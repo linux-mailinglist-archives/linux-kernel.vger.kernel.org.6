@@ -1,208 +1,192 @@
-Return-Path: <linux-kernel+bounces-369301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064B79A1B7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:17:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEA29A1B80
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29E4D1C21868
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:17:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C34BCB238F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8811F1C1AD6;
-	Thu, 17 Oct 2024 07:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FD317965E;
+	Thu, 17 Oct 2024 07:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hqKQbwPH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HNwdsoig"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070A9175D32
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC00D191F9A;
+	Thu, 17 Oct 2024 07:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729149426; cv=none; b=Y0wLc3gWf2PdlATBCnN3L1e964SSTNp973xynJ/rml3AzT2Vwfznt7zP8fbhXkIXNF03tBJWT4+9QoSnVbpqNa7lV+/d0oj/tnAhzSD5vue3RokAK0p7QUYNf9n4joOkHwMbOxe+zLdBjggX4tcazno/sIO6DEuzGHUELD7ehvI=
+	t=1729149456; cv=none; b=tQzZFHJypETtJPvgwvkHJvxGSfqT4pGbOe4q8AJJfp0I/c/vmPhvvwKrDHFnCY43FSlWcZ+WZ7DIEMjXsJTpl1ZACdB/jIW/k34IuP5toPfNjFoUrQgcLBo3UneSKbawE9FyKLh1KGWLSCUZBXaJFhEJ1Il35icJRVVhSzz0okQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729149426; c=relaxed/simple;
-	bh=6Qcx/xRCQVR3R6oj+RqNjM+yPQSV/y21hAdtRgpHR5o=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=bPyE/RCT2sqU83lhyeS/hLdPJ5yU3nbHLBuGDMx5AGo9AvKmx1xRYIb1UxQuf2JlDzWPNKkKusMNbEUncExgK1m+ojFeaaPERA06KmQTAnKp5Sm6pMlUxbxjdxB5xSDZ4n7N1kYx/bJNgQ99CNQlh0rGv2sgurSNR1CoeauVRK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hqKQbwPH; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729149425; x=1760685425;
-  h=date:from:to:cc:subject:message-id;
-  bh=6Qcx/xRCQVR3R6oj+RqNjM+yPQSV/y21hAdtRgpHR5o=;
-  b=hqKQbwPHlmVm8qTc+t/iS6+9YWUqMwsjn7t7fkCoqQvrdleA9+UmTvmX
-   tVvEj0QTpNFnXN9MUA4/Y/lKemM8Sd1YVAPfjnsmpcvo3CANr8Lh9v5Kl
-   K5o3xSOhkpqxzAyW5H2MestkzL5r7fENElKHur5OTTEgb0anZM3vxQTb6
-   eRarElBVY1fCoKb0Y+iOU24+HkEflyaw3rF0fo9xCTZPmABIG7bWHYTGh
-   hHopL1k9J9r2OraMdZIXXrbQrI8iEdqpEdYkS26nZUls1mGnJMjacefgh
-   uAnkRN1jTZ3ebszZ1cODVAHKnb+dLci485K9Z4Ok09FI119b0bCUNDQh3
-   A==;
-X-CSE-ConnectionGUID: p4ouCMetTeq/hXR2u/ysIw==
-X-CSE-MsgGUID: oh0tV8KlTHujUEt9mUcL0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="28063279"
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="28063279"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 00:17:05 -0700
-X-CSE-ConnectionGUID: UMjj/0CrSdyrSAygrga5Fg==
-X-CSE-MsgGUID: LM9J025dTEGrhvhrJMR6Lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="78623007"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 17 Oct 2024 00:17:04 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1Kkn-000LsB-17;
-	Thu, 17 Oct 2024 07:17:01 +0000
-Date: Thu, 17 Oct 2024 15:16:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20241015] BUILD REGRESSION
- d64af418459145b7d8eb94cd300fb4b7d2659a3c
-Message-ID: <202410171516.VOCVOq6N-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1729149456; c=relaxed/simple;
+	bh=KJE72V+2eRnMQvQBnilDC2fN6pl15XAvG6FslAjyIC8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mh0EwxCBxwokPZW6OU4sRzAtvv52eXcsdumxlVHAfPfX5U1coRvr1ku7IvDCQ4oaDOn341UDcovXfvJr8aOnPxzrt8nACxDdalJfOs4Sl0DM5g3id2HdEh3pXaUjxIHCr2XJZm0ii0cCtlYDtTw+a+pc981iEaLqcPNoTWahPSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HNwdsoig; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb587d0436so6676261fa.2;
+        Thu, 17 Oct 2024 00:17:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729149451; x=1729754251; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LPNLPgog+vbCNk0LoFWcYy/EHFJxqj69cSg/nXPsFdU=;
+        b=HNwdsoig3G5ivCaBygmyK+FajcTHolBCZsr98p7Ps6guLnnevwitBQVVfAWds7WLBL
+         gVk+F/RLGK/e9Wna0eF42CkxvZ7uUx7pHNorlfUi1zyChLNOELPdajFhBKrS2m2uIwH/
+         b9ufZmM2vfqR2XTjpLyqxnoTudAzQCKFB5RzPggNGY5vs0MnMPiMWP2d4WgXildZ53OH
+         IQRhAi+JbKvMgZqofmqJWJJRRRaGrfJAhKwSDplG+KpLE6FjKFHWDXFKdqK5v/66TeXK
+         31Qt3yAp/lMblZ8NBG5203OL8okG+sa3ogm3tqPjCTqGQMGtGWOOERLU2AxEl/8k4caO
+         nmmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729149451; x=1729754251;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LPNLPgog+vbCNk0LoFWcYy/EHFJxqj69cSg/nXPsFdU=;
+        b=nEujSxhViGfeMpkYSJJCodK0LLnCTMo6ATmxQNa+TZw8Aw8DQ2ts44KYF7oPjXlgLB
+         WUEV9wa8q2spaGVxyUVDe7yoxJBGXn7ZEkPniBUGM+e5TzmAiPnlJmOjFOI0gjJe3Tzw
+         bnPBFDjgr7uBqocUBSJh7PhvVxiEZ1Ll+wsP+zON2hZ8rGKkzFLgzCJk1qqgRcZM35af
+         GnOqSnwGrARe6Pg/EQhSO29fdgYo9WkgPQtMqo+KVw0oHBI/NT9mJ//IjMK1cVd0+0i+
+         niVpVN5NrB2ACi8xU0xJh4Jj9VINmt1heFfy74IzyCr97ZM0X2+08EXlEQAd0DCxh0Xl
+         N7XA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVTNjoOeXMtnjUnhNLTfR3sudeI5TdU6lwRrQgTskRPerT54vhwBoKWeDlRHVj7egghZBC8pOIxsF7@vger.kernel.org, AJvYcCXLpV4WtsfjATvHb7cz0XIC/V8bxRIpkYUN1i/rPf4rs3P6xk0fIUD3L9GNerJnnQ2B+bRVtB2U9Sjm/8ly@vger.kernel.org, AJvYcCXhN5BpdOcwEHtU9lWjjN70p5nnq6DlqyjehN78lreJTjsLSdWC3vOTDkVPeutCnl/OGYP+EzO+r4ku@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4WXSQlWkhwvGH2TPOa/i/TrSKpTwYbdbKMUnrt3w6luqFpM/A
+	HvKIMW6z14BpGXldfRI2hFRDDEDlCBdN745RYmF0tPwcWhcMYsHh
+X-Google-Smtp-Source: AGHT+IE0e+JRuUmErjYZCGI8T82wUui0287djy2ICfp5vPfucLeYv+FrmzFELL6uAEWUR9QgzHH5LQ==
+X-Received: by 2002:a2e:b88f:0:b0:2fb:3c44:7f8b with SMTP id 38308e7fff4ca-2fb3f2e8e69mr88977821fa.43.1729149450347;
+        Thu, 17 Oct 2024 00:17:30 -0700 (PDT)
+Received: from zenbook.agu.edu.tr ([95.183.227.34])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d778266sm2392174a12.70.2024.10.17.00.17.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 00:17:29 -0700 (PDT)
+From: Yassine Oudjana <yassine.oudjana@gmail.com>
+X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	Yassine Oudjana <yassine.oudjana@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 0/2] MediaTek MT6735 main clock and reset drivers
+Date: Thu, 17 Oct 2024 10:17:04 +0300
+Message-ID: <20241017071708.38663-1-y.oudjana@protonmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241015
-branch HEAD: d64af418459145b7d8eb94cd300fb4b7d2659a3c  uapi: net: Avoid -Wflex-array-member-not-at-end warnings
+From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Error/Warning (recently discovered and may have been fixed):
+These patches are part of a larger effort to support the MT6735 SoC family in
+mainline Linux. More patches (unsent or sent and pending review or revision) can
+be found here[1].
 
-    https://lore.kernel.org/oe-kbuild-all/202410171340.SzEKww7B-lkp@intel.com
+This series adds support for the main clock and reset controllers on the
+Mediatek MT6735 SoC:
+- apmixedsys (global PLLs)
+- topckgen (global divisors and muxes)
+- infracfg (gates and resets for infrastructure blocks)
+- pericfg (gates and resets for peripherals)
 
-    ./usr/include/linux/wireless.h:747:33: error: field 'addr' has incomplete type
-    ./usr/include/linux/wireless.h:772:33: error: field 'bssid' has incomplete type
-    ./usr/include/linux/wireless.h:860:33: error: field 'src_addr' has incomplete type
+MT6735 has other more specialized clock/reset controllers, support for which is
+not included in this series:
+- mfgcfg (GPU)
+- imgsys (camera)
+- mmsys (display)
+- vdecsys (video decoder)
+- vencsys (video encoder)
+- audsys (audio)
 
-Error/Warning ids grouped by kconfigs:
+Changes since v6:
+- Change .remove_new to .remove in platform driver structs.
+Changes since v5:
+- Fixed typos in driver source.
+Changes since v4:
+- Follow naming convention for DT bindings.
+- Add reset map.
+Changes since v3:
+- Squash DT binding patches.
+- Use mtk_clk_simple_probe/mtk_clk_simple_remove for topckgen.
+- Add MODULE_DEVICE_TABLE in all drivers.
+Changes since v2:
+- Add "CLK_" prefix to infracfg and pericfg clock definitions to avoid possible
+  clashes with reset bindings.
+- Replace "_RST" suffix with "RST_" prefix to maintain consistency with clock
+  bindings.
+- Use macros to define clocks.
+- Abandon mtk_clk_simple_probe/mtk_clk_simple_remove in favor of custom
+  functions in apmixedsys and topckgen drivers for the time being. 
+- Capitalize T in MediaTek in MODULE_DESCRIPTION.
+Changes since v1:
+- Rebase on some pending patches.
+- Move common clock improvements to a separate series.
+- Use mtk_clk_simple_probe/remove after making them support several clock types
+  in said series.
+- Combine all 4 drivers into one patch, and use one Kconfig symbol for all
+  following a conversation seen on a different series[2].
+- Correct APLL2 registers in apmixedsys driver (were offset backwards by 0x4).
+- Make irtx clock name lower case to match the other clocks.
 
-recent_errors
-`-- x86_64-buildonly-randconfig-002-20241017
-    |-- usr-include-linux-wireless.h:error:field-addr-has-incomplete-type
-    |-- usr-include-linux-wireless.h:error:field-bssid-has-incomplete-type
-    `-- usr-include-linux-wireless.h:error:field-src_addr-has-incomplete-type
+[1] https://gitlab.com/mt6735-mainline/linux/-/commits/mt6735-staging
+[2] https://lore.kernel.org/linux-mediatek/CAGXv+5H4gF5GXzfk8mjkG4Kry8uCs1CQbKoViBuc9LC+XdHH=A@mail.gmail.com/
 
-elapsed time: 1803m
+Yassine Oudjana (2):
+  dt-bindings: clock: Add MediaTek MT6735 clock and reset bindings
+  clk: mediatek: Add drivers for MediaTek MT6735 main clock and reset
+    drivers
 
-configs tested: 103
-configs skipped: 2
+ .../bindings/clock/mediatek,apmixedsys.yaml   |   4 +-
+ .../bindings/clock/mediatek,infracfg.yaml     |   8 +-
+ .../bindings/clock/mediatek,pericfg.yaml      |   1 +
+ .../bindings/clock/mediatek,topckgen.yaml     |   4 +-
+ MAINTAINERS                                   |  16 +
+ drivers/clk/mediatek/Kconfig                  |   9 +
+ drivers/clk/mediatek/Makefile                 |   1 +
+ drivers/clk/mediatek/clk-mt6735-apmixedsys.c  | 138 ++++++
+ drivers/clk/mediatek/clk-mt6735-infracfg.c    | 107 +++++
+ drivers/clk/mediatek/clk-mt6735-pericfg.c     | 124 ++++++
+ drivers/clk/mediatek/clk-mt6735-topckgen.c    | 394 ++++++++++++++++++
+ .../clock/mediatek,mt6735-apmixedsys.h        |  16 +
+ .../clock/mediatek,mt6735-infracfg.h          |  25 ++
+ .../clock/mediatek,mt6735-pericfg.h           |  37 ++
+ .../clock/mediatek,mt6735-topckgen.h          |  79 ++++
+ .../reset/mediatek,mt6735-infracfg.h          |  27 ++
+ .../reset/mediatek,mt6735-pericfg.h           |  31 ++
+ 17 files changed, 1016 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-apmixedsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-infracfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-pericfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-topckgen.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-infracfg.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-pericfg.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-topckgen.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-infracfg.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-pericfg.h
 
-tested configs:
-alpha                             allnoconfig    gcc-14.1.0
-alpha                            allyesconfig    clang-20
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.1.0
-arc                              allyesconfig    clang-20
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.1.0
-arm                              allyesconfig    clang-20
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.1.0
-csky                              allnoconfig    gcc-14.1.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.1.0
-hexagon                          allyesconfig    clang-20
-i386                             allmodconfig    clang-18
-i386                              allnoconfig    clang-18
-i386                             allyesconfig    clang-18
-i386        buildonly-randconfig-001-20241017    clang-18
-i386        buildonly-randconfig-002-20241017    clang-18
-i386        buildonly-randconfig-003-20241017    clang-18
-i386        buildonly-randconfig-004-20241017    clang-18
-i386        buildonly-randconfig-005-20241017    clang-18
-i386        buildonly-randconfig-006-20241017    clang-18
-i386                                defconfig    clang-18
-i386                  randconfig-001-20241017    clang-18
-i386                  randconfig-002-20241017    clang-18
-i386                  randconfig-003-20241017    clang-18
-i386                  randconfig-004-20241017    clang-18
-i386                  randconfig-005-20241017    clang-18
-i386                  randconfig-006-20241017    clang-18
-i386                  randconfig-011-20241017    clang-18
-i386                  randconfig-012-20241017    clang-18
-i386                  randconfig-013-20241017    clang-18
-i386                  randconfig-014-20241017    clang-18
-i386                  randconfig-015-20241017    clang-18
-i386                  randconfig-016-20241017    clang-18
-loongarch                        allmodconfig    gcc-14.1.0
-loongarch                         allnoconfig    gcc-14.1.0
-m68k                             allmodconfig    gcc-14.1.0
-m68k                              allnoconfig    gcc-14.1.0
-m68k                             allyesconfig    gcc-14.1.0
-microblaze                       allmodconfig    gcc-14.1.0
-microblaze                        allnoconfig    gcc-14.1.0
-microblaze                       allyesconfig    gcc-14.1.0
-mips                              allnoconfig    gcc-14.1.0
-nios2                             allnoconfig    gcc-14.1.0
-openrisc                          allnoconfig    clang-20
-openrisc                            defconfig    gcc-12
-parisc                            allnoconfig    clang-20
-parisc                              defconfig    gcc-12
-powerpc                           allnoconfig    clang-20
-riscv                             allnoconfig    clang-20
-riscv                               defconfig    gcc-12
-s390                             allmodconfig    gcc-14.1.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.1.0
-s390                                defconfig    gcc-12
-sh                               allmodconfig    gcc-14.1.0
-sh                                allnoconfig    gcc-14.1.0
-sh                               allyesconfig    gcc-14.1.0
-sh                                  defconfig    gcc-12
-sparc                            allmodconfig    gcc-14.1.0
-sparc64                             defconfig    gcc-12
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-18
-x86_64                           allyesconfig    clang-18
-x86_64      buildonly-randconfig-001-20241017    gcc-12
-x86_64      buildonly-randconfig-002-20241017    gcc-12
-x86_64      buildonly-randconfig-003-20241017    gcc-12
-x86_64      buildonly-randconfig-004-20241017    gcc-12
-x86_64      buildonly-randconfig-005-20241017    gcc-12
-x86_64      buildonly-randconfig-006-20241017    gcc-12
-x86_64                              defconfig    clang-18
-x86_64                                  kexec    clang-18
-x86_64                randconfig-001-20241017    gcc-12
-x86_64                randconfig-002-20241017    gcc-12
-x86_64                randconfig-003-20241017    gcc-12
-x86_64                randconfig-004-20241017    gcc-12
-x86_64                randconfig-005-20241017    gcc-12
-x86_64                randconfig-006-20241017    gcc-12
-x86_64                randconfig-011-20241017    gcc-12
-x86_64                randconfig-012-20241017    gcc-12
-x86_64                randconfig-013-20241017    gcc-12
-x86_64                randconfig-014-20241017    gcc-12
-x86_64                randconfig-015-20241017    gcc-12
-x86_64                randconfig-016-20241017    gcc-12
-x86_64                randconfig-071-20241017    gcc-12
-x86_64                randconfig-072-20241017    gcc-12
-x86_64                randconfig-073-20241017    gcc-12
-x86_64                randconfig-074-20241017    gcc-12
-x86_64                randconfig-075-20241017    gcc-12
-x86_64                randconfig-076-20241017    gcc-12
-x86_64                               rhel-8.3    gcc-12
-x86_64                           rhel-8.3-bpf    clang-18
-x86_64                         rhel-8.3-kunit    clang-18
-x86_64                           rhel-8.3-ltp    clang-18
-x86_64                          rhel-8.3-rust    clang-18
-xtensa                            allnoconfig    gcc-14.1.0
+-- 
+2.47.0
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
