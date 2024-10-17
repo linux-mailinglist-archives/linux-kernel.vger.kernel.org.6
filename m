@@ -1,89 +1,97 @@
-Return-Path: <linux-kernel+bounces-370680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA759A30A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5425E9A30A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4F97283665
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:25:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18029280C3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1301D7E35;
-	Thu, 17 Oct 2024 22:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790761D799E;
+	Thu, 17 Oct 2024 22:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6NkfUH2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IP723RXT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7255F1D54E9;
-	Thu, 17 Oct 2024 22:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D368E1D7E30;
+	Thu, 17 Oct 2024 22:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729203902; cv=none; b=I1gQmLzv4NiD7R164gFATHixSbj9u8bF8NSVNttk179nYiPJyhOxjvboZ8dV8lWonav5rzijvGEFFj2HT5jWCzlKfYr/j53mqu81NhMIERCAHy6Lm7pbAZ4awWj3q4yTIZWmQZO9VHum52hbFQRuTM0Btu3sauCA8gPSsXyxWz0=
+	t=1729203917; cv=none; b=hj7qNoT8JhFTBC4VHLTeNMb0vyt1Kn3jXRxaF0jXj07NkffFpHHKUJEsoYQMBi2vWcVxjk4LS39HzEIeViAjbSMDDlsO9zlOZovIhE/89iUTUWCTyY0xty+s3ai2qbVShJYDX4Ty+X4g3lCm7dtBajt69cHeqkza1idy2vkUp8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729203902; c=relaxed/simple;
-	bh=UxsMeMKqTAaNxfn5AaD4HqHVdbM0GZp5OXnjQx+h7c0=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=TpCCbJKn1A9cryJ/KOoNv7h4VuGmVCrHGnbsM/boS9BmZ1nD4enfCI3safe3ATFVkRt3La4PDk2AMrapiwNUErsvNBqsBCSSek1K6k/P58h98TlXnXxn0B/yuKNcGpEKezqSNz8W1gM+UqQRaoezq1fu7u0+9mzTLPh6rzkftIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6NkfUH2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1DEEC4CEC3;
-	Thu, 17 Oct 2024 22:25:01 +0000 (UTC)
+	s=arc-20240116; t=1729203917; c=relaxed/simple;
+	bh=nvQBQGQo04fXOFkrBcDRcbvCCqQvbJoPEPGXbyMPVEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d/IT1pNrrKUrVxuYORVonlPUilxgZgQ4Uod9cFPnH7Sx2fNIZWg9KXlSiPyzkx7hjA68pFyzpeEJ9Kh1UWssbwem9ajsVgXZxrDcztDBnjxtC17JEiNaQ9Vz7P1GtfS2A/e/8Cfg+13v63Q7VuAvAM93tdV6si303trSoXTNuHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IP723RXT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A1ACC4CEC3;
+	Thu, 17 Oct 2024 22:25:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729203901;
-	bh=UxsMeMKqTAaNxfn5AaD4HqHVdbM0GZp5OXnjQx+h7c0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=p6NkfUH2iEdRK5kmbrFK6ylq+jIY9PF/KQoxiEzFAZdC25O/mvcI8MI/+/JFmWE96
-	 CAO/Eb0hdbFhw3nXzoxHQwSfpYM2PERo46auNDpL8bw9rnpzSA5JzcMaHCMaryAQJu
-	 z0FnhRaLpT3lW2a1MIH9le27Lad+PjekUlX682DGrHQtI1DcrjEkI6D6fkV5ht7PPC
-	 MFSE3J3HMbIkwdM9Ehh4ehQW0sCf5yNhub27rJVjn9jTR9NfHUn/pMxCRVijLwrqQA
-	 bUKJnC3yHLbx6GJ3uILBoCuU4CfrZ6IZIzKp2wtPvxOB1uh56WgDxCpajU0nxSuurc
-	 KlPFmlOsexNVw==
-Message-ID: <45f562afc56223014bde8defc132023b.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1729203917;
+	bh=nvQBQGQo04fXOFkrBcDRcbvCCqQvbJoPEPGXbyMPVEg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IP723RXTzymv9PWnMp3v7dRcEB5gj6t86GRlyyiQcLeqzzdKI5m0ZJH+jhDB/in6i
+	 pFoCVAb97QCw0JyuNjgnN/R1Yyhsx+UG8m37Qvj2oanJKpdHtpAXfghAY3A8YTjqIU
+	 gvsibyLcsBgxX1bAWN1HLm7gnACbViSGD+JZVt5k1Mvjut6zQDJBUetoG2+PN3Gjem
+	 YWmkazcm3TYNy+BWUJOzImLmeddEXqMWsIg1FSH8o3+vbM+gmHtukiEaT5ZTA6qQ3g
+	 y7NaCdUsUb+LV/RSkt6BDA4UjT6ohsD650A8U+qdM9HD+px/6cK4/44r8x29FIep3X
+	 oLG3nO4K3Ikkw==
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-83493f2dda4so86377539f.1;
+        Thu, 17 Oct 2024 15:25:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVRxq7iI04uRjzVL44mD0ONx9Sz0aZn0qP8rriST5XcqX8pMxx1kxpBj6h3LRwl2wJGvYtGRRSyFseA5Es=@vger.kernel.org, AJvYcCXPALmLRexO5lQ+lRLBCbD9hDRofjhuj8kCiNCzzoSLLsBXamiTcqVUE61p+v1Xb9V8Ben497zuE0bzFA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTFSoBkav7nhxZPZ7RjZpMongEZZ6NW0jGkxDWM/j6AvRmncdH
+	lvPfHHMXYeAcB7E8YPpA70o2HgPlYo+KutyDhBYuBVDojw6+0GVNfzkRh7nQvDKeZ5jLC9YcLTU
+	2W7mzVCUGD+7NmVuD0Au80QfgSPc=
+X-Google-Smtp-Source: AGHT+IEn+Hwu7V+p527CRGeOxJr8iubRG/Kxm+vQk7J9jg0AncgaEzcbhTFx0Ar2KxQTvDJim7iRe9IVeVTiqr9XikQ=
+X-Received: by 2002:a05:6e02:b49:b0:3a0:abd0:122 with SMTP id
+ e9e14a558f8ab-3a3e5306a8emr32869565ab.8.1729203916868; Thu, 17 Oct 2024
+ 15:25:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240919063048.2887579-1-linan666@huaweicloud.com>
+In-Reply-To: <20240919063048.2887579-1-linan666@huaweicloud.com>
+From: Song Liu <song@kernel.org>
+Date: Thu, 17 Oct 2024 15:25:05 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW60RP7B59i7t5fY6vTTpfe4UwQJ+c7HtugCteOH0uzyaw@mail.gmail.com>
+Message-ID: <CAPhsuW60RP7B59i7t5fY6vTTpfe4UwQJ+c7HtugCteOH0uzyaw@mail.gmail.com>
+Subject: Re: [PATCH] md: ensure child flush IO does not affect origin bio->bi_status
+To: linan666@huaweicloud.com
+Cc: yukuai3@huawei.com, linux-raid@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, houtao1@huawei.com, 
+	yangerkun@huawei.com, zhangxiaoxu5@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240927103005.17605-3-pablo.sun@mediatek.com>
-References: <20240927103005.17605-1-pablo.sun@mediatek.com> <20240927103005.17605-3-pablo.sun@mediatek.com>
-Subject: Re: [PATCH v2 2/6] clk: mediatek: clk-mt8188-topckgen: Remove univpll from parents of mfg_core_tmp
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, Pablo Sun <pablo.sun@mediatek.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Pablo Sun <pablo.sun@mediatek.com>, Rob Herring <robh@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Thu, 17 Oct 2024 15:25:00 -0700
-User-Agent: alot/0.10
 
-Quoting Pablo Sun (2024-09-27 03:30:01)
-> Same as MT8195, MT8188 GPU clock is primarly supplied by the dedicated
-> mfgpll. The clock "mfg_core_tmp" is only used as an alt clock when
-> setting mfgpll clock rate.
->=20
-> If we keep the univpll parents from mfg_core_tmp, when setting
-> GPU frequency to 390000000, the common clock framework would switch
-> the parent to univpll, instead of setting mfgpll to 390000000:
->=20
->     mfgpll                            0        0        0   949999756
->     univpll                           2        2        0  2340000000
->        univpll_d6                     1        1        0   390000000
->           top_mfg_core_tmp            1        1        0   390000000
->              mfg_ck_fast_ref          1        1        0   390000000
->                 mfgcfg_bg3d           1        1        0   390000000
->=20
-> This results in failures when subsequent devfreq operations need to
-> switch to other frequencies. So remove univpll from the parent list.
->=20
-> This solution is taken from commit 72d38ed720e9 ("clk: mediatek:
-> clk-mt8195-topckgen: Drop univplls from mfg mux parents")
->=20
-> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> ---
+On Wed, Sep 18, 2024 at 11:33=E2=80=AFPM <linan666@huaweicloud.com> wrote:
+>
+> From: Li Nan <linan122@huawei.com>
+>
+> When a flush is issued to an RAID array, a child flush IO is created and
+> issued for each member disk in the RAID array. Since commit b75197e86e6d
+> ("md: Remove flush handling"), each child flush IO has been chained with
+> the original bio. As a result, the failure of any child IO could modify
+> the bi_status of the original bio, potentially impacting the upper-layer
+> filesystem.
+>
+> Fix the issue by preventing child flush IO from altering the original
+> bio->bi_status as before. However, this design introduces a known
+> issue: in the event of a power failure, if a flush IO on a member
+> disk fails, the upper layers may not be informed. This issue is not easy
+> to fix and will not be addressed for the time being in this issue.
+>
+> Fixes: b75197e86e6d ("md: Remove flush handling")
+> Signed-off-by: Li Nan <linan122@huawei.com>
 
-Applied to clk-next
+Applied to md-6.12.
+
+Thanks for the fix!
+Song
 
