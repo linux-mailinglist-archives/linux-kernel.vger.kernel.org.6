@@ -1,97 +1,95 @@
-Return-Path: <linux-kernel+bounces-369320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABDC9A1BBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:35:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97F29A1BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28E481C22077
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:35:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B950289FAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A61718D633;
-	Thu, 17 Oct 2024 07:35:00 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8651CF297;
+	Thu, 17 Oct 2024 07:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IRraA3w5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A83C144D21;
-	Thu, 17 Oct 2024 07:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02581144D21
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729150499; cv=none; b=mbINf1rkmthP4ysJMsNWLOWxkPerwS8Gy84khiKsLbRZ2T5h3mLpb30MuWM0fVsEaAYRZZFazmEUt5lbpg+D6kcy8ZlW5LWEHy16IkexboZG8YuiwElnzWUUzLWnLAdoKa2NXk7sVbzZs0iYp+Bj7au2EKaPn+TH8tRepBAXdB0=
+	t=1729150551; cv=none; b=MENTL852sFQo42pOur6gBYq5FvFgy9t7kdNcB45N3TOq71loSUm3C3GLElRfB2yggzlrzqg1zKGm5mZS8Uz/1ClWYZTu+GjyTy1QXnSderdpK5mZ7/yq6Mk7sYl3ySHHMQNQm97Zm9EoUlJLzUJ6A71ubiWw/w1QZJFP+o+nwZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729150499; c=relaxed/simple;
-	bh=XUbV0oCgOYoz7NcUb/PwQakpU+YQNjrval7Oi1EcL3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=chGp3q5Rhsq5V1H/fxl2hmTZAPekkEvAQUIX82MO8txf9YCo/yQ1RqY0y74xA8TNntDXdR8NfpLALjC1IEz4s0x7jecmBKBqG0pquNE3jv/3WzNEtmtgjchEI6TPh7dhPl+48cBPTDVXVCY3HysoNW3za2Tr3VCUiB1en1OkI3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 701301C0095; Thu, 17 Oct 2024 09:34:55 +0200 (CEST)
-Date: Thu, 17 Oct 2024 09:34:54 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Pavel Machek <pavel@denx.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	chris.paterson2@renesas.com, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: Re: [PATCH 6.11 000/212] 6.11.4-rc2 review
-Message-ID: <ZxC+HkGcgdCg5gtE@duo.ucw.cz>
-References: <20241015112329.364617631@linuxfoundation.org>
- <Zw+IXqfj5IA1KXj+@duo.ucw.cz>
+	s=arc-20240116; t=1729150551; c=relaxed/simple;
+	bh=ekjP/+RTxRRpF924txgjW8HefsPRSKOo9PCJDVuif4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e29EVhuGLzmqxdC9V+qpqzCi6UMLVeGHKQU3KMuaoqub+P9rctQwhYeYgOSCBtQN2Ujk/sXTB4FGGPdm2BnwrpwjjZ+8eWSiCEikJ+HpktTn330l0dSq1j149EJWMgNCqWD6RCucbKbrgQYouPUlqmQCWL/jZ1VqgJeVhgVLM0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IRraA3w5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729150548;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ekjP/+RTxRRpF924txgjW8HefsPRSKOo9PCJDVuif4w=;
+	b=IRraA3w5KJTtrOVjPWmzJ2YqZvJkgUQ0H8ttys5ahpLH33bQXMnj4aVheLHvL4AmND5MS9
+	8fZza7VT4VmfZ0Y6jWYuRrcxS2i7EIcs+HEVsN6z+aZJjnYK/tYFBsYHHrddVGvrdVwrYj
+	6FEM2J98Tx64a5KZGzpVEFfWITH+nhw=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-677--NNdpK-0Plq6hfaZ_JTfCw-1; Thu,
+ 17 Oct 2024 03:35:45 -0400
+X-MC-Unique: -NNdpK-0Plq6hfaZ_JTfCw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 58B241955D91;
+	Thu, 17 Oct 2024 07:35:43 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.60.16.52])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1B46D19560A3;
+	Thu, 17 Oct 2024 07:35:39 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: quic_jjohnson@quicinc.com
+Cc: ath12k@lists.infradead.org,
+	jjohnson@kernel.org,
+	jtornosm@redhat.com,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] wifi: ath12k: fix crash when unbinding
+Date: Thu, 17 Oct 2024 09:35:37 +0200
+Message-ID: <20241017073538.176198-1-jtornosm@redhat.com>
+In-Reply-To: <452ec614-7883-4e0f-ae0a-25d22d0be41c@quicinc.com>
+References: <452ec614-7883-4e0f-ae0a-25d22d0be41c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TOxLUA0/PC+9647U"
-Content-Disposition: inline
-In-Reply-To: <Zw+IXqfj5IA1KXj+@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Hello Jeff,
 
---TOxLUA0/PC+9647U
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> FYI I didn't comment on this previously but
+> <https://www.kernel.org/doc/html/latest/process/submitting-patches.html#backtraces-in-commit-messages>
+> has some guidance on trimming backtraces in commit messages.
+Ok, I will trim the backtrace in a next version of the patch.
+And I will fix the typos too.
 
-Hi!
+Thanks
 
-> According to our testing, it breaks boot on de0-nano-soc.
->=20
-> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines=
-/1497863060
-=2E..
-> Quick test showed that 5.10-cip kernel still works on that target, so
-> it seems to be real issue.
+Best regards
+José Ignacio
 
-So now it looks like we have misconfigured addresses in
-u-boot.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---TOxLUA0/PC+9647U
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZxC+HgAKCRAw5/Bqldv6
-8h/kAKCsJZTT8g90wJln5cBPCyLqdCM3vACcDdykqw0jiHA3q5FUz6c2XTqK0tE=
-=QAdR
------END PGP SIGNATURE-----
-
---TOxLUA0/PC+9647U--
 
