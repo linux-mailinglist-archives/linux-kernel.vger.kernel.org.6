@@ -1,443 +1,500 @@
-Return-Path: <linux-kernel+bounces-369150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1659A1978
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:48:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE4E9A1976
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0832866C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:48:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC6A2865E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6534913C3F6;
-	Thu, 17 Oct 2024 03:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7y6XhTq"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957856BFC0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32AE13541B;
 	Thu, 17 Oct 2024 03:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSnN3BsF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE126C139
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729136874; cv=none; b=Dz505TOhkS64kwsHUgtUmzqaRBhYlLPER45IRsdd1s4DxtvyLZVSTJvYhLugp7JVHktN+2vUitHgODUp/08BDDqI6wUEDpHyF6d6P0w34YEP2fTKLDRXeP8JiesO8p2JYr3TpeSWFbuY9RiCgf99eeor8jsBR0lMWr+snVSbY7A=
+	t=1729136872; cv=none; b=RDU6cOsLpZXXhsF2MseKbZqm3WXLzyRKPB4gSGr6uUP7F6WTjFxqoolq7wEtn+SkW33VNusN+zXTgFgxAzIXWK6s68cW2ixoPO20VZcfm/HMx97/ZpsXzq/cyB4hjB/+t43jsEPXYOaXJ3Ag4/oK5x07XcUB8Bwm/QZ2PMkfrf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729136874; c=relaxed/simple;
-	bh=aMsip7pjhyg6JnmW6w9memy2aloNkxXgSLqCQTzXKPo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FLJSQ2T066QJc1odLFZ/R2nHwRQS9z5ueoMqTF+1ZZNsgEfAza7nnJcHAlA30hyx832PZH5KhuTnz65rnUrHYpUVu1AZ8g6/p1K8rgjUvBWARd3J+r0bmw9S03Uc6phU/SVD770oDxoX3fqltiybd6CgC4oFf22gtpSxgZwOoZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7y6XhTq; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-28847f4207dso228677fac.0;
-        Wed, 16 Oct 2024 20:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729136871; x=1729741671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KiDw++hef03OiPKwQh86usuqIMKf/hTJwKuSaI1Ilxw=;
-        b=A7y6XhTqLZg8LPkRHYPpxHhSVIrsXEbB7LZwBB//RsXRxKUTcObUmzmJXp3D/cumgi
-         IIU+dmoJ5/pdn+NlgHzJlKylgfv2sQukjaTCPp09CVS8BbCf7Zt55GWwXacS9PqK075n
-         QYHDNHOAtFNElwwbLINYBca6C9zTYonTap23UpzWFbaZbgvazSoenrdG5UbBAh2Wy3qn
-         UJRCx9ibo4PeMMGWFG+GU6BLyOTlDc9DKXFGDYi/+kEFUH622DV3zEYKsm/sFo4S4YoR
-         Gk2QuP+yb2cOf7Ug9EjV3cCx1p2+tZ2OpvwjFfkJzCQqWsCWBhcVO7uHQN1u2+JNO6ZN
-         hx0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729136871; x=1729741671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KiDw++hef03OiPKwQh86usuqIMKf/hTJwKuSaI1Ilxw=;
-        b=iy9CgIGnCnMml1SCZqO7iMbLGbQPPI/C+KGy8bW7b5K4FtXxcKO26BqZMj31OV0LbL
-         v5Ijhp7T+89QZwXNyJLyX7xTyZJgZ9Luy0sqHOSDOaDXHdx3OJBDQfKOf2n9nhQ8C0dI
-         +aTaxMBTBbGkWd2ZzozDdbSjZWqE4eaELXL7OaNJbnvEHi132gZPyFWbIFLYrM0h/vow
-         Xeo1P5x+qx2kuhQ9JBI+wlmVpXXRrDC/smKAJQ/RujpiAIyFXmRcj69AjUyMbXcrau70
-         4bwKASRU/M7BM/Qxt8R9jbUBeVLyrR69PGhGEceC7jqhvx+U5lHJYUeX0FtMtednXz5b
-         7ANg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfhClrrewL4DDMCZlECQXXMxaZr+c/vu/4KsCJW8wKSgzhvRzuWuoYUAY/KBH659z+/0AaysR25uts@vger.kernel.org, AJvYcCXPuiWDEfmoy3iCrWk6DgrhjBX79uBStzCQKmB+k+JN6sHtWohQWywiLeAz2BOaE/FsUrcsjsqYzOAkMNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjCmLGp9t+lPB7ch3QaEGiTWMV/TJQZc6Lv5FZFuwWxwCkRBzP
-	waj9n0JeygGs+WpphxKEYbS9rLMLuZyYHeXAWix6HHa7gpulqA0JWmpyhAlFiwve9gRYFY9nfY+
-	p3dt/xk/uQZlVKy9H2T5p0Tzliks=
-X-Google-Smtp-Source: AGHT+IHzqrfe95JjMnIoV1GWVhXHOR447G+fTy+gBygoR1Yms502xbDHkrmI/mS/8wj8Tsk294qahZ1JbK1EhNxknis=
-X-Received: by 2002:a05:6870:9e08:b0:27b:7370:f610 with SMTP id
- 586e51a60fabf-2886dd51bc4mr15496034fac.10.1729136871367; Wed, 16 Oct 2024
- 20:47:51 -0700 (PDT)
+	s=arc-20240116; t=1729136872; c=relaxed/simple;
+	bh=zfcS/CUov++kYnVioTemWtIyz8pFa4kV0Ve1lFvpLAA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BWP5wBE21lpizA5VwOLJad3QM9BA0Zxv5bd19PwDf8Eame4mCVgesY5W6P3/rtfgOzk4HzFv23lUTcO0yu117Nas1VPacx7FdBSesLErsIk3+s7uTlReYlvOtpCJZKEozO1h22/UwGwUQfrwH0+6KUtBg8aUno6YWp94FFw5tt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSnN3BsF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8355C4CEC3;
+	Thu, 17 Oct 2024 03:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729136871;
+	bh=zfcS/CUov++kYnVioTemWtIyz8pFa4kV0Ve1lFvpLAA=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=mSnN3BsF4zk3ZaznITcxzjeD27rdUK+VDx322XPWmDbuz5Qzj5nrUXh2ae7l6MRux
+	 g5ZRgkh/2QI2T/eXczd5rsVflOkzu2RoEwFI6nbeWuolJzTtYYLjNeidyVP49N/Hk1
+	 uz7H6QbOyZsuPfd65ttq3av891QA24u6SsGLFqRsSXSUXwDfjh5RB5Kv2h27yPnnCb
+	 qbWhbTkKd3XlxSoYsR8Lfq7IqHFpidML6dUSk0i+33Qpy3tfkZsqmPDTIu3+27Jgee
+	 RoNZ5sWg8T2lxDXfLGoHK9sIvU3t9lSvypwknKyu6DQNwNYITGfAuoqHqzX/2xdp2/
+	 pWBs/qRZb+HQQ==
+Message-ID: <3f5ac7a7-b153-43e8-9a87-f8a9a432dd83@kernel.org>
+Date: Thu, 17 Oct 2024 11:47:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016114915.2823-1-linux.amoon@gmail.com> <20241016114915.2823-3-linux.amoon@gmail.com>
- <20241016182343.vocxyi5ry33btw5o@thinkpad>
-In-Reply-To: <20241016182343.vocxyi5ry33btw5o@thinkpad>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Thu, 17 Oct 2024 09:17:35 +0530
-Message-ID: <CANAwSgRnd5jaZjoNtCLcq6nRGz3gC-VwjhxsiG7haiowrmZs_w@mail.gmail.com>
-Subject: Re: [PATCH v9 2/3] PCI: rockchip: Simplify reset control handling by
- using reset_control_bulk*() function
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, 
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-pci@vger.kernel.org>, 
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-rockchip@lists.infradead.org>, 
-	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, Daeho Jeong <daehojeong@google.com>
+Subject: Re: [PATCH v6] f2fs: introduce device aliasing file
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20241015180936.1180394-1-daeho43@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20241015180936.1180394-1-daeho43@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Manivannan,
+On 2024/10/16 2:09, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> F2FS should understand how the device aliasing file works and support
+> deleting the file after use. A device aliasing file can be created by
+> mkfs.f2fs tool and it can map the whole device with an extent, not
+> using node blocks. The file space should be pinned and normally used for
+> read-only usages.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> Reviewed-by: Chao Yu <chao@kernel.org>
+> ---
+> v6: added the description in the kernel doc.
+> v5: added a ioctl to know whether a file is for device aliasing
+> v4: added file pinning check in sanity check
+> v3: merged Chao's extent cache sanity check.
+>      prevented device aliasing support with noextent mount option
+> v2: changed the position of f2fs_destroy_extent_tree() only for device
+>      aliasing files
+> ---
+>   Documentation/filesystems/f2fs.rst | 45 ++++++++++++++++++++++++++++++
+>   fs/f2fs/data.c                     |  5 ++++
+>   fs/f2fs/extent_cache.c             | 45 +++++++++++++++++++++++++++++-
+>   fs/f2fs/f2fs.h                     |  5 ++++
+>   fs/f2fs/file.c                     | 44 ++++++++++++++++++++++++++---
+>   fs/f2fs/inode.c                    | 19 ++++++++++++-
+>   fs/f2fs/super.c                    |  4 +++
+>   fs/f2fs/sysfs.c                    |  2 ++
+>   include/uapi/linux/f2fs.h          |  1 +
+>   9 files changed, 164 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+> index 68a0885fb5e6..e61e8c630ecd 100644
+> --- a/Documentation/filesystems/f2fs.rst
+> +++ b/Documentation/filesystems/f2fs.rst
+> @@ -943,3 +943,48 @@ NVMe Zoned Namespace devices
+>     can start before the zone-capacity and span across zone-capacity boundary.
+>     Such spanning segments are also considered as usable segments. All blocks
+>     past the zone-capacity are considered unusable in these segments.
+> +
+> +Device aliasing feature
+> +-----------------------
+> +
+> +f2fs can utilize a special file called a "device aliasing file." This file allows
+> +the entire storage device to be mapped with a single, large extent, not using
+> +the usual f2fs node structures. This mapped area is pinned and primarily intended
+> +for holding the space.
+> +
+> +Essentially, this mechanism allows a portion of the f2fs area to be temporarily
+> +reserved and used by another filesystem or for different purposes. Once that
+> +external usage is complete, the device aliasing file can be deleted, releasing
+> +the reserved space back to F2FS for its own use.
+> +
+> +<use-case>
+> +
+> +# ls /dev/vd*
+> +/dev/vdb (32GB) /dev/vdc (32GB)
+> +# mkfs.ext4 /dev/vdc
+> +# mkfs.f2fs -c /dev/vdc@vdc.file /dev/vdb
+> +# mount /dev/vdb /mnt/f2fs
+> +# ls -l /mnt/f2fs
+> +vdc.file
+> +# df -h
+> +/dev/vdb                            64G   33G   32G  52% /mnt/f2fs
+> +
+> +# mount -o loop /dev/vdc /mnt/ext4
+> +# df -h
+> +/dev/vdb                            64G   33G   32G  52% /mnt/f2fs
+> +/dev/loop7                          32G   24K   30G   1% /mnt/ext4
+> +# umount /mnt/ext4
+> +
+> +# f2fs_io getflags /mnt/f2fs/vdc.file
+> +get a flag on /mnt/f2fs/vdc.file ret=0, flags=nocow(pinned),immutable
+> +# f2fs_io setflags noimmutable /mnt/f2fs/vdc.file
+> +get a flag on noimmutable ret=0, flags=800010
+> +set a flag on /mnt/f2fs/vdc.file ret=0, flags=noimmutable
+> +# rm /mnt/f2fs/vdc.file
+> +# df -h
+> +/dev/vdb                            64G  753M   64G   2% /mnt/f2fs
+> +
+> +So, the key idea is, user can do any file operations on /dev/vdc, and
+> +reclaim the space after the use, while the space is counted as /data.
+> +That doesn't require modifying partition size and filesystem format.
+> +
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 94f7b084f601..90fa8ab85194 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -3441,6 +3441,11 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+>   
+>   	if (!f2fs_lookup_read_extent_cache_block(inode, index,
+>   						 &dn.data_blkaddr)) {
+> +		if (IS_DEVICE_ALIASING(inode)) {
+> +			err = -ENODATA;
+> +			goto out;
+> +		}
+> +
+>   		if (locked) {
+>   			err = f2fs_reserve_block(&dn, index);
+>   			goto out;
+> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> index 62ac440d9416..019c1f7b7fa5 100644
+> --- a/fs/f2fs/extent_cache.c
+> +++ b/fs/f2fs/extent_cache.c
+> @@ -24,6 +24,7 @@ bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
+>   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>   	struct f2fs_extent *i_ext = &F2FS_INODE(ipage)->i_ext;
+>   	struct extent_info ei;
+> +	int devi;
+>   
+>   	get_read_extent_info(&ei, i_ext);
+>   
+> @@ -38,7 +39,36 @@ bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
+>   			  ei.blk, ei.fofs, ei.len);
+>   		return false;
+>   	}
+> -	return true;
+> +
+> +	if (!IS_DEVICE_ALIASING(inode))
+> +		return true;
+> +
+> +	for (devi = 0; devi < sbi->s_ndevs; devi++) {
+> +		if (FDEV(devi).start_blk != ei.blk ||
+> +				FDEV(devi).end_blk != ei.blk + ei.len - 1)
+> +			continue;
+> +
+> +		if (devi == 0) {
+> +			f2fs_warn(sbi,
+> +			    "%s: inode (ino=%lx) is an alias of meta device",
+> +			    __func__, inode->i_ino);
+> +			return false;
+> +		}
+> +
+> +		if (bdev_is_zoned(FDEV(devi).bdev)) {
+> +			f2fs_warn(sbi,
+> +			    "%s: device alias inode (ino=%lx)'s extent info "
+> +			    "[%u, %u, %u] maps to zoned block device",
+> +			    __func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
+> +			return false;
+> +		}
+> +		return true;
+> +	}
+> +
+> +	f2fs_warn(sbi, "%s: device alias inode (ino=%lx)'s extent info "
+> +			"[%u, %u, %u] is inconsistent w/ any devices",
+> +			__func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
+> +	return false;
+>   }
+>   
+>   static void __set_extent_info(struct extent_info *ei,
+> @@ -76,6 +106,9 @@ static bool __init_may_extent_tree(struct inode *inode, enum extent_type type)
+>   
+>   static bool __may_extent_tree(struct inode *inode, enum extent_type type)
+>   {
+> +	if (IS_DEVICE_ALIASING(inode) && type == EX_READ)
+> +		return true;
+> +
+>   	/*
+>   	 * for recovered files during mount do not create extents
+>   	 * if shrinker is not registered.
+> @@ -401,6 +434,11 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
+>   	if (atomic_read(&et->node_cnt) || !ei.len)
+>   		goto skip;
+>   
+> +	if (IS_DEVICE_ALIASING(inode)) {
+> +		et->largest = ei;
+> +		goto skip;
+> +	}
+> +
+>   	en = __attach_extent_node(sbi, et, &ei, NULL,
+>   				&et->root.rb_root.rb_node, true);
+>   	if (en) {
+> @@ -463,6 +501,11 @@ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+>   		goto out;
+>   	}
+>   
+> +	if (IS_DEVICE_ALIASING(inode)) {
+> +		ret = false;
+> +		goto out;
+> +	}
+> +
+>   	en = __lookup_extent_node(&et->root, et->cached_en, pgofs);
+>   	if (!en)
+>   		goto out;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 33f5449dc22d..b6ba22a1da47 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -213,6 +213,7 @@ struct f2fs_mount_info {
+>   #define F2FS_FEATURE_CASEFOLD			0x00001000
+>   #define F2FS_FEATURE_COMPRESSION		0x00002000
+>   #define F2FS_FEATURE_RO				0x00004000
+> +#define F2FS_FEATURE_DEVICE_ALIAS		0x00008000
+>   
+>   #define __F2FS_HAS_FEATURE(raw_super, mask)				\
+>   	((raw_super->feature & cpu_to_le32(mask)) != 0)
+> @@ -3046,6 +3047,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+>   #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
+>   #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+>   #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
+> +#define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
+>   
+>   #define F2FS_QUOTA_DEFAULT_FL		(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL)
+>   
+> @@ -3061,6 +3063,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+>   /* Flags that are appropriate for non-directories/regular files. */
+>   #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
+>   
+> +#define IS_DEVICE_ALIASING(inode)	(F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
+> +
+>   static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
+>   {
+>   	if (S_ISDIR(mode))
+> @@ -4510,6 +4514,7 @@ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
+>   F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
+>   F2FS_FEATURE_FUNCS(compression, COMPRESSION);
+>   F2FS_FEATURE_FUNCS(readonly, RO);
+> +F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
+>   
+>   #ifdef CONFIG_BLK_DEV_ZONED
+>   static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 9ae54c4c72fe..25d934357d3c 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -725,6 +725,11 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+>   
+>   	trace_f2fs_truncate_blocks_enter(inode, from);
+>   
+> +	if (IS_DEVICE_ALIASING(inode) && from) {
+> +		err = -EINVAL;
+> +		goto out_err;
+> +	}
+> +
+>   	free_from = (pgoff_t)F2FS_BLK_ALIGN(from);
+>   
+>   	if (free_from >= max_file_blocks(inode))
+> @@ -739,6 +744,21 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+>   		goto out;
+>   	}
+>   
+> +	if (IS_DEVICE_ALIASING(inode)) {
+> +		struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
+> +		struct extent_info ei = et->largest;
+> +		unsigned int i;
+> +
+> +		for (i = 0; i < ei.len; i++)
+> +			f2fs_invalidate_blocks(sbi, ei.blk + i);
+> +
+> +		dec_valid_block_count(sbi, inode, ei.len);
+> +		f2fs_update_time(sbi, REQ_TIME);
+> +
+> +		f2fs_put_page(ipage, 1);
+> +		goto out;
+> +	}
+> +
+>   	if (f2fs_has_inline_data(inode)) {
+>   		f2fs_truncate_inline_inode(inode, ipage, from);
+>   		f2fs_put_page(ipage, 1);
+> @@ -774,7 +794,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+>   	/* lastly zero out the first data page */
+>   	if (!err)
+>   		err = truncate_partial_data_page(inode, from, truncate_page);
+> -
+> +out_err:
+>   	trace_f2fs_truncate_blocks_exit(inode, err);
+>   	return err;
+>   }
+> @@ -992,7 +1012,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>   		return -EPERM;
+>   
+>   	if ((attr->ia_valid & ATTR_SIZE)) {
+> -		if (!f2fs_is_compress_backend_ready(inode))
+> +		if (!f2fs_is_compress_backend_ready(inode) ||
+> +				IS_DEVICE_ALIASING(inode))
+>   			return -EOPNOTSUPP;
+>   		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
+>   			!IS_ALIGNED(attr->ia_size,
+> @@ -1860,7 +1881,7 @@ static long f2fs_fallocate(struct file *file, int mode,
+>   		return -EIO;
+>   	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
+>   		return -ENOSPC;
+> -	if (!f2fs_is_compress_backend_ready(inode))
+> +	if (!f2fs_is_compress_backend_ready(inode) || IS_DEVICE_ALIASING(inode))
+>   		return -EOPNOTSUPP;
+>   
+>   	/* f2fs only support ->fallocate for regular file */
+> @@ -3296,6 +3317,9 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
+>   	struct f2fs_inode_info *fi = F2FS_I(inode);
+>   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>   
+> +	if (IS_DEVICE_ALIASING(inode))
+> +		return -EINVAL;
+> +
+>   	if (fi->i_gc_failures >= sbi->gc_pin_file_threshold) {
+>   		f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
+>   			  __func__, inode->i_ino, fi->i_gc_failures);
+> @@ -3326,6 +3350,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+>   	if (f2fs_readonly(sbi->sb))
+>   		return -EROFS;
+>   
+> +	if (!pin && IS_DEVICE_ALIASING(inode))
+> +		return -EOPNOTSUPP;
+> +
+>   	ret = mnt_want_write_file(filp);
+>   	if (ret)
+>   		return ret;
+> @@ -3391,6 +3418,12 @@ static int f2fs_ioc_get_pin_file(struct file *filp, unsigned long arg)
+>   	return put_user(pin, (u32 __user *)arg);
+>   }
+>   
+> +static int f2fs_ioc_get_dev_alias_file(struct file *filp, unsigned long arg)
+> +{
+> +	return put_user(IS_DEVICE_ALIASING(file_inode(filp)) ? 1 : 0,
+> +			(u32 __user *)arg);
+> +}
+> +
+>   int f2fs_precache_extents(struct inode *inode)
+>   {
+>   	struct f2fs_inode_info *fi = F2FS_I(inode);
+> @@ -4490,6 +4523,8 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>   		return f2fs_ioc_decompress_file(filp);
+>   	case F2FS_IOC_COMPRESS_FILE:
+>   		return f2fs_ioc_compress_file(filp);
+> +	case F2FS_IOC_GET_DEV_ALIAS_FILE:
 
-On Wed, 16 Oct 2024 at 23:53, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Wed, Oct 16, 2024 at 05:19:07PM +0530, Anand Moon wrote:
-> > Currently, the driver acquires and asserts/deasserts the resets
-> > individually thereby making the driver complex to read. But this
-> > can be simplified by using the reset_control_bulk APIs.
-> > Use devm_reset_control_bulk_get_exclusive() API to acquire all
-> > the resets and use reset_control_bulk_{assert/deassert}() APIs to
-> > assert/deassert them in bulk.
-> >
-> > Following the recommendations in 'Rockchip RK3399 TRM v1.3 Part2':
-> >
-> > 1. Split the reset controls into two groups as per section '17.5.8.1.1 =
-PCIe
-> > as Root Complex'.
-> >
-> > 2. Deassert the 'Pipe, MGMT Sticky, MGMT, Core' resets in groups as per
-> > section '17.5.8.1.1 PCIe as Root Complex'. This is accomplished using t=
-he
-> > reset_control_bulk APIs.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> > v9: Improved the commit message and try to fix few review comments.
->
-> You haven't fixed all of them... Please take a look at all of my comments=
-.
+Needs to handle F2FS_IOC_GET_DEV_ALIAS_FILE in f2fs_compat_ioctl as well?
 
-It is becoming a nightmare for me, my confidence is a the lowest.
-Can you fix this while applying or I will resend it with the fix?
->
-> - Mani
->
-Thanks
--Anand
+Thanks,
 
-> > v8: I tried to address reviews and comments from Mani.
-> >     Follow the sequence of De-assert as per the driver code.
-> >     Drop the comment in the driver.
-> >     Improve the commit message with the description of the TMP section.
-> >     Improve the reason for the core functional changes in the commit
-> >     description.
-> >     Improve the error handling messages of the code.
-> > v7: replace devm_reset_control_bulk_get_optional_exclusive()
-> >         with devm_reset_control_bulk_get_exclusive()
-> >     update the functional changes.
-> > V6: Add reason for the split of the RESET pins.
-> > v5: Fix the De-assert reset core as per the TRM
-> >     De-assert the PIPE_RESET_N/MGMT_STICKY_RESET_N/MGMT_RESET_N/RESET_N
-> >     simultaneously.
-> > v4: use dev_err_probe in error path.
-> > v3: Fix typo in commit message, dropped reported by.
-> > v2: Fix compilation error reported by Intel test robot
-> >     fixed checkpatch warning.
-> > ---
-> >  drivers/pci/controller/pcie-rockchip.c | 154 +++++--------------------
-> >  drivers/pci/controller/pcie-rockchip.h |  26 +++--
-> >  2 files changed, 48 insertions(+), 132 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/contr=
-oller/pcie-rockchip.c
-> > index 2777ef0cb599..adf11208cc82 100644
-> > --- a/drivers/pci/controller/pcie-rockchip.c
-> > +++ b/drivers/pci/controller/pcie-rockchip.c
-> > @@ -30,7 +30,7 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rock=
-chip)
-> >       struct platform_device *pdev =3D to_platform_device(dev);
-> >       struct device_node *node =3D dev->of_node;
-> >       struct resource *regs;
-> > -     int err;
-> > +     int err, i;
-> >
-> >       if (rockchip->is_rc) {
-> >               regs =3D platform_get_resource_byname(pdev,
-> > @@ -69,55 +69,23 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *ro=
-ckchip)
-> >       if (rockchip->link_gen < 0 || rockchip->link_gen > 2)
-> >               rockchip->link_gen =3D 2;
-> >
-> > -     rockchip->core_rst =3D devm_reset_control_get_exclusive(dev, "cor=
-e");
-> > -     if (IS_ERR(rockchip->core_rst)) {
-> > -             if (PTR_ERR(rockchip->core_rst) !=3D -EPROBE_DEFER)
-> > -                     dev_err(dev, "missing core reset property in node=
-\n");
-> > -             return PTR_ERR(rockchip->core_rst);
-> > -     }
-> > -
-> > -     rockchip->mgmt_rst =3D devm_reset_control_get_exclusive(dev, "mgm=
-t");
-> > -     if (IS_ERR(rockchip->mgmt_rst)) {
-> > -             if (PTR_ERR(rockchip->mgmt_rst) !=3D -EPROBE_DEFER)
-> > -                     dev_err(dev, "missing mgmt reset property in node=
-\n");
-> > -             return PTR_ERR(rockchip->mgmt_rst);
-> > -     }
-> > -
-> > -     rockchip->mgmt_sticky_rst =3D devm_reset_control_get_exclusive(de=
-v,
-> > -                                                             "mgmt-sti=
-cky");
-> > -     if (IS_ERR(rockchip->mgmt_sticky_rst)) {
-> > -             if (PTR_ERR(rockchip->mgmt_sticky_rst) !=3D -EPROBE_DEFER=
-)
-> > -                     dev_err(dev, "missing mgmt-sticky reset property =
-in node\n");
-> > -             return PTR_ERR(rockchip->mgmt_sticky_rst);
-> > -     }
-> > -
-> > -     rockchip->pipe_rst =3D devm_reset_control_get_exclusive(dev, "pip=
-e");
-> > -     if (IS_ERR(rockchip->pipe_rst)) {
-> > -             if (PTR_ERR(rockchip->pipe_rst) !=3D -EPROBE_DEFER)
-> > -                     dev_err(dev, "missing pipe reset property in node=
-\n");
-> > -             return PTR_ERR(rockchip->pipe_rst);
-> > -     }
-> > +     for (i =3D 0; i < ROCKCHIP_NUM_PM_RSTS; i++)
-> > +             rockchip->pm_rsts[i].id =3D rockchip_pci_pm_rsts[i];
-> >
-> > -     rockchip->pm_rst =3D devm_reset_control_get_exclusive(dev, "pm");
-> > -     if (IS_ERR(rockchip->pm_rst)) {
-> > -             if (PTR_ERR(rockchip->pm_rst) !=3D -EPROBE_DEFER)
-> > -                     dev_err(dev, "missing pm reset property in node\n=
-");
-> > -             return PTR_ERR(rockchip->pm_rst);
-> > -     }
-> > +     err =3D devm_reset_control_bulk_get_exclusive(dev,
-> > +                                                 ROCKCHIP_NUM_PM_RSTS,
-> > +                                                 rockchip->pm_rsts);
-> > +     if (err)
-> > +             return dev_err_probe(dev, err, "Cannot get the PM reset\n=
-");
-> >
-> > -     rockchip->pclk_rst =3D devm_reset_control_get_exclusive(dev, "pcl=
-k");
-> > -     if (IS_ERR(rockchip->pclk_rst)) {
-> > -             if (PTR_ERR(rockchip->pclk_rst) !=3D -EPROBE_DEFER)
-> > -                     dev_err(dev, "missing pclk reset property in node=
-\n");
-> > -             return PTR_ERR(rockchip->pclk_rst);
-> > -     }
-> > +     for (i =3D 0; i < ROCKCHIP_NUM_CORE_RSTS; i++)
-> > +             rockchip->core_rsts[i].id =3D rockchip_pci_core_rsts[i];
-> >
-> > -     rockchip->aclk_rst =3D devm_reset_control_get_exclusive(dev, "acl=
-k");
-> > -     if (IS_ERR(rockchip->aclk_rst)) {
-> > -             if (PTR_ERR(rockchip->aclk_rst) !=3D -EPROBE_DEFER)
-> > -                     dev_err(dev, "missing aclk reset property in node=
-\n");
-> > -             return PTR_ERR(rockchip->aclk_rst);
-> > -     }
-> > +     err =3D devm_reset_control_bulk_get_exclusive(dev,
-> > +                                                 ROCKCHIP_NUM_CORE_RST=
-S,
-> > +                                                 rockchip->core_rsts);
-> > +     if (err)
-> > +             return dev_err_probe(dev, err, "Cannot get the CORE reset=
-s\n");
-> >
-> >       if (rockchip->is_rc) {
-> >               rockchip->ep_gpio =3D devm_gpiod_get_optional(dev, "ep",
-> > @@ -147,23 +115,10 @@ int rockchip_pcie_init_port(struct rockchip_pcie =
-*rockchip)
-> >       int err, i;
-> >       u32 regs;
-> >
-> > -     err =3D reset_control_assert(rockchip->aclk_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "assert aclk_rst err %d\n", err);
-> > -             return err;
-> > -     }
-> > -
-> > -     err =3D reset_control_assert(rockchip->pclk_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "assert pclk_rst err %d\n", err);
-> > -             return err;
-> > -     }
-> > -
-> > -     err =3D reset_control_assert(rockchip->pm_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "assert pm_rst err %d\n", err);
-> > -             return err;
-> > -     }
-> > +     err =3D reset_control_bulk_assert(ROCKCHIP_NUM_PM_RSTS,
-> > +                                     rockchip->pm_rsts);
-> > +     if (err)
-> > +             return dev_err_probe(dev, err, "Couldn't assert PM resets=
-\n");
-> >
-> >       for (i =3D 0; i < MAX_LANE_NUM; i++) {
-> >               err =3D phy_init(rockchip->phys[i]);
-> > @@ -173,47 +128,17 @@ int rockchip_pcie_init_port(struct rockchip_pcie =
-*rockchip)
-> >               }
-> >       }
-> >
-> > -     err =3D reset_control_assert(rockchip->core_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "assert core_rst err %d\n", err);
-> > -             goto err_exit_phy;
-> > -     }
-> > -
-> > -     err =3D reset_control_assert(rockchip->mgmt_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "assert mgmt_rst err %d\n", err);
-> > -             goto err_exit_phy;
-> > -     }
-> > -
-> > -     err =3D reset_control_assert(rockchip->mgmt_sticky_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "assert mgmt_sticky_rst err %d\n", err);
-> > -             goto err_exit_phy;
-> > -     }
-> > -
-> > -     err =3D reset_control_assert(rockchip->pipe_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "assert pipe_rst err %d\n", err);
-> > -             goto err_exit_phy;
-> > -     }
-> > +     err =3D reset_control_bulk_assert(ROCKCHIP_NUM_CORE_RSTS,
-> > +                                     rockchip->core_rsts);
-> > +     if (err)
-> > +             return dev_err_probe(dev, err, "Couldn't assert Core rese=
-ts\n");
-> >
-> >       udelay(10);
-> >
-> > -     err =3D reset_control_deassert(rockchip->pm_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "deassert pm_rst err %d\n", err);
-> > -             goto err_exit_phy;
-> > -     }
-> > -
-> > -     err =3D reset_control_deassert(rockchip->aclk_rst);
-> > +     err =3D reset_control_bulk_deassert(ROCKCHIP_NUM_PM_RSTS,
-> > +                                       rockchip->pm_rsts);
-> >       if (err) {
-> > -             dev_err(dev, "deassert aclk_rst err %d\n", err);
-> > -             goto err_exit_phy;
-> > -     }
-> > -
-> > -     err =3D reset_control_deassert(rockchip->pclk_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "deassert pclk_rst err %d\n", err);
-> > +             dev_err(dev, "Couldn't deassert PM resets %d\n", err);
-> >               goto err_exit_phy;
-> >       }
-> >
-> > @@ -252,31 +177,10 @@ int rockchip_pcie_init_port(struct rockchip_pcie =
-*rockchip)
-> >               goto err_power_off_phy;
-> >       }
-> >
-> > -     /*
-> > -      * Please don't reorder the deassert sequence of the following
-> > -      * four reset pins.
-> > -      */
-> > -     err =3D reset_control_deassert(rockchip->mgmt_sticky_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "deassert mgmt_sticky_rst err %d\n", err);
-> > -             goto err_power_off_phy;
-> > -     }
-> > -
-> > -     err =3D reset_control_deassert(rockchip->core_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "deassert core_rst err %d\n", err);
-> > -             goto err_power_off_phy;
-> > -     }
-> > -
-> > -     err =3D reset_control_deassert(rockchip->mgmt_rst);
-> > -     if (err) {
-> > -             dev_err(dev, "deassert mgmt_rst err %d\n", err);
-> > -             goto err_power_off_phy;
-> > -     }
-> > -
-> > -     err =3D reset_control_deassert(rockchip->pipe_rst);
-> > +     err =3D reset_control_bulk_deassert(ROCKCHIP_NUM_CORE_RSTS,
-> > +                                       rockchip->core_rsts);
-> >       if (err) {
-> > -             dev_err(dev, "deassert pipe_rst err %d\n", err);
-> > +             dev_err(dev, "Couldn't deassert CORE %d\n", err);
-ok, it shipped my review process.
-> >               goto err_power_off_phy;
-> >       }
-> >
-> > diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/contr=
-oller/pcie-rockchip.h
-> > index bebab80c9553..cc667c73d42f 100644
-> > --- a/drivers/pci/controller/pcie-rockchip.h
-> > +++ b/drivers/pci/controller/pcie-rockchip.h
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/kernel.h>
-> >  #include <linux/pci.h>
-> >  #include <linux/pci-ecam.h>
-> > +#include <linux/reset.h>
-> >
-> >  /*
-> >   * The upper 16 bits of PCIE_CLIENT_CONFIG are a write mask for the lo=
-wer 16
-> > @@ -288,18 +289,29 @@
-> >               (((c) << ((b) * 8 + 5)) & \
-> >                ROCKCHIP_PCIE_CORE_EP_FUNC_BAR_CFG_BAR_CTRL_MASK(b))
-> >
-> > +#define ROCKCHIP_NUM_PM_RSTS   ARRAY_SIZE(rockchip_pci_pm_rsts)
-> > +#define ROCKCHIP_NUM_CORE_RSTS ARRAY_SIZE(rockchip_pci_core_rsts)
-> > +
-> > +static const char * const rockchip_pci_pm_rsts[] =3D {
-> > +     "pm",
-> > +     "pclk",
-> > +     "aclk",
-> > +};
-> > +
-> > +static const char * const rockchip_pci_core_rsts[] =3D {
-> > +     "mgmt-sticky",
-> > +     "core",
-> > +     "mgmt",
-> > +     "pipe",
-> > +};
-> > +
-> >  struct rockchip_pcie {
-> >       void    __iomem *reg_base;              /* DT axi-base */
-> >       void    __iomem *apb_base;              /* DT apb-base */
-> >       bool    legacy_phy;
-> >       struct  phy *phys[MAX_LANE_NUM];
-> > -     struct  reset_control *core_rst;
-> > -     struct  reset_control *mgmt_rst;
-> > -     struct  reset_control *mgmt_sticky_rst;
-> > -     struct  reset_control *pipe_rst;
-> > -     struct  reset_control *pm_rst;
-> > -     struct  reset_control *aclk_rst;
-> > -     struct  reset_control *pclk_rst;
-> > +     struct  reset_control_bulk_data pm_rsts[ROCKCHIP_NUM_PM_RSTS];
-> > +     struct  reset_control_bulk_data core_rsts[ROCKCHIP_NUM_CORE_RSTS]=
-;
-> >       struct  clk_bulk_data *clks;
-> >       int     num_clks;
-> >       struct  regulator *vpcie12v; /* 12V power supply */
-> > --
-> > 2.44.0
-> >
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+> +		return f2fs_ioc_get_dev_alias_file(filp, arg);
+>   	default:
+>   		return -ENOTTY;
+>   	}
+> @@ -4764,7 +4799,8 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
+>   	else
+>   		return 0;
+>   
+> -	map.m_may_create = true;
+> +	if (!IS_DEVICE_ALIASING(inode))
+> +		map.m_may_create = true;
+>   	if (dio) {
+>   		map.m_seg_type = f2fs_rw_hint_to_seg_type(sbi,
+>   						inode->i_write_hint);
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 1ed86df343a5..194dc0f53ad8 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -372,6 +372,19 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+>   		return false;
+>   	}
+>   
+> +	if (IS_DEVICE_ALIASING(inode)) {
+> +		if (!f2fs_sb_has_device_alias(sbi)) {
+> +			f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but the feature is off",
+> +				  __func__, inode->i_ino);
+> +			return false;
+> +		}
+> +		if (!f2fs_is_pinned_file(inode)) {
+> +			f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but is not pinned",
+> +				  __func__, inode->i_ino);
+> +			return false;
+> +		}
+> +	}
+> +
+>   	return true;
+>   }
+>   
+> @@ -823,7 +836,8 @@ void f2fs_evict_inode(struct inode *inode)
+>   	f2fs_bug_on(sbi, get_dirty_pages(inode));
+>   	f2fs_remove_dirty_inode(inode);
+>   
+> -	f2fs_destroy_extent_tree(inode);
+> +	if (!IS_DEVICE_ALIASING(inode))
+> +		f2fs_destroy_extent_tree(inode);
+>   
+>   	if (inode->i_nlink || is_bad_inode(inode))
+>   		goto no_delete;
+> @@ -879,6 +893,9 @@ void f2fs_evict_inode(struct inode *inode)
+>   		goto retry;
+>   	}
+>   
+> +	if (IS_DEVICE_ALIASING(inode))
+> +		f2fs_destroy_extent_tree(inode);
+> +
+>   	if (err) {
+>   		f2fs_update_inode_page(inode);
+>   		if (dquot_initialize_needed(inode))
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 87ab5696bd48..30646418241c 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -834,6 +834,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+>   			set_opt(sbi, READ_EXTENT_CACHE);
+>   			break;
+>   		case Opt_noextent_cache:
+> +			if (F2FS_HAS_FEATURE(sbi, F2FS_FEATURE_DEVICE_ALIAS)) {
+> +				f2fs_err(sbi, "device aliasing requires extent cache");
+> +				return -EINVAL;
+> +			}
+>   			clear_opt(sbi, READ_EXTENT_CACHE);
+>   			break;
+>   		case Opt_noinline_data:
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index c56e8c873935..e51304bc65ea 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -1313,6 +1313,7 @@ F2FS_SB_FEATURE_RO_ATTR(sb_checksum, SB_CHKSUM);
+>   F2FS_SB_FEATURE_RO_ATTR(casefold, CASEFOLD);
+>   F2FS_SB_FEATURE_RO_ATTR(compression, COMPRESSION);
+>   F2FS_SB_FEATURE_RO_ATTR(readonly, RO);
+> +F2FS_SB_FEATURE_RO_ATTR(device_alias, DEVICE_ALIAS);
+>   
+>   static struct attribute *f2fs_sb_feat_attrs[] = {
+>   	ATTR_LIST(sb_encryption),
+> @@ -1329,6 +1330,7 @@ static struct attribute *f2fs_sb_feat_attrs[] = {
+>   	ATTR_LIST(sb_casefold),
+>   	ATTR_LIST(sb_compression),
+>   	ATTR_LIST(sb_readonly),
+> +	ATTR_LIST(sb_device_alias),
+>   	NULL,
+>   };
+>   ATTRIBUTE_GROUPS(f2fs_sb_feat);
+> diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
+> index 955d440be104..f7aaf8d23e20 100644
+> --- a/include/uapi/linux/f2fs.h
+> +++ b/include/uapi/linux/f2fs.h
+> @@ -43,6 +43,7 @@
+>   #define F2FS_IOC_DECOMPRESS_FILE	_IO(F2FS_IOCTL_MAGIC, 23)
+>   #define F2FS_IOC_COMPRESS_FILE		_IO(F2FS_IOCTL_MAGIC, 24)
+>   #define F2FS_IOC_START_ATOMIC_REPLACE	_IO(F2FS_IOCTL_MAGIC, 25)
+> +#define F2FS_IOC_GET_DEV_ALIAS_FILE	_IOR(F2FS_IOCTL_MAGIC, 26, __u32)
+>   
+>   /*
+>    * should be same as XFS_IOC_GOINGDOWN.
+
 
