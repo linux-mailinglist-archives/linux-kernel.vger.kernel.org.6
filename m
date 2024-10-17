@@ -1,171 +1,146 @@
-Return-Path: <linux-kernel+bounces-370452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC3B69A2CB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:53:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D089A2C60
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6F4281A4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:53:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D33F61F211D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC8A219492;
-	Thu, 17 Oct 2024 18:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9539C201261;
+	Thu, 17 Oct 2024 18:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="qJpzeQI+"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2047.outbound.protection.outlook.com [40.107.20.47])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUbnJ5va"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1AB1FCC47
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729191204; cv=fail; b=Pv+7U/AuIvRp8J/ZbbQe4AqZHiEJuWC3IkOHj/6HigdUaQVhLWxP6Qe34F3I9Q8Lta8S6QNDd/UQDJQieD4vJ+mTNGOm8QtaITFmMjdJPxDIQ1fJjBghDPOc+r0HqErU2jX5N7DKPY7rp/aNIh8bYOv/zS1GAXFcVhUwD6elinw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729191204; c=relaxed/simple;
-	bh=Uq9jUVIeb5Adtv9WBIZSpk2AlFLLq34C39MqhG+gvqc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rBLUOc7wrlKqMDZC1Vz3Vr9qcdTahZnKFhsDL+hTBVewiTYrjLszFOVwn/F5WN3t/3cu+RnbeiC3CsgQ7QrLMLdLvcZr/mwpOb0f+mRhmvjQxmIG40+yVVcJuc8WpdGthg5I38idVvgBMbghQ7MJ1QQViUsBlQ8gXRL09dBWDwg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=qJpzeQI+; arc=fail smtp.client-ip=40.107.20.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VU5rbj7/fyCaFT6fxcAI28LMf1JyH8UwGEySqve0BdbpWgd1p23gYB6CbFkCaudXzJ+DgRlAwURPWRbGsrJg6BnoBWuTbH4+FtrjKQC+e8JZM+mVZrPssK86H+4aLFuKsdY5u2PoNFnXk/1ZNIqcqUz/gWIpf134RB+x5HO3DzHESBtoqXd3M+IsIh9po9d07pQaKKiuGjyM4QOyhmDkHt1JYy47xFtvkEgLkNcyVrCm+oC/Y+2/uoaNiT37DYqobCemo4uU3h+0s+XB8TDXebatciNDQxVYxxqRDzDouW5k5GWVappnolMoPnbfHuO0ITFJK42KqZaSA9uujlDWVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5s/tUlwAtX01HrU39bq5P+oHBNx5oAaBZLJlraEkKLk=;
- b=MnQHsm3iDJ0MABRDQxuw18rlhQ0rz8VlS9i6Sg1bS0XFiwyOqhdYC2hGbS2JD+1vTVMLQvVHc4G00ZxBzZEJ/DHC3xlVxZIKiqxo5xJT5k587Jv71diNh53aR9Z3bbvyJ3jvOULgcwLxzWe8S7xmJFaVsfzTg4xLV0xawGw3RBw7xD7ki9hnylm1PBsOyAeWCh2+bNO6raDjPXGhU+/iYA6sO0vGDiOVlOUcL0KuAs9iS55p50RVaOeKrVurXOan0bEYwYkZUG8yQ6ZKpHNe4tn2WsC/GMLfIMLRdUDpNue23Ad08JVEU2/g7x9neTZYoDB6DesrseqEIxFw1DSvWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5s/tUlwAtX01HrU39bq5P+oHBNx5oAaBZLJlraEkKLk=;
- b=qJpzeQI+UauAJi7XXRvLTd2Sax7zLhzhlQzE/N8STk+5t5AK46AC6PtXq8frrggHgYQxOcioyeKCdfSaoj62hqQCjqgZY9LVGbp592WE1PY2AmBr8Tv50M0sk4dFHuQKOymA4Hm7kxorea2cpVenzMmZTGUDMsHdk/Y6wOEjzoU=
-Received: from DUZPR01CA0193.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b6::14) by DU0PR02MB9193.eurprd02.prod.outlook.com
- (2603:10a6:10:465::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
- 2024 18:53:14 +0000
-Received: from DB1PEPF000509E2.eurprd03.prod.outlook.com
- (2603:10a6:10:4b6:cafe::fa) by DUZPR01CA0193.outlook.office365.com
- (2603:10a6:10:4b6::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.20 via Frontend
- Transport; Thu, 17 Oct 2024 18:53:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- DB1PEPF000509E2.mail.protection.outlook.com (10.167.242.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8069.17 via Frontend Transport; Thu, 17 Oct 2024 18:53:14 +0000
-Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 17 Oct
- 2024 20:53:11 +0200
-From: Waqar Hameed <waqar.hameed@axis.com>
-To: Richard Weinberger <richard@nod.at>, Zhihao Cheng
-	<chengzhihao1@huawei.com>
-CC: <kernel@axis.com>, <linux-mtd@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] ubifs: Move update of cnt in get_znodes_to_commit
-Date: Thu, 17 Oct 2024 20:41:13 +0200
-Message-ID: <ebf1570e3d28462a97b1a595794e1969a4c27d81.1729191143.git.waqar.hameed@axis.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA76318133F;
+	Thu, 17 Oct 2024 18:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729190583; cv=none; b=S4ZNDSF6Z5PAkMbkDrdsXj1S563+fxXQA7sDcaVX9rUotrAQXk+u1dCCsNlRBCgpOC4igMGRvFXyapxIUdHyn3MbvztFrXUM9R7gVu+hYDDd9WfRF3ti1TbmZGazPuqhTB6r4E41qzNC6893yst4qBFZ3eDmTVtUQdiZ3U8EPvE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729190583; c=relaxed/simple;
+	bh=PcQXk4kA+O+U2bVu5sDiymybdRXz3rGK1neJUq0+tyU=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=EluEER1SySfTZPKA0mtrJ7rk2jC9Ap5huDl0+JLpHx5ibiaLngC/FpwKNRJQUdbfc2x1/PfTXMBZWDqay53bNMDTg/6I/zof+VEdz4/Ucg2k+IlNPqoB5VgW9w+V6EVAU8QupQ9uzG3Xmdd9Pb6ngNNT3idky/lgQHBkRKskvG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUbnJ5va; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853E0C4CEC3;
+	Thu, 17 Oct 2024 18:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729190582;
+	bh=PcQXk4kA+O+U2bVu5sDiymybdRXz3rGK1neJUq0+tyU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=nUbnJ5vajUPC0jmPEmsFVx+1DO/R1FPQqChPvjEWoAQxUoTpL819cQ7nzI9FS6Ud2
+	 J3P1NNt8AtmQ1hzFcOmFyGjTP0wwYVWVYMz6YFAv1VFw0StniVq/H+Xpl9j+9PjXff
+	 9D7SpEwjiV5In+T31SHbzg51+W2m1VU55okPGzS/2aocIly262DuGBHLonj2BUesRw
+	 gA3yt+TEHJQYHghYjD1qbi4Ps/ekr8/wvAUsgnx/MFz+y0HFtjRl5U2e4DA7kV+X9a
+	 A+qttaTCW/cjPJmqOYt6e13kdby7UdMyhgI/Tut4G4aBuhe1tIiI9bzppietkOwTYG
+	 DTcglYOh1CCgA==
+Message-ID: <3412c930fdb120032478c65e90e4b971.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF000509E2:EE_|DU0PR02MB9193:EE_
-X-MS-Office365-Filtering-Correlation-Id: b9eab406-88ad-4660-5307-08dceedcf4c3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iEucC2+g5hM6WHTdc39F6YEmxqr5mSnflug5eyjdjj3REMti/VbSWVwtv0Wk?=
- =?us-ascii?Q?nBtgHC00BH6sRE2VaK+6kZ0uMynVDriWL8wMqAI+t04MmqYIWth9fN5AOU1H?=
- =?us-ascii?Q?INyQ8IVUBjqdoTJfTn+u5yYRWt5rKT4Damw1/48xn4ycJ28i8e0+/sXBLxGi?=
- =?us-ascii?Q?gAT+Dt/3XfTZAo6cH65B8h5Rsg8wj4+vio7v4i+z/d/lipYVNpVD89SPu6vi?=
- =?us-ascii?Q?z5T+//bfgr4PkvOAud3KTXYs7gKk/zg6DFPPe/In6W8a+tEr73iF2yJPdpt3?=
- =?us-ascii?Q?EaeF9dzasA+Lm7+mel9fAd/R/n+czCMDI/U0GZZvKGlSgjhSlk/A1bb2zUJ/?=
- =?us-ascii?Q?hk7LToKAJkv7g9NW+5nkGxy2VGiRO2f/LpATjs8ZHcQZsPAduqNuFWAuPlXy?=
- =?us-ascii?Q?dsuJV2NCpwGupk2azxRO2/fZxK6skplYe6hkoly9mktBhr+aUj0KRObxtopB?=
- =?us-ascii?Q?LFtxvVfssSGLQAPE8+smV1UOFJ6IS/iIvnujt1IiqaTKp/j3eBvjRddELGnn?=
- =?us-ascii?Q?Q6spzib09XL6o6psvAUP9g6FNqaPtPRW+YyBNBW25GhuM1lp1dUGAZ8EVV5n?=
- =?us-ascii?Q?zRgCi3su2/5zF/Vd6EnC4yToovwBv9RQqd/RQkEgLZSDvfmLpv5fd8vdCBxV?=
- =?us-ascii?Q?x2pvhBtTtIAIPgbFHVW6g1/cQvcM44BXjzORchLBS8sTv4vvj5Jfoft3GObQ?=
- =?us-ascii?Q?9kYIlvSZSovOQ2N39sIDBpv/qdGVzxQEuYKfYJEtPeUHg2OOTO7dMNW3mrGi?=
- =?us-ascii?Q?cQyRfu/1ojef02tFvvXUIuL8ZowYQUyFLSg9nQ/EvGGao+HGsUp2cDz3ceRE?=
- =?us-ascii?Q?ctGMVzdMwa6X9nFzrrI5Xxj25NgOT8cs383wD86hITxrqP5DvHJXrzp8xVv6?=
- =?us-ascii?Q?8Q/oUCzI4GBm5KJ7KTFp9hsIepxzfCoPeR0IgSY5M928IUXZrlgO7uAqzNHz?=
- =?us-ascii?Q?WF9h0XDYxYRxnR89g3pEcHD27i1NwjejCMTGVRW9a7jcQOn6ZIsBHp0tjO/w?=
- =?us-ascii?Q?pyR1ucKKlRwWkXruqgaWOgDVraltdZdokcj2xnf5JQb1WEIAX+jpFVENz4Zv?=
- =?us-ascii?Q?F53odrcpehDvEYUtHg0n95OW0wWgFGbYPyy3CS62f/IbIkYl9/qCdxhzd1hk?=
- =?us-ascii?Q?cCbrJlkVeYlzmyFRn+nN6vaOb3kLvnrGYGcnPmaB4u55eZW7C1p/MkOKB21I?=
- =?us-ascii?Q?Up/H6VddtfZ2+4tGE/HSjfQ9M44oR16sVch9T4ZLEx+lg6+E1bG9kT0tIpIo?=
- =?us-ascii?Q?6PsW9Ib+tbc8olDu9NqqQR9neB2AD1xv5NSjDsoGt+lp6xAiZbEWsGy8yIdA?=
- =?us-ascii?Q?XrGXImollrzPRfO4pBU4tLwJn7w96SXk8vdPGKsXMUKT3N+cHLeYCOO9gbVf?=
- =?us-ascii?Q?yVZb5sdBfCNayfdijpeL4sZFpzqwVRmEckoqcyrLfazK0eiHLQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 18:53:14.5643
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9eab406-88ad-4660-5307-08dceedcf4c3
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF000509E2.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR02MB9193
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <D4W91PHV3238.3SL8CZLC15V5O@bootlin.com>
+References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com> <D4W91PHV3238.3SL8CZLC15V5O@bootlin.com>
+Subject: Re: [PATCH v5 0/4] Add Mobileye EyeQ clock support
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+Date: Thu, 17 Oct 2024 11:42:59 -0700
+User-Agent: alot/0.10
 
-There is no need to update `cnt` for the first dirty node just before
-the loop, and then again update it at the end of each iteration for the
-next dirty nodes. Just update `cnt` at the beginning of each iteration
-instead. This way, the first iteration will count the first dirty node
-and any subsequent iterations will count the next dirty nodes.
+Quoting Th=C3=A9o Lebrun (2024-10-15 01:50:26)
+> Hello Stephen,
+>=20
+> On Mon Oct 7, 2024 at 3:49 PM CEST, Th=C3=A9o Lebrun wrote:
+> > This series adds a platform driver dealing with read-only PLLs derived
+> > from the main crystal, and some divider clocks based on those PLLs. It
+> > also acts at the one instantiating reset and pinctrl auxiliary devices.
+>=20
+> I'd be curious to get feedback on this series?
+> Could it make it before the next merge window?
+>=20
+> V4 fixed all your comments but one. You implied the linked list might be
+> useless, but I am not convinced:
+>=20
+> > I had a pending question [0], asking for confirmation that the static
+> > linked list to inherit cells from of_clk_init() stage to platform
+> > device probe is indeed the right solution. As -rc1 got released I sent
+> > the new revision anyway.
+> >
+> > [0]: https://lore.kernel.org/lkml/D4ELMFAUQYZ7.3LXGQZJSX68UF@bootlin.co=
+m/
+>=20
+> Quoting here the original email for full context:
 
-Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
----
- fs/ubifs/tnc_commit.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks!
 
-diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
-index a55e04822d16..d42f7829389c 100644
---- a/fs/ubifs/tnc_commit.c
-+++ b/fs/ubifs/tnc_commit.c
-@@ -650,8 +650,8 @@ static int get_znodes_to_commit(struct ubifs_info *c)
- 		dbg_cmt("no znodes to commit");
- 		return 0;
- 	}
--	cnt += 1;
- 	while (1) {
-+		cnt += 1;
- 		ubifs_assert(c, !ubifs_zn_cow(znode));
- 		__set_bit(COW_ZNODE, &znode->flags);
- 		znode->alt = 0;
-@@ -664,7 +664,6 @@ static int get_znodes_to_commit(struct ubifs_info *c)
- 		znode->ciip = znode->iip;
- 		znode->cnext = cnext;
- 		znode = cnext;
--		cnt += 1;
- 	}
- 	dbg_cmt("committing %d znodes", cnt);
- 	ubifs_assert(c, cnt == atomic_long_read(&c->dirty_zn_cnt));
--- 
-2.39.2
+>=20
+> On Tue Sep 24, 2024 at 4:53 PM CEST, Th=C3=A9o Lebrun wrote:
+> > On Wed Sep 18, 2024 at 7:28 AM CEST, Stephen Boyd wrote:
+> > > Quoting Th=C3=A9o Lebrun (2024-07-30 09:04:46)
+> > > > +       list_add_tail(&priv->list, &eqc_list);
+> > >
+> > > The list is also kind of unnecessary. Set a bool in the match_data and
+> > > move on? We could have some sort of static_assert() check to make sure
+> > > if there's a CLK_OF_DECLARE_DRIVER() then the bool is set in the
+> > > match_data for the driver. Such a design is cheaper than taking a loc=
+k,
+> > > adding to a list.
+> >
+> > This list's main goal is not to know what was early-inited. Its only
+> > reason for existence is that we want to get, at eqc_probe(), the cells
+> > pointer allocated at eqc_init().
+> >
+> > struct eqc_priv {
+> >       /* this field is why we store priv inside a linked list: */
+> >       struct clk_hw_onecell_data      *cells;
+> >       /* the rest, we don't care much: */
+> >       const struct eqc_early_match_data *early_data;
 
+This is __initconst and won't be valid after init, which is possible if
+the driver probe is delayed beyond the time that init memory is freed.
+
+> >       const struct eqc_match_data     *data;
+> >       void __iomem                    *base;
+> >       struct device_node              *np;
+> >       struct list_head                list;
+> > };
+> >
+> > I do not see how to do that with a bool. We could put the pointer into
+> > the match data, but that would mean we'd have to make them writable
+> > (currently static const data). We are talking about a linked list with
+> > two items in the worst case (EyeQ6H), accessed twice.
+
+Ah I missed that you were trying to stash the onecell data away. You can
+register a clk provider for the same node more than once. The first
+"early" one can return an error pointer for the clk indices that will be
+registered later. The second onecell data can be registered in the
+regular driver probe and return the clks that are registered later. See
+of_clk_get_hw_from_clkspec() and how it keeps trying to find a clk if
+the provider that matches the node didn't return a valid pointer.
+
+> >
+> > The reason we store the whole of priv: simpler code and we avoid mapping
+> > registers twice (once at eqc_init() and once at eqc_probe()).
+
+The IO mapping code handles duplicate mappings internally by returning
+the previous virtual address. It doesn't hurt to call it again.
+
+> >
+> > Can you confirm the current static linked list approach (without any
+> > spinlock) will be good for next revision?
+>=20
+
+Getting rid of the list will make the code simpler and avoid the driver
+probe path from accessing the early data. Please do it!
 
