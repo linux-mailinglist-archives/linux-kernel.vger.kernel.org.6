@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-370625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27649A2FCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:25:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548509A2FD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49003B26FCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002621F25C8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE991D5AC6;
-	Thu, 17 Oct 2024 21:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15341D54D3;
+	Thu, 17 Oct 2024 21:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KhRHIMdN"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KyMccSja"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF6D1D5CC9
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB8B1D3182;
+	Thu, 17 Oct 2024 21:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729200313; cv=none; b=mdr3/xDFjmCZAZTPyoIKKBm9VGlekUTS0/cq0iaoJL6vE13Pl5t/r6z9jjw8dECe96mWjsdQ8FJv++CNX1hDaxhJ4f8MihqnCCidZ55C2Kxz642B65VJRKxsrlvrotl8qsuehDenjVQJzjvoXinsAAnSfg2ifGyl+r1Y9H7CAS8=
+	t=1729200342; cv=none; b=YTL18F6zev7Or4tfmNlULQb6fjNwEBxqOdEQARIjFeCqctZkw+F2tSrd9zHLHCF8ijRqg0MN/Lpf6GoLBwC0rmwbU07ezVwrhd+RF/qPbIhuBRFB1Cy48VSB4DXr1FO1g/zRkBXiJRxt8lDCgyBujkGlnf8D3FvYNRjXxdwX4mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729200313; c=relaxed/simple;
-	bh=f3XSZjpMW+4pSNSq+5t+nHginY6jLJSrXAO6nlE9cZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t4ovgeBZ5bCMl5Cp69vEVrU8eOJ3MEKUvfP2nTcR3S+zojWAJj5O5cGz1nWagiLV2rMr6UJ9ggZ023G7EEb8fLC/glh4rj3KryddlLN23bq9bVz8eCYuiwGDCjLOHo//tn4yuH4K+jtE7GhXtI0wWPEFovxMStNKHtE91XFuNSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KhRHIMdN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1729200342; c=relaxed/simple;
+	bh=suDF/ADSxNICs9pQ/ec+TobPhgWJtyvEXu2OKVYrk+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mWGuvcMXWQE65Yg75yvnHH2hSr/7W2ZuIxGz9NTPxcOwTEej/djtOVu0LgkjW8Xwnyj2Zh4/1/0rbrPYklMc/7ne9R+CdvmZgCHBSjCo1BQEJ/ciHW8XXXp3E5oL6fQMKnwjeFHWrlUJ8WZ9Yq9lcQuAR9yZpU4J1kk3meqg7NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KyMccSja; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HGRbc4031180
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:25:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HHEWT0000489;
+	Thu, 17 Oct 2024 21:25:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6V0PA1pbHT6De/zvPtGOGGXjIB2qbOpp2xwkNgIwcO4=; b=KhRHIMdNcsvOhkPe
-	uItromkmi1BWhuNFe7ea7rs0UcJV5hPGHqI45i3gDdwAEuyrdpOANU9Ui4pCxzAw
-	Pzu8DgEYp66uiyGoCEqAGfSmMbwr1FyGFXW2hiSeVjoyVcaC/46c7HvcP1PlalZa
-	XbNr+kvKEpVUXQjx2uSv1EDMkOTmSFLOuAlZD8DZKPkB2n9Fyj7X7IR2OmwEid/7
-	dWLJiuFuMONCZ6boU98S7zGV3OtaU1q9Qy7jUsul4FSmfHHZuMumYkGiw3bYaQCe
-	hradrwluD4PgswzGuBn01zFYHFnX/VKc9D4wFy0h8OGvVpF8FujOHAq7yQc78zhG
-	0trcHw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42a8nq6421-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:25:06 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7b13fbc3d6eso23794685a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:25:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729200305; x=1729805105;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6V0PA1pbHT6De/zvPtGOGGXjIB2qbOpp2xwkNgIwcO4=;
-        b=MqWwwkZmrdih36yn/SgHJMAyyW98rY8IBrVNVhui4Cj4rYXJl6jKZhNiUZj1B+tdSz
-         /A4p+nL3umOdWh8gstJo0lzBZRzGx+/KtWKBZOP/pWIvqkYNeRoGNTZlGqNUiyi+vBS0
-         O0pAJCvbmaZn+Zt80JY6royQ6YlGLZop9amuXy6J9/RCfm/PmQzVL59fW1CEJDDolrkM
-         16OPONXcM9E+TglXirvGZw/0wlHpHa0OjdQocVxhPQnoEi+o9K5MBQEI0prh7bYzyEZP
-         RRAqSPkp3sbIzQ7ANcUoKV7STZnlZ5VzENxNTRM6p5tL7Vl6B1f1kCA+pjhJsW42iua5
-         auNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBRuneSZaMe4fWRUvzz9l9WK/3BdVKXAQ/lzjytM+c2a5EIVauQrI6Er4OR72o8nqg2dHPl2pbz23JFDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiDuWKCwdwivsJLClDkfi3DFyc02dWesIHWQgyQLGx0lR/J8/G
-	GxEM/ww2sZUkVnB6h2kEpkKLEqm9W71jtiAq3i9xK/FssJC2wMUwHnuxeoJg6O5Pw0+EpAlbcpF
-	r5DaHUvbdkP3KliuCFn4IyH58RrDhMbgtBlvRWcjzQhYpUCLD60Ly3GixplOjCj8=
-X-Received: by 2002:a05:622a:1790:b0:460:a584:7b14 with SMTP id d75a77b69052e-460aece96b6mr1406001cf.1.1729200305450;
-        Thu, 17 Oct 2024 14:25:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGk/ZQpFtr4eYXVelF1QQ9saPRD8rq5WepP31nYkQliEgOxyubghQM68LJwB+eWOr/Ye4wNA==
-X-Received: by 2002:a05:622a:1790:b0:460:a584:7b14 with SMTP id d75a77b69052e-460aece96b6mr1405691cf.1.1729200305035;
-        Thu, 17 Oct 2024 14:25:05 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ca0b08bc27sm24203a12.45.2024.10.17.14.25.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 14:25:03 -0700 (PDT)
-Message-ID: <6787fffa-642a-4099-ba00-445dd2b865ef@oss.qualcomm.com>
-Date: Thu, 17 Oct 2024 23:25:00 +0200
+	nXiMqZVzQS5lxXD/YXvDV9jZB0iT+aslMiGaiQVmRdw=; b=KyMccSja+Jzpqf0M
+	ShCjjsIrzEDTD+ouG+/2pJX+Cf4ZwcCBdWyFMhkcjcDvfp/LxqxsMB5gOMtgbOiU
+	bJ92cxSmUKFUngondzCXl+XC2OWYkKRl++IBKLJbvJ7kgE+U3DP/iVEXQSjWVk/S
+	SdsstywsV6LFLqyrJguSl0ymEGIhYihlOOy9NYqo0vLyRevqgbxfCBDYfLowCRUC
+	SVgRjOFbMCXlG24b6p1zK9dpZeIZkyN153I4YvvaZ30V1xTHsqnGg4EE1w+k3eZp
+	f5k8sYPvATTmpLAaWi/aeQ2FGQRnA3ChBHLfV61F0bRTPGCbzZOdmYlfWUQ25qUd
+	tFCoWQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42a8nq6435-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 21:25:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49HLPSVm007469
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 21:25:28 GMT
+Received: from [10.48.241.64] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 17 Oct
+ 2024 14:25:28 -0700
+Message-ID: <9e314a29-69a3-45b3-9d70-b86075582b23@quicinc.com>
+Date: Thu, 17 Oct 2024 14:25:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,70 +64,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] remoteproc: qcom: Add helper function to support
- IOMMU devmem translation
-To: neil.armstrong@linaro.org, Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shiraz Hashim <quic_shashim@quicinc.com>
-References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
- <20241004212359.2263502-4-quic_mojha@quicinc.com>
- <83e23090-0390-4c2e-91e3-e222baaa889a@linaro.org>
- <ZwPyE/rQOH181rqz@hu-mojha-hyd.qualcomm.com>
- <5fc9d581-14a6-45e8-8eda-4df49b81f15d@linaro.org>
+Subject: Re: [PATCH 0/2] Improve ath10k flush queue mechanism
+To: Remi Pommarel <repk@triplefau.lt>, <ath10k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        Cedric
+ Veilleux <veilleux.cedric@gmail.com>
+References: <cover.1728741827.git.repk@triplefau.lt>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <5fc9d581-14a6-45e8-8eda-4df49b81f15d@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <cover.1728741827.git.repk@triplefau.lt>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: CXaA8n21D_VWLKGtDKgM8bqA_U8izpSu
-X-Proofpoint-GUID: CXaA8n21D_VWLKGtDKgM8bqA_U8izpSu
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TJtxeNbv4Rpw6SF0azI50sDIvDG48nnn
+X-Proofpoint-GUID: TJtxeNbv4Rpw6SF0azI50sDIvDG48nnn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 impostorscore=0 mlxlogscore=748 priorityscore=1501
+ malwarescore=0 impostorscore=0 mlxlogscore=278 priorityscore=1501
  suspectscore=0 adultscore=0 spamscore=0 bulkscore=0 clxscore=1015
  mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2409260000 definitions=main-2410170144
 
-On 10.10.2024 8:59 AM, neil.armstrong@linaro.org wrote:
-> Hi,
+On 10/12/2024 7:13 AM, Remi Pommarel wrote:
+> It has been reported [0] that a 3-4 seconds (actually up to 5 sec) of
+> radio silence could be observed followed by the error below on ath10k
+> devices:
 > 
-> On 07/10/2024 16:37, Mukesh Ojha wrote:
->> On Mon, Oct 07, 2024 at 10:08:16AM +0200, neil.armstrong@linaro.org wrote:
->>> On 04/10/2024 23:23, Mukesh Ojha wrote:
->>>> From: Shiraz Hashim <quic_shashim@quicinc.com>
->>>>
->>>> Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
->>>> translation set up for remote processors is managed by QHEE itself
->>>> however, for a case when these remote processors has to run under KVM
->>>
->>> This is not true, KVM is a Linux hypervisor, remote processors have
->>> nothing to do with KVM, please rephrase.
->>
->> Thanks, perhaps something like this,
->>
->> "However, when same SoC runs with KVM configuration, remoteproc IOMMU
->> translation needs to be set from Linux host running remoteproc PAS
->> driver"
+>  ath10k_pci 0000:04:00.0: failed to flush transmit queue (skip 0 ar-state 1): 0
 > 
-> Thanks but I still don't see what KVM has to do here, KVM is an an optional
-> Linux kernel feature, Linux can be configured without KVM and still perfectly
-> startup those remoteprocs.
+> This is due to how the TX queues are flushed in ath10k. When a STA is
+> removed, mac80211 need to flush queues [1], but because ath10k does not
+> have a lightweight .flush_sta operation, ieee80211_flush_queues() is
+> called instead effectively blocking the whole queue during the drain
+> causing this radio silence. Also because ath10k_flush() waits for all
+> queued to be emptied, not only the flushed ones it could more easily
+> take up to 5 seconds to finish making the whole situation worst.
+> 
+> The first patch of this series adds a .flush_sta operation to flush only
+> specific STA traffic avoiding the need to stop whole queues and should
+> be enough in itself to fix the reported issue.
+> 
+> The second patch of this series is a proposal to improve ath10k_flush so
+> that it will be less likely to timeout waiting for non related queues to
+> drain.
+> 
+> The abose kernel warning could still be observed (e.g. flushing a dead
+> STA) but should be now harmless.
+> 
+> [0]: https://lore.kernel.org/all/CA+Xfe4FjUmzM5mvPxGbpJsF3SvSdE5_wgxvgFJ0bsdrKODVXCQ@mail.gmail.com/
+> [1]: commit 0b75a1b1e42e ("wifi: mac80211: flush queues on STA removal")
+> 
+> Remi Pommarel (2):
+>   wifi: ath10k: Implement ieee80211 flush_sta callback
+>   wifi: ath10k: Flush only requested txq in ath10k_flush()
+> 
+>  drivers/net/wireless/ath/ath10k/core.h   |  4 ++
+>  drivers/net/wireless/ath/ath10k/htt.h    | 11 +++-
+>  drivers/net/wireless/ath/ath10k/htt_tx.c | 50 +++++++++++++++-
+>  drivers/net/wireless/ath/ath10k/mac.c    | 76 ++++++++++++++++++++----
+>  drivers/net/wireless/ath/ath10k/txrx.c   |  5 +-
+>  5 files changed, 129 insertions(+), 17 deletions(-)
+> 
+LGTM wit a few nits.
+Hope the Qualcomm ath10k folks review this.
 
-Mukesh, KVM is a very specific use case. What you're referring to is
-really "no QHEE / Gunyah". We can do s/KVM/Hyper-V (or almost any
-other software running at EL2) and your claims still hold.
-
-Konrad
+/jeff
 
