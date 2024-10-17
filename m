@@ -1,75 +1,112 @@
-Return-Path: <linux-kernel+bounces-370511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224E69A2DD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:30:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97AF29A2DD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C657228494D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:30:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4534D1F24F11
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09602201270;
-	Thu, 17 Oct 2024 19:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01C4219CB3;
+	Thu, 17 Oct 2024 19:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DfJ4KjPz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6PF+v+d"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2D7193409;
-	Thu, 17 Oct 2024 19:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA4D1C1AD3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729193412; cv=none; b=aq2bNEfL76kPR8po2uiojJAH27ce3Khp1t1UwbDt3gPDBbStLxs0uuLdkXOwsZql4zego2fODUh4T3HVZLQgKj/4lBWX+ulKToSyM+v7Wju7/1QguapFNTfofAP5Xy0gp9I1tqeqDMzIY6oDcVrRaozTTyhW00rVL/pWfx5x7m4=
+	t=1729193517; cv=none; b=IqY0fnWQNlRXiBK2CdKktjIBBNCLt5562RXjyCrYbSjv+EGNRRsNFXRvTbKq6yhlnkga2BHn9sXsxIBl21cRbeuKS3o14OiZP4YXfSX7nqrYxtsRy/XfoWSaVPaybhCEZmqk80SEXk59gqTqW/wwMRvtNqotUXPa56PjbSN8JGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729193412; c=relaxed/simple;
-	bh=FgGw+348hq+8XaJjRr2RQ3h8zLKyBzjTagmsfJeeBVQ=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ZHVyoRFp8i/jxGpR2DoFGhD9CcdKxVzBLRCsZshsWYnRAAjoyDufVEMs+j1b1gX0SgEWKYc6sNQhxUz4fXEzc/05goeCMQ/fO2yM0KxbAIW0PNJhmN6c3vRZ5VZzOrAdXN6swNcQtvNGGJ9vixxyI00SB+OXqs6K4LNrcGhiXg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DfJ4KjPz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCBEBC4CEC3;
-	Thu, 17 Oct 2024 19:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729193412;
-	bh=FgGw+348hq+8XaJjRr2RQ3h8zLKyBzjTagmsfJeeBVQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=DfJ4KjPzP5fLnkvbrv1jOSYYFT/OAzw2b/vS+1ZwAyVybbvP1cg5fRueMCn50bs9u
-	 Vrdyaph9ggPybHJPCg7+EqeWM4ptUnLApy8O/HObuu92Qdslz16dfgcUaThYNqQ0r3
-	 q+EAFpsD7A2RILPucjP0D7EYnd/TH6fTpqAuxQs3Z5BTXO5xbe/SiGdSKnrTBwMJB5
-	 UzUUnCOzNudLScpRvofZmg4pr+/64pynMpogFOUlj+XgUiL7oQvuevXYmJeRcET/tv
-	 1fDcoMqwhjCQVY2duwyAl7QKk66QgUMq/AFyKi25fRVVwy3VMv4lpCzDF4LZoXuOED
-	 sOCvRn5ZZD63Q==
-Message-ID: <18b311f580dfd0640db076d066ba5286.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729193517; c=relaxed/simple;
+	bh=dAkeaamY7o1370cUdKQG7yxKGStXqWiEAMiubdm6br8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GjObIStMlHuVtXArV8jvZ/5Zu5gZNg60X5dv5CYmcedLeXGnoofyK4SsKGbPJ1d8lOHu2auDka1Hd0ZCcNRO3D7YoyAGIy/lwZqu24vfsN+WtLJ1lkRM3UpMcYrJ3JIl2hx+7gWzQ0OhBMRWWT7l5axdtzgT2V29U5p5tusZKQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M6PF+v+d; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a68480164so6261566b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:31:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729193510; x=1729798310; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+PI6B1iY+JP2eo71Lss2ueaqQvzi03LBy+TDhNeB/Zc=;
+        b=M6PF+v+d9fcEMOCsw5XOt4VzTOpjY9o+uyqpThUW34bL7cYJ6fayc/IvN03gd2FwaT
+         xYdC4AHZ3fkwOZPqZ4YFuD9sIljaHKYWo0wgJf4nPxIzVqGpRTaEZCeHJ30dmfHLjVzn
+         cRvlP52U20kua5gecnh5TH2XFAlPWARw9bhoHZl5DaiYRnc2dnogbHdVZIVmbWj4kzz1
+         f517Vxarwy9U94CPhVW3RKYkfhkR036vAf7Bc+yrca45DWYVyAUUX8ndcgvLmRJRoFeD
+         tIBfHs/rH8MGLtQhfelgQdPJpkJoTP4vYS978tkDvmZ2QPntrSs3WUG9E1pvmYqorV34
+         D3VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729193510; x=1729798310;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+PI6B1iY+JP2eo71Lss2ueaqQvzi03LBy+TDhNeB/Zc=;
+        b=v6e370/F+wgIftp2Y8Wl8RVEyplwCQZdhC04UnHS4KfaAZz/mMfxqL/PYPCpPJCGUX
+         NY59XGUe42FMavTbGk5eDQVwifiA/ASfyDGDxXFBqHMD5Y2NEbh3w4AhQrAtrFW9tyfY
+         HclOmEr83Seg6bJ9nh7Jtt0nGMChoRzsW/OHESce/oe4NMqaa9CKCZaqA0XdDTF1kyWD
+         CxTBtYk9En6XZTpx1TP1FeBX7cOj6DGnajSgJW6yH99RVYaHKoEos0/QxuqwjbLbueTw
+         QsM02na2ByiHmziA2Vp3AoFEIkTR28TG4w6gWjcEnffo3Lg3KBVVA1blFjc8zQpYqFiU
+         yZ6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUyCVKSSpcNpefqI+1Ji/VIGCs5KJUZi7FK08VSPSL0sbvZVsYxxCReHOshaz4Zq8feX7LygChcQWPnYAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqyVkiWzoEjVQ5pN6QBd5KizWys7VXtIziCzRdrvCTeRfkKQr+
+	7YL920+SZjF6Fdy8TK8YZEmkEG9CXS1+kQFOu0NOQb+KGDOCVVg7dlUAu+/M3CU=
+X-Google-Smtp-Source: AGHT+IGJon+b9dsLW9OFTm+VNv4AExNUwMLbQMOv3biKDHICy+rUsUPzF2VOZMg3pm/HFx79t1+13g==
+X-Received: by 2002:a17:907:f709:b0:a9a:b4e:b9eb with SMTP id a640c23a62f3a-a9a34ec99e7mr838913366b.46.1729193510331;
+        Thu, 17 Oct 2024 12:31:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68c29b73sm2298166b.202.2024.10.17.12.31.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 12:31:49 -0700 (PDT)
+Date: Thu, 17 Oct 2024 22:31:46 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dave Penkler <dpenkler@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] staging: gpib: fix uninitialized variable in
+ usb_gpib_command()
+Message-ID: <a7fed100-ea4d-4dd8-97c6-3fbd2c15f795@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241017071708.38663-3-y.oudjana@protonmail.com>
-References: <20241017071708.38663-1-y.oudjana@protonmail.com> <20241017071708.38663-3-y.oudjana@protonmail.com>
-Subject: Re: [PATCH v7 2/2] clk: mediatek: Add drivers for MediaTek MT6735 main clock and reset drivers
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Yassine Oudjana <y.oudjana@protonmail.com>, Yassine Oudjana <yassine.oudjana@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, Daniel Golle <daniel@makrotopia.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Sam Shih <sam.shih@mediatek.com>, Yassine Oudjana <yassine.oudjana@gmail.com>
-Date: Thu, 17 Oct 2024 12:30:09 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Quoting Yassine Oudjana (2024-10-17 00:17:06)
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
->=20
-> Add drivers for MT6735 apmixedsys, topckgen, infracfg and pericfg
-> clock and reset controllers. These provide the base clocks and resets
-> on the platform, enough to bring up all essential blocks including
-> PWRAP, MSDC and peripherals (UART, I2C, SPI).
->=20
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> ---
+The number of bytes written is supposed to be zero at the start of this
+function but only one caller, ibcmd(), initializes it to zero.  For the
+other three callers, setup_serial_poll(), read_serial_poll_byte() and
+cleanup_serial_poll(), it's an uninitialized variable.
 
-Applied to clk-next
+Fixes: fce79512a96a ("staging: gpib: Add LPVO DIY USB GPIB driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+index aa7af352e709..4bcbaee65aa9 100644
+--- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
++++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+@@ -596,6 +596,7 @@ static int usb_gpib_command(gpib_board_t *board,
+ 
+ 	set_timeout(board);
+ 
++	*bytes_written = 0;
+ 	for (i = 0 ; i < length ; i++) {
+ 		command[3] = buffer[i];
+ 		retval = send_command(board, command, 5);
+-- 
+2.45.2
+
 
