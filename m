@@ -1,108 +1,109 @@
-Return-Path: <linux-kernel+bounces-370342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030009A2B4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:45:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620829A2B4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAEB21F21B36
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:45:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27689282290
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F17F1DFE32;
-	Thu, 17 Oct 2024 17:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8F41E04A1;
+	Thu, 17 Oct 2024 17:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+eU8mM5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PRrChvAg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808361DF99D;
-	Thu, 17 Oct 2024 17:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60401DFE12
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729187020; cv=none; b=ZP0zU155Q89k2XyTHWx1MfvcHOscbSari6PnauRE7ecTzhJLVQ5iStVdgWeHxeFcTs7Ae+kRDqwDt5vBeAhxHKeE3xEgUgi/cbLjDq6YcD2ZHI83A87pED+6D4NcBo3gzioBn8J0ZbXuHhPNOZxU1hb6pebrCfTtaCJO0S9kC6c=
+	t=1729187021; cv=none; b=t4xARfn/uROdyfFQJunMwqWmswttZdsMVPR32xtgIVjnSECAPUkCUfvFOsZTcN3/9dDcWBos9d3pp5KhngsrR5mCbxEESTLkSjq1PN3e7qZX+xaCxQ6JSpxJkTBkdXNZKous+g4No4Mf4E/3iL/dhspEjX9mVEEKcUr3HBIeQsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729187020; c=relaxed/simple;
-	bh=S6LzCFAMR6ixXUNBFX+2FpDuOFuVdXdxdGZ3jU5Sv4Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R3A/QdfSSbM2YAQtLaEVyUMzRpFzwLjAVKtX2mxB/sduQSFs/lgFvhR52Df3uedfTT36XiY4zncb8FSe6Nb1UaDMB3RFixSEdnZ/Obfqzdf8ze4LmqViszmqZzrXbviSYBlQ+Jro8Lx6wXvvq84TmHPM4AHiir1460KbVsTkYQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+eU8mM5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F1DC4CECD;
-	Thu, 17 Oct 2024 17:43:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729187020;
-	bh=S6LzCFAMR6ixXUNBFX+2FpDuOFuVdXdxdGZ3jU5Sv4Q=;
-	h=From:Date:Subject:To:Cc:From;
-	b=O+eU8mM5IPnAnePlpEjhg5/SEh5M+uvIUk7K6wrzZ9ck1pijgdg/YmmzLyoipH4X5
-	 culxeqPrwxzC3WouQ1uIAi3OlhTFoOi/q/nQD0nhk9nkV7bhaBDwH/E3aWJwelbsca
-	 ClPQVIS1A/YCmtXrVpL6pul6t5OWQQRvpWnIek01eXRHLYDALKP0/oG/YVImsG5Yu1
-	 lLK0tLazHTuF/sOeff4b/jjy6na7kI1NnmWL6kAoD4YZNKZ5txVi+KqiQ2NdgdoVRr
-	 sRVKFiqktHuSdoO6YBYKSZ51UNTR2DsIEDchIUrGPZdqXAlYlbESMJfyb+OFah9wCs
-	 GSNMF4d2ecuHw==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 17 Oct 2024 18:43:31 +0100
-Subject: [PATCH] kselftest/arm64: Fail the overall fp-stress test if any
- test fails
+	s=arc-20240116; t=1729187021; c=relaxed/simple;
+	bh=Ds0AuIbX7AIBOJQAXl1K2AY1bYf7KiGCn7QICt60v18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LynF3suv+joQgcuqS20HEiKoZoDuttFBmddEBDFazkDs1gw2NUZmwAg3zM8NgY7PQ5poNyUYDyz5i+3tAYRrk7uixjFV1QXnyheBkJL5q+XNWkwk3f42P2WgSl+drtxgZPXTMZU0EYhAsyn/JLKKaDdVmB6lM9pTKglbRearv4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PRrChvAg; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729187017; x=1760723017;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ds0AuIbX7AIBOJQAXl1K2AY1bYf7KiGCn7QICt60v18=;
+  b=PRrChvAgurvgb+yxqhCNqQnGi1nlAtgOCyweHF585Xhs7mkRogQAYzOJ
+   L5d5JY8FjGdyOUSQQC/kdJa/ObEqx55/xDoeY5mkD9FSNb5Dj5eV/WqRc
+   zPsK+V3LB02+cPnXBzPqVbqC3YV9A2Q/MK/3hI8iQnaTLfLq3yiwnDByw
+   lJVUiaPQeGhES9FScERLTp0BmymN2slSk17XpAbQD8Ui3nF1VOf5NVKd8
+   Jhq6rZZM9k0ptyCFrlUkpfEKvew2ADwrDKXPKbgNcIVkBIL1Ak3NYZ9FY
+   qJ6Ww580ki3Out/IRA9TquaZeOpVIBp7zPMnbZa8YbToWMa8vfHEgUAdW
+   Q==;
+X-CSE-ConnectionGUID: jmn6yoauRZSHRr2JSa6eGg==
+X-CSE-MsgGUID: zAJX+b8ORqm4bHGBQG8wag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="32488013"
+X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
+   d="scan'208";a="32488013"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 10:43:36 -0700
+X-CSE-ConnectionGUID: puFAUWHZQzCxmo0JWvXn5g==
+X-CSE-MsgGUID: brwTc6nlRS6wZy458Z99yA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
+   d="scan'208";a="109438650"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 10:43:36 -0700
+Date: Thu, 17 Oct 2024 10:43:34 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: James Morse <james.morse@arm.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Dave Martin <dave.martin@arm.com>
+Subject: Re: [PATCH v5 00/40] x86/resctrl: Move the resctrl filesystem code
+ to /fs/resctrl
+Message-ID: <ZxFMxkYJk14N1k3G@agluck-desk3.sc.intel.com>
+References: <20241004180347.19985-1-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241017-arm64-fp-stress-exit-code-v1-1-f528e53a2321@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAMJMEWcC/x3MQQqDMBBG4avIrB1I0mCpVxEXNvljZ1GVGRFBv
- HtDl9/ivYsMKjDqm4sUh5isS4VvG0qfaZnBkqspuBC980+e9NtFLhvbrjBjnLJzWjP45QqCzym
- +04NqvymKnP/3MN73D262IztrAAAA
-X-Change-ID: 20241017-arm64-fp-stress-exit-code-90fe21dc4bc3
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1065; i=broonie@kernel.org;
- h=from:subject:message-id; bh=S6LzCFAMR6ixXUNBFX+2FpDuOFuVdXdxdGZ3jU5Sv4Q=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnEUzJfMIUuE8fGYh7rfezGvYZWqHqhQzdtV1C9QXq
- jE/FgP+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZxFMyQAKCRAk1otyXVSH0DWoB/
- kBJ2XzZEefjkyY1KnAt2UPjTFf4mR+8jnzwV6MW4ueY7jymz/7eY8KMREu4GbKjCltz4nD71Dv14WK
- Gf+nDWsfzU5Lqf5N3J3PzorJllgXqQYNXg2mRIVt+A3ebgRNlHOxhMd0QdVL5lZSVJulAgwESzt1Qb
- SuXURa4sA0/XVrUadpLrvlAeKX06XyxPCM8mJvKKdFmnlRvVzGBDCKeSzthRy8eo669e9i+1s+ju7d
- Ts5+ixiR1qq+LjvmSP/NoE/jhwTa3A6cfTuxwPOHwlU9mDnJD1AeiBD94gcXIY/bsne3s87DKMIQxu
- r8pTqI2RITespBnoXmrdxm77GfMI2e
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004180347.19985-1-james.morse@arm.com>
 
-Currently fp-stress does not report a top level test result if it runs to
-completion, it always exits with a return code 0. Use the ksft_finished()
-helper to ensure that the exit code for the top level program reports a
-failure if any of the individual tests has failed.
+Summary of my comments:
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/arm64/fp/fp-stress.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+0002 - fragile, but simple fix
+0004 - drop the helper function, or add NULL check?
+0007 - needs rebase against tip x86/cache
+0011 - fix commit comment
+0020 - already in tip x86/cache, drop from series
+0030 - Use new RESCTRL_MAX_CLOSID to replace hard coded constant
+0038 - duplicate #include
 
-diff --git a/tools/testing/selftests/arm64/fp/fp-stress.c b/tools/testing/selftests/arm64/fp/fp-stress.c
-index faac24bdefeb9436e2daf20b7250d0ae25ca23a7..e62c9dbad5010234d70b477cf8c52ba0b312910e 100644
---- a/tools/testing/selftests/arm64/fp/fp-stress.c
-+++ b/tools/testing/selftests/arm64/fp/fp-stress.c
-@@ -651,7 +651,5 @@ int main(int argc, char **argv)
- 
- 	drain_output(true);
- 
--	ksft_print_cnts();
--
--	return 0;
-+	ksft_finished();
- }
+So nothing major.
 
----
-base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-change-id: 20241017-arm64-fp-stress-exit-code-90fe21dc4bc3
+Reviewed-by: Tony Luck <tony.luck@intel.com>
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+-Tony
 
 
