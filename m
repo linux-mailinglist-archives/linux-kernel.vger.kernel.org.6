@@ -1,77 +1,128 @@
-Return-Path: <linux-kernel+bounces-369458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2959A1D8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:49:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604CA9A1D86
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274861F25168
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:49:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499FC1C21A8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F2A1D54C5;
-	Thu, 17 Oct 2024 08:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986481D3560;
+	Thu, 17 Oct 2024 08:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="IAPob5fr"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6CD1D3560;
-	Thu, 17 Oct 2024 08:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clhXxSLH"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB9E154454;
+	Thu, 17 Oct 2024 08:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729154965; cv=none; b=XFSmD3MhXAEFPmpwaWIadAdija9qtN2j78UDRXFWo/xIA6Glj9UFr18ULBfK2bx6ZdFFWAe7qg+GFXK8N01F1UuO+Nf2XiaS9wnc6722yFF+h5P3ig+xGRwSgoQ4CTu/ZfAM6+jjmpKp5EM50b0PczDCaAAfjQG2/YvL00r3mqU=
+	t=1729154883; cv=none; b=tHcuQNzP0B/wmzelAmSnHAnguaTLgKEQt9bC4zkb/1I2JFbSbqZt+QznV+GZEOp31z+1q7EWuGAshspzEM0wSYWfO4t9HjzJzjIRvBRXpNIsYL9sW941un8PQyPW0KHcaTXsvJFzGE9TmAIWITg9pmeaNtz8ibuwiPuIgjRv8/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729154965; c=relaxed/simple;
-	bh=1ESagQClO2AWMP+Hg8twSTNPEQ1rgZEFFyRT9VoZX/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tI/axXUbv+cR74RsFIH2X1hwS0UHR8jiT8LD9BX7T2eDtXP0bwNHBX+qwtlbR4cZR05CSbBjXERFjIX80UgKNwEViRCXUSurfx/jjnVrlGSQN/ZaKxqE5kCgoDp0gop6+ed8PYNDQYwG3K2S85rTbX0JbBVRs7XHH1xMkGUgDbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=IAPob5fr; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=4lsm30lYRi4dwTD4J9fQ9TfYvcm5Gfz4W7SeXm0DybE=;
-	b=IAPob5frcFBuh99vbolYyAQRuUGs+LMfdFHOyCGoB0bqq7loVBX3OgOt4jtOaw
-	YxqUIqzYYcBccwSAE5k0YXpNxX/O+2w3O8dmQ84XVxYyR5+RD0Vn64HDDl3yM2EE
-	qldzw1wTidHgsL3mHWhuVpqjWS3y96WJxHMHdxxDISMOM=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3fgP3zhBnfzswAA--.1282S3;
-	Thu, 17 Oct 2024 16:46:49 +0800 (CST)
-Date: Thu, 17 Oct 2024 16:46:47 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Yannic Moog <y.moog@phytec.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
-Subject: Re: [PATCH] arm64: dts: imx8mp-phyboard-pollux-rdk: add gpio-fan
-Message-ID: <ZxDO9wPQZOsXcJ6b@dragon>
-References: <20240924-wip-y-moog-phytec-de-phyboard-pollux-fan-v1-1-9ea6ec43f27b@phytec.de>
+	s=arc-20240116; t=1729154883; c=relaxed/simple;
+	bh=s+MeVg3x7m57UDOxjqm6LcVJBnNVn1ki+uW1xlYsqTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sUOrUd2PShTmLLwgLkDyJmgW3df6l+RWDtDKJgjjKMYtWjV00qZRy5aPkYf+Gza7tNwQCzkBXaZ67+GG5uuL8JtWUogz4iDtk4LswvjPRV+kr6s+yHv83GTmUlQbQbeAsUwW3oVUZD5evNWfV1P7gjxpYpBiJUlD0w8GqgXc5uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clhXxSLH; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-50d2d300718so239980e0c.1;
+        Thu, 17 Oct 2024 01:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729154879; x=1729759679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s+MeVg3x7m57UDOxjqm6LcVJBnNVn1ki+uW1xlYsqTg=;
+        b=clhXxSLHR5yirp2a8nko38GU5fmVYmPqFXngQz15cq/DNXq8ig4PGIolV1lSxUR6r+
+         uyTyApsyjLXZ9BKq7CKEQN7dmPDAai73N9sM2lQm3EIAH1cmNCI1OkaiTKkF+I6tW/9u
+         hhgzEXncifWxpIfWO897Ek/2BkG6kFkvKfyAGSOpN6U48QxNq5sOIRmhaB8lXG5NVdwT
+         U6zkaAN2+n8HbrpvGcHLX7QBXbDX66Y+Gm9D08GCmV5QKvJ2SNhEyzlenLAUhE/aXyl/
+         kBSlvw9Gb3msoN59aqtQ6nH9O8XlFTNWhzc5iZ9sPZQy55MBCe7px/cpj12HYfwsBCO9
+         HjAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729154879; x=1729759679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s+MeVg3x7m57UDOxjqm6LcVJBnNVn1ki+uW1xlYsqTg=;
+        b=Uj20Yh2ZdmyKeIRyXN/GWPPHBwUqAOe/Ujaj21GWYrGur1hFeioUoekPm3Ao89P9PM
+         oQaHhlqBwMvxsjiUbWxuoW0uqpKuUOgeMEzJ3zb52ZURg6w/MMpV8XmwLUaYfqbLFu0v
+         e+Mlza9tCGX6dc5Dxmrw9kE9pgcjvnQl6nZMfu2eb/5dqAJQOwsBdyNzu+TUJmwwvb2O
+         4/fwoz700uQh1rzuLcvakpX7uNiQRQbAIJjhr6jZx8FMJNIFte5iuzDaudQKTdDp38SG
+         YgrKw3MTnmSyf3vzaJuwIO40bRrWOGYcJkJk7KHZYZM8UnbB6fvr0Sf+Hx6o5uQ3Usd+
+         SYLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYLNvTnk4HI3Lds9UdIKkOv6R98Xn32hS498FgdiTdPupqNitXmkJiQEXpOMxFkaToa4O91WLe/bQ2@vger.kernel.org, AJvYcCVPTb7K44GSIOLGu1dmeLrMWE54EkNiLn88h83IPRTiSIEiUt+bCg6RBlVBtgpmnj8OCE4MidHig5zqExd5@vger.kernel.org, AJvYcCWatKarmYiGo1jmr36IhyLNLxC4L7gjQowE9uEMWHT1uECN5n3TLj8uf6tTwKhXneCh++nP+IJVUAOlt8gUxoA9P7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU7b91SYqlCg71OqJIDjunS2DYn01P9mfdCW8ywp4hylA6tf7d
+	uMKUbXN22OE+sD1LsZS4JdPkUl7ulftOU7S5hpm8GbfA/fL7ggXF2aOu7zXofQqvwF8JKjzxOw5
+	Ge6bPEnYvs4R+XFUJV9RNYLvVNnnsc7Jo
+X-Google-Smtp-Source: AGHT+IE7p4vBxhyKhMfPj9Zsu9KwmHOroZ9yg96PlQ/mdug1V3xaxP/4CYVU2s8CSkR7fJa+NSkXTslvVMVpxYnDbLc=
+X-Received: by 2002:a05:6122:32c3:b0:50a:36ab:c788 with SMTP id
+ 71dfb90a1353d-50d374a2d79mr11483661e0c.3.1729154878732; Thu, 17 Oct 2024
+ 01:47:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240924-wip-y-moog-phytec-de-phyboard-pollux-fan-v1-1-9ea6ec43f27b@phytec.de>
-X-CM-TRANSID:Ms8vCgD3fgP3zhBnfzswAA--.1282S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUxCJmUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgl7ZWcQs0ZXfgAAsu
+References: <20241015162043.254517-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CACRpkdbYF5WCy7yc3t6VSU8CK-MKpxQnVWmRE-YCSKJ1hJDkug@mail.gmail.com>
+In-Reply-To: <CACRpkdbYF5WCy7yc3t6VSU8CK-MKpxQnVWmRE-YCSKJ1hJDkug@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 17 Oct 2024 09:47:32 +0100
+Message-ID: <CA+V-a8vQYJKqxKkGtduFuT9865jscn61gTw-iQHcyfh9O_9UzA@mail.gmail.com>
+Subject: Re: [RFC PATCH] pinctrl: pinmux: Introduce API to check if a pin is requested
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 09:53:04AM +0200, Yannic Moog wrote:
-> A GPIO fan may be connected to Pollux fan header. The fan should
-> activate at 60°C and stay active until critical SoC temperature is
-> reached and the board shuts down.
-> 
-> Signed-off-by: Yannic Moog <y.moog@phytec.de>
+Hi Linus,
 
-Applied, thanks!
+Thank you for the review.
 
+On Tue, Oct 15, 2024 at 10:43=E2=80=AFPM Linus Walleij <linus.walleij@linar=
+o.org> wrote:
+>
+> Hi Prabhakar,
+>
+> thanks for your patch!
+>
+> On Tue, Oct 15, 2024 at 6:21=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+>
+>
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Introduce `pin_requestesd` API to check if a pin is currently requested=
+.
+>
+> What kind of function name is this?
+>
+> Do you mean
+>
+> pin_requested()?
+>
+Ouch, I will fix that.
+
+> > This API allows pinctrl drivers to verify whether a pin is requested or
+> > not by checking if the pin is owned by either `gpio_owner` or `mux_owne=
+r`.
+>
+> There is nothing wrong with the patch as such, but it needs to be
+> illustrated by submitting it together with the first intended user
+> and show how it is used, we don't add upfront APIs.
+>
+Sure, I will post the patches.
+
+Cheers,
+Prabhakar
 
