@@ -1,93 +1,88 @@
-Return-Path: <linux-kernel+bounces-370662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06879A3055
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:04:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73AB9A3078
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84891C227E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9180D1F22C59
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B37B1D6DB7;
-	Thu, 17 Oct 2024 22:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3531D7984;
+	Thu, 17 Oct 2024 22:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHOYOIAv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rrZR6XW5"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D0D1531EA;
-	Thu, 17 Oct 2024 22:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600841D6DA3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729202651; cv=none; b=AOJ4G48/Hb+PqKtNfznyPO5+UaG0Aiq7QxXp+i9BCSsGRVOswpuEhojuoRps15YU9fPHmA2EcOLAyDJp+FNGA7Lx1lEdSzDcGUwFEiQ1wjrh1iN7glFPUUflkWCpvvwTpeSnRpw3kyjveGheIK4XXZPQgcoZ8E2KNzF0rYcksLc=
+	t=1729202743; cv=none; b=WaR2wOGxS8XC+UFFiqKOhFNftbCOPWB2gXEZH/ik71vE74zM4pF8lPgYGefK5K3+mbabO7e8/zeeHbdyUj/cwFNVf7yrtl7lyfhNqs7RsKcYVm3XuMrHB2lAeV720oWLlhDWwIHTIWc2lWaBWHt/aKsjQ4gsztPcwBr9CheiI/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729202651; c=relaxed/simple;
-	bh=WJiXraYnLFsn2UwSe85rbF1/b6U4gvtBHtFJkJLo8M8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q3e4KSqRFEgi6zFQgmdKUeIxXoF6xmaoX/1mlnafSzFsSFovjgsuqufoUwid1bjzDzGb2pyBrdZ0k17KIo37A3LLPHMN8gI+zV/XEWIY7pAdBseRYnhgQ5Dglydz0FYjk8WItBiCA0OXMytuid5KOzDm8vrko5XpeX+BFDcqOac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHOYOIAv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2DADC4CEC3;
-	Thu, 17 Oct 2024 22:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729202651;
-	bh=WJiXraYnLFsn2UwSe85rbF1/b6U4gvtBHtFJkJLo8M8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DHOYOIAvZZ1gWxOepJPe/c72xDeAS/W3jVejl8b93mRbFAWpqpwrTNpEUJtlHCBNW
-	 yMFGcbUSxLWwvbZsFIlEfRjpNHgM6jyx3PE4XHScdFtLgoQo8xm6P9aFYa7I06HfxT
-	 oAaMYgZrdHGMrEfb3QXQcqJYfK/rRSsC56fX2LK7Fstd2fYKjufrSFNvRI0lVSoLxo
-	 sdMBwToKtfomEIqPus0RiGGTwv2tR0ySYxSGyGmztQwF9K9Os7OxEl+wCq6HgEP8Da
-	 qhYIrYkSCdH1NiCoSvYt5syp0fEAa3TblXqjcu/9qCMNNqPhKma2kQIwlKO1hoQC8f
-	 Fp63vCuEcRitg==
-Date: Thu, 17 Oct 2024 15:04:09 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
-	will@kernel.org, catalin.marinas@arm.com,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v3 0/2] arm64: Speed up CRC-32 using PMULL instructions
-Message-ID: <20241017220409.GC11717@sol.localdomain>
-References: <20241017094132.2482168-4-ardb+git@google.com>
- <CAMj1kXFROGbn_49njp_rivEidqfgnLymOCRnfSkV_dTX_hAz9w@mail.gmail.com>
+	s=arc-20240116; t=1729202743; c=relaxed/simple;
+	bh=THKWmR2YFhTE4Gq8LFDOvjdB5gfvH8D1//XRmLSEhjo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bwFX85tWI9Lw7QcWpGYdFw8CQUurTC1rJxdnaByRszpPR2W96QVau65X+sQQ5TakHM47V1WpXMieDphqA4aYWKR2s37rECy14xVcuDKCf9++nrSdATEFXoCDA71JHXE89JmMVs8/wAX/fYcQIiItyVGtkdNavYfTnwUyFoRcP7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rrZR6XW5; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729202736;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KLtHY9tS67dDZxAwj9pQlA2Bn0F9rB4pbPk7zyiMrFE=;
+	b=rrZR6XW5obyGjfp9maIjt+NwAWzo0Ut3OPAfuViOukBWE15y1qHD/960MHE3i5uep9nzyy
+	roFl0uJIIvX/G7kLKIwRUKF2ngJG8mWLbO5jpwxxKQ/Mxj7NAdyT1ORKj2x/CmEMgg2opV
+	xb2J5Yhc6+bgMYYPeRR1BVwhiUuIzZs=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] f2fs: Use struct_size() to improve f2fs_acl_clone()
+Date: Fri, 18 Oct 2024 00:05:03 +0200
+Message-ID: <20241017220502.1592-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXFROGbn_49njp_rivEidqfgnLymOCRnfSkV_dTX_hAz9w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Oct 17, 2024 at 06:30:19PM +0200, Ard Biesheuvel wrote:
-> > Ard Biesheuvel (2):
-> >   arm64/lib: Handle CRC-32 alternative in C code
-> >   arm64/crc32: Implement 4-way interleave using PMULL
-> >
-> 
-> I'll need to respin this - the crc32_be code doesn't actually work correctly.
+Use struct_size() to calculate the number of bytes to allocate for a
+cloned acl.
 
-Right, good catch.  It looks like it needs an rbit of the crc value at the
-beginning and end.  lib/crc32test.c doesn't actually test crc32_be_arm64_4way()
-because it runs the tests with IRQs disabled; it probably shouldn't do that.
+Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/f2fs/acl.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-On a slightly related topic, since any crc32_le() and __crc32c_le() functions in
-arch/*/lib/ are automatically exposed as shash algorithms via the crypto API
-(this was already the case, but your other patch makes this more explicit by
-properly separating them from the generic implementation), I wonder if all the
-remaining arch/*/crypto/crc32*.c should be migrated to arch/*/lib/, and then
-users of crc32 and crc32c like ext4 and f2fs should just use the library
-functions instead of shash.  That would simply things greatly.  See e.g. the
-horrible hacks used in ext4_chksum() and __f2fs_crc32()...
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 8bffdeccdbc3..1fbc0607363b 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -296,9 +296,8 @@ static struct posix_acl *f2fs_acl_clone(const struct posix_acl *acl,
+ 	struct posix_acl *clone = NULL;
+ 
+ 	if (acl) {
+-		int size = sizeof(struct posix_acl) + acl->a_count *
+-				sizeof(struct posix_acl_entry);
+-		clone = kmemdup(acl, size, flags);
++		clone = kmemdup(acl, struct_size(acl, a_entries, acl->a_count),
++				flags);
+ 		if (clone)
+ 			refcount_set(&clone->a_refcount, 1);
+ 	}
+-- 
+2.47.0
 
-The only crc32 and crc32c implementations that *aren't* software based are those
-in drivers/crypto/stm32/stm32-crc32.c and
-drivers/crypto/inside-secure/safexcel_hash.c.  Access to those would be lost by
-going through lib.  But I strongly suspect they exist just because the hardware
-supported it and not because they are actually useful.
-
-- Eric
 
