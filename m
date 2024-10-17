@@ -1,483 +1,284 @@
-Return-Path: <linux-kernel+bounces-370127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67DB49A2809
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:10:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9869A2821
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F631F24788
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:10:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A06DD283ED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7A21DF27D;
-	Thu, 17 Oct 2024 16:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519AD1DE8A4;
+	Thu, 17 Oct 2024 16:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="WY1TIjhn"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QqtQUHu4"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013046.outbound.protection.outlook.com [52.101.67.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05661DF247;
-	Thu, 17 Oct 2024 16:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729181377; cv=none; b=BQnonwS72a3/1TovT3zyUfjXpdbaNDVjn8yoSRep20fDiPO4BUhpXz4+6mVKxmH+qshwFC5IPsw4va0GuAyXAnwegNFd4LrST1HCQbkXmkK0ajZ1j3EbTM85PzOZwcBSqbCIwZdJn6bb+p5TGgMkSlrUrtq/A6a5uDW/pJzgS9I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729181377; c=relaxed/simple;
-	bh=rk1i/ow7W3Yo9mcje3vbCRzdvYIIPBGrq8ABT4GheJs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Dv5iaURQ3cek5KOe1Zc5Yludzz+611FG098I1qzS7pqJJSjmBGY/8s62Cxb1moo0DuGEWiGKUTNL2/ugD57rV+2ZDyY2F9Au4hzdg8otSVFknjMjdAra38OrcFg2NUMMHdLAW+U4SGvVbJfEY8iSGA2Yfs8QQtH2g+N2DzkBH50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=WY1TIjhn; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CA21A42B29
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1729181372; bh=pHeaxIm6DMW2HYoCYMMOnsEL7M+CZsPpC/JgSlxTHYY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WY1TIjhniLb/AJWcguLAErOFYKP1I17bza3aWsXv9rG+dISnSP0uUdfkBNXnNNPE5
-	 rqiJMXg4JYpeP5NP0ePsDBp9ehCE8apuNf+IABYMAnvifyfamJQD/lF1gFqv8uvder
-	 vXCPTbU5fuRfe8OwYhLUl8E4n1jv2knY2rD//HSewJuJ62K92ftNLQpprVCIbpFPNc
-	 3W8TPi+ZFXPrmbmlCDpbezjG4JTNdsrhOEECIJwme6E4itIWc7lLYVY5Jiv8Z/r4T7
-	 iLdGKxdRtS4pLHXobKMLAZLf8NBUjfDcSNNay+2muwIBHBH4+WavXLq7edf8MWLRvz
-	 J89+8wXJQl/ZA==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id CA21A42B29;
-	Thu, 17 Oct 2024 16:09:31 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: linux-doc@vger.kernel.org
-Cc: Federico Vaga <federico.vaga@vaga.pv.it>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <si.yanteng@linux.dev>, Hu Haowen
- <2023002089@link.tyut.edu.cn>, Akira Yokosawa <akiyks@gmail.com>,
- linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: remove Documentation/dontdiff
-Date: Thu, 17 Oct 2024 10:09:31 -0600
-Message-ID: <87y12m1zk4.fsf@trenco.lwn.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5CDC147;
+	Thu, 17 Oct 2024 16:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729181470; cv=fail; b=Q2li3jdPaZbGfveZ95Qe18KzARC5yek8Qvfw1QAVDH48KpHE8hC75VgW1aIgHsSfmo4geaZtTREtVhwIYE5RlAQDe4llQJBBFDgNLouvvZZ1qGJjI6wrymYkblSx3AWdvlDB8eaQXSipvrvcMVet6Cj5M+MhUknaMx0wkFboPcU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729181470; c=relaxed/simple;
+	bh=MI5dMlzqA2RKLYrzcQ8NJMS2H78fonFD/h+t5yNWVmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=AuRZrnuWzaJ1n+xJTd3lqVTHtyBt1wLOSCvB+OK7wxbiiVXV4/Vdj2FJzzggeuDsqQPWCE27ZRvuXufA2N9RxiZmJ+t6Z9+O4HcVqbH9yLIsFysMyAEUKHftlnYmCxfoKNFIRqJA7k7jUa7FPd0SvSq1sRizOW79EfNim9hIDV8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QqtQUHu4; arc=fail smtp.client-ip=52.101.67.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Rp+hC5bKckks6d7nTRvxXfCY0UEuNJ0VNq3wqXX2Ov31YL77Tv0CU7pndCu0KYRt3uOZYDmE7BXPBWFNne4H5tVGbF8eAVTqa3UjSUY7lJ158krPc6yBSh/4/Jf/hvpvYlR9x4HP8eSAN6hwzsRKhO51kRrIx6oAB80NKnB4+aHnSqNdTs/ZN7BfaRYOimaBxaaoUAryZdR2UN9X/xbPblNCihFLmvYztSjPC+pHR4GQLL4jO3Qg0mGYhWzRmBlQFjwLcnJ4hvXjifiWQ4j82ygkdwFlaIc7QRpLEGoyRNBn/2O6FH1OIU7SbibHySucZqTHoIqZk/i4WJEFnMEAcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5HzlQyfAM6W/d8GxqbYq1Hh7xWwKiFs2JJ+4jQ9QYbE=;
+ b=AzfkoMeFVxAMxtOazjSnhxoOxJdiRmMpP/CfnelFoWYg+Qn8VrkijqCKqQ4hgS58mZkI2GPG0x312c7lKmnFuwvFeOQzKPH6+uWzOu3MaPnGJ9D2/qWd8loIBkIcTFzAhRMSAy9XIE/6Lb0i9RdxzEvlB7XkTo3UDBGpGCv3QUyBYgZkbe77uPRY0aTfc32HRLzfvcEQ5XK6XRUgeiYtobQ2jFb8MrFxocSR55M87Gnf3RE1ePsxARP+tJg9+9ZpnEM2fS91kzvlWhsFawEV63Cz0/fr0btpjaTw8wz68UpUb0xPixPN4so9fqUu3YhEEjpCcltQxzMNNeAakUyyqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5HzlQyfAM6W/d8GxqbYq1Hh7xWwKiFs2JJ+4jQ9QYbE=;
+ b=QqtQUHu44Paks0sQGoWA/HBUHnKFb8Mr7dKooEwZ9XqD2eFWZ9y+sSILajKFNNjsl+mqKmO3ewBqpOSuFUiEXmcbDUQRtXLacksM7f8L5cEdeQUquzf6DX8UEYdOO28DstbDBym/MMUmXRYBjPn3ZELMkzVNP8omPB10a2bnZTxiz81pAKkgAgjWGQp6SHBXISFPIhlxSUBQ94TvhNTNXCvcXHXCFruwi5nqBhc5SNHYMSAlrjG5rj1J4A0JVFgvHhFj7is8KYrA3jfmGJZiZ/hCunPOIqMkA5k0a7YvpFi3LJ/UBPaR8TbnoYHkgsBwAD5DwA13Y0xqmK1vw3PB/g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by DU2PR04MB8855.eurprd04.prod.outlook.com (2603:10a6:10:2e2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Thu, 17 Oct
+ 2024 16:11:02 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
+ 16:11:01 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Petr Machata <petrm@nvidia.com>,
+	Ido Schimmel <idosch@nvidia.com>,
+	Vlad Buslov <vladbu@nvidia.com>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Baowen Zheng <baowen.zheng@corigine.com>,
+	Simon Horman <horms@kernel.org>,
+	Pedro Tammela <pctammela@mojatatu.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] net/sched: act_api: deny mismatched skip_sw/skip_hw flags for actions created by classifiers
+Date: Thu, 17 Oct 2024 19:10:48 +0300
+Message-ID: <20241017161049.3570037-1-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: VI1PR0502CA0015.eurprd05.prod.outlook.com
+ (2603:10a6:803:1::28) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|DU2PR04MB8855:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd1b16a4-d646-4827-25ad-08dceec64b6c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gVqoP+nrzA2mvYJyOB4IfGtN9gyhPLN68VJNLNeVs9cmUHkNzarZ6LjL6WmQ?=
+ =?us-ascii?Q?4Ay5KkUS1j5GLC7jyH9qMFwFKZrtdw4cKvWxEttcFITfR0coLYFYLCvTlIL+?=
+ =?us-ascii?Q?9obAXbU/xq+gtjEIaqPu7QXNfKeO49Ycw+3E86bRYzqdAG3TrDIpLotHuwaI?=
+ =?us-ascii?Q?jvDVifvNDOMsITW5bOCx1yo/nHjoT7meHcgCeN/yNjS5QWdgQa+sKu1UnzDa?=
+ =?us-ascii?Q?GNLhV6V9MUXTOXphf/WgzQa18YJA0H5tdZZeUOrpFm6Nr9z+rFcpzkUhKtJj?=
+ =?us-ascii?Q?qYBU3l/Te5ecqSGrDdocbbNrCHJvo3LpDTDbC6pv7h/uwnUxyzGfaWbUc/ta?=
+ =?us-ascii?Q?ljQxGZ6bF6nkmA5w5194Ugb7kj+g7RBdlZzEIwT+mJh9pQRKIzo74WEh8vws?=
+ =?us-ascii?Q?FlEueZWcXF9/bk1Gqg05ssVKg/6fYaW0J759RJRIwu56ceeYD+jNXUK1j1Yz?=
+ =?us-ascii?Q?AUd0BeXDBiFjSTUOH20pDn1K09TEqtcVu+hx4yHGQuZKCmrdVyC3vu6gKlwN?=
+ =?us-ascii?Q?cIKjMbetXEuTMMCQXfPvxa2r9lsBQkEh/XwxUUONWDDH/YqFtsl8V6fweFy/?=
+ =?us-ascii?Q?g/oVqEnd31w8skG/nBUOYkw6q8wM8HK+sIlTm13sMwed3Mu5FjMPJrFIrDql?=
+ =?us-ascii?Q?dIr0IHtzzydDPMxa3DmBcvlFxR9VsxEktStJjdTf5uHOC1dZxg2fbm8NnIP1?=
+ =?us-ascii?Q?aYMrO/VgxcY0+H7TX8ZKpJykC7qh6nAd4yFDi/1q49NwQOf2AixBKGzSWV83?=
+ =?us-ascii?Q?O9QigEqbITHVnRmS6CNp26Ft1gNf7TytyFXp1D7lZQUwLaXviVuENlHFPD+e?=
+ =?us-ascii?Q?oSVIyGeQLr/2ffJUpilpYXsHie/mVASGIHOUD1ue9QH8BM9zmHN8aoDJQXQO?=
+ =?us-ascii?Q?mlGyy2zz+6ertds5uAX4ieIhJqUZiASDjKjrsul0sPx69fKWzewU1tDM3pZ2?=
+ =?us-ascii?Q?Fvpc5sagHhnTnrnkOQyGqtSlOHXlvYqrm8WmXZfO6+SqG18hLm2sNBd2vuJK?=
+ =?us-ascii?Q?/M7e59M81nC9NsPLD9dcGIX21Cylb1aB0R6aMotiTuvzhjzrYM8E4+SIOasU?=
+ =?us-ascii?Q?3UauS+obC2DOXTsdL7V3wEw1/emxxs7H1l46Rmhim2ghLiQBRAS2DccKxTCc?=
+ =?us-ascii?Q?InMZT7ydzdUjyGSkynqthJdXgumFUAITZDNzCGAwV9UAKokwkfADdCg5LlfB?=
+ =?us-ascii?Q?OyJ8VXiU60PIBSIkfki5VsCm1nlZQ8vlKIbDPLOQ4lJh5lOORogruDHDg8B2?=
+ =?us-ascii?Q?xQMrqaiyMF8F1mFTCQu6Njlag0r3AhpGZLt5+LQ5B7/evwGoRpyO6grukXm4?=
+ =?us-ascii?Q?UPuYjimuov+IV2GLIvakpOQ/85IOjCrHmxFPYoSSy6TEF5r9q6x2Os4zc0z7?=
+ =?us-ascii?Q?JowIHQ+OjnHf/Cw449P8xl5HI5kq?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aQWeLLfs2PQx1F5HDAvkrLIB1u3fHK5ltC2TP18IzRutCJJDBA1zg5U8+XBq?=
+ =?us-ascii?Q?q+mETxnN5cS8h0AIr5kW9jEMOWvr8CnrmVI6hN3/4BPoFfg276jkiDJZBI1O?=
+ =?us-ascii?Q?8J1yCMyVoBd7vaW3Hcy5zB6Frj5D9Tfpi4pWo/yHAiSmP/15lV2ae5D/11Vo?=
+ =?us-ascii?Q?VsarJXounAG+g+4yr8g5fkdaFZfSpeYSiGD8U6UBLBofOrdHumkJJ8c9jUWU?=
+ =?us-ascii?Q?3/j0m7vK+OloVcGVrG1VxX4HvGvsu7fk6Ltq9cisPza6BqyNrzeSXZWQhxXv?=
+ =?us-ascii?Q?3MMuLRnx8PunknoJ02+1/9UzVtEmgdRFjSp2hxFLumw2uH/OeVnaBi4eed1C?=
+ =?us-ascii?Q?fIts/k3g8dXQpVqcqL3yabSmFv8FGI4IUhkqvokq8nnxFVG5D4vTIrPkheW8?=
+ =?us-ascii?Q?HRBUC5PcZtMlpMIJkdclb/0eVS+TyTZBEyv+0rjiUfsBNt5QNOf82dqcsecE?=
+ =?us-ascii?Q?HtzfKp+HpByOoid4fdMlT/fPQf1S6ltkGW7iGaxVHxK5XWwQjP1K+qVkX1dU?=
+ =?us-ascii?Q?dlYOxhQFrv5RKT+tlpTuBg0wx8tC0UyLs/ywrFx8M15EB2J3gHM0HZdAVlaA?=
+ =?us-ascii?Q?mt9ePlsfdQz1w6zJ4rodybIyhCyIio+ZPCRsr2trJk3jQlgaON/jDe6lg7ZU?=
+ =?us-ascii?Q?mGzBeheMgDn3aDVevcHiTRM7PH0FX44RSsVBiEnB3BCP03t3fA+TfsDrl9MN?=
+ =?us-ascii?Q?5Hm+uADvBCBrjY7xVEDmlHGQT9UGb/E7T2B0i7DRFdi+DTSb3rkwDB2ru4bR?=
+ =?us-ascii?Q?JOS2qjdJL/tjDu4UIt+kqxemgCsQczUvsho/PxJ2ILISONXpyjNew5qoZ23N?=
+ =?us-ascii?Q?MQ4S79zPyEvxEl9Zpdli7miBEHjo1Gkc7/iOC6ASUK7XQYmnU+BAVEgOjDiL?=
+ =?us-ascii?Q?U3ZNl6DKrtXX27jHZMRNc7VWRaAa9xXwAS7PtMzrlgpR4mOokI1RxG7YqfsG?=
+ =?us-ascii?Q?rfAMFY4Jm/pB+88PR6kz2xbL/NbuuGjdxCNaCjzUW+B8R8UEjzQKy3Idl6Yl?=
+ =?us-ascii?Q?sBgbKxkJxGbG6/x6VlszgkAYbpF0CLfoUVonmu8HqKjwMeaMkCVXlxCG7MoH?=
+ =?us-ascii?Q?4TULzudZIr9SikjnctZtC4IolkbGMIYGjSj3R6Ob6xYfwLqmg2ho/29l6bSZ?=
+ =?us-ascii?Q?on1cjLinKRDhjALyzSMvbEbd+l0b+7RW1B2xwi6WgOi/bZsHVRUmvKrbgnYB?=
+ =?us-ascii?Q?TiqivvmkasSGwRpcr1ngSp1OyXUu1dHpRcOLTYIc3vNkTlSlIT2TzHijIkyz?=
+ =?us-ascii?Q?sBZ10Qnzs+ImXQxgHSmDgyA5XHhZ6q32dQIJ1Dook9boJPk7grGg9ELH7wHZ?=
+ =?us-ascii?Q?jC6tOPMHkijpWvPXxQn689ywy+AErgi1lUysCQ7nl1p9LfkSmIB0ZCoV+84j?=
+ =?us-ascii?Q?xn0RkQx/5urX0m+ADR0edys2gwLdONe94q8wXJ0pxgaADYhq7JmNnLY0mUwf?=
+ =?us-ascii?Q?XTkC7FOcnawGWp/VC+NTsMNUMIAnmPIt1wTcNNzTDabXbQwYs1fUwazWUyHG?=
+ =?us-ascii?Q?c3JHHaxDNDOBSIA8VU6mIdbp5048DgrlUFiDY2xBgQVu5uanNmyxxmu0f0DQ?=
+ =?us-ascii?Q?hnQV7iYSOg03mXf+2zKA3e+OTFk0WmcKxdFbsw7n8Lk0aTuyIZb7+FsdZ2l4?=
+ =?us-ascii?Q?LQ=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd1b16a4-d646-4827-25ad-08dceec64b6c
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 16:11:01.7511
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PMrzHbaFS+v38RWFSX47QcD+d+Qd+ViTeTdg6Srgmg/kCxpi2gOunQwFcXXUZz5+FqHHlVItR7nw/XOGiSJCvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8855
 
-The dontdiff file is a relic from the pre-Git era that has little use now.
-It has entries (parse.c, for example) that will mask real changes to kernel
-source files.  There are all kinds of entries for files we do not create
-anymore.  Rather than try to fix it up, simply remove it.
+tcf_action_init() has logic for checking mismatches between action and
+filter offload flags (skip_sw/skip_hw). AFAIU, this is intended to run
+on the transition between the new tc_act_bind(flags) returning true (aka
+now gets bound to classifier) and tc_act_bind(act->tcfa_flags) returning
+false (aka action was not bound to classifier before). Otherwise, the
+check is skipped.
 
-Update the kernel documentation (and translations) to remove references to
-this file.  There is an ancient Japanese translation of SubmittingPatches
-that I am unable to update; that really needs a thorough redo.
+For the case where an action is not standalone, but rather it was
+created by a classifier and is bound to it, tcf_action_init() skips the
+check entirely, and this means it allows mismatched flags to occur.
 
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Taking the matchall classifier code path as an example (with mirred as
+an action), the reason is the following:
+
+ 1 | mall_change()
+ 2 | -> mall_replace_hw_filter()
+ 3 |   -> tcf_exts_validate_ex()
+ 4 |      -> flags |= TCA_ACT_FLAGS_BIND;
+ 5 |      -> tcf_action_init()
+ 6 |         -> tcf_action_init_1()
+ 7 |            -> a_o->init()
+ 8 |               -> tcf_mirred_init()
+ 9 |                  -> tcf_idr_create_from_flags()
+10 |                     -> tcf_idr_create()
+11 |                        -> p->tcfa_flags = flags;
+12 |         -> tc_act_bind(flags))
+13 |         -> tc_act_bind(act->tcfa_flags)
+
+When invoked from tcf_exts_validate_ex() like matchall does (but other
+classifiers validate their extensions as well), tcf_action_init() runs
+in a call path where "flags" always contains TCA_ACT_FLAGS_BIND (set by
+line 4). So line 12 is always true, and line 13 is always true as well.
+No transition ever takes place, and the check is skipped.
+
+The code was added in this form in commit c86e0209dc77 ("flow_offload:
+validate flags of filter and actions"), but I'm attributing the blame
+even earlier in that series, to when TCA_ACT_FLAGS_SKIP_HW and
+TCA_ACT_FLAGS_SKIP_SW were added to the UAPI.
+
+Following the development process of this change, the check did not
+always exist in this form. A change took place between v3 [1] and v4 [2],
+AFAIU due to review feedback that it doesn't make sense for action flags
+to be different than classifier flags. I think I agree with that
+feedback, but it was translated into code that omits enforcing this for
+"classic" actions created at the same time with the filters themselves.
+
+There are 3 more important cases to discuss. First there is this command:
+
+$ tc qdisc add dev eth0 clasct
+$ tc filter add dev eth0 ingress matchall skip_sw \
+	action mirred ingress mirror dev eth1
+
+which should be allowed, because prior to the concept of dedicated
+action flags, it used to work and it used to mean the action inherited
+the skip_sw/skip_hw flags from the classifier. It's not a mismatch.
+
+Then we have this command:
+
+$ tc qdisc add dev eth0 clasct
+$ tc filter add dev eth0 ingress matchall skip_sw \
+	action mirred ingress mirror dev eth1 skip_hw
+
+where there is a mismatch and it should be rejected.
+
+Finally, we have:
+
+$ tc qdisc add dev eth0 clasct
+$ tc filter add dev eth0 ingress matchall skip_sw \
+	action mirred ingress mirror dev eth1 skip_sw
+
+where the offload flags coincide, and this should be treated the same as
+the first command based on inheritance, and accepted.
+
+[1]: https://lore.kernel.org/netdev/20211028110646.13791-9-simon.horman@corigine.com/
+[2]: https://lore.kernel.org/netdev/20211118130805.23897-10-simon.horman@corigine.com/
+Fixes: 7adc57651211 ("flow_offload: add skip_hw and skip_sw to control if offload the action")
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 ---
- Documentation/dontdiff                        | 271 ------------------
- Documentation/process/5.Posting.rst           |   5 -
- .../translations/it_IT/process/5.Posting.rst  |   5 -
- .../translations/zh_CN/process/5.Posting.rst  |   4 -
- .../translations/zh_TW/process/5.Posting.rst  |   4 -
- 5 files changed, 289 deletions(-)
- delete mode 100644 Documentation/dontdiff
+ net/sched/act_api.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/dontdiff b/Documentation/dontdiff
-deleted file mode 100644
-index de2cb8de6112..000000000000
---- a/Documentation/dontdiff
-+++ /dev/null
-@@ -1,271 +0,0 @@
--*.a
--*.aux
--*.bc
--*.bin
--*.bz2
--*.c.[012]*.*
--*.cis
--*.cpio
--*.csp
--*.dsp
--*.dvi
--*.elf
--*.eps
--*.fw
--*.gcno
--*.gcov
--*.gen.S
--*.gif
--*.grep
--*.grp
--*.gz
--*.html
--*.i
--*.jpeg
--*.ko
--*.ll
--*.log
--*.lst
--*.lzma
--*.lzo
--*.mo
--*.moc
--*.mod
--*.mod.c
--*.o
--*.o.*
--*.order
--*.orig
--*.out
--*.patch
--*.pdf
--*.plist
--*.png
--*.pot
--*.ps
--*.rej
--*.s
--*.sgml
--*.so
--*.so.dbg
--*.symtypes
--*.tab.c
--*.tab.h
--*.tex
--*.ver
--*.xml
--*.xz
--*.zst
--*_MODULES
--*_vga16.c
--*~
--\#*#
--*.9
--.*
--.*.d
--.mm
--53c700_d.h
--CVS
--ChangeSet
--GPATH
--GRTAGS
--GSYMS
--GTAGS
--Image
--Module.markers
--Module.symvers
--PENDING
--SCCS
--System.map*
--TAGS
--aconf
--af_names.h
--aic7*reg.h*
--aic7*reg_print.c*
--aic7*seq.h*
--aicasm
--aicdb.h*
--altivec*.c
--asm-offsets.h
--asm_offsets.h
--autoconf.h*
--av_permissions.h
--bbootsect
--binkernel.spec
--bootsect
--bounds.h
--bsetup
--btfixupprep
--build
--bvmlinux
--bzImage*
--capability_names.h
--capflags.c
--classlist.h*
--comp*.log
--compile.h*
--conf
--config
--config-*
--config.mak
--config.mak.autogen
--conmakehash
--consolemap_deftbl.c*
--cpustr.h
--crc32table.h*
--cscope.*
--defkeymap.c
--devlist.h*
--devicetable-offsets.h
--dnotify_test
--dslm
--dtc
--elf2ecoff
--elfconfig.h*
--evergreen_reg_safe.h
--fixdep
--flask.h
--fore200e_mkfirm
--fore200e_pca_fw.c*
--gconf
--gconf-cfg
--gen-devlist
--gen_crc32table
--gen_init_cpio
--generated
--genheaders
--genksyms
--*_gray256.c
--hpet_example
--hugepage-mmap
--hugepage-shm
--ihex2fw
--inat-tables.c
--initramfs_list
--int16.c
--int1.c
--int2.c
--int32.c
--int4.c
--int8.c
--kallsyms
--keywords.c
--ksym.c*
--ksym.h*
--*lex.c
--*lex.*.c
--linux
--logo_*.c
--logo_*_clut224.c
--logo_*_mono.c
--mach-types
--mach-types.h
--machtypes.h
--map
--map_hugetlb
--mconf
--mconf-cfg
--miboot*
--mk_elfconfig
--mkboot
--mkbugboot
--mkcpustr
--mkdep
--mkprep
--mkregtable
--mktables
--mktree
--mkutf8data
--modpost
--modules-only.symvers
--modules.builtin
--modules.builtin.modinfo
--modules.builtin.ranges
--modules.nsdeps
--modules.order
--modversions.h*
--nconf
--nconf-cfg
--ncscope.*
--offset.h
--oui.c*
--page-types
--parse.c
--parse.h
--patches*
--pca200e.bin
--pca200e_ecd.bin2
--perf.data
--perf.data.old
--perf-archive
--piggyback
--piggy.gzip
--piggy.S
--pnmtologo
--ppc_defs.h*
--pss_boot.h
--qconf
--qconf-cfg
--r100_reg_safe.h
--r200_reg_safe.h
--r300_reg_safe.h
--r420_reg_safe.h
--r600_reg_safe.h
--randstruct.seed
--randomize_layout_hash.h
--randomize_layout_seed.h
--recordmcount
--relocs
--rlim_names.h
--rn50_reg_safe.h
--rs600_reg_safe.h
--rv515_reg_safe.h
--series
--setup
--setup.bin
--setup.elf
--sortextable
--sImage
--sm_tbl*
--split-include
--syscalltab.h
--tables.c
--tags
--test_get_len
--tftpboot.img
--timeconst.h
--times.h*
--trix_boot.h
--utsrelease.h*
--vdso-syms.lds
--vdso.lds
--vdso32-int80-syms.lds
--vdso32-syms.lds
--vdso32-syscall-syms.lds
--vdso32-sysenter-syms.lds
--vdso32.lds
--vdso32.so.dbg
--vdso64.lds
--vdso64.so.dbg
--version.h*
--vmImage
--vmlinux
--vmlinux-*
--vmlinux.aout
--vmlinux.bin.all
--vmlinux.lds
--vmlinux.map
--vmlinux.symvers
--vmlinuz
--voffset.h
--vsyscall.lds
--vsyscall_32.lds
--wanxlfw.inc
--uImage
--unifdef
--utf8data.c
--wakeup.bin
--wakeup.elf
--wakeup.lds
--zImage*
--zoffset.h
-diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.=
-Posting.rst
-index de4edd42d5c0..b3eff03ea249 100644
---- a/Documentation/process/5.Posting.rst
-+++ b/Documentation/process/5.Posting.rst
-@@ -191,11 +191,6 @@ change to a revision control system.  It will be follo=
-wed by:
-    option to diff will associate function names with changes, making the
-    resulting patch easier for others to read.
-=20
--You should avoid including changes to irrelevant files (those generated by
--the build process, for example, or editor backup files) in the patch.  The
--file "dontdiff" in the Documentation directory can help in this regard;
--pass it to diff with the "-X" option.
--
- The tags already briefly mentioned above are used to provide insights how
- the patch came into being. They are described in detail in the
- :ref:`Documentation/process/submitting-patches.rst <submittingpatches>`
-diff --git a/Documentation/translations/it_IT/process/5.Posting.rst b/Docum=
-entation/translations/it_IT/process/5.Posting.rst
-index a61d9e6f7433..3b9b4db6fb9a 100644
---- a/Documentation/translations/it_IT/process/5.Posting.rst
-+++ b/Documentation/translations/it_IT/process/5.Posting.rst
-@@ -208,11 +208,6 @@ di commit in un sistema di controllo di versione.  Sar=
-=C3=A0 seguito da:
-    l'opzione "-p" assocer=C3=A0 alla modifica il nome della funzione alla =
-quale
-    si riferisce, rendendo il risultato pi=C3=B9 facile da leggere per gli =
-altri.
-=20
--Dovreste evitare di includere nelle patch delle modifiche per file
--irrilevanti (quelli generati dal processo di generazione, per esempio, o i=
- file
--di backup del vostro editor).  Il file "dontdiff" nella cartella Documenta=
-tion
--potr=C3=A0 esservi d'aiuto su questo punto; passatelo a diff con l'opzione=
- "-X".
--
- Le etichette sopracitate danno un'idea di come una patch prende vita e sono
- descritte nel dettaglio nel documento
- :ref:`Documentation/translations/it_IT/process/submitting-patches.rst <it_=
-submittingpatches>`.
-diff --git a/Documentation/translations/zh_CN/process/5.Posting.rst b/Docum=
-entation/translations/zh_CN/process/5.Posting.rst
-index 6a469e1c7deb..6c83a8f40310 100644
---- a/Documentation/translations/zh_CN/process/5.Posting.rst
-+++ b/Documentation/translations/zh_CN/process/5.Posting.rst
-@@ -146,10 +146,6 @@
-  - =E8=A1=A5=E4=B8=81=E6=9C=AC=E8=BA=AB=EF=BC=8C=E9=87=87=E7=94=A8=E7=BB=
-=9F=E4=B8=80=E7=9A=84=EF=BC=88=E2=80=9C-u=E2=80=9D=EF=BC=89=E8=A1=A5=E4=B8=
-=81=E6=A0=BC=E5=BC=8F=E3=80=82=E4=BD=BF=E7=94=A8=E2=80=9C-p=E2=80=9D=E9=80=
-=89=E9=A1=B9=E6=9D=A5diff=E5=B0=86=E4=BD=BF=E5=87=BD=E6=95=B0=E5=90=8D=E4=
-=B8=8E
-    =E6=9B=B4=E6=94=B9=E7=9B=B8=E5=85=B3=E8=81=94=EF=BC=8C=E4=BB=8E=E8=80=
-=8C=E4=BD=BF=E7=BB=93=E6=9E=9C=E8=A1=A5=E4=B8=81=E6=9B=B4=E5=AE=B9=E6=98=93=
-=E8=A2=AB=E5=85=B6=E4=BB=96=E4=BA=BA=E8=AF=BB=E5=8F=96=E3=80=82
-=20
--=E6=82=A8=E5=BA=94=E8=AF=A5=E9=81=BF=E5=85=8D=E5=9C=A8=E8=A1=A5=E4=B8=81=
-=E4=B8=AD=E5=8C=85=E6=8B=AC=E4=B8=8E=E6=9B=B4=E6=94=B9=E4=B8=8D=E7=9B=B8=E5=
-=85=B3=E6=96=87=E4=BB=B6=EF=BC=88=E4=BE=8B=E5=A6=82=EF=BC=8C=E6=9E=84=E5=BB=
-=BA=E8=BF=87=E7=A8=8B=E7=94=9F=E6=88=90=E7=9A=84=E6=96=87=E4=BB=B6=E6=88=96=
-=E7=BC=96=E8=BE=91=E5=99=A8
--=E5=A4=87=E4=BB=BD=E6=96=87=E4=BB=B6=EF=BC=89=E3=80=82=E6=96=87=E6=A1=A3=
-=E7=9B=AE=E5=BD=95=E4=B8=AD=E7=9A=84=E2=80=9Cdontdiff=E2=80=9D=E6=96=87=E4=
-=BB=B6=E5=9C=A8=E8=BF=99=E6=96=B9=E9=9D=A2=E6=9C=89=E5=B8=AE=E5=8A=A9=EF=BC=
-=9B=E4=BD=BF=E7=94=A8=E2=80=9C-X=E2=80=9D=E9=80=89=E9=A1=B9=E5=B0=86
--=E5=85=B6=E4=BC=A0=E9=80=92=E7=BB=99diff=E3=80=82
--
- =E4=B8=8A=E9=9D=A2=E6=8F=90=E5=88=B0=E7=9A=84=E6=A0=87=E7=AD=BE=EF=BC=88ta=
-g=EF=BC=89=E7=94=A8=E4=BA=8E=E6=8F=8F=E8=BF=B0=E5=90=84=E7=A7=8D=E5=BC=80=
-=E5=8F=91=E4=BA=BA=E5=91=98=E5=A6=82=E4=BD=95=E4=B8=8E=E8=BF=99=E4=B8=AA=E8=
-=A1=A5=E4=B8=81=E7=9A=84=E5=BC=80=E5=8F=91=E7=9B=B8=E5=85=B3=E8=81=94=E3=80=
-=82
- :ref:`Documentation/translations/zh_CN/process/submitting-patches.rst <cn_=
-submittingpatches>`
- =E6=96=87=E6=A1=A3=E4=B8=AD=E5=AF=B9=E5=AE=83=E4=BB=AC=E8=BF=9B=E8=A1=8C=
-=E4=BA=86=E8=AF=A6=E7=BB=86=E6=8F=8F=E8=BF=B0=EF=BC=9B=E4=B8=8B=E9=9D=A2=E6=
-=98=AF=E4=B8=80=E4=B8=AA=E7=AE=80=E7=9F=AD=E7=9A=84=E6=80=BB=E7=BB=93=E3=80=
-=82=E6=AF=8F=E4=B8=80=E8=A1=8C=E7=9A=84=E6=A0=BC=E5=BC=8F=E5=A6=82=E4=B8=8B=
-=EF=BC=9A
-diff --git a/Documentation/translations/zh_TW/process/5.Posting.rst b/Docum=
-entation/translations/zh_TW/process/5.Posting.rst
-index 7d66a1c638be..38f3a6d618eb 100644
---- a/Documentation/translations/zh_TW/process/5.Posting.rst
-+++ b/Documentation/translations/zh_TW/process/5.Posting.rst
-@@ -149,10 +149,6 @@
-  - =E8=A3=9C=E4=B8=81=E6=9C=AC=E8=BA=AB=EF=BC=8C=E6=8E=A1=E7=94=A8=E7=B5=
-=B1=E4=B8=80=E7=9A=84=EF=BC=88=E2=80=9C-u=E2=80=9D=EF=BC=89=E8=A3=9C=E4=B8=
-=81=E6=A0=BC=E5=BC=8F=E3=80=82=E4=BD=BF=E7=94=A8=E2=80=9C-p=E2=80=9D=E9=81=
-=B8=E9=A0=85=E4=BE=86diff=E5=B0=87=E4=BD=BF=E5=87=BD=E6=95=B8=E5=90=8D=E8=
-=88=87
-    =E6=9B=B4=E6=94=B9=E7=9B=B8=E9=97=9C=E8=81=AF=EF=BC=8C=E5=BE=9E=E8=80=
-=8C=E4=BD=BF=E7=B5=90=E6=9E=9C=E8=A3=9C=E4=B8=81=E6=9B=B4=E5=AE=B9=E6=98=93=
-=E8=A2=AB=E5=85=B6=E4=BB=96=E4=BA=BA=E8=AE=80=E5=8F=96=E3=80=82
-=20
--=E6=82=A8=E6=87=89=E8=A9=B2=E9=81=BF=E5=85=8D=E5=9C=A8=E8=A3=9C=E4=B8=81=
-=E4=B8=AD=E5=8C=85=E6=8B=AC=E8=88=87=E6=9B=B4=E6=94=B9=E4=B8=8D=E7=9B=B8=E9=
-=97=9C=E6=96=87=E4=BB=B6=EF=BC=88=E4=BE=8B=E5=A6=82=EF=BC=8C=E6=A7=8B=E5=BB=
-=BA=E9=81=8E=E7=A8=8B=E7=94=9F=E6=88=90=E7=9A=84=E6=96=87=E4=BB=B6=E6=88=96=
-=E7=B7=A8=E8=BC=AF=E5=99=A8
--=E5=82=99=E4=BB=BD=E6=96=87=E4=BB=B6=EF=BC=89=E3=80=82=E6=96=87=E6=AA=94=
-=E7=9B=AE=E9=8C=84=E4=B8=AD=E7=9A=84=E2=80=9Cdontdiff=E2=80=9D=E6=96=87=E4=
-=BB=B6=E5=9C=A8=E9=80=99=E6=96=B9=E9=9D=A2=E6=9C=89=E5=B9=AB=E5=8A=A9=EF=BC=
-=9B=E4=BD=BF=E7=94=A8=E2=80=9C-X=E2=80=9D=E9=81=B8=E9=A0=85=E5=B0=87
--=E5=85=B6=E5=82=B3=E9=81=9E=E7=B5=A6diff=E3=80=82
--
- =E4=B8=8A=E9=9D=A2=E6=8F=90=E5=88=B0=E7=9A=84=E6=A8=99=E7=B1=A4=EF=BC=88ta=
-g=EF=BC=89=E7=94=A8=E6=96=BC=E6=8F=8F=E8=BF=B0=E5=90=84=E7=A8=AE=E9=96=8B=
-=E7=99=BC=E4=BA=BA=E5=93=A1=E5=A6=82=E4=BD=95=E8=88=87=E9=80=99=E5=80=8B=E8=
-=A3=9C=E4=B8=81=E7=9A=84=E9=96=8B=E7=99=BC=E7=9B=B8=E9=97=9C=E8=81=AF=E3=80=
-=82
- :ref:`Documentation/translations/zh_CN/process/submitting-patches.rst <tw_=
-submittingpatches>`
- =E6=96=87=E6=AA=94=E4=B8=AD=E5=B0=8D=E5=AE=83=E5=80=91=E9=80=B2=E8=A1=8C=
-=E4=BA=86=E8=A9=B3=E7=B4=B0=E6=8F=8F=E8=BF=B0=EF=BC=9B=E4=B8=8B=E9=9D=A2=E6=
-=98=AF=E4=B8=80=E5=80=8B=E7=B0=A1=E7=9F=AD=E7=9A=84=E7=B8=BD=E7=B5=90=E3=80=
-=82=E6=AF=8F=E4=B8=80=E8=A1=8C=E7=9A=84=E6=A0=BC=E5=BC=8F=E5=A6=82=E4=B8=8B=
-=EF=BC=9A
---=20
-2.47.0
+diff --git a/net/sched/act_api.c b/net/sched/act_api.c
+index 5bbfb83ed600..8e705b212c14 100644
+--- a/net/sched/act_api.c
++++ b/net/sched/act_api.c
+@@ -1498,8 +1498,29 @@ int tcf_action_init(struct net *net, struct tcf_proto *tp, struct nlattr *nla,
+ 			bool skip_sw = tc_skip_sw(fl_flags);
+ 			bool skip_hw = tc_skip_hw(fl_flags);
+ 
+-			if (tc_act_bind(act->tcfa_flags))
++			if (tc_act_bind(act->tcfa_flags)) {
++				/* Action is created by classifier and is not
++				 * standalone. Check that the user did not set
++				 * any action flags different than the
++				 * classifier flags, and inherit the flags from
++				 * the classifier for the compatibility case
++				 * where no flags were specified at all.
++				 */
++				if ((tc_act_skip_sw(act->tcfa_flags) && !skip_sw) ||
++				    (tc_act_skip_hw(act->tcfa_flags) && !skip_hw)) {
++					NL_SET_ERR_MSG(extack,
++						       "Mismatch between action and filter offload flags");
++					err = -EINVAL;
++					goto err;
++				}
++				if (skip_sw)
++					act->tcfa_flags |= TCA_ACT_FLAGS_SKIP_SW;
++				if (skip_hw)
++					act->tcfa_flags |= TCA_ACT_FLAGS_SKIP_HW;
+ 				continue;
++			}
++
++			/* Action is standalone */
+ 			if (skip_sw != tc_act_skip_sw(act->tcfa_flags) ||
+ 			    skip_hw != tc_act_skip_hw(act->tcfa_flags)) {
+ 				NL_SET_ERR_MSG(extack,
+-- 
+2.43.0
 
 
