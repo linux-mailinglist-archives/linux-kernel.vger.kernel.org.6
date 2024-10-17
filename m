@@ -1,92 +1,95 @@
-Return-Path: <linux-kernel+bounces-369234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEDBD9A1AAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:29:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F46B9A1AB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C4111C22408
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:29:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07342B2166B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CEA18BC3B;
-	Thu, 17 Oct 2024 06:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="JXUVfMP8"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727A8190463;
+	Thu, 17 Oct 2024 06:32:14 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CE713D24C;
-	Thu, 17 Oct 2024 06:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BD0158205
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729146568; cv=none; b=ZEdAo6VppGJ+SF6UvMXJD6j6Q2B/ikgckrjaPCtqtaHiBM3EQxOeT+/Xy6R9+X/qLoljiRPHcAmZ8Ktx7CloapRyC6MaNWionhCY6TToQDe4vd4ZF5wC/sFhzxL2UfvbB4P3/fYL/DCUS3Y4mfTZoKg5CpafYVFCnF4cLRKCOes=
+	t=1729146734; cv=none; b=V2GUhbNWKR08u1wa6Uy5Hjo29/lAqxz6bEUDBSggokZLy5iIuHoFmGcnI1L+7DELQoJ/wiWynixuvpLL3Vn99fFGsoLG4dcUTtwHuTwmC+VXYYCXFjxmZHuE2xlC6MszmsX3z7QoSehEzAALj9eX5rho1hBuaQgcV0RKIYXTRRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729146568; c=relaxed/simple;
-	bh=s4nhpDsm0T9hY1XZ+ZmlcuwoPC7+usKDApntGAfXH/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hn813DKWyMXxcOETsEAtnmrcfj+sx19M4S/5MEJLS9uea38nRVAiZq/8eGsY3cKLy8tNSAgkjo0x8CfeT84er++LXqedmS47zGocbX+iDFGaZJc0Plb5uLoMMxpWTgWjuMteWZlRVQu74IgrlOAxN6vScEOjarWWO+sn7wtc6Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=JXUVfMP8; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DBBDC1484F3D;
-	Thu, 17 Oct 2024 08:29:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1729146563; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=1jroyLa3IOkny/YPUFBr1HHAZoT/a5l4o8j/iFhQogo=;
-	b=JXUVfMP8Bv46MjY1Ljd2/FloLUgnQ6F36eU82RxJE7iVgi1mLtRIr9C0IjgFUe3rrYRWKR
-	LGvMJdS2btBPeLiVeKy2pEVuvDMiZhpeRndmcohaxEGAbZzP4s8QgUV+UOkn2IOQHG1zIe
-	9uE0w+bY/DU5sPiCAOQ3U4dkDo+sn8IFP5ruOK60PgQ16xX4jpFZVUxruakPMq3LzKvuZa
-	/INMcjZFR4diWO56wOi9SFgkvRvfY2vSWyxvokpA8mal9FDQ3fFjQKK41DZx8LJK4E0euv
-	A6tRMB46rjUlzJUBXKmf4uU1qlGGwfCvn/UfzAk35uNbHAnceR7+aiTFZuQqTA==
-Date: Thu, 17 Oct 2024 08:29:17 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: micrel ksz8081 RMII phy and clause-22 broadcast
-Message-ID: <20241017-skirmish-various-4e334907784c@thorsis.com>
-Mail-Followup-To: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20241016-kissing-baffle-da66ca25d14a@thorsis.com>
- <8bbe2e1a-3ff0-4cf2-8d46-5f806f112925@lunn.ch>
+	s=arc-20240116; t=1729146734; c=relaxed/simple;
+	bh=rVdNY6Nw4tkZGctIPWJ5J3NMwQJ95BwpU5KuXCbyCHM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fpjGXZDDOH1aeSBnJ/PHVxd2JbhZqmf8QQQwpXQCuWDs6QyZkgAMdNDvTmDr7moTlVGYqOX3OFGBEhbUwNVIpxZqTxQVHgD6fYlt3jhT9upiYg5d/4QS7gPFrmmi+jVviUtx/tExoQTmGAmQ8FTvhLj7jMjzXVRohvkeAIjF4oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XTdJp1M50zQrmH;
+	Thu, 17 Oct 2024 14:31:22 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6E67D18009B;
+	Thu, 17 Oct 2024 14:32:07 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 17 Oct
+ 2024 14:32:06 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<christian.koenig@amd.com>, <ray.huang@amd.com>,
+	<dmitry.baryshkov@linaro.org>, <dave.stevenson@raspberrypi.com>,
+	<quic_jjohnson@quicinc.com>, <mcanal@igalia.com>, <ruanjinjie@huawei.com>,
+	<davidgow@google.com>, <skhan@linuxfoundation.org>,
+	<karolina.stolarek@intel.com>, <Arunpravin.PaneerSelvam@amd.com>,
+	<thomas.hellstrom@linux.intel.com>, <asomalap@amd.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/4] drm/tests: Fix some memory leaks
+Date: Thu, 17 Oct 2024 14:31:21 +0800
+Message-ID: <20241017063125.3080347-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8bbe2e1a-3ff0-4cf2-8d46-5f806f112925@lunn.ch>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Hello Andrew,
+Fix some memory leaks in drm tests.
 
-Am Wed, Oct 16, 2024 at 11:43:31PM +0200 schrieb Andrew Lunn:
-> > Would be happy if anyone could suggest a path forward here?
-> 
-> The hardware is different, so have a different dts file. You can then
-> list the PHY at is real address, which will stop the phantom broadcast
-> address PHY being created, and use a phy-handle to point to the real
-> PHYs, so when the phantom broadcast PHY is disabled, it does not
-> matter.
+Changes in v3:
+- Adjust drm/drm_edid.h header to drm_kunit_helpers.c.
+- Drop the "helper" in the helper name.
+- s/fllowing/following/
+- Add Acked-by.
 
-Yes, I think separate dts is a clean solution, creating those files is
-no problem.  I just wanted to avoid the additional work for
-integrating this into build, bootstrapping scripts, firmware upgrade
-etc.  O:-)
+Changes in v2:
+- Fix it with new introduced helper instead of drm_mode_destroy().
+- Update the commit message.
+- Add Reviewed-by.
 
-Thanks for confirming, seriously appreciated. :-)
+Jinjie Ruan (4):
+  drm/tests: helpers: Add helper for drm_display_mode_from_cea_vic()
+  drm/connector: hdmi: Fix memory leak in
+    drm_display_mode_from_cea_vic()
+  drm/ttm/tests: Fix memory leak in ttm_tt_simple_create()
+  drm/tests: hdmi: Fix memory leaks in drm_display_mode_from_cea_vic()
 
-> I would say that listing multiple PHYS is just an opportunistic hack,
-> which might work for simple cases, but soon leads to difficulties as
-> the situation gets complex.
+ drivers/gpu/drm/tests/drm_connector_test.c    | 24 +++++------
+ .../drm/tests/drm_hdmi_state_helper_test.c    |  8 ++--
+ drivers/gpu/drm/tests/drm_kunit_helpers.c     | 40 +++++++++++++++++++
+ drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c |  1 +
+ include/drm/drm_kunit_helpers.h               |  4 ++
+ 5 files changed, 61 insertions(+), 16 deletions(-)
 
-Right.  Thank you for taking the time to read.
-
-Greets
-Alex
+-- 
+2.34.1
 
 
