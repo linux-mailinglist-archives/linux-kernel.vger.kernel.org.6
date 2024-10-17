@@ -1,154 +1,116 @@
-Return-Path: <linux-kernel+bounces-369665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226F89A20B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:12:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A8E9A20BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98B841F24272
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:12:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9FE1C222CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB9B1DB546;
-	Thu, 17 Oct 2024 11:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777A01DBB2C;
+	Thu, 17 Oct 2024 11:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fK9Ry1Nd"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2cztVCj"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D169C1D88CA
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47981DBB0C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729163528; cv=none; b=FaADuQsTh3OxnjveDn9aklw+Zp+MyLng8xnCCjth3tr792RFZMyd91qFskKj1ysSRdwowgK7g6iGLORIEgYzmijlOP3SVCqG3fOLKPPVX+PKH6XIuYMh8jP1SGT/ujA/V8qn2Orjo5tgvysW4kMPsBPr5GTRR1yO5P+XnZNHRko=
+	t=1729163537; cv=none; b=cSyusf4SPP2BFK4gAyyZJAaWIJzSs9RfTj0ch5A+bAy16AMmziPrNojjCEr0OlsT8Y9+qoVJxUiOj0/tav3egRvo3Cf0YbbAzMSN3BF5WslzOzx3WHrntWqTYK0WlAG/IfgZLAGehl4SGWmXgB9s/AU5+pvRFXs4NZmaWWB/p/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729163528; c=relaxed/simple;
-	bh=naS6qP0vKwEe1o6U7dAcb3z4jX5hBsDEpVWMdzrVJ+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l1+LNH0PPCpId2/Hcw+F3kBstGknlAFPSwmlT72poxlzdZVii7Q2CDPe+cIOhWhJan6YvDeXLSaFt/vW2+XIC8061g9ZAirJ2IHjsiJeej3zoRdDVIETxiKnLdAB8dDwawzU3JwIdCGcx5uV9VPByTIMtOUOGS/+gjs0gIrEhd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fK9Ry1Nd; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539fbbadf83so1020058e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:12:06 -0700 (PDT)
+	s=arc-20240116; t=1729163537; c=relaxed/simple;
+	bh=zKdUS339pHOOXA+tBvmsS8ugcMtfQs7dgxpIpkGWeuw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FFa1ifJKj2NdQLwZjQPN3hTm616hcBsxJT9zLBk1adpL7jnF4iQey2lGwkO/RnP0jNic3YZXdIdXBbgFsOkEXzFMxqlnugC8wuv/TOTPcpjT01ji/5xmbqFZbEPyza7+oLBkqozihF/eGfEAs2Bam6oMQi9L/P2kB5fcogPRJiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2cztVCj; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c948c41edeso1024285a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:12:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729163525; x=1729768325; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I01kJoMcb3paKBSp+LkjL4WJ/SXZW2fawtH+MKsukNw=;
-        b=fK9Ry1NdvN4vLKib8icBrqXdETUJT4rjil9rPv+IFPeBKpLVeOlZ6f06VxnOh2B3Yk
-         j6WRzSEfemn+ZphkvL9gdkPV4aer399s3YA6CicvgTNB9rUFZUPjpJT26mcNuJr8pmM1
-         Jqv4FmfxGrbN1AxnfyKTmfz1cim1pYV5c1xd1qHpo9KqJZTdOFTFil4L8Fdcy1Y7Loxe
-         QKSxXoC934KsVpkvgt3i1dWgyOkrUt2Vps31jMfwlr7N3GKRbWMhJoMlPtX1tf+2bd5C
-         K3M0o/u241nROvuJlRVo59wvW3UXLam8XjzskLg96RxwVM831zqZrgUGekKCS5b83zvQ
-         oueQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729163525; x=1729768325;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1729163533; x=1729768333; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I01kJoMcb3paKBSp+LkjL4WJ/SXZW2fawtH+MKsukNw=;
-        b=kq5wrulrF8/E9/5+8OXIewsanoa2xgzM8prfVGFX8DjfiWuYerHsSRf6X4TtJ5eDRi
-         b3hNAPzOUa759QG9s6+iyxO3XidZUz+qvcyxym4v1M5K1kAe4FimhOBql3dXj8mkwbVO
-         4OIBP/GF3k3LZ+Jh2xOsU7UO8HYRnaKDCEzqDvNtsdH5cRDN31cZZSsFNiosPoDcIWC2
-         JhSnv0QcAZ3dT/5Kiw/XDDVqY7i0kY3+gJR1pK+MKx8NNe0kbqKXXUZExwy9VqQxkpYX
-         Ejc217c9tabw8e9UwP0XLxrioX8xv+4iiOs+KD4t0oK79Oap/2E1anXPNJ0JfqAkH91Y
-         rCCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCN2T8sRaOiIxK70UnRJe5HDcb066WwLZvVOQDV8Cjs99G8/KB0R+173kfd1OOOU6y4sECi+rqedM+3N0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7/M4F+p3RXURSmUPgS9Xw8U4S3Iw1A8zMpKyMNPe3yzPTv3rf
-	SLxftmooL3/lMRgYhYnG845upi7YDTEFRQ2ygK1K0zAiK5HfWAxxOz/zKwjd4n4=
-X-Google-Smtp-Source: AGHT+IFiNFENRIQD9pOtFdyQhPcQV/5ezbByMZVYiVFSktA1gZgDzgrr0EeV3eQLQpEHVuZ2WzE1iw==
-X-Received: by 2002:ac2:4c4c:0:b0:539:8e77:9129 with SMTP id 2adb3069b0e04-539da583e0fmr12041614e87.44.1729163524933;
-        Thu, 17 Oct 2024 04:12:04 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539fffb1eb3sm746710e87.81.2024.10.17.04.12.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 04:12:03 -0700 (PDT)
-Date: Thu, 17 Oct 2024 14:12:00 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com, 
-	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com, quic_parass@quicinc.com
-Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Add PCIe nodes
-Message-ID: <qevhitaa47fd77jrrs4viv6mctkhedoz5jy33ruqvv62qrb44y@owzfxnxrapvf>
-References: <20240209075716.GA12035@thinkpad>
- <CAA8EJppfzc_dM9c9mHPVWheVxi-1gJxCmaWPvreELijEQDDSyA@mail.gmail.com>
- <20241001101622.ys36slymgjbaz26q@thinkpad>
- <8459161B-87B8-481F-AE71-3D5156B1CA56@linaro.org>
- <20241001141948.g74rn6777ywvtcmx@thinkpad>
- <CFF89D4D-8131-47C2-95B8-A0E130A16E46@linaro.org>
- <9c24ba5d-431a-c45e-ce1c-3541eac7d017@quicinc.com>
- <20241012124334.4gsspgtuud4uudop@thinkpad>
- <7yzjgqitjvfwricftcpelktwjbgwkjuibwkpodjd6x4gwkjkw3@wkeqp6lqwfqv>
- <bbc900f7-eb8f-2664-2144-50a9a6ad8453@quicinc.com>
+        bh=X2f/5CdwlqDZzfToSurNpkysibov1LhVKsU7xXN+KuE=;
+        b=R2cztVCj1M6HojvKnwyaZlGoo9cKNQqLg5oZ0K+jMEVLfCsTvkBdPNfpgH51ueDJLY
+         ZEAjVGmApowhU5KZfBbjU9RcmQR4+/1gFYYsSAGKQwEKH8O0ZE30Vzr/2HjOzbZy9+Tj
+         +tatnt9BPuB+zCDY6fD1fZx3fZ89NvSIPRCrNUL6huSacVwf6EMEYvEpg17Ecpuqp5zK
+         d9kgC3n+D2yHGo3UUoz+XrU9w4OVO3Pu4ZWi5Dca+C21jYT9bgBO0o2GGM3ZbCBSzpBl
+         lc//pbNVDV3txOqz4v2D7qo23rLWUCL7MCWXN6ECHsFIn05ix/8CHBGsAnF9OEjHp7cW
+         e59w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729163533; x=1729768333;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X2f/5CdwlqDZzfToSurNpkysibov1LhVKsU7xXN+KuE=;
+        b=JNCM8avxKYfReprCEofUfdn3bOy/oVPaeDR2A+f23xYyx/3TXevBq00TRXs48ZErmk
+         xZK7A8ArG93bCo6/aWYas/fr+x6TsVY/TqbEsla0S4Wi2mCHRdeL42NYSpFeJIY9v7uh
+         UWZMOf6Qy7ploYmm5xd2AYu8YheYg5/pC6pzVKaJHw61m7imXX1BcUykkj0P7dYYcDwZ
+         GNJtEica+WMNrDdCjM6ky18p0v1YL4PuPp9eQpJRZQp/gUk6KAohhyswR6IHIaiTXQIP
+         Anr38IrTOb4oPAUqLlsSoh10d1HovAnkqGCAKsH8fjH7dmPwuFxY/s0YKPL5bItOgaZ0
+         ITpg==
+X-Gm-Message-State: AOJu0Ywo6XKGkBAFVRhwRVMb4Jkiw/PWbVm8ANQWUMXDzq5sDqdRmwbN
+	Iunw8+tEXSztqb2IAd3GTnkcAJRTTKiJeBaH/VC1ezorZVz6PSWeTau2R0UdANBC6W0/oPnJOo2
+	uIoZ6T7OFtO4eE8y4VdoS+P93rchZMC7v
+X-Google-Smtp-Source: AGHT+IHSlLqfHkfXjcrCrqw6HVJJpqqJW1sN04velCYQ/+/CcptzRhKhS5HTJ56w/NaVMDxgvs11CXhycPsWrCOogtU=
+X-Received: by 2002:a05:6402:42c9:b0:5c9:6bd9:68db with SMTP id
+ 4fb4d7f45d1cf-5c96bd96bd1mr12186832a12.3.1729163532841; Thu, 17 Oct 2024
+ 04:12:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bbc900f7-eb8f-2664-2144-50a9a6ad8453@quicinc.com>
+References: <2024101416-scouring-upbeat-b658@gregkh> <20241015070226.15790-1-vimal.agrawal@sophos.com>
+ <92435cd4-c0e1-4d05-8ecf-52dd9249adf4@quicinc.com>
+In-Reply-To: <92435cd4-c0e1-4d05-8ecf-52dd9249adf4@quicinc.com>
+From: Vimal Agrawal <avimalin@gmail.com>
+Date: Thu, 17 Oct 2024 16:42:01 +0530
+Message-ID: <CALkUMdS3wEuSi5SGqsRKt3nSb4mHue1bJTJm8=QL3OLYU2GWig@mail.gmail.com>
+Subject: Re: [PATCH v2] misc: misc_minor_alloc to use ida for all dynamic/misc
+ dynamic minors
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, 
+	vimal.agrawal@sophos.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 10:43:19AM +0530, Krishna Chaitanya Chundru wrote:
-> 
-> 
-> On 10/14/2024 4:55 AM, Dmitry Baryshkov wrote:
-> > On Sat, Oct 12, 2024 at 06:13:34PM +0530, Manivannan Sadhasivam wrote:
-> > > On Fri, Oct 11, 2024 at 05:24:29PM +0530, Krishna Chaitanya Chundru wrote:
-> > > 
-> > > [...]
-> > > 
-> > > > > > The logic here is that the fixed endpoints in the switch will get an unique SID
-> > > > > > and the devices getting attached to slots will share the same SID of the bus
-> > > > > > (this is the usual case with all Qcom SoCs).
-> > > > > > 
-> > > > > > But I guess we would need 'iommu-map-mask' as well. Hope this addresses your
-> > > > > > concern.
-> > > > > 
-> > > > > Yes, thank you!
-> > > > > 
-> > > > Hi dimitry & mani,
-> > > > 
-> > > > This particular board variant doesn't expose any open slots to connect
-> > > > a different endpoints like another switch(which might have BDF unknown
-> > > > to us) so static table should be fine for this board variant.
-> > > > 
-> > > > I tries to add iommu-map-mask property, the issue with that property is
-> > > > that the driver is applying the mask to the bdf before searching for the
-> > > > entry in the table. If I use a mask value which satisfies all the
-> > > > entries in the table ( mask as 0x718) and if a new bdf is enumerated
-> > > > lets say 0x600 due to mask 0x718 its value is again 0x600 only.
-> > > > 
-> > > > Can we skip iommu-map-mask property and use only static table for this
-> > > > board as we know this board doesn't expose any open slots.
-> > > > 
-> > > 
-> > > Hmm, I was not aware that it doesn't have open slots. Fine with me then.
-> > 
-> > It doesn't feature open slots, but it has two PCIe connections on HS2 /
-> > HS3. Users might attach external PCIe devices.
-> > 
-> > Krishna, could you please clarify, how those two connections are routed?
-> > 
-> For this qps615 board to one of the downstream port (pcie to usb) usb
-> hub is connected and to the other downstream port NVMe will be
-> connected.
+Hi Jeff,
 
-The board has two PCIe links routed to the HS2 and HS3 connectors. Are
-they routed to the PCIe switch?
+Thanks. I will be adding MODULE_DESCRIPTION in the next version of the
+patch. Will be splitting kunit changes from this patch in two patch
+series.
 
-Yes, they are not standard slots, but still the board is expandable and
-it is possible to connect external PCIe devices. As such it is not
-possible to have static SID mapping.
+Vimal
 
--- 
-With best wishes
-Dmitry
+On Wed, Oct 16, 2024 at 3:48=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
+.com> wrote:
+>
+> On 10/15/24 00:02, Vimal Agrawal wrote:
+> ...
+> > +static struct kunit_suite test_suite =3D {
+> > +     .name =3D "misc_minor_test",
+> > +     .test_cases =3D test_cases,
+> > +};
+> > +kunit_test_suite(test_suite);
+> > +
+> > +MODULE_LICENSE("GPL");
+>
+> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+> description is missing"), a module without a MODULE_DESCRIPTION() will
+> result in a warning when built with make W=3D1. Recently, multiple
+> developers have been eradicating these warnings treewide, and very few
+> (if any) are left, so please don't introduce a new one :)
+>
+> Please add the missing MODULE_DESCRIPTION()
+>
+> /jeff
 
