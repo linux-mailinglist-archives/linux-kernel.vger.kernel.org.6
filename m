@@ -1,102 +1,223 @@
-Return-Path: <linux-kernel+bounces-370556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0292A9A2E7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:29:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E0C9A2E80
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8AC12810C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:29:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBBB81C2249E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C992281E2;
-	Thu, 17 Oct 2024 20:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DFD2281E0;
+	Thu, 17 Oct 2024 20:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZME4Xqp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="leHQDlVp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47342227BA9;
-	Thu, 17 Oct 2024 20:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729196934; cv=none; b=vF2UDQ1zYTv11rPRm9iKLu29HdBgoC+rzRhrb10hXEd+J5wxa5xm0TLU2cBOikE+N2zSstCskeEwfGKbyTlqXKmfIERNQwTPHq9ynmU3RIJTkLnu03nZInzcVj+cSNSoXsA9G2IyqCbpns3MzSJSeKNVaUORURJYwVuKkk0W+vs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729196934; c=relaxed/simple;
-	bh=mHJdPYRlRIBOUm7RwbdVae1/VjEYV2F5pEsRwLleacY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O7IeYFWYJ5e6wbEGaypEK0gY2jUWk9X410Djn1pQSsanP9/Hq+X634P3ZHZBHAfzOiz9KSGFzjGn3ehBeHXHx5iR51flpOb0xyv1a5QgUnQFteCFe5jm1B+AwINYv61AhG8vlaVI2kzU1pklh/RoZGZt1H+cBS/IDH4iWE/idUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZME4Xqp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86235C4CEC3;
-	Thu, 17 Oct 2024 20:28:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729196933;
-	bh=mHJdPYRlRIBOUm7RwbdVae1/VjEYV2F5pEsRwLleacY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fZME4Xqpen8So84dZF1cWsZTHPv58ZNzBZr4+7Xk6TuMPS9MWM0+qmmv8eGNQAROK
-	 q3o+42XsmfPctcf7d4DqyW0B2Xg6HY0p0FDiqmds/VYCYLVyIp78GGbKZEINMjsXCf
-	 gj6Z55jpjGAFwZcHCXpJvy4nx7ngzWz9bYXZvcK8XPgd5RWAl4EzVz3Qwmwz2VGtTo
-	 4ymnMLQvNrSVlKRbye/56CMPJUo+2lg/TKsPeGqpQkm0hN7/ojlOM7vBBmhNlHoaWv
-	 aQlnxWFcZ7Z+p2ILyBd4vboAeROBXae+DdOLDch7okU70ObNeg5jevkcSM/alXfLWi
-	 ohsQagH4iudzw==
-Date: Thu, 17 Oct 2024 13:28:52 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Milan Broz <gmazyland@gmail.com>
-Cc: dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Md Sadre Alam <quic_mdalam@quicinc.com>,
-	Israel Rukshin <israelr@nvidia.com>,
-	Mikulas Patocka <mpatocka@redhat.com>
-Subject: Re: [RFC PATCH v2 2/2] dm-inlinecrypt: add target for inline block
- device encryption
-Message-ID: <20241017202852.GB11717@sol.localdomain>
-References: <20241016232748.134211-1-ebiggers@kernel.org>
- <20241016232748.134211-3-ebiggers@kernel.org>
- <20241017194415.GA11717@sol.localdomain>
- <b8670e11-61d4-4831-8a21-2dda3c5db131@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C188622738A;
+	Thu, 17 Oct 2024 20:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729196964; cv=fail; b=L7mEuFX9zwB+uUHRlSGpPRtdYse4vNjj9p9dYPxqr1yQgeMs5yJSY/steRbSXmD16XxsACNU1kUNXGqiBcxwiR1fnQyWygVFvaj3yrceth2GCoQ0q6MJvOFs1+eGzs/+ufEAjpqA67nPn07FMGaEyePVqkkbpDyiokAOsHMUmYQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729196964; c=relaxed/simple;
+	bh=t6vp905Jfxwi7FzL7Ob+lLGe56EZaEa37GWs66ZVWE4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ik4oit20Rr554HGZeIJ9/7nw+scFKmEPUk3O/onUB/F/ZebBnGw/S8ECcMf2LfS1zHmv6gFcdlhkfn80lBuhdhdxYHUm2CRRMv36loyAxBsyXggydgaDyAJp2EfUF0PDEaq3UHwSfkdMB8aOgSNmhLwXj8lbGCvI8ijwQi4Z5CE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=leHQDlVp; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729196958; x=1760732958;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=t6vp905Jfxwi7FzL7Ob+lLGe56EZaEa37GWs66ZVWE4=;
+  b=leHQDlVpiVfAXAvNLCSQiQaa4alkzHZvwyO9Vn9i27lSDKJ/yGXNaV49
+   5vhf7MBBYl8TRzVSdrxBpRMs9pu8iExRMljQOjZTAXMTxImj++ypWWf+j
+   4TAR+j5lKDN0TNoDjKspEdZ8PXbwro6xYMfa1ufekNvhRQGk5S7wdY+eg
+   5RnRJ/liHdmcY/U48g1eRf3NssjevLuGkgD7OaDZtQJTBu55SmfLe7BT1
+   eH0ax49/juqXyQGk4tSiaQyyn3W1yrkrigj2os5NtlJURbguOJv8CQcc4
+   d7Efei0VvvKlfnD2VcP7nP1GV52C2y4Kz9V/gLPGTaKOI5pa4DrXo0Mok
+   A==;
+X-CSE-ConnectionGUID: WzBnjpV7S9mgxUceXlptYg==
+X-CSE-MsgGUID: EnoZASwkSN2zjlhDRvmMKg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46170749"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46170749"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 13:29:18 -0700
+X-CSE-ConnectionGUID: CJHbJL0fTyyWDLxdjYyG3w==
+X-CSE-MsgGUID: nt+IyeR8RzKm2qw3YfOCOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
+   d="scan'208";a="109478182"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Oct 2024 13:29:17 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 17 Oct 2024 13:29:16 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 17 Oct 2024 13:29:16 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 17 Oct 2024 13:29:16 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.177)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 17 Oct 2024 13:29:15 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iiMNF6rHR97aZ27zZyvxUg7JQ3/D7MFoZJxyJ82Xo8io/8UoqNSCpXiG/8pcIuGZ1uat2Gfc/ldEHzEYAt0jKL1onzH3D+HUBQDY4oSa1cerFmXnVyVb4aVQRzYxgb28GCXvmOObH5t7gjpGx+FgUpd2m18QHaBT9GFx9FBtOCHQq5UdE3wEfAiWMq09ZT4D5AT0fjuKGD1G3PPYT7T5u+fLux75Hd/ZWFLlAH5dGK8wN4HWH5PXCUFCLHQg4vu8pwDuQScRYI1J2q64BA7deVjwbTGuM9FaN56WLLDz7sWS9Idf1xfWdvBuU4uViaQP5w6fNKyVdiQ2v7W56qy4Rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/qiW+B7+1bewn5oWLz5VHGCNddiLGKmFZ+Z9qTbe/0o=;
+ b=pzRqkmH5Ndtte4+HshON8lkyq5Hxe7wRl+to0aS3gEBdceAN0n6fq3aKBFU4bsUodSHM7eEhNSjNiM7IQ0d2RLfwJON3mXaWluKIT4eaRVmwFKdZfZefsT3k+TvhBJ5h7uISH5RvUjWnF4fmcqWlSrHDDvAO94tTYQVAzkKDI0W6EAAdYdRUN09CU6SXpeeqw0nrW+oz70+fYXSADx504IzmjEQcWuij2r59K1mUX085ibDOW6f1ujg4+eOW7gSz915pcyxIDs2njKipPkuo9rfkGydzXd8kT2sIUUvjJbYwbcVpokl/7prCgbT7dLIkGquSbT/REXcMiHiYTSjlHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by MW3PR11MB4554.namprd11.prod.outlook.com (2603:10b6:303:5d::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
+ 2024 20:29:12 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%3]) with mapi id 15.20.8048.020; Thu, 17 Oct 2024
+ 20:29:12 +0000
+Date: Thu, 17 Oct 2024 15:29:02 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Ira Weiny
+	<ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, Alison Schofield
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 15/28] cxl/region: Refactor common create region code
+Message-ID: <6711738e4caae_2cee294da@iweiny-mobl.notmuch>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+ <20241007-dcd-type2-upstream-v4-15-c261ee6eeded@intel.com>
+ <20241010141826.0000796e@Huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241010141826.0000796e@Huawei.com>
+X-ClientProxiedBy: MW4PR04CA0050.namprd04.prod.outlook.com
+ (2603:10b6:303:6a::25) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8670e11-61d4-4831-8a21-2dda3c5db131@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|MW3PR11MB4554:EE_
+X-MS-Office365-Filtering-Correlation-Id: a912e9a8-d126-4d97-d1cb-08dceeea5c69
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dVsYAYB785u3mOx8bUftpaAsq8y6SqugKSGbmpIocJdAu25a9jSM/+xXz8Sb?=
+ =?us-ascii?Q?PIAUgp+84Jifa3wZCEO1Vr3zKtbfAcJGbqqpdpaLmOmzH164Jo9cQ50XgO7W?=
+ =?us-ascii?Q?SITYga9OIX1pfBJj7qCzBk5WE8LwnDDSpPOlH8bXkANP5J8pxOtTWDMdCyki?=
+ =?us-ascii?Q?Y84ymTsq9sMBzsQfwVKQ6rRwjugdg2p2JK5bnNmdNOOIhfoXoJubgirdaFE7?=
+ =?us-ascii?Q?cjR0LRsRIcIuTi2WQvbdV4H14MuNtRQwsKFkM/gFuAgVJt0aOsvzkk29mD0S?=
+ =?us-ascii?Q?KszpiOE9x7Vm1KLeHTasdYIK1vsOFnUuXCT6APMf+mpDAEqN6WsIdDN5aq4k?=
+ =?us-ascii?Q?KiJ6/NsFStZpL0RZ8R9c0M3Z4hNd0IczX/Y/NhFWT/YBhjLufVuRqWLhyUis?=
+ =?us-ascii?Q?Bdb8Tg+VNQkPdjdBcxD5O0UeU0VswawUSJCRpuAnhxGT956bR0PgWaFNNA/n?=
+ =?us-ascii?Q?xhk/EF2ZCdjNGvrQBzp6PucA3CxvhAIHoXE7o9fhunun4DDLwefcTRxdf8BY?=
+ =?us-ascii?Q?4GwIwetk4WRZurqCViQs5cSE0/8AqCN85jTVqTFgy4ckXIhwzZ3CQL+dt0Im?=
+ =?us-ascii?Q?ZcTn8sy4xpIu7w+O4l9lox8mqL3Bw6oO0Ny7n2xCCcb/CBWuSLnM3l8OGgEk?=
+ =?us-ascii?Q?Zv7cn58dHl8EMuq+vxoSHGAM4TpY+GlymX6ahOuebPjmvoFCeoBrtLBs/afB?=
+ =?us-ascii?Q?oWyu6zoVxtxScuz/YDG3vywqdCjuap8zUZTqCqbVTNeqIpXlbhMYADEtnnBB?=
+ =?us-ascii?Q?CR49ef+FzA64eNtlWBbjcOo6YdrtcqqhE8EwqnrQVatyVAWUohfNXd2U0XJg?=
+ =?us-ascii?Q?n9sQkq382Oy0DIINaM9y9D8Li9gmIYBCeBOqt+cI1RzIzEMQvx2lS5KT31by?=
+ =?us-ascii?Q?SGjp1kXE7GNpa6uTjncpV5pDPayVsEn5OCN2zZdojm8SNeRDEJw00ID0X7lH?=
+ =?us-ascii?Q?Hjx8lBLLf6wte4cYS0ouN9rmbWyRObIbxWvaQjgxcUDq2Zl55RsB+9GRUTtv?=
+ =?us-ascii?Q?ykn3YSwwL0rAA2nzlz/rJQyUaejQe57rFTAO8I4wCMSa2sDMoGwfk96/ohGG?=
+ =?us-ascii?Q?xknAZ0hIoQKnm5nKgjVoVKFG6Op8RWIrxzntzxFc8nRjT13stSd+LNl5Sq3a?=
+ =?us-ascii?Q?/cfdJzU5wCYJJN4UUSsJ82wEGNo8lzk8HSiS5Sne3z/fiLrs91pVr/1C+Yra?=
+ =?us-ascii?Q?odgbdvLInF0/xZGS/Py9vAzAhTsDtHw3yIoa2G3+uUgYmhpsFlAEBANzOfcH?=
+ =?us-ascii?Q?5HeYOaIdMSzbK3QiuxzN0fTtV/VyvbpeLq9JVRJwZaVaY54NfCKzVvdzVfOT?=
+ =?us-ascii?Q?+C2JsXLoBW75SPD9MvwV7Phn?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+vmynPRh5GJSzTEQCNysEJPV50B3M3+E1PZd/oNY639QAUP38U78HV2zGaYq?=
+ =?us-ascii?Q?3+vDfVszs5QQE0zW6nV1QuOdtLVXnO5Ro4nG/tmlMaRY0Hi3wBy0lg3j1S8T?=
+ =?us-ascii?Q?nGpud6GSln1RpJf/gVJ4LmiBlMGoJgqLsH0MgmlEUMgZpWA0XGrpfHslzZeQ?=
+ =?us-ascii?Q?uTgeFCuIyh9AzTZmhmBCSPLJFKuPLUK7cIQyoqSjTe4awhLeFVFbk8kHvdTT?=
+ =?us-ascii?Q?1NMEYp2G69i4YY3AXYcmyojbGZkXTwEmCI41O+92WNhiNC1j5kRCp4sIhSEs?=
+ =?us-ascii?Q?upuWgpOdHU9k9FD0Bc+Kf8XAXKS4XP1vugo79Z/FuBHoWPXlcuuwXGEgVpel?=
+ =?us-ascii?Q?gAk0HFnnPjpr7DaSH3Jls0EySA7imnOX7maH6PZ+l9hbirzDoz02VWOf+KsA?=
+ =?us-ascii?Q?jTx4Jb/C7jzAP0uW6IGz+JeXfvHVFM3r0KCd0qV5mJOYJOmY8k6mZ9vayC1e?=
+ =?us-ascii?Q?ZuZQtBsD7fLvoqUeaTduPfB2zeuupZzTP4UGXGbdC0mQUbv9dN3MqXPfBDlW?=
+ =?us-ascii?Q?GQ0WEMBjPmezT2KaPGJtifEc7JtvtvC7kOZJgDsNzHUr5DQAb6Jg2XLRhJMe?=
+ =?us-ascii?Q?ljUSAH4ma+Hb4h1HBvxf59bCEErLEOsM8+C05KwXA3VvV4J+Vf4qsZii1OFS?=
+ =?us-ascii?Q?tKnvZHNKHMY7BDPd+0FMLqNeHtqBQ1zS0l+Qr7MDz+iZU3Mj4qhUx7APDzkt?=
+ =?us-ascii?Q?XtFH5d2HICXVECYcTxnSOgsiqFueHOeYySVJLSdrg/OLjW3/3tpAMbagyDDh?=
+ =?us-ascii?Q?NITW1iPJVMDrBUBvPVTjneChgjoIVOu7tBXcZ2glU7TVlWmLrdbJi9h2sJ1Q?=
+ =?us-ascii?Q?5GcFaXoU0BZjctr58NromXmGeFDB4aGnwQELnt2eTiQtsEgGWQQreFC1qPKl?=
+ =?us-ascii?Q?zzLq8gB1/JLZwwL634bxO8dkqN1TQoO7idn0EjX5g6xMOxaeDmt2xYkN5TVf?=
+ =?us-ascii?Q?u3F9I6GHvseN/2TSk6n0WHKWiH3/BasuMN2nj58YF4bWzX8/cmsJn5f5A1/t?=
+ =?us-ascii?Q?ZipeR3He0Q+Ckc3WrvXEorz3LizBfv5wrbi72VT3KSodXyKY8hyq6pebChiw?=
+ =?us-ascii?Q?A9G2mX+uFUtsW+goojTVKxj6E42/FKk7X4YwQ+fr+bV5duVM95lty65FdHLu?=
+ =?us-ascii?Q?5+6e0pqUdKGj24w/G3CGEYYmg4mUFQWqB/05H6Kvxs24rIJYN6djL1cOgd5F?=
+ =?us-ascii?Q?Zj3cBEoidZ0RPznqbkoD35c0qbKRUJhh5gZSsrN2lF2TZmVnpL28Z4IAyp3V?=
+ =?us-ascii?Q?p+eN8SUnbe2pdY2XWUYAqImER/4EGTrda4GCQY0btqG7/foHHLWMe0yoDdyv?=
+ =?us-ascii?Q?n/2xItRTVOfLPn7TuGzVc4sruQ6FHUdoQFmek4aGvdQtrHOJJitIZqXl03En?=
+ =?us-ascii?Q?cIn+Y7P0WuCTyrAmlLXiTDT3Z7ISqVDyFkyXR9p77LGqoV+LtOk+XSbpHvgP?=
+ =?us-ascii?Q?rx12AKmP9gSRPh4THdR/CeI73tWKbPi2289xgGS2nzmfRlhW2gqyXd7JO2Pv?=
+ =?us-ascii?Q?eUL4gZxxsWlUr1E5wfAkCUvmmoukZa5QlH9Yr43BqS6N2edXj5svVEcxQuEf?=
+ =?us-ascii?Q?4tNIQ+cRgYlKFZMdiXBVvJTRLE9Xl1lcbs/OfwDj?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a912e9a8-d126-4d97-d1cb-08dceeea5c69
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 20:29:12.3189
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3JwOZoAnsv42JFskqBebXUXBJbtupB0fqYwI0Zj0dfBLNF26dlkItQXtBWSaLFLRLtPBJxmDgLp239KjQxlYxQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4554
+X-OriginatorOrg: intel.com
 
-On Thu, Oct 17, 2024 at 10:17:04PM +0200, Milan Broz wrote:
-> On 10/17/24 9:44 PM, Eric Biggers wrote:
-> > On Wed, Oct 16, 2024 at 04:27:48PM -0700, Eric Biggers wrote:
-> > > Add a new device-mapper target "dm-inlinecrypt" that is similar to
-> > > dm-crypt but uses the blk-crypto API instead of the regular crypto API.
-> > > This allows it to take advantage of inline encryption hardware such as
-> > > that commonly built into UFS host controllers.
+Jonathan Cameron wrote:
+> On Mon, 07 Oct 2024 18:16:21 -0500
+> Ira Weiny <ira.weiny@intel.com> wrote:
+> 
+> > create_pmem_region_store() and create_ram_region_store() are identical
+> > with the exception of the region mode.  With the addition of DC region
+> > mode this would end up being 3 copies of the same code.
 > > 
-> > A slight difference in behavior vs. dm-crypt that I just became aware of:
-> > dm-crypt allows XTS keys whose first half equals the second half, i.e.
-> > cipher key == tweak key.  dm-inlinecrypt typically will not allow this.  Inline
-> > encryption hardware typically rejects such keys, and blk-crypto-fallback rejects
-> > them too because it uses CRYPTO_TFM_REQ_FORBID_WEAK_KEYS.
+> > Refactor create_pmem_region_store() and create_ram_region_store() to use
+> > a single common function to be used in subsequent DC code.
 > > 
-> > IMO, rejecting these weak keys is desirable, and the fact that dm-inlinecrypt
-> > fixes this issue with dm-crypt will just need to be documented.
+> > Suggested-by: Fan Ni <fan.ni@samsung.com>
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> Nice.
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 > 
-> Hm, I thought this is already rejected in crypto API (at least in FIPS mode)...
-> 
-> It should be rejected exactly as you described even for dm-crypt,
-> just the check should be (IMO) part of crypto API (set keys), not dm-crypt itself.
-> 
-> And here I think we should not be backward "compatible" as it is security issue,
-> both XTS keys just must not be the same.
-> 
+> Is it worth dragging out cleanup like this to the start of the series so
+> Dave can queue it up as 'good to have whatever' and reduce this set
+> a bit?
 
-In "FIPS mode" such keys are always rejected, but otherwise it is opt-in via the
-flag CRYPTO_TFM_REQ_FORBID_WEAK_KEYS.  dm-crypt doesn't use that flag.
+The problem was that this patch depended on the region mode change...  But
+that was an easy change.
 
-We could certainly try to fix that in dm-crypt, though I expect that some
-dm-crypt users have started relying on such keys.  It is a common misconception
-that XTS is secure when the two halves of the key are the same.
+I've moved it forward.
 
-- Eric
+Ira
 
