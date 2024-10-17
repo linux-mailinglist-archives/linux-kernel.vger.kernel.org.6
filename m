@@ -1,150 +1,95 @@
-Return-Path: <linux-kernel+bounces-369776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E8199A228B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4369A2290
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 957C1B259E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:40:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4202B215DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881D51DE2CD;
-	Thu, 17 Oct 2024 12:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ODnFXsYu"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2551DE3A9;
+	Thu, 17 Oct 2024 12:39:30 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021BC1DDC17
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEDF1DD862;
+	Thu, 17 Oct 2024 12:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729168755; cv=none; b=d2YJIQKqS1Wh7AHpU86QuAwS1kTUeolN23v368t/QFcV18mUG+8lRTjzELHMdjMfLAO/VWuFEknqVjHUI8sx+tRrXCe6u+Fpz2hfXQ29AVWUlWl7FrADLH6ajZmkLjmNHKQwq3dQdhtBA5mCw+BizyegL3WtpPSOZrqWsDkbmuM=
+	t=1729168770; cv=none; b=s9b/5KD3yAI5cKijS/DfRITI1sgwJOOPg04JHPFZT+NsL8M/91AB2j/tsbWzRKdTLa2H0b2I51UVixvYyM2wgANsUbvItQk5ei3DCktzYFsdCLxdWS34crekaKxAWiwpaHcKf2tlAkGZRZINthe4W4eFQCNJRxogqCKyzhVGH+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729168755; c=relaxed/simple;
-	bh=CmSgG8dgDVGowYqWp/vzfob7NQfDeXXWilwWB40CND8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=NNupek9hmR5CNzlnkXQ38IcSloZRVLvQpyOmmDfGRwn+hno4obs0PCks2MAyLbeA+4BvVPXtHQmRzbBHrWOnIw4UErY2iN6BUIwAluhcT1IMlDGNNGyM1EDKwCAyheLvyhRR83Z4yT18iEJb7euM2cBDABX06h0MITDKVmG4o+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ODnFXsYu; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d3e8d923fso690616f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729168750; x=1729773550; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eLKbd68RzcxlFXK7q4vrGEd+fffJ1TMM8zv/7HYDcsQ=;
-        b=ODnFXsYuVqeN5imNxMuTsXP49rINnfJwbqB6dqlPqXJF1QCS4flU6hHbEdzl9vkPoD
-         JhiXnXVpauDasz71/s1st4xCUEJQyd056XN5/GCmTtwCfHCHEDsbsXVrx1ZzV1tL45LD
-         WdwnIGuoKHJH+WtB34GBxgJsCphjW6AFTpgAqCMm12tnGgGdOsUufQ0fyUuYh71tpMwD
-         emUto0uD3B4WUUNMv3y2yHaD7vclvjNuJi+S/8rLP6pW97i2J81iH0NoGgiAGp1LBvxJ
-         BRWr9YI/XkBEGO6V1wUY5bNyQ85l6I3H8nsIQnsAhbmTotKtoRvVRkhJZFnV6H6lWsXy
-         ZBeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729168750; x=1729773550;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eLKbd68RzcxlFXK7q4vrGEd+fffJ1TMM8zv/7HYDcsQ=;
-        b=nuy2IUAswOxaqCOHlPgyvU/tniLoa7SwXx0HfGN8umRtNqSs2KmXMEeMpYLyxyQ519
-         odS2Z0UauDqeAzp9/NYsnTxAmLQ/FVjtobKB79B3RGam8O2uJk6b3Xz2jwKx/ajHWkBy
-         o+Ihp6/2E4KeDDOfWJqPp0PZsdOKUZl7udw9aDG+Hbuj9adii4ZfdQLgjX/1j6BViM+1
-         +Ir1op5jz3Yt4c8CgPz7Qk2Fu9oq7x9H2n6hFrbtcSqDtFYQT/30mk3FVWVXOCbe0zhN
-         Z6g5LWLW2NRVNIC8kE0HfDGIcSLbfv1DMeym/JWfx6uqC4WCd1wiQAQpV1keaa9Rl8N8
-         u46Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXab/dxmQqj0LNraR5NONDXGmaC5TwME2id3+mQ7qZYDXh5vUCLvtzFAlAaZ7dZU/NxDSD+r5jSTiholAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzhHbJCd9+NdLiglv2Fy7E9XvsL5DXm0Sv9rYEdlVBv6aauedN
-	k/bJfb0QC+EHCAQ83r0cG9r7MQoc2OLNybvxpkRZmctjOIAzDuqyxjTWH9Um/j8=
-X-Google-Smtp-Source: AGHT+IG7ejxJJUoO3H77hYt2WNQRu3rm4oMZyvw11lFYzsiOaPe5DscdwmGO2D+HP8vSEzTm8Trfkg==
-X-Received: by 2002:a5d:5051:0:b0:37d:4fab:c194 with SMTP id ffacd0b85a97d-37d86bd59b0mr4879360f8f.25.1729168750204;
-        Thu, 17 Oct 2024 05:39:10 -0700 (PDT)
-Received: from localhost ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf80a4sm7156250f8f.87.2024.10.17.05.39.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 05:39:09 -0700 (PDT)
+	s=arc-20240116; t=1729168770; c=relaxed/simple;
+	bh=58ZH9EysMGctJs6VFMx8+biSi2sHaIk63WBGxe5Y220=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kfDoTLgVwiw3CPOXBfT1YqVUlJ2LFw2yS0huVGzuxQyGX6rYRzyV3VuYQu6fD/TZs6VP13dkDOipPUVsze/Nt4vr0BJ5w9oJbS74NvUR0D4o/1DIeRAXLPC3k9VlpkjqAOg5L+CxTeez+OrGT3Xr0iqNhx3x6MuC6/7gGk3az8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=43634 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1t1Pmg-00Eunf-4s; Thu, 17 Oct 2024 14:39:20 +0200
+Date: Thu, 17 Oct 2024 14:39:17 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Felix Fietkau <nbd@nbd.name>
+Cc: Eric Woudstra <ericwouds@gmail.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Roopa Prabhu <roopa@nvidia.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, bridge@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH RFC v1 net-next 00/12] bridge-fastpath and related
+ improvements
+Message-ID: <ZxEFdX1uoBYSFhBF@calendula>
+References: <20241013185509.4430-1-ericwouds@gmail.com>
+ <9f9f3cf0-7a78-40f1-b8d5-f06a2d428210@blackwall.org>
+ <a07cadd3-a8ff-4d1c-9dca-27a5dba907c3@gmail.com>
+ <0b0a92f2-2e80-429c-8fcd-d4dc162e6e1f@nbd.name>
+ <137aa23a-db21-43c2-8fb0-608cfe221356@gmail.com>
+ <a7ab80d5-ff49-4277-ba73-db46547a8a8e@nbd.name>
+ <d7d48102-4c52-4161-a21c-4d5b42539fbb@gmail.com>
+ <b5739f78-9cd5-4fd0-ae63-d80a5a37aaf0@nbd.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 17 Oct 2024 13:39:08 +0100
-Message-Id: <D4Y35WNU7MWN.2Q3RHCLLZ69Y@linaro.org>
-Cc: <konradybcio@kernel.org>, <konrad.dybcio@oss.qualcomm.com>,
- <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
- <krzk+dt@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
- <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add Qualcomm SM6115 LPASS
- clock controller
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241017005800.1175419-1-alexey.klimov@linaro.org>
- <20241017005800.1175419-2-alexey.klimov@linaro.org>
- <n4nbzwostn6i5ygskjfr4o7haqujodadxd2kspvlk2gccxoaen@pk3qj7rxvspf>
-In-Reply-To: <n4nbzwostn6i5ygskjfr4o7haqujodadxd2kspvlk2gccxoaen@pk3qj7rxvspf>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b5739f78-9cd5-4fd0-ae63-d80a5a37aaf0@nbd.name>
+X-Spam-Score: -1.9 (-)
 
-On Thu Oct 17, 2024 at 9:39 AM BST, Krzysztof Kozlowski wrote:
-> On Thu, Oct 17, 2024 at 01:57:59AM +0100, Alexey Klimov wrote:
-> > From: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >=20
-> > SM6115 (and its derivatives or similar SoCs) has an LPASS clock
-> > controller block which provides audio-related resets.
-> >=20
-> > Add bindings for it.
->
-> That's a v2.
->
-> >=20
-> > Cc: Konrad Dybcio <konradybcio@kernel.org>
-> > Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > [alexey.klimov] slightly changed the commit message
-> > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->
-> My tag?
->
-> > ---
-> >  .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 53 +++++++++++++++++++
-> >  .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++++
-> >  2 files changed, 68 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115=
--lpasscc.yaml
-> >  create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-> > +examples:
-> > +  - |
-> > +    lpass_audiocc: clock-controller@a6a9000 {
-> > +        compatible =3D "qcom,sm6115-lpassaudiocc";
-> > +        reg =3D <0x0a6a9000 0x1000>;
-> > +        #reset-cells =3D <1>;
-> > +    };
-> > +
-> > +  - |
-> > +    lpasscc: clock-controller@a7ec000 {
-> > +        compatible =3D "qcom,sm6115-lpasscc";
-> > +        reg =3D <0x0a7ec000 0x1000>;
-> > +        #reset-cells =3D <1>;
-> > +    };
->
-> Not much improved. Don't send same code from whatever repo you got, but
-> go via mailing list.
+On Thu, Oct 17, 2024 at 11:17:09AM +0200, Felix Fietkau wrote:
+[...]
+> By the way, based on some reports that I received, I do believe that the
+> existing forwarding fastpath also doesn't handle roaming properly.
+> I just didn't have the time to properly look into that yet.
 
-Ok, thanks! I was not aware that there was a previous version on
-maillist ~ a year ago. My impression was that this was never sent for
-review. I'll update and resend it as v2 if there are no objections so it
-will become a proper v2. I am more interested what should be done
-regarding older email addresses or maybe .mailmap will handle it correctly.
+I think it should work for the existing forwarding fastpath.
 
-Best regards,
-Alexey
+- If computer roams from different port, packets follow classic path,
+  then new flow entry is created. The flow old entry expires after 30
+  seconds.
+- If route is stale, flow entry is also removed.
 
+Maybe I am missing another possible scenario?
+
+Thanks.
 
