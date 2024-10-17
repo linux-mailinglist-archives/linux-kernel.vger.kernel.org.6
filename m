@@ -1,135 +1,135 @@
-Return-Path: <linux-kernel+bounces-369543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E719A1EA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:42:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FAC9A1EC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4B161F23718
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:42:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95E511C214DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6771D959E;
-	Thu, 17 Oct 2024 09:42:05 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C869B1D9327;
+	Thu, 17 Oct 2024 09:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="puWc0Sfe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3795E762E0;
-	Thu, 17 Oct 2024 09:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933CBC147;
+	Thu, 17 Oct 2024 09:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729158125; cv=none; b=cAoof/vbVP7P2n/pyKsJkH3WG15dKdoEPHVr5+/d1FdYPDnYg87OGmTgUq1xXBIdjgOnoHFoVGOuLwLKzWxelnu4LEjYb/QjReHVb6Ae6WaEtXKtzqf7WX/0MQZnW1o4lw/KAO9IVt1fMRJ2pENSDoyj4eZ5Y9RnlB58kQpt6+Y=
+	t=1729158381; cv=none; b=LxJtw7GPG7xm3fyJEGeu6Mc0j0eJ+5lHjE+UBXFyNrjn3uM3vz6LxIcfT/XbNcRvH9ziv7wQfhHmdU7RalFCN6SPfendclIaplaj0ixIUE5qRqxx4TvzvCQ/SyiLqer04/eK0AVjbpIOtxg/ANEE7A0hX2pgve/LogOvY9dca9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729158125; c=relaxed/simple;
-	bh=9W4Xi23mOJ8iMsXDzLrt2lIAZH4MyALaIc7BbJR6fyg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lSOV0Jdg8oz4HH2DTYNa1pUGovaEpArYIOL8axTA2mqBRbEi1s5Tqnyn0A4lVtrCs+hj1l05IAngcl81+IqL0OWtTUXf4tqzeqlvdnWkJGiTV19ycIPrNQbIOKWk//KGeROCy7KPK1SmhTnS2qqeIuYXemQM3gt+KHEd9oWvL3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTjVm4yCrz6G9bw;
-	Thu, 17 Oct 2024 17:40:16 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5A3971400DB;
-	Thu, 17 Oct 2024 17:42:00 +0800 (CST)
-Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
- 2024 11:41:58 +0200
-Date: Thu, 17 Oct 2024 10:41:56 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-CC: <mark.rutland@arm.com>, <catalin.marinas@arm.com>, <mingo@redhat.com>,
-	<robin.murphy@arm.com>, <bp@alien8.de>, <rafael@kernel.org>,
-	<wangkefeng.wang@huawei.com>, <tanxiaofei@huawei.com>,
-	<mawupeng1@huawei.com>, <tony.luck@intel.com>, <linmiaohe@huawei.com>,
-	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
-	<gregkh@linuxfoundation.org>, <will@kernel.org>, <jarkko@kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
-	<linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
-	<ardb@kernel.org>, <ying.huang@intel.com>, <ashish.kalra@amd.com>,
-	<baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>,
-	<dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
-	<robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
-	<zhuo.song@linux.alibaba.com>
-Subject: Re: [PATCH v14 2/3] mm: memory-failure: move return value
- documentation to function declaration
-Message-ID: <20241017104156.00000f83@Huawei.com>
-In-Reply-To: <20241014084240.18614-3-xueshuai@linux.alibaba.com>
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
-	<20241014084240.18614-3-xueshuai@linux.alibaba.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729158381; c=relaxed/simple;
+	bh=wAu4lUH2ZdAEXqz/CGQi+vr7whbypoaU3diiPTqlLEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dSMrfEXJNLiOthNCGg7tz4wvyB9gxrBnF4NQM3fvFwheaFTPJrdystB/IOHQiWttWLLXFTNvPP0GKU8ax7cymuH8SGQnqajE6KqXfFJneWphW7im4vxEynM+UNTh3WZwEKcUJJQ8ilBqg+htFCqzAN9buwzQfr2c3vyLRZrGRTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=puWc0Sfe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GLRH8V000899;
+	Thu, 17 Oct 2024 09:46:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=ba5YfAfV1i1Kts3hR/V69uV8ukSuTw
+	UlftkXc9gcqO4=; b=puWc0SfeklF1O5Ue+nuQRWg7XXTuGEfhpxsJJ4EgzgUrXw
+	shXS5A1uYl9WelR/IEplKkTifUrc2QGBmHKVai5khjg+RpR2i3PCDkTeXAMewO5h
+	CuGwyG5IZ9zohzZSMbKAtgCBPC4vpfRcymPrJxcCFzPl4kzligLyATqlW4EyTIov
+	uC4zfuj0c0OLJUVoyvHXqwkEr1si7vAyf0H89N4pGaX4pEC3nABCJriO5DCAXWAG
+	vScLsq//Ad5/D4xPttlQb3FfaCZOuBA1iUQklD3mu1CG1ZT7p5j/A2I9ZnF3TiHr
+	FmjZo8lAbq4kpCr1Ua6QD/eqMrutns+sr10gWm0w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42and7jj3q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 09:46:13 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49H9kDHc010398;
+	Thu, 17 Oct 2024 09:46:13 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42and7jj3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 09:46:13 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49H8xSmG027444;
+	Thu, 17 Oct 2024 09:46:12 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txx4pq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 09:46:12 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49H9k8Kf30933714
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Oct 2024 09:46:08 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 22BDC20043;
+	Thu, 17 Oct 2024 09:46:08 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EFB6320040;
+	Thu, 17 Oct 2024 09:46:07 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 17 Oct 2024 09:46:07 +0000 (GMT)
+Date: Thu, 17 Oct 2024 11:46:06 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Sven Schnelle <svens@linux.ibm.com>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Ricardo B. Marliere" <ricardo@marliere.net>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] PtP driver for s390 clocks
+Message-ID: <20241017094606.6757-A-hca@linux.ibm.com>
+References: <20241017060749.3893793-1-svens@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017060749.3893793-1-svens@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9v15hzj-vzCxdfm87l2gIIuW1M6_icYy
+X-Proofpoint-ORIG-GUID: 5LTXIhDXDiPeVgwLIpNUxVmAgMHpL_En
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=620 adultscore=0 bulkscore=0 mlxscore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410170064
 
-On Mon, 14 Oct 2024 16:42:39 +0800
-Shuai Xue <xueshuai@linux.alibaba.com> wrote:
-
-> Part of return value comments for memory_failure() were originally
-> documented at the call site. Move those comments to the function
-> declaration to improve code readability and to provide developers with
-> immediate access to function usage and return information.
+On Thu, Oct 17, 2024 at 08:07:47AM +0200, Sven Schnelle wrote:
+> Hi,
 > 
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Seems sensible.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> these patches add support for using the s390 physical and TOD clock as ptp
+> clock. To do so, the first patch adds a clock id to the s390 TOD clock,
+> while the second patch adds the PtP driver itself.
+...
+>  MAINTAINERS                     |   6 ++
+>  arch/s390/include/asm/stp.h     |   1 +
+>  arch/s390/include/asm/timex.h   |   6 ++
+>  arch/s390/kernel/time.c         |   7 ++
+>  drivers/ptp/Kconfig             |  11 +++
+>  drivers/ptp/Makefile            |   1 +
+>  drivers/ptp/ptp_s390.c          | 129 ++++++++++++++++++++++++++++++++
+>  include/linux/clocksource_ids.h |   1 +
+>  8 files changed, 162 insertions(+)
+>  create mode 100644 drivers/ptp/ptp_s390.c
 
+As far as I am concerned:
+Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
-> ---
->  arch/x86/kernel/cpu/mce/core.c | 7 -------
->  mm/memory-failure.c            | 9 ++++++---
->  2 files changed, 6 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-> index 2a938f429c4d..c90d8fcd246a 100644
-> --- a/arch/x86/kernel/cpu/mce/core.c
-> +++ b/arch/x86/kernel/cpu/mce/core.c
-> @@ -1373,13 +1373,6 @@ static void kill_me_maybe(struct callback_head *cb)
->  		return;
->  	}
->  
-> -	/*
-> -	 * -EHWPOISON from memory_failure() means that it already sent SIGBUS
-> -	 * to the current process with the proper error info,
-> -	 * -EOPNOTSUPP means hwpoison_filter() filtered the error event,
-> -	 *
-> -	 * In both cases, no further processing is required.
-> -	 */
->  	if (ret == -EHWPOISON || ret == -EOPNOTSUPP)
->  		return;
->  
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 96ce31e5a203..1c5098f32d48 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -2209,9 +2209,12 @@ static void kill_procs_now(struct page *p, unsigned long pfn, int flags,
->   * Must run in process context (e.g. a work queue) with interrupts
->   * enabled and no spinlocks held.
->   *
-> - * Return: 0 for successfully handled the memory error,
-> - *         -EOPNOTSUPP for hwpoison_filter() filtered the error event,
-> - *         < 0(except -EOPNOTSUPP) on failure.
-> + * Return:
-> + *   0             - success,
-> + *   -EOPNOTSUPP   - hwpoison_filter() filtered the error event,
-> + *   -EHWPOISON    - the page was already poisoned, potentially
-> + *                   kill process,
-> + *   other negative values - failure.
->   */
->  int memory_failure(unsigned long pfn, int flags)
->  {
-
+Richard, if this looks good for you too, how should this go upstream?
+We could carry this via the s390 tree, if you want.
 
