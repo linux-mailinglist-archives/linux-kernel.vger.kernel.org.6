@@ -1,126 +1,138 @@
-Return-Path: <linux-kernel+bounces-369866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50CF29A23CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 734F59A23D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA4F81F212EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:29:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B5F71C2148C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1569D1DDC37;
-	Thu, 17 Oct 2024 13:29:16 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD0A1DE2AF;
+	Thu, 17 Oct 2024 13:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="euxmtI4w"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9E2364D6;
-	Thu, 17 Oct 2024 13:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729171755; cv=none; b=IooX+MQdh15jVDoIw43R+xg8u9vhrPOb//bcblY5PKtqdKEH6xhsFt5ENKGEFbMGKdJXsIdM04iCQEHEN8PA/WOyrUpIJNTuUDcCrxkqxwW7DdBV0cItsvlSP07YdqoiecTLEWC7lAkxDN0GHAAYBLT3Ie438olHwG6cwz/q0qQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729171755; c=relaxed/simple;
-	bh=4FjWyAaZfxGJ9S/bLZfEZRXua6ju/h0MsR/tVYXzonk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R6fa1wsbm7c6QhLobVG0GLi4yJeIwYIK7OjpiTDxJH13wEv10KYrVpHkcRJVIeG4fHd4lifFqizQuHye4QxtMMd54XAAOX4JnQ1qi9vvHO9xVMLz6No7n9a+TlzlU7xo/qamXtqWSDnpn9QyrUgJcF/4i89rHzaNKAvJ/tJcaVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTpXs6Zmrz6FH2t;
-	Thu, 17 Oct 2024 21:27:25 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1C1D01400DB;
-	Thu, 17 Oct 2024 21:29:10 +0800 (CST)
-Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
- 2024 15:29:09 +0200
-Date: Thu, 17 Oct 2024 14:29:08 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: Philipp Stanner <pstanner@redhat.com>, Bjorn Helgaas
-	<bhelgaas@google.com>, <linux-pci@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] PCI: Improve printout in pdev_sort_resources()
-Message-ID: <20241017142908.00001220@Huawei.com>
-In-Reply-To: <8b9f3fab-bfeb-5aa7-fc6a-26b9faa89417@linux.intel.com>
-References: <20241017095545.1424-1-ilpo.jarvinen@linux.intel.com>
-	<20241017121203.000003d8@Huawei.com>
-	<8b9f3fab-bfeb-5aa7-fc6a-26b9faa89417@linux.intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3521DD865;
+	Thu, 17 Oct 2024 13:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729171900; cv=pass; b=Au1ZXBl9hV0VpjHPXbD3eMGr70KmAQhZcQeqIou6V/Ma7B9Mq2wLQIOW52RkIl6R4hBBafz0OOi+IQFnZ7vkAMbA7ajjGpxJhkDVgaFbzTf+oAd8r3mKXf2CmLN6G47erwYdaikB0X5BTf0AQStIlTsQZV0CBuyg9//qu9658iY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729171900; c=relaxed/simple;
+	bh=9DkEOCmrXtQD7nEqOcbDJfP/RBjbw7rE5b+96dGjzoo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AMYJVXZa7FHwIw5qYEe734uij5fSCHimNTKeIfdBnEF6XefMPC4zFJg2fv9kI5nhOLMByb7VFzcW6neQkPgZeVtGRhlmIM7u7osrGHnFBwqLn+Cc2NEPTr5KNEOxL01VLg2vwmo/NDroh+/0ENv1Ka+Ey4g2g+pUto2i3dAYLfQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=euxmtI4w; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729171849; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KNRaz+wwXb5teQvBtcZ1QIfv3JAvPlrz/yzpa0tdbctPPXWPq/0Ll1srfwmt0OwaZwSlOrtsgte9FvRbsTn6G9YuWJQqER3RVPLRHHPUNf3zwlgaFhD+zJ3z6ZJio/wGVAYNfl9m/qHjeY3v7cbCwYJNCUobLsgA1UVkpvJjJ6M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729171849; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=mSoMR0sUB0OKM7ZHE0TAoevDS1sbnz7jCqSJagBCX6Q=; 
+	b=UAmmum5gHjNeiLZhuwct9ceQMl57BDSj+GKyllWgMsLHR8EJNjXd+mUF0HtyjI58Hi+VO0HzUpOBtlaQtjS/3HL6dlImOIrDw/L+HLFS9JJf/DIABhKwom7IMhUI+zoOuwPO1+WkZTsQMLWvknhnlxpcQmeYMysBTrhj1MZ+TRM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729171849;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=mSoMR0sUB0OKM7ZHE0TAoevDS1sbnz7jCqSJagBCX6Q=;
+	b=euxmtI4wvPxGP1Jx9dKzKQyEcnNAsmfya8dKsn2gIBaEwBCd19MKiHEI7/L1+bbA
+	4BotRu7EhS7O4XFW70lCJFpfC1p0844HueH1Dh8aeusYIlEFHTjQNfiGiM59c5f6keD
+	HeBnzOAsgd+gyxZ1E34hOLd4Y/PDnZC267ZsAW7o=
+Received: by mx.zohomail.com with SMTPS id 1729171846638242.53724024989015;
+	Thu, 17 Oct 2024 06:30:46 -0700 (PDT)
+Message-ID: <959cb2c0-cdb2-4c74-bd6a-76468789d615@collabora.com>
+Date: Thu, 17 Oct 2024 18:30:36 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org,
+ Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: Re: [PATCH 6.11 000/212] 6.11.4-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241015112329.364617631@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241015112329.364617631@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Thu, 17 Oct 2024 14:35:55 +0300 (EEST)
-Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+On 10/15/24 4:25 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.4 release.
+> There are 212 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.4-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
 
-> On Thu, 17 Oct 2024, Jonathan Cameron wrote:
->=20
-> > On Thu, 17 Oct 2024 12:55:45 +0300
-> > Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
-> >  =20
-> > > Use pci_resource_name() helper in pdev_sort_resources() to print
-> > > resources in user-friendly format. Also replace the vague "bogus
-> > > alignment" with a more precise explanation of the problem.
-> > >=20
-> > > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> > > ---
-> > >=20
-> > > v2:
-> > > - Place colon after %s %pR to be consistent with other printouts
-> > > - Replace vague "bogus alignment" with the exact cause
-> > >=20
-> > >  drivers/pci/setup-bus.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> > > index 23082bc0ca37..0fd286f79674 100644
-> > > --- a/drivers/pci/setup-bus.c
-> > > +++ b/drivers/pci/setup-bus.c
-> > > @@ -134,6 +134,7 @@ static void pdev_sort_resources(struct pci_dev *d=
-ev, struct list_head *head)
-> > >  	int i;
-> > > =20
-> > >  	pci_dev_for_each_resource(dev, r, i) {
-> > > +		const char *r_name =3D pci_resource_name(dev, i);
-> > >  		struct pci_dev_resource *dev_res, *tmp;
-> > >  		resource_size_t r_align;
-> > >  		struct list_head *n;
-> > > @@ -146,8 +147,8 @@ static void pdev_sort_resources(struct pci_dev *d=
-ev, struct list_head *head)
-> > > =20
-> > >  		r_align =3D pci_resource_alignment(dev, r);
-> > >  		if (!r_align) {
-> > > -			pci_warn(dev, "BAR %d: %pR has bogus alignment\n",
-> > > -				 i, r);
-> > > +			pci_warn(dev, "%s %pR: alignment must not be zero\n",
-> > > +				 r_name, r); =20
-> >
-> > Why bother with local variable if only used here? =20
->=20
-> No other reason than it seems to always be a local variable in the other=
-=20
-> places too regardless the number of uses.
-Fair enough. local style is perfectly valid reasoning.
+Hi,
 
-Jonathan
+Please find the KernelCI report below :-
 
->=20
-> > Absolutely fine if you have more code coming that uses it again though!
-> >=20
-> > Otherwise seems sensible change. =20
->=20
 
+OVERVIEW
+
+    Builds: 25 passed, 0 failed
+
+    Boot tests: 72 passed, 0 failed
+
+    CI systems: maestro
+
+REVISION
+
+    Commit
+        name: 
+        hash: 9e707bd5fc5996c97d762a16515399c2afc4d70d
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+
+
+BUILDS
+
+    No new build failures found
+
+BOOT TESTS
+
+    No new boot failures found
+
+See complete and up-to-date report at:
+ https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=9e707bd5fc5996c97d762a16515399c2afc4d70d&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
 
