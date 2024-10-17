@@ -1,98 +1,139 @@
-Return-Path: <linux-kernel+bounces-370413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267B59A2C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:19:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A089A2C04
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C30771F2398F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C6A28925F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C021D1DFDBA;
-	Thu, 17 Oct 2024 18:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430AE1E0DB5;
+	Thu, 17 Oct 2024 18:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YiQttMWe"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="TH5hVLHT"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D351DEFCB;
-	Thu, 17 Oct 2024 18:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B161E0B74;
+	Thu, 17 Oct 2024 18:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729189164; cv=none; b=WO25nc/7iqELHR+lmh/leis3KM9VBLbTbeQqtntWHaDV8UMbwcafstmOM5CpbSfFUfaurJH0J6WB6SzYAWLAusJ0NLxg6TKjHL3FdyC4wCXShqKlXLrVxxCDkLjYLkv4ofxv/9sadZMzr51rLH6K40DRkrampyFEStkch5SZGgE=
+	t=1729189147; cv=none; b=McUjL/seLxepv3o8z94c3IU3RiiO6sdBoTF5NS7hryNja27lUhemSwPeyxLfCHCYlQy7fCtFSSOulCDl4PEKgkO3fEgDIj0mXvFHq0upjNT1W/OtDlGwQWLxFty0jQ7lNuLtCRnxmbkcwdqIzP4hiwGb+ch2qMmre4xUep5lmAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729189164; c=relaxed/simple;
-	bh=jyUqzb/A0N9zdnI7o+n8FN8Dd4qhMHr+GFRQkf/6cL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z8QnhymPhnIH3wvIiAaqRluQo66rHIXGrkbkqYiTFoyAS5ZDcQTG+48wDrbn+rDs3TCMRf2/RQMl1euAmdhnL3ODooaKTF0fB+iGYCFdtD8vy8R0mQdlFCiNfYahAiWt9ykJF+9FV1fuphThJ/+KpE0s4RUqHRwz6Xn/snKDPAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YiQttMWe; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xclDtdCQh4Pro8+1C8nyQBevu1jc9Opn3i3g6aw6TIQ=; b=YiQttMWesBvhjOmjze//gvjsSC
-	K9dfxqy8ou8ljKxmx8vI/8un+ibX0xt6v8/RC9uhACdylw4q3/VYRifGbx5CHwHfvA6/B9bXOOH8c
-	9+VV9B/+S1UCHv29aO0fcR7ebE2g5u3lQGeo1ckdweJVaPks3OaG2pO2tL8CeRYl9eRhUUjHEx8il
-	oKiOeI4XmnbeYsD3eOem+t1QkYd+KOlxBDH0OJ05F/V7IT/b6Kce9y+fFyPud3sn9jAP4tFZzBZ4I
-	Rs0hUiRlFVMbrVZ5yDjrxZ609tn/wOdGyAsTie05mDjQMSnplqpuQ5hK63NC3+nTalE31lyPJmljK
-	5fgatYtA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1V5P-0000000Bm6e-3UxJ;
-	Thu, 17 Oct 2024 18:19:00 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A56AA3005AF; Thu, 17 Oct 2024 20:18:59 +0200 (CEST)
-Date: Thu, 17 Oct 2024 20:18:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] x86/percpu: Cast -1 to argument type when
- comparing in percpu_add_op()
-Message-ID: <20241017181859.GB17263@noisy.programming.kicks-ass.net>
-References: <20240905170356.260300-1-andriy.shevchenko@linux.intel.com>
- <f02e0624-ad4f-473c-b172-6dadea37f600@intel.com>
- <20241016192011.GY17263@noisy.programming.kicks-ass.net>
- <de705cdf-ccce-460f-846e-dfc63c63af1a@intel.com>
+	s=arc-20240116; t=1729189147; c=relaxed/simple;
+	bh=fXEFBLprEv0YLfdPXE1r1CxLoSDsy2diw/4xbhmsTV0=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rC9+v3mBf74V3AW6XnBgq2AY6jXXqPFUJC3jhh7ClUj3PmRdQ/xMuTCE5kf55Zp1RAJH4WInYJUXn+N6h9e26VJcTLmd4O31o4YP/HpFJqKCebfPHoGUQFx434e2Po7DIihsT7a3F4vO4v87AAqXFFQjKfCyX+1C4H3oKRdj3YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=TH5hVLHT; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1729189143; x=1760725143;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=fXEFBLprEv0YLfdPXE1r1CxLoSDsy2diw/4xbhmsTV0=;
+  b=TH5hVLHTYZghbSUgzAj/RDj7auHGJF4bL6zPiLMOdogDcPCz0tHcjJLY
+   T3CBAlbfxtcqXriYAXOJSlOzGsBFxuBPZd0ZKfTzAYV62KRVNY/25F14f
+   vZmlqbsyLkjMzQpPMnd9+ZZGTSTs9yvX/p9ib27o+K+IVRNp3JR+2a+wT
+   k=;
+X-IronPort-AV: E=Sophos;i="6.11,211,1725321600"; 
+   d="scan'208";a="441687331"
+Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and RUN_TO_PARITY
+ and move them to sysctl
+Thread-Topic: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and RUN_TO_PARITY and
+ move them to sysctl
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 18:19:01 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:63021]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.5.202:2525] with esmtp (Farcaster)
+ id 58932c62-ec00-494b-951d-098c14c64007; Thu, 17 Oct 2024 18:19:00 +0000 (UTC)
+X-Farcaster-Flow-ID: 58932c62-ec00-494b-951d-098c14c64007
+Received: from EX19D002UWA003.ant.amazon.com (10.13.138.235) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 17 Oct 2024 18:19:00 +0000
+Received: from EX19D016UWA004.ant.amazon.com (10.13.139.119) by
+ EX19D002UWA003.ant.amazon.com (10.13.138.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Thu, 17 Oct 2024 18:19:00 +0000
+Received: from EX19D016UWA004.ant.amazon.com ([fe80::92ec:e30c:889c:c2c0]) by
+ EX19D016UWA004.ant.amazon.com ([fe80::92ec:e30c:889c:c2c0%5]) with mapi id
+ 15.02.1258.034; Thu, 17 Oct 2024 18:19:00 +0000
+From: "Prundeanu, Cristian" <cpru@amazon.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: "linux-tip-commits@vger.kernel.org" <linux-tip-commits@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ingo Molnar
+	<mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "Doebel, Bjoern" <doebel@amazon.de>,
+	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>, "Blake, Geoff"
+	<blakgeof@amazon.com>, "Saidi, Ali" <alisaidi@amazon.com>, "Csoma, Csaba"
+	<csabac@amazon.com>, "gautham.shenoy@amd.com" <gautham.shenoy@amd.com>
+Thread-Index: AQHbIFRAqYP/Spxn4UemHlrRfl1T1LKKqDIAgABFZAA=
+Date: Thu, 17 Oct 2024 18:19:00 +0000
+Message-ID: <70D6B66E-B4BC-4A92-9A23-0DADE9B8C3FE@amazon.com>
+References: <20241017052000.99200-1-cpru@amazon.com>
+ <20241017091036.GT16066@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241017091036.GT16066@noisy.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1F9FFA42DE25784ABF5266EF6A736DD5@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de705cdf-ccce-460f-846e-dfc63c63af1a@intel.com>
 
-On Wed, Oct 16, 2024 at 12:44:18PM -0700, Dave Hansen wrote:
-
-> Would anybody hate if we broke this up a bit, like:
-> 
->         const typeof(var) _val = val;
->         const int paoconst = __builtin_constant_p(val);
->         const int paoinc   = paoconst && ((_val) == 1);
->         const int paodec   = paoconst && ((_val) == (typeof(var))-1);
-> 
-> and then did
-> 
-> 	if (paoinc)
-> 		percpu_unary_op(size, qual, "inc", var);
-> 	...
-
-I think that is an overall improvement. Proceed! :-)
+T24gMjAyNC0xMC0xNywgMDQ6MTEsICJQZXRlciBaaWpsc3RyYSIgPHBldGVyekBpbmZyYWRlYWQu
+b3JnPiB3cm90ZToNCg0KPj4gRm9yIGV4YW1wbGUsIHJ1bm5pbmcgbXlzcWwraGFtbWVyZGIgcmVz
+dWx0cyBpbiBhIDEyLTE3JSB0aHJvdWdocHV0DQo+IEdhdXRoYW0sIGlzIHRoaXMgYSBiZW5jaG1h
+cmsgeW91J3JlIHJ1bm5pbmc/DQoNCk1vc3Qgb2YgbXkgdGVzdGluZyBmb3IgdGhpcyBpbnZlc3Rp
+Z2F0aW9uIGlzIG9uIG15c3FsK2hhbW1lcmRiIGJlY2F1c2UgaXQNCnNpbXBsaWZpZXMgZGlmZmVy
+ZW50aWF0aW5nIHN0YXRpc3RpY2FsbHkgbWVhbmluZ2Z1bCByZXN1bHRzLCBidXQNCnBlcmZvcm1h
+bmNlIGltcGFjdCAoYW5kIGltcHJvdmVtZW50IGZyb20gZGlzYWJsaW5nIHRoZSB0d28gZmVhdHVy
+ZXMpIGFsc28NCnNob3dzIG9uIHdvcmtsb2FkcyBiYXNlZCBvbiBwb3N0Z3Jlc3FsIGFuZCBvbiB3
+b3JkcHJlc3MrbmdpbnguDQoNCj4gSG93IGRvZXMgdXNpbmcgU0NIRURfQkFUQ0ggY29tcGFyZT8N
+Cg0KSSBoYXZlbid0IHRlc3RlZCB3aXRoIFNDSEVEX0JBVENIIHlldCwgd2lsbCB1cGRhdGUgdGhl
+IHRocmVhZCB3aXRoIHJlc3VsdHMgDQphcyB0aGV5IGFjY3VtdWxhdGUgKGVhY2ggdmFyaWF0aW9u
+IG9mIHRoZSB0ZXN0IHRha2VzIG11bHRpcGxlIGhvdXJzLCBub3QNCmNvdW50aW5nIHJlc3VsdCBw
+cm9jZXNzaW5nIGFuZCBldmFsdWF0aW9uKS4NCg0KTG9va2luZyBhdCBtYW4gc2NoZWQgZm9yIFND
+SEVEX0JBVENIOiAidGhlIHNjaGVkdWxlciB3aWxsIGFwcGx5IGEgc21hbGwNCnNjaGVkdWxpbmcg
+cGVuYWx0eSB3aXRoIHJlc3BlY3QgdG8gd2FrZXVwIGJlaGF2aW9yLCBzbyB0aGF0IHRoaXMgdGhy
+ZWFkIGlzDQptaWxkbHkgZGlzZmF2b3JlZCBpbiBzY2hlZHVsaW5nIGRlY2lzaW9ucyIuIFdvdWxk
+IHRoaXMgY29ycmVjdGx5IHRyYW5zbGF0ZQ0KdG8gInRoZSB0aHJlYWQgd2lsbCBydW4gbW9yZSBk
+ZXRlcm1pbmlzdGljYWxseSwgYnV0IGJlIHNjaGVkdWxlZCBsZXNzDQpmcmVxdWVudGx5IHRoYW4g
+b3RoZXIgdGhyZWFkcyIsIGkuZS4gZXhwZWN0ZWRseSBsb3dlciBwZXJmb3JtYW5jZSBpbiANCmV4
+Y2hhbmdlIGZvciBsZXNzIHZhcmlhYmlsaXR5Pw0KDQo+IFNvIGRpc2FibGluZyB0aGVtIGJ5IGRl
+ZmF1bHQgd2lsbCB1bmRvdWJ0ZWRseSBhZmZlY3QgYSB0b24gb2Ygb3RoZXINCj4gd29ya2xvYWRz
+Lg0KDQpUaGF0J3MgdmVyeSBsaWtlbHkgZWl0aGVyIHdheSwgYXMgdGhlIHRlc3Rpbmcgc3BhY2Ug
+aXMgbmVhciBpbmZpbml0ZSwgYnV0IA0KaXQgc2VlbXMgbW9yZSBwcmFjdGljYWwgdG8gZmlyc3Qg
+YWRkcmVzcyB0aGUgaXNzdWUgd2UgYWxyZWFkeSBrbm93IGFib3V0Lg0KDQpBdCB0aGlzIHRpbWUs
+IEkgZG9uJ3QgaGF2ZSBhbnkgZGF0YSBwb2ludHMgdG8gaW5kaWNhdGUgYSBuZWdhdGl2ZQ0KaW1w
+YWN0IG9mIGRpc2FibGluZyB0aGVtIGZvciBwb3B1bGFyIHByb2R1Y3Rpb24gd29ya2xvYWRzIChh
+cyBvcHBvc2VkIHRvDQp0aGUgZmxpcCBjYXNlKS4gTW9yZSB0ZXN0aW5nIGlzIGluIHByb2dyZXNz
+IChsb29raW5nIGF0IHRoZSBtYWpvciBhcmVhczoNCndvcmtsb2FkcyBoZWF2eSBvbiBDUFUsIFJB
+TSwgZGlzaywgYW5kIG5ldHdvcmtpbmcpOyBzbyBmYXIsIHRoZSByZXN1bHRzDQpzaG93IG5vIGRv
+d25zaWRlLg0KDQo+IEFuZCBzeXNjdGwgaXMgYXJndWFibHkgbW9yZSBvZiBhbiBBQkkgdGhhbiBk
+ZWJ1Z2ZzLCB3aGljaA0KPiBkb2Vzbid0IHJlYWxseSBzb3VuZCBzdWl0YWJsZSBmb3Igd29ya2Fy
+b3VuZC4NCj4NCj4gQW5kIEkgZG9uJ3Qgc2VlIGhvdyBhZGRpbmcgYSBsaW5lIHRvIC9ldGMvcmMu
+bG9jYWwgaXMgaGFyZGVyIHRoYW4gYWRkaW5nDQo+IGEgbGluZSB0byAvZXRjL3N5c2N0bC5jb25m
+DQoNCkFkZGluZyBhIGxpbmUgaXMgZXF1YWxseSBkaWZmaWN1bHQgYm90aCB3YXlzLCB5b3UncmUg
+cmlnaHQuIEJ1dCBhcmVuJ3QgDQptb3N0IGRpc3Ryb3MgYmV0dGVyIGVxdWlwcGVkIHRvIG1hbmFn
+ZSAocGVyc2lzdCwgbW9kaWZ5LCBhdXRvbWF0ZSkgc3lzY3RsIA0KcGFyYW1ldGVycyBpbiBhIHN0
+YW5kYXJkaXplZCBtYW5uZXI/DQpXaGVyZWFzIHJjLmxvY2FsIHNlZW1zIG1vcmUgImluZGl2aWR1
+YWwgbmVlZCAvIGVkZ2UgY2FzZSIgb3JpZW50ZWQuIEZvcg0KaW5zdGFuY2U6IGNoYW5nZXMgYXJl
+IGRvbmUgYnkgZWRpdGluZyB0aGUgZmlsZSwgd2hpY2ggaXMgcG9vcmx5IHNjcmlwdGFibGUNCih1
+bmxpa2UgdGhlIHN5c2N0bCBjb21tYW5kLCB3aGljaCBpcyBhIHVuaWZpZWQgaW50ZXJmYWNlIHRo
+YXQgcmVjb25jaWxlcw0KY2hhbmdlcyk7IHRoZSBsb2FkIG9yZGVyIGlzIGFsc28gdHlwaWNhbGx5
+IGxhdGUgaW4gdGhlIGJvb3Qgc3RhZ2UsIG1ha2luZyAgIA0KaXQgbm90IGFuIGlkZWFsIHBsYWNl
+IGZvciBzZXR0aW5ncyB0aGF0IGFmZmVjdCBzeXN0ZW0gcHJvY2Vzc2VzLg0KDQo=
 
