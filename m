@@ -1,164 +1,143 @@
-Return-Path: <linux-kernel+bounces-369258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187E19A1AEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:46:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEB79A1AF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65A6BB25331
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:46:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 453CFB2583E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354E0192B91;
-	Thu, 17 Oct 2024 06:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5153C1925A5;
+	Thu, 17 Oct 2024 06:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Rq8iqK+D"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hQl8A5k3"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D0E41A8E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213AB25779
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729147560; cv=none; b=A3xJVqUGxxteGg8Tr0vITDLeXRxV5NwbZJ+f7/yF5iPt89o2y7C3GbsxxR6wAEFaq95FDWhWD8PklU67CaVQ+tLcgnLy/P15e8v27kLIdxOFYWJlk8T2rCS1Fi/rodbDyg39upDLi/K8N+3NDcrbuoqLwVAvNiQqoV4LxFYxjb4=
+	t=1729147602; cv=none; b=BM4LwPSAW17fU3yxy6HzCkCUU9pzWdjEV62Kn8lXG/jyAlIaOz/H9pPLVu3w1UfFKSlBhQzH4NUH+2MVbZ35ndpxk3C4j001o5dm8BK0Epo6LwODHgYwXiWRvC+v6iJ2h1boauhcIjfO9OQH7V8cgei+jd3Pyw/wOI4AkpsWDXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729147560; c=relaxed/simple;
-	bh=WvEl9DacNb0/BST0J+DTdTUbgLuLI3VskPgh+pfr+R4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Reoul0Oowt5To36Z/1rUUeNl8Mqv7ws+wd4k+0bChaE0NQupb8ebCsUZeHEY/4oiRMO8rZhebulsnVt/5YMbmzE8pt6k4BqvTW0GWW9eIukeJJe8SShD2cl9f6LWaa1aSTYHaTtbAgoWmH0U1IUQocmfrpBwYajEEawZeIYyx88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Rq8iqK+D; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c93109d09aso106964a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:45:56 -0700 (PDT)
+	s=arc-20240116; t=1729147602; c=relaxed/simple;
+	bh=mHzjW0gx/VK7EjIrCVRD3DafBTu7kglcFyZPXYwLpXs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dZ7rqQ2nujChiDEhuYy1TPnmBdCiVIghSRMx468SmmfblYMm4MZtNWo82SrfXi4dzqgzXd465xhoy+fDZQu+R44mFaFCDUDNLLdJBBCrDqRJvwFl75Y2zD+93MZkfeTxSLUlyUYGIdAa9+KsDHoXrg9auGXDlL6ZZuiwcUvnwcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hQl8A5k3; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ca96a155cso4745205ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:46:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1729147555; x=1729752355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bytedance.com; s=google; t=1729147600; x=1729752400; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hA7C/VJ2ogxqQJtDshb/T2bDSZIF624vqyDyYkZ46Hs=;
-        b=Rq8iqK+DHGJe61XdAHe1xXAjZqR3ZxF6dss5Q7gFqY97/UcD6r2+n68DJpGQzltekz
-         Mp+vffsuKaT4H9pU0b74Yx8RcRXybxiCc6kv1EeJ6flhqF2kpDkrDCrmOrR3ACiMDO4W
-         u3pF52x09h9+MKfleqyDnz9UzFm/I2wO6iZc0fxcXPKB7/m2PFcBFqCGz0vc2L0SmW1N
-         H6WkCZXbKfS2sBKuueFYrNCLcIWMaR49vJ+XMQTVRvMTWjfTbZHwtBMN0+EXDDU+h2ow
-         TCxz+g4oEZFDeDNyk2/JjAHb7qyIiwW3cVn4cUvXBlpEVN/Qn7PjgKGt3eEUv5nXcD1F
-         kg/g==
+        bh=tv5UJ/Xk45I32p3AVak0iA4xEipZAR9oPUhdZra2dK0=;
+        b=hQl8A5k3j6wM4gzA588iYYJy6dTDlGF6zji2awPMI2Qi8v07Qu6kfSrPbqCsXNhAvT
+         CW4/K4GMHkJyqG75yFZZvluScTTdffbYENhzjbnY9UQnLOjp5i3lEMiHWaz38++mi+Gd
+         4H3Tv8G0PmFswxVor56WOnm9qizFERwZvcfYSwVIqCChQaLXgrkFghr1dAaO+bqpS5RX
+         4FIP8FTocqLMMjLW+oMuH6O+jR431S76b1w0G7mHU88rVcX+KrOaaCDPRqEMO+bJ5pgX
+         wEYtOooTdan7nLpJWOPynZ1bhTpBF+gvNEPUiVOdT11X7kQL0uGkdjVWkKLjLw1/Gm4G
+         tckg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729147555; x=1729752355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729147600; x=1729752400;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hA7C/VJ2ogxqQJtDshb/T2bDSZIF624vqyDyYkZ46Hs=;
-        b=ojfq9eZFaegioFCqsaqpfCB11lhhcuLLF7Tb2pZfPLsurZ1jWeu9HUl+/6XM1a7qDi
-         9Rzx5kUYQcM61hbAto7GznjRBGnq6TpHtBV2XObMr+BWAz47ljpj7Uto7PuOkjnNdoim
-         bs2+D2Z761vG/kLDIzXuvzQDkUlNSGhKWV718QdPV9ODDZbRknXr2lI8+KTAfQf8yMD6
-         Ej+LfbnR/oRfqDic46JBEnjbrCnmQc/5tEQ8rYLsm6ieak1vltfpsIr0doXoJBF/AQnM
-         Zo4YEU2W9zIVoXT2byxZHbt3dIxWyvVvqh5If5kOQ6w5R0tk4yU9t18BYxYQUUafLUZD
-         JWsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1+lcKXRFhUev2dB2QEQe5ucgUG60tRMXcOy5FvqxlcZOwMiSSwWRIsGhYuQzguOUEE8PRJjsGYWMu2e8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNfPEBWBp9c2ZE12UjEHyqetdShVHV843Umec2In9AndwayM2L
-	shpcSUQ/RjeQX8baeb+yCQZ4eqwaUh5rJsuVMARWdJWwi+opZm+Z+8DEK4pFOM1XnKAxfzzhclq
-	Jzy/GOAnP0cGq6khBVHvZwgDojzIkP4AJ8DZVYg==
-X-Google-Smtp-Source: AGHT+IGvpu0H/wkCYjOHR1j1gd+ny9Zce6kSu5Qi/Zi4b3sW7Fe8QJ3fF6w/Nr24bNVxZt2SRBfk1slaPwZVfl8Y6hs=
-X-Received: by 2002:a05:6402:2741:b0:5c9:4499:2810 with SMTP id
- 4fb4d7f45d1cf-5c99979830dmr1687144a12.5.1729147554947; Wed, 16 Oct 2024
- 23:45:54 -0700 (PDT)
+        bh=tv5UJ/Xk45I32p3AVak0iA4xEipZAR9oPUhdZra2dK0=;
+        b=Xl3Fd6IslwkEMlKl9rD0u35zFieW5TXOalaL1fjXDmR9es1ykWcGacGfJfpdivGuLE
+         wenNvST7OUTIlca+WpT63/VtWTefxZppHa+SGU6wzlTfAkd6NZyhsZLihCH+MGDEIoku
+         vK0uNNzjMuMwIbyxKT4ZKjTwUGAgN7GwEf4MRSVzvrnQ3l60Hn2DJJoXvkbjrgyjG5Id
+         7O0k0jOUoGptbQPqdbZzd+QGeqk6o7SRWRkq+1zjmHj1mdTtYPLiQ8TtnfEMTfU/oYqh
+         fSEiYlAFfzOFoObqEMkgFLO3hyBZPPbEjDyLU/6XEilZRllnTNY7LBd0rysO29hLAPtK
+         blNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQQnhQGtlwpHdU4dFwg1cmT2guUXHT4C7xpJOeNjNOlz9BKkbbghsx4x0K9AFWGCmACegOMVG2FfKUYv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXi/2rlHNvkKg89IOj78ob0pBZ1qI5e9kBRykRS80MypBaFcoI
+	QhflvPV58f0+0sNJmKoU4qAaCz34FISVcCGCuNDdvmQjxj+0raZk0aH5xcHJx/c=
+X-Google-Smtp-Source: AGHT+IFAYfgIy3AbgiLfa0obsAVwN3fi3s02lU8uuKwdk6B7U1BGpCPxN9O4XcRG8RDsPtRfI6ReYA==
+X-Received: by 2002:a17:902:f545:b0:20c:ee48:94f3 with SMTP id d9443c01a7336-20cee489d9bmr163242905ad.14.1729147600311;
+        Wed, 16 Oct 2024 23:46:40 -0700 (PDT)
+Received: from GQ6QX3JCW2.bytedance.net ([203.208.189.8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f82c92sm38182635ad.45.2024.10.16.23.46.36
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 16 Oct 2024 23:46:39 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: llong@redhat.com
+Cc: akpm@linux-foundation.org,
+	boqun.feng@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lizhe.67@bytedance.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	will@kernel.org
+Subject: Re: [RFC 1/2] rwsem: introduce upgrade_read interface
+Date: Thu, 17 Oct 2024 14:46:32 +0800
+Message-ID: <20241017064632.82771-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <7f7b277a-7019-4bf4-b100-0505c6ce9737@redhat.com>
+References: <7f7b277a-7019-4bf4-b100-0505c6ce9737@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016220944.370539-1-salomondush@google.com>
-In-Reply-To: <20241016220944.370539-1-salomondush@google.com>
-From: Jinpu Wang <jinpu.wang@ionos.com>
-Date: Thu, 17 Oct 2024 08:45:43 +0200
-Message-ID: <CAMGffEmEJp_oVAsbCVV9PKs7vOKWLrUhRGcBGoUSx7+t4ZtsQA@mail.gmail.com>
-Subject: Re: [PATCH] scsi: pm80xx: Use module param to set pcs event log severity
-To: Salomon Dushimirimana <salomondush@google.com>
-Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Bhavesh Jashnani <bjashnani@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On Wed, 16 Oct 2024 10:23:14 -0400, llong@redhat.com wrote:
 
-On Thu, Oct 17, 2024 at 12:10=E2=80=AFAM Salomon Dushimirimana
-<salomondush@google.com> wrote:
+>> +static inline void rwsem_set_owner_upgrade(struct rw_semaphore *sem)
+>> +{
+>> +	lockdep_assert_preemption_disabled();
+>> +	atomic_long_set(&sem->owner, (long)current | RWSEM_UPGRADING |
+>> +			RWSEM_READER_OWNED | RWSEM_NONSPINNABLE);
+>> +}
 >
-> The pm8006 driver sets pcs event log threshold very high which causes
-> most of the FW logs to not be captured. This adds a module parameter to
-> configure pcs event log severity with 3 (medium severity) as the
-> default.
-upstream does not like more module parameters, can we just change the
-default to 3, any harm?
+>Because of possible  racing between 2 competing upgraders, read lock 
+>owner setting has to be atomic to avoid one overwriting the others.
 
-Thx!
->
-> Signed-off-by: Bhavesh Jashnani <bjashnani@google.com>
-> Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
-> ---
->  drivers/scsi/pm8001/pm8001_init.c | 4 ++++
->  drivers/scsi/pm8001/pm8001_sas.h  | 2 ++
->  drivers/scsi/pm8001/pm80xx_hwi.c  | 3 ++-
->  3 files changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/pm8001/pm8001_init.c b/drivers/scsi/pm8001/pm80=
-01_init.c
-> index 1e63cb6cd8e3..355aab0c982a 100644
-> --- a/drivers/scsi/pm8001/pm8001_init.c
-> +++ b/drivers/scsi/pm8001/pm8001_init.c
-> @@ -68,6 +68,10 @@ static bool pm8001_read_wwn =3D true;
->  module_param_named(read_wwn, pm8001_read_wwn, bool, 0444);
->  MODULE_PARM_DESC(zoned, "Get WWN from the controller. Default: true");
->
-> +uint pcs_event_log_severity =3D 0x03;
-> +module_param(pcs_event_log_severity, int, 0644);
-> +MODULE_PARM_DESC(pcs_event_log_severity, "PCS event log severity level")=
-;
-> +
->  static struct scsi_transport_template *pm8001_stt;
->  static int pm8001_init_ccb_tag(struct pm8001_hba_info *);
->
-> diff --git a/drivers/scsi/pm8001/pm8001_sas.h b/drivers/scsi/pm8001/pm800=
-1_sas.h
-> index ced6721380a8..42c7b3f7afbf 100644
-> --- a/drivers/scsi/pm8001/pm8001_sas.h
-> +++ b/drivers/scsi/pm8001/pm8001_sas.h
-> @@ -96,6 +96,8 @@ extern struct list_head hba_list;
->  extern const struct pm8001_dispatch pm8001_8001_dispatch;
->  extern const struct pm8001_dispatch pm8001_80xx_dispatch;
->
-> +extern uint pcs_event_log_severity;
-> +
->  struct pm8001_hba_info;
->  struct pm8001_ccb_info;
->  struct pm8001_device;
-> diff --git a/drivers/scsi/pm8001/pm80xx_hwi.c b/drivers/scsi/pm8001/pm80x=
-x_hwi.c
-> index 8fe886dc5e47..9b237a764d0b 100644
-> --- a/drivers/scsi/pm8001/pm80xx_hwi.c
-> +++ b/drivers/scsi/pm8001/pm80xx_hwi.c
-> @@ -763,7 +763,8 @@ static void init_default_table_values(struct pm8001_h=
-ba_info *pm8001_ha)
->                 pm8001_ha->memoryMap.region[IOP].phys_addr_lo;
->         pm8001_ha->main_cfg_tbl.pm80xx_tbl.pcs_event_log_size           =
-=3D
->                                                         PM8001_EVENT_LOG_=
-SIZE;
-> -       pm8001_ha->main_cfg_tbl.pm80xx_tbl.pcs_event_log_severity       =
-=3D 0x01;
-> +       pm8001_ha->main_cfg_tbl.pm80xx_tbl.pcs_event_log_severity       =
-=3D
-> +               pcs_event_log_severity;
->         pm8001_ha->main_cfg_tbl.pm80xx_tbl.fatal_err_interrupt          =
-=3D 0x01;
->
->         /* Enable higher IQs and OQs, 32 to 63, bit 16 */
-> --
-> 2.47.0.rc1.288.g06298d1525-goog
->
+I did concurrent processing at the very beginning of the function
+__upgrade_read(). Is it not necessary to do concurrent processing here?
+The relevant code is as follows.
+
++static inline int __upgrade_read(struct rw_semaphore *sem)
++{
++	long tmp;
++
++	preempt_disable();
++
++	tmp = atomic_long_read(&sem->count);
++	do {
++		if (tmp & (RWSEM_WRITER_MASK | RWSEM_FLAG_UPGRADE_READ)) {
++			preempt_enable();
++			return -EBUSY;
++		}
++	} while (!atomic_long_try_cmpxchg(&sem->count, &tmp,
++		tmp + RWSEM_FLAG_UPGRADE_READ + RWSEM_WRITER_LOCKED - RWSEM_READER_BIAS));
+
+>This new interface should have an API similar to a trylock. True if 
+>successful, false otherwise. I like the read_try_upgrade() name.
+
+I can't agree more. I will add an read_try_upgrade() API in v2.
+
+>Another alternative that I have been thinking about is a down_read() 
+>variant with intention to upgrade later. This will ensure that only one 
+>active reader is allowed to upgrade later. With this, upgrade_read() 
+>will always succeed, maybe with some sleeping, as long as the correct 
+>down_read() is used.
+
+I haven't figured out how to do this yet. If the current upgrade_read
+idea is also OK, should I continue to complete this patchset according
+to this idea?
+
+>Cheers,
+>Longman
+
+Thanks for your review!
 
