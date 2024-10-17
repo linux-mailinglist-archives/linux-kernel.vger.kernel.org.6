@@ -1,76 +1,135 @@
-Return-Path: <linux-kernel+bounces-370388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BABF9A2BCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:12:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C039A2BD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 286EE285D7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:12:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01FF51C20A1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDB01E1329;
-	Thu, 17 Oct 2024 18:10:46 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8C41E0096;
+	Thu, 17 Oct 2024 18:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o1CDtvXJ"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7A41E0E03;
-	Thu, 17 Oct 2024 18:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0808238FB0
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729188646; cv=none; b=rXM91iBEUvPaNKhFfWt6AQxGvjesGumd5hUFgAKCmYOT8pTJekRJcp3ts3TUEETcjfzIRYfG1i3EL04Q07E0LNxTehmOFite9xIioOJlo37RiTEw4mGzoomvze6/tdOTHja20EDXN1KBuPf8LWDJ5kkzgzbjc859fKtMrggUDyM=
+	t=1729188721; cv=none; b=lv50yeOz3wB0bEe+gZ8XlFGtzk3ZFc3RhGKP5VYuDxtdCzq0oLaKVtkmm0K9SwCo1LLzf8hC+0TxZ1DcqWvh/Y72oAkX7h5yUDvEfNGQcZp+xrex9D/DHfbrpB6/M9AIGqYLG9R++1Jfuj1EVEALgs91azoQcISmRKVB5OJAy7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729188646; c=relaxed/simple;
-	bh=bFWmMAiYY/zcVTbFe2jP5n8eJScXpS2Iqf32Nw7MvmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xcuk+9gmYE5ECZqLCjhnUxl8sjaKxLwTixcpva1WUBkFQcdgdbg/Ka4A/u0Ofo1UU4/Owkb5H3BjsslCLYuZzQ4cU7bOR+6jAEXUnKUorHYUR7Ttedw2Fhr5QNpsEppCKL31PgO/cgvaY+rWni7rxuRen8XVBs7HyIWP+E0FmwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1t1Ux4-0006xj-5c; Thu, 17 Oct 2024 20:10:22 +0200
-Date: Thu, 17 Oct 2024 20:10:22 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Stefan Wiehler <stefan.wiehler@nokia.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v6 05/10] ip6mr: Lock RTNL before ip6mr_new_table()
- call in ip6mr_rules_init()
-Message-ID: <20241017181022.GB25857@breakpoint.cc>
-References: <20241017174109.85717-1-stefan.wiehler@nokia.com>
- <20241017174109.85717-6-stefan.wiehler@nokia.com>
+	s=arc-20240116; t=1729188721; c=relaxed/simple;
+	bh=z9gullE2/djCQd7k5PGKfGuUrtvUKf8lsI3Xgek9AFs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UQ7kQ+2kgzxH/bkIjqY2JcFNQ75NZKPlp9cAXuhgWt5vWBDE/vIRbrD530dmoy2kb/jeQa6rf9MN30FBJ/X+SHVAvMwA0X02AquTc45FvR35zLsD83MKHrW9NDZHToM4nB/nwfZt+3uj50XXalFrlaPyXaHHBoDkJaeGpP05TPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o1CDtvXJ; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e4b7409fso1325598e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:11:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729188714; x=1729793514; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZxiQQYnnLiYe1NRYLfa18e4fbcMTEYgNWx6js0FYHU=;
+        b=o1CDtvXJGzTGMDnruAs+abheYhVExHZd+snyzA8Owl3nsSaWVMAl0zSEu/wau6V4Y3
+         qkSAX7BSL9gHjcQSZb9r+SI+DOKtWjgEnXWRFW7CgcDOuv2F8oE7dUMIzKgqHtdNmKC+
+         I5j1o9jAsHxnwN1XkQsxZmLIc/FSXsqKejNZQlCQliKB4CG8M0GPRSbzMmTik64vnoOg
+         ldRr919Ume2g3y1V4IEM35SoFiKvuP6XvVZnsQmHPgnuhKvuPBgeWTMj2xF82TXzcvD8
+         nPUVdy70tQlAq8uvvEdWY/h1XtURKr6jkA4J74Hk+WBFYrCRmFKZBEQ5T/ly8X8eA8Dw
+         43Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729188714; x=1729793514;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TZxiQQYnnLiYe1NRYLfa18e4fbcMTEYgNWx6js0FYHU=;
+        b=AvUd4CQq2/xHuCvAoSMYLKpMtp1go1oamtJQj47lyYAqpbq5U0eCjJbRsfKRqSNA1T
+         w41GNfTG/IaC7Rac52dog7H732CBDPvwLOi7qzXpBSLChWlBPIVpa/B24JN2TCPGJnLD
+         JYxpOIZdTjigvuK3G/xywPNLfPotcxovb6joI6MRJ09FfhlXwux32asuU3DdcRBYWOas
+         bbWAOqrk6l8ynuv6FWbuA1G/f7OYLI6lH5LxLBk5T02b0eaBJdWZqUxt2Xpc/bb4vQxZ
+         C2/Cm/xzFKDUyAg/ueLMLnzS8VQPhiN4h1O9y9td+GVHhQBZNe95o/+HUtwaXZiAOQ2T
+         Dn8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUFn2j0g/xy0aLOE8woZaXm97Y7oX/hbTH7XnEFAywzgy7K85aPTvpOV3c6nKtKOVeuh8N5EZWSy1GLJZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1gApvvlLEEMJ2KT39kQeSvCOwmaHACcbcq92Mf7LML5m+Oj3f
+	AxuNFrqZwDUOrF3PP6Uhw7FylUJ1ZBsbjcHH89p6OpJyJZGhv9Ccu8+1AfTmZ6o=
+X-Google-Smtp-Source: AGHT+IE5cnTqQ5nNqL9y5fKWUoLBqqEK62VLizium6/dxI7EPCeyNqDLop8VMZBt9ejWsGJejoilFA==
+X-Received: by 2002:a05:6512:2c0f:b0:539:e2cc:d37c with SMTP id 2adb3069b0e04-53a14ff6cddmr12725e87.3.1729188714046;
+        Thu, 17 Oct 2024 11:11:54 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539fffb232fsm841113e87.109.2024.10.17.11.11.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 11:11:51 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 17 Oct 2024 21:11:49 +0300
+Subject: [PATCH] dt-bindings: dma: qcom,gpi: Add SAR2130P compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017174109.85717-6-stefan.wiehler@nokia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241017-sar2130p-dma-v1-1-e6aa6789f116@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGRTEWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0Nz3eLEIiNDY4MC3ZTcRN0kY0vDFENjIDawUAJqKShKTcusABsXHVt
+ bCwDDVe4EXgAAAA==
+X-Change-ID: 20241017-sar2130p-dma-b391d131d108
+To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1027;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=z9gullE2/djCQd7k5PGKfGuUrtvUKf8lsI3Xgek9AFs=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnEVNlS6PCgdeyOaFQx3n6iIhMvdxOmsyJUyi/Q
+ UzIwVb++ZSJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxFTZQAKCRAU23LtvoBl
+ uGpWD/4k1swyZNeHRK7hgB70TpyATfXe1b/wlp8gNQ2MFbcIrH6+/IPk8cWQdMpqaHrr6mB+Jry
+ BwKAqikkOmKT8rvkl0xWEFyD8HI7vrbouF7hXcFCHxi+w2dqOCls6jdQqm0j+XhNIObhaxVg46g
+ JeBMVdMtya9WhCtLOapsfupqLB0PXcWijqiPX2dKtJlbDRSY2RMZD+wlgwxA/zuDS57amFVzY44
+ eATUu6FxPADBt3efcBvsqWJquia8ayWxETC0ybG4rjEI1p5S1Bu4JbehMDFhMzTZx71UOMEmK0u
+ SiWyW6CQt/p4w8F1TGIafHCXpkYlcvj7etxMslgewL3fBnEItXsiSfhaqcqZDpuybP5N/Vw6L0z
+ 5zV+e90q9OeNPtIk+wD2JbAYzRfwOX3KJ02Gnd01vStMlnEmoIXAe3HlXznqUSYoJuZFZkd5doC
+ xvtH1+Mpps/blQOyoBkNAR61wRw6azLYxSpY0cS0vZCFg/Ig7IBzFdLrm26vpMZ9xXW48PtcRBp
+ HvMI/gx0AMXsO51vE8dttlDkKwXCuQhKiI9BHKkdOifcTMoJ2kpvWKU/WDgkMUHtu7RqEdxKheP
+ aJNa/4IUo5SkPbG7vjCdY+Bbm5U93oVLoUsxUOsJfjWGp0riSm/MaYWwgTbTTIE4UvNNaOOcsMX
+ MS66c/OucR0fBVQ==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Stefan Wiehler <stefan.wiehler@nokia.com> wrote:
-> +	rtnl_lock();
->  	mrt = ip6mr_new_table(net, RT6_TABLE_DFLT);
->  	if (IS_ERR(mrt)) {
->  		err = PTR_ERR(mrt);
->  		goto err1;
->  	}
-> +	rtnl_unlock();
->  
->  	err = fib_default_rule_add(ops, 0x7fff, RT6_TABLE_DFLT, 0);
->  	if (err < 0)
-> @@ -254,6 +256,7 @@ static int __net_init ip6mr_rules_init(struct net *net)
->  	ip6mr_free_table(mrt);
->  	rtnl_unlock();
->  err1:
-> +	rtnl_unlock();
+Document compatible for GPI DMA controller on SAR2130P platform.
 
-Looks like a double-unlock?
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
+index 4df4e61895d2129caf7f2ad9b426d78b60f9c32b..4ad56a409b9cace94a3a4c4ec94d3ad16232f5a1 100644
+--- a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
++++ b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
+@@ -26,6 +26,7 @@ properties:
+           - enum:
+               - qcom,qcm2290-gpi-dma
+               - qcom,qdu1000-gpi-dma
++              - qcom,sar2130p-gpi-dma
+               - qcom,sc7280-gpi-dma
+               - qcom,sdx75-gpi-dma
+               - qcom,sm6115-gpi-dma
+
+---
+base-commit: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
+change-id: 20241017-sar2130p-dma-b391d131d108
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
