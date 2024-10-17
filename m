@@ -1,226 +1,166 @@
-Return-Path: <linux-kernel+bounces-369190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8AB39A1A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:20:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F879A1A23
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB3141C234DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:20:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38993B225E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C617143895;
-	Thu, 17 Oct 2024 05:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2FE2905;
+	Thu, 17 Oct 2024 05:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="pI9G2cdi"
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YxrsrTsn"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CDB15B12F;
-	Thu, 17 Oct 2024 05:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3D721E3C1
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729142434; cv=none; b=X5cgopQd4Eg2t7eG48MDwFoHPIGsf9ODMI02oUqqAvA8embGIY3LA6y+U/rge7jJqh/yIxzNqtGnOTE2PZ0emLqk8Gjjj1Mo1Z40Ao/pxO4aKMDAfcsSSB1jcxyZoiSi8ePe4OxhRozJdXwcViizF53jHEpN6Nkko/lrUY5Il3s=
+	t=1729142515; cv=none; b=fS4pDyI4WvPOh+vzmipkSr9a96rJJJ72WEP2xO+Lx34V1/8TFPk6cRM6t5ED31VU1QCGjZolEVJEK1D1KLJshaSpDYfXAkUqqBQr/fiESlr4ljYKJ9mthVMLSOr+rALeUE4GOzP1RwUMfVChRrQDsaV+TnTfb9hcIvcp3R6Z9Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729142434; c=relaxed/simple;
-	bh=n4izxsdCqjqWcvDJ5ZCj3ultS7uzhfdnEfgNyYzLHZw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QwjSDr2gr0N5NjOl5/PEVIS3/jcl6NlvxnnPtxTHaJikLsnioVlASGGnadJjqY67DdDuB7NQ/PbGHdSvoqvkpVTpDwVizEzM6qM4vmSKQyrU81l+ge86y2Z1kql/uMG9qPZen62UTb3qpl2Pr9UNf/0VA3qP+ogn24sh5fltDm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=pI9G2cdi; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1729142515; c=relaxed/simple;
+	bh=xkntsTyW214McUZOI4YK0PdX88OTCnH1vIdM2rrkYrU=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=FACA0z//y5RloXikPN5CnQo2RPD/JYdPVifqqMVdmH8Kyl2jfsmuEUoo4I7D6a97MioV8++md53pQ3fVXt2dn0l/9VVGPOK86NOrKwURpOCjYnTsw8M4+ltIG3F3+CdHC9beSQXdWpIl1jnc40DS9iiL+9fWSdecnf7nd5vuhnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YxrsrTsn; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6886cd07673so12738197b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:21:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1729142434; x=1760678434;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CjgaYnv9bouACl+8S6HJYWGpatyfYcFMbgYWvbg4/as=;
-  b=pI9G2cdiUYKZ+fNmtudGjYL5kku9QCMAED77lC+aQW9bgbAf4QHiWMky
-   g+B+a9mu8EmUqdHjl3d8DcKvTsYRcTaOZPdglJnI/qrDMtmUd8WCVxjw0
-   Uzu5SHVuJos7Oup9pB+iWVOOZRkhTyEibVfo+/KBBtICEKkaJWJz+Cgy6
-   4=;
-X-IronPort-AV: E=Sophos;i="6.11,210,1725321600"; 
-   d="scan'208";a="435749412"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 05:20:32 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:23927]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.37.107:2525] with esmtp (Farcaster)
- id 8057a66f-0bcb-466b-beba-e80bf4a06cb7; Thu, 17 Oct 2024 05:20:30 +0000 (UTC)
-X-Farcaster-Flow-ID: 8057a66f-0bcb-466b-beba-e80bf4a06cb7
-Received: from EX19D016UWA004.ant.amazon.com (10.13.139.119) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 17 Oct 2024 05:20:30 +0000
-Received: from 88665a51a6b2.amazon.com (10.106.178.54) by
- EX19D016UWA004.ant.amazon.com (10.13.139.119) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 17 Oct 2024 05:20:28 +0000
-From: Cristian Prundeanu <cpru@amazon.com>
-To: <linux-tip-commits@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, <x86@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Bjoern Doebel <doebel@amazon.com>,
-	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>, Geoff Blake
-	<blakgeof@amazon.com>, Ali Saidi <alisaidi@amazon.com>, Csaba Csoma
-	<csabac@amazon.com>, Cristian Prundeanu <cpru@amazon.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH 2/2] [tip: sched/core] sched: Move PLACE_LAG and RUN_TO_PARITY to sysctl
-Date: Thu, 17 Oct 2024 00:20:00 -0500
-Message-ID: <20241017052000.99200-3-cpru@amazon.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241017052000.99200-1-cpru@amazon.com>
-References: <20241017052000.99200-1-cpru@amazon.com>
+        d=google.com; s=20230601; t=1729142512; x=1729747312; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/pHJ2/jYB0ZkRftk8XT40WjO6Pb9plA13uzt50byz9E=;
+        b=YxrsrTsnKHtmKmWfKJx6z9ivdLISuC+n7g/szog5ctcOSkRWsNomgLtDemQcDiytvs
+         FI7byPPepDbFQjPM1bK9zjyXSKjWzj3IISfl/oekrCIrAsC7EoXoGw6OTpurLrDkTS3q
+         a1HuYZp8YLLtTzxevEhLvqg8mSVOq2i11LUyt9egSjbr7lQIMzO1FSXSXF9x1qkYvbuB
+         aJ39z+CgnpqAF9d6r868itWyUemDoW18iRr9u1m1qFFbdSzvl2i1Mh5TtepaIItkRwHs
+         PojEO4fTIZgv591CC/4t5SMUnp37WTt/fG17NseH4dhPMxFHkqrNmJ1BPVSAWwH+krrZ
+         gwyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729142512; x=1729747312;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/pHJ2/jYB0ZkRftk8XT40WjO6Pb9plA13uzt50byz9E=;
+        b=s2Ifo04PaS+OarbSs4YbnvoRCoefbOzuqdFzbC2qjpLiYRQimKjUNjuJkp8oXA38a0
+         Gl45QYZetLpKBamo6/yT5QQuOBMaxQztMi+CyyUD45twPUCFQSy7vkOonruTqX8wW7Cx
+         lGO65/3wZXzhls2iVmMFj0POSsoTHHEVcAGsC6JYnAuzvHhZZ4LK4T044LHN2I80POP8
+         nKZhttlh+i8q1KTxBW7xihW/goYPhqRGcsNzoCbUfIQdpWnOjtXJZYq+x+TZwxy1mlvM
+         KqUFVfGAs9Jfx5FE/p8sdEpuLtYkmn0mJdulAJG1Fo2JyV9nzhciZLvRC4MGrSL6Xfv5
+         tarQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW22tUNOhbIRV2AJLn03WEu7pmdaXj69QsxiQdib91sJcjsbmRIa3Or84EE8gzUGpVD1EHiHbmp3hQA00=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCWavuKHrTxWeTkylpbypPNaHKLzF9W+KtveRVngbom3eKIXD/
+	s+qe82BLY1qWFXhPpUQ7xAyKAIi8PEusfpfvYK+3J8l7UydiS+kFnrf2jwNxPeo4Wexye8pK4Sb
+	MXotjmg==
+X-Google-Smtp-Source: AGHT+IFx8038/Nn1GMMW99JA4rgv+GkI2D/hoWH0ohWCXwjlgYSNRt1ck55s/92JZpdrRJKxcd/rbvUywVcL
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:98a5:142e:8c2e:e9e5])
+ (user=irogers job=sendgmr) by 2002:a05:690c:6906:b0:6db:c3b8:c4ce with SMTP
+ id 00721157ae682-6e3d41e8dbdmr799607b3.7.1729142511774; Wed, 16 Oct 2024
+ 22:21:51 -0700 (PDT)
+Date: Wed, 16 Oct 2024 22:21:37 -0700
+Message-Id: <20241017052137.225514-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D044UWA004.ant.amazon.com (10.13.139.7) To
- EX19D016UWA004.ant.amazon.com (10.13.139.119)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+Subject: [PATCH v1] perf test: Add a signal handler to kill forked child processes
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-These two scheduler features have a high impact on performance for some
-database workloads. Move them to sysctl as they are likely to be modified
-and persisted across reboots.
+If the `perf test` process is killed the child tests continue running
+and may run indefinitely. Propagate SIGINT (ctrl-C) and SIGTERM (kill)
+signals to the running child processes so that they terminate when the
+parent is killed.
 
-Cc: <stable@vger.kernel.org> # 6.6.x
-Fixes: 86bfbb7ce4f6 ("sched/fair: Add lag based placement")
-Fixes: 63304558ba5d ("sched/eevdf: Curb wakeup-preemption")
-Signed-off-by: Cristian Prundeanu <cpru@amazon.com>
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- include/linux/sched/sysctl.h |  8 ++++++++
- kernel/sched/core.c          | 13 +++++++++++++
- kernel/sched/fair.c          |  5 +++--
- kernel/sched/features.h      | 10 ----------
- kernel/sysctl.c              | 20 ++++++++++++++++++++
- 5 files changed, 44 insertions(+), 12 deletions(-)
+This change is on top of the 8 patch parallel test series:
+https://lore.kernel.org/lkml/20241011220354.756798-1-irogers@google.com/
+---
+ tools/perf/tests/builtin-test.c | 34 +++++++++++++++++++++++++++++++--
+ 1 file changed, 32 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index 5a64582b086b..0258fba3896a 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -29,4 +29,12 @@ extern int sysctl_numa_balancing_mode;
- #define sysctl_numa_balancing_mode	0
- #endif
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index 09afe884a987..5c93608e9a75 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -469,13 +469,22 @@ static int start_test(struct test_suite *test, int i, int subi, struct child_tes
+ 	for (j = 0, k = 0; j < ARRAY_SIZE(tests); j++, k = 0)	\
+ 		while ((t = tests[j][k++]) != NULL)
  
-+#if defined(CONFIG_SCHED_DEBUG) && defined(CONFIG_SYSCTL)
-+extern unsigned int sysctl_sched_place_lag_enabled;
-+extern unsigned int sysctl_sched_run_to_parity_enabled;
-+#else
-+#define sysctl_sched_place_lag_enabled 0
-+#define sysctl_sched_run_to_parity_enabled 0
-+#endif
++/* State outside of __cmd_test for the sake of the signal handler. */
 +
- #endif /* _LINUX_SCHED_SYSCTL_H */
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 43e453ab7e20..c6bd1bda8c7e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -134,6 +134,19 @@ const_debug unsigned int sysctl_sched_features =
- 	0;
- #undef SCHED_FEAT
- 
-+#ifdef CONFIG_SYSCTL
-+/*
-+ * Using the avg_vruntime, do the right thing and preserve lag across
-+ * sleep+wake cycles. EEVDF placement strategy #1, #2 if disabled.
-+ */
-+__read_mostly unsigned int sysctl_sched_place_lag_enabled = 0;
-+/*
-+ * Inhibit (wakeup) preemption until the current task has either matched the
-+ * 0-lag point or until is has exhausted it's slice.
-+ */
-+__read_mostly unsigned int sysctl_sched_run_to_parity_enabled = 0;
-+#endif
++static size_t num_tests;
++static struct child_test **child_tests;
++static jmp_buf cmd_test_jmp_buf;
 +
- /*
-  * Print a warning if need_resched is set for the given duration (if
-  * LATENCY_WARN is enabled).
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 5a621210c9c1..c58b76233f59 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -925,7 +925,8 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
- 	 * Once selected, run a task until it either becomes non-eligible or
- 	 * until it gets a new slice. See the HACK in set_next_entity().
- 	 */
--	if (sched_feat(RUN_TO_PARITY) && curr && curr->vlag == curr->deadline)
-+	if (sysctl_sched_run_to_parity_enabled &&
-+	    curr && curr->vlag == curr->deadline)
- 		return curr;
++static void cmd_test_sig_handler(int sig)
++{
++	siglongjmp(cmd_test_jmp_buf, sig);
++}
++
+ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
+ {
+ 	struct test_suite *t;
+ 	int width = 0;
+ 	unsigned int j, k;
+-	size_t num_tests = 0;
+-	struct child_test **child_tests;
+ 	int err = 0;
  
- 	/* Pick the leftmost entity if it's eligible */
-@@ -5280,7 +5281,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	 *
- 	 * EEVDF: placement strategy #1 / #2
- 	 */
--	if (sched_feat(PLACE_LAG) && cfs_rq->nr_running && se->vlag) {
-+	if (sysctl_sched_place_lag_enabled && cfs_rq->nr_running && se->vlag) {
- 		struct sched_entity *curr = cfs_rq->curr;
- 		unsigned long load;
+ 	for_each_test(j, k, t) {
+@@ -499,6 +508,25 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
+ 	if (!child_tests)
+ 		return -ENOMEM;
  
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 8a5ca80665b3..b39a9dde0b54 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -1,10 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- 
--/*
-- * Using the avg_vruntime, do the right thing and preserve lag across
-- * sleep+wake cycles. EEVDF placement strategy #1, #2 if disabled.
-- */
--SCHED_FEAT(PLACE_LAG, false)
- /*
-  * Give new tasks half a slice to ease into the competition.
-  */
-@@ -13,11 +8,6 @@ SCHED_FEAT(PLACE_DEADLINE_INITIAL, true)
-  * Preserve relative virtual deadline on 'migration'.
-  */
- SCHED_FEAT(PLACE_REL_DEADLINE, true)
--/*
-- * Inhibit (wakeup) preemption until the current task has either matched the
-- * 0-lag point or until is has exhausted it's slice.
-- */
--SCHED_FEAT(RUN_TO_PARITY, false)
- /*
-  * Allow wakeup of tasks with a shorter slice to cancel RUN_TO_PARITY for
-  * current.
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 79e6cb1d5c48..f435b741654a 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2029,6 +2029,26 @@ static struct ctl_table kern_table[] = {
- 		.extra2		= SYSCTL_INT_MAX,
- 	},
- #endif
-+#ifdef CONFIG_SCHED_DEBUG
-+	{
-+		.procname	= "sched_place_lag_enabled",
-+		.data		= &sysctl_sched_place_lag_enabled,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{
-+		.procname	= "sched_run_to_parity_enabled",
-+		.data		= &sysctl_sched_run_to_parity_enabled,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+#endif
- };
- 
- static struct ctl_table vm_table[] = {
++	err = sigsetjmp(cmd_test_jmp_buf, 1);
++	if (err) {
++		pr_err("Signal while running tests. Terminating tests with signal %d\n", err);
++		for (size_t x = 0; x < num_tests; x++) {
++			struct child_test *child_test = child_tests[x];
++
++			if (!child_test)
++				continue;
++
++			pr_debug3("Killing %3d pid %d\n",
++				  child_test->test_num + 1,
++				  child_test->process.pid);
++			kill(child_test->process.pid, SIGTERM);
++		}
++		goto err_out;
++	}
++	signal(SIGINT, cmd_test_sig_handler);
++	signal(SIGTERM, cmd_test_sig_handler);
++
+ 	/*
+ 	 * In parallel mode pass 1 runs non-exclusive tests in parallel, pass 2
+ 	 * runs the exclusive tests sequentially. In other modes all tests are
+@@ -559,6 +587,8 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
+ 		}
+ 	}
+ err_out:
++	signal(SIGINT, SIG_DFL);
++	signal(SIGTERM, SIG_DFL);
+ 	if (err) {
+ 		pr_err("Internal test harness failure. Completing any started tests:\n:");
+ 		for (size_t x = 0; x < num_tests; x++)
 -- 
-2.40.1
+2.47.0.105.g07ac214952-goog
 
 
