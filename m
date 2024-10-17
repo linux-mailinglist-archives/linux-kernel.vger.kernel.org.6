@@ -1,189 +1,150 @@
-Return-Path: <linux-kernel+bounces-369775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FA09A2286
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:39:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8199A228B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27973281AFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:39:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 957C1B259E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F511DDC0F;
-	Thu, 17 Oct 2024 12:38:48 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881D51DE2CD;
+	Thu, 17 Oct 2024 12:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ODnFXsYu"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292051DDC0E;
-	Thu, 17 Oct 2024 12:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021BC1DDC17
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729168727; cv=none; b=uddaySqTx6Px1KcMsAqETjyIAnEm4rmLfvf9Itj+clyqvGZchRJVZBzjCflmzSAXPwmnAMPxYsiQyocCrZOVclWTctGwsou39UkTps7QniXo1AuOu7FFAJurUAANi4jp5jCs/QRU7hY590CTJzTcGRvViQ+WufBxiNAKqWd76Cg=
+	t=1729168755; cv=none; b=d2YJIQKqS1Wh7AHpU86QuAwS1kTUeolN23v368t/QFcV18mUG+8lRTjzELHMdjMfLAO/VWuFEknqVjHUI8sx+tRrXCe6u+Fpz2hfXQ29AVWUlWl7FrADLH6ajZmkLjmNHKQwq3dQdhtBA5mCw+BizyegL3WtpPSOZrqWsDkbmuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729168727; c=relaxed/simple;
-	bh=gJowPuj2eGVIHd+l3ktq8ceYKlOGYjghKnJE8W+rq8s=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FTIBBnNAZeUlGarLzafe718h1LBTxtrhsKjw4APy+6Bl7LHlOjzv9j9bL3DGf1d0hPfMNbBV9GG/Fas7sJRzzLJsl1l25NOLsnjYyNb0SlsJLt9bhuMG5trcJgvkSjgDKEQ0jnAVZO1z4wYNqzZUTb1WQi5OOoaAlWfdTINl4Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTnMQ06xCz6LDF7;
-	Thu, 17 Oct 2024 20:34:10 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8D9DC140B33;
-	Thu, 17 Oct 2024 20:38:41 +0800 (CST)
-Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
- 2024 14:38:40 +0200
-Date: Thu, 17 Oct 2024 13:38:39 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <shiju.jose@huawei.com>
-CC: <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>
-Subject: Re: [RFC PATCH 3/4] cxl/events: Updates for CXL DRAM Event Record
-Message-ID: <20241017133839.000035dd@Huawei.com>
-In-Reply-To: <20241016163349.1210-4-shiju.jose@huawei.com>
-References: <20241016163349.1210-1-shiju.jose@huawei.com>
-	<20241016163349.1210-4-shiju.jose@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729168755; c=relaxed/simple;
+	bh=CmSgG8dgDVGowYqWp/vzfob7NQfDeXXWilwWB40CND8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=NNupek9hmR5CNzlnkXQ38IcSloZRVLvQpyOmmDfGRwn+hno4obs0PCks2MAyLbeA+4BvVPXtHQmRzbBHrWOnIw4UErY2iN6BUIwAluhcT1IMlDGNNGyM1EDKwCAyheLvyhRR83Z4yT18iEJb7euM2cBDABX06h0MITDKVmG4o+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ODnFXsYu; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d3e8d923fso690616f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729168750; x=1729773550; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eLKbd68RzcxlFXK7q4vrGEd+fffJ1TMM8zv/7HYDcsQ=;
+        b=ODnFXsYuVqeN5imNxMuTsXP49rINnfJwbqB6dqlPqXJF1QCS4flU6hHbEdzl9vkPoD
+         JhiXnXVpauDasz71/s1st4xCUEJQyd056XN5/GCmTtwCfHCHEDsbsXVrx1ZzV1tL45LD
+         WdwnIGuoKHJH+WtB34GBxgJsCphjW6AFTpgAqCMm12tnGgGdOsUufQ0fyUuYh71tpMwD
+         emUto0uD3B4WUUNMv3y2yHaD7vclvjNuJi+S/8rLP6pW97i2J81iH0NoGgiAGp1LBvxJ
+         BRWr9YI/XkBEGO6V1wUY5bNyQ85l6I3H8nsIQnsAhbmTotKtoRvVRkhJZFnV6H6lWsXy
+         ZBeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729168750; x=1729773550;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eLKbd68RzcxlFXK7q4vrGEd+fffJ1TMM8zv/7HYDcsQ=;
+        b=nuy2IUAswOxaqCOHlPgyvU/tniLoa7SwXx0HfGN8umRtNqSs2KmXMEeMpYLyxyQ519
+         odS2Z0UauDqeAzp9/NYsnTxAmLQ/FVjtobKB79B3RGam8O2uJk6b3Xz2jwKx/ajHWkBy
+         o+Ihp6/2E4KeDDOfWJqPp0PZsdOKUZl7udw9aDG+Hbuj9adii4ZfdQLgjX/1j6BViM+1
+         +Ir1op5jz3Yt4c8CgPz7Qk2Fu9oq7x9H2n6hFrbtcSqDtFYQT/30mk3FVWVXOCbe0zhN
+         Z6g5LWLW2NRVNIC8kE0HfDGIcSLbfv1DMeym/JWfx6uqC4WCd1wiQAQpV1keaa9Rl8N8
+         u46Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXab/dxmQqj0LNraR5NONDXGmaC5TwME2id3+mQ7qZYDXh5vUCLvtzFAlAaZ7dZU/NxDSD+r5jSTiholAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzhHbJCd9+NdLiglv2Fy7E9XvsL5DXm0Sv9rYEdlVBv6aauedN
+	k/bJfb0QC+EHCAQ83r0cG9r7MQoc2OLNybvxpkRZmctjOIAzDuqyxjTWH9Um/j8=
+X-Google-Smtp-Source: AGHT+IG7ejxJJUoO3H77hYt2WNQRu3rm4oMZyvw11lFYzsiOaPe5DscdwmGO2D+HP8vSEzTm8Trfkg==
+X-Received: by 2002:a5d:5051:0:b0:37d:4fab:c194 with SMTP id ffacd0b85a97d-37d86bd59b0mr4879360f8f.25.1729168750204;
+        Thu, 17 Oct 2024 05:39:10 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf80a4sm7156250f8f.87.2024.10.17.05.39.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 05:39:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 17 Oct 2024 13:39:08 +0100
+Message-Id: <D4Y35WNU7MWN.2Q3RHCLLZ69Y@linaro.org>
+Cc: <konradybcio@kernel.org>, <konrad.dybcio@oss.qualcomm.com>,
+ <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+ <krzk+dt@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+ <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add Qualcomm SM6115 LPASS
+ clock controller
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241017005800.1175419-1-alexey.klimov@linaro.org>
+ <20241017005800.1175419-2-alexey.klimov@linaro.org>
+ <n4nbzwostn6i5ygskjfr4o7haqujodadxd2kspvlk2gccxoaen@pk3qj7rxvspf>
+In-Reply-To: <n4nbzwostn6i5ygskjfr4o7haqujodadxd2kspvlk2gccxoaen@pk3qj7rxvspf>
 
-On Wed, 16 Oct 2024 17:33:48 +0100
-<shiju.jose@huawei.com> wrote:
+On Thu Oct 17, 2024 at 9:39 AM BST, Krzysztof Kozlowski wrote:
+> On Thu, Oct 17, 2024 at 01:57:59AM +0100, Alexey Klimov wrote:
+> > From: Konrad Dybcio <konrad.dybcio@linaro.org>
+> >=20
+> > SM6115 (and its derivatives or similar SoCs) has an LPASS clock
+> > controller block which provides audio-related resets.
+> >=20
+> > Add bindings for it.
+>
+> That's a v2.
+>
+> >=20
+> > Cc: Konrad Dybcio <konradybcio@kernel.org>
+> > Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > [alexey.klimov] slightly changed the commit message
+> > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>
+> My tag?
+>
+> > ---
+> >  .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 53 +++++++++++++++++++
+> >  .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++++
+> >  2 files changed, 68 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115=
+-lpasscc.yaml
+> >  create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
+> > +examples:
+> > +  - |
+> > +    lpass_audiocc: clock-controller@a6a9000 {
+> > +        compatible =3D "qcom,sm6115-lpassaudiocc";
+> > +        reg =3D <0x0a6a9000 0x1000>;
+> > +        #reset-cells =3D <1>;
+> > +    };
+> > +
+> > +  - |
+> > +    lpasscc: clock-controller@a7ec000 {
+> > +        compatible =3D "qcom,sm6115-lpasscc";
+> > +        reg =3D <0x0a7ec000 0x1000>;
+> > +        #reset-cells =3D <1>;
+> > +    };
+>
+> Not much improved. Don't send same code from whatever repo you got, but
+> go via mailing list.
 
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> CXL spec 3.1 section 8.2.9.2.1.2 Table 8-46, DRAM Event Record has updated
-> with following new fields and new types for Memory Event Type, Transaction
-> Type and Validity Flags fields.
-> 1. Component Identifier
-> 2. Sub-channel
-> 3. Advanced Programmable Corrected Memory Error Threshold Event Flags
-> 4. Corrected Memory Error Count at Event
-> 5. Memory Event Sub-Type
-> 
-> Add updates for the above spec changes in the CXL events record and CXL
-> DRAM trace event implementations.
-> 
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-Passing comments on two things inline.
-1) There are a couple of whitespace consistency changes in here.
-   Spaces to tabs for alignment.  That's fine but maybe needs a brief
-   mention in the patch description.
-2) Really odd that the spec didn't have a component ID field for DRAM
-   errors.  They weren't all that useful before the PLDM format was added
-   but still a curiosity that made me open up the 3.0 spec.  Indeed, no
-   such field.
+Ok, thanks! I was not aware that there was a previous version on
+maillist ~ a year ago. My impression was that this was never sent for
+review. I'll update and resend it as v2 if there are no objections so it
+will become a proper v2. I am more interested what should be done
+regarding older email addresses or maybe .mailmap will handle it correctly.
 
-With that one line added to the patch description this looks good to me.
-
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-> ---
->  drivers/cxl/core/trace.h | 44 ++++++++++++++++++++++++++++++++--------
->  include/cxl/event.h      |  7 ++++++-
->  2 files changed, 42 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-> index e638e82429bc..20790dffa2b4 100644
-> --- a/drivers/cxl/core/trace.h
-> +++ b/drivers/cxl/core/trace.h
-> @@ -468,7 +468,7 @@ TRACE_EVENT(cxl_general_media,
->  /*
->   * DRAM Event Record - DER
->   *
-> - * CXL rev 3.0 section 8.2.9.2.1.2; Table 8-44
-> + * CXL rev 3.1 section 8.2.9.2.1.2; Table 8-46
->   */
->  /*
->   * DRAM Event Record defines many fields the same as the General Media Event
-> @@ -478,11 +478,17 @@ TRACE_EVENT(cxl_general_media,
->  #define CXL_DER_MEM_EVT_TYPE_SCRUB_MEDIA_ECC_ERROR	0x01
->  #define CXL_DER_MEM_EVT_TYPE_INV_ADDR			0x02
->  #define CXL_DER_MEM_EVT_TYPE_DATA_PATH_ERROR		0x03
-> -#define show_dram_mem_event_type(type)  __print_symbolic(type,				\
-> +#define CXL_DER_MEM_EVT_TYPE_TE_STATE_VIOLATION	0x04
-> +#define CXL_DER_MEM_EVT_TYPE_AP_CME_COUNTER_EXPIRE	0x05
-> +#define CXL_DER_MEM_EVT_TYPE_CKID_VIOLATION		0x06
-> +#define show_dram_mem_event_type(type)	__print_symbolic(type,				\
-
-This change looks odd here but does print the line above into the
-same formatting style as the other similar cases in the file.
-Maybe worth a line in the patch description to say "Includes trivial consistency of white
-space improvements" just to flag up that it was intentional.
-
->  	{ CXL_DER_MEM_EVT_TYPE_ECC_ERROR,		"ECC Error" },			\
->  	{ CXL_DER_MEM_EVT_TYPE_SCRUB_MEDIA_ECC_ERROR,	"Scrub Media ECC Error" },	\
->  	{ CXL_DER_MEM_EVT_TYPE_INV_ADDR,		"Invalid Address" },		\
-> -	{ CXL_DER_MEM_EVT_TYPE_DATA_PATH_ERROR,		"Data Path Error" }		\
-> +	{ CXL_DER_MEM_EVT_TYPE_DATA_PATH_ERROR,		"Data Path Error" },		\
-> +	{ CXL_DER_MEM_EVT_TYPE_TE_STATE_VIOLATION,	"TE State Violation" },		\
-> +	{ CXL_DER_MEM_EVT_TYPE_AP_CME_COUNTER_EXPIRE,	"Adv Prog CME Counter Expiration" },	\
-> +	{ CXL_DER_MEM_EVT_TYPE_CKID_VIOLATION,		"CKID Violation" }		\
->  )
->  
->  #define CXL_DER_VALID_CHANNEL				BIT(0)
-> @@ -493,7 +499,10 @@ TRACE_EVENT(cxl_general_media,
->  #define CXL_DER_VALID_ROW				BIT(5)
->  #define CXL_DER_VALID_COLUMN				BIT(6)
->  #define CXL_DER_VALID_CORRECTION_MASK			BIT(7)
-> -#define show_dram_valid_flags(flags)	__print_flags(flags, "|",			   \
-> +#define CXL_DER_VALID_COMPONENT				BIT(8)
-> +#define CXL_DER_VALID_COMPONENT_ID_FORMAT		BIT(9)
-> +#define CXL_DER_VALID_SUB_CHANNEL			BIT(10)
-> +#define show_dram_valid_flags(flags)	__print_flags(flags, "|",		   \
-
-As above this is a minor white space consistency change.
-
->  	{ CXL_DER_VALID_CHANNEL,			"CHANNEL"		}, \
->  	{ CXL_DER_VALID_RANK,				"RANK"			}, \
->  	{ CXL_DER_VALID_NIBBLE,				"NIBBLE"		}, \
-> @@ -501,7 +510,9 @@ TRACE_EVENT(cxl_general_media,
->  	{ CXL_DER_VALID_BANK,				"BANK"			}, \
->  	{ CXL_DER_VALID_ROW,				"ROW"			}, \
->  	{ CXL_DER_VALID_COLUMN,				"COLUMN"		}, \
-> -	{ CXL_DER_VALID_CORRECTION_MASK,		"CORRECTION MASK"	}  \
-> +	{ CXL_DER_VALID_CORRECTION_MASK,		"CORRECTION MASK"	}, \
-> +	{ CXL_DER_VALID_COMPONENT,			"COMPONENT"		}, \
-> +	{ CXL_DER_VALID_SUB_CHANNEL,			"SUB CHANNEL"		}  \
->  )
-
-> diff --git a/include/cxl/event.h b/include/cxl/event.h
-> index ea8cd44a52e9..7e98492c85df 100644
-> --- a/include/cxl/event.h
-> +++ b/include/cxl/event.h
-> @@ -71,7 +71,12 @@ struct cxl_event_dram {
->  	u8 row[3];
->  	u8 column[2];
->  	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
-> -	u8 reserved[0x17];
-> +	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-Odd that the general media had this field in 3.0 but DRAM didn't.
-I checked though and indeed the case!
-
-> +	u8 sub_channel;
-> +	u8 cme_threshold_ev_flags;
-> +	u8 cvme_count[3];
-> +	u8 sub_type;
-> +	u8 reserved;
->  } __packed;
->  
->  /*
+Best regards,
+Alexey
 
 
