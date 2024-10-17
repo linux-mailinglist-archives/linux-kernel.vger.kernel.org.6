@@ -1,240 +1,258 @@
-Return-Path: <linux-kernel+bounces-370641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4A79A2FFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:46:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7091D9A2FFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6A5D285786
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB841F23596
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFE91D6DAD;
-	Thu, 17 Oct 2024 21:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0AF1D63DC;
+	Thu, 17 Oct 2024 21:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndF/Y2eo"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JpxBUc0t"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2068.outbound.protection.outlook.com [40.107.236.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83831D54EF
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729201572; cv=none; b=ayygb1mRf/BdNrT4absUjIB5w63nctPKre5/5TThzbWiiBKmAbXYcik0IMCrSDPTNvyt4/+56oyNOPAa/9Uv9mFwldtYGBRlmrQMv+Ucw+FB/ei4/893QtOlg3XBKHCX9H0klbW2djA8EzVE0bpQJd5lJt3wIGYlLG6rWh83nGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729201572; c=relaxed/simple;
-	bh=q1K1HW3jG8IKYVi9MlhEha1p/ZeGitimdFUzzW5h+D0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eQ5Ya/1lJwmFov6igwX1ybaj4QmjuQPjz4ne99D3NU9wOp9Cxv6PImhHgR0MPcikJ1GQXelN8piYBFnhYCvI5Dm5Iwo/N/Mp/fgU6hydOPBrfvz1xhl/FQuXtsX9PhbTX/nuue9Tznl3wcfi7M1Cx7q7ShABhCj9KNQyEiqK418=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ndF/Y2eo; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea6a4b3807so189800a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729201570; x=1729806370; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tI1WUEgzzH52RdmMvRjnf4Xl2Jbh0RwAUil8kMyE9bo=;
-        b=ndF/Y2eofH8dVcyKn9Nr7feG5l4Q9h0HafG/s41+N/Z018PoA/zqK4KAQWGY7+rMER
-         /VQo/FoUJvCP4Ck3GtEY42KDYoxZllWnb1O8zscYVilmHKILGl36g2ZIn1tOoUqjEql2
-         vmV+zvZKRFPB8Qv6QlBRl6+pkMx/LuoFhjNfrYyFeGYP8Ms0/2bi2u45EXdieu+jeShx
-         df00lHljVaf6s7km5Mp/O0T4/4pqhUSukfxjT7GIn0Kjn6DzcxR/uPWFsgQYqvNFcpHv
-         PWxGQFjIvLa4BsYhfP662PYb1+B8DpCVip8eKTDZeG4v3i5bAzPNzqRWc4PpPzx00Vwa
-         +kSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729201570; x=1729806370;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tI1WUEgzzH52RdmMvRjnf4Xl2Jbh0RwAUil8kMyE9bo=;
-        b=cdqmFZ8k1tXNej3OFxQcGV/hDWjYKsyWZhajwRpgSxwyRebE+k5RqtkiJ4vQucURpq
-         Q268YpPueOwjzQMvDvqjJUeE+gGp9nTbU7bKxQfcqeM535une3XYY2XCSlpW4UG6ybZH
-         VAm30abBsygGNvUX77O4lxP/QkojYu3M6r6qpTFb4177BkERji4jgFMi3ozx5tAa29Bj
-         vR9bvjuRBVlxYvRgpzFPVmquGF9lgsCclIR8i0XTHmQlxL/b4tJAylMFNb/vPPKsEGjp
-         kt8gz5eO88X0t5Lpwq7aZreJ8Bi3WsrQjkNaVLIPPTJItjir4vDqImauBRRfn8b1lOvi
-         qK4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXJS6Hulo/VDOlUNTY0gBCuZwR0DKdFrGRtTdCvUGiIlFg1jF9HwZiTvCeHyydqbweWMyEC5rawRI3b0SQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBICBjP2uN7lSai2PA4zjVzI0XPYKNM6opdM34AP6s3Kk/oA81
-	GZKmh03gahvKaUedymTjpKLbNnpMD4wwzddziTsySDmvlgHVvlVJ
-X-Google-Smtp-Source: AGHT+IF4KxhFLm8lSHBoImRllcM8d/1wTkuCTPJjrr+qggsaUckdNMGZ05pJj+u6O7CblCNEP75N0Q==
-X-Received: by 2002:a05:6a21:9990:b0:1cf:2be2:6525 with SMTP id adf61e73a8af0-1d92c5872eemr219645637.11.1729201569998;
-        Thu, 17 Oct 2024 14:46:09 -0700 (PDT)
-Received: from ice.. ([171.76.83.88])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc20d2desm62817a12.7.2024.10.17.14.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 14:46:09 -0700 (PDT)
-From: Nihar Chaithanya <niharchaithanya@gmail.com>
-To: ryabinin.a.a@gmail.com
-Cc: andreyknvl@gmail.com,
-	dvyukov@google.com,
-	skhan@linuxfoundation.org,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	Nihar Chaithanya <niharchaithanya@gmail.com>
-Subject: [PATCH] kasan:report: filter out kasan related stack entries
-Date: Fri, 18 Oct 2024 03:12:54 +0530
-Message-Id: <20241017214251.170602-1-niharchaithanya@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525571386B4;
+	Thu, 17 Oct 2024 21:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729201571; cv=fail; b=X2TORjOilId8eMbKrVAkgtnU4YeLTJkHVWeSD++BgHb7jbJ/I3ppkPxJsvq78H7B0Dqk8UQ/hJw15VaimhTLavxcF4qVqydMXAf5FR6A/W8Q/CIwOSJ/J+IsBROwFzaDBnL1m8XtjSIqsQq8JxHUevb/sgJ6Jceh0YoONsdTCEQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729201571; c=relaxed/simple;
+	bh=sRyNOJF23I8dPG85+L6JGw90vySjJBKH0BEozoVwDHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kwWry0sb7x5vA1Rupt2fVZ6uF175VMZL0a020ViVDFm+AXExLBTgI6Tbx/ACKmAQCIvfLokXLcc8Oy0LVmNh/4j7YRBD/0yJpuy9nw8LDfAXKps2iito4+52LZ6GZZBntlKRj+n0InL/we4htE0FtTjYp1CswZ18wELXuNEJ6fU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JpxBUc0t; arc=fail smtp.client-ip=40.107.236.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A5z4KLNsVYuQQKi9U9l1pJZ7q1UAmLcpcaAdrS9R94HDYbVJ1bO2dN9vJLtFKTi11XxQNMQQrd2CVGCxeBZN19YndWnA3aX+Mybt3OdXjRyFIBJcMrJeH1ZuCndI5JDWro8fSMOGOvMT4URUsZIXD5CbRC92gKiGGAVNT/g6aQDxd0vsrtPUiYbxmIVWACuggp9pbeFbFOK+Gi0txjGJzzeu/NGuHCszG1SsC9KXK/rHhzcDrTDSftuDxIXSQYsCtOrAbmkDSXKZWM/27pq47ZpcIGS0vaIO+CC5tZwlGoP5wHTriaSuqJlzdC0KKdPLqsi1Lce1PLduWuQBxXyJvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bhb/Rirz5ZAU9n4iQHJxYPe48Sp8jyL2KsNvyGXmmBw=;
+ b=bDTm1OoI5aIxLJHCSzvvb4qV1XoQahBLHcbrYIbk68A0ou0eS1S54pD0/uLd+dgHhQU5Wdc8noachJ4NEjlE7s4qS5xK1UGTuT696E9/a+QrkJ2U2cB5EduSuBLV2+RA3C0aXoe8baPRlK4Vd+GiPxkR3fjj5TBCgLRW2RI3K4naYnYloZXEpU4K4SFjaAWFVeb2WHB6l9D3oKjNu6msrK4GRdBwEFha30uERz4IbJUX/Np9KdhHhmAX9H4GXnPAmARMNAjs/hsVkjoK9yOrRqrn9MbQ071K2771HL2BU3oVC7MQXGz7qMBhxCldyXjnICy4MPPbcGrXUqXdOO6Kuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=oracle.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bhb/Rirz5ZAU9n4iQHJxYPe48Sp8jyL2KsNvyGXmmBw=;
+ b=JpxBUc0tmuqEoYAe29+xYSzZivXaufrmCr6iBc69G4iZ7Q8SDu4p31TdAPlaZgTvjUaywZ4gwd7X4v+5+MKuZvZt1Y+eq+km+YBscKLRqI0tghDtaXKUetYc7VEgT1j0jxvEVYm9K/4sbSsAscIqF5np+YqCYyGSsyDnnFFoZX8/kUHC54bcjhHqEcmK4ntLKaO6zYMZzMMI0lqkm8hlpIWh7Dw4fEp7qXqQ2OOGbQ04njDUg08fg8CHggrpscrSuLpeM2g6yXnjVcwd1IbT4n3WZV4XvFTO+9gvYsw6t7eVYHV/4CqlFtBtJUSSC6F/8cVh2XBTkOn6N5xa1wTvnw==
+Received: from BL1PR13CA0386.namprd13.prod.outlook.com (2603:10b6:208:2c0::31)
+ by SN7PR12MB6932.namprd12.prod.outlook.com (2603:10b6:806:260::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.22; Thu, 17 Oct
+ 2024 21:46:01 +0000
+Received: from BN2PEPF00004FBB.namprd04.prod.outlook.com
+ (2603:10b6:208:2c0:cafe::d6) by BL1PR13CA0386.outlook.office365.com
+ (2603:10b6:208:2c0::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.16 via Frontend
+ Transport; Thu, 17 Oct 2024 21:46:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN2PEPF00004FBB.mail.protection.outlook.com (10.167.243.181) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8069.17 via Frontend Transport; Thu, 17 Oct 2024 21:46:01 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 17 Oct
+ 2024 14:45:45 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 17 Oct
+ 2024 14:45:44 -0700
+Message-ID: <7df771b9-bfd6-465e-b0ba-12d2aab13ec6@nvidia.com>
+Date: Thu, 17 Oct 2024 14:45:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/4] selftests: pidfd: add pidfd.h UAPI wrapper
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Christian Brauner
+	<christian@brauner.io>
+CC: Shuah Khan <shuah@kernel.org>, "Liam R . Howlett"
+	<Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, "Vlastimil
+ Babka" <vbabka@suse.cz>, <pedro.falcato@gmail.com>,
+	<linux-kselftest@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Oliver Sang <oliver.sang@intel.com>
+References: <cover.1729198898.git.lorenzo.stoakes@oracle.com>
+ <d8d1a8c6ade7f13a100a5c11fd1e53f7f2fddba3.1729198898.git.lorenzo.stoakes@oracle.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <d8d1a8c6ade7f13a100a5c11fd1e53f7f2fddba3.1729198898.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBB:EE_|SN7PR12MB6932:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe3b5d10-f2d2-4972-f8fd-08dceef51803
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b1p3emQzZ2t4anBVdGNKWThvK3BxYVdvZ3NxMVBqWm45MlBSZnB3V2V6Rk82?=
+ =?utf-8?B?dldpSW5oZWt0K2krZlVOVU1wRmk5cmJsblZJOUNRc3VPSkszU20vaEpONFdR?=
+ =?utf-8?B?TGtrUzJvZ2xKUHJmMll1VmhzS2Z3dmZRVHkzL25ncE5zUWg2TWhoTmVDRlIv?=
+ =?utf-8?B?QmVYSVU5RGFJdmthbldvOXBUWEFkSmNvdWVGZGhkUW5HYUxkcEJoT2tPZHZ4?=
+ =?utf-8?B?THF5cHcrK3NWUjhXU0VvSUhJNlV2VXduWWcvL1g3QXBJOXRMWWZ0Mi9xT2FV?=
+ =?utf-8?B?aGd5ZEpGUU9RbUxmcW1yQlp3UjdnaFN6SVB1S21tZTYyV25KUUtweEZVSmRY?=
+ =?utf-8?B?RDJ5bk1SRUl0Y00wNmxodVdzUXJPb215TmVyYTFLaDFVeGRTZ1gvdVJDV3Nt?=
+ =?utf-8?B?UlVZU1hMcHc3Z1dkYjk2L1FlMVpmd2tycTNVR0NxUVJtU1dnSmpoVVZDZllN?=
+ =?utf-8?B?WXZHTDdWU0I4M1ZEdXZFc3FLVnNMQi9nRjRDT2Q4WnFFcTJKdFZ3dVk2TDJ3?=
+ =?utf-8?B?dUl5SlFiNDhRamlEU3ZXdG9kM3dmNzROaGNORmpwa28vNTFlTXJFUFgzc2pC?=
+ =?utf-8?B?VDFVRE9sK3gweXBYTVMzbkh1R2h3Tkh2VDhrSEhkUXRlUTZwczNzSDFvcGk1?=
+ =?utf-8?B?N21NRDR1dGxVVytKK1pjT210SXY1VzZuRnBXZmlOcmF2Z0VDTWxQSjdyZGN0?=
+ =?utf-8?B?NGswd0pMOEw1L3VZL3h2TTd5NUtYMnI3ck5BN0VCcTQwTW9uNmhycm1kZmNa?=
+ =?utf-8?B?S3RpZUlucnBZT2VSa052N1Q0UjNXdWtJMG9XM21NeDM4NHo0OWFXa2JMYlZJ?=
+ =?utf-8?B?b1hLR2RlZG01YzlGaGtISzhmR2JFMG81OTNIdEovM2pxTlpkZGE2TS9sUXdo?=
+ =?utf-8?B?YWwrcXNVbllLTXFiZHZWL1VpODQ5bXFmZ0VpSTRmeEIrZXlNZmRZTEFzblo4?=
+ =?utf-8?B?R3ErblgzOFRCdUtNUVFhREtFMUtnbzVvVzZRK1FTMjZDREdDOTZUUDRUSG9h?=
+ =?utf-8?B?SHVNcmo4YUEzM0FxUmwwZVFaQUI2b2YvUW5yd1dLckRyRUdwYjRBZXRZUE9O?=
+ =?utf-8?B?NzJ3QksyM3ptbm5CSElGMExLd21LSEgvY3NseDVJS09NWFkxMW9xU052TlE2?=
+ =?utf-8?B?d1U4dVRpT1VTaDBaN09FcFRJZVVJVjZXSXlpUEtXTmdwVGxNVm9aSmZwc1Nn?=
+ =?utf-8?B?WCt1R0llTE5EWFZwRVh6UHJWZGJGWUhmbzJPdU1HeksvTDZjcnJtZktDYzE4?=
+ =?utf-8?B?dHUzTWx4ZEVydGJVQ2t5WnV1ZWlwcE1GZklLOFRMaDNPZ3ByWVJONGl5anJ1?=
+ =?utf-8?B?QkV5TEZWaVVIcDZKRy96Z2FTUTNNc1J1UU1YQ29sbmZtY09SL2IzMnZDK3Vj?=
+ =?utf-8?B?U3FReXBXNDVDZ3NGNVM0L093ZHJENTdoejh3UE9yMzNQTVNSUS85YmVGTExG?=
+ =?utf-8?B?d0lXZ2x4TE52Nm5xMlBJZmg3UmJ3QVM5WWFGWU8xVEh4R3ZNRWhVU3c3cVNt?=
+ =?utf-8?B?S2pGOUZPRzQ2ZVBHQlFza0JBNU5aMEdFbXVwdVhNT1Q4WFJaNVJVTTdPNzhU?=
+ =?utf-8?B?aTBnWnZreDNZUXVaQk5XWXpmR2RNMU4xdzhVd0hvUGJPR042clo4U0lid1JW?=
+ =?utf-8?B?a1FtU2ZrK3JMR1ozM0JsQkZ1QVM1U3pmR3VsVUcvRW8rZEhCVzR1K1RCak1w?=
+ =?utf-8?B?YXRnWjFSL3BYQWFvSUlmZ2UzVVJGTUsvYzF6WE9zeE95TDV3akFoWU1NUDdn?=
+ =?utf-8?B?a0lHWEFGZVAwLzZuQ0tVOEJMZEo2MEx0Zlo4ZVF0b0pPdjFOK1BGdXBwSndw?=
+ =?utf-8?B?TUZ3R1E2YnZOVGdWU01pRnBFeGZsMTF5dnRGbGZybnhEditodkZ6OExwVmIw?=
+ =?utf-8?B?ZWNQU2NEZjFYQ2RJNm1yd3Z2OHBYR2FKYlk1aWlhNjQ5QUE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 21:46:01.5048
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe3b5d10-f2d2-4972-f8fd-08dceef51803
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FBB.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6932
 
-The reports of KASAN include KASAN related stack frames which are not
-the point of interest in the stack-trace. KCSAN report filters out such
-internal frames providing relevant stack trace. Currently, KASAN reports
-are generated by dump_stack_lvl() which prints the entire stack.
+On 10/17/24 2:05 PM, Lorenzo Stoakes wrote:
+> Conflicts can arise between system fcntl.h and linux/fcntl.h, imported by
+> the linux/pidfd.h UAPI header.
+> 
+> Work around this by adding a wrapper for linux/pidfd.h to
+> tools/include/ which sets the linux/fcntl.h header guard ahead of
+> importing the pidfd.h header file.
+> 
+> Adjust the pidfd selftests Makefile to reference this include directory and
+> put it at a higher precidence than any make header installed headers to
+> ensure the wrapper is preferred.
 
-Add functionality to KASAN reports to save the stack entries and filter
-out the kasan related stack frames in place of dump_stack_lvl().
+...but we are not actually using the installed headers, now. And we intend
+to continue avoiding them. So the ordering shouldn't matter. More below:
 
-Within this new functionality:
-	- A function save_stack_lvl_kasan() in place of dump_stack_lvl() is
-	  created which contains functionality for saving, filtering and printing
-          the stack-trace.
-	- The stack-trace is saved to an array using stack_trace_save() similar to
-  	  KCSAN reporting which is useful for filtering the stack-trace,
-	- The sanitize_stack_entries() function is included to get the number of
-          entries to be skipped for filtering similar to KCSAN reporting,
-	- The dump_stack_print_info() which prints generic debug info is included
-  	  from __dump_stack(),
-	- And the function print_stack_trace() to print the stack-trace using the
- 	  array containing stack entries as well as the number of entries to be
- 	  skipped or filtered out is included.
+> 
+> This way we can directly import the UAPI header file without issue, use the
+> latest system header file without having to duplicate anything.
+> 
+> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>   tools/include/linux/pidfd.h            | 14 ++++++++++++++
+>   tools/testing/selftests/pidfd/Makefile |  3 +--
+>   2 files changed, 15 insertions(+), 2 deletions(-)
+>   create mode 100644 tools/include/linux/pidfd.h
+> 
+> diff --git a/tools/include/linux/pidfd.h b/tools/include/linux/pidfd.h
+> new file mode 100644
+> index 000000000000..113c8023072d
+> --- /dev/null
+> +++ b/tools/include/linux/pidfd.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +
+> +#ifndef _TOOLS_LINUX_PIDFD_H
+> +#define _TOOLS_LINUX_PIDFD_H
+> +
+> +/*
+> + * Some systems have issues with the linux/fcntl.h import in linux/pidfd.h, so
+> + * work around this by setting the header guard.
+> + */
+> +#define _LINUX_FCNTL_H
+> +#include "../../../include/uapi/linux/pidfd.h"
+> +#undef _LINUX_FCNTL_H
 
-Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
-Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=215756
----
- mm/kasan/report.c | 92 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 90 insertions(+), 2 deletions(-)
+Oh shoot, I think you, Shuah and I were referring to different uapi locations,
+the whole time. And so the basic approach is different after all.
 
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index b48c768acc84..c180cd8b32ae 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -39,6 +39,7 @@ static unsigned long kasan_flags;
- 
- #define KASAN_BIT_REPORTED	0
- #define KASAN_BIT_MULTI_SHOT	1
-+#define NUM_STACK_ENTRIES 64
- 
- enum kasan_arg_fault {
- 	KASAN_ARG_FAULT_DEFAULT,
-@@ -369,12 +370,99 @@ static inline bool init_task_stack_addr(const void *addr)
- 			sizeof(init_thread_union.stack));
- }
- 
-+/* Helper to skip KASAN-related functions in stack-trace. */
-+static int get_stack_skipnr(const unsigned long stack_entries[], int num_entries)
-+{
-+	char buf[64];
-+	int len, skip;
-+
-+	for (skip = 0; skip < num_entries; ++skip) {
-+		len = scnprintf(buf, sizeof(buf), "%ps", (void *)stack_entries[skip]);
-+
-+		/* Never show  kasan_* functions. */
-+		if (strnstr(buf, "kasan_", len) == buf)
-+			continue;
-+		/*
-+		 * No match for runtime functions -- @skip entries to skip to
-+		 * get to first frame of interest.
-+		 */
-+		break;
-+	}
-+
-+	return skip;
-+}
-+
-+static int
-+replace_stack_entry(unsigned long stack_entries[], int num_entries, unsigned long ip,
-+		    unsigned long *replaced)
-+{
-+	unsigned long symbolsize, offset;
-+	unsigned long target_func;
-+	int skip;
-+
-+	if (kallsyms_lookup_size_offset(ip, &symbolsize, &offset))
-+		target_func = ip - offset;
-+	else
-+		goto fallback;
-+
-+	for (skip = 0; skip < num_entries; ++skip) {
-+		unsigned long func = stack_entries[skip];
-+
-+		if (!kallsyms_lookup_size_offset(func, &symbolsize, &offset))
-+			goto fallback;
-+		func -= offset;
-+
-+		if (func == target_func) {
-+			*replaced = stack_entries[skip];
-+			stack_entries[skip] = ip;
-+			return skip;
-+		}
-+	}
-+
-+fallback:
-+	/* Should not happen; the resulting stack trace is likely misleading. */
-+	WARN_ONCE(1, "Cannot find frame for %pS in stack trace", (void *)ip);
-+	return get_stack_skipnr(stack_entries, num_entries);
-+}
-+
-+static void
-+print_stack_trace(unsigned long stack_entries[], int num_entries, unsigned long reordered_to)
-+{
-+	stack_trace_print(stack_entries, num_entries, 0);
-+	if (reordered_to)
-+		pr_err("  |\n  +-> reordered to: %pS\n", (void *)reordered_to);
-+}
-+
-+static int
-+sanitize_stack_entries(unsigned long stack_entries[], int num_entries, unsigned long ip,
-+		       unsigned long *replaced)
-+{
-+	return ip ? replace_stack_entry(stack_entries, num_entries, ip, replaced) :
-+			  get_stack_skipnr(stack_entries, num_entries);
-+}
-+
-+static void save_stack_lvl_kasan(const char *log_lvl, struct kasan_report_info *info)
-+{
-+	unsigned long reordered_to = 0;
-+	unsigned long stack_entries[NUM_STACK_ENTRIES] = {0};
-+	int num_stack_entries = stack_trace_save(stack_entries, NUM_STACK_ENTRIES, 1);
-+	int skipnr = sanitize_stack_entries(stack_entries,
-+				 num_stack_entries, info->ip, &reordered_to);
-+
-+	dump_stack_print_info(log_lvl);
-+	pr_err("\n");
-+
-+	print_stack_trace(stack_entries + skipnr, num_stack_entries - skipnr,
-+					 reordered_to);
-+	pr_err("\n");
-+}
-+
- static void print_address_description(void *addr, u8 tag,
- 				      struct kasan_report_info *info)
- {
- 	struct page *page = addr_to_page(addr);
- 
--	dump_stack_lvl(KERN_ERR);
-+	save_stack_lvl_kasan(KERN_ERR, info);
- 	pr_err("\n");
- 
- 	if (info->cache && info->object) {
-@@ -488,7 +576,7 @@ static void print_report(struct kasan_report_info *info)
- 		print_address_description(addr, tag, info);
- 		print_memory_metadata(info->first_bad_addr);
- 	} else {
--		dump_stack_lvl(KERN_ERR);
-+		save_stack_lvl_kasan(KERN_ERR, info);
- 	}
- }
- 
+Your include path above actually refers to:
+
+     $(top_srcdir)/include/uapi/linux/fcntl.h
+
+...but what I was intending was to copy a snapshot of that file (or a
+snapshot from the one generated by "make headers"), to here:
+
+     $(top_srcdir)/tools/include/uapi/linux/fcntl.h
+
+...and then use $(TOOLS_INCLUDES), which is already in selftests/lib.mk,
+for that reason: to be available to all of the kselftests:
+
+     TOOLS_INCLUDES := -isystem $(top_srcdir)/tools/include/uapi
+
+The reasoning for this directory is further explained here:
+
+     tools/include/uapi/README
+
+(And I see that selftests/proc has started using $(TOOLS_INCLUDES), that's
+progress.)
+
+And now, it's possible to change fcntl.h in place, instead of using a wrapper.
+Although either way seems OK to me. (I'm sort of ignoring the details of
+the actual header file conflict itself, for now.)
+
+
+> +
+> +#endif /* _TOOLS_LINUX_PIDFD_H */
+> diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
+> index d731e3e76d5b..f5038c9dae14 100644
+> --- a/tools/testing/selftests/pidfd/Makefile
+> +++ b/tools/testing/selftests/pidfd/Makefile
+> @@ -1,8 +1,7 @@
+>   # SPDX-License-Identifier: GPL-2.0-only
+> -CFLAGS += -g $(KHDR_INCLUDES) -pthread -Wall
+> +CFLAGS += -g -isystem $(top_srcdir)/tools/include $(KHDR_INCLUDES) -pthread -Wall
+
+Instead, it would look like this, which now mostly matches selftests/mm/Makefile,
+which is also helpful, because eventually this can be factored into a common
+piece for all selftests:
+
+     CFLAGS += -g -isystem $(KHDR_INCLUDES) $(TOOLS_INCLUDES) -pthread -Wall
+
+I apologize for just now noticing this! And these kselftests shouldn't require
+so much fussing around, I know. But once we get this just right, it will work
+well and last a long time. :)
+
+thanks,
 -- 
-2.34.1
-
+John Hubbard
 
