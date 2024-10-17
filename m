@@ -1,194 +1,185 @@
-Return-Path: <linux-kernel+bounces-369649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32919A205D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:55:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A802E9A205F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A6D61C2181E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:55:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEF1AB24259
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272A91D31A8;
-	Thu, 17 Oct 2024 10:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4902B1DB34B;
+	Thu, 17 Oct 2024 10:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="tUvW5+k9"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W496lQ2b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F985478E;
-	Thu, 17 Oct 2024 10:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2F31DA0E9;
+	Thu, 17 Oct 2024 10:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729162540; cv=none; b=oLAIAeKyLfeZdhGg/WqE9oZZ2SiD8xWHOrBMl+RU1XphGw8UCKj2Ao0Lw/HzzDD67Pq1SIkvO0g3n0pvpKOf00a3aTOBkI8Y8EmZ53tA4dsItDWQKVBBQpK+3AUIv/OpmDxyDY4ez3VPFoE4jtJnyTMauGQiJkP44sCfX7FakPc=
+	t=1729162619; cv=none; b=DP6wQuqooPyHRaASV6s9/J3mK8hGJvWMKIsgpQ2Baw8wH+44tTzyv975xupCaBNODnk6Ymk4VnG03lwM5aHWdIXuIgMUUa+3ky4MRo5qFDXDWLnP2l5+35mp4Wqgfw2tsW9k/jd3sK67nIyYbccLLl9IySLlXAlkrUee2WVHJnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729162540; c=relaxed/simple;
-	bh=UpKFrmYGllYrsyMM/1lD6FUUlil9xbypcgaoXpIa9rM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TjSrI+zAZwfXJ7V0oTwYuENzufcShCsBY9TxibX9h57n1yMXJDGRpCHAPRAVTilaicwF0ISAzUIIGAyB5qSFF0J83VcGN61Sv6WLPQEMwK2Xk0d5TxA/iRoHhhfc8qBCxs0a81vY0lP3JOee9KCU04tf2nsVZjTxwEGC+NW4cIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=tUvW5+k9; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 1B71C100009;
-	Thu, 17 Oct 2024 13:55:17 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1729162517; bh=+QOrfWCVTQRkFZFpeklgdTnpXjePxMpWDQdvvcusiSs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=tUvW5+k9qGoxLAcOAI1xJWl5fV2ilztGDXtq/ogzAnlzb1et9+EBPypzEA4DOCDE3
-	 te/lIhEtjbS7cV9YCTYCgtmmbyLTN538c9X714J/DDdO8NHlgub/JnJpoX13YB+86M
-	 hyx8HtjvRUD5Q0bugZ29pcqgEVkEn2p/iRFqtAqGobt33jsAb+Z5zXTr7IVAWIQ7Oc
-	 kOnkkz6VzZpjAWNOWFh7HYEeuFgnvLipmfc8gWKHXzyhT90TGla+q4UJ1oFQNxluwJ
-	 s9coMtWPa9RkHfLKUfrtbG3NWEei7gO97bwd0sR+HiPZ152RJIp0PXKoJXLCHJj2nT
-	 lpfINW8PKdLRg==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Thu, 17 Oct 2024 13:53:58 +0300 (MSK)
-Received: from [172.17.44.122] (172.17.44.122) by ta-mail-02 (172.17.13.212)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 17 Oct
- 2024 13:53:37 +0300
-Message-ID: <72a4d2b0-3faf-46a3-84f2-fc93bdf19104@t-argos.ru>
-Date: Thu, 17 Oct 2024 13:53:31 +0300
+	s=arc-20240116; t=1729162619; c=relaxed/simple;
+	bh=D5RTI9FOOit5KbbEFT2DC25/vMJ92nKXQzGoJvbMPXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qeQqUZ4TeabVYgF8Wjv9sO8R7PUhyUQH3L5/4Q6mWt78ut12uylyyKyEJFh6CwD5wrseXeeb8Tw5Cl8+JSeOC6nmp4Ge49df0qPIfF8bC2hultVX+sBG04F6MNv08Fa6DWrd55cg0MU8XoOmDEdXvSNdaotAbfzTF60CJc7JVDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W496lQ2b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47365C4CEC7;
+	Thu, 17 Oct 2024 10:56:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729162619;
+	bh=D5RTI9FOOit5KbbEFT2DC25/vMJ92nKXQzGoJvbMPXU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=W496lQ2byJnSKa4PxIA6n48H3WC7Bs1q2K3W4oDOcLlweMFNQWgZ3djy/HUpd4RGG
+	 A0T7QaN3+Ai6zhhKvCCCHB5m+3oObmvkLcajISB3+2RbgnJip2x37PFRlYcEINMLyt
+	 2XAexB3kyQ4Re4LEFYqbRfiry8qzvDaA4swkMAyxARATSiwrsTvqCX5G1gTnt9b+Yd
+	 EGElnt0+/PqR3WJYWqpNMzQka2aziGRs9yEhg/+Mm3GUyu1FJNHrkvgbn2fzGph1DC
+	 x64HYV4eBCRcmFNn7w6jKe6Y5eyzasLk+s3FLjqe/cOJ1tgGU6tF+wQHfBvBVGatpL
+	 mywAaKVtCPXTw==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5daa93677e1so444279eaf.3;
+        Thu, 17 Oct 2024 03:56:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUwGz+PpJBtzNJqKT4Mtb9RYeYM7Mu4/uHAW+EfoVP+FZ2p6g8LabXiOJoLGz92SqM76M472pywsVg=@vger.kernel.org, AJvYcCXfIyI2T1v5sAM1rifm1Cv2JKhe3HeBJpHFhMFltP5uDbJkaB1NtaGHGlrRxHbFM1g8AKzyEprnAaVrxfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcv0ieJwXJgM/ndB0Tupp9k+QW1iSDIcAOFbYRaYxIwTSOvJuE
+	ZvFKPGMvlkOey9Tn4GV9uMnRkOxRxhEq5nSGHG4DpVyCsO79qwiJodVWD8xLNlTJ7VHooF/yJy3
+	Hx4ytHGvGQSjjiOoCOOZCEKHRCoM=
+X-Google-Smtp-Source: AGHT+IFf3YEvrAc2/G0NQs4QVU7cxHfpnuZAN/b8kSqqUTXMoL2fKaVj+DCbNBkFcsDdYZgqgYOgXLv1o81cmRIrryA=
+X-Received: by 2002:a05:6870:e0ca:b0:27c:475c:ab2c with SMTP id
+ 586e51a60fabf-288ee12a3e2mr6407221fac.43.1729162618602; Thu, 17 Oct 2024
+ 03:56:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 2/2] fsl/fman: Fix refcount handling of fman-related
- devices
-To: Paolo Abeni <pabeni@redhat.com>, Igal Liberman
-	<igal.liberman@freescale.com>
-CC: Simon Horman <horms@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>,
-	Sean Anderson <sean.anderson@seco.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-References: <20241015060122.25709-1-amishin@t-argos.ru>
- <20241015060122.25709-3-amishin@t-argos.ru>
- <a0aec660-c18b-4d85-b85b-58fce3668e64@redhat.com>
-Content-Language: ru
-From: Aleksandr Mishin <amishin@t-argos.ru>
-In-Reply-To: <a0aec660-c18b-4d85-b85b-58fce3668e64@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ta-mail-01.ta.t-argos.ru (172.17.13.211) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188507 [Oct 17 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/10/17 09:58:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/10/17 05:21:00 #26765332
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20241017090503.1006068-1-wenst@chromium.org>
+In-Reply-To: <20241017090503.1006068-1-wenst@chromium.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 17 Oct 2024 12:56:47 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hZUzubeLt2OBcG=F5QKFh-0V8yqYRoQL0iHK+y+zeZFg@mail.gmail.com>
+Message-ID: <CAJZ5v0hZUzubeLt2OBcG=F5QKFh-0V8yqYRoQL0iHK+y+zeZFg@mail.gmail.com>
+Subject: Re: [PATCH v3] thermal/of: support thermal zones w/o trips subnode
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Icenowy Zheng <uwu@icenowy.me>, Mark Brown <broonie@kernel.org>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, 
+	Hsin-Te Yuan <yuanhsinte@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 17.10.2024 13:01, Paolo Abeni wrote:
-> On 10/15/24 08:01, Aleksandr Mishin wrote:
->> In mac_probe() there are multiple calls to of_find_device_by_node(),
->> fman_bind() and fman_port_bind() which takes references to of_dev->dev.
->> Not all references taken by these calls are released later on error path
->> in mac_probe() and in mac_remove() which lead to reference leaks.
->>
->> Add references release.
->>
->> Fixes: 3933961682a3 ("fsl/fman: Add FMan MAC driver")
->> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
->> ---
->> Compile tested only.
->>
->>   drivers/net/ethernet/freescale/fman/mac.c | 62 +++++++++++++++++------
->>   1 file changed, 47 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/freescale/fman/mac.c 
->> b/drivers/net/ethernet/freescale/fman/mac.c
->> index 9b863db0bf08..11da139082e1 100644
->> --- a/drivers/net/ethernet/freescale/fman/mac.c
->> +++ b/drivers/net/ethernet/freescale/fman/mac.c
->> @@ -204,7 +204,7 @@ static int mac_probe(struct platform_device 
->> *_of_dev)
->>       if (err) {
->>           dev_err(dev, "failed to read cell-index for %pOF\n", 
->> dev_node);
->>           err = -EINVAL;
->> -        goto _return_of_node_put;
->> +        goto _return_dev_put;
+On Thu, Oct 17, 2024 at 11:05=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> =
+wrote:
 >
-> We are after a succesful of_find_device_by_node and prior to 
-> fman_bind(), mac_dev->fman_dev refcount is 1
-
-
-Indeed. refcounts = 1.
-
-
+> From: Icenowy Zheng <uwu@icenowy.me>
 >
->> @@ -213,40 +213,51 @@ static int mac_probe(struct platform_device 
->> *_of_dev)
->>       if (!priv->fman) {
->>           dev_err(dev, "fman_bind(%pOF) failed\n", dev_node);
->>           err = -ENODEV;
->> -        goto _return_of_node_put;
->> +        goto _return_dev_put;
->>       }
-
-
-refcounts: 1 + 1 = 2.
-
-
->>   +    /* Two references have been taken in of_find_device_by_node()
->> +     * and fman_bind(). Release one of them here. The second one
->> +     * will be released in mac_remove().
->> +     */
->> +    put_device(mac_dev->fman_dev);
-
-
-refcounts: 2 - 1 = 1.
-
-
->>       of_node_put(dev_node);
->> +    dev_node = NULL;
->>         /* Get the address of the memory mapped registers */
->>       mac_dev->res = platform_get_mem_or_io(_of_dev, 0);
->>       if (!mac_dev->res) {
->>           dev_err(dev, "could not get registers\n");
->> -        return -EINVAL;
->> +        err = -EINVAL;
->> +        goto _return_dev_put;
+> Although the current device tree binding of thermal zones require the
+> trips subnode, the binding in kernel v5.15 does not require it, and many
+> device trees shipped with the kernel, for example,
+> allwinner/sun50i-a64.dtsi and mediatek/mt8183-kukui.dtsi in ARM64, still
+> comply to the old binding and contain no trips subnode.
 >
-> Here we are after a successful fman_bind(), mac_dev->fman_dev refcount 
-> is 2. _return_dev_put will drop a single reference, this error path 
-> looks buggy.
-
-
-We released 1 reference above with "put_device(mac_dev->fman_dev);".
-
-
+> Allow the code to successfully register thermal zones w/o trips subnode
+> for DT binding compatibility now.
 >
-> Similar issue for the _return_dev_arr_put error path below.
-
-
-Similar situation: we release 1 reference with 
-"put_device(mac_dev->fman_port_devs[i]);".
-
-
+> Furtherly, the inconsistency between DTs and bindings should be resolved
+> by either adding empty trips subnode or dropping the trips subnode
+> requirement.
 >
-> Cheers,
+> Fixes: d0c75fa2c17f ("thermal/of: Initialize trip points separately")
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+> Changes since v2:
+> - Stacked on top of Krzysztof's cleanup patches
+>   - thermal: of: Use scoped memory and OF handling to simplify thermal_of=
+_trips_init() [1]
+> - Adjusted to account for eliminated error path
 >
-> Paolo
+> [1] https://lore.kernel.org/all/20241010-b4-cleanup-h-of-node-put-thermal=
+-v4-2-bfbe29ad81f4@linaro.org/
 >
--- 
-Kind regards
-Aleksandr
+> Changes since v1:
+> - set *ntrips at beginning of thermal_of_trips_init()
+> - Keep goto out_of_node_put in of_get_child_count(trips) =3D=3D 0 branch
+> - Check return value of thermal_of_trips_init(), if it is -ENXIO, print
+>   warning and clear |trips| pointer
+> - Drop |mask| change, as the variable was removed
+>
+> I kept Mark's reviewed-by since the changes are more stylish than
+> functional.
+> ---
+>  drivers/thermal/thermal_of.c | 20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+> index 93f7c6f8d06d..be1fa6478c21 100644
+> --- a/drivers/thermal/thermal_of.c
+> +++ b/drivers/thermal/thermal_of.c
+> @@ -99,14 +99,14 @@ static struct thermal_trip *thermal_of_trips_init(str=
+uct device_node *np, int *n
+>
+>         struct device_node *trips __free(device_node) =3D of_get_child_by=
+_name(np, "trips");
+>         if (!trips) {
+> -               pr_err("Failed to find 'trips' node\n");
+> -               return ERR_PTR(-EINVAL);
+> +               pr_debug("Failed to find 'trips' node\n");
+> +               return ERR_PTR(-ENXIO);
 
+Why not
+
+*ntrips =3D 0;
+return NULL;
+
+>         }
+>
+>         count =3D of_get_child_count(trips);
+>         if (!count) {
+> -               pr_err("No trip point defined\n");
+> -               return ERR_PTR(-EINVAL);
+> +               pr_debug("No trip point defined\n");
+> +               return ERR_PTR(-ENXIO);
+
+Is this based on the current mainline code?
+
+>         }
+>
+>         struct thermal_trip *tt __free(kfree) =3D kzalloc(sizeof(*tt) * c=
+ount, GFP_KERNEL);
+> @@ -386,9 +386,15 @@ static struct thermal_zone_device *thermal_of_zone_r=
+egister(struct device_node *
+>
+>         trips =3D thermal_of_trips_init(np, &ntrips);
+>         if (IS_ERR(trips)) {
+> -               pr_err("Failed to find trip points for %pOFn id=3D%d\n", =
+sensor, id);
+> -               ret =3D PTR_ERR(trips);
+> -               goto out_of_node_put;
+> +               if (PTR_ERR(trips) !=3D -ENXIO) {
+> +                       pr_err("Failed to find trip points for %pOFn id=
+=3D%d\n", sensor, id);
+> +                       ret =3D PTR_ERR(trips);
+> +                       goto out_of_node_put;
+> +               }
+> +
+> +               pr_warn("Failed to find trip points for %pOFn id=3D%d\n",=
+ sensor, id);
+
+Wouldn't pr_info() be sufficient for this?
+
+> +               trips =3D NULL;
+> +               ntrips =3D 0;
+>         }
+>
+>         ret =3D thermal_of_monitor_init(np, &delay, &pdelay);
+> --
 
