@@ -1,204 +1,111 @@
-Return-Path: <linux-kernel+bounces-370141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613479A285C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:17:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C6C9A285A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E555F1F2316E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:17:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543C2285532
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9831DED5B;
-	Thu, 17 Oct 2024 16:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C8E1DEFFD;
+	Thu, 17 Oct 2024 16:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E4ae4cV3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NVwuBxWL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2B25FDA7
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512461DEFC9
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729181837; cv=none; b=rqdAiXMNrzKm3WMxSmVocFvTyPCU7sw1bKDUummpYo2AHydZjbhk8twc5AZEqR6CyEiePj0YGotgrajU2YeXhKU7Gfuudft0AmNsHNGtdbr9WGUqhbUs9ZpfaN4fgDcaFywRVQOjLQpf9N91y1SLd3sX4jcmBupTKt4mnqJHOd0=
+	t=1729181799; cv=none; b=YKlMKCC0ac9x3Ns5GUoqTpVQZrUpKWmzM0JjzZuAzcMbuhG++OPUw+UCZrAoAUD5Un0dKIAcQneOQWb7FWDYhqq1W7W2FeNPe5VB5wHx4v6ebTJ7RluwOJSxrcJuDpJJjNdctVE2Mm1/g9/iqJoPHDQqdkX2PXY6F8d3f0zO038=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729181837; c=relaxed/simple;
-	bh=NlGXNp3bNEjysVyIF38hdgezIoo8VoVadMB4IGHmm4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rHVvRlsOvEx/DfJiNGkCWxwE108Q36HCyj/IIRk3mVnmlthyFCdbc0E1AvqEMa69hrkXl3mi7mMfjZfKE37i+AKqUzKcqW0ok42SlO6vR/tFXrVzUT2Pyg6Lgw8usyhp6CACddXEhoVBX3UslcKrPz799ibfwT4g/bp3r4hVbhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E4ae4cV3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729181831;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1s5mwERcAMxBf3Q/BdA4U5z3Aay/Q0A8/cpBZSs1q+0=;
-	b=E4ae4cV3jGbcnFLERIrpy5sJvB6xeVavpM1EIabZE0QXphtzoRQh4okgpxcKshascMWxr/
-	uRSG8fXL6GU+g2p65W/eSVWS1sRejqkOpdi1Q+v51FVcuonSrS2AgNpmKg1sMmBB0PDqeo
-	DfVxOAZ7SziCoU/wO6GpOqYEfAewG1Q=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-148-pf4pvaUeNLeE0aOBr1djeA-1; Thu,
- 17 Oct 2024 12:17:08 -0400
-X-MC-Unique: pf4pvaUeNLeE0aOBr1djeA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3561C1954B16;
-	Thu, 17 Oct 2024 16:17:06 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.224.27])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E44641955F43;
-	Thu, 17 Oct 2024 16:17:00 +0000 (UTC)
-From: vmolnaro@redhat.com
-To: linux-perf-users@vger.kernel.org,
-	acme@kernel.org,
-	acme@redhat.com
-Cc: mpetlan@redhat.com,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] perf test: Handle perftool-testsuite_probe failure due to broken DWARF
-Date: Thu, 17 Oct 2024 18:15:55 +0200
-Message-ID: <20241017161555.236769-1-vmolnaro@redhat.com>
-In-Reply-To: <Zw_mutl867MINXPi@x1>
-References: <Zw_mutl867MINXPi@x1>
+	s=arc-20240116; t=1729181799; c=relaxed/simple;
+	bh=HD75xGXTJsjGbgGGvfF8PuaL+fWVavu1u4+WgeEAtjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=G/oxRp6f0adgYWu2+Rmcp9jcNYAl1Eb4xEOsa3G6StF92q3E0eDlb2B81D7uCK7AG3BqTd+BCZNn00XSOFSTQFqSehIV+85q5h4kaUm6+ecWKMljL9W3VLOyeKUlHSqGZdB67B04caxU/ML7ZtYWsayhcNhFeqkLkjUJyn17NGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NVwuBxWL; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729181793; x=1760717793;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=HD75xGXTJsjGbgGGvfF8PuaL+fWVavu1u4+WgeEAtjA=;
+  b=NVwuBxWLMQ47F1T4dsHM6ohfsUpK1vNXQgbJKabcT0iIQtuVXjUX4KcF
+   ooVZY7PHgZGkXs6sIUCnuYl06r3IMjSRu2W18VEIK01YAFddx0otOptgT
+   wd75fWnNg+m5PR0pDkcaF6/0/Jw56rJeBw4eP+IUXFDAk7/QiFIFq1hPd
+   NLMWUI5GXvtvh6hr8Sm80nah0j6P5VMJOGABfcd9dSi7YnhjsNQIiLjOd
+   ryMKJfdNyLkmvivHraxhohgd2GIOEt2Bknt1eaXC7gQlY3BUlmN0vOjAD
+   U7Ib04nMCQdl2ygBEQBXtP+vI4HSXZZS2xRpuoKeAa0sTR2qUKLo+PHld
+   A==;
+X-CSE-ConnectionGUID: eHxSsHeHQ5COpck6F5I1Kg==
+X-CSE-MsgGUID: ZkYOdeNrTEKgfkLcB2Pe2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32364603"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="32364603"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 09:16:33 -0700
+X-CSE-ConnectionGUID: nkHz18hDRqGVcBkdFvGFDA==
+X-CSE-MsgGUID: g34SwJKLS8eGNt2gW4L1HQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
+   d="scan'208";a="109406345"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 17 Oct 2024 09:16:32 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1TAr-000MZJ-2L;
+	Thu, 17 Oct 2024 16:16:29 +0000
+Date: Fri, 18 Oct 2024 00:16:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: arch/m68k/sun3/sun3ints.c:33:13: sparse: sparse: cast truncates bits
+ from constant value (ffffff7f becomes 7f)
+Message-ID: <202410180049.E04dChry-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Veronika Molnarova <vmolnaro@redhat.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c964ced7726294d40913f2127c3f185a92cb4a41
+commit: 72e70a0e7ac7c422843eb8bbf192e820e9ccd24d m68k: sun3: Change led_pattern[] to unsigned char
+date:   1 year ago
+config: m68k-randconfig-r123-20241017 (https://download.01.org/0day-ci/archive/20241018/202410180049.E04dChry-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20241018/202410180049.E04dChry-lkp@intel.com/reproduce)
 
-Test case test_adding_blacklisted ends in failure if the blacklisted
-probe is of an assembler function with no DWARF available. At the same
-time, probing the blacklisted function with ASM DWARF doesn't test the
-blacklist itself as the failure is a result of the broken DWARF.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410180049.E04dChry-lkp@intel.com/
 
-When the broken DWARF output is encountered, check if the probed
-function was compiled by the assembler. If so, the broken DWARF message
-is expected and does not report a perf issue, else report a failure.
-If the ASM DWARF affected the probe, try the next probe on the blacklist.
-If the first 5 probes are defective due to broken DWARF, skip the test
-case.
+sparse warnings: (new ones prefixed by >>)
+   arch/m68k/sun3/sun3ints.c: note: in included file (through include/linux/mmzone.h, include/linux/topology.h, include/linux/irq.h, ...):
+   include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
+>> arch/m68k/sun3/sun3ints.c:33:13: sparse: sparse: cast truncates bits from constant value (ffffff7f becomes 7f)
 
-Fixes: def5480d63c1e847 ("perf testsuite probe: Add test for blacklisted kprobes handling")
-Signed-off-by: Veronika Molnarova <vmolnaro@redhat.com>
----
- .../base_probe/test_adding_blacklisted.sh     | 69 +++++++++++++++----
- 1 file changed, 54 insertions(+), 15 deletions(-)
+vim +33 arch/m68k/sun3/sun3ints.c
 
-diff --git a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-index b5dc10b2a73810b3..bead723e34af3f0e 100755
---- a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-+++ b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-@@ -19,35 +19,74 @@
- TEST_RESULT=0
- 
- # skip if not supported
--BLACKFUNC=`head -n 1 /sys/kernel/debug/kprobes/blacklist 2> /dev/null | cut -f2`
--if [ -z "$BLACKFUNC" ]; then
-+BLACKFUNC_LIST=`head -n 5 /sys/kernel/debug/kprobes/blacklist 2> /dev/null | cut -f2`
-+if [ -z "$BLACKFUNC_LIST" ]; then
- 	print_overall_skipped
- 	exit 0
- fi
- 
-+# try to find vmlinux with DWARF debug info
-+VMLINUX_FILE=$(perf probe -v random_probe |& grep "Using.*for symbols" | sed -r 's/^Using (.*) for symbols$/\1/')
-+
- # remove all previously added probes
- clear_all_probes
- 
- 
- ### adding blacklisted function
--
--# functions from blacklist should be skipped by perf probe
--! $CMD_PERF probe $BLACKFUNC > $LOGS_DIR/adding_blacklisted.log 2> $LOGS_DIR/adding_blacklisted.err
--PERF_EXIT_CODE=$?
--
- REGEX_SCOPE_FAIL="Failed to find scope of probe point"
- REGEX_SKIP_MESSAGE=" is blacklisted function, skip it\."
--REGEX_NOT_FOUND_MESSAGE="Probe point \'$BLACKFUNC\' not found."
-+REGEX_NOT_FOUND_MESSAGE="Probe point \'$RE_EVENT\' not found."
- REGEX_ERROR_MESSAGE="Error: Failed to add events."
- REGEX_INVALID_ARGUMENT="Failed to write event: Invalid argument"
- REGEX_SYMBOL_FAIL="Failed to find symbol at $RE_ADDRESS"
--REGEX_OUT_SECTION="$BLACKFUNC is out of \.\w+, skip it"
--../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blacklisted.err
--CHECK_EXIT_CODE=$?
--
--print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted function $BLACKFUNC"
--(( TEST_RESULT += $? ))
--
-+REGEX_OUT_SECTION="$RE_EVENT is out of \.\w+, skip it"
-+REGEX_MISSING_DECL_LINE="A function DIE doesn't have decl_line. Maybe broken DWARF?"
-+
-+BLACKFUNC=""
-+SKIP_DWARF=0
-+
-+for BLACKFUNC in $BLACKFUNC_LIST; do
-+	echo "Probing $BLACKFUNC"
-+
-+	# functions from blacklist should be skipped by perf probe
-+	! $CMD_PERF probe $BLACKFUNC > $LOGS_DIR/adding_blacklisted.log 2> $LOGS_DIR/adding_blacklisted.err
-+	PERF_EXIT_CODE=$?
-+
-+	# check for bad DWARF polluting the result
-+	../common/check_all_patterns_found.pl "$REGEX_MISSING_DECL_LINE" >/dev/null < $LOGS_DIR/adding_blacklisted.err
-+
-+	if [ $? -eq 0 ]; then
-+		SKIP_DWARF=1
-+		echo "Result polluted by broken DWARF, trying another probe"
-+
-+		# confirm that the broken DWARF comes from assembler
-+		if [ -n "$VMLINUX_FILE" ]; then
-+			readelf -wi "$VMLINUX_FILE" |
-+			awk -v probe="$BLACKFUNC" '/DW_AT_language/ { comp_lang = $0 }
-+						   $0 ~ probe { if (comp_lang) { print comp_lang }; exit }' |
-+			grep -q "MIPS assembler"
-+
-+			CHECK_EXIT_CODE=$?
-+			if [ $CHECK_EXIT_CODE -ne 0 ]; then
-+				SKIP_DWARF=0 # broken DWARF while available
-+				break
-+			fi
-+		fi
-+	else
-+		../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blacklisted.err
-+		CHECK_EXIT_CODE=$?
-+
-+		SKIP_DWARF=0
-+		break
-+	fi
-+done
-+
-+if [ $SKIP_DWARF -eq 1 ]; then
-+	print_testcase_skipped "adding blacklisted function $BLACKFUNC"
-+else
-+	print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted function $BLACKFUNC"
-+	(( TEST_RESULT += $? ))
-+fi
- 
- ### listing not-added probe
- 
+    31	
+    32	static unsigned char led_pattern[8] = {
+  > 33		(u8)~(0x80), (u8)~(0x01),
+    34		(u8)~(0x40), (u8)~(0x02),
+    35		(u8)~(0x20), (u8)~(0x04),
+    36		(u8)~(0x10), (u8)~(0x08)
+    37	};
+    38	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
