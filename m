@@ -1,163 +1,181 @@
-Return-Path: <linux-kernel+bounces-369584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0049A1F2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 713659A1F2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C15F61F223CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2092F286144
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153981DD863;
-	Thu, 17 Oct 2024 09:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780D91D95BE;
+	Thu, 17 Oct 2024 09:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F9kRHCX9"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKNLR4e/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E4A1DAC9B;
-	Thu, 17 Oct 2024 09:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6561199E92
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729158855; cv=none; b=pHx6O2l78U0vtKn0NecbbvCXaor7zGvgLi/ft7VDmBvk6C9OdGdfrHjkVX/NO5cJtLIxyXF2N2/9sXlHxwDXHA9L7UHThqEwJAWAf3wtP0OwZGrZX7dMh4eyZ7onzfLtIsa4OsnAR9TgcAh8I8LgK9o+YxIRb03Z4/V3FA1h3vc=
+	t=1729158876; cv=none; b=qtVbOUzamKnOAYBAd7k55lrqUIIuUnnTpSIeuIGOvJSUdw0pjWlaFdsW0eePBEmDwqRzMo/4A2YGZHQP7EhJ7tbi2iuLlIk5eMQx2Xfx58LuihezndzrdobI9Bg5tA0q3hvditovBNw6wbrA+rKNXUWgBTi0d05IcfP4Q4Fm7KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729158855; c=relaxed/simple;
-	bh=tTHLZwbeqBOqBvWlmD9E+niNphUJawMItIl5A2gawTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=scKPAiPGE6Wh+ZDEUNrVPB+cD0zdw6J2LeP4Ynm28b3b20UL6PIiiru1LaI+QsJ8AFQwEg5ridUiJKWEHybceAmJ0WDyAfe1kf0x1NECGS4gmtnbPnVvVJsjqPFfohpUsRCLa9zcQTaiWvPak+C3xNR4AG96hDZkJXUbIk4/LgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F9kRHCX9; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H1t2FY027500;
-	Thu, 17 Oct 2024 09:54:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=+TRddsrmmpM1wtQaANF9W3y1Tj2RP3
-	bionyyPXGXt6Q=; b=F9kRHCX9egziWpTQJ43HZlaPP6ZucKQ/AeAMdpw3NXZTxu
-	FhVxJy0BJ4Sc/fRMntQfmS3E17JEqVp8fLk/ntCzzopaYJbwx1uTVtsUTL2SobeA
-	+ZaqhCY2Ml7x/GHd4GO3M2ALeT/+dwKKTT0VHuibNCFnvBhxX3X2g9Zm22l75Bo+
-	QXlufT64R+rfoNpCQxV7aDAax4JIQiVw2zilEKla2CeUeub7aJ9OLjl9ehSh4OmO
-	pcdYxObsFjLC/MhHm0nmfwoQCZjgPVlXMT1qMfIy4zqfIrWjDqzAcYEBCB4CTU+a
-	PkzkftNO+wW2K/QbFdQDhMmRGXk/uabXRyeouXjA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42asbd1tar-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 09:54:06 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49H9pCeX010672;
-	Thu, 17 Oct 2024 09:54:05 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42asbd1tak-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 09:54:05 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49H6Fj8D005218;
-	Thu, 17 Oct 2024 09:54:04 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4285njdtg8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 09:54:04 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49H9s0Po18022718
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Oct 2024 09:54:00 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 93E0A20043;
-	Thu, 17 Oct 2024 09:54:00 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7BFCE20040;
-	Thu, 17 Oct 2024 09:53:59 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.179.26.155])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 17 Oct 2024 09:53:59 +0000 (GMT)
-Date: Thu, 17 Oct 2024 11:53:58 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
-Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT)
- to support QEMU/KVM memory devices
-Message-ID: <ZxDetq73hETPMjln@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-5-david@redhat.com>
- <ZxC+mr5PcGv4fBcY@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <04d5169f-3289-4aac-abca-90b20ad4e9c9@redhat.com>
+	s=arc-20240116; t=1729158876; c=relaxed/simple;
+	bh=CbWD0YTmgOCj8bDmWVAY5RoLXCa/dTfp/GhXgw7q7LA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=U37Py7xRFXaFGkUkwzSrnspkKcFuWrgBNTQva6h5S4hYzARKmC80hlfPQg7NEGHn9fsC19UP+Al6zVKzjtGzyI30Bsu/JAvuv6KSJamlZEZDHrFeWW2Bb1joZHa2gcKA1AFq9EpcZvoY8RZSBnou9LJBxNV3IOh7Itjr9rWfby4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKNLR4e/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E2DC4CEC3;
+	Thu, 17 Oct 2024 09:54:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729158876;
+	bh=CbWD0YTmgOCj8bDmWVAY5RoLXCa/dTfp/GhXgw7q7LA=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=SKNLR4e/PFr8aXXZpvI0dF9g7CdYU27JbgNbuWqf/IOqDeHWftHTpNMN9CkSS60r8
+	 mLQMdVVqQrrWE4cmCeliO59E64r/kt+VW6tZ80/dMwz4NhEvEY8grw34YmwNFRoxFU
+	 SMINof5a2+OByouiEzPlmq7CXFElqq24KwJQ6B+FQxpByxp+cy532Ls3A7TcrCkal1
+	 OSxC3xxxMZaz4xIkWANArwY6Gu6r4bpaO8pqYSqV3omQaGxPjOIQp9CGDNrzgSHFD7
+	 YCdS7KoNVKfM/QewzV0Ijbs+WkD0ZHF4zl4oJYkKfn+aZCVZxc7a3uiu24/VBu9ePV
+	 80nF9P7HvX3NA==
+Message-ID: <bdd890de-4794-4133-bca1-9c7e067e6e5c@kernel.org>
+Date: Thu, 17 Oct 2024 17:54:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <04d5169f-3289-4aac-abca-90b20ad4e9c9@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: rsW7nei5PMxsFNxCpTTeWNX0xwVxfCqF
-X-Proofpoint-GUID: G8r6oOg0lIoIYHzFUNbBTccmQlmMrzuo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0 mlxscore=0
- clxscore=1015 adultscore=0 priorityscore=1501 mlxlogscore=282
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410170064
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] f2fs: modify f2fs_is_checkpoint_ready logic to allow more
+ data to be written with the CP disable
+To: Qi Han <hanqi@vivo.com>, jaegeuk@kernel.org
+References: <20241009102745.1390935-1-hanqi@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20241009102745.1390935-1-hanqi@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> > Why search_mem_end() is not tried in case sclp_early_get_memsize() failed?
+On 2024/10/9 18:27, Qi Han wrote:
+> When the free segment is used up during CP disable, many write or
+> ioctl operations will get ENOSPC error codes, even if there are
+> still many blocks available. We can reproduce it in the following
+> steps:
 > 
-> Patch #3 documents that:
+> dd if=/dev/zero of=f2fs.img bs=1M count=55
+> mkfs.f2fs -f f2fs.img
+> mount f2fs.img f2fs_dir -o checkpoint=disable:10%
+> cd f2fs_dir
+> dd if=/dev/zero of=bigfile bs=1M count=50
+> sync
+> rm bigfile
+> i=1; while [[ $i -lt 10000000 ]]; do (file_name=./file$i; dd \
+> if=/dev/random of=$file_name bs=1M count=0); i=$((i+1)); done
+> stat -f ./
 > 
-> +    The storage limit does not indicate currently usable storage, it may
-> +    include holes, standby storage and areas reserved for other means, such
-> +    as memory hotplug or virtio-mem devices. Other interfaces for detecting
-> +    actually usable storage, such as SCLP, must be used in conjunction with
-> +    this subfunction.
+> In f2fs_need_SSR() function, it is allowed to use SSR to allocate
+> blocks when CP is disabled, so in f2fs_is_checkpoint_ready function,
+> can we judge the number of invalid blocks when free segment is not
+> enough, and return ENOSPC only if the number of invalid blocks is
+> also not enough?
 
-Yes, I read this and that exactly what causes my confusion. In this wording it
-sounds like SCLP *or* other methods are fine to use. But then you use SCLP or
-DIAGNOSE 260, but not memory scanning. So I am still confused ;)
+Can you please try below patch?
 
-> If SCLP would fail, something would be seriously wrong and we should just crash
-> instead of trying to fallback to the legacy way of scanning.
+ From 38b7c97dcc55ba83de4220c3dc54c2eb66148dd5 Mon Sep 17 00:00:00 2001
+From: Chao Yu <chao@kernel.org>
+Date: Thu, 17 Oct 2024 17:07:05 +0800
+Subject: [PATCH] f2fs: revalidate empty segment when checkpoint is disabled
 
-But what is wrong with the legacy way of scanning?
+If checkpoint is off, let's set segment as free once all newly
+written datas were removed.
 
-> > > +	case MEM_DETECT_DIAG500_STOR_LIMIT:
-> > > +		return "diag500 storage limit";
-> > 
-> > AFAIU you want to always override MEM_DETECT_DIAG500_STOR_LIMIT method
-> > with an online memory detection method. In that case this code is dead.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+  fs/f2fs/segment.c | 13 ++++++++++++-
+  1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index f8d6e601e084..9bad13d70afb 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -853,6 +853,17 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+  	valid_blocks = get_valid_blocks(sbi, segno, false);
+  	ckpt_valid_blocks = get_ckpt_valid_blocks(sbi, segno, false);
+
++	/*
++	 * If checkpoint is off, let's set segment as free once all newly
++	 * written datas were removed.
++	 */
++	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED) &&
++		valid_blocks == 0 && ckpt_valid_blocks == 0) {
++		__remove_dirty_segment(sbi, segno, DIRTY);
++		__set_test_and_free(sbi, segno, false);
++		goto out_lock;
++	}
++
+  	if (valid_blocks == 0 && (!is_sbi_flag_set(sbi, SBI_CP_DISABLED) ||
+  		ckpt_valid_blocks == usable_blocks)) {
+  		__locate_dirty_segment(sbi, segno, PRE);
+@@ -863,7 +874,7 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+  		/* Recovery routine with SSR needs this */
+  		__remove_dirty_segment(sbi, segno, DIRTY);
+  	}
+-
++out_lock:
+  	mutex_unlock(&dirty_i->seglist_lock);
+  }
+
+-- 
+2.40.1
+
 > 
-> Not in the above case, pathological case above where something went wrong
-> during sclp_early_get_memsize(). In that scenario, die_oom() would indicate
-> that there are no memory ranges but that "diag500 storage limit" worked.
+> Signed-off-by: Qi Han <hanqi@vivo.com>
+> ---
+>   fs/f2fs/segment.h | 21 +++++++++++++++++++++
+>   1 file changed, 21 insertions(+)
 > 
-> Does that make sense?
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 71adb4a43bec..9bf0cf3a6a31 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -637,12 +637,33 @@ static inline bool has_enough_free_secs(struct f2fs_sb_info *sbi,
+>   	return !has_not_enough_free_secs(sbi, freed, needed);
+>   }
+>   
+> +static inline bool has_enough_available_blocks(struct f2fs_sb_info *sbi)
+> +{
+> +	unsigned int total_free_blocks = sbi->user_block_count -
+> +					valid_user_blocks(sbi) -
+> +					sbi->current_reserved_blocks;
+> +
+> +	if (total_free_blocks <= sbi->unusable_block_count)
+> +		total_free_blocks = 0;
+> +	else
+> +		total_free_blocks -= sbi->unusable_block_count;
+> +
+> +	if (total_free_blocks > F2FS_OPTION(sbi).root_reserved_blocks)
+> +		total_free_blocks -= F2FS_OPTION(sbi).root_reserved_blocks;
+> +	else
+> +		total_free_blocks = 0;
+> +
+> +	return (total_free_blocks > 0) ? true : false;
+> +}
+> +
+>   static inline bool f2fs_is_checkpoint_ready(struct f2fs_sb_info *sbi)
+>   {
+>   	if (likely(!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+>   		return true;
+>   	if (likely(has_enough_free_secs(sbi, 0, 0)))
+>   		return true;
+> +	if (likely(has_enough_available_blocks(sbi)))
+> +		return true;
+>   	return false;
+>   }
+>   
 
-Yes, I get your approach.
-
-> Thanks for the review!
-
-Thanks!
-
-> -- 
-> Cheers,
-> 
-> David / dhildenb
 
