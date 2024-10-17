@@ -1,107 +1,116 @@
-Return-Path: <linux-kernel+bounces-370457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5237D9A2CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:59:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926E09A2CE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE94B1F232B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:59:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B272E1C2723B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D226219C86;
-	Thu, 17 Oct 2024 18:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A44219CB7;
+	Thu, 17 Oct 2024 18:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jeVZttDc"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDv/vi6s"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1BD20100C
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A2E1DED44;
+	Thu, 17 Oct 2024 18:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729191537; cv=none; b=aBfep2xxOMAcuApP5/XUpf4ArxflIBEtOvcSM6FjcwHNLiEY6Bmx1kTIphffmeMdMXr6Fp05Jwn79ytO4QakwYMlE/+77tc2l6hG50+qo2Lf5MU3jfIIV7Y73/tCij7dy6x16FVJ3nu7IOdnfMK68gpcYRJ4LAkesAjtNNo3TXM=
+	t=1729191543; cv=none; b=VCTpjZv3NGk8ICKaATOfKUTBOYc5vM86Fcb1R0CVKAEq/jzypemokT41ngdgBaAUtBEV65VAjr3xhZ+QimEUuwIkFfko8FkqdcGYSs2/jGGHRgIiNvR0sp04F0FghDwBzlVE9wuBcAV+sHlAThJ8/iNg+gPl7Tiw29zD3HtiEag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729191537; c=relaxed/simple;
-	bh=SNtE+TAjJ2JdWb/jlOvN0PEbD8g1WcfFzQ7DNQOC190=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qiv5w4Z2wI3P0SILgfD2oqvh99lxc5ZXA6MpjSoBu+abzjWmB2JQs+4Hd/x9IsnDyMMUDANoKB11G5Z1NPMA2AEM7hrE5HX0MlFXY99HAN7N/JX4wQaiU1avhEgCExbZmmK6vL7DAF64vZ7LEl7oGI38UdX42N7u4/imWDPKEWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jeVZttDc; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d4a5ecc44so1003282f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:58:51 -0700 (PDT)
+	s=arc-20240116; t=1729191543; c=relaxed/simple;
+	bh=FvGY+kyegglu6hHgiHzS/jYFOrhlp2cqld43oO903Ew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q+arJ3ysCO6HgUUNDIBTxOhqK16h9K3K22Ftjz9P9p5hJPba/CG6lk3zuCh59w2fSgm9m+u+CZlHQmLnWfOeYiQ8IceEfCROkrZuGj46WVXn4YiG2P9ofsJiIr2mZIqf7qVsoTUd+kKtEXPljx9KkBpW5t1Q9Sol5gEoW6if8J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PDv/vi6s; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20cb14ed25fso1071505ad.1;
+        Thu, 17 Oct 2024 11:59:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729191530; x=1729796330; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0jNM0fKmT2OwKByfCojWNdXKNxzOOYUDB2waNLdpO7Q=;
-        b=jeVZttDcGNMaav9+aq8MTooYWFrpcTyXDzZyXU0UeYBWaXLBTlhZ48qVcG4b3u8iGX
-         tNaVrmtb/uVFTvo2KfSjaGGTViHGjzN6sAFwkezCpWg7o1D8kLg09e+g5tJG1q1DaovM
-         7E224UWP9fTVzNZcWdhczjMJ0vBtx9BI4pIMWx4ySb1oCWMMLQo3J90dXs7dbWUGeZZZ
-         lR0MihyBQdN8Zg8Msjg6ne5LI3+E2CBi+xLcoueRY74h/QKh+bzv5lx8j8JAtixCBQ5u
-         qUwc3MmTY8eKMcG5LpxdD0ZcucP0WYrDUYi25WwmstFhH5/CFhuiZgzdIan/ggcli82P
-         a4iA==
+        d=gmail.com; s=20230601; t=1729191541; x=1729796341; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FvGY+kyegglu6hHgiHzS/jYFOrhlp2cqld43oO903Ew=;
+        b=PDv/vi6sxXzhN9ahPxDQLxAMOtpWunKh85j4HQyW2NX+wbdMQSqu42UP4ymHeNzX5C
+         QLQbhAFWATeOr1BjRde+mj/3ssYiEOg9ketQ72Q9x5poBUxcWA+N65nxZcBTGHtfvf7z
+         KSbg1F7eDrtqfPt939VdpHFEE3o2D34F2zxvAw0TYl1faFhWv5PBeLlwV1DEaciC19Hq
+         CtJZJ64mShali452u1ariizMgtDGHTHMk4fq9H5+FPqpdqi8V0sYsrjv1DKXDyvSBb+9
+         wNLXe8w8hEWgnN5DommIKWSd0vMCr7TOqLNccvI+1PXG1kEMjCRmY7j8yf/vOio3Xl+D
+         2KhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729191530; x=1729796330;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0jNM0fKmT2OwKByfCojWNdXKNxzOOYUDB2waNLdpO7Q=;
-        b=AmuIGDKJ446SyLStqTAGqrywwaEIt22s30PUKb+lQyErtba93qG2gbiSioGGAlkRuq
-         jzHexNU4BQU8w6FlEXA2nRMe+wO3LZGbZ7hC8tyjmbLoBCdQwPMBCCUbSr3y7VxSK09g
-         Q97BxtLa7W7oKf3vDMxghMoS49KcB9sJ9TZi+4pydKG7FVHI/aAQ7n+f/BYYNckKKxuw
-         d5BiX9EUepg+lIIgKELb19xBY11dzB2o1f+W5L+OZ+R+H5UWKskCboEILS4r7Zj6DC8J
-         XU9ZIFQ7+eOS9QnpasL7E4RhfLi0Tui902qpyaoQwc+qqxDerjtgdF8x5/WhAp59sAhB
-         ztaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDQjqWloRqOdC3US4aGirRwc8hq8c132zT07yW8g5g5gr+MzMv92aqRFGI/AbVFOJ5qQxHOOND8yKK/a4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy43tHydLpH6KV0g9HKuIH2+T1SvPeK1yG0rUTlKPkEF//ZhxvA
-	TXovXaW09HPWWGPOrEedEOz361n+vXL+w9c+DKf5zPeUp+MAja9rVUC3bID4aiI=
-X-Google-Smtp-Source: AGHT+IF9kUUjfTLr6yM602q+fe8hCO6wIbB+sJWSe0YZkcfYdPlioijykg/CoyWhRs0AzdbysOwD0g==
-X-Received: by 2002:a5d:5192:0:b0:37d:5496:290c with SMTP id ffacd0b85a97d-37d86bb6740mr5003470f8f.7.1729191529891;
-        Thu, 17 Oct 2024 11:58:49 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d4d6586sm3037384a12.7.2024.10.17.11.58.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 11:58:49 -0700 (PDT)
-Date: Thu, 17 Oct 2024 21:58:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Everest K.C." <everestkc@everestkc.com.np>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, dpenkler@gmail.com,
-	gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: other staging/gpib bugs completed
-Message-ID: <c5cdbc20-5d45-4054-99fc-062608168e1a@stanley.mountain>
-References: <912561b9-e446-42e8-8922-9e8952355c79@stanley.mountain>
- <CAEO-vhF0NWB4J+WFu_c7Nn9tu_kYzAvNeFgLrLKc_Lk5DD51hQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1729191541; x=1729796341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FvGY+kyegglu6hHgiHzS/jYFOrhlp2cqld43oO903Ew=;
+        b=AAPoRwaS7FX5psZG2s2PhhpWah0eJL9mIoE5jaursaT0wVp9+KgYbGmBXvuhitatiK
+         rtw/rC4Sf9nvXGnKoekWc8FYeJQOY1cr5bIOhrWra5BI8y0tHPvkAjBB/9BaOkbJqfnY
+         Q4ZuBkAgTLEv59rKuhOi+P41EdAjUMigOrgHCsffTitTwc4E1gJC0t3NqlNLeyB6cItZ
+         g6PAh6Cb8YLfxH0G1d0BmTE5B/N8uwEkVfbmkVcESFgwbYJ+wVj8hYaRTWou7YQh0z+Z
+         bnkV4SP6Decr6VAEspuEO9aF/J8BGixzQAgvbmIm8a3Q+MAzYWnG47kVPmT9D/jIGwE5
+         ewgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVm6Xpeb4k6MvBjnLl4IdcXCimkDU4LcSy/YfDDXbCh5O18QgpAHOqZfwNBa32ggtQDnQgbX0dwz7UVAHE=@vger.kernel.org, AJvYcCWPPU3BdIuiJhV7pDY7l1VyjoWY16bNCFpFcEAQXJwshtT1ey6dIiegqcl013yJaoUUuXhACAsXVK0eQJQnOW4=@vger.kernel.org, AJvYcCWmmpPFkNxQ1gEzP9ojsZpJP5qmwasrisVKpxz+s2jdEnDzl/uOE3zShJM3QnIxeU0UD2PAAZhw@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRhS1RteL8P6iX34y7bCMSf4hriLRNbqs7PBsxdlvdEBvP2Qqf
+	mhQmUVOUjC+sjFZghAFzJgRTDHrWIiQ9UPPnSse+EP5GNgSxqtpuCalMx6SXacJPtkrb5zJ7cl3
+	GCno16NziatiK2hovSyKTl+66KJE=
+X-Google-Smtp-Source: AGHT+IHqAEd+Z6vKcj/6y+M0+t6z5K+Qjjlna7RDsLyicLo8lYc+R09lYvrvCbCMvnZS5ZFGsgZUiq2sEfR5pcCWwSU=
+X-Received: by 2002:a17:90b:249:b0:2e3:1af7:6ead with SMTP id
+ 98e67ed59e1d1-2e55dd1f397mr215856a91.5.1729191541074; Thu, 17 Oct 2024
+ 11:59:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEO-vhF0NWB4J+WFu_c7Nn9tu_kYzAvNeFgLrLKc_Lk5DD51hQ@mail.gmail.com>
+References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
+ <20241016035214.2229-5-fujita.tomonori@gmail.com> <ZxAZ36EUKapnp-Fk@Boquns-Mac-mini.local>
+ <20241017.183141.1257175603297746364.fujita.tomonori@gmail.com>
+ <CANiq72mbWVVCA_EjV_7DtMYHH_RF9P9Br=sRdyLtPFkythST1w@mail.gmail.com> <ZxFDWRIrgkuneX7_@boqun-archlinux>
+In-Reply-To: <ZxFDWRIrgkuneX7_@boqun-archlinux>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 17 Oct 2024 20:58:48 +0200
+Message-ID: <CANiq72kWH8dGfnzB-wKk93NJY+k3vFSz-Z+bkPCdoehqEzFojA@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 4/8] rust: time: Implement addition of Ktime
+ and Delta
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com, 
+	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
+	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org, 
+	tglx@linutronix.de, arnd@arndb.de, jstultz@google.com, sboyd@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 03:29:21AM -0600, Everest K.C. wrote:
-> On Wed, Oct 16, 2024 at 8:20 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > Keep up the good work, Everest.  Here are some other bugs you could fix if you
-> > want.
-> Thank you for all your feedback and help. I am learning a lot :)
-> I will look into these and try my best to fix them and send patches.
+On Thu, Oct 17, 2024 at 7:03=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> but one thing I'm not sure is since it looks like saturating to
+> KTIME_SEC_MAX is the current C choice, if we want to do the same, should
+> we use the name `add_safe()` instead of `saturating_add()`? FWIW, it
+> seems harmless to saturate at KTIME_MAX to me. So personally, I like
 
-Feel free to ask questions if there are any warning messages you don't
-understand.  :)
+Wait -- `ktime_add_safe()` calls `ktime_set(KTIME_SEC_MAX, 0)` which
+goes into the conditional that returns `KTIME_MAX`, not `KTIME_SEC_MAX
+* NSEC_PER_SEC` (which is what I guess you were saying).
 
-You also don't have to do fix any of these, of course.  But I didn't want you to
-run out of bugs.
+So I am confused -- it doesn't saturate to `KTIME_SEC_MAX` (scaled)
+anyway. Which is confusing in itself.
 
-regards,
-dan carpenter
+In fact, it means that `ktime_add_safe()` allows you to get any value
+whatsoever as long as you don't overflow, but `ktime_set` does not
+allow you to -- unless you use enough nanoseconds to get you there
+(i.e. over a second in nanoseconds).
 
+Cheers,
+Miguel
 
