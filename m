@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-369382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2A89A1C9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:10:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A58B9A1CA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207C91F274B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:10:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB8B1C2688B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B43B1D47DC;
-	Thu, 17 Oct 2024 08:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B691CF7C7;
+	Thu, 17 Oct 2024 08:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3+MJgk9"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OxMpo5Wu"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256A71CF7C7;
-	Thu, 17 Oct 2024 08:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA76A1D27AF
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729152423; cv=none; b=Bg3dKTkTBw8dAvnSzEA/dIHSEpoygyWWOh7puAQ9Ks8KmQcpf0IZfGzR28nHi7X+4BMf35xllRegCFB7rhtiJLNpCtURSuSdwLAMXzbHItJfIUMsImbhxkIssHeUhNPLaHyMlmBvRuPmRQyakgYooai2RhEpmi6VIZGXAmVeglM=
+	t=1729152464; cv=none; b=MVY0BrF5za8ps5C0rwmwJQl3OTuCGLCOGgzEZezm6FBBDSmL5TYKE9I/+D75tfFnq5qVQG3QO1aLlzEJLWEarf4R9qzLt0hM87uejnt8QpOoEAGRaHyJvIuNI6D3PrhGoHIlMcqhwzW0YeQrJPpnZbBTzPJDQ/SgY6slHteyfc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729152423; c=relaxed/simple;
-	bh=34qmFnpjtPgM64hHV/d3KZI9QOhHrf+WV9t+kBM7t3w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TpnlTkqSN9pCpxt9OISuBADYyl3/0jBnu3QWNWXQ4YyvOtL6cHFRVpmn0ogfsCKgf7Etmlz8vUBvZeBOVuQ7J9RAUJuxhXD+ymyi7uTFm+IZzToqg8oLIuTCCkSentvc/p2PdfcjHahs4jG+00CkjRcsIj1qTh3OI1PITXknpOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h3+MJgk9; arc=none smtp.client-ip=209.85.216.51
+	s=arc-20240116; t=1729152464; c=relaxed/simple;
+	bh=ndpoMxpMVrIrSKlwdDD1oKAkH6pVJHzoMFXo1S1iBaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qTolF+lUJzqi8bAZdIMLEZK6WR8WO2XCHlWDB4ZeAPusrtNBokPa+nJNGF05MKXg3xGxmLlPUkYNUagXi4bOddbLS8kAnmveelKXMNTsgBxEBAHoQKE6yZaOf+bk+tu3eV8VOCIQUHIDnG8VsAuCn5C0f37yTdC0cgIyAM5UZ9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OxMpo5Wu; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e1c91fe739so520298a91.2;
-        Thu, 17 Oct 2024 01:06:59 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d7351883aso26863f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:07:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729152419; x=1729757219; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=doPdjyTqoRoh33hI7C0I8OBtLtfWK7Aq8acLdfXO4tk=;
-        b=h3+MJgk9+VLqnGWhb9uu6AjVL4xe4p0dGEiXFwmkdd2eBsALoiU7HOe/WcMz4xOuWa
-         zHdBKp/qrQX5+WiLkwFrDXRQF45I+F2GqEGKcqoPpL3H/WJOfAy9rMb6+dPGAv7rAzJH
-         m5pKjZRihLfkeyYwC1z7MLHLNHv9Wc76XaTzCYu+m87XcRUmaIiFr3lERUdR9lQm1bli
-         a4TCMOI8eYH1FeCW0nUd9gwnEzoTJiOBqKr//SHYW6krVLSAPH7jQwaJr7lCiFFOB7uO
-         qT+SxLFec86cIwvuHmDAMUKfxQF8kpL1XM7p/T3U9EwIGdpO20AqzDXXAPahwfGhcVUN
-         QxTQ==
+        d=gmail.com; s=20230601; t=1729152461; x=1729757261; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f3ARNvMTDIwUa/OeE/2jT4z88IP0Xf8KXTuQ47EaPAA=;
+        b=OxMpo5WuCcdPssfhP2Jc5or1SNUQJcFgAlF6r4V5L+YBEuy3s0WOMdNf68xoDZcVcS
+         6tCupmFRqw+9NU0tBSwZvq00l7oci141j4Ujd+f4K6MI5sQuGh61ediPFLJyicMSN6CF
+         cz+sg4LBGjd5FvDJnqME1omrfOeGVBsc9z1CYbh6xn9ySKpeYNMoFkdZs1tYSpnhlmNf
+         D1uNClIBtjRGFvITVeaEzqhEMvtrkBCt3EBfNMbMMpPhTlYHzSKWR4eKGrNK649glIj7
+         Wm2lTk576KbsZ/EjjqBWUZdGlCOyw1LKLYpdGKKATvVDcLeBxc6jhQx2rFNWhTqBmKGY
+         02fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729152419; x=1729757219;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=doPdjyTqoRoh33hI7C0I8OBtLtfWK7Aq8acLdfXO4tk=;
-        b=hWDrKo5RCKasmVT7gEnp9o/c31/+Fah0WbqtX7p+yB3KkWGsdr7YqdcPSru/BzRVe/
-         MNL0/5EbvCrisq5tWj8ynb4W2NlFW5e2m0X4OBBOwV2LFLCnm0X1opM9t/i7oIGNQ4Fi
-         ezF9Dedm1Fkf3mYUl4DtHs8VsuQDKOAG7AQ+yluZDnJV63W1fRPNTsrNTJc/BfLZp55b
-         mqoKm27LSu00IkD7uljRgc00a6ckkmi6gX/a//6t1+YCjs1M/rLXD/LROWEDpDNqndcM
-         6zHAFMrs92bTKEG145rV0anl4fPvYSuCWO+mDthSz81AfVlE+IarQcwIfbvOekP+pSYb
-         CkBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeEfrfBNgFfqrC7DWhmZC/6uDZAGkasxDrSQy4oeHUcrhpO8QYO/WrkP+cNudoqfPRWJa22XW4rdTdFA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu5Gn8gXr8VQmfADsibbjsiBsmg4bDKYnsrqMyZlp02hYEKBXf
-	M6fCfTbV2UurG3/rBLmghy/s3/lhC+EoScUaUuX+/yVauxbp1vDcdVgflAr0
-X-Google-Smtp-Source: AGHT+IHsk9KSUSULHv3YQvFT1nOzL/iy4wVcpAiCOJZyZWCcEvefPxWBSxJ+1oX/bsWjt/dxebSLYQ==
-X-Received: by 2002:a17:90b:360b:b0:2e2:8995:dd1b with SMTP id 98e67ed59e1d1-2e2f0a5d65emr22445720a91.3.1729152419036;
-        Thu, 17 Oct 2024 01:06:59 -0700 (PDT)
-Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2e3e0924c68sm1205658a91.39.2024.10.17.01.06.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 01:06:58 -0700 (PDT)
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ping-Ke Shih <pkshih@realtek.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Mohammed Anees <pvmohammedanees2003@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v2] wifi: rtw88: Refactor looping in rtw_phy_store_tx_power_by_rate
-Date: Thu, 17 Oct 2024 13:36:38 +0530
-Message-ID: <20241017080638.13074-1-pvmohammedanees2003@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1729152461; x=1729757261;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f3ARNvMTDIwUa/OeE/2jT4z88IP0Xf8KXTuQ47EaPAA=;
+        b=CWm7bww7e3MLLOgnmafExGnVrdVWwYH8P+WovfKfq8Rn23YckUuwoQmb2pNVQBh6Y0
+         7HrrI+3WsYbDv56yIgYnkAFWj1Yp0P7ZdVAx2QkTPmfuYXTLQGsIZhHqHFNDtZnGLl/i
+         Ur/HTAab4UNfPI/W9POQV81JPih7dcxAsx+77x17TOCxGMXpBafT92TDuJYkx+5HxkvH
+         lHzl0rj23bLx1x4XsLbu89Xkgmowi3baerfAttbCNpknQBbapbgxRPI6krtqmRA1pvFU
+         5AjdOFyD8YKtVEwxU3jB0FAE3VZNCJdHW294jdK/WrvtdVBSVw9iMKuo3VZgs16IIge2
+         so0Q==
+X-Gm-Message-State: AOJu0YzRnjmp6e5WQFsd6Ot7dHWWsdR/Sx6DMAKBqO2YeCxxRctQD0DY
+	bvd52wAxgnwgbaxMQJVBUNU1zA5w6ER8Kq0GLoxZ5rB4HI+vs9Yx4mxFIe2PSDk3Pi21YeWvOie
+	2ZL0hG360AEb7eaZiK+oNaclukK8=
+X-Google-Smtp-Source: AGHT+IHoCiNIIhJpvNcCGrSEd8zUERi0mYbAqee8s1BYf5uwu/qt3wnTu2Z82Ymc1C7ehtXSEY8FCPa59AGUeys2RTc=
+X-Received: by 2002:a5d:6daa:0:b0:37c:d122:33ce with SMTP id
+ ffacd0b85a97d-37d937d7f3amr800502f8f.6.1729152460755; Thu, 17 Oct 2024
+ 01:07:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240927160655.3594366-1-daeho43@gmail.com>
+In-Reply-To: <20240927160655.3594366-1-daeho43@gmail.com>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Thu, 17 Oct 2024 16:07:29 +0800
+Message-ID: <CAHJ8P3LT21jErAjPB055a0JkHrxtSG=t7kzNKy61Dex5XSzEiQ@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v3 1/2] mkfs.f2fs: change -c option description
+To: Daeho Jeong <daeho43@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	kernel-team@android.com, Daeho Jeong <daehojeong@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The previous implementation included an unnecessary else
-condition paired with a continue statement. Since a check
-is already performed to determine if the band is either
-2G or 5G, the else condition will never be triggered.
-We can remove this check.
+Daeho Jeong <daeho43@gmail.com> =E4=BA=8E2024=E5=B9=B49=E6=9C=8828=E6=97=A5=
+=E5=91=A8=E5=85=AD 00:08=E5=86=99=E9=81=93=EF=BC=9A
+>
+> From: Daeho Jeong <daehojeong@google.com>
+>
+> Current description confuses users like they can add addtional devices
+> with one -c option using commas(,) at the same time.
+>
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> Reviewed-by: Chao Yu <chao@kernel.org>
+> ---
+>  mkfs/f2fs_format_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+> index d9cdd61..b6785cd 100644
+> --- a/mkfs/f2fs_format_main.c
+> +++ b/mkfs/f2fs_format_main.c
+> @@ -50,7 +50,7 @@ static void mkfs_usage()
+>         MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
+>         MSG(0, "[options]:\n");
+>         MSG(0, "  -b filesystem block size [default:4096]\n");
+> -       MSG(0, "  -c device1[,device2,...] up to 7 additional devices, ex=
+cept meta device\n");
+> +       MSG(0, "  -c [device_name] up to 7 additional devices, except met=
+a device\n");
+Dears,
+it seems that man should be updated too?
+.BI \-c " device-list"
+Build f2fs with these additional "comma separated devices", so that the use=
+r can
+see all the devices as one big volume.
+Supports up to 7 devices except meta device.
+thanks!
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202410171143.OnFlgIwK-lkp@intel.com/
-Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
----
-v2:
-- Changed from using a pointer approach to a simpler if-else structure for clarity.
----
- drivers/net/wireless/realtek/rtw88/phy.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtw88/phy.c b/drivers/net/wireless/realtek/rtw88/phy.c
-index 37ef80c9091d..8b9f8f73c14c 100644
---- a/drivers/net/wireless/realtek/rtw88/phy.c
-+++ b/drivers/net/wireless/realtek/rtw88/phy.c
-@@ -1470,10 +1470,8 @@ static void rtw_phy_store_tx_power_by_rate(struct rtw_dev *rtwdev,
- 		rate = rates[i];
- 		if (band == PHY_BAND_2G)
- 			hal->tx_pwr_by_rate_offset_2g[rfpath][rate] = offset;
--		else if (band == PHY_BAND_5G)
--			hal->tx_pwr_by_rate_offset_5g[rfpath][rate] = offset;
- 		else
--			continue;
-+			hal->tx_pwr_by_rate_offset_5g[rfpath][rate] = offset;
- 	}
- }
- 
--- 
-2.47.0
-
+>         MSG(0, "  -d debug level [default:0]\n");
+>         MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
+>         MSG(0, "  -E [hot file ext list] e.g. \"db\"\n");
+> --
+> 2.46.1.824.gd892dcdcdd-goog
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
