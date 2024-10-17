@@ -1,134 +1,125 @@
-Return-Path: <linux-kernel+bounces-369419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561749A1D15
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 125139A1D16
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A83328A467
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:22:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9CBC28A95A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC861D1F7E;
-	Thu, 17 Oct 2024 08:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0661CACF7;
+	Thu, 17 Oct 2024 08:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DBCxnL6B"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWkzHAnx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035251C1ABD
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214E625776;
+	Thu, 17 Oct 2024 08:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729153357; cv=none; b=YRlWEJD8FVGBF8q2JQ2OwHgFmbXIkE1S1+H+yCWqZ6DZnWWSkDbO9hWKCBRxNrJxPofauB6aBlqvOaH6EAYj2UYEUFCB4hAp9fLA0cdvY8Dzb6XAEk19kMTctmPnMGitFy7DhPthi1cqvMw6has7RDq4oPiyBIixcNHVvvjfEqA=
+	t=1729153396; cv=none; b=UEuiF4s0GLe8kdIbRtEAocsM/xJq6gmJizpG5eO/ZEB0AnoqBTxr23yUix8FDZf4WlsfpdcX7E8ymRIoCTM4VBMQotSs1JLrZGq1AYn5owsxP9bFVVfohJcTj33P1t04i2B1e8I3c+fXEebUN42xeKNuU2OongtjK8B/Mj3+flc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729153357; c=relaxed/simple;
-	bh=LHpKCji377DFMvaRbAFReZQaRgC0Kh3loXnkIDQ8RYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UBjxNjNIC5czW44qOVIH9AOSQ3kken+3HLc5qnMjV3vQViZqb4u4XPRqNPcqI+hBaWxRii7LBs8ppzQ1RP1ymZqY/WT7QqqO7WUuqCiZf6C0fQuZ8mV+M2VtzCf8y6MtHdFU3d9ZYN+OIcjZrwP60Qe70ypg/aJL3bdt6Wcp4J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DBCxnL6B; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d5aedd177so501982f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729153354; x=1729758154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WsXxx6/wl/PtaXF1WXd5AaVkjicmsyDuglgPitrvJwM=;
-        b=DBCxnL6BNJPyNMaomba0nAcsynBzaLsji6TDxlPIDEYv1j6DSCcVWgHqxIVBC9Iohs
-         9vQrA8fpGyked8GzHKaHaTMi9hr4LR7hwYnySmzkbRpOwWV1C4M8+6apffMaj6m9RQzP
-         XUbkZCpORuukhfL1e3Sy3LtVFeLXVBQTkTgrU0SDz9vOBCVrK+2ZJBCAHgndioDVQ04N
-         XjCvkc2o9llj8bJUjnoWciu+CZaPfqEfOgiDT99vhFIrYWSv9h1JeqdIqrnJr1xBHtP2
-         8dHdTiv4GLqQPi7gFeSOMt1U/qwrjljpZ1hM8aGYvUBk9FQC44b1ZHBoJSfQ1AS4zB1q
-         GF8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729153354; x=1729758154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WsXxx6/wl/PtaXF1WXd5AaVkjicmsyDuglgPitrvJwM=;
-        b=DIawNSuOCrZz24txALM5MXBDUZ7UXiOkVXHpm0KY6gs2zhRtTvf8AGdjjeCwZAFpqh
-         eo+yH/ZeKcT/Mkc6BpGZ2WD3fEZjaPQ7hiPFB0GONZpLFXOyWrdeFVulHSQv1JKTNu29
-         0rhIQFwoOhNLnh9sbenX3n0KUnqPHD7KnRKbyrZckZjOSU/dPgA3CnqKpN1MhhwV0co9
-         pHDqanow9zSdL7h7iLVDcoaYfzw2HAhi8I07sXdU2Tawwb1IRtiSocI+YEcVWvzl/XJT
-         lvqP+gQjM9IHXoV57j7gQxS0lqtM0ZxPRzQiCH4UunEEFO6c+FW33E0Fgiz+tAEUzSdP
-         jQXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKK8/N93r4ZjdG2S8x3fakjJi5h1JHrXF1GjHp4BzN10f/Yc9l/xQ+Y92fiErZQuUaBwI5+36hUpxIMgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzpfhsaa++knWI/o8oJ8ci3qmb6GYKPAH2Yzdx856xCqI3ixgX
-	yUpb/OeQU30LC8nEoml3khtBSOipMU2RRVTNl2CHelMMLvE5rBt0wV1dfo4wPQbzqV6Y9W6h9Fh
-	EjxFJ/3EWd+DiisdLB7D0tzqO2uYLMArwtV8W
-X-Google-Smtp-Source: AGHT+IFP0+h2AsfG6hM/KnGPmpu8BMbSpOOTSaL3KNMUlPYqSuiL84qJGLwymSL6TV65MTUPfPFzY2cx7qmxGe21PDM=
-X-Received: by 2002:a05:6000:12cc:b0:37d:41df:136b with SMTP id
- ffacd0b85a97d-37d551ca167mr12503719f8f.13.1729153354030; Thu, 17 Oct 2024
- 01:22:34 -0700 (PDT)
+	s=arc-20240116; t=1729153396; c=relaxed/simple;
+	bh=1KsqZNolBHazkASsyK7p/JCNfrY1ma2oIBPweDnshBw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lb7UKmUJhrN4kaOy38YFVxLxOy26BBe0bPIHi8R7ZPUTfEC5PnhXj30QqDMPakUHQDiLjhwtEHJSc5/z0eztQEB9cXraRJnbRrGktj63MTrY5Qyq9OYcfpakppgjasH4vWgrdgop5W3ez56x7CBVxT+EzRixkTdvznSxZkBtH80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWkzHAnx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A574FC4CEC3;
+	Thu, 17 Oct 2024 08:23:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729153395;
+	bh=1KsqZNolBHazkASsyK7p/JCNfrY1ma2oIBPweDnshBw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EWkzHAnx8cOVzSaJAAwD2F9oNXJpvVxMnlzkgmIu6HpnbmjDOY9afOVFRksyB09NK
+	 rmQhYYeYNA8yItxD5Iad3/vHGGrvrioYUvuv9KPR5hSQJLBvmuVPLeFrZY89E8IK7P
+	 5H/oNRSXbp0n7wg3vRfROGlZ/cJb1TItymnepnZvLsvJqZTXtKV982j2FTuUZPo2Xp
+	 vIoOXQMUANADCY4k/Ls8F05XlBd1yp9lvmiQx+3eWuu6KShiJpxNjRiYJh933Yf2PV
+	 nwHdXOlujTk6wlEmjU3Ld+Bj6KcEp3w7BE85VqYs/xmfSeTUnVLljnUntHxmQF4Pce
+	 7HQTC6yqQ3FdQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t1Lmr-004MES-Gw;
+	Thu, 17 Oct 2024 09:23:13 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: Gavin Shan <gshan@redhat.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Akihiko Odaki <akihiko.odaki@daynix.com>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] KVM: arm64: Fix shift-out-of-bounds bug
+Date: Thu, 17 Oct 2024 09:23:10 +0100
+Message-Id: <172915337759.953359.17693189186554582464.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241017025701.67936-1-ilkka@os.amperecomputing.com>
+References: <20241017025701.67936-1-ilkka@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
- <20241016035214.2229-4-fujita.tomonori@gmail.com> <CAH5fLgjKH_mQcAjwtAWAxnFYXvL6z24=Zcp-ou188-c=eQwPBw@mail.gmail.com>
- <20241017.161050.543382913045883751.fujita.tomonori@gmail.com>
-In-Reply-To: <20241017.161050.543382913045883751.fujita.tomonori@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 17 Oct 2024 10:22:20 +0200
-Message-ID: <CAH5fLgiPztunRXrEKF1=sCB16QfbFhQ19p_EorA2f1Xnfu3-zA@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 3/8] rust: time: Change output of Ktime's sub
- operation to Delta
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch, 
-	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, anna-maria@linutronix.de, 
-	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de, jstultz@google.com, 
-	sboyd@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: gshan@redhat.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, akihiko.odaki@daynix.com, ilkka@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Oct 17, 2024 at 9:11=E2=80=AFAM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
->
-> On Wed, 16 Oct 2024 10:25:11 +0200
-> Alice Ryhl <aliceryhl@google.com> wrote:
->
-> > On Wed, Oct 16, 2024 at 5:53=E2=80=AFAM FUJITA Tomonori
-> > <fujita.tomonori@gmail.com> wrote:
-> >>
-> >> Change the output type of Ktime's subtraction operation from Ktime to
-> >> Delta. Currently, the output is Ktime:
-> >>
-> >> Ktime =3D Ktime - Ktime
-> >>
-> >> It means that Ktime is used to represent timedelta. Delta is
-> >> introduced so use it. A typical example is calculating the elapsed
-> >> time:
-> >>
-> >> Delta =3D current Ktime - past Ktime;
-> >>
-> >> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> >
-> > So this means that you are repurposing Ktime as a replacement for
-> > Instant rather than making both a Delta and Instant type? Okay. That
-> > seems reasonable enough.
->
-> Yes.
->
-> Surely, we could create both Delta and Instant. What is Ktime used
-> for? Both can simply use bindings::ktime_t like the followings?
->
-> pub struct Instant {
->     inner: bindings::ktime_t,
-> }
->
-> pub struct Delta {
->     inner: bindings::ktime_t,
-> }
+On Wed, 16 Oct 2024 19:57:01 -0700, Ilkka Koskinen wrote:
+> Fix a shift-out-of-bounds bug reported by UBSAN when running
+> VM with MTE enabled host kernel.
+> 
+> UBSAN: shift-out-of-bounds in arch/arm64/kvm/sys_regs.c:1988:14
+> shift exponent 33 is too large for 32-bit type 'int'
+> CPU: 26 UID: 0 PID: 7629 Comm: qemu-kvm Not tainted 6.12.0-rc2 #34
+> Hardware name: IEI NF5280R7/Mitchell MB, BIOS 00.00. 2024-10-12 09:28:54 10/14/2024
+> Call trace:
+>  dump_backtrace+0xa0/0x128
+>  show_stack+0x20/0x38
+>  dump_stack_lvl+0x74/0x90
+>  dump_stack+0x18/0x28
+>  __ubsan_handle_shift_out_of_bounds+0xf8/0x1e0
+>  reset_clidr+0x10c/0x1c8
+>  kvm_reset_sys_regs+0x50/0x1c8
+>  kvm_reset_vcpu+0xec/0x2b0
+>  __kvm_vcpu_set_target+0x84/0x158
+>  kvm_vcpu_set_target+0x138/0x168
+>  kvm_arch_vcpu_ioctl_vcpu_init+0x40/0x2b0
+>  kvm_arch_vcpu_ioctl+0x28c/0x4b8
+>  kvm_vcpu_ioctl+0x4bc/0x7a8
+>  __arm64_sys_ioctl+0xb4/0x100
+>  invoke_syscall+0x70/0x100
+>  el0_svc_common.constprop.0+0x48/0xf0
+>  do_el0_svc+0x24/0x38
+>  el0_svc+0x3c/0x158
+>  el0t_64_sync_handler+0x120/0x130
+>  el0t_64_sync+0x194/0x198
+> 
+> [...]
 
-What you're doing is okay. No complaints.
+Applied to fixes, thanks!
 
-Alice
+[1/1] KVM: arm64: Fix shift-out-of-bounds bug
+      commit: c6c167afa090ea0451f91814e1318755a8fb8bb9
+
+Cheers,
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
+
+
 
