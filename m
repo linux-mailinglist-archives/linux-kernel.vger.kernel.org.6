@@ -1,140 +1,113 @@
-Return-Path: <linux-kernel+bounces-370490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350539A2D88
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:14:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB4F9A2D8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE93A287024
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71A021F239A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9541921D17D;
-	Thu, 17 Oct 2024 19:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256A321D2A8;
+	Thu, 17 Oct 2024 19:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XNJcGZ/Q"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L2U0/woA"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CFC218D72;
-	Thu, 17 Oct 2024 19:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0792A21BB06;
+	Thu, 17 Oct 2024 19:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729192445; cv=none; b=P5F9tj+tWhodLkxjXE8OBQn3NCFvPW0BdhuZ+uMcsxTlFRpx4GsF02CUVIYhRhAv/JUDsWXbKBIcx+vU0TkL+dFYFSOlaC04K5TH8mTmuzwNaKqD7rgnM9ykyUA48xkfz6xOrqt8neRO7jhFMVel3vtStHvxnVYbbmPw5vQnO5k=
+	t=1729192457; cv=none; b=fJlS2F8CxMLEpxoscbgqrjhXMFS2Gn81A5zvZhdFijQ4cStSf0dKwO01uKTRqGPeaymaYdDlJ2MxE4gb0dhDZ2wv7Ash+APOcSMb1VMjG4AGVfcVfm9WBDXriSB1RyEwkNF4zixOzKiejBIRn6Gjlu6HbGS2lVvtNGj1vVMRwTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729192445; c=relaxed/simple;
-	bh=oKEev3EugVk+ubV7v2vIKE/rUvjLm33hhOkJwHMkBmo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ru10U5XBWLpgTCG1lhv7np34oFwK4QDjoMWRuIKoPAxxwxo2KJeiBkm0fs66LBAXQMawaLd6y2s0zKOqz/ULTlSEDhE7uMMhcDsouy4LzGQexgLHDmUGeMCTCtx83NcUgDFwlVzczuF6wKR5mrC8yF8XmmrwuHQdCx+nydag8t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XNJcGZ/Q; arc=none smtp.client-ip=209.85.216.49
+	s=arc-20240116; t=1729192457; c=relaxed/simple;
+	bh=Koq6Qpu1UBXdJvH7+fvWs0ioA8ye9tyyCNjDy7B3Ah0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lZM0ctbPVpA6feZiBvhTAR06byDd6TyCTGHEVAYytCn9eJ0BNGk0hz0jmHw78ZqJY4jkNvxQHZCaSwyUtHx+/vFfrMdpg4IdrU+/zhaQL2L4+6yzbIOldotN+0tRmF/0gFOo1u1/44W7qGeqUeSwVejVzg3FQxgoWTSfmDMhKXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L2U0/woA; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e2dcf4b153so1019127a91.1;
-        Thu, 17 Oct 2024 12:14:03 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4305413aec9so13845545e9.2;
+        Thu, 17 Oct 2024 12:14:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729192443; x=1729797243; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ahFaJ8/guc7ie3rJ77irjN+5zBFR5O3hZmCpg9MelLo=;
-        b=XNJcGZ/Qe+enJV8uc9kCfjPpC8/LqxMtbhy5OrrP/tUp9tZPdvDhnv0hhy6RBBL1Zc
-         nB5sm127zSLnK/jiEkDXRhQXRP3tr4t2WpO7SbyZ4HIjzWBXuTblmMqlc6d7Pxoyh29w
-         9ESNScYNJPFYgxNr53u/vtv1kKUjgbpfUjjY3QOab0WoDC60zj1KtIIG8K2tSGGdZJ+c
-         CE3IlJ1ekQlj8fBigWVV6WJRNsyGE/KopPxDIuOpPIW1GVpkyJwj83ZFoAkO27WUbkNn
-         ERZV0tt3Z1mRJgM6cvbEmr41kUF/qJ+aI4ollwuZxxDBmBHmHaj4ZeEPvl1eKrXkZ/Lq
-         rKMg==
+        d=gmail.com; s=20230601; t=1729192454; x=1729797254; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jRchpYD2y5fPxBSlIYESO5pAsIBC81GMZW6SoYg2m2w=;
+        b=L2U0/woAAP4/au72QpWIXzmw4R3ofUp3GO3Z63YkxSQBgAkUxWf6ePnS8HcUWDwWEu
+         vfoGrEVcwBDEujRU8473Zs+H89dXUD0VtPvZRpFnXKDvcTLZQg81j4d/PcSZWyk4qnPf
+         9Xd5I7kZbINm/dcuTeZlG82eIlFCGzgqfdCMP+MqsTJQ+yu7u+fFjGaqn7WM8n0r8sKQ
+         vhl7MnTzcWzGzlXmfjFxi3T7PdB36p6OK+Kat0f+TXGzxGWe4oMjrW6ldrFGQd3CAvYw
+         CI5pbIdG57IJiQTz2udVo961G60e/IdjeOH4bTin+JwI6w/SXAtbVsB4j1dMzah6y9n1
+         X7CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729192443; x=1729797243;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ahFaJ8/guc7ie3rJ77irjN+5zBFR5O3hZmCpg9MelLo=;
-        b=h0Bte+KLbag1cy4MW/l2srTxGqUPAJQwPaLrRcXJooDdt0/hUXaHsjSXDKfE7OYuQ9
-         LqiX1wBtd76yeRQyiJjuCYX7LGLchaMsgJNhbfKf92cEZHIiq5N2l1A7qcOCDR2rLR2v
-         HLSt1m8bUF7bHu3aJJud2Lg8DoY4BuuEcctGuPtUEpi1tOVw5nKiXSyvXHWee8qFeuIL
-         fZZwUu3pkq68MaavVlXCYKY74NZPsHoNV/45/4POTDSn3w162udRKxj2CTomj5IlHl1S
-         h6rdOUvsHujQzPXBHKhP7ieUV4j/+cF6utk5ItagfQXa6v5w4mxoaLcLOns3PBWMgZPj
-         Dn4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVNrgTNCmREezxfq6LxnU+k6jSTjym/h/9WGEDbmMkG+AD0XIxGGYCOwYOELCLFulALVZF19JFq@vger.kernel.org, AJvYcCX4qea4JlKjeRIR4HjyigDmhNwQaLGTrY9MqeJGewj4geUQxMNGS1GUHoWrougMIyw/yBFL+JxRBi/0FXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo4+yQLG1TNvpKGD66ESZd3eEk/vB0TiBkZWrc9jE8c1esMu7l
-	dZ0ZiissonebxNvjUPovic96rUXgZi1t4O7OFIVacYzLmEsBfiYv
-X-Google-Smtp-Source: AGHT+IE1ac8B1kfyldFHM6YNOqOwjVQl7fWMYlyKMet9lF4khqCUNozyRY2HtHkWLcCXgAt2tZxsPA==
-X-Received: by 2002:a17:90b:180a:b0:2e1:d5c9:1bc4 with SMTP id 98e67ed59e1d1-2e5616db895mr34808a91.7.1729192442934;
-        Thu, 17 Oct 2024 12:14:02 -0700 (PDT)
-Received: from ubuntu.worldlink.com.np ([27.34.65.170])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5610af81fsm61572a91.5.2024.10.17.12.13.58
+        d=1e100.net; s=20230601; t=1729192454; x=1729797254;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jRchpYD2y5fPxBSlIYESO5pAsIBC81GMZW6SoYg2m2w=;
+        b=HGN2ZfDonVYnhKQYr59Pn68lQM8yc3yASXUbcLaNZofKVg0wvMNpb/EdueLyWDbonI
+         MjItNocTMHYQecTU81i59iGPwA0MGN227mDDqsCys3sE4h+b3GFkFEssVcQapa2192yM
+         8wuriWWvNqlKZFQYg1Pf21qgzztsE9yHaZRQv6qr5wx80hP6yIDcrcWJw7jEr4/5m4lc
+         GwHv7bBsH7X+aQfngZ/KWQlRO1IToMsWyRmGLCTBEh1TTTsHqbBW75o+oISoSq5CQ3PZ
+         lUzl6FeI4hNoSrE4nZRgoo7FYLESaSgsyKRYI0rzKDJMEIUSywDjSrU7dI/0s90GJ9Ll
+         33hA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhQZ6zAUGrQ2hbFRht+vtxluWo7kNfRwAbkAUVs3FHsljsezzqgZoYS+FHD51mE6S50CJvWRzGRICZCK5a@vger.kernel.org, AJvYcCX91QQtSLPj1h7sBSWCY4YnFmrRxtGZ7pusmhm/o1hE9dhwVq4k9cjOlYL8TNY2WMWtQT7Y4O2XysY4/gZQ0k8=@vger.kernel.org, AJvYcCXTIp0FacZe3vGSawlhcvt4bXvWOqkgfg4cX3lQjBXOPBJVsmFj2h+aFjPxg4u+Vr5pRAgF8qaHeDFAavcn5jYw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8Q+zwxhorEJWwydmeNaXpr13tWrIQzPmRdtNoQ4mtUJy/hyc3
+	gbHpcNqa9i2csykgy3s6dIDEw7Fr5WH+IbGCK0ivBsVja5/53NgH
+X-Google-Smtp-Source: AGHT+IELI/vhZ++02PVwYoLIIBS5XpsZPQhiAGp5oouGXvEhqky8ICI624eJZTe0MWdlvdoKMFWK0A==
+X-Received: by 2002:a05:600c:5110:b0:431:59ab:15cf with SMTP id 5b1f17b1804b1-43159ab1711mr25678705e9.19.1729192454113;
+        Thu, 17 Oct 2024 12:14:14 -0700 (PDT)
+Received: from PC-PEDRO-ARCH ([2001:818:e92f:6400:a118:25f3:b27f:9f34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160d3f3acsm1670155e9.0.2024.10.17.12.14.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 12:14:02 -0700 (PDT)
-From: Dipendra Khadka <kdipendra88@gmail.com>
-To: Sunil Goutham <sgoutham@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	hariprasad <hkelam@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Ratheesh Kannoth <rkannoth@marvell.com>
-Cc: Dipendra Khadka <kdipendra88@gmail.com>,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 5/6] octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_dmac_flt.c
-Date: Thu, 17 Oct 2024 19:13:54 +0000
-Message-ID: <20241017191355.32988-1-kdipendra88@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241017185116.32491-1-kdipendra88@gmail.com>
-References: 
+        Thu, 17 Oct 2024 12:14:13 -0700 (PDT)
+Date: Thu, 17 Oct 2024 20:14:11 +0100
+From: Pedro Falcato <pedro.falcato@gmail.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	akpm@linux-foundation.org, keescook@chromium.org, torvalds@linux-foundation.org, 
+	usama.anjum@collabora.com, corbet@lwn.net, Liam.Howlett@oracle.com, jeffxu@google.com, 
+	jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, jannh@google.com, sroettger@google.com, 
+	linux-hardening@vger.kernel.org, willy@infradead.org, gregkh@linuxfoundation.org, 
+	deraadt@openbsd.org, surenb@google.com, merimus@google.com, rdunlap@infradead.org
+Subject: Re: [PATCH] munmap sealed memory cause memory to split (bug)
+Message-ID: <zcizwa4wasrq5si6nsjvougg2lt2dklaujpshdmghwg7oejhlj@zxzqhyff4vba>
+References: <20241017022627.3112811-1-jeffxu@chromium.org>
+ <3a1bbbdf-1281-4f44-857d-58cba583e3da@lucifer.local>
+ <CABi2SkU2yX_Pbr6=6uEiQnro88O5Mhq3NLwOsy=A=Qa5xeC6Yw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABi2SkU2yX_Pbr6=6uEiQnro88O5Mhq3NLwOsy=A=Qa5xeC6Yw@mail.gmail.com>
 
-Add error pointer checks after calling otx2_mbox_get_rsp().
+On Thu, Oct 17, 2024 at 09:20:20AM -0700, Jeff Xu wrote:
+> On Thu, Oct 17, 2024 at 1:18 AM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > NACK. Greg's bot got to it but...
+> >
+> > As per Greg's bot, no signed-off-by line.
+> >
+> Sorry for confusion, I wasn't meant to send this as a PATCH, but
+> reporting the issue.
+> The diff was just sent as reference to repro the bug, and I forgot to
+> remove PATCH from the title. I apologize for the confusion.
+> 
 
-Fixes: 79d2be385e9e ("octeontx2-pf: offload DMAC filters to CGX/RPM block")
-Fixes: fa5e0ccb8f3a ("octeontx2-pf: Add support for exact match table.")
-Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
----
-v4:
- - Sent for patch series consistency.
-v3: https://lore.kernel.org/all/20241006164617.2134-1-kdipendra88@gmail.com/
- .../net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c   | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Can you explain what the issue is? I don't get it.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c
-index 80d853b343f9..2046dd0da00d 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c
-@@ -28,6 +28,11 @@ static int otx2_dmacflt_do_add(struct otx2_nic *pf, const u8 *mac,
- 	if (!err) {
- 		rsp = (struct cgx_mac_addr_add_rsp *)
- 			 otx2_mbox_get_rsp(&pf->mbox.mbox, 0, &req->hdr);
-+		if (IS_ERR(rsp)) {
-+			mutex_unlock(&pf->mbox.lock);
-+			return PTR_ERR(rsp);
-+		}
-+
- 		*dmac_index = rsp->index;
- 	}
- 
-@@ -200,6 +205,10 @@ int otx2_dmacflt_update(struct otx2_nic *pf, u8 *mac, u32 bit_pos)
- 
- 	rsp = (struct cgx_mac_addr_update_rsp *)
- 		otx2_mbox_get_rsp(&pf->mbox.mbox, 0, &req->hdr);
-+	if (IS_ERR(rsp)) {
-+		rc = PTR_ERR(rsp);
-+		goto out;
-+	}
- 
- 	pf->flow_cfg->bmap_to_dmacindex[bit_pos] = rsp->index;
- 
 -- 
-2.43.0
-
+Pedro
 
