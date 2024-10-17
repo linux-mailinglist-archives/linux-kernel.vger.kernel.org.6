@@ -1,172 +1,126 @@
-Return-Path: <linux-kernel+bounces-369528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DCB9A1E6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:31:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1027A9A1E70
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D8792894A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:31:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 326AD1C248F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB0E1D4150;
-	Thu, 17 Oct 2024 09:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017E81D90D1;
+	Thu, 17 Oct 2024 09:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vutH6VnP"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTQIEI2i"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27121D88C2
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938BF12DD8A;
+	Thu, 17 Oct 2024 09:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729157452; cv=none; b=jYoFQ3jaP2SyxOHP72fl02OutU8k9qbO1FWGxTxyWZrHiU8yRSMVWlE/4py2McWvx5M+ffGnr3W22LjjN9cJTz6rzPK/PLvtyfYrD/54lYUP6RluGfYT10xgqgKUdyyBb3UuuUAErOBI3fJIvNJ5tVprdfBKzGe+2P3cB0R6dlQ=
+	t=1729157518; cv=none; b=uAmtpWkJbKhnRmZdRpT15xHb7TYKk8IAcO0OU6GvZ9CATj+4oGTuCi75cB11lpmN2Ojm8lJXmFx7OWWmNWmPR8fo0NNSKEx/T47lWYHHuMQXyBWG+UBPPM+GAQUeHxijGJgeaHY4aVt2DFfGA0dxiKfyN45o4jUi+ywrH8Yo4rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729157452; c=relaxed/simple;
-	bh=69DxRSFMtnhAHbJGK01FQjK4oD5LqNYEz7GlR3HUQRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LiD2X1lu/ZPcwqPgiixgzTrKQJNbuaaQy6+tMMhNuSfwZnLb9mHDvyafw91ltDoCb6MZnbsyO94MHTq3whq2pYZCJGkgEzUxcJDMzqDDfgfCnAnS4bTRYRnMaZ+DxaYkZpMViBtmqDNpVwFQId9NWF27uyRz7mfJcapBxL90mPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vutH6VnP; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e67d12d04so532715b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:30:49 -0700 (PDT)
+	s=arc-20240116; t=1729157518; c=relaxed/simple;
+	bh=Azrfnx4dkIKaqXi3xjEg+tYVqbFMmUOo5eoV4jcn9is=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=hWa5NjR7w7VWKR4M5iTtHPrYtRdQ+FDBwgR+jLHgcm+VUfJ75HzRLifhnQoH95/rlTvnVHPl6sYXw4gwaMLOwc/YTLf8Y4osc1u2spTsYZiK3NmV6ihKmDvg5ktcaIXP0AEofR/izrNBKBVAjQcdAM4QoNZyJmXHERztcW+p+RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTQIEI2i; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cf3e36a76so7443835ad.0;
+        Thu, 17 Oct 2024 02:31:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729157449; x=1729762249; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Y53oSEtZ5CP67qr80ZJJlP6iB9wlZ84RYUcNqwkIoiQ=;
-        b=vutH6VnP7z4Sgv8UvcCIuzpRNuCqpwe8pQkNKNO3+x5UHiuXBV84TWlQUUshpbhB++
-         umkMhPTePcYSlNXFEL727u1mfEDMULQOwtaTr4u3Ylrlr3buQSNgS+61eSmQeLtW7YXA
-         GywSIkStIax23XvUqxAUb6N/S4EI6qhHNctEprJX1ZU2hEDbqMCqTf7skmA4NM+ydn4H
-         uMAtN9BxptOEJDOTWPCjXXDmucZBBAx4L7H5fkcj3iflRyZ49nXR4JRl+zJGzi3h4tnI
-         7tJ6ZfqAE0WNmU9dn4C3qV9dWqd1MEwSwDUx/2RaXucAfqWl1AhN5p2bFa5bEZPGkY6Z
-         EdSw==
+        d=gmail.com; s=20230601; t=1729157515; x=1729762315; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tN++gsqAlKPKPGgxXBW6D+DyyXfnHxCWQvMGhN763v0=;
+        b=LTQIEI2iAU2FqsiHhNYXQpKJ0qTLScWoPQgDaSDuZ1jqqlw3J9Wm/94KTNwhY14wt9
+         U/HCzvulgY2hUpM8mPLBOq/JTU9TXAd8Nb4eA8YmoFYa+XbgmJh9+9hPR9r/yMZ63lIq
+         0Vsybv3m+3z53qAGnpxG6BUH+PP8+S274E38TzjS+6yghsYSAin6y7j3fhwrcKwdhHWn
+         it1dV5zLrdV7Cxq+XcGac2ODSDK7kNV2Z2BSdXNaUAnR550Lh5n16mZ1Ew2bJqCu4xGQ
+         EV6ilNyLKSf1GosuBq/AFQuwlX7Y0Jlqg0uzGK4bQP+ITICrJFip0lIPVoPrOEoCEIOx
+         Uo7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729157449; x=1729762249;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y53oSEtZ5CP67qr80ZJJlP6iB9wlZ84RYUcNqwkIoiQ=;
-        b=gvzc5SfuYwZLGYL+ZR10oqYtD9qbD+boLoRriRuxF8Eg5vFoq9mZa0gH1TVA9gTauZ
-         NXPNcyP8WdH29QTYAElNfi2xsHsFkIKa6RznFY77668AdHwlgn/5kowPatluxE+Ybkzn
-         g48f9c6xZlecpUDti3Mt8sEhaBgGitqav+5VH7FO2ifmho9YnY477j0X7/F3/kGDd0s1
-         XiYHG5TV8KJLqxfr3CUBPbjPLALcYAfTdGYreWOsIGwj4pnXadtZgQjdj9+sE+ENuDeC
-         8SXvlC2E8wTDAeYQBibk729oZ3RB9p+ubaHR8zV0eirrxDHZT1PqCdgStm2pa3pjH7Vi
-         NsNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrjKLoRKrp3vQsOxcG18+/uVuBmMmI3eEPPN0Bt8iUfHm/mqm5bBl+hPWUiDRh/GbjNYU6YnwjwSEN12c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx75RGOq5ZehETHbIG9XCZQA7BO7NBHQnsSPMBNjtmSWd++OGr5
-	HAPJL+YFY9QgYFCXyvJMgWqUiH00lHloLeOzCk8871OD1ty0/dhFT5q+MlrhTg==
-X-Google-Smtp-Source: AGHT+IHjYEW5R6ceiYfrud9FBTU6I/onVh/gP0jxBFsfsPn+lh7D+vWNN/B+bO+Cf4ax5LO+h/ijqg==
-X-Received: by 2002:a05:6a00:2282:b0:71e:8023:c718 with SMTP id d2e1a72fcca58-71e8023c9e2mr8069580b3a.8.1729157448827;
-        Thu, 17 Oct 2024 02:30:48 -0700 (PDT)
-Received: from thinkpad ([220.158.156.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e7729dde5sm4349554b3a.0.2024.10.17.02.30.44
+        d=1e100.net; s=20230601; t=1729157515; x=1729762315;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tN++gsqAlKPKPGgxXBW6D+DyyXfnHxCWQvMGhN763v0=;
+        b=Lmc1+YYok6JnyubpxBJJJVqZGXhfrSzeXklYqb5jpkljHfqfUhBA5zWRjFKIwX9eAM
+         KkJllo2kV7wgyWPoLpR3fdn4wodHExs+eyKrWQnRxnBddH/zonLM78iX30IjejEcReiI
+         FZwHJG5pdMEGkd4TkH4AqE3dS5SmIXUkpMWlzEC7DItGk4O0TY299OwLjyAE6NcdmLfv
+         TleERDuytM1dhrNbGkuumnY722Crn+/5r54hu787O8HWpxNnt/K3aGj7BD2SsKK8Ka1T
+         LAnmPhIImIqZR1ioD4g7lBjYIvMPB07kViMNF3+gE+AkvHse537c6fFy6sRWhfytVk8z
+         E8Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOJ5SEfi9QtY1el5FzUmLD4aMTeIXkYsem8YqOjXChX7tKYf0Dq5kxZGmOPyGqZNOc41ALA0J+@vger.kernel.org, AJvYcCXnroXj4sV4vlMcDuLR/H1pWfhQh/rU7rnMBXCXHQVN69N812VcDs4bZaaBWCf3AcFdkQ9WYhX8jLcEcW4=@vger.kernel.org, AJvYcCXofPsQ3wc9bdJka/1ZBhyA2W9fd5ji5XsQM7dK7oa6iqr8j31rzLAzTZDLG9bu5m4rUenMrRvw5X3zGX1bmC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTE8DF4/6ks5vlG4Imd8VcsEUC0AdrbZ+7Tqt/L9ek4S8/f7Qe
+	zLV/42TadbStZ26ipjlvppWE4bRxIHeTUXMmmmEiMOqiDKzhAz3z
+X-Google-Smtp-Source: AGHT+IHWu4sce8SXvMI7k7KC6MwT7KYqEZrczhbNBoZFfuH7eqzrDyQ5IFDbRuE9sYEM1p/hft9bUg==
+X-Received: by 2002:a17:903:2301:b0:20c:7d4c:64db with SMTP id d9443c01a7336-20ca16be1f5mr326084545ad.49.1729157514823;
+        Thu, 17 Oct 2024 02:31:54 -0700 (PDT)
+Received: from localhost (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17fa4cafsm40580725ad.65.2024.10.17.02.31.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 02:30:48 -0700 (PDT)
-Date: Thu, 17 Oct 2024 15:00:40 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>, linux-pci@vger.kernel.org,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Ley Foon Tan <ley.foon.tan@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: Why set .suppress_bind_attrs even though .remove() implemented?
-Message-ID: <20241017093040.k6pefhmfdmw4nicz@thinkpad>
-References: <Yt+6azfwd/LuMzoG@hovoldconsulting.com>
- <20220727195716.GA220011@bhelgaas>
- <YuJ+PZIhg8mDrdlX@hovoldconsulting.com>
- <20241017052335.iue4jhvk5q4efigv@thinkpad>
- <86v7xr418s.wl-maz@kernel.org>
- <20241017082526.ppoz7ynxas5nlht5@thinkpad>
- <86r08f3yj1.wl-maz@kernel.org>
+        Thu, 17 Oct 2024 02:31:54 -0700 (PDT)
+Date: Thu, 17 Oct 2024 18:31:41 +0900 (JST)
+Message-Id: <20241017.183141.1257175603297746364.fujita.tomonori@gmail.com>
+To: boqun.feng@gmail.com
+Cc: fujita.tomonori@gmail.com, netdev@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com, aliceryhl@google.com, anna-maria@linutronix.de,
+ frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
+ jstultz@google.com, sboyd@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 4/8] rust: time: Implement addition of
+ Ktime and Delta
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <ZxAZ36EUKapnp-Fk@Boquns-Mac-mini.local>
+References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
+	<20241016035214.2229-5-fujita.tomonori@gmail.com>
+	<ZxAZ36EUKapnp-Fk@Boquns-Mac-mini.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <86r08f3yj1.wl-maz@kernel.org>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 09:48:50AM +0100, Marc Zyngier wrote:
-> On Thu, 17 Oct 2024 09:25:26 +0100,
-> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
-> > 
-> > On Thu, Oct 17, 2024 at 08:50:11AM +0100, Marc Zyngier wrote:
-> > > On Thu, 17 Oct 2024 06:23:35 +0100,
-> > > Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
-> > > > 
-> > > > So can we proceed with the series making Qcom driver modular?
-> > > 
-> > > Who is volunteering to fix the drivers that will invariably explode
-> > > once we allow this?
-> > > 
-> > 
-> > Why should anyone volunteer first up? If the issue gets reported for a driver
-> > blowing up, then the driver has to be fixed by the maintainer or someone, just
-> > like any other bug.
+On Wed, 16 Oct 2024 12:54:07 -0700
+Boqun Feng <boqun.feng@gmail.com> wrote:
+
+>> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+>> index 8c00854db58c..9b0537b63cf7 100644
+>> --- a/rust/kernel/time.rs
+>> +++ b/rust/kernel/time.rs
+>> @@ -155,3 +155,14 @@ pub fn as_secs(self) -> i64 {
+>>          self.nanos / NSEC_PER_SEC
+>>      }
+>>  }
+>> +
+>> +impl core::ops::Add<Delta> for Ktime {
+>> +    type Output = Ktime;
+>> +
+>> +    #[inline]
+>> +    fn add(self, delta: Delta) -> Ktime {
+>> +        Ktime {
+>> +            inner: self.inner + delta.as_nanos(),
 > 
-> You are introducing a new behaviour, and decide that it is fair game
-> to delegate the problems *you* introduced to someone else?
->
+> What if overflow happens in this addition? Is the expectation that user
+> should avoid overflows?
 
-You are getting it completely wrong. I'm not delegating any issues. If the so
-called *new* behavior in the controller driver uncovers the bug in a client
-driver, then that is not called *delegating*.
+Yes, I'll add a comment.
 
-> Maybe you should reconsider what it means to be a *responsible*
-> maintainer.
-> 
+> I asked because we have ktime_add_safe() which saturate at
+> KTIME_SEC_MAX.
 
-Sure, by not providing a development option useful to the users envisioning
-issues that may not happen at all.
-
-Even if any issue reported for the platform I'm maintaining, I am willing to put
-in the efforts to fix them.
-
-> > From reading the thread, the major concern was disposing the IRQs before
-> > removing the domain and that is now taken care of. If you are worrying about a
-> > specific issue, please say so.
-> 
-> That concern still exists, and I haven't seen a *consistent* approach
-> encompassing all of the PCI controllers. What I've seen is a bunch of
-> point hacks addressing a local issue on a particular implementation.
-> 
-
-Again, please be specific about your concern so that someone could try to
-address them. Right now all I'm hearing is, "hey don't do this, else
-something may blow up".
-
-> I don't think that's the correct approach, but hey, what do I
-> understand about interrupts and kernel maintenance?
-> 
-
-I'd like to quote the message in your signature here: "Without deviation from
-the norm, progress is not possible".
-
-> > 
-> > As a Qcom PCIe driver maintainer, I'd like to provide users/developers the
-> > flexibility to remove the driver for development purposes.
-> 
-> Sure, whatever.
->
-
-Thanks!
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+We could add the Rust version of add_safe method. But looks like
+ktime_add_safe() is used by only some core systems so we don't need to
+add it now?
 
