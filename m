@@ -1,197 +1,164 @@
-Return-Path: <linux-kernel+bounces-369981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381C09A2538
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:37:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BFE9A2544
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE271C20A4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:37:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FF2CB25B87
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F61E1DE4F1;
-	Thu, 17 Oct 2024 14:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F411DE892;
+	Thu, 17 Oct 2024 14:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YYO0ZkzM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/otaqd5"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE801DE4D4
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBA410F2;
+	Thu, 17 Oct 2024 14:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729175819; cv=none; b=ftt22ZqrURn5r5+joSQr6LTgf0b0QhOLUQnBrKnUBrnIaRi9ctbkeDTN5U3iTZbfFFLml5OgvmmsfudF4ApsbFwwG7gRj8HtZWdy6lmU7bXbMVpP3M5GnHFpLPP+yFyG2dY91iEq4QOo3Ng8LTlr6sYkrO6RvGXogi8gIwBLI3A=
+	t=1729175953; cv=none; b=ujGaueW01mFF7krj0AvMZz6vTeZ+v2SrGy/uHDc2Gk4XoSzGimZEROVrvNdPm/1iThdB+PGNsE3Sjf5h1B4ONvSNxQTy6KTAOKxmyYiMFynLofJrHF4XH38LrZHROWJvAMgXaYvXFejs3Imc7C28LaTYfKk4xuR42rU9RF+4N/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729175819; c=relaxed/simple;
-	bh=QXtnX+sdvYBkyWY1Bntt5HQGfkMEAVqFb1Kg5Izp/Oo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=igTOXBWeKdmWsHsI/ge5ePt93cUc48R27q8wBBx09yElrmPHI+KXvHISZ4Ev7Tf7cZPbSAFDE/IpqJEbF6HoXFhhoSd1rY4DcE9GUd99oqI+W49zbSsqaeL0gx7nOH4ROV40ATcukQMsJPyzJxe3H64pD1G/JN00DKg0+sZ3Gho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YYO0ZkzM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729175816;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UzfXLoTrDUyX1VJYFE3FTnLV0X70G74YSwU8euehzao=;
-	b=YYO0ZkzMlbGZhSuJ1Ojp1KELzju8ZA7i+NcCsjf/YxHiSvYQH6vh1WqvfcCaXoqYsl6sOz
-	zAOKKlOLCC3sZiVlJqigXqh58Rvpk8cG+K1tTZxJWLxvbAhxvX06szDZGbyXgzDdQi9Ste
-	Bm7pH7bFHk2UAMwqhhOlM4ZWDvx/IrE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-649-r7WW8O7hPvOlJ8QqOzX7ug-1; Thu, 17 Oct 2024 10:36:55 -0400
-X-MC-Unique: r7WW8O7hPvOlJ8QqOzX7ug-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43124676f8aso8393865e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:36:55 -0700 (PDT)
+	s=arc-20240116; t=1729175953; c=relaxed/simple;
+	bh=RSdMFumWyD7Mx4sKNxKfjNlsDJaTB6uemxsTmcKyHuo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=hlpZP5XB7GSFq7to4x/E6s8BtXZYyC0xI5kKxtGWGjZymLQjxyTUPjszPA2tbDAYw0ODstaxkfEU62P45h+kSTo7z6F6ZkK8c21sOCeLienJS8ZURt8tohd/gtOyV7jRwsyHnFyvEuPEBl6C9ms9m/A/gK2mcNJoJ7rPk0iAAIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/otaqd5; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so747985f8f.1;
+        Thu, 17 Oct 2024 07:39:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729175947; x=1729780747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NRHQQGm7cGssgdoLEtNCNKA/IiRlPKI/cHGPt5rH+50=;
+        b=O/otaqd54QBlBX+Op+mhyy76V1F5w0K1G9/Ie+1LuK/n03BTM/mk1ZDFsaCgQM4j3q
+         NhX0BNGFqPHMzsTYS6CfSk9EFmO9Vknnv64Ps+rlf8ArHKuwi0/G7bA7LVsjyjBSQWlq
+         mLdxp8rXjmAj/6OPEpCIqMJ1anPxb1XSsuGO7a9HOoOXX4u3epiCbynd+6gVxGYlRjoA
+         ofpsP3M1/BWZG4k1xPQ/jEaNyAwHRJ7c8RgcPEj8Dm56V5x5Qd8Jens2tpIKohrwr5UF
+         p11EKOXL6IOPeeOEHeXANXLAD2faj+X1qYBttQXtuWjUu60cvQd6Nxuygjr6lJs1TRLY
+         DdiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729175814; x=1729780614;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UzfXLoTrDUyX1VJYFE3FTnLV0X70G74YSwU8euehzao=;
-        b=dwX6lEJZtMJGnFXgCxI9k9GqpCacWffGZ+tLbIPFM/wWt7GMcLAkMlTx6pC6yNGvA+
-         q6ejsB2yS+EUQKzj+pGtS5PN2lHJb+HkCV5qLsjKq2q2I8BHVpQtQ5McY/ehDjlxxwUO
-         TG3+Wnj8uUl9GqxlcZR5c4z/9yOb0vOSdATPr3yM0CCfGs19zFSDjiDh5ISFUVEEkX5c
-         +5sJ4tKB/BMJZc2MSiT9u8BtQ0QIFFf321PkXuvdhsvjdS97GRzdSVeJyXTE0wYTUXFI
-         zHnqsay8WpCjwo9c+cNKMah9d1oNTWz/uBgmVcI+86RVDqTenbumqLtjuA59Ns/gVygh
-         X8yw==
-X-Gm-Message-State: AOJu0Yy/ZLP2fmuga5WScs5p6ctt0q8NYI9DNP/oMfq/2Byy1vLhZdHk
-	+KtRQVm6y59yLopiX7297/kDJWJqQzJVYVAWkwvgunnr6OW65k2AZTIZ8jjyrnAqyk/6f6sXehD
-	7hlEjA86jNH4xUOO0Lc5aEsVKxQr51JiWE7gDHDGD0FdXupOEZ/hldDPFK+S+mA==
-X-Received: by 2002:a05:600c:3b99:b0:426:647b:1bfc with SMTP id 5b1f17b1804b1-4314a3abe93mr69661435e9.30.1729175814116;
-        Thu, 17 Oct 2024 07:36:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHpU9cpWS3yeJ12WQ1qdRFSatXmwxIJA5brFMmY8AiQ4Fgny5eENTh1y2xj5WODUe0A3g91w==
-X-Received: by 2002:a05:600c:3b99:b0:426:647b:1bfc with SMTP id 5b1f17b1804b1-4314a3abe93mr69661145e9.30.1729175813692;
-        Thu, 17 Oct 2024 07:36:53 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:7600:62cc:24c1:9dbe:a2f5? (p200300cbc705760062cc24c19dbea2f5.dip0.t-ipconnect.de. [2003:cb:c705:7600:62cc:24c1:9dbe:a2f5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4314f1c3197sm42435665e9.0.2024.10.17.07.36.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 07:36:53 -0700 (PDT)
-Message-ID: <0224bd06-3a77-474e-917d-814d2082186e@redhat.com>
-Date: Thu, 17 Oct 2024 16:36:51 +0200
+        d=1e100.net; s=20230601; t=1729175947; x=1729780747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NRHQQGm7cGssgdoLEtNCNKA/IiRlPKI/cHGPt5rH+50=;
+        b=epG9GhFwzfqZxSy5i2wfsd9lmAk/XFDztWh46U963cDheqiVQrY6JEzmASNHTIw++E
+         oi6Qdy795R9/699qOcuNhG4ow7T8KFjafRU6T1xkMnmTNm1PmpPJmAJ+5qoW8R3Y99UF
+         Cjgs4rzVNm6f6Gc4Pjrt2tVQFydzsnpUzXb4FIv82ncwHqu7nHoPQbL7fw+Bhey5pK2S
+         kgXtHXuOhHcGvAXOdx/iBBMEYmPjz3BcfKgWOAy5VS5HQ3FYZME+oxAyNIL16QU87f/8
+         pp6kTPtD9V0KPaqu2ItMWvf1si146lbmNlzMQL+HUi8WC+VnedVKu1F7oU4aos5AgYou
+         +9gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHiWQ/AqpdV/k4s8XbBfXgXjkgXDLQ4oJSqH3HvL+esd60HMU1rvUitMw0GwDwctw0Ouh4fQSmbK23@vger.kernel.org, AJvYcCW0UKUa895ZfTWqbYdJ9QgJEqVgCJZ0vPfbUgCmPJ4g44B7RrOTVvVMGreHDR2MHVkH+bcL2dnrwzWt5zpP@vger.kernel.org, AJvYcCWGqngQRDaPB3nSiwFm+M0u8s8RgKn6+5mtc/vYr4IamPNAF+rqQpL+l1j4Gp/eJi4TcPanUi82XKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0Wg13bz25bEHDQh0jOwxlW1lUdqwvWOcacTMcQTBNcVekpFuU
+	ud0/DsMEkbEAvjGuxFz/bulg58isOGEttlI0sHOW3nNJpWSMe6Fh
+X-Google-Smtp-Source: AGHT+IHurhqL3M/WK0hFCGWAVhEuLelLlozmUE30CPXOnitE4Wu9IcCt+oBAvpCfr+HSmToSGIUGRQ==
+X-Received: by 2002:a5d:5985:0:b0:37d:511b:aecc with SMTP id ffacd0b85a97d-37d86d6fec8mr6196339f8f.54.1729175946450;
+        Thu, 17 Oct 2024 07:39:06 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a12fsm7442784f8f.6.2024.10.17.07.39.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 07:39:06 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: [PATCH v2 1/2] dt-bindings: thermal: Add support for Airoha EN7581 thermal sensor
+Date: Thu, 17 Oct 2024 16:37:56 +0200
+Message-ID: <20241017143830.1656-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT) to
- support QEMU/KVM memory devices
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
- Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-5-david@redhat.com>
- <ZxC+mr5PcGv4fBcY@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <04d5169f-3289-4aac-abca-90b20ad4e9c9@redhat.com>
- <ZxDetq73hETPMjln@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <1c7ef09e-9ba2-488e-a249-4db3f65e077d@redhat.com>
- <45de474c-9af3-4d71-959f-6dbc223b432b@redhat.com>
- <ZxEf6NOs1hDFZd1E@tuxmaker.boeblingen.de.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZxEf6NOs1hDFZd1E@tuxmaker.boeblingen.de.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17.10.24 16:32, Alexander Gordeev wrote:
-> On Thu, Oct 17, 2024 at 02:07:12PM +0200, David Hildenbrand wrote:
->> On 17.10.24 12:00, David Hildenbrand wrote:
->>> Well, DIAGNOSE 260 is z/VM only and DIAG 500 is KVM only. So there are
->>> currently not really any other reasonable ways besides SCLP.
->>
->> Correction: Staring at the code again, in detect_physmem_online_ranges()
->> we will indeed try:
->>
->> a) sclp_early_read_storage_info()
->> b) diag260()
-> 
-> So why care to call diag260() in case of DIAGNOSE 500? What about the below?
-> 
-> void detect_physmem_online_ranges(unsigned long max_physmem_end)
-> {
-> 	if (!sclp_early_read_storage_info()) {
-> 		physmem_info.info_source = MEM_DETECT_SCLP_STOR_INFO;
-> 	} else if (physmem_info.info_source == MEM_DETECT_DIAG500_STOR_LIMIT) {
-> 		unsigned long online_end;
-> 
-> 		if (!sclp_early_get_memsize(&online_end)) {
-> 			physmem_info.info_source = MEM_DETECT_SCLP_READ_INFO;
-> 			add_physmem_online_range(0, online_end);
-> 		}
-> 	} else if (!diag260()) {
-> 		physmem_info.info_source = MEM_DETECT_DIAG260;
-> 	} else if (max_physmem_end) {
-> 		add_physmem_online_range(0, max_physmem_end);
-> 	}
-> }
+Add support for Airoha EN7581 thermal sensor and monitor. This is a
+simple sensor for the CPU or SoC Package that provide thermal sensor and
+trip point for hot low and critical condition to fire interrupt and
+react on the abnormal state.
 
-Works for me, thanks!
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Changes v2:
+- Add Reviewed-by tag
 
+ .../thermal/airoha,en7581-thermal.yaml        | 48 +++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/airoha,en7581-thermal.yaml
+
+diff --git a/Documentation/devicetree/bindings/thermal/airoha,en7581-thermal.yaml b/Documentation/devicetree/bindings/thermal/airoha,en7581-thermal.yaml
+new file mode 100644
+index 000000000000..ca0242ef0378
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/airoha,en7581-thermal.yaml
+@@ -0,0 +1,48 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/thermal/airoha,en7581-thermal.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Airoha EN7581 Thermal Sensor and Monitor
++
++maintainers:
++  - Christian Marangi <ansuelsmth@gmail.com>
++
++properties:
++  compatible:
++    const: airoha,en7581-thermal
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  airoha,chip-scu:
++    description: phandle to the chip SCU syscon
++    $ref: /schemas/types.yaml#/definitions/phandle
++
++  '#thermal-sensor-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - airoha,chip-scu
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    thermal-sensor@1efbd800 {
++        compatible = "airoha,en7581-thermal";
++        reg = <0x1efbd000 0xd5c>;
++        interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++        airoha,chip-scu = <&chip_scu>;
++
++        #thermal-sensor-cells = <0>;
++    };
 -- 
-Cheers,
-
-David / dhildenb
+2.45.2
 
 
