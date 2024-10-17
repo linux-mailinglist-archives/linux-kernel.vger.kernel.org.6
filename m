@@ -1,140 +1,97 @@
-Return-Path: <linux-kernel+bounces-369184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332BF9A1A11
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:12:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 954F69A1A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA49FB21AE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:12:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A6A7B21B78
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583405478E;
-	Thu, 17 Oct 2024 05:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49CB146013;
+	Thu, 17 Oct 2024 05:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z1Yc1AQu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V2xKV5tV"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bXurL2c2"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9EF259C
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0D5137C35
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729141922; cv=none; b=LfFUAKk50+M213D/jvv7FjFqNd/ITfszJmZCpJftKZP/hFlDsIejW8AVRj61x87kARD7HGte2q06wt2ZMLFQW7PJTAZViZrugUbgll43jUSFo5U3nB2fgefFXyi2ODXe/ytXGudEBNE3LbbyH+8W2716z7RtxI9+ULf7zoEPel0=
+	t=1729142014; cv=none; b=cw+3ZNkNVgx1UUg0JjrMfxqgn9Lr4NkJW1GPMzaGnkjSu6K3twb7vf9Qy9Go+LXj8Jeu7L8Gl2JV2HHFuGi77oty5gIva+pmUBRpP/TWejM1PGzBX79N2SrM+Api9WWNKLWXNbVBRT3Lvyek89UKgQFvAc0q6BlOkxnV3PUjFhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729141922; c=relaxed/simple;
-	bh=fNK3lAqMCXrTaiXReODT7ZcIduhjuQ6hhGKHv0Yov6E=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=AsQ2wn08dsj9BoZxqzYODTmdGClA3yRGS0aBaEM6ZQ4ZinX0iEhBA3+crWZevHQFNzlYZGwT+h2HljCtCqVP5ZlWs6V1mad2+UFTqnLd9565qXL7DaUUSlARXWoQhH+jiS7zRYNxxHdQZqTKSLFeEpsxjCHwr5LDZtA8WElczJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z1Yc1AQu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V2xKV5tV; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2C34513801D7;
-	Thu, 17 Oct 2024 01:11:59 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 17 Oct 2024 01:11:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1729141919;
-	 x=1729228319; bh=417rKyW++kXoBCxiKYzXCjfYZVIaLYr4ooQeqr23rRc=; b=
-	Z1Yc1AQua7MgpuMzhaklr7wC4Pxan3UQW1N62m1pfo28GyyCD7M56ul4vIXfzyHY
-	LQyjwlwrZQQJ3rvIa0pCU53Mk9oq6Ut1xTm2al5EP4iAn4qR2KvgXybuJ0nTU685
-	ot6RHtldW4mruKsfcSuk1xx5IQeexHePSZDwHOBNlwBziXE612p1wmURM8PniquC
-	hKCKsNxA8FokKlkRlBXz0BwRZx91KeifubXlXHhaFkJ3B0tDE1/a1tsVoPiTZgFR
-	kKg+H8R5Wh0OLTTuJ+3SDjEWWohPogP1mkl9kB24EkpOZpI+3yPmjmbLdZXRV7wF
-	fo5KqOmPMzWGdzKj9jelJQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729141919; x=
-	1729228319; bh=417rKyW++kXoBCxiKYzXCjfYZVIaLYr4ooQeqr23rRc=; b=V
-	2xKV5tVlvGHUKy1/9w+FwaVDS63SvtUdOUxEQcXLcq8VaFKyoi4fcuNPFUpL/l4x
-	uy/zOaNzF7+IAfRTg5WUxGRbuMTr+Gaad0SsoLJy9CHyBMiMlI/NOyFzCJ9fDlI9
-	L6T9Fp/GVpPZBcMXYpyHfSkGCJutZn58nYWaHu4yiKmsqqu3wkYmsYG8BhUKBQ5c
-	uEY2/1AKhBYSp08dXBTPDARJfZdSnyQfi1d3e6YZOyUlh9YSoTV//q4SPY+ZQq7T
-	/jAmn0ioq2gsZAcRzkH0UKDU7JmR1LjkOT5WWbQ9T3TRltLFgzww2mcqL3W540hX
-	L2fQ6gMv+5Gq2MB3CCsCQ==
-X-ME-Sender: <xms:npwQZyGReiVKX36RogAt7hAYnYTmBmkbUizDiIJQ4jd4QrXTaBVP1g>
-    <xme:npwQZzWN9cP75c71gqHhoElHbzFnQwmZAvx08DZAmLuo3eMcmBSJCC7qnt03Fv9zf
-    zYoXP5sdny8b8v5_Zg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehtddgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeh
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
-    hhpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgt
-    phhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrghnjh
-    gtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehimhhrvgdruggvrghksehinhhtvghl
-    rdgtohhmpdhrtghpthhtoheprhhoughrihhgohdrvhhivhhisehinhhtvghlrdgtohhmpd
-    hrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrhhiphgr
-    rhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlih
-    hnuhigrdhinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:npwQZ8IVpyZoZAXeJbJJOyj4QKhgwXei_wpXByBm4gK2KzoFJHTtJQ>
-    <xmx:npwQZ8H7ayIiY3OlHbngCw-W6aCSRqxzwUi3aayZ1MQpEC7OPdzsMw>
-    <xmx:npwQZ4VbWVxUZ0j13nWJQGlldfM14rbAUXA802PeX9QeiwpJHmHmoQ>
-    <xmx:npwQZ_MRyM8E1frSJtGtCnKZN4Gc-PmgPfYgPaM-lEdKAH3THB3NyA>
-    <xmx:n5wQZ5saNI0QRopPL_GtcGnKG647YsLELqL9jyx07G6gOpx2aYtaRNzh>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 3034E2220071; Thu, 17 Oct 2024 01:11:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729142014; c=relaxed/simple;
+	bh=6V6eNGdE0SPvqcSpqgKb+DQULJcURDQCfkY0VUPRIas=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sIiYjdGDPdXECOso9QhVspnV1bOX7m/VF0SNJmEd6n08ejq9HAtOIPrYYzfo0sfZJRR3y60gH9eqVpR9Dl7BJzPwGdRTpNsRjEbC1uM33Pn5pRV3DxYgsZHp/Mv3jDF5HQkO2Wh/oEjesvyO38J7hLXzt7l00AkrSquOgRA/o3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bXurL2c2; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so538600e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:13:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729142009; x=1729746809; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6V6eNGdE0SPvqcSpqgKb+DQULJcURDQCfkY0VUPRIas=;
+        b=bXurL2c2zXRW1vZ6OfSZLMolriV7qrpw5pGwH1BNh3VOrGYBlsvmx3fNPjzMAj4EJn
+         ZfOwiocEDKv2/Y4NfmxGzqfVmp164w7MTxkxiQaeelHAS2GP0JS6AhAVTrCTsbhyoAoj
+         Pr2VqiZNktsSSClkXjjRFUvusWI7qaaB6DAKk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729142009; x=1729746809;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6V6eNGdE0SPvqcSpqgKb+DQULJcURDQCfkY0VUPRIas=;
+        b=ZfTWaR1RtgkLjQGu/GIZ3pcLN8YufyO+o4uR4V3jD3FrwogzJhpdnnAuuZyAvDK9T8
+         QqJ4nK1xhBBbUutlT//J8o+nSt+yVvZVh8MA0pX5nhl1h2FBlM00cTZnSP7m9Y2C1Hgy
+         zGHq2A4BjdDXD+5vEzWTUvoMtBfyeoWcFffH9LntlfPfzAKKb69WFt+rcl8XsTJ4B3Xz
+         MzLfnOt+y9eAQcTRlL7KQLkQDlthCBrkW26EbhxR5XpoHq/qrwjn982X15JNVVN+0gBi
+         VWCk7lRqxYa6/Le2JTOKhcCEJsA5A0G+VgpCzUleZyZXAdTX9RksJgbEbvQXCLWJyHVE
+         PV4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUmhfcXl+FGMHRKrphUJOtFv9tA5C7a39/Rm2P7SoMcLs9rIQh05sjmNeWQmM0iKpvvKmW6k8Wpe/9Pjyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+SluydMrX2Ui8G/Y7ON7gHTTSi7bVuVw8IzFTCyEQGvcemej7
+	hz+rwoui0seqrrJS7cPwKSQAVJWM0YvTgErNWTvuhIDmXlWW3zLy29NOuG6Bf+IBsEL/BPrNwaM
+	Y4BHGI+FnPA9C6iwrdKO0AMzeaAMtPj+9HO6W
+X-Google-Smtp-Source: AGHT+IFjzb2wpcnGWFDBZjNo1M6JPjsOZT8OvpkoK5cl54wpJ09jbG8ZH+YgyEBJvP+ZZVXYFVWt2kcbszuvdny5JUo=
+X-Received: by 2002:a05:6512:1292:b0:53a:bb9:b54a with SMTP id
+ 2adb3069b0e04-53a0bb9b6f0mr1366138e87.48.1729142008876; Wed, 16 Oct 2024
+ 22:13:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 17 Oct 2024 05:11:37 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Sean Christopherson" <seanjc@google.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Jani Nikula" <jani.nikula@linux.intel.com>,
- "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
- "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
- "Tvrtko Ursulin" <tursulin@ursulin.net>, "Dave Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Paolo Bonzini" <pbonzini@redhat.com>,
- "Maxime Ripard" <mripard@kernel.org>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Imre Deak" <imre.deak@intel.com>, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Message-Id: <6201c467-e5f2-4aa1-967c-8d9116c5367a@app.fastmail.com>
-In-Reply-To: <ZxBZx5EUhJFjTcXP@google.com>
-References: <20241015152157.2955229-1-arnd@kernel.org>
- <ZxBZx5EUhJFjTcXP@google.com>
-Subject: Re: [PATCH] i915: fix DRM_I915_GVT_KVMGT dependencies
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20241016223312.3430051-1-treapking@chromium.org>
+In-Reply-To: <20241016223312.3430051-1-treapking@chromium.org>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 17 Oct 2024 13:13:17 +0800
+Message-ID: <CAGXv+5FEEXYu_h=_cnLGfwVQh5kdf0KpRFKfUYgFsR5oV9s=nQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: mt8183: Add port node to mt8183.dtsi
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Jitao Shi <jitao.shi@mediatek.com>, 
+	Hsin-Yi Wang <hsinyi@chromium.org>, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024, at 00:26, Sean Christopherson wrote:
-> On Tue, Oct 15, 2024, Arnd Bergmann wrote:
->> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
->> index 46301c06d18a..985cb78d8256 100644
->> --- a/drivers/gpu/drm/i915/Kconfig
->> +++ b/drivers/gpu/drm/i915/Kconfig
->> @@ -118,9 +118,8 @@ config DRM_I915_USERPTR
->>  config DRM_I915_GVT_KVMGT
->>  	tristate "Enable KVM host support Intel GVT-g graphics virtualization"
->>  	depends on DRM_I915
->> -	depends on X86
->> +	depends on KVM_X86
+On Thu, Oct 17, 2024 at 6:33=E2=80=AFAM Pin-yen Lin <treapking@chromium.org=
+> wrote:
 >
-> Can GVT-g even work on non-Intel CPUs?  I.e. would it make sense to take a
-> dependency on KVM_INTEL?
+> Add the port node to fix the binding schema check. Also update
+> mt8183-kukui to reference the new port node.
 >
+> Fixes: 88ec840270e6 ("arm64: dts: mt8183: Add dsi node")
+> Fixes: 27eaf34df364 ("arm64: dts: mt8183: config dsi node")
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
 
-Yes, I think that should work, but I'm not sure if it needs a dependency
-on both KVM_INTEL and KVM_X86 in that case, to handle the link-time
-dependency in all configurations.
-
-    Arnd
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
