@@ -1,252 +1,172 @@
-Return-Path: <linux-kernel+bounces-369979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70AA49A2527
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:35:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7899A2534
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F374C1F228EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:35:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED836B28A22
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A291DE4F4;
-	Thu, 17 Oct 2024 14:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9792A1DE4ED;
+	Thu, 17 Oct 2024 14:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="knvMIdWm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BGHEmtPP"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmXv9C5o"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974501DE4C6;
-	Thu, 17 Oct 2024 14:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD6910F2;
+	Thu, 17 Oct 2024 14:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729175694; cv=none; b=OCyDTZsTzh1ypQRL2U5ZqDlg0Pt6JNHls0t0cGor4Ulq1TrrASELvtvWpmoxuUHX6pCxb6ZDV5hsQBiotciVvtXfRaOMFhJZcZQxKov/oxuqTr3sIRiKupH8pv1P5YIjGKCxv1S2gZ6dZT2/7cltH6JCKksemwhfJqXhGCNWznE=
+	t=1729175808; cv=none; b=Mu1QyE7fYd5Eu8P1owZ9MSfhzJyPbmH0S3CV6xqajvVJZnVBDpEySFd6jin7y/fsQUALjNwRGcj8g3pLcE1xlUeDsvE6TqFbUr7Jayoz8MKaahNDOzGXgSBB5L/r08r9Jo9G/0lkpj4Da0oX3+KOAG2mvG5wBqMdqrm36RDf2Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729175694; c=relaxed/simple;
-	bh=cMZoz3j10Skqn9kMG7AGIHbr1Z69W4yQ2XlQebpb2Sk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GS471TqeE3FieMTM0zVaw6Bo6GPhb/8ITTWgBNvp85o5Xievtc6TA8PG5ADu9lEemRO4u/hB3IvNdRzJzasYusuvItig4hjGAS1Ocog8r874N3QvZ1ZOJG0tyb2tP0IKYQd9mAwpzFhKMTTYoDYwlB51gjWwQnYNQIbdPlvTJCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=knvMIdWm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BGHEmtPP; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id B422A13803B0;
-	Thu, 17 Oct 2024 10:34:50 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Thu, 17 Oct 2024 10:34:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1729175690; x=1729262090; bh=fJvS9+alsJ
-	c2s4fbn9EOmQmJgz5/GJjCwKHXNF0mOXM=; b=knvMIdWmldnajbMQdhTIKNW59a
-	MXU4Pd2QFC9jU3qEyQqVCHgzuesoHNXNwrPh8//mha/2u12nPZ3axGQxJ9VNFcjv
-	7A/xzXhtWOVblyZ0W5ZAH0wJhN5Hp50IJ5+1r7H0rUIH5fK8QF1ZWtzn/5iIZUBO
-	gP6nrCjLS8IsD2TFpQNDA7kq+S/aHltuzpj2mCJCb05ppz0Ynw2uN6YB+zCjabFJ
-	BAu37jsHDtNgOOATSIhB1DfjM3t1Erb794v+NvbGPOjtLaLS3uvKzDJPnWKy/BLo
-	Ahb6B3TA0NEN2/nVTOS62kpuLK+P30IiRmZGY1EYqjF25OFrJqDQ5L+2SyXA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1729175690; x=1729262090; bh=fJvS9+alsJc2s4fbn9EOmQmJgz5/
-	GJjCwKHXNF0mOXM=; b=BGHEmtPPm1GAZFsOXkPCogc9J8tWkbURh5EeMDLOrBvw
-	y1Yx9CnR0XDBMiSzr08DcxzbOGx/j06lVnTWJvTMpEVChUJ2uKDuzdokpNxDNPg0
-	RclIPb0BoBEjW4ZNQLSeOrSuA8k/Yfr9LhcD1SuEip/LO8DfgXRR81jiIv1miij7
-	j6ZVKJ8JCBWKyi3LhGAM2qpte66kGFX2D4n6wyXsnZpiwPJpNSiyMvlVhFVpLOZB
-	cwX66jN8ddksafTM6OM297/OAITYRVMvalfXxTp4jhxoA5V46CAwxtKR24GSch5I
-	N2McI7hH4zvSVoc3If0Iexc4V66fYituafPfqLQElg==
-X-ME-Sender: <xms:iSARZ-YFNHmsF8V9GHi_KL3Wn2A2dIjJHiCZw-DaHUExVIwnk3RtYA>
-    <xme:iSARZxZDcYSZmjsME2dI6vcoGxxmF_Z0eNpEH3lyGlK_bxOrY7UWbqpN2oOP1u4R4
-    3FldoVCfqUonPgegnw>
-X-ME-Received: <xmr:iSARZ4-sJwrQQcVcvOOcg8L_y50dYdLdNcvQrahza8RTyQ2AJAS42ws2h4A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehuddgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepvfihtghhohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrph
-    hiiiiirgeqnecuggftrfgrthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifedu
-    leegjedutdefffetkeelhfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepthihtghhohesthihtghhohdrphhiiiiirgdpnhgspghrtghp
-    thhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehkvggvsheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepiigshihsiigvkhesihhnrdifrgifrdhplhdprhgt
-    phhtthhopegvsghivgguvghrmhesgihmihhsshhiohhnrdgtohhmpdhrtghpthhtohepvh
-    hirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhn
-    vghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprh
-    gtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhhu
-    tghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegrlhgvgidrrghrih
-    hnghesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:iSARZwpfpFIWI0Bm43OSe8Jhyha8a7o02UJYpzVaZgPhDw7Ubj6mbA>
-    <xmx:iSARZ5o322JfOjlAFuRhD5J5ugzVxq92kwFG6cuLHeKoDr7bs2wkLg>
-    <xmx:iSARZ-SkKVobzQLDFi2jD0qZ_RlRG0YU5c5WVmoB6mzeDwAOPNX7Ag>
-    <xmx:iSARZ5qerfqqfx5Aklv79Rlq0F-cE2MjD4zaNyq1qAiV9uq-agSXFA>
-    <xmx:iiARZ0Bmijn4nR9JtoZIcvGUIewgJ0pI8yT4tWvGJY2HsZGaMGW1N0p0>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 17 Oct 2024 10:34:47 -0400 (EDT)
-Date: Thu, 17 Oct 2024 08:34:43 -0600
-From: Tycho Andersen <tycho@tycho.pizza>
-To: Kees Cook <kees@kernel.org>
-Cc: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	s=arc-20240116; t=1729175808; c=relaxed/simple;
+	bh=6rKRf9Y1WXE42KHKwOnG748h/c4WLjfiy4PNeD5tvY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b93JsdNYzjCDLo9s+0ZnEQhzi3iOxhVt5NTsHBE+fd6SoVyhbwzrNOPp31kX2wgwGe2pEEXkouEUQyJ3fO45smrJPUzfU2kuau7sMTFsk5brHoh7ex1YFf8p3jvxWgRARZ+ikL0psrs53cise6HXmkbrgXnuv28ZX+GgHXDWaNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmXv9C5o; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d495d217bso913620f8f.0;
+        Thu, 17 Oct 2024 07:36:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729175801; x=1729780601; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zZagKg02wl0icL3yNm9ZBuvWQr9E3IdxLZ4rUxrkLGY=;
+        b=nmXv9C5oxYzEcq6TxtJuN1vI+VZOmrhXIRgqV9qa1bU/9aHmM6x5nw3hCRwRU6Gcxz
+         Ch9FqNqxl+hjUzCbXArhvSNAPpED2/uTiF4jiSHHo3hFGzhuvncW/qA4YSUrEJ+JtbLf
+         7oEsn84VPTPH0xEmFFdtw5VFYEn0NgyclhqTOIGe63ixbbGW5t9Ugr2yMJkRH4hnDftr
+         f2b5IlHZpISeI4x9aNacb1DmOsHKe0Bi13Fy9jzaGeC3KUcPkFbvx+BCsSRik0TdF1m2
+         Q6hesiV/sKcC8ikS/snjKZCbr5EJE0NpKh7vZqwdRvicerwCE3TfVJzhodNRMZWdCbEC
+         7/GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729175801; x=1729780601;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zZagKg02wl0icL3yNm9ZBuvWQr9E3IdxLZ4rUxrkLGY=;
+        b=nS9Xdj0VrqwZb0Z60tczYfqnNY9BveSwVNY1NOzLzQhkrujS3RmboBLPzzK/rnvzbb
+         AR1s/CewxbXTnMMwlBymlIRMmX/b5Kq2joBefDJdUwJvDduQhE10Ha3YcxwqP3cnW2/9
+         P1fxIYNBXZ+98v+JzDrrDHAyO0yCrPMNAFTh1ULZV2+8WITK6aYrjzBqSV3OvYK4U+0q
+         v40JCVblA+luw0VDUZjj6+buiQD9tJfW6UrQEYriK7Upnv56AzjhitW39VcdJDuCoCwn
+         81V1+VxPDa0tIgJdj2HnXw/DNY8YuQDtLyvFzXSugrDOFqbQWe8MNcJDrXgj6KP+Ozxv
+         18MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqotbgs+TjU/ta5/xB3xlA3jSKCOOrafCWLeO/K0Qdc/gJ/k+nXW4QczLCD406y/dT7TVlWTA0PNA7EQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRPo5hSBwrdJPcXrbDbUInIP8PWUeI7KDhSE5Evh/cDivX1cLj
+	PXdKDMAsmrTntwaDVlUU7Xn/uDa8jrl2NiyinD5DYFJRnb2TzERr
+X-Google-Smtp-Source: AGHT+IHfffww4ML1derH7Nbp65Ko+ITzCNOIk4WkP160BiZx9OIx2j+xcWvUgSq3w+mw+RHW1zFZsw==
+X-Received: by 2002:a5d:59a5:0:b0:37d:53d1:84f2 with SMTP id ffacd0b85a97d-37d5ff27fa8mr21397323f8f.11.1729175800873;
+        Thu, 17 Oct 2024 07:36:40 -0700 (PDT)
+Received: from andrea.. ([2a01:5a8:300:22d3:c46d:6fc7:2b80:b267])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa87d56sm7473352f8f.43.2024.10.17.07.36.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 07:36:40 -0700 (PDT)
+From: Andrea Parri <parri.andrea@gmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bjorn@kernel.org,
+	pulehui@huawei.com,
+	puranjay@kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	paulmck@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>,
-	Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-Message-ID: <ZxEgg+CEnvIHJJ4q@tycho.pizza>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
- <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
- <Zv1aA4I6r4py-8yW@kawka3.in.waw.pl>
- <ZwaWG/ult2P7HR5A@tycho.pizza>
- <202410141403.D8B6671@keescook>
+	Andrea Parri <parri.andrea@gmail.com>
+Subject: [PATCH] riscv, bpf: Make BPF_CMPXCHG fully ordered
+Date: Thu, 17 Oct 2024 17:36:28 +0300
+Message-ID: <20241017143628.2673894-1-parri.andrea@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202410141403.D8B6671@keescook>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 02:13:32PM -0700, Kees Cook wrote:
-> On Wed, Oct 09, 2024 at 08:41:31AM -0600, Tycho Andersen wrote:
-> > +static int bprm_add_fixup_comm(struct linux_binprm *bprm, struct user_arg_ptr argv)
-> > +{
-> > +	const char __user *p = get_user_arg_ptr(argv, 0);
-> > +
-> > +	/*
-> > +	 * In keeping with the logic in do_execveat_common(), we say p == NULL
-> > +	 * => "" for comm.
-> > +	 */
-> > +	if (!p) {
-> > +		bprm->argv0 = kstrdup("", GFP_KERNEL);
-> > +		return 0;
-> > +	}
-> > +
-> > +	bprm->argv0 = strndup_user(p, MAX_ARG_STRLEN);
-> > +	if (bprm->argv0)
-> > +		return 0;
-> > +
-> > +	return -EFAULT;
-> > +}
-> 
-> I'd rather this logic got done in copy_strings() and to avoid duplicating
-> a copy for all exec users. I think it should be possible to just do
-> this, to find the __user char *:
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 77364806b48d..e12fd706f577 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -642,6 +642,8 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
->  				goto out;
->  			}
->  		}
-> +		if (argc == 0)
-> +			bprm->argv0 = str;
->  	}
->  	ret = 0;
->  out:
+According to the prototype formal BPF memory consistency model
+discussed e.g. in [1] and following the ordering properties of
+the C/in-kernel macro atomic_cmpxchg(), a BPF atomic operation
+with the BPF_CMPXCHG modifier is fully ordered.  However, the
+current RISC-V JIT lowerings fail to meet such memory ordering
+property.  This is illustrated by the following litmus test:
 
-Isn't str here a __user? We want a kernel string for setting comm, so
-I guess kaddr+offset? But that's not mapped any more...
+BPF BPF__MP+success_cmpxchg+fence
+{
+ 0:r1=x; 0:r3=y; 0:r5=1;
+ 1:r2=y; 1:r4=f; 1:r7=x;
+}
+ P0                               | P1                                         ;
+ *(u64 *)(r1 + 0) = 1             | r1 = *(u64 *)(r2 + 0)                      ;
+ r2 = cmpxchg_64 (r3 + 0, r4, r5) | r3 = atomic_fetch_add((u64 *)(r4 + 0), r5) ;
+                                  | r6 = *(u64 *)(r7 + 0)                      ;
+exists (1:r1=1 /\ 1:r6=0)
 
-> Once we get to begin_new_exec(), only if we need to do the work (fdpath
-> set), then we can do the strndup_user() instead of making every exec
-> hold a copy regardless of whether it will be needed.
+whose "exists" clause is not satisfiable according to the BPF
+memory model.  Using the current RISC-V JIT lowerings, the test
+can be mapped to the following RISC-V litmus test:
 
-What happens if that allocation fails? begin_new_exec() says it is the
-point of no return, so we would just swallow the exec? Or have
-mysteriously inconsistent behavior?
+RISCV RISCV__MP+success_cmpxchg+fence
+{
+ 0:x1=x; 0:x3=y; 0:x5=1;
+ 1:x2=y; 1:x4=f; 1:x7=x;
+}
+ P0                 | P1                          ;
+ sd x5, 0(x1)       | ld x1, 0(x2)                ;
+ L00:               | amoadd.d.aqrl x3, x5, 0(x4) ;
+ lr.d x2, 0(x3)     | ld x6, 0(x7)                ;
+ bne x2, x4, L01    |                             ;
+ sc.d x6, x5, 0(x3) |                             ;
+ bne x6, x4, L00    |                             ;
+ fence rw, rw       |                             ;
+ L01:               |                             ;
+exists (1:x1=1 /\ 1:x6=0)
 
-I think we could check ->fdpath in the bprm_add_fixup_comm() above,
-and only do the allocation when really necessary. I should have done
-that in the above version, which would have made the comment about
-checking fdpath even somewhat true :)
+where the two stores in P0 can be reordered.  Update the RISC-V
+JIT lowerings/implementation of BPF_CMPXCHG to emit an SC with
+RELEASE ("rl") annotation in order to meet the expected memory
+ordering guarantees.  The resulting RISC-V JIT lowerings of
+BPF_CMPXCHG match the RISC-V lowerings of the C atomic_cmpxchg().
 
-Something like the below?
+Fixes: dd642ccb45ec ("riscv, bpf: Implement more atomic operations for RV64")
+Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+Link: https://lpc.events/event/18/contributions/1949/attachments/1665/3441/bpfmemmodel.2024.09.19p.pdf [1]
+---
+ arch/riscv/net/bpf_jit_comp64.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Tycho
+diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
+index 99f34409fb60f..c207aa33c980b 100644
+--- a/arch/riscv/net/bpf_jit_comp64.c
++++ b/arch/riscv/net/bpf_jit_comp64.c
+@@ -548,8 +548,8 @@ static void emit_atomic(u8 rd, u8 rs, s16 off, s32 imm, bool is64,
+ 		     rv_lr_w(r0, 0, rd, 0, 0), ctx);
+ 		jmp_offset = ninsns_rvoff(8);
+ 		emit(rv_bne(RV_REG_T2, r0, jmp_offset >> 1), ctx);
+-		emit(is64 ? rv_sc_d(RV_REG_T3, rs, rd, 0, 0) :
+-		     rv_sc_w(RV_REG_T3, rs, rd, 0, 0), ctx);
++		emit(is64 ? rv_sc_d(RV_REG_T3, rs, rd, 0, 1) :
++		     rv_sc_w(RV_REG_T3, rs, rd, 0, 1), ctx);
+ 		jmp_offset = ninsns_rvoff(-6);
+ 		emit(rv_bne(RV_REG_T3, 0, jmp_offset >> 1), ctx);
+ 		emit(rv_fence(0x3, 0x3), ctx);
+-- 
+2.43.0
 
-
-
-diff --git a/fs/exec.c b/fs/exec.c
-index dad402d55681..7ec0bbfbc3c3 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1416,7 +1416,16 @@ int begin_new_exec(struct linux_binprm * bprm)
- 		set_dumpable(current->mm, SUID_DUMP_USER);
- 
- 	perf_event_exec();
--	__set_task_comm(me, kbasename(bprm->filename), true);
-+
-+	/*
-+	 * If argv0 was set, execveat() made up a path that will
-+	 * probably not be useful to admins running ps or similar.
-+	 * Let's fix it up to be something reasonable.
-+	 */
-+	if (bprm->argv0)
-+		__set_task_comm(me, kbasename(bprm->argv0), true);
-+	else
-+		__set_task_comm(me, kbasename(bprm->filename), true);
- 
- 	/* An exec changes our domain. We are no longer part of the thread
- 	   group */
-@@ -1566,9 +1575,36 @@ static void free_bprm(struct linux_binprm *bprm)
- 	if (bprm->interp != bprm->filename)
- 		kfree(bprm->interp);
- 	kfree(bprm->fdpath);
-+	kfree(bprm->argv0);
- 	kfree(bprm);
- }
- 
-+static int bprm_add_fixup_comm(struct linux_binprm *bprm, struct user_arg_ptr argv)
-+{
-+	const char __user *p = get_user_arg_ptr(argv, 0);
-+
-+	/*
-+	 * If this isn't an execveat(), we don't need to fix up the command.
-+	 */
-+	if (!bprm->fdpath)
-+		return 0;
-+
-+	/*
-+	 * In keeping with the logic in do_execveat_common(), we say p == NULL
-+	 * => "" for comm.
-+	 */
-+	if (!p) {
-+		bprm->argv0 = kstrdup("", GFP_KERNEL);
-+		return 0;
-+	}
-+
-+	bprm->argv0 = strndup_user(p, MAX_ARG_STRLEN);
-+	if (bprm->argv0)
-+		return 0;
-+
-+	return -EFAULT;
-+}
-+
- static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int flags)
- {
- 	struct linux_binprm *bprm;
-@@ -1975,6 +2011,10 @@ static int do_execveat_common(int fd, struct filename *filename,
- 		goto out_ret;
- 	}
- 
-+	retval = bprm_add_fixup_comm(bprm, argv);
-+	if (retval != 0)
-+		goto out_free;
-+
- 	retval = count(argv, MAX_ARG_STRINGS);
- 	if (retval == 0)
- 		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
 
