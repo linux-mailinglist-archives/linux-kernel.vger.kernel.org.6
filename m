@@ -1,112 +1,203 @@
-Return-Path: <linux-kernel+bounces-370512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AF29A2DD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:32:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1CE9A2DDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4534D1F24F11
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:32:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7968C282986
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01C4219CB3;
-	Thu, 17 Oct 2024 19:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF277227B8D;
+	Thu, 17 Oct 2024 19:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6PF+v+d"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="C92aSNRl"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA4D1C1AD3
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5150C219CB7
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729193517; cv=none; b=IqY0fnWQNlRXiBK2CdKktjIBBNCLt5562RXjyCrYbSjv+EGNRRsNFXRvTbKq6yhlnkga2BHn9sXsxIBl21cRbeuKS3o14OiZP4YXfSX7nqrYxtsRy/XfoWSaVPaybhCEZmqk80SEXk59gqTqW/wwMRvtNqotUXPa56PjbSN8JGI=
+	t=1729193539; cv=none; b=B/0OuyQd4ZzpMvJ9OmLS7GMQz0o2yvUQbFK4SMF8EDeZqFTAyqiWt73JJbBr5R6q6CPom0YxDJEJMQxXgGqy1lvQtcb5dfRsJO12oVjbTQeUDhrY33tg/1LmtWmS6QwZTwfr1Zqwji9qepzA7NcxCui/W1fDY3ROSs8qrjgqJTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729193517; c=relaxed/simple;
-	bh=dAkeaamY7o1370cUdKQG7yxKGStXqWiEAMiubdm6br8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GjObIStMlHuVtXArV8jvZ/5Zu5gZNg60X5dv5CYmcedLeXGnoofyK4SsKGbPJ1d8lOHu2auDka1Hd0ZCcNRO3D7YoyAGIy/lwZqu24vfsN+WtLJ1lkRM3UpMcYrJ3JIl2hx+7gWzQ0OhBMRWWT7l5axdtzgT2V29U5p5tusZKQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M6PF+v+d; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a68480164so6261566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:31:51 -0700 (PDT)
+	s=arc-20240116; t=1729193539; c=relaxed/simple;
+	bh=vcUXd5tt9utnmCVe/nP6iWVCPF6al6ngb6a3ypPbz8U=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=EkSTrxF5koE9gPkP8EQpCq16vRZ868laPMKwhgETj5/4GxXxsuj9z/XoMl9VsPv3fO2dhL1Z0ILNPtZlpu8m+5ixm2GCzT6SQT9gGVf/Pql2vGgiBgrTNAg9xrhZqT3+WgS0JIpRGHL7mzVq5VMr/qOx+QfMRCkG8gk7HMo0Ero=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=C92aSNRl; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e7086c231so981722b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:32:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729193510; x=1729798310; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+PI6B1iY+JP2eo71Lss2ueaqQvzi03LBy+TDhNeB/Zc=;
-        b=M6PF+v+d9fcEMOCsw5XOt4VzTOpjY9o+uyqpThUW34bL7cYJ6fayc/IvN03gd2FwaT
-         xYdC4AHZ3fkwOZPqZ4YFuD9sIljaHKYWo0wgJf4nPxIzVqGpRTaEZCeHJ30dmfHLjVzn
-         cRvlP52U20kua5gecnh5TH2XFAlPWARw9bhoHZl5DaiYRnc2dnogbHdVZIVmbWj4kzz1
-         f517Vxarwy9U94CPhVW3RKYkfhkR036vAf7Bc+yrca45DWYVyAUUX8ndcgvLmRJRoFeD
-         tIBfHs/rH8MGLtQhfelgQdPJpkJoTP4vYS978tkDvmZ2QPntrSs3WUG9E1pvmYqorV34
-         D3VA==
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1729193535; x=1729798335; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TfCj0XZYQNwVFG9YcnvaiklTwIyQ/GhWVOU/ROFZAio=;
+        b=C92aSNRliXUZa4r6bkC42hbLvd1ICOB0CikdQCc4o/w1HHZOf+RWUVIB4jFrkZ54Uj
+         0vgr4ZQ+OeN+1hf3uuvkORB5LcPgLjgoBV1QP3pvVsHXDMheAOE/ndDCakwvdY+qeCT+
+         gSKx1wUbQmWgNWnCbN/+6+XFdK8VWI28xh5ophXT20imLaeKUDux8sGW5soAhYc9iZts
+         kSUvO2HtaYXFRg1eUAMY13vaP6NMx6iGQHu0DVJKHGckQL/Ih+VvLpZchsRZ8y+FKPHn
+         z+9mbSqniDgYEr28lhAiJSWic/N1jiRPSUcyOjoPRPg99tsw2VGR4XyXjkD+Nnr0GtAS
+         YK2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729193510; x=1729798310;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+PI6B1iY+JP2eo71Lss2ueaqQvzi03LBy+TDhNeB/Zc=;
-        b=v6e370/F+wgIftp2Y8Wl8RVEyplwCQZdhC04UnHS4KfaAZz/mMfxqL/PYPCpPJCGUX
-         NY59XGUe42FMavTbGk5eDQVwifiA/ASfyDGDxXFBqHMD5Y2NEbh3w4AhQrAtrFW9tyfY
-         HclOmEr83Seg6bJ9nh7Jtt0nGMChoRzsW/OHESce/oe4NMqaa9CKCZaqA0XdDTF1kyWD
-         CxTBtYk9En6XZTpx1TP1FeBX7cOj6DGnajSgJW6yH99RVYaHKoEos0/QxuqwjbLbueTw
-         QsM02na2ByiHmziA2Vp3AoFEIkTR28TG4w6gWjcEnffo3Lg3KBVVA1blFjc8zQpYqFiU
-         yZ6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUyCVKSSpcNpefqI+1Ji/VIGCs5KJUZi7FK08VSPSL0sbvZVsYxxCReHOshaz4Zq8feX7LygChcQWPnYAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqyVkiWzoEjVQ5pN6QBd5KizWys7VXtIziCzRdrvCTeRfkKQr+
-	7YL920+SZjF6Fdy8TK8YZEmkEG9CXS1+kQFOu0NOQb+KGDOCVVg7dlUAu+/M3CU=
-X-Google-Smtp-Source: AGHT+IGJon+b9dsLW9OFTm+VNv4AExNUwMLbQMOv3biKDHICy+rUsUPzF2VOZMg3pm/HFx79t1+13g==
-X-Received: by 2002:a17:907:f709:b0:a9a:b4e:b9eb with SMTP id a640c23a62f3a-a9a34ec99e7mr838913366b.46.1729193510331;
-        Thu, 17 Oct 2024 12:31:50 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68c29b73sm2298166b.202.2024.10.17.12.31.49
+        d=1e100.net; s=20230601; t=1729193535; x=1729798335;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TfCj0XZYQNwVFG9YcnvaiklTwIyQ/GhWVOU/ROFZAio=;
+        b=N8Y84E4vNFZNYdP7vU8JBpvhKu0fyWXkwCfqpwYR2iG08hIJkMuTifqaCEwmwc5r5p
+         m2QbQIivQN6k0w/cQq64RNXbTkkFCAxKtqpQ9KpGA0fDJX0fik4gz63vPvlzF5JuakIg
+         oqqGQfqspwTbS58d6CNhrx7Lh58ZiVkwhigq5FDBzkTJljl/WQ/o8jGthxD78dOlo4Ma
+         TwWvtr5daxf5mTCZHYpfU709j0Z0ZKOZAsdV4cKweOVQiauRoCCPCkxzi+ewGlgFZqJo
+         byBKhT5+3Kx26xRWgVznsCqI5ccndHTBrKtczScGzVw/3fG6H7kwSh1jsVlZOJU6GKEl
+         nX8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXIN7gneEmhIkFYSbgNKilytro5urkpDgogTtmCSgijY+ic3pChrPeiJv1113Y6b1MjSrpOBR43d+GrzDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXZOuKN7+RNA+FflT4mF4GpGy5F1stKg0MoSBBygBfWxbe4e8y
+	Q647cDmvPfQ1qp8ppwgbC+F+/8hW4XG+nY/bqvRkK2bVGhbUgbJOm4SEkOXcUtU=
+X-Google-Smtp-Source: AGHT+IEYQqSWyT9DM1JblvCRXie6c7wEQ7WCCMd8WOwGbnCY29CemQ9nchGTw3++94PPWZqamrgDPA==
+X-Received: by 2002:a05:6a00:2d25:b0:71e:5950:97d2 with SMTP id d2e1a72fcca58-71ea3328e08mr68611b3a.17.1729193534443;
+        Thu, 17 Oct 2024 12:32:14 -0700 (PDT)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea34a7fa8sm9965b3a.184.2024.10.17.12.32.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 12:31:49 -0700 (PDT)
-Date: Thu, 17 Oct 2024 22:31:46 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] staging: gpib: fix uninitialized variable in
- usb_gpib_command()
-Message-ID: <a7fed100-ea4d-4dd8-97c6-3fbd2c15f795@stanley.mountain>
+        Thu, 17 Oct 2024 12:32:13 -0700 (PDT)
+Date: Thu, 17 Oct 2024 12:32:13 -0700 (PDT)
+X-Google-Original-Date: Thu, 17 Oct 2024 12:32:02 PDT (-0700)
+Subject:     Re: [PATCH v11 4/5] jump_label: adjust inline asm to be consistent
+In-Reply-To: <20241015-tracepoint-v11-4-cceb65820089@google.com>
+CC: rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+  peterz@infradead.org, jpoimboe@kernel.org, jbaron@akamai.com, Ard Biesheuvel <ardb@kernel.org>,
+  ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+  gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
+  linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+  Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+  dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, seanjc@google.com, ubizjak@gmail.com,
+  Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+  oliver.upton@linux.dev, Mark Rutland <mark.rutland@arm.com>, ryan.roberts@arm.com, tabba@google.com,
+  linux-arm-kernel@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+  apatel@ventanamicro.com, ajones@ventanamicro.com, alexghiti@rivosinc.com,
+  Conor Dooley <conor.dooley@microchip.com>, samuel.holland@sifive.com, linux-riscv@lists.infradead.org,
+  chenhuacai@kernel.org, kernel@xen0n.name, maobibo@loongson.cn, yangtiezhu@loongson.cn,
+  akpm@linux-foundation.org, zhaotianrui@loongson.cn, loongarch@lists.linux.dev, aliceryhl@google.com
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: aliceryhl@google.com
+Message-ID: <mhng-0614da52-c420-4be1-a5b9-64dacae91d0e@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The number of bytes written is supposed to be zero at the start of this
-function but only one caller, ibcmd(), initializes it to zero.  For the
-other three callers, setup_serial_poll(), read_serial_poll_byte() and
-cleanup_serial_poll(), it's an uninitialized variable.
+On Tue, 15 Oct 2024 06:14:58 PDT (-0700), aliceryhl@google.com wrote:
+> To avoid duplication of inline asm between C and Rust, we need to
+> import the inline asm from the relevant `jump_label.h` header into Rust.
+> To make that easier, this patch updates the header files to expose the
+> inline asm via a new ARCH_STATIC_BRANCH_ASM macro.
+>
+> The header files are all updated to define a ARCH_STATIC_BRANCH_ASM that
+> takes the same arguments in a consistent order so that Rust can use the
+> same logic for every architecture.
+>
+> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  arch/arm/include/asm/jump_label.h       | 14 +++++----
+>  arch/arm64/include/asm/jump_label.h     | 20 ++++++++-----
+>  arch/loongarch/include/asm/jump_label.h | 16 +++++++----
+>  arch/riscv/include/asm/jump_label.h     | 50 ++++++++++++++++++---------------
+>  arch/x86/include/asm/jump_label.h       | 35 +++++++++--------------
+>  5 files changed, 73 insertions(+), 62 deletions(-)
 
-Fixes: fce79512a96a ("staging: gpib: Add LPVO DIY USB GPIB driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 1 +
- 1 file changed, 1 insertion(+)
+[...]
 
-diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-index aa7af352e709..4bcbaee65aa9 100644
---- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-+++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-@@ -596,6 +596,7 @@ static int usb_gpib_command(gpib_board_t *board,
- 
- 	set_timeout(board);
- 
-+	*bytes_written = 0;
- 	for (i = 0 ; i < length ; i++) {
- 		command[3] = buffer[i];
- 		retval = send_command(board, command, 5);
--- 
-2.45.2
+> diff --git a/arch/riscv/include/asm/jump_label.h b/arch/riscv/include/asm/jump_label.h
+> index 1c768d02bd0c..87a71cc6d146 100644
+> --- a/arch/riscv/include/asm/jump_label.h
+> +++ b/arch/riscv/include/asm/jump_label.h
+> @@ -16,21 +16,28 @@
+>
+>  #define JUMP_LABEL_NOP_SIZE 4
+>
+> +#define JUMP_TABLE_ENTRY(key, label)			\
+> +	".pushsection	__jump_table, \"aw\"	\n\t"	\
+> +	".align		" RISCV_LGPTR "		\n\t"	\
+> +	".long		1b - ., " label " - .	\n\t"	\
+> +	"" RISCV_PTR "	" key " - .		\n\t"	\
+> +	".popsection				\n\t"
+> +
+> +/* This macro is also expanded on the Rust side. */
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"	.align		2		\n\t"	\
+> +	"	.option push			\n\t"	\
+> +	"	.option norelax			\n\t"	\
+> +	"	.option norvc			\n\t"	\
+> +	"1:	nop				\n\t"	\
+> +	"	.option pop			\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +
+>  static __always_inline bool arch_static_branch(struct static_key * const key,
+>  					       const bool branch)
+>  {
+>  	asm goto(
+> -		"	.align		2			\n\t"
+> -		"	.option push				\n\t"
+> -		"	.option norelax				\n\t"
+> -		"	.option norvc				\n\t"
+> -		"1:	nop					\n\t"
+> -		"	.option pop				\n\t"
+> -		"	.pushsection	__jump_table, \"aw\"	\n\t"
+> -		"	.align		" RISCV_LGPTR "		\n\t"
+> -		"	.long		1b - ., %l[label] - .	\n\t"
+> -		"	" RISCV_PTR "	%0 - .			\n\t"
+> -		"	.popsection				\n\t"
+> +		ARCH_STATIC_BRANCH_ASM("%0", "%l[label]")
+>  		:  :  "i"(&((char *)key)[branch]) :  : label);
+>
+>  	return false;
+> @@ -38,21 +45,20 @@ static __always_inline bool arch_static_branch(struct static_key * const key,
+>  	return true;
+>  }
+>
+> +#define ARCH_STATIC_BRANCH_JUMP_ASM(key, label)		\
+> +	"	.align		2		\n\t"	\
+> +	"	.option push			\n\t"	\
+> +	"	.option norelax			\n\t"	\
+> +	"	.option norvc			\n\t"	\
+> +	"1:	j	" label "		\n\t" \
+> +	"	.option pop			\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +
+>  static __always_inline bool arch_static_branch_jump(struct static_key * const key,
+>  						    const bool branch)
+>  {
+>  	asm goto(
+> -		"	.align		2			\n\t"
+> -		"	.option push				\n\t"
+> -		"	.option norelax				\n\t"
+> -		"	.option norvc				\n\t"
+> -		"1:	j		%l[label]		\n\t"
+> -		"	.option pop				\n\t"
+> -		"	.pushsection	__jump_table, \"aw\"	\n\t"
+> -		"	.align		" RISCV_LGPTR "		\n\t"
+> -		"	.long		1b - ., %l[label] - .	\n\t"
+> -		"	" RISCV_PTR "	%0 - .			\n\t"
+> -		"	.popsection				\n\t"
+> +		ARCH_STATIC_BRANCH_JUMP_ASM("%0", "%l[label]")
+>  		:  :  "i"(&((char *)key)[branch]) :  : label);
+>
+>  	return false;
 
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com> # RISC-V
 
