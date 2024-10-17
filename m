@@ -1,82 +1,75 @@
-Return-Path: <linux-kernel+bounces-369861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F939A23BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:22:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CE69A23BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72A19B24EF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:22:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E6B91F2943E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D611DDC21;
-	Thu, 17 Oct 2024 13:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0201DDC25;
+	Thu, 17 Oct 2024 13:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TbUQ5E6D"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mv16Q38r"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A9C1DDC07
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 13:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40511DDC21
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 13:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729171354; cv=none; b=hOLp3+x5qF7EKWButrRf71RgUzFScuyfKfxoRTtr7RO7NNB5Mx32oDta0MbdUq65kptztluhvxdF779EXFGQGhMwtke2od8DCBmVaiLxk1RZ/GpLNtbIJEao1+KxpCoV/9ZlVYZmQ8K+1mUcisE42bTkAIc05wFQHD6q2BA53D4=
+	t=1729171352; cv=none; b=Xd3BGJngdf4ct4cXWjzGQq+XmHFDA10C56yLLAkaxBYzTWcM0rwSTRZxNUdntTKou+bO5fZN8Fid4KzVzSLQFA6q+pMe9v0zGzj5lRS55uHeelVcdtrlpM7SVE5MEgp04W1u5d7Pf5WM+um4+oM+4/piu3e4DY3fvY8ZIbp++K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729171354; c=relaxed/simple;
-	bh=8xd1OpG5nxp6NH/FQhHvMCZMfE+1UsN1G1aunJtc8yo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qri31OdtstObay6GotHrguEiJfDyDFahhJYJwSKzdpt0LDA3GFwlWFB3pxF/yp89ICOlFBoL0mVfNCW4bSeX8VRdpCVnP0Qb65IixbdtLu2ZIq5pHNLn/7WQjavMgymRJct2ddRN6F6JLOmmqxil68mHrmW0stVqGHd0RWAg9sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TbUQ5E6D; arc=none smtp.client-ip=192.198.163.7
+	s=arc-20240116; t=1729171352; c=relaxed/simple;
+	bh=POCcKFsZDCX17J8YXjXUXiElbCFiKUS3lyHCgP2MKOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EOMt4B++N6FvEcoDSFvH7X/7PeLicEvrumnoSIonB/fvYejokPoiN2RnzDb1RP6UkjUbJ++eNGR/cht6auBEUyuFfA3JUxOkDc0rmBMtR9QG4SvN9xXvbIN0ug6kdKaXI8XCVgXh69RsMy3XHD5atSUK5gcq8Hra2a62tTGFpWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mv16Q38r; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729171350; x=1760707350;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8xd1OpG5nxp6NH/FQhHvMCZMfE+1UsN1G1aunJtc8yo=;
-  b=TbUQ5E6D0ToU+5/iOBfa86cU4+o8EA35uQjI3TFp9yj5NdQ0DiPbRgR6
-   nkb4zlHpHjzMA//iu6Fr7Zzn62FBZuhpK0FbYdzCwtcLkfH70mDYv94F1
-   kYJe/6Cb7KTIyi5gA6EM+5NoNdEvbB/+5hkQ70oWGZJlv59KUWhNMQy9D
-   JZ0aMHyLwlTv2jWWNYX4/46gitAYu9yOtF77WrQXDV6qmZjkAdeijppEL
-   o8wAnGNvXPp7uoAjN0bNdeGcOVwnyINBWaMw601mkI2A3Qhb6cji7ukkH
-   PJjYBITm+IZYMIq9E227IUSyXNTaUC3edSsk1aee3GYbyXcJKyfCBWGH8
-   g==;
-X-CSE-ConnectionGUID: HMG9aABYSqGk/RwYDL3zQQ==
-X-CSE-MsgGUID: 28G4b5yZSYyEN0XdFF4fxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="54069274"
+  t=1729171348; x=1760707348;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=POCcKFsZDCX17J8YXjXUXiElbCFiKUS3lyHCgP2MKOA=;
+  b=mv16Q38r0Fr4QNChdpMwpDN+Thi/JnqH5gOUvq/uuXAkLHN32hklW7dQ
+   sIMdc2He2AtvzVio/mKTTuiFZOepJBbD8YeUr+txOCJW93qkA3kXePl3H
+   OqbTI4E+xoPoPxav0VGbmLentvgTzsXD6dgPrS3B6wWc2fDoePrcdnFHF
+   hHpCejVCIjqzQz3p8WFWrx5dd8rsYPTOQPpQGmtogeqGGzpJ/nXgLV/FW
+   bz+Q/43joVDIj9LiXudmgNcFrzBcE3G30sPNMay4fS8t8fzxwIn0YIF+j
+   xbO7xMJRXdShp5GdTYMsoBL6OW6+OkJobGt7jp3MGbilKYkuH3ykE2W/G
+   Q==;
+X-CSE-ConnectionGUID: qh+o1Es5QmiEvlL3pu2S3Q==
+X-CSE-MsgGUID: oMRwBDbURriTisCy+1GCaA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="54069263"
 X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="54069274"
+   d="scan'208";a="54069263"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 06:22:30 -0700
-X-CSE-ConnectionGUID: Et5xQTGqQ3+53gYqyZWmqg==
-X-CSE-MsgGUID: 6bjV5x8lQtKSTDDmZDfCIA==
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 06:22:27 -0700
+X-CSE-ConnectionGUID: WYRSj3kuRDa7aFhEjZG2Yw==
+X-CSE-MsgGUID: DU5i8yHJQBmnxETDUizwiQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="78689368"
+   d="scan'208";a="78689339"
 Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
   by orviesa006.jf.intel.com with ESMTP; 17 Oct 2024 06:22:25 -0700
 Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1t1QSM-000MOH-2D;
+	id 1t1QSM-000MOB-20;
 	Thu, 17 Oct 2024 13:22:22 +0000
-Date: Thu, 17 Oct 2024 21:22:02 +0800
+Date: Thu, 17 Oct 2024 21:22:03 +0800
 From: kernel test robot <lkp@intel.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, christian.koenig@amd.com, ray.huang@amd.com,
-	dmitry.baryshkov@linaro.org, dave.stevenson@raspberrypi.com,
-	mcanal@igalia.com, quic_jjohnson@quicinc.com,
-	karolina.stolarek@intel.com, Arunpravin.PaneerSelvam@amd.com,
-	thomas.hellstrom@linux.intel.com, asomalap@amd.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	ruanjinjie@huawei.com
-Subject: Re: [PATCH 1/3] drm/connector: hdmi: Fix memory leak in
- drm_display_mode_from_cea_vic()
-Message-ID: <202410172046.2W97YGlm-lkp@intel.com>
-References: <20241014071632.989108-2-ruanjinjie@huawei.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20241015-2 13/18]
+ kernel/bpf/core.c:2505:29: sparse: sparse: incompatible types in comparison
+ expression (different base types):
+Message-ID: <202410172103.ZqzfeZN1-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,134 +78,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241014071632.989108-2-ruanjinjie@huawei.com>
 
-Hi Jinjie,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on linus/master v6.12-rc3 next-20241017]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jinjie-Ruan/drm-connector-hdmi-Fix-memory-leak-in-drm_display_mode_from_cea_vic/20241014-152022
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20241014071632.989108-2-ruanjinjie%40huawei.com
-patch subject: [PATCH 1/3] drm/connector: hdmi: Fix memory leak in drm_display_mode_from_cea_vic()
-config: arm-randconfig-002-20241017 (https://download.01.org/0day-ci/archive/20241017/202410172046.2W97YGlm-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410172046.2W97YGlm-lkp@intel.com/reproduce)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241015-2
+head:   41fe8a04339b3781dca5a8ba323ba77022acc441
+commit: ad5262bdaed765f2f59e1db0a1361e7bd6dac847 [13/18] treewide_some: fix multiple -Wfamnae warnings that must be audited separately
+config: x86_64-randconfig-123-20241017 (https://download.01.org/0day-ci/archive/20241017/202410172103.ZqzfeZN1-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410172103.ZqzfeZN1-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410172046.2W97YGlm-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410172103.ZqzfeZN1-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+sparse warnings: (new ones prefixed by >>)
+   kernel/bpf/core.c:242:49: sparse: sparse: arithmetics on pointers to functions
+   kernel/bpf/core.c:2010:43: sparse: sparse: arithmetics on pointers to functions
+   kernel/bpf/core.c:2015:48: sparse: sparse: arithmetics on pointers to functions
+   kernel/bpf/core.c:2283:77: sparse: sparse: subtraction of functions? Share your drugs
+>> kernel/bpf/core.c:2505:29: sparse: sparse: incompatible types in comparison expression (different base types):
+   kernel/bpf/core.c:2505:29: sparse:    struct bpf_prog_array *
+   kernel/bpf/core.c:2505:29: sparse:    struct bpf_prog_array_hdr *
+   kernel/bpf/core.c: note: in included file (through include/trace/trace_events.h, include/trace/define_trace.h, include/trace/events/xdp.h, ...):
+   include/trace/events/xdp.h:321:1: sparse: sparse: Using plain integer as NULL pointer
+   include/trace/events/xdp.h:348:1: sparse: sparse: Using plain integer as NULL pointer
+   include/trace/events/xdp.h:382:1: sparse: sparse: Using plain integer as NULL pointer
 
->> drivers/gpu/drm/tests/drm_connector_test.c:1008:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1031:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1051:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1074:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1094:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1117:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1142:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1182:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1209:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1233:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1257:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   drivers/gpu/drm/tests/drm_connector_test.c:1281:24: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-           drm_mode_destroy(drm, mode);
-                                 ^~~~
-   include/drm/drm_modes.h:456:72: note: passing argument to parameter 'mode' here
-   void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode);
-                                                                          ^
-   12 errors generated.
+vim +2505 kernel/bpf/core.c
 
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2502  
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2503  void bpf_prog_array_free_sleepable(struct bpf_prog_array *progs)
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2504  {
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14 @2505  	if (!progs || progs == &bpf_empty_prog_array.hdr)
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2506  		return;
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2507  	call_rcu_tasks_trace(&progs->rcu, __bpf_prog_array_free_sleepable_cb);
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2508  }
+8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2509  
 
-vim +1008 drivers/gpu/drm/tests/drm_connector_test.c
+:::::: The code at line 2505 was first introduced by commit
+:::::: 8c7dcb84e3b744b2b70baa7a44a9b1881c33a9c9 bpf: implement sleepable uprobes by chaining gps
 
-   987	
-   988	/*
-   989	 * Test that for a given mode, with 8bpc and an RGB output the TMDS
-   990	 * character rate is equal to the mode pixel clock.
-   991	 */
-   992	static void drm_test_drm_hdmi_compute_mode_clock_rgb(struct kunit *test)
-   993	{
-   994		struct drm_connector_init_priv *priv = test->priv;
-   995		const struct drm_display_mode *mode;
-   996		unsigned long long rate;
-   997		struct drm_device *drm = &priv->drm;
-   998	
-   999		mode = drm_display_mode_from_cea_vic(drm, 16);
-  1000		KUNIT_ASSERT_NOT_NULL(test, mode);
-  1001	
-  1002		KUNIT_ASSERT_FALSE(test, mode->flags & DRM_MODE_FLAG_DBLCLK);
-  1003	
-  1004		rate = drm_hdmi_compute_mode_clock(mode, 8, HDMI_COLORSPACE_RGB);
-  1005		KUNIT_ASSERT_GT(test, rate, 0);
-  1006		KUNIT_EXPECT_EQ(test, mode->clock * 1000ULL, rate);
-  1007	
-> 1008		drm_mode_destroy(drm, mode);
-  1009	}
-  1010	
+:::::: TO: Delyan Kratunov <delyank@fb.com>
+:::::: CC: Alexei Starovoitov <ast@kernel.org>
 
 -- 
 0-DAY CI Kernel Test Service
