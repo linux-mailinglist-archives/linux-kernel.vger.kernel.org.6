@@ -1,93 +1,170 @@
-Return-Path: <linux-kernel+bounces-369069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4C09A1895
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 04:25:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C039A189F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 04:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEDB61C225F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:25:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78CB51F2274B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3D584A35;
-	Thu, 17 Oct 2024 02:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F4773501;
+	Thu, 17 Oct 2024 02:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AKTPquif"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="hyWWmKpM"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ABD335BA
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBC817580;
+	Thu, 17 Oct 2024 02:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729131884; cv=none; b=nYOND4AGG/yf8ptJoXt1qaFEsQTQ27u+ckfTUy8qvzJBGpxWSrEmtivq6m3KA8r26H0PeJ1/u/zkWi00F4CfhSmhvVx0oKgdgRm8LsQOpsxVMV1cRVxROoUihHYxIKNt5UvP61ZDxYzjEMIydC+MWNYa6tzR30kU+F6skn4wlAg=
+	t=1729131994; cv=none; b=YoyMCt2UawvIp17/1mpubvBPDXJJCSxQ0IYcHdpmF1+mR9hd+sCmPGBF2RwQLKCuSXIlKqFM0Fe62oIRxSebG2ygZwrHGX+8ovUGt4rbvKz8HGIv+GKYKoq5/nhA3iEVp5g+c8yja4LNMAwgmX8jl80qYSm7HGu6OIEI/VIrvHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729131884; c=relaxed/simple;
-	bh=Do5vG6pniFKL9CgKnRhAzSlGZriNR+Jkfe7eB92gs+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n+VRk6F22Cpz8vtMmh6BjAauMPFUaLTvPYAGEjqpMK8Hp6JsFWSYsC17iNJTIkebqwnnwVsihwQnapzaTU/3bS5L+fCa3WwK5Bqet84KVUJauftN998kbXuGPF/SDRKrQ92rNZ0EAG3RVxIH0PY/I7UgGQasy/k5ENZxRv0aK0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AKTPquif; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <660201ce-9109-4da7-8921-7a781b4b8ec4@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729131878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s5km65xJISQkG7Yb2tyjZxOp2bjZuxl/DZnU3wHuWT8=;
-	b=AKTPquifZWldMTgRfE9DAvvqxSXSCvlKp/WzoWln6THOwqsEWHnH6/RWn02QcBvujUs07X
-	ndMt01Iwj0uv5E/VwLSc0JwZ7ymKxRg2GLc4yFwqO5FnfF/v4iKs2G1L4i9g4XeZX8fMez
-	s/BGFaXSP7DTHat2bPpWQDQ7Q98wvh4=
-Date: Thu, 17 Oct 2024 10:24:30 +0800
+	s=arc-20240116; t=1729131994; c=relaxed/simple;
+	bh=JFaT0LYZbAmveZeB0SFySL/06wDYX5gBwrzQ14Dn2kU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aEvAlTSRkjA5gcjnertzLx377Y5NHFupjIIkLZSxN2sVheS0LGiw2Z9PTAvIxRZ8bZChm0T0n5IyBosOqczZ1hbsl2qLrmQSGbc39Mp2XIjOwQMcup5t6jBhdyGltTYqpS3N+blLwHQw6w3O5yukuwoYTvAXGdA8x8V4PDp9FrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=hyWWmKpM; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1729131914;
+	bh=rZHvVfowzI3daZqCxdNalDtcmaBy5OTc9UKJrJPe1mo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=hyWWmKpMObmnWtr9UJ+WHOk1f9+bfsVUtoUPTLpUYtDnzt/9qAF8EBjIk6UDbO3K8
+	 OlEEYiYGhFcmUkU0MFARq0RZ+DL2BM6vKd0NSslG/Mp1Dmh93X7DbPn5M94Fbs98wP
+	 G79iFp/O13uB26ke/BjDEQt1q9fL9ARiJxM8Yxp0=
+X-QQ-mid: bizesmtpsz13t1729131878t8vehn
+X-QQ-Originating-IP: R8LP9wFVVRb29t4eRnx8s4PSHdaUWr6JRjPv5XZ/nhM=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 17 Oct 2024 10:24:36 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16719627143748163980
+From: WangYuli <wangyuli@uniontech.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com,
+	johan.hedberg@gmail.com,
+	matthias.bgg@gmail.com,
+	hello@felixjara.me,
+	wangyuli@uniontech.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com,
+	aaron.ma@canonical.com
+Subject: [RESEND. PATCH v2] Bluetooth: btusb: Add MT7925 support for ID 0x13d3:0x3608
+Date: Thu, 17 Oct 2024 10:24:33 +0800
+Message-ID: <3DBBE09166DE4374+20241017022433.50800-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v6 4/4] docs/zh_CN: Add a entry in Chinese glossary
-To: Pengyu Zhang <zpenya1314@gmail.com>, alexs@kernel.org,
- siyanteng@loongson.cn, corbet@lwn.net, seakeel@gmail.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- yaxin_wang_uestc@163.com, zenghui.yu@linux.dev
-References: <20241016141801.25487-1-zpenya1314@gmail.com>
- <20241016141801.25487-5-zpenya1314@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20241016141801.25487-5-zpenya1314@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OEbZSWfyiQCUR+5mE0k0JnUQla4wPZJwj8Otq4Ia/tRPBe9iDTnh/4si
+	3wUG56yqlJ9E0gny5kJtdLKSGIhDRTb3SdUpkw8mAncEnAnwhL7pepINh+q01kQZFeVeDx0
+	KdXFKL0RouWT9OXDyoPaicjmc+tJLzgNuV2zlrfQsByTy2JPA0vN/rDn9jvA9AuGorlbDV6
+	dOEpJ9Ft0sUfU1/KFpWKzlRDGKpcToWGJTkdn2ZW9uEBNrVAe7qUDkL3OLTHT52mjDJa5bi
+	O2Q/5CSAqeae9hCL+SK66VD/TnpWdwzPIzcfQPbKN3BlSEzchvIf1EzneGyl2YaGsKYY6NN
+	aUVtDGhHv3S2qoInWXYAkrqhdhK8Au6DN/+j+eq7Ty1/Q4E5iZyBAaagmv7ZxMrVb8zmg0T
+	CZgHGBpmG+OWXaX8tNMesDroRjgZtGu6jPlItYidxF7h10rNRg6Jr0EMlA8WI7qm1mN15Q+
+	xH4StL5nSyDmsVc1vA8kZuZqEhnRVwHR4l2MOaAEz13fEqqcSlFwmrLGFHraeG1uIbD/i36
+	YpN5dLVAEfZMaC/BdVX8u39Ovx/p4R/s14hubxzxSU4UPXXcCmQFCYqN3LU9iwLB0ectzo/
+	hhHc7m3QGo067vCKG5WKFSb3EjDoZPh67qd/7Mi6TDXblPWndO9keT6etTXuZsh7swl+zSE
+	w6J1rqGxTVdGzKoOC6CYTMmL0PApQhiiOUwtgX8sRUsPdfU3yAegGjwxxgH6CY1qutlQprr
+	vkiGs5zIEEcm6OUmeFdIY+i0s+t2JujJ5cBgC+1s5LcHDe/HkXMpfbAalMHR4IBmECJ/MsR
+	RoTrPBqRX9yfxQTQPA5B+TtJYxG5XiBrmuqrrqPIH8pvUgapLIqW6JZ1NRUA/4BBTuHFwwC
+	HayjJZbWUpQkX8yuM+x3yvx7nn0/gzgJCsRbNtqlaIRVf+cXdkMPAFhLwPp6gYM/eSOWVHA
+	rm/8bz+xqypF656uA+KtaXO5hXPYn2Rv4R7XeuMUzzf7GRJjCvkXWInWh
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
+From: Félix Jara <hello@felixjara.me>
 
+Add compatibility Bluetooth device MT7925 for Asus UM5606 with
+ID 13d3:3608.
 
+The device info from /sys/kernel/debug/usb/devices as below.
 
-在 2024/10/16 22:18, Pengyu Zhang 写道:
-> To avoid confusion with the term "entry," the glossary stipulates
-> that in contexts related to page tables, "page table entry" will be
-> translated as "页表项," while "entry" will be translated as "表项."
->
-> Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+T:  Bus=03 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=13d3 ProdID=3608 Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
 
-Thanks,
-Yanteng
-> ---
->   Documentation/translations/zh_CN/glossary.rst | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/translations/zh_CN/glossary.rst b/Documentation/translations/zh_CN/glossary.rst
-> index 24f094df97cd..5975b0426f3d 100644
-> --- a/Documentation/translations/zh_CN/glossary.rst
-> +++ b/Documentation/translations/zh_CN/glossary.rst
-> @@ -34,3 +34,4 @@
->   * semaphores: 信号量。
->   * spinlock: 自旋锁。
->   * watermark: 水位，一般指页表的消耗水平。
-> +* PTE: 页表项。（Page Table Entry）
+Tested in Asus Zenbook S 16 UM5606XA
+
+Co-developed-by: Félix Jara <hello@felixjara.me>
+Signed-off-by: Félix Jara <hello@felixjara.me>
+Tested-by: Félix Jara <hello@felixjara.me>
+Link: https://github.com/openSUSE/kernel/pull/10
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/bluetooth/btusb.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index cd22b34542d5..4adae0be8222 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -512,6 +512,11 @@ static const struct usb_device_id blacklist_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
+ 
++	/* MediaTek MT7925 Bluetooth devices */
++	{ USB_DEVICE(0x13d3, 0x3608), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH |
++						     BTUSB_VALID_LE_STATES },
++
+ 	/* Additional Realtek 8723AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0930, 0x021d), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x13d3, 0x3394), .driver_info = BTUSB_REALTEK },
+-- 
+2.45.2
 
 
