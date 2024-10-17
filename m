@@ -1,103 +1,157 @@
-Return-Path: <linux-kernel+bounces-370479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60D99A2D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:09:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DFE9A2D57
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 651B2B21FB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:09:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 320EF283DDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C84121D16F;
-	Thu, 17 Oct 2024 19:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2240621D2D5;
+	Thu, 17 Oct 2024 19:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="M+zAVI2M"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMi1f/bC"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A937219CA6
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E4921BAF3;
+	Thu, 17 Oct 2024 19:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729192136; cv=none; b=DvtYDY11p7r9xKhuVmLQEklEX/ZYhtata+0qX4OfLPpxq0Sm2TstXoJ1rjrZfWK8lHLzvIMR8wbmZ632+TOxqupj0aJ54D9oGalC4t5y1gmH1tIzw0aQFioErHiq57TWQjEGzHbPuT4Qf1YRtiuG2vQd3XSrO+VP+bbKuAEW8bA=
+	t=1729192135; cv=none; b=TwGGwWj7mgAtYXgiGkGW3pnXzlaRoy9DjQysxuNN1rFSrxMbTrPnTIczr3T++T62Pa9iSjmBFpZ2Naa1SNdDONbU+AJZWygNB7JsHCOuegcmqQONkE+gh5hB6mC5w+/O6bkzEl3pfXrkZKPnZOqHWcAQvL2EgQapSBhBOV5pDg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729192136; c=relaxed/simple;
-	bh=XNbrH+PzGJnR1/M+mgzMDxkoQIDaLcgkvgT5zLemzak=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=H6CtI11SHhFqzLCDQGWrv2DXdDm07V709GtUpks6bI2E2Cb9mNrJ15vuIC3f4b8SHxiIIbXdVdHH2XChwJF1BOEdufqi9STN6Hg8MfdLfEsYmRVBuaUuiw0hUo5aNNrd823TvFkJ8siLX8+b2WPihib/pSWQIkbgiAyZK8kJsJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=M+zAVI2M; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1729192123; x=1729451323;
-	bh=O++mAf3y6UG64ocUCmqLlzP2zNaHJlUb0xjtjNehFU4=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=M+zAVI2MV4KODpU0wFeFKtpOCP0uvlvK5FlWSEqXhXZW7kYwsyKnp9brFQf+7KmMQ
-	 c15dWoTly7xa5pD3/PD6ttABQKf1CIuJA8RjJSZZSbKKfJ1VhhkktPEz8ZlFhJ1quW
-	 vaiPv0oTH4kjFun8/2d8GEB0wjuB2M4E2M19pWKgUW5Y98d6Nu7s/w6MrR1JcwBsc+
-	 CYTJrPWmi50OvRPvRTLvNMNVOhs6bMnIihwHcLKLEwEUj1CfEn9LCa13KRUy6k6nDD
-	 gDTZ9Dzgg/XE+p+BWx9ISMCsK7CLYJX/D63AmFLegkpj3Ep6eBlwVOZ1xVa0SwyBJX
-	 IQBsqCIy/kwAg==
-Date: Thu, 17 Oct 2024 19:08:39 +0000
-To: gregkh@linuxfoundation.org, dpenkler@gmail.com
-From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Subject: [PATCH v3] staging: gpib: Add TODO file
-Message-ID: <20241017190732.82176-1-dominik.karol.piatkowski@protonmail.com>
-Feedback-ID: 117888567:user:proton
-X-Pm-Message-ID: 6bcbac51b5f7e11e3abe22314cf4f7c29781cef9
+	s=arc-20240116; t=1729192135; c=relaxed/simple;
+	bh=s7U0icbK7FENRImx1tbz0XdY3NYXf6UP4UcAkP83OCo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GypwjKGfOtPLSaT1nwvxs5Y+jKXjFC0CRQsP07N/wiaZADAslMmYE4FxcUnBngYeJOrltRpPzneqPk8BRWuqKNFd2tfTaeYboxHShkUnTLJ28fHqHw2AGlHvkAeZuZfS3Ep/zvbHL8BkRa60WU5t6W/NjynPKGh++jLPlwEd0jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMi1f/bC; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cb47387ceso11406135ad.1;
+        Thu, 17 Oct 2024 12:08:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729192133; x=1729796933; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S2o9SjO3DgGlhTD4DQ2cq3Udc0mM0ErlixCRYYej+Hw=;
+        b=GMi1f/bC9l+mAenVJzAKw/ZGElDtGrYPU9jQ6aUsQPpPG6kGCrYeWKU67ZtoNIxUi7
+         5lH0Sl0Jti7cP8/EH+dZRH4z1P+WI/6l0isfG6lFZc8TOqXwH9Ce3Kd99G3tAaQSNf4E
+         DYD62UGrcRd92tnjhuVvz+ymzE1y5lTXb4H/1mXJJw5LRlXcE5aJLfQv1qIChXGkqsJK
+         4BL8VvGcAFFWMuygbrto8Xxs0N+/efh72mdBdmDvztoO+ApaQ+GEfD3lxNFjE7mas9ul
+         ahgTYkrFrZX347j88xdi7ezyKF6E1yGnbOKxZ//i1UKR1P68upgERXiyM230ZwEu2+jl
+         Mklw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729192133; x=1729796933;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S2o9SjO3DgGlhTD4DQ2cq3Udc0mM0ErlixCRYYej+Hw=;
+        b=TrjbuqC6hNWSQIuJfuWFIU9JsEsKjCS6dIWZglw3Vq+ite7hrfTtdCcOBS29xn4iM1
+         rns8SBEoWEQd2SRM+fE25QYgQPIkIE+lhKuNdvITwRhgMTl957e0CVAhLG532tyK//ip
+         uTfn3TkDbzo1tonz8BnafZGSnrrA9XiA2amMchcEuwnOycKRAn7nsBg9bbnMJplkIxbD
+         9y9vSKmCL2JcCeiGXIaFThS0dZ5vFovNs/LWGhpReYA/yNdwwFjkkEy2stytuBLQLIQ8
+         4OK4yISnpX+I3nt6h6S4FLpVsYwP6dLTKGZ35Z6rsOFbO8FOivUCTMLwGvABGzUxVO5h
+         7SGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlEEszpeT5ixk8MccqYVj6ul5bxMpqR06SfA5d56/GBOp8CZYq/l+pcKa/oboebYR6VncLlj+u@vger.kernel.org, AJvYcCXRmBMipm6wwGdYtPBvnvEC+7hb6H2swk9yJeAGyxU/CKhJjf+fSbF+2rnGrC1FpZ8C+VgB6CKF9/YkK0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNg8OZ+JAk8M4ymiPFfmwHATLu03AfGpm+pw3hZZD/sa8ajonV
+	AA2NBYSq9E0JY8n94JI6LKayRsmSEMJOeX+Rp2eFHaZBHLHDLx4I
+X-Google-Smtp-Source: AGHT+IEM0k8ZiOeY14Pp43NqAoSKS90Nlmf+JIqLSYjbZzH5X+8zlLg8hxHFM6roJOB/MeNcYJkLeg==
+X-Received: by 2002:a17:903:1cd:b0:20c:7a0b:74a5 with SMTP id d9443c01a7336-20d27f1c789mr129133675ad.39.1729192133287;
+        Thu, 17 Oct 2024 12:08:53 -0700 (PDT)
+Received: from ubuntu.worldlink.com.np ([27.34.65.170])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f8b4e1sm47210085ad.49.2024.10.17.12.08.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 12:08:53 -0700 (PDT)
+From: Dipendra Khadka <kdipendra88@gmail.com>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Naveen Mamindlapalli <naveenm@marvell.com>,
+	Suman Ghosh <sumang@marvell.com>
+Cc: Dipendra Khadka <kdipendra88@gmail.com>,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 3/6] octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_flows.c
+Date: Thu, 17 Oct 2024 19:08:44 +0000
+Message-ID: <20241017190845.32832-1-kdipendra88@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241017185116.32491-1-kdipendra88@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Add a TODO file for the gpib driver.
+Adding error pointer check after calling otx2_mbox_get_rsp().
 
-Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
-onmail.com>
+Fixes: 9917060fc30a ("octeontx2-pf: Cleanup flow rule management")
+Fixes: f0a1913f8a6f ("octeontx2-pf: Add support for ethtool ntuple filters")
+Fixes: 674b3e164238 ("octeontx2-pf: Add additional checks while configuring ucast/bcast/mcast rules")
+Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
 ---
-v2: Remove maintainers from TODO, as they can be found in MAINTAINERS file
-v3: Add things other than checkpatch fixes spotted in the code
+v4:
+ - removed unnecessary line "allocated = PTR_ERR(rsp);"
+v3: https://lore.kernel.org/all/20241006164322.2015-1-kdipendra88@gmail.com/
+ - Included in the patch set
+ - Changed patch subject
+ - Added Fixes: tag
+v2: https://lore.kernel.org/all/20240923063323.1935-1-kdipendra88@gmail.com/
+ - Changed the subject to net
+ - Changed the typo of the variable from bfvp to pfvf
+v1: https://lore.kernel.org/all/20240922185235.50413-1-kdipendra88@gmail.com/
+ .../net/ethernet/marvell/octeontx2/nic/otx2_flows.c    | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- drivers/staging/gpib/TODO | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100644 drivers/staging/gpib/TODO
-
-diff --git a/drivers/staging/gpib/TODO b/drivers/staging/gpib/TODO
-new file mode 100644
-index 000000000000..bf2c39742548
---- /dev/null
-+++ b/drivers/staging/gpib/TODO
-@@ -0,0 +1,21 @@
-+TODO:
-+- checkpatch.pl fixes
-+- fix device drivers that are broken ("depends on BROKEN" in Kconfig)
-+- tidy-up comments:
-+  - there are some "//comments" and "// comments" scattered around
-+  - sometimes they are misaligned
-+  - sometimes "// comments" are interleaved with "/* comments */"
-+  - multiline comments should start with initial almost-blank line:
-+    /*
-+     * Good
-+     * multiline
-+     * comment
-+     */
-+    /* Bad
-+     * multiline
-+     * comment
-+     */
-+- resolve XXX notes where possible
-+- fix FIXME notes
-+- clean-up commented-out code
-+- fix typos
---=20
-2.34.1
-
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
+index 98c31a16c70b..58720a161ee2 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
+@@ -119,6 +119,8 @@ int otx2_alloc_mcam_entries(struct otx2_nic *pfvf, u16 count)
+ 
+ 		rsp = (struct npc_mcam_alloc_entry_rsp *)otx2_mbox_get_rsp
+ 			(&pfvf->mbox.mbox, 0, &req->hdr);
++		if (IS_ERR(rsp))
++			goto exit;
+ 
+ 		for (ent = 0; ent < rsp->count; ent++)
+ 			flow_cfg->flow_ent[ent + allocated] = rsp->entry_list[ent];
+@@ -197,6 +199,10 @@ int otx2_mcam_entry_init(struct otx2_nic *pfvf)
+ 
+ 	rsp = (struct npc_mcam_alloc_entry_rsp *)otx2_mbox_get_rsp
+ 	       (&pfvf->mbox.mbox, 0, &req->hdr);
++	if (IS_ERR(rsp)) {
++		mutex_unlock(&pfvf->mbox.lock);
++		return PTR_ERR(rsp);
++	}
+ 
+ 	if (rsp->count != req->count) {
+ 		netdev_info(pfvf->netdev,
+@@ -232,6 +238,10 @@ int otx2_mcam_entry_init(struct otx2_nic *pfvf)
+ 
+ 	frsp = (struct npc_get_field_status_rsp *)otx2_mbox_get_rsp
+ 	       (&pfvf->mbox.mbox, 0, &freq->hdr);
++	if (IS_ERR(frsp)) {
++		mutex_unlock(&pfvf->mbox.lock);
++		return PTR_ERR(frsp);
++	}
+ 
+ 	if (frsp->enable) {
+ 		pfvf->flags |= OTX2_FLAG_RX_VLAN_SUPPORT;
+-- 
+2.43.0
 
 
