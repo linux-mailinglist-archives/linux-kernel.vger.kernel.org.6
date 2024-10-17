@@ -1,141 +1,130 @@
-Return-Path: <linux-kernel+bounces-368967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0BE9A171A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:30:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14E09A171B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1178B1F23B4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA1B288075
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FDA2C6AF;
-	Thu, 17 Oct 2024 00:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8523C38DDB;
+	Thu, 17 Oct 2024 00:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dPAShefK"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0kGHGmvk"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADD322612
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A731C139
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729124801; cv=none; b=SXDKNAJDgZhXOSi1kr0XTEL0lbSa1ncRx1ormmkLPdGb8uDZcWY/I0g+y0Fxmzo4zmlt5LavVKXtqYZyjOiHzFSi4yWsWYngkL7AkrXqzuzAcj/lCZj9sZK0v2QVJytA3huwMPSLm2Ktlp5Yi8V1l+hqQElLi9GyuTHeZObKxQM=
+	t=1729124811; cv=none; b=l9a6Kp+fWt3yPUz0Af3Qp0ruOhW/ig0IGGRD84uxr1p7WoAAch/bc0s6mDwADTsPFeWE67XJ/mRw8ZeZWZvVETJXQadnyndBTq65DIFjFmm9CTfmZkwpFty0LkXl98pSq4uPkBcZDpSXvFPpwMydVBwwFrUcy4cpeqtl9HnGIC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729124801; c=relaxed/simple;
-	bh=0jwTR0iueyndpPrNwaFPpUKTaxSDEKtRjzWhhrTbnME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L4HzhudjeAywkmPOyIpxsaTpK6v1b8yD56xMmSzCbv1RizXbOqwa9BJYoC2wrU1qruh+ok4zpk1pcq5e/5RuhH05DeCHmyQDqF7h36B/abR4GMxHHTYdrzWHwLB16qWAN1bMzwE3G8ODU26cAgZe42baBKAba7O0myNfoC1LkiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dPAShefK; arc=none smtp.client-ip=209.85.160.175
+	s=arc-20240116; t=1729124811; c=relaxed/simple;
+	bh=ke/U6M/R8mIq/tqiSoJRAHs0IFxG3jrmo50biIZXxwk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OiQpgXYLgNav8CxdqNcj4nR1IjsRA8eAcMYZYyVfWUhVcsyzKlttp05pIOy/Q4XglAwijcM+kcg9SnDftW5AZ4Pw0tR5ym4NYDewBSz7oBMB7B80uoLyt2XuCSlLPK1cbJuqFA7Kwet+HkZ9ydj4NvwQITDvL9KT2AvP1xvaDlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0kGHGmvk; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-45fb0ebb1d0so76141cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:26:39 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7db8197d431so483321a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729124798; x=1729729598; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jWdC8o5l9dSoefG8d0V05ixiC17MDxk90k3DqUJtL94=;
-        b=dPAShefKWC4QLcHJmjMl42aFVABXczWNYOdsNby8FvOQZmrOY+D/bLU44LMmQfp28j
-         o5RU24BNZTDP/dGSSF4rnlvS13/PAsvwi3YP9tLDNCH9eB6NZETgfc/G3zieRIrxHGqk
-         sqCrjVa+fpeBHGLut2kvfeBCE6GLbwnQ7V6Wt0GF5OjvStGyxtrbx+CnB5HbPtyOhBkw
-         wt3ZM0nl0fFdk2+clQPHPKmi7n3GOedeQC3AScb8UfjcPZddocARw79Ape7PfOv+XhMM
-         r/O2ZQnw0eEuKmKRqRMdl8vj33Sx/gwdsXQCkIVtr/f0xMu9O+RUCs1CJN/qDWRvZDB+
-         pkzA==
+        d=google.com; s=20230601; t=1729124810; x=1729729610; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PC4Hs0E5dBLkCnCinTPyvf/aLxRI0UAFEABy+KMCotw=;
+        b=0kGHGmvkTsMpbIrj+betRITdaHo8WJeRstWLoZwp2w72x8Igden3Mr4Y9O++fi+MJn
+         C+7w5yRuNXENi8g0vMAME6igLaAp87UXljTMye+ZI+c0KEKgEL0ebrW6GDyiopRQqDK+
+         IJZaeIjn2XHI6+dXj7KIhY27tEOWw4nm+rjaOoWEukhMVfWI/QqK7mViW7jTIeIYvH+q
+         R9BlLAj5w5AdPcTm3bAxZfN9wAIrBAlDdtkosqTubVDQRZs1UGZ5HmmV7dP/434I8gwA
+         M/mVZwEFLDVhRzUfaxb6PunPxQ4LqTZ+kvnspCDQBwN6lOm+WlpFQ+6tueGLWs41DIGF
+         Gf7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729124798; x=1729729598;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jWdC8o5l9dSoefG8d0V05ixiC17MDxk90k3DqUJtL94=;
-        b=g1WwsdGzZIS2FoLP/pBl1XighJ+IZnTuDrLynOUVgGZi/jv3eCHVQLPic3EKzGXIba
-         8yyh8YW0gPsn1hCrovPFQQHsYtoXeP6CccZijN4EVplMgIAjJ3oY3Qho4KLjM23ASqQ8
-         eN670KGvV7hzyAKmeTQGuCBVuT1d6H/8zMobqSUz9Mq6CmNnB+tNm6lsLpkxgUtXNyBE
-         ZK6yyi3hadV3SocPT7JI3U8ovUq6fww10RIjQyk+i545u27aves1e7EYrUtPzWyyVWmd
-         Hzjw02I039X7MNpAlr+W1qQO4WC4dVZJFLzUu9WVcBIueMnJA6hI7+r0SOF/O7aBfWVk
-         9GWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoRpAQlQhXiGg1EpfiExxnQ92CeRma8SZwL4M2xdsDIrWBu3EqDXyhD37MBY9ola8T4+nGvPz0k4bnKI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN3bRS4nxcWp9M1F3xv5SBeV+hjoglGTfgLBCrAwln/d8n5lDY
-	sDlBrT5nZtRXoZEOP5il7Dcy4dE1tS9km1Eujr4TMSylOB8aQYSGo9khibO2yXADd2vMOIsxgDd
-	mAeD2tAreSTk739aFreJMoWHIJ9S5K5oQg5ps
-X-Google-Smtp-Source: AGHT+IFyrIuiUrO1qU9KQuQZSVEK+54cenmGt/fL8q6O8TUeM+0K1ZlNZ1Ma9YYWd9GL+AJTnwqdve95TquY/nRUVCA=
-X-Received: by 2002:ac8:648d:0:b0:45f:924:6bcd with SMTP id
- d75a77b69052e-4609c8e1b3amr1552851cf.22.1729124798070; Wed, 16 Oct 2024
- 17:26:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729124810; x=1729729610;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PC4Hs0E5dBLkCnCinTPyvf/aLxRI0UAFEABy+KMCotw=;
+        b=Q7N7Wr+sec31aGEDG3ppLESrb2qpfXMc3qxmymaXcaeZWdPE92GmOhw1BPhIL5IKwa
+         99v4mTDFOBhnLkGWd2ngF6BaC1RqSerbWtpuwRf3tfLA/PzRWgMJXCGOU9//RgC6s8nq
+         1SDJCcgJgjmq1r6OHZZvHtMT0ubT/r+EhG8Samq59yorxkJXhNXHxzOGHZrcFM6MzAAy
+         TGVpMTC46V08oTiRw09FbDBKVEIrzEcpXuXg9Tan7SuM2vBSngnPlfED2u6iF/n4XVSW
+         CpoLI5PX33xreI2JsedJnqO3RhGoI1sdJ1OhNUvhySQfWZOrGFroozf5V42CBl4ObhiP
+         xLiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXf7Gaf/VSmrN3EzjBI83tenYSpFaLAuqe5v2UQV8WLPKOFhIvTDaEZDPi9Ow3Y++4pQaFsYRDo1OhahzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywiip9CwNp/f7Nj0LXF+PpMeeIT0DJUPG8ZDa90aCtqC60G7F1Y
+	rv3ab8RRfAq/3Zb1t90uIldqxPbm9vZuCwr7wq/44W5xCLqCD02TJYV4qVogQA5RfXRftQ1z21N
+	F/g==
+X-Google-Smtp-Source: AGHT+IHcZEDYoFZqO9vMeq+B+EvG4lcuq/J99qdXry7nLvP1k/6cQ8eP6ZnNUNNOwC4IGrsVzTHyGmuCdRY=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a63:ef50:0:b0:7ea:7907:7076 with SMTP id
+ 41be03b00d2f7-7eaa6c965a9mr6883a12.6.1729124809640; Wed, 16 Oct 2024 17:26:49
+ -0700 (PDT)
+Date: Wed, 16 Oct 2024 17:26:47 -0700
+In-Reply-To: <20241015152157.2955229-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241015231925.3854230-1-mmaurer@google.com> <20241015231925.3854230-5-mmaurer@google.com>
-In-Reply-To: <20241015231925.3854230-5-mmaurer@google.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Wed, 16 Oct 2024 17:25:58 -0700
-Message-ID: <CABCJKucg9okLPkK1bgDqZ+gdRxSxvkE2Ff8JPBkrcsH+Guo_vg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] modpost: Produce extended MODVERSIONS information
-To: Matthew Maurer <mmaurer@google.com>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org, 
-	gary@garyguo.net, mcgrof@kernel.org, Alex Gaynor <alex.gaynor@gmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, neal@gompa.dev, marcan@marcan.st, j@jannau.net, 
-	asahi@lists.linux.dev, linux-modules@vger.kernel.org, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20241015152157.2955229-1-arnd@kernel.org>
+Message-ID: <ZxBZx5EUhJFjTcXP@google.com>
+Subject: Re: [PATCH] i915: fix DRM_I915_GVT_KVMGT dependencies
+From: Sean Christopherson <seanjc@google.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Maxime Ripard <mripard@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Imre Deak <imre.deak@intel.com>, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Matt,
+On Tue, Oct 15, 2024, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Depending on x86 and KVM is not enough, as the kvm helper functions
+> that get called here are controlled by CONFIG_KVM_X86, which is
+> disabled if both KVM_INTEL and KVM_AMD are turned off.
+> 
+> ERROR: modpost: "kvm_write_track_remove_gfn" [drivers/gpu/drm/i915/kvmgt.ko] undefined!
+> ERROR: modpost: "kvm_page_track_register_notifier" [drivers/gpu/drm/i915/kvmgt.ko] undefined!
+> ERROR: modpost: "kvm_page_track_unregister_notifier" [drivers/gpu/drm/i915/kvmgt.ko] undefined!
+> ERROR: modpost: "kvm_write_track_add_gfn" [drivers/gpu/drm/i915/kvmgt.ko] undefined!
+> 
+> Change the dependency to CONFIG_KVM_X86 instead.
+> 
+> Fixes: ea4290d77bda ("KVM: x86: leave kvm.ko out of the build if no vendor module is requested")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/drm/i915/Kconfig | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+> index 46301c06d18a..985cb78d8256 100644
+> --- a/drivers/gpu/drm/i915/Kconfig
+> +++ b/drivers/gpu/drm/i915/Kconfig
+> @@ -118,9 +118,8 @@ config DRM_I915_USERPTR
+>  config DRM_I915_GVT_KVMGT
+>  	tristate "Enable KVM host support Intel GVT-g graphics virtualization"
+>  	depends on DRM_I915
+> -	depends on X86
+> +	depends on KVM_X86
 
-On Tue, Oct 15, 2024 at 4:19=E2=80=AFPM Matthew Maurer <mmaurer@google.com>=
- wrote:
->
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 107393a8c48a..d18ff8a1109a 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -1840,15 +1840,56 @@ static void add_versions(struct buffer *b, struct=
- module *mod)
->                         continue;
->                 }
->                 if (strlen(s->name) >=3D MODULE_NAME_LEN) {
-> +#ifdef CONFIG_EXTENDED_MODVERSIONS
-> +                       /* this symbol will only be in the extended info =
-*/
-> +                       continue;
-> +#else
->                         error("too long symbol \"%s\" [%s.ko]\n",
->                               s->name, mod->name);
->                         break;
-> +#endif
+Can GVT-g even work on non-Intel CPUs?  I.e. would it make sense to take a
+dependency on KVM_INTEL?
 
-I applied these patches to my test tree[1] and have the following
-options enabled in my .config:
-
-$ grep -E 'MODVERSIONS|GEN.*KSYMS' .config
-CONFIG_HAVE_ASM_MODVERSIONS=3Dy
-CONFIG_MODVERSIONS=3Dy
-# CONFIG_GENKSYMS is not set
-CONFIG_GENDWARFKSYMS=3Dy
-CONFIG_ASM_MODVERSIONS=3Dy
-CONFIG_EXTENDED_MODVERSIONS=3Dy
-
-When I try to build a Rust module, I still get the following error:
-
-ERROR: modpost: too long symbol
-"_RNvXs2_NtNtNtCsivAAjSnxUpM_4core3fmt3num3implNtB9_7Display3fmt"
-[samples/rust/rust_print.ko]
-
-I suspect gating this behind a config would require you to add a new
-command line flag to modpost and check for CONFIG_EXTENDED_MODVERSIONS
-in scripts/Makefile.modpost instead.
-
-[1] https://github.com/samitolvanen/linux/commits/rustmodversions
-
-Sami
+>  	depends on 64BIT
+> -	depends on KVM
+>  	depends on VFIO
+>  	select DRM_I915_GVT
+>  	select KVM_EXTERNAL_WRITE_TRACKING
+> -- 
+> 2.39.5
+> 
 
