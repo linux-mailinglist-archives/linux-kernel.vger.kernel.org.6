@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-372485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F25CF9A491A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:45:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553909A491F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0D61C20D5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:45:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E22ECB24413
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CD918E05A;
-	Fri, 18 Oct 2024 21:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3171018FC8C;
+	Fri, 18 Oct 2024 21:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oEmQIQAX"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="xU+mrdqr"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B0B18858C
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 21:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C996916D4E6;
+	Fri, 18 Oct 2024 21:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729287949; cv=none; b=uaK5GI3ANERzm8qsFO2/s2W7VbqTzxdHQ4+BrBRgxaYeaymRs0PAQmZ+Q3a2vOgTDobub+j6Cg3X1ybQBRxXj4KZv8dYgdqQsA0Ms5f4o6dJY6IVWvSYW5K6gdFb7UQvTLCBN4ZvtlGkK/GbO0q0JVrSdIW6FuiGGBMShBOte/g=
+	t=1729288076; cv=none; b=cJe6UZ/JSjH4CZKr+dgL0Y36tS5rR0TtRS6hMcuKOLkXoG9ZTivhvumw3iUGaEYrtZLdVT5fxT5Fq7Cev6CRyfPWs6reSzRtapjnYhlWcvMSvzJWn07d9N3A7eEU4AyA+xWEijF8z5YdMJrjhMoZ4NogbSlxGtIV5zbr73vOWoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729287949; c=relaxed/simple;
-	bh=tOA01gs5nPhL/vmNbtW+GIMrz7TJDXxOicvU7S/TnUU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t8/7cV7JJyUqaGOU7mlIG6MtSwU6Po8ZmmyQlRUmXy1okoMv63zHMGIed+onjLtYBCDTKQvzfeGn/a5akwmN+TVP4dq3aDVnVTwvI9oaWOWK5JrEIYYL4qc0GCwMcfUsCcC8uB9ePfKPDgVKnat79BdfsD+1JD0LjqCriJcOlnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oEmQIQAX; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729287944;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=R9I7quaW8/F+28X0/jjvHTMqunMj8YXAmloyPwoMZ/s=;
-	b=oEmQIQAXrKhG6Gtv7DgeTou2NPrJMFRi6Azoah+bii+k/NFmHetdBEYX3kBZbNslB66OU4
-	k8NzDLGKaAtZafnf0EIldMLvFGfnUS5g0SjViXC3665n718hr/tBdgUP4D3uW+eD5DkJ7W
-	yIXe4yQ0xz4CxwP1pzPuMVXrYSiSBmQ=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] apparmor: Remove unnecessary NULL check before kvfree()
-Date: Fri, 18 Oct 2024 23:45:14 +0200
-Message-ID: <20241018214513.163269-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1729288076; c=relaxed/simple;
+	bh=GCembOxXqoxGHyKB6sZTgd5drl5OE2YOvO0Wl2XLd7E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TFZqSit3zE3LVtNHS9EWXTirLJ5lXEt1L3ZdOnQ9/HyZd4mf/iNI8G0twCcwKPhl+DNFb3vL2xBPUcfcK5ZX+bTTBKp4mGwuOF8+67+ftLQJ6PmZD97zr/wfF1TphplP9J6NCaTBZsU+Zy0lR8DaFN86tqJYH20b++b5UmimQ10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=xU+mrdqr; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=K5aAZ4qh0AEAbu5qvWu/4QCvE+diJotq5vEmByCm7xk=; b=xU+mrdqrcM3zxXqe1PV5eBfrQ6
+	eWl5vuzcRRFUqDmlOKUwlfVUNTpQ+mW3iugHuHCuZvrOCn+ewRiOEH8Nxi21GgbwqqjMTb1IRSAuK
+	YR8x1xyb/L/3XLWEFrl3Ay7CInmRrm3q4Zit1uzDBIpzXyXBezIoxHO/hXHysZsbZx5f2QHURsWdC
+	c6M3bnM2fJAfpFgR6XghgPQTWcG6kV7VQwTiDORA0dSNIx3LfoteQfSMo4KE8pUWWJYwn7OI77ccY
+	FZixz1eUVOeUJ2wnl2y836dHZx6NohAZEQB8q0H+TvEFG3FddIt5Iv9cDxdUO/smUiYIH+iVvF+0V
+	vUJaojMg==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: tony@atomide.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	aford173@gmail.com,
+	linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	aaro.koskinen@iki.fi,
+	khilman@baylibre.com,
+	Roger Quadros <rogerq@kernel.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>,
+	Stable@vger.kernel.org
+Subject: [PATCH] ARM: dts: omap36xx: declare 1GHz OPP as turbo again
+Date: Fri, 18 Oct 2024 23:47:27 +0200
+Message-Id: <20241018214727.275162-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,36 +64,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Since kvfree() already checks if its argument is NULL, an additional
-check before calling kvfree() is unnecessary and can be removed.
+Operating stable without reduced chip life at 1Ghz needs several
+technologies working: The technologies involve
+- SmartReflex
+- DVFS
 
-Remove it and the following Coccinelle/coccicheck warning reported by
-ifnullfree.cocci:
+As this cannot directly specified in the OPP table as dependecies in the
+devicetree yet, use the turbo flag again to mark this OPP as something
+special to have some kind of opt-in.
 
-  WARNING: NULL check before some freeing functions is not needed
+So revert commit
+5f1bf7ae8481 ("ARM: dts: omap36xx: Remove turbo mode for 1GHz variants")
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Practical reasoning:
+At least the GTA04A5 (DM3730) has become unstable with that OPP enabled.
+Furthermore nothing enforces the availability of said technologies,
+even in the kernel configuration, so allow users to rather opt-in.
+
+Cc: Stable@vger.kernel.org
+Fixes: 5f1bf7ae8481 ("ARM: dts: omap36xx: Remove turbo mode for 1GHz variants")
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
- security/apparmor/policy.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/ti/omap/omap36xx.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index 14df15e35695..ce1c96cb2aed 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -103,8 +103,7 @@ static void aa_free_pdb(struct aa_policydb *pdb)
- {
- 	if (pdb) {
- 		aa_put_dfa(pdb->dfa);
--		if (pdb->perms)
--			kvfree(pdb->perms);
-+		kvfree(pdb->perms);
- 		aa_free_str_table(&pdb->trans);
- 		kfree(pdb);
- 	}
+diff --git a/arch/arm/boot/dts/ti/omap/omap36xx.dtsi b/arch/arm/boot/dts/ti/omap/omap36xx.dtsi
+index c3d79ecd56e39..c217094b50abc 100644
+--- a/arch/arm/boot/dts/ti/omap/omap36xx.dtsi
++++ b/arch/arm/boot/dts/ti/omap/omap36xx.dtsi
+@@ -72,6 +72,7 @@ opp-1000000000 {
+ 					 <1375000 1375000 1375000>;
+ 			/* only on am/dm37x with speed-binned bit set */
+ 			opp-supported-hw = <0xffffffff 2>;
++			turbo-mode;
+ 		};
+ 	};
+ 
 -- 
-2.47.0
+2.39.2
 
 
