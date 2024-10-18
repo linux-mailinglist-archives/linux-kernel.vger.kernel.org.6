@@ -1,170 +1,115 @@
-Return-Path: <linux-kernel+bounces-371915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8129A4221
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:19:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F719A4224
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB37F1F24E09
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:19:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90ED8B2176F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBD31FF7C2;
-	Fri, 18 Oct 2024 15:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525892010E6;
+	Fri, 18 Oct 2024 15:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aDRPxfXk"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BiQHe7Ip"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2091F4264;
-	Fri, 18 Oct 2024 15:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EDD1F4264;
+	Fri, 18 Oct 2024 15:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729264738; cv=none; b=dwjwI6DykQgSsR+9Z1TwLBnajtMylU8Tab1UYhUn5SOGb6TCAeiasWF8vcDIpk1XFyA7nFHYm75Guk4DlsUplUotW6I4tWbR1Y2lclsF1Um1DjAjbt/EfgN0ztfQMhQug+8jb6tSJzLuXNUjATD07Ga2aRx7qjpdb+7KbM16qak=
+	t=1729264757; cv=none; b=rCNU7nxnSQk+jb12W1tBd3nQ2olWTxy51VdSACQZtYtPiFgJJ7zUF9NwQ0S2O8BBcs/G5M16YPU4Hr7WY7WQ1EI3gakDbqv45hDPLwzCYq5CWCXImD2R/ZzbFzNX0ntDpek0w6mNJL4nvRoajqg+7aFszqSYdfx3/mYHkrA8dJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729264738; c=relaxed/simple;
-	bh=nVfa+imeiHbMcXl3EHSK5pbE+r26B0V/5kqtTnUoIMQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DTwb3Fax8UdKQ5PzhRoyAiFqb02NPJRa3ftSRcXuU771zO+R8PMy3KNmoPx2XuWxkjh6qhkmBt9YekcW064PZQqU3vLqCtgrqLsuHjPrAMvvINyW+fJy/oKpj6sijcMu0incfnA7uXH6CrD+tKvAz+hQvSTfvlgiej5nYK/gmVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aDRPxfXk; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e5f86e59f1so1118350b6e.1;
-        Fri, 18 Oct 2024 08:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729264735; x=1729869535; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nVfa+imeiHbMcXl3EHSK5pbE+r26B0V/5kqtTnUoIMQ=;
-        b=aDRPxfXkw38Vh2ctFcn56MrFRG3kFfZvNYJjdNKd3sadutQ8brkWlvlWHIa5qObV40
-         aXbEkNwY7XuTvL/YbbAChWyBEoE7drnmAghUnY/xN+Kc6RdZp8YIXEqSOH0Lr7kYvelg
-         ltaPS5f4C0nhWI95fUidpPO9HWTrzRc50pYsaiHQgBUbDJ+EnvwxbXeBMeGTf/al1KuV
-         vOAqQb+KMsM2sjLbVJGw5zUP4eEyhOzg7bCmC3JPR3LJJA7eiGXufFziJ+JxDkk1hG2c
-         zVICsSLu63xoTDTK/ODv/2uU+WzxDAljz5sOSlddAPi/VPuGIJgscar8aXwNsq5+XH1S
-         bqLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729264735; x=1729869535;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nVfa+imeiHbMcXl3EHSK5pbE+r26B0V/5kqtTnUoIMQ=;
-        b=CPDr6up1huOk0NH1DZo0cCLQpOycRqGdJXo0xWkxisGbI55A1FzyuGyUzLGiTy2LjO
-         75WOA8AlKX6ywysrUHU4XIF1+sCdZyqd6AsBmKizwJ6089XneXU/MeZwfYrakNUJJxSy
-         QXx4L1HZbnbB3aO/Vj/Uz2FjXLvxQQ5Fd6LR/E5OJvMMoBNZnqxKlUZlvSzvVgkDGjoQ
-         i3bBNuAcQ6yr2HYqOQJcGPoTUoizigxSNJU4IOsHbZOeW6ezsh1wSfUdbxvSY4PMNyQS
-         Lfco1occT0vfcZVdgAqtF0Age5hYiwAPaG6R3VH8QM5lO4IaZ+qzo7llxsdHP/VZXJ6U
-         VZag==
-X-Forwarded-Encrypted: i=1; AJvYcCUVM3CRyWqONi1hBGP/MrmeMp6WxGLHJZoQfI/0qEzOZNl/HRuxgdoGLDiKKHl6c+NYQmGMfSdoeIyXZZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBcK1dHJQYNzlTeNAk7YsuwtMiQLahHhtUWSe5w2Et1vodY0gX
-	QXFMZDm5SJAgukAD1v9xC+Rcd96VLv2FDByn+15lvFV0X4DSV5r5GTaSZHJZhmziVDCQBZWHysS
-	kU08yZl6vaTMqA5JIMlX4hA3x/hXxzWPR
-X-Google-Smtp-Source: AGHT+IHZKpl9hVDnEIZrXjZqWd+5h7zBspkclj83B7EHcIfWawJ8Xh3LC0qhnqnr7Ah5V11j4UM7E4/C5JNSFWbr9mQ=
-X-Received: by 2002:a05:6808:200e:b0:3e5:db57:c479 with SMTP id
- 5614622812f47-3e602c7aa71mr2695763b6e.3.1729264735576; Fri, 18 Oct 2024
- 08:18:55 -0700 (PDT)
+	s=arc-20240116; t=1729264757; c=relaxed/simple;
+	bh=UwPMKCaQO5+n3ciIjqo+WINUTZDFj4k3xLL2XjGRbos=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ihcF7CxjIfLCUrPPoqchg3ol4qK23heVzyR0ZQTDMB0qSNmC7u9W8ewgTs6Jx/qLbz+NiDyEc03MVqiw5PTmIxqNL8rW3+jKARp5FJuLVMXCPuKtTOAAREhA1dCHdd3QEUMG0+p7VVaI7u99CrSlxVdH8NjLWMDGpE2j8aTQyDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BiQHe7Ip; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729264746;
+	bh=UwPMKCaQO5+n3ciIjqo+WINUTZDFj4k3xLL2XjGRbos=;
+	h=From:Subject:Date:To:Cc:From;
+	b=BiQHe7IpC/W859WGSqcVMCN+JhALi2oC/xaRLcHyMyChZv/CZfybHqHs1NWRhtFVB
+	 sGhV1+PFan29sig7N9qI9T+URF6PA3CVby+Po1CNB88AixI89bso8fR2gPsnnyAGAf
+	 kyBYHiO5fu7c41By8SWRxnSMF7LPccxkz3sX+/Im/iArhNxYlU3q8vVVGzq2iyNqLA
+	 nAmtD7TUSIsxPSwjg2s4/2ST1iFXAAWQ8j5RlVAfvcqLsAMOyeF8FWgVdOSEjYJzBQ
+	 ERHksr5zQ/OJihw4ufVGFGO6n00bvhi87z3G2m/EOxsgggBDD2lwVr3OSExHHQ4DFF
+	 /RuELhFsBc6Jw==
+Received: from [192.168.1.218] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5DF1117E361A;
+	Fri, 18 Oct 2024 17:19:04 +0200 (CEST)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Subject: [PATCH v2 0/2] Enable Ethernet on the Genio 700 EVK board
+Date: Fri, 18 Oct 2024 11:19:01 -0400
+Message-Id: <20241018-genio700-eth-v2-0-f3c73b85507b@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018030917.2540841-1-james.hilliard1@gmail.com>
- <66922a0b-6e30-4501-9262-8bdd224155f9@roeck-us.net> <CADvTj4pnYn478mzM6LQFJ7x1SBANY_Q4JBygTUqx2PnJgJkQxg@mail.gmail.com>
- <20a922fb-6703-4712-9818-8e97c38b5148@roeck-us.net>
-In-Reply-To: <20a922fb-6703-4712-9818-8e97c38b5148@roeck-us.net>
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Fri, 18 Oct 2024 09:18:44 -0600
-Message-ID: <CADvTj4rmPdWqf2ohJenzxXupFq5gpwr4dofjS3vU=q0wTtoFNQ@mail.gmail.com>
-Subject: Re: [PATCH] watchdog: it87_wdt: add quirks for some Qotom IT8786 boards
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-watchdog@vger.kernel.org, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGV8EmcC/3XMQQ7CIBCF4as0sxYDlIK68h6mC6TTMkmFBppG0
+ 3B3sXuX/0vet0PGRJjh1uyQcKNMMdSQpwact2FCRkNtkFwqwUXHJgwUDecMV89kJ1uuBmu0dlA
+ vS8KR3gf36Gt7ymtMn0PfxG/9A22CcSa0Fe5q2osb1d3FebbPmOzZxRf0pZQviR7OJ6wAAAA=
+X-Change-ID: 20241015-genio700-eth-252304da766c
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Richard Cochran <richardcochran@gmail.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
+ Andrew Lunn <andrew@lunn.ch>, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
+ Jianguo Zhang <jianguo.zhang@mediatek.com>, 
+ Macpaul Lin <macpaul.lin@mediatek.com>, 
+ Hsuan-Yu Lin <shane.lin@canonical.com>, Pablo Sun <pablo.sun@mediatek.com>, 
+ fanyi zhang <fanyi.zhang@mediatek.com>
+X-Mailer: b4 0.14.2
 
-On Fri, Oct 18, 2024 at 4:09=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> =
-wrote:
->
-> On 10/17/24 21:29, James Hilliard wrote:
-> > On Thu, Oct 17, 2024 at 9:59=E2=80=AFPM Guenter Roeck <linux@roeck-us.n=
-et> wrote:
-> >>
-> >> On 10/17/24 20:09, James Hilliard wrote:
-> >>> For the watchdog timer to work properly on the QCML04 board we need t=
-o
-> >>> set PWRGD enable in the Environment Controller Configuration Register=
-s
-> >>> Special Configuration Register 1 when it is not already set, this may
-> >>> be the case when the watchdog is not enabled from within the BIOS.
-> >>>
-> >>> For the Qotom QGLK02 board the vendor indicates that the IT8786
-> >>> watchdog hardware is not functional due to a conflict with the BIOS
-> >>> power-on function, with PWRGD set the watchdog will trigger but the
-> >>> board will poweroff rather than restart as expected. Disable the
-> >>> it87 driver on this broken hardware.
-> >>>
-> >>
-> >> This shouldn't be done in drivers, and it doesn't scale. The driver ne=
-eds
-> >> to be disabled with the mechanism supported by the distribution, for e=
-xample
-> >> in /etc/modprobe.d/blacklist-watchdog.conf, or by whatever other mecha=
-nism
-> >> the distribution supports for that purpose.
-> >
-> > There isn't really a good way that I've found with my setup since I use=
- common
-> > images for both of these boards. I'm also worried that it's much easier=
- to mess
-> > something critical like this up if user space is involved in hardware d=
-etection.
-> >
-> > Many other watchdog drivers do this sort of thing so I'm a bit confused=
- why we
-> > would want to not do that here as well, for example:
-> > https://github.com/torvalds/linux/blob/v6.11/drivers/watchdog/renesas_w=
-dt.c#L176-L207
-> > https://github.com/torvalds/linux/blob/v6.11/drivers/watchdog/ebc-c384_=
-wdt.c#L125
-> > https://github.com/torvalds/linux/blob/v6.11/drivers/watchdog/lenovo_se=
-10_wdt.c#L242-L285
-> > https://github.com/torvalds/linux/blob/v6.11/drivers/watchdog/sbc_fitpc=
-2_wdt.c#L203-L206
-> >
->
-> Those are specialty watchdog drivers, which only work on a very limited n=
-umber of boards
-> to start with. For the most part they use DMI data to determine if the wa=
-tchdog is supported
-> on a board, not to determine if a watchdog isn't supported.
->
-> The it87 driver works on thousands of boards, and is not wired up on a su=
-bstantial percentage
-> of them. In many cases, systems with ITE Super-IO chips have two Super-IO=
- chips installed
-> (one of them typically being an IT8786), and only one of those (or none) =
-will have the watchdog
-> wired up. Many boards with Intel CPUs use the iTCO watchdog and don't hav=
-e the Super-IO
-> watchdog wired up at all. Trying to maintain a deny-list for all boards w=
-here the watchdog
-> isn't wired up would not scale.
+The patches in this series add the ethernet node on mt8188 and enable it
+on the Genio 700 EVK board.
 
-Hmm, so what would scale then? I mean obviously having every user manually
-configure watchdog drivers scales even worse than trying to maintain a deny=
--list
-as users are generally going to expect drivers to work properly without man=
-ual
-configuration.
+The changes were picked up from the downstream branch at
+https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-mtk/+git/jammy,
+cleaned up and split into two commits.
 
-Maybe something like hid-quirks would work better here for matching the
-correct watchdog driver on systems where multiple watchdog drivers
-otherwise detect a watchdog as being present?:
-https://github.com/torvalds/linux/blob/v6.11/drivers/hid/hid-quirks.c
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Changes in v2:
+- Moved mdio bus to mt8188.dtsi
+- Changed phy-mode: rgmii-rxid -> rgmii-id
+- Removed mediatek,tx-delay-ps
+- style: Reordered vendor properties alphabetically 
+- style: Used fewer lines for clock-names
+- Fixed typo in commit message: 1000 Gbps -> 1000 Mbps
+- Link to v1: https://lore.kernel.org/r/20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com
 
->
-> Guenter
->
+---
+Nícolas F. R. A. Prado (2):
+      arm64: dts: mediatek: mt8188: Add ethernet node
+      arm64: dts: mediatek: mt8390-genio-700-evk: Enable ethernet
+
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi           | 97 ++++++++++++++++++++++
+ .../boot/dts/mediatek/mt8390-genio-700-evk.dts     | 20 +++++
+ 2 files changed, 117 insertions(+)
+---
+base-commit: 7f773fd61baa9b136faa5c4e6555aa64c758d07c
+change-id: 20241015-genio700-eth-252304da766c
+
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
 
