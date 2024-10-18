@@ -1,74 +1,55 @@
-Return-Path: <linux-kernel+bounces-371802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D417E9A407A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC47F9A407F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5080FB21F13
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:53:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CD11C21999
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DA11FF5E6;
-	Fri, 18 Oct 2024 13:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E35C1D9686;
+	Fri, 18 Oct 2024 13:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="heBy3+lz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyTfWsGC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751AB1EE022
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B8F2010EE;
+	Fri, 18 Oct 2024 13:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729259587; cv=none; b=fJcPqwiTnszl+DJtc5MxiVAo/o3UxleUdvVkUjwxyODHxMCLrwYXAmJo9EYjC4lySeYmPqbjn9FfaWDGHYCKg8FPHWFnLNyIIM7kYYlYrcvPFzIHgHnzW2lysK0uF9lYOLogmu6HdLA5jWHLIVmMqupKynFjYi/L5N3uKm7Z90Y=
+	t=1729259595; cv=none; b=oju76S2IzHFfTFOEFuvdcsk4wGzCkcM4ageTeC//acMnw2kGCAW8uRnUf9TdcPgDfa35Kmdr59WMVbWrv7zOEmMcZB29TlbUjIX/43s723HiYMp9dBd1u2z2ZE9ennA33thM3rubw7znJ28Pg5ihTXJ+Ic1BImIUCJsFaanHXqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729259587; c=relaxed/simple;
-	bh=+pUqJ3djmbey5TSUtiG526xMXDdGeCWo+FHB78sE/JI=;
+	s=arc-20240116; t=1729259595; c=relaxed/simple;
+	bh=f1mO30JIws68FKWhn6Nc99NCDoEbGvfLG0lKrfaS32A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a5h6jMpm7XHSPyNbU7AMFuaDXUMRs/T3jgsN+9RVOKLnVXiggKyxH0q3oQuPu49H/izFgE1zWiFGavxvdLbbKXUTtmS5/9tJ//iPyu1He4LknBo953xDQuc9n9id+aLuqZixCAGfJRtMvXLdh0t23dDSmN9mV52+b6lOxkJ0hAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=heBy3+lz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729259584;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3MdTWV2aPXX7qYLVHT7xAeOS8FRxLhj6WL39+1SSrXE=;
-	b=heBy3+lzTuB7hQ5meYvMl4jD7IO/1YVuALodqdRxRRbTmXSKRBpEfWRYc+ZnnJZ13p+VPd
-	/agRAMuD4K5vFAwvnqWHHc37vfHULbCAf0zXpXEHvVCSdphKzxqTFmzKunQqoDypZD/UiD
-	WpzwzdX6HHzqbJwmDkp+D3r8NPopw24=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-317-vkadPesGPGSnk3vtBPuUeg-1; Fri,
- 18 Oct 2024 09:52:58 -0400
-X-MC-Unique: vkadPesGPGSnk3vtBPuUeg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E918319560B8;
-	Fri, 18 Oct 2024 13:52:54 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.28])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7518A1955E94;
-	Fri, 18 Oct 2024 13:52:51 +0000 (UTC)
-Date: Fri, 18 Oct 2024 21:52:47 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Gregory Price <gourry@gourry.net>, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	bhelgaas@google.com, ilpo.jarvinen@linux.intel.com,
-	mika.westerberg@linux.intel.com, ying.huang@intel.com,
-	tglx@linutronix.de, takahiro.akashi@linaro.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] resource,kexec: walk_system_ram_res_rev must retain
- resource flags
-Message-ID: <ZxJoLxyfAHxd18UM@MiWiFi-R3L-srv>
-References: <20241017190347.5578-1-gourry@gourry.net>
- <ZxHFgmHPe3Cow2n8@MiWiFi-R3L-srv>
- <ZxJTDq-PxxxIgzfv@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ya8uDGRwMPBnNRiJd3OQIJ9Slpxv5s/VQWHSyf5Q2T7UQN3J17BkKH1piqoyfCC6PmSUmSw2uKAxLQTdKajjZbdG+rhAlV3W8m2XnulxlSrCw5cNrJPgkJf2OGCainrZZwrAEbPmjfcYoO2l/xHGLz4dMKuqA0sI9/evznvncEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyTfWsGC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EFDDC4CEC3;
+	Fri, 18 Oct 2024 13:53:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729259595;
+	bh=f1mO30JIws68FKWhn6Nc99NCDoEbGvfLG0lKrfaS32A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pyTfWsGCvrdNvdtdP2v6mowNQTpwkQRy1kwWzwgc3kquMjvTdL8u94RgZFLdK4vSD
+	 HFaF4AKdHwg+wkTnNR0+tHf7JnFfKvMWE//kbzEAxCjELsLD7oNdlLn80YQD70/1pY
+	 osYLDyxauLpolayHu+A5WzM1jwdi0Y/2ohKHUsNVZpx8Y4hC1SG3XoU0S5cuhhA/fv
+	 LSOjOF6pZlJsz7i8Wp3DLHVv/qeV5FbaXuZkc43NQ4p+jhzNNGtkx/3Hij1Npk3iO4
+	 Lt+ykN012RxRQqCxLzlEk2dOIATygV9Y+KnwYU3OVtkBZ3U6l+TVYrFb67IN0iObAN
+	 WWbtEQctklm0A==
+Date: Fri, 18 Oct 2024 08:53:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Wojciech Siudy <wojciech.siudy@nokia.com>
+Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, andi.shyti@kernel.org, peda@axentia.se
+Subject: Re: [PATCH v5 1/2] dt-bindings: i2c: pca954x: Add timeout reset
+ property
+Message-ID: <20241018135314.GA91900-robh@kernel.org>
+References: <20241018100338.19420-1-wojciech.siudy@nokia.com>
+ <20241018100338.19420-2-wojciech.siudy@nokia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,37 +58,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxJTDq-PxxxIgzfv@smile.fi.intel.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20241018100338.19420-2-wojciech.siudy@nokia.com>
 
-On 10/18/24 at 03:22pm, Andy Shevchenko wrote:
-> On Fri, Oct 18, 2024 at 10:18:42AM +0800, Baoquan He wrote:
-> > HI Gregory,
-> > 
-> > On 10/17/24 at 03:03pm, Gregory Price wrote:
-> > > walk_system_ram_res_rev() erroneously discards resource flags when
-> > > passing the information to the callback.
-> > > 
-> > > This causes systems with IORESOURCE_SYSRAM_DRIVER_MANAGED memory to
-> > > have these resources selected during kexec to store kexec buffers
-> > > if that memory happens to be at placed above normal system ram.
-> > 
-> > Sorry about that. I haven't checked IORESOURCE_SYSRAM_DRIVER_MANAGED
-> > memory carefully, wondering if res could be set as
-> > 'IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY' plus
-> > IORESOURCE_SYSRAM_DRIVER_MANAGED in iomem_resource tree.
-> > 
-> > Anyway, the change in this patch is certainly better. Thanks.
+On Fri, Oct 18, 2024 at 12:03:37PM +0200, Wojciech Siudy wrote:
+> For cases when the mux shares reset line with other chips we cannot
+> use it always when channel selection or deselection times out, because
+> it could break them without proper init/probe. The property is
+> necessary, because reset lines are board-specific.
 > 
-> Can we get more test cases in the respective module, please?
+> Signed-off-by: Wojciech Siudy <wojciech.siudy@nokia.com>
+> 
+> ---
+> Changelog:
+> v5:
+>   * Declare dependency of a new property
+> ---
+>  .../devicetree/bindings/i2c/i2c-mux-pca954x.yaml      | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml b/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml
+> index 9aa0585200c9..37882a5a8c87 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml
+> @@ -63,6 +63,11 @@ properties:
+>        necessary for example, if there are several multiplexers on the bus and
+>        the devices behind them use same I2C addresses.
+>  
+> +  i2c-mux-timeout-reset:
+> +    type: boolean
+> +    description: Sends reset pulse if channel selection or deselection times
+> +      out. Do not use if other chips share the same reset line.
 
-Do you mean testing CXL memory in kexec/kdump? No, we can't. Kexec/kdump
-test cases basically is system testing, not unit test or module test. It
-needs run system and then jump to 2nd kernel, vm can be used but it
-can't cover many cases existing only on baremetal. Currenly, Redhat's
-CKI is heavily relied on to test them, however I am not sure if system
-with CXL support is available in our LAB.
+If you have a reset GPIO for the mux, then why wouldn't just use it on 
+timeout? What happens if you timeout and don't have this property? Just 
+give up? 
 
-Not sure if I got you right.
+Does the timeout time need to be configurable?
 
+> +
+>    idle-state:
+>      description: if present, overrides i2c-mux-idle-disconnect
+>      $ref: /schemas/mux/mux-controller.yaml#/properties/idle-state
+> @@ -88,6 +93,9 @@ properties:
+>        register activates a channel to detect a stuck high fault. On fault the
+>        channel is isolated from the upstream bus.
+>  
+> +dependencies:
+> +  i2c-mux-timeout-reset: [ reset-gpios ]
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -146,6 +154,9 @@ examples:
+>              interrupt-parent = <&ipic>;
+>              interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
+>              interrupt-controller;
+> +            reset-gpios = <&gpio1 27 1>;
+> +            i2c-mux-idle-disconnect;
+> +            i2c-mux-timeout-reset;
+>              #interrupt-cells = <2>;
+>  
+>              i2c@2 {
+> -- 
+> 2.34.1
+> 
 
