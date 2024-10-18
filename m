@@ -1,123 +1,128 @@
-Return-Path: <linux-kernel+bounces-372056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B169A43DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:31:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F399A43EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0535E1C20DCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:31:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD811F2442B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707E4202F99;
-	Fri, 18 Oct 2024 16:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174FA2036F2;
+	Fri, 18 Oct 2024 16:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="sOBwxHxb"
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="CTLQDGbX"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37AE201101;
-	Fri, 18 Oct 2024 16:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4197165EFC;
+	Fri, 18 Oct 2024 16:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729269074; cv=none; b=cW0lSdOuPT6QH5ZXrdrrGry2+mCRH81ov3lmzA3SICtHgjKMK05lPS1AVdDBDopQ0UYXL+Z1c3WjXQlhO/h4MpNx33Ivyz6u7vH2SZGPbdid+Q/2nat5bmEiu9K/5ULdorbSKpilOu9hoehesgNYRI44nTf+CJ5FOpGHL/dOZt8=
+	t=1729269447; cv=none; b=LDGezMSZ4qvf68IQIbtS6/jqmWoqA8z0jLoP9fjNVfOeaohJgbrzot+W4IENOZoN5scOCH6/5dizNk6hXTbJSYbs0psm1jEk2KfMEFGf8AMALUxlJtKJnOO2zxyYtNlhOOpyRMO6BIa75URDbaEb7wQO/G2vmW8Xo6WX5/ByJpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729269074; c=relaxed/simple;
-	bh=UV9m2RmlJtqTlnUQp2aKeeN+tm4yh3EfqLba8gw5mS4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l3UcgvRaX9KYgxwTG+x9/e6UzVQkHFHXpgtjDtGXY3X3a9qi8De2OqovxnQwuAqjFlVfSNMjSIik7uy8ad94ntMtGfCXvDBwtRyeEEags+be6fZnl3FLVr2xc3GjoGtXV053rWaVyE9Jtk97xdd9MK23cDW8r+CCH7KbPUB4OCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=sOBwxHxb; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1729269073; x=1760805073;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=SIF+R0GxqMw9QllLZYdFrl95UfBvBRNbwU8vDZYn+OU=;
-  b=sOBwxHxbMuWQECwVJBZZ9IfgaIFJi4aPF5g5iABPaHALVmhADLiBJqJi
-   FpZoiszbOeMSR5JGfAXF0LGyev/4K8SvhbfPPGLlb/baNxCxWugb/7h8a
-   U2GF4CLd7je2QkJkMQ5PKTJ0PQoRypQQpFnnse3/ye8gEekuvrkNXIiV4
-   k=;
-X-IronPort-AV: E=Sophos;i="6.11,214,1725321600"; 
-   d="scan'208";a="436230573"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 16:31:09 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:39548]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.20.142:2525] with esmtp (Farcaster)
- id a7bbece1-89c9-424b-afb9-b45ea0e374ca; Fri, 18 Oct 2024 16:31:07 +0000 (UTC)
-X-Farcaster-Flow-ID: a7bbece1-89c9-424b-afb9-b45ea0e374ca
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 18 Oct 2024 16:31:07 +0000
-Received: from 6c7e67c6786f.amazon.com (10.187.170.44) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Fri, 18 Oct 2024 16:31:03 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <arnd@kernel.org>
-CC: <aleksander.lobakin@intel.com>, <arnd@arndb.de>, <chentao@kylinos.cn>,
-	<davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<lizetao1@huawei.com>, <netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH] ipmr: Don't mark ip6mr_rtnl_msg_handlers as __initconst
-Date: Fri, 18 Oct 2024 09:31:00 -0700
-Message-ID: <20241018163100.88905-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20241018151217.3558216-1-arnd@kernel.org>
-References: <20241018151217.3558216-1-arnd@kernel.org>
+	s=arc-20240116; t=1729269447; c=relaxed/simple;
+	bh=iznIP1CQ2RKWwk7uUDU5rLTH1EXRc5AplndOTJbAEBA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XyVENV110SmL3cjK9z5aMVPby1l6cH/Yl2x70Gq8JlUmvNCa2SKc3rhsQCA2NCZtEk2A38ojiBufMm8CaVkua6lmWR0s980gkQmjM2cJA/Ak7JYE79QTZ2GFR15euj70G523M/aEhvTbmq+PP8K0KUlRWHCk3BWgpviP+bjmp54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=CTLQDGbX; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id 12BBE177103; Fri, 18 Oct 2024 16:31:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1729269096; bh=iznIP1CQ2RKWwk7uUDU5rLTH1EXRc5AplndOTJbAEBA=;
+	h=Date:From:To:Subject:From;
+	b=CTLQDGbXDkiBfolwG5yy1jOH2Fff+uvYjb1Is94eWi1LnmBIfpW/BXWbxqIeK6yNB
+	 fydZIRBikSeJ054rYODTynf2YWUhSukOEh11jo+icPGS/kaJ0KkZkYGkSz8kuZp4Z0
+	 Nlm5B6df1mx4KIl7Q5RTiHYn9scohtbjyUVOdt7SslQEmwvt6z8KFCXv34BAw4Fw+e
+	 1yJW6NybxKZsWNqXCol9MsZ9pVOJjbTsTNOTv47aztpAble7lob+EsjsRhUnsubhig
+	 wEQGOGXFySGsB5DCV6QZWccTX8xi1YW1fBUVjzWbsbreSSMfO1ZjxVvTP10KApva0v
+	 cU/X1MBm6ihyw==
+Date: Fri, 18 Oct 2024 16:31:36 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: jason.wessel@windriver.com, daniel.thompson@linaro.org,
+	dianders@chromium.org, corbet@lwn.net, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation: English fixes in kgdb/kdb article
+Message-ID: <20241018163136.GA795979@lichtman.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D033UWA003.ant.amazon.com (10.13.139.42) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Arnd Bergmann <arnd@kernel.org>
-Date: Fri, 18 Oct 2024 15:12:14 +0000
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> This gets referenced by the ip6_mr_cleanup function, so it must not be
-> discarded early:
-> 
-> WARNING: modpost: vmlinux: section mismatch in reference: ip6_mr_cleanup+0x14 (section: .exit.text) -> ip6mr_rtnl_msg_handlers (section: .init.rodata)
-> ERROR: modpost: Section mismatches detected.
-> Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.
-> 
-> Fixes: 3ac84e31b33e ("ipmr: Use rtnl_register_many().")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Minor grammar and typos fixed in the kgdb/kdb article
 
-Hi,
+Signed-off-by: Nir Lichtman <nir@lichtman.org>
+---
+ Documentation/dev-tools/kgdb.rst | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-I posted this yesterday.
-https://lore.kernel.org/netdev/20241017174732.39487-1-kuniyu@amazon.com/
-
-Thanks
-
-
-> ---
->  net/ipv6/ip6mr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
-> index 437a9fdb67f5..f7892afba980 100644
-> --- a/net/ipv6/ip6mr.c
-> +++ b/net/ipv6/ip6mr.c
-> @@ -1367,7 +1367,7 @@ static struct pernet_operations ip6mr_net_ops = {
->  	.exit_batch = ip6mr_net_exit_batch,
->  };
->  
-> -static const struct rtnl_msg_handler ip6mr_rtnl_msg_handlers[] __initconst_or_module = {
-> +static const struct rtnl_msg_handler ip6mr_rtnl_msg_handlers[] = {
->  	{.owner = THIS_MODULE, .protocol = RTNL_FAMILY_IP6MR,
->  	 .msgtype = RTM_GETROUTE,
->  	 .doit = ip6mr_rtm_getroute, .dumpit = ip6mr_rtm_dumproute},
-> -- 
-> 2.39.5
+diff --git a/Documentation/dev-tools/kgdb.rst b/Documentation/dev-tools/kgdb.rst
+index f83ba2601e55..9e0e3f3235ef 100644
+--- a/Documentation/dev-tools/kgdb.rst
++++ b/Documentation/dev-tools/kgdb.rst
+@@ -75,11 +75,11 @@ supports it for the architecture you are using, you can use hardware
+ breakpoints if you desire to run with the ``CONFIG_STRICT_KERNEL_RWX``
+ option turned on, else you need to turn off this option.
+ 
+-Next you should choose one of more I/O drivers to interconnect debugging
++Next you should choose one of the I/O drivers to interconnect the debugging
+ host and debugged target. Early boot debugging requires a KGDB I/O
+ driver that supports early debugging and the driver must be built into
+ the kernel directly. Kgdb I/O driver configuration takes place via
+-kernel or module parameters which you can learn more about in the in the
++kernel or module parameters which you can learn more about in the
+ section that describes the parameter kgdboc.
+ 
+ Here is an example set of ``.config`` symbols to enable or disable for kgdb::
+@@ -201,7 +201,7 @@ Using loadable module or built-in
+ Configure kgdboc at runtime with sysfs
+ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+-At run time you can enable or disable kgdboc by echoing a parameters
++At run time you can enable or disable kgdboc by echoing the parameters
+ into the sysfs. Here are two examples:
+ 
+ 1. Enable kgdboc on ttyS0::
+@@ -374,10 +374,10 @@ default behavior is always set to 0.
+ Kernel parameter: ``nokaslr``
+ -----------------------------
+ 
+-If the architecture that you are using enable KASLR by default,
++If the architecture that you are using enables KASLR by default,
+ you should consider turning it off.  KASLR randomizes the
+-virtual address where the kernel image is mapped and confuse
+-gdb which resolve kernel symbol address from symbol table
++virtual address where the kernel image is mapped and confuses
++gdb which resolves addresses of kernel symbols from the symbol table
+ of vmlinux.
+ 
+ Using kdb
+@@ -631,8 +631,6 @@ automatically changes into kgdb mode.
+ 
+ 	kgdb
+ 
+-   Now disconnect your terminal program and connect gdb in its place
+-
+ 2. At the kdb prompt, disconnect the terminal program and connect gdb in
+    its place.
+ 
+@@ -749,7 +747,7 @@ The kernel debugger is organized into a number of components:
+    helper functions in some of the other kernel components to make it
+    possible for kdb to examine and report information about the kernel
+    without taking locks that could cause a kernel deadlock. The kdb core
+-   contains implements the following functionality.
++   implements the following functionality.
+ 
+    -  A simple shell
+ 
+-- 
+2.39.2
 
