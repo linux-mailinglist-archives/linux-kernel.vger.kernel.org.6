@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-370792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014A29A3226
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:41:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02449A3229
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD39B1F22FAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:41:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EBBDB2345F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A606757F3;
-	Fri, 18 Oct 2024 01:41:05 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BB97603A;
+	Fri, 18 Oct 2024 01:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0LqtmN9"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64343558BC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9493320E33E;
+	Fri, 18 Oct 2024 01:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729215665; cv=none; b=bPlAREpgaxI7INb7cSZyR2+6Db9qlrvhqN/ZRuRfJ+KF1Ll9NUF81gvg/iw0ziAMAP4AdoGcD7Q/RjCBU5sRFrtPv8ZB3A6FjkBUM4+40J7M0x/gD5u+5/uaNqVo9H1mkg2K4zHh18NWOnukhyAC9OH5S+yXcVHtSSy89wA1ikI=
+	t=1729215734; cv=none; b=BFSVoXnzxUynq0i/AfqwQX6rYC2fyEEI0CkBuUwzNc84Zz7UbTaoMJJcPqIi+h3+OoFqMyJlqX1/5cBpnNxG+TZUVgG8LesDJRlZrKgWFtW1tVPVKFGPUEyHXpUCuLPc1QrtxI5B1xjwb3EamevAzPKsWEo22D1vNPekAjNJZw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729215665; c=relaxed/simple;
-	bh=N8l/f02iagzexerYyu9z0+Jt6eIXb+EtgywlJde3mjE=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=es/XEF7zg1/kmip+vWh6b/lbPfzxHMJL4iIc2U8TIPsAOvjLtU0K7/CLtjH+GXq9sVocj01FiPl4hoIWn5YROZk/G7ceh+pE5+Try80awP+rPnLjbvvD+GUlRYeenSXiz1mwtX7xmI5d5ZZyAvIJBHEf59/YBjUTwHSsunfa0cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XV6pN6jkDz20qQy;
-	Fri, 18 Oct 2024 09:40:12 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id D2C731A0188;
-	Fri, 18 Oct 2024 09:40:58 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 18 Oct 2024 09:40:58 +0800
-Subject: Re: [PATCH RFC] ubifs: Fix use-after-free in ubifs_tnc_end_commit
-To: Waqar Hameed <waqar.hameed@axis.com>
-CC: Richard Weinberger <richard@nod.at>, Sascha Hauer
-	<s.hauer@pengutronix.de>, <kernel@axis.com>, <linux-mtd@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <1225b9b5bbf5278e5ae512177712915f1bc0aebf.1728570925.git.waqar.hameed@axis.com>
- <5173d3d2-4a6b-8b0b-c8f7-8034c9763532@huawei.com> <pnd7ca9r0pt.fsf@axis.com>
- <239af2ee-c18d-414f-099f-2c82f98d9671@huawei.com> <pnd7ca6wp9r.fsf@axis.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <b3b80d1c-6c99-5d47-cba0-3be14ff79c36@huawei.com>
-Date: Fri, 18 Oct 2024 09:40:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1729215734; c=relaxed/simple;
+	bh=ALBNAZN1he27pKDTVzWnVA3I0wNwhnq8w84ZxJ/qpsY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D6AAO5vvIQ6B3L3+b1aSqH8hLZzZspMOblg0Dm8q7TV5EBwZNp8lhFpGP/MHxx5yc/FlSNz4FWSysZ91ZGPSBkNdebzJISOZSp0qtRxe0DLZx4X7ggosUNBp4+w4H8nwNAz4czKQM67Dey6KoeESdNJxABkSWwEVT5fSLYCBkWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m0LqtmN9; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5eb60f6b4a7so874015eaf.0;
+        Thu, 17 Oct 2024 18:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729215731; x=1729820531; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ALBNAZN1he27pKDTVzWnVA3I0wNwhnq8w84ZxJ/qpsY=;
+        b=m0LqtmN9NpC430FTFV8ZYhVNfSyA2v218TwP0H27HaurtjJKLxHhU44B/jPLufBr9K
+         j/mCGI8TTTvBd4GNIdQxN9ovJERMtNrHi2bBfKYWw9AdrIIM5B/6pB3BvWWMd8zv/zGq
+         oh60y6HJqJglKv8UzNyUPkczvIbCKNPW45pNLRhgezAkfxr3uAjuOWpun/sTiUZS0yw8
+         Ia9XPpWNWu5pO/i3MiSLQuzQRyyEPUKG6rdaekjPmM+UP6vtWiSwHIVup5rQIxMPEgJn
+         YL601HuztIREjM1f+WKvv5HQtb9+q2D3EgmZpGw7Q0fAXYO9d41ExbY0oKKZedtMJBLp
+         p7Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729215731; x=1729820531;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ALBNAZN1he27pKDTVzWnVA3I0wNwhnq8w84ZxJ/qpsY=;
+        b=Jv7Bp62WFSyv+hxs0N4ak7+pZ7qFOvNuRJOx29hpWg16zz11ORQ+yF9yTtKIABCl3+
+         xmpbFZ1zCHK/gYaLQV9qCzdx8Y4f3asP1qHXTWHByxi9kk3ZqvbMsHrhIhlJXty/VYwW
+         jLA1CSRe3eecPeIDb2byKA16TitJM0xjMo3d/o+72GAHTNJGmeB35ulcQzAWfQsJjXKu
+         VgqbKE8OD7UgmnpmVrnlTD+wPySiJCPt5gQ2VUe1V4B82vcSx1ZYs6PKFscoqXBK8qdB
+         E8nZHrW1QNsb70Tbxp11SBVY67iyNAgkJHdc0TEHH9K4Wh/FTpb/cb4Go7k84Y/jPIU6
+         q4OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7o9stuc41noxIdrSrsSE6jQAqZkstYnuyKp8ZFNEofd201Eqf5Xt+teqWA+OgsRoQ4jK6v1wLZU1qzxns@vger.kernel.org, AJvYcCU8bsVE3M7SF1/JdfgyBBAQG9ZE6QBkVazl2VRuxxpF692CwlWREIRXZsySwHauFS5qhB2CpfmXqy0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxae3DG0/cS1FavFP1+VV7XnpJoQ9gXG/2knYAIgstzH093lhIr
+	gTADYd9Ip9/HAvKRUjC1ukhvAyiKWFGyx6Mu9S6nYZopo7U6Q4ygmS8TDYcHwPPA06q+R9ydfvP
+	bRu4u9YhQ/xpXnwJuu416m/k9bCQ=
+X-Google-Smtp-Source: AGHT+IHJjCTRnPMrusLOIaHmBpBSy+NjPS6XJDDYs16C/0iIeMg2T9ywou/03DYS7m7vtEiBM+sbqx0r98cYV3QsA/c=
+X-Received: by 2002:a05:6871:3a08:b0:277:eb15:5c60 with SMTP id
+ 586e51a60fabf-2892c24d6aamr686215fac.10.1729215731580; Thu, 17 Oct 2024
+ 18:42:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <pnd7ca6wp9r.fsf@axis.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+References: <20241017151624.3532430-1-dzm91@hust.edu.cn>
+In-Reply-To: <20241017151624.3532430-1-dzm91@hust.edu.cn>
+From: Dongliang Mu <mudongliangabcd@gmail.com>
+Date: Fri, 18 Oct 2024 09:41:45 +0800
+Message-ID: <CAD-N9QUU5QC3L=nqJfSjsb75CWT3-Au48jVNuBiczofbr5zukA@mail.gmail.com>
+Subject: Re: [PATCH] docs/zh_CN: update the translation of process/coding-style.rst
+To: Dongliang Mu <dzm91@hust.edu.cn>
+Cc: si.yanteng@linux.dev, Alex Shi <alexs@kernel.org>, 
+	Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>, 
+	Thorsten Blum <thorsten.blum@toblux.com>, SeongJae Park <sj@kernel.org>, 
+	Federico Vaga <federico.vaga@vaga.pv.it>, hust-os-kernel-patches@googlegroups.com, 
+	Miguel Ojeda <ojeda@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-ÔÚ 2024/10/18 2:36, Waqar Hameed Ð´µÀ:
-> On Wed, Oct 16, 2024 at 10:11 +0800 Zhihao Cheng <chengzhihao1@huawei.com> wrote:
-> 
-> [...]
-> 
->> BTW, what is the configuration of your flash?(eg. erase size, page size)?
-> 
-> $ mtdinfo /dev/mtd2
->    mtd2
->    Name:                           firmware
->    Type:                           nand
->    Eraseblock size:                131072 bytes, 128.0 KiB
->    Amount of eraseblocks:          1832 (240123904 bytes, 229.0 MiB)
->    Minimum input/output unit size: 2048 bytes
->    Sub-page size:                  2048 bytes
->    OOB size:                       64 bytes
->    Character device major/minor:   90:4
->    Bad blocks are allowed:         true
->    Device is writable:             true
-> 
-> $ ubinfo /dev/ubi0_0
->    Volume ID:   0 (on ubi0)
->    Type:        dynamic
->    Alignment:   1
->    Size:        661 LEBs (83931136 bytes, 80.0 MiB)
->    State:       OK
->    Name:        test-vol
->    Character device major/minor: 244:1
-> 
-> [...]
-
-Thanks, I will change my nandsim configurations to generate a mtd device 
-the same model.
-> 
->> Well, let's do a preliminary analysis.
->> The znode->cparent[znode->ciip] is a freed address in write_index(), which
->> means:
->> 1. 'znode->ciip' is valid, znode->cparent is freed by tnc_delete, however znode
->> cannot be freed if znode->cnext is not NULL, which means:
->>    a) 'znode->cparent' is not dirty, we should add an assertion like
->>    ubifs_assert(c, ubifs_zn_dirty(znode->cparent)) in get_znodes_to_commit().
->>    Note, please check that 'znode->cparent' is not NULL before the assertion.
->>    b) 'znode->cparent' is dirty, but it is not added into list 'c->cnext', we
->>    should traverse the entire TNC in get_znodes_to_commit() to make sure that all
->>    dirty znodes are collected into list 'c->cnext', so another assertion is
->>   needed.
->> 2. 'znode->ciip' is invalid, and the value beyonds the memory area of
->> znode->cparent. All znodes are allocated with size of 'c->max_znode_sz', which
->> means that 'znode->ciip' exceeds the 'c->fantout', so we can add an assertion
->> like ubifs_assert(c, znode->ciip < c->fantout) in get_znodes_to_commit().
->>
->> That's what I can think of, are there any other possibilities?
-> 
-> I looked a little more at `get_znodes_to_commit()` when adding the
-> asserts you suggest, and I have a question: what happens when
-> `find_next_dirty()` returns `NULL`? In that case
-> 
-> ```
-> znode->cnext = c->cnext;
-> ```
-> 
-> but `znode->cparent` and `znode->ciip` are not updated. Shouldn't they?
-
-Good thinking.
-According to the implementation of find_next_dirty(), the order of dirty 
-znodes collection is bottom-up, which means that the last dirty znode is 
-the root znode, so it doesn't have a parent. You can verify that by 
-adding assertion to check whether the last dirty znode is the root.
-> 
-> By the way, I left a test running, and it actually triggered the same
-> KASAN report after 800 iterations... So we now at least know that this
-> patch doesn't indeed fix the problem.
-> 
-> I also found another minor thing regarding the update of `cnt` in
-> `get_znodes_to_commit`. I'll send a separate patch for that.
-> .
-> 
-
+T24gVGh1LCBPY3QgMTcsIDIwMjQgYXQgMTE6MTjigK9QTSBEb25nbGlhbmcgTXUgPGR6bTkxQGh1
+c3QuZWR1LmNuPiB3cm90ZToNCj4NCj4gVXBkYXRlIHRvIGNvbW1pdCBjNWQ0MzZmMDVhM2YgKCJk
+b2NzL3Byb2Nlc3M6IGZpeCB0eXBvcyIpDQo+DQo+IHNjcmlwdHMvY2hlY2t0cmFuc3RhdHVzLnB5
+IHJlcG9ydHM6DQo+DQo+IERvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL3Byb2Nlc3Mv
+Y29kaW5nLXN0eWxlLnJzdA0KPiBjb21taXQgYzVkNDM2ZjA1YTNmICgiZG9jcy9wcm9jZXNzOiBm
+aXggdHlwb3MiKQ0KPiBjb21taXQgODJiODAwMGMyOGI1ICgibmV0OiBkcm9wIHNwZWNpYWwgY29t
+bWVudCBzdHlsZSIpDQo+IDIgY29tbWl0cyBuZWVkcyByZXNvbHZpbmcgaW4gdG90YWwNCg0KU29y
+cnksIGd1eXMuIEkgbWlzdHlwZWQgdGhlIHNjcmlwdCBuYW1lIGluIHRoZSB0cmFuc2xhdGlvbiB1
+cGRhdGUNCnBhdGNoZXMgYW5kIEkgc2VudCB2MiBwYXRjaGVzIG9mIHRoZW0gc29vbi4NCg0KPg0K
+PiBTaWduZWQtb2ZmLWJ5OiBEb25nbGlhbmcgTXUgPGR6bTkxQGh1c3QuZWR1LmNuPg0KPiAtLS0N
+Cj4gIC4uLi90cmFuc2xhdGlvbnMvemhfQ04vcHJvY2Vzcy9jb2Rpbmctc3R5bGUucnN0ICAgICAg
+IHwgMTEgLS0tLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMSBkZWxldGlvbnMoLSkNCj4N
+Cj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL3Byb2Nlc3Mv
+Y29kaW5nLXN0eWxlLnJzdCBiL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL3Byb2Nl
+c3MvY29kaW5nLXN0eWxlLnJzdA0KPiBpbmRleCAxMGI5Y2I0ZjZhNjUuLjA0ODRkMGM2NWMyNSAx
+MDA2NDQNCj4gLS0tIGEvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04vcHJvY2Vzcy9j
+b2Rpbmctc3R5bGUucnN0DQo+ICsrKyBiL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NO
+L3Byb2Nlc3MvY29kaW5nLXN0eWxlLnJzdA0KPiBAQCAtNTYwLDE3ICs1NjAsNiBAQCBEb2N1bWVu
+dGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9kb2MtZ3VpZGUvaW5kZXgucnN0IOWSjCBzY3JpcHRz
+L2tlcm5lbC1kb2Mg44CCDQo+ICAgICAgICAgICogd2l0aCBiZWdpbm5pbmcgYW5kIGVuZGluZyBh
+bG1vc3QtYmxhbmsgbGluZXMuDQo+ICAgICAgICAgICovDQo+DQo+IC3lr7nkuo7lnKggbmV0LyDl
+kowgZHJpdmVycy9uZXQvIOeahOaWh+S7tu+8jOmmlumAieeahOmVvyAo5aSa6KGMKSDms6jph4rp
+o47moLzmnInkupvkuI3lkIzjgIINCj4gLQ0KPiAtLi4gY29kZS1ibG9jazo6IGMNCj4gLQ0KPiAt
+ICAgICAgIC8qIFRoZSBwcmVmZXJyZWQgY29tbWVudCBzdHlsZSBmb3IgZmlsZXMgaW4gbmV0LyBh
+bmQgZHJpdmVycy9uZXQNCj4gLSAgICAgICAgKiBsb29rcyBsaWtlIHRoaXMuDQo+IC0gICAgICAg
+ICoNCj4gLSAgICAgICAgKiBJdCBpcyBuZWFybHkgdGhlIHNhbWUgYXMgdGhlIGdlbmVyYWxseSBw
+cmVmZXJyZWQgY29tbWVudCBzdHlsZSwNCj4gLSAgICAgICAgKiBidXQgdGhlcmUgaXMgbm8gaW5p
+dGlhbCBhbG1vc3QtYmxhbmsgbGluZS4NCj4gLSAgICAgICAgKi8NCj4gLQ0KPiAg5rOo6YeK5pWw
+5o2u5Lmf5piv5b6I6YeN6KaB55qE77yM5LiN566h5piv5Z+65pys57G75Z6L6L+Y5piv6KGN55Sf
+57G75Z6L44CC5Li65LqG5pa55L6/5a6e546w6L+Z5LiA54K577yM5q+P5LiA6KGMDQo+ICDlupTl
+j6rlo7DmmI7kuIDkuKrmlbDmja4gKOS4jeimgeS9v+eUqOmAl+WPt+adpeS4gOasoeWjsOaYjuWk
+muS4quaVsOaNrinjgILov5nmoLfkvaDlsLHmnInnqbrpl7TmnaXkuLrmr4/kuKrmlbDmja4NCj4g
+IOWGmeS4gOauteWwj+azqOmHiuadpeino+mHiuWug+S7rOeahOeUqOmAlOS6huOAgg0KPiAtLQ0K
+PiAyLjQzLjANCj4NCj4NCg==
 
