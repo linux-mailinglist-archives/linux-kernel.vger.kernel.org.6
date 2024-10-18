@@ -1,232 +1,166 @@
-Return-Path: <linux-kernel+bounces-372388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 176DA9A47FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:30:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 537BD9A4804
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5237BB24BD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06ACC1F24C04
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02CC2040AD;
-	Fri, 18 Oct 2024 20:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC0020ADC6;
+	Fri, 18 Oct 2024 20:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CKhd7moi"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="NE7xqnXO"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00674205AD0
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C09C205AD0;
+	Fri, 18 Oct 2024 20:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729283414; cv=none; b=JJyvwP9AG0IVEgkvYcwvzn0eABm6eb2ikCmVOdr+hx/qR+I5DxT97iXE4nLFCCXxuHSTm6Cq+am93DfWPuIJrT4tUZCW4J9+kjrXmX0hKmUlRjxmSqiu1zNVbCz2polvMpyQVL1O6O+bG1lDXnKpcoC+ZnSQ1+DRrmB3bI0vRgg=
+	t=1729283477; cv=none; b=KaJjbLH91eRR4C31ptwvfVeJOoPjQL70s8yQ6Ct2wjuP0qqWodHD63vUVyK2ELIGqABLT/tfw06O/fNBhXcjKgZGeNXp5XBvjkD/KTu8k94UGzcmQOMbP9XfZe/U41th52AmIvSZaEszNEZPxEhgx8O9gabQ3fUp9EoEQeq2fXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729283414; c=relaxed/simple;
-	bh=D0gG+t9UDD61HRs9Xmvdjbehwa6Ib/Pm8rzB8pZW0EE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rYS78QuPJg2PC8PfTw6VWk4H8PbW8MhjPG1Ed6GuwuAthtXhwxkaW9kudwTawNJ/gsFLi9L3U7pjJYPpHkUCWE+7AUdEn9j1mFzquNLDXoNIn1Pf7AgH34OBjaZVMFV4WSoajxkPSU6SX5MWwCih9YTJhdKYKAzMJTwNVo/cr98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CKhd7moi; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-83aad4a05eeso100251839f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:30:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729283411; x=1729888211; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4Eb/bjYAyoVfge6Z8/C8u0lCt3wwAWzH/nDkL3fIlcc=;
-        b=CKhd7moi/kgNIcp7p73xmbxVsuTTxjhrb6ndfjm8XLpGVrwQPgQW7F1CkNCXaXyLUr
-         Y1gpOF4FqxRszFunbsICaNxl52XpiyG2yyuj5TyOJtsv4LFcMfV8rscVsD/gLtN8O/la
-         gshBPVJ2R5u2IuSd6nh9g3nWK7tW/YaYzqsSQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729283411; x=1729888211;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Eb/bjYAyoVfge6Z8/C8u0lCt3wwAWzH/nDkL3fIlcc=;
-        b=H3KvwUsJu1PaWHjrnGSrVSxI42+BJhTbmqQ6Mj6mf7cV6tq26F9ELP2c/7vMaEu8Gy
-         bZ5vs+kX2kWq/fcnkd37NUu3mQ7LLQnrQMMhnmWHmyXi8sCBK4MOi/3WUmnB7aE0P1MH
-         XEH/soecz8/eY/NhtVODxmZkmDUM49gq5PCtPpPtz6FpfHf7kll69i6ivv+AhUpL4TDB
-         rMk99DgHMgArrsaOTU8p9njaYoZr2+UykAUSZinUt/RZDewnEkD+ULVWqxzFNhgwhHjX
-         kujgCifnmaHT/hJ32gxsSwLSsLTDwtP92MrUYBF4S0dvh2voxC/I7W4K1IN+motgOGsO
-         fQBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUKIW39rK/uUJ9aFhKA2nca4IpBj+obCkhjEGUIGrauh5OIpObKGnQc9lbH6OISdFQDC6DWWxlqll1Wms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZzK2+9pYb/RAa+h1b4L1aWsPrnJletLMdlEivWqacgCXmvpV+
-	HKLdmFy5+tXFw2rgQp6pG6elLs5Y6L5HgXRwlWO58/NHnuwOc5tZmqK7SrXCR8g=
-X-Google-Smtp-Source: AGHT+IHtME0xh1bwpwUpGOSzAWusPxbbyxBma0gMXzwpjVl6rP5b2Bp9df1W13qPVhmxiPTyD4G2jw==
-X-Received: by 2002:a05:6602:13d4:b0:83a:a25a:cfaf with SMTP id ca18e2360f4ac-83aba5c097amr415765139f.3.1729283410856;
-        Fri, 18 Oct 2024 13:30:10 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc10c6b47asm595342173.162.2024.10.18.13.30.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 13:30:10 -0700 (PDT)
-Message-ID: <59e6d89e-9b5b-4dd9-9c05-2acd0a51d3af@linuxfoundation.org>
-Date: Fri, 18 Oct 2024 14:30:09 -0600
+	s=arc-20240116; t=1729283477; c=relaxed/simple;
+	bh=jxYSW0+WyHMobClrGQdCqB0UMbeyFIjEC0GrZW/fC9Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T2RHrw4Fy+U+RsYTfy6S5LrB0Hr0OYh3JypXRslXKTytPrXgLnHCSIGCzB1ZXA1PacqDHveu7a9Jw8o3BAQPyc7vdRQJ0Zhd1y+MxvmuJo0aJKsEgA2HeijEWzDZ9f+f07VWZZnGBM8orOAGanca5oGQjo4KxhMq4xSdqHzCYAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=NE7xqnXO; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IA8c1L032610;
+	Fri, 18 Oct 2024 13:31:06 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=A0Q/vfb2zuwjqqaxDrXkBkV
+	HcAMRGfStVQ8Ldd9N6bE=; b=NE7xqnXOtjY0k5PHMefhNvx4Rd4AJwMWVI7EmVD
+	Y/CsI7mCJKZKT/ypxkVzzd7/K747NJ0MKM1qGhQ++JN06YaebuliZVFgbAQ1tj53
+	Aig/QozkCUB9tuvNzVn51/eN90ZD/3WxuzeWg3NuCsLU2baK4A+YyNew97HmvuFi
+	bJx/ir8Jd29WebGvZpNofYZvJxgYyqgzioi0PLnjiXMZyC4l1UTPCzuASJ6+/OzX
+	UjN5gW5hqXf5/VcriYm1GGVo+SgVUHTrJJnkZvnaHPikz9QaFEn8pDk2de014Z7b
+	vP7VNfEbRhG8od5BwFhB4KX75rGrfDWBjVCBVMouNV3wGvQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42bnnbhbp0-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 13:31:06 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 18 Oct 2024 13:31:05 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 18 Oct 2024 13:31:05 -0700
+Received: from hyd1425.marvell.com (unknown [10.29.37.152])
+	by maili.marvell.com (Postfix) with ESMTP id 11E313F704C;
+	Fri, 18 Oct 2024 13:31:00 -0700 (PDT)
+From: Sai Krishna <saikrishnag@marvell.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gakula@marvell.com>, <lcherian@marvell.com>, <jerinj@marvell.com>,
+        <hkelam@marvell.com>, <sbhatta@marvell.com>
+CC: Sai Krishna <saikrishnag@marvell.com>
+Subject: [net-next PATCH 0/6] CN20K silicon with mbox support
+Date: Sat, 19 Oct 2024 02:00:52 +0530
+Message-ID: <20241018203058.3641959-1-saikrishnag@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
-To: Jeff Xu <jeffxu@chromium.org>, Mark Brown <broonie@kernel.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- pedro.falcato@gmail.com, willy@infradead.org, vbabka@suse.cz,
- Liam.Howlett@oracle.com, rientjes@google.com, keescook@chromium.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <CABi2SkUpCf+aOa2sPED8CosG5ccqjFd7ouot8gXi9ECqsHiZhw@mail.gmail.com>
- <4944ce41-9fe1-4e22-8967-f6bd7eafae3f@lucifer.local>
- <CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com>
- <CABi2SkVEMRHV3swrbb6M5RA6GQpFVVx855CGwdQ1xiz3tygiqA@mail.gmail.com>
- <f9b9422c-216d-422e-94b4-d8814b0b277e@lucifer.local>
- <CABi2SkWAv4LXvR1Wb1e31eyZ35JfyieXhDOq1bp_ZvHPLLg-qA@mail.gmail.com>
- <e0f440b0-5a45-4218-8c51-27f848c0617b@lucifer.local>
- <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
- <1f8eff74-005b-4fa9-9446-47f4cdbf3e8d@sirena.org.uk>
- <CABi2SkV38U-ZCAq9W091zYkOM1m5e-C27YmVXdTCi-t+p_W_fQ@mail.gmail.com>
- <a2652ed4-ea8b-4b56-bac6-6479b3df6c14@sirena.org.uk>
- <CABi2SkVF3OtRcq9cCgLh_hOjxRnWq0owypw++xodrEfm=dt_qA@mail.gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <CABi2SkVF3OtRcq9cCgLh_hOjxRnWq0owypw++xodrEfm=dt_qA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: eaZWN6p9uiWHU477aeG15V6wP_JKPE4W
+X-Proofpoint-ORIG-GUID: eaZWN6p9uiWHU477aeG15V6wP_JKPE4W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 10/18/24 13:32, Jeff Xu wrote:
-> Hi Mark
-> 
-> On Fri, Oct 18, 2024 at 11:37 AM Mark Brown <broonie@kernel.org> wrote:
->>
->> On Fri, Oct 18, 2024 at 11:06:20AM -0700, Jeff Xu wrote:
->>> On Fri, Oct 18, 2024 at 6:04 AM Mark Brown <broonie@kernel.org> wrote:
->>
->>>> The problem is that the macro name is confusing and not terribly
->>>> consistent with how the rest of the selftests work.  The standard
->>>> kselftest result reporting is
->>
->>>>          ksft_test_result(bool result, char *name_format, ...);
->>>>
->>>> so the result of the test is a boolean flag which is passed in.  This
->>>> macro on the other hand sounds like a double negative so you have to
->>>> stop and think what the logic is, and it's not seen anywhere else so
->>>> nobody is going to be familiar with it.  The main thing this is doing is
->>>> burying a return statement in there, that's a bit surprising too.
->>
->>> Thanks for explaining the problem, naming is hard. Do you have a
->>> suggestion on a better naming?
->>
->> Honestly I'd probably deal with this by refactoring such that the macro
->> isn't needed and the tests follow a pattern more like:
->>
->>          if (ret != 0) {
->>                  ksft_print_msg("$ACTION failed with %d\n", ret);
->>                  return false;
->>          }
->>
-> So expanding the macro to actually code ?
-> But this makes the meal_test  quite large with lots of "if", and I
-> would rather avoid that.
-> 
-> 
->> when they encouter a failure, the pattern I sketched in my earlier
->> message, or switch to kselftest_harness.h (like I say I don't know if
->> the fork()ing is an issue for these tests).  If I had to have a macro
->> it'd probably be something like mseal_assert().
->>
-> I can go with mseal_assert, the original macro is used  by mseal_test
-> itself, and only intended as such.
-> 
-> If changing name to mseal_assert() is acceptable, this seems to be a
-> minimum change and I'm happy with that.
-> 
->>>> I'll also note that these macros are resulting in broken kselftest
->>>> output, the name for a test has to be stable for automated systems to be
->>>> able to associate test results between runs but these print
->>
->> ....
->>
->>>> which includes the line number of the test in the name which is an
->>>> obvious problem, automated systems won't be able to tell that any two
->>>> failures are related to each other never mind the passing test.  We
->>>> should report why things failed but it's better to do that with a
->>>> ksft_print_msg(), ideally one that's directly readable rather than
->>>> requiring someone to go into the source code and look it up.
->>
->>> I don't know what  the issue you described is ? Are you saying that we
->>> are missing line numbers ? it is not. here is the sample of output:
->>
->> No, I'm saying that having the line numbers is a problem.
->>
->>> Failure in the second test case from last:
->>
->>> ok 105 test_munmap_free_multiple_ranges
->>> not ok 106 test_munmap_free_multiple_ranges_with_split: line:2573
->>> ok 107 test_munmap_free_multiple_ranges_with_split
->>
->> Test 106 here is called "test_munmap_free_multiple_ranges_with_split:
->> line:2573" which automated systems aren't going to be able to associate
->> with the passing "test_munmap_free_multiple_ranges_with_split", nor with
->> any failures that occur on any other lines in the function.
->>
-> I see. That will happen when those tests are modified and line number
-> changes. I could see reasoning for this argument, especially when
-> those tests are flaky and get updated often.
-> 
-> In practice, I hope any of those kernel self-test failures should get
-> fixed immediately, or even better, run before dev submitting the patch
-> that affects the mm area.
-> 
-> Having line number does help dev to go to error directly, and I'm not
-> against filling in the "action" field, but you might also agree with
-> me, finding unique text for each error would require some decent
-> amount of time, especially for large tests such as mseal_test.
-> 
->>> I would image the needs of something similar to FAIL_TEST_IF_FALSE is
->>> common in selftest writing:
->>
->>> 1> lightweight enough so dev can pick up quickly and adapt to existing
->>> tests, instead of rewriting everything from scratch.
->>> 2> assert like syntax
->>> 3> fail the current test case, but continue running the next test case
->>> 4> take care of reporting test failures.
->>
->> Honestly this just sounds and looks like kselftest_harness.h, it's
->> ASSERT_ and EXPECT_ macros sound exactly like what you're looking for
->> for asserts.  The main gotchas with it are that it's not particularly
->> elegant for test cases which need to enumerate system features (which I
->> don't think is the case for mseal()?) and that it runs each test case in
->> a fork()ed child which can be inconvenient for some tests.  The use of
->> fork() is because that makes the overall test program much more robust
->> against breakage in individual tests and allows things like per test
->> timeouts.
-> OK, I didn't know that ASSERT_ and EXPECT_ were part of the test fixture.
-> 
-> If I  switch to test_fixture, e,g, using TEST(test_name)
-> 
-> how do I pass the "seal" flag to it ?
+CN20K is the next generation silicon in the Octeon series with various
+improvements and new features.
 
-Doesn't TH_LOG() work for you to pass arguments?
+Along with other changes the mailbox communication mechanism between RVU
+(Resource virtualization Unit) SRIOV PFs/VFs with Admin function (AF) has
+also gone through some changes.
 
-> e.g. how do I run the same test twice, first seal = true, and second seal=false.
-> 
->          test_seal_mmap_shrink(false);
->          test_seal_mmap_shrink(true);
-> 
-> The example [1], isn't clear about that.
-> 
-> https://www.kernel.org/doc/html/v4.19/dev-tools/kselftest.html#example
-> 
-> Thanks
-> 
+Some of those changes are
+- Separate IRQs for mbox request and response/ack.
+- Configurable mbox size, default being 64KB.
+- Ability for VFs to communicate with RVU AF instead of going through
+  parent SRIOV PF.
 
-thanks,
--- Shuah
+Due to more memory requirement due to configurable mbox size, mbox memory
+will now have to be allocated by
+- AF (PF0) for communicating with other PFs and all VFs in the system.
+- PF for communicating with it's child VFs.
+
+On previous silicons mbox memory was reserved and configured by firmware.
+
+This patch series add basic mbox support for AF (PF0) <=> PFs and
+PF <=> VFs. AF <=> VFs communication and variable mbox size support will
+come in later.
+
+Patch #1 Supported co-existance of bit encoding PFs and VFs in 16-bit
+         hardware pcifunc format between CN20K silicon and older octeon
+         series. Also exported PF,VF masks and shifts present in mailbox
+         module to all other modules.
+
+Patch #2 Added basic mbox operation APIs and structures to support both
+         CN20K and previous version of silicons.
+
+Patch #3 This patch adds support for basic mbox infrastructure
+         implementation for CN20K silicon in AF perspective. There are
+         few updates w.r.t MBOX ACK interrupt and offsets in CN20k.
+         
+Patch #4 Added mbox implementation between NIC PF and AF for CN20K.
+
+Patch #5 Added mbox communication support between AF and AF's VFs.
+
+Patch #6 This patch adds support for MBOX communication between NIC PF and
+         its VFs.
+
+Sai Krishna (5):
+  octeontx2-af: CN20k basic mbox operations and structures
+  octeontx2-af: CN20k mbox to support AF REQ/ACK functionality
+  octeontx2-pf: CN20K mbox REQ/ACK implementation for NIC PF
+  octeontx2-af: CN20K mbox implementation for AF's VF
+  octeontx2-pf: CN20K mbox implementation between PF-VF
+
+Subbaraya Sundeep (1):
+  octeontx2: Set appropriate PF, VF masks and shifts based on silicon
+
+ .../ethernet/marvell/octeontx2/af/Makefile    |   3 +-
+ .../ethernet/marvell/octeontx2/af/cn20k/api.h |  34 ++
+ .../marvell/octeontx2/af/cn20k/mbox_init.c    | 423 ++++++++++++++++++
+ .../ethernet/marvell/octeontx2/af/cn20k/reg.h |  81 ++++
+ .../marvell/octeontx2/af/cn20k/struct.h       |  40 ++
+ .../net/ethernet/marvell/octeontx2/af/mbox.c  | 123 ++++-
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  13 +
+ .../net/ethernet/marvell/octeontx2/af/rvu.c   | 187 +++++---
+ .../net/ethernet/marvell/octeontx2/af/rvu.h   |  55 ++-
+ .../marvell/octeontx2/af/rvu_struct.h         |   6 +-
+ .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +-
+ .../ethernet/marvell/octeontx2/nic/cn10k.c    |  18 +-
+ .../ethernet/marvell/octeontx2/nic/cn10k.h    |   1 +
+ .../ethernet/marvell/octeontx2/nic/cn20k.c    | 254 +++++++++++
+ .../ethernet/marvell/octeontx2/nic/cn20k.h    |  17 +
+ .../marvell/octeontx2/nic/otx2_common.h       |  35 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 145 ++++--
+ .../ethernet/marvell/octeontx2/nic/otx2_reg.h |  49 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  44 +-
+ 19 files changed, 1383 insertions(+), 147 deletions(-)
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/api.h
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/mbox_init.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/reg.h
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/struct.h
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn20k.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn20k.h
+
+-- 
+2.25.1
 
 
