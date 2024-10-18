@@ -1,429 +1,370 @@
-Return-Path: <linux-kernel+bounces-371997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F9C9A4318
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:59:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1598A9A42C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543BC1C20E31
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36A581C22B11
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4643120262F;
-	Fri, 18 Oct 2024 15:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9748202656;
+	Fri, 18 Oct 2024 15:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="jZTjkjtu";
-	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="prSYL7Pv"
-Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AlgKX6FO";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="dOPGwpqr"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DA518E762
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A731FF60E;
+	Fri, 18 Oct 2024 15:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729267187; cv=fail; b=TqIhIpZNkS+q58dejV3jtqhDJnhI0hXosXbDmtSFCA6+uAjtzkqxQNoQ6Zi1fuNiuosJLwZb31UqDKifxVtHsrqjr+oqvobqWFlxbbP873aRNbzN6Ip6MerNia1r+fSWn+A2ridHCpagd7YF05qsQiWRPnjkYazXy5yApufYLWs=
+	t=1729266225; cv=fail; b=TFR3O4xMcjQX0eRoagnur6I2QBKjCimKKxBibgSHZkJmyM34dKdoeJADoA634ucVv3eWu/w00qS2rOYDyg6SGTy4+JgaxQLr0BJye/XPmCyFRnCl2gHMhL/Bqjvc3qiv4066rzgiirp/Zl4oAT8vgTGZsYsGS4ZVvjsKxYGkLs4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729267187; c=relaxed/simple;
-	bh=z6AqJcaAefyV1tPL2WZJtnKcFsff++OIpWit7uKF+bA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZpXEa9P8s4cTSBBAG5ZEf9C3D6xDm3IrSfTeG1gcm2tlgso1gJMJdFs9ePY8GbWplYWMDxOA4BxM7snM3s3N3rCdOo95XPAcT2DKRJcHpyxonLPFQvqYhVA8ZHne/UDtIr3NUEl2gx5tM3NLfoSZkuUNizMOnTo2dDjAKWXqfEc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=jZTjkjtu; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=prSYL7Pv; arc=fail smtp.client-ip=91.207.212.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
-	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ICP2Fx008181;
-	Fri, 18 Oct 2024 16:41:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	s=arc-20240116; t=1729266225; c=relaxed/simple;
+	bh=/ZmGG2ji8nmu7vsX1xwNxOyfqeQpKXUTqNNg8fBZWHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BGy69qQWoM/NdIV/VJpnuAJcSaStpz9BdG/82JI1ejpj+alY1f5/ssnxsYPdxlnsDclL1sAPkiLD5YqmPx7khCBfPMRzX0zrGXHRuEA9wip6QnFbzxRVnT3oCJRCIC0CHv8X1WFLbjcmlu8lNxPkkcRINXcK/2YZoyquMlHrFFE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=AlgKX6FO; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=dOPGwpqr; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IEBgiF019364;
+	Fri, 18 Oct 2024 15:42:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dk201812; bh=qHHwH7bI/YMEclJZwyZP4/j8V
-	tKd3sP5jx62wQm9xJU=; b=jZTjkjtuEDzdjkOUjWntofDlAjiH7xQoUf0CdbZZa
-	ki0BF1VRmJ845LxBwdVEHsG5pGACeENlojtjZlSacPI3Vx40qjhsJ3A92EY/geGf
-	hBPkx0u6ZZygq3XiyYtfWNHAn/RdQS9DceS/SVNdt0Ky3o2YFcqH6YO5vhuVN0g+
-	7GtKDVQG1bBxorzlGePDXR4CZo5VxxZRquYye09xNS+NHLBnGAGc+zwDueVBM3xA
-	ua+xkaeh9q9ie8LF0ozdlqj4WwNDO6gmKrYwTTPNa9aYCNBwGGixuYOtG6LWBNo+
-	G8PhKiHRu9zC7yrGvqS0g8sA6FFxNYLSnRAvPGgwRHlkQ==
-Received: from cwxp265cu008.outbound.protection.outlook.com (mail-ukwestazlp17010004.outbound.protection.outlook.com [40.93.68.4])
-	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 42a3ac2nwq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 16:41:41 +0100 (BST)
+	:references:subject:to; s=corp-2023-11-20; bh=fiQiWYPqYDW6eFU39d
+	rRWkrlGQ9fToajHbUUGfZJkWU=; b=AlgKX6FOSZkDYEFjph6QEwUgpAjQPplOCM
+	6oW8GMDdLkgM2toh0rpttWYPanA7uslEkZlMa+NB+RcakBJZXdQFEBh7W31m1A/q
+	h5QLL+uj+dyh5OUZ/b5GrLCMiMODvOWBW2ruylyR+36NRH+FTqMivQksZYJOGuGx
+	gHQWZyrk5rsXs7+rN9t8P8B2SteLoPCB3DYJ7cX077GyILeSjMQZkoP2pGpyKHaI
+	z5OW8R2szEGxcRMEfaSnxyoU4iRRvRmj6QwHZ5Pq+FwhOAXBlM33/061pmPpNKMu
+	4FL8Idl/IlYphTw7662UBaADLyhBh/dOguIoEiumHaFGeiKDrWBg==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427fhcrr5j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Oct 2024 15:42:16 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49IEd2jr010433;
+	Fri, 18 Oct 2024 15:42:15 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2172.outbound.protection.outlook.com [104.47.59.172])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 427fjj3v5x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Oct 2024 15:42:15 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t6BdCNbEem42cYPg5/b89wczlVWEIl4p1GFDWt0uvBXZdSLvboLyC283mNPnjVjD1YlqRvjDoajDcpVgfymFNyNfSKOkDhLn5j4pCcFdNROSQcgEhwlGrQOluL4vNEfoX4nt5u0hTU3To4BLQnvWRsoeJAPn30nVBThFBBmvVFJx3oahEeMzWOg3D5s8lIOLWRdGNb31wt7xQVl0F5p04euzU9hqcFjmEW/Vw0jjWROs/F2mKSs9EqOk7KvDY4XIS/GxOUDNKCR2QOmlWCAYc0GCGqi5Pn5FMBx5tlvdglg+6cTeDjN/Cs+Fvsdck3aOwq8431I+lvZR2hVvTXcqPQ==
+ b=E8EjZf0A5R7o8vfMpLSevzmSTLNkrLdT8r2cqjU0pJm+1D4fKZzMaJdGAs9yvzjEaDXY+PkWczX9P4/aearrlbQ6cWCU5PIiSNSJhnfqIz6EQJTaEgtrI/4rj3c+CfCxJQ77cqZKClTxKYVNL8EN83qKtGM2ROk78+LAp1AN3V/+zPpHwOGt8VR+IvJERGLvuaJvWrcYnl3Z1v2DefxtfRr7GsetrdwRQ9c31jsbJrxb1fiMBpqYEKQccYwUM7Xqq1yFG5URNFTnYY0jsP2y7fvr7mDBfPbcMmIsFW0HyKbBGSPvNCiF7CixtKhsx205FpLDsOZ7l+vn3eok8lh6pw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qHHwH7bI/YMEclJZwyZP4/j8VtKd3sP5jx62wQm9xJU=;
- b=kYrcFXXUYXWIyRH4m7c0oPGvwSI/70KgHzvoN7F/704R4VBgKTi2FCHZEWCX45MPW/8n4am/cMPmaEGu7hZzoq6qoI616OQ5jDArV9bjeqX5mJdrYY1NtoF6DYbQSyoW9eElpk6ltl8n1D12Seakp7n8P7nlE9IId+dJyrfAh6uvgkDLaxwgmJdRmw9+Ir6oV6yysPndAIav3lC3b6kxVQlDHPvF3QMDN6yx8CO+s3qUnOk7+WAP/yE5F0QyePXOzsRVspr5wxu8+V6fuYzfIPDgyP5oChD59VNB8xAKECKBBUD1akp76VbWqmO5hiqgnQV98P1WtY3J8uOUY+X1oA==
+ bh=fiQiWYPqYDW6eFU39drRWkrlGQ9fToajHbUUGfZJkWU=;
+ b=Vvzq048kQpmAZIxJOc0FBH4onV2ZhSUWebqeTfiBFjPKSKbxGu/LHDIOmsjtGlh/IJ/ZXsem8+tiw3LyCNvoiLlpf+/8xJ/S6eJ1ROYQ49pfOXP2xpXjiS3Scr3uyq0Vxy0Ko8m3V7Mg6PHPPJ1tD7lB/32/wnHKpj5Na01Bz3ziZQhfFLSLbh7JEMK8Z76PZUnWzSfdY2KAkAxpxi9m4W5HKcETI3p+8fBB2lmQ/UziHYYCq1Sr5ljiJ6YIHKCwvWVfioBC030+uJBww8tH8j0nVSaSuWIHAD7Gc//EVhkyYfwtg79xbvWSsWWMt9b7cdqHvZj70nr0FvE9/3pX4g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
- dkim=pass header.d=imgtec.com; arc=none
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qHHwH7bI/YMEclJZwyZP4/j8VtKd3sP5jx62wQm9xJU=;
- b=prSYL7Pv8KaGwGUMZMxhbQnuYEdQq+Vony4lkuMald+Ao/MrAGw7lSCVu06WuIWIgBKevScUz7bMQNh+KQrvC+nmaWU0hRMoOq/Coy3e7uY3SUzCHKWjYR4TmMgZtzsbqUtw3ek+vIbGZUwwc25UQQ+mqZnlPw8+xbb9JEXCbzA=
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e7::8) by
- CWLP265MB2259.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:6b::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8069.18; Fri, 18 Oct 2024 15:41:40 +0000
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15]) by CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15%6]) with mapi id 15.20.8069.020; Fri, 18 Oct 2024
- 15:41:40 +0000
-From: Matt Coster <Matt.Coster@imgtec.com>
-To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-CC: Brendan King <Brendan.King@imgtec.com>,
-        Frank Binns
-	<Frank.Binns@imgtec.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 2/2] drm/imagination: Break an object reference loop
-Thread-Topic: [PATCH v3 2/2] drm/imagination: Break an object reference loop
-Thread-Index: AQHbIXQ5O6skwcFhHUq9t8DEiam/vw==
-Date: Fri, 18 Oct 2024 15:41:40 +0000
-Message-ID: <8a25924f-1bb7-4d9a-a346-58e871dfb1d1@imgtec.com>
-References: <d35a7455-1ed7-44c2-94fe-3d211a8a5e94@imgtec.com>
-In-Reply-To: <d35a7455-1ed7-44c2-94fe-3d211a8a5e94@imgtec.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CWXP265MB3397:EE_|CWLP265MB2259:EE_
-x-ms-office365-filtering-correlation-id: 6ea76559-c70e-4b1c-8ee1-08dcef8b5be4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?ODVLbWd2TDZGSVlPRGJLcU1KVWJhVnh1RXJIZ3QzeU5zL2Uvd3RpRGVQb0JC?=
- =?utf-8?B?WG1IeHMzcFFFQzk2U29NKy9YWVlQcXFpNXlsSXl1SGNxTFZUODBqT2FEVkho?=
- =?utf-8?B?RCtPVWJiT3JHWGU1VU5BaUE1K3hDaDRURUZ4OTA4QlVJR2NwYng2L1J6VVc0?=
- =?utf-8?B?RzlpREZnQTZIT2ovbDRUTTRERGxxN1FtcTBCZ3UvM3h0WGlhYXl0a1VpTnJO?=
- =?utf-8?B?RGhFTENUWjgrVGFqYWsrRWMvWTNVTmhBdCtwYW51R2R0UEYwUkh4Q1B2VGNw?=
- =?utf-8?B?TkFISUQ5cHE5Nmc0M3JhWlQ1a0ovRUpaMGttVGxaTFRMYUIzR1hERHBTYjh1?=
- =?utf-8?B?OWRhbWpxVHZOT29TVWRpRUJ4cE1WTEN2R0Y2Mlp3Ym9RNHBMcUc2UUFYaEZ1?=
- =?utf-8?B?VXpuQlpid1drUUlzYkxDOUlEdHJydnFmL3VlM280aG5QeEVHdWpKUkhxT3pK?=
- =?utf-8?B?MlpRMVhqSnY3NkpwN2Fkd1BYYWZZbTJyZlhMVjE1cG54dm9qdkUxc2V1eFNy?=
- =?utf-8?B?dkRjcHBVczRRTUNzNlQ3L1d1c0poeHdTa2FWaUpienArWmR1Z3I0MVpNTDBk?=
- =?utf-8?B?cTJFZ0hzeXJTS3RWcUF6RXhaSjhYMGtNMjBkQS8yaHkvQ0ZDN3BpdlhBQWxy?=
- =?utf-8?B?QkkvRUJnN1RrMWUyWUtFSzl6R1htNlh1Q21oTzhFY1RMaUVNZXNEcTc0eUhK?=
- =?utf-8?B?SVpETmk4RTAySUdXZjd6bU1yQ21hN3Jsb05pMVRMQ1ovNXA0MlVtbzlaS2F1?=
- =?utf-8?B?TkV0R01FMVdicjh0NHpKVnZLTXBiMXEwQ0M3RUtTbnRhcFB2L0tyRlRLb2hD?=
- =?utf-8?B?MktJTXpEYVBoUGJWSGtEc05Wa1ROaEpVU3V0cjZhMndNMm00YmVrNDhOcEg4?=
- =?utf-8?B?djBxSURFUjFpZnRIN2trQXdEMXRjM1BRWjNJalp0cEhWNmh5TjdjNVI5WW5U?=
- =?utf-8?B?ZCt1QTJoMTVWY091T0VnRnh4MXhtM1hIcW9HQlJvTElVV1FLbUdLMUplcGhM?=
- =?utf-8?B?Y1hKbnV1M1VGRWV4NE16QzN5QnZqZFgzZWRxamY0eFk4TGs3ek85U084NXJT?=
- =?utf-8?B?Q0JmWkRFc25uZlZMWndGMVY1NUZUQXd2QXV5c0RHMzN3RG14YmNndk56UDdQ?=
- =?utf-8?B?MTc2WWxRVEZ4NkpzTUZ5N3dwK1g1cHJyS01EMWlLNG5Ic2ZRV0hqcXZMdWJL?=
- =?utf-8?B?K1VIR1VsYUV0UENQYi9HRGs2SytFV0ZDYi9PeHFkRVYrNlFscnAyWXBhdXFZ?=
- =?utf-8?B?aHhpK1ZnSWQ4NGlCUlNrOGZpdXcxdmhJYmVMeFNSQVpKaEkvbWVySEozUWE2?=
- =?utf-8?B?NHN6WWpDQlJrL3Axd0c5TVp6ZDJydk5MOHVvOXltUjk1K1BzVTJKdXcxbTZT?=
- =?utf-8?B?dUpiRGVaVEh0VHhzNEc3UlhmdW5ndFU2alQ3RDAzR0R6azJtQlUrd0V3N0VO?=
- =?utf-8?B?RjNVU0ltTm95aUZMRTErYXlQS2JmYWd2bUkzekFqaVFQUDkxZnhVY0NlV1dq?=
- =?utf-8?B?KzhWcEgyMmVKNC94WXFjM2prVzk4ZEdMd0hQY3NWZlRjZW9QKzZESjFqeldR?=
- =?utf-8?B?SC9MNkRyQ01xbjE2b3MzMHFaNTBPNHRVcUVwWC9xd3NkbkxSRGlJa3RneDRZ?=
- =?utf-8?B?b1k1dU0xYkw2akdHSFZZQkhyU3JJSGgycXdUV0NhMi9hTmIzdFY0aWdydVFh?=
- =?utf-8?B?bkN0emtGc05ITVA3NktpSGVROGtsZjlBMktnOEhndXJlTk5UWkptelJ2OGRk?=
- =?utf-8?B?UEdPcnhwRnA1Y1lYOUhXWi96bXlEOU5UNmJHS0V3b2Z5K09zS2p2bk1GVXFl?=
- =?utf-8?B?K2psb3pXcXNTTXVoUGhzT0xlMklTVEJrdEdQcG9TNkorQkFWMm9kU0N2L2ZW?=
- =?utf-8?Q?rZzOMBeRYjLql?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?T2xwMnVxKzd0UEZLTmkzZXVGMFdyUzVWQjhOaE1aN1oyZTZFbFliYThQVjFT?=
- =?utf-8?B?RXUvK2lyZGhtRnJINUhGbXJmM0lJVnF5MFNPMExVaWhEWi9BQm1UMzh0UFJa?=
- =?utf-8?B?NWFxL2N3bDJRTko5Qk1YY05pSndwbXdrTnl2b0gzMUZrZTV0c3VLc3VDOHdv?=
- =?utf-8?B?VFNSclJsY0diT3BTbjZIaTUvSEpQdWpoR1UxUlNFeDFWVEhadDh6TU94aDBF?=
- =?utf-8?B?Y1MzWldYRGtWYkVudEJpSlFWVjhGTnd3TzVtT1BHMENMckp1MjZZUXU2dHMz?=
- =?utf-8?B?ZUVxR0xkdFNZbVg4MzM3UXlMVVR2MVJuVFVHTzdheTdMbEE1WWsyMDlOeWV2?=
- =?utf-8?B?eldOWEt5TitVc2hTSTZtWmk4QnpjbUhIbEo3d1BoQ1ZCRlZSdVpFSGYyQWht?=
- =?utf-8?B?dkwrVTBSNGJwbThxOVZLOGU4eEZaZ0JOSmRNd0F3VFg5VnZ1NzV2NHY4bUM4?=
- =?utf-8?B?aVYrZ082bG14L3JmczN0QXBVNkpSbVluOFg2MUo0ZGg0bHBTdXRtM0o0NlNN?=
- =?utf-8?B?dzR4UnRwd054MEhwT0c1dE5pNnFHSnhtM21mNFFsVE95RVhveEVpTHJHNDZV?=
- =?utf-8?B?TVZuVE5jRDBGS0J6QVQwYmFiaTZOYU9vMitHMVVCcHZXd0dGNnFnVUZOMS92?=
- =?utf-8?B?Y2dDRk5JVk1QSnloUllBQjJJNVVLMWV5b3ZkK2Z4S2lkR1U5OWllMDA5TjRi?=
- =?utf-8?B?NHRQZlEzWm1Fb2JNMW5MSDVTMDR6a2xVZW1DVGZ5VkNHQ3NsVzBGT1NQWmpp?=
- =?utf-8?B?cStIMjQvOXpxUUpSbHRCeDJWamk2K1ZmSTlTZG5EMHh1R3pMTDlrcTZsOUU4?=
- =?utf-8?B?YmNNUHV1TTZwMUk3U09ob1ZleVp0elk4ZVN6N1BKcmdYdERpZ25ha1hVcGxa?=
- =?utf-8?B?bWRXR3lJcVNocmV0WlhLMGp2ZHBEVlZsU0ZabkpCejlIdmtGcFhndkMxdGhv?=
- =?utf-8?B?L0l6Ymo4emgzU0lwNmFwK0lFVk9NWHpRMjBjV1Z1WkF1VTVtTU85bjEzVTBP?=
- =?utf-8?B?U1NPa1FaUWVXTDhMc2V4blo4NW1DWkxKSUVqR0NKeUpkejFaaGZzRzVqSVcv?=
- =?utf-8?B?VThLbW9DZkw5YWdib2l5VDBpQjI0THZyakJpSmRNcGNQczVFVjZoSVA3S24z?=
- =?utf-8?B?QVFHajlKU2xKUG9yN3M4bS83YVljMFpRUFUwZVI5ekJWS09NR0dtbDhzQWZB?=
- =?utf-8?B?M1NPV2hOSXExK2NVRHhJMThIY1RYdWdKTkUyNDdnb2hlNnVHSDdOQjMyUFRr?=
- =?utf-8?B?cTJ2YWpEOGxFaGRlODU3Z3pRaGVjMkFvMW1aZ052ek5zOXFRWlJBRENoVGF1?=
- =?utf-8?B?dll3b2hJR3FwRGl2UnJ5djdUOStBM25FME1Wc00ydWZ3MWR5UGFycjZUSDN2?=
- =?utf-8?B?TTdNRC9ubGd5a1o0RHFOVFZ0S24va2dLczdKUlRCK2ZEMnNyMElpWTRKRzVm?=
- =?utf-8?B?T1FOUmJSYjZ1eEZhN2F2bWpwVDU4bkdZZE1MbTFrdnlDWU9DT1J1UnFtWWZ0?=
- =?utf-8?B?NXpXcVFHT0o2cUtPVU1IZGhGL3lnQXdYQlJINkhSaGo0R0p6eU9CNStja29i?=
- =?utf-8?B?QU95bkZHNUM5TXdJUm5rQmFaQy8wV0ZSQm5jVzdGbG5lRDd1QXBQUDJraVJS?=
- =?utf-8?B?QmJRNXI3ODdQdHMrSnZESHQzOHpJVDhueCtGeUJNRFcwZUw4UnZyeU5ZZzdq?=
- =?utf-8?B?ekxyVEkxU1gwTkZsSmVPUzN5b3dZT3A3VFBtdVZITFp3WU14TTJPYURrcTZ4?=
- =?utf-8?B?Szk5ZUkxZGhwZElhek5XYjVGaG0wZ0tQQ0dDemk1WkVBdWpQSnJjZTMxZjhv?=
- =?utf-8?B?S1F2YklHWldjaXFaWmxzT3RnYWtvMjVFbjRxejNGOUJSSkFhTW5iSmdGcmhO?=
- =?utf-8?B?S3VFMnN2VmVaclFzTDM0UENYUUdiTkxIZlJraWI2d2kyVDl1K3QweUFmTmVn?=
- =?utf-8?B?TWRRd2V0YlVxS3F6NzhuVGcvQ1ArWExLQVI2djlDY244UTNYenpXdkdlQ0pW?=
- =?utf-8?B?a2tlc0h0UzBFc2ZONUc0MDVCNzF6T1BFWHJ1a3E0cmRnQjRVUndoUGx1MjZ0?=
- =?utf-8?B?dWwza3VtS1V6aUVtSWRGZ0kvd2J6Zlc5ZDNxUy9pQ2V5ckZwZi9hNDhRQjE4?=
- =?utf-8?B?Y0FnSzFVQ1hJRk5ZZkkzbStqZndRQnJualFFQkoxOTR6QjJGYlhHYU1sbGc3?=
- =?utf-8?B?OVE9PQ==?=
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------AtQ3sTLoooRJQrBV76rYfuP3"
+ bh=fiQiWYPqYDW6eFU39drRWkrlGQ9fToajHbUUGfZJkWU=;
+ b=dOPGwpqr0m//c5Wn+cg6GVMq4sz7LtFgVXj5oHI3cxp46GLSLvX7Uocp/3Nv01ms9U1d/0y+gxclMiJV24iqRWZO9k9VqYyZn606pCmxeLNedF+I2ml1H63Q1026WVagVdOMn+SyrElxFRnOWQNw3EQBGyw+ZgAx+RmtqvW+lCk=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by SN4PR10MB5640.namprd10.prod.outlook.com (2603:10b6:806:20b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Fri, 18 Oct
+ 2024 15:42:11 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8069.016; Fri, 18 Oct 2024
+ 15:42:07 +0000
+Date: Fri, 18 Oct 2024 16:42:04 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
+        jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        ebpqwerty472123@gmail.com, paul@paul-moore.com, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        stable@vger.kernel.org,
+        syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [RFC][PATCH] mm: Split locks in remap_file_pages()
+Message-ID: <fa8cad07-c6d5-42aa-b58b-27ddbf86c1c5@lucifer.local>
+References: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
+X-ClientProxiedBy: LO6P123CA0024.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:313::16) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: imgtec.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SN4PR10MB5640:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86fe87f9-5542-4f1b-36cb-08dcef8b6c4d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xkF2Wf1WjOJQ1gq2a+e5AzPJO7ifD+BUYx44P72fYUP25/M07I0Mmqcf0yz4?=
+ =?us-ascii?Q?8Srp8BWLjoYeCY7lJ8JRljZur+v04i+VAdcTs1exFVrgHWH6Y6a8T2kXJJQ6?=
+ =?us-ascii?Q?1fYOBL3NR9/v0VNFX4neoDqdrNVpXuRm31bzdZt+2K2VfZ2g+rCzgORHwSWt?=
+ =?us-ascii?Q?VEGMQp30qiKOD4+0KqjDv4ukkGzb9nzLKKUVAh1eyu3ppsvDndqjwld8NnCO?=
+ =?us-ascii?Q?S3XqOLYK791CXUSb0LYQ+gDtkuW9vvbO8kguLySAzHLmdW7q/vZZHdNvAh7l?=
+ =?us-ascii?Q?R0Kv8B7a8vaCp/51F2BU5XjPyS8OsqfJCpvAiOUZq1GK0ph8p96s9BSEAVhW?=
+ =?us-ascii?Q?QyUwBDX+1AVAIdi22AN+W+L3tJsbwHjEn/FzQXLenisR5d32WSWc3j7aKzN1?=
+ =?us-ascii?Q?V/BMIYa5uOLInoMYWszxK5B+1srh98Am1jdIQ1f6i9OY/XV0hn32g8ct6KCz?=
+ =?us-ascii?Q?BgK7qt/+FCm7WX76bLClYkdvR2PVKgAnBAQPB+LCfuMlkhAVzbXdtmXQXJZW?=
+ =?us-ascii?Q?pzVJRJm3SwUrfEWuGeMTuGCyDeqmRJz0ZipDxPYI7X5KLfN96r2LnuMfj64z?=
+ =?us-ascii?Q?heHwTKY+Q+U6XjXQAcp96/zXlBQA33WlMGVwDHzDbi/pln4dCl4H+IJygjcq?=
+ =?us-ascii?Q?WRWGV3JNpw+KqLGJyHHh0gjkHfArneHt4zQfyUH6UGOiYlFjbhWuXhMssiK9?=
+ =?us-ascii?Q?bASpmYoM+fLa5cG8XHHawKozZJEVrw8zzN7bknKMIx47Cm8QFOsEQexQ9I0a?=
+ =?us-ascii?Q?VbYqKhrYiut6toibKYjfXkmEa9YtbaVmgh+kCENvkBrzc3rhUIR57HAeU/hN?=
+ =?us-ascii?Q?wLb7VA7Vh7rcCzK/k1anSCD8L3XpE98WH/S9a2m7k/RybaqZ0NPSge98chJg?=
+ =?us-ascii?Q?EeELo0TEFbMAlhon5iKheEp9XvgxMoeQc8qT05Stjuw3tRwR1YYvlQSXDh+h?=
+ =?us-ascii?Q?YFd57Ar/Y+Gb53+fi6Ol3oGW8MPDMztAQnt9ssYw4VkKQRIWOAZkn5/phY18?=
+ =?us-ascii?Q?yJw1MHsJ8dJPeN0jbJOI5MMuM9LikJCYXecf4FEONXcHrzTSGHTvVkWYbn1H?=
+ =?us-ascii?Q?lgaybgvLEhJAmpyIxCGPegdI6raHTRIaTgIc14sgZIHpHyZpLnLA02CJPZz7?=
+ =?us-ascii?Q?DwJnkf2UYQIZ70RgdU+nq3CrTd8i3+jXXmZZJ+5UQ2pE1Kl2yjNvP/vGRiSf?=
+ =?us-ascii?Q?avrzR2PGjzh/syNUVtAZmxhBmJYEFepHxZ+EXeob0DZKUbCgFyrzfO7W75nu?=
+ =?us-ascii?Q?/peId4oAmi7uUI3ObQSj+TCS3mX2ZCbI/WettwPkyEGpM8EKbcweC3jWvtLM?=
+ =?us-ascii?Q?NGAgGYndKWO9jGStSDk57/9p?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ZZmLBso1H7/vdOHrJ2aiynRhri4Afz/68nIN4b8ZvSrcAZLKus7vNTNM/rOT?=
+ =?us-ascii?Q?ES0X7OJZR0ObDxlXaZhVNcZgeEJPo3otZ0ktnBtIRLwxuk2PmPPt6jESR/Sf?=
+ =?us-ascii?Q?3W4/NxdvnruiFf2xbBLBaQGzshqQN3I0vIEtAXzgF279P07TOEkPm3TSaE8h?=
+ =?us-ascii?Q?y2SlrU3FjMw0/TBIeHkbzZ/hkUOR5segXtMtKuB7JhWSJ/Nt7VFztxuoSFBV?=
+ =?us-ascii?Q?nm07R9Ve330cAWJ2SlT8fcnJoYj+8uhA1Ry3LNKdiAC346ch2yP7srnjSt5P?=
+ =?us-ascii?Q?u/SWzrHoy/EpfW8pBiydiHz1STo1dCO6JUJAYKkDc5wq5LxN5q4jT6wbpNyI?=
+ =?us-ascii?Q?TIS+X1bZohtIvN/CU/CaNjGAmmGRnUNbIdbORrjAH8OPM8Hv+3HiUrTl8wsB?=
+ =?us-ascii?Q?HX6dh1TX4fzqG6T6hNTAxlDX94DDygSmbww6oeVgbp5c/exBN3OC+dvoGTw/?=
+ =?us-ascii?Q?KFpyiOdze1m6z1mbLHjOIDgWxt0vZzQPFWeYCtEPWALWk7Quk0NObya8Lgig?=
+ =?us-ascii?Q?4lJIvnbeGK+GDsrUiuDPyExG0N5xAQJZ6vZQcBUubPEBPMtoOlZwDZmMV8QE?=
+ =?us-ascii?Q?IXPXddrb49bxkR+w0OzUnWkHpLozCw55dVOkpr5FROCBbP/74QQqzys3UcrU?=
+ =?us-ascii?Q?kQT1uvJLo0CpU8FbdNFHy+dAa4vEzDS2AXweZA3zgDz+iWnatPGFoB9oaUBM?=
+ =?us-ascii?Q?gIV6JGNc+1pIusOLLKIk+jWe5oJKt454l6BR6F+CrgXzaKX8g5RNC3UyaeJC?=
+ =?us-ascii?Q?nmgBaZpCaN/6C00zqii9gc3j+1yHbQaR9fzDEvne6JS1+MTzjs8VKj5yfxmq?=
+ =?us-ascii?Q?gO8vC2ZO6Kli9znSH/hhaUrh8RAeZrj24GMYYYL/1XA1GqsHr/8bjNw2ZF7R?=
+ =?us-ascii?Q?IM3siRIcNVDpEw5o1n06mZWDrr/8IIfqVFqyzf4L+75e03xmuIKykJ1/X5nN?=
+ =?us-ascii?Q?v62RuWnWU133GYgnh0QS4WJdCT1XpiediqXRZPq+k4wDjKFC1aTmQNVUa+h1?=
+ =?us-ascii?Q?kHAY49huJMok8o4udKCcKf+Q4udU5H/WbtZGtectY8YYiQ1xFh8QipTT4RUp?=
+ =?us-ascii?Q?5N5xiphDBnQCGPShUyyvAzucPYUAHMPifPGAWQHQSK6lNIo0wvsmKMLgHhAq?=
+ =?us-ascii?Q?ggcdKw/4sFw1c9nRqwyf+1Lmo7A3pKQpieDKXKfFdtJ0L5sNksU9C1EBRm6M?=
+ =?us-ascii?Q?sLiJ+Orn0sbgoWu5vl3ogZfUkr4poOw97LTgfI6CxsCuSmAhfvo0FfFoURlZ?=
+ =?us-ascii?Q?u0r0t1cTesctQAHuULq4KNZzqEKjHW2huaqaL1kqeH1zMg0HZYnFm2YUvHUb?=
+ =?us-ascii?Q?FyTOTp/ga4YY5PQFhagBQK67SAtYKCbdlIfixUEX79qjprbU2ns0ZWI+/e1M?=
+ =?us-ascii?Q?ylOEXczGqWAjp9jToolC7I6QoIivWeL9ph0+QhBw7E3IPh4zN+oMES7HEjuk?=
+ =?us-ascii?Q?Sjh/kT/rlnWtBYpRLkvMnSYvKWNNN/0V/ceeMoS2cePl9ylEYmn65R5qqh4J?=
+ =?us-ascii?Q?7a9ioUw82zQwl+4z/JnmmhAFEojSVILXwi300BI8QWtQ+YNCHUF13saBRp1C?=
+ =?us-ascii?Q?tUFfvKb94Q+1c4H9hNxxeLy37/R0kHJPYvnzqe1ZUTG5QIQBOU83tbZD5X3P?=
+ =?us-ascii?Q?e1ih0fRD4Ayx2PNt33wNE0wnW2HT4QIn52AdIIQL5vZqgVxpYn4MKSa6rfMD?=
+ =?us-ascii?Q?UUdSgQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	AwXVBx5XUewhsLw1WWX4w0+i4GIEb0f5wuNFLLa2YRzUqv2plmdbDu2Yx1Qc04XxseWIFiBXs1LDEqzLScBR2N5E/B5C4ZOrI6Xb8w6JL2nwyJlTJjJCh6ANdUvC1c/UI87DG8Xc9+X22Y3xM4oAGuqjc7kAuVAvWlRyetTrKhwee8vk2H5UHgQz5HFoA/tQ+bSkunTRIToKSUej9BxlyVbQtmULAGHMV/VDxFYJ55tQQzSRVQnuoxHDQxVv7i7anSNo4ygnqaF2l5HmFmEHigqPoKHTOJpPqFt41nj1OCuEPkyx7iZBQ4l168JwjofekQfKMoeETlD5xaIZUJY8HnvAUBzDpNmWUGrt7zCTlX9I9GnzcoiqeSnF9vj57JoC5J8sizF4/gOTdNuj/97fLBBbquTK8QNLihdHNotyVHXYxqRv7AunroLf986hEdk4R04eza73IBuwPUK5u9S2R6YREBeSRFXnqmLKvFKTI8efV0lyXCkByucBqBmiMKLHbYY9lMbTjfhcJgYDPgyyzBAaEBoVssqE1HrLdKk1pfiQ2eAMyE3Jk26+4s+wKCBlgYxRQuHn50JYzdTyMQX4M0iZVfmbEJMojBDlPHXjZZM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86fe87f9-5542-4f1b-36cb-08dcef8b6c4d
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ea76559-c70e-4b1c-8ee1-08dcef8b5be4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2024 15:41:40.0837
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 15:42:07.8854
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YK09arh/dBhVX0VFfeGQpqQYa41vv+tHMz1W66ZfhuYDQuv7URdp1xd6tK256UwlY7WeDngQLCJKFEOPQL5W0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB2259
-X-Authority-Analysis: v=2.4 cv=AcbjHGXG c=1 sm=1 tr=0 ts=671281b6 cx=c_pps a=tbUAc5YXJZE2aXMCunvlBA==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=DAUX931o1VcA:10 a=WnR_qW7rlZcA:10 a=NgoYpvdbvlAA:10 a=r_1tXGB3AAAA:8 a=VwQbUJbxAAAA:8
- a=2vpGiOW3mguWqdhXNEEA:9 a=QEXdDO2ut3YA:10 a=FQAv6l16WG0gR8wUSMMA:9 a=FfaGCDsud1wA:10 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-ORIG-GUID: oXZFUJlsOVUzBZYpeOXfONpDufMa_C5d
-X-Proofpoint-GUID: oXZFUJlsOVUzBZYpeOXfONpDufMa_C5d
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ogWusKmvQxfa350aYkjvge4FsRguZT/3CLTTG02fEtpUCVEZd3C4BDSczZe/XzDKVhd1Y0q2aFP+X7qcdywUjgw8OcAUqvJ+1unBCPUQw9s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR10MB5640
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-18_11,2024-10-17_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
+ adultscore=0 spamscore=0 mlxscore=0 suspectscore=0 bulkscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410180100
+X-Proofpoint-GUID: YJ7whrTwB4mtCcsjRmb7Fb0MAEKHLbKs
+X-Proofpoint-ORIG-GUID: YJ7whrTwB4mtCcsjRmb7Fb0MAEKHLbKs
 
---------------AtQ3sTLoooRJQrBV76rYfuP3
-Content-Type: multipart/mixed; boundary="------------4Ex0tgkJ9HdK0AfC9K0JG9FX";
- protected-headers="v1"
-From: Matt Coster <matt.coster@imgtec.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Brendan King <brendan.king@imgtec.com>,
- Frank Binns <frank.binns@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Message-ID: <8a25924f-1bb7-4d9a-a346-58e871dfb1d1@imgtec.com>
-Subject: [PATCH v3 2/2] drm/imagination: Break an object reference loop
-References: <d35a7455-1ed7-44c2-94fe-3d211a8a5e94@imgtec.com>
-In-Reply-To: <d35a7455-1ed7-44c2-94fe-3d211a8a5e94@imgtec.com>
+On Fri, Oct 18, 2024 at 04:47:10PM +0200, Roberto Sassu wrote:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>
+> Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
+> remap_file_pages()") fixed a security issue, it added an LSM check when
+> trying to remap file pages, so that LSMs have the opportunity to evaluate
+> such action like for other memory operations such as mmap() and mprotect().
+>
+> However, that commit called security_mmap_file() inside the mmap_lock lock,
+> while the other calls do it before taking the lock, after commit
+> 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
+>
+> This caused lock inversion issue with IMA which was taking the mmap_lock
+> and i_mutex lock in the opposite way when the remap_file_pages() system
+> call was called.
+>
+> Solve the issue by splitting the critical region in remap_file_pages() in
+> two regions: the first takes a read lock of mmap_lock and retrieves the VMA
+> and the file associated, and calculate the 'prot' and 'flags' variable; the
+> second takes a write lock on mmap_lock, checks that the VMA flags and the
+> VMA file descriptor are the same as the ones obtained in the first critical
+> region (otherwise the system call fails), and calls do_mmap().
+>
+> In between, after releasing the read lock and taking the write lock, call
+> security_mmap_file(), and solve the lock inversion issue.
 
---------------4Ex0tgkJ9HdK0AfC9K0JG9FX
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Great description!
 
-From: Brendan King <brendan.king@imgtec.com>
+>
+> Cc: stable@vger.kernel.org
+> Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap_file_pages()")
+> Reported-by: syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.46d20.0036.GAE@google.com/
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com> (Calculate prot and flags earlier)
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-When remaining resources are being cleaned up on driver close,
-outstanding VM mappings may result in resources being leaked, due
-to an object reference loop, as shown below, with each object (or
-set of objects) referencing the object below it:
+Other than some nits below:
 
-    PVR GEM Object
-    GPU scheduler "finished" fence
-    GPU scheduler =E2=80=9Cscheduled=E2=80=9D fence
-    PVR driver =E2=80=9Cdone=E2=80=9D fence
-    PVR Context
-    PVR VM Context
-    PVR VM Mappings
-    PVR GEM Object
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-The reference that the PVR VM Context has on the VM mappings is a
-soft one, in the sense that the freeing of outstanding VM mappings
-is done as part of VM context destruction; no reference counts are
-involved, as is the case for all the other references in the loop.
+I think you're definitely good to un-RFC here.
 
-To break the reference loop during cleanup, free the outstanding
-VM mappings before destroying the PVR Context associated with the
-VM context.
+> ---
+>  mm/mmap.c | 62 ++++++++++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 45 insertions(+), 17 deletions(-)
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 9c0fb43064b5..762944427e03 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1640,6 +1640,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+>  	unsigned long populate = 0;
+>  	unsigned long ret = -EINVAL;
+>  	struct file *file;
+> +	vm_flags_t vm_flags;
+>
+>  	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. See Documentation/mm/remap_file_pages.rst.\n",
+>  		     current->comm, current->pid);
+> @@ -1656,12 +1657,53 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+>  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
+>  		return ret;
+>
+> -	if (mmap_write_lock_killable(mm))
+> +	if (mmap_read_lock_killable(mm))
+> +		return -EINTR;
 
-Signed-off-by: Brendan King <brendan.king@imgtec.com>
-Signed-off-by: Matt Coster <matt.coster@imgtec.com>
-Reviewed-by: Frank Binns <frank.binns@imgtec.com>
-Cc: stable@vger.kernel.org
----
-Changes in v1 -> v2:
- - None
+I'm kinda verbose generally, but I'd love a comment like:
 
-Changes in v2 -> v3:
- - Add Frank's Rb [1]
- - Add Cc: stable tag
+	/*
+	 * Look up VMA under read lock first so we can perform the security
+	 * without holding locks (which can be problematic). We reacquire a
+	 * write lock later and check nothing changed underneath us.
+	 */
 
-[1]: https://lore.kernel.org/dri-devel/b75e658cc5ce9ac24df2c31c1a6fd798a5=
-f3a87f.camel@imgtec.com/
----
- drivers/gpu/drm/imagination/pvr_context.c | 19 +++++++++++++++++++
- drivers/gpu/drm/imagination/pvr_context.h | 18 ++++++++++++++++++
- drivers/gpu/drm/imagination/pvr_vm.c      | 22 ++++++++++++++++++----
- drivers/gpu/drm/imagination/pvr_vm.h      |  1 +
- 4 files changed, 56 insertions(+), 4 deletions(-)
+> +
+> +	vma = vma_lookup(mm, start);
+> +
+> +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
+> +		mmap_read_unlock(mm);
+> +		return -EINVAL;
+> +	}
+> +
+> +	prot |= vma->vm_flags & VM_READ ? PROT_READ : 0;
+> +	prot |= vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
+> +	prot |= vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
+> +
+> +	flags &= MAP_NONBLOCK;
+> +	flags |= MAP_SHARED | MAP_FIXED | MAP_POPULATE;
+> +	if (vma->vm_flags & VM_LOCKED)
+> +		flags |= MAP_LOCKED;
+> +
+> +	/* Save vm_flags used to calculate prot and flags, and recheck later. */
+> +	vm_flags = vma->vm_flags;
+> +	file = get_file(vma->vm_file);
+> +
+> +	mmap_read_unlock(mm);
+> +
 
-diff --git a/drivers/gpu/drm/imagination/pvr_context.c b/drivers/gpu/drm/=
-imagination/pvr_context.c
-index 255c93582734..4cb3494c0bb2 100644
---- a/drivers/gpu/drm/imagination/pvr_context.c
-+++ b/drivers/gpu/drm/imagination/pvr_context.c
-@@ -450,11 +450,30 @@ pvr_context_destroy(struct pvr_file *pvr_file, u32 =
-handle)
-  */
- void pvr_destroy_contexts_for_file(struct pvr_file *pvr_file)
- {
-+	struct pvr_device *pvr_dev =3D pvr_file->pvr_dev;
- 	struct pvr_context *ctx;
- 	unsigned long handle;
-=20
- 	xa_for_each(&pvr_file->ctx_handles, handle, ctx)
- 		pvr_context_destroy(pvr_file, handle);
-+
-+	spin_lock(&pvr_dev->ctx_list_lock);
-+	ctx =3D list_first_entry(&pvr_file->contexts, struct pvr_context, file_=
-link);
-+
-+	while (!list_entry_is_head(ctx, &pvr_file->contexts, file_link)) {
-+		list_del_init(&ctx->file_link);
-+
-+		if (pvr_context_get_if_referenced(ctx)) {
-+			spin_unlock(&pvr_dev->ctx_list_lock);
-+
-+			pvr_vm_unmap_all(ctx->vm_ctx);
-+
-+			pvr_context_put(ctx);
-+			spin_lock(&pvr_dev->ctx_list_lock);
-+		}
-+		ctx =3D list_first_entry(&pvr_file->contexts, struct pvr_context, file=
-_link);
-+	}
-+	spin_unlock(&pvr_dev->ctx_list_lock);
- }
-=20
- /**
-diff --git a/drivers/gpu/drm/imagination/pvr_context.h b/drivers/gpu/drm/=
-imagination/pvr_context.h
-index a5b0a82a54a1..07afa179cdf4 100644
---- a/drivers/gpu/drm/imagination/pvr_context.h
-+++ b/drivers/gpu/drm/imagination/pvr_context.h
-@@ -126,6 +126,24 @@ pvr_context_get(struct pvr_context *ctx)
- 	return ctx;
- }
-=20
-+/**
-+ * pvr_context_get_if_referenced() - Take an additional reference on a s=
-till
-+ * referenced context.
-+ * @ctx: Context pointer.
-+ *
-+ * Call pvr_context_put() to release.
-+ *
-+ * Returns:
-+ *  * True on success, or
-+ *  * false if no context pointer passed, or the context wasn't still
-+ *  * referenced.
-+ */
-+static __always_inline bool
-+pvr_context_get_if_referenced(struct pvr_context *ctx)
-+{
-+	return ctx !=3D NULL && kref_get_unless_zero(&ctx->ref_count) !=3D 0;
-+}
-+
- /**
-  * pvr_context_lookup() - Lookup context pointer from handle and file.
-  * @pvr_file: Pointer to pvr_file structure.
-diff --git a/drivers/gpu/drm/imagination/pvr_vm.c b/drivers/gpu/drm/imagi=
-nation/pvr_vm.c
-index 97c0f772ed65..7bd6ba4c6e8a 100644
---- a/drivers/gpu/drm/imagination/pvr_vm.c
-+++ b/drivers/gpu/drm/imagination/pvr_vm.c
-@@ -14,6 +14,7 @@
- #include <drm/drm_gem.h>
- #include <drm/drm_gpuvm.h>
-=20
-+#include <linux/bug.h>
- #include <linux/container_of.h>
- #include <linux/err.h>
- #include <linux/errno.h>
-@@ -597,12 +598,26 @@ pvr_vm_create_context(struct pvr_device *pvr_dev, b=
-ool is_userspace_context)
- }
-=20
- /**
-- * pvr_vm_context_release() - Teardown a VM context.
-- * @ref_count: Pointer to reference counter of the VM context.
-+ * pvr_vm_unmap_all() - Unmap all mappings associated with a VM context.=
+Maybe worth adding a comment to explain why you're doing this without the
+lock so somebody looking at this later can understand the dance?
 
-+ * @vm_ctx: Target VM context.
-  *
-  * This function ensures that no mappings are left dangling by unmapping=
- them
-  * all in order of ascending device-virtual address.
-  */
-+void
-+pvr_vm_unmap_all(struct pvr_vm_context *vm_ctx)
-+{
-+	WARN_ON(pvr_vm_unmap(vm_ctx, vm_ctx->gpuvm_mgr.mm_start,
-+			     vm_ctx->gpuvm_mgr.mm_range));
-+}
-+
-+/**
-+ * pvr_vm_context_release() - Teardown a VM context.
-+ * @ref_count: Pointer to reference counter of the VM context.
-+ *
-+ * This function also ensures that no mappings are left dangling by call=
-ing
-+ * pvr_vm_unmap_all.
-+ */
- static void
- pvr_vm_context_release(struct kref *ref_count)
- {
-@@ -612,8 +627,7 @@ pvr_vm_context_release(struct kref *ref_count)
- 	if (vm_ctx->fw_mem_ctx_obj)
- 		pvr_fw_object_destroy(vm_ctx->fw_mem_ctx_obj);
-=20
--	WARN_ON(pvr_vm_unmap(vm_ctx, vm_ctx->gpuvm_mgr.mm_start,
--			     vm_ctx->gpuvm_mgr.mm_range));
-+	pvr_vm_unmap_all(vm_ctx);
-=20
- 	pvr_mmu_context_destroy(vm_ctx->mmu_ctx);
- 	drm_gem_private_object_fini(&vm_ctx->dummy_gem);
-diff --git a/drivers/gpu/drm/imagination/pvr_vm.h b/drivers/gpu/drm/imagi=
-nation/pvr_vm.h
-index f2a6463f2b05..79406243617c 100644
---- a/drivers/gpu/drm/imagination/pvr_vm.h
-+++ b/drivers/gpu/drm/imagination/pvr_vm.h
-@@ -39,6 +39,7 @@ int pvr_vm_map(struct pvr_vm_context *vm_ctx,
- 	       struct pvr_gem_object *pvr_obj, u64 pvr_obj_offset,
- 	       u64 device_addr, u64 size);
- int pvr_vm_unmap(struct pvr_vm_context *vm_ctx, u64 device_addr, u64 siz=
-e);
-+void pvr_vm_unmap_all(struct pvr_vm_context *vm_ctx);
-=20
- dma_addr_t pvr_vm_get_page_table_root_addr(struct pvr_vm_context *vm_ctx=
-);
- struct dma_resv *pvr_vm_get_dma_resv(struct pvr_vm_context *vm_ctx);
---=20
-2.47.0
+> +	ret = security_mmap_file(file, prot, flags);
+> +	if (ret) {
+> +		fput(file);
+> +		return ret;
+> +	}
+> +
+> +	ret = -EINVAL;
+> +
 
+Again, being verbose, I'd put something here like:
 
+	/* OK security check passed, take write lock + let it rip */
 
---------------4Ex0tgkJ9HdK0AfC9K0JG9FX--
+> +	if (mmap_write_lock_killable(mm)) {
+> +		fput(file);
+>  		return -EINTR;
+> +	}
+>
+>  	vma = vma_lookup(mm, start);
+>
+> -	if (!vma || !(vma->vm_flags & VM_SHARED))
+> +	if (!vma)
+> +		goto out;
+> +
 
---------------AtQ3sTLoooRJQrBV76rYfuP3
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+I'd also add something like:
 
------BEGIN PGP SIGNATURE-----
+	/* Make sure things didn't change under us. */
 
-wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCZxKBswUDAAAAAAAKCRB5vBnz2d5qsIE6
-AP93dvlO/G/K1kOPz+isg4v/U8tjScJCPLNpDATkZz1axQD/ZrVEkiKukUUVQykSU14jlMPz/cgJ
-K+JmSBa2iMzeTAE=
-=Ikxd
------END PGP SIGNATURE-----
+> +	if (vma->vm_flags != vm_flags)
+> +		goto out;
+> +
 
---------------AtQ3sTLoooRJQrBV76rYfuP3--
+And drop this newline to group them together (super nitty I know, sorry!)
+
+> +	if (vma->vm_file != file)
+>  		goto out;
+>
+>  	if (start + size > vma->vm_end) {
+> @@ -1689,25 +1731,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+>  			goto out;
+>  	}
+>
+> -	prot |= vma->vm_flags & VM_READ ? PROT_READ : 0;
+> -	prot |= vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
+> -	prot |= vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
+> -
+> -	flags &= MAP_NONBLOCK;
+> -	flags |= MAP_SHARED | MAP_FIXED | MAP_POPULATE;
+> -	if (vma->vm_flags & VM_LOCKED)
+> -		flags |= MAP_LOCKED;
+> -
+> -	file = get_file(vma->vm_file);
+> -	ret = security_mmap_file(vma->vm_file, prot, flags);
+> -	if (ret)
+> -		goto out_fput;
+>  	ret = do_mmap(vma->vm_file, start, size,
+>  			prot, flags, 0, pgoff, &populate, NULL);
+> -out_fput:
+> -	fput(file);
+>  out:
+>  	mmap_write_unlock(mm);
+> +	fput(file);
+>  	if (populate)
+>  		mm_populate(ret, populate);
+>  	if (!IS_ERR_VALUE(ret))
+> --
+> 2.34.1
+>
+
+These are just nits, this looks good to me!
 
