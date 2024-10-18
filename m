@@ -1,196 +1,180 @@
-Return-Path: <linux-kernel+bounces-371317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276639A3996
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:13:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AB19A397F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B435B2517C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:13:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BADF41F22A61
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77767192D76;
-	Fri, 18 Oct 2024 09:11:18 +0000 (UTC)
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01on2125.outbound.protection.outlook.com [40.107.222.125])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893C719006A;
+	Fri, 18 Oct 2024 09:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JsMahc8b"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A669190058;
-	Fri, 18 Oct 2024 09:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.222.125
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729242677; cv=fail; b=Uy7Cp6dyPG396iNyTiyMsrRUNgDlIua9gpl2pozbFRxNVy1aTD/m1ViErc5viVUZP6wsd/ItaOrJHobyMEkdNmQku5q1xfNz+aj3gUx8d0DYmb1cRMHIdAk4BsKtfoNz/YkSTFMVJl7qkVFFK2ytFPq/oDsu92+qicFnYRgRMRE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729242677; c=relaxed/simple;
-	bh=trVrpI9mAyH5HIHQU18bgCaeDV3E/clwshsjK+fW+j8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MIMYNcZSwCQk+i+98sK/H9qVfntt7uAUAdSlybho0vnmo6aXd5bFKOFMyWbR3L6opPCBF9e9ZPlWHOMjIWd2NRHUcZm2k9v1pPDuDYmsEYeZTTjkFccN6I/RIr8dyeFcBeGKXNBX/wDa9nUHiZxQ2wF4yMswQ7hAn6pE/r/u/hs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.222.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uzOpz/GrFBPSTNZGHhTpJ24KD04uHqRrr38QmqUDta11pzFQetID8FElICxifyUG88pqidDG7LLljoLtFUpSjJHNdEqnkk/84T3Z3KVhkYQCqAYvqe2dnMypY71I6e4K4hWnx4/r6gHcbYGe0D/TVJIWnitwsRAVDJi9D90KGmMcGbGV74y+sAQ6ogUOjGrKLnNojMUC/fu7rBI0Bjngh/+3GuMqUTX2JTK+xWsIIRGPUisijmlCguW1464CnbxvLSVZaS/aSTAm7Ud2Mor5tKvQV6OpVIJp8z4Wn4FPkWYDTSMJ+8CiAvRkLqYMZGrNixyKtO3+Y6w49w9GBpklfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9/+yxUPiK2n3VRCUkckt2iypvZ2U4EOfe5koLX6n7u4=;
- b=RxY7beSe3/s2/Gzkc/nHBpXhfyPz/j/so+QMXTpGzAtGyneX6xHhr0lpyQe6lQki1ngAndl7UBAX4kdo/6YTHqTjvvgEeuP+iRlmhIILjz67eUkq+UejAa4gIfirsCKMng9HFl9f+H8/my+25T1BlPxtmIALRBckGqmvfmk1H8te0v/U2eUFVwxK9iCL9BHWI8r58VWXdSSeR3mn76MkO/ixckqUx0btbuv0ghcBkttK0n5sQoYgE+GmIznAMklCEFNKGDVOScTjL7ekQhop2VY8qKJ5RURLJFkri9m8iRM86EFKyvq4crmrZJeTujcJQmNT+ixAa+q9SeH1uePI1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-Received: from PN3P287MB1171.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1a1::5)
- by PN2P287MB0738.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:f5::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Fri, 18 Oct
- 2024 09:11:12 +0000
-Received: from PN3P287MB1171.INDP287.PROD.OUTLOOK.COM
- ([fe80::12a8:c951:3e4b:5a8a]) by PN3P287MB1171.INDP287.PROD.OUTLOOK.COM
- ([fe80::12a8:c951:3e4b:5a8a%4]) with mapi id 15.20.8069.020; Fri, 18 Oct 2024
- 09:11:12 +0000
-From: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
-To: shawnguo@kernel.org,
-	krzk+dt@kernel.org,
-	robh@kernel.org
-Cc: Bhavin Sharma <bhavin.sharma@siliconsignals.io>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Mathieu Othacehe <m.othacehe@gmail.com>,
-	Michael Walle <mwalle@kernel.org>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Max Merchel <Max.Merchel@ew.tq-group.com>,
-	Tim Harvey <tharvey@gateworks.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] dt-bindings: arm: fsl: Add Boundary Device Nitrogen8MP Universal SMARC Carrier Board
-Date: Fri, 18 Oct 2024 14:39:28 +0530
-Message-ID: <20241018091023.29286-3-bhavin.sharma@siliconsignals.io>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241018091023.29286-1-bhavin.sharma@siliconsignals.io>
-References: <20241018091023.29286-1-bhavin.sharma@siliconsignals.io>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PN3PR01CA0143.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:bf::7) To PN3P287MB1171.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:1a1::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E42C188CC6
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729242624; cv=none; b=aa5aDs8XRrFASAmwTxlegdOQv2V/40KFSg4JPiydt+N2gGWnpcg+3JY130RUQX/bU0G20aIjq3DIKhV5gmiMgkDwf0ntoEsvjicEvOYJvq1obxpUPHQ0FyMDalPHsQhWJdrWmxWhAHBzgRjBspFCBtItjUl6BsQef/rcNK4HMnk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729242624; c=relaxed/simple;
+	bh=AcXDK52JnPC5xJMOFzpq0d2Won7phBSA6JlzjNtC1Xs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AXdBPVO4asFNzh8iH7IpyOatdzyLXmFKM9X04s2N2LbIot8tqOa8pbkJYGkHteMCqd/RjwmlZECHzd3UcONkx2tiJmXtVDnhku9tcMhNCBTXUm8PC3p1YktRUYKbE5pbZXaX2C6WV35WKh9R+9R1tHHgguGSnuHibqarHHgdG68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JsMahc8b; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f1292a9bso2473351e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:10:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729242621; x=1729847421; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WZeEZUKq+qIqtQz6nd6VZ+0h6dSKzhfxG56gJP1EyuU=;
+        b=JsMahc8b8spI/ehkEElRrAM4plyb5ux02mzCGFnOkCDFNWkr5o9beOCcqf0ncxnn8u
+         AluDanK/4biVM+UkA5QV70dihibWAeNA58tnblMzDxiv/K0y+sD8nWuBdTXBXLmTSoUO
+         Bs8TBm6XlumhGWPAjlY0lOHoAiwq0+nnsHBp4mayhIVxfxXt7gg8nYQ5sgHrLWi4Wo7S
+         kPkXcZ89aTFWX4Z7dkQtjalC5SKCfyXv+5s3AxhjGwzl1FAv0w244OiuLqaP7X2t29AA
+         rC3m/pV+9yl/UCJcVlY69f1JIGR8VonIgcwzXWRgiMJ7Av81QnajJ3Q9rZMYp6aFAceV
+         R4cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729242621; x=1729847421;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WZeEZUKq+qIqtQz6nd6VZ+0h6dSKzhfxG56gJP1EyuU=;
+        b=IjoznvgEJhAwkFJbZqfQRPXZoriBVynMa1693DspDlKkGcglLCPqEw+v0VMKeQMtAp
+         eyscdyWhNLFneWXMpommU5XbIrIcMpt2ANXzaUM0vl7IJHj5iuIEzXN0BuPlfUogwo9k
+         m35FN5RZY2BnuCjlaAoH3gMnGJ0xccT6CTpR5vrBiHlQ8jPexXru0H1WFc1rIn5zFI3Y
+         dQH8AcylgHyr11+BKKAuiSBsCW4T55JBMFiNrH6r7u/DTM4BNre1kN5S2mV/WwHvMQcH
+         FCXpX8T6TWcq+T+tUOQRmFuPw1e6y70yJsQ5qI0nsET+96oxUqMznkU3tUkBqyhXqA4a
+         h5IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWfdslMCCc7pEtq9FSNsuoVvwBjc7krJvkB0paa8L1WjSnhFL5hxydxNz6lCvppnIiZGsrH2Si12UN/Cg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw1jErioC0J6varnnKuwqdFcPKVFkAto3/TTr8UEruukz6zjff
+	QTtdeiecUP+jUJoQ970CgDmpTo9dOkUk4DKdztfgEPtPjKOynkrYD3IUKrpc1Pk=
+X-Google-Smtp-Source: AGHT+IH77jdEGYdT8xGK1gUaD7Az0JyK5YSSPJ3wEUYFWxfqF3HRb+Yz7f/UzrxhVAir553ksubjGA==
+X-Received: by 2002:a05:6512:3b8c:b0:539:fd1b:baf5 with SMTP id 2adb3069b0e04-53a15445006mr1252092e87.16.1729242620463;
+        Fri, 18 Oct 2024 02:10:20 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:45a3:93e:5196:d8ce])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160dbe76bsm18700455e9.10.2024.10.18.02.10.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 02:10:20 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v5 0/8] gpio: notify user-space about config changes in the
+ kernel
+Date: Fri, 18 Oct 2024 11:10:08 +0200
+Message-Id: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN3P287MB1171:EE_|PN2P287MB0738:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35341440-f2d3-4c33-3803-08dcef54cff7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4n7EvCttGN+b8DxjALZkHMVguJx6tiXmZaBWxKUrV73FY/NL1VT090Ptkr2Z?=
- =?us-ascii?Q?NW/vjkwyu/N9WuDu0QMBMsRkoN1uCGVRrj3nN4aScxE05g/1WnrJItet18gj?=
- =?us-ascii?Q?XLXmNNdi9t+mynT+6e2SPF189j8g3wd+BIKPiiUcxtS1Ln/2vG3kTodt76yT?=
- =?us-ascii?Q?cUBMfhQ0vqu1zoVF4Ur5wqiARDCd4BfQ5k0iAi4AM8NVR7M/ppOGy7jUZyIg?=
- =?us-ascii?Q?HanqWplAnwTnFaWvZ9fnOIpe1TkwBHfsuCesqJH4sgqTUJhwNPigNT/ZMNcO?=
- =?us-ascii?Q?N7c1ZYaCklYgKNAyw6uTe3YkvEEw+Dta8jCK5FutW5hqBF990Qft65dBILos?=
- =?us-ascii?Q?0tY564dYxakCKD9L5d+jPiobD2QdgaIjgTnVwoeNDmx+4RK1KQLDRxugj8wE?=
- =?us-ascii?Q?9Q6ANWWgus0YTUx5PM7kAHBKt64CgrXCDun5cLgCjv7VLA2EaCdARDm30KRQ?=
- =?us-ascii?Q?XIu1e/GyLz+ChK2naTUSvX/L3KMTxYY8c+MWTTbmHQzRTYU0gaS9r0uUI/ds?=
- =?us-ascii?Q?Ha3luGVimrDtb4Us1X2/fxFlcIdtIAW0v6TfBFQyMxYTCugPQMDpZJ2lJQlW?=
- =?us-ascii?Q?bNMPtBO5lCS/wGtShMyokJWcT75fbpBgTrh1GKHP3wj4KNy1UKRgDav6XQ7s?=
- =?us-ascii?Q?lMTmckhHSogSgIC8XgmFNfFBRFAKknHPZ+l2MF2ukd4tSvFBMZO4cFO7+9nI?=
- =?us-ascii?Q?ogwUfbWpege+Orf8Hsy8u191JhjbcJUp5OiBzKKzV03ZFILdEaWDtiSc572r?=
- =?us-ascii?Q?69y040xz7zuzHUX+IaYya4bheOwhABZB2RvPr+HJaYfHxU0K4LqMA6jfqXke?=
- =?us-ascii?Q?ruLggL/mooQVXORzucle0Mnv/M1TJM11sTOpY8muUgV6i4RdaFUoFH6I1GYO?=
- =?us-ascii?Q?vI+dK1Kr0fZnTp+NvdrdRNV3ip5CfpfaZJ1uwMJtJD6lfXHHWXTeqcFPkQf1?=
- =?us-ascii?Q?n6b/HomjmZjt9RQrTVUUotJtsll6ZCXSDWbHpFDhA3ERtxyJ9LByToPLL2cd?=
- =?us-ascii?Q?kq3M2r6f9IrGYenbG9FOTBixvUkyrZTMsSVg1xFVQ0F2SxqXVanBPoCYqc27?=
- =?us-ascii?Q?wdyTBah6bRCyflvBP3cfSlc/3iz4zDbWOshiXZrgaYUd4en4qfdx9hi1Jaxj?=
- =?us-ascii?Q?jN0HFBabD1r/b7GjjmrY7Iioya+lDZre7zGxKVm5FR2DRSY+Cd5+EKjwqEwK?=
- =?us-ascii?Q?ppkQgSvJSfHLLH/xDOr30NxCJAlmfdylgGwENsbHv1D11Su3fCj6ze5+fXdI?=
- =?us-ascii?Q?kQ+3JxQZEtN5S048VMPt6sUcui7jvOHu1tuTfxvcTC5QS/EBfcoDIG4gxx8w?=
- =?us-ascii?Q?8nd6M2CwXgPRSL74fh0CV8C7bX/ocgYWA1LQKkn/A8yeNMBjuWpKgzEZiAR4?=
- =?us-ascii?Q?SqgBImA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1171.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7ots0jAGF/9A/XOLuchqXXPQfUBQZc54yM3CzH6KbHPZU1E+GayJW1+JxdON?=
- =?us-ascii?Q?xv05gH8lgauCm91yLbqcdSPia2uH35CqLWNzykMGJzr/pPAs/q/vLyz1RUkU?=
- =?us-ascii?Q?2IhZSc/O9zEFwnR/6tC+EgBjx0w2nEugxcSpYkwEZblH1FVXzcQ4uRTvhxZO?=
- =?us-ascii?Q?66CBcpIO2W4GZIO9Hng9PLIH3k7z9Te0i8JGL5NNyZPe6xbF6txLNiEk1bf0?=
- =?us-ascii?Q?0AMhh0ccC9eeBLlP1u8G0X+VaPjSsf/1QRJkgt2KN6J8LcFFTsuBw2/f7QnI?=
- =?us-ascii?Q?M/xytGF/H8Zrl4DKtlCj30injFb8pClc9at5ve/21fNt3lCRIOkFgzktSRzJ?=
- =?us-ascii?Q?o9W1UMlMqpn4wZWjrsAHvPkdiW5BFThjPFC9otdt07XLE8RUB+Q0IGTu1mrd?=
- =?us-ascii?Q?vCNOP7J66A68OHdu1Pinp1MRNzkherxKzpnCnRBIQvn7EqO6B65KNm98SBYi?=
- =?us-ascii?Q?b5q3Qai2BS0yBnp7/nao7G9Y3TBotRbaokIeIqqecoj5qN5tX82c8nWzkHeS?=
- =?us-ascii?Q?qCebzei/q8Llrvssuvta8MKd20JfoSdXAyBtz1wZLI05IU5NkoZFj21K7vuw?=
- =?us-ascii?Q?jo/u9w+6oleuMqa1xSU+vdJrl8evt6S85QB9gLNcXDBJqxBPv/DbN7mIHnAM?=
- =?us-ascii?Q?cXN1fSoDV9prSJ8HGFrY4kw7osQUNu7B8TfVc2+9bnwpby3+WcADGYTxfpSm?=
- =?us-ascii?Q?8pnwK5wXy+xR83azFAJwsvKg0GqWzsHwZGZNoCENy/+EyjhwNttTbn9pKPTk?=
- =?us-ascii?Q?+3Ujz4xDHFPdn7aYXZAsw/3nNoX9HZh23zfYNTUtBDwi45P38u53u8OSvZzj?=
- =?us-ascii?Q?LH3JFYYqNSdesP0zixGeKp7S1lY6U0HFx4N3eOPqEeL39ifUuZtIMhuHfydx?=
- =?us-ascii?Q?Psv5pEIFD8piRBhZCkH1MFljvz2lDrK3hksLTMC5uk5tO3aCAwfDTJuZm86c?=
- =?us-ascii?Q?Tsj1XNuJeK4mo8CzNHMAxloQLMtR8JXEMLU8FT7jmH9ehl14csdxDV0ojRlC?=
- =?us-ascii?Q?YdUwL4SIyzcg4dVGky9gcBM39tM972uCRgyf+ipaUzUfZIlmBb8nlsF9f57B?=
- =?us-ascii?Q?2i3/ITGSs9z7fGrc9eYBKoY2v31S0rHYHuF82kug1c/qmL9KXmNz2+Zgid8t?=
- =?us-ascii?Q?cnwcneDgdZJaN6hUSJpRhyOK+yRb5OKirUUDNpuYh20yZNQPNJMDPtUlWOtB?=
- =?us-ascii?Q?eFCx+Na3fOxDm7fSbfS9V4prO2PzhrFgSZnkhj2k6HMC11AHSmc1ReZZNZnz?=
- =?us-ascii?Q?fNdErrk9EByMrjZDFwMaHSpz2+4wbFv4swusMBI/HO8jiQHBEKiwmDBJklhF?=
- =?us-ascii?Q?IbAIN/HT4XhWwlEpuFH+7fSyKMAlrWroMLjPl1IEsa191bpgGzvdDIeDf1GC?=
- =?us-ascii?Q?8i3lu7BTpg4DWulPNYh7xoWDdghFtqT5dpWMCPwtKau1N591h/sKFgevmhUa?=
- =?us-ascii?Q?eIHsTwqhhjL9dmXS0wl6+hJn2EVrIakZzKEcgjK+BD09uUSGJ76hhJvD7cC7?=
- =?us-ascii?Q?ywytKszgqjqTs4wktZBBRCOGjAim4bebnzcEtN2zZ/w7poRmwpHpylOLqX7d?=
- =?us-ascii?Q?g2kX0Vf6z4tfX4VK5sY5cu+mLZWeQNeb9Ymrmc1BXEZiLQcY2LHCwb1RIb+2?=
- =?us-ascii?Q?om+iYp+2Tkr75QAeNuXnt2g=3D?=
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35341440-f2d3-4c33-3803-08dcef54cff7
-X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1171.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 09:11:12.5921
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rzoQ1mom5mixveBd6aElmvT78BNjr8Tb0eZ2rNwlKtaEsTPbklJE7nOSxbELCvgBGz1T80gHDD2AccCyV2PN73h0oq5ufs4zy4CjpujDCV8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0738
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPElEmcC/4XNQW7DIBCF4atErEs1gyE2WeUeVRc2HpxRI7DAQ
+ o0i373EK1dZePm/xfeeIlNiyuJyeopEhTPHUMN8nIS79WEiyWNtoUBpsErLaeYoQ1zYPyQH+UM
+ p0F1SobBkCa0bLSo0DXWiEnMiz78b//Vd+8Z5iemxvRV8rRuMAAdwQQmy652yhKPXnq53Dn2Kn
+ zFN4iUXtdMQDjRVtcGcQSP61hn7pjV7zRxoTdUsjR5MB0q1+KbpvdYeaLpqZz04ML4ZCNw/bV3
+ XP29FKjmzAQAA
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3461;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=AcXDK52JnPC5xJMOFzpq0d2Won7phBSA6JlzjNtC1Xs=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnEiX2rx6PRojg2II1TJJ+ucySZL3StNWoUKew8
+ LFaDG55TXWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxIl9gAKCRARpy6gFHHX
+ cg5CEAC1EBPJl2jbK5+WHFKfHNL/l+n6U6LicFkK3JooheWS/34o/Rlrv/jlWR8T9cJADgpQUc/
+ 8l4j3KbrWuMBrZLV++TgS25jqILopdr43NRSaojaguht/F2E7QgT7oCyi663c5VpFsZRArFWKX1
+ 6nbYkcvGofr+6eoc9mZKBq1dvBaF+kZcmamXoX+uN3TBH+CNmjq/KhlNGIwGR9Ol8bOj1MWOQVn
+ obOAGdsUBvD24qqMLofMSGwoLoooRW1RTagGdSOIb3OBqTICE55oWbgPikD+U5ZpX8omFjr11Bm
+ Lmwqcq6VPYs5SXegISAzfLs8dTiIAGfR2VGI7Rmb9w4xc7nZGLvngGKvTLtQc97hRzbf/O4+EFg
+ DUG7eVsnPTZ01Nd2MtfcE3s8xqfQcTgNpv3QwIxIprTZTfX1kkbb1Q1dzYMSxvl6ZtSfSacjoFt
+ xt8/4xU4oNLWQjHQnADI8fKNuvrtjKgO6cyTs/uHTsYUJWF8/7ulcJs9R2CvmnDjz8nsdysX1iz
+ DhYpaiLv1I5mrX0Xj7bltLmqxZw0M/yN9JR9612HVpTtrPMPnHJy8Man+xX5B8dRRsp0ffcc4el
+ gcF92UFyL4h2pXg95JevQw+1d5SgBT5XaP1ENFbqbndofz2nZxQAsgeOAPrwn/d/7PVljAaj11y
+ 9PKGw6e5X2ylBoQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Adds support for the Nitrogen8MP SMARC System on Module and
-the Nitrogen8MP Universal SMARC Carrier Board.
+We currently only emit events on changed line config to user-space on
+changes made from user-space. Users have no way of getting notified
+about in-kernel changes. This series improves the situation and also
+contains a couple other related improvements.
 
-Signed-off-by: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
+This is a reworked approach which gets and stores as much info (all of
+it actually, except for the pinctrl state) the moment the event occurrs
+but moves the actual queueing of the event on the kfifo to a dedicated
+high-priority, ordered workqueue.
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+Changes in v5:
+- only notify user-space about changed config AFTER the edge detector
+  was updated (to that end keep the explicit notification and use the
+  nonotify variants of direction setters)
+- for consistency do the same for v1
+- Link to v4: https://lore.kernel.org/r/20241017-gpio-notify-in-kernel-events-v4-0-64bc05f3be0c@linaro.org
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index b39a7e031177..58979c030519 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -1097,6 +1097,12 @@ properties:
-           - const: avnet,sm2s-imx8mp              # SM2S-IMX8PLUS SoM
-           - const: fsl,imx8mp
- 
-+      - description: Boundary Device Nitrogen8MP Universal SMARC Carrier Board
-+        items:
-+          - const: boundary,imx8mp-nitrogen-smarc-universal-board
-+          - const: boundary,imx8mp-nitrogen-smarc-som
-+          - const: fsl,imx8mp
-+
-       - description: i.MX8MP DHCOM based Boards
-         items:
-           - enum:
+Changes in v4:
+- don't emit additional events when emulating open-source or open-drain
+  from gpiod_direction_output(), to that end use the nonotify variants
+  of gpiod_direction_input()
+- store current debounce period in the GPIO line descriptor and remove
+  the entire supinfo infrastructure from gpiolib-cdev.c
+- fix all (hopefully) corner-cases where two reconfigure or
+  requested/reconfigured events could be emitted for a single logical
+  event
+- emit the reconfigure event from gpio_set_debounce_timeout()
+- add a patch refactoring gpio_do_set_config()
+- Link to v3: https://lore.kernel.org/r/20241015-gpio-notify-in-kernel-events-v3-0-9edf05802271@linaro.org
+
+Changes in v3:
+- don't reach into pinctrl if the USED flag is already set
+- reword the comment from patch 5 and move it one patch back
+- don't abandon emitting the event if the GPIO chip is gone by the time
+  the work is executed, just don't reach into pinctrl and return
+  whatever data we already had
+- Link to v2: https://lore.kernel.org/r/20241010-gpio-notify-in-kernel-events-v2-0-b560411f7c59@linaro.org
+
+Changes in v2:
+- put all line-info events emitting on a workqueue to allow queueing
+  them from atomic context
+- switch the notifier type used for emitting info events to atomic
+- add a patch notifying user-space about drivers requesting their own
+  descs
+- drop patches that were picked up
+- Link to v1: https://lore.kernel.org/r/20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org
+
+---
+Bartosz Golaszewski (8):
+      gpiolib: notify user-space when a driver requests its own desc
+      gpiolib: unduplicate chip guard in set_config path
+      gpio: cdev: go back to storing debounce period in the GPIO descriptor
+      gpio: cdev: prepare gpio_desc_to_lineinfo() for being called from atomic
+      gpiolib: add a per-gpio_device line state notification workqueue
+      gpio: cdev: put emitting the line state events on a workqueue
+      gpiolib: switch the line state notifier to atomic
+      gpiolib: notify user-space about in-kernel line state changes
+
+ drivers/gpio/gpiolib-cdev.c | 301 +++++++++++++++++++-------------------------
+ drivers/gpio/gpiolib.c      | 130 ++++++++++++++-----
+ drivers/gpio/gpiolib.h      |  14 ++-
+ 3 files changed, 243 insertions(+), 202 deletions(-)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20240924-gpio-notify-in-kernel-events-07cd912153e8
+
+Best regards,
 -- 
-2.43.0
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
