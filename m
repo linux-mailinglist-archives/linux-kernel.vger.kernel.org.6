@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-371549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E269A3C89
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:02:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF5C9A3C8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E68851C23FBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBDB01C213FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70832040A3;
-	Fri, 18 Oct 2024 10:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141C32038A8;
+	Fri, 18 Oct 2024 10:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xVP+zijF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="32jQipiu"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AZac7GHZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04ED203715
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15A5202F7B;
+	Fri, 18 Oct 2024 10:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729249126; cv=none; b=BYQSkQzgpGXdeCWsLZ/mWXL+oEGbeLL80A1RqrpYiyM7TNBdvZY4erBPjiniVjGprPJwpBPb3lF2ZZXKFUNgl6U1VbNHN+L9K5J6dFRVU+Ystc+H8xMIfseaGlXhHZ2W/ed2dFDBuPzs49FyRTAZLKb/dfouoECwlKzV4fY1VRk=
+	t=1729249181; cv=none; b=Z745F8vFG393bQkXmvcYAq67SLnWBQMIRKFBHlJjvIr9UdbB9pfXPCQqI9PW366hMSNCj5RB0u+sT0Ltbh5TIkxhj8E39hGYWobT2pa+0X93U7eIMdU6yDN/tjKmv6Bs81O0i1bt4N7KrVh6ApmUpM/SBscXvVi/AllyC0MY+78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729249126; c=relaxed/simple;
-	bh=Zci9NhizznmDP8zOHvL1ljcQifyuO53qkNj1YToqwrY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ftbP3BmQC7xWfSZ7UyPkgPExltQS+zZ8VjmOwcb5ppqAFqRhSKpxJjhpQZY0hLLCOp39YNA4z1bl5vyfDpLmjKjgFvaocjY+/1MNkf0U8eM5RK51ZIcPcsPuXjE6758/GH8VQITuLBtBoV3FHj3sd70Dt6O/n0C8oADiBnprTDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xVP+zijF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=32jQipiu; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729249122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cY7Z2ILlY45KvRvGjUJZg5hnmtu8rYMrlgrR+X6O5Xs=;
-	b=xVP+zijFjFzBa05H9cKKBL7AR2C0oOJ3bXN/GfP+cLxOsWx+4QwNjR7mXgzmyS5ZLSlZQF
-	FR4mcUQbtZQPgegSz3eGQ0aPdanf4M2M1fB+MxgtIxBT0Kmh4vpu7V3dYvrkNKrhrN7JxQ
-	Cm4YMB29H2IKGhoLV7pMmCtWTxq/MEK0EsImmIxJAhMeCc3TCuUD3Vg5is1GNFCFce2GO3
-	6rXrbOXqnmhyvoPAUVgpxfp7Of/fkj5l2G9dV/yM4ejowdhx80VNUqGzt0UEy6BrXth5Sf
-	RSqpx/abHiLr+V8M1s0w1DpFA4pGKwg9ouEuNVno86qHM9YFxX3dU7uxYIzsgw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729249122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cY7Z2ILlY45KvRvGjUJZg5hnmtu8rYMrlgrR+X6O5Xs=;
-	b=32jQipiuFOPTF5JaIbtQQw/Vr0KAcLD6ejjY2RPGuaYSvsmQtCOG3y/pcIpEX/o2X17ENn
-	ehQn1kD751XmVRDA==
-To: quic_zijuhu <quic_zijuhu@quicinc.com>, Zijun Hu <zijun_hu@icloud.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] genirq/devres: Simplify API devm_free_irq() implementation
-In-Reply-To: <fa7268e4-24a9-4ddb-8477-e4959a6105ad@quicinc.com>
-References: <20241017-devres_kernel_fix-v1-1-4aa0d7c4fee4@quicinc.com>
- <87y12m8o76.ffs@tglx> <07f223e0-9a42-4637-a081-a057025e216f@icloud.com>
- <87sest94ag.ffs@tglx> <fa7268e4-24a9-4ddb-8477-e4959a6105ad@quicinc.com>
-Date: Fri, 18 Oct 2024 12:58:42 +0200
-Message-ID: <87plnx8yot.ffs@tglx>
+	s=arc-20240116; t=1729249181; c=relaxed/simple;
+	bh=ZMpBNiw5IFWbIs+kBZ27ODsoiXYLkkM+3z4SHvgR+0k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cy725Y/ADxqwuU3zQ13QMoKzpMwAnXuqlxIhsuV8Us/4BU6SY0UDe0aQ321ZjmlTduletu8lq+b8F32LzVJ6Skb/ix4BcQRU8p136K5b12ocYJmnuDBqc2yxZMXHAfCU7oohq/lRxGbSQQrEPAQtdYIjbzCcXbz06Qh2Arfq6eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AZac7GHZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I33Xf1007760;
+	Fri, 18 Oct 2024 10:59:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=mhCSdLki5ucZFmOT4Be6yQk4SMPL7p3Nk63
+	dhKclx1I=; b=AZac7GHZ5qs5m9LskqNb8uMa1EniRbzHMyukY6iEMaGHo+yDkar
+	fA13UkXFakBlNgIS267pVeTKkbq0xIl3XqH3QSDBAVGwOy1kbgeKXovm3Xg8g5kY
+	gB3eYi+kJZ5bzHj+4W82Y0M/1q2F4evHjMTQv1fFWMy1/YD8LrqZu6alK0BeK1IL
+	OP4ElDBDIU/+G4yIaxN0OT63Rm7eb4SIJsxXMO3R/FKpmIsmGiLeZ6LDLm9C1bQz
+	mK4iaoD9Mqc0uL1Jg3mDoGMe9p5lvMBvyp4f4nCgUXAiXV0BOOOifACtq/jc2xcg
+	r5J8QE2a3luahrUirbKc7W7Geq33s0Bxoww==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42athc4w1b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 10:59:30 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 49IAxR01001938;
+	Fri, 18 Oct 2024 10:59:27 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 427j6mr178-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 10:59:27 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49IAxQ7Z001933;
+	Fri, 18 Oct 2024 10:59:26 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.93])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 49IAxQrJ001931
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 10:59:26 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 460767)
+	id B776F509; Fri, 18 Oct 2024 16:29:25 +0530 (+0530)
+From: Balaji Pothunoori <quic_bpothuno@quicinc.com>
+To: andersson@kernel.org, mathieu.poirier@linaro.org,
+        dmitry.baryshkov@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ath11k@lists.infradead.org,
+        kvalo@kernel.org, Balaji Pothunoori <quic_bpothuno@quicinc.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] remoteproc: qcom_q6v5_pas: disable auto boot for wpss
+Date: Fri, 18 Oct 2024 16:29:11 +0530
+Message-Id: <20241018105911.165415-1-quic_bpothuno@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nojQCBI8kMDn8Wbtci0ST9Ocdx1nlO0v
+X-Proofpoint-ORIG-GUID: nojQCBI8kMDn8Wbtci0ST9Ocdx1nlO0v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxscore=0 clxscore=1011 malwarescore=0 mlxlogscore=999 impostorscore=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410180070
 
-On Fri, Oct 18 2024 at 17:28, quic zijuhu wrote:
-> On 10/18/2024 4:57 PM, Thomas Gleixner wrote:
-> if irq to free was ever requested by devm_request_irq()
-> then both logic is exactly same.
->
-> otherwise, actually change devres_free_irq()'s logic from
->
-> if (irq is not requested by devm_request_irq() {
-> 	warn;
-> }
-> free_irq()
->
-> To
->
-> if (irq is not requested by devm_request_irq() {
-> 	warn;
-> 	return;
-> }
->
+Currently, the rproc "atomic_t power" variable is incremented during:
+a. WPSS rproc auto boot.
+b. AHB power on for ath11k.
 
-Ah, you are right. I thought there is a return there.
+During AHB power off (rmmod ath11k_ahb.ko), rproc_shutdown fails
+to unload the WPSS firmware because the rproc->power value is '2',
+causing the atomic_dec_and_test(&rproc->power) condition to fail.
 
-So you want to explain it maybe this way:
+Consequently, during AHB power on (insmod ath11k_ahb.ko),
+QMI_WLANFW_HOST_CAP_REQ_V01 fails due to the host and firmware QMI
+states being out of sync.
 
-   If devres_destroy() does not find a matching devres entry, then
-   devm_free_irq() emits a warning and tries to free the interrupt.
+Fixes: 300ed425dfa9 ("remoteproc: qcom_q6v5_pas: Add SC7280 ADSP, CDSP & WPSS")
+Cc: stable@vger.kernel.org
+Signed-off-by: Balaji Pothunoori <quic_bpothuno@quicinc.com>
+---
+v2: updated commit text.
+    added Fixes/cc:stable tags.
 
-   That's wrong as devm_free_irq() should only undo what
-   devm_request_irq() set up.
+ drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   Replace devres_destroy() with a call to devres_release() which only
-   invokes the release function (free_irq()) in case that a matching
-   devres entry was found.
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index ef82835e98a4..05963d7924df 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -1344,7 +1344,7 @@ static const struct adsp_data sc7280_wpss_resource = {
+ 	.crash_reason_smem = 626,
+ 	.firmware_name = "wpss.mdt",
+ 	.pas_id = 6,
+-	.auto_boot = true,
++	.auto_boot = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+ 		"mx",
+-- 
+2.34.1
 
-Or something like that.
-
-Thanks,
-
-        tglx
 
