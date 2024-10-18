@@ -1,644 +1,423 @@
-Return-Path: <linux-kernel+bounces-372203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B87089A459E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:19:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B19C9A45C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC361C2222C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:19:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F97281E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC52204083;
-	Fri, 18 Oct 2024 18:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67732204F78;
+	Fri, 18 Oct 2024 18:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="UN+RJ2k4"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yuk1t5Be"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B37417C7CC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6D1168488;
+	Fri, 18 Oct 2024 18:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729275571; cv=none; b=uoLSe92b4+X6x4gJ2m+MiZVi6nA/ZXa8npuL1p+gSIMmXnLEl+eHMFHK4m9G0XCnOf+/tAn1Trf+4dPGLg5rkpws5J4qiWtwFYy/BngGWzrHcsB8LkebQxqO+LRLPUg/QnhVegyGZrgZdRsWPZdIYPunJ2XuQ76m9Dud+41/7Z4=
+	t=1729275704; cv=none; b=quFz0EmdpKWjfNy+bHVvE+lnZFxaA3VjgAEgWWdn2SiXEZCcG1TF9ezivGEojBgvdFsxIxSQiJjM8k8F+ECNtZtXCNU421Hk6Ifn2mhk8iTmz3HaCiczyvQQeLg1X2/EUSqBKSklilxCSZEIxOnDnvFBrsttjyr/0p9OPYeg+Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729275571; c=relaxed/simple;
-	bh=X1FME06xZowgQ1ycjXxU88JX+wm7nJhBG6WVqhf2YCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GZhSJaPMfEUKvyiZN5lyjV69RXFFAlVmbEzW7TCN0HnqBgUDScKnSqxPIqdUkDZbTtH07gK7yx0Hgbi1pAuVu1B6maAyZdfev1mb0REW37HvhR70GQ0rRcf/yBuS8sTOx5RDt/XS7pAU1kD/rU85clyjvV+cMML+5JKLDLU+iHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=UN+RJ2k4; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539fbbadf83so3205892e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:19:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atishpatra.org; s=google; t=1729275566; x=1729880366; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pxmy3sqS1cAQNJxt5t1dQqvUlQlW6137zV247JNa2jc=;
-        b=UN+RJ2k4VUngRNmlLZRxFxbqDxJLAySw3GKkiUAmjlNp6qoPKQEMIXN47jfV/+taug
-         7yIDixgNLIq/qNQ60vrpShLXmANFCETuHq2uL2MJleyMCSETKRVtCjFVEaRs1KwbG1hG
-         p3mmuUXrn0DEh3P2k+WMbgMln6A5FFlB3hB40=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729275566; x=1729880366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pxmy3sqS1cAQNJxt5t1dQqvUlQlW6137zV247JNa2jc=;
-        b=PHISL60p9k2fCJvXZ6+UJY8c7KX243MCC/l09rLr7q87pEPW9PEpV0VfjHBoWH6rwy
-         dpUFHNA4oFs/H8zmW18Kxc6FITw6SELul/wuCx2GPQiQ3QuUDPX2dD5PLtJ3uwuL9rwT
-         IuDtTb7cWZvahOTNpc9+IhwjVwfcrC1DWqzK2txM00d9fvyjz4FW3gfxGjJZg/rIeSKS
-         oRXlJlwmbb7rl+L1xZCSZi69UFzd61/ngJCy58POjz6XSIUPqMV5Z1yHvavJ/y79ck1F
-         ZAtEVyHBsMnVd6CHKB8mhbI2dhfslTlmZFZU7bZ0bT4eqF5UUBcrtdkK4/O1YEwgPQNx
-         B5qg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0uUjVb6WkGmtaCtyK69fDM08H01qwvppqNnLzkLPNUW0OC6sgljGLQ0+PXvLXVnKZhHGxXcCuBfMfM7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTHRntnOZoMGCoLnYoCEOfRsQS2iB3LFJo/pNbTDupXCOpXn01
-	tHP3lNgFdOIMGaU+ghN1Gw60iPxzPcIkQ6lZ5p9srNycKdo2E2GdYEA2IAzLnbXiy21NQGqvECC
-	xCIQ/3TEUd1scsEeIsMblKDtLsenqxuO2Fe+/
-X-Google-Smtp-Source: AGHT+IGLSZ/N96+nb+vxMw7TLpdFodBpcXt3/6JNGph7qbHR8v9giErxbk5rPWl+B+oeV3iBAMPMirdWB8KYguTmhvQ=
-X-Received: by 2002:a05:6512:b19:b0:539:d2e2:41ff with SMTP id
- 2adb3069b0e04-53a15493465mr2068480e87.23.1729275565749; Fri, 18 Oct 2024
- 11:19:25 -0700 (PDT)
+	s=arc-20240116; t=1729275704; c=relaxed/simple;
+	bh=gl39e5XMiuaV3vjNzR8IeZRB7zmMZrSilDNVwY2LOPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kXhoitF3V8elFuIznhcuPccVtIoUlJObRAVJbs7tVDhM8POmdQ1jYd3TcsVlpZ462+77I0l1Vzu7/lh7JiDw5hg0k1ftzZxZlojbQaBN5Ual3InPa5fPbAFTFRJifg8Sc0mi1E/KoEJTc9qCT881SPyHAlofBiZBHJzrHErZdcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yuk1t5Be; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83391C4CEC3;
+	Fri, 18 Oct 2024 18:21:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729275703;
+	bh=gl39e5XMiuaV3vjNzR8IeZRB7zmMZrSilDNVwY2LOPM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Yuk1t5BeqLkIrfS2tfLuGyIJLggpv0Pt+Yb7ob0URwIkKgPta6iNyAhJ5Xh076KZU
+	 j5CZcELZHHmvpm3y3imr5mwr8Nu+eEYv4yNI8S81INem+l5cpJqHt/U2y+HtbAwgeA
+	 nqDjLBsYTdDY5REnR8Rgh7Ly781hy8w4LCutvKRhAwqGLlv7xBnfmKbgzapkCmUugk
+	 6ovVXTMLcoiyJhIUzXYiVyA3jpxiE5U2pRyz06OLDIgICPCc7cgSf6o5dsZm+T6FZu
+	 Y7xyqPFTwQAgtvcB6gX4PTqlz20ucTLGD6XhSNRFdX/dEibEnEJcwvjLSDpLRXvjX1
+	 pgub1GelUc6EA==
+Date: Fri, 18 Oct 2024 19:21:37 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: jmaneyrol@invensense.com, lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: inv_icm42600: Enable Pedometer Functionality
+Message-ID: <20241018192137.0ff44c23@jic23-huawei>
+In-Reply-To: <20241015092035.10482-1-hardevsinh.palaniya@siliconsignals.io>
+References: <20241015092035.10482-1-hardevsinh.palaniya@siliconsignals.io>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-9-apatel@ventanamicro.com>
-In-Reply-To: <20240719160913.342027-9-apatel@ventanamicro.com>
-From: Atish Patra <atishp@atishpatra.org>
-Date: Fri, 18 Oct 2024 11:19:14 -0700
-Message-ID: <CAOnJCUJ6sCc5CKcHQBuLmW=Z2+j1MqBBTv309uqJeywp0s4V=A@mail.gmail.com>
-Subject: Re: [PATCH 08/13] RISC-V: KVM: Add common nested acceleration support
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 19, 2024 at 9:09=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
-> wrote:
->
-> Add a common nested acceleration support which will be shared by
-> all parts of KVM RISC-V. This nested acceleration support detects
-> and enables SBI NACL extension usage based on static keys which
-> ensures minimum impact on the non-nested scenario.
->
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+On Tue, 15 Oct 2024 14:50:03 +0530
+Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io> wrote:
+
+> Enables pedometer functionality in the ICM42605 IMU sensor.
+> 
+> The pedometer feature allows for step counting, which is accessible through
+> a new sysfs entry. Interrupts are triggered when a step event occurs, enabling
+> step event detection.
+> 
+> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Some additional comments from a quick read.
+
 > ---
->  arch/riscv/include/asm/kvm_nacl.h | 205 ++++++++++++++++++++++++++++++
->  arch/riscv/kvm/Makefile           |   1 +
->  arch/riscv/kvm/main.c             |  53 +++++++-
->  arch/riscv/kvm/nacl.c             | 152 ++++++++++++++++++++++
->  4 files changed, 409 insertions(+), 2 deletions(-)
->  create mode 100644 arch/riscv/include/asm/kvm_nacl.h
->  create mode 100644 arch/riscv/kvm/nacl.c
->
-> diff --git a/arch/riscv/include/asm/kvm_nacl.h b/arch/riscv/include/asm/k=
-vm_nacl.h
-> new file mode 100644
-> index 000000000000..a704e8000a58
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/kvm_nacl.h
-> @@ -0,0 +1,205 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2024 Ventana Micro Systems Inc.
-> + */
-> +
-> +#ifndef __KVM_NACL_H
-> +#define __KVM_NACL_H
-> +
-> +#include <linux/jump_label.h>
-> +#include <linux/percpu.h>
-> +#include <asm/byteorder.h>
-> +#include <asm/csr.h>
-> +#include <asm/sbi.h>
-> +
-> +DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_available);
-> +#define kvm_riscv_nacl_available() \
-> +       static_branch_unlikely(&kvm_riscv_nacl_available)
-> +
-> +DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_csr_available);
-> +#define kvm_riscv_nacl_sync_csr_available() \
-> +       static_branch_unlikely(&kvm_riscv_nacl_sync_csr_available)
-> +
-> +DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_hfence_available);
-> +#define kvm_riscv_nacl_sync_hfence_available() \
-> +       static_branch_unlikely(&kvm_riscv_nacl_sync_hfence_available)
-> +
-> +DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_sret_available);
-> +#define kvm_riscv_nacl_sync_sret_available() \
-> +       static_branch_unlikely(&kvm_riscv_nacl_sync_sret_available)
-> +
-> +DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_autoswap_csr_available);
-> +#define kvm_riscv_nacl_autoswap_csr_available() \
-> +       static_branch_unlikely(&kvm_riscv_nacl_autoswap_csr_available)
-> +
-> +struct kvm_riscv_nacl {
-> +       void *shmem;
-> +       phys_addr_t shmem_phys;
-> +};
-> +DECLARE_PER_CPU(struct kvm_riscv_nacl, kvm_riscv_nacl);
-> +
-> +void __kvm_riscv_nacl_hfence(void *shmem,
-> +                            unsigned long control,
-> +                            unsigned long page_num,
-> +                            unsigned long page_count);
-> +
-> +int kvm_riscv_nacl_enable(void);
-> +
-> +void kvm_riscv_nacl_disable(void);
-> +
-> +void kvm_riscv_nacl_exit(void);
-> +
-> +int kvm_riscv_nacl_init(void);
-> +
-> +#ifdef CONFIG_32BIT
-> +#define lelong_to_cpu(__x)     le32_to_cpu(__x)
-> +#define cpu_to_lelong(__x)     cpu_to_le32(__x)
-> +#else
-> +#define lelong_to_cpu(__x)     le64_to_cpu(__x)
-> +#define cpu_to_lelong(__x)     cpu_to_le64(__x)
-> +#endif
-> +
-> +#define nacl_shmem()                                                   \
-> +       this_cpu_ptr(&kvm_riscv_nacl)->shmem
-> +#define nacl_shmem_fast()                                              \
-> +       (kvm_riscv_nacl_available() ? nacl_shmem() : NULL)
-> +
+>  drivers/iio/imu/inv_icm42600/inv_icm42600.h   |  16 ++
+>  .../iio/imu/inv_icm42600/inv_icm42600_accel.c | 165 ++++++++++++++++++
+>  .../iio/imu/inv_icm42600/inv_icm42600_core.c  |  36 +++-
+>  3 files changed, 211 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600.h b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
+> index 3a07e43e4cf1..c3471b73152e 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600.h
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
+> @@ -122,6 +122,7 @@ struct inv_icm42600_sensor_conf {
+>  	int filter;
+>  };
+>  #define INV_ICM42600_SENSOR_CONF_INIT		{-1, -1, -1, -1}
+> +#define INV_ICM42600_SENSOR_CONF_APEX		{ 2, 0, 9, 6}
+>  
+>  struct inv_icm42600_conf {
+>  	struct inv_icm42600_sensor_conf gyro;
+> @@ -141,6 +142,8 @@ struct inv_icm42600_suspended {
+>   *  @chip:		chip identifier.
+>   *  @name:		chip name.
+>   *  @map:		regmap pointer.
+> + *  @pedometer_enable	status of pedometer function
+> + *  @pedometer_value	status of steps event occurnce
+Check the kernel-doc style.  Even better run the script over the
+files you are touching.
 
-I don't see any usage of this one. Most of the callers of nacl_shmem
-probably require more to do if nacl is available
-and need the conditional block anyways. Am I missing something ?
+You are missing : here.
 
-> +#define nacl_sync_hfence(__e)                                          \
-> +       sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SYNC_HFENCE,               \
-> +                 (__e), 0, 0, 0, 0, 0)
+>   *  @vdd_supply:	VDD voltage regulator for the chip.
+>   *  @vddio_supply:	I/O voltage regulator for the chip.
+>   *  @orientation:	sensor chip orientation relative to main hardware.
+> @@ -157,6 +160,8 @@ struct inv_icm42600_state {
+>  	enum inv_icm42600_chip chip;
+>  	const char *name;
+>  	struct regmap *map;
+> +	bool pedometer_enable;
+> +	bool pedometer_value;
+>  	struct regulator *vdd_supply;
+>  	struct regulator *vddio_supply;
+>  	struct iio_mount_matrix orientation;
+> @@ -301,6 +306,15 @@ struct inv_icm42600_sensor_state {
+>  #define INV_ICM42600_GYRO_ACCEL_CONFIG0_GYRO_FILT(_f)	\
+>  		FIELD_PREP(GENMASK(3, 0), (_f))
+>  
+> +/* Pedometer functionality */
+> +#define INV_ICM42600_REG_APEX_CONFIG0                  0x0056
+> +#define INV_ICM42600_DMP_ODR_50Hz                      BIT(1)
+> +#define INV_ICM42600_PED_ENABLE                        BIT(5)
+> +#define INV_ICM42600_REG_INT_STATUS3                   0x0038
+> +#define INV_ICM42600_STEP_DET_INT                      BIT(5)
+> +#define INV_ICM42600_REG_APEX_DATA                     0x0031 // 2 Byte little-endian
+
+/* */ for comments in IIO (and most of the kernel)
+Also, put it on the line above rather than making such a long line.
 > +
-> +#define nacl_hfence_mkconfig(__type, __order, __vmid, __asid)          \
-> +({                                                                     \
-> +       unsigned long __c =3D SBI_NACL_SHMEM_HFENCE_CONFIG_PEND;         =
- \
-> +       __c |=3D ((__type) & SBI_NACL_SHMEM_HFENCE_CONFIG_TYPE_MASK)     =
- \
-> +               << SBI_NACL_SHMEM_HFENCE_CONFIG_TYPE_SHIFT;             \
-> +       __c |=3D (((__order) - SBI_NACL_SHMEM_HFENCE_ORDER_BASE) &       =
- \
-> +               SBI_NACL_SHMEM_HFENCE_CONFIG_ORDER_MASK)                \
-> +               << SBI_NACL_SHMEM_HFENCE_CONFIG_ORDER_SHIFT;            \
-> +       __c |=3D ((__vmid) & SBI_NACL_SHMEM_HFENCE_CONFIG_VMID_MASK)     =
- \
-> +               << SBI_NACL_SHMEM_HFENCE_CONFIG_VMID_SHIFT;             \
-> +       __c |=3D ((__asid) & SBI_NACL_SHMEM_HFENCE_CONFIG_ASID_MASK);    =
- \
-> +       __c;                                                            \
-> +})
+one blank line is enough.
 > +
-> +#define nacl_hfence_mkpnum(__order, __addr)                            \
-> +       ((__addr) >> (__order))
+>  #define INV_ICM42600_REG_TMST_CONFIG			0x0054
+>  #define INV_ICM42600_TMST_CONFIG_MASK			GENMASK(4, 0)
+>  #define INV_ICM42600_TMST_CONFIG_TMST_TO_REGS_EN	BIT(4)
+> @@ -373,6 +387,8 @@ struct inv_icm42600_sensor_state {
+>  #define INV_ICM42600_INTF_CONFIG6_I3C_SDR_EN		BIT(0)
+>  
+>  /* User bank 4 (MSB 0x40) */
+> +#define INV_ICM42600_REG_INT_SOURCE6                    0x404D
+> +#define INV_ICM42600_STEP_DET_INT1_EN              	BIT(5)
+>  #define INV_ICM42600_REG_INT_SOURCE8			0x404F
+>  #define INV_ICM42600_INT_SOURCE8_FSYNC_IBI_EN		BIT(5)
+>  #define INV_ICM42600_INT_SOURCE8_PLL_RDY_IBI_EN		BIT(4)
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+> index 56ac19814250..90fe4c9e15ab 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+> @@ -160,6 +160,13 @@ static const struct iio_chan_spec_ext_info inv_icm42600_accel_ext_infos[] = {
+>  	{},
+>  };
+
+> +static int inv_icm42600_steps_read_raw(struct iio_dev *indio_dev,
+> +                               struct iio_chan_spec const *chan,
+> +                               int *val, int *val2, long mask)
+> +{
+> +       struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+> +       __le16 steps;
+> +       int ret;
 > +
-> +#define nacl_hfence_mkpcount(__order, __size)                          \
-> +       ((__size) >> (__order))
+> +       if (mask == IIO_CHAN_INFO_PROCESSED) {
+> +               ret = iio_device_claim_direct_mode(indio_dev);
+> +               if (ret)
+> +                       return ret;
+> +               ret = regmap_bulk_read(st->map, INV_ICM42600_REG_APEX_DATA, &steps, sizeof(steps));
+> +               if (ret)
+> +                       return ret;
+> +               iio_device_release_direct_mode(indio_dev);
+> +               if (ret)
+> +                       return ret;
+> +               *val = steps;
+As the bot pointed out, you need an endian conversion here.
+le16_to_cpu()
+
+> +               return IIO_VAL_INT;
+> +       }
 > +
-> +#define nacl_hfence_gvma(__shmem, __gpa, __gpsz, __order)              \
-> +__kvm_riscv_nacl_hfence(__shmem,                                       \
-> +       nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_GVMA,           \
-> +                          __order, 0, 0),                              \
-> +       nacl_hfence_mkpnum(__order, __gpa),                             \
-> +       nacl_hfence_mkpcount(__order, __gpsz))
+> +       return -EINVAL;
+> +}
 > +
-> +#define nacl_hfence_gvma_all(__shmem)                                  \
-> +__kvm_riscv_nacl_hfence(__shmem,                                       \
-> +       nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_GVMA_ALL,       \
-> +                          0, 0, 0), 0, 0)
-> +
-> +#define nacl_hfence_gvma_vmid(__shmem, __vmid, __gpa, __gpsz, __order) \
-> +__kvm_riscv_nacl_hfence(__shmem,                                       \
-> +       nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_GVMA_VMID,      \
-> +                          __order, __vmid, 0),                         \
-> +       nacl_hfence_mkpnum(__order, __gpa),                             \
-> +       nacl_hfence_mkpcount(__order, __gpsz))
-> +
-> +#define nacl_hfence_gvma_vmid_all(__shmem, __vmid)                     \
-> +__kvm_riscv_nacl_hfence(__shmem,                                       \
-> +       nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_GVMA_VMID_ALL,  \
-> +                          0, __vmid, 0), 0, 0)
-> +
-> +#define nacl_hfence_vvma(__shmem, __vmid, __gva, __gvsz, __order)      \
-> +__kvm_riscv_nacl_hfence(__shmem,                                       \
-> +       nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_VVMA,           \
-> +                          __order, __vmid, 0),                         \
-> +       nacl_hfence_mkpnum(__order, __gva),                             \
-> +       nacl_hfence_mkpcount(__order, __gvsz))
-> +
-> +#define nacl_hfence_vvma_all(__shmem, __vmid)                          \
-> +__kvm_riscv_nacl_hfence(__shmem,                                       \
-> +       nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_VVMA_ALL,       \
-> +                          0, __vmid, 0), 0, 0)
-> +
-> +#define nacl_hfence_vvma_asid(__shmem, __vmid, __asid, __gva, __gvsz, __=
-order)\
-> +__kvm_riscv_nacl_hfence(__shmem,                                       \
-> +       nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_VVMA_ASID,      \
-> +                          __order, __vmid, __asid),                    \
-> +       nacl_hfence_mkpnum(__order, __gva),                             \
-> +       nacl_hfence_mkpcount(__order, __gvsz))
-> +
-> +#define nacl_hfence_vvma_asid_all(__shmem, __vmid, __asid)             \
-> +__kvm_riscv_nacl_hfence(__shmem,                                       \
-> +       nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_VVMA_ASID_ALL,  \
-> +                          0, __vmid, __asid), 0, 0)
-> +
-> +#define nacl_csr_read(__shmem, __csr)                                  \
-> +({                                                                     \
-> +       unsigned long *__a =3D (__shmem) + SBI_NACL_SHMEM_CSR_OFFSET;    =
- \
-> +       lelong_to_cpu(__a[SBI_NACL_SHMEM_CSR_INDEX(__csr)]);            \
-> +})
-> +
-> +#define nacl_csr_write(__shmem, __csr, __val)                          \
-> +do {                                                                   \
-> +       void *__s =3D (__shmem);                                         =
- \
-> +       unsigned int __i =3D SBI_NACL_SHMEM_CSR_INDEX(__csr);            =
- \
-> +       unsigned long *__a =3D (__s) + SBI_NACL_SHMEM_CSR_OFFSET;        =
- \
-> +       u8 *__b =3D (__s) + SBI_NACL_SHMEM_DBITMAP_OFFSET;               =
- \
-> +       __a[__i] =3D cpu_to_lelong(__val);                               =
- \
-> +       __b[__i >> 3] |=3D 1U << (__i & 0x7);                            =
- \
-> +} while (0)
-> +
-> +#define nacl_csr_swap(__shmem, __csr, __val)                           \
-> +({                                                                     \
-> +       void *__s =3D (__shmem);                                         =
- \
-> +       unsigned int __i =3D SBI_NACL_SHMEM_CSR_INDEX(__csr);            =
- \
-> +       unsigned long *__a =3D (__s) + SBI_NACL_SHMEM_CSR_OFFSET;        =
- \
-> +       u8 *__b =3D (__s) + SBI_NACL_SHMEM_DBITMAP_OFFSET;               =
- \
-> +       unsigned long __r =3D lelong_to_cpu(__a[__i]);                   =
- \
-> +       __a[__i] =3D cpu_to_lelong(__val);                               =
- \
-> +       __b[__i >> 3] |=3D 1U << (__i & 0x7);                            =
- \
-> +       __r;                                                            \
-> +})
-> +
-> +#define nacl_sync_csr(__csr)                                           \
-> +       sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SYNC_CSR,                  \
-> +                 (__csr), 0, 0, 0, 0, 0)
-> +
-> +#define ncsr_read(__csr)                                               \
-> +({                                                                     \
-> +       unsigned long __r;                                              \
-> +       if (kvm_riscv_nacl_available())                                 \
-> +               __r =3D nacl_csr_read(nacl_shmem(), __csr);              =
- \
-> +       else                                                            \
-> +               __r =3D csr_read(__csr);                                 =
- \
-> +       __r;                                                            \
-> +})
-> +
-> +#define ncsr_write(__csr, __val)                                       \
-> +do {                                                                   \
-> +       if (kvm_riscv_nacl_sync_csr_available())                        \
-> +               nacl_csr_write(nacl_shmem(), __csr, __val);             \
-> +       else                                                            \
-> +               csr_write(__csr, __val);                                \
-> +} while (0)
-> +
-> +#define ncsr_swap(__csr, __val)                                         =
-       \
-> +({                                                                     \
-> +       unsigned long __r;                                              \
-> +       if (kvm_riscv_nacl_sync_csr_available())                        \
-> +               __r =3D nacl_csr_swap(nacl_shmem(), __csr, __val);       =
- \
-> +       else                                                            \
-> +               __r =3D csr_swap(__csr, __val);                          =
- \
-> +       __r;                                                            \
-> +})
-> +
-> +#define nsync_csr(__csr)                                               \
-> +do {                                                                   \
-> +       if (kvm_riscv_nacl_sync_csr_available())                        \
-> +               nacl_sync_csr(__csr);                                   \
-> +} while (0)
-> +
-> +#endif
-> diff --git a/arch/riscv/kvm/Makefile b/arch/riscv/kvm/Makefile
-> index c1eac0d093de..0fb1840c3e0a 100644
-> --- a/arch/riscv/kvm/Makefile
-> +++ b/arch/riscv/kvm/Makefile
-> @@ -16,6 +16,7 @@ kvm-y +=3D aia_device.o
->  kvm-y +=3D aia_imsic.o
->  kvm-y +=3D main.o
->  kvm-y +=3D mmu.o
-> +kvm-y +=3D nacl.o
->  kvm-y +=3D tlb.o
->  kvm-y +=3D vcpu.o
->  kvm-y +=3D vcpu_exit.o
-> diff --git a/arch/riscv/kvm/main.c b/arch/riscv/kvm/main.c
-> index bab2ec34cd87..fd78f40bbb04 100644
-> --- a/arch/riscv/kvm/main.c
-> +++ b/arch/riscv/kvm/main.c
-> @@ -10,8 +10,8 @@
->  #include <linux/err.h>
->  #include <linux/module.h>
->  #include <linux/kvm_host.h>
-> -#include <asm/csr.h>
->  #include <asm/cpufeature.h>
-> +#include <asm/kvm_nacl.h>
->  #include <asm/sbi.h>
->
->  long kvm_arch_dev_ioctl(struct file *filp,
-> @@ -22,6 +22,12 @@ long kvm_arch_dev_ioctl(struct file *filp,
->
->  int kvm_arch_hardware_enable(void)
->  {
-> +       int rc;
-> +
-> +       rc =3D kvm_riscv_nacl_enable();
-> +       if (rc)
-> +               return rc;
-> +
->         csr_write(CSR_HEDELEG, KVM_HEDELEG_DEFAULT);
->         csr_write(CSR_HIDELEG, KVM_HIDELEG_DEFAULT);
->
-> @@ -49,11 +55,14 @@ void kvm_arch_hardware_disable(void)
->         csr_write(CSR_HVIP, 0);
->         csr_write(CSR_HEDELEG, 0);
->         csr_write(CSR_HIDELEG, 0);
-> +
-> +       kvm_riscv_nacl_disable();
+>  static int inv_icm42600_accel_read_raw(struct iio_dev *indio_dev,
+>  				       struct iio_chan_spec const *chan,
+>  				       int *val, int *val2, long mask)
+> @@ -681,6 +721,8 @@ static int inv_icm42600_accel_read_raw(struct iio_dev *indio_dev,
+>  		break;
+>  	case IIO_TEMP:
+>  		return inv_icm42600_temp_read_raw(indio_dev, chan, val, val2, mask);
+> +	case IIO_STEPS:
+> +		return inv_icm42600_steps_read_raw(indio_dev, chan, val, val2, mask);
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -824,6 +866,126 @@ static int inv_icm42600_accel_hwfifo_flush(struct iio_dev *indio_dev,
+>  	return ret;
 >  }
->
->  static int __init riscv_kvm_init(void)
->  {
->         int rc;
-> +       char slist[64];
->         const char *str;
->
->         if (!riscv_isa_extension_available(NULL, h)) {
-> @@ -71,16 +80,53 @@ static int __init riscv_kvm_init(void)
->                 return -ENODEV;
->         }
->
-> +       rc =3D kvm_riscv_nacl_init();
-> +       if (rc && rc !=3D -ENODEV)
-> +               return rc;
-> +
->         kvm_riscv_gstage_mode_detect();
->
->         kvm_riscv_gstage_vmid_detect();
->
->         rc =3D kvm_riscv_aia_init();
-> -       if (rc && rc !=3D -ENODEV)
-> +       if (rc && rc !=3D -ENODEV) {
-> +               kvm_riscv_nacl_exit();
->                 return rc;
-> +       }
->
->         kvm_info("hypervisor extension available\n");
->
-> +       if (kvm_riscv_nacl_available()) {
-> +               rc =3D 0;
-> +               slist[0] =3D '\0';
-> +               if (kvm_riscv_nacl_sync_csr_available()) {
-> +                       if (rc)
-> +                               strcat(slist, ", ");
-> +                       strcat(slist, "sync_csr");
-> +                       rc++;
-> +               }
-> +               if (kvm_riscv_nacl_sync_hfence_available()) {
-> +                       if (rc)
-> +                               strcat(slist, ", ");
-> +                       strcat(slist, "sync_hfence");
-> +                       rc++;
-> +               }
-> +               if (kvm_riscv_nacl_sync_sret_available()) {
-> +                       if (rc)
-> +                               strcat(slist, ", ");
-> +                       strcat(slist, "sync_sret");
-> +                       rc++;
-> +               }
-> +               if (kvm_riscv_nacl_autoswap_csr_available()) {
-> +                       if (rc)
-> +                               strcat(slist, ", ");
-> +                       strcat(slist, "autoswap_csr");
-> +                       rc++;
-> +               }
-> +               kvm_info("using SBI nested acceleration with %s\n",
-> +                        (rc) ? slist : "no features");
-> +       }
-> +
->         switch (kvm_riscv_gstage_mode()) {
->         case HGATP_MODE_SV32X4:
->                 str =3D "Sv32x4";
-> @@ -108,6 +154,7 @@ static int __init riscv_kvm_init(void)
->         rc =3D kvm_init(sizeof(struct kvm_vcpu), 0, THIS_MODULE);
->         if (rc) {
->                 kvm_riscv_aia_exit();
-> +               kvm_riscv_nacl_exit();
->                 return rc;
->         }
->
-> @@ -119,6 +166,8 @@ static void __exit riscv_kvm_exit(void)
->  {
->         kvm_riscv_aia_exit();
->
-> +       kvm_riscv_nacl_exit();
-> +
->         kvm_exit();
->  }
->  module_exit(riscv_kvm_exit);
-> diff --git a/arch/riscv/kvm/nacl.c b/arch/riscv/kvm/nacl.c
-> new file mode 100644
-> index 000000000000..08a95ad9ada2
-> --- /dev/null
-> +++ b/arch/riscv/kvm/nacl.c
-> @@ -0,0 +1,152 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2024 Ventana Micro Systems Inc.
-> + */
-> +
-> +#include <linux/kvm_host.h>
-> +#include <linux/vmalloc.h>
-> +#include <asm/kvm_nacl.h>
-> +
-> +DEFINE_STATIC_KEY_FALSE(kvm_riscv_nacl_available);
-> +DEFINE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_csr_available);
-> +DEFINE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_hfence_available);
-> +DEFINE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_sret_available);
-> +DEFINE_STATIC_KEY_FALSE(kvm_riscv_nacl_autoswap_csr_available);
-> +DEFINE_PER_CPU(struct kvm_riscv_nacl, kvm_riscv_nacl);
-> +
-> +void __kvm_riscv_nacl_hfence(void *shmem,
-> +                            unsigned long control,
-> +                            unsigned long page_num,
-> +                            unsigned long page_count)
-> +{
-> +       int i, ent =3D -1, try_count =3D 5;
-> +       unsigned long *entp;
-> +
-> +again:
-> +       for (i =3D 0; i < SBI_NACL_SHMEM_HFENCE_ENTRY_MAX; i++) {
-> +               entp =3D shmem + SBI_NACL_SHMEM_HFENCE_ENTRY_CONFIG(i);
-> +               if (lelong_to_cpu(*entp) & SBI_NACL_SHMEM_HFENCE_CONFIG_P=
-END)
-> +                       continue;
-> +
-> +               ent =3D i;
-> +               break;
-> +       }
-> +
-> +       if (ent < 0) {
-> +               if (try_count) {
-> +                       nacl_sync_hfence(-1UL);
-> +                       goto again;
-> +               } else {
-> +                       pr_warn("KVM: No free entry in NACL shared memory=
-\n");
-> +                       return;
-> +               }
-> +       }
-> +
-> +       entp =3D shmem + SBI_NACL_SHMEM_HFENCE_ENTRY_CONFIG(i);
-> +       *entp =3D cpu_to_lelong(control);
-> +       entp =3D shmem + SBI_NACL_SHMEM_HFENCE_ENTRY_PNUM(i);
-> +       *entp =3D cpu_to_lelong(page_num);
-> +       entp =3D shmem + SBI_NACL_SHMEM_HFENCE_ENTRY_PCOUNT(i);
-> +       *entp =3D cpu_to_lelong(page_count);
-> +}
-> +
-> +int kvm_riscv_nacl_enable(void)
-> +{
-> +       int rc;
-> +       struct sbiret ret;
-> +       struct kvm_riscv_nacl *nacl;
-> +
-> +       if (!kvm_riscv_nacl_available())
-> +               return 0;
-> +       nacl =3D this_cpu_ptr(&kvm_riscv_nacl);
-> +
-> +       ret =3D sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SET_SHMEM,
-> +                       nacl->shmem_phys, 0, 0, 0, 0, 0);
-> +       rc =3D sbi_err_map_linux_errno(ret.error);
-> +       if (rc)
-> +               return rc;
-> +
-> +       return 0;
-> +}
-> +
-> +void kvm_riscv_nacl_disable(void)
-> +{
-> +       if (!kvm_riscv_nacl_available())
-> +               return;
-> +
-> +       sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SET_SHMEM,
-> +                 SBI_SHMEM_DISABLE, SBI_SHMEM_DISABLE, 0, 0, 0, 0);
-> +}
-> +
-> +void kvm_riscv_nacl_exit(void)
-> +{
-> +       int cpu;
-> +       struct kvm_riscv_nacl *nacl;
-> +
-> +       if (!kvm_riscv_nacl_available())
-> +               return;
-> +
-> +       /* Allocate per-CPU shared memory */
-> +       for_each_possible_cpu(cpu) {
-> +               nacl =3D per_cpu_ptr(&kvm_riscv_nacl, cpu);
-> +               if (!nacl->shmem)
-> +                       continue;
-> +
-> +               free_pages((unsigned long)nacl->shmem,
-> +                          get_order(SBI_NACL_SHMEM_SIZE));
-> +               nacl->shmem =3D NULL;
-> +               nacl->shmem_phys =3D 0;
-> +       }
-> +}
-> +
-> +static long nacl_probe_feature(long feature_id)
-> +{
-> +       struct sbiret ret;
-> +
-> +       if (!kvm_riscv_nacl_available())
-> +               return 0;
-> +
-> +       ret =3D sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_PROBE_FEATURE,
-> +                       feature_id, 0, 0, 0, 0, 0);
-> +       return ret.value;
-> +}
-> +
-> +int kvm_riscv_nacl_init(void)
-> +{
-> +       int cpu;
-> +       struct page *shmem_page;
-> +       struct kvm_riscv_nacl *nacl;
-> +
-> +       if (sbi_spec_version < sbi_mk_version(1, 0) ||
-> +           sbi_probe_extension(SBI_EXT_NACL) <=3D 0)
-> +               return -ENODEV;
-> +
-> +       /* Enable NACL support */
-> +       static_branch_enable(&kvm_riscv_nacl_available);
-> +
-> +       /* Probe NACL features */
-> +       if (nacl_probe_feature(SBI_NACL_FEAT_SYNC_CSR))
-> +               static_branch_enable(&kvm_riscv_nacl_sync_csr_available);
-> +       if (nacl_probe_feature(SBI_NACL_FEAT_SYNC_HFENCE))
-> +               static_branch_enable(&kvm_riscv_nacl_sync_hfence_availabl=
-e);
-> +       if (nacl_probe_feature(SBI_NACL_FEAT_SYNC_SRET))
-> +               static_branch_enable(&kvm_riscv_nacl_sync_sret_available)=
-;
-> +       if (nacl_probe_feature(SBI_NACL_FEAT_AUTOSWAP_CSR))
-> +               static_branch_enable(&kvm_riscv_nacl_autoswap_csr_availab=
-le);
-> +
-> +       /* Allocate per-CPU shared memory */
-> +       for_each_possible_cpu(cpu) {
-> +               nacl =3D per_cpu_ptr(&kvm_riscv_nacl, cpu);
-> +
-> +               shmem_page =3D alloc_pages(GFP_KERNEL | __GFP_ZERO,
-> +                                        get_order(SBI_NACL_SHMEM_SIZE));
-> +               if (!shmem_page) {
-> +                       kvm_riscv_nacl_exit();
-> +                       return -ENOMEM;
-> +               }
-> +               nacl->shmem =3D page_to_virt(shmem_page);
-> +               nacl->shmem_phys =3D page_to_phys(shmem_page);
-> +       }
-> +
-> +       return 0;
-> +}
-> --
-> 2.34.1
->
+>  
+> +/*****************Pedometer Functionality**************/
 
-Otherwise, it looks good to me.
+No to structure comments like this. They add little to readability and have
+a habit of rapidly becoming wrong.
 
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
+> +static int inv_icm42600_step_en(struct inv_icm42600_state *st, int state)
+> +{
+> +	struct inv_icm42600_sensor_conf conf = INV_ICM42600_SENSOR_CONF_APEX;
+> +	int ret, value;
+> +
+> +	if (state) {
+> +
+> +		ret = inv_icm42600_set_accel_conf(st, &conf, NULL);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_write(st->map, INV_ICM42600_REG_APEX_CONFIG0,
+> +		                        INV_ICM42600_DMP_ODR_50Hz);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_write(st->map, INV_ICM42600_REG_SIGNAL_PATH_RESET,
+> +		                        INV_ICM42600_SIGNAL_PATH_RESET_DMP_MEM_RESET);
+> +		if (ret)
+> +			return ret;
+> +		msleep(1);
+Document the reason for this value.
 
---=20
-Regards,
-Atish
+> +
+> +		ret = regmap_write(st->map, INV_ICM42600_REG_SIGNAL_PATH_RESET,
+> +		                        INV_ICM42600_SIGNAL_PATH_RESET_DMP_INIT_EN);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_write(st->map, INV_ICM42600_REG_INT_SOURCE6,
+> +		                        INV_ICM42600_STEP_DET_INT1_EN);
+> +		if (ret)
+> +			return ret;
+> +
+> +		value = INV_ICM42600_DMP_ODR_50Hz | INV_ICM42600_PED_ENABLE;
+> +		ret = regmap_write(st->map, INV_ICM42600_REG_APEX_CONFIG0, value);
+> +		if (ret)
+> +			return ret;
+> +
+> +		st->pedometer_enable = true;
+	return here.
+Then can drop the else.
+
+With two such different paths, even better would be two little functions
+to handle the two operations (enable + disable) as will make each individually
+easier to read.
+> +
+> +	} else {
+> +
+> +		ret = regmap_write(st->map, INV_ICM42600_REG_APEX_CONFIG0, 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_write(st->map, INV_ICM42600_REG_INT_SOURCE6, 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		st->pedometer_enable = false;
+> +	 }
+> +
+> +	return 0;
+> +}
+> +
+> +static int inv_icm42600_write_event_config(struct iio_dev *indio_dev,
+> +                                     const struct iio_chan_spec *chan,
+> +                                     enum iio_event_type type,
+> +                                     enum iio_event_direction dir, int state)
+> +{
+> +	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+> +	int ret;
+> +
+> +	if(chan->type != IIO_STEPS)
+> +	        return -EINVAL;
+> +
+> +	mutex_lock(&st->lock);
+
+guard() is useful in cases like this.
+
+> +
+> +	ret = inv_icm42600_step_en(st, state);
+> +
+> +	mutex_unlock(&st->lock);
+> +	return ret;
+> +}
+> +
+> +static int inv_icm42600_read_event_config(struct iio_dev *indio_dev,
+> +                                    const struct iio_chan_spec *chan,
+> +                                    enum iio_event_type type,
+> +                                    enum iio_event_direction dir)
+> +{
+> +	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+> +	int value;
+> +
+> +	if (chan->type != IIO_STEPS)
+> +	        return -EINVAL;
+> +
+> +	regmap_read(st->map, INV_ICM42600_REG_APEX_CONFIG0, &value);
+check return value.
+
+> +
+> +	if (value & INV_ICM42600_PED_ENABLE)
+> +	        return 1;
+> +	else
+> +	        return 0;
+> +}
+> +
+> +static int inv_icm42600_read_event_value(struct iio_dev *indio_dev,
+This isn't to get if the event happened, it's for reading thresholds
+etc. Not relevant for a pedometer.
+
+> +                                   const struct iio_chan_spec *chan,
+> +                                   enum iio_event_type type,
+> +                                   enum iio_event_direction dir,
+> +                                   enum iio_event_info info,
+> +                                   int *val, int *val2)
+> +{
+> +	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+> +
+> +	mutex_lock(&st->lock);
+guard()
+
+> +
+> +	if (type == IIO_EV_TYPE_CHANGE) {
+
+flip logic and can test that before taking the lock
+
+> +		if (st->pedometer_value == true) {
+> +			*val = 1;
+> +		        st->pedometer_value = false;
+> +		} else {
+> +		        *val = 0;
+> +		}
+> +		mutex_unlock(&st->lock);
+> +		return IIO_VAL_INT;
+> +	}
+> +
+> +	mutex_unlock(&st->lock);
+> +	return -EINVAL;
+> +}
+> +
+>  static const struct iio_info inv_icm42600_accel_info = {
+>  	.read_raw = inv_icm42600_accel_read_raw,
+>  	.read_avail = inv_icm42600_accel_read_avail,
+> @@ -833,6 +995,9 @@ static const struct iio_info inv_icm42600_accel_info = {
+>  	.update_scan_mode = inv_icm42600_accel_update_scan_mode,
+>  	.hwfifo_set_watermark = inv_icm42600_accel_hwfifo_set_watermark,
+>  	.hwfifo_flush_to_buffer = inv_icm42600_accel_hwfifo_flush,
+> +	.write_event_config = inv_icm42600_write_event_config,
+> +	.read_event_config  = inv_icm42600_read_event_config,
+> +	.read_event_value   = inv_icm42600_read_event_value,
+>  };
+>  
+>  struct iio_dev *inv_icm42600_accel_init(struct inv_icm42600_state *st)
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> index c3924cc6190e..4d78cb5ca396 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> @@ -15,7 +15,8 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/property.h>
+>  #include <linux/regmap.h>
+> -
+Keep the blank line and keep the iio headers in their own section.
+
+> +#include <linux/iio/events.h>
+> +#include <linux/of_irq.h>
+hmm. Can we not use the generic property accessors?
+Also you aren't using any interrupt related new stuff in here so I think
+this is just spurious.
+
+>  #include <linux/iio/iio.h>
+>  
+>  #include "inv_icm42600.h"
+> @@ -533,6 +534,19 @@ static irqreturn_t inv_icm42600_irq_handler(int irq, void *_data)
+>  
+>  	mutex_lock(&st->lock);
+Probably worth considering use of guard() in here as a precursor patch.
+
+>  
+> +	ret = regmap_read(st->map, INV_ICM42600_REG_INT_STATUS3, &status);
+> +	if (ret)
+> +	        goto out_unlock;
+> +
+> +	if (status & INV_ICM42600_STEP_DET_INT) {
+> +	        iio_push_event(st->indio_accel, IIO_MOD_EVENT_CODE(IIO_STEPS, 0,
+> +	                                                     IIO_NO_MOD,
+> +	                                                     IIO_EV_TYPE_CHANGE,
+> +	                                                     IIO_EV_DIR_NONE),
+> +	                                                        st->timestamp.accel);
+> +	        st->pedometer_value = true;
+> +	}
+> +
+>  	ret = regmap_read(st->map, INV_ICM42600_REG_INT_STATUS, &status);
+>  	if (ret)
+>  		goto out_unlock;
+> @@ -860,12 +876,20 @@ static int inv_icm42600_runtime_suspend(struct device *dev)
+>  	mutex_lock(&st->lock);
+>  
+>  	/* disable all sensors */
+> -	ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
+> -					 INV_ICM42600_SENSOR_MODE_OFF, false,
+> -					 NULL);
+> -	if (ret)
+> -		goto error_unlock;
+> +	if (st->pedometer_enable) {
+> +		ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
+> +						 INV_ICM42600_SENSOR_MODE_LOW_POWER,
+> +						false, NULL);
+> +		if (ret)
+> +			goto error_unlock;
+> +	} else {
+>  
+> +		ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
+> +						 INV_ICM42600_SENSOR_MODE_OFF,
+> +						 false, NULL);
+> +		if (ret)
+> +			goto error_unlock;
+> +	}
+>  	regulator_disable(st->vddio_supply);
+>  
+>  error_unlock:
+
 
