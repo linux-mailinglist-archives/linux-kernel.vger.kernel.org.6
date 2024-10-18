@@ -1,125 +1,135 @@
-Return-Path: <linux-kernel+bounces-371373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380BB9A3A30
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:39:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5920E9A3A37
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF221F27B4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:39:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0899E1F281F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458711F5830;
-	Fri, 18 Oct 2024 09:39:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F76179965;
-	Fri, 18 Oct 2024 09:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A881FF7CC;
+	Fri, 18 Oct 2024 09:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IJE8xZ5O"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135CB1F8924
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729244365; cv=none; b=nuSKiI6ETXx66ljkbpRf7PZgESWpaMzlPvgqGDH/OjQdebT+GQiFx4SQzSgqhfYDObhNXDRM3lG58Clc8jT+nguJoqAu0HhK+vJqNGFbLh7zNUNcdOMKkCbkhZk6JDeXbb/0PB5giBsM0refPeItZGXM70MOeMVbqYjbkEU+6p0=
+	t=1729244441; cv=none; b=dp3tmY712pxRhK/zeBC+MZcVeh6AbUs3cJpl8Ox18nB0dpzhomBVpvpafTF3A0z1Z8QVUV3XS15Y6TLmQmoTEBdun0DxA1km8E6OLxM9ME+gAybXLWxTovmLmWHvAOLM/3FkNvQR6Trk4esSWB6g5TSR3jTZ+RBq9RiCVcV8YKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729244365; c=relaxed/simple;
-	bh=4VpjvciPKCyIBPuGr0O2yTsp1zf+Y6OpaD0A4XO/8jk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ky/GB8oP8SLunHqDK8YC3BwfYShb4EnGo5kKivy55CQRu/A3aXK9da/Rp+E8/QfmabG8hO+CqjdimHvsHvRaPXVqbKjnc2rJZlZ6MaSpnKGRyeD/55KVZyrnHTaPBD94ZFCZ8irfhLeiX8lD6LcBXC3xAre6a3SijHvt/zCSNLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF260FEC;
-	Fri, 18 Oct 2024 02:39:52 -0700 (PDT)
-Received: from [10.57.22.188] (unknown [10.57.22.188])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 45FE93F58B;
-	Fri, 18 Oct 2024 02:39:21 -0700 (PDT)
-Message-ID: <026951f9-05af-4ee4-85d2-30236292f7f8@arm.com>
-Date: Fri, 18 Oct 2024 10:39:20 +0100
+	s=arc-20240116; t=1729244441; c=relaxed/simple;
+	bh=VjtlmWV+/LA8G3s2lKzJGA3bXCeBNqT37Gm49h5CU6g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gFlx+TjF+q8VUF4BzDsH1auyRBO9QQMA/iANBgC7Gr07cGRntpxenDMg76/7F1BvZV8/ALn7P9qpP0oJYH2NPjTIV8iRRlW1qgQc1iTG/vXyHRiOZlnKaRXFvXHTZZV4wFxfuV/tptqHs57AXrIyhkLOFY1PX5BY6u8om13SI/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IJE8xZ5O; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729244437;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EGS+Zmvx1BSPBM6JUvsz/W/2vC9RaxIP5u5IVVeaHTo=;
+	b=IJE8xZ5OSeHLCMDW1oJ5brzkF3EvxcEqIpuo0xHIJU/i1Ujfrb9G6DR9goDHBb+kILMTK1
+	qra3crdsHK7vU97ZGQ4vP/kYV16snR9sOypn3pYzIOpJMQCTJDe7HfgOqgpoW5FbCh62nw
+	cOiBl3kCcPa/3GL6o+2nxl1aSFnj6Qc=
+From: Andrea Righi <andrea.righi@linux.dev>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] sched_ext: improve WAKE_SYNC behavior for default idle CPU selection
+Date: Fri, 18 Oct 2024 11:40:33 +0200
+Message-ID: <20241018094033.160188-1-andrea.righi@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] amba: Fix atomicity violation in amba_match()
-Content-Language: en-GB
-To: Qiu-ji Chen <chenqiuji666@gmail.com>, linux@armlinux.org.uk,
- rmk+kernel@armlinux.org.uk, sumit.garg@linaro.org,
- gregkh@linuxfoundation.org, andi.shyti@kernel.org, krzk@kernel.org
-Cc: linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
- stable@vger.kernel.org
-References: <20241018081539.1358921-1-chenqiuji666@gmail.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241018081539.1358921-1-chenqiuji666@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 18/10/2024 09:15, Qiu-ji Chen wrote:
-> Atomicity violation occurs during consecutive reads of
-> pcdev->driver_override. Consider a scenario: after pvdev->driver_override
-> passes the if statement, due to possible concurrency,
-> pvdev->driver_override may change. This leads to pvdev->driver_override
-> passing the condition with an old value, but entering the
-> return !strcmp(pcdev->driver_override, drv->name); statement with a new
-> value. This causes the function to return an unexpected result.
-> Since pvdev->driver_override is a string that is modified byte by byte,
-> without considering atomicity, data races may cause a partially modified
-> pvdev->driver_override to enter both the condition and return statements,
-> resulting in an error.
-> 
-> To fix this, we suggest protecting all reads of pvdev->driver_override
-> with a lock, and storing the result of the strcmp() function in a new
-> variable retval. This ensures that pvdev->driver_override does not change
-> during the entire operation, allowing the function to return the expected
-> result.
-> 
-> This possible bug is found by an experimental static analysis tool
-> developed by our team. This tool analyzes the locking APIs
-> to extract function pairs that can be concurrently executed, and then
-> analyzes the instructions in the paired functions to identify possible
-> concurrency bugs including data races and atomicity violations.
-> 
-> Fixes: 5150a8f07f6c ("amba: reorder functions")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
-> ---
->   drivers/amba/bus.c | 11 +++++++++--
->   1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> index 34bc880ca20b..e310f4f83b27 100644
-> --- a/drivers/amba/bus.c
-> +++ b/drivers/amba/bus.c
-> @@ -209,6 +209,7 @@ static int amba_match(struct device *dev, const struct device_driver *drv)
->   {
->   	struct amba_device *pcdev = to_amba_device(dev);
->   	const struct amba_driver *pcdrv = to_amba_driver(drv);
-> +	int retval;
->   
->   	mutex_lock(&pcdev->periphid_lock);
->   	if (!pcdev->periphid) {
-> @@ -230,8 +231,14 @@ static int amba_match(struct device *dev, const struct device_driver *drv)
->   	mutex_unlock(&pcdev->periphid_lock);
->   
->   	/* When driver_override is set, only bind to the matching driver */
-> -	if (pcdev->driver_override)
-> -		return !strcmp(pcdev->driver_override, drv->name);
-> +
-> +	device_lock(dev);
-> +	if (pcdev->driver_override) {
-> +		retval = !strcmp(pcdev->driver_override, drv->name);
-> +		device_unlock(dev);
-> +		return retval;
-> +	}
-> +	device_unlock(dev);
->   
->   	return amba_lookup(pcdrv->id_table, pcdev) != NULL;
->   }
+In the sched_ext built-in idle CPU selection logic, when handling a
+WF_SYNC wakeup, we always attempt to migrate the task to the waker's
+CPU, as the waker is expected to yield the CPU after waking the task.
 
+However, it may be preferable to keep the task on its previous CPU if
+the waker's CPU is cache-affine.
 
-Looks correct to me
+The same approach is also used by the fair class and in other scx
+schedulers, like scx_rusty and scx_bpfland.
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Therefore, apply the same logic to the built-in idle CPU selection
+policy as well.
 
+Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
+---
+ kernel/sched/ext.c | 44 +++++++++++++++++++++++++++++++-------------
+ 1 file changed, 31 insertions(+), 13 deletions(-)
+
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 6eae3b69bf6e..8b7d90db3cfb 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -3087,20 +3087,38 @@ static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
+ 	*found = false;
+ 
+ 	/*
+-	 * If WAKE_SYNC, the waker's local DSQ is empty, and the system is
+-	 * under utilized, wake up @p to the local DSQ of the waker. Checking
+-	 * only for an empty local DSQ is insufficient as it could give the
+-	 * wakee an unfair advantage when the system is oversaturated.
+-	 * Checking only for the presence of idle CPUs is also insufficient as
+-	 * the local DSQ of the waker could have tasks piled up on it even if
+-	 * there is an idle core elsewhere on the system.
+-	 */
+-	cpu = smp_processor_id();
+-	if ((wake_flags & SCX_WAKE_SYNC) &&
+-	    !cpumask_empty(idle_masks.cpu) && !(current->flags & PF_EXITING) &&
+-	    cpu_rq(cpu)->scx.local_dsq.nr == 0) {
+-		if (cpumask_test_cpu(cpu, p->cpus_ptr))
++	 * If WAKE_SYNC, try to migrate the wakee to the waker's CPU.
++	 */
++	if (wake_flags & SCX_WAKE_SYNC) {
++		cpu = smp_processor_id();
++
++		/*
++		 * If the waker's CPU is cache affine and prev_cpu is idle,
++		 * then avoid a migration.
++		 */
++		if (cpus_share_cache(cpu, prev_cpu) &&
++		    test_and_clear_cpu_idle(prev_cpu))
+ 			goto cpu_found;
++
++		/*
++		 * If the waker's local DSQ is empty, and the system is under
++		 * utilized, try to wake up @p to the local DSQ of the waker.
++		 *
++		 * Checking only for an empty local DSQ is insufficient as it
++		 * could give the wakee an unfair advantage when the system is
++		 * oversaturated.
++		 *
++		 * Checking only for the presence of idle CPUs is also
++		 * insufficient as the local DSQ of the waker could have tasks
++		 * piled up on it even if there is an idle core elsewhere on
++		 * the system.
++		 */
++		if (!cpumask_empty(idle_masks.cpu) &&
++		    !(current->flags & PF_EXITING) &&
++		    cpu_rq(cpu)->scx.local_dsq.nr == 0) {
++			if (cpumask_test_cpu(cpu, p->cpus_ptr))
++				goto cpu_found;
++		}
+ 	}
+ 
+ 	/*
+-- 
+2.47.0
 
 
