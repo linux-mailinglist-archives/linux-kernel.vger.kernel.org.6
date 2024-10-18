@@ -1,327 +1,267 @@
-Return-Path: <linux-kernel+bounces-371171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7184F9A3757
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:37:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3479A375B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2E7EB23424
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C70F1F231B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EE7189528;
-	Fri, 18 Oct 2024 07:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CVyw4H2U"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B68018A6D0;
+	Fri, 18 Oct 2024 07:37:31 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93491185B68
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC611885B8
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729237031; cv=none; b=KE6INUsbwPkSPnpz1gpZTjf+r6/FAWDiyt+vYLF7/DLSXxOcpYutH3DOH/i/6GKO6N1cyQQZqHm39YlyJgg1RVJG8PGFN/UTV5KT2G/4mSH8c7wAjaVl2ze/OchloVvnvHmVSpGwcT5AaToQ1y3aQP+YikI2poLeG2e2lC86hHE=
+	t=1729237050; cv=none; b=LeC7xfoILdqYY0Mdm+4lit0iURWCKFAdkTGu1Hr/Jh3X2w0HKeDGYtGLqa1clfjPTYebVyoyxo1HUQqGAmqb2DpTEdxabh122a/5wnrkU3UmRPhL0uyx4q4Ea3FEoXsOTvBQsrcGXM3BSCpSQjWIFxPNL3y8MMp5daPAJCT0OTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729237031; c=relaxed/simple;
-	bh=J/2P0Qjo4Pi1oxevSNksyDuXieZuyJYEGU2KpqhBDkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jRYsLTS0VHpD9ioOyhx9/RtnCpqhAkwli/XRQQyuj9ScQBA4zUfLkOiOU+fLk6UVF9hhBZUGy2GCaeVfidwdDFAgbI0ekSohhz3kihl3ROeMw13QkJAVnyHwhu826WXXTMLMqTQGSjTC8FS6BGTxPvkR/wcanjOc3QXkQFyGoAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CVyw4H2U; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539fb49c64aso2581848e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:37:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729237026; x=1729841826; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FQ8SdkLsCIJNhBVmfW5932i8NaML5sg9nvB1KSarBPA=;
-        b=CVyw4H2UWtdhSajVc42QWON1wDRRDqiUh8on3uIiryOA8Y5K6Fjx61bx7WoKoXLx24
-         AHKRMNSes1GNgunfJWrnY67OBIpHQx0ce5DHLbV7wIz1YeZPx/yZfOV0IuKu41Rce0Dx
-         WhjCjbYYJNnUV2yChPRYthVKnxX52XOeVq6fGp7ZnG/ce1O6727XMX/kN7UVM1Xvs+Z5
-         EH3gSVXk3lB9LBqFez5Zol51E7e9C7vsClrTfJyJL0JO8/XsE7ZAEnEc1I899VArscgk
-         Np5q/qIQLyS7gliT/hT4m8fuDnMABznMATon6nbbnHMhtZTLwTh6Ob0AS1MHyT04xr88
-         iy8A==
+	s=arc-20240116; t=1729237050; c=relaxed/simple;
+	bh=3j32HDsoXxcNnfMxlhAz+OPZcnUlVBMR8ZevjD4mCy0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lO0aWzBv347ruFW7wrcCdbGoqMNU+Rhyx0tc3X7DlObuZNU5uUW7zMQVpdRE7VVYtLISVZyh1J4oU7BXJWdbb2VHrtuFGVvSobiPw4q/uoGXyC9ET2RvGMTrPE6v13LrNLDfGI/rJ+yeP9j+s4gokOKdHd2Lfu4qXgJ8I+nellI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c72d4ac4so17577605ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:37:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729237026; x=1729841826;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FQ8SdkLsCIJNhBVmfW5932i8NaML5sg9nvB1KSarBPA=;
-        b=nckFdu/IEPAmJhPvt3UY3fF6L8YbhvfbVaAHgYCS1UDu2+qcBVYjOlyaGD14BHSLNH
-         M5PpIB3CVd0IDIPTK8gbxCr9mZ7WE6vLl4Ey2tjCXMPiHWvdIKGO5Y0sZ1+j7Zc2BCA/
-         dj//ngUnLad2EeaxPr7FbrgVJsxBCSoEnaXVVfAwJO0b/cAld/0T3GEzSzMqNrfzXzby
-         vhXR/SsAEmRMOx1eviX3gpF6AbCaivrbKTAHY4g58LO9QsZcAMUOd5P40HIfuMd2VWJ6
-         oxBTyp5O6KBJIRNxKwoJ7m9ZiC2SJHDzr3yd52gdwJOd3Y0zk2bSI7+wnpFQ44zcnfMb
-         687A==
-X-Forwarded-Encrypted: i=1; AJvYcCV26PbnhxF8ACNDJTwfWoyNEKhN3ZIWbH7oeia/IF3qK0mWNStuGfNECc8PrMH+6jeG4OkPj5D//B7ohkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI4diF938Xxf+7Q8bpwz7C5F7olKGBViqS5vnKWMdyCjoVG3B3
-	ecULaR2V4zGPc+vXqm9HDj7d0ILM+2Ejvus/yApo0UDsuLE+gseSq9GLlzPQPpWHOkiHT8jTxAU
-	3NPXEQ/Vdee17J6TuFE67DMxz8LYVxmPfRdj3OQ==
-X-Google-Smtp-Source: AGHT+IFwONEnb117sVQ31CVX2MhwK+WpK1e9jDFmK9d88cHvnLc4jpqFjUwCVajdCZBWq38iLQOWMzxWC22WcOsJ8HE=
-X-Received: by 2002:a05:6512:1585:b0:539:8f68:e036 with SMTP id
- 2adb3069b0e04-53a154964a1mr1226810e87.34.1729237024774; Fri, 18 Oct 2024
- 00:37:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729237048; x=1729841848;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PceIiyZTW4DaHDkzJQNil/nz6nGZZ3KEslMKSIiwl3c=;
+        b=Z7hS2x2m6mJjJ6QYEzU29MIQOWmnbilOSvLpfwqwwC5/NKLf/1J/W070eZjm8DaA/u
+         gaCXFNgSspaHDWzkjuGTAuWphuTagdLivpl2LTuHwQ0ORc7lkQOYsN8BFlVv1mOxFu8B
+         jj+V8gEqOnM//nh8/4DT7gRVl2G0D80mCx69GeZMCXmjbziM7vgOU7wuu8hpnp2m8lTT
+         kklKsksjYFmVN0wjD2/xcYMCmP6JZmrR/38MsIBwEpvEVto+pAGcnzTirPUo/Qq7Vkhq
+         MgXNn1kKDgrcUjb7IV8pwZ4yNDnCBMBSlyh5WUc7CVQx4cCj/ouqAJ+jTvAEQep/qjO/
+         S4Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcUt2Ln5NHzGvhCuH7Cjri4kmwZx8nupOaQsSiL+QKDf77B/jWWnTCJC6wY+0rEMFmOsx3ZjzFqGXkItU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/umM4E0onI/nn8M19SDOERloiD1sfmNtu9ogg/4NE9+bPtJ90
+	QbCcT5w9N5Tc7HfY8Nc4mw251cHAWE7k3/Mt4CJzylcFtTsO5EITL6ll06Jo/SWHC/HObsNFjAr
+	gIF5HzrTI0vVR/0JDHVIUMMjQTNTeq4BKCpCSXQnc6F/h2C4bpOOTUc0=
+X-Google-Smtp-Source: AGHT+IFQO01hq61sLP2nhUaFpL/LYiVoNqV2CfPCR7g/qxrX9KLvjXdOr8uyseCIEmcRMdJe64k49pIWTEPgSVLDVxMIl68U+l7H
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com>
- <20241015-ad7380-add-adaq4380-4-support-v1-1-d2e1a95fb248@baylibre.com> <20241017190500.215b895e@jic23-huawei>
-In-Reply-To: <20241017190500.215b895e@jic23-huawei>
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Fri, 18 Oct 2024 09:36:52 +0200
-Message-ID: <CAEHHSvZrXNrh_DsyrnjjBfZJ3STYmA+HdysakO-54T6qYwTfrQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/4] dt-bindings: iio: adc: ad7380: add adaq4370-4 and
- adaq4380-4 compatible parts
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+X-Received: by 2002:a05:6e02:1c8e:b0:39f:5efe:ae73 with SMTP id
+ e9e14a558f8ab-3a3f40500a4mr16847475ab.5.1729237047997; Fri, 18 Oct 2024
+ 00:37:27 -0700 (PDT)
+Date: Fri, 18 Oct 2024 00:37:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67121037.050a0220.10f4f4.000f.GAE@google.com>
+Subject: [syzbot] [trace?] [bpf?] KASAN: slab-use-after-free Read in
+ bpf_trace_run2 (2)
+From: syzbot <syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	martin.lau@linux.dev, mathieu.desnoyers@efficios.com, 
+	mattbobrowski@google.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Le jeu. 17 oct. 2024 =C3=A0 20:05, Jonathan Cameron <jic23@kernel.org> a =
-=C3=A9crit :
->
-> On Tue, 15 Oct 2024 11:09:06 +0200
-> Julien Stephan <jstephan@baylibre.com> wrote:
->
-> > adaq4370-4 (2MSPS) and adaq4380-4 (4MSPS) are quad-channel precision da=
-ta
-> > acquisition signal chain =CE=BCModule solutions compatible with the ad7=
-38x
-> > family, with the following differences:
-> >
-> > - configurable gain in front of each 4 adc
-> > - internal reference is 3V derived from refin-supply (5V)
->
-> Now I'm confused.
->
-> The earlier refin-supply change appears unused in this patch.
-> I was expecting it to be required for the additional devices.
-> With additions to the docs from the fix to explain the new
-> cases.  I'm not seeing that in here.
->
->
-> > - additional supplies
-> >
-> > To configure the gain a new patternProperties is added to describe each
-> > channel. It is restricted to adaq devices.
-> >
-> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > ---
-> >  .../devicetree/bindings/iio/adc/adi,ad7380.yaml    | 117 +++++++++++++=
-++++++++
-> >  1 file changed, 117 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml =
-b/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
-> > index 74d82721637c..3007d8e39684 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
-> > @@ -25,6 +25,8 @@ description: |
-> >    * https://www.analog.com/en/products/ad7386-4.html
-> >    * https://www.analog.com/en/products/ad7387-4.html
-> >    * https://www.analog.com/en/products/ad7388-4.html
-> > +  * https://www.analog.com/en/products/adaq4370-4.html
-> > +  * https://www.analog.com/en/products/adaq4380-4.html
-> >
-> >
-> >  $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > @@ -46,6 +48,8 @@ properties:
-> >        - adi,ad7386-4
-> >        - adi,ad7387-4
-> >        - adi,ad7388-4
-> > +      - adi,adaq4370-4
-> > +      - adi,adaq4380-4
-> >
-> >    reg:
-> >      maxItems: 1
-> > @@ -59,6 +63,9 @@ properties:
-> >    vlogic-supply: true
-> >    refio-supply: true
-> >    refin-supply: true
-> > +  vs-p-supply: true
-> > +  vs-n-supply: true
-> > +  ldo-supply: true
-> >
-> >    aina-supply:
-> >      description:
-> > @@ -86,12 +93,43 @@ properties:
-> >        specify the ALERT interrupt.
-> >      maxItems: 1
-> >
-> > +  '#address-cells':
-> > +    const: 1
-> > +
-> > +  '#size-cells':
-> > +    const: 0
-> > +
-> >  required:
-> >    - compatible
-> >    - reg
-> >    - vcc-supply
-> >    - vlogic-supply
-> >
-> > +patternProperties:
-> > +  "^channel@([0-3])$":
-> > +    $ref: adc.yaml
-> > +    type: object
-> > +
-> > +    properties:
-> > +      reg:
-> > +        description:
-> > +          The channel number. From 0 to 3 corresponding to channels A,=
-B,C,D
-> > +        items:
-> > +          minimum: 0
-> > +          maximum: 3
-> > +
-> > +      adi,gain-milli:
-> > +        description:
-> > +          The hardware gain applied to the ADC input (in milli units).
-> > +          If not present, default to 1000 (no actual gain applied).
-> > +        $ref: /schemas/types.yaml#/definitions/uint32
-> > +        default: 1000
-> > +
-> > +    required:
-> > +      - reg
-> > +
-> > +    additionalProperties: false
-> > +
-> >  unevaluatedProperties: false
-> >
-> >  allOf:
-> > @@ -128,7 +166,21 @@ allOf:
-> >          ainc-supply: false
-> >          aind-supply: false
-> >
-> > +  # Using channel to declare gain property only applies to adaq device=
-s
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          not:
-> > +            contains:
-> > +              enum:
-> > +                - adi,adaq4370-4
-> > +                - adi,adaq4380-4
-> > +    then:
-> > +      patternProperties:
-> > +        "^channel@([0-3])$": false
-> > +
-> >    # ad7380-4 uses refin-supply as external reference.
-> > +  # adaq devices use internal reference only, derived from refin-suppl=
-y
+Hello,
 
-Hi Jonathan,
+syzbot found the following issue on:
 
-here I add a quick description on how adaq devices are using refin-supply .=
-..
+HEAD commit:    15e7d45e786a Add linux-next specific files for 20241016
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11b01830580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
+dashboard link: https://syzkaller.appspot.com/bug?extid=b390c8062d8387b6272a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=153ef887980000
 
-> >    # All other chips from ad738x family use refio as optional external =
-reference.
-> >    # When refio-supply is omitted, internal reference is used.
-> >    - if:
-> > @@ -136,6 +188,8 @@ allOf:
-> >          compatible:
-> >            enum:
-> >              - adi,ad7380-4
-> > +            - adi,adaq4370-4
-> > +            - adi,adaq4380-4
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/disk-15e7d45e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinux-15e7d45e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/bzImage-15e7d45e.xz
 
-... and adaq devices are added here to require refin-supply.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
 
-Maybe I am missing your point? or I still need to improve the description?
+==================================================================
+BUG: KASAN: slab-use-after-free in __bpf_trace_run kernel/trace/bpf_trace.c:2304 [inline]
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0xfa/0x540 kernel/trace/bpf_trace.c:2359
+Read of size 8 at addr ffff88805faaeb18 by task syz-executor/5664
 
-Cheers
-Julien
+CPU: 0 UID: 0 PID: 5664 Comm: syz-executor Not tainted 6.12.0-rc3-next-20241016-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ __bpf_trace_run kernel/trace/bpf_trace.c:2304 [inline]
+ bpf_trace_run2+0xfa/0x540 kernel/trace/bpf_trace.c:2359
+ __bpf_trace_sys_enter+0x38/0x60 include/trace/events/syscalls.h:18
+ __traceiter_sys_enter+0x2b/0x50 include/trace/events/syscalls.h:18
+ trace_sys_enter+0xd9/0x150 include/trace/events/syscalls.h:18
+ syscall_trace_enter+0xf8/0x150 kernel/entry/common.c:61
+ syscall_enter_from_user_mode_work include/linux/entry-common.h:168 [inline]
+ syscall_enter_from_user_mode include/linux/entry-common.h:198 [inline]
+ do_syscall_64+0xcc/0x230 arch/x86/entry/common.c:79
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f83bb719959
+Code: 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 0f 1f 40 00 90 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 c7 c0 0f 00 00 00 0f 05 <0f> 1f 80 00 00 00 00 48 81 ec 48 01 00 00 49 89 d0 64 48 8b 04 25
+RSP: 002b:00007ffe2c16e340 EFLAGS: 00000202 ORIG_RAX: 000000000000000f
+RAX: ffffffffffffffda RBX: 0000000000001623 RCX: 00007f83bb719959
+RDX: 00007ffe2c16e340 RSI: 00007ffe2c16e470 RDI: 0000000000000011
+RBP: 00007ffe2c16e8ec R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffe2c16e970
+R13: 00007ffe2c16e978 R14: 0000000000000009 R15: 0000000000000000
+ </TASK>
 
-> >      then:
-> >        properties:
-> >          refio-supply: false
-> > @@ -145,6 +199,24 @@ allOf:
-> >        properties:
-> >          refin-supply: false
-> >
-> > +  # adaq devices need more supplies
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          enum:
-> > +            - adi,adaq4370-4
-> > +            - adi,adaq4380-4
-> > +    then:
-> > +      required:
-> > +        - vs-p-supply
-> > +        - vs-n-supply
-> > +        - ldo-supply
-> > +    else:
-> > +      properties:
-> > +        vs-p-supply: false
-> > +        vs-n-supply: false
-> > +        ldo-supply: false
-> > +
-> >  examples:
-> >    - |
-> >      #include <dt-bindings/interrupt-controller/irq.h>
-> > @@ -169,3 +241,48 @@ examples:
-> >              refio-supply =3D <&supply_2_5V>;
-> >          };
-> >      };
-> > +
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +
-> > +    spi {
-> > +        #address-cells =3D <1>;
-> > +        #size-cells =3D <0>;
-> > +
-> > +        adc@0 {
-> > +            compatible =3D "adi,adaq4380-4";
-> > +            reg =3D <0>;
-> > +
-> > +            spi-cpol;
-> > +            spi-cpha;
-> > +            spi-max-frequency =3D <80000000>;
-> > +
-> > +            interrupts =3D <27 IRQ_TYPE_EDGE_FALLING>;
-> > +            interrupt-parent =3D <&gpio0>;
-> > +
-> > +            vcc-supply =3D <&supply_3_3V>;
-> > +            vlogic-supply =3D <&supply_3_3V>;
-> > +            refin-supply =3D <&supply_5V>;
-> > +            vs-p-supply =3D <&supply_5V>;
-> > +            vs-n-supply =3D <&supply_0V>;
-> > +            ldo-supply =3D <&supply_5V>;
-> > +
-> > +            #address-cells =3D <1>;
-> > +            #size-cells =3D <0>;
-> > +
-> > +            channel@0 {
-> > +                reg =3D <0>;
-> > +                adi,gain-milli =3D <300>;
-> > +            };
-> > +
-> > +            channel@2 {
-> > +                reg =3D <2>;
-> > +                adi,gain-milli =3D <600>;
-> > +            };
-> > +
-> > +            channel@3 {
-> > +                reg =3D <3>;
-> > +                adi,gain-milli =3D <1000>;
-> > +            };
-> > +        };
-> > +    };
-> >
->
+Allocated by task 5681:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __kmalloc_cache_noprof+0x243/0x390 mm/slub.c:4304
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ bpf_raw_tp_link_attach+0x2a0/0x6e0 kernel/bpf/syscall.c:3829
+ bpf_raw_tracepoint_open+0x177/0x1f0 kernel/bpf/syscall.c:3876
+ __sys_bpf+0x3c0/0x810 kernel/bpf/syscall.c:5691
+ __do_sys_bpf kernel/bpf/syscall.c:5756 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5754 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5754
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 24:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:582
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2329 [inline]
+ slab_free mm/slub.c:4588 [inline]
+ kfree+0x1a0/0x460 mm/slub.c:4736
+ rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+ rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+ handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+ run_ksoftirqd+0xca/0x130 kernel/softirq.c:921
+ smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
+ __call_rcu_common kernel/rcu/tree.c:3086 [inline]
+ call_rcu+0x167/0xa70 kernel/rcu/tree.c:3190
+ bpf_link_put_direct kernel/bpf/syscall.c:3045 [inline]
+ bpf_link_release+0x78/0x90 kernel/bpf/syscall.c:3052
+ __fput+0x23c/0xa50 fs/file_table.c:434
+ task_work_run+0x24f/0x310 kernel/task_work.c:239
+ get_signal+0x15e8/0x1740 kernel/signal.c:2690
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88805faaeb00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 24 bytes inside of
+ freed 128-byte region [ffff88805faaeb00, ffff88805faaeb80)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5faae
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801ac41a00 ffffea0000bc2e40 dead000000000002
+raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5361, tgid 5361 (syz-executor), ts 814297773699, free_ts 814275036984
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3123/0x3270 mm/page_alloc.c:3493
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4769
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2399
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2565
+ new_slab mm/slub.c:2618 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3805
+ __slab_alloc+0x58/0xa0 mm/slub.c:3895
+ __slab_alloc_node mm/slub.c:3970 [inline]
+ slab_alloc_node mm/slub.c:4131 [inline]
+ __do_kmalloc_node mm/slub.c:4272 [inline]
+ __kmalloc_node_track_caller_noprof+0x2e9/0x4c0 mm/slub.c:4292
+ kmemdup_noprof+0x2a/0x60 mm/util.c:135
+ rds_tcp_init_net+0x66/0x320 net/rds/tcp.c:557
+ ops_init+0x31e/0x590 net/core/net_namespace.c:139
+ setup_net+0x287/0x9e0 net/core/net_namespace.c:363
+ copy_net_ns+0x33f/0x570 net/core/net_namespace.c:501
+ create_new_namespaces+0x425/0x7b0 kernel/nsproxy.c:110
+ unshare_nsproxy_namespaces+0x124/0x180 kernel/nsproxy.c:228
+page last free pid 9 tgid 9 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2674
+ vfree+0x186/0x2e0 mm/vmalloc.c:3377
+ delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3298
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff88805faaea00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88805faaea80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88805faaeb00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88805faaeb80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88805faaec00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
