@@ -1,200 +1,236 @@
-Return-Path: <linux-kernel+bounces-372248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A25769A463E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C7F9A463F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16AD1C22D82
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:47:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1292A1C20A92
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631C317DFF2;
-	Fri, 18 Oct 2024 18:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85880204091;
+	Fri, 18 Oct 2024 18:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tKjg7ysV"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qDW83nvb"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545FA204F86
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61589185B78
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729277196; cv=none; b=e3KAh+J7291fAOpY4QWcihZmPs8Xl52/DcUhGKZvFmrFExdCPkx+tD5IP8c0lkzVdwMQL19kFk5uKyBYr7oECYco2Z1bAK3saCHj7Km3PAU8DlcYC7isTV+pZxAl8UJgYxCFE0hxInrsjj2TDOZAJRVWEMPsWK+kHn4i9atNtZo=
+	t=1729277206; cv=none; b=qbAnFIrQ/WxTkcfwlc4O6Ls2UGedYNoXneNyz+3aFIBo3onoTB7/JtvP82vdXVgGzEmPYrjLl9FaEHvZt5t69hRsHjsMBEdiw0Eop24+T+vBQzfUjm+ShaNS76RMkus7wxjt/c2Bpv2l/enK4oP15Bd8XDblGvctOnHwAyUeZDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729277196; c=relaxed/simple;
-	bh=iiF/iqYRiu45yTxffz/ijQIZQ8eLEifGJ+mn4QK66qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QLtEiuIYctNIHdP9wqk5J3nZ+1CU5xDd5d69ylGhKeoiVaBk9lARxK9Q5FA2hutLF5u5EOuvF0GWdPk/E/3hnOH5BB0iR2ObEDXiPqWd7QdO0HlPKdSmhQLsTfnM5E65uCHOR4b5VoXAU1H/gqN+neYLXtBz/JK9w9GgOIVhv34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tKjg7ysV; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e8586b53so2924185e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:46:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729277192; x=1729881992; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qySaWXXkrwmDT03ehuJXVekr/k61K5MvAp+B5Hja0FU=;
-        b=tKjg7ysVy0x9vvWpW3CfD67rSGcXoQf9pngWY3tTk3mr8oTFI6VAaaLBXdOAYJUuIh
-         WJi1Gbf3gelwAjgCTo7YGJzO3JoJ8DSQqr0jXLM4EvrK2klO4T9O5J2ZV2T8OLP3Mxuy
-         DItmACEwUjFRUfSN9drYjjFVwH96muvGO8MGQlf/N04U8HGf9g7GU7bcE+tl995xaqU3
-         QNP3YJKE2Ba9zb0weMRPLB57bNgROl+Efa3x6FY/bZHhD4jhZq88vUYwzDzgt670AsTX
-         gNGdx0Uw48x5cX/wbzu7uG5j12a4IpdoYLX+2qC0H9Au16cdP1hoPp1bK6Tb5f6lym9C
-         stng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729277192; x=1729881992;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qySaWXXkrwmDT03ehuJXVekr/k61K5MvAp+B5Hja0FU=;
-        b=btlRjz07SHbmehw2fMK/Ku++GSZW72OSTyTIk+A3ulmYy73R56+YpIQ9d9pqN5vyiM
-         bVAcl7LWetiwtC+hFqXmj1bZRpG6MzFhZEKR+B/X5xTOvk4I8sG3UD6oAi+EJtpGGdg8
-         47wxMId5okZKD/UuKnrXDhIInYL85JR2H5vsJLLz+jprmRaDUG0adUjiZtdyrHahMr8E
-         u197ey7tBxA3akIZEks2VbubH/eC/9MM/rf/yK99Okpjn/sdjQw6nFB2Zvanfj4eT5LM
-         WbagDF9iCZrnrB/9WSa3WECOZkCSifgod1V+Hgm5/19t5PLClZNu1X45qwiAjBi3GjUo
-         03CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkWIIe9yYsc9HhG4ZpcwCpF9w8G6cZMMGDvenRjFNlrNx6kE/9Gg73AjmIjzUU/BmBtPFcbVrxaAhwres=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXYam/tiCnAi0i8Ai4vl6SNaXG21du4OZ3ughDvS4R/xurT7Vt
-	BEPuhm9W3jQ0hSjDZQboH7SzauEK+TuyK4o3MzAX0I8E7FFzFnVfSIB/EwoRpik=
-X-Google-Smtp-Source: AGHT+IHcTXealoenjwjaH04th06Qrdau8HBNM6BI1gxY955Qk1Fu36XMvT2aaESzzxFES0p+7+jh/g==
-X-Received: by 2002:a05:6512:3b99:b0:539:fd98:d87a with SMTP id 2adb3069b0e04-53a1583d155mr1105910e87.5.1729277192311;
-        Fri, 18 Oct 2024 11:46:32 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a15211ac9sm290980e87.252.2024.10.18.11.46.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 11:46:30 -0700 (PDT)
-Date: Fri, 18 Oct 2024 21:46:29 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] clk: qcom: gcc: Add support for QCS615 GCC clocks
-Message-ID: <7bumydtmwbd7tecurxioqqzw4xj4rkm6mpm527fpwgetai5xzh@rdekj226xfbr>
-References: <20240920-qcs615-clock-driver-v2-0-2f6de44eb2aa@quicinc.com>
- <20240920-qcs615-clock-driver-v2-4-2f6de44eb2aa@quicinc.com>
- <gokgyvnunjswjdjmbhfvjzvdc6ag7r3dztj2hqk3cglwyz5f5a@aarbe4rrifme>
- <f1080f46-ed96-4360-ae91-0d5b7aa138ce@quicinc.com>
- <kgtg7seem6jhidn4svxttobwvs44uwezsj2f6hydjm7er4qt5d@kehfmwi437wg>
- <bdd2a873-3d5b-4986-a79c-d2bb54997b43@quicinc.com>
+	s=arc-20240116; t=1729277206; c=relaxed/simple;
+	bh=h8TYANH/Rm3VFpXirJ+fPVzaqM04U3Ots8fYgrPYztA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aaUa4DouLx25Wd1q7FMOUF9GuRL7lVZ463uOQ4S2OPqDgCHsx4eGvRN+tKnZ4pyTnwHf647XglRuYCkUW0PWcVkMCJyg8oh81FcTdecY9R4pAxFrDnE/k8/DLgcuM7SEZr2rOBkjq/nzyBtXPvucDjXGLt7tFZcX+wG96Rtuq7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qDW83nvb; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7b19ad7f-163b-44ed-bc70-f973a7a6f303@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729277202;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+qWqLaFRsovCSA73a8GFikArTFdEXCAPGRK8EgBnsBI=;
+	b=qDW83nvbu1D1nHDB9IU/Lb4Oq1RVpDDQgbBui4S6YZZh795i4+Og3uj3SyMb+WEFtTzKdq
+	6DEKsEGo1walFPw61yxeCpWlRQBOqhGwkHE87ESRhNYg8nZmu6FmzFvnD4Psf71Vcer0FU
+	MaTjIHY/Sw8DuOnBmH//5Qy0VJMEcbE=
+Date: Fri, 18 Oct 2024 11:46:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bdd2a873-3d5b-4986-a79c-d2bb54997b43@quicinc.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add a test for open coded
+ kmem_cache iter
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ bpf@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>
+References: <20241017080604.541872-1-namhyung@kernel.org>
+ <20241017080604.541872-2-namhyung@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20241017080604.541872-2-namhyung@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 18, 2024 at 11:14:00PM +0530, Taniya Das wrote:
+On 10/17/24 1:06 AM, Namhyung Kim wrote:
+> The new subtest is attached to sleepable fentry of syncfs() syscall.
+> It iterates the kmem_cache using bpf_for_each loop and count the number
+> of entries.  Finally it checks it with the number of entries from the
+> regular iterator.
 > 
+>    $ ./vmtest.sh -- ./test_progs -t kmem_cache_iter
+>    ...
+>    #130/1   kmem_cache_iter/check_task_struct:OK
+>    #130/2   kmem_cache_iter/check_slabinfo:OK
+>    #130/3   kmem_cache_iter/open_coded_iter:OK
+>    #130     kmem_cache_iter:OK
+>    Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
 > 
-> On 10/16/2024 3:46 PM, Dmitry Baryshkov wrote:
-> > On Wed, Oct 16, 2024 at 09:40:07AM +0530, Taniya Das wrote:
-> > > 
-> > > 
-> > > On 9/20/2024 4:33 PM, Dmitry Baryshkov wrote:
-> > > > On Fri, Sep 20, 2024 at 04:08:18PM GMT, Taniya Das wrote:
-> > > > > Add the global clock controller support for QCS615 SoC.
-> > > > > 
-> > > > > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> > > > > ---
-> > > > >    drivers/clk/qcom/Kconfig      |    9 +
-> > > > >    drivers/clk/qcom/Makefile     |    1 +
-> > > > >    drivers/clk/qcom/gcc-qcs615.c | 3035 +++++++++++++++++++++++++++++++++++++++++
-> > > > >    3 files changed, 3045 insertions(+)
+> Also simplify the code by using attach routine of the skeleton.
 > 
-> > > > > +};
-> > > > > +
-> > > > > +static struct clk_alpha_pll gpll0 = {
-> > > > > +	.offset = 0x0,
-> > > > > +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-> > > > > +	.clkr = {
-> > > > > +		.enable_reg = 0x52000,
-> > > > > +		.enable_mask = BIT(0),
-> > > > > +		.hw.init = &(const struct clk_init_data) {
-> > > > > +			.name = "gpll0",
-> > > > > +			.parent_data = &(const struct clk_parent_data) {
-> > > > > +				.index = DT_BI_TCXO,
-> > > > > +			},
-> > > > > +			.num_parents = 1,
-> > > > > +			.ops = &clk_alpha_pll_ops,
-> > > > > +		},
-> > > > > +	},
-> > > > > +};
-> > > > > +
-> > > > > +static struct clk_fixed_factor gpll0_out_aux2_div = {
-> > > > > +	.mult = 1,
-> > > > > +	.div = 2,
-> > > > > +	.hw.init = &(struct clk_init_data) {
-> > > > > +		.name = "gpll0_out_aux2_div",
-> > > > > +		.parent_data = &(const struct clk_parent_data) {
-> > > > > +			.hw = &gpll0.clkr.hw,
-> > > > > +		},
-> > > > > +		.num_parents = 1,
-> > > > > +		.ops = &clk_fixed_factor_ops,
-> > > > > +	},
-> > > > > +};
-> > > > 
-> > > > Should it be clk_alpha_pll_postdiv_foo_ops ?
-> > > > 
-> > > 
-> > > This is not the PLL output, but it is a fixed divider which is placed as
-> > > input to the RCG.
-> > > That is the reason to use the fixed factor.
-> > 
-> > Usually OUT_AUX2 is the PLL output, isn't it? Even by its name. See
-> > gcc-qcm2290 / gcc-sm6115 and most of other clock controller drivers,
-> > except gcc-sm6125. Maybe I don't understand the difference between the
-> > two usecases. Is there a difference in the GCC / PLL design?
-> > 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>   .../testing/selftests/bpf/bpf_experimental.h  |  6 ++++
+>   .../bpf/prog_tests/kmem_cache_iter.c          | 28 +++++++++++--------
+>   .../selftests/bpf/progs/kmem_cache_iter.c     | 24 ++++++++++++++++
+>   3 files changed, 46 insertions(+), 12 deletions(-)
 > 
-> Yes, your understanding is correct out_aux2/out_main are the PLL leaf
-> outputs. But on QCS615 the PLL dividers are not used and thus the aux2 and
-> the other leaf outputs are at the same frequency as the main output of the
-> VCO and instead there was a fixed divider placed after the PLL to divide the
-> VCO output. There was a GCC design change required to meet timing closures.
+> diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
+> index b0668f29f7b394eb..cd8ecd39c3f3c68d 100644
+> --- a/tools/testing/selftests/bpf/bpf_experimental.h
+> +++ b/tools/testing/selftests/bpf/bpf_experimental.h
+> @@ -582,4 +582,10 @@ extern int bpf_wq_set_callback_impl(struct bpf_wq *wq,
+>   		unsigned int flags__k, void *aux__ign) __ksym;
+>   #define bpf_wq_set_callback(timer, cb, flags) \
+>   	bpf_wq_set_callback_impl(timer, cb, flags, NULL)
+> +
+> +struct bpf_iter_kmem_cache;
+> +extern int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it) __weak __ksym;
+> +extern struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it) __weak __ksym;
+> +extern void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it) __weak __ksym;
+> +
+>   #endif
+> diff --git a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
+> index 848d8fc9171fae45..a1fd3bc57c0b21bb 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
+> @@ -68,12 +68,18 @@ static void subtest_kmem_cache_iter_check_slabinfo(struct kmem_cache_iter *skel)
+>   	fclose(fp);
+>   }
+>   
+> +static void subtest_kmem_cache_iter_open_coded(struct kmem_cache_iter *skel)
+> +{
+> +	/* To trigger the open coded iterator attached to the syscall */
+> +	syncfs(0);
+> +
+> +	/* It should be same as we've seen from the explicit iterator */
+> +	ASSERT_EQ(skel->bss->open_coded_seen, skel->bss->kmem_cache_seen, "open_code_seen_eq");
+> +}
+> +
+>   void test_kmem_cache_iter(void)
+>   {
+> -	DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
+>   	struct kmem_cache_iter *skel = NULL;
+> -	union bpf_iter_link_info linfo = {};
+> -	struct bpf_link *link;
+>   	char buf[256];
+>   	int iter_fd;
+>   
+> @@ -81,16 +87,12 @@ void test_kmem_cache_iter(void)
+>   	if (!ASSERT_OK_PTR(skel, "kmem_cache_iter__open_and_load"))
+>   		return;
+>   
+> -	opts.link_info = &linfo;
+> -	opts.link_info_len = sizeof(linfo);
+> -
+> -	link = bpf_program__attach_iter(skel->progs.slab_info_collector, &opts);
+> -	if (!ASSERT_OK_PTR(link, "attach_iter"))
+> +	if (!ASSERT_OK(kmem_cache_iter__attach(skel), "skel_attach"))
 
-Ack, please add a comment that this PLL uses fixed divider instead of
-a normal postdiv (and to other out_aux2 clocks too).
+with this change.
 
-> > > > 
-> > > > > +
-> > > > > +static struct clk_branch gcc_pcie_0_pipe_clk = {
-> > > > > +	.halt_reg = 0x6b024,
-> > > > > +	.halt_check = BRANCH_HALT_SKIP,
-> > > > > +	.clkr = {
-> > > > > +		.enable_reg = 0x5200c,
-> > > > > +		.enable_mask = BIT(4),
-> > > > > +		.hw.init = &(const struct clk_init_data) {
-> > > > > +			.name = "gcc_pcie_0_pipe_clk",
-> > > > > +			.ops = &clk_branch2_ops,
-> > > > > +		},
-> > > > > +	},
-> > > > > +};
-> > > > 
-> > > > No corresponding gcc_pcie_0_pipe_clk_src?
-> > > > 
-> > > 
-> > > On QCS615 the pipe clock source is not required to be modelled as the mux is
-> > > default Power on reset is set to external pipe clock.
-> > 
-> > And do we need to toggle the source of the clk_src together with the
-> > GDSC toggling?
-> > 
-> 
-> AFAIR, QCS615 didn't require toggling for GDSC, as even on downstream kernel
-> we do not have the pipe_clk_src modelled in our driver.
+>   		goto destroy;
+>   
+> -	iter_fd = bpf_iter_create(bpf_link__fd(link));
+> +	iter_fd = bpf_iter_create(bpf_link__fd(skel->links.slab_info_collector));
+>   	if (!ASSERT_GE(iter_fd, 0, "iter_create"))
+> -		goto free_link;
+> +		goto detach;
+>   
+>   	memset(buf, 0, sizeof(buf));
+>   	while (read(iter_fd, buf, sizeof(buf) > 0)) {
+> @@ -105,11 +107,13 @@ void test_kmem_cache_iter(void)
+>   		subtest_kmem_cache_iter_check_task_struct(skel);
+>   	if (test__start_subtest("check_slabinfo"))
+>   		subtest_kmem_cache_iter_check_slabinfo(skel);
+> +	if (test__start_subtest("open_coded_iter"))
+> +		subtest_kmem_cache_iter_open_coded(skel);
+>   
+>   	close(iter_fd);
+>   
+> -free_link:
+> -	bpf_link__destroy(link);
+> +detach:
+> +	kmem_cache_iter__detach(skel);
 
-OK, thanks for the explanation.
+nit. I think the kmem_cache_iter__destroy() below will also detach, so no need 
+to explicit kmem_cache_iter__detach().
 
--- 
-With best wishes
-Dmitry
+>   destroy:
+>   	kmem_cache_iter__destroy(skel);
+>   }
+> diff --git a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+> index 72c9dafecd98406b..4c44aa279a5328fe 100644
+> --- a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+> +++ b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+> @@ -2,6 +2,8 @@
+>   /* Copyright (c) 2024 Google */
+>   
+>   #include "bpf_iter.h"
+> +#include "bpf_experimental.h"
+> +#include "bpf_misc.h"
+>   #include <bpf/bpf_helpers.h>
+>   #include <bpf/bpf_tracing.h>
+>   
+> @@ -33,6 +35,7 @@ extern struct kmem_cache *bpf_get_kmem_cache(u64 addr) __ksym;
+>   /* Result, will be checked by userspace */
+>   int task_struct_found;
+>   int kmem_cache_seen;
+> +int open_coded_seen;
+>   
+>   SEC("iter/kmem_cache")
+>   int slab_info_collector(struct bpf_iter__kmem_cache *ctx)
+> @@ -85,3 +88,24 @@ int BPF_PROG(check_task_struct)
+>   		task_struct_found = -2;
+>   	return 0;
+>   }
+> +
+> +SEC("fentry.s/" SYS_PREFIX "sys_syncfs")
+> +int open_coded_iter(const void *ctx)
+> +{
+> +	struct kmem_cache *s;
+> +
+> +	bpf_for_each(kmem_cache, s) {
+> +		struct kmem_cache_result *r;
+> +		int idx = open_coded_seen;
+> +
+> +		r = bpf_map_lookup_elem(&slab_result, &idx);
+> +		if (r == NULL)
+> +			break;
+> +
+> +		open_coded_seen++;
+
+I am not sure if this will work well if the testing system somehow has another 
+process calling syncfs. It is probably a good idea to guard this by checking the 
+tid of the test_progs at the beginning of this bpf prog.
+
+> +
+> +		if (r->obj_size != s->size)
+> +			break;
+> +	}
+> +	return 0;
+> +}
+
 
