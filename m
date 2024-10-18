@@ -1,159 +1,108 @@
-Return-Path: <linux-kernel+bounces-372088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FDD9A4454
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:08:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8F99A4456
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3676AB22760
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:08:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B661F21DE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8A120370A;
-	Fri, 18 Oct 2024 17:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335AB2038D5;
+	Fri, 18 Oct 2024 17:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PcRR6RT5"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="B31IuP8h"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074A12036F7
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64061F428A;
+	Fri, 18 Oct 2024 17:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729271307; cv=none; b=SH+RezlI8/lpOhiPc82VdQt/0yGFI+9FTH7CJEGmBD0GoB+xaJEZdds08Wnr3jIkB9ywp+k1l8QBjh3ehPCXEPDRMW9bqWlLLpuLnkvhWwtRCa9wsH35beM9ZCPBOsLCI/8HYIxun3s0Bcvd3b77s1enwvJe2YZD6xjM/v5lNSI=
+	t=1729271354; cv=none; b=dDkASfNITNOuKlv0W/szVkmKKGjwkfGn6YlWaDvN3pWhmkFA5zLe9D9CMPTRx6h+3E1NBKxAWlRszqFsRmTLG1XnaKHYP32u4kMAuUe1wXrVUhKZKpGYZDLGIx8vvgcQiGHPoup2vfGDiIsE737CbQJ9Qzdvxas0J3h2UHAsAAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729271307; c=relaxed/simple;
-	bh=VjNjZ0gTlxnJa5Q6Sh2pxzO/5VJ24DWKlfbi+7tp948=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b2qOt0ng2BYoJ1Y2N4nil1JaqW8BV/0vYOPcvBdbdo2ac2d4ubXgE/wBUkJtGcO+yo3QNyWCXqtRtYoA7SfoP6MT0q9SZtNFGtIyTyqSRIQl8QZQnaBEoTzn4n2opxkfbEZ+B/MNC7+AU08+/rFv//kzjIYzCEdnf/zoi8nyCv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PcRR6RT5; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb50e84ec7so21001531fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:08:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729271303; x=1729876103; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OWlja0ncpRimS1KnaLy3/LNPFh3lK39/ETwogwVX5bI=;
-        b=PcRR6RT5D4XjmlACZgzyBS5ESfTelle/UA7kEqo8ZZqG46fU+2XS6KZhFoSSrmrDof
-         sfiQNa+Jm8BnTcRBTRexjiymFLj7qfhMVDKwvPYMGQLno6cyHI7wjMKt9OhuhcyVq5pT
-         1ifRxalZN3MdxyQ6wEfhmxN9CLa/pYlmzKpe9zAmySDi22SJWmBqxotiwzKV5N7QUKjg
-         XjzIi9xP61YS2pazliPGnavS/tgpfbgWRTfwTaWAaFwCdFt/vAmLXofm0zfNrGSBzs4A
-         IraeVa5MI/mmM9iAZXelj4OuZym/Si5HOBycqIv22o3h4luZzzkPwEkuMZHCngvy0PtG
-         tcRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729271303; x=1729876103;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OWlja0ncpRimS1KnaLy3/LNPFh3lK39/ETwogwVX5bI=;
-        b=fxwnFMTJCLEue0LXoUKQT4hx3yWYemHR+FUxi++UNkz93mmOtKN6ooFS5i1NZnB8um
-         yEE3xDQAiUFwWG2LJSeeW1ySRD58Oc0iG1QZqSIF+3GYpixcoE/u7m/4CSeKZvn8hKzP
-         I3AuAfQ4ulxQb74LQrJm+gUfo1FQ/QCV4Qru+aLOep10MBYc2XzTI3+jCC0cxn3GIDnf
-         fQiD/754EzcHs4jtNXD1eYx/gOiuaYwC3WOASsN2K3Ird4blb5/IaLLAc50jFCzGEymV
-         HOTHS94nPrZAyzFPXUDN6KZJHKrdtWI5JLu5s2n0bv+B1+F8wdrsygYCkwoH+02+U5SS
-         SiKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlAz3oJaRLYQ7hwsU3EKiZ2YkUcUqGuQAa19R8qeyYXMWocwnhyyOUSWZolOwFCXj06L7QbzhPNkO4M2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQRnwcJ8r/O1VxSj3zbVpv/YZB2s5K5gbhlyeBEroxWU+C57YP
-	GsHX8Ewk/Q0VEJhU7aD/p/z7rkYVlLymPotTFs1ateS5vNBK1HQf5JUATKj4NrM=
-X-Google-Smtp-Source: AGHT+IEoOYixU3j4FTjyHEPmwQ4j8jzTk9Gr33/mgkWnbpSfAHz7OIgIar5gJpwNSHyBDhu8Ljp8CQ==
-X-Received: by 2002:a2e:bc03:0:b0:2fb:5168:1a0c with SMTP id 38308e7fff4ca-2fb82eb03eamr17936621fa.19.1729271302829;
-        Fri, 18 Oct 2024 10:08:22 -0700 (PDT)
-Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ca0b08caa6sm953220a12.56.2024.10.18.10.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 10:08:22 -0700 (PDT)
-Date: Fri, 18 Oct 2024 19:08:21 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org,
-	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
-	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
-	xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz,
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
-	willy@infradead.org, liam.howlett@oracle.com,
-	pasha.tatashin@soleen.com, souravpanda@google.com,
-	keescook@chromium.org, dennis@kernel.org, yuzhao@google.com,
-	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com,
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-Message-ID: <ZxKWBfQ_Lps93fY1@tiehlicka>
-References: <20241014203646.1952505-1-surenb@google.com>
- <20241014203646.1952505-6-surenb@google.com>
- <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
- <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com>
- <6a2a84f5-8474-432f-b97e-18552a9d993c@redhat.com>
- <CAJuCfpGkuaCh+PxKbzMbu-81oeEdzcfjFThoRk+-Cezf0oJWZg@mail.gmail.com>
- <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
- <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
- <ZxJcryjDUk_LzOuj@tiehlicka>
- <CAJuCfpGV3hwCRJj6D-SnSOc+VEe5=_045R1aGJEuYCL7WESsrg@mail.gmail.com>
+	s=arc-20240116; t=1729271354; c=relaxed/simple;
+	bh=dcWpLFwW77yaOp3NoUz/Ox3vjJRBWe2DK58dQ/3bh20=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eHowE46GduhQUHq9wFAB2INw2GOnctCepcy6NNBgfgNq6CQOm9HOfjIQAtvV3jQhgzdVFang5Z4QGKFmLGZMebK4mbxkL7OCjVZ1E15Sbk00qAjqtdcPZZfN4eSLiQFmjwzwv/2OrBRLvUC02YKemyDiv5Ojt/Fdfa48AV/inBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=B31IuP8h; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IA8crq032610;
+	Fri, 18 Oct 2024 10:08:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=Qs2DU5FTRsEj78vMHWdipZdMt
+	nEt5a/Zc/dGpilUIPY=; b=B31IuP8hRCwso/KsF7cIVDY2tFVdgfCAyrD22ubbD
+	8puSwwLoPftMvZOESwRT3PtLQrj/TucfsgtY286l99SWrChcMuAsyyLtnrFwo9Ld
+	/3LIChP8oQOSgiydrSC6Ox9Jg/yZS0am5dgioREZxhtSQ7WlZq4mRPBxo+mUJc/X
+	BLgY1BnF2XXMh4gJ43CY/utCw1qfeq/EanOG0MYG//4RyaYJWkoQraai+j6EksSs
+	yPLjAhx+Z1nOgKbnswA5xfZHeM8Oa1vEJHi13p08TBuxZUxk3a3ER1+2CWWFVWgN
+	Xfj7gMaFiLhyr8/eBO8a0bshJmoOuVdgfftMKnAcPk7xA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42bnnbgwdq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 10:08:45 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 18 Oct 2024 10:08:44 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 18 Oct 2024 10:08:44 -0700
+Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with SMTP id DA2543F7068;
+	Fri, 18 Oct 2024 10:08:41 -0700 (PDT)
+Date: Fri, 18 Oct 2024 22:38:40 +0530
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: Lorenz Brun <lorenz@brun.one>
+CC: Igor Russkikh <irusskikh@marvell.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] net: atlantic: support reading SFP module info
+Message-ID: <ZxKWGBAMsVqsnS87@test-OptiPlex-Tower-Plus-7010>
+References: <20241018154741.2565618-1-lorenz@brun.one>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpGV3hwCRJj6D-SnSOc+VEe5=_045R1aGJEuYCL7WESsrg@mail.gmail.com>
+In-Reply-To: <20241018154741.2565618-1-lorenz@brun.one>
+X-Proofpoint-GUID: iipTzzbPWUbQCWHeIdXoA0CxWWaGK75U
+X-Proofpoint-ORIG-GUID: iipTzzbPWUbQCWHeIdXoA0CxWWaGK75U
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Fri 18-10-24 09:04:24, Suren Baghdasaryan wrote:
-> On Fri, Oct 18, 2024 at 6:03 AM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Tue 15-10-24 08:58:59, Suren Baghdasaryan wrote:
-> > > On Tue, Oct 15, 2024 at 8:42 AM David Hildenbrand <david@redhat.com> wrote:
-> > [...]
-> > > > Right, I think what John is concerned about (and me as well) is that
-> > > > once a new feature really needs a page flag, there will be objection
-> > > > like "no you can't, we need them for allocation tags otherwise that
-> > > > feature will be degraded".
-> > >
-> > > I do understand your concern but IMHO the possibility of degrading a
-> > > feature should not be a reason to always operate at degraded capacity
-> > > (which is what we have today). If one is really concerned about
-> > > possible future regression they can set
-> > > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS=n and keep what we have today. That's
-> > > why I'm strongly advocating that we do need
-> > > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS so that the user has control over how
-> > > this scarce resource is used.
-> >
-> > I really do not think users will know how/why to setup this and I wouldn't
-> > even bother them thinking about that at all TBH.
-> >
-> > This is an implementation detail. It is fine to reuse unused flags space
-> > as a storage as a performance optimization but why do you want users to
-> > bother with that? Why would they ever want to say N here?
+On 2024-10-18 at 21:17:38, Lorenz Brun (lorenz@brun.one) wrote:
+> Add support for reading SFP module info and digital diagnostic
+> monitoring data if supported by the module. The only Aquantia
+> controller without an integrated PHY is the AQC100 which belongs to
+> the B0 revision, that's why it's only implemented there.
 > 
-> In this patch you can find a couple of warnings that look like this:
+> The register information was extracted from a diagnostic tool made
+> publicly available by Dell, but all code was written from scratch by me.
 > 
-> pr_warn("With module %s there are too many tags to fit in %d page flag
-> bits. Memory profiling is disabled!\n", mod->name,
-> NR_UNUSED_PAGEFLAG_BITS);
-> emitted when we run out of page flag bits during a module loading,
+> This has been tested to work with a variety of both optical and direct
+> attach modules I had lying around and seems to work fine with all of
+> them, including the diagnostics if supported by an optical module.
+> All tests have been done with an AQC100 on an TL-NT521F card on firmware
+> version 3.1.121 (current at the time of this patch).
 > 
-> pr_err("%s: alignment %lu is incompatible with allocation tag
-> indexing, disable CONFIG_PGALLOC_TAG_USE_PAGEFLAGS",  mod->name,
-> align);
-> emitted when the arch-specific section alignment is incompatible with
-> alloc_tag indexing.
+> Signed-off-by: Lorenz Brun <lorenz@brun.one>
+> ---
+    Since this is not a fix, please submit this patch to "net-next"
+    tree by changing the subject prefix. 
 
-You are asking users to workaround implementation issue by configuration
-which sounds like a really bad idea. Why cannot you make the fallback
-automatic?
 
--- 
-Michal Hocko
-SUSE Labs
 
