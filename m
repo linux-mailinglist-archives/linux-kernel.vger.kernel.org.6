@@ -1,197 +1,104 @@
-Return-Path: <linux-kernel+bounces-370795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99EE69A322C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:45:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A557B9A3230
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D5A283D9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:45:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58A331F23F53
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E8C55E53;
-	Fri, 18 Oct 2024 01:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gYmWHfxt"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E562126C07
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCEC126C03;
+	Fri, 18 Oct 2024 01:45:43 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6942BAEF;
+	Fri, 18 Oct 2024 01:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729215907; cv=none; b=OqGkO72XAc/UyehFLVVgG3QYJuCvcxbW46MLOWDIifd3JiOg8wfBJGn2Qtkn9Vx3cP23f+Vr9nU7bxu5aBNp0Qqxr5MFmrlrhoj6mcd4vxQDMeSIU4bXZBgHpfeCWxyIIRmgA9Wre+ps+IP/KWlJ9fj66d0dtFHF64OAJkg6hN0=
+	t=1729215943; cv=none; b=mppBJ9akUh5g5vDE+BsdeO3AFRSxq+ILejAxIpFhUDKF2N6YCXc4Hl4lK1VeucKn1khQLpWIhgpzmNLEuNRkgJIYn1Y4HIpTlYUXZmWnLIv2kadS4Gy4dvNt8uOSlllOTzMi6GQi1+SMpiMpdKbKgCVFUUrvW0SDEcXgLmo0FL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729215907; c=relaxed/simple;
-	bh=AJ39ESjtOlB3I9wJLE8bmMPXfmZmvEu7c55Zz4JmWF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JfrFQFfKZ/LmQtUtYw321lN5kbfVIgW6kPaTfocXvlcKK3+7cuOpwanQXKhFb+1MJbvibkKtniIbzPxhx/7BRBYPN5Xwfyb3pvIRzorQ5sd/HeeaX3TykVcI4HR1M6hmEa2VM8O0QvHw1RzlM+PTcWl3JdYxIa1Y1LB2+kB1T3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gYmWHfxt; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729215903; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=yGK5DPK7Kpj12VvJ389klu5Y7cBGWXM8ZxUAztH0zUQ=;
-	b=gYmWHfxtE08lRm8A7n1ToNpvZ6gh78aqvHvWsmOp5dPjCiUXAAK06b+kmUElFJHElbARNKA2pMjur11Cf1gmuuxX71we71tLz3TkLbmljcOeGv97SK/5tdIThGtHVfYjJ8VobJoV5nzabMcVIVO0CqyWoqVUMvapANAMVdvr3AA=
-Received: from 30.74.144.131(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHMOCyl_1729215901 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 18 Oct 2024 09:45:02 +0800
-Message-ID: <2a12d76e-6458-4626-b761-558c143aa289@linux.alibaba.com>
-Date: Fri, 18 Oct 2024 09:45:01 +0800
+	s=arc-20240116; t=1729215943; c=relaxed/simple;
+	bh=ZvLeRG4Ms+AsQQg8nv2hbnbMnmitMejRAfLCvTgiTT4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AQbRVe7qoGmuoKgq3qQNgeUtKFp5Vefmsy9cInFtlMX98rRQHmspf9aYymMf3ICCInuaOBKluoC1RAJl+soe243/7691VMDX95AGkE0M+tp3eQ9QBxgIPqeQ63NOsJWhpG/ttjC9M+xWDvcV+LSeiquCy4uqA9qyMfNxasN3xCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.40.54.90])
+	by gateway (Coremail) with SMTP id _____8Dx8+i8vRFnNjcjAA--.51013S3;
+	Fri, 18 Oct 2024 09:45:32 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.40.54.90])
+	by front2 (Coremail) with SMTP id qciowMCxSsa7vRFngI0yAA--.18897S2;
+	Fri, 18 Oct 2024 09:45:32 +0800 (CST)
+From: Zhao Qunqin <zhaoqunqin@loongson.cn>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	chenhuacai@kernel.org,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org
+Cc: linux-edac@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel@xen0n.name,
+	loongarch@lists.linux.dev,
+	Jonathan.Cameron@Huawei.com,
+	Zhao Qunqin <zhaoqunqin@loongson.cn>
+Subject: [PATCH v6 RESEND 0/2] Add EDAC driver for loongson memory controller
+Date: Fri, 18 Oct 2024 09:45:40 +0800
+Message-Id: <20241018014542.27283-1-zhaoqunqin@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm: shmem: improve the tmpfs large folio read
- performance
-To: Yang Shi <shy828301@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
- hughd@google.com, david@redhat.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1729072803.git.baolin.wang@linux.alibaba.com>
- <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
- <Zw_d0EVAJkpNJEbA@casper.infradead.org>
- <CAHbLzkogrubD_rPH7zf1T454r-BsxL951YH=rGAfNqPZJSCGow@mail.gmail.com>
- <2b3572e1-a618-4f86-979d-87f59282fe8f@linux.alibaba.com>
- <CAHbLzkooj5JPbxkgFNWrxkpjaEzYH++DAFRGr87b7jc_WphYQQ@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAHbLzkooj5JPbxkgFNWrxkpjaEzYH++DAFRGr87b7jc_WphYQQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qciowMCxSsa7vRFngI0yAA--.18897S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7JFyDtrWDJw1rur4xuF4kGrX_yoWxtFg_Ca
+	17Aay8Jr4vyFyDJay2qr18ZFW5tF4UKasYkF1qgw15Xr4avr13Wr97Xa4UCF17Jw1DWFn3
+	ZrZ5KryxA3W8tosvyTuYvTs0mTUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbfkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
+	JVW8Jr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2_HUDUUUU
+
+Add a simple EDAC driver which report single bit errors (CE) only on
+loongson platform.
+
+Zhao Qunqin (2):
+  dt-bindings: EDAC for ls3a5000 memory controller
+  EDAC: Add EDAC driver for loongson memory controller
+
+ .../edac/loongson,ls3a5000-mc-edac.yaml       |  44 +++++
+ MAINTAINERS                                   |   7 +
+ arch/loongarch/Kconfig                        |   1 +
+ drivers/edac/Kconfig                          |   8 +
+ drivers/edac/Makefile                         |   1 +
+ drivers/edac/loongson_edac.c                  | 168 ++++++++++++++++++
+ 6 files changed, 229 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/edac/loongson,ls3a5000-mc-edac.yaml
+ create mode 100644 drivers/edac/loongson_edac.c
 
 
+base-commit: 61124f42dcaa30f58a8b47a2b69ddb80260677c7
+-- 
+2.43.0
 
-On 2024/10/18 00:48, Yang Shi wrote:
-> On Wed, Oct 16, 2024 at 8:25 PM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->>
->>
->>
->> On 2024/10/17 01:33, Yang Shi wrote:
->>> On Wed, Oct 16, 2024 at 8:38 AM Matthew Wilcox <willy@infradead.org> wrote:
->>>>
->>>> On Wed, Oct 16, 2024 at 06:09:30PM +0800, Baolin Wang wrote:
->>>>> @@ -3128,8 +3127,9 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>>>>                 if (folio) {
->>>>>                         folio_unlock(folio);
->>>>>
->>>>> -                     page = folio_file_page(folio, index);
->>>>> -                     if (PageHWPoison(page)) {
->>>>> +                     if (folio_test_hwpoison(folio) ||
->>>>> +                         (folio_test_large(folio) &&
->>>>> +                          folio_test_has_hwpoisoned(folio))) {
->>>>
->>>> Hm, so if we have hwpoison set on one page in a folio, we now can't read
->>>> bytes from any page in the folio?  That seems like we've made a bad
->>>> situation worse.
->>>
->>> Yeah, I agree. I think we can fallback to page copy if
->>> folio_test_has_hwpoisoned is true. The PG_hwpoison flag is per page.
->>>
->>> The folio_test_has_hwpoisoned is kept set if the folio split is failed
->>> in memory failure handler.
->>
->> Right. I can still keep the page size copy if
->> folio_test_has_hwpoisoned() is true. Some sample changes are as follow.
->>
->> Moreover, I noticed shmem splice_read() and write() also simply return
->> an error if the folio_test_has_hwpoisoned() is true, without any
->> fallback to page granularity. I wonder if it is worth adding page
->> granularity support as well?
-> 
-> I think you should do the same.
-
-OK. Let me have a detailed look.
-
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index 7e79b6a96da0..f30e24e529b9 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -3111,9 +3111,11 @@ static ssize_t shmem_file_read_iter(struct kiocb
->> *iocb, struct iov_iter *to)
->>
->>           for (;;) {
->>                   struct folio *folio = NULL;
->> +               struct page *page = NULL;
->>                   unsigned long nr, ret;
->>                   loff_t end_offset, i_size = i_size_read(inode);
->>                   size_t fsize;
->> +               bool fallback_page_copy = false;
->>
->>                   if (unlikely(iocb->ki_pos >= i_size))
->>                           break;
->> @@ -3127,13 +3129,16 @@ static ssize_t shmem_file_read_iter(struct kiocb
->> *iocb, struct iov_iter *to)
->>                   if (folio) {
->>                           folio_unlock(folio);
->>
->> -                       if (folio_test_hwpoison(folio) ||
->> -                           (folio_test_large(folio) &&
->> -                            folio_test_has_hwpoisoned(folio))) {
->> +                       page = folio_file_page(folio, index);
->> +                       if (PageHWPoison(page)) {
->>                                   folio_put(folio);
->>                                   error = -EIO;
->>                                   break;
->>                           }
->> +
->> +                       if (folio_test_large(folio) &&
->> +                           folio_test_has_hwpoisoned(folio))
->> +                               fallback_page_copy = true;
->>                   }
->>
->>                   /*
->> @@ -3147,7 +3152,7 @@ static ssize_t shmem_file_read_iter(struct kiocb
->> *iocb, struct iov_iter *to)
->>                           break;
->>                   }
->>                   end_offset = min_t(loff_t, i_size, iocb->ki_pos +
->> to->count);
->> -               if (folio)
->> +               if (folio && likely(!fallback_page_copy))
->>                           fsize = folio_size(folio);
->>                   else
->>                           fsize = PAGE_SIZE;
->> @@ -3160,8 +3165,13 @@ static ssize_t shmem_file_read_iter(struct kiocb
->> *iocb, struct iov_iter *to)
->>                            * virtual addresses, take care about potential
->> aliasing
->>                            * before reading the page on the kernel side.
->>                            */
->> -                       if (mapping_writably_mapped(mapping))
->> -                               flush_dcache_folio(folio);
->> +                       if (mapping_writably_mapped(mapping)) {
->> +                               if (unlikely(fallback_page_copy))
->> +                                       flush_dcache_page(page);
->> +                               else
->> +                                       flush_dcache_folio(folio);
->> +                       }
->> +
->>                           /*
->>                            * Mark the page accessed if we read the beginning.
->>                            */
->> @@ -3171,7 +3181,10 @@ static ssize_t shmem_file_read_iter(struct kiocb
->> *iocb, struct iov_iter *to)
->>                            * Ok, we have the page, and it's up-to-date, so
->>                            * now we can copy it to user space...
->>                            */
->> -                       ret = copy_folio_to_iter(folio, offset, nr, to);
->> +                       if (unlikely(fallback_page_copy))
->> +                               ret = copy_page_to_iter(page, offset,
->> nr, to);
->> +                       else
->> +                               ret = copy_folio_to_iter(folio, offset,
->> nr, to);
->>                           folio_put(folio);
->>                   } else if (user_backed_iter(to)) {
->>                           /*
-> 
-> The change seems fine to me.
-
-Thanks.
 
