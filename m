@@ -1,161 +1,143 @@
-Return-Path: <linux-kernel+bounces-371597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7F49A3D10
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:15:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CF99A3D20
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC9A1C20D00
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:15:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A74571C23562
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D169020262A;
-	Fri, 18 Oct 2024 11:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16472010EF;
+	Fri, 18 Oct 2024 11:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qvsi4u95"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCX1TYnH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467352010E2;
-	Fri, 18 Oct 2024 11:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2879615CD74;
+	Fri, 18 Oct 2024 11:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729250111; cv=none; b=hCs6sY2dpekuRmrLyox2jbtxv7TYW76ba+j+yiTzs3rdEQ5m6D4PYqaS6N9mVbkIU9miqVZbnf16co57z9z3z9Rrn4XxHQJJo9vl8W85mdRVAWpxxt1CktfDfKvmgWWXO2jV8dxB+flnd9tNIDfDsdVbIKXc3BlCbdv/wW7dILw=
+	t=1729250223; cv=none; b=C7Vn9aGah9hPLIllFbYTgUkzsy5XOXJGIGvlA2LcZ+E8hPKLe267RMKvKDD287/YQcEQUv7UDjYPqTQVtNZkc4ztb/n3mCgHL2yA8koGhPBvvGrrCB/3gYbBgA9LYqkhhap3IBUkORfFSuaQKS9jK9zDZk9rSvJVCNVazWpXmV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729250111; c=relaxed/simple;
-	bh=H9VbsKpLJ9wA5zYLB2VDqJsFVuIZuq/l/10T5Z+X44w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RJgI7RsGs3pplah16AmmRcy1rXQKq7iqiXpMsmPmWgi33X+jpD0LXGKsR3I75TBgZSNMfo2oxRy9VVVciLIaxRgiSOehpNVMmczAA782J+6N4EaDyEXp7boWq9SPDatgIt0C/mzPgx09g4ZkfyXxPSo/ZxqLhRE32DvafLY8isc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qvsi4u95; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hxnHwneT1xAzY8649PF0fR25ciSRedSmGB++Tg52HxQ=; b=qvsi4u95S4N1NjtzPIjvcZ2+qm
-	vBW/PJSzCycTBe78fX3bVZXJHNSLFGD9n/r27ucHtsexpYmbOVgkXupC8CpAvNstEDVG4XN3XrRxa
-	yKqVGt4f1MSa5AaGqAnER4ZaGw/S+sC+Sv4wUFJDt1f8ToBX/3sW4KecfL59JI5S2v1mx9cnM3eyF
-	Tv3cjcS+FkgvCcqL3Et9VsHMp6NPOJxW3Mg9O3VvfJ9jrX2PdNnqJNSVr66qokQjbVlQz7W24bvRu
-	BH2IDoP6a6ANVG1dJVcxmVXNq/ZwgqeYa/8N0KTI5DHgHxURPrCx2QEBINLTWj3xbzJTiMfg4bDsu
-	wEHSyRXQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1kwh-0000000D4SM-1VKa;
-	Fri, 18 Oct 2024 11:15:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9B7A33005AF; Fri, 18 Oct 2024 13:15:03 +0200 (CEST)
-Date: Fri, 18 Oct 2024 13:15:03 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-cxl@vger.kernel.org, przemyslaw.kitszel@intel.com
-Subject: Re: [PATCH 1/3] cleanup: add conditional guard helper
-Message-ID: <20241018111503.GC36494@noisy.programming.kicks-ass.net>
-References: <20241001-cleanup-if_not_cond_guard-v1-0-7753810b0f7a@baylibre.com>
- <20241001-cleanup-if_not_cond_guard-v1-1-7753810b0f7a@baylibre.com>
+	s=arc-20240116; t=1729250223; c=relaxed/simple;
+	bh=TyKBE7MoQqoiy5Ox7Q0k5Y+ZjkzhA38Eo1JU4Sc2i/c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QVwzU/A44DE5p9lHbFPfDk1P3/e2dd6jGPZ3o+HZ7a2oFdWqtC7dp2YjeVCkM8R11AQ5ONltDjo0mvUVH9GRjX27l2m4WuErjJICurIUoI6hscjBZSJoqK4Ax2l9sxa6QTvGgd8cH0QrZOcgx5eAmcLcmyvY5diDqDkIC6Gsi0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCX1TYnH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06FD4C4CEC3;
+	Fri, 18 Oct 2024 11:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729250222;
+	bh=TyKBE7MoQqoiy5Ox7Q0k5Y+ZjkzhA38Eo1JU4Sc2i/c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=cCX1TYnHS7uJ1XWUQmu993BANGY01CW9anDUPilRpbLH3HJiH97nt/wyi7+VbLTSd
+	 P9AnIk0oaIZFpdpLv73ClS8Sley/tonPfeVdJXvIfPT61NX8qcxpTiCkOVtDpXRT44
+	 zn6HS53RcXi8W49c//UyEaQ2S16rgXLk3v8Tdwjv1eTbsnvpfP+XsfcSyWH9Q8H9bJ
+	 yDB6A17DFvfVGVQFWqpXgMxyZdgzcHDKFCl5AZD0gRDaPIw5p1NH+WYv5PtDrp3pch
+	 9rEplNMbOuyt//rSMhvmPiTHsaSfz43Ozgdam9sa1OMkUuObwm8kZII4jnhElcu2dP
+	 Nu7PVoNITBAow==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Thomas Gleixner" <tglx@linutronix.de>,  Dirk Behme
+ <dirk.behme@gmail.com>,  Lyude Paul <lyude@redhat.com>,
+  rust-for-linux@vger.kernel.org,  Danilo Krummrich <dakr@redhat.com>,
+  airlied@redhat.com,  Ingo Molnar <mingo@redhat.com>,  will@kernel.org,
+  Waiman Long <longman@redhat.com>,  Peter Zijlstra <peterz@infradead.org>,
+  linux-kernel@vger.kernel.org,  Miguel Ojeda <ojeda@kernel.org>,  Alex
+ Gaynor <alex.gaynor@gmail.com>,  wedsonaf@gmail.com,  Gary Guo
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  Benno
+ Lossin <benno.lossin@proton.me>,  Andreas Hindborg
+ <a.hindborg@samsung.com>,  aliceryhl@google.com,  Trevor Gross
+ <tmgross@umich.edu>
+Subject: Re: [POC 0/6] Allow SpinLockIrq to use a normal Guard interface
+In-Reply-To: <20241018055125.2784186-1-boqun.feng@gmail.com> (Boqun Feng's
+	message of "Thu, 17 Oct 2024 22:51:19 -0700")
+References: <1eaf7f61-4458-4d15-bbe6-7fd2e34723f4@app.fastmail.com>
+	<20241018055125.2784186-1-boqun.feng@gmail.com>
+Date: Fri, 18 Oct 2024 13:16:43 +0200
+Message-ID: <87r08dr78k.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001-cleanup-if_not_cond_guard-v1-1-7753810b0f7a@baylibre.com>
+Content-Type: text/plain
 
-On Tue, Oct 01, 2024 at 05:30:18PM -0500, David Lechner wrote:
-> Add a new if_not_cond_guard() macro to cleanup.h for handling
-> conditional guards such as mutext_trylock().
-> 
-> This is more ergonomic than scoped_cond_guard() for most use cases.
-> Instead of hiding the error handling statement in the macro args, it
-> works like a normal if statement and allow the error path to be indented
-> while the normal code flow path is not indented. And it avoid unwanted
-> side-effect from hidden for loop in scoped_cond_guard().
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->  include/linux/cleanup.h | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-> index 038b2d523bf8..682bb3fadfc9 100644
-> --- a/include/linux/cleanup.h
-> +++ b/include/linux/cleanup.h
-> @@ -273,6 +273,10 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
->   *	an anonymous instance of the (guard) class, not recommended for
->   *	conditional locks.
->   *
-> + * if_not_cond_guard(name, args...) { <error handling> }:
-> + *	convenience macro for conditional guards that calls the statement that
-> + *	follows only if the lock was not acquired (typically an error return).
-> + *
->   * scoped_guard (name, args...) { }:
->   *	similar to CLASS(name, scope)(args), except the variable (with the
->   *	explicit name 'scope') is declard in a for-loop such that its scope is
-> @@ -304,6 +308,13 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
->  
->  #define __guard_ptr(_name) class_##_name##_lock_ptr
->  
-> +#define __if_not_cond_guard(_name, _id, args...)	\
-> +	CLASS(_name, _id)(args);			\
-> +	if (!__guard_ptr(_name)(&_id))
-> +
-> +#define if_not_cond_guard(_name, args...) \
-> +	__if_not_cond_guard(_name, __UNIQUE_ID(guard), args)
-> +
->  #define scoped_guard(_name, args...)					\
->  	for (CLASS(_name, scope)(args),					\
->  	     *done = NULL; __guard_ptr(_name)(&scope) && !done; done = (void *)1)
+Boqun Feng <boqun.feng@gmail.com> writes:
+
+> Hi Thomas,
+>
+> So this series is what I proposed, previously, because the nested
+> interrupt API in C is local_irq_save() and local_irq_restore(), the
+> following Rust code has the problem of enabling interrupt earlier:
+>
+> 	// l1 and l2 are interrupt disabling locks, their guards (i.e.
+> 	// return of lock()) can be used to track interrupt state.
+>
+> 	// interrupts are enabled in the beginning.
+> 	
+> 	let g1 = l1.lock(); // previous interrupt state is enabled.
+> 	let g2 = l2.lock(); // previous interrupt state is disabled.
+>
+> 	drop(g1); // release l1, if we use g1's state, interrupt will be
+> 		  // enabled. But this is obviously wrong. Because g2
+> 		  // can only exist with interrupt disabled.
+>
+> With the new interrupt disable and enable API, instead of a "unsigned
+> long", a percpu variable is used to track the outermost interrupt state
+> and the nested level, so that "drop(g1);" above won't enable interrupts.
+>
+> Although this requires extra cost, but I think it might be worth paying,
+> because this could make Rust's SpinLockIrq simply use a guard interface
+> as SpinLock.
+>
+> Of course, looking for any comments and suggestions.
+>
+> Boqun Feng (3):
+>   irq & spin_lock: Add counted interrupt disabling/enabling
+>   rust: helper: Add spin_{un,}lock_irq_{enable,disable}() helpers
+>   rust: sync: lock: Add `Backend::BackendInContext`
+>
+> Lyude Paul (3):
+>   rust: Introduce interrupt module
+>   rust: sync: Add SpinLockIrq
+>   rust: sync: Introduce lock::Backend::Context
+>
+>  include/linux/irqflags.h          |  32 +++++++++-
+>  include/linux/irqflags_types.h    |   6 ++
+>  include/linux/spinlock.h          |  13 ++++
+>  include/linux/spinlock_api_smp.h  |  29 +++++++++
+>  include/linux/spinlock_rt.h       |  10 +++
+>  kernel/locking/spinlock.c         |  16 +++++
+>  kernel/softirq.c                  |   3 +
+>  rust/helpers/helpers.c            |   1 +
+>  rust/helpers/interrupt.c          |  18 ++++++
+>  rust/helpers/spinlock.c           |  10 +++
+>  rust/kernel/interrupt.rs          |  64 +++++++++++++++++++
+>  rust/kernel/lib.rs                |   1 +
+>  rust/kernel/sync.rs               |   2 +-
+>  rust/kernel/sync/lock.rs          |  33 +++++++++-
+>  rust/kernel/sync/lock/mutex.rs    |   2 +
+>  rust/kernel/sync/lock/spinlock.rs | 103 ++++++++++++++++++++++++++++++
+>  16 files changed, 340 insertions(+), 3 deletions(-)
+>  create mode 100644 rust/helpers/interrupt.c
+>  create mode 100644 rust/kernel/interrupt.rs
 
 
-So if I stick this on top of:
+Tested-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-  https://lkml.kernel.org/r/20241011121535.28049-1-przemyslaw.kitszel@intel.com
+I ran the `hrtimer` examples on top of this, and it seems to work [1].
 
-then I can add the below:
+Best regards,
+Andreas
 
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -277,6 +277,8 @@ static inline class_##_name##_t class_##
-  *	convenience macro for conditional guards that calls the statement that
-  *	follows only if the lock was not acquired (typically an error return).
-  *
-+ *	Only for conditional locks.
-+ *
-  * scoped_guard (name, args...) { }:
-  *	similar to CLASS(name, scope)(args), except the variable (with the
-  *	explicit name 'scope') is declard in a for-loop such that its scope is
-@@ -290,7 +292,6 @@ static inline class_##_name##_t class_##
-  *      acquire fails.
-  *
-  *	Only for conditional locks.
-- *
-  */
- 
- #define __DEFINE_CLASS_IS_CONDITIONAL(_name, _is_cond)	\
-@@ -342,6 +343,7 @@ _label:										\
- 		       __UNIQUE_ID(label), args)
- 
- #define __if_not_guard(_name, _id, args...)		\
-+	BUILD_BUG_ON(!__is_cond_ptr(_name));		\
- 	CLASS(_name, _id)(args);			\
- 	if (!__guard_ptr(_name)(&_id))
- 
 
-That make sense to people?
+[1] git git://git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git hrtimer-boqun-poc
 
-I've queued these two patches:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git locking/core
-
-But lacking if_not_guard() users, the robot isn't really going to give
-me much feedback there, I suppose...
 
