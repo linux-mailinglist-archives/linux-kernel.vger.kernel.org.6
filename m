@@ -1,153 +1,156 @@
-Return-Path: <linux-kernel+bounces-370872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A749A331D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:58:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19CEF9A331F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC4C2832E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71A71F233B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAFE14E2E8;
-	Fri, 18 Oct 2024 02:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3240156960;
+	Fri, 18 Oct 2024 03:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JqfmJcNX"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ycs27AlH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD282BAEF
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C0352F9B
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729220330; cv=none; b=iFmS/B/r3GLffKwyloQED+h4Z/Y0flxXMxfJfgFdNcdqiY/u7UOZYWEXPuA0YA8j9OYwsvwXv367MyC3PRGbt0wYnCKKw2acqy8R+deWXQNjFLGoXMeBhgwDFQeeWeNYrQXrPmOdR3qbobL2Am9WJl9MZbJ735WNmNnNKKSVVJc=
+	t=1729220443; cv=none; b=DJvRo02b8IQprzQS0PSJYfMvS4aH14wN013Dl/9eV2P8ypSzU7Ma/RcQDc8MZLVKBq5oC/n+RXRlPW7iupVK5RdYxyKWbk+gGyMTyzJKSlY6LWevki9aiPhRIGuRBQ4EZMG4J2S5H74AaHwnNFCamycWLRd1OC7mgecIeLw/4d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729220330; c=relaxed/simple;
-	bh=yh2do4g280QhZR8j0PLP3kWM+6HO3M6zOWaKp6SVWVg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=iC2Ism4UYx1TXseOwgLfOWqVbbkDiayS6B72F4dAdtku7Gxt7ox5OVSYVqQPzhEL/+SYQcQerdbiL6TvWMlbpOc+2sKVfkN81Z37qj90W7B89QvATOED7oIObUXqsz2PioJKwDnlpg1fSKltYxWTXp44m/MyV9z1i/2bB/3QVyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JqfmJcNX; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea7d509e61so840945a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1729220328; x=1729825128; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JwyzH+PQsFeYWv/1M1l2ZyltnCIO+EcAW6jhl5pXyOU=;
-        b=JqfmJcNX1LANjX6NVeNTE6WHDoj9OyJ+o1swdewvWXVwESRREBP8IiEowPilnTSKXT
-         dB4Ffe0ymU1mDV8NCXfyQ1eYRoLi0MQt4LcRGZ79HXWqMyuKXN4wr95pVGFITeDOm3Xl
-         Ertfv8+WJMt3uz/VIWHaPWiVEuMjftZzxRbxhfcAQl4GPH1CmJdXyZGleLiMnD+kbYTG
-         l79nI7BnlSIF4+oY4CMAQEpHzF9r4pbQhSszsnwrZFpdbHQkEkjqncpo5TOVNPw0gjQh
-         pZ4Nhki1rqs9HkmPXKKJvM9Qc+cgVFdsLkA5VyzMtE6oR9D910TWhymuGI06dgzn3qcn
-         q+AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729220328; x=1729825128;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JwyzH+PQsFeYWv/1M1l2ZyltnCIO+EcAW6jhl5pXyOU=;
-        b=qqcRyezlNfMR0Ubvh+C6EgiZpHwif4WvTPXITi1hNxl95Lze/ooO/pRBEZ16IpDAbD
-         4rBaFChFJfurF8hQ6rhBZWWRJRownhTMpUxHP45alzWThwMthDGrqOSS9OcJt/W7Si1n
-         QTzGeb55uBuCNh4RwONhQIXYTNtRVHIgmx8+z/wHA/NRlr3m4xRA/j+SFAPCZOTPMAHT
-         Uyp49fWjF9xfjO0hvQGhKVV719ccyr8yb+SVagFLUnozdCwEGIfo+HEil1aKX9LNvKuL
-         Dexwlm2HIacwnDauRwgyf//Cf3FLN/KCJ7eCG+Ts9cPmxSxTGh5XtnjduhAbK/+2HBAk
-         w7aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXv0HT3az+Dd9zUjb5VZpUbqROLXLP0lU6bRezgv4x53wY98NtonOy/tmZ4unZihRkh+CnQfpP2I01yBog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDIwsGNr4KOQ3qcRR+1+xhSqBcqcpENBW61PdmDMM6CZwf1JaK
-	hc6fcBRK5CG0zLjOlLcQsLafgIkgfAmj4KimS4n6n/tMDFXa78j+NXADFh9qVWU=
-X-Google-Smtp-Source: AGHT+IGadGFVRM42mB61gyRJVOgsPCIBYVeKqm+uIwglN5rQCNOJRYXAKXI8WfaP/3JsMFJ7EZHc/A==
-X-Received: by 2002:a05:6a21:478a:b0:1d9:ce8:35c1 with SMTP id adf61e73a8af0-1d92c4e064emr1358466637.11.1729220328049;
-        Thu, 17 Oct 2024 19:58:48 -0700 (PDT)
-Received: from [10.84.149.95] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5611fede6sm526840a91.30.2024.10.17.19.58.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 19:58:47 -0700 (PDT)
-Message-ID: <32c14642-462d-4b29-bcf2-997c068d0f59@bytedance.com>
-Date: Fri, 18 Oct 2024 10:58:39 +0800
+	s=arc-20240116; t=1729220443; c=relaxed/simple;
+	bh=eBN38igVUpmVxeiTa03c96BwxlapOZr/2lV+Xa8R4EQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lyBS9TlzlwrCW43Z/38GpKsioiFTryEZ7UtJmXzleylf7aoeX6ZcI9GAL5/jecyLq+RrL0u8sOql8DiP4TW625qOXskpop/S+C5su37JugNMRe5NYUSX/6mggYGNaz4ZaMS4vJdwQIa/VYwWKRGHPmS0ZEq81xWBPJXpu6Mt57g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ycs27AlH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729220440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B+PqcdpWNS4u7ZHFgo8/hLkbYu5t2LAmdihHzmnrPdo=;
+	b=Ycs27AlHHtHvM8ZfaiMiczYrGKD5hMS0/PN5Od2G42D4fbCU/etx175ysntQDhvGBdRKtQ
+	WnroIgfN/ZoRyU2FQAvnX0N08fsXnheuC0cp1e+guIalEl16/FlEPxSk27meLAW2jK4Xqo
+	lzV+nH67QWUA2LpKIY/tJqCypB0t0kk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-256-15MAYLMPP6OTtrhbesPwiw-1; Thu,
+ 17 Oct 2024 23:00:36 -0400
+X-MC-Unique: 15MAYLMPP6OTtrhbesPwiw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B5F2C195608B;
+	Fri, 18 Oct 2024 03:00:32 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.28])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 08F5A19560A3;
+	Fri, 18 Oct 2024 03:00:29 +0000 (UTC)
+Date: Fri, 18 Oct 2024 11:00:23 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Greg Marsden <greg.marsden@oracle.com>,
+	Ivan Ivanov <ivan.ivanov@suse.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 19/57] crash: Remove PAGE_SIZE compile-time
+ constant assumption
+Message-ID: <ZxHPR+Et8VyeD8uI@MiWiFi-R3L-srv>
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-19-ryan.roberts@arm.com>
+ <Zw3luHGG3LqHge2m@MiWiFi-R3L-srv>
+ <2e561511-ab20-4aa9-9b92-bd6ac6678087@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 5/7] mm: pgtable: try to reclaim empty PTE page in
- madvise(MADV_DONTNEED)
-Content-Language: en-US
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: Jann Horn <jannh@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- zokeefe@google.com, rientjes@google.com, peterx@redhat.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org
-References: <cover.1729157502.git.zhengqi.arch@bytedance.com>
- <6c7fe15b0434a08a287c400869f9ba434e1a8fa3.1729157502.git.zhengqi.arch@bytedance.com>
- <CAG48ez3MLMXZvkbPGZ4He2+tnOSHYxA68Sa1Hd_70-3a8K++=A@mail.gmail.com>
- <8068329c-c71c-469e-b2b7-5cb2e9d9671e@bytedance.com>
-In-Reply-To: <8068329c-c71c-469e-b2b7-5cb2e9d9671e@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e561511-ab20-4aa9-9b92-bd6ac6678087@arm.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+On 10/15/24 at 12:13pm, Ryan Roberts wrote:
+> On 15/10/2024 04:47, Baoquan He wrote:
+> > On 10/14/24 at 11:58am, Ryan Roberts wrote:
+> >> To prepare for supporting boot-time page size selection, refactor code
+> >> to remove assumptions about PAGE_SIZE being compile-time constant. Code
+> >> intended to be equivalent when compile-time page size is active.
+> >>
+> >> Updated BUILD_BUG_ON() to test against limit.
+> >>
+> >> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> >> ---
+> >>
+> >> ***NOTE***
+> >> Any confused maintainers may want to read the cover note here for context:
+> >> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+> >>
+> >>  kernel/crash_core.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+> >> index 63cf89393c6eb..978c600a47ac8 100644
+> >> --- a/kernel/crash_core.c
+> >> +++ b/kernel/crash_core.c
+> >> @@ -465,7 +465,7 @@ static int __init crash_notes_memory_init(void)
+> >>  	 * Break compile if size is bigger than PAGE_SIZE since crash_notes
+> >>  	 * definitely will be in 2 pages with that.
+> >>  	 */
+> >> -	BUILD_BUG_ON(size > PAGE_SIZE);
+> >> +	BUILD_BUG_ON(size > PAGE_SIZE_MIN);
+> > 
+> > This should be OK. While one thing which could happen is if selected size
+> > is 64K, PAGE_SIZE_MIN is 4K, it will issue a false-positive warning when
+> > compiling while actual it's not a problem during running. 
+> 
+> PAGE_SIZE can only ever be bigger than PAGE_SIZE_MIN if compiling a "boot-time
+> page size" build. And in this case, you need to know that size is small enough
+> to work with any of the boot-time selectable page sizes. Since size
+> (=sizeof(note_buf_t)) is invariant to PAGE_SIZE, we can do this by checking
+> against PAGE_SIZE_MIN.
+> 
+> So I don't think this could ever lead to a false-positive.
 
-
-On 2024/10/18 10:53, Qi Zheng wrote:
+Makes sense, thanks for your explanation.
 > 
 > 
-> On 2024/10/18 02:43, Jann Horn wrote:
->> +arm64 maintainers in case they have opinions on the break-before-make 
->> aspects
->>
-
-[snip]
-
->>> +
->>> +       pmd_clear(pmd);
->>> +
->>> +       if (ptl != pml)
->>> +               spin_unlock(ptl);
->>> +       spin_unlock(pml);
->>
->> At this point, you have cleared the PMD and dropped the locks
->> protecting against concurrency, but have not yet done a TLB flush. If
->> another thread concurrently repopulates the PMD at this point, can we
->> get incoherent TLB state in a way that violates the arm64
->> break-before-make rule?
->>
->> Though I guess we can probably already violate break-before-make if
->> MADV_DONTNEED races with a pagefault, since zap_present_folio_ptes()
->> does not seem to set "force_flush" when zapping anon PTEs...
-> 
-> Thanks for pointing this out! That's why I sent a separate patch
-> discussing this a while ago, but unfortunately haven't gotten any
-> feedback yet, please take a look:
-> 
-> https://lore.kernel.org/lkml/20240815120715.14516-1-zhengqi.arch@bytedance.com/
-
-More context here: 
-https://lore.kernel.org/lkml/6f38cb19-9847-4f70-bbe7-06881bb016be@bytedance.com/
-
+> Not sure if
+> > that could happen on arm64. Anyway, we can check the crash_notes to get
+> > why it's so big when it really happens. So,
+> > 
+> > Acked-by: Baoquan He <bhe@redhat.com>
 > 
 > Thanks!
 > 
->>
->> (I realize you're only enabling this for x86 for now, but we should
->> probably make sure the code is not arch-dependent in subtle
->> undocumented ways...)
->>
->>> +       free_pte(mm, addr, tlb, pmdval);
->>> +
->>> +       return;
->>> +out_ptl:
->>> +       pte_unmap_unlock(start_pte, ptl);
->>> +       if (pml != ptl)
->>> +               spin_unlock(pml);
->>> +}
->>> -- 
->>> 2.20.1
->>>
+> > 
+> >>  
+> >>  	crash_notes = __alloc_percpu(size, align);
+> >>  	if (!crash_notes) {
+> >> -- 
+> >> 2.43.0
+> >>
+> >>
+> > 
+> 
+
 
