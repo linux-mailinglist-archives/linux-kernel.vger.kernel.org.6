@@ -1,117 +1,74 @@
-Return-Path: <linux-kernel+bounces-371575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416479A3CD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:09:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4CEF9A3CD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F029E28268C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682F91F25AF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C702040AE;
-	Fri, 18 Oct 2024 11:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="dcoCiM31";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nNFsDOP2"
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED7A204937;
+	Fri, 18 Oct 2024 11:05:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEC7204084;
-	Fri, 18 Oct 2024 11:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F66204923;
+	Fri, 18 Oct 2024 11:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729249543; cv=none; b=nGdmw8qYrg1nIHkHirMokpaoFTT7WC6K2Vsr1nJuHwFIYdl+yXOzzJXDjzcBHlltf++FKU2QhC3eVjaIDfDUEB/YohL23YPAVNYg7XOXsmKFaILO0BgMxSzMKZnN/uO1wccpuVLUQTSu1+EOorfzlbEl9bsguK3vXiSStL1d0L4=
+	t=1729249546; cv=none; b=inwGFS55QMoIjvP4zfbA34JlHghsJd6v2IENOBf4JkgdmSPOLTbh0dVctd1lG5Qs83UoIMIYQVENDHTu3AqkPakoUHT3Igc8Y9ZVl3fLam+YwmvWWUtuaHTKyBscmDkFZcAMirDt3kX6sVBf0LQKBB8ofH8pZ1GZl7fChLXAbvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729249543; c=relaxed/simple;
-	bh=P5PdRsacF474EbWgmhc3hiD7lELGK1tzJ9hufbt3rB0=;
+	s=arc-20240116; t=1729249546; c=relaxed/simple;
+	bh=9hDVWgN9eP3gLsc0lzjrta/0kQpsyqMF5QbErKfyG2A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJmLRfCaucm/o+pMk9VbC/cR87VyC6T/7RakujpLAy3rQdRdVGqpUNN/Syz0sO1HUjl0Nu9a+0P61tgSq8pEXaLYhYuXCLSOx8qNtQpIK3id+99UjBonnnpVE7vSRXWekmZDfop7dTmFn7sVugwnl3J8OQ1acSE+smodGL6bCUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=dcoCiM31; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nNFsDOP2; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailflow.phl.internal (Postfix) with ESMTP id 555442008EE;
-	Fri, 18 Oct 2024 07:05:40 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Fri, 18 Oct 2024 07:05:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1729249540; x=
-	1729256740; bh=DfrWUeI7jSkiKLl3DUG7tVnejbJ3jmsGwSHJKF/avYA=; b=d
-	coCiM31/zabNDU6R4RnsDb/1plhuAHiEF0Q80vQuqfE+bJSr2l8hUqp4h4bOEo+0
-	siqhlildBZ9aRwdUXkP6bKYWCQI4CUtI4ESFeMNHjOMGCSOjwNTBGvf95/xvOHaE
-	BuKDQivrJVwpUxoLOX3DjHJzctOno4J2XL3gcNAVfIqUpsk1VhXEX2P3qjwAuDRK
-	qPTeHrXencJNxxnQ63tOmM+V/fOGDdREAUtvXBvyIFUEr68si/HG3iHgmm1mJIJk
-	7x3KvB90ssS+3AuH5PewlgYZGkWK6EgoUlnR9naCY/GULiCqc3SMIbmwlPnox9K0
-	JdvYhq9eCBaWWfuG33/xA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1729249540; x=1729256740; bh=DfrWUeI7jSkiKLl3DUG7tVnejbJ3
-	jmsGwSHJKF/avYA=; b=nNFsDOP2Xp/fxhjCB/9xkSy4rU/Js1j6E0JYnmEbjGdt
-	oeqVqGwYRsXYWJBbm+M3/P4CnRyNzH2MJPMEBU8E2WqhAHTvkwDVGyWJK7EKWxJN
-	NU1NYytz+PukYpVWsKe25tu5cXr+fpKUuyLZ8hA4UIbyBpmVww109MbhUGVWJpID
-	pdCoL9e+CVTYUxZqpBdHOdYWdMOlY7YpGRRESqWkzJqQnKm+dlkqqWWF3uQitH6u
-	xiAxU1NkRZ/XhlGXpsh/wfySGQr9uhFGC03nM/cmu2OsMZD0YE+Ua+yYZuS21dzV
-	+0JXqpuohBLWNzXMDryuGiPGJc3iOMDKiPluxytD/A==
-X-ME-Sender: <xms:A0ESZ75jRzXbRLvvZQfDNzFob9LTd9-0p7m0LdT63zCDKO1jyMGLfg>
-    <xme:A0ESZw5IINJO66CzsiZwtEP8HHf9A1Igue9O41ZlgzhZsZ_jMV0zfv2iesWL4othb
-    hgyEdVev_w1-iM6BzU>
-X-ME-Received: <xmr:A0ESZyeawwBfJ-CWrs2bYgQn6iEAuis3v-Ud2y7hqlpnmVudvoCBnZ-Leo9oXMSb2Q1kxQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehfedgfeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
-    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
-    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
-    rdhnrghmvgdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdrtghomhdprhgtphht
-    thhopehrohgsvghrthhordhsrghsshhusehhuhgrfigvihgtlhhouhgurdgtohhmpdhrtg
-    hpthhtohepphgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphhtthhopegvsghp
-    qhifvghrthihgeejvdduvdefsehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhhirhhilh
-    hlrdhshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopeii
-    ohhhrghrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepughmihhtrhihrdhkrg
-    hsrghtkhhinhesghhmrghilhdrtghomhdprhgtphhtthhopegvrhhitgdrshhnohifsggv
-    rhhgsehorhgrtghlvgdrtghomhdprhgtphhtthhopehjmhhorhhrihhssehnrghmvghird
-    horhhg
-X-ME-Proxy: <xmx:A0ESZ8IYn0K0oMAIMHEMPAGeChgFhXRKE1MXmz5TFTySYvy1S-wrVA>
-    <xmx:A0ESZ_KaF5l77BShpny3V7R5x3_-4BaJmGhSybClo6FKEKsTb1fEYw>
-    <xmx:A0ESZ1wBQZgu77wJW-LApmzqL7gM8ugNX-BZ1ICA9Ka0fXNN_yK_VA>
-    <xmx:A0ESZ7LNU7aXGheO5AGArP71cuQUcqDpPIgPbk4U7jJV9sL4NJ8a9w>
-    <xmx:BEESZ0C36_eKafwilCyEkSRmOul-aD1SXQltohfGtkB8zkdqg6NX8KQ6>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 18 Oct 2024 07:05:32 -0400 (EDT)
-Date: Fri, 18 Oct 2024 14:05:27 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
-	Paul Moore <paul@paul-moore.com>, ebpqwerty472123@gmail.com, kirill.shutemov@linux.intel.com, 
-	zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>, linux-mm@kvack.org, akpm@linux-foundation.org, vbabka@suse.cz, 
-	linux-fsdevel@vger.kernel.org, Liam Howlett <liam.howlett@oracle.com>, 
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 1/3] ima: Remove inode lock
-Message-ID: <gl4pf7gezpjtvnbp4lzyb65wqaiw3xzjjrs3476j5odxsfzvsj@oouue73v3cgr>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
- <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
- <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
- <593282dbc9f48673c8f3b8e0f28e100f34141115.camel@huaweicloud.com>
- <15bb94a306d3432de55c0a12f29e7ed2b5fa3ba1.camel@huaweicloud.com>
- <c1e47882720fe45aa9d04d663f5a6fd39a046bcb.camel@huaweicloud.com>
- <b498e3b004bedc460991e167c154cc88d568f587.camel@huaweicloud.com>
- <ggvucjixgiuelt6vjz6oawgyobmzrhifaozqqvupwfso65ia7c@bauvfqtvq6lv>
- <e89f6b61-a57f-4848-87f1-8e2282bc5aea@lucifer.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gQ1acgqPttoW9idM1vXNoSaYQP3P342u1w5wbaV5L2o6GqalhIzfHTomg8JlOolhyarRdF937xh++H5oliCo5jjUdL/JEAy2fpg17kJY/22RstycxRYmMdDk4XBPFpEaed9wuxIJ/SUuzdo3oZ1VSfARwbP5sI4WFQMvWudMZas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92BF1C4CEC3;
+	Fri, 18 Oct 2024 11:05:40 +0000 (UTC)
+Date: Fri, 18 Oct 2024 12:05:38 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: "Okanovic, Haris" <harisokn@amazon.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+	"wanpengli@tencent.com" <wanpengli@tencent.com>,
+	"cl@gentwo.org" <cl@gentwo.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"maobibo@loongson.cn" <maobibo@loongson.cn>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"misono.tomohiro@fujitsu.com" <misono.tomohiro@fujitsu.com>,
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"arnd@arndb.de" <arnd@arndb.de>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"will@kernel.org" <will@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+	"vkuznets@redhat.com" <vkuznets@redhat.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"mtosatti@redhat.com" <mtosatti@redhat.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>
+Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
+ smp_cond_load_relaxed()
+Message-ID: <ZxJBAubok8pc5ek7@arm.com>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+ <20240925232425.2763385-2-ankur.a.arora@oracle.com>
+ <Zw5aPAuVi5sxdN5-@arm.com>
+ <7f7ffdcdb79eee0e8a545f544120495477832cd5.camel@amazon.com>
+ <ZxEYy9baciwdLnqh@arm.com>
+ <87h69amjng.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -120,119 +77,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e89f6b61-a57f-4848-87f1-8e2282bc5aea@lucifer.local>
+In-Reply-To: <87h69amjng.fsf@oracle.com>
 
-On Fri, Oct 18, 2024 at 12:00:22PM +0100, Lorenzo Stoakes wrote:
-> + Liam, Jann
-> 
-> On Fri, Oct 18, 2024 at 01:49:06PM +0300, Kirill A. Shutemov wrote:
-> > On Fri, Oct 18, 2024 at 11:24:06AM +0200, Roberto Sassu wrote:
-> > > Probably it is hard, @Kirill would there be any way to safely move
-> > > security_mmap_file() out of the mmap_lock lock?
+On Thu, Oct 17, 2024 at 03:47:31PM -0700, Ankur Arora wrote:
+> Catalin Marinas <catalin.marinas@arm.com> writes:
+> > On Wed, Oct 16, 2024 at 03:13:33PM +0000, Okanovic, Haris wrote:
+> >> On Tue, 2024-10-15 at 13:04 +0100, Catalin Marinas wrote:
+> >> > On Wed, Sep 25, 2024 at 04:24:15PM -0700, Ankur Arora wrote:
+> >> > > +                     smp_cond_load_relaxed(&current_thread_info()->flags,
+> >> > > +                                           VAL & _TIF_NEED_RESCHED ||
+> >> > > +                                           loop_count++ >= POLL_IDLE_RELAX_COUNT);
+> >> >
+> >> > The above is not guaranteed to make progress if _TIF_NEED_RESCHED is
+> >> > never set. With the event stream enabled on arm64, the WFE will
+> >> > eventually be woken up, loop_count incremented and the condition would
+> >> > become true. However, the smp_cond_load_relaxed() semantics require that
+> >> > a different agent updates the variable being waited on, not the waiting
+> >> > CPU updating it itself. Also note that the event stream can be disabled
+> >> > on arm64 on the kernel command line.
+> >>
+> >> Alternately could we condition arch_haltpoll_want() on
+> >> arch_timer_evtstrm_available(), like v7?
 > >
-> > What about something like this (untested):
-> >
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index dd4b35a25aeb..03473e77d356 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -1646,6 +1646,26 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
-> >  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
-> >  		return ret;
-> >
-> > +	if (mmap_read_lock_killable(mm))
-> > +		return -EINTR;
-> > +
-> > +	vma = vma_lookup(mm, start);
-> > +
-> > +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-> > +		mmap_read_unlock(mm);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	file = get_file(vma->vm_file);
-> > +
-> > +	mmap_read_unlock(mm);
-> > +
-> > +	ret = security_mmap_file(vma->vm_file, prot, flags);
+> > No. The problem is about the smp_cond_load_relaxed() semantics - it
+> > can't wait on a variable that's only updated in its exit condition. We
+> > need a new API for this, especially since we are changing generic code
+> > here (even it was arm64 code only, I'd still object to such
+> > smp_cond_load_*() constructs).
 > 
-> Accessing VMA fields without any kind of lock is... very much not advised.
+> Right. The problem is that smp_cond_load_relaxed() used in this context
+> depends on the event-stream side effect when the interface does not
+> encode those semantics anywhere.
 > 
-> I'm guessing you meant to say:
+> So, a smp_cond_load_timeout() like in [1] that continues to depend on
+> the event-stream is better because it explicitly accounts for the side
+> effect from the timeout.
 > 
-> 	ret = security_mmap_file(file, prot, flags);
-> 
-> Here? :)
+> This would cover both the WFxT and the event-stream case.
 
-Sure. My bad.
+Indeed.
 
-Patch with all fixups:
+> The part I'm a little less sure about is the case where WFxT and the
+> event-stream are absent.
+> 
+> As you said earlier, for that case on arm64, we use either short
+> __delay() calls or spin in cpu_relax(), both of which are essentially
+> the same thing.
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index dd4b35a25aeb..541787d526b6 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1646,14 +1646,41 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
- 	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
- 		return ret;
- 
--	if (mmap_write_lock_killable(mm))
-+	if (mmap_read_lock_killable(mm))
- 		return -EINTR;
- 
- 	vma = vma_lookup(mm, start);
- 
-+	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-+		mmap_read_unlock(mm);
-+		return -EINVAL;
-+	}
-+
-+	file = get_file(vma->vm_file);
-+
-+	mmap_read_unlock(mm);
-+
-+	ret = security_mmap_file(file, prot, flags);
-+	if (ret) {
-+		fput(file);
-+		return ret;
-+	}
-+
-+	ret = -EINVAL;
-+
-+	if (mmap_write_lock_killable(mm)) {
-+		fput(file);
-+		return -EINTR;
-+	}
-+
-+	vma = vma_lookup(mm, start);
-+
- 	if (!vma || !(vma->vm_flags & VM_SHARED))
- 		goto out;
- 
-+	if (vma->vm_file != file)
-+		goto out;
-+
- 	if (start + size > vma->vm_end) {
- 		VMA_ITERATOR(vmi, mm, vma->vm_end);
- 		struct vm_area_struct *next, *prev = vma;
-@@ -1688,16 +1715,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
- 	if (vma->vm_flags & VM_LOCKED)
- 		flags |= MAP_LOCKED;
- 
--	file = get_file(vma->vm_file);
--	ret = security_mmap_file(vma->vm_file, prot, flags);
--	if (ret)
--		goto out_fput;
- 	ret = do_mmap(vma->vm_file, start, size,
- 			prot, flags, 0, pgoff, &populate, NULL);
--out_fput:
--	fput(file);
- out:
- 	mmap_write_unlock(mm);
-+	fput(file);
- 	if (populate)
- 		mm_populate(ret, populate);
- 	if (!IS_ERR_VALUE(ret))
+Something derived from __delay(), not exactly this function. We can't
+use it directly as we also want it to wake up if an event is generated
+as a result of a memory write (like the current smp_cond_load().
+
+> Now on x86 cpu_relax() is quite optimal. The spec explicitly recommends
+> it and from my measurement a loop doing "while (!cond) cpu_relax()" gets
+> an IPC of something like 0.1 or similar.
+> 
+> On my arm64 systems however the same loop gets an IPC of 2.  Now this
+> likely varies greatly but seems like it would run pretty hot some of
+> the time.
+
+For the cpu_relax() fall-back, it wouldn't be any worse than the current
+poll_idle() code, though I guess in this instance we'd not enable idle
+polling.
+
+I expect the event stream to be on in all production deployments. The
+reason we have a way to disable it is for testing. We've had hardware
+errata in the past where the event on spin_unlock doesn't cross the
+cluster boundary. We'd not notice because of the event stream.
+
+> So maybe the right thing to do would be to keep smp_cond_load_timeout()
+> but only allow polling if WFxT or event-stream is enabled. And enhance
+> cpuidle_poll_state_init() to fail if the above condition is not met.
+
+We could do this as well. Maybe hide this behind another function like
+arch_has_efficient_smp_cond_load_timeout() (well, some shorter name),
+checked somewhere in or on the path to cpuidle_poll_state_init(). Well,
+it might be simpler to do this in haltpoll_want(), backed by an
+arch_haltpoll_want() function.
+
+I assume we want poll_idle() to wake up as soon as a task becomes
+available. Otherwise we could have just used udelay() for some fraction
+of cpuidle_poll_time() instead of cpu_relax().
+
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Catalin
 
