@@ -1,224 +1,185 @@
-Return-Path: <linux-kernel+bounces-371362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E5A9A3A0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:33:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71539A3A08
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E915C1F2679F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:33:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72C83B26337
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2251F1FF7BB;
-	Fri, 18 Oct 2024 09:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ADC200B89;
+	Fri, 18 Oct 2024 09:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="qSEIkl/2"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnvMho5b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3851FA25A;
-	Fri, 18 Oct 2024 09:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5441FF7BB;
+	Fri, 18 Oct 2024 09:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729243938; cv=none; b=QCEInhgnVT49X/oCxGkVE/OeFGspZ1Com5gnMbYZHERJEPJeqWEX6CF03aQ14u7pSj7j0DbnkbKU32aYhHoVBTc1ag60bAQ2uHg80jcYXJh0HLbbcxooYBHoB4OBax/UZ9G+FEPjihmY9AvGxour2OwC2cdwrcqpEENdEqIrF6E=
+	t=1729243930; cv=none; b=ouxhIGNZrsZL0fumAYtvV8FmS6JcQRW5OOou9sTvbm9fNfuNGzoliLBZOuWQmb4Q+fRwWMpkPZUEQrtHgxwJERoiHARd2dOqWWy91YhesM3U5a6279PeEvUtwXSjAXuxJrSzmdGCNhrKfS/R7d98fqBcHGqbq4yq6yrl3GTYwM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729243938; c=relaxed/simple;
-	bh=NRUNnP2mZXs2WNH4S9WNytayeFYHXzK5nj5USGUYSRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b+GkHduDVppVH725H4FA5jc4d+k68+OP0UMop7+0rGOlsKIpXrgqos1TC/Eq6BrHoq9TPyAUH1UjHFJWl1Gb0kfYUuu0mOCO9Nv04K9i3Cdji/nFqS55cnLFKObMVXJOjpW5MpeE62nfWW8pINmHXDEmZ4ekfXRbvqfzpQR1ogY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=qSEIkl/2; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.178.76] (host-212-18-30-247.customer.m-online.net [212.18.30.247])
-	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 76D792FC0050;
-	Fri, 18 Oct 2024 11:31:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1729243925;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RISW6pgFXjPBnkGM/1U0Ir7dOMl38aJw8Abj2tGkQQg=;
-	b=qSEIkl/2jyct94EKLzHdZx747BT27ZNffQCo67zWlc81G3td5nrwEjYaMkreE5XIOG+yz+
-	9oDxIeTp7BsN0kCWmQggUm4FOwm396m4P+grKvdYR2I7c8nzprMYL9Fs7Tzr6uHo8k0EgH
-	S0KHaYexl5+51I+YLuj9TZgwd8nWRQo=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=ggo@tuxedocomputers.com
-Message-ID: <5b72bde8-1084-4bf5-94a7-de5807302d96@tuxedocomputers.com>
-Date: Fri, 18 Oct 2024 11:31:57 +0200
+	s=arc-20240116; t=1729243930; c=relaxed/simple;
+	bh=AQ6fEYmJFBibrj9Gjf/7IjfPAPF78a/92tXhWW6r9J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHK8hxrxNA3l0RpfbavcS1Cn5PPm5Vp7gRNHD3dFpCGMI2TMWkNMaxkgXcbH8ezzpKYhoucrIFeMeC/0PIN8b3WNZ8zkET7sCxarzDozVTm1AnCa8xJoZF3Afg84xPBpAS1Ip/f4JEUzMo/+YfVAlkeEaee9EgLj9UGl0ME139s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnvMho5b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9328C4CEC7;
+	Fri, 18 Oct 2024 09:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729243929;
+	bh=AQ6fEYmJFBibrj9Gjf/7IjfPAPF78a/92tXhWW6r9J0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FnvMho5bIKzDyOJ43+p9GMEDwTt+923TPizzzgoqnTHxYp4WmHANrPwth7C9MRwHZ
+	 YTXnQKYEHNKtHoarVKJURoQ1YdI3TL/OH3l6QrETFjjlNqyWFDoGtbz3WQUrhPW2Sr
+	 jeVlkVi8PmL95I+ECMkuFbU8yq5RlOnRbUzVoanPyjzQ15iSHvFjOHKtuT2ub3z9AU
+	 TM6BgXIV92ztwBADSXfYWZsOe9YyITPQFEgd9V1jdoaXGRxDlfS7LRplP+62y7Awuj
+	 LytB4f3ZZTvwQUCPTAI4Em8X+VI+WhSHq0yzFa7ejaW1MuNb2/3gPMx2fSfQmgAgwu
+	 xq3sVmNEncHWw==
+Date: Fri, 18 Oct 2024 10:32:04 +0100
+From: Simon Horman <horms@kernel.org>
+To: Leo Stone <leocstone@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, shuah@kernel.org, 0x7f454c46@gmail.com,
+	rdunlap@infradead.org, mnassiri@ciena.com,
+	jiapeng.chong@linux.alibaba.com, colin.i.king@gmail.com,
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] selftest/tcp-ao: Add filter tests
+Message-ID: <20241018093204.GC1697@kernel.org>
+References: <20241016055823.21299-1-leocstone@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: FW: [RFC PATCH v2 1/1] mmc: sdhci-pci-gli: fix x86/S0ix SoCs
- suspend for GL9767
-To: Victor Shih <victorshihgli@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
- Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, Greg.tu@genesyslogic.com.tw,
- HL.Liu@genesyslogic.com.tw, Ben Chuang <ben.chuang@genesyslogic.com.tw>,
- Ben Chuang <benchuanggli@gmail.com>, Lucas.Lai@genesyslogic.com.tw,
- =?UTF-8?B?VmljdG9yU2hpaFvmlr3li53mlodd?= <victor.shih@genesyslogic.com.tw>,
- cs@tuxedo.de, Georg Gottleuber <ggo@tuxedocomputers.com>
-References: <41c1c88a-b2c9-4c05-863a-467785027f49@tuxedocomputers.com>
- <SI2PR01MB3916D4C2E36365A0CC2E128BA7472@SI2PR01MB3916.apcprd01.prod.exchangelabs.com>
- <CAK00qKCdKsdWbJ7DQRQX3RjSsd31PkinAUXt9fYtG+crx3G0Rg@mail.gmail.com>
-Content-Language: en-US
-From: Georg Gottleuber <ggo@tuxedocomputers.com>
-In-Reply-To: <CAK00qKCdKsdWbJ7DQRQX3RjSsd31PkinAUXt9fYtG+crx3G0Rg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016055823.21299-1-leocstone@gmail.com>
 
-Hi Victor,
-
-Am 17.10.24 um 17:05 schrieb Victor Shih:
-> Hi, Georg
+On Tue, Oct 15, 2024 at 10:51:52PM -0700, Leo Stone wrote:
+> Add tests that check if getsockopt(TCP_AO_GET_KEYS) returns the right
+> keys when using different filters.
 > 
-> I noticed that you mentioned in the patch for version 1 that the AMD
-> platform is fine,
-> may I ask that are AMD platforms and Intel platforms using the same
-> kernel version?
+> Sample output:
+> 
+> > # ok 114 filter keys: by sndid, rcvid, address
+> > # ok 115 filter keys: by is_current
+> > # ok 116 filter keys: by is_rnext
+> > # ok 117 filter keys: by sndid, rcvid
+> > # ok 118 filter keys: correct nkeys when in.nkeys < matched_keys
+> 
+> Signed-off-by: Leo Stone <leocstone@gmail.com>
+> ---
+> Changes in v2:
+> - Changed 2 unnecessary test_error calls to test_fail
+> - Added another test to make sure getsockopt returns the right nkeys
+>   value when the input nkeys is smaller than the number of matching keys
+> - Removed the TODO that this patch addresses
+> 
+> Thank you for your feedback.
+> ---
+>  .../selftests/net/tcp_ao/setsockopt-closed.c  | 180 +++++++++++++++++-
+>  1 file changed, 175 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c b/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
+> index 084db4ecdff6..4bfa76c28e4e 100644
+> --- a/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
+> +++ b/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
+> @@ -6,6 +6,8 @@
+>  
+>  static union tcp_addr tcp_md5_client;
+>  
+> +#define FILTER_TEST_NKEYS 16
+> +
+>  static int test_port = 7788;
+>  static void make_listen(int sk)
+>  {
+> @@ -813,23 +815,191 @@ static void duplicate_tests(void)
+>  	setsockopt_checked(sk, TCP_AO_ADD_KEY, &ao, EEXIST, "duplicate: SendID differs");
+>  }
+>  
+> +
+> +static void fetch_all_keys(int sk, struct tcp_ao_getsockopt *keys)
+> +{
+> +	socklen_t optlen = sizeof(struct tcp_ao_getsockopt);
+> +
+> +	memset(keys, 0, sizeof(struct tcp_ao_getsockopt) * FILTER_TEST_NKEYS);
+> +	keys[0].get_all = 1;
+> +	keys[0].nkeys = FILTER_TEST_NKEYS;
+> +	if (getsockopt(sk, IPPROTO_TCP, TCP_AO_GET_KEYS, &keys[0], &optlen))
+> +		test_error("getsockopt");
+> +}
+> +
+> +static int prepare_test_keys(struct tcp_ao_getsockopt *keys)
+> +{
+> +	struct tcp_ao_add test_ao[FILTER_TEST_NKEYS];
+> +	u8 rcvid = 100, sndid = 100;
+> +	const char *test_password = "Test password number ";
+> +	char test_password_scratch[64] = {};
+> +	int sk = socket(test_family, SOCK_STREAM, IPPROTO_TCP);
 
-yes, they use the same kernel version.
+Hi Leo,
 
-> If they are using the same kernel version, how do you confirm that
-> the solution is to modify the kernel code?
+In Networking code it is preferred to arrange local variables in
+reverse xmas tree order. In this case I think that could be as
+follows (completely untested!).
 
-I think the problem is similar to the one fixed by commit
-1202d617e3d04c ("mmc: sdhci-pci-gli: fix LPM negotiation so x86/S0ix
-SoCs can suspend") from Sven van Ashbrook.
+Also, as the sk needs to be checked for errors, I would
+separate it's assignment form it's declaration
 
-Unfortunately, I only have two devices with GL9767. I don't know if it
-really only affects Intel, but Sven van Ashbrook wrote in his commit:
+	const char *test_password = "Test password number ";
+	struct tcp_ao_add test_ao[FILTER_TEST_NKEYS];
+	char test_password_scratch[64] = {};
+	u8 rcvid = 100, sndid = 100;
+	int sk;
 
-"This prevents a large number of SoCs from suspending, notably x86
-systems which commonly use S0ix as the suspend mechanism - for example,
-Intel Alder Lake and Raptor Lake processors."
+	sk = socket(test_family, SOCK_STREAM, IPPROTO_TCP);
+	if (sk < 0)
+		test_error("socket()");
 
-That sounds like AMD is implementing the suspend differently.
+This tool can be of assistance here:
+https://github.com/ecree-solarflare/xmastree
 
-Additional experience / tests with GL9767 on Intel and AMD hardware
-would be helpful.
+> +
+> +	if (sk < 0)
+> +		test_error("socket()");
+> +
+> +	for (int i = 0; i < FILTER_TEST_NKEYS; i++) {
+> +		snprintf(test_password_scratch, 64, "%s %d", test_password, i);
+> +		test_prepare_key(&test_ao[i], DEFAULT_TEST_ALGO, this_ip_dest, false, false,
+> +				 DEFAULT_TEST_PREFIX, 0, sndid++, rcvid++, 0, 0,
+> +				 strlen(test_password_scratch), test_password_scratch);
 
-Kind regards,
+Likewise, in Networking code it is still preferred to keep lines at or
+below 80 columns wide, where it can trivially be achieved: don't split
+strings across or otherwise make the code less readable because of this
+guideline.
 
-Georg
+		test_prepare_key(&test_ao[i], DEFAULT_TEST_ALGO, this_ip_dest,
+				 false, false, DEFAULT_TEST_PREFIX, 0, sndid++,
+				 rcvid++, 0, 0, strlen(test_password_scratch),
+				 test_password_scratch);
 
+You can check for this using:
+./scripts/checkpatch.pl --strict --max-line-length=80
 
->> -----Original Message-----
->> From: Georg Gottleuber <ggo@tuxedocomputers.com>
->> Sent: Thursday, October 17, 2024 4:11 PM
->> To: Ben Chuang <benchuanggli@gmail.com>
->> Cc: Ben Chuang <benchuanggli@gmail.com>; adrian.hunter@intel.com; Ulf Hansson <ulf.hansson@linaro.org>; VictorShih[施勝文] <Victor.Shih@genesyslogic.com.tw>; LucasLai[賴宗清] <Lucas.Lai@genesyslogic.com.tw>; GregTu[杜啟軒] <Greg.Tu@genesyslogic.com.tw>; HLLiu[劉鴻霖] <HL.Liu@genesyslogic.com.tw>; cs@tuxedo.de; Georg Gottleuber <ggo@tuxedocomputers.com>; BenChuang[莊智量] <Ben.Chuang@genesyslogic.com.tw>; linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org
->> Subject: [RFC PATCH v2 1/1] mmc: sdhci-pci-gli: fix x86/S0ix SoCs suspend for GL9767
->>
->> [Some people who received this message don't often get email from ggo@tuxedocomputers.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->>
->> Adapt commit 1202d617e3d04c ("mmc: sdhci-pci-gli: fix LPM negotiation so x86/S0ix SoCs can suspend") also for GL9767 card reader.
->>
->> This patch was written without specs or deeper knowledge of PCI sleep states. Tests show that S0ix is reached and lower power consumption when suspended (6 watts vs 1.2 watts for TUXEDO InfinityBook Pro Gen9 Intel).
->>
->> The function of the card reader appears to be OK.
->>
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219284
->> Fixes: f3a5b56c1286 ("mmc: sdhci-pci-gli: Add Genesys Logic GL9767 support")
->> Co-developed-by: Christoffer Sandberg <cs@tuxedo.de>
->> Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
->> Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
->> ---
->> v1 -> v2:
->> - use gl9767_vhs_read() and gl9767_vhs_write()
->> - editorial changes to the commit message
->>
->>  drivers/mmc/host/sdhci-pci-gli.c | 61 +++++++++++++++++++++++++++++++-
->>  1 file changed, 60 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/mmc/host/sdhci-pci-gli.c
->> b/drivers/mmc/host/sdhci-pci-gli.c
->> index 0f81586a19df..bdccd74bacd2 100644
->> --- a/drivers/mmc/host/sdhci-pci-gli.c
->> +++ b/drivers/mmc/host/sdhci-pci-gli.c
->> @@ -1205,6 +1205,28 @@ static void
->> gl9763e_set_low_power_negotiation(struct sdhci_pci_slot *slot,
->>         pci_write_config_dword(pdev, PCIE_GLI_9763E_VHS, value);  }
->>
->> +static void gl9767_set_low_power_negotiation(struct sdhci_pci_slot *slot,
->> +                                            bool enable) {
->> +       struct pci_dev *pdev = slot->chip->pdev;
->> +       u32 value;
->> +
->> +       gl9767_vhs_write(pdev);
->> +
->> +       pci_write_config_dword(pdev, PCIE_GLI_9767_VHS, value);
->> +
->> +       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
->> +
->> +       if (enable)
->> +               value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
->> +       else
->> +               value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
->> +
->> +       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
->> +
->> +       gl9767_vhs_read(pdev);
->> +}
->> +
->>  static void sdhci_set_gl9763e_signaling(struct sdhci_host *host,
->>                                         unsigned int timing)  { @@ -1470,6 +1492,42 @@ static int gl9763e_suspend(struct sdhci_pci_chip
->> *chip)
->>         gl9763e_set_low_power_negotiation(slot, false);
->>         return ret;
->>  }
->> +
->> +static int gl9767_resume(struct sdhci_pci_chip *chip) {
->> +       struct sdhci_pci_slot *slot = chip->slots[0];
->> +       int ret;
->> +
->> +       ret = sdhci_pci_gli_resume(chip);
->> +       if (ret)
->> +               return ret;
->> +
->> +       gl9767_set_low_power_negotiation(slot, false);
->> +
->> +       return 0;
->> +}
->> +
->> +static int gl9767_suspend(struct sdhci_pci_chip *chip) {
->> +       struct sdhci_pci_slot *slot = chip->slots[0];
->> +       int ret;
->> +
->> +       /*
->> +        * Certain SoCs can suspend only with the bus in low-
->> +        * power state, notably x86 SoCs when using S0ix.
->> +        * Re-enable LPM negotiation to allow entering L1 state
->> +        * and entering system suspend.
->> +        */
->> +       gl9767_set_low_power_negotiation(slot, true);
->> +
->> +       ret = sdhci_suspend_host(slot->host);
->> +       if (ret) {
->> +               gl9767_set_low_power_negotiation(slot, false);
->> +               return ret;
->> +       }
->> +
->> +       return 0;
->> +}
->>  #endif
->>
->>  static int gli_probe_slot_gl9763e(struct sdhci_pci_slot *slot) @@ -1605,6 +1663,7 @@ const struct sdhci_pci_fixes sdhci_gl9767 = {
->>         .probe_slot     = gli_probe_slot_gl9767,
->>         .ops            = &sdhci_gl9767_ops,
->>  #ifdef CONFIG_PM_SLEEP
->> -       .resume         = sdhci_pci_gli_resume,
->> +       .resume         = gl9767_resume,
->> +       .suspend        = gl9767_suspend,
->>  #endif
->>  };
->> --
->> 2.34.1
+I think it would be good if you could do a pass over this patch with the
+above in mind.
+
+Lastly, please include the target tree, net or net-next, in the subject
+when posting patches for Networking.
+
+	Subject: [PATCH net-next] ...
+
+More information on processes for netdev can be found here:
+https://docs.kernel.org/process/maintainer-netdev.html
+
+-- 
+pw-bot: changes-requested
 
