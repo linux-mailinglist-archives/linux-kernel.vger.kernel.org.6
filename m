@@ -1,97 +1,128 @@
-Return-Path: <linux-kernel+bounces-371599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50FA09A3D2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BEF9A3D31
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5715281F26
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:17:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37CBE28363E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBF82010F9;
-	Fri, 18 Oct 2024 11:17:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6961E200CB6;
-	Fri, 18 Oct 2024 11:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399612010EC;
+	Fri, 18 Oct 2024 11:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOSoCDnr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E5F200BBC;
+	Fri, 18 Oct 2024 11:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729250247; cv=none; b=szNqVOVW06fLfR1yElJRO1R2cyZkbfBBkbnAxuRd/TNJgu+mdFIi7iQQaRN48zZXP6X+flumqwnSKAZXUtOt7F+J+ds6rNqBMWxXTbyUM/rmKF2OgA4uVu4fENr39rNPuTPTdZDMVFAVOTt+lgWQyJXhnqqTY4fqxqyVIx5T3ho=
+	t=1729250378; cv=none; b=g9YOFN1nikTMusAdn4TyrzRRSGZsuk6pJWX0Tg77dDjtFNor7d4VHuo61d8ggHh2Q7AtM1g0zsB2JlirhDfq+tI3KEjF5Hn9MpZ0zRZTYidcDBSw2ylH65NZ6YkQwzn1qEXV0bOyESHVXuQahvK5SV+64ypPZ6iBVQj1/xBYvjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729250247; c=relaxed/simple;
-	bh=34Dtxf8ZPj4O5Y7l7kCJE0Gju7y82fqgVDpYl4Kvu3E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tHz5bMcpq6oXtc29LZ2HaERIGwAZfwUBsdrdTgC0Icth3fvmJa86wKv6fjKlAbVBFQEedSHVERb+ZrRIVWrQr2MPX38Pl1xRMraB5TSISZUs/NCQY7lqrX8RRxTpiOCFWX7dX3eqlL4d4WoKX4tz8vANZLs8+zReh+ev71ASvqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1BC27FEC;
-	Fri, 18 Oct 2024 04:17:54 -0700 (PDT)
-Received: from e129166.arm.com (unknown [10.57.78.54])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5279A3F58B;
-	Fri, 18 Oct 2024 04:17:22 -0700 (PDT)
-From: Lukasz Luba <lukasz.luba@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org
-Cc: robdclark@gmail.com,
-	sean@poorly.run,
-	konradybcio@kernel.org,
-	quic_abhinavk@quicinc.com,
-	dmitry.baryshkov@linaro.org,
-	marijn.suijten@somainline.org,
-	airlied@gmail.com
-Subject: [PATCH] drm/msm/gpu: Check the status of registration to PM QoS
-Date: Fri, 18 Oct 2024 12:18:11 +0100
-Message-ID: <20241018111811.3534385-1-lukasz.luba@arm.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1729250378; c=relaxed/simple;
+	bh=cZQZyFhV6odFwcw9cSqGUp+HOV68fnDoIk0m8gHESu4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XvVIcTSBZmyj/fKjNRHpFZnWKglPvHivdvx6SfmUYkPgtcnNsLZX8Ly5BovdS6gGBVMgOqe0SkjGo5Uou5JMjSRnpzDZlPhK3c24gmEewL5c/24sHH+92SyhPFwh0iYcRbpEyqTOYMJcl7hFj3ZEgcjk90NziLcQezsih1+pzyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOSoCDnr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A264C4CECF;
+	Fri, 18 Oct 2024 11:19:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729250378;
+	bh=cZQZyFhV6odFwcw9cSqGUp+HOV68fnDoIk0m8gHESu4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iOSoCDnrKHv9F3qbdIvsWcPxVm+kRdE2eXyjpD1P41J4Gl2vNRboPgd/f6fOniMkZ
+	 +hOyy8o4SKmg9ucMMhkTE/rj1oDK2evXQmxvHChOuYG58CcNHzjGPNQDc11Y9S3bkT
+	 8IEBdpuZ2TI/cGL2MlCBQCrZk8Mk0z6M2VdkjIImMgXSiTz8YmfP8f4Yz+XjPJcuhg
+	 Bjom38p4aYxSOBkwtKr0X+hxr0+hBp+EftFXv9FoFPziqQq/LsuCAGjzOAjHi8Sjzj
+	 OnOqbWCpDLsWuJLrqPM7G4M+K5pw5qyAA0P/N+rDLckLqlAXckbOTBG963yx9zWQhi
+	 Q5Wz6A92nBwCg==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539983beb19so2276301e87.3;
+        Fri, 18 Oct 2024 04:19:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWJgQnUIqBZtXmoLfLdYvGi0nsb81ZIzkjU+b4SaS9dvhxegbqAZi7VWuV0W52dR+1AK7IkedWi4M9+cQE=@vger.kernel.org, AJvYcCXLCw+HJ4nUnl248W/qc11Oq0bi6coVCjKH57SuBb7XE795cu0+dZOZ3lB6K6oCrh7Bxby21oCLS9Q8mDzw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOMwRQ1axBgJuFNT5snPQpUW5BhwGhbRzqX47/V9pKOBxpnvk4
+	ZCkXlb+IiOKosEF1iuCoHdv5krtzRa/vqHTIVTJ8hOsO37UtIwi9QREvmtCjHdLYxAFTnVoEW0c
+	VDS6wAHd8Obh2hCXxSv4dq1bwXlU=
+X-Google-Smtp-Source: AGHT+IEU88aZtXtf9yQ9ikU7FiDgZ3r01jLQvmdVnpJB8djfFtTyO8sx2VEgMvKXQYJdS/pw86TTFXGJzhu8ilMTXPw=
+X-Received: by 2002:a05:6512:104c:b0:539:e85f:ba98 with SMTP id
+ 2adb3069b0e04-53a154fa46bmr1195071e87.56.1729250376855; Fri, 18 Oct 2024
+ 04:19:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241016194149.4178898-1-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20241016194149.4178898-1-chris.packham@alliedtelesis.co.nz>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 18 Oct 2024 20:19:00 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR4h6NZ+D0BK+q4VQBeHWpjzRBQFQ9ovBrftM=6dHRcUg@mail.gmail.com>
+Message-ID: <CAK7LNAR4h6NZ+D0BK+q4VQBeHWpjzRBQFQ9ovBrftM=6dHRcUg@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: Restore the ability to build out of tree dtbs
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: nathan@kernel.org, nicolas@fjasle.eu, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a need to check the returned value of the registration function.
-In case of returned error, print that and stop the init process.
+On Thu, Oct 17, 2024 at 4:59=E2=80=AFAM Chris Packham
+<chris.packham@alliedtelesis.co.nz> wrote:
+>
+> A build pattern to handle out of tree dtbs is to copy the .dts file into
+> the kernel source tree and run `make myboard.dtb`. This is supported by
+> the wildcard %.dtb rule in the Makefile but recent changes to split the
+> dtb handling out of scripts/Makefile.build stopped this from working.
+> Restore this functionality by looking for .dtb in $(MAKECMDGOALS) as
+> well as $(targets).
+>
+> Fixes: e7e2941300d2 ("kbuild: split device tree build rules into scripts/=
+Makefile.dtbs")
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
 
-Fixes: 7c0ffcd40b16 ("drm/msm/gpu: Respect PM QoS constraints")
-Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
----
- drivers/gpu/drm/msm/msm_gpu_devfreq.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+This is not a use-case in upstream.
 
-diff --git a/drivers/gpu/drm/msm/msm_gpu_devfreq.c b/drivers/gpu/drm/msm/msm_gpu_devfreq.c
-index ea70c1c32d940..6970b0f7f457c 100644
---- a/drivers/gpu/drm/msm/msm_gpu_devfreq.c
-+++ b/drivers/gpu/drm/msm/msm_gpu_devfreq.c
-@@ -140,6 +140,7 @@ void msm_devfreq_init(struct msm_gpu *gpu)
- {
- 	struct msm_gpu_devfreq *df = &gpu->devfreq;
- 	struct msm_drm_private *priv = gpu->dev->dev_private;
-+	int ret;
- 
- 	/* We need target support to do devfreq */
- 	if (!gpu->funcs->gpu_busy)
-@@ -156,8 +157,12 @@ void msm_devfreq_init(struct msm_gpu *gpu)
- 
- 	mutex_init(&df->lock);
- 
--	dev_pm_qos_add_request(&gpu->pdev->dev, &df->boost_freq,
--			       DEV_PM_QOS_MIN_FREQUENCY, 0);
-+	ret = dev_pm_qos_add_request(&gpu->pdev->dev, &df->boost_freq,
-+				     DEV_PM_QOS_MIN_FREQUENCY, 0);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(&gpu->pdev->dev, "Couldn't initialize QoS\n");
-+		return;
-+	}
- 
- 	msm_devfreq_profile.initial_freq = gpu->fast_rate;
- 
--- 
-2.46.0
+If you drop-in your downstream DT to the kernel tree,
+you need to associate it with Makefile.
 
+
+
+
+
+>
+> Notes:
+>     Changes in v2:
+>     - keep $(target) and search for .dtb in $(MAKECMDGOALS)
+>
+>  scripts/Makefile.build | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 8f423a1faf50..78763a4bc58a 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -449,7 +449,7 @@ ifneq ($(userprogs),)
+>  include $(srctree)/scripts/Makefile.userprogs
+>  endif
+>
+> -ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o %.dtbo.o,$(=
+targets)),)
+> +ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o %.dtbo.o,$(=
+targets))$(filter %.dtb,$(MAKECMDGOALS)),)
+>  include $(srctree)/scripts/Makefile.dtbs
+>  endif
+>
+> --
+> 2.47.0
+>
+>
+
+
+--
+Best Regards
+Masahiro Yamada
 
