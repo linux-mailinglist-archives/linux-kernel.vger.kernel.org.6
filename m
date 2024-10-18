@@ -1,165 +1,159 @@
-Return-Path: <linux-kernel+bounces-372087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7D89A4450
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:07:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0FDD9A4454
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC66B1C22341
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:07:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3676AB22760
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6866204080;
-	Fri, 18 Oct 2024 17:07:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F7920400C
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8A120370A;
+	Fri, 18 Oct 2024 17:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PcRR6RT5"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074A12036F7
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729271249; cv=none; b=M//pOw6wkK90F2bPuIvToJHy3L14oT9Fry+TlPuWFwkuhX/K3vZBYkCJkN7i35Vq0ze2F+60FJCN5qGmisU4E1vdzDHs3O4NCXl5WjjFZFQos3lEDLBXNEUeAwf4BX+b4VnuhzuoFF+PlJ6U4LnF65mR4uPmH1ivRnD6jeA6JvY=
+	t=1729271307; cv=none; b=SH+RezlI8/lpOhiPc82VdQt/0yGFI+9FTH7CJEGmBD0GoB+xaJEZdds08Wnr3jIkB9ywp+k1l8QBjh3ehPCXEPDRMW9bqWlLLpuLnkvhWwtRCa9wsH35beM9ZCPBOsLCI/8HYIxun3s0Bcvd3b77s1enwvJe2YZD6xjM/v5lNSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729271249; c=relaxed/simple;
-	bh=nyJcBtVOQUIERqDCjN4CNZkSIwDbjHwudrH+HgGuNJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tuOlykOiWK5mRKyZSx2Qqy+4tifHeKJjJ4hXvXb1bUFNupqcFtvQnKJiXAUi9zp7opm+RNOgHFG8CU0GHsL+n0kGHXdY/TzdX2OiNDxfVBFdfycjs2JHBcepArjpjWdlcc83bs6ftP4SLlFi0abHz8p0/oeCeZ/hp7XR7xIsORM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B392915BF;
-	Fri, 18 Oct 2024 10:07:56 -0700 (PDT)
-Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 401733F528;
-	Fri, 18 Oct 2024 10:07:23 -0700 (PDT)
-Message-ID: <d48e65cc-3c7b-4a93-80a2-fa0d676e88c4@arm.com>
-Date: Fri, 18 Oct 2024 18:07:19 +0100
+	s=arc-20240116; t=1729271307; c=relaxed/simple;
+	bh=VjNjZ0gTlxnJa5Q6Sh2pxzO/5VJ24DWKlfbi+7tp948=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b2qOt0ng2BYoJ1Y2N4nil1JaqW8BV/0vYOPcvBdbdo2ac2d4ubXgE/wBUkJtGcO+yo3QNyWCXqtRtYoA7SfoP6MT0q9SZtNFGtIyTyqSRIQl8QZQnaBEoTzn4n2opxkfbEZ+B/MNC7+AU08+/rFv//kzjIYzCEdnf/zoi8nyCv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PcRR6RT5; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb50e84ec7so21001531fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:08:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729271303; x=1729876103; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OWlja0ncpRimS1KnaLy3/LNPFh3lK39/ETwogwVX5bI=;
+        b=PcRR6RT5D4XjmlACZgzyBS5ESfTelle/UA7kEqo8ZZqG46fU+2XS6KZhFoSSrmrDof
+         sfiQNa+Jm8BnTcRBTRexjiymFLj7qfhMVDKwvPYMGQLno6cyHI7wjMKt9OhuhcyVq5pT
+         1ifRxalZN3MdxyQ6wEfhmxN9CLa/pYlmzKpe9zAmySDi22SJWmBqxotiwzKV5N7QUKjg
+         XjzIi9xP61YS2pazliPGnavS/tgpfbgWRTfwTaWAaFwCdFt/vAmLXofm0zfNrGSBzs4A
+         IraeVa5MI/mmM9iAZXelj4OuZym/Si5HOBycqIv22o3h4luZzzkPwEkuMZHCngvy0PtG
+         tcRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729271303; x=1729876103;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OWlja0ncpRimS1KnaLy3/LNPFh3lK39/ETwogwVX5bI=;
+        b=fxwnFMTJCLEue0LXoUKQT4hx3yWYemHR+FUxi++UNkz93mmOtKN6ooFS5i1NZnB8um
+         yEE3xDQAiUFwWG2LJSeeW1ySRD58Oc0iG1QZqSIF+3GYpixcoE/u7m/4CSeKZvn8hKzP
+         I3AuAfQ4ulxQb74LQrJm+gUfo1FQ/QCV4Qru+aLOep10MBYc2XzTI3+jCC0cxn3GIDnf
+         fQiD/754EzcHs4jtNXD1eYx/gOiuaYwC3WOASsN2K3Ird4blb5/IaLLAc50jFCzGEymV
+         HOTHS94nPrZAyzFPXUDN6KZJHKrdtWI5JLu5s2n0bv+B1+F8wdrsygYCkwoH+02+U5SS
+         SiKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlAz3oJaRLYQ7hwsU3EKiZ2YkUcUqGuQAa19R8qeyYXMWocwnhyyOUSWZolOwFCXj06L7QbzhPNkO4M2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQRnwcJ8r/O1VxSj3zbVpv/YZB2s5K5gbhlyeBEroxWU+C57YP
+	GsHX8Ewk/Q0VEJhU7aD/p/z7rkYVlLymPotTFs1ateS5vNBK1HQf5JUATKj4NrM=
+X-Google-Smtp-Source: AGHT+IEoOYixU3j4FTjyHEPmwQ4j8jzTk9Gr33/mgkWnbpSfAHz7OIgIar5gJpwNSHyBDhu8Ljp8CQ==
+X-Received: by 2002:a2e:bc03:0:b0:2fb:5168:1a0c with SMTP id 38308e7fff4ca-2fb82eb03eamr17936621fa.19.1729271302829;
+        Fri, 18 Oct 2024 10:08:22 -0700 (PDT)
+Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ca0b08caa6sm953220a12.56.2024.10.18.10.08.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 10:08:22 -0700 (PDT)
+Date: Fri, 18 Oct 2024 19:08:21 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org,
+	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
+	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
+	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
+	xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz,
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
+	willy@infradead.org, liam.howlett@oracle.com,
+	pasha.tatashin@soleen.com, souravpanda@google.com,
+	keescook@chromium.org, dennis@kernel.org, yuzhao@google.com,
+	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com,
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
+ refs in page flags
+Message-ID: <ZxKWBfQ_Lps93fY1@tiehlicka>
+References: <20241014203646.1952505-1-surenb@google.com>
+ <20241014203646.1952505-6-surenb@google.com>
+ <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
+ <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com>
+ <6a2a84f5-8474-432f-b97e-18552a9d993c@redhat.com>
+ <CAJuCfpGkuaCh+PxKbzMbu-81oeEdzcfjFThoRk+-Cezf0oJWZg@mail.gmail.com>
+ <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
+ <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
+ <ZxJcryjDUk_LzOuj@tiehlicka>
+ <CAJuCfpGV3hwCRJj6D-SnSOc+VEe5=_045R1aGJEuYCL7WESsrg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/40] x86/resctrl: Use schema type to determine how to
- parse schema values
-Content-Language: en-GB
-To: Tony Luck <tony.luck@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- Fenghua Yu <fenghua.yu@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
- Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-References: <20241004180347.19985-1-james.morse@arm.com>
- <20241004180347.19985-5-james.morse@arm.com>
- <Zw73nIUgPPQSa_ug@agluck-desk3.sc.intel.com>
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <Zw73nIUgPPQSa_ug@agluck-desk3.sc.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpGV3hwCRJj6D-SnSOc+VEe5=_045R1aGJEuYCL7WESsrg@mail.gmail.com>
 
-Hi Tony,
-
-On 16/10/2024 00:15, Tony Luck wrote:
-> On Fri, Oct 04, 2024 at 06:03:11PM +0000, James Morse wrote:
->> +static ctrlval_parser_t *get_parser(struct rdt_resource *r)
->> +{
->> +	switch (r->schema_fmt) {
->> +	case RESCTRL_SCHEMA_BITMAP:
->> +		return &parse_cbm;
->> +	case RESCTRL_SCHEMA_RANGE:
->> +		return &parse_bw;
->> +	}
->> +
->> +	return NULL;
->> +}
+On Fri 18-10-24 09:04:24, Suren Baghdasaryan wrote:
+> On Fri, Oct 18, 2024 at 6:03 AM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > On Tue 15-10-24 08:58:59, Suren Baghdasaryan wrote:
+> > > On Tue, Oct 15, 2024 at 8:42 AM David Hildenbrand <david@redhat.com> wrote:
+> > [...]
+> > > > Right, I think what John is concerned about (and me as well) is that
+> > > > once a new feature really needs a page flag, there will be objection
+> > > > like "no you can't, we need them for allocation tags otherwise that
+> > > > feature will be degraded".
+> > >
+> > > I do understand your concern but IMHO the possibility of degrading a
+> > > feature should not be a reason to always operate at degraded capacity
+> > > (which is what we have today). If one is really concerned about
+> > > possible future regression they can set
+> > > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS=n and keep what we have today. That's
+> > > why I'm strongly advocating that we do need
+> > > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS so that the user has control over how
+> > > this scarce resource is used.
+> >
+> > I really do not think users will know how/why to setup this and I wouldn't
+> > even bother them thinking about that at all TBH.
+> >
+> > This is an implementation detail. It is fine to reuse unused flags space
+> > as a storage as a performance optimization but why do you want users to
+> > bother with that? Why would they ever want to say N here?
 > 
-> Is it really worth making this a helper function? It's only
-> used once.
-
-Moved. This was just to avoid bloating the caller with boiler-plate.
-
-
->> +
->>  /*
->>   * For each domain in this resource we expect to find a series of:
->>   *	id=mask
->> @@ -204,6 +225,7 @@ int parse_cbm(struct rdt_parse_data *data, struct resctrl_schema *s,
->>  static int parse_line(char *line, struct resctrl_schema *s,
->>  		      struct rdtgroup *rdtgrp)
->>  {
->> +	ctrlval_parser_t *parse_ctrlval = get_parser(s->res);
+> In this patch you can find a couple of warnings that look like this:
 > 
-> No check to see if get_parser() returned NULL.
-
-No - but you must have passed it a non-existant enum value for that to happen, so we're
-already in memory corruption territory. (I probably should have made get_parser()
-WARN_ON_ONCE() when returning NULL)
-
-
->>  	enum resctrl_conf_type t = s->conf_type;
->>  	struct resctrl_staged_config *cfg;
->>  	struct rdt_resource *r = s->res;
->> @@ -235,7 +257,7 @@ static int parse_line(char *line, struct resctrl_schema *s,
->>  		if (d->hdr.id == dom_id) {
->>  			data.buf = dom;
->>  			data.rdtgrp = rdtgrp;
->> -			if (r->parse_ctrlval(&data, s, d))
->> +			if (parse_ctrlval(&data, s, d))
->>  				return -EINVAL;
+> pr_warn("With module %s there are too many tags to fit in %d page flag
+> bits. Memory profiling is disabled!\n", mod->name,
+> NR_UNUSED_PAGEFLAG_BITS);
+> emitted when we run out of page flag bits during a module loading,
 > 
-> Without the helper this could be:
-> 
-> 			switch (r->schema_fmt) {
-> 			case RESCTRL_SCHEMA_BITMAP:
-> 				if (parse_cbm(&data, s, d))
-> 					return -EINVAL;
-> 				break;
-> 			case RESCTRL_SCHEMA_RANGE:
-> 				if (parse_bw(&data, s, d))
-> 					return -EINVAL;
-> 				break;
-> 			default:
-> 				WARN_ON_ONCE(1);
-> 				return -EINVAL;
-> 			}
+> pr_err("%s: alignment %lu is incompatible with allocation tag
+> indexing, disable CONFIG_PGALLOC_TAG_USE_PAGEFLAGS",  mod->name,
+> align);
+> emitted when the arch-specific section alignment is incompatible with
+> alloc_tag indexing.
 
-I'd prefer the switch statement to have no default so that it triggers a compiler warning
-when future enum entries are added. This way the compiler can find cases where a new
-schema format missed a bit - it doesn't need booting the result on hardware to trigger a
-warning.
+You are asking users to workaround implementation issue by configuration
+which sounds like a really bad idea. Why cannot you make the fallback
+automatic?
 
-To avoid 'break' in a loop not breaking out of the loop, and to avoid bloating the loop
-I've kept the function pointer so the non-existant enum case is handled with the rest of
-the errors at the top of the function:
-|        /* Walking r->domains, ensure it can't race with cpuhp */
-|        lockdep_assert_cpus_held();
-|
-|        switch (r->schema_fmt) {
-|        case RESCTRL_SCHEMA_BITMAP:
-|                parse_ctrlval = &parse_cbm;
-|                break;
-|        case RESCTRL_SCHEMA_RANGE:
-|                parse_ctrlval = &parse_bw;
-|                break;
-|        }
-|
-|        if (WARN_ON_ONCE(!parse_ctrlval))
-|                return -EINVAL;
-|
-|        if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP &&
-
-
-Thanks,
-
-James
+-- 
+Michal Hocko
+SUSE Labs
 
