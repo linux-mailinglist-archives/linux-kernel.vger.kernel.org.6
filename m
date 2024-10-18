@@ -1,145 +1,89 @@
-Return-Path: <linux-kernel+bounces-371829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2375A9A40F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:19:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4138E9A40F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F351F2481F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E28DF1F247D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41691F4267;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C50E1D2B0E;
 	Fri, 18 Oct 2024 14:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="lVIzDg8I"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C7D6BFCA;
-	Fri, 18 Oct 2024 14:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08A824A08;
+	Fri, 18 Oct 2024 14:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729261141; cv=none; b=fNthKOBW/Ze+QCVbdgeOpiTcE+y2vGZJFE1thjkx3Z+iHDr6dLtlyzyvDZY7o3IqS65hsWMa5axODTXDiJDJtSKdW6hGsr6TQWL0gNUb/XU/eSdpWg480GoR4AQeOB0Oy2Chbwylp3KdZetlXLMvpowfwHU/ilgpyMHd6C+BwwU=
+	t=1729261140; cv=none; b=c6IlQQOjLVMGUw+qQoUqCucUOejvEwf7lzLhtTwLpB93eznjgIA/3Lri709dcnlfeyLg6zh/50EaulzeYvDt26ace9sAhkOSwjEA3ueL11iF1GrMCdtxgRsKeBgJuaLVuUYQ1NZzunAbUgzPAZnO4inbZCnSCsSznA1LVY49DBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729261141; c=relaxed/simple;
-	bh=8Ay7Hj5OZgQ7MGqy5i7LUi6fdznUG66vs92kGE3WWYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOYRiisZPma4zQELGQ3AuIM34WWL6R6Q8tfiumNysd8fSUsxw/WIMOXB1YSlhJUsumcb6F8Hcd6sr2IyUtoekLTAhBAiohjtNn4tbqoDtojkXr+/soOq1tyCBbXo5A7wFTKH8NkrPICWU5ns5GXuKa5ILGxCTyA7kDPv/8WLsMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=lVIzDg8I; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id C43E222909;
-	Fri, 18 Oct 2024 16:18:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1729261127;
-	bh=kMMaRKGZ6ngPRcX/Zv1+XoEwbVnv1U3vYYkh/ZUsUq0=; h=From:To:Subject;
-	b=lVIzDg8IpqceAxis4t3wHm1bshLDCxgQPc5pmoqr2JPPeiSaNw5L3Ve46BZy8+3ke
-	 ycfUJ4U0U3vp/ixn38OEX4uH0d+Eb0cTYaaoNBo2O0vzMuw+TrSJ4x5ntoxZLx0Hqu
-	 tZBh1RDZHy4lTk0IojP80p/RhJroVtAf2LNBVV7TWyZhmeRIojL88qEvN30KJXHxj8
-	 ggUhurQe5IzDObqOKt03yl+2ScczfA0HJ/sK81tskGwUXbyGTtMDQ9ozjhxRUJNrqi
-	 zM3kVl1i/LtLg5sFN3S3IastDgMx5QZAntIw5jvsmQ0y0NyzXheTWBpcOCNk4SMAB5
-	 SOrF8qidLj9Lw==
-Date: Fri, 18 Oct 2024 16:18:42 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Rob Herring <robh@kernel.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Parth Pancholi <parth.pancholi@toradex.com>,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: usb: add TUSB73x0 PCIe
-Message-ID: <20241018141825.GA46391@francesco-nb>
-References: <20241018105505.28005-1-francesco@dolcini.it>
- <20241018105505.28005-2-francesco@dolcini.it>
- <20241018140743.GA98324-robh@kernel.org>
+	s=arc-20240116; t=1729261140; c=relaxed/simple;
+	bh=yn35QLjFcNR3g0fNUv67vzQph/HVlIz1lIwzFeQlswg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ChRff3BF6icZ2AUta6LP5YWHgIYB3ax/uGP8E2OSN36n5Ip0Subfhe7DTFmqe2+H7urFPY4IURVeFiIKC4x0cgacoKcb3x+j6Nqq7KW8SfXhi+tQYsQackWIbS/5DavfndBBtLUPLHgLG3WeRuqTMfF74LyD10QPs99AdZK9bBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AEF09497;
+	Fri, 18 Oct 2024 07:19:27 -0700 (PDT)
+Received: from [10.57.78.54] (unknown [10.57.78.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E86E3F58B;
+	Fri, 18 Oct 2024 07:18:56 -0700 (PDT)
+Message-ID: <545e23ed-85fb-48f1-8d34-58c5f0b6506e@arm.com>
+Date: Fri, 18 Oct 2024 15:20:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018140743.GA98324-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/gpu: Check the status of registration to PM QoS
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ robdclark@gmail.com, sean@poorly.run, konradybcio@kernel.org,
+ quic_abhinavk@quicinc.com, marijn.suijten@somainline.org, airlied@gmail.com
+References: <20241018111811.3534385-1-lukasz.luba@arm.com>
+ <dpwmookr5owd43efowmnoxbtbzstvezgczpbzwxb5rwu3h3zaf@luim5srcbo6f>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <dpwmookr5owd43efowmnoxbtbzstvezgczpbzwxb5rwu3h3zaf@luim5srcbo6f>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Rob,
-thanks for the review.
 
-On Fri, Oct 18, 2024 at 09:07:43AM -0500, Rob Herring wrote:
-> On Fri, Oct 18, 2024 at 12:55:04PM +0200, Francesco Dolcini wrote:
-> > From: Parth Pancholi <parth.pancholi@toradex.com>
-> > 
-> > Add device tree bindings for TI's TUSB73x0 PCIe-to-USB 3.0 xHCI
-> > host controller. The controller supports software configuration
-> > through PCIe registers, such as controlling the PWRONx polarity
-> > via the USB control register (E0h).
-> > 
-> > Similar generic PCIe-based bindings can be found as qcom,ath11k-pci.yaml
-> > as an example.
-> > 
-> > Datasheet: https://www.ti.com/lit/ds/symlink/tusb7320.pdf
-> > Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
-> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > ---
-> > v3: use lowercase hex in compatible
-> > v2: rename property to ti,tusb7320-pwron-active-high and change type to flag
-> > ---
-> >  .../bindings/usb/ti,tusb73x0-pci.yaml         | 60 +++++++++++++++++++
-> >  1 file changed, 60 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml b/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
-> > new file mode 100644
-> > index 000000000000..7083e24d279c
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
-> > @@ -0,0 +1,60 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/usb/ti,tusb73x0-pci.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: TUSB73x0 USB 3.0 xHCI Host Controller (PCIe)
-> > +
-> > +maintainers:
-> > +  - Francesco Dolcini <francesco.dolcini@toradex.com>
-> > +
-> > +description:
-> > +  TUSB73x0 USB 3.0 xHCI Host Controller via PCIe x1 Gen2 interface.
-> > +  The TUSB7320 supports up to two downstream ports, the TUSB7340 supports up
-> > +  to four downstream ports.
+
+On 10/18/24 13:02, Dmitry Baryshkov wrote:
+> On Fri, Oct 18, 2024 at 12:18:11PM +0100, Lukasz Luba wrote:
+>> There is a need to check the returned value of the registration function.
 > 
-> XHCI controller, should be referencing usb-xhci.yaml.
+> Why?
+
+The question can be:
+why this driver doesn't check errors from frameworks during the
+registration?
+
+Is it a generic practice in that code (I hope not)?
+
+When you check the API doc you will see that this fwk can fail and
+return some error and the other functions in driver shouldn't
+assume blindly that it was OK.
+
+All other places in the kernel check that return value from
+the PM QoS framework.
+
 > 
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: pci104c,8241
+>> In case of returned error, print that and stop the init process.
+>>
+>> Fixes: 7c0ffcd40b16 ("drm/msm/gpu: Respect PM QoS constraints")
+>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+>> ---
+>>   drivers/gpu/drm/msm/msm_gpu_devfreq.c | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>
 > 
-> 2 parts mentioned above, but only 1 PCI ID?
-
-Exactly. Let me know if there is something we should do in this regard
-(something in the commit message? or in the description?).
-
-From the datasheet:
-  This 16-bit read only register contains the value 8241h,
-  which is the device ID assigned by TI to the TUSB73X0
-
-And one more confirmation, in the Linux code you have quirks for this
-device that just check for a single device id:
-
-drivers/usb/host/xhci-pci.c:459
-  if (pdev->vendor == PCI_VENDOR_ID_TI && pdev->device == 0x8241)         
-    xhci->quirks |= XHCI_LIMIT_ENDPOINT_INTERVAL_7;                 
-
-Francesco
-
 
