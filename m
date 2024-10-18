@@ -1,128 +1,165 @@
-Return-Path: <linux-kernel+bounces-371247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5799A3888
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:29:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FDD9A388D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BBF528289F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:29:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73B91281EC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445EC18E049;
-	Fri, 18 Oct 2024 08:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B87A18E379;
+	Fri, 18 Oct 2024 08:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmzm/Tyy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MbJV7qCt"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9633618E34C;
-	Fri, 18 Oct 2024 08:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253DD7E101
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729240137; cv=none; b=OZ8jfe8Eh1lKDT9cWy3tA1/Okn9JPEUBu6IStB58Fe9zc38+JZFe1DaPu2j23VCrfm/kQfGzVEL8RgMXiHLNIa3ofBR6ejKQYn6oJNA2/XsrVpWol83tPRKzUTC+2UFLXnqQ0/BqGByu34ILkQeWfHlZKc1DmGfF+vr/WgHMvkw=
+	t=1729240228; cv=none; b=Jimh6tHa/EPfTcMFpDRyIE/FXYSbYeW1tnnKMeN2GlThiBQHcYGXVV/tEBYy5zPRb7Ck/K7nnvdl2vZ0LcIBHcD1KltiLvuVh/wLIIAMUhM0+7e5tG4sYDgNZuOsTrmPqloOs7jlQljGMryDPQBO4CsPoHOR9xIFpK3TanVsG/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729240137; c=relaxed/simple;
-	bh=t8azlsJbzD/d+kmWsD1ut8PM1RBFHLHmrKBaTNuU6Rc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RM1/w6btHIFshgtgVBkJ0aM9Z4tts8A0i28d3xyAlsE/cmeuhKlpMVjRvmEzmcarUsT4ax2dEHF/WzsXe43L8XE8d3cbTmMD2F7ZXH0k0ZQ/JynomCOd6cUFUgh3Y9nJtGEbzuoenVcpMKN++5JAy5HBtH8l8RW0+HlcSwBtOkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmzm/Tyy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07221C4CED2;
-	Fri, 18 Oct 2024 08:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729240137;
-	bh=t8azlsJbzD/d+kmWsD1ut8PM1RBFHLHmrKBaTNuU6Rc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bmzm/TyyPgFTWdoISymC/SS/jMcTNqY2UMTdf/oqjdaIewu0umxaNzhle11wZ523A
-	 BsRjg/SjVpWI0vodQPXi70BP+6RWad8FuA+4BwF6mnublVnXHwI7F+mO/z19Xklrsg
-	 fnXyIc8sFqwuRHsEbYpPv21UDVySO8fSMolQLshpKzZLQyjVn1M0S+sANMOitsFKj8
-	 75HrGlCSD2kheD3BSw9UMMb1cHMLgPHuSldEOGrsaNpq6tc0m3uspwZpQtH+QyYtLz
-	 nUsGhXC+K2KAA5GEMO7ptl8fy7YiHZHb0cUIpaymZv7YSB5nLyRhrzh+qYNTJeVRjw
-	 8FbBFnlZS1S2g==
-Message-ID: <4a79f996-9d82-48b2-8a93-d7917413ed8c@kernel.org>
-Date: Fri, 18 Oct 2024 10:28:51 +0200
+	s=arc-20240116; t=1729240228; c=relaxed/simple;
+	bh=8qAPzqP3dKhXme2g3jDdAIPzAnjvRH1S8Phw3+rnUV0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qaN2AP9jHBXmdpnyWt+xEo/Y0wCzLiDV2zI1uUq1/62eanDZbTvO/Cc/CH4dc0Tq1A9zEW+TTK/FKy8CemJ/tEKxgsEGIVnD73P0baboDdpC5Y2agUtrd5IY/tXcPm1sC10c09BM8+tTsUsm62hb6e/SNIv6z/WUr4kuqt3QocQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MbJV7qCt; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so1388973f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729240225; x=1729845025; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wbAMcSp9yyDfnxGCGeMEKOhblZceCEfJ/csOCXnKJaE=;
+        b=MbJV7qCtpaaKSmDIyfXsB0DE6bKIrBZgLIT+z9VMu6XFtmkBzuqMzKri5lRMcfD3ec
+         pxR1RxfgXb+Y6H8zs5pH6a54KJ4EfMi+ydhM7NjKO9TG6QbgYJF4azgmmdTIybfZ4rd/
+         QOs1WaVMOiGjIpYdOmHAzRBlOEd11VMa2w8IWnn+JrMQvwb7foY2MLbTQDD24offd7uL
+         n6fcq4l7OEY0yjkNIBYygg2ci1Lk6UkdHYCsuwJh47lmEAw1b68NgJ4Pg6G2joE6Z8aK
+         UsiMqenM3Y8QePSUGDQVzX0Nwa8p0S57bcB1tqsTGRyqDu6h+Bib4f4s9Us8cK0v6dE2
+         sLvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729240225; x=1729845025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wbAMcSp9yyDfnxGCGeMEKOhblZceCEfJ/csOCXnKJaE=;
+        b=CekZYVSfyATKEdeANMNvzdy2umL9SvL/DUa4fgCuIo/5yRJu8nDaw8yytEKa65EUBy
+         ES3PiofI2kdpVsl0BbF8DjfIEnp7b6Ay3LCJNYWEFGCpQQK7wQBG5FZD6YHwUTEKzF9r
+         +zrCfx6XtAdf39zcibT205rX4+APiy7D3fOjRyfOMpI8sz2RasFc9du/BMsU+VEOEb2z
+         K9r6rMFwwRNS7aYPt3uQ+ZFH86/pg6TS8BhejBsoWkEge/oO7enp6kCY0OtXDWBrCf8A
+         3vN3Xd+co1jwDvLq+bmUaoJpmoxbjT6PuTwzEdRToKZUGGga0Sn83IoKCnYrOT9W9l0W
+         zOIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrqFWqHAoaV0C4WFj/NGx2prjFq2l5yZdmuGZtPaMCnvIhqPmbgKE9CXUqiwQU5IQ6DGir3ftJgsFjMbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwKS19GIg0g8gck4YHoiuAj/E9/AT0F+kqxEiTeKRj8ucD5aBX
+	f6pzTGriJ9QiJY7rFCzftgJuSJdLSPC+kkEaN1iRddfuTAZrWNyJbLv9Mtk6fIrZdeIqtBFaDrf
+	kbN60Lfz0i7HNlYONYnAQdH7uXgY6HlZu8Agj
+X-Google-Smtp-Source: AGHT+IHwNr1+oRgTPwtFuJrqUyGYR7XLK2TuDM5nSLj+twYMcIpk3cM45DuvXTdz13pykl0V1RuUBQqr9zWbtjSn338=
+X-Received: by 2002:a05:6000:1cd:b0:374:c059:f2c5 with SMTP id
+ ffacd0b85a97d-37eab6e38cfmr1254424f8f.22.1729240225355; Fri, 18 Oct 2024
+ 01:30:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Add support for Amlogic A4
- SoCs
-To: xianwei.zhao@amlogic.com, Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com>
- <20241018-a4_pinctrl-v3-1-e76fd1cf01d7@amlogic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241018-a4_pinctrl-v3-1-e76fd1cf01d7@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241016035214.2229-8-fujita.tomonori@gmail.com>
+ <CAH5fLgjk5koTwMOcdsnQjTVWQehjCDPoD2M3KboGZsxigKdMfA@mail.gmail.com>
+ <CAH5fLgi0dN+hkTb0a29XWaGO1xsmyyJMAQyFJDH+geWZwsfAHw@mail.gmail.com> <20241018.171026.271950414623402396.fujita.tomonori@gmail.com>
+In-Reply-To: <20241018.171026.271950414623402396.fujita.tomonori@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 18 Oct 2024 10:30:13 +0200
+Message-ID: <CAH5fLghpBDKEwW9maYD57O9+FuMDtVUJm7Dx6JdvjS2p5ZQNbQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 7/8] rust: Add read_poll_timeout functions
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch, 
+	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, anna-maria@linutronix.de, 
+	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de, jstultz@google.com, 
+	sboyd@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/10/2024 10:10, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> 
-> Add the new compatible name for Amlogic A4 pin controller, and add
-> a new dt-binding header file which document the detail pin names.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+On Fri, Oct 18, 2024 at 10:10=E2=80=AFAM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
+>
+> On Wed, 16 Oct 2024 10:52:17 +0200
+> Alice Ryhl <aliceryhl@google.com> wrote:
+>
+> > On Wed, Oct 16, 2024 at 10:45=E2=80=AFAM Alice Ryhl <aliceryhl@google.c=
+om> wrote:
+> >>
+> >> On Wed, Oct 16, 2024 at 5:54=E2=80=AFAM FUJITA Tomonori
+> >> <fujita.tomonori@gmail.com> wrote:
+> >> > +/// Polls periodically until a condition is met or a timeout is rea=
+ched.
+> >> > +///
+> >> > +/// `op` is called repeatedly until `cond` returns `true` or the ti=
+meout is
+> >> > +///  reached. The return value of `op` is passed to `cond`.
+> >> > +///
+> >> > +/// `sleep_delta` is the duration to sleep between calls to `op`.
+> >> > +/// If `sleep_delta` is less than one microsecond, the function wil=
+l busy-wait.
+> >> > +///
+> >> > +/// `timeout_delta` is the maximum time to wait for `cond` to retur=
+n `true`.
+> >> > +///
+> >> > +/// This macro can only be used in a nonatomic context.
+> >> > +#[macro_export]
+> >> > +macro_rules! readx_poll_timeout {
+> >> > +    ($op:expr, $cond:expr, $sleep_delta:expr, $timeout_delta:expr) =
+=3D> {{
+> >> > +        #[cfg(CONFIG_DEBUG_ATOMIC_SLEEP)]
+> >> > +        if !$sleep_delta.is_zero() {
+> >> > +            // SAFETY: FFI call.
+> >> > +            unsafe {
+> >> > +                $crate::bindings::__might_sleep(
+> >> > +                    ::core::file!().as_ptr() as *const i8,
+> >> > +                    ::core::line!() as i32,
+> >> > +                )
+> >> > +            }
+> >> > +        }
+> >>
+> >> I wonder if we can use #[track_caller] and
+> >> core::panic::Location::caller [1] to do this without having to use a
+> >> macro? I don't know whether it would work, but if it does, that would
+> >> be super cool.
+>
+> Seems it works, no need to use macro. Thanks a lot!
+>
+> >> #[track_caller]
+> >> fn might_sleep() {
+> >>     let location =3D core::panic::Location::caller();
+> >>     // SAFETY: FFI call.
+> >>     unsafe {
+> >>         $crate::bindings::__might_sleep(
+> >>             location.file().as_char_ptr(),
+> >>             location.line() as i32,
+> >>         )
+> >>     }
+> >> }
+> >
+> > Actually, this raises a problem ... core::panic::Location doesn't give
+> > us a nul-terminated string, so we probably can't pass it to
+> > `__might_sleep`. The thing is, `::core::file!()` doesn't give us a
+> > nul-terminated string either, so this code is probably incorrect
+> > as-is.
+>
+> Ah, what's the recommended way to get a null-terminated string from
+> &str?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In this case, you should be able to use the `c_str!` macro.
 
-Best regards,
-Krzysztof
+`kernel::c_str!(core::file!()).as_char_ptr()`
 
+Alice
 
