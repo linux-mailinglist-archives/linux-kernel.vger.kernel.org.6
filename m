@@ -1,119 +1,166 @@
-Return-Path: <linux-kernel+bounces-371668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 194179A3E4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:25:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93719A3E54
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE169285638
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:25:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561281F22952
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F341DB352;
-	Fri, 18 Oct 2024 12:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204562BB0D;
+	Fri, 18 Oct 2024 12:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nIdlTye+"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Q9ywZDnh"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCE42AD1C
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A548F6B;
+	Fri, 18 Oct 2024 12:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729254283; cv=none; b=NXQkiitPE95jFN4pnZ5kpNqCJUhG7031d92K85pLOW9U2QKM92JyJtx4LTAUou7TFtjbME88LM60pMJKqg7Q7CjK7evSBq620Icb/ldsXYXicvrxGs07P5+KLrskDnZp0gSBx5MTcrfhEjaR9Se29CaCgb2yXBOCIx0V8EHFFSs=
+	t=1729254382; cv=none; b=inJh2zDmgiZFB4/3NpDWbb/EVkjnU96s5HHyTBCkj0Sz0Fah5g/t0gfLHzAFNmNNL1FAQQXrK7cjuWTZqywHw/es/dEdhfC90nDkyX2x18DIKYbR+DGrWg6gwd+9LnggsgmxZcsqV2bOoIhapLqJv74evp4Tk+3HNzhWjPQ/TcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729254283; c=relaxed/simple;
-	bh=VHw/GBoW8BYLfS7z5ET9McRCyi78Nnx41JGN6LhxslM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HYl4RHZL+DXRx/6/NSlJ/334f+P+U/1v176yD61TrbSH2hT4QphqN60gyRTCcI/6ei7TS0P3D5yXPkAhxBEZi29jcdZcpv3SQ1pzXN5BEnrWfVoytjcx/PlJbT5ZD2yDWB7peXu7MPxYTghxJNLf021r5J05mOqS3GSOzUKpVJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nIdlTye+; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d5689eea8so1483845f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729254280; x=1729859080; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p5yAXKgkvRlmM7Q3Q1r6EA4WE06NJ9JBCqdIMCdrQfc=;
-        b=nIdlTye+wmKEaDtKSbUHJ90FX4PsC0svsQb0LCAdciJTc+ALmyx9fFSEsti1buisY6
-         l4PakiXEF1kWWjz2NxJUIefVXWj76sbajUcDA/Lio1i8Un3I3txvSd2NuadSpjvJSVPn
-         Mza8WTw4Jvobjuz2+M+gV3UEv2/ByhgWFbb2ycu4j2KahEMxHJPP+oBUFBbl0CQZcRuF
-         e8fulZiiOaFfia7VLXZsuvw1/sFkefQpVjIb/c2U53WidRZdJryGzV2Z1vFQxE2Bq4cl
-         Q0JaZmyA84MORS9wp8Xmfil37CMwK3AczIt+z7I7CQyKEDzaA3XwWNEbaD+Yv9ajKTSC
-         jd5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729254280; x=1729859080;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p5yAXKgkvRlmM7Q3Q1r6EA4WE06NJ9JBCqdIMCdrQfc=;
-        b=uZM4CInrE06NBWyRF2ypVuJjEWFWSGXSz83dNuc8VxSkkGbxXSTJ6RNItHrs4c2EhB
-         YoS0QQdza02OOPmxMJuObsgUfUZ0GqO2itxecdyOaxSP7eRIZGbb8QhFqEJPnyq9rrLv
-         D6F5Q0QmY22MxTVC7rQD3J8TwcZzWHB4O+pMUksB0VT5uNiT10jvgK2ixKkAw6OLK927
-         GxXJkJnfwe87EKcmB01TyGfH3eUQQDQfvicAnv3MHL4jXDyEX+6gi05fUwsVj+sEPDGQ
-         xmCQnktz91dZJN9x/KN6UXmAjorlJrx6htf7bOPO0jHQVeKtgUyGWP5wm+OemaHR/kHg
-         sWxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVULeFLmQf1xYNBePiiFM+R71txosuZky1NmvUpilJnWI6AKG1HKe2RU/PDzkUNlSNUMnDENWeuXmm/APk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTEmJN6C03nBZEmtQvs1f7S33W/jL7MZ6IU+Rrkru8B7dvWtfW
-	BaOG0KrCmIeLrm/dBVWJvGdq8sNq0T9jTlB5UhdzJtm3FnUur3py6if4eKuhM1E=
-X-Google-Smtp-Source: AGHT+IG2ngeX0J6avQw7IRzxx332+oMunIxQk+ee9sLmJVKDrk/IfXceSnQQ4Nx6MNAMfwxAOrNzWA==
-X-Received: by 2002:a5d:67cd:0:b0:37d:5301:6edb with SMTP id ffacd0b85a97d-37eb48a778amr1382595f8f.57.1729254279803;
-        Fri, 18 Oct 2024 05:24:39 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:45a3:93e:5196:d8ce])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf08a236sm1823351f8f.62.2024.10.18.05.24.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 05:24:39 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] spi: make class structs const
-Date: Fri, 18 Oct 2024 14:24:37 +0200
-Message-ID: <20241018122437.64275-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729254382; c=relaxed/simple;
+	bh=V/oNUhoruPdZR4f93niyQCJKrqbyk02JdWlMOhZpWjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gt3jCafJA1ku9z1htrOgH+9Et1iUZyw3/fC2RZqBT/mhkk1VNWjXco13iSupBq5RsWetmoB26xcu/kFkdA6bPX8wlEHxOCLgoPIZn/KSsx0OB1Rr9uJ/KwaM10dZaTVPTdfeZ76nb6aLUqKNjbzIiOk8LkGe7Ts25zjxV/rm0uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Q9ywZDnh; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 95D2159C;
+	Fri, 18 Oct 2024 14:24:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1729254273;
+	bh=V/oNUhoruPdZR4f93niyQCJKrqbyk02JdWlMOhZpWjs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q9ywZDnhMjJnSHuKN0NU4I2qcP9Aw53tTrlRMtVKoZvzCFLBE8c5RS4KnYy6YvF0F
+	 owNE2hUGSjAV+gEUmqmr7zvUC39gfOVQv85K6NeKKt2VbBkoXRFzoicFxlyTP0i2m8
+	 G5jmPt56bsE1Uuk1je/mp7QyqlUPwCPhelnLvPjs=
+Date: Fri, 18 Oct 2024 15:26:11 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v5 15/22] media: rzg2l-cru: Make use of
+ v4l2_format_info() helpers
+Message-ID: <20241018122611.GN30496@pendragon.ideasonboard.com>
+References: <20241011173052.1088341-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241011173052.1088341-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241015103317.GJ5682@pendragon.ideasonboard.com>
+ <CA+V-a8tRDhDBFZsMEyxPTbW0juZMpAcJ=bj4rA3Nbsku8y4PxA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+V-a8tRDhDBFZsMEyxPTbW0juZMpAcJ=bj4rA3Nbsku8y4PxA@mail.gmail.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, Oct 18, 2024 at 12:45:36PM +0100, Lad, Prabhakar wrote:
+> On Tue, Oct 15, 2024 at 11:33 AM Laurent Pinchart wrote:
+> > On Fri, Oct 11, 2024 at 06:30:45PM +0100, Prabhakar wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Make use of v4l2_format_info() helpers to determine the input and
+> > > output formats.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > ---
+> > >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 22 ++++++-------------
+> > >  1 file changed, 7 insertions(+), 15 deletions(-)
+> > >
+> > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > index 8932fab7c656..0cc69a7440bf 100644
+> > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > @@ -300,21 +300,12 @@ static void rzg2l_cru_initialize_axi(struct rzg2l_cru_dev *cru)
+> > >       rzg2l_cru_write(cru, AMnAXIATTR, amnaxiattr);
+> > >  }
+> > >
+> > > -static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru, bool *input_is_yuv,
+> > > +static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
+> > >                                const struct rzg2l_cru_ip_format *ip_fmt,
+> > >                                u8 csi_vc)
+> > >  {
+> > >       u32 icnmc = ICnMC_INF(ip_fmt->datatype);
+> > >
+> > > -     switch (ip_fmt->code) {
+> > > -     case MEDIA_BUS_FMT_UYVY8_1X16:
+> > > -             *input_is_yuv = true;
+> > > -             break;
+> > > -     default:
+> > > -             *input_is_yuv = false;
+> > > -             break;
+> > > -     }
+> > > -
+> > >       icnmc |= (rzg2l_cru_read(cru, ICnMC) & ~ICnMC_INF_MASK);
+> > >
+> > >       /* Set virtual channel CSI2 */
+> > > @@ -327,19 +318,17 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+> > >                                          struct v4l2_mbus_framefmt *ip_sd_fmt,
+> > >                                          u8 csi_vc)
+> > >  {
+> > > +     const struct v4l2_format_info *src_finfo, *dst_finfo;
+> > >       const struct rzg2l_cru_ip_format *cru_ip_fmt;
+> > > -     bool output_is_yuv = false;
+> > > -     bool input_is_yuv = false;
+> > >       u32 icndmr;
+> > >
+> > >       cru_ip_fmt = rzg2l_cru_ip_code_to_fmt(ip_sd_fmt->code);
+> > > -     rzg2l_cru_csi2_setup(cru, &input_is_yuv, cru_ip_fmt, csi_vc);
+> > > +     rzg2l_cru_csi2_setup(cru, cru_ip_fmt, csi_vc);
+> > >
+> > >       /* Output format */
+> > >       switch (cru->format.pixelformat) {
+> > >       case V4L2_PIX_FMT_UYVY:
+> > >               icndmr = ICnDMR_YCMODE_UYVY;
+> > > -             output_is_yuv = true;
+> > >               break;
+> > >       default:
+> > >               dev_err(cru->dev, "Invalid pixelformat (0x%x)\n",
+> > > @@ -347,8 +336,11 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+> > >               return -EINVAL;
+> > >       }
+> > >
+> > > +     src_finfo = v4l2_format_info(cru_ip_fmt->format);
+> > > +     dst_finfo = v4l2_format_info(cru->format.pixelformat);
+> >
+> > It would be a bit more efficient to add a yuv boolean field to the
+> > rzg2l_cru_ip_format structure, as you already have looked up cru_ip_fmt
+> > for the IP subdev format.
+>
+> I will consider this change, when adding support for the RZ/V2H SoC,
+> hope that's OK for you.
 
-The two instances of struct class are only used here in functions that
-take const pointers and so can too be made constant.
+It's not a blocker, it can be done on top indeed. If you end up
+submitting a v6 you could add a patch on top already, but otherwise
+later is fine too.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/spi/spi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >
+> > > +
+> > >       /* If input and output use same colorspace, do bypass mode */
+> > > -     if (output_is_yuv == input_is_yuv)
+> > > +     if (v4l2_is_format_yuv(src_finfo) == v4l2_is_format_yuv(dst_finfo))
+> > >               rzg2l_cru_write(cru, ICnMC,
+> > >                               rzg2l_cru_read(cru, ICnMC) | ICnMC_CSCTHR);
+> > >       else
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 7c5e76b15421..5528c46edd0e 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2926,7 +2926,7 @@ static void spi_controller_release(struct device *dev)
- 	kfree(ctlr);
- }
- 
--static struct class spi_master_class = {
-+static const struct class spi_master_class = {
- 	.name		= "spi_master",
- 	.dev_release	= spi_controller_release,
- 	.dev_groups	= spi_master_groups,
-@@ -3016,7 +3016,7 @@ static const struct attribute_group *spi_slave_groups[] = {
- 	NULL,
- };
- 
--static struct class spi_slave_class = {
-+static const struct class spi_slave_class = {
- 	.name		= "spi_slave",
- 	.dev_release	= spi_controller_release,
- 	.dev_groups	= spi_slave_groups,
 -- 
-2.43.0
+Regards,
 
+Laurent Pinchart
 
