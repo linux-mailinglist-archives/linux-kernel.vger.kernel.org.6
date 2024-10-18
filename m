@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-371572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4189A3CCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:09:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC47F9A3CCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E0E1F26D91
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B09B287B4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17AF201258;
-	Fri, 18 Oct 2024 11:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhHz9vD2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5E5204001;
+	Fri, 18 Oct 2024 11:04:21 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403F22010E6;
-	Fri, 18 Oct 2024 11:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0772010E6;
+	Fri, 18 Oct 2024 11:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729249401; cv=none; b=u+rO3EZwjw+Y6R9uuTlOHtXo8+6XoTT3Gqe5iI/1G3P7YN7yrOJhFKCSVcQIv78m09l8pNsZWh2el9nASEF2N1nzlk0EAkC+IwqeBgksYiVRTaZVjvs8R/hSwRmCIqt8Q+sRdnsmfitibMulzaweSpK9cx03+oIZOla6xnohyps=
+	t=1729249460; cv=none; b=TI39SVffcDGh+/sNVMFSpiGhmzqRekXSV2TMIOA3SIkrCdS/agJulReao4V8eISMj0X37TcD4xjo9IMYQtklp2Jlo/EVPrl5LlcXzRGfc56KmJ+Pp7KNIffBAthMq8K7Pru51Qpy93ek+z/rWzOhwWkTI4LvCyGUeVu4KuvXkZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729249401; c=relaxed/simple;
-	bh=CLn7iZAaQy/gzrcoCg6aXb/xKmwS/dcifC9LXkkmEbc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z2l9mnhR0zjh99TDSppNfYkQeKwf+eQB5dH/bOHGNaASlE0pj6gRBl3anoYyUfVScvhat9LZ+m1oTNT3OPbRasBbt3ESEismFpLzHc/ErNSw/pm4ADefMnbuEJO8gzWuUXEXJHXy6Bw7CsJy40UmLHPyhQXnqKHPC1cw7WDSIxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhHz9vD2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31E6EC4CEC3;
-	Fri, 18 Oct 2024 11:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729249400;
-	bh=CLn7iZAaQy/gzrcoCg6aXb/xKmwS/dcifC9LXkkmEbc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BhHz9vD2RpXdDX5Soc0XVhkKBqR9QOPIR9mbZx+Ut+MZOXDEdsKmIH/cvr9SivJAt
-	 LDqA2TReKYOx8rvw3GscgOYsc54e7SaTK3cLG4uVKOEPSDgRVuE6VbI7EXuPJLt7AT
-	 2XwT8sdn/wxBMA0hc967jbQT36r7GHFc87jAdBxMDYjqFhKCL+qFyyelTbx1JL9KGy
-	 /dzuty+EtIerG7QIagnROSRUUy1UbPRvLwgVROIaVRyiPR2umHE7fmUJsmGhHnHCmq
-	 y1aH9AOClIdO39rOJCi37v9Q+tU6t6OL0Rq+H0L0+zLsNeMG3u4/h8gbuVCALfMHCf
-	 xUxX8up9QsmUg==
-From: Christian Brauner <brauner@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Josef Bacik <josef@toxicpanda.com>,
-	"Tyler Hicks (Microsoft)" <code@tyhicks.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Yan Zhen <yanzhen@vivo.com>
-Subject: Re: [PATCH] proc: Fix W=1 build kernel-doc warning
-Date: Fri, 18 Oct 2024 13:03:04 +0200
-Message-ID: <20241018-soviel-ambitioniert-fc21fe4b9e9c@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241018102705.92237-2-thorsten.blum@linux.dev>
-References: <20241018102705.92237-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1729249460; c=relaxed/simple;
+	bh=+xGeuhUxIqF8diO+N3W/XAQkvBNA15z23E2Ktsiu1Eg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=imIL5MRUjP0ZjclF4hL9cB+/4oDWXii36jKTt3EofYWNKr4WVOhXYeqrzBnirHN426geiatifJat1mT6XGmv48nlOVMWvdnMSbmmrgX0M5oDDw8D/0YRlKD0Q7sN2yGWo3J3xILdW6GlljByp43HqQj5qAw8cYuuNO2h1LK3a2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XVMJP50RHz6HJdy;
+	Fri, 18 Oct 2024 19:03:33 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7A8CC1400F4;
+	Fri, 18 Oct 2024 19:04:16 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 18 Oct
+ 2024 13:04:15 +0200
+Date: Fri, 18 Oct 2024 12:04:14 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>
+Subject: Re: [RFC PATCH 0/4] Updates for CXL Event Records
+Message-ID: <20241018120414.00006c61@Huawei.com>
+In-Reply-To: <20241016163349.1210-1-shiju.jose@huawei.com>
+References: <20241016163349.1210-1-shiju.jose@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1088; i=brauner@kernel.org; h=from:subject:message-id; bh=CLn7iZAaQy/gzrcoCg6aXb/xKmwS/dcifC9LXkkmEbc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQLORRk3LlySOmjvHzFK70d6xfvC7P0OHLnLyNTY/vty wn7s1ce7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIPGOGf1ahd/Qv8/UxXEos CH0Q6d21e7PBcqXzefm7pl7Q8Jt5dyHDP/3NnPs/pV76E/NM8m/T9ovCm717dZZuyfVfvFU5ult TgQMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, 18 Oct 2024 12:27:03 +0200, Thorsten Blum wrote:
-> Building the kernel with W=1 generates the following warning:
+On Wed, 16 Oct 2024 17:33:45 +0100
+<shiju.jose@huawei.com> wrote:
+
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
->   fs/proc/fd.c:81: warning: This comment starts with '/**',
->                    but isn't a kernel-doc comment.
+> CXL spec rev 3.1 CXL Event Records has updated w.r.t CXL spec rev 3.0.
+> Add updates for the above spec changes in the CXL events records and CXL
+> trace events implementation.
 > 
-> Use a normal comment for the helper function proc_fdinfo_permission().
+> Note: Please apply following fix patch first if not present.
+> https://patchwork.kernel.org/project/cxl/patch/20241014143003.1170-1-shiju.jose@huawei.com/
 > 
-> [...]
+> Shiju Jose (4):
+>   cxl/events: Updates for CXL Common Event Record Format
+>   cxl/events: Updates for CXL General Media Event Record
+>   cxl/events: Updates for CXL DRAM Event Record
+>   cxl/events: Updates for CXL Memory Module Event Record
+> 
+>  drivers/cxl/core/trace.h | 201 +++++++++++++++++++++++++++++++++------
+>  include/cxl/event.h      |  20 +++-
+>  2 files changed, 190 insertions(+), 31 deletions(-)
+> 
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Hi Shiju,
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Why are these an RFC?  Seem in a good state to me and the
+questions I'm seeing are naming stuff that to me doesn't
+justify RFC status.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] proc: Fix W=1 build kernel-doc warning
-      https://git.kernel.org/vfs/vfs/c/197231da7f6a
+Jonathan
 
