@@ -1,340 +1,203 @@
-Return-Path: <linux-kernel+bounces-370905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806AE9A337C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:45:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29F19A3368
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8772855D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:45:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0902D1C235C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2692F1684A5;
-	Fri, 18 Oct 2024 03:45:08 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279AF161313
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729223107; cv=none; b=REkAJQ7FrBq88Z2WnCVcxNGnSSJsdIVZDQqY1+qG97ctg0D919fbFF42QWZkzpH2uugq2b/XnDOdttx6hUGMmyLni1j8pNkmKC0otnKCdd3g3BTlsn1ltVtvMEByk4Qtt3zfkOc6CLWFbpjWtPYNUkrFqpi3rRUwEWMuK6oeBUc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729223107; c=relaxed/simple;
-	bh=q46y8q7kBo0KrQVS4O6ZdsW5oxSp6/F6VtfZAGupo44=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=k9d+ovPVFmB76MntLJ6toZuyt4+1RiTAKvlLv3ktZvUVNpeLJTfIqf3a5qsh5jxUUBkOBj1p9zD93IZiP3XLLKyTGY3ARcXE0dySUaKEsmmwcytbeMwuaC0yytr6hCS3wC6R/jk/Mt+exrwjaLTiIVGaIrqY3cfoB97ozjvhiCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8AxSYqx2RFnakwjAA--.51222S3;
-	Fri, 18 Oct 2024 11:44:49 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMBxHeSn2RFnpmAvAA--.29241S3;
-	Fri, 18 Oct 2024 11:44:41 +0800 (CST)
-Subject: Re: [PATCH v2 1/3] LoongArch: Set initial pte entry with PAGE_GLOBAL
- for kernel space
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-mm@kvack.org
-References: <20241014035855.1119220-1-maobibo@loongson.cn>
- <20241014035855.1119220-2-maobibo@loongson.cn>
- <CAAhV-H5QkULWp6fciR1Lnds0r00fUdrmj86K_wBuxd0D=RkaXQ@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <f3089991-fd49-8d55-9ede-62ab1555c9fa@loongson.cn>
-Date: Fri, 18 Oct 2024 11:44:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D160C160884;
+	Fri, 18 Oct 2024 03:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PVUM3yYV"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2041.outbound.protection.outlook.com [40.107.22.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257C920E31F;
+	Fri, 18 Oct 2024 03:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729222627; cv=fail; b=TvuTtz6ASxW/CXnXZjAvRC271EAjxiw+HwpqpY/6yst8Q9aC1geUzQxxCk/YQD3WN4hPxoYb1VdGQ8XkAYWlG+qhVTOUjunodZvJU5sW3BZBtjg/1Y3c/FwMnUDHU3oYGrambxsD9HtBePo7UIChPs+cu7OhWQBMMLJXM1NB5zg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729222627; c=relaxed/simple;
+	bh=lqS4sjre8zEfOpJrew+LqGpI0XT+YcZJYoW0GWMZS/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ibRxCp7g/cTbtAsOqXL8tRr59UlVfPTxBGOJGVrPyzYyKFfSeeQzrlVFMgyBwyJClWDp4qW42gjcOWNwl8t5AZglFuRCx8Jqrriz3HyoxjFkLDFv6C+bSArKBGmcHZyheVtVEFxgU/AoI8gpWJN8biDjDwABMKtEG+ltLlPwoJ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PVUM3yYV; arc=fail smtp.client-ip=40.107.22.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hTTme1c3CevH6Ww4XgUCA5KOH5n02l7/3A1hmBobU11RPTpBl7zZ6jzJ/pw5gjW1Tm2i64O6hgl9YvcgvNvS2ijzk/AH0mF3k/gHxyTVr1gwRzNV/kDWJvHuDx8Mweedp56xLJ7uTseMy32HEEwjJ355eAzGbI2akMtD2v+BhzQLjVrOjLLvtc7aRAWyFYN9ZNf9GMuyNjnRreAuGjR1HnvmM9VUoQrqzwRDpitj+HeA6pnk/wnBqGydZp6f9Ekq+cr1XY17yqhhnMO3wDy/SWPesw0AzOGWC6w0tgYBz+90jRWx9BblsWVHR9vTfo7Dm/ub4Q++etwEhABeuiwDBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qy43nKwTHiXOjDw15yMl8tTJdF/l4Ci3EOYCKW3mVo8=;
+ b=izB9TSpoOwviVLhSA8GOIQ+wtzXFRLuSG0H69zXm2XRC4756rw7SI51+bX723lV09cNqi6f2TGapNuLl1n4JzfffzusGe4ksfg7cG05U14JC/Tpi8XPsdVIMFtjw4iYvksFiLgXeliH+wpjMJpVowI8N+CYffViVd3cEH9gj4/6+M6AsdQ50+AyzlUXpUtwTyR/mVO6dG+MAAs45qBFWEDOkJqYvO9fyid+NntJLNH991pK6o7HlbQ5RBTNdTSetMVxJuhm5qGDFVFnt+TL5j5GuI2QO5fYutnobXOIt2fp5FWIjD3M9fc5dHa7szGJ5lv87izJIs61aw6p6eOz/1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qy43nKwTHiXOjDw15yMl8tTJdF/l4Ci3EOYCKW3mVo8=;
+ b=PVUM3yYVxSaGQOmTlBgfcbCV0Vldros5vCWK555MoATGAgiHLnIFnaD7HcpYcutRfA60G1yeCZvO3kFCtPWhZ5W90DXhgnlRPwgH1OxghNlHol9Zf8naW58B+I6aCMIJAR2hDSC6xGs39OqK23DMNJ3vYcl/Ibqc5d9A6hp6H8IgkXqOPXRhIHqqD1f2ptkQwYxmvEUfxGfeLOzTIBSA/XqZsHvgs6ZdLyV1qHOXWzZIbdEjlP54/Ub0qcVfp9fIjbDwkHLbDCETcDWkeyAMItrW8Xf8KmMuplvAtmZhyox1ItXh2yP13s/D0qFwT9lhP0au9wr+2KEP5LnVvtY+AQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com (2603:10a6:208:5::22)
+ by PAXPR04MB8110.eurprd04.prod.outlook.com (2603:10a6:102:1bd::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.20; Fri, 18 Oct
+ 2024 03:37:02 +0000
+Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com
+ ([fe80::4e37:f56b:8a3e:bff0]) by AM0PR0402MB3937.eurprd04.prod.outlook.com
+ ([fe80::4e37:f56b:8a3e:bff0%4]) with mapi id 15.20.8048.020; Fri, 18 Oct 2024
+ 03:37:01 +0000
+From: carlos.song@nxp.com
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	haibo.chen@nxp.com,
+	frank.li@nxp.com
+Subject: [PATCH 0/5] arm64: dts: imx: Add LPSPI alias for I.MX8ULP/8QXP/8QM/8DXL/93
+Date: Fri, 18 Oct 2024 11:45:27 +0800
+Message-Id: <20241018034532.2552325-1-carlos.song@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0001.APCP153.PROD.OUTLOOK.COM (2603:1096:4:140::7)
+ To AM0PR0402MB3937.eurprd04.prod.outlook.com (2603:10a6:208:5::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H5QkULWp6fciR1Lnds0r00fUdrmj86K_wBuxd0D=RkaXQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxHeSn2RFnpmAvAA--.29241S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3ArWxtrWfKrWkZr1Utw4fJFc_yoWfWr4rpF
-	9rCFn5WF4UXr97Ja92qr1Uur1UXwsagF4xKFnFkFyrAasFgr1kWr18Gr9xuF1kA3yUCa4F
-	vr4fKa4a9a1jqagCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUU
-	UU=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR0402MB3937:EE_|PAXPR04MB8110:EE_
+X-MS-Office365-Filtering-Correlation-Id: ea1f9d66-de05-4c0d-0316-08dcef261433
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RoTkow9XOgKZAHF7qmxvy7ONliyBFbqpvsr/5Kmy+504GMST3utKK/bpOfXG?=
+ =?us-ascii?Q?63KgmXAH9f48WEdh4K+vWKNoKSna1s3GgwmUsZ+0DH0GRoFEzI9mfuogR6j7?=
+ =?us-ascii?Q?XGNFImngzSn0v9vnVbBBQSzYZYEdQNoeUwyo7EUx9fsdLl0oM4P8aY63DeFl?=
+ =?us-ascii?Q?czXw1j050guiEeF6lmNaD6en4XXp6joAQXSvZykvGXzCNXfWHqbSIpaqoDIp?=
+ =?us-ascii?Q?eH+8i32uWf1JyqpMu0k6xlnLItGNnGBWep8IYPqDrXhOhgE68vSwj2hk1NHy?=
+ =?us-ascii?Q?4qwCiAUqY/kgf1vGzm90m4LLLdnm/6Kidkele0GvlmouciTf4Jnh67WaL8QC?=
+ =?us-ascii?Q?IHqIn+MnqGIfZYpGJK38xvSEpmmCSvPY1CzIViXMoidWBzFIdFXlqla9W3MG?=
+ =?us-ascii?Q?/r8JBxDuMpclrNL1IDqxtkFtYmnrTTizxheFqeilh2kiiqcx9AxOukFA06pW?=
+ =?us-ascii?Q?Ljy5DGUIAezdwIq5M8ZYypYUkhAmMFxMGnj9KdTnARwHmXFMipzoIgObFBx5?=
+ =?us-ascii?Q?knUKKjtibgDDwiv7LaFBe85A8xKy7mwyj0jttM0lEvjJ6OufMjBmMs29f6xz?=
+ =?us-ascii?Q?kPaOfT2zNIH8MYnUgTUxXpngaD3p508wKYizw9JkzlcoFvxBFUKI59GHfNEO?=
+ =?us-ascii?Q?0xzL+MbolqtboDzk5yKqDfr8EZMP9TSBnU7G0I/XRTXANINPp59gy5gUMWJ/?=
+ =?us-ascii?Q?UzM+3JwKoNpJBBAIFx0qorDrB3L9ElARZD0WQqI0EeHij6Ba6adJqoP87WHu?=
+ =?us-ascii?Q?y3bA1QLVuwLqlc6t5XH1iiyEyBbGhGbFQJEvU65VxdGDgDk+R0xPEsyHTXI1?=
+ =?us-ascii?Q?+P0gfPcEeFBnjKhAHE93DzIj09AgPTH9q9OQGKk7/Aw+WKlNPD6tRC6AHFqn?=
+ =?us-ascii?Q?Zfqm169+SNCbi9K9gsW3n9sZxoQ7qKNQQI5rPO7xXCLvSsrX6OhZWNb48Ng+?=
+ =?us-ascii?Q?knBG4L2WmI3RHNNWMYlF1TBTqH3ToahNZqwNfrq+Fgjws1oLoy32BjSJW0f6?=
+ =?us-ascii?Q?XZyh46UnYw41wWI35U28tWjm4nHeS2d2cC9DzI1PxJ7lTiDjC6alcabnMbWS?=
+ =?us-ascii?Q?nCX11IJkKn6SuLXHl06IUMYGXk5e16aPkYA6s+3YLS6dnauO3BMLM3luKmjS?=
+ =?us-ascii?Q?DYtkgt1gw2ZSS8vQekq3PzdOCSYIrhHh3iNJ6FEUkc2xqDBrEul4wW2wOsIt?=
+ =?us-ascii?Q?qRWH8D5uBmqQ+f3RUDY4BxYQ/qAYzXGD0H6c1OpQELF/e7tDm4HiH34n27mb?=
+ =?us-ascii?Q?ogDrcF/qbedrIO441k21ma9WlnNnia3Uj6oSAcgZBquTU7/KYaYBiBJHZotw?=
+ =?us-ascii?Q?qpi2QjGWh2W2tOvtbmxzWrOZc08BauCLCq9ES1kl++JhXiarLSvHmavkEDDG?=
+ =?us-ascii?Q?7uoNJws=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR0402MB3937.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2f/zcJHOIcUmYcKyCF+GbFuEzliwxX488tyCZAt+Jlbb584G2oczCPJSsszQ?=
+ =?us-ascii?Q?1P74kSnVLTL9gaC94eaVahpIO9hU4rnoNqUa93HReT6dUXp8pucZSgarOEyj?=
+ =?us-ascii?Q?FmRzbTOflYcofLUz7hWkTsiVy3VoWVy7DgxdiYTUVC37YxqmXVEupvFCc974?=
+ =?us-ascii?Q?4kYTKYgiv9PfwZmh08r1i+EPRIKqJKMjW7Tu2OxK7x920iNK6KudE2d4Hpt+?=
+ =?us-ascii?Q?1yf02hkrSAWhHMpSe+co7pakiFHODZDxyjb7pIVjYhlNjAg337SpcslsFwRf?=
+ =?us-ascii?Q?CqQhyA9TxmfIWiTGJXVLKMmzmK+jiqgtkL9HnqaNl8B2+3xbXIrSum5e8uqM?=
+ =?us-ascii?Q?0+LMdXnnSkH9T1/DOpZi5sQPI3sCT3kF1epywUNX0NIzIM16XazJckI8mLGp?=
+ =?us-ascii?Q?0mg1fNkQ6/4o3viyL2yZN3TfpuKUB43mshkWvvoopQlJ2jJq3g1tWi1DIzw3?=
+ =?us-ascii?Q?H0Ji9p8TAg2PJ6o2oVpcLMYSz7Vc3+LFs6301RsEl3x/ukhmOz9IJY5fSVoK?=
+ =?us-ascii?Q?WLe0iTy2JFRSK7DFZe/9eZIsTeTcJUo63YfBrIUMw/rQgu0JnswKxmbdbgdm?=
+ =?us-ascii?Q?/8l95XvmKmZQA1qKfkjcAdD9OIz1b30qEYz8tY/8sq/GOwtX+Fahr3HiXDPK?=
+ =?us-ascii?Q?rQMj8yXglAJvX3xQXkj6TDS8p6tiR9LFgJim1BjiRVwRQ3TyJeMndMaFRwwG?=
+ =?us-ascii?Q?8fCcu2Isp8whh7aZcIXa80gUNGRx/UPd3FFTB/b+6wgWi3F4XmJigBrzI1d8?=
+ =?us-ascii?Q?u/YMX2nuljQHR72HNlaHwtxpOnOwkgH2SDGSMJ4orv09TIKwrqs7GiEIoxfI?=
+ =?us-ascii?Q?NgIKMPXnaKdIT/OeJiLm82X0q3CdUwBdG6tLzC8zgIBrOcHWifE4eTmXJC8L?=
+ =?us-ascii?Q?t0k9aPsDCiVqmcVSjNLm3+6ifUVuxQuQ4BgV0Eoj9fI26rVrTPOpdakKaBWx?=
+ =?us-ascii?Q?CwV1JrPT06Vi0wSwftLtYIWQ1Q+4N3E84gFAnoJV9QIrkGltLsemFrssSHto?=
+ =?us-ascii?Q?rKrJTWxbaWxegypzIF2QV4cLdSJA5GkJCursdnx7KMVArVKwk26RLMBL4pDT?=
+ =?us-ascii?Q?sAPVHLhnKVWYW9W2vV/dcrCtY2h8MkGeuYISEv9dOTCk6BTxKACoR4TdQxyR?=
+ =?us-ascii?Q?o4k1ZjEgERePZVQFFy8ZCq0NKMzZ8gTwQ7I1aAmg7KdOGJFBrhLK1xpp2viB?=
+ =?us-ascii?Q?FDsMW+o6jsaim1+PH5Zd9eC6J66OG1D02GF5r99Vc3CY2qsmaYszHCGaIH6a?=
+ =?us-ascii?Q?+1NpGcchwID0X5ws7rLvTVmKFBVPWfjgOsMaARj29zHcYAc41eE0fv0dXDk6?=
+ =?us-ascii?Q?wroSWu8KuUkpyQ0g3AD2sdwY2Cbvav2SFOik5HrjOAVLR+vjTq2oaD9+uikD?=
+ =?us-ascii?Q?S9jZHHwLUwBkL1lpTq5blLPSmZpCEnSakc+KZzOQ1gqVrBJkqa7obGD6tD06?=
+ =?us-ascii?Q?wNvIYF2dHIC2qmS04dg+9u9bi7SC8oszyox152acBH+6RUXG4kKuJMgT9/Pk?=
+ =?us-ascii?Q?Ez/3XT2rnE0ZWQMMfkuxcMXixF/LIsXHsXL54HqwTUa3ftnXhUSmtLX2gxnb?=
+ =?us-ascii?Q?iPX6dgxmMe5nCUXYKkNh9nPjShNrHQetJrBYXcC8?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea1f9d66-de05-4c0d-0316-08dcef261433
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR0402MB3937.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 03:36:40.8104
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8SQbckNfwqrdg0GES8/sXag3Yn87ojd+xIhN6FIFg9jaut+ZcRMcXjSnxybuFROIAm1up2vxZnlXipbSdy8eZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8110
 
+From: Carlos Song <carlos.song@nxp.com>
 
+Now there is no alias for LPSPI on I.MX8ULP/8QXP/8QM/8DXL/93.
+So spidevB.C index B will be automatically allocated by kernel
+incrementally from zero according to the order of registering
+spi controller. In this case, it is hard to determine spidevB.C
+is spi interface of device C on which LPSPI bus. It will cause
+confusion when operate spi devices in userspace.
 
-On 2024/10/18 上午11:14, Huacai Chen wrote:
-> Hi, Bibo,
-> 
-> I applied this patch but drop the part of arch/loongarch/mm/kasan_init.c:
-> https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/commit/?h=loongarch-next&id=15832255e84494853f543b4c70ced50afc403067
-> 
-> Because kernel_pte_init() should operate on page-table pages, not on
-> data pages. You have already handle page-table page in
-> mm/kasan/init.c, and if we don't drop the modification on data pages
-> in arch/loongarch/mm/kasan_init.c, the kernel fail to boot if KASAN is
-> enabled.
-> 
-static inline void set_pte(pte_t *ptep, pte_t pteval)
-  {
-  	WRITE_ONCE(*ptep, pteval);
--
--	if (pte_val(pteval) & _PAGE_GLOBAL) {
--		pte_t *buddy = ptep_buddy(ptep);
--		/*
--		 * Make sure the buddy is global too (if it's !none,
--		 * it better already be global)
--		 */
--		if (pte_none(ptep_get(buddy))) {
--#ifdef CONFIG_SMP
--			/*
--			 * For SMP, multiple CPUs can race, so we need
--			 * to do this atomically.
--			 */
--			__asm__ __volatile__(
--			__AMOR "$zero, %[global], %[buddy] \n"
--			: [buddy] "+ZB" (buddy->pte)
--			: [global] "r" (_PAGE_GLOBAL)
--			: "memory");
--
--			DBAR(0b11000); /* o_wrw = 0b11000 */
--#else /* !CONFIG_SMP */
--			WRITE_ONCE(*buddy, __pte(pte_val(ptep_get(buddy)) | _PAGE_GLOBAL));
--#endif /* CONFIG_SMP */
--		}
--	}
-+	DBAR(0b11000); /* o_wrw = 0b11000 */
-  }
+For example, in I.MX93, When LPSPI3 and LPSPI5 are enabled
+without alais:
 
-No, please hold on. This issue exists about twenty years, Do we need be 
-in such a hurry now?
+:~# ls /dev/spidev*
+/dev/spidev0.0  /dev/spidev1.0
 
-why is DBAR(0b11000) added in set_pte()?
+After LPSPI alais is applied, fixedly B is the LPSPI index and
+C is the spi device index in spidevB.C. They are the pleasant
+spidev names. Directly spidev2.0 is the device0 at LPSPI3 bus
+and spidev4.0 is the device0 at LPSPI5 bus:
 
-Regards
-Bibo Mao
-> Huacai
-> 
-> On Mon, Oct 14, 2024 at 11:59 AM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> Unlike general architectures, there are two pages in one TLB entry
->> on LoongArch system. For kernel space, it requires both two pte
->> entries with PAGE_GLOBAL bit set, else HW treats it as non-global
->> tlb, there will be potential problems if tlb entry for kernel space
->> is not global. Such as fail to flush kernel tlb with function
->> local_flush_tlb_kernel_range() which only flush tlb with global bit.
->>
->> With function kernel_pte_init() added, it can be used to init pte
->> table when it is created for kernel address space, and the default
->> initial pte value is PAGE_GLOBAL rather than zero at beginning.
->>
->> Kernel address space areas includes fixmap, percpu, vmalloc, kasan
->> and vmemmap areas set default pte entry with PAGE_GLOBAL set.
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->>   arch/loongarch/include/asm/pgalloc.h | 13 +++++++++++++
->>   arch/loongarch/include/asm/pgtable.h |  1 +
->>   arch/loongarch/mm/init.c             |  4 +++-
->>   arch/loongarch/mm/kasan_init.c       |  4 +++-
->>   arch/loongarch/mm/pgtable.c          | 22 ++++++++++++++++++++++
->>   include/linux/mm.h                   |  1 +
->>   mm/kasan/init.c                      |  8 +++++++-
->>   mm/sparse-vmemmap.c                  |  5 +++++
->>   8 files changed, 55 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/loongarch/include/asm/pgalloc.h b/arch/loongarch/include/asm/pgalloc.h
->> index 4e2d6b7ca2ee..b2698c03dc2c 100644
->> --- a/arch/loongarch/include/asm/pgalloc.h
->> +++ b/arch/loongarch/include/asm/pgalloc.h
->> @@ -10,8 +10,21 @@
->>
->>   #define __HAVE_ARCH_PMD_ALLOC_ONE
->>   #define __HAVE_ARCH_PUD_ALLOC_ONE
->> +#define __HAVE_ARCH_PTE_ALLOC_ONE_KERNEL
->>   #include <asm-generic/pgalloc.h>
->>
->> +static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
->> +{
->> +       pte_t *pte;
->> +
->> +       pte = (pte_t *) __get_free_page(GFP_KERNEL);
->> +       if (!pte)
->> +               return NULL;
->> +
->> +       kernel_pte_init(pte);
->> +       return pte;
->> +}
->> +
->>   static inline void pmd_populate_kernel(struct mm_struct *mm,
->>                                         pmd_t *pmd, pte_t *pte)
->>   {
->> diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
->> index 9965f52ef65b..22e3a8f96213 100644
->> --- a/arch/loongarch/include/asm/pgtable.h
->> +++ b/arch/loongarch/include/asm/pgtable.h
->> @@ -269,6 +269,7 @@ extern void set_pmd_at(struct mm_struct *mm, unsigned long addr, pmd_t *pmdp, pm
->>   extern void pgd_init(void *addr);
->>   extern void pud_init(void *addr);
->>   extern void pmd_init(void *addr);
->> +extern void kernel_pte_init(void *addr);
->>
->>   /*
->>    * Encode/decode swap entries and swap PTEs. Swap PTEs are all PTEs that
->> diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
->> index 8a87a482c8f4..9f26e933a8a3 100644
->> --- a/arch/loongarch/mm/init.c
->> +++ b/arch/loongarch/mm/init.c
->> @@ -198,9 +198,11 @@ pte_t * __init populate_kernel_pte(unsigned long addr)
->>          if (!pmd_present(pmdp_get(pmd))) {
->>                  pte_t *pte;
->>
->> -               pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
->> +               pte = memblock_alloc_raw(PAGE_SIZE, PAGE_SIZE);
->>                  if (!pte)
->>                          panic("%s: Failed to allocate memory\n", __func__);
->> +
->> +               kernel_pte_init(pte);
->>                  pmd_populate_kernel(&init_mm, pmd, pte);
->>          }
->>
->> diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_init.c
->> index 427d6b1aec09..34988573b0d5 100644
->> --- a/arch/loongarch/mm/kasan_init.c
->> +++ b/arch/loongarch/mm/kasan_init.c
->> @@ -152,6 +152,8 @@ static void __init kasan_pte_populate(pmd_t *pmdp, unsigned long addr,
->>                  phys_addr_t page_phys = early ?
->>                                          __pa_symbol(kasan_early_shadow_page)
->>                                                : kasan_alloc_zeroed_page(node);
->> +               if (!early)
->> +                       kernel_pte_init(__va(page_phys));
->>                  next = addr + PAGE_SIZE;
->>                  set_pte(ptep, pfn_pte(__phys_to_pfn(page_phys), PAGE_KERNEL));
->>          } while (ptep++, addr = next, addr != end && __pte_none(early, ptep_get(ptep)));
->> @@ -287,7 +289,7 @@ void __init kasan_init(void)
->>                  set_pte(&kasan_early_shadow_pte[i],
->>                          pfn_pte(__phys_to_pfn(__pa_symbol(kasan_early_shadow_page)), PAGE_KERNEL_RO));
->>
->> -       memset(kasan_early_shadow_page, 0, PAGE_SIZE);
->> +       kernel_pte_init(kasan_early_shadow_page);
->>          csr_write64(__pa_symbol(swapper_pg_dir), LOONGARCH_CSR_PGDH);
->>          local_flush_tlb_all();
->>
->> diff --git a/arch/loongarch/mm/pgtable.c b/arch/loongarch/mm/pgtable.c
->> index eb6a29b491a7..228ffc1db0a3 100644
->> --- a/arch/loongarch/mm/pgtable.c
->> +++ b/arch/loongarch/mm/pgtable.c
->> @@ -38,6 +38,28 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
->>   }
->>   EXPORT_SYMBOL_GPL(pgd_alloc);
->>
->> +void kernel_pte_init(void *addr)
->> +{
->> +       unsigned long *p, *end;
->> +       unsigned long entry;
->> +
->> +       entry = (unsigned long)_PAGE_GLOBAL;
->> +       p = (unsigned long *)addr;
->> +       end = p + PTRS_PER_PTE;
->> +
->> +       do {
->> +               p[0] = entry;
->> +               p[1] = entry;
->> +               p[2] = entry;
->> +               p[3] = entry;
->> +               p[4] = entry;
->> +               p += 8;
->> +               p[-3] = entry;
->> +               p[-2] = entry;
->> +               p[-1] = entry;
->> +       } while (p != end);
->> +}
->> +
->>   void pgd_init(void *addr)
->>   {
->>          unsigned long *p, *end;
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index ecf63d2b0582..6909fe059a2c 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -3818,6 +3818,7 @@ void *sparse_buffer_alloc(unsigned long size);
->>   struct page * __populate_section_memmap(unsigned long pfn,
->>                  unsigned long nr_pages, int nid, struct vmem_altmap *altmap,
->>                  struct dev_pagemap *pgmap);
->> +void kernel_pte_init(void *addr);
->>   void pmd_init(void *addr);
->>   void pud_init(void *addr);
->>   pgd_t *vmemmap_pgd_populate(unsigned long addr, int node);
->> diff --git a/mm/kasan/init.c b/mm/kasan/init.c
->> index 89895f38f722..ac607c306292 100644
->> --- a/mm/kasan/init.c
->> +++ b/mm/kasan/init.c
->> @@ -106,6 +106,10 @@ static void __ref zero_pte_populate(pmd_t *pmd, unsigned long addr,
->>          }
->>   }
->>
->> +void __weak __meminit kernel_pte_init(void *addr)
->> +{
->> +}
->> +
->>   static int __ref zero_pmd_populate(pud_t *pud, unsigned long addr,
->>                                  unsigned long end)
->>   {
->> @@ -126,8 +130,10 @@ static int __ref zero_pmd_populate(pud_t *pud, unsigned long addr,
->>
->>                          if (slab_is_available())
->>                                  p = pte_alloc_one_kernel(&init_mm);
->> -                       else
->> +                       else {
->>                                  p = early_alloc(PAGE_SIZE, NUMA_NO_NODE);
->> +                               kernel_pte_init(p);
->> +                       }
->>                          if (!p)
->>                                  return -ENOMEM;
->>
->> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
->> index edcc7a6b0f6f..c0388b2e959d 100644
->> --- a/mm/sparse-vmemmap.c
->> +++ b/mm/sparse-vmemmap.c
->> @@ -184,6 +184,10 @@ static void * __meminit vmemmap_alloc_block_zero(unsigned long size, int node)
->>          return p;
->>   }
->>
->> +void __weak __meminit kernel_pte_init(void *addr)
->> +{
->> +}
->> +
->>   pmd_t * __meminit vmemmap_pmd_populate(pud_t *pud, unsigned long addr, int node)
->>   {
->>          pmd_t *pmd = pmd_offset(pud, addr);
->> @@ -191,6 +195,7 @@ pmd_t * __meminit vmemmap_pmd_populate(pud_t *pud, unsigned long addr, int node)
->>                  void *p = vmemmap_alloc_block_zero(PAGE_SIZE, node);
->>                  if (!p)
->>                          return NULL;
->> +               kernel_pte_init(p);
->>                  pmd_populate_kernel(&init_mm, pmd, p);
->>          }
->>          return pmd;
->> --
->> 2.39.3
->>
+:~# ls /dev/spidev*
+/dev/spidev2.0  /dev/spidev4.0
+
+Signed-off-by: Carlos Song <carlos.song@nxp.com>
+Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+
+Carlos Song (5):
+  arm64: dts: imx8qxp: Add LPSPI alias
+  arm64: dts: imx8qm: Add LPSPI alias
+  arm64: dts: imx8dxl: Add LPSPI alias
+  arm64: dts: imx8ulp: Add LPSPI alias
+  arm64: dts: imx93: Add LPSPI alias
+
+ arch/arm64/boot/dts/freescale/imx8dxl.dtsi | 4 ++++
+ arch/arm64/boot/dts/freescale/imx8qm.dtsi  | 4 ++++
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 4 ++++
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi | 2 ++
+ arch/arm64/boot/dts/freescale/imx93.dtsi   | 8 ++++++++
+ 5 files changed, 22 insertions(+)
+
+-- 
+2.34.1
 
 
