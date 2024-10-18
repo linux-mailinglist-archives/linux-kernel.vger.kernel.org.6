@@ -1,168 +1,128 @@
-Return-Path: <linux-kernel+bounces-372069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D885E9A4415
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:46:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA699A441B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 096D61C210B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:46:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC0A28538E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8772038C1;
-	Fri, 18 Oct 2024 16:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913FF2036F7;
+	Fri, 18 Oct 2024 16:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePM3feaM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RGUnS/yE"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE1E202651;
-	Fri, 18 Oct 2024 16:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB422038AD
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 16:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729269992; cv=none; b=CpVGEfrPhrTA+bP6Bt8BWIOQL+90W39U6muyQJw7lB0iG0VdLfiWf866t20S9D0Uof+Wt6q1ImVBnVzq6auTlT9JzGcv1ffdop+ivIJNTxYLhI04/rh2Zma9epiQDgDxCJXHWkhsEvMCyoxuyd4ttlwaXppRxITOQ9JBH1WIYZg=
+	t=1729270060; cv=none; b=h0aWkfr5Pd2p+1jUXe/c0PemMoCwuAWnlyQcYK/FL0bYMDqaYaxSz/OzTPyaIsZjRDhmtUEawwC+1lmHHHtRC9y0cMkW8HIFuO2nP2WRORYeYvaRyWMvHm0yqQRkuOUDZZ2Bx2RvR7Q+8FvmDnNteS4Q+WdJCMenf9X+BaRA3XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729269992; c=relaxed/simple;
-	bh=HvetEVA4zCK8RL7HD2ZOs/3kgdfuNgxZCJtcWYYCeBI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wp2e872br0WOo57ghex0Ragd5s+KDimCu0ifaqIPtyZ/6lxKWZlt3H3+D+/4L2C4vrU9y+5hXyCBI3P3EUdp9nEyohp5x7QnxfyCF1IdMPp58SG241jGHhq4BRqcIr9IIs6OU6RYA8/haaetyoeD6+1lYWGITYlKDHoGrUlY4Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePM3feaM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3354CC4CECF;
-	Fri, 18 Oct 2024 16:46:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729269991;
-	bh=HvetEVA4zCK8RL7HD2ZOs/3kgdfuNgxZCJtcWYYCeBI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ePM3feaML+QDjb7Hk9W3VtQNSvOD/e6yi0wwNvPZHnc9nBxfQXvqjbmHLxiBE08m5
-	 H1jfEEsUwMrnlATY3BdP/4Sid8rJzkxv/oFuj61BOUHaSgfPZf7p7eNQ9+U9KI4Pku
-	 NNF6x8xNfg69pvky/iOo46zaBE9EDisG9rrAREk4DbVH5sE4gdzLVY+a8D+Z3/TU39
-	 hP5C8bVPDekko9rI4jF4Ik8C6Hj6+RRz80g0xk3XJR5VwIkJqO+o8fEb14e1KdhB9/
-	 zcgZbFtwaxaflJQx8kxyaEeDk+uQpgMkIGirIZ92f6lQtXvgtbI/8V91fpulyyflRR
-	 Erxp6aDKzs3VQ==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5eb8099f2e2so761071eaf.3;
-        Fri, 18 Oct 2024 09:46:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUiX60UwZcWHdqL0k7SvQcGamsAeGyxA8arpFfm07FtWS3zJeElH2DGAYnEeACSYcH860r6GBB0/s+nrASU@vger.kernel.org, AJvYcCV5cmGKyqt56DjJ9wbtTKeEzSBcL2fkgex2tD76bGhXvGcw1soJImPs/PHwrgkVH5tZgXkZb6PTFxnb2DKH@vger.kernel.org, AJvYcCVQ0KBUBoiH+pZj4LV/l0rNtUqge1wMnC0vv5ZD+CVALcVphB0ODHZLsW4E1EU/Bv0JHx+eUF/EpgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsWnd6GEujfQV70mpTGXkeJR3/uQcv85kLGKFbs27gT3QAHV3z
-	7lISdri0xeYd1TCrUEM4bZjPRxdi8gj1PfqTSMlQwFet7P7mvG5ai6xmljJ1pFjeuruZWhcPbtY
-	dEofBBYxXlkW4hvTNwcpxB/vaygU=
-X-Google-Smtp-Source: AGHT+IGXyq0dmldYiwmz+afHivTsSjfiM4J/KBaxukLyYzlQwRaqDq01j8jkT5ZetrgHgl22GBLb8mkwRLI2wrLMxa0=
-X-Received: by 2002:a05:6870:ac22:b0:287:b133:8aca with SMTP id
- 586e51a60fabf-2892c3425demr3187518fac.25.1729269990416; Fri, 18 Oct 2024
- 09:46:30 -0700 (PDT)
+	s=arc-20240116; t=1729270060; c=relaxed/simple;
+	bh=xOigHZi6vJGJCP887ppV80pj6xxRD92G/nmgaWkqArE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fqcy54YZOyFvh7lSRgtqFNblxzyoiNTQOtT64Z1LyFUEsMrTRjeLHlATyLbOwA1OpI+x5p1t+f24lFftr2ltAqgeFcxZNLtIP4LAMkdiEuh8fZnJE+mVFnJUh9260Fta5yVaaxcSVov3zasFcP3g8IzQP/oon562IzdV/9+uWR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=RGUnS/yE; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-83abe4524ccso27157339f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:47:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729270057; x=1729874857; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1xrAsGY1eEGZc5Yu+CpN7tXZ0WTm20eWqNXI9YXSfRI=;
+        b=RGUnS/yEMWUzU9ENZpfZBdw19LPJdoUJwXb5i83TMFZNAS2INDHjXRhibAQzAFSH/5
+         LLKfxyz7sQzPvzW087xjwxPTP+bVoQ/qPc97Jj0fDYLEQ/tEzaHCkfBspojLtuP3mRdn
+         qhTWc9euTgFScdI0006tPYvbwSO442hTwms8K/rkUiC3IR9ncu3/rmGllxBORyUArwW6
+         wxYkOi/5CF96NCSko/dbv2MXCm+v8GX0AYx1lczgAySyrZZu7PiTzNXkJLGHa85jQ52t
+         Ql/e5vpoYfSPxADJpN23gLfVwf0mZRsx09xnk8M+GaZ4mmrCXnyzIGtGJBi3ZB83MthU
+         4dIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729270057; x=1729874857;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1xrAsGY1eEGZc5Yu+CpN7tXZ0WTm20eWqNXI9YXSfRI=;
+        b=D9ZfV38kQF7GLroWPIBUOi14nLAZzfMwG0+/xb19vSmi4KZI5OA7DSxq3qU54cFNBo
+         K7pzq6UMHVvELhLCE03OAfnNt6NFf1lihAWwdcsY/iNABp/3omEJzm+5MiyOcfaRUKNa
+         LhaE18l6/OxZbKrL0zmPxKzW0J2stAVsg1ZgzgTznJVm2mU7UJgsEU1M1XfbRYIbgGL7
+         Jreas2+vhgLzauDgPRQMzArB6aSOTlUJuhs4ugWRMljVXEx6KR4DxgIEFZxU7+TrDijW
+         ovFm1dvje/ASav/13nvuOhUqRQHdHX88ro03D17ej3i9slShqQFZjmrcXqZj2b+1IQRk
+         XINg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyC1ftbo+Erc+h529jzc9lTd0pDCrxdyXDB2tizfluegs254iZ0x5qvBaN4TWKCaiYOi404VUZo2ifa04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvJbQnRxue9lzZyGzqRuXNSRnLVnJ/b72v26yRmtz+eAOzG2Sl
+	6BWEEcjXnj5VuArdvabsUXKxIkHTRl8a9lK3JIdoiVVWz6/ZOZ5ipN153lFSbgk=
+X-Google-Smtp-Source: AGHT+IGRZ5eg+vk3mqFXMeZHbFvptacsGMvZAkLKGH1anWYrHQLxW0thEDoHSVJdXnmUIcdGae9biQ==
+X-Received: by 2002:a05:6602:2b8d:b0:82c:e4e1:2e99 with SMTP id ca18e2360f4ac-83aba64bf11mr384868939f.11.1729270057395;
+        Fri, 18 Oct 2024 09:47:37 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc10c4efb1sm487582173.155.2024.10.18.09.47.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 09:47:36 -0700 (PDT)
+Message-ID: <aaf25389-e0c3-408a-ae05-a166c1720bf8@kernel.dk>
+Date: Fri, 18 Oct 2024 10:47:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927081018.8608-1-shenlichuan@vivo.com>
-In-Reply-To: <20240927081018.8608-1-shenlichuan@vivo.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 18 Oct 2024 18:46:19 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h3ZfsjOn05xBzpmFVi2Cm5Coa7006YRSGfoCe+HBv1ww@mail.gmail.com>
-Message-ID: <CAJZ5v0h3ZfsjOn05xBzpmFVi2Cm5Coa7006YRSGfoCe+HBv1ww@mail.gmail.com>
-Subject: Re: [PATCH v1] cpuidle: Correct some typos in comments
-To: Shen Lichuan <shenlichuan@vivo.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: AMD zen microcode updates breaks boot
+To: "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ the arch/x86 maintainers <x86@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "regressions@lists.linux.dev" <regressions@lists.linux.dev>
+References: <20241017100257.GAZxDg0VqDAesee00m@fat_crate.local>
+ <3400cf0b-85ca-4ec2-a8a0-c9d75889d573@kernel.dk>
+ <20241017141314.GDZxEbenNT6XF4jIaA@fat_crate.local>
+ <4d4bf52a-dd91-48ad-8949-198b2ffbc9da@kernel.dk>
+ <20241017142707.GEZxEeu3YHvnEMmd32@fat_crate.local>
+ <a395a18b-3478-45dd-aabd-ccc9d0851318@kernel.dk>
+ <20241018115857.GBZxJNgZY-NedtPrxX@fat_crate.local>
+ <20241018124943.GDZxJZZxtwA9O9eqiU@fat_crate.local>
+ <79296353-1fa3-458a-b055-88bc6a772180@kernel.dk>
+ <20241018155143.GIZxKED9YcF0Jg1CWZ@fat_crate.local>
+ <ZxKQux4I8We0Ax3-@gallifrey>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZxKQux4I8We0Ax3-@gallifrey>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 27, 2024 at 10:10=E2=80=AFAM Shen Lichuan <shenlichuan@vivo.com=
-> wrote:
->
-> Fixed some confusing typos that were currently identified with codespell,
-> the details are as follows:
->
-> -in the code comments:
-> drivers/cpuidle/cpuidle-arm.c:142: registeration =3D=3D> registration
-> drivers/cpuidle/cpuidle-qcom-spm.c:51: accidently =3D=3D> accidentally
-> drivers/cpuidle/cpuidle.c:409: dependant =3D=3D> dependent
-> drivers/cpuidle/driver.c:264: occuring =3D=3D> occurring
-> drivers/cpuidle/driver.c:299: occuring =3D=3D> occurring
->
-> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
-> ---
->  drivers/cpuidle/cpuidle-arm.c      | 2 +-
->  drivers/cpuidle/cpuidle-qcom-spm.c | 2 +-
->  drivers/cpuidle/cpuidle.c          | 2 +-
->  drivers/cpuidle/driver.c           | 4 ++--
->  4 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/cpuidle/cpuidle-arm.c b/drivers/cpuidle/cpuidle-arm.=
-c
-> index 7cfb980a357d..caba6f4bb1b7 100644
-> --- a/drivers/cpuidle/cpuidle-arm.c
-> +++ b/drivers/cpuidle/cpuidle-arm.c
-> @@ -139,7 +139,7 @@ static int __init arm_idle_init_cpu(int cpu)
->   *
->   * Initializes arm cpuidle driver for all CPUs, if any CPU fails
->   * to register cpuidle driver then rollback to cancel all CPUs
-> - * registeration.
-> + * registration.
->   */
->  static int __init arm_idle_init(void)
->  {
-> diff --git a/drivers/cpuidle/cpuidle-qcom-spm.c b/drivers/cpuidle/cpuidle=
--qcom-spm.c
-> index 1fc9968eae19..3ab240e0e122 100644
-> --- a/drivers/cpuidle/cpuidle-qcom-spm.c
-> +++ b/drivers/cpuidle/cpuidle-qcom-spm.c
-> @@ -48,7 +48,7 @@ static int qcom_cpu_spc(struct spm_driver_data *drv)
->         ret =3D cpu_suspend(0, qcom_pm_collapse);
->         /*
->          * ARM common code executes WFI without calling into our driver a=
-nd
-> -        * if the SPM mode is not reset, then we may accidently power dow=
-n the
-> +        * if the SPM mode is not reset, then we may accidentally power d=
-own the
->          * cpu when we intended only to gate the cpu clock.
->          * Ensure the state is set to standby before returning.
->          */
-> diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-> index 9e418aec1755..06ace16f9e71 100644
-> --- a/drivers/cpuidle/cpuidle.c
-> +++ b/drivers/cpuidle/cpuidle.c
-> @@ -406,7 +406,7 @@ void cpuidle_reflect(struct cpuidle_device *dev, int =
-index)
->   * Min polling interval of 10usec is a guess. It is assuming that
->   * for most users, the time for a single ping-pong workload like
->   * perf bench pipe would generally complete within 10usec but
-> - * this is hardware dependant. Actual time can be estimated with
-> + * this is hardware dependent. Actual time can be estimated with
->   *
->   * perf bench sched pipe -l 10000
->   *
-> diff --git a/drivers/cpuidle/driver.c b/drivers/cpuidle/driver.c
-> index cf5873cc45dc..9bbfa594c442 100644
-> --- a/drivers/cpuidle/driver.c
-> +++ b/drivers/cpuidle/driver.c
-> @@ -261,7 +261,7 @@ static void __cpuidle_unregister_driver(struct cpuidl=
-e_driver *drv)
->   * @drv: a pointer to a valid struct cpuidle_driver
->   *
->   * Register the driver under a lock to prevent concurrent attempts to
-> - * [un]register the driver from occuring at the same time.
-> + * [un]register the driver from occurring at the same time.
->   *
->   * Returns 0 on success, a negative error code (returned by
->   * __cpuidle_register_driver()) otherwise.
-> @@ -296,7 +296,7 @@ EXPORT_SYMBOL_GPL(cpuidle_register_driver);
->   * @drv: a pointer to a valid struct cpuidle_driver
->   *
->   * Unregisters the cpuidle driver under a lock to prevent concurrent att=
-empts
-> - * to [un]register the driver from occuring at the same time.  @drv has =
-to
-> + * to [un]register the driver from occurring at the same time.  @drv has=
- to
->   * match the currently registered driver.
->   */
->  void cpuidle_unregister_driver(struct cpuidle_driver *drv)
-> --
+On 10/18/24 10:45 AM, Dr. David Alan Gilbert wrote:
+> * Borislav Petkov (bp@alien8.de) wrote:
+>> On Fri, Oct 18, 2024 at 07:30:15AM -0600, Jens Axboe wrote:
+>>> At least on mine, the BIOS has an option that says something like "L3
+>>> cache as numa domain", which is on and why there's 32 nodes on that box.
+>>> It's pretty handy for testing since there's a crap ton of CPUs, as it
+>>> makes affinity handling easier.
+>>
+>> Right, so two boxes I tested with this:
+>>
+>> * 2 socket, a bit different microcode:
+>>
+>> [   22.947525] smp: Brought up 32 nodes, 512 CPUs
+>>
+>> * your CPU, one socket:
+>>
+>> [   26.830137] smp: Brought up 16 nodes, 255 CPUs
+> 
+> (Probably unrelated but...)
+> What happened to number 256 ?
 
-Applied as 6.13 material, thanks!
+Quick guess, maybe iommu was off, will cap it to 255. IIRC...
+
+-- 
+Jens Axboe
+
 
