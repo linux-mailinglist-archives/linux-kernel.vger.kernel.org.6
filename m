@@ -1,71 +1,49 @@
-Return-Path: <linux-kernel+bounces-370950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D212F9A342F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:22:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1A19A3435
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0907C1C21AE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46868284ECC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D300D17C22A;
-	Fri, 18 Oct 2024 05:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pN1jvbXe"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE9917BB06;
+	Fri, 18 Oct 2024 05:27:45 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D1617279E;
-	Fri, 18 Oct 2024 05:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074E117837F;
+	Fri, 18 Oct 2024 05:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729228939; cv=none; b=knn+5YIozTmGxkbhqadgtJKiP5wdXdc8TvzYFNX//5H3TN+brmpIkRhR+H5J7+BnnvRVFtEwBXbmz1fw/FYZXDkXFK1hPxShRoKsVg4XH8+qQuUpSwojz0oDFVVJjI1IqdSmAr4P1R1uD7JO+uwO+ZLRUKT1F+bqY4Djq4+YQS4=
+	t=1729229265; cv=none; b=b85HQIP5F7HiIY+1BQ5zUljpkSUsZx45w8etqZr5rmc10b3nI3VZcwUYZ5G5CApAqHBlCb/5GE2PIEkAMcaQCoujFYzCxUtWG+swZy9kR+AyjLCdq9dlbr0nVVQEvMLSVOpI8uqHnjI+1tmiAV2YIaqqzQnvGyWGwOLlq9k0ggw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729228939; c=relaxed/simple;
-	bh=SbU7YvsCLBo1fozw+FCn9FJ09fqD2MMNao4L3BGSKMY=;
+	s=arc-20240116; t=1729229265; c=relaxed/simple;
+	bh=zuvQWdEGQt2takvATObbj2UEmAahbnLWjYKE3v8ZmAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OEmrw7ORRvqLP+QI6nPzgidKofeWmTIHRPaY7+AcuWOgkrI1B8AEk6dQ6x7KPn8+Fs1CkjkeTFVu3bTB621EMrEMecpJIDkpIk1Djem4sfTpeDX6dfmI+UZaJsTg1vFWqKjxwbvxGOed2WE18om5O9m4RmvM9oeoUbVxKKutLI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pN1jvbXe; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=SbU7YvsCLBo1fozw+FCn9FJ09fqD2MMNao4L3BGSKMY=; b=pN1jvbXeIe6Ly1VsjgN9jHbM3X
-	grsroMmv6DWVBi/qgE6zMc7DQUd5KKDwUPQpSz6tMVyjkVsiUcxAa7I3U1FfLYR+e3WkJ25Y7EYLo
-	kkPCDoKb1H39X7AOfEhw9roZJP0bBvx+c60wsU85OyRTCi4DqUe4Dp7K0K7aayfRzdNoTCs8/5VLB
-	g7aUcZnJh8RxPoQKf+HZRewwL0NxIGD7TxhTxq80itaL4BJXfjw+89QQlaepUSlxtgHRoCzbXxaQO
-	7gPm52k8QXwHogv5Dn2Hu1iikUVePK1WbOXVT+EyngGke06K7pGO+HUxiTDW337Dof1/grzE8WeuH
-	KnaBqS0w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1fRC-0000000GxYM-2rYk;
-	Fri, 18 Oct 2024 05:22:10 +0000
-Date: Thu, 17 Oct 2024 22:22:10 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Adrian Vovk <adrianvovk@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk,
-	song@kernel.org, yukuai3@huawei.com, agk@redhat.com,
-	snitzer@kernel.org, mpatocka@redhat.com, adrian.hunter@intel.com,
-	quic_asutoshd@quicinc.com, ritesh.list@gmail.com,
-	ulf.hansson@linaro.org, andersson@kernel.org,
-	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-hardening@vger.kernel.org, quic_srichara@quicinc.com,
-	quic_varada@quicinc.com
-Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
-Message-ID: <ZxHwgsm2iP2Z_3at@infradead.org>
-References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
- <20240916085741.1636554-2-quic_mdalam@quicinc.com>
- <20240921185519.GA2187@quark.localdomain>
- <ZvJt9ceeL18XKrTc@infradead.org>
- <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TYBjZ+rOF0xMR+hCEUEu7SRVaWHv2x6puQsrfF6kgXUSxvhaD3oPSWxAIACcfj4EUYKBEtsYlMPSifeodyWF6kuOzhSpxD4likL56m9DK7xELqnEpswFTrso/mD+wWE3KFeYeW7Gm3VgX/bmTEioQoFqB2cmo9lTzuvSvaSDFe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 98A6A227A8E; Fri, 18 Oct 2024 07:27:38 +0200 (CEST)
+Date: Fri, 18 Oct 2024 07:27:38 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 2/3] dma-mapping: Use trace_dma_alloc for dma_alloc*
+ instead of using trace_dma_map
+Message-ID: <20241018052738.GA20045@lst.de>
+References: <20241017181354.2834674-1-sean.anderson@linux.dev> <20241017181354.2834674-3-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,34 +52,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20241017181354.2834674-3-sean.anderson@linux.dev>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, Oct 17, 2024 at 11:26:49PM -0400, Adrian Vovk wrote:
-> Let's say I'm using LVM, so I've got a physical partition that stores a
-> couple different virtual partitions. I can use dm-default-key both
-> underneath the physical partition, and on top of some of the virtual
-> partitions. In such a configuration, the virtual partitions with their own
-> dm-default-key instance get encrypted with their own key and passed through
-> the lower dm-default-key instance onto the hardware. Virtual partitions that
-> lack their own dm-default-key are encrypted once by the lower dm-default-key
-> instance. There's no filesystem involved here, and yet to avoid the cost of
-> double-encryption we need the passthrough functionality of dm-default-key.
-> This scenario is constrained entirely to the block layer.
+On Thu, Oct 17, 2024 at 02:13:53PM -0400, Sean Anderson wrote:
+> +DECLARE_EVENT_CLASS(_dma_alloc,
+>  	TP_PROTO(struct device *dev, void *virt_addr, dma_addr_t dma_addr,
+>  		 size_t size, enum dma_data_direction dir, gfp_t flags,
+>  		 unsigned long attrs),
+> @@ -149,7 +149,60 @@ TRACE_EVENT(dma_alloc,
+>  		decode_dma_attrs(__entry->attrs))
+>  );
+>  
+> -TRACE_EVENT(dma_free,
+> +DEFINE_EVENT(_dma_alloc, dma_alloc,
+> +	TP_PROTO(struct device *dev, void *virt_addr, dma_addr_t dma_addr,
+> +		 size_t size, enum dma_data_direction dir, gfp_t flags,
+> +		 unsigned long attrs),
+> +	TP_ARGS(dev, virt_addr, dma_addr, size, dir, flags, attrs));
+> +
+> +DEFINE_EVENT(_dma_alloc, dma_alloc_pages,
 
-So just run a target on each partition.
-
-> Other usecases involve loopback devices. This is a real scenario of
-> something we do in userspace. I have a loopback file, with a partition table
-> inside where some partitions are encrypted and others are not. I would like
-> to store this loopback file in a filesystem that sits on top of a dm-crypt
-> protected partition. With the current capabilities of the kernel, I'd have
-> to double-encrypt. But with dm-default-key, I could encrypt just once.
-
-Which would completely break the security model of the underlying
-file system, because it can't trust what you do in the loop device.
-
-This is the prime example of why allowing higher layers to skip
-encryption is a no-go.
+The scheme we used in XFS (fs/xfs/xfs_trace.h) for the event classes is
+to give the class a _class postdix, and use macros to avoid the repeated
+DEFINE_EVENT boilerplate.  Any chance you could rewrite this to use
+a similar scheme?
 
 
