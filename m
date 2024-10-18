@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-371203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409BA9A37DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:58:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357469A37E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD0BCB23CE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:58:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF8A2851B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE1918C337;
-	Fri, 18 Oct 2024 07:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0950218C34C;
+	Fri, 18 Oct 2024 07:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HklbUGo2"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BK63DK2h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF681442F4
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079CC18C335
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729238283; cv=none; b=dSprQL/76tZiTJaV2MUyzpo+CiYKgFfSdqQN9B3/SeoFJ6JmtVfCfum999Y2n7DPZkDVcULl21SlqQAa/3k177DIhUAA1iA5hHf/i6E76xl38Khp1pBMxJfIlVwNCuWEPflPXzbeGmJIGk3qhygdfjm7egHn3vVvCAiFfgtKwHw=
+	t=1729238324; cv=none; b=qCi6Mz6B7+MUOAqgCwkwpZCRDldtMUMl0Un3IfU4/lkZLtRKkLFUjkTdXklWdkglo83Sh2KNiKKClTrXlORfLNF+BqtR0BHsf18jLUEzCBf2wLXhbFT7rGlXjbIPJlzQl0Lp84N/mciVRqTUttFUPJPGvXNHqEDZFrtbisot5cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729238283; c=relaxed/simple;
-	bh=Ti5gna2oLMfSpkSXoyf0MAGF7yyXdcwXsWLmGTNSOeM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=X584I0nVelKwYjYCjhbtna0EdxY5g/nBrk0RFOIWuHWIQzyzVCihtTiQVOdbVDttrDTvUyjJRo0uD9emvHTXCrlrRKVBAXTzTPH8osNFaySFiPvc/tDyVjUtLbZQFSTLCCGlxmHCVmbeAWOA7agCbTXFfSBTzeN5C68yJGdbVE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HklbUGo2; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7db54269325so1462986a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:58:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729238281; x=1729843081; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Drm6GSMszdRwDqRBijgtPROGYu2UjXAmF0Jy5tagAhk=;
-        b=HklbUGo2LWygtUllbQ9Sd2Pj0vb2vdPWfZDPbnfdftDRBg7dbd4mi6aQkkNJ18pmJ1
-         UYWMBQhDgVZFtzf+N6Z/XNhx9n7uGZnnFVCCD7rPtCR2lRqSQ2mCT2U8VUU7VkfQAjiS
-         6fhx0bu3GzGjviQHSR7ARTPV4oBt3prggOi4AibSHaY/cTHhr2Hy67NxHvG2HNUWhGsZ
-         D9b01fiCS/+5cXr8hfGk+bhwqyoXrqOpm6kyQRbazr97GXdDKSyl/6S7nqfK9heTmxA7
-         o6fSAbtAgnfPTZ9JRSP2/r5V1CyVcUzZu8FcmGzixEhcEUQ5SMyRAAWtCylMLTIgWb9f
-         cMxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729238281; x=1729843081;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Drm6GSMszdRwDqRBijgtPROGYu2UjXAmF0Jy5tagAhk=;
-        b=Zh8ieUSY1p4I5y9rmMoWRRtJY+UHmY/3qZBzXB6JeMkG9n04WgDFD7DDYbkoCc1QB4
-         9aiXw3v1LTn6fyllG8oQHG8GHY1uK64o4mVfB6QB/cRnxkLtuKqgR2HmsN96nv4oQaV/
-         oi9FZeuqwoqTSyK96t+hh7/nsrpLZFP2/Q7yj22qTekUrNvXgyVXEd0q3wapgSL4XZvw
-         5od0IwYJVJmQF+4bpMxuGr2qC5XKMd7OF5yqXRP5SuFHDija/IC9fIpBx6qnAlDu8kSc
-         SoBXL93Qq/pUG9PE3AXuCrH+gXFr8WV+sAEgL+fEtsJeY3jodLQfvFX3OBFHGdeP27sp
-         tUPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzFT4E9Dok+TkV0VurEcvSx7J+/Bxypgw5MdY9H63ADcNqdJdWmcbPSWr5TUwyuK7sp+m9nsEOOvUaqzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytrYAbYxZoeThMDRjVusOvBW1eHr/1EkotiuXhtVl2PxV+3IsT
-	PUaboGTtdYDdSu2I6nF8nz0g8U0jCpI9UbyWAiDr8FdEL7VidCL9
-X-Google-Smtp-Source: AGHT+IG4zD6/7f12yR/mjUbybtqozcn/vgZSk2HbLlusGBxbrjzCt4vXo/MKgYMbufIpewVJGmwk8A==
-X-Received: by 2002:a05:6a21:4d8c:b0:1d9:1fac:7256 with SMTP id adf61e73a8af0-1d92c52a598mr2108382637.30.1729238280938;
-        Fri, 18 Oct 2024 00:58:00 -0700 (PDT)
-Received: from localhost.localdomain ([43.153.70.29])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e55d7970f4sm1290248a91.5.2024.10.18.00.58.00
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Oct 2024 00:58:00 -0700 (PDT)
-From: mengensun88@gmail.com
-X-Google-Original-From: mengensun@tencent.com
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	alexjlzheng@tencent.com,
-	MengEn Sun <mengensun@tencent.com>
-Subject: [PATCH linux-mm v2] mm: make pcp_decay_high working better with NOHZ full
-Date: Fri, 18 Oct 2024 15:57:57 +0800
-Message-Id: <1729238277-26683-1-git-send-email-mengensun@tencent.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1729238324; c=relaxed/simple;
+	bh=s+HlrfHqP69nqmDhgJNxMWvtR8m57Il9I98x50Qn7Cg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N+fLKCIqkgoIhrYqJ539gfgJr2O759/QqLEpZRKCJSQ4wr5mqBfz3GqNvzYIMwILw+vyKdWEItYQci7SuJ0+2OHCbW9ky/C5uSToRD8GZYD542NVMC7c+bZ7PwIYWOxVKiuX8juIVdd5GKdnqf/+mXyWkAECwFQUaMXYQ8SzQ6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BK63DK2h; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729238323; x=1760774323;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=s+HlrfHqP69nqmDhgJNxMWvtR8m57Il9I98x50Qn7Cg=;
+  b=BK63DK2hRfwzPwcl6Q6uxcy+5qgzr4Eq6m2821tTbH/RBnZQOPLuDDaR
+   AMdcGvALoqwxetQUb2bC1AD/BHfuMUmGlq3tV8BQ/ZgLdEpaFvLqRPeFF
+   exTNEMQaXsmbY1tem4UeFrbNy+cvigCZY3rXwb5YHfBh9PaeC9s0GkXuU
+   iO59UYeu7qBk2OQ///inQyrsAspX4htfqSE5A9eZi0ye7iwGQPKczcQtI
+   pzxB9p38eaOweK+KWDF1AQ4BCcTHEn4L7T+Ns+1HmNOKeADHYeQF2zd+H
+   m9ucHwrBW/o0zgJ0kMVyijpIhcVhHs/g9/G2HPtz/MlZmvJRNiyGrmHyM
+   g==;
+X-CSE-ConnectionGUID: NmNNZk+gQbGBzmCzlz6SLw==
+X-CSE-MsgGUID: l3+HYY8HTtS/ZDufw6Cnmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="46257545"
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="46257545"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 00:58:42 -0700
+X-CSE-ConnectionGUID: kBNgLfcKTdKJVQbYBLmJpQ==
+X-CSE-MsgGUID: 7HOiqOcVQpaecsJmkvw2Tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="116254824"
+Received: from klitkey1-mobl1.ger.corp.intel.com ([10.245.246.169])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 00:58:40 -0700
+Message-ID: <316b41e631572a02a89bab2456cfb373f3e667ae.camel@linux.intel.com>
+Subject: Re: [PATCH 1/1] nvme-pci: Add CPU latency pm-qos handling
+From: Tero Kristo <tero.kristo@linux.intel.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-kernel@vger.kernel.org, axboe@kernel.dk, 
+	linux-nvme@lists.infradead.org, sagi@grimberg.me, kbusch@kernel.org
+Date: Fri, 18 Oct 2024 10:58:36 +0300
+In-Reply-To: <20241015132928.GA3961@lst.de>
+References: <20241004101014.3716006-1-tero.kristo@linux.intel.com>
+	 <20241004101014.3716006-2-tero.kristo@linux.intel.com>
+	 <20241007061926.GA800@lst.de>
+	 <913b063d0638614bc95d92969879d2096ffc0722.camel@linux.intel.com>
+	 <20241009080052.GA16711@lst.de>
+	 <accb9ceb501197b71259d8d3996c461dcef1e7d6.camel@linux.intel.com>
+	 <0feb16b0bc3515b0a77f33a3e18568f62236b691.camel@linux.intel.com>
+	 <20241015132928.GA3961@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 
-From: MengEn Sun <mengensun@tencent.com>
+On Tue, 2024-10-15 at 15:29 +0200, Christoph Hellwig wrote:
+> On Tue, Oct 15, 2024 at 12:25:37PM +0300, Tero Kristo wrote:
+> > I've been giving this some thought offline, but can't really think
+> > of
+> > how this could be done in the generic layers; the code needs to
+> > figure
+> > out the interrupt that gets fired by the activity, to prevent the
+> > CPU
+> > that is going to handle that interrupt to go into deep idle,
+> > potentially ruining the latency and throughput of the request. The
+> > knowledge of this interrupt mapping only resides in the driver
+> > level,
+> > in this case NVMe.
+> >=20
+> > One thing that could be done is to prevent the whole feature to be
+> > used
+> > on setups where the number of cpus per irq is above some threshold;
+> > lets say 4 as an example.
+>=20
+> As a disclaimer I don't really understand the PM QOS framework, just
+> the NVMe driver and block layer.
+>=20
+> With that my gut feeling is that all this latency management should
+> be driven by the blk_mq_hctx structure, the block layer equivalent
+> to a queue.=C2=A0 And instead of having a per-cpu array of QOS requests
+> per device, there should one per cpu in the actual mask of the
+> hctx, so that you only have to iterate this local shared data
+> structure.
+>=20
+> Preferably there would be one single active check per hctx and
+> not one per cpu, e.g. when the block layer submits commands
+> it has to do one single check instead of an iteration.=C2=A0 Similarly
+> the block layer code would time out the activity once per hctx,
+> and only then iterate the (usually few) CPUs per hctx.
+>=20
 
-When a cpu entring NOHZ full, quiet_vmstat may flush percpu
-zonestats and nodestats.
+Thanks for the feedback, I have now reworked + retested my patches
+against blk-mq, just posted them to the block mailing list also.
 
-The vmstat_shepherd only check percpu zonestats and nodestats
-to determine whether it is necessary to fire vmstat_update on
-the target cpu for now.
-
-If a process on a certain CPU allocates a large amount of memory,
-then frees that memory, and subsequently the CPU enters NOHZ, and
-the process not freeing and allocating memory anymore,the
-vmstat_update not being executed on the cpu. Because
-vmstat_shepherd may not see zonestats and nodestats of the cpu
-changed, so may resulting in vmstat_update on the cpu not fired
-for a long time.
-
-While, This seems to be fine:
-- if freeing and allocating memory occur later, it may the
-  high_max may be adjust automatically
-- If memory is tight, the memory reclamation process will
-  release the pcp
-
-Whatever, we make vmstat_shepherd to checking whether we need
-decay pcp high_max, and fire pcp_decay_high early if we need.
-
-Fixes: 51a755c56dc0 ("mm: tune PCP high automatically")
-Reviewed-by: Jinliang Zheng <alexjlzheng@tencent.com>
-Signed-off-by: MengEn Sun <mengensun@tencent.com>
----
-changelog:
-v1: https://lore.kernel.org/lkml/20241012154328.015f57635566485ad60712f3@linux-foundation.org/T/#t
-v2: Make the commit message clearer by adding some comments.
----
- mm/vmstat.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 1917c034c045..07b494b06872 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -2024,8 +2024,17 @@ static bool need_update(int cpu)
- 
- 	for_each_populated_zone(zone) {
- 		struct per_cpu_zonestat *pzstats = per_cpu_ptr(zone->per_cpu_zonestats, cpu);
-+		struct per_cpu_pages *pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
- 		struct per_cpu_nodestat *n;
- 
-+		/* per_cpu_nodestats and per_cpu_zonestats maybe flush when cpu
-+		 * entering NOHZ full, see quiet_vmstat. so, we check pcp
-+		 * high_{min,max} to determine whether it is necessary to run
-+		 * decay_pcp_high on the corresponding CPU
-+		 */
-+		if (pcp->high_max > pcp->high_min)
-+			return true;
-+
- 		/*
- 		 * The fast way of checking if there are any vmstat diffs.
- 		 */
--- 
-2.43.5
-
+-Tero
 
