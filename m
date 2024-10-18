@@ -1,177 +1,96 @@
-Return-Path: <linux-kernel+bounces-371571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F7A9A3CCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:08:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B4189A3CCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C8C1F261C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:08:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E0E1F26D91
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39095202F9C;
-	Fri, 18 Oct 2024 11:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17AF201258;
+	Fri, 18 Oct 2024 11:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EFBBx2Bb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhHz9vD2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B7E18C938;
-	Fri, 18 Oct 2024 11:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403F22010E6;
+	Fri, 18 Oct 2024 11:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729249384; cv=none; b=gh70UV5JguACdfFP5ZPM7Wesgfiyo8K6PRp7L+TdiReJo1RIaKyCvZw9S4EJHhFVc/YMvqV4doQLrDOTpcXWql+vg90XsK9ahkLV8NZqXFGOEFil8BAjIpAM7KO8L84UYAoLLaSa2Xl0Ha+Gm3Wd/NHknNVyiVxuYefTPOv1MtA=
+	t=1729249401; cv=none; b=u+rO3EZwjw+Y6R9uuTlOHtXo8+6XoTT3Gqe5iI/1G3P7YN7yrOJhFKCSVcQIv78m09l8pNsZWh2el9nASEF2N1nzlk0EAkC+IwqeBgksYiVRTaZVjvs8R/hSwRmCIqt8Q+sRdnsmfitibMulzaweSpK9cx03+oIZOla6xnohyps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729249384; c=relaxed/simple;
-	bh=LR/c3xU4hDfFgXjw04gG6uCX3S4OvhfEfnZZalGUYUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YXaNDHfDynbbQQZUwoVfIcLa3TG2yqvImgIO0bHWq7wIbPqcWRgSiXIAKyNdm8bHNlHR8GKt78OUuGvpWnbnsT3TkH2CZICss40PVlA8vVbidM3i3AvzGKDpHLPdWGuvkb/rqf+De01Rwqa8sRYMblPGvut0s+1HEsTt+vBGOEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EFBBx2Bb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I9M7w7006477;
-	Fri, 18 Oct 2024 11:02:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ot9s+3Q8ivE3sA0acLWxoXDq4Fga1oL1hf003eoy9vM=; b=EFBBx2Bb4j13BDXa
-	vw7Kg9maieitixWfXGiPDfPU4vuEj6Jm7WL+khG5ZlwP3w7mCwDbqPDvsvrfVP5l
-	UgiTfG/RJhNyZSth0LZ3Ooz1rVntmIBuCgd+VZolXv/IGfgTT6ZBz7CBm/PjcQxF
-	Q4phCjMcAGzSqC/nTTjbwK9e7gr9v/dQkXdbgotYutli1DJ3WnNqpO+wdO34bNTY
-	+j+6fTq2x6Q7sEm9QTRtebrJ7WF5uXKesrZ3QXjHhBEfPrm6/bzhW0hjZO3d0fyf
-	rYjw7IiYnyFL9EKiPmeSSydWU1YPUdeipmlYMkTajLX1WsAZJBrJILGQ+1ST2yNK
-	NNZVDQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bmys8cgg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 11:02:56 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IB2t76030966
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 11:02:55 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
- 2024 04:02:50 -0700
-Message-ID: <dfafb945-69f7-4378-9bb0-72eee37de235@quicinc.com>
-Date: Fri, 18 Oct 2024 16:32:47 +0530
+	s=arc-20240116; t=1729249401; c=relaxed/simple;
+	bh=CLn7iZAaQy/gzrcoCg6aXb/xKmwS/dcifC9LXkkmEbc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z2l9mnhR0zjh99TDSppNfYkQeKwf+eQB5dH/bOHGNaASlE0pj6gRBl3anoYyUfVScvhat9LZ+m1oTNT3OPbRasBbt3ESEismFpLzHc/ErNSw/pm4ADefMnbuEJO8gzWuUXEXJHXy6Bw7CsJy40UmLHPyhQXnqKHPC1cw7WDSIxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhHz9vD2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31E6EC4CEC3;
+	Fri, 18 Oct 2024 11:03:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729249400;
+	bh=CLn7iZAaQy/gzrcoCg6aXb/xKmwS/dcifC9LXkkmEbc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BhHz9vD2RpXdDX5Soc0XVhkKBqR9QOPIR9mbZx+Ut+MZOXDEdsKmIH/cvr9SivJAt
+	 LDqA2TReKYOx8rvw3GscgOYsc54e7SaTK3cLG4uVKOEPSDgRVuE6VbI7EXuPJLt7AT
+	 2XwT8sdn/wxBMA0hc967jbQT36r7GHFc87jAdBxMDYjqFhKCL+qFyyelTbx1JL9KGy
+	 /dzuty+EtIerG7QIagnROSRUUy1UbPRvLwgVROIaVRyiPR2umHE7fmUJsmGhHnHCmq
+	 y1aH9AOClIdO39rOJCi37v9Q+tU6t6OL0Rq+H0L0+zLsNeMG3u4/h8gbuVCALfMHCf
+	 xUxX8up9QsmUg==
+From: Christian Brauner <brauner@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Josef Bacik <josef@toxicpanda.com>,
+	"Tyler Hicks (Microsoft)" <code@tyhicks.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Yan Zhen <yanzhen@vivo.com>
+Subject: Re: [PATCH] proc: Fix W=1 build kernel-doc warning
+Date: Fri, 18 Oct 2024 13:03:04 +0200
+Message-ID: <20241018-soviel-ambitioniert-fc21fe4b9e9c@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241018102705.92237-2-thorsten.blum@linux.dev>
+References: <20241018102705.92237-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/14] clk: qcom: clk-branch: Add support for
- BRANCH_HALT_POLL flag
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Stephen Boyd
-	<sboyd@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kalpak Kawadkar
-	<quic_kkawadka@quicinc.com>
-References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
- <20241017-sar2130p-clocks-v1-6-f75e740f0a8d@linaro.org>
- <d7989a770f0eb35a5ba346beb5e7548c.sboyd@kernel.org>
- <jcjncf5k5syvcvwxoopksisjvvmw4cvxo35nieqf63mquj57io@fumh4jnh2e4p>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <jcjncf5k5syvcvwxoopksisjvvmw4cvxo35nieqf63mquj57io@fumh4jnh2e4p>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: svb31PHtab0PIb2He5odXbQq4fIFbKIH
-X-Proofpoint-ORIG-GUID: svb31PHtab0PIb2He5odXbQq4fIFbKIH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- mlxlogscore=999 malwarescore=0 adultscore=0 priorityscore=1501 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410180070
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1088; i=brauner@kernel.org; h=from:subject:message-id; bh=CLn7iZAaQy/gzrcoCg6aXb/xKmwS/dcifC9LXkkmEbc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQLORRk3LlySOmjvHzFK70d6xfvC7P0OHLnLyNTY/vty wn7s1ce7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIPGOGf1ahd/Qv8/UxXEos CH0Q6d21e7PBcqXzefm7pl7Q8Jt5dyHDP/3NnPs/pV76E/NM8m/T9ovCm717dZZuyfVfvFU5ult TgQMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-
-
-On 10/18/2024 3:35 AM, Dmitry Baryshkov wrote:
-> On Thu, Oct 17, 2024 at 11:03:20AM -0700, Stephen Boyd wrote:
->> Quoting Dmitry Baryshkov (2024-10-17 09:56:56)
->>> From: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
->>>
->>> On some platforms branch clock will be enabled before Linux.
->>> It is expectated from the clock provider is to poll on the clock
->>
->> Unfortunately 'expectated' is not a word. The sentence is also
->> grammatically incorrect.
->>
->>> to ensure it is indeed enabled and not HW gated, thus add
->>> the BRANCH_HALT_POLL flag.
->> [...]
->>> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
->>> index 229480c5b075a0e70dc05b1cb15b88d29fd475ce..c4c7bd565cc9a3926e24bb12ed6355ec6ddd19fb 100644
->>> --- a/drivers/clk/qcom/clk-branch.c
->>> +++ b/drivers/clk/qcom/clk-branch.c
->>> @@ -76,6 +76,7 @@ static int clk_branch_wait(const struct clk_branch *br, bool enabling,
->>>                  udelay(10);
->>>          } else if (br->halt_check == BRANCH_HALT_ENABLE ||
->>>                     br->halt_check == BRANCH_HALT ||
->>> +                  br->halt_check == BRANCH_HALT_POLL ||
->>
->> The name is confusing. The halt check is already "polling", i.e. this
->> isn't a different type of halt check. This is really something like
->> another branch flag that doesn't have to do with the halt checking and
->> only to do with skipping writing the enable bit. Maybe we should
->> introduce another clk_ops for these types of clks instead.
+On Fri, 18 Oct 2024 12:27:03 +0200, Thorsten Blum wrote:
+> Building the kernel with W=1 generates the following warning:
 > 
-> SGTM. All clocks with this flag use clk_branch2_aon_ops, so it is easy
-> to switch to a separate clk_ops.
+>   fs/proc/fd.c:81: warning: This comment starts with '/**',
+>                    but isn't a kernel-doc comment.
 > 
-
-The basic requirement here is to just poll in both enable/disable, but 
-HLOS cannot update the CLK_ENABLE bit. The clock could be gated by the 
-bandwidth vote and thus to ensure the clock is in good state before the 
-consumers start using the subsystem.
-
-We can definitely think for a different ops, I think it is better we 
-have a good name to the flag.
-
->>
->>>                     (enabling && voted)) {
->>>                  int count = 200;
->>>   
->>> @@ -97,6 +98,10 @@ static int clk_branch_toggle(struct clk_hw *hw, bool en,
->>>          struct clk_branch *br = to_clk_branch(hw);
->>>          int ret;
->>>   
->>> +       if (br->halt_check == BRANCH_HALT_POLL) {
->>
->> Remove braces
->>
->>> +               return  clk_branch_wait(br, en, check_halt);
->>
->> Remove extra space      ^
->>
->>> +       }
->>> +
+> Use a normal comment for the helper function proc_fdinfo_permission().
 > 
+> [...]
 
--- 
-Thanks & Regards,
-Taniya Das.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] proc: Fix W=1 build kernel-doc warning
+      https://git.kernel.org/vfs/vfs/c/197231da7f6a
 
