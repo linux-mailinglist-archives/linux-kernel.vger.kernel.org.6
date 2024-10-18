@@ -1,207 +1,96 @@
-Return-Path: <linux-kernel+bounces-372471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDE49A48F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:35:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E49099A4902
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22691F268E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:35:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C217B21788
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87C418E37B;
-	Fri, 18 Oct 2024 21:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD82B18E379;
+	Fri, 18 Oct 2024 21:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1dAeNhwe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jNCclp1D";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1dAeNhwe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jNCclp1D"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a71QD695"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B3118C93F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 21:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8B918D640
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 21:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729287317; cv=none; b=NOb2DzAgKZ7TZCITf0akFauzdHEwy4qWIxOIHSqFxZYWIVoIIbdroa8ehmqCEEtoz+HlxcXFvusndB8FqfS5f5CC95slkXpVy+S4k9ed6dqWRDE4o2Gg6NHMszRfSZrq4P/nVawcX4I1bwLu79RdmmdFLyJtrXqUCvLk+PTqBVE=
+	t=1729287510; cv=none; b=PMawf+ZkVE63KdlRoZm9bi+GA1p2QraxE1X7yIhAPoU675PeRUe3+jRjMQpbLuWD1sUuFexwD4x2jIKTuH/ynCV97wcke0ju+1DRK6Tw6fi+oTI30ynJzzxSfLtdpzsyIBW3Xf8GM54A8VrDk1l9F58f6SM/+gGLFGfY34FTUAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729287317; c=relaxed/simple;
-	bh=0JJG7ZWIdGOJlptv0dy+ApYKEGxXb53eUSStdfKAWHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PVyR5PhXyN/L5iqa81nzz7kMyo+vh635C1a2DxT1X8vWFPaJjnvqVX1rVfFt5imQyYV8scpUuroLe4hf8DBma1r6na8nrtEJAVZIMuTgAOU07BMowhPWYkJ613Dp5guyyDoLbGhEapAab8oav0PxGPGEbFS34BMidXMYFckzjN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1dAeNhwe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jNCclp1D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1dAeNhwe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jNCclp1D; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AF34621D2E;
-	Fri, 18 Oct 2024 21:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729287311; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=axzGyzmJ+hGoR2JC/TBJ5+Ys6eofFYtEOxdTC16nNKI=;
-	b=1dAeNhwefhyIAmDvhaM1XDyaQ+G3e8GqK/Wi3ivSWbKvZJGJMdV5urjf0cX9FL4OOtTEyT
-	OhNOD3EUG9rvSSA7xD/rzSYM02/+7IMm41zXtGcvn0xjt5JbAtIwKUPJyXgUq+3lJNzEJv
-	XTvCxR0eJ+gCgATEMaEG/MF+8EKMMx0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729287311;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=axzGyzmJ+hGoR2JC/TBJ5+Ys6eofFYtEOxdTC16nNKI=;
-	b=jNCclp1D4L/f/TBwr8Qn7LEtXpgEs4zLkahaqkMcvqn1Lmeel1ZGcRegqxQMZwx+nmn4MD
-	wYfG+qWwsAfxxvAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1dAeNhwe;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jNCclp1D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729287311; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=axzGyzmJ+hGoR2JC/TBJ5+Ys6eofFYtEOxdTC16nNKI=;
-	b=1dAeNhwefhyIAmDvhaM1XDyaQ+G3e8GqK/Wi3ivSWbKvZJGJMdV5urjf0cX9FL4OOtTEyT
-	OhNOD3EUG9rvSSA7xD/rzSYM02/+7IMm41zXtGcvn0xjt5JbAtIwKUPJyXgUq+3lJNzEJv
-	XTvCxR0eJ+gCgATEMaEG/MF+8EKMMx0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729287311;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=axzGyzmJ+hGoR2JC/TBJ5+Ys6eofFYtEOxdTC16nNKI=;
-	b=jNCclp1D4L/f/TBwr8Qn7LEtXpgEs4zLkahaqkMcvqn1Lmeel1ZGcRegqxQMZwx+nmn4MD
-	wYfG+qWwsAfxxvAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8EDEE13680;
-	Fri, 18 Oct 2024 21:35:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TkYaIo/UEmdDJAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 18 Oct 2024 21:35:11 +0000
-Message-ID: <b6852c2d-3371-47a4-bfeb-049f4048e88a@suse.cz>
-Date: Fri, 18 Oct 2024 23:38:04 +0200
+	s=arc-20240116; t=1729287510; c=relaxed/simple;
+	bh=9/mR0strc0i71LGWOH3cbh5Ge6oQp5idlV4zItldwEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VYcGBWCFNiwMsQ5hWjkXVow1HUJAK2+EKTlHP468rRz8xhju5dYldQ7WpRikbn71gpCs5/YimufwIssXpd9HNrljkDs4omHPgDtCoqRfAVsJoKCel3y+zRhNLpoFi6vLZRJ/uJBOOQgxJzwaBgLjd+GtufzvGSMWkE1+V/0/XJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=a71QD695; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=nzyRG3Z7ZIbPjAZ+tjsUIqSFqFzTEvGVVhA8rfQPaao=; b=a71QD695gI2GeQXJO1lHwGfGD8
+	ngDqs9+mdtFf4bvRaUwaGnRQPIsGZAmJjR1mL/SjSU05b1V+vYmWFW92aJs66x/GmtlPpv6dYhgav
+	WNJKrrzONZF2sP7wKzcWnOhGKsM7BWIyGUmlD5RkxupxLyTPv2hjzKpd52V4VkuWiza8TN1ugu9ZH
+	tXz25z1GXGzokfKcXdC05X126JuGgNcn/pM6U5GUKToT5xeavL3DSI/ofC+1/HVQWIH6GZi2a3vGp
+	f8l8jtr/uwNSXOXyU2pOt77095+/WLCi6JO1sUbn2XqwWJmER9igO77mTI/9La6eivYrF0Yf9avVK
+	+EalVuXw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1ufq-0000000DcXM-2o2A;
+	Fri, 18 Oct 2024 21:38:18 +0000
+Date: Fri, 18 Oct 2024 22:38:18 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
+	"Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm, zswap: don't touch the XArray lock if there is no
+ entry to free
+Message-ID: <ZxLVSkEr_Zd2Ai3Q@casper.infradead.org>
+References: <20241018192525.95862-1-ryncsn@gmail.com>
+ <ZxK7G3S0N42ejJMh@casper.infradead.org>
+ <CAMgjq7AjBMJAE-rj2MmB53FrQKcsARK5tZ3sKB4+uhWhkQ=EGA@mail.gmail.com>
+ <CAJD7tkZMTJKYR+au2rjP1v+c8PvdP4D39j86tHg=o2riKGYynQ@mail.gmail.com>
+ <ZxLLNfbLifp-b3W7@casper.infradead.org>
+ <CAJD7tkaycBYvtTCoGsuNUekSDNnE5SZb-XyS5a8j83JsKQw4FQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] 9p: Avoid creating multiple slab caches with the same
- name
-To: Thorsten Leemhuis <regressions@leemhuis.info>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Dominique Martinet <asmadeus@codewreck.org>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
- Jason Gunthorpe <jgg@nvidia.com>, Pedro Falcato <pedro.falcato@gmail.com>
-References: <20240807094725.2193423-1-pedro.falcato@gmail.com>
- <20241018172804.GA2151929@nvidia.com>
- <CAKbZUD0Z_Kyumx3ourywUYhfksGNgJWrCpjAdnxtsbwS4vMRkA@mail.gmail.com>
- <1cb07628-269c-4d6c-9936-f3a2b233165f@leemhuis.info>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <1cb07628-269c-4d6c-9936-f3a2b233165f@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: AF34621D2E
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,crudebyte.com,lists.linux.dev,vger.kernel.org,nvidia.com,gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <CAJD7tkaycBYvtTCoGsuNUekSDNnE5SZb-XyS5a8j83JsKQw4FQ@mail.gmail.com>
 
-On 10/18/24 8:54 PM, Thorsten Leemhuis wrote:
-> [reinserting a bit of quotation below for Linus]
+On Fri, Oct 18, 2024 at 02:00:16PM -0700, Yosry Ahmed wrote:
+> On Fri, Oct 18, 2024 at 1:55 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Fri, Oct 18, 2024 at 01:40:18PM -0700, Yosry Ahmed wrote:
+> > > Oh I thought xas_reload() is enough here to check that the entry is
+> > > still there after the lock is acquired. Do we have to start the walk
+> > > over after holding the lock?
+> >
+> > Yes.  The entry is guaranteed to still be valid, but the node you're
+> > looking in might have been freed, so you can't modify the node without
+> > making sure the node is still in the tree.  We could make that cheaper
+> > than a rewalk, but you're going to need to write that code since you're
+> > the first to want to do something like this.
 > 
-> TLDR: Linus, I wonder if it would be best if you could merge the patch
-> at the start of this thread
-> (https://lore.kernel.org/all/20240807094725.2193423-1-pedro.falcato@gmail.com/
-> ), which can also be found as 79efebae4afc22 in -next if you prefer to
-> cherry-pick it from there. Either now or after 24 to 36 hours, which
-> would give Eric a chance to ACK/NACK this if he sees this mail.
+> I see, thanks for elaborating.
 > 
-> For details see below.
-> 
-> On 18.10.24 20:36, Pedro Falcato wrote:
->> On Fri, Oct 18, 2024 at 6:28 PM Jason Gunthorpe <jgg@nvidia.com> wrote:
->>>
->>> On Wed, Aug 07, 2024 at 10:47:25AM +0100, Pedro Falcato wrote:
->>>> In the spirit of [1], avoid creating multiple slab caches with the same
->>>> name. Instead, add the dev_name into the mix.
->>>>
->>>> [1]: https://lore.kernel.org/all/20240807090746.2146479-1-pedro.falcato@gmail.com/
->>>>
->>>> Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
->>>> ---
->>>>  net/9p/client.c | 10 +++++++++-
->>>>  1 file changed, 9 insertions(+), 1 deletion(-)
->>>
->>> Can this get picked up to rc4 please?
-> 
-> Eric apparently has not much time or upstream work currently (but
-> recently showed up in a discussion about another regression:
-> https://lore.kernel.org/all/Zw-J0DdrCFLYpT5y@codewreck.org/ ).
-> 
->>> It is causing regressions in my environment
->>> #regzbot introduced: 4c39529663b9
-> 
-> If anyone wonders, that is 4c39529663b931 ("slab: Warn on duplicate
-> cache names when DEBUG_VM=y") [v6.12-rc1]. That's also why I'm CCing
-> Vlastimil, so he knows about this.
-> 
->> FWIW, seems to have been picked up into 9pfs-next
->> (https://github.com/martinetd/linux/commit/79efebae4afc2221fa814c3cae001bede66ab259).
->> Seems like we're just missing a PR to Linus?
+> Could you confirm if the current patch with the xas_reset() added
+> would be equivalent to just checking xa_load() before using
+> xa_erase()?
 
-If was Dominique, not Eric, see:
-https://lore.kernel.org/all/ZvBIl8b9RRK9jgtJ@codewreck.org/
-
-Can you send it as mentioned in the email? :)
-
-> In that case: Linus, given the circumstances I wonder if it would be
-> best if you could merge the patch at the start of this thread
-> (https://lore.kernel.org/all/20240807094725.2193423-1-pedro.falcato@gmail.com/
-> ) directly, which can also be found as 79efebae4afc22 in -next if you
-> prefer to cherry-pick it from there  Either now or after 24 to 36 hours,
-> which would give Eric a chance to ACK/NACK this if he sees this mail.
-> 
-> Ciao, Thorsten
+Yes, I think it would, so it's probably a poor tradeoff.
 
