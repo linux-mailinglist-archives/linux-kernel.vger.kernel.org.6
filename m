@@ -1,175 +1,195 @@
-Return-Path: <linux-kernel+bounces-372307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC009A46F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:26:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 641899A46F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F35681F228A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:26:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2CE1B21988
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F86204026;
-	Fri, 18 Oct 2024 19:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB7E204026;
+	Fri, 18 Oct 2024 19:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddpDHj7U"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AbI7wNwj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F061802AB
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB271802AB
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729279555; cv=none; b=qgLIqp79UT5EVTpHZj8jajfCim/jRxxBHRLskMCfHgkv/4zt5gRjfNiyFg+fqpqVafXxNeeApY8aEh+DmRTncxxtSvvZG0nsDPOJL3esoeYAkkxYptznFZwN/na+uDxFFYonexyKoDOERxbiZ2MhXR7hvP190qRUk0yvWNAzcCI=
+	t=1729279633; cv=none; b=L2Q03f7krlHE/lya0NYMjFszBo3w/NN1D50rgM2KPI5MRqZAyNd37I3INasYZ/gyTo5iGPK3UDocHwG8EEMVbPMLOtd8nh4T9uZ1QKtBRM1VIk2YKYXQwmtNT5nBXVUOpBN76r5R/R9I72XgtDaQgoli/E8BfTJ59FTJoQthUI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729279555; c=relaxed/simple;
-	bh=5VzPu4NTtS6U1JNq81nkr2afoaof/qk9rfeVj6RRBZY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ak0duCQE0Pei5cqGJiQoOE/0wuKC2N9Q6vI1XfzTtx+6dBOZik6E8u0ShP0rbL/tk29bV1mUCoN4KqjQfOUmJoOInFLKXdiXI/yzrKnqbIom70p2Q4cObOGvhMbfjeLUhgQSEgy4edE3XWP2va/Nls6UMPYKkJZDwyBFsxlM3bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddpDHj7U; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ca7fc4484so18287835ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:25:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729279553; x=1729884353; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r0anSA7wmrimpqHZPAHtNpFmhlM7GFXCjTHh2HcmL4E=;
-        b=ddpDHj7UT1qDbWig79jxKbAsckFqCoeeLsprwjyAfr+KeWman8/XUWC06YeLE7lKkC
-         9sSP00HsxmiXDDWmEx2ChyhWlMcUBYfdMGXbe+DqE6vScnHIgzWm0R/i71xjc+mlcNLc
-         4qihtPHAHPK8ueN4DE7uI+wVlveyJC3GC0vzPV1UNmX7ICGhkAkgfTLCKEzay02mGUOp
-         iK16xAa7QC0rqJ4KdwQqQNadDHEM5tVRNMQwt2Yaqu8Uvhqq9H4asoVaAyUyRZXKB78v
-         D90U5QyEBns620Sfv3fleDSbZo8bMnNrPqnYU9I5/fI8bfZZbBVzujcRfEDbQPAn2eX0
-         HGDQ==
+	s=arc-20240116; t=1729279633; c=relaxed/simple;
+	bh=FU7gKNAxPD9FjEAgkAbjYNWzFsXNEQP2mVKHpwtUA1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bvEUvJWlqNoSwsWATt/+QG5T34PVXJY7uv25shkEWhOxN2pV2pTCZUsJRhLHu97gmsScr/Z7vl41upzvWRXf/3m6cvOU5GlxKLjvdIjyZgnabkObidYYuyK4iZNWCu7C3inU4Goc5Tf1Fb/t2Clc5lAVBdKelVvUlT2v7ZkqD14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AbI7wNwj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729279630;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9eYH6ZmSCyfkMp21ZS34aLhAwrR3veT5lMNn7Txs7KI=;
+	b=AbI7wNwjdCWeP7ruawuj3ugHCbJ9y84Yjp7vh9AkO5aHtKXPpW6zKD+zEk4WKJTGzT9Cp1
+	FeX4A8Ls/eEOmtkhSWfSXd7zuTPHecjJFysVOv3wl/7aSMuMONpJkdlqMYwSLjncTIc38r
+	imC3/j0Tos/mRWOdis7vmvNt5OVSn6g=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-677-exdp9T4JOxel5ztPadcKdw-1; Fri, 18 Oct 2024 15:27:09 -0400
+X-MC-Unique: exdp9T4JOxel5ztPadcKdw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d4854fa0eso1402213f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:27:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729279553; x=1729884353;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r0anSA7wmrimpqHZPAHtNpFmhlM7GFXCjTHh2HcmL4E=;
-        b=ELD9wCpBlL2pJb9YTs+t/phZqFsXYxhdJHNhjgmqeoxhmBY5kmvTZNvPNsJnhXex9S
-         nf7hD6ZnwbapjWZg6JG7NWwVco1G7RP2Jw1tnS0zzOydoxa8g8CwzxoBBN0c9c15w5sL
-         2c9iq8lj8GG6mlnIV0co2aMzrXUA6+OUna8kUGiGX61hZfRl2Ue1w2GVnnbnBTxYiARw
-         KfR7WIpubweXmPwBnUdPH0UUAORGk7kBBOrwp1rzbeuu8y2Qce9XUK0jI8H6S0f2A6q2
-         Tmu6qGqR+JnqAbv7Tm1/eLFAN1INN+u7zsEIs/h9Ru0I2BoFX/InpniB4VaBd3W9jXM1
-         eVxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCDRDkN1126mOeFANU79CypJP9laH6S9vS2fMM8lej4nFeUOCkb91541M56ao2TNACiF3j5RtoL3SbX34=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2th3p5H6lQFvDQf2M28FZd47ZpOuyiX4m/5mnQqIoPZAth9th
-	G+49Qpa0JjrqvDT91mstBJyRwGImf9UzaehZHI0wD/uLIegIV2IB
-X-Google-Smtp-Source: AGHT+IH+gcFUNvQJGdCfiZUKmlscDlPE7FoZXrFol71E+UA5WwDV5CwQUWLGvQyUta2qroIk60kOWw==
-X-Received: by 2002:a17:902:f552:b0:20b:7ec0:ee3e with SMTP id d9443c01a7336-20e5a79f505mr42301125ad.11.1729279552573;
-        Fri, 18 Oct 2024 12:25:52 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([115.171.40.120])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a747769sm16284015ad.74.2024.10.18.12.25.49
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 18 Oct 2024 12:25:52 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH] mm, zswap: don't touch the XArray lock if there is no entry to free
-Date: Sat, 19 Oct 2024 03:25:25 +0800
-Message-ID: <20241018192525.95862-1-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.47.0
-Reply-To: Kairui Song <kasong@tencent.com>
+        d=1e100.net; s=20230601; t=1729279628; x=1729884428;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9eYH6ZmSCyfkMp21ZS34aLhAwrR3veT5lMNn7Txs7KI=;
+        b=gF4aiCn06CCK/zEEHI4Ul0sY4coMkb1Mfno6nUm2m2fFdYeEXgatIETkWnD4hTSydl
+         nde2JtFbGUw2B87Nrqu6R7amFdOk9uRmYq2ZJJ9FfbQAbpmbBqz8PkL1mRWzioulMUTf
+         TQDkRfAjv8buJs1nZBSYPZFbs+Uj/LK5p6DrdO18jCpJ8cjzOQWfEOGZ9HMhvDNMhnAY
+         v4/CjINVVNlMIgQYnt5Jtcj/Vs01la/FG1IbhSnWCdYE+GlYdeeVNiRXAwzjKO9e+19R
+         3xpTG2VOzCIrX2TkkXBhcs/3JUWzXN5bTpv955h3HUopUBb47kpc6Mft+v27bjHZr/29
+         u6hw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXJ/lkZ4K6zpQAFUwHb+BgQ7q0BRfQTRp1hqSTD6+Mo6T/4tIbZetOV2M4sOiFRw5nrT57hIw8Xu4Z93U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj0RsnRUMde0Y8NkOsNpgzSn2qqkJmH86X1rYn5Od4XrxUHeEU
+	17tBTU6/KrkkU1/omKPdYpHKE8K96OStLzxKoKn5ZCSqgm/9tYxBcpVrcaNk/8WEXIhyhD6PMgh
+	wl+I2uT4PIFMgdSMQ1LboPzgjIUCfXlFXd/Tv2qoYOJc/3szIYiWeZrKZv2PHiA==
+X-Received: by 2002:a5d:4445:0:b0:37d:4894:6895 with SMTP id ffacd0b85a97d-37eab7428b9mr2324352f8f.15.1729279628227;
+        Fri, 18 Oct 2024 12:27:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/I3kznkMePXh8AB0uY1g40lqof7FrASV+x3OUrn0SkqkNff6d2XzsXmRWy8Ep3ZvQnlk7Iw==
+X-Received: by 2002:a5d:4445:0:b0:37d:4894:6895 with SMTP id ffacd0b85a97d-37eab7428b9mr2324328f8f.15.1729279627790;
+        Fri, 18 Oct 2024 12:27:07 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff23b63.dip0.t-ipconnect.de. [79.242.59.99])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf066707sm2652823f8f.36.2024.10.18.12.27.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 12:27:06 -0700 (PDT)
+Message-ID: <3f096ba0-b6f0-4db7-9d65-ba0550eb98b1@redhat.com>
+Date: Fri, 18 Oct 2024 21:27:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] : Re: [RFC PATCH v1 00/57] Boot-time page size
+ selection for arm64
+To: Joseph Salisbury <joseph.salisbury@oracle.com>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <f5baa653-fec1-4f6e-91b0-ed8368d3c725@oracle.com>
+ <915e2f0c-f603-4617-8429-da4dacc862c4@redhat.com>
+ <aa4b6c90-6e8c-4943-ba83-6688cdf776a1@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <aa4b6c90-6e8c-4943-ba83-6688cdf776a1@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Kairui Song <kasong@tencent.com>
 
-zswap_invalidation now already avoids touching the XArray if the whole
-tree is empty, which is mostly beneficial only when zswap is disabled.
-This commit takes it further by optimizing the case where zswap is
-enabled.
+>>> Hi Ryan,
+>>>
+>>> First off, this is excellent work!  Your cover page was very detailed
+>>> and made the patch set easier to understand.
+>>>
+>>> Some questions/comments:
+>>>
+>>> Once a kernel is booted with a certain page size, could there be issues
+>>> if it is booted later with a different page size?  How about if this is
+>>> done frequently?
+>>
+>> I think that is the reason why you are only given the option in RHEL
+>> to select the kernel (4K vs. 64K) to use at install time.
+>>
+>> Software can easily use a different data format for persistance based
+>> on the base page size. I would suspect DBs might be the usual suspects.
+>>
+>> One example is swap space I think, where the base page size used when
+>> formatting the device is used, and it cannot be used with a different
+>> page size unless reformatting it.
+>>
+>> So ... one has to be a bit careful ...
+>>
+> Yes, that is what I was thinking.  Once a userspace process does an I/O
+> and if it is based on PAGE_SIZE things can go south.  I think this is
+> not an issue with THP, so maybe it's possible with boot-time page selection?
 
-To reduce lock overhead, we load the XArray value locklessly first
-and keep the walk state. Only perform a locked erase if a entry is
-found, thereby minimizing unnecessary XArray lock acquisitions.
+THP is a different beast and has different semantics: the base page size 
+doesn't change: the result of getpagesize() is unmodified ("transparent").
 
-Below tests are done with a 4G brd SWAP device with BLK_FEAT_SYNCHRONOUS
-flag dropped to simulate fast SSD device, with zswap enabled and on a 32
-core system:
+One would have to emulate for a given user space process a different 
+page size ... and Ryan can likely tell some stories about that.
 
-Swapin of 4G mixed zero and 0x1 filled pages (avg of 12 test run):
-Before:         After (-1.6%):
-2315237 us      2277721 us
+Not that I consider it reasonable to have dynamic page sizes in the 
+kernel and then try emulating a different one for all user space.
 
-Swapin of 2G 0x1 filled pages (avg of 24 test run):
-Before:         After (-0.5%):
-4623561 us      4600406 us
-
-Build linux kernel test with 2G memory cgroup limit (avg of 12 test
-run, make -j32):
-Before:         After (-0.2%):
-1334.35s        1331.63s
-
-Swapin of 2G 0x1 filled pages, but zswap disabled (avg of 24 test run):
-Before:         After (+0.0%):
-2513837 us      2514437 us
-
-zswap enabled tests are a little bit faster, zswap disabled case are
-identical.
-
-Suggested-by: Yosry Ahmed <yosryahmed@google.com>
-Signed-off-by: Kairui Song <kasong@tencent.com>
-
----
-
-A previous patch [1] has been Acked and now in mm-unstable, that is a
-valid optimization on its own. This patch is Suggested-by Yosry during
-discussion. This patch is for a bit different cases (zswap disabled vs
-zswap enabled), so instead of a V2, I sent this as a incremental
-optimization and also tested it a little bit differently.
-
-Link:
-https://lore.kernel.org/linux-mm/20241011171950.62684-1-ryncsn@gmail.com/ [1]
-
- mm/zswap.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/mm/zswap.c b/mm/zswap.c
-index f6316b66fb23..a5ba80ac8861 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1641,12 +1641,21 @@ void zswap_invalidate(swp_entry_t swp)
- 	struct xarray *tree = swap_zswap_tree(swp);
- 	struct zswap_entry *entry;
- 
-+	XA_STATE(xas, tree, offset);
-+
- 	if (xa_empty(tree))
- 		return;
- 
--	entry = xa_erase(tree, offset);
--	if (entry)
-+	rcu_read_lock();
-+	entry = xas_load(&xas);
-+	if (entry) {
-+		xas_lock(&xas);
-+		WARN_ON_ONCE(xas_reload(&xas) != entry);
-+		xas_store(&xas, NULL);
-+		xas_unlock(&xas);
- 		zswap_entry_free(entry);
-+	}
-+	rcu_read_unlock();
- }
- 
- int zswap_swapon(int type, unsigned long nr_pages)
 -- 
-2.47.0
+Cheers,
+
+David / dhildenb
 
 
