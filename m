@@ -1,119 +1,111 @@
-Return-Path: <linux-kernel+bounces-372357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3252D9A47A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:05:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B77E9A47A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D735F1F23D26
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:05:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B985DB2492E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AD6205AA5;
-	Fri, 18 Oct 2024 20:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8CC205ACD;
+	Fri, 18 Oct 2024 20:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDeFzvJF"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nywpOx8e"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63C8136341;
-	Fri, 18 Oct 2024 20:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A02204F86
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729281927; cv=none; b=L3XDoFCGrGuATiZID8c952Xfi40Shoi1VUaYT0AaOeOoifHvGm6waQqLM3QbXm3y21pgFBT3v3xOQWmjKZNwCVz9A9j2tILTls7v1j0WHc42XGg7wwiNDitffKR5IfYh0ysb+O0u3coRvNbVY1LIclyR3xAy1ye3Wbc26Lp/844=
+	t=1729281995; cv=none; b=eGbVH2U6ALc+zaQied0Of/0Xpn9jso8Zykbkabv6BfmFIjjp5iDsZPbhoDj3ucwzmTBHsFWmfX88gtIx9tJm8T+puOOOBunsJfn209N2YQYlfNBmudqMOn3GhRjSTa14IRrIpMmI1BgEw91mRmd/J0EKvMO3ETFS+4TFBliRqSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729281927; c=relaxed/simple;
-	bh=M6Qw0hensInEvU8qqsRIko64nHxLMINN0V3biCVjq+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZTJ67dX/Q4mtt8UyHOsa4uNRxQGaPJ044iKXKyi6s/Sz/yOz+4jA9hyRgmiArLV0YQDnjKvaGTP47SBuoXF83PceFc5ex1nF9vQwT7/jkokaviLZayILx20p5jKTl3VeezsF5o4lplxdxR5AaOvzYEHRYnGMZfMuS+pmIkBxgFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDeFzvJF; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cbcd71012so23323355ad.3;
-        Fri, 18 Oct 2024 13:05:25 -0700 (PDT)
+	s=arc-20240116; t=1729281995; c=relaxed/simple;
+	bh=/51xfUSYsUDnsKHUISmuqpPXDOu6WONAfwM4tgenvn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J4h+k4d2AqyYpDKyfLFMyfWo3kQVztjQDdfr1gPNjDUvbraK9ert53XpG87K5HPhkK4pyRWXetrnZkyr84JtLazeeXFurmRK1I54EUxXE6uoGXCKURuqaf8Afu6qALBtF9E3L3T6pdElAzdI+GORk69ewsSGCuV4gZ8eJ3sZQ34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nywpOx8e; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb584a8f81so30116381fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:06:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729281925; x=1729886725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UxlZvp9Wi25P9voOrnrR/TE75KeagoCWsKqvLGdRZjw=;
-        b=GDeFzvJFJDer+3uSXMUH15C4UkcYbwe4Q3yOwgU4EcYM4xuLggPSk5FvCP987tdggj
-         dmTaHMvenTtMOoz2nVzdRl+tKKYhI9w4ueEIFmepBnc4Kkqo/PbjqtCpi8U6GLZ/MY6/
-         /Ha4TqdVV68T/baY5Rdat1Yt+MQOtApsgpMltkqfohRKOkYncqBQFhpO2z7x58qbBZCh
-         s9epUdT67et8iHJ0OD1UZIWyfwPzjVPZXotPJSIMh8YdnThLdki/opbFo751fVSbuFhV
-         SWlrylkdOjo7dh1YGhGMu2jIUky3A3yVkpcVEeduMc0Y1asrnXZgBcJ7lvwzGU8RSuuD
-         2uyw==
+        d=linaro.org; s=google; t=1729281990; x=1729886790; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3qqeaSgLM4urcEuCSV+5q6Je9Wo3+AKbBRfKiBnVfLY=;
+        b=nywpOx8e4pbIc417fKxkCToqytuZdvTH4Qpg2rhfsdXfZ81/dgLdX256X3TZHNKQyA
+         Nc6d2ElJAzjDUT42B1HEJnRtQPYTLPaNnse0wW1EpzKh6FdYeNZu0JLbQePN5pEsIt/c
+         XZZpVi3eZzufQjGeoH9pkQTBiiO+zxnWGInIXWVa805r+9L27RMqNBxwtozMepc9UPCi
+         y7zUjJ/En96L+nYNnnEntdoGdVgIJAkNVMOq3U7KwdULaz6jOyQmdwamv/kA88eWVTee
+         GY/uEylxhOlym6G2urH3xVv3eqHhuFiPC4vPVO0AGg08NxaG/NzIzQDw4Hej8WN9cQdS
+         eBmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729281925; x=1729886725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UxlZvp9Wi25P9voOrnrR/TE75KeagoCWsKqvLGdRZjw=;
-        b=sOtYZgJdHcWXmBkOufdk5KQ0gy67mRm8RuXn02ONWWmDnrkCGvwydPIMk4ALkNcUYl
-         4MzSW6Y5jQ636/+zsRw1Y0ZoXsPyOztS2kcvl9BPieM4nfeOzBpwaGYcNZqzt6jdIgzI
-         KaTZhGi0OVO7z0o4JHEAtB3r9U5JF6roRgd1gBAvOsfcWk2o6I6K8zI3+dh+U7IaNhir
-         Lr1cIEXvhDU850jR0+ktjEimxt8ODpfwdBtAtAAC3o5xiS64XOdSRM7V/zoQNcTtaCDl
-         /A9xr3lP0RFAbU6nAJ8rrNhVeVQQUFlPbUYAAqi+Dg3qkx2BqSuOI2EH8SSZDaED0qQn
-         CxqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcR4iNT486gvJG/XSAWUTYHq+d46BDonRhjpcWsrRIaJ/Z4QmDy9RjpOhu+a/wNdu5RoyN+kal7XVx0W0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye7vGR7gUzXPnCWh1Gnk8XwSnAjh6GI+wS+05Am8u8zWdEiTs2
-	HV3P4ttaD3PpHE+0CssL//3G6I79tyFpicGQVUMMJ5KLGt9g9MO4zHRWRQ==
-X-Google-Smtp-Source: AGHT+IFijJxG1EEv3N6T0D/QUuWjjL9BwDpqYNHyAhqzL/F8lTjXxHKnZfAIc6Mk8dfNTuweK8zvXQ==
-X-Received: by 2002:a17:902:f641:b0:20b:6918:30b5 with SMTP id d9443c01a7336-20e5a90624cmr50152535ad.41.1729281924569;
-        Fri, 18 Oct 2024 13:05:24 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8f98b2sm16432065ad.209.2024.10.18.13.05.23
+        d=1e100.net; s=20230601; t=1729281990; x=1729886790;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3qqeaSgLM4urcEuCSV+5q6Je9Wo3+AKbBRfKiBnVfLY=;
+        b=dBAUe6Qk2ErovIVtiSzZAsC2+umprS355xoojBvsfSSNFwR785fuRIo+IVfKH66EyV
+         gQupcYlBTgvNQdaT9D6WolDEveGCwFrN4uiP/Xwz6E1FTETfM4m/9KKpE9msLBpRw8K6
+         +4dxewawco3iKrNJ6KvVDOxqRLlJWzCRWr9CJKVLe8e2b2ujVaJYnMMGssepUwQ9YPGi
+         NUFvCCV+4cIFy8mXja5kLudrS8U9QccBnyqqp70wllWuYh80dduNxf6Fv91+UPuidJxt
+         CeWBb/Gyl+lQg4f14Od75YMkGSIb347LSZYyyDnt9Kl1KR20J18vWXQbExgzoh3P3F6a
+         Udcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMmwC8Zr1cRBGH9cIV5fDQMNCVfn6n0E1if3kVA7hzTCWU0w5V7ELPZNLKZS85ID2wxaJmH8Kg3wIkKrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRCeu63ncGFEeuTrmK9F4ffFmW049B6SIylSyk0i7mM8P7k8jw
+	PbBbq65Lr2ywQ6QswLv3fYUXs2ZKE3RkWcqB6KcdcWi87/6foYKIlNdnbqGpXAE=
+X-Google-Smtp-Source: AGHT+IEYyQy2Sr1B6koAkEX9lbp8dGLEG2De1kXaGvAZ20tI3Rvf2hBstWggqiGwZuP1BLYC4EzDUw==
+X-Received: by 2002:a2e:be84:0:b0:2fa:bb65:801f with SMTP id 38308e7fff4ca-2fb82ea2494mr22593721fa.10.1729281990154;
+        Fri, 18 Oct 2024 13:06:30 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb80a08906sm2878401fa.106.2024.10.18.13.06.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 13:05:24 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] net: mv643xx: use ethtool_puts
-Date: Fri, 18 Oct 2024 13:05:22 -0700
-Message-ID: <20241018200522.12506-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        Fri, 18 Oct 2024 13:06:28 -0700 (PDT)
+Date: Fri, 18 Oct 2024 23:06:26 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Stephen Boyd <sboyd@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 01/11] clk: qcom: Update the support for alpha mode
+ configuration
+Message-ID: <nzzijnfy4wy4ts46c55rokvgwsxc4kytro743xqoecyjpjosyu@hajjkkdw2xmg>
+References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
+ <20241019-qcs615-mm-clockcontroller-v1-1-4cfb96d779ae@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241019-qcs615-mm-clockcontroller-v1-1-4cfb96d779ae@quicinc.com>
 
-Allows simplifying get_strings and avoids manual pointer manipulation.
+On Sat, Oct 19, 2024 at 12:45:37AM +0530, Taniya Das wrote:
+> The alpha_en_mask and alpha_mode_mask must be applied within the
+> clk_alpha_pll_configure() function to ensure proper configuration of
+> the alpha mode of the PLL.
+> 
+> Fixes: c45ae598fc16 ("clk: qcom: support for alpha mode configuration")
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/marvell/mv643xx_eth.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/mv643xx_eth.c b/drivers/net/ethernet/marvell/mv643xx_eth.c
-index 4abd3ebcdbd6..a06048719e84 100644
---- a/drivers/net/ethernet/marvell/mv643xx_eth.c
-+++ b/drivers/net/ethernet/marvell/mv643xx_eth.c
-@@ -1698,13 +1698,9 @@ static void mv643xx_eth_get_strings(struct net_device *dev,
- {
- 	int i;
- 
--	if (stringset == ETH_SS_STATS) {
--		for (i = 0; i < ARRAY_SIZE(mv643xx_eth_stats); i++) {
--			memcpy(data + i * ETH_GSTRING_LEN,
--				mv643xx_eth_stats[i].stat_string,
--				ETH_GSTRING_LEN);
--		}
--	}
-+	if (stringset == ETH_SS_STATS)
-+		for (i = 0; i < ARRAY_SIZE(mv643xx_eth_stats); i++)
-+			ethtool_puts(&data, mv643xx_eth_stats[i].stat_string);
- }
- 
- static void mv643xx_eth_get_ethtool_stats(struct net_device *dev,
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 -- 
-2.47.0
-
+With best wishes
+Dmitry
 
