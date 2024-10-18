@@ -1,146 +1,116 @@
-Return-Path: <linux-kernel+bounces-371578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FE99A3CD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:10:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640169A3CDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F45C1C2546A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:10:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931901C25CE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFCF1D7E4C;
-	Fri, 18 Oct 2024 11:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F3720264A;
+	Fri, 18 Oct 2024 11:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="M9cQWn5S"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="CnXiQb3C"
+Received: from mr85p00im-ztdg06011101.me.com (mr85p00im-ztdg06011101.me.com [17.58.23.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA3620262E;
-	Fri, 18 Oct 2024 11:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13079202625
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729249690; cv=none; b=cbJDSCXQS52MqtXpL7Cflv7kVXRQnyBWyODqbiyqX8k+uy7WIbEvhFKKxK11jCJRGIHfMKamamGTdDy3YN2nPHh+2/VykVVtPQH3EK9Aw0d6n7fW5XjN0Ycffc0w1jpgmtGcpnjWi7Yqu3vtExiWURKccFN2IzrDskgBgq78MmI=
+	t=1729249718; cv=none; b=BystRihcibzT4A4vnIK9D6/XAYVP2EDaHQxtOWvEc8xVJKxBJUDfniwybsrZd2TZP9ql8UnBDFNMUAZrYTjf/ZcwUxmWMfFfUpm6vd/K8AAzCFw8guGfqx8eV5xRM1upgzIZTYyTlQQqCpqD01V/Q/oExsLcDkTBZ/sNOXFzEo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729249690; c=relaxed/simple;
-	bh=roZL7Fo4RQ8XJx9gSRchXoZs7X/th6UYrkxC2F/4bsc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jWlWNaBJk2gysmPL9w6oVm5b1emcZ/StAERgcg1mA6hLrlvPElSEx+q0Wf4ZJ6zYYcbp+rq4YR+M8zve0H4/+zq4o6d2ZDAeRyXdwiYZMoUikBXaLy0bg2TNwPMbB0/1O5cEDmFpxsiOaWbegd3ypv0sLm6QsYQ71cOblajLi9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=M9cQWn5S; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 3F9A3C000A;
-	Fri, 18 Oct 2024 14:07:56 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 3F9A3C000A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
-	t=1729249676; bh=mN9Vl+iYWRUJkFg62eJEHwY5V2j4me6G+dqs5tVdAuk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=M9cQWn5S7OaZp80mCs74SdtvBJM+T8EMXz0gIsQmgppcQhpzak/1W0+BXvPK53cP0
-	 hjPGqiXR7hZu0vIB/EOSgkvLkKLMnPwMVb1XWXQqswZrAfYs7qCOkZOPN2MKp3ZsV7
-	 Rva8QWgbc/bosCWL355g5/nSJ8FPW0lqJi+GzGokoxmX0YQccmuyCR7CDhUU5O4hIq
-	 M+MO2KBJ5qDF/6LkNhXql5SwkNOxY7akFPOihkzn8gFEL7WEqGOFhiJLdzIYNxFbKy
-	 ZzYEyTGCU2ZFhfFSa/xwF+Ywv5SiHVWvqFkARdSQK7iuHtJocFagYDufX97oDGRr5O
-	 LvvUVqT3PgdxA==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Fri, 18 Oct 2024 14:07:56 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (10.0.246.97) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.4; Fri, 18 Oct 2024 14:07:54 +0300
-From: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
-To: Liam Girdwood <lgirdwood@gmail.com>
-CC: Vitaliy Shevtsov <v.shevtsov@maxima.ru>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Seven Lee
-	<wtli@nuvoton.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>, Andy Shevchenko
-	<andy.shevchenko@gmail.com>, <linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] ASoC: nau8821: check regmap_raw_read/regmap_raw_write for failure
-Date: Fri, 18 Oct 2024 16:07:41 +0500
-Message-ID: <20241018110743.18786-1-v.shevtsov@maxima.ru>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1729249718; c=relaxed/simple;
+	bh=Mxf9I4r4giEtDh12J5oq7uYcjW/h34xDjYgPAK9SPHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gobQx53Eq9eyRta8rBmo8HJ0FAB0xwtw4CnUAqz5MTlgNzKgWOX/c0v81keEKUv0sI/Emeo3iSLnG0jCgd4FWyqhuCTlE87d++E0km3wk3CzZx81r4s6cClH8Zk7hbZQn3YTrd0CatUayFEzFWIgOXzUyLcy6t2Smr/w7C6G/9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=CnXiQb3C; arc=none smtp.client-ip=17.58.23.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1729249716;
+	bh=FLdIyu97O2rmgekrw7fmsFrdbuoso+fiNKTZ3MkeyjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=CnXiQb3CmsMpAs6jshES3YoWBDRKXojnEPJpxWn3PVuk91U+aWU3fuyz69BrF0x30
+	 8j9GFHFrAZrWLIsidwzOSDy4UTSZShORNvOISymOw0JJg999Jy4QH5xPF1GhHhCNYj
+	 L0cadrroj7VKbvT2ISlXaZHDvtNhbDMGkw8v8Stx5i3Uf6bN/ZWBkfu1e3yZEcMuoF
+	 mSzfRdvifdD8jdSMmmnjNLYv7S7mZYzhf/QHAlJSl7DpIS1rKqtasDGRXvF5E1hPQb
+	 AcZVyo78BQbtO29Hhqw/RA0pXsECfCqKZYqzCxqDXOREL7cAi4zZavee6Oc+knFgfP
+	 8HqYioDivvBfg==
+Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-ztdg06011101.me.com (Postfix) with ESMTPSA id C6254DA02BC;
+	Fri, 18 Oct 2024 11:08:34 +0000 (UTC)
+Message-ID: <d55840b8-4cc8-4bac-bb20-6aa155688fdb@icloud.com>
+Date: Fri, 18 Oct 2024 19:08:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-Rule-ID: 7
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188530 [Oct 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@maxima.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 40 0.3.40 cefee68357d12c80cb9cf2bdcf92256b1d238d22, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;maxima.ru:7.1.1;ksmg01.maxima.ru:7.1.1;81.200.124.61:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/18 09:34:00 #26770281
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] genirq/devres: Simplify API devm_free_irq()
+ implementation
+To: Thomas Gleixner <tglx@linutronix.de>,
+ quic_zijuhu <quic_zijuhu@quicinc.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20241017-devres_kernel_fix-v1-1-4aa0d7c4fee4@quicinc.com>
+ <87y12m8o76.ffs@tglx> <07f223e0-9a42-4637-a081-a057025e216f@icloud.com>
+ <87sest94ag.ffs@tglx> <fa7268e4-24a9-4ddb-8477-e4959a6105ad@quicinc.com>
+ <87plnx8yot.ffs@tglx>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <87plnx8yot.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: -keJ7pxBqHUTq0BPtxV2uWwON18x0bXU
+X-Proofpoint-GUID: -keJ7pxBqHUTq0BPtxV2uWwON18x0bXU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-18_06,2024-10-17_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 clxscore=1015 mlxscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 mlxlogscore=818 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2410180071
 
-The return values from both regmap_raw_read() and regmap_raw_write() are not
-checked despite they can fail. Propagate possible errors to caller.
+On 2024/10/18 18:58, Thomas Gleixner wrote:
+> On Fri, Oct 18 2024 at 17:28, quic zijuhu wrote:
+>> On 10/18/2024 4:57 PM, Thomas Gleixner wrote:
+>> if irq to free was ever requested by devm_request_irq()
+>> then both logic is exactly same.
 
-Found by Linux Verification Center (linuxtesting.org) with Svace.
+[snip]
 
-Fixes: aab1ad11d69f ("ASoC: nau8821: new driver")
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
----
- sound/soc/codecs/nau8821.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+>> if (irq is not requested by devm_request_irq() {
+>> 	warn;
+>> 	return;
+>> }
+>>
+> 
+> Ah, you are right. I thought there is a return there.
+> 
+> So you want to explain it maybe this way:
+> 
+>    If devres_destroy() does not find a matching devres entry, then
+>    devm_free_irq() emits a warning and tries to free the interrupt.
+> 
+>    That's wrong as devm_free_irq() should only undo what
+>    devm_request_irq() set up.
+> 
+>    Replace devres_destroy() with a call to devres_release() which only
+>    invokes the release function (free_irq()) in case that a matching
+>    devres entry was found.
+> 
 
-diff --git a/sound/soc/codecs/nau8821.c b/sound/soc/codecs/nau8821.c
-index de5c4db05c8f..edb95f869a4a 100644
---- a/sound/soc/codecs/nau8821.c
-+++ b/sound/soc/codecs/nau8821.c
-@@ -287,10 +287,8 @@ static int nau8821_biq_coeff_get(struct snd_kcontrol *kcontrol,
- 	if (!component->regmap)
- 		return -EINVAL;
- 
--	regmap_raw_read(component->regmap, NAU8821_R21_BIQ0_COF1,
-+	return regmap_raw_read(component->regmap, NAU8821_R21_BIQ0_COF1,
- 		ucontrol->value.bytes.data, params->max);
--
--	return 0;
- }
- 
- static int nau8821_biq_coeff_put(struct snd_kcontrol *kcontrol,
-@@ -299,6 +297,7 @@ static int nau8821_biq_coeff_put(struct snd_kcontrol *kcontrol,
- 	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
- 	struct soc_bytes_ext *params = (void *)kcontrol->private_value;
- 	void *data;
-+	int ret;
- 
- 	if (!component->regmap)
- 		return -EINVAL;
-@@ -308,12 +307,12 @@ static int nau8821_biq_coeff_put(struct snd_kcontrol *kcontrol,
- 	if (!data)
- 		return -ENOMEM;
- 
--	regmap_raw_write(component->regmap, NAU8821_R21_BIQ0_COF1,
-+	ret = regmap_raw_write(component->regmap, NAU8821_R21_BIQ0_COF1,
- 		data, params->max);
- 
- 	kfree(data);
- 
--	return 0;
-+	return ret;
- }
- 
- static const char * const nau8821_adc_decimation[] = {
--- 
-2.46.2
+thank you. good proposal, let me update commit base on it and send v2.
+
+> Or something like that.
+> 
+> Thanks,
+> 
+>         tglx
 
 
