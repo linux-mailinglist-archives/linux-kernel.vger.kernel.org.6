@@ -1,119 +1,103 @@
-Return-Path: <linux-kernel+bounces-372558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB489A4A4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:51:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDAE9A4A4C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2599B1F23D97
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:51:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADBEB1F23BEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB473191F90;
-	Fri, 18 Oct 2024 23:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12DD1917E9;
+	Fri, 18 Oct 2024 23:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FTtdqR2y"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7F41917FF;
-	Fri, 18 Oct 2024 23:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="s8lYF/8O"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEDA18C93C
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 23:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729295455; cv=none; b=em/U6z9vZnAat0+BGnqK6MDj7ChVS1Cxa2dEAhbx1I3X1QkV3PgCuZxliXtOdUVfZLx5eZO++PxrK5sCZF/i+fUuffaaNXLNg7Af9PIOStFpBSGak84vEG1MrVIFLgpN9YwrfZ5BuP8XD7CdlvDlHUeWGSoovV/QKb1W+3s/cpk=
+	t=1729295534; cv=none; b=gP8qLlrnF0NaAYlIvwXI3xrlbj+2d1an/0qxmvmcUQGSILXRJgljU41gBmPns4BjadAdN+B+EWmCOTXhuXC2UP44Nt1ZM0H88nnJqFIG7vCrboXatbIdNWC+Kax9mni/hb4PSkzkZkHFOCAp86XQdlzJ6zjgCFJnXeiJiLZRrMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729295455; c=relaxed/simple;
-	bh=ft9hCgQsW14cHdeTUVHiNnqMjJ68KAMuvXzxZov2Kjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qrdJUxcwqpEJ7lFaCbiMlP7YTYdkps0VU831/NnOg8cdN3jCBzwNieff5OOqA533nfQzV8VmNYrFW2/IBvY2r4nsRmyJ1dn4LdwykXOjeGptWLME1nsiRi4hHKJN1IfdCzYdgmRSsOBAgChdyToaoOHOV+wXiE4W7L9+tLOtqYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FTtdqR2y; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea7e250c54so1921647a12.0;
-        Fri, 18 Oct 2024 16:50:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729295452; x=1729900252; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fQIgcwOpF8GpQsLgj2FtogDbWZde+y8RaY8eMvCGFCQ=;
-        b=FTtdqR2yrvc420kLytEjYb45Cv1Kr8Q2n31Ee5g/M1+mxwOEctercgfPJAGKy1bWCJ
-         iTXvZ1+JTDOaK9Cuh28ttLP8yiST3qB7IPHrI5LqeI0XZgIrBOz1EL8fkOVDRnKNWd7O
-         q9XEbsagoPZ4gIuU/v5sNuJEGK4NFat/RRx+7eO8oPYLngklKtbb0gkPbByD03nvnnNk
-         jFyZSn9ez6jq8raqOBAvAFgDooTl01GhBT9HOBxZMYqsm4GRPRhZ85dKeETxWes45t2o
-         QmzWNarvblHwhGj+rHtiLr7eK+gR5ysqJJDCdnqKRmoW8kg6hSnuo1NK7JFRBTvoufZq
-         y8Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729295452; x=1729900252;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fQIgcwOpF8GpQsLgj2FtogDbWZde+y8RaY8eMvCGFCQ=;
-        b=qGOZC11nP5aL7cpmF715bIM4WucnLQgbPKAck80s2UM/RqnEBXzfdaX+UQeJtLVS3V
-         DRJW63y7klLaMa081Y/B1E2bVdOldPYv9H7I5J852il6VYoaH2pNEeCxGZCGCtAD9OoY
-         4A9OlzB+DJiGhap+3H1vJHwl/rMRJEvGSpULNV4+ciVgCDKoKscTb6lG7ggyS9bJYFBn
-         vHyDnNE3HoRJnF7PP1Tg9czB8dgb+rUVWRN3UqwT28HzvEta/TapvDs7iqr/8Uce6fRt
-         luO+I7hbdoFONcD+V5eNiqtSEQzUoulfPa++2BBV/+DU2NetuTIz2hB23Kfz0G3w1c2z
-         rvag==
-X-Forwarded-Encrypted: i=1; AJvYcCW4u6YSoaBWoLXrMROcXI37Qyq6ud9tNa8cw3DduQXxrYEx3thS3ldL1P6hvuHk5vS4cF6wJaVoiUvYrvIMtZ0=@vger.kernel.org, AJvYcCWokWc9fimsYLiZT8v/BxVHiCVSlKC/0peghyQ/kdkBTIrSWXSS80EBG8cPKn1Td+JcQZvuu6kYgKDr2IgZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxldpgu843Wf3Gk3JwtJzg3g/mSkvOskwDWLad7i7ukKb0QBwaK
-	QmMa11mxW1RnKcUpur8xvjF6GyYRMC4uJmWeyfaf2J0ghVL91pWO
-X-Google-Smtp-Source: AGHT+IFE9JK6B3y21JfHyOThlSgy/691TKbKrXY/mee9sy3R9mQV71UR397nafsW1x5D8JSGyjZQmw==
-X-Received: by 2002:a05:6a20:ac43:b0:1d9:9c6:5e7f with SMTP id adf61e73a8af0-1d92c49fa1fmr5518445637.4.1729295452467;
-        Fri, 18 Oct 2024 16:50:52 -0700 (PDT)
-Received: from mail.google.com (125-239-144-11-fibre.sparkbb.co.nz. [125.239.144.11])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea34b4b78sm2035852b3a.218.2024.10.18.16.50.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 16:50:52 -0700 (PDT)
-Date: Sat, 19 Oct 2024 12:50:43 +1300
-From: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-	naveen@kernel.org, maddy@linux.ibm.com, arnd@arndb.de,
-	chentao@kylinos.cn, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] powerpc/spufs: Replace snprintf() with the safer
- scnprintf() variant
-Message-ID: <ZxL0U6bziCxhySUO@mail.google.com>
-References: <ZxIcI0QRFGZLCNRl@mail.google.com>
- <20241018153843.GJ29862@gate.crashing.org>
+	s=arc-20240116; t=1729295534; c=relaxed/simple;
+	bh=OxY9Q1tiKFv9F6E1b4/6a8e/ANMJ02eAI6eokcUakNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Z9hhNTiSqO4DClOX3PM9pWZi2SMnA7fex1NpwOvnRTu1WzDPiw8gzrje3/t3gl7qPmsvbAe+/nq8njziBGF39K3G/5VknIGh3BlekaNyKttksU1LfzcqNLARjUSo/qd4rOHrgB6ewT/R3zEZSTocC3MTKnSpVxV6vuOSiC8WVGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=s8lYF/8O; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 5396514C1E1;
+	Sat, 19 Oct 2024 01:52:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1729295523;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=YLWxW+rt13XcBnLClpIjcUjwEi7QRMT/CGkxYg0YTAE=;
+	b=s8lYF/8OC5lZXqK4Tvf7eNmu76rO4oI9SEO5FT4EcsafQPkSZl7U5cCEG5zEqC0oZCmaw3
+	biYs0EDEE9D3JhMNHsCR3/iwJ+Uoyi8SlFPRxxl7cLdXF5+19lzPk7uvBSlxKsbiFf34nQ
+	C4RM7FnhQxKCTd78APZWxLYzX21JTYkOBK5P9d2x/i2dC9FoMJLTR/Skf16CivP598kytU
+	xGPE3N3avdo7G0ImBMFli6pnehhTBGVlsghOcue2ffhmzNYF9ekL/dQIUBNhc0+RX530Z7
+	4eBxl5FlT9JPlNmKylRqhCxUu04Ct1zIBp9pthdJ0YFdxkYbL1gXUFyJhss4dQ==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id e8b7294a;
+	Fri, 18 Oct 2024 23:51:59 +0000 (UTC)
+Date: Sat, 19 Oct 2024 08:51:44 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Pedro Falcato <pedro.falcato@gmail.com>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: [GIT PULL] 9p fixes for 6.12-rc4
+Message-ID: <ZxL0kMXLDng3Kw_V@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241018153843.GJ29862@gate.crashing.org>
 
-On Fri, Oct 18, 2024 at 10:38:43AM -0500, Segher Boessenkool wrote:
-> On Fri, Oct 18, 2024 at 09:28:19PM +1300, Paulo Miguel Almeida wrote:
-> > The C99 standard specifies that {v}snprintf() returns the length of the
-> > data that *would have been* written if there were enough space.
-> 
-> Not including the trailing zero byte, and it can also return negative if
-> there was an encoding error.  Yes.
-> 
-> Not that this matters at all for your patch, so why mention it?
-> 
-> 
-> Segher
+The following changes since commit 98f7e32f20d28ec452afb208f9cffc08448a2652:
 
-Thanks for taking the time to review this patch.
+  Linux 6.11 (2024-09-15 16:57:56 +0200)
 
-Is the objection with the change in itself or just the commit message?
+are available in the Git repository at:
 
-If it's the later, I'm happy to tweak it to what you would like see.
+  https://github.com/martinetd/linux tags/9p-for-6.12-rc4
 
-I added that bit for context so the motivation behind the preference for
-scnprintf is clear, otherwise one would ask me why :)
+for you to fetch changes up to 79efebae4afc2221fa814c3cae001bede66ab259:
 
-We are phasing out snprint utilisations in which the result is being
-used [1]. One of possible ways this *might* take form is that in near
-future snprint will have it return void.
+  9p: Avoid creating multiple slab caches with the same name (2024-09-23 05:51:27 +0900)
 
-[1] https://github.com/KSPP/linux/issues/105#issuecomment-2421244722
+----------------------------------------------------------------
+Mashed-up update that I sat on too long:
 
-- Paulo A.
+- fix for multiple slabs created with the same name
+- enable multipage folios
+- theorical fix to also look for opened fids by inode if none
+was found by dentry
+
+----------------------------------------------------------------
+David Howells (1):
+      9p: Enable multipage folios
+
+Dominique Martinet (1):
+      9p: v9fs_fid_find: also lookup by inode if not found dentry
+
+Pedro Falcato (1):
+      9p: Avoid creating multiple slab caches with the same name
+
+ fs/9p/fid.c       |  5 ++---
+ fs/9p/vfs_inode.c |  1 +
+ net/9p/client.c   | 10 +++++++++-
+ 3 files changed, 12 insertions(+), 4 deletions(-)
+
+-- 
+Dominique Martinet | Asmadeus
 
