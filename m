@@ -1,141 +1,108 @@
-Return-Path: <linux-kernel+bounces-371687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80FF9A3E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:41:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C18FE9A3EA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51363B20F1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:41:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816D7284F35
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE1826AD9;
-	Fri, 18 Oct 2024 12:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733F94207A;
+	Fri, 18 Oct 2024 12:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Y7MEqk8S"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="chjZEcYH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B2D3C17
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4638922EEF;
+	Fri, 18 Oct 2024 12:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729255299; cv=none; b=NwO2S1mPbisllW9jEgaWDqEW/JO6+r5LFOckoojJP7/WuFBxU9+IDpoZolc/cA87dw/BHLpa+QaiM82ux5VBIBGxkU8ecL+Vh9jfjLLEJGTsGtaPeaoDd10Jf13UetExQzRBwbGRf//lmlrnTuBgQClhZo+cYKh544ySLERSKX4=
+	t=1729255317; cv=none; b=J1B/XWJcB5evG1Ef6tjxZdj4CdM6RcwWEjgATw+VM7AU3uzfncbUaf1IYw2gbI+8lPt3VcLaGgujIr3urwTI903Z5s37S3WsqAHKsRdobtNfqDpkMHqkEkeHMMyYY+y6vDATJ3KpwFPwqyGIJXoGUjiK0RCP0Eh0aUBbgDeRgRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729255299; c=relaxed/simple;
-	bh=ldk81eBVBGKVUalDPu3BKnKqpZv8ZtoW0LkiflSsqmg=;
+	s=arc-20240116; t=1729255317; c=relaxed/simple;
+	bh=fWQ1C019OrLL79GjgJMechJSkH86Mhtqt/rQQpqf5W0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UlEX+IMAikEtthSv9ys/1j13djtOAo7Vfmb3elMMPhdUoWd02ISWh4mIGm9FTkfeNPvx1iOc4oNyZOWv29g7z02lvl9fgKva9XDzBhtgE2RgGwJzjNWPXy/Xtd6d+hF8LC9HqFnDOUrUuWX7T8Z/JdigO5uTPuVt9PznYdafNU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Y7MEqk8S; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5441240E021A;
-	Fri, 18 Oct 2024 12:41:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 7dgNbHGzmzXz; Fri, 18 Oct 2024 12:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729255291; bh=BlfrhmfeGCduIrCHopmZetJIS8sbiBrVD0sW0uTur4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y7MEqk8Szo70xVWAV+6wJDhcbtxKeqEFsLmNkq5gOkA7Ic/bRXM6AGWhahq0LLbwG
-	 wsEA9HQ2+a9+yqGRE6nvaCXMbjRt7HBIwJS9ttRKMp1YbHHyVrLXvtXRYO9o1S2wjO
-	 eIKzzUwwkgIkGxS4c/dqLfeQNIQidfa7opUdUehH4OxpB9Jd+VdCA7SHew614KE0Lm
-	 NyKfN9RtsRT8SSXVK94jGZU+rmCDHfzMu5MJ1tyGpPjDwh8g23J/AVAUQ5T0PuTo/n
-	 /DIgV9th4S5rc1wkEX3JOnliRFVqnvCJ3h+1Tj5BzP1nOMb6Yc8JTUCI8TLN97OJJu
-	 YvQjSPJ+3OS+39y0TQUbhyjFhnXcDc9orWVEBLmLb8WB6sCsajOJUFNEt3vp1Y8gbh
-	 1yDqLiqrmJqp85ZSKviIABF/1Mt0h7mejI2UclUnAlMsAj4f2bGPFN6yrHA2NzTGv6
-	 vRwjmZaPDrhXJs3yE90dQP3miQGcdjVSTCYZyUJ6Wuiu4hh4JaWG23sjT0xmvTFyAU
-	 90w31PWgm5s4SbeRDi8GPV3GeXnlanmcPasElVH/xDyzZ+3OTibUz4TPTYW9eSPWgG
-	 1WiZc8n30w/1nquSGyvDPGDsId/LMpnIagbPkYRdPkqsWbIihcOBkpzfcb16YajdPI
-	 K2HqcddH/9tTtetVDRfSPYPg=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5298B40E0169;
-	Fri, 18 Oct 2024 12:41:23 +0000 (UTC)
-Date: Fri, 18 Oct 2024 14:41:18 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Subject: Re: [PATCH v3 2/8] x86/sev: Add support for the RMPREAD instruction
-Message-ID: <20241018124118.GCZxJXbvAIcEak1gue@fat_crate.local>
-References: <cover.1727709735.git.thomas.lendacky@amd.com>
- <4f9d9eac997784cd11f4243d545dd05e670b2e4c.1727709735.git.thomas.lendacky@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lU43xpJWYheGEanNH0RzmWVWGD+wGqinwxvnJZshCuQ+OSXnTO43xufgXnkd4JlX2rw3JBfDplUwXgrk4vm9ECz1S3ltePsYbd7ASpp8X1lZD1gk6Wh7S8/bNEekd88WpLAFH0f3KYvRlq5iKQSPMF+qlDS9g5BEmaqDYd0ozVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=chjZEcYH; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729255316; x=1760791316;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fWQ1C019OrLL79GjgJMechJSkH86Mhtqt/rQQpqf5W0=;
+  b=chjZEcYHKOYbXUqfwK/1TFZkFc5bTE+KHu02CzWg490tUi96wq7iNbj/
+   VV3Vxno7d/PXgPsoZIZahRQWtzajH0zU9kd2CZcyl7CTHt4gf96ivYG2+
+   KBPO36q9cxVTM9AoJ5w1Oqgzfo2jxLhFu9dWCwxlJY4uiVdrdXO/j+ulY
+   juAvG1vRq6ThxowZm61O8I/sTke4ATSGfB18nXh+WuVZYxGdfWU/SntIn
+   i+6JmStRIyAchPpB8NnhaHB9E+3oKAmos2jFogVwQX1eIDEBJ8kFBGNIy
+   ZI9o+Yp3kLprGBGZT8TNLnmi3u7ipHBczOM1fy1RUlGeuOM59PHqeB2Qn
+   A==;
+X-CSE-ConnectionGUID: J8dCpeUWTomxNV9okS+0NA==
+X-CSE-MsgGUID: EO9yxPL1TtqtTZ5ypIF2XA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28575902"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28575902"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:41:56 -0700
+X-CSE-ConnectionGUID: uEPg6B55RTadAUoAC76otA==
+X-CSE-MsgGUID: 5JoMyiv3TWmr+fcmE+QzLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="79666154"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:41:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t1mIh-00000004SnJ-1NWI;
+	Fri, 18 Oct 2024 15:41:51 +0300
+Date: Fri, 18 Oct 2024 15:41:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Yoshihiro Furudera <fj5100bi@fujitsu.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: designware: Add ACPI HID for DWAPB I2C controller
+ on Fujitsu MONAKA
+Message-ID: <ZxJXj3holsMIdnC2@smile.fi.intel.com>
+References: <20241018015826.2925075-1-fj5100bi@fujitsu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4f9d9eac997784cd11f4243d545dd05e670b2e4c.1727709735.git.thomas.lendacky@amd.com>
+In-Reply-To: <20241018015826.2925075-1-fj5100bi@fujitsu.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Sep 30, 2024 at 10:22:10AM -0500, Tom Lendacky wrote:
-> diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-> index 103a2dd6e81d..73d4f422829a 100644
-> --- a/arch/x86/virt/svm/sev.c
-> +++ b/arch/x86/virt/svm/sev.c
-> @@ -301,6 +301,17 @@ static int get_rmpentry(u64 pfn, struct rmpentry *entry)
->  {
->  	struct rmpentry_raw *e;
->  
-> +	if (cpu_feature_enabled(X86_FEATURE_RMPREAD)) {
-> +		int ret;
-> +
-> +		asm volatile(".byte 0xf2, 0x0f, 0x01, 0xfd"
-> +			     : "=a" (ret)
-> +			     : "a" (pfn << PAGE_SHIFT), "c" (entry)
-> +			     : "memory", "cc");
-> +
-> +		return ret;
-> +	}
+On Fri, Oct 18, 2024 at 01:58:26AM +0000, Yoshihiro Furudera wrote:
+> This patch enables DWAPB I2C controller support on Fujitsu MONAKA.
 
-I think this should be:
+s/This patch enables/Enable/
 
-diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-index 73d9295dd013..5500c5d64cba 100644
---- a/arch/x86/virt/svm/sev.c
-+++ b/arch/x86/virt/svm/sev.c
-@@ -303,12 +303,11 @@ static int get_rmpentry(u64 pfn, struct rmpentry *entry)
- 	struct rmpentry_raw *e;
- 
- 	if (cpu_feature_enabled(X86_FEATURE_RMPREAD)) {
--		int ret;
-+		int ret = pfn << PAGE_SHIFT;
- 
- 		asm volatile(".byte 0xf2, 0x0f, 0x01, 0xfd"
--			     : "=a" (ret)
--			     : "a" (pfn << PAGE_SHIFT), "c" (entry)
--			     : "memory", "cc");
-+			     : "+a" (ret), "+c" (entry)
-+			     :: "memory", "cc");
- 
- 		return ret;
- 	}
+Also please give more details:
+1) is this ID already present in the wild
+   (in the products that one may just go and buy)?
+if so, mention the example of the product.
 
-because "The RCX register provides the effective address of a 16-byte data
-structure into which the RMP state is written."
+2) provide an excerpt from DSDT for the Device object that uses this _HID.
 
-So your %rcx is both an input and an output operand and you need to do the "+"
-thing here too for that.
+Otherwise the vendor ID is legit [1] and code wise patch is okay.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Same for %rax.
+[1]: https://uefi.org/ACPI_ID_List?acpi_search=fuji
 
 -- 
-Regards/Gruss,
-    Boris.
+With Best Regards,
+Andy Shevchenko
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
