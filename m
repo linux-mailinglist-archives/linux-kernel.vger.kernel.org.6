@@ -1,106 +1,106 @@
-Return-Path: <linux-kernel+bounces-370979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5742C9A3495
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:52:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E849A3496
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78B621C20EED
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:52:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EE2B1C2353F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCAE185923;
-	Fri, 18 Oct 2024 05:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF891865E6;
+	Fri, 18 Oct 2024 05:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSKZILIW"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJETTRBP"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA0B17CA03;
-	Fri, 18 Oct 2024 05:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43221181334;
+	Fri, 18 Oct 2024 05:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729230722; cv=none; b=KXtCIBbvz5a5YcVfbArUWGP2Ox6jfepaKMV7ZZSBAhodnZ8k4E4yFSnIoLhT9CzzsRGRrj8ST948DgRraOvr8dtppnOcnAsPLsUSNx27zNN+pAweUzcV9S73h7Gmvn0XLZJAcrU2QuzrdVwX1x+nT/z9GfsgfUu8p6mZ3jS418I=
+	t=1729230723; cv=none; b=LSWxQSvb/HXY6aFzEhn0AUM/rya9PU3gS4XigkaKl3a9zOfDfCIv84f5esgedxFMgSx6cN23xc/84nPkw3M4DIQMtIKd27LOamIPdy6SCsNBl92o6Mqz5umaVUZtBR63ws6gjq5ibkXJ33ZWgq2QvBiA3phrRud8wcWdUs0NHM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729230722; c=relaxed/simple;
-	bh=sgxh/WHiLpybhwyMhrRAlSI5uIMmb/7HK3IJyI+qd5o=;
+	s=arc-20240116; t=1729230723; c=relaxed/simple;
+	bh=DN+57LIYkfMqYE05e0XVimoLNUjef/QEJKEggD7glyo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OzCGBPsUIDvBbIPuHOwQuAel9CEcOUq40huheRvHHvXs9mn+v1GQIJWl8+jEYmHFTnurL7U4ZXKCD02AGHmMirMxiR6CyH2NbnhBcpTr5yrQw1Dzb8akm2T86xqURsLMYuvcxlo8UPGnAK2zk+gynkR5D/pg6AGi0Q6YW1srPkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSKZILIW; arc=none smtp.client-ip=209.85.160.178
+	 MIME-Version; b=KrKs+dsEp4LJtbv7RDlzetYZF4/qwTUeFPLFUoM/BeZXtLn93MglW7x/UDiOq5qqS6Ka1+/driWGNMVIePCRN+stC1nb5eJYb0OonkhfF/8haSrIkPdYIvXjrs0UZnWoSsvjPJnxS8nBH2xH1DVfVLoEwciMgGBf02R6bc4hu50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UJETTRBP; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4609967ab7eso13632321cf.3;
-        Thu, 17 Oct 2024 22:52:00 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6cbd550b648so12941836d6.0;
+        Thu, 17 Oct 2024 22:52:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729230719; x=1729835519; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729230721; x=1729835521; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=eFPesI8y6EBdRmBeoozqipL4P2PTKsdAJwTlUVr16qI=;
-        b=FSKZILIWltP4hqTsKzKbjV1r1gwSITqyttyq3A3vfJ6RVkLclvQMSY67JwLq3SO3Xb
-         UHbtnudXOXTBORi0NcpYMUAyMoh7J3eA0gBpm4Pno5N1FlQpOL2b2nQiZK0ypn0G3ahA
-         e1pjgM4hQ/Azes09cESth5O43jo8mML+L9zXy9mknm86RP4vH88XjJ2E78cYurd1zAse
-         R2rj3+veC/8pVPrCo752xj9hGJPKdcl70i5xLHsmX4P0MVlM+vIL913sT8XhrddQk2jK
-         /tgigHtZJ/z36jVu9sX7OHQyiiXdgOSvZn/9wC44W6TCovhK2GovI0LZiYE4JSSbKlmq
-         FMYA==
+        bh=QchuT/lR++8UPbNj4oEBDAwX/3RB/ZO33V1EX16IN5o=;
+        b=UJETTRBPsImh33IcOMXgU0HD87VFCRpkK3C8QC+X+Gv5UNRDrHIwF02SPmy/BtSuG/
+         jgyXx0Fry+Npin4F9cjfQL23O6D8ZoWqZpN4H+xWXYYPkgvXkImxN1DzvJAbTxquXmvt
+         MHJxuN8bJ/sx1Ms05k9+iDGhNc1e5JJWoi/4O/8Y9beaPuesvSrrB0dDzQjBsAU00EC3
+         ynvwNqgZGMsfjzH39x0TNnzv0nDdq05YsjQ7+o+27LBpOMb6Osmf4JDp6lUvL7K1FCln
+         FTWNKOL37P55RFJ9wmmIGg6dzeSl+92tDA1OLUTcpyOMw+Xe+cvZtniGH0rE1rcAkFF2
+         WxUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729230719; x=1729835519;
+        d=1e100.net; s=20230601; t=1729230721; x=1729835521;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=eFPesI8y6EBdRmBeoozqipL4P2PTKsdAJwTlUVr16qI=;
-        b=GUQDo7Y7sOLt4ezHvkxV01T7ur3afjGUMhEEznvH/0y8PUUAJnYt5tQg22hwvkCPiQ
-         OqqSdTWsEjRqT4RPQwnsHspxiiHfS4HjQjvKtVoV63Y9cxEB1Dg6uTabM+6eqyO1NijS
-         DutuJJ0DL6oWXek6dmv39FEPRD+UpGo/L+t0XV0wICT9zTJAKMXUqrnAIIDMElaDEURo
-         /V3EVHIrhs1ikWCHIW44Ne+CCE3agzijgbn6nuWzZN7SXkmt/OrZ/uueTSux22fICR9C
-         T9p99pmEl2mCbjZ0fapzT8B4wjfoJhmAuL1Q0lLoUSuPtEcmtHDogPaypfUMmJang3YT
-         rXKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkGKT/gOd6D8dz8rCRXcHHcNfBXJepsMcBdLUSC0v67AFLX/1xFAuF0GrhXyIFIhHYLL3DfaOmRTFjAzo=@vger.kernel.org, AJvYcCVOv2JybUHxIbH5NDiJp+WWbWSQgkPcb4RAZZtDp3IuH/NHzcs8nBSmvStWI6vYmiZeARShn1Pca2QQda3R6Ug=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxts6tCxfaFkeXvoszwGtWWrO9DoYgnLa0hilo8mzWO+hP1apEn
-	bRe8AgslGc4KeNnKMB3MQw8+uOAK0bMICiZiaJmVLy4Y0lTJ0DnjQ5FSNw==
-X-Google-Smtp-Source: AGHT+IHNqFF39yGW5Isneevii6EHRqn159vrnCCrDQpMh6Ez0SYrHXWlQ5pzlHBj9XglnMdC0ZnZuA==
-X-Received: by 2002:ac8:5f89:0:b0:456:8b5e:bcf3 with SMTP id d75a77b69052e-460aee6fa78mr18494111cf.52.1729230719396;
-        Thu, 17 Oct 2024 22:51:59 -0700 (PDT)
+        bh=QchuT/lR++8UPbNj4oEBDAwX/3RB/ZO33V1EX16IN5o=;
+        b=L46ZqBKNzmlaEUACNl23XGtwXDqy9Jm6DYllYnDdifjgEVqEONTe/VQndL74wO1AQS
+         PfQPGcPHI2er1Uxej262ncmeOXnJNgMWZDmHq3ceE5aLru1lwtmxhTCeiQbCwLZczNro
+         HPL85arY4+I2cZl3PHAV/NvyzvJ25tgaVRtlTZMix3L+0YyLusIOdbV0Rp+xr2vWYqKg
+         S2pk0qGzZHUCmjcSID7oMxb+Rz4iGLFLV5ljXtgDZyLDFAeRDIjdAG2B52Ykl62eUEeE
+         5f3TCtUzDFqMxqdY5qlaK/hAdSkP/vCMbRaGqT1Ap2qRBhAA533xo8FKIo0+B8+n0I+j
+         OjsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSleU3AnFIHrdvYiqdUdqdDLp14ihAmmJMueKNTSSwWwOE6UNz3WZrkV9abVAra6shlXrEBUbviR7FKlz1Bw8=@vger.kernel.org, AJvYcCXlYm9gl4nDSGMZDfIgOfYM7syRaZnswF3+QeTHEV3xyf2QZJKED+37CdtTa80iY+1vKkLlgcuftgrh6T0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBN+cFEILNz85dL0RtME/oPqe/9mOrOtZNQ+HIIvZodJYCnvAw
+	3yXdCe4GcQrj1UtBU5HyVR6X5V33asiUX5GK5pURylpmbGhZABZ4
+X-Google-Smtp-Source: AGHT+IGEJRJbnUwC2varYnTCZY5Ax/RNNDnrbQ6FJH44lwQk5RS/h12JEd/gNWvr3mj/kOn4LIxLeA==
+X-Received: by 2002:a05:6214:328e:b0:6cb:ea53:9c5f with SMTP id 6a1803df08f44-6cde162e841mr16687946d6.45.1729230721071;
+        Thu, 17 Oct 2024 22:52:01 -0700 (PDT)
 Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460aea63322sm3958191cf.95.2024.10.17.22.51.58
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cde114d782sm3903866d6.46.2024.10.17.22.52.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 22:51:59 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 745721200073;
-	Fri, 18 Oct 2024 01:51:58 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Fri, 18 Oct 2024 01:51:58 -0400
-X-ME-Sender: <xms:fvcRZ8P_vPg1UuXp73lxYi_wNSNN_uDYNBENmexIMXxVbcVW2xiiUw>
-    <xme:fvcRZy80_N-LgSCjAP77JR0AI2FLYRQO3jGlMpip6ihGOadWOibY9xcn-natushKB
-    Hc9YkonD7gnBvsWLA>
-X-ME-Received: <xmr:fvcRZzTK-MmuPzkonJGrTD-ErlwPEH3SJP-Z3AAn1gr1uKbOwpKMPYbvJi8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehvddgleelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeegleejiedthedvheeggfejveefjeejkefgveff
-    ieeujefhueeigfegueehgeeggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddupdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-    dprhgtphhtthhopeguihhrkhdrsggvhhhmvgesghhmrghilhdrtghomhdprhgtphhtthho
-    pehlhihuuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehruhhsthdqfhhorhdqlh
-    hinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrhesrhgv
-    ughhrghtrdgtohhmpdhrtghpthhtoheprghirhhlihgvugesrhgvughhrghtrdgtohhmpd
-    hrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhl
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtg
-    homh
-X-ME-Proxy: <xmx:fvcRZ0s8bEkanUfa4_on2w55vCxRCVIyc61gzCrmtNr9kLZNnxcYDg>
-    <xmx:fvcRZ0fSqFzFd3dYvhmDFyNylc9XdkKU7-U_q7-rAumMgTo9-hLTDA>
-    <xmx:fvcRZ43uJw08areeSVMo-7Y47M9bUK1Jpj0xJz9SExDKd8yiA45QEA>
-    <xmx:fvcRZ4_R7Bx-pT0HdK0VK94gVJKeZGiiAo9ejsQ0ovLvI1qtcuZVIw>
-    <xmx:fvcRZ7-AoE91Mvu8Fg1nhU00mZdc18YcPizvkAk7-lEyD6Ns56R8t6yq>
+        Thu, 17 Oct 2024 22:52:00 -0700 (PDT)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfauth.phl.internal (Postfix) with ESMTP id F14DE1200071;
+	Fri, 18 Oct 2024 01:51:59 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Fri, 18 Oct 2024 01:51:59 -0400
+X-ME-Sender: <xms:f_cRZ2zn19n4nOFCFednAonMjfaAYnbpPjT5I4BeezW_lnuumHIE6g>
+    <xme:f_cRZyStXgJYsmjvuRHRul0_KFU4Tw1CPHnAA089mVLW-OZNvUfTGdGTsJvOMmMEX
+    I-W3IxynyOnbUhT_w>
+X-ME-Received: <xmr:f_cRZ4Vobt74-TfGy2070a54ln_RkOt7_4SWAXhKblY72vNDIx97axLp_kkksQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehvddguddttdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhepgeeljeeitdehvdehgefgjeevfeejjeekgfev
+    ffeiueejhfeuiefggeeuheeggefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
+    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvuddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidrug
+    gvpdhrtghpthhtohepughirhhkrdgsvghhmhgvsehgmhgrihhlrdgtohhmpdhrtghpthht
+    oheplhihuhguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhushhtqdhfohhrqd
+    hlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehr
+    vgguhhgrthdrtghomhdprhgtphhtthhopegrihhrlhhivggusehrvgguhhgrthdrtghomh
+    dprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopeifihhl
+    lheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonhhgmhgrnhesrhgvughhrghtrd
+    gtohhm
+X-ME-Proxy: <xmx:f_cRZ8hqadywWIXeKVu-7t54PhVy1Ck-VGtKNlrGM3t_M_p9k0LXuw>
+    <xmx:f_cRZ4DrdavvKfqyqErudyN0_8jTsVwFI3RI46IN8p19mMa5YFdhKQ>
+    <xmx:f_cRZ9LhsI31UwBmxZh2pIiDtsYLs9sQmE88Vj-logWR7EgS4-MFrA>
+    <xmx:f_cRZ_BjaPvPSCoCf5mnWFok8pLhLMYsaxZ2BlP6v3z85YHoRvGhcA>
+    <xmx:f_cRZwz6LB9jOqu6eIayq81on2lwPIjVITCyI_wGuI_dp7gEzcW3xenI>
 Feedback-ID: iad51458e:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 18 Oct 2024 01:51:57 -0400 (EDT)
+ 18 Oct 2024 01:51:59 -0400 (EDT)
 From: Boqun Feng <boqun.feng@gmail.com>
 To: "Thomas Gleixner" <tglx@linutronix.de>
 Cc: Dirk Behme <dirk.behme@gmail.com>,
@@ -123,9 +123,9 @@ Cc: Dirk Behme <dirk.behme@gmail.com>,
 	aliceryhl@google.com,
 	Trevor Gross <tmgross@umich.edu>,
 	Boqun Feng <boqun.feng@gmail.com>
-Subject: [POC 1/6] irq & spin_lock: Add counted interrupt disabling/enabling
-Date: Thu, 17 Oct 2024 22:51:20 -0700
-Message-ID: <20241018055125.2784186-2-boqun.feng@gmail.com>
+Subject: [POC 2/6] rust: Introduce interrupt module
+Date: Thu, 17 Oct 2024 22:51:21 -0700
+Message-ID: <20241018055125.2784186-3-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241018055125.2784186-1-boqun.feng@gmail.com>
 References: <1eaf7f61-4458-4d15-bbe6-7fd2e34723f4@app.fastmail.com>
@@ -138,327 +138,149 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently the nested interrupt disabling and enabling is present by
-_irqsave() and _irqrestore() APIs, which are relatively unsafe, for
-example:
+From: Lyude Paul <lyude@redhat.com>
 
-	<interrupts are enabled as beginning>
-	spin_lock_irqsave(l1, flag1);
-	spin_lock_irqsave(l2, flag2);
-	spin_unlock_irqrestore(l1, flags1);
-	<l2 is still held but interrupts are enabled>
-	// accesses to interrupt-disable protect data will cause races.
+This introduces a module for dealing with interrupt-disabled contexts,
+including the ability to enable and disable interrupts along with the
+ability to annotate functions as expecting that IRQs are already
+disabled on the local CPU.
 
-This is even easier to triggered with guard facilities:
+[Boqun: This is based on Lyude's work on interrupt disable abstraction,
+I port to the new local_interrupt_disable() mechanism to make it work
+as a guard type. I cannot even take the credit of this design, since
+Lyude also brought up the same idea in zulip. Anyway, this is only for
+POC purpose, and of course all bugs are mine]
 
-	unsigned long flag2;
-
-	scoped_guard(spin_lock_irqsave, l1) {
-		spin_lock_irqsave(l2, flag2);
-	}
-	// l2 locked but interrupts are enabled.
-	spin_unlock_irqrestore(l2, flag2);
-
-(Hand-to-hand locking critical sections are not uncommon for a
-fine-grained lock design)
-
-And because this unsafety, Rust cannot easily wrap the
-interrupt-disabling locks in a safe API, which complicates the design.
-
-To resolve this, introduce a new set of interrupt disabling APIs:
-
-*	local_interrupt_disalbe();
-*	local_interrupt_enable();
-
-They work like local_irq_save() and local_irq_restore() except that 1)
-the outermost local_interrupt_disable() call save the interrupt state
-into a percpu variable, so that the outermost local_interrupt_enable()
-can restore the state, and 2) a percpu counter is added to record the
-nest level of these calls, so that interrupts are not accidentally
-enabled inside the outermost critical section.
-
-Also add the corresponding spin_lock primitives: spin_lock_irq_disable()
-and spin_unlock_irq_enable(), as a result, code as follow:
-
-	spin_lock_irq_disable(l1);
-	spin_lock_irq_disable(l2);
-	spin_unlock_irq_enable(l1);
-	// Interrupts are still disabled.
-	spin_unlock_irq_enable(l2);
-
-doesn't have the issue that interrupts are accidentally enabled.
-
-This also makes the wrapper of interrupt-disabling locks on Rust easier
-to design.
-
+Co-Developed-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- include/linux/irqflags.h         | 32 +++++++++++++++++++++++++++++++-
- include/linux/irqflags_types.h   |  6 ++++++
- include/linux/spinlock.h         | 13 +++++++++++++
- include/linux/spinlock_api_smp.h | 29 +++++++++++++++++++++++++++++
- include/linux/spinlock_rt.h      | 10 ++++++++++
- kernel/locking/spinlock.c        | 16 ++++++++++++++++
- kernel/softirq.c                 |  3 +++
- 7 files changed, 108 insertions(+), 1 deletion(-)
+ rust/helpers/helpers.c   |  1 +
+ rust/helpers/interrupt.c | 18 +++++++++++
+ rust/kernel/interrupt.rs | 64 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs       |  1 +
+ 4 files changed, 84 insertions(+)
+ create mode 100644 rust/helpers/interrupt.c
+ create mode 100644 rust/kernel/interrupt.rs
 
-diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index 3f003d5fde53..7840f326514b 100644
---- a/include/linux/irqflags.h
-+++ b/include/linux/irqflags.h
-@@ -225,7 +225,6 @@ extern void warn_bogus_irq_restore(void);
- 		raw_safe_halt();		\
- 	} while (0)
- 
--
- #else /* !CONFIG_TRACE_IRQFLAGS */
- 
- #define local_irq_enable()	do { raw_local_irq_enable(); } while (0)
-@@ -254,6 +253,37 @@ extern void warn_bogus_irq_restore(void);
- #define irqs_disabled()	raw_irqs_disabled()
- #endif /* CONFIG_TRACE_IRQFLAGS_SUPPORT */
- 
-+DECLARE_PER_CPU(struct interrupt_disable_state, local_interrupt_disable_state);
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index 30f40149f3a9..f6e5b33eaff8 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -12,6 +12,7 @@
+ #include "build_assert.c"
+ #include "build_bug.c"
+ #include "err.c"
++#include "interrupt.c"
+ #include "kunit.c"
+ #include "mutex.c"
+ #include "page.c"
+diff --git a/rust/helpers/interrupt.c b/rust/helpers/interrupt.c
+new file mode 100644
+index 000000000000..e58da42916da
+--- /dev/null
++++ b/rust/helpers/interrupt.c
+@@ -0,0 +1,18 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+static inline void local_interrupt_disable(void)
-+{
-+	unsigned long flags;
-+	long new_count;
++#include <linux/irqflags.h>
 +
-+	local_irq_save(flags);
-+
-+	new_count = raw_cpu_inc_return(local_interrupt_disable_state.count);
-+
-+	if (new_count == 1)
-+		raw_cpu_write(local_interrupt_disable_state.flags, flags);
-+}
-+
-+static inline void local_interrupt_enable(void)
-+{
-+	long new_count;
-+
-+	new_count = raw_cpu_dec_return(local_interrupt_disable_state.count);
-+
-+	if (new_count == 0) {
-+		unsigned long flags;
-+
-+		flags = raw_cpu_read(local_interrupt_disable_state.flags);
-+		local_irq_restore(flags);
-+	} else if (unlikely(new_count < 0)) {
-+		/* XXX: BUG() here? */
-+	}
-+}
-+
- #define irqs_disabled_flags(flags) raw_irqs_disabled_flags(flags)
- 
- DEFINE_LOCK_GUARD_0(irq, local_irq_disable(), local_irq_enable())
-diff --git a/include/linux/irqflags_types.h b/include/linux/irqflags_types.h
-index c13f0d915097..277433f7f53e 100644
---- a/include/linux/irqflags_types.h
-+++ b/include/linux/irqflags_types.h
-@@ -19,4 +19,10 @@ struct irqtrace_events {
- 
- #endif
- 
-+/* Per-cpu interrupt disabling state for local_interrupt_{disable,enable}() */
-+struct interrupt_disable_state {
-+	unsigned long flags;
-+	long count;
-+};
-+
- #endif /* _LINUX_IRQFLAGS_TYPES_H */
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index 63dd8cf3c3c2..c1cbf5d5ebe0 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -272,9 +272,11 @@ static inline void do_raw_spin_unlock(raw_spinlock_t *lock) __releases(lock)
- #endif
- 
- #define raw_spin_lock_irq(lock)		_raw_spin_lock_irq(lock)
-+#define raw_spin_lock_irq_disable(lock)	_raw_spin_lock_irq_disable(lock)
- #define raw_spin_lock_bh(lock)		_raw_spin_lock_bh(lock)
- #define raw_spin_unlock(lock)		_raw_spin_unlock(lock)
- #define raw_spin_unlock_irq(lock)	_raw_spin_unlock_irq(lock)
-+#define raw_spin_unlock_irq_enable(lock)	_raw_spin_unlock_irq_enable(lock)
- 
- #define raw_spin_unlock_irqrestore(lock, flags)		\
- 	do {							\
-@@ -376,6 +378,11 @@ static __always_inline void spin_lock_irq(spinlock_t *lock)
- 	raw_spin_lock_irq(&lock->rlock);
- }
- 
-+static __always_inline void spin_lock_irq_disable(spinlock_t *lock)
-+{
-+	raw_spin_lock_irq_disable(&lock->rlock);
-+}
-+
- #define spin_lock_irqsave(lock, flags)				\
- do {								\
- 	raw_spin_lock_irqsave(spinlock_check(lock), flags);	\
-@@ -401,6 +408,12 @@ static __always_inline void spin_unlock_irq(spinlock_t *lock)
- 	raw_spin_unlock_irq(&lock->rlock);
- }
- 
-+static __always_inline void spin_unlock_irq_enable(spinlock_t *lock)
-+{
-+	raw_spin_unlock_irq_enable(&lock->rlock);
-+}
-+
-+
- static __always_inline void spin_unlock_irqrestore(spinlock_t *lock, unsigned long flags)
- {
- 	raw_spin_unlock_irqrestore(&lock->rlock, flags);
-diff --git a/include/linux/spinlock_api_smp.h b/include/linux/spinlock_api_smp.h
-index 89eb6f4c659c..e96482c23044 100644
---- a/include/linux/spinlock_api_smp.h
-+++ b/include/linux/spinlock_api_smp.h
-@@ -28,6 +28,8 @@ _raw_spin_lock_nest_lock(raw_spinlock_t *lock, struct lockdep_map *map)
- void __lockfunc _raw_spin_lock_bh(raw_spinlock_t *lock)		__acquires(lock);
- void __lockfunc _raw_spin_lock_irq(raw_spinlock_t *lock)
- 								__acquires(lock);
-+void __lockfunc _raw_spin_lock_irq_disable(raw_spinlock_t *lock)
-+								__acquires(lock);
- 
- unsigned long __lockfunc _raw_spin_lock_irqsave(raw_spinlock_t *lock)
- 								__acquires(lock);
-@@ -39,6 +41,7 @@ int __lockfunc _raw_spin_trylock_bh(raw_spinlock_t *lock);
- void __lockfunc _raw_spin_unlock(raw_spinlock_t *lock)		__releases(lock);
- void __lockfunc _raw_spin_unlock_bh(raw_spinlock_t *lock)	__releases(lock);
- void __lockfunc _raw_spin_unlock_irq(raw_spinlock_t *lock)	__releases(lock);
-+void __lockfunc _raw_spin_unlock_irq_enable(raw_spinlock_t *lock)	__releases(lock);
- void __lockfunc
- _raw_spin_unlock_irqrestore(raw_spinlock_t *lock, unsigned long flags)
- 								__releases(lock);
-@@ -55,6 +58,11 @@ _raw_spin_unlock_irqrestore(raw_spinlock_t *lock, unsigned long flags)
- #define _raw_spin_lock_irq(lock) __raw_spin_lock_irq(lock)
- #endif
- 
-+/* Use the same config as spin_lock_irq() temporarily. */
-+#ifdef CONFIG_INLINE_SPIN_LOCK_IRQ
-+#define _raw_spin_lock_irq_disable(lock) __raw_spin_lock_irq_disable(lock)
-+#endif
-+
- #ifdef CONFIG_INLINE_SPIN_LOCK_IRQSAVE
- #define _raw_spin_lock_irqsave(lock) __raw_spin_lock_irqsave(lock)
- #endif
-@@ -79,6 +87,11 @@ _raw_spin_unlock_irqrestore(raw_spinlock_t *lock, unsigned long flags)
- #define _raw_spin_unlock_irq(lock) __raw_spin_unlock_irq(lock)
- #endif
- 
-+/* Use the same config as spin_unlock_irq() temporarily. */
-+#ifdef CONFIG_INLINE_SPIN_UNLOCK_IRQ
-+#define _raw_spin_unlock_irq_enable(lock) __raw_spin_unlock_irq_enable(lock)
-+#endif
-+
- #ifdef CONFIG_INLINE_SPIN_UNLOCK_IRQRESTORE
- #define _raw_spin_unlock_irqrestore(lock, flags) __raw_spin_unlock_irqrestore(lock, flags)
- #endif
-@@ -120,6 +133,14 @@ static inline void __raw_spin_lock_irq(raw_spinlock_t *lock)
- 	LOCK_CONTENDED(lock, do_raw_spin_trylock, do_raw_spin_lock);
- }
- 
-+static inline void __raw_spin_lock_irq_disable(raw_spinlock_t *lock)
++void rust_helper_local_interrupt_disable(void)
 +{
 +	local_interrupt_disable();
-+	preempt_disable();
-+	spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
-+	LOCK_CONTENDED(lock, do_raw_spin_trylock, do_raw_spin_lock);
 +}
 +
- static inline void __raw_spin_lock_bh(raw_spinlock_t *lock)
- {
- 	__local_bh_disable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
-@@ -160,6 +181,14 @@ static inline void __raw_spin_unlock_irq(raw_spinlock_t *lock)
- 	preempt_enable();
- }
- 
-+static inline void __raw_spin_unlock_irq_enable(raw_spinlock_t *lock)
++void rust_helper_local_interrupt_enable(void)
 +{
-+	spin_release(&lock->dep_map, _RET_IP_);
-+	do_raw_spin_unlock(lock);
 +	local_interrupt_enable();
-+	preempt_enable();
 +}
 +
- static inline void __raw_spin_unlock_bh(raw_spinlock_t *lock)
- {
- 	spin_release(&lock->dep_map, _RET_IP_);
-diff --git a/include/linux/spinlock_rt.h b/include/linux/spinlock_rt.h
-index 61c49b16f69a..c05be2cb4564 100644
---- a/include/linux/spinlock_rt.h
-+++ b/include/linux/spinlock_rt.h
-@@ -94,6 +94,11 @@ static __always_inline void spin_lock_irq(spinlock_t *lock)
- 	rt_spin_lock(lock);
- }
- 
-+static __always_inline void spin_lock_irq_disable(spinlock_t *lock)
++bool rust_helper_irqs_disabled(void)
 +{
-+	rt_spin_lock(lock);
++	return irqs_disabled();
++}
+diff --git a/rust/kernel/interrupt.rs b/rust/kernel/interrupt.rs
+new file mode 100644
+index 000000000000..fe5a36877538
+--- /dev/null
++++ b/rust/kernel/interrupt.rs
+@@ -0,0 +1,64 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Interrupt controls
++//!
++//! This module allows Rust code to control processor interrupts. [`with_interrupt_disabled()`] may be
++//! used for nested disables of interrupts, whereas [`InterruptDisabled`] can be used for annotating code
++//! that requires interrupts to be disabled.
++
++use bindings;
++use core::marker::*;
++
++/// XXX: Temporarily definition for NotThreadSafe
++pub type NotThreadSafe = PhantomData<*mut ()>;
++
++/// XXX: Temporarily const for NotThreadSafe
++#[allow(non_upper_case_globals)]
++pub const NotThreadSafe: NotThreadSafe = PhantomData;
++
++/// A guard that represent interrupt disable protection.
++///
++/// [`InterruptDisabled`] is a guard type that represent interrupts have been disabled. Certain
++/// functions take an immutable reference of [`InterruptDisabled`] in order to require that they may
++/// only be run in interrupt-disabled contexts.
++///
++/// This is a marker type; it has no size, and is simply used as a compile-time guarantee that
++/// interrupts are disabled where required.
++///
++/// This token can be created by [`with_interrupt_disabled`]. See [`with_interrupt_disabled`] for examples and
++/// further information.
++///
++/// # Invariants
++///
++/// Interrupts are disabled with `local_interrupt_disable()` when an object of this type exists.
++pub struct InterruptDisabled(NotThreadSafe);
++
++/// Disable interrupts.
++pub fn interrupt_disable() -> InterruptDisabled {
++    // SAFETY: It's always safe to call `local_interrupt_disable()`.
++    unsafe { bindings::local_interrupt_disable() };
++
++    InterruptDisabled(NotThreadSafe)
 +}
 +
- #define spin_lock_irqsave(lock, flags)			 \
- 	do {						 \
- 		typecheck(unsigned long, flags);	 \
-@@ -117,6 +122,11 @@ static __always_inline void spin_unlock_irq(spinlock_t *lock)
- 	rt_spin_unlock(lock);
- }
- 
-+static __always_inline void spin_unlock_irq_enable(spinlock_t *lock)
-+{
-+	rt_spin_unlock(lock);
++impl Drop for InterruptDisabled {
++    fn drop(&mut self) {
++        // SAFETY: Per type invariants, a `local_interrupt_disable()` must be called to create this
++        // object, hence call the corresponding `local_interrupt_enable()` is safe.
++        unsafe { bindings::local_interrupt_enable() };
++    }
 +}
 +
- static __always_inline void spin_unlock_irqrestore(spinlock_t *lock,
- 						   unsigned long flags)
- {
-diff --git a/kernel/locking/spinlock.c b/kernel/locking/spinlock.c
-index 7685defd7c52..a2e01ec4a0c8 100644
---- a/kernel/locking/spinlock.c
-+++ b/kernel/locking/spinlock.c
-@@ -172,6 +172,14 @@ noinline void __lockfunc _raw_spin_lock_irq(raw_spinlock_t *lock)
- EXPORT_SYMBOL(_raw_spin_lock_irq);
- #endif
- 
-+#ifndef CONFIG_INLINE_SPIN_LOCK_IRQ
-+noinline void __lockfunc _raw_spin_lock_irq_disable(raw_spinlock_t *lock)
-+{
-+	__raw_spin_lock_irq_disable(lock);
++impl InterruptDisabled {
++    const ASSUME_INTERRUPT_DISABLED: &'static InterruptDisabled = &InterruptDisabled(NotThreadSafe);
++
++    /// Assume that interrupts are disabled.
++    ///
++    /// # Safety
++    ///
++    /// For the whole life `'a`, interrupts must be considered disabled, for example an interrupt
++    /// handler.
++    pub unsafe fn assume_interrupt_disabled<'a>() -> &'a InterruptDisabled {
++        Self::ASSUME_INTERRUPT_DISABLED
++    }
 +}
-+EXPORT_SYMBOL_GPL(_raw_spin_lock_irq_disable);
-+#endif
-+
- #ifndef CONFIG_INLINE_SPIN_LOCK_BH
- noinline void __lockfunc _raw_spin_lock_bh(raw_spinlock_t *lock)
- {
-@@ -204,6 +212,14 @@ noinline void __lockfunc _raw_spin_unlock_irq(raw_spinlock_t *lock)
- EXPORT_SYMBOL(_raw_spin_unlock_irq);
- #endif
- 
-+#ifndef CONFIG_INLINE_SPIN_UNLOCK_IRQ
-+noinline void __lockfunc _raw_spin_unlock_irq_enable(raw_spinlock_t *lock)
-+{
-+	__raw_spin_unlock_irq_enable(lock);
-+}
-+EXPORT_SYMBOL_GPL(_raw_spin_unlock_irq_enable);
-+#endif
-+
- #ifndef CONFIG_INLINE_SPIN_UNLOCK_BH
- noinline void __lockfunc _raw_spin_unlock_bh(raw_spinlock_t *lock)
- {
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index b756d6b3fd09..fcbf700963c4 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -88,6 +88,9 @@ EXPORT_PER_CPU_SYMBOL_GPL(hardirqs_enabled);
- EXPORT_PER_CPU_SYMBOL_GPL(hardirq_context);
- #endif
- 
-+DEFINE_PER_CPU(struct interrupt_disable_state, local_interrupt_disable_state);
-+EXPORT_PER_CPU_SYMBOL_GPL(local_interrupt_disable_state);
-+
- /*
-  * SOFTIRQ_OFFSET usage:
-  *
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index b5f4b3ce6b48..56ff464b7905 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -35,6 +35,7 @@
+ #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
+ pub mod firmware;
+ pub mod init;
++pub mod interrupt;
+ pub mod ioctl;
+ #[cfg(CONFIG_KUNIT)]
+ pub mod kunit;
 -- 
 2.45.2
 
