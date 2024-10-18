@@ -1,127 +1,125 @@
-Return-Path: <linux-kernel+bounces-372511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E74D9A49A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:26:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362CC9A49AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A327284698
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:26:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA2981F24BDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D335C19048F;
-	Fri, 18 Oct 2024 22:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA12318EFD2;
+	Fri, 18 Oct 2024 22:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hofiPLwC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EG1QC+s5"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256DE20E33E;
-	Fri, 18 Oct 2024 22:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1074918FDC8
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 22:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729290394; cv=none; b=NB26uINroqkCfYY98VJsy9yo3HYbyNn89VhziVGi+2YFo6Tr31DGf83Sqyu3utsxu6vd2z6dQtKcP+E0RiAZARgvV65XIbM6KLCOt8vcBW8czuwrlVPS7OCB6O+Mp7EJcartSzf26pAh3RwLXFoICRwqJVpsZuNbWR8HMBdpXdc=
+	t=1729290545; cv=none; b=hc+ANv/9M8NkOSYkOxNtwDtZKxsLJUou3ek8qJPRrAM69GoSNvn0bxXPnRmSUBdo3AlKIU3RGcMjUdN9egQ/RPGE+cBXER+UwjBWVRTmOSwhABOwcGsKcj/gLFOVUNHnkYjTk+kSvRYbjsWx3tL1lzmvFPIbnRqG0iekU8KNPYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729290394; c=relaxed/simple;
-	bh=/E/9e58Y9Bu5v5d8vFHuqTDsMqT8vO+kzYyBZB6p9Hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WGP76YrYJvY+sU/aZRzDd7bn1Rh7yPjdcgcFBEOMozAp42TBBpUqGFaePP2kR1C7nxbo4CvVafclv8AfwGqkiFgtOKIJeq8FuEd1UR4rhlvR0MuFJX4BtIZEcEcJ4oOIK8/gu5dUhNcEoP9X0a0I/x/gDAH1DE/8HRwJ6sg0RAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hofiPLwC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78ACC4CEC5;
-	Fri, 18 Oct 2024 22:26:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729290393;
-	bh=/E/9e58Y9Bu5v5d8vFHuqTDsMqT8vO+kzYyBZB6p9Hw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hofiPLwCwcR21xLWrbcPu26yoX2j+wb+o9V2cdvvJJsDF0ydvvKmkAx1myVpNXinZ
-	 5AHwEgoTpINs3ayBUL8cpBQN6yQdCHxQ+lA7xwEMISsKZ0paPQgHd3iJOGpKSA9AZ9
-	 sLUmDzVH1wGHzkPH9mtAQaO9FQvibVSqsMtvlF7xLtPreEZw8mhaBv/+tOFb4z61Fl
-	 9PCeNF/RFL3ZxL6FM6paW/VBuIQnsQ+VBn5ueJ678uZQ4NqeziXWRP1II1RuD7xqLU
-	 o+sQX+bvOSFkGw4cgxGc0GWnOUUwMeEXU/QtncEAb3G0XjKDnIlt5Zb8krg01ihkn9
-	 NoZc3ROsptxfQ==
-Date: Fri, 18 Oct 2024 19:26:29 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Howard Chu <howardchu95@gmail.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@intel.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
- syscall ids in syscalltbl->entries
-Message-ID: <ZxLglVIivPk05c97@x1>
-References: <ffc2eb09-ac78-4594-a376-3fff9918c2a7@kernel.org>
- <ZwYbQswnGHSstClc@google.com>
- <CAH0uvoi622J7gZ9BoTik7niNH3axVJR0kPNovUQnMjUB6GWLNg@mail.gmail.com>
- <CAH0uvojw5EKqxqETq_H3-5zmjXiK=ew2hBQiPDpCtZmO7=mrKA@mail.gmail.com>
- <3a592835-a14f-40be-8961-c0cee7720a94@kernel.org>
- <ZwgAzde-jVyo4cSu@google.com>
- <ZwgBenahw7EImQLk@google.com>
- <ZwhA1SL706f60ynd@x1>
- <2a91f9d0-8950-4936-9776-7ba59ab1d42a@kernel.org>
- <ZxLeS7CQFIR8lTmo@x1>
+	s=arc-20240116; t=1729290545; c=relaxed/simple;
+	bh=03wjyWFtvc6Xih/NdlFTEfxmotvn8//AVR5offvvlkA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b6KW1HqnewUJ2OimPZUgdOxBCrhTd7qwSazzpZebgaSB1SBWx+AtBtfuUk73IFwC3FdrD1U7+sSYxTP/x0CCEV0oTZdcOpzals+KYv8ma6zaqwLnNhn3/c22UQwplfO6RZATbcwcIyRPXkXKoakqiGY4qKaEQ74l0Di0dYz7y34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EG1QC+s5; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso288497866b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729290541; x=1729895341; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=judkw8O8sSJO6cXFyOVA4iO8bRDGeONqQ6yqYjr3e3g=;
+        b=EG1QC+s5bzQkVPHisWHn+j7chNwbk60ryBMshaEnrRepksLMb8F2na9gpC0/vTayFD
+         /tqNFqai6NsttaGAVGxxF0cf+HRV8ffL4MWW6kRL2hTzKz9Ius8p7kAGgwPq6FkR9nNp
+         B3kRoIG2xnd4FHzf5n2gOpGi7S7WxsfVGaEUrNRyth1fa4HgOJvVXhZKwZUG2yI6IVEy
+         T4ah7/7uN5OSrkWY64+9FXOfsAAjmjZGRYI2iNJCg75pPZyoGtfHxJjODcoA/bRKW20A
+         DcXL+ojE5AqGF0Kjmjb4sLRXpjvC/D89T3fjKYtq/OJUwmYjEskqc+FcyXKMq6SIDCnS
+         56Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729290541; x=1729895341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=judkw8O8sSJO6cXFyOVA4iO8bRDGeONqQ6yqYjr3e3g=;
+        b=nZ2djXwTcO+CvU+0YnpylECJhvmPhG+ETWvTUmG0BcfonlEifBIchVgvzy/ccLNrHL
+         /KHe5i0/7rO3m7mdnd5Kf4473MOdOH1EDPDl825lsYHOjRKbwKWXD/1wCwy7u486ypwW
+         uNCVt4Y+S8csy515+Sk+9Ox8CfACq4bI1ImK52k03RkvtPn6iFljQOcxNiwrriqG9MV3
+         d5l7wgbwWamipvaQCVSZy9/D8SYfWztWEKZOKUng8R4UMw9GC38G3xY4euP672hUqK2O
+         ODmKl9BbH6Cvt9lfBIK8fhU1EhqgIYYweiN1WezXkxcecESWaTHhJqiqk5c39p3C21cf
+         3nXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAbgbY3xdbVZNequhKASSnConOKUVxSsBw5bIKIdTwEU/mNbbyaAed7sDYwPcCoymIvg4tcrq2WQuyE18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWIMqKigmb/KUftVPWla6SfXPh16UovQlqYTXufWQyz/ItS20Y
+	LHyO8IrcF4nHdkhIowz61VGCsuQ5qkAqlizIbC4v0dqK8YOUUZkMtsvFHEtg+nKEUUII/Z4+8Af
+	9T43cjDnxurCYU9ClIUJegyY/l4L1ZB3+GQOT
+X-Google-Smtp-Source: AGHT+IGOgAJ6LnmbnDiKfkl9xZZzFY0FfHd2A14Wx40MUuYwgypPAjhNEqxQhhHeA4IFlxGcQ5lTjOCrHCkyWUwCrao=
+X-Received: by 2002:a17:907:980f:b0:a99:fa4e:ba97 with SMTP id
+ a640c23a62f3a-a9a69bad21fmr340098166b.39.1729290541002; Fri, 18 Oct 2024
+ 15:29:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxLeS7CQFIR8lTmo@x1>
+References: <20241018192525.95862-1-ryncsn@gmail.com> <ZxK7G3S0N42ejJMh@casper.infradead.org>
+ <CAMgjq7AjBMJAE-rj2MmB53FrQKcsARK5tZ3sKB4+uhWhkQ=EGA@mail.gmail.com>
+ <CAJD7tkZMTJKYR+au2rjP1v+c8PvdP4D39j86tHg=o2riKGYynQ@mail.gmail.com>
+ <ZxLLNfbLifp-b3W7@casper.infradead.org> <CAJD7tkaycBYvtTCoGsuNUekSDNnE5SZb-XyS5a8j83JsKQw4FQ@mail.gmail.com>
+ <ZxLVSkEr_Zd2Ai3Q@casper.infradead.org>
+In-Reply-To: <ZxLVSkEr_Zd2Ai3Q@casper.infradead.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 18 Oct 2024 15:28:23 -0700
+Message-ID: <CAJD7tkZdTtqyZVKOB927YkYsoW76ZaTNrKV3KJnAbA_omaz9fg@mail.gmail.com>
+Subject: Re: [PATCH] mm, zswap: don't touch the XArray lock if there is no
+ entry to free
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 18, 2024 at 07:16:49PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, Oct 14, 2024 at 02:19:58PM +0200, Jiri Slaby wrote:
-> > On 10. 10. 24, 23:02, Arnaldo Carvalho de Melo wrote:
-> > > On Thu, Oct 10, 2024 at 09:31:54AM -0700, Namhyung Kim wrote:
-> > > > On Thu, Oct 10, 2024 at 09:29:01AM -0700, Namhyung Kim wrote:
-> > > > > On Thu, Oct 10, 2024 at 10:22:12AM +0200, Jiri Slaby wrote:
-> > > > > > Subject: [PATCH] perf: fix non-listed archs
-> 
-> > > > > > Suggested-by: Howard Chu <howardchu95@gmail.com>
-> > > > > > Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> 
-> > > > > Acked-by: Namhyung Kim <namhyung@kernel.org>
-> > > > Also with,
-> > > > Fixes: 7a2fb5619cc1fb53 ("perf trace: Fix iteration of syscall ids in syscalltbl->entries")
-> > > > > Arnaldo, can you please pick this up for v6.12?
-> 
-> > > Sure, probably the safest bet now, but just in case, Jiri, can you test
-> > > the following?
-> 
-> > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > Subject: [PATCH 1/1] perf tools arm: Generate syscalltbl.c from arm's syscall.tbl
-> > 
-> > With this:
-> > +++ b/tools/perf/Makefile.config
-> > @@ -31,7 +31,7 @@ $(call detected_var,SRCARCH)
-> >  ifneq ($(NO_SYSCALL_TABLE),1)
-> 
-> So after merging your changes (thanks) and finding an arm 32-bit system
-> (ressurecting a raspberry pi 3), I can build it, with bpf skels, etc but
-> then...
+On Fri, Oct 18, 2024 at 2:38=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Fri, Oct 18, 2024 at 02:00:16PM -0700, Yosry Ahmed wrote:
+> > On Fri, Oct 18, 2024 at 1:55=E2=80=AFPM Matthew Wilcox <willy@infradead=
+.org> wrote:
+> > >
+> > > On Fri, Oct 18, 2024 at 01:40:18PM -0700, Yosry Ahmed wrote:
+> > > > Oh I thought xas_reload() is enough here to check that the entry is
+> > > > still there after the lock is acquired. Do we have to start the wal=
+k
+> > > > over after holding the lock?
+> > >
+> > > Yes.  The entry is guaranteed to still be valid, but the node you're
+> > > looking in might have been freed, so you can't modify the node withou=
+t
+> > > making sure the node is still in the tree.  We could make that cheape=
+r
+> > > than a rewalk, but you're going to need to write that code since you'=
+re
+> > > the first to want to do something like this.
+> >
+> > I see, thanks for elaborating.
+> >
+> > Could you confirm if the current patch with the xas_reset() added
+> > would be equivalent to just checking xa_load() before using
+> > xa_erase()?
+>
+> Yes, I think it would, so it's probably a poor tradeoff.
 
-But if I uninstall clang and build without BPF skels, i.e. no BPF based
-'perf trace' collection of syscall pointer args, I stumble in some other
-problem on this debian (raspbian) system:
-
-root@aquarius:~# ls -la /sys/kernel/debug/tracing/events/syscalls
-ls: cannot access '/sys/kernel/debug/tracing/events/syscalls': No such file or directory
-root@aquarius:~# 
-
-Unsure where to find the config used to build this kernel:
-
-root@aquarius:~# uname -a
-Linux aquarius 5.10.103-v7+ #1529 SMP Tue Mar 8 12:21:37 GMT 2022 armv7l GNU/Linux
-root@aquarius:~#
-
-normally is in /boot/ but I'm no debian user, ideas?
-
-But at least it builds, would that be enough? I don't think so, I'd like
-to see this working...
-
-- Arnaldo
+Thanks. Kairui, please feel free to drop this or if you want you can
+check if checking xa_load() before xa_erase() helps.
 
