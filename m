@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-372259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E42BA9A465B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6928A9A465D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A9301F22544
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:59:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1018C1F24469
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9452040A2;
-	Fri, 18 Oct 2024 18:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392DC204940;
+	Fri, 18 Oct 2024 19:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="G5cKe+nG"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gL5Ahir1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA7420493C
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D41185B48;
+	Fri, 18 Oct 2024 18:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729277993; cv=none; b=YYAmNY4p5OeVXz/+sFrsktABPhEhG6beT/fiVBdL+pQR+mijumhIgbXOe8OtFMFnnh5md80donDRiLgzDCrSbiLAE1b6OWGJOZx6MVQMyH5kSFF9WmeR+j2ssxR/y2r3yPzekkczyXB6QDx0lHVW3TNP8ryn84rIHTaCaXIDjHY=
+	t=1729278000; cv=none; b=WF22plURSBtd9Ol7GuQ63geJOtSBqm3ebcJbXKuHrTAFxM+Z0J6HE3LSTORq0y5AEHPGw6iwQOQRCNO8sn1U2uEYh49yMYQQH+ITuFLJyZxDWEauUZs/cxdO2rLw75taxx3ECro4kTE49wC2cxgk17hbCZh3QxBCtYdxTiJ3HCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729277993; c=relaxed/simple;
-	bh=plW8z8SKu3+QyyGyhrFvZv7XZ5G+Ih4r4jjqmCXpco0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A8d+qZg0aTJnuhxnQxzC0R3KnuF5C4crYYpkyh6/zFnYnA2G06Cw0WXDErFmuz+fT1UreHmyilYDjzeej0ApH6M9TamJ89DYlUOvkD/B3wQ3AWkgO7NVH9mFdeY5+8KseQoUSoO/YYs9/f8M3W91ROwJ/cfiErzkbxR1UFlrfT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=G5cKe+nG; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-46040dadedfso20316871cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1729277990; x=1729882790; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pb1+1UfZwm+tC+7iZWCj8Ys0ERez50KYFYaInKA4kp0=;
-        b=G5cKe+nGge5vuTdVedGq+b/V2d+SDPcj1pXZ6eXbPBOqD26VM4qU9z+wHT9eddBNz1
-         z6D0Mwgij6fKODoqMCfP4VRPmcw1GNJWD8n74CG2XBGASILJNsEG7w2nGfsluDzwQN+x
-         TmPqKXXKkD4hl/mSOLGcL/bCfN4xHBdnEBYdlV7pDYQ6JTtv6Zk2Si+wx2bHPgpS37vq
-         tKfdaKPoD95cyQ6LvVKML+JotxNwtzrh7dfUAGnKFZsPRV/ozJnfH/hN3Jb9F+appQBC
-         wdb0gNr2VRaZFRr39EMwUgSWTM1ernD2FcTdkprMh7mAW5WarglBzmD4y1bP3/JNxbfS
-         WHXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729277990; x=1729882790;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pb1+1UfZwm+tC+7iZWCj8Ys0ERez50KYFYaInKA4kp0=;
-        b=EZzn+4Tyfp+Ru1zklsC2abfbFINMNfvmd54cyvg6JfIXmQwE6nJGuxKN0g2oRLdgmP
-         tsjSJzBtwrhAgGwPtsHOBzaPJzTyqfFT4u/sanMba/aJi97eYE0//y+fXPwn7tIyL3XL
-         b9AdLdrn1PZizIEymWremRo7njgTb3g+ysc83attGMXV+anG/i5rizK0W0k+snU2oUxb
-         JINDUXdC16DTgW2BEdVajgjJak9eBNuJ0Qhq/PjEpI7TMb7l9sOMguno4hrkDGXkxTzt
-         Bt/1mQ3cjkfODc6ctWBbabOgVdu0X9m35l5kCu11hA8QWlULz7RXbmqmdd9cUyFXTDrc
-         cuDA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9ktD0VpUyGfgRSZ7uXqmJcyq8w/9NoeHHAvUmhUg3nLt7HSxyGYFrwyJnWbqyagvWR55EFj4H+SG6rXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmGJ4jim5OZWgqxKxpBhFBxaPnsQ0C5wETVfx3DI+549qj4qQj
-	jKa8ps9iuxW0cFN8LCqyGUELHv/2JfywWEKQzzLN2nZafyaUN1Jmtq114mQg2ro=
-X-Google-Smtp-Source: AGHT+IEgGQ9FGjMYv/5XiGKKg0XIae2u/68MFi7EKw6BVkBpV271IlDS10OAac+wRz4pHVit2dQMyg==
-X-Received: by 2002:a05:622a:180f:b0:460:996b:2896 with SMTP id d75a77b69052e-460aeddee5amr43899261cf.45.1729277990099;
-        Fri, 18 Oct 2024 11:59:50 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460ae999ea5sm9905211cf.54.2024.10.18.11.59.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 11:59:49 -0700 (PDT)
-Date: Fri, 18 Oct 2024 14:59:47 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Luoxi Li <kaixa@kiloview.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>
-Subject: Re: [PATCH] mm: Remove unused has_isolate_pageblock
-Message-ID: <20241018185947.GB81612@cmpxchg.org>
-References: <20241018092235.2764859-1-kaixa@kiloview.com>
+	s=arc-20240116; t=1729278000; c=relaxed/simple;
+	bh=0aG0Vdh39Bpjw/ze8sXOJQx0EwB/LjnoHP4xrp3JZhU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=PAaRj7VrSuVIb0pa3w4ZxmhH1gp7FhBBxwm0uM0UfwFtK17WSgGF00dXTIlsr9LqaLfFa9ZhID8nqIAO8e/0e82ke2Zv/Mck69gVP1pFrQIe2kOhP2bkh+NxjaNpGRDAcnWjbMt0qPltXcKXJM7NeDivWQfYAIOFqcIkNzFC5gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gL5Ahir1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DE50C4CEC3;
+	Fri, 18 Oct 2024 18:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729277999;
+	bh=0aG0Vdh39Bpjw/ze8sXOJQx0EwB/LjnoHP4xrp3JZhU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=gL5Ahir1sygyksLSTK1EuP9rkBRkzXNbn+1lW4Fu1ZbxJ+vBZq4cHIdBGfVsBaMnb
+	 19Gg/0uTnydWxAusz24odNb5ClA7D2Zbxl868T7qzTMtsjWtmcNsSRaT9U2yIIgp7/
+	 x5znB9J//e0nsf4eucgylRiRDSN8Pbjj5DXOc5HMyima3v8GGoTb8eVrEMYSlbww8N
+	 tkoezADhK4Faj5Iqm25zbfkPCVy4PxWL6XQWjL7gifyC0mwWbMm1avy0XGRPKNp3h0
+	 giUJfMsKtnLaydGd5YpAcTjEEgIdI1M9ostEDNjuawJOkIOYp9d7A1psSP6kAPsB1i
+	 tQkUXBJvF5qtg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB8973805CC0;
+	Fri, 18 Oct 2024 19:00:05 +0000 (UTC)
+Subject: Re: [GIT PULL] smb3 client fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5mvOjw1o6RcYu8OHCANy+Z2+9ONS+tYjRFbX_o3QgT95Kg@mail.gmail.com>
+References: <CAH2r5mvOjw1o6RcYu8OHCANy+Z2+9ONS+tYjRFbX_o3QgT95Kg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5mvOjw1o6RcYu8OHCANy+Z2+9ONS+tYjRFbX_o3QgT95Kg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/v6.12-rc3-smb3-client-fixes
+X-PR-Tracked-Commit-Id: 6aca91c416f626fc0c5146cc4450ea86b831f3dd
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b04ae0f45168973edb658ac2385045ac13c5aca7
+Message-Id: <172927800438.3206390.2616348466005175783.pr-tracker-bot@kernel.org>
+Date: Fri, 18 Oct 2024 19:00:04 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018092235.2764859-1-kaixa@kiloview.com>
 
-On Fri, Oct 18, 2024 at 05:22:35PM +0800, Luoxi Li wrote:
-> has_isolate_pageblock() has been unused since commit 55612e80e722
-> ("mm: page_alloc: close migratetype race between freeing and stealing")
-> 
-> Remove it.
-> 
-> Signed-off-by: Luoxi Li <kaixa@kiloview.com>
+The pull request you sent on Fri, 18 Oct 2024 10:00:27 -0500:
 
-Thanks!
+> git://git.samba.org/sfrench/cifs-2.6.git tags/v6.12-rc3-smb3-client-fixes
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b04ae0f45168973edb658ac2385045ac13c5aca7
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
