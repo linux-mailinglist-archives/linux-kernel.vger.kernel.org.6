@@ -1,32 +1,32 @@
-Return-Path: <linux-kernel+bounces-370910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07909A3390
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:00:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E09F9A3393
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C94B11C231BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:00:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E737282C7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957C715CD74;
-	Fri, 18 Oct 2024 04:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86E71684A5;
+	Fri, 18 Oct 2024 04:00:35 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317AE20E31C;
-	Fri, 18 Oct 2024 04:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDF620E31C;
+	Fri, 18 Oct 2024 04:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729224022; cv=none; b=stj6ejEai/B0EWhabSjd/UeHC33N5IymTTrmQYGoXzkQ7k5V0X37z74iy7FeuNkIzeGlw99lk6qVa7ycmCY7m+WXNvP2i6mQLjeWE1KXQSnDEHqqBWlgOztDGB+qLy43kwWX+VGZWFInyxeRGJD3dCRKMRc/9vlkU/SqTjPPS1E=
+	t=1729224035; cv=none; b=XQazbPZvO1zBBte4l0p269VNk8loRgt5knN3Q8I3X7+tdGDdlujl6zLAUdfRP+9cUmVYsBYeyNL5wGH4dcb1Vqjrk6Fb+PYXP1H3EKNQjdMF23VQdNY9wj7igFLkVifiNbDOWTfP2vGJmlmoq0L98ToeFlOxMPaclZ0mODfYI4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729224022; c=relaxed/simple;
-	bh=zZfKZPP8l5MYfycDoWo016AHW6/wjb6VKMtMwKgqboQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BYPlVOxWxCussnXDCSecngnFSKdxg6mRnRM5YQQQesXe1pB8vUfpr70mNah+umelq3qC4G7i5Haj7bqQzRg0RISfHeh30wTlhhm2nIiZj6vUoEJ2RkOlUKYRFxVYKxwf+zkTWIbFwifsPCqhtSJ97EiOHcyCGteKP3o1BBvZUs4=
+	s=arc-20240116; t=1729224035; c=relaxed/simple;
+	bh=NGz6KlkJSWDi/bWhwwnxcjNUC/FuKAov70R8NlezG6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Soj7c8k54QCy2ryUe+qw93rMPWZB3GzOp6pLWaA2nPIjaXltDIi19baLX7q8u7O1W8qjU6sr5vKbbq0Spza9sDYOiZQYOh1FYtZbq5R+MXeumSFRQHm3xcZ1KefPVs1jSqZzPA1TCZb1TeJ43SfheH3N8hFbM0L23nDbIqRT6dc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D979C4CEC3;
-	Fri, 18 Oct 2024 04:00:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE04C4CEC3;
+	Fri, 18 Oct 2024 04:00:31 +0000 (UTC)
 From: Huacai Chen <chenhuacai@loongson.cn>
 To: Huacai Chen <chenhuacai@kernel.org>
 Cc: loongarch@lists.linux.dev,
@@ -38,10 +38,10 @@ Cc: loongarch@lists.linux.dev,
 	loongson-kernel@lists.loongnix.cn,
 	Huacai Chen <chenhuacai@loongson.cn>,
 	stable@vger.kernel.org,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: [PATCH] LoongArch: Enable IRQ if do_ale() triggered in irq-enabled context
-Date: Fri, 18 Oct 2024 11:59:58 +0800
-Message-ID: <20241018035958.1060381-1-chenhuacai@loongson.cn>
+	Kanglong Wang <wangkanglong@loongson.cn>
+Subject: [PATCH] LoongArch: Make KASAN usable for variable cpu_vabits
+Date: Fri, 18 Oct 2024 12:00:24 +0800
+Message-ID: <20241018040024.1060903-1-chenhuacai@loongson.cn>
 X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,68 +51,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Unaligned access exception can be triggered in irq-enabled context such
-as user mode, in this case do_ale() may call get_user() which may cause
-sleep. Then we will get:
+Currently, KASAN on LoongArch assume the CPU VA bits is 48, which is
+true for Loongson-3 series, but not for Loongson-2 series (only 40 or
+lower), this patch fix that issue and make KASAN usable for variable
+cpu_vabits.
 
- BUG: sleeping function called from invalid context at arch/loongarch/kernel/access-helper.h:7
- in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 129, name: modprobe
- preempt_count: 0, expected: 0
- RCU nest depth: 0, expected: 0
- CPU: 0 UID: 0 PID: 129 Comm: modprobe Tainted: G        W          6.12.0-rc1+ #1723
- Tainted: [W]=WARN
- Stack : 9000000105e0bd48 0000000000000000 9000000003803944 9000000105e08000
-         9000000105e0bc70 9000000105e0bc78 0000000000000000 0000000000000000
-         9000000105e0bc78 0000000000000001 9000000185e0ba07 9000000105e0b890
-         ffffffffffffffff 9000000105e0bc78 73924b81763be05b 9000000100194500
-         000000000000020c 000000000000000a 0000000000000000 0000000000000003
-         00000000000023f0 00000000000e1401 00000000072f8000 0000007ffbb0e260
-         0000000000000000 0000000000000000 9000000005437650 90000000055d5000
-         0000000000000000 0000000000000003 0000007ffbb0e1f0 0000000000000000
-         0000005567b00490 0000000000000000 9000000003803964 0000007ffbb0dfec
-         00000000000000b0 0000000000000007 0000000000000003 0000000000071c1d
-         ...
- Call Trace:
- [<9000000003803964>] show_stack+0x64/0x1a0
- [<9000000004c57464>] dump_stack_lvl+0x74/0xb0
- [<9000000003861ab4>] __might_resched+0x154/0x1a0
- [<900000000380c96c>] emulate_load_store_insn+0x6c/0xf60
- [<9000000004c58118>] do_ale+0x78/0x180
- [<9000000003801bc8>] handle_ale+0x128/0x1e0
-
-So enable IRQ if unaligned access exception is triggered in irq-enabled
-context to fix it.
+1. Define XRANGE_SHADOW_SHIFT which means valid address length from
+   VA_BITS to min(cpu_vabits, VA_BITS).
+2. In kasan_mem_to_shadow() let DMW addresses which exceed XRANGE_SIZE
+   to return kasan_early_shadow_page.
 
 Cc: stable@vger.kernel.org
-Reported-by: Binbin Zhou <zhoubinbin@loongson.cn>
+Signed-off-by: Kanglong Wang <wangkanglong@loongson.cn>
 Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 ---
- arch/loongarch/kernel/traps.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/loongarch/include/asm/kasan.h | 2 +-
+ arch/loongarch/mm/kasan_init.c     | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/loongarch/kernel/traps.c b/arch/loongarch/kernel/traps.c
-index f9f4eb00c92e..c57b4134f3e8 100644
---- a/arch/loongarch/kernel/traps.c
-+++ b/arch/loongarch/kernel/traps.c
-@@ -555,6 +555,9 @@ asmlinkage void noinstr do_ale(struct pt_regs *regs)
- #else
- 	unsigned int *pc;
+diff --git a/arch/loongarch/include/asm/kasan.h b/arch/loongarch/include/asm/kasan.h
+index cd6084f4e153..c6bce5fbff57 100644
+--- a/arch/loongarch/include/asm/kasan.h
++++ b/arch/loongarch/include/asm/kasan.h
+@@ -16,7 +16,7 @@
+ #define XRANGE_SHIFT (48)
  
-+	if (regs->csr_prmd & CSR_PRMD_PIE)
-+		local_irq_enable();
+ /* Valid address length */
+-#define XRANGE_SHADOW_SHIFT	(PGDIR_SHIFT + PAGE_SHIFT - 3)
++#define XRANGE_SHADOW_SHIFT	min(cpu_vabits, VA_BITS)
+ /* Used for taking out the valid address */
+ #define XRANGE_SHADOW_MASK	GENMASK_ULL(XRANGE_SHADOW_SHIFT - 1, 0)
+ /* One segment whole address space size */
+diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_init.c
+index 427d6b1aec09..e5ecc8c12034 100644
+--- a/arch/loongarch/mm/kasan_init.c
++++ b/arch/loongarch/mm/kasan_init.c
+@@ -48,6 +48,10 @@ void *kasan_mem_to_shadow(const void *addr)
+ 			return (void *)(kasan_early_shadow_page);
+ 
+ 		maddr &= XRANGE_SHADOW_MASK;
 +
- 	perf_sw_event(PERF_COUNT_SW_ALIGNMENT_FAULTS, 1, regs, regs->csr_badvaddr);
- 
- 	/*
-@@ -579,6 +582,8 @@ asmlinkage void noinstr do_ale(struct pt_regs *regs)
- 	die_if_kernel("Kernel ale access", regs);
- 	force_sig_fault(SIGBUS, BUS_ADRALN, (void __user *)regs->csr_badvaddr);
- out:
-+	if (regs->csr_prmd & CSR_PRMD_PIE)
-+		local_irq_disable();
- #endif
- 	irqentry_exit(regs, state);
- }
++		if (maddr >= XRANGE_SIZE)
++			return (void *)(kasan_early_shadow_page);
++
+ 		switch (xrange) {
+ 		case XKPRANGE_CC_SEG:
+ 			offset = XKPRANGE_CC_SHADOW_OFFSET;
 -- 
 2.43.5
 
