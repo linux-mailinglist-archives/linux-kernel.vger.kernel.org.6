@@ -1,206 +1,238 @@
-Return-Path: <linux-kernel+bounces-371574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15E59A3CCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:09:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 416479A3CD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24B341F25D6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:09:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F029E28268C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F99C200CA4;
-	Fri, 18 Oct 2024 11:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C702040AE;
+	Fri, 18 Oct 2024 11:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRBqZLji"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="dcoCiM31";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nNFsDOP2"
+Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9BD20403B
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEC7204084;
+	Fri, 18 Oct 2024 11:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729249489; cv=none; b=NUcOS1TL6BslQMInfo8aEnwuAZes6MbPspdhwThwesc/r84CUbPs9XDESDk+1rJfG2iJdcp8wMV15PgpJEj22wuKCIhTbyCTJ7DUX7W/NYwOY5dBuIzqVPwZLlOIAc9gqlbKikJQkNWzp6BFCl32xHvZ4vybk9YGrvqESL9E7R0=
+	t=1729249543; cv=none; b=nGdmw8qYrg1nIHkHirMokpaoFTT7WC6K2Vsr1nJuHwFIYdl+yXOzzJXDjzcBHlltf++FKU2QhC3eVjaIDfDUEB/YohL23YPAVNYg7XOXsmKFaILO0BgMxSzMKZnN/uO1wccpuVLUQTSu1+EOorfzlbEl9bsguK3vXiSStL1d0L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729249489; c=relaxed/simple;
-	bh=WppxXQv4JJMLQ6hSgSCQY/dM71RH4qkHILwYDL7NXJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gO7XChNZdo7MJZopqoaCVx+rbXB6tHtEoIsGuXUBKZLMe241ID4SswV5mNdd//dxpMrXDVJZFcK8mLS2Y41hq6uYQjBeSGTxVBwsGX3Xftd3j7Ulv6Ig6vbVUsY8ItCHG+wEWUYCqLLow0Gijgxln4dKUKu7zchSDZswfJx5EZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRBqZLji; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so12192555e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 04:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729249486; x=1729854286; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xNhaoaRhKrIF607df26klFatcehnnD14Q9wMSR2cO70=;
-        b=LRBqZLjizhJlp+iJjaJIRKrrRAvi4C3NxDD/i72E8e2QLt6z1AEFVxT2MLhINXp7W0
-         ZQd4V8ZDZJnFUOcV79XkbIGwT+lDYmkmCKeRFBzC/cJ6/6i3vOBAjee6B2Ede+K5tIoA
-         Ff725+xmqohzAsAfIU8yP+a9G7P0i7lou+/mx6pWUN7iwfdJ7gKgb6Ps2A161AH0rbIn
-         J03n44vJeXRH4NI0taKrNBqSHqB1dEmPe8HRJL6jGTDSylOESqeg/UPQXnl2UXQ6UX3O
-         MtBYJ/EDozG9PE/aY0alFCROBI5g0TzMmFbkH77cMYi3mpqQnex47x7vY98GQ/OZ4+Q7
-         zjtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729249486; x=1729854286;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xNhaoaRhKrIF607df26klFatcehnnD14Q9wMSR2cO70=;
-        b=OLeLxs0973JoibCs8P1DryJysueB2Y6TzCcnV80fCVML6utCFb5XvO4EpjQc4Yj2kN
-         em+T2UU3ab8dda24Z9h0Rj3Bv3NXau4DChfyGMhDLUaSRMPeg7MXR2CHPqYN1A21UoPZ
-         UyM0CWUSohXEMyfxHuLRTKm58Bc457KB8ZfUpfOLtbJNDIwYUlReo12+se35lOSCT2hO
-         T6GvVgDIRUohBHcCvFzhvalpuU/OhB9BvQsFAIg3kRI4zvAEFGL64pm8qEDzZR0BpBvq
-         67ZqVOqYvgoA88R4Dkz5AfYhibZhrVzsaGj1wUzYeGkpymIV5U70XJXf+B33Gq4niJKX
-         aKGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIUhIeVqJoWWcJkUHJISYvuO4MLFy8wQ0OZh77g+oR/q0ozMhagpC9Er+imjYfIKCVXpLEr0OqaqA/VrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/fv1Sp9bzAa776AZlq/pbLwdQUjulZ1Q5rjhDTvJONLnJF7EK
-	mGDe3K4S64puyHtoakrcdu7qQsZ5AD2bOi8kDDhBJxhMEwm4YcnQ
-X-Google-Smtp-Source: AGHT+IFigNDiYj/lNol/uMQcVkQ+uqcoMN9HliMxjSyZ7sbUd08wSWdHnrNRmXltTKvebhDKV0HMAA==
-X-Received: by 2002:a05:600c:35d3:b0:431:5f9e:3f76 with SMTP id 5b1f17b1804b1-43161669464mr17026595e9.16.1729249485735;
-        Fri, 18 Oct 2024 04:04:45 -0700 (PDT)
-Received: from ?IPV6:2a02:6b67:d751:7400:c2b:f323:d172:e42a? ([2a02:6b67:d751:7400:c2b:f323:d172:e42a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431606d58f9sm24522935e9.44.2024.10.18.04.04.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 04:04:45 -0700 (PDT)
-Message-ID: <169e5cb6-701a-474c-a703-60daee8b4d3f@gmail.com>
-Date: Fri, 18 Oct 2024 12:04:44 +0100
+	s=arc-20240116; t=1729249543; c=relaxed/simple;
+	bh=P5PdRsacF474EbWgmhc3hiD7lELGK1tzJ9hufbt3rB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJmLRfCaucm/o+pMk9VbC/cR87VyC6T/7RakujpLAy3rQdRdVGqpUNN/Syz0sO1HUjl0Nu9a+0P61tgSq8pEXaLYhYuXCLSOx8qNtQpIK3id+99UjBonnnpVE7vSRXWekmZDfop7dTmFn7sVugwnl3J8OQ1acSE+smodGL6bCUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=dcoCiM31; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nNFsDOP2; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailflow.phl.internal (Postfix) with ESMTP id 555442008EE;
+	Fri, 18 Oct 2024 07:05:40 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 18 Oct 2024 07:05:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729249540; x=
+	1729256740; bh=DfrWUeI7jSkiKLl3DUG7tVnejbJ3jmsGwSHJKF/avYA=; b=d
+	coCiM31/zabNDU6R4RnsDb/1plhuAHiEF0Q80vQuqfE+bJSr2l8hUqp4h4bOEo+0
+	siqhlildBZ9aRwdUXkP6bKYWCQI4CUtI4ESFeMNHjOMGCSOjwNTBGvf95/xvOHaE
+	BuKDQivrJVwpUxoLOX3DjHJzctOno4J2XL3gcNAVfIqUpsk1VhXEX2P3qjwAuDRK
+	qPTeHrXencJNxxnQ63tOmM+V/fOGDdREAUtvXBvyIFUEr68si/HG3iHgmm1mJIJk
+	7x3KvB90ssS+3AuH5PewlgYZGkWK6EgoUlnR9naCY/GULiCqc3SMIbmwlPnox9K0
+	JdvYhq9eCBaWWfuG33/xA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1729249540; x=1729256740; bh=DfrWUeI7jSkiKLl3DUG7tVnejbJ3
+	jmsGwSHJKF/avYA=; b=nNFsDOP2Xp/fxhjCB/9xkSy4rU/Js1j6E0JYnmEbjGdt
+	oeqVqGwYRsXYWJBbm+M3/P4CnRyNzH2MJPMEBU8E2WqhAHTvkwDVGyWJK7EKWxJN
+	NU1NYytz+PukYpVWsKe25tu5cXr+fpKUuyLZ8hA4UIbyBpmVww109MbhUGVWJpID
+	pdCoL9e+CVTYUxZqpBdHOdYWdMOlY7YpGRRESqWkzJqQnKm+dlkqqWWF3uQitH6u
+	xiAxU1NkRZ/XhlGXpsh/wfySGQr9uhFGC03nM/cmu2OsMZD0YE+Ua+yYZuS21dzV
+	+0JXqpuohBLWNzXMDryuGiPGJc3iOMDKiPluxytD/A==
+X-ME-Sender: <xms:A0ESZ75jRzXbRLvvZQfDNzFob9LTd9-0p7m0LdT63zCDKO1jyMGLfg>
+    <xme:A0ESZw5IINJO66CzsiZwtEP8HHf9A1Igue9O41ZlgzhZsZ_jMV0zfv2iesWL4othb
+    hgyEdVev_w1-iM6BzU>
+X-ME-Received: <xmr:A0ESZyeawwBfJ-CWrs2bYgQn6iEAuis3v-Ud2y7hqlpnmVudvoCBnZ-Leo9oXMSb2Q1kxQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehfedgfeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdrtghomhdprhgtphht
+    thhopehrohgsvghrthhordhsrghsshhusehhuhgrfigvihgtlhhouhgurdgtohhmpdhrtg
+    hpthhtohepphgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphhtthhopegvsghp
+    qhifvghrthihgeejvdduvdefsehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhhirhhilh
+    hlrdhshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopeii
+    ohhhrghrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepughmihhtrhihrdhkrg
+    hsrghtkhhinhesghhmrghilhdrtghomhdprhgtphhtthhopegvrhhitgdrshhnohifsggv
+    rhhgsehorhgrtghlvgdrtghomhdprhgtphhtthhopehjmhhorhhrihhssehnrghmvghird
+    horhhg
+X-ME-Proxy: <xmx:A0ESZ8IYn0K0oMAIMHEMPAGeChgFhXRKE1MXmz5TFTySYvy1S-wrVA>
+    <xmx:A0ESZ_KaF5l77BShpny3V7R5x3_-4BaJmGhSybClo6FKEKsTb1fEYw>
+    <xmx:A0ESZ1wBQZgu77wJW-LApmzqL7gM8ugNX-BZ1ICA9Ka0fXNN_yK_VA>
+    <xmx:A0ESZ7LNU7aXGheO5AGArP71cuQUcqDpPIgPbk4U7jJV9sL4NJ8a9w>
+    <xmx:BEESZ0C36_eKafwilCyEkSRmOul-aD1SXQltohfGtkB8zkdqg6NX8KQ6>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 18 Oct 2024 07:05:32 -0400 (EDT)
+Date: Fri, 18 Oct 2024 14:05:27 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
+	Paul Moore <paul@paul-moore.com>, ebpqwerty472123@gmail.com, kirill.shutemov@linux.intel.com, 
+	zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Roberto Sassu <roberto.sassu@huawei.com>, linux-mm@kvack.org, akpm@linux-foundation.org, vbabka@suse.cz, 
+	linux-fsdevel@vger.kernel.org, Liam Howlett <liam.howlett@oracle.com>, 
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH 1/3] ima: Remove inode lock
+Message-ID: <gl4pf7gezpjtvnbp4lzyb65wqaiw3xzjjrs3476j5odxsfzvsj@oouue73v3cgr>
+References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
+ <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
+ <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
+ <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
+ <593282dbc9f48673c8f3b8e0f28e100f34141115.camel@huaweicloud.com>
+ <15bb94a306d3432de55c0a12f29e7ed2b5fa3ba1.camel@huaweicloud.com>
+ <c1e47882720fe45aa9d04d663f5a6fd39a046bcb.camel@huaweicloud.com>
+ <b498e3b004bedc460991e167c154cc88d568f587.camel@huaweicloud.com>
+ <ggvucjixgiuelt6vjz6oawgyobmzrhifaozqqvupwfso65ia7c@bauvfqtvq6lv>
+ <e89f6b61-a57f-4848-87f1-8e2282bc5aea@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 6/7] mm: do_swap_page() calls swapin_readahead()
- zswap load batching interface.
-To: David Hildenbrand <david@redhat.com>,
- Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
- yosryahmed@google.com, nphamcs@gmail.com, chengming.zhou@linux.dev,
- ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
- akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
- bfoster@redhat.com, dchinner@redhat.com, chrisl@kernel.org
-Cc: wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-References: <20241018064805.336490-1-kanchana.p.sridhar@intel.com>
- <20241018064805.336490-7-kanchana.p.sridhar@intel.com>
- <71bcbd3f-a8bd-4014-aabe-081006cc62f8@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <71bcbd3f-a8bd-4014-aabe-081006cc62f8@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e89f6b61-a57f-4848-87f1-8e2282bc5aea@lucifer.local>
 
-
-
-On 18/10/2024 08:26, David Hildenbrand wrote:
-> On 18.10.24 08:48, Kanchana P Sridhar wrote:
->> This patch invokes the swapin_readahead() based batching interface to
->> prefetch a batch of 4K folios for zswap load with batch decompressions
->> in parallel using IAA hardware. swapin_readahead() prefetches folios based
->> on vm.page-cluster and the usefulness of prior prefetches to the
->> workload. As folios are created in the swapcache and the readahead code
->> calls swap_read_folio() with a "zswap_batch" and a "non_zswap_batch", the
->> respective folio_batches get populated with the folios to be read.
->>
->> Finally, the swapin_readahead() procedures will call the newly added
->> process_ra_batch_of_same_type() which:
->>
->>   1) Reads all the non_zswap_batch folios sequentially by calling
->>      swap_read_folio().
->>   2) Calls swap_read_zswap_batch_unplug() with the zswap_batch which calls
->>      zswap_finish_load_batch() that finally decompresses each
->>      SWAP_CRYPTO_SUB_BATCH_SIZE sub-batch (i.e. upto 8 pages in a prefetch
->>      batch of say, 32 folios) in parallel with IAA.
->>
->> Within do_swap_page(), we try to benefit from batch decompressions in both
->> these scenarios:
->>
->>   1) single-mapped, SWP_SYNCHRONOUS_IO:
->>        We call swapin_readahead() with "single_mapped_path = true". This is
->>        done only in the !zswap_never_enabled() case.
->>   2) Shared and/or non-SWP_SYNCHRONOUS_IO folios:
->>        We call swapin_readahead() with "single_mapped_path = false".
->>
->> This will place folios in the swapcache: a design choice that handles cases
->> where a folio that is "single-mapped" in process 1 could be prefetched in
->> process 2; and handles highly contended server scenarios with stability.
->> There are checks added at the end of do_swap_page(), after the folio has
->> been successfully loaded, to detect if the single-mapped swapcache folio is
->> still single-mapped, and if so, folio_free_swap() is called on the folio.
->>
->> Within the swapin_readahead() functions, if single_mapped_path is true, and
->> either the platform does not have IAA, or, if the platform has IAA and the
->> user selects a software compressor for zswap (details of sysfs knob
->> follow), readahead/batching are skipped and the folio is loaded using
->> zswap_load().
->>
->> A new swap parameter "singlemapped_ra_enabled" (false by default) is added
->> for platforms that have IAA, zswap_load_batching_enabled() is true, and we
->> want to give the user the option to run experiments with IAA and with
->> software compressors for zswap (swap device is SWP_SYNCHRONOUS_IO):
->>
->> For IAA:
->>   echo true > /sys/kernel/mm/swap/singlemapped_ra_enabled
->>
->> For software compressors:
->>   echo false > /sys/kernel/mm/swap/singlemapped_ra_enabled
->>
->> If "singlemapped_ra_enabled" is set to false, swapin_readahead() will skip
->> prefetching folios in the "single-mapped SWP_SYNCHRONOUS_IO" do_swap_page()
->> path.
->>
->> Thanks Ying Huang for the really helpful brainstorming discussions on the
->> swap_read_folio() plug design.
->>
->> Suggested-by: Ying Huang <ying.huang@intel.com>
->> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
->> ---
->>   mm/memory.c     | 187 +++++++++++++++++++++++++++++++++++++-----------
->>   mm/shmem.c      |   2 +-
->>   mm/swap.h       |  12 ++--
->>   mm/swap_state.c | 157 ++++++++++++++++++++++++++++++++++++----
->>   mm/swapfile.c   |   2 +-
->>   5 files changed, 299 insertions(+), 61 deletions(-)
->>
->> diff --git a/mm/memory.c b/mm/memory.c
->> index b5745b9ffdf7..9655b85fc243 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -3924,6 +3924,42 @@ static vm_fault_t remove_device_exclusive_entry(struct vm_fault *vmf)
->>       return 0;
->>   }
->>   +/*
->> + * swapin readahead based batching interface for zswap batched loads using IAA:
->> + *
->> + * Should only be called for and if the faulting swap entry in do_swap_page
->> + * is single-mapped and SWP_SYNCHRONOUS_IO.
->> + *
->> + * Detect if the folio is in the swapcache, is still mapped to only this
->> + * process, and further, there are no additional references to this folio
->> + * (for e.g. if another process simultaneously readahead this swap entry
->> + * while this process was handling the page-fault, and got a pointer to the
->> + * folio allocated by this process in the swapcache), besides the references
->> + * that were obtained within __read_swap_cache_async() by this process that is
->> + * faulting in this single-mapped swap entry.
->> + */
+On Fri, Oct 18, 2024 at 12:00:22PM +0100, Lorenzo Stoakes wrote:
+> + Liam, Jann
 > 
-> How is this supposed to work for large folios?
+> On Fri, Oct 18, 2024 at 01:49:06PM +0300, Kirill A. Shutemov wrote:
+> > On Fri, Oct 18, 2024 at 11:24:06AM +0200, Roberto Sassu wrote:
+> > > Probably it is hard, @Kirill would there be any way to safely move
+> > > security_mmap_file() out of the mmap_lock lock?
+> >
+> > What about something like this (untested):
+> >
+> > diff --git a/mm/mmap.c b/mm/mmap.c
+> > index dd4b35a25aeb..03473e77d356 100644
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -1646,6 +1646,26 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+> >  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
+> >  		return ret;
+> >
+> > +	if (mmap_read_lock_killable(mm))
+> > +		return -EINTR;
+> > +
+> > +	vma = vma_lookup(mm, start);
+> > +
+> > +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
+> > +		mmap_read_unlock(mm);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	file = get_file(vma->vm_file);
+> > +
+> > +	mmap_read_unlock(mm);
+> > +
+> > +	ret = security_mmap_file(vma->vm_file, prot, flags);
 > 
+> Accessing VMA fields without any kind of lock is... very much not advised.
+> 
+> I'm guessing you meant to say:
+> 
+> 	ret = security_mmap_file(file, prot, flags);
+> 
+> Here? :)
 
-Hi,
+Sure. My bad.
 
-I was looking at zswapin large folio support and have posted a RFC in [1].
-I got bogged down with some prod stuff, so wasn't able to send it earlier.
+Patch with all fixups:
 
-It looks quite different, and I think simpler from this series, so might be
-a good comparison.
-
-[1] https://lore.kernel.org/all/20241018105026.2521366-1-usamaarif642@gmail.com/
-
-Thanks,
-Usama
+diff --git a/mm/mmap.c b/mm/mmap.c
+index dd4b35a25aeb..541787d526b6 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1646,14 +1646,41 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
+ 		return ret;
+ 
+-	if (mmap_write_lock_killable(mm))
++	if (mmap_read_lock_killable(mm))
+ 		return -EINTR;
+ 
+ 	vma = vma_lookup(mm, start);
+ 
++	if (!vma || !(vma->vm_flags & VM_SHARED)) {
++		mmap_read_unlock(mm);
++		return -EINVAL;
++	}
++
++	file = get_file(vma->vm_file);
++
++	mmap_read_unlock(mm);
++
++	ret = security_mmap_file(file, prot, flags);
++	if (ret) {
++		fput(file);
++		return ret;
++	}
++
++	ret = -EINVAL;
++
++	if (mmap_write_lock_killable(mm)) {
++		fput(file);
++		return -EINTR;
++	}
++
++	vma = vma_lookup(mm, start);
++
+ 	if (!vma || !(vma->vm_flags & VM_SHARED))
+ 		goto out;
+ 
++	if (vma->vm_file != file)
++		goto out;
++
+ 	if (start + size > vma->vm_end) {
+ 		VMA_ITERATOR(vmi, mm, vma->vm_end);
+ 		struct vm_area_struct *next, *prev = vma;
+@@ -1688,16 +1715,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 	if (vma->vm_flags & VM_LOCKED)
+ 		flags |= MAP_LOCKED;
+ 
+-	file = get_file(vma->vm_file);
+-	ret = security_mmap_file(vma->vm_file, prot, flags);
+-	if (ret)
+-		goto out_fput;
+ 	ret = do_mmap(vma->vm_file, start, size,
+ 			prot, flags, 0, pgoff, &populate, NULL);
+-out_fput:
+-	fput(file);
+ out:
+ 	mmap_write_unlock(mm);
++	fput(file);
+ 	if (populate)
+ 		mm_populate(ret, populate);
+ 	if (!IS_ERR_VALUE(ret))
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
