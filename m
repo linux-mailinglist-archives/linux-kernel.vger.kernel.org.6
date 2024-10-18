@@ -1,153 +1,130 @@
-Return-Path: <linux-kernel+bounces-371622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E6B9A3D6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:44:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9319A3D74
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31CF1F21D13
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:44:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2216284AEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5F51D7E3D;
-	Fri, 18 Oct 2024 11:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F6B1A288;
+	Fri, 18 Oct 2024 11:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P8oFTDuZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LmqLmzuP"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F8C2F46
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090EC53AC;
+	Fri, 18 Oct 2024 11:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729251867; cv=none; b=UjO2Pd9+aTZJl+yKr01nFwDh+z2DsHKEVeNNPKHPPo6q6v8IdFZLpkdeY2BErcF3/tGVjLO/DJUU0LdcSZ46ypnDzV8e0revDAeBEHODJsIE0+Btjm5MWg75C1oF3/oPpCSuPC8UBPsjSjNgNTLDFjg53Xm7Qa/6d/kyRLfB06E=
+	t=1729251948; cv=none; b=XoxocmkVEj/wpjT7rHHG8wyzz5M3Bd8lghaBUrHb0LPthW+DVc/D1kW925HF+362DfeI5yq1sp3GpycP8C5CI4Uvm19Y312EXn+pPv+dgip6lpgtcMYW4ZmueFeSjPMvCkTasI5sNkzDwwFAAcIFW24F5b5bNjvlkytI6tAQU2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729251867; c=relaxed/simple;
-	bh=YPmbLkjhoSCx7Ka93jvwOwfbPUE1z48V2d4w/a9xZyg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fnkmYVXMwjqvXZIFwdX9/xUXJwAn/WPKeQSkNTm8KG7bf6XCjYCp/71wYp3bUzDLG8PLIYpwVNpVWlWNTn9TTmC+PuPkaPYb1mcUOUCOIH8m1pJWATLJH/yRMaInS9Rt5JrVQnSm6jdFnaQrVowtPgMt3vy8u2PGs680jKX+Cjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P8oFTDuZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729251864;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hlu6bqFSROl2zXVvkaXLKd26K3gvldoDh8YudQBsgb0=;
-	b=P8oFTDuZQCs2PDS7Ln/zr4NFriiJA3YV1+VXOjpdLsYPQiqjxqJSu7yv/qEd1j4luoeNWE
-	cawG5I0Oyyo3SjHHdFmu9zUUzmttLg5zmDQ69ZWa8H0Br2Ysmqp65Re8zh4lTjvxPD4RIq
-	rSkOSqBfkrGMVGomHIGcZPuKhgYgAnU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-39-oQARMjkeNQOEiNPj6PdM2A-1; Fri, 18 Oct 2024 07:44:23 -0400
-X-MC-Unique: oQARMjkeNQOEiNPj6PdM2A-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42ac185e26cso15634635e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 04:44:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729251862; x=1729856662;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hlu6bqFSROl2zXVvkaXLKd26K3gvldoDh8YudQBsgb0=;
-        b=szJWcD3CEF/6lxHHJyYoqCUQ3ZHM0I7EO9VTXIhMkk1vigTkAO9QAQGic/RH8V785n
-         pm4C4/batMXKk2x5QPXfe3AYD6PrnWjU65GZYiRrmHk1RibGJTrHt2sJoeCg/3rjl9oU
-         wtkGEXfq/Guf6j9sTX/JLxTGh2Rd/Le5ep5OopHmcjCdBdyP/y5kqCxJ+ZEegz5pDoNt
-         Lzt3Y2kGGJf0TtO4Ot7vseKOWHnuAlha/hRGrLEYSsZU4Vqgkp/oKrNyo5TUzm3mY1Sq
-         2KKd5lIhWxUGzerqXXxScUDfVkvXWjmm1WkQ3k6csZbvvI+jrrQbS7uBPUXYGImNRPG3
-         2mXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW48uoXWvplOO803nj8vHFEVAIvETJ2mI7mfLWyV/HmfoSxxxlBhNXs44P0NBjB/mgOe1p7vA2JEV1y07Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPIqR4vhy+c+VomlteHUPHF+IbEW9dDLa16VtsX8FPji0N0cFH
-	ViAeoDBB484CmmzNnVhnJADXiHQzGGlJB1ezNHx+mOJpoMs4X5Cw9THqFio6PzwjuOjsmD/QfPn
-	LVxdodGfv0cY4uGsqbvpW/N5DesN+jHbiaoz0aA7nTvrMfvGIDi2pwV2d2p4K6Q==
-X-Received: by 2002:a05:600c:1d27:b0:431:4e25:fe26 with SMTP id 5b1f17b1804b1-4316169742fmr13710915e9.27.1729251861893;
-        Fri, 18 Oct 2024 04:44:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEiEer9ZpdYNq8qEEDZmN8/HtafItHRlxeS8dPJ/aHfakFzmlopU8rrHb/idJHOFD5P4NATjQ==
-X-Received: by 2002:a05:600c:1d27:b0:431:4e25:fe26 with SMTP id 5b1f17b1804b1-4316169742fmr13710725e9.27.1729251861475;
-        Fri, 18 Oct 2024 04:44:21 -0700 (PDT)
-Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf056418sm1727731f8f.34.2024.10.18.04.44.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 04:44:21 -0700 (PDT)
-Message-ID: <ab51f981844c700d4e66b366c8d2abde7c5947bf.camel@redhat.com>
-Subject: Re: [PATCH v2 04/13] media: dvb_frontend: don't play tricks with
- underflow values
-From: Philipp Stanner <pstanner@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Kevin Hao <haokexin@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Kees Cook
-	 <keescook@chromium.org>
-Date: Fri, 18 Oct 2024 13:44:20 +0200
-In-Reply-To: <8d6193ed8d53ce94d595cb431627bbc7783c0e4c.1729230718.git.mchehab+huawei@kernel.org>
-References: <cover.1729230718.git.mchehab+huawei@kernel.org>
-	 <8d6193ed8d53ce94d595cb431627bbc7783c0e4c.1729230718.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729251948; c=relaxed/simple;
+	bh=m+X5tGW60K4ToKsc6kC1i+2nKbRszs4xZ9HwqAkYk+E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pVNz0HYpXgSabRFA9RAOca4mazrNMbdsdkBr+J6jDsu2KUeduron0mLpED/XM0E+Y8YXHPqZetcW9bIv2ek6Spxr1JXlC40ZuY4cIQIHjVXjNhNNO53JPc1S3FNADAIz28JTXZBnhUwIJhjirOlwRcns+zCzAdrHFGIf91ge7CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LmqLmzuP; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729251937; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=/M61x1cvogaG/HfRQ2l+U5zBrnsMrNgQXXlKMlMABF8=;
+	b=LmqLmzuPogTqsaLbOcHEiRRtiueb1pRRYzbfG0IVG9OUpjSKSzzoJ9edu5fzNNKnE++fa0TJi3mGUbeFWoAG9R14oaMKVlklWDPGz0NWPR6ypn2gvceI5U+v/T5UGlZLEtQddS7f8eP4eQyMoItq6rEr73xERjZ3AT4vltnqtns=
+Received: from localhost(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WHO1lIZ_1729251935 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 18 Oct 2024 19:45:36 +0800
+From: Philo Lu <lulie@linux.alibaba.com>
+To: netdev@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	dsahern@kernel.org,
+	antony.antony@secunet.com,
+	steffen.klassert@secunet.com,
+	linux-kernel@vger.kernel.org,
+	dust.li@linux.alibaba.com,
+	jakub@cloudflare.com,
+	fred.cc@alibaba-inc.com,
+	yubing.qiuyubing@alibaba-inc.com
+Subject: [PATCH v5 net-next 0/3] udp: Add 4-tuple hash for connected sockets
+Date: Fri, 18 Oct 2024 19:45:32 +0800
+Message-Id: <20241018114535.35712-1-lulie@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2024-10-18 at 07:53 +0200, Mauro Carvalho Chehab wrote:
-> fepriv->auto_sub_step is unsigned. Setting it to -1 is just a
-> trick to avoid calling continue, as reported by Coverity.
->=20
-> It relies to have this code just afterwards:
->=20
-> 	if (!ready) fepriv->auto_sub_step++;
->=20
-> Simplify the code by simply setting it to zero and use
-> continue to return to the while loop.
->=20
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+This patchset introduces 4-tuple hash for connected udp sockets, to make
+connected udp lookup faster. Test using udpgso_bench_tx/rx shows no
+obvious difference w/ and w/o this patchset for unconnected socket
+receiving (see v4 thread).
 
-Oh wow, back to the big-bang-commit ^^'
+Patch1: Add a new counter for hslot2 named hash4_cnt, to avoid cache line
+        miss when lookup.
+Patch2 and 3: Implement 4-tuple hash for ipv4.
+(That for ipv6 is in progress.)
 
-So is this a bug or not? It seems to me that the uint underflows to
-UINT_MAX, and then wrapps around to 0 again through the ++..
+The detailed motivation is described in Patch 3.
 
-I take the liberty of ++CCing Kees, since I heard him talk a lot about
-overflowing on Plumbers.
+The 4-tuple hash increases the size of udp_sock and udp_hslot. Thus add it
+with CONFIG_BASE_SMALL check, i.e., it's a no op with CONFIG_BASE_SMALL.
 
-If it's not a bug, I would not use "Fixes". If it is a bug, it should
-be backported to stable, agreed?
+AFAICS the patchset can be further improved by:
+(a) Better interact with hash2/reuseport. Now hash4 hardly affects other
+mechanisms, but maintaining sockets in both hash4 and hash2 lists seems
+unnecessary.
+(b) Support early demux and ipv6.
 
-Plus, is there a report-link somewhere by Coverty that could be linked
-with "Closes: "?
+changelogs:
+v4 -> v5 (Paolo Abeni):
+- Add CONFIG_BASE_SMALL with which udp hash4 does nothing
 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+v3 -> v4 (Willem de Bruijn):
+- fix mistakes in udp_pernet_table_alloc()
 
-Anyways, this in my eyes does what it's intended to do:
+RFCv2 -> v3 (Gur Stavi):
+- minor fix in udp_hashslot2() and udp_table_init()
+- add rcu sync in rehash4()
 
-Reviewed-by: Philipp Stanner <pstanner@redhat.com>
+RFCv1 -> RFCv2:
+- add a new struct for hslot2
+- remove the sockopt UDP_HASH4 because it has little side effect for
+  unconnected sockets
+- add rehash in connect()
+- re-organize the patch into 3 smaller ones
+- other minor fix
 
-> ---
-> =C2=A0drivers/media/dvb-core/dvb_frontend.c | 4 ++--
-> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/media/dvb-core/dvb_frontend.c
-> b/drivers/media/dvb-core/dvb_frontend.c
-> index d48f48fda87c..c9283100332a 100644
-> --- a/drivers/media/dvb-core/dvb_frontend.c
-> +++ b/drivers/media/dvb-core/dvb_frontend.c
-> @@ -443,8 +443,8 @@ static int dvb_frontend_swzigzag_autotune(struct
-> dvb_frontend *fe, int check_wra
-> =C2=A0
-> =C2=A0		default:
-> =C2=A0			fepriv->auto_step++;
-> -			fepriv->auto_sub_step =3D -1; /* it'll be
-> incremented to 0 in a moment */
-> -			break;
-> +			fepriv->auto_sub_step =3D 0;
-> +			continue;
-> =C2=A0		}
-> =C2=A0
-> =C2=A0		if (!ready) fepriv->auto_sub_step++;
+v4:
+https://lore.kernel.org/all/20241012012918.70888-1-lulie@linux.alibaba.com/
+v3:
+https://lore.kernel.org/all/20241010090351.79698-1-lulie@linux.alibaba.com/
+RFCv2:
+https://lore.kernel.org/all/20240924110414.52618-1-lulie@linux.alibaba.com/
+RFCv1:
+https://lore.kernel.org/all/20240913100941.8565-1-lulie@linux.alibaba.com/
+
+Philo Lu (3):
+  net/udp: Add a new struct for hash2 slot
+  net/udp: Add 4-tuple hash list basis
+  ipv4/udp: Add 4-tuple hash for connected socket
+
+ include/linux/udp.h |  11 +++
+ include/net/udp.h   | 111 +++++++++++++++++++++-
+ net/ipv4/udp.c      | 217 +++++++++++++++++++++++++++++++++++++++-----
+ net/ipv6/udp.c      |  17 ++--
+ 4 files changed, 317 insertions(+), 39 deletions(-)
+
+--
+2.32.0.3.g01195cf9f
 
 
