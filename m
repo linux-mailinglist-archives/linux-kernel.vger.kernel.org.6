@@ -1,218 +1,114 @@
-Return-Path: <linux-kernel+bounces-371734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE66C9A3F9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:29:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FDDA9A3FA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239551F22554
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:29:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FC41283C60
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8DB1D9665;
-	Fri, 18 Oct 2024 13:29:35 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FA51D7E43;
+	Fri, 18 Oct 2024 13:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt5EGiMx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9D01CABA;
-	Fri, 18 Oct 2024 13:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D400D23D2;
+	Fri, 18 Oct 2024 13:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729258174; cv=none; b=V1bk2tDIph3vGjtYnCCwlBxWYPvp7XNWmrj8rQDfaSwUqEZM+kIfeY0ULD05trhEBD8QvaG1m+no7XIobWbgTd65Dz4I54vxo9dt3KzrD/gwkTuviD+iTblfT2H93733sPZtolqG/TIhd5I1/aPe1Gai99MjPESvh38J5ngqvEo=
+	t=1729258187; cv=none; b=Sef9aC3VIC5788dURAobx9IkjExgK1/ge1geIi8exDcFW7W1nt5lCofK71fxMVnLd95yEFaBiBvPmtZXj8alwf7frqVohgUneXtk+6ziSdOaIqPvbuG4FC0BdCc1SG+g52MhDQl+S5i3bwdz3TQpY24LWO0/GJPwroG2lWjLgwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729258174; c=relaxed/simple;
-	bh=RZ6dj9vRCUkiAFZKjQ6w5AG7jaUlhyYdQDcOPRxtjwM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gj7kLeqhL/jy1OJBqc8oR2ORwl3X+tP5ehRieoZNoR8RDoswCaH3UOKkuoWF8TEPL/Qz7MiXzz6o+6G/nBhNqMEwEHMUb55LxeYc73obir40DVPEOz4QiuTL+usjgBMWdjx1wjQKTklIHkmMcqCfTy6zIz3snAZF8GZvGCkL3JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XVPyL33wPz9v7JP;
-	Fri, 18 Oct 2024 21:03:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 3249A1402A5;
-	Fri, 18 Oct 2024 21:29:22 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDHWDClYhJnwGEYAw--.52096S2;
-	Fri, 18 Oct 2024 14:29:21 +0100 (CET)
-Message-ID: <e6d5e3b0b35db5d569b418b73395574f8b63e445.camel@huaweicloud.com>
-Subject: Re: [PATCH 1/3] ima: Remove inode lock
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>, Lorenzo Stoakes
-	 <lorenzo.stoakes@oracle.com>
-Cc: Paul Moore <paul@paul-moore.com>, ebpqwerty472123@gmail.com, 
- kirill.shutemov@linux.intel.com, zohar@linux.ibm.com,
- dmitry.kasatkin@gmail.com,  eric.snowberg@oracle.com, jmorris@namei.org,
- serge@hallyn.com,  linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
- linux-mm@kvack.org, akpm@linux-foundation.org,  vbabka@suse.cz,
- linux-fsdevel@vger.kernel.org, Liam Howlett <liam.howlett@oracle.com>, Jann
- Horn <jannh@google.com>
-Date: Fri, 18 Oct 2024 15:29:05 +0200
-In-Reply-To: <gl4pf7gezpjtvnbp4lzyb65wqaiw3xzjjrs3476j5odxsfzvsj@oouue73v3cgr>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
-	 <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
-	 <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
-	 <593282dbc9f48673c8f3b8e0f28e100f34141115.camel@huaweicloud.com>
-	 <15bb94a306d3432de55c0a12f29e7ed2b5fa3ba1.camel@huaweicloud.com>
-	 <c1e47882720fe45aa9d04d663f5a6fd39a046bcb.camel@huaweicloud.com>
-	 <b498e3b004bedc460991e167c154cc88d568f587.camel@huaweicloud.com>
-	 <ggvucjixgiuelt6vjz6oawgyobmzrhifaozqqvupwfso65ia7c@bauvfqtvq6lv>
-	 <e89f6b61-a57f-4848-87f1-8e2282bc5aea@lucifer.local>
-	 <gl4pf7gezpjtvnbp4lzyb65wqaiw3xzjjrs3476j5odxsfzvsj@oouue73v3cgr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1729258187; c=relaxed/simple;
+	bh=0sbHRBsjbGBA1Ac2oOqCpC5kRRswpuyAvkL1Df298O0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sCR21SvuGBVhJsfTAsKuhCgNlZ1i/WnxRmfG+Wo0p6mBPd2Kp5JVy+jwOck5EoVexPnMUDzrDumwDVNBj0TxYp+ZH+ZEMcR7nj6oNA/LV6xIrFaVioyUF6TN1AA8mZAqUZUuT+Jia7oi9dF4o9Mn273WRbmXv5TSfpPY16RwEew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt5EGiMx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A7CEC4CEC3;
+	Fri, 18 Oct 2024 13:29:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729258186;
+	bh=0sbHRBsjbGBA1Ac2oOqCpC5kRRswpuyAvkL1Df298O0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xt5EGiMxdtTvBrlIYoC2Zt58IyLf2Rx5nM/TcPNJkLspAQmkTMtsuu1/JRcCX4jp/
+	 96zjvhmdAqV/CBGu0jYU22mrd53EM5IHvRIQMCu2LanUzgItKEH+nhKaU6QszrfAwZ
+	 noqVvK5qwy1pR/IflRl/NgVHbR0ZPGujjjbGrWMHmxTjPghZLjhPH0XMCNxZd69X8b
+	 ZwU8bF2b2zObQ8sMAczUto/Dksz6ldzJe6G/cgY54m1EbvZgPfAT7NJzcb2toPHv6G
+	 YyLVESYPYXxYEGxhHbi9cXZBsoXWaQ7tpybXTwBOI1QaZC+NO7damluju7Hcj018cr
+	 otsx37Uof178w==
+Date: Fri, 18 Oct 2024 08:29:45 -0500
+From: Rob Herring <robh@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/4] dt-bindings: iio: light: veml6075: document
+ rset-kohms
+Message-ID: <20241018132945.GA70244-robh@kernel.org>
+References: <20241017-veml6070-integration-time-v1-0-3507d17d562a@gmail.com>
+ <20241017-veml6070-integration-time-v1-3-3507d17d562a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDHWDClYhJnwGEYAw--.52096S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuF13JFWrJw1fuF43Jw4Utwb_yoW5Crykpr
-	yrJa4qgFWYqFyxXrn2q3Z0gFn0yayUKFy7urWrXry8AwnrtFnxCr4rGFy5urs8Ar1kAFyF
-	vF4UCFZakFW7JFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
-	0PDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABGcRxH8JsgAAsw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017-veml6070-integration-time-v1-3-3507d17d562a@gmail.com>
 
-On Fri, 2024-10-18 at 14:05 +0300, Kirill A. Shutemov wrote:
-> On Fri, Oct 18, 2024 at 12:00:22PM +0100, Lorenzo Stoakes wrote:
-> > + Liam, Jann
-> >=20
-> > On Fri, Oct 18, 2024 at 01:49:06PM +0300, Kirill A. Shutemov wrote:
-> > > On Fri, Oct 18, 2024 at 11:24:06AM +0200, Roberto Sassu wrote:
-> > > > Probably it is hard, @Kirill would there be any way to safely move
-> > > > security_mmap_file() out of the mmap_lock lock?
-> > >=20
-> > > What about something like this (untested):
-> > >=20
-> > > diff --git a/mm/mmap.c b/mm/mmap.c
-> > > index dd4b35a25aeb..03473e77d356 100644
-> > > --- a/mm/mmap.c
-> > > +++ b/mm/mmap.c
-> > > @@ -1646,6 +1646,26 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned lon=
-g, start, unsigned long, size,
-> > >  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
-> > >  		return ret;
-> > >=20
-> > > +	if (mmap_read_lock_killable(mm))
-> > > +		return -EINTR;
-> > > +
-> > > +	vma =3D vma_lookup(mm, start);
-> > > +
-> > > +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-> > > +		mmap_read_unlock(mm);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	file =3D get_file(vma->vm_file);
-> > > +
-> > > +	mmap_read_unlock(mm);
-> > > +
-> > > +	ret =3D security_mmap_file(vma->vm_file, prot, flags);
-> >=20
-> > Accessing VMA fields without any kind of lock is... very much not advis=
-ed.
-> >=20
-> > I'm guessing you meant to say:
-> >=20
-> > 	ret =3D security_mmap_file(file, prot, flags);
-> >=20
-> > Here? :)
->=20
-> Sure. My bad.
->=20
-> Patch with all fixups:
->=20
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index dd4b35a25aeb..541787d526b6 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1646,14 +1646,41 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, =
-start, unsigned long, size,
->  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
->  		return ret;
-> =20
-> -	if (mmap_write_lock_killable(mm))
-> +	if (mmap_read_lock_killable(mm))
->  		return -EINTR;
-> =20
->  	vma =3D vma_lookup(mm, start);
-> =20
-> +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-> +		mmap_read_unlock(mm);
-> +		return -EINVAL;
-> +	}
-> +
-> +	file =3D get_file(vma->vm_file);
-> +
-> +	mmap_read_unlock(mm);
-> +
-> +	ret =3D security_mmap_file(file, prot, flags);
+On Thu, Oct 17, 2024 at 11:39:27PM +0200, Javier Carrasco wrote:
+> The veml6070 provides a configurable integration time by means of an
+> extertnal resistor (Rset in the datasheet) with values between 75 and
+> 1200 kohms.
+> 
+> Document rset-kohms to select the integration time.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>  .../devicetree/bindings/iio/light/vishay,veml6075.yaml   | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml b/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
+> index 96c1317541fa..3d3ffeaa22df 100644
+> --- a/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
+> +++ b/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
+> @@ -29,6 +29,22 @@ required:
+>    - reg
+>    - vdd-supply
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - vishay,veml6070
+> +    then:
+> +      properties:
+> +        rset-kohms:
 
-Uhm, I have to calculate prot and flags before. I can check if what I
-used here changed in the next lock, and refuse.
+Use the documented '-ohms' suffix.
 
-Roberto
+Properties should be defined at the top-level and then restricted here.
 
-> +	if (ret) {
-> +		fput(file);
-> +		return ret;
-> +	}
+> +          $ref: /schemas/types.yaml#/definitions/uint32
+> +          description: |
+> +            Value in kilo Ohms of the Rset resistor used to select
+> +            the integration time.
+> +          minimum: 75
+> +          maximum: 1200
 > +
-> +	ret =3D -EINVAL;
-> +
-> +	if (mmap_write_lock_killable(mm)) {
-> +		fput(file);
-> +		return -EINTR;
-> +	}
-> +
-> +	vma =3D vma_lookup(mm, start);
-> +
->  	if (!vma || !(vma->vm_flags & VM_SHARED))
->  		goto out;
-> =20
-> +	if (vma->vm_file !=3D file)
-> +		goto out;
-> +
->  	if (start + size > vma->vm_end) {
->  		VMA_ITERATOR(vmi, mm, vma->vm_end);
->  		struct vm_area_struct *next, *prev =3D vma;
-> @@ -1688,16 +1715,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, =
-start, unsigned long, size,
->  	if (vma->vm_flags & VM_LOCKED)
->  		flags |=3D MAP_LOCKED;
-> =20
-> -	file =3D get_file(vma->vm_file);
-> -	ret =3D security_mmap_file(vma->vm_file, prot, flags);
-> -	if (ret)
-> -		goto out_fput;
->  	ret =3D do_mmap(vma->vm_file, start, size,
->  			prot, flags, 0, pgoff, &populate, NULL);
-> -out_fput:
-> -	fput(file);
->  out:
->  	mmap_write_unlock(mm);
-> +	fput(file);
->  	if (populate)
->  		mm_populate(ret, populate);
->  	if (!IS_ERR_VALUE(ret))
-
+>  additionalProperties: false
+>  
+>  examples:
+> 
+> -- 
+> 2.43.0
+> 
 
