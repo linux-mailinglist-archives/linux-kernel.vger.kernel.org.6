@@ -1,172 +1,116 @@
-Return-Path: <linux-kernel+bounces-371279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE3E79A3925
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:53:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEC19A392B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE20028479D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:53:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC6F1C25900
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86B618FC75;
-	Fri, 18 Oct 2024 08:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFD218FDB2;
+	Fri, 18 Oct 2024 08:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L82VRvx6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="io1WQ6BM"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DCF18E025;
-	Fri, 18 Oct 2024 08:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C58118E025;
+	Fri, 18 Oct 2024 08:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729241610; cv=none; b=TfXNXJ6YoGtxP0A6/qThmPO4DNTlBFTCYkodNQDZGBIdSFpzhbzM+0fuqVMQNLmZaZM4BndKiAHEVT3O5aSnsU+2xSlEvYlR3ytdI0ofwcTztwwRQFWCSfFpDHlJ16D+TzOaa+aUAuBGAEoyXPhhr9WbXKprdqiFXmDjl9sVv+U=
+	t=1729241639; cv=none; b=uaObqEIBq8+sKNA0QlEPMnTgAc1ZsT90UWpr0ov/KV1kkr1+Co7BLHESOuUOwxFnfrhXoZog/qF6lOhajOJSRKDuJqd6ViuJFhEu05FVBF9hmN6HLjHG7Is0wzjKXR14/8jvX6ACdWHWo2zidgk00+jVRtsGUdccb0whKtVdSH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729241610; c=relaxed/simple;
-	bh=Eft0/EV53cHhIKGudjtMBWNbw+3vJIAdcxvFutsGwM8=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=kY+IDrP2blqlQez1IDk5SyeCgwWOGBF7Z5fkR84Af4RUCAD0aVgHAAAKjzDvHRbnDGXKOah2VCQKxjdjTHQZV4HfKl2tjoh9wjW2OoTQtueC8XU+eaRezrgf4iop7+uVLILGD5OTxTWxLJIfuab7WE0SBuIepevu9WL2Auyiwg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L82VRvx6; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729241608; x=1760777608;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Eft0/EV53cHhIKGudjtMBWNbw+3vJIAdcxvFutsGwM8=;
-  b=L82VRvx6wEVzRd7/J+B1Ugh6vDFRmnTowtLwMoigExsg531HULTr2Lg6
-   titlNqRuA3AWIiojPxq5XjkGj4Sp6RyrsJewnZYkYctacVRrN/12PqpIg
-   cKtWUhy9n/uAZE/oG+5dsaq5pd1milUSVn+Yt83nI1qGSfw0eYLfC6LIq
-   2hBNTVo5Vmi3xSZIcncVwknlvEx29JMX5RJ6mrCfKa9/npVs5BsKdJeNA
-   n129/xslxevEaemiizgKB8C2ZuZIh6S4HmEfabgFR1zlVBEbtUzxGoF5B
-   g6H0/mynnE51pBBDV+KiOI1mfoTcaQp7LLfsVxSfQzQAWpVn2rZ01zOWK
-   w==;
-X-CSE-ConnectionGUID: sKKsDQxgS+qDku1Z5kUywQ==
-X-CSE-MsgGUID: L5trl373QcWyHiYP/Vswpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28899250"
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="28899250"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:53:28 -0700
-X-CSE-ConnectionGUID: 7arqsPE1Q0qPzh2ehBBFyA==
-X-CSE-MsgGUID: gCw747VwS+q2T8iY36aaOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="82775803"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.217])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:53:24 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 18 Oct 2024 11:53:21 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
-    peternewman@google.com, babu.moger@amd.com, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 05/15] selftests/resctrl: Protect against array overflow
- when reading strings
-In-Reply-To: <4adf01b3ee7019163ea4fc00b5d03d514d41b4b7.1729218182.git.reinette.chatre@intel.com>
-Message-ID: <70d4206c-3a5f-e699-0608-f70751f124eb@linux.intel.com>
-References: <cover.1729218182.git.reinette.chatre@intel.com> <4adf01b3ee7019163ea4fc00b5d03d514d41b4b7.1729218182.git.reinette.chatre@intel.com>
+	s=arc-20240116; t=1729241639; c=relaxed/simple;
+	bh=gr4U4FR4wkY2logh188gOxCC238FaP96WXZwHvzj8FM=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Qs6507Y7YMMqjOWxnG51RZjgbFKZ78DQLwrV340Jo3hkN4x/P5HU5xQrAsAj3zlAg2QwfOvpg4Vb6DRheUhoFl/sDBOsmJgqJb1dHhKoH3m/AM05Aw/U0osd0/sac8TAXfkaMZwbw5QqD18io07nrsnb6r+iCY60LrX1qKZ9FcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=io1WQ6BM; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=lmIYE7z4RuGhJ36QE482hSQEIKsxx2xUyL9F6iQ0AgQ=; b=io1WQ6BMMsW7iYFReW6Gly4bN7
+	YZCt/CT1FGAsqBFHn1cX/NL8sjMFIfdRyNYnTppZd8OwMCIdjXcd6A98mn18G3++bVBJNeN2QJ/kp
+	HpNM3FfA1UpH38UsVPwn7zZ6xBWUBXovHF6GrWqaAS6z/uJURVo7DxRCc8bwWhMUgr8Qw1BVmrtsW
+	Dk0y96ZvyXkoIJPYh56v0CH962HqKfkY2+WzUJkcf4LGrM8XJAc2JCe0mCUJKJWCA4sf5tMb17YKY
+	O7cRIvUeyzIkmFXQwJh5maoeKgqaUNUacNoQawyjW4Fzxa5vsgHf3pTeYJbWqoY7k/luMT4MIqxxi
+	TzS2WA0A==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Roger Quadros <rogerq@kernel.org>,
+	linux-omap@vger.kernel.org,
+	Tony Lindgren <tony@atomide.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Tero Kristo <kristo@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v3 0/2] dt-bindings: clock: ti: convert to yaml
+Date: Fri, 18 Oct 2024 10:53:45 +0200
+Message-Id: <20241018085347.95071-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-895840305-1729241601=:1141"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Convert some clock schemas to yaml. These are one of the most used non-yaml
+compatibles.
 
---8323328-895840305-1729241601=:1141
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+All can appear under a ti,clksel or without a ti,clksel.
 
-On Thu, 17 Oct 2024, Reinette Chatre wrote:
+I plan to convert the clock things from time to time.
+So enforcing certain compatibles below ti,clksel is not there yet.
 
-> resctrl selftests discover system properties via a variety of sysfs files=
-=2E
-> The MBM and MBA tests need to discover the event and umask with which to
-> configure the performance event used to measure read memory bandwidth.
-> This is done by parsing the contents of
-> /sys/bus/event_source/devices/uncore_imc_<imc instance>/events/cas_count_=
-read
-> Similarly, the resctrl selftests discover the cache size via
-> /sys/bus/cpu/devices/cpu<id>/cache/index<index>/size.
->=20
-> Take care to do bounds checking when using fscanf() to read the
-> contents of files into a string buffer because by default fscanf() assume=
-s
-> arbitrarily long strings. If the file contains more bytes than the array
-> can accommodate then an overflow will occur.
->=20
-> Provide a maximum field width to the conversion specifier to protect
-> against array overflow. The maximum is one less than the array size becau=
-se
-> string input stores a terminating null byte that is not covered by the
-> maximum field width.
->=20
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> ---
-> This makes the code robust against any changes in information read
-> from sysfs. The existing sysfs content fit well into the arrays, thus
-> this is not considered a bugfix.
->=20
-> Changes since V2:
-> - New patch
-> ---
->  tools/testing/selftests/resctrl/resctrl_val.c | 4 ++--
->  tools/testing/selftests/resctrl/resctrlfs.c   | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testin=
-g/selftests/resctrl/resctrl_val.c
-> index e88d5ca30517..c9dd70ce3ea8 100644
-> --- a/tools/testing/selftests/resctrl/resctrl_val.c
-> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
-> @@ -159,7 +159,7 @@ static int read_from_imc_dir(char *imc_dir, int count=
-)
-> =20
->  =09=09return -1;
->  =09}
-> -=09if (fscanf(fp, "%s", cas_count_cfg) <=3D 0) {
-> +=09if (fscanf(fp, "%1023s", cas_count_cfg) <=3D 0) {
->  =09=09ksft_perror("Could not get iMC cas count read");
->  =09=09fclose(fp);
-> =20
-> @@ -177,7 +177,7 @@ static int read_from_imc_dir(char *imc_dir, int count=
-)
-> =20
->  =09=09return -1;
->  =09}
-> -=09if  (fscanf(fp, "%s", cas_count_cfg) <=3D 0) {
-> +=09if  (fscanf(fp, "%1023s", cas_count_cfg) <=3D 0) {
->  =09=09ksft_perror("Could not get iMC cas count write");
->  =09=09fclose(fp);
-> =20
-> diff --git a/tools/testing/selftests/resctrl/resctrlfs.c b/tools/testing/=
-selftests/resctrl/resctrlfs.c
-> index 250c320349a7..a53cd1cb6e0c 100644
-> --- a/tools/testing/selftests/resctrl/resctrlfs.c
-> +++ b/tools/testing/selftests/resctrl/resctrlfs.c
-> @@ -182,7 +182,7 @@ int get_cache_size(int cpu_no, const char *cache_type=
-, unsigned long *cache_size
-> =20
->  =09=09return -1;
->  =09}
-> -=09if (fscanf(fp, "%s", cache_str) <=3D 0) {
-> +=09if (fscanf(fp, "%63s", cache_str) <=3D 0) {
->  =09=09ksft_perror("Could not get cache_size");
->  =09=09fclose(fp);
-> =20
->=20
+Open question: I set license to GPL-2 only because the .txt bindings the
+yaml binding was derived from were
+GPL-2. I personally have no problem with dual-licensing the binding.
+No idea about the legal side wether that is possible or who must agree.
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+Changes in v3:
+- adding more constraints and types
+- strip labels from example
+- fix references to divider.txt
 
---=20
- i.
+Changes in v2:
+- added conversion of divider
+- require reg now, makes sense after
+  https://lore.kernel.org/linux-omap/20240213105730.5287-1-tony@atomide.com/
+- clean up of examples
+- improvement of documentation
 
---8323328-895840305-1729241601=:1141--
+v1 is at https://lore.kernel.org/linux-omap/20231127202359.145778-1-andreas@kemnade.info/
+
+Andreas Kemnade (2):
+  dt-bindings: clock: ti: Convert interface.txt to json-schema
+  dt-bindings: clock: ti: Convert divider.txt to json-schema
+
+ .../bindings/clock/ti/composite.txt           |   2 +-
+ .../devicetree/bindings/clock/ti/divider.txt  | 115 -----------
+ .../bindings/clock/ti/interface.txt           |  55 -----
+ .../bindings/clock/ti/ti,divider-clock.yaml   | 193 ++++++++++++++++++
+ .../bindings/clock/ti/ti,interface-clock.yaml |  71 +++++++
+ 5 files changed, 265 insertions(+), 171 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/divider.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/interface.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml
+
+-- 
+2.39.5
+
 
