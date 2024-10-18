@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-372466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91269A48E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6439A48EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E101F24296
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:31:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A53D1F25C48
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771BC190493;
-	Fri, 18 Oct 2024 21:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B139F191493;
+	Fri, 18 Oct 2024 21:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbJ9I6Pe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXJ1kJu6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C654C19007D;
-	Fri, 18 Oct 2024 21:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0681E18D640;
+	Fri, 18 Oct 2024 21:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729287043; cv=none; b=tTHcGeA2XwODZCuH7ytSCcM4yyEj50sSlcB5tTSCieVvtZx29PE+0AebzZyQza7peRQg3feURCOCpEAs39A5oBRhlyRSVZ7oAHL88Vz35GFbvTJNq9aEvZSuBwJgHgA3mA2uwp6rsMztMQaUTG1FzFwXM4Bi4IsfExYzdOwnrwM=
+	t=1729287047; cv=none; b=GOg6Fv3FSM43btVCMyaa+/GJ/6ymj+DPsVBZ6/KGNlbluK8uMkkj0i4EeESes7cUYHhW4oNtZbm9sKHMGGjUGbXFidNUy1C3hLdLlbGY6sHUIgPZIksfPpW8PyenUPI9CTOKjO3yd3SrT8NY06QnpGNbIPQDyLyUaN5q7WO1SeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729287043; c=relaxed/simple;
-	bh=bd7zqGrKt29zOyO1cGYsr3FOMFt4VVqROBGt8oxJNRs=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EtWPMPp1UYUlD8qc+eAqPAef+YJvDrjI2s3tTC/+pnOqgsOfOtlc01+WTk66ZUtAMvxpIG8wbdCFZQALUy/BRPvGHfTudPjR6r313qpBCXvMFUpmFDMHAqRerQu6b5r0lofz90Ry3PIOhj+tbdUszUfr1XYZfuo308Ph1BKJ9nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbJ9I6Pe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60AD2C4CED1;
-	Fri, 18 Oct 2024 21:30:41 +0000 (UTC)
+	s=arc-20240116; t=1729287047; c=relaxed/simple;
+	bh=q6yelh/uOWVywDnkiEhm9rhs3QgNDHyY/K5DwGpxNFw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=LpPjSXNTsvfsKmdsdNogtazT/7XU7WSUbE+fxYAwMPerZs41sPmk8fe9KSs5Mr5FbQdty0AGc4gyTOwC1bQP8hJQPs5u6mI3B6HGKPwyvkl3QlUmk1q+EjkBtJgAniR9A2bTj8o0fSDEgQVMNFL/v8cDLdrc/SoJXLSjNyDyvcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXJ1kJu6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18D83C4CEC5;
+	Fri, 18 Oct 2024 21:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729287043;
-	bh=bd7zqGrKt29zOyO1cGYsr3FOMFt4VVqROBGt8oxJNRs=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=VbJ9I6PeF8RQAviyGZQl6FnjRoFk86rwPMF7ceG5X5rap30uDjPmHrctjo8dQOs9A
-	 ytr3HBuo833OgANJwKVsrSxsuWZzPnRY4Rzmm+2Eq43RkNDXHSonfrhWSIZj5XG8y/
-	 9Rs/rktl6k24rnPSuXlQQAngwThTgqb7d8m1b+FZxACTOFk5noyIJFX/v4NauQkUNN
-	 /UA4meQSQZ6j+Sesj5Q6UsywMOFwiDKtvzeSFBU0bqsi6zPP3XWQoFcJE2f0vSbtKD
-	 jD/V+S45WTHPpJN6U4jNGl38Ap1B3xp3IIaDwav0eNf3OPyZx5NraptjV0qy+aAtQG
-	 xxQk1RhLc+yiA==
+	s=k20201202; t=1729287045;
+	bh=q6yelh/uOWVywDnkiEhm9rhs3QgNDHyY/K5DwGpxNFw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=kXJ1kJu6hcr/Vy0iid+LjYDMFgiux3nLQvRKynZew8KgLADkLIMsjyO0usmQ0xqMJ
+	 KbMLsesmdW18iJkjieohQS//H9xWFfSZMZjsqh5j8b5TDm73i9Pt6VEF0TTbiTxpkt
+	 u2lNFLFVWBLeN2BEyL15DgyUs7yJpTpsg8a99/CR9cijHif1awEsmuhGLqpaqsS4la
+	 MTSET349BPxZPvpv4MgsQ/lIh8ePz4wN4bkHio9/7DKLeK8eVFtD1mhIXfBh3zHiQe
+	 Cz4hiLiEIOnG+YOHNaAgnHkcB/LcE8MkklOe2Pna8OCZjbUO8RyUUekPgbcqxaHhvT
+	 dOE5h14xLOV3Q==
 From: Mark Brown <broonie@kernel.org>
-To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
- Chancel Liu <chancel.liu@nxp.com>
-In-Reply-To: <20241017071507.2577786-1-chancel.liu@nxp.com>
-References: <20241017071507.2577786-1-chancel.liu@nxp.com>
-Subject: Re: [PATCH] ASoC: fsl_micfil: Add a flag to distinguish with
- different volume control types
-Message-Id: <172928704112.212383.3559380039082750889.b4-ty@kernel.org>
-Date: Fri, 18 Oct 2024 22:30:41 +0100
+To: tiwai@suse.de, vkoul@kernel.org, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>
+Cc: vinod.koul@linaro.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, pierre-louis.bossart@linux.dev, 
+ bard.liao@intel.com
+In-Reply-To: <20241016102333.294448-1-yung-chuan.liao@linux.intel.com>
+References: <20241016102333.294448-1-yung-chuan.liao@linux.intel.com>
+Subject: Re: [PATCH 00/11] ASoC/soundwire: add initial support for SDCA
+Message-Id: <172928704383.212383.14774577964808301941.b4-ty@kernel.org>
+Date: Fri, 18 Oct 2024 22:30:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,13 +61,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Thu, 17 Oct 2024 16:15:07 +0900, Chancel Liu wrote:
-> On i.MX8MM the register of volume control has positive and negative
-> values. It is different from other platforms like i.MX8MP and i.MX93
-> which only have positive values. Add a volume_sx flag to use SX_TLV
-> volume control for this kind of platform. Use common TLV volume control
-> for other platforms.
+On Wed, 16 Oct 2024 18:23:22 +0800, Bard Liao wrote:
+> We need to get rt712 version by reading SDCA version and functions.
+> This patch series adds initial support for SDCA and add a helper to tell
+> if the codec is RT712_VB.
 > 
+> This series may go via the ASoC tree with Vinod's Acked-by tag.
+> 
+> Bard Liao (1):
+>   soundwire: sdw_intel: include linux/acpi.h
 > 
 > [...]
 
@@ -78,8 +79,28 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: fsl_micfil: Add a flag to distinguish with different volume control types
-      commit: da95e891dd5d5de6c5ebc010bd028a2e028de093
+[01/11] soundwire: sdw_intel: include linux/acpi.h
+        commit: f35533a0e60946ee3fb8adccf8a36024c6f1fe40
+[02/11] ASoC/soundwire: remove sdw_slave_extended_id
+        commit: 4b224ff80d6609811ec6ab5406a16c92825cfb1a
+[03/11] ASoC: SDCA: add initial module
+        commit: 3a513da1ae33972e59efeef7908061f1f24af480
+[04/11] soundwire: slave: lookup SDCA version and functions
+        commit: 0c673d2862534955241f339d7331f384b5ea44af
+[05/11] ASoC: SDCA: add quirk function for RT712_VB match
+        commit: fdb220399177177917dce52063b326a191a35a02
+[06/11] ASoC: rt712-sdca: detect the SMART_MIC function during the probe stage
+        commit: 9aa6df9cb82e8fd44132c481afc76eb7a7dbc398
+[07/11] ASoC: soc-acpi: introduce new 'machine check' callback
+        commit: dcf4694f200a67784e053eb5d1d70a191761ff4f
+[08/11] ASoC: sdw_utils: add SmartMic DAI for RT712 VB
+        commit: 9489db97f6f0d78c26eef8e7fc9c1371cef97b82
+[09/11] ASoC: sdw_utils: add SmartMic DAI for RT713 VB
+        commit: 7d6f2d5254b1786c8b3bd64c6295b14e1607965d
+[10/11] ASoC: Intel: soc-acpi: add is_device_rt712_vb() helper
+        commit: 5703ab86ff7bf079aa1ddf7a65b9727d0249383a
+[11/11] ASoC: SOF: Intel: hda: use machine_check() for SoundWire
+        commit: e92edcf8023d425c7abcf1d7abb5dcac53d106f5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
