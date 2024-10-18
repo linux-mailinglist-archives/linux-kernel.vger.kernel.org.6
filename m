@@ -1,119 +1,85 @@
-Return-Path: <linux-kernel+bounces-372453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A53D9A48BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:10:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45CE9A48BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AFDA1F22BDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B1D2818A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154ED20401C;
-	Fri, 18 Oct 2024 21:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5751B1DE3B1;
+	Fri, 18 Oct 2024 21:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GCC/aZR8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFKp3L6t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C909F18E341;
-	Fri, 18 Oct 2024 21:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B83E13A244;
+	Fri, 18 Oct 2024 21:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729285811; cv=none; b=XZ7B3s2F82906VDpAUmizgkNSbfNUhvPPpRmgQ+aI/dFzqWKPjy90bFeGgvJc47ZF6sV8//qVatXB9Nl7sli6afoqVVWx1SLCbPVm88JU59I4L8Z3VksNLGtWYp1Do15ofG4PRgWP64EwywLe+0h3HECkXHDjsEeN9kutJVyA2M=
+	t=1729285822; cv=none; b=OmMKGdmkanHjJbNpbU21rQnuquZyJyuZNgoSD8ONXEPDrS58syDpTQVEhvCoMqA8hU5jeAKxmpAb9rBSOc5dQSEgUnOfWHktMcHmOhLQ88gpmi4FaiwB1iNkxLJiVN53nLQe+phPDJZKMff0m6rH8hnxEfbBSO+qJcoV+gPexg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729285811; c=relaxed/simple;
-	bh=hQ0DG6/Eb3j0prKHYX364xskTLEd+9vKpIg1xcOPcDw=;
+	s=arc-20240116; t=1729285822; c=relaxed/simple;
+	bh=sDLVES6Qpp5v9wZpIWk49SzdhUbTPBMmUtLjZBfD5ng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxxOBegOZrX3Dfm9/r/tfspMHt2SJNwdCgDvIwFEoOhgXXqbBXrqpY7hmhp5kAenC/djxkZ4wiOzPti2U/Rt06Fg6xPI14dfyhVbH8iyu+TlXYCotDbIVqldYCH0SNvrKG/pawp8F8uLPiDi2PfvtxmzEyinmNzyP41xVgbbBSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GCC/aZR8; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729285809; x=1760821809;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hQ0DG6/Eb3j0prKHYX364xskTLEd+9vKpIg1xcOPcDw=;
-  b=GCC/aZR8vwcft9DKreLN/fmFJWkpkZJFH67WpSDHNksW/CR04ZaKyeWL
-   XtoZtoCtFYtmcegKvkavN+KJGVxCjzqAhdXbd+IOOezcGUxYRgKG+kMbb
-   xQAYv8nfmcqKBuL0PvyKpfNP6vX9UeHUun1IeLr+j7jsejyAHejBEg/tT
-   s16Q+FTgxKC0wfRkNfHwQWmF7NPSlPljsyZ789mZrfGKSamDYzSLkMm8y
-   KtP6Yza+q5j5uz+ift8Tp9tKB45O2JaoAIcvYkYlpHFTGrcFA2Cp6MUp4
-   QCHIHtEr9tqwvVvFf4T9CQFxMMesDXYZZQ5B3/anHpvfvyAoXOs6vFg0M
-   Q==;
-X-CSE-ConnectionGUID: V2vtrIvqQPKeQ+r6dTJnFg==
-X-CSE-MsgGUID: Zp44uaT9Rnizfp3w3Th97w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28993129"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28993129"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 14:10:08 -0700
-X-CSE-ConnectionGUID: dr8iIfhTSkuHbpup6ssh2A==
-X-CSE-MsgGUID: zkUFIu82SCqVszaErv+rJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
-   d="scan'208";a="78938262"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 18 Oct 2024 14:10:02 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1uES-000OJS-0e;
-	Fri, 18 Oct 2024 21:10:00 +0000
-Date: Sat, 19 Oct 2024 05:09:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.oltean@nxp.com,
-	claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, Frank.Li@nxp.com,
-	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
-	bhelgaas@google.com, horms@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, imx@lists.linux.dev,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v3 net-next 06/13] net: enetc: build enetc_pf_common.c as
- a separate module
-Message-ID: <202410190431.wiCDZy8G-lkp@intel.com>
-References: <20241017074637.1265584-7-wei.fang@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=icfbP7HoQJP0p0cOTr9/clsE/cxCEq3duhlzr6pQ5xNvVWq59BCLXSHkA5SCNoln3YIrLQuIUXjXnQI067/71XnSa4RxSn3/lLEyDjA/i3pu1ZPIlXZsQIr17LU53OW2wNt/yP2IixqaKjBoU8QHNtS6omWtSFtyVeei/TV2nxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFKp3L6t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB4E4C4CEC3;
+	Fri, 18 Oct 2024 21:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729285822;
+	bh=sDLVES6Qpp5v9wZpIWk49SzdhUbTPBMmUtLjZBfD5ng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dFKp3L6tvF/jmRXDSdq97OMjRN8cpyHuU7ci4r/7/O1iBh/LOi4WsTSAkIqfF1ks6
+	 kwXyQKbW9Q+xNuWQbXfcvE9kLMYU9l6UbYP6hla9zqODmm11Sp8EOUS+v6qPJFQyQ7
+	 O30I7NpX0oLk/UUePL/qBsUTkL5t3lf/yBKyCOHeLW+QUWGxhWbY4XwQFBSQT7iWyL
+	 BzMirrkUiPoAU2vpIJ+8KKZMn9JQ2zSzrX9Vv2scXPPMuaFVM6muDXdBA0BWqpFD29
+	 dw9553bCpeCQLWvPiSc5VFIqjpZqycxPrLGfeR60Fak9mCscdsT4/trOoJF5xn4NXS
+	 87kb+53gShDpg==
+Date: Fri, 18 Oct 2024 23:10:18 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Michal Schmidt <mschmidt@redhat.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rcu/srcutiny: don't return before reenabling preemption
+Message-ID: <ZxLOut9zT_pfBWAO@pavilion.home>
+References: <20241007101415.466155-1-mschmidt@redhat.com>
+ <6c9dde7f-271b-4342-8ce9-8f363b341c0d@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241017074637.1265584-7-wei.fang@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6c9dde7f-271b-4342-8ce9-8f363b341c0d@paulmck-laptop>
 
-Hi Wei,
+Le Wed, Oct 09, 2024 at 10:19:01AM -0700, Paul E. McKenney a écrit :
+> On Mon, Oct 07, 2024 at 12:14:15PM +0200, Michal Schmidt wrote:
+> > Code after the return statement is dead. Enable preemption before
+> > returning from srcu_drive_gp().
+> > 
+> > This will be important when/if PREEMPT_AUTO (lazy resched) gets merged.
+> > 
+> > Fixes: 65b4a59557f6 ("srcu: Make Tiny SRCU explicitly disable preemption")
+> > Signed-off-by: Michal Schmidt <mschmidt@redhat.com>
+> 
+> Good catch!
+> 
+> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-kernel test robot noticed the following build errors:
+Applied!
 
-[auto build test ERROR on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-net-add-compatible-string-for-i-MX95-EMDIO/20241017-160848
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241017074637.1265584-7-wei.fang%40nxp.com
-patch subject: [PATCH v3 net-next 06/13] net: enetc: build enetc_pf_common.c as a separate module
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241019/202410190431.wiCDZy8G-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410190431.wiCDZy8G-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410190431.wiCDZy8G-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-ERROR: modpost: "__delay" [drivers/net/mdio/mdio-cavium.ko] undefined!
->> ERROR: modpost: "enetc_set_ethtool_ops" [drivers/net/ethernet/freescale/enetc/nxp-enetc-pf-common.ko] undefined!
-ERROR: modpost: "devm_of_clk_add_hw_provider" [drivers/media/i2c/tc358746.ko] undefined!
-ERROR: modpost: "devm_clk_hw_register" [drivers/media/i2c/tc358746.ko] undefined!
-ERROR: modpost: "of_clk_hw_simple_get" [drivers/media/i2c/tc358746.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks.
 
