@@ -1,124 +1,125 @@
-Return-Path: <linux-kernel+bounces-371371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EDA9A3A28
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:38:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380BB9A3A30
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24A27B22A24
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF221F27B4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A966B1F5833;
-	Fri, 18 Oct 2024 09:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="xlOcfpWw"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE28E139587;
-	Fri, 18 Oct 2024 09:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458711F5830;
+	Fri, 18 Oct 2024 09:39:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F76179965;
+	Fri, 18 Oct 2024 09:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729244275; cv=none; b=eOpF9PCFjpMCLPDbR3JI8kqIO/7r1nOXN08FAO46eTuEUR228wNNsiA68dW83MJb4HMT1uGbLnJCF4wAz4ArFNg9NlUpg14dtMbJovBizaIcZ7SBceubgxGhDdwFRUSYIyyUjGxa9dFTl9LiKQ+6xuGeAQ3ZN9pEeVD/LGECakU=
+	t=1729244365; cv=none; b=nuSKiI6ETXx66ljkbpRf7PZgESWpaMzlPvgqGDH/OjQdebT+GQiFx4SQzSgqhfYDObhNXDRM3lG58Clc8jT+nguJoqAu0HhK+vJqNGFbLh7zNUNcdOMKkCbkhZk6JDeXbb/0PB5giBsM0refPeItZGXM70MOeMVbqYjbkEU+6p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729244275; c=relaxed/simple;
-	bh=DOVQmhBf4K2P08mBoEzv7BzUo6saLfW36OYYo+ll4XY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gqekK3T91DNoXfEelaF5lesPiV+qh8nLQctOVp1McvVKNYiU0O06rRXKeGrTDKq6onf7NM/k0iEqOyzwRcdR5700nKuAkEmTzgsN/4wP6MlmknnJj+pFB2wE9ZMJtHaTZYvDqLFOgo2tBGCN+7+l+0JS27cy4b5TxTzLLNbE3yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=xlOcfpWw; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=qouiPpn6YX1/1IcGgtK9bT+Ht7HWLyCulNlPM8Iwk6I=; b=xlOcfpWwGRohG4z1NAUaxGZA1/
-	NvM1tupAENJpjtgEBrJCMbFKfDkb+/8L2uChgGznhbjIS8T47Wl8lnW1Nj3Il59B/nCAESqQ/72j7
-	al51RGLk2HTgyKzXC1pclRBKepoBEQkPPPzv3ZffHXfF2oJkS+KcY80XCOG5NXlM487rTCue7yvD3
-	E4gYQ1qrpCBCVWrIlw6jnTEYd73dn0CdZQ8A+GhwoqkuTCmqDLjrrJaVHy72jO8aRzGaCAOzRRUca
-	8+IG+pCCSW6Ac5Kn7ifMeE6pXwtBmNg0y5K8g9xbIQF5yKu6NJnHtAPHQ6zaPtFIGf9vJNtSTe23s
-	IYEugtVw==;
-Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t1jQW-00072T-2A; Fri, 18 Oct 2024 11:37:44 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject:
- Re: (subset) [PATCH v2 0/4] rockchip: Fix several DT validation errors
-Date: Fri, 18 Oct 2024 11:37:42 +0200
-Message-ID: <4604343.LvFx2qVVIh@diego>
-In-Reply-To: <D4YTW4DVRT68.1Z97ZHDYWTKHT@cknow.org>
-References:
- <20241008113344.23957-1-didi.debian@cknow.org>
- <D4X8GJV0W6JL.32E469JSATFEP@cknow.org> <D4YTW4DVRT68.1Z97ZHDYWTKHT@cknow.org>
+	s=arc-20240116; t=1729244365; c=relaxed/simple;
+	bh=4VpjvciPKCyIBPuGr0O2yTsp1zf+Y6OpaD0A4XO/8jk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ky/GB8oP8SLunHqDK8YC3BwfYShb4EnGo5kKivy55CQRu/A3aXK9da/Rp+E8/QfmabG8hO+CqjdimHvsHvRaPXVqbKjnc2rJZlZ6MaSpnKGRyeD/55KVZyrnHTaPBD94ZFCZ8irfhLeiX8lD6LcBXC3xAre6a3SijHvt/zCSNLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF260FEC;
+	Fri, 18 Oct 2024 02:39:52 -0700 (PDT)
+Received: from [10.57.22.188] (unknown [10.57.22.188])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 45FE93F58B;
+	Fri, 18 Oct 2024 02:39:21 -0700 (PDT)
+Message-ID: <026951f9-05af-4ee4-85d2-30236292f7f8@arm.com>
+Date: Fri, 18 Oct 2024 10:39:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] amba: Fix atomicity violation in amba_match()
+Content-Language: en-GB
+To: Qiu-ji Chen <chenqiuji666@gmail.com>, linux@armlinux.org.uk,
+ rmk+kernel@armlinux.org.uk, sumit.garg@linaro.org,
+ gregkh@linuxfoundation.org, andi.shyti@kernel.org, krzk@kernel.org
+Cc: linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
+ stable@vger.kernel.org
+References: <20241018081539.1358921-1-chenqiuji666@gmail.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20241018081539.1358921-1-chenqiuji666@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hey,
-
-Am Freitag, 18. Oktober 2024, 11:35:51 CEST schrieb Diederik de Haas:
-> Hi Heiko,
+On 18/10/2024 09:15, Qiu-ji Chen wrote:
+> Atomicity violation occurs during consecutive reads of
+> pcdev->driver_override. Consider a scenario: after pvdev->driver_override
+> passes the if statement, due to possible concurrency,
+> pvdev->driver_override may change. This leads to pvdev->driver_override
+> passing the condition with an old value, but entering the
+> return !strcmp(pcdev->driver_override, drv->name); statement with a new
+> value. This causes the function to return an unexpected result.
+> Since pvdev->driver_override is a string that is modified byte by byte,
+> without considering atomicity, data races may cause a partially modified
+> pvdev->driver_override to enter both the condition and return statements,
+> resulting in an error.
 > 
-> On Wed Oct 16, 2024 at 2:35 PM CEST, Diederik de Haas wrote:
-> > On Wed Oct 16, 2024 at 11:41 AM CEST, Diederik de Haas wrote:
-> > > On Tue Oct 8, 2024 at 9:28 PM CEST, Heiko Stuebner wrote:
-> > > > On Tue, 8 Oct 2024 13:15:35 +0200, Diederik de Haas wrote:
-> > > > > This is a set of 4 small device-tree validation fixes.
-> > > > > 
-> > > > > Patch 1 adds the power-domains property to the csi dphy node on rk356x.
-> > > > > Patch 2 removes the 2nd interrupt from the hdmi node on rk3328.
-> > > > > Patch 3 replaces 'wake' with 'wakeup' on PineNote BT node.
-> > > > > Patch 4 replaces 'reset-gpios' with 'shutdown-gpios' on brcm BT nodes.
-> > > >
-> > > > Applied, thanks!
-> > > >
-> > > > [2/4] arm64: dts: rockchip: Remove hdmi's 2nd interrupt on rk3328
-> > > >       commit: de50a7e3681771c6b990238af82bf1dea9b11b21
-> > > > [3/4] arm64: dts: rockchip: Fix wakeup prop names on PineNote BT node
-> > > >       commit: 87299d6ee95a37d2d576dd8077ea6860f77ad8e2
-> > > > [4/4] arm64: dts: rockchip: Fix reset-gpios property on brcm BT nodes
-> > > >       commit: 2b6a3f857550e52b1cd4872ebb13cb3e3cf12f5f
-> > >
-> > > Please revert the 4th patch.
-> > >
-> > > I must have messed up my testing previously, but BT does not work on the
-> > > PineNote with the 4th patch applied and does work with it reverted.
-> >
-> > FWIW, I figured out what went wrong.
-> > My testing was correct, but redo-ing the implementation to make it ready
-> > for submission wasn't very smart.
-> >
-> > With ``shutdown-gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_HIGH>;``
-> > it does work correctly, but I forgot to change GPIO_ACTIVE_LOW to
-> > GPIO_ACTIVE_HIGH before submitting.
-> >
-> > I'll first figure out a better procedure before making a new submission,
-> > so the revert is still the best approach IMO.
+> To fix this, we suggest protecting all reads of pvdev->driver_override
+> with a lock, and storing the result of the strcmp() function in a new
+> variable retval. This ensures that pvdev->driver_override does not change
+> during the entire operation, allowing the function to return the expected
+> result.
 > 
-> I've now done a new submission:
-> https://lore.kernel.org/linux-rockchip/20241018092237.6774-1-didi.debian@cknow.org/
+> This possible bug is found by an experimental static analysis tool
+> developed by our team. This tool analyzes the locking APIs
+> to extract function pairs that can be concurrently executed, and then
+> analyzes the instructions in the paired functions to identify possible
+> concurrency bugs including data races and atomicity violations.
 > 
-> So please don't revert the 4th patch now.
+> Fixes: 5150a8f07f6c ("amba: reorder functions")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+> ---
+>   drivers/amba/bus.c | 11 +++++++++--
+>   1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+> index 34bc880ca20b..e310f4f83b27 100644
+> --- a/drivers/amba/bus.c
+> +++ b/drivers/amba/bus.c
+> @@ -209,6 +209,7 @@ static int amba_match(struct device *dev, const struct device_driver *drv)
+>   {
+>   	struct amba_device *pcdev = to_amba_device(dev);
+>   	const struct amba_driver *pcdrv = to_amba_driver(drv);
+> +	int retval;
+>   
+>   	mutex_lock(&pcdev->periphid_lock);
+>   	if (!pcdev->periphid) {
+> @@ -230,8 +231,14 @@ static int amba_match(struct device *dev, const struct device_driver *drv)
+>   	mutex_unlock(&pcdev->periphid_lock);
+>   
+>   	/* When driver_override is set, only bind to the matching driver */
+> -	if (pcdev->driver_override)
+> -		return !strcmp(pcdev->driver_override, drv->name);
+> +
+> +	device_lock(dev);
+> +	if (pcdev->driver_override) {
+> +		retval = !strcmp(pcdev->driver_override, drv->name);
+> +		device_unlock(dev);
+> +		return retval;
+> +	}
+> +	device_unlock(dev);
+>   
+>   	return amba_lookup(pcdrv->id_table, pcdev) != NULL;
+>   }
 
-hehe ok :-) .
-I meant to ask if the fix wasn't simply toggling the gpio polarity, and
-I guess with your patch you were faster than my question.
 
-Heiko
+Looks correct to me
+
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
 
 
