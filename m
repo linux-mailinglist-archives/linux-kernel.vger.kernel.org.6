@@ -1,192 +1,118 @@
-Return-Path: <linux-kernel+bounces-372429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D829A485C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:43:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17539A486C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D671C221E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 875621F212BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A59A20FA80;
-	Fri, 18 Oct 2024 20:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CD918D63A;
+	Fri, 18 Oct 2024 20:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyI7rWZC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OinUBPtS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1231209687;
-	Fri, 18 Oct 2024 20:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F1D2CA5
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729284188; cv=none; b=OuKLxJc7y8BfEpClh6rMeM7Bsh8d94+gnipg0zok6VgqVA31Xc1KWBjJ927lRvOS06TQY1xgCT0ymlYw5BBh8UT2qk9FEEYdHseKAanJTQJPX2anjEaaVWcI1nRUnGwixxfrkhyx9kdDSw2l2ePjyDYew9VNVsWHJlqJD3hZL0E=
+	t=1729284446; cv=none; b=Mb0ZzNtmvLhy0d8nBJmdGFii2qGMGNGyaCKY5sMG3TxnZYayilcf1j6XxL76P0U4QDQZIZV+exNs5j7MV1K/tE1ZHVoLIVtt0c561ViDE9ENIbnwUXUrRsWd4OuXXpsnTRfBbtqoz74klFjQuHkvuB3t9MEA1I5qFli5/cgblps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729284188; c=relaxed/simple;
-	bh=Wd2sRFIv6VgBTxpaUlOO+UeISbX+LtoMmnn1efqwEq8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fvUJv6igDe+5LUX0zz+BFVWLzOKxKDYQdMgZsxw6QBsG2mp9KCPe4lsvlZf+UHA7rXSR9reo0RDq6Mt47qKDCL74ldFdwUktE/C5N2U1K3g4MrCUotURCzxQC4EIlLkA4gslEvfGb2K9ZOFzB4QDF5+vbOpLM4VsOuhOt8gMx+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyI7rWZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A864C4CEC5;
-	Fri, 18 Oct 2024 20:43:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729284187;
-	bh=Wd2sRFIv6VgBTxpaUlOO+UeISbX+LtoMmnn1efqwEq8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NyI7rWZCWNva/Ew7YW8P0IerlkOVnbmsSb3nrMwd3ktiHocZtcOtxYE2eAA5Dn9qk
-	 3zCdhgi3lEjGn1I0LuHxqlWipq4zPGZM45YP0Wtq8SxvV8zbyMeHmYJ1GHGu6XOEFV
-	 92sW2oDQbEXDAvQOfoy+DtiE9PKNkJNUmtbXXhhvVWzOCE52EVRA50ioJZzq6TyhZs
-	 DEdjzd6XuNH/3eLMaRqRfLaUGAePvdhs+9hNB1v9/RpZQLW+BbNEuPYgBa0d5eOfd5
-	 upSHUYTiu0pcn4CmksV0nagHj6YhetGPA+WcGTnhSh//pkUi3PiOm9KrMj9vxpuF3T
-	 LMGBkIRrZJMDg==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf test: Update all metrics test like metricgroups test
-Date: Fri, 18 Oct 2024 13:43:06 -0700
-Message-ID: <20241018204306.741972-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+	s=arc-20240116; t=1729284446; c=relaxed/simple;
+	bh=NfD8fPvBFqJ+Bwmzg6xrJ1U3rr8cry1s0S+hVZNz9O4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UJI6ipSXiNO3eowV4qrjWkvPGQTWYaBcXA7NZ/6fLNjy7pHVv7+tmfEShh0ofSpGJH92QYZZbEH12LJpTJ0X9nCE7KzYkzVdBwE1HOgbMHtqT/OVPoF0wDqEkAz87OuQI4gidrrmFULcX4c3g9kDOQXvGvXjPYjHFD7u8gPabzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OinUBPtS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IBfT29021848;
+	Fri, 18 Oct 2024 20:47:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GS1Oq3FUcmFG5PcZjImzqPlOyhYc0W1H2YX3pqZnlTQ=; b=OinUBPtSR3i1L1A3
+	42mntLKSXD1iR+3Ic3plqScoktyFrP+2/+ibg3OC542+XZ4f/fiD2hkO1F/xUZc7
+	kcZ9i7Up6k6UloJFnwawI7txDsH+AkRIkPEa/VSP/NGN5I06+xxTZRqMyIJt9OSr
+	ye6vWWx5I3KjLfV+zhstxjRP0sem+3l2qsDQ2jsQiANkqvWRyqVEZkGIVBrFDwcB
+	v7Vs15gj9Kiy2khHkS0Z/UameQXRNcPZR+Qen7dfmjZdJVRDY2oAH1pSHSITVs81
+	0i9jqpLaihTEU7ErBwnC1Hn75g2G7uYUi1YFYoBdQx1MOlgYNPtH5hIcN4KwAmvE
+	Cr+oWg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42be8cb0e8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 20:47:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IKlI0c032122
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 20:47:18 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
+ 2024 13:47:18 -0700
+Message-ID: <45e167e3-dab6-691f-2ab9-056d92db4149@quicinc.com>
+Date: Fri, 18 Oct 2024 14:47:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V4 05/10] accel/amdxdna: Add hardware context
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20241011231244.3182625-1-lizhi.hou@amd.com>
+ <20241011231244.3182625-6-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20241011231244.3182625-6-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: di87O5uBnu234SbUdnUbi9YtZlKvMtFR
+X-Proofpoint-ORIG-GUID: di87O5uBnu234SbUdnUbi9YtZlKvMtFR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ spamscore=0 bulkscore=0 phishscore=0 mlxscore=0 suspectscore=0
+ mlxlogscore=756 lowpriorityscore=0 impostorscore=0 priorityscore=1501
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410180133
 
-Like in the metricgroup tests, it should check the permission first and
-then skip relevant failures accordingly.
+On 10/11/2024 5:12 PM, Lizhi Hou wrote:
+> The hardware can be shared among multiple user applications. The
+> hardware resources are allocated/freed based on the request from
+> user application via driver IOCTLs.
+> 
+> DRM_IOCTL_AMDXDNA_CREATE_HWCTX
+> Allocate tile columns and create a hardware context structure to track the
+> usage and status of the resources. A hardware context ID is returned for
+> XDNA command execution.
+> 
+> DRM_IOCTL_AMDXDNA_DESTROY_HWCTX
+> Release hardware context based on its ID. The tile columns belong to
+> this hardware context will be reclaimed.
+> 
+> DRM_IOCTL_AMDXDNA_CONFIG_HWCTX
+> Config hardware context. Bind the hardware context to the required
+> resources.
+> 
+> Co-developed-by: Min Ma <min.ma@amd.com>
+> Signed-off-by: Min Ma <min.ma@amd.com>
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
 
-Also it needs to try again with the system wide flag properly.  On the
-second round, check if the result has the metric name because other
-failure cases are checked in the first round already.
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/tests/shell/stat_all_metrics.sh | 87 ++++++++++++++++------
- 1 file changed, 66 insertions(+), 21 deletions(-)
-
-diff --git a/tools/perf/tests/shell/stat_all_metrics.sh b/tools/perf/tests/shell/stat_all_metrics.sh
-index 54774525e18a7b9a..73e9347e88a964bd 100755
---- a/tools/perf/tests/shell/stat_all_metrics.sh
-+++ b/tools/perf/tests/shell/stat_all_metrics.sh
-@@ -2,42 +2,87 @@
- # perf all metrics test
- # SPDX-License-Identifier: GPL-2.0
- 
-+ParanoidAndNotRoot()
-+{
-+  [ "$(id -u)" != 0 ] && [ "$(cat /proc/sys/kernel/perf_event_paranoid)" -gt $1 ]
-+}
-+
-+system_wide_flag="-a"
-+if ParanoidAndNotRoot 0
-+then
-+  system_wide_flag=""
-+fi
-+
- err=0
- for m in $(perf list --raw-dump metrics); do
-   echo "Testing $m"
--  result=$(perf stat -M "$m" true 2>&1)
--  if [[ "$result" =~ ${m:0:50} ]] || [[ "$result" =~ "<not supported>" ]]
-+  result=$(perf stat -M "$m" $system_wide_flag -- sleep 0.01 2>&1)
-+  result_err=$?
-+  if [[ $result_err -gt 0 ]]
-   then
--    continue
-+    if [[ "$result" =~ \
-+          "Access to performance monitoring and observability operations is limited" ]]
-+    then
-+      echo "Permission failure"
-+      echo $result
-+      if [[ $err -eq 0 ]]
-+      then
-+        err=2 # Skip
-+      fi
-+      continue
-+    elif [[ "$result" =~ "in per-thread mode, enable system wide" ]]
-+    then
-+      echo "Permissions - need system wide mode"
-+      echo $result
-+      if [[ $err -eq 0 ]]
-+      then
-+        err=2 # Skip
-+      fi
-+      continue
-+    elif [[ "$result" =~ "<not supported>" ]]
-+    then
-+      echo "Not supported events"
-+      echo $result
-+      if [[ $err -eq 0 ]]
-+      then
-+        err=2 # Skip
-+      fi
-+      continue
-+    elif [[ "$result" =~ "FP_ARITH" || "$result" =~ "AMX" ]]
-+    then
-+      echo "FP issues"
-+      echo $result
-+      if [[ $err -eq 0 ]]
-+      then
-+        err=2 # Skip
-+      fi
-+      continue
-+    elif [[ "$result" =~ "PMM" ]]
-+    then
-+      echo "Optane memory issues"
-+      echo $result
-+      if [[ $err -eq 0 ]]
-+      then
-+        err=2 # Skip
-+      fi
-+      continue
-+    fi
-   fi
--  # Failed so try system wide.
--  result=$(perf stat -M "$m" -a sleep 0.01 2>&1)
-+
-   if [[ "$result" =~ ${m:0:50} ]]
-   then
-     continue
-   fi
--  # Failed again, possibly the workload was too small so retry with something
--  # longer.
--  result=$(perf stat -M "$m" perf bench internals synthesize 2>&1)
-+
-+  # Failed, possibly the workload was too small so retry with something longer.
-+  result=$(perf stat -M "$m" $system_wide_flag -- perf bench internals synthesize 2>&1)
-   if [[ "$result" =~ ${m:0:50} ]]
-   then
-     continue
-   fi
-   echo "Metric '$m' not printed in:"
-   echo "$result"
--  if [[ "$err" != "1" ]]
--  then
--    err=2
--    if [[ "$result" =~ "FP_ARITH" || "$result" =~ "AMX" ]]
--    then
--      echo "Skip, not fail, for FP issues"
--    elif [[ "$result" =~ "PMM" ]]
--    then
--      echo "Skip, not fail, for Optane memory issues"
--    else
--      err=1
--    fi
--  fi
-+  err=1
- done
- 
- exit "$err"
--- 
-2.47.0.rc1.288.g06298d1525-goog
-
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 
