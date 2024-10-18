@@ -1,113 +1,145 @@
-Return-Path: <linux-kernel+bounces-371302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3629A3977
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:09:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BB99A3979
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C540D281101
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACF59280E09
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F3F190075;
-	Fri, 18 Oct 2024 09:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEAC190667;
+	Fri, 18 Oct 2024 09:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NQYVm8mw"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ye7RdNq1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB7118FDBC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCD119004B;
+	Fri, 18 Oct 2024 09:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729242532; cv=none; b=hu3CNAHRACiPMhARtgZpaMZxLpRyO8Kbw5w9Qgnnpf8VECz3wBAvdYA2BB1EhUtVE7yNacj3ojBYqrRM9zYGzIAUWVPqYYLUu9F3A2Jg8YttFi3Tra+0rbXsRyNE6jt5Ufg2go2xPOUkqVmP91NJlU0upFYuqffNs+hXs5oKwOw=
+	t=1729242534; cv=none; b=dQ6VqJ42coGsJIEKjhLvhuyWXK69DiTEuDKnQIR8pTYumiqEwo6t2IG1babK7yq+oJrClbO5daeHk/0OzrK3eZnKWHoQpY8C+feTb2RKo2p4e3T21bLohcOXBuy41kSW9WHtaJ2M0W31yiO0U2/oRQXOHVyPQFzgioDfyDEDl3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729242532; c=relaxed/simple;
-	bh=P0QykGa6mmB3sO44cxFxtnrHxJzaPQAcbu4GIyK/+Zo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MGD3GazBCDY/ijNMkBq/vgtTDBOKBzzz25mhg/11iqfMoV7SFy2gwFEzLxVKOP+uXotT0dE35/e0Od0rGZekUAQlKECfjcoQRbc4CXBQ11AfjWQi0hZieX/41fKmsPO3WO2VoYBhhe3rdNygKPvA8Ubc6xoikXqgOrFq8wVkg/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NQYVm8mw; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so2120033e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:08:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729242529; x=1729847329; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cxSM6qT+OeQgeWi7041bNluFuXTRIeAOrig+KBLZb4w=;
-        b=NQYVm8mw0+CjTYZZ5HYHTbBH5UoPWGdr4pXCsrFZoVIu+FPi0WfRQ219BJ6sADfeWP
-         dmx6WmsP2sbqccb7IRO+S4VI7BaVny5VyUnI7o/nvjEgpsNiilLm5mv3EtmONSueZtfd
-         sDPZ/Ct5lAo3aHGvTTRAhRcDY4mxmIZki7pB/zs0t7KfZDFc1NQx9Hfx++LFRUsTx/Xj
-         TZ5aZ4XgGsT1LOvU0ectC8gzhf2C5lXlU+GUqEyA7pFESnnfSpnQe+LbtdQTHNTZRTwB
-         pE2J1kNfY/60rNyaUp9mo3BkybCT/teNoRkM+lyo1d1R972tvx4aHP7Ay4fH+5XRlCJe
-         +ECg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729242529; x=1729847329;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cxSM6qT+OeQgeWi7041bNluFuXTRIeAOrig+KBLZb4w=;
-        b=K74z39sBfglK/z+DBkRuSJgPLzGrQEtoxWOpdRdHehH23/8zHfjGhT/+Y4yD0C5wiW
-         W8zbPAKhQbhlMM9xrKRe+FGwmYkbvKFD7jfYSS/PXOvOPaYFpmOwIT+XCYppSq7AHdIR
-         T2ENicuyQLMn4nqXSmPr7yEVpsEspyRSTpPgRlaPwMprKtdPJRujRoC6OOeaFrZEET+L
-         APFqcFpPhxuY5kVI+WS7yoMGdQiG6bparYYxl42XBO8Ed2YdIVB+3d+haTCdZlHGaFk9
-         cH4S4Tq1R3XfHuBtWnIf7JDhyGGmKVycy6IziEaRu+ylBAo5e7Xfhpdvoq1U5oOp68k1
-         cKbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKT8ZnsL86bEBNTFf7n6reoe8Dvl0MDpr6TyNMNg/EgxSdkfjJlJDzVVGQ8US4fYmfE7Tr/XTsX/9dzTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhzvnQ3NvlsDD0+PVBdRwtQUiMVDhQV/xXa+bO/O6eDit50Vdy
-	0BzVoegsmnqmqew6W/C5TErhDt7wFj3+XEU9nYwdgyM4855SxIbMRy5lpHTz2is=
-X-Google-Smtp-Source: AGHT+IFoBABKezjNfDMwz8vy4TQ/qoKjudYMh40y6pmF7qzx8SUfzOO/4EPFP4GNYoeU5aVB7IDSKA==
-X-Received: by 2002:a05:6512:4009:b0:536:9f72:c427 with SMTP id 2adb3069b0e04-53a154a93a0mr944874e87.28.1729242528547;
-        Fri, 18 Oct 2024 02:08:48 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a152044a2sm165741e87.227.2024.10.18.02.08.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 02:08:47 -0700 (PDT)
-Date: Fri, 18 Oct 2024 12:08:45 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: linux-sound@vger.kernel.org, srinivas.kandagatla@linaro.org, 
-	broonie@kernel.org, lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org, perex@perex.cz, 
-	tiwai@suse.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	krzysztof.kozlowski@linaro.org, caleb.connolly@linaro.org, linux-kernel@vger.kernel.org, 
-	a39.skl@gmail.com
-Subject: Re: [PATCH v3 4/5] arm64: dts: qcom: sm4250: add LPASS LPI pin
- controller
-Message-ID: <tg3el4x6hxwizy7oxyw74oeme4siore7l3ko2uofbnssb7roey@lrwmo5x6euc6>
-References: <20241018025452.1362293-1-alexey.klimov@linaro.org>
- <20241018025452.1362293-5-alexey.klimov@linaro.org>
+	s=arc-20240116; t=1729242534; c=relaxed/simple;
+	bh=5YQ1hKbZy6xIUDVJBqJ7zEGyrybFRGod1J6/RupqD5k=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=FbgNnS2nNBR4KeBmp5gjgmb+9QjEkCB+oSlhsJltDq1TQWxDpYYbuWkwYFvachLRi3+C0K27tvfDNjqGcZSoit3SD2gJjD818pm8UKx+E1YE8LGlnhtoqsabWQxd/XG+3sLSwLAGSP4x9wnm+yw8ZvMQsRm6jxMg0fyfZBie+1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ye7RdNq1; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729242533; x=1760778533;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=5YQ1hKbZy6xIUDVJBqJ7zEGyrybFRGod1J6/RupqD5k=;
+  b=Ye7RdNq16Dd0ehxZiEzWwpRyEKdWVSZvpwkcj2goeMi+PzjzKhGpaWre
+   6SLiug1UOzClM3uz1W0pAO7fDJIqx3YIRfLYDUA8+odnuiIaVS6koZfj4
+   uoaDUcHGAHJFyfewC3WUXeZNGB3k0oqNv7hTJaf40o4+mZcDJRoJtXs4L
+   Z8NqA/fR8rdSFGa/vSX2+9wWaSiRCzzNovIW8ilhCPaL5rPUGJVTRTabC
+   lZdKkm2T2PSd2YK7zLg72vITsZDS8OQMyRlPCA+zPUIzZ9inyP0CySB8u
+   ULx/5/T7EwHOrfZR5Ej8P77NIov4syFd9fTereHbI1z5Y8nd65ZpQmm3w
+   g==;
+X-CSE-ConnectionGUID: 5N1Ix0IxQJ+srvi3KVl0RA==
+X-CSE-MsgGUID: KAlSHMkRQF6mmXKOOWoIyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28974954"
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="28974954"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 02:08:53 -0700
+X-CSE-ConnectionGUID: LENDyPVVQvOBSPSc6KCg+g==
+X-CSE-MsgGUID: WvR2SGNPRKWwdnUkf9uS2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="116270570"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.217])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 02:08:49 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 18 Oct 2024 12:08:45 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V3 15/15] selftests/resctrl: Replace magic constants used
+ as array size
+In-Reply-To: <4d4887b0359bfd4094871f34aa8b06e2efee6043.1729218182.git.reinette.chatre@intel.com>
+Message-ID: <805a7c70-9a0b-a50a-3985-895f9d2c5fd4@linux.intel.com>
+References: <cover.1729218182.git.reinette.chatre@intel.com> <4d4887b0359bfd4094871f34aa8b06e2efee6043.1729218182.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018025452.1362293-5-alexey.klimov@linaro.org>
+Content-Type: multipart/mixed; boundary="8323328-1957712913-1729242525=:1141"
 
-On Fri, Oct 18, 2024 at 03:54:50AM +0100, Alexey Klimov wrote:
-> Add the Low Power Audio SubSystem Low Power Island (LPASS LPI) pin
-> controller device node required for audio subsystem on Qualcomm
-> QRB4210 RB2. QRB4210 is based on sm4250 which has a slightly different
-> lpass pin controller comparing to sm6115.
-> 
-> While at this, also add description of lpi_i2s2 pins (active state)
-> required for audio playback via HDMI.
-> 
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1957712913-1729242525=:1141
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Thu, 17 Oct 2024, Reinette Chatre wrote:
+
+> The Memory Bandwidth Allocation (MBA) test iterates through all possible
+> MBA allocations, from 10% (ALLOCATION_MIN) to 100% (ALLOCATION_MAX) with
+> increments of 10% (ALLOCATION_STEP) at each iteration. During each
+> iteration the test measures the actual memory bandwidth NUM_OF_RUNS times
+> to determine the impact of MBA on actual memory bandwidth.
+>=20
+> After the MBA test completes all the memory bandwidth measurements are
+> parsed into an array. One array for resctrl Memory Bandwidth Monitoring
+> (MBM) measurements and one array for the Integrated Memory Controller
+> (iMC) measurements. Each array has a hardcoded size of 1024 that is
+> large enough to hold the current test data, but this hardcoded value make=
+s
+> the implementation difficult to understand. It will not be clear that thi=
+s
+> array needs to be reconsidered if any of the test parameters are changed.
+>=20
+> Replace the magic constant as array size with the test parameters the
+> array size depends on.
+>=20
+> Reported-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Closes: https://lore.kernel.org/all/45af2a8c-517d-8f0d-137d-ad0f3f6a3c68@=
+linux.intel.com/
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--
+ i.
+
 > ---
->  arch/arm64/boot/dts/qcom/sm4250.dtsi | 39 ++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
--- 
-With best wishes
-Dmitry
+> Changes since V2:
+> - New patch.
+> ---
+>  tools/testing/selftests/resctrl/mba_test.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/s=
+elftests/resctrl/mba_test.c
+> index 4e6645b172e3..536d9089d2f6 100644
+> --- a/tools/testing/selftests/resctrl/mba_test.c
+> +++ b/tools/testing/selftests/resctrl/mba_test.c
+> @@ -127,8 +127,9 @@ static bool show_mba_info(unsigned long *bw_imc, unsi=
+gned long *bw_resc)
+> =20
+>  static int check_results(void)
+>  {
+> +=09unsigned long bw_resc[NUM_OF_RUNS * ALLOCATION_MAX / ALLOCATION_STEP]=
+;
+> +=09unsigned long bw_imc[NUM_OF_RUNS * ALLOCATION_MAX / ALLOCATION_STEP];
+>  =09char *token_array[8], output[] =3D RESULT_FILE_NAME, temp[512];
+> -=09unsigned long bw_imc[1024], bw_resc[1024];
+>  =09int runs;
+>  =09FILE *fp;
+> =20
+>=20
+--8323328-1957712913-1729242525=:1141--
 
