@@ -1,201 +1,273 @@
-Return-Path: <linux-kernel+bounces-372187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E699A4569
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:06:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4B19A4664
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FF491F22220
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:06:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60AC41F22C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75884204092;
-	Fri, 18 Oct 2024 18:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C9420409B;
+	Fri, 18 Oct 2024 19:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ousfqs3/"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NFYt2vTC"
+Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D246B2038BE
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D228C180A81;
+	Fri, 18 Oct 2024 19:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729274795; cv=none; b=UsLtbbGaCv3LyKi9feDsz/UVRWGrNcEUMLth61lMNZA7+XKUUZLOuKCdOarO4355YonbWlgQFyM7heBSF/Iw7kiO4drYsYpwZ2dL+I91rh1E5wSl526xh7ql1LRmUheS1f1Zi7PdlrD0mQn7GeqIBMpd8AZ7vLLv0D7vgHbWKWE=
+	t=1729278065; cv=none; b=a+Hix+QrJmE3iN7ADsP4/RWDVb/zGXZV+ldx4GMb7h7jqXG7D00w4CsRpQ8j/0ih7qjerhUu6hrZGQF0MZ5l4EaHS/6r0bJQcPadkpQUQTL+obkLb0xKav7qansaLRehryWtOzZxYU2ey1mKLaNPajVDPAOLRDuNKZb0takKj8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729274795; c=relaxed/simple;
-	bh=9lHOP9DqWKfw/NySLCh66BbzYS8s6doBkSanVt6jRaY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nDsUgAMwaSW/Uo6HTOPhQPyApeVTq1/IoQOXJmmXDurWmmu4R0kyquEeFPoYO4ouwg8K0suL40nbzp+qfSzHPuR6rF6C4xaRK3EPcqCCoOHXeAnkg4m9MGfUXxI5NSohTCD68MZ2X4SXEKYquktwoCc0T6Ds4jMAI+RjXDD01SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ousfqs3/; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2884594d9f7so43599fac.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729274793; x=1729879593; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4xdUFp2BJs4C+TugGVY1v+LpNLjlv9m1e/7lI0oYkHs=;
-        b=Ousfqs3/1Xcy0d5iReq7dbpSFf9Bmqck6YE23McEO1bdd+ho3RiOm99Ar/dNSyj98i
-         +cmhUIPBEDbOj5yENo8FBEBhxt+A7TptkRyll/llq/Yjku9fBrWHJ05udYNMNo/eu7rr
-         PS/lcMqRZstQRlDm9fkHzfQfs2TED/VwGqeBw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729274793; x=1729879593;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4xdUFp2BJs4C+TugGVY1v+LpNLjlv9m1e/7lI0oYkHs=;
-        b=O8qrk9DS2jbXhZSt8W9Oh9Jx+q6k+4UWaPVvl2hUC7ch7LglrsrsxF18qJ9ALO0A1T
-         dhwirslMZpWlj2jQ87j2XJIl45ofLTU08KWbiqEMJcNfg/ZnA2LcDenPPDvcgpraxlVy
-         qn/b+tBj5hkZmo5C13bCigO2VYJrSLsxGLbYIhVW+MfadQ3xReajOoZYTRI1Rz4BTxnF
-         Z5fD1Up3cdQXNBnL46M4XKT9qhh2L4n7hHEpGE7sWygDXnUyz+GvS1h50rlUhHm7yTfZ
-         fNHPIqNDZTCx/q3371/Ljsz94Pwy82r+Lkg87Lmug1I3Gil2hwdQWRoCCy3oLrXvxYqf
-         WAQw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0BTOEJuKPDIl7UhjC7mpHeUSlyPv7awkHJdo1Nw+/jvwBI+DulyaLOjCiZK0Zotsm49R835xLeWTdElI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwODB1SKRPD12oBMdPbT6tQispC2Du7p7wkiEjufeTigiKy7CiL
-	YjCnScknsF5FaOKCnoauDA9PE4foAZn8nythilbF33E6x9n47LdeMv0/D0lSj0okJqOFVo2c3jd
-	3iiy98twsoBa5Qwu2e5CZUBtWEnGJFdhGJHft
-X-Google-Smtp-Source: AGHT+IGiqYAsYbp2TuEnbpop10/Cv/Z2PACZd+MZbdFdWLD0k5JeofybCn+2idssVW0UDzrceUreh3xg83fY1LOa5g0=
-X-Received: by 2002:a05:6870:5590:b0:27b:b2e0:6af with SMTP id
- 586e51a60fabf-2892c22ff16mr852559fac.2.1729274792779; Fri, 18 Oct 2024
- 11:06:32 -0700 (PDT)
+	s=arc-20240116; t=1729278065; c=relaxed/simple;
+	bh=EydGRGcq8QCzsPna4RGnx0xho3nuZGcGiMULYn2D2eI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D+zGjbcjTS4T4RsUENucHVDJNprw4jRf1zo2Yw3zx0pQjb/JYmETwNU9ZTiwX/VyL3dNUpeFpWvAh/jQ+ojwybD4xvD+2mZZd24OhfJQOz4KJL7bc9KWFQtGD0u8zMhZRGwM1SSdhXdVl52QgADsOpNhrQDHB0zh/T7gIi3/dxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=NFYt2vTC; arc=none smtp.client-ip=193.252.23.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 1qQZtV2hkZN8O1qQatW0HN; Fri, 18 Oct 2024 19:06:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1729271178;
+	bh=86Chs4ufIR1yiNI3+jlRXdlCATqvdX/rue8dEZfqmY8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=NFYt2vTChDSlF/Hz8uFqAOz7QfY9oKjoSlUy5akyaSBEv++hkr2Q+elOaa92OS9nZ
+	 SIzEhw8fzbYEO3kCmCcSCy0Hsbi3ZdBA1pVFk01XW5R9hjn4oVAnDeP2wVhwA993qK
+	 aeLsWd/xPsc1NdypyYuOXfjzdNMvQFEgawtadaou5J7cpM7oPSOm3MncZe9T2fAYeQ
+	 ycc6LZGHeTIvjF+5gy523jKJTEtPnl2IQ/QRy89mkC17+X8lWSvBbmh0YP9yU/4k4D
+	 NbsgafSHeEQOSXg6v791LqBCqJ7ngy8A0BIxnMxaMseLD4KNM7WuechRJd9Z0aAHMI
+	 CZ0VGPtWBM/xQ==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 18 Oct 2024 19:06:18 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-mtd@lists.infradead.org,
+	linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] mtd: spinand: Constify struct nand_ecc_engine_ops
+Date: Fri, 18 Oct 2024 19:05:57 +0200
+Message-ID: <72597e9de2320a4109be2112e696399592edacd4.1729271136.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e7ea2b84-8d10-40fe-a14f-837bca851ea9@lucifer.local>
- <fd927106-2fc3-4b96-8014-2c517229bc99@lucifer.local> <CABi2SkUpCf+aOa2sPED8CosG5ccqjFd7ouot8gXi9ECqsHiZhw@mail.gmail.com>
- <4944ce41-9fe1-4e22-8967-f6bd7eafae3f@lucifer.local> <CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com>
- <CABi2SkVEMRHV3swrbb6M5RA6GQpFVVx855CGwdQ1xiz3tygiqA@mail.gmail.com>
- <f9b9422c-216d-422e-94b4-d8814b0b277e@lucifer.local> <CABi2SkWAv4LXvR1Wb1e31eyZ35JfyieXhDOq1bp_ZvHPLLg-qA@mail.gmail.com>
- <e0f440b0-5a45-4218-8c51-27f848c0617b@lucifer.local> <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
- <1f8eff74-005b-4fa9-9446-47f4cdbf3e8d@sirena.org.uk>
-In-Reply-To: <1f8eff74-005b-4fa9-9446-47f4cdbf3e8d@sirena.org.uk>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 18 Oct 2024 11:06:20 -0700
-Message-ID: <CABi2SkV38U-ZCAq9W091zYkOM1m5e-C27YmVXdTCi-t+p_W_fQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
-To: Mark Brown <broonie@kernel.org>, Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pedro.falcato@gmail.com, willy@infradead.org, vbabka@suse.cz, 
-	Liam.Howlett@oracle.com, rientjes@google.com, keescook@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Mark and Muhammad
+'struct nand_ecc_engine_ops' are not modified in these drivers.
 
-On Fri, Oct 18, 2024 at 6:04=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> On Thu, Oct 17, 2024 at 12:49:40PM -0700, Jeff Xu wrote:
->
-> > So it is not a problem with the MACRO, but where is it used ?
->
-> >         ret =3D sys_mseal(ptr, size);
-> >         FAIL_TEST_IF_FALSE(!ret);
->
-> > Take this example, it would be
-> > assert(!ret)
->
-> The problem is that the macro name is confusing and not terribly
-> consistent with how the rest of the selftests work.  The standard
-> kselftest result reporting is
->
->         ksft_test_result(bool result, char *name_format, ...);
->
-> so the result of the test is a boolean flag which is passed in.  This
-> macro on the other hand sounds like a double negative so you have to
-> stop and think what the logic is, and it's not seen anywhere else so
-> nobody is going to be familiar with it.  The main thing this is doing is
-> burying a return statement in there, that's a bit surprising too.
->
-Thanks for explaining the problem, naming is hard. Do you have a
-suggestion on a better naming?
+Constifying this structure moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
 
-> I'll also note that these macros are resulting in broken kselftest
-> output, the name for a test has to be stable for automated systems to be
-> able to associate test results between runs but these print
->
->                         ksft_test_result_fail("%s: line:%d\n",          \
->                                                 __func__, __LINE__);    \
->                         return;                                         \
->
-> which includes the line number of the test in the name which is an
-> obvious problem, automated systems won't be able to tell that any two
-> failures are related to each other never mind the passing test.  We
-> should report why things failed but it's better to do that with a
-> ksft_print_msg(), ideally one that's directly readable rather than
-> requiring someone to go into the source code and look it up.
->
-I don't know what  the issue you described is ? Are you saying that we
-are missing line numbers ? it is not. here is the sample of output:
-Failure in the second test case from last:
+Update the prototype of mxic_ecc_get_pipelined_ops() accordingly.
 
-ok 105 test_munmap_free_multiple_ranges
-not ok 106 test_munmap_free_multiple_ranges_with_split: line:2573
-ok 107 test_munmap_free_multiple_ranges_with_split
-# Planned tests !=3D run tests (106 !=3D 107)
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  16709	   1374	     16	  18099	   46b3	drivers/mtd/nand/ecc-mxic.o
 
-> A more standard way to write what you've got here would be to have the
-> tests return a bool then have a runner loop which iterates over the
-> tests:
->
->         struct {
->                 char *name;
->                 bool (*func)(void);
->         } tests[];
->
->         ...
->
->         for (i =3D 0; i < ARRAY_SIZE(tests); i++)
->                 ksft_test_result(tests[i].test(), tests[i].name);
->
-> then the tests can just have explicit return statements and don't need
-> to worry about logging anything other than diagnostics.
->
-> Depending on how much you need to share between tests you might also be
-> able to use kselftest_harness.h which fork()s each test into a separate
-> child and allows you to just fault to fail if that's easier.
->
-> > > We are writing unit tests in a test framework, let's use very well
-> > > established industry practices please.
->
-> Plus also the fact that we have a framework here...
->
-> > > Also note that you don't even need to reinvent the wheel, there is a
-> > > fully-featured test harness available in
-> > > tools/testing/selftests/kselftest_harness.h with both ASSERT_xxx() an=
-d
-> > > EXPECT_xxx() helpers.
->
-> > The EXPECT_xxx() doesn't take care of reporting though,  or maybe it
->
-> I rather think people would've noticed if the test harness was so broken
-> that it was unable to report failures.  If it is that broken we should
-> fix it rather than open coding something else.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  16789	   1294	     16	  18099	   46b3	drivers/mtd/nand/ecc-mxic.o
 
-In general, I agree with those comments, but I would like to rely on
-domain experts in test infra to recommend what to use, or is
-acceptable.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+---
+ drivers/mtd/nand/ecc-mxic.c       |  6 +++---
+ drivers/mtd/nand/ecc-sw-bch.c     |  2 +-
+ drivers/mtd/nand/ecc-sw-hamming.c |  2 +-
+ drivers/mtd/nand/spi/core.c       |  2 +-
+ drivers/spi/spi-mtk-snfi.c        |  2 +-
+ drivers/spi/spi-mxic.c            | 10 +++++-----
+ include/linux/mtd/nand-ecc-mxic.h |  4 ++--
+ include/linux/mtd/nand.h          |  2 +-
+ 8 files changed, 15 insertions(+), 15 deletions(-)
 
-In this case, I hope Muhammad, who reviewed this code in the first
-place, can make recommendations on a replacement of this macro.
+diff --git a/drivers/mtd/nand/ecc-mxic.c b/drivers/mtd/nand/ecc-mxic.c
+index 47e10945b8d2..86895e09328f 100644
+--- a/drivers/mtd/nand/ecc-mxic.c
++++ b/drivers/mtd/nand/ecc-mxic.c
+@@ -723,21 +723,21 @@ static int mxic_ecc_finish_io_req_pipelined(struct nand_device *nand,
+ 	return ret;
+ }
+ 
+-static struct nand_ecc_engine_ops mxic_ecc_engine_external_ops = {
++static const struct nand_ecc_engine_ops mxic_ecc_engine_external_ops = {
+ 	.init_ctx = mxic_ecc_init_ctx_external,
+ 	.cleanup_ctx = mxic_ecc_cleanup_ctx,
+ 	.prepare_io_req = mxic_ecc_prepare_io_req_external,
+ 	.finish_io_req = mxic_ecc_finish_io_req_external,
+ };
+ 
+-static struct nand_ecc_engine_ops mxic_ecc_engine_pipelined_ops = {
++static const struct nand_ecc_engine_ops mxic_ecc_engine_pipelined_ops = {
+ 	.init_ctx = mxic_ecc_init_ctx_pipelined,
+ 	.cleanup_ctx = mxic_ecc_cleanup_ctx,
+ 	.prepare_io_req = mxic_ecc_prepare_io_req_pipelined,
+ 	.finish_io_req = mxic_ecc_finish_io_req_pipelined,
+ };
+ 
+-struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void)
++const struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void)
+ {
+ 	return &mxic_ecc_engine_pipelined_ops;
+ }
+diff --git a/drivers/mtd/nand/ecc-sw-bch.c b/drivers/mtd/nand/ecc-sw-bch.c
+index 405552d014a8..0d9310dd6f52 100644
+--- a/drivers/mtd/nand/ecc-sw-bch.c
++++ b/drivers/mtd/nand/ecc-sw-bch.c
+@@ -384,7 +384,7 @@ static int nand_ecc_sw_bch_finish_io_req(struct nand_device *nand,
+ 	return max_bitflips;
+ }
+ 
+-static struct nand_ecc_engine_ops nand_ecc_sw_bch_engine_ops = {
++static const struct nand_ecc_engine_ops nand_ecc_sw_bch_engine_ops = {
+ 	.init_ctx = nand_ecc_sw_bch_init_ctx,
+ 	.cleanup_ctx = nand_ecc_sw_bch_cleanup_ctx,
+ 	.prepare_io_req = nand_ecc_sw_bch_prepare_io_req,
+diff --git a/drivers/mtd/nand/ecc-sw-hamming.c b/drivers/mtd/nand/ecc-sw-hamming.c
+index 254db2e7f8bb..f2d0effad9d2 100644
+--- a/drivers/mtd/nand/ecc-sw-hamming.c
++++ b/drivers/mtd/nand/ecc-sw-hamming.c
+@@ -638,7 +638,7 @@ static int nand_ecc_sw_hamming_finish_io_req(struct nand_device *nand,
+ 	return max_bitflips;
+ }
+ 
+-static struct nand_ecc_engine_ops nand_ecc_sw_hamming_engine_ops = {
++static const struct nand_ecc_engine_ops nand_ecc_sw_hamming_engine_ops = {
+ 	.init_ctx = nand_ecc_sw_hamming_init_ctx,
+ 	.cleanup_ctx = nand_ecc_sw_hamming_cleanup_ctx,
+ 	.prepare_io_req = nand_ecc_sw_hamming_prepare_io_req,
+diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+index 4d76f9f71a0e..b1df7f627161 100644
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -337,7 +337,7 @@ static int spinand_ondie_ecc_finish_io_req(struct nand_device *nand,
+ 	return ret;
+ }
+ 
+-static struct nand_ecc_engine_ops spinand_ondie_ecc_engine_ops = {
++static const struct nand_ecc_engine_ops spinand_ondie_ecc_engine_ops = {
+ 	.init_ctx = spinand_ondie_ecc_init_ctx,
+ 	.cleanup_ctx = spinand_ondie_ecc_cleanup_ctx,
+ 	.prepare_io_req = spinand_ondie_ecc_prepare_io_req,
+diff --git a/drivers/spi/spi-mtk-snfi.c b/drivers/spi/spi-mtk-snfi.c
+index debe0e3c1c8b..4169d622f28c 100644
+--- a/drivers/spi/spi-mtk-snfi.c
++++ b/drivers/spi/spi-mtk-snfi.c
+@@ -776,7 +776,7 @@ static int mtk_snand_ecc_finish_io_req(struct nand_device *nand,
+ 	return snf->ecc_stats.failed ? -EBADMSG : snf->ecc_stats.bitflips;
+ }
+ 
+-static struct nand_ecc_engine_ops mtk_snfi_ecc_engine_ops = {
++static const struct nand_ecc_engine_ops mtk_snfi_ecc_engine_ops = {
+ 	.init_ctx = mtk_snand_ecc_init_ctx,
+ 	.cleanup_ctx = mtk_snand_ecc_cleanup_ctx,
+ 	.prepare_io_req = mtk_snand_ecc_prepare_io_req,
+diff --git a/drivers/spi/spi-mxic.c b/drivers/spi/spi-mxic.c
+index 9699e0bb6a5e..809767d3145c 100644
+--- a/drivers/spi/spi-mxic.c
++++ b/drivers/spi/spi-mxic.c
+@@ -649,7 +649,7 @@ static int mxic_spi_transfer_one(struct spi_controller *host,
+ /* ECC wrapper */
+ static int mxic_spi_mem_ecc_init_ctx(struct nand_device *nand)
+ {
+-	struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
++	const struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
+ 	struct mxic_spi *mxic = nand->ecc.engine->priv;
+ 
+ 	mxic->ecc.use_pipelined_conf = true;
+@@ -659,7 +659,7 @@ static int mxic_spi_mem_ecc_init_ctx(struct nand_device *nand)
+ 
+ static void mxic_spi_mem_ecc_cleanup_ctx(struct nand_device *nand)
+ {
+-	struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
++	const struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
+ 	struct mxic_spi *mxic = nand->ecc.engine->priv;
+ 
+ 	mxic->ecc.use_pipelined_conf = false;
+@@ -670,7 +670,7 @@ static void mxic_spi_mem_ecc_cleanup_ctx(struct nand_device *nand)
+ static int mxic_spi_mem_ecc_prepare_io_req(struct nand_device *nand,
+ 					   struct nand_page_io_req *req)
+ {
+-	struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
++	const struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
+ 
+ 	return ops->prepare_io_req(nand, req);
+ }
+@@ -678,12 +678,12 @@ static int mxic_spi_mem_ecc_prepare_io_req(struct nand_device *nand,
+ static int mxic_spi_mem_ecc_finish_io_req(struct nand_device *nand,
+ 					  struct nand_page_io_req *req)
+ {
+-	struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
++	const struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
+ 
+ 	return ops->finish_io_req(nand, req);
+ }
+ 
+-static struct nand_ecc_engine_ops mxic_spi_mem_ecc_engine_pipelined_ops = {
++static const struct nand_ecc_engine_ops mxic_spi_mem_ecc_engine_pipelined_ops = {
+ 	.init_ctx = mxic_spi_mem_ecc_init_ctx,
+ 	.cleanup_ctx = mxic_spi_mem_ecc_cleanup_ctx,
+ 	.prepare_io_req = mxic_spi_mem_ecc_prepare_io_req,
+diff --git a/include/linux/mtd/nand-ecc-mxic.h b/include/linux/mtd/nand-ecc-mxic.h
+index b125926e458c..0da4b2999576 100644
+--- a/include/linux/mtd/nand-ecc-mxic.h
++++ b/include/linux/mtd/nand-ecc-mxic.h
+@@ -16,7 +16,7 @@ struct mxic_ecc_engine;
+ 
+ #if IS_ENABLED(CONFIG_MTD_NAND_ECC_MXIC) && IS_REACHABLE(CONFIG_MTD_NAND_CORE)
+ 
+-struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void);
++const struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void);
+ struct nand_ecc_engine *mxic_ecc_get_pipelined_engine(struct platform_device *spi_pdev);
+ void mxic_ecc_put_pipelined_engine(struct nand_ecc_engine *eng);
+ int mxic_ecc_process_data_pipelined(struct nand_ecc_engine *eng,
+@@ -24,7 +24,7 @@ int mxic_ecc_process_data_pipelined(struct nand_ecc_engine *eng,
+ 
+ #else /* !CONFIG_MTD_NAND_ECC_MXIC */
+ 
+-static inline struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void)
++static inline const struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void)
+ {
+ 	return NULL;
+ }
+diff --git a/include/linux/mtd/nand.h b/include/linux/mtd/nand.h
+index 1e4208040956..0e2f228e8b4a 100644
+--- a/include/linux/mtd/nand.h
++++ b/include/linux/mtd/nand.h
+@@ -293,7 +293,7 @@ enum nand_ecc_engine_integration {
+ struct nand_ecc_engine {
+ 	struct device *dev;
+ 	struct list_head node;
+-	struct nand_ecc_engine_ops *ops;
++	const struct nand_ecc_engine_ops *ops;
+ 	enum nand_ecc_engine_integration integration;
+ 	void *priv;
+ };
+-- 
+2.47.0
 
-I would image the needs of something similar to FAIL_TEST_IF_FALSE is
-common in selftest writing:
-
-1> lightweight enough so dev can pick up quickly and adapt to existing
-tests, instead of rewriting everything from scratch.
-2> assert like syntax
-3> fail the current test case, but continue running the next test case
-4> take care of reporting test failures.
-
-Thanks
--Jeff
 
