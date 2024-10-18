@@ -1,84 +1,87 @@
-Return-Path: <linux-kernel+bounces-371682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323A99A3E90
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:38:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55289A3E91
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08CC1F23F62
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:38:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC231F23FBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DF42837B;
-	Fri, 18 Oct 2024 12:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E95288BD;
+	Fri, 18 Oct 2024 12:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pfnel2R+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BA5GoAes"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7327B3207;
-	Fri, 18 Oct 2024 12:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C883207;
+	Fri, 18 Oct 2024 12:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729255101; cv=none; b=Oxd4oh1f9uSw/+b6wbSN90qeoaJUiAUl+MXniq6gHJQNbJDi1DmVlJCANv6VaQU/nXzGR0PM/EpY5prAZSRad+/1TCD2vSTWhJf8I5zj+EquCbB35PCXEXs/A7V46ZwV6dZYeWx/lCY4wZfDcjZYykpNZqls2pjHn4NvYA0A6Pw=
+	t=1729255133; cv=none; b=AJOJvb8w8nNTmeckG2By8Q4FTL4kAUDDEcGFYvRN2TWYMa6XWLItcro3sa1rWf5ZjXbDaDUBezBdsdqr+08KcliHs7tvgHZyyytxkofRoaaU+IvpJnHdKEp6LkfCcpEtWuKrCOnWPIMdQutldHATYT7+fAM/88LWBInbZK8x14E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729255101; c=relaxed/simple;
-	bh=0QmAt7dRXX4M2u/hKZTugqWV6cGeNe4hmnu3eRxpa7A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JapOfRBNQSQ7RCoUz74JE1KySxcxcwu8FSTAlGez1QC1YKcHbf44Llk5zGBCtIewzTIPtwi4Y1Yht1ofcoku2Yo2RqG3lVW+t1BLmUwtYDC564wpJpFBmEKXh2cu/ZqN71KtIoMNI8Z7G1BryF8Ezh8xKi3TGbHiLTr7iua4e/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pfnel2R+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3354C4CEC3;
-	Fri, 18 Oct 2024 12:38:19 +0000 (UTC)
+	s=arc-20240116; t=1729255133; c=relaxed/simple;
+	bh=sU/wRbtKow9we8Zf+qCDeQEEsMJU+g0mnXx23BYtbA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XCSvlDME77WYzDXy3qit00VUYk6C5xcIRJrKc0FNaLZPNYots27tUEJMcvg2H1SXogzQxaANH5tyhEnnNhAR96Kc39Nq48DfKKBgm4i7NsWec5tp2rvUsBouFH3H20P+Zl+vvd+naf8OzpufcOEue4J242laPdjK1j1g3OMZGJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BA5GoAes; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C2FAC4CEC3;
+	Fri, 18 Oct 2024 12:38:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729255101;
-	bh=0QmAt7dRXX4M2u/hKZTugqWV6cGeNe4hmnu3eRxpa7A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Pfnel2R+pKP292ADeHa3Zd78K/1SjGz6LZQVVXMakCpz3Vl7Dw1K6sBH/iwgMJpwl
-	 HNUTLjhCeG4BxY/qSHc6iGJatZRWzug0IgIYQF69ILDyvW8Sc8TKUmwHEL4zfYRpCG
-	 7HP+T5H7hX/Py5vkxFBLRoGEsKxMASMLYdMKfY9hyEoeh6owv2BheWKIO9HD6H51RR
-	 nI6VytCpmxV5YdUq4IXe98GnYF1IKTHP0KZh8amwPdmTBIuyae+/W2PNufUtwBMmlO
-	 zx5uN138t4DMYVEh4Hlz6/bnVfZZGM+h9ORnsPoJ64uDq3lG///FhANwVuvvcOJEEI
-	 CVC4mB15MSvmw==
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- Tatsuyuki Ishi <ishitatsuyuki@gmail.com>, 
- =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>, 
- Peter Hutterer <peter.hutterer@who-t.net>
-In-Reply-To: <20241017-import_bpf_6-13-v2-0-6a7acb89a97f@kernel.org>
-References: <20241017-import_bpf_6-13-v2-0-6a7acb89a97f@kernel.org>
-Subject: Re: [PATCH v2 0/3] HID: bpf: add a couple of HID-BPF device fixes
-Message-Id: <172925509938.2215715.2616658993729589927.b4-ty@kernel.org>
-Date: Fri, 18 Oct 2024 14:38:19 +0200
+	s=k20201202; t=1729255132;
+	bh=sU/wRbtKow9we8Zf+qCDeQEEsMJU+g0mnXx23BYtbA8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BA5GoAesEqAU/DNZU2RPz4why8OlFmiPitY6WA37oi1TX+tlcLHBhsHsYJWHpyfa9
+	 8RzHUh73FtNdDr3CeUbfBb1Rtl0irEoXqROwB6MTHtDQa9JIJmbZDHQGWvfnLjnshq
+	 sqfnlXVhZuzx9Z+DYWvBygfaeSyzlmrKUKvoJNmluV4PHud+GemcSv0PJA3XjgFMfH
+	 PjvPrqbv7L1HAGwsKF6Bee82nPwFv49GM5A0D8dXlLvC5SZZnN7FT0E0WxCxtuXnyp
+	 iCRZJLa95/eazkaWvgouHLP7wfT95UP99xWvpFeY8O1cdl2VejmTyJt70kmv2IMeUf
+	 hh6ZhIKYIOEsA==
+Date: Fri, 18 Oct 2024 09:38:49 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH 3/3] perf test: Document the -w/--workload option
+Message-ID: <ZxJW2euCP4qi4mmZ@x1>
+References: <20241011171449.1362979-1-acme@kernel.org>
+ <20241011171449.1362979-4-acme@kernel.org>
+ <d4d5528a-2420-4f0b-a251-cc3db26345fc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d4d5528a-2420-4f0b-a251-cc3db26345fc@linaro.org>
 
-On Thu, 17 Oct 2024 18:34:57 +0200, Benjamin Tissoires wrote:
-> Both files have been in udev-hid-bpf for too long.
-> Both files are actually simple report descriptor fixups, so
-> there is not a lot to explain here :)
+On Mon, Oct 14, 2024 at 09:41:03AM +0100, James Clark wrote:
+> On 11/10/2024 6:14 pm, Arnaldo Carvalho de Melo wrote:
+> > +++ b/tools/perf/Documentation/perf-test.txt
+> > @@ -48,3 +48,17 @@ OPTIONS
+> >   --dso::
+> >   	Specify a DSO for the "Symbols" test.
+> > +
+> > +-w::
+> > +--workload=::
+> > +	Run a built-in workload, to list them use '-w --list', current ones include:
 > 
-> 
+> Should be --list-workloads now
 
-Applied to hid/hid.git (for-6.13/bpf), thanks!
+Oops, fixed now.
 
-[1/3] HID: bpf: Fix NKRO on Mistel MD770
-      https://git.kernel.org/hid/hid/c/9bc089307e8d
-[2/3] HID: bpf: Fix Rapoo M50 Plus Silent side buttons
-      https://git.kernel.org/hid/hid/c/cee9faff2f65
-[3/3] HID: bpf: drop use of Logical|Physical|UsageRange
-      https://git.kernel.org/hid/hid/c/b6d8c474e265
+Thanks,
 
-Cheers,
--- 
-Benjamin Tissoires <bentiss@kernel.org>
-
+- Arnaldo
 
