@@ -1,127 +1,164 @@
-Return-Path: <linux-kernel+bounces-371963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA319A42AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:40:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 443B49A42A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C891E1C20850
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:40:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3FAF282FDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0C82022C5;
-	Fri, 18 Oct 2024 15:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648F52022E0;
+	Fri, 18 Oct 2024 15:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fKPFoVSn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q4aA9FCQ"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF581FF60E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1CE20127B
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729266017; cv=none; b=uSSL91LLMW1/uYOB8kv/IlEAMMU3k2r/xa0g/lihS85w2EeVz83T5gR2MnWUbXUZHZCCxlgyuFjQiYt0Ka59q1ElwDD9Q8GPOgp4anTEEOUDbFMJfIxqUuBscixAnmGR9ahpTLj6QbSHW5GX371EyEZ9/1y3W7ooZRIVbpUpBf0=
+	t=1729265966; cv=none; b=gTVAt7hPfCDo4FWOZqONGetQKV8EpfnTmslbxnVQvuvJlPFht7bnNePHb4s+IhRKCJ3o2RbO+wHsbrkeLICNoMhmhdqWH7GU6aiosLfwl3/iuhCLPKySFVEAqBHG33xmCgdK84L0gna5+Q2JK4oz4WSx6tKfLbNRrNlHxikxz3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729266017; c=relaxed/simple;
-	bh=JwhDul0KWehdjzF8RUVNvZuD0KzaRzk5sOiMKzR8xWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGwIgpV7A1rOI6ZV59Ds7u2ZEKkVRy1/lN4XV8XCFb1s9UR/XHhEAluEYkBZkSYS4kbVUI8OfdaW5toF7I6YrMCsWdwKznZqjgohsb3BcTJHvLOR367w/ta3OsNb/uh6aR5iZ6Re3obvUwEOnSWoWmuc4OuV/1A4zW5gEAL7PGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fKPFoVSn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729266014;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L7sF+ux8tQB6rtv2OQ9q9fbX718Icj+2tzphppaDZ3A=;
-	b=fKPFoVSn98tPmDPFXKw+8xZachdEdFDE7H+udwyLZjugokED4Upm5JgauKiQ8qfApUlT3S
-	c2TVxqoUasmNTFwYOMavZtPrR3s3G4vX1qiL2NTY7nTmkWcufAFWQZL/SGuVYdEouSmRjT
-	8Xmc+64VrBCEnkVX2uYSaibtfuOsgoM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-633-9VZDhXIJN6-ai3qN3pH6Fg-1; Fri,
- 18 Oct 2024 11:40:10 -0400
-X-MC-Unique: 9VZDhXIJN6-ai3qN3pH6Fg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E8B231964CF3;
-	Fri, 18 Oct 2024 15:40:06 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.28])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 39A1F1955D5A;
-	Fri, 18 Oct 2024 15:39:10 +0000 (UTC)
-Date: Fri, 18 Oct 2024 23:39:00 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Gregory Price <gourry@gourry.net>, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	bhelgaas@google.com, ilpo.jarvinen@linux.intel.com,
-	mika.westerberg@linux.intel.com, ying.huang@intel.com,
-	tglx@linutronix.de, takahiro.akashi@linaro.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] resource,kexec: walk_system_ram_res_rev must retain
- resource flags
-Message-ID: <ZxKBFMAecrL25Fwb@MiWiFi-R3L-srv>
-References: <20241017190347.5578-1-gourry@gourry.net>
- <ZxHFgmHPe3Cow2n8@MiWiFi-R3L-srv>
- <ZxJTDq-PxxxIgzfv@smile.fi.intel.com>
- <ZxJoLxyfAHxd18UM@MiWiFi-R3L-srv>
- <ZxJ13aKBqEotI593@smile.fi.intel.com>
- <ZxJ2NxXpqowd73om@smile.fi.intel.com>
+	s=arc-20240116; t=1729265966; c=relaxed/simple;
+	bh=ZP+tae5klmCMnR+kw2A6FmL8QwoSk5XUQYePyQfmYAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uqhwb4jNNevZn14cJzq51jaUemQ4hRxjZ+JPZXSWgl9vtqZAJUfS5LcDAKNoaHqVRrNXm5vLrbCjZSPY0OrR8FBob/N3FUDk0MyV4pqofCbAnAwAa+0FWwf/49l91HvI/DcohSz4fLfhDqcPIr70ZVlSCRjeQVRug8xG+WIjOD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q4aA9FCQ; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83aad8586d3so110445839f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729265963; x=1729870763; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jOhIwlho/HfHFju/oIk0L9FVfoRtipr8K1k5tMEW8S4=;
+        b=Q4aA9FCQ9gVVps/qSraCwa/cGG5lzw4/uypV0D8mEvczfCL+pMktesVIsncw4D51zw
+         Jb/tFLCpFUXK4fMMdgRijDv3EVsjkWOnnTf2nY5wJl3jgMS4Um1d3CmZdL8alIAGQ3yf
+         e/Or3M1XXa3VpM6Y0cEEQkTlD8Fx/uQAgi2fI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729265963; x=1729870763;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jOhIwlho/HfHFju/oIk0L9FVfoRtipr8K1k5tMEW8S4=;
+        b=Da09c+4R10f7hLwkp2frbY1mgac9CdlN37e8OeLZFUkkmoL0C7BS4advKZqfLMrCG3
+         jz4tDwh0jFlPXSWSNz8Yr0ZtlwcDzmvwU/tWX5fS4zH/I7b5JyOf8tt83Qwq2DCthWNb
+         ZvX62h8UxUTdgEW+i1yomZFO3GuiidHH2Z+wquLAS54aVdM1r6iQAqlgnw0EyAxtk8As
+         xA75i8seH4jwuy7zgYD8odvhFovrOQZaclKZTeCsmGuKc6xjorQBC6RJcqt8UOvQ2DRe
+         ppyWZK4fi0HJN4XSULyIURmdk1W+qNQzAhVpodyi6As4yXYRwhx/2oLAn/cJOr2zMe4q
+         36Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPjh/a3GHOljtxlvbL+q5hvBraz8NPN49tw93fJcMNlASQLmEqWiuTTGZ8ju5/7fU5WayPAmcc+f2yQJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjV08lb60gjKS4H1fVcHqoDyOskJnuo03FbZlw1/Azc7pQjpbl
+	TN0TkmpbmYqxSSiR0MNEBX71Y0TPo/yxzLKSE/RaUL3Pgqi74PRVyFAJcgt39gw=
+X-Google-Smtp-Source: AGHT+IFfqiAS9ggQMjIGLNW9Cg5NONB155KyHg7OIvgneNWuQmCp1LEfM+7wAzs872RjX2Oeef+Vxg==
+X-Received: by 2002:a05:6602:1551:b0:834:f2d5:c758 with SMTP id ca18e2360f4ac-83aba65ec4fmr245111339f.13.1729265963494;
+        Fri, 18 Oct 2024 08:39:23 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ab9d80b94sm47685839f.4.2024.10.18.08.39.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 08:39:22 -0700 (PDT)
+Message-ID: <3c93eccf-d7a3-40a8-83e3-91daf2d30e37@linuxfoundation.org>
+Date: Fri, 18 Oct 2024 09:39:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxJ2NxXpqowd73om@smile.fi.intel.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] selftest: rtc: Check if could access /dev/rtc0 before
+ testing
+To: Joseph Jang <jjang@nvidia.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: "shuah@kernel.org" <shuah@kernel.org>,
+ "avagin@google.com" <avagin@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "brauner@kernel.org" <brauner@kernel.org>, Matt Ochs <mochs@nvidia.com>,
+ Koba Ko <kobak@nvidia.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240524013807.154338-1-jjang@nvidia.com>
+ <20240524013807.154338-3-jjang@nvidia.com>
+ <202406201937464fc96b1c@mail.local>
+ <8c92ef18-6648-4348-9008-4f646d8b6956@nvidia.com>
+ <05f24dbb-cfe6-4a75-9382-273c9c734b22@linuxfoundation.org>
+ <202409241931048861ee5b@mail.local>
+ <a9e43219-a4a7-4b78-8c03-c8deee36befb@linuxfoundation.org>
+ <de127207-40ff-4c9d-bed5-37592de4123f@nvidia.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <de127207-40ff-4c9d-bed5-37592de4123f@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10/18/24 at 05:52pm, Andy Shevchenko wrote:
-> On Fri, Oct 18, 2024 at 05:51:09PM +0300, Andy Shevchenko wrote:
-> > On Fri, Oct 18, 2024 at 09:52:47PM +0800, Baoquan He wrote:
-> > > On 10/18/24 at 03:22pm, Andy Shevchenko wrote:
-> > > > On Fri, Oct 18, 2024 at 10:18:42AM +0800, Baoquan He wrote:
-> > > > > On 10/17/24 at 03:03pm, Gregory Price wrote:
-> > > > > > walk_system_ram_res_rev() erroneously discards resource flags when
-> > > > > > passing the information to the callback.
-> > > > > > 
-> > > > > > This causes systems with IORESOURCE_SYSRAM_DRIVER_MANAGED memory to
-> > > > > > have these resources selected during kexec to store kexec buffers
-> > > > > > if that memory happens to be at placed above normal system ram.
-> > > > > 
-> > > > > Sorry about that. I haven't checked IORESOURCE_SYSRAM_DRIVER_MANAGED
-> > > > > memory carefully, wondering if res could be set as
-> > > > > 'IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY' plus
-> > > > > IORESOURCE_SYSRAM_DRIVER_MANAGED in iomem_resource tree.
-> > > > > 
-> > > > > Anyway, the change in this patch is certainly better. Thanks.
-> > > > 
-> > > > Can we get more test cases in the respective module, please?
-> > > 
-> > > Do you mean testing CXL memory in kexec/kdump? No, we can't. Kexec/kdump
-> > > test cases basically is system testing, not unit test or module test. It
-> > > needs run system and then jump to 2nd kernel, vm can be used but it
-> > > can't cover many cases existing only on baremetal. Currenly, Redhat's
-> > > CKI is heavily relied on to test them, however I am not sure if system
-> > > with CXL support is available in our LAB.
-> > > 
-> > > Not sure if I got you right.
-> > 
-> > I meant since we touch resource.c, we should really touch resource_kunit.c
-> > *in addition to*.
+On 10/17/24 22:18, Joseph Jang wrote:
 > 
-> And to be more clear, there is no best time to add test cases than
-> as early as possible. So, can we add the test cases to the (new) APIs,
-> so we want have an issue like the one this patch fixes?
+> 
+> On 2024/9/25 3:57 AM, Shuah Khan wrote:
+>> On 9/24/24 13:31, Alexandre Belloni wrote:
+>>> Hello,
+>>>
+>>> On 24/09/2024 10:05:43-0600, Shuah Khan wrote:
+>>>> On 9/23/24 23:37, Joseph Jang wrote:
+>>>>> Hi Alexandre,
+>>>>>
+>>>>> Thank you for looking at the rtc patch.
+>>>>> I saw you Acked the [PATCH 2/2], not sure when could we see the patch
+>>>>> in kernel master or next branch ?
+>>>>>
+>>>>> Thank you,
+>>>>> Joseph.
+>>>>>
+>>>>
+>>>> Please don't top post. It is hard to follow the thread.
+>>>>
+>>>>> On 2024/6/21 3:37 AM, Alexandre Belloni wrote:
+>>>>>> On 23/05/2024 18:38:07-0700, Joseph Jang wrote:
+>>>>>>> The rtctest requires the read permission on /dev/rtc0. The rtctest will
+>>>>>>> be skipped if the /dev/rtc0 is not readable.
+>>>>>>>
+>>>>>>> Reviewed-by: Koba Ko <kobak@nvidia.com>
+>>>>>>> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+>>>>>>> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+>>>>>>
+>>>>>> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>>>>>>
+>>>>
+>>>> Alexandre, I can take this patch through kselftest. Might have
+>>>> slipped through my Inbox or the assumption that this will go
+>>>> through rtc tree.
+>>>
+>>> I assumed this would go through your tree, this is why I didn't carry
+>>> it.
+>>>
+>>
+>> I will take it through my tree then. Sorry for the delay.
+> 
+> Hi Shuah,
+> 
+> Thanks your help.
+> May I know when can we see the patch on master branch ?
+> 
 
-I will have a look at kernel/resource_kunit.c to see if I can add
-something for walk_system_ram_res_rev(). Thanks.
+Did you check the mainline:
+This is already in  Linux 6.12 since rc2
+
+commit 1ad999870a86d58246b6a614a435d055a9edf269
+Author: Joseph Jang <jjang@nvidia.com>
+Date:   Thu May 23 18:38:07 2024 -0700
+
+     selftest: rtc: Check if could access /dev/rtc0 before testing
+
+thanks,
+-- Shuah
 
 
