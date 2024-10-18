@@ -1,170 +1,173 @@
-Return-Path: <linux-kernel+bounces-370974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7BF9A3485
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:49:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F989A3488
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF0E1C232B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:49:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE034284A77
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F17185B6D;
-	Fri, 18 Oct 2024 05:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7000117DFE8;
+	Fri, 18 Oct 2024 05:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gN1s6Buh"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aRl36x8/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C192818A6DD
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBE717279E;
+	Fri, 18 Oct 2024 05:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729230472; cv=none; b=qszaA70ofJTj7hnR+b2HkxfbKWKTS4MMNG99cVFitL+E6HmFc4EANJiqpeAXbW4gjsq/xIP7iYtUwPSs03EzO3P0iRMuR9qAUotQwCH4CHR87N9HauN6KR2cS+e28qm3Lt9G70TqvqYkRo3R3Ar186b6OEvXe0j3WzK2mw6hbU0=
+	t=1729230494; cv=none; b=iqiVZ2f4T8SBZm39sFtfaTr/g+Susztvfs4IsGFfz+9fqClmZIica8CJfNsUsNI5kBKfNRNOlpSnNzQcqxVoma4fzNffthbisUjZV2cvzC0dhB1EFCcuLwj2k24rcRbNSyyee5QTFct6yFyE7xYMAjK9ppUUgJxEllMcUJxiuCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729230472; c=relaxed/simple;
-	bh=5W+gJCgn/iqQR+0OXY2i27BEZMd24fFR3rEA7huJPM4=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=gGFP5INCCQHIPNsvSyePGy9/FhsCX5QsWxzyTNgJgOhrk8q4WkjjKl2DHG9IFILY5/pc9Yra+0z7tn07bCAgmSQjvdIjHr2MGrFARyBARWUB59qz09hkGRJhr1KYbs80edivPbreYeWIEzk64b5f+RSQCjG2GALJk6AZmqqJE1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gN1s6Buh; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e28edea9af6so2482804276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:47:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729230470; x=1729835270; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aQvCceMrlghIZnfCb5WUSYCrB9JkcNmVyoorIOTc2vc=;
-        b=gN1s6Buhq8I2Uk2Pt0ZXTFhpmXxlhpxa6Ua/feM1LZI6p+e0fHwmqMM1RFtaPmQPTE
-         p6ak36HaUDSOBD8Pet3lld9AFu5hwtDSm6Q1HoPfa9ZavqbaTmALOHD4dfQltGFY+T34
-         UBz0+jiDqEwVCl97+zKLitHATZPn950uKi0AygY+kEJ2uMBDYmIQFslezJB6S6NDTUQt
-         ToE6UDaiPvMK1tu/QLymBl49YFscHF70MbqKME4LSxRTDiXdo1QbR/fBsifjinEoAQkh
-         SX0BsR1eYf6fEynM/ujdI4uhrX5mzIo8ABNglP2ExUXNBwvC4ERTiSZ00Zf/eaEU4Nmu
-         /hnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729230470; x=1729835270;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQvCceMrlghIZnfCb5WUSYCrB9JkcNmVyoorIOTc2vc=;
-        b=BIOcX/71A+4XZIT6tBKF0Kvj4qmvOfN1JqegsZvoeGlZzLsLjFZzFqaJOUPOe/GbJs
-         8vn+THoJJQkV/PFB8afzZUGMUJGMZdy/5SK73fvip2wyJHvG7B3fDb5ssEGe2HORqgyp
-         n7CdEBB6EY8TX+9fgRZPF0mRMBW9KYJxuK/e8TzmRsbArXp8Oh/JHZOyblOynG/srik1
-         pnLJDUQ8ScCisg0FVxBZLay0y4CNSb27C286L74a/6sYU2XcHU0h5J+5DNWFUBjEv/VT
-         UIcrxIe283ifJfEGwudhfR1Yv0UY/FZd0C1KE0WfcOAcsDqQWk5s9DJRuenAzIwuWwf6
-         /bRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVL6kukvzpwzalgsdj/ROWC7JQfsieCc6RERF1WAf/j3f6/1ppsUTVpOtbjjTJ1JLbTCzuwE9kS47mYKWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/pyTAKZVguAw8FhicWJ+IQtE3etLy8SLuDa5s7eJw5c/oBBIu
-	RmkLZ+a7e43XbT1NezxYs5ZtAPwdiN4+vXa7SgSCK8an+5SlIDiv2A9Muzwgf8Xbv/ZQgDr8TIp
-	WtkOyXw==
-X-Google-Smtp-Source: AGHT+IEetzZbv6xKhA7Bjm58oK7gBLuLrdE7VQtAkXXBp2zVdlHbeXhsBPD8UPUb6aKAm0dZbINOr2lcVA4U
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:30c5:9d92:bcd:7977])
- (user=irogers job=sendgmr) by 2002:a25:860b:0:b0:e28:f231:1aa8 with SMTP id
- 3f1490d57ef6-e2bb11b3e9amr3380276.2.1729230469360; Thu, 17 Oct 2024 22:47:49
- -0700 (PDT)
-Date: Thu, 17 Oct 2024 22:47:19 -0700
-In-Reply-To: <20241018054719.1004128-1-irogers@google.com>
-Message-Id: <20241018054719.1004128-10-irogers@google.com>
+	s=arc-20240116; t=1729230494; c=relaxed/simple;
+	bh=5ed+YXIRKt4R1p86u7Yp1C2teLt4n1R3+K0CLW/7p24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRiswBOYD8NmMtpIeIo6Z2Uwb+rogKCHoLrK1Ev6htRyzBUtx5SdYubJyZYGZquD2ji3+GTHr4O5W18SAOEJUXyQbzDCyz1sc13h9tejqPRIE0/Hb7NVl0FHnVaSemWRuuEaajOCblVJcPBMTqApEI9EL+uaLuSnQqHAfq9w4c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aRl36x8/; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729230493; x=1760766493;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5ed+YXIRKt4R1p86u7Yp1C2teLt4n1R3+K0CLW/7p24=;
+  b=aRl36x8/D1h9NsBWJN8xWlVoAXSen3uH/8fG9zf1LoNl+KPeUFer9brq
+   G2d2hhG6sd/spdVrdt4Cr/BlBsMFJXXdmiStLHegX6t1hRzPVU13xLKt9
+   J6pQdnEgADVIx6sKguk8EhoRiE3yvOCRT8evhqb8WCyD2rtz9ALa16LtC
+   YDEoae2qVY6qVQs5dv/7We4G5+U0fvg+Mb09jx/tfyhEqi/BpWumHhbAj
+   P75pZhqB5Sgi8GtzmyGqA6YIWEtCUaDGBtbXdvlZda/VbnbMKQFoM4VSQ
+   z0TAND3pRU7Edfg7J3XNd/+ZQqHa5Vb/2FZo7BaH9FrDWfOOUqx9AWBWF
+   w==;
+X-CSE-ConnectionGUID: k1eHSKoyTIm9kY0Z57x/DQ==
+X-CSE-MsgGUID: mE/v2xKdRwi+OBvC4PB+SA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28847431"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28847431"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 22:48:13 -0700
+X-CSE-ConnectionGUID: fqPiXShaQuKN4thSghkR9w==
+X-CSE-MsgGUID: r8blsmJFSrCj+OKC6tfH1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="83596370"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 17 Oct 2024 22:48:09 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1fqI-000NK7-1Q;
+	Fri, 18 Oct 2024 05:48:06 +0000
+Date: Fri, 18 Oct 2024 13:47:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 2/2] thermal: Add support for Airoha EN7581 thermal
+ sensor
+Message-ID: <202410181340.S74lBfUS-lkp@intel.com>
+References: <20241017143830.1656-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241018054719.1004128-1-irogers@google.com>
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH v3 9/9] perf test: Add a signal handler to kill forked child processes
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Howard Chu <howardchu95@gmail.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
-	Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017143830.1656-2-ansuelsmth@gmail.com>
 
-If the `perf test` process is killed the child tests continue running
-and may run indefinitely. Propagate SIGINT (ctrl-C) and SIGTERM (kill)
-signals to the running child processes so that they terminate when the
-parent is killed.
+Hi Christian,
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/builtin-test.c | 34 +++++++++++++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index 78ff7862845a..c4b6300b0212 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -470,13 +470,22 @@ static int start_test(struct test_suite *test, int i, int subi, struct child_tes
- 	for (j = 0, k = 0; j < ARRAY_SIZE(tests); j++, k = 0)	\
- 		while ((t = tests[j][k++]) != NULL)
- 
-+/* State outside of __cmd_test for the sake of the signal handler. */
-+
-+static size_t num_tests;
-+static struct child_test **child_tests;
-+static jmp_buf cmd_test_jmp_buf;
-+
-+static void cmd_test_sig_handler(int sig)
-+{
-+	siglongjmp(cmd_test_jmp_buf, sig);
-+}
-+
- static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
- {
- 	struct test_suite *t;
- 	int width = 0;
- 	unsigned int j, k;
--	size_t num_tests = 0;
--	struct child_test **child_tests;
- 	int err = 0;
- 
- 	for_each_test(j, k, t) {
-@@ -500,6 +509,25 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
- 	if (!child_tests)
- 		return -ENOMEM;
- 
-+	err = sigsetjmp(cmd_test_jmp_buf, 1);
-+	if (err) {
-+		pr_err("Signal while running tests. Terminating tests with signal %d\n", err);
-+		for (size_t x = 0; x < num_tests; x++) {
-+			struct child_test *child_test = child_tests[x];
-+
-+			if (!child_test)
-+				continue;
-+
-+			pr_debug3("Killing %3d pid %d\n",
-+				  child_test->test_num + 1,
-+				  child_test->process.pid);
-+			kill(child_test->process.pid, SIGTERM);
-+		}
-+		goto err_out;
-+	}
-+	signal(SIGINT, cmd_test_sig_handler);
-+	signal(SIGTERM, cmd_test_sig_handler);
-+
- 	/*
- 	 * In parallel mode pass 1 runs non-exclusive tests in parallel, pass 2
- 	 * runs the exclusive tests sequentially. In other modes all tests are
-@@ -560,6 +588,8 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
- 		}
- 	}
- err_out:
-+	signal(SIGINT, SIG_DFL);
-+	signal(SIGTERM, SIG_DFL);
- 	if (err) {
- 		pr_err("Internal test harness failure. Completing any started tests:\n:");
- 		for (size_t x = 0; x < num_tests; x++)
+[auto build test ERROR on rafael-pm/thermal]
+[also build test ERROR on linus/master v6.12-rc3 next-20241017]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/thermal-Add-support-for-Airoha-EN7581-thermal-sensor/20241017-224102
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git thermal
+patch link:    https://lore.kernel.org/r/20241017143830.1656-2-ansuelsmth%40gmail.com
+patch subject: [PATCH v2 2/2] thermal: Add support for Airoha EN7581 thermal sensor
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241018/202410181340.S74lBfUS-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241018/202410181340.S74lBfUS-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410181340.S74lBfUS-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/thermal/airoha_thermal.c: In function 'airoha_thermal_get_temp':
+>> drivers/thermal/airoha_thermal.c:239:46: error: invalid use of undefined type 'struct thermal_zone_device'
+     239 |         struct airoha_thermal_priv *priv = tz->devdata;
+         |                                              ^~
+   drivers/thermal/airoha_thermal.c: In function 'airoha_thermal_set_trips':
+   drivers/thermal/airoha_thermal.c:268:46: error: invalid use of undefined type 'struct thermal_zone_device'
+     268 |         struct airoha_thermal_priv *priv = tz->devdata;
+         |                                              ^~
+   drivers/thermal/airoha_thermal.c: In function 'airoha_thermal_probe':
+   drivers/thermal/airoha_thermal.c:466:17: error: invalid use of undefined type 'struct thermal_zone_device'
+     466 |         priv->tz->tzp->offset = priv->default_offset;
+         |                 ^~
+   drivers/thermal/airoha_thermal.c:467:17: error: invalid use of undefined type 'struct thermal_zone_device'
+     467 |         priv->tz->tzp->slope = priv->default_slope;
+         |                 ^~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +239 drivers/thermal/airoha_thermal.c
+
+   236	
+   237	static int airoha_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+   238	{
+ > 239		struct airoha_thermal_priv *priv = tz->devdata;
+   240		int min, max, avg_temp, temp_adc;
+   241		int i;
+   242	
+   243		/* Get the starting temp */
+   244		temp_adc = airoha_get_thermal_ADC(priv);
+   245		min = temp_adc;
+   246		max = temp_adc;
+   247		avg_temp = temp_adc;
+   248	
+   249		/* Make 5 more measurement and average the temp ADC difference */
+   250		for (i = 0; i < 5; i++) {
+   251			temp_adc = airoha_get_thermal_ADC(priv);
+   252			avg_temp += temp_adc;
+   253			if (temp_adc > max)
+   254				max = temp_adc;
+   255			if (temp_adc < min)
+   256				min = temp_adc;
+   257		}
+   258		avg_temp = avg_temp - max - min;
+   259		avg_temp /= 4;
+   260	
+   261		*temp = RAW_TO_TEMP(priv, avg_temp);
+   262		return 0;
+   263	}
+   264	
+
 -- 
-2.47.0.105.g07ac214952-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
