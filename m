@@ -1,92 +1,201 @@
-Return-Path: <linux-kernel+bounces-371733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D5F9A3F71
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:21:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DFA9A3FA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16B5AB21494
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:21:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CDEB1F22048
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81111D6DD8;
-	Fri, 18 Oct 2024 13:21:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE7A1EE031;
+	Fri, 18 Oct 2024 13:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="WAfMJV28"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D7F1D0DF7
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDCF42ABD
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729257664; cv=none; b=HXF7ebEJn09BcUczyahkji6z6ab30qjBwPp/LDi+CCwPO1QFwLdrHOiqV4mnmlnGwgtp6o/PmiYhl8hcATw5tq4WBiAHE8WdQaaDN1cLLHjfLV8xltdVN0gSAozTPPu1bX3S674Knxi8LXlRPrXCjJb6Xo696Y+VEiGQKymNITE=
+	t=1729258222; cv=none; b=DoVawMAjjQ0KvTagpQzVYT3MjC5WLs5MlM0NWrDxi3PSDRJSRP/tdCGrtyIPraMAennPf51LLk5qA1FHA57379jGUkXeChRNt4U1j6ULOcOMXZ7yf0f6h3/nsQWBK0GrjbMBtSFCr9m7QNu4/xMkb4eDTy1nMbsx7wSGNxKfBJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729257664; c=relaxed/simple;
-	bh=J2ISKYJq+P9aWYzcvEmJNTpTQm3p+pYlylkV+zAb+uc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KG29uCPydyYrjSiOaLMD0eSaroGvtt5IStZgdrEgwtwbpAyMkvPHcLDx6jiH1321i7fNT0/OER4G0f8ve+fNMzhFFISq22e+ANW+iCHHczaCAhHvQAEg10o9mjc+62JuKc1ahdGKrSCFcWCfO0B0hJ4ZnyEoyAnJWdEBHOHhK5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so18329035ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:21:02 -0700 (PDT)
+	s=arc-20240116; t=1729258222; c=relaxed/simple;
+	bh=p3DTc4O8vInbNPSupIvHX0R53UKRk87fWs5iJU5kRpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oLP4uxNGYI/jRPr5hah6P+PAj5diruENZvi/7kdNDnWbLLqzvQUXlBVYCde9w2Mc/EK+hRgjS+PWWcmMllC+ouN3cwh7mAy9t20mem857dP99UQ4RktGbO44GEwy9krcxZnb9qSEDS7Xi0sp4rsuwRW7pzS8TGjk68HJimXLVUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=WAfMJV28; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E68743F5AB
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:21:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1729257715;
+	bh=Z5nbekklhuEu06YT3tciT7nnVcLbYF0ZUP641zijrpg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=WAfMJV285qGNo1c4RB3kmeKKKC1HS+w/o/gBZZfJnyFI+AurrHw/g941Dq915imLM
+	 MNG2dCIiGgLqU2kgtgjXUcXKyDI91D+2mzIz9gywxK2cS8PrfyclRmp5X//wpUdthQ
+	 bZlHpZ9/Kne8dIcWBx2AOCqEdNbowsV3aHpZExlDbQHqObo2Hc/hAXLaVuX9JCreet
+	 RgI1hDI4eVZBytVexuPn54WlVPpoyUfVqbl7A64zfy8Y7g7u4WJ+okBV+tHPE0y3ug
+	 s4ZgN3aqWkXXpem7jg9QYWSHFqjQsJHsHbBLGqjhW4Maly74wWfOL3yf61k2AOJacA
+	 2hx86MWKkbgmw==
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d3e8dccc9so1174119f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:21:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729257661; x=1729862461;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dsYwuI0Th+uVtMN7AlSOhFIFxHsr2HBMLpKgQ2C5NDw=;
-        b=bOWVUX1juw/2BOh9OVkFf9JZG2HhIsvhJaBt7mhrAR802VmUNx6A1fqb3AUtiQWwRt
-         Ad9eNdhT7D7MYGtg70GA6KiSqjI2KcjEufO4+ZbvZL7Jp7VF1i/BQd2ICgdzTC/8/krv
-         rI0iKJDU3PmAC7+w7nj+AjNmtdYaIpyI0f7zpZMGP6BpS3ZeS+6GQhCfYdMxeZE6L2sm
-         d+ERl0Q88J8+3vaDTh8qbIpFRcTZsBvTk9BeyppQn7A98MARyqu6yiAM7dhZ3P3K4+eT
-         spDREi5fMBMfRB21qXATxAPFcAlQKKRIEPWNp30liy3SbCg1TmVHPfEQqe8x/EUnxNMm
-         odKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjpJyuRpF+EZl9lfVFMKg5twjOmiSsZUGKWSQZrxxVYsjytssUnwDHBmu39fs8z/R1nZDbh/8olpHCf5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkYKMhTM2H58jUBQFJwvhsdDxhUrByq5d4XCOxw8alg32UIvKt
-	uhsHm7vwe3xSwIcl1O8qIFft8Euq8jHiKXhUjDudQrMEJw5C6Uo8/A7OSNbNmEe8rVi0UeEsLqw
-	VkOcGTZ28vJUUKThuvdbEqMP7204QmhLWZYdmKDaPRIwbmsbmxMnF1T4=
-X-Google-Smtp-Source: AGHT+IEBJH2H0YkAN3+kej2jAA+6Y4/nJq8KL+MjWGl3zwECcftJ2IWflNZlanDCdJEEAH367yNS/cixQ+dw4rG7mqrgBuHaxm1q
+        d=1e100.net; s=20230601; t=1729257715; x=1729862515;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z5nbekklhuEu06YT3tciT7nnVcLbYF0ZUP641zijrpg=;
+        b=s5+vFjQBukCMwBcOltpNbPc9jJ/sv6T+WcqikGL+6lfRar+bIDpsXPp3YO6SyhoJJP
+         vWP6FGLW5LtYaIIjaJmzu6fArhY/RK7f4OAyUG6EbteMjCrvGDZ2jMktKG0RUNIPVRxI
+         0JPBuQqG0oR8QTjTgX3nFsnVfMO6FKzz/qTADMMQQKQTJzje61nVTsOLgD2cw3ej/4lL
+         Az/PFc5+EAGxiRFzTt/EsUWUXekV4K7LOkT1Fe6SJBFCmI6v8iPf6N6cLo467l5d/wRy
+         TvhgJe+UzG9ovU3DmENpNFNlIcDNTX6wA9bhyj7ncUunHrgCOLA6TZnK4JU6DtHFpX1R
+         mmDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUObvVLxNqp8Uer6h7iXQiUT8cdxcUtc0/t/p+umBnixtw/q2mEbkg4/KYHHkEA80zQ2IFYy7D8HugV9j8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ0+6zk9GijXWWdl13YuHgXVOyGQgI6GfSohFSNnul5aEGJjtT
+	3ks9A0Ru8j9ktj5DruXpZJCFfByjRMrI8k2ByisUNnkjzrmfD00GAhpqKZtSVMtZYZ6/7N1FTUa
+	N7rietUUmz9UOaf4gTATKiYLHAOKtCA6Vm5b3scOJ8HZ6zCThhh5zR/f7cs8heRZ+LgESt1BYLk
+	5A3ddRb9bStS15RAaoj80RLEwoI1qACQmJhCKjp4sNPrtRfD97ypA67Rr0DhfIfRlq4w==
+X-Received: by 2002:a5d:6801:0:b0:37d:4e59:549a with SMTP id ffacd0b85a97d-37eab6edd1fmr1692928f8f.16.1729257714665;
+        Fri, 18 Oct 2024 06:21:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvqVis6AOhAKHGQ0jRLkpLbn5cO2x+TXp7Dkwd5xfWMTZeQul3F0FXVsek1XUcmw0usZznNWbYyTZlznmrbGs=
+X-Received: by 2002:a5d:6801:0:b0:37d:4e59:549a with SMTP id
+ ffacd0b85a97d-37eab6edd1fmr1692913f8f.16.1729257714273; Fri, 18 Oct 2024
+ 06:21:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214c:b0:3a3:9337:4cf4 with SMTP id
- e9e14a558f8ab-3a3f40500famr20935825ab.4.1729257661749; Fri, 18 Oct 2024
- 06:21:01 -0700 (PDT)
-Date: Fri, 18 Oct 2024 06:21:01 -0700
-In-Reply-To: <67124175.050a0220.10f4f4.0012.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671260bd.050a0220.1e4b4d.0016.GAE@google.com>
-Subject: Re: [syzbot] [pm?] WARNING in thermal_thresholds_flush
-From: syzbot <syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com>
-To: andreyknvl@gmail.com, daniel.lezcano@linaro.org, elver@google.com, 
-	jannh@google.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	lukasz.luba@arm.com, rafael@kernel.org, rui.zhang@intel.com, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+References: <20240912071702.221128-1-en-wei.wu@canonical.com>
+ <20240912113518.5941b0cf@gmx.net> <CANn89iK31kn7QRcFydsH79Pm_FNUkJXdft=x81jvKD90Z5Y0xg@mail.gmail.com>
+ <CAMqyJG1W1ER0Q_poS7HQhsogxr1cBo2inRmyz_y5zxPoMtRhrA@mail.gmail.com>
+ <CANn89iJ+ijDsTebhKeviXYyB=NQxP2=srpZ99Jf677+xTe7wqg@mail.gmail.com>
+ <CAMqyJG1aPBsRFz1XK2JvqY+QUg2HhxugVXG1ZaF8yKYg=KoP3Q@mail.gmail.com>
+ <CANn89i+4c0iLXXjFpD1OWV7OBHr5w4S975MKRVB9VU2L-htm4w@mail.gmail.com> <CAMqyJG2MqU46jRC1NzYCUeJ45fiP5Z5nS78Mi0FLFjbKbLVrFg@mail.gmail.com>
+In-Reply-To: <CAMqyJG2MqU46jRC1NzYCUeJ45fiP5Z5nS78Mi0FLFjbKbLVrFg@mail.gmail.com>
+From: En-Wei WU <en-wei.wu@canonical.com>
+Date: Fri, 18 Oct 2024 15:21:43 +0200
+Message-ID: <CAMqyJG0DYVaTXHxjSH8G8ZPRc=2aDB0SZVhoPf2MXpiNT1OXxA@mail.gmail.com>
+Subject: Re: [PATCH ipsec v2] xfrm: check MAC header is shown with both
+ skb->mac_len and skb_mac_header_was_set()
+To: Eric Dumazet <edumazet@google.com>
+Cc: Peter Seiderer <ps.report@gmx.net>, steffen.klassert@secunet.com, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kai.heng.feng@canonical.com, chia-lin.kao@canonical.com, 
+	anthony.wong@canonical.com, kuan-ying.lee@canonical.com, 
+	chris.chiu@canonical.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+> Seems like the __netif_receive_skb_core() and dev_gro_receive() are
+> the places where it calls skb_reset_mac_len() with skb->mac_header =3D
+> ~0U.
+I believe it's the root cause.
 
-commit b8c8ba73c68bb3c3e9dad22f488b86c540c839f9
-Author: Jann Horn <jannh@google.com>
-Date:   Fri Aug 9 15:36:56 2024 +0000
+My concern is that if we put something like:
++       if (!skb_mac_header_was_set(skb)) {
++               DEBUG_NET_WARN_ON_ONCE(1);
++               skb->mac_len =3D 0;
+in skb_reset_mac_len(), it may degrade the RX path a bit.
 
-    slub: Introduce CONFIG_SLUB_RCU_DEBUG
+Catching the bug in xfrm4_remove_tunnel_encap() and
+xfrm6_remove_tunnel_encap() (the original patch) is nice because it
+won't affect the systems which are not using the xfrm.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14cc4c5f980000
-start commit:   15e7d45e786a Add linux-next specific files for 20241016
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12cc4c5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
-dashboard link: https://syzkaller.appspot.com/bug?extid=f24dd060c1911fe54c85
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1192f887980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1417e830580000
+Kind Regards,
+En-Wei.
 
-Reported-by: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com
-Fixes: b8c8ba73c68b ("slub: Introduce CONFIG_SLUB_RCU_DEBUG")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On Mon, 14 Oct 2024 at 22:06, En-Wei WU <en-wei.wu@canonical.com> wrote:
+>
+> Hi, sorry for the late reply.
+>
+> I've tested this debug patch (with CONFIG_DEBUG_NET=3Dy) on my machine,
+> and the DEBUG_NET_WARN_ON_ONCE never got triggered.
+>
+> Thanks.
+>
+> On Wed, 2 Oct 2024 at 14:59, Eric Dumazet <edumazet@google.com> wrote:
+> >
+> > On Wed, Oct 2, 2024 at 12:40=E2=80=AFPM En-Wei WU <en-wei.wu@canonical.=
+com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > I would kindly ask if there is any progress :)
+> >
+> > Can you now try this debug patch (with CONFIG_DEBUG_NET=3Dy ) :
+> >
+> > diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+> > index 39f1d16f362887821caa022464695c4045461493..e0e4154cbeb90474d92634d=
+505869526c566f132
+> > 100644
+> > --- a/include/linux/skbuff.h
+> > +++ b/include/linux/skbuff.h
+> > @@ -2909,9 +2909,19 @@ static inline void
+> > skb_reset_inner_headers(struct sk_buff *skb)
+> >         skb->inner_transport_header =3D skb->transport_header;
+> >  }
+> >
+> > +static inline int skb_mac_header_was_set(const struct sk_buff *skb)
+> > +{
+> > +       return skb->mac_header !=3D (typeof(skb->mac_header))~0U;
+> > +}
+> > +
+> >  static inline void skb_reset_mac_len(struct sk_buff *skb)
+> >  {
+> > -       skb->mac_len =3D skb->network_header - skb->mac_header;
+> > +       if (!skb_mac_header_was_set(skb)) {
+> > +               DEBUG_NET_WARN_ON_ONCE(1);
+> > +               skb->mac_len =3D 0;
+> > +       } else {
+> > +               skb->mac_len =3D skb->network_header - skb->mac_header;
+> > +       }
+> >  }
+> >
+> >  static inline unsigned char *skb_inner_transport_header(const struct s=
+k_buff
+> > @@ -3014,11 +3024,6 @@ static inline void
+> > skb_set_network_header(struct sk_buff *skb, const int offset)
+> >         skb->network_header +=3D offset;
+> >  }
+> >
+> > -static inline int skb_mac_header_was_set(const struct sk_buff *skb)
+> > -{
+> > -       return skb->mac_header !=3D (typeof(skb->mac_header))~0U;
+> > -}
+> > -
+> >  static inline unsigned char *skb_mac_header(const struct sk_buff *skb)
+> >  {
+> >         DEBUG_NET_WARN_ON_ONCE(!skb_mac_header_was_set(skb));
+> > @@ -3043,6 +3048,7 @@ static inline void skb_unset_mac_header(struct
+> > sk_buff *skb)
+> >
+> >  static inline void skb_reset_mac_header(struct sk_buff *skb)
+> >  {
+> > +       DEBUG_NET_WARN_ON_ONCE(skb->data < skb->head);
+> >         skb->mac_header =3D skb->data - skb->head;
+> >  }
+> >
+> > @@ -3050,6 +3056,7 @@ static inline void skb_set_mac_header(struct
+> > sk_buff *skb, const int offset)
+> >  {
+> >         skb_reset_mac_header(skb);
+> >         skb->mac_header +=3D offset;
+> > +       DEBUG_NET_WARN_ON_ONCE(skb_mac_header(skb) < skb->head);
+> >  }
+> >
+> >  static inline void skb_pop_mac_header(struct sk_buff *skb)
 
