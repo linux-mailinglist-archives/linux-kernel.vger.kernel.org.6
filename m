@@ -1,164 +1,103 @@
-Return-Path: <linux-kernel+bounces-371962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443B49A42A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:39:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D957B9A42AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3FAF282FDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:39:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF3C286060
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648F52022E0;
-	Fri, 18 Oct 2024 15:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAD42022C2;
+	Fri, 18 Oct 2024 15:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q4aA9FCQ"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rK9R5lhj"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1CE20127B
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31C41FF60E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729265966; cv=none; b=gTVAt7hPfCDo4FWOZqONGetQKV8EpfnTmslbxnVQvuvJlPFht7bnNePHb4s+IhRKCJ3o2RbO+wHsbrkeLICNoMhmhdqWH7GU6aiosLfwl3/iuhCLPKySFVEAqBHG33xmCgdK84L0gna5+Q2JK4oz4WSx6tKfLbNRrNlHxikxz3o=
+	t=1729266057; cv=none; b=dJMY2uXeCdE1d5OMEKHMuZAKTUrVofFaox7hw0RyFik0e/sfqkXWlJoE9wQcun8Jozp1DpoX5sFqQ2V6bKG2rXybAtjA6eO73HQY5afSMfidx1OfpxuJP882Lfw040Sv8qvq3U28opJLVZJyiYAK7R2wCulb6Q+vaKEDUwHSNPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729265966; c=relaxed/simple;
-	bh=ZP+tae5klmCMnR+kw2A6FmL8QwoSk5XUQYePyQfmYAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uqhwb4jNNevZn14cJzq51jaUemQ4hRxjZ+JPZXSWgl9vtqZAJUfS5LcDAKNoaHqVRrNXm5vLrbCjZSPY0OrR8FBob/N3FUDk0MyV4pqofCbAnAwAa+0FWwf/49l91HvI/DcohSz4fLfhDqcPIr70ZVlSCRjeQVRug8xG+WIjOD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q4aA9FCQ; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83aad8586d3so110445839f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:39:24 -0700 (PDT)
+	s=arc-20240116; t=1729266057; c=relaxed/simple;
+	bh=bR96HRMldtQoV/zai4j//thNLoRr9ug5Ij4WLSTW25U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hoy2f8g/jlaUNJIUMhjlM0wpvbNcqSdvfATovfdaWwh6HGEwpTgbtDrBQcq6oVCxtlnt6afLZGsQE/yywpaeSbnLRXADZQ1tN/XaSxaXOXafh7/O1NG1l85FFkofpGeUeLRNvHAUrfWaeK0VluOStkCpmzfCPOtA0z5iJr57moI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rK9R5lhj; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so25553281fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:40:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729265963; x=1729870763; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jOhIwlho/HfHFju/oIk0L9FVfoRtipr8K1k5tMEW8S4=;
-        b=Q4aA9FCQ9gVVps/qSraCwa/cGG5lzw4/uypV0D8mEvczfCL+pMktesVIsncw4D51zw
-         Jb/tFLCpFUXK4fMMdgRijDv3EVsjkWOnnTf2nY5wJl3jgMS4Um1d3CmZdL8alIAGQ3yf
-         e/Or3M1XXa3VpM6Y0cEEQkTlD8Fx/uQAgi2fI=
+        d=linaro.org; s=google; t=1729266054; x=1729870854; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=w3bvwu3OzUWCf73MooSLxJMXXTcmaKvPuHjhrRvynjw=;
+        b=rK9R5lhj3fr70pVo1whGC+9HgvmmKHe7iu7CjqmKPNTuatVQtXMjOj98nfbpniJUFq
+         3++Dfvlt9Mj0ZvgGcGdeZjXusqFJfma4gbsJdNhKReeYwV7BoBodf1+Izm+JPQ8eGM9M
+         kZFZSzRj5j6Z+EuOVcZW54VdaPleQrlTAhpuuboCQRShzk1DufJVhbeSXzpeEAYv+cfJ
+         6rX97/P7t0o5SxUxTfMK0jGnGe6OxPn8++W9YmnELxr+ACax7knGwWFgOpgfa7lS38rL
+         IE/crqOlIbFJgFFEed01t4mgBN13pEqkam3KF0+VmhkAbGwI1RkBERtOY59r7ZOYmNGc
+         gbSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729265963; x=1729870763;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jOhIwlho/HfHFju/oIk0L9FVfoRtipr8K1k5tMEW8S4=;
-        b=Da09c+4R10f7hLwkp2frbY1mgac9CdlN37e8OeLZFUkkmoL0C7BS4advKZqfLMrCG3
-         jz4tDwh0jFlPXSWSNz8Yr0ZtlwcDzmvwU/tWX5fS4zH/I7b5JyOf8tt83Qwq2DCthWNb
-         ZvX62h8UxUTdgEW+i1yomZFO3GuiidHH2Z+wquLAS54aVdM1r6iQAqlgnw0EyAxtk8As
-         xA75i8seH4jwuy7zgYD8odvhFovrOQZaclKZTeCsmGuKc6xjorQBC6RJcqt8UOvQ2DRe
-         ppyWZK4fi0HJN4XSULyIURmdk1W+qNQzAhVpodyi6As4yXYRwhx/2oLAn/cJOr2zMe4q
-         36Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCXPjh/a3GHOljtxlvbL+q5hvBraz8NPN49tw93fJcMNlASQLmEqWiuTTGZ8ju5/7fU5WayPAmcc+f2yQJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjV08lb60gjKS4H1fVcHqoDyOskJnuo03FbZlw1/Azc7pQjpbl
-	TN0TkmpbmYqxSSiR0MNEBX71Y0TPo/yxzLKSE/RaUL3Pgqi74PRVyFAJcgt39gw=
-X-Google-Smtp-Source: AGHT+IFfqiAS9ggQMjIGLNW9Cg5NONB155KyHg7OIvgneNWuQmCp1LEfM+7wAzs872RjX2Oeef+Vxg==
-X-Received: by 2002:a05:6602:1551:b0:834:f2d5:c758 with SMTP id ca18e2360f4ac-83aba65ec4fmr245111339f.13.1729265963494;
-        Fri, 18 Oct 2024 08:39:23 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ab9d80b94sm47685839f.4.2024.10.18.08.39.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 08:39:22 -0700 (PDT)
-Message-ID: <3c93eccf-d7a3-40a8-83e3-91daf2d30e37@linuxfoundation.org>
-Date: Fri, 18 Oct 2024 09:39:21 -0600
+        d=1e100.net; s=20230601; t=1729266054; x=1729870854;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w3bvwu3OzUWCf73MooSLxJMXXTcmaKvPuHjhrRvynjw=;
+        b=RRq1z91O0J6rohH6YRHKnNlPWhmy9MaOpexuvBKIwq36/rQrPxtnuz/iYZIb6jowXF
+         Mynr1DTH+RHramJIlSh85vdp8R97BsFA0LAwlBt08fsAVCRJgzV4u17Hgt2S7LPu1XJb
+         96rSMQX/ZKGrhhPn4If6G8T/zBjTy07bLOK/LUclabhe0yM0Tb0UnLZPWkp5xF+LmHlV
+         a6BeDM5nepqBm305DEVj2Grk9ti4hHSZ3296ZwgAaXlQuxKNgjITXpc0jdeP3Q/FO412
+         QFENrQSxSoZdPImvmZaShDpjfJ4hhchE8oVJ0f9G0S8s7PiZSA1e87J5JSVZkU3X+pE/
+         TYig==
+X-Forwarded-Encrypted: i=1; AJvYcCX1bdsOUnGXxeT6X3HRaHsZ+X8RdaYD8/ZoqXNwj3fQQcgOwsr7Qa4MxMdbrVP/K9yDCqV9C0fuNSRtKEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKhRAVJpGb2oCDHlmffTKVOjk3cBnzUJK5SLf1nExLNqVCDfGm
+	EydGWidZXc9FqWSV3vOIolib/nUhzJLSjRJ8DqyF+RenRR3lHkRMY0tyE4ja1Ds=
+X-Google-Smtp-Source: AGHT+IFNy+IiwoNEkyZ2thYD/crdC0LJwLRi3uLBZU4IijiXr13fyi0mObCfVy8zlYe+NMMkBbwE/Q==
+X-Received: by 2002:a2e:7c16:0:b0:2fa:d84a:bd8f with SMTP id 38308e7fff4ca-2fb831e6dfemr12851361fa.30.1729266053851;
+        Fri, 18 Oct 2024 08:40:53 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809a69fesm2479441fa.11.2024.10.18.08.40.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 08:40:52 -0700 (PDT)
+Date: Fri, 18 Oct 2024 18:40:51 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/drm_mode_object: fix typo in kerneldoc
+Message-ID: <exqgw35skr7mdllf47k7dejcex3lh23kx5jh3vv6ln3m22nlig@zbefnqjlohsr>
+References: <20241018-drm-small-improvements-v1-0-cc316e1a98c9@bootlin.com>
+ <20241018-drm-small-improvements-v1-1-cc316e1a98c9@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] selftest: rtc: Check if could access /dev/rtc0 before
- testing
-To: Joseph Jang <jjang@nvidia.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: "shuah@kernel.org" <shuah@kernel.org>,
- "avagin@google.com" <avagin@google.com>,
- "amir73il@gmail.com" <amir73il@gmail.com>,
- "brauner@kernel.org" <brauner@kernel.org>, Matt Ochs <mochs@nvidia.com>,
- Koba Ko <kobak@nvidia.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240524013807.154338-1-jjang@nvidia.com>
- <20240524013807.154338-3-jjang@nvidia.com>
- <202406201937464fc96b1c@mail.local>
- <8c92ef18-6648-4348-9008-4f646d8b6956@nvidia.com>
- <05f24dbb-cfe6-4a75-9382-273c9c734b22@linuxfoundation.org>
- <202409241931048861ee5b@mail.local>
- <a9e43219-a4a7-4b78-8c03-c8deee36befb@linuxfoundation.org>
- <de127207-40ff-4c9d-bed5-37592de4123f@nvidia.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <de127207-40ff-4c9d-bed5-37592de4123f@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018-drm-small-improvements-v1-1-cc316e1a98c9@bootlin.com>
 
-On 10/17/24 22:18, Joseph Jang wrote:
+On Fri, Oct 18, 2024 at 05:26:51PM +0200, Luca Ceresoli wrote:
+> Remove unintended extra word.
 > 
-> 
-> On 2024/9/25 3:57 AM, Shuah Khan wrote:
->> On 9/24/24 13:31, Alexandre Belloni wrote:
->>> Hello,
->>>
->>> On 24/09/2024 10:05:43-0600, Shuah Khan wrote:
->>>> On 9/23/24 23:37, Joseph Jang wrote:
->>>>> Hi Alexandre,
->>>>>
->>>>> Thank you for looking at the rtc patch.
->>>>> I saw you Acked the [PATCH 2/2], not sure when could we see the patch
->>>>> in kernel master or next branch ?
->>>>>
->>>>> Thank you,
->>>>> Joseph.
->>>>>
->>>>
->>>> Please don't top post. It is hard to follow the thread.
->>>>
->>>>> On 2024/6/21 3:37 AM, Alexandre Belloni wrote:
->>>>>> On 23/05/2024 18:38:07-0700, Joseph Jang wrote:
->>>>>>> The rtctest requires the read permission on /dev/rtc0. The rtctest will
->>>>>>> be skipped if the /dev/rtc0 is not readable.
->>>>>>>
->>>>>>> Reviewed-by: Koba Ko <kobak@nvidia.com>
->>>>>>> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
->>>>>>> Signed-off-by: Joseph Jang <jjang@nvidia.com>
->>>>>>
->>>>>> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
->>>>>>
->>>>
->>>> Alexandre, I can take this patch through kselftest. Might have
->>>> slipped through my Inbox or the assumption that this will go
->>>> through rtc tree.
->>>
->>> I assumed this would go through your tree, this is why I didn't carry
->>> it.
->>>
->>
->> I will take it through my tree then. Sorry for the delay.
-> 
-> Hi Shuah,
-> 
-> Thanks your help.
-> May I know when can we see the patch on master branch ?
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>  include/drm/drm_mode_object.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
-Did you check the mainline:
-This is already in  Linux 6.12 since rc2
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-commit 1ad999870a86d58246b6a614a435d055a9edf269
-Author: Joseph Jang <jjang@nvidia.com>
-Date:   Thu May 23 18:38:07 2024 -0700
-
-     selftest: rtc: Check if could access /dev/rtc0 before testing
-
-thanks,
--- Shuah
-
+-- 
+With best wishes
+Dmitry
 
