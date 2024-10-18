@@ -1,123 +1,173 @@
-Return-Path: <linux-kernel+bounces-372383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9C09A47EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:27:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4BB9A47ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 941B528035E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:27:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90CCE1F227B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98160205ADD;
-	Fri, 18 Oct 2024 20:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F077205AB6;
+	Fri, 18 Oct 2024 20:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIPYQylA"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b="WwLAkxne";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Iz9A7XZZ"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2192A40862;
-	Fri, 18 Oct 2024 20:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F58E40862;
+	Fri, 18 Oct 2024 20:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729283240; cv=none; b=SyyJt0yYkZBpsZNr2KbitzgBdVbC18gMnIaciWn8HygU3VgnglwWf33kds2923ntgKR1675hUJhsMbycJhv/SFJw5PL3lAzA4Poalt76bUVuKXynIRopg1wDy5D2mQvBVEGnzElinHSMpxJWp2mp7SReN0clvUbqnlzS5fkLGuk=
+	t=1729283284; cv=none; b=cerEHjrapUYC8BbMXYgVPgkAtml7NRF7XS3zShqcw4X1Y3o0qCcJV0K9+vbSSo3BvvOPh7azy2HgviNprJLfWMkZraydzon7EB5/5z4EbXjV2kI2Yl7noCGynMqggqoueQhHVD/sMZUzcdeEKTkIqGKR0dFdRKdo+JWWEjB3ekk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729283240; c=relaxed/simple;
-	bh=ulJIiXuGSzjSoZr1Pfm50dn2MJ30OLcof8T4iqcw4Rw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cU50E5UayGd/jUg39LkxBurItFa/cmDoI5+vKgMXAug9V1MSI8CysSxAIz5UzVvHVy5memHQd21Xt7YIoHRkgneN9w0D0SkVi5dLtDtczfwuEmKyWK6aMk5f0FsI5FrdveR5L2X4EwVqb/XFxk6t/A/jfrIYqiI7q0jb3pJixTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lIPYQylA; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a99e3b3a411so568925066b.0;
-        Fri, 18 Oct 2024 13:27:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729283236; x=1729888036; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NLTAIYzIokOOAJ2uN73IdFzEEOIT0hSeGnTqsPosd2E=;
-        b=lIPYQylAooyq8OEr5GXJH5ZLSnr/NdVhMHb9cEqA/p4bARay89zdsgo3zSCMlvxh/D
-         Yt5tI5h8LjYlt6ZzlPq2RgaRCBGcF5PfPjmVxwH37p0MBbjRews+Kk8IEvQJBnXIZwkK
-         sCc9Ov9W+JutvVgnz+RSavAK6MYSr84l6Bdanp5dQgDBCU70FdRRtttH+0pn/J4+vWNw
-         JbeUsRPDErxRGRi7AqMvcT0X7p3J/9wC8cGIp7SoaXPcopAlQ4USqHvkfdqiMVM5/WN2
-         25ZJhoOLVqBaSJtu9nB5bZuN4reywlY+WMaV6FQ6jKHNPB2dyj7Yy60DqH2Fy+DkCyLj
-         gvIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729283236; x=1729888036;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NLTAIYzIokOOAJ2uN73IdFzEEOIT0hSeGnTqsPosd2E=;
-        b=tiPI6SZo2UOErUugM3NDh4MVMEKR9SpTnSZEnDcGE3LoozKlCod/HMaBq95dxJEDc4
-         gTJyRHsXdHHhHd+YyKik/vtkKtVEIJ5PDdSyr3p8a5HEonbckSXbAQvfYtRPnM3YOHqS
-         CNj5ZlDH9WIZjChynH/31IEbBBxukO95iRX1mOoVV5b+lMqavzu3rojLgJTe5EwUyN4j
-         ODVDKvFsBkSDdXXQ91aAeYbqaZONsorhpeOpyAMJUSkJqn44EoOGVhyJDv2SO/ii4vF9
-         9oAyC6TjjX7umDOePgx7NwzNWDR5voNj9p/XVB4JExCCqLlwtrtgIWmZR/6rV2XY9w+L
-         VmtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVikEVgPxKLwpfwBXNlGiosbDwBfuYFGXC4FpxMTDrcjCfSm2NYEmeUIIrWklV4dZncKYE=@vger.kernel.org, AJvYcCXR0alV6yIGEuZrtG+1Rh13a9oFmrnQftB4EtPn1N+MRLitY82BKPezsCY78Wh4V5zhOCkIaOidzCQ90DD2cDM7TzT3@vger.kernel.org, AJvYcCXiCPZ+00NhX9ruAuCKZxrq3mj+5AW+QiI8JlsXWzGZXPHpq0c11FZ5I0zxyKT8xfh4qvYgPS//PKYwdHPV@vger.kernel.org, AJvYcCXxpx7ObrTDN84j5R7VcdaKw0MXnfMzO303zkJIqcWv3z8FcVwJCXqkrpNN80gZQHj2QUP+2aD5QgSWEDBLobMtFg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7A++IJaAWQYx+5Cb604gkiK9i1aG0YmKg80iMBfGukct06uhk
-	oYzEQx2tbvJefH8tVVE362ex5fbGKLtbBUzh35iJFi1flzEuUJIs
-X-Google-Smtp-Source: AGHT+IGdjHTDDVglci63fyGhCtXzlJjrBgte9bk2LEaTfmxkDaZ0bOYrQyR9lSMlajWpF+CnUSa9iw==
-X-Received: by 2002:a17:907:8004:b0:a9a:6c41:50c0 with SMTP id a640c23a62f3a-a9a6c4152aemr236981066b.26.1729283236080;
-        Fri, 18 Oct 2024 13:27:16 -0700 (PDT)
-Received: from krava (85-193-35-5.rib.o2.cz. [85.193.35.5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68a8e83dsm136174066b.38.2024.10.18.13.27.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 13:27:15 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 18 Oct 2024 22:27:12 +0200
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
-	bpf <bpf@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Liao Chang <liaochang1@huawei.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>
-Subject: Re: The state of uprobes work and logistics
-Message-ID: <ZxLEoPQXiNT-MCdt@krava>
-References: <CAEf4BzarhiBHAQXECJzP5e-z0fbSaTpfQNPaSXwdgErz2f0vUA@mail.gmail.com>
- <20241018073628.GC17263@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1729283284; c=relaxed/simple;
+	bh=ZVhvqv3R+1MrUboZvyRAl/Dwq4yiUfLLcWFX3hoXp3k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YyRrJ1e9mrNYmtSq77kNtzVhIwEKAWuEDzqlWvN+mmYFrN+24P8qEdvtm96Ntsc9mK0pn3hYbfUNtnF+gsXD28CLMCL096G+ZPEagBgxlNJkUSZpQTkD5Oblus4mJAkhjyhAUr5q9YhiSDzTU50RLA+YIY1tNRHjXspDx8TSLEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com; spf=pass smtp.mailfrom=justinweiss.com; dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b=WwLAkxne; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Iz9A7XZZ; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=justinweiss.com
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 40E651140077;
+	Fri, 18 Oct 2024 16:28:00 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 18 Oct 2024 16:28:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=justinweiss.com;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729283280; x=
+	1729369680; bh=7Ad1wosag+b1bUBZzzK6r3rBJSGkvCGF7JEu0gQdUbA=; b=W
+	wLAkxneZ2RIj2uqJvlChmICpM3+ygisnyRz5stum7HruyAHCGAHlGWFcbubR/vGc
+	srmwUGSwkC51DwmSr3DrMfB1nn4TRKbNOwdKWTSRpshdildqyhVasfzPr8oSABB+
+	vFVtFotW2LXSm+p+0OvOYr8prGHJrRk9KEBxKyq90wXxw3vt2AzJ4yDLP+NM3j3G
+	h49WU3Z3sJd8EkHb3HuN1FEO6qDFgbsgkTtDaDYVLa/2Z3YRXo7xoAIBEBq6rkq0
+	O5Y9D8DN7M+gwcf1ev1/e6uZwfNdpItoQOOCMYT2JV9ZDH4yxO24yCJQXOnKjcCy
+	NIjxnG56Ro+C06MwUNUyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1729283280; x=1729369680; bh=7Ad1wosag+b1bUBZzzK6r3rBJSGk
+	vCGF7JEu0gQdUbA=; b=Iz9A7XZZbScpGDF5GcmnSrWBscYmWuX99udAVvPRcJjc
+	zV9GpeK0qkr3czp2hMcg1ALQMen1wLsu6bprAHDaI8TXOeccsuQPCjREIE/mbSXl
+	oresaWOHCDStFVgYbskbnJh63fAKN/ryU9HDQolfr6bkhM+Tq5g9mvlt6hOVt327
+	cTH66HVOwvC9RoXB6NPp1/6VeY1joXDia+VtaZjxePCU/nBfG4mrzOcqWlUbh3IE
+	10+FeG11C3dreujXjP/uMNkt5lJ6cUYi6Y57PF30MlncJ+NvBOk3TkD//bDoUtTf
+	m4gT2RhsRO4PRhycSizwhXE/MhtzNwvfgjpxpRQq7w==
+X-ME-Sender: <xms:z8QSZ3PX17g3WiPKDeUgYEl3z3GR-aFW1snACFdr4osO7GX2Xr1Cgg>
+    <xme:z8QSZx8qcj_3ttYf4A39akVRYsefQGjqWYawdEuaqAUJ2SnZflxzs9EdTMjEPwmOB
+    jlH4R7IkxjQtZ7VfA>
+X-ME-Received: <xmr:z8QSZ2QhaEOWXL8KnORL7jIh3GFcvWk_0v2JFY9g4pqxc5nDj1kqYC_SDPoXSdXh2yzHB655HdZ1orSh8sOo88icjqU4geDk4Xw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehfedgudegkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtsehttdertddtredt
+    necuhfhrohhmpefluhhsthhinhcuhggvihhsshcuoehjuhhsthhinhesjhhushhtihhnfi
+    gvihhsshdrtghomheqnecuggftrfgrthhtvghrnhepveffhfelvdejjeefkeetleejhfev
+    hfeiveegtdeiveefhedtgeegieefleeivdefnecuffhomhgrihhnpehmihgtrhhoshhofh
+    htrdgtohhmpdhkvghrnhgvlhdrohhrghdprgihrghnvghordgtohhmpdhgphgurdhhkhen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjuhhsth
+    hinhesjhhushhtihhnfigvihhsshdrtghomhdpnhgspghrtghpthhtohepiedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomh
+    dprhgtphhtthhopehlrghrshesmhgvthgrfhhoohdruggvpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqihhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhhi
+    hidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoh
+    epjhhitgdvfeeskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:z8QSZ7t7aQabCA0QB462rQ-K0JSxISToJPXDUSvks6_AMBUVJJrxVw>
+    <xmx:z8QSZ_d0u_at5Ghb-DHQGpahAJeOgn1Tj6EQSNg8hOtNTaoHz8tWnA>
+    <xmx:z8QSZ31Tgf9-dLybE-Wwz7TFF81a4_9HHUPmKbP01NYhES3DZvrKDw>
+    <xmx:z8QSZ79r7Mrs9WpxC0K18Gxs1YaYszEa-CbHkwxmnIHIKvrdumnLtA>
+    <xmx:0MQSZ3T_BQpBgDlVXLWI3MuZ7PRYARqWGx10fOEDveeaikpV-3-EQp-f>
+Feedback-ID: icf614246:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 18 Oct 2024 16:27:58 -0400 (EDT)
+From: Justin Weiss <justin@justinweiss.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+  linux-iio@vger.kernel.org,  linux-kernel@vger.kernel.org,  Lars-Peter
+ Clausen <lars@metafoo.de>,  Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v1 1/1] iio: gyro: bmg160: Drop most likely fake ACPI IDs
+In-Reply-To: <20241018185105.41a2db06@jic23-huawei> (Jonathan Cameron's
+	message of "Fri, 18 Oct 2024 18:51:05 +0100")
+References: <20241018145732.2181309-1-andriy.shevchenko@linux.intel.com>
+	<20241018185105.41a2db06@jic23-huawei>
+Date: Fri, 18 Oct 2024 13:27:57 -0700
+Message-ID: <87sestcg1e.fsf@justinweiss.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018073628.GC17263@noisy.programming.kicks-ass.net>
+Content-Type: text/plain
 
-On Fri, Oct 18, 2024 at 09:36:28AM +0200, Peter Zijlstra wrote:
-> On Wed, Oct 16, 2024 at 12:35:21PM -0700, Andrii Nakryiko wrote:
-> 
-> >   - Jiri Olsa's uprobe "session" support ([5]). This is less
-> > performance focused, but important functionality by itself. But I'm
-> > calling this out here because the first two patches are pure uprobe
-> > internal changes, and I believe they should go into tip/perf/core to
-> > avoid conflicts with the rest of pending uprobe changes.
-> > 
-> > Peter, do you mind applying those two and creating a stable tag for
-> > bpf-next to pull? We'll apply the rest of Jiri's series to
-> > bpf-next/master.
-> 
-> >   [5] https://lore.kernel.org/bpf/20241015091050.3731669-1-jolsa@kernel.org/
-> 
-> I don't actually appear to have these.. Jiri, can you bounce them my
-> way or resend?
+Jonathan Cameron <jic23@kernel.org> writes:
 
-sorry about that, I split the uprobe perf/core changes and reposted [1]
+> On Fri, 18 Oct 2024 17:57:32 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+>
+>> The commits in question do not proove that ACPI IDs exist.
+>> Quite likely it was a cargo cult addition while doing that
+>> for DT-based enumeration. Drop most likely fake ACPI IDs.
+>> 
+>> The to be removed IDs has been checked against the following resources:
+>> 1) DuckDuckGo
+>> 2) Google
+>> 3) MS catalog: https://www.catalog.update.microsoft.com/Search.aspx
+>> This gives no useful results in regard to DSDT, moreover, the official
+>> vendor IDs in the registry for Bosh are BSG and BOSC.
+>> 
+>
+> I'm nervous about Bosch drivers in the wild given recent report
+> from Justin
+> https://lore.kernel.org/linux-iio/87jzeboi3g.fsf@justinweiss.com/
+>
+> Justin, I couldn't find the driver you were referring to for the bmi160,
+> is it online somewhere?
 
-thanks,
-jirka
+Yes, the BMI160/260 Windows driver is on this page:
+https://ayaneo.com/support/download
 
+It's at the very bottom, under "AYANEO Universal Gyro Driver." GPD also
+has a copy inside their driver pack under the "Drivers & BIOS" tab here:
+https://www.gpd.hk/gpdwinminifirmwaredriver, but the download is often
+at capacity unless you're signed into Google.
 
-[1] https://lore.kernel.org/bpf/20241018202252.693462-1-jolsa@kernel.org/T/#ma43c549c4bf684ca1b17fa638aa5e7cbb46893e9
+> Also if you have other bosch drivers could you check for these + bmc150
+> IDs Andy is proposing dropping in:
+>
+> https://lore.kernel.org/linux-iio/20241018145805.2181682-1-andriy.shevchenko@linux.intel.com/
+
+Unfortunately, the 160/260 driver is the only one I have. I wanted gyro
+support in Linux for a handheld PC I bought, and it was the IMU that
+happened to be inside.
+
+Justin
+
+>
+>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> ---
+>>  drivers/iio/gyro/bmg160_i2c.c | 2 --
+>>  1 file changed, 2 deletions(-)
+>> 
+>> diff --git a/drivers/iio/gyro/bmg160_i2c.c b/drivers/iio/gyro/bmg160_i2c.c
+>> index 672d0b720f61..a81814df5205 100644
+>> --- a/drivers/iio/gyro/bmg160_i2c.c
+>> +++ b/drivers/iio/gyro/bmg160_i2c.c
+>> @@ -39,8 +39,6 @@ static void bmg160_i2c_remove(struct i2c_client *client)
+>>  
+>>  static const struct acpi_device_id bmg160_acpi_match[] = {
+>>  	{"BMG0160", 0},
+>> -	{"BMI055B", 0},
+>> -	{"BMI088B", 0},
+>>  	{},
+>>  };
+>>  
 
