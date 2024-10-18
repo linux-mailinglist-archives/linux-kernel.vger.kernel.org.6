@@ -1,197 +1,117 @@
-Return-Path: <linux-kernel+bounces-371941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF719A4260
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1E89A4264
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6FA1F256C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:32:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4105D1F21E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A224B20127F;
-	Fri, 18 Oct 2024 15:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276F213D52E;
+	Fri, 18 Oct 2024 15:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmloXEX6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LF17OhnF"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75701D5AC7;
-	Fri, 18 Oct 2024 15:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932F9137C2A
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729265513; cv=none; b=QGC4WIM6MmPfJWvX1+AsGsmHZBpLohivPfiTyYjfCslR4NqESxCib/Ia8bbzNjxz7GezDTq6uCUBAJ8/GmGD0Y1n3ktLCpeY0/eLKTwnK7GVvlIZaH14Pt26tABQHB1L7+ojNJnecyBEX/TH1fI3Zt1jM5jpX4OKxaNOwe74054=
+	t=1729265515; cv=none; b=ASnge4Yc54oVFIXxHlPoTI5vFdao7k48yFMX5GROp11l66xv07EQkV8WsguENjmd3jX0gyApoqWv3KzPnIqFpkNUHJ1yR+F8AAzOCJcuTSE6Fp7WuDdZM9Bq9xUEjC2ATX34/zl/1DxI3KxPqZXxq9Hfq8qjd1hG6HE11FTG6mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729265513; c=relaxed/simple;
-	bh=IdmLrmq9YvegyhJcScfze8kc18IhbrRoMhwMjSgkHdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Htcz5yukqDNRQt46HXNmP3MwzHNghIf2U6kKX1GGy20BUbF4Q/U+WmfDaQha+nECsAa8TkSnaU+N5KVZ40OvZIM6ZOTVqdlWorStSxtAt4OwJlTFm2ilQ24YsavVVoixAiSxlwIXj2NmRfFmvafs8wEsu44/Zq5yKEWdN+AjI5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HmloXEX6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDD44C4CEC3;
-	Fri, 18 Oct 2024 15:31:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729265513;
-	bh=IdmLrmq9YvegyhJcScfze8kc18IhbrRoMhwMjSgkHdg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HmloXEX6XQGmwMYXkxJqY6mVDxqipivufVv0adnktuaqNsbD8rcc6W1NrbmCS1Szs
-	 Qy2FsdDoFUhhFrgbyOu8ILtQ46gAvMgJzKIU/6qAeTZA7wMIwa48utXZGwzmUrhy28
-	 n4hmD0Qxx3UmUIrBEwv2FtIu3rT+7rGmfICd/axDDQqBmuj6D45Kf65HCo8+EaRIB8
-	 qLWFQVsIXmbAD1NCA/x8Oh4YSlt0QZ1fyP5IBxUw3xRDEgyuN9YyN5rVxtPuj8Pbu6
-	 cZNEZcOZAN2glQmsz9dfFAJGiru6RV6VxY2DYO25P0JnQb6eRSBkuFGHHqeMPsqV+l
-	 zXYrwkAxW+6oQ==
-Message-ID: <e6cd13b5-2f7a-4ab1-899c-5867bc0ea64f@kernel.org>
-Date: Fri, 18 Oct 2024 17:31:45 +0200
+	s=arc-20240116; t=1729265515; c=relaxed/simple;
+	bh=gQeddZA7AUNwll6ggmREqwiuhKzdOjqoIFQvMRD4+w0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fpMVAtRI5qpyQr4CY/1oMDGP2vYcLpEZrat1MuJF/K1bNt17bldhlAGJBJq1WfxApXeCzJf2yNtPxYFiS2AGyCUCdcMxytdAE0FBHbmeCiBdLzU8P2kO4g5QqBipW5V/HJC1lUmScZdC6vp4kDLM97RyjFK9XOUJk7WB/wDlgLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LF17OhnF; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso2468988e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729265512; x=1729870312; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v0nybU+upPHt2Dx8CJHCDz0JeIFRaZFDVbO6aBhUo3w=;
+        b=LF17OhnFOdHr6XdlCUdYLDWBUF1bmSIVRBulPKzehc8LJtbTlpu/nRFQu08tH+Vrqb
+         iBQeBKSOOYWCR1TH5WStbIG73V1hGT0OEImMwNg6Oo0V/pTbqP3I2EFDv2uLqTYFhYrB
+         XKjPWarJP4aV4taRbbFcVoYa3V4M+IkieYHZhIGC1676Njl2UK6Qpeckxp2/EpckNutn
+         RePP4oiO/9S+i3yIQkKsfGJdBVT1W9FIY3fOxNGMVRiQaU7EA1aMkO6iSZ/s6knAyRe4
+         rwGbjXAIRONn6I6qGPWZ36/BRMB2yXS0amjSzKrr9MsNtCA2qIXtUscjbY6Cen0jHi1a
+         xKWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729265512; x=1729870312;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v0nybU+upPHt2Dx8CJHCDz0JeIFRaZFDVbO6aBhUo3w=;
+        b=w9ebFsOq1HljRt8raCk4OdxKuaGIJz8o/nt6kQE/DiANdwbdnqyqbvUQEOND3N+JoS
+         TBmqR+pNWv4N+p8wxsKxSnYb/l0753Ad0gIkGxdcgOp0gkdhtD079He5Mlm7p0bA0bOq
+         MFanhZWmopr8p+dHUrqp6HR8E65Ulj8jk/fzKVNwRv9m3m8X6okzkryCfZixxlxrwmxK
+         ucEA8MuRgBBLe9aNR1vUGbYdQq3bVyhY49T9hkNE2xMbPzrmsdHSkGUrLqmaBef3WTUH
+         K4cFzl9rWfQ8RZdJDjN0+YTY4qgz8xlex8VHEpLTu6EtvtNRi+v6wZZmFiK8UYy8yQSH
+         ebEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUs/ljVLfHQCaik73x/CFjjTJ/8/Q7+89/zlgoGl1Ys26a4TFtE6T2RJcExicHs6OgJbjBvbZ6+BW97TdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEu1qINtJfDj5fewSTD2U7/1D6qJBK7aecw0727/2zNFTBZvXi
+	l7R1UV3+HCJVdDZAgmSQ37M45b0UCVMM9x25lTmNaW8gL7Im31JRVuh0gQtgChXW8y+WyPadQgf
+	gNjE=
+X-Google-Smtp-Source: AGHT+IEYN8Z/8ko7R/xwHM1JXJhtjnqNmKTe/HKd0kHZ6O4I/L4D+iF6YO0NLqlfFP8rSbsSSvLPgA==
+X-Received: by 2002:a05:6512:12c3:b0:539:d870:9a51 with SMTP id 2adb3069b0e04-53a154f8ebbmr1992715e87.48.1729265511562;
+        Fri, 18 Oct 2024 08:31:51 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151b934esm246241e87.100.2024.10.18.08.31.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 08:31:51 -0700 (PDT)
+Date: Fri, 18 Oct 2024 18:31:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Johan Hovold <johan+linaro@kernel.org>, Kalle Valo <kvalo@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v6 2/6] power: sequencing: qcom-wcn: improve support for
+ wcn6855
+Message-ID: <gqgawgpcuw7ojttxh33fsymmucpfixeqhed23fkic5gz6n4nya@ubz23tw5x7vd>
+References: <20241018-sc8280xp-pwrseq-v6-0-8da8310d9564@linaro.org>
+ <20241018-sc8280xp-pwrseq-v6-2-8da8310d9564@linaro.org>
+ <fee25ac2-14b8-412b-b093-1526443498e7@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Add support for Amlogic A4
- SoCs
-To: neil.armstrong@linaro.org, Jerome Brunet <jbrunet@baylibre.com>,
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com>
- <20241018-a4_pinctrl-v3-1-e76fd1cf01d7@amlogic.com>
- <4a79f996-9d82-48b2-8a93-d7917413ed8c@kernel.org>
- <1jttd9rein.fsf@starbuckisacylon.baylibre.com>
- <4127b448-a914-4c69-b938-29512995326f@amlogic.com>
- <1jmsj1rclh.fsf@starbuckisacylon.baylibre.com>
- <d654d2b2-977b-44c0-8b01-b26f5eb0a3fe@kernel.org>
- <5ad8f396-84a5-486d-b90d-98fbf8882d1b@linaro.org>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <5ad8f396-84a5-486d-b90d-98fbf8882d1b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fee25ac2-14b8-412b-b093-1526443498e7@oss.qualcomm.com>
 
-On 18/10/2024 14:31, Neil Armstrong wrote:
-> On 18/10/2024 12:13, Krzysztof Kozlowski wrote:
->> On 18/10/2024 11:20, Jerome Brunet wrote:
->>> On Fri 18 Oct 2024 at 17:01, Xianwei Zhao <xianwei.zhao@amlogic.com> wrote:
->>>
->>>> Hi Jerome,
->>>>     Thanks for your reply.
->>>>
->>>> On 2024/10/18 16:39, Jerome Brunet wrote:
->>>>> [ EXTERNAL EMAIL ]
->>>>> On Fri 18 Oct 2024 at 10:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>
->>>>>> On 18/10/2024 10:10, Xianwei Zhao via B4 Relay wrote:
->>>>>>> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
->>>>>>>
->>>>>>> Add the new compatible name for Amlogic A4 pin controller, and add
->>>>>>> a new dt-binding header file which document the detail pin names.
->>>>> the change does not do what is described here. At least the description
->>>>> needs updating.
->>>>>
->>>>
->>>> Will do.
->>>>
->>>>> So if the pin definition is now in the driver, does it mean that pins have
->>>>> to be referenced in DT directly using the made up numbers that are
->>>>> created in pinctrl-amlogic-a4.c at the beginning of patch #2 ?
->>>>>
->>>>
->>>> Yes.
->>>>
->>>>> If that's case, it does not look very easy a read.
->>>>>
->>>>
->>>> It does happen. The pin definition does not fall under the category of
->>>> binding.
->>>>
->>>> https://lore.kernel.org/all/106f4321-59e8-49b9-bad3-eeb57627c921@amlogic.com/
->>>
->>> So the expectation is that people will write something like:
->>>
->>>   reset-gpios = <&gpio 42 GPIO_ACTIVE_LOW>;
->>>
->>> And others will go in the driver to see that is maps to GPIOX_10 ? the number
->>> being completly made up, with no link to anything HW/Datasheet
->>> whatsoever ?
->>>
->>> This is how things should be done now ?
->>
->> Why would you need to do this? Why it cannot be <&gpio 10
->> GPIO_ACTIVE_LOW>, assuming it is GPIO 10?
->>
->> Bindings have absolutely nothing to do with it. You have GPIO 10, not
->> 42, right?
+On Fri, Oct 18, 2024 at 04:30:17PM +0200, Konrad Dybcio wrote:
+> On 18.10.2024 2:49 PM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > 
+> > WCN6855 (also known as QCA6490) is similar to the already supported
+> > QCA6390 but takes in two more supplies so add a new vregs list for it.
+> > 
+> > On sm8450-hdk it also requires a short assert of the xo-clk pin so add
+> > handling for it in a dedicated unit.
 > 
-> There's no 1:1 mapping between the number and the pin on Amlogic platforms,
-> so either a supplementary gpio phandle cell is needed to encode the gpio pin
-> group or some bindings header is needed to map those to well known identifiers.
+> Any chance this fits into what
+> 
+> Documentation/devicetree/bindings/clock/gated-fixed-clock.yaml
+> 
+> describes?
 
-So I assume this is not linear mapping (simple offset)? If so, this fits
-the binding header with identifiers, but I have impression these were
-not really used in earlier versions of this patchset. Instead some offsets:
-https://lore.kernel.org/all/20241014-a4_pinctrl-v2-1-3e74a65c285e@amlogic.com/
+No, this is a software controlled set of straps for the WCN device.
 
-and pre-proccessor.
-
-These looked almost good:
-https://lore.kernel.org/all/20240613170816.GA2020944-robh@kernel.org/
-
-but then 0 -> 0
-1 -> 1
-so where is this need for IDs?
-
-See also last comment from Rob in above email.
-
-Best regards,
-Krzysztof
-
+-- 
+With best wishes
+Dmitry
 
