@@ -1,189 +1,119 @@
-Return-Path: <linux-kernel+bounces-372452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B769A48B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:08:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A53D9A48BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0339D282CDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AFDA1F22BDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D1E18E37B;
-	Fri, 18 Oct 2024 21:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154ED20401C;
+	Fri, 18 Oct 2024 21:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iuy0Ywur"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GCC/aZR8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B6213541B;
-	Fri, 18 Oct 2024 21:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C909F18E341;
+	Fri, 18 Oct 2024 21:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729285718; cv=none; b=gFv1Z1sXqMq3cr3maWqbQT1o4In6L8LFH9woHz4Hv+VcXb/lbJTXjTwTNP2M2rExlZvgDcuDEYqN/+Px6xwBeBUPp4Izy2/jbRkv/bUftb7O7OpYQMvvM2li5Pb334nqR10NhE47XKnkN8wy+19BYD2NVNLm+ZhV2M8OrMbM7Oc=
+	t=1729285811; cv=none; b=XZ7B3s2F82906VDpAUmizgkNSbfNUhvPPpRmgQ+aI/dFzqWKPjy90bFeGgvJc47ZF6sV8//qVatXB9Nl7sli6afoqVVWx1SLCbPVm88JU59I4L8Z3VksNLGtWYp1Do15ofG4PRgWP64EwywLe+0h3HECkXHDjsEeN9kutJVyA2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729285718; c=relaxed/simple;
-	bh=SvKt67n2zji81Um2vUUrt/85YdAkt079QTWL93keV8g=;
+	s=arc-20240116; t=1729285811; c=relaxed/simple;
+	bh=hQ0DG6/Eb3j0prKHYX364xskTLEd+9vKpIg1xcOPcDw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MBBOygSw3eU2VO4lCBqqPPOQLqZLfoN2VK8ITdbVjZfbpwDZ1NOk9V5sqV0Uy6Eb6w/iqqWouQqIuJXbzC8+Ycp6dP4Mro22bYhjbv8bEsliVXIvoA6YHjiBlTUyAyL4MtoUAgiUIKQMfUeS6Ks+spIuhluI0bhbyrtKoO9bQM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iuy0Ywur; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2339C268;
-	Fri, 18 Oct 2024 23:06:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729285610;
-	bh=SvKt67n2zji81Um2vUUrt/85YdAkt079QTWL93keV8g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iuy0YwurjR5qcNZlG8GYF/Z2J8r36u0HLZ6aJx7471/9BDVtLCjcqjgzEeAxXVy+b
-	 6o8gQ6u9za+23VrEjsPYHkCY0rRHrVIwi/kXXi1Ew2EBfP4vkD/Slf5f7ymXcXZKMa
-	 53SLTdf7ijbex049MP94tKIjJqshO9A17kWCSVNw=
-Date: Sat, 19 Oct 2024 00:08:28 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v6 23/23] media: renesas: rzg2l-cru: Add 'yuv' flag to IP
- format structure
-Message-ID: <20241018210828.GA13357@pendragon.ideasonboard.com>
-References: <20241018133446.223516-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241018133446.223516-24-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxxOBegOZrX3Dfm9/r/tfspMHt2SJNwdCgDvIwFEoOhgXXqbBXrqpY7hmhp5kAenC/djxkZ4wiOzPti2U/Rt06Fg6xPI14dfyhVbH8iyu+TlXYCotDbIVqldYCH0SNvrKG/pawp8F8uLPiDi2PfvtxmzEyinmNzyP41xVgbbBSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GCC/aZR8; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729285809; x=1760821809;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hQ0DG6/Eb3j0prKHYX364xskTLEd+9vKpIg1xcOPcDw=;
+  b=GCC/aZR8vwcft9DKreLN/fmFJWkpkZJFH67WpSDHNksW/CR04ZaKyeWL
+   XtoZtoCtFYtmcegKvkavN+KJGVxCjzqAhdXbd+IOOezcGUxYRgKG+kMbb
+   xQAYv8nfmcqKBuL0PvyKpfNP6vX9UeHUun1IeLr+j7jsejyAHejBEg/tT
+   s16Q+FTgxKC0wfRkNfHwQWmF7NPSlPljsyZ789mZrfGKSamDYzSLkMm8y
+   KtP6Yza+q5j5uz+ift8Tp9tKB45O2JaoAIcvYkYlpHFTGrcFA2Cp6MUp4
+   QCHIHtEr9tqwvVvFf4T9CQFxMMesDXYZZQ5B3/anHpvfvyAoXOs6vFg0M
+   Q==;
+X-CSE-ConnectionGUID: V2vtrIvqQPKeQ+r6dTJnFg==
+X-CSE-MsgGUID: Zp44uaT9Rnizfp3w3Th97w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28993129"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28993129"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 14:10:08 -0700
+X-CSE-ConnectionGUID: dr8iIfhTSkuHbpup6ssh2A==
+X-CSE-MsgGUID: zkUFIu82SCqVszaErv+rJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="78938262"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 18 Oct 2024 14:10:02 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1uES-000OJS-0e;
+	Fri, 18 Oct 2024 21:10:00 +0000
+Date: Sat, 19 Oct 2024 05:09:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.oltean@nxp.com,
+	claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, Frank.Li@nxp.com,
+	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
+	bhelgaas@google.com, horms@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, imx@lists.linux.dev,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v3 net-next 06/13] net: enetc: build enetc_pf_common.c as
+ a separate module
+Message-ID: <202410190431.wiCDZy8G-lkp@intel.com>
+References: <20241017074637.1265584-7-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018133446.223516-24-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241017074637.1265584-7-wei.fang@nxp.com>
 
-Hi Prabhakar,
+Hi Wei,
 
-Thank you for the patch.
+kernel test robot noticed the following build errors:
 
-On Fri, Oct 18, 2024 at 02:34:46PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add a 'yuv' flag to the `rzg2l_cru_ip_format` structure to indicate
-> whether a given format is YUV-based and update the `rzg2l_cru_ip_formats`
-> array with this flag appropriately. This change enables a more efficient
-> way to check if the input and output formats use the same colorspace.
-> 
-> With this change, we can eliminate the use of `v4l2_format_info()` in
-> `rzg2l_cru_initialize_image_conv()` as the necessary details for the source
-> and destination formats are already available through the `yuv` flag.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+[auto build test ERROR on net-next/main]
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-net-add-compatible-string-for-i-MX95-EMDIO/20241017-160848
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241017074637.1265584-7-wei.fang%40nxp.com
+patch subject: [PATCH v3 net-next 06/13] net: enetc: build enetc_pf_common.c as a separate module
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241019/202410190431.wiCDZy8G-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410190431.wiCDZy8G-lkp@intel.com/reproduce)
 
-> ---
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h   | 2 ++
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c    | 5 +++++
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 6 +-----
->  3 files changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> index a83e78d9b0be..8b898ce05b84 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> @@ -69,6 +69,7 @@ struct rzg2l_cru_ip {
->   * @format: 4CC format identifier (V4L2_PIX_FMT_*)
->   * @icndmr: ICnDMR register value
->   * @bpp: bytes per pixel
-> + * @yuv: Flag to indicate whether the format is YUV-based.
->   */
->  struct rzg2l_cru_ip_format {
->  	u32 code;
-> @@ -76,6 +77,7 @@ struct rzg2l_cru_ip_format {
->  	u32 format;
->  	u32 icndmr;
->  	u8 bpp;
-> +	bool yuv;
->  };
->  
->  /**
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> index d935d981f9d3..76a2b451f1da 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> @@ -18,6 +18,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] = {
->  		.format = V4L2_PIX_FMT_UYVY,
->  		.bpp = 2,
->  		.icndmr = ICnDMR_YCMODE_UYVY,
-> +		.yuv = true,
->  	},
->  	{
->  		.code = MEDIA_BUS_FMT_SBGGR8_1X8,
-> @@ -25,6 +26,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] = {
->  		.datatype = MIPI_CSI2_DT_RAW8,
->  		.bpp = 1,
->  		.icndmr = 0,
-> +		.yuv = false,
->  	},
->  	{
->  		.code = MEDIA_BUS_FMT_SGBRG8_1X8,
-> @@ -32,6 +34,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] = {
->  		.datatype = MIPI_CSI2_DT_RAW8,
->  		.bpp = 1,
->  		.icndmr = 0,
-> +		.yuv = false,
->  	},
->  	{
->  		.code = MEDIA_BUS_FMT_SGRBG8_1X8,
-> @@ -39,6 +42,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] = {
->  		.datatype = MIPI_CSI2_DT_RAW8,
->  		.bpp = 1,
->  		.icndmr = 0,
-> +		.yuv = false,
->  	},
->  	{
->  		.code = MEDIA_BUS_FMT_SRGGB8_1X8,
-> @@ -46,6 +50,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] = {
->  		.datatype = MIPI_CSI2_DT_RAW8,
->  		.bpp = 1,
->  		.icndmr = 0,
-> +		.yuv = false,
->  	},
->  };
->  
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> index a4dc3689599c..e980afc32504 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> @@ -210,7 +210,6 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
->  					   struct v4l2_mbus_framefmt *ip_sd_fmt,
->  					   u8 csi_vc)
->  {
-> -	const struct v4l2_format_info *src_finfo, *dst_finfo;
->  	const struct rzg2l_cru_ip_format *cru_video_fmt;
->  	const struct rzg2l_cru_ip_format *cru_ip_fmt;
->  
-> @@ -225,11 +224,8 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
->  		return -EINVAL;
->  	}
->  
-> -	src_finfo = v4l2_format_info(cru_ip_fmt->format);
-> -	dst_finfo = v4l2_format_info(cru->format.pixelformat);
-> -
->  	/* If input and output use same colorspace, do bypass mode */
-> -	if (v4l2_is_format_yuv(src_finfo) == v4l2_is_format_yuv(dst_finfo))
-> +	if (cru_ip_fmt->yuv == cru_video_fmt->yuv)
->  		rzg2l_cru_write(cru, ICnMC,
->  				rzg2l_cru_read(cru, ICnMC) | ICnMC_CSCTHR);
->  	else
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410190431.wiCDZy8G-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+ERROR: modpost: "__delay" [drivers/net/mdio/mdio-cavium.ko] undefined!
+>> ERROR: modpost: "enetc_set_ethtool_ops" [drivers/net/ethernet/freescale/enetc/nxp-enetc-pf-common.ko] undefined!
+ERROR: modpost: "devm_of_clk_add_hw_provider" [drivers/media/i2c/tc358746.ko] undefined!
+ERROR: modpost: "devm_clk_hw_register" [drivers/media/i2c/tc358746.ko] undefined!
+ERROR: modpost: "of_clk_hw_simple_get" [drivers/media/i2c/tc358746.ko] undefined!
 
 -- 
-Regards,
-
-Laurent Pinchart
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
