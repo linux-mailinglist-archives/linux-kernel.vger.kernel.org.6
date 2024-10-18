@@ -1,109 +1,100 @@
-Return-Path: <linux-kernel+bounces-371532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68D39A3C59
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:57:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58D59A3C74
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ABE41F21627
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:57:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37CF9B28CC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8B1204F7C;
-	Fri, 18 Oct 2024 10:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9215B209669;
+	Fri, 18 Oct 2024 10:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="N0LPbRsl"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="gTk/UKHT"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C4B202F7D
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E0A20126C;
+	Fri, 18 Oct 2024 10:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729248862; cv=none; b=Lxm850Alp3KnUt4B1OZEeKLbIvdODOcz3/3dSRP0fvL+IQwGGmzUs8vHxn7HH2o3QlS9JQHFMDLpisWxaPQfJFWv5rlXXw1A3QaQwQAWPfODwmD0p1Abcid3IfqtfiVxNLMdRu6+lZQbuJVkAboDwcJkUihU0dCaNElHk1hT/XY=
+	t=1729248919; cv=none; b=Qz4rIAKeJU5Vi8cksiZsNzzMjcGORmrj68ncy68qZ1jKYF25sWp4TVS7e/1IrTebBUXE3XuExQvDEntNbMEqg5PtGs8DozxUOSBSVBoHDs/L2w27CgjssXwsrZpUP3IhKjI9upsayjDCiVamZiuJDtpNT2DL63Vo56wQiioR+cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729248862; c=relaxed/simple;
-	bh=4KdIkPIu8+BVH/HhxDVkrlnmCaApwKvkSreVyNO50nw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZQvu4FRLZr+QmI5JlVrfIMnQtaVtSoZFrygei6UMmOt0tXFukpVhFOtHKrI+YGcM8+3862rg2lNLZiqWuFjcbJGN3v0kyvPiShqn04sdxV/+BEM0e/jZfCMQx6L3cNutLh2o+UUak02bbDoaXaEeF6DyhAcksEsnjUZCDQ9ZTFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=N0LPbRsl; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso254986166b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:54:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1729248858; x=1729853658; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GAUQbRgxeTaGabj2y30qoVfCLTrJkkrVwRxImKaAGOc=;
-        b=N0LPbRsljKPakgISvZst6DDhm0pC4uIXZ86cUb5oSYQMgMMUGUFWLmFDKQvjP/y9st
-         zV0aZ/MYHbKSFVt89TQBD0RxYyI2WDaDgAA8nuEYlfHueOq4V5sz62T14gz7CoZnC7qX
-         3rAqAE+fQZ1pAd0FprjsAMLmFB4tRwULrm/h8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729248858; x=1729853658;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GAUQbRgxeTaGabj2y30qoVfCLTrJkkrVwRxImKaAGOc=;
-        b=lQzX8XofZV3UesbafsCD+v9xhjiUzLVs1DNQyyQANkPRjsH/R64CdCQhkOEhi4Qgbl
-         aT9IqsnRnmCE1E+nqAKQIlFW3gVwciu0uOGe3L2dGm3r/Z3xLFNwf46Iuf3vazX+67Nx
-         gVuszzSwW0LBYjA+R8EvDQF7s4B6g9vteeWBntYNbj1wHW9z6pSrcQNefZH8voy2pIwI
-         xSGjCOnMaw3RZnm6Qb6Kwl2eMMJanPPdTzgJahIjC/Cq1fUaESNvB5SeEjr5Gz7C9jcC
-         SVMjNFl/xyTUZ4jlsESGeoKi03mLTeB7XGITwxfQrwnO/OwsVLc0qEu0knBUtcrnQtWT
-         XODA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyeCGELsOPLt7dMA1xkCpL+duByK5WV1Jusk8Hz2GnYSv66tO4rmXDgkCdh+TvOx/OxqgvlkBLAlN9x/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUOGP8bzwkt8/ETiI0x1WAhkvjANH61Ljjp65CcPjHhIlXGg4C
-	om84BObPiC7EB6e+OIraZmfIbMpSI2Q0tf5FRHKbNius58Ftm39W5Zq8F3AsbwB+te3ucVeBD0F
-	uSR+uVsZWg8Z7+HKVpwfkyGb9WxNXVgGCDNE0Ng==
-X-Google-Smtp-Source: AGHT+IEUJUA2pq8KDG9toWCxMK1E3E/CZn7+Yka64gVWbmzLoa6UO/Pp4meoP0n2MMwKk05OG44tsPblS7BNCM2AQ9k=
-X-Received: by 2002:a17:907:6ea9:b0:a99:368d:dad3 with SMTP id
- a640c23a62f3a-a9a69a8083dmr157649966b.30.1729248858070; Fri, 18 Oct 2024
- 03:54:18 -0700 (PDT)
+	s=arc-20240116; t=1729248919; c=relaxed/simple;
+	bh=quj8FjTxjqN+y+sLiVFeNkUTAZcXKlYLPFq3FvBLbYM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c8p0pmYij1bHUF8rE7xL16o1H2H1N9mD6lGiyuQeF/JWpkT5FuomSxSrQHO6dPNAV3ixcZETMIjapoRD/dC5LDME2EwaaE1Bj2odsy22QPnCo7qfLvHToxbHtzuhuIDkzHesei6tpIMl6OySE/gsMs3kYxr8rZWxAOTDmBaiiKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=gTk/UKHT; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 792D51FAA3;
+	Fri, 18 Oct 2024 12:55:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1729248911;
+	bh=iSaY+IMAdbcVrCBA/bzFCudL7efxUfpsvzsS6r/mj8I=; h=From:To:Subject;
+	b=gTk/UKHTC/aLIiWwegR1Nln850g4cjIp3sS0pFf+RJ+MMw7rPn64doComXl0AIgiY
+	 ytXYq+mVGzL/nZzDqjogMKqVQmoe4D/C3/NJJG+604ZkG/t/vTQa7UxWy+6qkzgi0N
+	 BbFILnbpJKHBoyR7F5bE3IGv/e2b1DkPVQDS6wf5xCO08W+tAB4EkDOngjvmp0cBD4
+	 mOpHz7oiz0ECtr3FYoEU0Saex361MImHyZMjFq5D46NPoMSPt0Pss/jzWglq8XX54m
+	 9G0lA0eQ1Z9HYb9HvhBMJZzx4466Uu0h9Kj5V5DHgkpsEumF53+R/8kYGP5ILjOwTG
+	 54pRgoX2gG5dw==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Cc: linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] USB: xhci: add support for PWRON polarity invert (TI TUSB73x0)
+Date: Fri, 18 Oct 2024 12:55:03 +0200
+Message-Id: <20241018105505.28005-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66fc4b74.050a0220.f28ec.04c8.GAE@google.com> <CAJnrk1ZrPcDsD_mmNjTHj51NkuVR83g5cgZOJTHez6CB6T31Ww@mail.gmail.com>
- <CAJnrk1ZSZVrMY=EeuLQ0EGonL-9n72aOCEvvbs4=dhQ=xWqZYw@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZSZVrMY=EeuLQ0EGonL-9n72aOCEvvbs4=dhQ=xWqZYw@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 18 Oct 2024 12:54:06 +0200
-Message-ID: <CAJfpegu=U7sdWvw63ULkr=5T05cqVd3H9ytPOPrkLtwUwsy5Kw@mail.gmail.com>
-Subject: Re: [syzbot] [fuse?] WARNING in fuse_writepages
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: syzbot <syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 4 Oct 2024 at 21:04, Joanne Koong <joannelkoong@gmail.com> wrote:
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-> > The warning is complaining about this WARN_ON here
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/fuse/file.c#n1989.
-> > I think this warning can get triggered if there's a race between a
-> > write() and a close() where the page is dirty in the cache after the
-> > release has happened. Then when writeback (eg fuse_writepages()) is
-> > triggered, we hit this warning. (this possibility has always existed,
-> > it was surfaced after this refactoring commit 4046d3adcca4: "move fuse
-> > file initialization to wpa allocation time" but the actual logic
-> > hasn't been changed).
->
-> Actually, it's not clear how this WARN_ON is getting triggered.
->
-> I will wait for syzbot to surface a repro first before taking further action.
+The TUSB73x0 is a USB 3.0 xHCI Host Controller Hub using a PCIe x1 Gen2
+interface. The TUSB7320 supports up to two downstream ports, and the
+TUSB7340 supports up to four. It includes a feature to configure the
+polarity of the PWRONx# signals, which are used to control other peripherals.
+In some systems, the default polarity needs to be inverted, which is
+supported by the hardware through software configuration. This patch
+series introduces TUSB73x0 PCIe device tree bindings and modifies the
+USB XHCI PCI driver to handle PWRONx# polarity via a device tree property.
 
-I think the issue is that fuse_writepages() might be called with no
-dirty pages after all writable opens were closed.  The exact mechanism
-is unclear, but it's pretty likely that this is the case.
+TUSB73x0 datasheet: https://www.ti.com/lit/ds/symlink/tusb7320.pdf
 
-Commit 672c3b7457fc ("fuse: move initialization of fuse_file to
-fuse_writepages() instead of in callback") broke this case.
+v3:
+ - Correct the compatible string as "pci104c,8241" (uppercase hex to lowercase)
 
-Maybe reverting this is the simplest fix?
+v2: https://lore.kernel.org/all/20241007093205.27130-1-francesco@dolcini.it/
+ - Change the property type from bool to flag
+ - Rename the property as ti,tusb7320-pwron-active-high
 
-Thanks,
-Miklos
+v1: https://lore.kernel.org/all/20241004124521.53442-1-francesco@dolcini.it/
+
+Parth Pancholi (2):
+  dt-bindings: usb: add TUSB73x0 PCIe
+  USB: xhci: add support for PWRON active high
+
+ .../bindings/usb/ti,tusb73x0-pci.yaml         | 60 +++++++++++++++++++
+ drivers/usb/host/xhci-pci.c                   |  3 +
+ 2 files changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+
+-- 
+2.39.5
+
 
