@@ -1,130 +1,92 @@
-Return-Path: <linux-kernel+bounces-372003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D1489A4327
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:02:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59FDF9A4336
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 527741F243AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:02:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18FD62864E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3D3201101;
-	Fri, 18 Oct 2024 16:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57177200CB8;
+	Fri, 18 Oct 2024 16:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XWaXebQs"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cdUmnwqF"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C54D133987
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 16:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8AB133987
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 16:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729267359; cv=none; b=ttljRIchF9SctJs0Ul762xxNEcAG2eIWfqZcNhDBENVi6nkRzDX7DFB+LAzgnrtxlbcM3TOVr83hjmWMXTjh0/bgS6YBjwPA3ShUUIOn1dlk2OMg83dOp/3QRYKvccmH9di4DsNi8zE3CFlFricC1Mg/uDZlSZEwY/RqfT6fM3U=
+	t=1729267620; cv=none; b=FdKESCVYW86YP/JkCdnL/NheYh82EDIJ8cXLGoqDU/ijpONnHbbt3wcsd8WCGED3LZM2GlHAbLcqNycWjZFmi4rduYwaHzW4fw7WhKqTSHfF44ussSUz/RbeN43PGjZEQIBQlQf5L1t34vlr/M4jPvVm5ifdoT4uJxGH4eYwg8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729267359; c=relaxed/simple;
-	bh=Wge7ZEOCQ2IkTBi/6WCTmTeRk0hxyerDO50wi64lZlM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=RALJ11JDmb3rGhmLC+NMdMzgl3hlfpDmzCgJiJHwE4BYckevujzig/kOGG9MjBS/vg22oJuZA5ItDBc+aL0QKPo5U0S0G0t9NGXLdnvdJtka8XHPt73JIb7NHaJV7zkIXHIfrVnL/pYaL743W4WJoOsbaw4jyy29XD5iuR+nw0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XWaXebQs; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4314c452180so23111095e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:02:37 -0700 (PDT)
+	s=arc-20240116; t=1729267620; c=relaxed/simple;
+	bh=8UQAmDigmYSJcracBJQTIiTkRTICC3NZtqaNMfyfesA=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=jI1e+qRBAWwJgd6lh+ydReyE9BcrcnmYgKi+0u112RjaR3dOyo0GPeFDbfhu1FNEvwd186gdKVSmvQ0LZE9Hhs6jAxZhp6PDvoQlFe9SEbDyhbmq4Nsj1OUWUUWVvMZwaXyXRoJALJh1hBowcgUbLmeCt+ZGzwXlmznU+S+qwUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cdUmnwqF; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20b5affde14so16427255ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:06:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729267355; x=1729872155; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Nd17O4fpO5j20mo2wH2yb2B43nMIbfwJaafaQQs4iII=;
-        b=XWaXebQs1k6KrTdnPLo1MMiNiojU47Q/T7EdRn/lSPzm7N3WSsY4ERmNDHrgMRQxBT
-         VzJ/VkNvbGSLrEyjKg0bzi/vW6co4eNAMaUsisWhHR7OjB4R2Vj1vlYasB9JULCIYNcz
-         iYIaCosJogfkMa2yEN6oGs4AvtElZPBOwTyldCJxMjlUGwFq2A6vqEotwAhJYUidWBgR
-         VoKogI29nfoW45qBUa+13OELjO8uUU8zLV0zcAWccSJrpIBE2UqbTxikPxukwUeB43Qe
-         sLKfUhUQ+f3KPURosA37LJILxNzbxywU5Yogx0Gxhmd4T8EYhQlwhxRsNaUqiWBXfXhJ
-         WC2g==
+        d=gmail.com; s=20230601; t=1729267618; x=1729872418; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2oxb/SAQUrEM+BNO0w0IMGwQpA+53ixNq+VSmsiWddk=;
+        b=cdUmnwqFkHSLTTL9mZgneLpsRC/rKQGM7piCiqQ2PfukNXvrlhkB08Ep8zLg9gRHCh
+         gbAUKV376BgkQwfCE5GybhZQpvgMLyvuqJOx+JKBJT4rIIUDFvL4c6f2LOdfFgw4gOwY
+         dg8mzgyRWrZ5M4lAYSVlBgbAopkXsE5D7imk3pKRgoNoLlMZ9gzCBSjGnz98Rp7Amoud
+         69YJz5NDzw2OrJEg88JgOu2sGaf+NApEKBsKnP2S1AT2JjflyUpZNYkPNcR+UnPDk6IJ
+         e3IX/LUp74Ea+BS9dJyuZ/nrdq80y60oNxhh1pE3Tq2lN+N9kduMEQ1kaoU3sgUnDtJF
+         ohnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729267355; x=1729872155;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1729267618; x=1729872418;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nd17O4fpO5j20mo2wH2yb2B43nMIbfwJaafaQQs4iII=;
-        b=ijhIogwnhFIQVY4Chb/GvCgsW18M2id0ElfMtoO8Y+w7wbt5yIMgH4cpuq/CjthDjB
-         xdMYfqz7REM0j/8ll+M4VOn2a8QHnpoNGTAHl/iFByjGcFop12hOMTA0dlBixtYzvVBH
-         lxWqsKEIYgRyBGRRnyc5DsV5iUeAesvNrZE6MA+tmZejX8LqHZyvR138GoqCJENwK2ad
-         um4it1qr26ZWKiCy7olTga2GuJbaF5br80QWr8pLWvD0Hh0HD+iMnDV62IXHyllrtffi
-         JCc730mJtgHLBCU9Z7/oYs76+NCAK8itZ7mggF0TG1bKxbclIc+nBWqe7vXYdVKw0kO5
-         iE3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXRmvJZ25QFJ4GFMwOrkNDdzMi3G9EXGc2L2flKpfYmN/tNUdIU+wOMcdtJf83UQVxv5kUx+72YZAVTxzE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0y//xKsnRBdB2TlgR8+xb2gh6XepY4YOu7LToLKhfOvh6vdGP
-	3ULp/aKhDTXdcBNHsXsEOo00APePxCXsWnOvalxhYnSCfvwGUOHjaZxYCg6VQGc=
-X-Google-Smtp-Source: AGHT+IFmVVvmsQuZ4sFOjMH5I6+9IlVji1a5uYYQsKyQxE2A2myJSfSOVJxFraPEB7Mb0dKt43wMGQ==
-X-Received: by 2002:a05:6000:183:b0:376:dbb5:10c2 with SMTP id ffacd0b85a97d-37ecf08650fmr2195252f8f.29.1729267355456;
-        Fri, 18 Oct 2024 09:02:35 -0700 (PDT)
-Received: from [192.168.68.136] ([145.224.66.24])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf027bd3sm2280257f8f.22.2024.10.18.09.02.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 09:02:35 -0700 (PDT)
-Message-ID: <1520b33d-b490-468f-8759-f6b39653401d@linaro.org>
-Date: Fri, 18 Oct 2024 17:02:32 +0100
+        bh=2oxb/SAQUrEM+BNO0w0IMGwQpA+53ixNq+VSmsiWddk=;
+        b=v1UsYIqis62k2lDchG2f9HJMDCxSoGIGVKF9DXVfVhs0WxLT4XKjluDdoL9erRchcp
+         h+JwM/BGar4R3GETvqGBP1jWkYWKwPMrUX2ObI7g5qTJW2lG8W0OqWkAsUnQY/fuUTNi
+         BRQ8mmbk2hMiD7LYhpKC+jo5baa5jm0TueJRFJ+L7APj3s+pGOiiAC27pnoxNpnComqk
+         gq50i7X5jkHvuUYWtA9hPmVhDFlK3R36ooO1gctvES6hD1E/gLkorIRVvTpNMDmDR/2L
+         5uZxKG9TmgG4Qtc+cYBYDXPf0bwKc6MDbB4zxmvCWA/Dhj6FGKfELzIThiuvqiOWK8p0
+         K44Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUbqjTSu6bfQwE/F3TZ6UudGeVAJcmAKp0FjK7qwPZEtRdpoUwxc08NE4kr/XfONCGFfAeFG/e4FAGw+eE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxleUfKnPJhoISrdoVmbFBCOyENP0glpKC6MR8eMeU4Cpnp6TXa
+	uGwf9st2nhBkpVdHBMl405CY7wyCIiFP7UQyx7LvPtOEc+EVMjam
+X-Google-Smtp-Source: AGHT+IHH+8mnLv/RNwmJofMZH1/UlAGTE95HlSmIfUGjBIn/0P3/HWerod9ADou0u6dLHFU/8kiQBQ==
+X-Received: by 2002:a17:902:ccc8:b0:20c:c704:629e with SMTP id d9443c01a7336-20e5a93e82amr47973845ad.56.1729267618038;
+        Fri, 18 Oct 2024 09:06:58 -0700 (PDT)
+Received: from dw-tp ([171.76.80.151])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8fe68asm14345345ad.237.2024.10.18.09.06.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 09:06:57 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-mm@kvack.org, Sourabh Jain <sourabhjain@linux.ibm.com>, Hari Bathini <hbathini@linux.ibm.com>, Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Donet Tom <donettom@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, Sachin P Bappalige <sachinpb@linux.ibm.com>
+Subject: Re: [RFC v3 1/3] fadump: Refactor and prepare fadump_cma_init for late init
+In-Reply-To: <b66e69a9-7098-44f6-822d-f19bfe85117d@linux.ibm.com>
+Date: Fri, 18 Oct 2024 21:34:23 +0530
+Message-ID: <87zfn1gzy0.fsf@gmail.com>
+References: <030b6d46fddac126a6cf7e119bea48055338f0ed.1728658614.git.ritesh.list@gmail.com> <941875f7-0d7f-4ba3-bc7c-7aedc3b20dae@linux.ibm.com> <87bjznyliv.fsf@gmail.com> <b66e69a9-7098-44f6-822d-f19bfe85117d@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] coresight: trbe: Fix return value check in
- arm_trbe_register_coresight_cpu()
-To: Zhen Lei <thunder.leizhen@huawei.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>
-References: <20241018140858.711-1-thunder.leizhen@huawei.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-Cc: Mike Leach <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241018140858.711-1-thunder.leizhen@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+Madhavan Srinivasan <maddy@linux.ibm.com> writes:
 
+>
+> Patchset looks fine to me. 
+>
+> Reviewed-by: Madhavan Srinivasan <maddy@linux.ibm.com> for the series.
+>
 
-On 18/10/2024 3:08 pm, Zhen Lei wrote:
-> Function devm_kzalloc() returns NULL instead of ERR_PTR() when it fails.
-> The IS_ERR() test in the return value check should be replaced with NULL
-> test.
-> 
-> Fixes: 39744738a67d ("coresight: trbe: Allocate platform data per device")
-> Fixes: 3fbf7f011f24 ("coresight: sink: Add TRBE driver")
+Thanks Maddy for the reviews! 
+I will spin PATCH v4 with these minor suggested changes (No code changes)
 
-I don't think the code that this patches exists in 3fbf7f011f24, but it 
-looks ok for 39744738a67d.
-
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
->   drivers/hwtracing/coresight/coresight-trbe.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
-> index 96a32b213669940..93fe9860acf16bd 100644
-> --- a/drivers/hwtracing/coresight/coresight-trbe.c
-> +++ b/drivers/hwtracing/coresight/coresight-trbe.c
-> @@ -1266,7 +1266,7 @@ static void arm_trbe_register_coresight_cpu(struct trbe_drvdata *drvdata, int cp
->   	 * into the device for that purpose.
->   	 */
->   	desc.pdata = devm_kzalloc(dev, sizeof(*desc.pdata), GFP_KERNEL);
-> -	if (IS_ERR(desc.pdata))
-> +	if (!desc.pdata)
->   		goto cpu_clear;
->   
->   	desc.type = CORESIGHT_DEV_TYPE_SINK;
-
-
-Reviewed-by: James Clark <james.clark@linaro.org>
-
-
+-ritesh
 
