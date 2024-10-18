@@ -1,239 +1,271 @@
-Return-Path: <linux-kernel+bounces-371324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5249A39A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:14:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0059A39B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 437A4281CB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:14:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D26C283296
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C531ABEA3;
-	Fri, 18 Oct 2024 09:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEAE199E89;
+	Fri, 18 Oct 2024 09:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAny8PnY"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ivV2SjfZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="A3L9GHrD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ivV2SjfZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="A3L9GHrD"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB801922D7;
-	Fri, 18 Oct 2024 09:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A0218452C;
+	Fri, 18 Oct 2024 09:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729242809; cv=none; b=H5Di43jZJ+u4n09DQ1eyOwXQtjm/QUe6ZyMYoccNc0iQxViuSAnUL8/ROcdTgexvgiBKBl+H1yVI62TsOfP0kn0qK3rhF+V2XAvYHk15VBo34ND6a8Cfat4033fLiEBAXjZRMMHecPl22DBANmJ8Vr/XoDWXo8cRyrwcF+FnreU=
+	t=1729242888; cv=none; b=oSXvkNN+UL40spK5dELE3D3syYYnTk+F63fRYGNC4ZC4YRq3uLv/SEHmCiyBGa5h8bLdEW7Apx4mxKnXk7gs1aXRSKv8fJDJ+jBtlnGHYUEO06irsOg0rjpWf41ZuGJfN5UuEbNWJfnyILWt6EVoIpF/jnZ+pw3RzxEgn6qFuoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729242809; c=relaxed/simple;
-	bh=d8/uewxz1rX7hFNqb/Dbg4Fk7DVOYvvbbo+Pp/+kU+E=;
+	s=arc-20240116; t=1729242888; c=relaxed/simple;
+	bh=ROT6zgqFBK0eEpukVeMYyhv6nDJFhYHhH/w9THABMnU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rWLuDzkDbCByNKU9p59GZ5fx4MQ86OUq9WYx66g51SEYnYj3dd55gDdXTqOwEE+skjCA8TARUSrLGAlnOzdZdXD5BnC4Ol/BPAHpF9lPWHVzXBHmMHlU2D9ory9m4BRENunJebaPxKIXGvPJDSyxKLg+JLz6M9jnxpCnhDI4BVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EAny8PnY; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4314e64eba4so2449905e9.2;
-        Fri, 18 Oct 2024 02:13:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729242805; x=1729847605; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tIONkOU5igwAxCn5UCajWfFUel0FYfEBCQ6gdqF4Io=;
-        b=EAny8PnYZ1fOdE7liG5TE4S/mAIcUgN43GRFbUfbK32erfoOF1kNnXcMRpR+8iayQj
-         RT7AveUTmUNRfjqMKxcXCJnVNuiCzZsuGpENkaKiGRzWkoj5O9c+da/ujFQrIyLXBWZg
-         0sbcypybT+MpMFjO+CksVz8/IEyn8VjLXQKKrV8Lxo8/t7iSQmqGnOcaJpy4NruTE/sS
-         fPs424w1Q5o4qA4zG6M6O145XbnmMyoQa+JDHvNyPfMTk3psF0u8q0SaCNCe7FM8ksPV
-         +JePB3s4NFCcw/f89yM4VyXybfUCeZjv1aKoPnqel/kQ7Jqh7FKVGpdDuCP1DKvRKIV8
-         iBAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729242805; x=1729847605;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8tIONkOU5igwAxCn5UCajWfFUel0FYfEBCQ6gdqF4Io=;
-        b=Cn313fcTBoMmDkI8P9ksSmA00wGnaKDpnZfJWUoB1pwQT93+wKMTP5HGwOjOAiH3cp
-         Q4NMh9s30keo9BLw1pVJiY059Eo2eztZLRd2M4pEEBQYOnXSCzgiRgIgiHk+5dnaxluX
-         ukBP+isV+aSaOXgJA5uXvLoytLl8Gpy18FafBF0p/eP6tBKerX+JH8YS2+v2xDLJGsx9
-         /mKq7RPkO0E5e5KJ/FeVJedksGRikRlJ0Zg/52XD1YHtVcUvD3fl3N5yAWbJZStKYxxu
-         /HVSsn7yFMnnPCR98tcMUWNyELQhaqdqUrnTCWcHV/t30flFZok61bYEtVC1LXfDBBW3
-         4izg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrgax37G2fbK58AkLIeFQTPS53EXWT1GeeZXOf7alBrCaOcBTxRIePTJURZwl64c4wxwjLkbhJJUNz/dU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm1lEhAkMpFtTjWXtruqTHzhqmLnRn36uJJEY8YuysOo8VXdDA
-	6wl23ElwofyuWjXdm/Bo3gZW4Y+5b20NL+mBXc7u/GfFjind7/3vVhbX9A==
-X-Google-Smtp-Source: AGHT+IHs8ZRNnUB0mkW6u0KW5Jl1JQyFwugKrrmDLohyc9r6cBPtRmLmpi4K7SO+2fw+W3rbF75b2g==
-X-Received: by 2002:a05:600c:3b9b:b0:42c:ba83:3f08 with SMTP id 5b1f17b1804b1-431616236d2mr5834455e9.2.1729242804722;
-        Fri, 18 Oct 2024 02:13:24 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431606d622esm21740095e9.45.2024.10.18.02.13.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 02:13:24 -0700 (PDT)
-Date: Fri, 18 Oct 2024 12:13:21 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>, Simon Horman <horms@kernel.org>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com
-Subject: Re: [PATCH net-next v2 7/8] net: stmmac: xgmac: Complete FPE support
-Message-ID: <20241018091321.gfsdx7qzl4yoixgb@skbuf>
-References: <cover.1729233020.git.0x1207@gmail.com>
- <1776606b2eda8430077551ca117b035f987b5b70.1729233020.git.0x1207@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t0XD7luW28uYDbr8qzA21tX8QkVacItBANqKoW5q6hElBuGeurvnfkFQNwe62vPmcnFYc63I7FlX31V0FNcXGC3EcyVSmlZj9zUzXtZQSGGiuXAaIXVE10wele4FSD4t1swGgmtQ/gAXVY1bkC2dLcRrkNYN/GX27Opj+cHadms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ivV2SjfZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=A3L9GHrD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ivV2SjfZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=A3L9GHrD; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8E2F521BEE;
+	Fri, 18 Oct 2024 09:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729242884; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=28oYwiLkgCTjda/f5xfuImC4kUT6suMS2m+hSr7C38s=;
+	b=ivV2SjfZXfKEoWnnVYmA3Zp/xEP37gYuVhZBnY8VB3Cm+S94IDvb5izFWoBLr/vNDNxrW2
+	+z/WSwOM/QI4XEPXNz9ZRBVW3m9HW/t/a+Mq+aQGp+nK+8EpbDhzmM7wYrt3sIFntTtAX0
+	xZ+Cvhg1KR3a0ENiElOG7a8H3NMCdck=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729242884;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=28oYwiLkgCTjda/f5xfuImC4kUT6suMS2m+hSr7C38s=;
+	b=A3L9GHrDa/4RJjj9d4SyHLz5C1fW8UDkwjPZx8ShECUS4yaM0V1Doe6UFaBsVvsjN0/0b2
+	XD2a72rZHlSGCiDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729242884; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=28oYwiLkgCTjda/f5xfuImC4kUT6suMS2m+hSr7C38s=;
+	b=ivV2SjfZXfKEoWnnVYmA3Zp/xEP37gYuVhZBnY8VB3Cm+S94IDvb5izFWoBLr/vNDNxrW2
+	+z/WSwOM/QI4XEPXNz9ZRBVW3m9HW/t/a+Mq+aQGp+nK+8EpbDhzmM7wYrt3sIFntTtAX0
+	xZ+Cvhg1KR3a0ENiElOG7a8H3NMCdck=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729242884;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=28oYwiLkgCTjda/f5xfuImC4kUT6suMS2m+hSr7C38s=;
+	b=A3L9GHrDa/4RJjj9d4SyHLz5C1fW8UDkwjPZx8ShECUS4yaM0V1Doe6UFaBsVvsjN0/0b2
+	XD2a72rZHlSGCiDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8317913680;
+	Fri, 18 Oct 2024 09:14:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ubMIIAQnEme9VgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 18 Oct 2024 09:14:44 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 51B0DA080A; Fri, 18 Oct 2024 11:14:44 +0200 (CEST)
+Date: Fri, 18 Oct 2024 11:14:44 +0200
+From: Jan Kara <jack@suse.cz>
+To: liubaolin <liubaolin12138@163.com>
+Cc: Jan Kara <jack@suse.cz>, tytso@mit.edu, adilger.kernel@dilger.ca,
+	zhangshida@kylinos.cn, longzhi@sangfor.com.cn,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Baolin Liu <liubaolin@kylinos.cn>
+Subject: Re: [PATCH v1] ext4: fix a assertion failure due to ungranted bh
+ dirting
+Message-ID: <20241018091444.tmzhbj73gvegfmb5@quack3>
+References: <20241010025855.2632516-1-liubaolin12138@163.com>
+ <20241010092923.r53povuflevzhxrw@quack3>
+ <5dc22111.4718.19279c3f3b7.Coremail.liubaolin12138@163.com>
+ <20241016103301.rl6qngi2fb6yxjin@quack3>
+ <908502d6-cb0c-44ae-8c03-9a22c8c7fbf2@163.com>
+ <8c14e5b0-5229-4611-b8e6-434c6eb34ee9@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1776606b2eda8430077551ca117b035f987b5b70.1729233020.git.0x1207@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8c14e5b0-5229-4611-b8e6-434c6eb34ee9@163.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[163.com];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[163.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Oct 18, 2024 at 02:39:13PM +0800, Furong Xu wrote:
-> Implement the necessary stmmac_fpe_ops function callbacks for xgmac.
+On Fri 18-10-24 09:48:17, liubaolin wrote:
+> > Hello, I am very sorry.
+> > I did not previously understand the approach of your patch to solve the issue.
+> > Yesterday, I intentionally injected faults during the quick reproduction
+> > test, and indeed, after applying your patch, the crash issue was
+> > resolved and did not occur again.
+> > I finally understood your approach to solving the problem. Please disregard my previous email.
+> > Thank you for helping me solve this crash issue in a better way.
+> > I still need to improve my skills in file systems, and I truly appreciate your guidance.
+
+Great! Thanks for testing. I'll send the patch for inclusion then.
+
+								Honza
+
+> 在 2024/10/16 21:38, liubaolin 写道:
+> > > Hello,
+> > > I reviewed the patch attached in your email. The issue you mentioned
+> > > about clearing buffer_new(bh) in write_end_fn() is indeed a bug.
+> > > However, this patch does not resolve the crash issue we encountered.
+> > > 
+> > > Let me explain my analysis in detail below.
+> > > The crash occurs in the function jbd2_journal_dirty_metadata().
+> > > 
+> > > ext4_block_write_begin() -> ext4_journalled_zero_new_buffers() ->
+> > > write_end_fn()
+> > >  -> ext4_dirty_journalled_data() -> ext4_handle_dirty_metadata() ->
+> > > __ext4_handle_dirty_metadata()
+> > >  -> jbd2_journal_dirty_metadata()
+> > > 
+> > > In the function jbd2_journal_dirty_metadata(), there is the
+> > > following condition:
+> > > —---------------------------------------------------------------------------------------------------
+> > >         if (data_race(jh->b_transaction != transaction &&
+> > >             jh->b_next_transaction != transaction)) {
+> > >                 spin_lock(&jh->b_state_lock);
+> > >                 J_ASSERT_JH(jh, jh->b_transaction == transaction ||
+> > >                                 jh->b_next_transaction == transaction);
+> > >                 spin_unlock(&jh->b_state_lock);
+> > >         }
+> > > ----------------------------------------------------------------------------------------------------
+> > > By analyzing the vmcore, I found that both jh->b_transaction and jh-
+> > > >b_next_transaction are NULL.
+> > > Through code analysis, I discovered that the
+> > > __jbd2_journal_file_buffer() function adds the corresponding
+> > > transaction of bh to jh->b_transaction.
+> > > Normally, this is accessed through do_journal_get_write_access(),
+> > > which can call __jbd2_journal_file_buffer().
+> > > The detailed function call process is as follows:
+> > > do_journal_get_write_access() -> ext4_journal_get_write_access() ->
+> > > __ext4_journal_get_write_access()
+> > >  -> jbd2_journal_get_write_access() -> do_get_write_access() ->
+> > > __jbd2_journal_file_buffer()
+> > > 
+> > > 
+> > > Therefore, resolving the crash issue requires obtaining write access
+> > > before calling the jbd2_journal_dirty_metadata() function.
+> > > The comment at the definition of the jbd2_journal_dirty_metadata()
+> > > function also states:     'The buffer must have previously had
+> > > jbd2_journal_get_write_access().'
+> > > 
+> > > In the ext4_block_write_begin() function, if get_block() encounters
+> > > an error, then neither bh->b_this_page nor the subsequent bh calls
+> > > do_journal_get_write_access().
+> > > If bh->b_this_page and the subsequent bh are in the new state, it
+> > > will lead to a crash when reaching the jbd2_journal_dirty_metadata()
+> > > function.
+> > > 
+> > > So, there are two ways to resolve this crash issue:
+> > > 1、Call do_journal_get_write_access() on bh that is not handled due
+> > > to get_block() error.
+> > >     The patch modification is in the attachment 0001-ext4-fix-a-
+> > > assertion-failure-due-to-ungranted-bh-dir.patch.
+> > > 
+> > > 2、Call clear_buffer_new() on bh that is not handled due to
+> > > get_block() error.
+> > >     The patch modification is in the attachment 0001-ext4-fix-a-
+> > > assertion-failure-due-to-bh-not-clear-new.patch.
+> > > 
+> > > Additionally, I have found a method to quickly reproduce this crash
+> > > issue.
+> > > For details, please refer to the email I previously sent you:
+> > > “https://lore.kernel.org/all/bd41c24b-7325-4584-
+> > > a965-392a32e32c74@163.com/”.
+> > > I have verified that this quick reproduction method works for both
+> > > solutions to resolve the issue.
+> > > 
+> > > Please continue to consider which method is better to resolve this
+> > > issue. If you think that using clear_buffer_new() is a better
+> > > solution, I can resend the patch via git send-mail.
+> > 
+> > 
+> > 
+> > 在 2024/10/16 18:33, Jan Kara 写道:
+> > > Hello,
+> > > 
+> > > On Fri 11-10-24 12:08:58, Baolin Liu wrote:
+> > > > Greetings，
+> > > > 
+> > > > This problem is reproduced by our customer using their own testing tool
+> > > > “run_bug”. When I consulted with a client, the testing tool “run_bug”
+> > > > used a variety of background programs to benchmark (including memory
+> > > > pressure, cpu pressure, file cycle manipulation, fsstress Stress testing
+> > > > tool, postmark program，and so on).
+> > > > 
+> > > > The recurrence probability is relatively low.
+> > > 
+> > > OK, thanks for asking!
+> > > 
+> > > > In response to your query, in ext4_block_write_begin, the new state will
+> > > > be clear before get block, and the bh that failed get_block will not be
+> > > > set to new. However, when the page size is greater than the
+> > > > block size, a
+> > > > page will contain multiple bh.
+> > > 
+> > > True. I wanted to argue that the buffer_new bit should be either
+> > > cleared in
+> > > ext4_block_write_begin() (in case of error) or in
+> > > ext4_journalled_write_end() (in case of success) but actually
+> > > ext4_journalled_write_end() misses the clearing. So I think the better
+> > > solution is like the attached patch. I'll submit it once testing finishes
+> > > but it would be great if you could test that it fixes your problems as
+> > > well. Thanks!
+> > > 
+> > >                                 Honza
 > 
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> ---
->  .../net/ethernet/stmicro/stmmac/stmmac_fpe.c  | 77 +++++++++++++++++++
->  1 file changed, 77 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
-> index dfe911b3f486..c90ed7c1279d 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
-> @@ -373,6 +373,78 @@ static void dwxgmac3_fpe_configure(void __iomem *ioaddr,
->  			     &dwxgmac3_fpe_info);
->  }
->  
-> +static int dwxgmac3_fpe_irq_status(void __iomem *ioaddr, struct net_device *dev)
-> +{
-> +	return common_fpe_irq_status(ioaddr + XGMAC_MAC_FPE_CTRL_STS, dev);
-> +}
-> +
-> +static void dwxgmac3_fpe_send_mpacket(void __iomem *ioaddr,
-> +				      struct stmmac_fpe_cfg *cfg,
-> +				      enum stmmac_mpacket_type type)
-> +{
-> +	common_fpe_send_mpacket(ioaddr + XGMAC_MAC_FPE_CTRL_STS, cfg, type);
-> +}
-> +
-> +static int dwxgmac3_fpe_get_add_frag_size(const void __iomem *ioaddr)
-> +{
-> +	return FIELD_GET(FPE_MTL_ADD_FRAG_SZ,
-> +			 readl(ioaddr + XGMAC_MTL_FPE_CTRL_STS));
-> +}
-> +
-> +static void dwxgmac3_fpe_set_add_frag_size(void __iomem *ioaddr,
-> +					   u32 add_frag_size)
-> +{
-> +	u32 value;
-> +
-> +	value = readl(ioaddr + XGMAC_MTL_FPE_CTRL_STS);
-> +	writel(u32_replace_bits(value, add_frag_size, FPE_MTL_ADD_FRAG_SZ),
-> +	       ioaddr + XGMAC_MTL_FPE_CTRL_STS);
-> +}
-> +
-> +static int dwxgmac3_fpe_map_preemption_class(struct net_device *ndev,
-> +					     struct netlink_ext_ack *extack,
-> +					     u32 pclass)
-> +{
-> +	u32 val, offset, count, preemptible_txqs = 0;
-> +	struct stmmac_priv *priv = netdev_priv(ndev);
-> +	u32 num_tc = ndev->num_tc;
-> +
-> +	if (!num_tc) {
-> +		/* Restore default TC:Queue mapping */
-> +		for (u32 i = 0; i < priv->plat->tx_queues_to_use; i++) {
-> +			val = readl(priv->ioaddr + XGMAC_MTL_TXQ_OPMODE(i));
-> +			writel(u32_replace_bits(val, i, XGMAC_Q2TCMAP),
-> +			       priv->ioaddr + XGMAC_MTL_TXQ_OPMODE(i));
-> +		}
-> +	}
-> +
-> +	/* Synopsys Databook:
-> +	 * "All Queues within a traffic class are selected in a round robin
-> +	 * fashion (when packets are available) when the traffic class is
-> +	 * selected by the scheduler for packet transmission. This is true for
-> +	 * any of the scheduling algorithms."
-> +	 */
-> +	for (u32 tc = 0; tc < num_tc; tc++) {
-> +		count = ndev->tc_to_txq[tc].count;
-> +		offset = ndev->tc_to_txq[tc].offset;
-> +
-> +		if (pclass & BIT(tc))
-> +			preemptible_txqs |= GENMASK(offset + count - 1, offset);
-> +
-> +		for (u32 i = 0; i < count; i++) {
-> +			val = readl(priv->ioaddr + XGMAC_MTL_TXQ_OPMODE(offset + i));
-> +			writel(u32_replace_bits(val, tc, XGMAC_Q2TCMAP),
-> +			       priv->ioaddr + XGMAC_MTL_TXQ_OPMODE(offset + i));
-> +		}
-> +	}
-> +
-> +	val = readl(priv->ioaddr + XGMAC_MTL_FPE_CTRL_STS);
-> +	writel(u32_replace_bits(val, preemptible_txqs, FPE_MTL_PREEMPTION_CLASS),
-> +	       priv->ioaddr + XGMAC_MTL_FPE_CTRL_STS);
-> +
-> +	return 0;
-> +}
-> +
->  const struct stmmac_fpe_ops dwmac5_fpe_ops = {
->  	.fpe_configure = dwmac5_fpe_configure,
->  	.fpe_send_mpacket = dwmac5_fpe_send_mpacket,
-> @@ -384,4 +456,9 @@ const struct stmmac_fpe_ops dwmac5_fpe_ops = {
->  
->  const struct stmmac_fpe_ops dwxgmac_fpe_ops = {
->  	.fpe_configure = dwxgmac3_fpe_configure,
-> +	.fpe_send_mpacket = dwxgmac3_fpe_send_mpacket,
-> +	.fpe_irq_status = dwxgmac3_fpe_irq_status,
-> +	.fpe_get_add_frag_size = dwxgmac3_fpe_get_add_frag_size,
-> +	.fpe_set_add_frag_size = dwxgmac3_fpe_set_add_frag_size,
-> +	.fpe_map_preemption_class = dwxgmac3_fpe_map_preemption_class,
->  };
-
-This is much better in terms of visibility into the change.
-
-Though I cannot stop thinking that this implementation design:
-
-stmmac_fpe_configure()
--> stmmac_do_void_callback()
-   -> fpe_ops->fpe_configure()
-      /                    \
-     /                      \
-    v                        v
-dwmac5_fpe_configure   dwxgmac3_fpe_configure
-     \                      /
-      \                    /
-       v                  v
-       common_fpe_configure()
-
-is, pardon the expression, stuffy.
-
-If you aren't very opposed to the idea of having struct stmmac_fpe_ops
-contain a mix of function pointers and integer constants, I would
-suggest removing:
-
-	.fpe_configure()
-	.fpe_send_mpacket()
-	.fpe_irq_status()
-	.fpe_get_add_frag_size()
-	.fpe_set_add_frag_size()
-
-and just keeping a single function pointer, .fpe_map_preemption_class(),
-inside stmmac_fpe_ops. Only that is sufficiently different to warrant a
-completely separate implementation. Then move all current struct
-stmmac_fpe_configure_info to struct stmmac_fpe_ops, and reimplement
-stmmac_fpe_configure() directly like common_fpe_configure(),
-stmmac_fpe_send_mpacket() directly like common_fpe_send_mpacket(), etc etc.
-This lets us avoid the antipattern of calling a function pointer (hidden
-by an opaque macro) from common code, only to gather some parameters to
-call again a common implementation.
-
-I know this is a preposterous and heretic thing to suggest, but a person
-who isn't knee-deep in stmmac has a very hard time locating himself in
-space due to the unnecessarily complex layering. If that isn't something
-that is important, feel free to ignore.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
