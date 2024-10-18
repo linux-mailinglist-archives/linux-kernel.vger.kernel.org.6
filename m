@@ -1,131 +1,150 @@
-Return-Path: <linux-kernel+bounces-371402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56CA9A3A95
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:56:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023FF9A3A9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CF30287536
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7751F250D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E6220101B;
-	Fri, 18 Oct 2024 09:56:10 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CFD201023;
+	Fri, 18 Oct 2024 09:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BIM3AfgM"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC95200CB8
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15B3200CB6
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729245369; cv=none; b=hf4VwYq2Evwu366350GOwON5j+RoVxDQ9dY/ZOaO+ZMoYXM39jSY/SNakTw21O3ayTdQGiv8ER5b6p4moiz5xKHPnkmJM4VqsSXGhgyzJLIq5VHgu/Rxbu18iO+9rTO1wrcFECS8ySj3/syql1HFB6sLkAFP2LbKiGsh77H6MwA=
+	t=1729245415; cv=none; b=g4qG81cODNfVU7ZjedB4jAX+QNS2eVhyAVTa5ZanCumKgZTUgFpFB8U5ROl8D/QxGUFLrPkiEFVV6ZnIgh+YDctEsE0KE75J8rpycqoCeYKceiHYBDJCFnMDPAAKBaq8XWE7v9CZqZZQBlx/Qo6lMpNCO8tEj/2ah7+CuSGg3VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729245369; c=relaxed/simple;
-	bh=WLOiwswVWoe8YIe3YUxVolWHXnAUMUs2vRbLsIPouCs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qNcBZHr0hokgwgBszdMsHS05lEuqxI20cvXWGN6EHPKF8zVGiYoCBARehtRxQJordDddbrK8cPyhk+0OkWcOElu3pwkp17SywWdxUyXmx2/netoFqkzetD3f831xgaeBDknM+idDzt3MktUOOxgoVfjfgLuZnfnbBYkGMX5IRhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2cf5b5fe8d3711efa216b1d71e6e1362-20241018
-X-CID-CACHE: Type:Local,Time:202410181734+08,HitQuantity:3
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:d2113a9a-c013-44e0-b2b4-9afe0b14af3e,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:20
-X-CID-META: VersionHash:82c5f88,CLOUDID:a276e182aded7ad3b9423b24e97e2560,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,URL:0,
-	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
-	O,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 2cf5b5fe8d3711efa216b1d71e6e1362-20241018
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <chenzhang@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 123531707; Fri, 18 Oct 2024 17:55:58 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id A8FFFB803CA1;
-	Fri, 18 Oct 2024 17:55:58 +0800 (CST)
-X-ns-mid: postfix-671230AE-622751201
-Received: from localhost.localdomain (unknown [172.25.120.42])
-	by node2.com.cn (NSMail) with ESMTPA id DB6FBB803CA1;
-	Fri, 18 Oct 2024 09:55:56 +0000 (UTC)
-From: chen zhang <chenzhang@kylinos.cn>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	corentin.chary@gmail.com,
-	luke@ljones.dev
-Cc: linux-kernel@vger.kernel.org,
-	chenzhang_0901@163.com,
-	chen zhang <chenzhang@kylinos.cn>
-Subject: [PATCH] platform/x86: eeepc-laptop: use sysfs_emit() instead of sprintf()
-Date: Fri, 18 Oct 2024 17:55:47 +0800
-Message-Id: <20241018095547.46006-1-chenzhang@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729245415; c=relaxed/simple;
+	bh=7F02LSuaYG6QJFBmCRDKkgg4PK0fEcpJQMSscDg7UlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ft9gZ/zYkqPfWvqv88dzzIgJDwjgCamVngaaGTvoofJ3ynbog7Oa7vmVKQ19dq0RNreom7uk81koV7w9/yJQY7o2rE9dxAbwzD6q93NXSmWQDT/Y+RYCDxhowuJaN9yRZ8VTtc9bNtlo2fiVH040x7r/qXHVsLq4Trcv83jtA98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BIM3AfgM; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb599aac99so20685511fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729245412; x=1729850212; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7LNTOM/u0GLXGMOI0m9ADZhvsMR3Q86VPixhtk5oFIY=;
+        b=BIM3AfgMvpJS9rTaYmiGjRV26sQbxtxXSenjIjGpWs9EsiCbI64jdLUP3cuNkjK+Ag
+         6kuEi3GZg8X87YyOGjBwJkUSP4ISP4nye58NfH8GU0Kmg9T1BsRJqG87qwg5Rx8EP9c2
+         qkLOQvVdopL+v4k7lvXnuu3D+AdZN8YpHv818PYI+yqw5r/UUe+bSmNldKvqFOiPkUS7
+         7yEKf8MLDn+yG6mp9bQmpH9e8waoXstOUK6EnAT18eUAiFxpqORiEuRq4zYgTDSu952B
+         DW2AWmlJLL5pCzeUiaxgncBGZ9iQH6sQ1kbVZcK1AcnpzuMjXCoiHV3Wv7ZUL/tMKCX3
+         oEtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729245412; x=1729850212;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7LNTOM/u0GLXGMOI0m9ADZhvsMR3Q86VPixhtk5oFIY=;
+        b=h7Ap8chRfN8wgCaByX6Md7af7lI6a2vOjnUnegsOFuN1kkYwQH3l9txur/uNkdjfwa
+         tMzmXlYNEtHsngVkk+WSFiomYr6tXzJdedNP5ShFnvBiqBFkayXxQi/NopgIWFl61RSg
+         vedLT/qAEQiHRcEjpGwTbrt1h1p19iB33yyKnzcB9RKQVYP06BzsMn6jXfS+2HtCSao6
+         CGn3AyS0SBm2wm8Y5iOq+Ltt/Ds1AwGk3efOhYj/84d1j0Y756okORysvJM0XfBzzRs8
+         APrJfAs8dIFLhBvGyTDSIGqv8I/BEWEfMnb8lRpjvlNO8iUbvoSvRFSF+nC3bpXL1ZVn
+         iu3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUKEU4yUSVeP9aNS1yCoytRdfTv/ac/S04JrtOF5JIcN8vMSoSvgpTqs+UON873qZOKy2E/NPOnMOyBRrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPrydXpR5/1qwHxZxqYgWsBGv7cZKYiNqhz1PoBGHcuOVgfJ9H
+	vkzpSvRHD1OeZGLZSwyWjfnJU0NOKg6XRSnbnWas45OtrI5KsXp+JzRtMeGemEE=
+X-Google-Smtp-Source: AGHT+IGeK8KzMr9lXPmuFDOy4a4IgVl3STdpDnUlPNvFi3vc36Dx0SsuLqG1dmfqX8sdyi9pbmxBAg==
+X-Received: by 2002:a05:651c:211d:b0:2fa:cc12:67de with SMTP id 38308e7fff4ca-2fb83208e04mr9201491fa.32.1729245411950;
+        Fri, 18 Oct 2024 02:56:51 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809a6a7dsm1776881fa.10.2024.10.18.02.56.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 02:56:50 -0700 (PDT)
+Date: Fri, 18 Oct 2024 12:56:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Rob Herring <robh@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+Subject: Re: [PATCH 07/14] clk: qcom: clk-branch: Add support for SREG branch
+ ops
+Message-ID: <scwpcovoazmd4yrwtczghx4e5eopqoknknqzcr23wjve65bmxh@ih5efkh53g3h>
+References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
+ <20241017-sar2130p-clocks-v1-7-f75e740f0a8d@linaro.org>
+ <be8639d0add779bcac0314d3c433d01b.sboyd@kernel.org>
+ <we4stuv7td5jmvicsvsjowqg76merg5lmlgqj6dvqvqecsw7xk@bfz2kdjnt6kb>
+ <5904599efffa7ce747772c0dcc1c897b.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5904599efffa7ce747772c0dcc1c897b.sboyd@kernel.org>
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+On Thu, Oct 17, 2024 at 03:28:13PM -0700, Stephen Boyd wrote:
+> Quoting Dmitry Baryshkov (2024-10-17 15:00:03)
+> > On Thu, Oct 17, 2024 at 11:10:20AM -0700, Stephen Boyd wrote:
+> > > Quoting Dmitry Baryshkov (2024-10-17 09:56:57)
+> > > > From: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+> > > > 
+> > > > Add support for SREG branch ops. This is for the clocks which require
+> > > 
+> > > What is SREG? Can you spell it out?
+> > 
+> > Unfortunately, no idea. This is the only register name I know.
+> > 
+> 
+> Can someone inside qcom tell us?
 
-Signed-off-by: chen zhang <chenzhang@kylinos.cn>
----
- drivers/platform/x86/eeepc-laptop.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Taniya, could you possibly help us? This is for gcc_video_axi0_sreg /
+gcc_video_axi1_sreg / gcc_iris_ss_hf_axi1_sreg /
+gcc_iris_ss_spd_axi1_sreg clocks on the SAR2130P platform.
 
-diff --git a/drivers/platform/x86/eeepc-laptop.c b/drivers/platform/x86/e=
-eepc-laptop.c
-index 03319a80e114..ba36b7bf6dc4 100644
---- a/drivers/platform/x86/eeepc-laptop.c
-+++ b/drivers/platform/x86/eeepc-laptop.c
-@@ -285,7 +285,7 @@ static ssize_t show_sys_acpi(struct device *dev, int =
-cm, char *buf)
-=20
- 	if (value < 0)
- 		return -EIO;
--	return sprintf(buf, "%d\n", value);
-+	return sysfs_emit(buf, "%d\n", value);
- }
-=20
- #define EEEPC_ACPI_SHOW_FUNC(_name, _cm)				\
-@@ -361,7 +361,7 @@ static ssize_t cpufv_show(struct device *dev,
-=20
- 	if (get_cpufv(eeepc, &c))
- 		return -ENODEV;
--	return sprintf(buf, "%#x\n", (c.num << 8) | c.cur);
-+	return sysfs_emit(buf, "%#x\n", (c.num << 8) | c.cur);
- }
-=20
- static ssize_t cpufv_store(struct device *dev,
-@@ -393,7 +393,7 @@ static ssize_t cpufv_disabled_show(struct device *dev=
-,
- {
- 	struct eeepc_laptop *eeepc =3D dev_get_drvdata(dev);
-=20
--	return sprintf(buf, "%d\n", eeepc->cpufv_disabled);
-+	return sysfs_emit(buf, "%d\n", eeepc->cpufv_disabled);
- }
-=20
- static ssize_t cpufv_disabled_store(struct device *dev,
-@@ -1025,7 +1025,7 @@ static ssize_t store_sys_hwmon(void (*set)(int), co=
-nst char *buf, size_t count)
-=20
- static ssize_t show_sys_hwmon(int (*get)(void), char *buf)
- {
--	return sprintf(buf, "%d\n", get());
-+	return sysfs_emit(buf, "%d\n", get());
- }
-=20
- #define EEEPC_SENSOR_SHOW_FUNC(_name, _get)				\
---=20
-2.25.1
+> 
+> > 
+> > > 
+> > > >         u8      halt_check;
+> > > 
+> > > Instead of adding these new members can you wrap the struct in another
+> > > struct? There are usually a lot of branches in the system and this
+> > > bloats those structures when the members are never used.
+> > > 
+> > >       struct clk_sreg_branch {
+> > >               u32 sreg_enable_reg;
+> > >               u32 sreg_core_ack_bit;
+> > >               u32 sreg_periph_ack_bit;
+> > >               struct clk_branch branch;
+> > >       };
+> > > 
+> > > But I'm not even sure that is needed vs. just putting a clk_regmap
+> > > inside because the clk_ops don't seem to use any of these other members?
+> > 
+> > Yes, nice idea. Is it ok to keep the _branch suffix or we'd better
+> > rename it dropping the _branch (and move to another source file while we
+> > are at it)?
+> > 
+> 
+> I don't really care. Inside qcom they called things branches in the
+> hardware and that name was carried into the code. If sreg is a branch
+> then that would make sense. From the 'core_ack' and 'periph_ack' it
+> actually looks like some sort of power switch masquerading as a clk.
 
+Ack.
+
+
+-- 
+With best wishes
+Dmitry
 
