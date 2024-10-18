@@ -1,150 +1,112 @@
-Return-Path: <linux-kernel+bounces-371658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA669A3DF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:15:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBF59A3DFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704E7282D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C4FD1C23456
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0224207A;
-	Fri, 18 Oct 2024 12:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85381CABA;
+	Fri, 18 Oct 2024 12:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2uIDxnQ"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD9842077;
-	Fri, 18 Oct 2024 12:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="i4+mwGfk"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3D21878;
+	Fri, 18 Oct 2024 12:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729253743; cv=none; b=sBbt9WdzG05R2/cpEKUulcw2wJUmuYeLEndolft38oyHxdY5GDmrQJA+uYKPaxA12WLueD4dSXj9XbyeLxihz1OLznO9KOxzyyG/jm8sf3aj8F+vXaWNjcYbrmDFil8b+0fPZfDa6lN+PD31oOcuUo4VNHfh5pjQPGIgQMAPk18=
+	t=1729253783; cv=none; b=TlMXeWuQiW1YXWKt0dn2EEZPNEIVpeIFQJiiHUnDC3RSLOWe2QU+FI7NH1xU2U1AuBB7HVEEnlndhsE9BQ4uhk5pJaTCLpM9U4eCmaF1DmHnyHtcQ8J5D0o+3S4VEUHC36x+o6u3svNksNDT+hENAfuvxYwofJZLC7kcEGZiYLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729253743; c=relaxed/simple;
-	bh=IE5eND4JS389Mg64lkLSdqShAg+vwI2qRCJ1rs2mbGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RhNJFiBkcMrrf+AArJSfMg214tb4SXkzQpNsllA3nHVE3ygYrkZIHq66fXE/ETc0jyYAbtnlzQmNI3ZMNCaqC8JqIbXEpduT9k4N5Deb9bt/MPEzJ5s9Z1bF58JKY96YAEpoKzeCZmYwnX6imbsvExllXxvKiI1kIXYWL3l9uhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2uIDxnQ; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4608da1bea5so13069421cf.1;
-        Fri, 18 Oct 2024 05:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729253741; x=1729858541; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=20pjU3e//rgq26Yi05Ys1N4I2o5U5qD7ybOOR7293q4=;
-        b=G2uIDxnQpuBwUgWhgo8zozCqGk9kiKfHCRgd2rwA9t0AdTqJe0I+14JCkCTBhtqZ0H
-         osORUaYfQrUe5jsVQQ4tnX9D9l1Bf09hC8H+K9EWglrUuiUbAec+YxeHaqdKxKO4IRho
-         X0yV9M5fkylaa3MQ0OahdeB66W/EVgAOrYBRbyWax0w0moDZTqMWahBj3cIU2Ngt8zvb
-         tjvqMox/t/HoVEgI+a+v4x4/Tepnmr3QYAj3o0r7y8txOX3g21458MUhJhVPdvbAMR4c
-         Vi0BONgpmcck8n1+wflhJYcxfCbc6/pI1p6XZgJ37I3yVzOhFwSP63JLuHgFh96kdQen
-         V5GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729253741; x=1729858541;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=20pjU3e//rgq26Yi05Ys1N4I2o5U5qD7ybOOR7293q4=;
-        b=O/mix2MH3tzsSM9xnilPj9hXrMdCHMu8PcV9koReyvOPyZSdivgyS89YOC3TdsSBbq
-         j0bkZp9G6KsRJ35YHkEIMw9VvVsuO9Hijf88CGevkYxp/0/NqUOGPzpL+QAxrB+Ea826
-         pYG3dZuPqEHNqbpxI4XrUBPU+dwgfJkcNm2q2QZ9hePe8jjhKyIJ6VQSKYgyvINvIbpr
-         9QwEdcrhBOcv8fNMz5PprRJIboA+OLm3xdskf027mnIQLxEZbuY9QSj8srgYSbjWlozq
-         /DCvo8gjA7zB8zM98YCfPqwmn5XWtp2zFLWqrhxzWFmbw0WU9Kb7CwK6HDvb6ugO43It
-         rsOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJFEduUYIoYDzfkgXErp9oYkz9FZcsnD4XYUFRLXh1monzyh6qD6RGjJwmdtfDxl+cz9ecKrJFdFdCSmE=@vger.kernel.org, AJvYcCWPrTaqfdwfFJSa9kurEbHn4VdIl2zhQ1KUYBDfey+HJtH01i39jFda5tcDsir/WqJd85i9WNAEpYde3vF7@vger.kernel.org, AJvYcCXboH3wgffKNN4B53gqI4FWGZC6boNHZxlXwp0ZC11TedtYapEjFaiogqNHfp/hUTrv/6KHGQdjDRUE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlDw/dOwsc8bBoyx1R2AeSk+XG+HFp0LPIZMLnC6CE1tnAEHsC
-	XMuq0ogNIFR5zLbxtQc1qhukFG8cOBwzoamS9scr9cYk4g3mVvbJVuNyuMsXRx5TXSIusR4NVKw
-	pAPxQAPNk8BYkRY/mHoHP7xkQqZc=
-X-Google-Smtp-Source: AGHT+IHznlnIPkcD1o9NThG4Pn7268Gn9GiD6LokW8b2HqLdTDhxkp1K0M7XBv6+w0jbPY3BaPJt8cM+9Prcjg21UIk=
-X-Received: by 2002:ac8:5a01:0:b0:45f:bca0:b8d2 with SMTP id
- d75a77b69052e-460aed53cfemr26349851cf.20.1729253741145; Fri, 18 Oct 2024
- 05:15:41 -0700 (PDT)
+	s=arc-20240116; t=1729253783; c=relaxed/simple;
+	bh=0k+beNmcrY+pcRygjmZ7e8DqoH1s7rPL+86SRjP7vms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ccXMH3JVwG28zpdqD7kCkkqGLQ5uRtGDRCQJeOpkmkG8Om9RjOHbAiAqyIMZFOmJ9WMwu6yVeqoK1L+T2TSUN1pTe8twKBFK7Cr4O/+Z1yyB495Ym9wE50btZyWayuFksnYfQeGjMLOU7ohBF77mxhL0UAhdW63qwvumZgpyyi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=i4+mwGfk; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.160.38] (unknown [4.194.122.162])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 1650720FE9AB;
+	Fri, 18 Oct 2024 05:16:18 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1650720FE9AB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1729253781;
+	bh=1OgAmYzYozmaqji7ob1xgBvem4J3H/LILzhCtmgqTRE=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=i4+mwGfkDWpHEgcooIXsJ/JC8O9tN0jUO/9B5QVUqWkqFjQea2FZRAc43U3OQ63yg
+	 0iS3KJFgViyJGCoXPpOyUcovASbJ/moiyBmmcNv3INeZLTj2VUT1GswQUHhD1dNS36
+	 BFaz3GE9/FJTLxjyPzfCfqDSFwMso5xLFb9xVGfs=
+Message-ID: <6f9dcc74-5688-4bcb-9bb6-15c34df9317b@linux.microsoft.com>
+Date: Fri, 18 Oct 2024 17:46:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016-cs42l84-v1-0-8d7e9d437d2d@gmail.com> <20241016-cs42l84-v1-2-8d7e9d437d2d@gmail.com>
- <abe88a18-28fb-40e5-8bd2-3fde5de9cb56@sirena.org.uk>
-In-Reply-To: <abe88a18-28fb-40e5-8bd2-3fde5de9cb56@sirena.org.uk>
-From: James Calligeros <jcalligeros99@gmail.com>
-Date: Fri, 18 Oct 2024 22:15:29 +1000
-Message-ID: <CAHgNfTwGM8tEsp5SfYp2XmqN2qC557kGyuDwCJfcoxpc7wGSOQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ASoC: cs42l84: Add new codec driver
-To: Mark Brown <broonie@kernel.org>
-Cc: =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
-	David Rhodes <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, asahi@lists.linux.dev, 
-	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Hector Martin <marcan@marcan.st>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] drivers: hv: Convert open-coded timeouts to
+ msecs_to_jiffies()
+To: Easwar Hariharan <eahariha@linux.microsoft.com>, lkp@intel.com,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ "open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241016223730.531861-1-eahariha@linux.microsoft.com>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <20241016223730.531861-1-eahariha@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Mark,
 
-On Wed, Oct 16, 2024 at 10:23=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
-ote:
-> > +static const struct regmap_config cs42l84_regmap =3D {
-> > +     .reg_bits =3D 16,
-> > +     .val_bits =3D 8,
-> > +
-> > +     .volatile_reg =3D cs42l84_volatile_register,
-> > +
-> > +     .max_register =3D 0xffff,
->
-> Does that register actually exist?
 
-It is likely that the highest register is the ID register, which would matc=
-h
-CS42L42. Setting that here does not break anything.
+On 10/17/2024 4:07 AM, Easwar Hariharan wrote:
+> We have several places where timeouts are open-coded as N (seconds) * HZ,
+> but best practice is to use msecs_to_jiffies(). Convert the timeouts to
+> make them HZ invariant.
+> 
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> ---
+>   drivers/hv/hv_balloon.c  | 9 +++++----
+>   drivers/hv/hv_kvp.c      | 4 ++--
+>   drivers/hv/hv_snapshot.c | 6 ++++--
+>   drivers/hv/vmbus_drv.c   | 2 +-
+>   4 files changed, 12 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+> index c38dcdfcb914d..3017d41f12681 100644
+> --- a/drivers/hv/hv_balloon.c
 
-> > +static int cs42l84_mute_stream(struct snd_soc_dai *dai, int mute, int =
-stream)
-> > +{
-> > +     struct snd_soc_component *component =3D dai->component;
-> > +     struct cs42l84_private *cs42l84 =3D snd_soc_component_get_drvdata=
-(component);
-> > +     unsigned int regval;
-> > +     int ret;
->
-> > +                             ret =3D regmap_read_poll_timeout(cs42l84-=
->regmap,
-> > +                                                            CS42L84_PL=
-L_LOCK_STATUS,
-> > +                                                            regval,
-> > +                                                            (regval & =
-CS42L84_PLL_LOCK_STATUS_LOCKED),
-> > +                                                            CS42L84_PL=
-L_LOCK_POLL_US,
-> > +                                                            CS42L84_PL=
-L_LOCK_TIMEOUT_US);
-> > +                             if (ret < 0)
-> > +                                     dev_warn(component->dev, "PLL fai=
-led to lock: %d\n", ret);
->
-> This is too heavyweight for a mute operation, do you really need one?
+<.>
 
-Unfortunately it seems that way. This was carried over directly from CS42L4=
-2,
-and as the comment in the function states, the internal power supply
-will discharge
-itself and crash the chip if the PLL is set up before any of the interfaces
-are fully enabled. This is corroborrated by the CS42L42 datasheet. I've spe=
-nt
-some time today trying to work around this, but trying to sequence and enab=
-le
-the PLL anywhere more sensible either causes the chip to crash or causes
-audible clock jitter artefacts.
+
+>   	if (wait_for_completion_timeout(
+> -		&vmbus_connection.ready_for_resume_event, 10 * HZ) == 0)
+> +		&vmbus_connection.ready_for_resume_event, msecs_to_jiffies(10 * 1000)) == 0)
+>   		pr_err("Some vmbus device is missing after suspending?\n");
+>   
+>   	/* Reset the event for the next suspend. */
+
+
+Looks good to me. There can be different ways of passing arg to
+msecs_to_jiffies though-
+
+for 10 seconds
+* 10000
+* 10 * 1000
+* 10 * MSEC_PER_SEC
+
+I don't have any strong opinion on this, and you can probably choose
+whichever feels better.
+
+Even the current implementation with x * HZ works fine, with different
+HZ values. But, yes, I agree that using msecs_to_jiffies is better.
 
 Regards,
-James
+Naman
 
