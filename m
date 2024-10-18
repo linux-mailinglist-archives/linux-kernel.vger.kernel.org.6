@@ -1,130 +1,78 @@
-Return-Path: <linux-kernel+bounces-370811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297C79A3256
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:58:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84579A325B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AE5F1C2185C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:58:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68EEB285303
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A75126C07;
-	Fri, 18 Oct 2024 01:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BD882488;
+	Fri, 18 Oct 2024 02:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dav5vNsf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PaG4MKHG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673CF71747
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1675338DE5;
+	Fri, 18 Oct 2024 02:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729216725; cv=none; b=MgPLJLy8N2X7uppoqhLOkc405BlLw4CorbieUSgycFOACsf4sI4lJcUBI4dpFNsFiznRnOnZ4bO+RO10UusRcKxvH5V5+jjtxaP58WgIHqUI/0GVHjN3MmGFfzet5YGMsORqMyQX/euEuDT/PhjguaKzkqpVTnWwj/dvx7vcbWE=
+	t=1729216848; cv=none; b=RBSmE7LGiPoQKyjoZTJBUJU5pCq9pSvGBDrmzmC72USIcuTtZz9i6QcWjxWi8VuDDina5jhKZpDJAzyuTTMW4eK0dth+1arVhb4ChxFUH1v+6rDbT9hdY8aYM4ota6DdJhOtYVP56a5OmAwGomci8iG1rje6EXO3rcwdTQ1lVm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729216725; c=relaxed/simple;
-	bh=z0TiPjA1esacraE/iuy/u3ZF8AIUwcsbFBy9SdtcBr8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GwK5z2zdme1pdyjceWsAMWiBdMPZEZ8Hsy5xZWY/Cd2zdw7JtCtmLzGb2BsV0+UcYAl5iy4ugzsus9C63+WjujIIP3BWSADxVAao0hj35evGPrA/VUO/8ygZl2vE7ER0Ekaqf24/r+pelrzPygpkdT8FFjPwskrH+rPZ0I8vp9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dav5vNsf; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729216724; x=1760752724;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=z0TiPjA1esacraE/iuy/u3ZF8AIUwcsbFBy9SdtcBr8=;
-  b=Dav5vNsf6IKis8GcECj07n6Sl2zZWdurZEP1PzIMLz3dfZIoq/Ne24JT
-   pt/tgePgGWv2BZaWVj8ssihmUpzmRkwqwOW7BaWbYZ/cXouihNR5GASGI
-   cD+FNnfUjf1M+ajDcTLgoCpG+3hs5GiQRRsm0A2dqZRpxkk8qNfalVM/u
-   E47pnPp+9W7J7oFkeYlGMW5D42ExKVBu3p/LDMQJ6nSW96/MzQtk9pL78
-   i6n5gEBHMSDTER9y0+TyMW+7bV/SQBcyiUaC+DHasvSHBUM/FWnsLuKQG
-   lhBsRM9seS5cO58++7ArgjpKSVIV2YLQKYkzK5EbRAfD6kw1XZKrQCJJy
-   A==;
-X-CSE-ConnectionGUID: 9L3Rwen2Tk6X50TX6emfGA==
-X-CSE-MsgGUID: JZmF0qy7TVaBNAdRqwhGfA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28613710"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28613710"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 18:58:43 -0700
-X-CSE-ConnectionGUID: WslB4K4WRX+jx3xs76Nskg==
-X-CSE-MsgGUID: rMHC0WJ4QO+roVP274Zd6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
-   d="scan'208";a="78774900"
-Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 18:58:39 -0700
-Message-ID: <f218230c-ae01-4168-b36e-5e502de6b3db@linux.intel.com>
-Date: Fri, 18 Oct 2024 09:58:37 +0800
+	s=arc-20240116; t=1729216848; c=relaxed/simple;
+	bh=77juGJg8SGze4IKOuitRBCW0/JBZjitXAvX0VmGHCYw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=GqrKDSTuGcF7wpIb7kIHAqEJ+wvldu2+6ypM+VARUtjurF25CfO/7Rw3l9V4hRy4gya+F/h8Jc5sZZWGuarh4gEivqpsBVugctB3G7R2duodjr+4xrtriGnftKBgo4UBcD4MHK7pvBTtDLfXHCvNNzITYF1yKilisK2XzaGCcVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PaG4MKHG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC45C4CEC3;
+	Fri, 18 Oct 2024 02:00:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729216848;
+	bh=77juGJg8SGze4IKOuitRBCW0/JBZjitXAvX0VmGHCYw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=PaG4MKHGr5d3WDBSwG22Zx8FuRtdTyWLWUL65Y9az8fWfJEAS2d8UujC7YgGeFikb
+	 RMvHDYxdZejJkYTd8P2R8nwbIWBbPyb0yHUJBHxqv0TSvSBtms2r/bTebLyqFDl4fB
+	 S6VGfilOHQofU3eVKiZvl2oGXI7eNWLCXy0MjlPPU8+hHyPkTzYnfFiXn3c4MbocrA
+	 NG65lpvB2mKhM+/6wA/CO4M4NEiTk+DQ6E7WBi/xOn4b5V4AWQQGkaMP9qTzlkDuRu
+	 OYDeUY1+NNZYHm6DGDPBAJbhpcxD2eazC5yIHD9r4V4j5ibzWn0hCfZezi4r81AcJ2
+	 E9jYeMy3gG4Ew==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AEF3C3809A8A;
+	Fri, 18 Oct 2024 02:00:54 +0000 (UTC)
+Subject: Re: [GIT PULL] hotfixes for 6.12-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241017161027.f7fd7303fd91dbd1e6e18537@linux-foundation.org>
+References: <20241017161027.f7fd7303fd91dbd1e6e18537@linux-foundation.org>
+X-PR-Tracked-List-Id: <linux-mm.kvack.org>
+X-PR-Tracked-Message-Id: <20241017161027.f7fd7303fd91dbd1e6e18537@linux-foundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-10-17-16-08
+X-PR-Tracked-Commit-Id: e993457df65896696e165defa8a468a831d0da1b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4d939780b70592e0f4bc6c397e52e518f8fb7916
+Message-Id: <172921685329.2658289.16836366969548092918.pr-tracker-bot@kernel.org>
+Date: Fri, 18 Oct 2024 02:00:53 +0000
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Kevin Tian <kevin.tian@intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
- virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
- Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH v8 07/10] iommufd: Fault-capable hwpt
- attach/detach/replace
-To: Jason Gunthorpe <jgg@ziepe.ca>, Zhangfei Gao <zhangfei.gao@linaro.org>
-References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
- <20240702063444.105814-8-baolu.lu@linux.intel.com>
- <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
- <20241015125420.GK1825128@ziepe.ca>
- <CABQgh9E+AnuyJgcM9tf1gEOUqcC_QSrA__Xha9sKYZp=NVRwhQ@mail.gmail.com>
- <20241016152503.GB4020792@ziepe.ca>
- <CABQgh9FCJcOa0G0Kj__NUm-Q8C9uH4ud04XcHv+3c48T2qEnug@mail.gmail.com>
- <20241017120518.GI4020792@ziepe.ca>
- <CABQgh9EnEqDKkxg3VUgjSqBzz27h8B3Ct4w=A0vR6JK=d7fXHQ@mail.gmail.com>
- <20241017130805.GA926121@ziepe.ca>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20241017130805.GA926121@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 2024/10/17 21:08, Jason Gunthorpe wrote:
-> On Thu, Oct 17, 2024 at 08:35:24PM +0800, Zhangfei Gao wrote:
-> 
->> Yes, you are right
->>   I am using SRIOV vf and stall feature, so is_virtfn == true
->>
->> Our ACC devices are fake pci endpoint devices which supports stall,
->> And they also supports sriov
->>
->> So I have to ignore the limitation.
-> I see, so that is more complicated.
-> 
-> Lu, what do you think about also checking if the PCI function has PRI
-> ? If not PRI assume the fault is special and doesn't follow PRI rules?
-> 
-> Or maybe we can have the iommu driver tag the event as a PRI/not-PRI
-> fault?
+The pull request you sent on Thu, 17 Oct 2024 16:10:27 -0700:
 
-This limitation applies to PRI on PCI/SRIOV VFs because the PRI might be
-a shared resource and current iommu subsystem is not ready to support
-enabling/disabling PRI on a VF without any impact on others.
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-10-17-16-08
 
-In my understanding, it's fine to remove this limitation from the use
-case of non-PRI on SRIOV VFs. Perhaps something like below?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4d939780b70592e0f4bc6c397e52e518f8fb7916
 
-	if (dev_is_pci(dev)) {
-		struct pci_dev *pdev = to_pci_dev(dev);
-		if (pdev->is_virtfn && pci_pri_supported(pdev))
-			return -EINVAL;
-	}
+Thank you!
 
-Thanks,
-baolu
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
