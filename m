@@ -1,85 +1,87 @@
-Return-Path: <linux-kernel+bounces-372461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D03BA9A48DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:21:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3E19A4944
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ADAB1C224E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25CC91F2243B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A855F205AB4;
-	Fri, 18 Oct 2024 21:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C8418E05A;
+	Fri, 18 Oct 2024 21:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5b7yQoF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=m3y3r.de header.i=@m3y3r.de header.b="Jfny5lw8"
+Received: from www17.your-server.de (www17.your-server.de [213.133.104.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F010718D629;
-	Fri, 18 Oct 2024 21:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509B218C332
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 21:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729286475; cv=none; b=R2Sg+ZljmzYK3F7TETDOtDYbqbcGitiaG9cMJ7lBzSoW5O8bsUw1sFPZoZYd/6TSylzVE/sMDe8ly9uWwzbxxpzJw2D6DehmfOBb/XTmrHjRy03mrCLI3KsSZP1IaS3aYZLWHZEXGk1OflunOHWa0N371ljVJfzH0gxI3zWwEJw=
+	t=1729288253; cv=none; b=eUAGq61BIoiKGdXGSoWDbQmMsGqMmIQZNm6k6L1EKyCyR1E9WaaGY9/iAbnbPSWuSZqXIIihfGAJZgpHi7yoyUa+FcSt9TJPFy1nS878DRRdtMt27/k0wCqzmYn95JraHVn4Qh4315dHeFyUAzCkbUrcO7Ix6N9o+UPt4KtjxqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729286475; c=relaxed/simple;
-	bh=EES7i7+xI4t0nQiCYO6+i0Prk0sXhOXz7pQPDwImBlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzkmjU6uJvLvx6gSY/Fl8Qk00u4HnTKv3d6ANU20GpZCfNVB5qQr+IAyYcmQsrh85ljBRM2fJHQFAbE62gNUc7ASriGpLmDTD096itrtEyvU/qjfuLOVqzv87jBnNXCebJC8NmHXfCUWS4eUtD+Tb3JK3J8u6Jme3ZjjyrwLkSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5b7yQoF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF65C4CEC3;
-	Fri, 18 Oct 2024 21:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729286474;
-	bh=EES7i7+xI4t0nQiCYO6+i0Prk0sXhOXz7pQPDwImBlw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O5b7yQoFiIFFK80qoyUF3kODPbXJe1adoXBu3Gp5SZlrPt4B/5JuaBn6rb8oFbJlF
-	 BwlNB+/UE5KHx3ezYeDf0BxaB8LW+xEVAaP2PvRzADRZSEPs9cFjKqJ9BvXRZSS+SX
-	 kHoy6GtMes1OtwcFUqp9GDAFBn66eXoSTJrWEwoE9RBZVt3xaq8e/UgUTYNqSKWeq2
-	 RAT5wfvqOy9voQu1KgptnnDGFaY6ktrg/f6gFfySswCZ/0flEFXduA2VW+kA96IiE7
-	 PrhI+zA46vcKA3otQyr4fukyEnWAi87wIAzJYwJV49wfXXAogUXH2e1M/cSFjl4kwG
-	 qTyzyx9MZPTTQ==
-Date: Fri, 18 Oct 2024 23:21:11 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Srikar Dronamraju <srikar@linux.ibm.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rcu: Fix remaining rcu_momentary_dyntick_idle()
- references
-Message-ID: <ZxLRRzprMPEWDMz1@pavilion.home>
-References: <20240925054619.568209-1-srikar@linux.ibm.com>
+	s=arc-20240116; t=1729288253; c=relaxed/simple;
+	bh=wDf7YMqe2XApniUYFtVC1vwBkrTu78Ck2MzC3Mtz7GM=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aPjPvhQ3RfjRymbddQazoE0pFryxvkry1NQjHvYPrqFZmu/aWAgVGhH1Qx7e4XVO15uuoiBKs7m0T8b19aMtFPgHuqIRRxpA/qcFHwVdyjutt6z3C8KujSGbFL04CBWtZsIC07/HaWWJzl5gq2wyShpQGJMlprUxYhIXVgxeQa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m3y3r.de; spf=pass smtp.mailfrom=m3y3r.de; dkim=pass (2048-bit key) header.d=m3y3r.de header.i=@m3y3r.de header.b=Jfny5lw8; arc=none smtp.client-ip=213.133.104.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m3y3r.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m3y3r.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=m3y3r.de;
+	s=default2402; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
+	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=wDf7YMqe2XApniUYFtVC1vwBkrTu78Ck2MzC3Mtz7GM=; b=Jf
+	ny5lw8RTpJSd+2ksNh112V2dv3O/O4vr2Dk1KZPd5tABPqnX2BT8r9pjgAVpJ+m5xLFMvH499za3z
+	LtPf0jRqo4scNmgcIYMkycPyOLMfvj6PFXS1Yg+/0PZRWjRiDGIKahXKaN+MilIief5lgfZqBmiHk
+	T7UnAqLHbKQdWyFIxd7hidjC+oCVKmzlLnuBmt5Pj5le0DyP6G7+evg0Fl78tXuYYfIcnZzt8qvo/
+	omvPI5KnMjQVwgXRUQqibMGRtYveDbfsGg/fhEeu9eLERjEpxuODm4uXgL407Dm+ckRP1CAbk3XzE
+	zqsK0kHz1niGDc5Tupqh6LuNbHTpXjpg==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www17.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <thomas@m3y3r.de>)
+	id 1t1uQP-0001Qh-0Y
+	for linux-kernel@vger.kernel.org;
+	Fri, 18 Oct 2024 23:22:21 +0200
+Received: from [94.31.73.225] (helo=DESKTOP-DQBDJ0U.localdomain)
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <thomas@m3y3r.de>)
+	id 1t1uQO-0000zN-3D
+	for linux-kernel@vger.kernel.org;
+	Fri, 18 Oct 2024 23:22:21 +0200
+Date: Fri, 18 Oct 2024 23:22:29 +0200
+From: Thomas Meyer <thomas@m3y3r.de>
+To: linux-kernel@vger.kernel.org
+Subject: Enable CONFIG_TRACEPOINTS only?
+Message-ID: <ZxLRldQ688zYZJ8O@DESKTOP-DQBDJ0U.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240925054619.568209-1-srikar@linux.ibm.com>
+X-Authenticated-Sender: thomas@m3y3r.de
+X-Virus-Scanned: Clear (ClamAV 1.0.5/27431/Fri Oct 18 10:53:06 2024)
 
-Le Wed, Sep 25, 2024 at 11:16:18AM +0530, Srikar Dronamraju a écrit :
-> There is one last reference to rcu_momentary_dyntick_idle() after
-> Commit 32a9f26e5e26 ("rcu: Rename rcu_momentary_dyntick_idle() into rcu_momentary_eqs()")
-> 
-> Rename the same so that we are uniform.
-> 
-> Fixes: 32a9f26e5e26 ("rcu: Rename rcu_momentary_dyntick_idle() into rcu_momentary_eqs()")
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> CC: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-> Signed-off-by: Srikar Dronamraju <srikar@linux.ibm.com>
+Hi,
 
-Thanks!
+is there a way to enable CONFIG_TRACEPOINTS only?
+The commit 5f87f1121895dc09d2d1c1db5f14af6aa4ce3e94 seems to have removed the ability, for some reason.
 
-I suspect this should be better routed through the GPIO UAPI maintainers?
+The best I could come up with is:
+- FTRACE = y
+- ENABLE_DEFAULT_TRACERS = y (which selects TRACING which selects TRACEPOINTS, but has the side effect of also setting STACKTRACE = y)
 
-In which case:
+Bug or feature?
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+mfg
+thomas
 
 
