@@ -1,233 +1,199 @@
-Return-Path: <linux-kernel+bounces-372232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A30A9A45F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:33:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA8D9A45F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3690B23027
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:33:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A39E81C217F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1254204013;
-	Fri, 18 Oct 2024 18:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35FD20408D;
+	Fri, 18 Oct 2024 18:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McAj2UUm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pg6H5Tjm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CF820E338;
-	Fri, 18 Oct 2024 18:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCC3201101;
+	Fri, 18 Oct 2024 18:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729276395; cv=none; b=pr8AJOCw41Q1Sg6WwbF1k5QZPpwRhan8bkJ88MOjXhuZIBLo/HF7LFkuQGRrwey+1RW5gaTf3y2fhdt4QvUwurfXOzE0d48vDWGUoa45Ulti14wd/RSzd//H0vcAsWvnhmg3ZCTEDiEDCkZcDKLdBU/G0cZXILnDw4XBk16n/IE=
+	t=1729276587; cv=none; b=Do8f02RYjw3pT9bVxqblw9Zg9rPSI6BxK0VXDa95oAcWSTUMJOYrbIVQFTzjON9ljgX+iYEacj9whVi79kpT9S/d6ljsLO2JUaIJAudFCFQNfehZJiPKK2/tnOvYHl2rblA8xkc9jb1qFg+80SNhF5JshifVGr1BL0h+NfLET4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729276395; c=relaxed/simple;
-	bh=JTS7l00ywra+1THYcJZQsN2BffW5M/t8l3w1Xebv1OM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tGfpRr2WxPh60NL+Qa6xknT1CqeED5vXfQ7nhI13fmhnjCw1ExaLo5iJVfHhEh7dqySZciMUbCCNdwSHiAwyXsl1ngpo3Fygd8WZTtqeMeaJ+Tt6+4qhA/VsIQv7ySCzRM71NVIM9v5opV/mbGeCEKh5yTXe65daLHawjsYBKc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McAj2UUm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA92C4CEC3;
-	Fri, 18 Oct 2024 18:33:13 +0000 (UTC)
+	s=arc-20240116; t=1729276587; c=relaxed/simple;
+	bh=XJcaa9HkJtWZo6V1cjp8K2JPzBRWsxMIur2ExFOdd2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LiEtVS7oesKO08wcNq0aeAHRAH6WIlb6YDSk/nK+olec/R1Ih+mRkD+KooQAXpDeI155D+XFmNKENQ+p3O2Com5uw/CAhMhsVtmCq7ZkXCTJ6m6zNOJqAlSXRQBqY0TBXEBA9bJQ8R6qvVT7/jm6ej0qAP+wcehSQBpO1d6/o/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pg6H5Tjm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 494CBC4CEC3;
+	Fri, 18 Oct 2024 18:36:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729276393;
-	bh=JTS7l00ywra+1THYcJZQsN2BffW5M/t8l3w1Xebv1OM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=McAj2UUmemN7Ro4awQUL87JqeBbXfmKjq2cM8Fwd7q1LREln2bEm3wx7q57aMals4
-	 GxZhlCzr+MgJQQ90mW2t+ztjMqF9QqARyIhzrbpoIGsbN4kIG+BBCeallm2Db5QJRL
-	 zmJmxFEddNqSjQcSpdiJKr4jhjE/d+1GZdPK818Vud4dIInqnGRM5k3xzgz3CAAzdp
-	 MzEKZFo6JkFyDFwpoAJRIy5rZ+ytsNCIBXLajDmjvD3M5dBr/epwJ8srxEShQg34BI
-	 /xGkU54J96atDcVKRSxml40m57fWnVKGty2Q85cfj6sQRLZtpuxtGGvPv3rXZJNDW1
-	 WKcJbdpvbolqw==
-From: SeongJae Park <sj@kernel.org>
-To: Zheng Yejian <zhengyejian@huaweicloud.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	sieberf@amazon.com,
-	shakeel.butt@linux.dev,
-	foersleo@amazon.de,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/damon/vaddr: Fix issue in damon_va_evenly_split_region()
-Date: Fri, 18 Oct 2024 11:33:10 -0700
-Message-Id: <20241018183310.115850-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241018035304.1050135-1-zhengyejian@huaweicloud.com>
-References: 
+	s=k20201202; t=1729276586;
+	bh=XJcaa9HkJtWZo6V1cjp8K2JPzBRWsxMIur2ExFOdd2c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Pg6H5TjmogNp/lE+Sff+QDDwDkzW/m5HKA1UJmvFB37S3igzHLGjBB+r9p4LxFqXt
+	 PMmR73vIeCvT2c6JsFWmZh3IT0oUquxcvDRbeeYgIRz+PuLuzHQUaOBQiAL8nSmMmK
+	 UKFKUJ7CXqa0YTRt2Zl1w4m0sfGmS5MzHARLRhMiazFXekJndfv1Z1C+YAAAZQ8j+B
+	 Bq9U0UIXUVQVrIUebA3yfkgVRj/lqwPVrf6O3joWIuTPB4MkwI0nI7Q2y7UJVwIfLY
+	 C+vc43mLIG/5+1P355/zaVSp6hRXe1jBwdEgKC1fHWK8OBz/iRgALFDSfXLUiM5x7G
+	 e6k5dRc9kwVTw==
+Date: Fri, 18 Oct 2024 13:36:24 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/3] PCI: Remove unused PCI_SUBTRACTIVE_DECODE
+Message-ID: <20241018183624.GA756809@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241017141111.44612-1-ilpo.jarvinen@linux.intel.com>
 
-Hi Zheng,
-
-
-Thank you for sharing this nice finding and fix!  I have a few comments below.
-
-On Fri, 18 Oct 2024 11:53:04 +0800 Zheng Yejian <zhengyejian@huaweicloud.com> wrote:
-
-> According to the logic of damon_va_evenly_split_region(), currently at
-> least following split cases would not meet the expectation:
+On Thu, Oct 17, 2024 at 05:11:08PM +0300, Ilpo Järvinen wrote:
+> The commit 2fe2abf896c1 ("PCI: augment bus resource table with a list")
+> added PCI_SUBTRACTIVE_DECODE which is put into the struct
+> pci_bus_resource flags field but is never read. There seems to never
+> have been users for it. Remove both PCI_SUBTRACTIVE_DECODE and the
+> flags field from the struct pci_bus_resource.
 > 
->   Suppose DAMON_MIN_REGION=0x1000,
->   Case1: Split [0x0, 0x1100) into 1 pieces, then the result would be
->          acutually [0x0, 0x1000), but NOT the expected [0x0, 0x1100) !!!
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-Nice finding!  However, as long as DAMON_MIN_REGION is respected, [0x0, 0x1100]
-region could not be created.  So, the problematic case cannot happen in real?
-Please let me know if I'm missing something.
+All three applied with Jonathan's reviewed-by to pci/enumeration for
+v6.13, thanks, Ilpo!
 
-And, why would someone call the function with nr_pieces 1?
-
->   Case2: Split [0x0, 0x3000) into 2 pieces, then the result would be
->          acutually 3 regions:
->            [0x0, 0x1000), [0x1000, 0x2000), [0x2000, 0x3000)
->          but NOT the expected 2 regions:
->            [0x0, 0x1000), [0x1000, 0x3000) !!!
-
-Nice finding!
-
-> 
-> The root cause is that when calculating size of each split piece in
-> damon_va_evenly_split_region():
-> 
->   `sz_piece = ALIGN_DOWN(sz_orig / nr_pieces, DAMON_MIN_REGION);`
-> 
-> both the dividing and the ALIGN_DOWN may cause loss of precision,
-> then each time split one piece of size 'sz_piece' from origin 'start' to
-> 'end' would cause:
->   1. For the above Case1, the 'end' value of the split 1 piece is
->      aligned but not updated!!!
->   2. For the above Case2, more pieces are split out than expected!!!
-> 
-> To fix it, in this patch:
-> - As for the expect to split 1 piece, just return 0;
-
-As mentioned above, I think this is not needed, since the problematic case is
-unreal.
-
-> - Count for each piece split and make sure no more than 'nr_pieces';
-> - Add above two cases into damon_test_split_evenly().
-
-Thank you for adding tests!
-
-> 
-> BTW, currently when running kunit test, DAMON_MIN_REGION is redefined
-> as 1, then above ALIGN_DOWN cases may not be test, since every int
-> value is ALIGN-ed to 1.
-> 
-> After this patch, damon-operations test passed:
-> 
->  # ./tools/testing/kunit/kunit.py run damon-operations
->  [...]
->  ============== damon-operations (6 subtests) ===============
->  [PASSED] damon_test_three_regions_in_vmas
->  [PASSED] damon_test_apply_three_regions1
->  [PASSED] damon_test_apply_three_regions2
->  [PASSED] damon_test_apply_three_regions3
->  [PASSED] damon_test_apply_three_regions4
->  [PASSED] damon_test_split_evenly
->  ================ [PASSED] damon-operations =================
-> 
-> Fixes: 3f49584b262c ("mm/damon: implement primitives for the virtual memory address spaces")
-> Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
 > ---
->  mm/damon/tests/vaddr-kunit.h |  2 ++
->  mm/damon/vaddr.c             | 13 +++++++++----
->  2 files changed, 11 insertions(+), 4 deletions(-)
+>  arch/s390/pci/pci_bus.c |  2 +-
+>  arch/x86/pci/fixup.c    |  2 +-
+>  drivers/pci/bus.c       |  4 +---
+>  drivers/pci/probe.c     |  5 ++---
+>  include/linux/pci.h     | 12 +-----------
+>  5 files changed, 6 insertions(+), 19 deletions(-)
 > 
-> diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
-> index a339d117150f..b9a03e4e29e5 100644
-> --- a/mm/damon/tests/vaddr-kunit.h
-> +++ b/mm/damon/tests/vaddr-kunit.h
-> @@ -300,6 +300,8 @@ static void damon_test_split_evenly(struct kunit *test)
->  	damon_test_split_evenly_fail(test, 0, 100, 0);
->  	damon_test_split_evenly_succ(test, 0, 100, 10);
->  	damon_test_split_evenly_succ(test, 5, 59, 5);
-> +	damon_test_split_evenly_succ(test, 4, 6, 1);
-
-If my above assumption (the first problem is unreal) is not wrong, maybe this
-test is not needed?
-
-> +	damon_test_split_evenly_succ(test, 0, 3, 2);
-
-Nice.
-
->  	damon_test_split_evenly_fail(test, 5, 6, 2);
->  }
->  
-> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-> index 08cfd22b5249..1f3cebd20829 100644
-> --- a/mm/damon/vaddr.c
-> +++ b/mm/damon/vaddr.c
-> @@ -67,10 +67,14 @@ static int damon_va_evenly_split_region(struct damon_target *t,
->  	unsigned long sz_orig, sz_piece, orig_end;
->  	struct damon_region *n = NULL, *next;
->  	unsigned long start;
-> +	int i;
-
-Purpose of this variable is counting the number of splitted regions, and
-comparing it against 'nr_pieces', right?  Because nr_pieces is 'unsigned int',
-let's make this 'unsigned int' type, too.
-
->  
->  	if (!r || !nr_pieces)
->  		return -EINVAL;
->  
-> +	if (nr_pieces == 1)
-> +		return 0;
-> +
-
-As mentioned above, I don't think this is not needed.
-
->  	orig_end = r->ar.end;
->  	sz_orig = damon_sz_region(r);
->  	sz_piece = ALIGN_DOWN(sz_orig / nr_pieces, DAMON_MIN_REGION);
-> @@ -79,9 +83,11 @@ static int damon_va_evenly_split_region(struct damon_target *t,
->  		return -EINVAL;
->  
->  	r->ar.end = r->ar.start + sz_piece;
-> +	/* origin region will be updated as the first one after splitting */
-
-I don't think this comment is easy to understand.  Let's just remove it.
-
-> +	i = 1;
-> +	n = r;
-
-Why we need this? for 'nr_pieces == 1' case?  If so, I don't think we need to
-take care about the case for the above mentioned reason.  Please let me know if
-I'm missing something.
-
->  	next = damon_next_region(r);
-> -	for (start = r->ar.end; start + sz_piece <= orig_end;
-> -			start += sz_piece) {
-> +	for (start = r->ar.end; i < nr_pieces; start += sz_piece, i++) {
->  		n = damon_new_region(start, start + sz_piece);
->  		if (!n)
->  			return -ENOMEM;
-> @@ -89,8 +95,7 @@ static int damon_va_evenly_split_region(struct damon_target *t,
->  		r = n;
+> diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
+> index daa5d7450c7d..5630af5deb8b 100644
+> --- a/arch/s390/pci/pci_bus.c
+> +++ b/arch/s390/pci/pci_bus.c
+> @@ -53,7 +53,7 @@ static int zpci_bus_prepare_device(struct zpci_dev *zdev)
+>  		zpci_setup_bus_resources(zdev);
+>  		for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+>  			if (zdev->bars[i].res)
+> -				pci_bus_add_resource(zdev->zbus->bus, zdev->bars[i].res, 0);
+> +				pci_bus_add_resource(zdev->zbus->bus, zdev->bars[i].res);
+>  		}
 >  	}
->  	/* complement last region for possible rounding error */
-> -	if (n)
-> -		n->ar.end = orig_end;
-> +	n->ar.end = orig_end;
-
-Maybe this change is related with the above 'n = r' line?  But, I don't think
-we need that, as commented there.
-
 >  
->  	return 0;
+> diff --git a/arch/x86/pci/fixup.c b/arch/x86/pci/fixup.c
+> index 98a9bb92d75c..0681ecfe3430 100644
+> --- a/arch/x86/pci/fixup.c
+> +++ b/arch/x86/pci/fixup.c
+> @@ -757,7 +757,7 @@ static void pci_amd_enable_64bit_bar(struct pci_dev *dev)
+>  		dev_info(&dev->dev, "adding root bus resource %pR (tainting kernel)\n",
+>  			 res);
+>  		add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_STILL_OK);
+> -		pci_bus_add_resource(dev->bus, res, 0);
+> +		pci_bus_add_resource(dev->bus, res);
+>  	}
+>  
+>  	base = ((res->start >> 8) & AMD_141b_MMIO_BASE_MMIOBASE_MASK) |
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index 55c853686051..9cf6d0f3ab2b 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -46,8 +46,7 @@ void pci_free_resource_list(struct list_head *resources)
 >  }
+>  EXPORT_SYMBOL(pci_free_resource_list);
+>  
+> -void pci_bus_add_resource(struct pci_bus *bus, struct resource *res,
+> -			  unsigned int flags)
+> +void pci_bus_add_resource(struct pci_bus *bus, struct resource *res)
+>  {
+>  	struct pci_bus_resource *bus_res;
+>  
+> @@ -58,7 +57,6 @@ void pci_bus_add_resource(struct pci_bus *bus, struct resource *res,
+>  	}
+>  
+>  	bus_res->res = res;
+> -	bus_res->flags = flags;
+>  	list_add_tail(&bus_res->list, &bus->resources);
+>  }
+>  
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 4f68414c3086..4243b1e6ece2 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -546,8 +546,7 @@ void pci_read_bridge_bases(struct pci_bus *child)
+>  	if (dev->transparent) {
+>  		pci_bus_for_each_resource(child->parent, res) {
+>  			if (res && res->flags) {
+> -				pci_bus_add_resource(child, res,
+> -						     PCI_SUBTRACTIVE_DECODE);
+> +				pci_bus_add_resource(child, res);
+>  				pci_info(dev, "  bridge window %pR (subtractive decode)\n",
+>  					   res);
+>  			}
+> @@ -1032,7 +1031,7 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
+>  		if (res->flags & IORESOURCE_BUS)
+>  			pci_bus_insert_busn_res(bus, bus->number, res->end);
+>  		else
+> -			pci_bus_add_resource(bus, res, 0);
+> +			pci_bus_add_resource(bus, res);
+>  
+>  		if (offset) {
+>  			if (resource_type(res) == IORESOURCE_IO)
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 573b4c4c2be6..6a9cf80d0d4b 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -633,18 +633,9 @@ int pcibios_root_bridge_prepare(struct pci_host_bridge *bridge);
+>   * Use pci_bus_for_each_resource() to iterate through all the resources.
+>   */
+>  
+> -/*
+> - * PCI_SUBTRACTIVE_DECODE means the bridge forwards the window implicitly
+> - * and there's no way to program the bridge with the details of the window.
+> - * This does not apply to ACPI _CRS windows, even with the _DEC subtractive-
+> - * decode bit set, because they are explicit and can be programmed with _SRS.
+> - */
+> -#define PCI_SUBTRACTIVE_DECODE	0x1
+> -
+>  struct pci_bus_resource {
+>  	struct list_head	list;
+>  	struct resource		*res;
+> -	unsigned int		flags;
+>  };
+>  
+>  #define PCI_REGION_FLAG_MASK	0x0fU	/* These bits of resource flags tell us the PCI region flags */
+> @@ -1498,8 +1489,7 @@ void pci_add_resource(struct list_head *resources, struct resource *res);
+>  void pci_add_resource_offset(struct list_head *resources, struct resource *res,
+>  			     resource_size_t offset);
+>  void pci_free_resource_list(struct list_head *resources);
+> -void pci_bus_add_resource(struct pci_bus *bus, struct resource *res,
+> -			  unsigned int flags);
+> +void pci_bus_add_resource(struct pci_bus *bus, struct resource *res);
+>  struct resource *pci_bus_resource_n(const struct pci_bus *bus, int n);
+>  void pci_bus_remove_resources(struct pci_bus *bus);
+>  void pci_bus_remove_resource(struct pci_bus *bus, struct resource *res);
 > -- 
-> 2.25.1
-
-
-Thanks,
-SJ
+> 2.39.5
+> 
 
