@@ -1,237 +1,365 @@
-Return-Path: <linux-kernel+bounces-372266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5C39A4670
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:03:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05EC9A4671
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0E4EB2214A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:03:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C19CE1C2453A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA1820408A;
-	Fri, 18 Oct 2024 19:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAEF204093;
+	Fri, 18 Oct 2024 19:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CLYvgtW/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TqXQt7XC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9980188733;
-	Fri, 18 Oct 2024 19:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729278174; cv=fail; b=B9IYx5pbdSIgQiSem33XfgSuefHefrCZJYzn/APlkRpuUt680OUzqBMKO+qDF971Sc03q4sR698VMsDt2RJHIA8/+4CnXYiplMBoUCLYT36RBp1d0xD0vts7hTfgoiXRtNYHnTXMtK4/xTvga7NwXnridllusP/6oDMLvUFtSVY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729278174; c=relaxed/simple;
-	bh=xw1V5ksk4Pak9RntNLhsVWZm56YxNUrTRferqRt5Eew=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AAs6P3VuVFsRgr2qzVL4e05S0rM949rTp9O0DZyUMKq419kBmFDDruFzQ5+amzgUklS28HwfaDWMEI831XSpQWOtNNKrZMlK6vGyuDCYCZgL5J3O+T19fWG99Yzlb2WbuAWtekFkDFdaytxhKhDIUzHTesubONwFssSx+2wHIt0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CLYvgtW/; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729278173; x=1760814173;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=xw1V5ksk4Pak9RntNLhsVWZm56YxNUrTRferqRt5Eew=;
-  b=CLYvgtW/CTfL4JglpokL2w5GdgITsJD/XtjpW19YY/OabBSOsIywc3Wu
-   CQ+uFa6CEK8d8iSlvBWFADdwaE5a/S0wsAVbXR0qVBVAaXhyhasaoDrDw
-   oXf1W574jd39HhnV7cDCijW48qVnS9p+xSB5sPXw4V10GJ6xc5t2Bndix
-   rAVm7Iar1RL9KVaXuDKApJhsbTwWKTNJ1yE1QK3zcRMx4Nstu/ILsprgW
-   +Groj2HcVCw8YWPhKdCPbzwRe3O6I3xicSw3pCMlfbh7L8cSV3/0u9AWm
-   K0pMmElgCNBpnvM9xDjLcR/gGCyo/qY9nUo4BXIOCaA4Vik4xZb4bhOPm
-   g==;
-X-CSE-ConnectionGUID: 7xgD0txzRASCbe6pcahZzQ==
-X-CSE-MsgGUID: FOYUUHzSSjyZbsMKe5Y1dw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="29032531"
-X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
-   d="scan'208";a="29032531"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 12:02:52 -0700
-X-CSE-ConnectionGUID: LmOxE/HcRq+UROJMNPJCjA==
-X-CSE-MsgGUID: OY3lMctGTyiJWuS7569WOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
-   d="scan'208";a="78604706"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Oct 2024 12:02:52 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 18 Oct 2024 12:02:51 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 18 Oct 2024 12:02:51 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.48) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 18 Oct 2024 12:02:51 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rlMfGru3JYa7/JID7oMalsVimzrGxt7acF596Y4kCOW5UJc2mfBscUUqj68MwmjzWzAHNoyoujUtcXtK/6qW4tHL7gss6PwGJIIIqdjS9O66w+bkMdmEPptfCOKCt/ZXadScitcpxI4Xj4pqDIzBmAEVqhcPndQAxdfweW4HBTuT8Rk3ZT8D8P6hsHQyTkeIjWVQivbh2SkoVsLifu94Yp4oFnRbvoN/UYfAc0oWJTE+DSc/53W0qO4soRzcYJDp5vCyIbMCfdSyrpESCbkm8+8NbDFzdiQKFF50Vuw+Yv4M/fDDf19LRgeyFkPFEpj6uNXNbvHplCgR3xYBhDl5MA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dA+8bpNH7SKdYFCWx5DKJlk4HRNjbf7X3ufcexeD6ug=;
- b=gvkqRAd28O45C9BnUBij8dtpHualf8jqm8rod1gB2rgB4xL0BMUwengxrafTngYf3uhNVlzFvA3l/sJi/UbNeQo34H0kWS06UPMujbxCeoNoPQaAYjbgkbPbRA6aE6TNLoAHi5C8CfaOrXdqFWxtweffppdMtu4D6LTTjCxD+ygXyzWdfKZDml4Q2x146sc9aM3XWErLF5nKOj6EKAsqltLjOsBonFtn4YHO7jvkVnUW6/1CemzkMQ+1otockxdvuVmzeJr7J+AxYZekkdrDxZZCqaDsUTxB/mbKV/RBrFDflfdiruLGZlp0wQeEN5UU6BqHFlpu39r2UoOJoSjCsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
- by DS0PR11MB7559.namprd11.prod.outlook.com (2603:10b6:8:146::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.19; Fri, 18 Oct
- 2024 19:02:45 +0000
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b%5]) with mapi id 15.20.8048.020; Fri, 18 Oct 2024
- 19:02:45 +0000
-Message-ID: <abb86e51-ae6f-4872-afe1-627824c1e763@intel.com>
-Date: Fri, 18 Oct 2024 12:02:44 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/10] x86/mce: Make several functions return bool
-To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>, <tony.luck@intel.com>, <bp@alien8.de>
-CC: <tglx@linutronix.de>, <dave.hansen@linux.intel.com>, <mingo@redhat.com>,
-	<hpa@zytor.com>, <x86@kernel.org>, <linux-edac@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
- <20241016123036.21366-1-qiuxu.zhuo@intel.com>
- <20241016123036.21366-4-qiuxu.zhuo@intel.com>
-Content-Language: en-US
-From: Sohil Mehta <sohil.mehta@intel.com>
-In-Reply-To: <20241016123036.21366-4-qiuxu.zhuo@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY5PR17CA0007.namprd17.prod.outlook.com
- (2603:10b6:a03:1b8::20) To BYAPR11MB3320.namprd11.prod.outlook.com
- (2603:10b6:a03:18::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C982038B0
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729278192; cv=none; b=TY4sYfCeZ8Cm+svBp+pjR82mctOuSaolG0z4Blrt9F29gn+U4AchvBU9E4UI1nupdj6fJwjLY/NnpobpPgdwxGROnoP1mxHbOErfKVWUQoDZOOVg04vmK0vg70bRo+IHRcxcmPViDu9wN3eusbgSo4hUcAVb++z+PksbFV6EtTQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729278192; c=relaxed/simple;
+	bh=4l6CWUJywlwgCO/NWDGDD18NHmJbkNZ1RHEMdsE35tE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bPqPcRcCU7HZPLNQEFFDpwcTqNVIhNOwK0yZVel/jLEh4ZEkqh4zTHaR8CP10vWV9NG3GJMJlCr9gR4PNl8GpEz1jj49T+0yhzBt3OxANXn2pJJYhfUqPCuvOotfUBq0t6/FDE8rvGRAxuUcZRLRXkO5xIFVKuL7HOC0B6afkUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TqXQt7XC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729278187;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tQo0YZbGyY7iAxtTmd2kJH9mWaUUkaRIkAcsfKHjMog=;
+	b=TqXQt7XCZ72XU+89ve6GsckpeFNVy1LWlsfxkId5NX0Ef4zl5zAYHLG1gCtBEwHSK8Ezbv
+	qRj7NAsnjBIZrQ2uIzmP7lrVdgtkpgPkTbJFA1k+exEEe2jD6gYGR6b/0KbgK4GenWjNnw
+	c8Z5NEYMNadXTCA77L5vf0+PFHtC2lk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-199-gGpc-Q-qOM-FaZsVGynNSw-1; Fri, 18 Oct 2024 15:03:05 -0400
+X-MC-Unique: gGpc-Q-qOM-FaZsVGynNSw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4311a383111so15129795e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:03:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729278182; x=1729882982;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tQo0YZbGyY7iAxtTmd2kJH9mWaUUkaRIkAcsfKHjMog=;
+        b=FjA5HuYBEZbnn/5c954w1x2m6seE8hQYiDug+wC1swsODL8tfU70koKZSVCLNVv6ew
+         eEr38IRcLgp+WBrTLJg40pjehctWiiqlg0e4ToHA5RoNx65UQwzLrU7/B7g9J5xgp30a
+         Twro2WR5pT7kvrEdKM6SVe5B/uXd3KxbP19MeOe+hZ4cLTtBMLY0hy9qLpVHz7mA1acI
+         9bU+MhYZ8EqzfmvnweX80n3ykuro5ersgaN9a5nrSKTKRK1dKNsUVGgYI9hnsQABDG7X
+         5HF19u4bV4TEzb+s2xV7idIIzUSeIp3SnV0Bc2fDh3+gCiwg+2S0dkNcAfGJaYt1mbB6
+         Z0HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpt3Muiy66FUnyAijuKcDWdbkXOUsaVdspKVyw7vo1VZm3GLTM+gBhZ4BcvTSSuMOFWuS13V1Yt8SPHq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaH6tEvf3y+mDbZ0Hb1K47acJk5EFG3buUpol0M6O4+MvYCZjL
+	uf9NxJo8OMS64sdPUdMtXE7cBCf2RsgTAAhDyON9kAkl2MeT6AKRXcC/dO4fDTgnj05dQCBSVyk
+	53LxIg2j9qCRPtRGKUnMVd9xtxTz07SEbRF1JDUo394Fv6RxLusod7x3lsUf2iA==
+X-Received: by 2002:a05:600c:3b1e:b0:431:52f5:f48d with SMTP id 5b1f17b1804b1-431616a3c10mr25471015e9.31.1729278181657;
+        Fri, 18 Oct 2024 12:03:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFTQPTC6nkjtDBSk2oFHjpd3s2qenJuf8l/y/7eNuLAyXn19BjKJ3qT8knSzs8zqbNN4Gj/4Q==
+X-Received: by 2002:a05:600c:3b1e:b0:431:52f5:f48d with SMTP id 5b1f17b1804b1-431616a3c10mr25470635e9.31.1729278181131;
+        Fri, 18 Oct 2024 12:03:01 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c707:2400:68a3:92e0:906f:b69d? (p200300cbc707240068a392e0906fb69d.dip0.t-ipconnect.de. [2003:cb:c707:2400:68a3:92e0:906f:b69d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf0ed24esm2580691f8f.82.2024.10.18.12.02.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 12:03:00 -0700 (PDT)
+Message-ID: <7fc46791-3f1a-40a0-a939-bc7a90b7e7ed@redhat.com>
+Date: Fri, 18 Oct 2024 21:02:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|DS0PR11MB7559:EE_
-X-MS-Office365-Filtering-Correlation-Id: 39a12156-3699-44e0-386e-08dcefa77338
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?U1FKRFFQN3JoRVJwMEErVUtobHV5WGdMZXVwTWNEbEMvaGxrNFZvR3hWT1lu?=
- =?utf-8?B?eEtyQ0x0SkdVbHZIZ3AvQ2ZicEk0M0JtdUdOTkVqd1ZDbDRVWDV6Uy9rQ1FJ?=
- =?utf-8?B?dnJFL3BPTTNjNnlwNU1nQWVEUzJjRVVxR3F1dTAvcHg3Tys1VEQ0Z205RUNO?=
- =?utf-8?B?VGQ1b0FGQnVyM2FnTzJVd1JxOVR4YVI5blByY21wNEViNVNaTVU2RGg0cEJt?=
- =?utf-8?B?d3E1WFFyZ2FPbUNETHFrU0g0d3I3ZnRLbkxzWXB5cW1Pemp2TWV1cmgrMGc5?=
- =?utf-8?B?YnpDN0dOZzN6ZnNQclF4S09seW8wT1Y4N0ZNdXF2QnpUdHZLTDFGRWR2NXdn?=
- =?utf-8?B?ekxLQlNLKzNmRyt6Wnc2NTN0MGRUNld3a2NUMVRoS3U3WHdrUHFNRk13KzdX?=
- =?utf-8?B?V0RQTG01L1E2Sm94TTh4TzRDV3RiV25kVnZYendPSlBrelZWN3c1cXZSS3hm?=
- =?utf-8?B?MlRLbFlxd2pKR3ZvWGpQOVd2bjN2Tmw3aHEvWTY3RWJpYW05cW1hZkxwVmZD?=
- =?utf-8?B?V2JQekZ3QUw0ZWVDMTNoajgzOWFRS2x0bDMvcW4zMENDdHlHcFVtNU83d0xX?=
- =?utf-8?B?OGlCUmdiMzJmWUFEcDFIWWkxUXFTYTkvK1kwSnNVc0ZINkZLNlA5N1o4cFJV?=
- =?utf-8?B?aG1pNFlRY1puZHk2aTNhWVpROEJoV01BYU5jYUFIWnpKR29BMXZyQXVLWGxO?=
- =?utf-8?B?ZzN3amFkUUp1a0tidVlzL1lUMGlCZXVrSDAvM2FyanlqNHFySitsTTVkeUVv?=
- =?utf-8?B?eEM4VmNxQ2NDdDRpeWlXTUdWMnI5cGgxTXI5bThobm9sekc2cmJLS21NZEph?=
- =?utf-8?B?NXZUMDdOVElvenBkK0ZYL2VtcWx5VnV5RnJ2QncxbUp0Wk1acTZtY29WeU5N?=
- =?utf-8?B?dHBjWHRRRWRXejhyTzBMb2JhZ3RUdEN0K0hiR1RUZ3RCRDJpWGNtQTNQekQ1?=
- =?utf-8?B?TXJlMDg2TnIwZVdJbnBabCtVNHNJeURMaG9NTTlxZjNldkJJcmYxQjd1RDk4?=
- =?utf-8?B?NUdjdTh6RXJhdlBOL3ZER2dtVFVBbWduUWlDakd0cDk0TDdUbUswd1pUdFV6?=
- =?utf-8?B?eU5WMW1mRlg5WElwazdSK1NvOUpSOGovUmxTbFd0Z0xIbHYyaUF2ZUJ6L3VY?=
- =?utf-8?B?dzlIWmowRS91K28rcFdlaHFnQUU1M0RTUEdTVGcvRzZrMDBJeDN6ZEtYeEpH?=
- =?utf-8?B?aGVpRlNEU3RFRUJqUEU1NkFGQUMzVHVmLzAyblNsK0E4ejZoRCs3MEpoT1pp?=
- =?utf-8?B?TXlianFqMVI5a3BNVytLL1BYMXlyMm8wNERnaHlrVEtrS3orODRKS1NGcldq?=
- =?utf-8?B?V3V5ZmVNL05oajhGZ0RQRk5HVUJYaUJFVU9Uc2FSeWJHa09xck5xUjVYRllZ?=
- =?utf-8?B?dE9sZkt6b1RaendjTHk3TFh6RkhGMnVBaVRRUVdxYVpkL29FTHd4eTRJWUU1?=
- =?utf-8?B?NFp5K2Vqay8xQzFvdEk1Wk9ZbjhXSFRIbDNmaStGMEQreTFyOFFWaGxIenZE?=
- =?utf-8?B?QnNWN214S3Y0Q0Y4SFpoY016cG04Mkp5bFo4bmpQNVFjbHhtd1ZYN1BGSlIr?=
- =?utf-8?B?TFQzcVdmNjgxZnQ2d05pOXM5TGJEczZidEdSQVNleXdETi80VnBadDdFTVdJ?=
- =?utf-8?B?aHE1UkpJdHd2djRhNE5aSnBsUVc0a2pNY2RzU1J5b0xsUmpqd3h6U1daYUNN?=
- =?utf-8?B?ZlN4Q2U3ejhhUHJZRnNpQUIwbDRzbVQ0OG9IN2hNNzZUNFd3eW1KTnNZb2RG?=
- =?utf-8?Q?tg8RPyNkrCCLYpu5j0V4XBbv9LRdrp5A0jU2h4N?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bU5rcy9DcTMxU2w2RjVoQ05kbEtPNDIxVlpRWTVCVXczeUVUSDJEd3oxR3hJ?=
- =?utf-8?B?dm9USm5mRUFISGNTYU5PcVJoK2Z3SU5ROEJFQ0tRaW53UWp6TEJLckpKcVBN?=
- =?utf-8?B?ZHRnQWh4RERMWWhkNCtycWdSUnRrc0NPQUhzcW52TjVNOUR3Y1AvUWg5cHlS?=
- =?utf-8?B?M281UklzZDhnejVmM0x2RWZBSzBBdW5WQldXUWI3dmpMaDR3NlJCQ1Q3cWlm?=
- =?utf-8?B?SWJ0RGdIdWd1WURPOXRCRktqc1JVVXYxR1FMVUMrL3JEQzJtVDR3K1l3K3hE?=
- =?utf-8?B?ZjdZamx1Qkd0Y21UOENQaUhkLzl4SlhsN2xRTzFBaXM0YnREbVBEZmxOaWxI?=
- =?utf-8?B?RjlwTlRuSjhNYkEwdXdJUWtadUJjNTVDZGJ1SnlUaGRSOXlZdWFTajBHODhu?=
- =?utf-8?B?dWxteTQ5UGo3Tmk1VlJaYlRXSEI5SmFsSDV0TWQ0SHhYNUpSNWV1V09Oekt6?=
- =?utf-8?B?cUN0ZWhRM3RSM3E2dko5OFpwbndqWTAxYm03Q0NsWFdLSVVrNGtjNWZHT3JP?=
- =?utf-8?B?Vjg2NmxMcXhDUEdyWTQzeUFjcVdKNVlqRndQQXM2MVJaQ2FlbVRLSlIyTXFM?=
- =?utf-8?B?SDdqVlQwWkZLRXc1RGFXVkgzbUMwNmJER2hZSEVtTVpZQW82NUxMQzNBeGl4?=
- =?utf-8?B?Mit5N2c1dnFWU0RhTjFxS04vWmVHTWRoMlBWQkw1bHJQT3R1MXZQT3pFUG5w?=
- =?utf-8?B?QXdQU1BTNTNpNFNacGRIT3hPbzZYN1dEVm5aYmZDNFBZV0FEa2R4Z0VWekcr?=
- =?utf-8?B?VUtsY1QvU0JyclV6WERVeHZMRzI2MGVwRHlvMWlFZ25ZTDljNzE0VHkyZkpy?=
- =?utf-8?B?T0dlR2IvSnZlNUZhRmRXYkUvT0RqSk9ENEw5SUdjSXM1aEU2TUs3UzJ1WW5v?=
- =?utf-8?B?YVZFZ0RPSkZmeXlLYUZham1IWWhQQjFmZnJ0eWZ4Z1JLL2dhWHE5dXhCTnFr?=
- =?utf-8?B?aDNITWh4ZjAxckFxZGc0NUttVHRwbVJKUVZNbXpKaDJBT2d3b0EvTzF2OU9m?=
- =?utf-8?B?UU9zaG1qdjY4eDJSL08wZmpDczVZZU84SVNySWd5SVRCL3U4dWduK3crQThr?=
- =?utf-8?B?ZzduQ2hKcEpsTEVhN1VsZDI0Y1hobjA1cTJGWUs4a1NBYkRweVVOWDJMMSts?=
- =?utf-8?B?UnUxRmYwVFRobjhYd25JTk9lbUpTenF0R2NWUnZGYjBicWkzRnJ0dXFpaEZh?=
- =?utf-8?B?V1BYL0JIemhTd2g1ZFhZWTdaZzR0ZkR5TWlCUGR6elM4M0VjUU5UWmQzVENx?=
- =?utf-8?B?WmlLVmI4OE92WmE3QTBjSGlpc2RpVEFrWTZPZEFubEwzZ3o1YzNVUHlCS1lD?=
- =?utf-8?B?YmlyeWt1Y1ZhdmhqcnFkZzltbFZ0WDlXQnoxOFNJUnpBaU0rMWlPOGV3N05Q?=
- =?utf-8?B?anNORllETGs4REtkZHZIUGpIWXgrZlUyL20yUnlERWcwWWJrMDFVTjgzSmZC?=
- =?utf-8?B?ZWxFN2hrSklWaTcyVzJDcmsxMElJNjdzbU1VbzVFRlA4cVR6TFJ5N0VnYXBl?=
- =?utf-8?B?M1hzLzl3TGdFUW1wdTIwaGFjSU5UaG1XU0RhM1Z3OUxDQ1B1ZjZ2TFJNaXpM?=
- =?utf-8?B?dFNaRnhycDRQSllWMXNVbDJwRWQyZXFvdUlsdzJma3p5Yk1QR1lVanpldlJO?=
- =?utf-8?B?VWg1dC9OUkZ4MUJmSDgwSzMwZ1VMalZITFVBa2ZnT0pBd24xTU1kRmQ5ZEw0?=
- =?utf-8?B?UUxwY0RWN1pkYm1UQVl4UFJwN1A3TzNSUkxQWEF0QnhwbDlqVFNHMUpNSk5q?=
- =?utf-8?B?bkRtY2ZnQjY4Nm9ER1dtVFJqakVGUjc2bi93N2t1Uy9ReHFldzFURDdCcVA4?=
- =?utf-8?B?MmJRb0JFSno4WXhvNmNsbWM5dXlHaXBFdWIrNFE4SXIyclRJZ0wvRnlLVk9N?=
- =?utf-8?B?UHBtSngxR1ZQZFBqeDNUaUIxNFhYc2l4MFVyai81TzYzWDd5bHFQWERDdDBx?=
- =?utf-8?B?dHNzWlZtaVlqeDJZL3pQQ1dPV3JaK1dzanVudjI0cGd0U3R5WVpuV3FVb3pO?=
- =?utf-8?B?MU9RT1dtbGRMVjlvZ0FiekxNby92c1Y1RXZmbGJJNWtCNWVuV2R2K3VsNnRU?=
- =?utf-8?B?V3lhNjlkMGlpVkdyYWcxVG5QMjZrdHY5d2U3TTFQNFVBTHBQUStEYjAwSy95?=
- =?utf-8?Q?xCLI4rS+auq23RcjGhGoJZTJu?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39a12156-3699-44e0-386e-08dcefa77338
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 19:02:45.2473
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ccHJmpE65nVg7BadztB9by4uHiBuT0EuyqUSOM1GGDqzTYNqyySNLKz23u+i433M7Df4WP8J5NEC1flKrO6Bgg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7559
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/7] support for mm-local memory allocations and use
+ it
+From: David Hildenbrand <david@redhat.com>
+To: Fares Mehanna <faresx@amazon.de>
+Cc: akpm@linux-foundation.org, ardb@kernel.org, arnd@arndb.de,
+ bhelgaas@google.com, broonie@kernel.org, catalin.marinas@arm.com,
+ james.morse@arm.com, javierm@redhat.com, jean-philippe@linaro.org,
+ joey.gouly@arm.com, kristina.martsenko@arm.com, kvmarm@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, mark.rutland@arm.com, maz@kernel.org, mediou@amazon.de,
+ nh-open-source@amazon.com, oliver.upton@linux.dev, ptosi@google.com,
+ rdunlap@infradead.org, rkagan@amazon.de, rppt@kernel.org,
+ shikemeng@huaweicloud.com, suzuki.poulose@arm.com, tabba@google.com,
+ will@kernel.org, yuzenghui@huawei.com
+References: <63d112d8-62d0-4e95-81f0-3031f990abc4@redhat.com>
+ <20241011142547.24447-1-faresx@amazon.de>
+ <5f9ba14a-909b-4b49-b1de-3dc98b31aee0@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <5f9ba14a-909b-4b49-b1de-3dc98b31aee0@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10/16/2024 5:30 AM, Qiuxu Zhuo wrote:
+On 18.10.24 20:52, David Hildenbrand wrote:
+> On 11.10.24 16:25, Fares Mehanna wrote:
+>>>>
+>>>>
+>>>>> On 11. Oct 2024, at 14:36, Mediouni, Mohamed <mediou@amazon.de> wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>>> On 11. Oct 2024, at 14:04, David Hildenbrand <david@redhat.com> wrote:
+>>>>>>
+>>>>>> On 10.10.24 17:52, Fares Mehanna wrote:
+>>>>>>>>> In a series posted a few years ago [1], a proposal was put forward to allow the
+>>>>>>>>> kernel to allocate memory local to a mm and thus push it out of reach for
+>>>>>>>>> current and future speculation-based cross-process attacks.  We still believe
+>>>>>>>>> this is a nice thing to have.
+>>>>>>>>>
+>>>>>>>>> However, in the time passed since that post Linux mm has grown quite a few new
+>>>>>>>>> goodies, so we'd like to explore possibilities to implement this functionality
+>>>>>>>>> with less effort and churn leveraging the now available facilities.
+>>>>>>>>>
+>>>>>>>>> An RFC was posted few months back [2] to show the proof of concept and a simple
+>>>>>>>>> test driver.
+>>>>>>>>>
+>>>>>>>>> In this RFC, we're using the same approach of implementing mm-local allocations
+>>>>>>>>> piggy-backing on memfd_secret(), using regular user addresses but pinning the
+>>>>>>>>> pages and flipping the user/supervisor flag on the respective PTEs to make them
+>>>>>>>>> directly accessible from kernel.
+>>>>>>>>> In addition to that we are submitting 5 patches to use the secret memory to hide
+>>>>>>>>> the vCPU gp-regs and fp-regs on arm64 VHE systems.
+>>>>>>>>
+>>>>>>>> I'm a bit lost on what exactly we want to achieve. The point where we
+>>>>>>>> start flipping user/supervisor flags confuses me :)
+>>>>>>>>
+>>>>>>>> With secretmem, you'd get memory allocated that
+>>>>>>>> (a) Is accessible by user space -- mapped into user space.
+>>>>>>>> (b) Is inaccessible by kernel space -- not mapped into the direct map
+>>>>>>>> (c) GUP will fail, but copy_from / copy_to user will work.
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> Another way, without secretmem, would be to consider these "secrets"
+>>>>>>>> kernel allocations that can be mapped into user space using mmap() of a
+>>>>>>>> special fd. That is, they wouldn't have their origin in secretmem, but
+>>>>>>>> in KVM as a kernel allocation. It could be achieved by using VM_MIXEDMAP
+>>>>>>>> with vm_insert_pages(), manually removing them from the directmap.
+>>>>>>>>
+>>>>>>>> But, I am not sure who is supposed to access what. Let's explore the
+>>>>>>>> requirements. I assume we want:
+>>>>>>>>
+>>>>>>>> (a) Pages accessible by user space -- mapped into user space.
+>>>>>>>> (b) Pages inaccessible by kernel space -- not mapped into the direct map
+>>>>>>>> (c) GUP to fail (no direct map).
+>>>>>>>> (d) copy_from / copy_to user to fail?
+>>>>>>>>
+>>>>>>>> And on top of that, some way to access these pages on demand from kernel
+>>>>>>>> space? (temporary CPU-local mapping?)
+>>>>>>>>
+>>>>>>>> Or how would the kernel make use of these allocations?
+>>>>>>>>
+>>>>>>>> -- 
+>>>>>>>> Cheers,
+>>>>>>>>
+>>>>>>>> David / dhildenb
+>>>>>>> Hi David,
+>>>>>>
+>>>>>> Hi Fares!
+>>>>>>
+>>>>>>> Thanks for taking a look at the patches!
+>>>>>>> We're trying to allocate a kernel memory that is accessible to the kernel but
+>>>>>>> only when the context of the process is loaded.
+>>>>>>> So this is a kernel memory that is not needed to operate the kernel itself, it
+>>>>>>> is to store & process data on behalf of a process. The requirement for this
+>>>>>>> memory is that it would never be touched unless the process is scheduled on this
+>>>>>>> core. otherwise any other access will crash the kernel.
+>>>>>>> So this memory should only be directly readable and writable by the kernel, but
+>>>>>>> only when the process context is loaded. The memory shouldn't be readable or
+>>>>>>> writable by the owner process at all.
+>>>>>>> This is basically done by removing those pages from kernel linear address and
+>>>>>>> attaching them only in the process mm_struct. So during context switching the
+>>>>>>> kernel loses access to the secret memory scheduled out and gain access to the
+>>>>>>> new process secret memory.
+>>>>>>> This generally protects against speculation attacks, and if other process managed
+>>>>>>> to trick the kernel to leak data from memory. In this case the kernel will crash
+>>>>>>> if it tries to access other processes secret memory.
+>>>>>>> Since this memory is special in the sense that it is kernel memory but only make
+>>>>>>> sense in the term of the owner process, I tried in this patch series to explore
+>>>>>>> the possibility of reusing memfd_secret() to allocate this memory in user virtual
+>>>>>>> address space, manage it in a VMA, flipping the permissions while keeping the
+>>>>>>> control of the mapping exclusively with the kernel.
+>>>>>>> Right now it is:
+>>>>>>> (a) Pages not accessible by user space -- even though they are mapped into user
+>>>>>>>       space, the PTEs are marked for kernel usage.
+>>>>>>
+>>>>>> Ah, that is the detail I was missing, now I see what you are trying to achieve, thanks!
+>>>>>>
+>>>>>> It is a bit architecture specific, because ... imagine architectures that have separate kernel+user space page table hierarchies, and not a simple PTE flag
+>>> to change access permissions between kernel/user space.
+>>>>>>
+>>>>>> IIRC s390 is one such architecture that uses separate page tables for the user-space + kernel-space portions.
+>>>>>>
+>>>>>>> (b) Pages accessible by kernel space -- even though they are not mapped into the
+>>>>>>>       direct map, the PTEs in uvaddr are marked for kernel usage.
+>>>>>>> (c) copy_from / copy_to user won't fail -- because it is in the user range, but
+>>>>>>>       this can be fixed by allocating specific range in user vaddr to this feature
+>>>>>>>       and check against this range there.
+>>>>>>> (d) The secret memory vaddr is guessable by the owner process -- that can also
+>>>>>>>       be fixed by allocating bigger chunk of user vaddr for this feature and
+>>>>>>>       randomly placing the secret memory there.
+>>>>>>> (e) Mapping is off-limits to the owner process by marking the VMA as locked,
+>>>>>>>       sealed and special.
+>>>>>>
+>>>>>> Okay, so in this RFC you are jumping through quite some hoops to have a kernel allocation unmapped from the direct map but mapped into a per-process page
+>>> table only accessible by kernel space. :)
+>>>>>>
+>>>>>> So you really don't want this mapped into user space at all (consequently, no GUP, no access, no copy_from_user ...). In this RFC it's mapped but turned
+>>> inaccessible by flipping the "kernel vs. user" switch.
+>>>>>>
+>>>>>>> Other alternative (that was implemented in the first submission) is to track those
+>>>>>>> allocations in a non-shared kernel PGD per process, then handle creating, forking
+>>>>>>> and context-switching this PGD.
+>>>>>>
+>>>>>> That sounds like a better approach. So we would remove the pages from the shared kernel direct map and map them into a separate kernel-portion in the per-MM
+>>> page tables?
+>>>>>>
+>>>>>> Can you envision that would also work with architectures like s390x? I assume we would not only need the per-MM user space page table hierarchy, but also a
+>>> per-MM kernel space page table hierarchy, into which we also map the common/shared-among-all-processes kernel space page tables (e.g., directmap).
+>>>>> Yes, that’s also applicable to arm64. There’s currently no separate per-mm user space page hierarchy there.
+>>>> typo, read kernel
+>>>
+>>>
+>>> Okay, thanks. So going into that direction makes more sense.
+>>>
+>>> I do wonder if we really have to deal with fork() ... if the primary
+>>> users don't really have meaning in the forked child (e.g., just like
+>>> fork() with KVM IIRC) we might just get away by "losing" these
+>>> allocations in the child process.
+>>>
+>>> Happy to learn why fork() must be supported.
+>>
+>> It really depends on the use cases of the kernel secret allocation, but in my
+>> mind a troubling scenario:
+>> 1. Process A had a resource X.
+>> 2. Kernel decided to keep some data related to resource X in process A secret
+>>      memory.
+>> 3. Process A decided to fork, now process B share the resource X.
+>> 4. Process B started using resource X. <-- This will crash the kernel as the
+>>      used kernel page table on process B has no mapping for the secret memory used
+>>      in resource X.
+>>
+>> I haven't tried to trigger this crash myself though.
+>>
+> 
+> Right, and if we can rule out any users that are supposed to work after
+> fork(), we can just disregard that in the first version.
+> 
+> I never played with this, but let's assume you make use of these
+> mm-local allocations in KVM context.
+> 
+> What would happens if you fork() with a KVM fd and try accessing that fd
+> from the other process using ioctls? I recall that KVM will not be
+> "duplicated".
+> 
+> What would happen if you send that fd over to a completely different
+> process and try accessing that fd from the other process using ioctls?
 
-> @@ -1748,7 +1748,7 @@ static void mce_timer_delete_all(void)
->   * Can be called from interrupt context, but not from machine check/NMI
->   * context.
->   */
-> -int mce_notify_irq(void)
-> +bool mce_notify_irq(void)
->  {
->  	/* Not more than two messages every minute */
->  	static DEFINE_RATELIMIT_STATE(ratelimit, 60*HZ, 2);
-> @@ -1759,9 +1759,9 @@ int mce_notify_irq(void)
->  		if (__ratelimit(&ratelimit))
->  			pr_info(HW_ERR "Machine check events logged\n");
->  
-> -		return 1;
-> +		return true;
->  	}
-> -	return 0;
-> +	return false;
->  }
->  EXPORT_SYMBOL_GPL(mce_notify_irq);
->  
+Stumbling over Documentation/virtual/kvm/api.txt:
 
-I am slightly confused by the function name mce_notify_irq() and the
-boolean meaning. Would it better to rename this function to
-mce_notify_user()? As the comment suggests on top, it purpose doesn't
-seem to be irq related but to mainly notify the user.
+"In general file descriptors can be migrated among processes by means
+of fork() and the SCM_RIGHTS facility of unix domain socket.  These
+kinds of tricks are explicitly not supported by kvm.  While they will
+not cause harm to the host, their actual behavior is not guaranteed by
+the API.  See "General description" for details on the ioctl usage
+model that is supported by KVM.
 
-Also, the boolean would probably make more sense then:
-	True -> Notified the user
-	False -> Did not notify the user
+It is important to note that althought VM ioctls may only be issued from
+the process that created the VM, a VM's lifecycle is associated with its
+file descriptor, not its creator (process).  In other words, the VM and
+its resources, *including the associated address space*, are not freed
+until the last reference to the VM's file descriptor has been released.
+For example, if fork() is issued after ioctl(KVM_CREATE_VM), the VM will
+not be freed until both the parent (original) process and its child have
+put their references to the VM's file descriptor.
+
+Because a VM's resources are not freed until the last reference to its
+file descriptor is released, creating additional references to a VM via
+via fork(), dup(), etc... without careful consideration is strongly
+discouraged and may have unwanted side effects, e.g. memory allocated
+by and on behalf of the VM's process may not be freed/unaccounted when
+the VM is shut down.
+"
+
+The "may only be issued" doesn't make it clear if that is actively enforced.
+
+But staring at kvm_vcpu_ioctl():
+
+	if (vcpu->kvm->mm != current->mm || vcpu->kvm->vm_dead)
+		return -EIO;
+
+So with KVM it would likely work to *not* care about mm-local memory 
+allocations during fork().
+
+But of course, what I am getting at is: if we would have some fd that 
+uses an mm-local allocation, and it could be accessed (ioctl) from 
+another active MM, we would likely be in trouble ... and not only fork() 
+is the problem.
+
+We should really not try handling fork() and instead restrict the use 
+cases where this can be used.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
