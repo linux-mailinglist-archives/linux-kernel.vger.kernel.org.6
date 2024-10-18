@@ -1,93 +1,134 @@
-Return-Path: <linux-kernel+bounces-372077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F0B9A4432
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:56:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2959A4438
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86BB11C20E76
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E6C2837E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A4F2038D2;
-	Fri, 18 Oct 2024 16:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434262038CA;
+	Fri, 18 Oct 2024 16:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ODGXfY48"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="maZaoGJ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982E9200C87;
-	Fri, 18 Oct 2024 16:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8371320E312;
+	Fri, 18 Oct 2024 16:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729270575; cv=none; b=lE/mz8vWX+xGefEyx+GH61hCR/7WaBTKBFx36MBEy5xxfOZoH8QHsBxjHkg7TMjDnPByg4IWBJIlQ+4g6kjYqjr/gg7qdOMfEaXc0f61W9LJfQJznpFtNBYv6Qu3RTnok5f3a20/rWKHB+fcSEgFqRJgg76sK7yokpxSEDuBEiI=
+	t=1729270730; cv=none; b=ove5+4NMplHJ4ojojSZKsrO3l/fLG9Iixz1ZTUY/5LxH0wzs5Zxa0dRcswvjhoqgDJJA7sxi8S+mSROoL9HVJ1+ntKeinVi3aLF0mkqaMQQO1vgNrNpN88OlG+rNRHWMGR3nK4AhI07tnFUpB5ublLefvRq7Be7Ux9AhSr70+Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729270575; c=relaxed/simple;
-	bh=2nkCyEzm6YDm0J1JHlfuBkEtCsAIcHcfPw3Ho6IwEYc=;
+	s=arc-20240116; t=1729270730; c=relaxed/simple;
+	bh=KmFDIPqq/FGkhdEs2nrrL6xlOMgGPriCuUSmr1XNq+U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hsXKW0MlW/07uvFDjhh6BCBYz5leeyN+VFlSoq4SxaxwB/UivC0pwzI6vgo2HrU3eJFYAbkeu0sZRhIhklD+9sIu34HoPvi5oqjL5emMIGGzfQSc8eOca0uY96/jFw5GPOLlX+k8O9VI+GWN3Oc2WB9t70yRpJGIL68Po1Sc8FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ODGXfY48; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=YvTm0/Ddj2Aj9F+19cWeS71uKbiUkGYK6MuTaacqz6g=; b=OD
-	GXfY48tKICvEHrtQ/5BICPYlWREVkMvkhIbI+gV5wadqZngYMRNoqeAjKAdgE06oS91S8+HodIHLp
-	WFbmC/se7C3sY06Rl099bVJVFNiIoO+IKmsFpKbRLG4c97DE/3Nxi/8z49fB5C5TjcdMrG7d4R2SP
-	7fc3GSqCGg51Wm8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t1qGX-00AYEk-Mr; Fri, 18 Oct 2024 18:55:53 +0200
-Date: Fri, 18 Oct 2024 18:55:53 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
-	arnd@arndb.de, jstultz@google.com, sboyd@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/8] rust: time: Introduce Delta type
-Message-ID: <940d2002-650e-4e56-bc12-1aac2031e827@lunn.ch>
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
- <20241016035214.2229-3-fujita.tomonori@gmail.com>
- <6bc68839-a115-467f-b83e-21be708f78d7@lunn.ch>
- <CANiq72=_9cxkife3=b7acM7LbmwTLcXMX9LZpDP2JMvy=z3qkA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JKds+dOYjH1Rv3rsW6eNtfV3wh1kNaBnYrq912lPKlMXUwvbzW2yCl+BXQkotbIfsX+384XX8FHOtpgby+occ9jDIzBc0mLvEhlR/Bu324RSRkLZ3GXvv7jj3YhdxcDQfKTLcoPMnRddHqyw+mdLfonQxgdMwpSI2XYRIoR9Ba0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=maZaoGJ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF723C4CEC3;
+	Fri, 18 Oct 2024 16:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729270730;
+	bh=KmFDIPqq/FGkhdEs2nrrL6xlOMgGPriCuUSmr1XNq+U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=maZaoGJ+ADlxQ7yODd0ZuD/qMi8agvLf+ypYlCT7bRwYaSgFrAA/4kG6CEqwH0sJP
+	 4WuS2q8zk+FrM0Xd/SmELc32Fi8Ea96D7gMYtTs/KYYoulz4ff+MZwyEXCeZNxV36M
+	 znxutkYSErKONN0AVj/Yb3au6G9e+RaZpsupwBJtI1wu/nMrxfz+fC8iaMYFXHYYaL
+	 7xqW6l6fK7Cpxi9eQxI7TeYTTbrkygR3QO3hu6fZuPf+CMRCUUJbZjawMkJ+hIEHVC
+	 X+Xdqr7xs/6nnCOPdMO7F87zwfXNcaAwxJKkrr0q06SLpaI+ernKjltXb2CBr3Yjel
+	 T9gMk+Bt0OkMA==
+Date: Fri, 18 Oct 2024 17:58:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: iansdannapel@gmail.com, mdf@kernel.org, hao.wu@intel.com,
+	yilun.xu@intel.com, trix@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, neil.armstrong@linaro.org,
+	heiko.stuebner@cherry.de, rafal@milecki.pl,
+	linus.walleij@linaro.org, linux-fpga@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] fpga: Add Efinix Trion & Titanium serial SPI
+ programming driver
+Message-ID: <20241018-chump-juvenile-dc368d3d2f2c@spud>
+References: <20240927141445.157234-1-iansdannapel@gmail.com>
+ <ZxG70kzjsvT3UBlQ@yilunxu-OptiPlex-7050>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tJrW1TGs4m0tiOHr"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=_9cxkife3=b7acM7LbmwTLcXMX9LZpDP2JMvy=z3qkA@mail.gmail.com>
+In-Reply-To: <ZxG70kzjsvT3UBlQ@yilunxu-OptiPlex-7050>
 
-On Fri, Oct 18, 2024 at 04:31:34PM +0200, Miguel Ojeda wrote:
-> On Fri, Oct 18, 2024 at 3:50 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> >
-> > Wasn't there a comment that the code should always round up? Delaying
-> > for 0 uS is probably not what the user wants.
-> 
-> This is not delaying, though, so I don't see why a method with this
-> name should return a rounded up value.
-> 
-> Moreover, `ktime_to_us` doesn't round up. The standard library one
-> doesn't, either.
 
-Did you see my other comment, about not actually using these helpers?
-I _guess_ it was not used because it does not in fact round up. So at
-least for this patchset, the helpers are useless. Should we be adding
-useless helpers? Or should we be adding useful helpers? Maybe these
-helpers need a different name, and do actually round up?
+--tJrW1TGs4m0tiOHr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	Andrew
+On Fri, Oct 18, 2024 at 09:37:22AM +0800, Xu Yilun wrote:
+> On Fri, Sep 27, 2024 at 04:14:42PM +0200, iansdannapel@gmail.com wrote:
+> > From: Ian Dannapel <iansdannapel@gmail.com>
+> >=20
+> > Add a new driver for loading binary firmware to volatile
+> > configuration RAM using "SPI passive programming" on Efinix FPGAs.
+> >=20
+> > Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
+> > ---
+> >  drivers/fpga/Kconfig                    |  10 ++
+> >  drivers/fpga/Makefile                   |   1 +
+> >  drivers/fpga/efinix-trion-spi-passive.c | 211 ++++++++++++++++++++++++
+> >  3 files changed, 222 insertions(+)
+> >  create mode 100644 drivers/fpga/efinix-trion-spi-passive.c
+> >=20
+> > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > index 37b35f58f0df..eb1e44c4e3e0 100644
+> > --- a/drivers/fpga/Kconfig
+> > +++ b/drivers/fpga/Kconfig
+> > @@ -83,6 +83,16 @@ config FPGA_MGR_XILINX_SPI
+> >  	  FPGA manager driver support for Xilinx FPGA configuration
+> >  	  over slave serial interface.
+> > =20
+> > +config FPGA_MGR_EFINIX_SPI
+> > +	tristate "Efinix FPGA configuration over SPI passive"
+> > +	depends on SPI
+> > +	help
+> > +	  This option enables support for the FPGA manager driver to
+> > +	  configure Efinix Trion and Titanium Series FPGAs over SPI
+> > +	  using passive serial mode.
+> > +	  Warning: Do not activate this if there are other SPI devices
+> > +	  on the same bus as it might interfere with the transmission.
+>=20
+> Sorry, this won't work. As you can see, the conflict usage of CS causes
+> several concerns. Just a text here is far from enough.
+>=20
+> You need to actively work with SPI core/controller drivers to find a
+> solution that coordinate the usage of this pin.
 
+Why does it even impact other SPI devices on the bus? It's not /their/
+CS line that is being modified here, it is the line for the FPGA's
+programming interface, right?
+What am I missing here that makes it any different to any other SPI
+device that may need it's CS toggled?
+
+Cheers,
+Conor.
+
+--tJrW1TGs4m0tiOHr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxKTxAAKCRB4tDGHoIJi
+0unKAP4h10isIjeybBw7doFylQ84VeFR2ViMNgdJM2A4tWYn7QEA/zAY7NQ4XxmE
+/uliSNdw8wCGnHuO7wIKjrkl6mnoJQs=
+=ipTB
+-----END PGP SIGNATURE-----
+
+--tJrW1TGs4m0tiOHr--
 
