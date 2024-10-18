@@ -1,352 +1,235 @@
-Return-Path: <linux-kernel+bounces-371480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE839A3BA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:34:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0089A3BA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7039B24D0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:34:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 868592810B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4503A201112;
-	Fri, 18 Oct 2024 10:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67724201112;
+	Fri, 18 Oct 2024 10:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kIcLEAK4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="idakSHy6"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B04200CA4;
-	Fri, 18 Oct 2024 10:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B60C20101C
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729247643; cv=none; b=h6/aepQMGoEGaIWi3i/WFVnYA/n+hob+z4OubCconeTUhsbq6Ig3qPYntqlqKcY5WieRTXOduO/DoB38R5T2vXnW+lVFv7WzW4V+szKhqQ05U39jDMtDpSpIBqTgi9cwW0GFT9ZRmilm6QvjXG3PM4lkhQQgSmx+Xx0dkzXLWBw=
+	t=1729247654; cv=none; b=ngDwmBOEZU8u/mX5t/YgP7ynApbkIP46rQY0YnoZWKHWMJirTL4u8WylZGqMevrq8+Y9DEjHAsepFrCmNqCWD8R6uxD9WWcm22GSpR6ku6rPfzhJ4A95wc3EjVl59etfX3EL4176dhHOgTewj+pcIb3e7Ps0gNXLLmKbAra3TTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729247643; c=relaxed/simple;
-	bh=zmSbKVWAcSH9AYjf4uvMakA4B1sD3MFz/O+twOE/xEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggH43iQZxrmzQTjgyMlGbI8lZdu0nEXaGSnOwS2OWYUSqP8Kyc6YEp3k++cH6ugQG2MrKgX3JFhc559VJNzwEBikg/PGucRsbpyeAw6YLead/uni071torGd6ejIgfbsv2JbyVmIurDXTmY6z+rdyKoYd6vGnnfZkTzvpg6UNI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kIcLEAK4; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729247641; x=1760783641;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=zmSbKVWAcSH9AYjf4uvMakA4B1sD3MFz/O+twOE/xEQ=;
-  b=kIcLEAK4paGM+Pf+31P/PvzMb642WNj6Js+dZhKYWpXYaJrMlJLdC+Hr
-   9rQh9Bg2yM3K+WPciyW9KIkiSp06I0+ZWPYlLzwC8mVXhWY1QDq1h9lGU
-   19zZAhML1z4XkA4ONkli9+Y56ZjUzTxFSvqn5of4WN2EG3xa10KdMOZ3t
-   fxNDWBtIEYPrXK8zXg8Y50WYhCKvyWJanIShOksDFN0m8/rrIDcaU3RGH
-   QJx9mf5Yh/JEzZVw5+KW35K6/ipMOkNTaMjm9b0/eteddWzapE7IGk44X
-   /6HCqz2JMH3bO6qDXJapaKe6pTETHkE6KDBEeyGv9OpXddeewJxxbBC7b
-   Q==;
-X-CSE-ConnectionGUID: N9aGddJeTxa9SLAYtFvokw==
-X-CSE-MsgGUID: DuoIF646SVG9x6nJ4gKgqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28651929"
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="28651929"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 03:34:01 -0700
-X-CSE-ConnectionGUID: MP8sFEEBRVqtJwO4MkX8Eg==
-X-CSE-MsgGUID: QZ2uT8ezSYKIXTJpMq7fLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="83468790"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 03:33:59 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id D5ACA120D81;
-	Fri, 18 Oct 2024 13:33:56 +0300 (EEST)
-Date: Fri, 18 Oct 2024 10:33:56 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: ov5645: add HAS_EVENTS supporty
-Message-ID: <ZxI5lI1udMkN7K-_@kekkonen.localdomain>
-References: <20241014173840.412695-1-tomm.merciai@gmail.com>
- <20241014175452.GB13238@pendragon.ideasonboard.com>
- <Zw4IrU8bOOtq26Gx@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <Zw6aZiBvRM5hvqVn@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <20241016200836.GF30496@pendragon.ideasonboard.com>
- <ZxIoR6T6V0WgDdq0@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <CA+V-a8vw=hb+RZ_8haw30QHHRO3fzGoOZyERUba-MV3bYLTxWA@mail.gmail.com>
- <ZxI153rQ/IhCQhh1@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+	s=arc-20240116; t=1729247654; c=relaxed/simple;
+	bh=mA2KOXf3Z7bwRh07kEeE6r06chstYOPzx3Jp7aOFLBc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZuOzt3TpR6sNBfPvhe+Rrz1K0Hz5c6QtQxnUf9J3qrcJaO1QFaEnrqGWzTaX1F7Q2t3VGiFZ95TWd1TH3jZcPC93l89IgNg7yfw3cr64Vkz7aYRkQnKlmKUy5mfaPYAHVanYm7j4QpX+VKv2QziopVHywGhTT7dHrziTTBCNrCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=idakSHy6; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so1300012f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:34:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729247650; x=1729852450; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/9HaPGj36d/cYoGWTqva/i0G1iTFOrr3BULtRnZFT68=;
+        b=idakSHy6Lo38qIE26Mp1f6IJGJHCYzE52BU7GnLJupPzcMq0evXglAtQ4Bs34GpGOu
+         tuzHo7D8Fy83gaWfGZ79T0RWpyV8p4ZYDpbYx7BnFUkS1yjl9JEAIPah96rlxXjB8eUF
+         3FK2Jgkq8RLofO4bq9ED0wLLCs/Wwy16bMULBstNiU5Bnkdl129buOeKattNYvN5VXCh
+         cFJhcFuCD58TGzWdSIUEZ1077RSEgBQwNh5pG76bAiDy+U6KDRd2Rpw+cExVYH72MyxY
+         e+BC9CEpMptaXKFKlFoplrxXY6pXrzTGcBftLTrIbDLMa0N4J7klVqOqQmjblV6Omjev
+         N/+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729247650; x=1729852450;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/9HaPGj36d/cYoGWTqva/i0G1iTFOrr3BULtRnZFT68=;
+        b=axlf9civ1otSXuz43pQC5j0FHrUhHouGUhJvTixagbEUExiEt5vzlpYtQxvt9FGF7k
+         m9OblrL8Flien/zaLqkFV6D+3XidUO66L7DcMfHowS6R4+IpHSyvn5SAopQEmoRz9Nya
+         BpLuEA0LQ6o7oiQTLtrWt9P5ZGfthgUhSlaBcwrt2L/slqZ4C7fEgsrHLpZDWL7oNfSH
+         CE5KYyRDQycac5KnTjqIStOElOOVb7mHDKLqebmeAKQNuNJUlo+MkrvhMGgLZqMB2YpS
+         wq9PyMZOR+nk6xhAISS8XzK2wdtY/LUxei8Jm+Mu0WwyO5xBnfX/GOxwh6+6cVuCNf1h
+         gVGw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4voJZ/hgcvHq6txVtNvH0QDigLY8EtZ0YHM/aoU2QaVCG5ONbgeeKsWZajlaf17wZHsSdckVPplhWzLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuxW7LYr53JC/+nWC+IT7sRdud1WCn9H7h6vdl5yqJBdvfBHQ/
+	44iYq4sWBhckO83h/cMaOeiRzOD9KQhrCSlY+1tZjnOZTmcUlisriT0a5FxG1rA=
+X-Google-Smtp-Source: AGHT+IG6ZDIajn6ShPY3FAqnQ4bAfURvGcVHOxUhQQT02CMSmKBZf/ad6QQ/DVZsaMQDhk80rkx34g==
+X-Received: by 2002:a5d:4e05:0:b0:374:af19:7992 with SMTP id ffacd0b85a97d-37ea2140176mr1126087f8f.7.1729247650225;
+        Fri, 18 Oct 2024 03:34:10 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:b623:41fc:e293:c9b1? ([2a01:e0a:982:cbb0:b623:41fc:e293:c9b1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf062dd8sm1579482f8f.35.2024.10.18.03.34.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 03:34:09 -0700 (PDT)
+Message-ID: <20fc022c-874f-489f-8ac8-843db2726393@linaro.org>
+Date: Fri, 18 Oct 2024 12:34:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZxI153rQ/IhCQhh1@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 2/3] dt-bindings: iio: magnetometer: document the Allegro
+ MicroSystems ALS31300 3-D Linear Hall Effect Sensor
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20241007-topic-input-upstream-als31300-v1-0-2c240ea5cb77@linaro.org>
+ <20241007-topic-input-upstream-als31300-v1-2-2c240ea5cb77@linaro.org>
+ <20241012152051.644e0e61@jic23-huawei>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241012152051.644e0e61@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi folks,
+Hi Jonathan,
 
-On Fri, Oct 18, 2024 at 12:18:15PM +0200, Tommaso Merciai wrote:
-> Hi Prabhakar,
-> Thanks for your comments.
+On 12/10/2024 16:20, Jonathan Cameron wrote:
+> On Mon, 07 Oct 2024 15:14:39 +0200
+> Neil Armstrong <neil.armstrong@linaro.org> wrote:
 > 
-> On Fri, Oct 18, 2024 at 10:57:49AM +0100, Lad, Prabhakar wrote:
-> > Hi Tommaso,
-> > 
-> > On Fri, Oct 18, 2024 at 10:28 AM Tommaso Merciai <tomm.merciai@gmail.com> wrote:
-> > >
-> > > Hi Laurent,
-> > >
-> > > On Wed, Oct 16, 2024 at 11:08:36PM +0300, Laurent Pinchart wrote:
-> > > > Hi Tommaso,
-> > > >
-> > > > On Tue, Oct 15, 2024 at 06:37:58PM +0200, Tommaso Merciai wrote:
-> > > > > On Tue, Oct 15, 2024 at 08:16:13AM +0200, Tommaso Merciai wrote:
-> > > > > > On Mon, Oct 14, 2024 at 08:54:52PM +0300, Laurent Pinchart wrote:
-> > > > > > > On Mon, Oct 14, 2024 at 07:38:40PM +0200, Tommaso Merciai wrote:
-> > > > > > > > Controls can be exposed to userspace via a v4l-subdevX device, and
-> > > > > > > > userspace has to be able to subscribe to control events so that it is
-> > > > > > > > notified when the control changes value.
-> > > > > > > > Add missing HAS_EVENTS support: flag and .(un)subscribe_event().
-> > > > > > > >
-> > > > > > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> > > > > > > > ---
-> > > > > > > >  drivers/media/i2c/ov5645.c | 10 +++++++++-
-> > > > > > > >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> > > > > > > > index 0c32bd2940ec..2c5145d5c616 100644
-> > > > > > > > --- a/drivers/media/i2c/ov5645.c
-> > > > > > > > +++ b/drivers/media/i2c/ov5645.c
-> > > > > > > > @@ -29,6 +29,7 @@
-> > > > > > > >  #include <linux/slab.h>
-> > > > > > > >  #include <linux/types.h>
-> > > > > > > >  #include <media/v4l2-ctrls.h>
-> > > > > > > > +#include <media/v4l2-event.h>
-> > > > > > > >  #include <media/v4l2-fwnode.h>
-> > > > > > > >  #include <media/v4l2-subdev.h>
-> > > > > > > >
-> > > > > > > > @@ -1034,6 +1035,11 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
-> > > > > > > >       .s_stream = ov5645_s_stream,
-> > > > > > > >  };
-> > > > > > > >
-> > > > > > > > +static const struct v4l2_subdev_core_ops ov5645_subdev_core_ops = {
-> > > > > > > > +     .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-> > > > > > > > +     .unsubscribe_event = v4l2_event_subdev_unsubscribe,
-> > > > > > > > +};
-> > > > > > > > +
-> > > > > > > >  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
-> > > > > > > >       .enum_mbus_code = ov5645_enum_mbus_code,
-> > > > > > > >       .enum_frame_size = ov5645_enum_frame_size,
-> > > > > > > > @@ -1043,6 +1049,7 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
-> > > > > > > >  };
-> > > > > > > >
-> > > > > > > >  static const struct v4l2_subdev_ops ov5645_subdev_ops = {
-> > > > > > > > +     .core = &ov5645_subdev_core_ops,
-> > > > > > > >       .video = &ov5645_video_ops,
-> > > > > > > >       .pad = &ov5645_subdev_pad_ops,
-> > > > > > > >  };
-> > > > > > > > @@ -1178,7 +1185,8 @@ static int ov5645_probe(struct i2c_client *client)
-> > > > > > > >
-> > > > > > > >       v4l2_i2c_subdev_init(&ov5645->sd, client, &ov5645_subdev_ops);
-> > > > > > > >       ov5645->sd.internal_ops = &ov5645_internal_ops;
-> > > > > > > > -     ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-> > > > > > > > +     ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
-> > > > > > > > +                         V4L2_SUBDEV_FL_HAS_EVENTS;
-> > > > > > >
-> > > > > > > Instead of patching every subdev driver, should we handle all of this in
-> > > > > > > the subdev core ? If a control handler is set for the subdev, we could
-> > > > > > > set the HAS_EVENTS flag automatically, and default to
-> > > > > > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> > > > > > > if there are no control operations.
-> > > > >
-> > > > > Premit:
-> > > > >  - Don't know if I'm wrong eh.
-> > > >
-> > > > Nobody knows :-)
-> > > >
-> > > > > This can be done into:
-> > > > >
-> > > > > __v4l2_subdev_init_finalize()
-> > > > >
-> > > > > Adding:
-> > > > >
-> > > > >     if (sd->ctrl_handler)
-> > > > >             sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-> > > > >
-> > > > > And check if there are no control operations using:
-> > > > >
-> > > > > bool has_subscribe_event;
-> > > > > bool has_unsubscribe_event;
-> > > > >
-> > > > >
-> > > > > has_subscribe_event = v4l2_subdev_has_op(sd, core, subscribe_event);
-> > > > > has_unsubscribe_event = v4l2_subdev_has_op(sd, core, unsubscribe_event);
-> > > > >
-> > > > > if (!has_subscribe_event)
-> > > > >     assign v4l2_ctrl_subdev_subscribe_event as default .subscribe ops(somehow)
-> > > >
-> > > > We can't change the ops structure as it's constant. Something like this
-> > > > could do:
-> > > >
-> > > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > index 3a4ba08810d2..41ae18a0d41e 100644
-> > > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > @@ -691,10 +691,24 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
-> > > >               return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
-> > > >
-> > > >       case VIDIOC_SUBSCRIBE_EVENT:
-> > > > -             return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
-> > > > +             if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> > > > +                     return v4l2_subdev_call(sd, core, subscribe_event, vfh,
-> > > > +                                             arg);
-> > > > +             else if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
-> > > > +                      vfh->ctrl_handler)
-> > > > +                     return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-> > > > +             else
-> > > > +                     return -ENOIOCTLCMD;
-> > > >
-> > > >       case VIDIOC_UNSUBSCRIBE_EVENT:
-> > > > -             return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
-> > > > +             if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
-> > > > +                     return -ENOIOCTLCMD;
-> > > > +
-> > > > +             if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> > > > +                     return v4l2_subdev_call(sd, core, unsubscribe_event,
-> > > > +                                             vfh, arg);
-> > > > +             else
-> > > +                       return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
-> > >
-> > > Thanks for your "more than an hint :)"
-> > > I'm able to test this on ov5645:
-> > >
-> > > Adding:
-> > >
-> > > +++ b/drivers/media/i2c/ov5645.c
-> > > @@ -1238,6 +1238,12 @@ static int ov5645_probe(struct i2c_client *client)
-> > >
-> > >         ov5645_init_state(&ov5645->sd, NULL);
-> > >
-> > > +       ret = v4l2_subdev_init_finalize(&ov5645->sd);
-> > > +       if (ret < 0) {
-> > > +               dev_err(dev, "subdev initialization error %d\n", ret);
-> > > +               goto err_free_state;
-> > > +       }
-> > > +
-> > >         ret = v4l2_async_register_subdev(&ov5645->sd);
-> > >         if (ret < 0) {
-> > >                 dev_err(dev, "could not register v4l2 device\n");
-> > > @@ -1251,6 +1257,8 @@ static int ov5645_probe(struct i2c_client *client)
-> > >
-> > >         return 0;
-> > >
-> > > +err_free_state:
-> > > +       v4l2_subdev_cleanup(&ov5645->sd);
-> > >  err_pm_runtime:
-> > >         pm_runtime_disable(dev);
-> > >         pm_runtime_put_noidle(dev);
-> > > @@ -1272,6 +1280,7 @@ static void ov5645_remove(struct i2c_client *client)
-> > >
-> > >         v4l2_async_unregister_subdev(&ov5645->sd);
-> > >         media_entity_cleanup(&ov5645->sd.entity);
-> > > +       v4l2_subdev_cleanup(&ov5645->sd);
-> > >         v4l2_ctrl_handler_free(&ov5645->ctrls);
-> > >         pm_runtime_disable(ov5645->dev);
-> > >         if (!pm_runtime_status_suspended(ov5645->dev))
-> > >
-> > > Then from the compliance tool I'm getting now good results:
-> > >
-> > > Total for device /dev/v4l-subdev1: 44, Succeeded: 44, Failed: 0, Warnings: 0
-> > >
-> > > I will send these 2 patches later if you agree (1 v4l2-subdev 1 ov5645.c)
-> > > Thanks again.
-> > >
-> > Thank you for the patch.
-> > 
-> > I am currently working on adding support for V4L2_SUBDEV_FL_HAS_EVENTS
-> > and subscribe hooks[1] (and some more features [0] for ov5645 driver),
-> > since the patch series adds internal pad which needs rework based on
-> > patch series from Sakari which I will do soon and send v3 patches for
-> > ov5645 driver.
-> > 
-> > [0] https://lore.kernel.org/all/20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-> > [1] https://lore.kernel.org/all/20240910170610.226189-2-prabhakar.mahadev-lad.rj@bp.renesas.com/
-> 
-> Thanks for sharing this.
-> Nice! then I can drop ov5645 patch and send only v4l2-subdev patch :)
-> 
-> Plan as suggested by Laurent is:
-> 
-> "Instead of patching every subdev driver, should we handle all of this in
-> the subdev core ? If a control handler is set for the subdev, we could
-> set the HAS_EVENTS flag automatically, and default to
-> v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> if there are no control operations"
-> 
-> Using:
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> index 3a4ba08810d2..fe584998f5e6 100644
-> --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> @@ -691,10 +691,24 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
->                 return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
-> 
->         case VIDIOC_SUBSCRIBE_EVENT:
-> -               return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
-> +               if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> +                       return v4l2_subdev_call(sd, core, subscribe_event,
-> +                                               vfh, arg);
-> +               else if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
+>> Document the bindings for the Allegro MicroSystems ALS31300 3-D Linear Hall
+>> Effect Sensor controller by an I2C interface, mainly used in 3D head-on
+>> motion sensing applications.
+>>
+>> The device can be configured with different sensitivities in factory,
+>> but the sensitivity value used to calculate value into the Gauss
+>> unit is not available from registers, thus the sensitivity is
+>> provided by the compatible/device-id string which is based
+>> on the part number as described in the datasheet page 2.
+>>
+>> The datasheet is available on the product website at [1].
+>>
+>> [1] https://www.allegromicro.com/en/products/sense/linear-and-angular-position/linear-position-sensor-ics/als31300
+> Use Datasheet tag. It's not that common but it makes it clear what this is and some scripting
+> can pick it up.
 
-Useless use of else. Same below.
+Ack sure I'll use that instead
 
-> +                       vfh->ctrl_handler)
-> +                       return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-> +               else
-> +                       return -ENOIOCTLCMD;
 > 
->         case VIDIOC_UNSUBSCRIBE_EVENT:
-> -               return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
-> +               if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
-> +                       return -ENOIOCTLCMD;
-> +
-> +               if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> +                       return v4l2_subdev_call(sd, core, unsubscribe_event,
-> +                                               vfh, arg);
-> +               else
-> +                       return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
+>>
+> Datasheet: https://www.allegromicro.com/en/products/sense/linear-and-angular-position/linear-position-sensor-ics/als31300
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Hi Neil,
 > 
->  #ifdef CONFIG_VIDEO_ADV_DEBUG
->         case VIDIOC_DBG_G_REGISTER:
-> @@ -1641,6 +1655,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
->                 }
->         }
+>> ---
+>>   .../iio/magnetometer/allegro,als31300.yaml         | 43 ++++++++++++++++++++++
+>>   1 file changed, 43 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/allegro,als31300.yaml b/Documentation/devicetree/bindings/iio/magnetometer/allegro,als31300.yaml
+>> new file mode 100644
+>> index 000000000000..0a08e769f3aa
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/magnetometer/allegro,als31300.yaml
 > 
-> +       if (sd->ctrl_handler)
-> +               sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-> +
->         state = __v4l2_subdev_state_alloc(sd, name, key);
->         if (IS_ERR(state))
->                 return PTR_ERR(state);
-> 
-> In theory v4l2_subdev_init_finalize() and subdev_do_ioctl() will handle
-> this.
-> 
-> Please Laurent correct me if I'm wrong.
-> Prabhakar what do you think?
-> Thanks in advance.
+> Rob's bot has better eyes than me.  Filename needs to be allegromicro,als31300.yaml
 
-Looks good to me, with the above comment.
+Yeah I did modifications without testing it, bad habit....
 
--- 
-Kind regards,
+> 
+>> @@ -0,0 +1,43 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iio/magnetometer/allegromicro,als31300.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Allegro MicroSystems ALS31300 3-D Linear Hall Effect sensor
+>> +
+>> +maintainers:
+>> +  - Neil Armstrong <neil.armstrong@linaro.org>
+>> +
+>> +properties:
+>> +  $nodename:
+>> +    pattern: '^magnetometer@[0-9a-f]+$'
+>> +
+>> +  compatible:
+>> +    enum:
+>> +      - allegromicro,als31300-500 # Factory configured at 500 Gauss input range
+>> +      - allegromicro,als31300-1000 # Factory configured at 1000 Gauss input range
+>> +      - allegromicro,als31300-2000 # Factory configured at 2000 Gauss input range
+> 
+> I was wondering if the range should be a separate property, but given these
+> are the part numbers the parts are sold under, I think compatibles are fine.
 
-Sakari Ailus
+Yeah, I had the same conclusion
+
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  vcc-supply:
+>> +    description: 5.5V supply
+> A quick glance at the pinout google fed me suggests an interrupt pin.
+> Even though the driver doesn't yet support it (I assume as I've not looked at that yet)
+> the binding should include it.
+
+Sure I'll add it even if how it's configured in the epprom, it's barely usable by default.
+
+> 
+>> +
+>> +required:
+>> +  - compatible
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    i2c {
+>> +      #address-cells = <1>;
+>> +      #size-cells = <0>;
+>> +      sensor@61 {
+> 
+> magnetometer@61 {
+
+Ack
+
+> 
+>> +        compatible = "allegromicro,als31300";
+>> +        reg = <0x61>;
+>> +        vcc-supply = <&hall_vcc>;
+>> +      };
+>> +    };
+>>
+> 
+
+Thanks for the review,
+Neil
 
