@@ -1,122 +1,126 @@
-Return-Path: <linux-kernel+bounces-370773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67D59A31DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:11:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E3059A320F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C2B28442C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:11:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B189F1F22C21
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828EF3BB48;
-	Fri, 18 Oct 2024 01:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hh+34WXC"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E8E5674E;
+	Fri, 18 Oct 2024 01:28:53 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869FA383B1
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966103B192
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729213856; cv=none; b=VjpK2Rzad75RUYuOC8P0M4X1XAGqtU/uD3fW8VPe8rBktuepGVyf7ho0D/1tHnsjMyOtM1A0snO2mxgQ0ArzmDBiz2v2WI/jvwt2hxwXek6YUgeRXrvbPg/hx/ejO3g3fCbMqvkwJVRtHjYbhnE8Srk6lu9vj82duXPWm8Y27JE=
+	t=1729214932; cv=none; b=sllRI2g1ekOwTtsBjvb53hbBjfIUdA4FsYHc4D0uKN3yf1UXMnZHbq2hQv/7+R6AtsFi+pQxBgmz243Pa6FfGflMkOnkLvQBf0JgasgSsvagONWVLGQ05uFNC9tz7+tzkVgdnkWjgRfvo0mBWKJr5+2qC4OZZ1B9cUTW5nuZPBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729213856; c=relaxed/simple;
-	bh=1VIrtSxgY8rKreHAQV2DoUBJMcEEE1zFuleBgdCTLbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YYJ7vpm+WsY38o9tFcR2Fo4h3nkfpRPfTKIiXsj0hCIDkP9kc2Y+E1ewMhjq7+UkAWkvp56qRYckdqst62a3+IiiC9iOzVaiJmVtl/mEr1L68edf9Zs9QFrwJTE88rEljQc9RFPjKIB1nwkvgS9XYu5ikSnbx3pihpApA740kaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hh+34WXC; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c803787abso12429675ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:10:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729213852; x=1729818652; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H4ueAE+R2BbaBKwX82wegCAV+sg2ok5k+jGwKThPv9c=;
-        b=hh+34WXCqGxhbb9VTS4SjkMe1WL8siVPUKYhkyqXTAKMkke/AXieyUE1T8vhb5Xbmu
-         e3CBBT3cPzdPdMjePG7pS1lXOH2Mvl0HQcl7v3B5JSRgIusfGZAZwqpQVqKnCXvpwGtv
-         xjEB6Nro9WrW63aqvKFws/S0hIoR3xbSac8gq+h9ZHqNwTQSyz8Hi70yTP5j8wPiJKaK
-         bBMxl4rdl9wlOezT92tsc8eYI2fKpWxilE16hBUw01FM31rwN2YTuDrr/G/Ex/KvaEFk
-         0jCteGYYWZ6jabu3JkwpSWJjpjZKXHKRqPukXV2ZEZWgEY0RNMDCOSItlysweZFU52JS
-         7mvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729213852; x=1729818652;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H4ueAE+R2BbaBKwX82wegCAV+sg2ok5k+jGwKThPv9c=;
-        b=ONAhwwg907HuSMV8yCtiCarxFj4/22zxf0EnREth/N/FdgPmFhSQAYF1mDfOqqQgW+
-         kPetmn23qkNCNDWDJ/3FidsxYHg3Q2g0qYeZ0u32h5+RkxAaUSgJXAVT+yWnIhEn4rxt
-         ZcHAJM4UcwyctCoTA28VdZmDGa3sgC6CMuA4iGDs9aZ4E0u8GavcrUDKncaFVAXu5eZx
-         HoA7yxpAOf9nKAYVy4a0+tktSphu9WWvUjp4R9/E3+Cxg2jP9p1Sc8kmI9Gt83zL0Lwh
-         pD/alQXGZVHkqVMTEGsoQ/NQqPoOey1jCRERKAKgcJ1csc3pVzaHr6I6TodopCHqytqc
-         wTfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKYcp1Iq58tjEtTi29NdF0s3tywtyKV7pmv6I8X44QGD4ZoACXBplCb1I30CzZGEjYxs2h9gityMYdme8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhEooDVyyjozNtWBrUUlfSNU2wWb37h+SM1yrAU0X4AEmkHN50
-	1mvG2TiSbNonHwLiWxiaDX+/O+TnBhesjqXmKjVSLwxbMw6f8TzWjitFf3JEewQ95y7zKpFhCa4
-	s
-X-Google-Smtp-Source: AGHT+IE5qzSuNWyYI3ZWF/RFxQ9ENwphZ4xm0wBJtOo5f6VDr8UUs77H1QMFtImQynZnCEcbjEZowg==
-X-Received: by 2002:a17:902:cf11:b0:20c:ceaf:e65f with SMTP id d9443c01a7336-20e5c2b5866mr9549255ad.25.1729213851871;
-        Thu, 17 Oct 2024 18:10:51 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8f15ecsm2408795ad.204.2024.10.17.18.10.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 18:10:50 -0700 (PDT)
-Message-ID: <3a4cdc4f-63e9-48b1-80b0-54c5d1eb3e7f@kernel.dk>
-Date: Thu, 17 Oct 2024 19:10:49 -0600
+	s=arc-20240116; t=1729214932; c=relaxed/simple;
+	bh=6egk/wFq6egniZ2yGI8GeemNFFrUmTTATLYt4oscR84=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=X4oOLofkuZfbC4x6PwnByYRylH+BBmGSTjWe9ef84IJ86Dg4N/UGDlCQMpqTM/7Xg0DLNNmkbHdN3jzEnSdjbSweyra/LOJvXuds4c6Lpdj/Kbe8pg8kmKTFIMqG567Njs4HaK1ah5she31cQdENN/pZ+M0ljof5HYDGiFQ3jlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from mail03.siengine.com (localhost [127.0.0.2] (may be forged))
+	by mail03.siengine.com with ESMTP id 49I1FhXp006071
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:15:43 +0800 (+08)
+	(envelope-from hailong.fan@siengine.com)
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 49I1FVqT006042
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 18 Oct 2024 09:15:31 +0800 (+08)
+	(envelope-from hailong.fan@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4XV6Ft0KLLz7ZMv9;
+	Fri, 18 Oct 2024 09:15:30 +0800 (CST)
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Fri, 18 Oct 2024 09:15:30 +0800
+Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
+ SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
+ 15.02.1544.011; Fri, 18 Oct 2024 09:15:30 +0800
+From: =?gb2312?B?RmFuIEhhaWxvbmcvt7a6o8H6?= <hailong.fan@siengine.com>
+To: Simon Horman <horms@kernel.org>, "2694439648@qq.com" <2694439648@qq.com>
+CC: "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        "joabreu@synopsys.com" <joabreu@synopsys.com>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com"
+	<linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?gb2312?B?u9i4tDogW1BBVENIXSBuZXQ6IHN0bW1hYzogZW5hYmxlIE1BQyBhZnRlciBN?=
+ =?gb2312?Q?TL_configuring?=
+Thread-Topic: [PATCH] net: stmmac: enable MAC after MTL configuring
+Thread-Index: AQHbHfwmUFDRUPAmP0Op3UD8MH3slLKKOd6AgAF8NlA=
+Date: Fri, 18 Oct 2024 01:15:30 +0000
+Message-ID: <bd7a1be5cec348dab22f7d0c2552967d@siengine.com>
+References: <tencent_6BF819F333D995B4D3932826194B9B671207@qq.com>
+ <20241017101857.GE1697@kernel.org>
+In-Reply-To: <20241017101857.GE1697@kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cdrom: Avoid barrier_nospec() in
- cdrom_ioctl_media_changed()
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Phillip Potter <phil@philpotter.co.uk>, linux-kernel@vger.kernel.org,
- Jordy Zomer <jordyzomer@google.com>
-References: <1d86f4d9d8fba68e5ca64cdeac2451b95a8bf872.1729202937.git.jpoimboe@kernel.org>
- <dd1712dd-1485-417a-81cc-482d7dd26a11@kernel.dk>
- <20241018005233.styuaj7eyn7b6nux@treble>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241018005233.styuaj7eyn7b6nux@treble>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 49I1FhXp006071
 
-On 10/17/24 6:52 PM, Josh Poimboeuf wrote:
-> On Thu, Oct 17, 2024 at 06:33:24PM -0600, Jens Axboe wrote:
->> On 10/17/24 4:09 PM, Josh Poimboeuf wrote:
->>> The barrier_nospec() after the array bounds check is overkill and
->>> painfully slow for arches which implement it.
->>>
->>> Furthermore, most arches don't implement it, so they remain exposed to
->>> Spectre v1 (which can affect pretty much any CPU with branch
->>> prediction).
->>>
->>> Instead, clamp the user pointer to a valid range so it's guaranteed to
->>> be a valid array index even when the bounds check mispredicts.
->>
->> It's a cdrom, and media change detection to be more specific. I really
->> don't think anyone would care about performance here, it's not even
->> a hot path for a cdrom driver. That said, I don't disagree with
->> the change, just don't think it'll make one iota of difference
->> in the real world.
-> 
-> Fair, though it's also about hardening as barrier_nospec() is only
-> implemented by x86 and powerpc (see 2nd paragraph).  Most/all arches are
-> affected by Spectre v1.
-
-Yep agree, if we don't have full arch coverage, then that's a better
-reason for getting it included rather than performance reasons.
-
--- 
-Jens Axboe
-
+SGkNCg0KRm9yIGV4YW1wbGUsIEVUSCBpcyBkaXJlY3RseSBjb25uZWN0ZWQgdG8gdGhlIHN3aXRj
+aCwgd2hpY2ggbmV2ZXIgcG93ZXIgZG93biBhbmQgc2VuZHMgYnJvYWRjYXN0IHBhY2tldHMgYXQg
+cmVndWxhciBpbnRlcnZhbHMuIA0KRHVyaW5nIHRoZSBwcm9jZXNzIG9mIG9wZW5pbmcgRVRILCBk
+YXRhIG1heSBmbG93IGludG8gdGhlIE1UTCBGSUZPLCBvbmNlIE1BQyBSWCBpcyBlbmFibGVkLg0K
+YW5kIHRoZW4sIE1UTCB3aWxsIGJlIHNldCwgc3VjaCBhcyBGSUZPIHNpemUuIA0KT25jZSBlbmFi
+bGUgRE1BLCBUaGVyZSBpcyBhIGNlcnRhaW4gcHJvYmFiaWxpdHkgdGhhdCBETUEgd2lsbCByZWFk
+IGluY29ycmVjdCBkYXRhIGZyb20gTVRMIEZJRk8sIGNhdXNpbmcgRE1BIHRvIGhhbmcgdXAuIA0K
+QnkgcmVhZCBETUFfRGVidWdfU3RhdHVzLCB5b3UgY2FuIGJlIG9ic2VydmVkIHRoYXQgdGhlIFJQ
+UyByZW1haW5zIGF0IGEgY2VydGFpbiB2YWx1ZSBmb3JldmVyLiANClRoZSBjb3JyZWN0IHByb2Nl
+c3Mgc2hvdWxkIGJlIHRvIGNvbmZpZ3VyZSBNQUMvTVRML0RNQSBiZWZvcmUgZW5hYmxpbmcgRE1B
+L01BQw0KDQpzdG1tYWNfc3RhcnRfcngvdHggYW5kIHN0bW1hY19zdG9wX3J4L3R4IHNob3VsZCBv
+bmx5IGhhbmRsZSB0aGUgRE1BIG1vZHVsZSB0byBhdm9pZCBjb25mdXNpb24NCg0KDQoNCi0tLS0t
+08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBTaW1vbiBIb3JtYW4gPGhvcm1zQGtlcm5lbC5vcmc+IA0K
+t6LLzcqxvOQ6IDIwMjTE6jEw1MIxN8jVIDE4OjE5DQrK1bz+yMs6IDI2OTQ0Mzk2NDhAcXEuY29t
+DQqzrcvNOiBhbGV4YW5kcmUudG9yZ3VlQGZvc3Muc3QuY29tOyBqb2FicmV1QHN5bm9wc3lzLmNv
+bTsgZGF2ZW1AZGF2ZW1sb2Z0Lm5ldDsgZWR1bWF6ZXRAZ29vZ2xlLmNvbTsga3ViYUBrZXJuZWwu
+b3JnOyBwYWJlbmlAcmVkaGF0LmNvbTsgbWNvcXVlbGluLnN0bTMyQGdtYWlsLmNvbTsgbmV0ZGV2
+QHZnZXIua2VybmVsLm9yZzsgbGludXgtc3RtMzJAc3QtbWQtbWFpbG1hbi5zdG9ybXJlcGx5LmNv
+bTsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdl
+ci5rZXJuZWwub3JnOyBGYW4gSGFpbG9uZy+3trqjwfogPGhhaWxvbmcuZmFuQHNpZW5naW5lLmNv
+bT4NCtb3zOI6IFJlOiBbUEFUQ0hdIG5ldDogc3RtbWFjOiBlbmFibGUgTUFDIGFmdGVyIE1UTCBj
+b25maWd1cmluZw0KDQpPbiBNb24sIE9jdCAxNCwgMjAyNCBhdCAwMTo0NDowM1BNICswODAwLCAy
+Njk0NDM5NjQ4QHFxLmNvbSB3cm90ZToNCj4gRnJvbTogImhhaWxvbmcuZmFuIiA8aGFpbG9uZy5m
+YW5Ac2llbmdpbmUuY29tPg0KPiANCj4gRE1BIG1heWJlIGJsb2NrIHdoaWxlIEVUSCBpcyBvcGVu
+aW5nLA0KPiBBZGp1c3QgdGhlIGVuYWJsZSBzZXF1ZW5jZSwgcHV0IHRoZSBNQUMgZW5hYmxlIGxh
+c3QNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IGhhaWxvbmcuZmFuIDxoYWlsb25nLmZhbkBzaWVuZ2lu
+ZS5jb20+DQoNCkhpLA0KDQpJIHRoaW5rIHRoYXQgc29tZSBtb3JlIGV4cGxhbmF0aW9uIG9mIHRo
+aXMgaXMgcmVxdWlyZWQuDQpJbmNsdWRpbmcgaWYgYSBwcm9ibGVtIGhhcyBiZWVuIG9ic2VydmVk
+LCBhbmQgaWYgc28gdW5kZXIgd2hhdCBjb25kaXRpb25zLiBPciwgaWYgbm90LCBzb21lIGJhY2tn
+cm91bmQgaW5mb3JtYXRpb24gb24gd2h5IHRoaXMgYWRqdXN0bWVudCBpcyBjb3JyZWN0Lg0KDQpJ
+IGFsc28gdGhpbmsgc29tZSBleHBsYW5hdGlvbiBpcyByZXF1aXJlZCBvZiB0aGUgcmVsYXRpb25z
+aGlwIGJldHdlZW4gdGhlIGNoYW5nZXMgdGhpcyBwYXRjaCBtYWtlcyB0byBzZXR1cCwgYW5kIHRo
+ZSBjaGFuZ2VzIGl0IG1ha2VzIHRvIHN0YXJ0IGFuZCBzdG9wLg0KDQouLi4NCg==
 
