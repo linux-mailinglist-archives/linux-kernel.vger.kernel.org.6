@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-371695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE6E69A3EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:50:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 571659A3EC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F71286447
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:50:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7850E1C238D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F821EE02A;
-	Fri, 18 Oct 2024 12:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49D81D27BE;
+	Fri, 18 Oct 2024 12:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ml+tP7aD"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YXsWEtSE"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3E918CBF1
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725D01D1E64
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729255786; cv=none; b=JthCI3DvkLmLugsD/Gffm5eR8dfo9lOUkex8Y3Z2rrx3q4kPaAi2N6IPIXoehrjRCo0AT3SmFvg7HT6UISDEwjO6gQN7nCqEZgzb7Dryuf7OGq4gwhlLHdo6iprvuiR1QUNs7JTCd2KYaH7B8IDZQDz9GzhD4mqcFRNGbDPohTM=
+	t=1729255785; cv=none; b=eB5HCeM9UbNxZuxuLoKI8JfXJgtjBSjha0zwFJRcy1qntqaLPHE5wU3VqtWxpN6fB3GOMGHOQ9R8VOJLDpPzy55tu8kL2HPuWrtj/5NCsh3rBgEPaP4jkvr8C2hbuSxWfOWfZMLu+C8hHdiPRRzczGcEvAE9ELKY7Uj7+F7dWkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729255786; c=relaxed/simple;
-	bh=hjSlU2gxSWCop+hBvftwzPuKHq8KM6fyKWuyNw14hJ4=;
+	s=arc-20240116; t=1729255785; c=relaxed/simple;
+	bh=ALfCKFByYUDVrZkxzCoUjBlHbP+GuGdy/oMAze7XwKI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Yrq5YMnCgOpjQhBZEscsw7S8P3F3bIof7ZfZbEWytlNXqhh6e5i/0Up9bsqGMJJc/OYQlLFgNeUx8EfrP9ImcTEY56jRPZWGxKiAKr4ia96yc5aAQTQfX+w7Lcy+i3r23ShIHET8CW1sDFgiDvwiENKGGjjiubnp2jDJmZaBFdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ml+tP7aD; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:To:Cc; b=FxMLaw26OZRWns8ooyMktiUGfGXLxMjuWWWNQ1jpzrT6WFIbdxBiorLzp9S0fHZOOs/JlN5SnQDD2qcpmDb0KTcRiVptg186mJByHX1Ay2xlYzucNz+uVOL6AvExrF/ESHtuTca7iCD7gYXulzjmiYBvqx0WrjbIdJwDD1rvtJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YXsWEtSE; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so21001015e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:49:41 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-431481433bdso20983835e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:49:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729255780; x=1729860580; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729255782; x=1729860582; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sPRs0w0MxEGgnxDO7g24yPQwpAr5gvzr/mzcIR+fDQg=;
-        b=ml+tP7aD5KA4obM4sOjmiz0qjNwVYxs1h224sElAXTVlrMc+fjfawXnkl8Uc5wzhap
-         FyDSOkQkjcVzkkICWLD8Lw0C1MUATtEMevbNE4nXiyQ+gg4aqWX6ItSP7AML3dqdsNBM
-         U0UoZD4JPxGPhTN9uWWJMa6ukOCo+JpQVt4vmbrob5NwY+/AQiSKrvmELf0FlE+xCHD+
-         p6Dg6WPDKXMmnecS3zLZEx4hGfaAqpqeGZPMOYHOvJmFV5aeuOb3eE2tNiqB5NoLoNE7
-         6f+yvKoOjJZbXjVxdT2UECnBTLlZJBMpFeNo76lKlvUKsJvyeuq8NlXw9/gpshexi0IO
-         Y63A==
+        bh=2SXk1aP0FJCXvypNsnh25z1CFtl/7LUgjPK1RLNlZfg=;
+        b=YXsWEtSEzq+/X2aKudIgcEvy3Fb4ufUoCNW5bLQLXmo4CtnKPln/BMGBvk+Iboybdw
+         LSX76h7ktlY0gg2OZedGmAnM92sqib3xPmiMkN2PkwpeS7XvzS3q94/HFSa+GxCeborH
+         MoXwJh56YOPh3/WeunYQBb2UJlEeLKKCARq+Lo9gM0wDDsyAav/EAAoscqvoCQoyxtj4
+         QzA4F3qBAPBHkEp1a7GJ8a9gFkhkm+eMb7d4vb5w8jbfLswHGU2jdi050SCLT0RodTcN
+         zrbIUHTFjQiYXnbr4VyMjch7B4FDHu+TYYRJ2Qt1rHoazWzHLjYHqROLbA45IZVtGfdp
+         bYvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729255780; x=1729860580;
+        d=1e100.net; s=20230601; t=1729255782; x=1729860582;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sPRs0w0MxEGgnxDO7g24yPQwpAr5gvzr/mzcIR+fDQg=;
-        b=qeFMXiT63Mld9iObFl5hEYAwQ60+VsbVCPrAgZoUtAJ430HjQ3Nd0l9AabXH7AjDKs
-         sqN9aTXwTvFD3eJqYmqGYhmhS+6H8IL/6yvVJmT9OVp0F0IYD/l6/LuB89YAkpPGmvuH
-         FVf1vkMRg77f/JQQ6qx4gCusHg2dDC9BX1SAt6UvK37DAFUoHjGrEbw/TQ32CjGqy4LE
-         65p4eUVQ/qSRynz4yr68jCY1gcAf3Y+OKaIpLsNnWwhT5wV0nqW1nYiBADc48UXGhYWs
-         N7SeHWklcR+3LvKcYIwCO6Y8ezqSAahhfIFYgCT78voeXQolEjBcAkYREUnUWTvndBiX
-         q92w==
-X-Forwarded-Encrypted: i=1; AJvYcCW/NU7rGTGI0m2ZO8Mg3n2sQIsEQ9ANPS/eO6erp/TbLlYhX59q0MPiZf33ghH4Pv4N+duSPZ0urOGnOAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpc25besN9aNivq9Vb+71SolTkxiwvJSz88fe77mOnyTPy3GYB
-	Egu5jMuSCwELTj4ILpgl3uMsqQsbGC6S7/HEdSAig+4il7xjvN8q54pgAG9XjTI=
-X-Google-Smtp-Source: AGHT+IEIqw8kUmJihhMwDgPJitdV2JACtgTL4TNLOBjhAV3udeTjvvchkzKbUkVpGd6jNrhJYTpzbg==
-X-Received: by 2002:a05:600c:46c6:b0:42c:b220:4778 with SMTP id 5b1f17b1804b1-4316169127dmr18151415e9.33.1729255780398;
-        Fri, 18 Oct 2024 05:49:40 -0700 (PDT)
+        bh=2SXk1aP0FJCXvypNsnh25z1CFtl/7LUgjPK1RLNlZfg=;
+        b=VzEMEsjVS5OeNk58ifNHvvl70/d3YlhTlFBn4/iSxutvNC017F8WqC52XxZJnor0og
+         nAAplJTtVY2sYeQaI1ap/EKUbYG4eeLfEnpAh1bP9Qh4ExuHPb7vmriqKJy+y+Vp/RpY
+         tyjtCYSZeYDQFYj4PVtP+JnrAKaikz53FigRYnrZ/msLnArrumEwRmljKCLZQA8Tt2ui
+         jFHeWRzaf4KXUNUXEZGRn1YwYs4Eo7mM43SQXWczO80Z02uwGlzqdT5gK42p6AdcRXfI
+         yEK6P4OOnFlbJ93ag6sun+irwd0FjKM6un0N2uVGkwXPzNaiQZu81FGTEShMC72FqIg1
+         I/eA==
+X-Forwarded-Encrypted: i=1; AJvYcCXF3JLZSrq0ic8EnBoHAJodMcz0eYK2hnOg4O1kHQVC9RdNDgRYdAiXm9CE6JpLq3v8Jb+jOEwysmQ3Vsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDWCPgDvdtX4ihygFcZIRkoV2+Qg8ofiJtxdRYJaYXD2H8CX7W
+	WLPH7kwrkc4eozexi5lOcK3CiQAC20eOfWGKjkoDeHAJhhV9p1SsxpoQfLtt8/s=
+X-Google-Smtp-Source: AGHT+IF7i5ijJ/PBj+rVVE90wGBGkUbs+Qau7bPR83w2OKEfud7HPlsA4a1baxa0bmZ7IKUkM5cLpw==
+X-Received: by 2002:a05:600c:4f15:b0:42c:b187:bde9 with SMTP id 5b1f17b1804b1-4316168ffb3mr20259385e9.30.1729255781722;
+        Fri, 18 Oct 2024 05:49:41 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:45a3:93e:5196:d8ce])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160695d8fsm26640835e9.27.2024.10.18.05.49.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160695d8fsm26640835e9.27.2024.10.18.05.49.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 05:49:39 -0700 (PDT)
+        Fri, 18 Oct 2024 05:49:40 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 18 Oct 2024 14:49:12 +0200
-Subject: [PATCH v6 2/6] power: sequencing: qcom-wcn: improve support for
- wcn6855
+Date: Fri, 18 Oct 2024 14:49:13 +0200
+Subject: [PATCH v6 3/6] arm64: dts: qcom: sc8280xp-crd: model the PMU of
+ the on-board wcn6855
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241018-sc8280xp-pwrseq-v6-2-8da8310d9564@linaro.org>
+Message-Id: <20241018-sc8280xp-pwrseq-v6-3-8da8310d9564@linaro.org>
 References: <20241018-sc8280xp-pwrseq-v6-0-8da8310d9564@linaro.org>
 In-Reply-To: <20241018-sc8280xp-pwrseq-v6-0-8da8310d9564@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -93,234 +93,194 @@ Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6994;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4498;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=wVgH0vy0LFJruCxGn7HHmD4PkWROab2fVJIQAlt3CXs=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnEllfsBsZmyRrH2pE5TQOodqN6VXrIyUAgK/g/
- 9eUResIs22JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxJZXwAKCRARpy6gFHHX
- csEbD/9s1CuSb8y7vzkO3hEQvtki5RwrD/clMXivveK+FJM0HtjKoBFKACCorQwUOgO8Q1XwRfq
- lNAnxYdBCxwWxjvD0YpRTrxd3iTR02vO+iAPoTAa8L79c+/Ee1H+4aeu9CjzlxQSiLbeH1eFi0o
- bk2lRh4fbRXs74wV2OaMgHVtJMPFWJvD87nVihzua17MO15cF9JeCUMw1zUhsZu6nJs5STyp2pE
- kWdUd9BE0XCqEg6WiqZcwyHL5XamvFCH7m6eY2tyOTMpCQ4vWGV18X605S8BAWRNP4G5JloMbvV
- vf6Dwg2Ug7dTApd1ciVgsNbrJt0aYFr8ogTdtzKCFAwB7d87BsjKJfisUwIzBoZUmMUNKev2vZY
- g9DjkZ3iMTcYQbBgs8TK7I5H9zORYh9mMeK3rcco+dml6hzhYvZuPhbi+CmFhe/ApOzSXia+h0l
- TR5YuL0tqU8XYNmxM930Vdz5myAWFx7os8d4D/V3QbsQz1ovn64umdCdsE2U64LejuGES8f3g5u
- ZaTKpOyj/Zlg0D51DjYVUvKLMdzgQHTvhyVbX1ndFTNXpn+njABx6iDAEuh+/jyF2nN5khs8k2h
- R8Eb6knpNu+REUIqtXRWaxKeQgd2W1nCqBMviwjD2moNcqySo3nc2vN4Q/dn9x9tkI7qFfQvT7w
- qi0ba9tYsZPBmdA==
+ bh=z5k/Qqi73I7Ez24Ck4rdkv9VCt9Ycv56x4hxpvBQUWM=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnEllfEMACrK1WN1Db9NkLo+75YO6OWKDZMpOGN
+ nNzGKXdvV6JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxJZXwAKCRARpy6gFHHX
+ cl4iD/9v/vJiABNNQviNzBQ10JNb6iik4lfxcUYjiTcfwoGbXeXmMi/3l0J8P8QvfcN44smeCNU
+ Xn1jRCO2aNZwHVrR7MclNC2JzZ3dptqsfsgfKpSl35lIqAyxB0MTgjnpzpUKJlzdN8PuIfFUWQm
+ 1PjK3w0mFixu6Z6gfCVHZrlQAb37I9HrPnDAKYvrvIBmBEzCPOdXctdz8gtr/Z6lhyLlkBAxvzs
+ EAKDEP2JpAvDhsnLv2z7hP3qZmMVY292cuMxfrNrEV3KmMD+GkczwNRumxPI3fKJOi6jUA7h9NP
+ i19zJW5vpCcoVj4NLKfTAtJhgMqwQm95ICbXf00VT7Tb2X+C1MqHp3+uZj5W0ArCUybJd0RUhWI
+ HE6x8N/eLcBnXYT99gPZ7jMl3Cy0Cs/sTJPXuhnZRWF+CUHs59HBI3O9fAjCrFl+C52tgoYEDMS
+ xYVgM7QWqZY3INaKCk7x4cxkcO9lYw/PHMkXsZVZCs7IutWTN/CIrGbZAiyAinYVeqmv0wZQ+nu
+ LfRmpp/2SYhaVjjgVBoFFPu77UdXN0pWaujoKwnwDvo7DO4FiRBYvVHmgBSYQIimj6KDm37ohQ0
+ UzlX58HK04UXo2JmCkrf0X+eSFmIA0GF2By0bYNRc0VAHHaHNDqb6+iFpXlrvNPQ3k74ctsDwh6
+ 9N3OdtZI9po96rg==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-WCN6855 (also known as QCA6490) is similar to the already supported
-QCA6390 but takes in two more supplies so add a new vregs list for it.
+Add nodes for the WCN6855 PMU, the WLAN module and relevant regulators
+and pin functions to fully describe how the wifi is actually wired on
+this platform.
 
-On sm8450-hdk it also requires a short assert of the xo-clk pin so add
-handling for it in a dedicated unit.
-
-As we now have a separate set of targets for this variant, store the
-pointer to the targets struct associated with a model in the device
-match data.
-
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Co-developed-by: Konrad Dybcio <konradybcio@kernel.org>
+Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/power/sequencing/pwrseq-qcom-wcn.c | 101 ++++++++++++++++++++++++++++-
- 1 file changed, 98 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/qcom/sc8280xp-crd.dts | 112 ++++++++++++++++++++++++++++++
+ 1 file changed, 112 insertions(+)
 
-diff --git a/drivers/power/sequencing/pwrseq-qcom-wcn.c b/drivers/power/sequencing/pwrseq-qcom-wcn.c
-index 4fa129877d7e..682a9beac69e 100644
---- a/drivers/power/sequencing/pwrseq-qcom-wcn.c
-+++ b/drivers/power/sequencing/pwrseq-qcom-wcn.c
-@@ -22,6 +22,7 @@ struct pwrseq_qcom_wcn_pdata {
- 	size_t num_vregs;
- 	unsigned int pwup_delay_ms;
- 	unsigned int gpio_enable_delay_ms;
-+	const struct pwrseq_target_data **targets;
+diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts b/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
+index 6020582b0a59..a02d8029ac2d 100644
+--- a/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
++++ b/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
+@@ -260,6 +260,69 @@ usb1_sbu_mux: endpoint {
+ 			};
+ 		};
+ 	};
++
++	wcn6855-pmu {
++		compatible = "qcom,wcn6855-pmu";
++
++		pinctrl-0 = <&wlan_en>;
++		pinctrl-names = "default";
++
++		wlan-enable-gpios = <&tlmm 134 GPIO_ACTIVE_HIGH>;
++		swctrl-gpios = <&tlmm 132 GPIO_ACTIVE_HIGH>;
++
++		vddio-supply = <&vreg_s10b>;
++		vddaon-supply = <&vreg_s12b>;
++		vddpmu-supply = <&vreg_s12b>;
++		vddpmumx-supply = <&vreg_s12b>;
++		vddpmucx-supply = <&vreg_s12b>;
++		vddrfa0p95-supply = <&vreg_s12b>;
++		vddrfa1p3-supply = <&vreg_s11b>;
++		vddrfa1p9-supply = <&vreg_s1c>;
++		vddpcie1p3-supply = <&vreg_s11b>;
++		vddpcie1p9-supply = <&vreg_s1c>;
++
++		regulators {
++			vreg_pmu_rfa_cmn_0p8: ldo0 {
++				regulator-name = "vreg_pmu_rfa_cmn_0p8";
++			};
++
++			vreg_pmu_aon_0p8: ldo1 {
++				regulator-name = "vreg_pmu_aon_0p8";
++			};
++
++			vreg_pmu_wlcx_0p8: ldo2 {
++				regulator-name = "vreg_pmu_wlcx_0p8";
++			};
++
++			vreg_pmu_wlmx_0p8: ldo3 {
++				regulator-name = "vreg_pmu_wlmx_0p8";
++			};
++
++			vreg_pmu_btcmx_0p8: ldo4 {
++				regulator-name = "vreg_pmu_btcmx_0p8";
++			};
++
++			vreg_pmu_pcie_1p8: ldo5 {
++				regulator-name = "vreg_pmu_pcie_1p8";
++			};
++
++			vreg_pmu_pcie_0p9: ldo6 {
++				regulator-name = "vreg_pmu_pcie_0p9";
++			};
++
++			vreg_pmu_rfa_0p8: ldo7 {
++				regulator-name = "vreg_pmu_rfa_0p8";
++			};
++
++			vreg_pmu_rfa_1p2: ldo8 {
++				regulator-name = "vreg_pmu_rfa_1p2";
++			};
++
++			vreg_pmu_rfa_1p7: ldo9 {
++				regulator-name = "vreg_pmu_rfa_1p7";
++			};
++		};
++	};
  };
  
- struct pwrseq_qcom_wcn_ctx {
-@@ -31,6 +32,7 @@ struct pwrseq_qcom_wcn_ctx {
- 	struct regulator_bulk_data *regs;
- 	struct gpio_desc *bt_gpio;
- 	struct gpio_desc *wlan_gpio;
-+	struct gpio_desc *xo_clk_gpio;
- 	struct clk *clk;
- 	unsigned long last_gpio_enable_jf;
- };
-@@ -98,6 +100,33 @@ static const struct pwrseq_unit_data *pwrseq_qcom_wcn_unit_deps[] = {
- 	NULL
+ &apps_rsc {
+@@ -269,6 +332,15 @@ regulators-0 {
+ 
+ 		vdd-l3-l5-supply = <&vreg_s11b>;
+ 
++		vreg_s10b: smps10 {
++			regulator-name = "vreg_s10b";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
+ 		vreg_s11b: smps11 {
+ 			regulator-name = "vreg_s11b";
+ 			regulator-min-microvolt = <1272000>;
+@@ -276,6 +348,13 @@ vreg_s11b: smps11 {
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
++		vreg_s12b: smps12 {
++			regulator-name = "vreg_s12b";
++			regulator-min-microvolt = <984000>;
++			regulator-max-microvolt = <984000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
+ 		vreg_l3b: ldo3 {
+ 			regulator-name = "vreg_l3b";
+ 			regulator-min-microvolt = <1200000>;
+@@ -304,6 +383,13 @@ regulators-1 {
+ 		compatible = "qcom,pm8350c-rpmh-regulators";
+ 		qcom,pmic-id = "c";
+ 
++		vreg_s1c: smps1 {
++			regulator-name = "vreg_s1c";
++			regulator-min-microvolt = <1888000>;
++			regulator-max-microvolt = <1888000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
+ 		vreg_l1c: ldo1 {
+ 			regulator-name = "vreg_l1c";
+ 			regulator-min-microvolt = <1800000>;
+@@ -583,6 +669,25 @@ &pcie4_phy {
+ 	status = "okay";
  };
  
-+static int pwrseq_qcom_wcn6855_clk_assert(struct pwrseq_device *pwrseq)
-+{
-+	struct pwrseq_qcom_wcn_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
++&pcie4_port0 {
++	wifi@0 {
++		compatible = "pci17cb,1103";
++		reg = <0x10000 0x0 0x0 0x0 0x0>;
 +
-+	if (!ctx->xo_clk_gpio)
-+		return 0;
++		vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
++		vddaon-supply = <&vreg_pmu_aon_0p8>;
++		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
++		vddwlmx-supply = <&vreg_pmu_wlmx_0p8>;
++		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
++		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
++		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
++		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
++		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
 +
-+	msleep(1);
-+
-+	gpiod_set_value_cansleep(ctx->xo_clk_gpio, 1);
-+	usleep_range(100, 200);
-+
-+	return 0;
-+}
-+
-+static const struct pwrseq_unit_data pwrseq_qcom_wcn6855_xo_clk_assert = {
-+	.name = "xo-clk-assert",
-+	.enable = pwrseq_qcom_wcn6855_clk_assert,
++		qcom,ath11k-calibration-variant = "QC_8280XP_CRD";
++	};
 +};
 +
-+static const struct pwrseq_unit_data *pwrseq_qcom_wcn6855_unit_deps[] = {
-+	&pwrseq_qcom_wcn_vregs_unit_data,
-+	&pwrseq_qcom_wcn_clk_unit_data,
-+	&pwrseq_qcom_wcn6855_xo_clk_assert,
-+	NULL
-+};
-+
- static int pwrseq_qcom_wcn_bt_enable(struct pwrseq_device *pwrseq)
- {
- 	struct pwrseq_qcom_wcn_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
-@@ -125,6 +154,13 @@ static const struct pwrseq_unit_data pwrseq_qcom_wcn_bt_unit_data = {
- 	.disable = pwrseq_qcom_wcn_bt_disable,
+ &pmc8280c_lpg {
+ 	status = "okay";
  };
- 
-+static const struct pwrseq_unit_data pwrseq_qcom_wcn6855_bt_unit_data = {
-+	.name = "wlan-enable",
-+	.deps = pwrseq_qcom_wcn6855_unit_deps,
-+	.enable = pwrseq_qcom_wcn_bt_enable,
-+	.disable = pwrseq_qcom_wcn_bt_disable,
-+};
+@@ -1030,4 +1135,11 @@ mode-pins {
+ 			output-high;
+ 		};
+ 	};
 +
- static int pwrseq_qcom_wcn_wlan_enable(struct pwrseq_device *pwrseq)
- {
- 	struct pwrseq_qcom_wcn_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
-@@ -152,6 +188,13 @@ static const struct pwrseq_unit_data pwrseq_qcom_wcn_wlan_unit_data = {
- 	.disable = pwrseq_qcom_wcn_wlan_disable,
++	wlan_en: wlan-en-state {
++		pins = "gpio134";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-disable;
++	};
  };
- 
-+static const struct pwrseq_unit_data pwrseq_qcom_wcn6855_wlan_unit_data = {
-+	.name = "wlan-enable",
-+	.deps = pwrseq_qcom_wcn6855_unit_deps,
-+	.enable = pwrseq_qcom_wcn_wlan_enable,
-+	.disable = pwrseq_qcom_wcn_wlan_disable,
-+};
-+
- static int pwrseq_qcom_wcn_pwup_delay(struct pwrseq_device *pwrseq)
- {
- 	struct pwrseq_qcom_wcn_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
-@@ -162,6 +205,18 @@ static int pwrseq_qcom_wcn_pwup_delay(struct pwrseq_device *pwrseq)
- 	return 0;
- }
- 
-+static int pwrseq_qcom_wcn6855_xo_clk_deassert(struct pwrseq_device *pwrseq)
-+{
-+	struct pwrseq_qcom_wcn_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
-+
-+	if (ctx->xo_clk_gpio) {
-+		usleep_range(2000, 5000);
-+		gpiod_set_value_cansleep(ctx->xo_clk_gpio, 0);
-+	}
-+
-+	return pwrseq_qcom_wcn_pwup_delay(pwrseq);
-+}
-+
- static const struct pwrseq_target_data pwrseq_qcom_wcn_bt_target_data = {
- 	.name = "bluetooth",
- 	.unit = &pwrseq_qcom_wcn_bt_unit_data,
-@@ -174,12 +229,30 @@ static const struct pwrseq_target_data pwrseq_qcom_wcn_wlan_target_data = {
- 	.post_enable = pwrseq_qcom_wcn_pwup_delay,
- };
- 
-+static const struct pwrseq_target_data pwrseq_qcom_wcn6855_bt_target_data = {
-+	.name = "bluetooth",
-+	.unit = &pwrseq_qcom_wcn6855_bt_unit_data,
-+	.post_enable = pwrseq_qcom_wcn6855_xo_clk_deassert,
-+};
-+
-+static const struct pwrseq_target_data pwrseq_qcom_wcn6855_wlan_target_data = {
-+	.name = "wlan",
-+	.unit = &pwrseq_qcom_wcn6855_wlan_unit_data,
-+	.post_enable = pwrseq_qcom_wcn6855_xo_clk_deassert,
-+};
-+
- static const struct pwrseq_target_data *pwrseq_qcom_wcn_targets[] = {
- 	&pwrseq_qcom_wcn_bt_target_data,
- 	&pwrseq_qcom_wcn_wlan_target_data,
- 	NULL
- };
- 
-+static const struct pwrseq_target_data *pwrseq_qcom_wcn6855_targets[] = {
-+	&pwrseq_qcom_wcn6855_bt_target_data,
-+	&pwrseq_qcom_wcn6855_wlan_target_data,
-+	NULL
-+};
-+
- static const char *const pwrseq_qca6390_vregs[] = {
- 	"vddio",
- 	"vddaon",
-@@ -196,13 +269,28 @@ static const struct pwrseq_qcom_wcn_pdata pwrseq_qca6390_of_data = {
- 	.num_vregs = ARRAY_SIZE(pwrseq_qca6390_vregs),
- 	.pwup_delay_ms = 60,
- 	.gpio_enable_delay_ms = 100,
-+	.targets = pwrseq_qcom_wcn_targets,
-+};
-+
-+static const char *const pwrseq_wcn6855_vregs[] = {
-+	"vddio",
-+	"vddaon",
-+	"vddpmu",
-+	"vddpmumx",
-+	"vddpmucx",
-+	"vddrfa0p95",
-+	"vddrfa1p3",
-+	"vddrfa1p9",
-+	"vddpcie1p3",
-+	"vddpcie1p9",
- };
- 
- static const struct pwrseq_qcom_wcn_pdata pwrseq_wcn6855_of_data = {
--	.vregs = pwrseq_qca6390_vregs,
--	.num_vregs = ARRAY_SIZE(pwrseq_qca6390_vregs),
-+	.vregs = pwrseq_wcn6855_vregs,
-+	.num_vregs = ARRAY_SIZE(pwrseq_wcn6855_vregs),
- 	.pwup_delay_ms = 50,
- 	.gpio_enable_delay_ms = 5,
-+	.targets = pwrseq_qcom_wcn6855_targets,
- };
- 
- static const char *const pwrseq_wcn7850_vregs[] = {
-@@ -219,6 +307,7 @@ static const struct pwrseq_qcom_wcn_pdata pwrseq_wcn7850_of_data = {
- 	.vregs = pwrseq_wcn7850_vregs,
- 	.num_vregs = ARRAY_SIZE(pwrseq_wcn7850_vregs),
- 	.pwup_delay_ms = 50,
-+	.targets = pwrseq_qcom_wcn_targets,
- };
- 
- static int pwrseq_qcom_wcn_match(struct pwrseq_device *pwrseq,
-@@ -295,6 +384,12 @@ static int pwrseq_qcom_wcn_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(ctx->wlan_gpio),
- 				     "Failed to get the WLAN enable GPIO\n");
- 
-+	ctx->xo_clk_gpio = devm_gpiod_get_optional(dev, "xo-clk",
-+						   GPIOD_OUT_LOW);
-+	if (IS_ERR(ctx->xo_clk_gpio))
-+		return dev_err_probe(dev, PTR_ERR(ctx->xo_clk_gpio),
-+				     "Failed to get the XO_CLK GPIO\n");
-+
- 	/*
- 	 * Set direction to output but keep the current value in order to not
- 	 * disable the WLAN module accidentally if it's already powered on.
-@@ -313,7 +408,7 @@ static int pwrseq_qcom_wcn_probe(struct platform_device *pdev)
- 	config.owner = THIS_MODULE;
- 	config.drvdata = ctx;
- 	config.match = pwrseq_qcom_wcn_match;
--	config.targets = pwrseq_qcom_wcn_targets;
-+	config.targets = ctx->pdata->targets;
- 
- 	ctx->pwrseq = devm_pwrseq_device_register(dev, &config);
- 	if (IS_ERR(ctx->pwrseq))
 
 -- 
 2.43.0
