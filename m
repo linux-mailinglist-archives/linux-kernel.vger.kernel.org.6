@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-372508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C81B9A4994
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:17:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6859A4990
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78CAD1C217F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:17:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1A6DB22037
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC7918FC9D;
-	Fri, 18 Oct 2024 22:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2661819047E;
+	Fri, 18 Oct 2024 22:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t07qDKY/"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmSIL0OO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A8718D620
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 22:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6047A18D620;
+	Fri, 18 Oct 2024 22:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729289820; cv=none; b=kTPxv1nELlBcLLBItblDc8ZS7velIzMUDV2PSkl/oPnGRKptpi7Ejj5X7Se/KG45640RpndvYxjnU+qo/lGK11iY1aCWPo5eQ6FrAjGey5Ayei7CxhLXJNTdN4XkcfHLvMArfVi8Jtp2dDbjhyW0PbVdTEXhwReXZQC0OzfgaWE=
+	t=1729289809; cv=none; b=qauMANJ05sd3/t3RTRblbAOJLcz0eX0iD18+8v+ezysbdjKpY75GCeo8+c5dksNShzjBD2v95jOxjAKNy00yE7Z0Mdk7pKXuVNHKzJUlOszxzHtp+zTEcjyk0XkX3OrEDwgV1rHYACHRh3pIZqyVhSn2O9NNgMrAOxFWJRsXIUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729289820; c=relaxed/simple;
-	bh=k3negLHR1r5xVSxRRbj5Yu6okyixeopjv4paYWc7B8Y=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=T4L76otc0NL+PYWh5a9pmBAhaJ64J8zrlmOnXPdc8stnvw4dIkH0d0CNk87lShPrMNHA9e+bfNYfe2d/7GwiyAZm4ddbdby+nHk+ALE77IPYwH7ZtT13W5cbpPyFsP644hp8YR5nI1mdNl913hhg2u6ZSvq4AA3UbbS8m/NvfuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--pcc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t07qDKY/; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--pcc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e29205f6063so3841945276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:16:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729289818; x=1729894618; darn=vger.kernel.org;
-        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=npXDHMSv/CnwNU6GVsVemHWtoPO/0w0MZGCZikvlWco=;
-        b=t07qDKY/lMt2CGfeL42w3CXadqG6Jgbyt6IxrgRB1HIITcIoS/ERG5OTIhCmdw2Dq9
-         pkQA1Lk3PUshIXunVdT9af0z7fQimsHkJnaWlRarCf4XQ5E1JwSsA+m+v1bFDJ458a/C
-         MMn3lqRXJ8xMlWIxISUKrnus4KZGwa8g8pHw53F5qkVt5D/QhaOuOF/hQngR+bmF6x0I
-         LupM74ik+3DV5Dx+WCPRBXje3o1NYwAMUciK7fcVzu8BS+3P7OJzlyStGZMknoXYYta9
-         7WqGVLM6n9MPeV3HAYt//35Ib1J4rOM7SuJC87BqZbaWWxMmoYtSY0KO1bvevyvRD96w
-         cvwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729289818; x=1729894618;
-        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=npXDHMSv/CnwNU6GVsVemHWtoPO/0w0MZGCZikvlWco=;
-        b=s7Jn2dfxj8n2mAAbfq+2VIZzobPJ6dTWpVjaDGg+Tst+H2TJ8/qVHQJqZD+XZf6bej
-         ZmNOe8L+hu5LKN+BIl/cv4L/eNsCIawkHJ8qjO1vko29fjhJYHuw/CjWpBCNW4F7rDbg
-         ViliGe4qIAKOEdqFSDuS15eHU+64pPxxaIGhp+fvV8bU0iyugYSNbKQlKqmCccvsra/A
-         Kb5BorG2ImDLOdXHZpBZvU5ufGDwm+PT087Jajo3AzsuPVZ81Pu6Xdkts0W7hwqfmpog
-         p+rfRqenfo3oERs3hyWe8viSOLRfXJEIOg6Pi2dxjljN5mN1MCMQVT8I51AZYq9QRmeY
-         Eghg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNPB2+zkAzc/dcGUQY22q4Xd1cZhaHlfk7yQLLwqkGUU0hqkBLfc0NrpokiDilwUnUVJIRkIaiZTy/Fa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2yLZ34L52//cYltpv9YhM9jdCavcv2uz3U4Yq3MP1jFdcHuO0
-	1kBm+XE8XhRLaW29kuSK4T2QlQr95dJBo3EmcRbQrMHAui9jIkQXZ4ETVv+6acZJCA==
-X-Google-Smtp-Source: AGHT+IFHeCLo+UCtERsEqzbRLgjZenIz+8k2uno+X8uTWXAtOqF45NyQP3lRq9DEGuT5C41T1b8dP2k=
-X-Received: from pcc-desktop.svl.corp.google.com ([2620:15c:2d3:205:7e76:f201:fc01:a9c9])
- (user=pcc job=sendgmr) by 2002:a25:86cc:0:b0:e28:ee55:c3d with SMTP id
- 3f1490d57ef6-e2bb11a8d59mr6530276.1.1729289817688; Fri, 18 Oct 2024 15:16:57
- -0700 (PDT)
-Date: Fri, 18 Oct 2024 15:16:43 -0700
-Message-Id: <20241018221644.3240898-1-pcc@google.com>
+	s=arc-20240116; t=1729289809; c=relaxed/simple;
+	bh=5dHJfEm//35pWwhcN2KEO86KY/+VX4OyM6ATgjJuFow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WC2yzLMg64wBp3JpUpXAFybn226rl/z4GKwH81iycQXt3p3QJ2+CK04XIw/4P3fLAWrt+Nj7zQ10H8Jv/Vx6NJo+cbdXQjvluB5z5sPDUIHNLHemq+t0feueOLr1C5NDbJC75W7KGWalbFOzDglhgIqydBJpyIkHl6JCOivwZ0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmSIL0OO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126A7C4CEC6;
+	Fri, 18 Oct 2024 22:16:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729289808;
+	bh=5dHJfEm//35pWwhcN2KEO86KY/+VX4OyM6ATgjJuFow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KmSIL0OOaHObtvUoi1O1SZEQYGAT80cUtx+ys1Qt124zMTIxotskyKvZx0U7Ty+E2
+	 VNy50yirarmymG1aWuK17ZJaHUC2VUZQXVfXGpysL20keMuxedkHalbBsfudxA8AVE
+	 ozsKZnBkm+pHsRtvKlrMmcHmTaw2BPL7MSUYx5mMnmsnz2sqLThXT82ksdLLo4D4qS
+	 ID+fDk+YluZJmohUwt6Cg0j0JIOVdzR588qBX+QuYoFrmtjbvBgkOM04PrmKRDm8xJ
+	 UltiyoccabinhZl5Of4JYPm0QyrTQ58F7D1+HLWGNU5PNjofPM8Rux2wWdjvZWoYYZ
+	 sjwb2ZVG4XUfg==
+Date: Fri, 18 Oct 2024 19:16:43 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Howard Chu <howardchu95@gmail.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@intel.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
+ syscall ids in syscalltbl->entries
+Message-ID: <ZxLeS7CQFIR8lTmo@x1>
+References: <c279ad02-2543-4a95-9404-9304e1e704da@kernel.org>
+ <ffc2eb09-ac78-4594-a376-3fff9918c2a7@kernel.org>
+ <ZwYbQswnGHSstClc@google.com>
+ <CAH0uvoi622J7gZ9BoTik7niNH3axVJR0kPNovUQnMjUB6GWLNg@mail.gmail.com>
+ <CAH0uvojw5EKqxqETq_H3-5zmjXiK=ew2hBQiPDpCtZmO7=mrKA@mail.gmail.com>
+ <3a592835-a14f-40be-8961-c0cee7720a94@kernel.org>
+ <ZwgAzde-jVyo4cSu@google.com>
+ <ZwgBenahw7EImQLk@google.com>
+ <ZwhA1SL706f60ynd@x1>
+ <2a91f9d0-8950-4936-9776-7ba59ab1d42a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Subject: [PATCH] bpf, arm64: Fix address emission with tag-based KASAN enabled
-From: Peter Collingbourne <pcc@google.com>
-To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay12@gmail.com>, 
-	Xu Kuohai <xukuohai@huaweicloud.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Jean-Philippe Brucker <jean-philippe@linaro.org>, bpf@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Peter Collingbourne <pcc@google.com>, Alexander Potapenko <glider@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2a91f9d0-8950-4936-9776-7ba59ab1d42a@kernel.org>
 
-When BPF_TRAMP_F_CALL_ORIG is enabled, the address of a bpf_tramp_image
-struct on the stack is passed during the size calculation pass and
-an address on the heap is passed during code generation. This may
-cause a heap buffer overflow if the heap address is tagged because
-emit_a64_mov_i64() will emit longer code than it did during the size
-calculation pass. The same problem could occur without tag-based
-KASAN if one of the 16-bit words of the stack address happened to
-be all-ones during the size calculation pass. Fix the problem by
-assuming the worst case (4 instructions) when calculating the size
-of the bpf_tramp_image address emission.
+On Mon, Oct 14, 2024 at 02:19:58PM +0200, Jiri Slaby wrote:
+> On 10. 10. 24, 23:02, Arnaldo Carvalho de Melo wrote:
+> > On Thu, Oct 10, 2024 at 09:31:54AM -0700, Namhyung Kim wrote:
+> > > On Thu, Oct 10, 2024 at 09:29:01AM -0700, Namhyung Kim wrote:
+> > > > On Thu, Oct 10, 2024 at 10:22:12AM +0200, Jiri Slaby wrote:
+> > > > > Subject: [PATCH] perf: fix non-listed archs
 
-Fixes: 19d3c179a377 ("bpf, arm64: Fix trampoline for BPF_TRAMP_F_CALL_ORIG")
-Signed-off-by: Peter Collingbourne <pcc@google.com>
-Link: https://linux-review.googlesource.com/id/I1496f2bc24fba7a1d492e16e2b94cf43714f2d3c
-Cc: stable@vger.kernel.org
----
- arch/arm64/net/bpf_jit_comp.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+> > > > > Suggested-by: Howard Chu <howardchu95@gmail.com>
+> > > > > Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 
-diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-index 8bbd0b20136a8..5db82bfc9dc11 100644
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -2220,7 +2220,11 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
- 	emit(A64_STR64I(A64_R(20), A64_SP, regs_off + 8), ctx);
- 
- 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
--		emit_a64_mov_i64(A64_R(0), (const u64)im, ctx);
-+		/* for the first pass, assume the worst case */
-+		if (!ctx->image)
-+			ctx->idx += 4;
-+		else
-+			emit_a64_mov_i64(A64_R(0), (const u64)im, ctx);
- 		emit_call((const u64)__bpf_tramp_enter, ctx);
- 	}
- 
-@@ -2264,7 +2268,11 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
- 
- 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
- 		im->ip_epilogue = ctx->ro_image + ctx->idx;
--		emit_a64_mov_i64(A64_R(0), (const u64)im, ctx);
-+		/* for the first pass, assume the worst case */
-+		if (!ctx->image)
-+			ctx->idx += 4;
-+		else
-+			emit_a64_mov_i64(A64_R(0), (const u64)im, ctx);
- 		emit_call((const u64)__bpf_tramp_exit, ctx);
- 	}
- 
--- 
-2.47.0.rc1.288.g06298d1525-goog
+> > > > Acked-by: Namhyung Kim <namhyung@kernel.org>
+> > > Also with,
+> > > Fixes: 7a2fb5619cc1fb53 ("perf trace: Fix iteration of syscall ids in syscalltbl->entries")
+> > > > Arnaldo, can you please pick this up for v6.12?
 
+> > Sure, probably the safest bet now, but just in case, Jiri, can you test
+> > the following?
+
+> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Subject: [PATCH 1/1] perf tools arm: Generate syscalltbl.c from arm's syscall.tbl
+> 
+> With this:
+> +++ b/tools/perf/Makefile.config
+> @@ -31,7 +31,7 @@ $(call detected_var,SRCARCH)
+>  ifneq ($(NO_SYSCALL_TABLE),1)
+
+So after merging your changes (thanks) and finding an arm 32-bit system
+(ressurecting a raspberry pi 3), I can build it, with bpf skels, etc but
+then...
+
+; } else if (size > 0 && size <= value_size) { /* struct */
+83: (bf) r1 = r9
+84: (07) r1 += -1
+85: (67) r1 <<= 32
+86: (77) r1 >>= 32
+87: (25) if r1 > 0xfff goto pc+23
+ R0_w=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_w=inv(id=0,umax_value=4095,var_off=(0x0; 0xfff)) R2_w=map_value(id=0,off=16,ks=4,vs=8272,imm=0) R3_w=inv(id=0) R6_w=map_value(id=0,off=20,ks=4,vs=24,imm=0) R7_w=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8_w=invP6 R9_w=inv(id=27,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R10=fp0 fp-8=mmmmmmmm fp-16_w=map_value fp-24=map_value fp-32_w=invP40 fp-40=ctx fp-48=map_value fp-56_w=inv1 fp-64_w=map_value fp-72=map_value fp-80=map_value
+; if (!bpf_probe_read_user(((struct augmented_arg *)payload_offset)->value, size, arg))
+88: (79) r1 = *(u64 *)(r10 -16)
+89: (bf) r2 = r9
+90: (85) call bpf_probe_read_user#112
+ R0_w=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_w=map_value(id=0,off=112,ks=4,vs=24688,imm=0) R2_w=inv(id=27,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R3_w=inv(id=0) R6_w=map_value(id=0,off=20,ks=4,vs=24,imm=0) R7_w=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8_w=invP6 R9_w=inv(id=27,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R10=fp0 fp-8=mmmmmmmm fp-16_w=map_value fp-24=map_value fp-32_w=invP40 fp-40=ctx fp-48=map_value fp-56_w=inv1 fp-64_w=map_value fp-72=map_value fp-80=map_value
+R2 unbounded memory access, use 'var &= const' or 'if (var < const)'
+processed 497 insns (limit 1000000) max_states_per_insn 2 total_states 23 peak_states 23 mark_read 15
+-- END PROG LOAD LOG --
+libbpf: prog 'sys_enter': failed to load: -13
+libbpf: failed to load object 'augmented_raw_syscalls_bpf'
+libbpf: failed to load BPF skeleton 'augmented_raw_syscalls_bpf': -13
+
+Back at playing games with the BPF verifier:
+
+root@aquarius:~# uname -a
+Linux aquarius 5.10.103-v7+ #1529 SMP Tue Mar 8 12:21:37 GMT 2022 armv7l GNU/Linux
+root@aquarius:~# clang-13 --version
+Raspbian clang version 13.0.1-6~deb10u4+rpi1 (172.17.3.10:/build/git/l/llvm-toolchain-13 5bdfde6d6808bed4396414f7000db3d958040453)
+Target: arm-unknown-linux-gnueabihf
+Thread model: posix
+InstalledDir: /usr/bin
+root@aquarius:~#
+
+Will continue chasing windmills tomorrow...
+
+- Arnaldo
 
