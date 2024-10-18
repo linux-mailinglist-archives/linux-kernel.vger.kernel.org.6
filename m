@@ -1,124 +1,191 @@
-Return-Path: <linux-kernel+bounces-371745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E629A3FBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:33:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E34E9A3FCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE2EE1C23A08
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:33:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A30FB21F49
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760F21D7E5C;
-	Fri, 18 Oct 2024 13:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7D81D7E30;
+	Fri, 18 Oct 2024 13:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Es909GmG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEAvarnq"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96D020E335;
-	Fri, 18 Oct 2024 13:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA2D1D545;
+	Fri, 18 Oct 2024 13:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729258421; cv=none; b=i1mqcnC8sLAC9X2E89AXplmA5SOkOigD3p5CjXAQsIzyxMEiFZIWMzab9Y8TekyIFLa9wIv9ApZw1zVEI+1YHX6FvM/WdwO7Bp3yxfRR5AtGImYx4jXcB7Kn4QMpgV8dwhLRr4R80DomHc+GaDCA8K8qkHhLmZSuRRjbn4PFbRc=
+	t=1729258498; cv=none; b=PByhtZJzbGVw84aVtXUFJDbKiVOMs373yWWc6LvG/SpLr2Sz6zm7XvyjP7KN1H2l4YGQU+x0xZzv9zTE2vQAzs0oOJf0H0K27ujvp464zkJf6s7Jx3MtZpJ8jPMV1L5+juUu+K4RZee/3KZFt5iRDCq/jLYMjMWLcaBbQtZ0pZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729258421; c=relaxed/simple;
-	bh=nwqVYg9FZxvkSWfFuD0XeXYk+OpqSn4JaMEIAODptlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=amfEZASpmdolYqUzt6VxnSftm/SPq5ljh3hG0aJbRMzpl7CtJx1j82ZEsNwRysMGUW7pLHyTjMl0F6WxP0AzxS5+w5RFWIe189I7Kez+20pY9M++HsLkzZTNEEX0HxuDy4Unpwfn7kYBG3waSN4+9ufUCHygodUPybr3t8pMRko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Es909GmG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17F12C4CEC3;
-	Fri, 18 Oct 2024 13:33:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729258421;
-	bh=nwqVYg9FZxvkSWfFuD0XeXYk+OpqSn4JaMEIAODptlw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Es909GmGYuFgkFVb/Bhn2p7pUJOjy8hzXCeT2nmEATrjU51VIMQ2FIuBmzgXTpi1Y
-	 EW3qyiofuNHMypkZjLNNWlDpSEKOyB7tgaB4Hv19C+I+UPCJYMZ48l1Ji9P88Cpm4s
-	 XJQtNgLOGhTh/8cQg/Tg5MY9dzkLJfH7cTUunoI+4H7oNKcR/RmyBhpnL5QODtxSKk
-	 P62T1EUeXeD+Gno/lGEfnZRd+6kZUDW5AWf00+Vp1WZBXlFJrvlJ6xzoJw/SWhucBs
-	 C6ipnLWfSEWZVW7p20yhJ+5suYN2VVtaYCoQ3ThDvso6c/9+XiJiKlDUiyVJmTHeQX
-	 VXJqcGahFEgyw==
-Date: Fri, 18 Oct 2024 08:33:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
-	quic_nkela@quicinc.com, dan.carpenter@linaro.org,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 3/5] dt-bindings: firmware: arm,scmi: Introduce more
- transport properties
-Message-ID: <20241018133340.GA72220-robh@kernel.org>
-References: <20241018080602.3952869-1-cristian.marussi@arm.com>
- <20241018080602.3952869-4-cristian.marussi@arm.com>
+	s=arc-20240116; t=1729258498; c=relaxed/simple;
+	bh=AFmB76VJGeowgB2Thg2t6WHOWKw0M5egccb0wvXV0YQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bEyq1iRoUIkZknwbn3wNH2ubG2kHVXv4/Hj1JuBwhONOGBy98/yUCJiayRvVT3KOne7+4qTwblcfadufrLmvo+w3IrvxzMc6pDybU90rysYq9eRubbhG1KpUoDHP78r32fuZCOtztWFflKfNhschzLuch7s04AKQZ36J/NpSoKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEAvarnq; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315eac969aso10218245e9.1;
+        Fri, 18 Oct 2024 06:34:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729258495; x=1729863295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=++pIOVcgHU4Vk6ENEp+x6Rm2aLgwu4POcyN1W5+/SAs=;
+        b=gEAvarnq71RohjaAgv6uytqyLZdmEBH9+3BqrKcUDha34Yu8fNBnh3k9Tn7yYZJzVB
+         ZemmnUyByto62q4tZEwSIGQ7H1icNXQ4erJtWnckv2OqBHlZxZRSXKELQu8qe4Ek08dy
+         YerYDdZCFtW5IEkfmZMIdePvZCau0qtcX1t9/LqRPg/TND0YMiosHjEePJKGoeTs9VKy
+         Cj0EWKn/QkDuRkMGEkhmV2V2RuuLQJbuJP4uZZ+R+8Rn2Lp+Pxp7iMFbej9qp4LBTVOO
+         wS0Mu7ub/xSGvmF3BP3x5muZRZlzdryB48MwOBbmhenBqDXWW5e4aQZTY/711cB3JPjd
+         lcKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729258495; x=1729863295;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=++pIOVcgHU4Vk6ENEp+x6Rm2aLgwu4POcyN1W5+/SAs=;
+        b=uXw5XVN4q4E3/SG6RRvD0NH0euo3rgz4hhLXBBNcA/ln6eBbHPaeTjMM8NryV+UUa6
+         Bvbz6r/stB8SbHWQNHEnjamuWamYXODFugf7YOPCsOSNPxU2P78LoQy8g4ZJ9K1Vi85o
+         VaKRMEeqVl2bBoKSeTg3wJPFan2lFHyyENiKaLpUTK+T4MZ/ZRNg4nNQHMtYZUXYqHiM
+         SlPRznGlzwMtd8B9yns28hTqr6vXL3KATokaWiiy8aT6Yfxf9DGWUgE29cWrSnHrkI4w
+         idGZ08lQ32nCamvjv/835k4LV9ACBFcf5UZmzPnGV5x1fTR1JKktlt4Anmhm6n1tg/nG
+         JGqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVObAWjCiTX7AhVGb1ywZpqIEC/uQ/Gc2pS2CyxnLhNoKdrEQ3ypVyAtDkpl8i1+oyFHOpHRbERrA0BNko=@vger.kernel.org, AJvYcCXYadIe/5ApIPONLqv3kXoShYJIzpSzcFT2F+9ZZduDQmPlsQccD7ocbrk4MjQGYAPd9gr7wDxdvv1+ZTPZyYPtgQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTYShTQlSiwvU2hNTShYRMFcKynTkgsYxzCVNwgGXy67N+9S5y
+	2viI/w3PpdPx42tdytCZ2BEE2glLeQtQTtXfCzFzP7zn3tF/rpIg
+X-Google-Smtp-Source: AGHT+IEIsaEy4ZK8gHV2HIpK6Uq9LWxVHaudx1taU6OGXxnBFpcULNSUy8e1lLJAWsc22Xs3/7HbAA==
+X-Received: by 2002:a05:600c:5489:b0:42c:b8c9:16c8 with SMTP id 5b1f17b1804b1-431616415f4mr16309715e9.10.1729258494309;
+        Fri, 18 Oct 2024 06:34:54 -0700 (PDT)
+Received: from localhost.localdomain ([2a06:5906:61b:2d00:d416:f456:3869:adaf])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160e0a7acsm24320475e9.22.2024.10.18.06.34.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 06:34:53 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v6 00/23] media: platform: rzg2l-cru: CSI-2 and CRU enhancements
+Date: Fri, 18 Oct 2024 14:34:23 +0100
+Message-ID: <20241018133446.223516-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018080602.3952869-4-cristian.marussi@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 09:06:00AM +0100, Cristian Marussi wrote:
-> Depending on specific hardware and firmware design choices, it may be
-> possible for different platforms to end up having different requirements
-> regarding the same transport characteristics.
-> 
-> Introduce max-msg-size and max-msg properties to describe such platform
-> specific transport constraints, since they cannot be discovered otherwise.
-> 
-> Cc: devicetree@vger.kernel.org
-> Cc: Rob Herring (Arm) <robh@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> ---
->  .../devicetree/bindings/firmware/arm,scmi.yaml   | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> index 54d7d11bfed4..42852ed887f2 100644
-> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> @@ -131,6 +131,22 @@ properties:
->        be a non-zero value if set.
->      minimum: 1
->  
-> +  max-msg-size:
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Vendor prefix needed.
+Hi All,
 
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      An optional value, expressed in bytes, representing the maximum size
-> +      allowed for the payload of messages transmitted on this transport.
-> +      If set it is recommended to be greater or equal than the minimum size
-> +      required to support all the messages defined by the set of protocols
-> +      implemented on this platform.
+This patch series aims to add the below:
+- Support to capture 8bit Bayer formats.
+- Simplify format handling
+- Implement .link_validate callback
+- Simplify configuring CRU
+- Retrieve virtual channel from remote subdev
 
-Sounds kind of broken if less than the minimum...
+Note this patch series applies on top of branch -next + two additional patches:
+- https://git.linuxtv.org/media.git next
+- https://lore.kernel.org/all/20240826110740.271212-1-biju.das.jz@bp.renesas.com/
+- https://lore.kernel.org/all/20240905111828.159670-1-biju.das.jz@bp.renesas.com/
 
-> +
-> +  max-msg:
+v5->v6
+- Updated commit message for patch 10/23, 12/23, 13/23 and 18/23
+- Included RB tags from Laurent
+- Added new patch 23/23
 
-Vendor prefix and could be a bit more specific what this is.
+v4->v5
+- Updated .link_validate function to drop local variable, invalid
+  format check and input/output code fmt check
+- Split up patch 10/17 from v4 into multiple patches (10/11/12/13/14/15)/22
 
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      An optional value representing the maximum number of concurrent in-flight
-> +      messages allowed by this transport. If set, the value should be non-zero.
-> +    minimum: 1
-> +
->    arm,smc-id:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      description:
-> -- 
-> 2.46.1
-> 
+v3->v4
+- Added {} in rzg2l_cru_ip_format_to_fmt() for the for loop (in patch 10/17)
+- Added checks for formats in .link_validate callback (in patch 13/17)
+- Got rid of icndmr local variable in rzg2l_cru_initialize_image_conv()
+ (in patch 15/17)
+- Moved macro ICnDMR_YCMODE_UYVY to rzg2l-cru-regs.h
+- Included RB tags from Laurent for patches 15 and 17
+
+v2->v3
+- Added MUST_CONNECT flag for source pads
+- Used ARRAY_SIZE() instead of NR_OF_RZG2L_CSI2_PAD
+- Implemented rzg2l_cru_ip_format_to_fmt() and rzg2l_cru_ip_index_to_fmt()
+- Dropped checking fmt in rzg2l_cru_initialize_image_conv()
+- Dropped fse->index checks
+- Implemented link_validate for video node
+- Re-used rzg2l_cru_ip_format_to_fmt() to fetch icndmr details
+- Moved register definitions to separate header file
+- Updated subject lines and commit messages
+- Collected RB tag
+
+v1->v2
+- Fixed retrieving VC from subdev
+- Fixed review comments pointed by Laurent
+  * Refactored supported CRU formats
+  * Added MUST_CONNECT flag wherever required
+  * Dropped `channel` member from `struct
+
+v1:
+Link: https://lore.kernel.org/all/20240906173947.282402-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (23):
+  media: rzg2l-cru: Use RZG2L_CRU_IP_SINK/SOURCE enum entries
+  media: rzg2l-cru: Mark sink and source pad with MUST_CONNECT flag
+  media: rzg2l-cru: csi2: Mark sink and source pad with MUST_CONNECT
+    flag
+  media: rzg2l-cru: csi2: Use ARRAY_SIZE() in media_entity_pads_init()
+  media: rzg2l-cru: csi2: Implement .get_frame_desc()
+  media: rzg2l-cru: Retrieve virtual channel information
+  media: rzg2l-cru: Remove `channel` member from `struct rzg2l_cru_csi`
+  media: rzg2l-cru: Use MIPI CSI-2 data types for ICnMC_INF definitions
+  media: rzg2l-cru: Remove unused fields from rzg2l_cru_ip_format struct
+  media: rzg2l-cru: Remove unnecessary WARN_ON check in format func
+  media: rzg2l-cru: Simplify configuring input format for image
+    processing
+  media: rzg2l-cru: Inline calculating image size
+  media: rzg2l-cru: Simplify handling of supported formats
+  media: rzg2l-cru: Inline calculating bytesperline
+  media: rzg2l-cru: Make use of v4l2_format_info() helpers
+  media: rzg2l-cru: Use `rzg2l_cru_ip_formats` array in enum_frame_size
+  media: rzg2l-cru: csi2: Remove unused field from rzg2l_csi2_format
+  media: rzg2l-cru: video: Implement .link_validate() callback
+  media: rzg2l-cru: csi2: Use rzg2l_csi2_formats array in
+    enum_frame_size
+  media: rzg2l-cru: Refactor ICnDMR register configuration
+  media: rzg2l-cru: Add support to capture 8bit raw sRGB
+  media: rzg2l-cru: Move register definitions to a separate file
+  media: renesas: rzg2l-cru: Add 'yuv' flag to IP format structure
+
+ .../platform/renesas/rzg2l-cru/rzg2l-core.c   |   3 +-
+ .../renesas/rzg2l-cru/rzg2l-cru-regs.h        |  80 +++++
+ .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  28 +-
+ .../platform/renesas/rzg2l-cru/rzg2l-csi2.c   |  39 ++-
+ .../platform/renesas/rzg2l-cru/rzg2l-ip.c     |  85 +++++-
+ .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 287 +++++++-----------
+ 6 files changed, 315 insertions(+), 207 deletions(-)
+ create mode 100644 drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
+
+-- 
+2.43.0
+
 
