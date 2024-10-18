@@ -1,401 +1,210 @@
-Return-Path: <linux-kernel+bounces-372183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A739A455F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9822F9A4562
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8931F22201
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:02:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19F491F217B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C650520403F;
-	Fri, 18 Oct 2024 18:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFF7204089;
+	Fri, 18 Oct 2024 18:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j2D9p7Sl"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TaKPpL5R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8744C2038CA
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CCF8472;
+	Fri, 18 Oct 2024 18:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729274517; cv=none; b=KTJyukqbi/X8TDCkGnDm9JfsUsnhEqQgbksaifSRbtzDR5ibFP6Evz+cg/QCJKAw6u2fsgywTABlBCXZmYvmyVYaQecZrB+6yKfpXTHMaRe8NVc2zDiLNBPUgEo/YDarXmndHvSe+EIgNWr6Hhx6aUxXt7XXvrjUgTX8otdYVGs=
+	t=1729274546; cv=none; b=MAdScaSG/DhCluVRMfX23M88xdnKcFBGV/Gxe7ASN0WId+zWL0J1N6HxdSC59ZcTcH+SeiNS6oh84g/Y7XHW281wVCxailf8+UsxN5KLnHdbb++nyG5tpNHI9S0UgsxzvUG+T9IixJx8g2RxTFlH0iWEadtFNdwtZCjIoN6t5U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729274517; c=relaxed/simple;
-	bh=8rcchnUfthLl38vpr9Vp7U+3St9EqoU1pWs8x/Ug5SQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IRsZoSNWEuZJGmvOOGHNJiBlBdYv+BxVd8bWnMNex++VE8Oiv1EHDsK9IRkp7CsdFz7sVluGQGiPtbNIKDV/GGxWwXo/1ZF+pi3TjrEFJssiI3BdF1Nu2iMHhZWO8LdwQ3kCiKA1a4hkMjiKidgjucw8SohIVKgkBKX8whB+igY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j2D9p7Sl; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-288824e9cc4so302355fac.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:01:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729274514; x=1729879314; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9OKp72oFdRRG8t+D/9JG91r+3KRfEXqiJBYSKDyOMOA=;
-        b=j2D9p7SlxpG0hbJm6mWvncKT+FihaATtJrSuCL1ixga68Rrhe0SCto80r/CMKCp8WT
-         sRdTIlz1baqqY5urpqWQ84KWyswMR6/C4SdZeAcLx/1+IVDA8FJ+wj00I7fMSyRx8f/t
-         nKiDfZ19O1BMOFy5unW//n5EruUj6+f/aLpAk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729274514; x=1729879314;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9OKp72oFdRRG8t+D/9JG91r+3KRfEXqiJBYSKDyOMOA=;
-        b=I+UZZrbNuPwGv2ejRaGlSLD3Bn6df4U7pAw1e2eQgS1SVlA9eog4/4EMF3z4gm//gi
-         qjE3gt7rVNzqkEZkyIjDpS4D3dEBz25EqJbTeeA4R4cNDsBGadVsxVSHzf/PY31yEvTL
-         u34Sgfgcq7pqjwmtED3ptlgMp06dgYEOJSXkMGEVr3dD6WuyNuhuAGXYxpuufRJk4ZNJ
-         bdSFbCVq1TXORNOKcIufwyCrPkWzBIGhmepJRL9Df2iQwNBNYov0acH+TmVzuFWX2Xgg
-         XGDWmes07TjyhHVRLpYXAveSQA3tpXXjqsitSL5BlIELuEKZD8G3OlD0v/qqol54UQh9
-         vLcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYoE7/uf/ZC8Sc+lQugwhJBvnxsmkbSknrpcywJDZzxX+Xrv6nkccpebeRYZvfME8zwdWfNVY5Ltoiyuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUTBwy9eDH2Bng3NoCyRuXW+ZA4APJ2tzbTh2lPzrbnWJ5l1G0
-	RWTUIO9EOCDMDsur+zkdEj+TJs6xrXUC9wX40ZzcQwN3hBkbtWtC2hRlhj4ItZ2f2APHDvR+PJF
-	YUDw10RvKyI9HSuP1L/i9gLbQn+sMwXYrVy9d
-X-Google-Smtp-Source: AGHT+IGKPvjDV4dZmtSKWkrmR0IHyPkLSBZLU0gQOTWtc6F9ygGetic1QXOrzVfdzggME43tb3cFYb+uxSD7ggykO7U=
-X-Received: by 2002:a05:6870:f115:b0:27c:df37:9e0c with SMTP id
- 586e51a60fabf-2892c3426e3mr779683fac.8.1729274514353; Fri, 18 Oct 2024
- 11:01:54 -0700 (PDT)
+	s=arc-20240116; t=1729274546; c=relaxed/simple;
+	bh=P4W5WsJ7T2B5pGPBAwjLvDhq586dUwXIusTYcg05BAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sfQ6fgxps1j1C8T8NXVb697Yw5d97z1p3YSC9hzjMNm1Jmys0Yf/dUxSSSUMEQ0Xh71Og1mIVvGjLy0n8rsMBngceCM5Z5bFiFK8gno0LNn50FKQljYCPrB89nHoVCJKygBcDEulHMpzC1LZntBnnzt9sUeidHHGmO8QOmb4E/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TaKPpL5R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D501CC4CEC5;
+	Fri, 18 Oct 2024 18:02:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729274545;
+	bh=P4W5WsJ7T2B5pGPBAwjLvDhq586dUwXIusTYcg05BAE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TaKPpL5RiJjzjLlTZ1KgNmeEw+H17Vgja2H25r1k8HDDFIJtWMBl4qmIB3oyu6uhC
+	 2d+iaqNI+kJvt9yZhTYlfF0KbDa5o4zIiJBzes594EBWMpYH45zAICa0QmLBSjyyWl
+	 6B2xNabrclbuWEEWb3ZdHXUZGJrLNsqsLrr5Tke14PJYhbo5lzF15IQ5BTRDa+u9EH
+	 bHYNxs43rqP0mC1HTf3L5isI9dpxu6TQPS7CKHmCY2uthlRF9Jx61CxnrB3QwUsfqP
+	 /47ykukVrgZDYOi6ClXDCyXiSBUqVAnAIt6pUvWjhZctAMHDaE3DsgOZpjA8sqPMPH
+	 qDqDZCyvZB0iQ==
+Date: Fri, 18 Oct 2024 19:02:18 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxl?=
+ =?UTF-8?B?cg==?= <philm@manjaro.org>
+Subject: Re: [PATCH 3/3] iio: imu: Add scale and sampling frequency to
+ BMI270 IMU
+Message-ID: <20241018190218.2e2c04ff@jic23-huawei>
+In-Reply-To: <877ca8alnr.fsf@justinweiss.com>
+References: <20241011153751.65152-1-justin@justinweiss.com>
+	<20241011153751.65152-4-justin@justinweiss.com>
+	<20241012123535.1abe63bd@jic23-huawei>
+	<87jzecpvpd.fsf@justinweiss.com>
+	<20241013164000.19087833@jic23-huawei>
+	<87ttdfn2nr.fsf@justinweiss.com>
+	<20241014201124.5621c4aa@jic23-huawei>
+	<877ca8alnr.fsf@justinweiss.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e7ea2b84-8d10-40fe-a14f-837bca851ea9@lucifer.local>
- <fd927106-2fc3-4b96-8014-2c517229bc99@lucifer.local> <CABi2SkUpCf+aOa2sPED8CosG5ccqjFd7ouot8gXi9ECqsHiZhw@mail.gmail.com>
- <4944ce41-9fe1-4e22-8967-f6bd7eafae3f@lucifer.local> <CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com>
- <CABi2SkVEMRHV3swrbb6M5RA6GQpFVVx855CGwdQ1xiz3tygiqA@mail.gmail.com>
- <f9b9422c-216d-422e-94b4-d8814b0b277e@lucifer.local> <CABi2SkWAv4LXvR1Wb1e31eyZ35JfyieXhDOq1bp_ZvHPLLg-qA@mail.gmail.com>
- <e0f440b0-5a45-4218-8c51-27f848c0617b@lucifer.local> <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
- <c56aac50-83b5-45f2-8ddb-6980c22c059b@lucifer.local>
-In-Reply-To: <c56aac50-83b5-45f2-8ddb-6980c22c059b@lucifer.local>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 18 Oct 2024 11:01:40 -0700
-Message-ID: <CABi2SkUiazcOnGZxVyb21jCa1gzOaQ1NPzjGJVX5a3kw1BBE0Q@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, akpm@linux-foundation.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pedro.falcato@gmail.com, willy@infradead.org, broonie@kernel.org, 
-	vbabka@suse.cz, Liam.Howlett@oracle.com, rientjes@google.com, 
-	keescook@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-HHi Lorenzo
+On Tue, 15 Oct 2024 18:20:24 -0700
+Justin Weiss <justin@justinweiss.com> wrote:
 
-On Thu, Oct 17, 2024 at 11:38=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Thu, Oct 17, 2024 at 12:49:40PM -0700, Jeff Xu wrote:
-> > On Thu, Oct 17, 2024 at 12:00=E2=80=AFPM Lorenzo Stoakes
-> > <lorenzo.stoakes@oracle.com> wrote:
-> > >
-> > > On Thu, Oct 17, 2024 at 11:47:15AM -0700, Jeff Xu wrote:
-> > > > On Thu, Oct 17, 2024 at 11:29=E2=80=AFAM Lorenzo Stoakes
-> > > > <lorenzo.stoakes@oracle.com> wrote:
-> > > > >
-> > > > > On Thu, Oct 17, 2024 at 11:14:20AM -0700, Jeff Xu wrote:
-> > > > > > Hi Lorenzo and Muhammad
-> > > > > >
-> > > > > > Reviving this thread since the merging window is closed and we =
-have
-> > > > > > more time to review /work on this code in the next few weeks.
-> > > > > >
-> > > > > > On Fri, Sep 13, 2024 at 3:50=E2=80=AFPM Jeff Xu <jeffxu@chromiu=
-m.org> wrote:
-> > > > > > >
-> > > > > > > Hi Lorenzo
-> > > > > > >
-> > > > > > > On Sat, Sep 7, 2024 at 12:28=E2=80=AFPM Lorenzo Stoakes
-> > > > > > > <lorenzo.stoakes@oracle.com> wrote:
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > I also suggest we figure out this FAIL_TEST_IF_FALSE() thin=
-g at this point
-> > > > > > > > too - I may be missing something, but I cannot for the life=
- me understand
-> > > > > > > > why we have to assert negations only, and other self tests =
-do not do this.
-> > > > > > > >
-> > > > > > > My most test-infra related comments comes from Muhammad Usama=
- Anjum
-> > > > > > > (added into this email), e.g. assert is not recommended.[1] ,
-> > > > > > >
-> > > > > > > [1] https://lore.kernel.org/all/148fc789-3c03-4490-a653-6a4e5=
-8f336b6@collabora.com/
-> > > > > > >
-> > > > > > Specifically regarding Lorenzo's comments about FAIL_TEST_IF_FA=
-LSE
-> > > > > >
-> > > > > > Muhammad Usama Anjum doesn't want assert being used in selftest=
- (see
-> > > > > > [1] above), and I quote:
-> > > > > > "We don't want to terminate the test if one test fails because =
-of assert. We
-> > > > > > want the sub-tests to get executed in-dependent of other tests.
-> > > > > >
-> > > > > > ksft_test_result(condition, fmt, ...);
-> > > > > > ksft_test_result_pass(fmt, ...);"
-> > > > > >
-> > > > > > FAIL_TEST_IF_FALSE is a wrapper for ksft_test_result macro, and
-> > > > > > replacement of assert.
-> > > > > >
-> > > > > > Please let me know if you have questions on this and Muhammad m=
-ight
-> > > > > > also help to clarify the requirement if needed.
-> > > > > >
-> > > > > > Thanks
-> > > > > > -Jeff
-> > > > >
-> > > > > Right this is about not failing the test i.e. equivalent of an ex=
-pect
-> > > > > rather than an assert, which makes sense.
-> > > > >
-> > > > > What I'm saying is we should have something more like
-> > > > >
-> > > > > EXPECT_TRUE()
-> > > > > EXPECT_FALSE()
-> > > > >
-> > > > > etc.
-> > > > >
-> > > > > Which would avoid these confusing
-> > > > >
-> > > > >         FAIL_TEST_IF_FALSE(!expr)
-> > > >
-> > > > FAIL_TEST_IF_FALSE(expr) is the right way to use this macro.
-> > >
-> > > But you don't only test position conditions, you also test negative o=
-nes.
-> > >
-> > So it is not a problem with the MACRO, but where is it used ?
+> Jonathan Cameron <jic23@kernel.org> writes:
+> 
+> > On Sun, 13 Oct 2024 13:55:36 -0700
+> > Justin Weiss <justin@justinweiss.com> wrote:
+> >  
+> >> Jonathan Cameron <jic23@kernel.org> writes:
+> >>   
+> >> > On Sat, 12 Oct 2024 19:45:18 -0700
+> >> > Justin Weiss <justin@justinweiss.com> wrote:
+> >> >    
+> >> >> Jonathan Cameron <jic23@kernel.org> writes:
+> >> >>     
+> >> >> > On Fri, 11 Oct 2024 08:37:49 -0700
+> >> >> > Justin Weiss <justin@justinweiss.com> wrote:
+> >> >> >      
+> >> >> >> Add read and write functions and create _available entries. Use
+> >> >> >> IIO_CHAN_INFO_SAMP_FREQ instead of IIO_CHAN_INFO_FREQUENCY to match
+> >> >> >> the BMI160 / BMI323 drivers.      
+> >> >> >
+> >> >> > Ah.  Please break dropping _FREQUENCY change out as a separate fix
+> >> >> > with fixes tag etc and drag it to start of the patch. It was never
+> >> >> > wired to anything anyway
+> >> >> >
+> >> >> > That's a straight forward ABI bug so we want that to land ahead
+> >> >> > of the rest of the series.      
+> >> >> 
+> >> >> Thanks, I'll pull that into its own change and make it the first patch.
+> >> >>     
+> >> >> > Does this device have a data ready interrupt and if so what affect
+> >> >> > do the different ODRs for each type of sensor have on that?
+> >> >> > If there are separate data ready signals, you probably want to 
+> >> >> > go with a dual buffer setup from the start as it is hard to unwind
+> >> >> > that later.      
+> >> >> 
+> >> >> It has data ready interrupts for both accelerometer and gyroscope and a
+> >> >> FIFO interrupt. I had held off on interrupts to keep this change
+> >> >> simpler, but if it's a better idea to get it in earlier, I can add it
+> >> >> alongside the triggered buffer change.    
+> >> >
+> >> > Ok. So the challenge is that IIO buffers are only described by external
+> >> > metadata.  We don't carry tags within them.  Hence if you are using
+> >> > either effectively separate datastreams (the two data ready interrupts)
+> >> > or a fifo that is tagged data (how this difference of speed is normally handled
+> >> > if it's one buffer) then when we push them into IIO buffers, they have
+> >> > to go into separate buffers.
+> >> >
+> >> > In older drivers this was done via the heavy weight option of registering
+> >> > two separate IIO devices. Today we have the ability to support multiple buffers
+> >> > in one driver. I'm not sure we've yet used it for this case, so I think
+> >> > there may still be some gaps around triggering that will matter for the
+> >> > separate dataready interrupt case (fifo is fine as no trigger involved).
+> >> > Looking again at that code, it looks like there may need to be quite
+> >> > a bit more work to cover this case proeprly.
+> >> >
+> >> > We may be able to have a migration path from the simple case you have
+> >> > (where timing is an external trigger) to multiple buffers.
+> >> > It would involve:
+> >> > 1) Initial solution where the frequencies must match if the fifo is in use.
+> >> >    Non fifo trigger from data ready might work but we'd need to figure out
+> >> >    if they run in close enough timing.
+> >> > 2) Solution where we add a second buffer and if the channels are enabled
+> >> >    in that we can allow separate timing for the two sensor types.
+> >> >
+> >> > This is one of those hardware features that seems like a good idea
+> >> > from the hardware design point of view but assumes a very specific
+> >> > sort of software model :(
+> >> >
+> >> > Jonathan    
+> >> 
+> >> Hm, that does sound tricky. If there's an example I can follow, I can
+> >> make an attempt at it.  
 > >
-> >         ret =3D sys_mseal(ptr, size);
-> >         FAIL_TEST_IF_FALSE(!ret);
+> > I don't think it ever got used for a device like this - so probably no
+> > examples, but I might have forgotten one. (this was a few years back).
+> >  
+> >> Otherwise, if there's a change I can make now
+> >> that would help with migrating in the future, I can do that instead.
+> >> 
+> >> Of the devices I've looked at, only one has had the interrupts usable
+> >> and that one only had a single pin available.  
+> > Lovely!  
+> >  
+> >> So if this change doesn't
+> >> make it harder to add later if it's necessary, I would still be OK going
+> >> without full support for now.  
+> > I stopped being lazy and opened the datasheet.
 > >
-> > Take this example, it would be
-> > assert(!ret)
+> > Hmm. We have auxiliary channels as well.  oh goody.
+> > Considering just the fifo as that's the high performance route.
 > >
-> > The syscall return usually returns 0 to indicate success, where a
-> > negative comes from, but dev should be so used to (!ret), it is a
-> > common pattern to check syscall return code. e.g assert(!ret)
+> > Basically we can do headerless mode trivially as that's just one buffer.
+> > (same ODR for all sensors).
+> > We could do headered version but without messing with multiple buffers
+> > that would be only when all sensors have same ODR (after a messy
+> > transition period perhaps - that bit of the datasheet is less than
+> > intuitive!) The reason we might do headered mode is to support the
+> > timestamps but we can probably get those via a quick read of other
+> > registers after draining the fifo.  
+> 
+> OK, that sounds good. It looks like the BMI323 driver approximates
+> timestamps by slicing up the time period between the last flush and the
+> current flush. It seems like that could also work.
+> 
+> If I understand it right, the simple way forward would be to use only
+> the fifo watermark interrupt, to set the fifo to headerless mode, and
+> only allow that buffer to be enabled when the ODR is the same between
+> the accel and gyro sensors.
+> 
+> Since that sounds like a fairly independent change, I can hold it for a
+> future patch, unless you think it belongs in this set.
+Indeed fine to leave it as it stands for this series.
+We've established a compatible path forwards if those features get added
+so all looks good to me.
+
+Jonathan
+
+> 
+> Thank you for the rest of the feedback and advice, I really appreciate
+> it. I think I have enough for another revision soon.
+> 
+> Justin
+> 
+> > So I'm fine with just not supporting the weird corner cases unless
+> > we get someone turning up who
+> > a) cares
+> > b) if foolish (or motivated) enough to do the necessary work 
+> > c) (if they are lucky) we have the infrastructure in place because someone
+> >    else needed the missing bits.
 > >
-> > Or do you have specific examples of code that caused confusion ?
+> > Jonathan
 > >
-> >
-> > > 'Fail test if false false thing' is really confusing and hard to read=
-.
-> > >
-> > > I struggle to understand your tests as a result.
-> > >
-> > > I understand 'fail test if false' is expressive in a way, but it's re=
-ally hard
-> > > to parse.
-> > >
-> > If you just read it  as assert(), would that be easier ? (or you don't
-> > like assert() ?)
-> >
-> > > Obviously it's also misleading in that you're saying 'fail the test _=
-later_
-> > > if false', which I hadn't even realised...
-> > >
-> > > It's well established in basically all normal test suites that:
-> > >
-> > > * assert =3D fail test _here_ if this fails (actually a valid thing t=
-o do if
-> > >            you assert something that means the test simply cannot
-> > >            reasonably continue if that condition is false).
-> > > * expect =3D the test will now fail, but carry on.
-> > >
-> > > I mean you work for a company that does this :) [0] this is a very we=
-ll
-> > > established precedent.
-> > >
-> > > [0]:https://github.com/google/googletest
-> > >
-> > Let's use expect as an example, let's say I create a new Macro:
-> > TEST_EXPECT_TRUE, which basically is same syntax as
-> > FAIL_TEST_IF_FALSE, I'm not sure how it is different: you still have
-> > !ret in the code.
-> >
-> >  ret =3D sys_mseal(ptr, size);
-> >  TEST_EXPECT_TRUE(!ret);
-> >
-> > Or is the FAIL_xxx_IF_FALSE pattern more un-readable than  EXPECT_TURE
-> > ? maybe ..
-> >
-> > > >
-> > > > It is same syntax as assert(expr), e.g:
-> > > >
-> > > > man assert(expr)
-> > > >        assert - abort the program if assertion is false
-> > > >
-> > > > FAIL_TEST_IF_FALSE is a replacement for assert,  instead of abortin=
-g
-> > > > the program, it just reports failure in this test.
-> > >
-> > > So doesn't at all do what assert does, because that _does_ terminate
-> > > execution on failure...
-> > >
-> > I don't know what you mean, the test case will fail, but the next test
-> > case will run. This the point, the mseal_test continues to run all
-> > test cases to finish, even if one of the test cases is failed.
-> >
-> > > We are writing unit tests in a test framework, let's use very well
-> > > established industry practices please.
-> > >
-> > > Also note that you don't even need to reinvent the wheel, there is a
-> > > fully-featured test harness available in
-> > > tools/testing/selftests/kselftest_harness.h with both ASSERT_xxx() an=
-d
-> > > EXPECT_xxx() helpers.
-> > >
-> > The EXPECT_xxx() doesn't take care of reporting though,  or maybe it
-> > needs to be combined with FIXTURE_SETUP, FIXTURE_TEARDOWN. I haven't
-> > spent much time on those, but on brief look, it seems it is for
-> > repeating some tests, which doesn't exactly fit into what I needed,
-> > e.g. the sealed memory won't be unmapped.
-> > It is possible that those tests can be adopted to use test fixtures,
-> > but I don't see significant gain for that.
-> >
-> > > I've used it extensively myself and it works well.
-> > >
-> > > I'd basically suggest you use that. Though moving existing tests to t=
-hat
-> > > would be some churn.
-> > >
-> > > On the other hand I really can't accept patches which are totally
-> > > unreadable to me, so you'll need to fix this one way or another, and =
-the
-> > > churn is worth it as a one-time cost to be honest.
-> > >
-> > > >
-> > > > Is this still confusing ?
-> > > > (The FAIL_TEST_IF_FALSE is already a descriptive name, and the synt=
-ax
-> > > > of assert is well known.)
-> > >
-> > > It's a super misleading name as it says nothing about _WHEN_ the test
-> > > fails. Also the syntax of assert() may be well known but you don't ca=
-ll
-> > > this function assert, you don't reference assert anywhere, and you do=
-n't do what
-> > > assert() does so, you know, That's not a great example.
-> > >
-> > > The semantics of unit test frameworks are very well known, and alread=
-y
-> > > implemented for you, and also do not require you to do unreadable dou=
-ble
-> > > negations for no reason, so let's use those please.
-> > >
-> > As stated previously, I'm not sure whether the test fixture is
-> > benefiting mseal_test at this moment.  But I'm open for future
-> > conversion when I have time for this. For now, I like to get those
-> > tests in so we can properly detect  possible regression for memory
-> > sealing.
-> >
-> > What will help you better review this code? Would the below help ?
-> >
-> > s/FAIL_TEST_IF_FALSE/TEST_EXPECT_TRUE/g
->
-> Jeff, you're falling into your usual pattern of being unreasonably
-> argumentative for apparently no reason and I really don't have time to
-> constantly respond inline when you're just ignoring what I tell you.
->
-> You do this on nearly all code review and this just isn't working. If you
-> want to effectively be involved in mseal you need to LISTEN.
->
-> The more you do this the less patient everybody gets with you and the les=
-s
-> likely your series will ever get merged. This is not good for mseal or
-> anybody involved.
->
-> On this issue - either use sensible macros that YOU ARE DEFINING, not
-> assert.h, but YOU, that allow you to evaluate whether a condition is true
-> or false - or I will not accept your unreadable test code.
->
-> It's that simple and I'm done discussing this.
+> >  
+> >> 
+> >> Justin  
 
-Thanks for your time on discussing this.
-
-Please, if I may say, when presenting your argument, keep it technical
-and avoid personal attack. Using personal attacks rather than using
-logic to refute your argument is =E2=80=9CAd Hominem Fallacy=E2=80=9D [1]  =
-and will
-make it harder to get your point across.
-
-[1] https://www.txst.edu/philosophy/resources/fallacy-definitions/ad-homine=
-m.html#:~:text=3D(Attacking%20the%20person)%3A%20This,who%20is%20making%20t=
-he%20argument.
-
-Additionally, The mseal_test was reviewed-by Muhammad Usama Anjum
-during original RFC discussion. IIUC, Muhammad Usama Anjum has domain
-knowledge for selftest infra, and I have relied on Muhammad=E2=80=99s comme=
-nts
-and implemented all those comments.
-
-I'm not saying there is no room for improvement, but it should happen
-in more respectful and constructive ways. In any case, I hope we have
-common interest  and passion to  get more test coverage to avoid
-future regression.  Given that we had 2 regressions in the past during
-code reviews and a pending regression to fix at this moment in memory
-sealing area,  the benefit of additional test coverage is obvious.
-
-Specific on FAIL_TEST_IF_FALS macro, during the course of this
-discussion, your comments have started with, and I quote:
-
-=E2=80=9C Why do we not have a FAIL_TEST_IF_TRUE()? This is crazy.
-  Would be nice to have something human-readable like ASSERT_EQ() or
-ASSERT_TRUE() or ASSERT_FALSE().=E2=80=9D
-
-=E2=80=9CThis is beyond horrible. You really have to add more asserts.=E2=
-=80=9D
-
-TO my response:
-
-=E2=80=9CASSERT_EQ and ASSERT_TURE are not recommended by the self-test. Th=
-e
-FAIL_TEST_IF_FAIL wrap will take care of some of the admin tasks
-related to self-test infra, such as counting how many tests are
-failing.=E2=80=9D
-
-And your question:
-=E2=80=9Cwhy we have to assert negations only, and other self tests do not =
-do this.=E2=80=9D
-
-And my response:
-"My most test-infra related comments comes from Muhammad Usama Anjum"
-(added into this email), e.g. assert is not recommended.[1] ,
-[1] https://lore.kernel.org/all/148fc789-3c03-4490-a653-6a4e58f336b6@collab=
-ora.com/"
-
-And my additional  try to clarify about your question about negations:
-=E2=80=9CSo it is not a problem with the MACRO, but where is it used ?
-        ret =3D sys_mseal(ptr, size);
-        FAIL_TEST_IF_FALSE(!ret);
-Take this example, it would be
-assert(!ret)
-The syscall return usually returns 0 to indicate success, where a
-negative comes from, but dev should be so used to (!ret), it is a
-common pattern to check syscall return code. e.g assert(!ret)"
-
-And I offer an alternative approach for macro naming:
-"ret =3D sys_mseal(ptr, size);
-TEST_EXPECT_TRUE(!ret);"
-
-Which you didn=E2=80=99t respond to directly.
-
-Given the situation, I think it might be best to let domain experts
-from the testinfra team, such as Muhammad to suggestion a better
-replacement for this macro.
-
-Best regards,
--Jeff
 
