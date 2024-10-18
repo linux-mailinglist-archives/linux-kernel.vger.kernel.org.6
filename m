@@ -1,105 +1,120 @@
-Return-Path: <linux-kernel+bounces-371084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA1A9A3610
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:51:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0784B9A3614
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFAD4B2389C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:51:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F898B23549
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABC218EFED;
-	Fri, 18 Oct 2024 06:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DD117E8E5;
+	Fri, 18 Oct 2024 06:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="RfjjB12t"
-Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSW7oAzq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CF118870E;
-	Fri, 18 Oct 2024 06:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA2417C21B;
+	Fri, 18 Oct 2024 06:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729234122; cv=none; b=dKs+cPhGEXmqFdEhKoIZCbWxQMSH0w+RYgE5BVjlWz+kFVUwBPZDlt+euV11mdICd2jdJ8FD5u2zyBdyincgIgHMJ7lMujYmoy6i22WafZv21RElSFvGVCKqmIpNyzyCYD8tgDp7Ebal0v19e5mXW4Pb+65Dhapeh+CJDYqADN8=
+	t=1729234153; cv=none; b=MomCFnRCEH+dG+EC1n728WmGzewe2WrGQBcykqQxGJKvYe5BOY2NAEQ93oEF6mCa9kEK9yR0Ffw3USGm4n9BgO7O4c/AO62wVDXDsUPal7EMtYPON70lLqE4UYGEx7mYHjJj512upiYkLbJWh5vOhD4nmGl401lsP+2uNiHGJcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729234122; c=relaxed/simple;
-	bh=W6MRMooV4KIbuAB4G1Eb0IADwXOO0fFsGsXZB5TQvsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WONewA6cB6AHDHJXVpxqShfFGlRMJqTYENSqWJmm+GQ1EG256KgquXt6s1BrtF0xisd2jCYA1oj6T3k0QQDETpVMuhmVzCVKIL8eBZ1FKoEicLNRJs2btuYF5Dy37x5HAgd8Voa6ZUherqv4icNcuqaxyu+dZWGipeGknZWTzCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=RfjjB12t; arc=none smtp.client-ip=63.250.43.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4XVFfG70ywz4wGF;
-	Fri, 18 Oct 2024 06:48:38 +0000 (UTC)
-Received: from l-latitude7390.lan (host-80-41-166-50.as13285.net [80.41.166.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4XVFf72njWz8sWP;
-	Fri, 18 Oct 2024 06:48:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1729234113;
-	bh=W6MRMooV4KIbuAB4G1Eb0IADwXOO0fFsGsXZB5TQvsc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RfjjB12tatr36v75Air+pnDXRPNaEdcz6Im5Ofv4fXW0vQ5zHitQoEJmNF1QsBMS2
-	 lQYeJy1zbaEzm5aoWWjUPCUrKRWH/RuHOFPI08TYmEbWnPFp8nedHTFvI35Qs+oUX4
-	 Wv3WYgEE318DXAbSjE/AnuIj1QJta7ppt+WV5Ea8YEYAjlEERuwWOdlNZZE+97xHix
-	 JyEs5q/Cv9NMtUBCy9n39C4siaGV+8Eyw/twm1ISN0MfYswc8SLaH7+lcxm2gTcEzl
-	 qG/e6netfJcsC2SROOQjtMpF6h7jAF4lO+yB51hewxj3lxhbD/c+kQTVMlSLveb5u8
-	 Dk6aMiuYOR2AA==
-From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
-To: krzk@kernel.org
-Cc: alim.akhtar@samsung.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	igor.belwon@mentallysanemainliners.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	robh@kernel.org,
-	umer.uddin@mentallysanemainliners.org
-Subject: Re: Re: [PATCH v2 0/4] Add minimal Samsung Galaxy S20 Series board, SM-G981B and SM-G980F support
-Date: Fri, 18 Oct 2024 07:48:28 +0100
-Message-ID: <20241018064828.18576-1-umer.uddin@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <ncckonzlc7fjt6vhw543iqoua4qx7hjgexj6lxyaldzcvbtutx@luazzw3rmjcd>
-References: <ncckonzlc7fjt6vhw543iqoua4qx7hjgexj6lxyaldzcvbtutx@luazzw3rmjcd>
+	s=arc-20240116; t=1729234153; c=relaxed/simple;
+	bh=UwktfT7c9ieMankN4ksQCQMhaqNsVgCol6XeY0OIXTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctmVY4vAJ1g6d/dJcW9igSjRNU7tyOTkbxsZF7gb1njMN78TAUYdjpTQhn2QBLlalSXOs9TmQs3RkBRAEx11Sc6KKz6so5+UR2qzfUkrM3ZbQs2kvE1ckk/qy+USxP7/byg+GsbAa6rO1WRy/UrxxhLfGryA6Qzkud2PGUVesbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSW7oAzq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DA94C4CECF;
+	Fri, 18 Oct 2024 06:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729234153;
+	bh=UwktfT7c9ieMankN4ksQCQMhaqNsVgCol6XeY0OIXTE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SSW7oAzqjKhLfKFNSrOkTyexft43czsMGJH5/4fJmszrA48nIcnhq+rzDjgwUHUOq
+	 nWNY1SwHC/Jia5OBlM8nz6Kh2rNUKJz897LwWEsYMOLwgReVlvgomC5VBj1Qm/+mNu
+	 Hgnuwpa9iXclCYe8QeZ6FOSwaWGWrz1aHIqti1H38coWbRlUP4eTAtflJz3Be+wUBO
+	 GatbdBl7+7SH0SdxolBqtjqeayo5QO+mfH/0lyrUY2qxHaKA/BpsBFkVGUnMeufTRS
+	 6Na3NZ+cU4Mi0uiOmWhYNm6cDd0j7POUzPywJBIvrm0dK782YLTYe/YyeFrwqg5Qk8
+	 FAxgsl7+mgrcA==
+Date: Fri, 18 Oct 2024 08:49:09 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl : qcom: document SAR2130P TLMM
+Message-ID: <u2yel7ych7esqlr732x6x424rxcolb22k6fgw5t6yyuurgneyf@5hnqyc3iqdvv>
+References: <20241017-sar2130p-tlmm-v1-0-8d8f0bd6f19a@linaro.org>
+ <20241017-sar2130p-tlmm-v1-1-8d8f0bd6f19a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241017-sar2130p-tlmm-v1-1-8d8f0bd6f19a@linaro.org>
 
-On Thu, Oct 17, 2024 at 05:43:27PM +0100, Umer Uddin wrote:
-> > Add initial support for the Samsung Galaxy S20 (x1slte/SM-G980F)
-> > phone. It was launched in 2020, and it's based on the Exynos 990 SoC. It
-> > has only one configuration with 8GB of RAM and 128GB of UFS 3.0 storage.
+On Thu, Oct 17, 2024 at 07:15:45PM +0300, Dmitry Baryshkov wrote:
+> Add bindings for the pin controller (TLMM) present on the
+> Qualcomm SAR2130P platform.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../bindings/pinctrl/qcom,sar2130p-tlmm.yaml       | 138 +++++++++++++++++++++
+>  1 file changed, 138 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sar2130p-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sar2130p-tlmm.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..a8daa96936599e459c801b6685a42659271604ee
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sar2130p-tlmm.yaml
+> @@ -0,0 +1,138 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/qcom,sar2130p-tlmm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. SAR2130P TLMM block
+> +
+> +maintainers:
+> +  - Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> +
+> +description:
+> +  Top Level Mode Multiplexer pin controller in Qualcomm SAR2130P SoC.
+> +
+> +allOf:
+> +  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sar2130p-tlmm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  gpio-reserved-ranges:
+> +    minItems: 1
+> +    maxItems: 105
+> +
+> +  gpio-line-names:
+> +    maxItems: 156
 
-> 8 GB RAM, so the memory map should not be the same (and should not be in
-> DTSI file).
-
-> >
-> > This device tree adds support for the following:
-> >
-> > - SimpleFB
-> > - 8GB RAM
-> > - Buttons
+Don't you have 210 GPIOs? At least reserved-ranges and pins pattern
+suggest it.
 
 Best regards,
 Krzysztof
 
-Hi Krzysztof,
-
-Thank you for the review.
-All hubble devices actually do
-have the first 8GB of RAM mapped the same, I have personally
-checked this, by getting fdt dumps from /sys/firmware/fdt
-and checking all of the memory nodes.
-
-Best regards,
-Umer
 
