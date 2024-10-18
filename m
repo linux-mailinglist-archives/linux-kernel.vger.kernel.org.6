@@ -1,243 +1,194 @@
-Return-Path: <linux-kernel+bounces-371416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13499A3AC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:04:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A0A69A3AC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A541F28F50
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5B61F28AEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7680B2010EE;
-	Fri, 18 Oct 2024 10:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B07A201026;
+	Fri, 18 Oct 2024 10:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F0MXG8dk"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b="P7EWnkS4"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2063.outbound.protection.outlook.com [40.107.21.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123981D63DF
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729245830; cv=none; b=W2Bwkj61iylYlqFg7/zATxlZXtkIK07gFQCKfKBdipg0XU1iKysekEaln4XtbfakH51X2ZLrdGX3CZcnY0o37CtXlrnu0520AkhyqrWXiAU/Wa3tIytBUowvhWh+1DLWTNvYOGdWQqUkI4vOfvt5JwqVshWyIJZA5HGr3R1areY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729245830; c=relaxed/simple;
-	bh=DWyx/3YGe3huLlMU54X3fY0AM74cinw8tnManxqSsHw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZhOjp0ZgGrpi8DukUOV3C5Vd2IMOrjQ997lfObNfPzOinaozDehcWhPuaeFu1Lf1hb4AlCeLhFRgQ/MQhvmTdJR5gwX0zHWhHOetYg0UqK8xaC1oK9xw8P3uud+NDvc+l/5hIctc+EGdY08JCHtCW5E6MGc0V0gn/GoNBFDHnBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F0MXG8dk; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e38ebcc0abso22708727b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:03:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729245828; x=1729850628; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qhb0Ic3bcpMXH2km/HoGTBWj+bbxwR5zeev1bJh+028=;
-        b=F0MXG8dkWvpgv2754gONbOH+2MoNpZ8xI8ubjla71ce1L6hCqus6lhWh5jbkj/zVfy
-         EIu7vtbugPuhgdhUsmZKljJ3eC58UPRxN5aEy0IQ7MDaqg5+QgovKnSiTFgRy8N2sZEM
-         AdfqqIKBgOIIi5IsaEFXKMnlI66BxhakJKOK1ICNXimraMwUDxo64PuwIY8w5OEnkpHi
-         Uyk0oYv0jzIjEfOMfXpJwsLCKWDvodPr3xktuna5ga0Beo6igUJvvFlHeb3M0+4S4SsM
-         argThhzAolCtpbosvw/tOprHnpkejGhYdgR6Ksaz/79mw3ZzNy/oPwq2cA6fLaGtfSpx
-         3G5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729245828; x=1729850628;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qhb0Ic3bcpMXH2km/HoGTBWj+bbxwR5zeev1bJh+028=;
-        b=qJi6LEPJ7ZSc6b2bv1MQcmN5sBVjLoz/f7x3MoBLAh73po3t86twmm10gFciltEl+V
-         vftidj63uwOgE/fIHdJifTMwmWuq8E9DcCpZF7ayJ4RQKFwjgxlxZfHZhhn++IyFW7x7
-         2HTF6BmSCjE7NbcqPLtF/DkikP7MZYhz7EhyP+C3UzvtHe2K+/gUgcz4MD12l0Lmf8Iu
-         ibkAfWenMyHjDjjAue/VFcuGOI3HS17FEKBTGW/nZf/ywqdvoq6eVo2grLQd2zWEk/vI
-         d7nXQ5i1Vm0utQoJvQPO0C7KaEN5m+8ouQ1SH+riOBGTYT0OPnrxd8Lbja2+ctRDm7k7
-         fKtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4MHS4vHtl7ke30xtKQbw5c92IhvagUVVdCVQBM/yEGB/g1JAsEZqvGS2oe9mEYwaSxreVDLQXiCA+0y4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRkahtMqDJIEX+X3Pf333DH7eCNySD73BjSidpmeQxSFdAiTQU
-	tlma3XDkuEbhCuKl8zURagpZXJTyhW9OlbmPggmv2e8FcTgVo5vAr9EN6HUsQ8OuoQ/oeAJRhxh
-	9nLWdr7jMcj4LN/CRUSxw8i0VEZGS2smvCMDZgA==
-X-Google-Smtp-Source: AGHT+IG6+GNKdTTardBqrOSFafCoHKmDQ8VI6s29ziEBvjyDm72unVmqb/41tRAeouig0145z02Jy13eFHz5Np1TynU=
-X-Received: by 2002:a05:690c:112:b0:6e3:34ee:6780 with SMTP id
- 00721157ae682-6e5bf9e2dd9mr14707267b3.22.1729245827020; Fri, 18 Oct 2024
- 03:03:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C1617D378;
+	Fri, 18 Oct 2024 10:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729245829; cv=fail; b=hxxzhvBXz45ObE52shdD8QtMrK9qfshe+pvlUroHz0qUpuXc22W/+NrxwHqHzSdD0cHPuC5X1y/AlhkpJRAcR5jkVN0mC80mpaBNIKgqcij7uDahTObVnt3nDPxHGyAOW9/W4SOB3aFkaETqa2G8Fv/0w3d2b2NY4NMJH+0LqJw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729245829; c=relaxed/simple;
+	bh=AIgDVPNN1TWygpYp/hjsRHGhvTmHyzxUQZyrPaX8eY0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=CrK/M00C//i10XANCKssMJ4hZCu0GEYEUum/EcwOrqNOOjKwlWt7/78J9J/2NeQSw79JWzVRhgjdl8rO1OsxDhjH1WVRRCzZXCDVq8YV4GgBn1wZsugRNwjt9yqwC7cxiUr4u7B8fDFljz++1dKuJQPy0CpFLGCfEEHI7dpOcRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com; spf=fail smtp.mailfrom=nokia.com; dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b=P7EWnkS4; arc=fail smtp.client-ip=40.107.21.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nokia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QwxReu+L7G60e1YsE5hT1lHCA10ahgwvRJ0W82gZXNZfp5xrxDBgxPkBsiz6DCVICj/xVLqFpzB6bCz8ByKn53YfPpm1Nr2FWOUvKIwYyoCwoA6ZUlFVDBma1K49heSdkg5GMiBOIMR6wCqX/qXZKlfbV81r+64SQHNriPkN/6L+QzkzaF0Obbv1QgV5EZ7h4hk+GfC2Nj2EwiSq8DAZsEHq0LH1dOBiRPqbBXN9l4Fr7rVzzgplp5lFwDHD+JcAlgO76Nk7m7rwiVI/mvU+YXcpKvCMQkz+lPxB8MQhm0mvvFW1bwOmX/nMqcQZ+i0qfnP/r80Z2p4ugHevYJ4W2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tT0fdPp4j4sJown4QxGfJxeFnAEt5W9tCKUT6K0eLwk=;
+ b=RfIz1k7Z3tC2bDMafFRfyaK2Hk0K7oBTEBDWdTO7x7kptiTbnHhNRkntC6K4nAyhQO5e+RJ95OMAig5G7SZEdhYDklpCsJzr/XyKfr5ydtv51qnNxr78eE3998oJ9YIw120C4I5GEo9wBDTkDW3+sCgBe9l4NvwKrocXb72w10qFXs8duHwMaW8eDnQb8Myp6E0DfkszwQyoqtjYL0NhND6L+RHwItmofkke3t82zsLLyVXzfV+IdMwV2QTyDNmlpWG6l1gtsyjJCE8BReJ9CbslD47CKQYnVKLkxo1dWkf9oAuQkjiwGtuAJ7J5OoSYFkRwFzJZR4u8hna3VxjEtg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
+ dkim=pass header.d=nokia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tT0fdPp4j4sJown4QxGfJxeFnAEt5W9tCKUT6K0eLwk=;
+ b=P7EWnkS4exKUqP1QhjYCquJLVgKmZ8yISa0Z8CHmgpljG/kSNKNK1yTi6E1FeRYSyfYYmZ6N6vZxhxqqsYTezEr4kfTb/Zn5AcQBv3S1EUvgXlNTXF3hZLo1u55V2qnoUv2LqqcYpLDoRF3Af9PJ/8nY+WycCOltOWEue9fnFKl/0rAya3mbjyKIMBDQzFdiBr+Tcc+AQjYUKcevXjLKRLclmCf1UW0KXfXNOsa35cxAxgB/d0B02LACmjXc/2I4WyKAiyYEwYn5WIq7wDgSDSW8/AVxkVdqeArxHSQuKSY6AsDTatoPb0uLBiVqhC+hvu63v6wD5c3UMr5kamuI4g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nokia.com;
+Received: from DB6PR07MB3509.eurprd07.prod.outlook.com (2603:10a6:6:21::16) by
+ AS8PR07MB9211.eurprd07.prod.outlook.com (2603:10a6:20b:5ed::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8069.17; Fri, 18 Oct 2024 10:03:44 +0000
+Received: from DB6PR07MB3509.eurprd07.prod.outlook.com
+ ([fe80::5484:a966:1322:f78b]) by DB6PR07MB3509.eurprd07.prod.outlook.com
+ ([fe80::5484:a966:1322:f78b%4]) with mapi id 15.20.8069.016; Fri, 18 Oct 2024
+ 10:03:44 +0000
+From: Wojciech Siudy <wojciech.siudy@nokia.com>
+To: linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: andi.shyti@kernel.org,
+	peda@axentia.se,
+	Wojciech Siudy <wojciech.siudy@nokia.com>
+Subject: [PATCH v5 0/2] pca954x: Add DT bindings and driver changes for reset after timeout
+Date: Fri, 18 Oct 2024 12:03:36 +0200
+Message-Id: <20241018100338.19420-1-wojciech.siudy@nokia.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: FR0P281CA0047.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:48::18) To DB6PR07MB3509.eurprd07.prod.outlook.com
+ (2603:10a6:6:21::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
- <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
- <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
- <3969bae0-eeb8-447a-86a5-dfdac0b136cd@rock-chips.com> <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
- <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
-In-Reply-To: <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 18 Oct 2024 12:03:10 +0200
-Message-ID: <CAPDyKFogrPEEe1A3Kghjj3-SSJT2xEoKfo_hU7KZk+d9bZxEYQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Rob Herring <robh+dt@kernel.org>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K . Petersen" <martin.petersen@oracle.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
-	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB6PR07MB3509:EE_|AS8PR07MB9211:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9ca79d27-a5d0-4960-7ab2-08dcef5c2686
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|10070799003|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?e8X4yW48dPX3czgCO89cgjz9Vm3dsZyDJaN1dSwwQ3N3RYHNyr6xaDy0vuKw?=
+ =?us-ascii?Q?GAmF/5n6D91WCViVTRA25mXwHtTi6uSfrpzgraCl7/ZX3FU11Tv8aU/CzOO/?=
+ =?us-ascii?Q?6LHX72s4ubF2g2QNODfRKRLyY82sXr3Cpmxkzd1korYw/uK5nhBIWYB7TPg2?=
+ =?us-ascii?Q?URUTWGrz/HP72i+JAC/iK0ne5CtgtNQj7/xHCRnRSjXRWHb9753bSX1B1mL6?=
+ =?us-ascii?Q?M8iOuX3v8Mvsta6pA7ZZmyaAcgIgIKHpFl4ByAh2o/gFLANXeFHSI137ec5h?=
+ =?us-ascii?Q?P6WY52VCiroj/WltGerjvbep1iDI3xEeEvJ01+7wog78j758AFKywbqA/aQZ?=
+ =?us-ascii?Q?X9uHuPTA+kMrhnshqWdcFqluE2W1OaiGXorNgpis7fdtkX3elFkCGPqueGyg?=
+ =?us-ascii?Q?9kuB85bKJ8j3/9ujREbYOBgdhlo/Gt2E+vA3Fkg+Gd85HzSQ4XlNKpfICGE5?=
+ =?us-ascii?Q?lqelGHFP2p4Jlq43AbKaGwHRRjQXeqbIAXZx+k2x6rjCTXnzFEBa/rNhn0kk?=
+ =?us-ascii?Q?swCkKENhlk7IwMku7BOyiaWmdwekHhR6Ws72/ej3aAjkcD0vXvJPAg4/hXGw?=
+ =?us-ascii?Q?sd3pu0OwWICPcMu/Au9Pxz1qHkSr7cXhLWBU+C4M5Fu9YybwG2Ql6ILeZG+M?=
+ =?us-ascii?Q?Cx4J+wNkUG0i1b5pEHUfOhctBi874Sa9DlfniQqMWOBSSS0fQbLLjPS4PsnO?=
+ =?us-ascii?Q?0xsxvqV0ehXBLPlfuKnn7N0g4CdvQMrsAw1rkyaZvfanLWHF1VxCQUHHcL6r?=
+ =?us-ascii?Q?+N5C+UzVoK3se90rCsogY8jqh77DKbel9ecdToL7C4/SXKki2Ung6Tz/G46Y?=
+ =?us-ascii?Q?2rRkl3AcZJMoK8XPy2Lb2s/WB7WpaOaPj6gnCUy49CleG9kEe4+VBZXfAEkG?=
+ =?us-ascii?Q?XTsp6Qtf3ranTHBYiegQE4de6YRIhqQINESIcAlZrR2aRNYpuwBnEdwT6y5i?=
+ =?us-ascii?Q?BZCM01wG37Tozn3bqYIU42eYAtk6NJ9qf8Tibuk+9n513XCdFFtgl9yN3RsN?=
+ =?us-ascii?Q?081o/8VecKLJUNYTutDIhmjHAhSdEot6MimOzDd6T1Hb+RLyaBfWhYK9RbNW?=
+ =?us-ascii?Q?e5rOdGa0XKl/4kGkZZGyQ3xdIF5AxJNOPehIzyWqPefLBQ3SrbvIW8uDH7eG?=
+ =?us-ascii?Q?bx2xyJ42AnPKhW8j0zxu+6eVaKtxHMm+3Rw/6UFP0D59TcB2dYC5wrxdMbY1?=
+ =?us-ascii?Q?+fRuetK/e+c1aAO0ia74IvRYibehT2jkYPoVOA80cH8DYb8D8qjDu9BeJDkL?=
+ =?us-ascii?Q?DfiXvKjONZqe7ghpQb4FL128iMcmhxi1OPjpkSNXijRVx5PRDznVCG6ct4wm?=
+ =?us-ascii?Q?HwQCbnsOithGzSWL5oXVU54O?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR07MB3509.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UdeduPGZwuLgIC6WVar4NkiNZCy4UN6Xqtf8PdcySHu6iXSarRHp9Oabn2kK?=
+ =?us-ascii?Q?vmBqHh/2C/FspsE++7J92cFtuP/XoWVteWKyXKEAyloRw4wlGQYcnnsJrIET?=
+ =?us-ascii?Q?Mh8cIeqz9QCT1dDF4x5ovNfiEvXsNRHhYk+huyuffO1kpS+HgRnJQsYg3Dv8?=
+ =?us-ascii?Q?cdarjJEx68nj3t8JxMBEkH3ZeZQqcJDIneka/7uqd5KNst+mVSqpEOGTDBgh?=
+ =?us-ascii?Q?oUy1LOP3vaKjdYNOawYxdeGVP63IYHbBPbktjNSJJVFKnKQ9UsmXrTLeQO8a?=
+ =?us-ascii?Q?6Glwhd+3zVKKHD+B9HgfEAkb0DDaR4KIUNu960qq1U4YXNRWhcEYcwPMUDxb?=
+ =?us-ascii?Q?GelI+Jh5oAH440lq2HkmQ/Z6vC6V62ZBOVupaa18MWP7vKx7LcqYYYleo+F2?=
+ =?us-ascii?Q?+iGaeWeE+moNnoTHnKQQkmQ6c8lXCKZ4dvyUdY2sw/fu+EOgbfyHAtJb3AY5?=
+ =?us-ascii?Q?37kF+PU3zJwfGwH+1bacKDTwb2RmLYiqViD2av9TZfn+qrwmxBldPc1czXBS?=
+ =?us-ascii?Q?YA8OSW2VLnjOEbtNt4J0vQfwTt1Ks0zkIG0gQ+Eff2HcB5zXlDJrxHOXtIGr?=
+ =?us-ascii?Q?Z4A5spli2Y2kDtvQHyMNWtTdJPJLMTOnk1aPNWbf3gi0csk2qNoX1TiF+2+r?=
+ =?us-ascii?Q?6ZOO0mxpmodbNuRhVNsniBRtWK+lWxtWR4/DtDLCC6bD3ep8XvlMFYOu2Te/?=
+ =?us-ascii?Q?26AAe519ZMXMR5bMT407kCU/rdFXTFbMZd5l1Y5/TQELAHVpuRU4CgXAelAB?=
+ =?us-ascii?Q?8XBJ6vT/JwYNaSYMrqK5b3Sx1cH1V4B9Zs1eSz6LuNmHdJPcfuTOdIamGPuX?=
+ =?us-ascii?Q?f1RdvfaY1ztzXsh3gGMSlE9JEk4svdEmUOA6g1vgzKdrIMtDHukV3zNGIuOc?=
+ =?us-ascii?Q?texOuu7JBUrN2AN0lKWhfLp5HZwoApQzm7dZACSe7f6ZqsWgqms6VtlLKsuH?=
+ =?us-ascii?Q?d6MjRlKkcdpImbWDaYSsjL4aP/kQc0Xv9Jw2xjX4ai4eilVvPdIHbtHfIshX?=
+ =?us-ascii?Q?fOpxinoSPLeO8tl60ThfxiRMdO5EMY/8C11olyZeL6MCMgH1DVjTZmaAQPbl?=
+ =?us-ascii?Q?747SkYuVXPRT3owNowApvm/4FmGhbf6qBGePDQICF96mOHQFJpEpbIu8oz+o?=
+ =?us-ascii?Q?6tAQ61ZQaYnEbcGdRDGcF3MDEk2pI0XrUvp+GcKtD1jQp1L0TRmpvH7REo71?=
+ =?us-ascii?Q?+yHL5IbeotYwOd2gSPNF33JxOLTrpSMk2TmyLsd9mFkGkc3pTmbpdA1mFEng?=
+ =?us-ascii?Q?L8abv0W8lzJhFyaGHG26+HaRHhSERzmY8EGPhVJUuGgAmgVIL8l9JULBtyM8?=
+ =?us-ascii?Q?gyUiKISUmfWdXKLr0tiyNYct4C8Wc0keVwlSCENxRmL/szdXa58T2XgCS2lf?=
+ =?us-ascii?Q?iFnZOmP3cIYVreLG+YY9K11Rts6Be2ZMpLUSHYHzElisVj5yvLmmRJmTv7V/?=
+ =?us-ascii?Q?FT5xPUOQB/IlW3PxjW59FccTVGHaNsudi46Jh8daSsVkYaqPQZx5M5uEu49J?=
+ =?us-ascii?Q?2GU4jYn3Ij2CI01RZ/JtlNFPVCgeO4sodaYxxM+endb2l42rKG7Z66CCjSRz?=
+ =?us-ascii?Q?qJPU5bLpml9ItFp9xbzf7cUdP3//q1ch6mTSyIBMPYvEEtUVrTv26foL+OqK?=
+ =?us-ascii?Q?+2Y0CSxlI4x37sS0sZxe9Li1pkKWiTsWA92uJ5azhc8Tz6aebbSwGT+Fp/Vg?=
+ =?us-ascii?Q?YePl/g=3D=3D?=
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ca79d27-a5d0-4960-7ab2-08dcef5c2686
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR07MB3509.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 10:03:44.3402
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qWMxy/7pHBJ5LbxS9ySWD+/I/D67gyC4frK0ImP8hp79vBWZWyObrYbjTZMBLNsmnN4E1qbCu/FaQQrrmncHJAv8841hCFtxfV/vf76TkHo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR07MB9211
 
-On Fri, 18 Oct 2024 at 11:20, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->
-> Hi Ulf,
->
-> =E5=9C=A8 2024/10/18 17:07, Ulf Hansson =E5=86=99=E9=81=93:
-> > On Thu, 10 Oct 2024 at 03:21, Shawn Lin <shawn.lin@rock-chips.com> wrot=
-e:
-> >>
-> >> Hi Ulf
-> >>
-> >> =E5=9C=A8 2024/10/9 21:15, Ulf Hansson =E5=86=99=E9=81=93:
-> >>> [...]
-> >>>
-> >>>> +
-> >>>> +static int ufs_rockchip_runtime_suspend(struct device *dev)
-> >>>> +{
-> >>>> +       struct ufs_hba *hba =3D dev_get_drvdata(dev);
-> >>>> +       struct ufs_rockchip_host *host =3D ufshcd_get_variant(hba);
-> >>>> +       struct generic_pm_domain *genpd =3D pd_to_genpd(dev->pm_doma=
-in);
-> >>>
-> >>> pd_to_genpd() isn't safe to use like this. It's solely to be used by
-> >>> genpd provider drivers.
-> >>>
-> >>>> +
-> >>>> +       clk_disable_unprepare(host->ref_out_clk);
-> >>>> +
-> >>>> +       /*
-> >>>> +        * Shouldn't power down if rpm_lvl is less than level 5.
-> >>>
-> >>> Can you elaborate on why we must not power-off the power-domain when
-> >>> level is less than 5?
-> >>>
-> >>
-> >> Because ufshcd driver assume the controller is active and the link is =
-on
-> >> if level is less than 5. So the default resume policy will not try to
-> >> recover the registers until the first error happened. Otherwise if the
-> >> level is >=3D5, it assumes the controller is off and the link is down,
-> >> then it will restore the registers and link.
-> >>
-> >> And the level is changeable via sysfs.
-> >
-> > Okay, thanks for clarifying.
-> >
-> >>
-> >>> What happens if we power-off anyway when the level is less than 5?
-> >>>
-> >>>> +        * This flag will be passed down to platform power-domain dr=
-iver
-> >>>> +        * which has the final decision.
-> >>>> +        */
-> >>>> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
-> >>>> +               genpd->flags |=3D GENPD_FLAG_RPM_ALWAYS_ON;
-> >>>> +       else
-> >>>> +               genpd->flags &=3D ~GENPD_FLAG_RPM_ALWAYS_ON;
-> >>>
-> >>> The genpd->flags is not supposed to be changed like this - and
-> >>> especially not from a genpd consumer driver.
-> >>>
-> >>> I am trying to understand a bit more of the use case here. Let's see
-> >>> if that helps me to potentially suggest an alternative approach.
-> >>>
-> >>
-> >> I was not familiar with the genpd part, so I haven't come up with
-> >> another solution. It would be great if you can guide me to the right
-> >> way.
-> >
-> > I have been playing with the existing infrastructure we have at hand
-> > to support this, but I need a few more days to be able to propose
-> > something for you.
-> >
->
-> Much appreciate.
->
-> >>
-> >>>> +
-> >>>> +       return ufshcd_runtime_suspend(dev);
-> >>>> +}
-> >>>> +
-> >>>> +static int ufs_rockchip_runtime_resume(struct device *dev)
-> >>>> +{
-> >>>> +       struct ufs_hba *hba =3D dev_get_drvdata(dev);
-> >>>> +       struct ufs_rockchip_host *host =3D ufshcd_get_variant(hba);
-> >>>> +       int err;
-> >>>> +
-> >>>> +       err =3D clk_prepare_enable(host->ref_out_clk);
-> >>>> +       if (err) {
-> >>>> +               dev_err(hba->dev, "failed to enable ref out clock %d=
-\n", err);
-> >>>> +               return err;
-> >>>> +       }
-> >>>> +
-> >>>> +       reset_control_assert(host->rst);
-> >>>> +       usleep_range(1, 2);
-> >>>> +       reset_control_deassert(host->rst);
-> >>>> +
-> >>>> +       return ufshcd_runtime_resume(dev);
-> >>>> +}
-> >>>> +
-> >>>> +static int ufs_rockchip_system_suspend(struct device *dev)
-> >>>> +{
-> >>>> +       struct ufs_hba *hba =3D dev_get_drvdata(dev);
-> >>>> +       struct ufs_rockchip_host *host =3D ufshcd_get_variant(hba);
-> >>>> +
-> >>>> +       /* Pass down desired spm_lvl to Firmware */
-> >>>> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_C=
-ONFIG,
-> >>>> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0,=
- 0, 0, NULL);
-> >>>
-> >>> Can you please elaborate on what goes on here? Is this turning off th=
-e
-> >>> power-domain that the dev is attached to - or what is actually
-> >>> happening?
-> >>>
-> >>
-> >> This smc call is trying to ask firmware not to turn off the power-domi=
-an
-> >> that the UFS is attached to and also not to turn off the power of UFS
-> >> conntroller.
-> >
-> > Okay, thanks for clarifying!
-> >
-> > A follow up question, don't you need to make a corresponding smc call
-> > to inform the FW that it's okay to turn off the power-domain at some
-> > point?
-> >
->
-> Yes. Each time entering sleep, we teach FW if it need to turn off or
-> keep power-domain, for instance "hba->spm_lvl < 5 ? 1 : 0" , 0 means
-> off and 1 means on.
+The pca954x mux might not respond under certain cicumstances, like
+device behindit holding SDA after recovery loop or some internal issue
+in mux itself. Those situations are indicated by ETIMEDOUT returned
+from I2C transaction attempting selecting or deselecting the channel.
+According to device documentation the reset pulse restores I2C
+subsystem of the mux and deselects the channel.
 
-I see. So you need to make the call each time when entering the system susp=
-end?
+Since the mux switches using transistor switches, the failure of line
+behind mux that is currently conneted prevents sending commands to mux
+itself, so external reset signal is required. 
 
-Or would it be okay to just make it once, when the spm_lvl is changed?
+The following series of patches implements the reset functionality if
+it was selected in devicetree. This cannot be default behaviour,
+beceuse the reset line might not be dedivated on some boards and such
+reset pulse would make other chips need reinitialisation.
 
-Another way to deal with it, would be to make the smc call each time
-the power-domain is turned-on, based on spm_lvl too of course.
+---
+Changelog:
+v2:
+  * Removed mail header from the commit log
+  * Decreased reset pulse hold time from 10 to 1 ms
+v3:
+  * Make this functionality enabled by appropriate property in
+    devicetree
+v4:
+  * Fix missing condition check from devicetree
+v5:
+  * Declare dependency of a new property
+---
+Wojciech Siudy (2):
+  dt-bindings: i2c: pca954x: Add timeout reset property
+  pca954x: Reset if channel select fails
 
-Would that work?
+ .../bindings/i2c/i2c-mux-pca954x.yaml         | 11 ++++
+ drivers/i2c/muxes/i2c-mux-pca954x.c           | 51 +++++++++++++++----
+ 2 files changed, 51 insertions(+), 11 deletions(-)
 
-[...]
+-- 
+2.34.1
 
-Kind regards
-Uffe
 
