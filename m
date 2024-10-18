@@ -1,134 +1,117 @@
-Return-Path: <linux-kernel+bounces-371899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B8429A41F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 838F29A41EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3789BB25381
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:06:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24F87B23A5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0F6200BBC;
-	Fri, 18 Oct 2024 15:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD7C1FF61E;
+	Fri, 18 Oct 2024 15:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zcaJoHLm"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gi8/rTi1"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B80B7BAEC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007B9768E1;
+	Fri, 18 Oct 2024 15:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729263947; cv=none; b=mVAUVswuVz2Efo896e6gwkSebQ2wTCyCInnuPjnasuRa8WKHNBOk1iB6k5WTEXrTS4X1aG8mAGGXRG2nFilijPgRQlhOAWoveBVJduLJLcdcfAAx/10wsKercqPmekxMP8Q6LgcpwCrQtgJiqAWEYdu8Trnr9OB5jHWQ4Ac5WrU=
+	t=1729263937; cv=none; b=uHU4L2FbWuWOXvtiBxrWw6NPv6bAHk+OAI3smARQxke/htkVocp4QT38fy96QX9HTmxfv7lyrkfvNUvJR7rKp+lCeETdFr+tUyEKDEvYA95QxK6rwoJA8bUcDod64jH5aApwoNf5oZlE9Xxc7ajGd0q6IeLlNgvscuf/2YBYCK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729263947; c=relaxed/simple;
-	bh=VY+gOC6a4ZSs6CZ8Ns3SAUj2iHkxiyZBv5pZmVF9X+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VAbJRPLHu9MEejY7lAd97VGNfbB9pgum/ZGJ2a0YyhW07yojXx1eRnzGtTcrOOcA4DkJR6+JUeX5U9DTRGw5O6eCnwy8yI8oVhdXxPnSsB6g/D9M4BWQhBLFLn7M9gjdBP5rzrQDrxnE2rMPT/c9MHpkuLXNA1bc7zSYEMl5YUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zcaJoHLm; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e681ba70so20359e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:05:44 -0700 (PDT)
+	s=arc-20240116; t=1729263937; c=relaxed/simple;
+	bh=+fD6lCQpOeCSm54/WtMVv/HCy1IcHILJsJdnbVjIPu8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YltMLd9p/C7tKXtGIG88IrJFCuq8ksWrxZ4uNMF2eLHdNKvR6ukb58M02pD9fbrZjrihQM74ZWBVn6bNFFTQyaavZQUsd4JvJG6sAGFGA3nQnnXPPNCRxl0JAG7dsV+31eF78qtOa5d47zVQroIPJrdm+tVxB8OK7Yw3YAUeDBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gi8/rTi1; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso1443163b3a.3;
+        Fri, 18 Oct 2024 08:05:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729263943; x=1729868743; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VY+gOC6a4ZSs6CZ8Ns3SAUj2iHkxiyZBv5pZmVF9X+g=;
-        b=zcaJoHLmZnptFNjmtbc/WSclLW6gBDOFuB0ikdayjxq+ZhvVbt7k/jgBGpRgt2cQeN
-         y5W3znAnofIi8tIfofMq4BkpStjbexm79XVWhtrHjv8xHxJpY6191YLBHHe3EpX0lsoD
-         2yvdzem5mdRkgc20wbfml0ZbyOAe7JgJ4TBBBrdkgyVpP6B24+mlwIatuhEiFsaWGLNT
-         cfD/XCKafe2OruBfJhOZWFmE+RkcxK10NqJXcDZPNOeOoan8DUrggC3u8F820LQ4oHgb
-         sLqgkvLPqVtFi9Q8wdKxvMVFa2dngFyrgrtQhcksFobe3k2nPuB+OQ4iLo+bESX/2U2+
-         mwKA==
+        d=gmail.com; s=20230601; t=1729263935; x=1729868735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=7TwL/yuSTYlBpZHh1TaBOF8oIGjU6Y4M0/4saRikpmE=;
+        b=Gi8/rTi1tC2SqD51llGnkD9BTTKp/o5cDrhkI5AehHcJEXboJGUeV5tiLF50uBWSfL
+         mP8+xzj02MiiEJWZOyS2BKD9fYOn7NAtF9zt/YSLBZ/gf2yuVet8vEOBsGvhXb8ozXVp
+         A8XjJSeMRNy8D+M6BzbD4HcFHQe0RmOSppD9BsYUm1PgiVvfRLe6XOnHEEuch8BUNxzA
+         R3KF4dHUlj29mjA5yN4yNd+axmFFIm+vosf0vR7BpCXdm7o9YIM/FCGJkDBu2ORB2gSa
+         HRnEFHpPwf65lPfwf3cMmyYT4fobdDm9XJ7VwQ1nTA6jDFCsRUq+QxQdHF4xHij/I5ZO
+         jKZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729263943; x=1729868743;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VY+gOC6a4ZSs6CZ8Ns3SAUj2iHkxiyZBv5pZmVF9X+g=;
-        b=RieTg3NJw6sdtKZz8Z3jgjvOHdVnzvY9dwJDQRCOcNtoTYBcfjG89cL76HzlXh/EMx
-         FrdsourzIfp6NdOSCwFjbxlzTrDMhmu1lOBaSO+NiasoY0DpwCzs6LhPDx+2RJftCgia
-         Cy/bd+gJyTtYxT1IjD/wJPWL704cd6MtfiAPGIjnG1V1S1R9ooXsn6PG+8+URDGC+4tQ
-         7JmmDUBkJNKXEoEAe5IUqccr+4/vA+i3JzowthFT9zmiT3B9+S0frFG1sb5MPQuo1Fba
-         ZqODljVCSB6jWdwExACZj8VIvEOVyY+rk6AhFQBpZ9J+luHKDIkp2fcF0t4mzV9Qcm78
-         N1sw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5CzkDwP0VYpznJcO2mPg23KWs0UrQZrEMyzbjPpSglfY+TWrZDy9hOoc+s7IQU/kepXrJV6RO7Y+/5WQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK4lZbGgoo7sQ9IuArbNFyLTBi1ZPUHMCOMiSYhMxqP5WDjqc1
-	JYH1rC5aB7AY7Zo9VHzSepaBpEyyKn6lAr81QqCNbjNjdyolSgIM0i/tqItHsurby8J45g/rRfR
-	gpliiyX54CYBDGd79GK2etouyxCOBRnejOpgh
-X-Google-Smtp-Source: AGHT+IHEdjAuAnZpQTb3020lZcH6NNioXnQO8TFmyT8yTm8pf+QhIDKkj1QU/pK6ubOymnxvMFhGxeUvu4tJjCuhK2I=
-X-Received: by 2002:a05:6512:31c2:b0:52e:8475:7c23 with SMTP id
- 2adb3069b0e04-53a157613d6mr366525e87.7.1729263942596; Fri, 18 Oct 2024
- 08:05:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729263935; x=1729868735;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7TwL/yuSTYlBpZHh1TaBOF8oIGjU6Y4M0/4saRikpmE=;
+        b=mRyxxA0XV3zNxY0GCHvZNFbMxxv83PVv4vY4sGrRHMkQx496bPJ3GMGI/cU659F9qj
+         qXLEgV0NVpFzYhfPFQtJgEKL+cQrdg8aD1jBOKvYUu/uUvAF9Pwki+j8VjN6+AqHgeVW
+         wUB2Mc+x2NhjgtzkgqZIgTLXk1uc/xoAwMgyYko2VViQEiVYjBolqKTO/emv7BkMpXu9
+         a6JNhejytdLti53FpYrGOroBfNAvvdKZZpQgT+1eSnv5A+hFS1iD397O2y2PF11g+wfQ
+         odUaLB0GIPySTI+juFghgJDcFXBxJ0sF45N3AJBlhAAMQS+f7+Uvf8Vg5qBo0LtABagS
+         gZBw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3GC+8XF8Hk90RoA54+V3AoItwMCAnEl5Aa0PIRLaZ/4qk/O9YP1F1VsqkhcA+ItgB0rkr49OtfUjAfrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/6hCbNKxUdnqnaEmLCB/IFKVbUZK+ejHXKM+GBxU5Ey9Xr4dJ
+	zV3aRRnszNoDoYwd7gyiYapzEfRLJTbjwVO/mUa7eCVqeBR1JIeRsq/bQw==
+X-Google-Smtp-Source: AGHT+IG7WeTXxSVwQPpjkZEZaKRpxxQQko5XiH2CAecb4x/TajkPATNCTzbkWF+Yxg6QChWLP5S4IA==
+X-Received: by 2002:a05:6a00:8c3:b0:71e:108e:9c16 with SMTP id d2e1a72fcca58-71ea314f37dmr3789520b3a.12.1729263935009;
+        Fri, 18 Oct 2024 08:05:35 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea333e870sm1547121b3a.67.2024.10.18.08.05.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 08:05:33 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v6.12-rc4
+Date: Fri, 18 Oct 2024 08:05:31 -0700
+Message-ID: <20241018150531.122425-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 18 Oct 2024 17:05:04 +0200
-Message-ID: <CAG48ez1Bd7dWmXpMS2=f6gHoSxhySv2v3m5_BvucMNtC3AZeew@mail.gmail.com>
-Subject: Re: [RFC][PATCH] mm: Split locks in remap_file_pages()
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, vbabka@suse.cz, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, ebpqwerty472123@gmail.com, paul@paul-moore.com, 
-	zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, stable@vger.kernel.org, 
-	syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com, 
-	Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 4:48=E2=80=AFPM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
-> remap_file_pages()") fixed a security issue, it added an LSM check when
-> trying to remap file pages, so that LSMs have the opportunity to evaluate
-> such action like for other memory operations such as mmap() and mprotect(=
-).
->
-> However, that commit called security_mmap_file() inside the mmap_lock loc=
-k,
-> while the other calls do it before taking the lock, after commit
-> 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
->
-> This caused lock inversion issue with IMA which was taking the mmap_lock
-> and i_mutex lock in the opposite way when the remap_file_pages() system
-> call was called.
->
-> Solve the issue by splitting the critical region in remap_file_pages() in
-> two regions: the first takes a read lock of mmap_lock and retrieves the V=
-MA
-> and the file associated, and calculate the 'prot' and 'flags' variable; t=
-he
-> second takes a write lock on mmap_lock, checks that the VMA flags and the
-> VMA file descriptor are the same as the ones obtained in the first critic=
-al
-> region (otherwise the system call fails), and calls do_mmap().
->
-> In between, after releasing the read lock and taking the write lock, call
-> security_mmap_file(), and solve the lock inversion issue.
->
-> Cc: stable@vger.kernel.org
-> Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap=
-_file_pages()")
-> Reported-by: syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.4=
-6d20.0036.GAE@google.com/
-> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com> (Calculate prot and=
- flags earlier)
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Hi Linus,
 
-Reviewed-by: Jann Horn <jannh@google.com>
+Please pull hwmon fixes for Linux v6.12-rc4 from signed tag:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.12-rc4
+
+Thanks,
+Guenter
+------
+
+The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
+
+  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v6.12-rc4
+
+for you to fetch changes up to eabb03810194b75417b09cff8a526d26939736ac:
+
+  [PATCH} hwmon: (jc42) Properly detect TSE2004-compliant devices again (2024-10-14 19:14:08 -0700)
+
+----------------------------------------------------------------
+hwmon fixes for v6.12-rc4
+
+Fix auto-detect regression in jc42 driver.
+
+----------------------------------------------------------------
+Jean Delvare (1):
+      [PATCH} hwmon: (jc42) Properly detect TSE2004-compliant devices again
+
+ drivers/hwmon/jc42.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
