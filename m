@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-371305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AB19A397F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:10:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0038E9A3981
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BADF41F22A61
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:10:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FF791C2399C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893C719006A;
-	Fri, 18 Oct 2024 09:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C19118FDBC;
+	Fri, 18 Oct 2024 09:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JsMahc8b"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cmc6gHlW"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E42C188CC6
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0CD18FC9D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729242624; cv=none; b=aa5aDs8XRrFASAmwTxlegdOQv2V/40KFSg4JPiydt+N2gGWnpcg+3JY130RUQX/bU0G20aIjq3DIKhV5gmiMgkDwf0ntoEsvjicEvOYJvq1obxpUPHQ0FyMDalPHsQhWJdrWmxWhAHBzgRjBspFCBtItjUl6BsQef/rcNK4HMnk=
+	t=1729242625; cv=none; b=TJ8gjgHURaydK2+LWTWrVKFBgWKC1HAxJ9s5sdnfgPRnf9Eeij0w2XS7rtQRIprIPMAZU7qx5IMhL/4XIj5ojn4Xal4qpB/Vo2Gb0pvjxN2EPzw+NRXjgvkJ9/z7N/wmDocFszABtY4bTt/NY+XwfahuRnp22NOsmG9G6oNJjcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729242624; c=relaxed/simple;
-	bh=AcXDK52JnPC5xJMOFzpq0d2Won7phBSA6JlzjNtC1Xs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AXdBPVO4asFNzh8iH7IpyOatdzyLXmFKM9X04s2N2LbIot8tqOa8pbkJYGkHteMCqd/RjwmlZECHzd3UcONkx2tiJmXtVDnhku9tcMhNCBTXUm8PC3p1YktRUYKbE5pbZXaX2C6WV35WKh9R+9R1tHHgguGSnuHibqarHHgdG68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JsMahc8b; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1729242625; c=relaxed/simple;
+	bh=POHh8g+2CvyZoU0L+E1KmaYOw5grZB9aKoaGo7YEz6Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aw1nNcLTd1x5FGRQBgrYY/0CkCB1Q97OXljolN5U5H6Cxvt/4GNZ48oq7cykSiExym4UMjid1uDTDbud0r4TF8xSItLeJUjo1XYLo9IfLolyaJSyEyc9JSA3HG7mamWi0p9qDgzTYMe5kHoVTQdirA4YvK2YJrLkp1KKqXkUuYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cmc6gHlW; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f1292a9bso2473351e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:10:22 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so13979985e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:10:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729242621; x=1729847421; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WZeEZUKq+qIqtQz6nd6VZ+0h6dSKzhfxG56gJP1EyuU=;
-        b=JsMahc8b8spI/ehkEElRrAM4plyb5ux02mzCGFnOkCDFNWkr5o9beOCcqf0ncxnn8u
-         AluDanK/4biVM+UkA5QV70dihibWAeNA58tnblMzDxiv/K0y+sD8nWuBdTXBXLmTSoUO
-         Bs8TBm6XlumhGWPAjlY0lOHoAiwq0+nnsHBp4mayhIVxfxXt7gg8nYQ5sgHrLWi4Wo7S
-         kPkXcZ89aTFWX4Z7dkQtjalC5SKCfyXv+5s3AxhjGwzl1FAv0w244OiuLqaP7X2t29AA
-         rC3m/pV+9yl/UCJcVlY69f1JIGR8VonIgcwzXWRgiMJ7Av81QnajJ3Q9rZMYp6aFAceV
-         R4cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729242621; x=1729847421;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729242622; x=1729847422; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WZeEZUKq+qIqtQz6nd6VZ+0h6dSKzhfxG56gJP1EyuU=;
-        b=IjoznvgEJhAwkFJbZqfQRPXZoriBVynMa1693DspDlKkGcglLCPqEw+v0VMKeQMtAp
-         eyscdyWhNLFneWXMpommU5XbIrIcMpt2ANXzaUM0vl7IJHj5iuIEzXN0BuPlfUogwo9k
-         m35FN5RZY2BnuCjlaAoH3gMnGJ0xccT6CTpR5vrBiHlQ8jPexXru0H1WFc1rIn5zFI3Y
-         dQH8AcylgHyr11+BKKAuiSBsCW4T55JBMFiNrH6r7u/DTM4BNre1kN5S2mV/WwHvMQcH
-         FCXpX8T6TWcq+T+tUOQRmFuPw1e6y70yJsQ5qI0nsET+96oxUqMznkU3tUkBqyhXqA4a
-         h5IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWfdslMCCc7pEtq9FSNsuoVvwBjc7krJvkB0paa8L1WjSnhFL5hxydxNz6lCvppnIiZGsrH2Si12UN/Cg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw1jErioC0J6varnnKuwqdFcPKVFkAto3/TTr8UEruukz6zjff
-	QTtdeiecUP+jUJoQ970CgDmpTo9dOkUk4DKdztfgEPtPjKOynkrYD3IUKrpc1Pk=
-X-Google-Smtp-Source: AGHT+IH77jdEGYdT8xGK1gUaD7Az0JyK5YSSPJ3wEUYFWxfqF3HRb+Yz7f/UzrxhVAir553ksubjGA==
-X-Received: by 2002:a05:6512:3b8c:b0:539:fd1b:baf5 with SMTP id 2adb3069b0e04-53a15445006mr1252092e87.16.1729242620463;
-        Fri, 18 Oct 2024 02:10:20 -0700 (PDT)
+        bh=OB/wBkvSEUCyn6Pce3Sw/d9S+YTAmxmeVBF6YPbGUIs=;
+        b=cmc6gHlWIwopCwS5AKMP/V9VXtEuVuzDAepr8P3rRc8ZSL3liQUVbja3tHNHKVl9w1
+         dIjcMNr4Ll2jGa+p80EA1Q1YE0JINAeCqV7ved5sKmaGQLXb8aAR5CqabHgHFnaiafQ3
+         MFcjx/l6aEMinUSfAXRcc70DmJ5K2jbF97Q79xPE4c2xGuVv7b2olLVYPyoTpl1Ldo8H
+         XIiOWTGAvgI2LmpHwH5I3DofzWjU/WeGQYHgOMr9p2s3BS2JsfSYfmK1tRMmaCJNuolL
+         8wIUqEUnfVXcL+QK427z5BUobmTL6w192nehJZMXlQeF3jeWc1pccvGka55T319wFDwD
+         JOWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729242622; x=1729847422;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OB/wBkvSEUCyn6Pce3Sw/d9S+YTAmxmeVBF6YPbGUIs=;
+        b=BgmuNw5JbUAlCB2RTdbdQYanXfi0jkiUF9eqxfnJlmi0QA3UrMV8ta5g2Sws9VH+Bf
+         fmFfRyQvoUERR5pSglAVKQBrJqmn8lnmBexgbgqxclNIn03dfugCNVCnGe4ZCS3aCAJq
+         lSR5vY7FSHCgb5p2eJcSunWviK5kB4DIcl+Ci5MGXtlGJLXaadG+WoER9biwS5Llu1ZC
+         y0VeuddixU8GL3kYHQYF32EFGeQpIdEkkIy+ELQUIA1VsWoIPXzFHGlZTLjnZQ8LJEwa
+         QpbBRgUa5Gw4l7Ui4+bvgx3U0iKZoluYKubiw2RrR3WPE7AsYNLt+JPqfnN1jXfz3P2u
+         zSHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUi4+YRzeXsUzrDEZH/1iM16c832tlN44gOpF7MdeXwVKAm7m9qH8wqISGYyrbE8e5Yg0h/QFBlewHD0CU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr9IkopUch/ZyB5v1cyFGWNnuxf4AyI1wWSJM5HngBKGkQI25E
+	0HWQxAGxKRHw2aay/gpIyhsNmBQi6kOpG2EzO3X3s2pdjzxdO6pikw2po1/pLhnHgedGMPZRKkZ
+	U
+X-Google-Smtp-Source: AGHT+IEVba/x2vfrV7MnhVpSziwVemnsNgRs635JXjcpaYVImGwzKfYkyV2Nszc2wVRKjFRC0DN47g==
+X-Received: by 2002:a05:600c:34d4:b0:42c:bae0:f05f with SMTP id 5b1f17b1804b1-4316163664emr15360435e9.13.1729242621898;
+        Fri, 18 Oct 2024 02:10:21 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:45a3:93e:5196:d8ce])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160dbe76bsm18700455e9.10.2024.10.18.02.10.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160dbe76bsm18700455e9.10.2024.10.18.02.10.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 18 Oct 2024 02:10:20 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v5 0/8] gpio: notify user-space about config changes in the
- kernel
-Date: Fri, 18 Oct 2024 11:10:08 +0200
-Message-Id: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
+Date: Fri, 18 Oct 2024 11:10:09 +0200
+Subject: [PATCH v5 1/8] gpiolib: notify user-space when a driver requests
+ its own desc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,104 +79,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPElEmcC/4XNQW7DIBCF4atErEs1gyE2WeUeVRc2HpxRI7DAQ
- o0i373EK1dZePm/xfeeIlNiyuJyeopEhTPHUMN8nIS79WEiyWNtoUBpsErLaeYoQ1zYPyQH+UM
- p0F1SobBkCa0bLSo0DXWiEnMiz78b//Vd+8Z5iemxvRV8rRuMAAdwQQmy652yhKPXnq53Dn2Kn
- zFN4iUXtdMQDjRVtcGcQSP61hn7pjV7zRxoTdUsjR5MB0q1+KbpvdYeaLpqZz04ML4ZCNw/bV3
- XP29FKjmzAQAA
+Message-Id: <20241018-gpio-notify-in-kernel-events-v5-1-c79135e58a1c@linaro.org>
+References: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
+In-Reply-To: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
  Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3461;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=782;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=AcXDK52JnPC5xJMOFzpq0d2Won7phBSA6JlzjNtC1Xs=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnEiX2rx6PRojg2II1TJJ+ucySZL3StNWoUKew8
- LFaDG55TXWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxIl9gAKCRARpy6gFHHX
- cg5CEAC1EBPJl2jbK5+WHFKfHNL/l+n6U6LicFkK3JooheWS/34o/Rlrv/jlWR8T9cJADgpQUc/
- 8l4j3KbrWuMBrZLV++TgS25jqILopdr43NRSaojaguht/F2E7QgT7oCyi663c5VpFsZRArFWKX1
- 6nbYkcvGofr+6eoc9mZKBq1dvBaF+kZcmamXoX+uN3TBH+CNmjq/KhlNGIwGR9Ol8bOj1MWOQVn
- obOAGdsUBvD24qqMLofMSGwoLoooRW1RTagGdSOIb3OBqTICE55oWbgPikD+U5ZpX8omFjr11Bm
- Lmwqcq6VPYs5SXegISAzfLs8dTiIAGfR2VGI7Rmb9w4xc7nZGLvngGKvTLtQc97hRzbf/O4+EFg
- DUG7eVsnPTZ01Nd2MtfcE3s8xqfQcTgNpv3QwIxIprTZTfX1kkbb1Q1dzYMSxvl6ZtSfSacjoFt
- xt8/4xU4oNLWQjHQnADI8fKNuvrtjKgO6cyTs/uHTsYUJWF8/7ulcJs9R2CvmnDjz8nsdysX1iz
- DhYpaiLv1I5mrX0Xj7bltLmqxZw0M/yN9JR9612HVpTtrPMPnHJy8Man+xX5B8dRRsp0ffcc4el
- gcF92UFyL4h2pXg95JevQw+1d5SgBT5XaP1ENFbqbndofz2nZxQAsgeOAPrwn/d/7PVljAaj11y
- 9PKGw6e5X2ylBoQ==
+ bh=zMsMSJX1Nl0+caHE+JZSEzX7KhbE4YG1tQGrQmi8r44=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnEiX5N1KXBf9WUY2Laz9GAVO5bnVkySdSQ0wcp
+ xnhXgiresGJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxIl+QAKCRARpy6gFHHX
+ cuhFD/4sdt+m349SvCqaLbgaJzhOalvyDBQBKP2uSU7rBKAUl7KbPkaSEm3cbHfiflIEGGSd10c
+ Rm1KJP0+D8sztYsthxt8cScGxvroiwGs9FrMI/yNNirMviUpHP4z6LvEJ72Gxy1bZE0GABTvHAW
+ wIHegWJmVM9VrPbJMnq5a22rOHdjGgnnApN18HDpK+Hr0fqVNLaPHYs82i8pLFLr+AFHr1lcbQj
+ fyZ7P/eTQoIo9+JlCWDtSRggkCeKKToWsdspsR846GeX9BLZWVecfxIBBLlMKugugc/ctlGhWRr
+ 3vbM/xOjLoo2szCNwFqbFm+ig68Jzh2V2O8vww1LZnBbI03MQIcQ7lTwMDbElv5z1YgjR9xB11V
+ ssmQPQ1KBZVeaTMgI8UgbJQwIdph6U0Ox1Xso+C8cqsCr5mqxzg6Fd83GVyG6MOL4um5xFMeXz0
+ jRgV1sr5rJCi0YMB05eq8spzYSIkGrqjo0DCwQZCqTU4EZAei4kmAaL5s27xrH3NdF/5zC0Fjzy
+ weCgbtc+BMGmMlBMwbiyyxaLrI+fhK08+M5QUIRN4J/khV4/9JydKA/iKGmLyEmnXfiN+51tlTy
+ 6w7Vt6QfuXEbUxDfKaJDPqxeywj4c7Oosb9hq1e62dd+Lt6azJZDe1YSZ/VUICBAL2YgeQkdwf4
+ 1c5VFIvaP5fSC8w==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-We currently only emit events on changed line config to user-space on
-changes made from user-space. Users have no way of getting notified
-about in-kernel changes. This series improves the situation and also
-contains a couple other related improvements.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-This is a reworked approach which gets and stores as much info (all of
-it actually, except for the pinctrl state) the moment the event occurrs
-but moves the actual queueing of the event on the kfifo to a dedicated
-high-priority, ordered workqueue.
+We notify user-space about lines being requested from user-space or by
+drivers calling gpiod_get() but not when drivers request their own lines
+so add the missing call to gpiod_line_state_notify().
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-Changes in v5:
-- only notify user-space about changed config AFTER the edge detector
-  was updated (to that end keep the explicit notification and use the
-  nonotify variants of direction setters)
-- for consistency do the same for v1
-- Link to v4: https://lore.kernel.org/r/20241017-gpio-notify-in-kernel-events-v4-0-64bc05f3be0c@linaro.org
+ drivers/gpio/gpiolib.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes in v4:
-- don't emit additional events when emulating open-source or open-drain
-  from gpiod_direction_output(), to that end use the nonotify variants
-  of gpiod_direction_input()
-- store current debounce period in the GPIO line descriptor and remove
-  the entire supinfo infrastructure from gpiolib-cdev.c
-- fix all (hopefully) corner-cases where two reconfigure or
-  requested/reconfigured events could be emitted for a single logical
-  event
-- emit the reconfigure event from gpio_set_debounce_timeout()
-- add a patch refactoring gpio_do_set_config()
-- Link to v3: https://lore.kernel.org/r/20241015-gpio-notify-in-kernel-events-v3-0-9edf05802271@linaro.org
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 97346b746ef5..c09464f70f73 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2532,6 +2532,8 @@ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
+ 		return ERR_PTR(ret);
+ 	}
+ 
++	gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_REQUESTED);
++
+ 	return desc;
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_request_own_desc);
 
-Changes in v3:
-- don't reach into pinctrl if the USED flag is already set
-- reword the comment from patch 5 and move it one patch back
-- don't abandon emitting the event if the GPIO chip is gone by the time
-  the work is executed, just don't reach into pinctrl and return
-  whatever data we already had
-- Link to v2: https://lore.kernel.org/r/20241010-gpio-notify-in-kernel-events-v2-0-b560411f7c59@linaro.org
-
-Changes in v2:
-- put all line-info events emitting on a workqueue to allow queueing
-  them from atomic context
-- switch the notifier type used for emitting info events to atomic
-- add a patch notifying user-space about drivers requesting their own
-  descs
-- drop patches that were picked up
-- Link to v1: https://lore.kernel.org/r/20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org
-
----
-Bartosz Golaszewski (8):
-      gpiolib: notify user-space when a driver requests its own desc
-      gpiolib: unduplicate chip guard in set_config path
-      gpio: cdev: go back to storing debounce period in the GPIO descriptor
-      gpio: cdev: prepare gpio_desc_to_lineinfo() for being called from atomic
-      gpiolib: add a per-gpio_device line state notification workqueue
-      gpio: cdev: put emitting the line state events on a workqueue
-      gpiolib: switch the line state notifier to atomic
-      gpiolib: notify user-space about in-kernel line state changes
-
- drivers/gpio/gpiolib-cdev.c | 301 +++++++++++++++++++-------------------------
- drivers/gpio/gpiolib.c      | 130 ++++++++++++++-----
- drivers/gpio/gpiolib.h      |  14 ++-
- 3 files changed, 243 insertions(+), 202 deletions(-)
----
-base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
-change-id: 20240924-gpio-notify-in-kernel-events-07cd912153e8
-
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.43.0
 
 
