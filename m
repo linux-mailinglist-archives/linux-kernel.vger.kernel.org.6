@@ -1,270 +1,147 @@
-Return-Path: <linux-kernel+bounces-371288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F199A3944
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:55:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6C19A3947
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC930B24B32
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B034F2847FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A3618FC9F;
-	Fri, 18 Oct 2024 08:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A5118FC7E;
+	Fri, 18 Oct 2024 08:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NLbatw1D"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DF817DE36;
-	Fri, 18 Oct 2024 08:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="ltC26Ip9"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D520C18E025
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729241743; cv=none; b=LB82+wKSBun6WUPVMIzehTqxlmExfa/lEc0+f4GsZCKOI83Hma6HcGLW2jfnGl1OlDk6ZfrVd71rzqQI9IPHxgLM3GFXYcY2/2EReRFh74nm5mv+zYgM3O8cPmme+1eSKBOa3Bdor6dEyTIocPMS9SOIUaF+1zntUQ2/LGI8Lak=
+	t=1729241857; cv=none; b=gl0cL5a0eS4vh+rwPV8ZwSnNvUnKIPFqiRuh/QgLqEUAFHVxScITQ54JYDBw9hUmNEjW7zlPXq5+eBEciox2Ug4PC0SKHwVxQBoh1kCrL+zxVE7GzEN04JTYWLcyeE941KkOuySqMAYwodP01/CaaiD1ddxxqN6sOXA3XnD51gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729241743; c=relaxed/simple;
-	bh=a3FJK79Wq3kkI8YAqhGkoe37e+zTJROY0waZT8FEpis=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Yg1TXOeqV4qA/bfMmwa/1AiNQOGfNOBo0n6oAHGhmROzrzKOpZgoq4nr3hG8Sh5RmK1pQ1HIh7gsyK6cl1OOnZ6vg8LZk5i91YB8ZQgS/xshXMJg9sDZofTTO5njCFkxmf7jx54o/H+pyG1ImeKsmIxSCCbzNlJkN0QGWqgsePQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NLbatw1D; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729241741; x=1760777741;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=a3FJK79Wq3kkI8YAqhGkoe37e+zTJROY0waZT8FEpis=;
-  b=NLbatw1D/UA83CQzfaEw+x1HMigL2D8bxprCGVGkZcEUBiTfxo5N82uB
-   qj6/2RRW7Y/Isa8mrYpDQsH/MrgJwigrqCqINnqlsXEy6yTEnyOwN+1mP
-   2MjAhNBWMenlGvuu+AL1ssP6aSvhRCh8Oh/yZYk8uwseLauiW/SYc6iCk
-   AT5Lz+lXsYKQVgBE6xMHRWWTcaxoW7D2VMR1MEo2nBfAzs8PRjk1XGata
-   pRPyEs11y7Tw3Cg01HVmaTzNRgnRTancWhrGUYpg7pysQj8kZq6TcUYld
-   d4m5pc1U7RR7YLOBLETq36sWKZ59shDISaIwuB93nFGp/MqOirsxmx/hs
-   Q==;
-X-CSE-ConnectionGUID: 3dASBEJ5ST+29ZZ0v8nTQg==
-X-CSE-MsgGUID: 39aJRo2qRwi/TfCNwQRctw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="40164539"
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="40164539"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:55:41 -0700
-X-CSE-ConnectionGUID: 0zCBx7OzQYqOJWwkv1NKkw==
-X-CSE-MsgGUID: ji2PIPAoTiKHrpBTTeS3tw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="78719691"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.217])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:55:38 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 18 Oct 2024 11:55:35 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
-    peternewman@google.com, babu.moger@amd.com, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 08/15] selftests/resctrl: Only support measured read
- operation
-In-Reply-To: <3e451b37bf88a96018d6ab6564dbdf2f853c86ee.1729218182.git.reinette.chatre@intel.com>
-Message-ID: <0d5fdeff-2bd9-91ad-b98e-c7efc998e77d@linux.intel.com>
-References: <cover.1729218182.git.reinette.chatre@intel.com> <3e451b37bf88a96018d6ab6564dbdf2f853c86ee.1729218182.git.reinette.chatre@intel.com>
+	s=arc-20240116; t=1729241857; c=relaxed/simple;
+	bh=NDNBZ4MZbiy4V5FwxRLqOWI+bBrqXrIucxSbc/MnqRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Nz3YSjQCN6bdJ6G1lVYj1K5jFZ8y4B8JIGyRCVsE5eJvIzVm0cJ7Mrri36AUWESeTSdUsTSrcUJSRdLjvq64WOGc+Q0TwNS7mSES5Gg0eVRku0QcgM+2rq6kFj7EbOZLGOI8jUQFls9oZNOxlkh4LAhhZK39DrG1OwqQ3n9ytjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=ltC26Ip9; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p549219d2.dip0.t-ipconnect.de [84.146.25.210])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 084342A20B7;
+	Fri, 18 Oct 2024 10:57:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1729241848;
+	bh=NDNBZ4MZbiy4V5FwxRLqOWI+bBrqXrIucxSbc/MnqRY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ltC26Ip9idWaE4z4HYPIuqzPhvLnx5itqOVQ3dSqmvoGf4tdlNHzVuzbSlLTk0U8q
+	 5gjUuOXE1ASN3vVN0aVtFTGiInw1vSLq4vAQ1l4Wzx4glBzeDl/2MGayuq60Q/36PX
+	 Nl1fxO6mQ03lut5Xr3NeqH3g8+TjqKCZje+ziiKol+GIXr+Fn+qpQDl45wqnZMn9Mo
+	 xXGDlPwK2X+Wd4vZbBVz4n+p1Uw+Qs/AygF/ES3uiowdHSvqaNbCZxhtDCYweXSkGI
+	 ut6Pig4oHkdmyHsmWtfCcL5EEyU4LdOKKnQSOCGe0wzq1q4nCPruc8IDbEruroiltU
+	 dk7NBxGT4nSxw==
+Date: Fri, 18 Oct 2024 10:57:26 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: [git pull] IOMMU Fixes for Linux v6.12-rc3
+Message-ID: <ZxIi9rUNnv1HOPpr@8bytes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1834914115-1729241735=:1141"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="HS5WuD6udurEOHJe"
+Content-Disposition: inline
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-1834914115-1729241735=:1141
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+--HS5WuD6udurEOHJe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 17 Oct 2024, Reinette Chatre wrote:
+Hi Linus,
 
-> The CMT, MBM, and MBA tests rely on a benchmark to generate
-> memory traffic. By default this is the "fill_buf" benchmark that
-> can be replaced via the "-b" command line argument.
->=20
-> The original intent of the "-b" command line parameter was
-> to replace the default "fill_buf" benchmark, but the implementation
-> also exposes an alternative use case where the "fill_buf" parameters
-> itself can be modified. One of the parameters to "fill_buf" is the
-> "operation" that can be either "read" or "write" and indicates
-> whether the "fill_buf" should use "read" or "write" operations on the
-> allocated buffer.
->=20
-> While replacing "fill_buf" default parameters is technically possible,
-> replacing the default "read" parameter with "write" is not supported
-> because the MBA and MBM tests only measure "read" operations. The
-> "read" operation is also most appropriate for the CMT test that aims
-> to use the benchmark to allocate into the cache.
->=20
-> Avoid any potential inconsistencies between test and measurement by
-> removing code for unsupported "write" operations to the buffer.
-> Ignore any attempt from user space to enable this unsupported test
-> configuration, instead always use read operations.
->=20
-> Keep the initialization of the, now unused, "fill_buf" parameters
-> to reserve these parameter positions since it has been exposed as an API.
-> Future parameter additions cannot use these parameter positions.
->=20
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
 
---
- i.
+are available in the Git repository at:
 
-> ---
-> Changes since V2:
-> - Update changelog to justify keeping the assignment to benchmark_cmd[4].
->   (Ilpo)
->=20
-> Changes since V1:
-> - New patch.
-> ---
->  tools/testing/selftests/resctrl/fill_buf.c    | 28 ++-----------------
->  tools/testing/selftests/resctrl/resctrl.h     |  2 +-
->  .../testing/selftests/resctrl/resctrl_tests.c |  5 +++-
->  tools/testing/selftests/resctrl/resctrl_val.c |  5 ++--
->  4 files changed, 9 insertions(+), 31 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/s=
-elftests/resctrl/fill_buf.c
-> index 854f0108d8e6..e4f1cea317f1 100644
-> --- a/tools/testing/selftests/resctrl/fill_buf.c
-> +++ b/tools/testing/selftests/resctrl/fill_buf.c
-> @@ -88,18 +88,6 @@ static int fill_one_span_read(unsigned char *buf, size=
-_t buf_size)
->  =09return sum;
->  }
-> =20
-> -static void fill_one_span_write(unsigned char *buf, size_t buf_size)
-> -{
-> -=09unsigned char *end_ptr =3D buf + buf_size;
-> -=09unsigned char *p;
-> -
-> -=09p =3D buf;
-> -=09while (p < end_ptr) {
-> -=09=09*p =3D '1';
-> -=09=09p +=3D (CL_SIZE / 2);
-> -=09}
-> -}
-> -
->  void fill_cache_read(unsigned char *buf, size_t buf_size, bool once)
->  {
->  =09int ret =3D 0;
-> @@ -114,15 +102,6 @@ void fill_cache_read(unsigned char *buf, size_t buf_=
-size, bool once)
->  =09*value_sink =3D ret;
->  }
-> =20
-> -static void fill_cache_write(unsigned char *buf, size_t buf_size, bool o=
-nce)
-> -{
-> -=09while (1) {
-> -=09=09fill_one_span_write(buf, buf_size);
-> -=09=09if (once)
-> -=09=09=09break;
-> -=09}
-> -}
-> -
->  unsigned char *alloc_buffer(size_t buf_size, int memflush)
->  {
->  =09void *buf =3D NULL;
-> @@ -151,7 +130,7 @@ unsigned char *alloc_buffer(size_t buf_size, int memf=
-lush)
->  =09return buf;
->  }
-> =20
-> -int run_fill_buf(size_t buf_size, int memflush, int op)
-> +int run_fill_buf(size_t buf_size, int memflush)
->  {
->  =09unsigned char *buf;
-> =20
-> @@ -159,10 +138,7 @@ int run_fill_buf(size_t buf_size, int memflush, int =
-op)
->  =09if (!buf)
->  =09=09return -1;
-> =20
-> -=09if (op =3D=3D 0)
-> -=09=09fill_cache_read(buf, buf_size, false);
-> -=09else
-> -=09=09fill_cache_write(buf, buf_size, false);
-> +=09fill_cache_read(buf, buf_size, false);
-> =20
->  =09free(buf);
-> =20
-> diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/se=
-lftests/resctrl/resctrl.h
-> index 51f5f4b25e06..ba1ce1b35699 100644
-> --- a/tools/testing/selftests/resctrl/resctrl.h
-> +++ b/tools/testing/selftests/resctrl/resctrl.h
-> @@ -142,7 +142,7 @@ int perf_event_open(struct perf_event_attr *hw_event,=
- pid_t pid, int cpu,
->  unsigned char *alloc_buffer(size_t buf_size, int memflush);
->  void mem_flush(unsigned char *buf, size_t buf_size);
->  void fill_cache_read(unsigned char *buf, size_t buf_size, bool once);
-> -int run_fill_buf(size_t buf_size, int memflush, int op);
-> +int run_fill_buf(size_t buf_size, int memflush);
->  int initialize_mem_bw_imc(void);
->  int measure_mem_bw(const struct user_params *uparams,
->  =09=09   struct resctrl_val_param *param, pid_t bm_pid,
-> diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/test=
-ing/selftests/resctrl/resctrl_tests.c
-> index e7878077883f..0f91c475b255 100644
-> --- a/tools/testing/selftests/resctrl/resctrl_tests.c
-> +++ b/tools/testing/selftests/resctrl/resctrl_tests.c
-> @@ -265,13 +265,16 @@ int main(int argc, char **argv)
->  =09=09=09ksft_exit_fail_msg("Out of memory!\n");
->  =09=09uparams.benchmark_cmd[1] =3D span_str;
->  =09=09uparams.benchmark_cmd[2] =3D "1";
-> -=09=09uparams.benchmark_cmd[3] =3D "0";
->  =09=09/*
-> +=09=09 * Third parameter was previously used for "operation"
-> +=09=09 * (read/write) of which only (now default) "read"/"0"
-> +=09=09 * works.
->  =09=09 * Fourth parameter was previously used to indicate
->  =09=09 * how long "fill_buf" should run for, with "false"
->  =09=09 * ("fill_buf" will keep running until terminated)
->  =09=09 * the only option that works.
->  =09=09 */
-> +=09=09uparams.benchmark_cmd[3] =3D NULL;
->  =09=09uparams.benchmark_cmd[4] =3D NULL;
->  =09}
-> =20
-> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testin=
-g/selftests/resctrl/resctrl_val.c
-> index b0f3c594c4da..113ca18d67c1 100644
-> --- a/tools/testing/selftests/resctrl/resctrl_val.c
-> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
-> @@ -622,8 +622,8 @@ int measure_mem_bw(const struct user_params *uparams,
->   */
->  static void run_benchmark(int signum, siginfo_t *info, void *ucontext)
->  {
-> -=09int operation, ret, memflush;
->  =09char **benchmark_cmd;
-> +=09int ret, memflush;
->  =09size_t span;
->  =09FILE *fp;
-> =20
-> @@ -643,9 +643,8 @@ static void run_benchmark(int signum, siginfo_t *info=
-, void *ucontext)
->  =09=09/* Execute default fill_buf benchmark */
->  =09=09span =3D strtoul(benchmark_cmd[1], NULL, 10);
->  =09=09memflush =3D  atoi(benchmark_cmd[2]);
-> -=09=09operation =3D atoi(benchmark_cmd[3]);
-> =20
-> -=09=09if (run_fill_buf(span, memflush, operation))
-> +=09=09if (run_fill_buf(span, memflush))
->  =09=09=09fprintf(stderr, "Error in running fill buffer\n");
->  =09} else {
->  =09=09/* Execute specified benchmark */
->=20
---8323328-1834914115-1729241735=:1141--
+  git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.12-rc3
+
+for you to fetch changes up to 6e02a277f1db24fa039e23783c8921c7b0e5b1b3:
+
+  iommu/vt-d: Fix incorrect pci_for_each_dma_alias() for non-PCI devices (2024-10-15 10:17:54 +0200)
+
+----------------------------------------------------------------
+IOMMU Fixes for Linux v6.12-rc3
+
+Including:
+
+	- ARM-SMMU fixes from Will Deacon:
+	  - Clarify warning message when failing to disable the MMU-500
+	    prefetcher
+	  - Fix undefined behaviour in calculation of L1 stream-table index
+	    when 32-bit StreamIDs are implemented
+	  - Replace a rogue comma with a semicolon
+
+	- Intel VT-d fix from Lu Baolu:
+	  - Fix incorrect pci_for_each_dma_alias() for non-PCI devices
+
+----------------------------------------------------------------
+Chen Ni (1):
+      iommu/arm-smmu-v3: Convert comma to semicolon
+
+Daniel Mentz (1):
+      iommu/arm-smmu-v3: Fix last_sid_idx calculation for sid_bits==32
+
+Joerg Roedel (1):
+      Merge tag 'arm-smmu-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/will/linux into fixes
+
+Lu Baolu (1):
+      iommu/vt-d: Fix incorrect pci_for_each_dma_alias() for non-PCI devices
+
+Robin Murphy (1):
+      iommu/arm-smmu: Clarify MMU-500 CPRE workaround
+
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 4 ++--
+ drivers/iommu/arm/arm-smmu/arm-smmu-impl.c  | 4 ++--
+ drivers/iommu/intel/iommu.c                 | 4 +++-
+ 3 files changed, 7 insertions(+), 5 deletions(-)
+
+Please pull.
+
+Thanks,
+
+	Joerg
+
+--HS5WuD6udurEOHJe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEr9jSbILcajRFYWYyK/BELZcBGuMFAmcSIvYACgkQK/BELZcB
+GuMC+A//T0JANvaQ8OUZ2bCOry674NcTGldYh84OosAw2xPK2arnyE2+usoj0QTK
+HyMtauy3hzb4/2z0hpr2ZE2hguB53eI+Mt4psmyG3uomxVZAhQhEpdTgZ0sqpeYV
+tWE01QJc+rJbvumfwDC5yJUwSOP4Y8Gth2DRKY0+/+9AkjaNOMzDG7F4Ytebfg1R
+QRaAVsrukykUcg4KEmuAL14Ruz8sHasUJkwln2RfYFQZGfU+0uYX7Xm7gnbE6gER
+P4fo2zkWchJeIXHXxqE1Zg+JDrRtkfNZgGBiHmskqF7Ia/FXlxCavh7A33lLM2o0
+VXX1mMzcwFa3jgDb4bwMawUs23XlmMWU9G4uVYlJPug7f3jXBSa4ayCGvMzmS3+c
+HnDTwz6UkWmo0Xl0SCalXqoszzzGKSgTQIZOltsdwfit811tE5+wqnH8MuUA6k9p
+x+XHKmkNaApOo1Zwz/7hxhNWIc+jKbIHhA9ZX9bFdt4z8nkwOKlc/hN7zWZDIdHo
+nnt5AzKNExMzoBDjFz7QaDWHqXluO1nRYKIevCaGKibgM+Dxkd7nvOl/fsvHAA8i
+LKtGrVOwdnCT3d4AD9gANt+QXJXJmSeZe56bn3hW0WdcXBVXt+lUcy93Sw4AXbe8
+1szTeByF7xbzhbO+IiBKi3b3tNLGdDZqYys8+W6Jq7nW0F5fD1g=
+=uNjT
+-----END PGP SIGNATURE-----
+
+--HS5WuD6udurEOHJe--
 
