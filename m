@@ -1,225 +1,241 @@
-Return-Path: <linux-kernel+bounces-371868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1949A4191
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:48:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E81B9A4189
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C2351F257C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:48:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1505D288215
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585321FF7C2;
-	Fri, 18 Oct 2024 14:48:26 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A841FF60E;
+	Fri, 18 Oct 2024 14:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ib+iL0Y7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BF210E4;
-	Fri, 18 Oct 2024 14:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2C410E4;
+	Fri, 18 Oct 2024 14:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729262905; cv=none; b=Oga1vcQPj7mA8UqXwfhAijWrALx2xxRhF3n2I5YpyB5aV4A93TKcrW+HxtuQ8/0DLh8RcS9BtoQdApX3vHGVE7ZUbGYUhxSSZXwoK7yeZZfFSuEHUaTade6j2e04ewaO9F4MW0be64dn3rTZfJiqTRzi8B8IkjqBwJfFXhG2z1Q=
+	t=1729262892; cv=none; b=I0iAhgiZ2vATNMHJJ/ERY9BgXCoT69TCJYc5Y5FadJJN9JroJV3pwJlGcr861K2XQ/RnrdntT2xs86z19aISToNkzUMQQ28Jmvnn1A8N2tItxxDO1tEWQzpjoIyXZ2G3clL9VsPr+R7f+JdCLcosCoJ5fZ9QKrDawlv6Z4BVRGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729262905; c=relaxed/simple;
-	bh=UXd+esrUeJSXPyif7uLs6JTFMTdmCWFT4O/0ozmKKXs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mDekq9qaLsctCc+rBZHGIcdNTrG83ZuMnTBRIVGju4hgw/tKYEn0MSsDPH/VN+EH183fDFzeGvSBExELLkG+vuFMQ1Y3QQN1cBjWIjvMtPfNVk59kpdzVXFoN7LpkYEvM+P/IFk0KwvSyeeBwQ86t3rnbdMSb/7eBIL8VSMyjbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XVRjP5Z26z9v7JP;
-	Fri, 18 Oct 2024 22:22:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 3731B1404DA;
-	Fri, 18 Oct 2024 22:48:16 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCnNS0hdRJnhEoZAw--.54084S2;
-	Fri, 18 Oct 2024 15:48:15 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	jannh@google.com
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	ebpqwerty472123@gmail.com,
-	paul@paul-moore.com,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	stable@vger.kernel.org,
-	syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH] mm: Split locks in remap_file_pages()
-Date: Fri, 18 Oct 2024 16:47:10 +0200
-Message-Id: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729262892; c=relaxed/simple;
+	bh=O7wOviqV/219bT9BFDohUMQAjVvTdrZUiYrHNbY+ai8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Jb8ciFYE2V/Ap1cJ49EP/7ZtfZeHtqlISztp0N2lHCBWzohP5kmzKSP4Ol/jcTgjLFQ+0hOf6sOl52EcXD4aA+z4WTKttUH+foXev/7RAAR8u/D8qYBQz+DF5wiC2qFASDag2Z69zdHD+iVUBMdo2m6PH1Q8euqHs/b+dE3TFo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ib+iL0Y7; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729262890; x=1760798890;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=O7wOviqV/219bT9BFDohUMQAjVvTdrZUiYrHNbY+ai8=;
+  b=ib+iL0Y7HBpICaGok4xey7FWPyrptinNfExnmTyJzIR2PLduWINUxcuh
+   44JsGOgajTQ3IU5Y7LHdOreyoGPbJJady5C+geXcqNgPIQZxxYiImxz6t
+   cJvslLBqFoK5/Q+hgOD6LksrSLkrCpFPpLbdfZX5lWt/omAj7On93Oeza
+   IcmfQbvnf75oPvzDVNxBnNBGD2oIAMWmbYvr5w4wdIj+dyEbyPpHNuTDb
+   WFgPOqaseTmNTYsY9acgpXF1lKjLGbK7mo2uffu7mWKqdPG5J4pa99ICJ
+   y5hTSTXAGEJ1Y3/QdJHNcJzf4ua9quBnK6ZaR6neby17g0RxkdjgX9G7u
+   w==;
+X-CSE-ConnectionGUID: aTGh4fCARC6JmsAT0TaOfA==
+X-CSE-MsgGUID: BA4pf05kTCuwqZqVfddp7g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="46296800"
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="46296800"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 07:48:09 -0700
+X-CSE-ConnectionGUID: 3z+p7+FoTdu9oIxiK4jJ6A==
+X-CSE-MsgGUID: CtEeCNBlRXSVszmWHINN3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="83658045"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.217])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 07:48:03 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: linux-pci@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	linux-pm@vger.kernel.org,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Cc: linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v9 0/9] PCI: Add PCIe bandwidth controller
+Date: Fri, 18 Oct 2024 17:47:46 +0300
+Message-Id: <20241018144755.7875-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwCnNS0hdRJnhEoZAw--.54084S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFW3XrW7tw45uFyfXw4Utwb_yoWrZFWrpF
-	naqas0gF4kXF97Zrs2q3WUWFWYyry8KFyUu3yagr1rA3sFqF1SgrWfGFW5ZF4DArykZF95
-	ZF4UAr95KF4UJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
-	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07jIksgUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABGcRxH8K1wAAsW
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Hi all,
 
-Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
-remap_file_pages()") fixed a security issue, it added an LSM check when
-trying to remap file pages, so that LSMs have the opportunity to evaluate
-such action like for other memory operations such as mmap() and mprotect().
+This series adds PCIe bandwidth controller (bwctrl) and associated PCIe
+cooling driver to the thermal core side for limiting PCIe Link Speed
+due to thermal reasons. PCIe bandwidth controller is a PCI express bus
+port service driver. A cooling device is created for each port the
+service driver finds to support changing speeds.
 
-However, that commit called security_mmap_file() inside the mmap_lock lock,
-while the other calls do it before taking the lock, after commit
-8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
+This series only adds support for controlling PCIe Link Speed.
+Controlling PCIe Link Width might also be useful but there is no
+mechanism for that until PCIe 6.0 (L0p) so Link Width throttling is not
+added by this series.
 
-This caused lock inversion issue with IMA which was taking the mmap_lock
-and i_mutex lock in the opposite way when the remap_file_pages() system
-call was called.
 
-Solve the issue by splitting the critical region in remap_file_pages() in
-two regions: the first takes a read lock of mmap_lock and retrieves the VMA
-and the file associated, and calculate the 'prot' and 'flags' variable; the
-second takes a write lock on mmap_lock, checks that the VMA flags and the
-VMA file descriptor are the same as the ones obtained in the first critical
-region (otherwise the system call fails), and calls do_mmap().
+v9:
+- Split RMW ops doc reformat into own patch before adding LNKCTL2.
+- Comment reserved 0 LSB even better than it already was.
+- Consider portdrv future plans:
+	- Use devm helpers for mem alloc, IRQ, and mutex init.
+	- Don't use get/set_service_data().
+- Split rwsem into two to avoid recursive locking splat through
+  pcie_retrain_link().
+- Small wording improvements to commit messages (from Jonathan)
 
-In between, after releasing the read lock and taking the write lock, call
-security_mmap_file(), and solve the lock inversion issue.
+v8:
+- Removed CONFIG_PCIE_BWCTRL (use CONFIG_PCIEPORTBUS)
+- Removed locking wrappers that dealt with the CONFIG variations
+- Protect macro parameter with parenthesis to be on the safe side
 
-Cc: stable@vger.kernel.org
-Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap_file_pages()")
-Reported-by: syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.46d20.0036.GAE@google.com/
-Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com> (Calculate prot and flags earlier)
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- mm/mmap.c | 62 ++++++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 45 insertions(+), 17 deletions(-)
+v7:
+- Rebased on top of Maciej's latest Target Speed quirk patches
+- Target Speed quirk runs very early, w/o ->subordinate existing yet.
+  This required adapting logic:
+	- Move Supported Link Speeds back to pci_dev
+	- Check for ->subordinate == NULL where necessary
+	- Cannot always take bwctrl's per port mutex (in pcie_bwctrl_data)
+- Cleaned up locking in pcie_set_target_speed() using wrappers
+	- Allowed removing confusing __pcie_set_target_speed()
+- Fix building with CONFIG_PCI=n
+- Correct error check in pcie_lbms_seen()
+- Don't return error for an empty bus that remains at 2.5GT
+- Use rwsem to protect ->link_bwctrl setup and bwnotif enable
+- Clear LBMS in remove_board()
+- Adding export for pcie_get_supported_speeds() was unnecessary
+- Call bwctrl's init before hotplug.
+- Added local variable 'bus' into a few functions
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 9c0fb43064b5..762944427e03 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1640,6 +1640,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
- 	unsigned long populate = 0;
- 	unsigned long ret = -EINVAL;
- 	struct file *file;
-+	vm_flags_t vm_flags;
- 
- 	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. See Documentation/mm/remap_file_pages.rst.\n",
- 		     current->comm, current->pid);
-@@ -1656,12 +1657,53 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
- 	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
- 		return ret;
- 
--	if (mmap_write_lock_killable(mm))
-+	if (mmap_read_lock_killable(mm))
-+		return -EINTR;
-+
-+	vma = vma_lookup(mm, start);
-+
-+	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-+		mmap_read_unlock(mm);
-+		return -EINVAL;
-+	}
-+
-+	prot |= vma->vm_flags & VM_READ ? PROT_READ : 0;
-+	prot |= vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
-+	prot |= vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
-+
-+	flags &= MAP_NONBLOCK;
-+	flags |= MAP_SHARED | MAP_FIXED | MAP_POPULATE;
-+	if (vma->vm_flags & VM_LOCKED)
-+		flags |= MAP_LOCKED;
-+
-+	/* Save vm_flags used to calculate prot and flags, and recheck later. */
-+	vm_flags = vma->vm_flags;
-+	file = get_file(vma->vm_file);
-+
-+	mmap_read_unlock(mm);
-+
-+	ret = security_mmap_file(file, prot, flags);
-+	if (ret) {
-+		fput(file);
-+		return ret;
-+	}
-+
-+	ret = -EINVAL;
-+
-+	if (mmap_write_lock_killable(mm)) {
-+		fput(file);
- 		return -EINTR;
-+	}
- 
- 	vma = vma_lookup(mm, start);
- 
--	if (!vma || !(vma->vm_flags & VM_SHARED))
-+	if (!vma)
-+		goto out;
-+
-+	if (vma->vm_flags != vm_flags)
-+		goto out;
-+
-+	if (vma->vm_file != file)
- 		goto out;
- 
- 	if (start + size > vma->vm_end) {
-@@ -1689,25 +1731,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
- 			goto out;
- 	}
- 
--	prot |= vma->vm_flags & VM_READ ? PROT_READ : 0;
--	prot |= vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
--	prot |= vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
--
--	flags &= MAP_NONBLOCK;
--	flags |= MAP_SHARED | MAP_FIXED | MAP_POPULATE;
--	if (vma->vm_flags & VM_LOCKED)
--		flags |= MAP_LOCKED;
--
--	file = get_file(vma->vm_file);
--	ret = security_mmap_file(vma->vm_file, prot, flags);
--	if (ret)
--		goto out_fput;
- 	ret = do_mmap(vma->vm_file, start, size,
- 			prot, flags, 0, pgoff, &populate, NULL);
--out_fput:
--	fput(file);
- out:
- 	mmap_write_unlock(mm);
-+	fput(file);
- 	if (populate)
- 		mm_populate(ret, populate);
- 	if (!IS_ERR_VALUE(ret))
+v6:
+- Removed unnecessary PCI_EXP_LNKCAP_SLS mask from PCIE_LNKCAP_SLS2SPEED()
+- Split error handling in pcie_bwnotif_irq_thread()
+- pci_info() -> pci_dbg() on bwctrl probe success path
+- Handle cooling device pointer -Exx codes in bwctrl probe
+- Reorder port->link_bwctrl setup / bwnotif enable for symmetry
+- Handle LBMS count == 0 in PCIe quirk by checking LBMS (avoids a race
+  between quirk and bwctrl)
+- Use cleanup.h in PCIe cooling device's register
+
+v5:
+- Removed patches: LNKCTL2 RMW driver patches went in separately
+- Refactor pcie_update_link_speed() to read LNKSTA + add __ variant
+  for hotplug that has LNKSTA value at hand
+- Make series fully compatible with the Target Speed quirk
+	- LBMS counter added, quirk falls back to LBMS bit when bwctrl =n
+	- Separate LBMS patch from set target speed patches
+- Always provide pcie_bwctrl_change_speed() even if bwctrl =n so drivers
+  don't need to come up their own version (also required by the Target
+  Speed quirk)
+- Remove devm_* (based on Lukas' comment on some other service
+  driver patch)
+- Convert to use cleanup.h
+- Renamed functions/struct to have shorter names
+
+v4:
+- Merge Port's and Endpoint's Supported Link Speeds Vectors into
+  supported_speeds in the struct pci_bus
+- Reuse pcie_get_speed_cap()'s code for pcie_get_supported_speeds()
+- Setup supported_speeds with PCI_EXP_LNKCAP2_SLS_2_5GB when no
+  Endpoint exists
+- Squash revert + add bwctrl patches into one
+- Change to use threaded IRQ + IRQF_ONESHOT
+- Enable also LABIE / LABS
+- Convert Link Speed selection to use bit logic instead of loop
+- Allocate before requesting IRQ during probe
+- Use devm_*()
+- Use u8 for speed_conv array instead of u16
+- Removed READ_ONCE()
+- Improve changelogs, comments, and Kconfig
+- Name functions slightly more consistently
+- Use bullet list for RMW protected registers in docs
+
+v3:
+- Correct hfi1 shortlog prefix
+- Improve error prints in hfi1
+- Add L: linux-pci to the MAINTAINERS entry
+
+v2:
+- Adds LNKCTL2 to RMW safe list in Documentation/PCI/pciebus-howto.rst
+- Renamed cooling devices from PCIe_Port_* to PCIe_Port_Link_Speed_* in
+  order to plan for possibility of adding Link Width cooling devices
+  later on
+- Moved struct thermal_cooling_device declaration to the correct patch
+- Small tweaks to Kconfig texts
+- Series rebased to resolve conflict (in the selftest list)
+
+Ilpo Järvinen (9):
+  Documentation PCI: Reformat RMW ops documentation
+  PCI: Protect Link Control 2 Register with RMW locking
+  PCI: Store all PCIe Supported Link Speeds
+  PCI: Refactor pcie_update_link_speed()
+  PCI/quirks: Abstract LBMS seen check into own function
+  PCI/bwctrl: Re-add BW notification portdrv as PCIe BW controller
+  PCI/bwctrl: Add API to set PCIe Link Speed
+  thermal: Add PCIe cooling driver
+  selftests/pcie_bwctrl: Create selftests
+
+ Documentation/PCI/pciebus-howto.rst           |  14 +-
+ MAINTAINERS                                   |   9 +
+ drivers/pci/hotplug/pciehp_ctrl.c             |   5 +
+ drivers/pci/hotplug/pciehp_hpc.c              |   2 +-
+ drivers/pci/pci.c                             |  62 ++-
+ drivers/pci/pci.h                             |  38 +-
+ drivers/pci/pcie/Makefile                     |   2 +-
+ drivers/pci/pcie/bwctrl.c                     | 366 ++++++++++++++++++
+ drivers/pci/pcie/portdrv.c                    |   9 +-
+ drivers/pci/pcie/portdrv.h                    |   6 +-
+ drivers/pci/probe.c                           |  15 +-
+ drivers/pci/quirks.c                          |  32 +-
+ drivers/thermal/Kconfig                       |   9 +
+ drivers/thermal/Makefile                      |   2 +
+ drivers/thermal/pcie_cooling.c                |  80 ++++
+ include/linux/pci-bwctrl.h                    |  28 ++
+ include/linux/pci.h                           |  24 +-
+ include/uapi/linux/pci_regs.h                 |   1 +
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/pcie_bwctrl/Makefile  |   2 +
+ .../pcie_bwctrl/set_pcie_cooling_state.sh     | 122 ++++++
+ .../selftests/pcie_bwctrl/set_pcie_speed.sh   |  67 ++++
+ 22 files changed, 843 insertions(+), 53 deletions(-)
+ create mode 100644 drivers/pci/pcie/bwctrl.c
+ create mode 100644 drivers/thermal/pcie_cooling.c
+ create mode 100644 include/linux/pci-bwctrl.h
+ create mode 100644 tools/testing/selftests/pcie_bwctrl/Makefile
+ create mode 100755 tools/testing/selftests/pcie_bwctrl/set_pcie_cooling_state.sh
+ create mode 100755 tools/testing/selftests/pcie_bwctrl/set_pcie_speed.sh
+
 -- 
-2.34.1
+2.39.5
 
 
