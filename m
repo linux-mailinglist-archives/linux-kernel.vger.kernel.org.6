@@ -1,294 +1,262 @@
-Return-Path: <linux-kernel+bounces-371944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E1E9A426E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:32:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BED59A4273
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8332B2816F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:32:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ABA71C2248D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211292022C1;
-	Fri, 18 Oct 2024 15:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0C32022EE;
+	Fri, 18 Oct 2024 15:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SpDs95IU"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIjVrdMr"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F5F2022D1
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5CE1F4264;
+	Fri, 18 Oct 2024 15:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729265543; cv=none; b=dLm5S69M5QtsjkMbc/lVvuJ0R5gDwkNM8bSjlPloaQV6hGAVkhuyno7x8Mll/xvqRR/EAU8p9Q3l902WIUDNWSXBTC4JNPnIULiYL+f0UmJIDBnlUHc5bP8Tu4OgP6+c7+jlPuTGiUTUKQlyY+VQpssryxm2P+ofAUPkOtOIFeY=
+	t=1729265577; cv=none; b=r0D3lQGPXbh9McJEiT8+xfm+FjOiq8dijl59aBgMagCfTyRaX9zv7dOI9vTeeeBeNp9PYbcl7OmSl1ZnUaANIh5V5vO0SDxGaz5VZHaYgzEffylWD/sVxDCGhfdQFfIwicizVp1F3RlJlcVxo6kBA1PvNyExnLhM9qM0E8G7cmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729265543; c=relaxed/simple;
-	bh=BmVpdD0jRxsiIbfsqjgxnbZ7lslKne0rx0q7CxIOU5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=go+jygNmJImrpryDxBZX1nmtCJ5KuSVje2n5Oj7R9yPgVDagJuwWe0xxUHhX8ssXc8z9RPG/G0YYyxLGfu05YNIK9pkQikN8R1a7IUeZSFqkgjBchvV7dQPH4Lt96G7X+nlH98Wp70vhcz35S8l3VDF6AUQ+SeEWh62OdZuiPGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SpDs95IU; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2888165800fso1284028fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:32:20 -0700 (PDT)
+	s=arc-20240116; t=1729265577; c=relaxed/simple;
+	bh=HjFT8gxixI2zdMuRm0NjH3lyWJ4lhYr7CxcnIiPls/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f4A9kgsFw98Y+hrs0+zYuUfnlyWL6pox6zvdgJ3aOd0iCI8p8URul/SZXKKbh2vPS+DPcfo/0iTAVco7Fx6RjRfF+/yfX1fOMTVNcMp2fvt0DteKBiMbemBsrsBuNUJEiO0mOwMu6VCcFeylGhQKCC6qmB1fWjUheoF6ZkbL+k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dIjVrdMr; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37ed3bd6114so353365f8f.2;
+        Fri, 18 Oct 2024 08:32:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729265540; x=1729870340; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZC7IXrCg0YuAvn8GUXeJqu+LI8owpl5cfwS2jfkhEf0=;
-        b=SpDs95IU6ADOtqD4JdP5p1dTyQTopYQLVNRnWlt2kjYro2JEnufBTR7CTwP0ifGDJ9
-         YkYRuuqaZ2ZPbpIxOq96OM36svuSmbQCnAxqMXqd/jgR5Lg12HZlouRwOeFLz5/P+h2r
-         6ElHdsE/A28f7aB0ika9tOiqmUlbafPLz3AxY=
+        d=gmail.com; s=20230601; t=1729265573; x=1729870373; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JeZX36AOts656XeIipRUW//VVqaiAIOn+txCH/BlOKo=;
+        b=dIjVrdMrp2Zg4nye+Uj6kySN7mQ7Hv95AzYvI0duRiPQWnolL0DxQ6MlyDZ7K+MHyI
+         2iW2fRA7B7vXWjwkd3afVckqVZmdVe0cMEzY04H8mE4vpjin6zwpz7fyKoWoYzRu/2oy
+         M4szdcq9tjOSwdUg9Yjlk7XNxp/LnlICn9fSAVZYXuAzG+J/FIgNuZIHeSHaKUOtPalS
+         7b9/nGkXfavhHcnts5eMXQgfL460s6sSoVbiaXHVTw1DeIu12nJZ3rNOZYOG99YWvMwo
+         SdB7+1ShC8ClftPH/BTgYSbWu78Jgy59sOpShO1fTgb75CHfzPPEVYmNsBCR7b49v0h7
+         VARw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729265540; x=1729870340;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZC7IXrCg0YuAvn8GUXeJqu+LI8owpl5cfwS2jfkhEf0=;
-        b=cIct/FF+hC96T1T4KVDeVSoCNhjHIfQAn95fXNlB5b3asVwwTAxAMRkb/InHj9xEzx
-         aZG3PRqJmuj9TZ+MYa5Xws7FqqEFFy8VNqBOo7ktj7zYiyGEf2WXfHpcC67SK+Mx3SV6
-         cJ3Q8Uu54+S0roCFh0W7U0KrcJVEV8plNODA9o8WM2EZ6NB5AzmxXh2lrPqyS210Bljz
-         cJLMJWmqDCYBpeRdgzlzJLcEdcWldP6X4VsAGXrmV0e+zLOp3J8/YXHINIB9gP6N4JhG
-         J7Kkzox71YRRmTr9SpN/vLJ0LNZEm7W2WCrKwvS9tCTcYeOmiimOLEVns1gdMt12T/bq
-         atZA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7oCO/fXRiSdCmZ15WgtUXWeZ2/JZYM83ZTeNDTPHXNw3jdi6KwMEUaF9475Skcb15N3KiDe15oZo2UiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYrpyIAc1aYWYNoSiyIO+Cwtsg/sgSEwbNgYuYJ1luoOwcrF/1
-	BMtIkfRxi9Wc2fGIBrCeZyQDXwL7Sc94qHpaT+MbGnF1KiRozEn/WQ92Zkg9H/E=
-X-Google-Smtp-Source: AGHT+IFVILzQC3xLfv6R4AbCBfFL0IO4Vwr3Q+ju2/Ycfjj5wO6b5XNWyVkiIkvrRdK6DAeUYrsI+g==
-X-Received: by 2002:a05:6870:89a9:b0:277:f5d8:b77b with SMTP id 586e51a60fabf-2892c4a62edmr2658526fac.32.1729265539765;
-        Fri, 18 Oct 2024 08:32:19 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2892ad9f036sm493443fac.34.2024.10.18.08.32.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 08:32:19 -0700 (PDT)
-Message-ID: <22d386cd-e62f-43f9-905e-2d0881781abe@linuxfoundation.org>
-Date: Fri, 18 Oct 2024 09:32:17 -0600
+        d=1e100.net; s=20230601; t=1729265573; x=1729870373;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JeZX36AOts656XeIipRUW//VVqaiAIOn+txCH/BlOKo=;
+        b=OKVEm7exd8p+d8/ryDSa0zapB9WpxXoTZiEB+sS1KSZu5APVJPSIL8HluChYn+jEuR
+         kDpUafe4S0yvOrhxowHPd6tpZaYd7o7rCDJQxsc9MtFl39NXSdktcTl2Au1xbD7MwDaS
+         MBSz5+RnIVn9yTMYxb723Fe/SgpCQxtYp6XpE3SXbdtA0Zgrt1s5QpS3A8rFTem5LgzO
+         kc+juIkxaK1sMUUlxqNvlVWe40Fqn+DjD+2FPZn/VOQJvbQsBWzZdg2+Mr9PJXInnI9m
+         e+wCt0blZWDVBqLOijgSISh4S5RbuBROAL8bu+jDwpN8Oott4oHLpIZcBoAWKK9nL3U1
+         z9oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6APZMol5lXA3gMb0oBOuIrzzI6JgZFlbVG99BsOU2rTWixojarXItIgAkTRqTl7DWbw5kH0OEec59P/wpnbmKnXo=@vger.kernel.org, AJvYcCWNFhnTXCC7PNE3Kh40+DmFACJwIkQq14KmStcJuPUi/f0sGrc9GDU6omQAYwo+FymYujBqdlffxkv7rbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXUkeTm851z51/esqer3LC8tZgjPHjMNgOHN3+GoPeHtXkhHff
+	4R46i1Q5OHwwrTVfMKP2hFZPXqlpX89uibPbFpQ/kwK/bR6X5Gf3
+X-Google-Smtp-Source: AGHT+IEQFWX1fvkIjTzMGYo1gxAvOZz0GYutoj8BZaUd4y7lJ1Z8Tg/O5kZcJWa6e16HLeVqe5Tfjg==
+X-Received: by 2002:adf:a3d2:0:b0:37d:33ab:de30 with SMTP id ffacd0b85a97d-37ea2137119mr1761709f8f.8.1729265573123;
+        Fri, 18 Oct 2024 08:32:53 -0700 (PDT)
+Received: from localhost.localdomain ([2a06:5906:61b:2d00:d416:f456:3869:adaf])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316067e7b9sm30615595e9.6.2024.10.18.08.32.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 08:32:52 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 00/10] media: ov5645: Add support for streams
+Date: Fri, 18 Oct 2024 16:32:20 +0100
+Message-ID: <20241018153230.235647-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] selftests/mm: add self tests for guard page feature
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
- "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
- David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Muchun Song <muchun.song@linux.dev>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
- Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
- linux-kselftest@vger.kernel.org, Sidhartha Kumar
- <sidhartha.kumar@oracle.com>, Jeff Xu <jeffxu@chromium.org>,
- Christoph Hellwig <hch@infradead.org>, Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1729196871.git.lorenzo.stoakes@oracle.com>
- <8b1add3c511effb62d68183cae8a954d8339286c.1729196871.git.lorenzo.stoakes@oracle.com>
- <1d0bbc60-fda7-4c14-bf02-948bdbf8f029@linuxfoundation.org>
- <dfbf9ccb-6834-4181-a382-35c9c9af8064@lucifer.local>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <dfbf9ccb-6834-4181-a382-35c9c9af8064@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/18/24 01:12, Lorenzo Stoakes wrote:
-> On Thu, Oct 17, 2024 at 03:24:49PM -0600, Shuah Khan wrote:
->> On 10/17/24 14:42, Lorenzo Stoakes wrote:
->>> Utilise the kselftest harmness to implement tests for the guard page
->>
->> Splleing NIT - harmness -> harness
->>
->>> implementation.
->>>
->>> We start by implement basic tests asserting that guard pages can be
->>
->> implmenting? By the way checkpatch will catch spelling stuuf.
->> Please see comments about warnings below.
-> 
-> Thanks. The majority of the checkpatch warnings are invalid so I missed
-> this. Will fix on respin.
-> 
->>
->>> established (poisoned), cleared (remedied) and that touching poisoned pages
->>> result in SIGSEGV. We also assert that, in remedying a range, non-poison
->>> pages remain intact.
->>>
->>> We then examine different operations on regions containing poison markers
->>> behave to ensure correct behaviour:
->>>
->>> * Operations over multiple VMAs operate as expected.
->>> * Invoking MADV_GUARD_POISION / MADV_GUARD_REMEDY via process_madvise() in
->>>     batches works correctly.
->>> * Ensuring that munmap() correctly tears down poison markers.
->>> * Using mprotect() to adjust protection bits does not in any way override
->>>     or cause issues with poison markers.
->>> * Ensuring that splitting and merging VMAs around poison markers causes no
->>>     issue - i.e. that a marker which 'belongs' to one VMA can function just
->>>     as well 'belonging' to another.
->>> * Ensuring that madvise(..., MADV_DONTNEED) does not remove poison markers.
->>> * Ensuring that mlock()'ing a range containing poison markers does not
->>>     cause issues.
->>> * Ensuring that mremap() can move a poisoned range and retain poison
->>>     markers.
->>> * Ensuring that mremap() can expand a poisoned range and retain poison
->>>     markers (perhaps moving the range).
->>> * Ensuring that mremap() can shrink a poisoned range and retain poison
->>>     markers.
->>> * Ensuring that forking a process correctly retains poison markers.
->>> * Ensuring that forking a VMA with VM_WIPEONFORK set behaves sanely.
->>> * Ensuring that lazyfree simply clears poison markers.
->>> * Ensuring that userfaultfd can co-exist with guard pages.
->>> * Ensuring that madvise(..., MADV_POPULATE_READ) and
->>>     madvise(..., MADV_POPULATE_WRITE) error out when encountering
->>>     poison markers.
->>> * Ensuring that madvise(..., MADV_COLD) and madvise(..., MADV_PAGEOUT) do
->>>     not remove poison markers.
->>
->> Good summary of test. Does the test require root access?
->> If so does it check and skip appropriately?
-> 
-> Thanks and some do, in those cases we skip.
-> 
->>
->>>
->>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> ---
->>>    tools/testing/selftests/mm/.gitignore    |    1 +
->>>    tools/testing/selftests/mm/Makefile      |    1 +
->>>    tools/testing/selftests/mm/guard-pages.c | 1168 ++++++++++++++++++++++
->>>    3 files changed, 1170 insertions(+)
->>>    create mode 100644 tools/testing/selftests/mm/guard-pages.c
->>>
->>> diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
->>> index 689bbd520296..8f01f4da1c0d 100644
->>> --- a/tools/testing/selftests/mm/.gitignore
->>> +++ b/tools/testing/selftests/mm/.gitignore
->>> @@ -54,3 +54,4 @@ droppable
->>>    hugetlb_dio
->>>    pkey_sighandler_tests_32
->>>    pkey_sighandler_tests_64
->>> +guard-pages
->>> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
->>> index 02e1204971b0..15c734d6cfec 100644
->>> --- a/tools/testing/selftests/mm/Makefile
->>> +++ b/tools/testing/selftests/mm/Makefile
->>> @@ -79,6 +79,7 @@ TEST_GEN_FILES += hugetlb_fault_after_madv
->>>    TEST_GEN_FILES += hugetlb_madv_vs_map
->>>    TEST_GEN_FILES += hugetlb_dio
->>>    TEST_GEN_FILES += droppable
->>> +TEST_GEN_FILES += guard-pages
->>>    ifneq ($(ARCH),arm64)
->>>    TEST_GEN_FILES += soft-dirty
->>> diff --git a/tools/testing/selftests/mm/guard-pages.c b/tools/testing/selftests/mm/guard-pages.c
->>> new file mode 100644
->>> index 000000000000..2ab0ff3ba5a0
->>> --- /dev/null
->>> +++ b/tools/testing/selftests/mm/guard-pages.c
->>> @@ -0,0 +1,1168 @@
->>> +// SPDX-License-Identifier: GPL-2.0-or-later
->>> +
->>> +#define _GNU_SOURCE
->>> +#include "../kselftest_harness.h"
->>> +#include <assert.h>
->>> +#include <fcntl.h>
->>> +#include <setjmp.h>
->>> +#include <errno.h>
->>> +#include <linux/userfaultfd.h>
->>> +#include <signal.h>
->>> +#include <stdbool.h>
->>> +#include <stdio.h>
->>> +#include <stdlib.h>
->>> +#include <string.h>
->>> +#include <sys/ioctl.h>
->>> +#include <sys/mman.h>
->>> +#include <sys/syscall.h>
->>> +#include <sys/uio.h>
->>> +#include <unistd.h>
->>> +
->>> +/* These may not yet be available in the uAPI so define if not. */
->>> +
->>> +#ifndef MADV_GUARD_POISON
->>> +#define MADV_GUARD_POISON	102
->>> +#endif
->>> +
->>> +#ifndef MADV_GUARD_UNPOISON
->>> +#define MADV_GUARD_UNPOISON	103
->>> +#endif
->>> +
->>> +volatile bool signal_jump_set;
->>
->> Can you add a comment about why volatile is needed.
-> 
-> I'm not sure it's really necessary, it's completely standard to do this
-> with signal handling and is one of the exceptions to the 'volatile
-> considered harmful' rule.
-> 
->> By the way did you happen to run checkpatck on this. There are
->> several instances where single statement blocks with braces {}
->>
->> I noticed a few and ran checkpatch on your patch. There are
->> 45 warnings regarding codeing style.
->>
->> Please run checkpatch and clean them up so we can avoid followup
->> checkpatch cleanup patches.
-> 
-> No sorry I won't, checkpatch isn't infallible and series trying to 'clean
-> up' things that aren't issues will be a waste of everybody's time.
-> 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Sorry - this violates the coding styles and makes it hard to read.
+Hi All,
 
-See process/coding-style.rst:
+This patch series aims to add the below features,
+- Support subdev active state
+- Support for streams
+- Support for virtual channel
+- Code cleanup
 
-Do not unnecessarily use braces where a single statement will do.
+Note, these patches are dependent on below:
+1] https://patchwork.kernel.org/project/linux-media/patch/20240416193319.778192-27-sakari.ailus@linux.intel.com/
+2] https://patchwork.kernel.org/project/linux-media/patch/20240416193319.778192-26-sakari.ailus@linux.intel.com/
 
-.. code-block:: c
+v2->v3
+- Fixed review commments from Laurent
+- Included RB tags from Laurent
+- Dropped patch "media: i2c: ov5645: Enable runtime PM after v4l2_async_register_subdev()"
+- Fixed checkpatch issues (ie used --max-line-length=80)
 
-         if (condition)
-                 action();
+RFC->v2
+- Dropped setting of VC using routes
+- Defaulted the native format to MEDIA_BUS_FMT_SBGGR8_1X8
+- Fixed ov5645_enum_frame_size and ov5645_enum_mbus_code
+  for internal image pad
 
-and
+RFC patch,
+Link: https://lore.kernel.org/all/20240904210719.52466-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-.. code-block:: c
+Test logs:
+====================================
+root@smarc-rzg2l:~# media-ctl -p
+......
+- entity 4: ov5645 0-003c (2 pads, 1 link, 1 route)
+      type V4L2 subdev subtype Sensor flags 0
+      device node name /dev/v4l-subdev1
+    routes:
+        1/0 -> 0/0 [ACTIVE]
+    pad0: SOURCE
+        [stream:0 fmt:UYVY8_1X16/1280x960 field:none colorspace:srgb xfer:srgb ycbcr:601 quantization:lim-range
+        crop:(0,0)/1280x960]
+        -> "csi-10830400.csi2":0 [ENABLED,IMMUTABLE]
+    pad1: SINK,0x8
+        [stream:0 fmt:SBGGR8_1X8/2592x1944 field:none colorspace:srgb xfer:srgb ycbcr:601 quantization:lim-range
+        crop:(0,0)/1280x960]
+......
 
-         if (condition)
-                 do_this();
-         else
-                 do_that();
+root@smarc-rzg2l:~# v4l2-ctl --device /dev/v4l-subdev1 --list-subdev-mbus-codes pad=0
+ioctl: VIDIOC_SUBDEV_ENUM_MBUS_CODE (pad=0,stream=0)
+    0x200f: MEDIA_BUS_FMT_UYVY8_1X16
+root@smarc-rzg2l:~# v4l2-ctl --device /dev/v4l-subdev1 --list-subdev-mbus-codes pad=1
+ioctl: VIDIOC_SUBDEV_ENUM_MBUS_CODE (pad=1,stream=0)
+    0x3001: MEDIA_BUS_FMT_SBGGR8_1X8
+root@smarc-rzg2l:~# v4l2-ctl --device /dev/v4l-subdev1 --list-subdev-framesizes pad=1,code=0x3001
+ioctl: VIDIOC_SUBDEV_ENUM_FRAME_SIZE (pad=1,stream=0)
+    Size Range: 2592x1944 - 2592x1944
+root@smarc-rzg2l:~# v4l2-ctl --device /dev/v4l-subdev1 --list-subdev-framesizes pad=0,code=0x200f
+ioctl: VIDIOC_SUBDEV_ENUM_FRAME_SIZE (pad=0,stream=0)
+    Size Range: 1280x960 - 1280x960
+    Size Range: 1920x1080 - 1920x1080
+    Size Range: 2592x1944 - 2592x1944
+root@smarc-rzg2l:~# v4l2-compliance -u /dev/v4l-subdev1
+v4l2-compliance 1.28.1-5233, 64 bits, 64-bit time_t
+v4l2-compliance SHA: fc15e229d9d3 2024-07-23 19:22:15
 
-This does not apply if only one branch of a conditional statement is a single
-statement; in the latter case use braces in both branches:
+Compliance test for device /dev/v4l-subdev1:
 
-.. code-block:: c
+Driver Info:
+    Driver version  : 6.12.0
+    Capabilities   : 0x00000002
+        Streams Support
+    Client Capabilities: 0x00000[ 2429.125325] ov5645 0-003c: ================= START STATUS =================
+00000000003
+streams int[ 2429.134589] ov5645 0-003c: ================== END STATUS ==================
+erval-uses-which
+Required ioctls:
+    test VIDIOC_SUDBEV_QUERYCAP: OK
+    test invalid ioctls: OK
 
-         if (condition) {
-                 do_this();
-                 do_that();
-         } else {
-                 otherwise();
-         }
+Allow for multiple opens:
+    test second /dev/v4l-subdev1 open: OK
+    test VIDIOC_SUBDEV_QUERYCAP: OK
+    test for unlimited opens: OK
 
-Also, use braces when a loop contains more than a single simple statement:
+Debug ioctls:
+    test VIDIOC_LOG_STATUS: OK (Not Supported)
 
-.. code-block:: c
+Input ioctls:
+    test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+    test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+    test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+    test VIDIOC_ENUMAUDIO: OK (Not Supported)
+    test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+    test VIDIOC_G/S_AUDIO: OK (Not Supported)
+    Inputs: 0 Audio Inputs: 0 Tuners: 0
 
-         while (condition) {
-                 if (test)
-                         do_something();
-         }
+Output ioctls:
+    test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+    test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+    test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+    test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+    test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+    Outputs: 0 Audio Outputs: 0 Modulators: 0
 
-thanks,
--- Shuah
+Input/Output configuration ioctls:
+    test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+    test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+    test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+    test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Sub-Device routing ioctls:
+    test Try VIDIOC_SUBDEV_G_ROUTING/VIDIOC_SUBDEV_S_ROUTING: OK
+    test Active VIDIOC_SUBDEV_G_ROUTING/VIDIOC_SUBDEV_S_ROUTING: OK
+
+Control ioctls:
+    test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+    test VIDIOC_QUERYCTRL: OK
+    test VIDIOC_G/S_CTRL: OK
+    test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+    test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+    test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+    Standard Controls: 12 Private Controls: 0
+
+Format ioctls:
+    test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+    test VIDIOC_G/S_PARM: OK (Not Supported)
+    test VIDIOC_G_FBUF: OK (Not Supported)
+    test VIDIOC_G_FMT: OK (Not Supported)
+    test VIDIOC_TRY_FMT: OK (Not Supported)
+    test VIDIOC_S_FMT: OK (Not Supported)
+    test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+    test Cropping: OK (Not Supported)
+    test Composing: OK (Not Supported)
+    test Scaling: OK (Not Supported)
+
+Codec ioctls:
+    test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+    test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+    test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+    test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+    test CREATE_BUFS maximum buffers: OK
+    test VIDIOC_REMOVE_BUFS: OK
+    test VIDIOC_EXPBUF: OK (Not Supported)
+    test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev1: 47, Succeeded: 47, Failed: 0, Warnings: 0
+------------------------------------------------------------
+
+Lad Prabhakar (10):
+  media: i2c: ov5645: Add V4L2_SUBDEV_FL_HAS_EVENTS and subscribe hooks
+  media: i2c: ov5645: Use local `dev` pointer for subdev device
+    assignment
+  media: i2c: ov5645: Replace dev_err with dev_err_probe in probe
+    function
+  media: i2c: ov5645: Use v4l2_async_register_subdev_sensor()
+  media: i2c: ov5645: Drop `power_lock` mutex
+  media: i2c: ov5645: Use subdev active state
+  media: i2c: ov5645: Switch to {enable,disable}_streams
+  media: i2c: ov5645: Report streams using frame descriptors
+  media: i2c: ov5645: Add internal image sink pad
+  media: i2c: ov5645: Report internal routes to userspace
+
+ drivers/media/i2c/ov5645.c | 435 +++++++++++++++++++++----------------
+ 1 file changed, 246 insertions(+), 189 deletions(-)
+
+-- 
+2.43.0
+
 
