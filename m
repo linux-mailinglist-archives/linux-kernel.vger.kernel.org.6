@@ -1,229 +1,147 @@
-Return-Path: <linux-kernel+bounces-370806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CEB49A3246
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:53:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600B89A324C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753421C21DA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:53:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 253F12812B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BEE55E53;
-	Fri, 18 Oct 2024 01:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FvE+0QO5"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC639383B1
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60337E110;
+	Fri, 18 Oct 2024 01:56:07 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [20.231.56.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B0C20E327;
+	Fri, 18 Oct 2024 01:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.231.56.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729216393; cv=none; b=ZQO8fAg9uY+lu52TpHia9LMWncf82Qj6VxyPIi3S0qe0SVVsIGWlK/dVpXkwMq8aIkAE5Z2BsQ3+GrNVz2Xh3pTXdT3fO+fC5QNRKsbS0ldUXuLDBFc/yhZWPS2TNjMqZYmqwqV09XmLm/KHW/F8uNVW/CtYhtbZkQ8M05qplwg=
+	t=1729216567; cv=none; b=GdnAwwpmWROBTPqEabSjaxNBtwlg6aYl/vtLqKkVrOQl2YrqT2qT2rERgSPGDxP96xLTU8LbXeSh8tiQFAsxBTO/UOwU3wIi0U7srJhOBiHrTYFrtplh3GOc6B6pXOWIdDvO5R4VlVFdb6aq9uinuJDSBOEW3q5MhFLUCEvQsrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729216393; c=relaxed/simple;
-	bh=EeKpX7NUZUq8zMtV7FB9erh3TKxGrsk1Lw/mghF0G3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aXdjpr+Iai6ncOnfkEN2PtcCr5YYnr4G0xM33cAm3XkwJzqr5pMgrauyo1nt0yrXPw00+1ZXZ2U8NhjCMK/12+klhrUT/9PGV6PmDjNu9t1o+CPrvMmQMcyEjwejzHGwKmAEpidJ5VySAzoeAoumOo2if0yOz8L3VyMteZ261kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FvE+0QO5; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314ff68358so2636745e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:53:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729216390; x=1729821190; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1zSHdJlPUbayXLLcfATCEIdb8eH6mankQ/VadBAff7g=;
-        b=FvE+0QO5EGm6P+HfSCcAlyVE8A9Ukl0gr3Ykl1Cq3pWmxxfjiXZRRd6ug2k0xpqrm1
-         vVsZgx63vTBfp/aVuWD6u6r8+WhQPs/nEvnDrbGSEfDkt55jPfx2txeDeL/9OpljFiV9
-         igahLb/lq08NMaEPsd3slagBNH0LXCgwPVWc5be9zxY3oU8t3F+xSqEOq7CZpi8N6MAu
-         F3gz6AB8XO0673kIdIQ6X/LvbChvth4HVUhsQ0Ed3QC6d+xbyvvay3aQeOpeHTCYm2DV
-         jgui+S+ABsH8OsebphlKx/dtmFevIZs+CBCwDFU8dnVVj4bM9AZHAsfaBIW4NMWXMu/A
-         iP1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729216390; x=1729821190;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1zSHdJlPUbayXLLcfATCEIdb8eH6mankQ/VadBAff7g=;
-        b=W35QaXfcj3gpc2sITVBkI2C912t0LSfxKMVJbZDWMuJJf90ECovJ9BcKgHVNaBoOy2
-         kdVqJiZJ0Fm4wa78bc6Z96C3DL5gigKPLktP3ClQKQOEp4Jzmmtv2mJtn5GNdq+FytId
-         XcMmDtnHbNYtcNjJDyzY1J/yikPcspjqs4+341er/H6O0Suchh0fZRaWlzJ1xxE4jU39
-         gJsLIkm0znCf7LZDzaU1lxZb3IsmF2TgzeP4T5u6NHpIYsAVDFBTvwI8Tryl+ERqQ8gW
-         RXuokmDW4T26rga79ks/I+iYH2Z55k3rZuUo+jzKT6br0I0Otps2zx+JieBvnToP9oTs
-         wY4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVcTz9YMwdaXt02x/QWjTbIdD8N4g8oCyeMy1kmZSmMjoLTLWfvnG2wuGKi217fCRSi+H4GW3RN8nmHU1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwwhcyD/TXx2F+M4ROnoECaxPbqClDdru7dX2Zec9Fr2zGaedt
-	GH9MzmGy7q2zIKz06wppE2+X5OlhctoFOUXzX7PBQR9EMCWKw+y1bbQCIvchinrqcEfjINq3dKa
-	LJIsNSojcGyqQPwkDSGEs/RyFqiQ=
-X-Google-Smtp-Source: AGHT+IFW22XGmxmpGx3e2cHqyt8VryX3WIKRioJuCFz5mCW9CyRfz8JruPy/YmT26mUzckqqU1NlUWv/HMqLMLId5C0=
-X-Received: by 2002:a5d:6481:0:b0:37d:468c:1f38 with SMTP id
- ffacd0b85a97d-37eab715171mr258721f8f.12.1729216389794; Thu, 17 Oct 2024
- 18:53:09 -0700 (PDT)
+	s=arc-20240116; t=1729216567; c=relaxed/simple;
+	bh=8mqe2nfOjdoe+qMCwR7dofHrVeamoOVqki0cwmbQ5ko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nLprJsAGteS0/x78N0lh13wHXLu/LB8+69msJnGNn1hKgyhMrTSiWr8OCC7zcQRkkJYKpVpU2EniooapMbUpbWVal22h0ml137LTrF0DTDJk542gaW6Wn2vXsmZGr9NvmVgErlMmmyl36J79ZaOvZ32HlKcHbNAQNNphvpi0T4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=20.231.56.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app2 (Coremail) with SMTP id HwEQrACHjwP3vxFneFAXAQ--.3696S2;
+	Fri, 18 Oct 2024 09:55:03 +0800 (CST)
+Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wAX8sbxvxFnC+1RAA--.1462S2;
+	Fri, 18 Oct 2024 09:54:57 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: si.yanteng@linux.dev,
+	Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: hust-os-kernel-patches@googlegroups.com,
+	Hu Haowen <2023002089@link.tyut.edu.cn>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] docs/zh_CN: update the translation of process/submitting-patches.rst
+Date: Fri, 18 Oct 2024 09:54:44 +0800
+Message-ID: <20241018015452.3787741-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009102745.1390935-1-hanqi@vivo.com> <bdd890de-4794-4133-bca1-9c7e067e6e5c@kernel.org>
-In-Reply-To: <bdd890de-4794-4133-bca1-9c7e067e6e5c@kernel.org>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Fri, 18 Oct 2024 09:52:58 +0800
-Message-ID: <CAHJ8P3KhfuCSNwyc16QYQQYMNzjVKc4ey5CTZ2XK4893aW4mCQ@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: modify f2fs_is_checkpoint_ready logic to
- allow more data to be written with the CP disable
-To: Chao Yu <chao@kernel.org>
-Cc: Qi Han <hanqi@vivo.com>, jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrACHjwP3vxFneFAXAQ--.3696S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoWxZryUJrWDWr4rtFWxtry5Jwb_yoWrGF48pF
+	s29343J3WxKF1rJ3yxGay8ZF18J3WkCF9rGrsrK3WSyFs5Kay2v3sIqryfWay3J3s5KFy7
+	ZFs2qryv9ry29rDanT9S1TB71UUUUbUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQSb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
+	126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
+	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
+	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
+	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtw
+	CF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Y
+	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Wrv_ZF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF
+	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU3YFADUUUU
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-=E4=BA=8E2024=E5=B9=B410=E6=9C=8817=E6=97=A5=E5=91=A8=E5=9B=9B 17:57=E5=86=
-=99=E9=81=93=EF=BC=9A
->
-> On 2024/10/9 18:27, Qi Han wrote:
-> > When the free segment is used up during CP disable, many write or
-> > ioctl operations will get ENOSPC error codes, even if there are
-> > still many blocks available. We can reproduce it in the following
-> > steps:
-> >
-> > dd if=3D/dev/zero of=3Df2fs.img bs=3D1M count=3D55
-> > mkfs.f2fs -f f2fs.img
-> > mount f2fs.img f2fs_dir -o checkpoint=3Ddisable:10%
-> > cd f2fs_dir
-> > dd if=3D/dev/zero of=3Dbigfile bs=3D1M count=3D50
-> > sync
-> > rm bigfile
-> > i=3D1; while [[ $i -lt 10000000 ]]; do (file_name=3D./file$i; dd \
-> > if=3D/dev/random of=3D$file_name bs=3D1M count=3D0); i=3D$((i+1)); done
-> > stat -f ./
-> >
-> > In f2fs_need_SSR() function, it is allowed to use SSR to allocate
-> > blocks when CP is disabled, so in f2fs_is_checkpoint_ready function,
-Hi Chao and Qi,
-based on this comment  and codes, I have some doubts:
-unusable blocks are calculated  from  invalid blocks of Dirty segment
-in f2fs_get_unsuable_blocks then minus ovp_hole,
-but SSR is allowed when the checkpoint is disabled.
-So actually SSR can not use most invalid blocks of Dirty segments?
-Is this a contradiction?
-Thanks!
+Update to commit eb5ed2fae197 ("docs: submitting-patches: Advertise b4")
 
-> > can we judge the number of invalid blocks when free segment is not
-> > enough, and return ENOSPC only if the number of invalid blocks is
-> > also not enough?
->
-> Can you please try below patch?
->
->  From 38b7c97dcc55ba83de4220c3dc54c2eb66148dd5 Mon Sep 17 00:00:00 2001
-> From: Chao Yu <chao@kernel.org>
-> Date: Thu, 17 Oct 2024 17:07:05 +0800
-> Subject: [PATCH] f2fs: revalidate empty segment when checkpoint is disabl=
-ed
->
-> If checkpoint is off, let's set segment as free once all newly
-> written datas were removed.
->
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->   fs/f2fs/segment.c | 13 ++++++++++++-
->   1 file changed, 12 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index f8d6e601e084..9bad13d70afb 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -853,6 +853,17 @@ static void locate_dirty_segment(struct f2fs_sb_info=
- *sbi, unsigned int segno)
->         valid_blocks =3D get_valid_blocks(sbi, segno, false);
->         ckpt_valid_blocks =3D get_ckpt_valid_blocks(sbi, segno, false);
->
-> +       /*
-> +        * If checkpoint is off, let's set segment as free once all newly
-> +        * written datas were removed.
-> +        */
-> +       if (is_sbi_flag_set(sbi, SBI_CP_DISABLED) &&
-> +               valid_blocks =3D=3D 0 && ckpt_valid_blocks =3D=3D 0) {
-> +               __remove_dirty_segment(sbi, segno, DIRTY);
-> +               __set_test_and_free(sbi, segno, false);
-> +               goto out_lock;
-> +       }
-> +
->         if (valid_blocks =3D=3D 0 && (!is_sbi_flag_set(sbi, SBI_CP_DISABL=
-ED) ||
->                 ckpt_valid_blocks =3D=3D usable_blocks)) {
->                 __locate_dirty_segment(sbi, segno, PRE);
-> @@ -863,7 +874,7 @@ static void locate_dirty_segment(struct f2fs_sb_info =
-*sbi, unsigned int segno)
->                 /* Recovery routine with SSR needs this */
->                 __remove_dirty_segment(sbi, segno, DIRTY);
->         }
-> -
-> +out_lock:
->         mutex_unlock(&dirty_i->seglist_lock);
->   }
->
-> --
-> 2.40.1
->
-> >
-> > Signed-off-by: Qi Han <hanqi@vivo.com>
-> > ---
-> >   fs/f2fs/segment.h | 21 +++++++++++++++++++++
-> >   1 file changed, 21 insertions(+)
-> >
-> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> > index 71adb4a43bec..9bf0cf3a6a31 100644
-> > --- a/fs/f2fs/segment.h
-> > +++ b/fs/f2fs/segment.h
-> > @@ -637,12 +637,33 @@ static inline bool has_enough_free_secs(struct f2=
-fs_sb_info *sbi,
-> >       return !has_not_enough_free_secs(sbi, freed, needed);
-> >   }
-> >
-> > +static inline bool has_enough_available_blocks(struct f2fs_sb_info *sb=
-i)
-> > +{
-> > +     unsigned int total_free_blocks =3D sbi->user_block_count -
-> > +                                     valid_user_blocks(sbi) -
-> > +                                     sbi->current_reserved_blocks;
-> > +
-> > +     if (total_free_blocks <=3D sbi->unusable_block_count)
-> > +             total_free_blocks =3D 0;
-> > +     else
-> > +             total_free_blocks -=3D sbi->unusable_block_count;
-> > +
-> > +     if (total_free_blocks > F2FS_OPTION(sbi).root_reserved_blocks)
-> > +             total_free_blocks -=3D F2FS_OPTION(sbi).root_reserved_blo=
-cks;
-> > +     else
-> > +             total_free_blocks =3D 0;
-> > +
-> > +     return (total_free_blocks > 0) ? true : false;
-> > +}
-> > +
-> >   static inline bool f2fs_is_checkpoint_ready(struct f2fs_sb_info *sbi)
-> >   {
-> >       if (likely(!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
-> >               return true;
-> >       if (likely(has_enough_free_secs(sbi, 0, 0)))
-> >               return true;
-> > +     if (likely(has_enough_available_blocks(sbi)))
-> > +             return true;
-> >       return false;
-> >   }
-> >
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+scripts/checktransupdate.py reports:
+
+Documentation/translations/zh_CN/process/submitting-patches.rst
+commit eb5ed2fae197 ("docs: submitting-patches: Advertise b4")
+commit 413e775efaec ("Documentation: fix links to mailing list services")
+2 commits needs resolving in total
+
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+v1->v2: revise the script name
+ .../zh_CN/process/submitting-patches.rst      | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/translations/zh_CN/process/submitting-patches.rst b/Documentation/translations/zh_CN/process/submitting-patches.rst
+index 7ca16bda3709..f7ae584a439e 100644
+--- a/Documentation/translations/zh_CN/process/submitting-patches.rst
++++ b/Documentation/translations/zh_CN/process/submitting-patches.rst
+@@ -105,7 +105,7 @@ xyzzy do frotz”或“[I]changed xyzzy to do frotz”，就好像你在命令
+ 当链接到邮件列表存档时，请首选lore.kernel.org邮件存档服务。用邮件中的
+ ``Message-ID`` 头（去掉尖括号）可以创建链接URL。例如::
+ 
+-    Link: https://lore.kernel.org/r/30th.anniversary.repost@klaava.Helsinki.FI/
++    Link: https://lore.kernel.org/30th.anniversary.repost@klaava.Helsinki.FI
+ 
+ 请检查该链接以确保可用且指向正确的邮件。
+ 
+@@ -195,11 +195,8 @@ scripts/get_maintainer.pl在这个步骤中非常有用。如果您找不到正
+ 在MAINTAINERS文件中查找子系统特定的列表；您的补丁可能会在那里得到更多的关注。
+ 不过，请不要发送垃圾邮件到无关的列表。
+ 
+-许多与内核相关的列表托管在vger.kernel.org上；您可以在
+-http://vger.kernel.org/vger-lists.html 上找到它们的列表。不过，也有与内核相关
+-的列表托管在其他地方。
+-
+-不要一次发送超过15个补丁到vger邮件列表！！！！
++许多与内核相关的列表托管在 kernel.org 上；您可以在 https://subspace.kernel.org
++上找到它们的列表。不过，也有与内核相关的列表托管在其他地方。
+ 
+ Linus Torvalds是决定改动能否进入 Linux 内核的最终裁决者。他的邮件地址是
+ torvalds@linux-foundation.org 。他收到的邮件很多，所以一般来说最好 **别**
+@@ -621,6 +618,13 @@ Fixes: 指示补丁修复了之前提交的一个问题。它可以便于确定
+ 的工作所基于的树的提交哈希。你应该在封面邮件或系列的第一个补丁中添加它，它应
+ 该放在 ``---`` 行的下面或所有其他内容之后，即只在你的电子邮件签名之前。
+ 
++工具
++----
++
++这个过程的许多技术方面可以使用 b4 自动完成，其文档可在
++https://b4.docs.kernel.org/en/latest/ 查看。该工具可帮助处理诸如追踪依赖项、运行
++checkpatch 以及格式化和发送邮件等事务。
++
+ 参考文献
+ --------
+ 
+@@ -643,9 +647,6 @@ Greg Kroah-Hartman，“如何惹恼内核子系统维护人员”
+ 
+   <http://www.kroah.com/log/linux/maintainer-06.html>
+ 
+-不！！！别再发巨型补丁炸弹给linux-kernel@vger.kernel.org的人们了！
+-  <https://lore.kernel.org/r/20050711.125305.08322243.davem@davemloft.net>
+-
+ 内核 Documentation/translations/zh_CN/process/coding-style.rst
+ 
+ Linus Torvalds关于标准补丁格式的邮件
+-- 
+2.43.0
+
 
