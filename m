@@ -1,210 +1,355 @@
-Return-Path: <linux-kernel+bounces-372184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9822F9A4562
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:02:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D477B9A4566
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19F491F217B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:02:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238281F22FE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFF7204089;
-	Fri, 18 Oct 2024 18:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C9A2040B3;
+	Fri, 18 Oct 2024 18:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TaKPpL5R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqYy/M64"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CCF8472;
-	Fri, 18 Oct 2024 18:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731AA20264A;
+	Fri, 18 Oct 2024 18:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729274546; cv=none; b=MAdScaSG/DhCluVRMfX23M88xdnKcFBGV/Gxe7ASN0WId+zWL0J1N6HxdSC59ZcTcH+SeiNS6oh84g/Y7XHW281wVCxailf8+UsxN5KLnHdbb++nyG5tpNHI9S0UgsxzvUG+T9IixJx8g2RxTFlH0iWEadtFNdwtZCjIoN6t5U8=
+	t=1729274624; cv=none; b=mRuizrsv34FizkjuBVQ0V2zhjDTwNub+3Ex+H1RIopq4DevXNxRoQMJRq2tpkJLB/ajqTZs24kLBm3EhvOyT/rW40g289tVy/Pqw2Gd4W70VV2b7JMedTSz65eHlp/3keqqjNgiUGBCaM3fVeb7Rj4O6jEUTVumgIzWa8AbGugU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729274546; c=relaxed/simple;
-	bh=P4W5WsJ7T2B5pGPBAwjLvDhq586dUwXIusTYcg05BAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sfQ6fgxps1j1C8T8NXVb697Yw5d97z1p3YSC9hzjMNm1Jmys0Yf/dUxSSSUMEQ0Xh71Og1mIVvGjLy0n8rsMBngceCM5Z5bFiFK8gno0LNn50FKQljYCPrB89nHoVCJKygBcDEulHMpzC1LZntBnnzt9sUeidHHGmO8QOmb4E/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TaKPpL5R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D501CC4CEC5;
-	Fri, 18 Oct 2024 18:02:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729274545;
-	bh=P4W5WsJ7T2B5pGPBAwjLvDhq586dUwXIusTYcg05BAE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TaKPpL5RiJjzjLlTZ1KgNmeEw+H17Vgja2H25r1k8HDDFIJtWMBl4qmIB3oyu6uhC
-	 2d+iaqNI+kJvt9yZhTYlfF0KbDa5o4zIiJBzes594EBWMpYH45zAICa0QmLBSjyyWl
-	 6B2xNabrclbuWEEWb3ZdHXUZGJrLNsqsLrr5Tke14PJYhbo5lzF15IQ5BTRDa+u9EH
-	 bHYNxs43rqP0mC1HTf3L5isI9dpxu6TQPS7CKHmCY2uthlRF9Jx61CxnrB3QwUsfqP
-	 /47ykukVrgZDYOi6ClXDCyXiSBUqVAnAIt6pUvWjhZctAMHDaE3DsgOZpjA8sqPMPH
-	 qDqDZCyvZB0iQ==
-Date: Fri, 18 Oct 2024 19:02:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Justin Weiss <justin@justinweiss.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Derek J . Clark" <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxl?=
- =?UTF-8?B?cg==?= <philm@manjaro.org>
-Subject: Re: [PATCH 3/3] iio: imu: Add scale and sampling frequency to
- BMI270 IMU
-Message-ID: <20241018190218.2e2c04ff@jic23-huawei>
-In-Reply-To: <877ca8alnr.fsf@justinweiss.com>
-References: <20241011153751.65152-1-justin@justinweiss.com>
-	<20241011153751.65152-4-justin@justinweiss.com>
-	<20241012123535.1abe63bd@jic23-huawei>
-	<87jzecpvpd.fsf@justinweiss.com>
-	<20241013164000.19087833@jic23-huawei>
-	<87ttdfn2nr.fsf@justinweiss.com>
-	<20241014201124.5621c4aa@jic23-huawei>
-	<877ca8alnr.fsf@justinweiss.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729274624; c=relaxed/simple;
+	bh=lAq2B0GvCFBF3V9+QW5Jia+LxcIEjnw82vPSQ1vinIQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ori0/4kwyDJlIl93IRQlUykZGEQhx827rvbHlozcNIqlGcT9Y46XDnr8+6KIW44Ihc5uyJflx6B57P2Jt5khf2CaY47FjJzz6KmEXD84EwfT/ELXCsNTG71U/5pIr59THVvuhjfTCrL+KEFKiBMQci/+E907Ia6xwKOd0pbHZEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqYy/M64; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so21652825e9.3;
+        Fri, 18 Oct 2024 11:03:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729274621; x=1729879421; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vTl/hUSj/UfTQkYKvku3PzPI4RSkWnNGUZziFInNPIM=;
+        b=CqYy/M6486B6XQyMcxSY5YMGJcigTY0YWNvbEBD3/LFv6gqSXcVujbLstjodj4H9dU
+         YYWEujqkRXo2Bpv4Fh3GPV9K7NyLbpFX7r9tWv1EX5D5/lXBI/huws06lOjxmgLDzvV3
+         u7u/b29TcJWNmS+QN+bHexTmqJ2RccJG/fDW1QTc8YJXBULOinJoPm22v1diVQuwraw0
+         8aqu19iPwRTFr9yERDVpKVRLw0MFp6q9YeZjwUrVSOVQp1bdv5VK3rubqQGa/lUWFm4k
+         1N4HR/4/Tj7QIm+CiAKtQRGHYZHpszpXyJVrrY3vsn4tQCMBoC+4QPzO65iup6Z1K/gJ
+         LVzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729274621; x=1729879421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vTl/hUSj/UfTQkYKvku3PzPI4RSkWnNGUZziFInNPIM=;
+        b=BQJAMlfpeomCIRf+K25q4vpsC8e5AIgN8nvCRVcYcuB+38nSHYcpbTq1waj0s4nXPM
+         TR7ZWKUtW4Gu9feGHsiaw2LRqcD9G2ncz2T68iqE48594L5PqERi4Qp0AbEen9qfoJsO
+         Xt+McwC1N99RLYTgiXxLhi5ORQP7hKf9eXE0OF4g/cGsocJJo/FEeechTn03wrUsMfdA
+         HEN05EMZNquIiUoVoGhnjx0N3S+dHz9bK9CqwsPBQoi/WuwSRikUE4RN5sbj16az75c+
+         o6tyKgEaPtZZX4aCGm/b7yYsif3PVL+c6ZNn1i4w+X0AgVloH2SB0VCRKgvTVE2DnFrg
+         UGnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0n9vb6zqGX66VPckGjm3gk7B29i3RxFjIIRoL4H0jLihElCO3ed1JkbNayh1vmMWoq+R72cxE17nHytU=@vger.kernel.org, AJvYcCXISw1TiA7j7KkcmoZOwVKEjrVc1PutNYQ/1Cae2rXrNmGXQpIyV/BhMoxjodYr6FXQgemJwZnp@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfX80ptnS5IR+Ssn2x2NwDE2SrzBryvXoxN0EnmwIpzxZxHLqJ
+	VI7o0v0G1Yw2mkzID08L8nAI6Xfq0zkO5369CBY7Rt4qfIC9qKazCTgzMPmz8ZOec2ykhXLBEMR
+	lYkpCzqzfslVYD4t7EPEHtJYA0vU=
+X-Google-Smtp-Source: AGHT+IE53tP/trlIJhSThzo1jS5+hYd/nfh5lSF33/o7kCnAusq4BXbw0lmSqvYd8tM3bVJv0VSKJ2Rfe3i2z4xiiiI=
+X-Received: by 2002:a5d:6892:0:b0:37d:890c:f485 with SMTP id
+ ffacd0b85a97d-37ea21949e5mr2865340f8f.25.1729274620408; Fri, 18 Oct 2024
+ 11:03:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241018105351.1960345-1-linyunsheng@huawei.com> <20241018105351.1960345-11-linyunsheng@huawei.com>
+In-Reply-To: <20241018105351.1960345-11-linyunsheng@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Fri, 18 Oct 2024 11:03:03 -0700
+Message-ID: <CAKgT0UcrbmhJCm4=30Y12ZX9bWD_ChTn5vqHxKdTrGBP-FLk5w@mail.gmail.com>
+Subject: Re: [PATCH net-next v22 10/14] mm: page_frag: introduce
+ prepare/probe/commit API
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 15 Oct 2024 18:20:24 -0700
-Justin Weiss <justin@justinweiss.com> wrote:
+On Fri, Oct 18, 2024 at 4:00=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> There are many use cases that need minimum memory in order
+> for forward progress, but more performant if more memory is
+> available or need to probe the cache info to use any memory
+> available for frag caoleasing reason.
+>
+> Currently skb_page_frag_refill() API is used to solve the
+> above use cases, but caller needs to know about the internal
+> detail and access the data field of 'struct page_frag' to
+> meet the requirement of the above use cases and its
+> implementation is similar to the one in mm subsystem.
+>
+> To unify those two page_frag implementations, introduce a
+> prepare API to ensure minimum memory is satisfied and return
+> how much the actual memory is available to the caller and a
+> probe API to report the current available memory to caller
+> without doing cache refilling. The caller needs to either call
+> the commit API to report how much memory it actually uses, or
+> not do so if deciding to not use any memory.
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  include/linux/page_frag_cache.h | 130 ++++++++++++++++++++++++++++++++
+>  mm/page_frag_cache.c            |  21 ++++++
+>  2 files changed, 151 insertions(+)
+>
+> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_ca=
+che.h
+> index feed99d0cddb..1c0c11250b66 100644
+> --- a/include/linux/page_frag_cache.h
+> +++ b/include/linux/page_frag_cache.h
+> @@ -46,6 +46,10 @@ void *__page_frag_cache_prepare(struct page_frag_cache=
+ *nc, unsigned int fragsz,
+>  unsigned int __page_frag_cache_commit_noref(struct page_frag_cache *nc,
+>                                             struct page_frag *pfrag,
+>                                             unsigned int used_sz);
+> +void *__page_frag_alloc_refill_probe_align(struct page_frag_cache *nc,
+> +                                          unsigned int fragsz,
+> +                                          struct page_frag *pfrag,
+> +                                          unsigned int align_mask);
+>
+>  static inline unsigned int __page_frag_cache_commit(struct page_frag_cac=
+he *nc,
+>                                                     struct page_frag *pfr=
+ag,
+> @@ -88,6 +92,132 @@ static inline void *page_frag_alloc(struct page_frag_=
+cache *nc,
+>         return __page_frag_alloc_align(nc, fragsz, gfp_mask, ~0u);
+>  }
+>
+> +static inline bool __page_frag_refill_align(struct page_frag_cache *nc,
+> +                                           unsigned int fragsz,
+> +                                           struct page_frag *pfrag,
+> +                                           gfp_t gfp_mask,
+> +                                           unsigned int align_mask)
+> +{
+> +       if (unlikely(!__page_frag_cache_prepare(nc, fragsz, pfrag, gfp_ma=
+sk,
+> +                                               align_mask)))
+> +               return false;
+> +
+> +       __page_frag_cache_commit(nc, pfrag, fragsz);
+> +       return true;
+> +}
+> +
+> +static inline bool page_frag_refill_align(struct page_frag_cache *nc,
+> +                                         unsigned int fragsz,
+> +                                         struct page_frag *pfrag,
+> +                                         gfp_t gfp_mask, unsigned int al=
+ign)
+> +{
+> +       WARN_ON_ONCE(!is_power_of_2(align));
+> +       return __page_frag_refill_align(nc, fragsz, pfrag, gfp_mask, -ali=
+gn);
+> +}
+> +
+> +static inline bool page_frag_refill(struct page_frag_cache *nc,
+> +                                   unsigned int fragsz,
+> +                                   struct page_frag *pfrag, gfp_t gfp_ma=
+sk)
+> +{
+> +       return __page_frag_refill_align(nc, fragsz, pfrag, gfp_mask, ~0u)=
+;
+> +}
+> +
+> +static inline bool __page_frag_refill_prepare_align(struct page_frag_cac=
+he *nc,
+> +                                                   unsigned int fragsz,
+> +                                                   struct page_frag *pfr=
+ag,
+> +                                                   gfp_t gfp_mask,
+> +                                                   unsigned int align_ma=
+sk)
+> +{
+> +       return !!__page_frag_cache_prepare(nc, fragsz, pfrag, gfp_mask,
+> +                                          align_mask);
+> +}
+> +
+> +static inline bool page_frag_refill_prepare_align(struct page_frag_cache=
+ *nc,
+> +                                                 unsigned int fragsz,
+> +                                                 struct page_frag *pfrag=
+,
+> +                                                 gfp_t gfp_mask,
+> +                                                 unsigned int align)
+> +{
+> +       WARN_ON_ONCE(!is_power_of_2(align));
+> +       return __page_frag_refill_prepare_align(nc, fragsz, pfrag, gfp_ma=
+sk,
+> +                                               -align);
+> +}
+> +
+> +static inline bool page_frag_refill_prepare(struct page_frag_cache *nc,
+> +                                           unsigned int fragsz,
+> +                                           struct page_frag *pfrag,
+> +                                           gfp_t gfp_mask)
+> +{
+> +       return __page_frag_refill_prepare_align(nc, fragsz, pfrag, gfp_ma=
+sk,
+> +                                               ~0u);
+> +}
+> +
+> +static inline void *__page_frag_alloc_refill_prepare_align(struct page_f=
+rag_cache *nc,
+> +                                                          unsigned int f=
+ragsz,
+> +                                                          struct page_fr=
+ag *pfrag,
+> +                                                          gfp_t gfp_mask=
+,
+> +                                                          unsigned int a=
+lign_mask)
+> +{
+> +       return __page_frag_cache_prepare(nc, fragsz, pfrag, gfp_mask, ali=
+gn_mask);
+> +}
+> +
+> +static inline void *page_frag_alloc_refill_prepare_align(struct page_fra=
+g_cache *nc,
+> +                                                        unsigned int fra=
+gsz,
+> +                                                        struct page_frag=
+ *pfrag,
+> +                                                        gfp_t gfp_mask,
+> +                                                        unsigned int ali=
+gn)
+> +{
+> +       WARN_ON_ONCE(!is_power_of_2(align));
+> +       return __page_frag_alloc_refill_prepare_align(nc, fragsz, pfrag,
+> +                                                     gfp_mask, -align);
+> +}
+> +
+> +static inline void *page_frag_alloc_refill_prepare(struct page_frag_cach=
+e *nc,
+> +                                                  unsigned int fragsz,
+> +                                                  struct page_frag *pfra=
+g,
+> +                                                  gfp_t gfp_mask)
+> +{
+> +       return __page_frag_alloc_refill_prepare_align(nc, fragsz, pfrag,
+> +                                                     gfp_mask, ~0u);
+> +}
+> +
+> +static inline void *page_frag_alloc_refill_probe(struct page_frag_cache =
+*nc,
+> +                                                unsigned int fragsz,
+> +                                                struct page_frag *pfrag)
+> +{
+> +       return __page_frag_alloc_refill_probe_align(nc, fragsz, pfrag, ~0=
+u);
+> +}
+> +
+> +static inline bool page_frag_refill_probe(struct page_frag_cache *nc,
+> +                                         unsigned int fragsz,
+> +                                         struct page_frag *pfrag)
+> +{
+> +       return !!page_frag_alloc_refill_probe(nc, fragsz, pfrag);
+> +}
+> +
+> +static inline void page_frag_commit(struct page_frag_cache *nc,
+> +                                   struct page_frag *pfrag,
+> +                                   unsigned int used_sz)
+> +{
+> +       __page_frag_cache_commit(nc, pfrag, used_sz);
+> +}
+> +
+> +static inline void page_frag_commit_noref(struct page_frag_cache *nc,
+> +                                         struct page_frag *pfrag,
+> +                                         unsigned int used_sz)
+> +{
+> +       __page_frag_cache_commit_noref(nc, pfrag, used_sz);
+> +}
+> +
 
-> Jonathan Cameron <jic23@kernel.org> writes:
-> 
-> > On Sun, 13 Oct 2024 13:55:36 -0700
-> > Justin Weiss <justin@justinweiss.com> wrote:
-> >  
-> >> Jonathan Cameron <jic23@kernel.org> writes:
-> >>   
-> >> > On Sat, 12 Oct 2024 19:45:18 -0700
-> >> > Justin Weiss <justin@justinweiss.com> wrote:
-> >> >    
-> >> >> Jonathan Cameron <jic23@kernel.org> writes:
-> >> >>     
-> >> >> > On Fri, 11 Oct 2024 08:37:49 -0700
-> >> >> > Justin Weiss <justin@justinweiss.com> wrote:
-> >> >> >      
-> >> >> >> Add read and write functions and create _available entries. Use
-> >> >> >> IIO_CHAN_INFO_SAMP_FREQ instead of IIO_CHAN_INFO_FREQUENCY to match
-> >> >> >> the BMI160 / BMI323 drivers.      
-> >> >> >
-> >> >> > Ah.  Please break dropping _FREQUENCY change out as a separate fix
-> >> >> > with fixes tag etc and drag it to start of the patch. It was never
-> >> >> > wired to anything anyway
-> >> >> >
-> >> >> > That's a straight forward ABI bug so we want that to land ahead
-> >> >> > of the rest of the series.      
-> >> >> 
-> >> >> Thanks, I'll pull that into its own change and make it the first patch.
-> >> >>     
-> >> >> > Does this device have a data ready interrupt and if so what affect
-> >> >> > do the different ODRs for each type of sensor have on that?
-> >> >> > If there are separate data ready signals, you probably want to 
-> >> >> > go with a dual buffer setup from the start as it is hard to unwind
-> >> >> > that later.      
-> >> >> 
-> >> >> It has data ready interrupts for both accelerometer and gyroscope and a
-> >> >> FIFO interrupt. I had held off on interrupts to keep this change
-> >> >> simpler, but if it's a better idea to get it in earlier, I can add it
-> >> >> alongside the triggered buffer change.    
-> >> >
-> >> > Ok. So the challenge is that IIO buffers are only described by external
-> >> > metadata.  We don't carry tags within them.  Hence if you are using
-> >> > either effectively separate datastreams (the two data ready interrupts)
-> >> > or a fifo that is tagged data (how this difference of speed is normally handled
-> >> > if it's one buffer) then when we push them into IIO buffers, they have
-> >> > to go into separate buffers.
-> >> >
-> >> > In older drivers this was done via the heavy weight option of registering
-> >> > two separate IIO devices. Today we have the ability to support multiple buffers
-> >> > in one driver. I'm not sure we've yet used it for this case, so I think
-> >> > there may still be some gaps around triggering that will matter for the
-> >> > separate dataready interrupt case (fifo is fine as no trigger involved).
-> >> > Looking again at that code, it looks like there may need to be quite
-> >> > a bit more work to cover this case proeprly.
-> >> >
-> >> > We may be able to have a migration path from the simple case you have
-> >> > (where timing is an external trigger) to multiple buffers.
-> >> > It would involve:
-> >> > 1) Initial solution where the frequencies must match if the fifo is in use.
-> >> >    Non fifo trigger from data ready might work but we'd need to figure out
-> >> >    if they run in close enough timing.
-> >> > 2) Solution where we add a second buffer and if the channels are enabled
-> >> >    in that we can allow separate timing for the two sensor types.
-> >> >
-> >> > This is one of those hardware features that seems like a good idea
-> >> > from the hardware design point of view but assumes a very specific
-> >> > sort of software model :(
-> >> >
-> >> > Jonathan    
-> >> 
-> >> Hm, that does sound tricky. If there's an example I can follow, I can
-> >> make an attempt at it.  
-> >
-> > I don't think it ever got used for a device like this - so probably no
-> > examples, but I might have forgotten one. (this was a few years back).
-> >  
-> >> Otherwise, if there's a change I can make now
-> >> that would help with migrating in the future, I can do that instead.
-> >> 
-> >> Of the devices I've looked at, only one has had the interrupts usable
-> >> and that one only had a single pin available.  
-> > Lovely!  
-> >  
-> >> So if this change doesn't
-> >> make it harder to add later if it's necessary, I would still be OK going
-> >> without full support for now.  
-> > I stopped being lazy and opened the datasheet.
-> >
-> > Hmm. We have auxiliary channels as well.  oh goody.
-> > Considering just the fifo as that's the high performance route.
-> >
-> > Basically we can do headerless mode trivially as that's just one buffer.
-> > (same ODR for all sensors).
-> > We could do headered version but without messing with multiple buffers
-> > that would be only when all sensors have same ODR (after a messy
-> > transition period perhaps - that bit of the datasheet is less than
-> > intuitive!) The reason we might do headered mode is to support the
-> > timestamps but we can probably get those via a quick read of other
-> > registers after draining the fifo.  
-> 
-> OK, that sounds good. It looks like the BMI323 driver approximates
-> timestamps by slicing up the time period between the last flush and the
-> current flush. It seems like that could also work.
-> 
-> If I understand it right, the simple way forward would be to use only
-> the fifo watermark interrupt, to set the fifo to headerless mode, and
-> only allow that buffer to be enabled when the ODR is the same between
-> the accel and gyro sensors.
-> 
-> Since that sounds like a fairly independent change, I can hold it for a
-> future patch, unless you think it belongs in this set.
-Indeed fine to leave it as it stands for this series.
-We've established a compatible path forwards if those features get added
-so all looks good to me.
+Not a huge fan of introducing a ton of new API calls and then having
+to have them all applied at once in the follow-on patches. Ideally the
+functions and the header documentation for them would be introduced in
+the same patch as well as examples on how it would be used.
 
-Jonathan
+I really think we should break these up as some are used in one case,
+and others in another and it is a pain to have a pile of abstractions
+that are all using these functions in different ways.
 
-> 
-> Thank you for the rest of the feedback and advice, I really appreciate
-> it. I think I have enough for another revision soon.
-> 
-> Justin
-> 
-> > So I'm fine with just not supporting the weird corner cases unless
-> > we get someone turning up who
-> > a) cares
-> > b) if foolish (or motivated) enough to do the necessary work 
-> > c) (if they are lucky) we have the infrastructure in place because someone
-> >    else needed the missing bits.
-> >
-> > Jonathan
-> >
-> >  
-> >> 
-> >> Justin  
+> +static inline void page_frag_alloc_abort(struct page_frag_cache *nc,
+> +                                        unsigned int fragsz)
+> +{
+> +       VM_BUG_ON(fragsz > nc->offset);
+> +
+> +       nc->pagecnt_bias++;
+> +       nc->offset -=3D fragsz;
+> +}
+> +
 
+We should probably have the same checks here you had on the earlier
+commit. We should not be allowing blind changes. If we are using the
+commit or abort interfaces we should be verifying a page frag with
+them to verify that the request to modify this is legitimate.
+
+>  void page_frag_free(void *addr);
+>
+>  #endif
+> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+> index f55d34cf7d43..5ea4b663ab8e 100644
+> --- a/mm/page_frag_cache.c
+> +++ b/mm/page_frag_cache.c
+> @@ -112,6 +112,27 @@ unsigned int __page_frag_cache_commit_noref(struct p=
+age_frag_cache *nc,
+>  }
+>  EXPORT_SYMBOL(__page_frag_cache_commit_noref);
+>
+> +void *__page_frag_alloc_refill_probe_align(struct page_frag_cache *nc,
+> +                                          unsigned int fragsz,
+> +                                          struct page_frag *pfrag,
+> +                                          unsigned int align_mask)
+> +{
+> +       unsigned long encoded_page =3D nc->encoded_page;
+> +       unsigned int size, offset;
+> +
+> +       size =3D PAGE_SIZE << encoded_page_decode_order(encoded_page);
+> +       offset =3D __ALIGN_KERNEL_MASK(nc->offset, ~align_mask);
+> +       if (unlikely(!encoded_page || offset + fragsz > size))
+> +               return NULL;
+> +
+> +       pfrag->page =3D encoded_page_decode_page(encoded_page);
+> +       pfrag->size =3D size - offset;
+> +       pfrag->offset =3D offset;
+> +
+> +       return encoded_page_decode_virt(encoded_page) + offset;
+> +}
+> +EXPORT_SYMBOL(__page_frag_alloc_refill_probe_align);
+> +
+
+If I am not mistaken this would be the equivalent of allocating a size
+0 fragment right? The only difference is that you are copying out the
+"remaining" size, but we could get that from the offset if we knew the
+size couldn't we? Would it maybe make sense to look at limiting this
+to PAGE_SIZE instead of passing the size of the actual fragment?
+
+>  void *__page_frag_cache_prepare(struct page_frag_cache *nc, unsigned int=
+ fragsz,
+>                                 struct page_frag *pfrag, gfp_t gfp_mask,
+>                                 unsigned int align_mask)
+> --
+> 2.33.0
+>
 
