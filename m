@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-371612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9F29A3D55
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:35:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81359A3D69
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F3A1F21BF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:35:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D73131C22D25
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF8A198836;
-	Fri, 18 Oct 2024 11:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC921D935F;
+	Fri, 18 Oct 2024 11:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j75om5FA"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262A12F46;
-	Fri, 18 Oct 2024 11:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="ZGOLYkeu"
+Received: from smtp83.ord1d.emailsrvr.com (smtp83.ord1d.emailsrvr.com [184.106.54.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21721D5CE0;
+	Fri, 18 Oct 2024 11:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729251300; cv=none; b=doj1nqrG49oRX2yKwvKJJyfuAZREq5fYBBE6NHYC7agVtgLhGZb3sRLV36SEibyBZVwPpbNHd5jkTe12VRLUx3jf46ZufjecB1ok3FJsIz1/yeyJYk6NcaJ9jlXaQI4I0lloPebNn6n1T/AbS6fyPHSdmZrBcfcmIRloYtc2trI=
+	t=1729251706; cv=none; b=INClflVC4UTtHgXzAN3HMzYkSZjr92MvbCmE6wob1q0X2/oHvpruX/wME2ohGZ83HQoN1rPc9BALw5exM98Dp/wjCaE0UNc52J/RGMaMh2Jxe0+qq7o3gJPm7taarP4efKVOrY+hywlcNf9ijcuCVnORMgyIZNa1c5fQ7QFYZyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729251300; c=relaxed/simple;
-	bh=vIo6d3z0ZWjVlUbhqsm8NCa8h8VBGEoEX5hD5dHZBWU=;
+	s=arc-20240116; t=1729251706; c=relaxed/simple;
+	bh=9RhLGmbiBRtepmdiZwPlKSDhSY+UR62sjht8gKRsnmc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jxrImR4WLQ2EI7CCJIPXXo4IfY7IcToXQWrbDGunEjjJPz8S6H4asHfoBn2UjTbZNvZZCm6ihqK+ZNFagsV7JHWQp1ohhg+SpbZs6t5MSlXo0eazCDEIpKrtewgV//X6W0Mw1tb6JYtdwBD3ZAH7bqoov+4PcY8DXPfXz2y19Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=j75om5FA; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=caUiTptCocfNUoFU8zd6duiK1xNXinI7kyJpdRcGEvs=;
-	b=j75om5FAJKsveEOjLsZpZb+n+xrRc3+swqgTAZ/moXsyoNJcrGlJFSOWFGI/eh
-	O86SdoFqVqiQOxncWSu9Kzgt3B5XNmcvISqGFTq4SEqzao+cftdc63D8Me0hYgh3
-	H5xpuWn1dVUWdpUXk15POSMN2Fi9XBK3Lfz0N4vhMziek=
-Received: from [192.168.22.184] (unknown [223.70.253.255])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDXHzbLRxJnWzhPBw--.50533S2;
-	Fri, 18 Oct 2024 19:34:35 +0800 (CST)
-Message-ID: <f5193380-57f8-40c4-b4d6-b8e8cc3d0977@163.com>
-Date: Fri, 18 Oct 2024 19:34:31 +0800
+	 In-Reply-To:Content-Type; b=J9Su1xCsfY4AJmHS//u771JJw44tNNn2f9Xvcf+rUCaWQ7F9KCZC0kRDMnU1B7WLvTlMx0WvKPa3TGT/pOZ73W6YuL9FETFR2N2RHukjp85kddofP8p7rwRLvPHy2PER+dHPbessuFEY9911oa58zavP1uILHsGGOfJP4JUJ+8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=ZGOLYkeu; arc=none smtp.client-ip=184.106.54.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1729251329;
+	bh=9RhLGmbiBRtepmdiZwPlKSDhSY+UR62sjht8gKRsnmc=;
+	h=Date:Subject:To:From:From;
+	b=ZGOLYkeuVQ84nHszWqmRpRu+M/Z7ZgMS14SDA8xKhuTanoffTAI7oyLF01bPUOBwY
+	 +nxNDriWHvwHZ7IuSlK9KnLIhkknQzkYwfh7uC3+kVOUbeJPa+uOrLaSr+y0DTeNXl
+	 9rRrTrOGxGoWUwD8+posdrIp0U3SjH2ztuhJdBs0=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp3.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id C3BAC601D8;
+	Fri, 18 Oct 2024 07:35:28 -0400 (EDT)
+Message-ID: <10f30e5b-dbf0-4f7d-9688-5ae256e2c252@mev.co.uk>
+Date: Fri, 18 Oct 2024 12:35:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,172 +49,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ext4: fix a assertion failure due to ungranted bh
- dirting
-To: Jan Kara <jack@suse.cz>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, zhangshida@kylinos.cn,
- longzhi@sangfor.com.cn, linux-ext4@vger.kernel.org,
- linux-kernel@vger.kernel.org, Baolin Liu <liubaolin@kylinos.cn>
-References: <20241010025855.2632516-1-liubaolin12138@163.com>
- <20241010092923.r53povuflevzhxrw@quack3>
- <5dc22111.4718.19279c3f3b7.Coremail.liubaolin12138@163.com>
- <20241016103301.rl6qngi2fb6yxjin@quack3>
- <908502d6-cb0c-44ae-8c03-9a22c8c7fbf2@163.com>
- <8c14e5b0-5229-4611-b8e6-434c6eb34ee9@163.com>
- <20241018091444.tmzhbj73gvegfmb5@quack3>
-From: liubaolin <liubaolin12138@163.com>
-In-Reply-To: <20241018091444.tmzhbj73gvegfmb5@quack3>
+Subject: Re: [PATCH v3] comedi: Flush partial mappings in error case
+To: Jann Horn <jannh@google.com>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>,
+ Frank Mori Hess <fmh6jj@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241017-comedi-tlb-v3-1-16b82f9372ce@google.com>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+In-Reply-To: <20241017-comedi-tlb-v3-1-16b82f9372ce@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXHzbLRxJnWzhPBw--.50533S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3AF1kZr1DKFW3WF13Jr18Krg_yoWxAryrpr
-	y3Ka17Kr4qyryDArn2qF4UXrWUK34jqr9rWr15Grn7Z390yrn3tF48tr10kFyDCrWkG3WF
-	vr1UAr9rCr1qy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U3-BiUUUUU=
-X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/1tbiMR58ymcSPaGuuAAAsm
+Content-Transfer-Encoding: 7bit
+X-Classification-ID: 4da0f65f-3f97-4434-b483-c44206dccc89-1-1
 
-> Sorry, I saw the patch you submitted.
-> I would like to request a modification to the commit message.
-> I use the email 'Baolin Liu liubaolin12138@163.com' for community communication.
-> However, my work email is 'Baolin Liu liubaolin@kylinos.cn'.
+On 17/10/2024 20:07, Jann Horn wrote:
+> If some remap_pfn_range() calls succeeded before one failed, we still have
+> buffer pages mapped into the userspace page tables when we drop the buffer
+> reference with comedi_buf_map_put(bm). The userspace mappings are only
+> cleaned up later in the mmap error path.
 > 
-> So I would like to ask you to modify the commit message as follows:
-> From:
-> Reported-by: Baolin Liu liubaolin12138@163.com
-> Reported-by: Zhi Long longzhi@sangfor.com.cn
-> To:
-> Reported-and-tested-by: Baolin Liu liubaolin@kylinos.cn
-> Reported-and-tested-by: Zhi Long longzhi@sangfor.com.cn
+> Fix it by explicitly flushing all mappings in our VMA on the error path.
 > 
-> Could you please make the modification? Thank you.
+> See commit 79a61cc3fc04 ("mm: avoid leaving partial pfn mappings around in
+> error case").
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: ed9eccbe8970 ("Staging: add comedi core")
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+> Note: compile-tested only; I don't actually have comedi hardware, and I
+> don't know anything about comedi.
+> ---
+> Changes in v3:
+> - gate zapping ptes on CONFIG_MMU (Intel kernel test robot)
+> - Link to v2: https://lore.kernel.org/r/20241015-comedi-tlb-v2-1-cafb0e27dd9a@google.com
+> 
+> Changes in v2:
+> - only do the zapping in the pfnmap path (Ian Abbott)
+> - use zap_vma_ptes() instead of zap_page_range_single() (Ian Abbott)
+> - Link to v1: https://lore.kernel.org/r/20241014-comedi-tlb-v1-1-4b699144b438@google.com
+> ---
+>   drivers/comedi/comedi_fops.c | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
+> index 1b481731df96..b9df9b19d4bd 100644
+> --- a/drivers/comedi/comedi_fops.c
+> +++ b/drivers/comedi/comedi_fops.c
+> @@ -2407,6 +2407,18 @@ static int comedi_mmap(struct file *file, struct vm_area_struct *vma)
+>   
+>   			start += PAGE_SIZE;
+>   		}
+> +
+> +#ifdef CONFIG_MMU
+> +		/*
+> +		 * Leaving behind a partial mapping of a buffer we're about to
+> +		 * drop is unsafe, see remap_pfn_range_notrack().
+> +		 * We need to zap the range here ourselves instead of relying
+> +		 * on the automatic zapping in remap_pfn_range() because we call
+> +		 * remap_pfn_range() in a loop.
+> +		 */
+> +		if (retval)
+
+Perhaps that condition should be changed to `retval && i` since there 
+will be no partial mappings left behind if the first call to 
+`remap_pfn_range` failed.
+
+> +			zap_vma_ptes(vma, vma->vm_start, size);
+> +#endif
+>   	}
+>   
+>   	if (retval == 0) {
+> 
+> ---
+> base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
+> change-id: 20241014-comedi-tlb-400246505961
 
 
-
-在 2024/10/18 17:14, Jan Kara 写道:
-> On Fri 18-10-24 09:48:17, liubaolin wrote:
->>> Hello, I am very sorry.
->>> I did not previously understand the approach of your patch to solve the issue.
->>> Yesterday, I intentionally injected faults during the quick reproduction
->>> test, and indeed, after applying your patch, the crash issue was
->>> resolved and did not occur again.
->>> I finally understood your approach to solving the problem. Please disregard my previous email.
->>> Thank you for helping me solve this crash issue in a better way.
->>> I still need to improve my skills in file systems, and I truly appreciate your guidance.
-> 
-> Great! Thanks for testing. I'll send the patch for inclusion then.
-> 
-> 								Honza
-> 
->> 在 2024/10/16 21:38, liubaolin 写道:
->>>> Hello,
->>>> I reviewed the patch attached in your email. The issue you mentioned
->>>> about clearing buffer_new(bh) in write_end_fn() is indeed a bug.
->>>> However, this patch does not resolve the crash issue we encountered.
->>>>
->>>> Let me explain my analysis in detail below.
->>>> The crash occurs in the function jbd2_journal_dirty_metadata().
->>>>
->>>> ext4_block_write_begin() -> ext4_journalled_zero_new_buffers() ->
->>>> write_end_fn()
->>>>   -> ext4_dirty_journalled_data() -> ext4_handle_dirty_metadata() ->
->>>> __ext4_handle_dirty_metadata()
->>>>   -> jbd2_journal_dirty_metadata()
->>>>
->>>> In the function jbd2_journal_dirty_metadata(), there is the
->>>> following condition:
->>>> —---------------------------------------------------------------------------------------------------
->>>>          if (data_race(jh->b_transaction != transaction &&
->>>>              jh->b_next_transaction != transaction)) {
->>>>                  spin_lock(&jh->b_state_lock);
->>>>                  J_ASSERT_JH(jh, jh->b_transaction == transaction ||
->>>>                                  jh->b_next_transaction == transaction);
->>>>                  spin_unlock(&jh->b_state_lock);
->>>>          }
->>>> ----------------------------------------------------------------------------------------------------
->>>> By analyzing the vmcore, I found that both jh->b_transaction and jh-
->>>>> b_next_transaction are NULL.
->>>> Through code analysis, I discovered that the
->>>> __jbd2_journal_file_buffer() function adds the corresponding
->>>> transaction of bh to jh->b_transaction.
->>>> Normally, this is accessed through do_journal_get_write_access(),
->>>> which can call __jbd2_journal_file_buffer().
->>>> The detailed function call process is as follows:
->>>> do_journal_get_write_access() -> ext4_journal_get_write_access() ->
->>>> __ext4_journal_get_write_access()
->>>>   -> jbd2_journal_get_write_access() -> do_get_write_access() ->
->>>> __jbd2_journal_file_buffer()
->>>>
->>>>
->>>> Therefore, resolving the crash issue requires obtaining write access
->>>> before calling the jbd2_journal_dirty_metadata() function.
->>>> The comment at the definition of the jbd2_journal_dirty_metadata()
->>>> function also states:     'The buffer must have previously had
->>>> jbd2_journal_get_write_access().'
->>>>
->>>> In the ext4_block_write_begin() function, if get_block() encounters
->>>> an error, then neither bh->b_this_page nor the subsequent bh calls
->>>> do_journal_get_write_access().
->>>> If bh->b_this_page and the subsequent bh are in the new state, it
->>>> will lead to a crash when reaching the jbd2_journal_dirty_metadata()
->>>> function.
->>>>
->>>> So, there are two ways to resolve this crash issue:
->>>> 1、Call do_journal_get_write_access() on bh that is not handled due
->>>> to get_block() error.
->>>>      The patch modification is in the attachment 0001-ext4-fix-a-
->>>> assertion-failure-due-to-ungranted-bh-dir.patch.
->>>>
->>>> 2、Call clear_buffer_new() on bh that is not handled due to
->>>> get_block() error.
->>>>      The patch modification is in the attachment 0001-ext4-fix-a-
->>>> assertion-failure-due-to-bh-not-clear-new.patch.
->>>>
->>>> Additionally, I have found a method to quickly reproduce this crash
->>>> issue.
->>>> For details, please refer to the email I previously sent you:
->>>> “https://lore.kernel.org/all/bd41c24b-7325-4584-
->>>> a965-392a32e32c74@163.com/”.
->>>> I have verified that this quick reproduction method works for both
->>>> solutions to resolve the issue.
->>>>
->>>> Please continue to consider which method is better to resolve this
->>>> issue. If you think that using clear_buffer_new() is a better
->>>> solution, I can resend the patch via git send-mail.
->>>
->>>
->>>
->>> 在 2024/10/16 18:33, Jan Kara 写道:
->>>> Hello,
->>>>
->>>> On Fri 11-10-24 12:08:58, Baolin Liu wrote:
->>>>> Greetings，
->>>>>
->>>>> This problem is reproduced by our customer using their own testing tool
->>>>> “run_bug”. When I consulted with a client, the testing tool “run_bug”
->>>>> used a variety of background programs to benchmark (including memory
->>>>> pressure, cpu pressure, file cycle manipulation, fsstress Stress testing
->>>>> tool, postmark program，and so on).
->>>>>
->>>>> The recurrence probability is relatively low.
->>>>
->>>> OK, thanks for asking!
->>>>
->>>>> In response to your query, in ext4_block_write_begin, the new state will
->>>>> be clear before get block, and the bh that failed get_block will not be
->>>>> set to new. However, when the page size is greater than the
->>>>> block size, a
->>>>> page will contain multiple bh.
->>>>
->>>> True. I wanted to argue that the buffer_new bit should be either
->>>> cleared in
->>>> ext4_block_write_begin() (in case of error) or in
->>>> ext4_journalled_write_end() (in case of success) but actually
->>>> ext4_journalled_write_end() misses the clearing. So I think the better
->>>> solution is like the attached patch. I'll submit it once testing finishes
->>>> but it would be great if you could test that it fixes your problems as
->>>> well. Thanks!
->>>>
->>>>                                  Honza
->>
-
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
