@@ -1,146 +1,141 @@
-Return-Path: <linux-kernel+bounces-372254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A4599A464B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:55:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DB59A464D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431401C22E89
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:55:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DC2A1C22B65
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA73204035;
-	Fri, 18 Oct 2024 18:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A9F204940;
+	Fri, 18 Oct 2024 18:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZU13PlMM"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="sZGQoEts"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC63F20E319;
-	Fri, 18 Oct 2024 18:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8DE2038B4
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729277698; cv=none; b=qlvRUPyCwbgxvmCOl1ysHypP+nfwOsufyroT3oCx1WBzOFPnMH8Gxa61Ccy1MljAq+nBPqXd23vME7eqIlWUHICveCMzSGXAiibsXe3JqlYotpKFEuY2hsIzwJazYBrXoCUtear59TUrrainkiDGXNyYlmXc/4FIjYXERHhb670=
+	t=1729277730; cv=none; b=Cc8h+ofTZCoUeXR5EEc0dfv9/lXGcIei7srqiIIWZTfk2DZZic9vTfHyqc2vlQCPJ8z8hpEwPe9aDdcPulP/i4WRqOn/xNdrJesHpr0o6KSiYZIFRqJ4Veh2NJOKdnbCiMYazwAyck6ItHg3t21P0ahFgEDO3dCa4FFxU6O3eYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729277698; c=relaxed/simple;
-	bh=odZmaSe2NUxwSwK+Ojy4z/lhi5LMpyFMzzCvQnjosyE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JhyCqR4APR/BoAcnuMhiNGArVDF52WXcP+q9syDpAMJOsni6oWe2DGIf4sXyvFdVBmFNH8wYVwPNLEvO0ClXKWDNksom9+bJJo6j0sXEvC2oq0fQDlkyfJVv4BLcvmqep9oMytCtRPbcKTZScDXDLXSEf9pZEmRrLhkkYM54/Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZU13PlMM; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea9739647bso1711980a12.0;
-        Fri, 18 Oct 2024 11:54:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729277696; x=1729882496; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F3AekqJ3EtBItCjGHNZ1BHmF2TjbYs3oRMAWzkxT8OY=;
-        b=ZU13PlMMpEQ4o3v6mQ+Nk/OKwqz7dH9033nmqO3+LeHmH3MnFQHCldFjEenlzaLRd2
-         CMrF5sBXHx+w1lHvVa/kIuTGZpDdkd0ZHvVlMbLQtzPdw7dq/Oyl9fxhqD25xBL3NNTO
-         QxTMvS8DaXC8Dsibu/4pIHcQ9fKgjpWEl2IOMWOr0DOBPTgnsA/DE9ldGf0ScyxsmVWd
-         YcoMPMckxhEqp8ktuSsoYp0qK88lBG9l89hhRuhP6e8GegwK1oZ+de7Xltuf6clEPmhN
-         mNWZuCl4ac1UVnzGBcGghlVki1nk6tWaMxKf0C848Apd+YMrBHvLi8DGtRONTLGHxNor
-         kcPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729277696; x=1729882496;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F3AekqJ3EtBItCjGHNZ1BHmF2TjbYs3oRMAWzkxT8OY=;
-        b=aT7neEtfb0Nw/+bk5A+pvQtWtF86yltRrkoqwPwrDHiGRYVf0Z7yvQppH5a1927BB8
-         l0ixB0rZ3l0JEqs494Uo1CmcQEHhQdCclPaeJ8bjcUQUk2DiwyKSG+b3QGmU34V2zyPM
-         BT7pNtArjqDwrT4ABSp0juXr5W9czAaMLZhnCqFxpd8X5Goqa4OwxOBtRGelQyMlWC8A
-         RaSXs7liCbsHeAFDsFgh3Q7g5BJeGSVOBrIctJyfbNV8gHLbLG5MdhEEqMFSCVZcl0yh
-         1cFmuq2tOMBFA4Jf81IZA7/yIuTT7BUpmUNPfwYQXC1smJc8HAIQEPh7afj3I3mNdF2e
-         KFVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV52c++TMP/HmZUlAKCeAAgCLJU30km9wnBz0HqovID3nCblB+Yi+SKw6ENAfFKFDuXeo8XWuOyzk6KbYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXO/unWll6DZbr93KhmpdH2DdLpVEPxLwc5QA1ord3XsgkmTt/
-	4yRpUC8jotbEYMG+OIf5SkITNgN6FaiJr88IfYg72Utjv0uF5XkI
-X-Google-Smtp-Source: AGHT+IG9qhjRpw2G1khLgCJq922JNmq/QJWcNC0REKrzBbqXZgXzQLUmm2Ir8ZXq03ypsNTa1OCF7w==
-X-Received: by 2002:a05:6300:44:b0:1d8:a759:525c with SMTP id adf61e73a8af0-1d92c572670mr4652797637.39.1729277695865;
-        Fri, 18 Oct 2024 11:54:55 -0700 (PDT)
-Received: from Emma ([2401:4900:1c97:c88d:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc23a42esm1719726a12.44.2024.10.18.11.54.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 11:54:55 -0700 (PDT)
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-Date: Fri, 18 Oct 2024 18:54:42 +0000
-Subject: [PATCH] iio: chemical: sps30: Add Null pointer check
+	s=arc-20240116; t=1729277730; c=relaxed/simple;
+	bh=FyxG8L0kTeJMBvFZ2TqpR7bCfzlRoydYJ1KvWJsuPAU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d7s64WeMCgkX9w/qbXcVKun2itHVECjJmDjZMq4UZyMU/+eqWz3Ihrzpl2ya2kfSN99st9E5mb717O089Maq+y87mPAXOEuh8hsIe6L/57UYZkHruSCqZdK+QJLiJYrpNp7YI9BoT7ZV2CQ7nrKW/7yPn6OnG9Zu12qAw1JSy5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=sZGQoEts; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
+	by cmsmtp with ESMTPS
+	id 1TIKto4GUg2lz1s88tCfQX; Fri, 18 Oct 2024 18:55:20 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 1s87tmIi8827n1s87tyuqb; Fri, 18 Oct 2024 18:55:19 +0000
+X-Authority-Analysis: v=2.4 cv=GeTcnhXL c=1 sm=1 tr=0 ts=6712af17
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=OKg9RQrQ6+Y1xAlsUndU0w==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=1cCw6Q031rO_cLs8eM8A:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KrrHr3IraN34Z7RX5pMYVY2PbGjQrd0P+774MqXGDuM=; b=sZGQoEtsG0vy1dYKYMPwugisEF
+	6RFiB5MLfeCqdEgdeLf6elPw+zhdYUUFYR7g2xW7vi6MIQvzvngqrEHhEKC1yHicB+fqEKOsh2HYK
+	zdyy/Cv6DxRnSNE7mdCF0KJKfkDRalzdRGW3AGAx91xeMnX36z59pq+9b9jDaUKiaxowEoSEW+6HB
+	RGqUzVywxRLkD/4HbdA7eStG/bze7zndB8rWKS902vb1aGeoLxIC7DXv6RAdwal1S2OP286Qf5+Eq
+	cLg5LZQQKACAOHMTnjyx6fOMbl52j32doIYDiQeXbXHEaRDhbLFL2TPS8frIVVE1hrWKuLBHk1m9h
+	41rQWJ3g==;
+Received: from [201.172.173.7] (port=46946 helo=[192.168.15.5])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1t1s84-001YNE-32;
+	Fri, 18 Oct 2024 13:55:16 -0500
+Message-ID: <7bef8129-55b4-40e4-80c2-d319b8d6c251@embeddedor.com>
+Date: Fri, 18 Oct 2024 12:55:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5][next] uapi: net: arp: Avoid
+ -Wflex-array-member-not-at-end warnings
+To: Kees Cook <kees@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ Johannes Berg <johannes@sipsolutions.net>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, David Ahern <dsahern@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <cover.1729037131.git.gustavoars@kernel.org>
+ <f04e61e1c69991559f5589080462320bf772499d.1729037131.git.gustavoars@kernel.org>
+ <ac2ea738-09fb-4d03-b91c-d54bcfb893c6@lunn.ch>
+ <202410160942.000495E@keescook>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <202410160942.000495E@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241018-cid1593398badshift-v1-1-11550a10ff25@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAPGuEmcC/x3MQQqAIBBA0avErBMaTXC6SrQwnWo2FRoRSHdPW
- r7F/wUyJ+EMQ1Mg8S1Zjr0C2wbC5veVlcRq0J3usUOngkS0ZAy52ce8yXIpCha1NzPpSFDDM/E
- izz8dp/f9AASSchBkAAAA
-To: Tomasz Duszynski <tduszyns@gmail.com>, 
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- Karan Sanghavi <karansanghavi98@gmail.com>, 
- Karan Sanghavi <karansanghvi98@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729277691; l=1425;
- i=karansanghvi98@gmail.com; s=20241017; h=from:subject:message-id;
- bh=odZmaSe2NUxwSwK+Ojy4z/lhi5LMpyFMzzCvQnjosyE=;
- b=GbzYKIb7BZUyUqmmCxEbpouMabZsCp77rLR+fCU8qPizrvecasyOU3rrT1K8XWjC6ZLnZVeya
- uXWMjNKe1wZALbKoQQelE1o9aUANiAxDubn4jTyi8gRAcMRQfinL9js
-X-Developer-Key: i=karansanghvi98@gmail.com; a=ed25519;
- pk=UAcbefT1C06npNVDJHdgpPqTm4WE9IhaA1fmJb3A37Y=
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.7
+X-Source-L: No
+X-Exim-ID: 1t1s84-001YNE-32
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.5]) [201.172.173.7]:46946
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfNqPTXMfQcJ/gElXgE7UzMCMFJqkuQMnOOF4lFCrctStsjCj+WGtgVt4Y/riOLLSHG5WHxxZ0WXkBz52LuZP1rop7EhUPY7K0Z5CxZ1q8hdMjaIEP5rD
+ M9CvjblZxFuuwGxElcI2uocV6EpxgUagb5zh/jSVi+4ZHQoY3Hkn2Fxh11mvGSD0ot/m0gjiFB1vOPylS1xI0fPGuq6ivfExBdXX1iwYi56//U2REGD0jRZS
 
-Add a Null pointer check before assigning and incrementing
-the null pointer
 
-Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
----
- drivers/iio/chemical/sps30_i2c.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+>> These are clearly UAPI files. It would be good to state in the commit
+>> message why this is a safe change, at the source level.
 
-diff --git a/drivers/iio/chemical/sps30_i2c.c b/drivers/iio/chemical/sps30_i2c.c
-index 1b21b6bcd0e7..d2142e4c748c 100644
---- a/drivers/iio/chemical/sps30_i2c.c
-+++ b/drivers/iio/chemical/sps30_i2c.c
-@@ -105,16 +105,18 @@ static int sps30_i2c_command(struct sps30_state *state, u16 cmd, void *arg, size
- 		return ret;
- 
- 	/* validate received data and strip off crc bytes */
--	tmp = rsp;
--	for (i = 0; i < rsp_size; i += 3) {
--		crc = crc8(sps30_i2c_crc8_table, buf + i, 2, CRC8_INIT_VALUE);
--		if (crc != buf[i + 2]) {
--			dev_err(state->dev, "data integrity check failed\n");
--			return -EIO;
-+	if (rsp) {
-+		tmp = rsp;
-+		for (i = 0; i < rsp_size; i += 3) {
-+			crc = crc8(sps30_i2c_crc8_table, buf + i, 2, CRC8_INIT_VALUE);
-+			if (crc != buf[i + 2]) {
-+				dev_err(state->dev, "data integrity check failed\n");
-+				return -EIO;
-+			}
-+
-+			*tmp++ = buf[i];
-+			*tmp++ = buf[i + 1];
- 		}
--
--		*tmp++ = buf[i];
--		*tmp++ = buf[i + 1];
- 	}
- 
- 	return 0;
+Yes, I'll update it!
 
----
-base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
-change-id: 20241018-cid1593398badshift-9c512a3b92d9
+> 
+> I think we can avoid complicating UAPI by doing something like this in
+> include/uapi/linux/socket.h:
+> 
+> #ifdef __KERNEL__
+> #define __kernel_sockaddr_legacy        sockaddr_legacy
+> #else
+> #define __kernel_sockaddr_legacy        sockaddr
+> #endif
+> 
+> And then the UAPI changes can use __kernel_sockaddr_legacy and userspace
+> will resolve to sockaddr (unchanged), and the kernel internals will
+> resolve to sockaddr_legacy (fixing the warnings).
 
-Best regards,
--- 
-Karan Sanghavi <karansanghvi98@gmail.com>
+Here are a couple of test patches (Don't mind the changelog text):
 
+https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git/commit/?h=testing/wfamnae-next20241015-2&id=c3b631a5036cbf45b3308d563bf74a518490f3e6
+https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git/commit/?h=testing/wfamnae-next20241015-2&id=66db096a530b95ce0ac33f9fdec66401ec5f2204
+
+__kernel_sockaddr_legacy seems a bit too long, but at the same time
+it makes it quite clear what's going on.
+
+Thanks
+--
+Gustavo
 
