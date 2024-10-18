@@ -1,324 +1,90 @@
-Return-Path: <linux-kernel+bounces-372540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1685E9A4A0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:24:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF58E9A4A07
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83AC8B222CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:24:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 689F7B21991
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CCE1922E2;
-	Fri, 18 Oct 2024 23:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2DF191461;
+	Fri, 18 Oct 2024 23:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B9WRuZN6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npjpqc5I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F241922D8
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 23:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9B2768E1;
+	Fri, 18 Oct 2024 23:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729293826; cv=none; b=WZ+BsGJzeRN4LefsHeSywU59hwbS0ywIgRLUV+Vhy2cvkWHKrOmcJP8DwK4TccB25YlwUia1miGhXs3KMbVplslshvH34HdH1Y8WLeW5Zo836UcBA0kRTrOScaQMc2BC64RiG5CarymkLGx6ug8XIMMzJL2WHv6/NlShEXkQcgI=
+	t=1729293762; cv=none; b=Wcu3BI11DUra7Ap7tPlBHVe/zUiXecsycqijX78ghS+paDZ3Nf8bRe3ldFPgC1BxM2GVMfyLnA8c+K9Tgp0itiv7nQQttLSgw0mZj3VdZN0MoQWVcuMovCLVnFe9m2f7O39EEkWbmheR4hUUc6Hr7YGjh1KhQ1biF44+EqU2KhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729293826; c=relaxed/simple;
-	bh=PNNecKQuV9V0o1+rNr2a969kydwjt8uH35/pj2T9ce4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XtqQFYy+PrabDcjXzy/sfCtWsfRsvsCvubvsqo93sh3a8nfeYyMULYCJ1ibS1ZzgW7/RmfS7zQAikkgkVsSP7uEWOCL8CxYCmUuLbsEQXTVE7sQEDLJGJTQ/uSNBLHuK1L6iAqjvuLwFNumQcYXHkheOJkmAPaTShvZceJS1MFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B9WRuZN6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729293823;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yuLoqOdQBXZ8L/MsWSY6N1XQPGfO9k90fvfqIe04iYI=;
-	b=B9WRuZN6qK6Mzx4575Jslf/qLfXxdBa9Yq8xqpaOH46hPkCgiGMsOtUnlL1yAbQDmlJR3s
-	gnXPA9C7BqCvXko+qTBESvvx9rM+lCy6XWSbSnGKNDzj+XP9yQPULWtraHBc7HINLcgVsr
-	rGj4i+wVOyJ2c+wmRn0MkA0r0VPnm88=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-KYNnIusWNtietsc9Qx-nTQ-1; Fri,
- 18 Oct 2024 19:23:39 -0400
-X-MC-Unique: KYNnIusWNtietsc9Qx-nTQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0FC96195609D;
-	Fri, 18 Oct 2024 23:23:37 +0000 (UTC)
-Received: from chopper.redhat.com (unknown [10.22.65.88])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DD76419560A2;
-	Fri, 18 Oct 2024 23:23:32 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: rust-for-linux@vger.kernel.org
-Cc: Danilo Krummrich <dakr@redhat.com>,
-	airlied@redhat.com,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Filipe Xavier <felipe_life@live.com>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: [PATCH v8 3/3] rust: sync: Add SpinLockIrq
-Date: Fri, 18 Oct 2024 19:22:27 -0400
-Message-ID: <20241018232306.476664-4-lyude@redhat.com>
-In-Reply-To: <20241018232306.476664-1-lyude@redhat.com>
-References: <20241018232306.476664-1-lyude@redhat.com>
+	s=arc-20240116; t=1729293762; c=relaxed/simple;
+	bh=Awclod2d4QNoDtBeg3hpjMzIstaYpw+65mTAfcX0CYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=sm+brZGbLwDw1aBQgvcxf2o01m3fNJaDhAmGG+kMjnWXpgn9LpmN4r8kzt7mte/LjSjBXMNvYf3v3EoVz87BJkTBBEljuSsizwekirWYRGKXvqykJxAzCVoY1ZX/KrXI9wZ95oHri6666vCuERrA30NuW+BqEWNVlVYHQztKwLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npjpqc5I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B197C4CEC6;
+	Fri, 18 Oct 2024 23:22:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729293762;
+	bh=Awclod2d4QNoDtBeg3hpjMzIstaYpw+65mTAfcX0CYw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=npjpqc5I2N8hguVXQPfSuVWDblo3YQ18gaMgoVtSptw9nZsKZGPvE4vj0x5fpkbDE
+	 Kj87kkwO0sVyTpAVG/9gM4AffPFkMgEsmlwW//bW0k2+G7aRivdyhBuIgK9v3Y3JCg
+	 1vi0D+ekKKfDgI4BV0bX74rPqQAcqmHdvsGKeTEMkJH0f1/81BLAbfNKYX2NRPjnCQ
+	 xNAgFL7xWVMAVMTs18mMgGGctk4sLO2XjWHDuNIMFFUnbX1120Ob9OUdvFQPkheIFB
+	 WP+2COMO73oGgarqSgynbMHQofmFKlHpa8CWmR1Rd9MNM4NBXYOb90Xmnj0Twqp80I
+	 Uf4BIMfvSEFgQ==
+Date: Fri, 18 Oct 2024 18:22:40 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, oohall@gmail.com,
+	Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, smita.koralahallichannabasappa@amd.com
+Subject: Re: [PATCH 0/15] Enable CXL PCIe port protocol error handling and
+ logging
+Message-ID: <20241018232240.GA768749@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008221657.1130181-1-terry.bowman@amd.com>
 
-A variant of SpinLock that is expected to be used in noirq contexts, and
-thus requires that the user provide an kernel::irq::IrqDisabled to prove
-they are in such a context upon lock acquisition. This is the rust
-equivalent of spin_lock_irqsave()/spin_lock_irqrestore().
+On Tue, Oct 08, 2024 at 05:16:42PM -0500, Terry Bowman wrote:
+> This is a continuation of the CXL port error handling RFC from earlier.[1]
+> The RFC resulted in the decision to add CXL PCIe port error handling to
+> the existing RCH downstream port handling. This patchset adds the CXL PCIe
+> port handling and logging.
+> 
+> The first 7 patches update the existing AER service driver to support CXL
+> PCIe port protocol error handling and reporting. This includes AER service
+> driver changes for adding correctable and uncorrectable error support, CXL
+> specific recovery handling, and addition of CXL driver callback handlers.
+> 
+> The following 8 patches address CXL driver support for CXL PCIe port
+> protocol errors. This includes the following changes to the CXL drivers:
+> mapping CXL port and downstream port RAS registers, interface updates for
+> common RCH and VH, adding port specific error handlers, and protocol error
+> logging.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
+Looks like all my comments at
+https://lore.kernel.org/r/20241010190726.GA570880@bhelgaas still
+apply.
 
----
-
-V2:
-* s/IrqSpinLock/SpinLockIrq/
-* Implement `lock::Backend` now that we have `Context`
-* Add missing periods
-* Make sure rustdoc examples compile correctly
-* Add documentation suggestions
-V8:
-* Drop a completely unrelated change that got staged into this patch by
-  mistake
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- rust/helpers/spinlock.c           |  14 +++
- rust/kernel/sync.rs               |   2 +-
- rust/kernel/sync/lock/spinlock.rs | 149 ++++++++++++++++++++++++++++++
- 3 files changed, 164 insertions(+), 1 deletion(-)
-
-diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
-index 775ed4d549aef..f4108d2d78648 100644
---- a/rust/helpers/spinlock.c
-+++ b/rust/helpers/spinlock.c
-@@ -27,3 +27,17 @@ int rust_helper_spin_trylock(spinlock_t *lock)
- {
- 	return spin_trylock(lock);
- }
-+
-+size_t rust_helper_spin_lock_irqsave(spinlock_t *lock)
-+{
-+	size_t flags = 0;
-+
-+	spin_lock_irqsave(lock, flags);
-+
-+	return flags;
-+}
-+
-+void rust_helper_spin_unlock_irqrestore(spinlock_t *lock, size_t flags)
-+{
-+	spin_unlock_irqrestore(lock, flags);
-+}
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index 0ab20975a3b5d..b028ee325f2a6 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -15,7 +15,7 @@
- pub use arc::{Arc, ArcBorrow, UniqueArc};
- pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
- pub use lock::mutex::{new_mutex, Mutex};
--pub use lock::spinlock::{new_spinlock, SpinLock};
-+pub use lock::spinlock::{new_spinlock, new_spinlock_irq, SpinLock, SpinLockIrq};
- pub use locked_by::LockedBy;
- 
- /// Represents a lockdep class. It's a wrapper around C's `lock_class_key`.
-diff --git a/rust/kernel/sync/lock/spinlock.rs b/rust/kernel/sync/lock/spinlock.rs
-index 9fbfd96ffba3e..b376920424dc6 100644
---- a/rust/kernel/sync/lock/spinlock.rs
-+++ b/rust/kernel/sync/lock/spinlock.rs
-@@ -3,6 +3,7 @@
- //! A kernel spinlock.
- //!
- //! This module allows Rust code to use the kernel's `spinlock_t`.
-+use kernel::local_irq::*;
- 
- /// Creates a [`SpinLock`] initialiser with the given name and a newly-created lock class.
- ///
-@@ -127,3 +128,151 @@ unsafe fn try_lock(ptr: *mut Self::State) -> Option<Self::GuardState> {
-         }
-     }
- }
-+
-+/// Creates a [`SpinLockIrq`] initialiser with the given name and a newly-created lock class.
-+///
-+/// It uses the name if one is given, otherwise it generates one based on the file name and line
-+/// number.
-+#[macro_export]
-+macro_rules! new_spinlock_irq {
-+    ($inner:expr $(, $name:literal)? $(,)?) => {
-+        $crate::sync::SpinLockIrq::new(
-+            $inner, $crate::optional_name!($($name)?), $crate::static_lock_class!())
-+    };
-+}
-+pub use new_spinlock_irq;
-+
-+/// A spinlock that may be acquired when interrupts are disabled.
-+///
-+/// A version of [`SpinLock`] that can only be used in contexts where interrupts for the local CPU
-+/// are disabled. It requires that the user acquiring the lock provide proof that interrupts are
-+/// disabled through [`IrqDisabled`].
-+///
-+/// For more info, see [`SpinLock`].
-+///
-+/// # Examples
-+///
-+/// The following example shows how to declare, allocate initialise and access a struct (`Example`)
-+/// that contains two inner structs of type `Inner` that are protected by separate spinlocks.
-+///
-+/// ```
-+/// use kernel::{
-+///     sync::{new_spinlock_irq, SpinLockIrq},
-+///     local_irq::IrqDisabled
-+/// };
-+///
-+/// struct Inner {
-+///     a: u32,
-+///     b: u32,
-+/// }
-+///
-+/// #[pin_data]
-+/// struct Example {
-+///     c: u32,
-+///     #[pin]
-+///     first: SpinLockIrq<Inner>,
-+///     #[pin]
-+///     second: SpinLockIrq<Inner>,
-+/// }
-+///
-+/// impl Example {
-+///     fn new() -> impl PinInit<Self> {
-+///         pin_init!(Self {
-+///             c: 10,
-+///             first <- new_spinlock_irq!(Inner { a: 20, b: 30 }),
-+///             second <- new_spinlock_irq!(Inner { a: 10, b: 20 }),
-+///         })
-+///     }
-+/// }
-+///
-+/// // Allocate a boxed `Example`
-+/// let example = KBox::pin_init(Example::new(), GFP_KERNEL)?;
-+///
-+/// // Accessing an `Inner` from a context where we don't have a `LocalInterruptsDisabled` token
-+/// // already.
-+/// let bb = example.first.lock_with_new(|first, irq| {
-+///     assert_eq!(example.c, 10);
-+///     assert_eq!(first.a, 20);
-+///
-+///     // Since we already have a `LocalInterruptsDisabled` token, we can reuse it to acquire the
-+///     // second lock. This allows us to skip changing the local interrupt state unnecessarily on
-+///     // non-PREEMPT_RT kernels.
-+///     let second = example.second.lock_with(irq);
-+///     assert_eq!(second.a, 10);
-+///
-+///     (first.b, second.b)
-+/// });
-+///
-+/// assert_eq!(bb, (30, 20));
-+/// # Ok::<(), Error>(())
-+/// ```
-+pub type SpinLockIrq<T> = super::Lock<T, SpinLockIrqBackend>;
-+
-+/// A kernel `spinlock_t` lock backend that is acquired in no-irq contexts.
-+pub struct SpinLockIrqBackend;
-+
-+unsafe impl super::Backend for SpinLockIrqBackend {
-+    type State = bindings::spinlock_t;
-+    type GuardState = ();
-+    type Context<'a> = IrqDisabled<'a>;
-+
-+    unsafe fn init(
-+        ptr: *mut Self::State,
-+        name: *const core::ffi::c_char,
-+        key: *mut bindings::lock_class_key,
-+    ) {
-+        // SAFETY: The safety requirements ensure that `ptr` is valid for writes, and `name` and
-+        // `key` are valid for read indefinitely.
-+        unsafe { bindings::__spin_lock_init(ptr, name, key) }
-+    }
-+
-+    unsafe fn lock(ptr: *mut Self::State) -> Self::GuardState {
-+        // SAFETY: The safety requirements of this function ensure that `ptr` points to valid
-+        // memory, and that it has been initialised before.
-+        unsafe { bindings::spin_lock(ptr) }
-+    }
-+
-+    unsafe fn unlock(ptr: *mut Self::State, _guard_state: &Self::GuardState) {
-+        // SAFETY: The safety requirements of this function ensure that `ptr` is valid and that the
-+        // caller is the owner of the spinlock.
-+        unsafe { bindings::spin_unlock(ptr) }
-+    }
-+
-+    unsafe fn try_lock(ptr: *mut Self::State) -> Option<Self::GuardState> {
-+        // SAFETY: The `ptr` pointer is guaranteed to be valid and initialized before use.
-+        let result = unsafe { bindings::spin_trylock(ptr) };
-+
-+        if result != 0 {
-+            Some(())
-+        } else {
-+            None
-+        }
-+    }
-+}
-+
-+impl super::BackendWithContext for SpinLockIrqBackend {
-+    type ContextState = usize;
-+
-+    unsafe fn lock_with_context_saved<'a>(
-+        ptr: *mut Self::State,
-+    ) -> (Self::Context<'a>, Self::ContextState, Self::GuardState) {
-+        // SAFETY: The safety requirements of this function ensure that `ptr` points to valid
-+        // memory, and that it has been initialised before.
-+        let flags = unsafe { bindings::spin_lock_irqsave(ptr) };
-+
-+        // SAFETY: We just disabled interrupts above
-+        let context = unsafe { IrqDisabled::new() };
-+
-+        (context, flags, ())
-+    }
-+
-+    unsafe fn unlock_with_context_restored(
-+        ptr: *mut Self::State,
-+        _guard_state: &Self::GuardState,
-+        context_state: Self::ContextState,
-+    ) {
-+        // SAFETY: The safety requirements of this function ensure that `ptr` is valid and that the
-+        // caller is the owner of the spinlock.
-+        unsafe { bindings::spin_unlock_irqrestore(ptr, context_state) }
-+    }
-+}
--- 
-2.47.0
-
+URL broken across lines, distracting timestamps, patch subjects,
+no clue about the base commit.
 
