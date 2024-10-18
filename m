@@ -1,98 +1,94 @@
-Return-Path: <linux-kernel+bounces-372487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8B99A4923
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:48:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA6CE9A4924
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D68A1C21EDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:48:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83BEDB20ED1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507B018FC7E;
-	Fri, 18 Oct 2024 21:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE92318E756;
+	Fri, 18 Oct 2024 21:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="zTEuWelX"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ow+FaBcO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0247C16D4E6;
-	Fri, 18 Oct 2024 21:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E9018D65C;
+	Fri, 18 Oct 2024 21:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729288128; cv=none; b=R6lvxux7gBtly93LP0CmydpN0A5kubbzYRp2QrV5QNO/bQ1wca87z9iTXpSy/Wqq+7D+i6muDo0z6LlCw6q+lUor2tZ2MBrS7IAH2SaG8c7t3DyE0hKIE5VK1lczuhHtTlyT/JyIqjZJZVRuEz7qclGQy1B2c36LkXU0TdaVLVo=
+	t=1729288144; cv=none; b=gyTBeLApedJ1V88adSqTmFC4qqfuFotF0D/SwWzc4kTWZVFVI4WYBjUlMGtlrbsWu6tVll/BBGvVzqNokNn0gnFDQDrnt+3gLZrjqHjauNgTmwkpb5wpZD+YFflEE8I3VI/xFLVp2sDynl1BuYZ9i1RHAyhbbRVe2MAKdByXX9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729288128; c=relaxed/simple;
-	bh=pm7Umla3tm9jpux63hr248UjUv/yWTbSi1mqVJVDW6g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BxWy2mxEWPKUNHE0JE5WyM3/UnX6EcCF+pCiLSHHwSSIgK4OiWVm2VDk/BHeknj1VzQ5OIXIRNZEQsQZTHTvRC4EltqWOGnztjpKpqnzZEky5DxB/buqLaIlz7fwkJaR9toAGAeb3H86oI66zoopcyq67GIBDl2zJ8sCmpi6YAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=zTEuWelX; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=vfuHGGp/gXQEREQV7oenTHDDKxIs/pz9s2cGnpdqQLc=; b=zTEuWelX6tS3cuR1euUJ5RylYX
-	skKJusB/TTtzT7xkLzvT0Ap2bSKwkb2LWG7fZ5DM1vh1m4JXFQxeDlhn4Zi9+kQlbBWQlyrQn35Ij
-	gOpaw1my2y8SHwJBcGWbpOsxCk47z8aOw6pzcSvEMN+I0+gN6GEZ1oIrQh6s3Z+bQVxWA5lMMQFjx
-	MLj5qdcX7v0JuSvj19xbM2pfhgIMwDwFSHz3ffX8L1u7VjaZpBVOdGCtHOaDDdW/XffZGCvCTM6bT
-	pKdSw09V55rKXGSLRy4uZMfckWbNZCfUxSLD7hGMWfX2ABLI6e3FN6AiZ8IAhpdBCDp/MaSHJsKk2
-	abjZduFg==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: tony@atomide.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	aaro.koskinen@iki.fi,
-	khilman@baylibre.com,
-	Roger Quadros <rogerq@kernel.org>
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH] ARM: ti/omap: omap3-gta04a5: add Bluetooth
-Date: Fri, 18 Oct 2024 23:48:42 +0200
-Message-Id: <20241018214842.275194-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1729288144; c=relaxed/simple;
+	bh=f3K+7NqUjDXNy0lO4qYq2vhomW9AqXHiAR3DfjcaQWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHGYvXtSjUKWSerLESYiUcJqhljaz/NpEKu2p70qYmCPh1B6j2J2x7RYUAtA+hK4FzoD/a1FcKRHLy6glJicKsgGsSaE7ljL3PQYhwUNpyZqzt27mGnrIfApkeH+ozF12J+nZptphii/Oel2sqjuZn9nVTejtzg6/CYShy4w3MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ow+FaBcO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52AA6C4CEC3;
+	Fri, 18 Oct 2024 21:49:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729288143;
+	bh=f3K+7NqUjDXNy0lO4qYq2vhomW9AqXHiAR3DfjcaQWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ow+FaBcOeGP/rIPVF/PedkcrTFEStuDALunMpNpm84cbC/scHnEzed+rs7oFY5/Nx
+	 wFAiSD59AEL1Ses51JifBxLTT6PJdgGr/piBP3bNG8KXF3dm2nMBJkaCkpfz2DvtUz
+	 slFMDuFSoXNw3l5fdoE714VIzfmmcxB5IwZP1itybeX8XLfAhgcXgafiB3vZhg7eC5
+	 /P2UwYwFPRaKhKqlnFEK+DcIaYKKuDE7Mx/UAKXrTA1bnSIlXOwcXIjeWScPFDaYQ4
+	 08z0WPHan62FNn9fvlZWArjPczv0Z/J0oDHw+cEOJndaHoSSAUDb1A4mZgED3whs98
+	 27nLTku+t9L1A==
+Date: Fri, 18 Oct 2024 23:49:00 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH v2 rcu 0/3] RCU CPU stall-warning changes for v6.13
+Message-ID: <ZxLXzKoiCnIlmd3k@pavilion.home>
+References: <fb0b7a92-d371-4510-80c4-25a57f2c4f3d@paulmck-laptop>
+ <92193018-8624-495e-a685-320119f78db1@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <92193018-8624-495e-a685-320119f78db1@paulmck-laptop>
 
-The GTA04A5 model has a wl1837 WLAN/Bluetooth combo chip, add
-it.
+Le Wed, Oct 16, 2024 at 09:18:52AM -0700, Paul E. McKenney a écrit :
+> Hello!
+> 
+> This series contains RCU CPU stall-warning changes for v6.13:
+> 
+> 1.	Delete unused rcu_gp_might_be_stalled() function.
+> 
+> 2.	Stop stall warning from dumping stacks if grace period ends.
+> 
+> 3.	Finer-grained grace-period-end checks in rcu_dump_cpu_stacks().
+> 
+> Changes since v1:
+> 
+> o	Add data_race() to grace-period sequence-number access per
+> 	feedback from Joel Fernandes.
+> 
+> o	Add Reviewed-by tags.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- arch/arm/boot/dts/ti/omap/omap3-gta04a5.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Applied and pushed to rcu/stall
 
-diff --git a/arch/arm/boot/dts/ti/omap/omap3-gta04a5.dts b/arch/arm/boot/dts/ti/omap/omap3-gta04a5.dts
-index 8bd6b4b1f30b8..d3a81f0b880fd 100644
---- a/arch/arm/boot/dts/ti/omap/omap3-gta04a5.dts
-+++ b/arch/arm/boot/dts/ti/omap/omap3-gta04a5.dts
-@@ -114,6 +114,16 @@ wlcore: wlcore@2 {
- 	};
- };
- 
-+&uart1 {
-+	bluetooth {
-+		compatible = "ti,wl1837-st";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_pins>;
-+		enable-gpios = <&gpio5 9 GPIO_ACTIVE_HIGH>;	/* GPIO_137 */
-+	};
-+};
-+
-+
- &i2c2 {
- 	/delete-node/ bmp085@77;
- 	/delete-node/ bma180@41;
--- 
-2.39.2
+Thanks!
 
+> 						Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+>  b/include/linux/rcutiny.h |    1 -
+>  b/include/linux/rcutree.h |    1 -
+>  b/kernel/rcu/tree_stall.h |   30 ------------------------------
+>  kernel/rcu/tree_stall.h   |   35 ++++++++++++++++++++++-------------
+>  4 files changed, 22 insertions(+), 45 deletions(-)
 
