@@ -1,108 +1,178 @@
-Return-Path: <linux-kernel+bounces-371672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D9379A3E70
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:30:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6EA9A3E71
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3DC284A66
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01142285599
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AD642ABD;
-	Fri, 18 Oct 2024 12:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E849E18028;
+	Fri, 18 Oct 2024 12:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DtzUUyeC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z+2nDTxf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E38CF9F8;
-	Fri, 18 Oct 2024 12:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFF620E323;
+	Fri, 18 Oct 2024 12:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729254599; cv=none; b=sC/OeJiQsM2sIZwWNQcjAWkGNoQC/YMneNgskVs7Al9hb7i18NlRb3wK8YyTJfKWvsqd21f1vd5Rw6UqjdmAHEOKqPlFF/CnKsy2O6nvlHK6tlFgn2yt3O+qv9MN7OddKMZojfNShsot67Z17YEnSjAdMIkwgmXql/tHsrh0PFk=
+	t=1729254674; cv=none; b=f9jT+unLfO+gWgMkmcjC6HpGzIUiIGlluThgJo2VwnhSZwX9nw2AzYqOv2no21LlDXoajZgnvnbvTLebTA4rJDr7FLfg9kTIn/15CZCNxN9bN1hkS2BvvxUXotALt+/uC//40f3fLJFNf/lEOmq9h63/YDQiKuSnyVkD+V15a5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729254599; c=relaxed/simple;
-	bh=HLjQKmdaYxfy+8LnQVOaIQoMvuAC/MShmNTH0mnP6Gc=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=Vc09TVFW5YC/CEvtPwL1uK0uE0B6NtsZi8NiScVvXEiUiJdWykpstpmfYWlrrqfbTVw3OoWE/j72haPFRulvLOxEVLEvqaSrm7c97gT3AL7bjkYPg9Od5M5bWkO3FldjplPk+1pnD3/DhbVzUTk5YS/urDX+6wQ5gfOMrOzuG6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DtzUUyeC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36102C4CEC3;
-	Fri, 18 Oct 2024 12:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729254598;
-	bh=HLjQKmdaYxfy+8LnQVOaIQoMvuAC/MShmNTH0mnP6Gc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=DtzUUyeC51vOuVASHib2mwMSVPbHWlCu+bBFYRxWb4UZ1KQfm2d7Uc5EDuyXxLlKY
-	 iiLRvAjSAO5ved8NR3eTX6agpPgc8YjkaoYEawUOJ/ovaSQkN/lWu9WPorgJbRnLji
-	 xTz6mqx+/CIeqgQzqKAfN9IscOMwO5hqOBvGu/k4gmDezNkBYmfn+ea7h1bZJpCPiK
-	 gL2ZgrBirQSNz0fMyZC1jMDDxGJqnbICpLBQfIqcXbfV59+Uv5u/e2OF2Nv/yqBtJP
-	 Unur8Md4EKLJyTdEfN+udx93z9JLR6JILhEJh8RkoLU8AFBIZ1PP5FQiog/cdl9kJr
-	 QmFHozuTcbQGg==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729254674; c=relaxed/simple;
+	bh=YP4ryAVQ6mxQmShuV+kis5u6NU6ySMg9qusRdIUZQ7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TgQod0HayCk6PSrbykFGUBHF++7WCfK3oX3htcFvvArrLCPAqfkY4cMbL7X27b0ThTG2PAH5hiuPWOE54dzryxau0xfErVrWYUX8asi8dra8ZelJYfQcec9btzD5jUFvU9e1QRhiU/Q1/IdHAinnkTVXniDyrZehvHtHLFlaRXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z+2nDTxf; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729254673; x=1760790673;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YP4ryAVQ6mxQmShuV+kis5u6NU6ySMg9qusRdIUZQ7M=;
+  b=Z+2nDTxf9mRvBCAH+1EdeepbGedXbomKbLM5rhr0wKUBwTwhbdMqugN/
+   ghLNyKLmpcVz5cr0zec/y+5TKcZNZZf5eeTtksyeLcTNXjtjOsf144XyM
+   esf6n+M0OhbvAqCAZ5oaGB2d/lZGYGdDuvrdksYhRlossy6GINYNCDkrF
+   XdK22nQyNLssXkVpq4+j8vzEIDju9X15QI32bjJ8+wFLxSYcOsBior7WF
+   AOyJ2CICtnlKBwBHpWc0FwIHc8Wciyt2+i+7zGKIa6sJow8J4Ku2lWGvY
+   /S8ggnM9RWu4F2BfSxGHkeMyjIU6i8iyRAPL5+/U4MKTCKymMThbYhWx7
+   w==;
+X-CSE-ConnectionGUID: 4OgStquhTHGx6+xI9iz+IQ==
+X-CSE-MsgGUID: bCHgIM/XTM+LVC6ybjazxQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28875716"
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="28875716"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:31:12 -0700
+X-CSE-ConnectionGUID: asULgpfwRPCnZJ0v/ixNkg==
+X-CSE-MsgGUID: rXrtIxgBSISh+tpNbvGoFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="109591173"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:31:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t1m8H-00000004SZ1-34nZ;
+	Fri, 18 Oct 2024 15:31:05 +0300
+Date: Fri, 18 Oct 2024 15:31:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: tiwai@suse.de, robh+dt@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
+	pierre-louis.bossart@linux.intel.com, shenghao-ding@ti.com,
+	navada@ti.com, 13916275206@139.com, v-hampiholi@ti.com, v-po@ti.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	liam.r.girdwood@intel.com, yung-chuan.liao@linux.intel.com,
+	broonie@kernel.org, antheas.dk@gmail.com
+Subject: Re: [PATCH v2] ALSA: hda/tas2781: Add speaker id check for ASUS
+ projects
+Message-ID: <ZxJVCb13lQ4h2KRD@smile.fi.intel.com>
+References: <20241018071118.3298-1-baojun.xu@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241017072534.127519-1-liujing@cmss.chinamobile.com>
-References: <20241017072534.127519-1-liujing@cmss.chinamobile.com>
-Subject: Re: [PATCH] selftests: netfilter: remove unused rplnlh parameter
-From: Antoine Tenart <atenart@kernel.org>
-Cc: kadlec@netfilter.org, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Liu Jing <liujing@cmss.chinamobile.com>
-To: Liu Jing <liujing@cmss.chinamobile.com>, pablo@netfilter.org
-Date: Fri, 18 Oct 2024 14:29:54 +0200
-Message-ID: <172925459485.589680.8839743987026835475@kwain.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018071118.3298-1-baojun.xu@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Quoting Liu Jing (2024-10-17 09:25:34)
-> The rplnlh parameter is not used in many functions, so delete it.
->=20
-> Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
-> ---
->  tools/testing/selftests/net/netfilter/conntrack_dump_flush.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/net/netfilter/conntrack_dump_flush.c=
- b/tools/testing/selftests/net/netfilter/conntrack_dump_flush.c
-> index bd9317bf5ada..e03ddc60b5d4 100644
-> --- a/tools/testing/selftests/net/netfilter/conntrack_dump_flush.c
-> +++ b/tools/testing/selftests/net/netfilter/conntrack_dump_flush.c
-> @@ -96,7 +96,6 @@ static int conntrack_data_insert(struct mnl_socket *soc=
-k, struct nlmsghdr *nlh,
->                                  uint16_t zone)
->  {
->         char buf[MNL_SOCKET_BUFFER_SIZE];
-> -       struct nlmsghdr *rplnlh;
->         unsigned int portid;
->         int err, ret;
+On Fri, Oct 18, 2024 at 03:11:18PM +0800, Baojun Xu wrote:
+> Add speaker id check by gpio in ACPI for ASUS projects.
+> In other vendors, speaker id was checked by BIOS, and was applied in
+> last bit of subsys id, so we can load corresponding firmware binary file
+> for its speaker by subsys id.
+> But in ASUS project, the firmware binary name will be appended an extra
+> number to tell the speakers from different vendors. And this single digit
+> come from gpio level of speaker id in BIOS.
 
-While at it, it seems 'err' is not used as well. In the two other
-functions as well.
+...
 
-Thanks!
-Antoine
+> +	sub = acpi_get_subsystem_id(ACPI_HANDLE(physdev));
+> +	if (IS_ERR(sub)) {
+> +		dev_err(p->dev, "Failed to get SUBSYS ID.\n");
+> +		goto err;
+> +	}
+> +	// Speaker id was needed for ASUS projects.
+> +	if (strstr(sub, TAS2781_ASUS_ID)) {
 
-> @@ -212,7 +211,7 @@ static int count_entries(const struct nlmsghdr *nlh, =
-void *data)
->  static int conntracK_count_zone(struct mnl_socket *sock, uint16_t zone)
->  {
->         char buf[MNL_SOCKET_BUFFER_SIZE];
-> -       struct nlmsghdr *nlh, *rplnlh;
-> +       struct nlmsghdr *nlh;
->         struct nfgenmsg *nfh;
->         struct nlattr *nest;
->         unsigned int portid;
-> @@ -259,7 +258,7 @@ static int conntracK_count_zone(struct mnl_socket *so=
-ck, uint16_t zone)
->  static int conntrack_flush_zone(struct mnl_socket *sock, uint16_t zone)
->  {
->         char buf[MNL_SOCKET_BUFFER_SIZE];
-> -       struct nlmsghdr *nlh, *rplnlh;
-> +       struct nlmsghdr *nlh;
->         struct nfgenmsg *nfh;
->         struct nlattr *nest;
->         unsigned int portid;
+strstr() is wrong. You can get 1043 in the middle of the bigger number,
+or even text.
+
+> +		ret = devm_acpi_dev_add_driver_gpios(p->dev,
+> +			tas2781_speaker_id_gpios);
+> +		if (ret) {
+> +			dev_err(p->dev, "Unable to add GPIO.\n");
+
+> +			goto err;
+
+No need. If this fails, the below most likely fail as well.
+
+> +		}
+> +		p->speaker_id = devm_gpiod_get(p->dev, "speakerid", GPIOD_IN);
+> +		if (IS_ERR(p->speaker_id)) {
+> +			dev_err(p->dev, "Failed to get Speaker id.\n");
+> +			goto err;
+> +		}
+> +	} else {
+> +		p->speaker_id = NULL;
+> +	}
+
+...
+
+> +	if (tas_priv->speaker_id != NULL) {
+> +		// Speaker id need to be checked for ASUS only.
+> +		spk_id = gpiod_get_value(tas_priv->speaker_id);
+> +		if (spk_id < 0 || spk_id > 1) {
+
+When "> 1" is possible? Isn't it a dead code?
+
+> +			// Speaker id is not valid, use default.
+> +			dev_dbg(tas_priv->dev, "Wrong spk_id = %d\n", spk_id);
+> +			spk_id = 0;
+> +		}
+> +		scnprintf(tas_priv->coef_binaryname,
+
+Why 'c' variant? You do not check the return value anyway. So, what's the point?
+
+> +			  sizeof(tas_priv->coef_binaryname),
+> +			  "TAS2XXX%04X%01d.bin",
+> +			  lower_16_bits(codec->core.subsystem_id),
+> +			  spk_id);
+> +	} else {
+> +		scnprintf(tas_priv->coef_binaryname,
+
+Ditto.
+
+> +			  sizeof(tas_priv->coef_binaryname),
+> +			  "TAS2XXX%04X.bin",
+> +			  lower_16_bits(codec->core.subsystem_id));
+> +	}
+
+...
+
+> @@ -793,7 +844,6 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
+>  	const char *device_name;
+>  	int ret;
+>  
+> -
+>  	tas_hda = devm_kzalloc(&clt->dev, sizeof(*tas_hda), GFP_KERNEL);
+>  	if (!tas_hda)
+>  		return -ENOMEM;
+
+Stray change.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
