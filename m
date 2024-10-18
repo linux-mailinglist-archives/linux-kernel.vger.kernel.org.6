@@ -1,94 +1,152 @@
-Return-Path: <linux-kernel+bounces-371485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C3B9A3BBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C94129A3BBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B4F284751
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:39:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8951528475B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B0E201242;
-	Fri, 18 Oct 2024 10:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2400201109;
+	Fri, 18 Oct 2024 10:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eiyx96dr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYiQyWz2"
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904E72010F7;
-	Fri, 18 Oct 2024 10:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954F620100F;
+	Fri, 18 Oct 2024 10:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729247949; cv=none; b=Ue5rR4sHdB7dyIhxld0rxd3SQ+3zphI6df+1ExW7nKnFlJlWA20nVoO7+381K0DYmocrrEnMgCNZL4ZbnO1b8d1rd3hFIB+Hw6wVUSNReVFlRHMwgBllt0V2LJkjprx5iZxjLNPNeCCd4k+6OeeK1VyQs4ri9EsRZoqQX1HwAfE=
+	t=1729247989; cv=none; b=moP6S3WBJLutiJkPS3viIous0NSD7tCyOXUrLnz+n/kR8Gn5r3Y9rrWLcDBcvK8TCkY1zFlXnh1aLYvgyTM0GkODKjsQuD6uGimqIfXfX2xq2+faVHfuJ7bIugaAHZcbowY7qug5FDsOQ43+pVKnVwwHvKEvtOLpzLKAyuyVsZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729247949; c=relaxed/simple;
-	bh=pnvMpKpm8lg+Npieq10yqbwYs67uQybysE8OyAUFSVA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Pt6y6lfjTg6p1ym3qJe9ic+uMrMgWc3N7CwQSjkfeOAXo8+/Q/2An3Ck0a5dzf5mtVwi4pzvpyKb6faZkxOTl644TaRv26CtQY2F2o+M25Tzna3NYbuZ35mDVTumDW4XhMClJ1D7mOWnjwTat3CkQCoTJmgfqjj8a3aCM59wY80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eiyx96dr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3EDC4CED1;
-	Fri, 18 Oct 2024 10:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729247949;
-	bh=pnvMpKpm8lg+Npieq10yqbwYs67uQybysE8OyAUFSVA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=Eiyx96dr+uUryvDhSFBAGwxpevwAa+R+5eBQYgB3DHPLxBQ98Zh3A0x4RfbhfQIpK
-	 24X/1Uh/Hwv+ykvHh+4Dp14vWjE+E63jbVsOYNASGscTdmiASLVTENxq5gVvf1TddQ
-	 WUKpvn/XBvImLv+Dlzx/sECME1ipJNk7iqTO/jgfrtsp9CApaxFZjc+rSA1bk4jLOh
-	 CVnu58mtH8FQk8a4dwkQokD4nn+DSBCQP4KH4BuTJJFdaq/oBwJjBZLX0BE7vxYhU+
-	 mKAEEKVmfUfEtgloqG4oTnx+OJOMZ5WJE7UyRLo0TlRbIYrlG2sC1qSUnP0yiNTgGR
-	 VKL+gdtIc0tzw==
-Date: Fri, 18 Oct 2024 12:39:06 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Benjamin Tissoires <bentiss@kernel.org>
-cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
-    Tatsuyuki Ishi <ishitatsuyuki@gmail.com>, 
-    =?ISO-8859-15?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>, 
-    Peter Hutterer <peter.hutterer@who-t.net>
-Subject: Re: [PATCH v2 0/3] HID: bpf: add a couple of HID-BPF device fixes
-In-Reply-To: <20241017-import_bpf_6-13-v2-0-6a7acb89a97f@kernel.org>
-Message-ID: <nycvar.YFH.7.76.2410181238450.20286@cbobk.fhfr.pm>
-References: <20241017-import_bpf_6-13-v2-0-6a7acb89a97f@kernel.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1729247989; c=relaxed/simple;
+	bh=GyP5R1sqyB3oHftu8vlZv+ZSS2Pv3n/wDR/3Mn90H1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VjpTZysynVEqXE5G4lWknFoNYS4pbR+YivSOwLS+F7hz/VEbxOmzeLMf6+zVhqafdAIkTlz+7kqDIvgYXsd2b7sjE35N/YoRU29oYVkRY+GczIq25Ia7cL/w4Ostn2k/ZSZvMaIwxcwRPZZwnaJgPYbvdZkyhyKKHwnngQhjym4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYiQyWz2; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-84fd057a993so675612241.3;
+        Fri, 18 Oct 2024 03:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729247986; x=1729852786; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CWN7rSl/szRs9AEJZ/wqPmbYSzwqi4KQlM7z0+3Bf90=;
+        b=KYiQyWz2/IIC4iWt/ZS8iLvGjx8FzbWLiYCi2i2ia++1+MN81rnqKv7kr0ZuNlMj75
+         xtWasJKX/m9E9MWTQ2kDGgdCXCU5dvvWqy3B+68VHqpba6VqRethDBvm8E/yEqlzrUB6
+         kzRZndt2nrTC+d6hOS9/N/HTRwvFVP3lNwSuiZjR8g/a7OFlZ07GrxO7wjeWpdmeOfk2
+         Ra0fzajBXscRjmkfcCl6fjR1RkX0M9h91sDHF5psCfmC+Tqn27f4PO3Y96jwbVH8hJD2
+         ty7btQ860i3v+393eaTdHuJbaHNMbWMTiIhSmxLJKWL28Tk7fs4nWpltyUkEyDg0fO5r
+         pxWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729247986; x=1729852786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CWN7rSl/szRs9AEJZ/wqPmbYSzwqi4KQlM7z0+3Bf90=;
+        b=Gfk9HdvcLx3JCpa20lukcUYXfmBFjq4Xl3yFFTbXvdVYMEIuWLdiB5J6/tLnYtn74B
+         vDxnZSWNxLDoBleh89tLcl3Fr8HuK+SDwc1QymWLZAgfiqNM4XwP6EguXpZ/KqyUoa2a
+         E1XsZvH5h5hJ8vyu0kjO+7KGqLmNDdjZaZpHUlR5sWdb7T0SDjGD3IT9oDNg3iBZaSD3
+         W3gi9U0Q9laKx+eM56JOUjzm6jlT2HvjBuh+nHb1IEO4ykZteSEp2J15JzKXUNBqZ8ax
+         iE89mzYn7w+xVAFMRLN4CcTuI9BiZCA/2P1RH7FUC1Ic94+7yO5NZUvoPlqqa1LzIe00
+         VskQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSadVyOpozCEON17lQy/kABWfC6igLU7nCegzb/mA3ofacKaQc+w/z/CsaLzQi5fMAsIxXUAkbhxXa@vger.kernel.org, AJvYcCWMRlUs/85ahRZLSgeTh173upv2UD5wTU7SNqPuPB07jiQy8O3DmDdYDFa8Mcyo82xLzmMz71ToW2t861c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/HKypmyLUtv1s6et7R/JUbO+OyaYBPAoCNi8+CPluLrfDHiJd
+	aH1WYca8TTTSjYh+aPEtIV8bQ6bqrk7fKUKHNQrqUYsXvwZ1IDasL+uO0GI5u4EC3WeCj0efsti
+	wtp4Xnk4i7WHkZ1UT9nXTVLz20iM=
+X-Google-Smtp-Source: AGHT+IHyWFAXxIY8a43l8JBnDzykDlfyFyIsFuNfgUNB16YSMENlAjx+TBk8TzIgYecD2vUKznssuHLrFbqifdQMkyU=
+X-Received: by 2002:a05:6102:26c6:b0:4a4:8b67:4f6b with SMTP id
+ ada2fe7eead31-4a5d6ac0071mr1978480137.12.1729247986359; Fri, 18 Oct 2024
+ 03:39:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240913102836.6144-1-victorshihgli@gmail.com>
+ <20240913102836.6144-8-victorshihgli@gmail.com> <CAPDyKFrbVY3OGmCn0wx8yv2n61ALAa54-vkUVqU8+bLo_=y=6w@mail.gmail.com>
+ <CAK00qKDC6yciJS9JEjGjmqwEe4FRYGmppkYyFG72b3SFxzu1Zg@mail.gmail.com> <CAPDyKFp8jCf9dq2WyC_4ss4KvQXx6TFv9f-6fkQFQDjKHnA55Q@mail.gmail.com>
+In-Reply-To: <CAPDyKFp8jCf9dq2WyC_4ss4KvQXx6TFv9f-6fkQFQDjKHnA55Q@mail.gmail.com>
+From: Victor Shih <victorshihgli@gmail.com>
+Date: Fri, 18 Oct 2024 18:39:34 +0800
+Message-ID: <CAK00qKD20R4a=2ptDrwsoNA1jRRcpEyi5REKTuW-7EupDp=VKw@mail.gmail.com>
+Subject: Re: [PATCH V22 07/22] mmc: core: Support UHS-II card control and access
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
+	Lucas.Lai@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
+	Greg.tu@genesyslogic.com.tw, dlunev@chromium.org, 
+	Jason Lai <jason.lai@genesyslogic.com.tw>, 
+	Victor Shih <victor.shih@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 17 Oct 2024, Benjamin Tissoires wrote:
+On Thu, Oct 10, 2024 at 7:22=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+>
+> [...]
+>
+> > > > +
+> > > > +       /*
+> > > > +        * NOTE:
+> > > > +        * Should we read Externsion Register to check power notifi=
+cation feature here?
+> > > > +        */
+> > >
+> > > Yes, this is needed too.
+> > >
+> >
+> > Hi, Ulf
+> >
+> > We have the call sd_can_poweroff_notify() in the _mmc_sd_suspend() and
+> > _sd_uhs2_suspend.
+> > If we need to check the power notification feature here,
+> > do you have any suggestions for the type of power notification that
+> > needs to be confirmed?
+>
+> Right, I see what you mean! It's been a while since I read these parts
+> of the SD spec, apologize for my ignorance.
+>
+> In UHS-II mode, the power-off-notification is *not* supported. This
+> means that we should not use it from _sd_uhs2_suspend().
+>
+> In UHS-II mode we should instead use the so-called "hibernate" mode
+> (hbr bit in the GO_DORMANT command), which allows us to turn off
+> clocks and VDD1 (corresponds to the vmmc regulator). Note that the
+> support for hibernate mode is optional for an UHS-II SD card. Thus,
+> the support must be checked via the corresponding field in the PHY
+> capabilities, before we try to use it.
+>
+> That said, to not make it more complicated for you to get the basic
+> UHS-II support landed upstream, I am fine if you decide to defer the
+> support for hibernate mode to later. Instead, it seems like we should
+> just do a regular power-off in _sd_uhs2_suspend(). In other words,
+> just call sd_uhs2_power_off() from there.
+>
+> Moreover, reading the SD Extension Registers would still be valuable
+> during the UHS-II card initialization (even if hibernate isn't
+> supported), as it allows us to support the "cache maintenance"
+> feature, for example. However, the support for these features are
+> optional too for SD cards, so I am fine if you decide to defer this to
+> a later improvement too.
+>
+> Does this make sense to you?
+>
+> [...]
+>
+> Kind regards
+> Uffe
 
-> Both files have been in udev-hid-bpf for too long.
-> Both files are actually simple report descriptor fixups, so
-> there is not a lot to explain here :)
-> 
-> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> ---
-> Changes in v2:
-> - Sorry, while preparing the udev-hid-bpf tree I realized we had a
->   change in hid_report_helpers.h, so added the third commit
-> - Link to v1: https://lore.kernel.org/r/20241017-import_bpf_6-13-v1-0-197d882ade37@kernel.org
-> 
-> ---
-> Benjamin Tissoires (3):
->       HID: bpf: Fix NKRO on Mistel MD770
->       HID: bpf: Fix Rapoo M50 Plus Silent side buttons
->       HID: bpf: drop use of Logical|Physical|UsageRange
+Hi, Ulf
 
-FWIW:
+I hope that this feature can be implemented later.
 
-	Acked-by: Jiri Kosina <jkosina@suse.com>
-
-for the series.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+Thanks, Victor Shih
 
