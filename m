@@ -1,219 +1,91 @@
-Return-Path: <linux-kernel+bounces-371605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696359A3D3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:23:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55EC9A3D37
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E331228371E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:23:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 658D0283691
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289F520265D;
-	Fri, 18 Oct 2024 11:23:13 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11EE201029;
+	Fri, 18 Oct 2024 11:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JG1myLJ3"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED0715CD74;
-	Fri, 18 Oct 2024 11:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F2A15CD74
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729250592; cv=none; b=M0An7t1iahYkyNb+I1dfqNHUZfEUFBLZNl88rGHs6N3JYN6MScM1lfdspjRfJgFSLzu73qxKu6X3eZn1upgH3Nj3CXCjG6rk7WvDpXIXaij5FDotac9adJITuiVGbFkHsyZBpUUwf2llf+S8vHW0iuX+tGfjRajQli+ugtTsQko=
+	t=1729250584; cv=none; b=XOdz9TAVAKdskrXWq8lapWW/fiNwemk3wv4vdIPBSyKaG63XsVCQbLcnzowKRkaIrnAg3cKS/picetHZfCm8PnSL7WU1CR5O8PxZMw+yhPgwYjmYixWKQqWxiC29mYGT3r/2b50gE5wAd7H8b6IC08BRY4B1HzBr4kUmml/9G54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729250592; c=relaxed/simple;
-	bh=D1I/4ufMNbS+r7m8JyIKgUN6UCBipqdvyYRQ+PuBwU4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rw/tnYyE5qb+BY2Lpn9olA9iVyfMXA8MkqossL3NdcG0ri7KKRQPtBAJQABqZ3SK+OpnBc7U2zPyx70FKNEQvqsYgU0/v3ScBN2RyEyotYFCSwB5kx8wPVqvNUxwp21gX7BJTK1SyUnjedeoR9SW7sQxMbLHOMThoTORzcPnFq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XVMHS1jg7z9v7Hm;
-	Fri, 18 Oct 2024 19:02:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 41F851405A1;
-	Fri, 18 Oct 2024 19:22:51 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDHWDD+RBJnJOwWAw--.51604S2;
-	Fri, 18 Oct 2024 12:22:50 +0100 (CET)
-Message-ID: <b7155b2fa47f17e587b73620e86ef019a5efa7e1.camel@huaweicloud.com>
-Subject: Re: [PATCH 1/3] ima: Remove inode lock
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>, Lorenzo Stoakes
-	 <lorenzo.stoakes@oracle.com>
-Cc: Paul Moore <paul@paul-moore.com>, ebpqwerty472123@gmail.com, 
- kirill.shutemov@linux.intel.com, zohar@linux.ibm.com,
- dmitry.kasatkin@gmail.com,  eric.snowberg@oracle.com, jmorris@namei.org,
- serge@hallyn.com,  linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
- linux-mm@kvack.org, akpm@linux-foundation.org,  vbabka@suse.cz,
- linux-fsdevel@vger.kernel.org, Liam Howlett <liam.howlett@oracle.com>, Jann
- Horn <jannh@google.com>
-Date: Fri, 18 Oct 2024 13:22:35 +0200
-In-Reply-To: <gl4pf7gezpjtvnbp4lzyb65wqaiw3xzjjrs3476j5odxsfzvsj@oouue73v3cgr>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
-	 <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
-	 <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
-	 <593282dbc9f48673c8f3b8e0f28e100f34141115.camel@huaweicloud.com>
-	 <15bb94a306d3432de55c0a12f29e7ed2b5fa3ba1.camel@huaweicloud.com>
-	 <c1e47882720fe45aa9d04d663f5a6fd39a046bcb.camel@huaweicloud.com>
-	 <b498e3b004bedc460991e167c154cc88d568f587.camel@huaweicloud.com>
-	 <ggvucjixgiuelt6vjz6oawgyobmzrhifaozqqvupwfso65ia7c@bauvfqtvq6lv>
-	 <e89f6b61-a57f-4848-87f1-8e2282bc5aea@lucifer.local>
-	 <gl4pf7gezpjtvnbp4lzyb65wqaiw3xzjjrs3476j5odxsfzvsj@oouue73v3cgr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1729250584; c=relaxed/simple;
+	bh=RERqlDyQR8kTR9BwGb4+LARBFzifqaO5Mnzgssa0r4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kRujLc9DdNaiI/268yOApEphgIKiB9ZFpNWP8Q/S5r4xYv2XhWx54tRPb2vYYbRiExByvx9YhSJTVNFNMs8T763tJI8aP8lGIxjevW0tBBD6OPHA60dqpdTm/RUJjyeqwFNsjYfKnoB1nweqOqs0H0kc7VSy2kZttJt81/oHLO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JG1myLJ3; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TnBUWYJksQc4i/FZQZ9o3c/s3FDZm+jk3UrFtSiyKAQ=; b=JG1myLJ3XSVvAmiWTzwlQLF8Q/
+	3iwPXwdb3HY+i7dlz8H35wxN3QtTc6eD9MCNn0NcDEzPCjxVEZ8QoyluvXXZBMY4REGKKMbtwmxSa
+	VURdbkuWvYik/3+8Qghd53SqajnieqwG2D0x74cmHfQzq+ZbziTSOP9fSYpEqsaHesiEdZqeqj/Jt
+	eEjyZeBtCePwiXCSFrG6zDZ5pd9/1WPesDgQukSPCqhgK4THbuD8toyG+tp8m0AvuKGTv70FDHRi9
+	JENGp2H/Mo77D/MV4Em8qOO/I8iY4x/Bb6IxuxfkZooop+b6ifZ4R5lPJR26Z39WanZHrzVzFOshM
+	lpcYVxgg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1l4O-00000007LHx-1iaJ;
+	Fri, 18 Oct 2024 11:23:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D06C63005AF; Fri, 18 Oct 2024 13:22:59 +0200 (CEST)
+Date: Fri, 18 Oct 2024 13:22:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH -tip] cleanup: Remove address space of returned pointer
+Message-ID: <20241018112259.GD36494@noisy.programming.kicks-ass.net>
+References: <20240819074124.143565-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDHWDD+RBJnJOwWAw--.51604S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuF13JFWrJw1fuF43Jw4Utwb_yoW5CFyfpr
-	yrJ3WqgFWYqF1xJrn2q3Z0gFn8t34UKFy7WrWrXry8AwnFqF13Cr4rGFy5urs8Ar1kAFyr
-	ZF4UCFZIkay7JFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
-	0PDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABGcRxH8HrQAEsl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819074124.143565-1-ubizjak@gmail.com>
 
-On Fri, 2024-10-18 at 14:05 +0300, Kirill A. Shutemov wrote:
-> On Fri, Oct 18, 2024 at 12:00:22PM +0100, Lorenzo Stoakes wrote:
-> > + Liam, Jann
-> >=20
-> > On Fri, Oct 18, 2024 at 01:49:06PM +0300, Kirill A. Shutemov wrote:
-> > > On Fri, Oct 18, 2024 at 11:24:06AM +0200, Roberto Sassu wrote:
-> > > > Probably it is hard, @Kirill would there be any way to safely move
-> > > > security_mmap_file() out of the mmap_lock lock?
-> > >=20
-> > > What about something like this (untested):
-> > >=20
-> > > diff --git a/mm/mmap.c b/mm/mmap.c
-> > > index dd4b35a25aeb..03473e77d356 100644
-> > > --- a/mm/mmap.c
-> > > +++ b/mm/mmap.c
-> > > @@ -1646,6 +1646,26 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned lon=
-g, start, unsigned long, size,
-> > >  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
-> > >  		return ret;
-> > >=20
-> > > +	if (mmap_read_lock_killable(mm))
-> > > +		return -EINTR;
-> > > +
-> > > +	vma =3D vma_lookup(mm, start);
-> > > +
-> > > +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-> > > +		mmap_read_unlock(mm);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	file =3D get_file(vma->vm_file);
-> > > +
-> > > +	mmap_read_unlock(mm);
-> > > +
-> > > +	ret =3D security_mmap_file(vma->vm_file, prot, flags);
-> >=20
-> > Accessing VMA fields without any kind of lock is... very much not advis=
-ed.
-> >=20
-> > I'm guessing you meant to say:
-> >=20
-> > 	ret =3D security_mmap_file(file, prot, flags);
-> >=20
-> > Here? :)
->=20
-> Sure. My bad.
->=20
-> Patch with all fixups:
+On Mon, Aug 19, 2024 at 09:41:15AM +0200, Uros Bizjak wrote:
+> Guard functions in local_lock.h are defined using DEFINE_GUARD() and
+> DEFINE_LOCK_GUARD_1() macros having lock type defined as pointer in
+> the percpu address space. The functions, defined by these macros
+> return value in generic address space, causing:
+> 
+> cleanup.h:157:18: error: return from pointer to non-enclosed address space
+> 
+> and
+> 
+> cleanup.h:214:18: error: return from pointer to non-enclosed address space
+> 
+> when strict percpu checks are enabled.
+> 
+> Add explicit casts to remove address space of the returned pointer.
+> 
+> Found by GCC's named address space checks.
+> 
+> Fixes: e4ab322fbaaa ("cleanup: Add conditional guard support")
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
 
-Thanks a lot! Let's wait a bit until the others have a chance to
-comment. Meanwhile, I will test it.
+Thanks!
 
-Do you want me to do the final patch, or will you be proposing it?
-
-Roberto
-
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index dd4b35a25aeb..541787d526b6 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1646,14 +1646,41 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, =
-start, unsigned long, size,
->  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
->  		return ret;
-> =20
-> -	if (mmap_write_lock_killable(mm))
-> +	if (mmap_read_lock_killable(mm))
->  		return -EINTR;
-> =20
->  	vma =3D vma_lookup(mm, start);
-> =20
-> +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-> +		mmap_read_unlock(mm);
-> +		return -EINVAL;
-> +	}
-> +
-> +	file =3D get_file(vma->vm_file);
-> +
-> +	mmap_read_unlock(mm);
-> +
-> +	ret =3D security_mmap_file(file, prot, flags);
-> +	if (ret) {
-> +		fput(file);
-> +		return ret;
-> +	}
-> +
-> +	ret =3D -EINVAL;
-> +
-> +	if (mmap_write_lock_killable(mm)) {
-> +		fput(file);
-> +		return -EINTR;
-> +	}
-> +
-> +	vma =3D vma_lookup(mm, start);
-> +
->  	if (!vma || !(vma->vm_flags & VM_SHARED))
->  		goto out;
-> =20
-> +	if (vma->vm_file !=3D file)
-> +		goto out;
-> +
->  	if (start + size > vma->vm_end) {
->  		VMA_ITERATOR(vmi, mm, vma->vm_end);
->  		struct vm_area_struct *next, *prev =3D vma;
-> @@ -1688,16 +1715,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, =
-start, unsigned long, size,
->  	if (vma->vm_flags & VM_LOCKED)
->  		flags |=3D MAP_LOCKED;
-> =20
-> -	file =3D get_file(vma->vm_file);
-> -	ret =3D security_mmap_file(vma->vm_file, prot, flags);
-> -	if (ret)
-> -		goto out_fput;
->  	ret =3D do_mmap(vma->vm_file, start, size,
->  			prot, flags, 0, pgoff, &populate, NULL);
-> -out_fput:
-> -	fput(file);
->  out:
->  	mmap_write_unlock(mm);
-> +	fput(file);
->  	if (populate)
->  		mm_populate(ret, populate);
->  	if (!IS_ERR_VALUE(ret))
-
+Now lives in queue locking/core, and barring robot screams will make its
+way into tip.
 
