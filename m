@@ -1,99 +1,113 @@
-Return-Path: <linux-kernel+bounces-371710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398AE9A3EF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE8A9A3EF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECF47282139
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:56:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6902C286F95
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6025B1684A5;
-	Fri, 18 Oct 2024 12:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4BD1D0DF7;
+	Fri, 18 Oct 2024 12:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jz8TlxkF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ORE/p3mb"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091C51F947;
-	Fri, 18 Oct 2024 12:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C131D1E64
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729256213; cv=none; b=k7jRu+OE3rorQJK+zVrsP/tD0bi4nuBfJgBA76nzCJGwgqaLLJWnVRGzFEVckIqw7p1YUQHc+V4FCTeytsnXkninlavcClT/L9SkQkY3qkoNd5Yi314aWUSfhuw4QhRZjm7o5950KSFjPieKsxwo2PDsjSkR3aOgjDuMDHv4C3E=
+	t=1729256219; cv=none; b=SBjM0njC9wCS7QB/RjPxnUkUJs+3qXCfJW3IxI0pv5oV6+Cg4tRoH/pue399+Bp8zWDgB+tcq3PxT+McG+HRoK6xNQT2Chqn5FaIHxUgyyKMJQtUQJFSxBidVeDs5rKnOPdBcIwvccb9B8A1CbfpXbHLb12jGoywTAxt++cAuJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729256213; c=relaxed/simple;
-	bh=DxqYJ/nTng3w2f1t+3UAEknjhB6pQTrD7nwB3Lljcz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r2q4283l/vwJKRmcd5trk/w0tbG6bKIwM3dgRv875xpZAKopqwltIIsPm3Vy/ZN/osKUFe8b4wb4wDrTZtmzMOeC7E9yKf9rVH79O1QURJ6ZlV4OOwepey5Mz2v0VG1gAntD5Zo2fjG7lWLDbJgkBHhonNiSQtYFaxS/L2h7jk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jz8TlxkF; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729256212; x=1760792212;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DxqYJ/nTng3w2f1t+3UAEknjhB6pQTrD7nwB3Lljcz0=;
-  b=jz8TlxkFVQooT1b6nhokYPffexhUJb0wLu554Hu9v2c0Z9MKqGwFk5j0
-   SrgMjqsx2hHNBFBnm4YcsDa+R6XEfPAzjC2ZvMxOXINY+Ewny8p84+kSJ
-   Of5hwO+u6+uT7bQZ+MbeyXtqGQruPteDRNu+G7h7G4We2i4sc0NcvJ4bb
-   vpoar9LossEWjUpVclpK+iucT0u0pnDlvcsjsA9f1PGP35gUzgWDHW+2/
-   v5FpLi4MerBZlsZIO1gyrxGKYAXIPgYnf8y3O6lwH30l4YZGOmFoj0XQ+
-   RsCznk6+Tu2rK3LPB8nL4Ur3BXVx/wRK6Ze3NPT2l1Yr2o4cELOs3DUHf
-   A==;
-X-CSE-ConnectionGUID: BdQPLZMDQGKzteZP1PcBqQ==
-X-CSE-MsgGUID: OqgJy87DTKiqNZS2Iq0bLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="39412685"
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="39412685"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:56:51 -0700
-X-CSE-ConnectionGUID: S0ik5VSmSfG9J8KkcsPGvg==
-X-CSE-MsgGUID: PcQ7Ih13RrWYT7YC6SgkXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="79283539"
-Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.245.82.157])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:56:49 -0700
-Date: Fri, 18 Oct 2024 14:56:43 +0200
-From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-To: Song Liu <song@kernel.org>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, mariusz.tkaczyk@intel.com,
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 0/7] md: enhance faulty checking for blocked handling
-Message-ID: <20241018145643.0000788f@linux.intel.com>
-In-Reply-To: <CAPhsuW4UCFbtrxXVfCaXFvCWYhb8He0tGSHq8UZ_4dWX=ZMs3A@mail.gmail.com>
-References: <20241011011630.2002803-1-yukuai1@huaweicloud.com>
-	<CAPhsuW4UCFbtrxXVfCaXFvCWYhb8He0tGSHq8UZ_4dWX=ZMs3A@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729256219; c=relaxed/simple;
+	bh=8hryLUhjN9466aZtzGzJpDJXDvNAOUSxrMdam0RQjhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KZum98lAeVF8i9kHVofEeMzblCUkQ7yeSWAxtMIzWvfI6NaYSzsfnVNtp+3zSQ3YnLqUz18RsF728/lZUMK2p8cqe8/aDQz9kF11JrM5U29+E04MAu9mN36aVUGtQrwMzsCFeKa3st4mpJHQu2Ur1NY1c8OHRfJjVnUB2GPdw+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ORE/p3mb; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e3f35268so2700552e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:56:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729256215; x=1729861015; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tlmikyeHLA1R+v/SeMY82cfNuK9qeutuFdS/0zXyK7I=;
+        b=ORE/p3mbnVGm2zPiShyCv3oV+QeaiXa1ArLeJDIKmaKjg5uhugBkhsOoJ8mGVuHGsc
+         /OTqYFeU4ikcnR9S2feBxpQV9VzrbNJuB49h6wZDEiNt+VtcVJn3hk9PcUdsOoasTvjB
+         nMoYwDJL2tJBvTj5rlHafmH82fIw/CL1zUYIOVxRR3kBx1RaEvvQ/tCAotIoOajddiDV
+         H52zl+H76Xb+XhjY5a72uuXRnOvpXieLDbGR5c6T+7gVgSAxNtLgQpOurXUY5b1qMrDf
+         ZzIyR995WVZKIC91inNbdh0k9x9ZlWJvJOZPFwS8dKIa8FVniRq9Zk+TSNNKZI/6RNis
+         Uv/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729256215; x=1729861015;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tlmikyeHLA1R+v/SeMY82cfNuK9qeutuFdS/0zXyK7I=;
+        b=IEcpWnjJ4RBmffmim72AcXvGijKe9VleKugsYi6uCJ322nTV6JmnYLBS8V689jrS++
+         q4JSHCXvNG6dRQFh0XH4DFvKiyp/33wW8Scg1Bo6pa+9w8z/E4JxUwwkPrA1AsKBGfwL
+         CAOC9eEYfDOWNbK2QfxC3ZYTM6pE3mnfYhJWDEuRxrGIvNxc6Nv2ZLBjDqg8lN6T8GUB
+         5CfEU9eAx6XE0kOfbruOplSBjMSRxYOsSKKcqCdxnEF9STSPbfBS9nna8EF27QJFqM/C
+         BMDV6qR8TwTOD0cuJQEq/OAyo3pWZlRosM5blcsUzmsOLqZarOM0epfw1/C7rb9gHM1t
+         eFhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKDQGhMXK4pY0+psEoW4FRu99E7D+ekDEQd4lpyDEyeQ9awxC6ROVwIhqNLV4+rkHJ8SE5Xg1w1Nuf6tk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVwl5uMC6PZkBOsRGdAEaKPRU2WFytQqHw14EsulpfyvEaT8Ek
+	VNbBnp0Dn7CxE2+h4icr3kyLQgVDka2GjbQpxYTvuRXRe2jVyiHwszFXuTycsGg=
+X-Google-Smtp-Source: AGHT+IGp8BKiU5zwSiuqZHuPvclHSa+AFjqYaVWitnIZIJPqHYxSdeACmZOkLV/f3MXQCGakP7kHZg==
+X-Received: by 2002:a05:6512:1051:b0:539:f10b:ff93 with SMTP id 2adb3069b0e04-53a15229dc3mr1673369e87.27.1729256214774;
+        Fri, 18 Oct 2024 05:56:54 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a15211bb0sm210724e87.260.2024.10.18.05.56.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 05:56:54 -0700 (PDT)
+Date: Fri, 18 Oct 2024 15:56:52 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Hermes.wu@ite.com.tw
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Pin-yen Lin <treapking@chromium.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Kenneth Hung <Kenneth.hung@ite.com.tw>, Pet Weng <Pet.Weng@ite.com.tw>
+Subject: Re: [PATCH v6 01/10] drm/bridge: it6505: Change definition of
+ AUX_FIFO_MAX_SIZE
+Message-ID: <zltdkt5ynnfyetrxbqmazkj7l36olxueqkynka2orqzd4v6ji3@4odws5t4k4dt>
+References: <20241016-upstream-v6-v6-0-4d93a0c46de1@ite.com.tw>
+ <20241016-upstream-v6-v6-1-4d93a0c46de1@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016-upstream-v6-v6-1-4d93a0c46de1@ite.com.tw>
 
-On Thu, 17 Oct 2024 23:46:58 -0700
-Song Liu <song@kernel.org> wrote:
-
-> Mariusz, you have run some tests on v1, but didn't give your
-> Tested-by tag. Would you mind rerun the test and reply with
-> the tag?
+On Wed, Oct 16, 2024 at 03:54:13PM +0800, Hermes Wu via B4 Relay wrote:
+> From: Hermes Wu <Hermes.wu@ite.com.tw>
 > 
-> Thanks,
-> Song
+> The hardware AUX FIFO is 16 bytes
+> Change definition of AUX_FIFO_MAX_SIZE to 16
+> 
+> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
+> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+> ---
+>  drivers/gpu/drm/bridge/ite-it6505.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Hi Song,
-I see no functional difference between v1 and v2 feel free to add it.
-I will be hard to rerun these tests right now.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Tested-by: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-
-Thanks,
-Mariusz
+-- 
+With best wishes
+Dmitry
 
