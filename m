@@ -1,278 +1,107 @@
-Return-Path: <linux-kernel+bounces-372377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3E39A47DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:24:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BE59A47DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50050B257AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:24:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D093F1F216B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D41206E81;
-	Fri, 18 Oct 2024 20:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DFB1DA0EB;
+	Fri, 18 Oct 2024 20:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="aW1LQD5I"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oULBYi7L"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9814185B48;
-	Fri, 18 Oct 2024 20:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B00F18C35F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729283067; cv=none; b=JxkysoPY3LW1cxg+LfUYTlU8CseG/qwJVei3O7KhcgByLswmmP+ZLwNm1Rf437LbmYm/sK93sq34Mwkj2oBwQwoQbBjYVYYzHa1stEWdz8M3UdmL6zmUwKa1yb/rLGEuG55BZ/y14awvuiPSrm8xPvsmF5qoii5XBGqySoc/s6U=
+	t=1729283102; cv=none; b=p8M+D6RLbYzRNjYq2PQQWrufTJbK5S1Tw803PI7kPcm6rnTw6JK0NGqmh5NpR+BHPyqFWh01gFKXBnVNm9nfpUy6ti/RL2dBhxZ0XgJnTeqMJI95A9a8xSn6rGwWZkPA8r3eRHdyn4fNEspqPdsxN/BraYf7LfBdkZ5iFWtoqPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729283067; c=relaxed/simple;
-	bh=QQ0vgp33pjvkKRw9Etds7wOGrOISNeMYBwteSE9sZfY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rNBO5hcP58xIaOKIeAzT0UUby9YNn59pToVR9KvpMdF5VGEP/5j7tWf01dwRRKZyTNyqVf4ZLNrU2NGKGSiWjYXJDwzJ9PtR76Hcn7jlXeBBGj7r5t+yBysoiYJ3zfuDRco0NAYfzIAn/rOIZWa1FnJHAihQT7ngCNOKcbDj4Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=aW1LQD5I; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=WW+i2Ne2jyWvYltfeCFb87hSWbJ/wKPQQYuetGtHt6A=; b=aW1LQD5IHpcQUtE0WyDrk41bbi
-	LVI7AB3YeGxieQt6PWb1B0dLQQb5phQlvj/S9oAkzWMhR444J7IYAOB0MmJCLTZK57guiRmLXNdPs
-	m1FZ4aLPIrOOwY/5AN4B5+m9pdIxx/zUtKtk2yugU2dl8qXH3j196kdpmxqf73ooqZB+/1hjKqQoi
-	WKKaio26KP0JRz1VV2MRIpOy/+c0g69pz99K16cjEgGa1HtVguiAqgnouIwSFuR9p/GV6kxYQONuu
-	LNZKdriALFYIAmWvNxg0QsHf9tvf12q/EPQjVQyd/wB8acStgdeHhfVJkeFa8PVcrkOiuOEFI8Os0
-	du54M8iQ==;
-Received: from 12.248.197.178.dynamic.cust.swisscom.net ([178.197.248.12] helo=localhost)
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1t1tWH-000MS8-3i; Fri, 18 Oct 2024 22:24:21 +0200
-From: Daniel Borkmann <daniel@iogearbox.net>
-To: torvalds@linux-foundation.org
-Cc: bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alexei.starovoitov@gmail.com,
-	andrii@kernel.org,
-	martin.lau@kernel.org
-Subject: [GIT PULL] bpf for v6.12-rc4
-Date: Fri, 18 Oct 2024 22:24:20 +0200
-Message-Id: <20241018202420.17746-1-daniel@iogearbox.net>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729283102; c=relaxed/simple;
+	bh=68b7Ts+IdqL/COKwd0hCRi/eHOJYDBrWidJqI/CELI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g5x/FXtJNoiC5krwUBdH9Y8FVUSFJsvnIejmDPjApnzyrHBSsDmw0gel9PZtLOGpoFxrW+xgmPCUFvDOpKIwU0ln2dyurbKK+++sF/eZ5pf4clyH379p1TxWWNW1Y06T7OIQDQFrMi7UtYl9VEcILE4PCErICk+bRhVwSWLXoqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oULBYi7L; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IEhb5w029274;
+	Fri, 18 Oct 2024 20:24:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fcrxKfuT2kfJGzuPBa6Gbyf2j+J7lnPDD3tyooyUpFU=; b=oULBYi7LVDkPXYAm
+	4XDAbAPXWQ3I3YOQDwOWLP0IOQAec4jJYbYr8O63jOAW3NyjPT0fTflX/f6O2nYt
+	vlSmJJvLj14szNnd22dbwYy6SL53zqqEC1IcqFN0h4/yE+QrRYDK58JoBnjRM3Ob
+	TrSJJ1M2mSOFgAKH8+qajew85Nkge2ICkyBCX+jbJTgfSAJfDSZF+DndNC/1MK9D
+	w31kOXLkb01yivduFkDR9by3XhmprVAVG+GrmTta7p7t/nxJj6qsJB75ZtJ98Jg3
+	ifrJts1vz38MzKnwTCyba9cZ0JSkiKFgiTzcmdrFmJ3L3fq1nAXkS7VoOue3wYoG
+	DUHQaQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bhbqafan-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 20:24:56 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IKOtta026168
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 20:24:55 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
+ 2024 13:24:55 -0700
+Message-ID: <5b4c3053-bd62-2083-14b7-9671b839080e@quicinc.com>
+Date: Fri, 18 Oct 2024 14:24:54 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27431/Fri Oct 18 10:53:06 2024)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V4 01/10] accel/amdxdna: Add documentation for AMD NPU
+ accelerator driver
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20241011231244.3182625-1-lizhi.hou@amd.com>
+ <20241011231244.3182625-2-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20241011231244.3182625-2-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: hQCBqLbhqQ2sTgSXRpqIcZlO-t0NWuY8
+X-Proofpoint-GUID: hQCBqLbhqQ2sTgSXRpqIcZlO-t0NWuY8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 mlxscore=0 bulkscore=0
+ clxscore=1011 suspectscore=0 mlxlogscore=798 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410180130
 
-Hi Linus,
+On 10/11/2024 5:12 PM, Lizhi Hou wrote:
+> AMD NPU (Neural Processing Unit) is a multi-user AI inference accelerator
+> integrated into AMD client APU. NPU enables efficient execution of Machine
+> Learning applications like CNN, LLM, etc. NPU is based on AMD XDNA
+> Architecture. NPU is managed by amdxdna driver.
+> 
+> Co-developed-by: Sonal Santan <sonal.santan@amd.com>
+> Signed-off-by: Sonal Santan <sonal.santan@amd.com>
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
 
-The following changes since commit 684a64bf32b6e488004e0ad7f0d7e922798f65b6:
-
-  Merge tag 'nfs-for-6.12-1' of git://git.linux-nfs.org/projects/anna/linux-nfs (2024-09-24 15:44:18 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git tags/bpf-fixes
-
-for you to fetch changes up to 5ac9b4e935dfc6af41eee2ddc21deb5c36507a9f:
-
-  lib/buildid: Handle memfd_secret() files in build_id_parse() (2024-10-17 21:30:32 +0200)
-
-----------------------------------------------------------------
-BPF fixes:
-
-- Fix BPF verifier to not affect subreg_def marks in its range
-  propagation, from Eduard Zingerman.
-
-- Fix a truncation bug in the BPF verifier's handling of
-  coerce_reg_to_size_sx, from Dimitar Kanaliev.
-
-- Fix the BPF verifier's delta propagation between linked
-  registers under 32-bit addition, from Daniel Borkmann.
-
-- Fix a NULL pointer dereference in BPF devmap due to missing
-  rxq information, from Florian Kauer.
-
-- Fix a memory leak in bpf_core_apply, from Jiri Olsa.
-
-- Fix an UBSAN-reported array-index-out-of-bounds in BTF
-  parsing for arrays of nested structs, from Hou Tao.
-
-- Fix build ID fetching where memory areas backing the file
-  were created with memfd_secret, from Andrii Nakryiko.
-
-- Fix BPF task iterator tid filtering which was incorrectly
-  using pid instead of tid, from Jordan Rome.
-
-- Several fixes for BPF sockmap and BPF sockhash redirection
-  in combination with vsocks, from Michal Luczaj.
-
-- Fix riscv BPF JIT and make BPF_CMPXCHG fully ordered,
-  from Andrea Parri.
-
-- Fix riscv BPF JIT under CONFIG_CFI_CLANG to prevent the
-  possibility of an infinite BPF tailcall, from Pu Lehui.
-
-- Fix a build warning from resolve_btfids that bpf_lsm_key_free
-  cannot be resolved, from Thomas Weißschuh.
-
-- Fix a bug in kfunc BTF caching for modules where the wrong
-  BTF object was returned, from Toke Høiland-Jørgensen.
-
-- Fix a BPF selftest compilation error in cgroup-related tests
-  with musl libc, from Tony Ambardar.
-
-- Several fixes to BPF link info dumps to fill missing fields,
-  from Tyrone Wu.
-
-- Add BPF selftests for kfuncs from multiple modules, checking
-  that the correct kfuncs are called, from Simon Sundberg.
-
-- Ensure that internal and user-facing bpf_redirect flags
-  don't overlap, also from Toke Høiland-Jørgensen.
-
-- Switch to use kvzmalloc to allocate BPF verifier environment,
-  from Rik van Riel.
-
-- Use raw_spinlock_t in BPF ringbuf to fix a sleep in atomic
-  splat under RT, from Wander Lairson Costa.
-
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-----------------------------------------------------------------
-Alexei Starovoitov (3):
-      Merge branch 'check-the-remaining-info_cnt-before-repeating-btf-fields'
-      Merge branch 'fix-caching-of-btf-for-kfuncs-in-the-verifier'
-      Merge branch 'fix-truncation-bug-in-coerce_reg_to_size_sx-and-extend-selftests'
-
-Andrea Parri (1):
-      riscv, bpf: Make BPF_CMPXCHG fully ordered
-
-Andrii Nakryiko (1):
-      lib/buildid: Handle memfd_secret() files in build_id_parse()
-
-Daniel Borkmann (4):
-      bpf: Sync uapi bpf.h header to tools directory
-      bpf: Fix incorrect delta propagation between linked registers
-      bpf: Fix print_reg_state's constant scalar dump
-      selftests/bpf: Add test case for delta propagation
-
-Dimitar Kanaliev (3):
-      bpf: Fix truncation bug in coerce_reg_to_size_sx()
-      selftests/bpf: Add test for truncation after sign extension in coerce_reg_to_size_sx()
-      selftests/bpf: Add test for sign extension in coerce_subreg_to_size_sx()
-
-Eduard Zingerman (2):
-      bpf: sync_linked_regs() must preserve subreg_def
-      selftests/bpf: Verify that sync_linked_regs preserves subreg_def
-
-Florian Kauer (2):
-      bpf: devmap: provide rxq after redirect
-      bpf: selftests: send packet to devmap redirect XDP
-
-Hou Tao (2):
-      bpf: Check the remaining info_cnt before repeating btf fields
-      selftests/bpf: Add more test case for field flattening
-
-Jiri Olsa (1):
-      bpf: Fix memory leak in bpf_core_apply
-
-Jordan Rome (2):
-      bpf: Fix iter/task tid filtering
-      bpf: Properly test iter/task tid filtering
-
-Martin KaFai Lau (1):
-      Merge branch 'bpf: devmap: provide rxq after redirect'
-
-Michal Luczaj (4):
-      bpf, sockmap: SK_DROP on attempted redirects of unsupported af_vsock
-      vsock: Update rx_bytes on read_skb()
-      vsock: Update msg_count on read_skb()
-      bpf, vsock: Drop static vsock_bpf_prot initialization
-
-Pu Lehui (1):
-      riscv, bpf: Fix possible infinite tailcall when CONFIG_CFI_CLANG is enabled
-
-Rik van Riel (1):
-      bpf: use kvzmalloc to allocate BPF verifier environment
-
-Simon Sundberg (2):
-      selftests/bpf: Provide a generic [un]load_module helper
-      selftests/bpf: Add test for kfunc module order
-
-Thomas Weißschuh (1):
-      bpf, lsm: Remove bpf_lsm_key_free hook
-
-Toke Høiland-Jørgensen (2):
-      bpf: Make sure internal and UAPI bpf_redirect flags don't overlap
-      bpf: fix kfunc btf caching for modules
-
-Tony Ambardar (2):
-      selftests/bpf: Fix error compiling cgroup_ancestor.c with musl libc
-      selftests/bpf: Fix cross-compiling urandom_read
-
-Tyrone Wu (6):
-      bpf: fix unpopulated name_len field in perf_event link info
-      selftests/bpf: fix perf_event link info name_len assertion
-      bpf: Fix unpopulated path_size when uprobe_multi fields unset
-      selftests/bpf: Assert link info uprobe_multi count & path_size if unset
-      bpf: Fix link info netfilter flags to populate defrag flag
-      selftests/bpf: Add asserts for netfilter link info
-
-Wander Lairson Costa (1):
-      bpf: Use raw_spinlock_t in ringbuf
-
- arch/riscv/net/bpf_jit_comp64.c                    |   8 +-
- include/net/sock.h                                 |   5 +
- include/uapi/linux/bpf.h                           |  13 +--
- kernel/bpf/bpf_lsm.c                               |   4 -
- kernel/bpf/btf.c                                   |  15 ++-
- kernel/bpf/devmap.c                                |  11 +-
- kernel/bpf/log.c                                   |   3 +-
- kernel/bpf/ringbuf.c                               |  12 +-
- kernel/bpf/syscall.c                               |  29 +++--
- kernel/bpf/task_iter.c                             |   2 +-
- kernel/bpf/verifier.c                              |  36 ++++--
- kernel/trace/bpf_trace.c                           |  36 +++---
- lib/buildid.c                                      |   5 +
- net/core/filter.c                                  |   8 +-
- net/core/sock_map.c                                |   8 ++
- net/netfilter/nf_bpf_link.c                        |   3 +-
- net/vmw_vsock/virtio_transport_common.c            |  14 ++-
- net/vmw_vsock/vsock_bpf.c                          |   8 --
- tools/include/uapi/linux/bpf.h                     |  22 ++--
- tools/testing/selftests/bpf/Makefile               |  22 +++-
- .../selftests/bpf/bpf_test_modorder_x/Makefile     |  19 ++++
- .../bpf/bpf_test_modorder_x/bpf_test_modorder_x.c  |  39 +++++++
- .../selftests/bpf/bpf_test_modorder_y/Makefile     |  19 ++++
- .../bpf/bpf_test_modorder_y/bpf_test_modorder_y.c  |  39 +++++++
- tools/testing/selftests/bpf/prog_tests/bpf_iter.c  |  27 ++++-
- .../selftests/bpf/prog_tests/cgroup_ancestor.c     |   2 +-
- tools/testing/selftests/bpf/prog_tests/cpumask.c   |   1 +
- .../selftests/bpf/prog_tests/fill_link_info.c      |  18 ++-
- .../selftests/bpf/prog_tests/kfunc_module_order.c  |  55 +++++++++
- .../bpf/prog_tests/netfilter_link_attach.c         |  42 ++++++-
- tools/testing/selftests/bpf/prog_tests/verifier.c  |   2 +
- .../selftests/bpf/prog_tests/xdp_devmap_attach.c   | 125 +++++++++++++++++++--
- tools/testing/selftests/bpf/progs/cpumask_common.h |   5 +
- .../testing/selftests/bpf/progs/cpumask_failure.c  |  35 ++++++
- .../testing/selftests/bpf/progs/cpumask_success.c  |  78 ++++++++++++-
- .../selftests/bpf/progs/kfunc_module_order.c       |  30 +++++
- .../bpf/progs/test_xdp_with_devmap_helpers.c       |   2 +-
- .../selftests/bpf/progs/verifier_linked_scalars.c  |  34 ++++++
- tools/testing/selftests/bpf/progs/verifier_movsx.c |  40 +++++++
- .../selftests/bpf/progs/verifier_scalar_ids.c      |  67 +++++++++++
- tools/testing/selftests/bpf/testing_helpers.c      |  34 ++++--
- tools/testing/selftests/bpf/testing_helpers.h      |   2 +
- 42 files changed, 847 insertions(+), 132 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/bpf_test_modorder_x/Makefile
- create mode 100644 tools/testing/selftests/bpf/bpf_test_modorder_x/bpf_test_modorder_x.c
- create mode 100644 tools/testing/selftests/bpf/bpf_test_modorder_y/Makefile
- create mode 100644 tools/testing/selftests/bpf/bpf_test_modorder_y/bpf_test_modorder_y.c
- create mode 100644 tools/testing/selftests/bpf/prog_tests/kfunc_module_order.c
- create mode 100644 tools/testing/selftests/bpf/progs/kfunc_module_order.c
- create mode 100644 tools/testing/selftests/bpf/progs/verifier_linked_scalars.c
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 
