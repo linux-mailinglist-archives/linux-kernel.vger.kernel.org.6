@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-372480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E6C9A490E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:41:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521DB9A4910
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670761C2441F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:41:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5BFCB257A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0073A191F6D;
-	Fri, 18 Oct 2024 21:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0343D1922C9;
+	Fri, 18 Oct 2024 21:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S8+CYsaN"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CdIJ5Awg"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B72219004E;
-	Fri, 18 Oct 2024 21:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F801190664;
+	Fri, 18 Oct 2024 21:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729287627; cv=none; b=Wlm6XWXMN5zcvdvVf4H3vxgtfbBN88bfsrsL7pDfj8r+csWPbOGGnNHeRMIHKM3FlTVvdOBVEF6HTWX9Vuv6wPUeqVR5AsUheNk7mvH0sT1V7mfKEy/76elG23ULOPScjhaKa2mRUIoI5k0+2OTDFC2COgtoIgaKJB+DCRLnVQI=
+	t=1729287628; cv=none; b=daxNNWWDDOBqCvEpNDaiiwlbKm2Nz/nQ9G4OTB598EhWeOLcUqzU8T43wRUu/6SASU4Ge+OZ3Eb8cFjBILAVcceqjWcY66ZdjB6sKH+TqZCnqaPXxeX+n4Ntk+9RpmL6gFc/ujRkz7fg+or2IvaeoevDdmHx1LiFYLNcq9KD7M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729287627; c=relaxed/simple;
-	bh=Jr41L06cJhaViYFmP0B+b+cWwpUnFddqeq9b14cNNXc=;
+	s=arc-20240116; t=1729287628; c=relaxed/simple;
+	bh=7X4VXD2CoeN6HcEiAGY/FCKJsj9HVJI36AIU9sGDip4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nVLRmGhi7hcMcBOW5AJuKmUAvGPiLvCkAylA9WgNluhXlO0u6GaWUNAP5jqRJtvYlv0/a1MCu3eZKrm4zBaEIFhezIdamo6G5YUHEMsC1dEMBDz2+FasiIwI66MlPdoip114gmSJs5c5gjWQIKVOrYyt1x3k1+vnE803aVKn0Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S8+CYsaN; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=FZ6qdZ2a9rHL0wrjqIs+KAPtjWtUx99fjBZbzauBqA2I6gDbi9GszZ6W7crVUaG7AlLhTI05GR3WLMCxbxNaD22TXv8jfTyVXE1tochUMfMhrX63DC7uXaqkziCMwAtPnZG6bMWgGmGjyos3WJL7nL2+t9Ojxmbiha/9p2EW1q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CdIJ5Awg; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729287623;
-	bh=Jr41L06cJhaViYFmP0B+b+cWwpUnFddqeq9b14cNNXc=;
+	s=mail; t=1729287624;
+	bh=7X4VXD2CoeN6HcEiAGY/FCKJsj9HVJI36AIU9sGDip4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=S8+CYsaNvWg/8oM5l8TiHg2+L0tUOQ5F+Ie2KbojtBwBr1rDzQJOHhh9CBp7bPoJ8
-	 5eFB+hkripTfdshvfqpohHz0fOoqfA6Wxi23/2h80mAWOrYo1IgsbR29LIlgtsSNXU
-	 PjAEkC4jAP2vcOHB3JYZ7WfUnApqDt2vcJgLt8Ea6ZDX2ama+gePvRzYzRsmlcXN3L
-	 wEf+ACYpVNO59/GcwS2uICJiVVgOti6iHhZKIKGSV4sXX2KoguUJ1AmEmKxQuu/dpX
-	 w0HYrdHElE4tjDlkKnrLkEw8iv4nrHKy+w5Oq0ol0KVHhnlJq2iTQRhCreIvuY1ADo
-	 0B6kdLuepMpnQ==
+	b=CdIJ5Awghbn08lGkdq2mbYjQs/GQHnM3FkM1Lv1XQQO6+wAep8vvW/1gNG6rZW971
+	 4QUdKX6J13FSGYRwYPMV+UkbgCy3ZIx88gG8ErG5tfVDuPkig3UocnlYjwuTYXLifR
+	 tOeiGy9OyU5LWqnuqwxBKiQr2ndFgJhLUB97eVlTpIHt9CbY5NT0dpOFh/TKy8ojyQ
+	 rvuZMy1Eq9cLGwANcQikIoLHc1M1YYRm6o5cr66gPVbYQBM1hOmnXCHUe6uoyKKHo+
+	 GtIAKZg3ZvnxDmRZn1QNCAMjpkfLuq6h6I+06P605S34oNgQHQZ3WuNl8Iy4KlGf4+
+	 tl6nGbgIxcc5Q==
 Received: from localhost (unknown [188.24.146.62])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3CBD117E3762;
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 058F617E3763;
 	Fri, 18 Oct 2024 23:40:23 +0200 (CEST)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Sat, 19 Oct 2024 00:39:52 +0300
-Subject: [PATCH 4/5] arm64: dts: rockchip: Enable HDMI0 on orangepi-5-plus
+Date: Sat, 19 Oct 2024 00:39:53 +0300
+Subject: [PATCH UNTESTED 5/5] arm64: dts: rockchip: Enable HDMI0 on rock-5a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241019-rk3588-hdmi0-dt-v1-4-bd8f299feacd@collabora.com>
+Message-Id: <20241019-rk3588-hdmi0-dt-v1-5-bd8f299feacd@collabora.com>
 References: <20241019-rk3588-hdmi0-dt-v1-0-bd8f299feacd@collabora.com>
 In-Reply-To: <20241019-rk3588-hdmi0-dt-v1-0-bd8f299feacd@collabora.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -70,27 +70,27 @@ Cc: kernel@collabora.com, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-Add the necessary DT changes to enable HDMI0 on Orange Pi 5 Plus.
+Add the necessary DT changes to enable HDMI0 on Rock 5A.
 
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- .../boot/dts/rockchip/rk3588-orangepi-5-plus.dts   | 47 ++++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts | 47 ++++++++++++++++++++++++
  1 file changed, 47 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-index c73fecf1c73c94944bb25e1243d5390b84241338..9b1f985a32ebe73478d4318d5246aada78c08ffa 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-@@ -9,6 +9,7 @@
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+index 87fce8d9a964cd53d179ce214ae1c0ff505a2dce..1fd122250b0c70e729b7a2239ab5f288a6387a70 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+@@ -5,6 +5,7 @@
+ #include <dt-bindings/gpio/gpio.h>
  #include <dt-bindings/leds/common.h>
- #include <dt-bindings/input/input.h>
  #include <dt-bindings/pinctrl/rockchip.h>
 +#include <dt-bindings/soc/rockchip,vop2.h>
- #include <dt-bindings/usb/pd.h>
- #include "rk3588.dtsi"
+ #include "rk3588s.dtsi"
  
-@@ -85,6 +86,17 @@ led {
- 		};
+ / {
+@@ -35,6 +36,17 @@ chosen {
+ 		stdout-path = "serial2:1500000n8";
  	};
  
 +	hdmi0-con {
@@ -104,11 +104,11 @@ index c73fecf1c73c94944bb25e1243d5390b84241338..9b1f985a32ebe73478d4318d5246aada
 +		};
 +	};
 +
- 	fan: pwm-fan {
- 		compatible = "pwm-fan";
- 		cooling-levels = <0 70 75 80 100>;
-@@ -263,6 +275,26 @@ &cpu_l3 {
- 	cpu-supply = <&vdd_cpu_lit_s0>;
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -296,6 +308,26 @@ &gmac1_rgmii_clk
+ 	status = "okay";
  };
  
 +&hdmi0 {
@@ -131,11 +131,11 @@ index c73fecf1c73c94944bb25e1243d5390b84241338..9b1f985a32ebe73478d4318d5246aada
 +	status = "okay";
 +};
 +
- &i2c0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c0m2_xfer>;
-@@ -883,3 +915,18 @@ &usb_host1_ehci {
- &usb_host1_ohci {
+ &mdio1 {
+ 	rgmii_phy1: ethernet-phy@1 {
+ 		/* RTL8211F */
+@@ -788,3 +820,18 @@ &usb_host1_ohci {
+ &usb_host2_xhci {
  	status = "okay";
  };
 +
