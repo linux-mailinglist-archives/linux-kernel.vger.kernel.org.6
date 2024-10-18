@@ -1,80 +1,115 @@
-Return-Path: <linux-kernel+bounces-371637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521399A3DAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:59:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9FC9A3DAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1208C28121B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:59:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39ECAB23CDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D50E18E351;
-	Fri, 18 Oct 2024 11:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC3F1C242D;
+	Fri, 18 Oct 2024 11:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ke4YCPRM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RaaJHnpP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7B81B815;
-	Fri, 18 Oct 2024 11:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0122D26AD9
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729252714; cv=none; b=BYpQC0eL2AhfLBX8xPlkk/16j9JB4nFFuwBVv4FTnGy+0HvJ8nXVKRCzPrmbtf8gyV4VuPRWUMs5ZjcRrmyCea3YPMAuQksHHBu4I/sXArJs7HpPKJrsvchBOAAgZyCkQh/Q4NyUoqvPkhaAWZ0pPPiJh8zMiUqArTbopIXiLLE=
+	t=1729252723; cv=none; b=Eq4aSZLWlVe8gFNdLaR+warCGAG9deU1RB9xDEd32Sttpzf1GgnBMoZVkI0UffyPJJgu53ZBrLZOcW/3dKeUWIvsCTSShnMNNUnR0+kS5xslAvvzcKqGS275BgWjBlM/cvxn2wBlCAjjzPXowQBMT/VmtQ0S4YCsaLMFyptVatc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729252714; c=relaxed/simple;
-	bh=2R9kXp221amqzMlk3Tqe+eSDtWRSn5J3KYQbdedqztk=;
+	s=arc-20240116; t=1729252723; c=relaxed/simple;
+	bh=uju9A75VydgesuV5VJ3zReQUSRiqlBTRNgvmQbRq87Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Re87A9HSzB+AyosvDGOCuYW/tc+eg9n/UA/tOLQoVMlBMqnvPbkv9/tpAsuRC1eGFhm2vLmEc/Ex6tLXTgCTbvZBFEqdwiogdltVoi711PgbaFspgr4oZKy6Zqos4HOBFHhfRHguw1+Xl0uj0qqKScCC0YlFjFMCdliAdASb5OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ke4YCPRM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB3B9C4CEC3;
-	Fri, 18 Oct 2024 11:58:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXV1e/Q8l0pCONY3M7OCydsbNyAj1ZPF8NaLOixpE9ox9EWhGMUCUDDtzEztEiR92AM97ytxBIlLvV7XindSgjRsR6aY91K1N3EdROxo2r8qtR5OoWmxa8XRlFVirUF5uNsaLLP9pk8XZiX2/paKOBDg7K1+ci6z1TrlLEZ4O8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RaaJHnpP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 328EFC4CEC3;
+	Fri, 18 Oct 2024 11:58:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729252714;
-	bh=2R9kXp221amqzMlk3Tqe+eSDtWRSn5J3KYQbdedqztk=;
+	s=k20201202; t=1729252722;
+	bh=uju9A75VydgesuV5VJ3zReQUSRiqlBTRNgvmQbRq87Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ke4YCPRMF0bSPH6omEPNLfAhovcElaQeBTX0oJ29HHv+bcxed1G0JMr+7zCltX1P8
-	 qz9l2/kBbEz3SBrljcXtMDAWHbJSOo7em001Ab88lZoGj46i4xBhwqebnVJ9XT6vNk
-	 HMKq/1wHLUhyzpOsTuQB0EiN8Hk7hhP3BSyftRfZeDQQvtTmRWf1yXlcSylfbu11Yw
-	 /qWBwdwRFLZOj3TWZrp/AHQ3M+Q1jd/iUkZhPw9QlQNihgBsV2N3gWmXsqUVcp7x+s
-	 C5HOsDoVTZzRUxm95O+Xg+kWzUXI9R5gYr7jADCNrhf+Ft50g1VPIGkBWFiHx6y5VX
-	 shilHxfE2AMnQ==
-Date: Fri, 18 Oct 2024 12:58:29 +0100
-From: Simon Horman <horms@kernel.org>
-To: Linu Cherian <lcherian@marvell.com>
-Cc: davem@davemloft.net, sgoutham@marvell.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, gakula@marvell.com,
-	hkelam@marvell.com, sbhatta@marvell.com, jerinj@marvell.com,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Subject: Re: [PATCH v3 net-next 1/2] octeontx2-af: Refactor few NPC mcam APIs
-Message-ID: <20241018115829.GI1697@kernel.org>
-References: <20241017084244.1654907-1-lcherian@marvell.com>
- <20241017084244.1654907-2-lcherian@marvell.com>
+	b=RaaJHnpPDoAyz4yqPckjDJbyHGnUQaOxDPah2u6t6xtQwqZV4Yh+fGDMpsRjyoW4B
+	 +kxp47jNpaGncjFqF1y2MGjjt6EVOZgqYQgJKUvjRpKBsz00Jl6dYb2Qk/gZYBruyl
+	 1nZhSs0E1NUGdg6ZL/6XLIxMIrRYBhti8YNqfT79dqun+9dIqb8hNQLv6i1W2/2ILn
+	 noGG3czYJBURW+AVk+sInB0ApmEsrNDIM46E5yOBvJfuqUhzs03Ch56BL6lj731vVq
+	 R3fcY+fW+ba2SbLIurrbbhT532DZo0BPtJLbh/tZbaqGdLm1+OE1EfCiWHxUppBMDO
+	 zGbhKF6fWF8iQ==
+Date: Fri, 18 Oct 2024 13:58:39 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Benjamin Segall <bsegall@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Chris Metcalf <cmetcalf@ezchip.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] posix-cpu-timers: clear TICK_DEP_BIT_POSIX_TIMER on clone
+Message-ID: <ZxJNb0UNE6yxMNNe@localhost.localdomain>
+References: <xm264j5bd2gj.fsf@google.com>
+ <ZxDTFmOi0waQFGEX@lothringen>
+ <xm26zfn2bifv.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241017084244.1654907-2-lcherian@marvell.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <xm26zfn2bifv.fsf@google.com>
 
-On Thu, Oct 17, 2024 at 02:12:43PM +0530, Linu Cherian wrote:
-> Introduce lowlevel variant of rvu_mcam_remove/add_counter_from/to_rule
-> for better code reuse, which assumes necessary locks are taken at
-> higher level.
+Le Thu, Oct 17, 2024 at 01:09:08PM -0700, Benjamin Segall a écrit :
+> Frederic Weisbecker <frederic@kernel.org> writes:
 > 
-> These low level functions would be used for implementing default rule
-> counter APIs in the subsequent patch.
+> > On Wed, Oct 16, 2024 at 04:59:08PM -0700, Benjamin Segall wrote:
+> >> When we clone a new thread, we do not inherit its posix_cputimers, and
+> >> clear them with posix_cputimers_init. However, this does not clear the
+> >> tick dependency it creates in tsk->tick_dep_mask, and the handler does
+> >> not reach the code to clear the dependency if there were no timers to
+> >> begin with.
+> >> 
+> >> Thus if a thread has a cputimer running before cloneing/forking, that
+> >> hierarchy will prevent nohz_full unless they create a cputimer of their
+> >> own.
+> >> 
+> >> Process-wide timers do not have this problem because fork does not copy
+> >> signal_struct as a baseline, it creates one from scratch.
+> >> 
+> >> Fixes: b78783000d5c ("posix-cpu-timers: Migrate to use new tick dependency mask model")
+> >> Signed-off-by: Ben Segall <bsegall@google.com>
+> >> Cc: stable@vger.kernel.org
+> >> ---
+> >>  kernel/fork.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >> 
+> >> diff --git a/kernel/fork.c b/kernel/fork.c
+> >> index df8e4575ff01..b57cd63cfcd1 100644
+> >> --- a/kernel/fork.c
+> >> +++ b/kernel/fork.c
+> >> @@ -2290,10 +2290,11 @@ __latent_entropy struct task_struct *copy_process(
+> >>  
+> >>  	task_io_accounting_init(&p->ioac);
+> >>  	acct_clear_integrals(p);
+> >>  
+> >>  	posix_cputimers_init(&p->posix_cputimers);
+> >> +	tick_dep_clear_task(p, TICK_DEP_BIT_POSIX_TIMER);
+> >
+> > Yes but we don't need the expensive atomic_fetch_andnot(). Also more
+> > generally the task tick dependency should be 0 upon creation.
+> >
+> > So something like this?
 > 
-> Signed-off-by: Linu Cherian <lcherian@marvell.com>
-> ---
-> Changelog from v2:
+> Yeah, the only other uses are contained in rcu_do_batch and rcutorture
+> tests, which won't end up here anyways.
 > 
-> New refactoring patch.
+> Up to you if you want to send this or I can send out a v2.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Sounds good, please send a v2.
 
+Thanks!
 
