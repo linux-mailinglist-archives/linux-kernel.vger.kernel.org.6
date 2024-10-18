@@ -1,217 +1,91 @@
-Return-Path: <linux-kernel+bounces-372316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA23B9A470A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:34:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF0C9A4712
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFB51C211FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:34:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB5B91C221ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7EE204F6C;
-	Fri, 18 Oct 2024 19:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E674205ABF;
+	Fri, 18 Oct 2024 19:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vDj8XJFC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="l3oO1bZ0"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87C0757F3;
-	Fri, 18 Oct 2024 19:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF5373477;
+	Fri, 18 Oct 2024 19:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729280054; cv=none; b=KsJkjKvrogWN82dJhZDBhdaKR6vBvlwBPzTwgr2Q5T33Y1NN1/m5qr1gS2BaDRNlpjQKK706KH9td7CY4NwiOzsoqyU1D4DOCnV6JQ71FfEJDqj71IOg84aM5VSI5wzwDIHWVA7VmpOJk4UbSIHPinrmYOvVCh9p8kk+Q8TtaMk=
+	t=1729280261; cv=none; b=m93PLqokGpiiwF4hPaG+cetBS57dcV+O1Uga/39fJ2fFX3IlrznnDCC5SrO2gxbnFz/4Nn3Y6XztbeZBIZ10ENVh4qIewmo3QJpfT4bxhlEk/jnuRSUlQbTcF8m+gKBGNPwDqkl6oVT2ap2fs5M096hs6qEYHqU3DS8XDSVUbt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729280054; c=relaxed/simple;
-	bh=PA0c7dC1ikcGJw/dBRDgPk7KxYeY0mCH5fO+eV2W+Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=X0rj92QTikiPs9RtozSaTcA2ROec/PNF31ihu1G4efo+9iVXHZUGB93HmJteXneM/kxTDEy3Xog4VDoO+8C12z63NStQe5cdxpHeu0bxN1llOR7e6d0gS/RUxKmE/W8PnnXmLDYIUdDhdPDExR4SpKZBdMFYDXecV/zBt5MoYiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vDj8XJFC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49604C4CEC3;
-	Fri, 18 Oct 2024 19:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729280053;
-	bh=PA0c7dC1ikcGJw/dBRDgPk7KxYeY0mCH5fO+eV2W+Ew=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=vDj8XJFCc8hIXbVAKXDrjmZA2OdooYyLo6C5Bmap1gc7nq/Zr4H5bI2KEJJRD0wr/
-	 7wvhsTXSrrYY3e9W2zPl88EYBq5Fi/73q0O9CO2n5zGgW92u2d3Mv/3ul8SeoWCQj3
-	 CEi524wYbKRWxqYqfxOJz4mOanOCfxe4gAaIqVP3itTinovQVNtkuOrnXG8G01Arfv
-	 DXrsO2Ng3thvlok1ifhOQwKZGnfJMswdhk+rPqwunk5nnAV2caTeEZBQHERUTIBi6z
-	 j5JVauzmUKEbz/2YE1UzlcpLGM6ON7sRvLYywTwAvJV9uLjJWha/EpHOOThnl07mQh
-	 TvcepjAhmQjZg==
-Date: Fri, 18 Oct 2024 14:34:11 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Joseph Jang <jjang@nvidia.com>
-Cc: shuah@kernel.org, tglx@linutronix.de, mochs@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] selftest: drivers: Add support to check duplicate hwirq
-Message-ID: <20241018193411.GA758389@bhelgaas>
+	s=arc-20240116; t=1729280261; c=relaxed/simple;
+	bh=/lrZfts5NbnRQtVSw9VtSm/CdSHLv/6Pba0zDxeHWh0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WXD6GWQgw7l2Ay2ditJCIbsiSqQDCjZ1YAUeU+zea8gYRDYiCcYkK8dzc8NTf6hTTCGbxBlquxGNC9o7fbF2AFr4SGCThg3A+o/afk/yBaMZKBgqENkkOSitJV8om4XssEFeJs0f2c4nyl2Jsopw72O/mMwvpQ5X+TwmT9Nxjhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=l3oO1bZ0; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 754881C0003;
+	Fri, 18 Oct 2024 19:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1729280251;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/lrZfts5NbnRQtVSw9VtSm/CdSHLv/6Pba0zDxeHWh0=;
+	b=l3oO1bZ02YmVeOvsX5Y062C3xzO1MtwuKL2jAy+dAbONORGmFLJmZtzm2yWr2NXSGL9Fzl
+	BBnbpMK0KmXgTR+48symI+ey2aM+HD9Tx+p7rv3/XYd71YC18pv3ljpuE4l7jDYNvN0huH
+	1pjyYQq3JM8iU8OcgI4WGveJa4pJfRxOBjffBgnrTxG49Ac757WarENNQ+VgONWyPy5GZs
+	hToZkjbEeOJ97kX1rA/fxGthgFMOyZQ+CQrfs0UOqxfn0P80uAjCJ17UexrcsCkDwfBhQT
+	hWUd4iI8WGACyzZtk3A+nZF3cWMAPPkN9eaTT1rKPqCC2yzJFm2fM8/JH0wOFA==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Theodore Ts'o
+ <tytso@mit.edu>,  Andreas Dilger <adilger.kernel@dilger.ca>,  Hugh Dickins
+ <hughd@google.com>,  Andrew Morton <akpm@linux-foundation.org>,  Jonathan
+ Corbet <corbet@lwn.net>,  smcv@collabora.com,  kernel-dev@igalia.com,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-ext4@vger.kernel.org,  linux-mm@kvack.org,
+  linux-doc@vger.kernel.org
+Subject: Re: [PATCH v7 1/9] libfs: Create the helper function
+ generic_ci_validate_strict_name()
+In-Reply-To: <20241017-tonyk-tmpfs-v7-1-a9c056f8391f@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Thu, 17 Oct 2024 18:14:11 -0300")
+References: <20241017-tonyk-tmpfs-v7-0-a9c056f8391f@igalia.com>
+	<20241017-tonyk-tmpfs-v7-1-a9c056f8391f@igalia.com>
+Date: Fri, 18 Oct 2024 15:37:25 -0400
+Message-ID: <87zfn1yzgq.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904014426.3404397-1-jjang@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gabriel@krisman.be
 
-On Tue, Sep 03, 2024 at 06:44:26PM -0700, Joseph Jang wrote:
-> Validate there are no duplicate hwirq from the irq debug
-> file system /sys/kernel/debug/irq/irqs/* per chip name.
-> 
-> One example log show 2 duplicated hwirq in the irq debug
-> file system.
-> 
-> $ sudo cat /sys/kernel/debug/irq/irqs/163
-> handler:  handle_fasteoi_irq
-> device:   0019:00:00.0
->      <SNIP>
-> node:     1
-> affinity: 72-143
-> effectiv: 76
-> domain:  irqchip@0x0000100022040000-3
->  hwirq:   0xc8000000
->  chip:    ITS-MSI
->   flags:   0x20
-> 
-> $ sudo cat /sys/kernel/debug/irq/irqs/174
-> handler:  handle_fasteoi_irq
-> device:   0039:00:00.0
->     <SNIP>
-> node:     3
-> affinity: 216-287
-> effectiv: 221
-> domain:  irqchip@0x0000300022040000-3
->  hwirq:   0xc8000000
->  chip:    ITS-MSI
->   flags:   0x20
-> 
-> The irq-check.sh can help to collect hwirq and chip name from
-> /sys/kernel/debug/irq/irqs/* and print error log when find duplicate
-> hwirq per chip name.
-> 
-> Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
-> [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-I don't know enough about this issue to understand the details.  It
-seems like you look for duplicate hwirqs in chips with the same name,
-e.g., "ITS-MSI" in this case?  That name seems too generic to me
-(might there be several instances of "ITS-MSI" in a system?)
+> Create a helper function for filesystems do the checks required for
+> casefold directories and strict encoding.
+>
+> Suggested-by: Gabriel Krisman Bertazi <krisman@suse.de>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 
-Also, the name may come from chip->irq_print_chip(), so it apparently
-relies on irqchip drivers to make the names unique if there are
-multiple instances?
 
-I would have expected looking for duplicates inside something more
-specific, like "irqchip@0x0000300022040000-3".  But again, I don't
-know enough about the problem to speak confidently here.
+Reviewed-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
 
-Cosmetic nits:
 
-  - Tweak subject to match history (use "git log --oneline
-    tools/testing/selftests/drivers/" to see it), e.g.,
-
-      selftests: irq: Add check for duplicate hwirq
-
-  - Rewrap commit log to fill 75 columns.  No point in using shorter
-    lines.
-
-  - Indent the "$ sudu cat ..." block by a couple spaces since it's
-    effectively a quotation, not part of the main text body.
-
-  - Possibly include sample output of irq-check.sh (also indented as a
-    quote) when run on the system where you manually found the
-    duplicate via "sudo cat /sys/kernel/debug/irq/irqs/..."
-
-  - Reword "The irq-check.sh can help ..." to something like this:
-
-      Add an irq-check.sh test to report errors when there are
-      duplicate hwirqs per chip name.
-
-  - Since the kernel patch has already been merged, cite it like this
-    instead of using the https://lore URL:
-
-      db744ddd59be ("PCI/MSI: Prevent MSI hardware interrupt number truncation")
-
-> Signed-off-by: Joseph Jang <jjang@nvidia.com>
-> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
-> ---
->  tools/testing/selftests/drivers/irq/Makefile  |  5 +++
->  tools/testing/selftests/drivers/irq/config    |  2 +
->  .../selftests/drivers/irq/irq-check.sh        | 39 +++++++++++++++++++
->  3 files changed, 46 insertions(+)
->  create mode 100644 tools/testing/selftests/drivers/irq/Makefile
->  create mode 100644 tools/testing/selftests/drivers/irq/config
->  create mode 100755 tools/testing/selftests/drivers/irq/irq-check.sh
-> 
-> diff --git a/tools/testing/selftests/drivers/irq/Makefile b/tools/testing/selftests/drivers/irq/Makefile
-> new file mode 100644
-> index 000000000000..d6998017c861
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/irq/Makefile
-> @@ -0,0 +1,5 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +TEST_PROGS := irq-check.sh
-> +
-> +include ../../lib.mk
-> diff --git a/tools/testing/selftests/drivers/irq/config b/tools/testing/selftests/drivers/irq/config
-> new file mode 100644
-> index 000000000000..a53d3b713728
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/irq/config
-> @@ -0,0 +1,2 @@
-> +CONFIG_GENERIC_IRQ_DEBUGFS=y
-> +CONFIG_GENERIC_IRQ_INJECTION=y
-> diff --git a/tools/testing/selftests/drivers/irq/irq-check.sh b/tools/testing/selftests/drivers/irq/irq-check.sh
-> new file mode 100755
-> index 000000000000..e784777043a1
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/irq/irq-check.sh
-> @@ -0,0 +1,39 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +# This script need root permission
-> +uid=$(id -u)
-> +if [ $uid -ne 0 ]; then
-> +	echo "SKIP: Must be run as root"
-> +	exit 4
-> +fi
-> +
-> +# Ensure debugfs is mounted
-> +mount -t debugfs nodev /sys/kernel/debug 2>/dev/null
-> +if [ ! -d "/sys/kernel/debug/irq/irqs" ]; then
-> +	echo "SKIP: irq debugfs not found"
-> +	exit 4
-> +fi
-> +
-> +# Traverse the irq debug file system directory to collect chip_name and hwirq
-> +hwirq_list=$(for irq_file in /sys/kernel/debug/irq/irqs/*; do
-> +	# Read chip name and hwirq from the irq_file
-> +	chip_name=$(cat "$irq_file" | grep -m 1 'chip:' | awk '{print $2}')
-> +	hwirq=$(cat "$irq_file" | grep -m 1 'hwirq:' | awk '{print $2}' )
-> +
-> +	if [ -z "$chip_name" ] || [ -z "$hwirq" ]; then
-> +		continue
-> +	fi
-> +
-> +	echo "$chip_name $hwirq"
-> +done)
-> +
-> +dup_hwirq_list=$(echo "$hwirq_list" | sort | uniq -cd)
-> +
-> +if [ -n "$dup_hwirq_list" ]; then
-> +	echo "ERROR: Found duplicate hwirq"
-> +	echo "$dup_hwirq_list"
-> +	exit 1
-> +fi
-> +
-> +exit 0
-> -- 
-> 2.34.1
-> 
+--=20
+Gabriel Krisman Bertazi
 
