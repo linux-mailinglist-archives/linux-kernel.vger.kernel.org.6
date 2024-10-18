@@ -1,96 +1,95 @@
-Return-Path: <linux-kernel+bounces-372179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D5B9A4558
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 128939A4559
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7C7284913
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:57:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6CC92812ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9D420401D;
-	Fri, 18 Oct 2024 17:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE17204012;
+	Fri, 18 Oct 2024 17:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nLTrTOpV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wNAZAOF3"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88D7370;
-	Fri, 18 Oct 2024 17:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383872038B8
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729274269; cv=none; b=OnIq0wOLhcduJblLDOhTMqPbgBuQRjjXAI/a17tX/4TIErXIO4V8+Xcvl/HyZ0B3FS+SqDHAm83BoEz+CGTNX2Tauvg+xHa/WWXv0DU5bO6GO8EvIEkgnG7Ru4USNVu6VHz4ZqcNmknGDT+/PzBjmRiA59SHHYNTttyjZRsAXAE=
+	t=1729274317; cv=none; b=oCujP9eOPbPX6g/IvWHHt82ufNO6awXPyzWzBmX1kxsr0gMs4BoN1OIYiZZen9l9VjP6Abwm7UnNfNk6VxrLxFAhOtGmcwgzbk1l1S7nbo4AkP+PJJIiOCVgv4sOJuDWUp/ImmZjtKbrtgGIPRS4LmPR19zyiG0CLuZK4Kfl0uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729274269; c=relaxed/simple;
-	bh=xtS8n8Jq0YVcFkpXW1vVP5q+qR5OCdPNc8aBh0XW/28=;
+	s=arc-20240116; t=1729274317; c=relaxed/simple;
+	bh=oHgvB2cXKEMPeb1/CIHBwhI6gydtE+LOSyagYqAN2Fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TPUaxw1yUbc+iWmwVZ+HVomusb2xuJIC2LKkxhmTXKO6zEDGs+tsFPoT64F+ip6JwvIWMewM+pcppi+1U1VZJ+QRk+QpznjsOA/E9iRVgsWHt85vBSCsjr3nsqg4XX6Iybvuex2fnFmbcsjISRCfVThfRA5wIG40QUqC+qPu+EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nLTrTOpV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=1XH3C6puuyO0GVVr6J8qrsqvdtJ7rHyrQHKdm3F9rb4=; b=nL
-	TrTOpVyJJvFhO65Oehti5rMuApOhKObSUrasY80TmEwQJofwJOV26EQGFrFOT6NzeYcEeFfeppBkC
-	x3MjNgWrJaAel7zx1+1xZaw9XKHaR/GRYu2oFTdDxM3PRP7qamUc6+xk87pl4TUZsDoI0GVuDlzaz
-	Ri6BE7b9AuV777Y=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t1rDx-00AYTW-Py; Fri, 18 Oct 2024 19:57:17 +0200
-Date: Fri, 18 Oct 2024 19:57:17 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Fan =?utf-8?B?SGFpbG9uZy/ojIPmtbfpvpk=?= <hailong.fan@siengine.com>
-Cc: Simon Horman <horms@kernel.org>,
-	"2694439648@qq.com" <2694439648@qq.com>,
-	"alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-	"joabreu@synopsys.com" <joabreu@synopsys.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: =?utf-8?B?5Zue5aSN?= =?utf-8?Q?=3A?= [PATCH] net: stmmac: enable
- MAC after MTL configuring
-Message-ID: <9a11c47e-0cd6-4741-a25b-68538763110a@lunn.ch>
-References: <tencent_6BF819F333D995B4D3932826194B9B671207@qq.com>
- <20241017101857.GE1697@kernel.org>
- <bd7a1be5cec348dab22f7d0c2552967d@siengine.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rsidcWz60ZGCNmtDVy2f/riHlU1xADgjurqc6cVPIpZPg66Nsi4GB3J4IcUbrars8Q6Od4rSEyQGTFovhKQ5G5uA3FjBcM8lLi44Oe5ZkQfYXiIziAM4IWNOAQio04E8cWQui+vNfrdAwrLHzykHCncwKBRmwrro+tTGukBld8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wNAZAOF3; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 18 Oct 2024 19:58:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729274313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6SSCJKGNmaYNr86sLhzC8X3qGmGJ7Vg1vqzbd8IA33U=;
+	b=wNAZAOF3vWyBtZerOPiHjHkzEz84HJaEbiFQHSNAQ2nMibq+GuE8wBwjZ5P8XQOOol8nLN
+	iPVk8Z1s6zIEq2UdlP84rVb4askv6GJlpuOtCvECKAucuaSO6nPF4tD5N/LhhCYkgN5Aa/
+	iFVhVRi3TJ7rmIwjHOHalBWfcFuCs9I=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Andrea Righi <andrea.righi@linux.dev>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: improve WAKE_SYNC behavior for default idle
+ CPU selection
+Message-ID: <ZxKhxaM8Wv8EEXMd@gpd3>
+References: <20241018094033.160188-1-andrea.righi@linux.dev>
+ <ZxKdAvnLOmzPH4in@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bd7a1be5cec348dab22f7d0c2552967d@siengine.com>
+In-Reply-To: <ZxKdAvnLOmzPH4in@slm.duckdns.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 18, 2024 at 01:15:30AM +0000, Fan Hailong/范海龙 wrote:
-> Hi
+On Fri, Oct 18, 2024 at 07:38:10AM -1000, Tejun Heo wrote:
+> Hello,
 > 
-> For example, ETH is directly connected to the switch, which never power down and sends broadcast packets at regular intervals. 
-> During the process of opening ETH, data may flow into the MTL FIFO, once MAC RX is enabled.
-> and then, MTL will be set, such as FIFO size. 
-> Once enable DMA, There is a certain probability that DMA will read incorrect data from MTL FIFO, causing DMA to hang up. 
-> By read DMA_Debug_Status, you can be observed that the RPS remains at a certain value forever. 
-> The correct process should be to configure MAC/MTL/DMA before enabling DMA/MAC
+> On Fri, Oct 18, 2024 at 11:40:33AM +0200, Andrea Righi wrote:
+> ...
+> > +	 * If WAKE_SYNC, try to migrate the wakee to the waker's CPU.
+> > +	 */
+> > +	if (wake_flags & SCX_WAKE_SYNC) {
+> > +		cpu = smp_processor_id();
+> > +
+> > +		/*
+> > +		 * If the waker's CPU is cache affine and prev_cpu is idle,
+> > +		 * then avoid a migration.
+> > +		 */
+> > +		if (cpus_share_cache(cpu, prev_cpu) &&
+> > +		    test_and_clear_cpu_idle(prev_cpu))
+> >  			goto cpu_found;
+> 
+> Shouldn't this do set cpu to prev_cpu before jumping to cpu_found?
 
-What Simon is asking for is that this is part of the commit message.
+Ah! You're absolutely right!
 
-Please also don't top post.
+Let me send a v2 (and test it).
 
-    Andrew
+Thanks,
+-Andrea
 
----
-pw-bot: cr
+> 
+> Thanks.
+> 
+> -- 
+> tejun
 
