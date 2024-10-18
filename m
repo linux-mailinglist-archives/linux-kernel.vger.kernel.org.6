@@ -1,141 +1,174 @@
-Return-Path: <linux-kernel+bounces-372255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DB59A464D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:55:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874689A4650
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DC2A1C22B65
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F09C2819BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A9F204940;
-	Fri, 18 Oct 2024 18:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB85202F71;
+	Fri, 18 Oct 2024 18:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="sZGQoEts"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="3ZxYHRCu"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8DE2038B4
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E11320400F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729277730; cv=none; b=Cc8h+ofTZCoUeXR5EEc0dfv9/lXGcIei7srqiIIWZTfk2DZZic9vTfHyqc2vlQCPJ8z8hpEwPe9aDdcPulP/i4WRqOn/xNdrJesHpr0o6KSiYZIFRqJ4Veh2NJOKdnbCiMYazwAyck6ItHg3t21P0ahFgEDO3dCa4FFxU6O3eYs=
+	t=1729277845; cv=none; b=eQtObJZfa2zA5VveO4Mv4pHwxoveNtz37V2Kq1RiQtx3qq6i3z0quOppW6BZ9Ne6kpd49Tvyv55b4se0pDl8vCSTM+EZt7gizsi0wIkRORYzVwJ9YIPA407XTPx8+dXflLVGkwusjVTRE+iE1OvYYr4/9CdNyxBbdtwwHD6kEZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729277730; c=relaxed/simple;
-	bh=FyxG8L0kTeJMBvFZ2TqpR7bCfzlRoydYJ1KvWJsuPAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d7s64WeMCgkX9w/qbXcVKun2itHVECjJmDjZMq4UZyMU/+eqWz3Ihrzpl2ya2kfSN99st9E5mb717O089Maq+y87mPAXOEuh8hsIe6L/57UYZkHruSCqZdK+QJLiJYrpNp7YI9BoT7ZV2CQ7nrKW/7yPn6OnG9Zu12qAw1JSy5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=sZGQoEts; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
-	by cmsmtp with ESMTPS
-	id 1TIKto4GUg2lz1s88tCfQX; Fri, 18 Oct 2024 18:55:20 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 1s87tmIi8827n1s87tyuqb; Fri, 18 Oct 2024 18:55:19 +0000
-X-Authority-Analysis: v=2.4 cv=GeTcnhXL c=1 sm=1 tr=0 ts=6712af17
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=OKg9RQrQ6+Y1xAlsUndU0w==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=1cCw6Q031rO_cLs8eM8A:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KrrHr3IraN34Z7RX5pMYVY2PbGjQrd0P+774MqXGDuM=; b=sZGQoEtsG0vy1dYKYMPwugisEF
-	6RFiB5MLfeCqdEgdeLf6elPw+zhdYUUFYR7g2xW7vi6MIQvzvngqrEHhEKC1yHicB+fqEKOsh2HYK
-	zdyy/Cv6DxRnSNE7mdCF0KJKfkDRalzdRGW3AGAx91xeMnX36z59pq+9b9jDaUKiaxowEoSEW+6HB
-	RGqUzVywxRLkD/4HbdA7eStG/bze7zndB8rWKS902vb1aGeoLxIC7DXv6RAdwal1S2OP286Qf5+Eq
-	cLg5LZQQKACAOHMTnjyx6fOMbl52j32doIYDiQeXbXHEaRDhbLFL2TPS8frIVVE1hrWKuLBHk1m9h
-	41rQWJ3g==;
-Received: from [201.172.173.7] (port=46946 helo=[192.168.15.5])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1t1s84-001YNE-32;
-	Fri, 18 Oct 2024 13:55:16 -0500
-Message-ID: <7bef8129-55b4-40e4-80c2-d319b8d6c251@embeddedor.com>
-Date: Fri, 18 Oct 2024 12:55:10 -0600
+	s=arc-20240116; t=1729277845; c=relaxed/simple;
+	bh=LC0THKi60XSf6Rs76nPewkIzh1cFMQWvtnW1iEDcv58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBhfU46oBd5ROEYdzGbdI0w6KfDbg/+AgEJE1T+CROhbcao2FxvpJNeuDsNqjq9wlzXmRiGefkDdPEDjls8Zk901XzR3ly60OPWy/mkypYw1bUz4AU66s4dtuMbjnZwsF1JurHoUW499z0KapNvtaGz/T/fvdgpDkTlnSY8Y5zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=3ZxYHRCu; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cd7a2ed34bso7162826d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1729277841; x=1729882641; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s4xPE1nr+Xi0Dvh9jf2xWIR8MzeS9sAig5u4V7FCQVk=;
+        b=3ZxYHRCuza/lX6kV9XKDHSmESyrsXES7ps6N4UsXgod4yZtwV7U0cpWZLk7dUaYgoQ
+         eNFqKsmP80AHaCLruLkZ1YgZdgipgG1WYeFOLlHFAn9QHZxgUUDLAp0lEr/+ybxttmfx
+         jGYKD4bwESvabnXxoupu5NzHbhCE4OM6fzHz+qMfHxyMx2JKlsbssuES9GtVsrGxBaM5
+         /xaZUYM6LeXyorGmVPX68ZCnZ37ZxOQPVBiQq+lhxEFXNXSM3Gy8l+NKzlaiQ2i2fR57
+         iq/q2vY93aPyBx3WVqT1RxVd4Yh+EuJW0dY9MbUgGjo5cdixPTTHUV0Jim4KAt1wZo87
+         NN4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729277841; x=1729882641;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s4xPE1nr+Xi0Dvh9jf2xWIR8MzeS9sAig5u4V7FCQVk=;
+        b=T1Fgi6jCJa6ctlCoj6pcpbfDffYdzYea382ho11/gRrZ0j6ALOZ8OiSc8Cn+ONPwsc
+         8Zs+4j10DEjnN6uqE37kUtC2fiLKpHoW0iFUGCriikPJofKKkrw5qFhOJ4GE0oFH33y/
+         1AQfS2YdzGb1m5wvSNfrgxNK4rj9iDqSxxez6kg/OeYgYWQZZdO2HSpo5aEESR4ZxhF6
+         bFmCNhPl+hvb6XjYobZELRD0s7dfqSlThB8oVz8tNUbaglMLwnfvzAWrpSOVjAjXdT4F
+         gXI+63gErqHUYfLtMCpfOPnvj3gn0W5sRED5d6o3tk+3+bhZnUzrPyyaMnPyDhOTVGGv
+         JTUA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3jFxb2p7RhNHTE7/r9mh1oUuLGd5SEm9dbCPdDQ71+hdOiAovnFsK3FFDxDSGj/SJW9yUOWmz53s+ENE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs/FBP2F0qksaA9OE+u/jL1/gsqjdYlqhkJPpHsKLQohROQz2h
+	Iqv+HsJ5w2EiHY0CHGHTbRvhQ5Q5SrNz3d0On3kVGnX/7J0stt2ewxnZlOgIGPo=
+X-Google-Smtp-Source: AGHT+IEuuGSdfEcgR68BP9v0JkgMFSUHwOyBoM4Mf66gDspCSViiSEAWC/C55KbM/GlLKRr9IvX+wA==
+X-Received: by 2002:a05:6214:4808:b0:6cc:2ba7:7f7b with SMTP id 6a1803df08f44-6cde1553260mr52975886d6.28.1729277840921;
+        Fri, 18 Oct 2024 11:57:20 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cde122a159sm9406996d6.100.2024.10.18.11.57.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 11:57:19 -0700 (PDT)
+Date: Fri, 18 Oct 2024 14:57:15 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, nphamcs@gmail.com,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, lnyng@meta.com
+Subject: Re: [PATCH 0/1] memcg/hugetlb: Adding hugeTLB counters to memory
+ controller
+Message-ID: <20241018185715.GA81612@cmpxchg.org>
+References: <20241017160438.3893293-1-joshua.hahnjy@gmail.com>
+ <ZxI0cBwXIuVUmElU@tiehlicka>
+ <20241018123122.GB71939@cmpxchg.org>
+ <ZxJltegdzUYGiMfR@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5][next] uapi: net: arp: Avoid
- -Wflex-array-member-not-at-end warnings
-To: Kees Cook <kees@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Johannes Berg <johannes@sipsolutions.net>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, David Ahern <dsahern@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <cover.1729037131.git.gustavoars@kernel.org>
- <f04e61e1c69991559f5589080462320bf772499d.1729037131.git.gustavoars@kernel.org>
- <ac2ea738-09fb-4d03-b91c-d54bcfb893c6@lunn.ch>
- <202410160942.000495E@keescook>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <202410160942.000495E@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.7
-X-Source-L: No
-X-Exim-ID: 1t1s84-001YNE-32
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.5]) [201.172.173.7]:46946
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNqPTXMfQcJ/gElXgE7UzMCMFJqkuQMnOOF4lFCrctStsjCj+WGtgVt4Y/riOLLSHG5WHxxZ0WXkBz52LuZP1rop7EhUPY7K0Z5CxZ1q8hdMjaIEP5rD
- M9CvjblZxFuuwGxElcI2uocV6EpxgUagb5zh/jSVi+4ZHQoY3Hkn2Fxh11mvGSD0ot/m0gjiFB1vOPylS1xI0fPGuq6ivfExBdXX1iwYi56//U2REGD0jRZS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxJltegdzUYGiMfR@tiehlicka>
 
-
->> These are clearly UAPI files. It would be good to state in the commit
->> message why this is a safe change, at the source level.
-
-Yes, I'll update it!
-
+On Fri, Oct 18, 2024 at 03:42:13PM +0200, Michal Hocko wrote:
+> On Fri 18-10-24 08:31:22, Johannes Weiner wrote:
+> > On Fri, Oct 18, 2024 at 12:12:00PM +0200, Michal Hocko wrote:
+> > > On Thu 17-10-24 09:04:37, Joshua Hahn wrote:
+> > > > HugeTLB usage is a metric that can provide utility for monitors hoping
+> > > > to get more insight into the memory usage patterns in cgroups. It also
+> > > > helps identify if large folios are being distributed efficiently across
+> > > > workloads, so that tasks that can take most advantage of reduced TLB
+> > > > misses are prioritized.
+> > > > 
+> > > > While cgroupv2's hugeTLB controller does report this value, some users
+> > > > who wish to track hugeTLB usage might not want to take on the additional
+> > > > overhead or the features of the controller just to use the metric.
+> > > > This patch introduces hugeTLB usage in the memcg stats, mirroring the
+> > > > value in the hugeTLB controller and offering a more fine-grained
+> > > > cgroup-level breakdown of the value in /proc/meminfo.
+> > > 
+> > > This seems really confusing because memcg controller is not responsible
+> > > for the hugetlb memory. Could you be more specific why enabling hugetlb
+> > > controller is not really desirable when the actual per-group tracking is
+> > > needed?
+> > 
+> > We have competition over memory, but not specifically over hugetlb.
+> > 
+> > The maximum hugetlb footprint of jobs is known in advance, and we
+> > configure hugetlb_cma= accordingly. There are no static boot time
+> > hugetlb reservations, and there is no opportunistic use of hugetlb
+> > from jobs or other parts of the system. So we don't need control over
+> > the hugetlb pool, and no limit enforcement on hugetlb specifically.
+> > 
+> > However, memory overall is overcommitted between job and system
+> > management. If the main job is using hugetlb, we need that to show up
+> > in memory.current and be taken into account for memory.high and
+> > memory.low enforcement. It's the old memory fungibility argument: if
+> > you use hugetlb, it should reduce the budget for cache/anon.
+> > 
+> > Nhat's recent patch to charge hugetlb to memcg accomplishes that.
+> > 
+> > However, we now have potentially a sizable portion of memory in
+> > memory.current that doesn't show up in memory.stat. Joshua's patch
+> > addresses that, so userspace can understand its memory footprint.
+> > 
+> > I hope that makes sense.
 > 
-> I think we can avoid complicating UAPI by doing something like this in
-> include/uapi/linux/socket.h:
+> Looking at 8cba9576df60 ("hugetlb: memcg: account hugetlb-backed memory
+> in memory controller") describes this limitation
 > 
-> #ifdef __KERNEL__
-> #define __kernel_sockaddr_legacy        sockaddr_legacy
-> #else
-> #define __kernel_sockaddr_legacy        sockaddr
-> #endif
+>       * Hugetlb pages utilized while this option is not selected will not
+>         be tracked by the memory controller (even if cgroup v2 is remounted
+>         later on).
 > 
-> And then the UAPI changes can use __kernel_sockaddr_legacy and userspace
-> will resolve to sockaddr (unchanged), and the kernel internals will
-> resolve to sockaddr_legacy (fixing the warnings).
+> and it would be great to have an explanation why the lack of tracking
+> has proven problematic.
 
-Here are a couple of test patches (Don't mind the changelog text):
+Yes, I agree it would be good to outline this in the changelog.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git/commit/?h=testing/wfamnae-next20241015-2&id=c3b631a5036cbf45b3308d563bf74a518490f3e6
-https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git/commit/?h=testing/wfamnae-next20241015-2&id=66db096a530b95ce0ac33f9fdec66401ec5f2204
+The argument being that memory.stat breaks down the consumers that are
+charged to memory.current. hugetlb is (can be) charged, but is not
+broken out. This is a significant gap in the memcg stats picture.
 
-__kernel_sockaddr_legacy seems a bit too long, but at the same time
-it makes it quite clear what's going on.
+> Also the above doesn't really explain why those who care cannot
+> really enabled hugetlb controller to gain the consumption
+> information.
 
-Thanks
---
-Gustavo
+Well, I have explained why we don't need it at least. Enabling almost
+a thousand lines of basically abandoned code, compared to the few
+lines in this patch, doesn't strike me as reasonable.
+
+That said, I don't think the hugetlb controller is relevant. With
+hugetlb being part of memory.current (for arguments that are already
+settled), it needs to be itemized in memory.stat. It's a gap in the
+memory controller in any case.
+
+> Also what happens if CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING is disabled.
+> Should we report potentially misleading data?
+
+Good point. The stat item tracking should follow the same rules as
+charging, such that memory.current and memory.stat are always in sync.
+
+A stat helper that mirrors the mem_cgroup_hugetlb_try_charge() checks
+would make sense to me. E.g. lruvec_stat_mod_hugetlb_folio().
 
