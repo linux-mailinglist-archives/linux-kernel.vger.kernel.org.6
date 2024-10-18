@@ -1,253 +1,142 @@
-Return-Path: <linux-kernel+bounces-371851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3209A4151
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:37:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 364A59A4154
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6F31C21854
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:37:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567EC1C22572
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531991F4265;
-	Fri, 18 Oct 2024 14:37:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94353768E1;
-	Fri, 18 Oct 2024 14:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102561F426D;
+	Fri, 18 Oct 2024 14:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qiG4tHAu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C211D9686;
+	Fri, 18 Oct 2024 14:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729262248; cv=none; b=hdVbao/Md8d5qg4CpV1At8OzKKAg3L8RjVTQYDWKj9iSUwqYcB/eNe3yMDQE+U7MgEy7ddiFbyf0VMnkyXqEQ9ZVoHY90A+WaACdTBtRoE1MsJ6sEUelgZrCwiWQrDqwkaPjeFy8r51dVMPDfajCWvf47bHSl5PyeBLd+QcZSC0=
+	t=1729262279; cv=none; b=cj4rXaWT1Yqf7bvPU2gKocP+im59syCFl/ry29H/6qmXagdW8VSQ0BtWQKj4KikzXym0tgFrKcMCQMr2O++nycyflwc3wCKvt8eVpoPLKjWVAKR8TGdP6Nz6jQ+kVlnDXWCRpik/npKVqWgVfuqX9DMzdgQ3m7UV18SFLNRjdlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729262248; c=relaxed/simple;
-	bh=A0Qe57BA5SKFuEpfXr/0vVf3iraWpCGMTe6Ux26pQBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N52ckIcDOYdcZPz685S+J0HwBX8TxW9gF3R0FEWqfz77KnKGclG9rHPe80L4qAbkSHbUcaImWQHkfRMo+Oyh5S3bQQoZRabpPLn76NUXmm02V0N8E+ZqC7CI31lQ1kgSmwceibDVUAppIMwg0Ce72AZdJsIoiRF7AYC4658vAIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6765FDA7;
-	Fri, 18 Oct 2024 07:37:55 -0700 (PDT)
-Received: from [10.57.87.223] (unknown [10.57.87.223])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DC163F58B;
-	Fri, 18 Oct 2024 07:37:24 -0700 (PDT)
-Message-ID: <b17802cb-5dcd-4161-b192-89abd55c1228@arm.com>
-Date: Fri, 18 Oct 2024 15:37:22 +0100
+	s=arc-20240116; t=1729262279; c=relaxed/simple;
+	bh=/yyE0BGb/moBwgooACTr9VFti4FrIkhryK2klPZDuCI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=WS7X2LINWNBAAOyWVKQJouQ++gvQzjuN7+F4Lv3gMPo7Qihi+/H+18Rfds20Wc928wOojejpZimoogaMA5w+VP5nYQax3MK4PlgMA9R+zzhf0LXHu+uoUlZngmYfeLGk5SSMP6rB6HUCfIPlScep3EqVH1T9kUCE8huth3w9q9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qiG4tHAu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFECFC4CEC3;
+	Fri, 18 Oct 2024 14:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729262278;
+	bh=/yyE0BGb/moBwgooACTr9VFti4FrIkhryK2klPZDuCI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=qiG4tHAuQBSyL/RgfKO+s2rjYAJhTmXb/qUKTsrukKbgNEOp3HY8HLukgvMNIEZRo
+	 lbGk5Bj350yc2nL+nng3xf/tx8lOXN0tz/VZK76BOaFQsl4WpCsWs5hY9LjP2iCHz9
+	 gslkj1QMZ8AoD/7O5CDkMdcHUUtYL267kzAsh1alz9fcKZimWYDmmgAIfoKxVlRWE+
+	 m41fPDH/6/ojcEVB+RqCCF2u7nF54tgjDBU9dlEVDZ3SKySxscDH04kRmoBpPaB7E2
+	 zkRFuM3ay9kYdr7pabvETjsYbe0PgSR1FpFMzXIBykSZ8sva/0TJIPe8x7EiJ/0mjH
+	 oFeIfan81aBHA==
+Date: Fri, 18 Oct 2024 07:37:52 -0700
+From: Kees Cook <kees@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Hans Verkuil <hverkuil@xs4all.nl>, Kevin Hao <haokexin@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ Kees Cook <keescook@chromium.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_04/13=5D_media=3A_dvb=5Ffrontend?=
+ =?US-ASCII?Q?=3A_don=27t_play_tricks_with_underflow_values?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <ab51f981844c700d4e66b366c8d2abde7c5947bf.camel@redhat.com>
+References: <cover.1729230718.git.mchehab+huawei@kernel.org> <8d6193ed8d53ce94d595cb431627bbc7783c0e4c.1729230718.git.mchehab+huawei@kernel.org> <ab51f981844c700d4e66b366c8d2abde7c5947bf.camel@redhat.com>
+Message-ID: <4D0C7D12-C645-4766-B7B1-0B34B2129579@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftests/mm: replace atomic_bool with
- pthread_barrier_t
-Content-Language: en-GB
-To: Edward Liaw <edliaw@google.com>, linux-kselftest@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- Lokesh Gidra <lokeshgidra@google.com>, Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
- linux-mm@kvack.org, Aishwarya TCV <Aishwarya.TCV@arm.com>
-References: <20241003211716.371786-1-edliaw@google.com>
- <20241003211716.371786-2-edliaw@google.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241003211716.371786-2-edliaw@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 03/10/2024 22:17, Edward Liaw wrote:
-> Swaps synchronization primitive with pthread_barrier, so that
-> stdatomic.h does not need to be included.
-> 
-> The synchronization is needed on Android ARM64; we see a deadlock with
-> pthread_create when the parent thread races forward before the child has
-> a chance to start doing work.
-> 
-> Fixes: 8c864371b2a1 ("selftests/mm: fix ARM related issue with fork after
-> pthread_create")
-> Signed-off-by: Edward Liaw <edliaw@google.com>
-> ---
->  tools/testing/selftests/mm/uffd-common.c     |  5 +++--
->  tools/testing/selftests/mm/uffd-common.h     |  3 +--
->  tools/testing/selftests/mm/uffd-unit-tests.c | 14 ++++++++------
->  3 files changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-> index 717539eddf98..852e7281026e 100644
-> --- a/tools/testing/selftests/mm/uffd-common.c
-> +++ b/tools/testing/selftests/mm/uffd-common.c
-> @@ -18,7 +18,7 @@ bool test_uffdio_wp = true;
->  unsigned long long *count_verify;
->  uffd_test_ops_t *uffd_test_ops;
->  uffd_test_case_ops_t *uffd_test_case_ops;
-> -atomic_bool ready_for_fork;
-> +pthread_barrier_t ready_for_fork;
->  
->  static int uffd_mem_fd_create(off_t mem_size, bool hugetlb)
->  {
-> @@ -519,7 +519,8 @@ void *uffd_poll_thread(void *arg)
->  	pollfd[1].fd = pipefd[cpu*2];
->  	pollfd[1].events = POLLIN;
->  
-> -	ready_for_fork = true;
-> +	/* Ready for parent thread to fork */
-> +	pthread_barrier_wait(&ready_for_fork);
-
-Hi Edward,
-
-This change is causing uffd-unit-tests to hang on arm64 when running the "move on anon" test. It's happening because this wait is never returning for this case. And that happens because ready_for_fork was never initialized for this test. It looks like there are other places where a thread is created for uffd_poll_thread() where ready_for_fork is not initialized too.
-
-I added this change and it solves the problem, although it's pretty hacky.
-
-This is blocking our arm64 testing on linux-next so would appreciate either a quick fix or removing the change until a fix is ready.
-
-Thanks,
-Ryan
-
-----8<-----
-diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-index 852e7281026e..a05eb705be02 100644
---- a/tools/testing/selftests/mm/uffd-common.c
-+++ b/tools/testing/selftests/mm/uffd-common.c
-@@ -19,6 +19,7 @@ unsigned long long *count_verify;
- uffd_test_ops_t *uffd_test_ops;
- uffd_test_case_ops_t *uffd_test_case_ops;
- pthread_barrier_t ready_for_fork;
-+bool wait_ready_for_fork;
- 
- static int uffd_mem_fd_create(off_t mem_size, bool hugetlb)
- {
-@@ -520,7 +521,8 @@ void *uffd_poll_thread(void *arg)
-        pollfd[1].events = POLLIN;
- 
-        /* Ready for parent thread to fork */
--       pthread_barrier_wait(&ready_for_fork);
-+       if (wait_ready_for_fork)
-+               pthread_barrier_wait(&ready_for_fork);
- 
-        for (;;) {
-                ret = poll(pollfd, 2, -1);
-diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
-index 3e6228d8e0dc..e94329a39b34 100644
---- a/tools/testing/selftests/mm/uffd-common.h
-+++ b/tools/testing/selftests/mm/uffd-common.h
-@@ -105,6 +105,7 @@ extern bool test_uffdio_wp;
- extern unsigned long long *count_verify;
- extern volatile bool test_uffdio_copy_eexist;
- extern pthread_barrier_t ready_for_fork;
-+extern bool wait_ready_for_fork;
- 
- extern uffd_test_ops_t anon_uffd_test_ops;
- extern uffd_test_ops_t shmem_uffd_test_ops;
-diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
-index 3db2296ac631..d1fc4cd6a948 100644
---- a/tools/testing/selftests/mm/uffd-unit-tests.c
-+++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-@@ -775,6 +775,7 @@ static void uffd_sigbus_test_common(bool wp)
-        struct uffd_args args = { 0 };
- 
-        pthread_barrier_init(&ready_for_fork, NULL, 2);
-+       wait_ready_for_fork = true;
- 
-        fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
- 
-@@ -794,6 +795,7 @@ static void uffd_sigbus_test_common(bool wp)
-        /* Wait for child thread to start before forking */
-        pthread_barrier_wait(&ready_for_fork);
-        pthread_barrier_destroy(&ready_for_fork);
-+       wait_ready_for_fork = false;
- 
-        pid = fork();
-        if (pid < 0)
-@@ -835,6 +837,7 @@ static void uffd_events_test_common(bool wp)
-        struct uffd_args args = { 0 };
- 
-        pthread_barrier_init(&ready_for_fork, NULL, 2);
-+       wait_ready_for_fork = true;
- 
-        fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
-        if (uffd_register(uffd, area_dst, nr_pages * page_size,
-@@ -848,6 +851,7 @@ static void uffd_events_test_common(bool wp)
-        /* Wait for child thread to start before forking */
-        pthread_barrier_wait(&ready_for_fork);
-        pthread_barrier_destroy(&ready_for_fork);
-+       wait_ready_for_fork = false;
- 
-        pid = fork();
-        if (pid < 0)
-----8<-----
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
->  
->  	for (;;) {
->  		ret = poll(pollfd, 2, -1);
-> diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
-> index a70ae10b5f62..3e6228d8e0dc 100644
-> --- a/tools/testing/selftests/mm/uffd-common.h
-> +++ b/tools/testing/selftests/mm/uffd-common.h
-> @@ -33,7 +33,6 @@
->  #include <inttypes.h>
->  #include <stdint.h>
->  #include <sys/random.h>
-> -#include <stdatomic.h>
->  
->  #include "../kselftest.h"
->  #include "vm_util.h"
-> @@ -105,7 +104,7 @@ extern bool map_shared;
->  extern bool test_uffdio_wp;
->  extern unsigned long long *count_verify;
->  extern volatile bool test_uffdio_copy_eexist;
-> -extern atomic_bool ready_for_fork;
-> +extern pthread_barrier_t ready_for_fork;
->  
->  extern uffd_test_ops_t anon_uffd_test_ops;
->  extern uffd_test_ops_t shmem_uffd_test_ops;
-> diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
-> index b3d21eed203d..3db2296ac631 100644
-> --- a/tools/testing/selftests/mm/uffd-unit-tests.c
-> +++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-> @@ -774,7 +774,7 @@ static void uffd_sigbus_test_common(bool wp)
->  	char c;
->  	struct uffd_args args = { 0 };
->  
-> -	ready_for_fork = false;
-> +	pthread_barrier_init(&ready_for_fork, NULL, 2);
->  
->  	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
->  
-> @@ -791,8 +791,9 @@ static void uffd_sigbus_test_common(bool wp)
->  	if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
->  		err("uffd_poll_thread create");
->  
-> -	while (!ready_for_fork)
-> -		; /* Wait for the poll_thread to start executing before forking */
-> +	/* Wait for child thread to start before forking */
-> +	pthread_barrier_wait(&ready_for_fork);
-> +	pthread_barrier_destroy(&ready_for_fork);
->  
->  	pid = fork();
->  	if (pid < 0)
-> @@ -833,7 +834,7 @@ static void uffd_events_test_common(bool wp)
->  	char c;
->  	struct uffd_args args = { 0 };
->  
-> -	ready_for_fork = false;
-> +	pthread_barrier_init(&ready_for_fork, NULL, 2);
->  
->  	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
->  	if (uffd_register(uffd, area_dst, nr_pages * page_size,
-> @@ -844,8 +845,9 @@ static void uffd_events_test_common(bool wp)
->  	if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
->  		err("uffd_poll_thread create");
->  
-> -	while (!ready_for_fork)
-> -		; /* Wait for the poll_thread to start executing before forking */
-> +	/* Wait for child thread to start before forking */
-> +	pthread_barrier_wait(&ready_for_fork);
-> +	pthread_barrier_destroy(&ready_for_fork);
->  
->  	pid = fork();
->  	if (pid < 0)
 
+On October 18, 2024 4:44:20 AM PDT, Philipp Stanner <pstanner@redhat=2Ecom=
+> wrote:
+>On Fri, 2024-10-18 at 07:53 +0200, Mauro Carvalho Chehab wrote:
+>> fepriv->auto_sub_step is unsigned=2E Setting it to -1 is just a
+>> trick to avoid calling continue, as reported by Coverity=2E
+>>=20
+>> It relies to have this code just afterwards:
+>>=20
+>> 	if (!ready) fepriv->auto_sub_step++;
+>>=20
+>> Simplify the code by simply setting it to zero and use
+>> continue to return to the while loop=2E
+>>=20
+>> Fixes: 1da177e4c3f4 ("Linux-2=2E6=2E12-rc2")
+>
+>Oh wow, back to the big-bang-commit ^^'
+>
+>So is this a bug or not? It seems to me that the uint underflows to
+>UINT_MAX, and then wrapps around to 0 again through the ++=2E=2E
+>
+>I take the liberty of ++CCing Kees, since I heard him talk a lot about
+>overflowing on Plumbers=2E
+>
+>If it's not a bug, I would not use "Fixes"=2E If it is a bug, it should
+>be backported to stable, agreed?
+>
+>Plus, is there a report-link somewhere by Coverty that could be linked
+>with "Closes: "?
+
+Yeah, this is "avoid currently harmless overflow" fix=2E It is just avoidi=
+ng depending on the wrapping behavior, which is an improvement but not real=
+ly a "bug fix"; more a code style that will keep future work of making the =
+kernel wrapping-safe=2E
+
+>
+>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel=2Eorg>
+>
+>Anyways, this in my eyes does what it's intended to do:
+>
+>Reviewed-by: Philipp Stanner <pstanner@redhat=2Ecom>
+>
+>> ---
+>> =C2=A0drivers/media/dvb-core/dvb_frontend=2Ec | 4 ++--
+>> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/drivers/media/dvb-core/dvb_frontend=2Ec
+>> b/drivers/media/dvb-core/dvb_frontend=2Ec
+>> index d48f48fda87c=2E=2Ec9283100332a 100644
+>> --- a/drivers/media/dvb-core/dvb_frontend=2Ec
+>> +++ b/drivers/media/dvb-core/dvb_frontend=2Ec
+>> @@ -443,8 +443,8 @@ static int dvb_frontend_swzigzag_autotune(struct
+>> dvb_frontend *fe, int check_wra
+>> =C2=A0
+>> =C2=A0		default:
+>> =C2=A0			fepriv->auto_step++;
+>> -			fepriv->auto_sub_step =3D -1; /* it'll be
+>> incremented to 0 in a moment */
+>> -			break;
+>> +			fepriv->auto_sub_step =3D 0;
+>> +			continue;
+>> =C2=A0		}
+>> =C2=A0
+>> =C2=A0		if (!ready) fepriv->auto_sub_step++;
+>
+
+But this change seems incomplete=2E The above line is no longer needed=2E
+
+And I actually think this could be refractored to avoid needing "ready" at=
+ all?
+
+-Kees
+
+--=20
+Kees Cook
 
