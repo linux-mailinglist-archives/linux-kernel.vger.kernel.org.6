@@ -1,176 +1,233 @@
-Return-Path: <linux-kernel+bounces-372231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD979A45F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:32:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A30A9A45F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56244283D8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:32:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3690B23027
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58995204083;
-	Fri, 18 Oct 2024 18:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1254204013;
+	Fri, 18 Oct 2024 18:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="He7HI+Uw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McAj2UUm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B6F20E338;
-	Fri, 18 Oct 2024 18:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CF820E338;
+	Fri, 18 Oct 2024 18:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729276356; cv=none; b=I7FSReQoXssRVJ135Wtkm55+ZXvU3cbpq/MCaFj/72krTDRCVGtHEHvnkPl0wGcCwCFNucp1c2DEDytXn+QM0HL7uFUJot87Sj9iWpS6Kj9YS4kbIrVriXackzgxo79jVArcdPNoMrrL1W2I8xOJlo7bc7ymEkHhTuvJvq5JeWA=
+	t=1729276395; cv=none; b=pr8AJOCw41Q1Sg6WwbF1k5QZPpwRhan8bkJ88MOjXhuZIBLo/HF7LFkuQGRrwey+1RW5gaTf3y2fhdt4QvUwurfXOzE0d48vDWGUoa45Ulti14wd/RSzd//H0vcAsWvnhmg3ZCTEDiEDCkZcDKLdBU/G0cZXILnDw4XBk16n/IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729276356; c=relaxed/simple;
-	bh=ZwknKRBj45yWIN8VEOzJN4ZADwXRcELqseQtTwYHpjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pyzJtY/L5PwVegkw0UvNAPWmGk0JvYCyaSkqlB4vSGXjObwpqo0wRPYCL6Hza+mMpLaa1AZmtTYRg1OCIDmMFEPsXG1CBNRbHtpUTXYzSYRubQrSI1qBg1Fts2CUtc67Whs0GNCboO/qnX1Ht6CRhPGAItcT69p6ZcGe/7DEu6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=He7HI+Uw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IArN53025075;
-	Fri, 18 Oct 2024 18:32:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ZwknKR
-	Bj45yWIN8VEOzJN4ZADwXRcELqseQtTwYHpjQ=; b=He7HI+UwwBA7YA/87gJ38w
-	QLL+f3incrA8Pi1O/1AYj/i8wSy4i5S6PGg6v7TI9LVQEi//GxSvLcsGrIzIPSUL
-	mbJTYvW1Umt42voDLoGmIwCpuKQideNrsV1dH4+8KX/OMvOUhPUSo4AAKBSzYulg
-	sTmeg4KGYFSOx1cCAgfdUkLLpk3JFcejz1Sx5aBD6qH4VZgELFy5Tam0E7noeP8u
-	ly1BA8Zba+3Cd6tqU2TvTNrYiyWdOB6g1AO6AF7I54QLYMziEWkKf/Fksk87xFwb
-	pOzgoEygPDXw1CL8KtStz3meXv+Y7ry/g+Khy8cTHSCSokO86J7F5czaoAL3zrPw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42asbdaycu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 18:32:18 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49IIWHqU031157;
-	Fri, 18 Oct 2024 18:32:17 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42asbdaycr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 18:32:17 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49IIBf24005965;
-	Fri, 18 Oct 2024 18:32:16 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 428651dtk7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 18:32:16 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49IIWEuJ54657312
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Oct 2024 18:32:15 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D7DF82005A;
-	Fri, 18 Oct 2024 18:32:14 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5625420040;
-	Fri, 18 Oct 2024 18:32:11 +0000 (GMT)
-Received: from [9.124.220.53] (unknown [9.124.220.53])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 18 Oct 2024 18:32:11 +0000 (GMT)
-Message-ID: <a1cac0d3-c17d-478e-8a6b-40399a9428b6@linux.ibm.com>
-Date: Sat, 19 Oct 2024 00:02:10 +0530
+	s=arc-20240116; t=1729276395; c=relaxed/simple;
+	bh=JTS7l00ywra+1THYcJZQsN2BffW5M/t8l3w1Xebv1OM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tGfpRr2WxPh60NL+Qa6xknT1CqeED5vXfQ7nhI13fmhnjCw1ExaLo5iJVfHhEh7dqySZciMUbCCNdwSHiAwyXsl1ngpo3Fygd8WZTtqeMeaJ+Tt6+4qhA/VsIQv7ySCzRM71NVIM9v5opV/mbGeCEKh5yTXe65daLHawjsYBKc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McAj2UUm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA92C4CEC3;
+	Fri, 18 Oct 2024 18:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729276393;
+	bh=JTS7l00ywra+1THYcJZQsN2BffW5M/t8l3w1Xebv1OM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=McAj2UUmemN7Ro4awQUL87JqeBbXfmKjq2cM8Fwd7q1LREln2bEm3wx7q57aMals4
+	 GxZhlCzr+MgJQQ90mW2t+ztjMqF9QqARyIhzrbpoIGsbN4kIG+BBCeallm2Db5QJRL
+	 zmJmxFEddNqSjQcSpdiJKr4jhjE/d+1GZdPK818Vud4dIInqnGRM5k3xzgz3CAAzdp
+	 MzEKZFo6JkFyDFwpoAJRIy5rZ+ytsNCIBXLajDmjvD3M5dBr/epwJ8srxEShQg34BI
+	 /xGkU54J96atDcVKRSxml40m57fWnVKGty2Q85cfj6sQRLZtpuxtGGvPv3rXZJNDW1
+	 WKcJbdpvbolqw==
+From: SeongJae Park <sj@kernel.org>
+To: Zheng Yejian <zhengyejian@huaweicloud.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	sieberf@amazon.com,
+	shakeel.butt@linux.dev,
+	foersleo@amazon.de,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/damon/vaddr: Fix issue in damon_va_evenly_split_region()
+Date: Fri, 18 Oct 2024 11:33:10 -0700
+Message-Id: <20241018183310.115850-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241018035304.1050135-1-zhengyejian@huaweicloud.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
-To: Christian Loehle <christian.loehle@arm.com>,
-        Qais Yousef <qyousef@layalina.io>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Hongyan Xia
- <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240728184551.42133-1-qyousef@layalina.io>
- <ae65e4aa-3407-4fb0-b1f1-eb7c2626f768@linux.ibm.com>
- <fa2f15b1-1602-4fd0-80ff-9d33303b7b5a@arm.com>
-Content-Language: en-US
-From: Anjali K <anjalik@linux.ibm.com>
-In-Reply-To: <fa2f15b1-1602-4fd0-80ff-9d33303b7b5a@arm.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: U1Aid8jIKUqdZvN0_BzTP6eYltAiJ7pt
-X-Proofpoint-GUID: eqVF1Twp3eD4Y-fo-Z2SKsoSRmU8IRaS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0 mlxscore=0
- clxscore=1011 adultscore=0 priorityscore=1501 mlxlogscore=975
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180116
 
-On 08/10/24 15:26, Christian Loehle wrote:
-> The default CPUFREQ_DBS_MIN_SAMPLING_INTERVAL is still to have 2 ticks between
-> cpufreq updates on conservative/ondemand.
-> What is your sampling_rate setting? What's your HZ?
-The sampling_rate setting is 8000 us.
-CONFIG_HZ is set to 250 Hz.
-> Interestingly the context switch heavy benchmarks still show -6% don't they?
-Yes, stress-ng and Unixbench Pipebased Context Switching benchmarks showed 6% regression. There was a high run-to-run variation in stress-ng and the Unixbench Pipebased Context Switching benchmarks of 15% and 5% respectively. This led me to doubt those results and so I re-ran these two benchmarks.
+Hi Zheng,
 
-Each run below is an average of 10 iterations of the benchmarks.
-The results are as follows:
-+------------------------------------------------------+--------------------+----------+--------+---------+----------------+
-|                     Benchmark                        |      Baseline      | Baseline +   |Baseline|Baseline | Throughput |
-|                                                      |  (6.10.0-rc1 tip   |    patch     |        |+ patch  |Difference %|
-|                                                      |  sched/core)       |              |stdev % | stdev % |            |
-|                                                      |  avg throughput    |avg throughput|        |         |            |    
-+------------------------------------------------------+--------------------+--------------+--------+---------+------------+
-|Unixbench Pipebased Context Switching throughput (lps)|         1          |     1.02     |   6.48 |  10.29  |    2.18    |
-|                                                      |         1          |     1.19     |  13.74 |   8.22  |   19.20    |
-|                                                      |         1          |     0.87     |  11.27 |   8.12  |  -13.24    |
-|                                                      |                    |              |        |         |            |
-|stressng (bogo ops)                                   |         1          |     1.01     |  2.68  |  1.90   |    1.35    |
-|                                                      |         1          |     0.98     |  2.29  |  4.26   |   -2.03    |
-|                                                      |         1          |     0.99     |  2.01  |  2.24   |   -0.56    |
-+------------------------------------------------------+--------------------+--------------+--------+---------+------------+                   
-There is a very high run-to-run variation in the Unixbench Pipebased Context
-Switching benchmark and we can't conclude anything from this benchmark.
-There is no regression in stress-ng on applying this patch on this system.
 
-> Do you mind trying schedutil with a reasonable rate_limit_us, too?
+Thank you for sharing this nice finding and fix!  I have a few comments below.
 
-I think the schedutil governor is not working on my system because the cpu
-frequency shoots to the maximum (3.9GHz) even when the system is only 10%
-loaded.
-I ran stress-ng --cpu `nproc` --cpu-load 10.
-The mpstat command shows that the system is 10% loaded:
-10:55:25 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-10:56:50 AM  all   10.03    0.00    0.02    0.00    0.18    0.00    0.00    0.00    0.00   89.76
-But cpupower frequency-info showed that the system is at max frequency
-root@ltczz10:~# cpupower frequency-info
-<snipped>
-  available cpufreq governors: conservative ondemand performance schedutil
-  current policy: frequency should be within 2.30 GHz and 3.90 GHz.
-                  The governor "schedutil" may decide which speed to use
-                  within this range.
-  current CPU frequency: 3.90 GHz (asserted by call to hardware)
-<snipped>
-This is not expected, right?
-I will work on finding out why the schedutil governor is not working on
-this system and get back.
+On Fri, 18 Oct 2024 11:53:04 +0800 Zheng Yejian <zhengyejian@huaweicloud.com> wrote:
 
-Thank you for your response,
-Anjali K
+> According to the logic of damon_va_evenly_split_region(), currently at
+> least following split cases would not meet the expectation:
+> 
+>   Suppose DAMON_MIN_REGION=0x1000,
+>   Case1: Split [0x0, 0x1100) into 1 pieces, then the result would be
+>          acutually [0x0, 0x1000), but NOT the expected [0x0, 0x1100) !!!
 
+Nice finding!  However, as long as DAMON_MIN_REGION is respected, [0x0, 0x1100]
+region could not be created.  So, the problematic case cannot happen in real?
+Please let me know if I'm missing something.
+
+And, why would someone call the function with nr_pieces 1?
+
+>   Case2: Split [0x0, 0x3000) into 2 pieces, then the result would be
+>          acutually 3 regions:
+>            [0x0, 0x1000), [0x1000, 0x2000), [0x2000, 0x3000)
+>          but NOT the expected 2 regions:
+>            [0x0, 0x1000), [0x1000, 0x3000) !!!
+
+Nice finding!
+
+> 
+> The root cause is that when calculating size of each split piece in
+> damon_va_evenly_split_region():
+> 
+>   `sz_piece = ALIGN_DOWN(sz_orig / nr_pieces, DAMON_MIN_REGION);`
+> 
+> both the dividing and the ALIGN_DOWN may cause loss of precision,
+> then each time split one piece of size 'sz_piece' from origin 'start' to
+> 'end' would cause:
+>   1. For the above Case1, the 'end' value of the split 1 piece is
+>      aligned but not updated!!!
+>   2. For the above Case2, more pieces are split out than expected!!!
+> 
+> To fix it, in this patch:
+> - As for the expect to split 1 piece, just return 0;
+
+As mentioned above, I think this is not needed, since the problematic case is
+unreal.
+
+> - Count for each piece split and make sure no more than 'nr_pieces';
+> - Add above two cases into damon_test_split_evenly().
+
+Thank you for adding tests!
+
+> 
+> BTW, currently when running kunit test, DAMON_MIN_REGION is redefined
+> as 1, then above ALIGN_DOWN cases may not be test, since every int
+> value is ALIGN-ed to 1.
+> 
+> After this patch, damon-operations test passed:
+> 
+>  # ./tools/testing/kunit/kunit.py run damon-operations
+>  [...]
+>  ============== damon-operations (6 subtests) ===============
+>  [PASSED] damon_test_three_regions_in_vmas
+>  [PASSED] damon_test_apply_three_regions1
+>  [PASSED] damon_test_apply_three_regions2
+>  [PASSED] damon_test_apply_three_regions3
+>  [PASSED] damon_test_apply_three_regions4
+>  [PASSED] damon_test_split_evenly
+>  ================ [PASSED] damon-operations =================
+> 
+> Fixes: 3f49584b262c ("mm/damon: implement primitives for the virtual memory address spaces")
+> Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
+> ---
+>  mm/damon/tests/vaddr-kunit.h |  2 ++
+>  mm/damon/vaddr.c             | 13 +++++++++----
+>  2 files changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
+> index a339d117150f..b9a03e4e29e5 100644
+> --- a/mm/damon/tests/vaddr-kunit.h
+> +++ b/mm/damon/tests/vaddr-kunit.h
+> @@ -300,6 +300,8 @@ static void damon_test_split_evenly(struct kunit *test)
+>  	damon_test_split_evenly_fail(test, 0, 100, 0);
+>  	damon_test_split_evenly_succ(test, 0, 100, 10);
+>  	damon_test_split_evenly_succ(test, 5, 59, 5);
+> +	damon_test_split_evenly_succ(test, 4, 6, 1);
+
+If my above assumption (the first problem is unreal) is not wrong, maybe this
+test is not needed?
+
+> +	damon_test_split_evenly_succ(test, 0, 3, 2);
+
+Nice.
+
+>  	damon_test_split_evenly_fail(test, 5, 6, 2);
+>  }
+>  
+> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> index 08cfd22b5249..1f3cebd20829 100644
+> --- a/mm/damon/vaddr.c
+> +++ b/mm/damon/vaddr.c
+> @@ -67,10 +67,14 @@ static int damon_va_evenly_split_region(struct damon_target *t,
+>  	unsigned long sz_orig, sz_piece, orig_end;
+>  	struct damon_region *n = NULL, *next;
+>  	unsigned long start;
+> +	int i;
+
+Purpose of this variable is counting the number of splitted regions, and
+comparing it against 'nr_pieces', right?  Because nr_pieces is 'unsigned int',
+let's make this 'unsigned int' type, too.
+
+>  
+>  	if (!r || !nr_pieces)
+>  		return -EINVAL;
+>  
+> +	if (nr_pieces == 1)
+> +		return 0;
+> +
+
+As mentioned above, I don't think this is not needed.
+
+>  	orig_end = r->ar.end;
+>  	sz_orig = damon_sz_region(r);
+>  	sz_piece = ALIGN_DOWN(sz_orig / nr_pieces, DAMON_MIN_REGION);
+> @@ -79,9 +83,11 @@ static int damon_va_evenly_split_region(struct damon_target *t,
+>  		return -EINVAL;
+>  
+>  	r->ar.end = r->ar.start + sz_piece;
+> +	/* origin region will be updated as the first one after splitting */
+
+I don't think this comment is easy to understand.  Let's just remove it.
+
+> +	i = 1;
+> +	n = r;
+
+Why we need this? for 'nr_pieces == 1' case?  If so, I don't think we need to
+take care about the case for the above mentioned reason.  Please let me know if
+I'm missing something.
+
+>  	next = damon_next_region(r);
+> -	for (start = r->ar.end; start + sz_piece <= orig_end;
+> -			start += sz_piece) {
+> +	for (start = r->ar.end; i < nr_pieces; start += sz_piece, i++) {
+>  		n = damon_new_region(start, start + sz_piece);
+>  		if (!n)
+>  			return -ENOMEM;
+> @@ -89,8 +95,7 @@ static int damon_va_evenly_split_region(struct damon_target *t,
+>  		r = n;
+>  	}
+>  	/* complement last region for possible rounding error */
+> -	if (n)
+> -		n->ar.end = orig_end;
+> +	n->ar.end = orig_end;
+
+Maybe this change is related with the above 'n = r' line?  But, I don't think
+we need that, as commented there.
+
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.25.1
+
+
+Thanks,
+SJ
 
