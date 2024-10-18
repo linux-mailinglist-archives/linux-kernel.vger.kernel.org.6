@@ -1,60 +1,65 @@
-Return-Path: <linux-kernel+bounces-371596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E079A3D0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7F49A3D10
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198B71C211CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC9A1C20D00
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35A7202F73;
-	Fri, 18 Oct 2024 11:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D169020262A;
+	Fri, 18 Oct 2024 11:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GmTFyuY8"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qvsi4u95"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507B1202F6F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467352010E2;
+	Fri, 18 Oct 2024 11:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729250037; cv=none; b=j9SMHDbkK7gEVhWXmiWgj+zMV3Aw3OMfKm9yw5F8d+X1Y3Y7vEWLllDAZz8lcafaiMKqJHw1Jv2zkpunKzjMRl5XB7V3BPI/YPx6CkbnkxBy4NBHptdIlmymPyd2OVT3aTuZp75v8Rlic7CL7/XTDpM0b7mFthz6t/6v3BSz2PM=
+	t=1729250111; cv=none; b=hCs6sY2dpekuRmrLyox2jbtxv7TYW76ba+j+yiTzs3rdEQ5m6D4PYqaS6N9mVbkIU9miqVZbnf16co57z9z3z9Rrn4XxHQJJo9vl8W85mdRVAWpxxt1CktfDfKvmgWWXO2jV8dxB+flnd9tNIDfDsdVbIKXc3BlCbdv/wW7dILw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729250037; c=relaxed/simple;
-	bh=LP3haA7d+OoJSxhlWG5Y0d6CbvOQsn5QrGtxSj4Pz9c=;
+	s=arc-20240116; t=1729250111; c=relaxed/simple;
+	bh=H9VbsKpLJ9wA5zYLB2VDqJsFVuIZuq/l/10T5Z+X44w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ODVTPL/gRIOKW2J/erMz7cIFPoCXwjNdN4qPN2G9SQR4WnRsu49d49KQLOAySnDL/o+dazbmkVnAa7PISlyiMpAX82MKgH57Yao7YJjoqgyMdl9WlsPLZMuWVCWIAMCE6ymXaPcDRx3h1GeJlUTmJtpoJBjm9wmB/UT9lj4cfi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GmTFyuY8; arc=none smtp.client-ip=90.155.92.199
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJgI7RsGs3pplah16AmmRcy1rXQKq7iqiXpMsmPmWgi33X+jpD0LXGKsR3I75TBgZSNMfo2oxRy9VVVciLIaxRgiSOehpNVMmczAA782J+6N4EaDyEXp7boWq9SPDatgIt0C/mzPgx09g4ZkfyXxPSo/ZxqLhRE32DvafLY8isc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qvsi4u95; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=R2RqkZkmN0VlXxNgjvRznKQvYVZWzsGPLJdUJbM/oPc=; b=GmTFyuY8EMFURb2jybowygINfT
-	zz9mDMpYeoY8+5rNySkuR31dLaAj65WLvVWvPtsU8Yu23lzPmKBCoHiOiklO+W6HWlu9ZXb5p2ZuP
-	drrzg2rt3AdR393g+ktgH/PB+wG/oV1TSvyszkyhtAOtHJbDqhIxxK4Rrnk5uZ/Wbl8NztUo+7+PV
-	zuttj09CRVDXxjOt+rAbFEafOPsmkKOgJbNBOilECELLdHUgbO/WewmiInEg/hHTZ6CgXVXkKx1Oc
-	W4rDtr2cr2F72i271X1Kw6/TBErlzsMmf+3BQzXypAgIKUqus9uvfEZri7kE1hi/oXmukXdltmUch
-	Mtw/YlQg==;
+	bh=hxnHwneT1xAzY8649PF0fR25ciSRedSmGB++Tg52HxQ=; b=qvsi4u95S4N1NjtzPIjvcZ2+qm
+	vBW/PJSzCycTBe78fX3bVZXJHNSLFGD9n/r27ucHtsexpYmbOVgkXupC8CpAvNstEDVG4XN3XrRxa
+	yKqVGt4f1MSa5AaGqAnER4ZaGw/S+sC+Sv4wUFJDt1f8ToBX/3sW4KecfL59JI5S2v1mx9cnM3eyF
+	Tv3cjcS+FkgvCcqL3Et9VsHMp6NPOJxW3Mg9O3VvfJ9jrX2PdNnqJNSVr66qokQjbVlQz7W24bvRu
+	BH2IDoP6a6ANVG1dJVcxmVXNq/ZwgqeYa/8N0KTI5DHgHxURPrCx2QEBINLTWj3xbzJTiMfg4bDsu
+	wEHSyRXQ==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1kvU-00000007LDj-2doZ;
-	Fri, 18 Oct 2024 11:13:48 +0000
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1kwh-0000000D4SM-1VKa;
+	Fri, 18 Oct 2024 11:15:04 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 07BEF3002D3; Fri, 18 Oct 2024 13:13:48 +0200 (CEST)
-Date: Fri, 18 Oct 2024 13:13:47 +0200
+	id 9B7A33005AF; Fri, 18 Oct 2024 13:15:03 +0200 (CEST)
+Date: Fri, 18 Oct 2024 13:15:03 +0200
 From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: mingo@redhat.com, will@kernel.org, longman@redhat.com,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	paulmck@kernel.org, thomas.hellstrom@linux.intel.com
-Subject: Re: [GIT PULL] LOCKDEP changes for v6.13
-Message-ID: <20241018111347.GX16066@noisy.programming.kicks-ass.net>
-References: <ZxHq7-o8vV07M36J@Boquns-Mac-mini.local>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-cxl@vger.kernel.org, przemyslaw.kitszel@intel.com
+Subject: Re: [PATCH 1/3] cleanup: add conditional guard helper
+Message-ID: <20241018111503.GC36494@noisy.programming.kicks-ass.net>
+References: <20241001-cleanup-if_not_cond_guard-v1-0-7753810b0f7a@baylibre.com>
+ <20241001-cleanup-if_not_cond_guard-v1-1-7753810b0f7a@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,21 +68,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxHq7-o8vV07M36J@Boquns-Mac-mini.local>
+In-Reply-To: <20241001-cleanup-if_not_cond_guard-v1-1-7753810b0f7a@baylibre.com>
 
-On Thu, Oct 17, 2024 at 09:58:23PM -0700, Boqun Feng wrote:
-> Hi Peter & Ingo,
+On Tue, Oct 01, 2024 at 05:30:18PM -0500, David Lechner wrote:
+> Add a new if_not_cond_guard() macro to cleanup.h for handling
+> conditional guards such as mutext_trylock().
 > 
-> Please pull the changes of lockdep for v6.13 into tip.
+> This is more ergonomic than scoped_cond_guard() for most use cases.
+> Instead of hiding the error handling statement in the macro args, it
+> works like a normal if statement and allow the error path to be indented
+> while the normal code flow path is not indented. And it avoid unwanted
+> side-effect from hidden for loop in scoped_cond_guard().
 > 
-> The following changes since commit 87347f148061b48c3495fb61dcbad384760da9cf:
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>  include/linux/cleanup.h | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
->   futex: Use atomic64_try_cmpxchg_relaxed() in get_inode_sequence_number() (2024-10-17 22:02:27 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux tags/lockdep-for-tip.20241017
+> diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+> index 038b2d523bf8..682bb3fadfc9 100644
+> --- a/include/linux/cleanup.h
+> +++ b/include/linux/cleanup.h
+> @@ -273,6 +273,10 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+>   *	an anonymous instance of the (guard) class, not recommended for
+>   *	conditional locks.
+>   *
+> + * if_not_cond_guard(name, args...) { <error handling> }:
+> + *	convenience macro for conditional guards that calls the statement that
+> + *	follows only if the lock was not acquired (typically an error return).
+> + *
+>   * scoped_guard (name, args...) { }:
+>   *	similar to CLASS(name, scope)(args), except the variable (with the
+>   *	explicit name 'scope') is declard in a for-loop such that its scope is
+> @@ -304,6 +308,13 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+>  
+>  #define __guard_ptr(_name) class_##_name##_lock_ptr
+>  
+> +#define __if_not_cond_guard(_name, _id, args...)	\
+> +	CLASS(_name, _id)(args);			\
+> +	if (!__guard_ptr(_name)(&_id))
+> +
+> +#define if_not_cond_guard(_name, args...) \
+> +	__if_not_cond_guard(_name, __UNIQUE_ID(guard), args)
+> +
+>  #define scoped_guard(_name, args...)					\
+>  	for (CLASS(_name, scope)(args),					\
+>  	     *done = NULL; __guard_ptr(_name)(&scope) && !done; done = (void *)1)
 
-If I managed the git magic right, this should now reside in queue
-locking/core, and is on its way to tip.
+
+So if I stick this on top of:
+
+  https://lkml.kernel.org/r/20241011121535.28049-1-przemyslaw.kitszel@intel.com
+
+then I can add the below:
+
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -277,6 +277,8 @@ static inline class_##_name##_t class_##
+  *	convenience macro for conditional guards that calls the statement that
+  *	follows only if the lock was not acquired (typically an error return).
+  *
++ *	Only for conditional locks.
++ *
+  * scoped_guard (name, args...) { }:
+  *	similar to CLASS(name, scope)(args), except the variable (with the
+  *	explicit name 'scope') is declard in a for-loop such that its scope is
+@@ -290,7 +292,6 @@ static inline class_##_name##_t class_##
+  *      acquire fails.
+  *
+  *	Only for conditional locks.
+- *
+  */
+ 
+ #define __DEFINE_CLASS_IS_CONDITIONAL(_name, _is_cond)	\
+@@ -342,6 +343,7 @@ _label:										\
+ 		       __UNIQUE_ID(label), args)
+ 
+ #define __if_not_guard(_name, _id, args...)		\
++	BUILD_BUG_ON(!__is_cond_ptr(_name));		\
+ 	CLASS(_name, _id)(args);			\
+ 	if (!__guard_ptr(_name)(&_id))
+ 
+
+That make sense to people?
+
+I've queued these two patches:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git locking/core
+
+But lacking if_not_guard() users, the robot isn't really going to give
+me much feedback there, I suppose...
 
