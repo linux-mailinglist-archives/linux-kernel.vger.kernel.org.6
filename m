@@ -1,222 +1,149 @@
-Return-Path: <linux-kernel+bounces-371553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3F39A3C96
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:03:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CC2A9A3CA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30C011F216FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:03:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19266B29D92
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395822040BF;
-	Fri, 18 Oct 2024 11:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6C62038BE;
+	Fri, 18 Oct 2024 11:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a8b+8n2Q"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TebpSgHE"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF8220370A;
-	Fri, 18 Oct 2024 11:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A01420126E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729249213; cv=none; b=jWAIJ7rclQ4Tn2RerR9apgpFJzI05mN5CpvFFtlwcaVlGFcK51nDBcX04bCgeMoEx6KuWD8U3k9ww7ytiB5GRLMc5ZXeT+ObopW5HMWBzxG83MaDob4yLty4M1ldrAktygKcZni/KL13RygSQ1n3BEGACn4yB9tRCljkqRj8lLQ=
+	t=1729249200; cv=none; b=GshwHMOlvzZu/FnHj3G0ZUdV7/NX0tvwpPiz4X6v2DL4BAbj4DMuS8173TTrSfWik/zfnSMPo+Hs2l5vNDd0D5Xsy9ld+sSHr3dh3+lpGIWF50DRL2zWVOM5Uuu1q28SxsX/s8Op/WU5lGTod7S1jrS1nSojWoShC3MYlAwpmfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729249213; c=relaxed/simple;
-	bh=QsyhH25rLOxiNgZIQB5iNNRFKMjAvpxrtni47ZVSoHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GsHDXTiukoQFCTpnVnN3tYbYD1IGh0x9iJl/13QN3DwmiNszG+fxlcIyOdhIjS81j8KnLAU7HHrzL/BAZ+W3Yw7SVR13vxByw51zlNHEEW4MGXcXcfB/efILGqXsSE34BktSN9WLWndbiqWdw4NfwCXaFJrV4LnAiXhH907d+Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a8b+8n2Q; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I9M1Jb005759;
-	Fri, 18 Oct 2024 11:00:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LSgBwG3VOgSX9ZcNnIj9sjTE7GQOeW7zkIpMbYd/z0E=; b=a8b+8n2Q5VqwSbdM
-	d84PJMX5kkngQ1c32t4FGgRAXoeO0thcajJghMpr/qxTr0bF/gzPBE9VOnecMKAX
-	TV5RFQL7+kW9XbNU67gXPaI5krlJ67I+oLoxbtTZP+KNzdE8KltAds948iVz5l5Y
-	7fQUtybIw5x1OcYe72RdPIYYZVkITAETZ+kpluu8+bJYfs+0i9m+2Q90gO0dfrT8
-	tdWx2S983OMzksEFJ5HgmO5EATZyDoFwHnAW0szycPQ7bJYKAvH01OZB70LieMSU
-	Bl8ArMbsibd5sJmbkwVZGb96ylEh4TsUHbaMmuG4cq0jDU3FvJcV/7Wmc3UdhsS5
-	XMp8Iw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bmys8c25-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 11:00:05 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IB03lp024139
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 11:00:04 GMT
-Received: from [10.218.13.161] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
- 2024 03:59:47 -0700
-Message-ID: <3cf738f9-f0c7-41b7-b2ef-b73aca6f9448@quicinc.com>
-Date: Fri, 18 Oct 2024 16:29:35 +0530
+	s=arc-20240116; t=1729249200; c=relaxed/simple;
+	bh=Wnk4mh2j81RCLrthBqAg8IdLJJy2b3UuoDWmwxzcnZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n8K5GrSq7vHTe3Ipix2SGgz/pegYNGfF2s+5dJupubRYpNMQw4RaQtNqe9fQqokOniJp5MFt8Mu6CsP5abFV+rY/wVcyq8nuQ1q4fxL4gSaPbn/Uk2I32CxZQoypYWWz2M9VsNnS0MmEVFAM+4HRHgNsiEUTJLXmvclspMjSK38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TebpSgHE; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539fe02c386so3105301e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729249197; x=1729853997; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BDn3B2qj/hHbMDyr6HsfzwkGACEwdcb5vmYA2V4zZBg=;
+        b=TebpSgHEqPHxss9fOjEkPe5CW8Hp7AbTsgieWqlG8u6aKMShYpj/nn+chahaMe1Iw8
+         gq1GzF7Hmo7f+GF+qud2PpIlGSIswaKCm5IepAeM1IugpoaqsmgyZxuwJ7lOZXSh0KcP
+         LnZVhu0Qvx1YhLzP4TOXjQTLAXjK6V5PAwh+1Q7qTd6RyffLxJUB/z6H92ZZxvpiVCV0
+         Co3xYhzRBILsY7x/oUk6IxrQjp1qDk0jLMw8NHv9LXMKLDuAxRzg+MGcCQv7d41X/c3i
+         Nt9g2n3OC7lmLwGhWL+zvGIJn0C9vbqAgIgs1PL5jIcmhKQIjfaEVZ/KGOxR0WO4wKrV
+         P/iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729249197; x=1729853997;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BDn3B2qj/hHbMDyr6HsfzwkGACEwdcb5vmYA2V4zZBg=;
+        b=f6CMn9cLGv1UXG3p+2H1F6wZOgAnRZy2R+FYgGU0AIYrIRO75eyOiBoToJT0tTOaQs
+         iZbvvkF3fh1q6dLt8GVDW6BIIt6jA28pfyB5jE5ZksEyc8zVt++rnYCWSFOjTbFu2iXL
+         nQwYceWMSvd2+bvFuFQn2RWQGNwd9saY8Vm/72cciKmHcxHH/BcjUVapcaeoXmXEMEWZ
+         kL312Tgv2fGlwk9WiktdOm2wejMv292n85oYRDlsOHu/f23NMGn1eY/SdHTFIRy+kmWa
+         oWIrDUKxMJjUPEIdyeS3poyzc8ZJV9AHyRH9r5S6Fupzop5v9rbg0hizK8ztpKAc8aEf
+         4VfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAQsccHE/E8Ra3wSCzQ0MaYoNnXwOwhIQhKb9JXMulE4Xt3e0SX/Pthr+NbimJieouZih7+GmatJtV1QA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVvWPLntBpTVsQth/behNjPHCcLF2zcCKTvis6yX2tmrYYO/NG
+	3y8HAUyFmOghkYkSqZ4M+q2wygILc0fxnPKXR6qd3QU/SWgpoiOj4AmwCJm9Xb0=
+X-Google-Smtp-Source: AGHT+IFBl+2v8OAQ2fIrh0HeP3N6htiMXETE/IwmKI/CVl5P5tYrY6ccHdNQQtQ0wLclVVrPfSoqVg==
+X-Received: by 2002:a05:6512:3094:b0:539:f539:73b2 with SMTP id 2adb3069b0e04-53a15845c77mr582804e87.12.1729249196684;
+        Fri, 18 Oct 2024 03:59:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151f0d71sm185759e87.166.2024.10.18.03.59.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 03:59:55 -0700 (PDT)
+Date: Fri, 18 Oct 2024 13:59:52 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Mahadevan <quic_mahap@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kalyan Thota <quic_kalyant@quicinc.com>, Jayaprakash Madisetty <quic_jmadiset@quicinc.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 1/5] dt-bindings: display/msm: Document MDSS on SA8775P
+Message-ID: <ugkiv4m3etpydvosjkyzwr4qus74xnwccow7xrpvr77kzcx6bv@odlz7dzldqc5>
+References: <20241009-patchv3_1-v4-0-cd683a9ca554@quicinc.com>
+ <20241009-patchv3_1-v4-1-cd683a9ca554@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] usb: dwc3: core: Add support to ignore single SE0
- glitches
-Content-Language: en-US
-To: Uttkarsh Aggarwal <quic_uaggarwa@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <quic_ppratap@quicinc.com>,
-        <quic_jackp@quicinc.com>
-References: <20241017114055.13971-1-quic_uaggarwa@quicinc.com>
- <20241017114055.13971-3-quic_uaggarwa@quicinc.com>
-From: AKASH KUMAR <quic_akakum@quicinc.com>
-In-Reply-To: <20241017114055.13971-3-quic_uaggarwa@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mO-XzJiP_LooUhNBA4wFEbpBZEQbmPn6
-X-Proofpoint-ORIG-GUID: mO-XzJiP_LooUhNBA4wFEbpBZEQbmPn6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1011
- impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- mlxlogscore=999 malwarescore=0 adultscore=0 priorityscore=1501 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410180070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009-patchv3_1-v4-1-cd683a9ca554@quicinc.com>
 
-Hi Uttkarsh, Thinh,
-
-On 10/17/2024 5:10 PM, Uttkarsh Aggarwal wrote:
-> Currently in few of Qualcomm chips USB (Low speed) mouse not
-> detected showing following errors:
->
->    usb 1-1: Device not responding to setup address.
->    usb 1-1: device not accepting address 2, error -71
->    usb 1-1: new low-speed USB device number 3 using xhci-hcd
->    usb 1-1: Device not responding to setup address.
->    usb 1-1: Device not responding to setup address.
->    usb 1-1: device not accepting address 3, error -71
->    usb usb1-port1: attempt power cycle
->
-> Based on the Logic analyzer waveforms, It has been identified that there
-> is skew of about 8nS b/w DP & DM linestate signals (o/p of PHY & i/p to
-> controller) at the UTMI interface, Due to this controller is seeing SE0
-> glitch condition, this is causing controller to pre-maturely assume that
-> PHY has sent all the data & is initiating next packet much early, though
-> in reality PHY is still busy sending previous packets.
->
-> Enabling the GUCTL1.FILTER_SE0_FSLS_EOP bit29 allows the controller to
-> ignore single SE0 glitches on the linestate during transmission. Only two
-> or more SE0 signals are recognized as a valid EOP.
->
-> When this feature is activated, SE0 signals on the linestate are validated
-> over two consecutive UTMI/ULPI clock edges for EOP detection.
->
-> Device mode (FS): If GUCTL1.FILTER_SE0_FSLS_EOP is set, then for device LPM
-> handshake, the controller ignores single SE0 glitch on the linestate during
-> transmit. Only two or more SE0 is considered as a valid EOP on FS port.
->
-> Host mode (FS/LS): If GUCTL1.FILTER_SE0_FSLS_EOP is set, then the controller
-> ignores single SE0 glitch on the linestate during transmit.
->
-> Signed-off-by: Uttkarsh Aggarwal <quic_uaggarwa@quicinc.com>
+On Wed, Oct 09, 2024 at 08:02:01PM +0530, Mahadevan wrote:
+> Document the MDSS hardware found on the Qualcomm SA8775P platform.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
 > ---
->   drivers/usb/dwc3/core.c | 13 +++++++++++++
->   drivers/usb/dwc3/core.h |  4 ++++
->   2 files changed, 17 insertions(+)
->
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index 86b37881aab4..4edd32c44e73 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -222,6 +222,17 @@ static void __dwc3_set_mode(struct work_struct *work)
->   
->   	switch (desired_dr_role) {
->   	case DWC3_GCTL_PRTCAP_HOST:
-> +	       /*
-> +		* Setting GUCTL1 bit 29 so that controller
-> +		* will ignore single SE0 glitch on the linestate
-> +		* during transmit.
-> +		*/
-> +		if (dwc->filter_se0_fsls_eop_quirk) {
-> +			reg = dwc3_readl(dwc->regs, DWC3_GUCTL1);
-> +			reg |= DWC3_GUCTL1_FILTER_SE0_FSLS_EOP;
-> +			dwc3_writel(dwc->regs, DWC3_GUCTL1, reg);
-> +		}
+>  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 241 +++++++++++++++++++++
+>  1 file changed, 241 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..37c04ae6876f873c2cddc51b5160b1f54e2b5118
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
+
+[...]
+
 > +
-Since this bit is useful for device mode as well along with host mode,we 
-should set this in dwc3_core_init
-where we are already writing for GUCTL1 bit disable parkmode, instead of 
-host mode only. Like below
+> +        display-controller@ae01000 {
+> +            compatible = "qcom,sa8775p-dpu";
+> +            reg = <0x0ae01000 0x8f000>,
+> +                  <0x0aeb0000 0x2008>;
+> +            reg-names = "mdp", "vbif";
+> +
+> +            clocks = <&gcc GCC_DISP_HF_AXI_CLK>,
+> +                     <&dispcc_ahb_clk>,
+> +                     <&dispcc_mdp_lut_clk>,
+> +                     <&dispcc_mdp_clk>,
+> +                     <&dispcc_mdp_vsync_clk>;
+> +            clock-names = "bus",
+> +                          "iface",
+> +                          "lut",
+> +                          "core",
+> +                          "vsync";
+> +
 
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1444,6 +1444,9 @@ static int dwc3_core_init(struct dwc3 *dwc)
-                 if (dwc->parkmode_disable_hs_quirk)
-                         reg |= DWC3_GUCTL1_PARKMODE_DISABLE_HS;
+It's been more than a week since Rob reported issues with the bindings.
+Any updates? Obviously I can not pick up patches with binding errors.
 
-+               if (dwc->filter_se0_fsls_eop_quirk)
-+                       reg |= DWC3_GUCTL1_FILTER_SE0_FSLS_EOP;
-+
-                 if (DWC3_VER_IS_WITHIN(DWC3, 290A, ANY)) {
-                         if (dwc->maximum_speed == USB_SPEED_FULL ||
-                             dwc->maximum_speed == USB_SPEED_HIGH)
->   		ret = dwc3_host_init(dwc);
->   		if (ret) {
->   			dev_err(dwc->dev, "failed to initialize host\n");
-> @@ -1788,6 +1799,8 @@ static void dwc3_get_properties(struct dwc3 *dwc)
->   
->   	dwc->tx_de_emphasis_quirk = device_property_read_bool(dev,
->   				"snps,tx_de_emphasis_quirk");
-> +	dwc->filter_se0_fsls_eop_quirk = device_property_read_bool(dev,
-> +				"snps,filter-se0-fsls-eop-quirk");
->   	device_property_read_u8(dev, "snps,tx_de_emphasis",
->   				&tx_de_emphasis);
->   	device_property_read_string(dev, "snps,hsphy_interface",
-> diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-> index cc3f32acfaf5..33d53a436fd7 100644
-> --- a/drivers/usb/dwc3/core.h
-> +++ b/drivers/usb/dwc3/core.h
-> @@ -276,6 +276,7 @@
->   
->   /* Global User Control 1 Register */
->   #define DWC3_GUCTL1_DEV_DECOUPLE_L1L2_EVT	BIT(31)
-> +#define DWC3_GUCTL1_FILTER_SE0_FSLS_EOP		BIT(29)
->   #define DWC3_GUCTL1_TX_IPGAP_LINECHECK_DIS	BIT(28)
->   #define DWC3_GUCTL1_DEV_FORCE_20_CLK_FOR_30_CLK	BIT(26)
->   #define DWC3_GUCTL1_DEV_L1_EXIT_BY_HW		BIT(24)
-> @@ -1140,6 +1141,8 @@ struct dwc3_scratchpad_array {
->    * @gfladj_refclk_lpm_sel: set if we need to enable SOF/ITP counter
->    *                          running based on ref_clk
->    * @tx_de_emphasis_quirk: set if we enable Tx de-emphasis quirk
-> + * @filter_se0_fsls_eop_quirk: set to ignores single
-> + *				SE0 glitch on the linestate during transmit.
->    * @tx_de_emphasis: Tx de-emphasis value
->    *	0	- -6dB de-emphasis
->    *	1	- -3.5dB de-emphasis
-> @@ -1373,6 +1376,7 @@ struct dwc3 {
->   	unsigned		gfladj_refclk_lpm_sel:1;
->   
->   	unsigned		tx_de_emphasis_quirk:1;
-> +	unsigned		filter_se0_fsls_eop_quirk:1;
->   	unsigned		tx_de_emphasis:2;
->   
->   	unsigned		dis_metastability_quirk:1;
-Thanks,
-Akash
+> +            assigned-clocks = <&dispcc_mdp_vsync_clk>;
+> +            assigned-clock-rates = <19200000>;
+> +
+> +            operating-points-v2 = <&mdss0_mdp_opp_table>;
+> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
+> +
+> +            interrupt-parent = <&mdss0>;
+> +            interrupts = <0>;
+> +
+
+-- 
+With best wishes
+Dmitry
 
