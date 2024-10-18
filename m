@@ -1,128 +1,175 @@
-Return-Path: <linux-kernel+bounces-371344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0FF89A39DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:22:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45B89A39DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589291F27AD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:22:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FA791C20358
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B2B1E883A;
-	Fri, 18 Oct 2024 09:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A221EF953;
+	Fri, 18 Oct 2024 09:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfTpNufx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eUpY00op"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5483192B94
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5DC1E883A
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729243334; cv=none; b=e+2reMYrG1oGrKJ3OQkLb19jYa1oMGfZzgUtM9oP7FI5UH67VmOTXYUHnPelRi13VL0Q2O6FHWV+hNBKTlSUJTtccrBrcd8Gmnn/M6g82ovSY2gckvw7hJnF7DLqY7PMcGb7W6DoY0besmGJJdOI7FJJgUbHJyZGkbv8IFmiJG8=
+	t=1729243372; cv=none; b=c2apCnHxNqpS6OCmNZ47SDykLIupQdq651IV7vnwlOUdw70AOReyq46XSWTAYYwKjZBhky0nI2Zdk/qBAiYwszIQxZd1X9y6MGudExrn6w/iqQOFwoFJW01vd3e+CAkQTE1dMSRRv3oYY9YgEu4rb0UJtiHi+9p47i7DZL20V9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729243334; c=relaxed/simple;
-	bh=iQtFXyu+eKmRsJRQ50JW/Pwh0OvPOcYrT9Jj7gapYzY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K6lC7XatX+Rl3DwPMMCZQmbSZoUjQq4hVYBtplICk5QQex/8Q1IopMjbIRvLamkDicJp0lB+UlgXf73QOA0bxtf5ZUHQAnYQNDOxeIiV4E4sr8uWjB3CLYEUAa0td3t7bn5M0KZX+DwYeIvHxiqEMQUg/SWHeXOOT45cpJWTLZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JfTpNufx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3821EC4CEC3;
-	Fri, 18 Oct 2024 09:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729243334;
-	bh=iQtFXyu+eKmRsJRQ50JW/Pwh0OvPOcYrT9Jj7gapYzY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JfTpNufxh2i/J1ts9O+yGtlQldp4//A/HIMiJbixnq1P9QpwqfibMf2FG7ktkFbgY
-	 lcoEAgBiBlGRRcOkZ1J0VyKQSoGysHk0EzqefyJOE8n0l1CCBVwTxaBgLAtzMaoFRV
-	 cB63ArDaCAKfnZZEwegEy2r1fY+UhxQv/mJJXCJRdE5Oj+n6TLPcsGimxW7TKO/xbt
-	 ND7x2uHZBxPG9YtPMcuLvFoJ3EY3uPwXaS32ZUg34BSTiDJU38O5qCCDLm5FW1Byc8
-	 b9WkxAruAQdP8DVYqTJv7C/MetVJyUzg9PnXE5LVKfMEtJX/8lNsBAQzBpTNz9gdg8
-	 NPOqc8jANQkZA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to convert log type to segment data type correctly
-Date: Fri, 18 Oct 2024 17:22:00 +0800
-Message-Id: <20241018092200.2792472-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1729243372; c=relaxed/simple;
+	bh=+cNGane3sTo7+rSYkfcuXw7m4NmzJ7jEgA9mlQ11BPI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q05T/lH8whMIZJwgYLgJHNHhIlJGVx0OZUHXX5VZmAS/5uZl/jLVDgajXC0mKd8/6OZ/yuc9IN9fh6Z+53v5E9mSYHhvo7n1DU89DTBXG+iBWqVHGXQhAy7QDym5wzlE6SQeSGi40BoMbBXt45O9zqVHdzbqaGRVvX4E2BdR18g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eUpY00op; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I1gJNQ021882;
+	Fri, 18 Oct 2024 09:22:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=ypNyheCLO8fd3m2liOpgl6CzILJlaANSUDyAIrNWJGk=; b=eU
+	pY00opyDQBGs7Z53W8+u9GCM5DmT1YZgw8RYPMw2khROEbUEDTMm2KZcwqwlABy+
+	k9mIcDrIbk7HQWGS9J2eHXyfjNmGmKQd7+nhptAJmbSTiXUk2g2kTDBVC9JcSsoQ
+	Mz6Gf5Cuxxps/Kz9aBFgX/rNH0JHuIegy0/WRCZyKl3zCcoyH4ZHfI8sC04nKahN
+	WuzvV7iNY2dqV5PvWy0yOiEGOiRmJmjp01mVQmInGtBIULikwLrhtQqRW0tVwJ2m
+	ENO+9QTALIm7i3s2/qV1myRZZMENU+D/5xfIglngirwEVOmzuJaRxInAnzf0Hzrs
+	ga7jN/vWrXG1fIJu6gUw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42be8c95a6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 09:22:38 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49I9McZs022578
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 09:22:38 GMT
+Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 18 Oct 2024 02:22:35 -0700
+From: Pintu Kumar <quic_pintu@quicinc.com>
+To: <akpm@linux-foundation.org>, <catalin.marinas@arm.com>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+CC: <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
+        Pintu Kumar
+	<quic_pintu@quicinc.com>
+Subject: [PATCH v2] mm/kmemleak: fix errors/warnings for coding style
+Date: Fri, 18 Oct 2024 14:52:05 +0530
+Message-ID: <20241018092205.757-1-quic_pintu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: g-bbuv_bw_i_Lr7gbY3p1wkwxmEYHZIG
+X-Proofpoint-ORIG-GUID: g-bbuv_bw_i_Lr7gbY3p1wkwxmEYHZIG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ spamscore=0 bulkscore=0 phishscore=0 mlxscore=0 suspectscore=0
+ mlxlogscore=999 lowpriorityscore=0 impostorscore=0 priorityscore=1501
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410180059
 
-This patch introduces a new helper log_type_to_seg_type() to convert
-log type to segment data type, and uses it to clean up opened codes
-in build_curseg(), and also it fixes to convert log type before use
-in do_write_page().
+There are several errors/warnings reported by checkpatch.
+Fix all of the positive once as below:
+- Use #include <linux/processor.h> instead of <asm/processor.h>
+- Missing a blank lines after declarations
+- Prefer 'unsigned int' to bare use of 'unsigned'
+- else should follow close brace '}'
 
-Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
+
 ---
- fs/f2fs/segment.c | 36 ++++++++++++++++++++++++++++--------
- 1 file changed, 28 insertions(+), 8 deletions(-)
+Changes in V2:
+Introduce missing bracket in else as suggested by Catalin Marinas.
+V1: https://lore.kernel.org/all/ZxDbgS98-_VNkGXJ@arm.com/
+---
+ mm/kmemleak.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a1806976f4ad..e172b3d0aec3 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3836,10 +3836,35 @@ void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 17006d8a2afa..312a1a9fba97 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * mm/kmemleak.c
+- *
+  * Copyright (C) 2008 ARM Limited
+  * Written by Catalin Marinas <catalin.marinas@arm.com>
+  *
+@@ -95,7 +93,7 @@
+ #include <linux/crc32.h>
+ 
+ #include <asm/sections.h>
+-#include <asm/processor.h>
++#include <linux/processor.h>
+ #include <linux/atomic.h>
+ 
+ #include <linux/kasan.h>
+@@ -373,6 +371,7 @@ static void print_unreferenced(struct seq_file *seq,
+ 
+ 	for (i = 0; i < nr_entries; i++) {
+ 		void *ptr = (void *)entries[i];
++
+ 		warn_or_seq_printf(seq, "    [<%pK>] %pS\n", ptr, ptr);
  	}
  }
- 
-+static int log_type_to_seg_type(enum log_type type)
-+{
-+	int seg_type = CURSEG_COLD_DATA;
+@@ -1711,6 +1710,7 @@ static void kmemleak_scan(void)
+ 		rcu_read_lock();
+ 		for_each_process_thread(g, p) {
+ 			void *stack = try_get_task_stack(p);
 +
-+	switch (type) {
-+	case CURSEG_HOT_DATA:
-+	case CURSEG_WARM_DATA:
-+	case CURSEG_COLD_DATA:
-+	case CURSEG_HOT_NODE:
-+	case CURSEG_WARM_NODE:
-+	case CURSEG_COLD_NODE:
-+		seg_type = (int)type;
-+		break;
-+	case CURSEG_COLD_DATA_PINNED:
-+	case CURSEG_ALL_DATA_ATGC:
-+		seg_type = CURSEG_COLD_DATA;
-+		break;
-+	default:
-+		break;
+ 			if (stack) {
+ 				scan_block(stack, stack + THREAD_SIZE, NULL);
+ 				put_task_stack(p);
+@@ -1817,6 +1817,7 @@ static int kmemleak_scan_thread(void *arg)
+ 	 */
+ 	if (first_run) {
+ 		signed long timeout = msecs_to_jiffies(SECS_FIRST_SCAN * 1000);
++
+ 		first_run = 0;
+ 		while (timeout && !kthread_should_stop())
+ 			timeout = schedule_timeout_interruptible(timeout);
+@@ -2062,7 +2063,7 @@ static ssize_t kmemleak_write(struct file *file, const char __user *user_buf,
+ 	else if (strncmp(buf, "scan=off", 8) == 0)
+ 		stop_scan_thread();
+ 	else if (strncmp(buf, "scan=", 5) == 0) {
+-		unsigned secs;
++		unsigned int secs;
+ 		unsigned long msecs;
+ 
+ 		ret = kstrtouint(buf + 5, 0, &secs);
+@@ -2179,9 +2180,10 @@ static int __init kmemleak_boot_config(char *str)
+ 	else if (strcmp(str, "on") == 0) {
+ 		kmemleak_skip_disable = 1;
+ 		stack_depot_request_early_init();
+-	}
+-	else
++	} else {
+ 		return -EINVAL;
 +	}
-+	return seg_type;
-+}
 +
- static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- {
--	int type = __get_segment_type(fio);
--	bool keep_order = (f2fs_lfs_mode(fio->sbi) && type == CURSEG_COLD_DATA);
-+	enum log_type type = __get_segment_type(fio);
-+	int seg_type = log_type_to_seg_type(type);
-+	bool keep_order = (f2fs_lfs_mode(fio->sbi) &&
-+				seg_type == CURSEG_COLD_DATA);
- 
- 	if (keep_order)
- 		f2fs_down_read(&fio->sbi->io_order_lock);
-@@ -4845,12 +4870,7 @@ static int build_curseg(struct f2fs_sb_info *sbi)
- 				sizeof(struct f2fs_journal), GFP_KERNEL);
- 		if (!array[i].journal)
- 			return -ENOMEM;
--		if (i < NR_PERSISTENT_LOG)
--			array[i].seg_type = CURSEG_HOT_DATA + i;
--		else if (i == CURSEG_COLD_DATA_PINNED)
--			array[i].seg_type = CURSEG_COLD_DATA;
--		else if (i == CURSEG_ALL_DATA_ATGC)
--			array[i].seg_type = CURSEG_COLD_DATA;
-+		array[i].seg_type = log_type_to_seg_type(i);
- 		reset_curseg_fields(&array[i]);
- 	}
- 	return restore_curseg_summaries(sbi);
+ 	return 0;
+ }
+ early_param("kmemleak", kmemleak_boot_config);
 -- 
-2.40.1
+2.17.1
 
 
