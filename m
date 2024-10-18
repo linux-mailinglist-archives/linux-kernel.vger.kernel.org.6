@@ -1,143 +1,235 @@
-Return-Path: <linux-kernel+bounces-371598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CF99A3D20
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:17:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 809CB9A3D2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A74571C23562
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:17:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 946C1B23542
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16472010EF;
-	Fri, 18 Oct 2024 11:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E25201105;
+	Fri, 18 Oct 2024 11:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCX1TYnH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JSZoXEtP"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2879615CD74;
-	Fri, 18 Oct 2024 11:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E5F15CD74;
+	Fri, 18 Oct 2024 11:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729250223; cv=none; b=C7Vn9aGah9hPLIllFbYTgUkzsy5XOXJGIGvlA2LcZ+E8hPKLe267RMKvKDD287/YQcEQUv7UDjYPqTQVtNZkc4ztb/n3mCgHL2yA8koGhPBvvGrrCB/3gYbBgA9LYqkhhap3IBUkORfFSuaQKS9jK9zDZk9rSvJVCNVazWpXmV4=
+	t=1729250298; cv=none; b=czAoCDb1NFSB+Dl14OLemnLi3RwR80p1VEKv/fYOkb7sh8C1T7QVCRUwTW8tKJIFKPRIC8pCGWdvex8jT0aB4mZHJ7RiEdWRdreEC9kiaKrSyjX9vkK/Qez77Cz8FsWHIyMejiqbTkY+MXfc1LNZ/cAVOp01u9a2Z1bSR/Wchq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729250223; c=relaxed/simple;
-	bh=TyKBE7MoQqoiy5Ox7Q0k5Y+ZjkzhA38Eo1JU4Sc2i/c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QVwzU/A44DE5p9lHbFPfDk1P3/e2dd6jGPZ3o+HZ7a2oFdWqtC7dp2YjeVCkM8R11AQ5ONltDjo0mvUVH9GRjX27l2m4WuErjJICurIUoI6hscjBZSJoqK4Ax2l9sxa6QTvGgd8cH0QrZOcgx5eAmcLcmyvY5diDqDkIC6Gsi0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCX1TYnH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06FD4C4CEC3;
-	Fri, 18 Oct 2024 11:16:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729250222;
-	bh=TyKBE7MoQqoiy5Ox7Q0k5Y+ZjkzhA38Eo1JU4Sc2i/c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=cCX1TYnHS7uJ1XWUQmu993BANGY01CW9anDUPilRpbLH3HJiH97nt/wyi7+VbLTSd
-	 P9AnIk0oaIZFpdpLv73ClS8Sley/tonPfeVdJXvIfPT61NX8qcxpTiCkOVtDpXRT44
-	 zn6HS53RcXi8W49c//UyEaQ2S16rgXLk3v8Tdwjv1eTbsnvpfP+XsfcSyWH9Q8H9bJ
-	 yDB6A17DFvfVGVQFWqpXgMxyZdgzcHDKFCl5AZD0gRDaPIw5p1NH+WYv5PtDrp3pch
-	 9rEplNMbOuyt//rSMhvmPiTHsaSfz43Ozgdam9sa1OMkUuObwm8kZII4jnhElcu2dP
-	 Nu7PVoNITBAow==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: "Thomas Gleixner" <tglx@linutronix.de>,  Dirk Behme
- <dirk.behme@gmail.com>,  Lyude Paul <lyude@redhat.com>,
-  rust-for-linux@vger.kernel.org,  Danilo Krummrich <dakr@redhat.com>,
-  airlied@redhat.com,  Ingo Molnar <mingo@redhat.com>,  will@kernel.org,
-  Waiman Long <longman@redhat.com>,  Peter Zijlstra <peterz@infradead.org>,
-  linux-kernel@vger.kernel.org,  Miguel Ojeda <ojeda@kernel.org>,  Alex
- Gaynor <alex.gaynor@gmail.com>,  wedsonaf@gmail.com,  Gary Guo
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  Benno
- Lossin <benno.lossin@proton.me>,  Andreas Hindborg
- <a.hindborg@samsung.com>,  aliceryhl@google.com,  Trevor Gross
- <tmgross@umich.edu>
-Subject: Re: [POC 0/6] Allow SpinLockIrq to use a normal Guard interface
-In-Reply-To: <20241018055125.2784186-1-boqun.feng@gmail.com> (Boqun Feng's
-	message of "Thu, 17 Oct 2024 22:51:19 -0700")
-References: <1eaf7f61-4458-4d15-bbe6-7fd2e34723f4@app.fastmail.com>
-	<20241018055125.2784186-1-boqun.feng@gmail.com>
-Date: Fri, 18 Oct 2024 13:16:43 +0200
-Message-ID: <87r08dr78k.fsf@kernel.org>
+	s=arc-20240116; t=1729250298; c=relaxed/simple;
+	bh=31wnohWQ+bxg27sQPxHsxxLO3o0/2om6sMnqboJXIo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PgfPdTjGkH/Z/J29br9NSgHsCKSrbj54HhH9d0f3vuWiQ8UBtTHBHeqXWy05ha7c1nugaSylTa1Bp/yqlsfYA9SMzk2jwBLFkIBtYSjtntIj+OfR4SoxChFFgqQnZSQHv80RSv0nb4+2shilWuQrLfNxN1kv+1VFsCHP3pAV8UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JSZoXEtP; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cdb889222so20607395ad.3;
+        Fri, 18 Oct 2024 04:18:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729250296; x=1729855096; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AD9xrwy8AQVug5A4qhxj8S+oD2WPcuOf0xgjF6JZQiA=;
+        b=JSZoXEtPwgGuwvRdxsYqF42o0YIwKwSgWXxz5qmxSAW3fKEitivRIt8iKXLgU026xE
+         L9FTCJ72wjn6vl9KzkrFWjXPKwQkLd7ICUmM0tNXYA36dgopWrcdNotV7Foxji5u+vv6
+         riHdV0smVNXroAsHuoNx1EEWXvIpDU84L94vQXLdR1FOqnwaS9HX0msfTMZVc8cqHWun
+         ML7S+92OBgz4Z8+ZQv6Yv7FRFkdkVJm5tBVbvnN7I3/NX+q3VQzK5gWSL935co1asJFE
+         fCVCvm30JZUje4ffRf/PDenN5XhyJka88PUoDD4kBTRcHvyxzUFwhaeebLoJ+X+WAkJu
+         CEzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729250296; x=1729855096;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AD9xrwy8AQVug5A4qhxj8S+oD2WPcuOf0xgjF6JZQiA=;
+        b=XF22xDsPt8cTAAdwwDy8Ddo3IZxmNo2rL7L4jwSukuF0u1rNHQr9pKvDKUQ1SY7hBG
+         9FyCW4weMAfQuoYQF0xOrKGz1j2i3yye0Tdn5TkTcI/xLKacseOKQkoXtJFKCoGFE4dY
+         9BJ9QnnZWI94Pkptv9DdunrnsSgS67z4a6xQEPPdAUYvSfcpVN8wF41beuufvT1pKxk8
+         aThGo4ORE5DDSxZ1h8wLSbm1MB+a1/5rYIQnHTSbGZgplie2A/uh1ucr8Qa2WRcqvCwy
+         Y8957bfvzzNOQ/6StI8laLCM4Z8oknu9w5bp9fir9S0a+GkEZxUUep7BQwsEQoMMOZd8
+         4L4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVsHdL4UXQ5rLVNAHh5xRc21G8R+I7SEkijap39vPqlQ4XFSDfBFGIjsoes+RZa18P2x9TbUIibNJSlR16y@vger.kernel.org, AJvYcCVy9AznQ7ATfqw0r1PflqfNGo/e/9Ys3Fvj9ligVUpsM9LX77TF9KIhMW0n61ATx6GWzd44C+Ok4ZSSGkA=@vger.kernel.org, AJvYcCWF0yAUW2oseXAAFxIscFjTULzVlyYNyj+ZmauBSUYVj4TNHCeN/CgUPSv/iNM/u8kDHsyl88cOKe2v@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxta6Y3qg05z72lMtxNHG5aokD0vq2NHLqgVWO5uOBkP5F7C5yB
+	9vrqwOeAyqJS2Fk64M75lWVsCvqEQQ6gK5MikiWXYR5U21ck1PtI
+X-Google-Smtp-Source: AGHT+IEVZI9VguOIUy++m8V3bQDBofvSkPkutmCkt1I/ydjuQsi5ZfdokTvb+4cXSXZT7hmIlQiAog==
+X-Received: by 2002:a17:903:1104:b0:20b:7be8:8eb9 with SMTP id d9443c01a7336-20e5a93d705mr20019655ad.54.1729250295855;
+        Fri, 18 Oct 2024 04:18:15 -0700 (PDT)
+Received: from ux-UP-WHL01 ([240e:47e:2ed0:f711:83b7:17b8:5fad:d135])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8f04f2sm10524545ad.185.2024.10.18.04.18.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 04:18:15 -0700 (PDT)
+Date: Fri, 18 Oct 2024 19:18:05 +0800
+From: Charles Wang <charles.goodix@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Charles Wang <charles.goodix@gmail.com>, dmitry.torokhov@gmail.com,
+	hbarnor@chromium.org, dianders@chromium.org,
+	conor.dooley@microchip.com
+Cc: jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
+Message-ID: <ZxJCvwxwamvRZ3m9@ux-UP-WHL01>
+References: <20241018020815.3098263-2-charles.goodix@gmail.com>
+ <06151891-a260-450c-b688-fff18638e627@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06151891-a260-450c-b688-fff18638e627@kernel.org>
 
-Boqun Feng <boqun.feng@gmail.com> writes:
+Hi Krzysztof,
 
-> Hi Thomas,
+On Fri, Oct 18, 2024 at 07:59:46AM +0200, Krzysztof Kozlowski wrote:
+> On 18/10/2024 04:08, Charles Wang wrote:
+> > The Goodix GT7986U touch controller report touch data according to the
+> > HID protocol through the SPI bus. However, it is incompatible with
+> > Microsoft's HID-over-SPI protocol.
+> > 
+> > Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> > ---
+> >  .../bindings/input/goodix,gt7375p.yaml        | 68 ++++++++++++++++---
+> >  1 file changed, 58 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/input/goodix,gt7375p.yaml b/Documentation/devicetree/bindings/input/goodix,gt7375p.yaml
+> > index 358cb8275..184d9c320 100644
+> > --- a/Documentation/devicetree/bindings/input/goodix,gt7375p.yaml
+> > +++ b/Documentation/devicetree/bindings/input/goodix,gt7375p.yaml
+> > @@ -8,27 +8,27 @@ title: Goodix GT7375P touchscreen
+> >  
+> >  maintainers:
+> >    - Douglas Anderson <dianders@chromium.org>
+> > +  - Charles Wang <charles.goodix@gmail.com>
+> >  
+> >  description:
+> > -  Supports the Goodix GT7375P touchscreen.
+> > -  This touchscreen uses the i2c-hid protocol but has some non-standard
+> > -  power sequencing required.
+> > -
+> > -allOf:
+> > -  - $ref: /schemas/input/touchscreen/touchscreen.yaml#
+> > +  The Goodix GT7375P and GT7986U touchscreens support both SPI and I2C interfaces.
+> > +  With the I2C interface, they use the i2c-hid protocol but require non-standard
+> > +  power sequencing. With the SPI interface, they use a custom HID protocol that
+> > +  is incompatible with Microsoft's HID-over-SPI protocol.
+> >  
+> >  properties:
+> >    compatible:
+> >      oneOf:
+> > -      - const: goodix,gt7375p
+> > +      - items:
+> > +          - const: goodix,gt7375p
+> 
+> That's not a necessary change. Keep old code here.
 >
-> So this series is what I proposed, previously, because the nested
-> interrupt API in C is local_irq_save() and local_irq_restore(), the
-> following Rust code has the problem of enabling interrupt earlier:
->
-> 	// l1 and l2 are interrupt disabling locks, their guards (i.e.
-> 	// return of lock()) can be used to track interrupt state.
->
-> 	// interrupts are enabled in the beginning.
-> 	
-> 	let g1 = l1.lock(); // previous interrupt state is enabled.
-> 	let g2 = l2.lock(); // previous interrupt state is disabled.
->
-> 	drop(g1); // release l1, if we use g1's state, interrupt will be
-> 		  // enabled. But this is obviously wrong. Because g2
-> 		  // can only exist with interrupt disabled.
->
-> With the new interrupt disable and enable API, instead of a "unsigned
-> long", a percpu variable is used to track the outermost interrupt state
-> and the nested level, so that "drop(g1);" above won't enable interrupts.
->
-> Although this requires extra cost, but I think it might be worth paying,
-> because this could make Rust's SpinLockIrq simply use a guard interface
-> as SpinLock.
->
-> Of course, looking for any comments and suggestions.
->
-> Boqun Feng (3):
->   irq & spin_lock: Add counted interrupt disabling/enabling
->   rust: helper: Add spin_{un,}lock_irq_{enable,disable}() helpers
->   rust: sync: lock: Add `Backend::BackendInContext`
->
-> Lyude Paul (3):
->   rust: Introduce interrupt module
->   rust: sync: Add SpinLockIrq
->   rust: sync: Introduce lock::Backend::Context
->
->  include/linux/irqflags.h          |  32 +++++++++-
->  include/linux/irqflags_types.h    |   6 ++
->  include/linux/spinlock.h          |  13 ++++
->  include/linux/spinlock_api_smp.h  |  29 +++++++++
->  include/linux/spinlock_rt.h       |  10 +++
->  kernel/locking/spinlock.c         |  16 +++++
->  kernel/softirq.c                  |   3 +
->  rust/helpers/helpers.c            |   1 +
->  rust/helpers/interrupt.c          |  18 ++++++
->  rust/helpers/spinlock.c           |  10 +++
->  rust/kernel/interrupt.rs          |  64 +++++++++++++++++++
->  rust/kernel/lib.rs                |   1 +
->  rust/kernel/sync.rs               |   2 +-
->  rust/kernel/sync/lock.rs          |  33 +++++++++-
->  rust/kernel/sync/lock/mutex.rs    |   2 +
->  rust/kernel/sync/lock/spinlock.rs | 103 ++++++++++++++++++++++++++++++
->  16 files changed, 340 insertions(+), 3 deletions(-)
->  create mode 100644 rust/helpers/interrupt.c
->  create mode 100644 rust/kernel/interrupt.rs
 
+Ack,
 
-Tested-by: Andreas Hindborg <a.hindborg@kernel.org>
+> >        - items:
+> >            - const: goodix,gt7986u
+> >            - const: goodix,gt7375p
+> > +      - items:
+> > +          - const: goodix,gt7986u
+> 
+> Hm? This does not make much sense. Device either is or is not compatible
+> with gt7375p. Cannot be both.
+>
 
-I ran the `hrtimer` examples on top of this, and it seems to work [1].
+Ack,
+
+> >  
+> >    reg:
+> > -    enum:
+> > -      - 0x5d
+> > -      - 0x14
+> > +    maxItems: 1
+> >  
+> >    interrupts:
+> >      maxItems: 1
+> > @@ -57,6 +57,15 @@ properties:
+> >        This property is used to avoid the back-powering issue.
+> >      type: boolean
+> >  
+> > +  goodix,hid-report-addr:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description:
+> > +      The register address for retrieving HID report data.
+> > +      This address is related to the device firmware and may
+> > +      change after a firmware update.
+> 
+> How is this supposed to work? DTS will stay fixed, you cannot change it
+> just because firmware changed. User loads new firmware with different
+> address, but DTS will have to use old address - so broken property.
+> 
+> > +
+> > +  spi-max-frequency: true
+> 
+> Drop
+>
+
+Ack,
+
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -64,6 +73,25 @@ required:
+> >    - reset-gpios
+> >    - vdd-supply
+> >  
+> > +allOf:
+> > +  - $ref: /schemas/input/touchscreen/touchscreen.yaml#
+> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          items:
+> > +            - const: goodix,gt7986u
+> > +    then:
+> > +      required:
+> > +        - goodix,hid-report-addr
+> > +    else:
+> > +      properties:
+> > +        goodix,hid-report-addr: false
+> > +        spi-max-frequency: false
+> 
+> Why? GT7375P also supports SPI.
+>
+
+No, only GT7986U support SPI. What I'm trying to express here is that
+the GT7375P does not support the properties 'goodix,hid-report-addr'
+and 'spi-max-frequency. Is there any issue with writing it this way?
+
+> > +        reg:
+> > +          enum: [0x5d, 0x14]
+> > +
+> >  additionalProperties: false
+> 
+> This becomes now: unevaluatedProperties: false
+>
+
+Ack,
+
+> >  
+> >  examples:
+> > @@ -87,3 +115,23 @@ examples:
+> >          vdd-supply = <&pp3300_ts>;
+> >        };
+> >      };
+> > +
+>
 
 Best regards,
-Andreas
-
-
-[1] git git://git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git hrtimer-boqun-poc
+Charles
 
 
