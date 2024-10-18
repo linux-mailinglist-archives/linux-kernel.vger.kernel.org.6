@@ -1,210 +1,328 @@
-Return-Path: <linux-kernel+bounces-370948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B049A341C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:18:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A0C9A3429
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729401F241CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:18:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DFA8B22C39
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D389C17AE1C;
-	Fri, 18 Oct 2024 05:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D23117BED0;
+	Fri, 18 Oct 2024 05:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mWxzyO2L"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=benboeckel.net header.i=@benboeckel.net header.b="0XL4uJ+k";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EYArA03h"
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559B0176AB5
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B906217332C;
+	Fri, 18 Oct 2024 05:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729228675; cv=none; b=qDB4Kp5U9Vi97zO3an5tNSD3EYcibjL2fVaZvYhRMdzoVtM2hyXyRaBlvXQOEo1ua9KYtHEHsyuMyShAMov3oOm9BSa6WDQyJjJT73JFPXt+Sj8jSq84c0eTikBbe4WHvgA1NQlpwTqtWMw2HUkw1ogKpkyIG2YXjXtI0iEaN/s=
+	t=1729228912; cv=none; b=AVxAPuPdnarL9VEgqG919DheYpCxN2cOGPHVTsI96YDwJb2pJKeTXWhhEBlyDVNB0O9SjEbfXEWHtGAxlL8sluYq0F/j1MvOddA7BKEROSdmd+RwBLDWG584tHoLebDQ9BGAiJdlUVWX3EQzKYYfNyS3bc4i037quS3h3kZ9fKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729228675; c=relaxed/simple;
-	bh=Ho77DWHTdyRsuxsI6uPuILsTlNEgmwNqA2rOsdSxdZ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ABQv5NwseJS5eKyQOTQllrHQ2N6qRAY6RyvvW90GEfH2O0kD6dLiv6vMF1JOr4ckXpz92nk3RX6VhPFCY0EyYKGaQHCg1CpAwg3DMx8xLATaZvbmlDdZsfcvlop8fqai2JblBy7FnPIItqihJ/AM/t5Ulc0soxwADXXV11x9X4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mWxzyO2L; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e1543ab8so2981898e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:17:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729228671; x=1729833471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fb5KpeBreuXFeJ6C2dlxdkF/AtWXYD7eWJb+jZNVASw=;
-        b=mWxzyO2L0iKrU+M7qgs+jId5Juyu4kbkk8MfWKFM8uC7G40UWvVEzIl+/gyrQvKsKH
-         ZXCDIdY3Kz/aCIxLObN15K+jlkQwgiL4N2gV1FRETwcp81jAnCdTFc/akwl/Hb18yydT
-         rrfXc+V/MCQdoUTWmgnxUqUAaO+9OhR+C0FX0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729228671; x=1729833471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fb5KpeBreuXFeJ6C2dlxdkF/AtWXYD7eWJb+jZNVASw=;
-        b=b68FRel5NqnB6vj97HePtlcfvPHss0Sis+uyEWPuR8zIk5ufeGYzxU4M6CRzQRTo4m
-         beZzYv2GQpPHKiUFXfybes84pv9q3WE+UCWrv1O6NX25oazJKa3ZGuoHdve3ekRBYlM/
-         zOt/5Ux7vHN/hJFbvbLh4RQel1bl1xX62Mgn2tqGoBei+VzAvoEIqKU1DUihMhWZ/R4u
-         I4dd8WyjvL0mc39kjVcn9sHXgAAU1vTRfusprFEiygxnMx660TsPl19n0xhHNK0K7X5M
-         Nxxjq2Ue+9b9CT/7MnRpqCwfB8WxsPF2CaZrJMXINFGXnZYdwGrpOxpLIleQ+f0dMNy/
-         DvmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXc577u1NLmfnEuhfx+rrUk5EgHf0QGV9rurQyxJnaM++ho8z9/AC9JEYE7nX0roP47GG8rqNkQlKo+NiQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxnMelhFehCKAvDFLEOf+K4I0APFaO6CbRxrNUm94uoXVuJRjL
-	oI5Jx8Tgjpj1wdiDmo6JOBLjtdj1TGH/Vd81yw3iKxdCMeQC6OjVpZ4JDCreMySSylFsmMWota5
-	/gY9hJBDHXlmzm2XQGsx0oPhLcX5fobQm+clq
-X-Google-Smtp-Source: AGHT+IEMrNDmylr1CfjI1xQ5P74wl/iIOo4f+1YA243FTpzmnuRjnMreynnJtzQcXTFfSx2gj46cObeu9tjEebZJfM4=
-X-Received: by 2002:a05:6512:104f:b0:533:4497:9f29 with SMTP id
- 2adb3069b0e04-53a154704d2mr806562e87.31.1729228671134; Thu, 17 Oct 2024
- 22:17:51 -0700 (PDT)
+	s=arc-20240116; t=1729228912; c=relaxed/simple;
+	bh=77CDYYll5IUCmbYzAvTtf6hWlCj10t9eqfPT2/u09VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SfDqDXCzzVxVdL/lK+7wBGPcRlXOqhWFXOmlqdSVR1CDT4KlXFu/M7K0C9wz7PTQu/n+806nOVLFwdnXQzPj3qZKA9t2FCG92pkzbHiPvCDyFUCGh4ZKM8hGePnDRxdGOW6a3ncmeSBsWiGE09YaDCZg9b+jZuzfEkh26FjR7TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benboeckel.net; spf=pass smtp.mailfrom=benboeckel.net; dkim=pass (2048-bit key) header.d=benboeckel.net header.i=@benboeckel.net header.b=0XL4uJ+k; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EYArA03h; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benboeckel.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=benboeckel.net
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailflow.phl.internal (Postfix) with ESMTP id 9AD7720046C;
+	Fri, 18 Oct 2024 01:21:48 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Fri, 18 Oct 2024 01:21:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1729228908; x=1729236108; bh=Nv5e9PalN9ehiEsD+yPrlMtTklPaAwWS
+	SEMCc1ilrnk=; b=0XL4uJ+k5BRpB5y1IoE4M6xl0EtkfdgI53rpppIgx01A4Y6Z
+	+fFg3dHZxR1Wdzkbe5RdneosRJ14mU7yG3z5YFbYa6oKFUjVhVe/sVN75SKSPsge
+	0YZTbsR2uyPF64EP28ekQ6narypVZUOkp47eIBEg1UNHbLfcN+ZQyVwwL+3B5wWW
+	slOhgYtFeKqXY084zDXf2La9ZC7byXYaWtEK00YbPFLd1FMDodR1DOXjMMjF7bru
+	lSZPd5YvNZ02TjYqE100BPSWZEvWzTGU9Ar1Pdv6Zg5VL5nX4iaXs+XqRRBl2Of7
+	ceVBNbdEeGWo77rLygPpmORtzAOoutVJ9QoP6A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729228908; x=
+	1729236108; bh=Nv5e9PalN9ehiEsD+yPrlMtTklPaAwWSSEMCc1ilrnk=; b=E
+	YArA03h6vy6zNcVwt9bKjov2daUa8VR4GuJzTHxV2ZaAiADyt4sed8pqzIopwdk2
+	CU6XqRNd0HVOl2DXRfiqpgJ4qX5ME6mqEb0jIYkon4sYYXYwyQBlSzo/F4NtxdSf
+	7fU0MTAseetSfEF9fU6kOyhKpBpY63qTnSZ2webPg6h0IW9LnOjs1I1G02aVmNsR
+	WJXKUrPo9bzev5tVQ6vxfL6db7e3whFE73nJOzr3H76sNpJsC8PT5fQaeV29L9tD
+	PH5WWoKjEkts4edAsk8YBDG4oo1AOuAMJ4GnjnkRtbmEWE1XhwhMcAZzD75YvzvZ
+	TVa2oPHQMDAUS4351PBwg==
+X-ME-Sender: <xms:avARZzH5yRHgOa2BZWi_EXRqJ9Xo3ZXZ4wpP6Mi5XwA5bCIKJ99Aow>
+    <xme:avARZwU8A4hPcWPWLmqd37nzcgy73D1zIa3qMkS0uJ7aANyFubhUVJmhrhDQfFA2q
+    BZk6lXCRIQzHNu-BCA>
+X-ME-Received: <xmr:avARZ1JkSXMrg-qdH1WrVArAFwNxMLtDt7UYLVduSwK9J8AsaTS6DJZ054TersEZ435mVv29brc9GpN797751P5DDojabtV42rb9>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehvddgleegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjfgesthekredttder
+    jeenucfhrhhomhepuegvnhcuuehovggtkhgvlhcuoehmvgessggvnhgsohgvtghkvghlrd
+    hnvghtqeenucggtffrrghtthgvrhhnpedukedvjeetueduffevfffhleefgfejhefffefh
+    hfegieeiudevheefjeffteevfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehmvgessggvnhgsohgvtghkvghlrdhnvghtpdhnsggprhgtphht
+    thhopedvgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvghrihgtrdhsnhhofi
+    gsvghrghesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqshgvtghurhhi
+    thihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguhh
+    hofigvlhhlshesrhgvughhrghtrdgtohhmpdhrtghpthhtohepugifmhifvdesihhnfhhr
+    rgguvggrugdrohhrghdprhgtphhtthhopehhvghrsggvrhhtsehgohhnughorhdrrghprg
+    hnrgdrohhrghdrrghupdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgv
+    thdprhgtphhtthhopegrrhgusgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrrh
+    hkkhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhesphgruhhlqdhmohho
+    rhgvrdgtohhm
+X-ME-Proxy: <xmx:avARZxHP3OKqH4myMMS6ZxVIayyOxlBjualprYPn-SmvQcO1r0zxTQ>
+    <xmx:avARZ5U0_dcflfGMhqFC09UQNXpYeT8sf_jWKMhEROXXSg8zwRUeiw>
+    <xmx:avARZ8PdT6SH0mwogWpKcbv09aI7LecZC3bov0x2iLTaaDk74pDZcQ>
+    <xmx:avARZ40voLO4SMc0wwrJe7J0kFLNMV2lbnXg3vm61NBghPTr9CcLwA>
+    <xmx:bPARZ-dB1lZHlknKtmuyMgXiOxQ-tbUMDW58GPp2lt61hIiWE6plL_3w>
+Feedback-ID: iffc1478b:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 18 Oct 2024 01:21:45 -0400 (EDT)
+Date: Fri, 18 Oct 2024 01:21:44 -0400
+From: Ben Boeckel <me@benboeckel.net>
+To: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: linux-security-module@vger.kernel.org, dhowells@redhat.com,
+	dwmw2@infradead.org, herbert@gondor.apana.org.au,
+	davem@davemloft.net, ardb@kernel.org, jarkko@kernel.org,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	zohar@linux.ibm.com, roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com, mic@digikod.net, casey@schaufler-ca.com,
+	stefanb@linux.ibm.com, ebiggers@kernel.org, rdunlap@infradead.org,
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-integrity@vger.kernel.org
+Subject: Re: [RFC PATCH v3 05/13] clavis: Introduce a new key type called
+ clavis_key_acl
+Message-ID: <ZxHwaGeDCBSp3Dzx@farprobe>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+ <20241017155516.2582369-6-eric.snowberg@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017091238.180920-1-bo.ye@mediatek.com> <20241017091410.181093-1-bo.ye@mediatek.com>
-In-Reply-To: <20241017091410.181093-1-bo.ye@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 18 Oct 2024 13:17:40 +0800
-Message-ID: <CAGXv+5ESMm3t_kJckubDf4jMLYehz66o8B42sTTM=vEF1WMpCA@mail.gmail.com>
-Subject: Re: [RESEND. PATCH v1] pinctrl: mediatek: paris: Revert "Rework
- support for PIN_CONFIG_{INPUT,OUTPUT}_ENABLE"
-To: Bo Ye <bo.ye@mediatek.com>
-Cc: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Yongdong Zhang <yongdong.zhang@mediatek.com>, Xiujuan Tan <xiujuan.tan@mediatek.com>, 
-	Browse Zhang <browse.zhang@mediatek.com>, Light Hsieh <light.hsieh@mediatek.com>, 
-	Evan Cao <ot_evan.cao@mediatek.com>, linux-mediatek@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241017155516.2582369-6-eric.snowberg@oracle.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Thu, Oct 17, 2024 at 5:14=E2=80=AFPM Bo Ye <bo.ye@mediatek.com> wrote:
+On Thu, Oct 17, 2024 at 09:55:08 -0600, Eric Snowberg wrote:
+> Introduce a new key type for keyring access control.  The new key type
+> is called clavis_key_acl.  The clavis_key_acl contains the subject key
+> identifier along with the allowed usage type for the key.
+> 
+> The format is as follows:
+> 
+> XX:YYYYYYYYYYY
+> 
+> XX - Single byte of the key type
+> 	VERIFYING_MODULE_SIGNATURE            00
+> 	VERIFYING_FIRMWARE_SIGNATURE          01
+> 	VERIFYING_KEXEC_PE_SIGNATURE          02
+> 	VERIFYING_KEY_SIGNATURE               03
+> 	VERIFYING_KEY_SELF_SIGNATURE          04
+> 	VERIFYING_UNSPECIFIED_SIGNATURE       05
+> :  - ASCII colon
+> YY - Even number of hexadecimal characters representing the key id
 
-Please avoid sending more than one version per day. Most people in
-the community are not in the Asian time zones. Give people time
-to respond.
+This is expected to be *lowercase* hexadecimal characters in the code;
+can that restriction please be documented? (Coming back here, there is a
+`tolower` pass performed when copying from userspace, so this seems to
+be an internal requirement, not userspace. Might be worth documenting
+somewhere in case the kernel wants to make such a key internally.)
 
-> [This reverts commit c5d3b64c568a344e998830e0e94a7c04e372f89b.]
->
-> For MTK HW,
-> 1. to enable GPIO input direction: set DIR=3D0, IES=3D1
-> 2. to enable GPIO output direction: set DIR=3D1, and set DO=3D1 to output=
- high, set DO=3D0 to out low
->
-> The PIN_CONFIG_INPUT/PIN_CONFIG_OUTPUT/PIN_CONFIG_INPUT_ENABLE/PIN_CONFIG=
-_OUTPUT_ENABLE shall
-> be implemented according to view of its purpose - set GPIO direction and =
-output value (for
-> output only) according to specific HW design.
->
-> However, the reverted patch implement according to author's own explanati=
-on of IES without
-> understanding of MTK's HW. Such patch does not correctly set DIR/IES bit =
-to control GPIO
-> direction on MTK's HW.
->
-> Fixes: c5d3b64c568 ("pinctrl: mediatek: paris: Rework support for PIN_CON=
-FIG_{INPUT,OUTPUT}_ENABLE")
+I also see a 32-byte (64 hex characters) limit in the code; that should
+also be documented somewhere.
 
-As Macpaul mentioned, you changed the commit message by adding a tag, and
-thus this patch should be marked "v2". Please also provide a changelog
-on what changed in this version in the footer, i.e. under the "---" line
-but before the actual patch context.
+> This key type will be used in the clavis keyring for access control. To
+> be added to the clavis keyring, the clavis_key_acl must be S/MIME signed
+> by the sole asymmetric key contained within it.
+> 
+> Below is an example of how this could be used. Within the example, the
+> key (b360d113c848ace3f1e6a80060b43d1206f0487d) is already in the machine
+> keyring. The intended usage for this key is to validate a signed kernel
+> for kexec:
+> 
+> echo "02:b360d113c848ace3f1e6a80060b43d1206f0487d" > kernel-acl.txt
+> 
+> The next step is to sign it:
+> 
+> openssl smime -sign -signer clavis-lsm.x509 -inkey clavis-lsm.priv -in \
+> 	kernel-acl.txt  -out kernel-acl.pkcs7 -binary -outform DER \
+> 	-nodetach -noattr
+> 
+> The final step is how to add the acl to the .clavis keyring:
+> 
+> keyctl padd clavis_key_acl "" %:.clavis < kernel-acl.pkcs7
+> 
+> Afterwards the new clavis_key_acl can be seen in the .clavis keyring:
+> 
+> keyctl show %:.clavis
+> Keyring
+>   keyring: .clavis
+>    \_ asymmetric: Clavis LSM key: 4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+>    \_ clavis_key_acl: 02:b360d113c848ace3f1e6a80060b43d1206f0487d
 
-ChenYu
+Can this be committed to `Documentation/` and not just the Git history
+please?
 
-> Signed-off-by: Light Hsieh <light.hsieh@mediatek.com>
-> Signed-off-by: Evan Cao <ot_evan.cao@mediatek.com>
-> Signed-off-by: Bo Ye <bo.ye@mediatek.com>
+Code comments inline below.
+
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 > ---
->  drivers/pinctrl/mediatek/pinctrl-paris.c | 38 +++++++++++++++++-------
->  1 file changed, 27 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/m=
-ediatek/pinctrl-paris.c
-> index 87e958d827bf..a8af62e6f8ca 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-> @@ -165,21 +165,20 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctl=
-dev,
->                 err =3D mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_SR, &r=
-et);
->                 break;
->         case PIN_CONFIG_INPUT_ENABLE:
-> -               err =3D mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_IES, &=
-ret);
-> -               if (!ret)
-> -                       err =3D -EINVAL;
-> -               break;
-> -       case PIN_CONFIG_OUTPUT:
-> +       case PIN_CONFIG_OUTPUT_ENABLE:
->                 err =3D mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &=
-ret);
->                 if (err)
->                         break;
-> +               /*     CONFIG     Current direction return value
-> +                * -------------  ----------------- ---------------------=
--
-> +                * OUTPUT_ENABLE       output       1 (=3D HW value)
-> +                *                     input        0 (=3D HW value)
-> +                * INPUT_ENABLE        output       0 (=3D reverse HW val=
-ue)
-> +                *                     input        1 (=3D reverse HW val=
-ue)
-> +                */
-> +               if (param =3D=3D PIN_CONFIG_INPUT_ENABLE)
-> +                       ret =3D !ret;
->
-> -               if (!ret) {
-> -                       err =3D -EINVAL;
-> -                       break;
-> -               }
-> -
-> -               err =3D mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DO, &r=
-et);
->                 break;
->         case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
->                 err =3D mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &=
-ret);
-> @@ -284,9 +283,26 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctld=
-ev, unsigned int pin,
->                         break;
->                 err =3D hw->soc->bias_set_combo(hw, desc, 0, arg);
->                 break;
-> +       case PIN_CONFIG_OUTPUT_ENABLE:
-> +               err =3D mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT,
-> +                                      MTK_DISABLE);
-> +               /* Keep set direction to consider the case that a GPIO pi=
-n
-> +                *  does not have SMT control
-> +                */
-> +               if (err !=3D -ENOTSUPP)
-> +                       break;
+>  security/clavis/clavis.h         |   1 +
+>  security/clavis/clavis_keyring.c | 173 +++++++++++++++++++++++++++++++
+>  2 files changed, 174 insertions(+)
+> 
+> diff --git a/security/clavis/clavis.h b/security/clavis/clavis.h
+> index 5e397b55a60a..7b55a6050440 100644
+> --- a/security/clavis/clavis.h
+> +++ b/security/clavis/clavis.h
+> @@ -5,6 +5,7 @@
+>  
+>  /* Max length for the asymmetric key id contained on the boot param */
+>  #define CLAVIS_BIN_KID_MAX   32
+> +#define CLAVIS_ASCII_KID_MAX 64
+>  
+>  struct asymmetric_setup_kid {
+>  	struct asymmetric_key_id id;
+> diff --git a/security/clavis/clavis_keyring.c b/security/clavis/clavis_keyring.c
+> index 400ed455a3a2..00163e7f0fe9 100644
+> --- a/security/clavis/clavis_keyring.c
+> +++ b/security/clavis/clavis_keyring.c
+> @@ -2,8 +2,12 @@
+>  
+>  #include <linux/security.h>
+>  #include <linux/integrity.h>
+> +#include <linux/ctype.h>
+>  #include <keys/asymmetric-type.h>
+> +#include <keys/asymmetric-subtype.h>
+>  #include <keys/system_keyring.h>
+> +#include <keys/user-type.h>
+> +#include <crypto/pkcs7.h>
+>  #include "clavis.h"
+>  
+>  static struct key *clavis_keyring;
+> @@ -11,10 +15,173 @@ static struct asymmetric_key_id *clavis_boot_akid;
+>  static struct asymmetric_setup_kid clavis_setup_akid;
+>  static bool clavis_enforced;
+>  
+> +static int pkcs7_preparse_content(void *ctx, const void *data, size_t len, size_t asn1hdrlen)
+> +{
+> +	struct key_preparsed_payload *prep = ctx;
+> +	const void *saved_prep_data;
+> +	size_t saved_prep_datalen;
+> +	char *desc;
+> +	int ret, i;
 > +
-> +               err =3D mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DIR,
-> +                                      MTK_OUTPUT);
-> +               break;
->         case PIN_CONFIG_INPUT_ENABLE:
->                 /* regard all non-zero value as enable */
->                 err =3D mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_IES, !=
-!arg);
-> +               if (err)
-> +                       break;
+> +	/* key_acl_free_preparse will free this */
+> +	desc = kmemdup(data, len, GFP_KERNEL);
+> +	if (!desc)
+> +		return -ENOMEM;
 > +
-> +               err =3D mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DIR,
-> +                                      MTK_INPUT);
->                 break;
->         case PIN_CONFIG_SLEW_RATE:
->                 /* regard all non-zero value as enable */
-> --
-> 2.17.0
->
+> +	/* Copy the user supplied contents and remove any white space. */
+> +	for (i = 0; i < len; i++) {
+> +		desc[i] = tolower(desc[i]);
+
+Ah, looking here it seems that userspace can provide upper or lowercase.
+THat this is being performed should be added to the comment here.
+
+> +		if (isspace(desc[i]))
+> +			desc[i] = 0;
+
+How is setting a space to `0` *removing* it? Surely the `isxdigit` check
+internally is going to reject this. Perhaps you meant to have two
+indices into `desc`, one read and one write and to stall the write index
+as long as we're reading whitespace?
+
+Also, that whitespace is stripped is a userspace-relevant detail that
+should be documented.
+
+> +static void key_acl_destroy(struct key *key)
+> +{
+> +	/* It should not be possible to get here */
+> +	pr_info("destroy clavis_key_acl denied\n");
+> +}
+> +
+> +static void key_acl_revoke(struct key *key)
+> +{
+> +	/* It should not be possible to get here */
+> +	pr_info("revoke clavis_key_acl denied\n");
+> +}
+
+These keys cannot be destroyed or revoked? This seems…novel to me. What
+if there's a timeout on the key? If such keys are immortal, timeouts
+should also be refused?
+
+> +static int key_acl_vet_description(const char *desc)
+> +{
+> +	int i, desc_len;
+> +	s16 ktype;
+> +
+> +	if (!desc)
+> +		goto invalid;
+> +
+> +	desc_len = sizeof(desc);
+
+This should be `strlen`, no?
+
+> +	/*
+> +	 * clavis_acl format:
+> +	 *    xx:yyyy...
+> +	 *
+> +	 *    xx     - Single byte of the key type
+> +	 *    :      - Ascii colon
+> +	 *    yyyy.. - Even number of hexadecimal characters representing the keyid
+> +	 */
+> +
+> +	/* The min clavis acl is 7 characters. */
+> +	if (desc_len < 7)
+> +		goto invalid;
+> +
+> +	/* Check the first byte is a valid key type. */
+> +	if (sscanf(desc, "%2hx", &ktype) != 1)
+> +		goto invalid;
+> +
+> +	if (ktype >= VERIFYING_CLAVIS_SIGNATURE)
+> +		goto invalid;
+> +
+> +	/* Check that there is a colon following the key type */
+> +	if (desc[2] != ':')
+> +		goto invalid;
+> +
+> +	/* Move past the colon. */
+> +	desc += 3;
+> +
+> +	for (i = 0; *desc && i < CLAVIS_ASCII_KID_MAX; desc++, i++) {
+> +		/* Check if lowercase hex number */
+> +		if (!isxdigit(*desc) || isupper(*desc))
+> +			goto invalid;
+> +	}
+> +
+> +	/* Check if the has is greater than CLAVIS_ASCII_KID_MAX. */
+> +	if (*desc)
+> +		goto invalid;
+> +
+> +	/* Check for even number of hex characters. */
+> +	if (i == 0 || i & 1)
+
+FWIW< the `i == 0` is impossible due to the `desc_len < 7` check above
+(well, once `strlen` is used…).
+
+Thanks,
+
+--Ben
 
