@@ -1,95 +1,91 @@
-Return-Path: <linux-kernel+bounces-371467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1289A3B73
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:25:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03ED59A3B7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B701F26A5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:25:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8843285927
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F342010E6;
-	Fri, 18 Oct 2024 10:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B82B20100F;
+	Fri, 18 Oct 2024 10:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEqiHmDl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bX7xhte0"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5EF18C938;
-	Fri, 18 Oct 2024 10:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C85168C3F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729247079; cv=none; b=g82PnxHY0ETnoTEyxHrClPoNl//oKHS5VKUS8DtlvIBxlMgBhXOTM47LrD6hOL14sKA2heAYLLKo753hdqXUQKPmGcvBDqsSY/pdxjyJEM/3u3C+jrVLnfxZPonR7bSOasl7NazvqIEJavKGGXcVzD7EJkmOmqb3C9s806wJsek=
+	t=1729247287; cv=none; b=JYYuDmsyke52DjmVdshvzm1DerOtC8jiV2dndjEwTx5pMeaclg+yTdOxA4j9Pkc4rynLW1CG9GMndu4w5XPF+oDkA6PV7z62GEEUHyQhtqsib8F2EzdqMeH8FcQDlnilVh+2ezvrIh3D2vb58+OEdI+je+wGDOM0/N4Fx4ZGNUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729247079; c=relaxed/simple;
-	bh=cWX64qorojrVQ5gx13d3kqEmpkphq2oQIx91nL2B81c=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=qbgMiHqpLDEqwNbCiYDFc5IWzwhPbF/ssv5SqbE869aqxu5ch4tuQxan1idLrfM7lWhctSpBcwYOWUpfFzxy9z9Y240neHPidU0RTPM2vRQyqLtaFVf2Uwk/VtasvYTRidiUP77yiuYhqZl43K5VaVmFSuCGOKbq6DslCWMCI9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEqiHmDl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBC6C4CECF;
-	Fri, 18 Oct 2024 10:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729247079;
-	bh=cWX64qorojrVQ5gx13d3kqEmpkphq2oQIx91nL2B81c=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=rEqiHmDlbXHi19ZDDGDIrdmMBHBHsHGuEuxZKzv+9Ceo0AEAiadc4BjtPox3md3+k
-	 x0w+oWU2bTwUCPTnu6YvbY2E6aKq8AFxbe1x8+zGuE9uznQRZUE97POg6Kl0ZEoVui
-	 t4UUfwNvh0Wf7myerJJA/JiaP1rg80ACocc1PgU9a/HgOI//R0nUEgciHdhEYWcOBM
-	 rT9dxAtvxDY8Vke4RDEwcPqsFnj9ijK5UxrUH5jeuiol0Ii1uhzSWHbFkCV5TXnzm/
-	 Gl9WsM2F8s1/GUVYMZbO8nTnkA0u1vQacWth/JSL23RnDOZAWLtfJGwcHXTE8bRGdZ
-	 0aKFk+NRxfJiA==
-Date: Fri, 18 Oct 2024 12:24:36 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-cc: Thomas Kuehne <thomas.kuehne@gmx.li>, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Nathan Chancellor <nathan@kernel.org>, 
-    Nick Desaulniers <ndesaulniers@google.com>, 
-    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v2 1/1] HID: debug: Remove duplicates from 'keys'
-In-Reply-To: <20241016133523.899754-1-andriy.shevchenko@linux.intel.com>
-Message-ID: <nycvar.YFH.7.76.2410181224270.20286@cbobk.fhfr.pm>
-References: <20241016133523.899754-1-andriy.shevchenko@linux.intel.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1729247287; c=relaxed/simple;
+	bh=x2GDt2t8xGxiZF0J3X6YiqT5UKSyMxpJP/dyTFIT94M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j1PD6QYJCxeVXb83fTZ1tuaZF4E3+1O2i4sRyvE0fS9GIWkaoT+FggVaX/zL2wifKeoIAKkqJC28Bql/ARkvu3p5PPLM1/Zt0pfmb/LHfSQFIocrC3EkBA3YRDYOU+fUbHxRpDWYxNM2NRQVhk5yiIwGSy2yR/06lEoi58O+jQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bX7xhte0; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729247282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5KHT3ff6M8Nx/a1xS5GHR/zH/l+13M2qwmmTdtYZIM8=;
+	b=bX7xhte0tWU2pjujPDcrlqJj4dfUrqU8DdZbf0cNur1y9XJ5SAYEsYWV1JhK0tU5r8RWZl
+	p66PrsPNTQJmzjBEpo0hAtOfl3+d4vfYoy+HCPfFRn2AruJ1Y9Vo83NoLpf0/aKuwHXIIc
+	HNoG+GXe2Cg6izwSP1DSbz7ATxSFO5g=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Christian Brauner <brauner@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	"Tyler Hicks (Microsoft)" <code@tyhicks.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Yan Zhen <yanzhen@vivo.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: Fix W=1 build kernel-doc warning
+Date: Fri, 18 Oct 2024 12:27:03 +0200
+Message-ID: <20241018102705.92237-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 16 Oct 2024, Andy Shevchenko wrote:
+Building the kernel with W=1 generates the following warning:
 
-> Duplicates in 'keys prevents kernel builds with clang, `make W=1` and
-> CONFIG_WERROR=y, for example:
-> 
-> drivers/hid/hid-debug.c:3443:18: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
->  3443 |         [KEY_HANGEUL] = "HanGeul",              [KEY_HANGUP_PHONE] = "HangUpPhone",
->       |                         ^~~~~~~~~
-> drivers/hid/hid-debug.c:3217:18: note: previous initialization is here
->  3217 |         [KEY_HANGUEL] = "Hangeul",              [KEY_HANJA] = "Hanja",
->       |                         ^~~~~~~~~
-> 
-> Fix this by removing them.
-> 
-> The logic of removal is that, remove...
-> 1) if there is a constant that uses another defined constant, OR
-> 2) the one that appears later in the list.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> v2: fixed which one to remove for KEY_HANGEUL (Jiri)
->  drivers/hid/hid-debug.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+  fs/proc/fd.c:81: warning: This comment starts with '/**',
+                   but isn't a kernel-doc comment.
 
-Applied, thanks.
+Use a normal comment for the helper function proc_fdinfo_permission().
 
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/proc/fd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 1f54a54bfb91..5e391cbca7a3 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -77,7 +77,7 @@ static int seq_fdinfo_open(struct inode *inode, struct file *file)
+ 	return single_open(file, seq_show, inode);
+ }
+ 
+-/**
++/*
+  * Shared /proc/pid/fdinfo and /proc/pid/fdinfo/fd permission helper to ensure
+  * that the current task has PTRACE_MODE_READ in addition to the normal
+  * POSIX-like checks.
 -- 
-Jiri Kosina
-SUSE Labs
+2.47.0
 
 
