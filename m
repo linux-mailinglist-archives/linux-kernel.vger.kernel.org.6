@@ -1,114 +1,112 @@
-Return-Path: <linux-kernel+bounces-371887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84DE39A41CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:56:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 807D09A41D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D124B25665
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256BD1F25A55
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6301FF606;
-	Fri, 18 Oct 2024 14:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29591FF60E;
+	Fri, 18 Oct 2024 14:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KlX6x9lZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eIZVqyVP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85CD1EE03D;
-	Fri, 18 Oct 2024 14:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C5744384;
+	Fri, 18 Oct 2024 14:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729263402; cv=none; b=pqpIsk9nrby5SF8hyBqyHhg4vuga+IKEPnUFGqM+4Pt9ktPAMW/2QS5ZawAlmO4IyKrymthANYzFhLNx5weBiFa8Z2pZwzjJ/DaGwUEDSneMzSYd+gco/iCJE+hiZpnchndAM8bKS6n8ewWkMOPmzws+TBP/FjXOYTZcR+4trTA=
+	t=1729263467; cv=none; b=kWQjl43zX9DTBD/Y2wCzu2BIZxsS16/PWpC3JAwuXWzdZbPGNqpBgaTCkiUViCgsfW0ZaKCvzzhj1CWK5o6VLReQA60NBWttfSiarFKfXcc8J+E5MOVgk/c46AFRP2pMqwEu5NvjHFA874OcM89UJEHZPnwIjhLgLDsnWeHBdoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729263402; c=relaxed/simple;
-	bh=VHmtKiOi1NhA86gGNEa9z1Zv0gxn4WJNZDUDnqnD5Io=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GfVPK53CZJROeerofCyPnticzVCPGviUvsz/bjnep/K/mToE/n12OGVszMSaTOIycr58kMj7z7Hqmi7CeQliOgNl0wm6LxTtQJatnAKkUhpLPUKGbVcZGlOBsV1vUgFiv2BrnXRVA63OXIns2PZrXf6+Rvina8Wu1ZGC+CIPHGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KlX6x9lZ; arc=none smtp.client-ip=192.198.163.11
+	s=arc-20240116; t=1729263467; c=relaxed/simple;
+	bh=jV6ZxFpaAtay1oUU6PAS9zcjx6/Uej3Dl7a0D5iXTzA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zewwha4B+leGvQf7YVChVcPkwtr/ncBQ/7cSwmFrJgDFWhHe2gnzRROXMsEGU7vjWz4786fWhrCSkz5HAntDdwv2iyec9A0i7nhAa+e1DvbIZ6/rz0QRZtcW8u1kYFQ6ZoC6iU5XOIq40JT6tD0o6tbzv7B9+Et0aep/o1cZMJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eIZVqyVP; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729263401; x=1760799401;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VHmtKiOi1NhA86gGNEa9z1Zv0gxn4WJNZDUDnqnD5Io=;
-  b=KlX6x9lZTb0Uw9nReQOtlJTzFLOh1Bs8PAcWuyWNHK+TqErmOuHKNUsc
-   QVnXDK0kX7MB/BznltpJ9KAFmI4Dbg05Wa60exxi6Fj5FlbshWdYrXFpn
-   DALN+qDY9GAjaq33RvfdIMi4Z9Iy8HT38npR9w1Lc8is/6D7Tt4bHK7SQ
-   vnmipOOlj3AnIKA0YIC7wTVvz1KkiXoowdy553Db3nlyPIahUDQbpRowY
-   7X1Tow/ax2AqLkZMzbtsedcee2DmSUKCeFFseJ/ycJ4JwUoFYqu7ARHur
-   86K9PpyFLSqKivpDTxUBN3jAP3ndTOwIXwnkTiOxxljZH8ZhX5VPMv+9C
-   A==;
-X-CSE-ConnectionGUID: 3xTM3OW2R5yNVUMDsPV4vw==
-X-CSE-MsgGUID: R4KQaCKyTymZwaK4m/M5Lg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="39385726"
+  t=1729263465; x=1760799465;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jV6ZxFpaAtay1oUU6PAS9zcjx6/Uej3Dl7a0D5iXTzA=;
+  b=eIZVqyVP7UQ2NHky4GW6MMqIokkLwghD1hy8ig+UjjVhfNNLtHDqumQJ
+   AIPyq4efVRnciewsPYZFGp6Bv34OrVAiLFVLbHKXyOgqAODpxTc9TqkZ3
+   KCV9Q2U1BoOqT+6NXvTLJri4U8OELr4JAzS8DUOW9d3fazSmVJrVZJtg6
+   CKwEwYNlrdCP1uvp3HoGS16qgtQNMYlXSYy+OaQYJNVonzEI4nAqciq6z
+   SVme7hZsRR331B83jJB+hVwExhIRz3dGx0FGDlbjPjgfCu71DAljvylbt
+   zngjYor/7gl8HtBckTKeXMpTAauR+xi72Q9XZ2Uy0Xmc21Y1l1sYsJFik
+   g==;
+X-CSE-ConnectionGUID: jmJQdlMpRv2PSDHhPYaclA==
+X-CSE-MsgGUID: vbKOtel3SKuKiMHNDXw56A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28931858"
 X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
-   d="scan'208";a="39385726"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 07:56:40 -0700
-X-CSE-ConnectionGUID: bMKlOZoiQHuyQEE+IkTohA==
-X-CSE-MsgGUID: Q+LQnwbCRE28U5AqXJv94w==
+   d="scan'208";a="28931858"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 07:57:45 -0700
+X-CSE-ConnectionGUID: BRW1S8rMQFSloQCyyYPDCg==
+X-CSE-MsgGUID: 8B6T81X2RTC8NQPUcbXexQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
-   d="scan'208";a="83955360"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 07:56:37 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t1oP3-00000004VMq-3BNU;
-	Fri, 18 Oct 2024 17:56:33 +0300
-Date: Fri, 18 Oct 2024 17:56:33 +0300
+   d="scan'208";a="83464945"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 18 Oct 2024 07:57:43 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 230F1343; Fri, 18 Oct 2024 17:57:42 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Rodolfo Giometti <giometti@enneenne.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>,
-	corbet@lwn.net, Hall Christopher S <christopher.s.hall@intel.com>,
-	Mohan Subramanian <subramanian.mohan@intel.com>, tglx@linutronix.de,
-	Dong Eddie <eddie.dong@intel.com>, N Pandith <pandith.n@intel.com>,
-	T R Thejesh Reddy <thejesh.reddy.t.r@intel.com>,
-	Zage David <david.zage@intel.com>,
-	Chinnadurai Srinivasan <srinivasan.chinnadurai@intel.com>
-Subject: Re: [V1 4/4] Documentation ABI: add PPS generators documentation
-Message-ID: <ZxJ3IQYAFsuZ9mZZ@smile.fi.intel.com>
-References: <20241018143915.3877425-1-giometti@enneenne.com>
- <20241018143915.3877425-5-giometti@enneenne.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] iio: gyro: bmg160: Drop most likely fake ACPI IDs
+Date: Fri, 18 Oct 2024 17:57:32 +0300
+Message-ID: <20241018145732.2181309-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018143915.3877425-5-giometti@enneenne.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 04:39:15PM +0200, Rodolfo Giometti wrote:
-> This patch adds the documentation for the ABI between the Linux kernel
-> and userspace regarding the PPS generators.
+The commits in question do not proove that ACPI IDs exist.
+Quite likely it was a cargo cult addition while doing that
+for DT-based enumeration. Drop most likely fake ACPI IDs.
 
-...
+The to be removed IDs has been checked against the following resources:
+1) DuckDuckGo
+2) Google
+3) MS catalog: https://www.catalog.update.microsoft.com/Search.aspx
+This gives no useful results in regard to DSDT, moreover, the official
+vendor IDs in the registry for Bosh are BSG and BOSC.
 
-> +Date:		October 2024
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/iio/gyro/bmg160_i2c.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-The rule of thumb is to have the date of the estimated kernel release where
-this ABI will be available from.
-
-Citing our internal recommendations about this:
-"The field Date, usually in the format MONTH YEAR, should be aligned with the
-release date of the first release of the kernel where this entry will appear.
-The release date can be predicted using the prediction machine, AKA Kernel
-crystal ball."
-
-The prediction machine URL: https://hansen.beer/~dave/phb/
-
+diff --git a/drivers/iio/gyro/bmg160_i2c.c b/drivers/iio/gyro/bmg160_i2c.c
+index 672d0b720f61..a81814df5205 100644
+--- a/drivers/iio/gyro/bmg160_i2c.c
++++ b/drivers/iio/gyro/bmg160_i2c.c
+@@ -39,8 +39,6 @@ static void bmg160_i2c_remove(struct i2c_client *client)
+ 
+ static const struct acpi_device_id bmg160_acpi_match[] = {
+ 	{"BMG0160", 0},
+-	{"BMI055B", 0},
+-	{"BMI088B", 0},
+ 	{},
+ };
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0.rc1.1336.g36b5255a03ac
 
 
