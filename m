@@ -1,282 +1,346 @@
-Return-Path: <linux-kernel+bounces-371973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013629A42D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:46:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2089A42D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F1EC1C21EF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:46:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C3D41C23E09
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFFA20263D;
-	Fri, 18 Oct 2024 15:46:29 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69FF200C81;
+	Fri, 18 Oct 2024 15:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ld4DFomn"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1E620E32D;
-	Fri, 18 Oct 2024 15:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A826811F7
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729266389; cv=none; b=mB6S/t0dEw3o0hN3+1KAUT9NBMMifiSPO3xYI1DzoeY7rNMQkPrRH7juqaBY2wfA9aAq/N5HTxuuqQSb/PA6ZwczsvEedeTdLUjHTc5CAHUmP67xaloBm6fX9znNdjrBtoX6JJfvqQ5KWYXAJTR6mvp4AtRaQYDEdSk2wK2+0Eo=
+	t=1729266440; cv=none; b=fAMHLqVYzBowYPE/sW/8AFCR108AJK3mOC3ejk6TsWTrJAj9woZUWqwWgf9Ggss1jFuvGyvo2l50IfaKjzcecUCY8ojPzCCtiFymuIn2RxDRtlw/C9YsZESesBoOxQOWHGOD9ujceYO3SuJ4GhuhA+AesVMfCkPC0CjLaXr8+Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729266389; c=relaxed/simple;
-	bh=Glu9EEYI3POgW8Wu9mgRgNu1kjCiRyAiURBAWhJbhlY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ji5yDh563PIebDBGg/wR+slQKO/9+eaL3H1FCFTEmkSfvMxomZhDzSOX1gZaCeELwSt5BQxUhqwdh7CzSvp6xn0vdYQBJ9vlw3o1J91Iz0WmOKLaSs88+bBBfWUlR+oTlUK6gutMtLg/YVLoxmdzaZX60lhXXKwnnPOwtGFpRYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XVT7Q0fzBz9v7NR;
-	Fri, 18 Oct 2024 23:26:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 3FC59140FBB;
-	Fri, 18 Oct 2024 23:46:17 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwC3Ry+6ghJn0PUZAw--.23355S2;
-	Fri, 18 Oct 2024 16:46:16 +0100 (CET)
-Message-ID: <784c68fa023e99c53cd07265f0524e386815b443.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH] mm: Split locks in remap_file_pages()
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	ebpqwerty472123@gmail.com, paul@paul-moore.com, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Kirill A. Shutemov"
-	 <kirill.shutemov@linux.intel.com>, stable@vger.kernel.org, 
-	syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com, Roberto Sassu
-	 <roberto.sassu@huawei.com>
-Date: Fri, 18 Oct 2024 17:45:59 +0200
-In-Reply-To: <fa8cad07-c6d5-42aa-b58b-27ddbf86c1c5@lucifer.local>
-References: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
-	 <fa8cad07-c6d5-42aa-b58b-27ddbf86c1c5@lucifer.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1729266440; c=relaxed/simple;
+	bh=NpxrKemjjR0SgWnwg0mpqUlKK4EnM0TMl7/mQm4BBCg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HjTeuiv7rLeTmeohqMg6VLg0AZD7SYkaRQG0jbLOGHMYklbPmaYhHT/zneDGGKt4w7cG8WUY8orKKRliI8SG0lGbJgGxfECuVQ1xWU3gRYEwq+l7+XxuKYZCIogJ73X6g7cFPrkNWQpN20H1J+V/diRkBTbq/I3O0T6dDJCOQ+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ld4DFomn; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a3bd5a273bso236775ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729266435; x=1729871235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WysErSCps355iliDemzN53mNCGFer2jqjo+iuInVjOY=;
+        b=Ld4DFomnhby9z0fPygPcyYv11Fk5TpAq7n+dhgzMO2MsKS6Fq2IOtlnbmygw45+tDy
+         j+VGKq82PgiwfRlN/ivpXBtsu4SYGb23aMn1Ljnd6+tiwc4HGCuFlOe0B0kLdVv8CfLf
+         h8LOl4dhPrx4qSEzxi3pfxFilN2EltB+H3aoZgGvoSLJ1zeO0/mqZ5252uiwTqV6bqq/
+         3Df8mDPYeaHckCzwMFYiXsd6P/JxYOAc+FIoJgcNwBiWAZQRK6cAif+2fKahYJSopRAY
+         QlKbS1Ho6tSDD3xpIBpibG9jwR0cbfbDyTJPeaRSmXW8uiNj0ccQpNMb/nhZ/RWmFekW
+         4E6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729266435; x=1729871235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WysErSCps355iliDemzN53mNCGFer2jqjo+iuInVjOY=;
+        b=dGhgWprFwatFoEsqV1cPZ9NFxcArrxH3htzHAI64GJAnyD3FV/yttWBIwP6s3FEToy
+         i2pUjstLdR+pXBZqy6m7o6aGMf/a2MO89QRaw0/FBZRYjZMRzph+Hn+/hgU9VDEHFHLb
+         uOSpV3uKxAXeqEzZQxPFuQOGCCHuRGmIW2wmES4GCOh6CZ2zh/PPLFOvncx1uPqiIRV6
+         MJPZa06+YDW8fNTDxbplJP7Uloyp9keXCLTP7auyqPolBB2qYR/q0kTlJhKCJRROUfln
+         fg4HBk2/LLImdD4iKJKP8x0CS+2QZcdFjQHknyhYYg1W9OHiFQrGsRRYeHvBW0S1GJL7
+         vBTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXA8LVV7Eg7WOtAbh1U0ZrTPIC0O30v3PP0bvXuDtvy8juW1DIZatvuL6b4fqjQck8qhbUa9/neZpBdBEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp75ZYX9sSuQCmGu5/smzwfqJbhFV6kNP9IdsaaizfLnw/ru1/
+	pjDDXzdJ7T8sJEBx+yOwdWSRuJFfq6QCsAuyi3xw609/d/NcZeLVOcPBFFnc53oIqVWuKuKo3ci
+	7+7/2/IEYllXoAuaB8rgyvDQUbNLUP85oJc1a72t2XuvuZwu7BuHXUSU=
+X-Google-Smtp-Source: AGHT+IHs3jHA/bYqUItcxtwG6Ap0KQUzPAbe9A13IJhaIFjl0C3aUYUdqQhnTs1R8pdGYI+MmA5X0H3vP9hIOtd1K+E=
+X-Received: by 2002:a05:6e02:1566:b0:3a0:a459:8eca with SMTP id
+ e9e14a558f8ab-3a3f3403171mr4613855ab.10.1729266435245; Fri, 18 Oct 2024
+ 08:47:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwC3Ry+6ghJn0PUZAw--.23355S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Gr4UWrykZFy7Cr1DWr43GFg_yoW7tr4fpF
-	95tas8KF4kXFyxZrn2q3WUWFyrtrW8KFyUu3y3tF1rA3sFvF1fKr4fGFy5uF4DArykCF95
-	ZF4jyr9xGFWDAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	jIksgUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABGcRxH8LzQAAsN
+References: <cover.1729242778.git.sandipan.das@amd.com> <e8757bb9f511907a52bc182de9395c5edec2fccf.1729242778.git.sandipan.das@amd.com>
+In-Reply-To: <e8757bb9f511907a52bc182de9395c5edec2fccf.1729242778.git.sandipan.das@amd.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 18 Oct 2024 08:47:01 -0700
+Message-ID: <CAP-5=fVH0spLTv16Fs37PKQNkkPXZUcyomQ+Vjc1+NAA9GU5ow@mail.gmail.com>
+Subject: Re: [PATCH 2/3] perf vendor events amd: Add Zen 5 data fabric metrics
+To: Sandipan Das <sandipan.das@amd.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	adrian.hunter@intel.com, eranian@google.com, ravi.bangoria@amd.com, 
+	ananth.narayan@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-10-18 at 16:42 +0100, Lorenzo Stoakes wrote:
-> On Fri, Oct 18, 2024 at 04:47:10PM +0200, Roberto Sassu wrote:
-> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> >=20
-> > Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
-> > remap_file_pages()") fixed a security issue, it added an LSM check when
-> > trying to remap file pages, so that LSMs have the opportunity to evalua=
-te
-> > such action like for other memory operations such as mmap() and mprotec=
-t().
-> >=20
-> > However, that commit called security_mmap_file() inside the mmap_lock l=
-ock,
-> > while the other calls do it before taking the lock, after commit
-> > 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
-> >=20
-> > This caused lock inversion issue with IMA which was taking the mmap_loc=
-k
-> > and i_mutex lock in the opposite way when the remap_file_pages() system
-> > call was called.
-> >=20
-> > Solve the issue by splitting the critical region in remap_file_pages() =
-in
-> > two regions: the first takes a read lock of mmap_lock and retrieves the=
- VMA
-> > and the file associated, and calculate the 'prot' and 'flags' variable;=
- the
-> > second takes a write lock on mmap_lock, checks that the VMA flags and t=
-he
-> > VMA file descriptor are the same as the ones obtained in the first crit=
-ical
-> > region (otherwise the system call fails), and calls do_mmap().
-> >=20
-> > In between, after releasing the read lock and taking the write lock, ca=
-ll
-> > security_mmap_file(), and solve the lock inversion issue.
->=20
-> Great description!
->=20
-> >=20
-> > Cc: stable@vger.kernel.org
-> > Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in rem=
-ap_file_pages()")
-> > Reported-by: syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com
-> > Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220=
-.46d20.0036.GAE@google.com/
-> > Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com> (Calculate prot a=
-nd flags earlier)
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->=20
-> Other than some nits below:
->=20
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->=20
-> I think you're definitely good to un-RFC here.
+On Fri, Oct 18, 2024 at 2:32=E2=80=AFAM Sandipan Das <sandipan.das@amd.com>=
+ wrote:
+>
+> Add data fabric metrics taken from Section 2.1.16.2 "Performance
+> Measurement" in the Processor Programming Reference (PPR) for AMD Family
+> 1Ah Model 02h Revision C1 Processors document available at the link
+> below.
+>
+> The recommended metrics are sourced from Table 28 "Guidance for Common
+> Performance Statistics with Complex Event Selects". They capture data
+> bandwidth for various links and interfaces in the data fabric.
+>
+> Link: https://bugzilla.kernel.org/attachment.cgi?id=3D307010
+> Signed-off-by: Sandipan Das <sandipan.das@amd.com>
+> ---
+>  .../arch/x86/amdzen5/recommended.json         | 112 ++++++++++++++++++
+>  1 file changed, 112 insertions(+)
+>
+> diff --git a/tools/perf/pmu-events/arch/x86/amdzen5/recommended.json b/to=
+ols/perf/pmu-events/arch/x86/amdzen5/recommended.json
+> index c97874039c1e..635d57e3bc15 100644
+> --- a/tools/perf/pmu-events/arch/x86/amdzen5/recommended.json
+> +++ b/tools/perf/pmu-events/arch/x86/amdzen5/recommended.json
+> @@ -341,5 +341,117 @@
+>      "MetricGroup": "memory_controller",
+>      "PerPkg": "1",
+>      "ScaleUnit": "1per_memclk"
+> +  },
+> +  {
+> +    "MetricName": "dram_read_bandwidth_for_local_or_remote_socket",
+> +    "BriefDescription": "DRAM read data bandwidth for accesses in local =
+or remote socket.",
+> +    "MetricExpr": "(local_or_remote_socket_read_data_beats_dram_0 + loca=
+l_or_remote_socket_read_data_beats_dram_1 + local_or_remote_socket_read_dat=
+a_beats_dram_2 + local_or_remote_socket_read_data_beats_dram_3 + local_or_r=
+emote_socket_read_data_beats_dram_4 + local_or_remote_socket_read_data_beat=
+s_dram_5 + local_or_remote_socket_read_data_beats_dram_6 + local_or_remote_=
+socket_read_data_beats_dram_7 + local_or_remote_socket_read_data_beats_dram=
+_8 + local_or_remote_socket_read_data_beats_dram_9 + local_or_remote_socket=
+_read_data_beats_dram_10 + local_or_remote_socket_read_data_beats_dram_11) =
+/ duration_time",
 
-Perfect, will do. Thank you!
+Fwiw, I think we can make writing metrics like this less error prone
+with python. PTAL at:
+https://lore.kernel.org/lkml/20240926174101.406874-1-irogers@google.com/
 
-Roberto
+Thanks,
+Ian
 
-> > ---
-> >  mm/mmap.c | 62 ++++++++++++++++++++++++++++++++++++++++---------------
-> >  1 file changed, 45 insertions(+), 17 deletions(-)
-> >=20
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index 9c0fb43064b5..762944427e03 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -1640,6 +1640,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, =
-start, unsigned long, size,
-> >  	unsigned long populate =3D 0;
-> >  	unsigned long ret =3D -EINVAL;
-> >  	struct file *file;
-> > +	vm_flags_t vm_flags;
-> >=20
-> >  	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. See=
- Documentation/mm/remap_file_pages.rst.\n",
-> >  		     current->comm, current->pid);
-> > @@ -1656,12 +1657,53 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long=
-, start, unsigned long, size,
-> >  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
-> >  		return ret;
-> >=20
-> > -	if (mmap_write_lock_killable(mm))
-> > +	if (mmap_read_lock_killable(mm))
-> > +		return -EINTR;
->=20
-> I'm kinda verbose generally, but I'd love a comment like:
->=20
-> 	/*
-> 	 * Look up VMA under read lock first so we can perform the security
-> 	 * without holding locks (which can be problematic). We reacquire a
-> 	 * write lock later and check nothing changed underneath us.
-> 	 */
->=20
-> > +
-> > +	vma =3D vma_lookup(mm, start);
-> > +
-> > +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-> > +		mmap_read_unlock(mm);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	prot |=3D vma->vm_flags & VM_READ ? PROT_READ : 0;
-> > +	prot |=3D vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
-> > +	prot |=3D vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
-> > +
-> > +	flags &=3D MAP_NONBLOCK;
-> > +	flags |=3D MAP_SHARED | MAP_FIXED | MAP_POPULATE;
-> > +	if (vma->vm_flags & VM_LOCKED)
-> > +		flags |=3D MAP_LOCKED;
-> > +
-> > +	/* Save vm_flags used to calculate prot and flags, and recheck later.=
- */
-> > +	vm_flags =3D vma->vm_flags;
-> > +	file =3D get_file(vma->vm_file);
-> > +
-> > +	mmap_read_unlock(mm);
-> > +
->=20
-> Maybe worth adding a comment to explain why you're doing this without the
-> lock so somebody looking at this later can understand the dance?
->=20
-> > +	ret =3D security_mmap_file(file, prot, flags);
-> > +	if (ret) {
-> > +		fput(file);
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret =3D -EINVAL;
-> > +
->=20
-> Again, being verbose, I'd put something here like:
->=20
-> 	/* OK security check passed, take write lock + let it rip */
->=20
-> > +	if (mmap_write_lock_killable(mm)) {
-> > +		fput(file);
-> >  		return -EINTR;
-> > +	}
-> >=20
-> >  	vma =3D vma_lookup(mm, start);
-> >=20
-> > -	if (!vma || !(vma->vm_flags & VM_SHARED))
-> > +	if (!vma)
-> > +		goto out;
-> > +
->=20
-> I'd also add something like:
->=20
-> 	/* Make sure things didn't change under us. */
->=20
-> > +	if (vma->vm_flags !=3D vm_flags)
-> > +		goto out;
-> > +
->=20
-> And drop this newline to group them together (super nitty I know, sorry!)
->=20
-> > +	if (vma->vm_file !=3D file)
-> >  		goto out;
-> >=20
-> >  	if (start + size > vma->vm_end) {
-> > @@ -1689,25 +1731,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long=
-, start, unsigned long, size,
-> >  			goto out;
-> >  	}
-> >=20
-> > -	prot |=3D vma->vm_flags & VM_READ ? PROT_READ : 0;
-> > -	prot |=3D vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
-> > -	prot |=3D vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
-> > -
-> > -	flags &=3D MAP_NONBLOCK;
-> > -	flags |=3D MAP_SHARED | MAP_FIXED | MAP_POPULATE;
-> > -	if (vma->vm_flags & VM_LOCKED)
-> > -		flags |=3D MAP_LOCKED;
-> > -
-> > -	file =3D get_file(vma->vm_file);
-> > -	ret =3D security_mmap_file(vma->vm_file, prot, flags);
-> > -	if (ret)
-> > -		goto out_fput;
-> >  	ret =3D do_mmap(vma->vm_file, start, size,
-> >  			prot, flags, 0, pgoff, &populate, NULL);
-> > -out_fput:
-> > -	fput(file);
-> >  out:
-> >  	mmap_write_unlock(mm);
-> > +	fput(file);
-> >  	if (populate)
-> >  		mm_populate(ret, populate);
-> >  	if (!IS_ERR_VALUE(ret))
-> > --
-> > 2.34.1
-> >=20
->=20
-> These are just nits, this looks good to me!
-
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "dram_write_bandwidth_for_local_socket",
+> +    "BriefDescription": "DRAM write data bandwidth for accesses in local=
+ socket.",
+> +    "MetricExpr": "(local_socket_write_data_beats_dram_0 + local_socket_=
+write_data_beats_dram_1 + local_socket_write_data_beats_dram_2 + local_sock=
+et_write_data_beats_dram_3 + local_socket_write_data_beats_dram_4 + local_s=
+ocket_write_data_beats_dram_5 + local_socket_write_data_beats_dram_6 + loca=
+l_socket_write_data_beats_dram_7 + local_socket_write_data_beats_dram_8 + l=
+ocal_socket_write_data_beats_dram_9 + local_socket_write_data_beats_dram_10=
+ + local_socket_write_data_beats_dram_11) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "dram_write_bandwidth_for_remote_socket",
+> +    "BriefDescription": "DRAM write data bandwidth for accesses in remot=
+e socket.",
+> +    "MetricExpr": "(remote_socket_write_data_beats_dram_0 + remote_socke=
+t_write_data_beats_dram_1 + remote_socket_write_data_beats_dram_2 + remote_=
+socket_write_data_beats_dram_3 + remote_socket_write_data_beats_dram_4 + re=
+mote_socket_write_data_beats_dram_5 + remote_socket_write_data_beats_dram_6=
+ + remote_socket_write_data_beats_dram_7 + remote_socket_write_data_beats_d=
+ram_8 + remote_socket_write_data_beats_dram_9 + remote_socket_write_data_be=
+ats_dram_10 + remote_socket_write_data_beats_dram_11) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "dram_write_bandwidth_for_local_or_remote_socket",
+> +    "BriefDescription": "DRAM write data bandwidth for accesses in local=
+ or remote socket.",
+> +    "MetricExpr": "(local_or_remote_socket_write_data_beats_dram_0 + loc=
+al_or_remote_socket_write_data_beats_dram_1 + local_or_remote_socket_write_=
+data_beats_dram_2 + local_or_remote_socket_write_data_beats_dram_3 + local_=
+or_remote_socket_write_data_beats_dram_4 + local_or_remote_socket_write_dat=
+a_beats_dram_5 + local_or_remote_socket_write_data_beats_dram_6 + local_or_=
+remote_socket_write_data_beats_dram_7 + local_or_remote_socket_write_data_b=
+eats_dram_8 + local_or_remote_socket_write_data_beats_dram_9 + local_or_rem=
+ote_socket_write_data_beats_dram_10 + local_or_remote_socket_write_data_bea=
+ts_dram_11) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "upstream_dma_read_bandwidth_for_local_socket",
+> +    "BriefDescription": "Upstream DMA read data bandwidth for accesses i=
+n local socket.",
+> +    "MetricExpr": "(local_socket_upstream_read_data_beats_io_0 + local_s=
+ocket_upstream_read_data_beats_io_1 + local_socket_upstream_read_data_beats=
+_io_2 + local_socket_upstream_read_data_beats_io_3 + local_socket_upstream_=
+read_data_beats_io_4 + local_socket_upstream_read_data_beats_io_5 + local_s=
+ocket_upstream_read_data_beats_io_6 + local_socket_upstream_read_data_beats=
+_io_7) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "upstream_dma_write_bandwidth_for_local_socket",
+> +    "BriefDescription": "Upstream DMA write data bandwidth for accesses =
+in local socket.",
+> +    "MetricExpr": "(local_socket_upstream_write_data_beats_io_0 + local_=
+socket_upstream_write_data_beats_io_1 + local_socket_upstream_write_data_be=
+ats_io_2 + local_socket_upstream_write_data_beats_io_3 + local_socket_upstr=
+eam_write_data_beats_io_4 + local_socket_upstream_write_data_beats_io_5 + l=
+ocal_socket_upstream_write_data_beats_io_6 + local_socket_upstream_write_da=
+ta_beats_io_7) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "upstream_dma_read_bandwidth_for_remote_socket",
+> +    "BriefDescription": "Upstream DMA read data bandwidth for accesses i=
+n remote socket.",
+> +    "MetricExpr": "(remote_socket_upstream_read_data_beats_io_0 + remote=
+_socket_upstream_read_data_beats_io_1 + remote_socket_upstream_read_data_be=
+ats_io_2 + remote_socket_upstream_read_data_beats_io_3 + remote_socket_upst=
+ream_read_data_beats_io_4 + remote_socket_upstream_read_data_beats_io_5 + r=
+emote_socket_upstream_read_data_beats_io_6 + remote_socket_upstream_read_da=
+ta_beats_io_7) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "upstream_dma_write_bandwidth_for_remote_socket",
+> +    "BriefDescription": "Upstream DMA write data bandwidth for accesses =
+in remote socket.",
+> +    "MetricExpr": "(remote_socket_upstream_write_data_beats_io_0 + remot=
+e_socket_upstream_write_data_beats_io_1 + remote_socket_upstream_write_data=
+_beats_io_2 + remote_socket_upstream_write_data_beats_io_3 + remote_socket_=
+upstream_write_data_beats_io_4 + remote_socket_upstream_write_data_beats_io=
+_5 + remote_socket_upstream_write_data_beats_io_6 + remote_socket_upstream_=
+write_data_beats_io_7) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "core_inbound_data_bandwidth_for_local_socket",
+> +    "BriefDescription": "Core inbound data bandwidth for accesses in loc=
+al socket.",
+> +    "MetricExpr": "(local_socket_inbound_data_beats_cfi_0 + local_socket=
+_inbound_data_beats_cfi_1 + local_socket_inbound_data_beats_cfi_2 + local_s=
+ocket_inbound_data_beats_cfi_3 + local_socket_inbound_data_beats_cfi_4 + lo=
+cal_socket_inbound_data_beats_cfi_5 + local_socket_inbound_data_beats_cfi_6=
+ + local_socket_inbound_data_beats_cfi_7 + local_socket_inbound_data_beats_=
+cfi_8 + local_socket_inbound_data_beats_cfi_9 + local_socket_inbound_data_b=
+eats_cfi_10 + local_socket_inbound_data_beats_cfi_11 + local_socket_inbound=
+_data_beats_cfi_12 + local_socket_inbound_data_beats_cfi_13 + local_socket_=
+inbound_data_beats_cfi_14 + local_socket_inbound_data_beats_cfi_15) / durat=
+ion_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "3.2e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "core_outbound_data_bandwidth_for_local_socket",
+> +    "BriefDescription": "Core outbound data bandwidth for accesses in lo=
+cal socket.",
+> +    "MetricExpr": "(local_socket_outbound_data_beats_cfi_0 + local_socke=
+t_outbound_data_beats_cfi_1 + local_socket_outbound_data_beats_cfi_2 + loca=
+l_socket_outbound_data_beats_cfi_3 + local_socket_outbound_data_beats_cfi_4=
+ + local_socket_outbound_data_beats_cfi_5 + local_socket_outbound_data_beat=
+s_cfi_6 + local_socket_outbound_data_beats_cfi_7 + local_socket_outbound_da=
+ta_beats_cfi_8 + local_socket_outbound_data_beats_cfi_9 + local_socket_outb=
+ound_data_beats_cfi_10 + local_socket_outbound_data_beats_cfi_11 + local_so=
+cket_outbound_data_beats_cfi_12 + local_socket_outbound_data_beats_cfi_13 +=
+ local_socket_outbound_data_beats_cfi_14 + local_socket_outbound_data_beats=
+_cfi_15) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "core_inbound_data_bandwidth_for_remote_socket",
+> +    "BriefDescription": "Core inbound data bandwidth for accesses in rem=
+ote socket.",
+> +    "MetricExpr": "(remote_socket_inbound_data_beats_cfi_0 + remote_sock=
+et_inbound_data_beats_cfi_1 + remote_socket_inbound_data_beats_cfi_2 + remo=
+te_socket_inbound_data_beats_cfi_3 + remote_socket_inbound_data_beats_cfi_4=
+ + remote_socket_inbound_data_beats_cfi_5 + remote_socket_inbound_data_beat=
+s_cfi_6 + remote_socket_inbound_data_beats_cfi_7 + remote_socket_inbound_da=
+ta_beats_cfi_8 + remote_socket_inbound_data_beats_cfi_9 + remote_socket_inb=
+ound_data_beats_cfi_10 + remote_socket_inbound_data_beats_cfi_11 + remote_s=
+ocket_inbound_data_beats_cfi_12 + remote_socket_inbound_data_beats_cfi_13 +=
+ remote_socket_inbound_data_beats_cfi_14 + remote_socket_inbound_data_beats=
+_cfi_15) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "3.2e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "core_outbound_data_bandwidth_for_remote_socket",
+> +    "BriefDescription": "Core outbound data bandwidth for accesses in re=
+mote socket.",
+> +    "MetricExpr": "(remote_socket_outbound_data_beats_cfi_0 + remote_soc=
+ket_outbound_data_beats_cfi_1 + remote_socket_outbound_data_beats_cfi_2 + r=
+emote_socket_outbound_data_beats_cfi_3 + remote_socket_outbound_data_beats_=
+cfi_4 + remote_socket_outbound_data_beats_cfi_5 + remote_socket_outbound_da=
+ta_beats_cfi_6 + remote_socket_outbound_data_beats_cfi_7 + remote_socket_ou=
+tbound_data_beats_cfi_8 + remote_socket_outbound_data_beats_cfi_9 + remote_=
+socket_outbound_data_beats_cfi_10 + remote_socket_outbound_data_beats_cfi_1=
+1 + remote_socket_outbound_data_beats_cfi_12 + remote_socket_outbound_data_=
+beats_cfi_13 + remote_socket_outbound_data_beats_cfi_14 + remote_socket_out=
+bound_data_beats_cfi_15) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "cross_socket_inbound_data_bandwidth_for_local_socket"=
+,
+> +    "BriefDescription": "Inbound data bandwidth for accesses between loc=
+al socket and remote socket.",
+> +    "MetricExpr": "(local_socket_inbound_data_beats_link_0 + local_socke=
+t_inbound_data_beats_link_1 + local_socket_inbound_data_beats_link_2 + loca=
+l_socket_inbound_data_beats_link_3 + local_socket_inbound_data_beats_link_4=
+ + local_socket_inbound_data_beats_link_5) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+> +  },
+> +  {
+> +    "MetricName": "cross_socket_outbound_data_bandwidth_for_local_socket=
+",
+> +    "BriefDescription": "Outbound data bandwidth for accesses between lo=
+cal socket and remote socket.",
+> +    "MetricExpr": "(local_socket_outbound_data_beats_link_0 + local_sock=
+et_outbound_data_beats_link_1 + local_socket_outbound_data_beats_link_2 + l=
+ocal_socket_outbound_data_beats_link_3 + local_socket_outbound_data_beats_l=
+ink_4 + local_socket_outbound_data_beats_link_5) / duration_time",
+> +    "MetricGroup": "data_fabric",
+> +    "PerPkg": "1",
+> +    "ScaleUnit": "6.4e-5MB/s"
+>    }
+>  ]
+> --
+> 2.43.0
+>
 
