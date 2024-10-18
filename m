@@ -1,302 +1,247 @@
-Return-Path: <linux-kernel+bounces-371648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF849A3DD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 134F69A3DDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DB091F22409
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:07:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 902D51F22016
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8121CD2B;
-	Fri, 18 Oct 2024 12:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935DA1EA84;
+	Fri, 18 Oct 2024 12:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JLAU8fU7"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eX6Lu9Vg"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B646FC3;
-	Fri, 18 Oct 2024 12:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1586B26AEC
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729253242; cv=none; b=JTYF2DDwOGU0Qfu7b6rbWf21EHKiNIn9PupG4f9grGtR0ng/ircYghtQUENYbAXz3BYkU8H6xT6BaCmxx3t3RnJXhdelvTI7fbcZKK2ZETwRT/5HOOYg8QzayXASZr92rK5fBv6PeBzAg2KNKGdNA/l2bAbzwBrK2PGmO5s0m9s=
+	t=1729253285; cv=none; b=CuD4rw2w1I7MkYYhzx2EJTJKHOnsWQJls8LF8uHSjUMYgUChv/AwTimRINizbgaStWc/6dVpUgBBGA71kYhCaKYv19IQMlWgxhFGtb/NulHQ2SAW0QvVOZTzcJltbv9PmoyqdDGr+DMbu8r9I0hcFW9LRlmC32oxxlhIXZ2VdjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729253242; c=relaxed/simple;
-	bh=URBOnJ/Ss5PaWSgCKIzSeXHcUY8k6lxtjhkvPrc0xhg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qVSlsoTcKY69YlrjRL4Vo1ajyWkonVCBHgwY8l5YixPxU6KtaZP49dw/VaKogpAZIjCvKSG4Gry/NR6miiXZ6Cm1EOUARlaDVKqGqs3Po/G+AmCBOVDBTkYfDFlVC2EV2NphBo8v4IRmdRChvgomiOKQ7UXotOxYZBvMPeTR+30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JLAU8fU7; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1729253240; x=1760789240;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=URBOnJ/Ss5PaWSgCKIzSeXHcUY8k6lxtjhkvPrc0xhg=;
-  b=JLAU8fU75hGvk5c7edYg4XPv4MjvKJyZIgZfa4t8zVa6xIGUYXlKY73Z
-   uLKS4aOOKJq/KPczXNKo+upOV6SyeY/G1nkfIOH3sFWlplwdzHBUI2vtY
-   8TpEinMnJ6ZDHx7EUDHPDzTz7NXronUAjqHtcVIPXTtF+NR01ND6/JiEj
-   +cgGkhSEqTmfma7ZYwMKOLZZxx75GcwCL7zuhQ0bdc1l3jNFdMBFPyeCD
-   nTWFgEvCS+Ulqz/Xamklk0W+cldy3EeC7GNWP0POgzgOhuJqgfF55GUa0
-   IrUbfOu1JFddNi0aTmHpNy0VKeboXzQuu+LMpN83OhcNcjlc3ovoMiKRi
-   A==;
-X-CSE-ConnectionGUID: cunrz4YRRpeQeLPu+b1Gow==
-X-CSE-MsgGUID: k0qZE7O+S2uBKo6Hk5OdGw==
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="32981640"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Oct 2024 05:07:13 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 18 Oct 2024 05:06:48 -0700
-Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 18 Oct 2024 05:06:46 -0700
-From: <victor.duicu@microchip.com>
-To: <matteomartelli3@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>
-CC: <marius.cristea@microchip.com>, <victor.duicu@microchip.com>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5] iio: adc: pac1921: Add ACPI support to Microchip pac1921
-Date: Fri, 18 Oct 2024 15:06:24 +0300
-Message-ID: <20241018120624.15409-1-victor.duicu@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729253285; c=relaxed/simple;
+	bh=xUrIQHUCjZJyYr9h9a2ncIVx9VCCBKv1v97TddV3KfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tr7VjJqYL176fSvbKB7tdjN9ysQkvHaFUWx4n/zMIngPMjaLChMrhzDeTenZ1s5swIxZEAc67ejkT0BaKJo4ZJVpFh6UmP8toPkXML5kxMtEN8HNaUj/Cg6g42FT1m7oT6zDZD6EwIFN+ylLwV+ZFjJ0tdAbr7bvgka8BswiNP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eX6Lu9Vg; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f53973fdso1582858e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:08:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729253282; x=1729858082; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FHlkL/8BsxsxPx0ZFvj8OHCJ0PsZn0UFcrp/m+9hZV4=;
+        b=eX6Lu9VgCga0XNR7tPve1HZUlAFp1KAjPmualYOD8kABcnUW2Vi8R3KNUMe4vN89DW
+         0IvT/DzAZAqq88nNm2+JOd3H25DiyNkHPMjJvW18UaSWDwJpkZSMIw2tyJuoYGFORQ8J
+         UPBmw5EIQPaJvf1YdKSNW1L3awpMhXqAND1wTUL4K9ptMqJLWCD5wtoFW+8fugJjxiT0
+         Ff9WrXegpln/ybC4cTgMQP7/Xoqbpb+bEE5dblHx/U56hwOexDZa4EG+rv0oGJxT/qKu
+         a3MzinVS2qVytQjnDtcmJopePFL1adb8oN+gymdhHTuVCvfxtwYXThrPGxSYKUSDgXri
+         Tb8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729253282; x=1729858082;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FHlkL/8BsxsxPx0ZFvj8OHCJ0PsZn0UFcrp/m+9hZV4=;
+        b=ON9fdc8Vet0sImprgbvzkhzAIcIV27besftmvt4HKB7r/mCVpeZ5aWarYfYqTAkL1w
+         0v/peFYbw4OOGyA1Lfoh0gfQOUmozJ303P/esgq+O0r7Bh0GsZH/KvpeBYcNnAUZNR+G
+         7G7GUIp9v35z7YJbBeBd8Hw2cTdG7B21LjDDWw+QZE5FGVFmjLt9iJVnDX539b1XSf5V
+         Z+h/QEV5Jc94+pVdnJ+N7Rn0BNztq/XUM2mT+cvgutwbYUNVfmaTGdwcJJmDyiRuUuqe
+         LkTZ3EzPFRacdtXR/1OKH45/xcpPaI1xmlRT7VVJaULVESGCD6toYn1wn5lY4fxQZ7j6
+         DXqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwMQ/PWqY0JQB8vt/sYAMfZHRKHwSpQNbj/ImmlNj6njIQ959PQ9rtiMq3cHRQRloE1Dl5mkWb79seXP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySdHrpQ68ArCN1vLagK/CaFD/OBRDqVItn/DdwuVSqv3eq0CFO
+	YmMG5rKh/4Zk3frBoSWkKXpKXxYoJ6uaHJU5H6lkC4+FaK7DrT8p84MPZvaSVRA=
+X-Google-Smtp-Source: AGHT+IF4fR2V0+fs1LXk4Y63ajxHi6PYbJ7RvuQfAL/I4PlXjbgYR2WgC4CbmULEBhDbBQYXpb2fEA==
+X-Received: by 2002:a05:6512:2316:b0:539:f51d:8273 with SMTP id 2adb3069b0e04-53a0c6a56d0mr2408613e87.1.1729253282197;
+        Fri, 18 Oct 2024 05:08:02 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a15211a8fsm202174e87.261.2024.10.18.05.08.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 05:08:00 -0700 (PDT)
+Date: Fri, 18 Oct 2024 15:07:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Imran Shaik <quic_imrashai@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] clk: qcom: Add support for Camera Clock Controller
+ on QCS8300
+Message-ID: <pw6p5mhspqnhoszefljcuwsbmtwbywzequmsgkh366lam54fve@xpf7mmxeorkx>
+References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
+ <20241018-qcs8300-mm-patches-v1-4-859095e0776c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-cate: Fri, 18 Oct 2024 14:11:37 +0300
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018-qcs8300-mm-patches-v1-4-859095e0776c@quicinc.com>
 
-From: Victor Duicu <victor.duicu@microchip.com>
+On Fri, Oct 18, 2024 at 04:42:32PM +0530, Imran Shaik wrote:
+> Add support to the QCS8300 Camera clock controller by extending
+> the SA8775P Camera clock controller, which is mostly identical
+> but QCS8300 has few additional clocks and few other differences.
+> 
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+>  drivers/clk/qcom/camcc-sa8775p.c | 99 ++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 95 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/camcc-sa8775p.c b/drivers/clk/qcom/camcc-sa8775p.c
+> index c04801a5af35..0ef3c6015c34 100644
+> --- a/drivers/clk/qcom/camcc-sa8775p.c
+> +++ b/drivers/clk/qcom/camcc-sa8775p.c
+> @@ -1682,6 +1682,24 @@ static struct clk_branch cam_cc_sm_obs_clk = {
+>  	},
+>  };
+>  
+> +static struct clk_branch cam_cc_titan_top_accu_shift_clk = {
+> +	.halt_reg = 0x131f0,
+> +	.halt_check = BRANCH_HALT_VOTED,
+> +	.clkr = {
+> +		.enable_reg = 0x131f0,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "cam_cc_titan_top_accu_shift_clk",
+> +			.parent_hws = (const struct clk_hw*[]) {
+> +				&cam_cc_xo_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>  static struct gdsc cam_cc_titan_top_gdsc = {
+>  	.gdscr = 0x131bc,
+>  	.en_rest_wait_val = 0x2,
+> @@ -1776,6 +1794,7 @@ static struct clk_regmap *cam_cc_sa8775p_clocks[] = {
+>  	[CAM_CC_SLEEP_CLK_SRC] = &cam_cc_sleep_clk_src.clkr,
+>  	[CAM_CC_SLOW_AHB_CLK_SRC] = &cam_cc_slow_ahb_clk_src.clkr,
+>  	[CAM_CC_SM_OBS_CLK] = &cam_cc_sm_obs_clk.clkr,
+> +	[CAM_CC_TITAN_TOP_ACCU_SHIFT_CLK] = NULL,
+>  	[CAM_CC_XO_CLK_SRC] = &cam_cc_xo_clk_src.clkr,
+>  	[CAM_CC_QDSS_DEBUG_XO_CLK] = &cam_cc_qdss_debug_xo_clk.clkr,
+>  };
+> @@ -1812,6 +1831,7 @@ static struct qcom_cc_desc cam_cc_sa8775p_desc = {
+>  };
+>  
+>  static const struct of_device_id cam_cc_sa8775p_match_table[] = {
+> +	{ .compatible = "qcom,qcs8300-camcc" },
+>  	{ .compatible = "qcom,sa8775p-camcc" },
+>  	{ }
+>  };
+> @@ -1842,10 +1862,81 @@ static int cam_cc_sa8775p_probe(struct platform_device *pdev)
+>  	clk_lucid_evo_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
+>  	clk_lucid_evo_pll_configure(&cam_cc_pll5, regmap, &cam_cc_pll5_config);
+>  
+> -	/* Keep some clocks always enabled */
+> -	qcom_branch_set_clk_en(regmap, 0x13194); /* CAM_CC_CAMNOC_XO_CLK */
+> -	qcom_branch_set_clk_en(regmap, 0x131ec); /* CAM_CC_GDSC_CLK */
+> -	qcom_branch_set_clk_en(regmap, 0x13208); /* CAM_CC_SLEEP_CLK */
+> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-camcc")) {
+> +		cam_cc_camnoc_axi_clk_src.cmd_rcgr = 0x13154;
+> +		cam_cc_camnoc_axi_clk.halt_reg = 0x1316c;
+> +		cam_cc_camnoc_axi_clk.clkr.enable_reg = 0x1316c;
+> +		cam_cc_camnoc_dcd_xo_clk.halt_reg = 0x13174;
+> +		cam_cc_camnoc_dcd_xo_clk.clkr.enable_reg = 0x13174;
+> +
+> +		cam_cc_csi0phytimer_clk_src.cmd_rcgr = 0x15054;
+> +		cam_cc_csi1phytimer_clk_src.cmd_rcgr = 0x15078;
+> +		cam_cc_csi2phytimer_clk_src.cmd_rcgr = 0x15098;
+> +		cam_cc_csid_clk_src.cmd_rcgr = 0x13134;
+> +
+> +		cam_cc_mclk0_clk_src.cmd_rcgr = 0x15000;
+> +		cam_cc_mclk1_clk_src.cmd_rcgr = 0x1501c;
+> +		cam_cc_mclk2_clk_src.cmd_rcgr = 0x15038;
+> +
+> +		cam_cc_fast_ahb_clk_src.cmd_rcgr = 0x13104;
+> +		cam_cc_slow_ahb_clk_src.cmd_rcgr = 0x1311c;
+> +		cam_cc_xo_clk_src.cmd_rcgr = 0x131b8;
+> +		cam_cc_sleep_clk_src.cmd_rcgr = 0x131d4;
+> +
+> +		cam_cc_core_ahb_clk.halt_reg = 0x131b4;
+> +		cam_cc_core_ahb_clk.clkr.enable_reg = 0x131b4;
+> +
+> +		cam_cc_cpas_ahb_clk.halt_reg = 0x130f4;
+> +		cam_cc_cpas_ahb_clk.clkr.enable_reg = 0x130f4;
+> +		cam_cc_cpas_fast_ahb_clk.halt_reg = 0x130fc;
+> +		cam_cc_cpas_fast_ahb_clk.clkr.enable_reg = 0x130fc;
+> +
+> +		cam_cc_csi0phytimer_clk.halt_reg = 0x1506c;
+> +		cam_cc_csi0phytimer_clk.clkr.enable_reg = 0x1506c;
+> +		cam_cc_csi1phytimer_clk.halt_reg = 0x15090;
+> +		cam_cc_csi1phytimer_clk.clkr.enable_reg = 0x15090;
+> +		cam_cc_csi2phytimer_clk.halt_reg = 0x150b0;
+> +		cam_cc_csi2phytimer_clk.clkr.enable_reg = 0x150b0;
+> +		cam_cc_csid_clk.halt_reg = 0x1314c;
+> +		cam_cc_csid_clk.clkr.enable_reg = 0x1314c;
+> +		cam_cc_csid_csiphy_rx_clk.halt_reg = 0x15074;
+> +		cam_cc_csid_csiphy_rx_clk.clkr.enable_reg = 0x15074;
+> +		cam_cc_csiphy0_clk.halt_reg = 0x15070;
+> +		cam_cc_csiphy0_clk.clkr.enable_reg = 0x15070;
+> +		cam_cc_csiphy1_clk.halt_reg = 0x15094;
+> +		cam_cc_csiphy1_clk.clkr.enable_reg = 0x15094;
+> +		cam_cc_csiphy2_clk.halt_reg = 0x150b4;
+> +		cam_cc_csiphy2_clk.clkr.enable_reg = 0x150b4;
+> +
+> +		cam_cc_mclk0_clk.halt_reg = 0x15018;
+> +		cam_cc_mclk0_clk.clkr.enable_reg = 0x15018;
+> +		cam_cc_mclk1_clk.halt_reg = 0x15034;
+> +		cam_cc_mclk1_clk.clkr.enable_reg = 0x15034;
+> +		cam_cc_mclk2_clk.halt_reg = 0x15050;
+> +		cam_cc_mclk2_clk.clkr.enable_reg = 0x15050;
+> +
+> +		cam_cc_titan_top_gdsc.gdscr = 0x131a0;
 
-This driver implements ACPI support to Microchip pac1921.
-The driver can read shunt resistor value and label from ACPI table.
+Ugh. I see the point, but I can't say I like it.
 
-Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
----
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-The patch was tested on minnowboard and sama5.
+> +
+> +		cam_cc_sa8775p_clocks[CAM_CC_CCI_3_CLK] = NULL;
+> +		cam_cc_sa8775p_clocks[CAM_CC_CCI_3_CLK_SRC] = NULL;
+> +		cam_cc_sa8775p_clocks[CAM_CC_CSI3PHYTIMER_CLK] = NULL;
+> +		cam_cc_sa8775p_clocks[CAM_CC_CSI3PHYTIMER_CLK_SRC] = NULL;
+> +		cam_cc_sa8775p_clocks[CAM_CC_CSIPHY3_CLK] = NULL;
+> +		cam_cc_sa8775p_clocks[CAM_CC_MCLK3_CLK] = NULL;
+> +		cam_cc_sa8775p_clocks[CAM_CC_MCLK3_CLK_SRC] = NULL;
+> +		cam_cc_sa8775p_clocks[CAM_CC_TITAN_TOP_ACCU_SHIFT_CLK] =
+> +				&cam_cc_titan_top_accu_shift_clk.clkr;
+> +
+> +		/* Keep some clocks always enabled */
+> +		qcom_branch_set_clk_en(regmap, 0x13178); /* CAM_CC_CAMNOC_XO_CLK */
+> +		qcom_branch_set_clk_en(regmap, 0x131d0); /* CAM_CC_GDSC_CLK */
+> +		qcom_branch_set_clk_en(regmap, 0x131ec); /* CAM_CC_SLEEP_CLK */
+> +	} else {
+> +		/* Keep some clocks always enabled */
+> +		qcom_branch_set_clk_en(regmap, 0x13194); /* CAM_CC_CAMNOC_XO_CLK */
+> +		qcom_branch_set_clk_en(regmap, 0x131ec); /* CAM_CC_GDSC_CLK */
+> +		qcom_branch_set_clk_en(regmap, 0x13208); /* CAM_CC_SLEEP_CLK */
+> +	}
+>  
+>  	ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_sa8775p_desc, regmap);
+>  
+> 
+> -- 
+> 2.25.1
+> 
 
-Differences related to previous versions:
-v5:
-- set maximum acceptable value of shunt resistor to 2KOHM in devicetree,
-ACPI table and user input. The chosen value is lesser than INT_MAX,
-which is about 2.1KOHM.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw change to only
-  read 32b values for resistor shunt.
-
-v4:
-- change name of pac1921_shunt_is_valid to pac1921_shunt_is_invalid.
-- fix coding style.
-- in pac1921_parse_of_fw change back to device_property_read_u32.
-
-v3:
-- simplify and make inline function pac1921_shunt_is_valid. Make argument u64.
-- fix link to DSM documentation.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw, the shunt value is
-read as u64.
-- in pac1921_parse_of_fw remove code for reading label value from
-devicetree.
-- in pac1921_write_shunt_resistor cast the multiply result to u64 in order
-to fix overflow.
-
-v2:
-- remove name variable from priv. Driver reads label attribute with
-sysfs.
-- define pac1921_shunt_is_valid function.
-- move default assignments in pac1921_probe to original position.
-- roll back coding style changes.
-- add documentation for DSM(the linked document was used as reference).
-- remove acpi_match_device in pac1921_match_acpi_device.
-- remove unnecessary null assignment and comment.
-- change name of function pac1921_match_of_device to
-pac1921_parse_of_fw.
-
-v1:
-- initial version for review.
-
- drivers/iio/adc/pac1921.c | 109 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 96 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
-index a96fae546bc1..9622b0da6196 100644
---- a/drivers/iio/adc/pac1921.c
-+++ b/drivers/iio/adc/pac1921.c
-@@ -67,6 +67,13 @@ enum pac1921_mxsl {
- #define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain (HW default) */
- #define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample (HW default) */
- 
-+#define PAC1921_ACPI_GET_UOHMS_VALS             0
-+#define PAC1921_ACPI_GET_LABEL			1
-+#define PAC1921_DSM_UUID                        "f7bb9932-86ee-4516-a236-7a7a742e55cb"
-+/*The maximum accepted value of shunt_resistor is 2Kohms */
-+#define PAC1921_MAX_SHUNT_VALUE_OHMS		2000
-+#define PAC1921_MAX_SHUNT_VALUE_UOHMS		2000000000
-+
- /*
-  * Pre-computed scale factors for BUS voltage
-  * format: IIO_VAL_INT_PLUS_NANO
-@@ -204,6 +211,11 @@ struct pac1921_priv {
- 	} scan;
- };
- 
-+static inline bool pac1921_shunt_is_invalid(u32 shunt_val)
-+{
-+	return (shunt_val == 0 || shunt_val > PAC1921_MAX_SHUNT_VALUE_UOHMS);
-+}
-+
- /*
-  * Check if first integration after configuration update has completed.
-  *
-@@ -781,7 +793,7 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
- 					    const char *buf, size_t len)
- {
- 	struct pac1921_priv *priv = iio_priv(indio_dev);
--	u64 rshunt_uohm;
-+	u32 rshunt_uohm;
- 	int val, val_fract;
- 	int ret;
- 
-@@ -791,9 +803,13 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
- 	ret = iio_str_to_fixpoint(buf, 100000, &val, &val_fract);
- 	if (ret)
- 		return ret;
-+	
-+	/* This check is to ensure val*MICRO won't overflow*/
-+	if (val < 0 || val > PAC1921_MAX_SHUNT_VALUE_OHMS)
-+		return -EINVAL;
- 
- 	rshunt_uohm = val * MICRO + val_fract;
--	if (rshunt_uohm == 0 || rshunt_uohm > INT_MAX)
-+	if (pac1921_shunt_is_invalid(rshunt_uohm))
- 		return -EINVAL;
- 
- 	guard(mutex)(&priv->lock);
-@@ -1150,6 +1166,71 @@ static void pac1921_regulator_disable(void *data)
- 	regulator_disable(regulator);
- }
- 
-+/*
-+ * documentation related to the ACPI device definition
-+ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
-+ */
-+static int pac1921_match_acpi_device(struct i2c_client *client, struct pac1921_priv *priv,
-+				     struct iio_dev *indio_dev)
-+{
-+	acpi_handle handle;
-+	union acpi_object *rez;
-+	guid_t guid;
-+	char *label;
-+	u32 temp;
-+
-+	guid_parse(PAC1921_DSM_UUID, &guid);
-+	handle = ACPI_HANDLE(&client->dev);
-+
-+	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_UOHMS_VALS, NULL);
-+	if (!rez)
-+		return dev_err_probe(&client->dev, -EINVAL,
-+				     "Could not read shunt from ACPI table\n");
-+
-+	temp = rez->package.elements[0].integer.value;
-+	ACPI_FREE(rez);
-+
-+	if (pac1921_shunt_is_invalid(temp))
-+		return dev_err_probe(&client->dev, -EINVAL, "Invalid shunt resistor\n");
-+
-+	priv->rshunt_uohm = temp;
-+	pac1921_calc_current_scales(priv);
-+
-+	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_LABEL, NULL);
-+	if (!rez)
-+		return dev_err_probe(&client->dev, -EINVAL,
-+				     "Could not read label from ACPI table\n");
-+
-+	label = devm_kmemdup(&client->dev, rez->package.elements->string.pointer,
-+			     (size_t)rez->package.elements->string.length + 1,
-+			     GFP_KERNEL);
-+	label[rez->package.elements->string.length] = '\0';
-+	indio_dev->label = label;
-+	ACPI_FREE(rez);
-+
-+	return 0;
-+}
-+
-+static int pac1921_parse_of_fw(struct i2c_client *client, struct pac1921_priv *priv)
-+{
-+	int ret;
-+	struct device *dev = &client->dev;
-+
-+	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
-+				       &priv->rshunt_uohm);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Cannot read shunt resistor property\n");
-+
-+	if (pac1921_shunt_is_invalid(priv->rshunt_uohm))
-+		return dev_err_probe(dev, -EINVAL, "Invalid shunt resistor: %u\n",
-+				     priv->rshunt_uohm);
-+
-+	pac1921_calc_current_scales(priv);
-+
-+	return 0;
-+}
-+
- static int pac1921_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-@@ -1176,17 +1257,13 @@ static int pac1921_probe(struct i2c_client *client)
- 	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
- 	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
- 
--	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
--				       &priv->rshunt_uohm);
--	if (ret)
--		return dev_err_probe(dev, ret,
--				     "Cannot read shunt resistor property\n");
--	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
--		return dev_err_probe(dev, -EINVAL,
--				     "Invalid shunt resistor: %u\n",
--				     priv->rshunt_uohm);
--
--	pac1921_calc_current_scales(priv);
-+	if (ACPI_HANDLE(&client->dev))
-+		ret = pac1921_match_acpi_device(client, priv, indio_dev);
-+	else
-+		ret = pac1921_parse_of_fw(client, priv);
-+	if (ret < 0)
-+		return dev_err_probe(&client->dev, ret,
-+				     "parameter parsing error\n");
- 
- 	priv->vdd = devm_regulator_get(dev, "vdd");
- 	if (IS_ERR(priv->vdd))
-@@ -1243,11 +1320,17 @@ static const struct of_device_id pac1921_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, pac1921_of_match);
- 
-+static const struct acpi_device_id pac1921_acpi_match[] = {
-+	{ "MCHP1921" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, pac1921_acpi_match);
- static struct i2c_driver pac1921_driver = {
- 	.driver	 = {
- 		.name = "pac1921",
- 		.pm = pm_sleep_ptr(&pac1921_pm_ops),
- 		.of_match_table = pac1921_of_match,
-+		.acpi_match_table = pac1921_acpi_match
- 	},
- 	.probe = pac1921_probe,
- 	.id_table = pac1921_id,
-
-base-commit: 57573ace0c1b142433dfe3d63ebf375269c80fc1
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
