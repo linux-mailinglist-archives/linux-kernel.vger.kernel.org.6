@@ -1,108 +1,150 @@
-Return-Path: <linux-kernel+bounces-372089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8F99A4456
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:09:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C1D9A4458
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B661F21DE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:09:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C08F1C21F98
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335AB2038D5;
-	Fri, 18 Oct 2024 17:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9D22038DD;
+	Fri, 18 Oct 2024 17:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="B31IuP8h"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ge7k6+MR"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64061F428A;
-	Fri, 18 Oct 2024 17:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A16D168488;
+	Fri, 18 Oct 2024 17:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729271354; cv=none; b=dDkASfNITNOuKlv0W/szVkmKKGjwkfGn6YlWaDvN3pWhmkFA5zLe9D9CMPTRx6h+3E1NBKxAWlRszqFsRmTLG1XnaKHYP32u4kMAuUe1wXrVUhKZKpGYZDLGIx8vvgcQiGHPoup2vfGDiIsE737CbQJ9Qzdvxas0J3h2UHAsAAw=
+	t=1729271473; cv=none; b=OVWa0636RtlgX3rR1xWd5lnGCWrntNts9VgiG7hIx93Kk5/pVzkpyzriNAdtfmeqHmM9HfPDRupVnO65ouFNBpvSHKiZhEdyFlfpeorGPO1YAaYEc9jC6O0r5oThX3TxOIsazIk3BM3NmMVob8oElwofAVcf8jHJyUg/683uUEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729271354; c=relaxed/simple;
-	bh=dcWpLFwW77yaOp3NoUz/Ox3vjJRBWe2DK58dQ/3bh20=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eHowE46GduhQUHq9wFAB2INw2GOnctCepcy6NNBgfgNq6CQOm9HOfjIQAtvV3jQhgzdVFang5Z4QGKFmLGZMebK4mbxkL7OCjVZ1E15Sbk00qAjqtdcPZZfN4eSLiQFmjwzwv/2OrBRLvUC02YKemyDiv5Ojt/Fdfa48AV/inBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=B31IuP8h; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IA8crq032610;
-	Fri, 18 Oct 2024 10:08:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=Qs2DU5FTRsEj78vMHWdipZdMt
-	nEt5a/Zc/dGpilUIPY=; b=B31IuP8hRCwso/KsF7cIVDY2tFVdgfCAyrD22ubbD
-	8puSwwLoPftMvZOESwRT3PtLQrj/TucfsgtY286l99SWrChcMuAsyyLtnrFwo9Ld
-	/3LIChP8oQOSgiydrSC6Ox9Jg/yZS0am5dgioREZxhtSQ7WlZq4mRPBxo+mUJc/X
-	BLgY1BnF2XXMh4gJ43CY/utCw1qfeq/EanOG0MYG//4RyaYJWkoQraai+j6EksSs
-	yPLjAhx+Z1nOgKbnswA5xfZHeM8Oa1vEJHi13p08TBuxZUxk3a3ER1+2CWWFVWgN
-	Xfj7gMaFiLhyr8/eBO8a0bshJmoOuVdgfftMKnAcPk7xA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42bnnbgwdq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 10:08:45 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 18 Oct 2024 10:08:44 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 18 Oct 2024 10:08:44 -0700
-Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with SMTP id DA2543F7068;
-	Fri, 18 Oct 2024 10:08:41 -0700 (PDT)
-Date: Fri, 18 Oct 2024 22:38:40 +0530
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: Lorenz Brun <lorenz@brun.one>
-CC: Igor Russkikh <irusskikh@marvell.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] net: atlantic: support reading SFP module info
-Message-ID: <ZxKWGBAMsVqsnS87@test-OptiPlex-Tower-Plus-7010>
-References: <20241018154741.2565618-1-lorenz@brun.one>
+	s=arc-20240116; t=1729271473; c=relaxed/simple;
+	bh=IP+x7f2G2AR9oHaCIhywqDwoE70qzEcXZey4A7uNIDI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MluDh2kc0Nciuj0CV5r33iPcGSVcb+adg+3vk5OiIIT+JCPlcaqyxdijmJhG7Ahc/tPNNSfgN7u9CCrKPh39Tmri4j8WzCI+CgYThT4oHVR5/fSccVIe7t8dTpJTC2U3fXz4LoLKjNgU9Af1nSLamTx3enDUC3euteqGulIi91g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ge7k6+MR; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53a007743e7so3019301e87.1;
+        Fri, 18 Oct 2024 10:11:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729271469; x=1729876269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mgThiGCPl141sFNrgAm+Rln9/CtmEVSLiC31/DgZ018=;
+        b=Ge7k6+MR/8HN607bKp4cQYPXIui4IRVWZDgIz9wHVA83VKY5G6ILP5V6GFUBwXl8/W
+         7O7lSQ+tm55QEdTSqGiiGjvgPcVcNku3jGtdkOrg0Y/twMfXoiMAZ2s9fEr/BWgHtAqa
+         7fZM4muUgek6p+9BvNeMMZF48HzverEuYIm/zULiTZldsJIDF1OvfFwu0TCdU98dQ29I
+         1m9qy9GB7TRqWMYMwMf1E/8V8CcEVrrTuiXzxqZZe6CSpjY+WjZTFHadN5mQyL1J3xuH
+         WOUsSQ9l+3fQ12yMHm1zT4EF9NdwTk0FtSBXWwn8HOezQUmpTMtgUoY2T9MFDRri8oL4
+         q0JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729271469; x=1729876269;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mgThiGCPl141sFNrgAm+Rln9/CtmEVSLiC31/DgZ018=;
+        b=d7H700ZqnliuOiKllszEkwbueJJl+IhQorJvQ/sOqpxBprLgC0U31MkZJZO1rgzsDB
+         FgiK2D4jQZPn3DfRlXVXgnueSYlqv71PAsflCjcaO4QRxFs/2ylWtdlMBBglCsOfuRvM
+         emKK3Pzz+g/0OCr4/gwIkeDnaUZnLLwC/vW/9Oe4Dh7XER+MeujEQ2XviVJn1lWRN+/7
+         /+MxjZEhQsoEBvgPh/1z0MH9hnSRvirBqkKYUMOZY1IbUBQJwb/blouVDlvtHELEa/o1
+         jGqnaNpQyEmsEoXx3sbOHORnmrA5JaXNgfZELnn4B25PKpzdmIZczwiMjPpyxsGY7E1Q
+         5yzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWucz64jwyT2m8NnexzkTc6BygomZhvQJb3IfuF1+bL+eCm6PHAMeN2iShjcYM6GAN7TXzNLekEWTn0xl0=@vger.kernel.org, AJvYcCX1s0tWOK6LDWpHFwKHc24OY/4QD6OeJt9Zdnt8SaF37ByVux7x3o1v8t9NbNQI2hkKLtLyL2ZlrBtErhQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAIEo6qhTgnwJXPVW7ZRAmeuQyNicmGmDpU4+ZiDIO4sVZjFIX
+	NEuME1j8zrVWlIWFZYHHUqLdUBiLjmo9FqEjtibljZlmXAPSOddDa3L5Og==
+X-Google-Smtp-Source: AGHT+IH1GFiCfMMKzbKX6Z15IjU2zJjLuKFYvc3YTObVroWLVHx8a+1y4J4vmfFFuDB7oN+LPUlOHg==
+X-Received: by 2002:a05:6512:4009:b0:536:9f72:c427 with SMTP id 2adb3069b0e04-53a154a93a0mr2118740e87.28.1729271468789;
+        Fri, 18 Oct 2024 10:11:08 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation.station (net-188-217-51-176.cust.vodafonedsl.it. [188.217.51.176])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ca0b07f601sm935598a12.22.2024.10.18.10.11.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 10:11:08 -0700 (PDT)
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: 
+Cc: sakari.ailus@linux.intel.com,
+	laurent.pinchart@ideasonboard.com,
+	prabhakar.csengg@gmail.com,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	=?UTF-8?q?Pawe=C5=82=20Anikiel?= <panikiel@google.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: v4l2-subdev: Refactor events
+Date: Fri, 18 Oct 2024 19:11:03 +0200
+Message-Id: <20241018171104.1624426-1-tomm.merciai@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241018154741.2565618-1-lorenz@brun.one>
-X-Proofpoint-GUID: iipTzzbPWUbQCWHeIdXoA0CxWWaGK75U
-X-Proofpoint-ORIG-GUID: iipTzzbPWUbQCWHeIdXoA0CxWWaGK75U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Transfer-Encoding: 8bit
 
-On 2024-10-18 at 21:17:38, Lorenz Brun (lorenz@brun.one) wrote:
-> Add support for reading SFP module info and digital diagnostic
-> monitoring data if supported by the module. The only Aquantia
-> controller without an integrated PHY is the AQC100 which belongs to
-> the B0 revision, that's why it's only implemented there.
-> 
-> The register information was extracted from a diagnostic tool made
-> publicly available by Dell, but all code was written from scratch by me.
-> 
-> This has been tested to work with a variety of both optical and direct
-> attach modules I had lying around and seems to work fine with all of
-> them, including the diagnostics if supported by an optical module.
-> All tests have been done with an AQC100 on an TL-NT521F card on firmware
-> version 3.1.121 (current at the time of this patch).
-> 
-> Signed-off-by: Lorenz Brun <lorenz@brun.one>
-> ---
-    Since this is not a fix, please submit this patch to "net-next"
-    tree by changing the subject prefix. 
+Controls can be exposed to userspace via a v4l-subdevX device, and
+userspace has to be able to subscribe to control events so that it is
+notified when the control changes value.
+If a control handler is set for the subdev then set the HAS_EVENTS
+flag automatically into v4l2_subdev_init_finalize() and use
+v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
+as default if subdev don't have .(un)subscribe control operations.
 
+Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+---
+ drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+index 3a4ba08810d2..77ca829b9983 100644
+--- a/drivers/media/v4l2-core/v4l2-subdev.c
++++ b/drivers/media/v4l2-core/v4l2-subdev.c
+@@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+ 		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
+ 
+ 	case VIDIOC_SUBSCRIBE_EVENT:
+-		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
++		if (v4l2_subdev_has_op(sd, core, subscribe_event))
++			return v4l2_subdev_call(sd, core, subscribe_event,
++						vfh, arg);
++
++		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
++		     vfh->ctrl_handler)
++			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
++
++		return -ENOIOCTLCMD;
+ 
+ 	case VIDIOC_UNSUBSCRIBE_EVENT:
+-		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
++		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
++			return -ENOIOCTLCMD;
++
++		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
++			return v4l2_subdev_call(sd, core, unsubscribe_event,
++						vfh, arg);
++
++		return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
+ 
+ #ifdef CONFIG_VIDEO_ADV_DEBUG
+ 	case VIDIOC_DBG_G_REGISTER:
+@@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
+ 		}
+ 	}
+ 
++	if (sd->ctrl_handler)
++		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
++
+ 	state = __v4l2_subdev_state_alloc(sd, name, key);
+ 	if (IS_ERR(state))
+ 		return PTR_ERR(state);
+-- 
+2.34.1
 
 
