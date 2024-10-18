@@ -1,179 +1,226 @@
-Return-Path: <linux-kernel+bounces-372235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D89D9A45FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFFC9A4602
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2B16B23276
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:37:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481D81F24753
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6B7204093;
-	Fri, 18 Oct 2024 18:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30F82040A2;
+	Fri, 18 Oct 2024 18:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmF0Fi3m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/3/RdRs"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E4120E312;
-	Fri, 18 Oct 2024 18:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECAD20E312
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729276648; cv=none; b=cRZDcFTPjdQ5xws8AYL3i8ZVlMn4gG/bsJVp1UuJoLo+iffylxc/pDmHxEq6UtEObmhiY8LhPEMWNsyZCRcd66PKUM67XYuie378kCuZJ2aHypiZpdWRZ/iSB8yfLR3R3x6cjxLv1fbgZgjdQZtwQEdiMcP9SMnkhCMq22A1Bo4=
+	t=1729276731; cv=none; b=TBCfnpPeuzM1pJUA8jvjLw6gy0IxtRJiK01QKbrpMsERx+Rw41Fkp8rCzKDQiNIc/MFMuApk8ajO1gobfl+N5a0O8Ct4LjeXyrxdDXynHF9Ly+HLzS+YuTq/rNUK2bgGXTDImXtyJ5CqrVVrZNCTZGOnp65ekVpkUKHf/AZUcLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729276648; c=relaxed/simple;
-	bh=dSqi9IfAa5l3jYcAxFqh5y6voNSnsY/4yK4Ky+osyzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSMwehQuuKtg/pCUcD1S8FKio7mUomM4mVJmocj5ifnQ9D4ftk+iydByaM6QSY+b8vv8kycGpwI5dzQmMAosvhSYe9/pHX1OnwaNrVWe2smNQTl4TAn/Im10CSJIgkOyr3EWry0y5DSTXeX92CHNzvMAx5qkhGVat29lfTzlaTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmF0Fi3m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42D6FC4CEC3;
-	Fri, 18 Oct 2024 18:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729276648;
-	bh=dSqi9IfAa5l3jYcAxFqh5y6voNSnsY/4yK4Ky+osyzY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KmF0Fi3mLpV6GjbQaCRA6EA3/hmTHOuYNb0OlV7FM0aKT1stkxnb+6quUky7+IjhV
-	 L6o+NKUWoPLD0kfZrKO5Nb0eGG8/hecQqI500alUD6JS5TbiEX+cUIVFI690ETpBfr
-	 aSuR3sl03MMg5zFMW1AVohkqFFSrBrTDvdxUq+P5TWeIaX4iXhjZI0rWojBZSlTWN0
-	 D3tPgPmiXLxe7D8jCX6zsKKNtZg4G4AB6S+35NwFNVl4CNDHes91AISvxq1JAoQibD
-	 QBJl6sB+AlhRRTSEt3HTSH9Ldg2wQPdCNiEi91k5J1rNQEX29k3ixX7+dbWr9Ty8Du
-	 ijJKjWIrDr72A==
-Date: Fri, 18 Oct 2024 19:37:22 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jeff Xu <jeffxu@chromium.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	akpm@linux-foundation.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org, pedro.falcato@gmail.com,
-	willy@infradead.org, vbabka@suse.cz, Liam.Howlett@oracle.com,
-	rientjes@google.com, keescook@chromium.org
-Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
-Message-ID: <a2652ed4-ea8b-4b56-bac6-6479b3df6c14@sirena.org.uk>
-References: <CABi2SkUpCf+aOa2sPED8CosG5ccqjFd7ouot8gXi9ECqsHiZhw@mail.gmail.com>
- <4944ce41-9fe1-4e22-8967-f6bd7eafae3f@lucifer.local>
- <CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com>
- <CABi2SkVEMRHV3swrbb6M5RA6GQpFVVx855CGwdQ1xiz3tygiqA@mail.gmail.com>
- <f9b9422c-216d-422e-94b4-d8814b0b277e@lucifer.local>
- <CABi2SkWAv4LXvR1Wb1e31eyZ35JfyieXhDOq1bp_ZvHPLLg-qA@mail.gmail.com>
- <e0f440b0-5a45-4218-8c51-27f848c0617b@lucifer.local>
- <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
- <1f8eff74-005b-4fa9-9446-47f4cdbf3e8d@sirena.org.uk>
- <CABi2SkV38U-ZCAq9W091zYkOM1m5e-C27YmVXdTCi-t+p_W_fQ@mail.gmail.com>
+	s=arc-20240116; t=1729276731; c=relaxed/simple;
+	bh=kHo1OQsJrlXFRkJFmYFP6Us+kcML//OAoBCwZHeXeFI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aqz2BJ2mDD4eQgxbB5el92DF7uyvvuvcu7gE9xUHmD2HhEubH2Gg0QBjmlehOSC5XbgRir8mnoZuJEvWV1LWj68/nqw1JEtGX4ZxtWMtZUGgTEASszJ+gQwP9q+Lf8cTyoyLs8S+WvsGJp40Z91U3WsvSGmKokyBiJZEGWjTCOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/3/RdRs; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c96df52c52so3014310a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:38:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729276728; x=1729881528; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aMfpolUDz42PH58PTzjh3/JFNIGy2P822pqybTHMLv8=;
+        b=C/3/RdRsyj9JQPvtVsC+8Vy9UCBCr7zpxRJV1Bn4UJt35QwfzFpdLC5J2p1K8KqOJv
+         V1jcdFUwW59TqjhAnt8aRXgpJAoxdkCNz212FMPwhLrM4vy4HrlkQxB6h/R0CpCgydVB
+         sf5eWzxrFPBYUbFOaBg9513iVSY6nuR+7I6EoEax8BnHV7BPaihCYZerMkhlry9YrkLC
+         zMOMFus0XDJwcODSlfqvQ8uYoH6N21ydBMT2kPMhsZ4uItYD0iMwjDA6x3rx3bfgYIB5
+         WKCAoGiCQPRhMpAId/LR6u6//t42i35jQn1zNfE1IzXUCBJbVMrb0fCPgx+G8++N5f5B
+         eA4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729276728; x=1729881528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aMfpolUDz42PH58PTzjh3/JFNIGy2P822pqybTHMLv8=;
+        b=eybhGVm+opjnylZWwGJ1B20oK2PhVp3Pt9yqUJr3/bwf2MXXnm7yoe5TvyqebXlfH4
+         BJuw8Nc5mJit+7Jeif6Nb5bd40+xJJidyU2/D9VG3UC9IhD91AoRoMkJICXCGaeFR8Ok
+         Wy9ycurNvb6z1n9rkxyOWYwzFsLx5N0hSRRjxMms7tXQjhxFNCRdaL40gulqcnPorhBI
+         aNi5zy3Tktct5exaIa0JD3Sc3a+Y2Ezn5F61Dz64vdWTZXrrDYAEyVvD5Yv3nHyEW1Vi
+         EgMtzdiDNwQkM4PN+13AeidZ3VEspPk8OjfQ1wJ7VTxBWKwKZqnoPxKSiu1u+kipFtjT
+         odSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWE3rumyYRHm4VWoTWCVBe++OjJBWaFbMZE4vdiS6DkLhk8ExhPGas4rcGnxGOzfU1LRgQkFtzDSR9M4Gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCNHRYLYwnK8va+yUlhE70frNnbFWBiewjPXuYUTYRLBLJ0Uhl
+	fs5HImhxFtCvuKehcr5yyZKtrmSWqih6YThO3uuRU1ne8aLoU5QNQrECpFkRXtEHIiEFnw2393e
+	yUZp1jdGsJw8+98Qyk8Hzn2XZ0A4=
+X-Google-Smtp-Source: AGHT+IGbuXK7Hr1PpEVHlJDYhACH9CtZunSYZeKo0Qsu6JeCnoos2F1D2b3QuxVhegVe8lgQsr6ZS5rsDxzUSELU78k=
+X-Received: by 2002:a05:6402:d05:b0:5c8:8db1:1d55 with SMTP id
+ 4fb4d7f45d1cf-5ca0ac50dd0mr3200061a12.10.1729276727650; Fri, 18 Oct 2024
+ 11:38:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="P9lxhlovMTxuF4jF"
-Content-Disposition: inline
-In-Reply-To: <CABi2SkV38U-ZCAq9W091zYkOM1m5e-C27YmVXdTCi-t+p_W_fQ@mail.gmail.com>
-X-Cookie: What is the sound of one hand clapping?
-
-
---P9lxhlovMTxuF4jF
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <cover.1729218573.git.baolin.wang@linux.alibaba.com> <2129a21a5b9f77d3bb7ddec152c009ce7c5653c4.1729218573.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <2129a21a5b9f77d3bb7ddec152c009ce7c5653c4.1729218573.git.baolin.wang@linux.alibaba.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Fri, 18 Oct 2024 11:38:36 -0700
+Message-ID: <CAHbLzkoEtyKjUCChaAizAAnEXet3519q7Xg4nOm7aE4QdfeFjA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mm: shmem: improve the tmpfs large folio read performance
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org, 
+	david@redhat.com, wangkefeng.wang@huawei.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 18, 2024 at 11:06:20AM -0700, Jeff Xu wrote:
-> On Fri, Oct 18, 2024 at 6:04=E2=80=AFAM Mark Brown <broonie@kernel.org> w=
-rote:
+On Thu, Oct 17, 2024 at 8:00=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+> The tmpfs has already supported the PMD-sized large folios, but the tmpfs
+> read operation still performs copying at the PAGE SIZE granularity, which
+> is unreasonable. This patch changes to copy data at the folio granularity=
+,
+> which can improve the read performance, as well as changing to use folio
+> related functions.
+>
+> Moreoever, if a large folio has a subpage that is hwpoisoned, it will sti=
+ll
+> fallback to page granularity copying.
 
-> > The problem is that the macro name is confusing and not terribly
-> > consistent with how the rest of the selftests work.  The standard
-> > kselftest result reporting is
+s/Moreoever/Moreover
 
-> >         ksft_test_result(bool result, char *name_format, ...);
-> >
-> > so the result of the test is a boolean flag which is passed in.  This
-> > macro on the other hand sounds like a double negative so you have to
-> > stop and think what the logic is, and it's not seen anywhere else so
-> > nobody is going to be familiar with it.  The main thing this is doing is
-> > burying a return statement in there, that's a bit surprising too.
+>
+> Use 'fio bs=3D64k' to read a 1G tmpfs file populated with 2M THPs, and I =
+can
+> see about 20% performance improvement, and no regression with bs=3D4k.
+> Before the patch:
+> READ: bw=3D10.0GiB/s
+>
+> After the patch:
+> READ: bw=3D12.0GiB/s
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-> Thanks for explaining the problem, naming is hard. Do you have a
-> suggestion on a better naming?
+The patch looks fine to me. Reviewed-by: Yang Shi <shy828301@gmail.com>
 
-Honestly I'd probably deal with this by refactoring such that the macro
-isn't needed and the tests follow a pattern more like:
 
-	if (ret !=3D 0) {
-		ksft_print_msg("$ACTION failed with %d\n", ret);
-		return false;
-	}
-
-when they encouter a failure, the pattern I sketched in my earlier
-message, or switch to kselftest_harness.h (like I say I don't know if
-the fork()ing is an issue for these tests).  If I had to have a macro
-it'd probably be something like mseal_assert().
-
-> > I'll also note that these macros are resulting in broken kselftest
-> > output, the name for a test has to be stable for automated systems to be
-> > able to associate test results between runs but these print
-
-=2E...
-
-> > which includes the line number of the test in the name which is an
-> > obvious problem, automated systems won't be able to tell that any two
-> > failures are related to each other never mind the passing test.  We
-> > should report why things failed but it's better to do that with a
-> > ksft_print_msg(), ideally one that's directly readable rather than
-> > requiring someone to go into the source code and look it up.
-
-> I don't know what  the issue you described is ? Are you saying that we
-> are missing line numbers ? it is not. here is the sample of output:
-
-No, I'm saying that having the line numbers is a problem.
-
-> Failure in the second test case from last:
-
-> ok 105 test_munmap_free_multiple_ranges
-> not ok 106 test_munmap_free_multiple_ranges_with_split: line:2573
-> ok 107 test_munmap_free_multiple_ranges_with_split
-
-Test 106 here is called "test_munmap_free_multiple_ranges_with_split:
-line:2573" which automated systems aren't going to be able to associate
-with the passing "test_munmap_free_multiple_ranges_with_split", nor with
-any failures that occur on any other lines in the function.
-
-> I would image the needs of something similar to FAIL_TEST_IF_FALSE is
-> common in selftest writing:
-
-> 1> lightweight enough so dev can pick up quickly and adapt to existing
-> tests, instead of rewriting everything from scratch.
-> 2> assert like syntax
-> 3> fail the current test case, but continue running the next test case
-> 4> take care of reporting test failures.
-
-Honestly this just sounds and looks like kselftest_harness.h, it's
-ASSERT_ and EXPECT_ macros sound exactly like what you're looking for
-for asserts.  The main gotchas with it are that it's not particularly
-elegant for test cases which need to enumerate system features (which I
-don't think is the case for mseal()?) and that it runs each test case in
-a fork()ed child which can be inconvenient for some tests.  The use of
-fork() is because that make the overall test program much more robust
-against breakage in individual tests and allows things like per test
-timeouts.
-
---P9lxhlovMTxuF4jF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcSquEACgkQJNaLcl1U
-h9Co7Qf+IFX02DfWKnGFQmrXx/BU2tcsHpr6ALzD+Pf5eVjuzGXP2trUWphjlykz
-xQ1iS/lr0f+4xBGnAVbjryUNyIyPqPJ1an4APNVoEBIb0H4PY6i5vQglTj4qxvVL
-8RUQx3bMWMrfok1duAFTMm/Kpl94uPCH5TYTdvdM2iwrQnOqCsKDnSUItG+n9jVh
-GnArZl82biCNbQfGUdB01rMmMohltm7xfOiu2ZGzT3H+yPf3WXsP0epX12oLOP6j
-13gOBbpJmARrQRdV14gUNl9WoRjblWTYGsjdVEL/m1eV+NC6Zq8QeSfs8MAiEU2v
-dvqGHf0ov9NhgPPLYl3TcjEhGRl7xw==
-=O77y
------END PGP SIGNATURE-----
-
---P9lxhlovMTxuF4jF--
+> ---
+>  mm/shmem.c | 34 ++++++++++++++++++++++++----------
+>  1 file changed, 24 insertions(+), 10 deletions(-)
+>
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 93642aa8d1aa..cbefd9801f6b 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -3107,13 +3107,13 @@ static ssize_t shmem_file_read_iter(struct kiocb =
+*iocb, struct iov_iter *to)
+>         int error =3D 0;
+>         ssize_t retval =3D 0;
+>
+> -       offset =3D iocb->ki_pos & ~PAGE_MASK;
+> -
+>         for (;;) {
+>                 struct folio *folio =3D NULL;
+>                 struct page *page =3D NULL;
+>                 unsigned long nr, ret;
+>                 loff_t end_offset, i_size =3D i_size_read(inode);
+> +               bool fallback_page_copy =3D false;
+> +               size_t fsize;
+>
+>                 if (unlikely(iocb->ki_pos >=3D i_size))
+>                         break;
+> @@ -3134,6 +3134,10 @@ static ssize_t shmem_file_read_iter(struct kiocb *=
+iocb, struct iov_iter *to)
+>                                 error =3D -EIO;
+>                                 break;
+>                         }
+> +
+> +                       if (folio_test_large(folio) &&
+> +                           folio_test_has_hwpoisoned(folio))
+> +                               fallback_page_copy =3D true;
+>                 }
+>
+>                 /*
+> @@ -3147,7 +3151,12 @@ static ssize_t shmem_file_read_iter(struct kiocb *=
+iocb, struct iov_iter *to)
+>                         break;
+>                 }
+>                 end_offset =3D min_t(loff_t, i_size, iocb->ki_pos + to->c=
+ount);
+> -               nr =3D min_t(loff_t, end_offset - iocb->ki_pos, PAGE_SIZE=
+ - offset);
+> +               if (folio && likely(!fallback_page_copy))
+> +                       fsize =3D folio_size(folio);
+> +               else
+> +                       fsize =3D PAGE_SIZE;
+> +               offset =3D iocb->ki_pos & (fsize - 1);
+> +               nr =3D min_t(loff_t, end_offset - iocb->ki_pos, fsize - o=
+ffset);
+>
+>                 if (folio) {
+>                         /*
+> @@ -3155,10 +3164,15 @@ static ssize_t shmem_file_read_iter(struct kiocb =
+*iocb, struct iov_iter *to)
+>                          * virtual addresses, take care about potential a=
+liasing
+>                          * before reading the page on the kernel side.
+>                          */
+> -                       if (mapping_writably_mapped(mapping))
+> -                               flush_dcache_page(page);
+> +                       if (mapping_writably_mapped(mapping)) {
+> +                               if (likely(!fallback_page_copy))
+> +                                       flush_dcache_folio(folio);
+> +                               else
+> +                                       flush_dcache_page(page);
+> +                       }
+> +
+>                         /*
+> -                        * Mark the page accessed if we read the beginnin=
+g.
+> +                        * Mark the folio accessed if we read the beginni=
+ng.
+>                          */
+>                         if (!offset)
+>                                 folio_mark_accessed(folio);
+> @@ -3166,9 +3180,11 @@ static ssize_t shmem_file_read_iter(struct kiocb *=
+iocb, struct iov_iter *to)
+>                          * Ok, we have the page, and it's up-to-date, so
+>                          * now we can copy it to user space...
+>                          */
+> -                       ret =3D copy_page_to_iter(page, offset, nr, to);
+> +                       if (likely(!fallback_page_copy))
+> +                               ret =3D copy_folio_to_iter(folio, offset,=
+ nr, to);
+> +                       else
+> +                               ret =3D copy_page_to_iter(page, offset, n=
+r, to);
+>                         folio_put(folio);
+> -
+>                 } else if (user_backed_iter(to)) {
+>                         /*
+>                          * Copy to user tends to be so well optimized, bu=
+t
+> @@ -3186,8 +3202,6 @@ static ssize_t shmem_file_read_iter(struct kiocb *i=
+ocb, struct iov_iter *to)
+>                 }
+>
+>                 retval +=3D ret;
+> -               offset +=3D ret;
+> -               offset &=3D ~PAGE_MASK;
+>                 iocb->ki_pos +=3D ret;
+>
+>                 if (!iov_iter_count(to))
+> --
+> 2.39.3
+>
 
