@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-371628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008619A3D7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:47:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1949A3D82
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 838A5B2550E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:47:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 976A5B25899
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980551C6BE;
-	Fri, 18 Oct 2024 11:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF3EB667;
+	Fri, 18 Oct 2024 11:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrGLoVyc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYlqvUud"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28B618EAB;
-	Fri, 18 Oct 2024 11:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3714F6FB6;
+	Fri, 18 Oct 2024 11:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729252012; cv=none; b=gL612YlC9PxlYlR0hM32A/KHOVHfapanYC8KQCtuLMHxSCodnGSmI8gjIB25bIayXqVOPff2QQuS53vvRnrBj3+FYXFqOSELuWz9j+hKEV45bfhgGZi08mJK/NuX5xzApMXQnfeoo+9GwSZtrkhbu+OFJwgjmPavp09jKag50cc=
+	t=1729252188; cv=none; b=A3i1IUSXZT3PuIW4pgyvq1hti9M6cyUOANnvYS8s8n4YriOqLwBeEK2mVXvt7eFVwfO3NRMZIbfEyShExqXbt6VBdOG/ByifW8SB2oJB5s6323mhYTedsyCOLI5jPmEEYnfn0R3SCdF5zQmQXfxrcLWoHv2var10nBk20CsuPPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729252012; c=relaxed/simple;
-	bh=Tap+F2W3Ssi+cAWL9Ejxi1kzzg/rP6w5KM09ct5EJYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7zOoSzKMdWv1IVuLQteOwJv7zIT2ycCFxOr/qoUpHzn++3EwW9bJ6GUHeOOedbY887P+65uMfyuaD/1XvQxPIXpnB90IVNwIbqk00cxQ+QsxGybI3hicAIMOaiJQyVyvGmBZth3v77dsHuwmm5BxxlmUWC0zLRRf62evVTgI/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrGLoVyc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB50DC4CEDC;
-	Fri, 18 Oct 2024 11:46:48 +0000 (UTC)
+	s=arc-20240116; t=1729252188; c=relaxed/simple;
+	bh=mg5kdNfTdx14uiIW5ZvOxucA9flwjgHNLXYQdAdzvCY=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=ACwyvBpTwyMiPoZ2g/U6qEEEYgSQ+YgJl8M6pq7DV91cbPPxTv1rcCl0TBUrOn+VxFWTqisb78fNw0mxuQ5V7YkzzWU2DHQfx/1y7bZWfYmRKvrW0zwUiKZeWvn9ybLWonSGs4y6Jb36Uoox5aufTTDDjj0wW+YrpdB0UrMDd6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYlqvUud; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43925C4CED8;
+	Fri, 18 Oct 2024 11:49:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729252011;
-	bh=Tap+F2W3Ssi+cAWL9Ejxi1kzzg/rP6w5KM09ct5EJYY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OrGLoVycK0lj36hWTCjj9p5YXTzEVLmP7vMNIgvi3uNAXgtl+J/fGEARh7coIO+eE
-	 QxcaLAcvPokA0Edda1/HDBW5YEhLFOgwwBcN1AAJ5oPcBNp2TT7Dv286kVPEDoBJOL
-	 FnT//vVNWslz/xC70u9wAofjaNt8hdZ2shmSHsMLgktWZtKvQ3OGuR7bl0MZX3ouQS
-	 mTCh3LIEROTql6Xr5DsaYp1fNyVKW30M4ZLrVyEIyHTHr5XTtmbs5IbJFZbuki38da
-	 swmpVNqPsYbHTjNtDNWR2HWT1+l4LrUdNytQobCnMcK2kFDD/6TmoTCGDRhHkYT7d1
-	 GAi2JYfCLhWFw==
-Date: Fri, 18 Oct 2024 12:46:46 +0100
-From: Simon Horman <horms@kernel.org>
-To: =?utf-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>,
-	Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>, netdev@vger.kernel.org,
-	mptcp@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] tools: ynl-gen: use big-endian netlink
- attribute types
-Message-ID: <20241018114646.GH1697@kernel.org>
-References: <20241017094704.3222173-1-ast@fiberby.net>
+	s=k20201202; t=1729252187;
+	bh=mg5kdNfTdx14uiIW5ZvOxucA9flwjgHNLXYQdAdzvCY=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=uYlqvUudWIHdF9iKbfGcEe1uzinnsFCyhj4NOSdyFKOtj4aZvRb1/aaj65KiaejQr
+	 Ac74oiMgTC9qmdTiz4mOhH/ZRZZdGgvtw0FpL1kToHTvOJUb4flpe/ydNiQNqZZ3Dr
+	 +qUp5a8nLW4ZEO5avdGIFshffwTPbfHvZauvijYgNlOud8bfA7pcn867LtRZCuTNRn
+	 40Bq7byr0zsxrSymozy7xd21s6FtVzPmwJs87/1EIE2urb9NlihyWcuzsMqVpcrQQi
+	 Kg96jH+m9Ar8Gre5rf4FZT4ZRaSZnYFAcnlV4FgFHNdWbVbwsi6HypcfP+L44+3nzZ
+	 ++RKSk9IvUiUQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: =?utf-8?Q?Pawe=C5=82?= Owoc <frut3k7@gmail.com>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,  Jeff Johnson
+ <jjohnson@kernel.org>,  linux-wireless@vger.kernel.org,
+  ath10k@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] wifi: ath10k: add channel 177 for 5 GHz band
+References: <20240801202359.794035-1-frut3k7@gmail.com>
+	<20241009065051.51143-1-frut3k7@gmail.com>
+	<b58b5b2e-bf9f-480c-810b-2cef29aab82c@quicinc.com>
+	<CAKEyCaDUfn4jtCdTt9JJ-Qe+CCudORPwcjj5i5=G28ANc+eCRg@mail.gmail.com>
+Date: Fri, 18 Oct 2024 14:49:44 +0300
+In-Reply-To: <CAKEyCaDUfn4jtCdTt9JJ-Qe+CCudORPwcjj5i5=G28ANc+eCRg@mail.gmail.com>
+	(=?utf-8?Q?=22Pawe=C5=82?= Owoc"'s message of "Fri, 18 Oct 2024 00:51:59
+ +0200")
+Message-ID: <87ed4dr5pj.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,48 +63,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241017094704.3222173-1-ast@fiberby.net>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 09:47:02AM +0000, Asbjørn Sloth Tønnesen wrote:
-> Change ynl-gen-c.py to use NLA_BE16 and NLA_BE32 types to represent
-> big-endian u16 and u32 ynl types.
-> 
-> Doing this enables those attributes to have range checks applied, as
-> the validator will then convert to host endianness prior to validation.
-> 
-> The autogenerated kernel/uapi code have been regenerated by running:
->   ./tools/net/ynl/ynl-regen.sh -f
-> 
-> This changes the policy types of the following attributes:
-> 
->   FOU_ATTR_PORT (NLA_U16 -> NLA_BE16)
->   FOU_ATTR_PEER_PORT (NLA_U16 -> NLA_BE16)
->     These two are used with nla_get_be16/nla_put_be16().
-> 
->   MPTCP_PM_ADDR_ATTR_ADDR4 (NLA_U32 -> NLA_BE32)
->     This one is used with nla_get_in_addr/nla_put_in_addr(),
->     which uses nla_get_be32/nla_put_be32().
-> 
-> IOWs the generated changes are AFAICT aligned with their implementations.
-> 
-> The generated userspace code remains identical, and have been verified
-> by comparing the output generated by the following command:
->   make -C tools/net/ynl/generated
-> 
-> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
-> 
-> ---
-> Changelog:
-> 
-> v2:
-> - Re-implement to avoid adding a new Type attribute (Requested by Jakub).
-> 
-> v1: https://lore.kernel.org/netdev/20240913085555.134788-1-ast@fiberby.net/
+Pawe=C5=82 Owoc <frut3k7@gmail.com> writes:
 
-Thanks for addressing Jakub's review of v1.
+> On Fri, Oct 11, 2024 at 6:51=E2=80=AFPM Jeff Johnson <quic_jjohnson@quici=
+nc.com> wrote:
+>>
+>> On 10/8/2024 11:49 PM, Pawe=C5=82 Owoc wrote:> Add support for channel 1=
+77 (5885
+>> MHz ) for the 5 GHz band.
+>> >
+>> > Tested-on: qca988x hw2.0 firmware ver 10.2.4-1.0-00047
+>>
+>> Can you elaborate on what was tested in your commit text? And more
+>> importantly, what is the impact on existing devices, especially given th=
+at
+>> existing devices would not have calibration data for this channel in the=
+ board
+>> files? Does the QCA988x board file even have calibration data for this c=
+hannel?
+>>
+> In the case of ath10k we use an external regulatory database.
+> For the country "US" channels 169, 173 and 177 are marked as NO-IR and
+> we cannot run AP on them.
+> Even if channels are not disabled in the board files:
+>             * 5845.0 MHz [169] (27.0 dBm) (no IR)
+>             * 5865.0 MHz [173] (27.0 dBm) (no IR)
+>             * 5885.0 MHz [177] (27.0 dBm) (no IR)
+>
+> I only tested the use as a client on channel 177:
+> root@OpenWrt:~# iwinfo phy1 scan
+> Cell 01 - Address: XX:XX:XX:XX:XX:XX
+>           ESSID: "ch177"
+>           Mode: Master  Frequency: 5.885 GHz  Band: 5 GHz  Channel: 177
+>           Signal: -43 dBm  Quality: 67/70
+>           Encryption: mixed WPA2/WPA3 PSK/SAE (CCMP)
+>           HT Operation:
+>                     Primary Channel: 177
+>                     Secondary Channel Offset: no secondary
+>                     Channel Width: 20 MHz
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+I wonder how this works with QCA6174, unfortunately I'm not able to test
+that.
 
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
