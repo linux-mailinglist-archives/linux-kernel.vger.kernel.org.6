@@ -1,156 +1,123 @@
-Return-Path: <linux-kernel+bounces-371850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DDF9A414E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 797FA9A414A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62921F24ED4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:37:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 348D21F23E3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F931F4289;
-	Fri, 18 Oct 2024 14:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C421EE03F;
+	Fri, 18 Oct 2024 14:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yvLgzV7t"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H2snsFpd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87D11EE026
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 14:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAA313AD39;
+	Fri, 18 Oct 2024 14:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729262219; cv=none; b=TuSiERRqEr2O57LrgSzQDTU80jBE1v0GNy7GEKGzNWQp9wyk89DX3hIdPIREycz1QSKdvAW5xtIO4UF1jtenCUGAX3hsLBFZ+iwrAHkXY+yo6GNCnInYXTEcoLM0SMLkzWwl3XNmca0joSDrzlz6HO47MevaCAZ0/GKeMhINJFw=
+	t=1729262192; cv=none; b=exIgDkuBht6Z0Z19kCZ0pOWdSgmwcVZADJwRLemBKMtZ8b+Hn9xbMp58UHurj+SLlM2ltaXmsNDpzF/eDMiA1QtnPZhuRX7EhMmomNzSGZGDuMbfjj8fH4RF2erklnPoLweEJuaTGwz7dnxucblrg79CJQ30k2UgNOfnNfoXDrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729262219; c=relaxed/simple;
-	bh=C1jKHDBFy2o9/Z5BQ43Z/TvjolPDG3ZilqUK9yWK1Z0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oLUI/6opJRcVj57PTfzERAymheZkCI/48NKu5+JorSF7zfJknSkHHEZnqor38VlDOCx6q6jdcAeR5ztCQufGf4dv7uzdzpepRGe+GWhmWRrCOHoVS6uXGf5zi9GR3uYGXdtsHQdzaTaWdu3zl+e5dJ6nVor5CEfKMf0XuWcru1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yvLgzV7t; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e681ba70so19262e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:36:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729262215; x=1729867015; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pvy5eBUxdhPiiEPoS/y6D7WtkY1N7NVonPg2B7x3yac=;
-        b=yvLgzV7t0Ms1jKVslJYPE8YTs9Dxyy1IhO41hBbCUjt7QaqUxwawrUzSvlxaZ/0VjE
-         WXvxXlH1mYolqWbO/5tCP1XHnvKQFxbjmVsjVA51dh9C8tt3bLjFMvpjS+gLSt8//TOH
-         mIYJ1LOi1QvLt+SnV/oIS2kqncwmo2hnKp9CCJr7TARKjuqVqyaWDSGiv+piY2sFcjxE
-         5kz1R+7sNtrsBzUzPPte6NmdAvn4Gr3ULEm4N6fWAqRTD4EteYF/JMiwqIF+Si9SzUrg
-         uTaJicp41533/V/bAcaG2M+rquYf2zLNA6CyM1VdIl3MD4Gd9zK3lpZRGuvXKtiwd6HU
-         Y55g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729262215; x=1729867015;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pvy5eBUxdhPiiEPoS/y6D7WtkY1N7NVonPg2B7x3yac=;
-        b=tahvVqGhyiIFx2nFjRYqV0oVmyKKVHfbD//XUjJz/bVA8arPyr6mWMzGxRT+8o0Tpi
-         v2FbhXZ0fmt9638h3k+z62TNep76DVPMkktiSUVp0ZH5fJVpaPnK7I2lJbWNDAJTeIKw
-         vfP/k6M5myD03cVbJg1H1kYbxzgpKwGOtORJCOKQIlhtnhIrTe6L2z8OboIv8CFf5M32
-         IPS3rsHSi36mYBaFWrXV2GCCW88IEOQoSxYY6qZYE+ZMpjVQ1AQpUY7m4aT+qEZ4bZWe
-         OGHqhsxhWD3fIrLR2S2O4L7wtjhj7zeYPfqJP3BYyYmqNNxHk8eO36etni6eweBfLPK4
-         xhqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxsaZnqciCVZcfE0mjwXQZWxbAKo406WG+xQzMFSjITX38LFFH8NXSF/n7oz5Q4WmQrz3R+ZWYFm97jnE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQONvz/jf1yn1/MFUtUKXOvbvbFyPDkbhe0HtEfgpdEfI2PVVj
-	xEhTWYvHhILCcZmNVMlcekktzWvUZeJrftKmFHOkkKCOgiOMKYC04slQK3DR7K76KJ9YM5/UlZW
-	IsCcJ+o3bg7ylWzTujoj7XvnUD2lql7vkHHc7
-X-Google-Smtp-Source: AGHT+IGN5Ch4M92qnmqBGXI6V6wafb7DTaUaatifjKeXf6otrQ2Vdp/CsMIzZ88KZX2C+4NiCmQ78hfdgG1BaBCZKdU=
-X-Received: by 2002:a05:6512:4020:b0:530:ae18:810e with SMTP id
- 2adb3069b0e04-53a15761373mr323279e87.5.1729262214336; Fri, 18 Oct 2024
- 07:36:54 -0700 (PDT)
+	s=arc-20240116; t=1729262192; c=relaxed/simple;
+	bh=KHeVlAjHh485gIfHkzixI0Qf+VDa3OXP0pl1l9vqZMA=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rL2IGdGMS53U1O5AHZVfzRXXMtPyPKee1oLzrBqZWFK3qqWHvsiCnhE+TsnfWjCobbGCZO0cQ4hsxI5eYuV7CGAZZW54AaNjoAj0tMeQuHdgEJYXx3D0Oz70pzB/EAou/ZqumvzL7y+VaKujCR1zOz9WVE8U/h7YXa60NgRS1sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H2snsFpd; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729262190; x=1760798190;
+  h=message-id:subject:from:reply-to:to:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=KHeVlAjHh485gIfHkzixI0Qf+VDa3OXP0pl1l9vqZMA=;
+  b=H2snsFpdoILozX//rBocCfjS9HD3VyDg8DZ+tTKlgx1GM0qh1EtsZRrH
+   1ZXNjhtoM1GIqaf40fU9BRx0MOorS1T6q3FVVBjGm6DOjmfb98RLYvL7y
+   WGL+UQ3XGHf2kOgh8vuRs3XDlJoscvP7b23YJ9BkuuomyqeIglV3js2yn
+   BDEyODOP2WmPLyk+bLxuk9rULLd531wsobDpMvHVv+matEnbPmDeN/9KF
+   kgQ38uQsrlnnveeNoDlQQMaKftU/1fe/ZKwswBpy1obEbwb2FWKBkId7d
+   tHAygWZSXzXhVHjG6yOP8mZMdBvNrQHMqwjPURPTWJp3aWIROI6ukGO4O
+   Q==;
+X-CSE-ConnectionGUID: +vI9t3r8Qair6dsqLu3ffg==
+X-CSE-MsgGUID: gxR654caSfmqF13x3cc9AA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28953297"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28953297"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 07:36:30 -0700
+X-CSE-ConnectionGUID: 93p0DlwqQECQ4Je7TNvj6Q==
+X-CSE-MsgGUID: A7z/v8f7T9SK5gFnwIxB7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="79691822"
+Received: from cmdeoliv-mobl.amr.corp.intel.com ([10.125.109.150])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 07:36:30 -0700
+Message-ID: <9d72833eb5d89f5f88cb3d40a909411eabba0e2a.camel@linux.intel.com>
+Subject: Re: [PATCH 2/2] platform/x86/intel/pmc: Remove unnecessary ioremap
+From: "David E. Box" <david.e.box@linux.intel.com>
+Reply-To: david.e.box@linux.intel.com
+To: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 18 Oct 2024 07:36:29 -0700
+In-Reply-To: <20241018030357.3580487-2-david.e.box@linux.intel.com>
+References: <20241018030357.3580487-1-david.e.box@linux.intel.com>
+	 <20241018030357.3580487-2-david.e.box@linux.intel.com>
+Organization: David E. Box
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
- <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
- <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
- <593282dbc9f48673c8f3b8e0f28e100f34141115.camel@huaweicloud.com>
- <15bb94a306d3432de55c0a12f29e7ed2b5fa3ba1.camel@huaweicloud.com>
- <c1e47882720fe45aa9d04d663f5a6fd39a046bcb.camel@huaweicloud.com>
- <b498e3b004bedc460991e167c154cc88d568f587.camel@huaweicloud.com>
- <ggvucjixgiuelt6vjz6oawgyobmzrhifaozqqvupwfso65ia7c@bauvfqtvq6lv> <e89f6b61-a57f-4848-87f1-8e2282bc5aea@lucifer.local>
-In-Reply-To: <e89f6b61-a57f-4848-87f1-8e2282bc5aea@lucifer.local>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 18 Oct 2024 16:36:16 +0200
-Message-ID: <CAG48ez0m4O5M8m4bLJ++gTZzsAyKgud++cBMBqAm74OLUKBFpg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ima: Remove inode lock
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, Roberto Sassu <roberto.sassu@huaweicloud.com>, 
-	Paul Moore <paul@paul-moore.com>, ebpqwerty472123@gmail.com, 
-	kirill.shutemov@linux.intel.com, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, vbabka@suse.cz, linux-fsdevel@vger.kernel.org, 
-	Liam Howlett <liam.howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 18, 2024 at 1:00=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> On Fri, Oct 18, 2024 at 01:49:06PM +0300, Kirill A. Shutemov wrote:
-> > On Fri, Oct 18, 2024 at 11:24:06AM +0200, Roberto Sassu wrote:
-> > > Probably it is hard, @Kirill would there be any way to safely move
-> > > security_mmap_file() out of the mmap_lock lock?
-> >
-> > What about something like this (untested):
-> >
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index dd4b35a25aeb..03473e77d356 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -1646,6 +1646,26 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long,=
- start, unsigned long, size,
-> >       if (pgoff + (size >> PAGE_SHIFT) < pgoff)
-> >               return ret;
-> >
-> > +     if (mmap_read_lock_killable(mm))
-> > +             return -EINTR;
-> > +
-> > +     vma =3D vma_lookup(mm, start);
-> > +
-> > +     if (!vma || !(vma->vm_flags & VM_SHARED)) {
-> > +             mmap_read_unlock(mm);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     file =3D get_file(vma->vm_file);
-> > +
-> > +     mmap_read_unlock(mm);
-> > +
-> > +     ret =3D security_mmap_file(vma->vm_file, prot, flags);
->
-> Accessing VMA fields without any kind of lock is... very much not advised=
-.
->
-> I'm guessing you meant to say:
->
->         ret =3D security_mmap_file(file, prot, flags);
->
-> Here? :)
->
-> I see the original code did this, but obviously was under an mmap lock.
->
-> I guess given you check that the file is the same below this.... should b=
-e
-> fine? Assuming nothing can come in and invalidate the security_mmap_file(=
-)
-> check in the mean time somehow?
->
-> Jann any thoughts?
+On Thu, 2024-10-17 at 20:03 -0700, David E. Box wrote:
+> pmc_get_pmc() unnecessarily calls ioremap to access memory that is alread=
+y
+> available through a variable passed in as an argument. Replace the
+> redundant ioremap call with direct use of the provided variable, and remo=
+ve
+> the ioremap and iounmap calls.
 
-The overall approach seems reasonable to me - it aligns this path with
-the other security_mmap_file() checks, which also don't happen under
-the lock.
+Woke up to a test failure on this one. I'll drop in V2 or modify after chec=
+king
+what I missed.
+
+David
+
+>=20
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> ---
+> =C2=A0drivers/platform/x86/intel/pmc/core_ssram.c | 6 ------
+> =C2=A01 file changed, 6 deletions(-)
+>=20
+> diff --git a/drivers/platform/x86/intel/pmc/core_ssram.c
+> b/drivers/platform/x86/intel/pmc/core_ssram.c
+> index 70e03bd53740..d293e6e166e1 100644
+> --- a/drivers/platform/x86/intel/pmc/core_ssram.c
+> +++ b/drivers/platform/x86/intel/pmc/core_ssram.c
+> @@ -171,13 +171,7 @@ pmc_add_pmt(struct pmc_dev *pmcdev, u64 ssram_base, =
+void
+> __iomem *ssram)
+> =C2=A0	u32 dvsec_offset;
+> =C2=A0	u32 table, hdr;
+> =C2=A0
+> -	ssram =3D ioremap(ssram_base, SSRAM_HDR_SIZE);
+> -	if (!ssram)
+> -		return;
+> -
+> =C2=A0	dvsec_offset =3D readl(ssram + SSRAM_DVSEC_OFFSET);
+> -	iounmap(ssram);
+> -
+> =C2=A0	dvsec =3D ioremap(ssram_base + dvsec_offset, SSRAM_DVSEC_SIZE);
+> =C2=A0	if (!dvsec)
+> =C2=A0		return;
+
 
