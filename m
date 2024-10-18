@@ -1,121 +1,174 @@
-Return-Path: <linux-kernel+bounces-371272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6099A3901
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:46:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD469A3902
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07EA21C22A04
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:46:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66EC81C22503
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEFA18F2D8;
-	Fri, 18 Oct 2024 08:46:35 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [20.231.56.155])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D3418892F;
-	Fri, 18 Oct 2024 08:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.231.56.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0A718F2EF;
+	Fri, 18 Oct 2024 08:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="imkgZeYh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9622A18E02A;
+	Fri, 18 Oct 2024 08:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729241194; cv=none; b=Q6cRpTljSY8Hjv5EpVPHlbtRavPIxxEaA6uWDIpjgztn1w/x4sUYUYw/8yvaFufLbzIcsZ2FF+NObuVYPEFcRsmeL86bfGPWyJbQ/6u47qm7slhSGsG9fKI4lQ0fahpSACojOCbfvdqQA9zebJRuwgCWHFVUSCs+cYUKjvwZOMc=
+	t=1729241206; cv=none; b=UG8fE8mUJ8luqMCvYmk4Sh9fvUW/a88e72XH0oBGW1cC+sMw/POtI//k5Jf+s5WMbsXjEE0HYKYMzCI8EPVIQmIM0ZIeVTUQ/GL5TKDjoY1dOsJeDQoCGcRo5i4xGhDpltQInTckW2vq6mA0QJDKlWYH2/Yk4wgN1+keV5BrQSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729241194; c=relaxed/simple;
-	bh=fmNNoiNd8ADaJ238aw6EjZJQsBgu84WStngfBXUeGyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vC51qGP2P2wZSZUHtyCrPCBA4EVsEHvABcF/UrTKEjxzg3n6CP35HF9n6BK775iJX+NKb0+wgvvbo6AOw+o6OR2bbTGG3NFQUXEjgwV2H0rg/Yjt/aH2UUGx35QPiySJxlZ26gQGSF59XmexM7jMn3xUcAWfBbqYP3en2EwBdQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=20.231.56.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app1 (Coremail) with SMTP id HgEQrAC3F21WIBJnQ+QHCA--.15588S2;
-	Fri, 18 Oct 2024 16:46:14 +0800 (CST)
-Received: from [10.12.173.122] (unknown [10.12.173.122])
-	by gateway (Coremail) with SMTP id _____wDXmw1RIBJnOpVkAA--.16735S2;
-	Fri, 18 Oct 2024 16:46:12 +0800 (CST)
-Message-ID: <af4f186b-6874-4277-b5df-f384a698fc10@hust.edu.cn>
-Date: Fri, 18 Oct 2024 16:46:09 +0800
+	s=arc-20240116; t=1729241206; c=relaxed/simple;
+	bh=BmG3pmF+wqE21ChhB3j93ImO3VVkibr0t+QlXetDkQg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=IOWRrmvpXWuYcRcFkiBs2GB78OeY+wyVAZrGEMdXo3gQl0IFM5PW1LGXlzgYqvx9+msmpNZR0D3Y751E+CnZUCUPe8wiPrzehL7VZhoIBkUSnQTq+rY29olnV7Rv4C7kQj2iRxyTV+b3UrTeQ0jLrCt3znj7PpLV96/L/+owi3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=imkgZeYh; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729241204; x=1760777204;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=BmG3pmF+wqE21ChhB3j93ImO3VVkibr0t+QlXetDkQg=;
+  b=imkgZeYhiWIo+dNh0PywJeew4HnLrtkK+DakEGaVekeAfBYKQFKtkXhT
+   ZNUG4cCiHrHBESMCGOPX7odBbzc1KowoKUI4P0sQN+ZOl+4mv5yDoRk1I
+   jIm+zvXgM3TfefluaqPDaQ1A2HN1NuAnkDbdqIeacUyXP4XNfVQYRY19B
+   loB2vLx/xR37CWJcxMoc/85Uk+bHDO1em3pApMnntJHY6O/idW5DXYgui
+   RHpGAyI5K912NUsf47Q/sXqbxfJxI2Ch+k1JfCxKaIGyigoHahxOhJ74i
+   EPQkXt7gcxy5IvtdyP6FyvFrR4O+hZ3EPSdWNJCH2rBPdXqs3TtyeGoEc
+   g==;
+X-CSE-ConnectionGUID: K666Z4MiS1yY7hX09qTIRA==
+X-CSE-MsgGUID: xFaGO5QtS4W6Z1ISUDCSSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="16380138"
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="16380138"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:46:43 -0700
+X-CSE-ConnectionGUID: IrccAmt4S++RH26u/lFQUw==
+X-CSE-MsgGUID: IMCEz9l0SOqvSvg6xwrkWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="109617903"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.217])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:46:41 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 18 Oct 2024 11:46:37 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V3 02/15] selftests/resctrl: Print accurate buffer size
+ as part of MBM results
+In-Reply-To: <f7c200b42bf514e587e88e5be6e866fa797eed66.1729218182.git.reinette.chatre@intel.com>
+Message-ID: <68a7ff59-289c-1d50-d454-ab2fcf6baf22@linux.intel.com>
+References: <cover.1729218182.git.reinette.chatre@intel.com> <f7c200b42bf514e587e88e5be6e866fa797eed66.1729218182.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs/zh_CN: update the translation of
- process/submitting-patches.rst
-To: Yanteng Si <si.yanteng@linux.dev>, Alex Shi <alexs@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: hust-os-kernel-patches@googlegroups.com,
- Hu Haowen <2023002089@link.tyut.edu.cn>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241018015452.3787741-1-dzm91@hust.edu.cn>
- <aac937f3-f147-49b8-8408-9f8f4d00735e@linux.dev>
- <dbabf6eb-a1bf-401f-9159-605bc74e182c@linux.dev>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <dbabf6eb-a1bf-401f-9159-605bc74e182c@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrAC3F21WIBJnQ+QHCA--.15588S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvdXoW7GrW8CF1DCF43Wry5Aw1DWrg_yoWDCwc_uF
-	1Yyr12kFWDJry0qFs0g3y5GrZxC3Wj9rn8Wr1DCrs5Wa4vkFWDWFWDG34fZw17KrWFqFn8
-	AF92qay8JrWa9jkaLaAFLSUrUUUUnb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbm8YjsxI4VWxJwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
-	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
-	8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
-	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_JF
-	0_Jw1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
-	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
-	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
-	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw2
-	8IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jfvtZUUUUU=
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+Content-Type: text/plain; charset=US-ASCII
 
+On Thu, 17 Oct 2024, Reinette Chatre wrote:
 
-On 2024/10/18 15:32, Yanteng Si wrote:
->
->
->
-> 在 2024/10/18 15:12, Yanteng Si 写道:
->>
->>
->>
->> 在 2024/10/18 09:54, Dongliang Mu 写道:
->>> Update to commit eb5ed2fae197 ("docs: submitting-patches: Advertise 
->>> b4")
->>>
->>> scripts/checktransupdate.py reports:
->>>
->>> Documentation/translations/zh_CN/process/submitting-patches.rst
->>> commit eb5ed2fae197 ("docs: submitting-patches: Advertise b4")
->>> commit 413e775efaec ("Documentation: fix links to mailing list 
->>> services")
->>> 2 commits needs resolving in total
->>>
->>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->> Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
->>
-> I apologize, I signed off repeatedly (in v1).
->
-> Dongliang, Similar patches can be grouped into a single patch set,
-> which would make the review process easier.
+> By default the MBM test uses the "fill_buf" benchmark to keep reading
+> from a buffer with size DEFAULT_SPAN while measuring memory bandwidth.
+> User space can provide an alternate benchmark or amend the size of
+> the buffer "fill_buf" should use.
+> 
+> Analysis of the MBM measurements do not require that a buffer be used
+> and thus do not require knowing the size of the buffer if it was used
+> during testing. Even so, the buffer size is printed as informational
+> as part of the MBM test results. What is printed as buffer size is
+> hardcoded as DEFAULT_SPAN, even if the test relied on another benchmark
+> (that may or may not use a buffer) or if user space amended the buffer
+> size.
+> 
+> Ensure that accurate buffer size is printed when using "fill_buf"
+> benchmark and omit the buffer size information if another benchmark
+> is used.
+> 
+> Fixes: ecdbb911f22d ("selftests/resctrl: Add MBM test")
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> Backporting is not recommended. Backporting this fix will be
+> a challenge with all the refactoring done since then. This issue
+> does not impact default tests and there is no sign that
+> folks run these tests with anything but the defaults. This issue is
+> also minor since it does not impact actual test runs or results,
+> just the information printed during a test run.
+> 
+> Changes since V2:
+> - Make user input checks more robust. (Ilpo)
+> 
+> Changes since V1:
+> - New patch.
+> ---
+>  tools/testing/selftests/resctrl/mbm_test.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
+> index 6b5a3b52d861..36ae29a03784 100644
+> --- a/tools/testing/selftests/resctrl/mbm_test.c
+> +++ b/tools/testing/selftests/resctrl/mbm_test.c
+> @@ -40,7 +40,8 @@ show_bw_info(unsigned long *bw_imc, unsigned long *bw_resc, size_t span)
+>  	ksft_print_msg("%s Check MBM diff within %d%%\n",
+>  		       ret ? "Fail:" : "Pass:", MAX_DIFF_PERCENT);
+>  	ksft_print_msg("avg_diff_per: %d%%\n", avg_diff_per);
+> -	ksft_print_msg("Span (MB): %zu\n", span / MB);
+> +	if (span)
+> +		ksft_print_msg("Span (MB): %zu\n", span / MB);
+>  	ksft_print_msg("avg_bw_imc: %lu\n", avg_bw_imc);
+>  	ksft_print_msg("avg_bw_resc: %lu\n", avg_bw_resc);
+>  
+> @@ -138,15 +139,26 @@ static int mbm_run_test(const struct resctrl_test *test, const struct user_param
+>  		.setup		= mbm_setup,
+>  		.measure	= mbm_measure,
+>  	};
+> +	char *endptr = NULL;
+> +	size_t span = 0;
+>  	int ret;
+>  
+>  	remove(RESULT_FILE_NAME);
+>  
+> +	if (uparams->benchmark_cmd[0] && strcmp(uparams->benchmark_cmd[0], "fill_buf") == 0) {
+> +		if (uparams->benchmark_cmd[1]) {
+> +			errno = 0;
+> +			span = strtoul(uparams->benchmark_cmd[1], &endptr, 10);
+> +			if (errno || *endptr != '\0')
 
-Thanks for the reminder. I will submit a patch set next time.
+This no longer catches "" string as error. I tested strtoul() with an 
+empty string and errno remains at 0.
 
-Dongliang Mu
+> +				return -errno;
 
->
-> run:
-> git format-patch -n <the number of patches> -v <version>  
-> --cover-letter --thread=shallow
->
-> Thanks,
-> Yanteng
+Another issue is that in cases where errno=0 (both *endptr != '\0' and 
+endptr == uparams->benchmark_cmd[1]), this function doesn't return 
+a proper error code but -0.
+
+-- 
+ i.
+
+> +		}
+> +	}
+> +
+>  	ret = resctrl_val(test, uparams, uparams->benchmark_cmd, &param);
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = check_results(DEFAULT_SPAN);
+> +	ret = check_results(span);
+>  	if (ret && (get_vendor() == ARCH_INTEL))
+>  		ksft_print_msg("Intel MBM may be inaccurate when Sub-NUMA Clustering is enabled. Check BIOS configuration.\n");
+>  
+> 
 
 
