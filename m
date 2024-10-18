@@ -1,63 +1,85 @@
-Return-Path: <linux-kernel+bounces-371263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A3F9A38DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:42:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CBDA9A3852
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79B61F2114C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C79621F28FE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3B418E752;
-	Fri, 18 Oct 2024 08:41:53 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715F818CC13;
+	Fri, 18 Oct 2024 08:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PmNt/pOG"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D239718E02F;
-	Fri, 18 Oct 2024 08:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709A917BB25;
+	Fri, 18 Oct 2024 08:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729240913; cv=none; b=OFkM2v91NFiA+rffnTc5PIe3Zxnvo/bdvumwaQncs5+J7nq1MAQSM2TOzZOg8V21GNFMjn3eVUmVkhc64zvfli9qgK6W4UMD7ug3MFODdSzvr9rkaBRdAXF2hwWLC10P90mxGSasYrkVk2dIHsJnUOGgv5++eG9MUEiMUctAM+8=
+	t=1729239355; cv=none; b=KrWqTvA6AZYGPlvFsLvdlUbWNTpn2s6ElsfdKlISDoVB+AdtrUv46A+fYppOI30YxR9rwtnnIJMXEFXmUpOuvu/M6PmzZwDqZxIN09+fGOoqH7xWKzwOsmscsOawqwRK+vF8svqEOhkDxjjEdDs+pUGSTUvVBAcwUT8x5uEmv3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729240913; c=relaxed/simple;
-	bh=WLcINmbfmi58Iha37hEqQR0ZIMk0Bqv5bvSUn567lP4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qoB/VOLALw0IV8zKW3S/LpXHu35XLAJJnFGL3SvevxP39Bwl1CkKID9OgvvdZ0ft9Vhx565G15aS47IXfokKxTHk8TjpzUG0VyaaCBQf9Wbn6uJTOyu9l/z7X8dM/1tafuRf+JGBcYcQZY1H1yIv5WYEIHfUAPjPO2eppWG9SLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XVHls4Kycz4f3jdG;
-	Fri, 18 Oct 2024 16:23:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C8FBF1A07B6;
-	Fri, 18 Oct 2024 16:23:54 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgBn58MLGxJnOtqxEQ--.35884S4;
-	Fri, 18 Oct 2024 16:23:54 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: tj@kernel.org,
-	lizefan.x@bytedance.com,
-	hannes@cmpxchg.org,
-	longman@redhat.com,
-	mkoutny@suse.com,
-	john.fastabend@gmail.com,
-	roman.gushchin@linux.dev,
-	quanyang.wang@windriver.com,
-	ast@kernel.org
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	chenridong@huawei.com,
-	wangweiyang2@huawei.com
-Subject: [PATCH v1 2/2] cgroup/bpf: only cgroup v2 can be attached by bpf programs
-Date: Fri, 18 Oct 2024 08:15:20 +0000
-Message-Id: <20241018081520.694139-3-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1729239355; c=relaxed/simple;
+	bh=RcKxo8IHykWio7Epy94ZSrP8OjGiZBjXqv606YO30ec=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JiOlGcpwUhwCRHclSRcrECorlvbpM+xcE1en6L7Y++2H9r9MnGLtQwnuOqJjZLIK9TvbHHkbKzKSLjSd9PscpLqiB6J6i/EwXWED4t0LZqY+x1gOOAZbvP154FO8nxFKsTce5zSgGlqZJJ2maRDHGs9Cq6spBHsWy6Wbk4jHef4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PmNt/pOG; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso1240362a12.1;
+        Fri, 18 Oct 2024 01:15:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729239354; x=1729844154; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaThnzZRV6Q6AeNcXEdele7BxnNbtOKtfxcNYz7goU8=;
+        b=PmNt/pOGrkxmHv6FYZxNWL2omyqsGgP2mljDn+pBae8u0wYxZFiPfQtsrsXxAeEUNS
+         9IEhxh7E8rzaE9ql9iDwVdu8WnZ1O5zhvsE4CG59PG3vV5pMwqEnGkeL9ra06IBDyUC9
+         gUbmEuSytnZkUk192/zQC9Oii0O66VTfASGp3AiOX0mkExuHgTbKHgfR4EL5azO9KH4X
+         1J4kFFuH9KvVLy17Z+fxBItxuRIg4LzXw0TiqDabAUl4CA22DPtYp97lITuec9ncJkuI
+         TUYh0dVDsZQ1P3blk3ky8cEgIlTdImwgESgY7WiUalEUeMXgLzJlhwEv71qoKD3AUVQ0
+         7lCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729239354; x=1729844154;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gaThnzZRV6Q6AeNcXEdele7BxnNbtOKtfxcNYz7goU8=;
+        b=kZzp9Xj4Rm7ad15C3p78jnFqUW6EyqX7gX7OnQvFvxio1e4TeQ82utnJuXmjr0qa+I
+         qTGcOwAnFV/aDTs5GSb0iDJTeZvq4bVn4JS3t78Ys590kwN0QLHaIqJec/hLb8LW6/ng
+         oE9cM3HALudi9VikMSiNePqXiLLvI5vwg7ElwmCh+UIDeqLeXd5MOiD0TAzKyUrmo+sE
+         7Ldh0D9dBP/dyGmlUI4yQiuXFG9K7q264xRERjgYiqnN9pFofuEp5ys3XLE1VJHP+NG8
+         ghGVGSUZQNX1GyUYrtTkVGpMD//K3zIpFkvrS+AqsPGwKcjjVFxtzosZVJEyv1odqIdF
+         3sgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXW6AieVZSUipKWiVqaevDVh34mUtzK4aIKa+WoTgUEOt/5oEeywgRSx8KnSpnzQhufS2v5Jp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgNty4Cp6RQsFdO87/YkPCEXIzj5lYSd/fqdHu9F8V0l5L171E
+	jrZoFvrD0+i9x2AxfJpJX71acGL7i/F4r3q1lc+AfDx1Cf/VcnM+
+X-Google-Smtp-Source: AGHT+IEdDGGkrw0Ij96vDXytjOIi7vQKWW/rzmJKZtgFtVE8XLmu0fMMbF95YfTg5RPQBnZKvX3yZg==
+X-Received: by 2002:a05:6a21:1349:b0:1d8:f97e:b402 with SMTP id adf61e73a8af0-1d92ca59dc0mr2335728637.13.1729239353653;
+        Fri, 18 Oct 2024 01:15:53 -0700 (PDT)
+Received: from tom-QiTianM540-A739.. ([106.39.42.164])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea34a8077sm890571b3a.190.2024.10.18.01.15.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 01:15:53 -0700 (PDT)
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+To: linux@armlinux.org.uk,
+	suzuki.poulose@arm.com,
+	rmk+kernel@armlinux.org.uk,
+	sumit.garg@linaro.org,
+	gregkh@linuxfoundation.org,
+	andi.shyti@kernel.org,
+	krzk@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Qiu-ji Chen <chenqiuji666@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] amba: Fix atomicity violation in amba_match()
+Date: Fri, 18 Oct 2024 16:15:39 +0800
+Message-Id: <20241018081539.1358921-1-chenqiuji666@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241018081520.694139-1-chenridong@huaweicloud.com>
-References: <20241018081520.694139-1-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,84 +87,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBn58MLGxJnOtqxEQ--.35884S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7ArWxWF1xAFWfGr1fCw17Jrb_yoW8ZF48pr
-	s2kryYgw4rGF4qya92qasYgFyFka10q34jgw47Jw48AF17Xr1Yqr97ur1UZr15AF9rKr1f
-	JFWYvr17Kw1jy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI
-	0_Jw0_GFyl42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E
-	4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGV
-	WUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_
-	Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rV
-	WUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4U
-	JbIYCTnIWIevJa73UjIFyTuYvjxUob18DUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-From: Chen Ridong <chenridong@huawei.com>
+Atomicity violation occurs during consecutive reads of 
+pcdev->driver_override. Consider a scenario: after pvdev->driver_override 
+passes the if statement, due to possible concurrency, 
+pvdev->driver_override may change. This leads to pvdev->driver_override 
+passing the condition with an old value, but entering the 
+return !strcmp(pcdev->driver_override, drv->name); statement with a new 
+value. This causes the function to return an unexpected result. 
+Since pvdev->driver_override is a string that is modified byte by byte, 
+without considering atomicity, data races may cause a partially modified 
+pvdev->driver_override to enter both the condition and return statements, 
+resulting in an error.
 
-Only cgroup v2 can be attached by bpf programs, so this patch introduces
-that cgroup_bpf_inherit and cgroup_bpf_offline can only be called in
-cgroup v2, and this can fix the memleak mentioned by commit 04f8ef5643bc
-("cgroup: Fix memory leak caused by missing cgroup_bpf_offline"), which
-has been reverted.
+To fix this, we suggest protecting all reads of pvdev->driver_override 
+with a lock, and storing the result of the strcmp() function in a new 
+variable retval. This ensures that pvdev->driver_override does not change 
+during the entire operation, allowing the function to return the expected 
+result.
 
-Fixes: 2b0d3d3e4fcf ("percpu_ref: reduce memory footprint of percpu_ref in fast path")
-Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from cgroup itself")
-Link: https://lore.kernel.org/cgroups/aka2hk5jsel5zomucpwlxsej6iwnfw4qu5jkrmjhyfhesjlfdw@46zxhg5bdnr7/
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
+This possible bug is found by an experimental static analysis tool
+developed by our team. This tool analyzes the locking APIs
+to extract function pairs that can be concurrently executed, and then
+analyzes the instructions in the paired functions to identify possible
+concurrency bugs including data races and atomicity violations.
+
+Fixes: 5150a8f07f6c ("amba: reorder functions")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
 ---
- kernel/cgroup/cgroup.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/amba/bus.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 30444e096027..e275eaf2de7f 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -2140,8 +2140,10 @@ int cgroup_setup_root(struct cgroup_root *root, u16 ss_mask)
- 	if (ret)
- 		goto exit_stats;
+diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+index 34bc880ca20b..e310f4f83b27 100644
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -209,6 +209,7 @@ static int amba_match(struct device *dev, const struct device_driver *drv)
+ {
+ 	struct amba_device *pcdev = to_amba_device(dev);
+ 	const struct amba_driver *pcdrv = to_amba_driver(drv);
++	int retval;
  
--	ret = cgroup_bpf_inherit(root_cgrp);
--	WARN_ON_ONCE(ret);
-+	if (root == &cgrp_dfl_root) {
-+		ret = cgroup_bpf_inherit(root_cgrp);
-+		WARN_ON_ONCE(ret);
+ 	mutex_lock(&pcdev->periphid_lock);
+ 	if (!pcdev->periphid) {
+@@ -230,8 +231,14 @@ static int amba_match(struct device *dev, const struct device_driver *drv)
+ 	mutex_unlock(&pcdev->periphid_lock);
+ 
+ 	/* When driver_override is set, only bind to the matching driver */
+-	if (pcdev->driver_override)
+-		return !strcmp(pcdev->driver_override, drv->name);
++
++	device_lock(dev);
++	if (pcdev->driver_override) {
++		retval = !strcmp(pcdev->driver_override, drv->name);
++		device_unlock(dev);
++		return retval;
 +	}
++	device_unlock(dev);
  
- 	trace_cgroup_setup_root(root);
- 
-@@ -5708,9 +5710,11 @@ static struct cgroup *cgroup_create(struct cgroup *parent, const char *name,
- 	if (ret)
- 		goto out_kernfs_remove;
- 
--	ret = cgroup_bpf_inherit(cgrp);
--	if (ret)
--		goto out_psi_free;
-+	if (cgrp->root == &cgrp_dfl_root) {
-+		ret = cgroup_bpf_inherit(cgrp);
-+		if (ret)
-+			goto out_psi_free;
-+	}
- 
- 	/*
- 	 * New cgroup inherits effective freeze counter, and
-@@ -6024,7 +6028,8 @@ static int cgroup_destroy_locked(struct cgroup *cgrp)
- 
- 	cgroup1_check_for_release(parent);
- 
--	cgroup_bpf_offline(cgrp);
-+	if (cgrp->root == &cgrp_dfl_root)
-+		cgroup_bpf_offline(cgrp);
- 
- 	/* put the base reference */
- 	percpu_ref_kill(&cgrp->self.refcnt);
+ 	return amba_lookup(pcdrv->id_table, pcdev) != NULL;
+ }
 -- 
 2.34.1
 
