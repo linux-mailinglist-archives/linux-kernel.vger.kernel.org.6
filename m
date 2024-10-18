@@ -1,130 +1,96 @@
-Return-Path: <linux-kernel+bounces-372400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4CB9A4816
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:34:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27FF39A481D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A9E51C22263
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6355B282C22
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BF920C00A;
-	Fri, 18 Oct 2024 20:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CD9209687;
+	Fri, 18 Oct 2024 20:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hxt4pvgU"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8N3LvTk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4922071FD
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFC32071FB;
+	Fri, 18 Oct 2024 20:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729283530; cv=none; b=YtUfLzus6GY5okvv2m7sfwOU15QgYAFXeKVnB42QVWfZRFTL/7Xe8ToR+1Y2QePGbl19h21wkN9voEid8wNac3xpiOnVjNyuLO++Nb2UQbBM9yNymTq+7E0TWbGcXb/EfPQyupznSLmw95da53vZ1pKvXF2X44fYaZ5v/MEs73o=
+	t=1729283570; cv=none; b=b0gAHYYVEXpqQZYWLzuaLfcosk7PFI6nzpZBINZRZYD3Y0aMFFfCNMsQJpo/OXRffyOaHq9RMEpu0w350zs5yrwEAECm7mNP5VWZbP7+VdhXDg7miG6qjUcCsGVNUJR1Tw264/KYfUZ/NA7wHPx3nMJEe3W3hza7evrTki9KOZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729283530; c=relaxed/simple;
-	bh=vZrUCXE8YGc26ZVy4k0n5qZLKO3lXiAaTGLW/lCy1ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nIYRvszNNe6Rp+bvOnGf8nAfLmjB1BnmaQwGiHHts1aFYT9FGbRTVBzb8U0XoE7g4R7r7eG0gBrVCPkmQSi26u1eBZaNZyZZ8G2V1rzvTPxmJvuLMeZl00CNWWaiyrHO/vCUZ6a5KafDRBmuFUmpxyDXMWkE55Memgpoj4ux6VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hxt4pvgU; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb5111747cso32393451fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:32:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729283526; x=1729888326; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s1rvr/Uij2iiVVXujz3U4dUZfoWm7VsepVb5jVAgW5U=;
-        b=Hxt4pvgUJM8IN2Hy78zeIwf5q4f5cd/N9Bg/H/UtiN5+XOOf4mlUQd7gOKznG+E4Vl
-         dcN2OYapXcv3YrJQw+j3T6xipuFTgzQ5bxJ1yoQ4L89cAXprh6WjvIfPfm2RTi6IeS8o
-         ekWWcIJ/btjCPxWGq45C5sixXWVVkDAZbFSbcPMVHtT6Qld6kfGZ+En1gWAaJm06LfV4
-         JzgK2s9HsNfPL6SSVswMhxRqkAvnvsImQSsupr1S8TW1T9nXOZw5nVRDuVy3W/0gHpEW
-         p5NP5N5+elKljPlCYW99uLSud9YMSLX9YwViUvf92fHeobc5BOU/vC5i4lBEGRlvM/a5
-         XCgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729283526; x=1729888326;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s1rvr/Uij2iiVVXujz3U4dUZfoWm7VsepVb5jVAgW5U=;
-        b=o50Yee2bARwch3I0QHBa9e47yza6OzDrL2Bqv/7kbd5ytIMGxuQtVCOWrCRSZdDvuG
-         nSThR4LuUCSJDo5z5QlcR+oeQ2+PVYlyW9He92NCvoV+cFxJCoD4lxPAWLRBwUVxonES
-         xLIH7st8rC7jl6CEl8zpY+gZymi1IJWyzVDQfNf1DlS6AOgs2WbAbOQYFKZk9pshAQHO
-         rWNHjFG50pjtB/dhSSW6vVbEv7uUA8y77p/j1TJ3M/fyD8tS9JmujIttVnPdCiw9u9kL
-         vHzHUN8wYdjzAEtjsHywLupVry++0mN6GXMi9MrIN+incI3VJTHxaIjEqr1jBS7M/ORH
-         HUQw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8bZ9FEbPSbafR2uqEakGalH8+O+p5tuifo8h0RTDvqmGVOTbthDeTXrscFrwMnN3bOX0Ex7hUIzLb9co=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzErEUmtRiZBCzSnmbYmT96r006nrQbqAHyH5ysIBfwUwCTy8cQ
-	3sjPLz7SAdWTxEOWjyvVxJzhYe7/FRnsfkb31vOViWoxp1uzkYo1Ipinl2x0TxU=
-X-Google-Smtp-Source: AGHT+IFjhTDa04c0wkzsox8Nf4dTMwUSokqIXtmRgUfX6rTWuRzthFwhBOET/4mRAznXMvDflm/CFQ==
-X-Received: by 2002:a2e:bea2:0:b0:2fb:59dc:735a with SMTP id 38308e7fff4ca-2fb8320b27dmr21181791fa.41.1729283526338;
-        Fri, 18 Oct 2024 13:32:06 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb80a08de7sm2994311fa.118.2024.10.18.13.32.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 13:32:05 -0700 (PDT)
-Date: Fri, 18 Oct 2024 23:32:02 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Stephen Boyd <sboyd@codeaurora.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 11/11] arm64: defconfig: Enable QCS615 clock controllers
-Message-ID: <zbkqqweb6e6sw6cic3klg4pauxoi5wkcq5js5g4axp64ghpank@7q7jowwrwp5x>
-References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
- <20241019-qcs615-mm-clockcontroller-v1-11-4cfb96d779ae@quicinc.com>
+	s=arc-20240116; t=1729283570; c=relaxed/simple;
+	bh=/8iGQEwctRbj5LryMm16Z9kbZqOisZbj5aZS1YOqAT4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m32eYNStgycuaCDZbP2XiSKDhw7J6ZU3bnxfzUn8iY7fVbtrJiZfXbO0TSQx8eiwr1Y59tixbaPvvdL4tLyq72o2IFlcYRgEMhCf+Os426ToTebeUJMphJwdTougcwq9APeJtemiXWVsPp/ENAiETCcUxyyZ6dwEN+1n6VvRvB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8N3LvTk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92025C4CEC5;
+	Fri, 18 Oct 2024 20:32:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729283570;
+	bh=/8iGQEwctRbj5LryMm16Z9kbZqOisZbj5aZS1YOqAT4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=I8N3LvTkwCgzIRROb62/aBr3XKu/xKXmK8RP3tOnyFYWrVZZt23JaMvF14Y+IhuOr
+	 mYh+dkS9DCusPhkTRCuPFPvNTFScKyghXc0qfR9prTHFgNGGACxSqP9rCdT3OHaBOB
+	 cooJXJyRyMcFhLj5TxruTBl8Y9/ObJkoVwS3Y/evNHm7gDcYclQajjUA9qT4/nvc0r
+	 UTIEf+kdrhgYnsgF5TjdP4lZEieuyrOznrshN3ZwKh5Bp0ppMgNIwtloXK7YcbXRQJ
+	 Ga60K+00ycHWai04Np6/oFSw9yyephW5Bmc9kpF4lHuXDskZk4O46LQ3/A2uAUOphl
+	 lStTSVhmYEsSA==
+From: cel@kernel.org
+To: Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Olga Kornievskaia <aglo@umich.edu>
+Subject: Re: [PATCH 0/3] nfsd: fix final setattr on delegated timestamps
+Date: Fri, 18 Oct 2024 16:32:40 -0400
+Message-ID: <172928353196.235979.12559359835670760311.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241018-delstid-v1-0-c6021b75ff3e@kernel.org>
+References: <20241018-delstid-v1-0-c6021b75ff3e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241019-qcs615-mm-clockcontroller-v1-11-4cfb96d779ae@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1222; i=chuck.lever@oracle.com; h=from:subject:message-id; bh=HoB1+4k0Mz470vdco9+MxfcZbzkY2wnDFRSI7g9Zdzo=; b=owEBbQKS/ZANAwAIATNqszNvZn+XAcsmYgBnEsXpiS3y8xkbFY1xgsf6DYDoniHKpPGI3HvSI 4qvHkNBYlyJAjMEAAEIAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCZxLF6QAKCRAzarMzb2Z/ lxOcD/9ZP/INhvdYHOxCCQaFQvxOWOUjP8kohdfU4jR6FdhYVdxc4M4sD0s/nTKDrqcmz3asMKB 6pLyEyNPSD5DCEAQE/h+ejGhD6yvb1SkSW18Lzqd1qfXhDEhhlsEfxAcMA/yAW75Lj6tYj/mqgk iv0TaW8Po2AFE3CnThDz+tusbEF7C0Nvt5LLQwhccD02AbsngEbUYCvVmGQQJ/K292cpnxToi5B /gCJXwAwKdKZf756E7mE9HHpPB/NFjP9UZCxx9XvcGgE6jxzoEb3PVOHZu34Nf7KkvC8ns1gqS2 H3hXJ9R7OnOi6UIPaO17AFeKEqhKaPR14va/ERSIelCiadY9rv/Z1LJWox4e2ti6UK0zenRiDDG hHZc4P0WzQ0jDAnlkvT0NPPVhjnwUDFNKkS5615jkeGNw1lRpb7LTvI1lo8N9TLue09EnGrd/63 IIlgVoDtlTGpYc9eBSU5hyiovLU/mm4644gpNm8jzPj1Idu4d279DnDNmUjOTacjYSpg0+ZXr5t NY2fquK2ywP/YvMa5wfmlgvau0w8hze5cDLyzDVor1K98jnb5qcCzVidAwoH/JacEg0IQwfq2hx rQmEBi6ebiLvTAlG++bLoueTObkNoQnoJEu3lENfIellFnwXXP1Pir6aioeYe9MYR6VPc+gF6AU 1NJKhX
+ GxP6d87qA==
+X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp; fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 19, 2024 at 12:45:47AM +0530, Taniya Das wrote:
-> Enable the QCS615 display, video, camera and graphics clock
-> controller for their respective functionalities on Qualcomm QCS615.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-.... used on Qualcomm ABCDEF board, please.
+On Fri, 18 Oct 2024 14:44:58 -0400, Jeff Layton wrote:                                              
+> Olga reported seeing a NFS4ERR_INVAL return on the final SETATTR before
+> a DELEGRETURN to set the timestamps. The first patch fixes that by
+> simply ensuring they are declared writeable. The second patch fixes a
+> related bug in the stateid handling in that same SETATTR. The last patch
+> adds a new tracepoint that I found useful for tracking this down.
+> 
+> It might be best to squash the first two patches into this one:
+> 
+> [...]                                                                        
 
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  arch/arm64/configs/defconfig | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 730f303350c36a75661dc267fdd0f8f3088153fc..2fa666156b88b44a8298651e276c196cded9a7f8 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1322,7 +1322,11 @@ CONFIG_MSM_GCC_8998=y
->  CONFIG_MSM_MMCC_8998=m
->  CONFIG_QCM_GCC_2290=y
->  CONFIG_QCM_DISPCC_2290=m
-> +CONFIG_QCS_DISPCC_615=m
-> +CONFIG_QCS_CAMCC_615=m
->  CONFIG_QCS_GCC_404=y
-> +CONFIG_QCS_GPUCC_615=m
-> +CONFIG_QCS_VIDEOCC_615=m
->  CONFIG_QDU_GCC_1000=y
->  CONFIG_SC_CAMCC_8280XP=m
->  CONFIG_SC_DISPCC_7280=m
-> 
-> -- 
-> 2.45.2
-> 
+Applied to nfsd-next for v6.13, thanks!                                                                
 
--- 
-With best wishes
-Dmitry
+[1/3] nfsd: add TIME_DELEG_ACCESS and TIME_DELEG_MODIFY to writeable attrs
+      (no commit info)
+[2/3] nfsd: allow SETATTR to provide a READ deleg for updating time_access
+      (no commit info)
+[3/3] nfsd: new tracepoint for after op_func in compound processing
+      commit: ba6b3220066fdbd38063230cfc7951b728f15464                                                                      
+
+--                                                                              
+Chuck Lever
+
 
