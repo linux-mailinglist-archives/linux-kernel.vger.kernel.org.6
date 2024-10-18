@@ -1,121 +1,233 @@
-Return-Path: <linux-kernel+bounces-371099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7443F9A3673
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:06:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288E89A3677
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3CDC1C234EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:06:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6DA01F23195
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E2D183088;
-	Fri, 18 Oct 2024 07:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ADC18454E;
+	Fri, 18 Oct 2024 07:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iQZsvUnU"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r1iNOufN"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5293420E33D
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC4917DFEB
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729235188; cv=none; b=qdk2qe5gx6Xvq63FKdiM2gw8it30NtvmPXzaDyzdmKFKydsFmAxjv/BkXHh0LmqLLBziJmYpZOAywvDYPP7/bNrezaYvU+HF5qLjeymU7Qwby+KhET3A23a6Ecw7RvnynllwrXbPXBIFTem1UGv2ZCUHGkElr4E1RCBNVkSPUeA=
+	t=1729235214; cv=none; b=bUq24HL7UsTjC+PkfCEPOfCw1umz4Tv5mLqifmS2s69KgIfjGb+HSCziyPe27GvGbuPkRQzrH8bZt/5Qtiwlne5ziE7p5qLKo6T+YZM08SSv2Z+6Sl2Wias76khAsCYFHzNGaQLKgJX/8ndzO7MQJ4TmVTjLd5+KMb/Te0kzc1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729235188; c=relaxed/simple;
-	bh=+LXYPc6hzDz1apqRx1+djjFCpV4f5yKQDtoRJZwRfQo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=td8sQBNG9SrCLM1bREkFSRXKIPM9kFYXD7NTPFa42cnqH/3/zdRs9K5ih9Klj4bjj6dxBaJ3LmKEXKeQ3UgG1Dtjmr3B3UP+Ra284g9snJldiSLaosDcM2GQJKH3LS7MT0YMJCfU2KY1utXNEhSgxUC0DTVS/4e/pluBEXH78ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iQZsvUnU; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so20375161fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:06:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729235185; x=1729839985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0sDh29tgBDN/eY+37mHiEnkCsD41OoxLIQqVYqiE06Y=;
-        b=iQZsvUnUysgG3+Zmnrbp5TRbC0CZ3fHEb/lgnOGF/jnk25GYxwi2uCAnB17D1LldGf
-         nixY9VIT0l4P7YQOKfsz/+NgUwv8F/YkhhQ57zM9TZMxJxdmua92yr8gB+jFmfb4Rk1I
-         zjGNW0LwkXZsaXFdzgYY1lV8Yyn/mjqMg4ZtC01kMnVYaOMQwx5vLKACIYfJIk5jUwLm
-         hdUnWmMtkGnql09wFJ1a48CKD9nZMz15NL3g8sRi08b6bqOhhwcxqAP0BkawJ4r0zEUf
-         jeBDJ1Ryb3+/pVgLu19to+7/sppIfeDQ4SmR8HqJNh7I10oZ/bGGFfedihPfZZqn6oN6
-         XFiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729235185; x=1729839985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0sDh29tgBDN/eY+37mHiEnkCsD41OoxLIQqVYqiE06Y=;
-        b=T28+EDdrKZqXglOn/HTiuxV9WIV3C3AXUwqO6GSm/bxUGeGJL/OlGS7RT5MYhCX5ps
-         k6BcmUFTpb9swzWNr2yiojnMVkdhTCUHW+SYstWiq/dxEYqZ8EaYJomoDB1OGiRTrNpZ
-         34+x0Mvd7oJo5ZJnqcMT2ROgPcMTTCumwof4sP99fJsSiil6BviDey7PXYLKrOlawV/J
-         sqs2BgxYvHqv8tHhThWmlKfglGTXvhtdHq5PRPbip+oLTgqSacho56WCidPXrPWFdh1D
-         IhxQZZscphw1TLzbpA8u7eDx8FbASyLhoLQDbiIsw9O4yO5WHfZglBvhvt1C8pUwifKL
-         e0BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8P2K0j+t/ExmrUyDP//OHR4uvLMMZwQfdPNOdBHciwe3IiLu3A3WHn7iXGMMTUrXPAjKRhlkbYyZimyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG1Uk4AwLk8pGmlgirWCrFq9PqNDQdtQU/V0fuZKYtTjWyi5To
-	w+h8+2Pn37iGYdWyKPFGKXPjDtz93GSWeVFca9megJCvgs9c84Mo1yH2D3akCwFUgZ2gXwCwb/Z
-	w/WoMRE1JHRFJqzRv7lEa9DaBjxDpLVEFEYPV
-X-Google-Smtp-Source: AGHT+IEID67jPLeUKh1bY4LIIgpCPYkyWpP4dlriYtHZlSy5ZWcIWo8EO6dx3Mc7MG9Ne0bnLTtz+chQnd/X6Cdop5k=
-X-Received: by 2002:a05:651c:1543:b0:2fb:65c8:b4ca with SMTP id
- 38308e7fff4ca-2fb83226659mr5746961fa.40.1729235185149; Fri, 18 Oct 2024
- 00:06:25 -0700 (PDT)
+	s=arc-20240116; t=1729235214; c=relaxed/simple;
+	bh=PD1dfUkiWp4+Fg5+QaAmN1orjckOXSazFTxdFgeauHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XDSWj92rZ0XkpiaYoNzPOYCC3kGjxgjdmGK1MjkmDRU+wTB8MGWQtw01qdOsS2HqB+W3gw5/NkCvesbHjTJculOCo/PVrkt4CC4fyYwjp5n3rTaDAeiGNc+vHwT5mVKei4yRP5jLNg4DTWnSOjv82VGNJraf37gW7KMSJzwhaLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r1iNOufN; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ac2d7fcc-024f-4913-949f-11cbe5d09f63@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729235205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x4jwvES3paZZsPgPl7TtMdUAnSwokT4+ChUx90k8RRw=;
+	b=r1iNOufNIf0KCEB4B5FficqBFjlxS/U0LK+F6PxNMmgiHvmUGRD8ZCOfS3HHMXTtKCwDLq
+	ufiGvVxPNJRvV7wFgTGGzTbIp/rqBZaIY+PvUDhwXh5j+J1Q46KMIsxLisXQxx2YZLBdlg
+	CFks854KW3xv22Zbm5Vg4TDp0uQRXAo=
+Date: Fri, 18 Oct 2024 09:06:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+nYHL-daCTUG=G0CaAMyabf9LkUYa6HnjhUCYLoJTm2FfMdsQ@mail.gmail.com>
-In-Reply-To: <CA+nYHL-daCTUG=G0CaAMyabf9LkUYa6HnjhUCYLoJTm2FfMdsQ@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 18 Oct 2024 09:06:12 +0200
-Message-ID: <CANn89iJ4EwLU2H4CntDbufc3ZRS9-BZrO0vXGxYosx4ELq8PgA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in __nf_hook_entries_try_shrink
-To: Xia Chu <jiangmo9@gmail.com>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH for-next v8 0/6] On-Demand Paging on SoftRoCE
+To: Daisuke Matsuda <matsuda-daisuke@fujitsu.com>,
+ linux-rdma@vger.kernel.org, leon@kernel.org, jgg@ziepe.ca,
+ zyjzyj2000@gmail.com
+Cc: linux-kernel@vger.kernel.org, rpearsonhpe@gmail.com, lizhijian@fujitsu.com
+References: <20241009015903.801987-1-matsuda-daisuke@fujitsu.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20241009015903.801987-1-matsuda-daisuke@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 18, 2024 at 9:00=E2=80=AFAM Xia Chu <jiangmo9@gmail.com> wrote:
->
-> Hi,
->
-> We would like to report the following bug which has been found by our mod=
-ified version of syzkaller.
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> description: KASAN: use-after-free Read in __nf_hook_entries_try_shrink
-> affected file: net/netfilter/core.c
-> kernel version: 5.8.0-rc4
-> kernel commit: 0aea6d5c5be33ce94c16f9ab2f64de1f481f424b
-> git tree: upstream
-> kernel config: attached
-> crash reproducer: attached
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> Crash log:
-> BUG: KASAN: use-after-free in hooks_validate net/netfilter/core.c:177 [in=
-line]
-> BUG: KASAN: use-after-free in __nf_hook_entries_try_shrink+0x3c0/0x470 ne=
-t/netfilter/core.c:260
-> Read of size 4 at addr ffff888067fe4220 by task kworker/u4:2/126
->
-> CPU: 1 PID: 126 Comm: kworker/u4:2 Tainted: G        W         5.8.0-rc4+=
- #1
+在 2024/10/9 3:58, Daisuke Matsuda 写道:
+> This patch series implements the On-Demand Paging feature on SoftRoCE(rxe)
+> driver, which has been available only in mlx5 driver[1] so far.
+> 
+> This series has been blocked because of the hang issue of srp 002 test[2],
+> which was believed to be caused after applying the commit 9b4b7c1f9f54
+> ("RDMA/rxe: Add workqueue support for rxe tasks"). My patches are dependent
+> on the commit because the ODP feature requires sleeping in kernel space,
+> and it is impossible with the former tasklet implementation.
+> 
+> According to the original reporter[3], the hang issue is already gone in
+> v6.10. Additionally, tasklet is marked deprecated[4]. I think the rxe
+> driver is ready to accept this series since there is no longer any reason
+> to consider reverting back to the old tasklet.
+> 
+> I omitted some contents like the motive behind this series from the cover-
+> letter. Please see the cover letter of v3 for more details[5].
+> 
+> [Overview]
+> When applications register a memory region(MR), RDMA drivers normally pin
+> pages in the MR so that physical addresses are never changed during RDMA
+> communication. This requires the MR to fit in physical memory and
+> inevitably leads to memory pressure. On the other hand, On-Demand Paging
+> (ODP) allows applications to register MRs without pinning pages. They are
+> paged-in when the driver requires and paged-out when the OS reclaims. As a
+> result, it is possible to register a large MR that does not fit in physical
+> memory without taking up so much physical memory.
+> 
+> [How does ODP work?]
+> "struct ib_umem_odp" is used to manage pages. It is created for each
+> ODP-enabled MR on its registration. This struct holds a pair of arrays
+> (dma_list/pfn_list) that serve as a driver page table. DMA addresses and
+> PFNs are stored in the driver page table. They are updated on page-in and
+> page-out, both of which use the common interfaces in the ib_uverbs layer.
+> 
+> Page-in can occur when requester, responder or completer access an MR in
+> order to process RDMA operations. If they find that the pages being
+> accessed are not present on physical memory or requisite permissions are
+> not set on the pages, they provoke page fault to make the pages present
+> with proper permissions and at the same time update the driver page table.
+> After confirming the presence of the pages, they execute memory access such
+> as read, write or atomic operations.
+> 
+> Page-out is triggered by page reclaim or filesystem events (e.g. metadata
+> update of a file that is being used as an MR). When creating an ODP-enabled
+> MR, the driver registers an MMU notifier callback. When the kernel issues a
+> page invalidation notification, the callback is provoked to unmap DMA
+> addresses and update the driver page table. After that, the kernel releases
+> the pages.
+> 
+> [Supported operations]
+> All traditional operations are supported on RC connection. The new Atomic
+> write[6] and RDMA Flush[7] operations are not included in this patchset. I
+> will post them later after this patchset is merged. On UD connection, Send,
+> Recv, and SRQ-Recv are supported.
+> 
+> [How to test ODP?]
+> There are only a few resources available for testing. pyverbs testcases in
+> rdma-core and perftest[8] are recommendable ones. Other than them, the
+> ibv_rc_pingpong command can also be used for testing. Note that you may
+> have to build perftest from upstream because old versions do not handle ODP
+> capabilities correctly.
 
-This is an old version of linux, not supported.
+Thanks a lot. I have tested these patches with perftest. Because ODP (On 
+Demand Paging) is a feature, can you also add some testcases into rdma 
+core? So we can use rdma-core to make tests with this feature of rxe.
 
-What do you expect from us ?
+That is, add some testcases in run_tests.py, so use run_tests.py to 
+verify this (ODP) feature on rxe.
+
+Thanks,
+Zhu Yanjun
+
+> 
+> The latest ODP tree is available from github:
+> https://github.com/ddmatsu/linux/tree/odp_v8
+> 
+> [Future work]
+> My next work is to enable the new Atomic write[6] and RDMA Flush[7]
+> operations with ODP. After that, I am going to implement the prefetch
+> feature. It allows applications to trigger page fault using
+> ibv_advise_mr(3) to optimize performance. Some existing software like
+> librpma[9] use this feature. Additionally, I think we can also add the
+> implicit ODP feature in the future.
+> 
+> [1] Understanding On Demand Paging (ODP)
+> https://enterprise-support.nvidia.com/s/article/understanding-on-demand-paging--odp-x
+> 
+> [2] [bug report] blktests srp/002 hang
+> https://lore.kernel.org/linux-rdma/dsg6rd66tyiei32zaxs6ddv5ebefr5vtxjwz6d2ewqrcwisogl@ge7jzan7dg5u/T/
+> 
+> [3] blktests failures with v6.10-rc1 kernel
+> https://lore.kernel.org/linux-block/wnucs5oboi4flje5yvtea7puvn6zzztcnlrfz3lpzlwgblrxgw@7wvqdzioejgl/
+> 
+> [4] [00/15] ethernet: Convert from tasklet to BH workqueue
+> https://patchwork.kernel.org/project/linux-rdma/cover/20240621050525.3720069-1-allen.lkml@gmail.com/
+> 
+> [5] [PATCH for-next v3 0/7] On-Demand Paging on SoftRoCE
+> https://lore.kernel.org/lkml/cover.1671772917.git.matsuda-daisuke@fujitsu.com/
+> 
+> [6] [PATCH v7 0/8] RDMA/rxe: Add atomic write operation
+> https://lore.kernel.org/linux-rdma/1669905432-14-1-git-send-email-yangx.jy@fujitsu.com/
+> 
+> [7] [for-next PATCH 00/10] RDMA/rxe: Add RDMA FLUSH operation
+> https://lore.kernel.org/lkml/20221206130201.30986-1-lizhijian@fujitsu.com/
+> 
+> [8] linux-rdma/perftest: Infiniband Verbs Performance Tests
+> https://github.com/linux-rdma/perftest
+> 
+> [9] librpma: Remote Persistent Memory Access Library
+> https://github.com/pmem/rpma
+> 
+> v7->v8:
+>   1) Dropped the first patch because the same change was made by Bob Pearson.
+>   cf. https://github.com/torvalds/linux/commit/23bc06af547f2ca3b7d345e09fd8d04575406274
+>   2) Rebased to 6.12.1-rc2
+> 
+> v6->v7:
+>   1) Rebased to 6.6.0
+>   2) Disabled using hugepages with ODP
+>   3) Addressed comments on v6 from Jason and Zhu
+>     cf. https://lore.kernel.org/lkml/cover.1694153251.git.matsuda-daisuke@fujitsu.com/
+> 
+> v5->v6:
+>   Fixed the implementation according to Jason's suggestions
+>     cf. https://lore.kernel.org/all/ZIdFXfDu4IMKE+BQ@nvidia.com/
+>     cf. https://lore.kernel.org/all/ZIdGU709e1h5h4JJ@nvidia.com/
+> 
+> v4->v5:
+>   1) Rebased to 6.4.0-rc2+
+>   2) Changed to schedule all works on responder and completer to workqueue
+> 
+> v3->v4:
+>   1) Re-designed functions that access MRs to use the MR xarray.
+>   2) Rebased onto the latest jgg-for-next tree.
+> 
+> v2->v3:
+>   1) Removed a patch that changes the common ib_uverbs layer.
+>   2) Re-implemented patches for conversion to workqueue.
+>   3) Fixed compile errors (happened when CONFIG_INFINIBAND_ON_DEMAND_PAGING=n).
+>   4) Fixed some functions that returned incorrect errors.
+>   5) Temporarily disabled ODP for RDMA Flush and Atomic Write.
+> 
+> v1->v2:
+>   1) Fixed a crash issue reported by Haris Iqbal.
+>   2) Tried to make lock patters clearer as pointed out by Romanovsky.
+>   3) Minor clean ups and fixes.
+> 
+> Daisuke Matsuda (6):
+>    RDMA/rxe: Make MR functions accessible from other rxe source code
+>    RDMA/rxe: Move resp_states definition to rxe_verbs.h
+>    RDMA/rxe: Add page invalidation support
+>    RDMA/rxe: Allow registering MRs for On-Demand Paging
+>    RDMA/rxe: Add support for Send/Recv/Write/Read with ODP
+>    RDMA/rxe: Add support for the traditional Atomic operations with ODP
+> 
+>   drivers/infiniband/sw/rxe/Makefile    |   2 +
+>   drivers/infiniband/sw/rxe/rxe.c       |  18 ++
+>   drivers/infiniband/sw/rxe/rxe.h       |  37 ----
+>   drivers/infiniband/sw/rxe/rxe_loc.h   |  39 ++++
+>   drivers/infiniband/sw/rxe/rxe_mr.c    |  34 +++-
+>   drivers/infiniband/sw/rxe/rxe_odp.c   | 282 ++++++++++++++++++++++++++
+>   drivers/infiniband/sw/rxe/rxe_resp.c  |  18 +-
+>   drivers/infiniband/sw/rxe/rxe_verbs.c |   5 +-
+>   drivers/infiniband/sw/rxe/rxe_verbs.h |  37 ++++
+>   9 files changed, 419 insertions(+), 53 deletions(-)
+>   create mode 100644 drivers/infiniband/sw/rxe/rxe_odp.c
+> 
+
 
