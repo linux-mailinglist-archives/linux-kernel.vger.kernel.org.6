@@ -1,201 +1,110 @@
-Return-Path: <linux-kernel+bounces-371627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D999A3D7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:47:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008619A3D7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866541F2315B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:47:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 838A5B2550E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B35F4FA;
-	Fri, 18 Oct 2024 11:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980551C6BE;
+	Fri, 18 Oct 2024 11:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M59FOIaN"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrGLoVyc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718A49476;
-	Fri, 18 Oct 2024 11:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28B618EAB;
+	Fri, 18 Oct 2024 11:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729251966; cv=none; b=ho6zA7c4BoDs/KO0V9R7gI3AR7NPp0hQ3TxrYOhcD31WyiZ9tzGYjH3PEIBsWuwsqPYgjcLhDvj2VuBNOFd21QmORKx6s/pyrpwhRCp3P7XZipIDSMHixnL6OL1uUK/GTSSCyN3UFLP9v99U41jVIIFjVUTdxVQkLmlrryvzK8s=
+	t=1729252012; cv=none; b=gL612YlC9PxlYlR0hM32A/KHOVHfapanYC8KQCtuLMHxSCodnGSmI8gjIB25bIayXqVOPff2QQuS53vvRnrBj3+FYXFqOSELuWz9j+hKEV45bfhgGZi08mJK/NuX5xzApMXQnfeoo+9GwSZtrkhbu+OFJwgjmPavp09jKag50cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729251966; c=relaxed/simple;
-	bh=W0srQg2wqI85CNHH0gsvNkb6VWnma1Bw0s1E3KVJNgA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AdTFRdiyGc179Ftff2nUGkldsfp6mIvlVfu+f97483L0yHtNpR2Xs6cTjm57A9nx7jz3qfglqVQKOvo4Vv4hFYAjgz7bRWYmQF38E7FIBSmMyUkPA9YoZU9cEMo+TvWMk9MJs8R221NxrOfuJdOXyDjrNCTplpVLFwarVSs3Bpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M59FOIaN; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-50d3365c29cso1610190e0c.0;
-        Fri, 18 Oct 2024 04:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729251963; x=1729856763; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+05Uobe0HKnShTKGIax79/dC/4ByIKxrjDbK/LdwyzQ=;
-        b=M59FOIaNwecCwkNftos45eEaEZ236azNPiTQiouyERnRwBumc0t6J3SbW3+Efo7/D8
-         kXsfnKIf7IDro16IkKci95HJeGTe6Tk8JHxgJvIGxaUk5EnodaSTmpsV+4QaqeWyi6Bf
-         zgdpGZJ4B9/nFoZ/SaF8exvKjqS2UW+0eSf4UVij8C63FPfIinODAvTfceAr6OSiXoig
-         HAqgXdhXHpBrdIt2fLuxAQOcaOKkVvlKYvTNPcYESVy5KvmJxdHBabT7Fq76DisgGGaW
-         1lyUM+nywVqyJnrKNE+opsXUYi4wbxpJVkIHQqo9DFFcfpgTTV6edp5JfGVJGw+if4zh
-         K7Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729251963; x=1729856763;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+05Uobe0HKnShTKGIax79/dC/4ByIKxrjDbK/LdwyzQ=;
-        b=spU4NlKHqxAOSl9orwGSm2n0rMPDnvQMmV8okjpnhReXrZYjbqOsvaoIkx5tjMnHYz
-         jHVWw7M7yx+lvYyhzlcWAdl/wPW17j3qx+bXO8nxfjnNNrsdI0DNXjTxoOQTxsDucoP4
-         dmjqLkzdpuvAhjxZLNnYiHbnHT9JbZMvpeEIQgD6N3tohUkkQyx/LeKC3v/qjh8JLeYI
-         mlCSwPkzWP2aFPyvd6gGJqFK5sHTNen2pfbDvwJJYkclGMT7F1idQzI+hoVmbz2fcdAc
-         NqhNMKVot5ycCKPqcXOgp5pOtZHmxy3F9gP4zJqsvsxYWYFPtRLOjGiy5EJZPzGe6Gj/
-         5a6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVTzcWmo8XJYcg/P6bHZaSFG1Cvz36wHXq6ak5sV9JsCsXqzfintXBFDV82RXuOgSmoVEsgS50oWa73O2w=@vger.kernel.org, AJvYcCVY+QivjmKEoKNMq9ROcMWXfTsALboqMbBJvMn2kTQRsLHveyH2Mb/tcfRLLJvq8glZKJgZpiIOaEijjhrr7BX66Ag=@vger.kernel.org, AJvYcCWa/IxkIVfcKHqK2uBbLi+hN5g21AFAv1bDbTVeBhC5f8WKQOZvbCThvEi7dN+T28YxucfelCrDcDu6uG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw1ySA4kfKOARKsbzGHfecgEjOJ0aMw+ncjIslu+b0NxJDBRvd
-	nzcqgn5RXl1W1CntxZFiK2nN41oVB0Dy7gGyb9ega5nrMhjgwU+D7e8z2I9ZzWhCv2dvLIEbe4S
-	dUpsYmUmZUxpipRxa3oBc0AJpWWA=
-X-Google-Smtp-Source: AGHT+IEo8YLnFXl+Uzg93E4p7I2M2mVyh0u6fqbv186EzXZpaSYlDXpLn49v7VVQsi5krgfiW3cIa/eRya9AdiHk+jo=
-X-Received: by 2002:a05:6122:250f:b0:50d:4b8d:6750 with SMTP id
- 71dfb90a1353d-50dd9bf705fmr823403e0c.1.1729251963130; Fri, 18 Oct 2024
- 04:46:03 -0700 (PDT)
+	s=arc-20240116; t=1729252012; c=relaxed/simple;
+	bh=Tap+F2W3Ssi+cAWL9Ejxi1kzzg/rP6w5KM09ct5EJYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7zOoSzKMdWv1IVuLQteOwJv7zIT2ycCFxOr/qoUpHzn++3EwW9bJ6GUHeOOedbY887P+65uMfyuaD/1XvQxPIXpnB90IVNwIbqk00cxQ+QsxGybI3hicAIMOaiJQyVyvGmBZth3v77dsHuwmm5BxxlmUWC0zLRRf62evVTgI/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrGLoVyc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB50DC4CEDC;
+	Fri, 18 Oct 2024 11:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729252011;
+	bh=Tap+F2W3Ssi+cAWL9Ejxi1kzzg/rP6w5KM09ct5EJYY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OrGLoVycK0lj36hWTCjj9p5YXTzEVLmP7vMNIgvi3uNAXgtl+J/fGEARh7coIO+eE
+	 QxcaLAcvPokA0Edda1/HDBW5YEhLFOgwwBcN1AAJ5oPcBNp2TT7Dv286kVPEDoBJOL
+	 FnT//vVNWslz/xC70u9wAofjaNt8hdZ2shmSHsMLgktWZtKvQ3OGuR7bl0MZX3ouQS
+	 mTCh3LIEROTql6Xr5DsaYp1fNyVKW30M4ZLrVyEIyHTHr5XTtmbs5IbJFZbuki38da
+	 swmpVNqPsYbHTjNtDNWR2HWT1+l4LrUdNytQobCnMcK2kFDD/6TmoTCGDRhHkYT7d1
+	 GAi2JYfCLhWFw==
+Date: Fri, 18 Oct 2024 12:46:46 +0100
+From: Simon Horman <horms@kernel.org>
+To: =?utf-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	David Ahern <dsahern@kernel.org>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Donald Hunter <donald.hunter@gmail.com>, netdev@vger.kernel.org,
+	mptcp@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] tools: ynl-gen: use big-endian netlink
+ attribute types
+Message-ID: <20241018114646.GH1697@kernel.org>
+References: <20241017094704.3222173-1-ast@fiberby.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011173052.1088341-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241011173052.1088341-16-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241015103317.GJ5682@pendragon.ideasonboard.com>
-In-Reply-To: <20241015103317.GJ5682@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 18 Oct 2024 12:45:36 +0100
-Message-ID: <CA+V-a8tRDhDBFZsMEyxPTbW0juZMpAcJ=bj4rA3Nbsku8y4PxA@mail.gmail.com>
-Subject: Re: [PATCH v5 15/22] media: rzg2l-cru: Make use of v4l2_format_info() helpers
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241017094704.3222173-1-ast@fiberby.net>
 
-Hi Laurent,
+On Thu, Oct 17, 2024 at 09:47:02AM +0000, Asbjørn Sloth Tønnesen wrote:
+> Change ynl-gen-c.py to use NLA_BE16 and NLA_BE32 types to represent
+> big-endian u16 and u32 ynl types.
+> 
+> Doing this enables those attributes to have range checks applied, as
+> the validator will then convert to host endianness prior to validation.
+> 
+> The autogenerated kernel/uapi code have been regenerated by running:
+>   ./tools/net/ynl/ynl-regen.sh -f
+> 
+> This changes the policy types of the following attributes:
+> 
+>   FOU_ATTR_PORT (NLA_U16 -> NLA_BE16)
+>   FOU_ATTR_PEER_PORT (NLA_U16 -> NLA_BE16)
+>     These two are used with nla_get_be16/nla_put_be16().
+> 
+>   MPTCP_PM_ADDR_ATTR_ADDR4 (NLA_U32 -> NLA_BE32)
+>     This one is used with nla_get_in_addr/nla_put_in_addr(),
+>     which uses nla_get_be32/nla_put_be32().
+> 
+> IOWs the generated changes are AFAICT aligned with their implementations.
+> 
+> The generated userspace code remains identical, and have been verified
+> by comparing the output generated by the following command:
+>   make -C tools/net/ynl/generated
+> 
+> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
+> 
+> ---
+> Changelog:
+> 
+> v2:
+> - Re-implement to avoid adding a new Type attribute (Requested by Jakub).
+> 
+> v1: https://lore.kernel.org/netdev/20240913085555.134788-1-ast@fiberby.net/
 
-Thank you for the review.
+Thanks for addressing Jakub's review of v1.
 
-On Tue, Oct 15, 2024 at 11:33=E2=80=AFAM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Fri, Oct 11, 2024 at 06:30:45PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Make use of v4l2_format_info() helpers to determine the input and
-> > output formats.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 22 ++++++-------------
-> >  1 file changed, 7 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
-rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > index 8932fab7c656..0cc69a7440bf 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > @@ -300,21 +300,12 @@ static void rzg2l_cru_initialize_axi(struct rzg2l=
-_cru_dev *cru)
-> >       rzg2l_cru_write(cru, AMnAXIATTR, amnaxiattr);
-> >  }
-> >
-> > -static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru, bool *inpu=
-t_is_yuv,
-> > +static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
-> >                                const struct rzg2l_cru_ip_format *ip_fmt=
-,
-> >                                u8 csi_vc)
-> >  {
-> >       u32 icnmc =3D ICnMC_INF(ip_fmt->datatype);
-> >
-> > -     switch (ip_fmt->code) {
-> > -     case MEDIA_BUS_FMT_UYVY8_1X16:
-> > -             *input_is_yuv =3D true;
-> > -             break;
-> > -     default:
-> > -             *input_is_yuv =3D false;
-> > -             break;
-> > -     }
-> > -
-> >       icnmc |=3D (rzg2l_cru_read(cru, ICnMC) & ~ICnMC_INF_MASK);
-> >
-> >       /* Set virtual channel CSI2 */
-> > @@ -327,19 +318,17 @@ static int rzg2l_cru_initialize_image_conv(struct=
- rzg2l_cru_dev *cru,
-> >                                          struct v4l2_mbus_framefmt *ip_=
-sd_fmt,
-> >                                          u8 csi_vc)
-> >  {
-> > +     const struct v4l2_format_info *src_finfo, *dst_finfo;
-> >       const struct rzg2l_cru_ip_format *cru_ip_fmt;
-> > -     bool output_is_yuv =3D false;
-> > -     bool input_is_yuv =3D false;
-> >       u32 icndmr;
-> >
-> >       cru_ip_fmt =3D rzg2l_cru_ip_code_to_fmt(ip_sd_fmt->code);
-> > -     rzg2l_cru_csi2_setup(cru, &input_is_yuv, cru_ip_fmt, csi_vc);
-> > +     rzg2l_cru_csi2_setup(cru, cru_ip_fmt, csi_vc);
-> >
-> >       /* Output format */
-> >       switch (cru->format.pixelformat) {
-> >       case V4L2_PIX_FMT_UYVY:
-> >               icndmr =3D ICnDMR_YCMODE_UYVY;
-> > -             output_is_yuv =3D true;
-> >               break;
-> >       default:
-> >               dev_err(cru->dev, "Invalid pixelformat (0x%x)\n",
-> > @@ -347,8 +336,11 @@ static int rzg2l_cru_initialize_image_conv(struct =
-rzg2l_cru_dev *cru,
-> >               return -EINVAL;
-> >       }
-> >
-> > +     src_finfo =3D v4l2_format_info(cru_ip_fmt->format);
-> > +     dst_finfo =3D v4l2_format_info(cru->format.pixelformat);
->
-> It would be a bit more efficient to add a yuv boolean field to the
-> rzg2l_cru_ip_format structure, as you already have looked up cru_ip_fmt
-> for the IP subdev format.
->
-I will consider this change, when adding support for the RZ/V2H SoC,
-hope that's OK for you.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Cheers,
-Prabhakar
-
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
-> > +
-> >       /* If input and output use same colorspace, do bypass mode */
-> > -     if (output_is_yuv =3D=3D input_is_yuv)
-> > +     if (v4l2_is_format_yuv(src_finfo) =3D=3D v4l2_is_format_yuv(dst_f=
-info))
-> >               rzg2l_cru_write(cru, ICnMC,
-> >                               rzg2l_cru_read(cru, ICnMC) | ICnMC_CSCTHR=
-);
-> >       else
->
-> --
-> Regards,
->
-> Laurent Pinchart
 
