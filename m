@@ -1,369 +1,265 @@
-Return-Path: <linux-kernel+bounces-371807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E77DD9A409A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:01:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA3BE9A409F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67610B22F4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:01:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC881F21CF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBD643AB0;
-	Fri, 18 Oct 2024 14:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F85E137C37;
+	Fri, 18 Oct 2024 14:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpK9/3aX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PIbf2saj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AED826AFA;
-	Fri, 18 Oct 2024 14:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177C541A84;
+	Fri, 18 Oct 2024 14:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729260072; cv=none; b=kC/jsMpGNNHRk8Y3ifQL+2c3RV5gtAbLWPdjmZjnJPQthNbZv535JMfdygs1+OZcE4yLpKWqCmCyktQZvMNTYWpwHSrcRrTWMuDWhcd7CKhb+pms6bKQHiZ8oo78ZCuNAuC8RcOuAR9K0MpBrMcK/IXS/t+9B65o1yEpPVlDBdg=
+	t=1729260211; cv=none; b=SQ4JPnR956Fvrh6sALWqvOnPX9o11prVV745hQlU6RegdkSCIiGiwxUE7esez/VrY0giG8WRWl9NDwyK6T+GqDHCqtLwn1djGIBpSDxIZonQUJBEmSjnfTnPcn2I9SUVKzRIZtdtQV5t+MFszCEO/kx3PkRaKhlvioUQKWJlFBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729260072; c=relaxed/simple;
-	bh=w1KFwbjeawOEyuk6ibo4Ts2M3c2Y1JCeveZ6DlkK/w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PaJ1byMOIxL8oLgdpyZjgQVOAFi0psbpWPtqyietU7PccUifKIS+reP5e8SPdQE/TZI1XoeFIcar4+jHO4L3i4Eh6X86itufCxAVy9vnvILBEv5uANR0ZSTv4uFoi9xpweHxVnnE97Byx4No17m5srkFd+63qQ/Gt5+lrmb4cos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpK9/3aX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB277C4CECF;
-	Fri, 18 Oct 2024 14:01:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729260071;
-	bh=w1KFwbjeawOEyuk6ibo4Ts2M3c2Y1JCeveZ6DlkK/w4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UpK9/3aXgTYel3/ATsWrxz5Baq18wZVHokz8/A8Tg8/a/2mncZiwLejfIGn0L9NIH
-	 jsRlIq6s5S5paHOGU4nmGJBc17Tsp/RFqp9KhHBfvDkbON5B7USKmTLjU40VOaPS+f
-	 QqkgUWwJD+Me4bxUR/lvaDPdkPxbvTAqA2uepKeJv4oAsxHSFigKe56FloI7yGFHeB
-	 o5gnDL8QkSBRpqPcdexawtHY0w+lOtqE9wLwUtJIhu1Aj2/W8de761VFfmJo1e5hvh
-	 UrTu+SzHnWS4Ug4mmpJOVsvt8IjdmuKsQphRMbxUKQTrCEeAC91d0YkuQLopiPbNpW
-	 e9MkoKagNVb2g==
-Date: Fri, 18 Oct 2024 16:01:05 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, jdmason@kudzu.us
-Subject: Re: [PATCH v3 4/6] PCI: endpoint: pci-epf-test: Add doorbell test
- support
-Message-ID: <ZxJqITunljv0PGxn@ryzen.lan>
-References: <20241015-ep-msi-v3-0-cedc89a16c1a@nxp.com>
- <20241015-ep-msi-v3-4-cedc89a16c1a@nxp.com>
+	s=arc-20240116; t=1729260211; c=relaxed/simple;
+	bh=qZfqYvidyZZs9iNU/7gvDLreaqVnDtDxxmt3detY5C0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PJtG1rO+BQ4s701G5MR3ZIb+Bjoqc5HbvJEPIFk+9TN8w4p8D8wmuG5C2jqNaL+aA5H5v0PuqP1NYZWOCe6bj2tyqZRhTa8FCDArHLr9a7yviQDRuShvS5xGKuKuNRt8Azc1bkCjt4cHlKLf8me973TVw4ObDABwV7xqbNPxklI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PIbf2saj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I6KYNY006874;
+	Fri, 18 Oct 2024 14:03:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Ww6WPk4zRAg8DqDwBPZb6CyOotm3JIke7iboM7rYt6o=; b=PIbf2sajCY7lp8uq
+	bx1Xi2et9n2ndtp/EEmwMOtE033r5S9Nm5s2G8SRn7K0oMiqxTMMD5aWHZ/HF6Ri
+	lzPEO3ZX74Gqlzis9yYPjtLwy/rkjLBjrGncZSE4qchn7v/NEckINEXlL9mlSnpK
+	UrT7KaMQdU4I2JjkNLI08N25OQ2DzPg9/YK8zGal+VQrkLYWCiqz2zc1Z2h4cV/y
+	elOj6F1adCRii9+VNlLSY4C7lSoSVZQ925eDeVpb7CH+Yh2oY05lJH4NOUoG4J0d
+	hL5BhCo78Zw4gBiS1rFqbifvSmVtodE1y8gOM+a3LhwZ6lbpDvQwoC87f7TeZttm
+	zTo6uw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42b5hsudsr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 14:03:17 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IE3FsN014099
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 14:03:15 GMT
+Received: from [10.253.38.177] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
+ 2024 07:03:10 -0700
+Message-ID: <32dbf7ee-1190-401c-b6b1-bc8c70a5158c@quicinc.com>
+Date: Fri, 18 Oct 2024 22:03:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015-ep-msi-v3-4-cedc89a16c1a@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
+References: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com>
+ <20241015-qcom_ipq_cmnpll-v4-4-27817fbe3505@quicinc.com>
+ <abro3enahzbugcwokcyyhwybbokestbigvzhywxhnfrdjihni3@7ej2hkgbgtf6>
+ <b336724c-1fea-4e1e-9477-66f53d746f09@quicinc.com>
+ <CAA8EJprVNOLO-CoorNhvKrrSD1bNKdFrzth5BL0GHXffPv62jw@mail.gmail.com>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <CAA8EJprVNOLO-CoorNhvKrrSD1bNKdFrzth5BL0GHXffPv62jw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xERruqM-VTbohSe7-PW1Y8IWLNcPEXbC
+X-Proofpoint-ORIG-GUID: xERruqM-VTbohSe7-PW1Y8IWLNcPEXbC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 adultscore=0
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410180089
 
-Hello Frank,
 
-On Tue, Oct 15, 2024 at 06:07:17PM -0400, Frank Li wrote:
-> Add three registers: doorbell_bar, doorbell_addr, and doorbell_data,
-> along with doorbell_done. Use pci_epf_alloc_doorbell() to allocate a
-> doorbell address space.
+
+On 10/18/2024 4:11 PM, Dmitry Baryshkov wrote:
+> On Fri, 18 Oct 2024 at 09:55, Jie Luo <quic_luoj@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 10/18/2024 6:32 AM, Dmitry Baryshkov wrote:
+>>> On Tue, Oct 15, 2024 at 10:16:54PM +0800, Luo Jie wrote:
+>>>> The CMN PLL clock controller allows selection of an input
+>>>> clock rate from a defined set of input clock rates. It in-turn
+>>>> supplies fixed rate output clocks to the hardware blocks that
+>>>> provide ethernet functions such as PPE (Packet Process Engine)
+>>>> and connected switch or PHY, and to GCC.
+>>>>
+>>>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi |  6 +++++-
+>>>>    arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 20 +++++++++++++++++++-
+>>>>    2 files changed, 24 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+>>>> index 91e104b0f865..77e1e42083f3 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+>>>> @@ -3,7 +3,7 @@
+>>>>     * IPQ9574 RDP board common device tree source
+>>>>     *
+>>>>     * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>     */
+>>>>
+>>>>    /dts-v1/;
+>>>> @@ -164,6 +164,10 @@ &usb3 {
+>>>>       status = "okay";
+>>>>    };
+>>>>
+>>>> +&cmn_pll_ref_clk {
+>>>> +    clock-frequency = <48000000>;
+>>>> +};
+>>>> +
+>>>>    &xo_board_clk {
+>>>>       clock-frequency = <24000000>;
+>>>>    };
+>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>>> index 14c7b3a78442..93f66bb83c5a 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>>> @@ -3,10 +3,11 @@
+>>>>     * IPQ9574 SoC device tree source
+>>>>     *
+>>>>     * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>     */
+>>>>
+>>>>    #include <dt-bindings/clock/qcom,apss-ipq.h>
+>>>> +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
+>>>>    #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
+>>>>    #include <dt-bindings/interconnect/qcom,ipq9574.h>
+>>>>    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>> @@ -19,6 +20,11 @@ / {
+>>>>       #size-cells = <2>;
+>>>>
+>>>>       clocks {
+>>>> +            cmn_pll_ref_clk: cmn-pll-ref-clk {
+>>>> +                    compatible = "fixed-clock";
+>>>> +                    #clock-cells = <0>;
+>>>> +            };
+>>>
+>>> Which block provides this clock? If it is provided by the external XO
+>>> then it should not be a part of the SoC dtsi.
+>>
+>> The on-chip WiFi block supplies this reference clock. So keeping it in
+>> the SoC DTSI is perhaps appropriate.
 > 
-> Enable the Root Complex (RC) side driver to trigger pci-epc-test's doorbell
-> callback handler by writing doorbell_data to the mapped doorbell_bar's
-> address space.
+> Then maybe it should be provided by the WiFi device node? At least you
+> should document your design decisions in the commit message.
+
+This CMN PLL reference clock is fixed rate and is automatically
+generated by the SoC's internal Wi-Fi hardware block with no software
+configuration required from the Wi-Fi side.
+
+Sure, I will enhance the commit message to add the information on the
+fixed reference clock from Wi-Fi block. Hope this is ok.
+
 > 
-> Set doorbell_done in the doorbell callback to indicate completion.
+> Also, I don't think this node passes DT schema validation. Did you check it?
+
+Yes, the DT is validated against the schema, I have shared the logs
+below. Could you please let me know If anything needs rectification?
+
+dt-doc-validate --version
+2024.9
+
+make ARCH=arm64 DT_SCHEMA_FILES=qcom,ipq9574-cmn-pll.yaml CHECK_DTBS=y 
+qcom/ipq9574-rdp433.dtb
+   DTC [C] arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb
+
+make ARCH=arm64 dt_binding_check 
+DT_SCHEMA_FILES=qcom,ipq9574-cmn-pll.yaml        SCHEMA 
+Documentation/devicetree/bindings/processed-schema.json
+   CHKDT   Documentation/devicetree/bindings
+   LINT    Documentation/devicetree/bindings
+   DTEX 
+Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.example.dts
+   DTC [C] 
+Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.example.dtb
+
+make ARCH=arm64 CHECK_DTBS=y qcom/ipq9574-rdp433.dtb 
+          DTC [C] arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb
+/local/mnt2/workspace/luoj/projects/opensrc/linux-next-cmnpll-validation/linux-next/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: 
+usb@8af8800: interrupt-names: ['pwr_event'] is too short
+         from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+/local/mnt2/workspace/luoj/projects/opensrc/linux-next-cmnpll-validation/linux-next/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: 
+usb@8af8800: interrupts-extended: [[1, 0, 134, 4]] is too short
+         from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+
 > 
-> To avoid broken compatibility, use new PID/VID and set RevID bigger than 0.
-> So only new pcitest program can distinguish with/without doorbell support
-> and avoid wrongly write test data to doorbell bar.
+>>
+>>>
+>>>> +
+>>>>               sleep_clk: sleep-clk {
+>>>>                       compatible = "fixed-clock";
+>>>>                       #clock-cells = <0>;
+>>>> @@ -243,6 +249,18 @@ mdio: mdio@90000 {
+>>>>                       status = "disabled";
+>>>>               };
+>>>>
+>>>> +            cmn_pll: clock-controller@9b000 {
+>>>> +                    compatible = "qcom,ipq9574-cmn-pll";
+>>>> +                    reg = <0x0009b000 0x800>;
+>>>> +                    clocks = <&cmn_pll_ref_clk>,
+>>>> +                             <&gcc GCC_CMN_12GPLL_AHB_CLK>,
+>>>> +                             <&gcc GCC_CMN_12GPLL_SYS_CLK>;
+>>>> +                    clock-names = "ref", "ahb", "sys";
+>>>> +                    #clock-cells = <1>;
+>>>> +                    assigned-clocks = <&cmn_pll CMN_PLL_CLK>;
+>>>> +                    assigned-clock-rates-u64 = /bits/ 64 <12000000000>;
+>>>> +            };
+>>>> +
+>>>>               qfprom: efuse@a4000 {
+>>>>                       compatible = "qcom,ipq9574-qfprom", "qcom,qfprom";
+>>>>                       reg = <0x000a4000 0x5a1>;
+>>>>
+>>>> --
+>>>> 2.34.1
+>>>>
+>>>
+>>
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/pci/endpoint/functions/pci-epf-test.c | 58 ++++++++++++++++++++++++++-
->  1 file changed, 56 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index 7c2ed6eae53ad..c054d621353a6 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -11,12 +11,14 @@
->  #include <linux/dmaengine.h>
->  #include <linux/io.h>
->  #include <linux/module.h>
-> +#include <linux/msi.h>
->  #include <linux/slab.h>
->  #include <linux/pci_ids.h>
->  #include <linux/random.h>
->  
->  #include <linux/pci-epc.h>
->  #include <linux/pci-epf.h>
-> +#include <linux/pci-ep-msi.h>
->  #include <linux/pci_regs.h>
->  
->  #define IRQ_TYPE_INTX			0
-> @@ -39,6 +41,7 @@
->  #define STATUS_IRQ_RAISED		BIT(6)
->  #define STATUS_SRC_ADDR_INVALID		BIT(7)
->  #define STATUS_DST_ADDR_INVALID		BIT(8)
-> +#define STATUS_DOORBELL_SUCCESS		BIT(9)
->  
->  #define FLAG_USE_DMA			BIT(0)
->  
-> @@ -50,6 +53,7 @@ struct pci_epf_test {
->  	void			*reg[PCI_STD_NUM_BARS];
->  	struct pci_epf		*epf;
->  	enum pci_barno		test_reg_bar;
-> +	enum pci_barno		doorbell_bar;
->  	size_t			msix_table_offset;
->  	struct delayed_work	cmd_handler;
->  	struct dma_chan		*dma_chan_tx;
-> @@ -74,6 +78,9 @@ struct pci_epf_test_reg {
->  	u32	irq_type;
->  	u32	irq_number;
->  	u32	flags;
-> +	u32	doorbell_bar;
-> +	u32	doorbell_addr;
-> +	u32	doorbell_data;
->  } __packed;
->  
->  static struct pci_epf_header test_header = {
-> @@ -695,7 +702,7 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
->  	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
->  
->  	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
-> -		if (!epf_test->reg[bar])
-> +		if (!epf_test->reg[bar] && bar != epf_test->doorbell_bar)
->  			continue;
->  
->  		ret = pci_epc_set_bar(epc, epf->func_no, epf->vfunc_no,
-> @@ -810,11 +817,24 @@ static int pci_epf_test_link_down(struct pci_epf *epf)
->  	return 0;
->  }
->  
-> +static int pci_epf_test_doorbell(struct pci_epf *epf, int index)
-> +{
-> +	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-> +	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
-> +	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
-> +
-> +	reg->status |= STATUS_DOORBELL_SUCCESS;
-> +	pci_epf_test_raise_irq(epf_test, reg);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct pci_epc_event_ops pci_epf_test_event_ops = {
->  	.epc_init = pci_epf_test_epc_init,
->  	.epc_deinit = pci_epf_test_epc_deinit,
->  	.link_up = pci_epf_test_link_up,
->  	.link_down = pci_epf_test_link_down,
-> +	.doorbell = pci_epf_test_doorbell,
->  };
->  
->  static int pci_epf_test_alloc_space(struct pci_epf *epf)
-> @@ -853,7 +873,7 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
->  		if (bar == NO_BAR)
->  			break;
->  
-> -		if (bar == test_reg_bar)
-> +		if (bar == test_reg_bar || bar == epf_test->doorbell_bar)
->  			continue;
->  
->  		base = pci_epf_alloc_space(epf, bar_size[bar], bar,
-> @@ -887,7 +907,11 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->  	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->  	const struct pci_epc_features *epc_features;
->  	enum pci_barno test_reg_bar = BAR_0;
-> +	enum pci_barno doorbell_bar = NO_BAR;
->  	struct pci_epc *epc = epf->epc;
-> +	struct msi_msg *msg;
-> +	u64 doorbell_addr;
-> +	u32 align;
->  
->  	if (WARN_ON_ONCE(!epc))
->  		return -EINVAL;
-> @@ -905,10 +929,40 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->  	epf_test->test_reg_bar = test_reg_bar;
->  	epf_test->epc_features = epc_features;
->  
-> +	align = epc_features->align;
-> +	align = align ? align : 128;
-> +
-> +	/* Only revid >=1 support RC-to-EP Door bell */
-> +	ret = epf->header->revid > 0 ?  pci_epf_alloc_doorbell(epf, 1) : -EINVAL;
-
-I really, really don't like this idea.
-
-This means that you would need to write a revid > 1 in configfs to test this.
-I also don't think that it is right that pci-epf-test takes ownership of "rev".
-
-How about something like this instead:
-
-My thinking is that you add a doorbell_capable struct member to epc_features,
-and then populate CAPS_DOORBELL_SUPPORT based on epc_features in
-pci_epf_test_init_caps() (similar to how my proposal sets CAPS_MSI_SUPPORT).
-
-
-From 0f6bb535c6d56e03e9b3550194deec04a1c1d370 Mon Sep 17 00:00:00 2001
-From: Niklas Cassel <cassel@kernel.org>
-Date: Fri, 18 Oct 2024 10:32:39 +0200
-Subject: [PATCH] PCI: endpoint: pci-epf-test: Add support for exposing EPC
- capabilities
-
-Currently, there is no way for the pci-endpoint-test driver (RC side),
-to know which features the EPC supports.
-
-Expose some of the EPC:s capabilities in the test_reg_bar, such that
-the pci-endpoint-test driver can know if a feature (e.g. MSI-X or DMA)
-is supported before attempting to test it.
-
-Signed-off-by: Niklas Cassel <cassel@kernel.org>
----
- drivers/misc/pci_endpoint_test.c              | 34 +++++++++++++++
- drivers/pci/endpoint/functions/pci-epf-test.c | 43 +++++++++++++++++++
- 2 files changed, 77 insertions(+)
-
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 3aaaf47fa4ee..7eb045dc81b6 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -69,6 +69,20 @@
- #define PCI_ENDPOINT_TEST_FLAGS			0x2c
- #define FLAG_USE_DMA				BIT(0)
- 
-+#define CAPS_MAGIC				0x25ccf687
-+#define PCI_ENDPOINT_TEST_CAPS_MAGIC		0x30
-+#define PCI_ENDPOINT_TEST_CAPS_VERSION		0x34
-+#define PCI_ENDPOINT_TEST_CAPS			0x38
-+
-+#define CAPS_MSI_SUPPORT		BIT(0)
-+#define CAPS_MSIX_SUPPORT		BIT(1)
-+#define CAPS_DMA_SUPPORT		BIT(2)
-+#define CAPS_DMA_IS_PRIVATE		BIT(3) /* only valid if DMA_SUPPORT */
-+#define CAPS_DOORBELL_SUPPORT		BIT(4)
-+#define CAPS_DOORBELL_BAR_MASK		GENMASK(7, 5) /* only valid if DOORBELL_SUPPORT */
-+#define CAPS_DOORBELL_BAR_SHIFT		5
-+#define CAPS_DOORBELL_BAR(x)		(((x) & CAPS_DOORBELL_BAR_MASK) >> CAPS_DOORBELL_BAR_SHIFT)
-+
- #define PCI_DEVICE_ID_TI_AM654			0xb00c
- #define PCI_DEVICE_ID_TI_J7200			0xb00f
- #define PCI_DEVICE_ID_TI_AM64			0xb010
-@@ -805,6 +819,24 @@ static const struct file_operations pci_endpoint_test_fops = {
- 	.unlocked_ioctl = pci_endpoint_test_ioctl,
- };
- 
-+static void pci_endpoint_get_caps(struct pci_endpoint_test *test)
-+{
-+	u32 caps_magic, caps;
-+
-+	/* check if endpoint has CAPS support */
-+	caps_magic = pci_endpoint_test_readl(test, PCI_ENDPOINT_TEST_CAPS_MAGIC);
-+	if (caps_magic != CAPS_MAGIC)
-+		return;
-+
-+	caps = pci_endpoint_test_readl(test, PCI_ENDPOINT_TEST_CAPS);
-+	pr_info("CAPS: MSI support: %u\n", (caps & CAPS_MSI_SUPPORT) ? 1 : 0);
-+	pr_info("CAPS: MSI-X support: %u\n", (caps & CAPS_MSIX_SUPPORT) ? 1 : 0);
-+	pr_info("CAPS: DMA support: %u\n", (caps & CAPS_DMA_SUPPORT) ? 1 : 0);
-+	pr_info("CAPS: DMA is private: %u\n", (caps & CAPS_DMA_IS_PRIVATE) ? 1 : 0);
-+	pr_info("CAPS: DOORBELL support: %u\n", (caps & CAPS_DOORBELL_SUPPORT) ? 1 : 0);
-+	pr_info("CAPS: DOORBELL BAR: %lu\n", CAPS_DOORBELL_BAR(caps));
-+}
-+
- static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 				   const struct pci_device_id *ent)
- {
-@@ -906,6 +938,8 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 		goto err_kfree_test_name;
- 	}
- 
-+	pci_endpoint_get_caps(test);
-+
- 	misc_device = &test->miscdev;
- 	misc_device->minor = MISC_DYNAMIC_MINOR;
- 	misc_device->name = kstrdup(name, GFP_KERNEL);
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index a73bc0771d35..2dd90e2e8565 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -44,6 +44,18 @@
- 
- #define TIMER_RESOLUTION		1
- 
-+#define CAPS_MAGIC			0x25ccf687
-+#define CAPS_VERSION			0x1
-+
-+#define CAPS_MSI_SUPPORT		BIT(0)
-+#define CAPS_MSIX_SUPPORT		BIT(1)
-+#define CAPS_DMA_SUPPORT		BIT(2)
-+#define CAPS_DMA_IS_PRIVATE		BIT(3) /* only valid if DMA_SUPPORT */
-+#define CAPS_DOORBELL_SUPPORT		BIT(4)
-+#define CAPS_DOORBELL_BAR_MASK		GENMASK(7, 5) /* only valid if DOORBELL_SUPPORT */
-+#define CAPS_DOORBELL_BAR_SHIFT		5
-+#define CAPS_DOORBELL_BAR(x)		(((x) & CAPS_DOORBELL_BAR_MASK) >> CAPS_DOORBELL_BAR_SHIFT)
-+
- static struct workqueue_struct *kpcitest_workqueue;
- 
- struct pci_epf_test {
-@@ -74,6 +86,9 @@ struct pci_epf_test_reg {
- 	u32	irq_type;
- 	u32	irq_number;
- 	u32	flags;
-+	u32	caps_magic;
-+	u32	caps_version;
-+	u32	caps;
- } __packed;
- 
- static struct pci_epf_header test_header = {
-@@ -741,6 +756,32 @@ static void pci_epf_test_clear_bar(struct pci_epf *epf)
- 	}
- }
- 
-+static void pci_epf_test_init_caps(struct pci_epf *epf)
-+{
-+	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-+	const struct pci_epc_features *epc_features = epf_test->epc_features;
-+	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
-+	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
-+	u32 caps = 0;
-+
-+	reg->caps_magic = cpu_to_le32(CAPS_MAGIC);
-+	reg->caps_version = cpu_to_le32(CAPS_VERSION);
-+
-+	if (epc_features->msi_capable)
-+		caps |= CAPS_MSI_SUPPORT;
-+
-+	if (epc_features->msix_capable)
-+		caps |= CAPS_MSIX_SUPPORT;
-+
-+	if (epf_test->dma_supported)
-+		caps |= CAPS_DMA_SUPPORT;
-+
-+	if (epf_test->dma_private)
-+		caps |= CAPS_DMA_IS_PRIVATE;
-+
-+	reg->caps = cpu_to_le64(caps);
-+}
-+
- static int pci_epf_test_epc_init(struct pci_epf *epf)
- {
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-@@ -765,6 +806,8 @@ static int pci_epf_test_epc_init(struct pci_epf *epf)
- 		}
- 	}
- 
-+	pci_epf_test_init_caps(epf);
-+
- 	ret = pci_epf_test_set_bar(epf);
- 	if (ret)
- 		return ret;
--- 
-2.47.0
 
 
