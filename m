@@ -1,183 +1,92 @@
-Return-Path: <linux-kernel+bounces-371732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E109A3F51
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:18:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D5F9A3F71
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0275B2223D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:18:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16B5AB21494
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFB81D4161;
-	Fri, 18 Oct 2024 13:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SlKgvb+e"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81111D6DD8;
+	Fri, 18 Oct 2024 13:21:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EAB3207;
-	Fri, 18 Oct 2024 13:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D7F1D0DF7
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729257481; cv=none; b=NK0koEAnwtMAsOu5yaVSF7f+VoLaEwPYBFq+f/s5FCPjZDoWZkt0lECJ482KgnQDa0xxwySZb5k0AkEy/dvLPTgclk/Doj9edE2gSIDyQRmElFiSCgXDHMn6OjejPdXdSwbwxPAUtlDL6yVtIqVo3RkshX5yOAmQ8UAwWMLlpW4=
+	t=1729257664; cv=none; b=HXF7ebEJn09BcUczyahkji6z6ab30qjBwPp/LDi+CCwPO1QFwLdrHOiqV4mnmlnGwgtp6o/PmiYhl8hcATw5tq4WBiAHE8WdQaaDN1cLLHjfLV8xltdVN0gSAozTPPu1bX3S674Knxi8LXlRPrXCjJb6Xo696Y+VEiGQKymNITE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729257481; c=relaxed/simple;
-	bh=HPXtxo5Vvpr2Etua6TwUK33NA6Be2AnfOMNRunrFSgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFuXnnF/OZes5n9X2ZBP0K/9gW7v7nlkxEiuXh2mfNqL/TdrtBnaVJb8SkmjFwOlBsM+rzv2dZwiZZKV2qjVF/XiqIUhrNCaAz5Bxv6URx+WvIn/n5gZ3TuyzheCNu+ltNI6p1xcMzYpY/+Jt4eEM4vaN15MRtzaDuSudqGHSx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SlKgvb+e; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43158124a54so2544405e9.3;
-        Fri, 18 Oct 2024 06:17:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729257478; x=1729862278; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HYTC1KKmj1Tx4GZAlIt/vCaAXRaBVXXUSQJlK1KgVeE=;
-        b=SlKgvb+ejWjnjO+trcuov/kNRLiCQeP1rl+ceWeUFA5Kpj1H+MaA9ppQneWKSYipQz
-         2I9gsQjzcf0yVPLBnIxNd3c6zoNsfnEUxfVU0bitnFAppEH8D8y7rB1dTMG1Oobc85Pa
-         +AjhhyrW1DXzfEzj4TggmcnjmC+GPOTLrZTqICXX3qYd1uw4i5nwfyx5OZr4fD5KYRm2
-         sCkx4AnnNI/++gHmUrrW6bORvGp5rU+CU/wzZx+VuYNfWMfyGVLIq9Fb++XRqyhb83P4
-         Asw+c/Wq9l6SMLlNFOcAGPzzDOrdFCejcv8wdOdjB5sZHHMM9PO+hxGBxRB/cj85Ub3a
-         xyxw==
+	s=arc-20240116; t=1729257664; c=relaxed/simple;
+	bh=J2ISKYJq+P9aWYzcvEmJNTpTQm3p+pYlylkV+zAb+uc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KG29uCPydyYrjSiOaLMD0eSaroGvtt5IStZgdrEgwtwbpAyMkvPHcLDx6jiH1321i7fNT0/OER4G0f8ve+fNMzhFFISq22e+ANW+iCHHczaCAhHvQAEg10o9mjc+62JuKc1ahdGKrSCFcWCfO0B0hJ4ZnyEoyAnJWdEBHOHhK5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so18329035ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:21:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729257478; x=1729862278;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HYTC1KKmj1Tx4GZAlIt/vCaAXRaBVXXUSQJlK1KgVeE=;
-        b=JdCB1HNQOJVS4YZ+4fhTPpC97b2XGmLyEfF0ixwVkyw7Kwu0cDF9Nmw8Xz6IS4xhHi
-         ToD6f1YvltaaKfBKCDgVvliyqtWdqp0sBNlugDTViwj5GqMF7kugWoZPzJmVT4cmEe5d
-         ZppZ6IWyTV82Yr+CuYpn6kh1CsGOHAsnmKdE3do73ZC3X9X2BB9kHQ22YHf5eI5fA5BH
-         AUdaGiWFtwm0iyc4tN4/70T/TV5m3yKbGkFclJpkrGDGk6wm+5aFm2nesLmYu0J8vJ/C
-         jUGXlV/4SXQBgwhTnt0yUTCocHrR+e6anS9Ko304WqKNvLoGou0aQxmj7Qnkn2rB7742
-         G1sA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlAYJluDJUuMsujy2vetV9To1gquWGP5UH0PHBoqAfFOxmEU3O1Xatd7jYHlKZw9pbP9mel8ev@vger.kernel.org, AJvYcCWk8aEiJF7oki3GfjPIUxHpmafSHWgUFz88hPuzLHav7sQggIA6EA1kI7+zVGxDbkhwLWOQKvre0vksoNQ=@vger.kernel.org, AJvYcCXGJUQt6stym4bVVPT897PLXAiedbTt6lP4EJYsjoyjUlNwZ+4H3Ilxn2icQthB2JPp6OvHLiRFPTkAn4WGJ+FX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeQoNlUtySgosbqcDjtb3za0dR2d37ReIKHv3XlkS4onAUa21V
-	QId9CghjHDPiAKakNBXta/UMJkgzC+2rJMcC+HoJnjItDGlx3GsB
-X-Google-Smtp-Source: AGHT+IEq019Hq1TIXR/qIFJskJJDma7tgLtYd48CED4u+gZEDmakAyaK8oGFTjQd2kcXyOKjRJnT+g==
-X-Received: by 2002:a05:600c:1c08:b0:42c:aeee:e603 with SMTP id 5b1f17b1804b1-4316168f7f2mr8301575e9.7.1729257477692;
-        Fri, 18 Oct 2024 06:17:57 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160695d8fsm27244935e9.27.2024.10.18.06.17.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 06:17:57 -0700 (PDT)
-Date: Fri, 18 Oct 2024 16:17:54 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Eric Woudstra <ericwouds@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Roopa Prabhu <roopa@nvidia.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, bridge@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH RFC v1 net-next 02/12] netfilter: bridge: Add conntrack
- double vlan and pppoe
-Message-ID: <20241018131754.ikrrnsspjsu5ppfz@skbuf>
-References: <20241013185509.4430-1-ericwouds@gmail.com>
- <20241013185509.4430-3-ericwouds@gmail.com>
+        d=1e100.net; s=20230601; t=1729257661; x=1729862461;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dsYwuI0Th+uVtMN7AlSOhFIFxHsr2HBMLpKgQ2C5NDw=;
+        b=bOWVUX1juw/2BOh9OVkFf9JZG2HhIsvhJaBt7mhrAR802VmUNx6A1fqb3AUtiQWwRt
+         Ad9eNdhT7D7MYGtg70GA6KiSqjI2KcjEufO4+ZbvZL7Jp7VF1i/BQd2ICgdzTC/8/krv
+         rI0iKJDU3PmAC7+w7nj+AjNmtdYaIpyI0f7zpZMGP6BpS3ZeS+6GQhCfYdMxeZE6L2sm
+         d+ERl0Q88J8+3vaDTh8qbIpFRcTZsBvTk9BeyppQn7A98MARyqu6yiAM7dhZ3P3K4+eT
+         spDREi5fMBMfRB21qXATxAPFcAlQKKRIEPWNp30liy3SbCg1TmVHPfEQqe8x/EUnxNMm
+         odKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjpJyuRpF+EZl9lfVFMKg5twjOmiSsZUGKWSQZrxxVYsjytssUnwDHBmu39fs8z/R1nZDbh/8olpHCf5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkYKMhTM2H58jUBQFJwvhsdDxhUrByq5d4XCOxw8alg32UIvKt
+	uhsHm7vwe3xSwIcl1O8qIFft8Euq8jHiKXhUjDudQrMEJw5C6Uo8/A7OSNbNmEe8rVi0UeEsLqw
+	VkOcGTZ28vJUUKThuvdbEqMP7204QmhLWZYdmKDaPRIwbmsbmxMnF1T4=
+X-Google-Smtp-Source: AGHT+IEBJH2H0YkAN3+kej2jAA+6Y4/nJq8KL+MjWGl3zwECcftJ2IWflNZlanDCdJEEAH367yNS/cixQ+dw4rG7mqrgBuHaxm1q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241013185509.4430-3-ericwouds@gmail.com>
+X-Received: by 2002:a05:6e02:214c:b0:3a3:9337:4cf4 with SMTP id
+ e9e14a558f8ab-3a3f40500famr20935825ab.4.1729257661749; Fri, 18 Oct 2024
+ 06:21:01 -0700 (PDT)
+Date: Fri, 18 Oct 2024 06:21:01 -0700
+In-Reply-To: <67124175.050a0220.10f4f4.0012.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671260bd.050a0220.1e4b4d.0016.GAE@google.com>
+Subject: Re: [syzbot] [pm?] WARNING in thermal_thresholds_flush
+From: syzbot <syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com>
+To: andreyknvl@gmail.com, daniel.lezcano@linaro.org, elver@google.com, 
+	jannh@google.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	lukasz.luba@arm.com, rafael@kernel.org, rui.zhang@intel.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Oct 13, 2024 at 08:54:58PM +0200, Eric Woudstra wrote:
-> This adds the capability to conntrack 802.1ad, QinQ, PPPoE and PPPoE-in-Q
-> packets that are passing a bridge.
-> 
-> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
-> ---
+syzbot has bisected this issue to:
 
-Whatever you choose to do forward with these patches, please squash this
-build fix here (you can drop my authorship info and commit message):
+commit b8c8ba73c68bb3c3e9dad22f488b86c540c839f9
+Author: Jann Horn <jannh@google.com>
+Date:   Fri Aug 9 15:36:56 2024 +0000
 
-From e73315196c3143de2af2fe39e3b0e95391849d6c Mon Sep 17 00:00:00 2001
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-Date: Fri, 18 Oct 2024 13:59:27 +0300
-Subject: [PATCH] netfilter: bridge: fix build failures in nf_ct_bridge_pre()
+    slub: Introduce CONFIG_SLUB_RCU_DEBUG
 
-clang-16 fails to build, stating:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14cc4c5f980000
+start commit:   15e7d45e786a Add linux-next specific files for 20241016
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12cc4c5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
+dashboard link: https://syzkaller.appspot.com/bug?extid=f24dd060c1911fe54c85
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1192f887980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1417e830580000
 
-net/bridge/netfilter/nf_conntrack_bridge.c:257:3: error: expected expression
-                struct ppp_hdr {
-                ^
-net/bridge/netfilter/nf_conntrack_bridge.c:262:20: error: use of undeclared identifier 'ph'
-                data_len = ntohs(ph->hdr.length) - 2;
-                                 ^
-net/bridge/netfilter/nf_conntrack_bridge.c:262:20: error: use of undeclared identifier 'ph'
-net/bridge/netfilter/nf_conntrack_bridge.c:262:20: error: use of undeclared identifier 'ph'
-net/bridge/netfilter/nf_conntrack_bridge.c:262:20: error: use of undeclared identifier 'ph'
-net/bridge/netfilter/nf_conntrack_bridge.c:265:11: error: use of undeclared identifier 'ph'
-                switch (ph->proto) {
-                        ^
+Reported-by: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com
+Fixes: b8c8ba73c68b ("slub: Introduce CONFIG_SLUB_RCU_DEBUG")
 
-net/bridge/netfilter/nf_conntrack_bridge.c:278:3: error: expected expression
-                struct vlan_hdr *vhdr = (struct vlan_hdr *)(skb->data);
-                ^
-net/bridge/netfilter/nf_conntrack_bridge.c:283:17: error: use of undeclared identifier 'vhdr'
-                inner_proto = vhdr->h_vlan_encapsulated_proto;
-                              ^
-
-One cannot have variable declarations placed this way in a switch/case
-statement, a new scope must be opened.
-
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
- net/bridge/netfilter/nf_conntrack_bridge.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/net/bridge/netfilter/nf_conntrack_bridge.c b/net/bridge/netfilter/nf_conntrack_bridge.c
-index fb2f79396aa0..31e2bcd71735 100644
---- a/net/bridge/netfilter/nf_conntrack_bridge.c
-+++ b/net/bridge/netfilter/nf_conntrack_bridge.c
-@@ -253,7 +253,7 @@ static unsigned int nf_ct_bridge_pre(void *priv, struct sk_buff *skb,
- 		return NF_ACCEPT;
- 
- 	switch (skb->protocol) {
--	case htons(ETH_P_PPP_SES):
-+	case htons(ETH_P_PPP_SES): {
- 		struct ppp_hdr {
- 			struct pppoe_hdr hdr;
- 			__be16 proto;
-@@ -273,7 +273,8 @@ static unsigned int nf_ct_bridge_pre(void *priv, struct sk_buff *skb,
- 			return NF_ACCEPT;
- 		}
- 		break;
--	case htons(ETH_P_8021Q):
-+	}
-+	case htons(ETH_P_8021Q): {
- 		struct vlan_hdr *vhdr = (struct vlan_hdr *)(skb->data);
- 
- 		data_len = 0xffffffff;
-@@ -281,6 +282,7 @@ static unsigned int nf_ct_bridge_pre(void *priv, struct sk_buff *skb,
- 		outer_proto = skb->protocol;
- 		inner_proto = vhdr->h_vlan_encapsulated_proto;
- 		break;
-+	}
- 	default:
- 		data_len = 0xffffffff;
- 		break;
--- 
-2.43.0
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
