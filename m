@@ -1,311 +1,166 @@
-Return-Path: <linux-kernel+bounces-372050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81299A43CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:26:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D9F9A43D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1071F21684
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:26:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0532F1C23B69
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A862038A1;
-	Fri, 18 Oct 2024 16:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FD7202656;
+	Fri, 18 Oct 2024 16:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H+/zmRRV"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RCR8TQBh"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D44920370D
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 16:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBBD201273
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 16:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729268762; cv=none; b=lHW5xDGz/mzdUxX35JbW+9kNOd7SMSF9ebs70E+dpLgHszfcchHCyx+gWLaytdKJ30rpcXeWbuy51MCphta2JAAZwk1EzWzSaOPLiXz9ycam/Xh/iqxgBwwJmaD79xZhfMo9oFgqqyaoBclJNF7T30/WdTKUrQhyRf1yAGF3+OM=
+	t=1729268794; cv=none; b=I5nScwPYt+4zq5p3jL7p11Rd6RdMfO0jBUwJUjlRs32xVRk1yTVv6K4ay6i3g4o9ywE9+4LN76sO3AdtUAsre+rkB6PMI5i1HcKEkBM8/bA60Z4zSG4rko7TXKiJmJ+c5uoymkSGYq2Xk1QVxnWZjqYprqenJxVvKV4nIjJT0KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729268762; c=relaxed/simple;
-	bh=5jbP6qgUgoq1McrR3RLDeRE04owyYxOG4RL62eRi/S0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0qNe5sDVMMnw14gnfhpwJt81MdmSjSgLpKqLloCXrjDII64LJfNsG37HvqBbl5MMJCRKssNN/B2nxjcojkPqULM4z4wMasrf4Ugv/wJUKlSavtUV9LVTNFMTUln55UdTZPu+0AyqBtEJrcIsiQnsDLr5pHFh++Ada/RxDRtx8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H+/zmRRV; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-286f0dcead5so1980451fac.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:25:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729268758; x=1729873558; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P4qNWvLVpxYbIRtwTadaIjM03ETyiiYE+F1EJeQJjHY=;
-        b=H+/zmRRV8q4r4+UlnQN+A0sP2z3gWgJIB1zMRgg6lSVwQDwtf4E85CCQQQpAg5ByQZ
-         syk1Lhzseqd9xZSU4/I/HS2vk/XrXimgUu6t+n555D68Yz7svJcvHY1nTQOyg+tYj36k
-         YsPJaR6eYmdifwgngf3DaWrxI6vYfn+aABy5o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729268758; x=1729873558;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P4qNWvLVpxYbIRtwTadaIjM03ETyiiYE+F1EJeQJjHY=;
-        b=j7XsOhDdeVE3S6bZ6srBBOSg7T5QP5e/hXflHQIoAsno90/sFUAsCzoyxk+GS7I+UD
-         9KchA6xbtfgQ/aSh1zcn4lWWJRZnUIcJpmxLzFaOqfyYg26/LFA/7jWcJICM6nMNoMdY
-         XAa1+IqMXAssuRli9rSoKY6YFuRImI8GS1daEq0JTeK120/8XPH3I3AvUnSvkQgZ6Cd1
-         WgPyQhTSYpDhA7ltJwDtFf2GU7RjpA4LJJ//Xo9DljymM0U5/INoAIbj42UJw6gYEGbZ
-         msLwjFjoLsu2bQvhx2GjsNMDTRmeB0udKIe20bly1oTZ5WBUZkSJU1FLZD8Y2HTGeTiw
-         5u6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUCYrnqVmbMF0SampuzXe9nYfrjw4v/1fEaTXc4b5rX3BgR16TlVyFK/Apln9qSnyuJpM5XnmqZMxAy6OA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya4AUFsMBb4hdEm038krhzgr7ST/BLHv4FghPwXhYi+HijRXzQ
-	/o1tLbBqsxQFTCPeolgA19eRVhpMK96qBRgOin5pg9LL9qivn6heLMRl7gBbEFg=
-X-Google-Smtp-Source: AGHT+IGaroc9U1gTQH8oIv9XintQoQrlC7c5FvJNC3/Om1CneZ+0NGXExK3IjmCzNnhwYO6jdZ3JsA==
-X-Received: by 2002:a05:6870:d60e:b0:288:aed8:c43d with SMTP id 586e51a60fabf-2890cf88610mr4183890fac.15.1729268758143;
-        Fri, 18 Oct 2024 09:25:58 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-718195da5f0sm377033a34.60.2024.10.18.09.25.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 09:25:57 -0700 (PDT)
-Message-ID: <3a41a1b5-e9a7-43db-b50e-84d6cc275d10@linuxfoundation.org>
-Date: Fri, 18 Oct 2024 10:25:55 -0600
+	s=arc-20240116; t=1729268794; c=relaxed/simple;
+	bh=HRTZaXDBrFUAoRnNeGJRP0l2UpgCPoD1h3PvuB7mPqk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TAuYq+5Q6+uVpmvoQW7NZX6GBaS6bIM91X39LhCn9Nzdl108JkSXU+KKbxE4qEoUcLTAH45IPvUF1wqoMYfP9DK/pMufG9PEvAQv9M/smgfsKUQNoKetrV1rzAUQw0OEeF0YphtzJoULhn1Ddh6sca+vXblKEEROk9waHlTphTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RCR8TQBh; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729268788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zZFNty+4MUqUulapojItD8daiL/iVPa2dufUpuuxdUk=;
+	b=RCR8TQBhzi5rMo3TV7meFY54D3RTlAQuvL5ba0WLsRC6gKuMmzzxcH5OCdsZtSUTCPPZEZ
+	2C3RPRvy0ycgvapMQCaP72+tRzfbpY8hVqB/Prkj0rkO1jZhjsSuUZfJREZBr+7GJiuS2t
+	qZINTFwYD55eWF8JSTIMCt7gJ8hlz1o=
+From: Hao Ge <hao.ge@linux.dev>
+To: surenb@google.com,
+	kent.overstreet@linux.dev,
+	akpm@linux-foundation.org
+Cc: yuzhao@google.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	hao.ge@linux.dev,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH v2] mm/codetag: move ref and tag null pointer check to alloc_tag_add
+Date: Sat, 19 Oct 2024 00:25:59 +0800
+Message-Id: <20241018162559.143548-1-hao.ge@linux.dev>
+In-Reply-To: <20241018152925.138341-1-hao.ge@linux.dev>
+References: <20241018152925.138341-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] selftests/mm: add self tests for guard page feature
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
- "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
- David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Muchun Song <muchun.song@linux.dev>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
- Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
- linux-kselftest@vger.kernel.org, Sidhartha Kumar
- <sidhartha.kumar@oracle.com>, Jeff Xu <jeffxu@chromium.org>,
- Christoph Hellwig <hch@infradead.org>, Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1729196871.git.lorenzo.stoakes@oracle.com>
- <8b1add3c511effb62d68183cae8a954d8339286c.1729196871.git.lorenzo.stoakes@oracle.com>
- <1d0bbc60-fda7-4c14-bf02-948bdbf8f029@linuxfoundation.org>
- <dfbf9ccb-6834-4181-a382-35c9c9af8064@lucifer.local>
- <22d386cd-e62f-43f9-905e-2d0881781abe@linuxfoundation.org>
- <7bbfc635-8d42-4c3d-8808-cb060cd9f658@lucifer.local>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <7bbfc635-8d42-4c3d-8808-cb060cd9f658@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10/18/24 10:07, Lorenzo Stoakes wrote:
-> On Fri, Oct 18, 2024 at 09:32:17AM -0600, Shuah Khan wrote:
->> On 10/18/24 01:12, Lorenzo Stoakes wrote:
->>> On Thu, Oct 17, 2024 at 03:24:49PM -0600, Shuah Khan wrote:
->>>> On 10/17/24 14:42, Lorenzo Stoakes wrote:
->>>>> Utilise the kselftest harmness to implement tests for the guard page
->>>>
->>>> Splleing NIT - harmness -> harness
->>>>
->>>>> implementation.
->>>>>
->>>>> We start by implement basic tests asserting that guard pages can be
->>>>
->>>> implmenting? By the way checkpatch will catch spelling stuuf.
->>>> Please see comments about warnings below.
->>>
->>> Thanks. The majority of the checkpatch warnings are invalid so I missed
->>> this. Will fix on respin.
->>>
->>>>
->>>>> established (poisoned), cleared (remedied) and that touching poisoned pages
->>>>> result in SIGSEGV. We also assert that, in remedying a range, non-poison
->>>>> pages remain intact.
->>>>>
->>>>> We then examine different operations on regions containing poison markers
->>>>> behave to ensure correct behaviour:
->>>>>
->>>>> * Operations over multiple VMAs operate as expected.
->>>>> * Invoking MADV_GUARD_POISION / MADV_GUARD_REMEDY via process_madvise() in
->>>>>      batches works correctly.
->>>>> * Ensuring that munmap() correctly tears down poison markers.
->>>>> * Using mprotect() to adjust protection bits does not in any way override
->>>>>      or cause issues with poison markers.
->>>>> * Ensuring that splitting and merging VMAs around poison markers causes no
->>>>>      issue - i.e. that a marker which 'belongs' to one VMA can function just
->>>>>      as well 'belonging' to another.
->>>>> * Ensuring that madvise(..., MADV_DONTNEED) does not remove poison markers.
->>>>> * Ensuring that mlock()'ing a range containing poison markers does not
->>>>>      cause issues.
->>>>> * Ensuring that mremap() can move a poisoned range and retain poison
->>>>>      markers.
->>>>> * Ensuring that mremap() can expand a poisoned range and retain poison
->>>>>      markers (perhaps moving the range).
->>>>> * Ensuring that mremap() can shrink a poisoned range and retain poison
->>>>>      markers.
->>>>> * Ensuring that forking a process correctly retains poison markers.
->>>>> * Ensuring that forking a VMA with VM_WIPEONFORK set behaves sanely.
->>>>> * Ensuring that lazyfree simply clears poison markers.
->>>>> * Ensuring that userfaultfd can co-exist with guard pages.
->>>>> * Ensuring that madvise(..., MADV_POPULATE_READ) and
->>>>>      madvise(..., MADV_POPULATE_WRITE) error out when encountering
->>>>>      poison markers.
->>>>> * Ensuring that madvise(..., MADV_COLD) and madvise(..., MADV_PAGEOUT) do
->>>>>      not remove poison markers.
->>>>
->>>> Good summary of test. Does the test require root access?
->>>> If so does it check and skip appropriately?
->>>
->>> Thanks and some do, in those cases we skip.
->>>
->>>>
->>>>>
->>>>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>>>> ---
->>>>>     tools/testing/selftests/mm/.gitignore    |    1 +
->>>>>     tools/testing/selftests/mm/Makefile      |    1 +
->>>>>     tools/testing/selftests/mm/guard-pages.c | 1168 ++++++++++++++++++++++
->>>>>     3 files changed, 1170 insertions(+)
->>>>>     create mode 100644 tools/testing/selftests/mm/guard-pages.c
->>>>>
->>>>> diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
->>>>> index 689bbd520296..8f01f4da1c0d 100644
->>>>> --- a/tools/testing/selftests/mm/.gitignore
->>>>> +++ b/tools/testing/selftests/mm/.gitignore
->>>>> @@ -54,3 +54,4 @@ droppable
->>>>>     hugetlb_dio
->>>>>     pkey_sighandler_tests_32
->>>>>     pkey_sighandler_tests_64
->>>>> +guard-pages
->>>>> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
->>>>> index 02e1204971b0..15c734d6cfec 100644
->>>>> --- a/tools/testing/selftests/mm/Makefile
->>>>> +++ b/tools/testing/selftests/mm/Makefile
->>>>> @@ -79,6 +79,7 @@ TEST_GEN_FILES += hugetlb_fault_after_madv
->>>>>     TEST_GEN_FILES += hugetlb_madv_vs_map
->>>>>     TEST_GEN_FILES += hugetlb_dio
->>>>>     TEST_GEN_FILES += droppable
->>>>> +TEST_GEN_FILES += guard-pages
->>>>>     ifneq ($(ARCH),arm64)
->>>>>     TEST_GEN_FILES += soft-dirty
->>>>> diff --git a/tools/testing/selftests/mm/guard-pages.c b/tools/testing/selftests/mm/guard-pages.c
->>>>> new file mode 100644
->>>>> index 000000000000..2ab0ff3ba5a0
->>>>> --- /dev/null
->>>>> +++ b/tools/testing/selftests/mm/guard-pages.c
->>>>> @@ -0,0 +1,1168 @@
->>>>> +// SPDX-License-Identifier: GPL-2.0-or-later
->>>>> +
->>>>> +#define _GNU_SOURCE
->>>>> +#include "../kselftest_harness.h"
->>>>> +#include <assert.h>
->>>>> +#include <fcntl.h>
->>>>> +#include <setjmp.h>
->>>>> +#include <errno.h>
->>>>> +#include <linux/userfaultfd.h>
->>>>> +#include <signal.h>
->>>>> +#include <stdbool.h>
->>>>> +#include <stdio.h>
->>>>> +#include <stdlib.h>
->>>>> +#include <string.h>
->>>>> +#include <sys/ioctl.h>
->>>>> +#include <sys/mman.h>
->>>>> +#include <sys/syscall.h>
->>>>> +#include <sys/uio.h>
->>>>> +#include <unistd.h>
->>>>> +
->>>>> +/* These may not yet be available in the uAPI so define if not. */
->>>>> +
->>>>> +#ifndef MADV_GUARD_POISON
->>>>> +#define MADV_GUARD_POISON	102
->>>>> +#endif
->>>>> +
->>>>> +#ifndef MADV_GUARD_UNPOISON
->>>>> +#define MADV_GUARD_UNPOISON	103
->>>>> +#endif
->>>>> +
->>>>> +volatile bool signal_jump_set;
->>>>
->>>> Can you add a comment about why volatile is needed.
->>>
->>> I'm not sure it's really necessary, it's completely standard to do this
->>> with signal handling and is one of the exceptions to the 'volatile
->>> considered harmful' rule.
->>>
->>>> By the way did you happen to run checkpatck on this. There are
->>>> several instances where single statement blocks with braces {}
->>>>
->>>> I noticed a few and ran checkpatch on your patch. There are
->>>> 45 warnings regarding codeing style.
->>>>
->>>> Please run checkpatch and clean them up so we can avoid followup
->>>> checkpatch cleanup patches.
->>>
->>> No sorry I won't, checkpatch isn't infallible and series trying to 'clean
->>> up' things that aren't issues will be a waste of everybody's time.
->>>
->>
->> Sorry - this violates the coding styles and makes it hard to read.
->>
->> See process/coding-style.rst:
->>
->> Do not unnecessarily use braces where a single statement will do.
->>
->> .. code-block:: c
->>
->>          if (condition)
->>                  action();
->>
->> and
->>
->> .. code-block:: c
->>
->>          if (condition)
->>                  do_this();
->>          else
->>                  do_that();
->>
->> This does not apply if only one branch of a conditional statement is a single
->> statement; in the latter case use braces in both branches:
->>
->> .. code-block:: c
->>
->>          if (condition) {
->>                  do_this();
->>                  do_that();
->>          } else {
->>                  otherwise();
->>          }
->>
->> Also, use braces when a loop contains more than a single simple statement:
->>
->> .. code-block:: c
->>
->>          while (condition) {
->>                  if (test)
->>                          do_something();
->>          }
->>
->> thanks,
->> -- Shuah
-> 
-> Shuah, quoting coding standards to an experienced kernel developer
-> (maintainer now) is maybe not the best way to engage here + it may have
-> been more productive for you to first engage on why it is I'm deviating
-> here.
-> 
+From: Hao Ge <gehao@kylinos.cn>
 
-This is not the only comment I gave you in this patch and your
-other patches.
+When we compile and load lib/slub_kunit.c,it will cause a panic.
 
-thanks,
--- Shuah
+The root cause is that __kmalloc_cache_noprof was directly called
+instead of kmem_cache_alloc,which resulted in no alloc_tag being
+allocated.This caused current->alloc_tag to be null,leading to a
+null pointer dereference in alloc_tag_ref_set.
+
+Despite the fact that my colleague Pei Xiao will later fix the code
+in slub_kunit.c,we still need to move the null pointer check for ref
+and tag to alloc_tag_add here.
+It is sufficient for us to issue a warning to the user;
+It should not lead to a panic.
+
+Here is the log for the panic:
+
+[   74.779373][ T2158] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
+[   74.780130][ T2158] Mem abort info:
+[   74.780406][ T2158]   ESR = 0x0000000096000004
+[   74.780756][ T2158]   EC = 0x25: DABT (current EL), IL = 32 bits
+[   74.781225][ T2158]   SET = 0, FnV = 0
+[   74.781529][ T2158]   EA = 0, S1PTW = 0
+[   74.781836][ T2158]   FSC = 0x04: level 0 translation fault
+[   74.782288][ T2158] Data abort info:
+[   74.782577][ T2158]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[   74.783068][ T2158]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[   74.783533][ T2158]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[   74.784010][ T2158] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000105f34000
+[   74.784586][ T2158] [0000000000000020] pgd=0000000000000000, p4d=0000000000000000
+[   74.785293][ T2158] Internal error: Oops: 0000000096000004 [#1] SMP
+[   74.785805][ T2158] Modules linked in: slub_kunit kunit ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_mangle 4
+[   74.790661][ T2158] CPU: 0 UID: 0 PID: 2158 Comm: kunit_try_catch Kdump: loaded Tainted: G        W        N 6.12.0-rc3+ #2
+[   74.791535][ T2158] Tainted: [W]=WARN, [N]=TEST
+[   74.791889][ T2158] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+[   74.792479][ T2158] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   74.793101][ T2158] pc : alloc_tagging_slab_alloc_hook+0x120/0x270
+[   74.793607][ T2158] lr : alloc_tagging_slab_alloc_hook+0x120/0x270
+[   74.794095][ T2158] sp : ffff800084d33cd0
+[   74.794418][ T2158] x29: ffff800084d33cd0 x28: 0000000000000000 x27: 0000000000000000
+[   74.795095][ T2158] x26: 0000000000000000 x25: 0000000000000012 x24: ffff80007b30e314
+[   74.795822][ T2158] x23: ffff000390ff6f10 x22: 0000000000000000 x21: 0000000000000088
+[   74.796555][ T2158] x20: ffff000390285840 x19: fffffd7fc3ef7830 x18: ffffffffffffffff
+[   74.797283][ T2158] x17: ffff8000800e63b4 x16: ffff80007b33afc4 x15: ffff800081654c00
+[   74.798011][ T2158] x14: 0000000000000000 x13: 205d383531325420 x12: 5b5d383734363537
+[   74.798744][ T2158] x11: ffff800084d337e0 x10: 000000000000005d x9 : 00000000ffffffd0
+[   74.799476][ T2158] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008219d188 x6 : c0000000ffff7fff
+[   74.800206][ T2158] x5 : ffff0003fdbc9208 x4 : ffff800081edd188 x3 : 0000000000000001
+[   74.800932][ T2158] x2 : 0beaa6dee1ac5a00 x1 : 0beaa6dee1ac5a00 x0 : ffff80037c2cb000
+[   74.801656][ T2158] Call trace:
+[   74.801954][ T2158]  alloc_tagging_slab_alloc_hook+0x120/0x270
+[   74.802494][ T2158]  __kmalloc_cache_noprof+0x148/0x33c
+[   74.802976][ T2158]  test_kmalloc_redzone_access+0x4c/0x104 [slub_kunit]
+[   74.803607][ T2158]  kunit_try_run_case+0x70/0x17c [kunit]
+[   74.804124][ T2158]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
+[   74.804768][ T2158]  kthread+0x10c/0x118
+[   74.805141][ T2158]  ret_from_fork+0x10/0x20
+[   74.805540][ T2158] Code: b9400a80 11000400 b9000a80 97ffd858 (f94012d3)
+[   74.806176][ T2158] SMP: stopping secondary CPUs
+[   74.808130][ T2158] Starting crashdump kernel...
+
+Fixes: e0a955bf7f61 ("mm/codetag: add pgalloc_tag_copy()")
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+v2: Modify the errors in the title and commit message.
+    Remove the empty lines that were mistakenly added in version v1.
+---
+ include/linux/alloc_tag.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+index 1f0a9ff23a2c..8603e3a9df10 100644
+--- a/include/linux/alloc_tag.h
++++ b/include/linux/alloc_tag.h
+@@ -137,10 +137,6 @@ static inline void alloc_tag_sub_check(union codetag_ref *ref) {}
+ /* Caller should verify both ref and tag to be valid */
+ static inline void __alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *tag)
+ {
+-	alloc_tag_add_check(ref, tag);
+-	if (!ref || !tag)
+-		return;
+-
+ 	ref->ct = &tag->ct;
+ }
+ 
+@@ -158,6 +154,10 @@ static inline void alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *t
+ 
+ static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag, size_t bytes)
+ {
++	alloc_tag_add_check(ref, tag);
++	if (!ref || !tag)
++		return;
++
+ 	alloc_tag_ref_set(ref, tag);
+ 	this_cpu_add(tag->counters->bytes, bytes);
+ }
+-- 
+2.25.1
 
 
