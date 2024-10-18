@@ -1,180 +1,224 @@
-Return-Path: <linux-kernel+bounces-371930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34889A4242
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:23:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A859A4246
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499D5280E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:23:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3EB21C20307
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4883F2022D9;
-	Fri, 18 Oct 2024 15:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F762022E2;
+	Fri, 18 Oct 2024 15:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7i5uxKe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YlCmhHxs"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AC22010F0;
-	Fri, 18 Oct 2024 15:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE792022EC
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729264998; cv=none; b=cb01OBt0+4zts5JOcZWK/yWyA8Gxw4XEeRRS/AXg0DG6o6SKzB12yO6a5C+DcVMqqjCf8KpL6RwKfjd1U1esMGnAWgXk2TrEYZvVC/FWei3jMo688mTUc7E3WHQHassyKpk8KEsL0ULdyq3Ad+dU7nLRz/LG4puoiWcpjHGn0fE=
+	t=1729265034; cv=none; b=jEixaWYZMVmSpK8Fl9EPw4iTLlIxqdp5otSGkghtmEpX2YPrYK8Xq/BgOC3dcuthuF7a7cDveXqWhlI0Vghul586oMpIgy/G5KTDhZfGWgg/3+wgS6BVY+M7MSC2sv4xK8jsbpiNIxAYkq4hEopv+6E81w+Dbwmb0OAgw/UZPEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729264998; c=relaxed/simple;
-	bh=CxkuYeapXtUVsDlCc28E9Iy/192+YAlGn6UxeAQPmms=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sNWF46qbgq1uWc1Ys6xGcP8dK5wUmEo0+2t1OTMJmoHCOIjlFFBoksN7XO1hpzcVPl/EwL6wQKwq26BCAy3R4J1dyVws8G5m2OZdsluY6zZy6TdaJnbNAo0Y0a8RvxuQrZj/X093iwu3NVd2/WBTsU3a8Fqh3Kq3gtqb7bJGqtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7i5uxKe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A732C4CEC3;
-	Fri, 18 Oct 2024 15:23:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729264998;
-	bh=CxkuYeapXtUVsDlCc28E9Iy/192+YAlGn6UxeAQPmms=;
-	h=From:To:Cc:Subject:Date:From;
-	b=g7i5uxKe3rT7ZBt81OUoHh5Jlsvi6b8SjgNVu4Q7C4YSr1EfvOLI6+2rfJn0hTc93
-	 hk23hkFGzz14BUehPnEYg/8LDnRM2aqakciLnfv2bBanNV8A29bbz5dDjYWqmWnTFN
-	 f6Ex1H69BKLwmmnJ8DIxUcp1tf2FINCLoYNHw2cE76bkrDmR8LGf1hmzEZy83ronnR
-	 2qPAL1Qizt3xykcue85Eyuvcjht1d62aEVQMeqyNaGajaVONJk1lkH1qWdnvSE9l3W
-	 buF1iBMIGu8PC9r6a8qMMYN6DmN7aYQUsurrtoO7c+N6Q2A6bh/RSSwUaLxjokcrda
-	 rt7YURxOn3rCQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Ping-Ke Shih <pkshih@realtek.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Zong-Zhe Yang <kevin_yang@realtek.com>,
-	Kuan-Chung Chen <damon.chen@realtek.com>,
-	Chih-Kang Chang <gary.chang@realtek.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] rtw89: -Wenum-compare-conditional warnings
-Date: Fri, 18 Oct 2024 15:23:07 +0000
-Message-Id: <20241018152311.4023979-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1729265034; c=relaxed/simple;
+	bh=aw4TvXBRoxS1QLVyOhClwUJogFEDYLW7y7nKYmwBT08=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tfr3Rn7oDqsMfxdgnJolNspcm0QSm1iKxWsTuZ20pKVLnS9O2ii6svyPE3oeI9HAnVqCIH5TaOz9BEWrciJFxx7RkkMuNxIbpPFaON2DiuxJnqLL/Wm7S30XRHtBypk4sOqUHkdKapAkhf9p2j1DNhyN+x6VSe2AUEy+Pq257YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YlCmhHxs; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a39620ff54so8565835ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:23:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729265031; x=1729869831; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2ujG7zA5UqO+FYt2O4Y3HH9GYNxBYa4vCv9rOHMB0kI=;
+        b=YlCmhHxs3MovcboipEg2j6YCyIODMKgNj5hW4qPOUTL8Ttf+42kML4rO9dJh0skxCQ
+         LwT5o1vWN+ZAXQt21jdlHTC4TbreaBOqx/0iQdauk4QLcMw0+yxCsNnhC2n/L6m51U1o
+         dc13pNamqmyvvym/hO8aQFCp6A5V2IJoXue2g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729265031; x=1729869831;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ujG7zA5UqO+FYt2O4Y3HH9GYNxBYa4vCv9rOHMB0kI=;
+        b=lS30sLpFOX72KCsCpBEzKe06ToTIHndvYDmHuj28tyVwpsuhro+o4n3H4Dx+9aVnBZ
+         371PIZpoLwR/1hXXbpN0Tr/NeUhWvQ90C5AU4aaTAlWdPasYFDgKmRYuHSmDjyyRp5Om
+         dGemVGzdta8XptbXX/1MJ0KWC4dL8BuR4rJH73Vc9y2Ty9lNUaUVl/iYuMX+QUTKHKFC
+         7fpdMNQKRAQkqs8eimmgcGe/xka2D79ScBK2Tigu8GoSlSmIaG7MKyXIxpoORZmV82I1
+         BY3O8TrAO3atom6uOohmYErr1FAV+iLz2em4aayS24e/LP7u2kdEKMXvbi01nMwDGwTv
+         0SeA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5W5Yup0I6cMcPlJ48bO5pURSUZsp3ZOQ1PVJKY3X6m/1nmYEeVe8TxG140xMhE2zXtGltW87aWSyxkF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH8fgbdwmKVwzDT/wRZYwm9/zqFIS6+qoc10h9SLq2SbtfzrjW
+	NvgbwETLQvXPx/xT+gDUFU2nwJDzvheB2uuXQjZ1fVPMhnp3w3elWjduX7Vbw/c=
+X-Google-Smtp-Source: AGHT+IE9lYlbu2klSew/sozdMK+w2vL/0RkYMdMpgfnkCRFosAwu6PfGf4y0odXrA8wa/bMYfWTccQ==
+X-Received: by 2002:a05:6e02:178b:b0:3a0:9fa5:8f1 with SMTP id e9e14a558f8ab-3a3f40bac08mr30599885ab.24.1729265030742;
+        Fri, 18 Oct 2024 08:23:50 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3f814d63csm1219055ab.65.2024.10.18.08.23.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 08:23:50 -0700 (PDT)
+Message-ID: <2cda7742-d454-4dc3-83f3-2a2abf4cc4d6@linuxfoundation.org>
+Date: Fri, 18 Oct 2024 09:23:49 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftest: drivers: Add support to check duplicate hwirq
+To: Joseph Jang <jjang@nvidia.com>, shuah@kernel.org, tglx@linutronix.de,
+ helgaas@kernel.org, mochs@nvidia.com, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240904014426.3404397-1-jjang@nvidia.com>
+ <533eb948-a061-4d62-8d89-5edbdaf785e6@nvidia.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <533eb948-a061-4d62-8d89-5edbdaf785e6@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 10/17/24 22:29, Joseph Jang wrote:
+> 
+> 
+> On 2024/9/4 9:44 AM, Joseph Jang wrote:
+>> Validate there are no duplicate hwirq from the irq debug
+>> file system /sys/kernel/debug/irq/irqs/* per chip name.
+>>
+>> One example log show 2 duplicated hwirq in the irq debug
+>> file system.
+>>
+>> $ sudo cat /sys/kernel/debug/irq/irqs/163
+>> handler:  handle_fasteoi_irq
+>> device:   0019:00:00.0
+>>       <SNIP>
+>> node:     1
+>> affinity: 72-143
+>> effectiv: 76
+>> domain:  irqchip@0x0000100022040000-3
+>>   hwirq:   0xc8000000
+>>   chip:    ITS-MSI
+>>    flags:   0x20
+>>
+>> $ sudo cat /sys/kernel/debug/irq/irqs/174
+>> handler:  handle_fasteoi_irq
+>> device:   0039:00:00.0
+>>      <SNIP>
+>> node:     3
+>> affinity: 216-287
+>> effectiv: 221
+>> domain:  irqchip@0x0000300022040000-3
+>>   hwirq:   0xc8000000
+>>   chip:    ITS-MSI
+>>    flags:   0x20
+>>
+>> The irq-check.sh can help to collect hwirq and chip name from
+>> /sys/kernel/debug/irq/irqs/* and print error log when find duplicate
+>> hwirq per chip name.
+>>
+>> Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
+>> [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
+>>
+>> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+>> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+>> ---
+>>   tools/testing/selftests/drivers/irq/Makefile  |  5 +++
+>>   tools/testing/selftests/drivers/irq/config    |  2 +
+>>   .../selftests/drivers/irq/irq-check.sh        | 39 +++++++++++++++++++
+>>   3 files changed, 46 insertions(+)
+>>   create mode 100644 tools/testing/selftests/drivers/irq/Makefile
+>>   create mode 100644 tools/testing/selftests/drivers/irq/config
+>>   create mode 100755 tools/testing/selftests/drivers/irq/irq-check.sh
+>>
+>> diff --git a/tools/testing/selftests/drivers/irq/Makefile b/tools/testing/selftests/drivers/irq/Makefile
+>> new file mode 100644
+>> index 000000000000..d6998017c861
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/drivers/irq/Makefile
+>> @@ -0,0 +1,5 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +
+>> +TEST_PROGS := irq-check.sh
+>> +
+>> +include ../../lib.mk
+>> diff --git a/tools/testing/selftests/drivers/irq/config b/tools/testing/selftests/drivers/irq/config
+>> new file mode 100644
+>> index 000000000000..a53d3b713728
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/drivers/irq/config
+>> @@ -0,0 +1,2 @@
+>> +CONFIG_GENERIC_IRQ_DEBUGFS=y
+>> +CONFIG_GENERIC_IRQ_INJECTION=y
+>> diff --git a/tools/testing/selftests/drivers/irq/irq-check.sh b/tools/testing/selftests/drivers/irq/irq-check.sh
+>> new file mode 100755
+>> index 000000000000..e784777043a1
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/drivers/irq/irq-check.sh
+>> @@ -0,0 +1,39 @@
+>> +#!/bin/bash
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +
+>> +# This script need root permission
+>> +uid=$(id -u)
+>> +if [ $uid -ne 0 ]; then
+>> +    echo "SKIP: Must be run as root"
+>> +    exit 4
+>> +fi
+>> +
+>> +# Ensure debugfs is mounted
+>> +mount -t debugfs nodev /sys/kernel/debug 2>/dev/null
+>> +if [ ! -d "/sys/kernel/debug/irq/irqs" ]; then
+>> +    echo "SKIP: irq debugfs not found"
+>> +    exit 4
+>> +fi
+>> +
+>> +# Traverse the irq debug file system directory to collect chip_name and hwirq
+>> +hwirq_list=$(for irq_file in /sys/kernel/debug/irq/irqs/*; do
+>> +    # Read chip name and hwirq from the irq_file
+>> +    chip_name=$(cat "$irq_file" | grep -m 1 'chip:' | awk '{print $2}')
+>> +    hwirq=$(cat "$irq_file" | grep -m 1 'hwirq:' | awk '{print $2}' )
+>> +
+>> +    if [ -z "$chip_name" ] || [ -z "$hwirq" ]; then
+>> +        continue
+>> +    fi
+>> +
+>> +    echo "$chip_name $hwirq"
+>> +done)
+>> +
+>> +dup_hwirq_list=$(echo "$hwirq_list" | sort | uniq -cd)
+>> +
+>> +if [ -n "$dup_hwirq_list" ]; then
+>> +    echo "ERROR: Found duplicate hwirq"
+>> +    echo "$dup_hwirq_list"
+>> +    exit 1
+>> +fi
+>> +
+>> +exit 0
+> 
+> Hi Tglx,
+> 
+> I follow your suggestions https://www.mail-archive.com/linux-kselftest@vger.kernel.org/msg16952.html to enable IRQ DEBUG_FS and create a new script to scan duplicated hwirq. If you have available time, would you please help to take a look at new patch again ?
+> 
+> 
+> https://lore.kernel.org/all/20240904014426.3404397-1-jjang@nvidia.com/T/
+> 
+> 
+> Hi Shuah,
+> 
+> If you have time, could you help to take a look at the new patch ?
+> 
 
-This is one of three drivers that trigger -Wenum-compare-conditional warnings
-with clang:
+Once Thomas reviews this and gives me okay - I will accept the patch.
 
-drivers/net/wireless/realtek/rtw89/core.c:1806:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
- 1806 |                 return eht ? NL80211_RATE_INFO_EHT_GI_0_8 :
-      |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 1807 |                              NL80211_RATE_INFO_HE_GI_0_8;
-      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/wireless/realtek/rtw89/core.c:1810:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
- 1810 |                 return eht ? NL80211_RATE_INFO_EHT_GI_1_6 :
-      |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 1811 |                              NL80211_RATE_INFO_HE_GI_1_6;
-      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/wireless/realtek/rtw89/core.c:1813:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
- 1813 |                 return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
-      |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 1814 |                              NL80211_RATE_INFO_HE_GI_3_2;
-      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/wireless/realtek/rtw89/core.c:1818:15: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
- 1818 |                         return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
-      |                                    ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 1819 |                                      NL80211_RATE_INFO_HE_GI_3_2;
-      |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+thanks,
+-- Shuah
 
-In this case, all four warnings can be easily avoided by splitting the
-function into two separate ones, in a way that helps readability as well,
-at the expense of a few extra source lines.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/wireless/realtek/rtw89/core.c | 48 +++++++++++++++++------
- 1 file changed, 37 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
-index bba5bde95bb4..62e873fa1659 100644
---- a/drivers/net/wireless/realtek/rtw89/core.c
-+++ b/drivers/net/wireless/realtek/rtw89/core.c
-@@ -1858,32 +1858,58 @@ static void rtw89_core_rx_process_phy_sts(struct rtw89_dev *rtwdev,
- 					  phy_ppdu);
- }
- 
--static u8 rtw89_rxdesc_to_nl_he_eht_gi(struct rtw89_dev *rtwdev,
--				       u8 desc_info_gi,
--				       bool rx_status, bool eht)
-+static u8 rtw89_rxdesc_to_nl_he_gi(struct rtw89_dev *rtwdev,
-+				   u8 desc_info_gi,
-+				   bool rx_status)
-+{
-+	switch (desc_info_gi) {
-+	case RTW89_GILTF_SGI_4XHE08:
-+	case RTW89_GILTF_2XHE08:
-+	case RTW89_GILTF_1XHE08:
-+		return NL80211_RATE_INFO_HE_GI_0_8;
-+	case RTW89_GILTF_2XHE16:
-+	case RTW89_GILTF_1XHE16:
-+		return NL80211_RATE_INFO_HE_GI_1_6;
-+	case RTW89_GILTF_LGI_4XHE32:
-+		return NL80211_RATE_INFO_HE_GI_3_2;
-+	default:
-+		rtw89_warn(rtwdev, "invalid gi_ltf=%d", desc_info_gi);
-+		if (rx_status)
-+			return NL80211_RATE_INFO_HE_GI_3_2;
-+		return U8_MAX;
-+	}
-+}
-+
-+static u8 rtw89_rxdesc_to_nl_eht_gi(struct rtw89_dev *rtwdev,
-+				    u8 desc_info_gi,
-+				    bool rx_status)
- {
- 	switch (desc_info_gi) {
- 	case RTW89_GILTF_SGI_4XHE08:
- 	case RTW89_GILTF_2XHE08:
- 	case RTW89_GILTF_1XHE08:
--		return eht ? NL80211_RATE_INFO_EHT_GI_0_8 :
--			     NL80211_RATE_INFO_HE_GI_0_8;
-+		return NL80211_RATE_INFO_EHT_GI_0_8;
- 	case RTW89_GILTF_2XHE16:
- 	case RTW89_GILTF_1XHE16:
--		return eht ? NL80211_RATE_INFO_EHT_GI_1_6 :
--			     NL80211_RATE_INFO_HE_GI_1_6;
-+		return NL80211_RATE_INFO_EHT_GI_1_6;
- 	case RTW89_GILTF_LGI_4XHE32:
--		return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
--			     NL80211_RATE_INFO_HE_GI_3_2;
-+		return NL80211_RATE_INFO_EHT_GI_3_2;
- 	default:
- 		rtw89_warn(rtwdev, "invalid gi_ltf=%d", desc_info_gi);
- 		if (rx_status)
--			return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
--				     NL80211_RATE_INFO_HE_GI_3_2;
-+			return NL80211_RATE_INFO_EHT_GI_3_2;
- 		return U8_MAX;
- 	}
- }
- 
-+static u8 rtw89_rxdesc_to_nl_he_eht_gi(struct rtw89_dev *rtwdev,
-+				       u8 desc_info_gi,
-+				       bool rx_status, bool eht)
-+{
-+	return eht ? rtw89_rxdesc_to_nl_eht_gi(rtwdev, desc_info_gi, rx_status) :
-+		     rtw89_rxdesc_to_nl_he_gi(rtwdev, desc_info_gi, rx_status);
-+}
-+
- static
- bool rtw89_check_rx_statu_gi_match(struct ieee80211_rx_status *status, u8 gi_ltf,
- 				   bool eht)
--- 
-2.39.5
 
 
