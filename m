@@ -1,251 +1,187 @@
-Return-Path: <linux-kernel+bounces-371885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F13289A41C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:55:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0159A41C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 101F21C24D16
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:55:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6A01C24F36
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C59F1FF5F7;
-	Fri, 18 Oct 2024 14:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jjBr11oB"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5864E1FF61B;
+	Fri, 18 Oct 2024 14:56:11 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF9318872C
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 14:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679011EE03D;
+	Fri, 18 Oct 2024 14:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729263303; cv=none; b=uxt6r/IJUv0i4oY8YrcXrd+UnAB3RX/vcQtpqRzdu/duj6NLbPnMWVgmCIEU1lrglxZzM9Btt+9A6i1cQI1Bh4w00B5P51PG6hb4kqIfJjh9mYsZYHK947wS3iVKMDjb2fQsAM+IuwYK6wLjXTESKO0KWgUH8E/9vRgQfnHGCAQ=
+	t=1729263370; cv=none; b=oNQ3ia5VgxinxbfGL+r0ThXea2W2dG0djjQ1DkQqBxx+OIAneW2Lrx+BuIHjMq+En7GUEqjkwao9MRj6YNJFC17h89zl2xevpXigg35q3plOY34rmyx6uvB5agKWekjyPLyzLSxUstC92t01oPI+3qMcA6QgMfgFQi1TQyTdTl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729263303; c=relaxed/simple;
-	bh=+RX6psnv04alpH+aiDLmh/VhPgq4HI01CEdcSo1Zxxk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FZWT98LDOF1aTH2AvZt7H8BUVnA2nXH95OCXYORQ2Zn30Spaea9P3pon1Hjg96zB01zFASTpsOQv+HhO5LWXGVu+5z9zZQygmYBCcraVSECzfXqhnJ8WaOYsfwqZDoiuaIjRANj2dVTdu4NNIiG27soCeeH94KC2k7FDtIxXxB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jjBr11oB; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IA0vxR014451;
-	Fri, 18 Oct 2024 14:54:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=wuAbHx
-	iPkGV2NkdygUsactUToW9jLAcb4zeAhpmaSGA=; b=jjBr11oB+taVHxPvp7t2fH
-	IwtS9I9CcUtrvza5d0lRNY5GR1ZriAFyDSZZy9B8DDrpooehGrHm3Uj20pf8r1au
-	KR4Z88OJuMI2Kv7ngGuDqhkSymEPm+DxfRmwiePnlmZiRZWYXX6SSMnNRGNx9iGJ
-	bgSadKfnndhqJ4whOEBZGoQ3VUBgx/ZBoQtH0u3zYbFk65ol/xgc+WP4SHNZC9LA
-	73jV/uHtRXiIYvQubPcmwy5hrZFahnAlcftUKoWFj/QK6IvJkkyuMtVhLtkDMdbM
-	8Q8w/Mp14LxjNI75qFkLhsIyz9xopHAqR6kSDOtZmDIArvSTtu8sDpwSA+q5Jnig
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42aqgr9hqm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 14:54:41 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49IEsebp001706;
-	Fri, 18 Oct 2024 14:54:40 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42aqgr9hqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 14:54:40 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49IEAfaK027499;
-	Fri, 18 Oct 2024 14:54:39 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283ty58w1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 14:54:39 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49IEsc7f48955862
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Oct 2024 14:54:38 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8825858058;
-	Fri, 18 Oct 2024 14:54:38 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D64E558057;
-	Fri, 18 Oct 2024 14:54:30 +0000 (GMT)
-Received: from [9.43.75.71] (unknown [9.43.75.71])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 18 Oct 2024 14:54:30 +0000 (GMT)
-Message-ID: <b66e69a9-7098-44f6-822d-f19bfe85117d@linux.ibm.com>
-Date: Fri, 18 Oct 2024 20:24:28 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 1/3] fadump: Refactor and prepare fadump_cma_init for
- late init
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org
-Cc: linux-mm@kvack.org, Sourabh Jain <sourabhjain@linux.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-        Donet Tom <donettom@linux.vnet.ibm.com>,
-        LKML
- <linux-kernel@vger.kernel.org>,
-        Sachin P Bappalige <sachinpb@linux.ibm.com>
-References: <030b6d46fddac126a6cf7e119bea48055338f0ed.1728658614.git.ritesh.list@gmail.com>
- <941875f7-0d7f-4ba3-bc7c-7aedc3b20dae@linux.ibm.com>
- <87bjznyliv.fsf@gmail.com>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <87bjznyliv.fsf@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 4bogdjanN3TYYCy_sgTWtiLvonWB_FNz
-X-Proofpoint-GUID: 6sJJXsusFzLs8VonsFBslxb73qcPWjO2
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729263370; c=relaxed/simple;
+	bh=62QEUV1KPsfEpMy7KQ63REX0ZDBu3fVmmN2TDPHe16c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=stLgieYXdBNgfb4GParyECj0/jZoqLe7LSLHO4vFv2tnquYbntqWEcwcptYObs5mtm6x9Quz8TOHvpa3k7MO9im5nTwhR/91i0wEVg9+SO9ibrIgOe+6Zhtgx/Ec9qUXjKEPfSwJ2ons6d88i1e5sfW/SoTNHZGT5+HYQ6jicQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XVS1N4lgNz9v7JS;
+	Fri, 18 Oct 2024 22:35:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 1954A1404DA;
+	Fri, 18 Oct 2024 22:56:00 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwCHNsf1dhJnRHggAw--.63843S2;
+	Fri, 18 Oct 2024 15:55:59 +0100 (CET)
+Message-ID: <46d8cfe7db6f381c99455159bff1c2220dff4aed.camel@huaweicloud.com>
+Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
+ process_measurement (4)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Shu Han <ebpqwerty472123@gmail.com>, syzbot
+ <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>, 
+ akpm@linux-foundation.org, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  hughd@google.com, jmorris@namei.org,
+ linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org,  linux-security-module@vger.kernel.org,
+ roberto.sassu@huawei.com,  serge@hallyn.com,
+ stephen.smalley.work@gmail.com,  syzkaller-bugs@googlegroups.com,
+ zohar@linux.ibm.com
+Date: Fri, 18 Oct 2024 16:55:47 +0200
+In-Reply-To: <1a1d106ea8bba8abc1d3f3cd6fdd71d03edcf764.camel@huaweicloud.com>
+References: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
+	 <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
+	 <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
+	 <05e893036fa8753e0177db99dd48eb9d2e33476a.camel@huaweicloud.com>
+	 <CAHC9VhSEMSwzxjXUHLCWXoGj3ds8pQJ-nH6WQuRDzBkx6Svotw@mail.gmail.com>
+	 <70f55efdba0e682907c895ea8ba537ea435bc3aa.camel@huaweicloud.com>
+	 <CAHC9VhRt1BA_U2cEDFjHK_bmfW0ejx2AtbwZKgE5FFRDbUYNOg@mail.gmail.com>
+	 <1a1d106ea8bba8abc1d3f3cd6fdd71d03edcf764.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 mlxlogscore=999 malwarescore=0 clxscore=1015
- lowpriorityscore=0 adultscore=0 spamscore=0 mlxscore=0 suspectscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410180094
+X-CM-TRANSID:GxC2BwCHNsf1dhJnRHggAw--.63843S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWrWDGF1UGr43XrWxJr15twb_yoWrXFWkpF
+	93Wa4Ikr4DtFyUArn2yr1UW3Wjy34UGryUWr95Jr18JFyqvF1ktr17Jr1ruryUGr95C342
+	qr4UWryfJw1DArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	j7l19UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABGcRxH8K8AABsw
 
+On Wed, 2024-10-09 at 18:23 +0200, Roberto Sassu wrote:
+> On Mon, 2024-10-07 at 12:58 -0400, Paul Moore wrote:
+> > On Mon, Oct 7, 2024 at 12:49=E2=80=AFPM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > On Mon, 2024-10-07 at 12:35 -0400, Paul Moore wrote:
+> > > > On Mon, Oct 7, 2024 at 11:31=E2=80=AFAM Roberto Sassu
+> > > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > > On Wed, 2024-10-02 at 23:09 -0400, Paul Moore wrote:
+> > > > > > On Sat, Sep 28, 2024 at 2:08=E2=80=AFPM Shu Han <ebpqwerty47212=
+3@gmail.com> wrote:
+> > > > > > >=20
+> > > > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > > WARNING: possible circular locking dependency detected
+> > > > > > > > 6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
+> > > > > > > > ------------------------------------------------------
+> > > > > > > > syz-executor369/5231 is trying to acquire lock:
+> > > > > > > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3},=
+ at: inode_lock include/linux/fs.h:815 [inline]
+> > > > > > > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3},=
+ at: process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+> > > > > > > >=20
+> > > > > > > > but task is already holding lock:
+> > > > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_wri=
+te_lock_killable include/linux/mmap_lock.h:122 [inline]
+> > > > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys=
+_remap_file_pages mm/mmap.c:1649 [inline]
+> > > > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys=
+_remap_file_pages+0x22d/0xa50 mm/mmap.c:1624
+> > > > > > > >=20
+> > > > > > > > which lock already depends on the new lock.
+> > > > > > >=20
+> > > > > > > This issue (if not a false positive?) is due to the possible =
+`prot`
+> > > > > > > change caused by the processing logic for READ_IMPLIES_EXEC i=
+n do_mmap(),
+> > > > > > > so the remap_file_pages() must perform LSM check before calli=
+ng do_mmap(),
+> > > > > > > this is what the previous commit want to do.
+> > > > > >=20
+> > > > > > My apologies for the delay on this, I was traveling for a bit a=
+nd
+> > > > > > missed this issue while away.
+> > > > > >=20
+> > > > > > Looking quickly at the report, I don't believe this is a false =
+positive.
+> > > > > >=20
+> > > > > > > The LSM check is required to know what the `prot` is, but `pr=
+ot` must be
+> > > > > > > obtained after holding the `mmap_write_lock`.
+> > > > > > >=20
+> > > > > > > If the `mmap_write_lock` is released after getting the `prot`=
+ and before
+> > > > > > > the LSM call in remap_file_pages(), it may cause TOCTOU.
+> > > > > >=20
+> > > > > > Looking at the IMA code, specifically the process_measurement()
+> > > > > > function which is called from the security_mmap_file() LSM hook=
+, I'm
+> > > > > > not sure why there is the inode_lock() protected region.  Mimi?
+> > > > > > Roberto?  My best guess is that locking the inode may have been
+> > > > > > necessary before we moved the IMA inode state into the inode's =
+LSM
+> > > > > > security blob, but I'm not certain.
+> > > > > >=20
+> > > > > > Mimi and Roberto, can we safely remove the inode locking in
+> > > > > > process_measurement()?
+> > > > >=20
+> > > > > I discussed a bit with Mimi. Her concern was the duplicate iint
+> > > > > structure creation during concurrent file accesses. Now that inod=
+e
+> > > > > integrity metadata have been moved to the inode security blob, we=
+ can
+> > > > > take the iint->mutex out of the ima_iint_cache structure, and sto=
+re it
+> > > > > directly in the security blob. In this way, we can remove the ino=
+de
+> > > > > lock.
+> > > > >=20
+> > > > > Will write a patch and see if it passes our tests.
+> > > >=20
+> > > > That's great, thanks Roberto.  Assuming all goes well we'll want to
+> > > > backport this everywhere we merged the remap_file_pages() patch.
+> > >=20
+> > > Welcome. Probably it can go down only until the kernel where IMA and
+> > > EVM are LSMs.
+> >=20
+> > Yes, we'll need to look at that once we solve this in Linus' tree.
+>=20
+> #syz test: https://github.com/robertosassu/linux.git ima-remove-inode-loc=
+k-v1
 
-
-On 10/14/24 4:54 PM, Ritesh Harjani (IBM) wrote:
-> Madhavan Srinivasan <maddy@linux.ibm.com> writes:
-> 
->> On 10/11/24 8:30 PM, Ritesh Harjani (IBM) wrote:
->>> We anyway don't use any return values from fadump_cma_init(). Since
->>> fadump_reserve_mem() from where fadump_cma_init() gets called today,
->>> already has the required checks.
->>> This patch makes this function return type as void. Let's also handle
->>> extra cases like return if fadump_supported is false or dump_active, so
->>> that in later patches we can call fadump_cma_init() separately from
->>> setup_arch().
->>
->> Usually patches to this file are posted with title format of
->>
->> powerpc/fadump:<>
-> 
-> yes. I guess it is good to do it that way (I might have missed it)
-> Although commit history of oldest few patches to fadump shows..
-> 
-> ebaeb5ae2437 fadump: Convert firmware-assisted cpu state dump data into elf notes.
-> 2df173d9e85d fadump: Initialize elfcore header and add PT_LOAD program headers.
-> 3ccc00a7e04f fadump: Register for firmware assisted dump.
-> eb39c8803d0e fadump: Reserve the memory for firmware assisted dump.
-> 
->>
-
-Patchset looks fine to me. 
-
-Reviewed-by: Madhavan Srinivasan <maddy@linux.ibm.com> for the series.
-
-
->>
->>>
->>> Acked-by: Hari Bathini <hbathini@linux.ibm.com>
->>> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->>> ---
->>> v2 -> v3: Separated the series into 2 as discussed in v2.
->>> [v2]: https://lore.kernel.org/linuxppc-dev/cover.1728585512.git.ritesh.list@gmail.com/
->>>
->>>  arch/powerpc/kernel/fadump.c | 23 +++++++++--------------
->>>  1 file changed, 9 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
->>> index a612e7513a4f..162327d66982 100644
->>> --- a/arch/powerpc/kernel/fadump.c
->>> +++ b/arch/powerpc/kernel/fadump.c
->>> @@ -78,27 +78,23 @@ static struct cma *fadump_cma;
->>>   * But for some reason even if it fails we still have the memory reservation
->>>   * with us and we can still continue doing fadump.
->>>   */
->>> -static int __init fadump_cma_init(void)
->>> +static void __init fadump_cma_init(void)
->>>  {
->>>  	unsigned long long base, size;
->>>  	int rc;
->>>
->>> -	if (!fw_dump.fadump_enabled)
->>> -		return 0;
->>> -
->>> +	if (!fw_dump.fadump_supported || !fw_dump.fadump_enabled ||
->>> +			fw_dump.dump_active)
->>> +		return;
->>
->> Is these checks even needed here? fadump_reserve_mem() checked for all
->> these already, also dont see any other caller for fadump_cma_init(). 
->>
->>
-> 
-> In the next patch we will move fadump_cma_init() call from within
-> fadump_reserve_mem() to setup_arch(). Hence we need these extra checks
-> in fadump_cma_init() as well. I mentioned the same in the commit msg of
-> this patch too.
-> 
->>>  	/*
->>>  	 * Do not use CMA if user has provided fadump=nocma kernel parameter.
->>> -	 * Return 1 to continue with fadump old behaviour.
->>>  	 */
->>> -	if (fw_dump.nocma)
->>> -		return 1;
->>> +	if (fw_dump.nocma || !fw_dump.boot_memory_size)
->>> +		return;
->>>
->>>  	base = fw_dump.reserve_dump_area_start;
->>>  	size = fw_dump.boot_memory_size;
->>>
->>> -	if (!size)
->>> -		return 0;
->>
->> So this is the only place where we return 0, which in turn will make the
->> "ret" in fadump_reserve_mem() as zero forcing to call reserve_crashkernel()
->> in early_init_devtree().
->>
->> we are removing it, becos we know "size" here will never be zero?
->>
->>
-> 
-> yes. Because we already check if boot_memory_size is less than
-> bootmem_min in fadump_reserve_mem(). If it is less, then we fail and
-> disable fadump (fadump_enabled = 0).
-> 
-> So then there is no need to check for !boot_memory_size in here.
-> 
-> fadump_reseve_mem( ) {
-> <...>
-> 	if (!fw_dump.dump_active) {
-> 		fw_dump.boot_memory_size =
-> 			PAGE_ALIGN(fadump_calculate_reserve_size());
-> 
-> 		bootmem_min = fw_dump.ops->fadump_get_bootmem_min();
-> 		if (fw_dump.boot_memory_size < bootmem_min) {
-> 			pr_err("Can't enable fadump with boot memory size (0x%lx) less than 0x%llx\n",
-> 			       fw_dump.boot_memory_size, bootmem_min);
-> 			goto error_out;
-> 		}
->     <...>    
->     }
-> <...>
-> error_out:
-> 	fw_dump.fadump_enabled = 0;
-> 	fw_dump.reserve_dump_area_size = 0;
-> 	return 0;
-> }
-> 
-> 
-> Thanks for the review!
-> -ritesh
+#syz test: https://github.com/robertosassu/linux.git remap-file-pages-locki=
+ng-v1
 
 
