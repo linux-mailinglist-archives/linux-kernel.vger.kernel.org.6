@@ -1,99 +1,109 @@
-Return-Path: <linux-kernel+bounces-370977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0FE9A3493
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:52:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E479A34A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5671F21FA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53702285573
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713AD17C9B9;
-	Fri, 18 Oct 2024 05:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE803185B5F;
+	Fri, 18 Oct 2024 05:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BrxudGqm"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cSyiPMGN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570281547C3;
-	Fri, 18 Oct 2024 05:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C8E1822E5;
+	Fri, 18 Oct 2024 05:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729230719; cv=none; b=bJiw0vYVKXwlzD0srJxqeTpXE04z0ESeme+j46sxNPMwsmk5skkmJZZAdTcBZt7xw8EQp62+fvFX6/8Wgv/9ITrVmK5Sh2mcAbX98sW/jVePVnSM1OUvn8NeG8Ujy/4ihz+fRL7KM2x4ab8+LYyRDHLugPuKWjJ05NcKIlpUaTs=
+	t=1729230759; cv=none; b=KLaxR2uap01bStcKZ4NNN9NRVzKAha2Yw3UBDxvVryDVWCQl5IrVA6E0KHzEd6vX+zy7nx999hx4gygOBK9DneXc8DL7Xxbix8xfAMchN9RcLdffbPQvdcneMDOGJrUJ2aSr4ZfzmcNZafHI6aqzxaXoLDbZPkOpghvjEnzO3gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729230719; c=relaxed/simple;
-	bh=HLSs1bTpxFixzrpn4wyzbHhVx+6XHPwafunFJTLvOXk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iXZGLZhLXUg26PlF93ySGpqdcHxc1XGBO5sfMlVOxsXCBTcIV90FIOc6MJ1JOgbHWDxFJ+iTqTuQw6k4+sCIEsyFPSjMSiO/i5I74ffmGVz59D3xdbmylRyKJ+pzMdgxrqUiwZkCazAlGspLUG4lFKOcrVWOftqAycQxNztUDPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BrxudGqm; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a0474e70eso230030466b.0;
-        Thu, 17 Oct 2024 22:51:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729230717; x=1729835517; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HLSs1bTpxFixzrpn4wyzbHhVx+6XHPwafunFJTLvOXk=;
-        b=BrxudGqmNng/evVRWpJ3Hyx+FyaX7uN7gWxuDIoOwo5wMmYtqHaTb0Ilo627aavJAD
-         636rZhSfqtKjP6sZN5eFPX51TkULJjodD/qxGm7RT5qBkvC9/eBx/piLdHETfycxnvRc
-         SIXJWgewImVBWGQxPGwhrq11ehqcczxOAqODLf6Q4hsQCHso5PHF4dTrQ4e4ozFOWmvd
-         DFQuSp9LCRM7mYU9Ewlabhy1bF2jw490vsRHc0u6x6B4foKzIOUK0J/vTd3zxQZ2N3he
-         FFbtlkf3gvP8UaRjjWdsP1vtOmlbvdvWBhDMo1m30wO8arvUHwU4CNXdh2xhHRMHQRIw
-         6wMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729230717; x=1729835517;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HLSs1bTpxFixzrpn4wyzbHhVx+6XHPwafunFJTLvOXk=;
-        b=Hxj0Z07OGZqLnFvlfyfQ8Tu2gFFIkW05DrPN5mYqAHX+Zw82JgbIs87ml4WGU9eIVa
-         Msq8/K1oPJY5snrINgJ4xibKyPcs0S1I2H7XfJhtlNBZKXr0Pps1tpoeGHmnFgQZlzgC
-         pAdU2RNHgsKwT2kfHM7R04QOIpKo0QYCfw445ZI7pf3lo4i6DFoSuU/VfgCxUJnI/j4J
-         rwpXy4PmcGt8GBX2Rj5/YTaDeQozcHgMIlAUoLD8BARjWbhPl5BwtA8t57HOPpebMrzA
-         KjxGtyLRwSrvnBtfrwi2LaXq+pvK5MRbE/aK2Ok1b7dngqlNq3bp3hSoTWuTVSLjwoQb
-         bQZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgZbJH0/al/BEBmL6Menm7QerJnOBAxnrcTU/N2SzHd8s3OwVnpjRRTtPKYqvo5mtRUY3o4C8Saa02@vger.kernel.org, AJvYcCXKWi6lROAJwempUCfFKbAKQKCDTT0qFU6yyky7FlxiRIqlkHvFPF/9KigSpwRt81rvvYd+7O2PaY4p1d8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvfeZW3dHXEUgeVOWpGBfACti9WLablfwEv34mTWnOdPAugTDz
-	d3LwmceGVxSU1VOKLdNSJeMOn07V9xZ1TDv56Jq8X6BubyfkG78l
-X-Google-Smtp-Source: AGHT+IH3hf5zZVuEO38gil91KQgp2pYj54Qdfu/b+0Mi8QbUv2PSTpj3xQwtU01L+hEBm7Euxm67/g==
-X-Received: by 2002:a17:907:9803:b0:a9a:19c8:740c with SMTP id a640c23a62f3a-a9a69cccb7amr90361366b.47.1729230716465;
-        Thu, 17 Oct 2024 22:51:56 -0700 (PDT)
-Received: from [192.168.216.101] (public-gprs10413.centertel.pl. [87.96.40.173])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68aeedabsm46808966b.89.2024.10.17.22.51.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 22:51:56 -0700 (PDT)
-Message-ID: <50361c479af3067031320b19fe650a32bec6d1ba.camel@gmail.com>
-Subject: Re: [PATCH] usb: musb: Fix hardware lockup on first Rx endpoint
- request
-From: Hubert =?UTF-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bin Liu <b-liu@ti.com>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 18 Oct 2024 07:51:54 +0200
-In-Reply-To: <2024101625-fetal-oboe-1b9a@gregkh>
-References: <e905e5d9c3e76786f154a87d54690fe1a90d755a.camel@gmail.com>
-	 <2024101625-fetal-oboe-1b9a@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1729230759; c=relaxed/simple;
+	bh=t72qPYFH5qW9CSTUoUWBfe21Vq2ukayl51YEp/oosEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KP8m7lUDSGSs+1YiUVSA0Q/FSK63GCzmNXK0sz3/hJ17lYNrRYWMjxQuYKRP1v0IIVsk9h/+ILwYRTEKR+JSL0bQfBCzpOAZPmvTjpwIP0vxyPmw6pvoF21FscAt8xknOauKK9g/F8bsUwbZlqC3iFm5uDdGC8OKA/XV6psX/Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cSyiPMGN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB8EAC4CEC3;
+	Fri, 18 Oct 2024 05:52:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729230758;
+	bh=t72qPYFH5qW9CSTUoUWBfe21Vq2ukayl51YEp/oosEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cSyiPMGNKU212TJ+q0GtMzycjpfO32+6AkR/8bwoCghlU21012x0Aoki6eVJI1/U+
+	 6iELNc2vLqcqt7GQZsDvXNrVAYO8yAWTNuDglWB8WFpY0dGOUQxr22xiyNl/HZRJ2C
+	 zYMq/2SyFRgLmomkI7ENxVvBoXwiCQGZBe4D5gqY=
+Date: Fri, 18 Oct 2024 07:52:35 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, mathias.nyman@intel.com, perex@perex.cz,
+	conor+dt@kernel.org, dmitry.torokhov@gmail.com, corbet@lwn.net,
+	lgirdwood@gmail.com, tiwai@suse.com, krzk+dt@kernel.org,
+	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com,
+	broonie@kernel.org, bgoswami@quicinc.com, robh@kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-doc@vger.kernel.org, alsa-devel@alsa-project.org,
+	Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [PATCH v29 01/33] xhci: support setting interrupt moderation
+ IMOD for secondary interrupters
+Message-ID: <2024101824-hammock-elastic-8d38@gregkh>
+References: <20241015212915.1206789-1-quic_wcheng@quicinc.com>
+ <20241015212915.1206789-2-quic_wcheng@quicinc.com>
+ <2024101747-defog-squiggly-ef54@gregkh>
+ <5847c380-75ce-492a-9a30-0899b7ebe98c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5847c380-75ce-492a-9a30-0899b7ebe98c@quicinc.com>
 
-On Wed, 2024-10-16 at 10:27 +0200, Greg Kroah-Hartman wrote:
-> What commit id does this fix?
+On Thu, Oct 17, 2024 at 05:07:12PM -0700, Wesley Cheng wrote:
+> Hi Greg,
+> 
+> On 10/16/2024 11:40 PM, Greg KH wrote:
+> > On Tue, Oct 15, 2024 at 02:28:43PM -0700, Wesley Cheng wrote:
+> >> From: Mathias Nyman <mathias.nyman@linux.intel.com>
+> >>
+> >> Allow creators of xHCI secondary interrupters to specify the interrupt
+> >> moderation interval value in nanoseconds when creating the interrupter.
+> >>
+> >> If not sure what value to use then use the xhci driver default
+> >> xhci->imod_interval
+> >>
+> >> Suggested-by: Wesley Cheng <quic_wcheng@quicinc.com>
+> >> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+> >> Link: https://lore.kernel.org/r/20240905143300.1959279-13-mathias.nyman@linux.intel.com
+> >> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> ---
+> >>  drivers/usb/host/xhci-mem.c | 8 +++++++-
+> >>  drivers/usb/host/xhci.c     | 4 ++--
+> >>  drivers/usb/host/xhci.h     | 5 ++++-
+> >>  3 files changed, 13 insertions(+), 4 deletions(-)
+> > This is already in 6.12-rc1, which makes me confused as to what tree you
+> > made this series against.
+> 
+> Sorry, I didn't fetch the latest changes from usb-next.
 
-This does not fix any commit in particular. Bisecting reveals baebdf48c360
-("net: dev: Makes sure netif_rx() can be invoked in any context."), but it
-did not create the problem, it just exposed it by changing the behaviour of
-netif_rx(). Callback could be called from usb_ep_queue() since the very
-beginning of the MUSB driver introduced by 550a7375fe72 ("USB: Add MUSB and
-TUSB support").
+It wasn't even usb-next, it was 6.12-rc1, so I don't know what tree you
+based this on :(
+
+> In this case, should I rebase and resbumit?
+
+As the series can't be applied as-is, probably.  But I think you might
+want to collect some acks from the sound people and xhci developers, as
+I can't do anything with this until they look at the changes.
+
+thanks,
+
+greg k-h
 
