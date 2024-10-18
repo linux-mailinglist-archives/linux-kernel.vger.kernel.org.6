@@ -1,132 +1,154 @@
-Return-Path: <linux-kernel+bounces-372515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7991A9A49B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:35:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B209A49B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1BD1C228D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:35:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93C031F25334
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DA119047A;
-	Fri, 18 Oct 2024 22:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88A8190068;
+	Fri, 18 Oct 2024 22:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="cJJb/WMM"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="v/v4/brA"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A2A188CDC;
-	Fri, 18 Oct 2024 22:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B50188CDC
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 22:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729290939; cv=none; b=jwfXNyVUDPlYzlDvkgqQrpjEaVSgxzHG56GAW6tPryGO5vqzcnAFiX8ccmYhzTc0OoMzNukgXgaeDpsBEtfAZaIC6rVfEN2YDhBKlUsyp8BM4idxL9qiJoVXGIRiOKiew29kLlHtWdMG8KTwaHVFB8eJuyzM9sxkmor3XTC/k2Y=
+	t=1729291148; cv=none; b=H2j0W4s/7lnVCCC5Z5JzFNZ3YggfEDC0CGNYAjgFLG84qDDRes9YRa6qraMB3O0SYpi70W1pb0d4DNfbxjMOGOne7FtUJceD0YjkODi3jbNDuMAERat8CTnyiKhomiXP/FjodZH6JJJDg6UNn30pN5hpC1jD/4zNpzLqRoZzY4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729290939; c=relaxed/simple;
-	bh=XD+AGUUFq4jivFWzDw1zmD0eWk5I2XvZ7EZuQDspZLw=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y4KnsTCF0ZmMsmpxJ9HpeUGguYjbc1mx2hU5XUTsOvkXAylsdmuUawLaURYnBms7eZJjoluH2rn1VIX+QBevJH11ovQIjscPdB4bXBMPoFzMGGOMWHm2p7+GcDcRnklOvVuWix3Wd2XKZEHQF8H4zWsT18y9cXOkvPnXlA/TCUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=cJJb/WMM; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 92D25177103; Fri, 18 Oct 2024 22:35:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1729290936; bh=XD+AGUUFq4jivFWzDw1zmD0eWk5I2XvZ7EZuQDspZLw=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=cJJb/WMM2I9a4GNvjDM0CcQ7HqfWVrf9LfS4jZITB9SngAsyknaz6qN4Y5ecEinuk
-	 I2DQpVR7kJMmKNbiaHsnBWshOgMXw5euvmzwxm6G4vvnUpyvBpgY93/2zxSJayhclP
-	 29Ll6jWbd1gqWJ78nInMPoXmLQy0vihPor+wMdkUkVUB3iarmpu5UB866ed9/W7PuV
-	 gdDBq6qcW9rR2znYZGRO1i9jXWoAIds+UUGbA7yaWTfxTpilDX30cDywiqSAmSrQrt
-	 0seBGXMrqBKmYonfHISJHJyg8PCrjaFiHK2hnmT0Ho32cTxgMRskjNOjjIs+u6e8NQ
-	 SDKE8byw5X46A==
-Date: Fri, 18 Oct 2024 22:35:36 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: jason.wessel@windriver.com, daniel.thompson@linaro.org,
-	dianders@chromium.org, corbet@lwn.net, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] Documentation: English fixes in kgdb/kdb article
-Message-ID: <20241018223536.GA799515@lichtman.org>
-References: <20241018163136.GA795979@lichtman.org>
- <20241018175540.GA796909@lichtman.org>
+	s=arc-20240116; t=1729291148; c=relaxed/simple;
+	bh=BTxBIctsFGuIebMRImYSOtEASqlxEeBV+vnkWsXEWww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oZmmAKCjAjKtcSKzy0CXZgzaXAETJwE7vKSp/n+FkS2nDduEXwrG8sJOwTsFcll1iQGJHcvav3r1+emUIWP7yibut9RFvX3ugreckb3yXg084oMTaQGlVh+C/ZasahxMZMjBK1RH23pZfgAnF8PlhMJFGq3cgCs4wJE62Ti+01g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=v/v4/brA; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6cbceb48613so15435836d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1729291143; x=1729895943; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=27O84oor1VFOi2QdCyPslhDi+MuWwwNB8nDvjSXIg5I=;
+        b=v/v4/brA5fGWsJrUtt1EAFACqo+tx5zKDL4DYsY4MvKD0Ueqe6hNZs0vqTGP9RqH57
+         rpuPg6EIG7S7hk2wO1DJd+TQTTFz7j311kwgzzOlUZF/sBACWXuaKcw5E2Yl6914bQxX
+         Wa1MvAVTvB1UwqT1GhFQxggT550vWR2BjPrQ/JOFYRlXIhgo3tFAEU8uQV5JsZnuPQKX
+         MVvyYHKzX/7wwplQ9XjbG0cLb5ONEYnf3Rkf1KHfCqyvC6xNguhPIHeA+csbiYuUhcUM
+         MjXy801kksfrr99yluCek8/gGSVufAw0KewBAheSz5lQg8UWXOLmS9v+h0COcM9Ymtse
+         1ivA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729291143; x=1729895943;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=27O84oor1VFOi2QdCyPslhDi+MuWwwNB8nDvjSXIg5I=;
+        b=gIDx90mrdlBe5VllS1EjORaGaljswDX3z7LL6EeY1PTFHLc4BdUbzwwuNbAfs5vT5/
+         2CfSDQOH3RH7SwrQUuD8Be+rzY2jQqevEkCAOM1QWzSXZEDVvg/rg7Qe9LKNcHD/uEGv
+         iZYFjppjkNQwZXrQRatoAvCRZ7nx40MGH/nmxBsyqa3zwe/wvxUNsFARBitCmt2JBIx4
+         wLXR5pzGuhfdlAjkFD0Kh111bzBvJSvnwxVbX5jNF0qC9pqtI//5OcWSr51JShgrAqHZ
+         Rqwazey9rft1gLC7AEBFSCfA7gNNy1GT6AlGQc0fSIZzJMS6gv7x+kW3JI6wSythlYEQ
+         8etw==
+X-Forwarded-Encrypted: i=1; AJvYcCXisGusntfcY6V0+szSBOYqGHWNKCyWXhWO0El5EAuPK92ZbM07207falNLTUVFZU6UgKYrANKQ7ApKpjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFColSG0bydOwjfeKpf/YIz/KXlawH1+64gqDK+kGAmdy2yFdY
+	MrlZCDYDEck0h6JojFYxxllrQyTrn8UBvFcH3MCBWG5TBzw05foC+NTlmAaxA78=
+X-Google-Smtp-Source: AGHT+IFJ7PMB0YWbSXcu0BJe/T0BQhm3CnzjPN0ToSLmEoHdAVs7NdsRrZlFVzkEuSF5l5ZKvIKWNg==
+X-Received: by 2002:a05:6214:469c:b0:6c7:50bf:a443 with SMTP id 6a1803df08f44-6cde1583893mr60176556d6.30.1729291143089;
+        Fri, 18 Oct 2024 15:39:03 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cde111ccd4sm11346246d6.26.2024.10.18.15.38.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 15:38:59 -0700 (PDT)
+Date: Fri, 18 Oct 2024 18:38:55 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
+	"Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm, zswap: don't touch the XArray lock if there is no
+ entry to free
+Message-ID: <20241018223855.GC81612@cmpxchg.org>
+References: <20241018192525.95862-1-ryncsn@gmail.com>
+ <ZxK7G3S0N42ejJMh@casper.infradead.org>
+ <CAMgjq7AjBMJAE-rj2MmB53FrQKcsARK5tZ3sKB4+uhWhkQ=EGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241018175540.GA796909@lichtman.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMgjq7AjBMJAE-rj2MmB53FrQKcsARK5tZ3sKB4+uhWhkQ=EGA@mail.gmail.com>
 
-Minor grammar and typos fixed in the kgdb/kdb article
+On Sat, Oct 19, 2024 at 04:01:18AM +0800, Kairui Song wrote:
+> On Sat, Oct 19, 2024 at 3:46 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Sat, Oct 19, 2024 at 03:25:25AM +0800, Kairui Song wrote:
+> > >       if (xa_empty(tree))
+> > >               return;
+> > >
+> > > -     entry = xa_erase(tree, offset);
+> > > -     if (entry)
+> > > +     rcu_read_lock();
+> > > +     entry = xas_load(&xas);
+> > > +     if (entry) {
+> >
+> > You should call xas_reset() here.  And I'm not sure it's a great idea to
+> > spin waiting for the xa lock while holding the RCU read lock?  Probably
+> > not awful but I could easily be wrong.
 
-Signed-off-by: Nir Lichtman <nir@lichtman.org>
----
- Documentation/dev-tools/kgdb.rst | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+Spinlocks already implicitly acquire an RCU read-side lock before
+beginning to spin, so we shouldn't be worse for wear by doing this.
 
-diff --git a/Documentation/dev-tools/kgdb.rst b/Documentation/dev-tools/kgdb.rst
-index f83ba2601e55..9e0e3f3235ef 100644
---- a/Documentation/dev-tools/kgdb.rst
-+++ b/Documentation/dev-tools/kgdb.rst
-@@ -75,11 +75,11 @@ supports it for the architecture you are using, you can use hardware
- breakpoints if you desire to run with the ``CONFIG_STRICT_KERNEL_RWX``
- option turned on, else you need to turn off this option.
- 
--Next you should choose one of more I/O drivers to interconnect debugging
-+Next you should choose one or more I/O drivers to interconnect the debugging
- host and debugged target. Early boot debugging requires a KGDB I/O
- driver that supports early debugging and the driver must be built into
- the kernel directly. Kgdb I/O driver configuration takes place via
--kernel or module parameters which you can learn more about in the in the
-+kernel or module parameters which you can learn more about in the
- section that describes the parameter kgdboc.
- 
- Here is an example set of ``.config`` symbols to enable or disable for kgdb::
-@@ -201,7 +201,7 @@ Using loadable module or built-in
- Configure kgdboc at runtime with sysfs
- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
--At run time you can enable or disable kgdboc by echoing a parameters
--into the sysfs. Here are two examples:
-+At run time you can enable or disable kgdboc by writing parameters
-+into sysfs. Here are two examples:
- 
- 1. Enable kgdboc on ttyS0::
-@@ -374,10 +374,10 @@ default behavior is always set to 0.
- Kernel parameter: ``nokaslr``
- -----------------------------
- 
--If the architecture that you are using enable KASLR by default,
-+If the architecture that you are using enables KASLR by default,
- you should consider turning it off.  KASLR randomizes the
--virtual address where the kernel image is mapped and confuse
--gdb which resolve kernel symbol address from symbol table
-+virtual address where the kernel image is mapped and confuses
-+gdb which resolves addresses of kernel symbols from the symbol table
- of vmlinux.
- 
- Using kdb
-@@ -631,8 +631,6 @@ automatically changes into kgdb mode.
- 
- 	kgdb
- 
--   Now disconnect your terminal program and connect gdb in its place
--
- 2. At the kdb prompt, disconnect the terminal program and connect gdb in
-    its place.
- 
-@@ -749,7 +747,7 @@ The kernel debugger is organized into a number of components:
-    helper functions in some of the other kernel components to make it
-    possible for kdb to examine and report information about the kernel
-    without taking locks that could cause a kernel deadlock. The kdb core
--   contains implements the following functionality.
-+   implements the following functionality.
- 
-    -  A simple shell
- 
--- 
-2.39.2
+> Thanks for the review. I thought about it, that could cancel this optimization.
+> 
+> Oh, and there is a thing I forgot to mention (maybe I should add some
+> comments about it?). If xas_load found an entry, that entry must be
+> pinned by HAS_CACHE or swap slot count right now, and one entry can
+> only be freed once.
+> So it should be safe here?
+> 
+> This might be a little fragile though, maybe this optimization can
+> better be done after some zswap invalidation path cleanup.
+
+This seems fine too, exlusivity during invalidation is a fundamental
+property of swap. If a load were possible, we'd be freeing an entry
+with ptes pointing to it (or readahead a slot whose backing space has
+been discarded). If a store were possible, we could write new data
+into a dead slot and lose it. Even the swapcache bypass path in
+do_swap_page() must at least acquire HAS_CACHE due to this.
+
+So from a swap POV, if we find an entry here it's guaranteed to remain
+in the tree by the calling context. The xa lock is for protection the
+tree structure against concurrent changes (e.g. from adjacent entries).
+
+With that said, is there still a way for the tree to change internally
+before we acquire the lock? Such that tree + index might end up
+pointing to the same contents in a different memory location?
+
+AFAIK there are two possible ways:
+
+- xas_split() - this shouldn't be possible because we don't do large
+  entries inside the zswap trees.
+
+- xas_shrink() - this could move the entry from a node to xa->head,
+  iff it's the last entry in the tree and its index is 0. Swap offset
+  0 is never a valid swap entry (swap header), but unfortunately we
+  have split trees so it could happen to any offset that is a multiple
+  of SWAP_ADDRESS_SPACE_PAGES. AFAICS xas_store() doesn't detect such
+  a transition. And making it do that honestly sounds a bit hairy...
+
+So this doesn't look safe to me without a reload :(
 
