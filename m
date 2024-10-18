@@ -1,87 +1,120 @@
-Return-Path: <linux-kernel+bounces-372496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3E19A4944
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B7719A48DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25CC91F2243B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:51:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB2FB1F22963
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C8418E05A;
-	Fri, 18 Oct 2024 21:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD8B205ABA;
+	Fri, 18 Oct 2024 21:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=m3y3r.de header.i=@m3y3r.de header.b="Jfny5lw8"
-Received: from www17.your-server.de (www17.your-server.de [213.133.104.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vfsVGrmw"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509B218C332
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 21:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE1A204953
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 21:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729288253; cv=none; b=eUAGq61BIoiKGdXGSoWDbQmMsGqMmIQZNm6k6L1EKyCyR1E9WaaGY9/iAbnbPSWuSZqXIIihfGAJZgpHi7yoyUa+FcSt9TJPFy1nS878DRRdtMt27/k0wCqzmYn95JraHVn4Qh4315dHeFyUAzCkbUrcO7Ix6N9o+UPt4KtjxqQ=
+	t=1729286649; cv=none; b=gRTVsL6YwEC/o2dINYoRTJI/I2mqY9ZbSMxwXikB1JVTIZNtVj03dxOuGCqVGc+ZNGVkGzTUpRmZaR0dPrEcvhvymjLJ/Y3VmKzPA2DnHE1M0blv2YGcjLXQ3nn5a2a1WgKCfvdgrmKj58KB4eoD30zlZmc7kzispZSA1MDoJTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729288253; c=relaxed/simple;
-	bh=wDf7YMqe2XApniUYFtVC1vwBkrTu78Ck2MzC3Mtz7GM=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aPjPvhQ3RfjRymbddQazoE0pFryxvkry1NQjHvYPrqFZmu/aWAgVGhH1Qx7e4XVO15uuoiBKs7m0T8b19aMtFPgHuqIRRxpA/qcFHwVdyjutt6z3C8KujSGbFL04CBWtZsIC07/HaWWJzl5gq2wyShpQGJMlprUxYhIXVgxeQa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m3y3r.de; spf=pass smtp.mailfrom=m3y3r.de; dkim=pass (2048-bit key) header.d=m3y3r.de header.i=@m3y3r.de header.b=Jfny5lw8; arc=none smtp.client-ip=213.133.104.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m3y3r.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m3y3r.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=m3y3r.de;
-	s=default2402; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
-	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References; bh=wDf7YMqe2XApniUYFtVC1vwBkrTu78Ck2MzC3Mtz7GM=; b=Jf
-	ny5lw8RTpJSd+2ksNh112V2dv3O/O4vr2Dk1KZPd5tABPqnX2BT8r9pjgAVpJ+m5xLFMvH499za3z
-	LtPf0jRqo4scNmgcIYMkycPyOLMfvj6PFXS1Yg+/0PZRWjRiDGIKahXKaN+MilIief5lgfZqBmiHk
-	T7UnAqLHbKQdWyFIxd7hidjC+oCVKmzlLnuBmt5Pj5le0DyP6G7+evg0Fl78tXuYYfIcnZzt8qvo/
-	omvPI5KnMjQVwgXRUQqibMGRtYveDbfsGg/fhEeu9eLERjEpxuODm4uXgL407Dm+ckRP1CAbk3XzE
-	zqsK0kHz1niGDc5Tupqh6LuNbHTpXjpg==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www17.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <thomas@m3y3r.de>)
-	id 1t1uQP-0001Qh-0Y
-	for linux-kernel@vger.kernel.org;
-	Fri, 18 Oct 2024 23:22:21 +0200
-Received: from [94.31.73.225] (helo=DESKTOP-DQBDJ0U.localdomain)
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <thomas@m3y3r.de>)
-	id 1t1uQO-0000zN-3D
-	for linux-kernel@vger.kernel.org;
-	Fri, 18 Oct 2024 23:22:21 +0200
-Date: Fri, 18 Oct 2024 23:22:29 +0200
-From: Thomas Meyer <thomas@m3y3r.de>
-To: linux-kernel@vger.kernel.org
-Subject: Enable CONFIG_TRACEPOINTS only?
-Message-ID: <ZxLRldQ688zYZJ8O@DESKTOP-DQBDJ0U.localdomain>
+	s=arc-20240116; t=1729286649; c=relaxed/simple;
+	bh=BBdrTo4hw8HK2E2yA2d+cEkf0HPodq5gdVba/Qop9iQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=igPWVNwbi7xMblTgb6DZoDk9A1f+f2+jibRyIjCaUQT7fdSal5xH5JDOG4oyFn8QZecIhvgmhgVbXC6dsgCMC4Hgl1/8Vo9/itJx9zddqdOh5oXYTod5AQpB5Zo5qTzVH5ydpmrRlMU6nPZahMRCtDQ5ca+A3+yoy0e+m8PHg6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vfsVGrmw; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2884910c846so1391134fac.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 14:24:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729286645; x=1729891445; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cu3ywbeiueAiLpZlAoRlOExXhdy9SqJHCZ3asIlIMCc=;
+        b=vfsVGrmwnPxfgarfd07e65/IIFOUJKs0goW19UPls3ATqdmX6LbxB1eH60mt/qW6yS
+         526BRrAOp6S3GIqlXpnzaNswJaNaNlt4w+8t8rOFtt+tQjJavh3ilZX86YgeTGdCpHDU
+         Gd23vkeK4aFLGSvcr4KmOyE3XfCbRWXVgjQm7dHjUo0Qv4grOMeY5a9KPpE4ow/XGAhb
+         nsGtUGRlNaZLaiGOJiA0NErfc4Ef24CaJiB5fSOYq7vy2FGQIpxx6xqBJ64mS28CZUAv
+         YQ90CTWMvdtOmoP2eb+1IZ/UvwVdDbD8pqocuW0uskxelPiYZ5uxn3ts4kL1WWE/y/Vd
+         VTew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729286645; x=1729891445;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cu3ywbeiueAiLpZlAoRlOExXhdy9SqJHCZ3asIlIMCc=;
+        b=hh6g6Vk6MjMR9QjsDSBu9EkRutJMg5n80y+CPbTh5tCyWT/oXS123uULYInA6NdKoW
+         H4cfaMmD6Io7xOfnSdrJeEJAUaEzDk+SG/HuvycTgGjXswQNNfPYyjVggIGvjNGoM0/o
+         DiAtqMllTFL8KE96UqdnCfsFYinLONXHgut0sr5wmP5+4rLJky/xG5pug4r68Oe40SFB
+         cFQEJSFbri3r5hQKBzsjV40oEVMJ3z5HQMKA2MVGhcCfxjoihittrgI4DexmKH2ZkyvL
+         7azaiSQZPLz1x4BhYKFNPB98oXCyDXO2K0fuW26mh01Dsl8i+veCWRZal7+go/9e+beD
+         sb1w==
+X-Forwarded-Encrypted: i=1; AJvYcCW7vHJ+2SGnlI1tIuqhJt+W7puS+RiKQ9HhlEiF/TAAB9vCEQkGzEIwODx0K4KeiXjU1jMTpRn04/1WI7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgXRGea28rgxYJ1LwLNNnjVH8FWeAWRS+Xp93bpJ26l7pf2giw
+	yW58Yyj3XHQAZyxPRKU1WyR+mnaD/HQeqGSSmgtDYpiK1OD7MKlExT/8Ss6V4uU=
+X-Google-Smtp-Source: AGHT+IG96hABqMhdjCx/0hJEiSV691+QsSLQw+YPEtTi9KNT3Z86pZV8qtEDnp5uMzq0c6TALZYKhw==
+X-Received: by 2002:a05:6870:7183:b0:288:b7f0:f8fc with SMTP id 586e51a60fabf-2892c5a9404mr3647435fac.41.1729286645453;
+        Fri, 18 Oct 2024 14:24:05 -0700 (PDT)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2892af3f393sm683309fac.38.2024.10.18.14.24.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 14:24:04 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Fri, 18 Oct 2024 16:24:01 -0500
+Subject: [PATCH] iio: dac: ad8460: fix DT compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Authenticated-Sender: thomas@m3y3r.de
-X-Virus-Scanned: Clear (ClamAV 1.0.5/27431/Fri Oct 18 10:53:06 2024)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241018-iio-adc-ad8460-fix-dt-compatible-v1-1-058231638527@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAPDREmcC/x2NQQqDMBBFryKzdiATojW9irhIk7EdaI0kIgXx7
+ g4u3uLB4/8DKhfhCs/mgMK7VMmLCrUNxE9Y3oyS1MEa68jQgCIZQ4rK4HqDs/wxbRjzbw2bvL6
+ MnubOeE8Pyw50Zi2s0X0xTud5AbBCE2NyAAAA
+To: Mariel Tinaco <Mariel.Tinaco@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-Hi,
+Fix the DT compatible string in the of_device_id table to match the
+binding documentation. There should not be a space after the comma.
 
-is there a way to enable CONFIG_TRACEPOINTS only?
-The commit 5f87f1121895dc09d2d1c1db5f14af6aa4ce3e94 seems to have removed the ability, for some reason.
+Fixes: a976ef24c625 ("iio: dac: support the ad8460 Waveform DAC")
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ drivers/iio/dac/ad8460.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The best I could come up with is:
-- FTRACE = y
-- ENABLE_DEFAULT_TRACERS = y (which selects TRACING which selects TRACEPOINTS, but has the side effect of also setting STACKTRACE = y)
+diff --git a/drivers/iio/dac/ad8460.c b/drivers/iio/dac/ad8460.c
+index dc8c76ba573d..6706c8112094 100644
+--- a/drivers/iio/dac/ad8460.c
++++ b/drivers/iio/dac/ad8460.c
+@@ -924,7 +924,7 @@ static int ad8460_probe(struct spi_device *spi)
+ }
+ 
+ static const struct of_device_id ad8460_of_match[] = {
+-	{ .compatible = "adi, ad8460" },
++	{ .compatible = "adi,ad8460" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ad8460_of_match);
 
-Bug or feature?
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241018-iio-adc-ad8460-fix-dt-compatible-91f5099172e4
 
-mfg
-thomas
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
