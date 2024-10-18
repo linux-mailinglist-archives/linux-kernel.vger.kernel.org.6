@@ -1,125 +1,78 @@
-Return-Path: <linux-kernel+bounces-371143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596FD9A3700
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:21:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47EA9A36FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A3C0281FD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:21:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9731F219DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7946A188714;
-	Fri, 18 Oct 2024 07:21:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC6F188A00;
+	Fri, 18 Oct 2024 07:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXBNxpwi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC558186E3F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A507186284;
+	Fri, 18 Oct 2024 07:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729236101; cv=none; b=EKGczVZchspPCPVXsRfNSdt+Tbw5ClJx06zm9XdAyUCYD2BY7sdEaUo35801godL0SWw3vq4cKaIZ5qWBuxQs8Cvm2fCdDj/uZDyZNW+BAxQP8WECkpwGX5DAiTyedyno+HPZ83xx5Mc6dsqi/zTg/EW75f9dC1bI2YRLQ4vaD8=
+	t=1729236088; cv=none; b=lStNj+IP/6dLnDotf/dWBMrXosYrAbuTHeDkAXPNRmptnYYUFV02MX+aSNbTGHVqgWQzPM+ZjbVKYwUnD21KnC6yYR1n8duHIJBb0DaxKRSyOhSTEI7WTg1WH51EARHFlVGDzZHjj6+FqwXUyCT+kroORwQQDDhTqAqWTP95D+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729236101; c=relaxed/simple;
-	bh=3Hc+QKWRe6CJdpdWi0kYQtpq7TAIE4a9KyFJhaDo2Bw=;
+	s=arc-20240116; t=1729236088; c=relaxed/simple;
+	bh=gjhO2fB4TN7F/i0LDb8ZvEwTCFrjhrrk/Q2kozKnmMc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o0Av65EcG5BgoF60j1pimOygU2wz3jiO8kuQPR3nv5f/XFSexnyR4q2riYm3zemluYqJdgMNxP1LwoJv2VXu9r1vpOmYuoLoz84u8JEmxzHywjycBY1nsPxx+9vNP1gmsG8uzuzmKUAVif6som0GrMHNbxKYsDozeyhQbQtdVhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1hId-0001VB-Ef; Fri, 18 Oct 2024 09:21:27 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1hIb-000Ajz-2u;
-	Fri, 18 Oct 2024 09:21:25 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 8038A355AEC;
-	Fri, 18 Oct 2024 07:21:25 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fFy1e1EWSjzr8V/+mE7C5zPf3TWihZL6PhCpGHFOYJc/r9XmCsVC6TcrgwVFEWeMPG+3KT4joJDthODwr8HA/UerJF+8jj1PKuCR3BTvVVocA/UKs0CzCw91tEXCVdtFsxqbvLH6cYbVqnV2w+HGw+9qVEZxB4C7JfaIqOB0ukc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IXBNxpwi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0003C4CEC3;
+	Fri, 18 Oct 2024 07:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729236087;
+	bh=gjhO2fB4TN7F/i0LDb8ZvEwTCFrjhrrk/Q2kozKnmMc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IXBNxpwiIieoRgLIqpXdCdV9gHoUYIgPfRveR5QyrXxiPe2Yd2pEUZfTRbgYtJeas
+	 PFELF97cXHpDPeY2f7rpJs2KM7cCPy+8W3SvESoVyoeJTlY67WQHBPcJWJjt4SSDjM
+	 mn/RUQjmYfgEaIy/GJOQEtbUuHikZds/PqFsrr0XgLZvnKULx22YKeUTu7uqnuJQQi
+	 xlBHcBmKKlsVjT/3vrQlgL7qal/uAjveg2w24YxSV74WPEHms/amCReCd1l8ThdiBW
+	 lJ6fZQd44TqY8f3rizON6+CbyBWrcyM8tk7sEJgxejARGOJmEe586EKmbGFP5v7Yyp
+	 9q5KJ8s06iPAA==
 Date: Fri, 18 Oct 2024 09:21:24 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: RE: RE: [PATCH net-next 13/13] net: fec: fec_enet_rx_queue():
- factor out VLAN handling into separate function fec_enet_rx_vlan()
-Message-ID: <20241018-thundering-cicada-of-prosperity-e29ec8-mkl@pengutronix.de>
-References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
- <20241016-fec-cleanups-v1-13-de783bd15e6a@pengutronix.de>
- <PAXPR04MB85104DCA7DED14565615E4A588472@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20241017-fox-of-awesome-blizzard-544df5-mkl@pengutronix.de>
- <PAXPR04MB8510969C2BE65FD3D08ACBC788472@PAXPR04MB8510.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: usb: qcom,dwc3: Add SAR2130P compatible
+Message-ID: <shzy24hayj6ee72pwc5lxk7yflzawx5f3uaqql4fwb55idbxci@qgi2fr7pvb5m>
+References: <20241017-sar2130p-usb-v1-1-21e01264b70e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cp2jxqpoyuqg4cys"
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8510969C2BE65FD3D08ACBC788472@PAXPR04MB8510.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---cp2jxqpoyuqg4cys
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241017-sar2130p-usb-v1-1-21e01264b70e@linaro.org>
 
-On 17.10.2024 07:48:34, Wei Fang wrote:
-> > > Why not move vlan_header into the if statement?
-> >=20
-> > I've an upcoming patch that adds NETIF_F_HW_VLAN_STAG_RX (a.k.a.
-> > 801.2ad, S-VLAN) handling that changes this function.
-> >=20
-> > One hunk looks like this, it uses the vlan_header outside of the if:
-> >=20
->=20
-> You can move valn_header out of the 'if' when it happens.
+On Thu, Oct 17, 2024 at 09:16:38PM +0300, Dmitry Baryshkov wrote:
+> Document compatible for the Synopsys DWC3 USB Controller on SAR2130P
+> platform.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Ok.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-regards,
-Marc
+Best regards,
+Krzysztof
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---cp2jxqpoyuqg4cys
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcSDG0ACgkQKDiiPnot
-vG+lAQf+NwO+/a/yS8s35LmZ8JJuXTwoi8ta39vutpDPQYtHgOxWmjVR2ElMrrGe
-B4l/W9zeATUFFZpRnriXWXIJOvn9A11K8Ddo6gyaORrMphlgJ/RefJdI6919vPQH
-iV8+8m4pOpNaXBEj5Rau4ZFgoa0/C86O0eYbtgjUgJdkLWk9mdzfFlWDjTrCpiuY
-4i4AnelJ29HHqqxPXTwIYBaNmFHJsA7JvAEF0L35NLQVxrIZJm1BH6ZG5KydP0rA
-olUVm9Gthntvnzcbs67EDXQbM2JCvguXm4+dAdjBWvtG5aVKvJzEn1QUjQijV5WB
-y4o2hwQ3204oxbEoFlZPdH5kH/Il5w==
-=qorl
------END PGP SIGNATURE-----
-
---cp2jxqpoyuqg4cys--
 
