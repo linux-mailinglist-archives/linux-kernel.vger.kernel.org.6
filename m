@@ -1,136 +1,172 @@
-Return-Path: <linux-kernel+bounces-371716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C189A3F19
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:03:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704A29A3F1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD0228341C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:03:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32A991C214A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD09D18FC79;
-	Fri, 18 Oct 2024 13:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A3A18FC79;
+	Fri, 18 Oct 2024 13:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P2m5Kn67"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sy70iDxd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF8144375
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CF84084C;
+	Fri, 18 Oct 2024 13:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729256629; cv=none; b=PH10Vl5ecKqkzg4JhPCzdPpqGCN39SQQhpyOTwDWzyPvpgOkdutgebt1CxK2kCMsbqoBQM8+X34fSovxldyisyx5SKbjkL5kZ2sgQmfjHFkafNCz7GGSACA6g9pNM5JhUfpQncNJwOY5MERVOvkifYn8DsrRR7Uo1HH7ulGyRu8=
+	t=1729256650; cv=none; b=TOqZwmoo0ZT33H0x7zseG/8n7tsazVzOLYeGlBn00jmC5XV6BTDU9det1/mrQwrl0GpTOcUNWxi/dwx3EEexXNGS0uXnlVkmyiBmmNRmXw93ogI27m5YFu1j3VmpM7F8hJihySsOK1u1sIOSCeCzP8PT/bIRENvPC8s9KazxN0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729256629; c=relaxed/simple;
-	bh=DOTTWquBNd8l+IUT7seOntP4YwH3dQlJJjlVuG2vkoY=;
+	s=arc-20240116; t=1729256650; c=relaxed/simple;
+	bh=g2CJxGpTFCOsw8YxyBZm5iz4MWqWWqjHA92Ubpkewfk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=STTCz7uDZqSEQaUYaYmAwk+5HA002wLAEBObh053vNoAJC7t0CrfDN/igcqjPdJfweg8gAvKYOIlZOkoeWZuGVWCfx5daBGmpAVbOxmJ0aysztW7s8R4RVs0Lblhlvbiy/cW90KEZqDYau9f/ZfE7anNEOOTFQPlMDq3YC9CSKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P2m5Kn67; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f58c68c5so3409112e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729256625; x=1729861425; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sODVftRiJEB/0R5ZKHQ3MqkxJS24ttUXB9G8dSmRS9Y=;
-        b=P2m5Kn67C7LQ/K1R77kNsVHv92932XZk5c0fKUBHuhBa4mmvjBTL1XTDLt2r4n58lq
-         kM307cUczd8AvEEn7bJ7p8Y7LJqIuB1eVsq61P0jO8t6siQ1k9mAau4DjLiZAWsbf5Zs
-         Jt2a1vCbb17QAOHfY0JTh3X1+Hv0fzNn1Q0yzXl2N3ecnKANUQTkXD/7YYgfbpdg/f6M
-         oxOiQDThDENAxwcMugk8fAe43UD/RZXfUZsmpWpYyabqyPNga/MjNB3BA8XAE34nndje
-         V2XaBMavNsii3AZUPUdc9GUQDJD8vo8m6lSgQKAjPSqRDLShwZXJyzvzoYKJh4nIPQe7
-         XnvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729256625; x=1729861425;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sODVftRiJEB/0R5ZKHQ3MqkxJS24ttUXB9G8dSmRS9Y=;
-        b=k3Bs6AdXIGEdPqrNL9RBjincNnazUq5hDqNMcJx6YvJNSIxpn0JPUFJkvAPcMRabpP
-         WloSSkBLYd3ERzk0odrD5Rpdokc2IZ47M1NMubi+oCx0XwcN7AFEe701gdYDhjgQgA+t
-         JfaMlXy+ek4O0r+s4hCLbmnn7kJW1cJYRTRE3LhrXGj+iSqSfshM2XZ4Md2AEwNERfUf
-         AamX5d8oWlZZDgBkkZONQkywksahVnV/LVdkfkwSjZZtQjz+sDCA45YvQKPluvPnJZtf
-         QUYL2PcQJWzMOf/3sJFxxKOyY1w3CWCUakUfd34LZdsOnkdAyBK6Y8vOtFQ/flbORlOS
-         kWjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUE4D7Sq+g3npylMSxukTE54l8GzcYuMWbkgPvxxPMhq2cerT+5/bMb5dtxEVOGKeNz4Ff/DAmOUhwbPEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbDLf5Udiwllrc1nw+Abj7CLh5qvEO4I2w26n9FBgKkpBNYfN4
-	muSa3F0IqoQT3CkZDioixWMEpHwsFStRciWsydX8bobZvnWC+G4owygYJOG8sVQ=
-X-Google-Smtp-Source: AGHT+IEkARo88tz9Es4BK+YT+IflxGdlBCDgKhTnNhRNnTwvn1zSXl9sNOjA8rduKHJn/2Ffh9OhwA==
-X-Received: by 2002:a05:6512:3d24:b0:539:89a8:600f with SMTP id 2adb3069b0e04-53a15452b7dmr2496478e87.23.1729256624502;
-        Fri, 18 Oct 2024 06:03:44 -0700 (PDT)
-Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68c27893sm93408266b.195.2024.10.18.06.03.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 06:03:43 -0700 (PDT)
-Date: Fri, 18 Oct 2024 15:03:43 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org,
-	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
-	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
-	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
-	xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz,
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
-	willy@infradead.org, liam.howlett@oracle.com,
-	pasha.tatashin@soleen.com, souravpanda@google.com,
-	keescook@chromium.org, dennis@kernel.org, yuzhao@google.com,
-	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com,
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-Message-ID: <ZxJcryjDUk_LzOuj@tiehlicka>
-References: <20241014203646.1952505-1-surenb@google.com>
- <20241014203646.1952505-6-surenb@google.com>
- <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
- <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com>
- <6a2a84f5-8474-432f-b97e-18552a9d993c@redhat.com>
- <CAJuCfpGkuaCh+PxKbzMbu-81oeEdzcfjFThoRk+-Cezf0oJWZg@mail.gmail.com>
- <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
- <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CWLq15S4Dp1QRcLmw+kkl0MRldkOig1z42dqdcUxdeUxr4z3Fymqr+zDnxs04ILVArdtVxiGqeHZMPSKrds9PMUSL2pdDQQqrpgZhLNcE6gbNi1nVJBn4bamXVU1ke+HKbUiSW7MFizMslaUeP3qf13hW8+ovL1K3IeTYRpv9no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sy70iDxd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B843C4CEC3;
+	Fri, 18 Oct 2024 13:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729256650;
+	bh=g2CJxGpTFCOsw8YxyBZm5iz4MWqWWqjHA92Ubpkewfk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sy70iDxdvegIxSpbXgc5l5sDisr1CZ4sC7k1lbpyMO3ps7QBlrYogssUkxA3itTq3
+	 AQEoQL9PclRAphMwOGvXczd3YP5474UnFMyGtofrV7wewmUhWgb36+D/mxX0TSNS9T
+	 f/lVPozmAReEZcHeTg1Kr5WVXMFXZYL56yvSNJocnM2MQT14uIf4KFaoaWuUmH2N9u
+	 j6TTPE83B54c0FIDFMWZnWB6v9ey8dIJiiRCeaLi84cRr3FGSDOSn6r3l8GdREAatz
+	 wjnSiM+Q3gG6VspsFgyIlOd22BZENkjey1+D1sWRaKBTI22bIf8/K8mo1mVq3sihH0
+	 aeBFQqweIx1hw==
+Date: Fri, 18 Oct 2024 14:04:04 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	akpm@linux-foundation.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pedro.falcato@gmail.com,
+	willy@infradead.org, vbabka@suse.cz, Liam.Howlett@oracle.com,
+	rientjes@google.com, keescook@chromium.org
+Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
+Message-ID: <1f8eff74-005b-4fa9-9446-47f4cdbf3e8d@sirena.org.uk>
+References: <e7ea2b84-8d10-40fe-a14f-837bca851ea9@lucifer.local>
+ <fd927106-2fc3-4b96-8014-2c517229bc99@lucifer.local>
+ <CABi2SkUpCf+aOa2sPED8CosG5ccqjFd7ouot8gXi9ECqsHiZhw@mail.gmail.com>
+ <4944ce41-9fe1-4e22-8967-f6bd7eafae3f@lucifer.local>
+ <CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com>
+ <CABi2SkVEMRHV3swrbb6M5RA6GQpFVVx855CGwdQ1xiz3tygiqA@mail.gmail.com>
+ <f9b9422c-216d-422e-94b4-d8814b0b277e@lucifer.local>
+ <CABi2SkWAv4LXvR1Wb1e31eyZ35JfyieXhDOq1bp_ZvHPLLg-qA@mail.gmail.com>
+ <e0f440b0-5a45-4218-8c51-27f848c0617b@lucifer.local>
+ <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YLYxAeMluy/4woDv"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
+In-Reply-To: <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
+X-Cookie: What is the sound of one hand clapping?
 
-On Tue 15-10-24 08:58:59, Suren Baghdasaryan wrote:
-> On Tue, Oct 15, 2024 at 8:42 AM David Hildenbrand <david@redhat.com> wrote:
-[...]
-> > Right, I think what John is concerned about (and me as well) is that
-> > once a new feature really needs a page flag, there will be objection
-> > like "no you can't, we need them for allocation tags otherwise that
-> > feature will be degraded".
-> 
-> I do understand your concern but IMHO the possibility of degrading a
-> feature should not be a reason to always operate at degraded capacity
-> (which is what we have today). If one is really concerned about
-> possible future regression they can set
-> CONFIG_PGALLOC_TAG_USE_PAGEFLAGS=n and keep what we have today. That's
-> why I'm strongly advocating that we do need
-> CONFIG_PGALLOC_TAG_USE_PAGEFLAGS so that the user has control over how
-> this scarce resource is used.
 
-I really do not think users will know how/why to setup this and I wouldn't
-even bother them thinking about that at all TBH. 
+--YLYxAeMluy/4woDv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This is an implementation detail. It is fine to reuse unused flags space
-as a storage as a performance optimization but why do you want users to
-bother with that? Why would they ever want to say N here?
--- 
-Michal Hocko
-SUSE Labs
+On Thu, Oct 17, 2024 at 12:49:40PM -0700, Jeff Xu wrote:
+
+> So it is not a problem with the MACRO, but where is it used ?
+
+>         ret = sys_mseal(ptr, size);
+>         FAIL_TEST_IF_FALSE(!ret);
+
+> Take this example, it would be
+> assert(!ret)
+
+The problem is that the macro name is confusing and not terribly
+consistent with how the rest of the selftests work.  The standard
+kselftest result reporting is
+
+	ksft_test_result(bool result, char *name_format, ...);
+
+so the result of the test is a boolean flag which is passed in.  This
+macro on the other hand sounds like a double negative so you have to
+stop and think what the logic is, and it's not seen anywhere else so
+nobody is going to be familiar with it.  The main thing this is doing is
+burying a return statement in there, that's a bit surprising too.
+
+I'll also note that these macros are resulting in broken kselftest
+output, the name for a test has to be stable for automated systems to be
+able to associate test results between runs but these print
+
+                        ksft_test_result_fail("%s: line:%d\n",          \
+                                                __func__, __LINE__);    \
+                        return;                                         \
+
+which includes the line number of the test in the name which is an
+obvious problem, automated systems won't be able to tell that any two
+failures are related to each other never mind the passing test.  We
+should report why things failed but it's better to do that with a
+ksft_print_msg(), ideally one that's directly readable rather than
+requiring someone to go into the source code and look it up.
+
+A more standard way to write what you've got here would be to have the
+tests return a bool then have a runner loop which iterates over the
+tests:
+
+	struct {
+		char *name;
+		bool (*func)(void);
+	} tests[];
+
+	...
+
+	for (i = 0; i < ARRAY_SIZE(tests); i++)
+		ksft_test_result(tests[i].test(), tests[i].name);
+
+then the tests can just have explicit return statements and don't need
+to worry about logging anything other than diagnostics.
+
+Depending on how much you need to share between tests you might also be
+able to use kselftest_harness.h which fork()s each test into a separate
+child and allows you to just fault to fail if that's easier.
+
+> > We are writing unit tests in a test framework, let's use very well
+> > established industry practices please.
+
+Plus also the fact that we have a framework here...
+
+> > Also note that you don't even need to reinvent the wheel, there is a
+> > fully-featured test harness available in
+> > tools/testing/selftests/kselftest_harness.h with both ASSERT_xxx() and
+> > EXPECT_xxx() helpers.
+
+> The EXPECT_xxx() doesn't take care of reporting though,  or maybe it
+
+I rather think people would've noticed if the test harness was so broken
+that it was unable to report failures.  If it is that broken we should
+fix it rather than open coding something else.
+
+--YLYxAeMluy/4woDv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcSXMMACgkQJNaLcl1U
+h9AmKAf/Tu4kW1hhmlXQ1Agr7BitWMDgVw9arn8ymLeyxIk/tu+VEoRY7AhaMvzd
+3J00TJc8rCiabRtgebGDooegImXGlwOPo+OozAKDSoqY+XL5NQxnakmMrk0vSUfQ
+jJzLnl2Bxo/43T6/xPQKzUdxMz8NY4uHDF3X0FPWWnvF4F/5XMZ44uDRMmFrL+aI
+FsP7ZEB4W1A7wn5bpj83e58whRSO5G2Y/3Z5kl5oh49cTIXBM4nNIVtOcOWt5976
+FWtpGPSQEHqtBj840j7dVwFCRAJ9aobcbBWt4lOhOVftuOf1fE0QeLgGaE9/tOHB
+gYLIyF/x8ZauAuQattbuUL3nOp6iqw==
+=r5Sq
+-----END PGP SIGNATURE-----
+
+--YLYxAeMluy/4woDv--
 
