@@ -1,117 +1,124 @@
-Return-Path: <linux-kernel+bounces-371779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67AF39A4036
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:44:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E629A3FBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967811C24561
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:44:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE2EE1C23A08
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8560A202F7D;
-	Fri, 18 Oct 2024 13:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760F21D7E5C;
+	Fri, 18 Oct 2024 13:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DY2QMddy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Es909GmG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EA41F4265;
-	Fri, 18 Oct 2024 13:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96D020E335;
+	Fri, 18 Oct 2024 13:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729258897; cv=none; b=HpbG6u9FEto6JMf7vu+6bNaDqocNTnezIeFGGjKp9qpu9fXlVtpeTZesqPsenvmAgpdgAfjAVuIb94ULJVOmKg08AEkXL428eyGPhS7bhqKuVJtTeVh9guilkZ+mqCuaxdVloEvuX4OGM/ktkeEWGcjOkQTL55ps3i6eAdg4txA=
+	t=1729258421; cv=none; b=i1mqcnC8sLAC9X2E89AXplmA5SOkOigD3p5CjXAQsIzyxMEiFZIWMzab9Y8TekyIFLa9wIv9ApZw1zVEI+1YHX6FvM/WdwO7Bp3yxfRR5AtGImYx4jXcB7Kn4QMpgV8dwhLRr4R80DomHc+GaDCA8K8qkHhLmZSuRRjbn4PFbRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729258897; c=relaxed/simple;
-	bh=BMKOrCU5z2rmEQgUEoHRlV/x9cOoFl97PDC+MzdSL7I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TxeJZjMSmi6n7mpGQpndWbiKZWKLBl7zXkCXIv1njMcwgX8qsPXYlM4M7mzNdJ34hx9ayHoqaVdd+v2aLBJRQErjAH5loeheFj/O6B/ET8ob1za+Aer5MU/WabTbkH3sqMlNoNh6GMRNHey/3IqccDltkok5FsqKKxzwYYC7Bv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DY2QMddy; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729258896; x=1760794896;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=BMKOrCU5z2rmEQgUEoHRlV/x9cOoFl97PDC+MzdSL7I=;
-  b=DY2QMddy/lBFle06w8ZtK4p2j0fdXx7bGqMry9obw1EXfsuI2rnOTuP5
-   stWPhs2vRb6L7xwhkV7VtGzntdqsLsvNynlWrwW0XANeRSWBccrpNdPXq
-   ymi7vsXK5WRplCs0GoSfjTaiMlBeWydAHya7FiEfaTZlcImx6M8l4RZWK
-   SfJpqtJ/nxZ9M0LcHMBOa4EBqIzQ3X9157MMOJRggLWDKDMRZ7Y7XPTz6
-   mpMFxLf5bfa4PQ9CvXMhThVYxLNt7WRroKwoto2ynsJ8a/oI/YPWByqhb
-   c2wywdawlzsCYLDKnY8Cz5TKpQIg6WyispSIY0V/ipUmM8uWel5z5pbNv
-   w==;
-X-CSE-ConnectionGUID: IZdl7NxqRjKt8nOh/zY+Gw==
-X-CSE-MsgGUID: l0rt+2IJRLy0+OOGLmoT1A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28251454"
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="28251454"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 06:41:33 -0700
-X-CSE-ConnectionGUID: 34YAGRVcT92LgWs0LEtLug==
-X-CSE-MsgGUID: JMM3dTlJTRqkT/MJVPSerQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="83935283"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 18 Oct 2024 06:41:31 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 38FDE5C3; Fri, 18 Oct 2024 16:41:30 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 4/4] gpio: xgene-sb: Tidy up ACPI and OF ID tables
-Date: Fri, 18 Oct 2024 16:32:35 +0300
-Message-ID: <20241018134129.2058068-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241018134129.2058068-1-andriy.shevchenko@linux.intel.com>
-References: <20241018134129.2058068-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1729258421; c=relaxed/simple;
+	bh=nwqVYg9FZxvkSWfFuD0XeXYk+OpqSn4JaMEIAODptlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amfEZASpmdolYqUzt6VxnSftm/SPq5ljh3hG0aJbRMzpl7CtJx1j82ZEsNwRysMGUW7pLHyTjMl0F6WxP0AzxS5+w5RFWIe189I7Kez+20pY9M++HsLkzZTNEEX0HxuDy4Unpwfn7kYBG3waSN4+9ufUCHygodUPybr3t8pMRko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Es909GmG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17F12C4CEC3;
+	Fri, 18 Oct 2024 13:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729258421;
+	bh=nwqVYg9FZxvkSWfFuD0XeXYk+OpqSn4JaMEIAODptlw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Es909GmGYuFgkFVb/Bhn2p7pUJOjy8hzXCeT2nmEATrjU51VIMQ2FIuBmzgXTpi1Y
+	 EW3qyiofuNHMypkZjLNNWlDpSEKOyB7tgaB4Hv19C+I+UPCJYMZ48l1Ji9P88Cpm4s
+	 XJQtNgLOGhTh/8cQg/Tg5MY9dzkLJfH7cTUunoI+4H7oNKcR/RmyBhpnL5QODtxSKk
+	 P62T1EUeXeD+Gno/lGEfnZRd+6kZUDW5AWf00+Vp1WZBXlFJrvlJ6xzoJw/SWhucBs
+	 C6ipnLWfSEWZVW7p20yhJ+5suYN2VVtaYCoQ3ThDvso6c/9+XiJiKlDUiyVJmTHeQX
+	 VXJqcGahFEgyw==
+Date: Fri, 18 Oct 2024 08:33:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
+	james.quinlan@broadcom.com, f.fainelli@gmail.com,
+	vincent.guittot@linaro.org, etienne.carriere@st.com,
+	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com, dan.carpenter@linaro.org,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 3/5] dt-bindings: firmware: arm,scmi: Introduce more
+ transport properties
+Message-ID: <20241018133340.GA72220-robh@kernel.org>
+References: <20241018080602.3952869-1-cristian.marussi@arm.com>
+ <20241018080602.3952869-4-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018080602.3952869-4-cristian.marussi@arm.com>
 
-Tidy up the ACPI and OF ID tables:
-- remove explicit driver_data initializer
-- drop comma in the terminator entry
+On Fri, Oct 18, 2024 at 09:06:00AM +0100, Cristian Marussi wrote:
+> Depending on specific hardware and firmware design choices, it may be
+> possible for different platforms to end up having different requirements
+> regarding the same transport characteristics.
+> 
+> Introduce max-msg-size and max-msg properties to describe such platform
+> specific transport constraints, since they cannot be discovered otherwise.
+> 
+> Cc: devicetree@vger.kernel.org
+> Cc: Rob Herring (Arm) <robh@kernel.org>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> ---
+>  .../devicetree/bindings/firmware/arm,scmi.yaml   | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> index 54d7d11bfed4..42852ed887f2 100644
+> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> @@ -131,6 +131,22 @@ properties:
+>        be a non-zero value if set.
+>      minimum: 1
+>  
+> +  max-msg-size:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-xgene-sb.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Vendor prefix needed.
 
-diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
-index 0ebe3b215634..48b829733b15 100644
---- a/drivers/gpio/gpio-xgene-sb.c
-+++ b/drivers/gpio/gpio-xgene-sb.c
-@@ -306,14 +306,14 @@ static void xgene_gpio_sb_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id xgene_gpio_sb_of_match[] = {
--	{.compatible = "apm,xgene-gpio-sb", },
--	{},
-+	{ .compatible = "apm,xgene-gpio-sb" },
-+	{}
- };
- MODULE_DEVICE_TABLE(of, xgene_gpio_sb_of_match);
- 
- static const struct acpi_device_id xgene_gpio_sb_acpi_match[] = {
--	{"APMC0D15", 0},
--	{},
-+	{ "APMC0D15" },
-+	{}
- };
- MODULE_DEVICE_TABLE(acpi, xgene_gpio_sb_acpi_match);
- 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      An optional value, expressed in bytes, representing the maximum size
+> +      allowed for the payload of messages transmitted on this transport.
+> +      If set it is recommended to be greater or equal than the minimum size
+> +      required to support all the messages defined by the set of protocols
+> +      implemented on this platform.
 
+Sounds kind of broken if less than the minimum...
+
+> +
+> +  max-msg:
+
+Vendor prefix and could be a bit more specific what this is.
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      An optional value representing the maximum number of concurrent in-flight
+> +      messages allowed by this transport. If set, the value should be non-zero.
+> +    minimum: 1
+> +
+>    arm,smc-id:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      description:
+> -- 
+> 2.46.1
+> 
 
