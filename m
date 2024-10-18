@@ -1,211 +1,177 @@
-Return-Path: <linux-kernel+bounces-372237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD809A4604
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:39:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 002369A460B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB1ED1C2120A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A829B283D1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899912040A8;
-	Fri, 18 Oct 2024 18:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECAA20408A;
+	Fri, 18 Oct 2024 18:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ImtIdi5g"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KyjUPa1m"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EAB2038C8;
-	Fri, 18 Oct 2024 18:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF30A202F71
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729276745; cv=none; b=FkLahP4CC0aTUs/Xs9P74BNLjW/3F41LjoYOgpNoP1h+Ja3xgohrx3vyA9J0Sa6CHPfKzA9mJpsOOY4K/VpWzRisbaEyuDIw1Hk0MO0hn4rHAjHpBPxP6bAz0xnAnqLTEso97DqOAKuxL7D2sBJ+6g/mrpq0Q55i9K6kmXpZAyA=
+	t=1729276949; cv=none; b=YuAhsmC7EmiQIi+QqHZq9hUT9SVN+Dcr8nGRL8DXY1MFnWwnzKgpLEugzgrt0wxdvtyT6EoX+Pnhq14KkE6MKHVptLB7NM4dSlm2GqrOS8BKt0cwLiLMPjhLl3124Pw1pQ2v6a8z/YovL7Zhb1T41hSgzjZzBb838fmkEDdTMO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729276745; c=relaxed/simple;
-	bh=uXj2vblEs/WlhkDdzuqJptgAkmHLF67IfskPKZMxe1c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CZi/+QVXl8LNv5rABkoycto1EHOcRKAOJZ2ZC0R7VG/9JYcMepQPpmEUFRyXBCndwVWHVGNp2F1zw5RminUMHTs1IATXORFc0yIekq61QoXnQomQwgbfx0bLVLbeY80FCRRCrC5wSg0OAizRACiKI4uo5FL+TK775PeIJoOAkrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ImtIdi5g; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d4d1b48f3so1790187f8f.1;
-        Fri, 18 Oct 2024 11:39:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729276742; x=1729881542; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uXj2vblEs/WlhkDdzuqJptgAkmHLF67IfskPKZMxe1c=;
-        b=ImtIdi5g3AMkeSSvwRSEcejvAtgWTDRnhRXxSIKIxm2JVMHMeMUPVvdsuTRdeZEXtB
-         gUxYQJCv4Whd4tChU729ls+Kew/GYsJErkusjQv2Ur6D6E9jV8qVUZjS4Uxhq9yxq1wg
-         vXqk1QeGvesC16HnVfCzYHMR9JLWjA8HsxSc5zw0SGLZZ/WNe1apiNU4QnPLsZvxjGAB
-         p/uCzmw3MRaGx+16sapniKWh8lERWSjI+u3P7GTRfewZT7lZBEoOlysPULAJFIJSdoY5
-         b9maHvCeyWcyTb6oUgIAjtzTyQdqwSVxHQzCPPD8pocN0XjGI1Zis8NOOB9UMBxOzoSf
-         o1Uw==
+	s=arc-20240116; t=1729276949; c=relaxed/simple;
+	bh=GEpcWi5C9Asj2k8N3KxrwrVkRKmU8iOKRFBZC2L4BdY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nuXwJzZyaj0x5jCG0fwU0ZHSYOhTNyD4NKarOg1cCAq9gSYb+VZ7ckKCokoZl0l4ocG4XEsma/IpqVPB2rlCMRhH++tn3CCfbF27OH2XJIKJEZAiAdF1TflM+B9DBOMDmETdjr/tjO1MAj2a9dtpzLof7hLuA3bKk1ta5RH2x2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KyjUPa1m; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729276946;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=kEHREo/6vx6EwxGigHZxuVZ7HO5/M0dBIlZFq7rjQb0=;
+	b=KyjUPa1m2QP0qNAVaGK4/jb4/LzUIqTRwoXN4NG5lB07KHFkA/X9B5PLw+K8EFtqRsaSDY
+	fQROZDnNbMvujmMG5pfzxK0u58kIzLdRDqHoUPS+zEvwOJtrall1woysbsBIml62CyABwH
+	hlNk4NOnZ2tuyzusOVmzGXVj3gyfX2E=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-649-rmJBylLRPU6Gh63Kx7xzaQ-1; Fri, 18 Oct 2024 14:42:25 -0400
+X-MC-Unique: rmJBylLRPU6Gh63Kx7xzaQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d5a3afa84so1262549f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:42:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729276742; x=1729881542;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uXj2vblEs/WlhkDdzuqJptgAkmHLF67IfskPKZMxe1c=;
-        b=NGSvjSqoKPxnGHF8yQrxpP7stky+GYEXONq/1YbmqL/mAOCXbMxu/bvsA40AUELNCT
-         ifODpVrLDCr1j1terxBTcaimD164iJupqJdIzhbJneXL4wKkCHZbcTJXsH9R4+0Wr90h
-         qC1/ZM7UjA6F9cdpQTcxmjSiwhc6nd7+X15PE71b+Nl9M2mP/s66oC+kI5IC/3C3UtpJ
-         WKMPST+t+rqCIkpUtXiUstMUzqtnSmmJbyyTSNd+NJUv/RUvosDxn8Wox4jIoK+dbZKc
-         k+V6riBKUH48r4MU6PhcWUQBp756fE423PA7P/+6dX/L3uwlqDZQCeYNla0WJu7EgYp6
-         qlXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVch6ToByzLpPQh9XfdiVe/ACWfRdmH8nEM9sDz0K6fMH8iUDfA9DWY5vukc7IDSWVEJbTpTRgBvS/6yPYg@vger.kernel.org, AJvYcCWh9IdbZIVOFbyqQz+CD+waR59lUzyPgeWTKBuuaAYduFwikXSGhEjXi+2mtZdtx834n4HBd621@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCyW1mNv7kD3sVfaZvzOHsg+xy5C5mhjcK81nL5GXW6I8oFoXR
-	7pSCo4z+Oqz/LaATGpSAGgd119klbpwV801DY2Jzse2ct4F5+OzNtMdZ/pO8aUSrPYOFoMsm6Rq
-	a+woR9PGAEOPg7rUtRBnMMg/oX3M=
-X-Google-Smtp-Source: AGHT+IHiniw7KI+UuesyYI7EYwpugwCS8A1Mtubu3dtGbo4lqnm5fBpFsbLFNoaq9R957MjbjAdI4P+f2ngpcZpnkpc=
-X-Received: by 2002:a5d:4983:0:b0:37d:33a3:de1c with SMTP id
- ffacd0b85a97d-37eb486ad19mr2477676f8f.38.1729276741686; Fri, 18 Oct 2024
- 11:39:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729276944; x=1729881744;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kEHREo/6vx6EwxGigHZxuVZ7HO5/M0dBIlZFq7rjQb0=;
+        b=YqVxeBMW5NsAfLjyS6w0sDZU5raSQcT/BoQwTZA7RGXVWQG9Qi6R/uc8GaDsp+LmhN
+         qj5KAjReQB6ZpjUHZfVzbRfSfhPFkzqnz3iMlBOjuVYDhvm6cy2xuBRbKZA/Kwf+6nFY
+         us1xBSnxU0pzFJOhOlwA8tNHNR8yS6rCUq8hhWiG1Y6bTy0/yOOF5CChJeLdhUMvac/D
+         72Kn7Bsq8FQnbjJQJz3g7ggxblsusbPQ4wGIt5wENKX5kLcSQYF8Nn5X5U0fssshIMdl
+         EjFHrw0lnFma9Lrn4R1wBOc4qsV4BW7VhmYTTxBYX/80JPSCQVpxjMG6lBWeikSh8uz0
+         DN2A==
+X-Forwarded-Encrypted: i=1; AJvYcCU9klu9Z9BKk/7ydSV4/vMDR0xjL1/6r1tlSW0+qVCzDSuiYwRLo0uuIctuT6BigpYICMiCvXmy3KsvmRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrkIS6UANM+JGVaA0HbTgz3QTnwR9VFGFiYaYaWTSlyj6z947a
+	8P03uqXwjjzgn4S1OtxODHXTMrA1h0uuHsWMHlLQ34QBRpGuoyjlaQylgXyuduPn4xhUeuKfNUc
+	RfjWmqOMED6T7EUhFIfTP4psM9D/pchWHm6OPfhKKvmytDU4sjwXwRC26Qbc7Sg==
+X-Received: by 2002:adf:e386:0:b0:37d:37e4:f904 with SMTP id ffacd0b85a97d-37eab4ed7e0mr2570224f8f.36.1729276944589;
+        Fri, 18 Oct 2024 11:42:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9b4bKozbt5gskGcurGdfWU61xhk7EoXHvIi0Z8cD8zTi2F1HrAUG4WNiw/qg92Ad+yl3YDw==
+X-Received: by 2002:adf:e386:0:b0:37d:37e4:f904 with SMTP id ffacd0b85a97d-37eab4ed7e0mr2570208f8f.36.1729276944206;
+        Fri, 18 Oct 2024 11:42:24 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c707:2400:68a3:92e0:906f:b69d? (p200300cbc707240068a392e0906fb69d.dip0.t-ipconnect.de. [2003:cb:c707:2400:68a3:92e0:906f:b69d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf027e31sm2557761f8f.12.2024.10.18.11.42.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 11:42:23 -0700 (PDT)
+Message-ID: <7ec81ff8-5645-42a1-a048-c8700aff07fa@redhat.com>
+Date: Fri, 18 Oct 2024 20:42:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017160438.3893293-1-joshua.hahnjy@gmail.com>
- <ZxI0cBwXIuVUmElU@tiehlicka> <20241018123122.GB71939@cmpxchg.org>
- <ZxJltegdzUYGiMfR@tiehlicka> <il346o3nahawquum3t5rzcuuntkdpyahidpm2ctmdibj3td7pm@2aqirlm5hrdh>
-In-Reply-To: <il346o3nahawquum3t5rzcuuntkdpyahidpm2ctmdibj3td7pm@2aqirlm5hrdh>
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-Date: Fri, 18 Oct 2024 14:38:48 -0400
-Message-ID: <CAN+CAwOHE_J3yO=uMjAGamNKHFc7WXETDutvU=uWzNv5d33zYg@mail.gmail.com>
-Subject: Re: [PATCH 0/1] memcg/hugetlb: Adding hugeTLB counters to memory controller
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>, nphamcs@gmail.com, 
-	roman.gushchin@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	lnyng@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/1] Buddy allocator like folio split
+To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>,
+ John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org
+References: <20241008223748.555845-1-ziy@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241008223748.555845-1-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 18, 2024 at 2:11=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
-> On Fri, Oct 18, 2024 at 03:42:13PM GMT, Michal Hocko wrote:
-> > On Fri 18-10-24 08:31:22, Johannes Weiner wrote:
-> > > On Fri, Oct 18, 2024 at 12:12:00PM +0200, Michal Hocko wrote:
-> > > > On Thu 17-10-24 09:04:37, Joshua Hahn wrote:
-> > > > > HugeTLB usage is a metric that can provide utility for monitors h=
-oping
-> > > > > to get more insight into the memory usage patterns in cgroups. It=
- also
-> > > > > helps identify if large folios are being distributed efficiently =
-across
-> > > > > workloads, so that tasks that can take most advantage of reduced =
-TLB
-> > > > > misses are prioritized.
-> > > >
-> > > > This seems really confusing because memcg controller is not respons=
-ible
-> > > > for the hugetlb memory. Could you be more specific why enabling hug=
-etlb
-> > > > controller is not really desirable when the actual per-group tracki=
-ng is
-> > > > needed?
-> > >
-> > > However, we now have potentially a sizable portion of memory in
-> > > memory.current that doesn't show up in memory.stat. Joshua's patch
-> > > addresses that, so userspace can understand its memory footprint.
-> > >
-> > > I hope that makes sense.
-> >
-> > and it would be great to have an explanation why the lack of tracking
-> > has proven problematic. Also the above doesn't really explain why those
-> > who care cannot really enabled hugetlb controller to gain the
-> > consumption information.
->
-> Let me give my take on this. The reason is the ease and convenience to
-> see what is happening when I see unexpectedly large memory.current
-> value. Logically I would look at memory.stat to make sense of it.
-> Without this I have to remember that the user might have hugetlb memcg
-> accounting option enabled and they are use hugetlb cgroup to find the
-> answer. If they have not enabled hugetlb cgroup then I am in dark.
->
-> >
-> > Also what happens if CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING is disabled.
-> > Should we report potentially misleading data?
->
-> I think with what Johannes has suggested (to use lruvec_stat_mod_folio),
-> the metric will only get updated when hugetlb memcg accounting is
-> enabled and zero otherwise.
+On 09.10.24 00:37, Zi Yan wrote:
+> Hi all,
 
-Hi Michal, Johannes, and Shakeel,
+Hi!
 
-Thank you all for taking the time to review my patch.
+> 
+> Matthew and I have discussed about a different way of splitting large
+> folios. Instead of split one folio uniformly into the same order smaller
+> ones, doing buddy allocator like split can reduce the total number of
+> resulting folios, the amount of memory needed for multi-index xarray
+> split, and keep more large folios after a split. In addition, both
+> Hugh[1] and Ryan[2] had similar suggestions before.
+> 
+> The patch is an initial implementation. It passes simple order-9 to
+> lower order split tests for anonymous folios and pagecache folios.
+> There are still a lot of TODOs to make it upstream. But I would like to gather
+> feedbacks before that.
 
-I was writing my response when Shakeel responded, and I think it includes
-an important point. I am sending out this message in the hopes that I can
-gather insight on what direction would make most sense for everyone.
+Interesting, but I don't see any actual users besides the debug/test 
+interface wired up.
 
-Michal -- You brought up several points in your response, so I'll do my
-best to answer them below.
+I assume ftruncate() / fallocate(PUNCH_HOLE) might be good use cases? 
+For example, when punching 1M of a 2M folio, we can just leave a 1M 
+folio in the pagecache.
 
-1. Why is the lack of tracking hugeTLB problematic?
+Any other obvious users you have in mind?
 
-The biggest problem that I see is that if CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTI=
-NG
-is enabled, then there is a discrepancy between what is reported in
-memory.stat and memory.current, as Johannes explained in his response above=
-.
+-- 
+Cheers,
 
-As Shakeel expanded as well, it is just convenient to have the value
-explicitly there, so users don't have to go through and remember where
-hugeTLB pages might be used and where they might not be used.
+David / dhildenb
 
-Aside from consistency between the two files, we can see benefits in
-observability. There are many reasons userspace might be intersted in
-understanding the hugeTLB footprint of cgroups. To name a few, system
-administrators might want to verify that hugeTLB usage is distributed as
-expected across tasks: i.e. memory-intensive tasks are using more hugeTLB
-pages than tasks that don't consume a lot of memory, or is seen to fault
-frequently. Note that this is separate from wanting to inspect the
-distribution for limiting purposes (in that case, it makes sense to use
-the controller)
-
-2. Why can't you enable the hugeTLB controller, if tracking is so important=
-?
-
-By turning on the hugeTLB controller, we gain all of the observability
-that I mentioned above; users can just check the respective hugetlb files.
-However, the discrepancy between memory.stat and memory.current is still
-there. When I check memory.current, I expect to be able to explain the usag=
-e
-by looking at memory.stat and trying to understand the breakdown, not by go=
-ing
-into the various hugetlb controller files to check how/if the memory is
-accounted for.
-
-But even if we are okay with this, I think it might be overkill to
-enable the hugeTLB controller for the convenience of being able to inspect
-the hugeTLB usage for cgroups. This is especially true in workloads where
-we can predict what usage patterns will be like, and we do not need to enfo=
-rce
-specific limits on hugeTLB usage.
-
-3. What if CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING is disabled?
-
-This is a great point. The way the patch is currently implemented, it
-should still do the accounting to memory.stat, even if
-CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING is disabled. This would give us the rev=
-erse
-problem where hugeTLB usage that is reported in the statistics are no longe=
-r
-accounted for in current...
-
-I think it makes sense to show hugeTLB statistics in memory.stat only if
-hugeTLB is accounted for in memory.current as well (i.e. check if
-CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING is enabled before doing the accounting,
-or move the accounting from hugeTLB alloc/free --> hugeTLB charge/uncharge,
-which should only happen if hugeTLBs are accounted for in memory.current).
-
-What do you think?
-
-Joshua
 
