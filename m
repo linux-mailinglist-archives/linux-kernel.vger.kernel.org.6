@@ -1,100 +1,250 @@
-Return-Path: <linux-kernel+bounces-371030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D2A9A355E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:27:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDCE9A355F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65A001F21682
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:27:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 864721C20AE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F815185B76;
-	Fri, 18 Oct 2024 06:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xo+Ri8yX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1F4186294;
+	Fri, 18 Oct 2024 06:27:54 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E7B183CBB;
-	Fri, 18 Oct 2024 06:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839E5168C3F;
+	Fri, 18 Oct 2024 06:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729232856; cv=none; b=lWSAm+b7xWa7+8bQ6Wb/+HlUhjUleq2OswucCbsK1xMPAW+xMdLMs/4Dx1m5kqdgJJClBEdBW2KcMzjVt4rsVkv8eyyUFoQZWc3cTDaKQ+SFKbxpIcYjFHRoF5IBoSTwKF9hWMYfa+Jnb+9UafjI5Ge4aSSBBa7yAaN+VdxUjss=
+	t=1729232873; cv=none; b=CPt87KLY+KMY2tKVvFgdH7v9KK1HXADaI+k+9Yr/b6F5YPmxo15bVdBRPjq63n8rxbWa8krbSGzsV1eUpEE4hzG2Nbhcfh5+lygxdZyGrDqiLd89R07NBGofdRm13C3BPe6jEe7HGO4+SeOaLt+NKj8z4cet2bnAtGLotCvSD6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729232856; c=relaxed/simple;
-	bh=atv7BrdRaONTCagKXG9yPnrfvP+k64GtF/0tHBoRiwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qtk4z6pORgWTuf4mkFvP3quYZG01KPt5KhB/Xw+gW+vAlXgycvG1n4SvscT4CY9lrlQ0xaVkv9Z9Jepaau7T5UsGkBGifaPjjDhsDPoM6IQeXYb9imrdb/T9Jh9UMGSdadsY+IL5J8ZZcHz+i87VEJ76J4XHDGORgzTkQZumDzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xo+Ri8yX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF0AC4CEC3;
-	Fri, 18 Oct 2024 06:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729232856;
-	bh=atv7BrdRaONTCagKXG9yPnrfvP+k64GtF/0tHBoRiwo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xo+Ri8yXBdAaJL2c9J3nlgPFv6xiqdzm+8eMMMfL40UFF1jKFX0d8Wg+KhnS4nqlL
-	 D/MJt9G3Id1Vft0nOKGdKiniMiY/maAj7CuY1Y9N6NRCdQckYcpB113Hl8Tc59KJ/q
-	 UF7Ygoffd0b+4Xro/YNuBRs/DZspcmIrt/T+FMXVlAaWbNaIr5LMzVO5m7OHnBJewo
-	 DOs5SuiAJxNXzK6liEPkVsc6+xep/nR3SKk352uP//E14j4jv0G2yzJh2oYGgeQV2G
-	 ignecnwgNMy+/HqSLypTBGSVqFemuVKVQowU3gKvHn1gFpr2rbJl46GmxIM54SFXim
-	 c7aN0lLAFcv+Q==
-Date: Fri, 18 Oct 2024 08:27:32 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Uttkarsh Aggarwal <quic_uaggarwa@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@kernel.org>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, quic_ppratap@quicinc.com, quic_jackp@quicinc.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: usb: snps,dwc3: Add
- snps,filter-se0-fsls-eop quirk
-Message-ID: <gclvciv5cmrcut6qvo3kh3ycutqt5sot5k4i2nwics6myhuxvq@cf6ajwflxdlc>
-References: <20241017114055.13971-1-quic_uaggarwa@quicinc.com>
- <20241017114055.13971-2-quic_uaggarwa@quicinc.com>
+	s=arc-20240116; t=1729232873; c=relaxed/simple;
+	bh=3GSSLALAwUy7M5hozWs8dJRtWJVQG7LsIfxb144DR9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bHqNPABifjlS3bxgCzI/EtN16xK6W0hRnSqiFmmGWGnCmeP+i52liMFSNG8flVdHX4KgvOmO5mtvaqU4YPeVunkgiJvF7G7QEuPOow8YE28iPATKlQv2E0mr4/Byx5fsY92ds27iTzmL4XpFIy1YrJ/0cTw+d2MSYI6WkUa4syk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9600C4CEC3;
+	Fri, 18 Oct 2024 06:27:49 +0000 (UTC)
+Message-ID: <6bde2e39-b422-490f-b3b1-142a5671e770@xs4all.nl>
+Date: Fri, 18 Oct 2024 08:27:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241017114055.13971-2-quic_uaggarwa@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 5/6] media: v4l2-ctrls: Add video roi ctrls
+To: Ming Qian <ming.qian@nxp.com>, mchehab@kernel.org
+Cc: yunkec@google.com, nicolas@ndufresne.ca, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+ xiahong.bao@nxp.com, ming.zhou@nxp.com, eagle.zhou@nxp.com,
+ tao.jiang_2@nxp.com, ming.qian@oss.nxp.com, imx@lists.linux.dev,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20241018054448.3190423-1-ming.qian@nxp.com>
+ <20241018054448.3190423-6-ming.qian@nxp.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20241018054448.3190423-6-ming.qian@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 05:10:54PM +0530, Uttkarsh Aggarwal wrote:
-> Adding a new 'snps,filter-se0-fsls-eop quirk' DT quirk to dwc3 core to set
-> GUCTL1 BIT 29. When set, controller will ignore single SE0 glitch on the
-> linestate during transmission. Only two or more SE0 is considered as
-> valid EOP on FS/LS port. This bit is applicable only in FS in device mode
-> and FS/LS mode of operation in host mode.
-
-Why this is not device/compatible specific? Just like all other quirks
-pushed last one year.
-
+On 18/10/2024 07:44, Ming Qian wrote:
+> Add some ctrls to support the video encoder ROI feature.
+> Support 2 encoder ROI configurations that are rectangular region and
+> QP map
 > 
-> Signed-off-by: Uttkarsh Aggarwal <quic_uaggarwa@quicinc.com>
+> Signed-off-by: Ming Qian <ming.qian@nxp.com>
+> Signed-off-by: TaoJiang <tao.jiang_2@nxp.com>
 > ---
->  Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  .../media/v4l/ext-ctrls-codec.rst             | 73 +++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ctrls-defs.c     | 29 ++++++++
+>  include/uapi/linux/v4l2-controls.h            | 11 +++
+>  3 files changed, 113 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-> index 1cd0ca90127d..d9e813bbcd80 100644
-> --- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-> +++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-> @@ -180,6 +180,12 @@ properties:
->      description: When set core will set Tx de-emphasis value
->      type: boolean
+> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst
+> index 4a379bd9e3fb..6b972247778c 100644
+> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst
+> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst
+> @@ -1667,6 +1667,79 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type -
+>      Codecs need to always use the specified range, rather then a HW custom range.
+>      Applicable to encoders
 >  
-> +  snps,filter-se0-fsls-eop-quirk:
-> +    description:
-> +      When set controller will ignore single SE0 glitch on the linestate during transmit
+> +``V4L2_CID_MPEG_VIDEO_ROI_MODE``
+> +    (enum)
+> +
+> +enum v4l2_mpeg_video_roi_mode -
+> +    Video roi mode. Possible values are:
+> +
+> +
+> +
+> +.. flat-table::
+> +    :header-rows:  0
+> +    :stub-columns: 0
+> +
+> +    * - ``V4L2_MPEG_VIDEO_ROI_MODE_NONE``
+> +      - No ROI in the MPEG stream
+> +    * - ``V4L2_MPEG_VIDEO_ROI_MODE_RECT``
+> +      - Rectangle ROI mode
+> +    * - ``V4L2_MPEG_VIDEO_ROI_MODE_MAP``
+> +      - Map ROI mode
+> +
+> +``V4L2_CID_MPEG_VIDEO_ROI_RECT (struct)``
+> +    Select rectangular regions and specify the QP offset. The
+> +    struct :c:type:`v4l2_ctrl_video_region_param` provides the
+> +    rectangular region and the parameter to describe QP offset.
+> +    The maximum number of rectangular regions depends on the
+> +    hardware.  This control is a dynamically sized array. This
+> +    control is applicable when ``V4L2_CID_MPEG_VIDEO_ROI_MODE``
+> +    value is ``V4L2_MPEG_VIDEO_ROI_MODE_RECT``. Applicable to
+> +    encoders.
+> +
+> +.. c:type:: v4l2_ctrl_video_region_param
+> +
+> +.. raw:: latex
+> +
+> +    \small
+> +
+> +.. tabularcolumns:: |p{4.0cm}|p{4.0cm}|p{4.0cm}|
+> +
+> +.. flat-table:: struct v4l2_ctrl_video_region_param
+> +    :header-rows:  0
+> +    :stub-columns: 0
+> +    :widths:       1 1 1
+> +
+> +    * - struct :c:type:`v4l2_rect`
+> +      - ``rect``
+> +      - The rectangular region
 
-Does not look like wrapped according to coding style (checkpatch is not
-a coding style document).
+What is the unit? I assume pixels. And inside what larger area is this
+rectangle located? It probably needs to refer to one of the SEL_TGT targets as
+described here:
 
-Best regards,
-Krzysztof
+https://hverkuil.home.xs4all.nl/spec/userspace-api/v4l/v4l2-selection-targets.html
+
+> +    * - __s32
+> +      - ``parameter``
+> +      -
+
+So what is the parameter? It has no description.
+
+> +    * - __u32
+> +      - ``reserved[2]``
+> +      -
+
+Add "Applications and drivers must set this to zero."
+
+> +
+> +.. raw:: latex
+> +
+> +    \normalsize
+> +
+> +``V4L2_CID_MPEG_VIDEO_ROI_MAP (integer)``
+> +    Specifies the QP offset for each block. This control is a
+> +    dynamically sized array. The array size can be calculated
+> +    from video resolution and the roi map block size which can
+> +    be got from ``V4L2_CID_MPEG_VIDEO_ROI_MAP_BLOCK_SIZE``. This
+> +    control is applicable when ``V4L2_CID_MPEG_VIDEO_ROI_MODE``
+> +    value is ``V4L2_MPEG_VIDEO_ROI_MODE_MAP``. Applicable to
+> +    encoders.
+> +
+> +``V4L2_CID_MPEG_VIDEO_ROI_MAP_BLOCK_SIZE (struct)``
+> +    This control returns the roi block size in pixels. The struct
+> +    :c:type:`v4l2_area` provides the width and height in separate
+> +    fields. This control is applicable when
+> +    ``V4L2_CID_MPEG_VIDEO_ROI_MODE`` value is
+> +    ``V4L2_MPEG_VIDEO_ROI_MODE_MAP``. This control depends on the
+> +    encoding format. Applicable to encoders.
+> +
+>  .. raw:: latex
+>  
+>      \normalsize
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> index 1ea52011247a..54219a3b215a 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> @@ -612,6 +612,13 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
+>  		NULL,
+>  	};
+>  
+> +	static const char * const mpeg_video_roi_mode[] = {
+> +		"None",
+> +		"Rectangle",
+> +		"Map",
+> +		NULL,
+> +	};
+> +
+>  	switch (id) {
+>  	case V4L2_CID_MPEG_AUDIO_SAMPLING_FREQ:
+>  		return mpeg_audio_sampling_freq;
+> @@ -750,6 +757,8 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
+>  		return camera_orientation;
+>  	case V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE:
+>  		return intra_refresh_period_type;
+> +	case V4L2_CID_MPEG_VIDEO_ROI_MODE:
+> +		return mpeg_video_roi_mode;
+>  	default:
+>  		return NULL;
+>  	}
+> @@ -971,6 +980,10 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_MPEG_VIDEO_FRAME_LTR_INDEX:		return "Frame LTR Index";
+>  	case V4L2_CID_MPEG_VIDEO_USE_LTR_FRAMES:		return "Use LTR Frames";
+>  	case V4L2_CID_MPEG_VIDEO_AVERAGE_QP:			return "Average QP Value";
+> +	case V4L2_CID_MPEG_VIDEO_ROI_MODE:			return "Video ROI Mode";
+> +	case V4L2_CID_MPEG_VIDEO_ROI_RECT:			return "Video ROI Rectangle";
+> +	case V4L2_CID_MPEG_VIDEO_ROI_MAP:			return "Video ROI Map";
+> +	case V4L2_CID_MPEG_VIDEO_ROI_MAP_BLOCK_SIZE:		return "Video ROI Map Block Size";
+>  	case V4L2_CID_FWHT_I_FRAME_QP:				return "FWHT I-Frame QP Value";
+>  	case V4L2_CID_FWHT_P_FRAME_QP:				return "FWHT P-Frame QP Value";
+>  
+> @@ -1512,6 +1525,22 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+>  		*type = V4L2_CTRL_TYPE_INTEGER;
+>  		*flags |= V4L2_CTRL_FLAG_READ_ONLY;
+>  		break;
+> +	case V4L2_CID_MPEG_VIDEO_ROI_MODE:
+> +		*type = V4L2_CTRL_TYPE_MENU;
+> +		*flags |= V4L2_CTRL_FLAG_UPDATE;
+> +		break;
+> +	case V4L2_CID_MPEG_VIDEO_ROI_RECT:
+> +		*type =	V4L2_CTRL_TYPE_REGION;
+> +		*flags |= V4L2_CTRL_FLAG_DYNAMIC_ARRAY | V4L2_CTRL_FLAG_HAS_WHICH_MIN_MAX;
+> +		break;
+> +	case V4L2_CID_MPEG_VIDEO_ROI_MAP:
+> +		*type = V4L2_CTRL_TYPE_INTEGER;
+> +		*flags |= V4L2_CTRL_FLAG_DYNAMIC_ARRAY | V4L2_CTRL_FLAG_HAS_WHICH_MIN_MAX;
+> +		break;
+> +	case V4L2_CID_MPEG_VIDEO_ROI_MAP_BLOCK_SIZE:
+> +		*type = V4L2_CTRL_TYPE_AREA;
+> +		*flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +		break;
+>  	case V4L2_CID_PIXEL_RATE:
+>  		*type = V4L2_CTRL_TYPE_INTEGER64;
+>  		*flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index 974fd254e573..169a676fd64c 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -900,6 +900,17 @@ enum v4l2_mpeg_video_av1_level {
+>  
+>  #define V4L2_CID_MPEG_VIDEO_AVERAGE_QP  (V4L2_CID_CODEC_BASE + 657)
+>  
+> +enum v4l2_mpeg_video_roi_mode {
+> +	V4L2_MPEG_VIDEO_ROI_MODE_NONE,
+> +	V4L2_MPEG_VIDEO_ROI_MODE_RECT,
+> +	V4L2_MPEG_VIDEO_ROI_MODE_MAP
+> +};
+> +
+> +#define V4L2_CID_MPEG_VIDEO_ROI_MODE		(V4L2_CID_CODEC_BASE + 658)
+> +#define V4L2_CID_MPEG_VIDEO_ROI_RECT		(V4L2_CID_CODEC_BASE + 659)
+> +#define V4L2_CID_MPEG_VIDEO_ROI_MAP		(V4L2_CID_CODEC_BASE + 660)
+> +#define V4L2_CID_MPEG_VIDEO_ROI_MAP_BLOCK_SIZE	(V4L2_CID_CODEC_BASE + 661)
+> +
+>  /*  MPEG-class control IDs specific to the CX2341x driver as defined by V4L2 */
+>  #define V4L2_CID_CODEC_CX2341X_BASE				(V4L2_CTRL_CLASS_CODEC | 0x1000)
+>  #define V4L2_CID_MPEG_CX2341X_VIDEO_SPATIAL_FILTER_MODE		(V4L2_CID_CODEC_CX2341X_BASE+0)
 
 
