@@ -1,159 +1,111 @@
-Return-Path: <linux-kernel+bounces-371696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82589A3EC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:50:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 795F19A3ED3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847FD2821C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:50:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385B9286FED
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772FB1F4266;
-	Fri, 18 Oct 2024 12:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD221CCB33;
+	Fri, 18 Oct 2024 12:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z5AWc95e"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LmAIkk9M"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06071D2B0E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CC51C3F10
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729255787; cv=none; b=nJW1RNBadIsmfjCCQwslPQZ96RCIqPGoZFjbD1AnpGCMu3dphGCnvJfq2u6edU60MQWbsN9LXvLv/UAIU1/LnBMFgUKSgIm8m7+ZhYzCOo9V8BB/65EqOz9HnfsUSEkqUAspD42UvA4wM7T4YP8wNuZT/UyF0iu+HWd6KrswykI=
+	t=1729255797; cv=none; b=hhcYNG53NhN1SchyA7vXZaTIZ3ulpBjrUKGnuRR8amEC1aF9qzOAnBJgsAWWU+iMpPT2v/rwH5W1f1GRJ7kzStdpZvD7LFHPsKfceKeXvH9HFobIqiDOw9KHu8rdkEkBQvo5HX2JqJY3GlXET1s1F9P5TS9wviTGmMxfeE4ucDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729255787; c=relaxed/simple;
-	bh=kfWulNWqB4gXHg5uFx3b3lXmDfL4uoz1uwfWItgVKtM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mL573Ms6jWkXLbIu+Ua+PTTwN2JrAH9P2wcUbQGx2n52nBosqenwAYGfzFdfRICzz79pLKhzQHmrT81CpzyykhJ4fC6nggEkYhEvatcvU01Tp/N/+pWCZR7goWKRrVpyxiNnQM+7C2Jgnlra9PZNqxe2X5HdFfpl7YD55SEsXEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z5AWc95e; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d49a7207cso1482145f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729255784; x=1729860584; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wNoX5IHrzAxgidozBILlAFDudMpJyA8374WuU9SBpdg=;
-        b=z5AWc95eFTJfH/KhqSLCljE64Qui0xi545Wq5CT3+PfW3GG39RGb6w7FrXkSMoPpB5
-         18XPVBxrySrTUi48iSF1S0LThrzCRlpJCISfGeZjbAhKPHoLqH84Ug4FddczvRF1ZQXm
-         475Qe3/Ker4UJoODLyUxQ6c3CktZLiNaKmi9s84EpZvQvwVeGx7TLT1cW4IMD3BPnxdB
-         V481476i85Vv9CeVCtvUcaxBGQeC/PRLh7oD3zS9a7CNoYL/Sa6m7tz5cCrYe8siEMzX
-         oh7+eA7S+Wo1W0VwKcAuCrC8hf1CCc//OhuShKFreBnFPJgkRRh0bMelrfUsNGTm8bUW
-         Fcww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729255784; x=1729860584;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wNoX5IHrzAxgidozBILlAFDudMpJyA8374WuU9SBpdg=;
-        b=JKbpj0IAWOYP9ts8rUx/P+E1Rp32kV6XaSkpKxuUPsUOtUqlTnhFYnmMzgjgt9bV6C
-         BcNgE+SGMIE9rdxTz/HLpie5S3yeW9HY0V6cFE87RJdcBEXNpXJDKYz3e4xgxNrog+CH
-         kPTdTMVn3kR6VJI3x4/TrazoqLuoftZYJAyD1r3vsE7BFlRqN64dwlrMem8c+1bf9wS4
-         qcfoA9PCt0+MVTSPO/iY9nH0LHOoUeDYLwBgIcWPI8h7mMZWl0v3T0Of47c46C678sgt
-         60OLg+qjFaF/cc2zULkXptGN3MqvW6i/wstrXGVnQ7CR6F5RJ4WqskMSnYTMEFkAorTt
-         F2sg==
-X-Forwarded-Encrypted: i=1; AJvYcCVj/D8bKABhe3nHLDmgUhOBpDQp1ENl3yygK1+rVwS7z8c7YgOrDobIdlimVByWdAc2Klw1XZ1sKT4Vzyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz78Wqn+u+y1EdivITw+q0hwQJIPVSKffiXKfCmgcrL/Gy4YVjA
-	F6nA3RXKDiSFcUx2lwGQQ47Mf+oz3b41aOuhpSh6CWKJEG4CSXA3xBKI7L4lSUo=
-X-Google-Smtp-Source: AGHT+IE0g5FUhbZpxx/i7vohMC6D1yREIsPBdB29vyxyl4XkKH0dXnNvgXo8WwLLiI1oQb6uoUq09A==
-X-Received: by 2002:adf:ffc5:0:b0:37d:5338:872c with SMTP id ffacd0b85a97d-37ea2136f6emr1545159f8f.1.1729255784024;
-        Fri, 18 Oct 2024 05:49:44 -0700 (PDT)
-Received: from [127.0.1.1] ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316067dc56sm26751725e9.3.2024.10.18.05.49.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 05:49:43 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Fri, 18 Oct 2024 15:49:34 +0300
-Subject: [PATCH v2] drm/bridge: Fix assignment of the of_node of the parent
- to aux bridge
+	s=arc-20240116; t=1729255797; c=relaxed/simple;
+	bh=x8Jx1PJsd1fk6/RgEx6LeCS+xcpZp2A5jYTRP0faV4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hfuvOYE908JD84yQ1jzl/b8Fre+Whr9ZMReVWk5TlFXlYmz5cYHYSS/X9zLcDLDGqfEPLEYeTbVYRI6uaH1bXkeJrtiSs8kgbt6+v17EW7laVr9WfhTAiu1IJd+RQtKIULHBNtWYrsbQJkvUujFemF2HORDx0gGOvgpDz6A1Px4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LmAIkk9M; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EBB7D40E0169;
+	Fri, 18 Oct 2024 12:49:53 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ITSQRhb-uJed; Fri, 18 Oct 2024 12:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729255789; bh=GDNu1/78QwFrBbhAg+/okEcKgChAgn+ja2+bT034AL0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LmAIkk9MkaUQ5N5snzfDqqGGDMEIelMl3go/9ErxHvW9+bV6THUlDNB95W6zBkhkN
+	 UmJtg5ASgkp1/rcITmvPXS2WXdCqlVnRwFGLsAUAFWMFxJk/exIJvcqGMxDmDwXH7o
+	 HiiiuwJz3+/WGTi99n6LUvty6Qig5Fy7nP140jR37cshgMIXiaPsLPqeLHCa0jK1bp
+	 cgyu98w0INq+kdefOtnJp5nUu/ZoZqitoq8cGqTXCAIqjA9A2Aekql7Z053Iri8f/n
+	 OlFhX9fbN1v1z8K5AYuAqfkymu7LfRk/3AMVFNvnbDRmRFnRAHT0/35/0Rci4X1VDN
+	 EEctpil6UOXGXv978pAiDQBVMW6V1OZS3tmNTTW0L2RKdMs1y7bn0Iwls9mAd6rQzv
+	 hAXXaMsy0ZWR7WxB5qm9WUdvaNV2UlhXHnaio+DO9+Juff9FDVZ9HZYMi9HzUPQ62V
+	 TilI5jQGF13PLGY/d4RYQgSP0YqIi9Gp1KBZ+tbYKASofL3nCJ8hngowdINWc1h5wO
+	 yiS52Ziysu+1SWwTQqoLPK3eOLTe0fBYto3EAbgHK3Ef8YcVSNaIX/WUoXRqTT+zaM
+	 7dtPFxecOdaxMgBAVPzrqhqVP+dU4ihF9mvNRFwy2qp/HJR/jiz06Wmw0lnFad4ySQ
+	 PEXJkRPC2eiaxR3uSPnFhqUA=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DF10E40E015F;
+	Fri, 18 Oct 2024 12:49:43 +0000 (UTC)
+Date: Fri, 18 Oct 2024 14:49:43 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
+Subject: Re: AMD zen microcode updates breaks boot
+Message-ID: <20241018124943.GDZxJZZxtwA9O9eqiU@fat_crate.local>
+References: <20241010134613.GDZwfapaZ8AKp0n72C@fat_crate.local>
+ <842a76fe-3d6a-4846-83da-bb113634b8bc@kernel.dk>
+ <13fe104b-d83b-4d6d-a348-1103d402540d@kernel.dk>
+ <20241017100257.GAZxDg0VqDAesee00m@fat_crate.local>
+ <3400cf0b-85ca-4ec2-a8a0-c9d75889d573@kernel.dk>
+ <20241017141314.GDZxEbenNT6XF4jIaA@fat_crate.local>
+ <4d4bf52a-dd91-48ad-8949-198b2ffbc9da@kernel.dk>
+ <20241017142707.GEZxEeu3YHvnEMmd32@fat_crate.local>
+ <a395a18b-3478-45dd-aabd-ccc9d0851318@kernel.dk>
+ <20241018115857.GBZxJNgZY-NedtPrxX@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAF1ZEmcC/5WNQQ6CMBBFr0Jm7Zi2gTS68h6GRaFTmCitmQrBE
- O5u5QYu3//JextkEqYM12oDoYUzp1jAnCroRxcHQvaFwShTa6UtepnQzSt2wr68k5MHpoAxeUK
- hOZPHpjdEtlYh6AsU0Uso8HpE7m3hkfM7yedoLvq3/qVfNGq0vW+sMl1XB3N7cnSSzkkGaPd9/
- wLdUh+W1QAAAA==
-X-Change-ID: 20241017-drm-aux-bridge-mark-of-node-reused-5c2ee740ff19
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Johan Hovold <johan@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1833; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=kfWulNWqB4gXHg5uFx3b3lXmDfL4uoz1uwfWItgVKtM=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnEllg/6+luv/EDjB6p7bP/2XwiFNKKUBTqWE/k
- gyey9MA9L+JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZxJZYAAKCRAbX0TJAJUV
- Viq2D/4ogi9WzQdFvO605u37JteTykuywyIuZKo4ul7KwGW2DSVO7LZ1vaYl5FU9HiS/EBcv6RY
- bah13DqPLIq88p5509alQOJbS2wIRVDYywa2NbUR0ZyVFQbjzWXpvN/8Du2K6F8j18pnnvJLXIE
- 9os5LVxYeBjawUIFuDvdt5MUj1vxpYrdpcDtG5LCfKus6vjET03/hvebfcNx2tsNp3aeZR6F90w
- lWt2r833KeBE/QCFdUC0eKtor3U/rr8cQPKpDI5XhuJXkQsfZMVErhk9aLOhfQAGtP6Gy36t++u
- uBkQ4OAPSGbGkdqfSAP7ZsScfKEm0veOjXLUdsYkcUknoizIhlRgZjQ8sYi7WU1lrfUE9sFrhAX
- Hlf63ITK382waV1tQd9zd1ylpQJhetrl64HyYLNwXaenjtHoPL/Vi1jX2YX3EbQBNRKDOsI5ir/
- dWQNJLeRy1exV6vQuaE8jlceCe795hDdGL26FvHce9QP7sLVfkvRbDQkcySesq9MhpuAGHaQ8ZQ
- 7bwXCHdyILO9dTa0U1//fMaOpmsruQFnqte+buQpTi4OtjKaXCj2hyG+ils+9O7FfDMa8YDTh02
- YpRNb5UOxLTKJdbcW05MWShGfs3gUtpJ6W/Ep9aaulkt6WYvwESX99S9O+uLKZVd/QsGrkuDYs5
- wK1rlN6/xHnaHMw==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241018115857.GBZxJNgZY-NedtPrxX@fat_crate.local>
 
-The assignment of the of_node to the aux bridge needs to mark the
-of_node as reused as well, otherwise resource providers like pinctrl will
-report a gpio as already requested by a different device when both pinconf
-and gpios property are present.
-Fix that by using the device_set_of_node_from_dev() helper instead.
+On Fri, Oct 18, 2024 at 01:58:57PM +0200, Borislav Petkov wrote:
+> The next thing that is catching my eye is your simulated NUMA config:
+> 
+> [    1.668943] smp: Brought up 32 nodes, 512 CPUs
+> 
+> Lemme see if I can repro that here.
 
-Fixes: 6914968a0b52 ("drm/bridge: properly refcount DT nodes in aux bridge drivers")
-Cc: stable@vger.kernel.org      # 6.8
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
-Changes in v2:
-- Re-worded commit to be more explicit of what it fixes, as Johan suggested
-- Used device_set_of_node_from_dev() helper, as per Johan's suggestion
-- Added Fixes tag and cc'ed stable
-- Link to v1: https://lore.kernel.org/r/20241017-drm-aux-bridge-mark-of-node-reused-v1-1-7cd5702bb4f2@linaro.org
----
- drivers/gpu/drm/bridge/aux-bridge.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I can do only 4 nodes here:
 
-diff --git a/drivers/gpu/drm/bridge/aux-bridge.c b/drivers/gpu/drm/bridge/aux-bridge.c
-index b29980f95379ec7af873ed6e0fb79a9abb663c7b..295e9d031e2dc86cbfd2a7350718fca181c99487 100644
---- a/drivers/gpu/drm/bridge/aux-bridge.c
-+++ b/drivers/gpu/drm/bridge/aux-bridge.c
-@@ -58,9 +58,10 @@ int drm_aux_bridge_register(struct device *parent)
- 	adev->id = ret;
- 	adev->name = "aux_bridge";
- 	adev->dev.parent = parent;
--	adev->dev.of_node = of_node_get(parent->of_node);
- 	adev->dev.release = drm_aux_bridge_release;
- 
-+	device_set_of_node_from_dev(&adev->dev, parent);
-+
- 	ret = auxiliary_device_init(adev);
- 	if (ret) {
- 		ida_free(&drm_aux_bridge_ida, adev->id);
+[   23.137188] smp: Brought up 4 nodes, 255 CPUs
 
----
-base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
-change-id: 20241017-drm-aux-bridge-mark-of-node-reused-5c2ee740ff19
+But that thing boots fine too.
 
-Best regards,
+I guess the next thing to try is a two-socket box like yours.
+
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
