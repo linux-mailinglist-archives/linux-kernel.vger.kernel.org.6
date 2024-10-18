@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-370973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D5D9A3484
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:49:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7BF9A3485
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D80285FF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:49:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF0E1C232B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C17718A6C6;
-	Fri, 18 Oct 2024 05:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F17185B6D;
+	Fri, 18 Oct 2024 05:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="czd6LNOg"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gN1s6Buh"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473C6185B5F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C192818A6DD
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729230469; cv=none; b=ILuTFvkjL90Y2j53es91kwvuEN0W0DVeKDRbsmqLb6SPk/aeuiW4ytRy7syt/uUZonBwIExWH4y5I5omZhZB52jALFZ7EHhL8recdyhpGBCgHWz70VyXwWfq9A66XSjgFNkikfj/0fmBYHCYyPY+n+ez8yd1EaahW6jKhO9xOWw=
+	t=1729230472; cv=none; b=qszaA70ofJTj7hnR+b2HkxfbKWKTS4MMNG99cVFitL+E6HmFc4EANJiqpeAXbW4gjsq/xIP7iYtUwPSs03EzO3P0iRMuR9qAUotQwCH4CHR87N9HauN6KR2cS+e28qm3Lt9G70TqvqYkRo3R3Ar186b6OEvXe0j3WzK2mw6hbU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729230469; c=relaxed/simple;
-	bh=NyBi4ldcotgRIWXy+pyJqk7L/008dIgRW+IaUmHndKE=;
+	s=arc-20240116; t=1729230472; c=relaxed/simple;
+	bh=5W+gJCgn/iqQR+0OXY2i27BEZMd24fFR3rEA7huJPM4=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=aaWLMK+YQtmrgArB5zZV6Qs37/4dD0Ik5ULxcvuLfqMbxCJiXOJLl/4JaeiVTu4pqK/4oy3wv/ywPVBsMB1oMqX0Ylp/3TugxFL0FyeEPK9nDKXVkDQxUQ6xniirctbI7rZ7Rj7ygM2k/a5w7hpkqJT0o/D5HoQzvHzGFer6+QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=czd6LNOg; arc=none smtp.client-ip=209.85.128.201
+	 To:Content-Type; b=gGFP5INCCQHIPNsvSyePGy9/FhsCX5QsWxzyTNgJgOhrk8q4WkjjKl2DHG9IFILY5/pc9Yra+0z7tn07bCAgmSQjvdIjHr2MGrFARyBARWUB59qz09hkGRJhr1KYbs80edivPbreYeWIEzk64b5f+RSQCjG2GALJk6AZmqqJE1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gN1s6Buh; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e31d9c8efcso36080447b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:47:48 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e28edea9af6so2482804276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:47:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729230467; x=1729835267; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729230470; x=1729835270; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WRFmLYGgcJHBSD8LI17iLRO0wZ/dUkGCXCceddIu4Nc=;
-        b=czd6LNOgd2AiALcqvDeRRgjrPDTaeqk3BWv31pOzU9R9x11JG+6XIUPmdUKrb2935r
-         /5o3MhbN+X2bjOhKybfhjbeLIUaEXkcvUusY616c2/rSc1/BH0MaBevEdqC9Sc27oAzO
-         3k1hMozzdDd6c14jm28bzmZUwQRQZmd6TH8tqlC3xrClvDgD9xZN2/Z4yte/yx2NI85e
-         iFEykiMcHt1UJDFcndsBdlBNoesX1JC+I6QJyIQZhtGvxjY9PQ/aWBz+8WqzFqd8DGdB
-         smNW8AAT/r1IHWTa3Jg6di5ybV1kcKhcfhgMD/jPjS25cvj9lWZzH/GrE3PkPL0RmH0G
-         0ayQ==
+        bh=aQvCceMrlghIZnfCb5WUSYCrB9JkcNmVyoorIOTc2vc=;
+        b=gN1s6Buhq8I2Uk2Pt0ZXTFhpmXxlhpxa6Ua/feM1LZI6p+e0fHwmqMM1RFtaPmQPTE
+         p6ak36HaUDSOBD8Pet3lld9AFu5hwtDSm6Q1HoPfa9ZavqbaTmALOHD4dfQltGFY+T34
+         UBz0+jiDqEwVCl97+zKLitHATZPn950uKi0AygY+kEJ2uMBDYmIQFslezJB6S6NDTUQt
+         ToE6UDaiPvMK1tu/QLymBl49YFscHF70MbqKME4LSxRTDiXdo1QbR/fBsifjinEoAQkh
+         SX0BsR1eYf6fEynM/ujdI4uhrX5mzIo8ABNglP2ExUXNBwvC4ERTiSZ00Zf/eaEU4Nmu
+         /hnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729230467; x=1729835267;
+        d=1e100.net; s=20230601; t=1729230470; x=1729835270;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WRFmLYGgcJHBSD8LI17iLRO0wZ/dUkGCXCceddIu4Nc=;
-        b=ifH7jQAsDD8yScLzFV1Hfoo+7bPS32iJKb8NLkIxwDhlGZVY3pbQzQe7wuFMG4YrAy
-         JN7Mn3eaOfsHtg5/WO6XdAy0kCyftk6nlM6AIwiKcBMPlTz0kKjQrxVyjQ75mdKvCXEy
-         DFFOyz727aKkhC+ZSRNmvgIXBfHKxvnf6y/3uYY3hcxN+jPcAlAv1YB0oEtP81jfokn3
-         yDox/VRXXq3sE+3iNLNwfHWL9/PrmKcyg5mL0cJP97oFPJWW1084bbdX3ruX7XKAUkdr
-         P5nuyaKwKfgSnJ52w1wZjOkYjqi2QrD+Ls//ChXCL6SlRAz41Ra6vbcD9IVwX7hwu5ui
-         UqgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUES1k1o0T3MeLCVYzCvvenNnYgl/JaOuqT+sEAm8LV/+Tq71TYPGjQEjaF829NKP/Q/JCkZMPeAjXzr4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRky/ryhtKHt7Xoa3mRn6TAXp8aBRElWy+t3kF8SQBLcWA93ys
-	ig94c/vWSN3cqsG7XvO4Wv113i/EJzD/z+P9mk1UE1VKKur+1q5p7j4PHguBLGg45rtrpkUR5Cj
-	PekDFtQ==
-X-Google-Smtp-Source: AGHT+IFKrEsf9oi8iVB/8vbj394g4OdfsAGDRVko5LPfw+EWI4ka0AKsPwGUvXWJfCgWkVrCA2e+ufqmm8lm
+        bh=aQvCceMrlghIZnfCb5WUSYCrB9JkcNmVyoorIOTc2vc=;
+        b=BIOcX/71A+4XZIT6tBKF0Kvj4qmvOfN1JqegsZvoeGlZzLsLjFZzFqaJOUPOe/GbJs
+         8vn+THoJJQkV/PFB8afzZUGMUJGMZdy/5SK73fvip2wyJHvG7B3fDb5ssEGe2HORqgyp
+         n7CdEBB6EY8TX+9fgRZPF0mRMBW9KYJxuK/e8TzmRsbArXp8Oh/JHZOyblOynG/srik1
+         pnLJDUQ8ScCisg0FVxBZLay0y4CNSb27C286L74a/6sYU2XcHU0h5J+5DNWFUBjEv/VT
+         UIcrxIe283ifJfEGwudhfR1Yv0UY/FZd0C1KE0WfcOAcsDqQWk5s9DJRuenAzIwuWwf6
+         /bRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVL6kukvzpwzalgsdj/ROWC7JQfsieCc6RERF1WAf/j3f6/1ppsUTVpOtbjjTJ1JLbTCzuwE9kS47mYKWM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/pyTAKZVguAw8FhicWJ+IQtE3etLy8SLuDa5s7eJw5c/oBBIu
+	RmkLZ+a7e43XbT1NezxYs5ZtAPwdiN4+vXa7SgSCK8an+5SlIDiv2A9Muzwgf8Xbv/ZQgDr8TIp
+	WtkOyXw==
+X-Google-Smtp-Source: AGHT+IEetzZbv6xKhA7Bjm58oK7gBLuLrdE7VQtAkXXBp2zVdlHbeXhsBPD8UPUb6aKAm0dZbINOr2lcVA4U
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:30c5:9d92:bcd:7977])
- (user=irogers job=sendgmr) by 2002:a05:690c:640b:b0:6e3:b93:3ae2 with SMTP id
- 00721157ae682-6e5bfbd5bf7mr108587b3.1.1729230466217; Thu, 17 Oct 2024
- 22:47:46 -0700 (PDT)
-Date: Thu, 17 Oct 2024 22:47:18 -0700
+ (user=irogers job=sendgmr) by 2002:a25:860b:0:b0:e28:f231:1aa8 with SMTP id
+ 3f1490d57ef6-e2bb11b3e9amr3380276.2.1729230469360; Thu, 17 Oct 2024 22:47:49
+ -0700 (PDT)
+Date: Thu, 17 Oct 2024 22:47:19 -0700
 In-Reply-To: <20241018054719.1004128-1-irogers@google.com>
-Message-Id: <20241018054719.1004128-9-irogers@google.com>
+Message-Id: <20241018054719.1004128-10-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241018054719.1004128-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH v3 8/9] perf test: Make parallel testing the default
+Subject: [PATCH v3 9/9] perf test: Add a signal handler to kill forked child processes
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,65 +90,80 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Now C tests can have the "exclusive" flag to run without other tests,
-and shell tests can add "(exclusive)" to their description, run tests
-in parallel by default. Tests which flake when run in parallel can be
-marked exclusive to resolve the problem.
+If the `perf test` process is killed the child tests continue running
+and may run indefinitely. Propagate SIGINT (ctrl-C) and SIGTERM (kill)
+signals to the running child processes so that they terminate when the
+parent is killed.
 
-Non-scientifically, the reduction on `perf test` execution time is
-from 8m35.890s to 3m55.115s on a Tigerlake laptop. So the tests
-complete in less than half the time.
-
-Tested-by: James Clark <james.clark@linaro.org>
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/builtin-test.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+ tools/perf/tests/builtin-test.c | 34 +++++++++++++++++++++++++++++++--
+ 1 file changed, 32 insertions(+), 2 deletions(-)
 
 diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index 258dd97c122b..78ff7862845a 100644
+index 78ff7862845a..c4b6300b0212 100644
 --- a/tools/perf/tests/builtin-test.c
 +++ b/tools/perf/tests/builtin-test.c
-@@ -40,8 +40,8 @@
-  * making them easier to debug.
-  */
- static bool dont_fork;
--/* Don't fork the tests in parallel and wait for their completion. */
--static bool sequential = true;
-+/* Fork the tests in parallel and wait for their completion. */
-+static bool sequential;
- const char *dso_to_test;
- const char *test_objdump_path = "objdump";
+@@ -470,13 +470,22 @@ static int start_test(struct test_suite *test, int i, int subi, struct child_tes
+ 	for (j = 0, k = 0; j < ARRAY_SIZE(tests); j++, k = 0)	\
+ 		while ((t = tests[j][k++]) != NULL)
  
-@@ -627,19 +627,12 @@ int cmd_test(int argc, const char **argv)
- 	};
- 	const char *skip = NULL;
- 	const char *workload = NULL;
--	/*
--	 * Run tests in parallel, lacks infrastructure to avoid running tests
--	 * that clash for resources, So leave it as the developers choice to
--	 * enable while working on the needed infra.
--	 */
--	bool parallel = false;
- 	const struct option test_options[] = {
- 	OPT_STRING('s', "skip", &skip, "tests", "tests to skip"),
- 	OPT_INCR('v', "verbose", &verbose,
- 		    "be more verbose (show symbol address, etc)"),
- 	OPT_BOOLEAN('F', "dont-fork", &dont_fork,
- 		    "Do not fork for testcase"),
--	OPT_BOOLEAN('p', "parallel", &parallel, "Run the tests in parallel"),
- 	OPT_BOOLEAN('S', "sequential", &sequential,
- 		    "Run the tests one after another rather than in parallel"),
- 	OPT_STRING('w', "workload", &workload, "work", "workload to run for testing"),
-@@ -670,8 +663,6 @@ int cmd_test(int argc, const char **argv)
++/* State outside of __cmd_test for the sake of the signal handler. */
++
++static size_t num_tests;
++static struct child_test **child_tests;
++static jmp_buf cmd_test_jmp_buf;
++
++static void cmd_test_sig_handler(int sig)
++{
++	siglongjmp(cmd_test_jmp_buf, sig);
++}
++
+ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
+ {
+ 	struct test_suite *t;
+ 	int width = 0;
+ 	unsigned int j, k;
+-	size_t num_tests = 0;
+-	struct child_test **child_tests;
+ 	int err = 0;
  
- 	if (dont_fork)
- 		sequential = true;
--	else if (parallel)
--		sequential = false;
+ 	for_each_test(j, k, t) {
+@@ -500,6 +509,25 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
+ 	if (!child_tests)
+ 		return -ENOMEM;
  
- 	symbol_conf.priv_size = sizeof(int);
- 	symbol_conf.try_vmlinux_path = true;
++	err = sigsetjmp(cmd_test_jmp_buf, 1);
++	if (err) {
++		pr_err("Signal while running tests. Terminating tests with signal %d\n", err);
++		for (size_t x = 0; x < num_tests; x++) {
++			struct child_test *child_test = child_tests[x];
++
++			if (!child_test)
++				continue;
++
++			pr_debug3("Killing %3d pid %d\n",
++				  child_test->test_num + 1,
++				  child_test->process.pid);
++			kill(child_test->process.pid, SIGTERM);
++		}
++		goto err_out;
++	}
++	signal(SIGINT, cmd_test_sig_handler);
++	signal(SIGTERM, cmd_test_sig_handler);
++
+ 	/*
+ 	 * In parallel mode pass 1 runs non-exclusive tests in parallel, pass 2
+ 	 * runs the exclusive tests sequentially. In other modes all tests are
+@@ -560,6 +588,8 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
+ 		}
+ 	}
+ err_out:
++	signal(SIGINT, SIG_DFL);
++	signal(SIGTERM, SIG_DFL);
+ 	if (err) {
+ 		pr_err("Internal test harness failure. Completing any started tests:\n:");
+ 		for (size_t x = 0; x < num_tests; x++)
 -- 
 2.47.0.105.g07ac214952-goog
 
