@@ -1,173 +1,157 @@
-Return-Path: <linux-kernel+bounces-370846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC78D9A32D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:27:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A8DD9A32A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFFC61C21AD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:27:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2C4DB2369E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBC1156960;
-	Fri, 18 Oct 2024 02:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4602E15C144;
+	Fri, 18 Oct 2024 02:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="YF1aWB9S"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fB6aG3HU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C774F1552E3;
-	Fri, 18 Oct 2024 02:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6262158DB1;
+	Fri, 18 Oct 2024 02:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729218208; cv=none; b=MCp4sH3EaUKmtmTFkJL8AsaxBLSFSYlBGGCPPuema8STrUqpff3NRCkhs9oySTwdnJ/y8g+4Xium8kbNn/CzCL4scpxCnEjVjyFBtirlnyC9OWqYrw0O8pL5R91scdISQgPrB6lxqnQb6A+bFRzXyb2jvW+xxl1K0PwGeFGcDfI=
+	t=1729218111; cv=none; b=mie3AMRqCCWJthnNNVY7F7cOIS+3tF4Qkxr1GzBRQ3Mg6Sl2O3an7siJekM5+yq+uj8C+C3lyzmbxq6QymsDcUvVf5ViZTFg+g+FKl3UXdbpvj5G/Gg5n1/V6jxeR7+hM3m0yotajXJf2S75SY+DbrLUG5uQ/hs++NKmlA5mXCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729218208; c=relaxed/simple;
-	bh=O4uT707Tv/lIfQv6cblxhA6wLHdiMJE58k2jil6dDIE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fRh/xkR+qdx+GvXlem2qaWTe/rrMcQz2HRaQa8cFx59ZPzhwucu9ygf4lhDqQbJ6LO+qjIe9ITqi5PU32HmNAzrW5fmgf3fYw1ixfpBNBc8N+tckEuXhCGN8eZMTgU3DCCbP+uTH2ua2axYOX9QpYAAANqBIZm2D5qDWXQgaSlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=YF1aWB9S; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1729217974;
-	bh=Ki0z6CTdVTpppMdLs2s6QNtb9P/mdMmiW9dRytEzdzM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=YF1aWB9SNHjxY9ILwki4UVo60mCmQDZnvJ7BXARAX8pOJtrDUnllbmJxWjB2Ov+WP
-	 vdXy54qGGt7kvSnbMR8CfceWpGbeBAb1rC0d4EfoGmaIe+R1WwN0oRB8E7VFhNO+4b
-	 U4L4sQapyJY/1L1GVwV+ke/tKypEQV5kMieEqR00=
-X-QQ-mid: bizesmtpsz3t1729217955tkprubm
-X-QQ-Originating-IP: 428xufKTZI5Xo6kHFcuyAGYJM5mAD4lY95RzwD1mDpc=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 18 Oct 2024 10:19:13 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 3988907893277172996
-From: WangYuli <wangyuli@uniontech.com>
-To: michael.chan@broadcom.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	pavan.chebbi@broadcom.com,
-	mchan@broadcom.com,
-	jdmason@kudzu.us,
-	horms@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mcarlson@broadcom.com,
-	benli@broadcom.com,
-	sbaddipa@broadcom.com,
-	linas@austin.ibm.com,
-	Ramkrishna.Vepa@neterion.com,
-	raghavendra.koushik@neterion.com,
-	wenxiong@us.ibm.com,
-	jeff@garzik.org,
-	vasundhara-v.volam@broadcom.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] eth: Fix typo 'accelaration'. 'exprienced' and 'rewritting'
-Date: Fri, 18 Oct 2024 10:19:10 +0800
-Message-ID: <90D42CB167CA0842+20241018021910.31359-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1729218111; c=relaxed/simple;
+	bh=Nry3rVCi8/za/36G9Tg8vsDLl0xoAWHmEVnhEGzG+oQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SLkUNTgjzz4ts0c8Mce9OU17kRL18laLSIY8LQB84ejzWQgOOeQW0SPG0fROWtmplE82hRNI5r8VzVMj2gYA164pdiklqbNC/dHcDoZU9xM7QQOvW8+PnhiYg3ThfU/ThgnaqDB/oz5Lm8WLm0AJKhDgp8ngUjEwPJdxitbkl6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fB6aG3HU; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729218109; x=1760754109;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Nry3rVCi8/za/36G9Tg8vsDLl0xoAWHmEVnhEGzG+oQ=;
+  b=fB6aG3HUQ805d7ZJQPdMAOpgcmYyiW8hBm7w5kGTkZQDxYMKgwn1VtkF
+   5HfzNaDzQ5ZupQB7Vzo5Yjp4C5R5bJIqDtHJF9MLDqaQz/ziVF3btpVlG
+   vAHqrj/7DkJQPMhayYyqDw2mXphLgvG9oBJzppdif/lqJrlSWsbaPXCoH
+   mFv2GBSmEXLAcO3GjAhyIDdkxC4XzuOg5pBtlIq6RODrgMjnfrdEvHX5p
+   0hXA1zd/4Onk6lNCpwgW17psCNJGbufbhPw60SLLHCPzMAQ8D8XGWq9F7
+   0+PR1QJepWv8Dq+7c5CIZpbwKK01idMJ1oXpKkGwfOMcS/tJlmyz38u4n
+   A==;
+X-CSE-ConnectionGUID: 2NfEmx/FRm2qOQua4Fukzg==
+X-CSE-MsgGUID: 96Z2KwPCQ6SRbmpliawfnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28834035"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28834035"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 19:21:49 -0700
+X-CSE-ConnectionGUID: k3g80N+MTRKmVhktp9Jz2A==
+X-CSE-MsgGUID: weiLgmf8TK6MhJcOZRqcjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
+   d="scan'208";a="83376224"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.224.38]) ([10.124.224.38])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 19:21:46 -0700
+Message-ID: <aa3d2db8-e72c-42e2-b08f-6a4c9ad78748@intel.com>
+Date: Fri, 18 Oct 2024 10:21:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/25] KVM: TDX: Do TDX specific vcpu initialization
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "Hunter, Adrian" <adrian.hunter@intel.com>,
+ "yuan.yao@linux.intel.com" <yuan.yao@linux.intel.com>
+Cc: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai"
+ <kai.huang@intel.com>, "isaku.yamahata@gmail.com"
+ <isaku.yamahata@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-19-rick.p.edgecombe@intel.com>
+ <20240813080009.zowu3woyffwlyazu@yy-desk-7060>
+ <1a200cd3-ad73-4a53-bc48-661f7d022ac0@intel.com>
+ <1be47d7f9d4b812c110572d8b413ecdbb537ceb7.camel@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <1be47d7f9d4b812c110572d8b413ecdbb537ceb7.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M4+GqYRlc6iCCZMTMoiAff7mKh2ed6eK76kNLXe/7ZObDRtwylQAsDgI
-	ye3sef2HhqTdOPG0BFF7a96y8ZdDxKDn3QQQOJ3ZeyPVGjGj/mWk5ad1rpB0JyGvtTFuVpg
-	KVMJzO5OWMqyGL9KUNSFETk0I8ojEZNeiwFOdT1BU9ZuoWxm8Fu0r12M8ds/qJaandk+wR4
-	tkjEzIxPMlGya+p17j5vgHLyYHHTX2VjacDY0swklsrdLmUh+20Fo8pr3fT3E/Eh9ePSSj6
-	cuZ51NrFDBsnTZCb7hMWcTFPnDf9l00W1lLUnD+HR9Qbnt8FCziroWHK6RBq7lc6HNd+H6c
-	VqPBoD1pu2YJPKEB3+hcLh+HTM+6krrqNmBYRdQK/NL1PDuA/5om6TC5kr879YXM5x/3LR0
-	3Ia/qQH7res4VECnpXg+EpWo5YpoU5HocEubgKn0JhUgJwg4fpjSieEnb77vlIFSAR/Hv+n
-	6smW66ieBrzIzdJIrAaN9zITgz5g1GMv5ugxPtnMEJRM0Za5huif1zzChcvCeL6EoKm+Fy3
-	ekZ1t9J1DGjPB4PhAB5yNYsaBVR4jMOZYcTuArPnjAHGq3rByse3tOfxJIPRz+HB8BB+8C8
-	1RB3+Pg1rrdE/YhqkqoGal0EGoSr4MmnH8Hazo1YL9G+f/tcqnSj952wzdmUOdpLaLcC0jG
-	7DmvNV3o1F3rsVJp1TNQVFJdThfHBOdWDAFmS6CIyMxYx+b4eHObnGd9dh00t5He+Z9GUr7
-	QIk1KHTkZxmgRwaywVMZbJfsIbUOJiVyZAnySNrEoy9w738VuowihvuXMUJOOQLZpEpiBGp
-	musGcitUg97AXrTFPNMyOV03q1l6IS3VsGDzpLcZ4Ki7iOXGAdMeS8a5FQxaLmBN6m9LIuA
-	TpzBXAOTBbS0dkiVpH41mYp/jZvyrYcavUx2nA0YFVVTB8kFZINlzaA1e9EpIHZ8ie4w/i/
-	LG1IVGFMtpPkDslKV3GEjhMP8JKobOQmE+3cYKdUIRGNDoQ==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
 
-There are some spelling mistakes of 'accelaration', 'exprienced' and
-'rewritting' in comments which should be 'acceleration', 'experienced'
-and 'rewriting'.
+On 10/17/2024 1:42 AM, Edgecombe, Rick P wrote:
+> On Wed, 2024-10-09 at 18:01 +0300, Adrian Hunter wrote:
+>> tdh_vp_init_apicid() passes x2APIC ID to TDH.VP.INIT which
+>> is one of the steps for the TDX Module to support topology
+>> information for the guest i.e. CPUID leaf 0xB and CPUID leaf 0x1F.
+>>
+>> If the host VMM does not provide CPUID leaf 0x1F values
+>> (i.e. the values are 0), then the TDX Module will use native
+>> values for both CPUID leaf 0x1F and CPUID leaf 0xB.
+>>
+>> To get 0x1F/0xB the guest must also opt-in by setting
+>> TDCS.TD_CTLS.ENUM_TOPOLOGY to 1.  AFAICT currently Linux
+>> does not do that.
+>>
+>> In the tdh_vp_init() case, topology information will not be
+>> supported.
+>>
+>> If topology information is not supported CPUID leaf 0xB and
+>> CPUID leaf 0x1F will #VE, and a Linux guest will return zeros.
+>>
+>> So, yes, it seems like tdh_vp_init_apicid() should only
+>> be called if there is non-zero CPUID leaf 0x1F values provided
+>> by host VMM. e.g. add a helper function
+>>
+>> bool tdx_td_enum_topology(struct kvm_cpuid2 *cpuid)
+>> {
+>> 	const struct tdx_sys_info_features *modinfo = &tdx_sysinfo->features;
+>> 	const struct kvm_cpuid_entry2 *entry;
+>>
+>> 	if (!(modinfo->tdx_features0 & MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM))
+>> 		return false;
+>>
+>> 	entry = kvm_find_cpuid_entry2(cpuid->entries, cpuid->nent, 0x1f, 0);
+>> 	if (!entry)
+>> 		return false;
+>>
+>> 	return entry->eax || entry->ebx || entry->ecx || entry->edx;
+>> }
+> 
+> KVM usually leaves it up to userspace to not create nonsensical VMs. So I think
+> we can skip the check in KVM.
 
-Suggested-by: Simon Horman <horms@kernel.org>
-Link: https://lore.kernel.org/all/20241017162846.GA51712@kernel.org/
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 6 +++---
- drivers/net/ethernet/broadcom/tg3.c       | 2 +-
- drivers/net/ethernet/neterion/s2io.c      | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+It's not nonsensical unless KVM announces its own requirement for TD 
+guest that userspace VMM must provide valid CPUID leaf 0x1f value for 
+topology.
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index f5da2dace982..bda3742d4e32 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -12881,7 +12881,7 @@ static netdev_features_t bnxt_fix_features(struct net_device *dev,
- 	if (features & NETIF_F_GRO_HW)
- 		features &= ~NETIF_F_LRO;
- 
--	/* Both CTAG and STAG VLAN accelaration on the RX side have to be
-+	/* Both CTAG and STAG VLAN acceleration on the RX side have to be
- 	 * turned on or off together.
- 	 */
- 	vlan_features = features & BNXT_HW_FEATURE_VLAN_ALL_RX;
-@@ -16131,7 +16131,7 @@ static pci_ers_result_t bnxt_io_error_detected(struct pci_dev *pdev,
-  * @pdev: Pointer to PCI device
-  *
-  * Restart the card from scratch, as if from a cold-boot.
-- * At this point, the card has exprienced a hard reset,
-+ * At this point, the card has experienced a hard reset,
-  * followed by fixups by BIOS, and has its config space
-  * set up identically to what it was at cold boot.
-  */
-@@ -16159,7 +16159,7 @@ static pci_ers_result_t bnxt_io_slot_reset(struct pci_dev *pdev)
- 		pci_set_master(pdev);
- 		/* Upon fatal error, our device internal logic that latches to
- 		 * BAR value is getting reset and will restore only upon
--		 * rewritting the BARs.
-+		 * rewriting the BARs.
- 		 *
- 		 * As pci_restore_state() does not re-write the BARs if the
- 		 * value is same as saved value earlier, driver needs to
-diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-index d5916bbc1b3a..08d2ba3c758e 100644
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -18276,7 +18276,7 @@ static pci_ers_result_t tg3_io_error_detected(struct pci_dev *pdev,
-  * @pdev: Pointer to PCI device
-  *
-  * Restart the card from scratch, as if from a cold-boot.
-- * At this point, the card has exprienced a hard reset,
-+ * At this point, the card has experienced a hard reset,
-  * followed by fixups by BIOS, and has its config space
-  * set up identically to what it was at cold boot.
-  */
-diff --git a/drivers/net/ethernet/neterion/s2io.c b/drivers/net/ethernet/neterion/s2io.c
-index f235e76e4ce9..f8016dc25e0a 100644
---- a/drivers/net/ethernet/neterion/s2io.c
-+++ b/drivers/net/ethernet/neterion/s2io.c
-@@ -8523,7 +8523,7 @@ static pci_ers_result_t s2io_io_error_detected(struct pci_dev *pdev,
-  * @pdev: Pointer to PCI device
-  *
-  * Restart the card from scratch, as if from a cold-boot.
-- * At this point, the card has exprienced a hard reset,
-+ * At this point, the card has experienced a hard reset,
-  * followed by fixups by BIOS, and has its config space
-  * set up identically to what it was at cold boot.
-  */
--- 
-2.45.2
+It's architectural valid that userspace VMM creates a TD with legacy 
+topology, i.e., topology enumerated via CPUID 0x1 and 0x4.
 
+> In that case, do you see a need for the vanilla tdh_vp_init() SEAMCALL wrapper?
+> 
+> The TDX module version we need already supports enum_topology, so the code:
+> 	if (modinfo->tdx_features0 & MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM)
+> 		err = tdh_vp_init_apicid(tdx, vcpu_rcx, vcpu->vcpu_id);
+> 	else
+> 		err = tdh_vp_init(tdx, vcpu_rcx);
+> 
+> The tdh_vp_init() branch shouldn't be hit.
+
+We cannot know what version of TDX module user might use thus we cannot 
+assume enum_topology is always there unless we make it a hard 
+requirement in KVM that TDX fails being enabled when
+
+   !(modinfo->tdx_features0 & MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM)
 
