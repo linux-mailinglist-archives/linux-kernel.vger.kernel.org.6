@@ -1,137 +1,115 @@
-Return-Path: <linux-kernel+bounces-372300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121159A46E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:19:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E949A46AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9013C1F2206A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D74471C22FE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB75212645;
-	Fri, 18 Oct 2024 19:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCBA2040A8;
+	Fri, 18 Oct 2024 19:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FafvJAkT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bs6e+geo"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A505E210C1C;
-	Fri, 18 Oct 2024 19:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C166116EB4C;
+	Fri, 18 Oct 2024 19:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729279045; cv=none; b=a7W+u0LfkdCN2VjhaiEhWsMxOitriEzyQ4Sw6IryPzBiTxl4/YdmHX/GYmw0hi1tb1qFm54Z8pwAVX492cFOfQHHP4O9GqSjHaRF1n57waxsVTcstg0SOrXvbVoqvdoGginXEs2ZfFcJ5IFAY34yQqFrQNE+arLIY3rID/AbS+4=
+	t=1729278956; cv=none; b=VPR6YXPywZQeRL4osRW8rqp+bYXbuV1kjw07FEue/Q9R4QNqsQxGmSFm2T6CLydycRe+q5WhVhrSbhZFfEhX/lcfodBHEkHsyIFWtM6NrEzy1MgpW+fQ/aHaMvH0Ul+8keIzioHZrcFeJ7VdyF4hSCCHcFwq41XeAUBiIQZuknw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729279045; c=relaxed/simple;
-	bh=MpiCw0/jvMUoJ8LD9yTVl5Hp8qYftQGS75uTGKu4TkQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=EexZpuIq6HKLImoebYdYgmdAt9UFnPwvDHpQws/jrmaOQlmoqwbDjgw6cxsuJpucKDTzd0e6N8eze6XXCu9eLbFGlcJ7vEBf7FsR7uja3QvUnlm0XP993r8LERZrOdUOv39k35CvNmkGeHC/oicSw7tSD1C7TnaYSzqOsOr/uEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FafvJAkT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IEXx7t029273;
-	Fri, 18 Oct 2024 19:16:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SV6FW2QlAdSrJig6Hqm+GbTm8KyG8syat6oY3nfYD1k=; b=FafvJAkThFmCtRY4
-	P/MQruo3SF77VEVHCFPYe3hWr1uCxTwILJusCVTlkh0+qsbLzrvP5SrFhokrUBEI
-	38jKY4xw5Npd2DbsnUoq4GTe/hLW52iHdgfMPX2Ie1AQoEUjaOjYKPEDRgt8pmdg
-	/now5zR5BLwWcW9L5oRDwiOA1vtHpSssUnTLA+goZkFBr5Q2b8f3Y8H27TI5er23
-	8bXvHw9Hq+V9SjczdGIEQeSM5wPcc8BK2KQIej0Uk26f7yGtwfTn+EYrOqr+itcM
-	bB8eYYyNsi3Hpg8Lw9Vr4rZrXWcToPpLuHL9v44eJ5ccNAaV/tl1oaz7/h13gQ5V
-	CgeZzw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bhbqab0f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 19:16:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IJGoQ9029976
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 19:16:50 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 18 Oct 2024 12:16:45 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Sat, 19 Oct 2024 00:45:47 +0530
-Subject: [PATCH 11/11] arm64: defconfig: Enable QCS615 clock controllers
+	s=arc-20240116; t=1729278956; c=relaxed/simple;
+	bh=I18z61QeColdAmOMx5C6/B9N5qxv+2MNp0MbEEqjjtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fzH6FYcVauvzRffY0Ohk1kMA7B9Gdlm7Ox7PWLgs+gFu7Srdpwgu6TI26coMIszk9Z6oI6X8/n61aGU+stA5A0RmuFm1V9O3S11iDuHOinu5Y6G6gaTl7Wb1pwtUGBUGOSg4onDH+jQTRY7y7UEQerXsxRGP89jIi0coFWQqAHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bs6e+geo; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e2cc47f1d7so1784002a91.0;
+        Fri, 18 Oct 2024 12:15:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729278954; x=1729883754; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oJcCOkX7npavhD9TICmdCKs/bOiKnBn5bb2igulRwqA=;
+        b=Bs6e+geoZn6CGStjYK9mPuVrCn13e/IUV/lFvSC72FQO9cKtBYDZ2mD+/215slwsPj
+         qr4ktEEjnjFkm5qiQoNO8AXYPJKVIMODHBXJPOc72NLUVCw4BJXDFQVdApKxDWVDnXjz
+         uHwe5eWrpYJH4oJIS3XFBdHdvL2xu40kAKZ1iDr8+p10OPd1hwrZHgCwwKYACXIsIw/5
+         5JSIQYAHB/whf7ElWZijOPXbz1Ece9aalV7yx80zMnN1sRFso8yN67gY98B+6mGqiRfs
+         cgjbY2LS4Jc73NinfJfYsltpGpvg1MKoRd7RjqcZ0ZsPs5zy+9eOsXtZwyrbU9689NgR
+         c8EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729278954; x=1729883754;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oJcCOkX7npavhD9TICmdCKs/bOiKnBn5bb2igulRwqA=;
+        b=pAJr14SQGMlaVcmxri5W2d7iEhR82HJ7FOEPVGj6k30cPbiceI7IVpT1za0I/n/XIb
+         xFsWepyPWfgcVwBOTc7PVl7gj48bbtBU9yXsBVxwR9Li0b0SqVaQPqgxcc601chCDIZc
+         4muL4k/b6N6qP7CskYHKc/wTC4klnMMkyYv+ZBxfc707Lchcj6H2zj9QZo3szcRlB9dd
+         SvtmJhGGQtNxi2aj9i175lxFrko1cD+yf6dwsMQ4jA+c4bORDW1B4bqznXDpgQdPmQQF
+         YvZYHpnEwAEXXN/Qi50Zloa5YNQ0rcTqcZKUNc1uPEqToJBEPbOm4uQxs30IpTi+x++L
+         QBLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoiu8WWfYEJnaeHVUInyud9Q/9nRrlpILZrbP63yv3jD8o2wqlT486+AQN+o2l1xz08263YKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdW65W0Eq8gfkHAUmNcNco0T+43pO54ZL/0Ucq7+JkzbZYBhzw
+	u0NWQG64F0oM/YkUpCN7+1DCHFx85NHCX1QCJO/JS1k/O4hl6pVn
+X-Google-Smtp-Source: AGHT+IErQdqNkVwCwUL/Ixn4/BAQmd/HwP5uXwBRI7+LGd+x2liZdulD8V2brX8IhG91ZBbOQkrUwg==
+X-Received: by 2002:a17:90a:2c06:b0:2e3:109:5147 with SMTP id 98e67ed59e1d1-2e3dc5d69e5mr11403408a91.17.1729278953968;
+        Fri, 18 Oct 2024 12:15:53 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:351c:e27f:10e5:484c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e561202a68sm2359233a91.31.2024.10.18.12.15.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 12:15:53 -0700 (PDT)
+Date: Fri, 18 Oct 2024 12:15:50 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Kees Cook <keescook@chromium.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v4] cleanup: adjust scoped_guard() macros to avoid
+ potential warning
+Message-ID: <ZxKz5jGCNZSAbNo-@google.com>
+References: <20241018113823.171256-1-przemyslaw.kitszel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241019-qcs615-mm-clockcontroller-v1-11-4cfb96d779ae@quicinc.com>
-References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
-In-Reply-To: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Abhishek Sahu
-	<absahu@codeaurora.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Stephen Boyd" <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        "Taniya
- Das" <quic_tdas@quicinc.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: yXp7Ef-1RrjQZK9xGXV7l_rGh9dWuM-x
-X-Proofpoint-GUID: yXp7Ef-1RrjQZK9xGXV7l_rGh9dWuM-x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 mlxscore=0 bulkscore=0
- clxscore=1015 suspectscore=0 mlxlogscore=628 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180123
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018113823.171256-1-przemyslaw.kitszel@intel.com>
 
-Enable the QCS615 display, video, camera and graphics clock
-controller for their respective functionalities on Qualcomm QCS615.
+Hi Przemek,
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+On Fri, Oct18, 2024 at 01:38:14PM +0200, Przemek Kitszel wrote:
+> Change scoped_guard() and scoped_cond_guard() macros to make reasoning
+> about them easier for static analysis tools (smatch, compiler
+> diagnostics), especially to enable them to tell if the given usage of
+> scoped_guard() is with a conditional lock class (interruptible-locks,
+> try-locks) or not (like simple mutex_lock()).
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 730f303350c36a75661dc267fdd0f8f3088153fc..2fa666156b88b44a8298651e276c196cded9a7f8 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1322,7 +1322,11 @@ CONFIG_MSM_GCC_8998=y
- CONFIG_MSM_MMCC_8998=m
- CONFIG_QCM_GCC_2290=y
- CONFIG_QCM_DISPCC_2290=m
-+CONFIG_QCS_DISPCC_615=m
-+CONFIG_QCS_CAMCC_615=m
- CONFIG_QCS_GCC_404=y
-+CONFIG_QCS_GPUCC_615=m
-+CONFIG_QCS_VIDEOCC_615=m
- CONFIG_QDU_GCC_1000=y
- CONFIG_SC_CAMCC_8280XP=m
- CONFIG_SC_DISPCC_7280=m
+Thank you for making all these improvements!
+
+>  
+> +#define __DEFINE_CLASS_IS_CONDITIONAL(_name, _is_cond)	\
+> +static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
+
+Question - does this have to be a constant or can it be a macro?
+
+Thanks.
 
 -- 
-2.45.2
-
+Dmitry
 
