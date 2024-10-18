@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-370754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D198B9A31AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:32:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAED89A31AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D33A1C232BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:32:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6431F23310
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBFA383A5;
-	Fri, 18 Oct 2024 00:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VaO1SkEJ"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B2433993;
+	Fri, 18 Oct 2024 00:33:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C0920E309;
-	Fri, 18 Oct 2024 00:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5297920E309
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729211523; cv=none; b=Vt1HHu0a3GSjKk88ISxw8tUNioLyWCM+iVOwooNU+Jz2t/dn8FEU+pCRrowcyzcboyT3Ml5sf/qbGIiAw4QtYPY3RFkqmpp59F4GMH73zuX6Cnz0rExQ+/lZAoGDny1tFTlw8+q3vdPpYwrALglusiSSWa3IWLr26XFCCssckps=
+	t=1729211584; cv=none; b=Cc8QJl6nwNHnrWGo64Kjywex0AcN2moFS0CikUxLzbquJkT6gvW8YPvnm/SdbxaCbXJCM6zzYj0JUM2fuYHxEbvc0M/tdccHvJTP2A7gHhs3Q4a/NGOSVRq7EkBXyORKYtQKtlko0t0dpTjSQYxJudjQyQf7Nf9DwcqGHvXJleg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729211523; c=relaxed/simple;
-	bh=Z2CHYFX90bPOgNfDMKo6F3dhYoZWbpNldEFmCWByjzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i4A+koC0uWX1Q5NMH+JglkWkL1rAs0lmQH2ZBSqSQkqDpRJvae5sgxK3+D+4QFye88qNggzZ/v0Dx3oy6ddqglUER2/umk0zAFagsIFmwgedZKkTGj7VwwPgZT5JsKwYIiLlaqEC6P66z9TEK9/iMj3iBadDsCeh7mgvZ47R/Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VaO1SkEJ; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71ea2643545so275837b3a.3;
-        Thu, 17 Oct 2024 17:32:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729211521; x=1729816321; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J9TaQ9jLKsHthLkNEyMhi5newVAYD+QTVeRFDRUl6h8=;
-        b=VaO1SkEJXo56nNoHnn8/q/xZ0vLjQNUru7WBnOVaIg6KP5M/SOpCSyLhHhwhpC9vR4
-         bzEj53Bzd1Lsd8HkCTFFuELwBfXEjaZJwr6oHk20Uq/66TP2EVJ7CnIUAgJwXBQm/WIA
-         1AwGKv/wRqSX6YDATydMJzCrQcWQKGk9jg6F5APrZbNF+gT5G4vwGeJHqniGiSbPnAmc
-         pwyPHpHHGJckAO5+9wx6P/naE35nJMx75jUeQAMW671qFTBk69DmqYCheOfMV/x2EpdQ
-         ocPFRZw2jmAoywNOGhdV6HvpIId88rgiYLmI0/V+cMPfwIaVrCvf9UbRC0fDaglAYPlr
-         6ocQ==
+	s=arc-20240116; t=1729211584; c=relaxed/simple;
+	bh=R9p7wHTzq+3x+zDSE/eQkeLeAYNzA0gWyXlblG0p8FU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YfWkUyYDLPmfPKg6IJarUrIJHaBUVzcTDnsW0BQGjwhCr/i3tvghq2fIi7WLRmrzTpY5WjWveBiRZveYnPxN0owGiKZL7OODDUPtqG6QbhFdl9rYK2LhA2BPtrhpfNsRo4sT/LY1md6Nv0RnhQkDKATDKoDG6hWvT1xXgS+ZCkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a39631593aso19642895ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:33:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729211521; x=1729816321;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J9TaQ9jLKsHthLkNEyMhi5newVAYD+QTVeRFDRUl6h8=;
-        b=u+Wfl/vYZtkOJmaEIV+Vt/Pga71WnCEgNs691893qz3OgMkPIvUyUU3z3wAVO1xcja
-         78zfqbfs4UTX+a84pKPsCn8/DdPh2J0faNvBVTLu9n/XILt6QMn+N4uu9kMVldeXjzhy
-         UA8Z8/THW/y5ipvhdIUiS7muMlk8gqQU3iXYJtx8YOePxf8kl+RI9NGsxviFP6ZMQRD/
-         mLd+Pbu1e4xHPP0a9CQtl9FYNYeJbdX2cnvvpaPhKz/PdXZkx411cS/3nlOJyDEkfBSG
-         ctl6MVDGNaImHRQyOZAQjqGzUEodfJ6lNU12cKYmD3litLL8b6iqUGZvaSMdbgK8WZwD
-         Rg3w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/OnapHRYAMn0QkLYTefCRRUCut/07s/dKdQDcOrzO+sdqA1/BBdUu+QS29kZVKKySQwBfdwykFly/pl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9aBQcUaPpGN88DVndIf+d9BVv4mNWbJ+eTntGGTsxF2pvBL4Z
-	hC0XEtZ7BMq1hhHyY4i0YeziUpXCpBZmN1+mz1rl+4X7Rb/ovWC8
-X-Google-Smtp-Source: AGHT+IGbcGq1bF9rYC90X4JCirz1BO+pZbDtvk5/pyTvyfQ3p4K0FuzsuclvjFtaOoKEPcir8tIJZg==
-X-Received: by 2002:a05:6a00:2302:b0:71e:5a1d:ecdc with SMTP id d2e1a72fcca58-71ea31d2c22mr1343853b3a.17.1729211521085;
-        Thu, 17 Oct 2024 17:32:01 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:136e:2635:ea46:fe25])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc29bacbsm201445a12.82.2024.10.17.17.32.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 17:32:00 -0700 (PDT)
-Date: Thu, 17 Oct 2024 17:31:58 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: itewqq <shipeiqu@sjtu.edu.cn>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, ye.xingchen@zte.com.cn
-Subject: Re: [PATCH v2] Input/mouse: cyapa - fix potential buffer overflow in
- cyapa_gen3.c
-Message-ID: <ZxGsfjTpw8KkbXtt@google.com>
-References: <20241012100801.1774302-1-shipeiqu@sjtu.edu.cn>
- <20241017080104.1817636-1-shipeiqu@sjtu.edu.cn>
+        d=1e100.net; s=20230601; t=1729211582; x=1729816382;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B+P9VPEgHEJhWOztHfYizBrLPckKwLhMVOjlybgApzg=;
+        b=fq2qq+7J5+5sDAdzHp1kVz8+aPE08YBSLng12ok1nREPzwvTTZQjCNoZkC54hULaTx
+         W0fI08QEtRxjVmEFF5jVP3P2JDX6lTVs+y4ardkbvXMHDnyCUI9RsamCFM8uYd29QLY+
+         szsoHWINUBPzmgSZF1PKtQH38AqFHcx0hZK48uodJSWChMX4+051b1nCKlO4x0GvqXhg
+         B+E17XfUSDq90o1Csi4juluKSnJwIsvm4SFbnoYRa2IiJqm7peWXMPdXWRYpJ6U0DEDG
+         pXjF+ZV8I74eceJgwDi1+TnZiLTjTFD2QvjdhrktL9wC/kaPxkxcONUaIg5BiwhdBCkD
+         R7pg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhPdA2GmEYxt2mRxSnNqqD/JSdXoFqHgBqNdZMCScjHsQneImGsD8ciD4aSnxq3YilOueJlypK/180UWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2KabTC85shJjySMCGMeK4AKgDDm0VnlKEUI7pWnMpwvLY+PgZ
+	HatbZ3dlp59hJE89hf5EdPIm6mNxkP8V1eSuEFvK5Q60x7JCabbEcWBxGzZLaWSylmcL0+sAh5Z
+	JO8GMpeX1fMokuoR2X8IaNN3/Q8uUj9FwE7sPrt7Fe8n0xMiPvu/9ysU=
+X-Google-Smtp-Source: AGHT+IHwxnecFgp8TgVEHdcUby8Z/HYmniWIaZebCAYZxhPezVjHW050jB76Pj4eM40ZeRFYEg+UXuCRD3/gSSLSY8VriGdVPD53
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017080104.1817636-1-shipeiqu@sjtu.edu.cn>
+X-Received: by 2002:a05:6e02:152a:b0:39f:507a:6170 with SMTP id
+ e9e14a558f8ab-3a3f41b4a82mr4027845ab.8.1729211582396; Thu, 17 Oct 2024
+ 17:33:02 -0700 (PDT)
+Date: Thu, 17 Oct 2024 17:33:02 -0700
+In-Reply-To: <CAGiJo8SRrptdtiax6-NzTJyiPPy1OJOnkAB8yWLGNYasN=i25Q@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6711acbe.050a0220.1e4b4d.0009.GAE@google.com>
+Subject: Re: [syzbot] [net?] KMSAN: kernel-infoleak in move_addr_to_user (7)
+From: syzbot <syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com>
+To: danielyangkang@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-On Thu, Oct 17, 2024 at 04:01:04PM +0800, itewqq wrote:
-> The i2c_smbus_read_block_data function receives up to I2C_SMBUS_BLOCK_MAX
-> bytes, which is defined as 32. This exceeds the size of the struct
-> cyapa_reg_data, which will be provided to cyapa_read_block as an input
-> buffer and finally reach i2c_smbus_read_block_data. When the cyapa module
-> is enabled (CONFIG_MOUSE_CYAPA=m), this bug could result in potential
-> denial-of-service for invalid or malicious I2C data. Pad the size of the
-> cyapa_reg_data structure from 27 to I2C_SMBUS_BLOCK_MAX=32 bytes to
-> address this issue.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-No, I don't think padding all buffers is a good idea. We need to change
-i2c_smbus_read_block_data() to accept the buffer size so that it does
-not copy more than it should.
+Reported-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
+Tested-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
 
-I sent a patch to i2c list and CCed you.
+Tested on:
 
-Thanks.
+commit:         6efbea77 Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e6af27980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5242e0e980477c72
+dashboard link: https://syzkaller.appspot.com/bug?extid=346474e3bf0b26bd3090
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1332af27980000
 
--- 
-Dmitry
+Note: testing is done by a robot and is best-effort only.
 
