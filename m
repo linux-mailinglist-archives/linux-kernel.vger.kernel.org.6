@@ -1,112 +1,112 @@
-Return-Path: <linux-kernel+bounces-371659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBF59A3DFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:16:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFDF9A3E02
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C4FD1C23456
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC6E1283143
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85381CABA;
-	Fri, 18 Oct 2024 12:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169851CD2C;
+	Fri, 18 Oct 2024 12:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="i4+mwGfk"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3D21878;
-	Fri, 18 Oct 2024 12:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1lk3lAo4"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155511878
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729253783; cv=none; b=TlMXeWuQiW1YXWKt0dn2EEZPNEIVpeIFQJiiHUnDC3RSLOWe2QU+FI7NH1xU2U1AuBB7HVEEnlndhsE9BQ4uhk5pJaTCLpM9U4eCmaF1DmHnyHtcQ8J5D0o+3S4VEUHC36x+o6u3svNksNDT+hENAfuvxYwofJZLC7kcEGZiYLY=
+	t=1729253852; cv=none; b=j8gkWTG9KpjFaBERvSfX3yOC6aMym7V94M6r92OmR3ASO046BTIaJJnyPj528GilICjpPAP1/wKboBNhj71xwuB2b68YsFvDKT+MMXpgzA0CB4E1z9bhhUJCve/nW8WU/2XEok21Tcs0+aCwwfXGydw3QwqUzr3hbY59Yj6AUb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729253783; c=relaxed/simple;
-	bh=0k+beNmcrY+pcRygjmZ7e8DqoH1s7rPL+86SRjP7vms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ccXMH3JVwG28zpdqD7kCkkqGLQ5uRtGDRCQJeOpkmkG8Om9RjOHbAiAqyIMZFOmJ9WMwu6yVeqoK1L+T2TSUN1pTe8twKBFK7Cr4O/+Z1yyB495Ym9wE50btZyWayuFksnYfQeGjMLOU7ohBF77mxhL0UAhdW63qwvumZgpyyi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=i4+mwGfk; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.160.38] (unknown [4.194.122.162])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 1650720FE9AB;
-	Fri, 18 Oct 2024 05:16:18 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1650720FE9AB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1729253781;
-	bh=1OgAmYzYozmaqji7ob1xgBvem4J3H/LILzhCtmgqTRE=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=i4+mwGfkDWpHEgcooIXsJ/JC8O9tN0jUO/9B5QVUqWkqFjQea2FZRAc43U3OQ63yg
-	 0iS3KJFgViyJGCoXPpOyUcovASbJ/moiyBmmcNv3INeZLTj2VUT1GswQUHhD1dNS36
-	 BFaz3GE9/FJTLxjyPzfCfqDSFwMso5xLFb9xVGfs=
-Message-ID: <6f9dcc74-5688-4bcb-9bb6-15c34df9317b@linux.microsoft.com>
-Date: Fri, 18 Oct 2024 17:46:17 +0530
+	s=arc-20240116; t=1729253852; c=relaxed/simple;
+	bh=cRedNhZinFJWNF1LdgN5osG3CkN3lOod1l75Ye8/xU4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dqjqbhGxDanLjGX8P35AjvXqrdxpqiaNHvGI029y68IsH9x0TfoRxdjndY0vfZiplN0AWUIV3lxg20DE05BbSaV22qDfd1p7vawouItYKb3K2bkWmZPJQhO4CD1zh0jc/3dn93Rvfk291DNyUPBdtSHo8M2trc8C8KGKD2A+mxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1lk3lAo4; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d518f9abcso1494258f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729253849; x=1729858649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CJU/+Wh+ldjpgT/D+5mz9a/ir4F3D+2s5F/fl+n3k4k=;
+        b=1lk3lAo4H7wBfuL8O9IclLpC4vMhNyuHlAmokQc2gBL6IuYcpDy6GELmVX6ZPKwLLd
+         /zSupjLSSNutEwos1LXsv5CugoppNDMjJl/6nc7+H19ZvXPWZVHmm7YLpuCRIa2E4Wxk
+         VwboVxMu3HUA4NYZ2gX0/AJhEqgiF6/G5RGu6KbwCbdOQidAVd8NBXQv8JGcmo3sBfB7
+         sfwAfStdkl9P3TPMlf96i3aAcQ9I2fRCgaKXYkiX3jDPwsAisMqcTJyRsuHSKkd/9XHE
+         W0mQMI6MhLc/2N1whL/7cmp6fJJ/hnGIHCdW99eIHGwHCTRoz383H4xOouO4GyNrM9Au
+         U8rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729253849; x=1729858649;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CJU/+Wh+ldjpgT/D+5mz9a/ir4F3D+2s5F/fl+n3k4k=;
+        b=cAnnpDsXwHpLlde1jg1BnV/3borj6VqPY9shp+bSgTjcQ6rVACWnV27QykP2ABJOz/
+         JE1SgFSwUfoQn7CTByYJL9XstuEkJUR0WbQrzdPy3AOc6Ev0LpZoeKd5HV7jGn40WXIJ
+         Z6Zcu8OGbHhiqluiZG1S8Z/74OBDADLOt6U7vSEkvg7/SQSiGovNEjTUJQ9adLsnlhnQ
+         7dTpspJShtPaw5hb5EHPfPmZxyQjEN37kqTdSc9SH7bRwZf9SH44+WviQ40pOtPzePYX
+         wmd4dRh1yycjWa3QxX3UYU1bQ+VBq1IY3ruGYyQar33WHg2Awyo/M80qp6evG8ktA1lT
+         3eXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGoiaZ7DGHVclq9Q9KC37xqeytXSRqFvSLqVBM4JQnOsaXEtkX2XxmgRZT8z9GVwYoQYTit0G+MXd0UAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFQJbQGHidUp9ellKKB414YViFLNrTS8N0FkLCdtSqPcRCrTy0
+	bHQ89BRMaweNRoJ86gQlet2wiO/1eUn9IePJTFgkqicPhLMjBWiy7n5epcXUslo=
+X-Google-Smtp-Source: AGHT+IG330zsN0flUqcTgZUnJJ1SpIQvi23hlZqBRQ8HFr1BZREwbQHpxywMkQFN0Av5sFjn2jDufQ==
+X-Received: by 2002:a5d:4535:0:b0:37d:49d1:1e89 with SMTP id ffacd0b85a97d-37eab6e46b9mr1521452f8f.27.1729253849150;
+        Fri, 18 Oct 2024 05:17:29 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:45a3:93e:5196:d8ce])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160dc9370sm22535955e9.12.2024.10.18.05.17.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 05:17:28 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] iommu/sysfs: constify the class struct
+Date: Fri, 18 Oct 2024 14:17:25 +0200
+Message-ID: <20241018121725.61128-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] drivers: hv: Convert open-coded timeouts to
- msecs_to_jiffies()
-To: Easwar Hariharan <eahariha@linux.microsoft.com>, lkp@intel.com,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- "open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241016223730.531861-1-eahariha@linux.microsoft.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <20241016223730.531861-1-eahariha@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+All functions that take the class address as argument expect a const
+pointer so we can make the iommu class constant.
 
-On 10/17/2024 4:07 AM, Easwar Hariharan wrote:
-> We have several places where timeouts are open-coded as N (seconds) * HZ,
-> but best practice is to use msecs_to_jiffies(). Convert the timeouts to
-> make them HZ invariant.
-> 
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
-> ---
->   drivers/hv/hv_balloon.c  | 9 +++++----
->   drivers/hv/hv_kvp.c      | 4 ++--
->   drivers/hv/hv_snapshot.c | 6 ++++--
->   drivers/hv/vmbus_drv.c   | 2 +-
->   4 files changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-> index c38dcdfcb914d..3017d41f12681 100644
-> --- a/drivers/hv/hv_balloon.c
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/iommu/iommu-sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-<.>
+diff --git a/drivers/iommu/iommu-sysfs.c b/drivers/iommu/iommu-sysfs.c
+index cbe378c34ba3..170022c09536 100644
+--- a/drivers/iommu/iommu-sysfs.c
++++ b/drivers/iommu/iommu-sysfs.c
+@@ -34,7 +34,7 @@ static void release_device(struct device *dev)
+ 	kfree(dev);
+ }
+ 
+-static struct class iommu_class = {
++static const struct class iommu_class = {
+ 	.name = "iommu",
+ 	.dev_release = release_device,
+ 	.dev_groups = dev_groups,
+-- 
+2.43.0
 
-
->   	if (wait_for_completion_timeout(
-> -		&vmbus_connection.ready_for_resume_event, 10 * HZ) == 0)
-> +		&vmbus_connection.ready_for_resume_event, msecs_to_jiffies(10 * 1000)) == 0)
->   		pr_err("Some vmbus device is missing after suspending?\n");
->   
->   	/* Reset the event for the next suspend. */
-
-
-Looks good to me. There can be different ways of passing arg to
-msecs_to_jiffies though-
-
-for 10 seconds
-* 10000
-* 10 * 1000
-* 10 * MSEC_PER_SEC
-
-I don't have any strong opinion on this, and you can probably choose
-whichever feels better.
-
-Even the current implementation with x * HZ works fine, with different
-HZ values. But, yes, I agree that using msecs_to_jiffies is better.
-
-Regards,
-Naman
 
