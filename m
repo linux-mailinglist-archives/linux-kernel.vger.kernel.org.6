@@ -1,294 +1,144 @@
-Return-Path: <linux-kernel+bounces-372355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597929A479C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:03:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA639A479E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78FC51C22B6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:03:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0FAB1F248DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AF51891AB;
-	Fri, 18 Oct 2024 20:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FD520010F;
+	Fri, 18 Oct 2024 20:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="Wqqn+rsZ"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Nw3GzzIm"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FA776C61
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDA576C61
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729281823; cv=none; b=OSmxujNm/u7remyrp/TV1marQgXwu/wNrMn5NwtKf2mftq4jnAZeDd8DxwqVwr0riaYL2HOMWyXIE9xznK+jKiIZqeu+MUEnrvAtEcczajCDi9qicJwHRH3r9TTdrer5IfWRWvadNPZsjQm/nFo9x5q4Ge/Q/7A6+ixzEWJi2ZY=
+	t=1729281909; cv=none; b=EC30oo/6S5qI5M5UZsOyjD6H0iMXN2o3N13XXch/UrT2B3tfd8/uN0Npz/80qh8a5z4BaY09LSHBE54cipl7f2PYeXA/f4z27swH+DxHHoXgdYvVO7MMOKJemMYRJK/Kuc/oH5osU8rqNIO424ymTLX39L+WzjuEq9heYrWI++s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729281823; c=relaxed/simple;
-	bh=WzAfvF1gL0V+TInebGYjO2cajb1J5JnUbl2PrgUF1EQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DsoRi2LoWb6tdmm6qmmXHiDm27XtY2+cqVdOOi/F9Yyx1r7ILnYW4ShvvgeRQyymWjv6jbQ+Z9MywLkoE7smo08C78pDESkmV4m/XA+g/kroUrKVB63+y+HPYK9niy/FkEvSUKeI1XrjTk5M75uZVHY/NhQmBgd+Vp5QptBqOo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=Wqqn+rsZ; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso2347747e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:03:40 -0700 (PDT)
+	s=arc-20240116; t=1729281909; c=relaxed/simple;
+	bh=mkaOtpb3HNeDJA0nxy7+7OowOpaC33RcU/eLe93HduA=;
+	h=Content-Type:Message-ID:Date:MIME-Version:From:Subject:To:Cc; b=E9dqLIyVRF8WN4OEcoAEo2fn+urLnXxkxByxmhjAP6R/CeRzqFf2CyP9uAqAN2tj9OVXhjXsADc1iKZnTdhLdDKfqfirMED1/OKCnscyRpUBejBnw57/xElie2IzJmT2fDTMKB1IJlzpEqHnAqZM1wMOgVFrySS9vQHTy8alN6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Nw3GzzIm; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a3b6b281d4so10174585ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atishpatra.org; s=google; t=1729281819; x=1729886619; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pYatGbzHpPf/eUgS637h+Whp9vo5lmEoMXno6C9b2Cc=;
-        b=Wqqn+rsZFzLx/dHvdhN03i8+wnFROc+PkIY+4uhH8pwDCwnreV4EZO84R0IjuxId+c
-         5GR876sOgmo4FJsWasFCAAQ8YQ8I7jHapChiFqDJQBVo5nbcFF6xZRrwXb18OK3cWBc9
-         4KdzT9v2dNLMBCc+6sUqX0EK+naezc8hZYyPo=
+        d=linuxfoundation.org; s=google; t=1729281906; x=1729886706; darn=vger.kernel.org;
+        h=cc:to:subject:from:content-language:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=rPxHTXyKrbypbqAH2vVCeHWTcQMbDX/8MEJl9C0+I7A=;
+        b=Nw3GzzImwuXW6o4JIZyRY2qF3ItNh//irPkZRJVBtit/njkavAkjK1c/AlZN3ikdiT
+         g8z3SUhiWEpUUv2Si6ebGA43LhGhicS6wDqL0BAbLtBa9+62o1njXiGFTtznNx3Oa+wh
+         VM+hqR+c/kwA8tbOPCa98CEl0zM+yB0sgJyDA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729281819; x=1729886619;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pYatGbzHpPf/eUgS637h+Whp9vo5lmEoMXno6C9b2Cc=;
-        b=c6+iX36hwuy2TS43wYhj7yFt0nWycyh9twaxcQeJZKRGCILuuNJHnmwqpjypjCjgZI
-         sSS5CB4gLCZO05NkoWyII76lYrDQPX0acGv34oB568WyU89WIU8JpfnWVpm0fJC+Jr1/
-         nxOVQmYOiHEqudFeSJnolP9+22OD9UhlBTbBYye5gWw8qqXoC1QbApUU5OrQWwRLxYKW
-         HLPJR0LH5Y05FWe6hYqrTewXInsm8Y99N9iJY3ABz8VMOtDMtWO4PO5f3yA0Ti3Peqgl
-         uRIbO9Qx7qSeRfLBZPKBTTGiohmGmMxo4Fd3hZNW2i2FhId3ezM6ATi7QLnfHjP8n4MB
-         gcHA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+8lIcrPYJdRKUag3Q83o56o7VAwgVaL/AXOfzLOxTrUThU71lfQc4xJzwIwZCesLXDJ9i2LA0trIAIHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB1e+1TaNLSgicyUtqdZjrkqJotfY5rhFaGctja7jQVVIzoVEZ
-	3ZdqR+99nnBvzUTmlkK8lK1sd9/3hsJihuqiDuWvSpk3WjtS2uOahlESekLhUaPJE3HePBOtr5G
-	lhQAwRdgDwm4oiS7NunLxqVMAYGbFnoIaZYZD
-X-Google-Smtp-Source: AGHT+IFdbTtG7sDF7kqFab9oC8x0FqfZ8vBcRVnP/A2kKG0DxefaC9GUZcyQBdYPMMsFWCk/wOfiRnrd0xb3SaYJZrY=
-X-Received: by 2002:a05:6512:318e:b0:539:f26f:d285 with SMTP id
- 2adb3069b0e04-53a15440cebmr2695842e87.3.1729281818502; Fri, 18 Oct 2024
- 13:03:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729281906; x=1729886706;
+        h=cc:to:subject:from:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rPxHTXyKrbypbqAH2vVCeHWTcQMbDX/8MEJl9C0+I7A=;
+        b=deJHbCVciozA10njjAhjYZBB8NVseso6ikHnfZB+ylBOKfWiktgZLX5nd7ttNk7bxU
+         wBnPUE6Q5rxO0eR200nxpx/HrzVOdJ0/c21LdVx45VoS8V2GTiyBB2FG0vHiLry5TWZN
+         J+rTa6XK32xU2GnRvZK1rikmSDbbGAjyI2aoScgcGEXjvsjDfD6K6UiCH/OFTzIldy73
+         yQVtpC/Ql9X70BKNNTCvMco2LW0XpI1sXsdUir/YttrhfQhgkOE3zADoGqn10EI9LJ9s
+         kC8EMWJfcqFIccOJ6jxWHtCr2PtpLlfaOKEIiPFhQt11ZNIbB583t1aQmvXbOIrOWNhJ
+         ua9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8eMDGi585WlZiDZIesuW1/KCUkFiOcHfLL/ScKtL7SWIHIaeQifTFOFHOq78OdhuNkWKOc9g1eyajZI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOS5o8gaN5Rk13mRttJthM1icComrx5IdeyEWDhx7eA77ADx7d
+	iUNyi+iJp4iTPOrZNxcuCyFlxbPrFKbVidJrsLEUENLPnp8YUjQnY6zI1qnMSLYIPM4m5z1HFE7
+	V
+X-Google-Smtp-Source: AGHT+IFoS8dBAqr9LnFIvB1nC4+F22eafH96GYg4T3IeiyRLXhgA3mdRdXgQaRAS8j+4rtJWvCQXZw==
+X-Received: by 2002:a92:190d:0:b0:3a3:f860:9c79 with SMTP id e9e14a558f8ab-3a3f860c229mr13965005ab.18.1729281906207;
+        Fri, 18 Oct 2024 13:05:06 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc10c67f35sm574680173.158.2024.10.18.13.05.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 13:05:05 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------ZlneuxfJq1Xpvfa6ANCD9Syw"
+Message-ID: <399ec96b-1d84-4aa0-9030-0e42282a6d4a@linuxfoundation.org>
+Date: Fri, 18 Oct 2024 14:05:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-12-apatel@ventanamicro.com>
-In-Reply-To: <20240719160913.342027-12-apatel@ventanamicro.com>
-From: Atish Patra <atishp@atishpatra.org>
-Date: Fri, 18 Oct 2024 13:03:26 -0700
-Message-ID: <CAOnJCU+rORtJecgZA1inp7pzjoK8Rc_q46JNcsEcnm31M8bjJg@mail.gmail.com>
-Subject: Re: [PATCH 11/13] RISC-V: KVM: Use SBI sync SRET call when available
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+Subject: [GIT PULL] Kselftest fixes update for Linux 6.12-rc4
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 19, 2024 at 9:10=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
-> wrote:
->
-> Implement an optimized KVM world-switch using SBI sync SRET call
-> when SBI nested acceleration extension is available. This improves
-> KVM world-switch when KVM RISC-V is running as a Guest under some
-> other hypervisor.
->
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  arch/riscv/include/asm/kvm_nacl.h | 32 +++++++++++++++++++++
->  arch/riscv/kvm/vcpu.c             | 48 ++++++++++++++++++++++++++++---
->  arch/riscv/kvm/vcpu_switch.S      | 29 +++++++++++++++++++
->  3 files changed, 105 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/kvm_nacl.h b/arch/riscv/include/asm/k=
-vm_nacl.h
-> index a704e8000a58..5e74238ea525 100644
-> --- a/arch/riscv/include/asm/kvm_nacl.h
-> +++ b/arch/riscv/include/asm/kvm_nacl.h
-> @@ -12,6 +12,8 @@
->  #include <asm/csr.h>
->  #include <asm/sbi.h>
->
-> +struct kvm_vcpu_arch;
-> +
->  DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_available);
->  #define kvm_riscv_nacl_available() \
->         static_branch_unlikely(&kvm_riscv_nacl_available)
-> @@ -43,6 +45,10 @@ void __kvm_riscv_nacl_hfence(void *shmem,
->                              unsigned long page_num,
->                              unsigned long page_count);
->
-> +void __kvm_riscv_nacl_switch_to(struct kvm_vcpu_arch *vcpu_arch,
-> +                               unsigned long sbi_ext_id,
-> +                               unsigned long sbi_func_id);
-> +
->  int kvm_riscv_nacl_enable(void);
->
->  void kvm_riscv_nacl_disable(void);
-> @@ -64,6 +70,32 @@ int kvm_riscv_nacl_init(void);
->  #define nacl_shmem_fast()                                              \
->         (kvm_riscv_nacl_available() ? nacl_shmem() : NULL)
->
-> +#define nacl_scratch_read_long(__shmem, __offset)                      \
-> +({                                                                     \
-> +       unsigned long *__p =3D (__shmem) +                               =
- \
-> +                            SBI_NACL_SHMEM_SCRATCH_OFFSET +            \
-> +                            (__offset);                                \
-> +       lelong_to_cpu(*__p);                                            \
-> +})
-> +
-> +#define nacl_scratch_write_long(__shmem, __offset, __val)              \
-> +do {                                                                   \
-> +       unsigned long *__p =3D (__shmem) +                               =
- \
-> +                            SBI_NACL_SHMEM_SCRATCH_OFFSET +            \
-> +                            (__offset);                                \
-> +       *__p =3D cpu_to_lelong(__val);                                   =
- \
-> +} while (0)
-> +
-> +#define nacl_scratch_write_longs(__shmem, __offset, __array, __count)  \
-> +do {                                                                   \
-> +       unsigned int __i;                                               \
-> +       unsigned long *__p =3D (__shmem) +                               =
- \
-> +                            SBI_NACL_SHMEM_SCRATCH_OFFSET +            \
-> +                            (__offset);                                \
-> +       for (__i =3D 0; __i < (__count); __i++)                          =
- \
-> +               __p[__i] =3D cpu_to_lelong((__array)[__i]);              =
- \
-> +} while (0)
-> +
+This is a multi-part message in MIME format.
+--------------ZlneuxfJq1Xpvfa6ANCD9Syw
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This should be in a separate patch along with other helpers ?
+Hi Linus,
 
->  #define nacl_sync_hfence(__e)                                          \
->         sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SYNC_HFENCE,               \
->                   (__e), 0, 0, 0, 0, 0)
-> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> index 00baaf1b0136..fe849fb1aaab 100644
-> --- a/arch/riscv/kvm/vcpu.c
-> +++ b/arch/riscv/kvm/vcpu.c
-> @@ -759,19 +759,59 @@ static __always_inline void kvm_riscv_vcpu_swap_in_=
-host_state(struct kvm_vcpu *v
->   */
->  static void noinstr kvm_riscv_vcpu_enter_exit(struct kvm_vcpu *vcpu)
->  {
-> +       void *nsh;
->         struct kvm_cpu_context *gcntx =3D &vcpu->arch.guest_context;
->         struct kvm_cpu_context *hcntx =3D &vcpu->arch.host_context;
->
->         kvm_riscv_vcpu_swap_in_guest_state(vcpu);
->         guest_state_enter_irqoff();
->
-> -       hcntx->hstatus =3D ncsr_swap(CSR_HSTATUS, gcntx->hstatus);
-> +       if (kvm_riscv_nacl_sync_sret_available()) {
-> +               nsh =3D nacl_shmem();
->
-> -       nsync_csr(-1UL);
-> +               if (kvm_riscv_nacl_autoswap_csr_available()) {
-> +                       hcntx->hstatus =3D
-> +                               nacl_csr_read(nsh, CSR_HSTATUS);
-> +                       nacl_scratch_write_long(nsh,
-> +                                               SBI_NACL_SHMEM_AUTOSWAP_O=
-FFSET +
-> +                                               SBI_NACL_SHMEM_AUTOSWAP_H=
-STATUS,
-> +                                               gcntx->hstatus);
-> +                       nacl_scratch_write_long(nsh,
-> +                                               SBI_NACL_SHMEM_AUTOSWAP_O=
-FFSET,
-> +                                               SBI_NACL_SHMEM_AUTOSWAP_F=
-LAG_HSTATUS);
-> +               } else if (kvm_riscv_nacl_sync_csr_available()) {
-> +                       hcntx->hstatus =3D nacl_csr_swap(nsh,
-> +                                                      CSR_HSTATUS, gcntx=
-->hstatus);
-> +               } else {
-> +                       hcntx->hstatus =3D csr_swap(CSR_HSTATUS, gcntx->h=
-status);
-> +               }
->
-> -       __kvm_riscv_switch_to(&vcpu->arch);
-> +               nacl_scratch_write_longs(nsh,
-> +                                        SBI_NACL_SHMEM_SRET_OFFSET +
-> +                                        SBI_NACL_SHMEM_SRET_X(1),
-> +                                        &gcntx->ra,
-> +                                        SBI_NACL_SHMEM_SRET_X_LAST);
-> +
-> +               __kvm_riscv_nacl_switch_to(&vcpu->arch, SBI_EXT_NACL,
-> +                                          SBI_EXT_NACL_SYNC_SRET);
-> +
-> +               if (kvm_riscv_nacl_autoswap_csr_available()) {
-> +                       nacl_scratch_write_long(nsh,
-> +                                               SBI_NACL_SHMEM_AUTOSWAP_O=
-FFSET,
-> +                                               0);
-> +                       gcntx->hstatus =3D nacl_scratch_read_long(nsh,
-> +                                                               SBI_NACL_=
-SHMEM_AUTOSWAP_OFFSET +
-> +                                                               SBI_NACL_=
-SHMEM_AUTOSWAP_HSTATUS);
-> +               } else {
-> +                       gcntx->hstatus =3D csr_swap(CSR_HSTATUS, hcntx->h=
-status);
-> +               }
-> +       } else {
-> +               hcntx->hstatus =3D csr_swap(CSR_HSTATUS, gcntx->hstatus);
->
-> -       gcntx->hstatus =3D csr_swap(CSR_HSTATUS, hcntx->hstatus);
-> +               __kvm_riscv_switch_to(&vcpu->arch);
-> +
-> +               gcntx->hstatus =3D csr_swap(CSR_HSTATUS, hcntx->hstatus);
-> +       }
->
->         vcpu->arch.last_exit_cpu =3D vcpu->cpu;
->         guest_state_exit_irqoff();
-> diff --git a/arch/riscv/kvm/vcpu_switch.S b/arch/riscv/kvm/vcpu_switch.S
-> index 9f13e5ce6a18..47686bcb21e0 100644
-> --- a/arch/riscv/kvm/vcpu_switch.S
-> +++ b/arch/riscv/kvm/vcpu_switch.S
-> @@ -218,6 +218,35 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
->         ret
->  SYM_FUNC_END(__kvm_riscv_switch_to)
->
-> +       /*
-> +        * Parameters:
-> +        * A0 <=3D Pointer to struct kvm_vcpu_arch
-> +        * A1 <=3D SBI extension ID
-> +        * A2 <=3D SBI function ID
-> +        */
-> +SYM_FUNC_START(__kvm_riscv_nacl_switch_to)
-> +       SAVE_HOST_GPRS
-> +
-> +       SAVE_HOST_AND_RESTORE_GUEST_CSRS .Lkvm_nacl_switch_return
-> +
-> +       /* Resume Guest using SBI nested acceleration */
-> +       add     a6, a2, zero
-> +       add     a7, a1, zero
-> +       ecall
-> +
-> +       /* Back to Host */
-> +       .align 2
-> +.Lkvm_nacl_switch_return:
-> +       SAVE_GUEST_GPRS
-> +
-> +       SAVE_GUEST_AND_RESTORE_HOST_CSRS
-> +
-> +       RESTORE_HOST_GPRS
-> +
-> +       /* Return to C code */
-> +       ret
-> +SYM_FUNC_END(__kvm_riscv_nacl_switch_to)
-> +
->  SYM_CODE_START(__kvm_riscv_unpriv_trap)
->         /*
->          * We assume that faulting unpriv load/store instruction is
-> --
-> 2.34.1
->
+Please pull the following kselftest fixes update for Linux 6.12-rc4.
 
+-- fixes test makefile to install tests directory without which
+    the test fails with errors.
 
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
---=20
-Regards,
-Atish
+diff is attached.
+
+thanks,
+-- Shuah
+
+----------------------------------------------------------------
+The following changes since commit 4ee5ca9a29384fcf3f18232fdf8474166dea8dca:
+
+   ftrace/selftest: Test combination of function_graph tracer and function profiler
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-fixes-6.12-rc4
+
+for you to fetch changes up to fe05c40ca9c18cfdb003f639a30fc78a7ab49519:
+
+   selftest: hid: add the missing tests directory (2024-10-16 15:55:14 -0600)
+
+----------------------------------------------------------------
+linux_kselftest-fixes-6.12-rc4
+
+kselftest fixes for Linux 6.12-rc4
+
+-- fixes test makefile to install tests directory without which
+    the test fails with errors.
+
+----------------------------------------------------------------
+Yun Lu (1):
+       selftest: hid: add the missing tests directory
+
+  tools/testing/selftests/hid/Makefile | 1 +
+  1 file changed, 1 insertion(+)
+----------------------------------------------------------------
+--------------ZlneuxfJq1Xpvfa6ANCD9Syw
+Content-Type: text/x-patch; charset=UTF-8;
+ name="linux_kselftest-fixes-6.12-rc4.diff"
+Content-Disposition: attachment;
+ filename="linux_kselftest-fixes-6.12-rc4.diff"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2hpZC9NYWtlZmlsZSBiL3Rv
+b2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2hpZC9NYWtlZmlsZQppbmRleCAzOGFlMzFiYjA3YjUu
+LjY2MjIwOWY1ZmFiYyAxMDA2NDQKLS0tIGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvaGlk
+L01ha2VmaWxlCisrKyBiL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2hpZC9NYWtlZmlsZQpA
+QCAtMTgsNiArMTgsNyBAQCBURVNUX1BST0dTICs9IGhpZC11c2JfY3Jhc2guc2gKIFRFU1Rf
+UFJPR1MgKz0gaGlkLXdhY29tLnNoCiAKIFRFU1RfRklMRVMgOj0gcnVuLWhpZC10b29scy10
+ZXN0cy5zaAorVEVTVF9GSUxFUyArPSB0ZXN0cwogCiBDWFggPz0gJChDUk9TU19DT01QSUxF
+KWcrKwogCg==
+
+--------------ZlneuxfJq1Xpvfa6ANCD9Syw--
 
