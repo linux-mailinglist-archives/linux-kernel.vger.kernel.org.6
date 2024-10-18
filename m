@@ -1,180 +1,242 @@
-Return-Path: <linux-kernel+bounces-371670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB81E9A3E57
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:26:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B23299A3E63
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764DA285941
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6723B2855DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7472118E351;
-	Fri, 18 Oct 2024 12:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2589D22EEF;
+	Fri, 18 Oct 2024 12:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ewnT43Dv"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E0N2eRSy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E6017ADF0
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E165FF9F8
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729254391; cv=none; b=Io+O+Pc3kdee+TWrhHKfd1OTXdmCT59LVni7qxsDYzXAZOf210culNWwtGdRcUNk7GMLBzhDU1eYC/cv/JUv4Sgm04ugEn8HhE8dRQQkbL8n7bIZJEVnSYVRG2aI7cyH76vLcbeEP6ghadbtput8X69TLKgMQv3S9MQQAGQfw20=
+	t=1729254579; cv=none; b=NTM2Lv80nTxNUQA2LONSP/wOPq+b00GURc5j94mKEKo5Zy8kpLAv14/8ihNoeRVkt3iOxg9alfjgG5ISojuXg5I923pLvJMaZrDRKXqaKk+epx20Od6S8s2kF1lMpBTw/3qX7uFGmfq7J/T1yuuLa8WgZ2zp+4rPcXQ4EV3Gtw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729254391; c=relaxed/simple;
-	bh=Uh3+7TMjGd7ntNY9Wy8bfawFFggv5z6Z2IzetUpvySk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EfIp/fl7Ofb7MXh2wOA1J32p2PoqNEYBuIWvPNEkDQExqxYcFt1Dt/dFXPRjy1jv+s1joWEwfCpkJEjkRovN0POTfsbE0hEa9APftKXFEiwLypkFI4nu3pLx5Pk7+e5zeFU42fswr/moQ2If0x6/r3lNlh41dfU2dqwdOMTRhNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ewnT43Dv; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43055b43604so21626075e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:26:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729254388; x=1729859188; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5YS74a7m9Z0FRUCbatwYpptX+BA9xoFlV0gIpbemQJQ=;
-        b=ewnT43DvMRmcJegNAco0VFet0s2TcXL+0abocHZlwAyot7NWlGAbhtY639y2Sus2X6
-         n4T8LgyAvl3svdY87L2ThvnhO6qiEidEuhKcWe6JK/wKdd4smtLeiXN7Zvyq+/cMNY2w
-         oD1DzIa1n3g9dcWdphuHh09XkLXOnIe79nqcQp9fxyz2PRWGjueoOXBKNLSxC05k/Bf5
-         Owegb0md1Orz8qjjfMsuHllZZMRY7xW92CfDkr3DLEUNyq+c2w3KNCONvYM3ECV5kcL9
-         ZLT0PSd0icfWYBoVFQwloGiD69oOVFFfqDCz3XjFK2JUNXKumdlko2eVW8mnJ0JGhmw1
-         zQSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729254388; x=1729859188;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5YS74a7m9Z0FRUCbatwYpptX+BA9xoFlV0gIpbemQJQ=;
-        b=HzsR7uuSv4SC5/zuhAmoG1gSmXrACxFUbqBTgmQWT9smaVoyPvsl5f1ay/2Dh60WsP
-         AetHJjAdU0s8bOybYGUOUltBCnUEFvj8uxApLaGWf4GQqCg3Ix4Wl0tguJAqHbKj65k9
-         VkAauPg66nqG/xWPV6qRtP8x6iBdwhjx2rAhjTAY2T4N7q+PN12q0J13e0ni/ZPrg/n2
-         KwG6xr6cixPvGat1HlIfg3/s0XAZZRigqT/hDO1peagEqrjdZrTkMqf64Aku6taJKl+3
-         RQXmGqM81pZ7gE73bC68w8NIPVmKl3Q216m/tZPP6GUp8pGKABMFwZHmDDOirRJ3dBnP
-         DUfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqQvNnbSZ+qOTC9aJiliFhHJWfj/BpXq7N3FbB2Hw5qy6+7n/za9lGcL+ycO8u5vNKxWCAKsITGp8I0/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNPXRKS7nZNoB5G/FLWG9lBdi5wGa1p73Ny6UJAc46+be+t7zS
-	8zyHD5/jKRR5ftFSem/gy4GqS9lvRSpiWeJLcDkK5csQ0m/LiKZ9eVtnqO126po=
-X-Google-Smtp-Source: AGHT+IH0D342MuhKUa3UYsaToIehwKc/N4IfojfzV6RoQLZSnVuOV356C0GEf4yeThmx1zhx7T5kGg==
-X-Received: by 2002:a05:600c:4687:b0:42e:d4a2:ce67 with SMTP id 5b1f17b1804b1-4316164dd02mr18506575e9.17.1729254387614;
-        Fri, 18 Oct 2024 05:26:27 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:6e2b:4562:2d66:575e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160e4fe8bsm22609435e9.44.2024.10.18.05.26.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 05:26:27 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>,  Linus Walleij
- <linus.walleij@linaro.org>,  Rob Herring <robh@kernel.org>,  Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Neil
- Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Bartosz Golaszewski
- <brgl@bgdev.pl>,  linux-gpio@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Add support for Amlogic A4
- SoCs
-In-Reply-To: <d654d2b2-977b-44c0-8b01-b26f5eb0a3fe@kernel.org> (Krzysztof
-	Kozlowski's message of "Fri, 18 Oct 2024 12:13:14 +0200")
-References: <20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com>
-	<20241018-a4_pinctrl-v3-1-e76fd1cf01d7@amlogic.com>
-	<4a79f996-9d82-48b2-8a93-d7917413ed8c@kernel.org>
-	<1jttd9rein.fsf@starbuckisacylon.baylibre.com>
-	<4127b448-a914-4c69-b938-29512995326f@amlogic.com>
-	<1jmsj1rclh.fsf@starbuckisacylon.baylibre.com>
-	<d654d2b2-977b-44c0-8b01-b26f5eb0a3fe@kernel.org>
-Date: Fri, 18 Oct 2024 14:26:26 +0200
-Message-ID: <1jiktpr40d.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1729254579; c=relaxed/simple;
+	bh=VV1oRK2SWRRte2+olJujx+EjC6To4nANOdZ0GtMgFps=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Bv9Mv+OXv4/SitRpH/6ATSGQRMl/9Cn0zg+XscqQsZc/U6tgAplEl841xVYC2cQfyKowV3aVnN4VwQaa8igjo8VxFt8iMWSeVfPx/HuvTz6iZsSyZ0qXjuKD8U54l1DhBCHkvU0E1itnryehGL7XVROw9WpHDknE/ACGXH5BRHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E0N2eRSy; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729254579; x=1760790579;
+  h=date:from:to:cc:subject:message-id;
+  bh=VV1oRK2SWRRte2+olJujx+EjC6To4nANOdZ0GtMgFps=;
+  b=E0N2eRSyN7aqscU4zP368sgo4W6gusUwUUVLB+WGWyaO4C+T8iomqFlk
+   B4ZVU6lpT0ak2wuNpCFaWvYv/3pXf7GHhUUAUWbrjIheFKADDI7mqWzTa
+   Ls6/QHJMs9fvn9Xbe0+sJmuoUh6Tlrpu41N0b+R9AOdnQdKgZ7/RpCviU
+   7+j1BnvdP9E2mZ9Ws/miV6zhL1lj0FkW/jKSCWca4aiZRHOYhjfTzZm2F
+   LZNful/JOnjWhcE6QAtHYD+6fzrwVwqRHut37PJsGfPKz3fsIzOyaymt6
+   olENd3tW6nsW0fotzy9XvO6SKIICyyfvbkKYJG5tcFcwSPOwNxYZmmamy
+   Q==;
+X-CSE-ConnectionGUID: KbumIYN7SqSjRwIP/NEPLQ==
+X-CSE-MsgGUID: Vl5/uAVnQxyjtDtKU+f0rw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46241900"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46241900"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:29:38 -0700
+X-CSE-ConnectionGUID: NkrbU1Q8TyqWaS6v7dag6g==
+X-CSE-MsgGUID: /ggGwZDbR8OgLQ6xT4XoSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="83439244"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 18 Oct 2024 05:29:36 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1m6o-000NoH-0N;
+	Fri, 18 Oct 2024 12:29:34 +0000
+Date: Fri, 18 Oct 2024 20:28:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/sev] BUILD SUCCESS
+ 0a895c0d9b73d934de95aa0dd4e631c394bdd25d
+Message-ID: <202410182051.fAke1ASB-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-On Fri 18 Oct 2024 at 12:13, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sev
+branch HEAD: 0a895c0d9b73d934de95aa0dd4e631c394bdd25d  virt: sev-guest: Carve out SNP message context structure
 
-> On 18/10/2024 11:20, Jerome Brunet wrote:
->> On Fri 18 Oct 2024 at 17:01, Xianwei Zhao <xianwei.zhao@amlogic.com> wrote:
->> 
->>> Hi Jerome,
->>>    Thanks for your reply.
->>>
->>> On 2024/10/18 16:39, Jerome Brunet wrote:
->>>> [ EXTERNAL EMAIL ]
->>>> On Fri 18 Oct 2024 at 10:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
->>>>> On 18/10/2024 10:10, Xianwei Zhao via B4 Relay wrote:
->>>>>> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
->>>>>>
->>>>>> Add the new compatible name for Amlogic A4 pin controller, and add
->>>>>> a new dt-binding header file which document the detail pin names.
->>>> the change does not do what is described here. At least the description
->>>> needs updating.
->>>>
->>>
->>> Will do.
->>>
->>>> So if the pin definition is now in the driver, does it mean that pins have
->>>> to be referenced in DT directly using the made up numbers that are
->>>> created in pinctrl-amlogic-a4.c at the beginning of patch #2 ?
->>>>
->>>
->>> Yes.
->>>
->>>> If that's case, it does not look very easy a read.
->>>>
->>>
->>> It does happen. The pin definition does not fall under the category of
->>> binding.
->>>
->>> https://lore.kernel.org/all/106f4321-59e8-49b9-bad3-eeb57627c921@amlogic.com/
->> 
->> So the expectation is that people will write something like:
->> 
->>  reset-gpios = <&gpio 42 GPIO_ACTIVE_LOW>;
->> 
->> And others will go in the driver to see that is maps to GPIOX_10 ? the number
->> being completly made up, with no link to anything HW/Datasheet
->> whatsoever ?
->> 
->> This is how things should be done now ?
->
-> Why would you need to do this? Why it cannot be <&gpio 10
-> GPIO_ACTIVE_LOW>, assuming it is GPIO 10?
->
-> Bindings have absolutely nothing to do with it. You have GPIO 10, not
-> 42, right?
+elapsed time: 1436m
 
-That's what being proposed here, as far as I can see.
+configs tested: 150
+configs skipped: 4
 
-GPIOX_10 (not GPIO 10) maps to 42. If this goes through, for DTs to be
-valid in any OS, all need to share the same definition. That looks like
-a binding to me.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-On these SOC, gpios in each controller are organized in bank with
-different number of pins. So far, this was represented as single linear
-array and that was not a problem since the mapping was part of the binding.
+tested configs:
+alpha                             allnoconfig    gcc-14.1.0
+alpha                            allyesconfig    clang-20
+alpha                               defconfig    gcc-14.1.0
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.1.0
+arc                              allyesconfig    clang-20
+arc                                 defconfig    gcc-14.1.0
+arc                 nsimosci_hs_smp_defconfig    gcc-14.1.0
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.1.0
+arm                              allyesconfig    clang-20
+arm                                 defconfig    gcc-14.1.0
+arm                          exynos_defconfig    gcc-14.1.0
+arm                          gemini_defconfig    gcc-14.1.0
+arm                          ixp4xx_defconfig    gcc-14.1.0
+arm                        keystone_defconfig    gcc-14.1.0
+arm                        multi_v7_defconfig    gcc-14.1.0
+arm                             rpc_defconfig    gcc-14.1.0
+arm                         s5pv210_defconfig    gcc-14.1.0
+arm                           tegra_defconfig    gcc-14.1.0
+arm                       versatile_defconfig    gcc-14.1.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.1.0
+arm64                               defconfig    gcc-14.1.0
+csky                              allnoconfig    gcc-14.1.0
+csky                                defconfig    gcc-14.1.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.1.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.1.0
+i386                             allmodconfig    clang-18
+i386                              allnoconfig    clang-18
+i386                             allyesconfig    clang-18
+i386        buildonly-randconfig-001-20241018    gcc-11
+i386        buildonly-randconfig-002-20241018    gcc-11
+i386        buildonly-randconfig-003-20241018    gcc-11
+i386        buildonly-randconfig-004-20241018    gcc-11
+i386        buildonly-randconfig-005-20241018    gcc-11
+i386        buildonly-randconfig-006-20241018    gcc-11
+i386                                defconfig    clang-18
+i386                  randconfig-001-20241018    gcc-11
+i386                  randconfig-002-20241018    gcc-11
+i386                  randconfig-003-20241018    gcc-11
+i386                  randconfig-004-20241018    gcc-11
+i386                  randconfig-005-20241018    gcc-11
+i386                  randconfig-006-20241018    gcc-11
+i386                  randconfig-011-20241018    gcc-11
+i386                  randconfig-012-20241018    gcc-11
+i386                  randconfig-013-20241018    gcc-11
+i386                  randconfig-014-20241018    gcc-11
+i386                  randconfig-015-20241018    gcc-11
+i386                  randconfig-016-20241018    gcc-11
+loongarch                        allmodconfig    gcc-14.1.0
+loongarch                         allnoconfig    gcc-14.1.0
+loongarch                           defconfig    gcc-14.1.0
+m68k                             allmodconfig    gcc-14.1.0
+m68k                              allnoconfig    gcc-14.1.0
+m68k                             allyesconfig    gcc-14.1.0
+m68k                                defconfig    gcc-14.1.0
+m68k                        m5272c3_defconfig    gcc-14.1.0
+m68k                        stmark2_defconfig    gcc-14.1.0
+microblaze                       allmodconfig    gcc-14.1.0
+microblaze                        allnoconfig    gcc-14.1.0
+microblaze                       allyesconfig    gcc-14.1.0
+microblaze                          defconfig    gcc-14.1.0
+microblaze                      mmu_defconfig    gcc-14.1.0
+mips                              allnoconfig    gcc-14.1.0
+mips                  cavium_octeon_defconfig    gcc-14.1.0
+mips                           ip30_defconfig    gcc-14.1.0
+nios2                            alldefconfig    gcc-14.1.0
+nios2                             allnoconfig    gcc-14.1.0
+nios2                               defconfig    gcc-14.1.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.1.0
+openrisc                            defconfig    gcc-12
+openrisc                    or1ksim_defconfig    gcc-14.1.0
+parisc                           allmodconfig    gcc-14.1.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.1.0
+parisc                              defconfig    gcc-12
+parisc64                            defconfig    gcc-14.1.0
+powerpc                          allmodconfig    gcc-14.1.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.1.0
+powerpc                  iss476-smp_defconfig    gcc-14.1.0
+powerpc                      pcm030_defconfig    gcc-14.1.0
+powerpc                     redwood_defconfig    gcc-14.1.0
+powerpc                     skiroot_defconfig    gcc-14.1.0
+powerpc                      tqm8xx_defconfig    gcc-14.1.0
+riscv                            allmodconfig    gcc-14.1.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.1.0
+riscv                               defconfig    gcc-12
+riscv             nommu_k210_sdcard_defconfig    gcc-14.1.0
+riscv                    nommu_virt_defconfig    gcc-14.1.0
+s390                             allmodconfig    gcc-14.1.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.1.0
+s390                                defconfig    gcc-12
+sh                               allmodconfig    gcc-14.1.0
+sh                                allnoconfig    gcc-14.1.0
+sh                               allyesconfig    gcc-14.1.0
+sh                                  defconfig    gcc-12
+sh                            hp6xx_defconfig    gcc-14.1.0
+sh                          sdk7786_defconfig    gcc-14.1.0
+sh                           se7705_defconfig    gcc-14.1.0
+sh                           se7751_defconfig    gcc-14.1.0
+sparc                            allmodconfig    gcc-14.1.0
+sparc64                             defconfig    gcc-12
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-18
+x86_64                           allyesconfig    clang-18
+x86_64      buildonly-randconfig-001-20241018    clang-18
+x86_64      buildonly-randconfig-002-20241018    clang-18
+x86_64      buildonly-randconfig-003-20241018    clang-18
+x86_64      buildonly-randconfig-004-20241018    clang-18
+x86_64      buildonly-randconfig-005-20241018    clang-18
+x86_64      buildonly-randconfig-006-20241018    clang-18
+x86_64                              defconfig    clang-18
+x86_64                                  kexec    gcc-12
+x86_64                randconfig-001-20241018    clang-18
+x86_64                randconfig-002-20241018    clang-18
+x86_64                randconfig-003-20241018    clang-18
+x86_64                randconfig-004-20241018    clang-18
+x86_64                randconfig-005-20241018    clang-18
+x86_64                randconfig-006-20241018    clang-18
+x86_64                randconfig-011-20241018    clang-18
+x86_64                randconfig-012-20241018    clang-18
+x86_64                randconfig-013-20241018    clang-18
+x86_64                randconfig-014-20241018    clang-18
+x86_64                randconfig-015-20241018    clang-18
+x86_64                randconfig-016-20241018    clang-18
+x86_64                randconfig-071-20241018    clang-18
+x86_64                randconfig-072-20241018    clang-18
+x86_64                randconfig-073-20241018    clang-18
+x86_64                randconfig-074-20241018    clang-18
+x86_64                randconfig-075-20241018    clang-18
+x86_64                randconfig-076-20241018    clang-18
+x86_64                               rhel-8.3    gcc-12
+x86_64                           rhel-8.3-bpf    clang-18
+x86_64                         rhel-8.3-kunit    clang-18
+x86_64                           rhel-8.3-ltp    clang-18
+x86_64                          rhel-8.3-rust    clang-18
+xtensa                            allnoconfig    gcc-14.1.0
+xtensa                       common_defconfig    gcc-14.1.0
 
-Are you suggesting 2 params instead of one ? something like this maybe ?
-
-reset-gpios = <&gpio BANK_X 10 GPIO_ACTIVE_LOW>;
-
-This means this A4 controller will be software incompatible with the
-previous generation. It will need to handled differently eventhough the
-HW is exactly the same.
-
-Note that some form of binding would still be required to define the
-banks which are referenced by arbitrary letter in doc, not numbers.
-
->
-> Best regards,
-> Krzysztof
-
--- 
-Jerome
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
