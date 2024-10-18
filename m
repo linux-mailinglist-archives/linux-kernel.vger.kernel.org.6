@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-371009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86549A3518
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:06:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D62109A351B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF95282063
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:06:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2541C2114F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50CF17C220;
-	Fri, 18 Oct 2024 06:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2056417C9F1;
+	Fri, 18 Oct 2024 06:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HWZrH1eT"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="YPzrQdfD"
+Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCF920E30C
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B53D20E30C
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729231605; cv=none; b=o1Du9wccQaoCRKKP+wEwazzrGXrEEME4VSXXHbONHUh7BF1Yh8hr5PHEZIdGPFQcCFCx35tyx7u0BYdAVROsjylpjCAayMDTJ2rEg4N+Ggdnl8oCAk9COl5YaSBo7GsHa2rS1t3fTSDJjyIYWLPp9CkD1ZuP1GkawKFXB8SI6Cg=
+	t=1729231779; cv=none; b=QIss0w3KfE3bb7iYpVBEWyef2KFiKlZX4o2JxZ/v5zfH47RBkg5xO+twHDS/YQh4JAwk6ErLJVTsNMMZhta0C4wDHs3NJSee9tG+TAbSVVvQpB4CtzZO7u0nPbJdkwaLQDVAS/iyOkDNWWWGMLuGqi6lecRu8ahjVQFbgDGOnG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729231605; c=relaxed/simple;
-	bh=jr/gLFKcTItfqi1gNT92lR8SOn032rSaVRtIUrU0I/Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Aqtf0WXnpOXgmJ0EKJtUxmIoxoJ3IN7WvN70ZjkQDZLhGViwTVrHlAznkwpx2vdVdZzCNE5zP/+t6gR9JPA3V6y69scPBOnAveeNwqCCuyRge+YZ+kdNGfKLFbuxOIxuxp/4VJimHg0kaSi++XgbmrvlDcBXvKDpdDI3Q9nTFSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HWZrH1eT; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2a97c2681so1334970a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 23:06:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729231602; x=1729836402; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YB1LmCQcNZuiTRixfyMNEp3sh0blica8ab4H/fIaBHI=;
-        b=HWZrH1eTr0k6KePFglAAJh8KxoOhscXWqJv5RxXAE3TMikmG+tnPoSfl8mPG1hSHCY
-         Vl8MUdokUUVGN2fQ0oMrEuxojni575oDqvV0yYb7mLA6d+lcuY//fHf+Vm6Tn4hO/btX
-         e3ACFU4yGzQ13Uf0cNlmjrGmdfsRgxz7xAfSYg82EqBIlpImwiWZt97iC+xTB5W78NdH
-         zmWDOaepzKHCsQxg0IZ/q/ePhNkOk+pfze6hA3oTlTYS1UjKUZSmVA5WcRrUrIDTWd1N
-         7NW9bCi5WkpqhzM3n7p0l5XCLjGkQpwqNLx8fBqi8rJOZJ2EJ0cEhi7/7cQvevzymKAm
-         v3mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729231602; x=1729836402;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YB1LmCQcNZuiTRixfyMNEp3sh0blica8ab4H/fIaBHI=;
-        b=SY90qdCKJZ6aVgcSgF87D96NjLHxTFq6ykM8rwingvXpO2knsmD6bxvhd4nHifGEac
-         cQ5QxTUuklcnj7VBzLmqnI/f58jp1sqZhKQZWHea+ZtOHY4HE5iV5oCUHs1JwAchHy6f
-         JPv/MHYN54EUAv5VmCP4ue3/poFNUx3DH8kQ+TE3du5rTUIlUi5din9XY8u1cyPsqvOF
-         vsK+dayYCc21Mcziz7enXaHgab8SLTBW9ECXhzUUGD9KV4WIzF9e5c5foGbANX1aQhZr
-         6bV72K8fKa2CDIfREJX0uNN+ey4D6pgbYjQghHUDoacNBTBrYplA5KGCSYGv+tC2BiVv
-         s3gA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBjF4T6w85zdNpZP2dS6PnZF3nWuTaNeWpInO7TJ16fRqSg4BU6bxVyIl0K0mMqkRP1V/8bMYpo3YpHQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6hZTB4Y8Y8m11CWcW1zhaLLroQ6g4sl8qjSsuQfD+fM8bmxEv
-	INcA/lZro4iASK7I7i0zMf/tuHF7YM6NNOIn10zwkIVPe692/fZon1Oztv4tRPI=
-X-Google-Smtp-Source: AGHT+IGMhqMVHHNFIWWyo62KZN/pX0PwPN6mmwV4upUByvOhTYxgCIAztvDcyMFtjUztU47SoKJDgg==
-X-Received: by 2002:a17:90b:2782:b0:2e2:af0b:7169 with SMTP id 98e67ed59e1d1-2e56171a95amr1598611a91.12.1729231602464;
-        Thu, 17 Oct 2024 23:06:42 -0700 (PDT)
-Received: from localhost.localdomain ([43.153.70.29])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e55d7c4b55sm1027899a91.21.2024.10.17.23.06.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2024 23:06:42 -0700 (PDT)
-From: MengEn Sun <mengensun88@gmail.com>
-X-Google-Original-From: MengEn Sun <mengensun@tencent.com>
-To: akpm@linux-foundation.org
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
+	s=arc-20240116; t=1729231779; c=relaxed/simple;
+	bh=EKcaj1zBxZxv0K7v8DN2eYg5WnyI9Q6wCEZw60CpIJg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N2xaLIFtbeTi7F4DRMFGv5JrkpztBQATgUrYl8n+GUfXKdvbhp7PvIhU86e9rwOp84W6tgWE+ceeFu52UfUrNF5km/tdB273+cB4JDpyXycFMzBLKqPE+nXdaCq5GyPnfevRp1uTvkrIfJu9dcQR82LrJsyHrpFuNUXDk2WKRfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=YPzrQdfD; arc=none smtp.client-ip=195.133.245.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
+Received: from mail.nppct.ru (localhost [127.0.0.1])
+	by mail.nppct.ru (Postfix) with ESMTP id 984861C19D3
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:00:36 +0300 (MSK)
+Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
+	reason="pass (just generated, assumed good)" header.d=nppct.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:to:from:from; s=dkim; t=1729231229; x=
+	1730095230; bh=EKcaj1zBxZxv0K7v8DN2eYg5WnyI9Q6wCEZw60CpIJg=; b=Y
+	PzrQdfDlC7rDRijX7w1tZ9Z6tx3GcaRCx+fiNtxNEleWZc2T13eQFRAqcyFFn7WV
+	FDWD4RqV18T03x09LDqRrOUtRxl4LRgar8dA6jh0aWFA27WGdKEZ9zir111rjdVq
+	QQ2yM9EZC1k0Xnsx8znKOTkilCJl57vVh6a9swflnc=
+X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
+Received: from mail.nppct.ru ([127.0.0.1])
+	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id EYO4AWugzoEX for <linux-kernel@vger.kernel.org>;
+	Fri, 18 Oct 2024 09:00:29 +0300 (MSK)
+Received: from localhost.localdomain (mail.dev-ai-melanoma.ru [185.130.227.204])
+	by mail.nppct.ru (Postfix) with ESMTPSA id AE2181C0904;
+	Fri, 18 Oct 2024 09:00:22 +0300 (MSK)
+From: Andrey Shumilin <shum.sdl@nppct.ru>
+To: Clemens Ladisch <clemens@ladisch.de>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: Andrey Shumilin <shum.sdl@nppct.ru>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mengensun@tencent.com
-Subject: [PATCH] mm: make pcp decay work with onhz
-Date: Fri, 18 Oct 2024 14:06:40 +0800
-Message-Id: <1729231600-19607-1-git-send-email-mengensun@tencent.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20241012154328.015f57635566485ad60712f3@linux-foundation.org>
-References: <20241012154328.015f57635566485ad60712f3@linux-foundation.org>
+	lvc-project@linuxtesting.org,
+	lvc-patches@linuxtesting.org,
+	khoroshilov@ispras.ru,
+	ykarpov@ispras.ru,
+	vmerzlyakov@ispras.ru,
+	vefanov@ispras.ru
+Subject: [PATCH] ALSA: firewire-lib: Avoid division by zero in apply_constraint_to_size()
+Date: Fri, 18 Oct 2024 09:00:18 +0300
+Message-Id: <20241018060018.1189537-1-shum.sdl@nppct.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat, 12 Oct 2024 15:43:28 -0700 akpm@linux-foundation.org wrote:
-> On Fri, 11 Oct 2024 18:36:10 +0800 alexjlzheng@gmail.com wrote:
-> 
-> > Subject: [PATCH] mm: make pcp decay work with onhz
-> 
-> "NOHZ".
-> 
-> > Date: Fri, 11 Oct 2024 18:36:10 +0800
-> > X-Mailer: git-send-email 2.39.3
-> > 
-> > From: MengEn Sun <mengensun@tencent.com>
-> > 
-> > when a cpu stops tick, quiet_vmstat may flush all the per cpu
-> > statistics counter.
-> > 
-> > while, the shepherd is needed those counters to kick the
-> > vmstat_work.
-> > 
-> > when a cpu in nohz with a lot of pcp pages, and do not do page
-> > allocating and freeing. the pcp pages of the cpu may not be hold
-> > for a long time
-> > 
-> > we make shepherd keep a eye on the pcp high_min and high_max
-> 
-> I can see what you're saying here, but it's hard to understand.  Please
-> spend a little time clarifying the text?  And please start sentences
-> with a capital letter!
+The step variable is initialized to zero. It is changed in the loop,
+but if it's not changed it will remain zero. Add a variable check
+before the division.
 
-Thank you for your suggestion
-I will create a v2 version, and make text clarifyed
+The observed behavior was introduced by commit 826b5de90c0b
+("ALSA: firewire-lib: fix insufficient PCM rule for period/buffer size"),
+and it is difficult to show that any of the interval parameters will
+satisfy the snd_interval_test() condition with data from the
+amdtp_rate_table[] table.
 
-> 
-> > --- a/mm/vmstat.c
-> > +++ b/mm/vmstat.c
-> > @@ -2024,8 +2024,13 @@ static bool need_update(int cpu)
-> >  
-> >  	for_each_populated_zone(zone) {
-> >  		struct per_cpu_zonestat *pzstats = per_cpu_ptr(zone->per_cpu_zonestats, cpu);
-> > +		struct per_cpu_pages *pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
-> >  		struct per_cpu_nodestat *n;
-> >  
-> > +		/* in onhz or nohz full make pcp decay work */
-> 
-> "NOHZ".
-> 
-> > +		if (pcp->high_max > pcp->high_min)
-> > +			return true;
-> > +
-> >  		/*
-> >  		 * The fast way of checking if there are any vmstat diffs.
-> >  		 */
-> > -- 
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 826b5de90c0b ("ALSA: firewire-lib: fix insufficient PCM rule for period/buffer size")
+Signed-off-by: Andrey Shumilin <shum.sdl@nppct.ru>
+---
+ sound/firewire/amdtp-stream.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/sound/firewire/amdtp-stream.c b/sound/firewire/amdtp-stream.c
+index 4e2f2bb7879f..6c45ee3545f9 100644
+--- a/sound/firewire/amdtp-stream.c
++++ b/sound/firewire/amdtp-stream.c
+@@ -163,6 +163,9 @@ static int apply_constraint_to_size(struct snd_pcm_hw_params *params,
+ 			step = max(step, amdtp_syt_intervals[i]);
+ 	}
+ 
++	if (step == 0)
++		return -EINVAL;
++
+ 	t.min = roundup(s->min, step);
+ 	t.max = rounddown(s->max, step);
+ 	t.integer = 1;
+-- 
+2.30.2
+
 
