@@ -1,144 +1,158 @@
-Return-Path: <linux-kernel+bounces-371862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DFD9A416B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 724A49A415D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92DEC1C2384A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:42:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610F81C22D2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92441FCF6F;
-	Fri, 18 Oct 2024 14:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAD21F4281;
+	Fri, 18 Oct 2024 14:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="fOT+jI20"
-Received: from smtpcmd0986.aruba.it (smtpcmd0986.aruba.it [62.149.156.86])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a8PwP3d3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC4A20E312
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 14:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3BE1EE03A
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 14:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729262549; cv=none; b=hiNTxiH0Nz9OyLOemD95QUXpsdzpV45aeGw7ZoukvERPblxCv6WzXaMZIizgGMED+9LSdVgcjtcM6Ay/CzDIXs0W9GtP6wHnUcu7+k8MtGA+OuTeQ8mvCxt0Ec0+4THv6jXpQM8nQ8U5rYDk7AOPKZmR3RVXvevrmab8fPNs5yA=
+	t=1729262394; cv=none; b=oXLCFgWisY6aL74FYh5h6lqmy4gbSaLOo3AzWw1gm0chHPdPRwY4HfvqW4JHrJK7druwoNHveZ7258asoFz6od9WseiNtbFUgrpaYkhsAITvsk5VNMdD5ZYq90dQXxVTvDAfd/ZP7CBoqenFLyOwUCgKuLQFfEcfMJuwYbNbzn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729262549; c=relaxed/simple;
-	bh=L/7lI5InFA2FdeoR5QCDWagzEdB/60JLN6iA+Qyt6+8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=owcNMxim+X5jrvcVwbQb/mK6O8tds5P9npmANHyde96XXtHyTDeFFDPf6I8gD/3886tXD2mawL/LXZVN8IDndWUSfBM5F+i1ufY/2r79tYYhhZmv81LzFoDSYPMNF3+Ja9HvTmwobFuXiW3R8FblbvZOsCvq5o8rW15plxOYyog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=fOT+jI20; arc=none smtp.client-ip=62.149.156.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from polimar.homenet.telecomitalia.it ([79.0.204.227])
-	by Aruba Outgoing Smtp  with ESMTPSA
-	id 1o8JtbKaEcvwV1o8LtrUBE; Fri, 18 Oct 2024 16:39:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1729262358; bh=L/7lI5InFA2FdeoR5QCDWagzEdB/60JLN6iA+Qyt6+8=;
-	h=From:To:Subject:Date:MIME-Version;
-	b=fOT+jI20ZByatyzZu6FqG9VJL6UADfEkHFzu4f3bygyfSEJN9n1ArFHWjPC0WzJpN
-	 7ueVqzXnwR9Yu1RAL4nJp9ppNK9Yw6xdObGTCGuD2xfB+fkzL5ErBDhiFJQpXL8W5v
-	 SJq+qW2BGVWmVHUz7y5jwu16LQpYVMHgTgftyDMMUYSqa69F2JCwtPoj90ksNV5Mqh
-	 2yBjhqpO6FVOW+7JYGC4ls78dlCYJSz7h9eHp9Th7euVmjs+RPpz/wexGW/w83iYEU
-	 sxmAcrDplWY4vz76It9WTqwhsBLpPpGk47EGEuW8zcsuCVHNmyVczunCQmcL8F3Rcw
-	 1K4WJlsly2w4g==
-From: Rodolfo Giometti <giometti@enneenne.com>
-To: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Greg KH <greg@kroah.com>,
-	corbet@lwn.net,
-	Hall Christopher S <christopher.s.hall@intel.com>,
-	Mohan Subramanian <subramanian.mohan@intel.com>,
-	tglx@linutronix.de,
-	andriy.shevchenko@linux.intel.com,
-	Dong Eddie <eddie.dong@intel.com>,
-	N Pandith <pandith.n@intel.com>,
-	T R Thejesh Reddy <thejesh.reddy.t.r@intel.com>,
-	Zage David <david.zage@intel.com>,
-	Chinnadurai Srinivasan <srinivasan.chinnadurai@intel.com>,
-	Rodolfo Giometti <giometti@enneenne.com>
-Subject: [V1 4/4] Documentation ABI: add PPS generators documentation
-Date: Fri, 18 Oct 2024 16:39:15 +0200
-Message-Id: <20241018143915.3877425-5-giometti@enneenne.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241018143915.3877425-1-giometti@enneenne.com>
-References: <20241018143915.3877425-1-giometti@enneenne.com>
+	s=arc-20240116; t=1729262394; c=relaxed/simple;
+	bh=tr8jRKAqh09ouuyihQan5X+g0ShJthMmUZ6d8PXsqVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VuKXQ7BCfcfzl46lL+AO735EJWd5/fFUtOQO8oXbQrVOYolsvuqLUdie4CMsP0JlV1iRRsyRA6YS2OoSkCawTL2xA/RyTM1Kgl4taSM2IDAWKQyolN324mNr8HbkPrN7J9HwHOQtf7k89bDGiHqYL7K6NIW0mtR7jKdvp7BISHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a8PwP3d3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729262391;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q1kdgqSpUkHaDdHlWc2ZMvh2f7J4lCZH1eEq8CMsWKE=;
+	b=a8PwP3d3SkWwpl1EBMF2cozoCoAAZv3M3BrudlTg2Dk/bO4JGkSKgofTmtcAQlZePZSKzb
+	AQQtWh3Pw0bBhzbBtHVVGdGUZVMRQtZMHSaxtihfOlcNdETUKANr4NY8YD0pvSbbxBxMHG
+	l+y8KJJWMjUxJrg2WkW/edMMS1yY+lA=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-118-cOCFVg4JPIOvWnB1RvbnIg-1; Fri, 18 Oct 2024 10:39:49 -0400
+X-MC-Unique: cOCFVg4JPIOvWnB1RvbnIg-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbf59c1b3cso27207136d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:39:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729262389; x=1729867189;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q1kdgqSpUkHaDdHlWc2ZMvh2f7J4lCZH1eEq8CMsWKE=;
+        b=Xf2bcKEQIeWJIRt0L90Vi0iPU+mxXfHOmf15fOWRFLKxixKzxOxtZQQu2NYCUNJBFr
+         4VvMHwQny5OR4R9E8SdxldSLNDHXac5qQxgcuBMkwcB6gGYkVXWM8/lfP5vwen6TEYk4
+         mQDOnX9IR+o+JYhljZ5HRV0gJPMm4ms8x2ZEI77cVIL9GRiIm36zgDdhni7G7X0kiy4a
+         ZkBiQqeHF2n6sDK6rc1dFywObpUIu4EFIOBt3X8Kl1dbvHwZR23UoTuyYaGdVHKGOBtY
+         KUAE+NvdVmN6w2/lgEZgv3DjVv3h8R3Whqjk0ubB22nBp++gUP1/3gowAJwkOhso53QG
+         x/mw==
+X-Gm-Message-State: AOJu0Yy3FG+87Vo2KnVoaOTkqXcG1/0PtA78+ZJDKhtkAMyz497NJAt9
+	elppKdGgOk3WuHpjOQOs6xL/xR2ASsFQoom+01XW9S2Joxx3dXN9I2ZaWsg4wWYtznkIkRyh4mz
+	mWGQsiZ75rJnaYdydRWBilFPbhT8yXceObVEjTYyxgzNmM7t2S9A02SRgPqLqdg==
+X-Received: by 2002:a05:6214:5541:b0:6cb:20b6:f398 with SMTP id 6a1803df08f44-6cde150dd18mr34710866d6.21.1729262389301;
+        Fri, 18 Oct 2024 07:39:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsprW5VkpYV0rcxGwN4Pw/bcWrNG/R/XuTyrPHGf/vzAwEznM75iAODlOWI+en0Ua/metoMA==
+X-Received: by 2002:a05:6214:5541:b0:6cb:20b6:f398 with SMTP id 6a1803df08f44-6cde150dd18mr34710536d6.21.1729262388975;
+        Fri, 18 Oct 2024 07:39:48 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-46-200-231.retail.telecomitalia.it. [79.46.200.231])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cde115577csm7560936d6.55.2024.10.18.07.39.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 07:39:48 -0700 (PDT)
+Date: Fri, 18 Oct 2024 16:39:41 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, 
+	"Colin King (gmail)" <colin.i.king@gmail.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH] virtio_net: fix integer overflow in stats
+Message-ID: <riu6774ovfsubpe3zzuehfmzr2lz4slv6wmcsenoewl47nukf6@ba2tode64wby>
+References: <53e2bd6728136d5916e384a7840e5dc7eebff832.1729099611.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfJrnHruLi3tY5UzQyuP1rDyaDg/+bwqZDkO0LeUU29FCatvnZx+2biKbcQwlQiAM+3tIzxrridS1H2GE6mADoe23fMmhWK4KyuyheffSfuA/YW7UN7Ez
- hgbxk7eVNSum9UkK3ON30Hsmp+4kBqDy87Sj2MRiTjl3xniglg8eGx1cgK8CfS7Uu3CFKSrNY7frP6oEafPCYt+0yWVpkYTZXIv5bYBIlU/c9ScQouMf3GyA
- wtVUhe0aV1/0/XhvRBIGm+UCyQ1MLH2YKykxjSaLTFd5XvGhSnZStC+23lOlD9qjKLjdjasNsCOxLGXVvG/9eyzmNATQU6rN2SIzvnQmNNqur+LB2vj2lPfS
- LUFhIhJ9C0eOqGd7Gs2fnjsOzjxdGlkjCCWMdtQZi3+uqsCWNelzL80r/Pf5HHShjRDIXpSpUmOEs4l1vXXjxTByWfvdYOCR16CkJbVfxyRKHAw2QcXF4+ur
- khYORs/JK+SMwlLU8u8xjO4QsdD8ktS5tDfxFmbiNRXR4yncdueVdirqVqOoJpGBw4yPgL45uP5x6+ifrMLh6aC4j0iyj48BTe1bjBzVqa9lYOeA/K09Swix
- y2TrMhyaqM2pyGtucEGK9uq5EPzR/4ZghMxTB/xLZbUwsaWOmgAfx/sH8zpYeJYaBTL/7dJEwEPZAbkBFXS2Sbn1m9e4fvkbQASja9w8wCA+0r36rxIrzVNf
- 3KoU5wq5fSQBaXQ6IQvj3JET1jHonfP4
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <53e2bd6728136d5916e384a7840e5dc7eebff832.1729099611.git.mst@redhat.com>
 
-This patch adds the documentation for the ABI between the Linux kernel
-and userspace regarding the PPS generators.
+On Wed, Oct 16, 2024 at 01:27:07PM -0400, Michael S. Tsirkin wrote:
+>Static analysis on linux-next has detected the following issue
+>in function virtnet_stats_ctx_init, in drivers/net/virtio_net.c :
+>
+>        if (vi->device_stats_cap & VIRTIO_NET_STATS_TYPE_CVQ) {
+>                queue_type = VIRTNET_Q_TYPE_CQ;
+>                ctx->bitmap[queue_type]   |= VIRTIO_NET_STATS_TYPE_CVQ;
+>                ctx->desc_num[queue_type] += ARRAY_SIZE(virtnet_stats_cvq_desc);
+>                ctx->size[queue_type]     += sizeof(struct virtio_net_stats_cvq);
+>        }
+>
+>ctx->bitmap is declared as a u32 however it is being bit-wise or'd with
+>VIRTIO_NET_STATS_TYPE_CVQ and this is defined as 1 << 32:
+>
+>include/uapi/linux/virtio_net.h:#define VIRTIO_NET_STATS_TYPE_CVQ (1ULL << 32)
+>
+>..and hence the bit-wise or operation won't set any bits in ctx->bitmap
+>because 1ULL < 32 is too wide for a u32.
+>
+>In fact, the field is read into a u64:
+>
+>       u64 offset, bitmap;
+>....
+>       bitmap = ctx->bitmap[queue_type];
+>
+>so to fix, it is enough to make bitmap an array of u64.
+>
+>Fixes: 941168f8b40e5 ("virtio_net: support device stats")
 
-Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
----
- Documentation/ABI/testing/sysfs-pps-gen | 44 +++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-pps-gen
+Release with v6.10, so should we cc stable?
 
-diff --git a/Documentation/ABI/testing/sysfs-pps-gen b/Documentation/ABI/testing/sysfs-pps-gen
-new file mode 100644
-index 000000000000..427ba985f413
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-pps-gen
-@@ -0,0 +1,44 @@
-+What:		/sys/class/pps-gen/
-+Date:		October 2024
-+Contact:	Rodolfo Giometti <giometti@enneenne.com>
-+Description:
-+		The /sys/class/pps-gen/ directory will contain files and
-+		directories that will provide a unified interface to
-+		the PPS generators.
-+
-+What:		/sys/class/pps-gen/pps-genX/
-+Date:		October 2024
-+Contact:	Rodolfo Giometti <giometti@enneenne.com>
-+Description:
-+		The /sys/class/pps-gen/pps-genX/ directory is related to X-th
-+		PPS generator into the system. Each directory will
-+		contain files to manage and control its PPS generator.
-+
-+What:		/sys/class/pps-gen/pps-genX/enable
-+Date:		October 2024
-+Contact:	Rodolfo Giometti <giometti@enneenne.com>
-+Description:
-+		This write-only file enables or disables generation of the
-+		PPS signal.
-+
-+What:		/sys/class/pps-gen/pps-genX/name
-+Date:		October 2024
-+Contact:	Rodolfo Giometti <giometti@enneenne.com>
-+Description:
-+		This read-only file reports the name of the X-th generator.
-+
-+What:		/sys/class/pps-gen/pps-genX/system
-+Date:		October 2024
-+Contact:	Rodolfo Giometti <giometti@enneenne.com>
-+Description:
-+		This read-only file returns "1" if the generator takes the
-+		timing from the system clock, while it returns "0" if not
-+		(i.e. from a peripheral device clock).
-+
-+What:		/sys/class/pps-gen/pps-genX/time
-+Date:		October 2024
-+Contact:	Rodolfo Giometti <giometti@enneenne.com>
-+Description:
-+		This read-only file contains the current time stored into the
-+		generator clock as two integers representing the current time
-+		seconds and nanoseconds.
--- 
-2.34.1
+>Reported-by: "Colin King (gmail)" <colin.i.king@gmail.com>
+>Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+>---
+> drivers/net/virtio_net.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+
+LGTM!
+
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+
+Thanks,
+Stefano
+
+>
+>diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+>index c6af18948092..b950d24b1ffa 100644
+>--- a/drivers/net/virtio_net.c
+>+++ b/drivers/net/virtio_net.c
+>@@ -4112,7 +4112,7 @@ struct virtnet_stats_ctx {
+> 	u32 desc_num[3];
+>
+> 	/* The actual supported stat types. */
+>-	u32 bitmap[3];
+>+	u64 bitmap[3];
+>
+> 	/* Used to calculate the reply buffer size. */
+> 	u32 size[3];
+>-- 
+>MST
+>
+>
 
 
