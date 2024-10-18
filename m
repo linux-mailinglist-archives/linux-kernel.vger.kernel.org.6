@@ -1,252 +1,198 @@
-Return-Path: <linux-kernel+bounces-371927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CC19A423A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:22:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542E79A423C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60BA8288774
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:22:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 714131C22360
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E3E2010E6;
-	Fri, 18 Oct 2024 15:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11F2201254;
+	Fri, 18 Oct 2024 15:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="AIZnqn0c"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ex7sTEWR"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567581D7989;
-	Fri, 18 Oct 2024 15:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D171FF7C2
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729264962; cv=none; b=bh2Icj4EGlLfs3JVUDzc34f9j/pJ1SK3QwfFDA/JOHmU/ISC4/+1uK6YJLWja+a2gRr17yx9jrvT8SzV+P7ZtfBR0d7oYmAA0mkYaSdX3L4H7KArtSVrLpCgp3sYWtKzXvOapfHZYrB9sb2oI8o5aybt/DdjoEQVFoHOoU21Qbo=
+	t=1729264980; cv=none; b=CAknoB4XSmER0YP5NMLmEz12lzzEzjbbjAQiJtQ9pz83XiSrVzEDlTqhhoREs2sdyvJNBlKvUQ4Me/3ylDIm3GA4GDcYS+Ii9YY0CEiOPKINtns6CsnZ5Pbhm7g/JI7UlpyG7wugA0l5TsruEAQRHSYCxIt+mRAo+3nHi/j0ZQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729264962; c=relaxed/simple;
-	bh=SSpKaVaCX27nL5SxgyzizMtsMVImkADVzoBCLGb09Mk=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=CYZ83zziAZhGG6eI/nCyNpIdeosSbVn+5UNBNUgcl3hiF2lP37g/kDk3RDc8R1xndcf9GJSv9YQ8erIUBGPtShPeKsvP5wr1qGLsBkdRWsfe+lJkJFfCmcVCPqLsnL7hVDJZUq+k24bv+pcCQ21NHUKWttzob+oiA5lrdnuHRnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=AIZnqn0c; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1729264937; x=1729869737; i=frank-w@public-files.de;
-	bh=nYO/ZWwzw37Yw09J81DGKU8898+LB3M5uGlP4gdXjqU=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=AIZnqn0cRCQTHsnWPwGY1EisV+fQDC0WkiPE76y2Ze3JfwdCfNLWcV1UeGe0dkSx
-	 MCFIYCdol7BqAj4jPprgIaHdwu5oXu9zorbcIdKWWB4oQCHwKjmf51gPGVc7uBWh2
-	 G6p9cqAImrD0P8jQEB0MyvIhuNgtv0eUjn4d9mBftkyYojyrAehCA8VveUcFSb1+y
-	 SbTeeTLGoUin0QcjgXIk407gBmz0uOo00yRxVE9T8SBui4ihHAuPI9wQF8fCQThb2
-	 CiL9chUWVUaUZNeEHz5EIvzbFwOZ+FX2KGy37DfsBC7qhmBG9NVDF2MRSU2eVHe0h
-	 m42Bc5iH+KM/Bp0JMA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.156.70] ([217.61.156.70]) by web-mail.gmx.net
- (3c-app-gmx-bs21.server.lan [172.19.170.73]) (via HTTP); Fri, 18 Oct 2024
- 17:22:17 +0200
+	s=arc-20240116; t=1729264980; c=relaxed/simple;
+	bh=ppghXajr7mhEOYXY5xWy2NDJw6Rv7mCbsa8gnAaqBBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZShM5ueNFT0H/CsgX8TopIlf0AUMBAj2QUE9Wn+9CZnxK+HfI4xTwj7Zabo9DFO1NTr43fRuqOubNb8R8Oiwxc55R95MUPaIAaT3Duu1EetUDk6w7oENZAqrDpHbiBezTH5i9Gjb/32McettDojecWZX/iRPrnqcda/nJCGLiZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ex7sTEWR; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539e4b7409fso2275733e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:22:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729264974; x=1729869774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RvYOf2b92tGv/0UJsbZFFQLBbdVKWDuRIravkxYfymw=;
+        b=ex7sTEWR7kMY4kp4SMCdopAiWpmUWFf4b/J7yH7vEPlSNc97MPoIMzyIfonhHjax5e
+         kVAFXz0vuODKPwWNivFDsW0EGfAcqhOrSTpg/uMkg/Z6v1p216yD3dal6QJ9M2i8ozjz
+         MM3+iW4NfIcIYENqAU6umA+lrSVPImWsMIYHs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729264974; x=1729869774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RvYOf2b92tGv/0UJsbZFFQLBbdVKWDuRIravkxYfymw=;
+        b=UQjEx6aCEjoUEpGP5TR2/gqbekU3oVFIHbQoqDjXtXPcsV7oMywEgzrQFxCsHDHDnT
+         v4oDk9+yGIdSy6VpL0o0zShCMrSMEHll7oOBPYebj3lMlvtph/fugzV9u8cKMYvSN/Pd
+         7fCjBKoIpRcWey+ZuHaAMkAHt4OT6qY3YoLGJu8imqEy+lGrtu4YbWdVTiWXue1uHs1j
+         e0pkZNF5VCCbLDdJ4BkN4Kdlzxl44ao7YSHWMBki2VE8jA/D8kmJIyAFCzQjuEOJfv78
+         3U0MdPTrCsu0aqR39tutrd9y2a/KJiGnc5+4ADjBI6nvoxmCugM3NnXh0E2bqtfXvqi9
+         KUpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6PxMpnt4LcazRZcmn9j98iS4MAIMc+1GlNsvBXg4sD8sXW8mDdZEXTqY7DPq9/7Lo7GVOii5p/BZ6U1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUDCht8MRcAGdpvjFjworHlTN06HA400ilXON1Br1Wv9Cn1Rxc
+	fAw0k20QNkTfL4DEE+jIHr+mSTWcrE/Oj3zyX8Zi/Mda1ymXqrkIb3VIQINYxHXownuYdmXmfJX
+	XO59f
+X-Google-Smtp-Source: AGHT+IGYk7EKDSVEhQU9YdpEFxIgJw4+kPc1V5xqWWCOajZXdobO5DVLVXZz+wtrX2vC/1MF+imj8Q==
+X-Received: by 2002:a05:6512:33cb:b0:52f:1b08:d2d8 with SMTP id 2adb3069b0e04-53a15844da5mr904442e87.7.1729264974446;
+        Fri, 18 Oct 2024 08:22:54 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a152044a2sm244541e87.227.2024.10.18.08.22.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 08:22:54 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e8586b53so2772048e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:22:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUadNWQHg/diFwV8+PkZGPeo/xwv/KKZGvvJOm/nmD/JGGIbc4gAj3FNtTEf9IuVyjms5/8nTQQ1IVIgwo=@vger.kernel.org
+X-Received: by 2002:a05:6512:39cd:b0:539:ea33:c01b with SMTP id
+ 2adb3069b0e04-53a158456e9mr874666e87.9.1729264972196; Fri, 18 Oct 2024
+ 08:22:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-c4ba2a12-a350-4681-b2f5-e04c27bb3630-1729264937213@3c-app-gmx-bs21>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <linux@fw-web.de>, Linus Walleij
- <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang
- <sean.wang@kernel.org>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- daniel@makrotopia.org, john@phrozen.org, ansuelsmth@gmail.com,
- eladwf@gmail.com, Sam Shih <sam.shih@mediatek.com>,
- =?UTF-8?Q?Ar=C4=B1n=C3=A7_=C3=9CNAL?= <arinc.unal@arinc9.com>
-Subject: Aw: Re: [PATCH v4 2/4] pinctrl: mediatek: add MT7988 pinctrl driver
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 18 Oct 2024 17:22:17 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <d1a9f533-3a9e-47c2-9476-c54653b56e68@collabora.com>
-References: <20241009165222.5670-1-linux@fw-web.de>
- <20241009165222.5670-3-linux@fw-web.de>
- <d1a9f533-3a9e-47c2-9476-c54653b56e68@collabora.com>
+References: <20241018141337.316807-1-danielgeorgem@chromium.org>
+In-Reply-To: <20241018141337.316807-1-danielgeorgem@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 18 Oct 2024 08:22:36 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XNTgzccjkQOnuTcYtaUK+ZRU1DbqYdnNOOD+TrVGn9xA@mail.gmail.com>
+Message-ID: <CAD=FV=XNTgzccjkQOnuTcYtaUK+ZRU1DbqYdnNOOD+TrVGn9xA@mail.gmail.com>
+Subject: Re: [PATCH] r8152: fix deadlock in usb reset during resume
+To: George-Daniel Matei <danielgeorgem@chromium.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Hayes Wang <hayeswang@realtek.com>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Grant Grundler <grundler@chromium.org>, linux-usb@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:LhGHiJlaXI887Ob46HR55sDLtu+gghtsz7L1HjmF/g2v//30/Su9ziz6UJFD51KjA2b8h
- MOOtaYbkh3YWrl752DWj6BWxAFq8n1ffWe1cBnFDAM2BYoGsqLUQyjEYDoiBYeNeS0j0L2FoycJP
- NI/giYUHQ3RXj8LSSzb6KrhJCW/iUCcqWXxgODtLaVcAW4+hxlfNa/vG0afkmt+P5mIP3PRwigvR
- zhFWPV0jluHR8dOWX31a0QHdq+bE01ldfDW47Xqhu6RA91qmFb2Ky/I2cdb4hrWXKQLY4aUPH0gU
- BI=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:L2sIoFh25S4=;5fTiyybGU9Ehmit0sEVxGFXQvqP
- y3IlCKOyyZpabjtj9f2QPKH7uH46/p3Q2cOdcnaDaXt93hhjnT7hCIiFFvF5DDxovcPxna20w
- JgH1Ejg+BpzEzY7GnLwT56LNVS29KJ1oF4pC5n2wd2Nr9NvOHMbIE5BwlWdKUXWX6OKw/PbBF
- t2hvXCuWnXpVdvYFCmGSP4p4fWXQVl5RWVlxRJ1rJUYockZ9EppNPTz0pe3t/VillfznQ3tfV
- yG9GdhNneph7U5oY27kRZ83dgQjasFTgAQu5faRdqphxWft65wA/bK5zsNFgH8FPXM7RrOs+v
- b5GQLZUjerUHE+JjGP86/Yhqdc+yjoum7L8tCiPFu0c3F2kT1ZiQXhb9ULlfpg2vSbZqa1Gnh
- CDRp+66GtUcfnh8nqSBEyUdy4u1jI5JuBEYUtq1l8a0KA+Bp15Y9/2SiOuWvB9acDtLwgeWwz
- 4kCEqW2MtCoBKGur2B0nOe3j776xlyRyiUPn6auPo26XvN1sStqZP6NA0Za2hC/tlGUSOG/Fk
- kRNwTyovrIkm9I9vs+aGlw9Ee8ThP4Rg1WCTU5qHc2WzgLA5R/Oxzq2iZINTX7SSvINivfMJP
- /wDVN2dfnem44VLEq5dV81w9aiDIaalEHThdfkGRymqNDFGMsFzkB4R+vTM7V3Y6T8/aitspT
- fZog3nDkTZ5e6nPCxMmhS0wSo/pj1AhqPgGV3T3V0g==
 
-Hi Angelo
+Hi,
 
-> Gesendet: Donnerstag, 10=2E Oktober 2024 um 14:28 Uhr
-> Betreff: Re: [PATCH v4 2/4] pinctrl: mediatek: add MT7988 pinctrl driver
+On Fri, Oct 18, 2024 at 7:13=E2=80=AFAM George-Daniel Matei
+<danielgeorgem@chromium.org> wrote:
 >
-> Il 09/10/24 18:52, Frank Wunderlich ha scritto:
-> > From: Daniel Golle <daniel@makrotopia=2Eorg>
-> >=20
-> > Add pinctrl driver for the MediaTek MT7988 SoC=2E
-> >=20
-> > Signed-off-by: Sam Shih <sam=2Eshih@mediatek=2Ecom>
-> > Signed-off-by: Daniel Golle <daniel@makrotopia=2Eorg>
-> > [correctly initialise for the function_desc structure]
-> > Signed-off-by: Ar=C4=B1n=C3=A7 =C3=9CNAL <arinc=2Eunal@arinc9=2Ecom>
-> > Signed-off-by: Frank Wunderlich <frank-w@public-files=2Ede>
-> > ---
-> >   drivers/pinctrl/mediatek/Kconfig          |    7 +
-> >   drivers/pinctrl/mediatek/Makefile         |    1 +
-> >   drivers/pinctrl/mediatek/pinctrl-mt7988=2Ec | 1526 +++++++++++++++++=
-++++
-> >   3 files changed, 1534 insertions(+)
-> >   create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7988=2Ec
-> >=20
-> > diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediat=
-ek/Kconfig
-> > index 7af287252834=2E=2E952110c783d4 100644
-> > --- a/drivers/pinctrl/mediatek/Kconfig
-> > +++ b/drivers/pinctrl/mediatek/Kconfig
-> > @@ -187,6 +187,13 @@ config PINCTRL_MT7986
-> >   	default ARM64 && ARCH_MEDIATEK
-> >   	select PINCTRL_MTK_MOORE
-> >  =20
-> > +config PINCTRL_MT7988
-> > +	bool "Mediatek MT7988 pin control"
-> > +	depends on OF
-> > +	depends on ARM64 || COMPILE_TEST
-> > +	default ARM64 && ARCH_MEDIATEK
-> > +	select PINCTRL_MTK_MOORE
-> > +
-> >   config PINCTRL_MT8167
-> >   	bool "MediaTek MT8167 pin control"
-> >   	depends on OF
-> > diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/media=
-tek/Makefile
-> > index 680f7e8526e0=2E=2E2b47ce030b54 100644
-> > --- a/drivers/pinctrl/mediatek/Makefile
-> > +++ b/drivers/pinctrl/mediatek/Makefile
-> > @@ -27,6 +27,7 @@ obj-$(CONFIG_PINCTRL_MT7623)		+=3D pinctrl-mt7623=2E=
-o
-> >   obj-$(CONFIG_PINCTRL_MT7629)		+=3D pinctrl-mt7629=2Eo
-> >   obj-$(CONFIG_PINCTRL_MT7981)		+=3D pinctrl-mt7981=2Eo
-> >   obj-$(CONFIG_PINCTRL_MT7986)		+=3D pinctrl-mt7986=2Eo
-> > +obj-$(CONFIG_PINCTRL_MT7988)		+=3D pinctrl-mt7988=2Eo
-> >   obj-$(CONFIG_PINCTRL_MT8167)		+=3D pinctrl-mt8167=2Eo
-> >   obj-$(CONFIG_PINCTRL_MT8173)		+=3D pinctrl-mt8173=2Eo
-> >   obj-$(CONFIG_PINCTRL_MT8183)		+=3D pinctrl-mt8183=2Eo
-> > diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7988=2Ec b/drivers/pin=
-ctrl/mediatek/pinctrl-mt7988=2Ec
-> > new file mode 100644
-> > index 000000000000=2E=2E5479f4fa47a7
-> > --- /dev/null
-> > +++ b/drivers/pinctrl/mediatek/pinctrl-mt7988=2Ec
-> > @@ -0,0 +1,1526 @@
-> > +// SPDX-License-Identifier: GPL-2=2E0
-> > +/*
-> > + * The MT7988 driver based on Linux generic pinctrl binding=2E
-> > + *
-> > + * Copyright (C) 2020 MediaTek Inc=2E
-> > + * Author: Sam Shih <sam=2Eshih@mediatek=2Ecom>
-> > + */
-> > +
-> > +#include "pinctrl-moore=2Eh"
-> > +
-> > +enum MT7988_PINCTRL_REG_PAGE {
->=20
-> Lowercase name for the enumeration, please=2E
+> rtl8152_system_resume() issues a synchronous usb reset if the device is
+> inaccessible. __rtl8152_set_mac_address() is called via
+> rtl8152_post_reset() and it tries to take the same mutex that was already
+> taken in rtl8152_resume().
 
-will do in next version
+Thanks for the fix! I'm 99% certain I tested the original code, but I
+guess somehow I ran a different code path. I just put my old hacky
+test patch [1] back on and re-tested this to see what happened. OK, I
+see. In my case dev_set_mac_address() gets called at resume time but
+then the address hasn't changed so "ops->ndo_set_mac_address()" (which
+points to rtl8152_set_mac_address()) never gets called and I don't end
+up in the deadlock. I wonder why the MAC address changed for you. In
+any case, the deadlock is real and I agree that this should be fixed.
 
-> > +	GPIO_BASE,
-> > +	IOCFG_TR_BASE,
-> > +	IOCFG_BR_BASE,
-> > +	IOCFG_RB_BASE,
-> > +	IOCFG_LB_BASE,
-> > +	IOCFG_TL_BASE,
-> > +};
-> > +
->=20
-> =2E=2Esnip=2E=2E
->=20
-> > +static const struct mtk_eint_hw mt7988_eint_hw =3D {
-> > +	=2Eport_mask =3D 7,
-> > +	=2Eports =3D 7,
-> > +	=2Eap_num =3D ARRAY_SIZE(mt7988_pins),
-> > +	=2Edb_cnt =3D 16,
->=20
-> Are you sure that the EINT controller in this SoC doesn't have the
-> DBNC_SET and DBNC_CLR registers?
->=20
-> Another way of asking the same thing: are you sure that this SoC does
-> not support interrupt debounce?
+BTW: it would be handy to include the call stack of the deadlock in
+your commit message.
 
-Got information from MTK, that hw debounce is only available for pins 0 to=
- 15,
-and does not support pins with numbers 16 or higher and definition here is=
- correct=2E
+[1] https://crrev.com/c/5543125
 
-> > +};
-> > +
-> > +static const char * const mt7988_pinctrl_register_base_names[] =3D {
-> > +	"gpio",	 "iocfg_tr", "iocfg_br",
-> > +	"iocfg_rb", "iocfg_lb", "iocfg_tl",
-> > +};
-> > +
-> > +static struct mtk_pin_soc mt7988_data =3D {
-> > +	=2Ereg_cal =3D mt7988_reg_cals,
-> > +	=2Epins =3D mt7988_pins,
-> > +	=2Enpins =3D ARRAY_SIZE(mt7988_pins),
-> > +	=2Egrps =3D mt7988_groups,
-> > +	=2Engrps =3D ARRAY_SIZE(mt7988_groups),
-> > +	=2Efuncs =3D mt7988_functions,
-> > +	=2Enfuncs =3D ARRAY_SIZE(mt7988_functions),
-> > +	=2Eeint_hw =3D &mt7988_eint_hw,
-> > +	=2Egpio_m =3D 0,
-> > +	=2Eies_present =3D false,
-> > +	=2Ebase_names =3D mt7988_pinctrl_register_base_names,
-> > +	=2Enbase_names =3D ARRAY_SIZE(mt7988_pinctrl_register_base_names),
-> > +	=2Ebias_disable_set =3D mtk_pinconf_bias_disable_set,
-> > +	=2Ebias_disable_get =3D mtk_pinconf_bias_disable_get,
-> > +	=2Ebias_set =3D mtk_pinconf_bias_set,
-> > +	=2Ebias_get =3D mtk_pinconf_bias_get,
-> > +	=2Epull_type =3D mt7988_pull_type,
-> > +	=2Ebias_set_combo =3D mtk_pinconf_bias_set_combo,
-> > +	=2Ebias_get_combo =3D mtk_pinconf_bias_get_combo,
-> > +	=2Edrive_set =3D mtk_pinconf_drive_set_rev1,
-> > +	=2Edrive_get =3D mtk_pinconf_drive_get_rev1,
-> > +	=2Eadv_pull_get =3D mtk_pinconf_adv_pull_get,
-> > +	=2Eadv_pull_set =3D mtk_pinconf_adv_pull_set,
-> > +};
-> > +
-> > +static const struct of_device_id mt7988_pinctrl_of_match[] =3D {
->=20
-> Please compress that to a single line=2E
->=20
-> { =2Ecompatible =3D "mediatek,mt7988-pinctrl" },
+> Move the call to reset usb in rtl8152_resume()
+> outside mutex protection.
+>
+> Signed-off-by: George-Daniel Matei <danielgeorgem@chromium.org>
 
-will do in next version
+Before your Signed-off-by you should have:
 
-> Cheers,
-> Angelo
+Fixes: 4933b066fefb ("r8152: If inaccessible at resume time, issue a reset"=
+)
 
-regards Frank
+
+> ---
+>  drivers/net/usb/r8152.c | 26 +++++++++++++-------------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+> index a5612c799f5e..69d66ce7a5c5 100644
+> --- a/drivers/net/usb/r8152.c
+> +++ b/drivers/net/usb/r8152.c
+> @@ -8564,19 +8564,6 @@ static int rtl8152_system_resume(struct r8152 *tp)
+>                 usb_submit_urb(tp->intr_urb, GFP_NOIO);
+>         }
+>
+> -       /* If the device is RTL8152_INACCESSIBLE here then we should do a
+> -        * reset. This is important because the usb_lock_device_for_reset=
+()
+> -        * that happens as a result of usb_queue_reset_device() will sile=
+ntly
+> -        * fail if the device was suspended or if too much time passed.
+> -        *
+> -        * NOTE: The device is locked here so we can directly do the rese=
+t.
+> -        * We don't need usb_lock_device_for_reset() because that's just =
+a
+> -        * wrapper over device_lock() and device_resume() (which calls us=
+)
+> -        * does that for us.
+> -        */
+> -       if (test_bit(RTL8152_INACCESSIBLE, &tp->flags))
+> -               usb_reset_device(tp->udev);
+> -
+>         return 0;
+>  }
+>
+> @@ -8681,6 +8668,19 @@ static int rtl8152_suspend(struct usb_interface *i=
+ntf, pm_message_t message)
+>
+>         mutex_unlock(&tp->control);
+>
+> +       /* If the device is RTL8152_INACCESSIBLE here then we should do a
+> +        * reset. This is important because the usb_lock_device_for_reset=
+()
+> +        * that happens as a result of usb_queue_reset_device() will sile=
+ntly
+> +        * fail if the device was suspended or if too much time passed.
+> +        *
+> +        * NOTE: The device is locked here so we can directly do the rese=
+t.
+> +        * We don't need usb_lock_device_for_reset() because that's just =
+a
+> +        * wrapper over device_lock() and device_resume() (which calls us=
+)
+> +        * does that for us.
+> +        */
+> +       if (test_bit(RTL8152_INACCESSIBLE, &tp->flags))
+> +               usb_reset_device(tp->udev);
+
+You seem to have moved this to the wrong function. It should be in
+rtl8152_resume() but you've moved it to rtl8152_suspend(). As you have
+it here you'll avoid the deadlock but I fear you may end up missing a
+reset. Maybe you didn't notice this because commit 8c1d92a740c0
+("r8152: Wake up the system if the we need a reset") woke us up
+quickly enough and the previous reset hadn't expired yet?
+
+In any case, please move it to the rtl8152_resume() function, re-test,
+and post a new version.
+
+-Doug
 
