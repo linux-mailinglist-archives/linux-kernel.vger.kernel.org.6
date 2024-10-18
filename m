@@ -1,185 +1,126 @@
-Return-Path: <linux-kernel+bounces-370903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368949A3378
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:44:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0E39A337A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C46B7285627
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:44:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C57EB1F24548
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC4916BE3A;
-	Fri, 18 Oct 2024 03:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mdtA5bR9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4B91684A5;
+	Fri, 18 Oct 2024 03:44:21 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E918A1547C3;
-	Fri, 18 Oct 2024 03:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8130154C00;
+	Fri, 18 Oct 2024 03:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729223047; cv=none; b=AbwvIkBYbaNNpPxvGK4zeh+X3R194TxDLf1XG6gpHKCudnhR3/2IwNcRjz7SEGk9U1ekuFBRW0/u8QHu0C8qjVdoKowCuTEOVc/LA0gifD0nR4Wio7dxMKWJkNLZBBgqbayqHzCg+X0KVfT75fw7mpFMq/zQ0NwsXPIZUrM5tN8=
+	t=1729223060; cv=none; b=or4HMJ4taBJuaQ+jDJnvNH6FapgvApMqvqjKAzF0DkXQGu6gu0smmgOALvxbrA2Rq6ZKykPSwpLw8+9nBiEMMbmtWB/K1EHbPl3PrN1TCNM1hzjnOQ4vffLn6oNH6/6N+17mrxshqZBmhkDVqwwgdyfoiZsRpMEx8cDU1ntzoWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729223047; c=relaxed/simple;
-	bh=H8vlp8zt5LbQ3oWxLa0uGme6oWHI5mjpEIFX+GssDMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=piCuaTL1AyGNF+gVfQud32NWznlR9I+sq/GKMw8pWANVGIYepWW/+csddIoLhF/a2Ay+h25suyJgl6DJiw3/tTiknEgQaGlWutPtA7lgtCIn4XrJ5r/YOLYo5s2WLyRRuBvHVtU4AL/dZ/gX8UjF3XJNEQcMXGhs0RMQdTTm1gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mdtA5bR9; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729223046; x=1760759046;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=H8vlp8zt5LbQ3oWxLa0uGme6oWHI5mjpEIFX+GssDMg=;
-  b=mdtA5bR9/t1B3Rq4jR+GpLUfc8QBAbwUpOD5JRiPG4aB2w+DWrZy8biZ
-   yCF6tybKjpkBE9Q971Ytr6ViLIhs7ueP4tcIhyI7bGsicyx43LOIzZOPS
-   vyD/b5GxOfv/jcneVS4ZNKGYgc2PNz/MJlEgfB89dmGpw1R1d+9qKUK9g
-   G/Sw7iYN3hHryEGfyXSc7ujqMuTWjwPfH7EvQFx+nVkzXUJe4Sm6ddpdw
-   1iIZ8WbwkIkWd1f7ZSypAiHxk+5Hn5r8qEk8RuUPxHpg3ftCko9wVUfWi
-   DsOwx668s94yYXE+57MlkYhUl/0iB6jvMdGaP7nVBZn6dZq/Jjzz0AVbU
-   g==;
-X-CSE-ConnectionGUID: Q938H+syTreSLBdPfWJUcg==
-X-CSE-MsgGUID: q4uwlzcKS3Gc1LUXGXiUFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32424429"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="32424429"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 20:44:06 -0700
-X-CSE-ConnectionGUID: pC1GArHgTHG590frpVmg/Q==
-X-CSE-MsgGUID: voGyqymqQIq48f+iQT2jLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
-   d="scan'208";a="78355491"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 17 Oct 2024 20:44:02 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1duC-000NEJ-2T;
-	Fri, 18 Oct 2024 03:44:00 +0000
-Date: Fri, 18 Oct 2024 11:43:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Marcos Paulo de Souza <mpdesouza@suse.com>
-Subject: Re: [PATCH 2/2] tty: sysrq: Use printk_loud_console context on
- __handle_sysrq
-Message-ID: <202410181116.WA27FpBB-lkp@intel.com>
-References: <20241016-printk-loud-con-v1-2-065e4dad6632@suse.com>
+	s=arc-20240116; t=1729223060; c=relaxed/simple;
+	bh=QZkw0hyKmTRYADg2Zmk0ARqL53eXfipXjETL2xk2L9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VgP8AvlsC/9WncCUVC69fa2iTI59nkT/TfN1pOLhi2j4uKs4y1bOcmLXz6YHxl9p/BjUHXLA8qb9ZtdX1QgjGqg5vSkClGloXc3rBPWp+xX5Qlm5fvWb82AIxLMTwWBEfP8U9pEL2YiVxaIyxiEChUEcnD+qvmRONX5YuOQNerE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XV9XT5PmDzQrwM;
+	Fri, 18 Oct 2024 11:43:21 +0800 (CST)
+Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
+	by mail.maildlp.com (Postfix) with ESMTPS id 006361400D4;
+	Fri, 18 Oct 2024 11:44:08 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by dggpeml100021.china.huawei.com
+ (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 18 Oct
+ 2024 11:44:07 +0800
+Message-ID: <f74591de-72ce-48aa-94eb-b38e4f74cc5f@huawei.com>
+Date: Fri, 18 Oct 2024 11:44:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016-printk-loud-con-v1-2-065e4dad6632@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: fix out-of-bounds issue in ext4_xattr_set_entry
+To: Theodore Ts'o <tytso@mit.edu>
+CC: Jan Kara <jack@suse.cz>, Qianqiang Liu <qianqiang.liu@163.com>,
+	<adilger.kernel@dilger.ca>, syzbot
+	<syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>,
+	<linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<syzkaller-bugs@googlegroups.com>, Yang Erkun <yangerkun@huawei.com>, Baokun
+ Li <libaokun1@huawei.com>
+References: <Zu+vI3EipxSsPOMe@thinkpad.lan>
+ <66efba95.050a0220.3195df.008c.GAE@google.com>
+ <Zu+8aQBJgMn7xVws@thinkpad.lan>
+ <d62a25e9-04de-4309-98d1-22a4f9b5bb49@huawei.com>
+ <20241009155028.u7jpzrw6txldt43j@quack3>
+ <05f9c7c2-655a-4f5b-be8e-93f511a954bd@huawei.com>
+ <20241014163120.hinbd5jc6mp4vev7@quack3>
+ <3930aad6-174d-4422-944e-6c90a3ea065a@huawei.com>
+ <20241016204741.GA3204734@mit.edu>
+ <811eb084-55d4-4725-9388-05a6e8f489d9@huawei.com>
+ <20241017144731.GA3254556@mit.edu>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20241017144731.GA3254556@mit.edu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml100021.china.huawei.com (7.185.36.148)
 
-Hi Marcos,
+On 2024/10/17 22:47, Theodore Ts'o wrote:
+> On Thu, Oct 17, 2024 at 08:42:59PM +0800, Baokun Li wrote:
+>> Indeed, our rough plan is to first implement isolation of abnormal file
+>> system resources, so that the system can continue to run normally even
+>> when there is an error; then implement online scanning, so that the
+>> maintainer can see the health report at any time; and finally implement
+>> the most difficult online repair.
+> We have some of this already; if a block group has obvious
+> inconsistencies --- for example, if there is an attempt to mark a
+> block or inode as free, but it's already marked as free as the
+> allocation bitmap, we can mark the block group as inconsistent, and
+> then avoid allocating from the block group.  That's easy because it's
+> the kind of inconsistency which can be detected locally.
+Yes, there is now block group level isolation. Our goal is to further
+reduce the scope of isolation to minimise the impact of isolation.
 
-kernel test robot noticed the following build errors:
+The rough idea is to isolate resources where errors are reported,
+and throw errors when isolation is not possible. This may be a bit
+crude, but after implementing inline scanning we can achieve precise
+fine-grained isolation.
+> The problem comes with those inconsistencies which require a global
+> examination of the file system data structures.  For example, is the
+> refcount of an inode correct?  Or is a block claimed by more than one
+> inode?  The e2scrub approach requires creating a read-only snapshot
+> (which is why we need LVM) and then running e2fsck in userspace,
+> because it does a global examination of all file system data
+> structures.
+Indeed, consistency is a tricky issue, and we'll focus on that piece of
+logic.
+>> We do need to establish the mapping of physical blocks to inodes and
+>> inodes to parent dir. By tree managed by jbd2 do you mean updating
+>> the tree when committing to journal? Or are updates to the tree
+>> logged to journal?
+> When we allocate a block, we need to journal the changes to the
+> allocation bitmap.  If we are going to also update the reverse mapping
+> data structure, that needs to be journalled also, so that after a
+> crash, the data structures are consistent.
+>
+> 						- Ted
+>
+Of course, we have to make sure that the metadata modification and the tree
+update are in the same transaction, otherwise there is no guarantee that
+the metadata is consistent.
 
-[auto build test ERROR on 1d227fcc72223cbdd34d0ce13541cbaab5e0d72f]
+Thank you for your input!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Marcos-Paulo-de-Souza/printk-Introduce-LOUD_CON-flag/20241017-010521
-base:   1d227fcc72223cbdd34d0ce13541cbaab5e0d72f
-patch link:    https://lore.kernel.org/r/20241016-printk-loud-con-v1-2-065e4dad6632%40suse.com
-patch subject: [PATCH 2/2] tty: sysrq: Use printk_loud_console context on __handle_sysrq
-config: x86_64-buildonly-randconfig-004-20241018 (https://download.01.org/0day-ci/archive/20241018/202410181116.WA27FpBB-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241018/202410181116.WA27FpBB-lkp@intel.com/reproduce)
+Regards,
+Baokun
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410181116.WA27FpBB-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/tty/sysrq.c: In function '__handle_sysrq':
->> drivers/tty/sysrq.c:600:9: error: implicit declaration of function 'printk_loud_console_enter' [-Werror=implicit-function-declaration]
-     600 |         printk_loud_console_enter();
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/tty/sysrq.c:610:25: error: implicit declaration of function 'printk_loud_console_exit' [-Werror=implicit-function-declaration]
-     610 |                         printk_loud_console_exit();
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/printk_loud_console_enter +600 drivers/tty/sysrq.c
-
-   582	
-   583	void __handle_sysrq(u8 key, bool check_mask)
-   584	{
-   585		const struct sysrq_key_op *op_p;
-   586		int orig_suppress_printk;
-   587		int i;
-   588	
-   589		orig_suppress_printk = suppress_printk;
-   590		suppress_printk = 0;
-   591	
-   592		rcu_sysrq_start();
-   593		rcu_read_lock();
-   594		/*
-   595		 * Enter in the console_loud context so that sysrq header is shown to
-   596		 * provide the user with positive feedback.  We do not simply emit this
-   597		 * at KERN_EMERG as that would change message routing in the consumers
-   598		 * of /proc/kmsg.
-   599		 */
- > 600		printk_loud_console_enter();
-   601	
-   602		op_p = __sysrq_get_key_op(key);
-   603		if (op_p) {
-   604			/*
-   605			 * Should we check for enabled operations (/proc/sysrq-trigger
-   606			 * should not) and is the invoked operation enabled?
-   607			 */
-   608			if (!check_mask || sysrq_on_mask(op_p->enable_mask)) {
-   609				pr_info("%s\n", op_p->action_msg);
- > 610				printk_loud_console_exit();
-   611				op_p->handler(key);
-   612			} else {
-   613				pr_info("This sysrq operation is disabled.\n");
-   614				printk_loud_console_exit();
-   615			}
-   616		} else {
-   617			pr_info("HELP : ");
-   618			/* Only print the help msg once per handler */
-   619			for (i = 0; i < ARRAY_SIZE(sysrq_key_table); i++) {
-   620				if (sysrq_key_table[i]) {
-   621					int j;
-   622	
-   623					for (j = 0; sysrq_key_table[i] !=
-   624							sysrq_key_table[j]; j++)
-   625						;
-   626					if (j != i)
-   627						continue;
-   628					pr_cont("%s ", sysrq_key_table[i]->help_msg);
-   629				}
-   630			}
-   631			pr_cont("\n");
-   632			printk_loud_console_exit();
-   633		}
-   634		rcu_read_unlock();
-   635		rcu_sysrq_end();
-   636	
-   637		suppress_printk = orig_suppress_printk;
-   638	}
-   639	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
