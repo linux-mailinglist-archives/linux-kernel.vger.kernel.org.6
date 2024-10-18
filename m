@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-371918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF019A422A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 696009A422B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1522888A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3AD428A5B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B61E202654;
-	Fri, 18 Oct 2024 15:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB0E1FF60E;
+	Fri, 18 Oct 2024 15:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I/Q1zbdJ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPEIufVF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4441FF60E;
-	Fri, 18 Oct 2024 15:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520BC23D2;
+	Fri, 18 Oct 2024 15:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729264761; cv=none; b=db6ogyMNxbIlwlyXuePFTZAAFOqpfjpJOseGflYHDKWnbsckBoq9wGY2er0maEy2qyEV/1IcqDW3N0bQ4NjOpjdB3nUTuAwni+cE+wU+uu8uGeh0MQV6p7McQgYdWZNNMk2Tqgdo9WWHOOfkXNgeT+uv6QOddePaTywSjHLkaAc=
+	t=1729264809; cv=none; b=BiQdmHb7UlZQHB5JGbpUxCwheAp0Yy7ppQsB0FhwS17zqTw74q3Bq/6C7AQ0hI+O3ggk/KMlB1odjXSD7qZ0ZxZQ8DAd3Qtocrt7726CUdVxJcIkqpPpkXOHElIn+ykvPcfZFZDGHJfdx+O4adI8Eko2gv+twYF+BIDjID0Xp7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729264761; c=relaxed/simple;
-	bh=SxTw5Ce/pOnrjKwvBcbYJ7lzE+rssP9CUicVkJ98jZQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GEtmAMa/PceNxjVZ1e/5GLdb11lIDIhOL91Ht4SCBBTGEhs31iaffXORDKM2i57mSV6epdoHz01Jgo9LOFF5cIzjwXCptvSabeDmJxvspQ8464is65VypvJdt7V0Le5/iMoA3OOsi0L1YiXuvlv1L3NFtfLGussXsB0pxBTrtS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I/Q1zbdJ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729264752;
-	bh=SxTw5Ce/pOnrjKwvBcbYJ7lzE+rssP9CUicVkJ98jZQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=I/Q1zbdJ8AWzIFGD0LOOQFgW6ip2mU0szB6ZlEsOCRooFwWD5f2USaSlh6+s4RJYd
-	 p8oomaAEBujBAbPDsLqMoPPTLD3QCx2+rb9e7gZX6xoH49E/HyvCq76sA63FO28kwf
-	 KKFCyWfFYLtXi+BJw6fqpdemBEIYZ68E/IaqBFeJqwTpilMjypnG7csikHSeQldDzJ
-	 VVTEtTx4PMubtB+KRV6bHIml1JPIiQu7a1CtBZGhn7H8LVsFJS81vg+s0LaQb8YFf1
-	 z23nrIyaJm5EesCtsZ58Ds86Sd7Z8xjCStq6g6ccneKjyGiDbmzJjPeVTlynMAzBss
-	 1G3AT+i2JeOmw==
-Received: from [192.168.1.218] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2E0FE17E3630;
-	Fri, 18 Oct 2024 17:19:09 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Fri, 18 Oct 2024 11:19:03 -0400
-Subject: [PATCH v2 2/2] arm64: dts: mediatek: mt8390-genio-700-evk: Enable
- ethernet
+	s=arc-20240116; t=1729264809; c=relaxed/simple;
+	bh=dYgNxH1KAZzJc6ZxlPcZAP/+GEwZCh9Os7i+9GyR4d4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=sVcb7UdRg8Jq19iMnZ7rb7zb3PRWT1Dmo8iSTkBhqkNurw8qxuFqemIj2BdzanOdJop+m3ySt029nyJQ6VDIMfRsvkaSAXm+18jaPJawWj7oFXWuO8cwrkuz94JekpD1b2B7zq+bjLSzLE1tvZpC3wJ8zvYtV+0Csvzzp0sT+v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPEIufVF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 905CDC4CEC3;
+	Fri, 18 Oct 2024 15:20:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729264808;
+	bh=dYgNxH1KAZzJc6ZxlPcZAP/+GEwZCh9Os7i+9GyR4d4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=rPEIufVFvVle4/hC2CotZ+UlZBgPEYWocFgsbfUR8kAoE5OvZ7o7IDFQj23hLpBmR
+	 jHfUUfSOqhhSlOvRMNCl6yf/yXEOebgbLyhubypDljvYJd7Yj0Vo0UgZUMHa2Xub4c
+	 8KL3dnkKcBSq1JYM/R+dfoWGIMp1MoKAm0wPQjSYWIvtikr1OJJvWXWagXDethSbI1
+	 jzF3e6p6ABhjkQZQNN++aEhDwixxl9VATp+0Icx45+DCL5NWRFGvkRp2lXE+Ylryc6
+	 0gTehoePjWHfYi7sw8Fbu53zQYVGJkcp2NadIBa8AG35Emcem3TOvVUystVxkjltcy
+	 IODv7J7Lvg/CQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com, 
+ irogers@google.com, hbathini@linux.ibm.com, 
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com, maddy@linux.ibm.com, 
+ kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com
+In-Reply-To: <20241010145107.51211-1-atrajeev@linux.vnet.ibm.com>
+References: <20241010145107.51211-1-atrajeev@linux.vnet.ibm.com>
+Subject: Re: [PATCH V2 1/2] tools/perf/pmu-events/powerpc: Add support for
+ compat events in json
+Message-Id: <172926480855.1381973.17233939395641584642.b4-ty@kernel.org>
+Date: Fri, 18 Oct 2024 08:20:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,82 +60,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241018-genio700-eth-v2-2-f3c73b85507b@collabora.com>
-References: <20241018-genio700-eth-v2-0-f3c73b85507b@collabora.com>
-In-Reply-To: <20241018-genio700-eth-v2-0-f3c73b85507b@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Richard Cochran <richardcochran@gmail.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
- Andrew Lunn <andrew@lunn.ch>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Jianguo Zhang <jianguo.zhang@mediatek.com>, 
- Macpaul Lin <macpaul.lin@mediatek.com>, 
- Hsuan-Yu Lin <shane.lin@canonical.com>, Pablo Sun <pablo.sun@mediatek.com>, 
- fanyi zhang <fanyi.zhang@mediatek.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c04d2
 
-Enable ethernet on the Genio 700 EVK board. It has been tested to work
-with speeds up to 1000Mbps.
+On Thu, 10 Oct 2024 20:21:06 +0530, Athira Rajeev wrote:
 
-Signed-off-by: Jianguo Zhang <jianguo.zhang@mediatek.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Signed-off-by: Hsuan-Yu Lin <shane.lin@canonical.com>
-Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-Signed-off-by: fanyi zhang <fanyi.zhang@mediatek.com>
-[Cleaned up to pass dtbs_check, follow DTS style guidelines, and split
-between mt8188 and genio700 commits, and addressed further feedback from
-the mailing list]
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- .../arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+> perf list picks the events supported for specific platform
+> from pmu-events/arch/powerpc/<platform>. Example power10 events
+> are in pmu-events/arch/powerpc/power10, power9 events are part
+> of pmu-events/arch/powerpc/power9. The decision of which
+> platform to pick is determined based on PVR value in powerpc.
+> The PVR value is matched from pmu-events/arch/powerpc/mapfile.csv
+> 
+> [...]
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-index 0a6c9871b41e5f913740e68853aea78bc33d02aa..a063c7504cce08707a308b72559f2425eee515e1 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
-@@ -24,6 +24,7 @@ / {
- 
- 	aliases {
- 		serial0 = &uart0;
-+		ethernet0 = &eth;
- 	};
- 
- 	chosen {
-@@ -845,6 +846,25 @@ pins-wifi-enable {
- 	};
- };
- 
-+&eth {
-+	phy-mode ="rgmii-id";
-+	phy-handle = <&ethernet_phy0>;
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&eth_default_pins>;
-+	pinctrl-1 = <&eth_sleep_pins>;
-+	mediatek,mac-wol;
-+	snps,reset-gpio = <&pio 147 GPIO_ACTIVE_HIGH>;
-+	snps,reset-delays-us = <0 10000 10000>;
-+	status = "okay";
-+};
-+
-+&eth_mdio {
-+	ethernet_phy0: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id001c.c916";
-+		reg = <0x1>;
-+	};
-+};
-+
- &pmic {
- 	interrupt-parent = <&pio>;
- 	interrupts = <222 IRQ_TYPE_LEVEL_HIGH>;
+Applied to perf-tools-next, thanks!
 
--- 
-2.47.0
+Best regards,
+Namhyung
 
 
