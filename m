@@ -1,394 +1,192 @@
-Return-Path: <linux-kernel+bounces-371691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766FD9A3EB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 720039A3EB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90FCA1C23C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:48:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A5061C2367D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1532817ADF0;
-	Fri, 18 Oct 2024 12:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CA717ADF0;
+	Fri, 18 Oct 2024 12:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="esY8MAuP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GTLkgxIj"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BBE168BD;
-	Fri, 18 Oct 2024 12:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729255717; cv=fail; b=rzLzTusCreYFxVtRIChyv7euLpFvFnxcPrnMZZP9AcwQP8OVEzaVTXQ4rKz8RR6u4p1FjfB9iWROGo7/RT7g8eHvOzOoPns7D751O+aQg/oHTMgaxogYWSa7JS22D1Q/o21YzIeiXyFSy+4pO77AHXXkOEBHpAvpaEYCrSu6obQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729255717; c=relaxed/simple;
-	bh=MYPUsikWj7/RbrCXioY67PI1k4bEV6VgHqjPIqaPI74=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gF4O8k+qNIuR9uxrexDRnOVFR++s3NFZ2t26v+4gtXWPK6Antqy4+c6aY3A6sydafJdEbYjrREMF7WLAoq8dK2n/oazTqrlpj59muidHFuJ0IBEIYcdtcpZ/TESEQEEwOZIdr2ZcsXo+KI9dm9bV1VDEv3aaqqrlUds0o6OlaIY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=esY8MAuP; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729255715; x=1760791715;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=MYPUsikWj7/RbrCXioY67PI1k4bEV6VgHqjPIqaPI74=;
-  b=esY8MAuP7RpBn595Iw1XoVmaTwEJ4I36D+l7Eu5YR3wcQMavLRJwUMd1
-   ZdkpTgu+lNMDlXXLlH/n6lvK3Ps6FoRsp6igOcKjqaemD+uYmTJSZVHKt
-   gSZpuYAP+jqwhJap/z8QU3kZawad6v1VOFg7jhQ57ThgAJwT3JWrFKSct
-   gY9L4OZYLYjiiEYGOcfP7CNFWRDHB0xMdWwcFvudQDMWPobyPmOWK7x55
-   G5axo6RUnrPWDay5Ix2Zp0ms5fBzIf2fCFVyC5I+Vuzm7VgzTrP5E1O+7
-   gi/57jGMlPim3PI96wy+XAouRU2r+xMKm4TWwgbLCEOR3B03t6W4o1szK
-   w==;
-X-CSE-ConnectionGUID: rWf+gH5mS3qQCE1maI27dw==
-X-CSE-MsgGUID: 81JejMRhQBO97yKA4MRzTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28943114"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28943114"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:48:34 -0700
-X-CSE-ConnectionGUID: Wefmje0iQpuhZbac3C1CCQ==
-X-CSE-MsgGUID: Bp6bYPdhShmE4Rzu+pvxoA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="109682179"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Oct 2024 05:48:34 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 18 Oct 2024 05:48:33 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 18 Oct 2024 05:48:33 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 18 Oct 2024 05:48:33 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.49) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 18 Oct 2024 05:48:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q9ZAZZMY+EdnAUEYaTnWUFSI6Pgy1W9E1cZyRzlfsTg8TMuK1Wk6OX6fVeNJPCJe9SgNqfYqRGLG0rWxwianPbJLCISzg4eHMYXJFWWhzgfyO7JpNKFmxUeH+XRASMwt8pClIUYp28cuFA7jTfclJgDtNIU/5m9LP921LQ+zxL3QLfDafCDZJZKDNH8BTyONTEVIkMQzVC4MrAeJyvSocKVa+5gIDi/KKD8yuhQ6Kk9lRddFr7ygpSJpJrz1XpySvlTvTdQv+NOHz19+6T14wRu8+bdlS7labnGKbuycUo2sg+qYDl84XszDH0DQ4DmTJh6fsxavagcYF9cqloLojg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8r39drF1Q0hr6MZpS2R/QsIMtA7DSHih13E9hu9Ct78=;
- b=p3ZBEtC2io2iW5qHGmvZRe1CbNDMa3hsPYS5SisFRqQsNU8WncmxB7noDh/S+9PdXOjKt7/28vbFCKP3YudVRIDkoFAZ4x+OVTpppyvL1uvz/HVTULlS8kvKgszOViKZv+aYdXPPpEDgiC8ohJKYCfIZOiJtaEh/OFTr17sSL09RYFEM6jB67NNsfR0s9Qg3R9Sn+ssGsl0sGM3sdwrItNyi7Q7LlAt1miIlCHdUi+4OyZqqTbf7UDBzLDPWDf/g0kno0esx0hMYjpRbllkLBQ3Gpdcp5RxpLdTUq4ShYk41m/pWFd11hXsExWkn0StV20nb1UDVo2/OzOr3/ye4/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com (2603:10b6:8:b3::19) by
- PH8PR11MB6927.namprd11.prod.outlook.com (2603:10b6:510:225::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Fri, 18 Oct
- 2024 12:48:30 +0000
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca]) by DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca%5]) with mapi id 15.20.8048.020; Fri, 18 Oct 2024
- 12:48:30 +0000
-Date: Fri, 18 Oct 2024 14:48:18 +0200
-From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?=
-	<toke@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, "Andrii
- Nakryiko" <andrii@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, "Magnus
- Karlsson" <magnus.karlsson@intel.com>,
-	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <bpf@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 15/18] xsk: add generic XSk &xdp_buff -> skb
- conversion
-Message-ID: <ZxJZEn43W4y8EwsD@boxer>
-References: <20241015145350.4077765-1-aleksander.lobakin@intel.com>
- <20241015145350.4077765-16-aleksander.lobakin@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241015145350.4077765-16-aleksander.lobakin@intel.com>
-X-ClientProxiedBy: WA2P291CA0036.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1f::9) To DM4PR11MB6117.namprd11.prod.outlook.com
- (2603:10b6:8:b3::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A9B1F947
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729255780; cv=none; b=Ba238PwOQAZZ1HX98iaiCzX6jt9IzEKi21+t+G21gz3J0J8fABrtG5pBoPfEuMyZWo9cwBbsN8lglReVkKmgCrfQQSxsQV3ZjWBmei0YLTzBFaz7kyAMSREwA5hrkyCb0I7ouJkJBFiuNBI8ncaI3nm+uF9RGS8d/AtVcKPCjIs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729255780; c=relaxed/simple;
+	bh=KW0DM9y521xnsIzlWoKOHn3iGMEHMEaiggaJBCMHLqU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cQE+TicAiQw1jOAr6jcFU1oOqFLQBDqIzTwIC6zMysG6vJYNvW4ZiJQNxaiOSQYpAfFvTl7aLUFiwrAmwn8NArzP6xSwZ7YLXoYa2i3BmnAVbMiAmeOohd9smApmtS0AIW/2QiqAao1juza+kHz1Ch6baFUE1hW0jsIebbv4/YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GTLkgxIj; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso15886165e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:49:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729255778; x=1729860578; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tHQm1A3wWG4ttDQv8G9o0qpK3fTgulr9fH3cUF69eYs=;
+        b=GTLkgxIjpFFoLdw5iSlS4lxFisiv2atGbxSazY983opUndmGV8IYOwPRpSm/MLCWCG
+         MqiCLxBXdyM3yQVknrzVonJHmRJNIEsT70uKaCMHy6tqygWal8IOD+ELTnOmVKst6NKX
+         TSnsnyz9XMk6FtjOuRyClPPyi37ydoGt+s8b56h+0M5HfsZwRWL5+Qmf1JrO6rb+rfar
+         SZZfMXmmRNAu+FtNPvswTRR8h+6IL3qANqXQUoPgZYKxYgyUmHJJEEg7X0eqZ6svX1Eo
+         WgEzCjrvLakZqU3Jqr2iFWLp3w7Z4iNXW+9uehgGs7sgZc5ERlpvHXrCzYQNV5HZOEpA
+         YIDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729255778; x=1729860578;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tHQm1A3wWG4ttDQv8G9o0qpK3fTgulr9fH3cUF69eYs=;
+        b=I6Panbuk3elhNRRMObpKh5vd9U/fizXk2Li0Mm8WvL9mcliybMhO0+qZliDhY8zXwt
+         BDZgP1mxccZyWVGM/nIYBvjrCtMYr2E+X9k4z05soqClHUlcou3pgJ3GKNTkQkaWm1UB
+         KGyjKy6ySxycXV77kZ4NaI5k82gCRJRruHbCzedPrHoQxn6f9NkJ05ZSc/lP3xW0ImcA
+         /htlFikc4liqvCbGLvcWzIixFAyw1eFQcC4d0/KyPVnr2j7Ao2kDqvEiU3lAs6czPdpn
+         uRMfRQYIjt3kYr8/6A0d/3okZKj2+6B07jo7WPQyx8kv1//pFFKk3NO0wHBjv3vbEVQ4
+         LIyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwtYln2YTeRC2QUIsWHhewS1JT1GQJeAuW2fxvIs8bMjdoTfD12RRRWM8ShGuxMQNuHnCViRU3rTNtoSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR70dyAt7mDhBgwBlGLJCNg/s/junjMp5CkqUWJAf1lgzm1ZGe
+	Cy9whBLDim4jO+1zvvfHNQFu09KWjpiKXfCy7C7trxMw5MgOg+4zK48Dcl2gioc=
+X-Google-Smtp-Source: AGHT+IF6WeKiITXXszsGmJw+wxsyKHZzbIw4J/ll8ntLiADsff1uQwo7y5tsHpGvq/+T+R1J5ysj2Q==
+X-Received: by 2002:a05:600c:1e28:b0:42c:b750:1a1e with SMTP id 5b1f17b1804b1-431615991f4mr19110665e9.0.1729255777585;
+        Fri, 18 Oct 2024 05:49:37 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:45a3:93e:5196:d8ce])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160695d8fsm26640835e9.27.2024.10.18.05.49.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 05:49:37 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v6 0/6] arm64: dts: qcom: enable Bluetooth and WLAN on
+ sc8280xp and sm8450 boards
+Date: Fri, 18 Oct 2024 14:49:10 +0200
+Message-Id: <20241018-sc8280xp-pwrseq-v6-0-8da8310d9564@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6117:EE_|PH8PR11MB6927:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88d8a784-2629-471a-d2c1-08dcef732b54
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?WHRdFGy45uOe4Tr/apW0IGZdNKTtQ+eEEbsfnjpZeEYUDp0DRBCXotFsQYz1?=
- =?us-ascii?Q?6iNVjLu0/ww75Qzs4p1pkQ+fdnOajRXf8pkUkUcWVPhmsWEh4WJf0YDlvMFo?=
- =?us-ascii?Q?0HvXDii4+bXT2saed7EGRxX7CjwFpWaTfd9eGdR4F8gos+WwjRuP6M5vC15H?=
- =?us-ascii?Q?oqy7xfwh2/zk2IHGx6qh+H4Qe5Umcf2nCavAVUdtcR8VXEPNLcrNncPCC1zc?=
- =?us-ascii?Q?HD0vj5lN8ruKckXxCc5jpMDvFc7ZFWvlX/jy13Hp8cPg2/33MDolfaZ0t9LX?=
- =?us-ascii?Q?Jezq9sFRZOt7Xt0m3NzqGNoUhkgiaWjeEohXOrgTf1C3FrezamJ1ppHiGWa5?=
- =?us-ascii?Q?3dnNp3dScoLMcWuKfXw8vhOuV54WFafofx5Ee6a58xBI8KVuzVpUY+EkRDzC?=
- =?us-ascii?Q?yO7UAUuYz2UJSfaW4k+I1Skx5zhnp53acbO34UvqxZU2uT/00MBpw6tDRbPr?=
- =?us-ascii?Q?xQzX1F4RrL0B0DBgGc0kE3YT+KiIoUJ1R2b5r0/6rfat7/Z9NJvyPo2Tgcb0?=
- =?us-ascii?Q?WbMVoddEXWf7TDGBKSv+243rD7v/THQWzYXfdjXvCIH8vpcuhL2lFFXXiRsm?=
- =?us-ascii?Q?63ztLH/ZSbPzEYL1GNa3fy8Qq34VD3sx4TL0l8rEFBGDxLN5mkL3eHeEhkU/?=
- =?us-ascii?Q?G+g71Pt9j2XsE2ry7M37vTcdXqpkC7kPM2opSbtBw68SnNDoJqPGIa68LeZ6?=
- =?us-ascii?Q?iY/HBMbkMWnipXDm2nnLUdl5bdJrwR4y6NMOOpYgoSjD9h+/nTxgpgExx0Bd?=
- =?us-ascii?Q?s2I+oLkxLtY61md5PN7mbmiyY957Q3mhnCcXqGY8A3eQVRy0pMXBjjeL2/1n?=
- =?us-ascii?Q?C5yQ2TXveDncDz1yO26C7owjX+KKx/aGpBcteLFW42vrJ5AgWFkJ/X/b3cTw?=
- =?us-ascii?Q?2SeFa6Y8nQeKyMnkaY4B0xWhLtBij8cl+eQw/fYPsQts+aDvK+1YEttGXZgi?=
- =?us-ascii?Q?FZrjFN3BMFQVvm/FRWGGctAlnSrOPwYVM48VE9S6SP1XsjDLN0aUHgaGmwS1?=
- =?us-ascii?Q?SPO2+M570pimj+xBEpFy1/bKlfWvtag+Aqtsr0W+O1KUeQ9Ta/JBm4sPHfZ7?=
- =?us-ascii?Q?5XYgMJI01Yftz2zOGxe4KkJcQU1xEr38qzpW9XfPhtyZr0S+ZNNhh/5X34oG?=
- =?us-ascii?Q?rF+DXwlc9CEd98Xp1gPu20XfiFm+mp76U/U6p7zvCs1nn8BycDmUNbJipj8A?=
- =?us-ascii?Q?h6qWn7E5l/utKJqveKX3FUvPIt+5yuZBXHWZgR0Sm1JQ35ScCaHYDPYWaYFj?=
- =?us-ascii?Q?zNNs1Lwwr0re28XA0UXyXgJ+osXVuIwHkPTG1jSXfepk7eUIjFoyCEoGkO17?=
- =?us-ascii?Q?yMnH2GzIqPPIsvpantM570qI?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6117.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?prv2Mfv2RCAK21DftbEI1vJ+Ih04uGqsFGR5dibSaAR+cm5sXgsKxIoE6ibm?=
- =?us-ascii?Q?tsCiumtDJVrcNj8B4ylwEIiQry4PRqgoD3gBmjFWcT8B4hCSjfDiK6avfEfO?=
- =?us-ascii?Q?q71QNL3b0d4oGiED4WhL00zvXj392qeS7vciNm6e00MCaOD3M4HYR6mexO8P?=
- =?us-ascii?Q?4ctio4LqtmAQIUaKNFu8c0kwz5BboqXXC/NpjT0h5rviPQFRv1vCSM1jmaUd?=
- =?us-ascii?Q?dQFRV9lHZWpbUd9i9a2iBe8/TAp446zMnzpnzHDWjDSXe7tX9mX3s90EzJQp?=
- =?us-ascii?Q?p69YfU/yYwfYl6dDmat+9vp+dUHujd5NxT6mf20pJ5GnNROSDAuii7P0tgt0?=
- =?us-ascii?Q?iursVs1ch998qoha7ZH+EfxQmD1MdKSP8SovVI56j4TJc0GwAa5ZkrlAbr/K?=
- =?us-ascii?Q?28D38GcdIdOMpRnb30yOuMxZ3iTH70OPAFndh3ldnpoNb6eHBkYmAZQoLFxw?=
- =?us-ascii?Q?mjJTM3g55R+nN/EnWYYqWasiVOdjAfMbIGI8aSINiEJcL/C0wKtf/YPPpuNf?=
- =?us-ascii?Q?WsZnldJ9/MfZsi6Mv7AZmH0yAoQHI254DV0cfLWadE66ZOs5FLIqQpWKGA6V?=
- =?us-ascii?Q?O4YuUGGo3W4BNRLsK+eyIIe1sF26EITG6S/Bs5962R5C9yYx4PFHTFV+WULs?=
- =?us-ascii?Q?p7Wf7sjDhWALQRcpfEnUyexp5ooO4l/qcTDZuRLP1iialC8hLWdTxVi9BMNw?=
- =?us-ascii?Q?+S5vaPvk8MBtXizsyzwkRyW85uvuYHsfVp3xAHzviLUYLF1MA5KKcvB3/H4Y?=
- =?us-ascii?Q?ZWl/2FRrZJlWZkVgHHICFIgB+HAIrxOE+pU+WL7XNrisYJdha4Z5+NkoiGQx?=
- =?us-ascii?Q?fQjmdlhtcJYLMca7iwRbE2nYr1otSzoY7mv9z1j6wK9N70EpL/39mvU7o7u1?=
- =?us-ascii?Q?sSM88yse8/Vjm22DHVRTCj/Z1CxskSSG2O/maNcg7gu1RX9PkL3OQTSki6qo?=
- =?us-ascii?Q?wN6F8J1eyaGgTjMzjrdYZzgqUoHV4ilNOgEB//BeIFppR0yPZpKUmuFe+/Xz?=
- =?us-ascii?Q?MtgtwhIUD/RBs2roMWQ9eOqhmawv7e3Zg170gW3hUJRszoRyPjqA3b+6Xowu?=
- =?us-ascii?Q?snYjkvfMrmHz1/gv3iFzoVBJW7Rzr3sC9VNggt3MFsPb00vGQMaooOZKN2Kh?=
- =?us-ascii?Q?twcqk3FlRkz4J4US0vnzP9jvIfbDkBAto0Y6it9azqR1TFnP5KoEGI6iQwZL?=
- =?us-ascii?Q?eF8i+RllsKCeSN2fXLoZwpSU2maO8fd+DMILDCkJaocHCXnLhxFFaaUZPj2l?=
- =?us-ascii?Q?Q/neX4ACgMR2Y7Lx8NoazqNVWdLQoMNodJ56ZA47PjMZyEdgjjN++hBAV5BW?=
- =?us-ascii?Q?RDGUdBcwonxS3k+RVGl+5P7e31gyYpNk7P3dVEvnOQCbF4UVndE4vFJeNDa6?=
- =?us-ascii?Q?zR/OZ6KzhqQIT8gV2FXaQGk109Hv8uX2/Jas+XKpz8uq+QvvobURxsua6YSk?=
- =?us-ascii?Q?scnfhdlMhMWUeFgzuPsusEYHEWn8S3cVByz4opFgHCn4gUf0U4vmpmdATvt9?=
- =?us-ascii?Q?n5VKBhONWibh4JNHJpURiWf5STMZT6tW/w3Wwbui/q4ZjO0UoMS11/kv5b5w?=
- =?us-ascii?Q?kjvWpUDEVyM28mdMuBywRdiLRBBwsXuXhOgXMM3bu7oFEsIbBqZE1ysSvJvb?=
- =?us-ascii?Q?DQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88d8a784-2629-471a-d2c1-08dcef732b54
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6117.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 12:48:30.8050
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Eonigm0CL4dOVUBKaLgd4euHp7OxknyN9bPS4UcJwjs6YWHPnQWE8z3wWbsYmAY3cU04iUECSXGbKCtmXYSA4O/ObUY2D3XCybwdKo3In40=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6927
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEZZEmcC/x3MQQqAIBBA0avErBNESqeuEi3KpppNmQMlSHdPW
+ r7F/xmEIpNAX2WIdLPweRTYugK/T8dGipdiMNo0GrVT4tGgTkGFJwpdys0W227BxvoWShUirZz
+ +4zC+7we8+06hYQAAAA==
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Johan Hovold <johan+linaro@kernel.org>, Kalle Valo <kvalo@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Abel Vesa <abel.vesa@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Steev Klimaszewski <steev@kali.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3207;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=KW0DM9y521xnsIzlWoKOHn3iGMEHMEaiggaJBCMHLqU=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnEllaYumzIkevzpZBf3QebQlGMbQOMBsycQUWb
+ YTOZvudTHKJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxJZWgAKCRARpy6gFHHX
+ cs/+D/0eOhVz2lphUv5iwdjz8bpqDiiJhBEtVB2NfR9oSPcie8TyDmZPrUdpBM1u7OGP5/OP5Zk
+ 1IpsUpCzEcX5IwRurjqN7qEazCzk3rWxgCOiQNWKGZR9NDQPkkxOrpH0Sdvugl+G9qhPiLNvFnx
+ ZFR9Imab3Tsnvmg5WbvkgY13GPBUsLwoGPMUyFeUGicxR+dBnoS23HvhVomXc8KZ2MzLZTKFmvP
+ rx5e0E/Ay6QgM9PhnODjHz3lQwxPHWAPmEJ976WUdbvTvZu92QJVPTg9DCpHTLMIZyueFAwkLdz
+ 6V/KtSRoL/9yEMbV+EtCWUqEHxbs87gTs9NZay/llceNUGTrtjaTsRSgriRCMnvqIsS4Ed+0GLR
+ UT+l762EYV9ogO8ns3kqtxHFcL0FCWfZUjF2ll8FdIXtfv8Q3iQLYTJ2Lrg7VmeehSWBz90ylXu
+ eKGXRIelEdwriDZQyVIGOPU4zVlebMGa58W54R4FImZrspTLaaJIPeNlF203p6u00Mc7ho2c55m
+ 8rQFCOu5unoQQnR0wzTj14S9lk7eq9BkHOb0AfqjdOxG6qgNgTvuyXFo34XLCP7va4Qi1jpDySB
+ 9YcA8859npIXDHpRo/mbEUsdVbvHCu/hvbJoa0P8xRemzY5e2phhYoGctITFkkA6et5OJtOZ3Hq
+ tEAVXFNKO2GPBqA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Tue, Oct 15, 2024 at 04:53:47PM +0200, Alexander Lobakin wrote:
-> Same as with converting &xdp_buff to skb on Rx, the code which allocates
-> a new skb and copies the XSk frame there is identical across the
-> drivers, so make it generic. This includes copying all the frags if they
-> are present in the original buff.
-> System percpu Page Pools help here a lot: when available, allocate pages
-> from there instead of the MM layer. This greatly improves XDP_PASS
-> performance on XSk: instead of page_alloc() + page_free(), the net core
-> recycles the same pages, so the only overhead left is memcpy()s.
-> Note that the passed buff gets freed if the conversion is done w/o any
-> error, assuming you don't need this buffer after you convert it to an
-> skb.
+This series previously only concerned sc8280xp but while enabling
+WLAN/BT on sm8450 I noticed some more changes will be required so I
+folded the latter into this series and updated the sc8280xp CRD and X13
+patches.
 
-AFAICT looks good.
-Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+==
 
-I have to switch the context now so I'll finish reviewing the remainder of
-this set on monday.
+This models the WLAN and Bluetooth modules on several boards using the
+WCN6855 module.
 
- 
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> ---
->  include/net/xdp.h |   1 +
->  net/core/xdp.c    | 138 ++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 139 insertions(+)
-> 
-> diff --git a/include/net/xdp.h b/include/net/xdp.h
-> index 83e3f4648caa..69728b2d75d5 100644
-> --- a/include/net/xdp.h
-> +++ b/include/net/xdp.h
-> @@ -331,6 +331,7 @@ void xdp_warn(const char *msg, const char *func, const int line);
->  #define XDP_WARN(msg) xdp_warn(msg, __func__, __LINE__)
->  
->  struct sk_buff *xdp_build_skb_from_buff(const struct xdp_buff *xdp);
-> +struct sk_buff *xdp_build_skb_from_zc(struct xdp_buff *xdp);
->  struct xdp_frame *xdp_convert_zc_to_xdp_frame(struct xdp_buff *xdp);
->  struct sk_buff *__xdp_build_skb_from_frame(struct xdp_frame *xdpf,
->  					   struct sk_buff *skb,
-> diff --git a/net/core/xdp.c b/net/core/xdp.c
-> index 371c26c203b2..116153b88d26 100644
-> --- a/net/core/xdp.c
-> +++ b/net/core/xdp.c
-> @@ -22,6 +22,8 @@
->  #include <trace/events/xdp.h>
->  #include <net/xdp_sock_drv.h>
->  
-> +#include "dev.h"
-> +
->  #define REG_STATE_NEW		0x0
->  #define REG_STATE_REGISTERED	0x1
->  #define REG_STATE_UNREGISTERED	0x2
-> @@ -682,6 +684,142 @@ struct sk_buff *xdp_build_skb_from_buff(const struct xdp_buff *xdp)
->  }
->  EXPORT_SYMBOL_GPL(xdp_build_skb_from_buff);
->  
-> +/**
-> + * xdp_copy_frags_from_zc - copy the frags from an XSk buff to an skb
-> + * @skb: skb to copy frags to
-> + * @xdp: XSk &xdp_buff from which the frags will be copied
-> + * @pp: &page_pool backing page allocation, if available
-> + *
-> + * Copy all frags from an XSk &xdp_buff to an skb to pass it up the stack.
-> + * Allocate a new page / page frag for each frag, copy it and attach to
-> + * the skb.
-> + *
-> + * Return: true on success, false on page allocation fail.
-> + */
-> +static noinline bool xdp_copy_frags_from_zc(struct sk_buff *skb,
-> +					    const struct xdp_buff *xdp,
-> +					    struct page_pool *pp)
-> +{
-> +	const struct skb_shared_info *xinfo;
-> +	struct skb_shared_info *sinfo;
-> +	u32 nr_frags, ts;
-> +
-> +	xinfo = xdp_get_shared_info_from_buff(xdp);
-> +	nr_frags = xinfo->nr_frags;
-> +	sinfo = skb_shinfo(skb);
-> +
-> +#if IS_ENABLED(CONFIG_PAGE_POOL)
-> +	ts = 0;
-> +#else
-> +	ts = xinfo->xdp_frags_truesize ? : nr_frags * xdp->frame_sz;
-> +#endif
-> +
-> +	for (u32 i = 0; i < nr_frags; i++) {
-> +		u32 len = skb_frag_size(&xinfo->frags[i]);
-> +		void *data;
-> +#if IS_ENABLED(CONFIG_PAGE_POOL)
-> +		u32 truesize = len;
-> +
-> +		data = page_pool_dev_alloc_va(pp, &truesize);
-> +		ts += truesize;
-> +#else
-> +		data = napi_alloc_frag(len);
-> +#endif
-> +		if (unlikely(!data))
-> +			return false;
-> +
-> +		memcpy(data, skb_frag_address(&xinfo->frags[i]),
-> +		       LARGEST_ALIGN(len));
-> +		__skb_fill_page_desc(skb, sinfo->nr_frags++,
-> +				     virt_to_page(data),
-> +				     offset_in_page(data), len);
-> +	}
-> +
-> +	xdp_update_skb_shared_info(skb, nr_frags, xinfo->xdp_frags_size,
-> +				   ts, false);
-> +
-> +	return true;
-> +}
-> +
-> +/**
-> + * xdp_build_skb_from_zc - create an skb from an XSk &xdp_buff
-> + * @xdp: source XSk buff
-> + *
-> + * Similar to xdp_build_skb_from_buff(), but for XSk frames. Allocate an skb
-> + * head, new page for the head, copy the data and initialize the skb fields.
-> + * If there are frags, allocate new pages for them and copy.
-> + * If Page Pool is available, the function allocates memory from the system
-> + * percpu pools to try recycling the pages, otherwise it uses the NAPI page
-> + * frag caches.
-> + * If new skb was built successfully, @xdp is returned to XSk pool's freelist.
-> + * On error, it remains untouched and the caller must take care of this.
-> + *
-> + * Return: new &sk_buff on success, %NULL on error.
-> + */
-> +struct sk_buff *xdp_build_skb_from_zc(struct xdp_buff *xdp)
-> +{
-> +	const struct xdp_rxq_info *rxq = xdp->rxq;
-> +	u32 len = xdp->data_end - xdp->data_meta;
-> +	struct page_pool *pp;
-> +	struct sk_buff *skb;
-> +	int metalen;
-> +#if IS_ENABLED(CONFIG_PAGE_POOL)
-> +	u32 truesize;
-> +	void *data;
-> +
-> +	pp = this_cpu_read(system_page_pool);
-> +	truesize = xdp->frame_sz;
-> +
-> +	data = page_pool_dev_alloc_va(pp, &truesize);
-> +	if (unlikely(!data))
-> +		return NULL;
-> +
-> +	skb = napi_build_skb(data, truesize);
-> +	if (unlikely(!skb)) {
-> +		page_pool_free_va(pp, data, true);
-> +		return NULL;
-> +	}
-> +
-> +	skb_mark_for_recycle(skb);
-> +	skb_reserve(skb, xdp->data_meta - xdp->data_hard_start);
-> +#else /* !CONFIG_PAGE_POOL */
-> +	struct napi_struct *napi;
-> +
-> +	pp = NULL;
-> +	napi = napi_by_id(rxq->napi_id);
-> +	if (likely(napi))
-> +		skb = napi_alloc_skb(napi, len);
-> +	else
-> +		skb = __netdev_alloc_skb_ip_align(rxq->dev, len,
-> +						  GFP_ATOMIC | __GFP_NOWARN);
-> +	if (unlikely(!skb))
-> +		return NULL;
-> +#endif /* !CONFIG_PAGE_POOL */
-> +
-> +	memcpy(__skb_put(skb, len), xdp->data_meta, LARGEST_ALIGN(len));
-> +
-> +	metalen = xdp->data - xdp->data_meta;
-> +	if (metalen > 0) {
-> +		skb_metadata_set(skb, metalen);
-> +		__skb_pull(skb, metalen);
-> +	}
-> +
-> +	skb_record_rx_queue(skb, rxq->queue_index);
-> +
-> +	if (unlikely(xdp_buff_has_frags(xdp)) &&
-> +	    unlikely(!xdp_copy_frags_from_zc(skb, xdp, pp))) {
-> +		napi_consume_skb(skb, true);
-> +		return NULL;
-> +	}
-> +
-> +	xsk_buff_free(xdp);
-> +
-> +	skb->protocol = eth_type_trans(skb, rxq->dev);
-> +
-> +	return skb;
-> +}
-> +EXPORT_SYMBOL_GPL(xdp_build_skb_from_zc);
-> +
->  struct sk_buff *__xdp_build_skb_from_frame(struct xdp_frame *xdpf,
->  					   struct sk_buff *skb,
->  					   struct net_device *dev)
-> -- 
-> 2.46.2
-> 
+The wcn6855 (also known as qca6490) is a bit different from the qca6390
+so modify the power sequencing driver to support it with separate device
+match data.
+
+For the sc8280xp-crd and sm8450-hdk we add the PMU, wifi and bluetooth
+nodes with the correctly modelled wiring between them. For the X13s, we
+rework existing nodes so that they align with the new DT bindings
+contract.
+
+On sm8450-hdk we require some additional toggling of the XO-CLK signal
+so add that to the driver as well and update the bindings.
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v6:
+- add the xo-clk signal handling to the pwrseq-qcom-wcn driver
+- add a patch enabling wifi and bluetooth on sm8450-hdk
+- add missing supplies to the PMUs on sc8280xp boards
+- Link to v5: https://lore.kernel.org/all/20241008102545.40003-1-brgl@bgdev.pl/
+
+Changes in v5:
+- put vreg_s10b under the "B" PMIC on the CRD instead of modeling it as a
+  fixed regulator
+- order pinctrl nodes alphabetically
+- restore the drive-strength property for all pins to what bootfw sets it to
+- disable bias on wlan-en pin on the CRD
+- remove stray newline
+- add the swctrl pins to the PMU node
+
+Changes in v4:
+- bind bluetooth pins on X13s in patch 3/3
+- only drop the regulator-always-on properties for vreg_s11b and vreg_s12b
+  and fold this change into patch 3/3
+
+Changes in v3:
+- move adding the bt-enable-gpios to the PMU on the CRD to patch 2/4
+- add a patch removing the regulator-always-on property from regulators
+  on X13s that no longer need it
+
+Changes in v2:
+- fix commit message in patch 1/3
+- drop drive-strength from the wlan enable pin function
+- drop the calibration variant property from the wifi node of the CRD
+
+---
+Bartosz Golaszewski (6):
+      regulator: dt-bindings: qcom,qca6390-pmu: add more properties for wcn6855
+      power: sequencing: qcom-wcn: improve support for wcn6855
+      arm64: dts: qcom: sc8280xp-crd: model the PMU of the on-board wcn6855
+      arm64: dts: qcom: sc8280xp-crd: enable bluetooth
+      arm64: dts: qcom: sc8280xp-x13s: model the PMU of the on-board wcn6855
+      arm64: dts: qcom: sm8450-hdk: model the PMU of the on-board wcn6855
+
+ .../bindings/regulator/qcom,qca6390-pmu.yaml       |  12 ++
+ arch/arm64/boot/dts/qcom/sc8280xp-crd.dts          | 169 +++++++++++++++++++++
+ .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     | 103 +++++++++++--
+ arch/arm64/boot/dts/qcom/sm8450-hdk.dts            | 157 +++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sm8450.dtsi               |   2 +-
+ drivers/power/sequencing/pwrseq-qcom-wcn.c         | 101 +++++++++++-
+ 6 files changed, 526 insertions(+), 18 deletions(-)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20240807-sc8280xp-pwrseq-7b6859d846c5
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
