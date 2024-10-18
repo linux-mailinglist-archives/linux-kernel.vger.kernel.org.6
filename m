@@ -1,157 +1,134 @@
-Return-Path: <linux-kernel+bounces-371896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A23F19A41E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:04:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8429A41F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1A82B227FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3789BB25381
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DC978C91;
-	Fri, 18 Oct 2024 15:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0F6200BBC;
+	Fri, 18 Oct 2024 15:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ez7yx+zR"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zcaJoHLm"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286C67BAEC;
-	Fri, 18 Oct 2024 15:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B80B7BAEC
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729263837; cv=none; b=mFjxJc/MjcBx1SCh09RJLACPmKoTZy+WBX8hbShK5VpME0yOTUYYtK6OEHUW9npMcTfFpMp+zONnWU49jkpTb0KD1DswXHmuWSurstPOsk3XCL+P3WSo9Xlo5SBwMEBHDf1SEWNr71e90uMRCV5swCdKdR9sebqfVOldAD5+I6Q=
+	t=1729263947; cv=none; b=mVAUVswuVz2Efo896e6gwkSebQ2wTCyCInnuPjnasuRa8WKHNBOk1iB6k5WTEXrTS4X1aG8mAGGXRG2nFilijPgRQlhOAWoveBVJduLJLcdcfAAx/10wsKercqPmekxMP8Q6LgcpwCrQtgJiqAWEYdu8Trnr9OB5jHWQ4Ac5WrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729263837; c=relaxed/simple;
-	bh=2bfs2UEwo6ToOh8FqCQeqUWi9lfpjMNVBp5cRaIPVyM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=qOHg6NFxP9+OqpHXFgoEyImxuhHbj5Ye81pQi3wk9wtzNpg/BWtL7XmsG7HA1Vcvp9xFzG2Y5HXRl34Hsjjbs0JWRfVgzlXlSKM8yBxk3CdkoBjDwek1MK7q/RT+nRV7xSPaJ5/RE0oc59iJUkxsCU4D5tdI/wHhphv8ZcTwgHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ez7yx+zR; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4603aced3a5so16855491cf.1;
-        Fri, 18 Oct 2024 08:03:54 -0700 (PDT)
+	s=arc-20240116; t=1729263947; c=relaxed/simple;
+	bh=VY+gOC6a4ZSs6CZ8Ns3SAUj2iHkxiyZBv5pZmVF9X+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VAbJRPLHu9MEejY7lAd97VGNfbB9pgum/ZGJ2a0YyhW07yojXx1eRnzGtTcrOOcA4DkJR6+JUeX5U9DTRGw5O6eCnwy8yI8oVhdXxPnSsB6g/D9M4BWQhBLFLn7M9gjdBP5rzrQDrxnE2rMPT/c9MHpkuLXNA1bc7zSYEMl5YUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zcaJoHLm; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e681ba70so20359e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:05:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729263834; x=1729868634; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2bfs2UEwo6ToOh8FqCQeqUWi9lfpjMNVBp5cRaIPVyM=;
-        b=ez7yx+zR0cD5xTGSdsBViwj41n6ij5LFvlr809gs3Pqj5jiaQONjZ0TvKI14NOv2rD
-         fbtDc7PYJcNmtgIdFXl5MO8Xnj/mL++/TjLIolhw4e1/C2r+I5y7b3juoFrOVY+esD8U
-         L0/xTM76u8/BQxoHahMieWnTYcsh7gElxoDV9K1NnT/cmvXsIUeA4IRmN0/Gh++D6Nan
-         yqWaDwdAYDwv+2jPtFMKb6uJgFl+fw/9I5qYhlXoXJan20DZrE9HU51IRxbwPq/uT0aM
-         kGGG+MQzd3kpgomxbEUG0+HzyVf+h2+dCSks34G2k8/+4ajUM+BIeJd8xgcEy2NjMCS3
-         6Rgw==
+        d=google.com; s=20230601; t=1729263943; x=1729868743; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VY+gOC6a4ZSs6CZ8Ns3SAUj2iHkxiyZBv5pZmVF9X+g=;
+        b=zcaJoHLmZnptFNjmtbc/WSclLW6gBDOFuB0ikdayjxq+ZhvVbt7k/jgBGpRgt2cQeN
+         y5W3znAnofIi8tIfofMq4BkpStjbexm79XVWhtrHjv8xHxJpY6191YLBHHe3EpX0lsoD
+         2yvdzem5mdRkgc20wbfml0ZbyOAe7JgJ4TBBBrdkgyVpP6B24+mlwIatuhEiFsaWGLNT
+         cfD/XCKafe2OruBfJhOZWFmE+RkcxK10NqJXcDZPNOeOoan8DUrggC3u8F820LQ4oHgb
+         sLqgkvLPqVtFi9Q8wdKxvMVFa2dngFyrgrtQhcksFobe3k2nPuB+OQ4iLo+bESX/2U2+
+         mwKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729263834; x=1729868634;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2bfs2UEwo6ToOh8FqCQeqUWi9lfpjMNVBp5cRaIPVyM=;
-        b=DgztNlIFSGvleZu1xB7H3zbHm1rTfc/h0QfwPn1WZiF50qRUh+acI1T5k3hrdnE3lS
-         NBCrRIm1t4cKqkFHX9ZpjgrGqSZCJGY1w5Sz0zvMcfuXj2wcvSuqSEI3D/KPgxq/9sNF
-         ByIhKxvfl9khDm+ZWp1+ZOqvOlhDAMXWq1XFlgnUwPVXAhpR9rcAXIQeEsGQXQTU0Apv
-         Fcxp0QCwdrgG9JUZSTH3t23Hk8Bc/KZYAwdlWaGNA5LTds+i2UtOO178qUerDA/TR+jH
-         xxnx3qhBVLCJ2LRkUlIy0pFK71BktMdbqsRUccMTMGKp0HqMIjvzn9GyG0UmbtvDITaY
-         cZeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHKZgzzZ/bAvoZCa/nenuBBBR9x7xvs1llYlqiCv7jtFbKeprhkgjE1m8f4t+9opxJc+o8WeaFIcEBBOd33y4o@vger.kernel.org, AJvYcCVLvOfMK+8FhI2E4iQ17WaQQEKe9KgaoIOcPE9acHCkwlL2LcEiNdVooYXyGrxTb3DyIEprBJR0H6CEJ2iz@vger.kernel.org, AJvYcCVlZ7oRwOQgSFgZDM986eLXjBQPVvVAuWK15pnav+RQLKeAB4FxiX0jPn/bIoq2+abMft/MBoezeUnOAQ==@vger.kernel.org, AJvYcCWCLZJJ2L3WHhpAK9wKyn7d1LiZE6Yz/eA7XvWz0O/MSSmlsMaUIUeuTrrsGgEKpRalfNOaosxdU9KR@vger.kernel.org, AJvYcCXVFpBHAtHErX2nf5opVVo1T0Imku4li7Y1Ril94azImZeS7TO4C8V5KR8gQjsCLP6bhqepnHMmIxYx/qfR@vger.kernel.org, AJvYcCXa+yIxV6JqKMN9qXSvJmkhPC0Z7W/O5Xty+eTUUNlxlLl2hjKlXXzJGOuOOxz5mL5gOn9NpQyvAfPvRiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzggh6hO9be8tUQP1pVY5lRQhOffZKIM8RbgOS1dU63A9t261Gq
-	UkWoQS/PsFT9ECs4AqKAF65OHQpghR/VYZDx/c5QZBG775CryzQ2
-X-Google-Smtp-Source: AGHT+IFtSxqYQ+Uh1KxSL4gmbFP2b5u4RAOEyxYYnsypWhrbsVj/jXKkNnFmi1COXRELCZUTv+Zc5A==
-X-Received: by 2002:a05:622a:2309:b0:460:8be6:9b00 with SMTP id d75a77b69052e-460aede585bmr37176911cf.50.1729263833772;
-        Fri, 18 Oct 2024 08:03:53 -0700 (PDT)
-Received: from [127.0.0.1] (syn-076-188-177-122.res.spectrum.com. [76.188.177.122])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460b818e356sm2189391cf.69.2024.10.18.08.03.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 08:03:53 -0700 (PDT)
-Date: Fri, 18 Oct 2024 11:03:50 -0400
-From: Adrian Vovk <adrianvovk@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>
-CC: Eric Biggers <ebiggers@kernel.org>, Md Sadre Alam <quic_mdalam@quicinc.com>,
- axboe@kernel.dk, song@kernel.org, yukuai3@huawei.com, agk@redhat.com,
- snitzer@kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
- adrian.hunter@intel.com, quic_asutoshd@quicinc.com, ritesh.list@gmail.com,
- ulf.hansson@linaro.org, andersson@kernel.org, konradybcio@kernel.org,
- kees@kernel.org, gustavoars@kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-mmc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
- quic_srichara@quicinc.com, quic_varada@quicinc.com
-Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
-User-Agent: Thunderbird for Android
-In-Reply-To: <ZxH4lnkQNhTP5fe6@infradead.org>
-References: <20240916085741.1636554-1-quic_mdalam@quicinc.com> <20240916085741.1636554-2-quic_mdalam@quicinc.com> <20240921185519.GA2187@quark.localdomain> <ZvJt9ceeL18XKrTc@infradead.org> <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com> <ZxHwgsm2iP2Z_3at@infradead.org> <CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com> <ZxH4lnkQNhTP5fe6@infradead.org>
-Message-ID: <D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
+        d=1e100.net; s=20230601; t=1729263943; x=1729868743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VY+gOC6a4ZSs6CZ8Ns3SAUj2iHkxiyZBv5pZmVF9X+g=;
+        b=RieTg3NJw6sdtKZz8Z3jgjvOHdVnzvY9dwJDQRCOcNtoTYBcfjG89cL76HzlXh/EMx
+         FrdsourzIfp6NdOSCwFjbxlzTrDMhmu1lOBaSO+NiasoY0DpwCzs6LhPDx+2RJftCgia
+         Cy/bd+gJyTtYxT1IjD/wJPWL704cd6MtfiAPGIjnG1V1S1R9ooXsn6PG+8+URDGC+4tQ
+         7JmmDUBkJNKXEoEAe5IUqccr+4/vA+i3JzowthFT9zmiT3B9+S0frFG1sb5MPQuo1Fba
+         ZqODljVCSB6jWdwExACZj8VIvEOVyY+rk6AhFQBpZ9J+luHKDIkp2fcF0t4mzV9Qcm78
+         N1sw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5CzkDwP0VYpznJcO2mPg23KWs0UrQZrEMyzbjPpSglfY+TWrZDy9hOoc+s7IQU/kepXrJV6RO7Y+/5WQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK4lZbGgoo7sQ9IuArbNFyLTBi1ZPUHMCOMiSYhMxqP5WDjqc1
+	JYH1rC5aB7AY7Zo9VHzSepaBpEyyKn6lAr81QqCNbjNjdyolSgIM0i/tqItHsurby8J45g/rRfR
+	gpliiyX54CYBDGd79GK2etouyxCOBRnejOpgh
+X-Google-Smtp-Source: AGHT+IHEdjAuAnZpQTb3020lZcH6NNioXnQO8TFmyT8yTm8pf+QhIDKkj1QU/pK6ubOymnxvMFhGxeUvu4tJjCuhK2I=
+X-Received: by 2002:a05:6512:31c2:b0:52e:8475:7c23 with SMTP id
+ 2adb3069b0e04-53a157613d6mr366525e87.7.1729263942596; Fri, 18 Oct 2024
+ 08:05:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 18 Oct 2024 17:05:04 +0200
+Message-ID: <CAG48ez1Bd7dWmXpMS2=f6gHoSxhySv2v3m5_BvucMNtC3AZeew@mail.gmail.com>
+Subject: Re: [RFC][PATCH] mm: Split locks in remap_file_pages()
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, vbabka@suse.cz, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, ebpqwerty472123@gmail.com, paul@paul-moore.com, 
+	zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, stable@vger.kernel.org, 
+	syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-
-On October 18, 2024 1:56:38 AM EDT, Christoph Hellwig <hch@infradead=2Eorg=
-> wrote:
->On Fri, Oct 18, 2024 at 01:44:19AM -0400, Adrian Vovk wrote:
->> > So just run a target on each partition=2E
->>=20
->>=20
->> That has different semantics=2E If I encrypt each virtual partition the=
-re's
->> nothing encrypting the metadata around the virtual partitions=2E Of cou=
-rse,
->> this is a rather contrived example but point stands, the semantics are
->> different=2E
+On Fri, Oct 18, 2024 at 4:48=E2=80=AFPM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
+> remap_file_pages()") fixed a security issue, it added an LSM check when
+> trying to remap file pages, so that LSMs have the opportunity to evaluate
+> such action like for other memory operations such as mmap() and mprotect(=
+).
 >
->Then you set up an dm-crype device mapper table for the partition table a=
-s
->well=2E
-
-Sure, but then this way you're encrypting each partition twice=2E Once by =
-the dm-crypt inside of the partition, and again by the dm-crypt that's unde=
-r the partition table=2E This double encryption is ruinous for performance,=
- so it's just not a feasible solution and thus people don't do this=2E Woul=
-d be nice if we had the flexibility though=2E
-
-Plus, I'm not sure that such a double encryption approach is even feasible=
- with blk-crypto=2E Is the blk-crypto engine capable of receiving two keys =
-and encrypting twice with them?
-
+> However, that commit called security_mmap_file() inside the mmap_lock loc=
+k,
+> while the other calls do it before taking the lock, after commit
+> 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
 >
->> > This is the prime example of why allowing higher layers to skip
->> > encryption is a no-go=2E
->> >
->>=20
->> In what way does that break the file system's security model? Could you
->> elaborate on what's objectionable about the behavior here?
+> This caused lock inversion issue with IMA which was taking the mmap_lock
+> and i_mutex lock in the opposite way when the remap_file_pages() system
+> call was called.
 >
->Because you are now bypassing encryption for certainl LBA ranges in
->the file system based on hints/flags for something sitting way above
->in the stack=2E
+> Solve the issue by splitting the critical region in remap_file_pages() in
+> two regions: the first takes a read lock of mmap_lock and retrieves the V=
+MA
+> and the file associated, and calculate the 'prot' and 'flags' variable; t=
+he
+> second takes a write lock on mmap_lock, checks that the VMA flags and the
+> VMA file descriptor are the same as the ones obtained in the first critic=
+al
+> region (otherwise the system call fails), and calls do_mmap().
 >
+> In between, after releasing the read lock and taking the write lock, call
+> security_mmap_file(), and solve the lock inversion issue.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap=
+_file_pages()")
+> Reported-by: syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.4=
+6d20.0036.GAE@google.com/
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com> (Calculate prot and=
+ flags earlier)
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Well the data is still encrypted=2E It's just encrypted with a different k=
-ey=2E If the attacker has a FDE dump of the disk, the data is still just as=
- inaccessible to them=2E
-
-In fact, allowing for this will let us tighten up security instead of punc=
-hing holes=2E It would let us put encrypted home directories on top of full=
--disk encryption=2E So if an attacker has a disk image and the FDE key, the=
-y still wouldn't be able to decrypt the user's home directory because they'=
-d need more keys=2E We also want to put fscrypt on top of the encrypted hom=
-e directories to encrypt each app data directory, so if you have a banking =
-app the attacker wouldn't be able to get that app's data even if they manag=
-e to get your home directory key=2E Right now, doing something like this re=
-quires stacking encryption and is thus unfeasible and we can't do it, so we=
-'re stuck with one layer of full disk encryption and no isolation between u=
-sers and apps=2E
-
-Thanks,
-Adrian
+Reviewed-by: Jann Horn <jannh@google.com>
 
