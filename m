@@ -1,139 +1,239 @@
-Return-Path: <linux-kernel+bounces-371650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADBA9A3DE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:08:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3089A3DF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D07FC28288A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:08:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A34D1F2315B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933B918EBF;
-	Fri, 18 Oct 2024 12:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2812208AD;
+	Fri, 18 Oct 2024 12:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YdNaA7ZC"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B7A1A288
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hi3GfoBx"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421E618028;
+	Fri, 18 Oct 2024 12:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729253325; cv=none; b=If3hHWGv89zk4XDKQMSL7jKvrbDJOwLXpI88PFEUrriWp43fKsQWIiN6H0QVRyJUTO1McK+P+fquQD/xIg31+wLCeRxENCbMkuYwx1CzsaN+9L0LojqeH2Ehb9wTgI4OTsQC5YAkMvOjnx48VnNOeWUY/wH5z+myQ7Nu/FGkyMc=
+	t=1729253618; cv=none; b=RPp/ZWnR7+myas4O/+mG5aAu7t0CrjMp4LwjoF5vZIxX5/0aKOJwZTT+uAJmR+8wPmOW57iC/17NpnJQK6Ff8tN+zzedtVr8nnSCLv/K3qDyJjwc+Em6htvbINMU4QK3LnE61BDXqz7p1GUUt0lD0QrLyypNmLHbnN+zdYsLPE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729253325; c=relaxed/simple;
-	bh=YbqulcNrKaoe+EnMEt2XGpFtZJZT2rx1KICvibHOoq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AhREADRwzNzDsupQ0aB9fT6iAcevtLPVWHntRRRufO9ea9blTyFQ3DjzyfDT4y2bULlZsOinXXt7dFE469KFrzNI9qvosX/OyeZ4OyCp6sKDazWY3cL9B0tRWbbI4IA7F0UmotdHncHcWBB7Ix8Hv9uUcvujHKH3FRt74pFT6lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YdNaA7ZC; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so30260661fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:08:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729253321; x=1729858121; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w9CEyOXycZo0GAH066lZHL9x0GBdHQ/RJtrNNbuW8wM=;
-        b=YdNaA7ZCIEZR3ou61LZ977hIvA4kyqmvPiSfRQdP4O7HaX7NpAb/w71/cxW5h9aXqS
-         BlRmYaetMo4kZAMxEIjXAMqako16dweZGSP3bwKQRSUeJQgsRBZDSGL/pAl3BU+vKjzl
-         M1nfDnehd4c/dovJoVJZ9L8DnbWsLP9Ai5X3inKJVHTLa0hqb2bTF2c9H8B7y1G6faWS
-         o3P1bste1DUfNH7yafDPKswBifMZC3ZaiFrsjQebHfEVGVeLw9nYjaUjMW0UeAwe3MHM
-         GrNcxNBHjrV0i15sxi445WEY3Bi5PULruBPuqkh2SmAQ5yr148Tu+TrJu9n6e20aw937
-         7MvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729253321; x=1729858121;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w9CEyOXycZo0GAH066lZHL9x0GBdHQ/RJtrNNbuW8wM=;
-        b=ENe5cARQcGTjv21si5btgqoOsP0ggRXrVfKLqkICA++dBipg+xzi6HOoQpeGNesVN+
-         9UNCL+AR0zVlzbadzs+YRzQiCNHtmleXokpDZvmvQTG0kwhbBTPMHRSNOet62lRl+0yS
-         cc4q94esSBFKRWFuO5LwC7TtLHhImbgmarKV3Sa3TeyQG+F8LoB1rJwn4Lct9fUh1Dck
-         OACmgWV113rSyN+6H1jo1yHmQZvWIRvZl3wNN+vfaSxoBDhf/NJcl7Q9AQLGDkxpdkJ5
-         eaQd8hkZU7NH0ZhSUbYjiV9zMb3Vva5rEg8G5ULxMDcAOO9eAsdmCGhcVXUyTbMfzcm6
-         mPMw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1/yU0UErSNKQG65gkwFHd2T44Gym2DcKuJllW3+NS9GOP5FyatIHWYNqaa0Go+dfIpu1EH1mo37CiBD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV0Bp1CzhlltHjFoQzXKGoUf6kQGulRNHeDAwnlIhOyNGUxpyk
-	XIB9wMloCj0KFUz4lI7rgiczg7AB0o36C/cua6uLdb0m8CTQVYQ/tw62Zjw/D5c=
-X-Google-Smtp-Source: AGHT+IET87521GR+Ncypj8kYlpZXAqXop//a42wje36HMmpSaJ1UQJi3Vj3+Hvduz4mk5BgZRtxPyg==
-X-Received: by 2002:a05:651c:1547:b0:2fa:d84a:bda5 with SMTP id 38308e7fff4ca-2fb82e90e03mr16854441fa.7.1729253321351;
-        Fri, 18 Oct 2024 05:08:41 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809a6a88sm1997451fa.7.2024.10.18.05.08.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 05:08:40 -0700 (PDT)
-Date: Fri, 18 Oct 2024 15:08:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Imran Shaik <quic_imrashai@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] clk: qcom: Add support for Video Clock Controller on
- QCS8300
-Message-ID: <2wahtcgpz7juse325f6vp5od75pwrwyl5v3c2ln2xa64qzpvid@f43c7uxx34r6>
-References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
- <20241018-qcs8300-mm-patches-v1-6-859095e0776c@quicinc.com>
+	s=arc-20240116; t=1729253618; c=relaxed/simple;
+	bh=i37SaRzslbKXdvTWMx2bvwNLqVIaXZu7rKAifGB+qnQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=aMRnzHZt6oyZ/4oVcRenaLIClVy2z0lvEGi4H9pXZ87+f+fnuRRwTbj9NPhrpXJvH/QunNOiS0czKXVyO+eZkJCcBxmSX61qPLdvlnNclcLIP5BESTMVWMEbqNJAlh5Da0Fnitk/5vTWwQi5JEgF3lnHPvKIXSEZ9jX87cCR9TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hi3GfoBx; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=1aAs7Nlz9KxKA2Bf4GMSwxHrj241sfnt/4rLIpJMark=;
+	b=hi3GfoBx7kF86SUCNIdb/HBRd6UivOGLbw83IDAw3/2dLyY8mJOoj3SKts45MN
+	sdMtQyVnk4RmqF1zb9UF0eyT795fKg2IMMw0O5jyy585YiFWuVoSugOnJilp5NIJ
+	QSuvrRLwQnWvxxiw22K/BWLYRmajMVKz1biFihTgbcdv0=
+Received: from [192.168.22.184] (unknown [223.70.253.255])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDHT6hITRJnqFYVBw--.63805S2;
+	Fri, 18 Oct 2024 19:58:02 +0800 (CST)
+Message-ID: <641939fc-e001-4e4d-8297-58ebe5fc4194@163.com>
+Date: Fri, 18 Oct 2024 19:57:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018-qcs8300-mm-patches-v1-6-859095e0776c@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ext4: fix a assertion failure due to ungranted bh
+ dirting
+From: liubaolin <liubaolin12138@163.com>
+To: Jan Kara <jack@suse.cz>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, zhangshida@kylinos.cn,
+ longzhi@sangfor.com.cn, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Baolin Liu <liubaolin@kylinos.cn>
+References: <20241010025855.2632516-1-liubaolin12138@163.com>
+ <20241010092923.r53povuflevzhxrw@quack3>
+ <5dc22111.4718.19279c3f3b7.Coremail.liubaolin12138@163.com>
+ <20241016103301.rl6qngi2fb6yxjin@quack3>
+ <908502d6-cb0c-44ae-8c03-9a22c8c7fbf2@163.com>
+ <8c14e5b0-5229-4611-b8e6-434c6eb34ee9@163.com>
+ <20241018091444.tmzhbj73gvegfmb5@quack3>
+ <f5193380-57f8-40c4-b4d6-b8e8cc3d0977@163.com>
+In-Reply-To: <f5193380-57f8-40c4-b4d6-b8e8cc3d0977@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHT6hITRJnqFYVBw--.63805S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3AryUXw1rGw4fJr1kCr1UGFg_yoWxuw4rpr
+	y3Ka17Kr4UtryDArn2qF4UXrWUK34UXr9rXr15Gr1xZ390yrn3tF48tr10ka4DCrWDGw10
+	vr1UJr9rGr1jy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U3-BiUUUUU=
+X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/1tbiLh18ymcSPg36ewAAsC
 
-On Fri, Oct 18, 2024 at 04:42:34PM +0530, Imran Shaik wrote:
-> Add support to the QCS8300 Video clock controller by extending
-> the SA8775P Video clock controller, which is mostly identical
-> but QCS8300 has minor difference.
+> please feel free to add:
+> Reported-and-tested-by: Baolin Liu <liubaolin@kylinos.cn>
+> Reported-and-tested-by: Zhi Long <longzhi@sangfor.com.cn>
 > 
-> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-> ---
->  drivers/clk/qcom/videocc-sa8775p.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> Thank you.
+
+
+
+在 2024/10/18 19:34, liubaolin 写道:
+>> Sorry, I saw the patch you submitted.
+>> I would like to request a modification to the commit message.
+>> I use the email 'Baolin Liu liubaolin12138@163.com' for community 
+>> communication.
+>> However, my work email is 'Baolin Liu liubaolin@kylinos.cn'.
+>>
+>> So I would like to ask you to modify the commit message as follows:
+>> From:
+>> Reported-by: Baolin Liu liubaolin12138@163.com
+>> Reported-by: Zhi Long longzhi@sangfor.com.cn
+>> To:
+>> Reported-and-tested-by: Baolin Liu liubaolin@kylinos.cn
+>> Reported-and-tested-by: Zhi Long longzhi@sangfor.com.cn
+>>
+>> Could you please make the modification? Thank you.
 > 
-> diff --git a/drivers/clk/qcom/videocc-sa8775p.c b/drivers/clk/qcom/videocc-sa8775p.c
-> index bf5de411fd5d..d0494ba81f5f 100644
-> --- a/drivers/clk/qcom/videocc-sa8775p.c
-> +++ b/drivers/clk/qcom/videocc-sa8775p.c
-> @@ -524,6 +524,7 @@ static struct qcom_cc_desc video_cc_sa8775p_desc = {
->  
->  static const struct of_device_id video_cc_sa8775p_match_table[] = {
->  	{ .compatible = "qcom,sa8775p-videocc" },
-> +	{ .compatible = "qcom,qcs8300-videocc" },
-
-Sorted, please.
-
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, video_cc_sa8775p_match_table);
-> @@ -550,6 +551,9 @@ static int video_cc_sa8775p_probe(struct platform_device *pdev)
->  	clk_lucid_evo_pll_configure(&video_pll0, regmap, &video_pll0_config);
->  	clk_lucid_evo_pll_configure(&video_pll1, regmap, &video_pll1_config);
->  
-
-Comment?
-
-> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-videocc"))
-> +		regmap_write(regmap, video_cc_mvs0c_div2_div_clk_src.reg, 2);
-> +
->  	/* Keep some clocks always enabled */
->  	qcom_branch_set_clk_en(regmap, 0x80ec); /* VIDEO_CC_AHB_CLK */
->  	qcom_branch_set_clk_en(regmap, 0x8144); /* VIDEO_CC_SLEEP_CLK */
 > 
-> -- 
-> 2.25.1
+> 
+> 在 2024/10/18 17:14, Jan Kara 写道:
+>> On Fri 18-10-24 09:48:17, liubaolin wrote:
+>>>> Hello, I am very sorry.
+>>>> I did not previously understand the approach of your patch to solve 
+>>>> the issue.
+>>>> Yesterday, I intentionally injected faults during the quick 
+>>>> reproduction
+>>>> test, and indeed, after applying your patch, the crash issue was
+>>>> resolved and did not occur again.
+>>>> I finally understood your approach to solving the problem. Please 
+>>>> disregard my previous email.
+>>>> Thank you for helping me solve this crash issue in a better way.
+>>>> I still need to improve my skills in file systems, and I truly 
+>>>> appreciate your guidance.
+>>
+>> Great! Thanks for testing. I'll send the patch for inclusion then.
+>>
+>>                                 Honza
+>>
+>>> 在 2024/10/16 21:38, liubaolin 写道:
+>>>>> Hello,
+>>>>> I reviewed the patch attached in your email. The issue you mentioned
+>>>>> about clearing buffer_new(bh) in write_end_fn() is indeed a bug.
+>>>>> However, this patch does not resolve the crash issue we encountered.
+>>>>>
+>>>>> Let me explain my analysis in detail below.
+>>>>> The crash occurs in the function jbd2_journal_dirty_metadata().
+>>>>>
+>>>>> ext4_block_write_begin() -> ext4_journalled_zero_new_buffers() ->
+>>>>> write_end_fn()
+>>>>>   -> ext4_dirty_journalled_data() -> ext4_handle_dirty_metadata() ->
+>>>>> __ext4_handle_dirty_metadata()
+>>>>>   -> jbd2_journal_dirty_metadata()
+>>>>>
+>>>>> In the function jbd2_journal_dirty_metadata(), there is the
+>>>>> following condition:
+>>>>> —---------------------------------------------------------------------------------------------------
+>>>>>          if (data_race(jh->b_transaction != transaction &&
+>>>>>              jh->b_next_transaction != transaction)) {
+>>>>>                  spin_lock(&jh->b_state_lock);
+>>>>>                  J_ASSERT_JH(jh, jh->b_transaction == transaction ||
+>>>>>                                  jh->b_next_transaction == 
+>>>>> transaction);
+>>>>>                  spin_unlock(&jh->b_state_lock);
+>>>>>          }
+>>>>> ----------------------------------------------------------------------------------------------------
+>>>>> By analyzing the vmcore, I found that both jh->b_transaction and jh-
+>>>>>> b_next_transaction are NULL.
+>>>>> Through code analysis, I discovered that the
+>>>>> __jbd2_journal_file_buffer() function adds the corresponding
+>>>>> transaction of bh to jh->b_transaction.
+>>>>> Normally, this is accessed through do_journal_get_write_access(),
+>>>>> which can call __jbd2_journal_file_buffer().
+>>>>> The detailed function call process is as follows:
+>>>>> do_journal_get_write_access() -> ext4_journal_get_write_access() ->
+>>>>> __ext4_journal_get_write_access()
+>>>>>   -> jbd2_journal_get_write_access() -> do_get_write_access() ->
+>>>>> __jbd2_journal_file_buffer()
+>>>>>
+>>>>>
+>>>>> Therefore, resolving the crash issue requires obtaining write access
+>>>>> before calling the jbd2_journal_dirty_metadata() function.
+>>>>> The comment at the definition of the jbd2_journal_dirty_metadata()
+>>>>> function also states:     'The buffer must have previously had
+>>>>> jbd2_journal_get_write_access().'
+>>>>>
+>>>>> In the ext4_block_write_begin() function, if get_block() encounters
+>>>>> an error, then neither bh->b_this_page nor the subsequent bh calls
+>>>>> do_journal_get_write_access().
+>>>>> If bh->b_this_page and the subsequent bh are in the new state, it
+>>>>> will lead to a crash when reaching the jbd2_journal_dirty_metadata()
+>>>>> function.
+>>>>>
+>>>>> So, there are two ways to resolve this crash issue:
+>>>>> 1、Call do_journal_get_write_access() on bh that is not handled due
+>>>>> to get_block() error.
+>>>>>      The patch modification is in the attachment 0001-ext4-fix-a-
+>>>>> assertion-failure-due-to-ungranted-bh-dir.patch.
+>>>>>
+>>>>> 2、Call clear_buffer_new() on bh that is not handled due to
+>>>>> get_block() error.
+>>>>>      The patch modification is in the attachment 0001-ext4-fix-a-
+>>>>> assertion-failure-due-to-bh-not-clear-new.patch.
+>>>>>
+>>>>> Additionally, I have found a method to quickly reproduce this crash
+>>>>> issue.
+>>>>> For details, please refer to the email I previously sent you:
+>>>>> “https://lore.kernel.org/all/bd41c24b-7325-4584-
+>>>>> a965-392a32e32c74@163.com/”.
+>>>>> I have verified that this quick reproduction method works for both
+>>>>> solutions to resolve the issue.
+>>>>>
+>>>>> Please continue to consider which method is better to resolve this
+>>>>> issue. If you think that using clear_buffer_new() is a better
+>>>>> solution, I can resend the patch via git send-mail.
+>>>>
+>>>>
+>>>>
+>>>> 在 2024/10/16 18:33, Jan Kara 写道:
+>>>>> Hello,
+>>>>>
+>>>>> On Fri 11-10-24 12:08:58, Baolin Liu wrote:
+>>>>>> Greetings，
+>>>>>>
+>>>>>> This problem is reproduced by our customer using their own testing 
+>>>>>> tool
+>>>>>> “run_bug”. When I consulted with a client, the testing tool “run_bug”
+>>>>>> used a variety of background programs to benchmark (including memory
+>>>>>> pressure, cpu pressure, file cycle manipulation, fsstress Stress 
+>>>>>> testing
+>>>>>> tool, postmark program，and so on).
+>>>>>>
+>>>>>> The recurrence probability is relatively low.
+>>>>>
+>>>>> OK, thanks for asking!
+>>>>>
+>>>>>> In response to your query, in ext4_block_write_begin, the new 
+>>>>>> state will
+>>>>>> be clear before get block, and the bh that failed get_block will 
+>>>>>> not be
+>>>>>> set to new. However, when the page size is greater than the
+>>>>>> block size, a
+>>>>>> page will contain multiple bh.
+>>>>>
+>>>>> True. I wanted to argue that the buffer_new bit should be either
+>>>>> cleared in
+>>>>> ext4_block_write_begin() (in case of error) or in
+>>>>> ext4_journalled_write_end() (in case of success) but actually
+>>>>> ext4_journalled_write_end() misses the clearing. So I think the better
+>>>>> solution is like the attached patch. I'll submit it once testing 
+>>>>> finishes
+>>>>> but it would be great if you could test that it fixes your problems as
+>>>>> well. Thanks!
+>>>>>
+>>>>>                                  Honza
+>>>
 > 
 
--- 
-With best wishes
-Dmitry
 
