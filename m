@@ -1,150 +1,148 @@
-Return-Path: <linux-kernel+bounces-371017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D589A353A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:18:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330FD9A3542
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF56D2820DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:18:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629C71C23A87
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2723D18132F;
-	Fri, 18 Oct 2024 06:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C6418132F;
+	Fri, 18 Oct 2024 06:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMuCuTa7"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OOkGVZal"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFE115C144;
-	Fri, 18 Oct 2024 06:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D372173326;
+	Fri, 18 Oct 2024 06:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729232325; cv=none; b=ZaiHEZNqeapWeH0Ewtncg3PhT8DpeaG8ZB79TeSs5iy/EbCtsFvvrD4fy3loYvK1TWwWSvBm7mjI2QN0sfCGRvNW0WePQy9Y5w3soesxluzQjYeTNcGZf5HtMaQ1xZnDAMh6n65dPm2mSRMmdCtr/E+hvmUAOvE3TlHefxjtwqo=
+	t=1729232544; cv=none; b=dM/ucwGNYlwXQXkiIiTDgM1H2aeRF6XrkVEyIKRE8PubbZ7dX4tEV6JlWLAYRgdFohxcS5n0Nu1WP2IXUoU3ltm9NSULuG/iVAHSm0UjPMJGhJLFjB/D9/aSi2MN/rfzP6voKWQEeL/n6zCCb5761QX56g8bvVKU63uyd8pJias=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729232325; c=relaxed/simple;
-	bh=NzeMR7erdNWgJu71wd43ok/PJEvMdq8EmPPUMY13qLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ikdk0MyLXTIdutZSXRq6ClWBipldinhu07uvVHfy0113sJrALI0NOA6HO1/rjx7zs6x9+Ekh6n18KyTgvQHz0jY/ttj0ay4QI+Bh1aSS22nsklv5M5BvdgwuMILAzw2OgMxp0x9Qj7yveOEZ+JCkowMR5C97pIMzWiHMte8NE3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMuCuTa7; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e56750bb13so48007a91.2;
-        Thu, 17 Oct 2024 23:18:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729232323; x=1729837123; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ouUINbwY2JBh/LI60xwCfEtsQIXolR7Vwp/EQ6dj3+o=;
-        b=GMuCuTa7dJfbJ2Lg9UKOKhWq9467HQ3tbf3iqoWVLqkK5u4lh2T/G1692DARrNpzLn
-         gOrOazGE4gIYxm+yEglqctLkDrfd3x/ROGF1XHK8nX/NY08uivObiBTDj8U4dewcdJO4
-         jJxBgTTPzr7z+MjP6wzf4VeZLYSIaO9U18gzZddsaFG8HdTG4swkEP6GPxYlqBJ8phK8
-         7T4uz33dy4jbCawDQETH9WCdOSjqPK1/U6lRS6LeuEwHrUBDw6fparfA7ep3CqPBeYeN
-         efo3ZATC2/mqygkChqwzRHqywcbn5xmzY0R61AaGmATHYVkcoOMy+blI4UnpzSI/NdUP
-         GJyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729232323; x=1729837123;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ouUINbwY2JBh/LI60xwCfEtsQIXolR7Vwp/EQ6dj3+o=;
-        b=RFxgV6wQFEnAngw02fjCp/6qN3B8xd6yXZ3zQgvTqQjz1Wiydx/k1t5bcXONOpVwIz
-         8JmV9mHxBKnFESIUcmZDSQkBIU90S3nEDK7CXjQpKGBkvGxBcgrjDsVRn7GXCYlF17im
-         nlLtRsiMYva03FZh8BlMffxQ3+6n2l4zIjZQhKiNdQ5givGryX5jyMXSN7n1MBxYOwLE
-         uDB1uMW5UsB6nADzSwf4wVGN8JHGrq2kHEn1cCUgfFm6vom0deTG3cSlBM3kVHMD2ZBl
-         HuTOcK4gOZgmE4PrT7jy7UeyGb6in+sFDIvA9osu+7Cwxx2UZPVgEE79ICBYK9vNjEb4
-         3PaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXANVBTkxnaMrHqElC9q2YuJ7vWRp/q/r/LYvJCnY4Z428JtW5x3abGKuiRSRjaswDG3EkDcV4Klnue@vger.kernel.org, AJvYcCXK53K8ySzKEn+GNjXkawbLelmG1Su67uzamQzXIN/QrCB0qyk2JeI8+6/v6w0oTSr1/dyRschrZ54uUfab@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj8ZXZW3XWcrj5h3BkTHGwG8Re4zDvPbU3/QA4SwRYYrUAf/m9
-	fAkwfRyTSGXDxlqp74yZabY39yY1FhBx5VFfWWCkaWoNZaDLbaAcd1xLYw==
-X-Google-Smtp-Source: AGHT+IHTa4o1U0/RWcsBQd2x+1sXi55hJr+ER1bPmWHpKN8wglThFLNxkxKayVdgTq2xyvVigaVFug==
-X-Received: by 2002:a17:90b:1a81:b0:2e2:ada8:2984 with SMTP id 98e67ed59e1d1-2e5618d5990mr787518a91.4.1729232323248;
-        Thu, 17 Oct 2024 23:18:43 -0700 (PDT)
-Received: from [192.168.60.56] ([103.29.142.67])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8d6cf9sm5875815ad.143.2024.10.17.23.18.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 23:18:41 -0700 (PDT)
-Message-ID: <d2a200aa-1301-4940-a39c-0412fe741994@gmail.com>
-Date: Fri, 18 Oct 2024 14:18:35 +0800
+	s=arc-20240116; t=1729232544; c=relaxed/simple;
+	bh=IqLzXohJX66D2JZCurgrTzPtyopB1LzzrsvhGh3Zs9c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O0cZX4pwGrS9uT/5ToyP+Lssdv1gAvClhNIvn0jXJGYrzEwoW59wZevga7DBisEwigBWBWxRJilss+Oa2Vl7tJPuM296bb9jx6EeZ75NdTOpBLI6PUmfl3EJ99LKQ2KV7z7UgefbY0a5VlOy+sRUf4YiKjyK9gu7ZVbddxElkH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OOkGVZal; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729232543; x=1760768543;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=IqLzXohJX66D2JZCurgrTzPtyopB1LzzrsvhGh3Zs9c=;
+  b=OOkGVZaleFfZ6GR6YcjNwGLjkqFfOrvb+AxFm6nDt5G/98gcGTJTe47i
+   Zv99X48WcN5SimrlnlaDMEJgQ9WIjM3ycZ7lXiU5AfUcR3R/bnGkuIOgz
+   cRTz1k2NBLLhsByCHWt5Xe/MpdHHgonBJncszwTxaCu2Ycm0xls+yjLjQ
+   4VW4Znmxb/52ggtOHqNOu1Fnn/+fKEo0ob0Kk9yNBNJ2FAFM7Ombxnkik
+   8qJEGiIGyzG2kacg//UcejUOJaxbA1/Stg7pP3rPYtPqRGTGaaa9kWMJN
+   D84c8Lfv1FS02uAb+D3tMosLSEkY3tZ2rUbXc2mhKFOR1JERLrnob90pd
+   A==;
+X-CSE-ConnectionGUID: WsJ2c/l4S/Gf7VwCkGOmoA==
+X-CSE-MsgGUID: hLpBbT6gRTaxIJzpF0QQqw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="39340234"
+X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
+   d="scan'208";a="39340234"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 23:22:22 -0700
+X-CSE-ConnectionGUID: StR5ZspeTJuSkuNWioar0w==
+X-CSE-MsgGUID: mG8QVoyIRsOwn+kAvkzxCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
+   d="scan'208";a="78438998"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 23:22:19 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,  linux-cxl@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Davidlohr Bueso <dave@stgolabs.net>,
+  Gregory Price <gourry@gourry.net>,  Jonathan Cameron
+ <jonathan.cameron@huawei.com>,  Alison Schofield
+ <alison.schofield@intel.com>,  Vishal Verma <vishal.l.verma@intel.com>,
+  Ira Weiny <ira.weiny@intel.com>,  Alejandro Lucero <alucerop@amd.com>,
+  Ben Cheatham <benjamin.cheatham@amd.com>
+Subject: Re: [PATCH 2/5] cxl: Rename CXL_DECODER_HOSTONLYMEM/DEVMEM
+In-Reply-To: <67118dcd2ba4a_3f14294fe@dwillia2-xfh.jf.intel.com.notmuch> (Dan
+	Williams's message of "Thu, 17 Oct 2024 15:21:01 -0700")
+References: <20241015065713.308671-1-ying.huang@intel.com>
+	<20241015065713.308671-3-ying.huang@intel.com>
+	<67118dcd2ba4a_3f14294fe@dwillia2-xfh.jf.intel.com.notmuch>
+Date: Fri, 18 Oct 2024 14:18:47 +0800
+Message-ID: <87bjzi6iig.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: soc: rockchip: add rk3576 vo1-grf
- syscon
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, heiko@sntech.de, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- william.wu@rock-chips.com, tim.chen@rock-chips.com,
- yubing.zhang@rock-chips.com, Frank Wang <frank.wang@rock-chips.com>
-References: <20241017025230.28752-1-frawang.cn@gmail.com>
- <ca0ee8752791f53bac23933e1582dd86@manjaro.org>
-Content-Language: en-US
-From: Frank Wang <frawang.cn@gmail.com>
-In-Reply-To: <ca0ee8752791f53bac23933e1582dd86@manjaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 
-Hi Dragan,
+Hi, Dan,
 
-On 2024/10/18 13:02, Dragan Simic wrote:
-> Hello Frank,
+Dan Williams <dan.j.williams@intel.com> writes:
+
+> Huang Ying wrote:
+>> Previously, CXL type3 devices (memory expanders) use host only
+>> coherence (HDM-H), while CXL type2 devices (accelerators) use dev
+>> coherence (HDM-D).  So the name of the target device type of a cxl
+>> decoder is CXL_DECODER_HOSTONLYMEM for type3 devices and
+>> CXL_DECODER_DEVMEM for type2 devices.  However, this isn't true
+>> anymore.  CXL type3 devices can use dev coherence + back
+>> invalidation (HDM-DB) too.
+>> 
+>> To avoid confusion between the device type and coherence, the patch
+>> renames CXL_DECODER_HOSTONLYMEM/DEVMEM to CXL_DECODER_EXPANDER/ACCEL.
 >
-> On 2024-10-17 04:52, Frank Wang wrote:
->> From: Frank Wang <frank.wang@rock-chips.com>
->>
->> Add rockchip,rk3576-vo1-grf syscon compatible, the vo1-grf is
->> configured in usbdp phy driver.
->>
->> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
->> ---
->> Changelog:
->> v2:
->>  - This is a new patch adds rk3576-vo1-grf syscon.
+> This does not look like an improvement to me. Type-3 devices that
+> support back-invalidate are DEVMEM devices. The device plays a role in
+> the coherence. 
 >
-> Could you, please, clarify a bit why is this additional patch
-> needed in this series?
+> Your explanation is the reverse of this commit:
 >
+> 5aa39a9165cf cxl/port: Rename CXL_DECODER_{EXPANDER, ACCELERATOR} => {HOSTONLYMEM, DEVMEM}
+>
+> ...so I am confused what motivated this rename?
 
-I mentioned in the commit content. The usbdp-phy driver select dp lanes 
-via configuring the vo1-grf.
+Sorry, I am confused about the target_type and coherence and forgot to
+check the history.  In some places, current kernel still hints
+target_type (CXL_DECODER_HOSTONLYMEM/DEVMEM) as expander/accelerator.
+Should we change them to avoid confusion in the future?
 
-Best regards,
-Frank
+$ grep expander -r drivers/cxl/
+drivers/cxl/cxl.h:346: * @target_type: accelerator vs expander (type2 vs type3) selector
+drivers/cxl/core/region.c:2450: * @type: select whether this is an expander or accelerator (type-2 or type-3)
+drivers/cxl/core/port.c:141:		return sysfs_emit(buf, "expander\n");
 
->> v1:
->>  - none
->>
->>  Documentation/devicetree/bindings/soc/rockchip/grf.yaml | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
->> b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
->> index 50d727f4b76c6..fd42217ab85e7 100644
->> --- a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
->> +++ b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
->> @@ -33,6 +33,7 @@ properties:
->>                - rockchip,rk3576-usb-grf
->>                - rockchip,rk3576-usbdpphy-grf
->>                - rockchip,rk3576-vo0-grf
->> +              - rockchip,rk3576-vo1-grf
->>                - rockchip,rk3576-vop-grf
->>                - rockchip,rk3588-bigcore0-grf
->>                - rockchip,rk3588-bigcore1-grf
->> @@ -283,6 +284,7 @@ allOf:
->>          compatible:
->>            contains:
->>              enum:
->> +              - rockchip,rk3576-vo1-grf
->>                - rockchip,rk3588-vo-grf
->>                - rockchip,rk3588-vo0-grf
->>                - rockchip,rk3588-vo1-grf
+The last one is
 
+static ssize_t target_type_show(struct device *dev,
+				struct device_attribute *attr, char *buf)
+{
+	struct cxl_decoder *cxld = to_cxl_decoder(dev);
+
+	switch (cxld->target_type) {
+	case CXL_DECODER_DEVMEM:
+		return sysfs_emit(buf, "accelerator\n");
+	case CXL_DECODER_HOSTONLYMEM:
+		return sysfs_emit(buf, "expander\n");
+	}
+	return -ENXIO;
+}
+static DEVICE_ATTR_RO(target_type);
+
+for decoder device.  This is a testing ABI documented in,
+
+Documentation/ABI/testing/sysfs-bus-cxl
+
+Is it OK to change this?
+
+--
+Best Regards,
+Huang, Ying
 
