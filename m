@@ -1,57 +1,78 @@
-Return-Path: <linux-kernel+bounces-371712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA9E9A3EF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:57:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7E09A3EF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 393862820A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:57:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A481F25510
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7897518CBF1;
-	Fri, 18 Oct 2024 12:57:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F12F9DF;
-	Fri, 18 Oct 2024 12:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0F217ADF0;
+	Fri, 18 Oct 2024 12:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BjJBlnZs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D265813AA2A;
+	Fri, 18 Oct 2024 12:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729256238; cv=none; b=Si4lZZTmGUxpinX1NxbTdjYHnBrWQH64zKQHE4AHliRRvWCi72UNNXEQUeW5kyHiTcq5fkXeVPtqRTg+L1R0mY0g1OgwVaO6zHXLtwkTn+7DNNe3SPthIHJODrChzbtcoITwycqomX3yGlsuZe/oTu06vhbibNuzPrsz4yQf/bk=
+	t=1729256260; cv=none; b=qkHNP8aJEYkJ7Gi1h3QfMAmnyApQ151TjB0L4Cj6kv+bqsGzoHJZ5lZiGHxke7D7uTtmodFWRVnYKLIiQ+H5gSiQqq1onqHDpTl9TxE4tflwZlaBggNynDC1evKvJiJ964JU0JNbXXu5uj96exKsjLDTmqm+XtSJx4zOaUYusHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729256238; c=relaxed/simple;
-	bh=u8YJsDjnXx6waZcqswFEzrNIa9LHOweKyJMecaGgmz4=;
+	s=arc-20240116; t=1729256260; c=relaxed/simple;
+	bh=0vi3a1mXgYGi7GRXfKsrnUCbV0Q+BiHOW7Bq6nhRpVk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LyO/Ngmb4+ioNL/2sfBWp0k05ND7XPV+rRp245nYOTLgKGHmIHavz0+6VvGz4RpxxjNTRBffAI6hwSu+bxt+ex1eAHQbPk6gdvw92VqCYUx7qmygBCzaeAflhQOsBfXH5ev8rm0r06RoujO/S7Hl5dLB67M0oV/xeSu9GuL7/xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E4A5106F;
-	Fri, 18 Oct 2024 05:57:44 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EBC63F7F5;
-	Fri, 18 Oct 2024 05:57:12 -0700 (PDT)
-Date: Fri, 18 Oct 2024 13:57:09 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <arm-scmi@vger.kernel.org>,
-	justin.chen@broadcom.com, opendmb@gmail.com,
-	kapil.hali@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 2/2] firmware: arm_scmi: Support 'reg-io-width'
- property for shared memory
-Message-ID: <ZxJbJa8Q3V02yf_z@bogus>
-References: <20240827182450.3608307-1-florian.fainelli@broadcom.com>
- <20240827182450.3608307-3-florian.fainelli@broadcom.com>
- <20240903154000.GA2080277@bogus>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sVYK9yK80fGpoH3L4IvdE9EUPfWjYXh0pTM6Wa/gGVWB5k8C9TRxQVCLI9ZCBI67T9EvZHCuiajEqO+3aaTpPp6abK82I14O4AwdzOitPn5lMMaNXSWNewJHZ7RYlXN5A2xphBFQpjoH0NTwed1K9beHCtsqxWvqlNmTHm80n5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BjJBlnZs; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729256259; x=1760792259;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0vi3a1mXgYGi7GRXfKsrnUCbV0Q+BiHOW7Bq6nhRpVk=;
+  b=BjJBlnZsGx7fb0FLTgI9K5ZDeK7oDvGRIrp+z23hUjJzOSCnfatZmcRJ
+   UaPD6JPcDxnuw9qn4CuwKnc3D7HUwlpZ0E8URhnPXFPNlt+8QgttgLexa
+   4X/zDdFG1q7t4A3ckMD2Sk4MNEkkodrFjZdXVqweSn4RhUI3BRzFcQMvH
+   INqHt0ntSLY2t4chyVH63XjqISVDFAtvmHi9tavQfJYApa+3Z82rVoYMC
+   sNZaH7IPc1iayYc1oga27Bp4d7eRowNSe/ev1uOpbr2I3qPtJy3J4lXaO
+   47BaFcMJWY3OCwPZWSwrbgtG5kuX9fzhX5vGL+rM6y5glJ948UFSPImDz
+   Q==;
+X-CSE-ConnectionGUID: uZ78g29WR1u+jBEQxxm1sg==
+X-CSE-MsgGUID: CoAn6KX+TbOolnQRkRIDNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="39412773"
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="39412773"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:57:37 -0700
+X-CSE-ConnectionGUID: G9LB692CSuS0E4anPdXY2w==
+X-CSE-MsgGUID: r3KnnZ/hSOqpnxrDRYyR+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="79283610"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:57:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t1mXq-00000004T8S-2EsZ;
+	Fri, 18 Oct 2024 15:57:30 +0300
+Date: Fri, 18 Oct 2024 15:57:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, bhelgaas@google.com,
+	ilpo.jarvinen@linux.intel.com, mika.westerberg@linux.intel.com,
+	ying.huang@intel.com, bhe@redhat.com, tglx@linutronix.de,
+	takahiro.akashi@linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH] resource,kexec: walk_system_ram_res_rev must retain
+ resource flags
+Message-ID: <ZxJbOinZ0E4Ppmak@smile.fi.intel.com>
+References: <20241017190347.5578-1-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,45 +81,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240903154000.GA2080277@bogus>
+In-Reply-To: <20241017190347.5578-1-gourry@gourry.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Sep 03, 2024 at 04:40:00PM +0100, Sudeep Holla wrote:
-> On Tue, Aug 27, 2024 at 11:24:50AM -0700, Florian Fainelli wrote:
-> > Some shared memory areas might only support a certain access width,
-> > such as 32-bit, which memcpy_{from,to}_io() does not adhere to at least
-> > on ARM64 by making both 8-bit and 64-bit accesses to such memory.
-> >
-> > Update the shmem layer to support reading from and writing to such
-> > shared memory area using the specified I/O width in the Device Tree. The
-> > various transport layers making use of the shmem.c code are updated
-> > accordingly to pass the I/O accessors that they store.
-> >
+On Thu, Oct 17, 2024 at 03:03:47PM -0400, Gregory Price wrote:
+> walk_system_ram_res_rev() erroneously discards resource flags when
+> passing the information to the callback.
 > 
-> This looks good to me now, much simpler. I will push this to -next soon,
-> but it won't be for v6.12. I have already sent PR for that. I want this
-> to be in -next for longer just to see if anyone has any comments and
-> doesn't break any platform(which it shouldn't anyways).
+> This causes systems with IORESOURCE_SYSRAM_DRIVER_MANAGED memory to
+> have these resources selected during kexec to store kexec buffers
+> if that memory happens to be at placed above normal system ram.
 > 
-> Just hoping if anyone looks at it and have feedback once it is in -next.
-> I will apply formally at v6.12-rc1 and report back if no one complains
-> until then.
+> This leads to undefined behavior after reboot. If the kexec buffer
+> is never touched, nothing happens. If the kexec buffer is touched,
+> it could lead to a crash (like below) or undefined behavior.
 > 
+> Tested on a system with CXL memory expanders with driver managed
+> memory, TPM enabled, and CONFIG_IMA_KEXEC=y. Adding printk's
+> showed the flags were being discarded and as a result the check
+> for IORESOURCE_SYSRAM_DRIVER_MANAGED passes.
+> 
+> find_next_iomem_res: name(System RAM (kmem))
+> 		     start(10000000000)
+> 		     end(1034fffffff)
+> 		     flags(83000200)
+> 
+> locate_mem_hole_top_down: start(10000000000) end(1034fffffff) flags(0)
+> 
+> [.] BUG: unable to handle page fault for address: ffff89834ffff000
 
-Hi Florian,
+Please, cut this down to only important ~3-5 lines as suggested in
+the Submitting Patches documentation.
 
-Just thought I will check with you if the content is -next are fine as I now
-recall I did the rebase as this patch was original posted before the rework
-of transport as modules were merged. Please confirm if you are happy with the
-rebase as you see in -next. I also had to rebase it on recent fixes that
-Justin added as there were trivial conflicts.
+Yeah, I see that Andrew applied it to hist testing branch, if it's not going to
+be updated there, consider above as a hint for the future contributions with
+backtraces.
 
-Another thing I wanted to check is if [1] series has any impact on this.
-IIUC no, but it would be good to give a go in terms of testing just in case
-that as well lands in -next.
+-- 
+With Best Regards,
+Andy Shevchenko
 
---
-Regards,
-Sudeep
 
-[1] https://lore.kernel.org/all/20241010123627.695191-1-jvetter@kalrayinc.com
 
