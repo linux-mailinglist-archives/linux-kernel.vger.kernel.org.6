@@ -1,273 +1,84 @@
-Return-Path: <linux-kernel+bounces-372262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED4B19A4664
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:01:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB4B9A4571
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60AC41F22C79
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:01:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E981F230DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C9420409B;
-	Fri, 18 Oct 2024 19:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007BE204929;
+	Fri, 18 Oct 2024 18:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NFYt2vTC"
-Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Q9MeujY+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D228C180A81;
-	Fri, 18 Oct 2024 19:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787121362;
+	Fri, 18 Oct 2024 18:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729278065; cv=none; b=a+Hix+QrJmE3iN7ADsP4/RWDVb/zGXZV+ldx4GMb7h7jqXG7D00w4CsRpQ8j/0ih7qjerhUu6hrZGQF0MZ5l4EaHS/6r0bJQcPadkpQUQTL+obkLb0xKav7qansaLRehryWtOzZxYU2ey1mKLaNPajVDPAOLRDuNKZb0takKj8E=
+	t=1729274931; cv=none; b=gG0hjDon9KNPXM6HaFvMzVd1i1uhXCZloNVkdlzgQbszEc44cCFiByZvLXiTQ+ZSc0amDk9bfGSD+p7augy06MEhahdFtYFl2WBIPNwezMH+e/dno+klOj65QgeWqJ2xGMDzKOvChivcKTs7edg/4uzkzn0eXGTllmV8Oy2WauU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729278065; c=relaxed/simple;
-	bh=EydGRGcq8QCzsPna4RGnx0xho3nuZGcGiMULYn2D2eI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D+zGjbcjTS4T4RsUENucHVDJNprw4jRf1zo2Yw3zx0pQjb/JYmETwNU9ZTiwX/VyL3dNUpeFpWvAh/jQ+ojwybD4xvD+2mZZd24OhfJQOz4KJL7bc9KWFQtGD0u8zMhZRGwM1SSdhXdVl52QgADsOpNhrQDHB0zh/T7gIi3/dxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=NFYt2vTC; arc=none smtp.client-ip=193.252.23.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 1qQZtV2hkZN8O1qQatW0HN; Fri, 18 Oct 2024 19:06:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1729271178;
-	bh=86Chs4ufIR1yiNI3+jlRXdlCATqvdX/rue8dEZfqmY8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=NFYt2vTChDSlF/Hz8uFqAOz7QfY9oKjoSlUy5akyaSBEv++hkr2Q+elOaa92OS9nZ
-	 SIzEhw8fzbYEO3kCmCcSCy0Hsbi3ZdBA1pVFk01XW5R9hjn4oVAnDeP2wVhwA993qK
-	 aeLsWd/xPsc1NdypyYuOXfjzdNMvQFEgawtadaou5J7cpM7oPSOm3MncZe9T2fAYeQ
-	 ycc6LZGHeTIvjF+5gy523jKJTEtPnl2IQ/QRy89mkC17+X8lWSvBbmh0YP9yU/4k4D
-	 NbsgafSHeEQOSXg6v791LqBCqJ7ngy8A0BIxnMxaMseLD4KNM7WuechRJd9Z0aAHMI
-	 CZ0VGPtWBM/xQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 18 Oct 2024 19:06:18 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-mtd@lists.infradead.org,
-	linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] mtd: spinand: Constify struct nand_ecc_engine_ops
-Date: Fri, 18 Oct 2024 19:05:57 +0200
-Message-ID: <72597e9de2320a4109be2112e696399592edacd4.1729271136.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729274931; c=relaxed/simple;
+	bh=O7WmOZ/UWH+i6C84k6Hkmat7ALV0t6fNrZmBj6MQNNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rxzm4191RI3qbJ03J9wOFga8tOtVE7DytT3sk3rZLE8CkrcTXFBdKlTZUxlehQTWJU9XfOOxZz3Hpp1BBKQT4wLR+t+1MP7V7S0b9ih9Ld6oGZSAMhd5n7gl9JQo+hMzBfsnVMQnq5iIHlZI/S8u4ZemBKw5mBygMzFAT3JfxcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Q9MeujY+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=3IRrbV8v30eu6geVm8BmPCV09DcMpdtg/tZrGVi3N8k=; b=Q9MeujY+Jap/0raH44mEE2d3nT
+	b8oi9FqKjqfmCzU8GOmxsekCR/1atIFDdtfE5IJQS88hczrw/oP7ILXwYG3P3oo0wVLdn53Yfd8Jr
+	qyD/m+M0GSj3k0TnfwxgmgRPPYWVYw0JP+v5vG+NwzDOtGsSsDyzRX6/jrVSQjJs5L5I=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t1rP2-00AYVm-9X; Fri, 18 Oct 2024 20:08:44 +0200
+Date: Fri, 18 Oct 2024 20:08:44 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 0/2] pinctrl: qcom: Introduce Pinctrl for QCS8300
+Message-ID: <f9dace93-f6c7-40c2-a6d2-60ce8043aa72@lunn.ch>
+References: <20241018-qcs8300_tlmm-v3-0-8b8d3957cf1a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018-qcs8300_tlmm-v3-0-8b8d3957cf1a@quicinc.com>
 
-'struct nand_ecc_engine_ops' are not modified in these drivers.
+On Fri, Oct 18, 2024 at 11:19:30AM +0800, Jingyi Wang wrote:
+> Introduce Top Level Mode Multiplexer dt-binding and driver for Qualcomm
+> QCS8300 SoC.
+> 
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+I'm curious why you are Cc: netdev for a pin controller patch?  Did
+./scripts/get_maintainer.pl say you should?
 
-Update the prototype of mxic_ecc_get_pipelined_ops() accordingly.
+    Andrew
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  16709	   1374	     16	  18099	   46b3	drivers/mtd/nand/ecc-mxic.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  16789	   1294	     16	  18099	   46b3	drivers/mtd/nand/ecc-mxic.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only.
----
- drivers/mtd/nand/ecc-mxic.c       |  6 +++---
- drivers/mtd/nand/ecc-sw-bch.c     |  2 +-
- drivers/mtd/nand/ecc-sw-hamming.c |  2 +-
- drivers/mtd/nand/spi/core.c       |  2 +-
- drivers/spi/spi-mtk-snfi.c        |  2 +-
- drivers/spi/spi-mxic.c            | 10 +++++-----
- include/linux/mtd/nand-ecc-mxic.h |  4 ++--
- include/linux/mtd/nand.h          |  2 +-
- 8 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/mtd/nand/ecc-mxic.c b/drivers/mtd/nand/ecc-mxic.c
-index 47e10945b8d2..86895e09328f 100644
---- a/drivers/mtd/nand/ecc-mxic.c
-+++ b/drivers/mtd/nand/ecc-mxic.c
-@@ -723,21 +723,21 @@ static int mxic_ecc_finish_io_req_pipelined(struct nand_device *nand,
- 	return ret;
- }
- 
--static struct nand_ecc_engine_ops mxic_ecc_engine_external_ops = {
-+static const struct nand_ecc_engine_ops mxic_ecc_engine_external_ops = {
- 	.init_ctx = mxic_ecc_init_ctx_external,
- 	.cleanup_ctx = mxic_ecc_cleanup_ctx,
- 	.prepare_io_req = mxic_ecc_prepare_io_req_external,
- 	.finish_io_req = mxic_ecc_finish_io_req_external,
- };
- 
--static struct nand_ecc_engine_ops mxic_ecc_engine_pipelined_ops = {
-+static const struct nand_ecc_engine_ops mxic_ecc_engine_pipelined_ops = {
- 	.init_ctx = mxic_ecc_init_ctx_pipelined,
- 	.cleanup_ctx = mxic_ecc_cleanup_ctx,
- 	.prepare_io_req = mxic_ecc_prepare_io_req_pipelined,
- 	.finish_io_req = mxic_ecc_finish_io_req_pipelined,
- };
- 
--struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void)
-+const struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void)
- {
- 	return &mxic_ecc_engine_pipelined_ops;
- }
-diff --git a/drivers/mtd/nand/ecc-sw-bch.c b/drivers/mtd/nand/ecc-sw-bch.c
-index 405552d014a8..0d9310dd6f52 100644
---- a/drivers/mtd/nand/ecc-sw-bch.c
-+++ b/drivers/mtd/nand/ecc-sw-bch.c
-@@ -384,7 +384,7 @@ static int nand_ecc_sw_bch_finish_io_req(struct nand_device *nand,
- 	return max_bitflips;
- }
- 
--static struct nand_ecc_engine_ops nand_ecc_sw_bch_engine_ops = {
-+static const struct nand_ecc_engine_ops nand_ecc_sw_bch_engine_ops = {
- 	.init_ctx = nand_ecc_sw_bch_init_ctx,
- 	.cleanup_ctx = nand_ecc_sw_bch_cleanup_ctx,
- 	.prepare_io_req = nand_ecc_sw_bch_prepare_io_req,
-diff --git a/drivers/mtd/nand/ecc-sw-hamming.c b/drivers/mtd/nand/ecc-sw-hamming.c
-index 254db2e7f8bb..f2d0effad9d2 100644
---- a/drivers/mtd/nand/ecc-sw-hamming.c
-+++ b/drivers/mtd/nand/ecc-sw-hamming.c
-@@ -638,7 +638,7 @@ static int nand_ecc_sw_hamming_finish_io_req(struct nand_device *nand,
- 	return max_bitflips;
- }
- 
--static struct nand_ecc_engine_ops nand_ecc_sw_hamming_engine_ops = {
-+static const struct nand_ecc_engine_ops nand_ecc_sw_hamming_engine_ops = {
- 	.init_ctx = nand_ecc_sw_hamming_init_ctx,
- 	.cleanup_ctx = nand_ecc_sw_hamming_cleanup_ctx,
- 	.prepare_io_req = nand_ecc_sw_hamming_prepare_io_req,
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index 4d76f9f71a0e..b1df7f627161 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -337,7 +337,7 @@ static int spinand_ondie_ecc_finish_io_req(struct nand_device *nand,
- 	return ret;
- }
- 
--static struct nand_ecc_engine_ops spinand_ondie_ecc_engine_ops = {
-+static const struct nand_ecc_engine_ops spinand_ondie_ecc_engine_ops = {
- 	.init_ctx = spinand_ondie_ecc_init_ctx,
- 	.cleanup_ctx = spinand_ondie_ecc_cleanup_ctx,
- 	.prepare_io_req = spinand_ondie_ecc_prepare_io_req,
-diff --git a/drivers/spi/spi-mtk-snfi.c b/drivers/spi/spi-mtk-snfi.c
-index debe0e3c1c8b..4169d622f28c 100644
---- a/drivers/spi/spi-mtk-snfi.c
-+++ b/drivers/spi/spi-mtk-snfi.c
-@@ -776,7 +776,7 @@ static int mtk_snand_ecc_finish_io_req(struct nand_device *nand,
- 	return snf->ecc_stats.failed ? -EBADMSG : snf->ecc_stats.bitflips;
- }
- 
--static struct nand_ecc_engine_ops mtk_snfi_ecc_engine_ops = {
-+static const struct nand_ecc_engine_ops mtk_snfi_ecc_engine_ops = {
- 	.init_ctx = mtk_snand_ecc_init_ctx,
- 	.cleanup_ctx = mtk_snand_ecc_cleanup_ctx,
- 	.prepare_io_req = mtk_snand_ecc_prepare_io_req,
-diff --git a/drivers/spi/spi-mxic.c b/drivers/spi/spi-mxic.c
-index 9699e0bb6a5e..809767d3145c 100644
---- a/drivers/spi/spi-mxic.c
-+++ b/drivers/spi/spi-mxic.c
-@@ -649,7 +649,7 @@ static int mxic_spi_transfer_one(struct spi_controller *host,
- /* ECC wrapper */
- static int mxic_spi_mem_ecc_init_ctx(struct nand_device *nand)
- {
--	struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
-+	const struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
- 	struct mxic_spi *mxic = nand->ecc.engine->priv;
- 
- 	mxic->ecc.use_pipelined_conf = true;
-@@ -659,7 +659,7 @@ static int mxic_spi_mem_ecc_init_ctx(struct nand_device *nand)
- 
- static void mxic_spi_mem_ecc_cleanup_ctx(struct nand_device *nand)
- {
--	struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
-+	const struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
- 	struct mxic_spi *mxic = nand->ecc.engine->priv;
- 
- 	mxic->ecc.use_pipelined_conf = false;
-@@ -670,7 +670,7 @@ static void mxic_spi_mem_ecc_cleanup_ctx(struct nand_device *nand)
- static int mxic_spi_mem_ecc_prepare_io_req(struct nand_device *nand,
- 					   struct nand_page_io_req *req)
- {
--	struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
-+	const struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
- 
- 	return ops->prepare_io_req(nand, req);
- }
-@@ -678,12 +678,12 @@ static int mxic_spi_mem_ecc_prepare_io_req(struct nand_device *nand,
- static int mxic_spi_mem_ecc_finish_io_req(struct nand_device *nand,
- 					  struct nand_page_io_req *req)
- {
--	struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
-+	const struct nand_ecc_engine_ops *ops = mxic_ecc_get_pipelined_ops();
- 
- 	return ops->finish_io_req(nand, req);
- }
- 
--static struct nand_ecc_engine_ops mxic_spi_mem_ecc_engine_pipelined_ops = {
-+static const struct nand_ecc_engine_ops mxic_spi_mem_ecc_engine_pipelined_ops = {
- 	.init_ctx = mxic_spi_mem_ecc_init_ctx,
- 	.cleanup_ctx = mxic_spi_mem_ecc_cleanup_ctx,
- 	.prepare_io_req = mxic_spi_mem_ecc_prepare_io_req,
-diff --git a/include/linux/mtd/nand-ecc-mxic.h b/include/linux/mtd/nand-ecc-mxic.h
-index b125926e458c..0da4b2999576 100644
---- a/include/linux/mtd/nand-ecc-mxic.h
-+++ b/include/linux/mtd/nand-ecc-mxic.h
-@@ -16,7 +16,7 @@ struct mxic_ecc_engine;
- 
- #if IS_ENABLED(CONFIG_MTD_NAND_ECC_MXIC) && IS_REACHABLE(CONFIG_MTD_NAND_CORE)
- 
--struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void);
-+const struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void);
- struct nand_ecc_engine *mxic_ecc_get_pipelined_engine(struct platform_device *spi_pdev);
- void mxic_ecc_put_pipelined_engine(struct nand_ecc_engine *eng);
- int mxic_ecc_process_data_pipelined(struct nand_ecc_engine *eng,
-@@ -24,7 +24,7 @@ int mxic_ecc_process_data_pipelined(struct nand_ecc_engine *eng,
- 
- #else /* !CONFIG_MTD_NAND_ECC_MXIC */
- 
--static inline struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void)
-+static inline const struct nand_ecc_engine_ops *mxic_ecc_get_pipelined_ops(void)
- {
- 	return NULL;
- }
-diff --git a/include/linux/mtd/nand.h b/include/linux/mtd/nand.h
-index 1e4208040956..0e2f228e8b4a 100644
---- a/include/linux/mtd/nand.h
-+++ b/include/linux/mtd/nand.h
-@@ -293,7 +293,7 @@ enum nand_ecc_engine_integration {
- struct nand_ecc_engine {
- 	struct device *dev;
- 	struct list_head node;
--	struct nand_ecc_engine_ops *ops;
-+	const struct nand_ecc_engine_ops *ops;
- 	enum nand_ecc_engine_integration integration;
- 	void *priv;
- };
--- 
-2.47.0
-
+pw-bot: cr
 
