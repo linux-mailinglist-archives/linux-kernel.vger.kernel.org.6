@@ -1,93 +1,113 @@
-Return-Path: <linux-kernel+bounces-371504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53FA29A3BFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:49:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D309A3C0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F425281340
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:49:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A04D7B2666F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E6D202650;
-	Fri, 18 Oct 2024 10:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88490202624;
+	Fri, 18 Oct 2024 10:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RBRPAQEO"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="i/xJbZrg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TS8cyIt8"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0055202628
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1142F2036F9;
+	Fri, 18 Oct 2024 10:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729248550; cv=none; b=GkI75ykl/30tsEO6hhVXh/miJoIBuKIM4CaVOt1Z+cjOdhfpeasfZr3BKGREW80wHUpl7AhisTS/nR0YcZMk0FiEk22AH3OoJXbP5kYfb13slIPiy8C/iHsuzPUuQ/JigPniWtB03dtu+gkiYwouqP/ekj/zgMKgK9lg7j4awQs=
+	t=1729248564; cv=none; b=aK2g3NBoHVES/XwZh4cN05WjGPrLmQJblbVA9nlXtpS+jwZ74uXmVmbIaJ7OnIZGYq17UDY2a2aXpRDGpZL7oVok+HlgLxYgFfr9y7RHaxWFJsBzxq01o6uG87FNyL+R3YjHzMQEvIPFtm2Xfd600E8P88+Tch9jo4Om3Weoc0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729248550; c=relaxed/simple;
-	bh=wr1iRFq7iN4x+9pRN12+7fDUIC9HMcj38lG/hyXOCnw=;
+	s=arc-20240116; t=1729248564; c=relaxed/simple;
+	bh=cERpOJNcFUtahnaQux82n4tPWU1j9Z1ogqBHffq0xVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WIJDOJtTjNL44c1Ye3nvLMUhxW1CvXk1Oi5ah3LOEtr2ll3mc7a7rKRLJKroQE0PVWowlK1nM6u1PY97Ul6aB154u446aqxk5RRdcv5ai41Yh5vgJUrmumNsiFlB6jvZ/Ryqd6dKP8VkMKPIKMcmGKHkPcMcztN2RGeO2pjeNYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RBRPAQEO; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f8490856so2342874e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:49:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729248546; x=1729853346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gNtj1520nO/dJZLvoCXMLAGQoHCtBOdOq7yx+2L3fGM=;
-        b=RBRPAQEOlVUOg5dOsofpTnDUjeIWwW3R7i5yYFQ0EI/DIgN34Zzg81u9YAmXY6+snp
-         yIYxVI0CRrEeoAIL+tnzcdbZxslNcFQlQekUGwZibhVPhhpi/TlkVG5/y1bNK6lSP3Kr
-         /gU9Le/6q+pRHHazNG5tnw1DHZ2rzl63lCeFHhWTXouEqu2utA4rYwG9PJVhE4VZh/f3
-         LgNf06CtzTMXzkC2MU7XIEG53Rv8WBidCJaNS5B63W/6Y2JH8Mt1CbeLkoM54L8QSn4L
-         jpY7RTZG82ciP92Ozz2BeXqcKgXnSfxs31m3Br2D+0/sQRhYZMsfP0mVEUA4fy5TvLnE
-         e6yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729248546; x=1729853346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gNtj1520nO/dJZLvoCXMLAGQoHCtBOdOq7yx+2L3fGM=;
-        b=QKWA1orrvOxLrffA4rLJ5ghQo6zuo40Tf8XdSDMAvp3AdAI8XA/+NIxr27UXBFHGOc
-         QdKAU8FkDa8Cdn73aPD8kBkz5xBbgrcEPnDQAI2186+q5ur3S/2PmRxwNCBT6VPKpdlw
-         A0T6yjr5qyg/1XvKK2dD0pY2dbuIva9NMlDIJf2RRwr0w2E/7Y4aRa3wNliB34fzFChB
-         Q7LSgy/hk8GXb+hW3k7dJnHJqElHMwOAnudIyniDqUhEaEmHgi5D/9Bn3MW8Ui9m0LVa
-         2hjgrN1wEw9ybBwf+KuzTRVqGv4YnmPh2B9Jak0//zXzo63SqNQqJxN0b+pzhSlJr3J1
-         tqZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXC9IShf/dtmwXw6yKE43/GELkMZQN9OF6LoanKpcocdYGU12XZfqwnlKcc7TzAEDbKty0UCL+cZueDFtA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS8TC8qx7FdFxkDTn5M6x/zdaHbirxcmgLHGw52PJ81T06hZX6
-	djMVuP+r+6FWlVELxHxxAneD1NrSc/DzWKX6TfRZn6iGp+N+tZa8yZqjxEjEDGw=
-X-Google-Smtp-Source: AGHT+IHE+iZFyneUUs1Mw89eQrR5BtWwMErFKT+LuOvyRT6hNtiWczLi1qhZhpeMOJbbPBh7L5Fw0w==
-X-Received: by 2002:a05:6512:398f:b0:539:f2f6:c6fe with SMTP id 2adb3069b0e04-53a1545ddeemr1184531e87.16.1729248545189;
-        Fri, 18 Oct 2024 03:49:05 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a1520482bsm184384e87.239.2024.10.18.03.49.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 03:49:03 -0700 (PDT)
-Date: Fri, 18 Oct 2024 13:49:01 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Andersson <quic_bjorande@quicinc.com>, 
-	Wesley Cheng <quic_wcheng@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Tingwei Zhang <quic_tingweiz@quicinc.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-phy@lists.infradead.org, quic_ppratap@quicinc.com, 
-	quic_jackp@quicinc.com
-Subject: Re: [PATCH v2 5/5] phy: qcom: qmp-usbc: Add qmp configuration for
- QCS615
-Message-ID: <7fbr744shxfk4rf5k6izjs43lyd4suraznsdib5uanbwcll322@446iulvtwokd>
-References: <20241017130701.3301785-1-quic_kriskura@quicinc.com>
- <20241017130701.3301785-6-quic_kriskura@quicinc.com>
- <CAA8EJprcOU6qeJvHH+MVoPnQ+mGcos=pDOVBSeSUfBGw-KR6tA@mail.gmail.com>
- <aa68e5ab-86a6-430e-92d8-ed89b4eb37f7@quicinc.com>
- <CAA8EJprkq-Cct9Uk1Jwqc5Rn8mx8THTRgwCzDx=8ZgbCpwD7qw@mail.gmail.com>
- <684582c3-3559-4c54-8257-cb952bbfe2ec@quicinc.com>
- <l4wpt5qin3ezkowf3puvodrm5wjsptd4a32f4qrzcuuquo6kq6@j2orv5z5quln>
- <479f7aa2-0401-40d5-8e2f-d7512aeab0c0@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g1JOrWhacBn9arpLhI/Cri3cx5GET29dBkyGm+tCybv9qJyDPn9SETlTIvXi2DFxP/ECBNLt3IoetR3poi4n+KA3tSN4vDVhkRTJz36yIkYTIrp3lHrT0Vnz/Yx5j1lb8fWs1in983RWOU/fSVMDYr5A8JWWDFyp+INR9Escfws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=i/xJbZrg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TS8cyIt8; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 1D8BB1380499;
+	Fri, 18 Oct 2024 06:49:21 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Fri, 18 Oct 2024 06:49:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729248561; x=
+	1729334961; bh=mvvVjoh3e6ihasKm0bBvrghicZuE833642Mybcjr34U=; b=i
+	/xJbZrgcdFQZSmjOWvK/cUQ+9Bhug/+Jr0N7UXHpOQSUZg191jpCnxxa+VgDRtOi
+	ippa4VUGV4jIYKRcMrhUnauix2a6TX4jBdEXgfFK7pNRjuKgIt5U9POgYGiAbwU1
+	b6z4V982jZZZIKzbmbOPz5SskZTZQfWl/3SCEIm7xiwiv8HhbThejeQiNOHXaRlc
+	S+xZtwFCPisqUf7YNqwO3ODL0WmnHeE24KsjPpqITI4kMEaUi5GAUd/SZkYJXwdu
+	/LgULR8RP5ECvGyubNfP7HitfaniaCgDg5wEkON8XweHw0nnJHKT7AyKYHVYCNZF
+	z94Bsed1AgXl7JomIflLA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1729248561; x=1729334961; bh=mvvVjoh3e6ihasKm0bBvrghicZuE
+	833642Mybcjr34U=; b=TS8cyIt8RghdTeQHg9i1O2IWahrzy7CN5Xyj6eVTFOn8
+	ZXWcdjQR3+YQQvwLxnakVlTXbxY951v8YAfGHnGFggZECp3m5oOS101Si1RUwsrU
+	J88O8MDBPz9Da7HIlzLb2OGNlhDc+kNHqtW/bbJ+GRA5ush94ZBu3ZKyTFetRPPW
+	/rEDWjFpFG13xaNf1NfFK64WauuqHo0o2XBJnNA6HQAS+PvaTlq100by+SnQciaA
+	ajrztvBkApxEVKqbGDVlEws4sWTzLxF/lqHr/a10xjU516RP2WLpO1c4zII1hzKx
+	gedYKa8x0jKYCDLHATkSIk++kQT7uMRR84Hy/v8UiA==
+X-ME-Sender: <xms:LT0SZx5AYByC2-Kwzd1igZjoPH6zU8bTJdNEGXzdHEq0XdevF0fqMg>
+    <xme:LT0SZ-5cNPb6udtg5tyByiLsZ0sN_IfGJYy1IKTczOJIaqODYWBCr9cDHkqXbk9mn
+    em50ui1BWPaMUsj4sk>
+X-ME-Received: <xmr:LT0SZ4e9keYCZoxZXmC4G4WuzHt3xwct9GXr7E4X_j4E0v3QALduIyc0zkCqN6s6d7Oqaw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehfedgfedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehrohgsvghrthhordhsrghsshhusehhuhgrfigvihgtlhhouhgurdgtohhmpdhr
+    tghpthhtohepphgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphhtthhopegvsg
+    hpqhifvghrthihgeejvdduvdefsehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhhirhhi
+    lhhlrdhshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhope
+    iiohhhrghrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepughmihhtrhihrdhk
+    rghsrghtkhhinhesghhmrghilhdrtghomhdprhgtphhtthhopegvrhhitgdrshhnohifsg
+    gvrhhgsehorhgrtghlvgdrtghomhdprhgtphhtthhopehjmhhorhhrihhssehnrghmvghi
+    rdhorhhgpdhrtghpthhtohepshgvrhhgvgeshhgrlhhlhihnrdgtohhm
+X-ME-Proxy: <xmx:LT0SZ6JorCvf9kFFrHrvBx1UJOtOMruMaNBR2Pbu7IE-_H4OVpqkEA>
+    <xmx:LT0SZ1LdBazL3EHmJx-AXaqv9AO2jRnX7pNQPWvt_eXemrfYHVb0gQ>
+    <xmx:LT0SZzyE1ScJT0Pj8Il-L0aagNuQOpr1bOPeGLTMkW_qkcpjTOc3Pw>
+    <xmx:LT0SZxLHpCxlCPbMN5FxvGWgWf8rsmuxJFg7K1f9L1TFJpj-WzTlWQ>
+    <xmx:MT0SZ98yDcnInQ9q8Z58C75Rk4vCMWaEfSHTbB1xfkXGauBTCt9qo-kO>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 18 Oct 2024 06:49:11 -0400 (EDT)
+Date: Fri, 18 Oct 2024 13:49:06 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Paul Moore <paul@paul-moore.com>, ebpqwerty472123@gmail.com, 
+	kirill.shutemov@linux.intel.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, vbabka@suse.cz, 
+	lorenzo.stoakes@oracle.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ima: Remove inode lock
+Message-ID: <ggvucjixgiuelt6vjz6oawgyobmzrhifaozqqvupwfso65ia7c@bauvfqtvq6lv>
+References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
+ <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
+ <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
+ <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
+ <593282dbc9f48673c8f3b8e0f28e100f34141115.camel@huaweicloud.com>
+ <15bb94a306d3432de55c0a12f29e7ed2b5fa3ba1.camel@huaweicloud.com>
+ <c1e47882720fe45aa9d04d663f5a6fd39a046bcb.camel@huaweicloud.com>
+ <b498e3b004bedc460991e167c154cc88d568f587.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,67 +116,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <479f7aa2-0401-40d5-8e2f-d7512aeab0c0@quicinc.com>
+In-Reply-To: <b498e3b004bedc460991e167c154cc88d568f587.camel@huaweicloud.com>
 
-On Fri, Oct 18, 2024 at 03:53:22PM +0530, Krishna Kurapati wrote:
-> 
-> 
-> On 10/18/2024 3:41 PM, Dmitry Baryshkov wrote:
-> > On Fri, Oct 18, 2024 at 05:01:48PM +0800, Tingwei Zhang wrote:
-> > > On 10/18/2024 4:06 PM, Dmitry Baryshkov wrote:
-> > > > On Fri, 18 Oct 2024 at 10:48, Tingwei Zhang <quic_tingweiz@quicinc.com> wrote:
-> > > > > 
-> > > > > On 10/18/2024 2:27 AM, Dmitry Baryshkov wrote:
-> > > > > > On Thu, 17 Oct 2024 at 16:07, Krishna Kurapati
-> > > > > > <quic_kriskura@quicinc.com> wrote:
-> > > > > > > 
-> > > > > > > Provide PHY configuration for the USB QMP PHY for QCS615 Platform.
-> > > > > > > 
-> > > > > > > Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> > > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > 
-> > > > > > After checking platform details,
-> > > > > > 
-> > > > > > Unreviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > 
-> > > > > > Please perform global s/QCS615/SM6150/ and s/qcs615/sm6150/
-> > > > > 
-> > > > > QCS615 and SM6150 are different variants of the same SoC. QCS615 is an
-> > > > > IoT variant, while SM6150 is a mobile variant. We are currently adding
-> > > > > QCS615 SoC support to the upstream Kernel, as it is in an active
-> > > > > development stage and we anticipate many products based on this SoC. On
-> > > > > the other hand, the SM6150 is an older mobile platform that is unlikely
-> > > > > to be used in new designs. For a product introduction of the QCS615,
-> > > > > please refer to
-> > > > > https://docs.qualcomm.com/bundle/publicresource/87-83838-1_REV_A_Qualcomm_IQ6_Series_Product_Brief.pdf
-> > > > 
-> > > > Yes, I guessed so. It would have been nice if it was documented this
-> > > > way from the beginning.
-> > > > 
-> > > > Please note that we usually get support for the mobile SoC first. So
-> > > > in most of the cases devices use mobile compatible even for IoT
-> > > > platforms, see qrb5165, qrb4210, qcm6490 and other similar platforms.
-> > > > I simply asked to follow the established pattern.
-> > > 
-> > > Yes, we start from mobile variant for most of the platforms. There are some
-> > > exceptions like sc7180 and sc7280 which we started from compute variant
-> > > since they are widely used by compute platform on upstream Kernel. I think
-> > > we have similar case here. QCS615 will be widely used by IOT products on
-> > > upstream Kernel. We should have clarified this from beginning so there's no
-> > > ambiguity.
-> > 
-> > After offline discussion with Krzysztof, I'll lift my objection, so
-> > still Reviewed-by.
-> > 
-> 
-> Thanks Dmitry.
-> 
-> Can you help review patch-4 of the series. I made the changes you suggested
-> on v1 (uppercase to lowercase and removing un-necessary re-inits).
+On Fri, Oct 18, 2024 at 11:24:06AM +0200, Roberto Sassu wrote:
+> Probably it is hard, @Kirill would there be any way to safely move
+> security_mmap_file() out of the mmap_lock lock?
 
-done
+What about something like this (untested):
 
+diff --git a/mm/mmap.c b/mm/mmap.c
+index dd4b35a25aeb..03473e77d356 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1646,6 +1646,26 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
+ 		return ret;
+ 
++	if (mmap_read_lock_killable(mm))
++		return -EINTR;
++
++	vma = vma_lookup(mm, start);
++
++	if (!vma || !(vma->vm_flags & VM_SHARED)) {
++		mmap_read_unlock(mm);
++		return -EINVAL;
++	}
++
++	file = get_file(vma->vm_file);
++
++	mmap_read_unlock(mm);
++
++	ret = security_mmap_file(vma->vm_file, prot, flags);
++	if (ret) {
++		fput(file);
++		return ret;
++	}
++
+ 	if (mmap_write_lock_killable(mm))
+ 		return -EINTR;
+ 
+@@ -1654,6 +1674,9 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 	if (!vma || !(vma->vm_flags & VM_SHARED))
+ 		goto out;
+ 
++	if (vma->vm_file != file)
++		goto out;
++
+ 	if (start + size > vma->vm_end) {
+ 		VMA_ITERATOR(vmi, mm, vma->vm_end);
+ 		struct vm_area_struct *next, *prev = vma;
+@@ -1688,16 +1711,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 	if (vma->vm_flags & VM_LOCKED)
+ 		flags |= MAP_LOCKED;
+ 
+-	file = get_file(vma->vm_file);
+-	ret = security_mmap_file(vma->vm_file, prot, flags);
+-	if (ret)
+-		goto out_fput;
+ 	ret = do_mmap(vma->vm_file, start, size,
+ 			prot, flags, 0, pgoff, &populate, NULL);
+-out_fput:
+-	fput(file);
+ out:
+ 	mmap_write_unlock(mm);
++	fput(file);
+ 	if (populate)
+ 		mm_populate(ret, populate);
+ 	if (!IS_ERR_VALUE(ret))
 -- 
-With best wishes
-Dmitry
+  Kiryl Shutsemau / Kirill A. Shutemov
 
