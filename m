@@ -1,216 +1,229 @@
-Return-Path: <linux-kernel+bounces-370805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACCB9A3245
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:53:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEB49A3246
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EABCB23AD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:53:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753421C21DA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20E1126C07;
-	Fri, 18 Oct 2024 01:53:06 +0000 (UTC)
-Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2CA20E327;
-	Fri, 18 Oct 2024 01:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BEE55E53;
+	Fri, 18 Oct 2024 01:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FvE+0QO5"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC639383B1
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729216386; cv=none; b=eMNZivKTD0B16dXiIcXyBOz6oeBpdqsTfOPhilZYcDfvEPUqs0gN2Q6XPjepMqXlhaqNtbPwN4YN6y1s8UiR/w8VSXbk9l5tVVngjraKl4dDjDEWeEVo1ooKOntXoJ/5yRJb9Db/gCRIly5WcXIt6b4K46V6ayN0RWN6gcedJkI=
+	t=1729216393; cv=none; b=ZQO8fAg9uY+lu52TpHia9LMWncf82Qj6VxyPIi3S0qe0SVVsIGWlK/dVpXkwMq8aIkAE5Z2BsQ3+GrNVz2Xh3pTXdT3fO+fC5QNRKsbS0ldUXuLDBFc/yhZWPS2TNjMqZYmqwqV09XmLm/KHW/F8uNVW/CtYhtbZkQ8M05qplwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729216386; c=relaxed/simple;
-	bh=GwT3A+NOL2q0+cWVmACAjiU4di5jpTAluA9HNpF8cyo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MiWnqMKiN5nWx2jI0E6utWyaZpqwGaj5CPNYrEKVjC06r0R5atGNqMhobIRU00PB6Pw0LKhPsw8BgvRd0jqbCmWtzGWDOgYuUj/iq8YdYyrvWSSBgin9EkOl3Cu9mjvSBo/3bKy+cmZgpmLeFppPmlSdgoGMLa9zwmd00mySQdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.79.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app2 (Coremail) with SMTP id HwEQrABHTgJhvxFn+E4XAQ--.3867S2;
-	Fri, 18 Oct 2024 09:52:33 +0800 (CST)
-Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wB3M8ZcvxFnm+lRAA--.59195S2;
-	Fri, 18 Oct 2024 09:52:28 +0800 (CST)
-From: Dongliang Mu <dzm91@hust.edu.cn>
-To: si.yanteng@linux.dev,
-	Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Dongliang Mu <dzm91@hust.edu.cn>
-Cc: hust-os-kernel-patches@googlegroups.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v2] docs/zh_CN: update the translation of process/programming-language.rst
-Date: Fri, 18 Oct 2024 09:52:18 +0800
-Message-ID: <20241018015226.3786020-1-dzm91@hust.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729216393; c=relaxed/simple;
+	bh=EeKpX7NUZUq8zMtV7FB9erh3TKxGrsk1Lw/mghF0G3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aXdjpr+Iai6ncOnfkEN2PtcCr5YYnr4G0xM33cAm3XkwJzqr5pMgrauyo1nt0yrXPw00+1ZXZ2U8NhjCMK/12+klhrUT/9PGV6PmDjNu9t1o+CPrvMmQMcyEjwejzHGwKmAEpidJ5VySAzoeAoumOo2if0yOz8L3VyMteZ261kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FvE+0QO5; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314ff68358so2636745e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:53:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729216390; x=1729821190; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1zSHdJlPUbayXLLcfATCEIdb8eH6mankQ/VadBAff7g=;
+        b=FvE+0QO5EGm6P+HfSCcAlyVE8A9Ukl0gr3Ykl1Cq3pWmxxfjiXZRRd6ug2k0xpqrm1
+         vVsZgx63vTBfp/aVuWD6u6r8+WhQPs/nEvnDrbGSEfDkt55jPfx2txeDeL/9OpljFiV9
+         igahLb/lq08NMaEPsd3slagBNH0LXCgwPVWc5be9zxY3oU8t3F+xSqEOq7CZpi8N6MAu
+         F3gz6AB8XO0673kIdIQ6X/LvbChvth4HVUhsQ0Ed3QC6d+xbyvvay3aQeOpeHTCYm2DV
+         jgui+S+ABsH8OsebphlKx/dtmFevIZs+CBCwDFU8dnVVj4bM9AZHAsfaBIW4NMWXMu/A
+         iP1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729216390; x=1729821190;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1zSHdJlPUbayXLLcfATCEIdb8eH6mankQ/VadBAff7g=;
+        b=W35QaXfcj3gpc2sITVBkI2C912t0LSfxKMVJbZDWMuJJf90ECovJ9BcKgHVNaBoOy2
+         kdVqJiZJ0Fm4wa78bc6Z96C3DL5gigKPLktP3ClQKQOEp4Jzmmtv2mJtn5GNdq+FytId
+         XcMmDtnHbNYtcNjJDyzY1J/yikPcspjqs4+341er/H6O0Suchh0fZRaWlzJ1xxE4jU39
+         gJsLIkm0znCf7LZDzaU1lxZb3IsmF2TgzeP4T5u6NHpIYsAVDFBTvwI8Tryl+ERqQ8gW
+         RXuokmDW4T26rga79ks/I+iYH2Z55k3rZuUo+jzKT6br0I0Otps2zx+JieBvnToP9oTs
+         wY4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVcTz9YMwdaXt02x/QWjTbIdD8N4g8oCyeMy1kmZSmMjoLTLWfvnG2wuGKi217fCRSi+H4GW3RN8nmHU1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwwhcyD/TXx2F+M4ROnoECaxPbqClDdru7dX2Zec9Fr2zGaedt
+	GH9MzmGy7q2zIKz06wppE2+X5OlhctoFOUXzX7PBQR9EMCWKw+y1bbQCIvchinrqcEfjINq3dKa
+	LJIsNSojcGyqQPwkDSGEs/RyFqiQ=
+X-Google-Smtp-Source: AGHT+IFW22XGmxmpGx3e2cHqyt8VryX3WIKRioJuCFz5mCW9CyRfz8JruPy/YmT26mUzckqqU1NlUWv/HMqLMLId5C0=
+X-Received: by 2002:a5d:6481:0:b0:37d:468c:1f38 with SMTP id
+ ffacd0b85a97d-37eab715171mr258721f8f.12.1729216389794; Thu, 17 Oct 2024
+ 18:53:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrABHTgJhvxFn+E4XAQ--.3867S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW3WrW3Gw18WF1rCF4fZr43ZFb_yoW7tryfpF
-	W7Kr9rKa18J3WxCrZ7Kr12vr1FkFZ5Ka48trWUt3WYyF40ya9IqFyxKr43J342vryxCFWD
-	Z34fuFW8X3y3AFDanT9S1TB71UUUU1UqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUHmb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	1q6r43M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVW8ZVWrXw
-	CF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Y
-	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Wrv_ZF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6IIYr7AKxVW8JVW5
-	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU5
-	2eHPUUUUU==
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+References: <20241009102745.1390935-1-hanqi@vivo.com> <bdd890de-4794-4133-bca1-9c7e067e6e5c@kernel.org>
+In-Reply-To: <bdd890de-4794-4133-bca1-9c7e067e6e5c@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Fri, 18 Oct 2024 09:52:58 +0800
+Message-ID: <CAHJ8P3KhfuCSNwyc16QYQQYMNzjVKc4ey5CTZ2XK4893aW4mCQ@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: modify f2fs_is_checkpoint_ready logic to
+ allow more data to be written with the CP disable
+To: Chao Yu <chao@kernel.org>
+Cc: Qi Han <hanqi@vivo.com>, jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update to commit 0b02076f9953 ("docs: programming-language: add Rust
-programming language section")
+Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+=E4=BA=8E2024=E5=B9=B410=E6=9C=8817=E6=97=A5=E5=91=A8=E5=9B=9B 17:57=E5=86=
+=99=E9=81=93=EF=BC=9A
+>
+> On 2024/10/9 18:27, Qi Han wrote:
+> > When the free segment is used up during CP disable, many write or
+> > ioctl operations will get ENOSPC error codes, even if there are
+> > still many blocks available. We can reproduce it in the following
+> > steps:
+> >
+> > dd if=3D/dev/zero of=3Df2fs.img bs=3D1M count=3D55
+> > mkfs.f2fs -f f2fs.img
+> > mount f2fs.img f2fs_dir -o checkpoint=3Ddisable:10%
+> > cd f2fs_dir
+> > dd if=3D/dev/zero of=3Dbigfile bs=3D1M count=3D50
+> > sync
+> > rm bigfile
+> > i=3D1; while [[ $i -lt 10000000 ]]; do (file_name=3D./file$i; dd \
+> > if=3D/dev/random of=3D$file_name bs=3D1M count=3D0); i=3D$((i+1)); done
+> > stat -f ./
+> >
+> > In f2fs_need_SSR() function, it is allowed to use SSR to allocate
+> > blocks when CP is disabled, so in f2fs_is_checkpoint_ready function,
+Hi Chao and Qi,
+based on this comment  and codes, I have some doubts:
+unusable blocks are calculated  from  invalid blocks of Dirty segment
+in f2fs_get_unsuable_blocks then minus ovp_hole,
+but SSR is allowed when the checkpoint is disabled.
+So actually SSR can not use most invalid blocks of Dirty segments?
+Is this a contradiction?
+Thanks!
 
-scripts/checktransupdate.py reports:
-
-Documentation/translations/zh_CN/process/programming-language.rst
-commit 0b02076f9953 ("docs: programming-language: add Rust programming
-language section")
-commit 38484a1d0c50 ("docs: programming-language: remove mention of the
-Intel compiler")
-2 commits needs resolving in total
-
-Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
----
-v1->v2: revise the script name
- .../zh_CN/process/programming-language.rst    | 78 +++++++------------
- 1 file changed, 30 insertions(+), 48 deletions(-)
-
-diff --git a/Documentation/translations/zh_CN/process/programming-language.rst b/Documentation/translations/zh_CN/process/programming-language.rst
-index fabdc338dbfb..55f132a4b212 100644
---- a/Documentation/translations/zh_CN/process/programming-language.rst
-+++ b/Documentation/translations/zh_CN/process/programming-language.rst
-@@ -3,25 +3,22 @@
- :Original: :ref:`Documentation/process/programming-language.rst <programming_language>`
- :Translator: Alex Shi <alex.shi@linux.alibaba.com>
- 
--.. _cn_programming_language:
--
- 程序设计语言
- ============
- 
--内核是用C语言 :ref:`c-language <cn_c-language>` 编写的。更准确地说，内核通常是用 :ref:`gcc <cn_gcc>`
--在 ``-std=gnu11`` :ref:`gcc-c-dialect-options <cn_gcc-c-dialect-options>` 下编译的：ISO C11的 GNU 方言
--
--这种方言包含对语言 :ref:`gnu-extensions <cn_gnu-extensions>` 的许多扩展，当然，它们许多都在内核中使用。
-+内核是用 C 编程语言编写的 [zh_cn_c-language]_。更准确地说，内核通常使用 ``gcc`` [gcc]_ 编译，
-+并且使用 ``-std=gnu11`` [zh_cn_gcc-c-dialect-options]_：这是 ISO C11 的 GNU 方言。
-+``clang`` [zh_cn_clang]_ 也得到了支持，详见文档：
-+:ref:`使用 Clang/LLVM 构建 Linux <kbuild_llvm>`。
- 
--对于一些体系结构，有一些使用 :ref:`clang <cn_clang>` 和 :ref:`icc <cn_icc>` 编译内核
--的支持，尽管在编写此文档时还没有完成，仍需要第三方补丁。
-+这种方言包含对 C 语言的许多扩展 [zh_cn_gnu-extensions]_，当然，它们许多都在内核中使用。
- 
- 属性
- ----
- 
--在整个内核中使用的一个常见扩展是属性（attributes） :ref:`gcc-attribute-syntax <cn_gcc-attribute-syntax>`
-+在整个内核中使用的一个常见扩展是属性（attributes） [zh_cn_gcc-attribute-syntax]_。
- 属性允许将实现定义的语义引入语言实体（如变量、函数或类型），而无需对语言进行
--重大的语法更改（例如添加新关键字） :ref:`n2049 <cn_n2049>`
-+重大的语法更改（例如添加新关键字） [zh_cn_n2049]_。
- 
- 在某些情况下，属性是可选的（即不支持这些属性的编译器仍然应该生成正确的代码，
- 即使其速度较慢或执行的编译时检查/诊断次数不够）
-@@ -30,42 +27,27 @@
- ``__attribute__((__pure__))`` ），以检测可以使用哪些关键字和/或缩短代码, 具体
- 请参阅 ``include/linux/compiler_attributes.h``
- 
--.. _cn_c-language:
--
--c-language
--   http://www.open-std.org/jtc1/sc22/wg14/www/standards
--
--.. _cn_gcc:
--
--gcc
--   https://gcc.gnu.org
--
--.. _cn_clang:
--
--clang
--   https://clang.llvm.org
--
--.. _cn_icc:
--
--icc
--   https://software.intel.com/en-us/c-compilers
--
--.. _cn_gcc-c-dialect-options:
--
--c-dialect-options
--   https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
--
--.. _cn_gnu-extensions:
--
--gnu-extensions
--   https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
--
--.. _cn_gcc-attribute-syntax:
--
--gcc-attribute-syntax
--   https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
--
--.. _cn_n2049:
-+Rust
-+----
- 
--n2049
--   http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
-+内核对 Rust 编程语言 [zh_cn_rust-language]_ 的支持是实验性的，并且可以通过配置选项
-+``CONFIG_RUST`` 来启用。Rust 代码使用 ``rustc`` [rustc]_ 编译器在
-+``--edition=2021`` [zh_cn_rust-editions]_ 选项下进行编译。版本（Editions）是一种
-+在语言中引入非后向兼容的小型变更的方式。
-+
-+除此之外，内核中还使用了一些不稳定的特性 [zh_cn_rust-unstable-features]_。这些不稳定
-+的特性将来可能会发生变化，因此，一个重要的目标是达到仅使用稳定特性的程度。
-+
-+具体请参阅 Documentation/rust/index.rst
-+
-+.. [zh_cn_c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
-+.. [gcc] https://gcc.gnu.org
-+.. [zh_cn_clang] https://clang.llvm.org
-+.. [zh_cn_gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
-+.. [zh_cn_gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
-+.. [zh_cn_gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
-+.. [zh_cn_n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
-+.. [zh_cn_rust-language] https://www.rust-lang.org
-+.. [rustc] https://doc.rust-lang.org/rustc/
-+.. [zh_cn_rust-editions] https://doc.rust-lang.org/edition-guide/editions/
-+.. [zh_cn_rust-unstable-features] https://github.com/Rust-for-Linux/linux/issues/2
--- 
-2.43.0
-
+> > can we judge the number of invalid blocks when free segment is not
+> > enough, and return ENOSPC only if the number of invalid blocks is
+> > also not enough?
+>
+> Can you please try below patch?
+>
+>  From 38b7c97dcc55ba83de4220c3dc54c2eb66148dd5 Mon Sep 17 00:00:00 2001
+> From: Chao Yu <chao@kernel.org>
+> Date: Thu, 17 Oct 2024 17:07:05 +0800
+> Subject: [PATCH] f2fs: revalidate empty segment when checkpoint is disabl=
+ed
+>
+> If checkpoint is off, let's set segment as free once all newly
+> written datas were removed.
+>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>   fs/f2fs/segment.c | 13 ++++++++++++-
+>   1 file changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index f8d6e601e084..9bad13d70afb 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -853,6 +853,17 @@ static void locate_dirty_segment(struct f2fs_sb_info=
+ *sbi, unsigned int segno)
+>         valid_blocks =3D get_valid_blocks(sbi, segno, false);
+>         ckpt_valid_blocks =3D get_ckpt_valid_blocks(sbi, segno, false);
+>
+> +       /*
+> +        * If checkpoint is off, let's set segment as free once all newly
+> +        * written datas were removed.
+> +        */
+> +       if (is_sbi_flag_set(sbi, SBI_CP_DISABLED) &&
+> +               valid_blocks =3D=3D 0 && ckpt_valid_blocks =3D=3D 0) {
+> +               __remove_dirty_segment(sbi, segno, DIRTY);
+> +               __set_test_and_free(sbi, segno, false);
+> +               goto out_lock;
+> +       }
+> +
+>         if (valid_blocks =3D=3D 0 && (!is_sbi_flag_set(sbi, SBI_CP_DISABL=
+ED) ||
+>                 ckpt_valid_blocks =3D=3D usable_blocks)) {
+>                 __locate_dirty_segment(sbi, segno, PRE);
+> @@ -863,7 +874,7 @@ static void locate_dirty_segment(struct f2fs_sb_info =
+*sbi, unsigned int segno)
+>                 /* Recovery routine with SSR needs this */
+>                 __remove_dirty_segment(sbi, segno, DIRTY);
+>         }
+> -
+> +out_lock:
+>         mutex_unlock(&dirty_i->seglist_lock);
+>   }
+>
+> --
+> 2.40.1
+>
+> >
+> > Signed-off-by: Qi Han <hanqi@vivo.com>
+> > ---
+> >   fs/f2fs/segment.h | 21 +++++++++++++++++++++
+> >   1 file changed, 21 insertions(+)
+> >
+> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> > index 71adb4a43bec..9bf0cf3a6a31 100644
+> > --- a/fs/f2fs/segment.h
+> > +++ b/fs/f2fs/segment.h
+> > @@ -637,12 +637,33 @@ static inline bool has_enough_free_secs(struct f2=
+fs_sb_info *sbi,
+> >       return !has_not_enough_free_secs(sbi, freed, needed);
+> >   }
+> >
+> > +static inline bool has_enough_available_blocks(struct f2fs_sb_info *sb=
+i)
+> > +{
+> > +     unsigned int total_free_blocks =3D sbi->user_block_count -
+> > +                                     valid_user_blocks(sbi) -
+> > +                                     sbi->current_reserved_blocks;
+> > +
+> > +     if (total_free_blocks <=3D sbi->unusable_block_count)
+> > +             total_free_blocks =3D 0;
+> > +     else
+> > +             total_free_blocks -=3D sbi->unusable_block_count;
+> > +
+> > +     if (total_free_blocks > F2FS_OPTION(sbi).root_reserved_blocks)
+> > +             total_free_blocks -=3D F2FS_OPTION(sbi).root_reserved_blo=
+cks;
+> > +     else
+> > +             total_free_blocks =3D 0;
+> > +
+> > +     return (total_free_blocks > 0) ? true : false;
+> > +}
+> > +
+> >   static inline bool f2fs_is_checkpoint_ready(struct f2fs_sb_info *sbi)
+> >   {
+> >       if (likely(!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+> >               return true;
+> >       if (likely(has_enough_free_secs(sbi, 0, 0)))
+> >               return true;
+> > +     if (likely(has_enough_available_blocks(sbi)))
+> > +             return true;
+> >       return false;
+> >   }
+> >
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
