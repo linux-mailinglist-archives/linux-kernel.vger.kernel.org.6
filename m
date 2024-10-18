@@ -1,99 +1,188 @@
-Return-Path: <linux-kernel+bounces-371157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF229A372A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D6E9A372B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747181F2290D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB3C31F23326
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1272717BEAE;
-	Fri, 18 Oct 2024 07:31:32 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6547818872C;
+	Fri, 18 Oct 2024 07:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jkkEY8UW"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4217E13D51E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B64D17C7C2
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729236691; cv=none; b=qWKn5WBQ+kMwO8Vjo+SjOh13+0AvzT8WKppkO+GwcqG58NARA83E/w6/lsNrISJrozE/3MsJczPLpR7hKerN3bjigeqkd03aMpsK05756sv7utcLhaWSdZouf2lzVj2cwTJ/1iDi0mEIwYBJMaOI0AWAWVb/H8E4uwHEiN3i57s=
+	t=1729236711; cv=none; b=bAH1LE9MNQlgchGFmYza1yMjEUG1KguTfEUan+asGWqbgyh5ChWqdfsd/MFRzlk4ZTOS1NImPITSXtAgKm+N2yO5xfOJMLW2z8XngFGI3LxPo5lVFconyvANhaZDElH7DDy0doOGW1lu1abVK0vvlkcqTnbD8Jfu1VjrQwPZhiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729236691; c=relaxed/simple;
-	bh=FwxLymgIGX19bQ3q5+ZUKoMF7qjKIFs/m/upHfQjmJo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fkpOVfqQVrLp/2SNHB7JzrQx3FpZ4j94oCGFpSJODtFJU2Hqz7SBue4X4ipG5sZgUZcffS6+6XhyKVYdbMWadSBUNGvHUNehhBRLoorfmiSoI6f0u4I0jXoA6BsqxLO4tb3oy0BoqyG9VcqEkx4F4jTSDvAjusGGcFlZxkkl97s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c27c72d5so16133235ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:31:30 -0700 (PDT)
+	s=arc-20240116; t=1729236711; c=relaxed/simple;
+	bh=NH+L9Jxf2wkMM71Yi6LYSc5pR0cezzW0842zQcofwrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sudhNhzjJ+51Fg+UX1+SAWwVwohJBeI3JF1vjEFaEk6n3an7pngIiOEceTP5gOFNW3EyhVC4p6ZW1Smf4y3mbnKALZ80kXcKon9fQhquCnwbPPfzCVU6HzzeRbq06uPf7PijljR6suzdiozVywn9OM2DKGGP9XnS217Ckb9yHJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jkkEY8UW; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ca7fc4484so12613415ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:31:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729236708; x=1729841508; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IlPybqmG9m/ZAU4ubVutLFbdpffPKHkEonNeryEzP1o=;
+        b=jkkEY8UWc8kP09AaEoby7XyFsIt05PR4zqinhng5MwPk0ZKsAPZDD+mg/SDBUA8FRt
+         GUIrRdqa4nQriRIiJqAeT8sIM0gj6pV4KPDMpGvMvkXduNzi7ZHyInNxJHyYr+o0bD3d
+         hj1Qzzu7snOoyCa0y1UrtEsGJA5Fw/5OtX5QQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729236689; x=1729841489;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GzXkhfT9/F2JC3M0BsEDAkKgZtNlAin3Z8M1bsi6SHM=;
-        b=rVXNnwUfsH9z1TeSuNe7KRyCXe3EWlJKEO5wgmi4cjBekbXkRTHSCoF4epgxF2PSBB
-         UJvxwDyR5OuTyf2Fl1kN7tLSUwWOzVe451hz53WnGh/q8aP6bwLGPZsTvZwQM5bNDobY
-         nnVjf/LxYcgUf38LSPs0TsjOz83Lz1Ov1VqqC+ov/ODzWIkcpJnKwLEOcuAqkgyEQw/R
-         sTR6O+MwoTdEkhotrG5Qfw3ja8ICy2mKKjWF8UG9KVnV4PMp091CNMB/yyvgTmbQ18ji
-         OpLIXFFLZGWNFlt3WxzGuxeb4L9In0D5utfbDIMr9G1uLbfjoKrlcCrnBNYBgLm8c6KF
-         Re9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVLETt8qFV+NZfLt/0LWk1tJ+Dg9P3LXbEwRYRLbpiy3h1fG+xnFQEx5uNBe3QiAVDpkqlgTuXY83UYWRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGitBgVbbm5JgCaOTMEjz6T8mHsJWkZNEURLfcDQHAeA9uzxuk
-	xrfrR4F4XSQ5yUABE7/PV5Lg6gLPsV2sDAAlFIB+lbbnKB2hX/J1Axgy7uAmexejyHKKRAfAv4e
-	C/zEcKSTXdLl2G030o6PUZgAldC7Xd1nXP/ewYj5Db0B0qQSNsobLD4k=
-X-Google-Smtp-Source: AGHT+IFySUjvgG3Fl/szHy+Coj3vJjzvXk/L63ixiuhUZyvUQfFUQNj8qSben04A5CXrGYP1+XPl4tfLrEs3JS28u6E47iL5hN9j
+        d=1e100.net; s=20230601; t=1729236708; x=1729841508;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IlPybqmG9m/ZAU4ubVutLFbdpffPKHkEonNeryEzP1o=;
+        b=jmO461VFDkhssQT2z0v5cgBVSSCyV6JhCyGHSeuarp4Z2sSPatiZnUz9LVqqwjXK71
+         7AIWOWEuLZQplcv0du7sWGbIzQB5X4NqSp+/r3IOnPO0ALOw3YRnV/HDO2Lotbre0x0W
+         SmYxPLh9ULWfBb2f49zC+5V0byG0r69J8BODvaiFZJ7FCXqm1rSHwsF0wfPb0Tf/fqWb
+         nE5WM0heD6d1Ix9zCiGKtbuCuZmadXosbNFRvHetmMs3mEJ68kEjZttq7bR4Y/yF0fkl
+         d1YIc9YbaSRZhx0/H9JDkVaXoh1k3ji3dp7xpCe76Y8Inp6ccHXqZNsBi1lJURJ5JZ9k
+         1oTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFl9Phr9hn1JrjTWH/tDXf76jONntsHPRH1LyucRtWZvk8CEYOOxjVwu2qFvpYCO7Ulx2vXEbsfXNabvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymU8Zcko7F8P7g2cwy0l/3+jyNr/zV0pKGKnoZA6daOn6vXdQu
+	tDy+Uij7XhEiMGmdy6f41MF79f64bUaduzyqXBYwLIYhvXz4BNPwHKNnughcJg==
+X-Google-Smtp-Source: AGHT+IHLIrR9ytIHJoh0tpY7PloSKaVtl6gokdxvrnHnBae8s/7gjJhQ59rft77DxeV3cTP3OmeRAA==
+X-Received: by 2002:a05:6a21:70c8:b0:1d9:575:6659 with SMTP id adf61e73a8af0-1d92c58fa40mr2750256637.49.1729236708639;
+        Fri, 18 Oct 2024 00:31:48 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:5e77:354e:2385:7baa])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc229a7dsm745320a12.20.2024.10.18.00.31.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 00:31:48 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>
+Cc: Icenowy Zheng <uwu@icenowy.me>,
+	Mark Brown <broonie@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org,
+	Hsin-Te Yuan <yuanhsinte@chromium.org>,
+	Chen-Yu Tsai <wenst@chromium.org>
+Subject: [PATCH v4] thermal/of: support thermal zones w/o trips subnode
+Date: Fri, 18 Oct 2024 15:31:36 +0800
+Message-ID: <20241018073139.1268995-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1389:b0:3a0:90c7:f1b with SMTP id
- e9e14a558f8ab-3a3f40623e0mr15094615ab.12.1729236689484; Fri, 18 Oct 2024
- 00:31:29 -0700 (PDT)
-Date: Fri, 18 Oct 2024 00:31:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67120ed1.050a0220.10f4f4.000d.GAE@google.com>
-Subject: [syzbot] Monthly f2fs report (Oct 2024)
-From: syzbot <syzbot+list5742c28e505b5188ee8a@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello f2fs maintainers/developers,
+From: Icenowy Zheng <uwu@icenowy.me>
 
-This is a 31-day syzbot report for the f2fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/f2fs
+Although the current device tree binding of thermal zones require the
+trips subnode, the binding in kernel v5.15 does not require it, and many
+device trees shipped with the kernel, for example,
+allwinner/sun50i-a64.dtsi and mediatek/mt8183-kukui.dtsi in ARM64, still
+comply to the old binding and contain no trips subnode.
 
-During the period, 3 new issues were detected and 0 were fixed.
-In total, 7 issues are still open and 47 have been fixed so far.
+Allow the code to successfully register thermal zones w/o trips subnode
+for DT binding compatibility now.
 
-Some of the still happening issues:
+Furtherly, the inconsistency between DTs and bindings should be resolved
+by either adding empty trips subnode or dropping the trips subnode
+requirement.
 
-Ref Crashes Repro Title
-<1> 1071    Yes   INFO: task hung in f2fs_balance_fs
-                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
-<2> 70      No    INFO: task hung in vfs_rename
-                  https://syzkaller.appspot.com/bug?extid=6165bc9800cd6e1fe958
-<3> 2       Yes   possible deadlock in f2fs_evict_inode
-                  https://syzkaller.appspot.com/bug?extid=7988d9999219aea9f2db
+Fixes: d0c75fa2c17f ("thermal/of: Initialize trip points separately")
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+[wenst@chromium.org: Reworked logic and kernel log messages]
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+This patch is based on Krzysztof's cleanup patches
+  - thermal: of: Use scoped memory and OF handling to simplify thermal_of_trips_init() [1]
+
+Changes since v3:
+  - Set *ntrips = 0 and return NULL from thermal_of_trips_init() if
+    no trip points are found in the device tree (Rafael)
+  - Dropped log level of "no trip points found" message to INFO
+  - Reworded new "failed to find trip points" message to "no trip points
+    found"
+  - Reworded existing "failed to find trip points" message to "failed to
+    parse trip points"
+
+I dropped Mark's reviewed-by because of the new changes.
+
+Changes since v2:
+- Stacked on top of Krzysztof's cleanup patches
+  - thermal: of: Use scoped memory and OF handling to simplify thermal_of_trips_init() [1]
+- Adjusted to account for eliminated error path
+
+[1] https://lore.kernel.org/all/20241010-b4-cleanup-h-of-node-put-thermal-v4-2-bfbe29ad81f4@linaro.org/
+
+Changes since v1:
+- set *ntrips at beginning of thermal_of_trips_init()
+- Keep goto out_of_node_put in of_get_child_count(trips) == 0 branch
+- Check return value of thermal_of_trips_init(), if it is -ENXIO, print
+  warning and clear |trips| pointer
+- Drop |mask| change, as the variable was removed
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/thermal/thermal_of.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+index 93f7c6f8d06d..abafce22c91f 100644
+--- a/drivers/thermal/thermal_of.c
++++ b/drivers/thermal/thermal_of.c
+@@ -99,14 +99,16 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
+ 
+ 	struct device_node *trips __free(device_node) = of_get_child_by_name(np, "trips");
+ 	if (!trips) {
+-		pr_err("Failed to find 'trips' node\n");
+-		return ERR_PTR(-EINVAL);
++		pr_debug("Failed to find 'trips' node\n");
++		*ntrips = 0;
++		return NULL;
+ 	}
+ 
+ 	count = of_get_child_count(trips);
+ 	if (!count) {
+-		pr_err("No trip point defined\n");
+-		return ERR_PTR(-EINVAL);
++		pr_debug("No trip point defined\n");
++		*ntrips = 0;
++		return NULL;
+ 	}
+ 
+ 	struct thermal_trip *tt __free(kfree) = kzalloc(sizeof(*tt) * count, GFP_KERNEL);
+@@ -386,11 +388,14 @@ static struct thermal_zone_device *thermal_of_zone_register(struct device_node *
+ 
+ 	trips = thermal_of_trips_init(np, &ntrips);
+ 	if (IS_ERR(trips)) {
+-		pr_err("Failed to find trip points for %pOFn id=%d\n", sensor, id);
++		pr_err("Failed to parse trip points for %pOFn id=%d\n", sensor, id);
+ 		ret = PTR_ERR(trips);
+ 		goto out_of_node_put;
+ 	}
+ 
++	if (!trips)
++		pr_info("No trip points found for %pOFn id=%d\n", sensor, id);
++
+ 	ret = thermal_of_monitor_init(np, &delay, &pdelay);
+ 	if (ret) {
+ 		pr_err("Failed to initialize monitoring delays from %pOFn\n", np);
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
