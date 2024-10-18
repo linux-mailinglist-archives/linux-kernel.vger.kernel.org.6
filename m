@@ -1,168 +1,404 @@
-Return-Path: <linux-kernel+bounces-371446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51979A3B31
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:18:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 451909A3B19
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D55BEB2504E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:18:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71150B22FB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512C1202F77;
-	Fri, 18 Oct 2024 10:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEC02010F5;
+	Fri, 18 Oct 2024 10:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZEfnDiN"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L1oymtwu"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6D420262F;
-	Fri, 18 Oct 2024 10:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD57A18452C;
+	Fri, 18 Oct 2024 10:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729246625; cv=none; b=GrUVR+ODjW5itMpvAY/1oVSM8yl6FR0KPiFiuKbDw4CBccfzo28g9LCcqcArknAbMqixfFP8iNHt0QeEsluPdC/P6k6DyiQ1EPCDaMEYGoZo5JezUpAl5mwUkowfbNXEP6n4wxDk3C+hdZYRbgJo7wYQpCKXtmMees0rJJyfWYo=
+	t=1729246615; cv=none; b=kd9/6yGw9s9wMAdVO9SagC8jKyVQ98e07RpERu0wd3s/4Trlzfph/qezHMtZyXfHH1YPHIdeOlOsCgKawAgqv1i/L+XCm/jFB6VTujsKp8PvZtIPs0/CgGE6RopY4WVKCe8s/TLEQ6jEyk+vCOwmb103CWfgG7WKqqWyG1gOsag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729246625; c=relaxed/simple;
-	bh=zPhyRDG9F+zgzh0+HIEmtXBb7OQBzROgLZ7mJASXsvQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ji5U242up16IbWqr98Ru3+w63BRvhY5UEx1DWRFW1F1Sh8plnkqO6W/vIdw6/7W5RXHl2VG3r3se3+VrfDcY7NBVuvqHwENvT2KC2lFa0oTM+HT1BdUrF71l/c2NLUL6VNNpWMrDA1zNsrkJUkils3uwwzSTJolwgRtinY/qHuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZEfnDiN; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4311c285bc9so19132635e9.3;
-        Fri, 18 Oct 2024 03:17:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729246622; x=1729851422; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yg5C99O5lFsD3GMjKIKiUiVjWoF4T1zlBP/PbUaocsA=;
-        b=KZEfnDiNukXZzeCNsmYRTFp4l+1S0hhJ6MZA9fycmEXMwCOd0IckNeQojiJHTHY+4l
-         jXgTw49k3+7dFTc5AZqCk9apqimEn5Z1uw0P2A4hiYuVEcWcFX6ogesGtj0Tx4FKYM9d
-         0BLHzVruluyvhWhjVnyojwwspo0qGn+ocpnSu9FzSh1TWbe99zB6h/hV/OyLvqGvmNPh
-         WBcIorX6oTa38vcMREvKALeagQmoPEQIgH9+FZXUezhjAFpMETH8MMZe29HCg75lq8l2
-         vLkly61mALj0m4VNibAMgansStrONoY5nujcG3D0V/Ia5g8hsyQmJTJ5z4rhlxcJJl7o
-         OsOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729246622; x=1729851422;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yg5C99O5lFsD3GMjKIKiUiVjWoF4T1zlBP/PbUaocsA=;
-        b=l0QNUKgLikyREu+doQ/NeE+9q656JGwZ3IRjlqOh5FYJl696ePbRBoVj2jcriEemVH
-         MIgYb5ZSJpUOr/bOTSijO3WaNBgCWIDuOl4lsV9eN1vsPOpg5jszgDHmyLlGIKrQFIO9
-         SIXcgH6JpACyRbdAGZFsCK2+wLG+2PFmtuAOmp6qz5rnpZ2ZhOuOazxMaWfpbgxiULiA
-         TTTUVA7RnsFgvCVGYtBvlDuPYVU0q1JBxZ1RitUW9DsA8ncja5sOZwa+HZVwmvkZOHeE
-         78MvCYzsyzeZRRWzz8OOAf28/V8/+B3dOzzHqoycycSDKY+HPYQcIWudIOc943PkimmG
-         0gmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJH6/7dbfyrXffsX62nC8cwpeuLpDoaeBiRnFGDY9DbjC9vNXNXAE6yD5dAJekMEILtvbfyP3kcsEPWuQ=@vger.kernel.org, AJvYcCXU6UTTZfbV9a47G3wYtAew97yrXWJGT7+YUdUZNZalrKeUQJJNkV7iC1vBzXMUWIeBxyRibmPzc/4=@vger.kernel.org, AJvYcCXjJ+mrn/81FbqxWlKCV3fLjV3ZEnPcdIrNcWCbI/tMe+OY5VWUdR/HM7b7p/iFOp5KjsZXoT7rWt/Uug==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpD+OOQzEuCF70sDmhFP4CeJExmjhgOF8NvMMlyoNW1R+7aSdy
-	MV28v2Js7JgMg6kzzqsMmf2+WuguTaUAk6xGecn+Bf/voye2wuIjwwwBgZ0ggf0=
-X-Google-Smtp-Source: AGHT+IEeLVJ7h84WQ4/+u3k4S9ShFi1dHNq8ZcXPQUIGtlWymZVFe8HnRUMIjBIrqeVsPikZlvPQ7g==
-X-Received: by 2002:a05:600c:3d99:b0:431:588a:4498 with SMTP id 5b1f17b1804b1-4316164dd18mr16051385e9.14.1729246621980;
-        Fri, 18 Oct 2024 03:17:01 -0700 (PDT)
-Received: from localhost (host-79-18-120-72.retail.telecomitalia.it. [79.18.120.72])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf146e2asm1512707f8f.116.2024.10.18.03.17.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 03:17:01 -0700 (PDT)
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Date: Fri, 18 Oct 2024 12:16:44 +0200
-Subject: [PATCH v4 5/5] iio: as73211: copy/release available integration
- times to fix race
+	s=arc-20240116; t=1729246615; c=relaxed/simple;
+	bh=2X/NA5WrkrDFFUggkz7hMY18q+IxIgaifuftv8eQYnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KEqpfYQmbVhoq3CGIN6ln+3jOHL9jxRgI/kST/rBYxnahjR/Zza3qm5xLuwkIn9h/ubOY1ABJmXgSoQoq42YLquyZcFClwIY0AmYalGhjAb52shWNVEj3u5v1KE0b2bon9N8qaRwWEMKtAA10NKwNrMeGok8haD5fi3m8QxkkwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L1oymtwu; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cYnjQkJGFypCO7ziWpEz2qR2oT5yS8MTKUUqGzUSuTA=; b=L1oymtwuGBnGHAf+9C960gr/sd
+	2Bq3noydWWTWFKnI5iUwPSKPtglZ6rpUtuYbUnCX2OFj9P/i8jJSl3nkqFIMfs7sQ5lfQ9MwrEh6x
+	VK2oRfv1VHmsQfW5lhnUX/15qlEt7sfN/v9QLrIcDeQXNmzT0OfvxRa1du3AYtFaPGdlwFajgK0U2
+	97v78Lwy/Lx6LFgc1g3u8aXrQZiShKWw3o6r22z8T9Px7O6VCuuGFdZ4dLTEQx1px28MfOHyFqJeE
+	bbk/pwHEFhWTzkOg1gKvCmcjxHkJWaEkrbGbdSWaqYzJUWYRtHfkeAABmZmbjWMXEBPjCNBr9r3l5
+	nMua1dJw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1k2J-00000007KmJ-3o73;
+	Fri, 18 Oct 2024 10:16:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 418BA3005AF; Fri, 18 Oct 2024 12:16:47 +0200 (CEST)
+Date: Fri, 18 Oct 2024 12:16:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, oleg@redhat.com,
+	rostedt@goodmis.org, mhiramat@kernel.org, mingo@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+	paulmck@kernel.org
+Subject: Re: [PATCH v2 tip/perf/core 2/2] uprobes: SRCU-protect uretprobe
+ lifetime (with timeout)
+Message-ID: <20241018101647.GA36494@noisy.programming.kicks-ass.net>
+References: <20241008002556.2332835-1-andrii@kernel.org>
+ <20241008002556.2332835-3-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241018-iio-read-avail-release-v4-5-53c8ac618585@gmail.com>
-References: <20241018-iio-read-avail-release-v4-0-53c8ac618585@gmail.com>
-In-Reply-To: <20241018-iio-read-avail-release-v4-0-53c8ac618585@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Alisa-Dariana Roman <alisa.roman@analog.com>, 
- Christian Eggers <ceggers@arri.de>, Peter Rosin <peda@axentia.se>, 
- Paul Cercueil <paul@crapouillou.net>, Sebastian Reichel <sre@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mips@vger.kernel.org, linux-pm@vger.kernel.org, 
- Matteo Martelli <matteomartelli3@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008002556.2332835-3-andrii@kernel.org>
 
-While available integration times are being printed to sysfs by iio core
-(iio_read_channel_info_avail), the sampling frequency might be changed.
-This could cause the buffer shared with iio core to be corrupted. To
-prevent it, make a copy of the integration times buffer and free it in
-the read_avail_release_resource callback.
+On Mon, Oct 07, 2024 at 05:25:56PM -0700, Andrii Nakryiko wrote:
 
-Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+> +/* Initialize hprobe as SRCU-protected "leased" uprobe */
+> +static void hprobe_init_leased(struct hprobe *hprobe, struct uprobe *uprobe, int srcu_idx)
+> +{
+> +	hprobe->state = HPROBE_LEASED;
+> +	hprobe->uprobe = uprobe;
+> +	hprobe->srcu_idx = srcu_idx;
+> +}
+> +
+> +/* Initialize hprobe as refcounted ("stable") uprobe (uprobe can be NULL). */
+> +static void hprobe_init_stable(struct hprobe *hprobe, struct uprobe *uprobe)
+> +{
+> +	hprobe->state = HPROBE_STABLE;
+> +	hprobe->uprobe = uprobe;
+> +	hprobe->srcu_idx = -1;
+> +}
+> +
+> +/*
+> + * hprobe_consume() fetches hprobe's underlying uprobe and detects whether
+> + * uprobe is SRCU protected or is refcounted. hprobe_consume() can be
+> + * used only once for a given hprobe.
+> + *
+> + * Caller has to call hprobe_finalize() and pass previous hprobe_state, so
+> + * that hprobe_finalize() can perform SRCU unlock or put uprobe, whichever
+> + * is appropriate.
+> + */
+> +static inline struct uprobe *hprobe_consume(struct hprobe *hprobe, enum hprobe_state *hstate)
+> +{
+> +	enum hprobe_state state;
+> +
+> +	*hstate = xchg(&hprobe->state, HPROBE_CONSUMED);
+> +	switch (*hstate) {
+> +	case HPROBE_LEASED:
+> +	case HPROBE_STABLE:
+> +		return hprobe->uprobe;
+> +	case HPROBE_GONE:
+> +		return NULL; /* couldn't refcnt uprobe, it's effectively NULL */
+> +	case HPROBE_CONSUMED:
+> +		return NULL; /* uprobe was finalized already, do nothing */
+> +	default:
+> +		WARN(1, "hprobe invalid state %d", state);
+> +		return NULL;
+> +	}
+> +}
+> +
+> +/*
+> + * Reset hprobe state and, if hprobe was LEASED, release SRCU lock.
+> + * hprobe_finalize() can only be used from current context after
+> + * hprobe_consume() call (which determines uprobe and hstate value).
+> + */
+> +static void hprobe_finalize(struct hprobe *hprobe, enum hprobe_state hstate)
+> +{
+> +	switch (hstate) {
+> +	case HPROBE_LEASED:
+> +		__srcu_read_unlock(&uretprobes_srcu, hprobe->srcu_idx);
+> +		break;
+> +	case HPROBE_STABLE:
+> +		if (hprobe->uprobe)
+> +			put_uprobe(hprobe->uprobe);
+> +		break;
+> +	case HPROBE_GONE:
+> +	case HPROBE_CONSUMED:
+> +		break;
+> +	default:
+> +		WARN(1, "hprobe invalid state %d", hstate);
+> +		break;
+> +	}
+> +}
+> +
+> +/*
+> + * Attempt to switch (atomically) uprobe from being SRCU protected (LEASED)
+> + * to refcounted (STABLE) state. Competes with hprobe_consume(); only one of
+> + * them can win the race to perform SRCU unlocking. Whoever wins must perform
+> + * SRCU unlock.
+> + *
+> + * Returns underlying valid uprobe or NULL, if there was no underlying uprobe
+> + * to begin with or we failed to bump its refcount and it's going away.
+> + *
+> + * Returned non-NULL uprobe can be still safely used within an ongoing SRCU
+> + * locked region. It's not guaranteed that returned uprobe has a positive
+> + * refcount, so caller has to attempt try_get_uprobe(), if it needs to
+> + * preserve uprobe beyond current SRCU lock region. See dup_utask().
+> + */
+> +static struct uprobe* hprobe_expire(struct hprobe *hprobe)
+> +{
+> +	enum hprobe_state hstate;
+> +
+> +	/*
+> +	 * return_instance's hprobe is protected by RCU.
+> +	 * Underlying uprobe is itself protected from reuse by SRCU.
+> +	 */
+> +	lockdep_assert(rcu_read_lock_held() && srcu_read_lock_held(&uretprobes_srcu));
+> +
+> +	hstate = data_race(READ_ONCE(hprobe->state));
+> +	switch (hstate) {
+> +	case HPROBE_STABLE:
+> +		/* uprobe is properly refcounted, return it */
+> +		return hprobe->uprobe;
+> +	case HPROBE_GONE:
+> +		/*
+> +		 * SRCU was unlocked earlier and we didn't manage to take
+> +		 * uprobe refcnt, so it's effectively NULL
+> +		 */
+> +		return NULL;
+> +	case HPROBE_CONSUMED:
+> +		/*
+> +		 * uprobe was consumed, so it's effectively NULL as far as
+> +		 * uretprobe processing logic is concerned
+> +		 */
+> +		return NULL;
+> +	case HPROBE_LEASED: {
+> +		struct uprobe *uprobe = try_get_uprobe(hprobe->uprobe);
+> +		/*
+> +		 * Try to switch hprobe state, guarding against
+> +		 * hprobe_consume() or another hprobe_expire() racing with us.
+> +		 * Note, if we failed to get uprobe refcount, we use special
+> +		 * HPROBE_GONE state to signal that hprobe->uprobe shouldn't
+> +		 * be used as it will be freed after SRCU is unlocked.
+> +		 */
+> +		if (try_cmpxchg(&hprobe->state, &hstate, uprobe ? HPROBE_STABLE : HPROBE_GONE)) {
+> +			/* We won the race, we are the ones to unlock SRCU */
+> +			__srcu_read_unlock(&uretprobes_srcu, hprobe->srcu_idx);
+> +			return uprobe;
+> +		}
+> +
+> +		/* We lost the race, undo refcount bump (if it ever happened) */
+> +		if (uprobe)
+> +			put_uprobe(uprobe);
+> +		/*
+> +		 * Even if hprobe_consume() or another hprobe_expire() wins
+> +		 * the state update race and unlocks SRCU from under us, we
+> +		 * still have a guarantee that underyling uprobe won't be
+> +		 * freed due to ongoing caller's SRCU lock region, so we can
+> +		 * return it regardless. The caller then can attempt its own
+> +		 * try_get_uprobe() to preserve the instance, if necessary.
+> +		 * This is used in dup_utask().
+> +		 */
+> +		return uprobe;
+> +	}
+> +	default:
+> +		WARN(1, "unknown hprobe state %d", hstate);
+> +		return NULL;
+> +	}
+> +}
+
+So... after a few readings I think I'm mostly okay with this. But I got
+annoyed by the whole HPROBE_STABLE with uprobe=NULL weirdness. Also,
+that data_race() usage is weird, what is that about?
+
+And then there's the case where we end up doing:
+
+  try_get_uprobe()
+  put_uprobe()
+  try_get_uprobe()
+
+in the dup path. Yes, it's unlikely, but gah.
+
+
+So how about something like this?
+
 ---
- drivers/iio/light/as73211.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iio/light/as73211.c b/drivers/iio/light/as73211.c
-index be0068081ebbbb37fdfb252b67a77b302ff725f6..c4c94873e6a1cc926cfb724d906b07222773c43f 100644
---- a/drivers/iio/light/as73211.c
-+++ b/drivers/iio/light/as73211.c
-@@ -108,7 +108,8 @@ struct as73211_spec_dev_data {
-  * @creg1:  Cached Configuration Register 1.
-  * @creg2:  Cached Configuration Register 2.
-  * @creg3:  Cached Configuration Register 3.
-- * @mutex:  Keeps cached registers in sync with the device.
-+ * @mutex:  Keeps cached registers in sync with the device and protects
-+ *          int_time_avail concurrent access for updating and reading.
-  * @completion: Completion to wait for interrupt.
-  * @int_time_avail: Available integration times (depend on sampling frequency).
-  * @spec_dev: device-specific configuration.
-@@ -493,17 +494,32 @@ static int as73211_read_avail(struct iio_dev *indio_dev, struct iio_chan_spec co
- 		*type = IIO_VAL_INT;
- 		return IIO_AVAIL_LIST;
- 
--	case IIO_CHAN_INFO_INT_TIME:
-+	case IIO_CHAN_INFO_INT_TIME: {
- 		*length = ARRAY_SIZE(data->int_time_avail);
--		*vals = data->int_time_avail;
- 		*type = IIO_VAL_INT_PLUS_MICRO;
--		return IIO_AVAIL_LIST;
- 
-+		guard(mutex)(&data->mutex);
-+
-+		*vals = kmemdup_array(data->int_time_avail, *length,
-+				      sizeof(int), GFP_KERNEL);
-+		if (!*vals)
-+			return -ENOMEM;
-+
-+		return IIO_AVAIL_LIST;
-+	}
- 	default:
- 		return -EINVAL;
- 	}
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 06ec41c75c45..efb4f5ee6212 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -657,20 +657,19 @@ static void put_uprobe(struct uprobe *uprobe)
+ 	call_srcu(&uretprobes_srcu, &uprobe->rcu, uprobe_free_srcu);
  }
  
-+static void as73211_read_avail_release_res(struct iio_dev *indio_dev,
-+					   struct iio_chan_spec const *chan,
-+					   const int *vals, long mask)
-+{
-+	if (mask == IIO_CHAN_INFO_INT_TIME)
-+		kfree(vals);
-+}
-+
- static int _as73211_write_raw(struct iio_dev *indio_dev,
- 			       struct iio_chan_spec const *chan __always_unused,
- 			       int val, int val2, long mask)
-@@ -699,6 +715,7 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
- static const struct iio_info as73211_info = {
- 	.read_raw = as73211_read_raw,
- 	.read_avail = as73211_read_avail,
-+	.read_avail_release_resource = as73211_read_avail_release_res,
- 	.write_raw = as73211_write_raw,
- };
+-/* Initialize hprobe as SRCU-protected "leased" uprobe */
+-static void hprobe_init_leased(struct hprobe *hprobe, struct uprobe *uprobe, int srcu_idx)
++static void hprobe_init(struct hprobe *hprobe, struct uprobe *uprobe, int srcu_idx)
+ {
+-	hprobe->state = HPROBE_LEASED;
+-	hprobe->uprobe = uprobe;
+-	hprobe->srcu_idx = srcu_idx;
+-}
++	enum hprobe_state state = HPROBE_GONE;
  
-
--- 
-2.47.0
-
+-/* Initialize hprobe as refcounted ("stable") uprobe (uprobe can be NULL). */
+-static void hprobe_init_stable(struct hprobe *hprobe, struct uprobe *uprobe)
+-{
+-	hprobe->state = HPROBE_STABLE;
++	if (uprobe) {
++		state = HPROBE_LEASED;
++		if (srcu_idx < 0)
++			state = HPROBE_STABLE;
++	}
++
++	hprobe->state = state;
+ 	hprobe->uprobe = uprobe;
+-	hprobe->srcu_idx = -1;
++	hprobe->srcu_idx = srcu_idx;
+ }
+ 
+ /*
+@@ -713,8 +712,7 @@ static void hprobe_finalize(struct hprobe *hprobe, enum hprobe_state hstate)
+ 		__srcu_read_unlock(&uretprobes_srcu, hprobe->srcu_idx);
+ 		break;
+ 	case HPROBE_STABLE:
+-		if (hprobe->uprobe)
+-			put_uprobe(hprobe->uprobe);
++		put_uprobe(hprobe->uprobe);
+ 		break;
+ 	case HPROBE_GONE:
+ 	case HPROBE_CONSUMED:
+@@ -739,8 +737,9 @@ static void hprobe_finalize(struct hprobe *hprobe, enum hprobe_state hstate)
+  * refcount, so caller has to attempt try_get_uprobe(), if it needs to
+  * preserve uprobe beyond current SRCU lock region. See dup_utask().
+  */
+-static struct uprobe* hprobe_expire(struct hprobe *hprobe)
++static struct uprobe *hprobe_expire(struct hprobe *hprobe, bool get)
+ {
++	struct uprobe *uprobe = NULL;
+ 	enum hprobe_state hstate;
+ 
+ 	/*
+@@ -749,25 +748,18 @@ static struct uprobe* hprobe_expire(struct hprobe *hprobe)
+ 	 */
+ 	lockdep_assert(rcu_read_lock_held() && srcu_read_lock_held(&uretprobes_srcu));
+ 
+-	hstate = data_race(READ_ONCE(hprobe->state));
++	hstate = READ_ONCE(hprobe->state);
+ 	switch (hstate) {
+ 	case HPROBE_STABLE:
+-		/* uprobe is properly refcounted, return it */
+-		return hprobe->uprobe;
++		uprobe = hprobe->uprobe;
++		break;
++
+ 	case HPROBE_GONE:
+-		/*
+-		 * SRCU was unlocked earlier and we didn't manage to take
+-		 * uprobe refcnt, so it's effectively NULL
+-		 */
+-		return NULL;
+ 	case HPROBE_CONSUMED:
+-		/*
+-		 * uprobe was consumed, so it's effectively NULL as far as
+-		 * uretprobe processing logic is concerned
+-		 */
+-		return NULL;
+-	case HPROBE_LEASED: {
+-		struct uprobe *uprobe = try_get_uprobe(hprobe->uprobe);
++		break;
++
++	case HPROBE_LEASED:
++		uprobe = try_get_uprobe(hprobe->uprobe);
+ 		/*
+ 		 * Try to switch hprobe state, guarding against
+ 		 * hprobe_consume() or another hprobe_expire() racing with us.
+@@ -778,27 +770,26 @@ static struct uprobe* hprobe_expire(struct hprobe *hprobe)
+ 		if (try_cmpxchg(&hprobe->state, &hstate, uprobe ? HPROBE_STABLE : HPROBE_GONE)) {
+ 			/* We won the race, we are the ones to unlock SRCU */
+ 			__srcu_read_unlock(&uretprobes_srcu, hprobe->srcu_idx);
+-			return uprobe;
++			break;
+ 		}
+ 
+ 		/* We lost the race, undo refcount bump (if it ever happened) */
+-		if (uprobe)
++		if (uprobe && !get) {
+ 			put_uprobe(uprobe);
+-		/*
+-		 * Even if hprobe_consume() or another hprobe_expire() wins
+-		 * the state update race and unlocks SRCU from under us, we
+-		 * still have a guarantee that underyling uprobe won't be
+-		 * freed due to ongoing caller's SRCU lock region, so we can
+-		 * return it regardless. The caller then can attempt its own
+-		 * try_get_uprobe() to preserve the instance, if necessary.
+-		 * This is used in dup_utask().
+-		 */
++			uprobe = NULL;
++		}
++
+ 		return uprobe;
+-	}
++
+ 	default:
+ 		WARN(1, "unknown hprobe state %d", hstate);
+ 		return NULL;
+ 	}
++
++	if (uprobe && get)
++		return try_get_uprobe(uprobe);
++
++	return uprobe;
+ }
+ 
+ static __always_inline
+@@ -1920,9 +1911,8 @@ static void ri_timer(struct timer_list *timer)
+ 	/* RCU protects return_instance from freeing. */
+ 	guard(rcu)();
+ 
+-	for_each_ret_instance_rcu(ri, utask->return_instances) {
+-		hprobe_expire(&ri->hprobe);
+-	}
++	for_each_ret_instance_rcu(ri, utask->return_instances)
++		hprobe_expire(&ri->hprobe, false);
+ }
+ 
+ static struct uprobe_task *alloc_utask(void)
+@@ -1975,10 +1965,7 @@ static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
+ 
+ 		*n = *o;
+ 
+-		/* see hprobe_expire() comments */
+-		uprobe = hprobe_expire(&o->hprobe);
+-		if (uprobe) /* refcount bump for new utask */
+-			uprobe = try_get_uprobe(uprobe);
++		uprobe = hprobe_expire(&o->hprobe, true);
+ 
+ 		/*
+ 		 * New utask will have stable properly refcounted uprobe or
+@@ -1986,7 +1973,7 @@ static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
+ 		 * need to preserve full set of return_instances for proper
+ 		 * uretprobe handling and nesting in forked task.
+ 		 */
+-		hprobe_init_stable(&n->hprobe, uprobe);
++		hprobe_init(&n->hprobe, uprobe, -1);
+ 
+ 		n->next = NULL;
+ 		rcu_assign_pointer(*p, n);
+@@ -2131,7 +2118,7 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
+ 
+ 	utask->depth++;
+ 
+-	hprobe_init_leased(&ri->hprobe, uprobe, srcu_idx);
++	hprobe_init(&ri->hprobe, uprobe, srcu_idx);
+ 	ri->next = utask->return_instances;
+ 	rcu_assign_pointer(utask->return_instances, ri);
+ 
 
