@@ -1,94 +1,191 @@
-Return-Path: <linux-kernel+bounces-370855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF4C09A32EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:33:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823759A32AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58168B21937
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:33:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067EC1F24A54
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0FD14BF86;
-	Fri, 18 Oct 2024 02:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAED51741D1;
+	Fri, 18 Oct 2024 02:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="E5MpfvRy"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hIPGaKOv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638172CA5;
-	Fri, 18 Oct 2024 02:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3419F13D890;
+	Fri, 18 Oct 2024 02:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729218797; cv=none; b=baMn0AcG46tfpGYCNoN0Cql0nqqz/mxIjvyGA87EKMxiDYoOEM4VgBuLL4hLZ/VjDhJXVC6nrRbLOjbXxcUfPSei8hP3X8DQiPfNkH0QbsksxRkljOowk9T9QktkPHWu4FQWQvPKAWp9aYcSZ3gHTuQF7gy+ofTETzEIBzP6KG8=
+	t=1729218159; cv=none; b=GV9RHa6RdrOKBiROjWrLiAgZcDdCMvGYD81n+EW3WIAWCErellA9wNX5nuSCUmatMBh5imnZXQ0WwnRqsp22HGolQGyS50T2M35GTBTD3uvjkKw3Ft4m6OwxUVIAe7ju/kTXpBpMTZ4kWEuZZUytytkUd0S7gdTerv4mnrOPrMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729218797; c=relaxed/simple;
-	bh=U7+lIfcx743bjmHl2HiphHVyK9Nmc5jiCxeFyXuSLMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+t8fr1jUERysnboBwZTs/MU0SUjAgRwurBq3eqTpfpH2jCQ/jeSRQ7tibRBJGd7I0k14GTW4uhpX8MWsDn6JUXQas1+BlvsoE0zrn1Btl2ORHve7/VvctYSVrq6r0HqgvjDgVEAOfkYPP9WIyTdB9Xzr3vZ0jdHF2mXQnRCekM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=E5MpfvRy; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=FDJn4XXIjtyq1C4WRBOEnHEbGl9tvoFq7BB0FTlNUn4=; b=E5MpfvRyOOAbCVMvQjDs7hrWjD
-	B6mlxRZ8DnBTSxKsn/lH+6wCOcSDhKUIjNwent6D9SpdmpbOY8sJp960hsjO1pIshOGLW7eZjM6TE
-	uNZIttKZmebHFASK7dFjRgJsfBXy7lSTAUvJdNBW64ydSibRSIBJMIhErJyv1dRmaNpI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t1cnR-00AJ0Z-VP; Fri, 18 Oct 2024 04:32:57 +0200
-Date: Fri, 18 Oct 2024 04:32:57 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Suraj Jaiswal <quic_jsuraj@quicinc.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Andrew Halaney <ahalaney@redhat.com>, Rob Herring <robh@kernel.org>,
-	kernel@quicinc.com
-Subject: Re: [PATCH v3] net: stmmac: allocate separate page for buffer
-Message-ID: <8677a11c-8735-43c7-ae5b-6dc894d94677@lunn.ch>
-References: <20241015121009.3903121-1-quic_jsuraj@quicinc.com>
- <20241017194258.000044b3@gmail.com>
+	s=arc-20240116; t=1729218159; c=relaxed/simple;
+	bh=07OKZv7bQXxY15+SLz0VH6nmOA94d39zoedazb04sYI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M1DfcyU7ZQc7Os7KSH/LglMnCVvPe9aHiQOdmqq8ABtjdGlt9pC69azGI5Z9LvEzS6xFppMG6P/yxyT/G2rjzb7ep90lu13doBtfWhSX6eM8bQVs8PCeGw/PIGX2IrRo4wnfyCMqAHVVbrhxeRncy4FWGBEUonK6b7GDNl9rAa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hIPGaKOv; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729218157; x=1760754157;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=07OKZv7bQXxY15+SLz0VH6nmOA94d39zoedazb04sYI=;
+  b=hIPGaKOvDI56CyWynhIaOJCXV2LReUIWeg7cnlOwYYjSQTCoaLsfIy4B
+   AdIcWpyrXBRbjrblLOv61Z6NZ7p7kluc79yIiCC97wqyEiCpLLIz7nkZm
+   5QwqwCWyqX03Xzv6ICyAlwyazW4LO6/exl4x69XPPnBWgL1L9tIq1ao5O
+   CFqkzXT0kfRrO/f+tvCktOpmWaASPqdkMuue2ZfWhJIqhf/v+9Dgh7LUy
+   HIYJfsBTt37kQWm9VKF6tVSiVeICfd2aTfuM+721WRwx9masVEAHMPx0w
+   T6oeEixQZhBTAMeEx13dNwrYeF7rRDnNJ22mUbT0uzbAHyolL5AR57y/c
+   g==;
+X-CSE-ConnectionGUID: BeWU8rQ1QNOkbnsXQGn8+g==
+X-CSE-MsgGUID: q8WJJ6jYQXe4teXh2iUcUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="54149662"
+X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
+   d="scan'208";a="54149662"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 19:22:36 -0700
+X-CSE-ConnectionGUID: 5qxcRD3ITVqL30GbaEK1hw==
+X-CSE-MsgGUID: dH5xQ0uMQ2e/gMhfTEO0qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
+   d="scan'208";a="78697695"
+Received: from rchatre-desk1.jf.intel.com ([10.165.154.99])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 19:22:36 -0700
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: fenghua.yu@intel.com,
+	shuah@kernel.org,
+	tony.luck@intel.com,
+	peternewman@google.com,
+	babu.moger@amd.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: maciej.wieczor-retman@intel.com,
+	reinette.chatre@intel.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3 00/15] selftests/resctrl: Support diverse platforms with MBM and MBA tests
+Date: Thu, 17 Oct 2024 19:33:15 -0700
+Message-ID: <cover.1729218182.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017194258.000044b3@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 17, 2024 at 07:42:58PM +0800, Furong Xu wrote:
-> Hi Suraj,
-> 
-> Thanks for this fix.
-> 
-> I tested your patch on XGMAC 3.20a, all goes well, except a performance
-> drop of ~10%
-> Like Jakub Kicinski said in V2, this involves more dma_map() and does add
-> overhead :-/
-> 
-> I might have a better fix for this, I will send to review and CC it to you.
+Changes since V2:
+- V2: https://lore.kernel.org/all/cover.1726164080.git.reinette.chatre@intel.com/
+- Add fix to protect against buffer overflow when parsing text from sysfs files.
+- Add cleanup patch to address use of magic constants as pointed out by
+  Ilpo.
+- Add Reviewed-by tags where received, except for "selftests/resctrl: Use cache
+  size to determine "fill_buf" buffer size" that changed too much since
+  receiving the Reviewed-by tag.
+- Please see individual patches for detailed changes.
 
-Lets mark this as changed-requested, due to the performance drop
+Changes since V1:
+- V1: https://lore.kernel.org/cover.1724970211.git.reinette.chatre@intel.com/
+- V2 contains the same general solutions to stated problem as V1 but these
+  are now preceded by more fixes (patches 1 to 5) and improved robustness
+  (patches 6 to 9) to existing tests before the series gets back
+  to solving the original problem with more confidence in patches 10 to 13.
+- The posibility of making "memflush = false" for CMT test was discussed
+  during V1. Modifying this setting does not have a significant impact on the
+  observed results that are already well within acceptable range and this
+  version thus keeps original default. If performance was a goal it may
+  be possible to do further experimentation where "memflush = false" could
+  eliminate the need for the sleep(1) within the test wrapper, but
+  improving the performance is not a goal of this work.
+- (New) Support what seems to be unintended ability for user space to provide
+  parameters to "fill_buf" by making the parsing robust and only support
+  changing parameters that are supported to be changed. Drop support for
+  "write" operation since it has never been measured.
+- (New) Improve wraparound handling. (Ilpo)
+- (New) A couple of new fixes addressing issues discovered during development.
+- (Change from V1) To support fill_buf parameters provided by user space as
+  well as test specific fill_buf parameters struct fill_buf_param is no longer
+  just a member of struct resctrl_val_param, instead there could be at most
+  two instances of struct fill_buf_param, the immutable parameters provided
+  by user space and the parameters used by individual tests. (Ilpo)
+- Please see individual patches for detailed changes.
 
-It also introduces one more kdoc warning.
+V1 cover:
 
+The resctrl selftests for Memory Bandwidth Allocation (MBA) and Memory
+Bandwidth Monitoring (MBM) are failing on some (for example [1]) Emerald
+Rapids systems. The test failures result from the following two
+properties of these systems:
+1) Emerald Rapids systems can have up to 320MB L3 cache. The resctrl
+   MBA and MBM selftests measure memory traffic for which a hardcoded
+   250MB buffer has been sufficient so far. On platforms with L3 cache
+   larger than the buffer, the buffer fits in the L3 cache and thus
+   no/very little memory traffic is generated during the "memory
+   bandwidth" tests.
+2) Some platform features, for example RAS features or memory
+   performance features that generate memory traffic may drive accesses
+   that are counted differently by performance counters and MBM
+   respectively, for instance generating "overhead" traffic which is not
+   counted against any specific RMID. Until now these counting
+   differences have always been "in the noise". On Emerald Rapids
+   systems the maximum MBA throttling (10% memory bandwidth)
+   throttles memory bandwidth to where memory accesses by these other
+   platform features push the memory bandwidth difference between
+   memory controller performance counters and resctrl (MBM) beyond the
+   tests' hardcoded tolerance.
 
-    Andrew
+Make the tests more robust against platform variations:
+1) Let the buffer used by memory bandwidth tests be guided by the size
+   of the L3 cache.
+2) Larger buffers require longer initialization time before the buffer can
+   be used to measurement. Rework the tests to ensure that buffer
+   initialization is complete before measurements start.
+3) Do not compare performance counters and MBM measurements at low
+   bandwidth. The value of "low" is hardcoded to 750MiB based on
+   measurements on Emerald Rapids, Sapphire Rapids, and Ice Lake
+   systems. This limit is not applicable to AMD systems since it
+   only applies to the MBA and MBM tests that are isolated to Intel.
 
----
-pw-bot: cr
+[1]
+https://ark.intel.com/content/www/us/en/ark/products/237261/intel-xeon-platinum-8592-processor-320m-cache-1-9-ghz.html
+
+Reinette Chatre (15):
+  selftests/resctrl: Make functions only used in same file static
+  selftests/resctrl: Print accurate buffer size as part of MBM results
+  selftests/resctrl: Fix memory overflow due to unhandled wraparound
+  selftests/resctrl: Protect against array overrun during iMC config
+    parsing
+  selftests/resctrl: Protect against array overflow when reading strings
+  selftests/resctrl: Make wraparound handling obvious
+  selftests/resctrl: Remove "once" parameter required to be false
+  selftests/resctrl: Only support measured read operation
+  selftests/resctrl: Remove unused measurement code
+  selftests/resctrl: Make benchmark parameter passing robust
+  selftests/resctrl: Ensure measurements skip initialization of default
+    benchmark
+  selftests/resctrl: Use cache size to determine "fill_buf" buffer size
+  selftests/resctrl: Do not compare performance counters and resctrl at
+    low bandwidth
+  selftests/resctrl: Keep results from first test run
+  selftests/resctrl: Replace magic constants used as array size
+
+ tools/testing/selftests/resctrl/cmt_test.c    |  37 +-
+ tools/testing/selftests/resctrl/fill_buf.c    |  45 +-
+ tools/testing/selftests/resctrl/mba_test.c    |  54 ++-
+ tools/testing/selftests/resctrl/mbm_test.c    |  37 +-
+ tools/testing/selftests/resctrl/resctrl.h     |  79 +++-
+ .../testing/selftests/resctrl/resctrl_tests.c |  95 +++-
+ tools/testing/selftests/resctrl/resctrl_val.c | 447 +++++-------------
+ tools/testing/selftests/resctrl/resctrlfs.c   |  19 +-
+ 8 files changed, 354 insertions(+), 459 deletions(-)
+
+-- 
+2.46.2
+
 
