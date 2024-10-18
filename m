@@ -1,182 +1,266 @@
-Return-Path: <linux-kernel+bounces-371276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90AC19A3917
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:50:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3CC9A3923
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14D631F22DD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:50:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8963028478E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF8418F2F1;
-	Fri, 18 Oct 2024 08:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F7818FC7F;
+	Fri, 18 Oct 2024 08:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cGvX/ymO"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0OD/jL7f"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2089.outbound.protection.outlook.com [40.107.92.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE9418E74D
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729241437; cv=none; b=rIeVK2kOEDd2u0zzPSkbqFHZiyu8SzJgwUPsGte+WRegU/qZy7pejq9RZVNmKtZVCy1vMqFeQRb/b90lkr5i9dvEpaxv4aciidi9v5F/jquYK4RXvt3HCYAVI5Mo6wriccfxz47r4yr2jKB3mnmn0baGgFK61Qc0yoVZ4Yf0QqY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729241437; c=relaxed/simple;
-	bh=q6UaaBG1S1+qACQ6YRhwicu8VBEuLQLOH0LNHXVY9yc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uLwfUfDowaIHk6uC8p+XkMsiOv+BtoLCF1bwdLPbi8uBYCUX2O80INXvFaZQPxLOZ1BasPiTgYwZcCvUhmarEraAGUM7iajKD5fHtJ5SOR+9yzFGQghp2xmE+VGLZPJBdaATybf46D924FBTn2VNArljbeiEPyHBoWlGYycKEhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cGvX/ymO; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e396a69062so17935697b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:50:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729241434; x=1729846234; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/RSforFp+VQNtLc4ofIvEcTd/s/JTnlqhsY7WVRH24=;
-        b=cGvX/ymOsRiCUhCtm6gKWeuZv7bEICcUSiqlkEPEsnKr/DjCPCeM5szJA6HiqIMEJJ
-         7GBU7tluoAZ/Lc/wJZF4Dp0fflq8F72YmkdRI7OQTp6n8DQfwyLtOGwFr79mM4LDVKpW
-         z2e1o2Qq7rnQ+MM6bWbLXn4LLxzwTssXZhGeZ/QCQRRYqGVNzAHfePrMMmlKjRI0x9NN
-         H59W4nbjDXpBXrFw101KgpBc3IIaORYMIlHKzenIVrAXJK77QRvbdS85C30cZiZM40Ql
-         Yr2J4dEKBnCjbQk4qON2gBvMLCi0Eto8dhwgnNmguO9ApD8m3r33VPrR4mmz7UGDTqvB
-         m3BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729241434; x=1729846234;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4/RSforFp+VQNtLc4ofIvEcTd/s/JTnlqhsY7WVRH24=;
-        b=MJ9RekSTxcRgqVOiPndH7grVaYFy/FmhARKdQT+pTSjvNzGty8Z/7YAfAw7C2pbjxa
-         1e95qsPhHw0t2tO2aABE0WUTmA2G8Kzkp4Y+qjt0/H+rHUEALerwzJ/1AmsytHOPtaND
-         WtE26V+qqWNPaAefgFcuyXelE8NnbhE+RB9lN/LhFQ850evzeoXelser3LJCyZ/wtODc
-         9lwrDMKFtcokYNyFBG3MyYARbaaZEkh8T5q7ISToQbKb2UPLaEv1vWK727CN+/dcz2mn
-         N3BU05x4phKHx6fSan/6UMsO58Em/3VZ2k3+EkSb1YmraOY/5Yh6ipM0DD02vaWs0CeP
-         81kA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuvqlaVJAwlSsB8i9anZQwcZTwvgZgwokRYpSp/14hNtoMIc2blj7vQkZTdMMspafHTzbCNrfK4dgnYF8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLOoiMgKqguGmXQLHaBNDVnD2QsOinvrvYzYIHHCMxKD2zQ1t4
-	pfnSgYpL/hoKOb6tYhSnsvptsDJfJNe6lEAna+G6L2FPkkEa8iWER3FyEpkXlVy3X8ZGiet+JPR
-	ZJBck1dCAHPybFezFATNrISX+DuuNDzP343z1Ug==
-X-Google-Smtp-Source: AGHT+IEfhw8dTGOqtMUmLixgGGVRqyf2gSqNzfjdP2OonSOoTDcrjLgzvPuP0+fWji/QpUGei3fuavAC7iK/8ckB4NI=
-X-Received: by 2002:a05:690c:fc2:b0:6e2:1090:af31 with SMTP id
- 00721157ae682-6e5bfbe7c76mr17174717b3.3.1729241434462; Fri, 18 Oct 2024
- 01:50:34 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D7318E744;
+	Fri, 18 Oct 2024 08:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729241556; cv=fail; b=n1XHWF0kGAJiLejVD1ZHBarxhPIK3e6rHKM6HpYxXs9UM/v8UUYEdIOijH44Y9GZ12I+zFk7PHazGL8I/vJ3opTanVMwJr0IVqWWwL01bh1qg/FG3qh/c0vSSmA4wF+1zLaSxBZnHlCOVDbBR2pGaIZSWRhLSE6oGovjcNv0gy8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729241556; c=relaxed/simple;
+	bh=CsMi36V0VhL/+T8jXhGFDYIl9V9J/LMYchiVlNn7qGw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hZhtcfev+J1ARFOU/v1lXFVLRrojifrovco2Kh/M2LAtkdQdyN0nWRuj1PqqOE4hAcEbgJsMc15CtbslCXOgR3TX5KyK5Sa5+rQou+4gydWL0swNxFdNNS+jvsuZmp63BSGyejpk4TfQacwT85zJukaSkTZAYeDiYxP3C/4/ovg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0OD/jL7f; arc=fail smtp.client-ip=40.107.92.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UJ9zxhGe9siGFgt89R2lpsHGJsHsXYCLV8MFGWK4G6Pku/aOgu6jntX1cCshza+HXPyNRB2t/pzDMTmAWLz/18U0jahIoy3UxUr89oiPV88LkXLwOm2pGd8uO7tzfZ4XlPXmfC3VqA3uXjxAI/hZaAWEF0YVQHmkyltROEHwoX35+Kenui2CH0k3/UHUAR2f009v0art9S01G0pXU+7CwRi+5MeWZYxLx2LvSHtspfPQgq58DzZaIaOv12+iOTHstt8el/9XMeBg7j6y7UpGZq/G3qHZEf8ArEL3tiIJkLNPu2k7C3Wq6U+x4AlywBfEtdq6Bq3H3w5++OFef6Jf1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KQbsVaszZ0Box5GznutiBe0zkzLQePszSHzff2S+4HI=;
+ b=gMl+pSrxOtyfFxjZV6QW4t8ySxZAWgffM4ImwbTLxIiNx8pAHiwXxMUfsyVKLP+qb6Uv9TLzq3Mjf+kRSypBPjKsu22MIqVWv5s45AWwS3CWybhOrNHmlyY44Y5YbLsAmOUpkAiLgXDxWRzQwAZokgO+pchrLAhRxxNhfjZ8fgd5xWdj957ssXhNA9U4MOOtZqCMbzrrH3XHTTrv3Z8UAMiz7vEwbsZmqXGoTYYjcIHYu3iDTbBDBRVyZ5jRraaUDm0YUvXtZjRYYjKwE5UzDubY4NtfD85edk9c4veG0iL7qIKPTBglxoqOFmNyBSIxts74Le/T1sClSZTeBgIefg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KQbsVaszZ0Box5GznutiBe0zkzLQePszSHzff2S+4HI=;
+ b=0OD/jL7fpSUN4drOPdwty+CakFCPbX04ChDgOGfVPx5Ig4N+9enPzqmWd57eLYsWVPFdVcFpoG1A7L5bjbB5It9n3f376VtIiseH/lACU6SVqd57bbF89k/VcBK5X0wogEHPs2GFtdv2Dh9Tb5COIZhvuA4nFloe0HlrBkouPvs=
+Received: from CH5P223CA0010.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:1f3::11)
+ by SN7PR12MB6887.namprd12.prod.outlook.com (2603:10b6:806:261::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Fri, 18 Oct
+ 2024 08:52:30 +0000
+Received: from CH2PEPF00000146.namprd02.prod.outlook.com
+ (2603:10b6:610:1f3:cafe::73) by CH5P223CA0010.outlook.office365.com
+ (2603:10b6:610:1f3::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.21 via Frontend
+ Transport; Fri, 18 Oct 2024 08:52:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF00000146.mail.protection.outlook.com (10.167.244.103) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8069.17 via Frontend Transport; Fri, 18 Oct 2024 08:52:30 +0000
+Received: from volcano-62e7host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 18 Oct
+ 2024 03:52:22 -0500
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+To: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
+CC: <pbonzini@redhat.com>, <seanjc@google.com>, <joao.m.martins@oracle.com>,
+	<david.kaplan@amd.com>, <jon.grimm@amd.com>, <santosh.shukla@amd.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: [PATCH v2] KVM: SVM: Inhibit AVIC on SNP-enabled system without HvInUseWrAllowed feature
+Date: Fri, 18 Oct 2024 08:50:37 +0000
+Message-ID: <20241018085037.14131-1-suravee.suthikulpanit@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 18 Oct 2024 10:49:58 +0200
-Message-ID: <CAPDyKFq1-fW=d5QiEcYNkErpMuBo0aZzB1pos1CHcPZmAWGTRw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] watchdog: rzg2l_wdt: Enable properly the watchdog
- clocks and power domain
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000146:EE_|SN7PR12MB6887:EE_
+X-MS-Office365-Filtering-Correlation-Id: d06a3d77-a0cd-4a4c-93b8-08dcef523322
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SktLcHdSajl1Ri9OYVZqdUJmaUlOckd1TWJpb3RDdnpuUUFld29IY1NvaFd2?=
+ =?utf-8?B?Y2xTTTlLZVR6K2dONzRmeGFLVFBlSEdrczE2UzFQOW5CZ28ydjdjelpBVjBZ?=
+ =?utf-8?B?TFk3NmJ5UXZHTUJsc0t4V25XMFIwM1pnUEhmVjBNSTZsdDZwRHpZcHk1QnlB?=
+ =?utf-8?B?QXExMHM4UTB1b2xHV0lud1JVTEtua0JmK1NYUFp3ajladlExYmJEelllemhT?=
+ =?utf-8?B?RVdrV1dURFdKa0Vpc1JPVW13QnhxZ2lvR2JUYVVkTDFRdWs3aUZoV1VsVkFL?=
+ =?utf-8?B?MGhNUmF5elp2bExyYndCZURXOHI0MzFOMnBIWGxQUkp3ZVlETG5pS0pycnZJ?=
+ =?utf-8?B?clN1ZHNuSTZQL3hjZ0YzZVNOYXNoekdwY1A0dmNoc2dqNWEwZWwrcmVJZjYz?=
+ =?utf-8?B?UENhUjFlc1lxZDlNQ2k2K3YzaW5DaktsQXlDbGUzdmc5aVExV25WTFBlcHpX?=
+ =?utf-8?B?L0RvRVVFb3FWbWlBYUE5anhzS1ZUdW9sWXg4d3N3eXJpWXBwL2g3MWFxWncy?=
+ =?utf-8?B?QjFlb0srZmFkRHRQNU1wdDFLdDFIWTArWGJDY1RJcDYwb1lmL3BlVHRDVEc1?=
+ =?utf-8?B?dXRHeWZkQ1F3V3p1SjIwWDlmSTVXRkk4Rkt2SWprcTVncXVXYmJUNWlxdnVT?=
+ =?utf-8?B?L1NabTQ1Wi9jM3BZWXdPZDBTbjJYYmxZTTVhNWF0aVpQUVEwL3ZjWkE2WUVK?=
+ =?utf-8?B?eVhlN0xDZVozWElSSUl5VlpDbE5XbllqNVpLejEzSWt1WHBmZ1RJcld5ZnAy?=
+ =?utf-8?B?czMzYzhUc1dzSlNKUVRLUmMzVTQvZ05xNjlTZXk5LzdRcmxuaHlsUHliV0hy?=
+ =?utf-8?B?RTRrWU9VSmI4eVFGYW44VHFSVU4zN2xoZ3lqT0lndkQ2QTFDL3lKRGx4VlFu?=
+ =?utf-8?B?U0g0K0hXNXZjYU82RnZETzVST0pHM1haVWVsNkw3ZVJ6UG9aZVprNjFKVVh6?=
+ =?utf-8?B?bHU3ZnpHbkR1aENrcTNBQ0gvS0ErVzhUQU45VE9La3luemRlV0RBOGRVU3RC?=
+ =?utf-8?B?RDE2RXhIM1hPY1JocXFhVmlQbzJUbFNQRlJuVTFqcHlYY3N4bHZRL21iTkZZ?=
+ =?utf-8?B?RTdWMlBQTm9jZ2Q0czdzQ3VaQ2lzdWI4Z3AvN21SZlhxc3ZnTGl6aVY4VDV5?=
+ =?utf-8?B?QndjL3BYNTAvcXBNdVFLNlM0SFlYVEhweDlyaENsajJGMVB1VTRTbUYxVTd0?=
+ =?utf-8?B?ZXNZZzNaVWRQallTaHVuVGxuNkxCelJjSFE4VFd4dmQ5V2x6b1dTaFJ1MWNO?=
+ =?utf-8?B?NzdlUDFFTVZ5UlpnVVV5VlErS0MzWnpjUkErTUt3bHRYYlAzZnVaVlg3bHpW?=
+ =?utf-8?B?SGYrN0pJNy9takZvYjYyM3A0OXdCa2VnaDlETUxlVmp4emxHWDlSTFJpTVdQ?=
+ =?utf-8?B?bXkwcnV6UUYzaXJDQTMxR25iL2tQZ0JjZVNlQ1VhcExkYUI1TmRSazhPZlYx?=
+ =?utf-8?B?VEYwOWNiYk4wcnhEU3ZHVWJHSjQxemFsQkJ6M1hHQWQ1T05aMHk4QXROU1Rk?=
+ =?utf-8?B?djBDZDEyOEVJaUVES3ZQNnYrcVFKZVRiYlVLU1plaENrQVRYNHV2R1l3OUVH?=
+ =?utf-8?B?RFRKSlk1eDgzSkVnM2hIdEF2TkdkUC9ZckFIcmJLZ213YnVOWjFaSlpCcFg3?=
+ =?utf-8?B?QXV0SlBMWGNQN0pZT3RoMVVmbFBJVXR3dlp1QnZmTm5LKzMzaENZS2sxeEI0?=
+ =?utf-8?B?VDlsWUVxbENlRFJrVmVnSEJnV0I0VUNxdUl6NG4yM01MT1hreWtIZGZNMHkv?=
+ =?utf-8?B?RGZGQ3NkdGNhWlB3YWloMXM5R2pZWFFYZ09OcmhaK2Z4K0xtZmtOenJXZ1pz?=
+ =?utf-8?B?QWRZZUVFcXNReVV0cE9INFFtUkpaVXpEZElsbGp3bmluYXB3NmpKZVhhTUJh?=
+ =?utf-8?B?bWZzQUZEWWVLR2NSWGlaVUQwQndXenpBeTY5YURPeXNNdkE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 08:52:30.3247
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d06a3d77-a0cd-4a4c-93b8-08dcef523322
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000146.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6887
 
-On Tue, 15 Oct 2024 at 18:47, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Hi,
->
-> Watchdog device available on RZ/G3S SoC is part of a software-controlled
-> power domain. The watchdog driver implements struct
-> watchdog_ops::restart() handler which is called in atomic context via
-> this call chain:
->
-> kernel_restart() ->
->   machine_restart() ->
->     do_kernel_restart() ->
->       atomic_notifier_call_chain() ->
->         watchdog_restart_notifier()
->           rzg2l_wdt_restart()
->
-> When the rzg2l_wdt_restart() is called it may happen that the watchdog
-> clocks to be disabled and the associated power domain to be off.
-> Accessing watchdog registers in this state leads to aborts and system
-> blocks.
->
-> To solve this issue the watchdog power domain was marked as IRQ safe
-> as well as watchdog device (as proposed by Ulf Hansson). Along with
-> it the clk_prepare_enable() calls from the watchdog restart() handler
-> were removed and all is based now on pm_runtime_resume_and_get()
-> as explained in patch 03/03.
->
-> Series contains also power domain driver changes to be able to
-> register the watchdog PM domain as an IRQ safe one.
->
-> Initial RFC series for solving this issue was posted at [1].
->
-> It is safe to merge watchdog and PM domain driver changes though
-> different trees.
->
-> Thank you,
-> Claudiu Beznea
->
-> [1] https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com/
->
-> Changes in v4:
-> - in patch 1/1, function rzg2l_cpg_pd_setup():
-> -- call rzg2l_cpg_power_on() unconditionally of governor
-> -- drop governor's parameter and decide what governor to use based on
->    always_on
-> - collected tags
->
-> Changes in v3:
-> - added patch "clk: renesas: rzg2l-cpg: Move PM domain power on in
->   rzg2l_cpg_pd_setup()"
-> - addressed review comments
-> - collected tags
-> - per-patch changes are listed in individual patches
->
-> Changes in v2:
-> - adjusted patch title for patch 02/03
-> - adjusted description for patch 03/03 along with comment
->   from code
->
-> Changes since RFC:
-> - dropped patches 01/03, 02/03 from RFC
-> - adjusted power domain driver to be able to register the
->   watchdog PM domain as an IRQ safe one
-> - drop clock prepare approach from watchdog driver presented in RFC
->   and rely only on pm_runtime_resume_and_get()
-> - mark the watchdog device as IRQ safe
->
->
-> Claudiu Beznea (4):
->   clk: renesas: rzg2l-cpg: Move PM domain power on in
->     rzg2l_cpg_pd_setup()
->   clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
->   clk: renesas: r9a08g045: Mark the watchdog and always-on PM domains as
->     IRQ safe
->   watchdog: rzg2l_wdt: Power on the watchdog domain in the restart
->     handler
->
->  drivers/clk/renesas/r9a08g045-cpg.c | 52 +++++++++++------------------
->  drivers/clk/renesas/rzg2l-cpg.c     | 41 ++++++++++++-----------
->  drivers/clk/renesas/rzg2l-cpg.h     | 10 ++----
->  drivers/watchdog/rzg2l_wdt.c        | 20 +++++++++--
->  4 files changed, 63 insertions(+), 60 deletions(-)
->
-> --
-> 2.39.2
->
+On SNP-enabled system, VMRUN marks AVIC Backing Page as in-use while
+the guest is running for both secure and non-secure guest. Any hypervisor
+write to the in-use vCPU's AVIC backing page (e.g. to inject an interrupt)
+will generate unexpected #PF in the host.
 
-For the series, feel free to add:
+Currently, attempt to run AVIC guest would result in the following error:
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+    BUG: unable to handle page fault for address: ff3a442e549cc270
+    #PF: supervisor write access in kernel mode
+    #PF: error_code(0x80000003) - RMP violation
+    PGD b6ee01067 P4D b6ee02067 PUD 10096d063 PMD 11c540063 PTE 80000001149cc163
+    SEV-SNP: PFN 0x1149cc unassigned, dumping non-zero entries in 2M PFN region: [0x114800 - 0x114a00]
+    ...
 
-Kind regards
-Uffe
+Newer AMD system is enhanced to allow hypervisor to modify the backing page
+for non-secure guest on SNP-enabled system. This enhancement is available
+when the CPUID Fn8000_001F_EAX bit 30 is set (HvInUseWrAllowed).
+
+This table describes AVIC support matrix w.r.t. SNP enablement:
+
+               | Non-SNP system |     SNP system
+-----------------------------------------------------
+ Non-SNP guest |  AVIC Activate | AVIC Activate iff
+               |                | HvInuseWrAllowed=1
+-----------------------------------------------------
+     SNP guest |      N/A       |    Secure AVIC
+               |                |    x2APIC only
+
+Introduce APICV_INHIBIT_REASON_HVINUSEWR_NOT_ALLOWED to deactivate AVIC
+when the feature is not available on SNP-enabled system.
+
+See the AMD64 Architecture Programmer’s Manual (APM) Volume 2 for detail.
+(https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/
+programmer-references/40332.pdf)
+
+Fixes: 216d106c7ff7 ("x86/sev: Add SEV-SNP host initialization support")
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+---
+
+Change log v2:
+ * Use APICv inhibit bit instead of disabling AVIC in driver.
+
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ arch/x86/include/asm/kvm_host.h    | 9 ++++++++-
+ arch/x86/kvm/svm/avic.c            | 6 ++++++
+ arch/x86/kvm/svm/svm.h             | 3 ++-
+ 4 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index dd4682857c12..921b6de80e24 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -448,6 +448,7 @@
+ #define X86_FEATURE_SME_COHERENT	(19*32+10) /* AMD hardware-enforced cache coherency */
+ #define X86_FEATURE_DEBUG_SWAP		(19*32+14) /* "debug_swap" AMD SEV-ES full debug state swap support */
+ #define X86_FEATURE_SVSM		(19*32+28) /* "svsm" SVSM present */
++#define X86_FEATURE_HV_INUSE_WR_ALLOWED	(19*32+30) /* Write to in-use hypervisor-owned pages allowed */
+ 
+ /* AMD-defined Extended Feature 2 EAX, CPUID level 0x80000021 (EAX), word 20 */
+ #define X86_FEATURE_NO_NESTED_DATA_BP	(20*32+ 0) /* No Nested Data Breakpoints */
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 4a68cb3eba78..1fef50025512 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1276,6 +1276,12 @@ enum kvm_apicv_inhibit {
+ 	 */
+ 	APICV_INHIBIT_REASON_LOGICAL_ID_ALIASED,
+ 
++	/*
++	 * Non-SNP guest cannot activate AVIC on SNP-enabled system w/o
++	 * CPUID HvInUseWrAllowed feature.
++	 */
++	APICV_INHIBIT_REASON_HVINUSEWR_NOT_ALLOWED,
++
+ 	NR_APICV_INHIBIT_REASONS,
+ };
+ 
+@@ -1294,7 +1300,8 @@ enum kvm_apicv_inhibit {
+ 	__APICV_INHIBIT_REASON(IRQWIN),			\
+ 	__APICV_INHIBIT_REASON(PIT_REINJ),		\
+ 	__APICV_INHIBIT_REASON(SEV),			\
+-	__APICV_INHIBIT_REASON(LOGICAL_ID_ALIASED)
++	__APICV_INHIBIT_REASON(LOGICAL_ID_ALIASED),	\
++	__APICV_INHIBIT_REASON(HVINUSEWR_NOT_ALLOWED)
+ 
+ struct kvm_arch {
+ 	unsigned long n_used_mmu_pages;
+diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+index 4b74ea91f4e6..cc4f0c00334a 100644
+--- a/arch/x86/kvm/svm/avic.c
++++ b/arch/x86/kvm/svm/avic.c
+@@ -202,6 +202,12 @@ int avic_vm_init(struct kvm *kvm)
+ 	if (!enable_apicv)
+ 		return 0;
+ 
++	if (cc_platform_has(CC_ATTR_HOST_SEV_SNP) &&
++	    !boot_cpu_has(X86_FEATURE_HV_INUSE_WR_ALLOWED)) {
++		pr_debug("APICv Inhibit due to Missing HvInUseWrAllowed.\n");
++		kvm_set_apicv_inhibit(kvm, APICV_INHIBIT_REASON_HVINUSEWR_NOT_ALLOWED);
++	}
++
+ 	/* Allocating physical APIC ID table (4KB) */
+ 	p_page = alloc_page(GFP_KERNEL_ACCOUNT | __GFP_ZERO);
+ 	if (!p_page)
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index 76107c7d0595..13046bad2d6e 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -682,7 +682,8 @@ extern struct kvm_x86_nested_ops svm_nested_ops;
+ 	BIT(APICV_INHIBIT_REASON_PHYSICAL_ID_ALIASED) |	\
+ 	BIT(APICV_INHIBIT_REASON_APIC_ID_MODIFIED) |	\
+ 	BIT(APICV_INHIBIT_REASON_APIC_BASE_MODIFIED) |	\
+-	BIT(APICV_INHIBIT_REASON_LOGICAL_ID_ALIASED)	\
++	BIT(APICV_INHIBIT_REASON_LOGICAL_ID_ALIASED) |	\
++	BIT(APICV_INHIBIT_REASON_HVINUSEWR_NOT_ALLOWED)	\
+ )
+ 
+ bool avic_hardware_setup(void);
+-- 
+2.34.1
+
 
