@@ -1,423 +1,261 @@
-Return-Path: <linux-kernel+bounces-372215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B19C9A45C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:23:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131D79A45CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F97281E59
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:23:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A26B283B6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67732204F78;
-	Fri, 18 Oct 2024 18:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E7C20969C;
+	Fri, 18 Oct 2024 18:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yuk1t5Be"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+5AuMFE"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6D1168488;
-	Fri, 18 Oct 2024 18:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E049208983;
+	Fri, 18 Oct 2024 18:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729275704; cv=none; b=quFz0EmdpKWjfNy+bHVvE+lnZFxaA3VjgAEgWWdn2SiXEZCcG1TF9ezivGEojBgvdFsxIxSQiJjM8k8F+ECNtZtXCNU421Hk6Ifn2mhk8iTmz3HaCiczyvQQeLg1X2/EUSqBKSklilxCSZEIxOnDnvFBrsttjyr/0p9OPYeg+Kk=
+	t=1729275737; cv=none; b=MStIJ9iVnTBImbAWjt4kWdJLn17d6X/0mIy0AwjYd21elRMF+xi4q+mp02SPsuDG2oGdw5aUz1emalYUE88xOWtSCISM11idg61u+U6boCkEfItGKqGbl3I7kySx26h7+TyVZ+lgGiLpYL4POIsaCTJa90BPdf5+7ItjDs3M0uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729275704; c=relaxed/simple;
-	bh=gl39e5XMiuaV3vjNzR8IeZRB7zmMZrSilDNVwY2LOPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kXhoitF3V8elFuIznhcuPccVtIoUlJObRAVJbs7tVDhM8POmdQ1jYd3TcsVlpZ462+77I0l1Vzu7/lh7JiDw5hg0k1ftzZxZlojbQaBN5Ual3InPa5fPbAFTFRJifg8Sc0mi1E/KoEJTc9qCT881SPyHAlofBiZBHJzrHErZdcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yuk1t5Be; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83391C4CEC3;
-	Fri, 18 Oct 2024 18:21:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729275703;
-	bh=gl39e5XMiuaV3vjNzR8IeZRB7zmMZrSilDNVwY2LOPM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Yuk1t5BeqLkIrfS2tfLuGyIJLggpv0Pt+Yb7ob0URwIkKgPta6iNyAhJ5Xh076KZU
-	 j5CZcELZHHmvpm3y3imr5mwr8Nu+eEYv4yNI8S81INem+l5cpJqHt/U2y+HtbAwgeA
-	 nqDjLBsYTdDY5REnR8Rgh7Ly781hy8w4LCutvKRhAwqGLlv7xBnfmKbgzapkCmUugk
-	 6ovVXTMLcoiyJhIUzXYiVyA3jpxiE5U2pRyz06OLDIgICPCc7cgSf6o5dsZm+T6FZu
-	 Y7xyqPFTwQAgtvcB6gX4PTqlz20ucTLGD6XhSNRFdX/dEibEnEJcwvjLSDpLRXvjX1
-	 pgub1GelUc6EA==
-Date: Fri, 18 Oct 2024 19:21:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Cc: jmaneyrol@invensense.com, lars@metafoo.de, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: imu: inv_icm42600: Enable Pedometer Functionality
-Message-ID: <20241018192137.0ff44c23@jic23-huawei>
-In-Reply-To: <20241015092035.10482-1-hardevsinh.palaniya@siliconsignals.io>
-References: <20241015092035.10482-1-hardevsinh.palaniya@siliconsignals.io>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729275737; c=relaxed/simple;
+	bh=xEsQ6C7sDwT1xSNrzTyJArqfAtWkDfrhY9mcFXWxDOU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AOgfwOuCv5ksF4zuh2z4hju30ZhABJQ0jPHtdRTk4TLXJ6YFbCDbk7S84PQU56N8JUxo9atHnf9gh8+gvNN+SEc869cb783hYYKcIW30KZInN0buR+5oIEAEPFfPxEsApsi73JRTC0moMflvpnm06qRMrbfkI+r2MiUctVPyHbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W+5AuMFE; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so2224719a12.0;
+        Fri, 18 Oct 2024 11:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729275734; x=1729880534; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=szlpOYbQpLKnuUX8XB/uf3D+PzZu7s18p1D68tVqpeI=;
+        b=W+5AuMFE+XIeoeukkIsduuVratUi7PsiEploXXSvqoVTC9QChukd0ne1KMo4t9Wg+E
+         Vq29I2Bh/Gh+XPyZQMWo2QZ0T7CT0qcNg1py1b2UczE39TgZvAW9+5DzYbt88TgEPJ1K
+         8tC3HHpdB3zbebQ4qUvFxsQfGkRrb01+0GHMXV5jfiJMCrdEAs3+0ACmJ2RJzjbVH2CL
+         Gzl/7X4Cd7WUltGqa2ZMvmtuO5s8u9EyAcXAQ8VPO0WUsNr7rqEq4NNEETnI6dSlpt4+
+         AlpDNb4HopSvAxxAHAs1JnfBFAEtyXeELSt0CpJCUueL+jRRgwckQ/Mse43C7zlbeYyX
+         Rbig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729275734; x=1729880534;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=szlpOYbQpLKnuUX8XB/uf3D+PzZu7s18p1D68tVqpeI=;
+        b=EDE+oZn7G9wRF3OEe9cHummlrMB8ZI+a1YlsC8LFKbNi56lzE8Q4dGUtlOAv5Mt7x3
+         f/1CLg/WCFYcpXZrVe3r2mUMp1VlwuDyI93eLHE3J5Dt97ZvjuT6Kg0XexMqxKdQhWJ7
+         8O7YjZXZSnQrGl/8Vty75u0tn5rahUEHWmbVt2f3+sGEunGXazyLRLULNEGT9uDZhUPz
+         ydRxqAgG3fA7X57BuE5MN8wGah+3hyukzVG4vfndoEx81ZALS9vjwmtcUdibDSKHP13m
+         o10axk2CqifufQAvAw+ts6tb68Y/VDZjdDywhyQczibM5zBsPWapGbX/5KPg1JUzd18J
+         a4WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLiKo63geon7kubSGbqCcUCfrEVREJaE06nxJLqenP9tiZFV9VW8HWN9PHHoeQ8K7/caM=@vger.kernel.org, AJvYcCWUQ0GALApiqZ9U+whFB0ESy0GCZvd7XcGewKdBHPrgzWKOJXeAjVqxL2DkZnN5QAN/1tOA7L+Ilnf74jvB@vger.kernel.org, AJvYcCWd5UI+7FM/qh9mp1uW+oqkYa1J3GOoSuow2XTA5iznJdwK7tZD5Z1305qMJPFkUCNksp9V/ZBPiXoQMUrzkOH1QKZd@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM1rY/o14u7UnXvT5flYkGHizBGvFXdjJw0W0KezwUvdp7hklb
+	xgeRrJOb1k56+V0dTFBHqImTn6u9+AI1T1yydUJMU+dQ1RlKOBvc61GEf/fpkhHoUMzNr0RN5nF
+	yr8v3iq/vZ1qq/BiWV/HqmBAa7T/rs42j
+X-Google-Smtp-Source: AGHT+IFq+r8vQIWblVMtI2Uzay+Y6h/gUXSeCY1ZG4DppGwL3dp5HBc3n2goO/ortNvz18nkx8sM4k+tCyvLE+El3jY=
+X-Received: by 2002:a05:6a21:31c8:b0:1d4:becc:6eeb with SMTP id
+ adf61e73a8af0-1d92c5990femr4311881637.31.1729275733967; Fri, 18 Oct 2024
+ 11:22:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241008002556.2332835-1-andrii@kernel.org> <20241008002556.2332835-2-andrii@kernel.org>
+ <20241018082605.GD17263@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241018082605.GD17263@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 18 Oct 2024 11:22:00 -0700
+Message-ID: <CAEf4Bzb3xjTH7Qh8c_j95jEr4fNxBgG11a0sCe4hoF9chwUtYg@mail.gmail.com>
+Subject: Re: [PATCH v2 tip/perf/core 1/2] uprobes: allow put_uprobe() from
+ non-sleepable softirq context
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mingo@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
+	paulmck@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 15 Oct 2024 14:50:03 +0530
-Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io> wrote:
+On Fri, Oct 18, 2024 at 1:26=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Mon, Oct 07, 2024 at 05:25:55PM -0700, Andrii Nakryiko wrote:
+> > Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), which
+> > makes it unsuitable to be called from more restricted context like soft=
+irq.
+>
+> This is delayed_uprobe_lock, right?
 
-> Enables pedometer functionality in the ICM42605 IMU sensor.
-> 
-> The pedometer feature allows for step counting, which is accessible through
-> a new sysfs entry. Interrupts are triggered when a step event occurs, enabling
-> step event detection.
-> 
-> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Some additional comments from a quick read.
+Not just delated_uprobe_lock, there is also uprobes_treelock (I forgot
+to update the commit message to mention that). Oleg had concerns (see
+[0]) with that being taken from the timer thread, so I just moved all
+of the locking into deferred work callback.
 
+  [0] https://lore.kernel.org/linux-trace-kernel/20240915144910.GA27726@red=
+hat.com/
+
+>
+> So can't we do something like so instead?
+
+I'll need to look at this more thoroughly (and hopefully Oleg will get
+a chance as well), dropping lock from delayed_ref_ctr_inc() is a bit
+scary, but might be ok.
+
+But generally speaking, what's your concern with doing deferred work
+in put_uprobe()? It's not a hot path by any means, worst case we'll
+have maybe thousands of uprobes attached/detached.
+
+>
 > ---
->  drivers/iio/imu/inv_icm42600/inv_icm42600.h   |  16 ++
->  .../iio/imu/inv_icm42600/inv_icm42600_accel.c | 165 ++++++++++++++++++
->  .../iio/imu/inv_icm42600/inv_icm42600_core.c  |  36 +++-
->  3 files changed, 211 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600.h b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-> index 3a07e43e4cf1..c3471b73152e 100644
-> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-> @@ -122,6 +122,7 @@ struct inv_icm42600_sensor_conf {
->  	int filter;
+>  kernel/events/uprobes.c | 40 +++++++++++++++++++++++-----------------
+>  1 file changed, 23 insertions(+), 17 deletions(-)
+>
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 2a0059464383..d17a9046de35 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -83,9 +83,11 @@ struct delayed_uprobe {
+>         struct list_head list;
+>         struct uprobe *uprobe;
+>         struct mm_struct *mm;
+> +       struct rcu_head rcu;
 >  };
->  #define INV_ICM42600_SENSOR_CONF_INIT		{-1, -1, -1, -1}
-> +#define INV_ICM42600_SENSOR_CONF_APEX		{ 2, 0, 9, 6}
->  
->  struct inv_icm42600_conf {
->  	struct inv_icm42600_sensor_conf gyro;
-> @@ -141,6 +142,8 @@ struct inv_icm42600_suspended {
->   *  @chip:		chip identifier.
->   *  @name:		chip name.
->   *  @map:		regmap pointer.
-> + *  @pedometer_enable	status of pedometer function
-> + *  @pedometer_value	status of steps event occurnce
-Check the kernel-doc style.  Even better run the script over the
-files you are touching.
-
-You are missing : here.
-
->   *  @vdd_supply:	VDD voltage regulator for the chip.
->   *  @vddio_supply:	I/O voltage regulator for the chip.
->   *  @orientation:	sensor chip orientation relative to main hardware.
-> @@ -157,6 +160,8 @@ struct inv_icm42600_state {
->  	enum inv_icm42600_chip chip;
->  	const char *name;
->  	struct regmap *map;
-> +	bool pedometer_enable;
-> +	bool pedometer_value;
->  	struct regulator *vdd_supply;
->  	struct regulator *vddio_supply;
->  	struct iio_mount_matrix orientation;
-> @@ -301,6 +306,15 @@ struct inv_icm42600_sensor_state {
->  #define INV_ICM42600_GYRO_ACCEL_CONFIG0_GYRO_FILT(_f)	\
->  		FIELD_PREP(GENMASK(3, 0), (_f))
->  
-> +/* Pedometer functionality */
-> +#define INV_ICM42600_REG_APEX_CONFIG0                  0x0056
-> +#define INV_ICM42600_DMP_ODR_50Hz                      BIT(1)
-> +#define INV_ICM42600_PED_ENABLE                        BIT(5)
-> +#define INV_ICM42600_REG_INT_STATUS3                   0x0038
-> +#define INV_ICM42600_STEP_DET_INT                      BIT(5)
-> +#define INV_ICM42600_REG_APEX_DATA                     0x0031 // 2 Byte little-endian
-
-/* */ for comments in IIO (and most of the kernel)
-Also, put it on the line above rather than making such a long line.
-> +
-one blank line is enough.
-> +
->  #define INV_ICM42600_REG_TMST_CONFIG			0x0054
->  #define INV_ICM42600_TMST_CONFIG_MASK			GENMASK(4, 0)
->  #define INV_ICM42600_TMST_CONFIG_TMST_TO_REGS_EN	BIT(4)
-> @@ -373,6 +387,8 @@ struct inv_icm42600_sensor_state {
->  #define INV_ICM42600_INTF_CONFIG6_I3C_SDR_EN		BIT(0)
->  
->  /* User bank 4 (MSB 0x40) */
-> +#define INV_ICM42600_REG_INT_SOURCE6                    0x404D
-> +#define INV_ICM42600_STEP_DET_INT1_EN              	BIT(5)
->  #define INV_ICM42600_REG_INT_SOURCE8			0x404F
->  #define INV_ICM42600_INT_SOURCE8_FSYNC_IBI_EN		BIT(5)
->  #define INV_ICM42600_INT_SOURCE8_PLL_RDY_IBI_EN		BIT(4)
-> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-> index 56ac19814250..90fe4c9e15ab 100644
-> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-> @@ -160,6 +160,13 @@ static const struct iio_chan_spec_ext_info inv_icm42600_accel_ext_infos[] = {
->  	{},
->  };
-
-> +static int inv_icm42600_steps_read_raw(struct iio_dev *indio_dev,
-> +                               struct iio_chan_spec const *chan,
-> +                               int *val, int *val2, long mask)
-> +{
-> +       struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
-> +       __le16 steps;
-> +       int ret;
-> +
-> +       if (mask == IIO_CHAN_INFO_PROCESSED) {
-> +               ret = iio_device_claim_direct_mode(indio_dev);
-> +               if (ret)
-> +                       return ret;
-> +               ret = regmap_bulk_read(st->map, INV_ICM42600_REG_APEX_DATA, &steps, sizeof(steps));
-> +               if (ret)
-> +                       return ret;
-> +               iio_device_release_direct_mode(indio_dev);
-> +               if (ret)
-> +                       return ret;
-> +               *val = steps;
-As the bot pointed out, you need an endian conversion here.
-le16_to_cpu()
-
-> +               return IIO_VAL_INT;
+>
+> -static DEFINE_MUTEX(delayed_uprobe_lock);
+> +/* XXX global state; use per mm list instead ? */
+> +static DEFINE_SPINLOCK(delayed_uprobe_lock);
+>  static LIST_HEAD(delayed_uprobe_list);
+>
+>  /*
+> @@ -289,9 +291,11 @@ delayed_uprobe_check(struct uprobe *uprobe, struct m=
+m_struct *mm)
+>  {
+>         struct delayed_uprobe *du;
+>
+> -       list_for_each_entry(du, &delayed_uprobe_list, list)
+> +       guard(rcu)();
+> +       list_for_each_entry_rcu(du, &delayed_uprobe_list, list) {
+>                 if (du->uprobe =3D=3D uprobe && du->mm =3D=3D mm)
+>                         return du;
 > +       }
-> +
-> +       return -EINVAL;
-> +}
-> +
->  static int inv_icm42600_accel_read_raw(struct iio_dev *indio_dev,
->  				       struct iio_chan_spec const *chan,
->  				       int *val, int *val2, long mask)
-> @@ -681,6 +721,8 @@ static int inv_icm42600_accel_read_raw(struct iio_dev *indio_dev,
->  		break;
->  	case IIO_TEMP:
->  		return inv_icm42600_temp_read_raw(indio_dev, chan, val, val2, mask);
-> +	case IIO_STEPS:
-> +		return inv_icm42600_steps_read_raw(indio_dev, chan, val, val2, mask);
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -824,6 +866,126 @@ static int inv_icm42600_accel_hwfifo_flush(struct iio_dev *indio_dev,
->  	return ret;
+>         return NULL;
 >  }
->  
-> +/*****************Pedometer Functionality**************/
-
-No to structure comments like this. They add little to readability and have
-a habit of rapidly becoming wrong.
-
-> +static int inv_icm42600_step_en(struct inv_icm42600_state *st, int state)
-> +{
-> +	struct inv_icm42600_sensor_conf conf = INV_ICM42600_SENSOR_CONF_APEX;
-> +	int ret, value;
+>
+> @@ -308,7 +312,8 @@ static int delayed_uprobe_add(struct uprobe *uprobe, =
+struct mm_struct *mm)
+>
+>         du->uprobe =3D uprobe;
+>         du->mm =3D mm;
+> -       list_add(&du->list, &delayed_uprobe_list);
+> +       scoped_guard(spinlock, &delayed_uprobe_lock)
+> +               list_add_rcu(&du->list, &delayed_uprobe_list);
+>         return 0;
+>  }
+>
+> @@ -316,19 +321,21 @@ static void delayed_uprobe_delete(struct delayed_up=
+robe *du)
+>  {
+>         if (WARN_ON(!du))
+>                 return;
+> -       list_del(&du->list);
+> -       kfree(du);
+> +       scoped_guard(spinlock, &delayed_uprobe_lock)
+> +               list_del(&du->list);
+> +       kfree_rcu(du, rcu);
+>  }
+>
+>  static void delayed_uprobe_remove(struct uprobe *uprobe, struct mm_struc=
+t *mm)
+>  {
+> -       struct list_head *pos, *q;
+>         struct delayed_uprobe *du;
+> +       struct list_head *pos;
+>
+>         if (!uprobe && !mm)
+>                 return;
+>
+> -       list_for_each_safe(pos, q, &delayed_uprobe_list) {
+> +       guard(rcu)();
+> +       list_for_each_rcu(pos, &delayed_uprobe_list) {
+>                 du =3D list_entry(pos, struct delayed_uprobe, list);
+>
+>                 if (uprobe && du->uprobe !=3D uprobe)
+> @@ -434,12 +441,10 @@ static int update_ref_ctr(struct uprobe *uprobe, st=
+ruct mm_struct *mm,
+>                         return ret;
+>         }
+>
+> -       mutex_lock(&delayed_uprobe_lock);
+>         if (d > 0)
+>                 ret =3D delayed_uprobe_add(uprobe, mm);
+>         else
+>                 delayed_uprobe_remove(uprobe, mm);
+> -       mutex_unlock(&delayed_uprobe_lock);
+>
+>         return ret;
+>  }
+> @@ -645,9 +650,7 @@ static void put_uprobe(struct uprobe *uprobe)
+>          * gets called, we don't get a chance to remove uprobe from
+>          * delayed_uprobe_list from remove_breakpoint(). Do it here.
+>          */
+> -       mutex_lock(&delayed_uprobe_lock);
+>         delayed_uprobe_remove(uprobe, NULL);
+> -       mutex_unlock(&delayed_uprobe_lock);
+>
+>         call_rcu_tasks_trace(&uprobe->rcu, uprobe_free_rcu);
+>  }
+> @@ -1350,13 +1353,18 @@ static void build_probe_list(struct inode *inode,
+>  /* @vma contains reference counter, not the probed instruction. */
+>  static int delayed_ref_ctr_inc(struct vm_area_struct *vma)
+>  {
+> -       struct list_head *pos, *q;
+>         struct delayed_uprobe *du;
+> +       struct list_head *pos;
+>         unsigned long vaddr;
+>         int ret =3D 0, err =3D 0;
+>
+> -       mutex_lock(&delayed_uprobe_lock);
+> -       list_for_each_safe(pos, q, &delayed_uprobe_list) {
+> +       /*
+> +        * delayed_uprobe_list is added to when the ref_ctr is not mapped
+> +        * and is consulted (this function) when adding maps. And since
+> +        * mmap_lock serializes these, it is not possible miss an entry.
+> +        */
+> +       guard(rcu)();
+> +       list_for_each_rcu(pos, &delayed_uprobe_list) {
+>                 du =3D list_entry(pos, struct delayed_uprobe, list);
+>
+>                 if (du->mm !=3D vma->vm_mm ||
+> @@ -1370,9 +1378,9 @@ static int delayed_ref_ctr_inc(struct vm_area_struc=
+t *vma)
+>                         if (!err)
+>                                 err =3D ret;
+>                 }
 > +
-> +	if (state) {
-> +
-> +		ret = inv_icm42600_set_accel_conf(st, &conf, NULL);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_write(st->map, INV_ICM42600_REG_APEX_CONFIG0,
-> +		                        INV_ICM42600_DMP_ODR_50Hz);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_write(st->map, INV_ICM42600_REG_SIGNAL_PATH_RESET,
-> +		                        INV_ICM42600_SIGNAL_PATH_RESET_DMP_MEM_RESET);
-> +		if (ret)
-> +			return ret;
-> +		msleep(1);
-Document the reason for this value.
-
-> +
-> +		ret = regmap_write(st->map, INV_ICM42600_REG_SIGNAL_PATH_RESET,
-> +		                        INV_ICM42600_SIGNAL_PATH_RESET_DMP_INIT_EN);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_write(st->map, INV_ICM42600_REG_INT_SOURCE6,
-> +		                        INV_ICM42600_STEP_DET_INT1_EN);
-> +		if (ret)
-> +			return ret;
-> +
-> +		value = INV_ICM42600_DMP_ODR_50Hz | INV_ICM42600_PED_ENABLE;
-> +		ret = regmap_write(st->map, INV_ICM42600_REG_APEX_CONFIG0, value);
-> +		if (ret)
-> +			return ret;
-> +
-> +		st->pedometer_enable = true;
-	return here.
-Then can drop the else.
-
-With two such different paths, even better would be two little functions
-to handle the two operations (enable + disable) as will make each individually
-easier to read.
-> +
-> +	} else {
-> +
-> +		ret = regmap_write(st->map, INV_ICM42600_REG_APEX_CONFIG0, 0);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_write(st->map, INV_ICM42600_REG_INT_SOURCE6, 0);
-> +		if (ret)
-> +			return ret;
-> +
-> +		st->pedometer_enable = false;
-> +	 }
-> +
-> +	return 0;
-> +}
-> +
-> +static int inv_icm42600_write_event_config(struct iio_dev *indio_dev,
-> +                                     const struct iio_chan_spec *chan,
-> +                                     enum iio_event_type type,
-> +                                     enum iio_event_direction dir, int state)
-> +{
-> +	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
-> +	int ret;
-> +
-> +	if(chan->type != IIO_STEPS)
-> +	        return -EINVAL;
-> +
-> +	mutex_lock(&st->lock);
-
-guard() is useful in cases like this.
-
-> +
-> +	ret = inv_icm42600_step_en(st, state);
-> +
-> +	mutex_unlock(&st->lock);
-> +	return ret;
-> +}
-> +
-> +static int inv_icm42600_read_event_config(struct iio_dev *indio_dev,
-> +                                    const struct iio_chan_spec *chan,
-> +                                    enum iio_event_type type,
-> +                                    enum iio_event_direction dir)
-> +{
-> +	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
-> +	int value;
-> +
-> +	if (chan->type != IIO_STEPS)
-> +	        return -EINVAL;
-> +
-> +	regmap_read(st->map, INV_ICM42600_REG_APEX_CONFIG0, &value);
-check return value.
-
-> +
-> +	if (value & INV_ICM42600_PED_ENABLE)
-> +	        return 1;
-> +	else
-> +	        return 0;
-> +}
-> +
-> +static int inv_icm42600_read_event_value(struct iio_dev *indio_dev,
-This isn't to get if the event happened, it's for reading thresholds
-etc. Not relevant for a pedometer.
-
-> +                                   const struct iio_chan_spec *chan,
-> +                                   enum iio_event_type type,
-> +                                   enum iio_event_direction dir,
-> +                                   enum iio_event_info info,
-> +                                   int *val, int *val2)
-> +{
-> +	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
-> +
-> +	mutex_lock(&st->lock);
-guard()
-
-> +
-> +	if (type == IIO_EV_TYPE_CHANGE) {
-
-flip logic and can test that before taking the lock
-
-> +		if (st->pedometer_value == true) {
-> +			*val = 1;
-> +		        st->pedometer_value = false;
-> +		} else {
-> +		        *val = 0;
-> +		}
-> +		mutex_unlock(&st->lock);
-> +		return IIO_VAL_INT;
-> +	}
-> +
-> +	mutex_unlock(&st->lock);
-> +	return -EINVAL;
-> +}
-> +
->  static const struct iio_info inv_icm42600_accel_info = {
->  	.read_raw = inv_icm42600_accel_read_raw,
->  	.read_avail = inv_icm42600_accel_read_avail,
-> @@ -833,6 +995,9 @@ static const struct iio_info inv_icm42600_accel_info = {
->  	.update_scan_mode = inv_icm42600_accel_update_scan_mode,
->  	.hwfifo_set_watermark = inv_icm42600_accel_hwfifo_set_watermark,
->  	.hwfifo_flush_to_buffer = inv_icm42600_accel_hwfifo_flush,
-> +	.write_event_config = inv_icm42600_write_event_config,
-> +	.read_event_config  = inv_icm42600_read_event_config,
-> +	.read_event_value   = inv_icm42600_read_event_value,
->  };
->  
->  struct iio_dev *inv_icm42600_accel_init(struct inv_icm42600_state *st)
-> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-> index c3924cc6190e..4d78cb5ca396 100644
-> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-> @@ -15,7 +15,8 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/property.h>
->  #include <linux/regmap.h>
-> -
-Keep the blank line and keep the iio headers in their own section.
-
-> +#include <linux/iio/events.h>
-> +#include <linux/of_irq.h>
-hmm. Can we not use the generic property accessors?
-Also you aren't using any interrupt related new stuff in here so I think
-this is just spurious.
-
->  #include <linux/iio/iio.h>
->  
->  #include "inv_icm42600.h"
-> @@ -533,6 +534,19 @@ static irqreturn_t inv_icm42600_irq_handler(int irq, void *_data)
->  
->  	mutex_lock(&st->lock);
-Probably worth considering use of guard() in here as a precursor patch.
-
->  
-> +	ret = regmap_read(st->map, INV_ICM42600_REG_INT_STATUS3, &status);
-> +	if (ret)
-> +	        goto out_unlock;
-> +
-> +	if (status & INV_ICM42600_STEP_DET_INT) {
-> +	        iio_push_event(st->indio_accel, IIO_MOD_EVENT_CODE(IIO_STEPS, 0,
-> +	                                                     IIO_NO_MOD,
-> +	                                                     IIO_EV_TYPE_CHANGE,
-> +	                                                     IIO_EV_DIR_NONE),
-> +	                                                        st->timestamp.accel);
-> +	        st->pedometer_value = true;
-> +	}
-> +
->  	ret = regmap_read(st->map, INV_ICM42600_REG_INT_STATUS, &status);
->  	if (ret)
->  		goto out_unlock;
-> @@ -860,12 +876,20 @@ static int inv_icm42600_runtime_suspend(struct device *dev)
->  	mutex_lock(&st->lock);
->  
->  	/* disable all sensors */
-> -	ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
-> -					 INV_ICM42600_SENSOR_MODE_OFF, false,
-> -					 NULL);
-> -	if (ret)
-> -		goto error_unlock;
-> +	if (st->pedometer_enable) {
-> +		ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
-> +						 INV_ICM42600_SENSOR_MODE_LOW_POWER,
-> +						false, NULL);
-> +		if (ret)
-> +			goto error_unlock;
-> +	} else {
->  
-> +		ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
-> +						 INV_ICM42600_SENSOR_MODE_OFF,
-> +						 false, NULL);
-> +		if (ret)
-> +			goto error_unlock;
-> +	}
->  	regulator_disable(st->vddio_supply);
->  
->  error_unlock:
-
+>                 delayed_uprobe_delete(du);
+>         }
+> -       mutex_unlock(&delayed_uprobe_lock);
+>         return err;
+>  }
+>
+> @@ -1596,9 +1604,7 @@ void uprobe_clear_state(struct mm_struct *mm)
+>  {
+>         struct xol_area *area =3D mm->uprobes_state.xol_area;
+>
+> -       mutex_lock(&delayed_uprobe_lock);
+>         delayed_uprobe_remove(NULL, mm);
+> -       mutex_unlock(&delayed_uprobe_lock);
+>
+>         if (!area)
+>                 return;
 
