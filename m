@@ -1,91 +1,81 @@
-Return-Path: <linux-kernel+bounces-371434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6732C9A3B0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:12:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3844C9A3B0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A91C9B2246B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E300F1F25358
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C575201033;
-	Fri, 18 Oct 2024 10:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC8220111A;
+	Fri, 18 Oct 2024 10:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lY7c+Abl"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IGc0sspd"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05623200C98
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FA2201111
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729246318; cv=none; b=p8zOJVUS4hnHcNsHFj8KTGJnvO3gVdLZwU9+q0JNNAJAHpKOEb/FUiQPn8A5mm8KBctJiPrDsdPYPP/y9D/1eCU4egBmZMyh3+BUFmTzc28tuySEuUao3LlHNmivmh9TWG3gIfNaGPOXNTXetQhka65jIrA11AFcfuWiSqBf//o=
+	t=1729246324; cv=none; b=a250ULVWGAsELOb5FOvosozDpqIe9MAzoxBycVLJo/Yk1N5jwj6QWB++pmXMT7l8HKZsxd4+4T5oRrN6CYmxTuNvPdEti1hnTYE9qBGF+rncQXBkYe2KwWNev0k69ARKfZIymq1im1/dzxcvc6hzCX/4j4Ewjk1y0lArL85HUKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729246318; c=relaxed/simple;
-	bh=kRK4/BKBi0JXML0QAlq/7TuHFKd7W2th9qWUj6ShHEY=;
+	s=arc-20240116; t=1729246324; c=relaxed/simple;
+	bh=1F+qf+jVYc/QP5fGuzJST4sDlujrh+4dBWGgsBxOxjc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bolSWWx/CuVfxTYxpD3MbPeTrTwoxaCyw/wYc4sU/KHHJ4oiwfCkbinMSn8FT4GAezQckqFkKaJ5lEjoI7p2alyfGyAkwa6o1j2blR5jYEJLBTeC6q3bK6QvGi4oMT2xcArv2fJm8dJgmLKXUxDV3OzHz3syYBneRKeky5JXv8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lY7c+Abl; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb3c3d5513so21132011fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:11:56 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=soYI/pLvyiKmTTCIQRn+woi5CL5pOcpSqUDqwN5WnwYT+jsT4kpIejpdREtZv1CTSbPiS1JarbjSLotGB3eMYDITLiUiZilUpdj9iBgrNGkIlRP5Hhsu1zHxdxQDFlAehg+a4xXSMWTm+fjF31y1Wf1l0dhDBi2up2QaJB2DDVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IGc0sspd; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a99e3b3a411so476821866b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:12:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729246315; x=1729851115; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1729246321; x=1729851121; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jvY8KYiHaZqzdfBn2meM7L0X9I9zbwo+MC/72l11qcc=;
-        b=lY7c+AblIJR5m6SRvIf1y47AIC0qHNJtNGeWTodpotUKSlDk3u2n+RNrBKK5RcZ3uD
-         DYAPqkGN+9pQeeaYb77no7B1oEfhX8lHLgEBWzfrbItq6VCfCDwyfb/AkbIS2Aihr47e
-         yfLV+8AfXPUN6TKCy2slTuzgS6EtB64gzP6UU6Iksk6ELiUR6K2F4lYRO7a0j1zFbFTn
-         lSYC+CaFYYim2W9HPAX8iWrwN/fXS96PCnIrw9OjLDrbINl2OGm03pJsIpiCY02WTZUA
-         pYezMiuKoN7ejzcGXZsPDjweDeYk7njapikDBzZUBtPyB705UOiWY8VEd5DDg78p13o5
-         8fow==
+        bh=nP+JOMY4iaykICx5qO8ZsaBsQsowDERbnUHntcs+XbI=;
+        b=IGc0sspd+xYB43TxxI3oLURazNX/sZLIvcj4E6U2IA28fXCrojcqaC2c6J6w5MdTqY
+         NsaVVPv5yx+z6lhyqWmJSMXoZZhgnntohVOXhCI4+RL5kwC+MRt3qmmuWMvfjz8OUkB3
+         qM3BxXQ+nR8/3dELxHKRNDKOqEwOgWYbWvfVYDH6sNe5f0DDBX5P7oAX20WJa4a6IskV
+         MPuK2c/T7f+YBLco3FDnXr4lZEWGHEAUhsWKQRnMtKWMpealyq+M6WiFXfyv9eb1to2f
+         xnHrO18ms0s/DewxjmwnIRZ5pPsrY7wYNllMf7AKANLP0HBgz9yx0ZhYJOnb+Om+P0ai
+         4W7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729246315; x=1729851115;
+        d=1e100.net; s=20230601; t=1729246321; x=1729851121;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jvY8KYiHaZqzdfBn2meM7L0X9I9zbwo+MC/72l11qcc=;
-        b=h7CBvzF9az9KApZ/UOK56SukJ6Yl6HhVUHF85c4m2nNMorpEDHeyh2bZ9bmg5mfBd8
-         4/lLy20+xoIgMh7voX8kwpXwGSvE/9ChdKdoxYuAfAyVzFCtsMn7xi2Yiclu0qSRdr4x
-         LGszt6IYI645maW8a1+6WjO8edCiOa71UOcaYFORyqcf4fS5WKAdKD7/qqCl4KDiZt/K
-         7sGi2REzygQn+CA8LqqUErJC793iHHo/r9mpRSz51jeBbJCeI9TtZNyyWIRVz0MRtQ0I
-         YMJFwH4SR1nS56e8OA0oa6BnN+fAIXyH1nzcBWIUYJA8m9KH6/tb1iD+rGjl/rBHFmnE
-         25Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCV+Z7bBegYaHxFuA8nmbfZNLrwWHSG5st0cYBeStr1vmUAZ/jFE9EJw7nGkCm/TMddcTjocpahuuGRt4h8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5CPyAFH8R2aSZtcBccg/WmGcZy/eMgi1siYZm9OkVhQwIpfuj
-	vmzOVHCGtw/1j73koetc9uehhRBEUcJXi56ZQdJhhYT/7UCRg5aaFIg6nctSRZs=
-X-Google-Smtp-Source: AGHT+IG3sYPji9qicEvtFNlcAs92ChQJkMrU6bQriug80NS0HFO4UZ/qbgCf38X9ZiV302DAIpmCeg==
-X-Received: by 2002:a05:651c:542:b0:2fb:2e27:5334 with SMTP id 38308e7fff4ca-2fb82e98f77mr7417511fa.15.1729246315128;
-        Fri, 18 Oct 2024 03:11:55 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809b2ab8sm1878671fa.48.2024.10.18.03.11.52
+        bh=nP+JOMY4iaykICx5qO8ZsaBsQsowDERbnUHntcs+XbI=;
+        b=Ck4/nmE2waQp8qRpHtF4LKQxNBo83czSN+Hsr+f7ZQcy8zw1MkzRl19dj1kTaRKJFs
+         mbaqGEiAu2HoldijMarfOoWXwTUTFEKqGsJOMRPtmNRtwwSq+o29sCx9QrvZUu1/N6Xq
+         otMPA++dog5/5EFcFrKPGEeza5SKNkffR9VfaVcMCz2/POxgLMlowUC5Uj7nb98kt8pG
+         lXpe+aCGgeR/DZnuRO+m7DiamtGASmrq+a9z7eruyIshfxsriEZf+41dWkdlzjQz9mMY
+         lOpiIuz0bX59pLImn1zUaV2yXhEhe49M0mSuKh+K4uvA7Emp6bjpRcLAy4Wf2G3+AMbi
+         2jew==
+X-Forwarded-Encrypted: i=1; AJvYcCXDLcfITcpBFRW9E9L3wYzYlTDFcXp3hVHbAC5gQu56HrcZE1JTeZurvsT53cqicA/m0VW8+/dYsgfSitA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaO9Ouz3csXak9emzx0GfZSvmPr40DGexp4NfbnqMiSxDWecy3
+	dygY1gG/pOdGlJpeY90ujz83Ul4NWi/gd45PqEadHGpvRmaPR8qMUsGHWmuKIdg=
+X-Google-Smtp-Source: AGHT+IFpi0II1Hmaw1IuAkx+cm14EFxpoJJ2Qv/1Lw4miCPbqkHcvomv5vAStTR5DLHU/UpSIoybaQ==
+X-Received: by 2002:a17:907:6e87:b0:a99:eef5:d360 with SMTP id a640c23a62f3a-a9a4c311578mr608526566b.19.1729246321295;
+        Fri, 18 Oct 2024 03:12:01 -0700 (PDT)
+Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68bf4157sm73467066b.154.2024.10.18.03.12.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 03:11:53 -0700 (PDT)
-Date: Fri, 18 Oct 2024 13:11:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tingwei Zhang <quic_tingweiz@quicinc.com>
-Cc: Krishna Kurapati <quic_kriskura@quicinc.com>, 
-	Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Bjorn Andersson <quic_bjorande@quicinc.com>, Wesley Cheng <quic_wcheng@quicinc.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-phy@lists.infradead.org, quic_ppratap@quicinc.com, 
-	quic_jackp@quicinc.com
-Subject: Re: [PATCH v2 5/5] phy: qcom: qmp-usbc: Add qmp configuration for
- QCS615
-Message-ID: <l4wpt5qin3ezkowf3puvodrm5wjsptd4a32f4qrzcuuquo6kq6@j2orv5z5quln>
-References: <20241017130701.3301785-1-quic_kriskura@quicinc.com>
- <20241017130701.3301785-6-quic_kriskura@quicinc.com>
- <CAA8EJprcOU6qeJvHH+MVoPnQ+mGcos=pDOVBSeSUfBGw-KR6tA@mail.gmail.com>
- <aa68e5ab-86a6-430e-92d8-ed89b4eb37f7@quicinc.com>
- <CAA8EJprkq-Cct9Uk1Jwqc5Rn8mx8THTRgwCzDx=8ZgbCpwD7qw@mail.gmail.com>
- <684582c3-3559-4c54-8257-cb952bbfe2ec@quicinc.com>
+        Fri, 18 Oct 2024 03:12:00 -0700 (PDT)
+Date: Fri, 18 Oct 2024 12:12:00 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: hannes@cmpxchg.org, nphamcs@gmail.com, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev,
+	akpm@linux-foundation.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, lnyng@meta.com
+Subject: Re: [PATCH 0/1] memcg/hugetlb: Adding hugeTLB counters to memory
+ controller
+Message-ID: <ZxI0cBwXIuVUmElU@tiehlicka>
+References: <20241017160438.3893293-1-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,55 +84,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <684582c3-3559-4c54-8257-cb952bbfe2ec@quicinc.com>
+In-Reply-To: <20241017160438.3893293-1-joshua.hahnjy@gmail.com>
 
-On Fri, Oct 18, 2024 at 05:01:48PM +0800, Tingwei Zhang wrote:
-> On 10/18/2024 4:06 PM, Dmitry Baryshkov wrote:
-> > On Fri, 18 Oct 2024 at 10:48, Tingwei Zhang <quic_tingweiz@quicinc.com> wrote:
-> > > 
-> > > On 10/18/2024 2:27 AM, Dmitry Baryshkov wrote:
-> > > > On Thu, 17 Oct 2024 at 16:07, Krishna Kurapati
-> > > > <quic_kriskura@quicinc.com> wrote:
-> > > > > 
-> > > > > Provide PHY configuration for the USB QMP PHY for QCS615 Platform.
-> > > > > 
-> > > > > Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > 
-> > > > After checking platform details,
-> > > > 
-> > > > Unreviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > 
-> > > > Please perform global s/QCS615/SM6150/ and s/qcs615/sm6150/
-> > > 
-> > > QCS615 and SM6150 are different variants of the same SoC. QCS615 is an
-> > > IoT variant, while SM6150 is a mobile variant. We are currently adding
-> > > QCS615 SoC support to the upstream Kernel, as it is in an active
-> > > development stage and we anticipate many products based on this SoC. On
-> > > the other hand, the SM6150 is an older mobile platform that is unlikely
-> > > to be used in new designs. For a product introduction of the QCS615,
-> > > please refer to
-> > > https://docs.qualcomm.com/bundle/publicresource/87-83838-1_REV_A_Qualcomm_IQ6_Series_Product_Brief.pdf
-> > 
-> > Yes, I guessed so. It would have been nice if it was documented this
-> > way from the beginning.
-> > 
-> > Please note that we usually get support for the mobile SoC first. So
-> > in most of the cases devices use mobile compatible even for IoT
-> > platforms, see qrb5165, qrb4210, qcm6490 and other similar platforms.
-> > I simply asked to follow the established pattern.
+On Thu 17-10-24 09:04:37, Joshua Hahn wrote:
+> HugeTLB usage is a metric that can provide utility for monitors hoping
+> to get more insight into the memory usage patterns in cgroups. It also
+> helps identify if large folios are being distributed efficiently across
+> workloads, so that tasks that can take most advantage of reduced TLB
+> misses are prioritized.
 > 
-> Yes, we start from mobile variant for most of the platforms. There are some
-> exceptions like sc7180 and sc7280 which we started from compute variant
-> since they are widely used by compute platform on upstream Kernel. I think
-> we have similar case here. QCS615 will be widely used by IOT products on
-> upstream Kernel. We should have clarified this from beginning so there's no
-> ambiguity.
+> While cgroupv2's hugeTLB controller does report this value, some users
+> who wish to track hugeTLB usage might not want to take on the additional
+> overhead or the features of the controller just to use the metric.
+> This patch introduces hugeTLB usage in the memcg stats, mirroring the
+> value in the hugeTLB controller and offering a more fine-grained
+> cgroup-level breakdown of the value in /proc/meminfo.
 
-After offline discussion with Krzysztof, I'll lift my objection, so
-still Reviewed-by.
+This seems really confusing because memcg controller is not responsible
+for the hugetlb memory. Could you be more specific why enabling hugetlb
+controller is not really desirable when the actual per-group tracking is
+needed?
+ 
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> 
+> Joshua Hahn (1):
+>   Adding hugeTLB counters to memory controller
+> 
+>  include/linux/memcontrol.h | 3 +++
+>  mm/hugetlb.c               | 5 +++++
+>  mm/memcontrol.c            | 6 ++++++
+>  3 files changed, 14 insertions(+)
+> 
+> -- 
+> 2.43.5
 
 -- 
-With best wishes
-Dmitry
+Michal Hocko
+SUSE Labs
 
