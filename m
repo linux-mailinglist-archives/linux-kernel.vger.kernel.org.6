@@ -1,126 +1,146 @@
-Return-Path: <linux-kernel+bounces-372253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A739A4649
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:54:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4599A464B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E64FB28292F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431401C22E89
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA4B204013;
-	Fri, 18 Oct 2024 18:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA73204035;
+	Fri, 18 Oct 2024 18:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="x2ex08Ev"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZU13PlMM"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C0D20E319;
-	Fri, 18 Oct 2024 18:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC63F20E319;
+	Fri, 18 Oct 2024 18:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729277661; cv=none; b=XjcADxX47vLtJ/koxxokBPCqWXh6tRVXohNGOsdrZfEP2WGpFS8eKc6INTdSgliAkDu6C9Q730K5Ny9JWPYXDnJRtqDdi0ykbnqSzwZXmrmuQXK9/w4oitd6utlp5AeBrDFOaDRHV4vqpEZD2tnzduhAWrKT4ANg1AKq5uuWzP8=
+	t=1729277698; cv=none; b=qlvRUPyCwbgxvmCOl1ysHypP+nfwOsufyroT3oCx1WBzOFPnMH8Gxa61Ccy1MljAq+nBPqXd23vME7eqIlWUHICveCMzSGXAiibsXe3JqlYotpKFEuY2hsIzwJazYBrXoCUtear59TUrrainkiDGXNyYlmXc/4FIjYXERHhb670=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729277661; c=relaxed/simple;
-	bh=9SbWM3CvnOHvW/bRwBdcAebrRpW8x9mDPVAVuIWwSFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oEUR4mDl95agWe/daUL8s2EkL3fUaA/qsRCZxfZ1wNwT7jPWmHPsWetBYdsZkq2g754+GDLUhvZYsQvzmcwGh1r/dXQtDNE1QdF+eQfApkti680HXgUk4kAYAIPmCLTGPcS1OX/YDqpIJe4oHGYqegpDMtzTUL+auQXAMDbhrSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=x2ex08Ev; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=A4bFeDIAbwabxt/OL8jHcFGOxHJoyVHPgzeE8LqQeFw=; t=1729277660;
-	x=1729709660; b=x2ex08EvMgtQrQuk00B237Ua2a733hEsnhTBziOHImXxWM6UDGYwSduLIbvxv
-	4T2An91v/wEUDSXOj0euciCNw4qwgU+KDF4HtJtV+VDRUkXK3kEsVtcSBYXBeYRYwbfcwRKNcNyRJ
-	RWje0O2Pu2sWte8QBWJD8jxLu4KzlobwPdXc1LLLEjyggA6VdtYqsvr8S8r/6a0Lo/s8i7G/e1WAv
-	3LVz77u4VDG/sOGucoHsvADl4gW/DJbzDj1QZtWYFyFnwJ+17lWdPheMAk65uSozCeOKwYimOdgQS
-	zp9L9RkFqK0yVfkUlU4fXxhmcCTQroFZYsLz2fIezFWfslwxRQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t1s76-0005JI-76; Fri, 18 Oct 2024 20:54:16 +0200
-Message-ID: <1cb07628-269c-4d6c-9936-f3a2b233165f@leemhuis.info>
-Date: Fri, 18 Oct 2024 20:54:15 +0200
+	s=arc-20240116; t=1729277698; c=relaxed/simple;
+	bh=odZmaSe2NUxwSwK+Ojy4z/lhi5LMpyFMzzCvQnjosyE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JhyCqR4APR/BoAcnuMhiNGArVDF52WXcP+q9syDpAMJOsni6oWe2DGIf4sXyvFdVBmFNH8wYVwPNLEvO0ClXKWDNksom9+bJJo6j0sXEvC2oq0fQDlkyfJVv4BLcvmqep9oMytCtRPbcKTZScDXDLXSEf9pZEmRrLhkkYM54/Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZU13PlMM; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea9739647bso1711980a12.0;
+        Fri, 18 Oct 2024 11:54:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729277696; x=1729882496; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F3AekqJ3EtBItCjGHNZ1BHmF2TjbYs3oRMAWzkxT8OY=;
+        b=ZU13PlMMpEQ4o3v6mQ+Nk/OKwqz7dH9033nmqO3+LeHmH3MnFQHCldFjEenlzaLRd2
+         CMrF5sBXHx+w1lHvVa/kIuTGZpDdkd0ZHvVlMbLQtzPdw7dq/Oyl9fxhqD25xBL3NNTO
+         QxTMvS8DaXC8Dsibu/4pIHcQ9fKgjpWEl2IOMWOr0DOBPTgnsA/DE9ldGf0ScyxsmVWd
+         YcoMPMckxhEqp8ktuSsoYp0qK88lBG9l89hhRuhP6e8GegwK1oZ+de7Xltuf6clEPmhN
+         mNWZuCl4ac1UVnzGBcGghlVki1nk6tWaMxKf0C848Apd+YMrBHvLi8DGtRONTLGHxNor
+         kcPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729277696; x=1729882496;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F3AekqJ3EtBItCjGHNZ1BHmF2TjbYs3oRMAWzkxT8OY=;
+        b=aT7neEtfb0Nw/+bk5A+pvQtWtF86yltRrkoqwPwrDHiGRYVf0Z7yvQppH5a1927BB8
+         l0ixB0rZ3l0JEqs494Uo1CmcQEHhQdCclPaeJ8bjcUQUk2DiwyKSG+b3QGmU34V2zyPM
+         BT7pNtArjqDwrT4ABSp0juXr5W9czAaMLZhnCqFxpd8X5Goqa4OwxOBtRGelQyMlWC8A
+         RaSXs7liCbsHeAFDsFgh3Q7g5BJeGSVOBrIctJyfbNV8gHLbLG5MdhEEqMFSCVZcl0yh
+         1cFmuq2tOMBFA4Jf81IZA7/yIuTT7BUpmUNPfwYQXC1smJc8HAIQEPh7afj3I3mNdF2e
+         KFVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV52c++TMP/HmZUlAKCeAAgCLJU30km9wnBz0HqovID3nCblB+Yi+SKw6ENAfFKFDuXeo8XWuOyzk6KbYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXO/unWll6DZbr93KhmpdH2DdLpVEPxLwc5QA1ord3XsgkmTt/
+	4yRpUC8jotbEYMG+OIf5SkITNgN6FaiJr88IfYg72Utjv0uF5XkI
+X-Google-Smtp-Source: AGHT+IG9qhjRpw2G1khLgCJq922JNmq/QJWcNC0REKrzBbqXZgXzQLUmm2Ir8ZXq03ypsNTa1OCF7w==
+X-Received: by 2002:a05:6300:44:b0:1d8:a759:525c with SMTP id adf61e73a8af0-1d92c572670mr4652797637.39.1729277695865;
+        Fri, 18 Oct 2024 11:54:55 -0700 (PDT)
+Received: from Emma ([2401:4900:1c97:c88d:5054:ff:fe53:2787])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc23a42esm1719726a12.44.2024.10.18.11.54.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 11:54:55 -0700 (PDT)
+From: Karan Sanghavi <karansanghvi98@gmail.com>
+Date: Fri, 18 Oct 2024 18:54:42 +0000
+Subject: [PATCH] iio: chemical: sps30: Add Null pointer check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] 9p: Avoid creating multiple slab caches with the same
- name
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
- Vlastimil Babka <vbabka@suse.cz>, Jason Gunthorpe <jgg@nvidia.com>,
- Pedro Falcato <pedro.falcato@gmail.com>
-References: <20240807094725.2193423-1-pedro.falcato@gmail.com>
- <20241018172804.GA2151929@nvidia.com>
- <CAKbZUD0Z_Kyumx3ourywUYhfksGNgJWrCpjAdnxtsbwS4vMRkA@mail.gmail.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <CAKbZUD0Z_Kyumx3ourywUYhfksGNgJWrCpjAdnxtsbwS4vMRkA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1729277660;1c3e423f;
-X-HE-SMSGID: 1t1s76-0005JI-76
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241018-cid1593398badshift-v1-1-11550a10ff25@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAPGuEmcC/x3MQQqAIBBA0avErBMaTXC6SrQwnWo2FRoRSHdPW
+ r7F/wUyJ+EMQ1Mg8S1Zjr0C2wbC5veVlcRq0J3usUOngkS0ZAy52ce8yXIpCha1NzPpSFDDM/E
+ izz8dp/f9AASSchBkAAAA
+To: Tomasz Duszynski <tduszyns@gmail.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ Karan Sanghavi <karansanghavi98@gmail.com>, 
+ Karan Sanghavi <karansanghvi98@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729277691; l=1425;
+ i=karansanghvi98@gmail.com; s=20241017; h=from:subject:message-id;
+ bh=odZmaSe2NUxwSwK+Ojy4z/lhi5LMpyFMzzCvQnjosyE=;
+ b=GbzYKIb7BZUyUqmmCxEbpouMabZsCp77rLR+fCU8qPizrvecasyOU3rrT1K8XWjC6ZLnZVeya
+ uXWMjNKe1wZALbKoQQelE1o9aUANiAxDubn4jTyi8gRAcMRQfinL9js
+X-Developer-Key: i=karansanghvi98@gmail.com; a=ed25519;
+ pk=UAcbefT1C06npNVDJHdgpPqTm4WE9IhaA1fmJb3A37Y=
 
-[reinserting a bit of quotation below for Linus]
+Add a Null pointer check before assigning and incrementing
+the null pointer
 
-TLDR: Linus, I wonder if it would be best if you could merge the patch
-at the start of this thread
-(https://lore.kernel.org/all/20240807094725.2193423-1-pedro.falcato@gmail.com/
-), which can also be found as 79efebae4afc22 in -next if you prefer to
-cherry-pick it from there. Either now or after 24 to 36 hours, which
-would give Eric a chance to ACK/NACK this if he sees this mail.
+Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+---
+ drivers/iio/chemical/sps30_i2c.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-For details see below.
+diff --git a/drivers/iio/chemical/sps30_i2c.c b/drivers/iio/chemical/sps30_i2c.c
+index 1b21b6bcd0e7..d2142e4c748c 100644
+--- a/drivers/iio/chemical/sps30_i2c.c
++++ b/drivers/iio/chemical/sps30_i2c.c
+@@ -105,16 +105,18 @@ static int sps30_i2c_command(struct sps30_state *state, u16 cmd, void *arg, size
+ 		return ret;
+ 
+ 	/* validate received data and strip off crc bytes */
+-	tmp = rsp;
+-	for (i = 0; i < rsp_size; i += 3) {
+-		crc = crc8(sps30_i2c_crc8_table, buf + i, 2, CRC8_INIT_VALUE);
+-		if (crc != buf[i + 2]) {
+-			dev_err(state->dev, "data integrity check failed\n");
+-			return -EIO;
++	if (rsp) {
++		tmp = rsp;
++		for (i = 0; i < rsp_size; i += 3) {
++			crc = crc8(sps30_i2c_crc8_table, buf + i, 2, CRC8_INIT_VALUE);
++			if (crc != buf[i + 2]) {
++				dev_err(state->dev, "data integrity check failed\n");
++				return -EIO;
++			}
++
++			*tmp++ = buf[i];
++			*tmp++ = buf[i + 1];
+ 		}
+-
+-		*tmp++ = buf[i];
+-		*tmp++ = buf[i + 1];
+ 	}
+ 
+ 	return 0;
 
-On 18.10.24 20:36, Pedro Falcato wrote:
-> On Fri, Oct 18, 2024 at 6:28 PM Jason Gunthorpe <jgg@nvidia.com> wrote:
->>
->> On Wed, Aug 07, 2024 at 10:47:25AM +0100, Pedro Falcato wrote:
->>> In the spirit of [1], avoid creating multiple slab caches with the same
->>> name. Instead, add the dev_name into the mix.
->>>
->>> [1]: https://lore.kernel.org/all/20240807090746.2146479-1-pedro.falcato@gmail.com/
->>>
->>> Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
->>> ---
->>>  net/9p/client.c | 10 +++++++++-
->>>  1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> Can this get picked up to rc4 please?
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241018-cid1593398badshift-9c512a3b92d9
 
-Eric apparently has not much time or upstream work currently (but
-recently showed up in a discussion about another regression:
-https://lore.kernel.org/all/Zw-J0DdrCFLYpT5y@codewreck.org/ ).
+Best regards,
+-- 
+Karan Sanghavi <karansanghvi98@gmail.com>
 
->> It is causing regressions in my environment
->> #regzbot introduced: 4c39529663b9
-
-If anyone wonders, that is 4c39529663b931 ("slab: Warn on duplicate
-cache names when DEBUG_VM=y") [v6.12-rc1]. That's also why I'm CCing
-Vlastimil, so he knows about this.
-
-> FWIW, seems to have been picked up into 9pfs-next
-> (https://github.com/martinetd/linux/commit/79efebae4afc2221fa814c3cae001bede66ab259).
-> Seems like we're just missing a PR to Linus?
-
-In that case: Linus, given the circumstances I wonder if it would be
-best if you could merge the patch at the start of this thread
-(https://lore.kernel.org/all/20240807094725.2193423-1-pedro.falcato@gmail.com/
-) directly, which can also be found as 79efebae4afc22 in -next if you
-prefer to cherry-pick it from there  Either now or after 24 to 36 hours,
-which would give Eric a chance to ACK/NACK this if he sees this mail.
-
-Ciao, Thorsten
 
