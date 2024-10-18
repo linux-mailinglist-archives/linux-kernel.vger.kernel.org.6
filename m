@@ -1,162 +1,118 @@
-Return-Path: <linux-kernel+bounces-371228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E383A9A3843
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:14:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4023F9A381B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B97F1F28102
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:14:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1B7EB21C7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB4918FDDA;
-	Fri, 18 Oct 2024 08:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2B018DF6F;
+	Fri, 18 Oct 2024 08:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4UgVM89"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzTB57Sb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F3A18C936;
-	Fri, 18 Oct 2024 08:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF5718872A;
+	Fri, 18 Oct 2024 08:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729239124; cv=none; b=JE368t/Zad1BqHHQyk/nqqNqoeKisDqa4xfMxosTT+JnBQJeNfrVWAWGnxPvPvSaXjveISmMLnCrDG8no3eSsOdCfyzVfPkFF3GdxndhcNsZd1tnrnmagdyBkFUEuh3CCdH9kNQxGI/Hpzrp7fhXCfPkeZybPGFRP5HiHNp8QYU=
+	t=1729239054; cv=none; b=CIoqTOTzncrl7kKwvZRYe5kaDgnp28muaeyqe5vlZUNmfL0ZnbLZyjshmqLEwh3d2OrggpRLF4yVntf3vncsDoI+8ZziVnL0hLzTBnto8mcyl3hOL3lJ19Nn3RufvfJ5Md2y9AtyDCw4WVOTvHgrgoPACuDyadn1DPC30hGx7YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729239124; c=relaxed/simple;
-	bh=1IU7rchA1NI7Q1y+xykq0jrk6FSz8Bkg/LF6qgma2Qs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Li5L0lyElHnacxpuDncZ0fCQOu3pokzilXXWuK2ydXyEUjd02ZIV5EySmiReZkdMlJuLLiEnBYI4GZrCCcAVNb/2tbSi6z5bgk/ePjGS2yzFWOMhk7N28BVffKxBTjOQl0hqhz/bKA0bl32cBoaorEFswcUy0kjioaAsEZne/KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4UgVM89; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f2b95775so2301058e87.1;
-        Fri, 18 Oct 2024 01:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729239121; x=1729843921; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eZjjRK96GfuXcw6nB88pboztj/XL99IucjnOaEslf5E=;
-        b=W4UgVM89DC6v3xGqVwgckjJap5qkMmQZ0zOlbZXbO0n+3KmNbytOqitsI71PmTJXuy
-         XwPWaSktUNo9kreeC0zgJmPt3E21GRNY3D5lnOKMmvdx5hFR3KXUn2SsKLuG2ZwQAat4
-         fIK63q8CAiDXyxmYJxzbTw2yHwdOPJq88vH/hUMc/ZKy4Rhwtfg/HxDKtwQhWlUKPzpd
-         zczYtWnp4YY+i8wpqwb5dGIM1nhPOsyuhYC8mH9JF9qt4f4nbiVFqjtq0w3yC8/lm8b2
-         MvLcdhSr5GsIb/dUCyW4Yr2w6s4Pjc24vKduhtkkATiXSnEw+kfSULxr89vK0pIQCdxW
-         PQng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729239121; x=1729843921;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eZjjRK96GfuXcw6nB88pboztj/XL99IucjnOaEslf5E=;
-        b=bairHm3/LDrRlNa7tLM/6CNyoRD9bG24hUc5lNgewAM9wAt7FANHmNnU+6/uSNB179
-         0vPUDY8ouIHXnYaQXmCbOTIPMubHgfeSWxl8Jt1s2wcCQDLNyiynalAWA73RmwXFL/vU
-         seVWQarw2icZlk7cQDecvJ5dhZsf5YkuYwxErVQv+xocyN0TIeLFgjKDC77qItvocF/+
-         KTubthVScABUie3olFZtiXQb/5Du3uOrSOM0PdlaZPEjIgJoiphLp0uTVmsIA40FG3JD
-         GeAQGMvZH58s8Cxw1lepXfukhkpKio04o/UfDDeghzzE40XGd7YE//P4zNPcvP3/2Wcj
-         7I2g==
-X-Forwarded-Encrypted: i=1; AJvYcCV8436Fy747lO5Ne8/06e2UkT4sQHZESZiJ5eddWv/97IBnn4KqQaMmFT4dc0DdWbC0GckgZRSyWDWR6dKR@vger.kernel.org, AJvYcCW061bvwT1IRftlQ1V555m40ZI7TGcRzFzqI3p8Ksi70IZHb4EOvIo4XIjT9DHi2u/AA2FXURwRE1g=@vger.kernel.org, AJvYcCWN/tPSo/zQZx/BhPGJwstUV8dvRLamc99d0pLG6h9pHYH/iqQKBGKmMfBdyDg9cJXxYpRUWwF8FPvVPHU=@vger.kernel.org, AJvYcCXrLbmBdQ/wGr8MQnoiv/RsZWV03xlPcV+vEiQkna+hUrbEalwEyAJwc3fLV1LGY8PxR4epCd6Pk10V@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmHrB1ivsgItluQskvb64hSbat0fth/A067zQlOiiDdfe7lEUM
-	0E/RtskCH9KcURWvmR8jrs20yx129KGcevWrPYI7WmAWyJliy9zy
-X-Google-Smtp-Source: AGHT+IHOZo2zIv5xORZ3TfFiF94d8rr6g6N8wyJA6Yi6pZbzCQ0+fj68XKKyXsG1c3g2+PrJqW4LIw==
-X-Received: by 2002:a05:6512:39cb:b0:538:9e36:7b6a with SMTP id 2adb3069b0e04-53a15494e4emr1432817e87.32.1729239121034;
-        Fri, 18 Oct 2024 01:12:01 -0700 (PDT)
-Received: from zenbook.agu.edu.tr ([95.183.227.33])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68a8e734sm61129666b.24.2024.10.18.01.11.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 01:12:00 -0700 (PDT)
-From: Yassine Oudjana <yassine.oudjana@gmail.com>
-X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sen Chu <sen.chu@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>,
-	Lee Jones <lee@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	jason-ch chen <Jason-ch.Chen@mediatek.com>,
-	Chen Zhong <chen.zhong@mediatek.com>,
-	Flora Fu <flora.fu@mediatek.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
-	Yassine Oudjana <yassine.oudjana@gmail.com>,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH 6/6] Input: mtk-pmic-keys - Add support for MT6328
-Date: Fri, 18 Oct 2024 11:10:48 +0300
-Message-ID: <20241018081050.23592-7-y.oudjana@protonmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241018081050.23592-1-y.oudjana@protonmail.com>
-References: <20241018081050.23592-1-y.oudjana@protonmail.com>
+	s=arc-20240116; t=1729239054; c=relaxed/simple;
+	bh=qam845+M054/HCuxE2Dub4pqx0T6LNs2036Ba2LFmY8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UrcnXv1tS4mh/T1/wKTzBncUoaT1GEuQVwblrb9DnltS0Q9ZzY08vYew9YEybZ5hedlbnqUt1Z04nOhdnjVyGWL5jqsDZ/g2tFht7MRwqZ5ebNFK/mt7cl18GspXfCUfMX3B92sjuO/B+1w1RDNwjCmwDqUBpm3rdGZNK4LoNZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzTB57Sb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 852F4C4CEC3;
+	Fri, 18 Oct 2024 08:10:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729239053;
+	bh=qam845+M054/HCuxE2Dub4pqx0T6LNs2036Ba2LFmY8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=CzTB57SbnE7u8H5SDZ/GNUvfPjN+H+Y/TAZeCNvH9Y8Dy/fjEueBtFDxjY+1RK3Zz
+	 +FxIrlgpoc5pePyfVeb/4yGm+YWqaeggvOlieLs6+3SOsCp5tii3ndWg0R5SqAij3A
+	 VSDi9B8Myyif8qUjhqFNogyZdzRsMkRdTnmGqQ+VoFZiQL684Ph4a9UPJvlwYss+O+
+	 05+kckJ6drNkAJ0D4nAWsEF65AEN0jvhkE84QXF1nX98G0VaOkoKy6RkLiTeyIVbY3
+	 8qEhM8ofu2pB/yktIZouRcpbu13kcIvfWBC0h1A1kC4bFs5MDreLGTb8QeKwgfoyoU
+	 RlO7d9xdjMRjw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FC2D3C544;
+	Fri, 18 Oct 2024 08:10:53 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH v3 0/3] Pinctrl: A4: Add pinctrl driver
+Date: Fri, 18 Oct 2024 16:10:49 +0800
+Message-Id: <20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAkYEmcC/03M0QqCMBTG8VeRc91iO85WXvUeIbHmSQ+ok01GI
+ b57Swi6/H/w/VaIFJgi1MUKgRJH9lOO8lCA6+3UkeA2N6BEraRCYfV95sktYRDy0qoHWmVIG8i
+ HOdCTXzt2a3L3HBcf3rud8Lv+GP3PJBRSlGS0PVUOzxVd7Tj4jt3R+RGabds+UeMFT6YAAAA=
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729239051; l=1206;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=qam845+M054/HCuxE2Dub4pqx0T6LNs2036Ba2LFmY8=;
+ b=iq5sxMdSUIEb/ykt5CpcF6wTUW7k5vVqa1/aARrx4VQWbC7RVa4rVQEkZ2/RvI+s4XmHmW66h
+ ZH7b6a8vJc+C4s/evg5ba7t8c9UZRdHkZw1MOWQX+Fz8dW58kTSduDI
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-From: Yassine Oudjana <y.oudjana@protonmail.com>
+Add pinctrl driver support for Amloigc A4 SoC
 
-Add a compatible string and related data for the PMIC keys on the
-MT6328 PMIC.
-
-Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
- drivers/input/keyboard/mtk-pmic-keys.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Changes in v3:
+- Remove head file from binding.
+- Move GPIO define to file *.c.
+- Link to v2: https://lore.kernel.org/r/20241014-a4_pinctrl-v2-0-3e74a65c285e@amlogic.com
 
-diff --git a/drivers/input/keyboard/mtk-pmic-keys.c b/drivers/input/keyboard/mtk-pmic-keys.c
-index 4364c3401ff1c..df1e4147e3365 100644
---- a/drivers/input/keyboard/mtk-pmic-keys.c
-+++ b/drivers/input/keyboard/mtk-pmic-keys.c
-@@ -9,6 +9,7 @@
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/mfd/mt6323/registers.h>
-+#include <linux/mfd/mt6328/registers.h>
- #include <linux/mfd/mt6331/registers.h>
- #include <linux/mfd/mt6357/registers.h>
- #include <linux/mfd/mt6358/registers.h>
-@@ -78,6 +79,17 @@ static const struct mtk_pmic_regs mt6323_regs = {
- 	.rst_lprst_mask = MTK_PMIC_RST_DU_MASK,
- };
- 
-+static const struct mtk_pmic_regs mt6328_regs = {
-+	.keys_regs[MTK_PMIC_PWRKEY_INDEX] =
-+		MTK_PMIC_KEYS_REGS(MT6328_TOPSTATUS,
-+		0x2, MT6328_INT_MISC_CON, 0x4, MTK_PMIC_PWRKEY_RST),
-+	.keys_regs[MTK_PMIC_HOMEKEY_INDEX] =
-+		MTK_PMIC_KEYS_REGS(MT6328_TOPSTATUS,
-+		0x4, MT6328_INT_MISC_CON, 0x2, MTK_PMIC_HOMEKEY_RST),
-+	.pmic_rst_reg = MT6328_TOP_RST_MISC,
-+	.rst_lprst_mask = MTK_PMIC_RST_DU_MASK,
-+};
-+
- static const struct mtk_pmic_regs mt6331_regs = {
- 	.keys_regs[MTK_PMIC_PWRKEY_INDEX] =
- 		MTK_PMIC_KEYS_REGS(MT6331_TOPSTATUS, 0x2,
-@@ -287,6 +299,9 @@ static const struct of_device_id of_mtk_pmic_keys_match_tbl[] = {
- 	}, {
- 		.compatible = "mediatek,mt6323-keys",
- 		.data = &mt6323_regs,
-+	}, {
-+		.compatible = "mediatek,mt6328-keys",
-+		.data = &mt6328_regs,
- 	}, {
- 		.compatible = "mediatek,mt6331-keys",
- 		.data = &mt6331_regs,
+Changes in v2:
+- Use one marco instead of all pin define.
+- Add unit name for dts node.
+- Link to v1: https://lore.kernel.org/all/20240611-a4_pinctrl-v1-0-dc487b1977b3@amlogic.com/
+
+---
+Xianwei Zhao (3):
+      dt-bindings: pinctrl: Add support for Amlogic A4 SoCs
+      pinctrl: meson: Add driver support for Amlogic A4 SoCs
+      arm64: dts: amlogic: a4: add pinctrl node
+
+ .../bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml |    2 +
+ arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |   35 +
+ drivers/pinctrl/meson/Kconfig                      |    6 +
+ drivers/pinctrl/meson/Makefile                     |    1 +
+ drivers/pinctrl/meson/pinctrl-amlogic-a4.c         | 1253 ++++++++++++++++++++
+ 5 files changed, 1297 insertions(+)
+---
+base-commit: 58e2d28ed28e5bc8836f8c14df1f94c27c1f9e2f
+change-id: 20241012-a4_pinctrl-09d1b2a17e47
+
+Best regards,
 -- 
-2.47.0
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
 
 
