@@ -1,135 +1,136 @@
-Return-Path: <linux-kernel+bounces-371375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5920E9A3A37
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:40:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A429A3A40
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0899E1F281F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:40:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6120C283221
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A881FF7CC;
-	Fri, 18 Oct 2024 09:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IJE8xZ5O"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63DB20010B;
+	Fri, 18 Oct 2024 09:41:24 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135CB1F8924
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26931FF7C4
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729244441; cv=none; b=dp3tmY712pxRhK/zeBC+MZcVeh6AbUs3cJpl8Ox18nB0dpzhomBVpvpafTF3A0z1Z8QVUV3XS15Y6TLmQmoTEBdun0DxA1km8E6OLxM9ME+gAybXLWxTovmLmWHvAOLM/3FkNvQR6Trk4esSWB6g5TSR3jTZ+RBq9RiCVcV8YKI=
+	t=1729244484; cv=none; b=TnExq2/E3GW0Jf1LfQrDMjlipsC9XVVyPhpBw5ydQySjKcKp5I/GFLymQ7Nip5oHpB7+MT6WXUh5P86aaz6wlQot4SrjmwuH21z+1axK8tK9KlDWTclXYsEEvb4cBfD+1wTt8FiWj0AZ+iF5M9vAkYjsdD0huiInBLC5h3vDiT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729244441; c=relaxed/simple;
-	bh=VjtlmWV+/LA8G3s2lKzJGA3bXCeBNqT37Gm49h5CU6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gFlx+TjF+q8VUF4BzDsH1auyRBO9QQMA/iANBgC7Gr07cGRntpxenDMg76/7F1BvZV8/ALn7P9qpP0oJYH2NPjTIV8iRRlW1qgQc1iTG/vXyHRiOZlnKaRXFvXHTZZV4wFxfuV/tptqHs57AXrIyhkLOFY1PX5BY6u8om13SI/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IJE8xZ5O; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729244437;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EGS+Zmvx1BSPBM6JUvsz/W/2vC9RaxIP5u5IVVeaHTo=;
-	b=IJE8xZ5OSeHLCMDW1oJ5brzkF3EvxcEqIpuo0xHIJU/i1Ujfrb9G6DR9goDHBb+kILMTK1
-	qra3crdsHK7vU97ZGQ4vP/kYV16snR9sOypn3pYzIOpJMQCTJDe7HfgOqgpoW5FbCh62nw
-	cOiBl3kCcPa/3GL6o+2nxl1aSFnj6Qc=
-From: Andrea Righi <andrea.righi@linux.dev>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] sched_ext: improve WAKE_SYNC behavior for default idle CPU selection
-Date: Fri, 18 Oct 2024 11:40:33 +0200
-Message-ID: <20241018094033.160188-1-andrea.righi@linux.dev>
+	s=arc-20240116; t=1729244484; c=relaxed/simple;
+	bh=wffCtmN6ytO8CqC4XzgTLHinARfHMCGXGwK1kHB+yJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GBGpKlOVR4nkvtlWOKvD2QotFN8npyJdywmgrY3n8zIl7PjqXo1WyE4clyXi8BaeVMpxvZkoLOqA0W/x66VRI4y8RCwqiQ/Fvya/C1KazQTfcEgAlfJh1hfMVpS0FVHpAY9WDO7rPXz14lDXDbWjsN3kcG1x874lztpKMtESWrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1t1jTS-0006BO-Et; Fri, 18 Oct 2024 11:40:46 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1t1jTP-000Bil-2D;
+	Fri, 18 Oct 2024 11:40:43 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1t1jTP-000Qi1-1r;
+	Fri, 18 Oct 2024 11:40:43 +0200
+Date: Fri, 18 Oct 2024 11:40:43 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Hui-Ping Chen <hpchen0nvt@gmail.com>
+Cc: miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	nikita.shubin@maquefel.me, arnd@arndb.de, vkoul@kernel.org,
+	esben@geanix.com, linux-arm-kernel@lists.infradead.org,
+	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/2] mtd: rawnand: nuvoton: add new driver for the
+ Nuvoton MA35 SoC
+Message-ID: <ZxItGw0m_w0jgtAq@pengutronix.de>
+References: <20241018022519.721914-1-hpchen0nvt@gmail.com>
+ <20241018022519.721914-3-hpchen0nvt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018022519.721914-3-hpchen0nvt@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-In the sched_ext built-in idle CPU selection logic, when handling a
-WF_SYNC wakeup, we always attempt to migrate the task to the waker's
-CPU, as the waker is expected to yield the CPU after waking the task.
+On Fri, Oct 18, 2024 at 02:25:19AM +0000, Hui-Ping Chen wrote:
+> +static int ma35_nfi_ecc_check(struct nand_chip *chip, u8 *addr)
+> +{
+> +	struct ma35_nand_info *nand = nand_get_controller_data(chip);
+> +	struct mtd_info *mtd = nand_to_mtd(chip);
+> +	int i, j, nchunks = 0;
+> +	int report_err = 0;
+> +	int err_cnt = 0;
+> +	u32 status;
+> +
+> +	nchunks = mtd->writesize / chip->ecc.steps;
+> +	if (nchunks < 4)
+> +		nchunks = 1;
+> +	else
+> +		nchunks /= 4;
+> +
+> +	for (j = 0; j < nchunks; j++) {
+> +		status = readl(nand->regs + MA35_NFI_REG_NANDECCES0 + j * 4);
+> +		if (!status)
+> +			continue;
+> +
+> +		for (i = 0; i < 4; i++) {
+> +			if ((status & ECC_STATUS_MASK) == 0x01) {
+> +				/* Correctable error */
+> +				err_cnt = (status >> 2) & ECC_ERR_CNT_MASK;
+> +				ma35_nfi_correct(chip, j * 4 + i, err_cnt, addr);
+> +				report_err += err_cnt;
 
-However, it may be preferable to keep the task on its previous CPU if
-the waker's CPU is cache-affine.
+This is still wrong. This should be
 
-The same approach is also used by the fair class and in other scx
-schedulers, like scx_rusty and scx_bpfland.
+				report_err = max(report_err, err_cnt);
 
-Therefore, apply the same logic to the built-in idle CPU selection
-policy as well.
+You have to search for the subpage that has the most bitflips and return
+the number of bitflips on that subpage, *not* the total amount of errors
+on the whole page.
 
-Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
----
- kernel/sched/ext.c | 44 +++++++++++++++++++++++++++++++-------------
- 1 file changed, 31 insertions(+), 13 deletions(-)
+That said, the statistic counter should still count the total number of
+bitflips occurred.
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 6eae3b69bf6e..8b7d90db3cfb 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -3087,20 +3087,38 @@ static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
- 	*found = false;
- 
- 	/*
--	 * If WAKE_SYNC, the waker's local DSQ is empty, and the system is
--	 * under utilized, wake up @p to the local DSQ of the waker. Checking
--	 * only for an empty local DSQ is insufficient as it could give the
--	 * wakee an unfair advantage when the system is oversaturated.
--	 * Checking only for the presence of idle CPUs is also insufficient as
--	 * the local DSQ of the waker could have tasks piled up on it even if
--	 * there is an idle core elsewhere on the system.
--	 */
--	cpu = smp_processor_id();
--	if ((wake_flags & SCX_WAKE_SYNC) &&
--	    !cpumask_empty(idle_masks.cpu) && !(current->flags & PF_EXITING) &&
--	    cpu_rq(cpu)->scx.local_dsq.nr == 0) {
--		if (cpumask_test_cpu(cpu, p->cpus_ptr))
-+	 * If WAKE_SYNC, try to migrate the wakee to the waker's CPU.
-+	 */
-+	if (wake_flags & SCX_WAKE_SYNC) {
-+		cpu = smp_processor_id();
-+
-+		/*
-+		 * If the waker's CPU is cache affine and prev_cpu is idle,
-+		 * then avoid a migration.
-+		 */
-+		if (cpus_share_cache(cpu, prev_cpu) &&
-+		    test_and_clear_cpu_idle(prev_cpu))
- 			goto cpu_found;
-+
-+		/*
-+		 * If the waker's local DSQ is empty, and the system is under
-+		 * utilized, try to wake up @p to the local DSQ of the waker.
-+		 *
-+		 * Checking only for an empty local DSQ is insufficient as it
-+		 * could give the wakee an unfair advantage when the system is
-+		 * oversaturated.
-+		 *
-+		 * Checking only for the presence of idle CPUs is also
-+		 * insufficient as the local DSQ of the waker could have tasks
-+		 * piled up on it even if there is an idle core elsewhere on
-+		 * the system.
-+		 */
-+		if (!cpumask_empty(idle_masks.cpu) &&
-+		    !(current->flags & PF_EXITING) &&
-+		    cpu_rq(cpu)->scx.local_dsq.nr == 0) {
-+			if (cpumask_test_cpu(cpu, p->cpus_ptr))
-+				goto cpu_found;
-+		}
- 	}
- 
- 	/*
+Sascha
+
+> +			} else {
+> +				/* Uncorrectable error */
+> +				dev_warn(nand->dev, "uncorrectable error! 0x%4x\n", status);
+> +				return -EBADMSG;
+> +			}
+> +			status >>= 8;
+> +		}
+> +	}
+> +	return report_err;
+> +}
+> +
+
 -- 
-2.47.0
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
