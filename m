@@ -1,186 +1,350 @@
-Return-Path: <linux-kernel+bounces-372367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8C69A47B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:11:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FE49A47B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E992B2208F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:11:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F98D282DF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CDF205AAA;
-	Fri, 18 Oct 2024 20:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDDF205E06;
+	Fri, 18 Oct 2024 20:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="rcFzKkhB"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YujiOdCw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AA9204026
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EAC1EE00E;
+	Fri, 18 Oct 2024 20:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729282294; cv=none; b=QhVy0C+CmiL6VdjMw5KwTM42v60DnYjhmUnMYTdTjGkFAGSOWPpgWlWp6jdFs2Sq7LMewworfmtXwNxTujHH++8PjccEcWJ9l6TxN9BdFAbHYVDbTKDcRvm9tRTqfxBrEMgwza70v/YmvKYznRC5rvMMGxFdUabY7Eo6fNEGAPE=
+	t=1729282501; cv=none; b=dDW3+d8K/BqDsSb4sePXak07nopHhRqnRlBRigroeeER+hcudMgcCfLg+Vn+IPGcj3X0yzVb7ezfANu9MbGUj2PmjjhZv5N8hXtM8q4g9ur81dB5eSJ2TIBHAz+yMxpMxXCSZDVSTFROsfhQmSLf0fV9aoEsZMLn5N9GB8LCKIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729282294; c=relaxed/simple;
-	bh=L1zmrwMA350Pw6vNvSRdXg7wao7p9uWvjSldj4JS//Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P93B/BG9wWT3ixMJE/z128m9zwsQmk7P+fLiFxNl5ZqXeO+Oq+MoTMH17n3wILawjwnqLQRwQ4Dh8FiQzVe3oJDik8MzuvkIWtbFJSzbCas5RKziIYH66kkGOGZ22BzasY/nxZgw2oExeSfCXEHKJfm1KB5IQcBHUUVHRiuJ/Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=rcFzKkhB; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so2453995e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:11:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atishpatra.org; s=google; t=1729282290; x=1729887090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pjceIsWcwiJi9o8K3wuHgDeqcBFmrQpMfaaoOm2yWMc=;
-        b=rcFzKkhBR2/uw92tqX6bro8El+cnw7SGXNMZZ6hUrYpJC/2erRf5iJfkGSSJZqsb6u
-         XM6TjQtj/gnNC+m6+ccq7k6E0Npcipns0tYILarHsCQBQJg/2NlmsPHejHlk42J8if6L
-         7J8WvLMD8kpaAwFp+3d9yjwXMcrkR1oKZRZXE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729282290; x=1729887090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pjceIsWcwiJi9o8K3wuHgDeqcBFmrQpMfaaoOm2yWMc=;
-        b=UbBVR/JdfRm2Uvowz8zDARDGhCB5QaM0R9pQQQAyo+BF3CRlwKXIK1Y23+m+YRPYbO
-         dewt2grp6GyV0G30NboTW1CJ9eQg2BbK8YscIE5ZtnMtxhdJH+80L4028qe8n7KpUzGo
-         HtGxyqUv1GUANr6PzRMXuz7Eyr0sHJaO2AIL8tljt12281fsO7zHjz2Jr0h9JMoyX/9/
-         e+5xfm1Q+omjjvwESrPv0Bm86kZudeQcJlMDX05GwuZXvB/T6IvAEGBPeeclXvkAk3fP
-         8u3vnvZpQYMg+XTWncRrfvN/VxH3VL9b3gUCIMIkNocC1vdC/qgPxAq2gFVpfEVoTktd
-         sKdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrqgesZHCjjlORI55W++96jZ0yvl4SwEeN1qnjpR6FpEPxJVazrSTUjpDZWc+FdgooilPfQFigG31rDwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfe8nKFE1H1KSXshyujq/JsjPh/GGgLFvT8h2US/bXVk6Vrjgb
-	DDhXIMxInTESnnTwzuyLbWPSsS4CDy2Sq+tWrJgppwxYu56b9CSHEt8MGJqAky8Vm6f5xbCOphH
-	4XQ5gMd/2siarndoTyn5Uuer3jrDMfc1YEuaR
-X-Google-Smtp-Source: AGHT+IEdHOrSLjkzUAeYvCUQQHFAMWufe92JOuvK/VstP4tFd3/prjystEPcQ+qjzWFtQzonKenRkCQKn82nAdly+bo=
-X-Received: by 2002:a05:6512:6c5:b0:530:ad7d:8957 with SMTP id
- 2adb3069b0e04-53a1545dff1mr2826449e87.49.1729282290131; Fri, 18 Oct 2024
- 13:11:30 -0700 (PDT)
+	s=arc-20240116; t=1729282501; c=relaxed/simple;
+	bh=wAQ/oFdCVMPeqHoYjJs6iERnBwfqRu91WmYEu49roWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=caWuOz0JstXJiTrfxSiHzlRsYBTMN2kyyPyXnsPHFV4dUEPeUgDKp88fbCvZMjQWNwIygx10Ma2cGO3n+H73LnwfRGlJpXc7cYObdEMtsXfYDE4yWDSKbb+O0YSaZu/fOOHYHYIPyBbB/8QTak86PlasdD2oGDaxCDrBWfPkCSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YujiOdCw; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729282499; x=1760818499;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wAQ/oFdCVMPeqHoYjJs6iERnBwfqRu91WmYEu49roWo=;
+  b=YujiOdCwNUGzVLTMFj7eqWNtmSkahT0+J1ljzepH6RecwpieGC3EqX7W
+   w0Mb3lLZGtxOF9VkhYdPigOvuHLg+zxhDxPn50y+KgN13EnN1GXzUU3FZ
+   FhXUBKcF5YcOSKy9H9GmMJSKg1zZNrvfhmrJJRKFEPkeVcRTUNGWDLZoe
+   27bsHYynw0tood9x4g2KOIuRVlB5qS0QokPEru1UvMxCG7gjSDh7YTrah
+   pOQLUIvV0wsWaSnimm1PBYJf2Ivi41pw9Ku3yx9cOQYVF/eMfk9kXpYaO
+   3UJmyjWsHExK3ro0TkmDwZHY2EMNmckZP/Jem0SbAV6ofKpN+/CiC955F
+   Q==;
+X-CSE-ConnectionGUID: Zqslu7TOQq+7iH7Urz+wrQ==
+X-CSE-MsgGUID: Barwnjt1QuC5+gqrpSoT2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51374558"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="51374558"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 13:14:59 -0700
+X-CSE-ConnectionGUID: JoWCyihETbKzXa79ig2NfA==
+X-CSE-MsgGUID: zHchQDUoQUicsXn4xZfCHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="79378918"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 13:14:58 -0700
+Date: Fri, 18 Oct 2024 13:14:56 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>, bp@alien8.de, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, mingo@redhat.com, hpa@zytor.com,
+	x86@kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/10] x86/mce: Convert multiple if () statements into
+ a switch() statement
+Message-ID: <ZxLBwO4HkkJG4WYn@agluck-desk3.sc.intel.com>
+References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
+ <20241016123036.21366-1-qiuxu.zhuo@intel.com>
+ <20241016123036.21366-7-qiuxu.zhuo@intel.com>
+ <c928d9aa-1609-4f5f-943c-fec72091e989@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-13-apatel@ventanamicro.com>
-In-Reply-To: <20240719160913.342027-13-apatel@ventanamicro.com>
-From: Atish Patra <atishp@atishpatra.org>
-Date: Fri, 18 Oct 2024 13:11:18 -0700
-Message-ID: <CAOnJCULYc-m_Jq-MxwGMbktmCvLPsMiA_tzxE2qYuoKgeR0BEw@mail.gmail.com>
-Subject: Re: [PATCH 12/13] RISC-V: KVM: Save trap CSRs in kvm_riscv_vcpu_enter_exit()
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c928d9aa-1609-4f5f-943c-fec72091e989@intel.com>
 
-On Fri, Jul 19, 2024 at 9:10=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
-> wrote:
->
-> Save trap CSRs in the kvm_riscv_vcpu_enter_exit() function instead of
-> the kvm_arch_vcpu_ioctl_run() function so that HTVAL and HTINST CSRs
-> are accessed in more optimized manner while running under some other
-> hypervisor.
->
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  arch/riscv/kvm/vcpu.c | 34 +++++++++++++++++++++-------------
->  1 file changed, 21 insertions(+), 13 deletions(-)
->
-> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> index fe849fb1aaab..854d98aa165e 100644
-> --- a/arch/riscv/kvm/vcpu.c
-> +++ b/arch/riscv/kvm/vcpu.c
-> @@ -757,12 +757,21 @@ static __always_inline void kvm_riscv_vcpu_swap_in_=
-host_state(struct kvm_vcpu *v
->   * This must be noinstr as instrumentation may make use of RCU, and this=
- is not
->   * safe during the EQS.
->   */
-> -static void noinstr kvm_riscv_vcpu_enter_exit(struct kvm_vcpu *vcpu)
-> +static void noinstr kvm_riscv_vcpu_enter_exit(struct kvm_vcpu *vcpu,
-> +                                             struct kvm_cpu_trap *trap)
->  {
->         void *nsh;
->         struct kvm_cpu_context *gcntx =3D &vcpu->arch.guest_context;
->         struct kvm_cpu_context *hcntx =3D &vcpu->arch.host_context;
->
-> +       /*
-> +        * We save trap CSRs (such as SEPC, SCAUSE, STVAL, HTVAL, and
-> +        * HTINST) here because we do local_irq_enable() after this
-> +        * function in kvm_arch_vcpu_ioctl_run() which can result in
-> +        * an interrupt immediately after local_irq_enable() and can
-> +        * potentially change trap CSRs.
-> +        */
-> +
->         kvm_riscv_vcpu_swap_in_guest_state(vcpu);
->         guest_state_enter_irqoff();
->
-> @@ -805,14 +814,24 @@ static void noinstr kvm_riscv_vcpu_enter_exit(struc=
-t kvm_vcpu *vcpu)
->                 } else {
->                         gcntx->hstatus =3D csr_swap(CSR_HSTATUS, hcntx->h=
-status);
->                 }
-> +
-> +               trap->htval =3D nacl_csr_read(nsh, CSR_HTVAL);
-> +               trap->htinst =3D nacl_csr_read(nsh, CSR_HTINST);
->         } else {
->                 hcntx->hstatus =3D csr_swap(CSR_HSTATUS, gcntx->hstatus);
->
->                 __kvm_riscv_switch_to(&vcpu->arch);
->
->                 gcntx->hstatus =3D csr_swap(CSR_HSTATUS, hcntx->hstatus);
-> +
-> +               trap->htval =3D csr_read(CSR_HTVAL);
-> +               trap->htinst =3D csr_read(CSR_HTINST);
->         }
->
-> +       trap->sepc =3D gcntx->sepc;
-> +       trap->scause =3D csr_read(CSR_SCAUSE);
-> +       trap->stval =3D csr_read(CSR_STVAL);
-> +
->         vcpu->arch.last_exit_cpu =3D vcpu->cpu;
->         guest_state_exit_irqoff();
->         kvm_riscv_vcpu_swap_in_host_state(vcpu);
-> @@ -929,22 +948,11 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
->
->                 guest_timing_enter_irqoff();
->
-> -               kvm_riscv_vcpu_enter_exit(vcpu);
-> +               kvm_riscv_vcpu_enter_exit(vcpu, &trap);
->
->                 vcpu->mode =3D OUTSIDE_GUEST_MODE;
->                 vcpu->stat.exits++;
->
-> -               /*
-> -                * Save SCAUSE, STVAL, HTVAL, and HTINST because we might
-> -                * get an interrupt between __kvm_riscv_switch_to() and
-> -                * local_irq_enable() which can potentially change CSRs.
-> -                */
-> -               trap.sepc =3D vcpu->arch.guest_context.sepc;
-> -               trap.scause =3D csr_read(CSR_SCAUSE);
-> -               trap.stval =3D csr_read(CSR_STVAL);
-> -               trap.htval =3D ncsr_read(CSR_HTVAL);
-> -               trap.htinst =3D ncsr_read(CSR_HTINST);
-> -
->                 /* Syncup interrupts state with HW */
->                 kvm_riscv_vcpu_sync_interrupts(vcpu);
->
-> --
-> 2.34.1
->
+On Fri, Oct 18, 2024 at 12:44:00PM -0700, Sohil Mehta wrote:
+> > diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+> > index 725c1d6fb1e5..40672fe0991a 100644
+> > --- a/arch/x86/kernel/cpu/mce/core.c
+> > +++ b/arch/x86/kernel/cpu/mce/core.c
+> > @@ -1892,7 +1892,8 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
+> >  	}
+> >  
+> >  	/* This should be disabled by the BIOS, but isn't always */
+> 
+> This comment is specific to the AMD and placing it before the switch
+> makes it seem generic to the entire switch statement. It should probably
+> be moved inside the AMD case just above the disable GART TLB check.
+> 
+> > -	if (c->x86_vendor == X86_VENDOR_AMD) {
+> > +	switch (c->x86_vendor) {
+> > +	case X86_VENDOR_AMD:
+> >  		if (c->x86 == 15 && this_cpu_read(mce_num_banks) > 4) {
+> >  			/*
+> >  			 * disable GART TBL walk error reporting, which
+> > @@ -1925,9 +1926,9 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
+> >  		if (c->x86 >= 0x17 && c->x86 <= 0x1A)
+> >  			mce_flags.zen_ifu_quirk = 1;
+> >  
+> > -	}
+> > +		break;
+> >  
+> 
+> 
+> Also, why not include the unknown vendor check (right above) inside the
+> switch case as well?
+> 
+> if (c->x86_vendor == X86_VENDOR_UNKNOWN) {
+> 	pr_info("unknown CPU type - not enabling MCE support\n");
+> 	return -EOPNOTSUPP;
+> }
+> 
+> This seems to follow the same pattern as others and can be the first
+> case inside the switch.
+
+The vendor specific bits are large enough to warrant their own
+static functions (as we do elsewhere in this file).
+
+How about this (only compile-tested) patch?
+
+-Tony
 
 
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
---=20
-Regards,
-Atish
+From 967d8637ac90823f28f4612cbbac305c421b4853 Mon Sep 17 00:00:00 2001
+From: Tony Luck <tony.luck@intel.com>
+Date: Fri, 18 Oct 2024 13:01:02 -0700
+Subject: [PATCH] x86/mce: Break up __mcheck_cpu_apply_quirks()
+
+Split each vendor specific part into its own helper function.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+---
+ arch/x86/kernel/cpu/mce/core.c | 172 ++++++++++++++++++---------------
+ 1 file changed, 96 insertions(+), 76 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 2a938f429c4d..f51fb393d369 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -1880,101 +1880,121 @@ static void __mcheck_cpu_check_banks(void)
+ 	}
+ }
+ 
+-/* Add per CPU specific workarounds here */
+-static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
++static void apply_quirks_amd(struct cpuinfo_x86 *c)
+ {
+ 	struct mce_bank *mce_banks = this_cpu_ptr(mce_banks_array);
+ 	struct mca_config *cfg = &mca_cfg;
+ 
+-	if (c->x86_vendor == X86_VENDOR_UNKNOWN) {
+-		pr_info("unknown CPU type - not enabling MCE support\n");
+-		return -EOPNOTSUPP;
+-	}
+-
+ 	/* This should be disabled by the BIOS, but isn't always */
+-	if (c->x86_vendor == X86_VENDOR_AMD) {
+-		if (c->x86 == 15 && this_cpu_read(mce_num_banks) > 4) {
+-			/*
+-			 * disable GART TBL walk error reporting, which
+-			 * trips off incorrectly with the IOMMU & 3ware
+-			 * & Cerberus:
+-			 */
+-			clear_bit(10, (unsigned long *)&mce_banks[4].ctl);
+-		}
+-		if (c->x86 < 0x11 && cfg->bootlog < 0) {
+-			/*
+-			 * Lots of broken BIOS around that don't clear them
+-			 * by default and leave crap in there. Don't log:
+-			 */
+-			cfg->bootlog = 0;
+-		}
++	if (c->x86 == 15 && this_cpu_read(mce_num_banks) > 4) {
+ 		/*
+-		 * Various K7s with broken bank 0 around. Always disable
+-		 * by default.
++		 * disable GART TBL walk error reporting, which
++		 * trips off incorrectly with the IOMMU & 3ware
++		 * & Cerberus:
+ 		 */
+-		if (c->x86 == 6 && this_cpu_read(mce_num_banks) > 0)
+-			mce_banks[0].ctl = 0;
+-
++		clear_bit(10, (unsigned long *)&mce_banks[4].ctl);
++	}
++	if (c->x86 < 0x11 && cfg->bootlog < 0) {
+ 		/*
+-		 * overflow_recov is supported for F15h Models 00h-0fh
+-		 * even though we don't have a CPUID bit for it.
++		 * Lots of broken BIOS around that don't clear them
++		 * by default and leave crap in there. Don't log:
+ 		 */
+-		if (c->x86 == 0x15 && c->x86_model <= 0xf)
+-			mce_flags.overflow_recov = 1;
++		cfg->bootlog = 0;
++	}
++	/*
++	 * Various K7s with broken bank 0 around. Always disable
++	 * by default.
++	 */
++	if (c->x86 == 6 && this_cpu_read(mce_num_banks) > 0)
++		mce_banks[0].ctl = 0;
+ 
+-		if (c->x86 >= 0x17 && c->x86 <= 0x1A)
+-			mce_flags.zen_ifu_quirk = 1;
++	/*
++	 * overflow_recov is supported for F15h Models 00h-0fh
++	 * even though we don't have a CPUID bit for it.
++	 */
++	if (c->x86 == 0x15 && c->x86_model <= 0xf)
++		mce_flags.overflow_recov = 1;
+ 
+-	}
++	if (c->x86 >= 0x17 && c->x86 <= 0x1A)
++		mce_flags.zen_ifu_quirk = 1;
++}
+ 
+-	if (c->x86_vendor == X86_VENDOR_INTEL) {
+-		/*
+-		 * SDM documents that on family 6 bank 0 should not be written
+-		 * because it aliases to another special BIOS controlled
+-		 * register.
+-		 * But it's not aliased anymore on model 0x1a+
+-		 * Don't ignore bank 0 completely because there could be a
+-		 * valid event later, merely don't write CTL0.
+-		 */
++static void apply_quirks_intel(struct cpuinfo_x86 *c)
++{
++	struct mce_bank *mce_banks = this_cpu_ptr(mce_banks_array);
++	struct mca_config *cfg = &mca_cfg;
+ 
+-		if (c->x86 == 6 && c->x86_model < 0x1A && this_cpu_read(mce_num_banks) > 0)
+-			mce_banks[0].init = false;
++	/*
++	 * SDM documents that on family 6 bank 0 should not be written
++	 * because it aliases to another special BIOS controlled
++	 * register.
++	 * But it's not aliased anymore on model 0x1a+
++	 * Don't ignore bank 0 completely because there could be a
++	 * valid event later, merely don't write CTL0.
++	 */
+ 
+-		/*
+-		 * All newer Intel systems support MCE broadcasting. Enable
+-		 * synchronization with a one second timeout.
+-		 */
+-		if ((c->x86 > 6 || (c->x86 == 6 && c->x86_model >= 0xe)) &&
+-			cfg->monarch_timeout < 0)
+-			cfg->monarch_timeout = USEC_PER_SEC;
++	if (c->x86 == 6 && c->x86_model < 0x1A && this_cpu_read(mce_num_banks) > 0)
++		mce_banks[0].init = false;
+ 
+-		/*
+-		 * There are also broken BIOSes on some Pentium M and
+-		 * earlier systems:
+-		 */
+-		if (c->x86 == 6 && c->x86_model <= 13 && cfg->bootlog < 0)
+-			cfg->bootlog = 0;
++	/*
++	 * All newer Intel systems support MCE broadcasting. Enable
++	 * synchronization with a one second timeout.
++	 */
++	if ((c->x86 > 6 || (c->x86 == 6 && c->x86_model >= 0xe)) &&
++	    cfg->monarch_timeout < 0)
++		cfg->monarch_timeout = USEC_PER_SEC;
+ 
+-		if (c->x86_vfm == INTEL_SANDYBRIDGE_X)
+-			mce_flags.snb_ifu_quirk = 1;
++	/*
++	 * There are also broken BIOSes on some Pentium M and
++	 * earlier systems:
++	 */
++	if (c->x86 == 6 && c->x86_model <= 13 && cfg->bootlog < 0)
++		cfg->bootlog = 0;
+ 
+-		/*
+-		 * Skylake, Cascacde Lake and Cooper Lake require a quirk on
+-		 * rep movs.
+-		 */
+-		if (c->x86_vfm == INTEL_SKYLAKE_X)
+-			mce_flags.skx_repmov_quirk = 1;
++	if (c->x86_vfm == INTEL_SANDYBRIDGE_X)
++		mce_flags.snb_ifu_quirk = 1;
++
++	/*
++	 * Skylake, Cascacde Lake and Cooper Lake require a quirk on
++	 * rep movs.
++	 */
++	if (c->x86_vfm == INTEL_SKYLAKE_X)
++		mce_flags.skx_repmov_quirk = 1;
++}
++
++static void apply_quirks_zhaoxin(struct cpuinfo_x86 *c)
++{
++	struct mca_config *cfg = &mca_cfg;
++
++	/*
++	 * All newer Zhaoxin CPUs support MCE broadcasting. Enable
++	 * synchronization with a one second timeout.
++	 */
++	if (c->x86 > 6 || (c->x86_model == 0x19 || c->x86_model == 0x1f)) {
++		if (cfg->monarch_timeout < 0)
++			cfg->monarch_timeout = USEC_PER_SEC;
+ 	}
++}
+ 
+-	if (c->x86_vendor == X86_VENDOR_ZHAOXIN) {
+-		/*
+-		 * All newer Zhaoxin CPUs support MCE broadcasting. Enable
+-		 * synchronization with a one second timeout.
+-		 */
+-		if (c->x86 > 6 || (c->x86_model == 0x19 || c->x86_model == 0x1f)) {
+-			if (cfg->monarch_timeout < 0)
+-				cfg->monarch_timeout = USEC_PER_SEC;
+-		}
++/* Add per CPU specific workarounds here */
++static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
++{
++	struct mca_config *cfg = &mca_cfg;
++
++	switch (c->x86_vendor) {
++	case X86_VENDOR_UNKNOWN:
++		pr_info("unknown CPU type - not enabling MCE support\n");
++		return -EOPNOTSUPP;
++
++	case X86_VENDOR_AMD:
++		apply_quirks_amd(c);
++		break;
++	case X86_VENDOR_INTEL:
++		apply_quirks_intel(c);
++		break;
++	case X86_VENDOR_ZHAOXIN:
++		apply_quirks_zhaoxin(c);
++		break;
+ 	}
+ 
+ 	if (cfg->monarch_timeout < 0)
+-- 
+2.47.0
+
+> 
 
