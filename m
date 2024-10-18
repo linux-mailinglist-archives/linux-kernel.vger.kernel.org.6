@@ -1,84 +1,75 @@
-Return-Path: <linux-kernel+bounces-371784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3C29A4045
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:45:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8C09A4048
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CD6CB2259D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:45:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E61B288152
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE2C17C9E9;
-	Fri, 18 Oct 2024 13:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B6B1DAC86;
+	Fri, 18 Oct 2024 13:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fjvuVCet"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ew2iD+gs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E750134AC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E31E1D95B5;
+	Fri, 18 Oct 2024 13:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729258939; cv=none; b=gKoMCjJpUpTQHhqld12R0AFmQjWKSB6HbwzO/JEqzJ/AYgz2X6JnMaR/qBJZcqLykmxRTWlPiGjtXlN0Ofj7ZTr2zjjXtGFNGUtnvt+S2lDYHJa9/lQEdCML+rwrvUtqyUM3geKP4Y/U96kwM6VSC1Vmoq1h9pqk1yXSpzUiqwg=
+	t=1729259074; cv=none; b=Q2Bhag+TxZpPCNYJYJJFH37Y55cxOysuS9ZZdBeqA9Ph0wZ4Lbxl9cnULbWz4ISi9s+sVMLeMBYVCTHDc65sVqWQbHwpdg1KpFRIn3lO5HnzmxXWV1ThUUnUZL2V0gYRYcOCVouaes9iHnc1fdUB561qZJu8YZ9nXlJ5P/jsfeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729258939; c=relaxed/simple;
-	bh=xBePZnsK3Nudyza72rvI8w1t5GSr3TU0LqaYiARoEDo=;
+	s=arc-20240116; t=1729259074; c=relaxed/simple;
+	bh=7FJz9go6NmDrdGqWGJYOcGvUN9zYPmW5q3YnQ1vjR/I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=maMUdVU2nGlaT+uQbtyEjo0rTLCqTIf4/6sy4RKjnE+UR7ipOSInAYeCUmT6zgABfX2e1eXl7xpm1IYNj4D3C+XxTRyqUDzUHJUSK428ye8lkQKger2vwv3LH6b2GwCJud5BtQx53/GneMqEoX6gdelje6x+nHlmOAN1xqmnb7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fjvuVCet; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c94861ee25so1115762a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729258935; x=1729863735; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZa7Ue1oIcLGAigjL4zuYAAZ2xEAi56JLa+QFpctN6s=;
-        b=fjvuVCettQKqxe9GMf0pUA6JCkFbEiOELajjTNBCmfQn39l7s7uB4tCrKYVLnEHH/m
-         JwIFA8dpeJ/bYVR1YUUJpceVNyC6+Qtj091mAG4ehgxf6jJ11J50N/+WvMdLh8aBqZ75
-         3BDC+zOWlSKPTDm52pvxKs5006kI2Z9YWcaUTH9uwAle20qw2um5fM5gFCtSUNqQtWzX
-         t7FsfVBjaKtqSft6nnI1Odv/5s/iUCPh+3Zon98Owr5ZVGMfqH+PQlWMyYYSzS4wqQWk
-         CrF8GVsXC9amz6nsXuUCaRn/9jpES60b0BORtzBc6M4q4xhAXo0b4L71oUZwK/Wh9P/i
-         LTkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729258935; x=1729863735;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HZa7Ue1oIcLGAigjL4zuYAAZ2xEAi56JLa+QFpctN6s=;
-        b=Tw1wY/ovMZAyRYP3vnjvtYWgr8kHG5LP2R+S1ikIMXD0a7gLQUkZUG3gf+njS9VcNr
-         vVVH4yTXJG9pDqj0TqyeS6cmkU/hmfS/R6VM23MhWvzJYty5DQ+POHalD7VKoESmC4ml
-         hKGekReks+dk7mqbQRdKgDcwrioCRvafx9lYTWDCwJ2dR+RSA1bgdZ3HFQrv864H46/7
-         4rMqj7KqFvmE2aVq9iIrzAr2A1oBg+p+1GixqP+TKtKYPR3dunBbrAwTo0HwvYNZwA6S
-         JpNz07FdLKejT2CcP6zdBc6TSUrtlqD2vipPH/xncWaKCA6xArdnzeKbC7No0sgcaSPs
-         wiZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbgVNIeOTpURChIqNL57qHugJKMIvICww5TBP3njxY9iHdD3Ubl313QgQHL+Q3k3optwyVW0YPh8+dQIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl4KQuwtIPcIkAH39onp4ex2QxMNRe5vqW13KS0BSsZt5umdg2
-	RhLa/M0dnSLSYYvXy1LpqZM9SgSGChwfI6OtsiABgE0KPLBSvsYkZtpyz+WzsbY=
-X-Google-Smtp-Source: AGHT+IG6Fxgb4NHCkIX3/dnlPvjFLsVzKH6Jek9DA+hqFWFwOWxceGjaQg5r7AgnL5NBc1jgnzfu1g==
-X-Received: by 2002:a05:6402:274d:b0:5c7:1f16:78e3 with SMTP id 4fb4d7f45d1cf-5ca0ae81acbmr2408464a12.22.1729258934653;
-        Fri, 18 Oct 2024 06:42:14 -0700 (PDT)
-Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ca0b0fec43sm751287a12.91.2024.10.18.06.42.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 06:42:14 -0700 (PDT)
-Date: Fri, 18 Oct 2024 15:42:13 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, nphamcs@gmail.com,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, akpm@linux-foundation.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, lnyng@meta.com
-Subject: Re: [PATCH 0/1] memcg/hugetlb: Adding hugeTLB counters to memory
- controller
-Message-ID: <ZxJltegdzUYGiMfR@tiehlicka>
-References: <20241017160438.3893293-1-joshua.hahnjy@gmail.com>
- <ZxI0cBwXIuVUmElU@tiehlicka>
- <20241018123122.GB71939@cmpxchg.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JIgxxzC4guAWgIIuD4ablMd1KNkcrjjMicam4aHM4E1/6R1RXs+ZVwvorYnXn5W1iTrWvb1JR6chWzKD9RnhLTRE+Ku+Q7q2wg1EEAVGA2y4AEFHJty1yJ+TVjZZjiGmRwVn0PsHJwZRdIoOt0DVMFAzmAvi5qk0iallJu8gU7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ew2iD+gs; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729259072; x=1760795072;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7FJz9go6NmDrdGqWGJYOcGvUN9zYPmW5q3YnQ1vjR/I=;
+  b=ew2iD+gsR6BRwhIKjI24eInZ4EZsPd74o5KCrQikYgOyWCQmGG4Z019A
+   LI8EIrOK8nJk05wl5vW0s1kpQDk4OO/PlfctXvIP8qdrXIHhOmyCCtRhs
+   qVrL4YeUKKoBACP2O6le1210sLxv8+xz7gVgv9kZ5mWiz8AFw/tE4LW7T
+   txjxxLzWO91xD3pzPvmbeuJ9cs9m2H+EXJFaT6SPIMeE+7HzA2PctZPAG
+   +trhbefZzKEZ9KFTVU5smaiq2N2KVVjJnpbVBeyDdf9ZQnCeLFWXxkb9F
+   fAqj3hDfm85agUEPAhYVcrW7FJ+AY1RIu/DmVivGJxUr6eVChSfAYlcQp
+   A==;
+X-CSE-ConnectionGUID: eeUYQLuYRkS+S7iosTa4Fw==
+X-CSE-MsgGUID: SA5/MpiNSpKjTCKK1B4lsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28668869"
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="28668869"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 06:44:32 -0700
+X-CSE-ConnectionGUID: YjqSYosrTx+AFDfZaWoROw==
+X-CSE-MsgGUID: X/4xZGt5SKegZ3VIVbIstg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="109698128"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 06:44:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t1nHH-00000004Tvm-0gsm;
+	Fri, 18 Oct 2024 16:44:27 +0300
+Date: Fri, 18 Oct 2024 16:44:26 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v1 0/4] gpio: xgene-sb: Improve ACPI and property related
+ code
+Message-ID: <ZxJmOjvQAKUc0_4A@smile.fi.intel.com>
+References: <20241018134129.2058068-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,66 +78,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018123122.GB71939@cmpxchg.org>
+In-Reply-To: <20241018134129.2058068-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri 18-10-24 08:31:22, Johannes Weiner wrote:
-> On Fri, Oct 18, 2024 at 12:12:00PM +0200, Michal Hocko wrote:
-> > On Thu 17-10-24 09:04:37, Joshua Hahn wrote:
-> > > HugeTLB usage is a metric that can provide utility for monitors hoping
-> > > to get more insight into the memory usage patterns in cgroups. It also
-> > > helps identify if large folios are being distributed efficiently across
-> > > workloads, so that tasks that can take most advantage of reduced TLB
-> > > misses are prioritized.
-> > > 
-> > > While cgroupv2's hugeTLB controller does report this value, some users
-> > > who wish to track hugeTLB usage might not want to take on the additional
-> > > overhead or the features of the controller just to use the metric.
-> > > This patch introduces hugeTLB usage in the memcg stats, mirroring the
-> > > value in the hugeTLB controller and offering a more fine-grained
-> > > cgroup-level breakdown of the value in /proc/meminfo.
-> > 
-> > This seems really confusing because memcg controller is not responsible
-> > for the hugetlb memory. Could you be more specific why enabling hugetlb
-> > controller is not really desirable when the actual per-group tracking is
-> > needed?
+On Fri, Oct 18, 2024 at 04:32:31PM +0300, Andy Shevchenko wrote:
+> Improve ACPI and property related code in the driver.
 > 
-> We have competition over memory, but not specifically over hugetlb.
-> 
-> The maximum hugetlb footprint of jobs is known in advance, and we
-> configure hugetlb_cma= accordingly. There are no static boot time
-> hugetlb reservations, and there is no opportunistic use of hugetlb
-> from jobs or other parts of the system. So we don't need control over
-> the hugetlb pool, and no limit enforcement on hugetlb specifically.
-> 
-> However, memory overall is overcommitted between job and system
-> management. If the main job is using hugetlb, we need that to show up
-> in memory.current and be taken into account for memory.high and
-> memory.low enforcement. It's the old memory fungibility argument: if
-> you use hugetlb, it should reduce the budget for cache/anon.
-> 
-> Nhat's recent patch to charge hugetlb to memcg accomplishes that.
-> 
-> However, we now have potentially a sizable portion of memory in
-> memory.current that doesn't show up in memory.stat. Joshua's patch
-> addresses that, so userspace can understand its memory footprint.
-> 
-> I hope that makes sense.
+> Andy Shevchenko (4):
+>   gpio: xgene-sb: Remove unneeded definitions for properties
 
-Looking at 8cba9576df60 ("hugetlb: memcg: account hugetlb-backed memory
-in memory controller") describes this limitation
+>   gpio: xgene-sb: don't use "proxy" headers
 
-      * Hugetlb pages utilized while this option is not selected will not
-        be tracked by the memory controller (even if cgroup v2 is remounted
-        later on).
+Ah, patch order is wrong (we will see CIs are not being happy),
+the above should be the last one.
 
-and it would be great to have an explanation why the lack of tracking
-has proven problematic. Also the above doesn't really explain why those
-who care cannot really enabled hugetlb controller to gain the
-consumption information.
+>   gpio: xgene-sb: Drop ACPI_PTR() and CONFIG_ACPI guards
+>   gpio: xgene-sb: Tidy up ACPI and OF ID tables
 
-Also what happens if CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING is disabled.
-Should we report potentially misleading data?
 -- 
-Michal Hocko
-SUSE Labs
+With Best Regards,
+Andy Shevchenko
+
+
 
