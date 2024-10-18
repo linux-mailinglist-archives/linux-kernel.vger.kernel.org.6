@@ -1,70 +1,88 @@
-Return-Path: <linux-kernel+bounces-371516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C959A3C2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:53:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A5B9A3C34
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23C01F21BC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78A85282C4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479062038D7;
-	Fri, 18 Oct 2024 10:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFCB2022DC;
+	Fri, 18 Oct 2024 10:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F8Qt7nny"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wlpu/tI8"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABA6202624;
-	Fri, 18 Oct 2024 10:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5214B201026
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729248660; cv=none; b=OF8Vavu89S8yOCplKYvhMCbcCAFcWeLC0J3VzePQX+/h8UvWviBeyqP9CwVHfNmxzkuYk1rVCN1OK3o/Si+y3N/s+22oKgKsJqfMrWX6VmBT6Wt78VitpwGLWhL8rkPp4HoaBYxVfq+CAU5QRu46lzsZzHnYeMfptWIIeRWwM8M=
+	t=1729248720; cv=none; b=fMobwaVPX1+Er2cxsPqOpXPk3GDuaFhNmVfUJBTmCcHZfTFy3/nGs3l56lF43BdgUzFivKRmBIGNwXVzkoV2FMmbuvualslUb5hEnjyhbc8IuVnqEyVWBmDVT6GrVTm2CT0kFGxnZOrquxHR3oTqGFwRYCL76bYor8EG6EkPkcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729248660; c=relaxed/simple;
-	bh=syJdLYnz5Q70PDNaZn4aYfuviFa7wVVgde/vmOAQEWw=;
+	s=arc-20240116; t=1729248720; c=relaxed/simple;
+	bh=13RJL78aQDntwPZ4PtUlARuj1xajjStPJh26trgJ86Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gYoqvieJsGZtjHj0ldzIANVX1VH1YQ2HvUWCgk6mg8GGI/788kZ2rHa3C5X9koLAjtgEb/pG3SSIMrBueAUKp5vU5sIEPGLajf5B+rFnsdx3chQLiXP6xpsiTyiAmbXSEKzWAYwyXOJxQO/JL1rqwOa+yIY24w16gLZHPCvqsww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F8Qt7nny; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2cU22bSglzDVdcqTFPBtq8HXbywO/nkwltNcPNsssAM=; b=F8Qt7nnyXIJ8jUCjfss2VhOk6T
-	OL+E8R1+Q8R8f4UfvHPXgvDIQRA+b+byCTuu51OwS1XmFmu4bjyQiorxdW3zWARXdUvATqvjnKQHs
-	f4U4i+aDTWIwFXdhvka0Wwh5j1+FcNwWlZMT20dHWAeR9U6AfuPxyRUn0CTWx5nHLnzd3B6ja2Zb4
-	78JNWbjq+Rs6675gYYcgcUoIfvvkf9mmoMoCwrfEy7gnemkgB4ac92puyrNHdTLZnlmrGTC9NRrs5
-	nSIm74T6PIyMDp0heZmtasmGiWzF47jq3ixeqQABHpfDawd/SdF0hQy007EC+39cIEP98r5680OB1
-	+7bzyI5w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1kZK-0000000D0vl-1n9N;
-	Fri, 18 Oct 2024 10:50:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 860333005AF; Fri, 18 Oct 2024 12:50:54 +0200 (CEST)
-Date: Fri, 18 Oct 2024 12:50:54 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, amadeuszx.slawinski@linux.intel.com,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Kees Cook <keescook@chromium.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Dan Carpenter <error27@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v3] cleanup: adjust scoped_guard() macros to avoid
- potential warning
-Message-ID: <20241018105054.GB36494@noisy.programming.kicks-ass.net>
-References: <20241011121535.28049-1-przemyslaw.kitszel@intel.com>
- <202410131151.SBnGQot0-lkp@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wa7xZPrgqbQ3jBYiahs7BOKcHexmLZpZ6h+GxqVzRgNP2AgkrKx/tEps07XeL9oEX2H26AhTCVXmEMXT+HzXuo3QaCXMOla3EyW0eUZvOeSRPLGEw6qABE8ohY8pMWazKcYmJQlrZC2AZCKUs/ZHTtNzISyWVKjVu4VvCWZWDYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wlpu/tI8; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so20269041fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:51:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729248716; x=1729853516; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E4mQ6eh72Pp3VjxoRxuIsZprFLvY0i0ybat0S6qmaPc=;
+        b=Wlpu/tI8AbReFGXG15UbdIxZLYiCgGqIwDTRfUMG0PNA3Ww0VbdZDwuqsqpWaPeh85
+         pMK4CBJYBgP/GNbYFyIbRQcSic1wKbQckjQlX/USMzFYafZL80GEbY+9D/iy47MnQmla
+         LVmSOJASKGVOq5loY8sefnX4/eosyuYHluOkF1NBc6JJOc1cUgyhL5h3Gqk9OiBjLMit
+         bMx3eV0t7c4+NbhPiwdolJSQmcrpJOBZC2XlLgDCLDMEnG4r3F3bFT4ohbyPvTBk0ve2
+         5aK04QaKEfURMDqT+pkEFhzhWA/uKH38+UOj6Mm+cXDJSTqV1955C8XeI+wQo2Iy3Qgd
+         cGKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729248716; x=1729853516;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E4mQ6eh72Pp3VjxoRxuIsZprFLvY0i0ybat0S6qmaPc=;
+        b=AIWdG4hB9ewNUyw0FDntLOEyfvpESiNqxEgfi5pDTiWqFVoveR23BOE+MskqYrewZX
+         YJxy/D8HNeFapSh5oxfgDjOnkHbG8jJXm/zNuC9QzFVL6Ad532rEyjiLEerYIcnJCBK/
+         TUE1UKo+AzPdQFcQ0fTpP/bLGeGKgEiMJmZx9h26nPj3gfHn+/yBrTFSRJjVamkDaOmy
+         S+4yB95JTO4cVsD7rkzhM9ICWG7qyUSXQY1Zo9CWc6WPjlmqqfVawM0z11FDlZ9eloQe
+         uJlGIq5ixcPSPxShRExTQSqHJT2is6SW1IXyS4tqx0Mj2QE4pzD0Vnctjh2bQTC8FCBN
+         mXow==
+X-Forwarded-Encrypted: i=1; AJvYcCXIgTKhlBdkUk/4GsaZCCvjfgt6qI2ZuPiAcbi/jtBVsDe9yHcVnZ9ePG4TzFuw94g1mZZ67WsS8/G8Xmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvEvfmCJBXbUAHG2G0BAOxMcRE0XNd8fbeCzxKiHR3oRuwazGg
+	nNg3rfxCIOYisoPqA7GFN0Z6hWG4pO/RTcLQqQjoo7w+v7POcK/eGgjwmUU2zxE=
+X-Google-Smtp-Source: AGHT+IECcngN0+7c78hOzshVlovF6OLXcd+ee0flemVjcZCCn6f3Yr8ycO5q+1WZZwd4Q6yeAMfmQw==
+X-Received: by 2002:a05:651c:1543:b0:2fb:30d5:669a with SMTP id 38308e7fff4ca-2fb82da59camr8775201fa.0.1729248716388;
+        Fri, 18 Oct 2024 03:51:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb80a235d6sm1856161fa.129.2024.10.18.03.51.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 03:51:55 -0700 (PDT)
+Date: Fri, 18 Oct 2024 13:51:52 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Cc: Rob Herring <robh@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
+Subject: Re: [PATCH 1/3] dt-bindings: mailbox: qcom,cpucp-mbox: Add sc7280
+ cpucp mailbox instance
+Message-ID: <mxc6jsm5k3l5jc3txmltchja2yn6e7vmwo5i6bw5l5jcj6lzoo@tcb5f5qgqxz3>
+References: <20240924050941.1251485-1-quic_kshivnan@quicinc.com>
+ <20240924050941.1251485-2-quic_kshivnan@quicinc.com>
+ <20240924232526.GA563039-robh@kernel.org>
+ <2d4e47fd-0aaf-4533-a96f-95ada853d9a0@quicinc.com>
+ <kzlhhovfffvg227oxbpl3nv6q2lyn53pz2fyqis22brkd4bkkz@vqprudcdfunb>
+ <7bf56716-886d-4e2c-9a90-e31b0bfa4a89@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,62 +91,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202410131151.SBnGQot0-lkp@intel.com>
+In-Reply-To: <7bf56716-886d-4e2c-9a90-e31b0bfa4a89@quicinc.com>
 
-On Sun, Oct 13, 2024 at 12:01:24PM +0800, kernel test robot wrote:
-> >> drivers/firewire/core-transaction.c:912:2: warning: variable 'handler' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
->      912 |         scoped_guard(rcu) {
->          |         ^~~~~~~~~~~~~~~~~
->    include/linux/cleanup.h:197:2: note: expanded from macro 'scoped_guard'
->      197 |         __scoped_guard(_name, /* empty */, __UNIQUE_ID(label), args)
->          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/cleanup.h:190:3: note: expanded from macro '__scoped_guard'
->      190 |                 if (!__guard_ptr(_name)(&scope) && __is_cond_ptr(_name)) {      \
->          |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/compiler.h:55:28: note: expanded from macro 'if'
->       55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
->          |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/compiler.h:57:30: note: expanded from macro '__trace_if_var'
->       57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
->          |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    drivers/firewire/core-transaction.c:921:7: note: uninitialized use occurs here
->      921 |         if (!handler)
->          |              ^~~~~~~
->    include/linux/compiler.h:55:47: note: expanded from macro 'if'
->       55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
->          |                                               ^~~~
->    include/linux/compiler.h:57:52: note: expanded from macro '__trace_if_var'
->       57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
->          |                                                    ^~~~
->    drivers/firewire/core-transaction.c:912:2: note: remove the 'if' if its condition is always false
->      912 |         scoped_guard(rcu) {
->          |         ^
->    include/linux/cleanup.h:197:2: note: expanded from macro 'scoped_guard'
->      197 |         __scoped_guard(_name, /* empty */, __UNIQUE_ID(label), args)
->          |         ^
->    include/linux/cleanup.h:190:3: note: expanded from macro '__scoped_guard'
->      190 |                 if (!__guard_ptr(_name)(&scope) && __is_cond_ptr(_name)) {      \
->          |                 ^
->    include/linux/compiler.h:55:23: note: expanded from macro 'if'
->       55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
->          |                       ^
->    drivers/firewire/core-transaction.c:903:36: note: initialize the variable 'handler' to silence this warning
->      903 |         struct fw_address_handler *handler;
->          |                                           ^
->          |                                            = NULL
->    1 warning generated.
+On Thu, Oct 17, 2024 at 10:48:32AM +0530, Shivnandan Kumar wrote:
+> Thanks Dmitry for reviewing the patch
+> 
+> On 10/6/2024 10:41 PM, Dmitry Baryshkov wrote:
+> > On Thu, Oct 03, 2024 at 11:13:02AM GMT, Shivnandan Kumar wrote:
+> > > thanks Rob for reviewing this patch.
+> > > 
+> > > 
+> > > On 9/25/2024 4:55 AM, Rob Herring wrote:
+> > > > On Tue, Sep 24, 2024 at 10:39:39AM +0530, Shivnandan Kumar wrote:
+> > > > > sc7280 has a cpucp mailbox. Document them.
+> > > > 
+> > > > And is different from the existing device how?
+> > > 
+> > > It is different with respect to the register placement.
+> > 
+> > Register placement in the global map or the internal register structure?
+> 
+> the register placement varies both internally and globally as well.
 
-So this goes away when we do:
+Please mention in the commit message that internal regiter map is
+different.
 
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -323,7 +323,7 @@ static __maybe_unused const bool class_#
-  */
- #define __scoped_guard(_name, _fail, _label, args...)				\
- 	for (CLASS(_name, scope)(args);	true; ({ goto _label; }))		\
--		if (!__guard_ptr(_name)(&scope) && __is_cond_ptr(_name)) {	\
-+		if (__is_cond_ptr(_name) && !__guard_ptr(_name)(&scope)) {	\
- 			_fail;							\
- _label:										\
- 			break;							\
+> 
+> > 
+> > > 
+> > > Thanks,
+> > > Shivnandan
+> > > 
+> > > > 
+> > > > > 
+> > > > > Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+> > > > > ---
+> > > > >    .../devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml         | 5 +++--
+> > > > >    1 file changed, 3 insertions(+), 2 deletions(-)
+> > > > > 
+> > > > > diff --git a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+> > > > > index f7342d04beec..4a7ea072a3c1 100644
+> > > > > --- a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+> > > > > +++ b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+> > > > > @@ -15,8 +15,9 @@ description:
+> > > > > 
+> > > > >    properties:
+> > > > >      compatible:
+> > > > > -    items:
+> > > > > -      - const: qcom,x1e80100-cpucp-mbox
+> > > > > +    enum:
+> > > > > +      - qcom,x1e80100-cpucp-mbox
+> > > > > +      - qcom,sc7280-cpucp-mbox
+> > > > > 
+> > > > >      reg:
+> > > > >        items:
+> > > > > --
+> > > > > 2.25.1
+> > > > > 
+> > 
+
+-- 
+With best wishes
+Dmitry
 
