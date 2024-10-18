@@ -1,178 +1,165 @@
-Return-Path: <linux-kernel+bounces-372154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 485489A4521
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:42:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2709A4524
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EAB285019
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:42:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC032855EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32657204920;
-	Fri, 18 Oct 2024 17:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHxk4GJq"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812EA204026;
+	Fri, 18 Oct 2024 17:40:26 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B8A2040A7;
-	Fri, 18 Oct 2024 17:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5420203710
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729273183; cv=none; b=hJJQo0IlEFhVXF8G5vqizr9lUynzllEnzWyw8+fGq4P5ekH12TrHMOCNDQvsvQTaspABCepUiA0lPZhzkFfn2n16oR2CWI4KCzeJ036+Qysut3F/+e4YkAJIYcFRmmCx4hwxEnkpO/IpggJgfuu+dowoUWA80FNE03VxvJiUvqY=
+	t=1729273226; cv=none; b=iS4cNvpobHLDeL605qzKSZPnzSF6kSUyA9lqnRUXRsqifg0qrmN0/CM1HLsOk0riAkUpQsnVghxHBwyER9Elsiinax34FtR2jGOSLzPtiEk0/azdBDAe/VD8NJPL+gK+lLTGvTxdmnfJQJEzWkikG+WPFIBpHJkogCFu1ojoIzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729273183; c=relaxed/simple;
-	bh=yUJF5lQ/HksuBemm3uZw6pkqyzUQSmaorwLeuiHQFlU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TLKCw16GKaJ6+PLF6+y5i3ICX680KTHQEcAfEyyb8p0m2roYusiUk4mAZG//+6UZpqlmyy9pWSvO0XRgBrCE1EflQ90TmJFQwj+PqS8ZyU4nG02Xy/2D4Lek6RfCadIpyfNDzB9T/mM1JNn4ETR8CNT1F4Ne27g5v1NKOxnCXuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aHxk4GJq; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431195c3538so21731165e9.3;
-        Fri, 18 Oct 2024 10:39:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729273179; x=1729877979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gJoEoIi8PCw2HyhDJP4sL8slKSJjLQ+CubKYpgJKLQE=;
-        b=aHxk4GJqdAU5RavPuQy+h1/qn2g9zcKdMAtyHn9Z/6vNWfvOnq/52euGUXboSUdUm8
-         DV4TvXToRJTIkcndPr8+MuzvQDH70cuuZXpeyv+vbKeUQ8hQK4x8IL75PNLVt7T1YogX
-         au8LL2AwgBZ5AR040wyoCk3rJBjpA6ekAly80DYeLUnY+ULD+XRYJXUDT06CI28gpMVK
-         nZm3NXwxjKUyCwZI3OlVAb/ajLZf+C75gJ/42nRgt5vAVJhSuladalA4kR7vcP3hBYbl
-         fbzBB1sRP6jxQpQikl+h0GFOJImTkF61cNeqWzim5hQA7MOVamOr+Pe24lAzjLK/pnhs
-         Jjxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729273179; x=1729877979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gJoEoIi8PCw2HyhDJP4sL8slKSJjLQ+CubKYpgJKLQE=;
-        b=dhRaEy9exf19m5fiNN0Hyx+YJYqkck44OAuIjZgll8mzoBuOm7NBEEdD7qShCzlGt/
-         jB9WM0h5Dd4mXB/bCpebA8PWW9+A0Xda7VAGbfqyd4Q6g5tn8x2PqJAElLKWprbcm9ia
-         A8s9Lp9MLbECNFA0sURjSHuLMw7V+8HOl9POiTJP+GppHPdPCwFb1qBm0ltQ0HpuMrXI
-         NfCizqemPp5MrmkZ7ZDu3vI2VKZx6szhdUSEzlwCCfuWK/VT2XLhdC1xHytQ7x0H293i
-         JdiSmBv4IYMYoeXOJU4eT/xoA9khCPFKbSvMPplY/w5iLiYpM/hd2PvZb2edd/F6nRPG
-         OMLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVA32vQ+xBmOInIDgOrMkKkhNbitn5pMldyNgWmikMP+COpysABF8FCZX9CevN/BBQ/AYm2iylt@vger.kernel.org, AJvYcCW07Em0gMI/iCyFviL0Bw5MUiDOzKw2/vSlm+MUigNrQZEbT1B7GjigoXx6z4w7JLRl8tFbHHriIL3CceU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTfLg2Bu5LUVNX5pDCLuFWuyWpy2C0oV56k0aZVdd5Ev+75RlQ
-	lmuyPCBodmUAA3qqiDZyjqym6ARjM/vKFzOoZ0ItRx0Y/adVD30efrYzgffRPtVaIU6/wn8PW4A
-	jYmSXMAyffEnGnIJtn3KVfrjb8Sk=
-X-Google-Smtp-Source: AGHT+IHWLp+B1UjmgXd+KI44SKKzL6vpcvzDVhwqnh8ZXuHdNSpF5VtKvJi95ezinOvIFYvB92b9N56AVNtHJmhbClg=
-X-Received: by 2002:a5d:5e04:0:b0:37e:d715:3f39 with SMTP id
- ffacd0b85a97d-37ed7154007mr247491f8f.10.1729273177846; Fri, 18 Oct 2024
- 10:39:37 -0700 (PDT)
+	s=arc-20240116; t=1729273226; c=relaxed/simple;
+	bh=hbRI55698veypB4UxQ3Z9Im/ei0Q8/Xan8ZM7GDpVRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iimShupGUd+rDG45M3Pms6C23sOrLS4a6NFlKZmyog1uibwzBICZIM2Cs9DbAKQZAj0DRLP8exKNFv+JCorzk88M7zk3bGJwnRh6r35TapdU9mBAybx0ejaX8yEQWVpNoqKvQsx0yI+EpMs+Q9qVeNzUQ32Vr+uhZivbHE8Oork=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XVX675pLBz9sPd;
+	Fri, 18 Oct 2024 19:40:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id A60ALosMKCjZ; Fri, 18 Oct 2024 19:40:15 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XVX674tplz9rvV;
+	Fri, 18 Oct 2024 19:40:15 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 97B0A8B779;
+	Fri, 18 Oct 2024 19:40:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id ZaNkbIa7WNNO; Fri, 18 Oct 2024 19:40:15 +0200 (CEST)
+Received: from [192.168.232.18] (unknown [192.168.232.18])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CBDAC8B764;
+	Fri, 18 Oct 2024 19:40:14 +0200 (CEST)
+Message-ID: <0c81a6cc-2466-4932-805b-056d4e7dec2b@csgroup.eu>
+Date: Fri, 18 Oct 2024 19:40:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018105351.1960345-1-linyunsheng@huawei.com>
-In-Reply-To: <20241018105351.1960345-1-linyunsheng@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Fri, 18 Oct 2024 10:39:01 -0700
-Message-ID: <CAKgT0Uft5Ga0ub_Fj6nonV6E0hRYcej8x_axmGBBX_Nm_wZ_8w@mail.gmail.com>
-Subject: Re: [PATCH net-next v22 00/14] Replace page_frag with page_frag_cache
- for sk_page_frag()
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Shuah Khan <skhan@linuxfoundation.org>, Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/12] powerpc: mm/fault: Fix kfence page fault
+ reporting
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ linuxppc-dev@lists.ozlabs.org
+Cc: kasan-dev@googlegroups.com, linux-mm@kvack.org,
+ Marco Elver <elver@google.com>, Alexander Potapenko <glider@google.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Hari Bathini <hbathini@linux.ibm.com>,
+ "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+ Donet Tom <donettom@linux.vnet.ibm.com>,
+ Pavithra Prakash <pavrampu@linux.vnet.ibm.com>,
+ LKML <linux-kernel@vger.kernel.org>, Disha Goel <disgoel@linux.ibm.com>
+References: <cover.1729271995.git.ritesh.list@gmail.com>
+ <a411788081d50e3b136c6270471e35aba3dfafa3.1729271995.git.ritesh.list@gmail.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <a411788081d50e3b136c6270471e35aba3dfafa3.1729271995.git.ritesh.list@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 4:00=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
-m> wrote:
->
-> After [1], there are still two implementations for page frag:
->
-> 1. mm/page_alloc.c: net stack seems to be using it in the
->    rx part with 'struct page_frag_cache' and the main API
->    being page_frag_alloc_align().
-> 2. net/core/sock.c: net stack seems to be using it in the
->    tx part with 'struct page_frag' and the main API being
->    skb_page_frag_refill().
->
-> This patchset tries to unfiy the page frag implementation
-> by replacing page_frag with page_frag_cache for sk_page_frag()
-> first. net_high_order_alloc_disable_key for the implementation
-> in net/core/sock.c doesn't seems matter that much now as pcp
-> is also supported for high-order pages:
-> commit 44042b449872 ("mm/page_alloc: allow high-order pages to
-> be stored on the per-cpu lists")
->
-> As the related change is mostly related to networking, so
-> targeting the net-next. And will try to replace the rest
-> of page_frag in the follow patchset.
->
-> After this patchset:
-> 1. Unify the page frag implementation by taking the best out of
->    two the existing implementations: we are able to save some space
->    for the 'page_frag_cache' API user, and avoid 'get_page()' for
->    the old 'page_frag' API user.
-> 2. Future bugfix and performance can be done in one place, hence
->    improving maintainability of page_frag's implementation.
->
-> Kernel Image changing:
->     Linux Kernel   total |      text      data        bss
->     ------------------------------------------------------
->     after     45250307 |   27274279   17209996     766032
->     before    45254134 |   27278118   17209984     766032
->     delta        -3827 |      -3839        +12         +0
->
-> Performance validation:
-> 1. Using micro-benchmark ko added in patch 1 to test aligned and
->    non-aligned API performance impact for the existing users, there
->    is no notiable performance degradation. Instead we seems to have
->    some major performance boot for both aligned and non-aligned API
->    after switching to ptr_ring for testing, respectively about 200%
->    and 10% improvement in arm64 server as below.
->
-> 2. Use the below netcat test case, we also have some minor
->    performance boot for replacing 'page_frag' with 'page_frag_cache'
->    after this patchset.
->    server: taskset -c 32 nc -l -k 1234 > /dev/null
->    client: perf stat -r 200 -- taskset -c 0 head -c 20G /dev/zero | tasks=
-et -c 1 nc 127.0.0.1 1234
->
-> In order to avoid performance noise as much as possible, the testing
-> is done in system without any other load and have enough iterations to
-> prove the data is stable enough, complete log for testing is below:
->
-> perf stat -r 200 -- insmod ./page_frag_test.ko test_push_cpu=3D16 test_po=
-p_cpu=3D17 test_alloc_len=3D12 nr_test=3D51200000
-> perf stat -r 200 -- insmod ./page_frag_test.ko test_push_cpu=3D16 test_po=
-p_cpu=3D17 test_alloc_len=3D12 nr_test=3D51200000 test_align=3D1
-> taskset -c 32 nc -l -k 1234 > /dev/null
-> perf stat -r 200 -- taskset -c 0 head -c 20G /dev/zero | taskset -c 1 nc =
-127.0.0.1 1234
->
-> *After* this patchset:
->
 
-So I still think this set should be split in half in order to make
-this easier to review. The ones I have provided a review-by for so far
-seem fine to me. I really think if you just submitted that batch first
-we can get that landed and let them stew in the kernel for a bit to
-make sure we didn't miss anything there.
 
-As far as the others there is a bunch there for me to try and chew
-through. A bunch of that is stuff not related necessarily to my
-version of the page frag stuff that I did so merging the two is a bit
-less obvious to me. The one thing I am wondering about is the behavior
-for why we are pulling apart the logic with this "commit" approach
-that is deferring the offset update which seems to have to happen
-unless we need to abort.
+Le 18/10/2024 à 19:29, Ritesh Harjani (IBM) a écrit :
+> copy_from_kernel_nofault() can be called when doing read of /proc/kcore.
+> /proc/kcore can have some unmapped kfence objects which when read via
+> copy_from_kernel_nofault() can cause page faults. Since *_nofault()
+> functions define their own fixup table for handling fault, use that
+> instead of asking kfence to handle such faults.
+> 
+> Hence we search the exception tables for the nip which generated the
+> fault. If there is an entry then we let the fixup table handler handle the
+> page fault by returning an error from within ___do_page_fault().
+> 
+> This can be easily triggered if someone tries to do dd from /proc/kcore.
+> dd if=/proc/kcore of=/dev/null bs=1M
+> 
+> <some example false negatives>
+> ===============================
+> BUG: KFENCE: invalid read in copy_from_kernel_nofault+0xb0/0x1c8
+> Invalid read at 0x000000004f749d2e:
+>   copy_from_kernel_nofault+0xb0/0x1c8
+>   0xc0000000057f7950
+>   read_kcore_iter+0x41c/0x9ac
+>   proc_reg_read_iter+0xe4/0x16c
+>   vfs_read+0x2e4/0x3b0
+>   ksys_read+0x88/0x154
+>   system_call_exception+0x124/0x340
+>   system_call_common+0x160/0x2c4
+> 
+> BUG: KFENCE: use-after-free read in copy_from_kernel_nofault+0xb0/0x1c8
+> Use-after-free read at 0x000000008fbb08ad (in kfence-#0):
+>   copy_from_kernel_nofault+0xb0/0x1c8
+>   0xc0000000057f7950
+>   read_kcore_iter+0x41c/0x9ac
+>   proc_reg_read_iter+0xe4/0x16c
+>   vfs_read+0x2e4/0x3b0
+>   ksys_read+0x88/0x154
+>   system_call_exception+0x124/0x340
+>   system_call_common+0x160/0x2c4
+> 
+> Fixes: 90cbac0e995d ("powerpc: Enable KFENCE for PPC32")
+> Suggested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-My review time is going to be limited for the next several weeks. As
-such I will likely not be able to get to a review until Friday or
-Saturday each week so sending out updates faster than that will not
-get you any additional reviews from me.
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-Thanks,
+Nit below.
 
-- Alex
+> Reported-by: Disha Goel <disgoel@linux.ibm.com>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
+>   arch/powerpc/mm/fault.c | 11 +++++++++--
+>   1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+> index 81c77ddce2e3..316f5162ffc4 100644
+> --- a/arch/powerpc/mm/fault.c
+> +++ b/arch/powerpc/mm/fault.c
+> @@ -439,10 +439,17 @@ static int ___do_page_fault(struct pt_regs *regs, unsigned long address,
+>   	/*
+>   	 * The kernel should never take an execute fault nor should it
+>   	 * take a page fault to a kernel address or a page fault to a user
+> -	 * address outside of dedicated places
+> +	 * address outside of dedicated places.
+> +	 *
+> +	 * Rather than kfence directly reporting false negatives, search whether
+> +	 * the NIP belongs to the fixup table for cases where fault could come
+> +	 * from functions like copy_from_kernel_nofault().
+>   	 */
+>   	if (unlikely(!is_user && bad_kernel_fault(regs, error_code, address, is_write))) {
+> -		if (kfence_handle_page_fault(address, is_write, regs))
+> +
+
+Why do you need a blank line here ?
+
+> +		if (is_kfence_address((void *)address) &&
+> +		    !search_exception_tables(instruction_pointer(regs)) &&
+> +		    kfence_handle_page_fault(address, is_write, regs))
+>   			return 0;
+> 
+>   		return SIGSEGV;
+> --
+> 2.46.0
+> 
 
