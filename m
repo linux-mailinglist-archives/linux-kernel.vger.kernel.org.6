@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-371076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F4E9A3601
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:49:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762619A3602
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26AE51C21956
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:49:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9DCEB23AFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ABC18B48C;
-	Fri, 18 Oct 2024 06:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F2018C924;
+	Fri, 18 Oct 2024 06:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RjbvtdPq"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WWxAGnrc"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915AA18787A
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F614188713
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729234093; cv=none; b=UA4SG9qarq2N3tq5/xYu/YgB/2KCAwamdaKPAB7A33rWo0tmnB/YrMtKLkrX3vR2tu04gdhKTTmPMebLYhqbHZwxEi6AyY/ASetgjvHNfsyJPRGuR/pUFxo3/HAQ8IpMkEXqH4bru9KwyTbKi3k4sYsWYalyd2UsWJG2/ezKyNk=
+	t=1729234094; cv=none; b=laCxVVxYP2ekjxw1KUz92uLXUPLIKWSzFAENGWHPKPQZKRHKUppR3PAU6T2pbhp+PiHTbZp6fe5vWmVUgPaJ9vfn6AElsirCibGYyihGOFmRtjjwNiQV5dwvCCRb2xRIaspFrJVuV2nrBUPWH2mD1KaLRq/u7unVKLmJCOAYr48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729234093; c=relaxed/simple;
-	bh=Wk7y1NCaq5vrYXmMN8sm97ljo3rd4bPykdD24mhfkEY=;
+	s=arc-20240116; t=1729234094; c=relaxed/simple;
+	bh=EVMRjfiuNxd9amTtVRjIPzNA0R9fg2+OAdURffS6kSM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Z/7hE8Ieitim1O6tB3IVEuZsI7LeCPGxnFh9awWb+R6PLDn50Xw/vCOOxtsBKn+flZIThcgtRqaW9F5g/tX9+6GevH7Q7GT1gjufuhhHxOukBxMsxB9aHJdm2vSc45wLEU11Bpwm+pgcADP2nVn0dKY/41h2/BCHF7fQtYKLENs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RjbvtdPq; arc=none smtp.client-ip=192.198.163.14
+	 MIME-Version; b=PYLcvr5tkJzVCkRkkXOLx/LV0os4aMadepvLovOSiWacj+Bxy0ZjJZS2Bb8aEUUjiggUptFCRVON0wg1/O54qOX3NmRknm8mL3ZiRkoXFOjnvQy2LI0RLxS0Hlx3X6YgDk91FniWADE9VzWq2/yh8iPRflN8Q/rqGXzT1So6E1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WWxAGnrc; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729234091; x=1760770091;
+  t=1729234092; x=1760770092;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Wk7y1NCaq5vrYXmMN8sm97ljo3rd4bPykdD24mhfkEY=;
-  b=RjbvtdPq7O3FWXwT+BHoZil3d99OGkHbTWuB+c91vkgOWBSN2u7FYB11
-   BjYPBvMqbBIOX3prs3+pMcc1AFwCZo4esdUE6zvcuaLej5bPRli8/uGWy
-   a7ilQ+IgQnU+psif6Rv17KBo9Q0BAxY6NqR+bAt8hV5cBJesL+1Brt4DM
-   JJ2X+msLmWtJo1+hlXjecabJF3L00m39E+PLHavUSDlcVvL14ocBAHlxE
-   aUufQOQh6Hhff9GoIdSRUNWrUwB2s0t+x6Kzrfn1q6TSATWuDXEGM2SJ1
-   Dv4zO1ZWI+jS4EMiFg5Cvj5822hf3r+sShr2j4CdX3CkRHheDzA07zZDQ
+  bh=EVMRjfiuNxd9amTtVRjIPzNA0R9fg2+OAdURffS6kSM=;
+  b=WWxAGnrc9MUQmyXhbClJyVFcdMLJc5WiHOT3+N9CRCs9mOZOHg/kEh0o
+   nbSsseT3KMxdehaFO5FX4n2CF0ItcF3K4Cm8fMf5QBQMvOddtyaC66DOC
+   n9NcvzQyMxACcI2SDisu8yfM/WtM0gyC/ZxHMZ3lE661QOPXxuLY2r0Qg
+   VjGZw3Fmvw+dJTFEaHvzHVA5fprGIQi4Gt59/zUvFG/dckUfEuL/vqeOT
+   e37gJbIciiQt6ZQspqnsrVMqN0QoB75srHnJiTwJZFvemfvfsvFI+i1tA
+   uilP7Sd9dxyLnCf4uVcEbS224IyNZfahWbuiu3bh956oC3bpPSWxBvGmW
    A==;
-X-CSE-ConnectionGUID: W2OYiiq8So+Ja3LkJzTzBA==
-X-CSE-MsgGUID: /cxUvX2BRKyEwvWoP/TBJQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28963350"
+X-CSE-ConnectionGUID: wG+1eC8cQMCqIjUx0O5SPA==
+X-CSE-MsgGUID: 144r3/6fS6ePkpFxBnAB3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28963362"
 X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
-   d="scan'208";a="28963350"
+   d="scan'208";a="28963362"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
   by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 23:48:09 -0700
-X-CSE-ConnectionGUID: 2dVk8TXESRGmpz6l97XWIg==
-X-CSE-MsgGUID: 3TYx2nS6SfmEhvdE+9apQQ==
+X-CSE-ConnectionGUID: bK28v/+wSFW12salxHZpOw==
+X-CSE-MsgGUID: 2L41HZYESMSBem9+UQfdBw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
-   d="scan'208";a="82744516"
+   d="scan'208";a="82744521"
 Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
   by fmviesa003.fm.intel.com with ESMTP; 17 Oct 2024 23:48:08 -0700
 From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
@@ -78,9 +78,9 @@ To: linux-kernel@vger.kernel.org,
 Cc: wajdi.k.feghali@intel.com,
 	vinodh.gopal@intel.com,
 	kanchana.p.sridhar@intel.com
-Subject: [RFC PATCH v1 4/7] mm: swap: swap_read_folio() can add a folio to a folio_batch if it is in zswap.
-Date: Thu, 17 Oct 2024 23:48:02 -0700
-Message-Id: <20241018064805.336490-5-kanchana.p.sridhar@intel.com>
+Subject: [RFC PATCH v1 5/7] mm: swap, zswap: zswap folio_batch processing with IAA decompression batching.
+Date: Thu, 17 Oct 2024 23:48:03 -0700
+Message-Id: <20241018064805.336490-6-kanchana.p.sridhar@intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20241018064805.336490-1-kanchana.p.sridhar@intel.com>
 References: <20241018064805.336490-1-kanchana.p.sridhar@intel.com>
@@ -92,376 +92,338 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch modifies swap_read_folio() to check if the swap entry is present
-in zswap, and if so, it will be added to a "zswap_batch" folio_batch, if
-the caller (e.g. swapin_readahead()) has passed in a valid "zswap_batch".
+This patch provides the functionality that processes a "zswap_batch" in
+which swap_read_folio() had previously stored swap entries found in zswap,
+for batched loading.
 
-If the swap entry is found in zswap, it will be added the next available
-index in a sub-batch. This sub-batch is part of "struct zswap_decomp_batch"
-which progressively constructs SWAP_CRYPTO_SUB_BATCH_SIZE arrays of zswap
-entries/xarrays/pages/source-lengths ready for batch decompression in IAA.
-The function that does this, zswap_add_load_batch(), will return true to
-swap_read_folio(). If the entry is not found in zswap, it will return
-false.
-
-If the swap entry was not found in zswap, and if
-zswap_load_batching_enabled() and a valid "non_zswap_batch" folio_batch is
-passed to swap_read_folio(), the folio will be added to the
-"non_zswap_batch" batch.
-
-Finally, the code falls through to the usual/existing swap_read_folio()
-flow.
+The newly added zswap_finish_load_batch() API implements the main zswap
+load batching functionality. This makes use of the sub-batches of
+zswap_entry/xarray/page/source-length readily available from
+zswap_add_load_batch(). These sub-batch arrays are processed one at a time,
+until the entire zswap folio_batch has been loaded. The existing
+zswap_load() functionality of deleting zswap_entries for folios found in
+the swapcache, is preserved.
 
 Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 ---
- include/linux/zswap.h | 35 +++++++++++++++++
- mm/memory.c           |  2 +-
- mm/page_io.c          | 26 ++++++++++++-
- mm/swap.h             | 31 ++++++++++++++-
- mm/swap_state.c       | 10 ++---
- mm/zswap.c            | 89 +++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 183 insertions(+), 10 deletions(-)
+ include/linux/zswap.h |  22 ++++++
+ mm/page_io.c          |  35 +++++++++
+ mm/swap.h             |  17 +++++
+ mm/zswap.c            | 171 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 245 insertions(+)
 
 diff --git a/include/linux/zswap.h b/include/linux/zswap.h
-index 294d13efbfb1..1d6de281f243 100644
+index 1d6de281f243..a0792c2b300a 100644
 --- a/include/linux/zswap.h
 +++ b/include/linux/zswap.h
-@@ -12,6 +12,8 @@ extern atomic_long_t zswap_stored_pages;
- #ifdef CONFIG_ZSWAP
+@@ -110,6 +110,15 @@ struct zswap_store_pipeline_state {
+ 	u8 nr_comp_pages;
+ };
  
- struct swap_in_memory_cache_cb;
-+struct zswap_decomp_batch;
-+struct zswap_entry;
- 
- struct zswap_lruvec_state {
- 	/*
-@@ -120,6 +122,19 @@ static inline void zswap_store_batch(struct swap_in_memory_cache_cb *simc)
- }
- 
- bool zswap_load_batching_enabled(void);
-+void zswap_load_batch_init(struct zswap_decomp_batch *zd_batch);
-+void zswap_load_batch_reinit(struct zswap_decomp_batch *zd_batch);
-+bool __zswap_add_load_batch(struct zswap_decomp_batch *zd_batch,
-+			    struct folio *folio);
-+static inline bool zswap_add_load_batch(
-+	struct zswap_decomp_batch *zd_batch,
-+	struct folio *folio)
-+{
-+	if (zswap_load_batching_enabled())
-+		return __zswap_add_load_batch(zd_batch, folio);
++/* Note: If SWAP_CRYPTO_SUB_BATCH_SIZE exceeds 256, change the u8 to u16. */
++struct zswap_load_sub_batch_state {
++	struct xarray **trees;
++	struct zswap_entry **entries;
++	struct page **pages;
++	unsigned int *slens;
++	u8 nr_decomp;
++};
 +
-+	return false;
-+}
- 
- unsigned long zswap_total_pages(void);
- bool zswap_store(struct folio *folio);
-@@ -138,6 +153,8 @@ struct zswap_lruvec_state {};
- struct zswap_store_sub_batch_page {};
- struct zswap_store_pipeline_state {};
- struct swap_in_memory_cache_cb;
-+struct zswap_decomp_batch;
-+struct zswap_entry;
- 
- static inline bool zswap_store_batching_enabled(void)
- {
-@@ -153,6 +170,24 @@ static inline bool zswap_load_batching_enabled(void)
+ bool zswap_store_batching_enabled(void);
+ void __zswap_store_batch(struct swap_in_memory_cache_cb *simc);
+ void __zswap_store_batch_single(struct swap_in_memory_cache_cb *simc);
+@@ -136,6 +145,14 @@ static inline bool zswap_add_load_batch(
  	return false;
  }
  
-+static inline void zswap_load_batch_init(
++void __zswap_finish_load_batch(struct zswap_decomp_batch *zd_batch);
++static inline void zswap_finish_load_batch(
 +	struct zswap_decomp_batch *zd_batch)
 +{
++	if (zswap_load_batching_enabled())
++		__zswap_finish_load_batch(zd_batch);
 +}
 +
-+static inline void zswap_load_batch_reinit(
+ unsigned long zswap_total_pages(void);
+ bool zswap_store(struct folio *folio);
+ bool zswap_load(struct folio *folio);
+@@ -188,6 +205,11 @@ static inline bool zswap_add_load_batch(
+ 	return false;
+ }
+ 
++static inline void zswap_finish_load_batch(
 +	struct zswap_decomp_batch *zd_batch)
 +{
-+}
-+
-+static inline bool zswap_add_load_batch(
-+	struct folio *folio,
-+	struct zswap_entry *entry,
-+	struct zswap_decomp_batch *zd_batch)
-+{
-+	return false;
 +}
 +
  static inline bool zswap_store(struct folio *folio)
  {
  	return false;
-diff --git a/mm/memory.c b/mm/memory.c
-index 0f614523b9f4..b5745b9ffdf7 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4322,7 +4322,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 
- 				/* To provide entry to swap_read_folio() */
- 				folio->swap = entry;
--				swap_read_folio(folio, NULL);
-+				swap_read_folio(folio, NULL, NULL, NULL);
- 				folio->private = NULL;
- 			}
- 		} else {
 diff --git a/mm/page_io.c b/mm/page_io.c
-index 065db25309b8..9750302d193b 100644
+index 9750302d193b..aa83221318ef 100644
 --- a/mm/page_io.c
 +++ b/mm/page_io.c
-@@ -744,11 +744,17 @@ static void swap_read_folio_bdev_async(struct folio *folio,
- 	submit_bio(bio);
- }
- 
--void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
-+/*
-+ * Returns true if the folio was read, and false if the folio was added to
-+ * the zswap_decomp_batch for batched decompression.
-+ */
-+bool swap_read_folio(struct folio *folio, struct swap_iocb **plug,
-+		     struct zswap_decomp_batch *zswap_batch,
-+		     struct folio_batch *non_zswap_batch)
- {
- 	struct swap_info_struct *sis = swp_swap_info(folio->swap);
- 	bool synchronous = sis->flags & SWP_SYNCHRONOUS_IO;
--	bool workingset = folio_test_workingset(folio);
-+	bool workingset;
- 	unsigned long pflags;
- 	bool in_thrashing;
- 
-@@ -756,11 +762,26 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(folio_test_uptodate(folio), folio);
- 
-+	/*
-+	 * If entry is found in zswap xarray, and zswap load batching
-+	 * is enabled, this is a candidate for zswap batch decompression.
-+	 */
-+	if (zswap_batch && zswap_add_load_batch(zswap_batch, folio))
-+		return false;
-+
-+	if (zswap_load_batching_enabled() && non_zswap_batch) {
-+		BUG_ON(!folio_batch_space(non_zswap_batch));
-+		folio_batch_add(non_zswap_batch, folio);
-+		return false;
-+	}
-+
- 	/*
- 	 * Count submission time as memory stall and delay. When the device
- 	 * is congested, or the submitting cgroup IO-throttled, submission
- 	 * can be a significant part of overall IO time.
- 	 */
-+	workingset = folio_test_workingset(folio);
-+
- 	if (workingset) {
- 		delayacct_thrashing_start(&in_thrashing);
- 		psi_memstall_enter(&pflags);
-@@ -792,6 +813,7 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
- 		psi_memstall_leave(&pflags);
- 	}
- 	delayacct_swapin_end();
-+	return true;
- }
- 
- void __swap_read_unplug(struct swap_iocb *sio)
-diff --git a/mm/swap.h b/mm/swap.h
-index 0bb386b5fdee..310f99007fe6 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -84,6 +84,27 @@ void swap_crypto_acomp_decompress_batch(
- 	int nr_pages,
- 	struct crypto_acomp_ctx *acomp_ctx);
- 
-+#if defined(CONFIG_ZSWAP_LOAD_BATCHING_ENABLED)
-+#define MAX_NR_ZSWAP_LOAD_SUB_BATCHES DIV_ROUND_UP(PAGEVEC_SIZE, \
-+					SWAP_CRYPTO_SUB_BATCH_SIZE)
-+#else
-+#define MAX_NR_ZSWAP_LOAD_SUB_BATCHES 1UL
-+#endif /* CONFIG_ZSWAP_LOAD_BATCHING_ENABLED */
-+
-+/*
-+ * Note: If PAGEVEC_SIZE or SWAP_CRYPTO_SUB_BATCH_SIZE
-+ * exceeds 256, change the u8 to u16.
-+ */
-+struct zswap_decomp_batch {
-+	struct folio_batch fbatch;
-+	bool swapcache[PAGEVEC_SIZE];
-+	struct xarray *trees[MAX_NR_ZSWAP_LOAD_SUB_BATCHES][SWAP_CRYPTO_SUB_BATCH_SIZE];
-+	struct zswap_entry *entries[MAX_NR_ZSWAP_LOAD_SUB_BATCHES][SWAP_CRYPTO_SUB_BATCH_SIZE];
-+	struct page *pages[MAX_NR_ZSWAP_LOAD_SUB_BATCHES][SWAP_CRYPTO_SUB_BATCH_SIZE];
-+	unsigned int slens[MAX_NR_ZSWAP_LOAD_SUB_BATCHES][SWAP_CRYPTO_SUB_BATCH_SIZE];
-+	u8 nr_decomp[MAX_NR_ZSWAP_LOAD_SUB_BATCHES];
-+};
-+
- /* linux/mm/vmscan.c, linux/mm/page_io.c, linux/mm/zswap.c */
- /* For batching of compressions in reclaim path. */
- struct swap_in_memory_cache_cb {
-@@ -101,7 +122,9 @@ struct swap_in_memory_cache_cb {
- /* linux/mm/page_io.c */
- int sio_pool_init(void);
- struct swap_iocb;
--void swap_read_folio(struct folio *folio, struct swap_iocb **plug);
-+bool swap_read_folio(struct folio *folio, struct swap_iocb **plug,
-+		     struct zswap_decomp_batch *zswap_batch,
-+		     struct folio_batch *non_zswap_batch);
- void __swap_read_unplug(struct swap_iocb *plug);
- static inline void swap_read_unplug(struct swap_iocb *plug)
- {
-@@ -238,8 +261,12 @@ static inline void swap_crypto_acomp_decompress_batch(
- {
- }
- 
--static inline void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
-+struct zswap_decomp_batch {};
-+static inline bool swap_read_folio(struct folio *folio, struct swap_iocb **plug,
-+				   struct zswap_decomp_batch *zswap_batch,
-+				   struct folio_batch *non_zswap_batch)
- {
-+	return false;
- }
- static inline void swap_write_unplug(struct swap_iocb *sio)
- {
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 0673593d363c..0aa938e4c34d 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -570,7 +570,7 @@ struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 	mpol_cond_put(mpol);
- 
- 	if (page_allocated)
--		swap_read_folio(folio, plug);
-+		swap_read_folio(folio, plug, NULL, NULL);
- 	return folio;
- }
- 
-@@ -687,7 +687,7 @@ struct folio *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
- 		if (!folio)
- 			continue;
- 		if (page_allocated) {
--			swap_read_folio(folio, &splug);
-+			swap_read_folio(folio, &splug, NULL, NULL);
- 			if (offset != entry_offset) {
- 				folio_set_readahead(folio);
- 				count_vm_event(SWAP_RA);
-@@ -703,7 +703,7 @@ struct folio *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
- 	folio = __read_swap_cache_async(entry, gfp_mask, mpol, ilx,
- 					&page_allocated, false);
- 	if (unlikely(page_allocated))
--		swap_read_folio(folio, NULL);
-+		swap_read_folio(folio, NULL, NULL, NULL);
- 	return folio;
- }
- 
-@@ -1057,7 +1057,7 @@ static struct folio *swap_vma_readahead(swp_entry_t targ_entry, gfp_t gfp_mask,
- 		if (!folio)
- 			continue;
- 		if (page_allocated) {
--			swap_read_folio(folio, &splug);
-+			swap_read_folio(folio, &splug, NULL, NULL);
- 			if (addr != vmf->address) {
- 				folio_set_readahead(folio);
- 				count_vm_event(SWAP_RA);
-@@ -1075,7 +1075,7 @@ static struct folio *swap_vma_readahead(swp_entry_t targ_entry, gfp_t gfp_mask,
- 	folio = __read_swap_cache_async(targ_entry, gfp_mask, mpol, targ_ilx,
- 					&page_allocated, false);
- 	if (unlikely(page_allocated))
--		swap_read_folio(folio, NULL);
-+		swap_read_folio(folio, NULL, NULL, NULL);
- 	return folio;
- }
- 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index fe7bc2a6672e..1d293f95d525 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -2312,6 +2312,95 @@ bool zswap_load(struct folio *folio)
+@@ -816,6 +816,41 @@ bool swap_read_folio(struct folio *folio, struct swap_iocb **plug,
  	return true;
  }
  
-+/* Code for zswap load batch with batch decompress. */
-+
-+__always_inline void zswap_load_batch_init(struct zswap_decomp_batch *zd_batch)
++static void __swap_post_process_zswap_load_batch(
++	struct zswap_decomp_batch *zswap_batch)
 +{
-+	unsigned int sb;
++	u8 i;
 +
-+	folio_batch_init(&zd_batch->fbatch);
-+
-+	for (sb = 0; sb < MAX_NR_ZSWAP_LOAD_SUB_BATCHES; ++sb)
-+		zd_batch->nr_decomp[sb] = 0;
-+}
-+
-+__always_inline void zswap_load_batch_reinit(struct zswap_decomp_batch *zd_batch)
-+{
-+	unsigned int sb;
-+
-+	folio_batch_reinit(&zd_batch->fbatch);
-+
-+	for (sb = 0; sb < MAX_NR_ZSWAP_LOAD_SUB_BATCHES; ++sb)
-+		zd_batch->nr_decomp[sb] = 0;
++	for (i = 0; i < folio_batch_count(&zswap_batch->fbatch); ++i) {
++		struct folio *folio = zswap_batch->fbatch.folios[i];
++		folio_unlock(folio);
++	}
 +}
 +
 +/*
-+ * All folios in zd_batch are allocated into the swapcache
-+ * in swapin_readahead(), before being added to the zd_batch
-+ * for batch decompression.
++ * The swapin_readahead batching interface makes sure that the
++ * input zswap_batch consists of folios belonging to the same swap
++ * device type.
 + */
-+bool __zswap_add_load_batch(struct zswap_decomp_batch *zd_batch,
-+			    struct folio *folio)
++void __swap_read_zswap_batch_unplug(struct zswap_decomp_batch *zswap_batch,
++				    struct swap_iocb **splug)
 +{
-+	swp_entry_t swp = folio->swap;
-+	pgoff_t offset = swp_offset(swp);
-+	bool swapcache = folio_test_swapcache(folio);
-+	struct xarray *tree = swap_zswap_tree(swp);
-+	struct zswap_entry *entry;
-+	unsigned int batch_idx, sb;
++	unsigned long pflags;
 +
-+	VM_WARN_ON_ONCE(!folio_test_locked(folio));
++	if (!folio_batch_count(&zswap_batch->fbatch))
++		return;
 +
-+	if (zswap_never_enabled())
-+		return false;
++	psi_memstall_enter(&pflags);
++	delayacct_swapin_start();
 +
-+	/*
-+	 * Large folios should not be swapped in while zswap is being used, as
-+	 * they are not properly handled. Zswap does not properly load large
-+	 * folios, and a large folio may only be partially in zswap.
-+	 *
-+	 * Returning false here will cause the large folio to be added to
-+	 * the "non_zswap_batch" in swap_read_folio(), which will eventually
-+	 * call zswap_load() if the folio is not in the zeromap. Finally,
-+	 * zswap_load() will return true without marking the folio uptodate
-+	 * so that an IO error is emitted (e.g. do_swap_page() will sigbus).
-+	 */
-+	if (WARN_ON_ONCE(folio_test_large(folio)))
-+		return false;
++	/* Load the zswap batch. */
++	zswap_finish_load_batch(zswap_batch);
++	__swap_post_process_zswap_load_batch(zswap_batch);
 +
-+	/*
-+	 * When reading into the swapcache, invalidate our entry. The
-+	 * swapcache can be the authoritative owner of the page and
-+	 * its mappings, and the pressure that results from having two
-+	 * in-memory copies outweighs any benefits of caching the
-+	 * compression work.
-+	 */
-+	if (swapcache)
-+		entry = xa_erase(tree, offset);
-+	else
-+		entry = xa_load(tree, offset);
++	psi_memstall_leave(&pflags);
++	delayacct_swapin_end();
++}
 +
-+	if (!entry)
-+		return false;
+ void __swap_read_unplug(struct swap_iocb *sio)
+ {
+ 	struct iov_iter from;
+diff --git a/mm/swap.h b/mm/swap.h
+index 310f99007fe6..2b82c8ed765c 100644
+--- a/mm/swap.h
++++ b/mm/swap.h
+@@ -125,6 +125,16 @@ struct swap_iocb;
+ bool swap_read_folio(struct folio *folio, struct swap_iocb **plug,
+ 		     struct zswap_decomp_batch *zswap_batch,
+ 		     struct folio_batch *non_zswap_batch);
++void __swap_read_zswap_batch_unplug(
++	struct zswap_decomp_batch *zswap_batch,
++	struct swap_iocb **splug);
++static inline void swap_read_zswap_batch_unplug(
++	struct zswap_decomp_batch *zswap_batch,
++	struct swap_iocb **splug)
++{
++	if (likely(zswap_batch))
++		__swap_read_zswap_batch_unplug(zswap_batch, splug);
++}
+ void __swap_read_unplug(struct swap_iocb *plug);
+ static inline void swap_read_unplug(struct swap_iocb *plug)
+ {
+@@ -268,6 +278,13 @@ static inline bool swap_read_folio(struct folio *folio, struct swap_iocb **plug,
+ {
+ 	return false;
+ }
 +
-+	BUG_ON(!folio_batch_space(&zd_batch->fbatch));
-+	folio_batch_add(&zd_batch->fbatch, folio);
++static inline void swap_read_zswap_batch_unplug(
++	struct zswap_decomp_batch *zswap_batch,
++	struct swap_iocb **splug)
++{
++}
 +
-+	batch_idx = folio_batch_count(&zd_batch->fbatch) - 1;
-+	zd_batch->swapcache[batch_idx] = swapcache;
-+	sb = batch_idx / SWAP_CRYPTO_SUB_BATCH_SIZE;
+ static inline void swap_write_unplug(struct swap_iocb *sio)
+ {
+ }
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 1d293f95d525..39bf7d8810e9 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -35,6 +35,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/workqueue.h>
+ #include <linux/list_lru.h>
++#include <linux/delayacct.h>
+ 
+ #include "swap.h"
+ #include "internal.h"
+@@ -2401,6 +2402,176 @@ bool __zswap_add_load_batch(struct zswap_decomp_batch *zd_batch,
+ 	return true;
+ }
+ 
++static __always_inline void zswap_load_sub_batch_init(
++	struct zswap_decomp_batch *zd_batch,
++	unsigned int sb,
++	struct zswap_load_sub_batch_state *zls)
++{
++	zls->trees = zd_batch->trees[sb];
++	zls->entries = zd_batch->entries[sb];
++	zls->pages = zd_batch->pages[sb];
++	zls->slens = zd_batch->slens[sb];
++	zls->nr_decomp = zd_batch->nr_decomp[sb];
++}
 +
-+	if (entry->length) {
-+		zd_batch->trees[sb][zd_batch->nr_decomp[sb]] = tree;
-+		zd_batch->entries[sb][zd_batch->nr_decomp[sb]] = entry;
-+		zd_batch->pages[sb][zd_batch->nr_decomp[sb]] = &folio->page;
-+		zd_batch->slens[sb][zd_batch->nr_decomp[sb]] = entry->length;
-+		zd_batch->nr_decomp[sb]++;
++static void zswap_load_map_sources(
++	struct zswap_load_sub_batch_state *zls,
++	u8 *srcs[])
++{
++	u8 i;
++
++	for (i = 0; i < zls->nr_decomp; ++i) {
++		struct zswap_entry *entry = zls->entries[i];
++		struct zpool *zpool = entry->pool->zpool;
++		u8 *buf = zpool_map_handle(zpool, entry->handle, ZPOOL_MM_RO);
++		memcpy(srcs[i], buf, entry->length);
++		zpool_unmap_handle(zpool, entry->handle);
 +	}
++}
 +
-+	return true;
++static void zswap_decompress_batch(
++	struct zswap_load_sub_batch_state *zls,
++	u8 *srcs[],
++	int decomp_errors[])
++{
++	struct crypto_acomp_ctx *acomp_ctx;
++
++	acomp_ctx = raw_cpu_ptr(zls->entries[0]->pool->acomp_ctx);
++
++	swap_crypto_acomp_decompress_batch(
++		srcs,
++		zls->pages,
++		zls->slens,
++		decomp_errors,
++		zls->nr_decomp,
++		acomp_ctx);
++}
++
++static void zswap_load_batch_updates(
++	struct zswap_decomp_batch *zd_batch,
++	unsigned int sb,
++	struct zswap_load_sub_batch_state *zls,
++	int decomp_errors[])
++{
++	unsigned int j;
++	u8 i;
++
++	for (i = 0; i < zls->nr_decomp; ++i) {
++		j = (sb * SWAP_CRYPTO_SUB_BATCH_SIZE) + i;
++		struct folio *folio = zd_batch->fbatch.folios[j];
++		struct zswap_entry *entry = zls->entries[i];
++
++		BUG_ON(decomp_errors[i]);
++		count_vm_event(ZSWPIN);
++		if (entry->objcg)
++			count_objcg_events(entry->objcg, ZSWPIN, 1);
++
++		if (zd_batch->swapcache[j]) {
++			zswap_entry_free(entry);
++			folio_mark_dirty(folio);
++		}
++
++		folio_mark_uptodate(folio);
++	}
++}
++
++static void zswap_load_decomp_batch(
++	struct zswap_decomp_batch *zd_batch,
++	unsigned int sb,
++	struct zswap_load_sub_batch_state *zls)
++{
++	int decomp_errors[SWAP_CRYPTO_SUB_BATCH_SIZE];
++	struct crypto_acomp_ctx *acomp_ctx;
++
++	acomp_ctx = raw_cpu_ptr(zls->entries[0]->pool->acomp_ctx);
++	mutex_lock(&acomp_ctx->mutex);
++
++	zswap_load_map_sources(zls, acomp_ctx->buffer);
++
++	zswap_decompress_batch(zls, acomp_ctx->buffer, decomp_errors);
++
++	mutex_unlock(&acomp_ctx->mutex);
++
++	zswap_load_batch_updates(zd_batch, sb, zls, decomp_errors);
++}
++
++static void zswap_load_start_accounting(
++	struct zswap_decomp_batch *zd_batch,
++	unsigned int sb,
++	struct zswap_load_sub_batch_state *zls,
++	bool workingset[],
++	bool in_thrashing[])
++{
++	unsigned int j;
++	u8 i;
++
++	for (i = 0; i < zls->nr_decomp; ++i) {
++		j = (sb * SWAP_CRYPTO_SUB_BATCH_SIZE) + i;
++		struct folio *folio = zd_batch->fbatch.folios[j];
++		workingset[i] = folio_test_workingset(folio);
++		if (workingset[i])
++			delayacct_thrashing_start(&in_thrashing[i]);
++	}
++}
++
++static void zswap_load_end_accounting(
++	struct zswap_decomp_batch *zd_batch,
++	struct zswap_load_sub_batch_state *zls,
++	bool workingset[],
++	bool in_thrashing[])
++{
++	u8 i;
++
++	for (i = 0; i < zls->nr_decomp; ++i)
++		if (workingset[i])
++			delayacct_thrashing_end(&in_thrashing[i]);
++}
++
++/*
++ * All entries in a zd_batch belong to the same swap device.
++ */
++void __zswap_finish_load_batch(struct zswap_decomp_batch *zd_batch)
++{
++	struct zswap_load_sub_batch_state zls;
++	unsigned int nr_folios = folio_batch_count(&zd_batch->fbatch);
++	unsigned int nr_sb = DIV_ROUND_UP(nr_folios, SWAP_CRYPTO_SUB_BATCH_SIZE);
++	unsigned int sb;
++
++	/*
++	 * Process the zd_batch in sub-batches of
++	 * SWAP_CRYPTO_SUB_BATCH_SIZE.
++	 */
++	for (sb = 0; sb < nr_sb; ++sb) {
++		bool workingset[SWAP_CRYPTO_SUB_BATCH_SIZE];
++		bool in_thrashing[SWAP_CRYPTO_SUB_BATCH_SIZE];
++
++		zswap_load_sub_batch_init(zd_batch, sb, &zls);
++
++		zswap_load_start_accounting(zd_batch, sb, &zls,
++					    workingset, in_thrashing);
++
++		/* Decompress the batch. */
++		if (zls.nr_decomp)
++			zswap_load_decomp_batch(zd_batch, sb, &zls);
++
++		/*
++		 * Should we free zswap_entries, as in zswap_load():
++		 * With the new swapin_readahead batching interface,
++		 * all prefetch entries are read into the swapcache.
++		 * Freeing the zswap entries here causes segfaults,
++		 * most probably because a page-fault occured while
++		 * the buffer was being decompressed.
++		 * Allowing the regular folio_free_swap() sequence
++		 * in do_swap_page() appears to keep things stable
++		 * without duplicated zswap-swapcache memory, as far
++		 * as I can tell from my testing.
++		 */
++
++		zswap_load_end_accounting(zd_batch, &zls,
++					  workingset, in_thrashing);
++	}
 +}
 +
  void zswap_invalidate(swp_entry_t swp)
