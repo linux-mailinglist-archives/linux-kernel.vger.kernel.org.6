@@ -1,255 +1,633 @@
-Return-Path: <linux-kernel+bounces-371489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02649A3BC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:41:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03F79A3BC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11BE1C21C12
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:41:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48C4C1F248C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FED3201259;
-	Fri, 18 Oct 2024 10:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C434201251;
+	Fri, 18 Oct 2024 10:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="BF0mmadz"
-Received: from rcdn-iport-9.cisco.com (rcdn-iport-9.cisco.com [173.37.86.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M69HAZkc"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BA81D54C5
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=173.37.86.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729248089; cv=fail; b=WLurS+p5EYJ9dkstQYIFW1CLGCJGYZAbUIqSGM2x69zTLLts/2kz7+yFBHfyYtrcamaJ/UByf0yNKqHxEDm6/r9kYdxjn5maNcysoeO3e9ey3Av2J+3Ros1hRLmMXH0S3rzdwim8Ckz+TkpYAoxpYC12L0a7mBHWAZRItcX7Jwo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729248089; c=relaxed/simple;
-	bh=ro9fjkpkH3w/ouSHekn21o06mn2yyPD+5yp4HVkMA5k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hRhMCpl1c0Fwb4Q1eShIIJm8FVlJxIpGsHya8FRb2owJDAOl7u5kNcV+yGpXTkANeKjLDnOYrF4AMG3IL/TiN+QGfNmasit9MTS5+pak48SiF2lg14PP2/CriT+OO7AS2yFuqfMGeZMzggiIFoWRsrjTPv4JjZQgBIHhoO4UPUE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=BF0mmadz; arc=fail smtp.client-ip=173.37.86.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF98201109
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729248027; cv=none; b=RmtXtxgmrO3a1OC806ERdOdNfrrdfvS+KDgzt+/rZw96/vN0lFSqpRVFyKr5zAC2uwVMyRoY5c3mFBVEn5Yr/807R2FxvykNcnY1r7Ob4xGQUkLGu6tconvzLaqfdYSd9RxjFBtAFV86jkWiHMp6S8QzNt/uca38oKf5y/R4TUU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729248027; c=relaxed/simple;
+	bh=ZiDcJ9wnDCXHrrn7DaeAQRnjkMiZNOYN4z89khQzNgM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=vF9BeCz6do8kKqVPIxOcc0en19u/gjpdJ8DIyZI1EOGCzzy6OW3TFawt8bD3etTnWeOoWUqo8EhXTGdmfmI0P6CauTq7bpBf/iibxYqyqfwm2eiuNmeMDiVUUXlF99NiiKgHZw5U+FRVrD28N5X9lBll4ebm74GGV/WFSuC/VJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M69HAZkc; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so1304925f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:40:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=846; q=dns/txt; s=iport;
-  t=1729248087; x=1730457687;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=ro9fjkpkH3w/ouSHekn21o06mn2yyPD+5yp4HVkMA5k=;
-  b=BF0mmadzYh6bIP/F+yQv5DqAJ9oMbhqUxMTpYUL3sarOf9vR+aneAUUB
-   YDxoYpXHc+nla4bl6K0+CqxVkl6xwiS8A2xd0xzgx+VFyKCcO3wveP/Hy
-   u51drCsrDmT7J/fFObAzNGMuE3D8MA+ts/lIw88CfyFTS3hp39z3RqV+3
-   I=;
-X-CSE-ConnectionGUID: PmD4/LybScCeE03VWpvhHA==
-X-CSE-MsgGUID: tcasd55QQn6OoVDnBpH8GA==
-X-IPAS-Result: =?us-ascii?q?A0DTAABlOhJn/5H/Ja1aHAEBAQEBAQcBARIBAQQEAQFAJ?=
- =?us-ascii?q?YEXBgEBCwGBcVIHdIEehR2DTAOFLYhFMJ4UFIFqDwEBAQ0CRAQBAYUHAhaKD?=
- =?us-ascii?q?QImNQgOAQIEAQEBAQMCAwEBAQEBAQEBAQ0BAQUBAQECAQcFgQ4ThgiGWwEBA?=
- =?us-ascii?q?QMSERFFEAIBCA4KAgImAgICLxUQAgQOJ4JfgmUDAaNGAYFAAooqeoEygQHgH?=
- =?us-ascii?q?xiBAi4BiEsBgWyDfYR3JxuCDYE8C4JHMT6EKTGDRIJpBJIFhCNXD4JWg3UWi?=
- =?us-ascii?q?WKRPwlJexwDWSECEQFVExcLCQVoiE0KgxwpgUUmgQiDCIEzg3KBZwlhiEKBD?=
- =?us-ascii?q?IE+gVkBgzhKg0wcgU8FOAo/gk9qTjcCDQI3giSBAIJRgSUEBYM+fB1AAgELb?=
- =?us-ascii?q?T01CQsbBj2yc0GXb0mvIAoog3KhRAYPBC+DchONAZlGmHeodgIEAgQFAg8BA?=
- =?us-ascii?q?QaBaQM3gVlwFYMjURkPji0WFssMgTMCBwsBAQMJjhsBAQ?=
-IronPort-PHdr: A9a23:cCR9xxXuPVI1vNutDeMTfI/dPcnV8K3PAWYlg6HPw5pUeailupP6M
- 1OauLNmjUTCWsPQ7PcXw+bVsqW1QWUb+t7Bq3ENdpVQSgUIwdsbhQ0uAcOJSAX7IffmYjZ8H
- ZFqX15+9Hb9Ok9QcPs=
-IronPort-Data: A9a23:iQlnq6xi33Adtd5ettp6t+dhxyrEfRIJ4+MujC+fZmUNrF6WrkVWy
- mMZDzjQOvmNMDemLot0aovj80xXsZPdmIBlTAtlqlhgHilAwSbn6Xt1DatR0we6dJCroJdPt
- p1GAjX4BJlpCCKa/FH1a+iJQUBUjcmgXqD7BPPPJhd/TAplTDZJoR94kobVuKYw6TSCK13L4
- IqaT/H3Ygf/h2csazJMt8pvlTs21BjMkGJA1rABTagjUG/2zxE9EJ8ZLKetGHr0KqE8NvK6X
- evK0Iai9Wrf+Ro3Yvv9+losWhRXKlJ6FVHmZkt+A8BOsDAbzsAB+vpT2M4nVKtio27hc+adZ
- zl6ncfYpQ8BZsUgkQmGOvVSO3kW0aZuoNcrLZUj2CCe5xWuTpfi/xlhJHkzEdFf3vd9Ompl+
- NFAcw4ydg6Dp8vjldpXSsE07igiBNPgMIVavjRryivUSK52B5vCWK7No9Rf2V/chOgXQq2YP
- JVfM2cyKk2cPnWjOX9PYH46tO23j2blYSxegFmUvqEwpWPUyWSd1ZC3b4eMJ4LbGJs9ckCwu
- mnP5GikXygjMoK4zgSp9Fi0pr/gtHauMG4VPPjinhJwu3WXx2oOGFgVWEG9rP2RlEGzQZRcJ
- lYS9y5oqrI9nHFHVfHnVBG+5XrBtRkGVp8IQ6sx6RqGzezf5APx6nU4cwOtoecO7acebTcrz
- VSO2djuAFRSXHe9Eyr1Gmu8xd9qBRUoEA==
-IronPort-HdrOrdr: A9a23:Q+Crq6l9zxgg6q8sEtEVkzWULaPpDfNQiWdD5ihNYBxZY6Wkfp
- +V7ZcmPE7P6Ar5BktApTnZAtj/fZq9z/JICYl4B8bFYOF/0FHYYr2KnrGSsgEIfBeOt9K1tJ
- 0QPJSWZ+eAd2SS4fyKhDVQVuxQv+Vvk5rYxds2rU0dMD2CApsIh2wWe2Trd3GeBjM2eabRf6
- Dsn/av0gDQAkj/Gf7LfkXtMdKzwOEjvaiWEiIuNloM0iXLpzWu77LxDhif2Tkjcx4n+90f2F
- mAuTbUooG4vd+G6jK07QLuBpJt9+fJ+59mPoihm8IVIjLjhkKDf4J6QYCPuzgzvaWG9EsquM
- OkmWZjA+1Dr1fqOk2lqxrk3AftlBw07WX59FOeiXz/5eTkWTMBDdZbj44xSGqd16NghqA57E
- t45RPei3NlN2KYoM073amRa/herDvynZPlq59Js5UQa/pFVFYbl/1uwKocKuZzIMu90vFlLA
- GrZ/usuMq/tjihHi3kl3gqz9q2UnspGBCaBkAEp8yOyjBT2Gt01k0C2aUk7z09Hb8GOtF5Dt
- 7/Q+9VvaALStVTYbN2Be8HT8fyAmvRQQjUOGbXJVj8DqkIN3/EtpayudwOla2XUY1NyIF3lI
- XKUVteu2J3c0XyCdeW1JkO9hzWWm2yUTnk18kb7Zlkvb/3QqbtLES4OR0Tutrlp+9aDtzQWv
- 61Np4TC/j/LXH2EYIMxAH6U4k6EwhWbCTUgKdMZ7ujmLO9FmSxjJ2vTB/6HsuYLQoZ
-X-Talos-CUID: =?us-ascii?q?9a23=3A3DqubWgsxqVpU1uFZSizs/jBOTJuSnjxkDD0MkW?=
- =?us-ascii?q?DAk1kZeXOd2CI5qNEup87?=
-X-Talos-MUID: 9a23:y9j9EQazkoh6GeBTqzTlnz0/af5R5fqJD34hl78em5mrHHkl
-X-IronPort-Anti-Spam-Filtered: true
-Received: from rcdn-l-core-08.cisco.com ([173.37.255.145])
-  by rcdn-iport-9.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 18 Oct 2024 10:40:16 +0000
-Received: from rcdn-opgw-5.cisco.com (rcdn-opgw-5.cisco.com [72.163.7.169])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by rcdn-l-core-08.cisco.com (Postfix) with ESMTPS id 9ADA0180001F2
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:40:16 +0000 (GMT)
-X-CSE-ConnectionGUID: d0+3tD45QVmm060mgv3j2A==
-X-CSE-MsgGUID: VftqmyFdTX26iEY1r4dt2Q==
-Authentication-Results: rcdn-opgw-5.cisco.com; dkim=pass (signature verified) header.i=@cisco.com
-X-IronPort-AV: E=Sophos;i="6.11,213,1725321600"; 
-   d="scan'208";a="18461572"
-Received: from mail-dm6nam04lp2048.outbound.protection.outlook.com (HELO NAM04-DM6-obe.outbound.protection.outlook.com) ([104.47.73.48])
-  by rcdn-opgw-5.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 10:40:16 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PPsc3Qpe1LH04cVOxn/9yBsSqZametb4V+daz3CNWEMT8hURFC1wu7m5VfUa19CWI/S6nhM7NcPiUX+ke1pYy5obu+zRku0peB/AG6ow81gzEOhGaaAHhHCipvxC0Jdudczs7s9bMglOSLoZYl3fA3vGCrU2XtKQIn+OaMzLm11ZuxD190Dch7+F32bs/GK4Hk1eVFqB2W/k/VrFp9ZKb4Eq+Jm/ZZRys6yVRkQkJNmtnK+0k7+11axHTz9NkkfSipyvyXa8mFz1mJLjeLlN34SB7SKKjpFMXZexvri8Gybah4V6Ix47Rn2gdSk5IPP1hYMk7qSZaHo8fXnTLgtKMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ro9fjkpkH3w/ouSHekn21o06mn2yyPD+5yp4HVkMA5k=;
- b=rjwtskyjxhhb+//yXeXz3iFFx3Zm3GVtDvsI3qTuo5TaoSX3AqO59n8Q8M+XMkF/vS5qEaJ1jp4qaQgGW4BLux+CAREDWXnq7SRGx4JkraOOd6dpd9BhJeu50ErldhCZ4Et5A1oH0KCIIjfv5oWEK9L6I8ALZgMXTFJxeXgxrVpxuwU5u97IiE34tTJLDHul6jwHppbKRgbsJYB6dVJEQ4t9FEELETwddlfFw6u5DKtJ1nVODiDPQ24FZ1ki/qADG+WFeG4UV9LlGSkOY0TKSk8Cr+6gjz4JyEbMMEiryI39BXtMNEYlrVX6/bOkh/vW/FjwrdlvUT/K/K4X8mk+0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
- dkim=pass header.d=cisco.com; arc=none
-Received: from CY5PR11MB6367.namprd11.prod.outlook.com (2603:10b6:930:39::13)
- by SA3PR11MB7527.namprd11.prod.outlook.com (2603:10b6:806:314::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Fri, 18 Oct
- 2024 10:40:14 +0000
-Received: from CY5PR11MB6367.namprd11.prod.outlook.com
- ([fe80::a96b:f32a:2d2c:c7b1]) by CY5PR11MB6367.namprd11.prod.outlook.com
- ([fe80::a96b:f32a:2d2c:c7b1%4]) with mapi id 15.20.8069.020; Fri, 18 Oct 2024
- 10:40:14 +0000
-From: "Bartosz Wawrzyniak -X (bwawrzyn - GLOBALLOGIC INC at Cisco)"
-	<bwawrzyn@cisco.com>
-To: Vinod Koul <vkoul@kernel.org>
-CC: Kishon Vijay Abraham I <kishon@kernel.org>, Swapnil Jakhade
-	<sjakhade@cadence.com>, Aswath Govindraju <a-govindraju@ti.com>,
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"xe-linux-external(mailer list)" <xe-linux-external@cisco.com>, "Daniel
- Walker (danielwa)" <danielwa@cisco.com>, "Bartosz Stania -X (sbartosz -
- GLOBALLOGIC INC at Cisco)" <sbartosz@cisco.com>
-Subject: Re: [PATCH v2] phy: cadence: Sierra: Fix offset of DEQ open eye
- algorithm control register
-Thread-Topic: [PATCH v2] phy: cadence: Sierra: Fix offset of DEQ open eye
- algorithm control register
-Thread-Index: AQHbGaUCINkyft+830Oqn0+qPmJsW7KLFrSAgAFKO4A=
-Date: Fri, 18 Oct 2024 10:40:14 +0000
-Message-ID: <06c52602-9f70-4412-8d1c-9247b20215e8@cisco.com>
-References: <ZwN+8xpOl4+Ggaha@vaman>
- <20241008171000.2665935-1-bwawrzyn@cisco.com> <ZxEmCWsViATsffE/@vaman>
-In-Reply-To: <ZxEmCWsViATsffE/@vaman>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY5PR11MB6367:EE_|SA3PR11MB7527:EE_
-x-ms-office365-filtering-correlation-id: f2ded47c-7682-475e-6b75-08dcef614007
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?TTVtVVRyMDArWUxPWXQwdXB5ek9McE8xeTVLUm5HVHIwOWxMQWNVSlNiYkVU?=
- =?utf-8?B?a0RqUmgwMWZoNjNiNnVETVBkWkpRVnhScjZIR0pqWTZSZUxDWGxLWitYNVhq?=
- =?utf-8?B?MlNSRnpzYlpRZVB4WlNlaE5IK3FuQnIxMisxVVRwRlIwWnpPUFFqeURmY0Ev?=
- =?utf-8?B?KytSZmRkN1FRTDBVeUZaSmlWZEtXdmVaNFBodHIxeUtDQkJGeTN1eGY1ZUdC?=
- =?utf-8?B?MVpReks1bjRKdmpOUVp0Z2ZTZ3FaZDRyYWFXdHA4QXJBcHdLcXlORjNKVTFF?=
- =?utf-8?B?S2ZXZXRmQ1plbU84R3ovNkI2b2lKT0tUak1zV3RWT2liZ3JQcVZMeU5EeHBW?=
- =?utf-8?B?L25tMUlkcEdsRmN0QjZVT1c2aVpOUjU4SXhtQ05DR2J1S3QwcFdST21Rb1h0?=
- =?utf-8?B?aGNEL1dOUjJxTnR4eVlhTXB6SFkwVUdsdUcwdVJYY0JtQnJGTnpyWm5OQ3g0?=
- =?utf-8?B?aiswM0VJYkJsclFOSXFudkJSeTZic2liTi9FREM3YVlZTmtrbkI5MTJVUloz?=
- =?utf-8?B?VXpVRDZoSzcwb0NXdGlqNEY0MDEzQXNyaTRIS1dzcHQxUFNRZTNXc05pN25Z?=
- =?utf-8?B?UlpTMXowbHRIR0UvZHZPekcrUmZoSHBuY1JzSzlwajQ0Vm1mZGtHVW1QOVc5?=
- =?utf-8?B?NzFWK2NJRUErVDRpZHZ6Sld4M2NJdVlkaUlWckppdVhKL2huenY3M3d0aUJz?=
- =?utf-8?B?MUF0TWozVjlzWFVwVjAwbnNtaVdNK0xvdEhPVExKV2taYWVTWWVrNk9zVW9N?=
- =?utf-8?B?VGtuYzVKRWl3OTU1VzM0M3piUjIzSUwyS01uRmpPd0JxbVFmdlRrZGpoRkxy?=
- =?utf-8?B?dXBxTm5zamwyWEZNVS8zRmM1ZFdUeVc5WjhSR0tzWkloUmhTQlgwd0dreE5k?=
- =?utf-8?B?RzBRM1BDbU9qQkRBclhjSGo3SEtqVlk5UGFXWVBHNHVEUW9JWmVHV1NLeEFU?=
- =?utf-8?B?VEk1UTM1dUdhZlhid2o0ZkxxVWpIeitGd0ZhdTR3MnhvOWVpYld4d2RlUEVX?=
- =?utf-8?B?Q2hCWTFPT0RMRlNleWgvd3hLU0pZTzlUdkxrcTF1YnZPYVZ5MjJlVVRHanU1?=
- =?utf-8?B?MFVXNlhrSjdvSVBhbDZmMUlmdXFRQ0g4QmtyNnlrQ3hkVTMvbElKN3lIdnE1?=
- =?utf-8?B?R3p3QW91SVVTMi8zSDcwNEZLZ25xYmJ6TXEzNTArZmVlV2h6ZFJybU12aHZ2?=
- =?utf-8?B?bnRiZzQ4Z0NpcTdVS1UwZGhhN3dwUFo5Z2twT0tFY0lhdTJUSE4wTVg4Zno0?=
- =?utf-8?B?K1pEZDlKMzhUdXJQWkJGTyt3SUkzVGVaUkpPRm5QbnVlN1NybitsZDFJVklU?=
- =?utf-8?B?WTdWRDIvamFOUjZqVnVqNkVuZFQ3N0xJNHMrdmgwWnpaaUhOZXJ5WndLYlds?=
- =?utf-8?B?aGhZbzI1NlpmaFIxM1UyUjQ2S29VWFVkdit6VnppR2R3WFJnZm1IRk5PVUFu?=
- =?utf-8?B?Q3hxNUc3bGlmNkVWWW42M3J2L0xML1NmZGRINmVUblVnWFpMdGlPa2FEeE95?=
- =?utf-8?B?MmowbXF4QVN6N1pDdlNaM0ZLVWkxMkZjazFJdmQxVFpGVE1ZVXJkby9McHVG?=
- =?utf-8?B?VmtNN05leGJxU09uNUdGN3YwNy9vMndGd3FMLzViRmMxZnVCMFYvNVRzcVdv?=
- =?utf-8?B?SXRhQ3dtc3V5NHBvSklyUHEyNGlrUHJibEZmaWdyUTlQb3pUMjYxQ1JSMnlu?=
- =?utf-8?B?VktZendkd3ZPdEtTQXYyT3JRaDl4MTMwZ2Izb2prRXFEWGhwWmJGSGdiU0lW?=
- =?utf-8?B?dmhwaFROUERNbjJQcXdvbTB2OW5mR3hUbFd4eXJLc0Z0ZEhSc3M3WnpsRVF4?=
- =?utf-8?Q?XtMZjRxXqXuczYPDd8m2uP6w+nykFuS2DpiS0=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6367.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OTRlMm4zQTJWbTUzUUdIMnJSS1FYV0thVWlBNnoycWlWZEx4VGhXam9MVXhn?=
- =?utf-8?B?a1lSN245bkNMSjBpblVVVDZRdnd0bE1MVVNlTU9PQ0U0TGtpTnBGcUhPVWZ3?=
- =?utf-8?B?MVBJNXJHcUM3VjdINUVPUFlxNU1KT1Jib01yWU02VS9EUzNNbkh2bkV6cGdQ?=
- =?utf-8?B?WE9OMVNEZkw2b0xnbVJvaDNhSHRjVENmVTdQeXJoMk1EekErMFZ1c0tqNzJ3?=
- =?utf-8?B?R2pleHcvNHNRckNQU0l0UnYyMlNuSnVJYWFyRVVvZVorcVUrbGtrS05DRUFJ?=
- =?utf-8?B?d2FYT2F1bkpJbjllb2VxT0RHdUZvZDNEWDlLcWpSa3ZPUy9OSlBBck9vRlhq?=
- =?utf-8?B?cW1qUjBKdFdDNFp4dVVzdk55Y0J5RmdFWVRnMCtyZ05aT2o2VXN2UVFYM0RM?=
- =?utf-8?B?SHhaNU1RcjhBbGJZTGNIRUdFR0ZvL0Y5WEpsdlVGTFg0R2I0S3daSW5SbWhT?=
- =?utf-8?B?bTlzQXJUQ0Zuc0VTblludUlWQTV5R0Z0Nk92WGdweXhHK2ZmbllVcW16N2pw?=
- =?utf-8?B?UHFVL1FjcTBBNXJ1czR6K0VyWDIva2FuMXNvbjdsMTdzc2ZGV1lyRnI0UXVT?=
- =?utf-8?B?dDZrSDFMZ2JEUlB4ZVZvQ2swY29VSllTN2oxYks4ZDRtc3QvTUgvV2RKSUFD?=
- =?utf-8?B?VUdEdEl5dXNNWmhTOXBHdDhhSGV5ZG1wYXVkQ1NwTWhKb3RMdUlwVzBOcUxJ?=
- =?utf-8?B?OUhDS1R6MjV4cmZGR0ZSUlNmcVc1SkJsdFlkeXFsem1OSWpxYUtKRXNuSUM5?=
- =?utf-8?B?dDJLUTY5RUtMQ1d4TzdRT0RVT1VGbUVmY2FhZVJnSU9XbXRYSHhnYUZGSm5T?=
- =?utf-8?B?N0RVa0puTEgvMzJEbVl6eW1sQ2xUQ1pMMlhid0FBWlQzSVQzUmdxRGhLbmFh?=
- =?utf-8?B?YzNLVUYyOFROTlM3b2VVS0Z2aTRORGhkSDh4bS9UOExGWXYzN0dNZUcrcEkv?=
- =?utf-8?B?RUpUanlGYThnQ0MvZVkyenBjVGpsYkVvU1ZQVXF4NVRXT0Z6czZRWG5ZWGV1?=
- =?utf-8?B?UDE1TjZMbllSckU4cDN2SWhZTzZkRHUwNmxyWW80TjdpWkpyTGJ6YlNDWUJw?=
- =?utf-8?B?clVjK0FIUTVEaXVBY3NRSGlnNEFNM1RBSlpITklKTEV6d2c3UEFMQTA5dW5U?=
- =?utf-8?B?YW1ycW9pT3g2dzl1R3pYYVF0bU9kZDhYbGlrSk9zZ0p3Yzl1MjFxSVNDdmNq?=
- =?utf-8?B?VEExR0RlTWVpK2hZTkVHOWd1TURqT0Eybm9kcVVjaWpnVFhNMHl3OXJXN2h1?=
- =?utf-8?B?cFdYdDlVVjV2Z0VzMU44WndoVlNaT1hWYUlMOG8zRWdwd24vRDRGeHFrUnor?=
- =?utf-8?B?UkVhck5lb0dNdXQrWkp1M3lpZi90TzRJNW8zRXpHc1Q0c1pVcTJQRXVJTW9y?=
- =?utf-8?B?UU5sQ0JPNG5Cb253KzM3cE8vbXViZ0dQbFpXTXc0dU5YSFhkSDVqNTFUeklr?=
- =?utf-8?B?VUFzWDZ4eWtvd1JHTTNJeWdLSnZHVW1vdVA3c1ZscXZoS0pJTWp2Q0hzaEdi?=
- =?utf-8?B?M2ExbjRjSFpKdXVETlcrNDg2RUNJM1UrOHZQV1AwcGh0WFV0UXYrWkg1ZFJO?=
- =?utf-8?B?eFRVMDB6OWJDeGFqS21STFM5RzRUSzZKRkt1VlVVNWVqYjdHMWZYdG5JSW01?=
- =?utf-8?B?ekxXeXAyQXFVS1d6cCtzWWsrUW1nK2J6WkdiNmJkT2RNREkwTnBTcU1EbTlD?=
- =?utf-8?B?ZWFCK3VzWnlVakwvOWY0MWVUSUdnaDFtdTdPTWNENnVwcW1HM2gvRWdXNkxN?=
- =?utf-8?B?cGtJbXdBUnBpUWlTOGdlNzIzNHRoNk5uclhYWFp3VTl6dVpmdkpwMUMweWJm?=
- =?utf-8?B?N0ZERWhNMURSeGY3Q0pQL2hMdnNudTJUenhZNnR3UEZFSzMvOHR4czZPSjhr?=
- =?utf-8?B?SlFoa1NpSVpIbkYxcmtCNGcyTnlET1FZZ0RUTE4yTVNBM3JZR3RtdVIzK3NO?=
- =?utf-8?B?eDhMdytkVm9wM0tCVmJNRUZTdlR2dnhHT3F5ME55OTRpTzhxcTl2MXJlRkt4?=
- =?utf-8?B?ZHZ1d0V2eHFrcDRPMEVEclJBYit3bGZjeTE5eE5GTkhKM1oyY202Q2lITXJR?=
- =?utf-8?B?Ty9Zb042aElDVXJ6b3N3TVZhOEF6UmZZRlQ5T1N2eWYzcFZYWTdPSTdiekJV?=
- =?utf-8?Q?W5/kTow52Vtga5YnuJwtXb8jh?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FC5A597C928AEF448A2D3A696BC0F573@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google; t=1729248023; x=1729852823; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9OgxwchXgTmvNx1TGKHgI4BeWcd/Kc61iRc8bYZ9ZQg=;
+        b=M69HAZkcUwzk36u3q2/fEDfJJDUUA5k8uutnmPR8ABL27UJYghQq0UnBn7OZBb39s7
+         +Yuz8k7Gsqum0b0ueFdODgQN6r8G9OXEgZYIfjeZtmgIl0Smnd6d3Dw51U9Y80PATmq9
+         HhVLECzRDQsEFhbnaAkavB48BY7aLVS5nNNCtICvjj3UVOu4e5TYyNZT1/e9U2MKsXAC
+         u9HMuneB/u1NyAF1m8/o0og1tMmqvz0CbRQhoT+8Ih2dpTR5Q/43oFwQgrR71ryn3pLH
+         5UnZhNqWaUBLs7HQXyjoh6tXWhvv9ZQ9QFMiLiz8PvxnmPT4+qwLOfGDuKWzo0Bk80gx
+         t3ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729248023; x=1729852823;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9OgxwchXgTmvNx1TGKHgI4BeWcd/Kc61iRc8bYZ9ZQg=;
+        b=vsS6PI+6Emi4oZy7TlZMZE6Z3CUth36K2eo5y+T798xzCaYHOm7sjEFz+73PapGnNm
+         m6vDisApVc5wIxQliY5cbtOJils2A/D4PE+ka2KX7dlyUf2qGgCSZIzJHgcuYscKbnex
+         IbT4q3MHjwAr7ktSe/K4OPyTJJ4JLTvVD3usR37In+InoutyqcHzfX0zYJ7GPFIAThPp
+         03MBZmR4BA3jQ0cVokH5oGYjzUhJPbOUF0r0CS3zrYZRZqNo7IzoW1l2HsQjUOxF++WB
+         XjcitpxbokPxnMcN/mLfCmxfLKbmlcKXM2/yvNkR33N4mSbAHe1QlxljR1CH3T1tvZ+T
+         Wl0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWAIkgzhwWHQIJ8jhJyziMWD7y/u4FiB8KLwAHqf9sVucOEk4TOE9yPEHOFVfL3Wye07P8smKhtPBlVs08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFsz4F5KvXGtud3AWz0RuMKPlGKzCGPWsfJu9RbPViE1wC+9J8
+	MXTeNEJ1wvHgo8UicPnu+UbB0vglzBvp5Wj+POzeofKO8b7wyR2rOFOBVDwaBrU=
+X-Google-Smtp-Source: AGHT+IHL37VEqqVV0qjcGmwDL1yOYIvr3egAHUHuUSiLVwOvBPbCOpqPNpLzwD7WJKWHOi7R1BmaCA==
+X-Received: by 2002:adf:fb45:0:b0:37d:4ebe:1646 with SMTP id ffacd0b85a97d-37eab728744mr1332595f8f.48.1729248023062;
+        Fri, 18 Oct 2024 03:40:23 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:b623:41fc:e293:c9b1? ([2a01:e0a:982:cbb0:b623:41fc:e293:c9b1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf0469acsm1583462f8f.25.2024.10.18.03.40.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 03:40:22 -0700 (PDT)
+Message-ID: <f19cf5b0-39d8-4297-96c5-e00c4f61c8f6@linaro.org>
+Date: Fri, 18 Oct 2024 12:40:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cisco.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6367.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2ded47c-7682-475e-6b75-08dcef614007
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2024 10:40:14.4466
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: njYeNZVyH8NycK7Vw2tcTohALsv3g5MtcYRaj73JpK/iRJUEj0VfmrLW37ire5UKdQepHC1yBsqIEuqzYEqF3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7527
-X-Outbound-SMTP-Client: 72.163.7.169, rcdn-opgw-5.cisco.com
-X-Outbound-Node: rcdn-l-core-08.cisco.com
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 3/3] iio: magnetometer: add Allegro MicroSystems ALS31300
+ 3-D Linear Hall Effect driver
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20241007-topic-input-upstream-als31300-v1-0-2c240ea5cb77@linaro.org>
+ <20241007-topic-input-upstream-als31300-v1-3-2c240ea5cb77@linaro.org>
+ <20241012155043.48b7a4a9@jic23-huawei>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241012155043.48b7a4a9@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gMTAvMTcvMjAyNCA0OjU4IFBNLCBWaW5vZCBLb3VsIHdyb3RlOg0KPiBPbiAwOC0xMC0yNCwg
-MTc6MDksIEJhcnRvc3ogV2F3cnp5bmlhayB3cm90ZToNCj4+IEZpeCB0aGUgdmFsdWUgb2YgU0lF
-UlJBX0RFUV9PUEVORVlFX0NUUkxfUFJFRyBhbmQgYWRkIGEgZGVmaW5pdGlvbiBmb3INCj4+IFNJ
-RVJSQV9ERVFfVEFVX0VQSU9GRlNFVF9NT0RFX1BSRUcuIFRoaXMgZml4ZXMgdGhlIFNHTUlJIHNp
-bmdsZSBsaW5rDQo+PiByZWdpc3RlciBjb25maWd1cmF0aW9uLg0KPiBUaGlzIGRvZXMgbm90IGFw
-cGx5IGZvciBtZSBvbiBwaHkvZml4ZXMNCj4NCj4gQ2FuIHlvdSBwbGVhc2UgcmViYXNlIGFuZCBy
-ZXNlbmQNCj4NCkhpIFZpbm9kLA0KSXQgc2VlbXMgdGhhdCB0aGUgVjEgcGF0Y2ggd2FzIGFscmVh
-ZHkgYXBwbGllZCBvbiB0aGUgcGh5L2ZpeCBicmFuY2ggDQooMmQwZjk3MykuDQpUaGlzIGlzIG9r
-YXksIGFzIGluIFYyLCBJIGp1c3QgcmVtb3ZlZCB0aGUgZW1wdHkgbGluZSBmcm9tIHRoZSBjb21t
-aXQgDQptZXNzYWdlLCB3aGljaCBJIHRoaW5rIHlvdSBhbHNvIGRpZCB3aGVuIHlvdSBhcHBsaWVk
-IFYxLg0KU28sIFYyIGNhbiBiZSBkcm9wcGVkLg0KDQotLQ0KDQpCYXJ0ZWsNCg0K
+Hi Jonathan,
+
+On 12/10/2024 16:50, Jonathan Cameron wrote:
+> On Mon, 07 Oct 2024 15:14:40 +0200
+> Neil Armstrong <neil.armstrong@linaro.org> wrote:
+> 
+>> The Allegro MicroSystems ALS31300 is a 3-D Linear Hall Effect Sensor
+>> mainly used for 3D head-on motion sensing applications.
+>>
+>> The device is configured over I2C, and as part of the Sensor
+>> data the temperature core is also provided.
+>>
+>> While the device provides an IRQ gpio, it depends on a configuration
+>> programmed into the internal EEPROM, thus only the default mode
+>> is supported and buffered input via trigger is also supported
+>> to allow streaming values with the same sensing timestamp.
+>>
+>> The device can be configured with different sensitivities in factory,
+>> but the sensitivity value used to calculate value into the Gauss
+>> unit is not available from registers, thus the sensitivity is
+>> provided by the compatible/device-id string which is based
+>> on the part number as described in the datasheet page 2.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Hi Neil.
+> 
+> Pretty clean driver. Just a few minor comments inline.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+> 
+>> diff --git a/drivers/iio/magnetometer/als31300.c b/drivers/iio/magnetometer/als31300.c
+>> new file mode 100644
+>> index 000000000000..123e6a63b516
+>> --- /dev/null
+>> +++ b/drivers/iio/magnetometer/als31300.c
+>> @@ -0,0 +1,459 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Driver for the Allegro MicroSystems ALS31300 3-D Linear Hall Effect Sensor
+>> + *
+>> + * Copyright (c) 2024 Linaro Limited
+>> + */
+>> +
+>> +#include <linux/bitfield.h>
+>> +#include <linux/bits.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/module.h>
+>> +#include <linux/i2c.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/pm_runtime.h>
+>> +#include <linux/regulator/consumer.h>
+>> +
+>> +#include <linux/iio/buffer.h>
+>> +#include <linux/iio/iio.h>
+>> +#include <linux/iio/trigger_consumer.h>
+>> +#include <linux/iio/triggered_buffer.h>
+>> +
+>> +/*
+>> + * The Allegro MicroSystems ALS31300 has an EEPROM space to configure how
+>> + * the device works and how the interrupt line behaves,
+> 
+> behaves.
+> 
+>> + * we only support the default setup with external trigger
+> 
+> 	Only the default setup with external trigger is supported.
+> etc.
+
+Ack, I'll rephrase that part
+
+> 
+>> + *
+>> + * Since by default the interrupt line is disable, we don't
+>> + * support GPIO interrupt events for now.
+>> + *
+>> + * It should be possible to adapt the driver to the current
+>> + * device setup, but we leave it as a future exercise.
+>> + */
+>> +
+>> +#define ALS31300_EEPROM_CONFIG		0x02
+>> +#define ALS31300_EEPROM_INTERRUPT	0x03
+>> +#define ALS31300_EEPROM_CUSTOMER_1	0x0d
+>> +#define ALS31300_EEPROM_CUSTOMER_2	0x0e
+>> +#define ALS31300_EEPROM_CUSTOMER_3	0x0f
+>> +#define ALS31300_VOLATILE_MODE		0x27
+> 
+> Is spelling out volatile needed? Maybe VOL or just V or skip
+> it completely as it makes for some long lines?
+
+Yep, there's no formal naming on the datasheet for those so I'll
+reduce to _VOL
+
+> 
+>> +#define ALS31300_VOLATILE_MODE_LPDCM		GENMASK(6, 4)
+>> +#define ALS31300_VOLATILE_MODE_SLEEP		GENMASK(1, 0)
+>> +#define ALS31300_VOLATILE_MSB		0x28
+>> +#define ALS31300_VOLATILE_MSB_TEMPERATURE	GENMASK(5, 0)
+>> +#define ALS31300_VOLATILE_MSB_INTERRUPT		BIT(6)
+>> +#define ALS31300_VOLATILE_MSB_NEW_DATA		BIT(7)
+>> +#define ALS31300_VOLATILE_MSB_Z_AXIS		GENMASK(15, 8)
+>> +#define ALS31300_VOLATILE_MSB_Y_AXIS		GENMASK(23, 16)
+>> +#define ALS31300_VOLATILE_MSB_X_AXIS		GENMASK(31, 24)
+>> +#define ALS31300_VOLATILE_LSB		0x29
+>> +#define ALS31300_VOLATILE_LSB_TEMPERATURE	GENMASK(5, 0)
+>> +#define ALS31300_VOLATILE_LSB_HALL_STATUS	GENMASK(7, 7)
+>> +#define ALS31300_VOLATILE_LSB_Z_AXIS		GENMASK(11, 8)
+>> +#define ALS31300_VOLATILE_LSB_Y_AXIS		GENMASK(15, 12)
+>> +#define ALS31300_VOLATILE_LSB_X_AXIS		GENMASK(19, 16)
+>> +#define ALS31300_VOLATILE_LSB_INTERRUPT_WRITE	BIT(20)
+>> +#define ALS31300_CUSTOMER_ACCESS	0x35
+>> +
+>> +#define ALS31300_LPDCM_INACTIVE_0_5_MS		0
+>> +#define ALS31300_LPDCM_INACTIVE_1_0_MS		1
+>> +#define ALS31300_LPDCM_INACTIVE_5_0_MS		2
+>> +#define ALS31300_LPDCM_INACTIVE_10_0_MS		3
+>> +#define ALS31300_LPDCM_INACTIVE_50_0_MS		4
+>> +#define ALS31300_LPDCM_INACTIVE_100_0_MS	5
+>> +#define ALS31300_LPDCM_INACTIVE_500_0_MS	6
+>> +#define ALS31300_LPDCM_INACTIVE_1000_0_MS	7
+> I'd move these up to next to the field def above.
+> Can play games with indent to make it clear they are the contents of
+> that field.
+> 
+> #define ALS31300_VOLATILE_MODE_LPDCM		GENMASK(6, 4)
+> #define   ALS31300_LPDCM_INACTIVE_0_5_MS	0
+> etc
+
+If it's accepted, then I'll do it!
+
+> 
+> 
+>> +
+>> +#define ALS31300_VOLATILE_MODE_ACTIVE_MODE	0
+>> +#define ALS31300_VOLATILE_MODE_SLEEP_MODE	1
+>> +#define ALS31300_VOLATILE_MODE_LPDCM_MODE	2
+>> +
+>> +#define ALS31300_DATA_X_GET(__buf)			\
+> 
+> Why __buf?  I'd just use b
+
+Right
+
+> 
+>> +		((int)(s8)FIELD_GET(ALS31300_VOLATILE_MSB_X_AXIS, __buf[0]) << 4 | \
+>> +			  FIELD_GET(ALS31300_VOLATILE_LSB_X_AXIS, __buf[1]))
+>> +#define ALS31300_DATA_Y_GET(__buf)			\
+>> +		((int)(s8)FIELD_GET(ALS31300_VOLATILE_MSB_Y_AXIS, __buf[0]) << 4 | \
+>> +			  FIELD_GET(ALS31300_VOLATILE_LSB_Y_AXIS, __buf[1]))
+>> +#define ALS31300_DATA_Z_GET(__buf)			\
+>> +		((int)(s8)FIELD_GET(ALS31300_VOLATILE_MSB_Z_AXIS, __buf[0]) << 4 | \
+>> +			  FIELD_GET(ALS31300_VOLATILE_LSB_Z_AXIS, __buf[1]))
+> 
+> Nice way to make these more readable is sign_extend32() rather than the casts.
+> So
+> 	sign_extend32(FIELD_GET(ALS31300_VOLATILE_MSB_X_AXIS, b[0]) << 4 |
+> 		      FIELD_GET(ALS31300_VOLATILE_LSB_X_AXIS, b[1]),
+> 		      11);
+
+Thanks for the suggestion, it's indeed better
+
+> 
+> 
+>> +#define ALS31300_TEMPERATURE_GET(__buf)			\
+>> +		((u32)(u8)FIELD_GET(ALS31300_VOLATILE_MSB_TEMPERATURE, __buf[0]) << 6 | \
+>> +			  FIELD_GET(ALS31300_VOLATILE_LSB_TEMPERATURE, __buf[1]))
+> 
+> What does the u8 cast change?
+
+It was to align with the s8 defines, but it won't be needed with sign_extend32
+
+> 
+>> +
+> 
+>> +struct als31300_data {
+>> +	struct device *dev;
+>> +	/* protects power on/off the device and access HW */
+>> +	struct mutex mutex;
+>> +	unsigned long sensitivity;
+>> +	struct regmap *map;
+>> +	struct {
+>> +		u16 temperature;
+>> +		s16 channels[3];
+>> +		s64 timestamp __aligned(8);
+> aligned_s64 timestamp
+> 
+> 
+> It's new so for now only in the togreg branch of iio.git.
+
+Ack, I'll use it and rebase on your togreg branch
+
+> 
+>> +	} scan;
+>> +};
+>> +
+>> +/* The whole measure is split into 2x32bit registers, we need to read them both at once */
+>> +static int als31300_get_measure(struct als31300_data *data, s16 *t, s16 *x,
+>> +				s16 *y, s16 *z)
+>> +{
+>> +	unsigned int count = 0;
+>> +	u32 buf[2];
+>> +	int ret;
+>> +
+>> +	mutex_lock(&data->mutex);
+> 
+> 	guard(mutex)(&data->mutex) and drop the unlock handling.
+> It's a small simplification but still nice to have here.
+
+Ok, it'll be my first time, hope I'll get it right
+
+> 
+>> +	ret = pm_runtime_resume_and_get(data->dev);
+>> +	if (ret)
+>> +		goto unlock;
+>> +
+>> +	/* Max update rate it 2KHz, wait up to 1ms */
+>> +	while (count < 50) {
+>> +		/* Read Data */
+>> +		ret = regmap_bulk_read(data->map, ALS31300_VOLATILE_MSB, buf, 2);
+>> +		if (ret) {
+>> +			dev_err(data->dev, "read data failed, error %d\n", ret);
+>> +			goto out;
+>> +		}
+>> +
+>> +		/* Check if data is valid, happens right after getting out of sleep mode */
+>> +		if (FIELD_GET(ALS31300_VOLATILE_MSB_NEW_DATA, buf[0]))
+>> +			break;
+>> +
+>> +		usleep_range(10, 20);
+>> +		++count;
+>> +	}
+>> +
+>> +	if (count >= 50) {
+>> +		ret = -ETIMEDOUT;
+>> +		goto out;
+>> +	}
+>> +
+>> +	*t = ALS31300_TEMPERATURE_GET(buf);
+>> +	*x = ALS31300_DATA_X_GET(buf);
+>> +	*y = ALS31300_DATA_Y_GET(buf);
+>> +	*z = ALS31300_DATA_Z_GET(buf);
+>> +
+>> +out:
+>> +	pm_runtime_mark_last_busy(data->dev);
+>> +	pm_runtime_put_autosuspend(data->dev);
+>> +
+>> +unlock:
+>> +	mutex_unlock(&data->mutex);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int als31300_read_raw(struct iio_dev *indio_dev,
+>> +			     const struct iio_chan_spec *chan, int *val,
+>> +			     int *val2, long mask)
+>> +{
+>> +	struct als31300_data *data = iio_priv(indio_dev);
+>> +	s16 t, x, y, z;
+>> +	int ret;
+>> +
+>> +	switch (mask) {
+>> +	case IIO_CHAN_INFO_PROCESSED:
+>> +	case IIO_CHAN_INFO_RAW:
+>> +		ret = als31300_get_measure(data, &t, &x, &y, &z);
+>> +		if (ret)
+>> +			return ret;
+> 
+> blank line here would perhaps make this a tiny bit easier to read.
+
+Ack
+
+> 
+>> +		switch (chan->address) {
+>> +		case TEMPERATURE:
+>> +			*val = t;
+>> +			return IIO_VAL_INT;
+>> +		case AXIS_X:
+>> +			*val = x;
+>> +			return IIO_VAL_INT;
+>> +		case AXIS_Y:
+>> +			*val = y;
+>> +			return IIO_VAL_INT;
+>> +		case AXIS_Z:
+>> +			*val = z;
+>> +			return IIO_VAL_INT;
+>> +		default:
+>> +			return -EINVAL;
+>> +		}
+>> +	case IIO_CHAN_INFO_SCALE:
+>> +		switch (chan->type) {
+>> +		case IIO_TEMP:
+>> +			/*
+>> +			 * Fractional part of:
+>> +			 *         302(value - 1708)
+>> +			 * temp = ------------------
+>> +			 *             4096
+>> +			 * to convert temperature in Celcius
+> 
+> Units in IIO ABI (because we copied hwmon) are millidegrees celcius.
+> Bad decision a long time back, but we are stuck with it.
+> See Documentation/ABI/testing/sysfs-bus-iio
+
+I was wondering, now I have my answer :-)
+
+> 
+>> +			 */
+>> +			*val = 302;
+>> +			*val2 = 4096;
+>> +			return IIO_VAL_FRACTIONAL;
+>> +		case IIO_MAGN:
+>> +			/*
+>> +			 * Devices are configured in factory
+>> +			 * with different sensitivities:
+>> +			 * - 500 GAUSS <-> 4 LSB/Gauss
+>> +			 * - 1000 GAUSS <-> 2 LSB/Gauss
+>> +			 * - 2000 GAUSS <-> 1 LSB/Gauss
+>> +			 * with translates by a division of the returned
+>> +			 * value to get Gauss value.
+>> +			 * The sensisitivity cannot be read at runtime
+>> +			 * so the value depends on the model compatible
+>> +			 * or device id.
+>> +			 */
+>> +			*val = 1;
+>> +			*val2 = data->sensitivity;
+>> +			return IIO_VAL_FRACTIONAL;
+>> +		default:
+>> +			return -EINVAL;
+>> +		}
+>> +	case IIO_CHAN_INFO_OFFSET:
+>> +		switch (chan->type) {
+>> +		case IIO_TEMP:
+>> +			*val = -1708;
+>> +			return IIO_VAL_INT;
+>> +		default:
+>> +			return -EINVAL;
+>> +		}
+>> +
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +}
+>> +
+>> +static irqreturn_t als31300_trigger_handler(int irq, void *p)
+>> +{
+>> +	struct iio_poll_func *pf = p;
+>> +	struct iio_dev *indio_dev = pf->indio_dev;
+>> +	struct als31300_data *data = iio_priv(indio_dev);
+>> +	s16 x, y, z;
+>> +	u16 t;
+>> +	int ret;
+>> +
+>> +	ret = als31300_get_measure(data, &t, &x, &y, &z);
+>> +	if (ret)
+>> +		goto trigger_out;
+>> +
+>> +	data->scan.temperature = t;
+>> +	data->scan.channels[0] = x;
+>> +	data->scan.channels[1] = y;
+>> +	data->scan.channels[2] = z;
+> 
+> This is pretty small. I'd just put scan on the stack in this function.
+
+Ack
+
+> 
+>> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->scan,
+>> +					   iio_get_time_ns(indio_dev));
+> 
+> pf->timestamp given you are providing a non threaded interrupt handler
+> to fill that in.
+
+Ok
+
+> 
+>> +
+>> +trigger_out:
+>> +	iio_trigger_notify_done(indio_dev->trig);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+> 
+>> +static const struct iio_chan_spec als31300_channels[] = {
+>> +	{
+>> +		.type = IIO_TEMP,
+>> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+>> +			BIT(IIO_CHAN_INFO_SCALE) |
+>> +			BIT(IIO_CHAN_INFO_OFFSET),
+>> +		.address = TEMPERATURE,
+>> +		.scan_index = TEMPERATURE,
+>> +		.scan_type = {
+>> +			.sign = 'u',
+>> +			.realbits = 16,
+>> +			.storagebits = 16,
+>> +			.endianness = IIO_CPU,
+>> +		},
+>> +	},
+>> +	ALS31300_AXIS_CHANNEL(X, AXIS_X),
+>> +	ALS31300_AXIS_CHANNEL(Y, AXIS_Y),
+>> +	ALS31300_AXIS_CHANNEL(Z, AXIS_Z),
+>> +	IIO_CHAN_SOFT_TIMESTAMP(6),
+> 
+> Why 6?
+> 
+> Technically it's not wrong ABI, just odd to leave a gap between the channels
+> and the timestamp.  Probably wants to be 4
+
+Seems it's a bad copy-paste and not knowing what 6 was meaning, thx for the clarification
+
+> 
+>> +};
+> 
+>> +static int als31300_probe(struct i2c_client *i2c)
+>> +{
+>> +	struct device *dev = &i2c->dev;
+>> +	struct als31300_data *data;
+>> +	struct iio_dev *indio_dev;
+>> +	int ret;
+>> +
+>> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+>> +	if (!indio_dev)
+>> +		return -ENOMEM;
+>> +
+>> +	data = iio_priv(indio_dev);
+>> +	data->dev = dev;
+>> +	i2c_set_clientdata(i2c, indio_dev);
+>> +
+>> +	mutex_init(&data->mutex);
+>> +
+>> +	data->sensitivity = (unsigned long)of_device_get_match_data(dev);
+> After changing the data to pointers to structures below use
+> i2c_get_match_data() That will try various types of firmware and fall
+> back to the id tables if appropriate.
+
+Yep I have a change that does that already, I figured that out after sending v1...
+
+> 
+>> +
+>> +	data->map = devm_regmap_init_i2c(i2c, &als31300_regmap_config);
+>> +	if (IS_ERR(data->map))
+>> +		return dev_err_probe(dev, PTR_ERR(data->map),
+>> +				     "failed to allocate register map\n");
+> 
+> ...
+> 
+> 
+>> +
+>> +static DEFINE_RUNTIME_DEV_PM_OPS(als31300_pm_ops,
+>> +				 als31300_runtime_suspend, als31300_runtime_resume,
+>> +				 NULL);
+>> +
+>> +static const struct i2c_device_id als31300_id[] = {
+>> +	{ "als31300-500" },
+> 
+> This needs data as well because you can probe via the sysfs interface instead
+> of DT which will use these ids.
+> 
+>> +	{ "als31300-1000" },
+>> +	{ "als31300-2000" },
+>> +	{ /* sentinel */ }
+>> +};
+>> +MODULE_DEVICE_TABLE(i2c, als31300_id);
+>> +
+>> +static const struct of_device_id als31300_of_match[] = {
+>> +	{ .compatible = "allegromicro,als31300-500", .data = (void *)4 },
+>> +	{ .compatible = "allegromicro,als31300-1000", .data = (void *)2 },
+>> +	{ .compatible = "allegromicro,als31300-2000", .data = (void *)1 },
+> 
+> Use pointers to structures and also use them above.  Even if those structures
+> have just one value in them for now.
+> 
+> Just have something like
+> 
+> struct als31300_variant_info {
+> 	u8 sensitivity;
+> };
+> 
+> static const struct als31300_variant_info al31300_variant_500 = {
+> 	.sensitivity = 4;
+> };
+> 
+> etc.
+
+Yep I'll switch to that
+
+> 
+> 
+>> +	{ /* sentinel */ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, als31300_of_match);
+>> +
+>> +static struct i2c_driver als31300_driver = {
+>> +	.driver	 = {
+>> +		.name = "als31300",
+>> +		.of_match_table = als31300_of_match,
+>> +		.pm = pm_ptr(&als31300_pm_ops),
+>> +	},
+>> +	.probe = als31300_probe,
+>> +	.id_table = als31300_id,
+>> +};
+>> +module_i2c_driver(als31300_driver);
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_DESCRIPTION("ALS31300 3-D Linear Hall Effect Driver");
+>> +MODULE_AUTHOR("Neil Armstrong <neil.armstrong@linaro.org>");
+>>
+> 
+
+Thanks,
+Neil
 
