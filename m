@@ -1,61 +1,67 @@
-Return-Path: <linux-kernel+bounces-372517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0395B9A49B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:41:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490F99A49BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F071F244FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:41:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D347AB2206B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7330190664;
-	Fri, 18 Oct 2024 22:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5701190667;
+	Fri, 18 Oct 2024 22:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEfuZZiY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evCiJPUC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D3A188A18;
-	Fri, 18 Oct 2024 22:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34833188A18;
+	Fri, 18 Oct 2024 22:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729291261; cv=none; b=a9Z1+oaAczWOj3p3P6nVoWRgKeo5GOBwL0sfsIehCirvKTf8BQVG7+1O7Go9cmw4w9V8u9+L9w2clZUfhAkFi2KG4PuotiUsoh+LInj8XZYeGk8uR7x5szgp0ZdE5YZMYXoHUXhGUWIaDYga/ntF9esSHvfARsU0BRNAOCur7X8=
+	t=1729291299; cv=none; b=nWssB9qJRQ2VDnQdHKm9Bt1etRuzaNBlvvXlvBFteMc8jP/tIVrAl0dH2q5/PHm5jXQjqnQ/kBQyS1KfnGhtyC/fd2lbPx8hRVl7gcsyreTTUSEgaqZE6xAMaMjdJLSdkvUAsZOfXEA8VQmSyTVCqL4eOU31eNpmDEQ1LIy0hL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729291261; c=relaxed/simple;
-	bh=AkeNo/tk92UbTjmdHz4UbsBIgtAYxTSYnCUb4J5AiLE=;
+	s=arc-20240116; t=1729291299; c=relaxed/simple;
+	bh=9MYUEN+y7bGhQ5uRf0uI07lO/K3C7KNY5c2cLXqPh0w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aibnaq+lxQmAfPMzHABl42O8KU9C6AVmh45mgq5cuxRkeA108cA5jzv5wydakP6egINFP0S1ztATx8NrabVv7wjdbG1dK8I5BUAi/eQHcOFxZM9gjDcoYtCokFb/98g9xiiEccyymvYlKbsHgwVDxSiT9KsrkYDHuUgLwDnRW2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEfuZZiY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1664C4CEC3;
-	Fri, 18 Oct 2024 22:40:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=o7XQbJFLS0gzBdvOBeTcZFLAOfnqahuQ3HqtKxeZtJZfwxS8RL/hY93esqsSKv7m8CdohbBRk1BAZePqvJbDHqQcEriyXLhBp0hsZMzXlCaG70/oj7YVe/oSNO7qG8KgW0uqCyOr2ZdTVcFYfEn2jAO2bWn5UZwkF7+/mlQjuco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evCiJPUC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF23AC4CEC3;
+	Fri, 18 Oct 2024 22:41:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729291260;
-	bh=AkeNo/tk92UbTjmdHz4UbsBIgtAYxTSYnCUb4J5AiLE=;
+	s=k20201202; t=1729291298;
+	bh=9MYUEN+y7bGhQ5uRf0uI07lO/K3C7KNY5c2cLXqPh0w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FEfuZZiY9ByqoBy8I9AFOCFq56jmWhFmK3zzcnvop+h9aWq7A+ljGSoa9190KOHR/
-	 0fEUhaMJN/fJ5fOnfuVkRFYyupkZJiQXG5SL3Ey+TFv5t9IKI3o3Nvh3KW/0oASXo+
-	 s+Im/aKJLt99jnQ47Bv8Ir0EHb4AFlT9S19UcRSVMZhTqV0HMIhqRh/jwNof13Kud0
-	 kTTuFHD4AsPqXtGSrJoQlbh222xkJaBv9sEdIquJrAH4wTsrsb8GHvOvUvcJfwJLbg
-	 8k7HV+wnkclc+mvhu96OHF6/qkIy5hxjpj0jaAnYWztQ/ssbeiDEi/f6TjL/uPRy05
-	 DMbLkZgVUnYlA==
-Date: Fri, 18 Oct 2024 15:40:58 -0700
+	b=evCiJPUCO4yWevyL7//o8c6xzDvBdx/+3P2JRJAqCmxhOZZopbmfBAFE3SkJ2WB4F
+	 N3epTMeT3tBOeG0y4vV5TL3iB5+jmxyD9kNSL6nWxs9ZMV1iTQ1IkqhcsJqU2yKAwu
+	 S1FAYgcgxQacKOd5biXHyWF17AI7ZQ7SxQELEuQRU+4Hhss2hi0M4g0mk7xsk6yny1
+	 IHn4kMB3qyiF+HxFqtNeLZNP9rs+SW7W+COuFysLxjLdcKa33lcFLjbXD4bFjL9thn
+	 JfzDmpIDXTh63O2CEqPlHNDUEOkMw5CNFJghTHun6XRErBfJxQXJABqLecAldvKfHf
+	 2s0Gi/iuKgAsw==
+Date: Fri, 18 Oct 2024 15:41:36 -0700
 From: Nathan Chancellor <nathan@kernel.org>
 To: Arnd Bergmann <arnd@kernel.org>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
+Cc: Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Alexandre Courbot <acourbot@chromium.org>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Nick Desaulniers <ndesaulniers@google.com>,
 	Bill Wendling <morbo@google.com>,
 	Justin Stitt <justinstitt@google.com>,
-	Zong-Zhe Yang <kevin_yang@realtek.com>,
-	Kuan-Chung Chen <damon.chen@realtek.com>,
-	Chih-Kang Chang <gary.chang@realtek.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] rtw89: -Wenum-compare-conditional warnings
-Message-ID: <20241018224058.GA2635543@thelio-3990X>
-References: <20241018152311.4023979-1-arnd@kernel.org>
+	Fei Shao <fshao@chromium.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] media: mtk-vcodec: venc: avoid
+ -Wenum-compare-conditional warning
+Message-ID: <20241018224136.GB2635543@thelio-3990X>
+References: <20241018152127.3958436-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,124 +70,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018152311.4023979-1-arnd@kernel.org>
+In-Reply-To: <20241018152127.3958436-1-arnd@kernel.org>
 
-On Fri, Oct 18, 2024 at 03:23:07PM +0000, Arnd Bergmann wrote:
+On Fri, Oct 18, 2024 at 03:21:10PM +0000, Arnd Bergmann wrote:
 > From: Arnd Bergmann <arnd@arndb.de>
 > 
-> This is one of three drivers that trigger -Wenum-compare-conditional warnings
-> with clang:
+> This is one of three clang warnings about incompatible enum types
+> in a conditional expression:
 > 
-> drivers/net/wireless/realtek/rtw89/core.c:1806:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
->  1806 |                 return eht ? NL80211_RATE_INFO_EHT_GI_0_8 :
->       |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  1807 |                              NL80211_RATE_INFO_HE_GI_0_8;
->       |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/net/wireless/realtek/rtw89/core.c:1810:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
->  1810 |                 return eht ? NL80211_RATE_INFO_EHT_GI_1_6 :
->       |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  1811 |                              NL80211_RATE_INFO_HE_GI_1_6;
->       |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/net/wireless/realtek/rtw89/core.c:1813:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
->  1813 |                 return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
->       |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  1814 |                              NL80211_RATE_INFO_HE_GI_3_2;
->       |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/net/wireless/realtek/rtw89/core.c:1818:15: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
->  1818 |                         return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
->       |                                    ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  1819 |                                      NL80211_RATE_INFO_HE_GI_3_2;
->       |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c:597:29: error: conditional expression between different enumeration types ('enum scp_ipi_id' and 'enum ipi_id') [-Werror,-Wenum-compare-conditional]
+>   597 |         inst->vpu_inst.id = is_ext ? SCP_IPI_VENC_H264 : IPI_VENC_H264;
+>       |                                    ^ ~~~~~~~~~~~~~~~~~   ~~~~~~~~~~~~~
 > 
-> In this case, all four warnings can be easily avoided by splitting the
-> function into two separate ones, in a way that helps readability as well,
-> at the expense of a few extra source lines.
+> The code is correct, so just rework it to avoid the warning.
 > 
+> Fixes: 0dc4b3286125 ("media: mtk-vcodec: venc: support SCP firmware")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-I agree this is slightly less compact but I think it is more obvious,
-especially in the face of the warning.
 
 Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
 > ---
->  drivers/net/wireless/realtek/rtw89/core.c | 48 +++++++++++++++++------
->  1 file changed, 37 insertions(+), 11 deletions(-)
+>  .../platform/mediatek/vcodec/encoder/venc/venc_h264_if.c    | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
-> index bba5bde95bb4..62e873fa1659 100644
-> --- a/drivers/net/wireless/realtek/rtw89/core.c
-> +++ b/drivers/net/wireless/realtek/rtw89/core.c
-> @@ -1858,32 +1858,58 @@ static void rtw89_core_rx_process_phy_sts(struct rtw89_dev *rtwdev,
->  					  phy_ppdu);
->  }
+> diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c b/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
+> index f8145998fcaf..8522f71fc901 100644
+> --- a/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
+> @@ -594,7 +594,11 @@ static int h264_enc_init(struct mtk_vcodec_enc_ctx *ctx)
 >  
-> -static u8 rtw89_rxdesc_to_nl_he_eht_gi(struct rtw89_dev *rtwdev,
-> -				       u8 desc_info_gi,
-> -				       bool rx_status, bool eht)
-> +static u8 rtw89_rxdesc_to_nl_he_gi(struct rtw89_dev *rtwdev,
-> +				   u8 desc_info_gi,
-> +				   bool rx_status)
-> +{
-> +	switch (desc_info_gi) {
-> +	case RTW89_GILTF_SGI_4XHE08:
-> +	case RTW89_GILTF_2XHE08:
-> +	case RTW89_GILTF_1XHE08:
-> +		return NL80211_RATE_INFO_HE_GI_0_8;
-> +	case RTW89_GILTF_2XHE16:
-> +	case RTW89_GILTF_1XHE16:
-> +		return NL80211_RATE_INFO_HE_GI_1_6;
-> +	case RTW89_GILTF_LGI_4XHE32:
-> +		return NL80211_RATE_INFO_HE_GI_3_2;
-> +	default:
-> +		rtw89_warn(rtwdev, "invalid gi_ltf=%d", desc_info_gi);
-> +		if (rx_status)
-> +			return NL80211_RATE_INFO_HE_GI_3_2;
-> +		return U8_MAX;
-> +	}
-> +}
+>  	inst->ctx = ctx;
+>  	inst->vpu_inst.ctx = ctx;
+> -	inst->vpu_inst.id = is_ext ? SCP_IPI_VENC_H264 : IPI_VENC_H264;
+> +	if (is_ext)
+> +		inst->vpu_inst.id = SCP_IPI_VENC_H264;
+> +	else
+> +		inst->vpu_inst.id = IPI_VENC_H264;
 > +
-> +static u8 rtw89_rxdesc_to_nl_eht_gi(struct rtw89_dev *rtwdev,
-> +				    u8 desc_info_gi,
-> +				    bool rx_status)
->  {
->  	switch (desc_info_gi) {
->  	case RTW89_GILTF_SGI_4XHE08:
->  	case RTW89_GILTF_2XHE08:
->  	case RTW89_GILTF_1XHE08:
-> -		return eht ? NL80211_RATE_INFO_EHT_GI_0_8 :
-> -			     NL80211_RATE_INFO_HE_GI_0_8;
-> +		return NL80211_RATE_INFO_EHT_GI_0_8;
->  	case RTW89_GILTF_2XHE16:
->  	case RTW89_GILTF_1XHE16:
-> -		return eht ? NL80211_RATE_INFO_EHT_GI_1_6 :
-> -			     NL80211_RATE_INFO_HE_GI_1_6;
-> +		return NL80211_RATE_INFO_EHT_GI_1_6;
->  	case RTW89_GILTF_LGI_4XHE32:
-> -		return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
-> -			     NL80211_RATE_INFO_HE_GI_3_2;
-> +		return NL80211_RATE_INFO_EHT_GI_3_2;
->  	default:
->  		rtw89_warn(rtwdev, "invalid gi_ltf=%d", desc_info_gi);
->  		if (rx_status)
-> -			return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
-> -				     NL80211_RATE_INFO_HE_GI_3_2;
-> +			return NL80211_RATE_INFO_EHT_GI_3_2;
->  		return U8_MAX;
->  	}
->  }
+>  	inst->hw_base = mtk_vcodec_get_reg_addr(inst->ctx->dev->reg_base, VENC_SYS);
 >  
-> +static u8 rtw89_rxdesc_to_nl_he_eht_gi(struct rtw89_dev *rtwdev,
-> +				       u8 desc_info_gi,
-> +				       bool rx_status, bool eht)
-> +{
-> +	return eht ? rtw89_rxdesc_to_nl_eht_gi(rtwdev, desc_info_gi, rx_status) :
-> +		     rtw89_rxdesc_to_nl_he_gi(rtwdev, desc_info_gi, rx_status);
-> +}
-> +
->  static
->  bool rtw89_check_rx_statu_gi_match(struct ieee80211_rx_status *status, u8 gi_ltf,
->  				   bool eht)
+>  	ret = vpu_enc_init(&inst->vpu_inst);
 > -- 
 > 2.39.5
 > 
