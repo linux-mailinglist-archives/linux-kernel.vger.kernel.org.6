@@ -1,140 +1,173 @@
-Return-Path: <linux-kernel+bounces-372193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F1F9A457D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:10:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170EC9A4580
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17B1828366F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:10:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DAE01F220DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897D6204931;
-	Fri, 18 Oct 2024 18:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B467204F60;
+	Fri, 18 Oct 2024 18:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s3gqcCSQ"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIBbJnJU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FBF2040B7
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD038472;
+	Fri, 18 Oct 2024 18:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729274999; cv=none; b=ichCgG8aCoh5YdeUfXcI9nrvzlVMcVAD/FaDONRdTVCMgnGpkyUluJWa4GxKBJn3bCH9WndJKWsIosX2DStjcPGz92y0c9Lf8MKDgXrG+39newCkCantuiS/klfDx1IatW/Eb439gG84GaEYzix3md8Ot7EYJzkgzeXBv2eI9ZQ=
+	t=1729275015; cv=none; b=QDctKL6BID3evdR/O7NvasKPIO9MiKpky24opp8wVFYBrzLDO3qzCgFD2yuSCO2q5FHFpMS6tM7/nOIledV6tM8/Dr2cSCpV5FcmWjtLHS8Kcit2S7mKua/J34M47IAKT/f80b5J50UJgkEuN8nPsVjsbdb0wZzItCfvjkCulIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729274999; c=relaxed/simple;
-	bh=W9pP8aAhBIbIZU0KiiaZPkNSQMOggtpuCasabxpekCc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YbjMb//9IfWQ6rrI0ACbv/VQDA/2tsMpv40t8CV/XGRIdsl1LE3qPkommzf1KjV2dpR7CggSoBsOodAbPVKFl+jRt/Ki4Nui8espTcHb0RKuR9bw/Ox8qwfYElcRz+zkZThSjj87r9CE8wp8jYFevTnEdBzVGarqDA0fY8O4b6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s3gqcCSQ; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729274994;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LQa9VnLheHxCFWlnEiY1bZ51fkZDcHbIYFUsXeK1JWE=;
-	b=s3gqcCSQaELXX879OHjU9ucb60mF9sfOcvJo0lCBy3z79mW3poVsBP5NcD5DTGdk4n1OfI
-	9QpRFaphmc+bDwGiIv4npzRHbtq9T+z0bySqRHyib+krmZZYif+gZKPVgfkBOswLaR2F/6
-	LCF6LDKFs15RwoJG7wvNwATG0QBjh6w=
-From: Andrea Righi <andrea.righi@linux.dev>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2] sched_ext: improve WAKE_SYNC behavior for default idle CPU selection
-Date: Fri, 18 Oct 2024 20:09:51 +0200
-Message-ID: <20241018180951.599625-1-andrea.righi@linux.dev>
+	s=arc-20240116; t=1729275015; c=relaxed/simple;
+	bh=9yaCmxGUI0xpIbTKyt2NJCZxUQiqbruYfsGNowkzzOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tf+wk2FE0KV8uxX9C6orWWnHuML2SQApQjVKbwRBje92XpNTLir7teZ5IBXr5M2M0XMuvt+Aii+S0Vaq3U9waaSnDn33iyx5FkTEAtXM3T/N0Vxpvy2YFHdt0+vYC0uTFZNDxSXe8smvR/0mjWlTHivAIXwroq9MNbJKiicpISs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIBbJnJU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0772AC4CEC5;
+	Fri, 18 Oct 2024 18:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729275015;
+	bh=9yaCmxGUI0xpIbTKyt2NJCZxUQiqbruYfsGNowkzzOI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nIBbJnJUHQGzPfWkaOphdIkgsNLrJ2dJ2YKiu6tw3wT07nfGKeHhGUGH7jqS2XEUj
+	 X+r7+sNYnYRyrP/cV+vHex+1ACc9Ur9iqSZF+qf7KfU7eq9tuMewetuW3D8GCZVACH
+	 0RWyjbRRZw/CfGzu9yCHWobScOdiaF+Ya6TOA4UjVR1fKSXtd68E2YrLiG3KMtlst1
+	 lJlqX6jic7T7FJF1d6Ps0mSfgPj/z49ISxYbzsYgE9wDvQ7AXIwRM6jcLKp1EhlnKV
+	 tTbiwpGJh9l6azF/izcokiLgkCb8NM0fKrw1/Fn1bKsVFh8XWLZcjot2JIGLQNAZea
+	 fOSSrgb+eZvsQ==
+Date: Fri, 18 Oct 2024 19:10:05 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: <Jianping.Shen@de.bosch.com>
+Cc: <lars@metafoo.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <dima.fedrau@gmail.com>,
+ <marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <Christian.Lorenz3@de.bosch.com>, <Ulrike.Frauendorf@de.bosch.com>,
+ <Kai.Dolde@de.bosch.com>
+Subject: Re: [PATCH v9 0/2] iio: imu: smi240: add bosch smi240 driver
+Message-ID: <20241018191005.4530ad0d@jic23-huawei>
+In-Reply-To: <20241018135234.5446-1-Jianping.Shen@de.bosch.com>
+References: <20241018135234.5446-1-Jianping.Shen@de.bosch.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-In the sched_ext built-in idle CPU selection logic, when handling a
-WF_SYNC wakeup, we always attempt to migrate the task to the waker's
-CPU, as the waker is expected to yield the CPU after waking the task.
+On Fri, 18 Oct 2024 15:52:32 +0200
+<Jianping.Shen@de.bosch.com> wrote:
 
-However, it may be preferable to keep the task on its previous CPU if
-the waker's CPU is cache-affine.
+> From: Shen Jianping <Jianping.Shen@de.bosch.com>
+>=20
+> Add the iio driver for bosch imu smi240. The smi240 is a combined
+> three axis angular rate and three axis acceleration sensor module
+> with a measurement range of +/-300=C2=B0/s and up to 16g. This driver
+> provides raw data access for each axis through sysfs, and tiggered
+> buffer for continuous sampling. A synchronous acc and gyro sampling
+> can be triggered by setting the capture bit in spi read command.
+>=20
+Applied to the togreg branch of iio.git and pushed out as testing
+for 0-day to take a first look at it.
 
-The same approach is also used by the fair class and in other scx
-schedulers, like scx_rusty and scx_bpfland.
+Minor tweak needed due to the unaligned.h header moving to linux/
 
-Therefore, apply the same logic to the built-in idle CPU selection
-policy as well.
+Thanks,
 
-Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
----
- kernel/sched/ext.c | 46 +++++++++++++++++++++++++++++++++-------------
- 1 file changed, 33 insertions(+), 13 deletions(-)
+Jonathan
 
-ChangeLog v1 -> v2:
-  - correctly return prev_cpu in the cache affine case
-
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 6eae3b69bf6e..a34af6df2f98 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -3087,20 +3087,40 @@ static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
- 	*found = false;
- 
- 	/*
--	 * If WAKE_SYNC, the waker's local DSQ is empty, and the system is
--	 * under utilized, wake up @p to the local DSQ of the waker. Checking
--	 * only for an empty local DSQ is insufficient as it could give the
--	 * wakee an unfair advantage when the system is oversaturated.
--	 * Checking only for the presence of idle CPUs is also insufficient as
--	 * the local DSQ of the waker could have tasks piled up on it even if
--	 * there is an idle core elsewhere on the system.
--	 */
--	cpu = smp_processor_id();
--	if ((wake_flags & SCX_WAKE_SYNC) &&
--	    !cpumask_empty(idle_masks.cpu) && !(current->flags & PF_EXITING) &&
--	    cpu_rq(cpu)->scx.local_dsq.nr == 0) {
--		if (cpumask_test_cpu(cpu, p->cpus_ptr))
-+	 * If WAKE_SYNC, try to migrate the wakee to the waker's CPU.
-+	 */
-+	if (wake_flags & SCX_WAKE_SYNC) {
-+		cpu = smp_processor_id();
-+
-+		/*
-+		 * If the waker's CPU is cache affine and prev_cpu is idle,
-+		 * then avoid a migration.
-+		 */
-+		if (cpus_share_cache(cpu, prev_cpu) &&
-+		    test_and_clear_cpu_idle(prev_cpu)) {
-+			cpu = prev_cpu;
- 			goto cpu_found;
-+		}
-+
-+		/*
-+		 * If the waker's local DSQ is empty, and the system is under
-+		 * utilized, try to wake up @p to the local DSQ of the waker.
-+		 *
-+		 * Checking only for an empty local DSQ is insufficient as it
-+		 * could give the wakee an unfair advantage when the system is
-+		 * oversaturated.
-+		 *
-+		 * Checking only for the presence of idle CPUs is also
-+		 * insufficient as the local DSQ of the waker could have tasks
-+		 * piled up on it even if there is an idle core elsewhere on
-+		 * the system.
-+		 */
-+		if (!cpumask_empty(idle_masks.cpu) &&
-+		    !(current->flags & PF_EXITING) &&
-+		    cpu_rq(cpu)->scx.local_dsq.nr == 0) {
-+			if (cpumask_test_cpu(cpu, p->cpus_ptr))
-+				goto cpu_found;
-+		}
- 	}
- 
- 	/*
--- 
-2.47.0
+> dt-bindings:=20
+> v1 -> v2
+>     - Add more detail in description
+>     - Add maintainer
+>     - Add vdd and vddio power supply
+>     - Use generic node name
+>     - Order the properties according to DTS coding style
+>=20
+> v2 -> v3
+>     - Improve description
+>     - Improve supply definition
+>     - Make supply definition as required
+>     - Add supply definition in example
+>=20
+> v3 -> v4
+>     - No changes
+>=20
+> v4 -> v5
+>     - No changes
+>=20
+> v5 -> v6
+>     - Fix checkpatch findings
+>=20
+> v6 -> v7
+>     - No changes
+>=20
+> v7 -> v8
+>     - No changes
+>=20
+> v8 -> v9
+>     - No changes
+>=20
+> imu driver:
+> v1 -> v2
+>     - Use regmap for register access
+>     - Redefine channel for each singel axis
+>     - Provide triggered buffer
+>     - Fix findings in Kconfig
+>     - Remove unimportant functions
+>=20
+> v2 -> v3
+>     - Use enum f=C3=BCr capture mode
+>     - Using spi default init value instead manual init=20
+>     - remove duplicated module declaration
+>     - Fix code to avoid warning
+>=20
+> v3 -> v4
+>     - Use DMA safe buffer
+>     - Use channel info instead of custom ABI
+>     - Fix other findings
+>=20
+> v4 -> v5
+>     - Merge the implementation in one simple file
+>     - Add channel info for acc/gyro data channel
+>     - Fix other findings
+>=20
+> v5 -> v6
+>     - Fix checkpatch findings
+>     - Fix review findings
+>=20
+> v6 -> v7
+>     - Fix offset and scale
+>=20
+> v7 -> v8
+>     - Use memcpy in spi write to keep CPU endian
+>     - Fix some minor findings
+>=20
+> v8 -> v9
+>     - remove unnecessary cpu_to_le16 for reg value in spi response
+>     - use REGMAP_ENDIAN_NATIVE in regmap config to avoid regmap to flip t=
+he reg value when passing to spi write
+>=20
+> Shen Jianping (2):
+>   dt-bindings: iio: imu: smi240: add Bosch smi240
+>   iio: imu: smi240: add driver
+>=20
+>  .../bindings/iio/imu/bosch,smi240.yaml        |  51 ++
+>  drivers/iio/imu/Kconfig                       |  14 +
+>  drivers/iio/imu/Makefile                      |   2 +
+>  drivers/iio/imu/smi240.c                      | 622 ++++++++++++++++++
+>  4 files changed, 689 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,smi24=
+0.yaml
+>  create mode 100644 drivers/iio/imu/smi240.c
+>=20
 
 
