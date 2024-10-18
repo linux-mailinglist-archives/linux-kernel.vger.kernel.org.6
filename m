@@ -1,324 +1,217 @@
-Return-Path: <linux-kernel+bounces-372317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDBF9A470C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:34:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA23B9A470A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4301F2486E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFB51C211FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0848B205AD5;
-	Fri, 18 Oct 2024 19:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7EE204F6C;
+	Fri, 18 Oct 2024 19:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="thxLGaBH"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vDj8XJFC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDEC205131
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87C0757F3;
+	Fri, 18 Oct 2024 19:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729280058; cv=none; b=RvPYMat6EH2tcvZuqJnj5pQhaFhdrbNePtSDfFRYdGjHIN5LrrFYxQS/l197UEoSKEb5eJj8bcY9Dx7JN4Mh3ApC2/X3S1a6Hvj1SW41njNiuHX7oIurkJhmjNnumwQb5Sv/20yV58CpfOV00Xu+fsDVCHB3Ux3KuylPh6nHEdI=
+	t=1729280054; cv=none; b=KsJkjKvrogWN82dJhZDBhdaKR6vBvlwBPzTwgr2Q5T33Y1NN1/m5qr1gS2BaDRNlpjQKK706KH9td7CY4NwiOzsoqyU1D4DOCnV6JQ71FfEJDqj71IOg84aM5VSI5wzwDIHWVA7VmpOJk4UbSIHPinrmYOvVCh9p8kk+Q8TtaMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729280058; c=relaxed/simple;
-	bh=54Z/Xu+GM77sjxtWU4gFHis9QE1ftBTxluVfk56kmZ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oKpEq2CtGazyIYOvWUZlnEMit7i/1K1azHD1Ugvihv1d4BbpzSUG8QDD5HAJOkKGQCln6FWJsJSTE1ELSWz5UIFbFctptOyXIWgg/APEY4+cjb8uXNcE/govlgpzEcl+mRmxaYqOb285Uy+dONLvYUpiPokrQXKP8n5w9f/Cy1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=thxLGaBH; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e13375d3so2906553e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atishpatra.org; s=google; t=1729280053; x=1729884853; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gykfHwEhvZn9OouPG+xeH4hENJCq3IryA0U1CzVeZMw=;
-        b=thxLGaBHS3BccBn1kERmZ3W7Ax3/6u3NIStw8j+fnJC6uSQLN6TqL5SErAa520KbS6
-         +iHsZU0py/KtARFit3xPH8rxeOFZyoGVJH1UaqQjRtHSSpxzfQf6BzpbSfoTqW+94XQI
-         OeBhQUEMCh2IR5ovr8iUTo9ePpUHN8hZiD4eU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729280053; x=1729884853;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gykfHwEhvZn9OouPG+xeH4hENJCq3IryA0U1CzVeZMw=;
-        b=K3fGJkMp1FlTiFUO6/pfZuMR2bG+2uQiwZkj9gG56cT14CLP68AOZHd3E6pFHR8Dsi
-         zh9O8PQMqwOkTO270pz4oFDu7QUUOK1W9r6wXAnVtDhSvY7OslvKamu5dgpneXEVbOzm
-         6LhILUSpllsXuQ+QaZ6xi3Zg/evCCWx+CXiBqPkpC3jOuUm1shVoc/sy1+7QbNvIOUAz
-         COl0X35O4MYT4qyKyrsteXJWEQlqjau1t41g/4iQsOVCRq2Z+7iajfJwa9yRY4PlfrL9
-         whoAMWalMtaJO6x1MECqVEs5fWaBcP7e2mBoVZEP5IwuThoAuG1cvsYltkBp3bzKAv4N
-         Hm4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUSXaX6qfLD4yZSXpNTQe0yooIJUgLlsr/J0HWy3SX5oesGJ4hhLpc1n0aW+b8fWiXDY2EEmeX7rvYeSOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6F40x1z+ndWmKEnHi1yW41eyoJBwQIwbZPoVDT/lbdEf99kUv
-	8KPGl8pzyR4z5JpQ1bH864m+LjIyUjGJkeZrb/AM4vu0SPAHtd7iPoV8uCMJqvIViNo2bH+3BUW
-	/VpHTwjG+1SeTCdZmzWw4Q3VTvRnltBIpsnVL
-X-Google-Smtp-Source: AGHT+IFemzNnwJ2CcScOOlMoI+DNU01cHF4Dq4xF5Q1M3NP3Ac9xEwqfjEJ8BnZEk27S3/xO4XqteeQkRFdqNfK6+94=
-X-Received: by 2002:a05:6512:128f:b0:539:f1ce:5fa8 with SMTP id
- 2adb3069b0e04-53a1550b9e6mr2524845e87.49.1729280053088; Fri, 18 Oct 2024
- 12:34:13 -0700 (PDT)
+	s=arc-20240116; t=1729280054; c=relaxed/simple;
+	bh=PA0c7dC1ikcGJw/dBRDgPk7KxYeY0mCH5fO+eV2W+Ew=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=X0rj92QTikiPs9RtozSaTcA2ROec/PNF31ihu1G4efo+9iVXHZUGB93HmJteXneM/kxTDEy3Xog4VDoO+8C12z63NStQe5cdxpHeu0bxN1llOR7e6d0gS/RUxKmE/W8PnnXmLDYIUdDhdPDExR4SpKZBdMFYDXecV/zBt5MoYiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vDj8XJFC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49604C4CEC3;
+	Fri, 18 Oct 2024 19:34:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729280053;
+	bh=PA0c7dC1ikcGJw/dBRDgPk7KxYeY0mCH5fO+eV2W+Ew=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=vDj8XJFCc8hIXbVAKXDrjmZA2OdooYyLo6C5Bmap1gc7nq/Zr4H5bI2KEJJRD0wr/
+	 7wvhsTXSrrYY3e9W2zPl88EYBq5Fi/73q0O9CO2n5zGgW92u2d3Mv/3ul8SeoWCQj3
+	 CEi524wYbKRWxqYqfxOJz4mOanOCfxe4gAaIqVP3itTinovQVNtkuOrnXG8G01Arfv
+	 DXrsO2Ng3thvlok1ifhOQwKZGnfJMswdhk+rPqwunk5nnAV2caTeEZBQHERUTIBi6z
+	 j5JVauzmUKEbz/2YE1UzlcpLGM6ON7sRvLYywTwAvJV9uLjJWha/EpHOOThnl07mQh
+	 TvcepjAhmQjZg==
+Date: Fri, 18 Oct 2024 14:34:11 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Joseph Jang <jjang@nvidia.com>
+Cc: shuah@kernel.org, tglx@linutronix.de, mochs@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] selftest: drivers: Add support to check duplicate hwirq
+Message-ID: <20241018193411.GA758389@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-11-apatel@ventanamicro.com>
-In-Reply-To: <20240719160913.342027-11-apatel@ventanamicro.com>
-From: Atish Patra <atishp@atishpatra.org>
-Date: Fri, 18 Oct 2024 12:34:01 -0700
-Message-ID: <CAOnJCUK7Bbq=X4e-z1SbVLOA_DLB+QrA7VO3dAMgdDOzEAK0jw@mail.gmail.com>
-Subject: Re: [PATCH 10/13] RISC-V: KVM: Use nacl_csr_xyz() for accessing AIA CSRs
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904014426.3404397-1-jjang@nvidia.com>
 
-On Fri, Jul 19, 2024 at 9:10=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
-> wrote:
->
-> When running under some other hypervisor, prefer nacl_csr_xyz()
-> for accessing AIA CSRs in the run-loop. This makes CSR access
-> faster whenever SBI nested acceleration is available.
->
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+On Tue, Sep 03, 2024 at 06:44:26PM -0700, Joseph Jang wrote:
+> Validate there are no duplicate hwirq from the irq debug
+> file system /sys/kernel/debug/irq/irqs/* per chip name.
+> 
+> One example log show 2 duplicated hwirq in the irq debug
+> file system.
+> 
+> $ sudo cat /sys/kernel/debug/irq/irqs/163
+> handler:  handle_fasteoi_irq
+> device:   0019:00:00.0
+>      <SNIP>
+> node:     1
+> affinity: 72-143
+> effectiv: 76
+> domain:  irqchip@0x0000100022040000-3
+>  hwirq:   0xc8000000
+>  chip:    ITS-MSI
+>   flags:   0x20
+> 
+> $ sudo cat /sys/kernel/debug/irq/irqs/174
+> handler:  handle_fasteoi_irq
+> device:   0039:00:00.0
+>     <SNIP>
+> node:     3
+> affinity: 216-287
+> effectiv: 221
+> domain:  irqchip@0x0000300022040000-3
+>  hwirq:   0xc8000000
+>  chip:    ITS-MSI
+>   flags:   0x20
+> 
+> The irq-check.sh can help to collect hwirq and chip name from
+> /sys/kernel/debug/irq/irqs/* and print error log when find duplicate
+> hwirq per chip name.
+> 
+> Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
+> [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
+
+I don't know enough about this issue to understand the details.  It
+seems like you look for duplicate hwirqs in chips with the same name,
+e.g., "ITS-MSI" in this case?  That name seems too generic to me
+(might there be several instances of "ITS-MSI" in a system?)
+
+Also, the name may come from chip->irq_print_chip(), so it apparently
+relies on irqchip drivers to make the names unique if there are
+multiple instances?
+
+I would have expected looking for duplicates inside something more
+specific, like "irqchip@0x0000300022040000-3".  But again, I don't
+know enough about the problem to speak confidently here.
+
+Cosmetic nits:
+
+  - Tweak subject to match history (use "git log --oneline
+    tools/testing/selftests/drivers/" to see it), e.g.,
+
+      selftests: irq: Add check for duplicate hwirq
+
+  - Rewrap commit log to fill 75 columns.  No point in using shorter
+    lines.
+
+  - Indent the "$ sudu cat ..." block by a couple spaces since it's
+    effectively a quotation, not part of the main text body.
+
+  - Possibly include sample output of irq-check.sh (also indented as a
+    quote) when run on the system where you manually found the
+    duplicate via "sudo cat /sys/kernel/debug/irq/irqs/..."
+
+  - Reword "The irq-check.sh can help ..." to something like this:
+
+      Add an irq-check.sh test to report errors when there are
+      duplicate hwirqs per chip name.
+
+  - Since the kernel patch has already been merged, cite it like this
+    instead of using the https://lore URL:
+
+      db744ddd59be ("PCI/MSI: Prevent MSI hardware interrupt number truncation")
+
+> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
 > ---
->  arch/riscv/kvm/aia.c | 97 ++++++++++++++++++++++++++++----------------
->  1 file changed, 63 insertions(+), 34 deletions(-)
->
-> diff --git a/arch/riscv/kvm/aia.c b/arch/riscv/kvm/aia.c
-> index 8ffae0330c89..dcced4db7fe8 100644
-> --- a/arch/riscv/kvm/aia.c
-> +++ b/arch/riscv/kvm/aia.c
-> @@ -16,6 +16,7 @@
->  #include <linux/percpu.h>
->  #include <linux/spinlock.h>
->  #include <asm/cpufeature.h>
-> +#include <asm/kvm_nacl.h>
->
->  struct aia_hgei_control {
->         raw_spinlock_t lock;
-> @@ -88,7 +89,7 @@ void kvm_riscv_vcpu_aia_sync_interrupts(struct kvm_vcpu=
- *vcpu)
->         struct kvm_vcpu_aia_csr *csr =3D &vcpu->arch.aia_context.guest_cs=
-r;
->
->         if (kvm_riscv_aia_available())
-> -               csr->vsieh =3D csr_read(CSR_VSIEH);
-> +               csr->vsieh =3D ncsr_read(CSR_VSIEH);
->  }
->  #endif
->
-> @@ -115,7 +116,7 @@ bool kvm_riscv_vcpu_aia_has_interrupts(struct kvm_vcp=
-u *vcpu, u64 mask)
->
->         hgei =3D aia_find_hgei(vcpu);
->         if (hgei > 0)
-> -               return !!(csr_read(CSR_HGEIP) & BIT(hgei));
-> +               return !!(ncsr_read(CSR_HGEIP) & BIT(hgei));
->
->         return false;
->  }
-> @@ -128,45 +129,73 @@ void kvm_riscv_vcpu_aia_update_hvip(struct kvm_vcpu=
- *vcpu)
->                 return;
->
->  #ifdef CONFIG_32BIT
-> -       csr_write(CSR_HVIPH, vcpu->arch.aia_context.guest_csr.hviph);
-> +       ncsr_write(CSR_HVIPH, vcpu->arch.aia_context.guest_csr.hviph);
->  #endif
-> -       csr_write(CSR_HVICTL, aia_hvictl_value(!!(csr->hvip & BIT(IRQ_VS_=
-EXT))));
-> +       ncsr_write(CSR_HVICTL, aia_hvictl_value(!!(csr->hvip & BIT(IRQ_VS=
-_EXT))));
->  }
->
->  void kvm_riscv_vcpu_aia_load(struct kvm_vcpu *vcpu, int cpu)
->  {
->         struct kvm_vcpu_aia_csr *csr =3D &vcpu->arch.aia_context.guest_cs=
-r;
-> +       void *nsh;
->
->         if (!kvm_riscv_aia_available())
->                 return;
->
-> -       csr_write(CSR_VSISELECT, csr->vsiselect);
-> -       csr_write(CSR_HVIPRIO1, csr->hviprio1);
-> -       csr_write(CSR_HVIPRIO2, csr->hviprio2);
-> +       if (kvm_riscv_nacl_sync_csr_available()) {
-> +               nsh =3D nacl_shmem();
-> +               nacl_csr_write(nsh, CSR_VSISELECT, csr->vsiselect);
-> +               nacl_csr_write(nsh, CSR_HVIPRIO1, csr->hviprio1);
-> +               nacl_csr_write(nsh, CSR_HVIPRIO2, csr->hviprio2);
-> +#ifdef CONFIG_32BIT
-> +               nacl_csr_write(nsh, CSR_VSIEH, csr->vsieh);
-> +               nacl_csr_write(nsh, CSR_HVIPH, csr->hviph);
-> +               nacl_csr_write(nsh, CSR_HVIPRIO1H, csr->hviprio1h);
-> +               nacl_csr_write(nsh, CSR_HVIPRIO2H, csr->hviprio2h);
-> +#endif
-> +       } else {
-> +               csr_write(CSR_VSISELECT, csr->vsiselect);
-> +               csr_write(CSR_HVIPRIO1, csr->hviprio1);
-> +               csr_write(CSR_HVIPRIO2, csr->hviprio2);
->  #ifdef CONFIG_32BIT
-> -       csr_write(CSR_VSIEH, csr->vsieh);
-> -       csr_write(CSR_HVIPH, csr->hviph);
-> -       csr_write(CSR_HVIPRIO1H, csr->hviprio1h);
-> -       csr_write(CSR_HVIPRIO2H, csr->hviprio2h);
-> +               csr_write(CSR_VSIEH, csr->vsieh);
-> +               csr_write(CSR_HVIPH, csr->hviph);
-> +               csr_write(CSR_HVIPRIO1H, csr->hviprio1h);
-> +               csr_write(CSR_HVIPRIO2H, csr->hviprio2h);
->  #endif
-> +       }
->  }
->
->  void kvm_riscv_vcpu_aia_put(struct kvm_vcpu *vcpu)
->  {
->         struct kvm_vcpu_aia_csr *csr =3D &vcpu->arch.aia_context.guest_cs=
-r;
-> +       void *nsh;
->
->         if (!kvm_riscv_aia_available())
->                 return;
->
-> -       csr->vsiselect =3D csr_read(CSR_VSISELECT);
-> -       csr->hviprio1 =3D csr_read(CSR_HVIPRIO1);
-> -       csr->hviprio2 =3D csr_read(CSR_HVIPRIO2);
-> +       if (kvm_riscv_nacl_available()) {
-> +               nsh =3D nacl_shmem();
-> +               csr->vsiselect =3D nacl_csr_read(nsh, CSR_VSISELECT);
-> +               csr->hviprio1 =3D nacl_csr_read(nsh, CSR_HVIPRIO1);
-> +               csr->hviprio2 =3D nacl_csr_read(nsh, CSR_HVIPRIO2);
->  #ifdef CONFIG_32BIT
-> -       csr->vsieh =3D csr_read(CSR_VSIEH);
-> -       csr->hviph =3D csr_read(CSR_HVIPH);
-> -       csr->hviprio1h =3D csr_read(CSR_HVIPRIO1H);
-> -       csr->hviprio2h =3D csr_read(CSR_HVIPRIO2H);
-> +               csr->vsieh =3D nacl_csr_read(nsh, CSR_VSIEH);
-> +               csr->hviph =3D nacl_csr_read(nsh, CSR_HVIPH);
-> +               csr->hviprio1h =3D nacl_csr_read(nsh, CSR_HVIPRIO1H);
-> +               csr->hviprio2h =3D nacl_csr_read(nsh, CSR_HVIPRIO2H);
->  #endif
-> +       } else {
-> +               csr->vsiselect =3D csr_read(CSR_VSISELECT);
-> +               csr->hviprio1 =3D csr_read(CSR_HVIPRIO1);
-> +               csr->hviprio2 =3D csr_read(CSR_HVIPRIO2);
-> +#ifdef CONFIG_32BIT
-> +               csr->vsieh =3D csr_read(CSR_VSIEH);
-> +               csr->hviph =3D csr_read(CSR_HVIPH);
-> +               csr->hviprio1h =3D csr_read(CSR_HVIPRIO1H);
-> +               csr->hviprio2h =3D csr_read(CSR_HVIPRIO2H);
-> +#endif
-> +       }
->  }
->
->  int kvm_riscv_vcpu_aia_get_csr(struct kvm_vcpu *vcpu,
-> @@ -250,20 +279,20 @@ static u8 aia_get_iprio8(struct kvm_vcpu *vcpu, uns=
-igned int irq)
->
->         switch (bitpos / BITS_PER_LONG) {
->         case 0:
-> -               hviprio =3D csr_read(CSR_HVIPRIO1);
-> +               hviprio =3D ncsr_read(CSR_HVIPRIO1);
->                 break;
->         case 1:
->  #ifndef CONFIG_32BIT
-> -               hviprio =3D csr_read(CSR_HVIPRIO2);
-> +               hviprio =3D ncsr_read(CSR_HVIPRIO2);
->                 break;
->  #else
-> -               hviprio =3D csr_read(CSR_HVIPRIO1H);
-> +               hviprio =3D ncsr_read(CSR_HVIPRIO1H);
->                 break;
->         case 2:
-> -               hviprio =3D csr_read(CSR_HVIPRIO2);
-> +               hviprio =3D ncsr_read(CSR_HVIPRIO2);
->                 break;
->         case 3:
-> -               hviprio =3D csr_read(CSR_HVIPRIO2H);
-> +               hviprio =3D ncsr_read(CSR_HVIPRIO2H);
->                 break;
->  #endif
->         default:
-> @@ -283,20 +312,20 @@ static void aia_set_iprio8(struct kvm_vcpu *vcpu, u=
-nsigned int irq, u8 prio)
->
->         switch (bitpos / BITS_PER_LONG) {
->         case 0:
-> -               hviprio =3D csr_read(CSR_HVIPRIO1);
-> +               hviprio =3D ncsr_read(CSR_HVIPRIO1);
->                 break;
->         case 1:
->  #ifndef CONFIG_32BIT
-> -               hviprio =3D csr_read(CSR_HVIPRIO2);
-> +               hviprio =3D ncsr_read(CSR_HVIPRIO2);
->                 break;
->  #else
-> -               hviprio =3D csr_read(CSR_HVIPRIO1H);
-> +               hviprio =3D ncsr_read(CSR_HVIPRIO1H);
->                 break;
->         case 2:
-> -               hviprio =3D csr_read(CSR_HVIPRIO2);
-> +               hviprio =3D ncsr_read(CSR_HVIPRIO2);
->                 break;
->         case 3:
-> -               hviprio =3D csr_read(CSR_HVIPRIO2H);
-> +               hviprio =3D ncsr_read(CSR_HVIPRIO2H);
->                 break;
->  #endif
->         default:
-> @@ -308,20 +337,20 @@ static void aia_set_iprio8(struct kvm_vcpu *vcpu, u=
-nsigned int irq, u8 prio)
->
->         switch (bitpos / BITS_PER_LONG) {
->         case 0:
-> -               csr_write(CSR_HVIPRIO1, hviprio);
-> +               ncsr_write(CSR_HVIPRIO1, hviprio);
->                 break;
->         case 1:
->  #ifndef CONFIG_32BIT
-> -               csr_write(CSR_HVIPRIO2, hviprio);
-> +               ncsr_write(CSR_HVIPRIO2, hviprio);
->                 break;
->  #else
-> -               csr_write(CSR_HVIPRIO1H, hviprio);
-> +               ncsr_write(CSR_HVIPRIO1H, hviprio);
->                 break;
->         case 2:
-> -               csr_write(CSR_HVIPRIO2, hviprio);
-> +               ncsr_write(CSR_HVIPRIO2, hviprio);
->                 break;
->         case 3:
-> -               csr_write(CSR_HVIPRIO2H, hviprio);
-> +               ncsr_write(CSR_HVIPRIO2H, hviprio);
->                 break;
->  #endif
->         default:
-> @@ -377,7 +406,7 @@ int kvm_riscv_vcpu_aia_rmw_ireg(struct kvm_vcpu *vcpu=
-, unsigned int csr_num,
->                 return KVM_INSN_ILLEGAL_TRAP;
->
->         /* First try to emulate in kernel space */
-> -       isel =3D csr_read(CSR_VSISELECT) & ISELECT_MASK;
-> +       isel =3D ncsr_read(CSR_VSISELECT) & ISELECT_MASK;
->         if (isel >=3D ISELECT_IPRIO0 && isel <=3D ISELECT_IPRIO15)
->                 return aia_rmw_iprio(vcpu, isel, val, new_val, wr_mask);
->         else if (isel >=3D IMSIC_FIRST && isel <=3D IMSIC_LAST &&
-> --
+>  tools/testing/selftests/drivers/irq/Makefile  |  5 +++
+>  tools/testing/selftests/drivers/irq/config    |  2 +
+>  .../selftests/drivers/irq/irq-check.sh        | 39 +++++++++++++++++++
+>  3 files changed, 46 insertions(+)
+>  create mode 100644 tools/testing/selftests/drivers/irq/Makefile
+>  create mode 100644 tools/testing/selftests/drivers/irq/config
+>  create mode 100755 tools/testing/selftests/drivers/irq/irq-check.sh
+> 
+> diff --git a/tools/testing/selftests/drivers/irq/Makefile b/tools/testing/selftests/drivers/irq/Makefile
+> new file mode 100644
+> index 000000000000..d6998017c861
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/irq/Makefile
+> @@ -0,0 +1,5 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +TEST_PROGS := irq-check.sh
+> +
+> +include ../../lib.mk
+> diff --git a/tools/testing/selftests/drivers/irq/config b/tools/testing/selftests/drivers/irq/config
+> new file mode 100644
+> index 000000000000..a53d3b713728
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/irq/config
+> @@ -0,0 +1,2 @@
+> +CONFIG_GENERIC_IRQ_DEBUGFS=y
+> +CONFIG_GENERIC_IRQ_INJECTION=y
+> diff --git a/tools/testing/selftests/drivers/irq/irq-check.sh b/tools/testing/selftests/drivers/irq/irq-check.sh
+> new file mode 100755
+> index 000000000000..e784777043a1
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/irq/irq-check.sh
+> @@ -0,0 +1,39 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +# This script need root permission
+> +uid=$(id -u)
+> +if [ $uid -ne 0 ]; then
+> +	echo "SKIP: Must be run as root"
+> +	exit 4
+> +fi
+> +
+> +# Ensure debugfs is mounted
+> +mount -t debugfs nodev /sys/kernel/debug 2>/dev/null
+> +if [ ! -d "/sys/kernel/debug/irq/irqs" ]; then
+> +	echo "SKIP: irq debugfs not found"
+> +	exit 4
+> +fi
+> +
+> +# Traverse the irq debug file system directory to collect chip_name and hwirq
+> +hwirq_list=$(for irq_file in /sys/kernel/debug/irq/irqs/*; do
+> +	# Read chip name and hwirq from the irq_file
+> +	chip_name=$(cat "$irq_file" | grep -m 1 'chip:' | awk '{print $2}')
+> +	hwirq=$(cat "$irq_file" | grep -m 1 'hwirq:' | awk '{print $2}' )
+> +
+> +	if [ -z "$chip_name" ] || [ -z "$hwirq" ]; then
+> +		continue
+> +	fi
+> +
+> +	echo "$chip_name $hwirq"
+> +done)
+> +
+> +dup_hwirq_list=$(echo "$hwirq_list" | sort | uniq -cd)
+> +
+> +if [ -n "$dup_hwirq_list" ]; then
+> +	echo "ERROR: Found duplicate hwirq"
+> +	echo "$dup_hwirq_list"
+> +	exit 1
+> +fi
+> +
+> +exit 0
+> -- 
 > 2.34.1
->
-
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
-
---=20
-Regards,
-Atish
+> 
 
