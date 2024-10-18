@@ -1,214 +1,115 @@
-Return-Path: <linux-kernel+bounces-371153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806FF9A371B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:27:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA569A371F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01F921F22F93
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:27:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36853B21A79
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3345F189F3C;
-	Fri, 18 Oct 2024 07:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4BE18B472;
+	Fri, 18 Oct 2024 07:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XlNpA2Sq"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fQLOosMG"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7C41891AA
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E357018B465
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729236408; cv=none; b=tizOG4aoSDdSBoi3sCg/7Ets9dSrPwVBuPMiohQQQGl9CEpckQYMQPVz0GWOI5AAKNT+FQdZifXOBkHMg+Ur+arTkcg7oYXLbfSWau1D+YV6QxejhyCekHm/9+YbMdoamLZJHSHIqwiSEXFag5WrkYKKF712lxfOmGwe5jxVBtU=
+	t=1729236419; cv=none; b=JDE/88gvw063jxbY5obKh4X8n4jv2mNPrADs/22pnkUxeIC8pJkPDt5ioyMd9IrhQxQ3Fj5ivw2Nvh2ZNqvobTfZj9cjfFfguLxX32mz71WeiTtfcv9Hvo/6JKuSo2sZfv7qrvpq0uRKz8oo7Lvt518u8OAe8mQOu4PJljoD0cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729236408; c=relaxed/simple;
-	bh=cmX78/NjQSPOEuSFKaXzPwEemfjjqoTgsq95vgKoAHo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CknAQtkPYk9WBYoTEPbzo7nDQjrZkqrH7xdITSusDdUecoFw9EuMXRcbIAitjpPJ+WPeHRDi6ii2SOP6N4IaEwdD2TvRstuRFrtpoSqZudkZbyp4BoF3+wBGP8a9lT9ys4RMT2YHssDIBFHv6mtbVZajpWOZb+qlFXDZML5cOzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XlNpA2Sq; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d462c91a9so1224804f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:26:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729236405; x=1729841205; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N4jrK5q/aoXE5D0XtwRQGRgEBkDTA8rIA0t/1mpgmdw=;
-        b=XlNpA2SqI8SO9dl8xk69BQLX57dJE0PXr7eZ3zad6GlE4BBzm/DhGuXUb51+e1qmPN
-         fVEch8gamSQwXKRNs4cWZnnZxJ+RG+ZhjtRAtOD6ubFm/hoHxcDPskfm2zl/4SJYfjLx
-         0lJr/WuWOF1cGI9xLiGt9ZxVVYHicpRMnZ0Za3d8EREAw6z7ha6Lhv1Z/3W/aoKdQjqk
-         WmyPvq1Iw22OLG4MhIZTcZtS7qm2bE1f9Aqj5yYMqtr03qw504ZL+Cs52nze3hINhMqb
-         o8TpJUQ4uH5DgGvnAO+TK0tq/pqAj08pt84UtSZ30HvJ+cp5ZBthgkFT7I5SXynE/MIY
-         8HSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729236405; x=1729841205;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=N4jrK5q/aoXE5D0XtwRQGRgEBkDTA8rIA0t/1mpgmdw=;
-        b=rRJ2jXrJJrEqZ+Nw8X7jtRn6xgsp4zgO1cBbWdd2uqyeBGLgH2n+mOIZlxcTR2H8o1
-         7yr4JDaP0TlMsRoRThx9+e7qex56w0WmhFENON9Di7kGBLG+ggVd48pfNxa13R470qaD
-         HnKYH9G7+Flrd1t5WQ5Pf/TXT9khlCLNlcgOeqERQYhDL0fbSHP2Y2pJBaBKTwysmiwV
-         kyvhYcD/x7mmL4H9IOlssYF4WgZhWod+0WYtuSehDaiYbq6g+jXGuGNbSi+nSTM4gCY8
-         uKsjC04uwdVuZlL3bERaPwpNxn/6zbUz0WQMXomo62T/asJfY5/RhlzDL/GRhWtd+MTI
-         ZoMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuTNRx+/8j27mLlw2Zemz/hmNGP+IRL/stskYLFxA6n5Bx8zfrFbUCWPVMDHL3xiZ9njNaQX4jZ/BA+m8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2U+RKAAFSlLigu/++Kq9LB8/BhSOV4kKLJ2HNicx0YEz5I+co
-	iL/o2AZ+3nqIVSsOo5pSbdk3+VP6iH8dikEZmve5IBBFlsRCu8ei6fD892btx7s=
-X-Google-Smtp-Source: AGHT+IFp1Xwh45F5uM+TtJfoLYHz3UDcu7l16xJaAp6HqTgpd+zORaVIg7OOFyRZZPcrcetOxY8onQ==
-X-Received: by 2002:a5d:4ec9:0:b0:371:8319:4dcc with SMTP id ffacd0b85a97d-37eaa48f8b5mr1101303f8f.2.1729236405059;
-        Fri, 18 Oct 2024 00:26:45 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:b623:41fc:e293:c9b1? ([2a01:e0a:982:cbb0:b623:41fc:e293:c9b1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf027b94sm1171556f8f.2.2024.10.18.00.26.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 00:26:44 -0700 (PDT)
-Message-ID: <f90da4ca-4f22-4158-938f-e0d3395b19df@linaro.org>
-Date: Fri, 18 Oct 2024 09:26:43 +0200
+	s=arc-20240116; t=1729236419; c=relaxed/simple;
+	bh=dJkcyFCfdw4XMhCX1tHVLniqjmkGISQAbTfuiB8fQxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=grvSZ0JvEK6hp0XgpUvZbLO+phkPyUsPbx4bQkWFMkv2ebDOjEii4s2qn/gWeNHl16JetIlULQwGwUYQGT+eBa9uV9+1p/yq3TgdYAqa1OoM2GujS0t92V6fwY911ZufMWpyxMQfWX9ubHp8wX/tWab/U1sVwPjgboZeB2WhUyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fQLOosMG; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <5472cead-7965-47f5-9ee1-77d40062b897@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729236414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/KFpx6VixP9yy4xxFaQWd//8YairifxkNNvdJP3idU4=;
+	b=fQLOosMGk8sWYTwotPFATSnDYfULW8a0uCJnY30ZtcfNdCsMB5EATE3nlPA0a+C8iJY8es
+	W/e5tK6eElVFajiqDZZAKZ4FmXKYVDdsRrCdUW8hdsfSZ3vuZ+Jo7n72a9QjCXEidgvLyI
+	3o9J+t3+AmK2JRJXLr9N8F6P5mgjlRw=
+Date: Fri, 18 Oct 2024 09:26:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 13/14] clk: qcom: dispcc-sm8550: enable support for
- SAR2130P
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
- <20241017-sar2130p-clocks-v1-13-f75e740f0a8d@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241017-sar2130p-clocks-v1-13-f75e740f0a8d@linaro.org>
+Subject: Re: [PATCH v1 0/4] GPU Direct RDMA (P2P DMA) for Device Private Pages
+To: Yonatan Maman <ymaman@nvidia.com>, Christoph Hellwig <hch@infradead.org>
+Cc: nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-mm@kvack.org, herbst@redhat.com,
+ lyude@redhat.com, dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
+ jgg@ziepe.ca, leon@kernel.org, jglisse@redhat.com,
+ akpm@linux-foundation.org, dri-devel@lists.freedesktop.org,
+ apopple@nvidia.com, bskeggs@nvidia.com
+References: <20241015152348.3055360-1-ymaman@nvidia.com>
+ <Zw8_x0Tvux9IMbly@infradead.org>
+ <1a667504-72bd-445b-8bf8-a6604b7beb2b@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <1a667504-72bd-445b-8bf8-a6604b7beb2b@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 17/10/2024 18:57, Dmitry Baryshkov wrote:
-> The display clock controller on SAR2130P is very close to the clock
-> controller on SM8550 (and SM8650). Reuse existing driver to add support
-> for the controller on SAR2130P.
+在 2024/10/16 17:16, Yonatan Maman 写道:
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/clk/qcom/Kconfig         |  4 ++--
->   drivers/clk/qcom/dispcc-sm8550.c | 18 ++++++++++++++++--
->   2 files changed, 18 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 5f7bf9db76cfcef1ab18a6ba09fb4dc506695f9d..f314f26fe136c0fc1612edc0cca23c4deba5cd9f 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -968,10 +968,10 @@ config SM_DISPCC_8450
->   config SM_DISPCC_8550
->   	tristate "SM8550 Display Clock Controller"
->   	depends on ARM64 || COMPILE_TEST
-> -	depends on SM_GCC_8550 || SM_GCC_8650
-> +	depends on SM_GCC_8550 || SM_GCC_8650 || SAR_GCC_2130P
->   	help
->   	  Support for the display clock controller on Qualcomm Technologies, Inc
-> -	  SM8550 or SM8650 devices.
-> +	  SAR2130P, SM8550 or SM8650 devices.
->   	  Say Y if you want to support display devices and functionality such as
->   	  splash screen.
->   
-> diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
-> index 7f9021ca0ecb0ef743a40bed1bb3d2cbcfa23dc7..e41d4104d77021cae6438886bcb7015469d86a9f 100644
-> --- a/drivers/clk/qcom/dispcc-sm8550.c
-> +++ b/drivers/clk/qcom/dispcc-sm8550.c
-> @@ -75,7 +75,7 @@ static struct pll_vco lucid_ole_vco[] = {
->   	{ 249600000, 2000000000, 0 },
->   };
->   
-> -static const struct alpha_pll_config disp_cc_pll0_config = {
-> +static struct alpha_pll_config disp_cc_pll0_config = {
->   	.l = 0xd,
->   	.alpha = 0x6492,
->   	.config_ctl_val = 0x20485699,
-> @@ -106,7 +106,7 @@ static struct clk_alpha_pll disp_cc_pll0 = {
->   	},
->   };
->   
-> -static const struct alpha_pll_config disp_cc_pll1_config = {
-> +static struct alpha_pll_config disp_cc_pll1_config = {
->   	.l = 0x1f,
->   	.alpha = 0x4000,
->   	.config_ctl_val = 0x20485699,
-> @@ -594,6 +594,13 @@ static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src[] = {
->   	{ }
->   };
->   
-> +static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src_sar2130p[] = {
-> +	F(200000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
-> +	F(325000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
-> +	F(514000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
-> +	{ }
-> +};
-> +
->   static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src_sm8650[] = {
->   	F(19200000, P_BI_TCXO, 1, 0, 0),
->   	F(85714286, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
-> @@ -1750,6 +1757,7 @@ static struct qcom_cc_desc disp_cc_sm8550_desc = {
->   };
->   
->   static const struct of_device_id disp_cc_sm8550_match_table[] = {
-> +	{ .compatible = "qcom,sar2130p-dispcc" },
->   	{ .compatible = "qcom,sm8550-dispcc" },
->   	{ .compatible = "qcom,sm8650-dispcc" },
->   	{ }
-> @@ -1780,6 +1788,12 @@ static int disp_cc_sm8550_probe(struct platform_device *pdev)
->   		disp_cc_mdss_mdp_clk_src.freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src_sm8650;
->   		disp_cc_mdss_dptx1_usb_router_link_intf_clk.clkr.hw.init->parent_hws[0] =
->   			&disp_cc_mdss_dptx1_link_div_clk_src.clkr.hw;
-> +	} else if (of_device_is_compatible(pdev->dev.of_node, "qcom,sar2130p-dispcc")) {
-> +		disp_cc_pll0_config.l = 0x1f;
-> +		disp_cc_pll0_config.alpha = 0x4000;
-> +		disp_cc_pll0_config.user_ctl_val = 0x1;
-> +		disp_cc_pll1_config.user_ctl_val = 0x1;
-> +		disp_cc_mdss_mdp_clk_src.freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src_sar2130p;
->   	}
->   
->   	clk_lucid_ole_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+> On 16/10/2024 7:23, Christoph Hellwig wrote:
+>> On Tue, Oct 15, 2024 at 06:23:44PM +0300, Yonatan Maman wrote:
+>>> From: Yonatan Maman <Ymaman@Nvidia.com>
+>>>
+>>> This patch series aims to enable Peer-to-Peer (P2P) DMA access in
+>>> GPU-centric applications that utilize RDMA and private device pages. 
+>>> This
+>>> enhancement is crucial for minimizing data transfer overhead by allowing
+>>> the GPU to directly expose device private page data to devices such as
+>>> NICs, eliminating the need to traverse system RAM, which is the native
+>>> method for exposing device private page data.
+>>
+>> Please tone down your marketing language and explain your factual
+>> changes.  If you make performance claims back them by numbers.
+>>
 > 
+> Got it, thanks! I'll fix that. Regarding performance, we’re achieving 
+> over 10x higher bandwidth and 10x lower latency using perftest-rdma, 
+> especially (with a high rate of GPU memory access).
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+If I got this patch series correctly, this is based on ODP (On Demand 
+Paging). And a way also exists which is based on non-ODP. From the 
+following links, this way is implemented on efa, irdma and mlx5.
+1. iRDMA
+https://lore.kernel.org/all/20230217011425.498847-1-yanjun.zhu@intel.com/
+
+2. efa
+https://lore.kernel.org/lkml/20211007114018.GD2688930@ziepe.ca/t/
+
+3. mlx5
+https://lore.kernel.org/all/1608067636-98073-5-git-send-email-jianxin.xiong@intel.com/
+
+Because these 2 methods are both implemented on mlx5, have you compared 
+the test results with the 2 methods on mlx5?
+
+The most important results should be latency and bandwidth. Please let 
+us know the test results.
+
+Thanks a lot.
+Zhu Yanjun
+
+
+
 
