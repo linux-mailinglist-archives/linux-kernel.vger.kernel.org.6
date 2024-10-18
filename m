@@ -1,115 +1,124 @@
-Return-Path: <linux-kernel+bounces-371629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1949A3D82
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:49:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B30A9A3D86
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 976A5B25899
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ADCA284C58
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF3EB667;
-	Fri, 18 Oct 2024 11:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CF0EADC;
+	Fri, 18 Oct 2024 11:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYlqvUud"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRrnpQ+O"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3714F6FB6;
-	Fri, 18 Oct 2024 11:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABADD6FB6;
+	Fri, 18 Oct 2024 11:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729252188; cv=none; b=A3i1IUSXZT3PuIW4pgyvq1hti9M6cyUOANnvYS8s8n4YriOqLwBeEK2mVXvt7eFVwfO3NRMZIbfEyShExqXbt6VBdOG/ByifW8SB2oJB5s6323mhYTedsyCOLI5jPmEEYnfn0R3SCdF5zQmQXfxrcLWoHv2var10nBk20CsuPPU=
+	t=1729252343; cv=none; b=rrgkUquVLmHxQ724QF1erh2aTOeg8vpoAfF7qisqQo6h4e9NNOyqaXCmEFFXTG6wUSyp8pN4/ZvZqIvvbDDDj3iUdf+/XsWY0xZASPn4FrImG91frcB1nNhwR2KFI5thaezL+8COFwafSQ7bwzy4bo0yO6uusPZG4FZ9fYGEhi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729252188; c=relaxed/simple;
-	bh=mg5kdNfTdx14uiIW5ZvOxucA9flwjgHNLXYQdAdzvCY=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=ACwyvBpTwyMiPoZ2g/U6qEEEYgSQ+YgJl8M6pq7DV91cbPPxTv1rcCl0TBUrOn+VxFWTqisb78fNw0mxuQ5V7YkzzWU2DHQfx/1y7bZWfYmRKvrW0zwUiKZeWvn9ybLWonSGs4y6Jb36Uoox5aufTTDDjj0wW+YrpdB0UrMDd6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYlqvUud; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43925C4CED8;
-	Fri, 18 Oct 2024 11:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729252187;
-	bh=mg5kdNfTdx14uiIW5ZvOxucA9flwjgHNLXYQdAdzvCY=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=uYlqvUudWIHdF9iKbfGcEe1uzinnsFCyhj4NOSdyFKOtj4aZvRb1/aaj65KiaejQr
-	 Ac74oiMgTC9qmdTiz4mOhH/ZRZZdGgvtw0FpL1kToHTvOJUb4flpe/ydNiQNqZZ3Dr
-	 +qUp5a8nLW4ZEO5avdGIFshffwTPbfHvZauvijYgNlOud8bfA7pcn867LtRZCuTNRn
-	 40Bq7byr0zsxrSymozy7xd21s6FtVzPmwJs87/1EIE2urb9NlihyWcuzsMqVpcrQQi
-	 Kg96jH+m9Ar8Gre5rf4FZT4ZRaSZnYFAcnlV4FgFHNdWbVbwsi6HypcfP+L44+3nzZ
-	 ++RKSk9IvUiUQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: =?utf-8?Q?Pawe=C5=82?= Owoc <frut3k7@gmail.com>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,  Jeff Johnson
- <jjohnson@kernel.org>,  linux-wireless@vger.kernel.org,
-  ath10k@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] wifi: ath10k: add channel 177 for 5 GHz band
-References: <20240801202359.794035-1-frut3k7@gmail.com>
-	<20241009065051.51143-1-frut3k7@gmail.com>
-	<b58b5b2e-bf9f-480c-810b-2cef29aab82c@quicinc.com>
-	<CAKEyCaDUfn4jtCdTt9JJ-Qe+CCudORPwcjj5i5=G28ANc+eCRg@mail.gmail.com>
-Date: Fri, 18 Oct 2024 14:49:44 +0300
-In-Reply-To: <CAKEyCaDUfn4jtCdTt9JJ-Qe+CCudORPwcjj5i5=G28ANc+eCRg@mail.gmail.com>
-	(=?utf-8?Q?=22Pawe=C5=82?= Owoc"'s message of "Fri, 18 Oct 2024 00:51:59
- +0200")
-Message-ID: <87ed4dr5pj.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1729252343; c=relaxed/simple;
+	bh=iNV1Toc7MSk4oGsveAP0All7CMv4VkQA5da0clNa6u4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cmpOhEcR3ETehZcj/uy8bg6ALiQadnfL84Whpfh8HNfcBBK+bLAtIXS3Oe5B1Te+qCS2RPqbDW3jPD8X5lmzmeZ++rfKuHyaDz5ecoxDyqRmwSjt9dy6ZXvtSUxLCMDV+CFVNcfVUeoH7SK+3iKCd3HFUtrXQdzpKuTefvrZpcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eRrnpQ+O; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2af4dca5cso358628a91.3;
+        Fri, 18 Oct 2024 04:52:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729252341; x=1729857141; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iNV1Toc7MSk4oGsveAP0All7CMv4VkQA5da0clNa6u4=;
+        b=eRrnpQ+OwmQYWkHl0tiYF37Qo5NAtCPUY4nDg1j4OGhHe7xOSXc3wxGxMfYog/r4rL
+         0Q8I1nI+q4l/SugtQJ6o6dApdOjOklBgFCpfYhATBINGMnPrEIJoXn9h8ZRpbXHpxsbY
+         BMm7hYX6EbGwUpoxDcxA2DFhdDH1wxKnDlsK7s23KCvUV37Q8JhUkhUbpobDM9YvuF3N
+         h5Kh62JBPI+SP+Wp1oDU5A0EchUXD2mnHmlI/N2Dg7QRtJP/Aarsq1MVXrMPaVVNu5xV
+         McuvAkppcdSblBrcYNY7H3WOwx91KmaGhHhmWezcU2RVENWKg/z+/2tZON89G8UAMwE2
+         yzKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729252341; x=1729857141;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iNV1Toc7MSk4oGsveAP0All7CMv4VkQA5da0clNa6u4=;
+        b=qQ5U3rzLYvbEwcOA+MDi8pRPaAmQVGmX3W0xjBbOTM+MOgs02ZZqq8TNJFGQ1t17sy
+         Hb7bXV3aVHeGTw7cZRt/R+/XCOZ1YepAifZ/c0m59A3LsvbpXtdHYB52W1O186BLhFFm
+         PospV32lX6rXT2DIOumUQ80I8UqDwFPULXbGrK6d2i2sDciSHyZo6RTsVxDpQZPMLVia
+         SfIAC2tsC10vhK7phbNhFWxy9JxcGq/ukCgS/pePdysZ9qV9Pc2DD5y/k6yc574z5kBP
+         hN2l1Tdc2kP4/NyxK03pgeSEVsabk1/mQ7q0xHaSwOIcyRcfYSPm1p2uZiGPkDjG2sFx
+         GGJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVu5Tv74+JOEshqGbed2/DjaNEEFOaPFa1QRu6lxICUYMAlOWlPnR3kYDZil9aSy++p1npOfF5XR94MkyHx@vger.kernel.org, AJvYcCW71uvnAQslKDkvQEGKUI1z3awh03EXVzxvZb02zZLNf60kPZNMXUMHTSZ/OaI93swcm6DgkmncMQ3V8tu9aHUL@vger.kernel.org, AJvYcCWfY552i5xM22eiHXFxJA7caqSNepbkb5Evnel3vtcXU+/yVjnEWhlv9MLKiQaK1E/Te31sylMm8aIFnVx9Cg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9QNXnxxTZwofhSkHRp33bByGTCJ3NTZCDzBfue+a8gB27o9sV
+	526OZTeIw6VQaaqtpbYl+dNvMQTacQCvFoKbAv+olGBcrrNNMXVHha1G7szYHq3JTZr2Bs0tXis
+	Q/sWOIVOKKORqPpNNbKkglRKO7sw=
+X-Google-Smtp-Source: AGHT+IG0ZQWmOdahzal0xzYd7knbSdaQBL5DsAJHxmsUxXKZ2XhcWs8MdyWy6ihQNAZJrQ6QOwlll+4hdS5YoIiCx88=
+X-Received: by 2002:a17:90b:1254:b0:2e2:d881:5936 with SMTP id
+ 98e67ed59e1d1-2e561a10f40mr1104905a91.7.1729252341015; Fri, 18 Oct 2024
+ 04:52:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <Zv61dCaxScXuOjZg@archlinux> <202410031424.45E5D19@keescook>
+ <Zv8RIs-htdc-PtXB@archlinux> <202410040958.C19D3B9E48@keescook>
+ <ZwNb-_UPL9BPSg9N@archlinux> <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
+ <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
+ <ZxB-uh1KzfD4ww2a@archlinux> <20241017165522.GA370674@thelio-3990X>
+ <CANiq72=cUS4GRzuU0WAWn9owttU-L4UpV1Dip6QjUdudCoT8VA@mail.gmail.com> <20241017185552.GA2263054@thelio-3990X>
+In-Reply-To: <20241017185552.GA2263054@thelio-3990X>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 18 Oct 2024 13:52:08 +0200
+Message-ID: <CANiq72=BRFHrNK54f3ydj7EPPnDGprzaBUhoB+bY_xO3tOPyOA@mail.gmail.com>
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in bch2_xattr_validate
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Jan Hendrik Farr <kernel@jfarr.cc>, Bill Wendling <morbo@google.com>, Kees Cook <kees@kernel.org>, 
+	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev, 
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ardb@kernel.org, ojeda@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Pawe=C5=82 Owoc <frut3k7@gmail.com> writes:
-
-> On Fri, Oct 11, 2024 at 6:51=E2=80=AFPM Jeff Johnson <quic_jjohnson@quici=
-nc.com> wrote:
->>
->> On 10/8/2024 11:49 PM, Pawe=C5=82 Owoc wrote:> Add support for channel 1=
-77 (5885
->> MHz ) for the 5 GHz band.
->> >
->> > Tested-on: qca988x hw2.0 firmware ver 10.2.4-1.0-00047
->>
->> Can you elaborate on what was tested in your commit text? And more
->> importantly, what is the impact on existing devices, especially given th=
-at
->> existing devices would not have calibration data for this channel in the=
- board
->> files? Does the QCA988x board file even have calibration data for this c=
-hannel?
->>
-> In the case of ath10k we use an external regulatory database.
-> For the country "US" channels 169, 173 and 177 are marked as NO-IR and
-> we cannot run AP on them.
-> Even if channels are not disabled in the board files:
->             * 5845.0 MHz [169] (27.0 dBm) (no IR)
->             * 5865.0 MHz [173] (27.0 dBm) (no IR)
->             * 5885.0 MHz [177] (27.0 dBm) (no IR)
+On Thu, Oct 17, 2024 at 8:55=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
 >
-> I only tested the use as a client on channel 177:
-> root@OpenWrt:~# iwinfo phy1 scan
-> Cell 01 - Address: XX:XX:XX:XX:XX:XX
->           ESSID: "ch177"
->           Mode: Master  Frequency: 5.885 GHz  Band: 5 GHz  Channel: 177
->           Signal: -43 dBm  Quality: 67/70
->           Encryption: mixed WPA2/WPA3 PSK/SAE (CCMP)
->           HT Operation:
->                     Primary Channel: 177
->                     Secondary Channel Offset: no secondary
->                     Channel Width: 20 MHz
+> The most "correct" Fixes tag would appear to be the one that first
+> introduced __counted_by itself (dd06e72e68bc) but __counted_by can never
+> be used at that original change because the test used __element_count__
+> as the attribute name, which never shipped in any compiler. So I would
+> argue that this change really does fix c8248faf3ca2 because that is the
+> point in time that needs this fix.
 
-I wonder how this works with QCA6174, unfortunately I'm not able to test
-that.
+That is fair, you are right.
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
+> This is a good point, as technically to allow use of __counted_by with
+> GCC with a version check, it would need to be 150000, which would
+> potentially break GCC versions between the 15 version bump and landing
+> __counted_by support without the feature check. We could also just do
+> 150100 to be simple about it but I am not sure that is worth doing,
+> since I believe it is important that we support using __counted_by with
+> prerelease GCC. We want to make sure that this attribute gets decent
+> testing coverage while in development.
+>
+> We could ship this with a comment to simplify the check when GCC 15.1.0
+> is released, since this is a feature very unlikely to be backported to
+> earlier GCC releases?
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+Thanks for the clear explanation! Yeah, if older not-yet-released GCC
+15s are important for some people, then I think it is fair to have the
+build test for the time being.
+
+Cheers,
+Miguel
 
