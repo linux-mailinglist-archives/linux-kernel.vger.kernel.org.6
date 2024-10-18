@@ -1,97 +1,94 @@
-Return-Path: <linux-kernel+bounces-372339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880619A475E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8575A9A4765
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B23FA1C22DAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:47:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9601C20986
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77AF206E85;
-	Fri, 18 Oct 2024 19:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F57205E35;
+	Fri, 18 Oct 2024 19:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MSO/RmjZ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="e9AlYhZV"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB85D205E3B
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984FD20262E;
+	Fri, 18 Oct 2024 19:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729280820; cv=none; b=qsRfgff43IwoAaIcUTMaZYkurqibH6uwZ6wdaOusnoFt7Z1QLep0dGMMvPvb0dnavYzpkNMYJ2O91c+J25xyXqG0JCxQ1vmhct77Z4BWyDVViuZD5POrSR+OySxrDsNFC+FXL9qM50jJM8+K079AG7FVVBaRaKcts5BrmpkDqNA=
+	t=1729280901; cv=none; b=kdpLOZrlysEgXetDRLO2jKbbMT0qPMCS82hacVnUteLG7CUGmdS8VxU1fA0dyhbt02RdIrXsTTG8YfUlwr+QuSaZn6IbjiRavghyXzcSWicpXRCFdZ+mbI2Vo8KcjbkH6jBDYJhE5rEfzsu3nW43L0FNii83Al4RnzOawJJFT5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729280820; c=relaxed/simple;
-	bh=hHBuVpG/NK3K94q+q1dgCwzmjlvmZ6FGKW67Ar1jef0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FORSFZ2+RRR2ztpBdy/ym6CKYHnlz9axN0mwLlkb3j5VEU2WC8Uwyfhdm6Bh7nedr2IquugNBhoty114J0LfCiW/fidYlr369g7wAGXeQeJFpp9m0tx5rbj5zsyo5Ij+8aT5rL1OXRljsvv+jG41FUiCSVL8rNgC6+pXQIOznoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MSO/RmjZ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+VepyXiZbx9uJ8aegzhYRA4ICpuwx3cagiAD2SqI8CE=; b=MSO/RmjZ+PMCZR1NX0HIi2Ojmf
-	2Ht9l87B9J3ICbjuh/j9YXg0Odsrih/GKYTGy/trXKYhRjZHtYhmsAw/7ii/n5JpWzmCml0ypXSuA
-	piDB23ud9Ktr6deNfhGSWQ8ZypbvAfRIDZrNH5Dil5D68vHRwymZDf2Jd9jHIsbRzSXQXen0wu5SL
-	2g7FAACSQ4Kw/OTdtiHP+LYQc7Eg5Fs0P3WOOeh++BWyYizQobL6wA7qrrQxCSvzhZkjBtOmzNbNZ
-	hBUAY2C8jPsK/pPqdF5Aq1LgNkQSYL/NIbHOr/jp2x9VftcoTXlv9WuBjGijEs3ZelxfvGPvtB9cP
-	JlF1Nphw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1svj-0000000DXBu-41oR;
-	Fri, 18 Oct 2024 19:46:35 +0000
-Date: Fri, 18 Oct 2024 20:46:35 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	"Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm, zswap: don't touch the XArray lock if there is no
- entry to free
-Message-ID: <ZxK7G3S0N42ejJMh@casper.infradead.org>
-References: <20241018192525.95862-1-ryncsn@gmail.com>
+	s=arc-20240116; t=1729280901; c=relaxed/simple;
+	bh=Ryh9S2w/8zyf3l/+bRpDuNkHuLoaWcsDvh6MES496PE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Zvl19tT5WSmv2Ue5Y5+CDzIbm+Phxq1/3Dl1OeW/JBgABsCQft8XII1iCcDTP9G8lwCgvullvJXGPRwGbSDLbbr6EVhgK3e8yEbTpqjJmhxEQuRzFJua4qSBZqwlS7ZDE3WUBk/hjdOy1DHDHCpCOY84xbxWPoLg0A4y80r/j0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=e9AlYhZV; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 336E1E0003;
+	Fri, 18 Oct 2024 19:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1729280891;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5bo6tysJTyx2Rxxt6aYaCsgvYERLIISBXrIf2OzQFeo=;
+	b=e9AlYhZVsNZ9Nztvev4a4MOSxn3Gj6Az753LsSsJJDifeHimwu9Vv6vQJbaKLbRdejixbt
+	+PqAB8DlqCAaj/j9KFbPdMKu8dqKhgNoxpM49so3Vdyweg9DGotN767mFr/QI1UmPQp0Hl
+	WH+1AyzUy1qK1tS0bIWk6MdBZ6SR101VRmyBQOJ9lLkN6YXKZg8m4BdAgR/LqJ7bElgopK
+	s+lxI2hMS5T/gAMnxeLB6eMsRcjbfCvP6fJ/yLiXBjyawGWwOSFX1vky7vugZMoaDAsqw1
+	pFqwNcIh3uNUIetMd3LmpFeqKUKUEhKqNXBSJ6MkDr22wyboFAiJGrwCslvZ7Q==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Theodore Ts'o
+ <tytso@mit.edu>,  Andreas Dilger <adilger.kernel@dilger.ca>,  Hugh Dickins
+ <hughd@google.com>,  Andrew Morton <akpm@linux-foundation.org>,  Jonathan
+ Corbet <corbet@lwn.net>,  smcv@collabora.com,  kernel-dev@igalia.com,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-ext4@vger.kernel.org,  linux-mm@kvack.org,
+  linux-doc@vger.kernel.org
+Subject: Re: [PATCH v7 0/9] tmpfs: Add case-insensitive support for tmpfs
+In-Reply-To: <20241017-tonyk-tmpfs-v7-0-a9c056f8391f@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Thu, 17 Oct 2024 18:14:10 -0300")
+References: <20241017-tonyk-tmpfs-v7-0-a9c056f8391f@igalia.com>
+Date: Fri, 18 Oct 2024 15:48:07 -0400
+Message-ID: <87frotyyyw.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018192525.95862-1-ryncsn@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gabriel@krisman.be
 
-On Sat, Oct 19, 2024 at 03:25:25AM +0800, Kairui Song wrote:
->  	if (xa_empty(tree))
->  		return;
->  
-> -	entry = xa_erase(tree, offset);
-> -	if (entry)
-> +	rcu_read_lock();
-> +	entry = xas_load(&xas);
-> +	if (entry) {
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-You should call xas_reset() here.  And I'm not sure it's a great idea to
-spin waiting for the xa lock while holding the RCU read lock?  Probably
-not awful but I could easily be wrong.
+> Hi,
+>
+> This patchset adds support for case-insensitive file names lookups in
+> tmpfs. The main difference from other casefold filesystems is that tmpfs
+> has no information on disk, just on RAM, so we can't use mkfs to create a
+> case-insensitive tmpfs.  For this implementation, I opted to have a mount
+> option for casefolding. The rest of the patchset follows a similar approa=
+ch
+> as ext4 and f2fs.
 
-> +		xas_lock(&xas);
-> +		WARN_ON_ONCE(xas_reload(&xas) != entry);
-> +		xas_store(&xas, NULL);
-> +		xas_unlock(&xas);
->  		zswap_entry_free(entry);
-> +	}
-> +	rcu_read_unlock();
->  }
->  
->  int zswap_swapon(int type, unsigned long nr_pages)
-> -- 
-> 2.47.0
-> 
-> 
+Hi Andr=C3=A9,
+
+The series looks good to me now. Thanks for the changes.  Let's see what
+others think.
+
+--=20
+Gabriel Krisman Bertazi
 
