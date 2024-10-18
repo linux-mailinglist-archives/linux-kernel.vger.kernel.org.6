@@ -1,223 +1,329 @@
-Return-Path: <linux-kernel+bounces-371400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD189A3A90
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:54:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D823F9A3A92
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68A031F25F4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:54:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B9A8B25B46
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBFF201038;
-	Fri, 18 Oct 2024 09:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03412201008;
+	Fri, 18 Oct 2024 09:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ahAgEk0z";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oFuBjuHY";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ahAgEk0z";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oFuBjuHY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MkcU2s5w"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA669201007;
-	Fri, 18 Oct 2024 09:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C2C201002;
+	Fri, 18 Oct 2024 09:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729245281; cv=none; b=aSgqaLOdegQLiyFelTJ4oihnvnfQ6qWd4w8MUwkZhaVv+vWG1f85UXMkGDs1Kf6cqSKJubnZ9iSY+PwFl4X1NXREah+nVM/nN838fjGvtreP6MtpKGQTRNAvqpRWZ/0EvAtTETwX1nmbHnM9XbF6+3km0/yKjOF1v9N2UVjGw2I=
+	t=1729245298; cv=none; b=iCDhh6gfkx/CF0wbUwAwZndlZ4cJShNyqWHwKuy057aw1KEeqwHRvL6gwnlcdYdw0xnTRpltIUJStbW0regHcIgyPM+dLUlzj3l5fMddKmRe7+RbpCQ/B0iQlsxdUuwIQejMLfH1D1mAxPLWUIXBHztbh6yc4nKs1FCB3JmPOOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729245281; c=relaxed/simple;
-	bh=y8J1gMb6GjOQGDAWYefK/cBHIifkVuA6UgmIBYFPlUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mSIid96orucOJKozBx98TCaaXnQYshgIy8pVhBomJ9JCUJ4kE6jPcU1H4Aa1pvq7GsPeXxaQKYTVsaBsXYdjTWOVDKQ5IK/gP/Si9xhdcy39yBnxys8NM0sgGA01quIEPVzLG4yhl+BWYAgkWwGSP+5BXkl3vIC6K0Yp1Oh28GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ahAgEk0z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oFuBjuHY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ahAgEk0z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oFuBjuHY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 01AAD21DC1;
-	Fri, 18 Oct 2024 09:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729245278; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CFYRTWF15ddtTIFg4BWAxR2N8EgXFZHV0oxaHhkdnNg=;
-	b=ahAgEk0zvzSSIQKUL6A814A0FQh5Ipctfq0BhVfFC8alaHTg9S3ZROEvSpX5X1LaJNClvf
-	bnXj8udeOg2oRFZCCdQWjyeAt9bw/y0LPKVxsJPZXpEhrq03imopMPJ5oVnLZ3+kcamyn8
-	7oL7HdULCISOdNBdsUb8otGpzlKxZpM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729245278;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CFYRTWF15ddtTIFg4BWAxR2N8EgXFZHV0oxaHhkdnNg=;
-	b=oFuBjuHYSo7tV4kOJ8li0gcK975SC1ZvJIbYPhgffUBCO35Nj+nWZFcPS8hCL7ul1hMgE9
-	DblcD2auLZisyjCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729245278; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CFYRTWF15ddtTIFg4BWAxR2N8EgXFZHV0oxaHhkdnNg=;
-	b=ahAgEk0zvzSSIQKUL6A814A0FQh5Ipctfq0BhVfFC8alaHTg9S3ZROEvSpX5X1LaJNClvf
-	bnXj8udeOg2oRFZCCdQWjyeAt9bw/y0LPKVxsJPZXpEhrq03imopMPJ5oVnLZ3+kcamyn8
-	7oL7HdULCISOdNBdsUb8otGpzlKxZpM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729245278;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CFYRTWF15ddtTIFg4BWAxR2N8EgXFZHV0oxaHhkdnNg=;
-	b=oFuBjuHYSo7tV4kOJ8li0gcK975SC1ZvJIbYPhgffUBCO35Nj+nWZFcPS8hCL7ul1hMgE9
-	DblcD2auLZisyjCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 506CC13680;
-	Fri, 18 Oct 2024 09:54:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id l1ChEV0wEmcvYwAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Fri, 18 Oct 2024 09:54:37 +0000
-Date: Fri, 18 Oct 2024 11:54:35 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Doug Anderson <dianders@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, YueHaibing
- <yuehaibing@huawei.com>, Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, linux-arm-msm
- <linux-arm-msm@vger.kernel.org>, freedreno
- <freedreno@lists.freedesktop.org>
-Subject: Re: [PATCH v3] drm/display: Drop obsolete dependency on
- COMPILE_TEST
-Message-ID: <20241018115435.3632cb10@endymion.delvare>
-In-Reply-To: <CAD=FV=WhVWswn28hbxNDLDhMeiZOpsWzsx8OkORniOxWVx_4Gg@mail.gmail.com>
-References: <20241015134606.5b87093e@endymion.delvare>
-	<CAD=FV=WhVWswn28hbxNDLDhMeiZOpsWzsx8OkORniOxWVx_4Gg@mail.gmail.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1729245298; c=relaxed/simple;
+	bh=SeSwzr6EzUAcT/MCOBwVjCKx6s0L9EQWrYbUqEDA6VE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcfMGI9gFGikG5acgeYRGs1wutzlLzydq43xrWyIXj5dAPrd2THB1o4lx7L2WXfG/0Ydif1JvAGi/QeInFcGqk+fBdoV2TmesvJYChZ5lJjml/gbXo0Syw7yI3zyEJ1+JDA3WH1Mb5gEK+Usz7cF6+MuJw4zvumS+X9QrkxFxUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MkcU2s5w; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I8RdPX014660;
+	Fri, 18 Oct 2024 09:54:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=hoEsiEKp9zGlUSc9yQiidoLpEcUdiB
+	kBdXP4ZJ2KNYs=; b=MkcU2s5wOseMfU1hkNSvzHhrafmAAGxFE0fqnGV3j3FHuf
+	tRLZYG9bylch7Au7q6CCyszRHpCxICTjQIQhA/DBaQhoZeV1SWFqt/ppMTGqL3Mv
+	jWGcXcsnD+HLC3blL1WsYYQA6ZNGFWMHDfwFngseNwsHDFGtFZ4ex7y+uJ+uOO4R
+	x6TPQAl3Sp2hBCqi88n1F9ifRT9UWDwicVzRA0Z8h7SbdF47h7CT2ladhnPBLTQe
+	/T/oLTN/nOfnLmDR9ul/ia3FuL6B8HhueWMYRvXz73J19w7BbXuEn8TriNR9HOfj
+	jBJ2Fi0jPJWB/CBOKPpwBwDkMnPWCoo4idnQiYEw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42aqgr7yuv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 09:54:45 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49I9sjrA017375;
+	Fri, 18 Oct 2024 09:54:45 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42aqgr7yuu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 09:54:45 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49I9h5Cv005951;
+	Fri, 18 Oct 2024 09:54:44 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 428651bc0k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 09:54:44 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49I9sgWX21102854
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Oct 2024 09:54:42 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 99D4C2004D;
+	Fri, 18 Oct 2024 09:54:42 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E1EE620049;
+	Fri, 18 Oct 2024 09:54:40 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 18 Oct 2024 09:54:40 +0000 (GMT)
+Date: Fri, 18 Oct 2024 15:24:38 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        linux-kernel@vger.kernel.org, dchinner@redhat.com,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, nirjhar@linux.ibm.com
+Subject: Re: [PATCH v3] xfs: Check for delayed allocations before setting
+ extsize
+Message-ID: <ZxIwXkHvI/aV++Nl@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20241011145427.266614-1-ojaswin@linux.ibm.com>
+ <20241011163830.GX21853@frogsfrogsfrogs>
+ <20241011164057.GY21853@frogsfrogsfrogs>
+ <ZwzlPR6044V/Siph@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <20241014152856.GG21853@frogsfrogsfrogs>
+ <Zw4RYapUKWH5u7yt@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <20241015162237.GX21853@frogsfrogsfrogs>
+ <ZxC2xEdWGVXDIFqR@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <20241017145630.GU21853@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	HAS_ORG_HEADER(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[lists.freedesktop.org,vger.kernel.org,linux.intel.com,kernel.org,suse.de,gmail.com,ffwll.ch,huawei.com,quicinc.com,linaro.org,poorly.run,somainline.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017145630.GU21853@frogsfrogsfrogs>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 7-eLRouJC4xqNhxkQtw1oQCeExuVQMKC
+X-Proofpoint-GUID: DCNmqGBXicvToS4MhmIXShLuralR_0f2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 spamscore=0 mlxscore=0 suspectscore=0
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410180060
 
-Hi Doug,
+On Thu, Oct 17, 2024 at 07:56:30AM -0700, Darrick J. Wong wrote:
+> On Thu, Oct 17, 2024 at 12:33:32PM +0530, Ojaswin Mujoo wrote:
+> > On Tue, Oct 15, 2024 at 09:22:37AM -0700, Darrick J. Wong wrote:
+> > > On Tue, Oct 15, 2024 at 12:23:21PM +0530, Ojaswin Mujoo wrote:
+> > > > On Mon, Oct 14, 2024 at 08:28:56AM -0700, Darrick J. Wong wrote:
+> > > > > On Mon, Oct 14, 2024 at 03:02:45PM +0530, Ojaswin Mujoo wrote:
+> > > > > > On Fri, Oct 11, 2024 at 09:40:57AM -0700, Darrick J. Wong wrote:
+> > > > > > > On Fri, Oct 11, 2024 at 09:38:30AM -0700, Darrick J. Wong wrote:
+> > > > > > > > On Fri, Oct 11, 2024 at 08:24:27PM +0530, Ojaswin Mujoo wrote:
+> > > > > > > > > Extsize is allowed to be set on files with no data in it. For this,
+> > > > > > > > > we were checking if the files have extents but missed to check if
+> > > > > > > > > delayed extents were present. This patch adds that check.
+> > > > > > > > > 
+> > > > > > > > > While we are at it, also refactor this check into a helper since
+> > > > > > > > > its used in some other places as well like xfs_inactive() or
+> > > > > > > > > xfs_ioctl_setattr_xflags()
+> > > > > > > > > 
+> > > > > > > > > **Without the patch (SUCCEEDS)**
+> > > > > > > > > 
+> > > > > > > > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> > > > > > > > > 
+> > > > > > > > > wrote 1024/1024 bytes at offset 0
+> > > > > > > > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> > > > > > > > > 
+> > > > > > > > > **With the patch (FAILS as expected)**
+> > > > > > > > > 
+> > > > > > > > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> > > > > > > > > 
+> > > > > > > > > wrote 1024/1024 bytes at offset 0
+> > > > > > > > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> > > > > > > > > xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
+> > > > > > > > > 
+> > > > > > > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > > > > > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > > > > > > 
+> > > > > > > > Looks good now,
+> > > > > > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > > > > > 
+> > > > > > > That said, could you add a fixes tag for the xfs_ioctl_setattr_*
+> > > > > > > changes, please?
+> > > > > > 
+> > > > > > Actually a small doubt Darrick regarding the Fixes commit (asked inline
+> > > > > > below):
+> > > > > > 
+> > > > > > > 
+> > > > > > > --D
+> > > > > > > 
+> > > > > > > > --D
+> > > > > > > > 
+> > > > > > > > > ---
+> > > > > > > > >  fs/xfs/xfs_inode.c | 2 +-
+> > > > > > > > >  fs/xfs/xfs_inode.h | 5 +++++
+> > > > > > > > >  fs/xfs/xfs_ioctl.c | 4 ++--
+> > > > > > > > >  3 files changed, 8 insertions(+), 3 deletions(-)
+> > > > > > > > > 
+> > > > > > > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> > > > > > > > > index bcc277fc0a83..19dcb569a3e7 100644
+> > > > > > > > > --- a/fs/xfs/xfs_inode.c
+> > > > > > > > > +++ b/fs/xfs/xfs_inode.c
+> > > > > > > > > @@ -1409,7 +1409,7 @@ xfs_inactive(
+> > > > > > > > >  
+> > > > > > > > >  	if (S_ISREG(VFS_I(ip)->i_mode) &&
+> > > > > > > > >  	    (ip->i_disk_size != 0 || XFS_ISIZE(ip) != 0 ||
+> > > > > > > > > -	     ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0))
+> > > > > > > > > +	     xfs_inode_has_filedata(ip)))
+> > > > > > > > >  		truncate = 1;
+> > > > > > > > >  
+> > > > > > > > >  	if (xfs_iflags_test(ip, XFS_IQUOTAUNCHECKED)) {
+> > > > > > > > > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> > > > > > > > > index 97ed912306fd..03944b6c5fba 100644
+> > > > > > > > > --- a/fs/xfs/xfs_inode.h
+> > > > > > > > > +++ b/fs/xfs/xfs_inode.h
+> > > > > > > > > @@ -292,6 +292,11 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
+> > > > > > > > >  	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
+> > > > > > > > >  }
+> > > > > > > > >  
+> > > > > > > > > +static inline bool xfs_inode_has_filedata(const struct xfs_inode *ip)
+> > > > > > > > > +{
+> > > > > > > > > +	return ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0;
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > >  /*
+> > > > > > > > >   * Check if an inode has any data in the COW fork.  This might be often false
+> > > > > > > > >   * even for inodes with the reflink flag when there is no pending COW operation.
+> > > > > > > > > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> > > > > > > > > index a20d426ef021..2567fd2a0994 100644
+> > > > > > > > > --- a/fs/xfs/xfs_ioctl.c
+> > > > > > > > > +++ b/fs/xfs/xfs_ioctl.c
+> > > > > > > > > @@ -481,7 +481,7 @@ xfs_ioctl_setattr_xflags(
+> > > > > > > > >  
+> > > > > > > > >  	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
+> > > > > > > > >  		/* Can't change realtime flag if any extents are allocated. */
+> > > > > > > > > -		if (ip->i_df.if_nextents || ip->i_delayed_blks)
+> > > > > > > > > +		if (xfs_inode_has_filedata(ip))
+> > > > > > > > >  			return -EINVAL;
+> > > > > > > > >  
+> > > > > > > > >  		/*
+> > > > > > > > > @@ -602,7 +602,7 @@ xfs_ioctl_setattr_check_extsize(
+> > > > > > > > >  	if (!fa->fsx_valid)
+> > > > > > > > >  		return 0;
+> > > > > > > > >  
+> > > > > > > > > -	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
+> > > > > > > > > +	if (S_ISREG(VFS_I(ip)->i_mode) && xfs_inode_has_filedata(ip) &&
+> > > > > > 
+> > > > > > So seems like there have been lots of changes to this particular line
+> > > > > > mostly as a part of refactoring other areas but seems like the actual
+> > > > > > commit that introduced it was:
+> > > > > > 
+> > > > > >   commit e94af02a9cd7b6590bec81df9d6ab857d6cf322f
+> > > > > >   Author: Eric Sandeen <sandeen@sgi.com>
+> > > > > >   Date:   Wed Nov 2 15:10:41 2005 +1100
+> > > > > >   
+> > > > > >       [XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not
+> > > > > >       using xfs rt
+> > > > > > 
+> > > > > > Before this we were actually checking ip->i_delayed_blks correctly. So just wanted 
+> > > > > > to confirm that the fixes would have the above commit right?
+> > > > > > 
+> > > > > > If this looks okay I'll send a revision with this above tags:
+> > > > > > 
+> > > > > > Fixes: e94af02a9cd7 ("[XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not using xfs rt")
+> > > > > 
+> > > > > Yeah, that sounds fine.  Want to write a quick fstest to bang on
+> > > > > xfs_ioctl_setattr_check_extsize to force everyone to backport it? :)
+> > > > 
+> > > > Got it, thanks, I'll send a v4.
+> > > > 
+> > > > Regarding the tests, we were thinking of adding more comprehensive
+> > > > generic tests for extsize now that ext4 is also implementing it. We
+> > > > have a new team member Nirjhar (cc'd) who is interested in writing the 
+> > > > xfstest and is working on it as we speak.
+> > > 
+> > > Heh, welcome! :)
+> > > 
+> > > > Since the area is new to him, it might take a bit of time to get that
+> > > > out, hope that is okay?
+> > > 
+> > > Sounds good to me.  You might see how many of the tests/xfs/ stuff can
+> > > be pulled up to tests/generic/ as a starting point.
+> > 
+> > Sure Darrick, I believe you mean how many of the extsize related tests
+> > we can pull up right?
+> > 
+> > So I was checking this and I could find some relevant tests:
+> > 
+> >  * Looking into existing tests around extsize:
+> >    * xfs/074
+> >      * Check some extent size hint boundary conditions that can result in
+> >        MAXEXTLEN overflows.
+> >      * This looks specific to xfs however
+> > 
+> >    * xfs/208
+> >      * Testing interactinon b/w cowextsize and extsize but again seems xfs specific
+> > 
+> >    * xfs/207
+> >      * basic test on setting and getting (cow)extsize on file with data or empty
+> >      * This is a subset of the features we are testing with our test, but only
+> >        for extsize not cowextsize.
+> >      * So we can probably remove the equivalent tests from here when we add the generic
+> >        one.
+> > 
+> >    * xfs/419
+> >      * These are related to extsize inherit feature but with rtinherit.
+> >      * The current patchset in ext4 doesn't implement this extszinherit but it
+> >        might be something we might want to do in the future
+> >      * We can look into hoisting the extszinherit related tests at some point
+> > 
+> >   * The other ones I looked into around extsize again seemed to be specific to
+> >     xfx but maybe i missed something.
+> > 
+> > Are there any other tests you had in mind Darrick?
+> 
+> Not really.  Most of my testing comes from setting up an entire vm
+> config with extszinherit=X in the MKFS_OPTIONS.  I wonder if we need a
+> single generic test to kick the tires on the functionality just to make
+> sure that everyone runs it even if they only do an all-defaults testrun?
 
-On Tue, 15 Oct 2024 09:06:04 -0700, Doug Anderson wrote:
-> On Tue, Oct 15, 2024 at 4:46=E2=80=AFAM Jean Delvare <jdelvare@suse.de> w=
-rote:
-> > Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
-> > is possible to test-build any driver which depends on OF on any
-> > architecture by explicitly selecting OF. Therefore depending on
-> > COMPILE_TEST as an alternative is no longer needed.
-> >
-> > To avoid reintroducing the randconfig bug originally fixed by commit
-> > 876271118aa4 ("drm/display: Fix build error without CONFIG_OF"),
-> > DRM_MSM which selects DRM_DISPLAY_DP_HELPER must explicitly depend
-> > on OF. This is consistent with what all other DRM drivers are doing.
-> >
-> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> > Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-> > Cc: David Airlie <airlied@gmail.com>
-> > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > ---
-> > For regular builds, this is a no-op, as OF is always enabled on
-> > ARCH_QCOM and SOC_IMX5. So this change only affects test builds. As
-> > explained before, allowing test builds only when OF is enabled
-> > improves the quality of these test builds, as the result is then
-> > closer to how the code is built on its intended targets.
-> >
-> > Changes in v3:
-> > * Rebase on top of kernel v6.11.
-> > Changes in v2:
-> > * Let DRM_MSM depend on OF so that random test builds won't break.
-> >
-> >  drivers/gpu/drm/display/Kconfig |    2 +-
-> >  drivers/gpu/drm/msm/Kconfig     |    1 +
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> >
-> > --- linux-6.11.orig/drivers/gpu/drm/display/Kconfig
-> > +++ linux-6.11/drivers/gpu/drm/display/Kconfig
-> > @@ -3,7 +3,7 @@
-> >  config DRM_DISPLAY_DP_AUX_BUS
-> >         tristate
-> >         depends on DRM
-> > -       depends on OF || COMPILE_TEST
-> > +       depends on OF
-> >
-> >  config DRM_DISPLAY_HELPER
-> >         tristate
-> > --- linux-6.11.orig/drivers/gpu/drm/msm/Kconfig
-> > +++ linux-6.11/drivers/gpu/drm/msm/Kconfig
-> > @@ -6,6 +6,7 @@ config DRM_MSM
-> >         depends on ARCH_QCOM || SOC_IMX5 || COMPILE_TEST
-> >         depends on COMMON_CLK
-> >         depends on IOMMU_SUPPORT
-> > +       depends on OF =20
->=20
-> Perhaps nobody landed this because you're missing the msm maintainers
-> as specified by `./scripts/get_maintainer.pl -f
-> drivers/gpu/drm/msm/Kconfig` ? I've added them here. It seems like
-> we'd at least need an Ack by those guys since this modified the
-> msm/Kconfig...
+Got it Darrick, thanks for the inputs.
 
-You are right. The fix originally only touched
-drivers/gpu/drm/display/Kconfig and I forgot to update the maintainers
-list for v2 when drivers/gpu/drm/msm/Kconfig had to be modified as
-well. Thank you for noticing and getting the right people involved,
-this clearly made a difference :-)
+Sure we can look into adding/enhancing tests for extsizeinherit in mkfs
+as well as setting using xfs_io.
 
-> FWIW I haven't spent massive time studying this, but what you have
-> here looks reasonable. I'm happy at least with this from a DP AUX bus
-> perspective:
->=20
-> Acked-by: Douglas Anderson <dianders@chromium.org>
->=20
-> Presumably landing this via drm-misc makes the most sense after MSM
-> guys give it an Ack.
-
-Thanks,
---=20
-Jean Delvare
-SUSE L3 Support
+Regards,
+ojaswin
+> 
+> --D
+> 
+> > Regards,
+> > ojaswin
+> > 
+> > > 
+> > > --D
+> > > 
+> > > > Regards,
+> > > > Ojaswin
+> > > > 
+> > > > > 
+> > > > > --D
+> > > > > 
+> > > > > > Thanks,
+> > > > > > Ojaswin
+> > > > > > 
+> > > > > > > > >  	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
+> > > > > > > > >  		return -EINVAL;
+> > > > > > > > >  
+> > > > > > > > > -- 
+> > > > > > > > > 2.43.5
+> > > > > > > > > 
+> > > > > > > > > 
+> > > > > > > > 
+> > > > > > 
+> > > > 
+> > 
 
