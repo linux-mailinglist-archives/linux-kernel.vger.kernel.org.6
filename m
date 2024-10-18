@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-371827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 180569A40EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:17:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2375A9A40F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABFB81F2467A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:17:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F351F2481F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D264F1D969C;
-	Fri, 18 Oct 2024 14:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41691F4267;
+	Fri, 18 Oct 2024 14:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLSuyBJN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="lVIzDg8I"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2153720E30F;
-	Fri, 18 Oct 2024 14:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C7D6BFCA;
+	Fri, 18 Oct 2024 14:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729261036; cv=none; b=god4njQFRXETTet/03/GrzgpTEM9c3LVx+RUDbqstQ/+ZHxF34XUkxilo7J24HIrdhdx6WGqMrBJ2AYknMJo96IppA4bbWWBnfwxDVPIDrRdhqOkLzPHQEOEPWEL6VECleRMT69N2FcHLqi8wycfLd3CYM5nrQb6DcQmXTVokDY=
+	t=1729261141; cv=none; b=fNthKOBW/Ze+QCVbdgeOpiTcE+y2vGZJFE1thjkx3Z+iHDr6dLtlyzyvDZY7o3IqS65hsWMa5axODTXDiJDJtSKdW6hGsr6TQWL0gNUb/XU/eSdpWg480GoR4AQeOB0Oy2Chbwylp3KdZetlXLMvpowfwHU/ilgpyMHd6C+BwwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729261036; c=relaxed/simple;
-	bh=8QatYD1USeo6p/RJYPbJf7AP0z42xV4gcApBL5SbZ+I=;
+	s=arc-20240116; t=1729261141; c=relaxed/simple;
+	bh=8Ay7Hj5OZgQ7MGqy5i7LUi6fdznUG66vs92kGE3WWYE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sOlTfbnIJGY0gObpgqjzljArNg+78QvInzRA5MA3WfIBxhs6wh8VP/oUxu3kg8TErwzrgauICHbYgCTFKC1rvzhYHi6Dc6wvE3tk8CxdaqbV4mANxbqzXaDUUIEUwSUaJ6HSxdtDfj9FdC5VlqzY9cj2NDEIgYbtFNx03CNZAuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLSuyBJN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5559C4CEC3;
-	Fri, 18 Oct 2024 14:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729261035;
-	bh=8QatYD1USeo6p/RJYPbJf7AP0z42xV4gcApBL5SbZ+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PLSuyBJNXDfagM/lJPbLxv8sJlcpChxg1Qk8Vc9uWjYH18XRNoggUVr4S1EaJAZWj
-	 cWk6u/wTcktXZIEFtnmYmf/kZ8rr+wMF2JF+VjFI7PfFyIMMsdsIWBW6jQV40x3ot7
-	 sH1Iw5GovHw+FypHDriLG5uvv8xVXoODUlQ7qDF5t7bHVPYmaZplb1NrQYuNB8R1R2
-	 HwpP9WuULN+Ly+vmld7j5ID8El8Xp0hm6efWgiX8p5PKWFBAvvTeJ8zeaT+NTaxxZg
-	 P45Roc7sBHF8Rr1cpiKLZNDQsdU0D93ty05mP9UKuYvWw6m6eG2kMu1149h/lFpKPn
-	 +pQxueFC+fZ3A==
-Date: Fri, 18 Oct 2024 15:17:10 +0100
-From: Simon Horman <horms@kernel.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>, Petr Machata <petrm@nvidia.com>,
-	Ido Schimmel <idosch@nvidia.com>, Vlad Buslov <vladbu@nvidia.com>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	Baowen Zheng <baowen.zheng@corigine.com>,
-	Pedro Tammela <pctammela@mojatatu.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOYRiisZPma4zQELGQ3AuIM34WWL6R6Q8tfiumNysd8fSUsxw/WIMOXB1YSlhJUsumcb6F8Hcd6sr2IyUtoekLTAhBAiohjtNn4tbqoDtojkXr+/soOq1tyCBbXo5A7wFTKH8NkrPICWU5ns5GXuKa5ILGxCTyA7kDPv/8WLsMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=lVIzDg8I; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id C43E222909;
+	Fri, 18 Oct 2024 16:18:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1729261127;
+	bh=kMMaRKGZ6ngPRcX/Zv1+XoEwbVnv1U3vYYkh/ZUsUq0=; h=From:To:Subject;
+	b=lVIzDg8IpqceAxis4t3wHm1bshLDCxgQPc5pmoqr2JPPeiSaNw5L3Ve46BZy8+3ke
+	 ycfUJ4U0U3vp/ixn38OEX4uH0d+Eb0cTYaaoNBo2O0vzMuw+TrSJ4x5ntoxZLx0Hqu
+	 tZBh1RDZHy4lTk0IojP80p/RhJroVtAf2LNBVV7TWyZhmeRIojL88qEvN30KJXHxj8
+	 ggUhurQe5IzDObqOKt03yl+2ScczfA0HJ/sK81tskGwUXbyGTtMDQ9ozjhxRUJNrqi
+	 zM3kVl1i/LtLg5sFN3S3IastDgMx5QZAntIw5jvsmQ0y0NyzXheTWBpcOCNk4SMAB5
+	 SOrF8qidLj9Lw==
+Date: Fri, 18 Oct 2024 16:18:42 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Rob Herring <robh@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Parth Pancholi <parth.pancholi@toradex.com>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net/sched: act_api: deny mismatched skip_sw/skip_hw
- flags for actions created by classifiers
-Message-ID: <20241018141710.GO1697@kernel.org>
-References: <20241017161049.3570037-1-vladimir.oltean@nxp.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: usb: add TUSB73x0 PCIe
+Message-ID: <20241018141825.GA46391@francesco-nb>
+References: <20241018105505.28005-1-francesco@dolcini.it>
+ <20241018105505.28005-2-francesco@dolcini.it>
+ <20241018140743.GA98324-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,90 +67,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017161049.3570037-1-vladimir.oltean@nxp.com>
+In-Reply-To: <20241018140743.GA98324-robh@kernel.org>
 
-On Thu, Oct 17, 2024 at 07:10:48PM +0300, Vladimir Oltean wrote:
-> tcf_action_init() has logic for checking mismatches between action and
-> filter offload flags (skip_sw/skip_hw). AFAIU, this is intended to run
-> on the transition between the new tc_act_bind(flags) returning true (aka
-> now gets bound to classifier) and tc_act_bind(act->tcfa_flags) returning
-> false (aka action was not bound to classifier before). Otherwise, the
-> check is skipped.
-> 
-> For the case where an action is not standalone, but rather it was
-> created by a classifier and is bound to it, tcf_action_init() skips the
-> check entirely, and this means it allows mismatched flags to occur.
-> 
-> Taking the matchall classifier code path as an example (with mirred as
-> an action), the reason is the following:
-> 
->  1 | mall_change()
->  2 | -> mall_replace_hw_filter()
->  3 |   -> tcf_exts_validate_ex()
->  4 |      -> flags |= TCA_ACT_FLAGS_BIND;
->  5 |      -> tcf_action_init()
->  6 |         -> tcf_action_init_1()
->  7 |            -> a_o->init()
->  8 |               -> tcf_mirred_init()
->  9 |                  -> tcf_idr_create_from_flags()
-> 10 |                     -> tcf_idr_create()
-> 11 |                        -> p->tcfa_flags = flags;
-> 12 |         -> tc_act_bind(flags))
-> 13 |         -> tc_act_bind(act->tcfa_flags)
-> 
-> When invoked from tcf_exts_validate_ex() like matchall does (but other
-> classifiers validate their extensions as well), tcf_action_init() runs
-> in a call path where "flags" always contains TCA_ACT_FLAGS_BIND (set by
-> line 4). So line 12 is always true, and line 13 is always true as well.
-> No transition ever takes place, and the check is skipped.
-> 
-> The code was added in this form in commit c86e0209dc77 ("flow_offload:
-> validate flags of filter and actions"), but I'm attributing the blame
-> even earlier in that series, to when TCA_ACT_FLAGS_SKIP_HW and
-> TCA_ACT_FLAGS_SKIP_SW were added to the UAPI.
-> 
-> Following the development process of this change, the check did not
-> always exist in this form. A change took place between v3 [1] and v4 [2],
-> AFAIU due to review feedback that it doesn't make sense for action flags
-> to be different than classifier flags. I think I agree with that
-> feedback, but it was translated into code that omits enforcing this for
-> "classic" actions created at the same time with the filters themselves.
-> 
-> There are 3 more important cases to discuss. First there is this command:
-> 
-> $ tc qdisc add dev eth0 clasct
-> $ tc filter add dev eth0 ingress matchall skip_sw \
-> 	action mirred ingress mirror dev eth1
-> 
-> which should be allowed, because prior to the concept of dedicated
-> action flags, it used to work and it used to mean the action inherited
-> the skip_sw/skip_hw flags from the classifier. It's not a mismatch.
-> 
-> Then we have this command:
-> 
-> $ tc qdisc add dev eth0 clasct
-> $ tc filter add dev eth0 ingress matchall skip_sw \
-> 	action mirred ingress mirror dev eth1 skip_hw
-> 
-> where there is a mismatch and it should be rejected.
-> 
-> Finally, we have:
-> 
-> $ tc qdisc add dev eth0 clasct
-> $ tc filter add dev eth0 ingress matchall skip_sw \
-> 	action mirred ingress mirror dev eth1 skip_sw
-> 
-> where the offload flags coincide, and this should be treated the same as
-> the first command based on inheritance, and accepted.
-> 
-> [1]: https://lore.kernel.org/netdev/20211028110646.13791-9-simon.horman@corigine.com/
-> [2]: https://lore.kernel.org/netdev/20211118130805.23897-10-simon.horman@corigine.com/
-> Fixes: 7adc57651211 ("flow_offload: add skip_hw and skip_sw to control if offload the action")
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Hello Rob,
+thanks for the review.
 
-Thanks Vladimir,
+On Fri, Oct 18, 2024 at 09:07:43AM -0500, Rob Herring wrote:
+> On Fri, Oct 18, 2024 at 12:55:04PM +0200, Francesco Dolcini wrote:
+> > From: Parth Pancholi <parth.pancholi@toradex.com>
+> > 
+> > Add device tree bindings for TI's TUSB73x0 PCIe-to-USB 3.0 xHCI
+> > host controller. The controller supports software configuration
+> > through PCIe registers, such as controlling the PWRONx polarity
+> > via the USB control register (E0h).
+> > 
+> > Similar generic PCIe-based bindings can be found as qcom,ath11k-pci.yaml
+> > as an example.
+> > 
+> > Datasheet: https://www.ti.com/lit/ds/symlink/tusb7320.pdf
+> > Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > ---
+> > v3: use lowercase hex in compatible
+> > v2: rename property to ti,tusb7320-pwron-active-high and change type to flag
+> > ---
+> >  .../bindings/usb/ti,tusb73x0-pci.yaml         | 60 +++++++++++++++++++
+> >  1 file changed, 60 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml b/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+> > new file mode 100644
+> > index 000000000000..7083e24d279c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/ti,tusb73x0-pci.yaml
+> > @@ -0,0 +1,60 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/usb/ti,tusb73x0-pci.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: TUSB73x0 USB 3.0 xHCI Host Controller (PCIe)
+> > +
+> > +maintainers:
+> > +  - Francesco Dolcini <francesco.dolcini@toradex.com>
+> > +
+> > +description:
+> > +  TUSB73x0 USB 3.0 xHCI Host Controller via PCIe x1 Gen2 interface.
+> > +  The TUSB7320 supports up to two downstream ports, the TUSB7340 supports up
+> > +  to four downstream ports.
+> 
+> XHCI controller, should be referencing usb-xhci.yaml.
+> 
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: pci104c,8241
+> 
+> 2 parts mentioned above, but only 1 PCI ID?
 
-This looks like an oversight to me.
+Exactly. Let me know if there is something we should do in this regard
+(something in the commit message? or in the description?).
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+From the datasheet:
+  This 16-bit read only register contains the value 8241h,
+  which is the device ID assigned by TI to the TUSB73X0
+
+And one more confirmation, in the Linux code you have quirks for this
+device that just check for a single device id:
+
+drivers/usb/host/xhci-pci.c:459
+  if (pdev->vendor == PCI_VENDOR_ID_TI && pdev->device == 0x8241)         
+    xhci->quirks |= XHCI_LIMIT_ENDPOINT_INTERVAL_7;                 
+
+Francesco
+
 
