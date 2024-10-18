@@ -1,227 +1,296 @@
-Return-Path: <linux-kernel+bounces-371338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A1D9A39C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:18:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E0A9A39CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3A6DB26D4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:18:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A34028568D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1187D1E906C;
-	Fri, 18 Oct 2024 09:17:02 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A351EF0A3;
+	Fri, 18 Oct 2024 09:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPlW4y9n"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FCA1FF5F1
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D05190665;
+	Fri, 18 Oct 2024 09:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729243021; cv=none; b=d0KWGmFoVXTsSuXdN42Qoxbn+ag9P4lCUZQL6zWynqOXG20CjdqPyCYYZAQi3/7uyvlAFbCzobWnEh/UmRUooqdQxLKWAgprh2MII7KPBAKfOZ+46JmqJOsocuT8hZYxpXnBXP/NEYIb0e41f7Ih4x8mhKHEr0DyAWMNLZ0SfBU=
+	t=1729243213; cv=none; b=H6I77zC6dvQfcBQD442jjaSIImpmWzH+0uiG1DXrMtu9uM529N65rwvqq5lbwH7itedN4A25KOqiEC5pWnNHY0hmK7oDQimwq6hX7ToUUZLiTZPQn26ZLOas/3iSRJIn3SwIsjYdNVHhvDdFqfcOoJ181WW3xJxtljQdGje8rlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729243021; c=relaxed/simple;
-	bh=rzkEdXf9tnVWOIhcsEoK9mKCEw0k2o0GdcuNOkBNxmM=;
+	s=arc-20240116; t=1729243213; c=relaxed/simple;
+	bh=0Q2KDEP0qq3PAiq/FDJibeD0M+vUwjUeKaUtocNKyOs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VB1lLvpeaOZDteKUVfrt/f/hpjy4OBEcBqV/qPWGoViZMH4wO3P4P7RYL/zRDL+vd48YndIUoJdHr4I+G5AVG6+Z3w8XtD+ZeSAQoaXAKyMv+9JoaeI6fBhba19vvxbnUCzNdz+Rd2ndB2u1hrDeDCJVRDrE7/wD1ukje30X0sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1j6G-0004by-1v; Fri, 18 Oct 2024 11:16:48 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1j6E-000Bd1-2i;
-	Fri, 18 Oct 2024 11:16:46 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 7CFAF357AF1;
-	Fri, 18 Oct 2024 09:16:46 +0000 (UTC)
-Date: Fri, 18 Oct 2024 11:16:46 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: RE: RE: [PATCH net-next 07/13] net: fec: fec_probe(): update
- quirk: bring IRQs in correct order
-Message-ID: <20241018-black-dormouse-of-exercise-f7fed0-mkl@pengutronix.de>
-References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
- <20241016-fec-cleanups-v1-7-de783bd15e6a@pengutronix.de>
- <PAXPR04MB85103D3E433F3FBE5DDFA15C88472@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20241017-affable-impartial-rhino-a422ec-mkl@pengutronix.de>
- <PAXPR04MB8510149D0E8AC39E048941F988472@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20241017-manipulative-dove-of-renovation-88d00b-mkl@pengutronix.de>
- <ZxEZR2lmIbX6+xX2@lizhi-Precision-Tower-5810>
- <20241017-rainbow-nifty-gazelle-9acee4-mkl@pengutronix.de>
- <ZxEtpRWsi+QiYsFh@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhFEOuk4cIAB5HoDrb3Ve1aBuu5r1cpLBDzWtr+m6F1pl1ToLX7Osy9rfCsOIrq87NEDgmYntei3GDN/LzhxUFHDRn+IX8yet1wm1bvcmGTUpIusgMKdXxmkoGftYNEv7nH/ypeAxca1WAB0501Y4UNja6GXa80mRGswAz9Sr8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GPlW4y9n; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314f38d274so24613135e9.1;
+        Fri, 18 Oct 2024 02:20:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729243210; x=1729848010; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oxu7aS4Jv02dvxySCdMe6qqTPQFuzAQt/P2vOVwqeLs=;
+        b=GPlW4y9nzEhQV/UM/0ItXAzuBBbj8Qq+0l/90vW7JOWzVTtpK6UHFslmjwjhm2d+Fn
+         TWggR95Ok1puSHW+aH7roXIksIXYg6I1zm+qTmmgi5Fzmxsv1iZfCKgvSeyrn/H7Fcx9
+         77G9s/xK8uf9mpuFYdABi3zN2sOBk6/fquftAsK/vlrCvsUw6AptcSQyI6XhqxqCt05D
+         tcoAuGfvs4PHeJJbsHM6gXB0WxApw774w8yYDbF/A7SCY4L8VcxnI2/9ma99anWLmSEm
+         x4LEBoAKE1ghao8tVjbuI5unr/53JVCOzzJ/xzl2wJx/cvT3+DdpF/h9WcQMV3tLFh+h
+         9Zag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729243210; x=1729848010;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oxu7aS4Jv02dvxySCdMe6qqTPQFuzAQt/P2vOVwqeLs=;
+        b=P3CoZWoW5GZIq+ZBmrJ7csczE23haZzG7LM8XX7gBsSgey+GRV9oqkcCnHZoXGW9k+
+         ElmOe6pSeqFahRGX3qEPQHKB5rLmJd9+yMibeoGvZe+mSVJh1ll6FCs2MmmRJ3N/7D7c
+         3F2uk8n2/MRFw4yU8hIwVwtnLjgYuQYUdTiDakpl4dZ43a6Gd+fIIeZzkW8dORoB/KeQ
+         FlViI5FLDJGLchfQp6zuOBF6NjNkyBOC/XJYRd5a1zUjcNOb4LrwWM+eks+FUs6qPE09
+         F9389w4Gubv2ub35VV8PHD02u3uQ82QrifUasJJANhpxNimD+i1Z7CMsVppHKTQf/GJS
+         76kw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/mgZo0FL/W/PGxc+gDcHXF0jkUl/yKwTQviGOOIhIou1vec2PEixH1dDzGiVByZLxDPbwrOeTGUt2dns=@vger.kernel.org, AJvYcCWIWL3t4nPEi2yeFZtpUPPgnk3UUmKCjzC5iAYohMxrwRHfT5mIBBdj2g/bqGtDulRXwFC31uukfS6f2qI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhwhyx+i5hPnT85+hL23Hu4C004TtTq+wYFEbKZ1s672tV7WBi
+	BN4WB/6wjnn8Z8pKVMr+pEGOyL75krF9XGXAA9u2AGJTaXZaqMnu
+X-Google-Smtp-Source: AGHT+IEzesBa7EdinoBbue9zF/6mRcpA92tyNukPTgU3ZZhCU3Hx3wKED8/AwnFcpiT8PwGZB1Cd1g==
+X-Received: by 2002:a05:600c:3b1e:b0:42c:a8cb:6a5a with SMTP id 5b1f17b1804b1-43161636cd1mr17115065e9.15.1729243209528;
+        Fri, 18 Oct 2024 02:20:09 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-51-176.cust.vodafonedsl.it. [188.217.51.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160e4424asm18495345e9.32.2024.10.18.02.20.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 02:20:09 -0700 (PDT)
+Date: Fri, 18 Oct 2024 11:20:07 +0200
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: sakari.ailus@linux.intel.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: ov5645: add HAS_EVENTS supporty
+Message-ID: <ZxIoR6T6V0WgDdq0@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+References: <20241014173840.412695-1-tomm.merciai@gmail.com>
+ <20241014175452.GB13238@pendragon.ideasonboard.com>
+ <Zw4IrU8bOOtq26Gx@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+ <Zw6aZiBvRM5hvqVn@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+ <20241016200836.GF30496@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5ozr2uxsly64lqtk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxEtpRWsi+QiYsFh@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20241016200836.GF30496@pendragon.ideasonboard.com>
 
+Hi Laurent,
 
---5ozr2uxsly64lqtk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Oct 16, 2024 at 11:08:36PM +0300, Laurent Pinchart wrote:
+> Hi Tommaso,
+> 
+> On Tue, Oct 15, 2024 at 06:37:58PM +0200, Tommaso Merciai wrote:
+> > On Tue, Oct 15, 2024 at 08:16:13AM +0200, Tommaso Merciai wrote:
+> > > On Mon, Oct 14, 2024 at 08:54:52PM +0300, Laurent Pinchart wrote:
+> > > > On Mon, Oct 14, 2024 at 07:38:40PM +0200, Tommaso Merciai wrote:
+> > > > > Controls can be exposed to userspace via a v4l-subdevX device, and
+> > > > > userspace has to be able to subscribe to control events so that it is
+> > > > > notified when the control changes value.
+> > > > > Add missing HAS_EVENTS support: flag and .(un)subscribe_event().
+> > > > > 
+> > > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > > > > ---
+> > > > >  drivers/media/i2c/ov5645.c | 10 +++++++++-
+> > > > >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> > > > > index 0c32bd2940ec..2c5145d5c616 100644
+> > > > > --- a/drivers/media/i2c/ov5645.c
+> > > > > +++ b/drivers/media/i2c/ov5645.c
+> > > > > @@ -29,6 +29,7 @@
+> > > > >  #include <linux/slab.h>
+> > > > >  #include <linux/types.h>
+> > > > >  #include <media/v4l2-ctrls.h>
+> > > > > +#include <media/v4l2-event.h>
+> > > > >  #include <media/v4l2-fwnode.h>
+> > > > >  #include <media/v4l2-subdev.h>
+> > > > >  
+> > > > > @@ -1034,6 +1035,11 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
+> > > > >  	.s_stream = ov5645_s_stream,
+> > > > >  };
+> > > > >  
+> > > > > +static const struct v4l2_subdev_core_ops ov5645_subdev_core_ops = {
+> > > > > +	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > > > > +	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > > > > +};
+> > > > > +
+> > > > >  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+> > > > >  	.enum_mbus_code = ov5645_enum_mbus_code,
+> > > > >  	.enum_frame_size = ov5645_enum_frame_size,
+> > > > > @@ -1043,6 +1049,7 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+> > > > >  };
+> > > > >  
+> > > > >  static const struct v4l2_subdev_ops ov5645_subdev_ops = {
+> > > > > +	.core = &ov5645_subdev_core_ops,
+> > > > >  	.video = &ov5645_video_ops,
+> > > > >  	.pad = &ov5645_subdev_pad_ops,
+> > > > >  };
+> > > > > @@ -1178,7 +1185,8 @@ static int ov5645_probe(struct i2c_client *client)
+> > > > >  
+> > > > >  	v4l2_i2c_subdev_init(&ov5645->sd, client, &ov5645_subdev_ops);
+> > > > >  	ov5645->sd.internal_ops = &ov5645_internal_ops;
+> > > > > -	ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> > > > > +	ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > > > > +			    V4L2_SUBDEV_FL_HAS_EVENTS;
+> > > > 
+> > > > Instead of patching every subdev driver, should we handle all of this in
+> > > > the subdev core ? If a control handler is set for the subdev, we could
+> > > > set the HAS_EVENTS flag automatically, and default to
+> > > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
+> > > > if there are no control operations.
+> > 
+> > Premit:
+> >  - Don't know if I'm wrong eh.
+> 
+> Nobody knows :-)
+> 
+> > This can be done into:
+> > 
+> > __v4l2_subdev_init_finalize()
+> > 
+> > Adding:
+> > 
+> > 	if (sd->ctrl_handler)
+> > 		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
+> > 
+> > And check if there are no control operations using:
+> > 
+> > bool has_subscribe_event;
+> > bool has_unsubscribe_event;
+> > 
+> > 
+> > has_subscribe_event = v4l2_subdev_has_op(sd, core, subscribe_event);
+> > has_unsubscribe_event = v4l2_subdev_has_op(sd, core, unsubscribe_event);
+> > 
+> > if (!has_subscribe_event)
+> > 	assign v4l2_ctrl_subdev_subscribe_event as default .subscribe ops(somehow)
+> 
+> We can't change the ops structure as it's constant. Something like this
+> could do:
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+> index 3a4ba08810d2..41ae18a0d41e 100644
+> --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> @@ -691,10 +691,24 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
+> 
+>  	case VIDIOC_SUBSCRIBE_EVENT:
+> -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
+> +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
+> +			return v4l2_subdev_call(sd, core, subscribe_event, vfh,
+> +						arg);
+> +		else if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
+> +			 vfh->ctrl_handler)
+> +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
+> +		else
+> +			return -ENOIOCTLCMD;
+> 
+>  	case VIDIOC_UNSUBSCRIBE_EVENT:
+> -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
+> +		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
+> +			return -ENOIOCTLCMD;
+> +
+> +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
+> +			return v4l2_subdev_call(sd, core, unsubscribe_event,
+> +						vfh, arg);
+> +		else
++			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
 
-On 17.10.2024 11:30:45, Frank Li wrote:
-> On Thu, Oct 17, 2024 at 04:21:33PM +0200, Marc Kleine-Budde wrote:
-> > On 17.10.2024 10:03:51, Frank Li wrote:
-> > > > > > Yes, that is IMHO the correct description of the IP core, but t=
-he
-> > > > > > i.MX8M/N/Q DTS have the wrong order of IRQs. And for compatibil=
-ity
-> > > > > > reasons (fixed DTS with old driver) it's IMHO not possible to c=
-hange the
-> > > > > > DTS.
-> > > > > >
-> > > > >
-> > > > > I don't think it is a correct behavior for old drivers to use new=
- DTBs or new
-> > > > > drivers to use old DTBs. Maybe you are correct, Frank also asked =
-the same
-> > > > > question, let's see how Frank responded.
-> > > >
-> > > > DTBs should be considered stable ABI.
-> > > >
-> > >
-> > > ABI defined at binding doc.
-> > >   interrupt-names:
-> > >     oneOf:
-> > >       - items:
-> > >           - const: int0
-> > >       - items:
-> > >           - const: int0
-> > >           - const: pps
-> > >       - items:
-> > >           - const: int0
-> > >           - const: int1
-> > >           - const: int2
-> > >       - items:
-> > >           - const: int0
-> > >           - const: int1
-> > >           - const: int2
-> > >           - const: pps
-> > >
-> > > DTB should align binding doc. There are not 'descriptions' at 'interr=
-upt',
-> > > which should match 'interrupt-names'. So IMX8MP dts have not match AB=
-I,
-> > > which defined by binding doc. So it is DTS implement wrong.
-> >
-> > I follow your conclusion. But keep in mind, fixing the DTB would break
-> > compatibility. The wrong DTS looks like this:
-> >
-> > - const: int1
-> > - const: int2
-> > - const: int0
-> > - const: pps
-> >
-> > Currently we have broken DTS on the i.MX8M* and the
-> > FEC_QUIRK_WAKEUP_FROM_INT2 that "fixes" this.
-> >
-> > This patch uses this quirk to correct the IRQ <-> queue assignment in
-> > the driver.
->=20
-> This current code
->=20
-> for (i =3D 0; i < irq_cnt; i++) {
->                 snprintf(irq_name, sizeof(irq_name), "int%d", i);
->                 irq =3D platform_get_irq_byname_optional(pdev, irq_name);
-> 		      ^^^^^^^^^^^^^^^^^^^^^
->=20
-> You just need add interrupt-names at imx8mp dts and reorder it to pass
-> DTB check.
+Thanks for your "more than an hint :)"
+I'm able to test this on ov5645:
 
-ACK
+Adding:
 
->=20
->                 if (irq < 0)
->                         irq =3D platform_get_irq(pdev, i);
->                 if (irq < 0) {
->                         ret =3D irq;
->                         goto failed_irq;
->                 }
->                 ret =3D devm_request_irq(&pdev->dev, irq, fec_enet_interr=
-upt,
->                                        0, pdev->name, ndev);
->                 if (ret)
->                         goto failed_irq;
->=20
->                 fep->irq[i] =3D irq;
->         }
->=20
-> All irq handle by the same fec_enet_interrupt().  Change dts irq orders
-> doesn't broken compatiblity.
++++ b/drivers/media/i2c/ov5645.c
+@@ -1238,6 +1238,12 @@ static int ov5645_probe(struct i2c_client *client)
+ 
+        ov5645_init_state(&ov5645->sd, NULL);
+ 
++       ret = v4l2_subdev_init_finalize(&ov5645->sd);
++       if (ret < 0) {
++               dev_err(dev, "subdev initialization error %d\n", ret);
++               goto err_free_state;
++       }
++
+        ret = v4l2_async_register_subdev(&ov5645->sd);
+        if (ret < 0) {
+                dev_err(dev, "could not register v4l2 device\n");
+@@ -1251,6 +1257,8 @@ static int ov5645_probe(struct i2c_client *client)
+ 
+        return 0;
+ 
++err_free_state:
++       v4l2_subdev_cleanup(&ov5645->sd);
+ err_pm_runtime:
+        pm_runtime_disable(dev);
+        pm_runtime_put_noidle(dev);
+@@ -1272,6 +1280,7 @@ static void ov5645_remove(struct i2c_client *client)
+ 
+        v4l2_async_unregister_subdev(&ov5645->sd);
+        media_entity_cleanup(&ov5645->sd.entity);
++       v4l2_subdev_cleanup(&ov5645->sd);
+        v4l2_ctrl_handler_free(&ov5645->ctrls);
+        pm_runtime_disable(ov5645->dev);
+        if (!pm_runtime_status_suspended(ov5645->dev))
 
-I'm sorry, but this is not 100% correct. Changing the _order_ of IRQs
-does break compatibility. New DT (with changed IRQ order) with old
-driver breaks wakeup functionality.
+Then from the compliance tool I'm getting now good results:
 
-Have a look at b7cdc9658ac8 ("net: fec: add WoL support for i.MX8MQ"),
-but keep in mind the patch description is not 100% correct:
+Total for device /dev/v4l-subdev1: 44, Succeeded: 44, Failed: 0, Warnings: 0
 
-| By default FEC driver treat irq[0] (i.e. int0 described in dt-binding)
-| as wakeup interrupt, but this situation changed on i.MX8M serials, SoC
-| integration guys mix wakeup interrupt signal into int2 interrupt line.
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+I will send these 2 patches later if you agree (1 v4l2-subdev 1 ov5645.c)
+Thanks again.
 
-This statement is wrong. The SoC integration is correct, the DT is
-wrong.
+Regards,
+Tommaso
 
-| This patch introduces FEC_QUIRK_WAKEUP_FROM_INT2 to indicate int2 as
-| wakeup interrupt for i.MX8MQ.
-
-> "pre-equeue" irq is new features. You can enable this feature only
-> when "interrupt-names" exist in future.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---5ozr2uxsly64lqtk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcSJ3sACgkQKDiiPnot
-vG9DXwgAnWJD0+pgpUJwVQfqSiGkWkMe5M6qtIWo09HfS9/N5262P2ixUjv5KrFo
-IzsTY4+y4EJquuMsX1nIxJhLIEM+GqN6m+Tan1IH9wNdvvAhAE/GJYDc3imzsKsC
-3gATfbC7NZ6kjf/v9/b7mgwelkL6Xogc4aQwvQvTRdVQgIW+BqW2VpGfPHQieW25
-henGvWDOBvWUFIQLhQYPzf20bq1VVxekaFHZe+PIr6uf7h/aCr3FVYyiHSVVx2+V
-iW4WjZkIQozCNneQ3MHq6u20f94gItt1bFuBqKhrYDSgIe+Tj7Bt1n35dtJoGUQv
-jTI3ADivQ7SoRYabV2mXTVhbq3xxTQ==
-=SR5D
------END PGP SIGNATURE-----
-
---5ozr2uxsly64lqtk--
+> 
+>  #ifdef CONFIG_VIDEO_ADV_DEBUG
+>  	case VIDIOC_DBG_G_REGISTER:
+> 
+> > if (!has_unsubscribe_event)
+> > 	assign v4l2_event_subdev_unsubscribe as default .unsubscribe ops (somehow)
+> > 
+> > 
+> > Or maybe v4l2_subdev_init_finalize() it's too late?
+> > I'm completely wrong? What do you think?
+> 
+> I like v4l2_subdev_init_finalize() as we're pushing all subdev drivers
+> to use it, so it's an extra incentive.
+> 
+> > > Well :)
+> > > Not every subdev drivers, but only the ones I'm testing.
+> > > 
+> > > Yesterday I was playing with ov5645 :) And I got:
+> > > 
+> > > v4l2-compliance -d /dev/v4l-subdev1
+> > > 
+> > > test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+> > > fail: v4l2-test-controls.cpp(1108): subscribe event for control 'User Controls' failed
+> > > 
+> > > Joke apart fully agree and thanks for your hint!
+> > > I will take  a look :)
+> > > 
+> > > > >  	ov5645->pad.flags = MEDIA_PAD_FL_SOURCE;
+> > > > >  	ov5645->sd.dev = &client->dev;
+> > > > >  	ov5645->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
