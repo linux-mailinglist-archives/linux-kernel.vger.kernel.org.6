@@ -1,169 +1,146 @@
-Return-Path: <linux-kernel+bounces-371577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8F19A3CD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:10:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FE99A3CD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA9E52812C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F45C1C2546A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FEA420262D;
-	Fri, 18 Oct 2024 11:07:36 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFCF1D7E4C;
+	Fri, 18 Oct 2024 11:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="M9cQWn5S"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351762022EF
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA3620262E;
+	Fri, 18 Oct 2024 11:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729249655; cv=none; b=spavkGFgeDfWZg/bYeeCqPzITKFuHyhk7UDih+/x1earIeAp4OeN2upppeTybDdNNVWbFLx7lmJyiuT4S/xL53QLWWf8txcxwdG/6YrGug3W5ENlaWCiyKbK1Ewh4XBwi3KP0hGvgZKBoZWIq7Y8tITCpBu1imjmmafj/CGiWgc=
+	t=1729249690; cv=none; b=cbJDSCXQS52MqtXpL7Cflv7kVXRQnyBWyODqbiyqX8k+uy7WIbEvhFKKxK11jCJRGIHfMKamamGTdDy3YN2nPHh+2/VykVVtPQH3EK9Aw0d6n7fW5XjN0Ycffc0w1jpgmtGcpnjWi7Yqu3vtExiWURKccFN2IzrDskgBgq78MmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729249655; c=relaxed/simple;
-	bh=N1WTYhKo8iTm67koSSjIAdU2i0KeEnRKF4LrPcOgrgY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=b0rmFVbGhMznRZ15tCX2B9/AhB5wqBzI6tyvAMS9fikIafLG3pViHrHkEsY/3SHailROL7KTg/SLRUS1GjCgDGHwXqNd1YReXZN1Udjpd7ws24SF//zgFgEHB0HMVE+feiNXruFf6sbKk1SKG3ofcYiWJCnBxpRjEC1TxwAYKq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3e1ef9102so20736915ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 04:07:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729249653; x=1729854453;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C72w+3uPUzoz0HKooV4z9jWdHJhkKtLSXpMEvCoalBc=;
-        b=HlTjZQ+XZMjBGDDbvtM+TK7JTxypZqxHMDF8L5RYNp6FgYXdFdbHtXGZbnJ8+o4GLa
-         cGck1yOJlCTmh1vmUobN+fCZAbYl4BfHxHBeK36SZb/xpTLpB9EIfH5Q7AfPl4MjRgDN
-         qCJYm+okX6jcNLFaMpn+ImDdSt1XOKnhFHWGxgubdrZDwJ/M7clZZ+f1fEHOYdSR9ulh
-         6uoQr+U+EmEl2gXbNJbVByslbO4YqkuN1dUbyYjOc66nH4k1HYeqhLk/5VTCy+AJ4UvM
-         VspbIygCD53vmxLiAH9tbFqp9FTFibGoiOoWMmKlqeHGYQ0R6hVGeqXD8GPleHJz8/i8
-         zg7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXUiFHM24SpuGRSBG2zK1cuJVdB8/BZadnkmBzEHpa4xS2jc4X3yak8HWaeZxOqdrLaxcGw2WDEubbBoYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/eCZ+K+P/s17A6XhM2UEfuMb1BykQUxG3vmQhVGzL1PLzurq/
-	bB+beL4HJFk9uHDc8wPQ5bN2H5nZO9OYzr2j743pwVSPuEKjiv7tyqPyA8KbzabLkrSZY8YfTCi
-	JyJ8NxIi8wHdZTifFj34HfzRm1Z7d2UJ60p8hojqx7dDodM0kODDUPnk=
-X-Google-Smtp-Source: AGHT+IF7AaTYncNS8ilO3bhXIksa2eWkGMJ6FP7e0uj1r8BE3zSPk6cISARX8slUk7N6mxpSad2Zao3LX1GUSh+dbKtsgrvCmiMR
+	s=arc-20240116; t=1729249690; c=relaxed/simple;
+	bh=roZL7Fo4RQ8XJx9gSRchXoZs7X/th6UYrkxC2F/4bsc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jWlWNaBJk2gysmPL9w6oVm5b1emcZ/StAERgcg1mA6hLrlvPElSEx+q0Wf4ZJ6zYYcbp+rq4YR+M8zve0H4/+zq4o6d2ZDAeRyXdwiYZMoUikBXaLy0bg2TNwPMbB0/1O5cEDmFpxsiOaWbegd3ypv0sLm6QsYQ71cOblajLi9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=M9cQWn5S; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id 3F9A3C000A;
+	Fri, 18 Oct 2024 14:07:56 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 3F9A3C000A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
+	t=1729249676; bh=mN9Vl+iYWRUJkFg62eJEHwY5V2j4me6G+dqs5tVdAuk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=M9cQWn5S7OaZp80mCs74SdtvBJM+T8EMXz0gIsQmgppcQhpzak/1W0+BXvPK53cP0
+	 hjPGqiXR7hZu0vIB/EOSgkvLkKLMnPwMVb1XWXQqswZrAfYs7qCOkZOPN2MKp3ZsV7
+	 Rva8QWgbc/bosCWL355g5/nSJ8FPW0lqJi+GzGokoxmX0YQccmuyCR7CDhUU5O4hIq
+	 M+MO2KBJ5qDF/6LkNhXql5SwkNOxY7akFPOihkzn8gFEL7WEqGOFhiJLdzIYNxFbKy
+	 ZzYEyTGCU2ZFhfFSa/xwF+Ywv5SiHVWvqFkARdSQK7iuHtJocFagYDufX97oDGRr5O
+	 LvvUVqT3PgdxA==
+Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Fri, 18 Oct 2024 14:07:56 +0300 (MSK)
+Received: from localhost.maximatelecom.ru (10.0.246.97) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.4; Fri, 18 Oct 2024 14:07:54 +0300
+From: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
+To: Liam Girdwood <lgirdwood@gmail.com>
+CC: Vitaliy Shevtsov <v.shevtsov@maxima.ru>, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Seven Lee
+	<wtli@nuvoton.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>, Andy Shevchenko
+	<andy.shevchenko@gmail.com>, <linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] ASoC: nau8821: check regmap_raw_read/regmap_raw_write for failure
+Date: Fri, 18 Oct 2024 16:07:41 +0500
+Message-ID: <20241018110743.18786-1-v.shevtsov@maxima.ru>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc2:b0:3a3:40f0:cb8c with SMTP id
- e9e14a558f8ab-3a3f40a8528mr20878255ab.17.1729249653340; Fri, 18 Oct 2024
- 04:07:33 -0700 (PDT)
-Date: Fri, 18 Oct 2024 04:07:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67124175.050a0220.10f4f4.0012.GAE@google.com>
-Subject: [syzbot] [pm?] WARNING in thermal_thresholds_flush
-From: syzbot <syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com>
-To: daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, lukasz.luba@arm.com, rafael@kernel.org, 
-	rui.zhang@intel.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
+ (81.200.124.61)
+X-KSMG-Rule-ID: 7
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188530 [Oct 18 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: v.shevtsov@maxima.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 40 0.3.40 cefee68357d12c80cb9cf2bdcf92256b1d238d22, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;maxima.ru:7.1.1;ksmg01.maxima.ru:7.1.1;81.200.124.61:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/18 09:34:00 #26770281
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hello,
+The return values from both regmap_raw_read() and regmap_raw_write() are not
+checked despite they can fail. Propagate possible errors to caller.
 
-syzbot found the following issue on:
+Found by Linux Verification Center (linuxtesting.org) with Svace.
 
-HEAD commit:    15e7d45e786a Add linux-next specific files for 20241016
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=123c2f27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
-dashboard link: https://syzkaller.appspot.com/bug?extid=f24dd060c1911fe54c85
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1192f887980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1417e830580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/disk-15e7d45e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinux-15e7d45e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/bzImage-15e7d45e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 51 at drivers/thermal/thermal_thresholds.c:28 thermal_thresholds_flush+0x1ff/0x230 drivers/thermal/thermal_thresholds.c:28
-Modules linked in:
-CPU: 1 UID: 0 PID: 51 Comm: kworker/1:1 Not tainted 6.12.0-rc3-next-20241016-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:thermal_thresholds_flush+0x1ff/0x230 drivers/thermal/thermal_thresholds.c:28
-Code: 34 24 eb 05 e8 02 76 36 f9 4c 89 f7 be 0f 00 00 00 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d e9 c7 3a ff ff e8 e2 75 36 f9 90 <0f> 0b 90 e9 7f fe ff ff 48 c7 c1 3c e6 1d 90 80 e1 07 80 c1 03 38
-RSP: 0018:ffffc90000bb7168 EFLAGS: 00010293
-RAX: ffffffff885e6c6e RBX: 0000000000000000 RCX: ffff88802068da00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffffff8f97be40 R08: ffffffff885e6ae2 R09: 1ffffffff285d30e
-R10: dffffc0000000000 R11: fffffbfff285d30f R12: dffffc0000000000
-R13: dffffc0000000000 R14: ffff8880468a4000 R15: ffff8880468a47c0
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9c90c27c78 CR3: 000000000e736000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- thermal_zone_device_unregister+0x29e/0x370 drivers/thermal/thermal_core.c:1612
- psy_unregister_thermal drivers/power/supply/power_supply_core.c:1326 [inline]
- power_supply_unregister+0xe8/0x140 drivers/power/supply/power_supply_core.c:1539
- thunderstrike_destroy drivers/hid/hid-nvidia-shield.c:927 [inline]
- shield_remove+0x72/0x120 drivers/hid/hid-nvidia-shield.c:1104
- hid_device_remove+0x225/0x370
- device_remove drivers/base/dd.c:567 [inline]
- __device_release_driver drivers/base/dd.c:1273 [inline]
- device_release_driver_internal+0x4a9/0x7c0 drivers/base/dd.c:1296
- bus_remove_device+0x34f/0x420 drivers/base/bus.c:576
- device_del+0x57a/0x9b0 drivers/base/core.c:3864
- hid_remove_device drivers/hid/hid-core.c:2968 [inline]
- hid_destroy_device+0x6a/0x1b0 drivers/hid/hid-core.c:2990
- usbhid_disconnect+0x9e/0xc0 drivers/hid/usbhid/hid-core.c:1458
- usb_unbind_interface+0x25e/0x940 drivers/usb/core/driver.c:461
- device_remove drivers/base/dd.c:569 [inline]
- __device_release_driver drivers/base/dd.c:1273 [inline]
- device_release_driver_internal+0x503/0x7c0 drivers/base/dd.c:1296
- bus_remove_device+0x34f/0x420 drivers/base/bus.c:576
- device_del+0x57a/0x9b0 drivers/base/core.c:3864
- usb_disable_device+0x3bf/0x850 drivers/usb/core/message.c:1418
- usb_disconnect+0x340/0x950 drivers/usb/core/hub.c:2304
- hub_port_connect drivers/usb/core/hub.c:5361 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x1ebc/0x5150 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
+Fixes: aab1ad11d69f ("ASoC: nau8821: new driver")
+Signed-off-by: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ sound/soc/codecs/nau8821.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/sound/soc/codecs/nau8821.c b/sound/soc/codecs/nau8821.c
+index de5c4db05c8f..edb95f869a4a 100644
+--- a/sound/soc/codecs/nau8821.c
++++ b/sound/soc/codecs/nau8821.c
+@@ -287,10 +287,8 @@ static int nau8821_biq_coeff_get(struct snd_kcontrol *kcontrol,
+ 	if (!component->regmap)
+ 		return -EINVAL;
+ 
+-	regmap_raw_read(component->regmap, NAU8821_R21_BIQ0_COF1,
++	return regmap_raw_read(component->regmap, NAU8821_R21_BIQ0_COF1,
+ 		ucontrol->value.bytes.data, params->max);
+-
+-	return 0;
+ }
+ 
+ static int nau8821_biq_coeff_put(struct snd_kcontrol *kcontrol,
+@@ -299,6 +297,7 @@ static int nau8821_biq_coeff_put(struct snd_kcontrol *kcontrol,
+ 	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
+ 	struct soc_bytes_ext *params = (void *)kcontrol->private_value;
+ 	void *data;
++	int ret;
+ 
+ 	if (!component->regmap)
+ 		return -EINVAL;
+@@ -308,12 +307,12 @@ static int nau8821_biq_coeff_put(struct snd_kcontrol *kcontrol,
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	regmap_raw_write(component->regmap, NAU8821_R21_BIQ0_COF1,
++	ret = regmap_raw_write(component->regmap, NAU8821_R21_BIQ0_COF1,
+ 		data, params->max);
+ 
+ 	kfree(data);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static const char * const nau8821_adc_decimation[] = {
+-- 
+2.46.2
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
