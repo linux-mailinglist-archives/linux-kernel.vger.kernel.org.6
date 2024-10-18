@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-371367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E489A3A1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:35:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D91B9A3A1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B68BF1C221E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:35:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D032814D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458361FF7B3;
-	Fri, 18 Oct 2024 09:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767531F4FA9;
+	Fri, 18 Oct 2024 09:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IpMGg66U"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ApDJeSYv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A811FF60F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6A3192B86;
+	Fri, 18 Oct 2024 09:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729244125; cv=none; b=M0s2dlXle4LSiDmhhnJDmiOnEpOdfWu5g6h/sMLO5uhLNosBe+S6myRbcDIXaai1v09OqPCu/q8AI1wp2J4eJ+piZY+6uuj7+I1jHpZMZC/tRnPPhdy/6pBfT4Bgf9II7PPNQO/cunWh++K41tGFw2LqOVXzCmla3D+pTGhtzJc=
+	t=1729244143; cv=none; b=ij9wwKoROm6NEWANEr3WY7MVgQWJgnk5XNZEp7v5uv4c3hPEGDXR52OlP0ZelPrU1DwNuOFNvbcPnKml6sDtLsiDxCHxt3MZACMSumiLtHt/g65jUeM2YPuyOkqGHgfi6lA0g/G6MINNKroN9L3lUHMsB0pKv8PfBUK4eu8d9Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729244125; c=relaxed/simple;
-	bh=bek+YrEWpRyaKUYvuqdDyBQjCYE6eaX5Fqmn+FxpHoM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qfJm9hUyTNeXa8axnj/x6yMXmKemYJyPNAytaDUbEXVXxntwfgVwFfN9GqT+rWrJ0I2CShFYYF94rSvEulfFjtJYJkgQshXoNm3Mk3dV1MlZcpACGW99xqgryNfAAxmI7fDhTptenDnwQEKKkqKw25pM8zZU3jEoOeay5l+H9jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IpMGg66U; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e8586b53so2493186e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729244122; x=1729848922; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bek+YrEWpRyaKUYvuqdDyBQjCYE6eaX5Fqmn+FxpHoM=;
-        b=IpMGg66UlA/L6DgoesaSBV/b2cj/PaELs51vHPtUzf05TRBkYwfj9/MWCZgWA9p9sx
-         5bJ3KH1HNyAg30BTmyVQ4fas5XNY+qep7Yafg6rEl7qgwyvJtaR6y+OrGJb3QY3PxqHc
-         /cWF41tMQSKmvNsIS0RAzwKNcQ0ZcH6QlDAfo17jaFt2gX1n4okgDZRX2kpzaucwSDv5
-         SxuPx0cBmUZewQJrcciZwWaeo9Xuc0j80p7HuNnbvd6soqTzcZjQXlK7BP+JbnoeR6dx
-         zRb6SFC6pyq9toweWl1yzKB5rZZjzIXWFal6jiSFrF/Pyi+zY4fSruLjpZsU9p2vhyIA
-         pBGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729244122; x=1729848922;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bek+YrEWpRyaKUYvuqdDyBQjCYE6eaX5Fqmn+FxpHoM=;
-        b=uioG+600cVO1AyVfelq8bPQQMxVRUzREqUfa0ZLamKielSPvfK5taJwI8bo7UiSRFN
-         d318H583lxfN5/5RsUB45h0H/5mFLwaof+OeHgAyv1gIiBeQKFKS6XyQtlpiX5V7QIS9
-         Ld08H84dNufUUZ8B+iBYiB7XKZn6HIB5cfELPWHZnuzNHTPQg0cStruK1WCVSr/Pfpjz
-         k4P1UEpt0Q4IvlwNGpl0M5td8owN0wv+re7R99Ri5jnyjvsbrYh9MPYjCnwaVvPoy9qM
-         jhGHvcfQRZVKjfiWKzxOpJFQbJIjKTJwBMVWCEAOKqoJYYsIjV6eMcNVydDSylC1HZhO
-         RInw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqC3G6iYGTU4pRqobrHl39KP0FKiP99/zsGHxjFZF7Kesgu+LPG/LW3Kwg60HOTiwnNSdZLhVCVs8YgsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS7eiXfkz8QTr24P5VQJCZHi6ASOZkWguuYYpY1JbgGWR78UZI
-	w6CFFccYOdA3Sda/5yQoo8zKEsuiVXNdxBnoAusfgrmTQin03JwCVVuYXFt/JtmBlIUmo8WAHGC
-	iezOhlBrpYvxLuily+s/aQWeTnudN3w5KfDsYlQ==
-X-Google-Smtp-Source: AGHT+IFgPE68BnFk2E/viiVozXsEhEPq4/B2uBNfhDuMdWqDAqf1efDOBxlm8jQ3zwqOQ2eqZnNBlTBsM9ySv4GdgEw=
-X-Received: by 2002:a05:6512:110e:b0:539:8ee8:749e with SMTP id
- 2adb3069b0e04-53a0c6a58bemr1991127e87.3.1729244122351; Fri, 18 Oct 2024
- 02:35:22 -0700 (PDT)
+	s=arc-20240116; t=1729244143; c=relaxed/simple;
+	bh=mBm5UXS147lpNF9ltnx90LerAQQ1hhEWZy44zEqIz7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UQM8qHVfi8L36/Ohp9NviNeC+TWz8Vk/6yw/rn4iItDIleUjH+krak7gBIcTEZoO7GCF3XrtN31/GVrtY8biq6+exTK3LSgFrFCqbxoGWaVbck0hFz+2LVHi1Gijy88INuNZBaZhCDrgn5/F552LGdXjnSYTg2Gl1bR5ey2c4WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ApDJeSYv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A24C4CEC3;
+	Fri, 18 Oct 2024 09:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729244143;
+	bh=mBm5UXS147lpNF9ltnx90LerAQQ1hhEWZy44zEqIz7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ApDJeSYvkPjavoMwh28gRoFk+8CF9I7jLA06bH95luzsphOalin64zJHkj4YXTJQD
+	 KTkV/5Xi8ZtNqcVgi1VyKW4UZJXriI/Pwfcb5OI0Y689YWSDKOsNPlAB9RVfSkT6pJ
+	 1yzX8itHvHLDsam1Sjf+gMTWy5iW0CV9ZPX6MBYY=
+Date: Fri, 18 Oct 2024 11:35:40 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "Gupta, Akshay" <Akshay.Gupta@amd.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux@roeck-us.net, arnd@arndb.de, naveenkrishna.chatradhi@amd.com
+Subject: Re: [PATCH v4 5/9] misc: amd-sbi: Add support for mailbox error codes
+Message-ID: <2024101854-twister-stem-e3e6@gregkh>
+References: <20240912070810.1644621-1-akshay.gupta@amd.com>
+ <20240912070810.1644621-6-akshay.gupta@amd.com>
+ <2024101351-hash-deflate-b339@gregkh>
+ <27148cde-29db-dc77-18af-2fe56dce036e@amd.com>
+ <2024101541-domestic-steadily-6451@gregkh>
+ <420ab0bf-32cf-cd98-c711-0dacc8bcc161@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007092447.18616-1-brgl@bgdev.pl>
-In-Reply-To: <20241007092447.18616-1-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 18 Oct 2024 11:35:11 +0200
-Message-ID: <CAMRc=MdK7Xjf6t+9zNohahmLFWQAqczJd6v6TZepg+23vyzzxQ@mail.gmail.com>
-Subject: Re: [PATCH v2] PCI/pwrctl: pwrseq: abandon QCom WCN probe on
- pre-pwrseq device-trees
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Johan Hovold <johan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <420ab0bf-32cf-cd98-c711-0dacc8bcc161@amd.com>
 
-On Mon, Oct 7, 2024 at 11:24=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Old device trees for some platforms already define wifi nodes for the WCN
-> family of chips since before power sequencing was added upstream.
->
-> These nodes don't consume the regulator outputs from the PMU and if we
-> allow this driver to bind to one of such "incomplete" nodes, we'll see
-> a kernel log error about the infinite probe deferral.
->
-> Let's extend the driver by adding a platform data struct matched against
-> the compatible. This struct will now contain the pwrseq target string as
-> well as a validation function called right after entering probe(). For
-> Qualcomm WCN models, we'll check the existence of the regulator supply
-> property that indicates the DT is already using power sequencing and
-> return -ENODEV if it's not there, indicating to the driver model that
-> the device should not be bound to the pwrctl driver.
->
-> Fixes: 6140d185a43d ("PCI/pwrctl: Add a PCI power control driver for powe=
-r sequenced devices")
-> Reported-by: Johan Hovold <johan@kernel.org>
-> Closes: https://lore.kernel.org/all/Zv565olMDDGHyYVt@hovoldconsulting.com=
-/
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+On Fri, Oct 18, 2024 at 02:53:26PM +0530, Gupta, Akshay wrote:
+> 
+> On 10/15/2024 3:34 PM, Greg KH wrote:
+> > Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+> > 
+> > 
+> > On Tue, Oct 15, 2024 at 02:42:08PM +0530, Gupta, Akshay wrote:
+> > > On 10/13/2024 8:49 PM, Greg KH wrote:
+> > > > Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+> > > > 
+> > > > 
+> > > > On Thu, Sep 12, 2024 at 07:08:06AM +0000, Akshay Gupta wrote:
+> > > > > --- a/include/uapi/misc/amd-apml.h
+> > > > > +++ b/include/uapi/misc/amd-apml.h
+> > > > > @@ -38,6 +38,10 @@ struct apml_message {
+> > > > >                 __u32 mb_in[2];
+> > > > >                 __u8 reg_in[8];
+> > > > >         } data_in;
+> > > > > +     /*
+> > > > > +      * Error code is returned in case of soft mailbox
+> > > > > +      */
+> > > > > +     __u32 fw_ret_code;
+> > > > >    } __attribute__((packed));
+> > > > You can not just randomly change the size of a user/kernel structure
+> > > > like this, what just broke because of this?
+> > > > 
+> > > > confused,
+> > > The changes are not because of anything is broken, we support 3 different
+> > > protocol under 1 IOCTL using the same structure. I split the patch to make
+> > > it easy to review.
+> > > Modification in patch 4, is only for the existing code. This patch (patch 5)
+> > > has additional functionality, so we do not want add multiple changes in
+> > > single patch (patch 4).
+> > > 
+> > > The changes done in patches are as follows:
+> > > 
+> > > Patch 4:
+> > > 
+> > > - Adding basic structure as per current protocol in upstream kernel
+> > So what if we only take the first 4 patches?  Now any changes after that
+> > would change the user/kernel api and break things.
+> 
+> Yes, it will break. We need all the patches to go.
 
-Bjorn (Andersson), gentle ping. Does this work better for you?
+That's not how to submit a patch series.  Please work with the other
+kernel developers at your company to do this right before resubmitting.
+You shouldn't rely on the community to point out basic engineering
+problems like this.  Would you want to review a series like this?
 
-Bartosz
+> > Please don't write changes and then "fix them up" later on, that's not
+> > how to do stuff as it makes it very difficult to review.  What would you
+> > want to see if _you_ had to review this patch series?
+> 
+> We submitted a single patch in v1, later split the patch based on each
+> functionality for ease of review.
+> 
+> I will squash and submit along with other review comments addressed.
+
+No, don't squash, do it in a patch series, one at a time properly such
+that if we were to take any moment in time of the series, all would
+still work correctly.  That's the proper way to do any sort of software
+engineering, this isn't unique to us at all.
+
+thanks,
+
+greg k-h
 
