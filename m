@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-372351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2719A478A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:01:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3C39A478B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67A71B2428F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:01:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821481C22E18
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9769B206046;
-	Fri, 18 Oct 2024 20:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B978207A34;
+	Fri, 18 Oct 2024 20:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mN/4k2CE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGBRjuk4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A47205ABC;
-	Fri, 18 Oct 2024 20:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846A12071F3;
+	Fri, 18 Oct 2024 20:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729281687; cv=none; b=DZv7jO5l8kGoSCTsXN579srN9ZLeQMEj3yG/lotRlQcOTkP5hHK26iZ9fMUOO09YH9FDRvcdnczF1PdED0NyvaUYmHsRl998ZN7V149izyNm68ft/DPa+az9nx+ly3b/YMUqyB+nWFyTSjb5oavwMBG081nmq/kxjqrxmwDfjUo=
+	t=1729281689; cv=none; b=h+t38siNMYNTn71jDaPhXCyHz4zcpjIvO42zK8/BItXMwNFhkA5XFTg0t1Za48JhlPpxSODo46DHviMYPnMs5JhJtpEPSEOc9HRXCU6Bn7Zu/30lW+6CfDkU+RCqj7OH3yx3GaJY+TpuS6IXdSH7p4dtvxQ+MRnfOyblRArXBe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729281687; c=relaxed/simple;
-	bh=Hvhks8tnqLdiS5aqzSNad6B/dGIU3GwYRrHIZhBBIAU=;
+	s=arc-20240116; t=1729281689; c=relaxed/simple;
+	bh=F/Qg4sroR8mBbE2eR+VURuFEuPYxXZpNpv6skBP+GMo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Chk3f3WGJFn25LG7BLa8Qn/SBAKmUjVWgJ5DLmst+Z6KixOumcdWgbVRSiGU+3WXufGMM170XqGHlHFCkR1kskZ+GFm+FNgAN9n4ug8qxZ9qkcYIkpJlC2qIt1nnJB+XM0tDlirf4+B5U/16LC7jV5PocpNrvfgczz6C5d+qBL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mN/4k2CE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEA55C4CEC5;
-	Fri, 18 Oct 2024 20:01:24 +0000 (UTC)
+	 MIME-Version:Content-Type; b=NQ3RxFXoj9Pe7SwlGr6Qqma7urvncuTnguhFDpzUZ2Evd41moqYHWUqBztQarvbfDUk6s9GpKVrw2rC6lNPuVFLhjsFMniSnEzNB6fO7tlIWKNlzWbACasNCiuEWRyDMxDsfTP1LjR0SF/2xC1CxAfF4hW+6ZF50DNHxrVLo0MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGBRjuk4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04E83C4CED1;
+	Fri, 18 Oct 2024 20:01:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729281686;
-	bh=Hvhks8tnqLdiS5aqzSNad6B/dGIU3GwYRrHIZhBBIAU=;
+	s=k20201202; t=1729281689;
+	bh=F/Qg4sroR8mBbE2eR+VURuFEuPYxXZpNpv6skBP+GMo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mN/4k2CEGIISzGLY3qjS3MMepoUaz+GOfZfUPNxMmPVYgHxI7242GfmlIIgqJxHqw
-	 /Xt4C5L8WgMUQg11iRQ2zSkd/9NYO8Nj2fzTa50w/INx+V1ynOU5SJy27ku3eGr+Em
-	 EvrmnqkPnL9DQM//S7OJYZbFxkQlB18MXsFrp1bxAWNy/7v/wN/O+BGhjgbRyznfZL
-	 RftBYmw7HbwSib3CR0fOlXrfTXCACKNtqrAZnFcf4wwkmwzCgTczuKaKG780Zmr/EM
-	 ggknPXTW1pfJrqUlCJWx/V7c1VUUtgv8NQQd6DihJ6t1XFlS7nL/Fbd5/IVbjsYVSE
-	 ZT6CCW6vgij+A==
+	b=AGBRjuk4GAqW1pVdPh0oPnlknqOx+RXlrQYhVYqKU82fCOCGu7IBmssONO+/xn8E2
+	 2dPJ3Oic8nm60Ek2iSW7ytFgnpwDur4H4gdr8NbHWGwHzbhTvpYCLV0Pi8smhn5rQX
+	 eGTPjWQIUjVjMpVx0m+tjohpS76kGxgM/sPe6RukQoIZIpLEoKRuxB8sfWT7qIc7XO
+	 U7WnIlptZafMR+d2cdfEUzzms0rwDkxzf2woFKX9slEMuzjCOCtpy2NYVtdlLP8bhy
+	 jSyzMxhV+yoLtThaz4exYV8PgNwtu4OU5JHXU9rc/5xDEmT+6Pn2YZAM+iHET8XeOX
+	 JLvru7cZUNFEA==
 From: Mark Brown <broonie@kernel.org>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
- Mario Limonciello <superm1@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20241017210952.3586713-1-superm1@kernel.org>
-References: <20241017210952.3586713-1-superm1@kernel.org>
-Subject: Re: [PATCH] ASoC: amd: acp: Add stream name to ACP PDM DMIC
- devices
-Message-Id: <172928168468.188041.1137360050259879498.b4-ty@kernel.org>
-Date: Fri, 18 Oct 2024 21:01:24 +0100
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Vitaliy Shevtsov <v.shevtsov@maxima.ru>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Seven Lee <wtli@nuvoton.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+ Andy Shevchenko <andy.shevchenko@gmail.com>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+In-Reply-To: <20241018110743.18786-1-v.shevtsov@maxima.ru>
+References: <20241018110743.18786-1-v.shevtsov@maxima.ru>
+Subject: Re: [PATCH] ASoC: nau8821: check regmap_raw_read/regmap_raw_write
+ for failure
+Message-Id: <172928168672.188041.5557095423095482145.b4-ty@kernel.org>
+Date: Fri, 18 Oct 2024 21:01:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,8 +64,11 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Thu, 17 Oct 2024 16:09:52 -0500, Mario Limonciello wrote:
-> Add for sof and legacy dai links to dummy DMIC codec.
+On Fri, 18 Oct 2024 16:07:41 +0500, Vitaliy Shevtsov wrote:
+> The return values from both regmap_raw_read() and regmap_raw_write() are not
+> checked despite they can fail. Propagate possible errors to caller.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Svace.
 > 
 > 
 
@@ -73,8 +78,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: amd: acp: Add stream name to ACP PDM DMIC devices
-      commit: b2385de2ae11bdd34855276e0a254109469227eb
+[1/1] ASoC: nau8821: check regmap_raw_read/regmap_raw_write for failure
+      commit: 1b9971a4e01b80afbf061ad7cdf84ac6fbbbde8d
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
