@@ -1,238 +1,118 @@
-Return-Path: <linux-kernel+bounces-371474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6213B9A3B91
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:31:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B0E9A3B92
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28BC1F23D88
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:31:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41F7F1F24418
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A545920126F;
-	Fri, 18 Oct 2024 10:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1F72022C7;
+	Fri, 18 Oct 2024 10:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMuMTRif"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b="aRRKGttV"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF61920101C;
-	Fri, 18 Oct 2024 10:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68D017E00F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729247488; cv=none; b=PNTf69NsZFs6714/EhDBnDgq1Xt2R+o8vC+Q76eg0mFwm6sArbP1u/JRAA37nHJtg+wHLnQ0ysoCpcUcdz6C1xzJASsPF6ZV/KcQgOiyaU7OW6oyOQwaOhl1FYnaqswzM2nAAvvl2GQCfF9zDiml4CxVEgz+YvBYsvT7Gmn1teE=
+	t=1729247490; cv=none; b=CtDHppDj/UOqMyo+y9vErXYW5v6VA/eGrQmyzP2BX+TaU06M1pXLYX6K6l5vz5lNAjpT+wzFI8OsOengF21H2V7s0tuw5pWoMC9lxw1Qgk7/ZyH55vER8qlNBnIzJu9kzzhtbmJA6XmIxK4aV0hmYullUM7kMRpKFHxEOl+aopM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729247488; c=relaxed/simple;
-	bh=NweyaK88wSDBHtvm/iU8kSFKR1ybGLKUs/1umU9gu5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qhfABcFQbXlRjVo2XifZq7dLjIyZXPkFyvaVdBz3tOfRXSq7p/TcUxkmLTKBFvOK7TIwq28fjN+uQrZr30O/f9/royTX+gr7mPqobHicFxoP8bMRxCwSVf5ELM2UB2Nf7Q2XHadcBIFR6wjhzHZgavjilRRw+0S6HcUZSX8onAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMuMTRif; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46FA3C4CEC3;
-	Fri, 18 Oct 2024 10:31:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729247488;
-	bh=NweyaK88wSDBHtvm/iU8kSFKR1ybGLKUs/1umU9gu5o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gMuMTRifCftvTb+VgpKMNfAhY1rEFszIQtgUcatnSDulhqEjnH6jkqwh+ZfapTnlT
-	 0fOFSHAye6xtH04yiZflO9bnWCNbeKvirkYGxPBfvJLYDWaNGXdWbkatNXaWgObp9B
-	 4AK9p1V6Nzk50AClJ1FqlQgNQvX4qsIL0aj7V46V/R0F1tL4G2w8YqH4mfTsC9uAQI
-	 PTVGhMyDKCZsbJ+QlzKQZr29xjSj/JtnlfqPcoFA3JgvyY+TccvSUESNua+aJ1LeYi
-	 0orc3109Fll3Y5hw0oLE7LPYfoqGtgBtdMnw3MQ/wP2gTt9FE7QbRj8a04ARDaoD2P
-	 LH/1lVnPk6qjA==
-Message-ID: <3dee4753-9df1-4fc5-8805-34a5d05beaa4@kernel.org>
-Date: Fri, 18 Oct 2024 12:31:20 +0200
+	s=arc-20240116; t=1729247490; c=relaxed/simple;
+	bh=LSoBdcG8z1yBSfSmQI/2gfmPkYAjLk/CpeJDC4twC8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NLLNz35D5Zmg+TO+Us0WEGGHeL7MFuSMzKbsW6o9ECDpVuerRoHYFznxYRLIZphIFfdiYiEHBG+68KAOLUGhVEUVFjKBwJhR7zQMN2CGPhJbNe2Xxq5NuyLj8RJdg+XLx9dJKy7xiOeQ35iTp8Baoek1PKSPdAunECxCVxwlpYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk; spf=pass smtp.mailfrom=philpotter.co.uk; dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b=aRRKGttV; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=philpotter.co.uk
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315abed18aso14919035e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:31:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=philpotter-co-uk.20230601.gappssmtp.com; s=20230601; t=1729247487; x=1729852287; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NGMLCK6yi6tPIAZcZpIiXSjnyYflSSElp2q2UMFWQK0=;
+        b=aRRKGttV2Vu3UyK4sIpHdT5ebISTEtsi+07KNPydl6zx70XWe5bwXnIkKcr7k+3s3l
+         aZ2mipxjwLnEkV+1G1pSfZjLK82hzokdAaGq3IMFXZe6hUNooomE7mtcDn0II53ObPv0
+         h8uYHLK5I4inEDNhjPu0DmyWaLffAyRV+dxSI+8bXXduS9e10DT/dfUEur5hiuQ3hu3T
+         1OQ22pA7ONpNcUEQm+Xh9/+znlvCpRs8QOrOXUgRbl0Rdh0G5EB0bYftdSYqKKjkq/EW
+         fN+ugKxl6tHt4reoVDDWvzcm94ePG19VCKKHHyfwkJjnWoq9AeBZc2HWT+82zUZh/k8M
+         LkMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729247487; x=1729852287;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NGMLCK6yi6tPIAZcZpIiXSjnyYflSSElp2q2UMFWQK0=;
+        b=ajjL0K0Xim/GoZ5bPAYzau90WptY0xYnMuyays7zkhUhVNIiEkMTvaJFD89Z8Vj0Wd
+         kOMqHHNpODkU7zl96SVm8MoLrX7oqikc9svDjQIYeiqdGkqtBOTX5aF2zilO4pkTfUbc
+         oVG/J+2a0BY88MDA8QzExnultr+6aazqTismqm5dEVNCkYXUvKw0r4LAZEb3Sv4LsKps
+         9wq6ZG8+kuFAaJXtkga9/IZ2d3KDGcJD1z1vyciE06XWAZtiIPZ75tpAo0+2+1tQyuzN
+         N8dAcQ1k6Q/PRN7w10/KDDfScJNJzFNf8Dd7YWb60RaOuS8yAyRLoRwCYtZ7Hf1qGJfe
+         jJPw==
+X-Gm-Message-State: AOJu0YxziZXYNELJtuhiC74Ms0+Rbz1ovvuzj17Sm8CCT7nJ8FjIX1HM
+	MUVm8pvHYUOvdBLrtNF1dJHByfmHvW/roVVpmNZlvYD4sjfFG0DByBefPpN3I8g=
+X-Google-Smtp-Source: AGHT+IFuuh8c1ut8M9NQK4hCaHHnsIoKPOgyRMUWBNaoOrm+wNYFra8udYrf1etTHGv78ukeJaKqzw==
+X-Received: by 2002:a05:600c:5490:b0:431:5aea:95f with SMTP id 5b1f17b1804b1-4316165a78cmr15389735e9.16.1729247486808;
+        Fri, 18 Oct 2024 03:31:26 -0700 (PDT)
+Received: from equinox (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.6.1.f.d.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:df16::2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431606c64b8sm23559035e9.38.2024.10.18.03.31.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 03:31:26 -0700 (PDT)
+Date: Fri, 18 Oct 2024 11:31:24 +0100
+From: Phillip Potter <phil@philpotter.co.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, Jordy Zomer <jordyzomer@google.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: Re: [PATCH] cdrom: Avoid barrier_nospec() in
+ cdrom_ioctl_media_changed()
+Message-ID: <ZxI4_BlGL99OX7b4@equinox>
+References: <1d86f4d9d8fba68e5ca64cdeac2451b95a8bf872.1729202937.git.jpoimboe@kernel.org>
+ <172921605188.361223.17436309372879358744.b4-ty@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: arm:
- qcom,coresight-static-replicator: Add property for source filtering
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Tao Zhang <quic_taozha@quicinc.com>
-Cc: Mike Leach <mike.leach@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
- Leo Yan <leo.yan@linux.dev>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20240821031348.6837-1-quic_taozha@quicinc.com>
- <20240821031348.6837-2-quic_taozha@quicinc.com>
- <a01d2f2f-d963-4eb1-98ee-3dc6f86c9397@arm.com>
- <xmijaayxveghxx76nnudo5mlpxv6tpxvooiox7wj2jyojf3xpe@ntm67lxikfop>
- <44e2617c-62b0-436f-ac6a-0bd3e3855473@arm.com>
- <53ec46af-3438-44e0-82b2-9432fc7f0fcb@arm.com>
- <4a6066ed-ead4-4387-8c66-b3e7631c5e90@arm.com>
- <6e408062-9a74-4a2a-8b67-b83244c4ca95@quicinc.com>
- <ce439616-072b-463f-b293-8a186f8282bd@kernel.org>
- <b62435d7-8f25-4555-9e50-3e03e249e0b7@arm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <b62435d7-8f25-4555-9e50-3e03e249e0b7@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172921605188.361223.17436309372879358744.b4-ty@kernel.dk>
 
-On 18/10/2024 12:08, Suzuki K Poulose wrote:
-> On 18/10/2024 11:05, Krzysztof Kozlowski wrote:
->> On 17/10/2024 09:23, Tao Zhang wrote:
->>>
->>> On 10/9/2024 6:52 PM, Suzuki K Poulose wrote:
->>>> Krzysztof
->>>>
->>>> On 22/08/2024 12:50, Suzuki K Poulose wrote:
->>>>> On 22/08/2024 11:34, Suzuki K Poulose wrote:
->>>>>> On 22/08/2024 08:08, Krzysztof Kozlowski wrote:
->>>>>>> On Wed, Aug 21, 2024 at 11:38:55AM +0100, Suzuki K Poulose wrote:
->>>>>>>> On 21/08/2024 04:13, Tao Zhang wrote:
->>>>>>>>> The is some "magic" hard coded filtering in the replicators,
->>>>>>>>> which only passes through trace from a particular "source". Add
->>>>>>>>> a new property "filter-src" to label a phandle to the coresight
->>>>>>>>> trace source device matching the hard coded filtering for the port.
->>>>>>>>
->>>>>>>> Minor nit: Please do not use abbreviate "source" in the bindings.
->>>>>>>> I am not an expert on other changes below and will leave it to
->>>>>>>> Rob/Krzysztof to comment.
->>>>>>>>
->>>>>>>> Rob, Krzysztof,
->>>>>>>>
->>>>>>>> We need someway to "link" (add a phandle) from a "port". The patch
->>>>>>>> below
->>>>>>>> is extending "standard" port to add a phandle. Please let us know if
->>>>>>>> there is a better way.
->>>>>>>>
->>>>>>>> e.g.:
->>>>>>>>
->>>>>>>> filters = list of tuples of port, phandle. ?
->>>>>>>>
->>>>>>>> e.g.:
->>>>>>>>
->>>>>>>> filters = < 0, <&tpdm_video>,
->>>>>>>>               1, <&tpdm_mdss>
->>>>>>>>         >
->>>>>>>>
->>>>>>>
->>>>>>> Current solution feels like band-aid - what if next time you need some
->>>>>>> second filter? Or "wall"? Or whatever? Next property?
->>>>>>
->>>>>>
->>>>>>
->>>>>>>
->>>>>>> Isn't filter just one endpoint in the graph?
->>>>>>>
->>>>>>> A <--> filter <--> B
->>>>>>
->>>>>> To be more precise, "Filter" is a "port (p0, p1, p2 below)" (among a
->>>>>> multi output ports).
->>>>>>
->>>>>> For clearer example:
->>>>>>
->>>>>> A0 <--> .. <--> ..\                  p0  / --> Filtered for (A1)
->>>>>> <--> B1
->>>>>> A1 <--> .. <--> .. - < L(filters>    p1  - --> Filtered for (A2)
->>>>>> <--> B2
->>>>>> A2 <--> .. <--> ../                  p2  \ --> Unfiltered
->>>>>> <--> B0
->>>>>>
->>>>>>
->>>>>>
->>>>>>> Instead of
->>>>>>>
->>>>>>> A <----through-filter----> B?
->>>>>>
->>>>>> The problem is we need to know the components in the path from A0 to X
->>>>>> through, (Not just A0 and L). And also we need to know "which port
->>>>>> (p0 vs p1 vs p2)" does the traffic take from a source (A0/A1/A2) out
->>>>>> of the
->>>>>> link "L".
->>>>>>
->>>>>> So ideally, we need a way to tie p0 -> A1, p1 -> A2.
->>>>>>
->>>>>> would we need something else in the future ? I don't know for sure.
->>>>>> People could design their own things ;-). But this was the first time
->>>>>> ever in the last 12yrs since we supported coresight in the kernel.
->>>>>> (there is always a first time).
->>>>>>
->>>>>> Fundamentally, the "ports" cannot have additional properties today.
->>>>>> Not sure if there are other usecases (I don't see why). So, we have
->>>>>> to manually extend like above, which I think is not nice.
->>>>>
->>>>> Replying to the other thread [0], made me realize that the above is not
->>>>> true. Indeed it is possible to add properties for endpoints, e.g:
->>>>>
->>>>> e.g.: media/video-interfaces.yaml
->>>>>
->>>>> So extending the endpoint node is indeed acceptable (unlike I thought).
->>>>> May be the we it is achieved in this patch is making it look otherwise.
->>>>>
->>>>> Suzuki
->>>>> [0]
->>>>> https://lkml.kernel.org/r/4b51d5a9-3706-4630-83c1-01b01354d9a4@arm.com
->>>>
->>>> Please could you let us know if it is acceptable to extend "endpoint"
->>>> node to have an optional property ?
->>>
->>> Hi Krzysztof,
->>>
->>>
->>> Kindly reminder, could you help comment on this?
->>
->> I don't have any smart ideas and with earlier explanation sounds ok.
+On Thu, Oct 17, 2024 at 07:47:31PM -0600, Jens Axboe wrote:
 > 
-> Just to confirm, are you OK with adding a property to the "endpoint"
-> node that will indicate a phandle that the device allows on this
-> endpoint ?
+> On Thu, 17 Oct 2024 15:09:02 -0700, Josh Poimboeuf wrote:
+> > The barrier_nospec() after the array bounds check is overkill and
+> > painfully slow for arches which implement it.
+> > 
+> > Furthermore, most arches don't implement it, so they remain exposed to
+> > Spectre v1 (which can affect pretty much any CPU with branch
+> > prediction).
+> > 
+> > [...]
+> 
+> Applied, thanks!
+> 
+> [1/1] cdrom: Avoid barrier_nospec() in cdrom_ioctl_media_changed()
+>       commit: b0bf1afde7c34698cf61422fa8ee60e690dc25c3
+> 
+> Best regards,
+> -- 
+> Jens Axboe
+> 
+> 
+> 
 
-You mean the filter property in endpoint? if so, then yes.
+Sorry for lack of reply, this conversation took place in the early hours
+for my timezone and thus I was unconscious :-)
 
-Best regards,
-Krzysztof
+Change sounds good to me for the aforementioned reasons.
 
+Regards,
+Phil
 
