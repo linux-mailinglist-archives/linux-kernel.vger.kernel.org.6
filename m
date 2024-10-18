@@ -1,118 +1,78 @@
-Return-Path: <linux-kernel+bounces-372554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A9579A4A40
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:46:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4998E9A4A43
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E29628243D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:46:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C991C21CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C200A1917E6;
-	Fri, 18 Oct 2024 23:46:29 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F99E191F68;
+	Fri, 18 Oct 2024 23:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcKl0SIk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A132D152E12;
-	Fri, 18 Oct 2024 23:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09EF152E12;
+	Fri, 18 Oct 2024 23:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729295189; cv=none; b=jphWa9c7MS45ywWR3DMPG6v97bdAUrz7zy4nt0PwrKv5wWd0Bfqew6uD0+A6QHvfU+fY0OP9b9ltHOD53oayKiQOIh96vkPf2gbnRFDQTh7557NzFYQgqpw5GMszHLU9mTGjlsss8ygPckUeUAIBEFaxJWZyrZlJrBOeISAE7IA=
+	t=1729295226; cv=none; b=gAGXu61RZqMplIzHz2DF7N10CKLLf+76521MiJm2nhea27jDAoG06Lk4aW+eVpyob9yiAgXesMuJkrPuHQx7cCeFkEX3XT6qa45rXXoucPrPG4FFYwmU1kuCk3nll12XeZwXObfOW2lA+n/ATgO0laHA7n3X+9G84/b/8Y83u5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729295189; c=relaxed/simple;
-	bh=oH3mmL8w1VzBwkoIErlqAXURXZliwRqlPIyCItbDdjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TnHPuRDfqTcswURRWrFKZAxdabo97hX78zSQTKq9IWB6WfQ6MnU9IoVmxtRTvO5gFYx9SXIdlKjw2gz3zCjUTM3coHFuk9kGfXpV8TFyftbqVgwyFChtPxNb9MZW+5TTHi5tZ2AU7L/fwTRTcXOqfJrr4gANcPNQtXV+MaL2W2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Sat, 19 Oct 2024 07:46:15 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>, cyy@cyyself.name,
-	samuel.holland@sifive.com, anup@brainfault.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, inochiama@outlook.com,
-	uwu@icenowy.me, zhangmeng.kevin@spacemit.com, kevin.z.m@hotmail.com,
-	matthias.bgg@kernel.org, Haylen Chu <heylenay@4d2.org>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Jesse T <mr.bossman075@gmail.com>
-Subject: Re: [PATCH v5 00/10] riscv: add initial support for SpacemiT K1
-Message-ID: <20241018234615-GYA2124001@gentoo>
-References: <20240730-k1-01-basic-dt-v5-0-98263aae83be@gentoo.org>
- <mhng-5bc45db9-5deb-4db6-8733-561768b2968c@palmer-ri-x1c9>
- <20240917-spoilage-nimble-a8303fd04482@squawk>
- <20241018-drapery-stable-cc31a97cda90@spud>
+	s=arc-20240116; t=1729295226; c=relaxed/simple;
+	bh=0ufzcRrsmb21/qrwoVKV9ZRAr/nCyaaGpsRJ41J3u6A=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jH/i9Bh0Cby79k0Xmukza36JO5jgJ/GOiQ+E/WXiYK5QWJUbEFs+dmDkAJxo3v7MQI9mPowWAnxcLfLZL4sHxhbhCpSMUs6mKq94hls8UhYCx3znAA/lWaAoJpllZPiV25W4xzfFZU2Tcig2pZqGYnd2C6QSm4k0LQOG3ftb2Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcKl0SIk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93144C4CEC3;
+	Fri, 18 Oct 2024 23:47:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729295226;
+	bh=0ufzcRrsmb21/qrwoVKV9ZRAr/nCyaaGpsRJ41J3u6A=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=WcKl0SIkuJ8dDBQ8VXsPni3ZpQFxpyRZfmSMULricHefYhAZ+xF47mt8KEMAlX1Ck
+	 wPUyZhsk500vj0TQw+2R+VzQCxZ6Kuewa44040kjkfbo1sRNa/4oq1aiPASgiiIKRt
+	 dlLF6OYa+3XYV34D1Bs8aJ9jLaAhLDfkUTzHIgqczs5LO4oJsrGGx/HDUza6bq6IG5
+	 e5J3efeDXADXoHAhKcodxSw9/M9aE6BtoB03cFCMN6W0HlOQMwx7QkfOlZuNG2qDEb
+	 jZz2nP5ZmI0F4rbzYJngMD9hULD3C0ll7fSdTzsC5j7WS3ocI+gl/BmdiH7rz6GXiN
+	 GuuOK4FfnbZKA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70FF23805CC0;
+	Fri, 18 Oct 2024 23:47:13 +0000 (UTC)
+Subject: Re: [GIT PULL] bpf for v6.12-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241018202420.17746-1-daniel@iogearbox.net>
+References: <20241018202420.17746-1-daniel@iogearbox.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241018202420.17746-1-daniel@iogearbox.net>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git tags/bpf-fixes
+X-PR-Tracked-Commit-Id: 5ac9b4e935dfc6af41eee2ddc21deb5c36507a9f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3d5ad2d4eca337e80f38df77de89614aa5aaceb9
+Message-Id: <172929523208.3295109.5294002829281223394.pr-tracker-bot@kernel.org>
+Date: Fri, 18 Oct 2024 23:47:12 +0000
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: torvalds@linux-foundation.org, bpf@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, alexei.starovoitov@gmail.com, andrii@kernel.org, martin.lau@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241018-drapery-stable-cc31a97cda90@spud>
 
-Hi Conor:
+The pull request you sent on Fri, 18 Oct 2024 22:24:20 +0200:
 
-On 18:24 Fri 18 Oct     , Conor Dooley wrote:
-> On Tue, Sep 17, 2024 at 10:08:03PM +0100, Conor Dooley wrote:
-> > In other news, nobody has really made an "official" statement about who
-> > is going to maintain this particular platform. People have expressed
-> > interest (including the submitter of the series, IIRC) but there's no
-> > MAINTAINERS entry added here AFAICT. I used to have an entry that
-> > covered arch/riscv/boot/dts/*, with exclusions for sunxi and renesas,
-> > but with Drew taking on thead and sophgo being the resぽonsibility of
-> > Chen Wang and Inochi, I no longer have that wildcard.
-> > 
-> > I'm happy to apply patches for the platform if noone else is interested
-> > in that side of things, provided there are willing reviewers, but I
-> > would much rather that someone else took up the responsibility of
-> > applying patches and sending PRs - and of course I am happy to help
-> > whoever that is with the process.
-> 
-> On second thoughts (and on a second opinion) I am not actually willing
-> to apply patches for this platform, since it isn't sustainable to take
-> on each and every platform that there's no maintainer for.
-> 
-Ok, I fully understand your concern..
+> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git tags/bpf-fixes
 
-> +CC a few more people that have been involved in the platform.
-> 
-> Yixun Lan, you're kinda the "prime" person to maintain the platform
-> since you're the one who took up the core support work etc. Is
-> maintaining the platform, maybe with the help of one of the other folks
-> working on it something you can do?
-> 
-That would be sweet, yes, I can take the maintainer responsibitly for now
-but, I'm open if someone else willing to help and co-maintain..
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3d5ad2d4eca337e80f38df77de89614aa5aaceb9
 
-> Mostly the responsibilities are just applying patches for fixes/new
-> content and sending PRs to the soc maintainers - but knowing what's
-> right or not obviously requires familiarity with the platform which
-> people that work on it are best placed to do. Myself and the soc
-> maintainers will help if whoever does this runs into any trouble.
-> There is some documentation here https://docs.kernel.org/process/maintainer-soc.html
-> that will assist somewhat with getting up to speed with the process
-> also.
-> 
-Great, thanks for the info
-> Cheers,
-> Conor.
-
-last, one question I'd raise:
-
-for this particular patch series, do you want me to send another version v6
-which can update the MAINTAINERS file (nothing changed with the code)
+Thank you!
 
 -- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
