@@ -1,111 +1,131 @@
-Return-Path: <linux-kernel+bounces-371991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62FB9A4301
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:55:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56DAB9A430D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85BE8286CB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:55:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4AB1B22954
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB7F2022D7;
-	Fri, 18 Oct 2024 15:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FEE20262E;
+	Fri, 18 Oct 2024 15:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgeeZh71"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KzSwBoqU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9035165EFC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51270165EFC;
+	Fri, 18 Oct 2024 15:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729266915; cv=none; b=ausp52waYSy8EhmgeZalSgIgSEUjbZOd4NorVee8l2AEprne+GMcaqRGqH9xbAgW1ukn5oejnM8kJkGiOQyzwNRd2HsFL6K7vBkn2K/R4ZfZoiBapF6DqAfubd9atWM1dOZf+BkAo3ecXS1VRLUm68Y+pHTBrQtTsmbPzOFuIyA=
+	t=1729267077; cv=none; b=RycnfZ+sfqhuTF904vGOj2hnk7XUnPUl7t5+mu9018pwtimk5YHZsiDAlbAXGh9YBFZ0gLqDUCTTTumWETB5LX4Lgrad6uqQFo38OQaTiP/WTjPHPAJNO8nZWffCF2pI7C5OmJrBYhH1aOmaHwFbQ10dHk5HF99DTQPYTbGmxG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729266915; c=relaxed/simple;
-	bh=htHCVl3dLq19V8wPIxFnR3ZwPaftOj2Ne5i0C7AnREY=;
+	s=arc-20240116; t=1729267077; c=relaxed/simple;
+	bh=/jhK/IFMqwYDsQdHj+5TZBuOduQ+FEeTuIymxvj+BtU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IDeGvjLf+9C5E02tEvQ7IEPeMnVWP07Kmta5exFcimBVOpBTCDbkDD7pNuCUxuR9b4B+HP4CQIvg9BWzhHoSGSv5IBh54CQSMj5tg7SZB5/AcbOtoqm7FrsA7b5iTkw1RcWEZlcIj1LdRpfN7w9rnFHuc9L/tO0XpnhIiFr4vjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgeeZh71; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C71F2C4CEC3;
-	Fri, 18 Oct 2024 15:55:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729266915;
-	bh=htHCVl3dLq19V8wPIxFnR3ZwPaftOj2Ne5i0C7AnREY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CgeeZh71kHHVa+cdIml4FAaHnIyZWEzgZRfuxPxxCs+RFgod+LNwbqICcNdi7yKjG
-	 QG1DB6W5hM6ZVIvhWravyOF6IJevy+fGh8ntBge476UHqWIqXRDvOPzREa0THkkj74
-	 Tc1xt0ykVx00t7JDcJObK37GMAXrH6vxy6QQB7M6CLaveixPdN5FuLclDcwS9RLUYG
-	 ZPlR65HSH+C7UTrMN/lgWv8zpB2FXtMTM+LdBKsUJyWILobAbQNZoc3LeDI8+RljKY
-	 oT1t72OoDDbv7tLUqEuj/7Vqg8AltGdVRJc2brKLDUmuMc0dPgOcJR5Gtplahxz4FA
-	 QTr93f8rHUetg==
-Date: Fri, 18 Oct 2024 08:55:13 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: "Kirill A . Shutemov" <kirill@shutemov.name>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Waiman Long <longman@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	linuxppc-dev@lists.ozlabs.org,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 3/6] x86/uaccess: Rearrange putuser.S
-Message-ID: <20241018155513.zaufdhi7p5mrz2bp@treble>
-References: <cover.1729201904.git.jpoimboe@kernel.org>
- <7818233ecd726628a3eb9cbb5ed0ba831e69af4b.1729201904.git.jpoimboe@kernel.org>
- <srdcfvwgmm4aiyny5ex24puhi7u4rohy2sjb2htrzqhr7igekx@bh3c22loauzb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Id4LNhBYUIRBGu74YeAgjMeGcLx5bPwR8Blb8Acvrw7M/fUbuUx9J2URO1Vc0IISG3RhtIHgKD9w9av9ZZPAJ6h7u0thQJc2zBaghGQ3Yptfd5cVnqfASkHMq0JhM+ToZkh2CuA05IHFBdqPhao4ENXmoE4qYu6p44rNoaNOEzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KzSwBoqU; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729267075; x=1760803075;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/jhK/IFMqwYDsQdHj+5TZBuOduQ+FEeTuIymxvj+BtU=;
+  b=KzSwBoqU28f6rjcSyVhUPVQVZ7CtdrUcMdUS9B2NnVKXg6KArmN63VpI
+   xz8DpO9A3pNzbQM34I5XfDoTd3pllzgglkI1bNwDmKXWjt+faaOhP56I5
+   xevIenPn1qCW6BVqSjWxvnIooFTLEnEct9J0gedb2A0lJ/PJjZXJXuY9j
+   sW1rtWxjj3Rm7bU8tETctkc8/5fIeQfr3WojMiG7sZdUXBflMlyflT1w0
+   o8Or3o1FJOqqv80nXX4f+QFtBrRHFj1OU56DozhR+WlkSYGiG3lk366Gv
+   JJ3CJ1ZfDs8zdXOzvLxPi5BwtdTWnTYal2aaCIQMa425bl75l+h33m4G9
+   A==;
+X-CSE-ConnectionGUID: whs8T819Sw29+cFEzzTm6g==
+X-CSE-MsgGUID: mzsYS/L7Rxu+QUPjKY7o6g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="40200885"
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="40200885"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 08:57:54 -0700
+X-CSE-ConnectionGUID: J/Sl4MABSPKELOlAeygCFg==
+X-CSE-MsgGUID: qlkVBjWrQuebpoPjghY1gQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="83534334"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 08:57:52 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t1pMK-00000004WXx-3hbY;
+	Fri, 18 Oct 2024 18:57:48 +0300
+Date: Fri, 18 Oct 2024 18:57:48 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: Gregory Price <gourry@gourry.net>, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	bhelgaas@google.com, ilpo.jarvinen@linux.intel.com,
+	mika.westerberg@linux.intel.com, ying.huang@intel.com,
+	tglx@linutronix.de, takahiro.akashi@linaro.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] resource,kexec: walk_system_ram_res_rev must retain
+ resource flags
+Message-ID: <ZxKFfOIOhxlw2YJD@smile.fi.intel.com>
+References: <20241017190347.5578-1-gourry@gourry.net>
+ <ZxHFgmHPe3Cow2n8@MiWiFi-R3L-srv>
+ <ZxJTDq-PxxxIgzfv@smile.fi.intel.com>
+ <ZxJoLxyfAHxd18UM@MiWiFi-R3L-srv>
+ <ZxJ13aKBqEotI593@smile.fi.intel.com>
+ <ZxJ2NxXpqowd73om@smile.fi.intel.com>
+ <ZxKBFMAecrL25Fwb@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <srdcfvwgmm4aiyny5ex24puhi7u4rohy2sjb2htrzqhr7igekx@bh3c22loauzb>
+In-Reply-To: <ZxKBFMAecrL25Fwb@MiWiFi-R3L-srv>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Oct 18, 2024 at 11:51:06AM +0300, Kirill A . Shutemov wrote:
-> On Thu, Oct 17, 2024 at 02:55:22PM -0700, Josh Poimboeuf wrote:
-> >  SYM_FUNC_START(__put_user_2)
-> >  	check_range size=2
-> >  	ASM_STAC
-> > -3:	movw %ax,(%_ASM_CX)
-> > +2:	movw %ax,(%_ASM_CX)
-> >  	xor %ecx,%ecx
-> >  	ASM_CLAC
-> >  	RET
-> >  SYM_FUNC_END(__put_user_2)
-> >  EXPORT_SYMBOL(__put_user_2)
+On Fri, Oct 18, 2024 at 11:39:00PM +0800, Baoquan He wrote:
+> On 10/18/24 at 05:52pm, Andy Shevchenko wrote:
+> > On Fri, Oct 18, 2024 at 05:51:09PM +0300, Andy Shevchenko wrote:
+> > > On Fri, Oct 18, 2024 at 09:52:47PM +0800, Baoquan He wrote:
+> > > > On 10/18/24 at 03:22pm, Andy Shevchenko wrote:
+> > > > > On Fri, Oct 18, 2024 at 10:18:42AM +0800, Baoquan He wrote:
+
+...
+
+> > > > > Can we get more test cases in the respective module, please?
+> > > > 
+> > > > Do you mean testing CXL memory in kexec/kdump? No, we can't. Kexec/kdump
+> > > > test cases basically is system testing, not unit test or module test. It
+> > > > needs run system and then jump to 2nd kernel, vm can be used but it
+> > > > can't cover many cases existing only on baremetal. Currenly, Redhat's
+> > > > CKI is heavily relied on to test them, however I am not sure if system
+> > > > with CXL support is available in our LAB.
+> > > > 
+> > > > Not sure if I got you right.
+> > > 
+> > > I meant since we touch resource.c, we should really touch resource_kunit.c
+> > > *in addition to*.
+> > 
+> > And to be more clear, there is no best time to add test cases than
+> > as early as possible. So, can we add the test cases to the (new) APIs,
+> > so we want have an issue like the one this patch fixes?
 > 
-> This patch provides an opportunity to give these labels more meaningful
-> names, so that future rearrangements do not require as much boilerplate.
+> I will have a look at kernel/resource_kunit.c to see if I can add
+> something for walk_system_ram_res_rev(). Thanks.
 
-Yeah, I can add a patch like Linus' patch to getuser.S which
-encapsulates it all in a macro:
-
-.macro UACCESS op src dst
-1:	\op \src,\dst
-	_ASM_EXTABLE_UA(1b, __get_user_handle_exception)
-.endm
-
-	.text
-SYM_FUNC_START(__get_user_1)
-	check_range size=1
-	ASM_STAC
-	UACCESS movzbl (%_ASM_AX),%edx
-	xor %eax,%eax
-	ASM_CLAC
-	RET
-SYM_FUNC_END(__get_user_1)
-EXPORT_SYMBOL(__get_user_1)
+Thank you! I will appreciate that.
 
 -- 
-Josh
+With Best Regards,
+Andy Shevchenko
+
+
 
