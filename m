@@ -1,134 +1,172 @@
-Return-Path: <linux-kernel+bounces-371277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D2E9A391F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:51:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE3E79A3925
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74410B22DEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:51:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE20028479D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC57318F2DA;
-	Fri, 18 Oct 2024 08:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86B618FC75;
+	Fri, 18 Oct 2024 08:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Z3dLR58s";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ejJML6iW"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L82VRvx6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801B117839C
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DCF18E025;
+	Fri, 18 Oct 2024 08:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729241480; cv=none; b=eheLxQ47QdQYMR0tGsvFFB/J2wzlPEdIZ5+aLB52D5uvDpsixUN2ECvoF6VhlY9KHK0x9ZQXYXb5X3K/lpFl0QBzuuF1n2095Uup4hBLvm9uZ3GC0sJLmEadK9HM0vNqxeY7sezbm0BOpDCbuNgEb9iseYtJefWqdcdF/jpRr6Q=
+	t=1729241610; cv=none; b=TfXNXJ6YoGtxP0A6/qThmPO4DNTlBFTCYkodNQDZGBIdSFpzhbzM+0fuqVMQNLmZaZM4BndKiAHEVT3O5aSnsU+2xSlEvYlR3ytdI0ofwcTztwwRQFWCSfFpDHlJ16D+TzOaa+aUAuBGAEoyXPhhr9WbXKprdqiFXmDjl9sVv+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729241480; c=relaxed/simple;
-	bh=JSmdMnRt/cQMfOaUbklcB1w5+Ed2Ivt7vyjyr/r9Qk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h7t5vppL4RfB0Xm31ta9cvbBjp18prWKkJ4eeeYm6IcL/pYpchFGWcLcUg68ow+Uxh3UKuFX9DjAQfwTCQnpUB7pipOtIUbhdaLXpi8huTxig7Gu0Dl8ChrcTuCOCtMpLv4Vyo4k8HMZUrvrvD++b8VLpmuWfsYJVMBG5gibxoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Z3dLR58s; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ejJML6iW; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 971D01140193;
-	Fri, 18 Oct 2024 04:51:17 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Fri, 18 Oct 2024 04:51:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1729241477; x=
-	1729327877; bh=ujq12Rn1ZYuFrl0E2Y4gVr1fgaquKynz6QQkqj20W+0=; b=Z
-	3dLR58snKKcCJZgZI3xeVE1wHwQdEhFcXogbDo3AZ9gydToFBWoKlvMNdW3k/uW6
-	jCbmBS6p5qc3MNzRv9O0MH4FbMWnATsWlYwT/xu+NMD8Vy3206zBov19LsihtNoA
-	5G7Qfo1A7R8SrUTivKRMGUsl917LkD2L0MC5Lc1WNScOM0WADNJlaoY8rzRFq0/t
-	YydyrvyCUyRAjGTgjRhczBmGBSCEAcTowEjesgUcB/Cq8POTzcZgiFvXMHZ5SnpO
-	SRsjVToGLmjHGCnE/DHje9zIw+qomL2+D3aQNC5D7wgNzuQMBLfaBnc6eblMXDTb
-	4AryKgbnxwj0YKPNuiJMw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1729241477; x=1729327877; bh=ujq12Rn1ZYuFrl0E2Y4gVr1fgaqu
-	Kynz6QQkqj20W+0=; b=ejJML6iWBsqgueuBT4fZuvsdujksEjLlVtrckefdgsrI
-	Xa3bvEDZBt9GiFTgDWQK7q4AZuwIztZCiCo9PwMKcp33lokDnrIvsjtdcJoqAMme
-	XdkKdIozTOxgDYolF4GlFiaFFPH89luiGJHwP6arft65XLKccD1chVmcTMsqnevL
-	7HpBJEDDCMw6rJdyswhxup7SxIXrxuxD6wh1t9dqnSlTGbybyPJF3c/ezFtoVPhM
-	DpVaYHXpErwN5stUMXGAOOuwkCmDXmezctQ3HlItD1ZhyvUT6tr9B9TnJq1cOYt2
-	XURzh+eN50Mt2nAXAhOWiPuzyfXDkbjc+egK4gsAMQ==
-X-ME-Sender: <xms:gyESZ6XSXpFEmaS-7geuqxyPc7tEhjHMImlRe461ajghgIdeWRQwEA>
-    <xme:gyESZ2kKsqTZ3ESMyubcy5HTU4ObhKnCt37BkbE_8e6b1Zz73h6fsecWhSj0MigDw
-    I3cJ5JPNUgxCqXbBX0>
-X-ME-Received: <xmr:gyESZ-YcVbPyquP6e-_F1TyzjTV2ly6RhLx_pbLwIIbco9IbF4sbQTRVYYDn60dQOw5blA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehfedgtdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutecurdcuufhhuhhtvghmohhvfdcuoehkihhrihhllh
-    esshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepuefhkeeiveegheev
-    ledukeffheejfeeivdfgjeeukeehkefgvdeifeehvefggffhnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhho
-    vhdrnhgrmhgvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepjhhpohhimhgsohgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeei
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihig
-    rdguvgdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehpvghtvg
-    hriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehprgifrghnrdhkuhhmrghr
-    rdhguhhpthgrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheplhhonhhgmh
-    grnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepuggrvhgvrdhhrghnshgvnheslhhi
-    nhhugidrihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:gyESZxVeHzCRD6MAiqT2S6T207Wd3kzCe8Zfc5Ej44QKsFKILE-PXA>
-    <xmx:gyESZ0mxgdkcEWjNKUEIx2l89WdjgL35BSRXD0HtleLh5TfcPMCBYg>
-    <xmx:gyESZ2eusl9wn4Upuji7Eayx0BuCyhXnOirBUWRzJ4HorabHAperlg>
-    <xmx:gyESZ2FdVtPX2R5ogsOIA_tr5uYKdf5owyjz2umGDCOl1wos0dbeuQ>
-    <xmx:hSESZ4lkrKXKaV_5i95opjMMhO4ccmSeRUZGg3GphxIwdeo7Q1ziXh2k>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 18 Oct 2024 04:51:10 -0400 (EDT)
-Date: Fri, 18 Oct 2024 11:51:06 +0300
-From: "Kirill A . Shutemov" <kirill@shutemov.name>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Waiman Long <longman@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Ingo Molnar <mingo@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, 
-	Andrew Cooper <andrew.cooper3@citrix.com>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 3/6] x86/uaccess: Rearrange putuser.S
-Message-ID: <srdcfvwgmm4aiyny5ex24puhi7u4rohy2sjb2htrzqhr7igekx@bh3c22loauzb>
-References: <cover.1729201904.git.jpoimboe@kernel.org>
- <7818233ecd726628a3eb9cbb5ed0ba831e69af4b.1729201904.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1729241610; c=relaxed/simple;
+	bh=Eft0/EV53cHhIKGudjtMBWNbw+3vJIAdcxvFutsGwM8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kY+IDrP2blqlQez1IDk5SyeCgwWOGBF7Z5fkR84Af4RUCAD0aVgHAAAKjzDvHRbnDGXKOah2VCQKxjdjTHQZV4HfKl2tjoh9wjW2OoTQtueC8XU+eaRezrgf4iop7+uVLILGD5OTxTWxLJIfuab7WE0SBuIepevu9WL2Auyiwg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L82VRvx6; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729241608; x=1760777608;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Eft0/EV53cHhIKGudjtMBWNbw+3vJIAdcxvFutsGwM8=;
+  b=L82VRvx6wEVzRd7/J+B1Ugh6vDFRmnTowtLwMoigExsg531HULTr2Lg6
+   titlNqRuA3AWIiojPxq5XjkGj4Sp6RyrsJewnZYkYctacVRrN/12PqpIg
+   cKtWUhy9n/uAZE/oG+5dsaq5pd1milUSVn+Yt83nI1qGSfw0eYLfC6LIq
+   2hBNTVo5Vmi3xSZIcncVwknlvEx29JMX5RJ6mrCfKa9/npVs5BsKdJeNA
+   n129/xslxevEaemiizgKB8C2ZuZIh6S4HmEfabgFR1zlVBEbtUzxGoF5B
+   g6H0/mynnE51pBBDV+KiOI1mfoTcaQp7LLfsVxSfQzQAWpVn2rZ01zOWK
+   w==;
+X-CSE-ConnectionGUID: sKKsDQxgS+qDku1Z5kUywQ==
+X-CSE-MsgGUID: L5trl373QcWyHiYP/Vswpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28899250"
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="28899250"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:53:28 -0700
+X-CSE-ConnectionGUID: 7arqsPE1Q0qPzh2ehBBFyA==
+X-CSE-MsgGUID: gCw747VwS+q2T8iY36aaOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="82775803"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.217])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:53:24 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 18 Oct 2024 11:53:21 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V3 05/15] selftests/resctrl: Protect against array overflow
+ when reading strings
+In-Reply-To: <4adf01b3ee7019163ea4fc00b5d03d514d41b4b7.1729218182.git.reinette.chatre@intel.com>
+Message-ID: <70d4206c-3a5f-e699-0608-f70751f124eb@linux.intel.com>
+References: <cover.1729218182.git.reinette.chatre@intel.com> <4adf01b3ee7019163ea4fc00b5d03d514d41b4b7.1729218182.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7818233ecd726628a3eb9cbb5ed0ba831e69af4b.1729201904.git.jpoimboe@kernel.org>
+Content-Type: multipart/mixed; boundary="8323328-895840305-1729241601=:1141"
 
-On Thu, Oct 17, 2024 at 02:55:22PM -0700, Josh Poimboeuf wrote:
->  SYM_FUNC_START(__put_user_2)
->  	check_range size=2
->  	ASM_STAC
-> -3:	movw %ax,(%_ASM_CX)
-> +2:	movw %ax,(%_ASM_CX)
->  	xor %ecx,%ecx
->  	ASM_CLAC
->  	RET
->  SYM_FUNC_END(__put_user_2)
->  EXPORT_SYMBOL(__put_user_2)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-This patch provides an opportunity to give these labels more meaningful
-names, so that future rearrangements do not require as much boilerplate.
+--8323328-895840305-1729241601=:1141
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-For example, we can rename this label 2: to .Luser_2 or something similar.
+On Thu, 17 Oct 2024, Reinette Chatre wrote:
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> resctrl selftests discover system properties via a variety of sysfs files=
+=2E
+> The MBM and MBA tests need to discover the event and umask with which to
+> configure the performance event used to measure read memory bandwidth.
+> This is done by parsing the contents of
+> /sys/bus/event_source/devices/uncore_imc_<imc instance>/events/cas_count_=
+read
+> Similarly, the resctrl selftests discover the cache size via
+> /sys/bus/cpu/devices/cpu<id>/cache/index<index>/size.
+>=20
+> Take care to do bounds checking when using fscanf() to read the
+> contents of files into a string buffer because by default fscanf() assume=
+s
+> arbitrarily long strings. If the file contains more bytes than the array
+> can accommodate then an overflow will occur.
+>=20
+> Provide a maximum field width to the conversion specifier to protect
+> against array overflow. The maximum is one less than the array size becau=
+se
+> string input stores a terminating null byte that is not covered by the
+> maximum field width.
+>=20
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> This makes the code robust against any changes in information read
+> from sysfs. The existing sysfs content fit well into the arrays, thus
+> this is not considered a bugfix.
+>=20
+> Changes since V2:
+> - New patch
+> ---
+>  tools/testing/selftests/resctrl/resctrl_val.c | 4 ++--
+>  tools/testing/selftests/resctrl/resctrlfs.c   | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testin=
+g/selftests/resctrl/resctrl_val.c
+> index e88d5ca30517..c9dd70ce3ea8 100644
+> --- a/tools/testing/selftests/resctrl/resctrl_val.c
+> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
+> @@ -159,7 +159,7 @@ static int read_from_imc_dir(char *imc_dir, int count=
+)
+> =20
+>  =09=09return -1;
+>  =09}
+> -=09if (fscanf(fp, "%s", cas_count_cfg) <=3D 0) {
+> +=09if (fscanf(fp, "%1023s", cas_count_cfg) <=3D 0) {
+>  =09=09ksft_perror("Could not get iMC cas count read");
+>  =09=09fclose(fp);
+> =20
+> @@ -177,7 +177,7 @@ static int read_from_imc_dir(char *imc_dir, int count=
+)
+> =20
+>  =09=09return -1;
+>  =09}
+> -=09if  (fscanf(fp, "%s", cas_count_cfg) <=3D 0) {
+> +=09if  (fscanf(fp, "%1023s", cas_count_cfg) <=3D 0) {
+>  =09=09ksft_perror("Could not get iMC cas count write");
+>  =09=09fclose(fp);
+> =20
+> diff --git a/tools/testing/selftests/resctrl/resctrlfs.c b/tools/testing/=
+selftests/resctrl/resctrlfs.c
+> index 250c320349a7..a53cd1cb6e0c 100644
+> --- a/tools/testing/selftests/resctrl/resctrlfs.c
+> +++ b/tools/testing/selftests/resctrl/resctrlfs.c
+> @@ -182,7 +182,7 @@ int get_cache_size(int cpu_no, const char *cache_type=
+, unsigned long *cache_size
+> =20
+>  =09=09return -1;
+>  =09}
+> -=09if (fscanf(fp, "%s", cache_str) <=3D 0) {
+> +=09if (fscanf(fp, "%63s", cache_str) <=3D 0) {
+>  =09=09ksft_perror("Could not get cache_size");
+>  =09=09fclose(fp);
+> =20
+>=20
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-895840305-1729241601=:1141--
 
