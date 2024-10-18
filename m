@@ -1,202 +1,361 @@
-Return-Path: <linux-kernel+bounces-372072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C5B9A441F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:48:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044689A4429
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4146D1C20FEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B155D28258F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41662036E9;
-	Fri, 18 Oct 2024 16:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781F32038DD;
+	Fri, 18 Oct 2024 16:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTZ2NN3i"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kopaCg16";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JWXCVVEw"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50151202651;
-	Fri, 18 Oct 2024 16:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729270093; cv=none; b=oGxUQOHcJlYBsuJbh6J2/qzN5PmX8R7Tnh8u3B7YoxPtidz7cKh4upZlqV/0UYHZuiF8czju7/WXxIizuMqkTD9NBvy01hrOPN/qw1VOejlzb+nrtb80nOpNSgLzK/ExmKa82oRcVKDe7bRaDshmsDEsXjQKhI5GUy5wCowJpFI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729270093; c=relaxed/simple;
-	bh=cfG7+wQ41ZDxpQ7jdDKg8LaDeziyv82FxZfg3dp++54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tJljUrwMtKYwRcuWjuk2pFzOOXELowNUfV4Nw/ab8GEZMc9fA9fJkAkvCS452ez/sjaMJq0vEY5nrg/6QqkWyAELSl9NhwLcWE+t9F3c+vVX7buBVoGQ+2D8kb/K9UfqmqmzfBjLg7GpcZ/vgKOmCkFsLfssfPW6S7yD6OdMZG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTZ2NN3i; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2d1b7bd57so260743a91.1;
-        Fri, 18 Oct 2024 09:48:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D067201273;
+	Fri, 18 Oct 2024 16:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729270261; cv=fail; b=AqmUBeOOTJv57wOV2sHSPBdohAHl1yscBmjhVXfl81Xf2gS6OiXGyaIJ8Q465Fn12WVvZyV5SPWDrfFxf8Ieqj6s22fiZMxkQJf7zlIv5AorrdlmUbUvYipTroIKY03cz2sM/bv8CFcXV2nGgPtuz5KHjQVnwsOojpyqDe7thA8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729270261; c=relaxed/simple;
+	bh=Sa1hGWHRTGeKOiSlShlBaYZ+LD5kXHWHZZ8UKlbl9Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Zyn4uMwKiG7jf0J4noc3ZIbqAkEy/DnDEa/zJEgunkifxpsTzgnf5Gqafw0AYm7Ly2kjE+irQrgwZOJdtwV0elYVP7G2i2WpP85sLNIV0Kz4SbUyvt2AwqjaQzcvVyh7cX/2asQY8/LE68qgm2fpbwv1jmufoD9Hm/yEZK0k/F4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kopaCg16; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JWXCVVEw; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IEBdDF017100;
+	Fri, 18 Oct 2024 16:48:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=Ci22HYuBuT/Jpcm7K+
+	FNohtAwtu7tzNl4VhumklXL18=; b=kopaCg16hUCWLbuhup5Nq1MrOlR+VGYQ/3
+	EGaGrAUN7MM/TqhG8uxWl1BywhfI6d/mrvoU0SSF8Xjef6F8+K74xUPYDHzk9Pvi
+	4NSSjXJopW5Znczzkfw/2vlVhQeMrMDX11POMbRIQ1kX3np6LVlSZsyeq9Kmp8Wb
+	h3Rkq7QGeW9P4T69Ngd7Kzw8uEKL5qqE1KS5MwH5CTQ99MwYE7jtRYUN3Cd/1gzR
+	Oabumy+WB4RRl1tqPTpQXVkb3RCvfkK+wYUaZtUjT0WaHVEhnQ0sarhhkVZJuzoy
+	Day7T7GoiFb15YeJ380Hn3/1ifLeXD2khPGdetOln+abKI/okdew==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427hnth8qy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Oct 2024 16:48:24 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49IGdsV1013876;
+	Fri, 18 Oct 2024 16:48:24 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2045.outbound.protection.outlook.com [104.47.51.45])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fjbt517-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Oct 2024 16:48:24 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XYcxVxOLXs3YPAfQD1yf1TMKaPZEUAZ8u/o/0fJyw2UZuU3/yWEAuYtiJZLAEDjelhn1AMvEkXLzljg7O4JdH8YXKj4sNB4H8gltLCKc5FScnzZXtvFHSYy377hV/jHtVQfjPyZ+YqH697+gfSFXa//wV9CI75aIRGB0CXcoktNkTba3i4PUrqosn0x9PqKJ4LR2KBG4R3LMc2LOUBQf0ZGjfplPRjVg1Bx0HzDJ1Ug5sRjs85JxTyTgjAqOTHXbcTAsS71+lx3zF65uvCJnPib9HI0iTv6p1Tp1Ln8eiDrdPTsYCvZ6lnG2EUvAWSzoRoPqX3neDb5xNQ0k9Qp5DA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ci22HYuBuT/Jpcm7K+FNohtAwtu7tzNl4VhumklXL18=;
+ b=dSUAF7yeCeXL7dUEyBIo/bkPFxGeyhhvEuOX/ifccFLowqlPfGW2MoXw0Qbd1F2NmEGE3fmae2EUK9H7w7XBMcQEhO9aKyPqYd9WpG8SiDCm5tGYg6Mjv5saHee+6mD7zk1vrsF2xbm0rbNsU/9NF3DJ7tGJdjWgZuLHOzb+0YIaDiQ33w2Puxccfg0X/g6yZ71hTFVugaMBlFCPWZWlHAWRo8PeZPi5dS4Nr7/i/oyrQNiXXr26ewWfBOmSFQNLAprfCmM4Ip9ezjqV/WojhZ4ST3QsxA5B8DMs6EdVZQFb4tohbaPYmRH/2Gn5fFIk8P83ngDCaa/j1xZN6oyMIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729270090; x=1729874890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+KdFMyZilgxNgos2aKAfdGC1JRwrBCcFoee7Jhfl6wo=;
-        b=aTZ2NN3i6eVijeFgqrdS8iRd94jEWCKXR73recXiF8wU28tyN9e1+DriWRAmyJC5Ib
-         MyPcj3BmPMjUFoGuPMAELPY7CIBuAYDdrnMZIu7IsYM3boCAkzN0tG/ZLeiC9xaGv863
-         7aNbz7671+xuNeacBD+6USAZEvkPeSkZ/tFMooeUcl5xVY5ttxwrET4nkfQ2YjPHanhN
-         jBk8x2NNPgdpO7/gAONAg/w6oWnDb6oXu5mM82ORbA0xiLIr8R4TeR79WimKqGl6UP3m
-         RiDIeZnhrJpqhVQT430wJD3qFBKS/Uj3dQWzLTiePcmotsJAFJIAynzlARLhZDi4RT5Y
-         U8Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729270090; x=1729874890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+KdFMyZilgxNgos2aKAfdGC1JRwrBCcFoee7Jhfl6wo=;
-        b=wM6+FTb7oQ+29ZfLEA07+7SIlKa/TRT1qSUFu/oAQ/31LGtLQZbGG449/B8qtidx3a
-         NPAp6d1XRDbN5G1BYGtyMmwt637QrcLf/R2NH0KPBUr3u5PCk83NOxM/ipD/Qft0k/7b
-         FlH0F+BXEQWEJjPIB+vVKjDYt160zndiNUuRZSQMsVKwfVDBqbNU2vIVEZYqOl8Qumkn
-         V/EphTIVPp2rp0IDrDxkaU0TXtzI0JLYCgxbFqstoumyLI164w9wiqHh8kwb0n3YybKb
-         BMdEsAFbF6PSxxEnNRmFHSYLEUa3/33BM2fvSc4wesWk5D+bTdYi5wwGjbtl3m0Pa7AJ
-         B8EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUigBrQ4beP9zSkA2/lXfZ8N1gtiVf1ePWSWRqESpfw7CmxuvZu/QPoDSsBeN4zXTz6AcgY+QJaVCU=@vger.kernel.org, AJvYcCWqLAeTNU9oOoVWdBUDIuTpF+WXybfqV4+pNVfmXsC2r6Ikpi/5Mtl+PnsIGEv40irQD7UIrxoDAz+YXa3h@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy330PWEj4jj79oT/sfcEK3gEc84xq4BFwYpi8CRd3zqqgdjluW
-	OAUVEiBVhgdbaxWNZHC3wQnTWd0kLMhdPq9VDlovzSI9VKNyRieEp4gCgNrhFSGaYV6sPCqXpaY
-	qKVZKFiLgQ2pzM5LBBb9F0fhthgQcZA==
-X-Google-Smtp-Source: AGHT+IEHHpQqFYmBn0xV51TfI+SJmAuytoxVOYISR+ezP4xC8C3OEqfFW8De5N7maRo4MXgcOq1zix+V+Pc+gPWkCFg=
-X-Received: by 2002:a17:90a:f189:b0:2e2:a70a:f107 with SMTP id
- 98e67ed59e1d1-2e5615d618emr1697930a91.1.1729270090387; Fri, 18 Oct 2024
- 09:48:10 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ci22HYuBuT/Jpcm7K+FNohtAwtu7tzNl4VhumklXL18=;
+ b=JWXCVVEwEe+g1fEcpWhWsU3ZqtKV77pkZ3jOxQsnynuMbhfN/a4icx2JQmIwmKb9mM1sRsiKz5yEuX4nud9CSoVZ+TzBF+7jfrwUJKi2pM/HUFp58zsBpDs6hEKtOwgagsdmCzTQPDVv4ig9Od/sgBtaThpdhpe5dCQ6XIhFT3o=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by CY5PR10MB6022.namprd10.prod.outlook.com (2603:10b6:930:3e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.20; Fri, 18 Oct
+ 2024 16:48:20 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.8069.016; Fri, 18 Oct 2024
+ 16:48:20 +0000
+Date: Fri, 18 Oct 2024 12:48:18 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: akpm@linux-foundation.org, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+        jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        ebpqwerty472123@gmail.com, paul@paul-moore.com, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        stable@vger.kernel.org,
+        syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v2] mm: Split critical region in remap_file_pages() and
+ invoke LSMs in between
+Message-ID: <mbcl7xg6sg2dbycebfosbiakj6evwft662oaqgx7h2vcccbky4@obq6x72ek5dh>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Roberto Sassu <roberto.sassu@huaweicloud.com>, akpm@linux-foundation.org, lorenzo.stoakes@oracle.com, 
+	vbabka@suse.cz, jannh@google.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, ebpqwerty472123@gmail.com, paul@paul-moore.com, 
+	zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, stable@vger.kernel.org, 
+	syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com, Roberto Sassu <roberto.sassu@huawei.com>
+References: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT4P288CA0006.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d4::12) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240824-amdgpu-min-backlight-quirk-v6-0-1ed776a17fb3@weissschuh.net>
- <cfec358a-ff42-49c3-a174-149bee7a461c@t-8ch.de> <5b1c8688-8154-436e-ba8f-f5a9087d2c85@amd.com>
-In-Reply-To: <5b1c8688-8154-436e-ba8f-f5a9087d2c85@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 18 Oct 2024 12:47:57 -0400
-Message-ID: <CADnq5_N9HxF749HviiM-cAcrrEUHJMohzdar4t5RTy_kNNK+Vg@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] drm: Minimum backlight overrides and
- implementation for amdgpu
-To: Harry Wentland <harry.wentland@amd.com>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Matt Hartley <matt.hartley@gmail.com>, 
-	Kieran Levin <ktl@framework.net>, Hans de Goede <hdegoede@redhat.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
-	Jonathan Corbet <corbet@lwn.net>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Dustin Howett <dustin@howett.net>, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|CY5PR10MB6022:EE_
+X-MS-Office365-Filtering-Correlation-Id: 158bbcdd-3d97-4c90-67e0-08dcef94ac5a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BLQ/gL1sBMAsVOaKCdL/IjtvNl2doHakS/tInChJMk0PhkOanF2XQnUgLbL/?=
+ =?us-ascii?Q?n2Qd9D7uF9oX5ZGy4v/qrf23J/0lDc7Tu7x59AjdO5slj1IlfpvBlDfiapfE?=
+ =?us-ascii?Q?Yg0I3npoYV8VuT8I1bSuYWdwA+91OyFZud3LUrzrjaCgluSVp9+UbqgOVCW/?=
+ =?us-ascii?Q?+DrLuXIGcjxDG4rMIVSJz8MPpC6u5gv9oJuTC3GqOt6jVJ9VCGn6WIW0Vmnd?=
+ =?us-ascii?Q?/3IekTniUE1/G0jaASRL/WYNMpWBpjwyQN1w+JoqJkLJcmeRfshvPuCkjc9A?=
+ =?us-ascii?Q?XYLGxs1Mq5Rr17+jhpWCTRqlGYiXYmmnd+1dF1QGAaZYRHPcxWWIQSrl0TvG?=
+ =?us-ascii?Q?n7BurZjUSGtEfhmKOSDkyX4CXK9IQklijPdBvWDU9qmhlOrJ9uP9OaETiHyH?=
+ =?us-ascii?Q?NV6sxHT/YSQ7g3CLI3aM49UklAKD53UVe8aC9NzCgt1v4iJl5RoRB3W3hl/4?=
+ =?us-ascii?Q?BK1X/E3exC7SMUm9Drs7Ncp4HoCRRzobjrw/FBOiLuTRAUuC9N5n36WrFWxt?=
+ =?us-ascii?Q?PBzN//vRnZidKq/byoUl16QsoXI9VcLJSW7fRJWxowYPJYAGmfDTZTIgLxcX?=
+ =?us-ascii?Q?mZllztBwV9YIj/q2fKE3u8+DMhTREJA//Auz+7K9V7W3t/s7CXrq++xInDNV?=
+ =?us-ascii?Q?l38YU4vkXX+AoyG2hMHRZ989ziXeLoKF+RYGos95riUH/NSFW3XxyWhioLc9?=
+ =?us-ascii?Q?7pmweb5Y26VwumXTWI+G6qDO0/1outn0lDQTwWNeRpXjVPbRd1OzVGsQO2jI?=
+ =?us-ascii?Q?piMEdTgP9ehVZ3TdsM2axOYQTbWS2ajI51Elcg5KB/94z9xOxqzvI2T3lyor?=
+ =?us-ascii?Q?bIaCTnbnaIajRrL9YLvkQQwXeFzgv9/dUSdM7Fgmi//+UyuFSURYFq8gYuWP?=
+ =?us-ascii?Q?+qMLufTeyHgoRgomlNHTDoGG0XWszZbqyV62z6tbK52Xz07Ou4Ax1aNP2ODN?=
+ =?us-ascii?Q?tVE3NaBqCw9DkTDVQFzES1v8HswkzYEmW/fQBF+dh0kDo5qJTwW4NUTzDK1o?=
+ =?us-ascii?Q?P01t3mWhcW7uWA8Eecd4QBFv+Zs+7+UEmUH35w7DuGIihHgQSj9hus2jZ6Ui?=
+ =?us-ascii?Q?4uobEp040jwn0OXcCuW3WIgQZ+HBem8k0BZ185iztIndtTkDVvlQXhnLEP4H?=
+ =?us-ascii?Q?YzGLCT2bFaDDZp1c7Stc0Hqw5yae8CfVJFpG78lmT81QlbjPeDbEy/Kd5tVF?=
+ =?us-ascii?Q?3/DcSddqFSnksroDKiv4vz3pD3LZFySMe0C1GjUtvmJ30UMhye24miVHm1ml?=
+ =?us-ascii?Q?W6xQNSKT4GTtLEqbqVTt26/FhUAhK4mmYf6CDhsfR4DUkC9qXCBYR+Qk6TBi?=
+ =?us-ascii?Q?6EEoWCgsoS/hhPGyeXCLidUU?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?36gej68+uPIKJqm9JsWaBa6k3eP5kA9esoeA9ZNasjI87GSYTiCTxfMc5LdJ?=
+ =?us-ascii?Q?AXaS87VN7sV/bYOxC4dHRq/7vYsjyiCWyfyObPiGRPHCWNoBJP30achGZYJ1?=
+ =?us-ascii?Q?u2u+fFVKDKK1e4BkMyBRLT4O1EQeN9Ff4hl39JJScwc8yAsgoVSDef/7gmgo?=
+ =?us-ascii?Q?zMQq3nI1E1kMbWFO4OdZGMzllOIrWq7+MjVvcKjvjXgSYfh5xBmDIOySuNpt?=
+ =?us-ascii?Q?zcjr3Yb93ucCy7BXKiQb8awI3D8733V9kH0zM7j/5bPbXju/zJEwA5HjBCKs?=
+ =?us-ascii?Q?C6y1BcraME1ROARAMJoeFyTPl1b1oJ2kWmMSWTcJSx6ShJj5oG1yqs3i9l9K?=
+ =?us-ascii?Q?ntb2gxqj+noup++GPkyf/DS7I6o6NaK9l5jlFnAXlRxpaEzWBWS/8+OMoNpj?=
+ =?us-ascii?Q?c4B1L310eX32qeykpo0Sc1FKesgDxMMVCoWxJ/S7pgI/f6+5TaLwdAlI1Ztm?=
+ =?us-ascii?Q?FG5NywEujmyLo50VvXcqqDV6rHwcpXfemeg+7tXmj4abtgaxycMR6Sv0xPgQ?=
+ =?us-ascii?Q?6osTgSTQ/EaOh/fb/bOVuqMMuiU6+zAK33DIAgKTNezxs0FSeaLTCu5cSHXi?=
+ =?us-ascii?Q?iSbJLFRX/B7MudZnrSxtWIlVLQdpD5YK82R5bp6bfySx4BXwOyvM7QfUaRyt?=
+ =?us-ascii?Q?HF4bfm6Q1E53haRs18neVDH4+tlALhpThwqgioTmnTNNT2HvJ46aGpI/pe1g?=
+ =?us-ascii?Q?a3Ys1cXd4iplAwCksaheFttoO2LLjG72NNMprHQJC2/kjRh+R5fcgVnPmmTu?=
+ =?us-ascii?Q?Y2ZryuDnhO6wFdDWgdmyinm0ixiLyox8yqZEWKFXiSpW1XxmZhjg3YttsM0I?=
+ =?us-ascii?Q?Ezm9q2Z2tQwypT/fO3IM6CYwCkmK56DrkYxXji/RknafeO9SNYPsz1IwOcC6?=
+ =?us-ascii?Q?yF5Y3SiaBAVSwYq7l6NV01KVAacJMtGf2Ns5Px3IA6+K9GGY1AydpQvS9Kxt?=
+ =?us-ascii?Q?C3kmmilVL7L/WFXXeqMHszyEp+IyfiQ8RapzcoT6B41U/qSpimT5bxEBJadh?=
+ =?us-ascii?Q?A6RpUNBxqXaEAMC9/IsmkZIfFm0bONT9JC8EUUgyGCPPKOQ0B29ou/39L+y9?=
+ =?us-ascii?Q?+4OrySE3m5f2C7pMYkEpuWAytpAldG4NDNPa9n7SuJNDkh0Apmzr5WimyVSF?=
+ =?us-ascii?Q?W17AtfF9+76rbUV4Q8AYu2GJqvxxmtEgwxjcyHoF09GLrm7CiAgZugk6Wr/V?=
+ =?us-ascii?Q?Ci+ZfKwUiEtIP9mOdbVI6AhXzqDc9+hgj0r62a8Cxq1Dtp3K/g+DtR+bPipD?=
+ =?us-ascii?Q?6yIkHDt8P2RZrvbFCoZzT4qjFmHxdm/FzFFr9dxEWoj9FTE+jMZYX3KYGUPs?=
+ =?us-ascii?Q?TsUAVilNXYIdFE/QB3MOOJv6uzlPsldM3ua4B8IULvloKt5balfvOtxBWyEz?=
+ =?us-ascii?Q?E0edKe+GoaL+Nj7a5NeCLAo4max3l1fAWwZ1J7+F7Cqhrn8rpw8GwiCt0ArK?=
+ =?us-ascii?Q?dvV0V37+TxdRfgFmpzvO9aS+bROn1Rx3x7ibanaDCV15XaKwyfmXYJG3Ix4U?=
+ =?us-ascii?Q?1CWspaqYL9W5fhOiaSMREF60WNN0JI6nbdb/tVWM7nM9Da11yvuAgd5C/aiv?=
+ =?us-ascii?Q?ESYmNcEYcEJc5tauSjMm08LYVkCGk+bf4X+SboWJ?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	cfsYOEQcHWd0qslibAEICRQ/r5ytwB2wZwtzShvl4DnXIcrL5RzN3CkfKlVXlpq8vx4jUbalmvb96FlFPzKY64SLN08EaE8PJfSUZv7sBQmKabq/+9rU6LGemqxSPi6j6YdH4fqGrPXq0cZnoKIl+RidM5QWzY4t0D+xQ1drbnUXiRe0Iv1fVoNvVee2Cjag9lplHZHs0hTHswD89JpTsJD9k+GRxM5Zqhcd5ULVSVdHbplPgWOQmv50Ey8WelhoQEAUdYhaI1ZaZC0IuRVENS2p2+oU1xUpqz5OspIw7QR7U7/T8sfoxdL9jv4gMvMIaRDstZfv0lgjXSjgPRNTUDk+6ZamyB/Kg+NplIy3H0nxZMmby7SJrdjwFz1OCkx1YD5/kGJ3y6wOQ+vE3SeyhxMk0jmOHaRqQqE3NYT3q1QHMQTiLu7ddEGeEvW0BbDzqXuY+FSn3MHIE053ipBFDUo2fX2KS5b60NUVbMVWmwflMTx26LmmfiQl/GNaROZiwU2hRsKmjEqmkj4k4HKBEznF8mTavykZWKuIacF5L+OiZcwYmN5e+vbIGoGjSaGKRXceQVqwkkrPgQ9r7IIhL0Rr8vloQiUEQy7M0u87m7c=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 158bbcdd-3d97-4c90-67e0-08dcef94ac5a
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 16:48:20.7632
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ot8h6wi8saDHkrOmAcF00BYbaUzek8dcu5/CVa1v5NwsC2fUoVnCjThzh2xgJQ7yfLwMlQSjZ8r1gWI1kjjy6Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR10MB6022
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-18_12,2024-10-17_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410180107
+X-Proofpoint-ORIG-GUID: f825sLNnOTbqM8aseSxPNv-bGQ1JE6jo
+X-Proofpoint-GUID: f825sLNnOTbqM8aseSxPNv-bGQ1JE6jo
 
-On Wed, Oct 16, 2024 at 1:47=E2=80=AFPM Harry Wentland <harry.wentland@amd.=
-com> wrote:
->
->
->
-> On 2024-09-16 14:23, Thomas Wei=C3=9Fschuh wrote:
-> > Hi Harry, Leo and other amdgpu maintainers,
-> >
-> > On 2024-08-24 20:33:53+0000, Thomas Wei=C3=9Fschuh wrote:
-> >> The value of "min_input_signal" returned from ATIF on a Framework AMD =
-13
-> >> is "12". This leads to a fairly bright minimum display backlight.
-> >>
-> >> Introduce a quirk to override "min_input_signal" to "0" which leads to=
- a
-> >> much lower minimum brightness, which is still readable even in dayligh=
-t.
-> >
-> > could you take another look at the series?
-> > The issues around panel power are not specific to the low pwm values,
-> > so shouldn't have an impact on this series.
-> > (And are nearly imperceptible anyways)
-> >
->
-> I think these patches are good.
->
-> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+* Roberto Sassu <roberto.sassu@huaweicloud.com> [241018 12:15]:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> 
+> Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
+> remap_file_pages()") fixed a security issue, it added an LSM check when
+> trying to remap file pages, so that LSMs have the opportunity to evaluate
+> such action like for other memory operations such as mmap() and mprotect().
+> 
+> However, that commit called security_mmap_file() inside the mmap_lock lock,
+> while the other calls do it before taking the lock, after commit
+> 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
+> 
+> This caused lock inversion issue with IMA which was taking the mmap_lock
+> and i_mutex lock in the opposite way when the remap_file_pages() system
+> call was called.
+> 
+> Solve the issue by splitting the critical region in remap_file_pages() in
+> two regions: the first takes a read lock of mmap_lock, retrieves the VMA
+> and the file descriptor associated, and calculates the 'prot' and 'flags'
+> variables; the second takes a write lock on mmap_lock, checks that the VMA
+> flags and the VMA file descriptor are the same as the ones obtained in the
+> first critical region (otherwise the system call fails), and calls
+> do_mmap().
+> 
+> In between, after releasing the read lock and before taking the write lock,
+> call security_mmap_file(), and solve the lock inversion issue.
+> 
+> Cc: stable@vger.kernel.org # v6.12-rcx
+> Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap_file_pages()")
+> Reported-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.46d20.0036.GAE@google.com/
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Jann Horn <jannh@google.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Tested-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Tested-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Can you pick these up?
+You really need to be in that list of people :)
 
-Thanks,
+Please add your own signed-off-by.
 
-Alex
+Besides the missing SOB, it looks good.
 
->
-> Harry
->
-> >> One solution would be a fixed firmware version, which was announced bu=
-t
-> >> has no timeline.
-> >>
-> >> ---
-> >> Changes in v6:
-> >> - Clean up cover letter and commit messages
-> >> - Add my S-o-b to patch from Dustin
-> >> - Mention testing in combination with "panel_power_savings"
-> >> - Link to v5: https://lore.kernel.org/r/20240818-amdgpu-min-backlight-=
-quirk-v5-0-b6c0ead0c73d@weissschuh.net
-> >>
-> >> Changes in v5:
-> >> - Forward-declare struct drm_edid
-> >> - Reorder patches, quirk entries are last
-> >> - Add patch from Dustin for additional quirk entries
-> >> - Link to v4: https://lore.kernel.org/r/20240812-amdgpu-min-backlight-=
-quirk-v4-0-56a63ff897b7@weissschuh.net
-> >>
-> >> Changes in v4:
-> >> - Switch back to v2 implementation
-> >> - Add MODULE_DESCRIPTION()
-> >> - Simplify quirk infrastructure to only handle min backlight quirks.
-> >>   It can be extended if necessary.
-> >> - Expand documentation.
-> >> - Link to v3: https://lore.kernel.org/r/20240731-amdgpu-min-backlight-=
-quirk-v3-0-46d40bb21a62@weissschuh.net
-> >>
-> >> Changes in v3:
-> >> - Switch to cmdline override parameter
-> >> - Link to v2: https://lore.kernel.org/r/20240623-amdgpu-min-backlight-=
-quirk-v2-0-cecf7f49da9b@weissschuh.net
-> >>
-> >> Changes in v2:
-> >> - Introduce proper drm backlight quirk infrastructure
-> >> - Quirk by EDID and DMI instead of only DMI
-> >> - Limit quirk to only single Framework 13 matte panel
-> >> - Link to v1: https://lore.kernel.org/r/20240610-amdgpu-min-backlight-=
-quirk-v1-1-8459895a5b2a@weissschuh.net
-> >>
-> >> ---
-> >> Dustin L. Howett (1):
-> >>       drm: panel-backlight-quirks: Add Framework 13 glossy and 2.8k pa=
-nels
-> >>
-> >> Thomas Wei=C3=9Fschuh (3):
-> >>       drm: Add panel backlight quirks
-> >>       drm/amd/display: Add support for minimum backlight quirk
-> >>       drm: panel-backlight-quirks: Add Framework 13 matte panel
-> >>
-> >>  Documentation/gpu/drm-kms-helpers.rst             |  3 +
-> >>  drivers/gpu/drm/Kconfig                           |  4 +
-> >>  drivers/gpu/drm/Makefile                          |  1 +
-> >>  drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
-> >>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 +++
-> >>  drivers/gpu/drm/drm_panel_backlight_quirks.c      | 94 ++++++++++++++=
-+++++++++
-> >>  include/drm/drm_utils.h                           |  4 +
-> >>  7 files changed, 117 insertions(+)
-> >> ---
-> >> base-commit: d2bafcf224f3911b183113b2fcb536c9e90684a3
-> >> change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
-> >>
-> >> Best regards,
-> >> --
-> >> Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> >>
->
+Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+
+> ---
+>  mm/mmap.c | 69 +++++++++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 52 insertions(+), 17 deletions(-)
+> 
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 9c0fb43064b5..f731dd69e162 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1640,6 +1640,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+>  	unsigned long populate = 0;
+>  	unsigned long ret = -EINVAL;
+>  	struct file *file;
+> +	vm_flags_t vm_flags;
+>  
+>  	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. See Documentation/mm/remap_file_pages.rst.\n",
+>  		     current->comm, current->pid);
+> @@ -1656,12 +1657,60 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+>  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
+>  		return ret;
+>  
+> -	if (mmap_write_lock_killable(mm))
+> +	if (mmap_read_lock_killable(mm))
+>  		return -EINTR;
+>  
+> +	/*
+> +	 * Look up VMA under read lock first so we can perform the security
+> +	 * without holding locks (which can be problematic). We reacquire a
+> +	 * write lock later and check nothing changed underneath us.
+> +	 */
+>  	vma = vma_lookup(mm, start);
+>  
+> -	if (!vma || !(vma->vm_flags & VM_SHARED))
+> +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
+> +		mmap_read_unlock(mm);
+> +		return -EINVAL;
+> +	}
+> +
+> +	prot |= vma->vm_flags & VM_READ ? PROT_READ : 0;
+> +	prot |= vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
+> +	prot |= vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
+> +
+> +	flags &= MAP_NONBLOCK;
+> +	flags |= MAP_SHARED | MAP_FIXED | MAP_POPULATE;
+> +	if (vma->vm_flags & VM_LOCKED)
+> +		flags |= MAP_LOCKED;
+> +
+> +	/* Save vm_flags used to calculate prot and flags, and recheck later. */
+> +	vm_flags = vma->vm_flags;
+> +	file = get_file(vma->vm_file);
+> +
+> +	mmap_read_unlock(mm);
+> +
+> +	/* Call outside mmap_lock to be consistent with other callers. */
+> +	ret = security_mmap_file(file, prot, flags);
+> +	if (ret) {
+> +		fput(file);
+> +		return ret;
+> +	}
+> +
+> +	ret = -EINVAL;
+> +
+> +	/* OK security check passed, take write lock + let it rip. */
+> +	if (mmap_write_lock_killable(mm)) {
+> +		fput(file);
+> +		return -EINTR;
+> +	}
+> +
+> +	vma = vma_lookup(mm, start);
+> +
+> +	if (!vma)
+> +		goto out;
+> +
+> +	/* Make sure things didn't change under us. */
+> +	if (vma->vm_flags != vm_flags)
+> +		goto out;
+> +	if (vma->vm_file != file)
+>  		goto out;
+>  
+>  	if (start + size > vma->vm_end) {
+> @@ -1689,25 +1738,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+>  			goto out;
+>  	}
+>  
+> -	prot |= vma->vm_flags & VM_READ ? PROT_READ : 0;
+> -	prot |= vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
+> -	prot |= vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
+> -
+> -	flags &= MAP_NONBLOCK;
+> -	flags |= MAP_SHARED | MAP_FIXED | MAP_POPULATE;
+> -	if (vma->vm_flags & VM_LOCKED)
+> -		flags |= MAP_LOCKED;
+> -
+> -	file = get_file(vma->vm_file);
+> -	ret = security_mmap_file(vma->vm_file, prot, flags);
+> -	if (ret)
+> -		goto out_fput;
+>  	ret = do_mmap(vma->vm_file, start, size,
+>  			prot, flags, 0, pgoff, &populate, NULL);
+> -out_fput:
+> -	fput(file);
+>  out:
+>  	mmap_write_unlock(mm);
+> +	fput(file);
+>  	if (populate)
+>  		mm_populate(ret, populate);
+>  	if (!IS_ERR_VALUE(ret))
+> -- 
+> 2.34.1
+> 
 
