@@ -1,103 +1,111 @@
-Return-Path: <linux-kernel+bounces-371923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60D39A4230
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:20:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4CB9A4232
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 105501C223E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A812282C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A46202F67;
-	Fri, 18 Oct 2024 15:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4255A200CBF;
+	Fri, 18 Oct 2024 15:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JF6PnDCw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwlbPMPm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5EF2022F3;
-	Fri, 18 Oct 2024 15:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852CA23D2;
+	Fri, 18 Oct 2024 15:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729264811; cv=none; b=hCTk+eLVFb17S3aoeQLcRTH9PkryGub+9qOcuq3KWYxt886KN74nigZ+rSVV0aW3y8ZxY5d4DGr+nhNAWyhJAvfngFp3mpEBvTj2V2ruwyw5qlcw9ifXLARlZi3w1HxCTCDz8SFWuaSrOkoTvGplbnoEjPFGJ/Iy8QfU0/sq67U=
+	t=1729264894; cv=none; b=CyRHX0xhoKwUAqHBWj2gUEdVSAi0kfBvsgoTnu7kdldtAxvTXySPZMgIhsnSApTOBU0ncKt9isuw051PgQMMDFM/x9QDD6+93eqdNeayF46vOOMLr/C8PipDj1rhE1ipKzJrpb6brMtfr4qH7hPICDysbem2jPIw7u8SSjUu74c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729264811; c=relaxed/simple;
-	bh=5eYNbZUigYhBxYOXnV+9vqer5der0qHZSZ3vpJSXq9k=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kjureWKpYMb3QMl1doSf6azKYgfKkEsrE1svsQ0UeSJ7O3Di8068xnqWOuT9noGV2UUif2InvgAGgFc0Z253qopGuthSPsUirej/44otIWZZJcYL6mPvlbU4QokwSD3KTX2I7hPQ9AsnlBIyd9JroHDz+mcx8zbLC43ikbHhqXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JF6PnDCw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C3CC4CED5;
-	Fri, 18 Oct 2024 15:20:10 +0000 (UTC)
+	s=arc-20240116; t=1729264894; c=relaxed/simple;
+	bh=mx87PZ0fJUAC0aOMm3blO7HIkucZJPoFvoNzVO2DGLE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LZ8gaZZxroIGyIeMEC873QcSgNFEZwr9sLz7bn4N9aBuYs2BeoEkrda9mGFdbCUwx1bDbOPG3+ypkTnvuG2V+7Zos/HrjamC6YjqS7vFiDoUG6UOZjk3jcAl5NZpC8W7tXMQGIwTI6eRc4J9cqHwFcuDBT2rzcghyW1AvN/B8Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwlbPMPm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28513C4CEC3;
+	Fri, 18 Oct 2024 15:21:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729264811;
-	bh=5eYNbZUigYhBxYOXnV+9vqer5der0qHZSZ3vpJSXq9k=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=JF6PnDCwRQRvYk2jJ1+yqnbivCh0ofVgKjqUe24AxZ8bkHSglPiknTx4wqV5Ju2xB
-	 J/IYWLZAASzq4aENx8TYstGO6hgpoqaHHdxK5Anxi2IYC/iLlrAt5EEhITPiddW+lX
-	 yYQZAioxMsOLDyNZ3CXWHyg7pgF9L09FEHxfCFmiZx4aBuKxaX4JoVWldR6zomzys4
-	 Uiss20xvVUnOUYsY1kJf3pPvLl1XtiegscZd9U9yRZnl73Me0m0iaqUib0+GeoWCpg
-	 km+R5hxzp472m2dFMzvymVQ6tm4trf5Hwsvvi1mH8dP7sFKfqHSj3E5hTo6w3qVS9K
-	 PFKvN4GoJfd8Q==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
- Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
- zhaimingbing <zhaimingbing@cmss.chinamobile.com>, 
- Thomas Richter <tmricht@linux.ibm.com>, 
- Veronika Molnarova <vmolnaro@redhat.com>, Leo Yan <leo.yan@linux.dev>, 
- Howard Chu <howardchu95@gmail.com>, Ze Gao <zegao2021@gmail.com>, 
- Weilin Wang <weilin.wang@intel.com>, linux-kernel@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, 
- Ian Rogers <irogers@google.com>
-In-Reply-To: <20241015000158.871828-1-irogers@google.com>
-References: <20241015000158.871828-1-irogers@google.com>
-Subject: Re: [PATCH v2 0/3] Make "Setup struct perf_event_attr" a shell
- test
-Message-Id: <172926481069.1381973.16405989898927387636.b4-ty@kernel.org>
-Date: Fri, 18 Oct 2024 08:20:10 -0700
+	s=k20201202; t=1729264894;
+	bh=mx87PZ0fJUAC0aOMm3blO7HIkucZJPoFvoNzVO2DGLE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bwlbPMPmuPOb+/LqJ4WWncgzj2FxM9cJbcXhcNpVUBcuxbuOLQmxcIwfK2EQiaAM2
+	 wFW+zK6d9BgpayW1uV2DDKEJzHDzPGQdwW5P5SbcxxSi/WWWP8RC218y679NVZFbve
+	 Gfdf8hG7p2CdRRC4m/fW9y2L+cLdWsySOdOtalASlfjX7eu6p5RH7PmppentunxdkY
+	 nMcB7FI2w4FI/qiI18Rje10jYVIg1m/VFNst5Tj/Gyl4dagpE9Mq+pQD6ZVTlL6lUu
+	 rgE355uhVy6JVgvJFz5jlu3ThFMqgqjMIpfNaXquZ1lE9W1IiuWby/GpZjexiBoSfJ
+	 tJhIEAUL6c7Qg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Alexandre Courbot <acourbot@chromium.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Fei Shao <fshao@chromium.org>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] media: mtk-vcodec: venc: avoid -Wenum-compare-conditional warning
+Date: Fri, 18 Oct 2024 15:21:10 +0000
+Message-Id: <20241018152127.3958436-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c04d2
+Content-Transfer-Encoding: 8bit
 
-On Mon, 14 Oct 2024 17:01:55 -0700, Ian Rogers wrote:
+From: Arnd Bergmann <arnd@arndb.de>
 
-> The path detection for "Setup struct perf_event_attr" test is brittle
-> and leads to the test frequently not running. Running shell tests is
-> reasonably robust, so make the test a shell test. Move the test files
-> to reflect this.
-> 
-> Before, if you build perf like `make -C tools/perf O=/tmp/perf` then
-> run the built perf test for the "Setup struct perf_event_attr" it
-> skips (causing the tests to bitrot, fixes to be sent, etc.):
-> ```
-> $ sudo /tmp/perf/perf test -vv perf_event_attr
-> capget syscall failed (No such file or directory - 2) fall back on root check
-> 17: Setup struct perf_event_attr:
-> 17: Setup struct perf_event_attr:
-> --- start ---
-> test child forked, pid 806601
-> Using CPUID GenuineIntel-6-8D-1
-> ---- end(-2) ----
-> 17: Setup struct perf_event_attr                                    : Skip
-> ```
-> 
-> [...]
+This is one of three clang warnings about incompatible enum types
+in a conditional expression:
 
-Applied to perf-tools-next, thanks!
+drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c:597:29: error: conditional expression between different enumeration types ('enum scp_ipi_id' and 'enum ipi_id') [-Werror,-Wenum-compare-conditional]
+  597 |         inst->vpu_inst.id = is_ext ? SCP_IPI_VENC_H264 : IPI_VENC_H264;
+      |                                    ^ ~~~~~~~~~~~~~~~~~   ~~~~~~~~~~~~~
 
-Best regards,
-Namhyung
+The code is correct, so just rework it to avoid the warning.
+
+Fixes: 0dc4b3286125 ("media: mtk-vcodec: venc: support SCP firmware")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ .../platform/mediatek/vcodec/encoder/venc/venc_h264_if.c    | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c b/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
+index f8145998fcaf..8522f71fc901 100644
+--- a/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
++++ b/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
+@@ -594,7 +594,11 @@ static int h264_enc_init(struct mtk_vcodec_enc_ctx *ctx)
+ 
+ 	inst->ctx = ctx;
+ 	inst->vpu_inst.ctx = ctx;
+-	inst->vpu_inst.id = is_ext ? SCP_IPI_VENC_H264 : IPI_VENC_H264;
++	if (is_ext)
++		inst->vpu_inst.id = SCP_IPI_VENC_H264;
++	else
++		inst->vpu_inst.id = IPI_VENC_H264;
++
+ 	inst->hw_base = mtk_vcodec_get_reg_addr(inst->ctx->dev->reg_base, VENC_SYS);
+ 
+ 	ret = vpu_enc_init(&inst->vpu_inst);
+-- 
+2.39.5
 
 
