@@ -1,143 +1,133 @@
-Return-Path: <linux-kernel+bounces-370955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3201D9A3442
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:31:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E99F9A3448
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCE091F221DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:31:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 536AC1C20E04
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE43817B50E;
-	Fri, 18 Oct 2024 05:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE9D17B516;
+	Fri, 18 Oct 2024 05:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="oZ3ckdg6"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="toS/p7b5"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3712A170A13
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ED215381A;
+	Fri, 18 Oct 2024 05:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729229500; cv=none; b=PNBTzckI+PuU3YG5wMMnuNx78X3qCahcj3O0ESWjRCdLK0KU/JhsFRSVP0RdHyQnNssuJC7HMzWYNSjjH2wgLu4NQ7tNl/2E/eBqHpykUXqwAUJGimjOTLOOLJbM4EC86dZsu9LAEYJWaQR6vUNMmE/JMyJ35bXXpbczEReCJxc=
+	t=1729229536; cv=none; b=ZUThU/nbx5pwuNS9zcC6Vciw8diOS3F/fSlIwL7FoRSJT6yvT9XggtTTuEOuiXudDArnU6B8KOE4448dfMA+EjUWDtG8sNphFNrwo4m7MIeoWqLQ0OFj2b3dpNEcMG8j4VFjr9bvn9yahVnaWN3+c9lFZKXEqezN9xAnZs9jcvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729229500; c=relaxed/simple;
-	bh=c6pJR17Cx+vhBdPlKGr1glBzn0/Huh2wZWajDJPJL9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPBHpX/Z2fobwZ9gAbAxmsPKxvG6ELazJeb6TrAvTPMIFpQriV8fjEablloCaifMqTom+TPhuTFKQyIW5zzRv29QT+4KvWzk2VMxhnDxeN2B0irB8kQorhPyKeu0CrP8CDF0uWOQhTi5iBCSkrcd3ba7HqOIWS+RCN+1MclP7Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=oZ3ckdg6; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d4c1b1455so1289971f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:31:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729229496; x=1729834296; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c6pJR17Cx+vhBdPlKGr1glBzn0/Huh2wZWajDJPJL9g=;
-        b=oZ3ckdg6CoKMWMyrrquRg1bWUmPzVMnO7Pt1ZOEccAtmT0rF32QKcqzDwzKmiZJX7o
-         2HggUPmruVvYMW2d/mwZHMBLp/FQn3o3Y5VoYusnjuNYR8Mb/tNPJNTGQJUwaY8ZE894
-         UfGBFxDj1cExPA0Wo0Kvh0dclxzNcRHvTmjR6I8ePSEAJfJUs92asLL32+MmM9LWNMlg
-         1AiKNIxgNFiLDTILU00J/7Wil01/hVZ9trh2cIlu3SlqNHZImMigfxu5Ho1Wsn47brFp
-         oPfM+rp8wiybMRk1a0IU55Ed0EMCG58csykSXAfTVUKIs49LuKd2c01NXW5Y0FM1bkKD
-         Ig4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729229496; x=1729834296;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c6pJR17Cx+vhBdPlKGr1glBzn0/Huh2wZWajDJPJL9g=;
-        b=bDpRayNXjrJtHQHe9MK9C8zMWNzyBBWffjqp832v4FSmC8k4SQAKLtl6QxUn8v2H0M
-         qEQh1kb18Dn8q47F02KW/qcbfwyg1QkCrE7bD79OhgJSVUum2+lwlkvBT446WLGjXerv
-         DoHlv1SNVVVs6N/dcsSAadEGKmmNb+clGZapOAayFn6xbESy5qJUPS62pr8SrES9bL1B
-         5jUfsWopWBPaD8eX14BgcsWE/6ilBqKM3N6qciCTfGTNtKnSA4wv+tzkJxK8/LVrh4Tz
-         d03r91Q6PUu+Jonxx8zE1MJYa++LuaRuNC5BCE0WqRrf8A1o+nXsd8JoXtHhZr3bdK8l
-         ZXNA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6StrPrdU0FxGynlDSybLmYNqj5J7nUZI8uLuNhbPAOzaRJ/wH0O+VVg/9SiWM8FdEzHiCcosb7BdX8ck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYCdreji0wDzL8zbekkLGhnXjVC6dplDPtVa8jf1B0ohd3iNfS
-	IkMTsg/xmPyW7xkGWdl4pzA3MvYHgV+zc8HyDlQh+FuZ6X4QkFVUh1Xy4E6KD1o=
-X-Google-Smtp-Source: AGHT+IG8Ld3kpTB/rwLsIFn3KMclllCP6Lx/tf5/1/edc8B38j82iBjzH0rHnvWAB7r6efnRAWqU6A==
-X-Received: by 2002:adf:e008:0:b0:37d:3735:8fe7 with SMTP id ffacd0b85a97d-37eab70bbf3mr720253f8f.32.1729229496469;
-        Thu, 17 Oct 2024 22:31:36 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:c04e:758c:2eb5:eeda])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68c29ddasm44973866b.211.2024.10.17.22.31.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 22:31:35 -0700 (PDT)
-Date: Fri, 18 Oct 2024 07:31:33 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Tomasz Jeznach <tjeznach@rivosinc.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Anup Patel <apatel@ventanamicro.com>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Nick Kossifidis <mick@ics.forth.gr>, Sebastien Boeuf <seb@rivosinc.com>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux@rivosinc.com, 
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH v9 2/7] iommu/riscv: Add RISC-V IOMMU platform device
- driver
-Message-ID: <5jxxlmvyyennvrg5w6l3ma5pg7ythzo6z65nhs3lhpscmcl5sc@w22emfmvf2rg>
-References: <cover.1728579958.git.tjeznach@rivosinc.com>
- <b8da2b00aec3f7b4b2e3a7cc194f7961bf656f24.1728579958.git.tjeznach@rivosinc.com>
- <lagj6ljulmfjogrzhfd3jrf5fnngev63q2g3bmvftwfzc3s6mb@gw6oz4yriyjf>
- <CAH2o1u4BYyHhi3dVcBrB8T2JpXdxStsfYodmOT-6a8KMHAot8w@mail.gmail.com>
+	s=arc-20240116; t=1729229536; c=relaxed/simple;
+	bh=aCuJTRQqAlzX4ksRnTcNehM+fFAx64niezjkxYpEhr8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ofl9t8HJJi5pm5t/Op+UT2JnHzcGmJwvno8fZvxygau27aeroOs4caMpXkwULQN9/HEF/j14PuZ0AB+tCLkjjADawvNZkVqbdetOoO+bR1VnQc9pmLEy33PTRRytGu7QBBGPyvkJpbOgFzsm9rKNTM3JG8TTZaxvxFemOk9d8R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=toS/p7b5; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49I5W0CL01553263, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1729229520; bh=aCuJTRQqAlzX4ksRnTcNehM+fFAx64niezjkxYpEhr8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=toS/p7b5YwKXs8ylP6rav5JQO0idGy8gGEKAXQaR9FqmxIFK5tcnnz2Yi4kSBqn7I
+	 mNRduwkuAp/FLnA2HS7Nk7Viax57bolOuO9A9uEMceKgLGA/tImzAm42SZ8SShMHf4
+	 gDOLuxYuljym3SZ9wCinm95gUGPRs0+KRA7GM1HTiI+O0Nl+GnkUJvISn3cXrSMHxW
+	 TYVlgUN8zcBxwIQJ85uCUrO6QnznXjbnWstlrNoT5e4adLU/TA3UT6qJPXMa0BBgxD
+	 59LgFkOzgH/gczJuRHQCCoW8f7XPLhh9d99RS5m1RVataq7N6Y+H5R7wSr8t5Np1rd
+	 CFBvOBx5R8VHQ==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49I5W0CL01553263
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Oct 2024 13:32:00 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 18 Oct 2024 13:32:00 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 18 Oct 2024 13:32:00 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Fri, 18 Oct 2024 13:32:00 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Kalle Valo <kvalo@kernel.org>, kernel test robot <lkp@intel.com>
+Subject: RE: [PATCH v2] wifi: rtw88: Refactor looping in rtw_phy_store_tx_power_by_rate
+Thread-Topic: [PATCH v2] wifi: rtw88: Refactor looping in
+ rtw_phy_store_tx_power_by_rate
+Thread-Index: AQHbIGuMqxz8Rb2d/UazSc++jiptXbKL/LXg
+Date: Fri, 18 Oct 2024 05:32:00 +0000
+Message-ID: <87a0854a459549a5addfd39ab94669c1@realtek.com>
+References: <20241017080638.13074-1-pvmohammedanees2003@gmail.com>
+In-Reply-To: <20241017080638.13074-1-pvmohammedanees2003@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fbh7gyoiozliysgu"
-Content-Disposition: inline
-In-Reply-To: <CAH2o1u4BYyHhi3dVcBrB8T2JpXdxStsfYodmOT-6a8KMHAot8w@mail.gmail.com>
 
+Mohammed Anees <pvmohammedanees2003@gmail.com> wrote:
+> The previous implementation included an unnecessary else
+> condition paired with a continue statement. Since a check
+> is already performed to determine if the band is either
+> 2G or 5G, the else condition will never be triggered.
+> We can remove this check.
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202410171143.OnFlgIwK-lkp@i=
+ntel.com/
 
---fbh7gyoiozliysgu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v9 2/7] iommu/riscv: Add RISC-V IOMMU platform device
- driver
-MIME-Version: 1.0
+no need this Closes link because of typo of v1. I will remove this during m=
+erging.=20
 
-Hello Tomasz,
+> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
 
-On Thu, Oct 17, 2024 at 09:45:14AM -0700, Tomasz Jeznach wrote:
-> Thank you for those comments, they look reasonable.
-> Can we postpone those changes after v10 is merged into the iommu
-> subsystem tree?
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-If the patch is already scheduled to go in, that's fine.
+> ---
+> v2:
+> - Changed from using a pointer approach to a simpler if-else structure fo=
+r clarity.
+> ---
+>  drivers/net/wireless/realtek/rtw88/phy.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw88/phy.c b/drivers/net/wirel=
+ess/realtek/rtw88/phy.c
+> index 37ef80c9091d..8b9f8f73c14c 100644
+> --- a/drivers/net/wireless/realtek/rtw88/phy.c
+> +++ b/drivers/net/wireless/realtek/rtw88/phy.c
+> @@ -1470,10 +1470,8 @@ static void rtw_phy_store_tx_power_by_rate(struct =
+rtw_dev *rtwdev,
+>                 rate =3D rates[i];
+>                 if (band =3D=3D PHY_BAND_2G)
+>                         hal->tx_pwr_by_rate_offset_2g[rfpath][rate] =3D o=
+ffset;
+> -               else if (band =3D=3D PHY_BAND_5G)
+> -                       hal->tx_pwr_by_rate_offset_5g[rfpath][rate] =3D o=
+ffset;
+>                 else
+> -                       continue;
+> +                       hal->tx_pwr_by_rate_offset_5g[rfpath][rate] =3D o=
+ffset;
+>         }
+>  }
+>=20
+> --
+> 2.47.0
 
-My motivation to reply is the .remove_new thing and just pointed the
-indention as I noticed it while replying to your patch. So I don't care
-about the indention. Do as you please.
-
-drivers/iommu is still on my todo list to convert from .remove_new to
-.remove, so you can just wait until I come around. I'll push it a bit to
-the end to be sure to have your patch in next already so it will get
-converted in a catch-all patch for drivers/iommu.
-
-Thanks
-Uwe
-
---fbh7gyoiozliysgu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcR8rIACgkQj4D7WH0S
-/k54eQf/YHC2YibpwUipmuB41HqAHsAljGTGCjGvubnogU3Jg8+TQNsVCfGqZXiu
-si3jNg2XK8hVkXTPzdSH0nIRx+Be7vhMJWMyKr894iU5YDrDDV2n1Y+isdYzrUal
-rzz5N1eG26FaxM4czeRU064oACyOKuyPIYY10yrkQiko3A3sWVa5SMHS4fm4IWIV
-2KXXGUkx5ctFSaCtJCseENcFdV/yAmQ/Y83sQrle/sqrou8wkm7WIegZHMEe22cT
-nG3GMref6aC4I4kLjFhQKdUKEkqJuqkhcYzqhuq+TGSUGet/ZkN6AR8N0+QA3RDr
-6iM6q7fDc1d3XirP6chF+olWVozGxQ==
-=jEvi
------END PGP SIGNATURE-----
-
---fbh7gyoiozliysgu--
 
