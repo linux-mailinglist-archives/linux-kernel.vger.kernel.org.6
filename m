@@ -1,218 +1,324 @@
-Return-Path: <linux-kernel+bounces-372315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 325A39A4706
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:33:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDBF9A470C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 509381C214F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4301F2486E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80629204943;
-	Fri, 18 Oct 2024 19:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0848B205AD5;
+	Fri, 18 Oct 2024 19:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Oi11/AZ2"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="thxLGaBH"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C506A20E33D
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDEC205131
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729279972; cv=none; b=TTotKXUnDKxGfOmcF4XPiml3Gpzkd3Va8w6pbUVTerluoBmcTOklmLJm/zN/WvfIOjILR28GIDz5xw1RwVO/rwkDDXmOtlDmimdgjHM++ZcRm6Vc308wA9bM6xfADhBxRudZhvBO7emv23sCfcR7Q9ge2rAzFA8j2Q97bGwZbHg=
+	t=1729280058; cv=none; b=RvPYMat6EH2tcvZuqJnj5pQhaFhdrbNePtSDfFRYdGjHIN5LrrFYxQS/l197UEoSKEb5eJj8bcY9Dx7JN4Mh3ApC2/X3S1a6Hvj1SW41njNiuHX7oIurkJhmjNnumwQb5Sv/20yV58CpfOV00Xu+fsDVCHB3Ux3KuylPh6nHEdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729279972; c=relaxed/simple;
-	bh=B7xJeudKEQr3CYPi3UtHbVFs37By4lzyrFcH2pQyoCE=;
+	s=arc-20240116; t=1729280058; c=relaxed/simple;
+	bh=54Z/Xu+GM77sjxtWU4gFHis9QE1ftBTxluVfk56kmZ8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GE97RPif04WLZdZ3x+nTAiKLuPutLRLLPE5328TlGso3rE+654fE/JE5hgP4vy6LVooyJI8cv6VAOoBQn1Y7a9v+N3tPE4tC+NtohaRrzplWw+HN4skKntBMOAYpmIIkIXvFJRTdq2ubl6n3P3vNkMVKNn1PfnWatuRrOfQLOOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Oi11/AZ2; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db3763e924so191958b6e.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:32:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=oKpEq2CtGazyIYOvWUZlnEMit7i/1K1azHD1Ugvihv1d4BbpzSUG8QDD5HAJOkKGQCln6FWJsJSTE1ELSWz5UIFbFctptOyXIWgg/APEY4+cjb8uXNcE/govlgpzEcl+mRmxaYqOb285Uy+dONLvYUpiPokrQXKP8n5w9f/Cy1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=thxLGaBH; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e13375d3so2906553e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729279970; x=1729884770; darn=vger.kernel.org;
+        d=atishpatra.org; s=google; t=1729280053; x=1729884853; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gplWmfGOWe5Pq8fZbVA+dPlQSygIYBkNS0fSsl2L6Z8=;
-        b=Oi11/AZ2wayVQcMc9u37JOzz53l3ij8B325AYM8fUo7Y8Qk+/2fdkqIdmnWkH7tWUv
-         uw8ZVlEoH+i8p+zG1DDeXS0BjQ5TSIXf8kTEvBCJW2fEn7MJTYdB1fGF7LDIknRYn2Fy
-         GYTa4PiM8KDmrM2i5io/0QdAEZG1r7FSB1xVo=
+        bh=gykfHwEhvZn9OouPG+xeH4hENJCq3IryA0U1CzVeZMw=;
+        b=thxLGaBHS3BccBn1kERmZ3W7Ax3/6u3NIStw8j+fnJC6uSQLN6TqL5SErAa520KbS6
+         +iHsZU0py/KtARFit3xPH8rxeOFZyoGVJH1UaqQjRtHSSpxzfQf6BzpbSfoTqW+94XQI
+         OeBhQUEMCh2IR5ovr8iUTo9ePpUHN8hZiD4eU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729279970; x=1729884770;
+        d=1e100.net; s=20230601; t=1729280053; x=1729884853;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gplWmfGOWe5Pq8fZbVA+dPlQSygIYBkNS0fSsl2L6Z8=;
-        b=mZNQeX9LP4W//1TL8pNLiXvaEig2cL5/8wjHe4ET4gertcJd4x5FOa34BQqlf7Y7mD
-         rFROZoekMZABgG9gPbuglh5IxeaV8Y3THMCxEQKzeXLzRekNsBORsTf/FbXCarhLyqKt
-         H7uBiD4voKA2368M/aa66N5dPoR6LentVCJkC8j/Q35s3JtYrNlwmwgr5LzI41S3X+QC
-         jsgj/24uGHk3MrW6zEgcVn1zvjs0uLr8F9ib+mt4neGydApnCbyRMh5F+/UlwCYj3jEU
-         PEoPpAWB+iZ1ENZOQB7ItwvhQHipsEoLe9eZBWbs5Oh+dvcdipHn9en9AyRpuJ+i6Jka
-         pwCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUKpWjMd0iCpshEQUX9dYONQTRn3s/C1meFURe/2YfSZNOzM5PKs0Trm/GGbb0B5T56nlG1gTLSaqIGr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKtDGvO9Qtf1V5EpUctgk6K0DOpzfhYA/Q6tsOe3TtpL0usRZM
-	JI6ILI5193oKHPRl6WVXmkc9hgfW7/LPgydAoIwgxSwK8vvVeEN4e5frpODb6uA1J2fhobj9hPe
-	SyPplP9twg9ZKMtaOOitrIs4KcPJIfrRFpplv
-X-Google-Smtp-Source: AGHT+IFVeKDD7KbSW5OcBfxhKKW+l7qGtWlzjoy4awnj9k9KumaMQ10QXXe1bakBP4FsadALWQQuMH8NVDjIEtvir80=
-X-Received: by 2002:a05:6871:813:b0:278:2698:7721 with SMTP id
- 586e51a60fabf-2892c3418dfmr810796fac.8.1729279969805; Fri, 18 Oct 2024
- 12:32:49 -0700 (PDT)
+        bh=gykfHwEhvZn9OouPG+xeH4hENJCq3IryA0U1CzVeZMw=;
+        b=K3fGJkMp1FlTiFUO6/pfZuMR2bG+2uQiwZkj9gG56cT14CLP68AOZHd3E6pFHR8Dsi
+         zh9O8PQMqwOkTO270pz4oFDu7QUUOK1W9r6wXAnVtDhSvY7OslvKamu5dgpneXEVbOzm
+         6LhILUSpllsXuQ+QaZ6xi3Zg/evCCWx+CXiBqPkpC3jOuUm1shVoc/sy1+7QbNvIOUAz
+         COl0X35O4MYT4qyKyrsteXJWEQlqjau1t41g/4iQsOVCRq2Z+7iajfJwa9yRY4PlfrL9
+         whoAMWalMtaJO6x1MECqVEs5fWaBcP7e2mBoVZEP5IwuThoAuG1cvsYltkBp3bzKAv4N
+         Hm4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUSXaX6qfLD4yZSXpNTQe0yooIJUgLlsr/J0HWy3SX5oesGJ4hhLpc1n0aW+b8fWiXDY2EEmeX7rvYeSOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6F40x1z+ndWmKEnHi1yW41eyoJBwQIwbZPoVDT/lbdEf99kUv
+	8KPGl8pzyR4z5JpQ1bH864m+LjIyUjGJkeZrb/AM4vu0SPAHtd7iPoV8uCMJqvIViNo2bH+3BUW
+	/VpHTwjG+1SeTCdZmzWw4Q3VTvRnltBIpsnVL
+X-Google-Smtp-Source: AGHT+IFemzNnwJ2CcScOOlMoI+DNU01cHF4Dq4xF5Q1M3NP3Ac9xEwqfjEJ8BnZEk27S3/xO4XqteeQkRFdqNfK6+94=
+X-Received: by 2002:a05:6512:128f:b0:539:f1ce:5fa8 with SMTP id
+ 2adb3069b0e04-53a1550b9e6mr2524845e87.49.1729280053088; Fri, 18 Oct 2024
+ 12:34:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABi2SkUpCf+aOa2sPED8CosG5ccqjFd7ouot8gXi9ECqsHiZhw@mail.gmail.com>
- <4944ce41-9fe1-4e22-8967-f6bd7eafae3f@lucifer.local> <CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com>
- <CABi2SkVEMRHV3swrbb6M5RA6GQpFVVx855CGwdQ1xiz3tygiqA@mail.gmail.com>
- <f9b9422c-216d-422e-94b4-d8814b0b277e@lucifer.local> <CABi2SkWAv4LXvR1Wb1e31eyZ35JfyieXhDOq1bp_ZvHPLLg-qA@mail.gmail.com>
- <e0f440b0-5a45-4218-8c51-27f848c0617b@lucifer.local> <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
- <1f8eff74-005b-4fa9-9446-47f4cdbf3e8d@sirena.org.uk> <CABi2SkV38U-ZCAq9W091zYkOM1m5e-C27YmVXdTCi-t+p_W_fQ@mail.gmail.com>
- <a2652ed4-ea8b-4b56-bac6-6479b3df6c14@sirena.org.uk>
-In-Reply-To: <a2652ed4-ea8b-4b56-bac6-6479b3df6c14@sirena.org.uk>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 18 Oct 2024 12:32:37 -0700
-Message-ID: <CABi2SkVF3OtRcq9cCgLh_hOjxRnWq0owypw++xodrEfm=dt_qA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
-To: Mark Brown <broonie@kernel.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	akpm@linux-foundation.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pedro.falcato@gmail.com, willy@infradead.org, 
-	vbabka@suse.cz, Liam.Howlett@oracle.com, rientjes@google.com, 
-	keescook@chromium.org
+References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-11-apatel@ventanamicro.com>
+In-Reply-To: <20240719160913.342027-11-apatel@ventanamicro.com>
+From: Atish Patra <atishp@atishpatra.org>
+Date: Fri, 18 Oct 2024 12:34:01 -0700
+Message-ID: <CAOnJCUK7Bbq=X4e-z1SbVLOA_DLB+QrA7VO3dAMgdDOzEAK0jw@mail.gmail.com>
+Subject: Re: [PATCH 10/13] RISC-V: KVM: Use nacl_csr_xyz() for accessing AIA CSRs
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark
+On Fri, Jul 19, 2024 at 9:10=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
+> wrote:
+>
+> When running under some other hypervisor, prefer nacl_csr_xyz()
+> for accessing AIA CSRs in the run-loop. This makes CSR access
+> faster whenever SBI nested acceleration is available.
+>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  arch/riscv/kvm/aia.c | 97 ++++++++++++++++++++++++++++----------------
+>  1 file changed, 63 insertions(+), 34 deletions(-)
+>
+> diff --git a/arch/riscv/kvm/aia.c b/arch/riscv/kvm/aia.c
+> index 8ffae0330c89..dcced4db7fe8 100644
+> --- a/arch/riscv/kvm/aia.c
+> +++ b/arch/riscv/kvm/aia.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/percpu.h>
+>  #include <linux/spinlock.h>
+>  #include <asm/cpufeature.h>
+> +#include <asm/kvm_nacl.h>
+>
+>  struct aia_hgei_control {
+>         raw_spinlock_t lock;
+> @@ -88,7 +89,7 @@ void kvm_riscv_vcpu_aia_sync_interrupts(struct kvm_vcpu=
+ *vcpu)
+>         struct kvm_vcpu_aia_csr *csr =3D &vcpu->arch.aia_context.guest_cs=
+r;
+>
+>         if (kvm_riscv_aia_available())
+> -               csr->vsieh =3D csr_read(CSR_VSIEH);
+> +               csr->vsieh =3D ncsr_read(CSR_VSIEH);
+>  }
+>  #endif
+>
+> @@ -115,7 +116,7 @@ bool kvm_riscv_vcpu_aia_has_interrupts(struct kvm_vcp=
+u *vcpu, u64 mask)
+>
+>         hgei =3D aia_find_hgei(vcpu);
+>         if (hgei > 0)
+> -               return !!(csr_read(CSR_HGEIP) & BIT(hgei));
+> +               return !!(ncsr_read(CSR_HGEIP) & BIT(hgei));
+>
+>         return false;
+>  }
+> @@ -128,45 +129,73 @@ void kvm_riscv_vcpu_aia_update_hvip(struct kvm_vcpu=
+ *vcpu)
+>                 return;
+>
+>  #ifdef CONFIG_32BIT
+> -       csr_write(CSR_HVIPH, vcpu->arch.aia_context.guest_csr.hviph);
+> +       ncsr_write(CSR_HVIPH, vcpu->arch.aia_context.guest_csr.hviph);
+>  #endif
+> -       csr_write(CSR_HVICTL, aia_hvictl_value(!!(csr->hvip & BIT(IRQ_VS_=
+EXT))));
+> +       ncsr_write(CSR_HVICTL, aia_hvictl_value(!!(csr->hvip & BIT(IRQ_VS=
+_EXT))));
+>  }
+>
+>  void kvm_riscv_vcpu_aia_load(struct kvm_vcpu *vcpu, int cpu)
+>  {
+>         struct kvm_vcpu_aia_csr *csr =3D &vcpu->arch.aia_context.guest_cs=
+r;
+> +       void *nsh;
+>
+>         if (!kvm_riscv_aia_available())
+>                 return;
+>
+> -       csr_write(CSR_VSISELECT, csr->vsiselect);
+> -       csr_write(CSR_HVIPRIO1, csr->hviprio1);
+> -       csr_write(CSR_HVIPRIO2, csr->hviprio2);
+> +       if (kvm_riscv_nacl_sync_csr_available()) {
+> +               nsh =3D nacl_shmem();
+> +               nacl_csr_write(nsh, CSR_VSISELECT, csr->vsiselect);
+> +               nacl_csr_write(nsh, CSR_HVIPRIO1, csr->hviprio1);
+> +               nacl_csr_write(nsh, CSR_HVIPRIO2, csr->hviprio2);
+> +#ifdef CONFIG_32BIT
+> +               nacl_csr_write(nsh, CSR_VSIEH, csr->vsieh);
+> +               nacl_csr_write(nsh, CSR_HVIPH, csr->hviph);
+> +               nacl_csr_write(nsh, CSR_HVIPRIO1H, csr->hviprio1h);
+> +               nacl_csr_write(nsh, CSR_HVIPRIO2H, csr->hviprio2h);
+> +#endif
+> +       } else {
+> +               csr_write(CSR_VSISELECT, csr->vsiselect);
+> +               csr_write(CSR_HVIPRIO1, csr->hviprio1);
+> +               csr_write(CSR_HVIPRIO2, csr->hviprio2);
+>  #ifdef CONFIG_32BIT
+> -       csr_write(CSR_VSIEH, csr->vsieh);
+> -       csr_write(CSR_HVIPH, csr->hviph);
+> -       csr_write(CSR_HVIPRIO1H, csr->hviprio1h);
+> -       csr_write(CSR_HVIPRIO2H, csr->hviprio2h);
+> +               csr_write(CSR_VSIEH, csr->vsieh);
+> +               csr_write(CSR_HVIPH, csr->hviph);
+> +               csr_write(CSR_HVIPRIO1H, csr->hviprio1h);
+> +               csr_write(CSR_HVIPRIO2H, csr->hviprio2h);
+>  #endif
+> +       }
+>  }
+>
+>  void kvm_riscv_vcpu_aia_put(struct kvm_vcpu *vcpu)
+>  {
+>         struct kvm_vcpu_aia_csr *csr =3D &vcpu->arch.aia_context.guest_cs=
+r;
+> +       void *nsh;
+>
+>         if (!kvm_riscv_aia_available())
+>                 return;
+>
+> -       csr->vsiselect =3D csr_read(CSR_VSISELECT);
+> -       csr->hviprio1 =3D csr_read(CSR_HVIPRIO1);
+> -       csr->hviprio2 =3D csr_read(CSR_HVIPRIO2);
+> +       if (kvm_riscv_nacl_available()) {
+> +               nsh =3D nacl_shmem();
+> +               csr->vsiselect =3D nacl_csr_read(nsh, CSR_VSISELECT);
+> +               csr->hviprio1 =3D nacl_csr_read(nsh, CSR_HVIPRIO1);
+> +               csr->hviprio2 =3D nacl_csr_read(nsh, CSR_HVIPRIO2);
+>  #ifdef CONFIG_32BIT
+> -       csr->vsieh =3D csr_read(CSR_VSIEH);
+> -       csr->hviph =3D csr_read(CSR_HVIPH);
+> -       csr->hviprio1h =3D csr_read(CSR_HVIPRIO1H);
+> -       csr->hviprio2h =3D csr_read(CSR_HVIPRIO2H);
+> +               csr->vsieh =3D nacl_csr_read(nsh, CSR_VSIEH);
+> +               csr->hviph =3D nacl_csr_read(nsh, CSR_HVIPH);
+> +               csr->hviprio1h =3D nacl_csr_read(nsh, CSR_HVIPRIO1H);
+> +               csr->hviprio2h =3D nacl_csr_read(nsh, CSR_HVIPRIO2H);
+>  #endif
+> +       } else {
+> +               csr->vsiselect =3D csr_read(CSR_VSISELECT);
+> +               csr->hviprio1 =3D csr_read(CSR_HVIPRIO1);
+> +               csr->hviprio2 =3D csr_read(CSR_HVIPRIO2);
+> +#ifdef CONFIG_32BIT
+> +               csr->vsieh =3D csr_read(CSR_VSIEH);
+> +               csr->hviph =3D csr_read(CSR_HVIPH);
+> +               csr->hviprio1h =3D csr_read(CSR_HVIPRIO1H);
+> +               csr->hviprio2h =3D csr_read(CSR_HVIPRIO2H);
+> +#endif
+> +       }
+>  }
+>
+>  int kvm_riscv_vcpu_aia_get_csr(struct kvm_vcpu *vcpu,
+> @@ -250,20 +279,20 @@ static u8 aia_get_iprio8(struct kvm_vcpu *vcpu, uns=
+igned int irq)
+>
+>         switch (bitpos / BITS_PER_LONG) {
+>         case 0:
+> -               hviprio =3D csr_read(CSR_HVIPRIO1);
+> +               hviprio =3D ncsr_read(CSR_HVIPRIO1);
+>                 break;
+>         case 1:
+>  #ifndef CONFIG_32BIT
+> -               hviprio =3D csr_read(CSR_HVIPRIO2);
+> +               hviprio =3D ncsr_read(CSR_HVIPRIO2);
+>                 break;
+>  #else
+> -               hviprio =3D csr_read(CSR_HVIPRIO1H);
+> +               hviprio =3D ncsr_read(CSR_HVIPRIO1H);
+>                 break;
+>         case 2:
+> -               hviprio =3D csr_read(CSR_HVIPRIO2);
+> +               hviprio =3D ncsr_read(CSR_HVIPRIO2);
+>                 break;
+>         case 3:
+> -               hviprio =3D csr_read(CSR_HVIPRIO2H);
+> +               hviprio =3D ncsr_read(CSR_HVIPRIO2H);
+>                 break;
+>  #endif
+>         default:
+> @@ -283,20 +312,20 @@ static void aia_set_iprio8(struct kvm_vcpu *vcpu, u=
+nsigned int irq, u8 prio)
+>
+>         switch (bitpos / BITS_PER_LONG) {
+>         case 0:
+> -               hviprio =3D csr_read(CSR_HVIPRIO1);
+> +               hviprio =3D ncsr_read(CSR_HVIPRIO1);
+>                 break;
+>         case 1:
+>  #ifndef CONFIG_32BIT
+> -               hviprio =3D csr_read(CSR_HVIPRIO2);
+> +               hviprio =3D ncsr_read(CSR_HVIPRIO2);
+>                 break;
+>  #else
+> -               hviprio =3D csr_read(CSR_HVIPRIO1H);
+> +               hviprio =3D ncsr_read(CSR_HVIPRIO1H);
+>                 break;
+>         case 2:
+> -               hviprio =3D csr_read(CSR_HVIPRIO2);
+> +               hviprio =3D ncsr_read(CSR_HVIPRIO2);
+>                 break;
+>         case 3:
+> -               hviprio =3D csr_read(CSR_HVIPRIO2H);
+> +               hviprio =3D ncsr_read(CSR_HVIPRIO2H);
+>                 break;
+>  #endif
+>         default:
+> @@ -308,20 +337,20 @@ static void aia_set_iprio8(struct kvm_vcpu *vcpu, u=
+nsigned int irq, u8 prio)
+>
+>         switch (bitpos / BITS_PER_LONG) {
+>         case 0:
+> -               csr_write(CSR_HVIPRIO1, hviprio);
+> +               ncsr_write(CSR_HVIPRIO1, hviprio);
+>                 break;
+>         case 1:
+>  #ifndef CONFIG_32BIT
+> -               csr_write(CSR_HVIPRIO2, hviprio);
+> +               ncsr_write(CSR_HVIPRIO2, hviprio);
+>                 break;
+>  #else
+> -               csr_write(CSR_HVIPRIO1H, hviprio);
+> +               ncsr_write(CSR_HVIPRIO1H, hviprio);
+>                 break;
+>         case 2:
+> -               csr_write(CSR_HVIPRIO2, hviprio);
+> +               ncsr_write(CSR_HVIPRIO2, hviprio);
+>                 break;
+>         case 3:
+> -               csr_write(CSR_HVIPRIO2H, hviprio);
+> +               ncsr_write(CSR_HVIPRIO2H, hviprio);
+>                 break;
+>  #endif
+>         default:
+> @@ -377,7 +406,7 @@ int kvm_riscv_vcpu_aia_rmw_ireg(struct kvm_vcpu *vcpu=
+, unsigned int csr_num,
+>                 return KVM_INSN_ILLEGAL_TRAP;
+>
+>         /* First try to emulate in kernel space */
+> -       isel =3D csr_read(CSR_VSISELECT) & ISELECT_MASK;
+> +       isel =3D ncsr_read(CSR_VSISELECT) & ISELECT_MASK;
+>         if (isel >=3D ISELECT_IPRIO0 && isel <=3D ISELECT_IPRIO15)
+>                 return aia_rmw_iprio(vcpu, isel, val, new_val, wr_mask);
+>         else if (isel >=3D IMSIC_FIRST && isel <=3D IMSIC_LAST &&
+> --
+> 2.34.1
+>
 
-On Fri, Oct 18, 2024 at 11:37=E2=80=AFAM Mark Brown <broonie@kernel.org> wr=
-ote:
->
-> On Fri, Oct 18, 2024 at 11:06:20AM -0700, Jeff Xu wrote:
-> > On Fri, Oct 18, 2024 at 6:04=E2=80=AFAM Mark Brown <broonie@kernel.org>=
- wrote:
->
-> > > The problem is that the macro name is confusing and not terribly
-> > > consistent with how the rest of the selftests work.  The standard
-> > > kselftest result reporting is
->
-> > >         ksft_test_result(bool result, char *name_format, ...);
-> > >
-> > > so the result of the test is a boolean flag which is passed in.  This
-> > > macro on the other hand sounds like a double negative so you have to
-> > > stop and think what the logic is, and it's not seen anywhere else so
-> > > nobody is going to be familiar with it.  The main thing this is doing=
- is
-> > > burying a return statement in there, that's a bit surprising too.
->
-> > Thanks for explaining the problem, naming is hard. Do you have a
-> > suggestion on a better naming?
->
-> Honestly I'd probably deal with this by refactoring such that the macro
-> isn't needed and the tests follow a pattern more like:
->
->         if (ret !=3D 0) {
->                 ksft_print_msg("$ACTION failed with %d\n", ret);
->                 return false;
->         }
->
-So expanding the macro to actually code ?
-But this makes the meal_test  quite large with lots of "if", and I
-would rather avoid that.
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
-
-> when they encouter a failure, the pattern I sketched in my earlier
-> message, or switch to kselftest_harness.h (like I say I don't know if
-> the fork()ing is an issue for these tests).  If I had to have a macro
-> it'd probably be something like mseal_assert().
->
-I can go with mseal_assert, the original macro is used  by mseal_test
-itself, and only intended as such.
-
-If changing name to mseal_assert() is acceptable, this seems to be a
-minimum change and I'm happy with that.
-
-> > > I'll also note that these macros are resulting in broken kselftest
-> > > output, the name for a test has to be stable for automated systems to=
- be
-> > > able to associate test results between runs but these print
->
-> ....
->
-> > > which includes the line number of the test in the name which is an
-> > > obvious problem, automated systems won't be able to tell that any two
-> > > failures are related to each other never mind the passing test.  We
-> > > should report why things failed but it's better to do that with a
-> > > ksft_print_msg(), ideally one that's directly readable rather than
-> > > requiring someone to go into the source code and look it up.
->
-> > I don't know what  the issue you described is ? Are you saying that we
-> > are missing line numbers ? it is not. here is the sample of output:
->
-> No, I'm saying that having the line numbers is a problem.
->
-> > Failure in the second test case from last:
->
-> > ok 105 test_munmap_free_multiple_ranges
-> > not ok 106 test_munmap_free_multiple_ranges_with_split: line:2573
-> > ok 107 test_munmap_free_multiple_ranges_with_split
->
-> Test 106 here is called "test_munmap_free_multiple_ranges_with_split:
-> line:2573" which automated systems aren't going to be able to associate
-> with the passing "test_munmap_free_multiple_ranges_with_split", nor with
-> any failures that occur on any other lines in the function.
->
-I see. That will happen when those tests are modified and line number
-changes. I could see reasoning for this argument, especially when
-those tests are flaky and get updated often.
-
-In practice, I hope any of those kernel self-test failures should get
-fixed immediately, or even better, run before dev submitting the patch
-that affects the mm area.
-
-Having line number does help dev to go to error directly, and I'm not
-against filling in the "action" field, but you might also agree with
-me, finding unique text for each error would require some decent
-amount of time, especially for large tests such as mseal_test.
-
-> > I would image the needs of something similar to FAIL_TEST_IF_FALSE is
-> > common in selftest writing:
->
-> > 1> lightweight enough so dev can pick up quickly and adapt to existing
-> > tests, instead of rewriting everything from scratch.
-> > 2> assert like syntax
-> > 3> fail the current test case, but continue running the next test case
-> > 4> take care of reporting test failures.
->
-> Honestly this just sounds and looks like kselftest_harness.h, it's
-> ASSERT_ and EXPECT_ macros sound exactly like what you're looking for
-> for asserts.  The main gotchas with it are that it's not particularly
-> elegant for test cases which need to enumerate system features (which I
-> don't think is the case for mseal()?) and that it runs each test case in
-> a fork()ed child which can be inconvenient for some tests.  The use of
-> fork() is because that makes the overall test program much more robust
-> against breakage in individual tests and allows things like per test
-> timeouts.
-OK, I didn't know that ASSERT_ and EXPECT_ were part of the test fixture.
-
-If I  switch to test_fixture, e,g, using TEST(test_name)
-
-how do I pass the "seal" flag to it ?
-e.g. how do I run the same test twice, first seal =3D true, and second seal=
-=3Dfalse.
-
-        test_seal_mmap_shrink(false);
-        test_seal_mmap_shrink(true);
-
-The example [1], isn't clear about that.
-
-https://www.kernel.org/doc/html/v4.19/dev-tools/kselftest.html#example
-
-Thanks
+--=20
+Regards,
+Atish
 
