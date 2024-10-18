@@ -1,162 +1,192 @@
-Return-Path: <linux-kernel+bounces-370817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD52A9A326E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:12:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9859A3284
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA70285134
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FFEB1C22512
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BAE145B14;
-	Fri, 18 Oct 2024 02:11:55 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B21B1487CD;
+	Fri, 18 Oct 2024 02:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DL6eexnK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F323C466;
-	Fri, 18 Oct 2024 02:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F092757F3
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729217515; cv=none; b=Mpr5aiTTZhWIiRPxuGvVEi/GC1BTKpNdGKXVGvM7YCbXT9MZSdtNMH0PBOJbnK5pQDWCQpNf0WJH1JEovg4XJ8uCfBiuoTvT9VEycmXTzbeT+wgTuIQ7sC9h05nkEskp72AiYn9PZrQgZqSHodtcddF626j0+EPXi81CC+2zQ5A=
+	t=1729217943; cv=none; b=GsHKYnQP7vnOa+NoeYDxdKfdH6jaZvwNDLTefRDc1TfZRxmbsLufEv+wjEorl5osDyjyjcm2fS+DBpAvaT7PRb1GDDBbXfb6r2yU5xtKu/SouCTynneASPptm4ULXPojTKu5JfdXhxBT6YrvE1xF3oELbSZkdhppSrQMWGRy0fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729217515; c=relaxed/simple;
-	bh=Tj/tKyJPMhb1CaFlHl7vpQi6VQrw6dIc6BuUMFP1ILM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HodJqaZB+Sw1zj2cOU15+VLnjoLduWY22qMKoNN5mkLz/vBADAdSRp1Q5y6DGmo+iTxJHsKA188IUN8Dlhacx0RWOdzH72D3zu+0/0pqHnG73UEBslhIRYnJAh8A9NeHmO5KESosrwQvbJtqpyhpCEy2CTHnEHbZWx0BODG0QU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XV7W024hVz1yn82;
-	Fri, 18 Oct 2024 10:11:56 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1B5B71A016C;
-	Fri, 18 Oct 2024 10:11:50 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 18 Oct
- 2024 10:11:49 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<hawk@kernel.org>, <john.fastabend@gmail.com>,
-	<maciej.fijalkowski@intel.com>, <vedang.patel@intel.com>,
-	<jithu.joseph@intel.com>, <andre.guedes@intel.com>, <horms@kernel.org>,
-	<jacob.e.keller@intel.com>, <sven.auhagen@voleatech.de>,
-	<alexander.h.duyck@intel.com>
-CC: <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH net 1/4] igc: Fix passing 0 to ERR_PTR in igc_xdp_run_prog()
-Date: Fri, 18 Oct 2024 10:29:23 +0800
-Message-ID: <20241018022926.1911257-2-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241018022926.1911257-1-yuehaibing@huawei.com>
-References: <20241018022926.1911257-1-yuehaibing@huawei.com>
+	s=arc-20240116; t=1729217943; c=relaxed/simple;
+	bh=F9csNYq+KUGLmCx5zz7hgwkFDnEbzTnRnLBXJjyheEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJLsA5pqMflt9r/BbNg4uUil8HxsAMGMaB1sp64WeQhcUUj5QZuuooFw9Bz3SGRT6R6TLzvAaCXq1PjuIm673I52P07Yo7hKWiDQA3y8oJ1d3ycei5rbgnjBYpYfcV/PsgJw/37EVk8Z8Gb7nKS1Lff7bZrnlKiOYRZvMYtvM6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DL6eexnK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729217939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YfvFw0tOK2Fyk1UbczyrvNOBcIGyduZmN7lJxbAzLyg=;
+	b=DL6eexnKoelj4JiEhpX569fwDH5c6wQOdye1MuZiKWFrqhM0kRLLQwCN0FbcdTRS8AW+3b
+	s7hyhBhhcnj4S9LVjQFde6TBHauFIPqjUPeBySJAfSi0MVQghh0kVZJJohssbdZ/XM2pli
+	lVjTNCum7qIbmxlgv9W3JAibNrIj8eI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-5A-PiV4VMYyr7Pcz-3CGkw-1; Thu,
+ 17 Oct 2024 22:18:53 -0400
+X-MC-Unique: 5A-PiV4VMYyr7Pcz-3CGkw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5ECAE1955F41;
+	Fri, 18 Oct 2024 02:18:51 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.28])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6861619560A3;
+	Fri, 18 Oct 2024 02:18:48 +0000 (UTC)
+Date: Fri, 18 Oct 2024 10:18:42 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, bhelgaas@google.com,
+	andriy.shevchenko@linux.intel.com, ilpo.jarvinen@linux.intel.com,
+	mika.westerberg@linux.intel.com, ying.huang@intel.com,
+	tglx@linutronix.de, takahiro.akashi@linaro.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] resource,kexec: walk_system_ram_res_rev must retain
+ resource flags
+Message-ID: <ZxHFgmHPe3Cow2n8@MiWiFi-R3L-srv>
+References: <20241017190347.5578-1-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017190347.5578-1-gourry@gourry.net>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-igc_xdp_run_prog() converts customed xdp action to a negative error code
-with the sk_buff pointer type which be checked with IS_ERR in
-igc_clean_rx_irq(). Remove this error pointer handing instead use plain
-int return value to fix this smatch warnings:
+HI Gregory,
 
-drivers/net/ethernet/intel/igc/igc_main.c:2533
- igc_xdp_run_prog() warn: passing zero to 'ERR_PTR'
+On 10/17/24 at 03:03pm, Gregory Price wrote:
+> walk_system_ram_res_rev() erroneously discards resource flags when
+> passing the information to the callback.
+> 
+> This causes systems with IORESOURCE_SYSRAM_DRIVER_MANAGED memory to
+> have these resources selected during kexec to store kexec buffers
+> if that memory happens to be at placed above normal system ram.
 
-Fixes: 26575105d6ed ("igc: Add initial XDP support")
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/intel/igc/igc_main.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+Sorry about that. I haven't checked IORESOURCE_SYSRAM_DRIVER_MANAGED
+memory carefully, wondering if res could be set as
+'IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY' plus
+IORESOURCE_SYSRAM_DRIVER_MANAGED in iomem_resource tree.
 
-diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-index 6e70bca15db1..5e44c2546a12 100644
---- a/drivers/net/ethernet/intel/igc/igc_main.c
-+++ b/drivers/net/ethernet/intel/igc/igc_main.c
-@@ -2123,10 +2123,6 @@ static bool igc_cleanup_headers(struct igc_ring *rx_ring,
- 				union igc_adv_rx_desc *rx_desc,
- 				struct sk_buff *skb)
- {
--	/* XDP packets use error pointer so abort at this point */
--	if (IS_ERR(skb))
--		return true;
--
- 	if (unlikely(igc_test_staterr(rx_desc, IGC_RXDEXT_STATERR_RXE))) {
- 		struct net_device *netdev = rx_ring->netdev;
- 
-@@ -2515,8 +2511,7 @@ static int __igc_xdp_run_prog(struct igc_adapter *adapter,
- 	}
- }
- 
--static struct sk_buff *igc_xdp_run_prog(struct igc_adapter *adapter,
--					struct xdp_buff *xdp)
-+static int igc_xdp_run_prog(struct igc_adapter *adapter, struct xdp_buff *xdp)
- {
- 	struct bpf_prog *prog;
- 	int res;
-@@ -2530,7 +2525,7 @@ static struct sk_buff *igc_xdp_run_prog(struct igc_adapter *adapter,
- 	res = __igc_xdp_run_prog(adapter, prog, xdp);
- 
- out:
--	return ERR_PTR(-res);
-+	return res;
- }
- 
- /* This function assumes __netif_tx_lock is held by the caller. */
-@@ -2585,6 +2580,7 @@ static int igc_clean_rx_irq(struct igc_q_vector *q_vector, const int budget)
- 	struct sk_buff *skb = rx_ring->skb;
- 	u16 cleaned_count = igc_desc_unused(rx_ring);
- 	int xdp_status = 0, rx_buffer_pgcnt;
-+	int xdp_res = 0;
- 
- 	while (likely(total_packets < budget)) {
- 		struct igc_xdp_buff ctx = { .rx_ts = NULL };
-@@ -2630,12 +2626,10 @@ static int igc_clean_rx_irq(struct igc_q_vector *q_vector, const int budget)
- 			xdp_buff_clear_frags_flag(&ctx.xdp);
- 			ctx.rx_desc = rx_desc;
- 
--			skb = igc_xdp_run_prog(adapter, &ctx.xdp);
-+			xdp_res = igc_xdp_run_prog(adapter, &ctx.xdp);
- 		}
- 
--		if (IS_ERR(skb)) {
--			unsigned int xdp_res = -PTR_ERR(skb);
--
-+		if (xdp_res) {
- 			switch (xdp_res) {
- 			case IGC_XDP_CONSUMED:
- 				rx_buffer->pagecnt_bias++;
-@@ -2657,7 +2651,7 @@ static int igc_clean_rx_irq(struct igc_q_vector *q_vector, const int budget)
- 			skb = igc_construct_skb(rx_ring, rx_buffer, &ctx);
- 
- 		/* exit if we failed to retrieve a buffer */
--		if (!skb) {
-+		if (!xdp_res && !skb) {
- 			rx_ring->rx_stats.alloc_failed++;
- 			rx_buffer->pagecnt_bias++;
- 			set_bit(IGC_RING_FLAG_RX_ALLOC_FAILED, &rx_ring->flags);
-@@ -2672,7 +2666,7 @@ static int igc_clean_rx_irq(struct igc_q_vector *q_vector, const int budget)
- 			continue;
- 
- 		/* verify the packet layout is correct */
--		if (igc_cleanup_headers(rx_ring, rx_desc, skb)) {
-+		if (xdp_res || igc_cleanup_headers(rx_ring, rx_desc, skb)) {
- 			skb = NULL;
- 			continue;
- 		}
--- 
-2.34.1
+Anyway, the change in this patch is certainly better. Thanks.
+
+Acked-by: Baoquan He <bhe@redhat.com>
+
+> 
+> This leads to undefined behavior after reboot. If the kexec buffer
+> is never touched, nothing happens. If the kexec buffer is touched,
+> it could lead to a crash (like below) or undefined behavior.
+> 
+> Tested on a system with CXL memory expanders with driver managed
+> memory, TPM enabled, and CONFIG_IMA_KEXEC=y. Adding printk's
+> showed the flags were being discarded and as a result the check
+> for IORESOURCE_SYSRAM_DRIVER_MANAGED passes.
+> 
+> find_next_iomem_res: name(System RAM (kmem))
+> 		     start(10000000000)
+> 		     end(1034fffffff)
+> 		     flags(83000200)
+> 
+> locate_mem_hole_top_down: start(10000000000) end(1034fffffff) flags(0)
+> 
+> [.] BUG: unable to handle page fault for address: ffff89834ffff000
+> [.] #PF: supervisor read access in kernel mode
+> [.] #PF: error_code(0x0000) - not-present page
+> [.] PGD c04c8bf067 P4D c04c8bf067 PUD c04c8be067 PMD 0
+> [.] Oops: 0000 [#1] SMP
+> [.] RIP: 0010:ima_restore_measurement_list+0x95/0x4b0
+> [.] RSP: 0018:ffffc900000d3a80 EFLAGS: 00010286
+> [.] RAX: 0000000000001000 RBX: 0000000000000000 RCX: ffff89834ffff000
+> [.] RDX: 0000000000000018 RSI: ffff89834ffff000 RDI: ffff89834ffff018
+> [.] RBP: ffffc900000d3ba0 R08: 0000000000000020 R09: ffff888132b8a900
+> [.] R10: 4000000000000000 R11: 000000003a616d69 R12: 0000000000000000
+> [.] R13: ffffffff8404ac28 R14: 0000000000000000 R15: ffff89834ffff000
+> [.] FS:  0000000000000000(0000) GS:ffff893d44640000(0000) knlGS:0000000000000000
+> [.] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [.] ata5: SATA link down (SStatus 0 SControl 300)
+> [.] CR2: ffff89834ffff000 CR3: 000001034d00f001 CR4: 0000000000770ef0
+> [.] PKRU: 55555554
+> [.] Call Trace:
+> [.]  <TASK>
+> [.]  ? __die+0x78/0xc0
+> [.]  ? page_fault_oops+0x2a8/0x3a0
+> [.]  ? exc_page_fault+0x84/0x130
+> [.]  ? asm_exc_page_fault+0x22/0x30
+> [.]  ? ima_restore_measurement_list+0x95/0x4b0
+> [.]  ? template_desc_init_fields+0x317/0x410
+> [.]  ? crypto_alloc_tfm_node+0x9c/0xc0
+> [.]  ? init_ima_lsm+0x30/0x30
+> [.]  ima_load_kexec_buffer+0x72/0xa0
+> [.]  ima_init+0x44/0xa0
+> [.]  __initstub__kmod_ima__373_1201_init_ima7+0x1e/0xb0
+> [.]  ? init_ima_lsm+0x30/0x30
+> [.]  do_one_initcall+0xad/0x200
+> [.]  ? idr_alloc_cyclic+0xaa/0x110
+> [.]  ? new_slab+0x12c/0x420
+> [.]  ? new_slab+0x12c/0x420
+> [.]  ? number+0x12a/0x430
+> [.]  ? sysvec_apic_timer_interrupt+0xa/0x80
+> [.]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+> [.]  ? parse_args+0xd4/0x380
+> [.]  ? parse_args+0x14b/0x380
+> [.]  kernel_init_freeable+0x1c1/0x2b0
+> [.]  ? rest_init+0xb0/0xb0
+> [.]  kernel_init+0x16/0x1a0
+> [.]  ret_from_fork+0x2f/0x40
+> [.]  ? rest_init+0xb0/0xb0
+> [.]  ret_from_fork_asm+0x11/0x20
+> [.]  </TASK>
+> 
+> Link: https://lore.kernel.org/all/20231114091658.228030-1-bhe@redhat.com/
+> Fixes: 7acf164b259d ("resource: add walk_system_ram_res_rev()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> ---
+>  kernel/resource.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index b730bd28b422..4101016e8b20 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -459,9 +459,7 @@ int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
+>  			rams_size += 16;
+>  		}
+>  
+> -		rams[i].start = res.start;
+> -		rams[i++].end = res.end;
+> -
+> +		rams[i++] = res;
+>  		start = res.end + 1;
+>  	}
+>  
+> -- 
+> 2.43.0
+> 
 
 
