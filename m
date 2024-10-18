@@ -1,170 +1,121 @@
-Return-Path: <linux-kernel+bounces-371098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F20F9A3670
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:05:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7443F9A3673
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 506B3B22E5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:05:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3CDC1C234EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5791A17C7A3;
-	Fri, 18 Oct 2024 07:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E2D183088;
+	Fri, 18 Oct 2024 07:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hvTN4Szf"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iQZsvUnU"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE1520E33D
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5293420E33D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729235129; cv=none; b=jEC/E5Q70tjS1Ukh3nDcIvPayAQH6tKYeFJ85wHUJEpXp0HTJANqr9WMb/jkbabIZNZExqC5P/C8rqrzrj6vyxwLK72GzV6PHkFuniA4VX1ybSGrYqVOeGvMbr5lJ2DkVo9sM115y/De1tHI9r+YfVPPpnWcQ3AFbmevk5C9NoU=
+	t=1729235188; cv=none; b=qdk2qe5gx6Xvq63FKdiM2gw8it30NtvmPXzaDyzdmKFKydsFmAxjv/BkXHh0LmqLLBziJmYpZOAywvDYPP7/bNrezaYvU+HF5qLjeymU7Qwby+KhET3A23a6Ecw7RvnynllwrXbPXBIFTem1UGv2ZCUHGkElr4E1RCBNVkSPUeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729235129; c=relaxed/simple;
-	bh=UD1X7+y4g7xOHbFbP2xrOZwrUf3MVbc6tglEQbeFGag=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=o5VyUFTKL9BeZvJoytdX0hhm8W48pX+Mit3czMiAXAf/QrnGOwA8IK+2htFpFu7fQoNsPbakR7128b4uF0EkqLmrk5bF/OFUGCNeYQzWP/DvPYTc6Nw7A8rqC1S9rYEL5rylazXoXBSajYiulQ6SDztejIpHdRrh0pHLscGWNeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hvTN4Szf; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4a5ad828a0fso529893137.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:05:26 -0700 (PDT)
+	s=arc-20240116; t=1729235188; c=relaxed/simple;
+	bh=+LXYPc6hzDz1apqRx1+djjFCpV4f5yKQDtoRJZwRfQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=td8sQBNG9SrCLM1bREkFSRXKIPM9kFYXD7NTPFa42cnqH/3/zdRs9K5ih9Klj4bjj6dxBaJ3LmKEXKeQ3UgG1Dtjmr3B3UP+Ra284g9snJldiSLaosDcM2GQJKH3LS7MT0YMJCfU2KY1utXNEhSgxUC0DTVS/4e/pluBEXH78ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iQZsvUnU; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so20375161fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:06:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729235125; x=1729839925; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3EsDn71iKRJbsLqCH6cdyCF8oxK7HkDcTIVHp+N4J44=;
-        b=hvTN4SzfeDHnbtNMxnLMn/kHSIav7tEoR4etNilFHbL+beRU6K1Wjf1EmGK8UrtUaI
-         ycWgvXJ59sSJnopOdvGJKaQdJmDsCTXSDCcJcsMc5UEJ7UChcWI0A87rAiOpuZCRnGf2
-         QaNw/6FYIVFRDOicyyl0hFc9UuuKKoBKMblU6TuM+FeeR1LQhhb1X3+mPb0yGRPoIqto
-         ul2aclJ+tRlpcQsIpq5unZ0mg0lpDwROlRNLH0699Hwj7X5F2YXc/suLN3pxAFH6vVog
-         HalubfVVK1RIjkw+9AW6riwEOXoQAc3FEt34yJXu20YTC/7FQTIB7Qm+/wiV2NypG7xV
-         5Vcg==
+        d=google.com; s=20230601; t=1729235185; x=1729839985; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0sDh29tgBDN/eY+37mHiEnkCsD41OoxLIQqVYqiE06Y=;
+        b=iQZsvUnUysgG3+Zmnrbp5TRbC0CZ3fHEb/lgnOGF/jnk25GYxwi2uCAnB17D1LldGf
+         nixY9VIT0l4P7YQOKfsz/+NgUwv8F/YkhhQ57zM9TZMxJxdmua92yr8gB+jFmfb4Rk1I
+         zjGNW0LwkXZsaXFdzgYY1lV8Yyn/mjqMg4ZtC01kMnVYaOMQwx5vLKACIYfJIk5jUwLm
+         hdUnWmMtkGnql09wFJ1a48CKD9nZMz15NL3g8sRi08b6bqOhhwcxqAP0BkawJ4r0zEUf
+         jeBDJ1Ryb3+/pVgLu19to+7/sppIfeDQ4SmR8HqJNh7I10oZ/bGGFfedihPfZZqn6oN6
+         XFiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729235125; x=1729839925;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3EsDn71iKRJbsLqCH6cdyCF8oxK7HkDcTIVHp+N4J44=;
-        b=S2WyPZjOtQ01In8IfuTg//MKAASAgtHP4n8nwluhXgQC4JWHE0X9D+DnN/cgYtaTs0
-         SzPgx4nMVwKGs2cj80b1uuhl7RJFWoO/GGsMmM4g8pUqw28puD192wXQDbmGq3uQT0Dv
-         Q7+VfHygllgS3uqlWanHp9NIAM50AVXtTmq7srPMSrRWevgHXxi4lo49+xY8h67gy0cz
-         8y3dDSJOFggmAOXf/RP06Gq7GXvpfwwuAvZ/lxGHS63XEHj5XXolqzfg4ymc/fo/a+Cr
-         V5AliElHUwYQstNBmEoc1MNhSZ//G8E2LOsPd1GQMMHb7SXjOkxMXUY8Dt4+gZGW9jkk
-         5wfw==
-X-Gm-Message-State: AOJu0Yz1qQgMbx0gST2gIYBcxQZ9kLHjRzpWq34BFo3ncP0LzxOzeFx6
-	O1HdUPtnOzLcZtFXD5qqZdT0u0UvD2PPRmHMDINpnDAlbeCwZZ3PawHx2PBRIfMeiCkH+P5nHOB
-	PdcqxrE/PvZXcTEJP4hQBVNOYqz0/JeJoyPocc+waSix1qdLptNs=
-X-Google-Smtp-Source: AGHT+IEMKaiswjTQniXEOdUFmx1XXP3WE2nVkQ6nLj/7XG+PW7CpRN/Fzi2UzGnsKtcggkXYx1K6vFJBvNS/bVGOk1s=
-X-Received: by 2002:a05:6102:e0d:b0:493:bcbd:4633 with SMTP id
- ada2fe7eead31-4a5d6a8c469mr1644327137.3.1729235124950; Fri, 18 Oct 2024
- 00:05:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729235185; x=1729839985;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0sDh29tgBDN/eY+37mHiEnkCsD41OoxLIQqVYqiE06Y=;
+        b=T28+EDdrKZqXglOn/HTiuxV9WIV3C3AXUwqO6GSm/bxUGeGJL/OlGS7RT5MYhCX5ps
+         k6BcmUFTpb9swzWNr2yiojnMVkdhTCUHW+SYstWiq/dxEYqZ8EaYJomoDB1OGiRTrNpZ
+         34+x0Mvd7oJo5ZJnqcMT2ROgPcMTTCumwof4sP99fJsSiil6BviDey7PXYLKrOlawV/J
+         sqs2BgxYvHqv8tHhThWmlKfglGTXvhtdHq5PRPbip+oLTgqSacho56WCidPXrPWFdh1D
+         IhxQZZscphw1TLzbpA8u7eDx8FbASyLhoLQDbiIsw9O4yO5WHfZglBvhvt1C8pUwifKL
+         e0BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8P2K0j+t/ExmrUyDP//OHR4uvLMMZwQfdPNOdBHciwe3IiLu3A3WHn7iXGMMTUrXPAjKRhlkbYyZimyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG1Uk4AwLk8pGmlgirWCrFq9PqNDQdtQU/V0fuZKYtTjWyi5To
+	w+h8+2Pn37iGYdWyKPFGKXPjDtz93GSWeVFca9megJCvgs9c84Mo1yH2D3akCwFUgZ2gXwCwb/Z
+	w/WoMRE1JHRFJqzRv7lEa9DaBjxDpLVEFEYPV
+X-Google-Smtp-Source: AGHT+IEID67jPLeUKh1bY4LIIgpCPYkyWpP4dlriYtHZlSy5ZWcIWo8EO6dx3Mc7MG9Ne0bnLTtz+chQnd/X6Cdop5k=
+X-Received: by 2002:a05:651c:1543:b0:2fb:65c8:b4ca with SMTP id
+ 38308e7fff4ca-2fb83226659mr5746961fa.40.1729235185149; Fri, 18 Oct 2024
+ 00:06:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 18 Oct 2024 12:35:13 +0530
-Message-ID: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
-Subject: Qemu v9.0.2: Boot failed qemu-arm with Linux next-20241017 tag.
-To: open list <linux-kernel@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, qemu-devel@nongnu.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Aishwarya TCV <Aishwarya.TCV@arm.com>, 
-	Peter Maydell <peter.maydell@linaro.org>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>
+References: <CA+nYHL-daCTUG=G0CaAMyabf9LkUYa6HnjhUCYLoJTm2FfMdsQ@mail.gmail.com>
+In-Reply-To: <CA+nYHL-daCTUG=G0CaAMyabf9LkUYa6HnjhUCYLoJTm2FfMdsQ@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 18 Oct 2024 09:06:12 +0200
+Message-ID: <CANn89iJ4EwLU2H4CntDbufc3ZRS9-BZrO0vXGxYosx4ELq8PgA@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in __nf_hook_entries_try_shrink
+To: Xia Chu <jiangmo9@gmail.com>
+Cc: pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de, 
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The QEMU-ARMv7 boot has failed with the Linux next-20241017 tag.
-The boot log is incomplete, and no kernel crash was detected.
-However, the system did not proceed far enough to reach the login prompt.
+On Fri, Oct 18, 2024 at 9:00=E2=80=AFAM Xia Chu <jiangmo9@gmail.com> wrote:
+>
+> Hi,
+>
+> We would like to report the following bug which has been found by our mod=
+ified version of syzkaller.
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> description: KASAN: use-after-free Read in __nf_hook_entries_try_shrink
+> affected file: net/netfilter/core.c
+> kernel version: 5.8.0-rc4
+> kernel commit: 0aea6d5c5be33ce94c16f9ab2f64de1f481f424b
+> git tree: upstream
+> kernel config: attached
+> crash reproducer: attached
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> Crash log:
+> BUG: KASAN: use-after-free in hooks_validate net/netfilter/core.c:177 [in=
+line]
+> BUG: KASAN: use-after-free in __nf_hook_entries_try_shrink+0x3c0/0x470 ne=
+t/netfilter/core.c:260
+> Read of size 4 at addr ffff888067fe4220 by task kworker/u4:2/126
+>
+> CPU: 1 PID: 126 Comm: kworker/u4:2 Tainted: G        W         5.8.0-rc4+=
+ #1
 
-Please find the incomplete boot log links below for your reference.
-The Qemu version is 9.0.2.
-The arm devices TI beaglebone x15 boot pass.
+This is an old version of linux, not supported.
 
-This is always reproducible.
-First seen on Linux next-20241017 tag.
-  Good: next-20241016
-  Bad: next-20241017
-
-qemu-armv7:
-  boot:
-    * clang-19-lkftconfig
-    * gcc-13-lkftconfig
-    * clang-nightly-lkftconfig
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Boot log:
--------
-[    0.000000] Booting Linux on physical CPU 0x0
-[    0.000000] Linux version 6.12.0-rc3-next-20241017
-(tuxmake@tuxmake) (arm-linux-gnueabihf-gcc (Debian 13.3.0-5) 13.3.0,
-GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP @1729156545
-[    0.000000] CPU: ARMv7 Processor [414fc0f0] revision 0 (ARMv7), cr=10c5387d
-[    0.000000] CPU: div instructions available: patching division code
-[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
-[    0.000000] OF: fdt: Machine model: linux,dummy-virt
-[    0.000000] random: crng init done
-[    0.000000] earlycon: pl11 at MMIO 0x09000000 (options '')
-[    0.000000] printk: legacy bootconsole [pl11] enabled
-[    0.000000] Memory policy: Data cache writealloc
-[    0.000000] efi: UEFI not found.
-[    0.000000] cma: Size (0x04000000) of region at 0x00000000 exceeds
-limit (0x00000000)
-[    0.000000] cma: Failed to reserve 64 MiB on node -1
-
-<nothing after this>
-
-Boot log link,
------
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/log
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/details/
-
-Build images:
-------
- - https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/
-
-Steps to reproduce via qemu:
-----------------
-/usr/bin/qemu-system-arm -cpu cortex-a15 \
-          -machine virt,gic-version=3 \
-          -nographic -nic none -m 4G -monitor \
-          none -no-reboot -smp 2 \
-          -kernel zImage \
-          -append \"console=ttyAMA0,115200 rootwait root=/dev/vda
-debug verbose console_msg_format=syslog systemd.log_level=warning rw
-earlycon\"
-          -drive
-file=debian_trixie_armhf_rootfs.ext4,if=none,format=raw,id=hd0 \
-          -device virtio-blk-device,drive=hd0
-
-Steps to reproduce with tuxrun reproducer:
----------------
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/reproducer
-
-Boot history compare link:
-------------------------
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/history/
-
-metadata:
-----
-  git describe: next-20241017
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-  git sha: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/
-  toolchain: clang-19, gcc-13 and clang-nightly
-  config: lkftconfig
-  arch: arm
-
---
-Linaro LKFT
-https://lkft.linaro.org
+What do you expect from us ?
 
