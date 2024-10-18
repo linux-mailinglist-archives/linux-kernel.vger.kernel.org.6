@@ -1,88 +1,123 @@
-Return-Path: <linux-kernel+bounces-372528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BB69A49D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:13:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F55A9A49E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B457A2835AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:13:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32461F23841
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D28E1917C9;
-	Fri, 18 Oct 2024 23:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70722190676;
+	Fri, 18 Oct 2024 23:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kj+Am4S1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b+wgGljO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2EB188010;
-	Fri, 18 Oct 2024 23:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07158152E12
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 23:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729293189; cv=none; b=J6PMta4ffxFuqMT/ygTeeHUQ9eq0uxveCU+vm4Cv+GFdvWHejVXipRdG/sauxx4Dc8dIB4ykL2/1EV5OZZM18zmyqupytjBMyKugbrF7bHGiP0WB/9WkukOVssn6zJVNYF+h6wDWiZIYXZrmaSaM9MP1Ipf0aUNVDHzPtfm8pnc=
+	t=1729293434; cv=none; b=ewdrN+XpyRexP0abh+zsG36WdoJ4Ja8+x1D45wvvoBmhKZMApBLWbyWvTinPvJEFxphO0e+wRBJqaWbnM0/kMnS8RNXgic6bVPzMEZecna2ica8lQOe8wGNU7i+2JoSYPgCg500p1zB21MSnIF0T1knntGnVvTEusYxy1hDCzWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729293189; c=relaxed/simple;
-	bh=PxigYZHsMS7Ka5btja412U+QAgfuxXzExNadMgste3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sAl2SzDJdq/kLsuIrv3y4TmPXJtFsAAkNg4qUKDVpIkqKKPDCf0TPSWjq7dqu3wbwjahkE/t+wMW3wBBwX/EfJmzbfh5yd0FNV/WfiPn99ZfUQlZJ/ya3wJML3YRoeuEBYpDeXS3+nfoGiwq//pBOuEWw2z8vjEcyy6m5nNhofE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kj+Am4S1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 391BCC4CEC3;
-	Fri, 18 Oct 2024 23:13:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729293188;
-	bh=PxigYZHsMS7Ka5btja412U+QAgfuxXzExNadMgste3k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Kj+Am4S1ctlX8aVYBQNWz6oPsMnQEk2nOAo5koJNfIszdt6Eq47C1G2y4R2hy4GAU
-	 /ApgU0OfDgBcDCrtPG5CNhY1fPyd7Jmk3ieIqJy7l7+JCBqeIb4q4kwVYj8eUzMjfB
-	 96gbzFf4veNd+v+hUUQOrjJHyFzgroSLHAzHT/pbcS+KXOy9nx0b65aOJ102DyL+it
-	 2h7/KLbWxSgd+e3ZNlxui6WBdDETnzhe3p+EnHbOg3tVCOvdOqUbSxQnw0rLwNLp9r
-	 V4It16N9KjDPspAmRWXOIuC0Hq9YHbBgSDLWBDjssKlbniMC7sR42o1d91nFNGqMoV
-	 vuTz7ZPuFUEOw==
-Date: Fri, 18 Oct 2024 18:13:05 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: kw@linux.com, manivannan.sadhasivam@linaro.org, bhelgaas@google.com,
-	lpieralisi@kernel.org, frank.li@nxp.com, l.stach@pengutronix.de,
-	robh+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, festevam@gmail.com,
-	s.hauer@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kernel@pengutronix.de,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v4 1/9] dt-bindings: imx6q-pcie: Add ref clock for i.MX95
- PCIe RC
-Message-ID: <20241018231305.GA768070@bhelgaas>
+	s=arc-20240116; t=1729293434; c=relaxed/simple;
+	bh=EKFz18dTqTZQNFFtuezUAHUlyCwgEgoHQ8k/pFQxMCQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YgLOFFXoVt2Z8j6Si+WHhvF+ctCZIWSykrqbGFKBNocTdMLXyfnsGCuvuBo8UZMX9gqMySw6Fpyv5xt36Jo9Qs9ImSmgOcx2N/XkLmPMErydpjXbK45ArciUQjd7uLWFUHqqW9aHWsTKUzL58BoCwd4SxK0aKqjOcoTvA6D6dMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b+wgGljO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729293431;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CLMUyNHQiaCv4zwkoRVVWYMA0GThuwsF5UrHKm3NvKg=;
+	b=b+wgGljOKaP7tm35WLwDUb3R6WZMAzGpD11y8H+jp53f/7YbiiIDgVZjmTJqVdaDi83TMK
+	OqdT6U8JLpc58HwVY0NNuW9ufxTiv4bSs3+rOWegN27nmKcE9wKWZ5W3BIO7OSJ4iGsnea
+	BBQFo3GPlxHMvc+799pIP4mMOKUhtk0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-336-u6R2lIYdN3SdYMs2BvI5Kw-1; Fri,
+ 18 Oct 2024 19:17:06 -0400
+X-MC-Unique: u6R2lIYdN3SdYMs2BvI5Kw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4A4C3195608D;
+	Fri, 18 Oct 2024 23:17:04 +0000 (UTC)
+Received: from chopper.redhat.com (unknown [10.22.65.88])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1A0C91956086;
+	Fri, 18 Oct 2024 23:16:58 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: rust-for-linux@vger.kernel.org
+Cc: Danilo Krummrich <dakr@redhat.com>,
+	airlied@redhat.com,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>
+Subject: [PATCH v7 0/3] rust: Add local_irq abstraction, SpinLockIrq
+Date: Fri, 18 Oct 2024 19:13:49 -0400
+Message-ID: <20241018231621.474601-2-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1728981213-8771-2-git-send-email-hongxing.zhu@nxp.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, Oct 15, 2024 at 04:33:25PM +0800, Richard Zhu wrote:
-> Previous reference clock of i.MX95 PCIe RC is on when system boot to
-> kernel. But boot firmware change the behavor, it is off when boot. So it
-> needs be turn on when it is used. Also it needs be turn off/on when suspend
-> and resume.
+This adds a token for annotating contexts where IRQs may be disabled on
+non-PREEMPT_RT kernels, a way to use these tokens with Lock types, and
+introduces bindings for spin_lock_irqsave() and
+spin_unlock_irqrestore().
 
-I think this background would make more sense in patch 2.  IIUC,
-that's where the driver behavior changes to do something with the
-"ref" clock.
+This patch series depends on the NotThreadSafe type from Alice:
 
-I'm not sure how to interpret "Previous reference clock of i.MX95 PCIe
-RC is on when system boot to kernel. But boot firmware change the
-behavor, it is off when boot."
+https://lore.kernel.org/rust-for-linux/20240808-alice-file-v9-1-2cb7b934e0e1@google.com/
 
-Does that mean a previous version of the boot firmware left the ref
-clock on at handoff to the OS, and newer firmware turns it off?  If
-so, I think it would be useful to include information about the
-relevant firmware versions.
+(Please re-review, since there's been some changes here!)
 
-> Add one ref clock for i.MX95 PCIe RC. Increase clocks' maxItems to 5 and keep
-> the same restriction with other compatible string.
+Lyude Paul (3):
+  rust: Introduce local_irq module
+  rust: sync: Introduce lock::Backend::Context and
+    lock::BackendWithContext
+  rust: sync: Add SpinLockIrq
+
+ rust/helpers/helpers.c            |   1 +
+ rust/helpers/irq.c                |   8 ++
+ rust/helpers/spinlock.c           |  14 +++
+ rust/kernel/lib.rs                |   1 +
+ rust/kernel/local_irq.rs          |  56 ++++++++++++
+ rust/kernel/sync.rs               |   2 +-
+ rust/kernel/sync/lock.rs          | 118 +++++++++++++++++++++++-
+ rust/kernel/sync/lock/mutex.rs    |   1 +
+ rust/kernel/sync/lock/spinlock.rs | 146 ++++++++++++++++++++++++++++++
+ 9 files changed, 341 insertions(+), 6 deletions(-)
+ create mode 100644 rust/helpers/irq.c
+ create mode 100644 rust/kernel/local_irq.rs
+
+
+base-commit: 6ce162a002657910104c7a07fb50017681bc476c
+prerequisite-patch-id: 4e3cfb97c9dc94e99912e67f383497848ac6f81d
+-- 
+2.47.0
+
 
