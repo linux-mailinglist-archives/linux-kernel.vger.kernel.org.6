@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-371735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDDA9A3FA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:30:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B5D9A3FA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FC41283C60
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:30:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70CAA1F212B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FA51D7E43;
-	Fri, 18 Oct 2024 13:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt5EGiMx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D400D23D2;
-	Fri, 18 Oct 2024 13:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B637C1D88DC;
+	Fri, 18 Oct 2024 13:30:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549FCF9F8;
+	Fri, 18 Oct 2024 13:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729258187; cv=none; b=Sef9aC3VIC5788dURAobx9IkjExgK1/ge1geIi8exDcFW7W1nt5lCofK71fxMVnLd95yEFaBiBvPmtZXj8alwf7frqVohgUneXtk+6ziSdOaIqPvbuG4FC0BdCc1SG+g52MhDQl+S5i3bwdz3TQpY24LWO0/GJPwroG2lWjLgwE=
+	t=1729258220; cv=none; b=YwV8dmHcH0wakD8S9HDWHoV0tJUgFGWOEwB+ulw0BYSkwc8OWmU0woo4dsA3CG3FS0f5rr4Cq4pef4o1SZsXYSsYu76WCQIp6Lds1bSmHljP5te/tt4leTatOL5liFbxul6GMvRFLZWplvKRs9V2rYlrIE7GFvC3oQgmB/Zc6xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729258187; c=relaxed/simple;
-	bh=0sbHRBsjbGBA1Ac2oOqCpC5kRRswpuyAvkL1Df298O0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sCR21SvuGBVhJsfTAsKuhCgNlZ1i/WnxRmfG+Wo0p6mBPd2Kp5JVy+jwOck5EoVexPnMUDzrDumwDVNBj0TxYp+ZH+ZEMcR7nj6oNA/LV6xIrFaVioyUF6TN1AA8mZAqUZUuT+Jia7oi9dF4o9Mn273WRbmXv5TSfpPY16RwEew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt5EGiMx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A7CEC4CEC3;
-	Fri, 18 Oct 2024 13:29:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729258186;
-	bh=0sbHRBsjbGBA1Ac2oOqCpC5kRRswpuyAvkL1Df298O0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xt5EGiMxdtTvBrlIYoC2Zt58IyLf2Rx5nM/TcPNJkLspAQmkTMtsuu1/JRcCX4jp/
-	 96zjvhmdAqV/CBGu0jYU22mrd53EM5IHvRIQMCu2LanUzgItKEH+nhKaU6QszrfAwZ
-	 noqVvK5qwy1pR/IflRl/NgVHbR0ZPGujjjbGrWMHmxTjPghZLjhPH0XMCNxZd69X8b
-	 ZwU8bF2b2zObQ8sMAczUto/Dksz6ldzJe6G/cgY54m1EbvZgPfAT7NJzcb2toPHv6G
-	 YyLVESYPYXxYEGxhHbi9cXZBsoXWaQ7tpybXTwBOI1QaZC+NO7damluju7Hcj018cr
-	 otsx37Uof178w==
-Date: Fri, 18 Oct 2024 08:29:45 -0500
-From: Rob Herring <robh@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/4] dt-bindings: iio: light: veml6075: document
- rset-kohms
-Message-ID: <20241018132945.GA70244-robh@kernel.org>
-References: <20241017-veml6070-integration-time-v1-0-3507d17d562a@gmail.com>
- <20241017-veml6070-integration-time-v1-3-3507d17d562a@gmail.com>
+	s=arc-20240116; t=1729258220; c=relaxed/simple;
+	bh=4cb3B3QHewrPYGrjaGWu1ULVYo4OSiASJENbHyPgKyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vF18A2+TNcxu8t99dV2FwtcnWGUlgGhjNCxrVF65wt1NXufvtbaMx9Yucpp7ARfG2ASnCEfdXpZr5Lnayv6AupXBO1smnHIWt8/EwPrIGPTT+82tWzu/BPbWd2b5QHV4MI6LI1A5uEGXIlZOW4Ki7VS/Z09lJU7j2Q4DiZMieRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 332DFFEC;
+	Fri, 18 Oct 2024 06:30:47 -0700 (PDT)
+Received: from [10.57.64.219] (unknown [10.57.64.219])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AAD373F528;
+	Fri, 18 Oct 2024 06:30:14 -0700 (PDT)
+Message-ID: <7ca207aa-4433-4e9b-8cd2-e025bb265796@arm.com>
+Date: Fri, 18 Oct 2024 14:30:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017-veml6070-integration-time-v1-3-3507d17d562a@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 31/43] arm64: rme: Prevent Device mappings for Realms
+Content-Language: en-GB
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>
+References: <20241004152804.72508-1-steven.price@arm.com>
+ <20241004152804.72508-32-steven.price@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20241004152804.72508-32-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 11:39:27PM +0200, Javier Carrasco wrote:
-> The veml6070 provides a configurable integration time by means of an
-> extertnal resistor (Rset in the datasheet) with values between 75 and
-> 1200 kohms.
+On 04/10/2024 16:27, Steven Price wrote:
+> Physical device assignment is not yet supported by the RMM, so it
+> doesn't make much sense to allow device mappings within the realm.
+> Prevent them when the guest is a realm.
 > 
-> Document rset-kohms to select the integration time.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->  .../devicetree/bindings/iio/light/vishay,veml6075.yaml   | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>   arch/arm64/kvm/mmu.c | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml b/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
-> index 96c1317541fa..3d3ffeaa22df 100644
-> --- a/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
-> @@ -29,6 +29,22 @@ required:
->    - reg
->    - vdd-supply
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - vishay,veml6070
-> +    then:
-> +      properties:
-> +        rset-kohms:
-
-Use the documented '-ohms' suffix.
-
-Properties should be defined at the top-level and then restricted here.
-
-> +          $ref: /schemas/types.yaml#/definitions/uint32
-> +          description: |
-> +            Value in kilo Ohms of the Rset resistor used to select
-> +            the integration time.
-> +          minimum: 75
-> +          maximum: 1200
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index 4f0403059c91..602c49eae90d 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -1142,6 +1142,10 @@ int kvm_phys_addr_ioremap(struct kvm *kvm, phys_addr_t guest_ipa,
+>   	if (is_protected_kvm_enabled())
+>   		return -EPERM;
+>   
+> +	/* We don't support mapping special pages into a Realm */
+> +	if (kvm_is_realm(kvm))
+> +		return -EINVAL;
 > +
->  additionalProperties: false
->  
->  examples:
-> 
-> -- 
-> 2.43.0
-> 
+
+I believe this is not sufficient. This is only called for GICv2 today.
+But we also need to check in  user_mem_abort() and only allow the
+mapping if it targeting an unprotected IPA.
+
+Something like:
+
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index 26d550ad8393..e433bf8376f2 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -1710,6 +1710,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, 
+phys_addr_t fault_ipa,
+         if (exec_fault && device)
+                 return -ENOEXEC;
+
++       if (device && kvm_gpa_from_fault(fault_ipa) != fault_ipa)
++               return -EINVAL;
++
+         /*
+          * Potentially reduce shadow S2 permissions to match the 
+guest's own
+          * S2. For exec faults, we'd only reach this point if the guest
+
+
+
+Suzuki
+
+
+>   	size += offset_in_page(guest_ipa);
+>   	guest_ipa &= PAGE_MASK;
+>   
+
 
