@@ -1,122 +1,86 @@
-Return-Path: <linux-kernel+bounces-371091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884FF9A362F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:54:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A365D9A3629
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495181F246EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:54:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A162B248F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B34181D00;
-	Fri, 18 Oct 2024 06:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B77187FF4;
+	Fri, 18 Oct 2024 06:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dm+LwOBn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELggh48y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9B92905;
-	Fri, 18 Oct 2024 06:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8621417E472;
+	Fri, 18 Oct 2024 06:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729234474; cv=none; b=g+pQYoat220uJTo9ilJyTIUsgCfqUWoxg5T9K3rPd/MwM4RgNKoM1J3MC3dB2JLna+YCflOhK/ctIIpzmKQOC85orJqgOjhYCLX/IhZVLCuXEjIxmAmPLwclRJXK9Cfusag6zQ60mvdl8uEA6+Lv7d1PHuOvFujQIPe3NXQQeL4=
+	t=1729234293; cv=none; b=XwiP+bA7HSTsX0xGgFGDrlWHb37qyw/4+bvo0q/iVbw9TujFXFBAXkLeVcrHbK2+eHgmPkdaRzXaRJgf+8fVNHsuXFOm+Lp/r0sXUW8+niMlpXSxwKe19sUs/YJ56kKON42OvXQibJNqnMufXfFdJA+80HfpvK4qqkIVWeO7OFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729234474; c=relaxed/simple;
-	bh=evsN8uwCBAtyjbwFtrCAwBpQZhHeAvzprdl3LY6tz3U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BK3gZDm48zapyecKV0aspLn+faqiNAyu88irFy4axw1tH/6a3lbG9GA6TLMzRMnSJgOSFvugaxmMN2ZdtZHv8nv48ZqIT4pQyuVhxUUz/LSGKKk2mbIoinZF+pZgcCyfvQ5I9PB/i27GqQfAfc6jA35S8ARBgfG9iA3AdkDlzW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dm+LwOBn; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729234473; x=1760770473;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=evsN8uwCBAtyjbwFtrCAwBpQZhHeAvzprdl3LY6tz3U=;
-  b=Dm+LwOBn0Nh90O/JGObiOLOS5img1VwCaLUU9PcqN0Is5sPr6vaq9VRa
-   TBuNndyoTHBHf7s3vpc9d9+3WeR2O1D2mjvlQ1+bhyH+NvksqZqzcTUVn
-   6RxPGlsXmAoY4xl8kDEIj1HRytgkJpJsicu03yvZ17/TmlMmLd/GGrdfX
-   XDfW8kspWV8VeKhBMbjiS4D9Uh00KOjLt7UlpK4fWCYdqhglFUIjl7slr
-   LkVUX32Y4IP4M+UYTkH/0XK2QEdyfGwhbMyLw8ea4j3u06bhjbO9FRvpg
-   Jdh2JY/YpHgUizXFK4l9ZPJ78c58Z4dTR33cy+QvHWbGyv+LBP88fDdBH
-   Q==;
-X-CSE-ConnectionGUID: 8h0Fn3zeSrmkZ0UJT/xo+g==
-X-CSE-MsgGUID: otK4w6LFQ32781WxnABPNQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28886411"
-X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
-   d="scan'208";a="28886411"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 23:54:32 -0700
-X-CSE-ConnectionGUID: FDCaoVJPTG6h5ptq3w01fA==
-X-CSE-MsgGUID: iE95uR4uSeq0XWRqum53vg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
-   d="scan'208";a="78388662"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 23:54:29 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,  linux-cxl@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Gregory Price <gourry@gourry.net>,
-  Davidlohr Bueso <dave@stgolabs.net>,  Jonathan Cameron
- <jonathan.cameron@huawei.com>,  Alison Schofield
- <alison.schofield@intel.com>,  Vishal Verma <vishal.l.verma@intel.com>,
-  Ira Weiny <ira.weiny@intel.com>,  Alejandro Lucero <alucerop@amd.com>,
-  Ben Cheatham <benjamin.cheatham@amd.com>
-Subject: Re: [PATCH 4/5] cxl: Set type of region to that of the first endpoint
-In-Reply-To: <6711909cd5d83_3f14294e@dwillia2-xfh.jf.intel.com.notmuch> (Dan
-	Williams's message of "Thu, 17 Oct 2024 15:33:00 -0700")
-References: <20241015065713.308671-1-ying.huang@intel.com>
-	<20241015065713.308671-5-ying.huang@intel.com>
-	<6711909cd5d83_3f14294e@dwillia2-xfh.jf.intel.com.notmuch>
-Date: Fri, 18 Oct 2024 14:50:56 +0800
-Message-ID: <877ca57vlb.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1729234293; c=relaxed/simple;
+	bh=sUuiyWXodwKVBm9kq9rKKI8q25ACU7MeeBUloNr5nAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LO64tfSjsuaANGPfvRNk9J3Tccv2iXbcSRhBo+bKb/5Yw+0fDlzRhuCVNwxliHZ4PxxTtbzVqJehWethozBGJFU5KAvGbwysglrL/mY9u6hQ+4yHQJ0victQX7mZJDb9rtrjaaaKkfCHMm165a3TbEFXZzLmFIX2ycCvyxBwkoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELggh48y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5F21C4CEC3;
+	Fri, 18 Oct 2024 06:51:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729234293;
+	bh=sUuiyWXodwKVBm9kq9rKKI8q25ACU7MeeBUloNr5nAM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ELggh48y8E9Ei3tWaihiUZUk5ZoPWhvwG4dLdFR9zncmhSJlUPsOwOj720vXuluT4
+	 gryCpk4ME1PcJKdLj2HM3BsuwkUpVZv7T0rvU0PTwwR4RE0FbYWoC22nQxQR6VRdWD
+	 JyTrFanTJuiq5Cvx5HG+V+ThVveRs4x9hkqHBk1fZudt8W0a4GJJMfUoguXGcXOIrQ
+	 28N/MlvCDISE1ZOJ41EzdFQvRStDgXlHGBBlWB7ZgOeetjMAJ876yzJdu4BcgswySo
+	 O1Kwtt/5X8igDutbRj+19qOISP1K6nUoWsTmvCbqFH/XEKMyqnYZwNQB8X5WzWHgNS
+	 7LtitnDGvHzQw==
+Date: Fri, 18 Oct 2024 08:51:28 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/14] dt-bindings: clk: qcom,sm8450-gpucc: add SAR2130P
+ compatibles
+Message-ID: <npyk6vwcznx3iwm3a3qxeu4dn5nnkprown6iax73rbpzghnt3n@zfxvwvll4pl5>
+References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
+ <20241017-sar2130p-clocks-v1-5-f75e740f0a8d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241017-sar2130p-clocks-v1-5-f75e740f0a8d@linaro.org>
 
-Dan Williams <dan.j.williams@intel.com> writes:
+On Thu, Oct 17, 2024 at 07:56:55PM +0300, Dmitry Baryshkov wrote:
+> From: Konrad Dybcio <konradybcio@kernel.org>
+> 
+> Expand qcom,sm8450-gpucc bindings to include SAR2130P.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../bindings/clock/qcom,sm8450-gpucc.yaml          |  2 ++
+>  include/dt-bindings/clock/qcom,sar2130p-gpucc.h    | 33 ++++++++++++++++++++++
+>  include/dt-bindings/reset/qcom,sar2130p-gpucc.h    | 14 +++++++++
+>  3 files changed, 49 insertions(+)
 
-> Huang Ying wrote:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[snip]
+Best regards,
+Krzysztof
 
->> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->> index 21b877d8582f..d709738ada61 100644
->> --- a/drivers/cxl/core/region.c
->> +++ b/drivers/cxl/core/region.c
->> @@ -1926,7 +1926,10 @@ static int cxl_region_attach(struct cxl_region *cxlr,
->>  		return -ENXIO;
->>  	}
->>  
->> -	if (cxled->cxld.target_type != cxlr->type) {
->> +	/* Set the type of region to that of the first endpoint */
->> +	if (cxlr->type == CXL_DECODER_INVALID) {
->> +		cxlr->type = cxled->cxld.target_type;
->> +	} else if (cxled->cxld.target_type != cxlr->type) {
->
-> No, the type of the region is determined by the caller and should be
-> gated by the region capability. For type-2 region creation I doubt
-> userspace is going to be creating those vs the accelerator so this all
-> seems backwards to me.
-
-How do we determine the type of the endpoint?  Specify it in type2/type3
-device driver?
-
-If so, we will specify the type of both the endpoint and the region in
-type2/type3 device driver.  Then, why not only specify the type of the
-endpoint?  The type of region can be determined from the type of the
-endpoint.
-
---
-Best Regards,
-Huang, Ying
 
