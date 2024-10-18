@@ -1,112 +1,126 @@
-Return-Path: <linux-kernel+bounces-372473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D959A48FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:37:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43B89A4901
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A3F1C2337D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:37:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C4E3B2397E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD7E18E379;
-	Fri, 18 Oct 2024 21:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB03818FC7B;
+	Fri, 18 Oct 2024 21:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lxCmifz0"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ub/Vj2rz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8274A18D640;
-	Fri, 18 Oct 2024 21:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E265618D640;
+	Fri, 18 Oct 2024 21:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729287415; cv=none; b=ty0aFusZQgN5TGNhrcR+qs848ilBzi56E7/MVYlEQ6qLjG9MYLSSaHZTLCYcFhButBoFnxnPLySSmlprbqKk85bN73jyYLSPqrn5IxOYkU8sURd58WLErjt1JgIOHI2MYQX5RvOuRuqBS1Gu0zURU7uxNK5sYArfLAvwQck4q+8=
+	t=1729287437; cv=none; b=WLaxct3ZdvMYqpxrsoXgF/eHta2jvPX8z3rycgcgDhnOOdmVWrWZQl97y3qy9fW3BlcOLEbAgSVRRzQHyklJxJLMmfWU+aqd59SNKPLEGBx3+jhC0VKCPfTsLIfrV11nSu2epXLOVNHVLJkfBSiNUZKkMarW5Byr9t1pv5zEeYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729287415; c=relaxed/simple;
-	bh=BXY6/Xz1K3rp0n0eKABUQYXOORIIxF8Clqu4g0UtK8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j8bZbvh70ZpbgIC0hoTZcng3IZVFb7otrJ7lHhtp0ZzcjIdL2L/ZNqChhwcbMXNB3ahhpmlTo4BPJNEGJleeVP1vqeqkk0zA6cB2IcIHdIq4JocQBxnXTG5PXUMkG+g/8yxMaZsN8AxAHvZKG5FzqT24zoYpcLmY+kACc1qIa04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lxCmifz0; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea8ecacf16so1878432a12.1;
-        Fri, 18 Oct 2024 14:36:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729287413; x=1729892213; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e/QiucVYfZ/doIk8MZgKrtYDj/bCE5621BtmHaL2dZ8=;
-        b=lxCmifz0NVX53R4xo/vdJp52lTzFBVvcmc9N8JdXN69FQSwjwc8UlsRCitSIIxO/TP
-         QBGm5QaKlkV09+/AceicPcu+41EsGXiMv1ff0ShMARY2b9pPhJAmY1A9NPnoEC5RDjHE
-         ZD5vuHIm3ClBcfnzZ6MKkAnsuFwi1rO3m8Jqr5LdnwmwMCKFGLBuNIkzz/sIPGs84lZp
-         6vdyaT9i9xqQFezL/jTzNqvf7NazEiCvrNowX1Yw+CvlS9HSpwVaVXfUF1dSoyf6iFo1
-         tDW5VAYA9pez/iILXwY0mTEw7oxXULimtc6BP8wSOEKBi9+1RKKRe73pvaqtv2qvsXuT
-         XLkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729287413; x=1729892213;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e/QiucVYfZ/doIk8MZgKrtYDj/bCE5621BtmHaL2dZ8=;
-        b=FCEUp0XuTFWQSjEZ+4S3KZLPdPar39oy/O003gyTkwrtSLqS2MyvOMtNXK7GCE0L/m
-         BntlNV7vkBUsWTp26Fx6td+6JC33xqH9FqJYgkQwvD6C/WSDqw+R5noLiGNELRfle4p+
-         gqDsTW+HUhnNCQLS8YLFuZupguCId5tEZ2VpbcaPqT70DLcAr2MihaOwTOhR9c7h97dD
-         ePJiGXUfQeX9+gbe2MvsRm5Qy5YzYxDdnE6lvB1Sj+M1cjadeYQ9YS94wQdC+yRFEHXZ
-         mPfwjeDd3IVkdM7NglzKxQ/TxD6+5r3POM9OACrExmdUSoUHSKF/mv7x508HBRnjwC0v
-         KZDw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5yTJ1bxQWpywBtitedHlrzplXY/C0rb0Sfv6z3fb/U21UhvTJ4nU+Wz41xXR1icMmTsuIVtCDahRcZg==@vger.kernel.org, AJvYcCXZm7oLQz8AQ/OCwchylPHyWMHGW0N7eso/ImteNqfJaV/6biGcAQuSgpr+pQheCQrd4vRsICzjjkGoa+4x@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbeVMTtxc5krDtQHuZbCWm5QQOa/n26P/6gEpve04jh8N/PaJ6
-	FLXnWlLncQDTWjT3YbF7NAzesW2jJww8xuvfQ/VKrKC4XlcGoERBQxOFkA==
-X-Google-Smtp-Source: AGHT+IHrtOaf+fPd+6pBLoNPFsKouy2wsOKN3El5ykUhADfQ8GBLI9eqm1HlB2ZQtyB6WIocGkebWA==
-X-Received: by 2002:a17:90a:7147:b0:2e5:5e95:b389 with SMTP id 98e67ed59e1d1-2e5619021f0mr4028850a91.35.1729287412686;
-        Fri, 18 Oct 2024 14:36:52 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:351c:e27f:10e5:484c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e55d7970f4sm2696125a91.5.2024.10.18.14.36.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 14:36:52 -0700 (PDT)
-Date: Fri, 18 Oct 2024 14:36:50 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Christopher Snowhill <kode54@gmail.com>
-Cc: John Edwards <uejji@uejji.net>,
-	"Derek J . Clark" <derekjohn.clark@gmail.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] Input: xpad - add support for MSI Claw A1M
-Message-ID: <ZxLU8s44Ffzf6nOC@google.com>
-References: <20241010232020.3292284-2-uejji@uejji.net>
- <20241010232020.3292284-4-uejji@uejji.net>
- <D4SZUDRTK0LN.2I9S7T660S7IM@gmail.com>
+	s=arc-20240116; t=1729287437; c=relaxed/simple;
+	bh=QJ53Scw1t1SKQzFOABoj/pnvI/hnsCdkPuCpi2UA++w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sTBPOMIy3kmiPZnDuSGKsjQ9Xz907UTDd3nbI++H41/lhx1E64iEZl/dhPvU6OPNHJPlAdYD9MS38JKUYnRsEZA6O5P8fw3PcESvrWzGfAxeEvyLpaRogJT1j4lJhRvDL4FZBhvoBdiNmVJhUasEJrcQCT+fsTA4TyB2T8Wm8ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ub/Vj2rz; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729287435; x=1760823435;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QJ53Scw1t1SKQzFOABoj/pnvI/hnsCdkPuCpi2UA++w=;
+  b=Ub/Vj2rzx6g0ImjXcqriREmLf0dwjdjBzyrceZPKzyETj3OtPEPXNd2M
+   o57wrieNBBmDQQtTfQqMAmEu2+ceyD1edusZ6AKwscKY+K2jViftl/sTs
+   VD/sYSQfhP0QoitvNbQHw5jfLBY/n4jMoHQoPnu3BovH9JlcDowzW+KVd
+   MoKDp8iyve/TaISeDF9XlYG2DDOAGD3cbw2rl/crraKJA2M4iX596Gz5V
+   T9p0w6BgmS4KWRdb3fZkR7ayA+MTt3eaed/kO8VRSpbY+v+ytjikDhuxW
+   uZBqWDrpr+NC4F+T+WYP2CMj1l9aNgra9OwfQgg1DsHQg+8ta6my2Zz7f
+   g==;
+X-CSE-ConnectionGUID: yBYUVHTLT3KDbBW8q5cstA==
+X-CSE-MsgGUID: UT+ifT9ITqmEIZ3QUB0dNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28967219"
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="28967219"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 14:37:13 -0700
+X-CSE-ConnectionGUID: 6dMtU5KxQK6xpNw44/cymQ==
+X-CSE-MsgGUID: Mysex+KgR/yR3AwHRVC3pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="116439670"
+Received: from fyu1.sc.intel.com ([172.25.103.126])
+  by orviesa001.jf.intel.com with ESMTP; 18 Oct 2024 14:37:13 -0700
+From: Fenghua Yu <fenghua.yu@intel.com>
+To: "Vinod Koul" <vkoul@kernel.org>,
+	"Dave Jiang" <dave.jiang@intel.com>
+Cc: dmaengine@vger.kernel.org,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH v2] dmaengine: idxd: Move DSA/IAA device IDs to IDXD driver
+Date: Fri, 18 Oct 2024 14:37:25 -0700
+Message-Id: <20241018213725.4167413-1-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.37.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D4SZUDRTK0LN.2I9S7T660S7IM@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Christopher,
+Since the DSA/IAA device IDs are only used by the IDXD driver, there is
+no need to define them as public IDs. Move their definitions to the IDXD
+driver to limit their scope. This change helps reduce unnecessary
+exposure of the device IDs in the global space, making the codebase
+cleaner and better encapsulated.
 
-On Fri, Oct 11, 2024 at 05:59:42AM -0700, Christopher Snowhill wrote:
-> On Thu Oct 10, 2024 at 4:09 PM PDT, John Edwards wrote:
-> > Add MSI Claw A1M controller to xpad_device match table when in xinput mode.
-> > Add MSI VID as XPAD_XBOX360_VENDOR.
-> >
-> > Signed-off-by: John Edwards <uejji@uejji.net>
-> > Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
-> 
-> Um, I may have erred with my contribution of a R-b? Do I have to test
-> the patch on the device in question to review it? If so, I'll just Ack
-> the patch as looking properly drafted, and applying cleanly. Sorry for
-> the noise.
+There is no functional change.
 
-No, you do not need to test the patch to review it. We have a separate
-"Tested-by" tag to signal when a person did test the patch with their
-setup.
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+---
+v2:
+- Remove "Fixes" tags (Vinod)
 
-Thanks.
+ drivers/dma/idxd/registers.h | 4 ++++
+ include/linux/pci_ids.h      | 3 ---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
+index e16dbf9ab324..c426511f2104 100644
+--- a/drivers/dma/idxd/registers.h
++++ b/drivers/dma/idxd/registers.h
+@@ -6,6 +6,10 @@
+ #include <uapi/linux/idxd.h>
+ 
+ /* PCI Config */
++#define PCI_DEVICE_ID_INTEL_DSA_GNRD	0x11fb
++#define PCI_DEVICE_ID_INTEL_DSA_DMR	0x1212
++#define PCI_DEVICE_ID_INTEL_IAA_DMR	0x1216
++
+ #define DEVICE_VERSION_1		0x100
+ #define DEVICE_VERSION_2		0x200
+ 
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index 4cf6aaed5f35..e4bddb927795 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -2709,9 +2709,6 @@
+ #define PCI_DEVICE_ID_INTEL_82815_MC	0x1130
+ #define PCI_DEVICE_ID_INTEL_82815_CGC	0x1132
+ #define PCI_DEVICE_ID_INTEL_SST_TNG	0x119a
+-#define PCI_DEVICE_ID_INTEL_DSA_GNRD	0x11fb
+-#define PCI_DEVICE_ID_INTEL_DSA_DMR	0x1212
+-#define PCI_DEVICE_ID_INTEL_IAA_DMR	0x1216
+ #define PCI_DEVICE_ID_INTEL_82092AA_0	0x1221
+ #define PCI_DEVICE_ID_INTEL_82437	0x122d
+ #define PCI_DEVICE_ID_INTEL_82371FB_0	0x122e
 -- 
-Dmitry
+2.37.1
+
 
