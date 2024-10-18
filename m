@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-372435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17539A486C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:47:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2FF19A4870
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 875621F212BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:47:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58AD81F211CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CD918D63A;
-	Fri, 18 Oct 2024 20:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBBF18DF61;
+	Fri, 18 Oct 2024 20:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OinUBPtS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Hss/a/DJ"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F1D2CA5
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA28186616
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729284446; cv=none; b=Mb0ZzNtmvLhy0d8nBJmdGFii2qGMGNGyaCKY5sMG3TxnZYayilcf1j6XxL76P0U4QDQZIZV+exNs5j7MV1K/tE1ZHVoLIVtt0c561ViDE9ENIbnwUXUrRsWd4OuXXpsnTRfBbtqoz74klFjQuHkvuB3t9MEA1I5qFli5/cgblps=
+	t=1729284559; cv=none; b=jFBzEbKEHpkHyUGdp4VKPEZw21ZYw3Cd5A0lx0FHs0m6UB+WqhHDuvoQip4nw6gMT/oK66aQ9K08ODBges/A3rwU6H05JzTPn1O5HEc8PYmXmF+w1gdV/NrEbX3JiLA6BYTWFBB3Qhoj8NIHEXAoFS6BDYdT1cPZsfCL719GycE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729284446; c=relaxed/simple;
-	bh=NfD8fPvBFqJ+Bwmzg6xrJ1U3rr8cry1s0S+hVZNz9O4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UJI6ipSXiNO3eowV4qrjWkvPGQTWYaBcXA7NZ/6fLNjy7pHVv7+tmfEShh0ofSpGJH92QYZZbEH12LJpTJ0X9nCE7KzYkzVdBwE1HOgbMHtqT/OVPoF0wDqEkAz87OuQI4gidrrmFULcX4c3g9kDOQXvGvXjPYjHFD7u8gPabzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OinUBPtS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IBfT29021848;
-	Fri, 18 Oct 2024 20:47:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GS1Oq3FUcmFG5PcZjImzqPlOyhYc0W1H2YX3pqZnlTQ=; b=OinUBPtSR3i1L1A3
-	42mntLKSXD1iR+3Ic3plqScoktyFrP+2/+ibg3OC542+XZ4f/fiD2hkO1F/xUZc7
-	kcZ9i7Up6k6UloJFnwawI7txDsH+AkRIkPEa/VSP/NGN5I06+xxTZRqMyIJt9OSr
-	ye6vWWx5I3KjLfV+zhstxjRP0sem+3l2qsDQ2jsQiANkqvWRyqVEZkGIVBrFDwcB
-	v7Vs15gj9Kiy2khHkS0Z/UameQXRNcPZR+Qen7dfmjZdJVRDY2oAH1pSHSITVs81
-	0i9jqpLaihTEU7ErBwnC1Hn75g2G7uYUi1YFYoBdQx1MOlgYNPtH5hIcN4KwAmvE
-	Cr+oWg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42be8cb0e8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 20:47:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IKlI0c032122
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 20:47:18 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
- 2024 13:47:18 -0700
-Message-ID: <45e167e3-dab6-691f-2ab9-056d92db4149@quicinc.com>
-Date: Fri, 18 Oct 2024 14:47:17 -0600
+	s=arc-20240116; t=1729284559; c=relaxed/simple;
+	bh=sq2lBEx/oPK3mFck2yfdIPZDDYu11WVFdH4z5opWiaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lB9mWNTPsE7f2qzxz2Viu/RtKJgwLm+QkiYVyAOgMSC1uAQMGR3HmiFJ/GxplKRAXufFCV+7UcAfyg+vJX/OY42W85FJUXQvq/T5u7evWZoXewYZ+xLsqPbDLSpB0e/WQHMC8El4JFs1/3GKP06miMrm3qbGwREHarvJWDr5Keg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Hss/a/DJ; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53a007743e7so3231593e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:49:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729284552; x=1729889352; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SM/k2Z4ZPVx9AnrPUOX6+i0klklaqbDryXRJgrrJdkw=;
+        b=Hss/a/DJ5Nb2+8tInkvIJbaLgJJh1RD7vbWaSnNXp2cq1xAvJQYrpyIZ9/g8Py8pvH
+         +WTGD0V63yvstX/5452TXTqqMTgfnzloPI+Xy1NyF8RWqYMdKSTCn3VsJjqCPUzpRj2w
+         kP4SXFR3HfE78NhpS51UW3OOSRh0zgjehQ/J8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729284552; x=1729889352;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SM/k2Z4ZPVx9AnrPUOX6+i0klklaqbDryXRJgrrJdkw=;
+        b=ofN+BiewVC5AtBqDpjuA1pv1SVMe7IDGdNckQBoYF9aivhKnyoGcDn0I7f91utGg5o
+         5fcvapWOpdiUQwYy0VCqQ56OILtNSKBrIT7odcYUB9D4tXFebJSHtsMduzHCHkuUlj2a
+         cScTBo+GU13cwPCvWGi5HZos37f5bFwTes0tnFkYDW5so/sfNnZaPRoC+4YgB4j/Lmvk
+         yjwfhkpPV0oNdoL4OBMWcqCz8Mre35sFDsa5Y5bKhU9YFb4rr/LPdSQzS250Cyv1bIma
+         yZF5ve3klmDDPrVIvS+Mg4QnUir/6AxhJyF4wDM2vZGQzAOcfXRWPg6DIF72+mOTsTEV
+         TQtg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMxOAsPI/eLBEakXbBa/d8yZ2VaCs7S4CATuS421kDnT++e3Wvn0pxSGqbDZk94jE4xhhdI4EPkrpjusw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztscHugEhAZ7Bpby6qNMuW7dUUEKaHbaNtZGfqxu+x3uzPm70q
+	K6RLDT0U/kIhhjYoqzvo4orn5HWNAwxeEi+MEeLqEcyxTxcFRVDZf/yd6XNCNLdZEtRgOZtNZ5n
+	48SK3
+X-Google-Smtp-Source: AGHT+IFee8wFLWURN70q+If0Ufw2JJ16PSpNfgauZXsKawmfEp9ZIGHBthcwVp5wFhep6H6Ugzy4iw==
+X-Received: by 2002:a05:6512:ac2:b0:539:fb30:1f75 with SMTP id 2adb3069b0e04-53a15499c96mr2189533e87.24.1729284552237;
+        Fri, 18 Oct 2024 13:49:12 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151b039bsm328138e87.58.2024.10.18.13.49.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 13:49:11 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53a007743e7so3231528e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:49:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUjjnM87C2BrIAmCtD03tAz4zZgLqBmpNd+49cRgxNvcMul8tULx9mhGP1YjPZoMBHktzFdos+e+6zp1jU=@vger.kernel.org
+X-Received: by 2002:a05:6512:3985:b0:539:f23b:59c3 with SMTP id
+ 2adb3069b0e04-53a154b3094mr2178158e87.34.1729284550257; Fri, 18 Oct 2024
+ 13:49:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V4 05/10] accel/amdxdna: Add hardware context
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20241011231244.3182625-1-lizhi.hou@amd.com>
- <20241011231244.3182625-6-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20241011231244.3182625-6-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: di87O5uBnu234SbUdnUbi9YtZlKvMtFR
-X-Proofpoint-ORIG-GUID: di87O5uBnu234SbUdnUbi9YtZlKvMtFR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- spamscore=0 bulkscore=0 phishscore=0 mlxscore=0 suspectscore=0
- mlxlogscore=756 lowpriorityscore=0 impostorscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180133
+References: <20241018020815.3098263-2-charles.goodix@gmail.com>
+In-Reply-To: <20241018020815.3098263-2-charles.goodix@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 18 Oct 2024 13:48:56 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UFrk4QCxWzV9zUZnjhwiFf22Fji5KH83svdwba2mPVBA@mail.gmail.com>
+Message-ID: <CAD=FV=UFrk4QCxWzV9zUZnjhwiFf22Fji5KH83svdwba2mPVBA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: krzk@kernel.org, dmitry.torokhov@gmail.com, hbarnor@chromium.org, 
+	conor.dooley@microchip.com, jikos@kernel.org, bentiss@kernel.org, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/11/2024 5:12 PM, Lizhi Hou wrote:
-> The hardware can be shared among multiple user applications. The
-> hardware resources are allocated/freed based on the request from
-> user application via driver IOCTLs.
-> 
-> DRM_IOCTL_AMDXDNA_CREATE_HWCTX
-> Allocate tile columns and create a hardware context structure to track the
-> usage and status of the resources. A hardware context ID is returned for
-> XDNA command execution.
-> 
-> DRM_IOCTL_AMDXDNA_DESTROY_HWCTX
-> Release hardware context based on its ID. The tile columns belong to
-> this hardware context will be reclaimed.
-> 
-> DRM_IOCTL_AMDXDNA_CONFIG_HWCTX
-> Config hardware context. Bind the hardware context to the required
-> resources.
-> 
-> Co-developed-by: Min Ma <min.ma@amd.com>
-> Signed-off-by: Min Ma <min.ma@amd.com>
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+Hi,
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+On Thu, Oct 17, 2024 at 7:09=E2=80=AFPM Charles Wang <charles.goodix@gmail.=
+com> wrote:
+>
+> The Goodix GT7986U touch controller report touch data according to the
+> HID protocol through the SPI bus. However, it is incompatible with
+> Microsoft's HID-over-SPI protocol.
+>
+> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> ---
+>  .../bindings/input/goodix,gt7375p.yaml        | 68 ++++++++++++++++---
+>  1 file changed, 58 insertions(+), 10 deletions(-)
+
+I'm happy to let device tree folks make the call here, but IMO it
+would be much cleaner to just consider the I2C-connected GT7986U and
+the SPI-connected GT7986U to be different things and just use a
+different compatible string for them. So essentially go back to your
+v7 patch from before [1] but change the compatible to
+"goodix,gt7986u-spi". If, for instance, this device also had a USB
+interface then I don't think we'd try to cram it into the same
+bindings even though the same physical chip was present...
+
+-Doug
 
