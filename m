@@ -1,126 +1,87 @@
-Return-Path: <linux-kernel+bounces-370764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211F49A31C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:46:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0DE9A31CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8950283075
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:46:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 762531C223DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ABA2A1CA;
-	Fri, 18 Oct 2024 00:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BFF3BB22;
+	Fri, 18 Oct 2024 00:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bn4GOA3b"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bt6hjR9T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857B62A1D1;
-	Fri, 18 Oct 2024 00:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4965320E30B
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729212388; cv=none; b=uUNmRdeppmVorp0ZHwJskEutWqCyK+ts7WWSG2DyOSgXkhIshQNT8xDggsrzlRZ+tQ689Xm2CfaeWZrD6E/e0Q1XXURSHOQFkET39tC37l6J/2elLxLYpUSN+D22Z4PaERpKwfWVNsPwTffSDeJe6OgqkqrhDasY3KQSAfrMWPY=
+	t=1729212756; cv=none; b=Vc8DeA7jHG8Cr2rJrGyjU4iHKZzMoJG4cUlqW00CZb2gAO+OQG4x4Che3fe77zbkRNbm9XkPefmPUwjNEOLpAwd7iCn6FY2xL7HsKoJTsBRXBbVj6wj7jF5V4DHQAQyz11Cg6yQExdhn8dTfI98vvhzlnIu6qi5GdFAcKMWaGHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729212388; c=relaxed/simple;
-	bh=A9W5BXqJLzSc6wqaDftNTLmM/XjPL1T+K9gE4lzY9eg=;
+	s=arc-20240116; t=1729212756; c=relaxed/simple;
+	bh=wPRRqlv1/ki0LcaRlxx1RH0ZpcvrgzNnPp5Ea3C3ews=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8gtDiOliKKlFQXAg+lqVPz6xLDxev1IGy5lI6j6bUTKrzCZ2zV/4+cGChbiTS64NU6Rl99eE6mQdHk3ExBjftYdaSKWampbL/RQaxhU9adHLGxj8YTjW/UKzR5Jjauto8N1AgLH6U5HD8oTbdzmpqhgxFJgTott00kk0/NpGm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bn4GOA3b; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ea784aea63so909546a12.3;
-        Thu, 17 Oct 2024 17:46:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729212387; x=1729817187; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RVunuq3gbvj+AkSw28J9IAD2E6K6krV4ZjRY2oiq+QY=;
-        b=Bn4GOA3bJHOvp7OuqZK5yyXMrwE37cypyWQ06BXwWvKRfSKaX6Xe8ag9CjjucE2Ylx
-         HLfQ297Wz/3BknAkP/T7dqM9qUVDafjvf/x/KvWUUWbm2QckRl/NZG0f2OYMMhlTjDWp
-         3qYy3lacBBarJmg295j/BwOVPi4ujOtnx6qPwR/tffSDJYYg+hhUzYlUwBqXNVJhlmsB
-         +ZNY8/884aM1Zi3YSEJ463Z9SBLGWYNwJfnXS0q5pO4wMH/bwGa0Br8mdmdx7hKLxJvC
-         Ri/5qJq5Vo1ZihR/AANC7vp/ABB72H2A22/GF9owJZF06q+u6lO4kEpYRQKuU7pTu6Hu
-         w+nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729212387; x=1729817187;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RVunuq3gbvj+AkSw28J9IAD2E6K6krV4ZjRY2oiq+QY=;
-        b=mk3voFCHNBqCD+aAHjzDWz/PmatIQhzvxSrIexw340aKB+yeF4e1740f7qsSR2WIoG
-         V+76wsgU/L0qI+Nq/WadnpCVe5p9OpKcKX2t8nH9zkD3ZHBpJ4hZNIPDwF8zZSX0R1+n
-         ke0pBOSFATE+hQaauU8uJvaOGN+ppxL+4kt2TaIFI1K1OVIFGio6KQ+1AjbGFhkPq9MG
-         DsC11UyjbxZK7atsHObWI9BnJTExJyVuYN9jaVHy8vunBoVvSynSyBL4JmsjaL4St04Y
-         Ugv59bUkz59QVpAkU39sFcjCFqy86uoHKLM8s3VttQedQ4pSCf3g0izY8OFuq7ySRocr
-         5VPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGrNUD7dYrsJ1ATSFlgvG549GSWMr0RLNYHUxSzl6iagvhUrt5RN5mJTyWp41e9FdzNjrOEJNBa+r0@vger.kernel.org, AJvYcCVSZFVc4N7kkWkyc+CHHU43yAV1quyfFIeOyou8o2cBJzWpWVYuWortRmpaXWB0VZMwt7zr5UQ/THAXMZ8/@vger.kernel.org, AJvYcCWdLBdoKQHPyE/Er52MyRYT2GrLlrjs7Ijbb5qdDu6FruhmNZ3B7arR9rJPw4FJp86tX14=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1+7TkMMeHKPztVjA52i8gLxi8Nb4TQ4AJHDlwY4OZCgCB638x
-	lxS46uzz1uuROGWbp2XtD9QgVp4b97yzueoixDnS5pk57eIwaDJJLeF6zWWUCzo=
-X-Google-Smtp-Source: AGHT+IHPg8DRZc4blkJt6M4jB9p7QkQPgZeoQK6vx6eapZG8GWX01nJC76zgSI/PBpyyXXHR6o9AUA==
-X-Received: by 2002:a05:6a21:1693:b0:1cf:4ad8:83b9 with SMTP id adf61e73a8af0-1d92c5abf0dmr1004985637.43.1729212386730;
-        Thu, 17 Oct 2024 17:46:26 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea3459abesm271817b3a.168.2024.10.17.17.46.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 17:46:26 -0700 (PDT)
-Date: Fri, 18 Oct 2024 00:46:18 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrii Nakryiko <andriin@fb.com>, Jussi Maki <joamaki@gmail.com>,
-	Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Nikolay Aleksandrov <razor@blackwall.org>
-Subject: Re: [PATCHv2 net-next 2/3] bonding: use correct return value
-Message-ID: <ZxGv2s4bl5VQV4g-@fedora>
-References: <20241017020638.6905-1-liuhangbin@gmail.com>
- <20241017020638.6905-3-liuhangbin@gmail.com>
- <878qumzszs.fsf@toke.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEn4Vrv4p1Q0kVe+W8MadEPOvYUjlAWU6HvYS1Ns21TuX2xCaTzYHX41NAJ8GngA0xZuKVHUt7Jc/7IsVX2Ush4Yv0i6Q2x/UcWaPBuRktOfiRTytdDpeepjrFjE2v+gtaXXyWPhFZR077CYO6INXqnWYDXClYZ6YftskFzLyBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bt6hjR9T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AF6CC4CEC3;
+	Fri, 18 Oct 2024 00:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729212755;
+	bh=wPRRqlv1/ki0LcaRlxx1RH0ZpcvrgzNnPp5Ea3C3ews=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bt6hjR9TT+QN0GQsUWb8A36JmF+cR1yxW08mbKeg2uJuZil8BPi6C4M6Z2W/QeNV4
+	 GR52nSwZR2zNUK4Kv2M3SNOv/nWZ0Yf5ZpRY9a3ww0SGFK/7CSi3FZxhQ7oZwCorkP
+	 JWfHh4vmnbsRn45L0VisnfbJlG4h3ZnuqkxmAm4fzgVywCWGnL1EAHJ50LX+xcOyaF
+	 MCb+1h0yy5u1NnRc1pR4GTm9sSLUOL1BBo0QZBDKMNAAN4VV/haxhVWlvNF+qK/qoV
+	 fSk6n/wXEi9mx1D8/9rzWtFeECf5JgTEliV7UoutFvG0kILP5X/RKCsY7wnb89/64C
+	 tGlF1ZXbTAVEA==
+Date: Thu, 17 Oct 2024 17:52:33 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Phillip Potter <phil@philpotter.co.uk>, linux-kernel@vger.kernel.org,
+	Jordy Zomer <jordyzomer@google.com>
+Subject: Re: [PATCH] cdrom: Avoid barrier_nospec() in
+ cdrom_ioctl_media_changed()
+Message-ID: <20241018005233.styuaj7eyn7b6nux@treble>
+References: <1d86f4d9d8fba68e5ca64cdeac2451b95a8bf872.1729202937.git.jpoimboe@kernel.org>
+ <dd1712dd-1485-417a-81cc-482d7dd26a11@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <878qumzszs.fsf@toke.dk>
+In-Reply-To: <dd1712dd-1485-417a-81cc-482d7dd26a11@kernel.dk>
 
-On Thu, Oct 17, 2024 at 04:47:19PM +0200, Toke Høiland-Jørgensen wrote:
-> > diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> > index f0f76b6ac8be..6887a867fe8b 100644
-> > --- a/drivers/net/bonding/bond_main.c
-> > +++ b/drivers/net/bonding/bond_main.c
-> > @@ -5699,7 +5699,7 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
-> >  		if (dev_xdp_prog_count(slave_dev) > 0) {
-> >  			SLAVE_NL_ERR(dev, slave_dev, extack,
-> >  				     "Slave has XDP program loaded, please unload before enslaving");
-> > -			err = -EOPNOTSUPP;
-> > +			err = -EEXIST;
+On Thu, Oct 17, 2024 at 06:33:24PM -0600, Jens Axboe wrote:
+> On 10/17/24 4:09 PM, Josh Poimboeuf wrote:
+> > The barrier_nospec() after the array bounds check is overkill and
+> > painfully slow for arches which implement it.
+> > 
+> > Furthermore, most arches don't implement it, so they remain exposed to
+> > Spectre v1 (which can affect pretty much any CPU with branch
+> > prediction).
+> > 
+> > Instead, clamp the user pointer to a valid range so it's guaranteed to
+> > be a valid array index even when the bounds check mispredicts.
 > 
-> Hmm, this has been UAPI since kernel 5.15, so can we really change it
-> now? What's the purpose of changing it, anyway?
+> It's a cdrom, and media change detection to be more specific. I really
+> don't think anyone would care about performance here, it's not even
+> a hot path for a cdrom driver. That said, I don't disagree with
+> the change, just don't think it'll make one iota of difference
+> in the real world.
 
-I just think it should return EXIST when the error is "Slave has XDP program
-loaded". No special reason. If all others think we should not change it, I
-can drop this patch.
+Fair, though it's also about hardening as barrier_nospec() is only
+implemented by x86 and powerpc (see 2nd paragraph).  Most/all arches are
+affected by Spectre v1.
 
-Thanks
-Hangbin
+-- 
+Josh
 
