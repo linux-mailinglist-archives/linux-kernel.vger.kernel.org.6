@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-372350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D9F9A4789
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:01:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF2719A478A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D81286E37
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:01:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67A71B2428F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B3A204F7E;
-	Fri, 18 Oct 2024 20:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9769B206046;
+	Fri, 18 Oct 2024 20:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVYrMDQz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mN/4k2CE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CC3383;
-	Fri, 18 Oct 2024 20:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A47205ABC;
+	Fri, 18 Oct 2024 20:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729281685; cv=none; b=XdDB5bxl2xtzetPWRJIN7hQq92Q4igboZf3QQvaLQ6aAYl9B8nsdTgoghZSPxThLbAskq1UBeJafdo8eAaW7zv7tKlr8eWxgS3ICiJzkPyhJLZyPBZ2O9JCXF6ZZZHSMSNrgAoUpHb3sCZoeo1KRu54ov5xEBvT1xiTrkCahH5s=
+	t=1729281687; cv=none; b=DZv7jO5l8kGoSCTsXN579srN9ZLeQMEj3yG/lotRlQcOTkP5hHK26iZ9fMUOO09YH9FDRvcdnczF1PdED0NyvaUYmHsRl998ZN7V149izyNm68ft/DPa+az9nx+ly3b/YMUqyB+nWFyTSjb5oavwMBG081nmq/kxjqrxmwDfjUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729281685; c=relaxed/simple;
-	bh=QWhvm43q9x9Ypgb8zjF1c/AGKh9cPO/2PMOjR56h6Ls=;
+	s=arc-20240116; t=1729281687; c=relaxed/simple;
+	bh=Hvhks8tnqLdiS5aqzSNad6B/dGIU3GwYRrHIZhBBIAU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OVK/Nvs2XW41oiKBGB3RaXpMN4ANJWIyCslCLwPFGqOzwXEqtzqEHVsS5/aNxcSAWTyPXcx1d+sjcXfR/wT3xeLsAa9qSc42ZmE6wmRMSWD5RkOCWGpHSG6N+xET5o0iY+xZY0swCY05JZb9g/bFN2XSrcGK69ElCdjTNpa+/A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVYrMDQz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6810BC4CEC3;
-	Fri, 18 Oct 2024 20:01:22 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Chk3f3WGJFn25LG7BLa8Qn/SBAKmUjVWgJ5DLmst+Z6KixOumcdWgbVRSiGU+3WXufGMM170XqGHlHFCkR1kskZ+GFm+FNgAN9n4ug8qxZ9qkcYIkpJlC2qIt1nnJB+XM0tDlirf4+B5U/16LC7jV5PocpNrvfgczz6C5d+qBL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mN/4k2CE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEA55C4CEC5;
+	Fri, 18 Oct 2024 20:01:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729281684;
-	bh=QWhvm43q9x9Ypgb8zjF1c/AGKh9cPO/2PMOjR56h6Ls=;
+	s=k20201202; t=1729281686;
+	bh=Hvhks8tnqLdiS5aqzSNad6B/dGIU3GwYRrHIZhBBIAU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mVYrMDQz7GFGpXSoqROtkQhYHA7pJL2KL4K1oy6GTCQxr3oi8u8Qgw/oB8TwNs7fv
-	 6QND6ZmhJalDRlJqh5Qr7GGXeCN0C4cVsiXzA8KmV9wnUepGTxZq8oxOvWshUQjYbK
-	 2Qa6F3IYM10sCy2b9NDpRetUYpOYrOBT+uPsqI3OixJBtRswa3rmS6hcegj+nfgn7S
-	 HS8L+4YxTirlbp+ybB4gN400lK9gLsfOXhTa2utJM01GmmWr2KplMS9blg3MU+Nh5Q
-	 o/g4Rz0fBTlbEIPX4oceBsmFdpfupeAjJWWobTD3DOZwdlYyFl0yVWtrInwzBPTAzp
-	 RUEdPWJh1bZjw==
+	b=mN/4k2CEGIISzGLY3qjS3MMepoUaz+GOfZfUPNxMmPVYgHxI7242GfmlIIgqJxHqw
+	 /Xt4C5L8WgMUQg11iRQ2zSkd/9NYO8Nj2fzTa50w/INx+V1ynOU5SJy27ku3eGr+Em
+	 EvrmnqkPnL9DQM//S7OJYZbFxkQlB18MXsFrp1bxAWNy/7v/wN/O+BGhjgbRyznfZL
+	 RftBYmw7HbwSib3CR0fOlXrfTXCACKNtqrAZnFcf4wwkmwzCgTczuKaKG780Zmr/EM
+	 ggknPXTW1pfJrqUlCJWx/V7c1VUUtgv8NQQd6DihJ6t1XFlS7nL/Fbd5/IVbjsYVSE
+	 ZT6CCW6vgij+A==
 From: Mark Brown <broonie@kernel.org>
-To: peter.ujfalusi@gmail.com, Liu Jing <liujing@cmss.chinamobile.com>
-Cc: jarkko.nikula@bitmer.com, lgirdwood@gmail.com, perex@perex.cz, 
- tiwai@suse.com, alsa-devel@alsa-project.org, linux-omap@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241015074938.6247-1-liujing@cmss.chinamobile.com>
-References: <20241015074938.6247-1-liujing@cmss.chinamobile.com>
-Subject: Re: [PATCH] Use card->dev in replace of the &pdev->dev argument in
- the dev_err function
-Message-Id: <172928168210.188041.8550134088626737627.b4-ty@kernel.org>
-Date: Fri, 18 Oct 2024 21:01:22 +0100
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
+ Mario Limonciello <superm1@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20241017210952.3586713-1-superm1@kernel.org>
+References: <20241017210952.3586713-1-superm1@kernel.org>
+Subject: Re: [PATCH] ASoC: amd: acp: Add stream name to ACP PDM DMIC
+ devices
+Message-Id: <172928168468.188041.1137360050259879498.b4-ty@kernel.org>
+Date: Fri, 18 Oct 2024 21:01:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,9 +62,8 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Tue, 15 Oct 2024 15:49:38 +0800, Liu Jing wrote:
-> Because card->dev = &pdev->dev is already defined in the rx51_soc_probe function,
-> and then &pdev->dev is still used.
+On Thu, 17 Oct 2024 16:09:52 -0500, Mario Limonciello wrote:
+> Add for sof and legacy dai links to dummy DMIC codec.
 > 
 > 
 
@@ -73,8 +73,8 @@ Applied to
 
 Thanks!
 
-[1/1] Use card->dev in replace of the &pdev->dev argument in the dev_err function
-      commit: 4d003b81f46737620c7f9194d305617dfdfce8fb
+[1/1] ASoC: amd: acp: Add stream name to ACP PDM DMIC devices
+      commit: b2385de2ae11bdd34855276e0a254109469227eb
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
