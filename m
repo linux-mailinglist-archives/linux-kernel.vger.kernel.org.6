@@ -1,156 +1,214 @@
-Return-Path: <linux-kernel+bounces-371616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7D69A3D5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:39:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006159A3D62
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD25B1C21A3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:39:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EF74B22E36
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D271D7E45;
-	Fri, 18 Oct 2024 11:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB671F4266;
+	Fri, 18 Oct 2024 11:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="buQZ5SnD"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="KRejIOPX";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="qiLznpSu"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44FE1878;
-	Fri, 18 Oct 2024 11:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBD81EE016;
+	Fri, 18 Oct 2024 11:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729251556; cv=none; b=rQLlfkKIHSSGY2vOycOK2HAcMi3ymmmPzI0Z8u3SISoZKrDL7mYjoKPOLxbRQ5B9/jlCuxyHCYukW4XIHZZfRr1oit336MNZyK6zJS18EsqTkJxejkgf59U+A/kREexGTwe9ztzUx7HdObxMmVHwhLxWRDP044XQyZ+1e+w1/eI=
+	t=1729251564; cv=none; b=axwyXCro53RcuHJsNhXAEpb2ATmzmFzWyx4UV5gaR5OTwklyAQxddJmPSx/EmhSGxWFK+c2sSHw6wqe2xAMe06ge1peyMWKavnhvek9BlG8nnMZvw83jtpvfwQQoj27EiViy0pSWzgAuRwj0M8hO7LFLS7uTjViKYQ6m00cpuUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729251556; c=relaxed/simple;
-	bh=x8Cmag9E/oK9ax4NWa9i3CSYVp8OitM1F8DUwJB3wQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s7jHP89HHKbclEIdcRjwkstrEMPgLf/XGpSEdh+vPchL0dyCmAC5Pw0mUIU3Rgta9odNXMp9OhzDg/JfIO+eWKejUhE/e76WJ0X4FRy7dCP2CuPsus/qC6+Js+q8Uaiks0stsFbIPMHAsIc2HIe+SHbFnqSDf3GhfJZpWhtDlsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=buQZ5SnD; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=x3SzTN25smW73xZMw29TjQ48Aj2JrqXmwz5pk4MnM4o=; b=buQZ5SnD9HH12w6ChjRLJQuuKC
-	zPLMd3aICRlHYQVHWChaNSISV2lAj9V3fY7MEzqHa+o83Ar9J6RLDytd3C+47PbC7ffMdCCXwfDm8
-	4d0q8Urt3B3woDHY2q0R4lJDpVhwx3IgvOX2RnMtn/GdoA+1j5sZqyW80cMwtV2T0a/HUJsrzx1v/
-	FeTMtfs7V7emgcK0hIHryYGrJ/rk+bRpO2JD+0SjTUymUin6ZIMRaYcgBFQdu8YrMtzflnzFPblfG
-	agA/GMImx5eDndAC9X670V8lIaZkXqUzgj0T8Dmz8YElvyGHfPTjMAlusVAJhBD0QqXS819GjjelZ
-	yvtDDAiA==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1t1lK3-00032V-7z; Fri, 18 Oct 2024 13:39:11 +0200
-Received: from [178.197.248.12] (helo=[192.168.1.114])
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1t1lK2-000BBm-14;
-	Fri, 18 Oct 2024 13:39:10 +0200
-Message-ID: <8d4af742-bd8c-42b8-90b7-a18ddec1ecd3@iogearbox.net>
-Date: Fri, 18 Oct 2024 13:39:09 +0200
+	s=arc-20240116; t=1729251564; c=relaxed/simple;
+	bh=Rwphs5qi5S1XzQ4OWSmFTarZA+fNuWErHOY/vR7cDzM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FqNZr8H8eM0o3IrhYCIAA4l/aH7nOZrhApn6AFpmGFYRsBhkINNy+pOjiw7Qdm0nZWKM/flyWCRGWB1NPOv7SsxATImwZyoNrg342nRFquRxlknVJFCuxpVejQ3aXZ9xNoN/phTcThZ/9b5Iirbb6oPIFB21PMaC1vfeXwvhyF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=KRejIOPX; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=qiLznpSu reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1729251561; x=1760787561;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=IIQWDK07jPvUzisRnHdaspHYVQzk9bJrYJb1eqyhans=;
+  b=KRejIOPXeH4DESx2QYjYv+PdV6/JExjOTImOiGpOrZtoBFYJFX+cyFai
+   tsEoc7h9+QJNxmskx6bwfCG/VVxk6rG2cQhLypu7CH3OsbktzybTpKFCf
+   Qj1B3QmgjoylWDvpVQ+0rA/2qLT0Vb8jwILUzNTa33GoRLeQfkccG+Dg4
+   s960q2pr+4YtZgD2zJFxE/Xx4LZs5abvCAlqLLLFYbRl9juvuZu1tu0hN
+   rria18sAbIc8AW0Z7dBl3GXp+rkPvBoLUYiuXZWbyei7UzNZmZh7nuL7J
+   gKdYK7tEiTl+p977TjGgym+7Hq8Ci6BxQbYYlXu3elbl88p+ZTGv7gxvU
+   A==;
+X-CSE-ConnectionGUID: LfXkwjYRSVuTYfD3twpHWg==
+X-CSE-MsgGUID: QTkz3N6uRJKx8nYMqH3iXw==
+X-IronPort-AV: E=Sophos;i="6.11,213,1725314400"; 
+   d="scan'208";a="39542041"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 18 Oct 2024 13:39:17 +0200
+X-CheckPoint: {671248E5-28-21611FC3-DAD22B0C}
+X-MAIL-CPID: 9F6785E2A16242C205A18BDDCAE8529D_4
+X-Control-Analysis: str=0001.0A682F19.671248E6.0003,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BEDDA16006D;
+	Fri, 18 Oct 2024 13:39:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1729251553;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=IIQWDK07jPvUzisRnHdaspHYVQzk9bJrYJb1eqyhans=;
+	b=qiLznpSuavnpXEaldsfL7ZcfXTgINywoO/R9IVRztdyafx51bURrJCjjgD/IKBaD1yz7bp
+	Tkjp8ReZz7u4oxExxp7GASKSqRZIZ+M1HftSk0Ulpzq5GK/i3HgaJejQ5g/SJuJ1KERuKh
+	2/anYtLvhu3/neYyVdfTEcfTUMBMgpXn9zbLzzRTZiSYzHNXBv44N/99o5q4+LF5Dcmt4d
+	FDLAMJVsoCRLzaF3mtHp/U1OwiAA9hmg5nRNslN5TcVV0bz1Md8FauMVSGFT4lb5iVQXdq
+	yM360OCiCRd54g1jTXmFkpPN9L+KNzQrOTl+2HncZHwNWTVCt7uke5z6D3sQvA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Frank Li <frank.li@nxp.com>, Wei Fang <wei.fang@nxp.com>
+Cc: "davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, "christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "bhelgaas@google.com" <bhelgaas@google.com>, "horms@kernel.org" <horms@kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v3 net-next 02/13] dt-bindings: net: add i.MX95 ENETC support
+Date: Fri, 18 Oct 2024 13:39:10 +0200
+Message-ID: <9407049.rMLUfLXkoz@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <PAXPR04MB8510B252A7EDE73B2E1F00BD88402@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20241017074637.1265584-1-wei.fang@nxp.com> <3657116.R56niFO833@steina-w> <PAXPR04MB8510B252A7EDE73B2E1F00BD88402@PAXPR04MB8510.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: BUG: unable to handle kernel paging request in
- build_id_parse_nofault
-To: Hui Guo <guohui.study@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Cc: syzkaller-bugs@googlegroups.com
-References: <CAHOo4gJO+Bx9w-kxbSFt1=SPQUYrr29EPmCerypZTAfFdWocYg@mail.gmail.com>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <CAHOo4gJO+Bx9w-kxbSFt1=SPQUYrr29EPmCerypZTAfFdWocYg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27431/Fri Oct 18 10:53:06 2024)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 10/18/24 1:26 PM, Hui Guo wrote:
-> Hi Kernel Maintainers,
-> we found a crash "BUG: unable to handle kernel paging request in
-> build_id_parse_nofault" (it seems like a KASAN and makes the kernel
-> reboot) in upstream, we also have successfully reproduced it manually:
-> 
-> HEAD Commit: 9852d85ec9d492ebef56dc5f229416c925758edc(tag 'v6.12-rc1')
-> kernel config: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/6.12.config
-> 
-> console output:
-> https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/7a4626c1fd3c932f5ee145636d9b82d152708357/log0
-> repro report: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/7a4626c1fd3c932f5ee145636d9b82d152708357/repro.report
-> syz reproducer:
-> https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/7a4626c1fd3c932f5ee145636d9b82d152708357/repro.prog
-> c reproducer: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/7a4626c1fd3c932f5ee145636d9b82d152708357/repro.cprog
-> 
-> 
-> Please let me know if there is anything I can help with.
+Hi,
 
-Should be fixed by :
+Am Freitag, 18. Oktober 2024, 09:50:43 CEST schrieb Wei Fang:
+> > -----Original Message-----
+> > From: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > Sent: 2024=E5=B9=B410=E6=9C=8818=E6=97=A5 14:53
+> > To: Frank Li <frank.li@nxp.com>; Wei Fang <wei.fang@nxp.com>
+> > Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> > pabeni@redhat.com; robh@kernel.org; krzk+dt@kernel.org;
+> > conor+dt@kernel.org; Vladimir Oltean <vladimir.oltean@nxp.com>; Claudiu
+> > Manoil <claudiu.manoil@nxp.com>; Clark Wang <xiaoning.wang@nxp.com>;
+> > christophe.leroy@csgroup.eu; linux@armlinux.org.uk; bhelgaas@google.com;
+> > horms@kernel.org; imx@lists.linux.dev; netdev@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > linux-pci@vger.kernel.org
+> > Subject: Re: [PATCH v3 net-next 02/13] dt-bindings: net: add i.MX95 ENE=
+TC
+> > support
+> >=20
+> > Hi,
+> >=20
+> > Am Freitag, 18. Oktober 2024, 03:20:55 CEST schrieb Wei Fang:
+> > > > -----Original Message-----
+> > > > From: Frank Li <frank.li@nxp.com>
+> > > > Sent: 2024=E5=B9=B410=E6=9C=8818=E6=97=A5 0:23
+> > > > To: Wei Fang <wei.fang@nxp.com>
+> > > > Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> > > > pabeni@redhat.com; robh@kernel.org; krzk+dt@kernel.org;
+> > > > conor+dt@kernel.org; Vladimir Oltean <vladimir.oltean@nxp.com>;
+> > > > conor+Claudiu
+> > > > Manoil <claudiu.manoil@nxp.com>; Clark Wang
+> > <xiaoning.wang@nxp.com>;
+> > > > christophe.leroy@csgroup.eu; linux@armlinux.org.uk;
+> > > > bhelgaas@google.com; horms@kernel.org; imx@lists.linux.dev;
+> > > > netdev@vger.kernel.org; devicetree@vger.kernel.org;
+> > > > linux-kernel@vger.kernel.org; linux-pci@vger.kernel.org
+> > > > Subject: Re: [PATCH v3 net-next 02/13] dt-bindings: net: add i.MX95
+> > > > ENETC support
+> > > >
+> > > > On Thu, Oct 17, 2024 at 03:46:26PM +0800, Wei Fang wrote:
+> > > > > The ENETC of i.MX95 has been upgraded to revision 4.1, and the
+> > > > > vendor ID and device ID have also changed, so add the new
+> > > > > compatible strings for i.MX95 ENETC. In addition, i.MX95 supports
+> > > > > configuration of RGMII or RMII reference clock.
+> > > > >
+> > > > > Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> > > > > ---
+> > > > > v2: Remove "nxp,imx95-enetc" compatible string.
+> > > > > v3:
+> > > > > 1. Add restriction to "clcoks" and "clock-names" properties and
+> > > > > rename the clock, also remove the items from these two properties.
+> > > > > 2. Remove unnecessary items for "pci1131,e101" compatible string.
+> > > > > ---
+> > > > >  .../devicetree/bindings/net/fsl,enetc.yaml    | 22
+> > ++++++++++++++++---
+> > > > >  1 file changed, 19 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > > > > b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > > > > index e152c93998fe..e418c3e6e6b1 100644
+> > > > > --- a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > > > > +++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > > > > @@ -20,10 +20,13 @@ maintainers:
+> > > > >
+> > > > >  properties:
+> > > > >    compatible:
+> > > > > -    items:
+> > > > > +    oneOf:
+> > > > > +      - items:
+> > > > > +          - enum:
+> > > > > +              - pci1957,e100
+> > > > > +          - const: fsl,enetc
+> > > > >        - enum:
+> > > > > -          - pci1957,e100
+> > > > > -      - const: fsl,enetc
+> > > > > +          - pci1131,e101
+> > > > >
+> > > > >    reg:
+> > > > >      maxItems: 1
+> > > > > @@ -40,6 +43,19 @@ required:
+> > > > >  allOf:
+> > > > >    - $ref: /schemas/pci/pci-device.yaml
+> > > > >    - $ref: ethernet-controller.yaml
+> > > > > +  - if:
+> > > > > +      properties:
+> > > > > +        compatible:
+> > > > > +          contains:
+> > > > > +            enum:
+> > > > > +              - pci1131,e101
+> > > > > +    then:
+> > > > > +      properties:
+> > > > > +        clocks:
+> > > > > +          maxItems: 1
+> > > > > +          description: MAC transmit/receiver reference clock
+> > > > > +        clock-names:
+> > > > > +          const: ref
+> > > >
+> > > > Did you run CHECK_DTBS for your dts file? clocks\clock-names should
+> > > > be under top 'properties" firstly. Then use 'if' restrict it. But I
+> > > > am not sure for that. only dt_binding_check is not enough because
+> > > > your example have not use clocks and clok-names.
+> > > >
+> > >
+> > > I have run dtbs_check and dt_binding_check in my local env. there were
+> > > no warnings and errors.
+> >=20
+> > Is there already the DT part somewhere? Do you mind sharing it?
+> >=20
+> I will prepare the DT patch when this series is applied. Below is my local
+> patch of imx95.dtsi. FYI.
+> > [snip]
 
-https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git/commit/?id=5ac9b4e935dfc6af41eee2ddc21deb5c36507a9f
+Thanks for providing the DT patch. With this I was able to get ethernet
+running on my i.MX95 based board.
+Please keep me on CC if you send DT patch. Thanks.
 
-Please retry against git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git tree.
+Best regards,
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+http://www.tq-group.com/
 
-Thanks,
-Daniel
+
 
