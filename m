@@ -1,146 +1,114 @@
-Return-Path: <linux-kernel+bounces-371411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D64C99A3AB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:01:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFEF9A3ABC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 797F41F26C5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:01:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06EE6B225AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068E91EF94D;
-	Fri, 18 Oct 2024 10:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4DC200CB2;
+	Fri, 18 Oct 2024 10:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UhK2w9zI"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RH2EWPAE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD88014E2DF
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D45417D378
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729245694; cv=none; b=hm5T2u5ALr7c+raLxdX8uP2/XWO/fn92dWlvH10eWJOhrSslvw74Ib1ae32LBTOzaj6IlcaPNPT0hub2ofY2IPLVti54qYopTHJTgEwpVDQ9rw6YIS+GYBDa+/8zhvr6kVYOLYp8w07+qE4aeEF6eVS0FiguOoUK2w87NL1lGyw=
+	t=1729245721; cv=none; b=cUKSRTDqzjy35qMOFy8hL4Xyihepnd7IInW13EE1oF3E+OaFjpp8D2U9Zw2/gG9cTT6+iM7MCJQ3X2u3U5TwlOS5ycPn8foboXt3BusCHYLPq0EyV0mWKl+bywyX9jDy1bLdxjTIqg89/0SHk1DOhidLEz6AFQ0QHISBX0DqP94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729245694; c=relaxed/simple;
-	bh=ByQvZv98BC+L8p1DTuZl2zlqdFxenNAcm24+PlvMt0s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WN99qauHypbdrOILNpwlmrbZ/ywewNGvxk74dY/2yJHUbafqs12uIWcHWruF1nb/ZxWpCnPBGSR885q61L6tWHOlWgFSGT6VQHSGOol4uh+XSEi6PUBbB6W3wmpFNtuIYsgqPdnSk4DWKRMcIIdo5P8bAAqIuSuFM4Rj7Ev62bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UhK2w9zI; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c973697b52so2361019a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729245691; x=1729850491; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EceJMD5TFFW28sEBYAnTnnk355nDba/Ev8Vf3NXQHxQ=;
-        b=UhK2w9zI+RoF0YroymDbRJbS4TpLxVDayGlT4lVyDTQy+LWwo/1fijgrvMnLUfB+o6
-         CtNeUnPniRYX3VruJt0HCodxCpU2l3DPDADct7DbnCru6zxQnX3WaZ+9YtvFagrAhbEe
-         LKRTT9PnSD9PVa5KafVk3t8Y6GGcNtkLGl1X/AK01J5KGmP+UA9ljBuR0UGmkaQAqcUI
-         dhV4UUuMjoJdQEUkLE4RWa1xv2+mWCGrBVISLCCeEuOd+kxzxHD8KqyLpuN1bdlkC2RL
-         /K7Jri7h4yUixVjl9IyV6x3EFBSdgCUq1vOaAN3gVPqpfwqPVhuFOTw40tUjsJHNTV0e
-         h9VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729245691; x=1729850491;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EceJMD5TFFW28sEBYAnTnnk355nDba/Ev8Vf3NXQHxQ=;
-        b=hrPOdr/G8DiChxOanoecyMqo/lHgQnBdSUj224AKC8yKcMgUl6vTLH8/I6Wu2+FdE3
-         6UxPItD6G667K+9W6agJWZevDKN1B9LUalsu9kB+WWqNXpzjxRX7m1RuUxOLCRgOw7KA
-         La+PHAFcLqD4UAKhKTDx7IXQrVSNASFIzZP64RquOH1qp3baiqRSf3EhRUEfvaTgXnL1
-         WB+jX1MubFKKO23Ox9M173TYW/1Z9WeP/3JzeUJEuvu3FgSMxxWqeZhYz+TpVGfAShz9
-         O0soZUnDP5CtCFCnUCGB/USjDSXPjABA93AIC9rTNwi/GQsHnlFrMcZJ5MXNPBnJt0GM
-         VwBw==
-X-Gm-Message-State: AOJu0YwV6ldNr9smqfrVGBvkk2VrEyekWpwOgkOIdnG5tNFj7ZbBiy8H
-	f0m14tExwAHlaFKdNkxb9QJumv8hTZrgis4dGMsLq5F6UdWon4FTYPR5pbSVHiI=
-X-Google-Smtp-Source: AGHT+IEDSxbCrlx25fjyK8bHdzmrM1cAxNXPz/tyNwGjzf/ZGH+OdLM0Jm8+kkTlgW5Frk6BCtFLAw==
-X-Received: by 2002:a17:907:7da1:b0:a9a:2d04:b577 with SMTP id a640c23a62f3a-a9a69ba71d2mr175520566b.32.1729245691269;
-        Fri, 18 Oct 2024 03:01:31 -0700 (PDT)
-Received: from draig.lan ([85.9.250.243])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68a8d9e4sm73106566b.9.2024.10.18.03.01.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 03:01:30 -0700 (PDT)
-Received: from draig (localhost [IPv6:::1])
-	by draig.lan (Postfix) with ESMTP id 413755F863;
-	Fri, 18 Oct 2024 11:01:29 +0100 (BST)
-From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>,  Linux ARM
- <linux-arm-kernel@lists.infradead.org>,  lkft-triage@lists.linaro.org,
-  Linux Regressions <regressions@lists.linux.dev>,  qemu-devel@nongnu.org,
-  Arnd Bergmann <arnd@arndb.de>,  Mark Brown <broonie@kernel.org>,  Catalin
- Marinas <catalin.marinas@arm.com>,  Aishwarya TCV <Aishwarya.TCV@arm.com>,
-  Peter Maydell <peter.maydell@linaro.org>,  Anders Roxell
- <anders.roxell@linaro.org>
-Subject: Re: Qemu v9.0.2: Boot failed qemu-arm with Linux next-20241017 tag.
-In-Reply-To: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
-	(Naresh Kamboju's message of "Fri, 18 Oct 2024 12:35:13 +0530")
-References: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
-User-Agent: mu4e 1.12.6; emacs 29.4
-Date: Fri, 18 Oct 2024 11:01:29 +0100
-Message-ID: <87v7xp91c6.fsf@draig.linaro.org>
+	s=arc-20240116; t=1729245721; c=relaxed/simple;
+	bh=c95i7yQ7yvMxmF9U7mJUoxODymNVPbilqum2Qcc3rII=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W1gUfHFLaY2YtGoHEgTiDo5v7BZzFW+zvkzqdN9knLz98scPg6jMBxSiQyRmAhmI7Ft730SUNMZYncd3gHHCzui+SJ7YZayQ1piSzlxPXTPM8wli4KO914wqzEaMCvd5jPQpmOPqaOEwzG0tr3dEg9mC430rtcRd4N+/EsM/vnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RH2EWPAE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C1E6C4CEC3;
+	Fri, 18 Oct 2024 10:01:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729245721;
+	bh=c95i7yQ7yvMxmF9U7mJUoxODymNVPbilqum2Qcc3rII=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RH2EWPAE9cL7/kwE7/Kfm6Y/IhDxlxqTorp7dqmS937GwQmXH5DkJWB8wI/FTlShx
+	 PsMCDYFG+xMAbSUmUh/97FmXycbi3V3fYf2T60Apsclk+f+catDhbxyoijKtGoFib2
+	 FhFglyLy+xrGhVHssLWKhC2H4IuWhLFAUNTNoOF1TYibJD7CU29hyIFJRDLXLa7gMX
+	 yD1Epk4CKUHh4Em4PhH3dKXgkCabk9SYhrEgpQLZU3cgURPRKO06Tt1XmfNgKMmRLy
+	 q4LyLmrn3lpL0QPbyQui9QE6FB+GriciKX63cW3N3VZW3JCh6uSFNr8w6ZOVwPLXVH
+	 g1+MwAnJXpqfA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Daniel Rosenberg <drosen@google.com>,
+	Qi Han <hanqi@vivo.com>
+Subject: [PATCH RFC] f2fs: revalidate empty segment when checkpoint is disabled
+Date: Fri, 18 Oct 2024 18:01:50 +0800
+Message-Id: <20241018100150.2852132-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Naresh Kamboju <naresh.kamboju@linaro.org> writes:
+If checkpoint is off, let's set segment as free once all newly
+written datas were removed, it fixes below case:
 
-> The QEMU-ARMv7 boot has failed with the Linux next-20241017 tag.
-> The boot log is incomplete, and no kernel crash was detected.
-> However, the system did not proceed far enough to reach the login prompt.
->
-> Please find the incomplete boot log links below for your reference.
-> The Qemu version is 9.0.2.
-> The arm devices TI beaglebone x15 boot pass.
->
-> This is always reproducible.
-> First seen on Linux next-20241017 tag.
->   Good: next-20241016
->   Bad: next-20241017
->
-> qemu-armv7:
->   boot:
->     * clang-19-lkftconfig
->     * gcc-13-lkftconfig
->     * clang-nightly-lkftconfig
->
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
-> Boot log:
-> -------
-> [    0.000000] Booting Linux on physical CPU 0x0
-> [    0.000000] Linux version 6.12.0-rc3-next-20241017
-> (tuxmake@tuxmake) (arm-linux-gnueabihf-gcc (Debian 13.3.0-5) 13.3.0,
-> GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP @1729156545
-> [    0.000000] CPU: ARMv7 Processor [414fc0f0] revision 0 (ARMv7), cr=3D1=
-0c5387d
-> [    0.000000] CPU: div instructions available: patching division code
-> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction =
-cache
-> [    0.000000] OF: fdt: Machine model: linux,dummy-virt
-> [    0.000000] random: crng init done
-> [    0.000000] earlycon: pl11 at MMIO 0x09000000 (options '')
-> [    0.000000] printk: legacy bootconsole [pl11] enabled
-> [    0.000000] Memory policy: Data cache writealloc
-> [    0.000000] efi: UEFI not found.
-> [    0.000000] cma: Size (0x04000000) of region at 0x00000000 exceeds
-> limit (0x00000000)
-> [    0.000000] cma: Failed to reserve 64 MiB on node -1
+dd if=/dev/zero of=f2fs.img bs=1M count=64
+mkfs.f2fs -f f2fs.img
+mount -o checkpoint=disable:10% f2fs.img mnt
+dd if=/dev/zero of=mnt/file bs=1M count=19
+sync
+rm mnt/file
+dd if=/dev/zero of=mnt/file bs=1M count=9
+dd: error writing 'mnt/file': No space left on device
 
-Is this a highmem related thing. Passing -m 2G allows it to get further
-and 4G is obviously at the limit of 32 bit?
+Cc: Daniel Rosenberg <drosen@google.com>
+Reported-by: Qi Han <hanqi@vivo.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/segment.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
---=20
-Alex Benn=C3=A9e
-Virtualisation Tech Lead @ Linaro
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index e172b3d0aec3..4f480bfc9618 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -849,6 +849,17 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+ 	valid_blocks = get_valid_blocks(sbi, segno, false);
+ 	ckpt_valid_blocks = get_ckpt_valid_blocks(sbi, segno, false);
+ 
++	/*
++	 * If checkpoint is off, let's set segment as free once all newly
++	 * written datas were removed.
++	 */
++	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED) &&
++		valid_blocks == 0 && ckpt_valid_blocks == 0) {
++		__remove_dirty_segment(sbi, segno, DIRTY);
++		__set_test_and_free(sbi, segno, false);
++		goto out_lock;
++	}
++
+ 	if (valid_blocks == 0 && (!is_sbi_flag_set(sbi, SBI_CP_DISABLED) ||
+ 		ckpt_valid_blocks == usable_blocks)) {
+ 		__locate_dirty_segment(sbi, segno, PRE);
+@@ -859,7 +870,7 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+ 		/* Recovery routine with SSR needs this */
+ 		__remove_dirty_segment(sbi, segno, DIRTY);
+ 	}
+-
++out_lock:
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ }
+ 
+-- 
+2.40.1
+
 
