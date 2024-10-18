@@ -1,132 +1,93 @@
-Return-Path: <linux-kernel+bounces-372484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1FA9A4915
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:45:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25CF9A491A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02F47B22304
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0D61C20D5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479C018E756;
-	Fri, 18 Oct 2024 21:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CD918E05A;
+	Fri, 18 Oct 2024 21:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Q50Sb5CG"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oEmQIQAX"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48E714C5BA
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 21:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B0B18858C
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 21:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729287894; cv=none; b=OYoLE/HgKA5bF/a8ntmXZNRVHELFNxAyt/UKc2mM/G4rN/wx3T8+RuGvNzJqFLW6Taw9xYCZ5ZpTrE7PNRcaZS0B7JdzEinaT6QuFraFXgQ1n6KLv+WBGd+fl1tXe3mY/2ILIRX3Y7d9m9CEf9mth2HwCWRDMhJoRDMSOSrnFgk=
+	t=1729287949; cv=none; b=uaK5GI3ANERzm8qsFO2/s2W7VbqTzxdHQ4+BrBRgxaYeaymRs0PAQmZ+Q3a2vOgTDobub+j6Cg3X1ybQBRxXj4KZv8dYgdqQsA0Ms5f4o6dJY6IVWvSYW5K6gdFb7UQvTLCBN4ZvtlGkK/GbO0q0JVrSdIW6FuiGGBMShBOte/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729287894; c=relaxed/simple;
-	bh=jyy7JLmQxl6wTRjl8UqryYDQaj/jxSGqUmhT8PipY8Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YAE3uXcX1tTbzTmVdPD6gAgdW+QF2yZ4GlzoGwGBSrTa/+21RzMNk6bHK0y5AvAFmcpbsEutMF33g2ct26Wgr4HU49ZDr9h6S9cjxBJb3LcbsGTFSlUkyMY+83XBizQEBfqI+E88t385xP05AzMtT06fHgkZU0ZzJt8ldIyrfcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Q50Sb5CG; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2872134c806so1011384fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 14:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729287891; x=1729892691; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FMqjAyuym8kO0S6P2ejY/kfmYTx2+tMdub+GPF3mz6k=;
-        b=Q50Sb5CGl3ra0YsHbSTYgNxcEqQQxxS473+lpJuZN5D+cWhNdckHAOi+8aN5Z3GWZv
-         4W4cY7wCKqGrLeMgm3FbGoMGBWoKVSQt4VKgdymScJrLEp46AxtQaczK5cEtE6A6fUrm
-         jfEOkgYoHalQrE1vyZwfVsj0CsWxfHrj+HbJRJSTlrLPV6hnkGMlD2Jvss3XC3FhQ09A
-         M1QSn9d3C7KBg97R1IMAHGcFtQ+nnmU7jJxrR6GksekDvEjjbAFouB2/201sOkIHXHxY
-         +3bj+rpyqolHuahU7+xAiPFqmLIqbs8xKnuk7oBVkGBRJq4OQ0WQxDoxxtQAp/S6pfas
-         UfmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729287891; x=1729892691;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FMqjAyuym8kO0S6P2ejY/kfmYTx2+tMdub+GPF3mz6k=;
-        b=vUuzCPGWXaFei13aEy2mH1a7UMOfl4qDj5mjoOLraVyvrDwu6Awt939ZzZclN+msep
-         UTwXrK8uPH5aYyi+v/MiRN713XeHEjK2r4meZ6lZvz/fp1VTxcsZ00o1Ja4l4nqfhXWa
-         n32fao3+qgxOG6YnaF+rRbLNL02ZHJp/vaVXLYEaf0rG4IKGbYaa9B0vydNSYqRCpuMe
-         HxQvg6nsvcWhijdxRQwGtr0DMeubGegOdntoSJ5fGsER2hPBQfQY6WihV4tO/+1oorA6
-         /xgXzuJeKAyLOwKzyoLA8CV1CMTPndD0YZltcA/JMukfML8O/tHXcwWt8O8mx6t9ooYX
-         Q+mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpL7om3DFRJvocIR8I3KE9OQKvfqwOyIf9VCXackWcJf7MRFN/xtkenC3hcGG9OBWfrztVRbhhtcFUlUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX8HM9gnLj2DqS7zd/GY8N523x/5fNoO35v9dlvMkSeSy++vLo
-	uqQcSrlc8/UGDRKg6m0fC+3jqxRGgKTL4rL3POwopNBTjxz7+vy91FlKoUTifkA=
-X-Google-Smtp-Source: AGHT+IFdjwx8P1K2RS/2aLojqgswehswGxjnO25URnODR+tpiphndgig0nezfBUqe5Ek19Hf1Azm9g==
-X-Received: by 2002:a05:6870:b487:b0:288:33d1:a95e with SMTP id 586e51a60fabf-2892c528028mr3869783fac.30.1729287890836;
-        Fri, 18 Oct 2024 14:44:50 -0700 (PDT)
-Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2892ad2e6e8sm691388fac.18.2024.10.18.14.44.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 14:44:50 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 18 Oct 2024 16:44:48 -0500
-Subject: [PATCH] iio: dac: ad8460: add SPI device match table
+	s=arc-20240116; t=1729287949; c=relaxed/simple;
+	bh=tOA01gs5nPhL/vmNbtW+GIMrz7TJDXxOicvU7S/TnUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t8/7cV7JJyUqaGOU7mlIG6MtSwU6Po8ZmmyQlRUmXy1okoMv63zHMGIed+onjLtYBCDTKQvzfeGn/a5akwmN+TVP4dq3aDVnVTwvI9oaWOWK5JrEIYYL4qc0GCwMcfUsCcC8uB9ePfKPDgVKnat79BdfsD+1JD0LjqCriJcOlnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oEmQIQAX; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729287944;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=R9I7quaW8/F+28X0/jjvHTMqunMj8YXAmloyPwoMZ/s=;
+	b=oEmQIQAXrKhG6Gtv7DgeTou2NPrJMFRi6Azoah+bii+k/NFmHetdBEYX3kBZbNslB66OU4
+	k8NzDLGKaAtZafnf0EIldMLvFGfnUS5g0SjViXC3665n718hr/tBdgUP4D3uW+eD5DkJ7W
+	yIXe4yQ0xz4CxwP1pzPuMVXrYSiSBmQ=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] apparmor: Remove unnecessary NULL check before kvfree()
+Date: Fri, 18 Oct 2024 23:45:14 +0200
+Message-ID: <20241018214513.163269-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241018-iio-dac-ad8460-add-spi-match-table-v1-1-84a5f903bf50@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAM/WEmcC/x2NQQqEMAwAvyI5G0itFNeviIfYxDWwq9KKLIh/3
- +JpmMvMBVmTaYa+uiDpadm2tYirK4gLr29Fk+LQUNM6ch2abSgckaVrAxUI5t3wy0dc8ODpo/i
- iIOJDnMh7KKE96Wy/ZzKM9/0HkmvVZXQAAAA=
-To: Mariel Tinaco <Mariel.Tinaco@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Add SPI device match table for ADI AD8460 DAC. As described in [1], this
-is required for the module to automatically load, even when using DT.
+Since kvfree() already checks if its argument is NULL, an additional
+check before calling kvfree() is unnecessary and can be removed.
 
-[1]: https://lore.kernel.org/all/20210921192149.50740-1-broonie@kernel.org/
+Remove it and the following Coccinelle/coccicheck warning reported by
+ifnullfree.cocci:
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
+  WARNING: NULL check before some freeing functions is not needed
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- drivers/iio/dac/ad8460.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ security/apparmor/policy.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/iio/dac/ad8460.c b/drivers/iio/dac/ad8460.c
-index dc8c76ba573d..ded442d4060d 100644
---- a/drivers/iio/dac/ad8460.c
-+++ b/drivers/iio/dac/ad8460.c
-@@ -929,12 +929,19 @@ static const struct of_device_id ad8460_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, ad8460_of_match);
- 
-+static const struct spi_device_id ad8460_spi_match[] = {
-+	{ .name = "ad8460" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, ad8460_spi_match);
-+
- static struct spi_driver ad8460_driver = {
- 	.driver = {
- 		.name = "ad8460",
- 		.of_match_table = ad8460_of_match,
- 	},
- 	.probe = ad8460_probe,
-+	.id_table = ad8460_spi_match,
- };
- module_spi_driver(ad8460_driver);
- 
-
----
-base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
-change-id: 20241018-iio-dac-ad8460-add-spi-match-table-906dd36cb033
-
-Best regards,
+diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+index 14df15e35695..ce1c96cb2aed 100644
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -103,8 +103,7 @@ static void aa_free_pdb(struct aa_policydb *pdb)
+ {
+ 	if (pdb) {
+ 		aa_put_dfa(pdb->dfa);
+-		if (pdb->perms)
+-			kvfree(pdb->perms);
++		kvfree(pdb->perms);
+ 		aa_free_str_table(&pdb->trans);
+ 		kfree(pdb);
+ 	}
 -- 
-David Lechner <dlechner@baylibre.com>
+2.47.0
 
 
