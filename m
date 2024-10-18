@@ -1,117 +1,129 @@
-Return-Path: <linux-kernel+bounces-372198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB5B9A458E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:11:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF559A4594
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCCDF1C216E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:11:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 832C42869BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF91204F63;
-	Fri, 18 Oct 2024 18:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D096204939;
+	Fri, 18 Oct 2024 18:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYZaA4zI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHaBJOBQ"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600BC2040BE;
-	Fri, 18 Oct 2024 18:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5A3155312;
+	Fri, 18 Oct 2024 18:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729275098; cv=none; b=ULCCWo6NsgD50KXVSRiGnJaNQ3S3YyCSFNiafdlXnM8P8TP8uBQiUZmc6XkXfTtgo+SEIrI030ZnXHA4N4gxobeK4o7Gu+g90cja7NBzhj9iIOvq6SwN60BO+BV2sDooibUyYVo+pTXY2n/94ML5T4FTXPzoFyDxiRho29+W2m4=
+	t=1729275197; cv=none; b=IaqZHRjgcB8oDA2yfP6ubEE+Wt408foBr962iTkMCvmauLMwIcjTqTEius8fb0D/eOWi8tN/pV2KTJS+upF5DNv9Yq1CsMZDm4Hf05jbv/g4UivWd4krhunhA050gp4vC9vpKy6tA12H0vTw9G+/Ec3BN8eSVOiI6qR+G7a6Ll0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729275098; c=relaxed/simple;
-	bh=2TPOvfABd0T2cKUYUm3jMCFxZQlzTTeFqVbwQk1vh8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FODlW/jysXCfVxyuSTZUDoBstpXOx9sK6UEC08NHUWJFfs0wBvZZ70DmxwZVwI8LStwxCJtTP56egrBFAwL0Tsv93DrOo0oN8GP33RvWh4VQ1NU8kGc0oaxMToO/BpTh+ezokNClOUaG5v0D3T4ks3d5i8pNl2U7EMelsR0o924=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYZaA4zI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB36C4CEC3;
-	Fri, 18 Oct 2024 18:11:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729275097;
-	bh=2TPOvfABd0T2cKUYUm3jMCFxZQlzTTeFqVbwQk1vh8Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XYZaA4zI+pGUYL+aM+4dYjQvMkUG60DwL7B3vZb8yKUcDoEbh27D1EEnc9Wi8rNVF
-	 kjEoOYIYGsD+UDS23BWKSLYveKMB58SoqW+2kgrJ1P884hiZYEYxKsa6H3hovCXAVX
-	 rfZpLnsidgiJA4IxuQVo3bO4hPh2J+ALn5QttQbqI7GL3NE2pav+oPNbn/KDUQ4G0B
-	 dYMfF7hZcEny516kTBpojxQbAuLKxINncjLJGzfvFquQN3n6s04yHhDGoK64V+r+6s
-	 K7cPFTrvS7NYezW+ffJGfgXrQPg84pxLDukqQnCySuPxZKXnwR/1m3pZzJ0VwMM7tX
-	 VBIE3vaKUsFDg==
-Date: Fri, 18 Oct 2024 19:11:28 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Conor Dooley <conor@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH RFC 0/4] ad7380: add adaq4370-4 and adaq4380-4 support
-Message-ID: <20241018191128.50502c4e@jic23-huawei>
-In-Reply-To: <CAEHHSvZ+j2DyikVQ1XYzk-Zg14FVKP1YHOm-rOimjHydxaGPaA@mail.gmail.com>
-References: <20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com>
-	<20241015-scoreless-carwash-9ac6047092fe@spud>
-	<CAEHHSvZ+j2DyikVQ1XYzk-Zg14FVKP1YHOm-rOimjHydxaGPaA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729275197; c=relaxed/simple;
+	bh=V7cATR5PtC3+8+gKpg5fD+d51cdjsZ+kanX4EQ1Simc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PyjRdJg7eZol7nC0NiV4/zofgJzRyOP+/7NcqnsUB6T1XZ3+XMFEMKo6kQ4LDmO3VPuPTgFmFG5EwDc8tKjgH1E4A985Sf1+++4W+eaC61Tgcr19e2ACcDylvNgWPRMycpunLFUY18FEFrAnYY2SJdFpyaK6paDdV8UTgoxjIN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHaBJOBQ; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-460963d6233so14106811cf.2;
+        Fri, 18 Oct 2024 11:13:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729275195; x=1729879995; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B40RPIqnhSSJ85lZL+p2R/O2i15e5fShUZ74XjiPrcc=;
+        b=LHaBJOBQepwJx/kdsEoTCPhYwgrObL1cn2in5lyTN93AxU+2fLLszGIItrVomqMfQL
+         CeyN0GzhV6Wuwpp3nN9f884rVQS0xQL9SLHIYEeRL53mt6fhhEtdrQ/afhtQPVnJ3mTj
+         aabXiUSXyZqoTS349kJhW8BO+T7B/67jgDYQZAY+ryGpGeZCbXM1ZxzX/ZUsRXFGeM7F
+         gHwSSfqZ4IhyhGzPtGGmOge96k2HwAQDAxjCuguCavtJ18NhQtr2T/zMQNYPR8JcIx0C
+         j7DV8GTDMXLG/kD080MusBCqpFrfFoK10lBsEcMQS2djiHBs5K2naAkdx7w8GyCkC4BU
+         EEvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729275195; x=1729879995;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B40RPIqnhSSJ85lZL+p2R/O2i15e5fShUZ74XjiPrcc=;
+        b=FjQC3FbaRFwm98Efc6ecfqV8RxVf2nSJGFIF/TLT5ALMyXnJTOFClJDdPJ6rBJYL9d
+         q6oCXMo4OSnK2Q6g3uo5uI72QuDnSDa2Rn+gBHFrRkFAsy6KWt/2GtQL4ptjYu8GVyYo
+         jmRlhzca1xeSgjOIySu5vYh83Max+exs9Nj+U8AXfWKj1Ddq/71X54gbo48iHBxC4wDS
+         FPAva8P5iLckCsJ0R7gAwXRwUrsmkziOjtcNqKIKUGggF/sI6ATbttSsVKOfljj2MFxe
+         ZT8a79UiUJGF4k81lCu7hKgcGSHlHQnJoOJHhpmH8VK6Opp/X5EQxJB57dz2392BUby6
+         5EUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpMO4P3GoU5H7q8LwpSwZW3YQ4DilINyZSs1hYcafHSl13DAh2rotBFSMoqhUQzVFoyi3Be/SjamnI/b54@vger.kernel.org, AJvYcCXo/qAEjXF2balSZ0KAHIv7YPvbQdbasa9GkzBFd7p4HjymCcQe6VuqPpf3e7l4uzFbM/3aeAzlniTKIfw7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvTkf9v5uF3XLEwA3bcyGmD/45LGCsK7NFjmiGYcU4tmHyaduS
+	MgRw/QMa5M/+r2MSb3fkO7mtPOWhlACUb100aZmcEUShijoG2S6cz06/1tX0M0KpswlEqb0PlhC
+	daL81RryatFzZKg0uFhayAPtmK4U7QsGA
+X-Google-Smtp-Source: AGHT+IHcTHSZdC0Z88gNxFh2UTs5vfM8SVLlU+v0plSU9lZArMDhkKDUcVgTkUkA+NHndi2JlHZpPZwlAOdCCkL4GoU=
+X-Received: by 2002:a05:622a:34d:b0:460:908b:f1e8 with SMTP id
+ d75a77b69052e-460aed4da18mr36943681cf.18.1729275194593; Fri, 18 Oct 2024
+ 11:13:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <66fc4b74.050a0220.f28ec.04c8.GAE@google.com> <CAJnrk1ZrPcDsD_mmNjTHj51NkuVR83g5cgZOJTHez6CB6T31Ww@mail.gmail.com>
+ <CAJnrk1ZSZVrMY=EeuLQ0EGonL-9n72aOCEvvbs4=dhQ=xWqZYw@mail.gmail.com> <CAJfpegu=U7sdWvw63ULkr=5T05cqVd3H9ytPOPrkLtwUwsy5Kw@mail.gmail.com>
+In-Reply-To: <CAJfpegu=U7sdWvw63ULkr=5T05cqVd3H9ytPOPrkLtwUwsy5Kw@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Fri, 18 Oct 2024 11:13:02 -0700
+Message-ID: <CAJnrk1aQwfvb51wQ5rUSf9N8j1hArTFeSkHqC_3T-mU6_BCD=A@mail.gmail.com>
+Subject: Re: [syzbot] [fuse?] WARNING in fuse_writepages
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: syzbot <syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 16 Oct 2024 09:25:53 +0200
-Julien Stephan <jstephan@baylibre.com> wrote:
+On Fri, Oct 18, 2024 at 3:54=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Fri, 4 Oct 2024 at 21:04, Joanne Koong <joannelkoong@gmail.com> wrote:
+>
+> > > The warning is complaining about this WARN_ON here
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/fs/fuse/file.c#n1989.
+> > > I think this warning can get triggered if there's a race between a
+> > > write() and a close() where the page is dirty in the cache after the
+> > > release has happened. Then when writeback (eg fuse_writepages()) is
+> > > triggered, we hit this warning. (this possibility has always existed,
+> > > it was surfaced after this refactoring commit 4046d3adcca4: "move fus=
+e
+> > > file initialization to wpa allocation time" but the actual logic
+> > > hasn't been changed).
+> >
+> > Actually, it's not clear how this WARN_ON is getting triggered.
+> >
+> > I will wait for syzbot to surface a repro first before taking further a=
+ction.
+>
+> I think the issue is that fuse_writepages() might be called with no
+> dirty pages after all writable opens were closed.  The exact mechanism
+> is unclear, but it's pretty likely that this is the case.
+>
+> Commit 672c3b7457fc ("fuse: move initialization of fuse_file to
+> fuse_writepages() instead of in callback") broke this case.
+>
+> Maybe reverting this is the simplest fix?
 
-> Le mar. 15 oct. 2024 =C3=A0 18:43, Conor Dooley <conor@kernel.org> a =C3=
-=A9crit :
-> >
-> > On Tue, Oct 15, 2024 at 11:09:05AM +0200, Julien Stephan wrote: =20
-> > > Hello,
-> > >
-> > > This series add support for adaq4370-4 (2MSPS) and adaq4380-4 (4MSPS)
-> > > which are quad-channel precision data acquisition signal chain =CE=BC=
-Module
-> > > solutions compatible with the ad738x family, with the following diffe=
-rences:
-> > >
-> > > - configurable gain in front of each 4 adc
-> > > - internal reference is 3V derived from refin-supply (5V)
-> > > - additional supplies
-> > >
-> > > This series depends on [1] which fix several supplies issues
-> > >
-> > > [1]: https://lore.kernel.org/all/20241007-ad7380-fix-supplies-v1-0-ba=
-dcf813c9b9@baylibre.com/ =20
-> >
-> > What exactly makes this series RFC rather than v1? =20
->=20
-> Hi Conor,
-> I am sorry I forgot to add some context here... There is an ongoing
-> discussion on the dependent series about power supplies and Jonathan
-> asked me to send this series to see how to properly handle the supply
-> fix...
-> See  https://lore.kernel.org/all/20241014193701.40e3785a@jic23-huawei/
+Reverting this sounds good to me.
+
+I guess we don't run into this warning in the original code because if
+there are no dirty pages, write_cache_pages() calls into
+folio_prepare_writeback() which skips the folio if it's not dirty.
 
 Thanks,
-
-It did the job for that.  Given it's on list, do you want a review
-of the rest of the patch set, or is it still enough of a work in progress
-that we should hold off?
-
-Thanks,
-
-Jonathan
-
->=20
-> Cheers,
-> Julien
->=20
-
+Joanne
+>
+> Thanks,
+> Miklos
 
