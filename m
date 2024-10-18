@@ -1,115 +1,134 @@
-Return-Path: <linux-kernel+bounces-371036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A0499A3570
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:32:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A809A3573
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 896361C22421
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1511F283BB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CA718785C;
-	Fri, 18 Oct 2024 06:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AE9186E3F;
+	Fri, 18 Oct 2024 06:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FZsHjnxp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GcrpCD8K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280DF187339;
-	Fri, 18 Oct 2024 06:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA34920E30E;
+	Fri, 18 Oct 2024 06:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729233142; cv=none; b=jyDCs/DoPKyfBR5yNL0pCuFCA0mRJQSSYdfi6/S+2y5Ex6YKK5v3gbtriLh+s9CO4IJ2ssVuTYPO2Jun/L/aM/s1TJ34fvaZ0LTTjOxuZkmamfEln4QO3p2qcuYiDacAWxlKu0xb8UdHNV3uYxcZ9r+Cz0ENvtLYzlvrDrg9Qgg=
+	t=1729233156; cv=none; b=iQhshzoIkGDxEgsnFbYRlTe42v6k8MN3PPJiQw24MTyErySl1XXYoCoQz1Wm7JGq+ZynBpEl5SGqdJ5oD3/+q1GXiR8k7q7FDCY4KhI+Q18ZwyYO2prpdv1clBQz6ta8S8Re347C9b0BweeAw7ltuUOiHkfLA9wkRFPkigHhmiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729233142; c=relaxed/simple;
-	bh=RBbsmy0pgd1yHEdvREC300nWIODYwIgTapne369AcU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=da5eVh1SbBQmuGK6lo0fjUODIOyo+eRC4J1ViUnPZXo8KVS5B19I6F6chifVDZy3J/+PolYNjf73eO/J0iuEYZtzM4gb6wSdz5YqjeBTy0VvI/Us6PTc8TDiYDc3driMVqMfjRQqymFOj5CRUj2r9dSdQPULcHFpE++QPz+W2sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FZsHjnxp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I0NHCa005830;
-	Fri, 18 Oct 2024 06:32:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NAsB94Uf/B5zfHWiXlHuP2BRqsvtHgo1G8A+Lzo/QG0=; b=FZsHjnxpyYHDiZIQ
-	52WakfK1yBeEd2hCpKpCOIoAyTD5BVmXZBp/joDCl4oCRCHRiIo7zlTzedfu7gXj
-	Y6egA6mdNmtUU4yK4zTE9OhKmAqwYQReuFZcaLhjDclDp5le5lAC32sWQ2qIr3Sb
-	aU5mPatIxrW0toWiG4g3xT14N52dQOQuWQ9ZBFhTr1pQ8yAVebA1uA8K5rq8hOnX
-	z4IhqVYs2Q3MA4t89TGD86gyTK00NtReXKP9k0eSHW2mGwrF58ZLzVnCieGMBMPt
-	8oFf5KXoZUBXcUl4QlOq0S+yoVT2nJrlBMwI5Y7eveSvXTp5ejXuZ3Uk65++e8dW
-	Z49aMA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bd3arrrw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 06:32:16 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49I6WGvx031587
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 06:32:16 GMT
-Received: from [10.253.73.121] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 17 Oct
- 2024 23:32:12 -0700
-Message-ID: <abdb209a-3328-46f0-98d4-1a03e8da96d1@quicinc.com>
-Date: Fri, 18 Oct 2024 14:32:09 +0800
+	s=arc-20240116; t=1729233156; c=relaxed/simple;
+	bh=EnUwPW7HoPLOfLN2+uJ+xCsmQHstEx9fnNHE5H5mR0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pI/E5WTu0SjVJ17AKKg/t2rvIiUAGVPrc9Ro5OEHfsRzykWrgTbvNmzX+WpfdEsRiwxtcWkUP70S7DYp9gHYd4SSpSmNkA8DHqd2hPDrd0ahzzrbVSewczJl+ht7j0LTLo1c+WJtKu+lfQGmPmrtdgPpRaOzm9llPMSfv/I4c5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GcrpCD8K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C4CC4CEC3;
+	Fri, 18 Oct 2024 06:32:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729233156;
+	bh=EnUwPW7HoPLOfLN2+uJ+xCsmQHstEx9fnNHE5H5mR0s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GcrpCD8K5de0gfBddqhcRaulw2jdw7B+CZrIOjcQYlq/5bA4rDB3dyhlnujmXAzvt
+	 QTsDYiPLPrp/x7wBaHuO2Ji5KcIHXnPor0MfbqN3CCfJfRcoMxM2ldiwYxIi3cSmRL
+	 RJGKr0Jetfm3bKpJ1q3tYL3+yKzp7BlqqdvdvKDE/LCuVBzQGrZHYeu9eSyD8XUu0n
+	 d8ccWsamOb3AJqF3XDwQFouhZZluNsDiPPP2vZOjBxKepzSSdcGh7pIbGSmpALdDY6
+	 +Yu1T4ItATMHYkc/VfqNTAy/sfqNHVUTgN1AxOIvUHyv4wKfpGwZPROWxdDhIpi8iu
+	 smigCvrtn/5wQ==
+Date: Fri, 18 Oct 2024 08:32:32 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	igor.belwon@mentallysanemainliners.org
+Subject: Re: [PATCH v2 2/4] arm64: dts: exynos: Add initial support for
+ Samsung Galaxy S20 Series boards (hubble)
+Message-ID: <px4lfzrmgppve7rhwihjg3fbejemxtufoxlxu6r4igvuynuim7@vu2w746zuxlk>
+References: <20241017164328.17077-1-umer.uddin@mentallysanemainliners.org>
+ <20241017164328.17077-3-umer.uddin@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: aoss: qcom: Document the qcs615 AOSS_QMP
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>,
-        <quic_aiquny@quicinc.com>, <quic_sudeepgo@quicinc.com>,
-        <quic_taozhan@quicinc.com>, <quic_jiegan@quicinc.com>
-References: <20241017025313.2028120-1-quic_chunkaid@quicinc.com>
- <20241017025313.2028120-3-quic_chunkaid@quicinc.com>
- <u7y2eu6t4ljk42rigfgxylpzpog2ygbwcou7e6jalnfqsqxsfy@ifezf2435be4>
-Content-Language: en-US
-From: Kyle Deng <quic_chunkaid@quicinc.com>
-In-Reply-To: <u7y2eu6t4ljk42rigfgxylpzpog2ygbwcou7e6jalnfqsqxsfy@ifezf2435be4>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NQ3mTraN_s6LAXjHz4GdM3Esfq1Pewvg
-X-Proofpoint-ORIG-GUID: NQ3mTraN_s6LAXjHz4GdM3Esfq1Pewvg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 impostorscore=0 clxscore=1011 mlxlogscore=811
- malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180039
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241017164328.17077-3-umer.uddin@mentallysanemainliners.org>
+
+On Thu, Oct 17, 2024 at 05:43:25PM +0100, Umer Uddin wrote:
+> Add initial support for the Samsung Galaxy S20 Series (hubble) phones.
+> They were launched in 2020, and are based on the Exynos 990 SoC.
+> The devices have multiple RAM configurations,
+> starting from 8GB going all the way up to 16GB for the S20 Ultra devices.
+> 
+> This device tree adds support for the following:
+> 
+> - SimpleFB
+> - 8GB RAM (Any more will be mapped in device trees)
+> - Buttons
+> 
+> Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+> ---
+>  .../dts/exynos/exynos990-hubble-common.dtsi   | 109 ++++++++++++++++++
+>  1 file changed, 109 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-hubble-common.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos990-hubble-common.dtsi b/arch/arm64/boot/dts/exynos/exynos990-hubble-common.dtsi
+> new file mode 100644
+> index 000000000..2c634e4bb
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos990-hubble-common.dtsi
+> @@ -0,0 +1,109 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> +/*
+> + * Samsung Galaxy S20 Series device tree source
+> + *
+> + * Copyright (c) 2024, Umer Uddin <umer.uddin@mentallysanemainliners.org>
+> + */
+> +
+> +/dts-v1/;
+> +#include "exynos990.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +/ {
+> +	chosen {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		framebuffer0: framebuffer@f1000000 {
+> +			compatible = "simple-framebuffer";
+> +			reg = <0 0xf1000000 0 (1440 * 3200 * 4)>;
+> +			width = <1440>;
+> +			height = <3200>;
+> +			stride = <(1440 * 4)>;
+> +			format = "a8r8g8b8";
+> +		};
+> +	};
+> +
+> +	memory@80000000 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x80000000 0x0 0x3ab00000>,
+> +		      /* Memory hole */
+> +		      <0x0 0xc1200000 0x0 0x1ee00000>,
+> +		      /* Memory hole */
+> +		      <0x0 0xe1900000 0x0 0x1e700000>,
+> +		      /* Memory hole */
+> +		      <0x8 0x80000000 0x1 0x7ec00000>;
 
 
+If I am counting correctly, that's only 8 GB, not 12.
 
-On 2024/10/17 17:18, Krzysztof Kozlowski wrote:
-> On Thu, Oct 17, 2024 at 10:53:12AM +0800, Kyle Deng wrote:
->> Document the Always-On Subsystem Qualcomm Message Potocol(AOSS_QMP)
-> 
-> typo: Protocol
-Okay,I will fix it in the next version.
-> 
->> on the Qualcomm qcs615 platform.
->>
->> Signed-off-by: Kyle Deng <quic_chunkaid@quicinc.com>
-> 
-> Best regards,
-> Krzysztof
-> 
+Best regards,
+Krzysztof
 
 
