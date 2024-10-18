@@ -1,94 +1,180 @@
-Return-Path: <linux-kernel+bounces-371929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B33B9A423F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:23:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A34889A4242
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53EB61C208DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:23:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499D5280E63
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E586202637;
-	Fri, 18 Oct 2024 15:23:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4883F2022D9;
+	Fri, 18 Oct 2024 15:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7i5uxKe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAE920262E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AC22010F0;
+	Fri, 18 Oct 2024 15:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729264985; cv=none; b=keaf7/v+J9g53ugugqtD+yQUR/Pt1/jtrrd7IjdF7yhyGRJd1MJ0z7mSw3cDoTIy0CCQn1K+tXXUupusGIfno2l0aBOR9GX5iD4EHGJJnzIkCtdNK3KAsYcj6Zl7Da8Eo1lml7sZIUkH4xlKmBy/GPkqNy4lDeVtzSczdRGj4FE=
+	t=1729264998; cv=none; b=cb01OBt0+4zts5JOcZWK/yWyA8Gxw4XEeRRS/AXg0DG6o6SKzB12yO6a5C+DcVMqqjCf8KpL6RwKfjd1U1esMGnAWgXk2TrEYZvVC/FWei3jMo688mTUc7E3WHQHassyKpk8KEsL0ULdyq3Ad+dU7nLRz/LG4puoiWcpjHGn0fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729264985; c=relaxed/simple;
-	bh=S2b8raoKO2jpMm+bStWmIYHe9iT0SxSMwT/23htQqKU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tyqfwcJrXqTv6mr0Gvnd7A4RMrdlcwYhktHEnPE0qxSXHfyG6uZLkZoUwppYDIGdQlE/R0ke7w6nfigI8jqkkZl4jtOPVhkE9qZFVtPP3uDwLXBdr9no/ZAZ7dlxmdQExSNMC08vcCgN8TbJZm9XCmb56dBYi4xvol69Vk4CBDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so23223215ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:23:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729264983; x=1729869783;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MMasKnrStJmhL2WrAjeBgpPgH9uRvlMVH0mRvvyx83E=;
-        b=iC9GabVHBA1C7tmxnOK1uQg6GN9yomFGxKgDaTOEeghN7VwVpPtXErhx+EG4BeYq/N
-         OI6XESgRJ+/K047BkoLcRGHbsoJLtlu7Es+5S98adWfq3WefQLHUPsJE4r7MkwDI7pyC
-         1rhju/TL5W7yDEkEGJ6Wt6GFHyha6jYhzC+i9ZOW1LWN2YaQFgkgfLuQfcDn7tpzVBYG
-         jwCh7pbYG0chCKRyBQ5MKZ3ukEybM51feJRKrIG5Rh9M3R5XEId+ZBYwqi0jFzIXIAWc
-         7sZD174Qe9krER7KhoOxUb/ZNG0DgIOgL5yVqy+LCObor08svGO74MNPAEDlkIm92BeM
-         X/ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWoKBiq5w7eredbP7PoBLczv0MF+yozAqbuiyBHgwtasXPcJ2EJLoEdZa3TXOfXqVysT+OFscMQ+6WT9eA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz8uRVN+7C1OWTeEglvzWpk5LjLi31MU3t3rl3UY94WLeZDWWx
-	KWavxgvMwhkgCUcQrNpIlJjqp4Dyg3DL7ktN6GrytEwbwii4Frz5WEUwuiaXUeP2GUR8LisSxb2
-	LiDxbY9PcyBglg15WzE0oEiEMIu5PPzUh3UaEYKjQvhA7fUGXj08O9Hc=
-X-Google-Smtp-Source: AGHT+IFaa43STGFMHe0/hOCzeExl2B3M5A5tpOKNGOU/pV3YF8Pp+q0cS6YasT/jYWn8gro3UAO0r1Ann3dOBmvYjNAqMsS6YWOP
+	s=arc-20240116; t=1729264998; c=relaxed/simple;
+	bh=CxkuYeapXtUVsDlCc28E9Iy/192+YAlGn6UxeAQPmms=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sNWF46qbgq1uWc1Ys6xGcP8dK5wUmEo0+2t1OTMJmoHCOIjlFFBoksN7XO1hpzcVPl/EwL6wQKwq26BCAy3R4J1dyVws8G5m2OZdsluY6zZy6TdaJnbNAo0Y0a8RvxuQrZj/X093iwu3NVd2/WBTsU3a8Fqh3Kq3gtqb7bJGqtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7i5uxKe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A732C4CEC3;
+	Fri, 18 Oct 2024 15:23:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729264998;
+	bh=CxkuYeapXtUVsDlCc28E9Iy/192+YAlGn6UxeAQPmms=;
+	h=From:To:Cc:Subject:Date:From;
+	b=g7i5uxKe3rT7ZBt81OUoHh5Jlsvi6b8SjgNVu4Q7C4YSr1EfvOLI6+2rfJn0hTc93
+	 hk23hkFGzz14BUehPnEYg/8LDnRM2aqakciLnfv2bBanNV8A29bbz5dDjYWqmWnTFN
+	 f6Ex1H69BKLwmmnJ8DIxUcp1tf2FINCLoYNHw2cE76bkrDmR8LGf1hmzEZy83ronnR
+	 2qPAL1Qizt3xykcue85Eyuvcjht1d62aEVQMeqyNaGajaVONJk1lkH1qWdnvSE9l3W
+	 buF1iBMIGu8PC9r6a8qMMYN6DmN7aYQUsurrtoO7c+N6Q2A6bh/RSSwUaLxjokcrda
+	 rt7YURxOn3rCQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Zong-Zhe Yang <kevin_yang@realtek.com>,
+	Kuan-Chung Chen <damon.chen@realtek.com>,
+	Chih-Kang Chang <gary.chang@realtek.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] rtw89: -Wenum-compare-conditional warnings
+Date: Fri, 18 Oct 2024 15:23:07 +0000
+Message-Id: <20241018152311.4023979-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:144a:b0:3a3:3e17:993f with SMTP id
- e9e14a558f8ab-3a3f405d064mr29660255ab.8.1729264982842; Fri, 18 Oct 2024
- 08:23:02 -0700 (PDT)
-Date: Fri, 18 Oct 2024 08:23:02 -0700
-In-Reply-To: <46d8cfe7db6f381c99455159bff1c2220dff4aed.camel@huaweicloud.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67127d56.050a0220.10f4f4.0016.GAE@google.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
- process_measurement (4)
-From: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
-	ebpqwerty472123@gmail.com, eric.snowberg@oracle.com, hughd@google.com, 
-	jmorris@namei.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	roberto.sassu@huawei.com, roberto.sassu@huaweicloud.com, serge@hallyn.com, 
-	stephen.smalley.work@gmail.com, syzkaller-bugs@googlegroups.com, 
-	zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Arnd Bergmann <arnd@arndb.de>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This is one of three drivers that trigger -Wenum-compare-conditional warnings
+with clang:
 
-Reported-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
-Tested-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+drivers/net/wireless/realtek/rtw89/core.c:1806:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
+ 1806 |                 return eht ? NL80211_RATE_INFO_EHT_GI_0_8 :
+      |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1807 |                              NL80211_RATE_INFO_HE_GI_0_8;
+      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/wireless/realtek/rtw89/core.c:1810:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
+ 1810 |                 return eht ? NL80211_RATE_INFO_EHT_GI_1_6 :
+      |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1811 |                              NL80211_RATE_INFO_HE_GI_1_6;
+      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/wireless/realtek/rtw89/core.c:1813:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
+ 1813 |                 return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
+      |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1814 |                              NL80211_RATE_INFO_HE_GI_3_2;
+      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/wireless/realtek/rtw89/core.c:1818:15: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
+ 1818 |                         return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
+      |                                    ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1819 |                                      NL80211_RATE_INFO_HE_GI_3_2;
+      |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Tested on:
+In this case, all four warnings can be easily avoided by splitting the
+function into two separate ones, in a way that helps readability as well,
+at the expense of a few extra source lines.
 
-commit:         31063ab7 mm: Split locks in remap_file_pages()
-git tree:       https://github.com/robertosassu/linux.git remap-file-pages-locking-v1
-console output: https://syzkaller.appspot.com/x/log.txt?x=15502240580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5b6f5c91e13aedf5
-dashboard link: https://syzkaller.appspot.com/bug?extid=1cd571a672400ef3a930
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/wireless/realtek/rtw89/core.c | 48 +++++++++++++++++------
+ 1 file changed, 37 insertions(+), 11 deletions(-)
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
+index bba5bde95bb4..62e873fa1659 100644
+--- a/drivers/net/wireless/realtek/rtw89/core.c
++++ b/drivers/net/wireless/realtek/rtw89/core.c
+@@ -1858,32 +1858,58 @@ static void rtw89_core_rx_process_phy_sts(struct rtw89_dev *rtwdev,
+ 					  phy_ppdu);
+ }
+ 
+-static u8 rtw89_rxdesc_to_nl_he_eht_gi(struct rtw89_dev *rtwdev,
+-				       u8 desc_info_gi,
+-				       bool rx_status, bool eht)
++static u8 rtw89_rxdesc_to_nl_he_gi(struct rtw89_dev *rtwdev,
++				   u8 desc_info_gi,
++				   bool rx_status)
++{
++	switch (desc_info_gi) {
++	case RTW89_GILTF_SGI_4XHE08:
++	case RTW89_GILTF_2XHE08:
++	case RTW89_GILTF_1XHE08:
++		return NL80211_RATE_INFO_HE_GI_0_8;
++	case RTW89_GILTF_2XHE16:
++	case RTW89_GILTF_1XHE16:
++		return NL80211_RATE_INFO_HE_GI_1_6;
++	case RTW89_GILTF_LGI_4XHE32:
++		return NL80211_RATE_INFO_HE_GI_3_2;
++	default:
++		rtw89_warn(rtwdev, "invalid gi_ltf=%d", desc_info_gi);
++		if (rx_status)
++			return NL80211_RATE_INFO_HE_GI_3_2;
++		return U8_MAX;
++	}
++}
++
++static u8 rtw89_rxdesc_to_nl_eht_gi(struct rtw89_dev *rtwdev,
++				    u8 desc_info_gi,
++				    bool rx_status)
+ {
+ 	switch (desc_info_gi) {
+ 	case RTW89_GILTF_SGI_4XHE08:
+ 	case RTW89_GILTF_2XHE08:
+ 	case RTW89_GILTF_1XHE08:
+-		return eht ? NL80211_RATE_INFO_EHT_GI_0_8 :
+-			     NL80211_RATE_INFO_HE_GI_0_8;
++		return NL80211_RATE_INFO_EHT_GI_0_8;
+ 	case RTW89_GILTF_2XHE16:
+ 	case RTW89_GILTF_1XHE16:
+-		return eht ? NL80211_RATE_INFO_EHT_GI_1_6 :
+-			     NL80211_RATE_INFO_HE_GI_1_6;
++		return NL80211_RATE_INFO_EHT_GI_1_6;
+ 	case RTW89_GILTF_LGI_4XHE32:
+-		return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
+-			     NL80211_RATE_INFO_HE_GI_3_2;
++		return NL80211_RATE_INFO_EHT_GI_3_2;
+ 	default:
+ 		rtw89_warn(rtwdev, "invalid gi_ltf=%d", desc_info_gi);
+ 		if (rx_status)
+-			return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
+-				     NL80211_RATE_INFO_HE_GI_3_2;
++			return NL80211_RATE_INFO_EHT_GI_3_2;
+ 		return U8_MAX;
+ 	}
+ }
+ 
++static u8 rtw89_rxdesc_to_nl_he_eht_gi(struct rtw89_dev *rtwdev,
++				       u8 desc_info_gi,
++				       bool rx_status, bool eht)
++{
++	return eht ? rtw89_rxdesc_to_nl_eht_gi(rtwdev, desc_info_gi, rx_status) :
++		     rtw89_rxdesc_to_nl_he_gi(rtwdev, desc_info_gi, rx_status);
++}
++
+ static
+ bool rtw89_check_rx_statu_gi_match(struct ieee80211_rx_status *status, u8 gi_ltf,
+ 				   bool eht)
+-- 
+2.39.5
+
 
