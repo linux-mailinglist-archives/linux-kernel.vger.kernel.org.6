@@ -1,139 +1,88 @@
-Return-Path: <linux-kernel+bounces-372507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6859A4990
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 956249A4997
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1A6DB22037
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:16:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6DFCB224E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2661819047E;
-	Fri, 18 Oct 2024 22:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBA318FDD0;
+	Fri, 18 Oct 2024 22:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmSIL0OO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="beoxhTm/"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6047A18D620;
-	Fri, 18 Oct 2024 22:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC90A188010;
+	Fri, 18 Oct 2024 22:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729289809; cv=none; b=qauMANJ05sd3/t3RTRblbAOJLcz0eX0iD18+8v+ezysbdjKpY75GCeo8+c5dksNShzjBD2v95jOxjAKNy00yE7Z0Mdk7pKXuVNHKzJUlOszxzHtp+zTEcjyk0XkX3OrEDwgV1rHYACHRh3pIZqyVhSn2O9NNgMrAOxFWJRsXIUk=
+	t=1729290076; cv=none; b=je854HVtdXZjhDwwILQR+cpglqCdc5D3H1TLtiYU7bjFXE8jS9Oa6mNLcW+NbGgDkxdJilS0hpY47TDFZ6DnNGdec6LKmEBvkAf3VkmaXyjKbv0t2/eksDHs5gckzhu5/9Pv4r73Qkh7t8zhIu/ZowHdMKXNVr6vt/9tE58Lv9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729289809; c=relaxed/simple;
-	bh=5dHJfEm//35pWwhcN2KEO86KY/+VX4OyM6ATgjJuFow=;
+	s=arc-20240116; t=1729290076; c=relaxed/simple;
+	bh=7AX+UloeEVKGtCsWCJzVMK5wsfs3qcLMFGgDp508ASs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WC2yzLMg64wBp3JpUpXAFybn226rl/z4GKwH81iycQXt3p3QJ2+CK04XIw/4P3fLAWrt+Nj7zQ10H8Jv/Vx6NJo+cbdXQjvluB5z5sPDUIHNLHemq+t0feueOLr1C5NDbJC75W7KGWalbFOzDglhgIqydBJpyIkHl6JCOivwZ0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmSIL0OO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126A7C4CEC6;
-	Fri, 18 Oct 2024 22:16:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729289808;
-	bh=5dHJfEm//35pWwhcN2KEO86KY/+VX4OyM6ATgjJuFow=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=gnrqKN/yeJfiSVMtffBpxaEhsFQkMT7PLtEUMB3TfLd5exHdBibDYqvy4iNFTjljMRr6FDI0Yf/yRgKzQVNlsU9I9s0BoMd8jjCiqjyQtkt6mtO8EC11p0sJyW2lZwzWvGbFt1DqXn8N+gwJaI3u7HzDqOztzmtqvXTI6aW/ybc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=beoxhTm/; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id C159F177103; Fri, 18 Oct 2024 22:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1729290073; bh=7AX+UloeEVKGtCsWCJzVMK5wsfs3qcLMFGgDp508ASs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KmSIL0OOaHObtvUoi1O1SZEQYGAT80cUtx+ys1Qt124zMTIxotskyKvZx0U7Ty+E2
-	 VNy50yirarmymG1aWuK17ZJaHUC2VUZQXVfXGpysL20keMuxedkHalbBsfudxA8AVE
-	 ozsKZnBkm+pHsRtvKlrMmcHmTaw2BPL7MSUYx5mMnmsnz2sqLThXT82ksdLLo4D4qS
-	 ID+fDk+YluZJmohUwt6Cg0j0JIOVdzR588qBX+QuYoFrmtjbvBgkOM04PrmKRDm8xJ
-	 UltiyoccabinhZl5Of4JYPm0QyrTQ58F7D1+HLWGNU5PNjofPM8Rux2wWdjvZWoYYZ
-	 sjwb2ZVG4XUfg==
-Date: Fri, 18 Oct 2024 19:16:43 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Howard Chu <howardchu95@gmail.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@intel.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
- syscall ids in syscalltbl->entries
-Message-ID: <ZxLeS7CQFIR8lTmo@x1>
-References: <c279ad02-2543-4a95-9404-9304e1e704da@kernel.org>
- <ffc2eb09-ac78-4594-a376-3fff9918c2a7@kernel.org>
- <ZwYbQswnGHSstClc@google.com>
- <CAH0uvoi622J7gZ9BoTik7niNH3axVJR0kPNovUQnMjUB6GWLNg@mail.gmail.com>
- <CAH0uvojw5EKqxqETq_H3-5zmjXiK=ew2hBQiPDpCtZmO7=mrKA@mail.gmail.com>
- <3a592835-a14f-40be-8961-c0cee7720a94@kernel.org>
- <ZwgAzde-jVyo4cSu@google.com>
- <ZwgBenahw7EImQLk@google.com>
- <ZwhA1SL706f60ynd@x1>
- <2a91f9d0-8950-4936-9776-7ba59ab1d42a@kernel.org>
+	b=beoxhTm/t5XUtiGDsrMqOir9WwDiQKvhwGlIp9sIWzHKxRcHLViu1JP/nM898oFlR
+	 ZezrcquVze/jENe0LUNM35so/esHGanHNe8AHCVNsge2F4fmGeb1zU9Vznt9OvL+0n
+	 7Cff+dRRkSHFw/7JQI0++RbHXoFw0S0huyjSMKx41M3xf+J8Sa/HJcxazHMDyRFWS/
+	 kh7uTgMJ+adjQ7qPfvV+rc1hS4WelPtU8Ks79xUIrG8uTtT0ZNetiM98YD6TVlRuEf
+	 XzJyyt/VsuoHOfqwGOlu3hJruQbhvzAFjPNL/Gpyl26QT2H0p21dPbFdAc+lZ7Vj4x
+	 t5lRoiwZS5/Nw==
+Date: Fri, 18 Oct 2024 22:21:13 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org, corbet@lwn.net,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation: English fixes in kgdb/kdb article
+Message-ID: <20241018222113.GA799331@lichtman.org>
+References: <20241018163136.GA795979@lichtman.org>
+ <20241018175540.GA796909@lichtman.org>
+ <CAD=FV=UwNAkam8HFhdPLRCXHf05LUXdJF++d-pvpFrCLtOypPQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2a91f9d0-8950-4936-9776-7ba59ab1d42a@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=UwNAkam8HFhdPLRCXHf05LUXdJF++d-pvpFrCLtOypPQ@mail.gmail.com>
 
-On Mon, Oct 14, 2024 at 02:19:58PM +0200, Jiri Slaby wrote:
-> On 10. 10. 24, 23:02, Arnaldo Carvalho de Melo wrote:
-> > On Thu, Oct 10, 2024 at 09:31:54AM -0700, Namhyung Kim wrote:
-> > > On Thu, Oct 10, 2024 at 09:29:01AM -0700, Namhyung Kim wrote:
-> > > > On Thu, Oct 10, 2024 at 10:22:12AM +0200, Jiri Slaby wrote:
-> > > > > Subject: [PATCH] perf: fix non-listed archs
-
-> > > > > Suggested-by: Howard Chu <howardchu95@gmail.com>
-> > > > > Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-
-> > > > Acked-by: Namhyung Kim <namhyung@kernel.org>
-> > > Also with,
-> > > Fixes: 7a2fb5619cc1fb53 ("perf trace: Fix iteration of syscall ids in syscalltbl->entries")
-> > > > Arnaldo, can you please pick this up for v6.12?
-
-> > Sure, probably the safest bet now, but just in case, Jiri, can you test
-> > the following?
-
-> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > Subject: [PATCH 1/1] perf tools arm: Generate syscalltbl.c from arm's syscall.tbl
+On Fri, Oct 18, 2024 at 12:46:14PM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> With this:
-> +++ b/tools/perf/Makefile.config
-> @@ -31,7 +31,7 @@ $(call detected_var,SRCARCH)
->  ifneq ($(NO_SYSCALL_TABLE),1)
+> On Fri, Oct 18, 2024 at 10:55 AM Nir Lichtman <nir@lichtman.org> wrote:
+> >
+> > @@ -201,7 +201,7 @@ Using loadable module or built-in
+> >  Configure kgdboc at runtime with sysfs
+> >  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> >
+> > -At run time you can enable or disable kgdboc by echoing a parameters
+> > +At run time you can enable or disable kgdboc by writing parameters
+> >  into sysfs. Here are two examples:
+> 
+> In response to v1, Matthew wanted you to change "the sysfs" into
+> "sysfs". In the above it's no longer "the sysfs" but it's not part of
+> your patch (no "-" of the old line with the "the" and "+" of the new
+> line without the "the". Huh? This causes the patch to fail to apply.
+> 
+> Other than that, this all looks fine to me.
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-So after merging your changes (thanks) and finding an arm 32-bit system
-(ressurecting a raspberry pi 3), I can build it, with bpf skels, etc but
-then...
-
-; } else if (size > 0 && size <= value_size) { /* struct */
-83: (bf) r1 = r9
-84: (07) r1 += -1
-85: (67) r1 <<= 32
-86: (77) r1 >>= 32
-87: (25) if r1 > 0xfff goto pc+23
- R0_w=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_w=inv(id=0,umax_value=4095,var_off=(0x0; 0xfff)) R2_w=map_value(id=0,off=16,ks=4,vs=8272,imm=0) R3_w=inv(id=0) R6_w=map_value(id=0,off=20,ks=4,vs=24,imm=0) R7_w=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8_w=invP6 R9_w=inv(id=27,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R10=fp0 fp-8=mmmmmmmm fp-16_w=map_value fp-24=map_value fp-32_w=invP40 fp-40=ctx fp-48=map_value fp-56_w=inv1 fp-64_w=map_value fp-72=map_value fp-80=map_value
-; if (!bpf_probe_read_user(((struct augmented_arg *)payload_offset)->value, size, arg))
-88: (79) r1 = *(u64 *)(r10 -16)
-89: (bf) r2 = r9
-90: (85) call bpf_probe_read_user#112
- R0_w=map_value(id=0,off=0,ks=4,vs=24688,imm=0) R1_w=map_value(id=0,off=112,ks=4,vs=24688,imm=0) R2_w=inv(id=27,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R3_w=inv(id=0) R6_w=map_value(id=0,off=20,ks=4,vs=24,imm=0) R7_w=map_value(id=0,off=56,ks=4,vs=8272,imm=0) R8_w=invP6 R9_w=inv(id=27,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R10=fp0 fp-8=mmmmmmmm fp-16_w=map_value fp-24=map_value fp-32_w=invP40 fp-40=ctx fp-48=map_value fp-56_w=inv1 fp-64_w=map_value fp-72=map_value fp-80=map_value
-R2 unbounded memory access, use 'var &= const' or 'if (var < const)'
-processed 497 insns (limit 1000000) max_states_per_insn 2 total_states 23 peak_states 23 mark_read 15
--- END PROG LOAD LOG --
-libbpf: prog 'sys_enter': failed to load: -13
-libbpf: failed to load object 'augmented_raw_syscalls_bpf'
-libbpf: failed to load BPF skeleton 'augmented_raw_syscalls_bpf': -13
-
-Back at playing games with the BPF verifier:
-
-root@aquarius:~# uname -a
-Linux aquarius 5.10.103-v7+ #1529 SMP Tue Mar 8 12:21:37 GMT 2022 armv7l GNU/Linux
-root@aquarius:~# clang-13 --version
-Raspbian clang version 13.0.1-6~deb10u4+rpi1 (172.17.3.10:/build/git/l/llvm-toolchain-13 5bdfde6d6808bed4396414f7000db3d958040453)
-Target: arm-unknown-linux-gnueabihf
-Thread model: posix
-InstalledDir: /usr/bin
-root@aquarius:~#
-
-Will continue chasing windmills tomorrow...
-
-- Arnaldo
+Thanks, sorry about that mistake, will send a v3 with a fix shortly.
 
