@@ -1,450 +1,249 @@
-Return-Path: <linux-kernel+bounces-371194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122169A37B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:54:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F889A37BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF1F2849D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C72F2856F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453A01442F4;
-	Fri, 18 Oct 2024 07:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E9118E037;
+	Fri, 18 Oct 2024 07:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3OpXelTP"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="bacZkfUE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bZ8f1Rbi"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4961318CC05
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC1A18CBE6;
+	Fri, 18 Oct 2024 07:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729238045; cv=none; b=MubunVZgTcv0epA5Gb74A8dd33ZIqwkeQ2XskD7metqgnG6kmavH/1V+KTJFe0sxTRWnOSsXudcy1pkx2gKE5QrOEa1V510rIMUikHecdgAQz6glAefpjTmPRX8qteDkyl4dvc0a1d4/3M46mua5OFFlVIE/3EaJYJsZp5wf3+k=
+	t=1729238076; cv=none; b=XQ9VNbdv5nkFpJTLVz5h39iHX203hsc1gzXo7zO/+5E7/xjiQe+oWfoj/LnFce3lJYTCJl9TcfzxFUfmTjFxnX+YuiP3d+TpXTGhn44SqWCYNpBuB+iyZYsXkdWHFDnkN8NDroQTzsHkjMhgAOzsUs9LHKLVAc+KRgkihItvfOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729238045; c=relaxed/simple;
-	bh=8zYKmJNjygwOMuAiCDaGQaWCy++42Kn8YoUjmioLzcE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XN3IgrGlXbWwJr2N8RszI3g2bjmtx3glJU9KIz7cqfixwthMPNkzWfQAm+4y19ozl/JuarbfkAKvgFvwM1R/gsKZoroLWZf789RJo8+JHkxNXLwQ93IKa98yPQAQTotv2zGSJCps6Sn+lh2pu/AkDNMBhKmwbvqdINmqUT6XI/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3OpXelTP; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-431518ae047so13405015e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:54:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729238041; x=1729842841; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p2DfE++i5UbLneVMcP8Emct3Ey/R8+tu/KecJg2ueJ8=;
-        b=3OpXelTP2AnzKVDRqokWQUinVCyZe4q3jNrebnXcaTLaAMWkBmu3KT1be3qX0Pf8gs
-         ubpwXwgBTA/3W9M7IMdbpedy7sC+sJu2qvaoGub+59P2Z19A1pzGQ6GXWz6x3QzgpGVH
-         5mjdsTVglEwVCMz6dCEAo2d8xe39dwvSg1RyDi/0wgguHOF7y5ccIBSnIZPhGfJyhgdG
-         4m/rZx9g2nslnG5NceulPU99Yq0Ow2WeCDOWY2dz7LLkqML8hgdsJTgR/ZxBUztH0hwk
-         3Rx+5w+wMasZKoIwFsqaO8a11ed9oH38BroCxjEJrIwS+2vipMOFS2VraOL07vNe64kQ
-         YzKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729238041; x=1729842841;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p2DfE++i5UbLneVMcP8Emct3Ey/R8+tu/KecJg2ueJ8=;
-        b=YmtZnBAYjRSDfxQLtQLrMosQ46WG2NDUFOLwfdI7u703zdLT5YQ9orFU+cYtxFsMw+
-         clt8MqZO3sV7LgISMIORHC4N+z+2xavwcsEG0wS6VgFYh41ctpsYXfQIMiVb+d85Sbxu
-         xcda4U3l03pzRQPoAI5OytAP3BdDoCeoDFT+000CRSDvE1Y6bnAaAip2Q1ednJ7kEMdT
-         fB1+o/ZI715Nqm8hId8l+15OBV+Adfs+9FwUDTqhtg5NNW/iJ06qfZOtVknSjVMtSI0p
-         siPqB0XGDYnki5YEV1m6V+51Ziw9zzQo1A0Km5N0wnXlWxr++Bibp7KAZ175X0ih4MQx
-         my8Q==
-X-Gm-Message-State: AOJu0YzD0P8EdphZTKwbzXpb+hMKrnvvyyqREDQqp1TgB4pp5lqeCcDA
-	xKqUa+xD0cugI/vBfmHU3d2dajjvEgTJ4eAAT4jP53hN/a1uxgy+mreJKTeicziLdmSMHg==
-X-Google-Smtp-Source: AGHT+IGprioily34Rw5wEVc8KJpJ/e2dL5gSfhlYAIlyD8U4HYi+og3DaBnLXkiTFJBK5a3Eq0Ly+UPi
-X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:adf:b609:0:b0:374:badf:9b16 with SMTP id
- ffacd0b85a97d-37ecee1197emr1427f8f.0.1729238041450; Fri, 18 Oct 2024 00:54:01
- -0700 (PDT)
-Date: Fri, 18 Oct 2024 09:53:51 +0200
-In-Reply-To: <20241018075347.2821102-5-ardb+git@google.com>
+	s=arc-20240116; t=1729238076; c=relaxed/simple;
+	bh=X8haYsb381neW+dETbhktpqU3lK2inRGLWQPz8R0D4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gDghC8YwKO/34H3aSLkBY9ZDNEHyQ6vVQRcvsr4B8SuQjL+dwePsvjLogs1udhFjRsUGZ+SfZ+xJqYnBlxp88DqDRNsbMMPYOyCWz8hYLKDYQNOKRzp16s1GZ4Ir2x7covHuODOGT6FMMvLzt1l2NT/yPDsi4WHyiUjI//JZbn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=bacZkfUE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bZ8f1Rbi; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 008361140215;
+	Fri, 18 Oct 2024 03:54:33 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Fri, 18 Oct 2024 03:54:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729238072; x=
+	1729324472; bh=u3sl/1PSnM1FXF1JtFpDhiIVcuz0H5aAevpo8M62y+o=; b=b
+	acZkfUESHOkaEH95Kb7E0jPX2oI01YdsE9t0+ZzxzzVcRhdx15ViFRaDh2qBxx8I
+	fTMTdvOAK/b1x71ljVoR24R+xvMy0TBgZAtgsfznZ5tmm5OqElFGPRbndfW6rsGm
+	WBjw0yVlzcVMwfb2rHd7ai1sq23lzqcUH5ENur+E+XMetcWL3cqsJh+ya/knSGNW
+	duDpOd5N6ctIKQzBrzCZWs9X1hAVATPCHeV2m2DJwXPUjdzsNzwSHivUwy1TQzuN
+	OUXkDAEx844sgphrJpr9+SsbIbLgvYkCbifpLeV4EU/yfrEKjDsiTyqQjobVcfyd
+	FEe7TC9330pP3leiz4cuA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1729238072; x=1729324472; bh=u3sl/1PSnM1FXF1JtFpDhiIVcuz0
+	H5aAevpo8M62y+o=; b=bZ8f1Rbi5jkgG6AyOWA7eO6wMvuteXAArTJBMC/G1nLf
+	shHMG7U4mqcFnRwjMcNbC8AlYty1CfsNxOcVReYy08nqXMVi+d20puL6f9wFdQ6r
+	NbqMqIS6okHeiv/+6kNIBoUpdOUHkHiWyfY1GEpQP5JJ2MvxiUesExLueuydaWTH
+	avn2Mw4FsDK1g8pQT9SlsmIWr+uBg8HXPSKZH7iEWMlsByYRgcOjIq/fCcaeUijA
+	DISWjDKHbRjRNSkzCSIjzfeIVmJjnYQ9WtIHj7+LRYR6jx3MbIkKjBgSFTWIDQUq
+	1GPV41XvzuqaBAlW18DExHHQe7OynT/l2SN90lygiA==
+X-ME-Sender: <xms:OBQSZ1ICxP0tAZFaRJoIgnxiMqYhTGlya_unY5NXPQV-9zDbzAKq-w>
+    <xme:OBQSZxLFGK4Yl9-t_N4Owgjy8LDjCYtYp1skZJiNLKvJUMCXvElCc9l7YL90q8C-s
+    B4e6bKvFw8kaRjr__I>
+X-ME-Received: <xmr:OBQSZ9tskqFEwAPXB2spEnV-a15HKRb3SHKi2N5QECsiU5_mqNgkGdN64KVmifJ82xeDkQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehvddguddvgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddv
+    necuhfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllh
+    esshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepleetudegtdfghedu
+    udfhteelieeuvddtheeijeejudefjeefgeettedutdeggfdunecuffhomhgrihhnpehkvg
+    hrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtoh
+    epudekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehnvggvrhgrjhdruhhprggu
+    hhihrgihsegrmhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhi
+    gidruggvpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtoh
+    epuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthho
+    pehthhhomhgrshdrlhgvnhgurggtkhihsegrmhgurdgtohhmpdhrtghpthhtohepnhhikh
+    hunhhjsegrmhgurdgtohhmpdhrtghpthhtohepshgrnhhtohhshhdrshhhuhhklhgrsegr
+    mhgurdgtohhmpdhrtghpthhtohepvhgrshgrnhhtrdhhvghguggvsegrmhgurdgtohhm
+X-ME-Proxy: <xmx:OBQSZ2aH7OElaZOw_Lsf04fZZWI4icLv32MEBcDf3x6YCII9hwO8-Q>
+    <xmx:OBQSZ8YOpzXCyIibgQi02yGr9IpJol_i55ENYACo6x7gA9kCotlWqg>
+    <xmx:OBQSZ6DK1cK53_dVxciIjYwRpdWCeejle6sBS-jrNjstHGdWKrZgVg>
+    <xmx:OBQSZ6aXMAf3pWLKIWih1sFHTcKSHu5Fo3bPUC7UpVVyxAGj5EuTig>
+    <xmx:OBQSZ5SO6YCoLqpWYY5n9EJqv1_FivC85uvxF6FhtxjOnDHJmdlhkWoo>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 18 Oct 2024 03:54:26 -0400 (EDT)
+Date: Fri, 18 Oct 2024 10:54:21 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com, 
+	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, bp@alien8.de, 
+	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com, peterz@infradead.org, 
+	seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org
+Subject: Re: [RFC 00/14] AMD: Add Secure AVIC Guest Support
+Message-ID: <ramttkbttoyswpl7fkz25jwsxs4iuoqdogfllp57ltigmgb3vd@txz4azom56ej>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <vo2oavwp2p4gbenistkq2demqtorisv24zjq2jgotuw6i5i7oy@uq5k2wcg3j5z>
+ <378fb9dd-dfb9-48aa-9304-18367a60af58@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241018075347.2821102-5-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12381; i=ardb@kernel.org;
- h=from:subject; bh=je4FqzSfL7MXWIoBlKaqML5+ykG0g5UEV0cb/756WYo=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIV1IhO8/0+1cX2PLA/OrWDiSC6tO6L02eyJc0y23KiTlw
- 9Hg6qUdpSwMYhwMsmKKLAKz/77beXqiVK3zLFmYOaxMIEMYuDgFYCL5fYwMKy9Pn8rh8tXcY+IG
- W0/bg1U6+htbjFOybsjFCq8odjjrzMjQeTcxzletlNPR58gKTQ1dWwt2dY7nzOqT3tcJ7nlkFsw BAA==
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241018075347.2821102-8-ardb+git@google.com>
-Subject: [PATCH v4 3/3] arm64/crc32: Implement 4-way interleave using PMULL
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	herbert@gondor.apana.org.au, will@kernel.org, catalin.marinas@arm.com, 
-	Ard Biesheuvel <ardb@kernel.org>, Eric Biggers <ebiggers@kernel.org>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <378fb9dd-dfb9-48aa-9304-18367a60af58@amd.com>
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On Fri, Oct 18, 2024 at 08:03:20AM +0530, Neeraj Upadhyay wrote:
+> Hi Kirill,
+> 
+> On 10/17/2024 1:53 PM, Kirill A. Shutemov wrote:
+> > On Fri, Sep 13, 2024 at 05:06:51PM +0530, Neeraj Upadhyay wrote:
+> >> Introduction
+> >> ------------
+> >>
+> >> Secure AVIC is a new hardware feature in the AMD64 architecture to
+> >> allow SEV-SNP guests to prevent hypervisor from generating unexpected
+> >> interrupts to a vCPU or otherwise violate architectural assumptions
+> >> around APIC behavior.
+> >>
+> >> One of the significant differences from AVIC or emulated x2APIC is that
+> >> Secure AVIC uses a guest-owned and managed APIC backing page. It also
+> >> introduces additional fields in both the VMCB and the Secure AVIC backing
+> >> page to aid the guest in limiting which interrupt vectors can be injected
+> >> into the guest.
+> >>
+> >> Guest APIC Backing Page
+> >> -----------------------
+> >> Each vCPU has a guest-allocated APIC backing page of size 4K, which
+> >> maintains APIC state for that vCPU. The x2APIC MSRs are mapped at
+> >> their corresposing x2APIC MMIO offset within the guest APIC backing
+> >> page. All x2APIC accesses by guest or Secure AVIC hardware operate
+> >> on this backing page. The backing page should be pinned and NPT entry
+> >> for it should be always mapped while the corresponding vCPU is running.
+> >>
+> >>
+> >> MSR Accesses
+> >> ------------
+> >> Secure AVIC only supports x2APIC MSR accesses. xAPIC MMIO offset based
+> >> accesses are not supported.
+> >>
+> >> Some of the MSR accesses such as ICR writes (with shorthand equal to
+> >> self), SELF_IPI, EOI, TPR writes are accelerated by Secure AVIC
+> >> hardware. Other MSR accesses generate a #VC exception. The #VC
+> >> exception handler reads/writes to the guest APIC backing page.
+> >> As guest APIC backing page is accessible to the guest, the Secure
+> >> AVIC driver code optimizes APIC register access by directly
+> >> reading/writing to the guest APIC backing page (instead of taking
+> >> the #VC exception route).
+> >>
+> >> In addition to the architected MSRs, following new fields are added to
+> >> the guest APIC backing page which can be modified directly by the
+> >> guest:
+> >>
+> >> a. ALLOWED_IRR
+> >>
+> >> ALLOWED_IRR vector indicates the interrupt vectors which the guest
+> >> allows the hypervisor to send. The combination of host-controlled
+> >> REQUESTED_IRR vectors (part of VMCB) and ALLOWED_IRR is used by
+> >> hardware to update the IRR vectors of the Guest APIC backing page.
+> >>
+> >> #Offset        #bits        Description
+> >> 204h           31:0         Guest allowed vectors 0-31
+> >> 214h           31:0         Guest allowed vectors 32-63
+> >> ...
+> >> 274h           31:0         Guest allowed vectors 224-255
+> >>
+> >> ALLOWED_IRR is meant to be used specifically for vectors that the
+> >> hypervisor is allowed to inject, such as device interrupts.  Interrupt
+> >> vectors used exclusively by the guest itself (like IPI vectors) should
+> >> not be allowed to be injected into the guest for security reasons.
+> >>
+> >> b. NMI Request
+> >>  
+> >> #Offset        #bits        Description
+> >> 278h           0            Set by Guest to request Virtual NMI
+> >>
+> >>
+> >> LAPIC Timer Support
+> >> -------------------
+> >> LAPIC timer is emulated by hypervisor. So, APIC_LVTT, APIC_TMICT and
+> >> APIC_TDCR, APIC_TMCCT APIC registers are not read/written to the guest
+> >> APIC backing page and are communicated to the hypervisor using SVM_EXIT_MSR
+> >> VMGEXIT. 
+> >>
+> >> IPI Support
+> >> -----------
+> >> Only SELF_IPI is accelerated by Secure AVIC hardware. Other IPIs require
+> >> writing (from the Secure AVIC driver) to the IRR vector of the target CPU
+> >> backing page and then issuing VMGEXIT for the hypervisor to notify the
+> >> target vCPU.
+> >>
+> >> Driver Implementation Open Points
+> >> ---------------------------------
+> >>
+> >> The Secure AVIC driver only supports physical destination mode. If
+> >> logical destination mode need to be supported, then a separate x2apic
+> >> driver would be required for supporting logical destination mode.
+> >>
+> >> Setting of ALLOWED_IRR vectors is done from vector.c for IOAPIC and MSI
+> >> interrupts. ALLOWED_IRR vector is not cleared when an interrupt vector
+> >> migrates to different CPU. Using a cleaner approach to manage and
+> >> configure allowed vectors needs more work.
+> >>
+> >>
+> >> Testing
+> >> -------
+> >>
+> >> This series is based on top of commit 196145c606d0 "Merge
+> >> tag 'clk-fixes-for-linus' of
+> >> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux."
+> >>
+> >> Host Secure AVIC support patch series is at [1].
+> >>
+> >> Following tests are done:
+> >>
+> >> 1) Boot to Prompt using initramfs and ubuntu fs.
+> >> 2) Verified timer and IPI as part of the guest bootup.
+> >> 3) Verified long run SCF TORTURE IPI test.
+> >> 4) Verified FIO test with NVME passthrough.
+> > 
+> > One case that is missing is kexec.
+> > 
+> > If the first kernel set ALLOWED_IRR, but the target kernel doesn't know
+> > anything about Secure AVIC, there are going to be a problem I assume.
+> > 
+> > I think we need ->setup() counterpart (->teardown() ?) to get
+> > configuration back to the boot state. And get it called from kexec path.
+> > 
+> 
+> Agree, I haven't fully investigated the changes required to support kexec.
+> Yes, teardown step might be required to disable Secure AVIC in control msr
+> and possibly resetting other Secure AVIC configuration.
+> 
+> Thanks for pointing it out! I will update the details with kexec support
+> being missing in this series.
 
-Now that kernel mode NEON no longer disables preemption, using FP/SIMD
-in library code which is not obviously part of the crypto subsystem is
-no longer problematic, as it will no longer incur unexpected latencies.
+I think it has to be addressed before it got merged. Or we will get a
+regression.
 
-So accelerate the CRC-32 library code on arm64 to use a 4-way
-interleave, using PMULL instructions to implement the folding.
-
-On Apple M2, this results in a speedup of 2 - 2.8x when using input
-sizes of 1k - 8k. For smaller sizes, the overhead of preserving and
-restoring the FP/SIMD register file may not be worth it, so 1k is used
-as a threshold for choosing this code path.
-
-The coefficient tables were generated using code provided by Eric. [0]
-
-[0] https://github.com/ebiggers/libdeflate/blob/master/scripts/gen_crc32_multipliers.c
-
-Cc: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/arm64/lib/crc32-glue.c |  48 ++++
- arch/arm64/lib/crc32.S      | 231 +++++++++++++++++++-
- 2 files changed, 276 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/lib/crc32-glue.c b/arch/arm64/lib/crc32-glue.c
-index 0b51761d4b75..295ae3e6b997 100644
---- a/arch/arm64/lib/crc32-glue.c
-+++ b/arch/arm64/lib/crc32-glue.c
-@@ -4,16 +4,40 @@
- #include <linux/linkage.h>
- 
- #include <asm/alternative.h>
-+#include <asm/cpufeature.h>
-+#include <asm/neon.h>
-+#include <asm/simd.h>
-+
-+#include <crypto/internal/simd.h>
-+
-+// The minimum input length to consider the 4-way interleaved code path
-+static const size_t min_len = 1024;
- 
- asmlinkage u32 crc32_le_arm64(u32 crc, unsigned char const *p, size_t len);
- asmlinkage u32 crc32c_le_arm64(u32 crc, unsigned char const *p, size_t len);
- asmlinkage u32 crc32_be_arm64(u32 crc, unsigned char const *p, size_t len);
- 
-+asmlinkage u32 crc32_le_arm64_4way(u32 crc, unsigned char const *p, size_t len);
-+asmlinkage u32 crc32c_le_arm64_4way(u32 crc, unsigned char const *p, size_t len);
-+asmlinkage u32 crc32_be_arm64_4way(u32 crc, unsigned char const *p, size_t len);
-+
- u32 __pure crc32_le(u32 crc, unsigned char const *p, size_t len)
- {
- 	if (!alternative_has_cap_likely(ARM64_HAS_CRC32))
- 		return crc32_le_base(crc, p, len);
- 
-+	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
-+		kernel_neon_begin();
-+		crc = crc32_le_arm64_4way(crc, p, len);
-+		kernel_neon_end();
-+
-+		p += round_down(len, 64);
-+		len %= 64;
-+
-+		if (!len)
-+			return crc;
-+	}
-+
- 	return crc32_le_arm64(crc, p, len);
- }
- 
-@@ -22,6 +46,18 @@ u32 __pure __crc32c_le(u32 crc, unsigned char const *p, size_t len)
- 	if (!alternative_has_cap_likely(ARM64_HAS_CRC32))
- 		return __crc32c_le_base(crc, p, len);
- 
-+	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
-+		kernel_neon_begin();
-+		crc = crc32c_le_arm64_4way(crc, p, len);
-+		kernel_neon_end();
-+
-+		p += round_down(len, 64);
-+		len %= 64;
-+
-+		if (!len)
-+			return crc;
-+	}
-+
- 	return crc32c_le_arm64(crc, p, len);
- }
- 
-@@ -30,5 +66,17 @@ u32 __pure crc32_be(u32 crc, unsigned char const *p, size_t len)
- 	if (!alternative_has_cap_likely(ARM64_HAS_CRC32))
- 		return crc32_be_base(crc, p, len);
- 
-+	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
-+		kernel_neon_begin();
-+		crc = crc32_be_arm64_4way(crc, p, len);
-+		kernel_neon_end();
-+
-+		p += round_down(len, 64);
-+		len %= 64;
-+
-+		if (!len)
-+			return crc;
-+	}
-+
- 	return crc32_be_arm64(crc, p, len);
- }
-diff --git a/arch/arm64/lib/crc32.S b/arch/arm64/lib/crc32.S
-index f9920492f135..68825317460f 100644
---- a/arch/arm64/lib/crc32.S
-+++ b/arch/arm64/lib/crc32.S
-@@ -1,14 +1,17 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Accelerated CRC32(C) using AArch64 CRC instructions
-+ * Accelerated CRC32(C) using AArch64 CRC and PMULL instructions
-  *
-- * Copyright (C) 2016 - 2018 Linaro Ltd <ard.biesheuvel@linaro.org>
-+ * Copyright (C) 2016 - 2018 Linaro Ltd.
-+ * Copyright (C) 2024 Google LLC
-+ *
-+ * Author: Ard Biesheuvel <ardb@kernel.org>
-  */
- 
- #include <linux/linkage.h>
- #include <asm/assembler.h>
- 
--	.arch		armv8-a+crc
-+	.cpu		generic+crc+crypto
- 
- 	.macro		bitle, reg
- 	.endm
-@@ -135,3 +138,225 @@ SYM_FUNC_END(crc32c_le_arm64)
- SYM_FUNC_START(crc32_be_arm64)
- 	__crc32		order=be
- SYM_FUNC_END(crc32_be_arm64)
-+
-+	in		.req	x1
-+	len		.req	x2
-+
-+	/*
-+	 * w0: input CRC at entry, output CRC at exit
-+	 * x1: pointer to input buffer
-+	 * x2: length of input in bytes
-+	 */
-+	.macro		crc4way, insn, table, order=le
-+	bit\order	w0
-+	lsr		len, len, #6		// len := # of 64-byte blocks
-+
-+	/* Process up to 64 blocks of 64 bytes at a time */
-+.La\@:	mov		x3, #64
-+	cmp		len, #64
-+	csel		x3, x3, len, hi		// x3 := min(len, 64)
-+	sub		len, len, x3
-+
-+	/* Divide the input into 4 contiguous blocks */
-+	add		x4, x3, x3, lsl #1	// x4 :=  3 * x3
-+	add		x7, in, x3, lsl #4	// x7 := in + 16 * x3
-+	add		x8, in, x3, lsl #5	// x8 := in + 32 * x3
-+	add		x9, in, x4, lsl #4	// x9 := in + 16 * x4
-+
-+	/* Load the folding coefficients from the lookup table */
-+	adr_l		x5, \table - 12		// entry 0 omitted
-+	add		x5, x5, x4, lsl #2	// x5 += 12 * x3
-+	ldp		s0, s1, [x5]
-+	ldr		s2, [x5, #8]
-+
-+	/* Zero init partial CRCs for this iteration */
-+	mov		w4, wzr
-+	mov		w5, wzr
-+	mov		w6, wzr
-+	mov		x17, xzr
-+
-+.Lb\@:	sub		x3, x3, #1
-+	\insn		w6, w6, x17
-+	ldp		x10, x11, [in], #16
-+	ldp		x12, x13, [x7], #16
-+	ldp		x14, x15, [x8], #16
-+	ldp		x16, x17, [x9], #16
-+
-+	\order		x10, x11, x12, x13, x14, x15, x16, x17
-+
-+	/* Apply the CRC transform to 4 16-byte blocks in parallel */
-+	\insn		w0, w0, x10
-+	\insn		w4, w4, x12
-+	\insn		w5, w5, x14
-+	\insn		w6, w6, x16
-+	\insn		w0, w0, x11
-+	\insn		w4, w4, x13
-+	\insn		w5, w5, x15
-+	cbnz		x3, .Lb\@
-+
-+	/* Combine the 4 partial results into w0 */
-+	mov		v3.d[0], x0
-+	mov		v4.d[0], x4
-+	mov		v5.d[0], x5
-+	pmull		v0.1q, v0.1d, v3.1d
-+	pmull		v1.1q, v1.1d, v4.1d
-+	pmull		v2.1q, v2.1d, v5.1d
-+	eor		v0.8b, v0.8b, v1.8b
-+	eor		v0.8b, v0.8b, v2.8b
-+	mov		x5, v0.d[0]
-+	eor		x5, x5, x17
-+	\insn		w0, w6, x5
-+
-+	mov		in, x9
-+	cbnz		len, .La\@
-+
-+	bit\order	w0
-+	ret
-+	.endm
-+
-+	.align		5
-+SYM_FUNC_START(crc32c_le_arm64_4way)
-+	crc4way		crc32cx, .L0
-+SYM_FUNC_END(crc32c_le_arm64_4way)
-+
-+	.align		5
-+SYM_FUNC_START(crc32_le_arm64_4way)
-+	crc4way		crc32x, .L1
-+SYM_FUNC_END(crc32_le_arm64_4way)
-+
-+	.align		5
-+SYM_FUNC_START(crc32_be_arm64_4way)
-+	crc4way		crc32x, .L1, be
-+SYM_FUNC_END(crc32_be_arm64_4way)
-+
-+	.section	.rodata, "a", %progbits
-+	.align		6
-+.L0:	.long		0xddc0152b, 0xba4fc28e, 0x493c7d27
-+	.long		0x0715ce53, 0x9e4addf8, 0xba4fc28e
-+	.long		0xc96cfdc0, 0x0715ce53, 0xddc0152b
-+	.long		0xab7aff2a, 0x0d3b6092, 0x9e4addf8
-+	.long		0x299847d5, 0x878a92a7, 0x39d3b296
-+	.long		0xb6dd949b, 0xab7aff2a, 0x0715ce53
-+	.long		0xa60ce07b, 0x83348832, 0x47db8317
-+	.long		0xd270f1a2, 0xb9e02b86, 0x0d3b6092
-+	.long		0x65863b64, 0xb6dd949b, 0xc96cfdc0
-+	.long		0xb3e32c28, 0xbac2fd7b, 0x878a92a7
-+	.long		0xf285651c, 0xce7f39f4, 0xdaece73e
-+	.long		0x271d9844, 0xd270f1a2, 0xab7aff2a
-+	.long		0x6cb08e5c, 0x2b3cac5d, 0x2162d385
-+	.long		0xcec3662e, 0x1b03397f, 0x83348832
-+	.long		0x8227bb8a, 0xb3e32c28, 0x299847d5
-+	.long		0xd7a4825c, 0xdd7e3b0c, 0xb9e02b86
-+	.long		0xf6076544, 0x10746f3c, 0x18b33a4e
-+	.long		0x98d8d9cb, 0x271d9844, 0xb6dd949b
-+	.long		0x57a3d037, 0x93a5f730, 0x78d9ccb7
-+	.long		0x3771e98f, 0x6b749fb2, 0xbac2fd7b
-+	.long		0xe0ac139e, 0xcec3662e, 0xa60ce07b
-+	.long		0x6f345e45, 0xe6fc4e6a, 0xce7f39f4
-+	.long		0xa2b73df1, 0xb0cd4768, 0x61d82e56
-+	.long		0x86d8e4d2, 0xd7a4825c, 0xd270f1a2
-+	.long		0xa90fd27a, 0x0167d312, 0xc619809d
-+	.long		0xca6ef3ac, 0x26f6a60a, 0x2b3cac5d
-+	.long		0x4597456a, 0x98d8d9cb, 0x65863b64
-+	.long		0xc9c8b782, 0x68bce87a, 0x1b03397f
-+	.long		0x62ec6c6d, 0x6956fc3b, 0xebb883bd
-+	.long		0x2342001e, 0x3771e98f, 0xb3e32c28
-+	.long		0xe8b6368b, 0x2178513a, 0x064f7f26
-+	.long		0x9ef68d35, 0x170076fa, 0xdd7e3b0c
-+	.long		0x0b0bf8ca, 0x6f345e45, 0xf285651c
-+	.long		0x02ee03b2, 0xff0dba97, 0x10746f3c
-+	.long		0x135c83fd, 0xf872e54c, 0xc7a68855
-+	.long		0x00bcf5f6, 0x86d8e4d2, 0x271d9844
-+	.long		0x58ca5f00, 0x5bb8f1bc, 0x8e766a0c
-+	.long		0xded288f8, 0xb3af077a, 0x93a5f730
-+	.long		0x37170390, 0xca6ef3ac, 0x6cb08e5c
-+	.long		0xf48642e9, 0xdd66cbbb, 0x6b749fb2
-+	.long		0xb25b29f2, 0xe9e28eb4, 0x1393e203
-+	.long		0x45cddf4e, 0xc9c8b782, 0xcec3662e
-+	.long		0xdfd94fb2, 0x93e106a4, 0x96c515bb
-+	.long		0x021ac5ef, 0xd813b325, 0xe6fc4e6a
-+	.long		0x8e1450f7, 0x2342001e, 0x8227bb8a
-+	.long		0xe0cdcf86, 0x6d9a4957, 0xb0cd4768
-+	.long		0x613eee91, 0xd2c3ed1a, 0x39c7ff35
-+	.long		0xbedc6ba1, 0x9ef68d35, 0xd7a4825c
-+	.long		0x0cd1526a, 0xf2271e60, 0x0ab3844b
-+	.long		0xd6c3a807, 0x2664fd8b, 0x0167d312
-+	.long		0x1d31175f, 0x02ee03b2, 0xf6076544
-+	.long		0x4be7fd90, 0x363bd6b3, 0x26f6a60a
-+	.long		0x6eeed1c9, 0x5fabe670, 0xa741c1bf
-+	.long		0xb3a6da94, 0x00bcf5f6, 0x98d8d9cb
-+	.long		0x2e7d11a7, 0x17f27698, 0x49c3cc9c
-+	.long		0x889774e1, 0xaa7c7ad5, 0x68bce87a
-+	.long		0x8a074012, 0xded288f8, 0x57a3d037
-+	.long		0xbd0bb25f, 0x6d390dec, 0x6956fc3b
-+	.long		0x3be3c09b, 0x6353c1cc, 0x42d98888
-+	.long		0x465a4eee, 0xf48642e9, 0x3771e98f
-+	.long		0x2e5f3c8c, 0xdd35bc8d, 0xb42ae3d9
-+	.long		0xa52f58ec, 0x9a5ede41, 0x2178513a
-+	.long		0x47972100, 0x45cddf4e, 0xe0ac139e
-+	.long		0x359674f7, 0xa51b6135, 0x170076fa
-+
-+.L1:	.long		0xaf449247, 0x81256527, 0xccaa009e
-+	.long		0x57c54819, 0x1d9513d7, 0x81256527
-+	.long		0x3f41287a, 0x57c54819, 0xaf449247
-+	.long		0xf5e48c85, 0x910eeec1, 0x1d9513d7
-+	.long		0x1f0c2cdd, 0x9026d5b1, 0xae0b5394
-+	.long		0x71d54a59, 0xf5e48c85, 0x57c54819
-+	.long		0x1c63267b, 0xfe807bbd, 0x0cbec0ed
-+	.long		0xd31343ea, 0xe95c1271, 0x910eeec1
-+	.long		0xf9d9c7ee, 0x71d54a59, 0x3f41287a
-+	.long		0x9ee62949, 0xcec97417, 0x9026d5b1
-+	.long		0xa55d1514, 0xf183c71b, 0xd1df2327
-+	.long		0x21aa2b26, 0xd31343ea, 0xf5e48c85
-+	.long		0x9d842b80, 0xeea395c4, 0x3c656ced
-+	.long		0xd8110ff1, 0xcd669a40, 0xfe807bbd
-+	.long		0x3f9e9356, 0x9ee62949, 0x1f0c2cdd
-+	.long		0x1d6708a0, 0x0c30f51d, 0xe95c1271
-+	.long		0xef82aa68, 0xdb3935ea, 0xb918a347
-+	.long		0xd14bcc9b, 0x21aa2b26, 0x71d54a59
-+	.long		0x99cce860, 0x356d209f, 0xff6f2fc2
-+	.long		0xd8af8e46, 0xc352f6de, 0xcec97417
-+	.long		0xf1996890, 0xd8110ff1, 0x1c63267b
-+	.long		0x631bc508, 0xe95c7216, 0xf183c71b
-+	.long		0x8511c306, 0x8e031a19, 0x9b9bdbd0
-+	.long		0xdb3839f3, 0x1d6708a0, 0xd31343ea
-+	.long		0x7a92fffb, 0xf7003835, 0x4470ac44
-+	.long		0x6ce68f2a, 0x00eba0c8, 0xeea395c4
-+	.long		0x4caaa263, 0xd14bcc9b, 0xf9d9c7ee
-+	.long		0xb46f7cff, 0x9a1b53c8, 0xcd669a40
-+	.long		0x60290934, 0x81b6f443, 0x6d40f445
-+	.long		0x8e976a7d, 0xd8af8e46, 0x9ee62949
-+	.long		0xdcf5088a, 0x9dbdc100, 0x145575d5
-+	.long		0x1753ab84, 0xbbf2f6d6, 0x0c30f51d
-+	.long		0x255b139e, 0x631bc508, 0xa55d1514
-+	.long		0xd784eaa8, 0xce26786c, 0xdb3935ea
-+	.long		0x6d2c864a, 0x8068c345, 0x2586d334
-+	.long		0x02072e24, 0xdb3839f3, 0x21aa2b26
-+	.long		0x06689b0a, 0x5efd72f5, 0xe0575528
-+	.long		0x1e52f5ea, 0x4117915b, 0x356d209f
-+	.long		0x1d3d1db6, 0x6ce68f2a, 0x9d842b80
-+	.long		0x3796455c, 0xb8e0e4a8, 0xc352f6de
-+	.long		0xdf3a4eb3, 0xc55a2330, 0xb84ffa9c
-+	.long		0x28ae0976, 0xb46f7cff, 0xd8110ff1
-+	.long		0x9764bc8d, 0xd7e7a22c, 0x712510f0
-+	.long		0x13a13e18, 0x3e9a43cd, 0xe95c7216
-+	.long		0xb8ee242e, 0x8e976a7d, 0x3f9e9356
-+	.long		0x0c540e7b, 0x753c81ff, 0x8e031a19
-+	.long		0x9924c781, 0xb9220208, 0x3edcde65
-+	.long		0x3954de39, 0x1753ab84, 0x1d6708a0
-+	.long		0xf32238b5, 0xbec81497, 0x9e70b943
-+	.long		0xbbd2cd2c, 0x0925d861, 0xf7003835
-+	.long		0xcc401304, 0xd784eaa8, 0xef82aa68
-+	.long		0x4987e684, 0x6044fbb0, 0x00eba0c8
-+	.long		0x3aa11427, 0x18fe3b4a, 0x87441142
-+	.long		0x297aad60, 0x02072e24, 0xd14bcc9b
-+	.long		0xf60c5e51, 0x6ef6f487, 0x5b7fdd0a
-+	.long		0x632d78c5, 0x3fc33de4, 0x9a1b53c8
-+	.long		0x25b8822a, 0x1e52f5ea, 0x99cce860
-+	.long		0xd4fc84bc, 0x1af62fb8, 0x81b6f443
-+	.long		0x5690aa32, 0xa91fdefb, 0x688a110e
-+	.long		0x1357a093, 0x3796455c, 0xd8af8e46
-+	.long		0x798fdd33, 0xaaa18a37, 0x357b9517
-+	.long		0xc2815395, 0x54d42691, 0x9dbdc100
-+	.long		0x21cfc0f7, 0x28ae0976, 0xf1996890
-+	.long		0xa0decef3, 0x7b4aa8b7, 0xbbf2f6d6
 -- 
-2.47.0.rc1.288.g06298d1525-goog
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
