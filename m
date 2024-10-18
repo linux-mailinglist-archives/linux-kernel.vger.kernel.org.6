@@ -1,192 +1,268 @@
-Return-Path: <linux-kernel+bounces-371686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FEDB9A3E9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:41:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209889A3E9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57D6F1C20C1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:41:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 778D8B2104B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9017842A97;
-	Fri, 18 Oct 2024 12:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B4926AD9;
+	Fri, 18 Oct 2024 12:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hO0bFFQk"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UBsdd+Ac"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F37E8F6B;
-	Fri, 18 Oct 2024 12:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4E8288BD
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729255277; cv=none; b=VzKnbGuk90+86TL02BwEs8I1yLKkvuO8dUET4GKmCdKjEXAmgORjh1qmFc/HFo9DSCyaxWbvucM/JKQmBmcwvxh6RrKD9wJJ5sFjD76sR5zg/b5ml1N9vW5jwHCs4CKtlSOulupcyFcjs6KPlyx+8KY/CvUt9/DwEWsOXfZOamQ=
+	t=1729255257; cv=none; b=dUL0t6Wu87cmkJAQjUIG8GtBvuBxfSYfeHDtK8vlrXTj4toKV8OgHm28344TTamMtek53RDTCIjFPL5UZBXAbGoJUiJ2jMcGRSX0euTsW7x0h+AUuFUpioxuWBSjV9BkV+OmzbmMy6hr55tbvtB7HgCAEyCZ0C9LRX/TS3E7/90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729255277; c=relaxed/simple;
-	bh=MdE/vlwuaIy+l1DVfCSNRGdPx+i97TVjXEXo4j8dxz0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S2k8iPFpVC5sTqwT3wsqmao3/isAeooZgYkHwDlNLuTI0tsbBs9mMVnq6pdADKvGGbX5+XW1XNLbu6tUOYyPwCbm8165uBML6ezuGkLPk8LS7FftJ/mZCiAfBWXRdIlC9i21kQq8nqjxMlaGHB7609gpSHKe+3zFSJE3ZPatrS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hO0bFFQk; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-50d2d300718so585713e0c.1;
-        Fri, 18 Oct 2024 05:41:16 -0700 (PDT)
+	s=arc-20240116; t=1729255257; c=relaxed/simple;
+	bh=NepPP9+EUJkQE6AAFekh9hvZnrPeDE2ASN5F2g/sxaQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WIVd2hdz+Wy2yraCeabKngMXJwqFMnk39hd4b6bqWQq6EX1ZZnjObxPRZxtFKY8QRoPk+sDhEWTUrUFS2JlmCLbcYzX8C0FBz0r9LkB2cJkgeRXH3vW62eQlP2xAIhpxsg78kvPJJdK3ro+zcq/FP3cvgbupMIKhpWnmWeWMb5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UBsdd+Ac; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso237075066b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:40:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729255275; x=1729860075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+l+LdwuWPPQPyQbdGsPd0DvVg4iTYvTYWs9TNNMBdzQ=;
-        b=hO0bFFQk9Afb3EmbqRjfr6g50iqzPhfGihm8mGXR+PbjmoCTQuYbxze8JlazxDsIID
-         6MVdBVoDz3zpCleHTErO2skHEww8Ama3kKPN2iKa0pB6sOOZlC5svBkM27r+eC83Nt/X
-         AMSed+4DlR/0jRD36HXO4/P6p7fYQFcMuj7yc3wwIWImIqT9M627PGwyvVpW165hyJyu
-         h42C43sBkC3i+D2/upoLKrEeOBtQHxTt9/btt9hQO50vzZEoHWhrXFRVR7xzomgE117L
-         mmJ+EoY+OBMwfsQBCwtALeapiDhnF4qKpEmZAXN3DJArzVRkM0czpVdjPSapeJjzCK/b
-         LZLw==
+        d=suse.com; s=google; t=1729255252; x=1729860052; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9DykL4kRhQMn7Cbt8yrjSApwATRDvV4AIHohgrmqOh0=;
+        b=UBsdd+AcJeTPSj7VbDDbVayFFlXZEceFq+/3BzPSGVEd/vqIQ1Xo7f24O8TX9JYYJX
+         2uKOpn2wggd9+3uwrDa1FdqY+j/MdsZjlY4KKebecfW2xuNJnp5NjaaFczFrBFKmpXA2
+         5V/L0TI4GwuDTbdpHutCyoSnArESUECp8EBEYEx5FdUYa/OpdlfTi5UaWYAzURH22Toj
+         glP0mVzYNvaDNBTOuVqKcQmd/JluRvWygUycKTa+wvCFrqCUsbNq9ImkRQmK+iFXZwKP
+         snrH8Lho4I7A5slljx30zdGrTO+4JnlRHtI1/7ZukalCy6atc5M+U3943fiUh9M1hMP/
+         QhhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729255275; x=1729860075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+l+LdwuWPPQPyQbdGsPd0DvVg4iTYvTYWs9TNNMBdzQ=;
-        b=hZKHAP9yZ7tNzX88CqHu1uQC+mma00IbCFSxRoX/yIyupA1yZXLJo8mDUuSJNqTTT0
-         xi9BL5GaD3pD19V/glk3D8FfL/xv/7M4nY9VB4iGB7dSQoLb5MLrUZr7fmnF3SPv1fQj
-         h0TIneZNmUGcjLdR1avHJOaXji8y+/oBuoVTGATWdB3hlWS/pkTQ/qob5lOuhv3a1enN
-         km8p1ocUp7ZYDuvPCr3nGZzHsRmu4uusjpsaCMz26qDWWA1JjYsN7+z89DaLC6gmRv3P
-         qKXUm6520qtJD1Bl9lRi56wizNnb2SghGqbskIgQOd/py4od0LNDWEhxfF0IFLLsVdCt
-         bRbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMiVruJtBsOn9z64SEtYGHMoG85s6RRZk7VOgzs+aGZoHdKWRnZdstZvOtbDdLSBEpLAqyyefgSY+c19I=@vger.kernel.org, AJvYcCVh/tyyMgeANEzv32Q+v99YT1iTcDucZfOcAV9twsQt2ZKKYXu6TxsRUEe6WdUQvXDhNrUpz8mkqwLzovWP/Q4zZko=@vger.kernel.org, AJvYcCXX2jNdDzeuLVIdo4PNqSGcBXrbWrvcZ426GU88Jx6TEsv/zXdoS94vBcMGGnCUi7KkGn22bFmkaVFClWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4r/zbZK28w5YCnlZAGMW2byFi2QcloIYW0bRKj4Pkngs5VsC3
-	3fLJHdfhR/adERfAq4gNA2ula7ZKi62pQntrzoyL3wH4nqA9ANMjWKKiz7k0R6+L/HlB9OhE5Ta
-	9B7qA/mGzhv+Nis6x8+DzkH63jsE=
-X-Google-Smtp-Source: AGHT+IES5LVfGLX428NF36lgQkwm5gmSds6SXoQbN8pEfFwBt2PslW0w2y0YaQTTE0RFslwpeT/TM9xcqmqha+Hwya4=
-X-Received: by 2002:a05:6122:1da6:b0:507:81f0:f952 with SMTP id
- 71dfb90a1353d-50dda35f9d8mr1384356e0c.9.1729255275033; Fri, 18 Oct 2024
- 05:41:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729255252; x=1729860052;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9DykL4kRhQMn7Cbt8yrjSApwATRDvV4AIHohgrmqOh0=;
+        b=Wn7MZ1Og9vwATQq4LxV5EFRb8YmUVNDuPlmnB+R1BW/tNJGlGCugnz11TmYnYRvm9/
+         AHIRbLiHyk6mK3KNyzRG+F0H+wexxMG5ocB79jrrU1vUJujioR+Hh95sCDUGHTlyEDpw
+         vfXUFnAiosO+/Vs+Yg5N8eiWRYKi0vXQSiaNfsw35XDC4VGgDtS0PH3wdauVEhXljBgN
+         vIaXZK7guWxYWAZ9rjGtRPbC1eGLCJ2PWhvbePjuPQ8lFHD390EObyUG3NejLXsuXIBo
+         2QRe6H7cRh+93XOcLHIzsPcxykfva1zslV/pYt3IGU+8exYdSZdUt8Q07Bg8duwdJ+hv
+         KTcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWW8r6YLf/mSvmYRY02OnXDP/pcOxYZXwBr5xlff9+ojDDAxsdt72R4wNzgLzTIZ1C6sqnsLRwkMo/158=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0qVgdOqY6n22Dl80lQL0pnu9mHR/bo0hbIU3T0cAfcxSfjeUm
+	0MlSA429ZlYzIMGp5129Bb7gDptDj0dmhV4vlTkv8O2bsdnX0xIGYEzR6qDldzE=
+X-Google-Smtp-Source: AGHT+IGKGlI5U6acm0UPw/vtEqZLZZNRs4tL7ATU0Wt6GltRPSfjPzSBXo/n0wxDoTzpCi5atrc0Sw==
+X-Received: by 2002:a17:907:94d2:b0:a99:ec3c:15cd with SMTP id a640c23a62f3a-a9a69ccf8a4mr209343466b.54.1729255251547;
+        Fri, 18 Oct 2024 05:40:51 -0700 (PDT)
+Received: from localhost (host-95-234-228-50.retail.telecomitalia.it. [95.234.228.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68bf5f4asm91053466b.157.2024.10.18.05.40.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 05:40:51 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 18 Oct 2024 14:41:11 +0200
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>, Lizhi Hou <lizhi.hou@amd.com>
+Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
+ parsed from DT
+Message-ID: <ZxJXZ9R-Qp9CNmJk@apocalypse>
+References: <ZwJyk9XouLfd24VG@apocalypse>
+ <20241008010808.GA455773@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011173052.1088341-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241011173052.1088341-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241015103317.GJ5682@pendragon.ideasonboard.com> <CA+V-a8tRDhDBFZsMEyxPTbW0juZMpAcJ=bj4rA3Nbsku8y4PxA@mail.gmail.com>
- <20241018122611.GN30496@pendragon.ideasonboard.com>
-In-Reply-To: <20241018122611.GN30496@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 18 Oct 2024 13:40:48 +0100
-Message-ID: <CA+V-a8uXrO8iPxhQEKb+HtVqXctQS5O4NAfFTr2Cfrci9Qd_UQ@mail.gmail.com>
-Subject: Re: [PATCH v5 15/22] media: rzg2l-cru: Make use of v4l2_format_info() helpers
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008010808.GA455773@bhelgaas>
 
-Hi Laurent,
+Hi Bjorn,
 
-On Fri, Oct 18, 2024 at 1:26=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Fri, Oct 18, 2024 at 12:45:36PM +0100, Lad, Prabhakar wrote:
-> > On Tue, Oct 15, 2024 at 11:33=E2=80=AFAM Laurent Pinchart wrote:
-> > > On Fri, Oct 11, 2024 at 06:30:45PM +0100, Prabhakar wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Make use of v4l2_format_info() helpers to determine the input and
-> > > > output formats.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
-> > > > ---
-> > > >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 22 ++++++---------=
-----
-> > > >  1 file changed, 7 insertions(+), 15 deletions(-)
-> > > >
-> > > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c=
- b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > > index 8932fab7c656..0cc69a7440bf 100644
-> > > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > > @@ -300,21 +300,12 @@ static void rzg2l_cru_initialize_axi(struct r=
-zg2l_cru_dev *cru)
-> > > >       rzg2l_cru_write(cru, AMnAXIATTR, amnaxiattr);
-> > > >  }
-> > > >
-> > > > -static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru, bool *=
-input_is_yuv,
-> > > > +static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
-> > > >                                const struct rzg2l_cru_ip_format *ip=
-_fmt,
-> > > >                                u8 csi_vc)
-> > > >  {
-> > > >       u32 icnmc =3D ICnMC_INF(ip_fmt->datatype);
-> > > >
-> > > > -     switch (ip_fmt->code) {
-> > > > -     case MEDIA_BUS_FMT_UYVY8_1X16:
-> > > > -             *input_is_yuv =3D true;
-> > > > -             break;
-> > > > -     default:
-> > > > -             *input_is_yuv =3D false;
-> > > > -             break;
-> > > > -     }
-> > > > -
-> > > >       icnmc |=3D (rzg2l_cru_read(cru, ICnMC) & ~ICnMC_INF_MASK);
-> > > >
-> > > >       /* Set virtual channel CSI2 */
-> > > > @@ -327,19 +318,17 @@ static int rzg2l_cru_initialize_image_conv(st=
-ruct rzg2l_cru_dev *cru,
-> > > >                                          struct v4l2_mbus_framefmt =
-*ip_sd_fmt,
-> > > >                                          u8 csi_vc)
-> > > >  {
-> > > > +     const struct v4l2_format_info *src_finfo, *dst_finfo;
-> > > >       const struct rzg2l_cru_ip_format *cru_ip_fmt;
-> > > > -     bool output_is_yuv =3D false;
-> > > > -     bool input_is_yuv =3D false;
-> > > >       u32 icndmr;
-> > > >
-> > > >       cru_ip_fmt =3D rzg2l_cru_ip_code_to_fmt(ip_sd_fmt->code);
-> > > > -     rzg2l_cru_csi2_setup(cru, &input_is_yuv, cru_ip_fmt, csi_vc);
-> > > > +     rzg2l_cru_csi2_setup(cru, cru_ip_fmt, csi_vc);
-> > > >
-> > > >       /* Output format */
-> > > >       switch (cru->format.pixelformat) {
-> > > >       case V4L2_PIX_FMT_UYVY:
-> > > >               icndmr =3D ICnDMR_YCMODE_UYVY;
-> > > > -             output_is_yuv =3D true;
-> > > >               break;
-> > > >       default:
-> > > >               dev_err(cru->dev, "Invalid pixelformat (0x%x)\n",
-> > > > @@ -347,8 +336,11 @@ static int rzg2l_cru_initialize_image_conv(str=
-uct rzg2l_cru_dev *cru,
-> > > >               return -EINVAL;
-> > > >       }
-> > > >
-> > > > +     src_finfo =3D v4l2_format_info(cru_ip_fmt->format);
-> > > > +     dst_finfo =3D v4l2_format_info(cru->format.pixelformat);
-> > >
-> > > It would be a bit more efficient to add a yuv boolean field to the
-> > > rzg2l_cru_ip_format structure, as you already have looked up cru_ip_f=
-mt
-> > > for the IP subdev format.
-> >
-> > I will consider this change, when adding support for the RZ/V2H SoC,
-> > hope that's OK for you.
->
-> It's not a blocker, it can be done on top indeed. If you end up
-> submitting a v6 you could add a patch on top already, but otherwise
-> later is fine too.
->
-I was intending to send a v6 anyway with the updated commit messages,
-so I will add a new patch on top.
+On 20:08 Mon 07 Oct     , Bjorn Helgaas wrote:
+... 
+> It's common that PCI bus addresses are identical to CPU physical
+> addresses, but by no means universal.  More details in
+> Documentation/core-api/dma-api-howto.rst
+> 
+> > [2] I still think that the of_pci_set_address() function should be amended
+> > to avoid generating invalid 64 address when 32 bit flag is set.
+> > 
+> > As you noted, fixing [2] will incidentally also let [1] work: I think
+> > we can try to solve [1] the proper way and maybe defer [2] for a separate
+> > patch.
+> > To solve [1] I've dropped this patch and tried to solve it from devicetree,
+> > modifying the following mapping:
+> > 
+> > pcie@120000: <0x3000000 0x1f 0x00    0x1f 0x00                0x00 0xfffffffc>;
+> > 
+> > so we now have a 1:1 64 bit mapping from 0x1f_00000000 to 0x1f_00000000.
+> 
+> That's the wrong thing to change.  pcie@120000 is fine; it's pci@0
+> that's incorrect.
+> 
+> pcie@120000 is the host bridge, and its "ranges" must describe the
+> address translation it performs between the primary (CPU) side and the
+> secondary (PCI) side.  Either this offset is built into the hardware
+> and can't be changed, or the offset is configured by firmware and the
+> DT has to match.
+> 
+> So I think this description is correct:
+> 
+>   pcie@120000: <0x2000000 0x0 0x00000000 0x1f 0x00000000 0x0 0xfffffffc>;
+> 
+> which means we have an aperture from CPU physical addresses to PCI bus
+> addresses like this:
+> 
+>   Host bridge: [mem 0x1f_00000000-0x1f_fffffffb window] (bus address 0x00000000-0xfffffffb)
+> 
+> > I thought it would result in something like this:
+> > 
+> > pcie@120000: <0x3000000 0x1f 0x00    0x1f 0x00                0x00 0xfffffffc>;
+> > pci@0      : <0x82000000 0x1f 0x00   0x82000000 0x1f 0x00     0x00 0x600000>;
+> > dev@0,0    : <0x01 0x00 0x00         0x82010000 0x1f 0x00     0x00 0x400000>;
+> > rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
+> > 
+> > but it fails instead (err: "can't assign; no space") in pci_assign_resource()
+> > function trying to match the size using pci_clip_resource_to_region(). It turned
+> > out that the clipping is done against 32 bit memory region 'pci_32_bit',and
+> > this is failing because the original region addresses to be clipped wxxiereas 64
+> > bit wide. The 'culprit' seems to be the function devm_of_pci_get_host_bridge_resources()
+> > dropping IORESOURCE_MEM_64 on any memory resource, which seems to be a change
+> > somewhat specific to a RK3399 case (see commit 3bd6b8271ee66), but I'm not sure
+> > whether it can be considered generic.
+> 
+> I think the problem is that we're building the pci@0 (Root Port)
+> "ranges" incorrectly.  pci@0 is a PCI-PCI bridge, which cannot do any
+> address translation, so its parent and child address spaces must both
+> be inside the pcie@120000 *child* address space.
+> 
+> > Also, while taking a look at the resulting devicetree, I'm a bit confused by the
+> > fact that the parent address generated by of_pci_prop_ranges() for the pci@0,0
+> > bridge seems to be taken from the parent address of the pcie@120000 node. Shouldn't
+> > it be taken from the child address of pcie@120000, instead?
+> 
+> Yes, this is exactly the problem.  The pci@0 parent and child
+> addresses in "ranges" are both in the PCI address space.  But we
+> start with pdev->resource[N], which is a CPU address.  To get the PCI
+> address, we need to apply pci_bus_address().  If the host bridge
+> windows are set up correctly, the window->offset used in
+> pcibios_resource_to_bus() should yield the PCI bus address.
 
-Cheers,
-Prabhakar
+You mean something like this, I think:
+
+@@ -129,7 +129,7 @@ static int of_pci_prop_ranges(struct pci_dev *pdev, struct of_changeset *ocs,
+                if (of_pci_get_addr_flags(&res[j], &flags))
+                        continue;
+ 
+-               val64 = res[j].start;
++               val64 = pci_bus_address(pdev, &res[j] - pdev->resource);
+                of_pci_set_address(pdev, rp[i].parent_addr, val64, 0, flags,
+                                   false);
+                if (pci_is_bridge(pdev)) {
+
+> 
+> I think it should look like this:
+> 
+>   pci@0: <0x82000000 0x0 0x00000000 0x82000000 0x0 0x00000000 0x0 0x600000>;
+
+indeed, with the above patch applied, the result is exactly as you expected.
+
+> 
+> By default lspci shows you the CPU addresses for BARs, so you should
+> see something like this:
+> 
+>   00:02.0 PCI bridge
+>     Memory behind bridge: 1f00000000-1ffffffffb
+>     Capabilities: [40] Express Root Port
+> 
+> If you run "lspci -b", it will show you PCI bus addresses instead,
+> which should look like this:
+> 
+>   00:02.0 PCI bridge
+>     Memory behind bridge: 00000000-fffffffb
+>     Capabilities: [40] Express Root Port
+> 
+> > > But I don't think it works in general because there's no requirement
+> > > that the host bridge address translation be that simple.  For example,
+> > > if we have two host bridges, and we want each to have 2GB of 32-bit
+> > > PCI address space starting at 0x0, it might look like this:
+> > > 
+> > >   0x00000002_00000000 -> PCI 0x00000000 (subtract 0x00000002_00000000)
+> > >   0x00000002_80000000 -> PCI 0x00000000 (subtract 0x00000002_80000000)
+> > > 
+> > > In this case simply ignoring the high 32 bits of the CPU address isn't
+> > > the correct translation for the second host bridge.  I think we should
+> > > look at each host bridge's "ranges", find the difference between its
+> > > parent and child addresses, and apply the same difference to
+> > > everything below that bridge.
+> > 
+> > Not sure I've got this scenario straight: can you please provide the topology
+> > and the bit setting (32/64 bit) for those ranges? Also, is this scenario coming
+> > from a real use case or is it hypothetical?
+> 
+> This scenario is purely hypothetical, but it's a legal topology that
+> we should handle correctly.  It's two host bridges, with independent
+> PCI hierarchies below them:
+> 
+>   Host bridge A: [mem 0x2_00000000-0x2_7fffffff window] (bus address 0x00000000-0x7fffffff)
+>   Host bridge B: [mem 0x2_80000000-0x2_ffffffff window] (bus address 0x00000000-0x7fffffff)
+> 
+> Bridge A has an MMIO aperture at CPU addresses
+> 0x2_00000000-0x2_7fffffff, and when it initiates PCI transactions on
+> its secondary side, the PCI address is CPU_addr - 0x2_00000000.
+> 
+> Similarly, bridge B has an MMIO aperture at CPU addresses 
+> 0x2_80000000-0x2_ffffffff, and when it initiates PCI transactions on 
+> its secondary side, the PCI address is CPU_addr - 0x2_80000000.
+> 
+> Both hierarchies use PCI bus addresses in the 0x00000000-0x7fffffff
+> range.  In a topology like this, you can't convert a bus address back
+> to a CPU address unless you know which hierarchy it's in.
+> pcibios_bus_to_resource() takes a pci_bus pointer, which tells you
+> which hierarchy (and which host bridge address translation) to use.
+
+Agreed. While I think about how to adjust that specific patch,i let's drop it from
+this patchset since the aforementioned change is properly fixing the translation
+issue.
+
+> 
+> Bjora
+
+Many thanks,
+Andrea
 
