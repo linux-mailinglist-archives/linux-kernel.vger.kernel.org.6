@@ -1,360 +1,270 @@
-Return-Path: <linux-kernel+bounces-371286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B968C9A393E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:55:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F199A3944
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0B4E1C2591D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:55:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC930B24B32
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD9618FDBD;
-	Fri, 18 Oct 2024 08:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A3618FC9F;
+	Fri, 18 Oct 2024 08:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="pYnE9w4S"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2049.outbound.protection.outlook.com [40.107.21.49])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NLbatw1D"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC7518FC80;
-	Fri, 18 Oct 2024 08:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729241703; cv=fail; b=sQYANwbkV136M56Ti43XGY65Z3BH0TkC+h/3/G11hZUkkyj4RHVGXgWxfil7S/oz4Wcrd16lKObgO2yNIOa87s6OxxC2pL87nw584eERGGzJiE7/jhktFQhCn0uc7MZ9UZarQSOiTNrCLnMjT6BOJzYg91sWbCGJ7V8aqx+3Uck=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729241703; c=relaxed/simple;
-	bh=AoB5ByMe+GlKfxR01EKmHKpb6wrtQOW2pX/t6F6R1Ks=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Q14bGKQnBwXgauus3GdefUQLjhAsZJqK9ZDZ4ybiVxrGyrtGbYk8rB9WEAtW+urGsJBKkfbHHDnpamncXQwRR70guR56KvbuL2IDVf3FfOjVpDX4n5opIOa4iMRAtHzXZky6cyeLG6st6rSuywI39/SapvkKFS4PN9/tEoAdIIE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=pYnE9w4S; arc=fail smtp.client-ip=40.107.21.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pBzA4SrjbCX6bMzf3tmmwfUNkxOR55cwsnU0CR3EMRIiRXrILJZc//t+qGHRKDbSP8VZq3TuzSUimsYOldyaSvZUAUtyv1Y30xzvQvqDUJTMaUWwor1W7XsHzpsYp/yIyste+/Wr1gV8PsdfqU8gTGNa8pKkeg4g/AsS9+7xDSF+xQNWX35q8plh9j7AOnOP0LZQp9a4xYMlT3amKeYQeLyGqLxwYomH/c2QNetXPQ9Sj6+W/PKBRDLDV7r4j4CPAQEI+F6MbqEEdAKvvhSoB2ZC/+O/EPIOh13C2bfECAgdWX2MfEVZimPQPfbqxR/5VLGDSR8uxSYKAJzRrtNWhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sPMgbtGTK4m+wQtVDVLuT+lZa61iv5Iy+EvCh0a2gpI=;
- b=XOqigCLKyIyGRHppuTLGUBQMiLDg71aYIo17bey7wSk0khyK/jbjDug20rLIS0pCiwQQcpZ1tAQFOCIiv2mfLVU1u+gNE+SL/EOUEXlJCeIRj+T+eRGyqQmTmsXBK2666Kt1CS9XGTbvd1dPBjQK6fO/PkqFnTdn5kxkhdht52OB3wXTrmtMwK1gkgDb4ECrozboNjywngy/uYAug2NAtsRjfn/7wGtHg1CrKkNFEVfc65md3GptiwGXllsnxeqZUK+4Nzn8HDBVc/dxIba+iGsY7/ckpmkwHodLvzM3gjjdss/AO9l1NkUOs5m5L0Je/URo2rtNW48GDY/h3dPXBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sPMgbtGTK4m+wQtVDVLuT+lZa61iv5Iy+EvCh0a2gpI=;
- b=pYnE9w4S8830tOEqgYEEoNLrrB4+OjrLPi2RTJ6SWHalUVSyFWSpzDF3hBlTD31Dm+KEkXAp8Kbt8rNcqy6Kqc+rEQ0wR+ctKpCw526XLvJ8T6hcpIFBzSDa71N5rOcyEfAlrfcQZV9/0nPcmsTBlRiRSzcQxWpZfjh+EMUdwWiGmtAvxEBNvZUs0YoH27ePbf1q3vrT2Ka1ZWcDZqePU456NEKRyjpNreV5BCNwaXA3IiY2y+iwn0vHG45ZZYw3t/YPZLrOAoEsuBc1NCxVApD9HTlFocnnGph/nupOzZcOdCI8G5p3F1ewZTOs9iYXPOoQ2tyvWtj5Oxy9H3U9MQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
- by DUZPR04MB9982.eurprd04.prod.outlook.com (2603:10a6:10:4db::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.20; Fri, 18 Oct
- 2024 08:54:57 +0000
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd%6]) with mapi id 15.20.8069.019; Fri, 18 Oct 2024
- 08:54:56 +0000
-Message-ID: <1210ae00-2cb4-4175-933d-8227f9b7a160@oss.nxp.com>
-Date: Fri, 18 Oct 2024 11:54:52 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3
- SoCs
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- NXP S32 Linux Team <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>,
- Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>,
- Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-References: <20241015105133.656360-1-ciprianmarian.costea@oss.nxp.com>
- <20241015105133.656360-2-ciprianmarian.costea@oss.nxp.com>
- <20241015211540.GA1968867-robh@kernel.org>
- <20241015212717.GA1983714-robh@kernel.org>
- <20241016160823c22ccb22@mail.local>
-Content-Language: en-US
-From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-In-Reply-To: <20241016160823c22ccb22@mail.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS4P192CA0043.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:20b:658::9) To DU0PR04MB9251.eurprd04.prod.outlook.com
- (2603:10a6:10:352::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DF817DE36;
+	Fri, 18 Oct 2024 08:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729241743; cv=none; b=LB82+wKSBun6WUPVMIzehTqxlmExfa/lEc0+f4GsZCKOI83Hma6HcGLW2jfnGl1OlDk6ZfrVd71rzqQI9IPHxgLM3GFXYcY2/2EReRFh74nm5mv+zYgM3O8cPmme+1eSKBOa3Bdor6dEyTIocPMS9SOIUaF+1zntUQ2/LGI8Lak=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729241743; c=relaxed/simple;
+	bh=a3FJK79Wq3kkI8YAqhGkoe37e+zTJROY0waZT8FEpis=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Yg1TXOeqV4qA/bfMmwa/1AiNQOGfNOBo0n6oAHGhmROzrzKOpZgoq4nr3hG8Sh5RmK1pQ1HIh7gsyK6cl1OOnZ6vg8LZk5i91YB8ZQgS/xshXMJg9sDZofTTO5njCFkxmf7jx54o/H+pyG1ImeKsmIxSCCbzNlJkN0QGWqgsePQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NLbatw1D; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729241741; x=1760777741;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=a3FJK79Wq3kkI8YAqhGkoe37e+zTJROY0waZT8FEpis=;
+  b=NLbatw1D/UA83CQzfaEw+x1HMigL2D8bxprCGVGkZcEUBiTfxo5N82uB
+   qj6/2RRW7Y/Isa8mrYpDQsH/MrgJwigrqCqINnqlsXEy6yTEnyOwN+1mP
+   2MjAhNBWMenlGvuu+AL1ssP6aSvhRCh8Oh/yZYk8uwseLauiW/SYc6iCk
+   AT5Lz+lXsYKQVgBE6xMHRWWTcaxoW7D2VMR1MEo2nBfAzs8PRjk1XGata
+   pRPyEs11y7Tw3Cg01HVmaTzNRgnRTancWhrGUYpg7pysQj8kZq6TcUYld
+   d4m5pc1U7RR7YLOBLETq36sWKZ59shDISaIwuB93nFGp/MqOirsxmx/hs
+   Q==;
+X-CSE-ConnectionGUID: 3dASBEJ5ST+29ZZ0v8nTQg==
+X-CSE-MsgGUID: 39aJRo2qRwi/TfCNwQRctw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="40164539"
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="40164539"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:55:41 -0700
+X-CSE-ConnectionGUID: 0zCBx7OzQYqOJWwkv1NKkw==
+X-CSE-MsgGUID: ji2PIPAoTiKHrpBTTeS3tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="78719691"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.217])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:55:38 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 18 Oct 2024 11:55:35 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V3 08/15] selftests/resctrl: Only support measured read
+ operation
+In-Reply-To: <3e451b37bf88a96018d6ab6564dbdf2f853c86ee.1729218182.git.reinette.chatre@intel.com>
+Message-ID: <0d5fdeff-2bd9-91ad-b98e-c7efc998e77d@linux.intel.com>
+References: <cover.1729218182.git.reinette.chatre@intel.com> <3e451b37bf88a96018d6ab6564dbdf2f853c86ee.1729218182.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|DUZPR04MB9982:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa9d8853-58a4-4201-92f3-08dcef528a51
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?STlYM09OdEg3QVJjcHkwaFlxazZxeWw1TTd2NzRzaDJ1OXZNQnQxa2wzOXVF?=
- =?utf-8?B?M3ZwVlRBVE5TeUpjekFTUkpvb1B0Y0lBUnVWZUNGOG5QQVdGeHFSNkV2UW41?=
- =?utf-8?B?M1laUzBtd3d0V1NwUFRacTlJUlltbjVSbUROU0JDOGI4NVltN2JUQTBoeGNQ?=
- =?utf-8?B?Vy9sS1J0SEtXNWtkKzBCQ2hmeFN6bjhwSHdkbEc3MCtqWWtGUWRFNVdhcEJQ?=
- =?utf-8?B?QVhEbFlFU25oekN0RkhEMUJBV3N2ODd5UDBHSEY3N2pQbys1WVZGTjh6TTZC?=
- =?utf-8?B?RDhiS2xISHoxaDA1eFlVbTRIZVFkVmt0dGRVQ0duRUZPYXpKcDA1cjlQeWRo?=
- =?utf-8?B?cGhOT0NoTTl3Mi95R2J3Rk9OUEZtNklYd1ZGcDZWQjdtM2xodDRNb2x5RERo?=
- =?utf-8?B?cE9aWVRobXVkVFBSNWFLR3hBeWtwZWxGZSswNmJUQmJza3dQV2V3WjUxdy9L?=
- =?utf-8?B?YXYwQzJocThraHZjWGVxZHU3VGxjendFc0lHUlBaemZTaUlzV3RxMXNiVnk4?=
- =?utf-8?B?RHczWjdHdzd1dzVjN1Y5L1h0T2dvTC9JeHJFdmxaT3hkTU5mVlg3L3RLeU0v?=
- =?utf-8?B?NDhlUXRCdjcxWUY0VmpPOCtQVkYzRlh2ZW5ISW5HVFVqRFY1MVJLWFQyRnJP?=
- =?utf-8?B?NG9HZVFNaU1xZ2kzRDhldjlESGpmZE12N3drNTRQd0p5N21nTlFvQ3M1RG1H?=
- =?utf-8?B?S3BadWo1V29UUTdaeFd6SGxaMkltcHhqdnJqK1ZGeDJwcU9GRnhDTjh0dWdF?=
- =?utf-8?B?UlRhT1ZqUE5KeS9pRUhLR1ZMVkx4OEJVYW1Sb2hMTXNIY09pSnBEdFNaOGhv?=
- =?utf-8?B?UU1qd0xSbVpsWHlDRmhMN2ZqbTh4Z2hpZDJ0VmlreEJkcDMyZU9qVWl2RURq?=
- =?utf-8?B?WmY0QUxVcHpTb3FseWVhVlhTYWs5T3lEdTVCbjVUeWgwd1dPNDZXYmRkbUJ0?=
- =?utf-8?B?cXRxMkFERU1hYy9hU2g1d2NjTE1McHdYUWV6UDg2TFErNWlXUE5kQTkwb2g4?=
- =?utf-8?B?cEdBc3JTbDNwN3g4YjJoQVRTVHY3dlBqRGlweHNMdlpjQWpmM2lnTHFia0hP?=
- =?utf-8?B?R3hNeFNIWjlBTjBMZUJDQVBDRW9jcDYvTTg1d0tFUzA0dFJBdnQwNlpTckFy?=
- =?utf-8?B?SmoyVHhYRitlVFlyWml1SU5Ib3BNOTl5MUw0VlJ4L29BMTR6bjlrS0IyOHFv?=
- =?utf-8?B?RnNBMGk3NzBBbDVDOVVtWlBjSmpTZ0l2SUhHSS9YSC95OWcwRFVQUUk5VjZM?=
- =?utf-8?B?blJqdk91UWJUOXJnRHp2MGR3cTN5djNrV0RGcVQ1a09wcDB4aG41bzFTUUwz?=
- =?utf-8?B?VExjaldPYnBjREg2UTRwY0hmQXQ1QTFyN2o5T1NkdHBsYk42Q1lmc2Fzd3E0?=
- =?utf-8?B?aXNuazZranN3b2h6VkRhbGtOWk1LbnF3eUZMRGRnL2xQaHAwc3FIcVhKb1BO?=
- =?utf-8?B?T0JjVGVpbWsxSGQvRjB1N3dFNmxReTBFRXhYMGU5QmhDRG80NVJVei9TajEr?=
- =?utf-8?B?cnY3Sy9kNmRxVFFrSnJMRGREdlU0NFM0TENHV0VzdmhVdVZHRlRlb3IyWVhT?=
- =?utf-8?B?Tlh2U0FEYVdYZUkyWEVseHpJZ3BkMGtuQWl1ekowdno2bjJ4d1VZZTBodWs3?=
- =?utf-8?B?UHNzRGsxeDlPR3FzVlQyWlo3NG84WEx6ajFWRjZlbjkyYk5xQnBGSUdvNzZL?=
- =?utf-8?B?amRXUEtkWklXeHJMZG95d2MyMFQvRjV5eVRDdWQ5b3lqSlZ5ZkdWVi9RPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SjBqT2toVi9qWDROOTIwQkk4aEVGTjlXTk9CUnl6MmRHMFFneG9mWmdobWxZ?=
- =?utf-8?B?d0dDekp3a24rTm04UjcrYVUzVEVOZzErdHBKbXYyRjd1SXFBVXYrbkRqbWhp?=
- =?utf-8?B?ek93aFkwWW1ZZk5ZWFBMYWh4d0hzR2duQnNvaFgyNDdHNTBpakpNVS9HL2Vu?=
- =?utf-8?B?MU80a3RIU2hmcGJiNkxzSGJYQWlZOE95SHlUVTlKR3RIejJMdVpscjhRYXFQ?=
- =?utf-8?B?ZGdUNVkyNytTRW5Va2xJbmZqWDFkRzZJcmtzWWxXZkdzaEMwUU9MVVgxTEgv?=
- =?utf-8?B?UHhmQlNTMkhaajhOcndMSnhTVmNWQXdtVWREVmtodDEyTVpodDE5Z0dYdjdR?=
- =?utf-8?B?UVMwM2dGbER5YWJUWHcyQXJ4MWxMWXdTeThaV2R3ajdwSEFUZzZ1ODU5YTdY?=
- =?utf-8?B?OGVEdHpENnFpVUkyb2dSekNDVVFrempzZHdYaFdVNVM3UFZ2N096a1dONzEw?=
- =?utf-8?B?T0hIRDAzejVOQXFrd2RkVlFYaURqQTBaRDB3VktCS1F6c0R0NnVFQUVaU3ZL?=
- =?utf-8?B?YjJRWjMrelFBTUFKMUVDWU5nUndLdmFIaDEwTXRLeVB1ZXZOVXdrZ0tLUm9T?=
- =?utf-8?B?M0I1UGhiWTZZaVlwWnk4OG1IV0JlR2Rpejd3ZXVmVFJGeW5ReVEvM2xYTjJ6?=
- =?utf-8?B?QlgrbTNiTTFlZG8zOUF1TkVIWlAwMmpFRnJuSDFwM041NkVJUHlPWVYvdlFP?=
- =?utf-8?B?NnRudzQyTzc1ODcyb1J2OG1XRFRjTUt4KzkvbEJ5ekd4YkU2VStqWlhBYk5r?=
- =?utf-8?B?RU1ieXMyblV2WnFheTV3Nkhrc0JPSWVHbHo1ellMNTNOT2hiY1RxNEpFK2Y3?=
- =?utf-8?B?a25OSkM3Smc1aFVqMzg2NnFJN3lkMlZFTStuZGNhUkg0d252MTM2c0lEdUtR?=
- =?utf-8?B?UVljSVRxYnVZeHFGTXlSWWxhcnRORzVVNXRjRmxjV0plVllyM3BQU2Z0Z2NW?=
- =?utf-8?B?VTFXazZEY0xJdEJWeEthYTJra1BlZ3hUVkFQMGFNUThMM08vK1NnRVlYT0JD?=
- =?utf-8?B?TVh2WVVZR284N0Vtcm8zM0tOMXJpVHBPeWFxUUdsaGJCV1Qwa1QrSERMRkxp?=
- =?utf-8?B?dTJ0ZXJsRFJNNTl2N0hGL3BXdzdnVDAxUEJsTlhTRzFSdlp1RURxZld3cmNx?=
- =?utf-8?B?RHp4UFpnTWJvSXBVSkJEVlo1ckdZNWxTVjkxdjJ1T0xOdmFmZEMrU2ptMm9a?=
- =?utf-8?B?QWxXdzdmS2tHSzYveFZoTXVEY0lmaEJpMlhySkcxS2JRRnJEd0N0bTZRb1R4?=
- =?utf-8?B?Skk2cWFDaE05RGZYYnJMVkpNczJWNnBSZjlDcUxWajFTS1VTSk9lckJoRGt2?=
- =?utf-8?B?NXkvSGwxMXJNZk95VVR1N2NxMTFIcUM2ZnpMK05yYS9XZThvZnkySUtCNzln?=
- =?utf-8?B?NldhemhQKzVlWVVBSm81MjBWdjYwcFQrSzhNdFlLalV2dm5CM3g4dHQ3cC84?=
- =?utf-8?B?UnBiSHNjL1lPeWhGcFRQME5yaVdLbXVJbHZkWThHaUZUQjF2UjZjQ0JLK2Iz?=
- =?utf-8?B?bXJSRjkwVHk1NFp2UWVtMFQwTUZoS3h5VWI3TUJMNUdFWEhWQ21Bbmtnbmxi?=
- =?utf-8?B?bmF3aXk0YklMbUZFNXltaXlOZDlSamlUbXdVR1FjQnlkSnBZTHMyN0ZVdEJw?=
- =?utf-8?B?ckE2bVU4cEhEZUEyalR0NnpzZDFreGo5WnhDSk9ndGtKVTdUbUZ4Y0t4cjZQ?=
- =?utf-8?B?bHJkeVpidUNxMUR0Z1p0VkN4ZGpDSU1ua29LdUJ0d3ZLQ2hKTXptanlVZkZU?=
- =?utf-8?B?NWZwZjBKZ0FjUTZMZ2tRTFNsVmxxc0VkeFFSdGwyNnFDVlRFQ1FXVytaOWVQ?=
- =?utf-8?B?OTBaYy9rcjVFcURxSDc4OUxpK2FtZ1A5VzhxZXAzdFZlZHROM0hZWCtoSTRW?=
- =?utf-8?B?Y0FiNUhJeGNFSFU3NDJoT2ZKK1hKNnd4VEpYb051WWtIYlRhR3IycnB2S01E?=
- =?utf-8?B?QVAyV3pIYkxiYXo2K2xXY0dGa3pUMGFTL1J6eHFrNjUxRzIzWCtjcXhGUlFp?=
- =?utf-8?B?SlgrR25JWVZaMXJHMHNlRmZ1RmxKbWN1c1U1ZWtvWkd2ZkpGYjJxMTJ5YjBQ?=
- =?utf-8?B?TFMwWGtlQ2pRT3RlTXVaTW5BRXhBS0YwM1loVUFXc1RMZWw0Qzg2bUxJd04z?=
- =?utf-8?B?eGYvT2ZnWlRJYmlpQ2wvZlpiV1hUb0Yxai9admFKR3JQUWJUZUhlOHlyd1Y2?=
- =?utf-8?Q?a3WXGOnDcaoY2gZ7WT8fu3s=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa9d8853-58a4-4201-92f3-08dcef528a51
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 08:54:56.8178
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LJBl/8rU35UZqefie+fBOlvak/BoIyejHnAfq1jgGcBeTDsBPD5Q9MM2FUmhJ308eFP9dwuRfRmHXwq/xjZsK0wmWe7wPR20B/k11ojhGyM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB9982
+Content-Type: multipart/mixed; boundary="8323328-1834914115-1729241735=:1141"
 
-On 10/16/2024 7:08 PM, Alexandre Belloni wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hello Rob and Alexandre,
+--8323328-1834914115-1729241735=:1141
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Thank you for your careful review!
+On Thu, 17 Oct 2024, Reinette Chatre wrote:
 
-> On 15/10/2024 16:27:17-0500, Rob Herring wrote:
->> On Tue, Oct 15, 2024 at 04:15:40PM -0500, Rob Herring wrote:
->>> On Tue, Oct 15, 2024 at 01:51:30PM +0300, Ciprian Costea wrote:
->>>> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->>>>
->>>> This patch adds the dt-bindings for NXP S32G2/S32G3 SoCs RTC driver.
->>>>
->>>> Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
->>>> Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
->>>> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
->>>> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
->>>> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->>>> ---
->>>>   .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 102 ++++++++++++++++++
->>>>   1 file changed, 102 insertions(+)
->>>>   create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
->>>> new file mode 100644
->>>> index 000000000000..3a77d4dd8f3d
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
->>>> @@ -0,0 +1,102 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: NXP S32G2/S32G3 Real Time Clock (RTC)
->>>> +
->>>> +maintainers:
->>>> +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
->>>> +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    oneOf:
->>>> +      - enum:
->>>> +          - nxp,s32g2-rtc
->>>> +      - items:
->>>> +          - const: nxp,s32g3-rtc
->>>> +          - const: nxp,s32g2-rtc
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  interrupts:
->>>> +    maxItems: 1
->>>> +
->>>> +  "#clock-cells":
->>>> +    const: 1
->>>> +
->>>> +  clocks:
->>>> +    items:
->>>> +      - description: ipg clock drives the access to the
->>>> +          RTC iomapped registers
->>>> +
->>>> +  clock-names:
->>>> +    items:
->>>> +      - const: ipg
->>>> +
->>>> +  assigned-clocks:
->>>> +    minItems: 1
->>>> +    items:
->>>> +      - description: Runtime clock source. It must be a clock
->>>> +            source for the RTC module. It will be disabled by hardware
->>>> +            during Standby/Suspend.
->>>> +      - description: Standby/Suspend clock source. It is optional
->>>> +            and can be used in case the RTC will continue ticking during
->>>> +            platform/system suspend. RTC hardware module contains a
->>>> +            hardware mux for clock source selection.
->>>
->>> If the RTC h/w contains a mux, then your mux inputs should be listed in
->>> 'clocks', not here.
->>>
->>>> +
->>>> +  assigned-clock-parents:
->>>> +    description: List of phandles to each parent clock.
->>>> +
->>>> +  assigned-clock-rates:
->>>> +    description: List of frequencies for RTC clock sources.
->>>> +            RTC module contains 2 hardware divisors which can be
->>>> +            enabled or not. Hence, available frequencies are the following
->>>> +            parent_freq, parent_freq / 512, parent_freq / 32 or
->>>> +            parent_freq / (512 * 32)
->>>
->>> In general, assigned-clocks* do not need to be documented and should
->>> never be required.
->>>
->>>> +
->>>> +required:
->>>> +  - compatible
->>>> +  - reg
->>>> +  - interrupts
->>>> +  - "#clock-cells"
->>>> +  - clocks
->>>> +  - clock-names
->>>> +  - assigned-clocks
->>>> +  - assigned-clock-parents
->>>> +  - assigned-clock-rates
->>>> +
->>>> +additionalProperties: false
->>>> +
->>>> +examples:
->>>> +  - |
->>>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>> +    #include <dt-bindings/interrupt-controller/irq.h>
->>>> +
->>>> +    rtc0: rtc@40060000 {
->>>> +        compatible = "nxp,s32g3-rtc",
->>>> +                   "nxp,s32g2-rtc";
->>>> +        reg = <0x40060000 0x1000>;
->>>> +        interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
->>>> +        #clock-cells = <1>;
->>>> +        clocks = <&clks 54>;
->>>> +        clock-names = "ipg";
->>>> +        /*
->>>> +         * Configuration of default parent clocks.
->>>> +         * 'assigned-clocks' 0-3 IDs are Runtime clock sources
->>>> +         * 4-7 IDs are Suspend/Standby clock sources.
->>>> +         */
->>>> +        assigned-clocks = <&rtc0 2>, <&rtc0 4>;
->>>
->>> That's weird...
->>>
->>>> +        assigned-clock-parents = <&clks 56>, <&clks 55>;
->>>
->>> I'd expect these should be in 'clocks'. I don't think this node should
->>> be a clock provider unless it provides a clock to something outside the
->>> RTC.
->>>
->>> Looks like you are just using assigned-clocks to configure the clock mux
->>> in the RTC. That's way over complicated. Just define a vendor specific
->>> property with the mux settings.
->>
->> I just read v1 and got told use the clock framework...
->>
->> I disagree completely. Tons of h/w blocks have the ability to select
->> (internal to the block) from multiple clock sources. Making the block a
->> clock provider to itself is completely pointless and an overkill, and
->> we *never* do that. Any display controller or audio interface has
->> mutiple clock sources as just 2 examples.
-> 
-> And in 6 months, we are going to learn that the rtc is used to clock the
-> wifi chip or whatever and we are going to need to add everything in the
-> CCF and we will have an unused property that we are going to have to
-> support forever to avoid breaking the ABI. This already happened...
-> 
->>
->> However, I don't see why you need the divider config in DT. Can't you
->> figure out what divider you need based on input frequency? The output
->> frequency should be fixed, right?
->>
->> Rob
-> 
+> The CMT, MBM, and MBA tests rely on a benchmark to generate
+> memory traffic. By default this is the "fill_buf" benchmark that
+> can be replaced via the "-b" command line argument.
+>=20
+> The original intent of the "-b" command line parameter was
+> to replace the default "fill_buf" benchmark, but the implementation
+> also exposes an alternative use case where the "fill_buf" parameters
+> itself can be modified. One of the parameters to "fill_buf" is the
+> "operation" that can be either "read" or "write" and indicates
+> whether the "fill_buf" should use "read" or "write" operations on the
+> allocated buffer.
+>=20
+> While replacing "fill_buf" default parameters is technically possible,
+> replacing the default "read" parameter with "write" is not supported
+> because the MBA and MBM tests only measure "read" operations. The
+> "read" operation is also most appropriate for the CMT test that aims
+> to use the benchmark to allocate into the cache.
+>=20
+> Avoid any potential inconsistencies between test and measurement by
+> removing code for unsupported "write" operations to the buffer.
+> Ignore any attempt from user space to enable this unsupported test
+> configuration, instead always use read operations.
+>=20
+> Keep the initialization of the, now unused, "fill_buf" parameters
+> to reserve these parameter positions since it has been exposed as an API.
+> Future parameter additions cannot use these parameter positions.
+>=20
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 
-Would the following approach be acceptable ?
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-1. Keep 'assigned-clocks' based implementation as optional (not 
-required), in order to take leverage of its scalability for allowing 
-different clock source and divisor settings.
-2. Implement a default clock muxing setting in the driver for both 
-Runtime and Suspend.
+--
+ i.
 
-
-Best Regards,
-Ciprian
-
+> ---
+> Changes since V2:
+> - Update changelog to justify keeping the assignment to benchmark_cmd[4].
+>   (Ilpo)
+>=20
+> Changes since V1:
+> - New patch.
+> ---
+>  tools/testing/selftests/resctrl/fill_buf.c    | 28 ++-----------------
+>  tools/testing/selftests/resctrl/resctrl.h     |  2 +-
+>  .../testing/selftests/resctrl/resctrl_tests.c |  5 +++-
+>  tools/testing/selftests/resctrl/resctrl_val.c |  5 ++--
+>  4 files changed, 9 insertions(+), 31 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/s=
+elftests/resctrl/fill_buf.c
+> index 854f0108d8e6..e4f1cea317f1 100644
+> --- a/tools/testing/selftests/resctrl/fill_buf.c
+> +++ b/tools/testing/selftests/resctrl/fill_buf.c
+> @@ -88,18 +88,6 @@ static int fill_one_span_read(unsigned char *buf, size=
+_t buf_size)
+>  =09return sum;
+>  }
+> =20
+> -static void fill_one_span_write(unsigned char *buf, size_t buf_size)
+> -{
+> -=09unsigned char *end_ptr =3D buf + buf_size;
+> -=09unsigned char *p;
+> -
+> -=09p =3D buf;
+> -=09while (p < end_ptr) {
+> -=09=09*p =3D '1';
+> -=09=09p +=3D (CL_SIZE / 2);
+> -=09}
+> -}
+> -
+>  void fill_cache_read(unsigned char *buf, size_t buf_size, bool once)
+>  {
+>  =09int ret =3D 0;
+> @@ -114,15 +102,6 @@ void fill_cache_read(unsigned char *buf, size_t buf_=
+size, bool once)
+>  =09*value_sink =3D ret;
+>  }
+> =20
+> -static void fill_cache_write(unsigned char *buf, size_t buf_size, bool o=
+nce)
+> -{
+> -=09while (1) {
+> -=09=09fill_one_span_write(buf, buf_size);
+> -=09=09if (once)
+> -=09=09=09break;
+> -=09}
+> -}
+> -
+>  unsigned char *alloc_buffer(size_t buf_size, int memflush)
+>  {
+>  =09void *buf =3D NULL;
+> @@ -151,7 +130,7 @@ unsigned char *alloc_buffer(size_t buf_size, int memf=
+lush)
+>  =09return buf;
+>  }
+> =20
+> -int run_fill_buf(size_t buf_size, int memflush, int op)
+> +int run_fill_buf(size_t buf_size, int memflush)
+>  {
+>  =09unsigned char *buf;
+> =20
+> @@ -159,10 +138,7 @@ int run_fill_buf(size_t buf_size, int memflush, int =
+op)
+>  =09if (!buf)
+>  =09=09return -1;
+> =20
+> -=09if (op =3D=3D 0)
+> -=09=09fill_cache_read(buf, buf_size, false);
+> -=09else
+> -=09=09fill_cache_write(buf, buf_size, false);
+> +=09fill_cache_read(buf, buf_size, false);
+> =20
+>  =09free(buf);
+> =20
+> diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/se=
+lftests/resctrl/resctrl.h
+> index 51f5f4b25e06..ba1ce1b35699 100644
+> --- a/tools/testing/selftests/resctrl/resctrl.h
+> +++ b/tools/testing/selftests/resctrl/resctrl.h
+> @@ -142,7 +142,7 @@ int perf_event_open(struct perf_event_attr *hw_event,=
+ pid_t pid, int cpu,
+>  unsigned char *alloc_buffer(size_t buf_size, int memflush);
+>  void mem_flush(unsigned char *buf, size_t buf_size);
+>  void fill_cache_read(unsigned char *buf, size_t buf_size, bool once);
+> -int run_fill_buf(size_t buf_size, int memflush, int op);
+> +int run_fill_buf(size_t buf_size, int memflush);
+>  int initialize_mem_bw_imc(void);
+>  int measure_mem_bw(const struct user_params *uparams,
+>  =09=09   struct resctrl_val_param *param, pid_t bm_pid,
+> diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/test=
+ing/selftests/resctrl/resctrl_tests.c
+> index e7878077883f..0f91c475b255 100644
+> --- a/tools/testing/selftests/resctrl/resctrl_tests.c
+> +++ b/tools/testing/selftests/resctrl/resctrl_tests.c
+> @@ -265,13 +265,16 @@ int main(int argc, char **argv)
+>  =09=09=09ksft_exit_fail_msg("Out of memory!\n");
+>  =09=09uparams.benchmark_cmd[1] =3D span_str;
+>  =09=09uparams.benchmark_cmd[2] =3D "1";
+> -=09=09uparams.benchmark_cmd[3] =3D "0";
+>  =09=09/*
+> +=09=09 * Third parameter was previously used for "operation"
+> +=09=09 * (read/write) of which only (now default) "read"/"0"
+> +=09=09 * works.
+>  =09=09 * Fourth parameter was previously used to indicate
+>  =09=09 * how long "fill_buf" should run for, with "false"
+>  =09=09 * ("fill_buf" will keep running until terminated)
+>  =09=09 * the only option that works.
+>  =09=09 */
+> +=09=09uparams.benchmark_cmd[3] =3D NULL;
+>  =09=09uparams.benchmark_cmd[4] =3D NULL;
+>  =09}
+> =20
+> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testin=
+g/selftests/resctrl/resctrl_val.c
+> index b0f3c594c4da..113ca18d67c1 100644
+> --- a/tools/testing/selftests/resctrl/resctrl_val.c
+> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
+> @@ -622,8 +622,8 @@ int measure_mem_bw(const struct user_params *uparams,
+>   */
+>  static void run_benchmark(int signum, siginfo_t *info, void *ucontext)
+>  {
+> -=09int operation, ret, memflush;
+>  =09char **benchmark_cmd;
+> +=09int ret, memflush;
+>  =09size_t span;
+>  =09FILE *fp;
+> =20
+> @@ -643,9 +643,8 @@ static void run_benchmark(int signum, siginfo_t *info=
+, void *ucontext)
+>  =09=09/* Execute default fill_buf benchmark */
+>  =09=09span =3D strtoul(benchmark_cmd[1], NULL, 10);
+>  =09=09memflush =3D  atoi(benchmark_cmd[2]);
+> -=09=09operation =3D atoi(benchmark_cmd[3]);
+> =20
+> -=09=09if (run_fill_buf(span, memflush, operation))
+> +=09=09if (run_fill_buf(span, memflush))
+>  =09=09=09fprintf(stderr, "Error in running fill buffer\n");
+>  =09} else {
+>  =09=09/* Execute specified benchmark */
+>=20
+--8323328-1834914115-1729241735=:1141--
 
