@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-371905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A399A4205
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:12:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC78E9A4209
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D99D628A303
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:12:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46C27B2128A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA9276C61;
-	Fri, 18 Oct 2024 15:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EC2200BB7;
+	Fri, 18 Oct 2024 15:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcn0AAZs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf0eO50I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9525A16BE3A;
-	Fri, 18 Oct 2024 15:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D7D76C61;
+	Fri, 18 Oct 2024 15:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729264343; cv=none; b=NsLidQWFbKeA9t35bBzQ2XiI2Z3cFU7YMtyyAXQPEMv33vfi96rYi3anKOAnEL/R1hoGvwZ0l5DBjcMkFYjxnMvgJ5UC25gGIYmzkGTn6zbC/DerTzSOkBMW0gtDVwXJcdcZaD3u2BpeKdQxfo4MRZldJ+zzyw5vvuKQkkjf280=
+	t=1729264383; cv=none; b=g3vDouhcOrLbAfQG1fGMdX8Ldz4zGhPr3vX5FIwj3XMkIJ7ZmnTjvlrPRYZxiwn0BpdK9iopizsNRr3z0Xqv4XrxveTtxA/h5xZUunTuAPO+ZoyUCM6RqSb1EFegQjxyXwYWQaUwsBGSe0vAUqJWySB+/d7oIG1PWmgbNCEah78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729264343; c=relaxed/simple;
-	bh=W1Y5OK/NY7K9m461uBKMk468dZHpDUW5Foz6lCJa0Gk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IZh+qx8gPneoaCtzny5J61yX9Yx8M28U/Tst0s0ipmnORQSFWAB5Qm1RSYk4eyT0+hiR2igDQK+UnuaBxAdXzGG/p+z2ZbfeRsWYD0gHhmXdZ6fI0jZIOOOQJck90UvsM2sM5cEBKP0VzucDc6FQBiNjkN0AZLgCCM+j2GtXzgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcn0AAZs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 649B8C4CEC3;
-	Fri, 18 Oct 2024 15:12:20 +0000 (UTC)
+	s=arc-20240116; t=1729264383; c=relaxed/simple;
+	bh=4/LoPNWFMLOtRjQ2F1SWn+Sgmq2mlkEMHTBeAJ0+Sts=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=okygfkDXKPr1NU+hs72l3bW5m1WnurXFFCsYN4f9K6QTqg00OkXXbgbL9r5Oo4y9s11qpzlzLG1gBDgnRwH4ho+z8jYAxdr4GQe+4J4JBdPLJVyoZdqoe5spvYqldQzCJTUyIvAYnVAL9Qoq51Mk7dul7JFyIj+cbokwap6RHpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf0eO50I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9C33C4CEC3;
+	Fri, 18 Oct 2024 15:13:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729264343;
-	bh=W1Y5OK/NY7K9m461uBKMk468dZHpDUW5Foz6lCJa0Gk=;
+	s=k20201202; t=1729264383;
+	bh=4/LoPNWFMLOtRjQ2F1SWn+Sgmq2mlkEMHTBeAJ0+Sts=;
 	h=From:To:Cc:Subject:Date:From;
-	b=lcn0AAZsD7toXxaY4C6Q6zLbhLYNaYscIBQuhZtqo7dXj2ymsphuZmlVCFtId664c
-	 prY6s0r3UJYbxI5vieHUEqK6DXmStZ0XsLuYaCk+NGqlB3GYkQD4otK2P8YQHFTiJT
-	 VHQ1PCsWg45UIyFmDgSUnzOLXJhlSyKVuXdZncqj6Ri9iPfXFj6BSSOt8DBtjSoG8l
-	 dZWMT89U/IBvM3RwEINHoKwClharcgqsnvUSaxgsX/Pcgl2ppWCDrlKbsW4rG7cNDJ
-	 1OU1GIS0UM2T/J7ouiAf31jV1FNBUwNNAfO/13GUQuWFayt3BDSfYedyCKjum1aS+l
-	 QlPMJq9SShqIw==
+	b=Zf0eO50IFcBdjC4gKtwzS+B/O423DZOxwfR0DF10Yo3ApzX7RN+qHkv7TV0yPW6UU
+	 ewdR2DNjZWB+2ohT6qNOeXTkPsCBEYQ7XGd4dl5sk6tlRb5O+rfqPGZIZRqqk274gH
+	 5ASnOXh1mTXoXKhMOzn9NBwK7pdNawa5OihBgornEmtLRXxnVjoH4ODymBWjwZt3v8
+	 ZpBzxjpQI2nnxW9Gdllumxi16BE1BVUbJyvM7APCxPlD9a65vIirTwJNOmhvEyPtf7
+	 nzlj5kke0T+exfPGWNCIGyDefFQvmG+tzrm8oqsFfaWQfoLG9/j1zGUclLcP9zEEeR
+	 6Fmscvoo/0hIw==
 From: Arnd Bergmann <arnd@kernel.org>
-To: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>
+To: Helge Deller <deller@gmx.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Li Zetao <lizetao1@huawei.com>,
-	Kunwu Chan <chentao@kylinos.cn>,
-	netdev@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] ipmr: Don't mark ip6mr_rtnl_msg_handlers as __initconst
-Date: Fri, 18 Oct 2024 15:12:14 +0000
-Message-Id: <20241018151217.3558216-1-arnd@kernel.org>
+Subject: [PATCH] fbdev/wm8505fb: select CONFIG_FB_IOMEM_FOPS
+Date: Fri, 18 Oct 2024 15:12:49 +0000
+Message-Id: <20241018151258.3574617-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -66,32 +61,32 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-This gets referenced by the ip6_mr_cleanup function, so it must not be
-discarded early:
+The fb_io_mmap() function is used in the file operations but
+not enabled in all configurations unless FB_IOMEM_FOPS gets
+selected:
 
-WARNING: modpost: vmlinux: section mismatch in reference: ip6_mr_cleanup+0x14 (section: .exit.text) -> ip6mr_rtnl_msg_handlers (section: .init.rodata)
-ERROR: modpost: Section mismatches detected.
-Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.
+ld.lld-20: error: undefined symbol: fb_io_mmap
+>>> referenced by wm8505fb.c
+>>>               drivers/video/fbdev/wm8505fb.o:(wm8505fb_ops) in archive vmlinux.a
 
-Fixes: 3ac84e31b33e ("ipmr: Use rtnl_register_many().")
+Fixes: 11754a504608 ("fbdev/wm8505fb: Initialize fb_ops to fbdev I/O-memory helpers")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- net/ipv6/ip6mr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
-index 437a9fdb67f5..f7892afba980 100644
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -1367,7 +1367,7 @@ static struct pernet_operations ip6mr_net_ops = {
- 	.exit_batch = ip6mr_net_exit_batch,
- };
- 
--static const struct rtnl_msg_handler ip6mr_rtnl_msg_handlers[] __initconst_or_module = {
-+static const struct rtnl_msg_handler ip6mr_rtnl_msg_handlers[] = {
- 	{.owner = THIS_MODULE, .protocol = RTNL_FAMILY_IP6MR,
- 	 .msgtype = RTM_GETROUTE,
- 	 .doit = ip6mr_rtm_getroute, .dumpit = ip6mr_rtm_dumproute},
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index 9957dde4a3f6..961d7f5bbbc2 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -1388,6 +1388,7 @@ config FB_VT8500
+ config FB_WM8505
+ 	bool "Wondermedia WM8xxx-series frame buffer support"
+ 	depends on (FB = y) && HAS_IOMEM && (ARCH_VT8500 || COMPILE_TEST)
++	select FB_IOMEM_FOPS
+ 	select FB_SYS_FILLRECT if (!FB_WMT_GE_ROPS)
+ 	select FB_SYS_COPYAREA if (!FB_WMT_GE_ROPS)
+ 	select FB_SYS_IMAGEBLIT
 -- 
 2.39.5
 
