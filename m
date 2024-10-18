@@ -1,60 +1,67 @@
-Return-Path: <linux-kernel+bounces-371797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02AB39A4065
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D189A4070
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2826E1C20BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:50:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAE771C21082
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CFE1D88A6;
-	Fri, 18 Oct 2024 13:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC1A1DE3A9;
+	Fri, 18 Oct 2024 13:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1qk+sXCZ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgDX+vTq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E9FF9E6;
-	Fri, 18 Oct 2024 13:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F32D41A84;
+	Fri, 18 Oct 2024 13:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729259423; cv=none; b=k3gH1cVLpMoMg21C6hEEjwdbaRI6R6/Wtz+GNyjQDjw+nB7P87Aqcd0zugIieVcAA3el1rLCu7JYFgXDf0FYEKXmrsw8e0kJfFgZE4QJcA2rn2Z5oZVsMHRd01VX5tRmS0QCsywvcZuPkmLTn6Du3xIPqq9pBNAqzgJHJZOPPSQ=
+	t=1729259541; cv=none; b=gWKLc9wwU2XlfR2gXKQrSIZBEFTTK1eUyngNg/+Bx9VN0XbyT612mGg89dj+Hqt8JQG/pliqALUk5GxMGPlOCBzl/osISFzf1WMCe1AEeuYLlHk5uZGh+KV/hvOcLodXRmK8To/uwaNghJAfTzqfHA1u6QCB4JemYS9TohV1+1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729259423; c=relaxed/simple;
-	bh=Ifz2Hi49RNJ7FTB0bhlHs1SBJ6O19jjgJGYYqj7mLk4=;
+	s=arc-20240116; t=1729259541; c=relaxed/simple;
+	bh=ZM4EDtbQIRuZYDRskOrejqQI6sGJWvB8V8K3e9Fncdc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VDExGVqgoyHUHzdl/96j/zt46e/XIEsFWQ1H2kZeaLvC2l3fa/6xr0tWqvqV4JrKSvLivdTfGUpWxaSouqAA3uTAkAjJXTDxoLn8WbPwCwU41GMjHfMhUQXzf+sB00iJGG6u62T6MlXYwydw57h/0DDVOkLeaOzb9wK4Aol82tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1qk+sXCZ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Iaohp9JW+2KjUcboUd0Ub0ES9LNoNdwWMVfFNbvuLsM=; b=1qk+sXCZ+ySPkpBqSJ8biolan9
-	0ZcV/XAb4XAe/JNQnEe7PAugIa1pzEezaQdTVIAlU37jXE522s3OrzaiXbrybuAP46RpB58KJmzuh
-	gisag2No1ZkVdUkREmlSbPGvxyeiY9PAE5dtvJO/zwT/XkS7B5tdFfHd/4NY0osXa4zI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t1nMY-00AXUl-QB; Fri, 18 Oct 2024 15:49:54 +0200
-Date: Fri, 18 Oct 2024 15:49:54 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
-	tglx@linutronix.de, arnd@arndb.de, jstultz@google.com,
-	sboyd@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/8] rust: time: Introduce Delta type
-Message-ID: <6bc68839-a115-467f-b83e-21be708f78d7@lunn.ch>
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
- <20241016035214.2229-3-fujita.tomonori@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y0mzklMg4d3GofRy2TMtvnryvsQGLDlfsGf0zhZA3zXxzc3uA5Bgp5LKye8WKF9ujtFOrEKDWBEmo8O6ckKFKdIVaE4t/zT6xg93bWM3XswIiRY/jzM4+BXJtXJbexka+KinZEIFN64G2Cl0Q3gp1Qfnzm0oH6e8aH/0TxaoFX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgDX+vTq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0279C4CEC3;
+	Fri, 18 Oct 2024 13:52:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729259540;
+	bh=ZM4EDtbQIRuZYDRskOrejqQI6sGJWvB8V8K3e9Fncdc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SgDX+vTqqkFga5WU8i8c3F/ctmp7ocpvgizN+L8I9kjsLnNX/2UTfv5w5Dm04vOqb
+	 zDWSSzoLxJeFzLSqzvUkJCjnejljiJ0qy5nd//5aSYDGTPJX3cusTlLLvd3tWOopVg
+	 eXQxOy+2Nc50uxE+b/s4Sqdfhckc+tlz1nDngmYCIol8zzvOXloWN9Mr89Sar2C2/6
+	 tTrUc9XLJhyOkZdi2rAQNs/nyfO/gtj78WUybeO2iyDQyvldfyCUJXCZoWVHYkvfnw
+	 DnjiNuWfDoDaQMd+I4NBMwQJtDLy+YQhsGEjjWH56Z2i7qT2rrPFoVvHX29xo0+HAJ
+	 PwGiMaoo6ENhA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t1nOX-0000000072J-0XfD;
+	Fri, 18 Oct 2024 15:51:57 +0200
+Date: Fri, 18 Oct 2024 15:51:57 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
+	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
+	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	johan+linaro@kernel.org
+Subject: Re: [PATCH v7 5/7] PCI: qcom: Remove BDF2SID mapping config for
+ SC8280X family SoC
+Message-ID: <ZxJn_Xf4NO3eAfey@hovoldconsulting.com>
+References: <20241017030412.265000-1-quic_qianyu@quicinc.com>
+ <20241017030412.265000-6-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,16 +70,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016035214.2229-3-fujita.tomonori@gmail.com>
+In-Reply-To: <20241017030412.265000-6-quic_qianyu@quicinc.com>
 
-> +    /// Return the number of microseconds in the `Delta`.
-> +    #[inline]
-> +    pub fn as_micros(self) -> i64 {
-> +        self.nanos / NSEC_PER_USEC
-> +    }
+On Wed, Oct 16, 2024 at 08:04:10PM -0700, Qiang Yu wrote:
+> On SC8280X family SoC, PCIe controllers are connected to SMMUv3, hence
+> they don't need the config_sid() callback in ops_1_9_0 struct. Fix it by
+> introducing a new ops struct, namely ops_1_21_0 which is same as ops_1_9_0
+> without config_sid() callback so that BDF2SID mapping won't be configured
+> during init.
 
-Wasn't there a comment that the code should always round up? Delaying
-for 0 uS is probably not what the user wants.
+The sc8280xp PCIe devicetree nodes do not specify an 'iommu-map' so the
+config_sid() callback is effectively a no-op. Please rephrase this so
+that it becomes obvious that this is a clean up rather than fix.
 
-    Andrew
+> Fixes: 70574511f3fc ("PCI: qcom: Add support for SC8280XP")
+
+And drop the Fixes tag.
+
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 88a98be930e3..468bd4242e61 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1367,6 +1367,16 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>  };
+>  
+> +/* Qcom IP rev.: 1.21.0 */
+
+Is this the actual IP revision on sc8280xp (and not just the revision
+used on x1e80100)?
+
+Please also provide the Synopsis IP rev like the other configs do.
+
+> +static const struct qcom_pcie_ops ops_1_21_0 = {
+> +	.get_resources = qcom_pcie_get_resources_2_7_0,
+> +	.init = qcom_pcie_init_2_7_0,
+> +	.post_init = qcom_pcie_post_init_2_7_0,
+> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+> +	.deinit = qcom_pcie_deinit_2_7_0,
+> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+> +};
+> +
+>  static const struct qcom_pcie_cfg cfg_1_0_0 = {
+>  	.ops = &ops_1_0_0,
+>  };
+
+And try to keep these structs sorted by revision. At least put this one
+after ops_1_9_0.
+
+Johan
 
