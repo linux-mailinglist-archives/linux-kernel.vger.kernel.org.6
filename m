@@ -1,225 +1,139 @@
-Return-Path: <linux-kernel+bounces-371268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F139A38EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:43:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507CC9A38E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C1D01C2222E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:43:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE1631F21405
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC1019005E;
-	Fri, 18 Oct 2024 08:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC4C18EFF9;
+	Fri, 18 Oct 2024 08:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iJy7JzdG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PYsZ8ojG"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBE018EFCD;
-	Fri, 18 Oct 2024 08:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BD718E759
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729240975; cv=none; b=Xp+28VqiEL5RphhPoJimmiFrc6dIObmyLS27qMP/DYQbWu0PFjkzuao4VpgKCMGB3Px+zdsxUmhzJiO/R+sRwPlV0odvmVTGxIDWbTS0Tpo4Pf2WCnaDzZlgYaCPp0nbDUI3/yrhilA3jYNqpFWyaRPjO6Mj6SrWChjyWZPpjMg=
+	t=1729240966; cv=none; b=hrx2Ifo1EmHZ8SgZ5oyLQOtZHjmNbbz65CrCYOKRQ0V2VVvkd/nBBRAIsIPBIppQTV/MgNpvoNfI2OMy253vYyqG+G7Viv0xxSYhj42MEiXI4eWvDa2ScPB9ZuZYiNaGkGZpwwtkmvB9vr1ycYvP+0XQYhHoyoUkpt4rn5EORO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729240975; c=relaxed/simple;
-	bh=BdMBaQxYzDCh9oXXcvEW+MhoR9zeas/rRDhUK7erWFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GORuWDRFYzvcZ7tBhK7tbdeuR1GsFR2lzGMwOvn7lCyZjkypRB/CTc0UHUP+77xubbXHNIAw8nkTRPWOiXy7XJrf9aPqinjwx/ziEbGryWXn8e7wYhUr5C/b937drQwqyOmRT7QOtxSSRf/T3gVftyAdZBZmmQUdGaqJJcyLa0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iJy7JzdG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I8JqaY004780;
-	Fri, 18 Oct 2024 08:42:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LUdS08Y80LEpjHk98+eNL2cvVZW7E88UWfB0dPfndeY=; b=iJy7JzdGtzQAVdPf
-	xBxdaAwkAIrgWgrDlD8bzZzsl5fEuElWPLyb7ztxz+bbjk1GCpYhpq/BweKuTgcy
-	QeiiwkTfgWxomDjZFlOHUyr/DDAnUpphxrBorqQMcm6owLsq1M1GvDIYzGJfXhx6
-	L+n9ecthIyAQP4v+yCw1gjkjsgcCzi8axTERjK8a5kzVdaFfG0FOG29/9EDq63+o
-	+SdILe3jPYfd6bx2OpnOc3KXjFv35qe5pNW3fRLwL2E1q8PSY2h0piruZgAD/02J
-	OGIMPxCxC3hErXyDTOAD+hMdps9HTJUv7u/yAn677Dz5vTf394G8OTIHu0yDNWnX
-	nzhfQw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ajm5dfwr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 08:42:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49I8ge3n030109
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 08:42:40 GMT
-Received: from [10.239.133.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
- 2024 01:42:36 -0700
-Message-ID: <5dcce78a-d7e5-4a61-a165-05b9efe11052@quicinc.com>
-Date: Fri, 18 Oct 2024 16:42:33 +0800
+	s=arc-20240116; t=1729240966; c=relaxed/simple;
+	bh=CuslMtJuOiYg4c5xbG3D/mL3KiZ0f9lI0b+tOiwhbis=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OghRU8YUH2bR9602ftetTkMURPvEeYJjzn82VhvrASLXoh0m5QNTstohgFAT0/L65bjdsNjk5CK2XypWbN70Oz/ZJ4ZNrGTTXkl0e6aWVm+V9Ax4Pi4VoDwZHKPbQyglkhaikUUergtjm5Vwu6j9wTdpfRlc5N3kYmvm3wXPKeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PYsZ8ojG; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539e4b7409fso1907354e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:42:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729240962; x=1729845762; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A24vUYhL2/L93W4l5Bq2g4Oia25is22mM76b8eIc1f0=;
+        b=PYsZ8ojGpUaNWTeDtIQNUAaKifGJUp/51apGApaTwZ355X6DL8UfdXTgnmMih3hBu+
+         QZf3GGhUnxIyJcZjbmu1GplE/KVDmBe8VqGNhfIJeaC9a6WG/CzRvlVIGf+/wzX4E0s4
+         98Gjsf4SBMWJ2UjALcgI86fPD2SNqGtBzHbcivUsntjX57P5/bmxTFzunzoynObt2e3i
+         j3UkOmUMCemSpUufFn6kCSv6LZAfKKiEazgLTSpKtsNrN98XqKK/lB16W3F5oWi++6KS
+         xxmmS6+uf5VtVf6Z3SZFaDfMQ4jr2nXQP2w7rCsXrvX7FPR/K6pZdCjzz1RF59uDrhVz
+         OcKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729240962; x=1729845762;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A24vUYhL2/L93W4l5Bq2g4Oia25is22mM76b8eIc1f0=;
+        b=b6/Lp7h++SmepMQnH91VQvQC0XMDGnGfmQwdGYy0xv3mxrCYAxXQTfNGbo8r7kM/KQ
+         qdPPy3qAZ6Rk8HZdeXoIMCxj3utCtsMR7jmWWnmvMFBWxNNnIzIo+JGnAJ6y8U2Sue1D
+         TjTk9G/YfjGVkhbG7nakP3pOxx0nap9dSvZ5BkWOFwlRM58l+nWsU0mUFE3gZIheYtkX
+         wqte3fahsoOJ6KjiKURenhv5Ggqa/1JuVuPMRi9rzvteAt8Yvt5eUA8yOPT4Dhv0sX26
+         dnJPYbQz15cUiJhA62vCJB5NNkccsf5XqfTDbzWAJGTL/K4Rft9ZN0VyFZToRRTyCkiD
+         DBTA==
+X-Forwarded-Encrypted: i=1; AJvYcCW68UN6dsRKXHqN4PTYUgocQCBHdpNhHA7OFf+N5Qr1SYKDAtCZVK5C6NDlektEoIwtdcngJmcOtAurp3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc5mtLIyEcE4vouVJquepr6untdV6u7fJjkMXyl67zkj7sJNA8
+	EauqkH+D30mrQ2RfywrcSNYnVfXl5jR9V0BuiQ9uc5/HW03E0K/WpwjoaBbNUNo=
+X-Google-Smtp-Source: AGHT+IFd4RGDSoCPoI3z8uIZCklukWCrVgYoBTq8B1/a+atEwGljf+js5cT41oJbuy9ABiNNfGJGJA==
+X-Received: by 2002:a05:6512:e9b:b0:539:ebc7:97a2 with SMTP id 2adb3069b0e04-53a0c73434dmr1996013e87.19.1729240962375;
+        Fri, 18 Oct 2024 01:42:42 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151b0098sm160702e87.22.2024.10.18.01.42.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 01:42:41 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/2] pinctrl: qcom: add support for TLMM on SAR2130P
+Date: Fri, 18 Oct 2024 11:42:38 +0300
+Message-Id: <20241018-sar2130p-tlmm-v2-0-11a1d09a6e5f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] coresight: core: Add device name support
-To: Mike Leach <mike.leach@linaro.org>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        James Clark
-	<james.clark@arm.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        "Tingwei
- Zhang" <quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang
-	<quic_yuanfang@quicinc.com>,
-        Tao Zhang <quic_taozha@quicinc.com>,
-        songchai
-	<quic_songchai@quicinc.com>,
-        Jie Gan <quic_jiegan@quicinc.com>
-References: <20240703122340.26864-1-quic_jinlmao@quicinc.com>
- <CAJ9a7VhwD6kFHPTgrfs+7fNx4nXZPqXTLK0ObmJM3A6mQfmuyQ@mail.gmail.com>
-Content-Language: en-US
-From: Jinlong Mao <quic_jinlmao@quicinc.com>
-In-Reply-To: <CAJ9a7VhwD6kFHPTgrfs+7fNx4nXZPqXTLK0ObmJM3A6mQfmuyQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Qpb_kxROQKkP6KfY8rf_PM-C7Q6Wcuao
-X-Proofpoint-ORIG-GUID: Qpb_kxROQKkP6KfY8rf_PM-C7Q6Wcuao
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- mlxscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 suspectscore=0 clxscore=1015 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180055
+X-B4-Tracking: v=1; b=H4sIAH4fEmcC/3XMQQ6CMBCF4auQWVvTabWgK+9hWFTawiRAyZQQD
+ endrexd/i953w7JM/kE92oH9hslinMJdaqgG+zce0GuNCipLiixFsmyQi0XsY7TJMy10aZDXQe
+ roXwW9oHeh/dsSw+U1sifg9/wt/6TNhRSNK4J8uVMwJt9jDRbjufIPbQ55y9Eca9BqwAAAA==
+X-Change-ID: 20241017-sar2130p-tlmm-65836c137fa3
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mayank Grover <groverm@codeaurora.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1049;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=CuslMtJuOiYg4c5xbG3D/mL3KiZ0f9lI0b+tOiwhbis=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnEh+AaJjae2eMn6Rl2Mskc4540eRcxG5UNzly9
+ TeoU4Zm/4SJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxIfgAAKCRAU23LtvoBl
+ uN6RD/4vxZ+SMjUK3LACZvPivlB++wTzdDpjiCByvbAL0gmpSwdhKMU7//2GPB1XAVvmBSguQf2
+ 3N18Ri9CvKDtGraY3DM0LKEBufD2smpRD9A6JhH0EOE3OnaMqUufuPsZ8KatSbYlvaTtUmsL8WW
+ FiDCoUzHf8wgC+SDtT8nrNVXMobL3kOEzV5c1S3DOKMfu0zUrndaGiCg1BCZLA+JuLlVJrHFMSU
+ ZJRDicx6BfWUHeLpfzAKVxn5T9Jcrer6ujZMWiP3Xpfa8QuRd3wDBHZvZG34z8tjk0Z06mJ7wDJ
+ SYzecELmEXMi71jotfhqLvnd/f5kOziC9h9N2P0OTS+oQWMHRu8kMwGoNjgDkcltDhnoz1exdf/
+ sDGy0bZJEpyvftC0A04qmc8ocOQppqDRjVslH7MkIESQawUP7t3KtDpy+3I4rJAyTO/7yd8WtWl
+ z3LQ/S8bWG3PCwYIyp+0AwmySl3w8BOCMVLD59Q/L4nZtipiqf3OUKTAl1EnaOBH7cTF0DGei1l
+ +iIlUBBzxyAVS1doc5oRiIc0akgEJCr5gIgNiXLbLXK6IKZTIZvNtC3rqjFB1rTkaz1ZgVi4Ewl
+ 8ahh0x/MRJeVIENiag4Rj339bU0mdciTU2jNcBu9XLRrxLgyXuuAie4LvKnOtlTaUC3OaA07rL8
+ LKWl4KJxGutkVSg==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
+Add driver for the pin controlling device as present on the Qualcomm
+SAR2130P platform.
 
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Fixed gpio-reserved-ranges and the patttern for the pins to match the
+  number of GPIOs (Krzysztof)
+- Switched from .remove_new to .remove (Uwe)
+- Link to v1: https://lore.kernel.org/r/20241017-sar2130p-tlmm-v1-0-8d8f0bd6f19a@linaro.org
 
-On 2024/7/31 23:15, Mike Leach wrote:
-> Hi,
-> 
-> 1) As per Krzysztof comment - use the standard "label" property
-> 
-> 2) Do not use the label string as the node name - there is no
-> guarantee of uniqueness which will cause issues. Please add the label
-> as a sysfs file to the standard node.
-> This uses the existing standard names, allowing any scripting based on
-> this to continue to work, and will not cause issues with uniqueness
-> 
-> e.g.
-> This will allow :
-> 
-> cat cti_cpu0/label
-> 
-> to extract the additional hardware context information that you need.
-> 
-> Thanks
-> 
-> Mike
+---
+Dmitry Baryshkov (2):
+      dt-bindings: pinctrl : qcom: document SAR2130P TLMM
+      pinctrl: qcom: add support for TLMM on SAR2130P
 
-Hi Mike,
+ .../bindings/pinctrl/qcom,sar2130p-tlmm.yaml       |  138 ++
+ drivers/pinctrl/qcom/Kconfig.msm                   |    8 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-sar2130p.c            | 1505 ++++++++++++++++++++
+ 4 files changed, 1652 insertions(+)
+---
+base-commit: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
+change-id: 20241017-sar2130p-tlmm-65836c137fa3
 
-I tried to get the label in the driver code. But I don't find any
-function for it. Do you know the function to get the label of the device
-tree node ?
-
-label: node_name@node_address
-
-Thanks
-Jinlong Mao
-
-> 
-> 
-> On Wed, 3 Jul 2024 at 13:24, Mao Jinlong <quic_jinlmao@quicinc.com> wrote:
->>
->> With current design, the name of the non-cpu bounded coresight
->> component is the device type with the number. And with 'ls' command
->> we can get the register address of the component. But from these
->> information, we can't know what the HW or system the component belongs
->> to. Add device-name in DT to support it.
->>
->> cti_sys0 -> ../../../devices/platform/soc@0/138f0000.cti/cti_sys0
->> cti_sys1 -> ../../../devices/platform/soc@0/13900000.cti/cti_sys1
->> tpdm0 -> ../../../devices/platform/soc@0/10b0d000.tpdm/tpdm0
->> tpdm1 -> ../../../devices/platform/soc@0/10c28000.tpdm/tpdm1
->> tpdm2 -> ../../../devices/platform/soc@0/10c29000.tpdm/tpdm2
->>
->> Change since V3:
->> 1. Change device-name to arm,cs-dev-name.
->> 2. Add arm,cs-dev-name to only CTI and sources' dt-binding.
->>
->> Change since V2:
->> 1. Fix the error in coresight core.
->> drivers/hwtracing/coresight/coresight-core.c:1775:7: error: assigning to 'char *' from 'const char *' discards qualifiers
->>
->> 2. Fix the warning when run dtbinding check.
->> Documentation/devicetree/bindings/arm/arm,coresight-cpu-debug.yaml: device-name: missing type definition
->>
->> Change since V1:
->> 1. Change coresight-name to device name.
->> 2. Add the device-name in coresight dt bindings.
->>
->>
->> Mao Jinlong (2):
->>    coresight: core: Add device name support
->>    dt-bindings: arm: Add device-name in the coresight components
->>
->>   .../bindings/arm/arm,coresight-catu.yaml      |  6 +++
->>   .../bindings/arm/arm,coresight-cpu-debug.yaml |  6 +++
->>   .../bindings/arm/arm,coresight-cti.yaml       |  6 +++
->>   .../arm/arm,coresight-dummy-sink.yaml         |  6 +++
->>   .../arm/arm,coresight-dummy-source.yaml       |  6 +++
->>   .../arm/arm,coresight-dynamic-funnel.yaml     |  6 +++
->>   .../arm/arm,coresight-dynamic-replicator.yaml |  6 +++
->>   .../bindings/arm/arm,coresight-etb10.yaml     |  6 +++
->>   .../bindings/arm/arm,coresight-etm.yaml       |  6 +++
->>   .../arm/arm,coresight-static-funnel.yaml      |  6 +++
->>   .../arm/arm,coresight-static-replicator.yaml  |  6 +++
->>   .../bindings/arm/arm,coresight-stm.yaml       |  6 +++
->>   .../bindings/arm/arm,coresight-tmc.yaml       |  6 +++
->>   .../bindings/arm/arm,coresight-tpiu.yaml      |  6 +++
->>   .../bindings/arm/qcom,coresight-tpda.yaml     |  6 +++
->>   .../bindings/arm/qcom,coresight-tpdm.yaml     |  6 +++
->>   drivers/hwtracing/coresight/coresight-core.c  | 37 ++++++++++---------
->>   .../hwtracing/coresight/coresight-platform.c  | 31 ++++++++++++++++
->>   include/linux/coresight.h                     |  3 +-
->>   19 files changed, 149 insertions(+), 18 deletions(-)
->>
->> Mao Jinlong (2):
->>    dt-bindings: arm: Add device-name in the coresight components
->>    coresight: core: Add device name support
->>
->>   .../bindings/arm/arm,coresight-cti.yaml       |  6 +++
->>   .../arm/arm,coresight-dummy-source.yaml       |  6 +++
->>   .../bindings/arm/arm,coresight-stm.yaml       |  6 +++
->>   .../bindings/arm/qcom,coresight-tpdm.yaml     |  6 +++
->>   drivers/hwtracing/coresight/coresight-core.c  | 37 ++++++++++---------
->>   .../hwtracing/coresight/coresight-platform.c  | 30 +++++++++++++++
->>   include/linux/coresight.h                     |  3 +-
->>   7 files changed, 76 insertions(+), 18 deletions(-)
->>
->> --
->> 2.41.0
->>
-> 
-> 
-> --
-> Mike Leach
-> Principal Engineer, ARM Ltd.
-> Manchester Design Centre. UK
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
