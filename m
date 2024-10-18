@@ -1,90 +1,80 @@
-Return-Path: <linux-kernel+bounces-371664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B3529A3E3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:22:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 664119A3E3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B440284B1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:22:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBD4CB2259E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABBC22331;
-	Fri, 18 Oct 2024 12:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1087B2837B;
+	Fri, 18 Oct 2024 12:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CGEBP3FC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iGxryCan"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EA1EADC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12836748A;
+	Fri, 18 Oct 2024 12:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729254109; cv=none; b=Q1T43MunVabHf2wFUzn3iUpmeW34vGQdaDvLwATzJrIejrw09mMDs502HewaL+3eKJDuC03bSNNMbPST9n1mvI/c82gRNk5oxSFea7QqRk65GT9sLMvsuy8oriLX34CXKuhhHk0Y0EyLn9Kn8ZrJu7csI0Qz1NVC6OWceuxHle0=
+	t=1729254166; cv=none; b=TMmky05ANJuplMiXJeHy0pRnnN3Y4d94vh9t1P+6fvgPOhbsEIWABUEee2vDZa0DrHNPdV/p0U/V22LBQNMaJZ6hZ9Ua9k/V9MqdoMD/SG1nzDFuwIpswleTB450pErhyb1gevECgiX98LwnROb74UxJWm4JBGEM59BsEin6LtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729254109; c=relaxed/simple;
-	bh=Uv1d5K1klaFSKeuuhCGcrtsGP+uBJnKXAv1ai7A8dK0=;
+	s=arc-20240116; t=1729254166; c=relaxed/simple;
+	bh=awYloGo+PANLFp0nhkTibOtcO7WmO6xuHo1JSv1VzMM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XeZeNFEGvBTuf6P4kumdAYlQZereeG0dKAHw48iHN5clG2SZENiW0b9D6Yp0Kx42bkmPQQvztHkefh0l+Dn8VBVlNxk3mnBZWjm5D8g8S2VK4Yp9pTUr2vELslfJZffKXYo/jJ92EHU9bnKJhRaLv5iW+aWY///952Sot0CcdHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CGEBP3FC; arc=none smtp.client-ip=198.175.65.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=dFR6SQLRNdeOWh5B26za1zU4nf1wfijbR9dAgBMLFxjm3EgwBiOVw/vmXUjfm+mJTIOvEAnn09KDemvRGCDR7cEJIIyuAZFf2gLu2bhdtsBYoHTRi/FfUqEIvAeqqMGallA+o0rPQsCo1AEzKIw44GG5E5vnTceAeSMOJYgsxr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iGxryCan; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729254108; x=1760790108;
+  t=1729254165; x=1760790165;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=Uv1d5K1klaFSKeuuhCGcrtsGP+uBJnKXAv1ai7A8dK0=;
-  b=CGEBP3FCPhbxZD6CNM8Pea2Hx+63wcO4/Kaeeb2gS+5IlBGGkE7dfMVA
-   rlO/EUktp+4BA1LiXrWS4eZeBfxVuGj42Hc/PJUGXOVyzoX25UWL0kpzD
-   bEB5OQ9Z6/PvqA6Eyja3P7MceIam/Z/SVZT5HW/qJWqEbgJU/W0NyMI/i
-   P3YCZGJbuG2g2dSkeA8wqIHh7J4CM8HR9kvdm7A2juohpMcL8LZEFCWCT
-   nrHQM1vVHEQGIg2NUltMlXQWiuHX12uyLYrEvK8SJaxF1mjUTs4YBpl6K
-   hqcFMxl1wTWVaOEQms77bNpcLuW22hlno11KuTr9XuUy7NuGnstbL42Gl
+  bh=awYloGo+PANLFp0nhkTibOtcO7WmO6xuHo1JSv1VzMM=;
+  b=iGxryCanbh+HYavjw1KSN2sfi9hSHLD9ABfGYJ/prVzeQUlFHQ5g9DtJ
+   OQAstT7WylIi5pF4r7ZbvbILDnlwAcHFNFdHaEZmbp1Tsd3K8BT60Y0rw
+   0WOPuymmfYtaYTvjpmA44xZXkmy0hllTYD53adkCIAsnelavtuelKiVdx
+   EV2ZVSXpNEHKrc9dFdaCabaxhN2zqzDgB6p/8LzlV9AtqEyPNk4Omoxn5
+   IkS8L6wG4HbffptZfdO++oil5nJKEgiXkGPR0Rn2Qtvh2/UIX4wIOC1Ad
+   KyaqaKMQvWNX5Q3ohcTycbOIivf2KJNV0XAqiFh9nQpjPHFAO6iPSajZl
    g==;
-X-CSE-ConnectionGUID: Y5Oe0fzdTv+Zc/1pYtXu0g==
-X-CSE-MsgGUID: UszwpCjMR3CrA/nInAz/Gg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28659208"
+X-CSE-ConnectionGUID: EZaXW2e9QzeM6OLT3tWaJA==
+X-CSE-MsgGUID: 6c//LsIERwCgCiCCVepQ5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28938168"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28659208"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:21:47 -0700
-X-CSE-ConnectionGUID: 2AneYokkR8iQpnnn0XyHCQ==
-X-CSE-MsgGUID: TB8hpo0kR9Sn1jG5bguG/g==
+   d="scan'208";a="28938168"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:22:44 -0700
+X-CSE-ConnectionGUID: 1KhvwUMkS3CAcMIewNw5fQ==
+X-CSE-MsgGUID: 8jNyaGBjQ7+Mj9pUI+sPLg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="82823777"
+   d="scan'208";a="109590171"
 Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:21:44 -0700
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:22:41 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t1lzA-00000004SPs-0tbc;
-	Fri, 18 Oct 2024 15:21:40 +0300
-Date: Fri, 18 Oct 2024 15:21:39 +0300
+	id 1t1m06-00000004SR9-18Y9;
+	Fri, 18 Oct 2024 15:22:38 +0300
+Date: Fri, 18 Oct 2024 15:22:38 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Uros Bizjak <ubizjak@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] x86/percpu: Cast -1 to argument type when
- comparing in percpu_add_op()
-Message-ID: <ZxJS0_DUfgi4mHe1@smile.fi.intel.com>
-References: <20240905170356.260300-1-andriy.shevchenko@linux.intel.com>
- <f02e0624-ad4f-473c-b172-6dadea37f600@intel.com>
- <20241016192011.GY17263@noisy.programming.kicks-ass.net>
- <de705cdf-ccce-460f-846e-dfc63c63af1a@intel.com>
- <20241017181859.GB17263@noisy.programming.kicks-ass.net>
+To: Baoquan He <bhe@redhat.com>
+Cc: Gregory Price <gourry@gourry.net>, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	bhelgaas@google.com, ilpo.jarvinen@linux.intel.com,
+	mika.westerberg@linux.intel.com, ying.huang@intel.com,
+	tglx@linutronix.de, takahiro.akashi@linaro.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] resource,kexec: walk_system_ram_res_rev must retain
+ resource flags
+Message-ID: <ZxJTDq-PxxxIgzfv@smile.fi.intel.com>
+References: <20241017190347.5578-1-gourry@gourry.net>
+ <ZxHFgmHPe3Cow2n8@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,31 +83,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017181859.GB17263@noisy.programming.kicks-ass.net>
+In-Reply-To: <ZxHFgmHPe3Cow2n8@MiWiFi-R3L-srv>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Oct 17, 2024 at 08:18:59PM +0200, Peter Zijlstra wrote:
-> On Wed, Oct 16, 2024 at 12:44:18PM -0700, Dave Hansen wrote:
+On Fri, Oct 18, 2024 at 10:18:42AM +0800, Baoquan He wrote:
+> HI Gregory,
 > 
-> > Would anybody hate if we broke this up a bit, like:
+> On 10/17/24 at 03:03pm, Gregory Price wrote:
+> > walk_system_ram_res_rev() erroneously discards resource flags when
+> > passing the information to the callback.
 > > 
-> >         const typeof(var) _val = val;
-> >         const int paoconst = __builtin_constant_p(val);
-> >         const int paoinc   = paoconst && ((_val) == 1);
-> >         const int paodec   = paoconst && ((_val) == (typeof(var))-1);
-> > 
-> > and then did
-> > 
-> > 	if (paoinc)
-> > 		percpu_unary_op(size, qual, "inc", var);
-> > 	...
+> > This causes systems with IORESOURCE_SYSRAM_DRIVER_MANAGED memory to
+> > have these resources selected during kexec to store kexec buffers
+> > if that memory happens to be at placed above normal system ram.
 > 
-> I think that is an overall improvement. Proceed! :-)
+> Sorry about that. I haven't checked IORESOURCE_SYSRAM_DRIVER_MANAGED
+> memory carefully, wondering if res could be set as
+> 'IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY' plus
+> IORESOURCE_SYSRAM_DRIVER_MANAGED in iomem_resource tree.
+> 
+> Anyway, the change in this patch is certainly better. Thanks.
 
-Wouldn't typeof(var) be a regression? The val can be wider (in term of bits)
-than var and cutting it like this might bring different result depending on
-the signedness. TL;DR: Whatever is done, please add more (corner) test cases
-to the percpu_test.c.
+Can we get more test cases in the respective module, please?
 
 -- 
 With Best Regards,
