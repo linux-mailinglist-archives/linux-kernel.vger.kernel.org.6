@@ -1,145 +1,105 @@
-Return-Path: <linux-kernel+bounces-370810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CAE9A3252
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:57:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A1E39A3259
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53A611C222C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2928285380
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD0113B59B;
-	Fri, 18 Oct 2024 01:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E905113D8A4;
+	Fri, 18 Oct 2024 01:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sHaariLp"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="sFxZPRUb"
+Received: from esa5.hc1455-7.c3s2.iphmx.com (esa5.hc1455-7.c3s2.iphmx.com [68.232.139.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD8A137C37;
-	Fri, 18 Oct 2024 01:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B68C13AA27;
+	Fri, 18 Oct 2024 01:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729216619; cv=none; b=k+hk4eKtuQaYGOad/HUXRPKUzCa0gxcBYbm0gNoAHdFdnhZ4iG3Di/dxP/M9gvklxC57j8mbH0M3VivtYq5Y/FKXyzGYeXk2Jj75QKxdW0vAlepcCZfnI6o2SPi7pfotO3Je4BAvVQrURwNogLJ4NBM/UF4o/su4S2mVH/+a464=
+	t=1729216728; cv=none; b=a0l0Viitm8PwVL1AQgfD0VK6OCEEysYpC66LsAeaSbIcCDDE3mzvQb/R32sFEeaeH61KYo5OeASl7KmG3vmVqI5AoDxKCDxNDDC/mPiHFLdANjAfvvGB2wSXrMgkVEKZDF1fwjVYFiE9CbKxTWhvNl7I/gelb6J8hJtiYdlKEnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729216619; c=relaxed/simple;
-	bh=KHLe/J8E4e88INRBMpAtjQgG958iJ6/6UhvhQlARA90=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ti85KDYM1pkITzSWggFRL9S7UivIsRU27X64YiXuBqfv0rMf3N1ySiXaTGCZHcwIWbWJa7IeTW6NmhbVacjzv3E9iKKLWibM83rQTA4Geh57RfSzpNE52uV70dInZFOCmruZaydvqCU7txifideBqMvcmdRPQo2sIxJfvlWt1/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sHaariLp; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729216610;
-	bh=fv5TdDOtmjmY3nCw0vNFC8sXNVF3YhtQ6Nu/cO8upnc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=sHaariLpZATKLtYKBTpSdCLHBYCSkF79Knk87lw2aaaHHJTYvDxtpLgwYlCE30MOs
-	 2EVMyuO64mr1ZGBtTfJMrkukE1MLnjyjq7BOPjiQqX6wCUt9Ne+2zoUqfGeaCbOBBn
-	 w7WdKlB1SLC5WFgSJtoyaNstDCoP6KZZauT9CKLYKRha5NZyBbYjqc6OdJNBTGIXsk
-	 J5jQgesy6JhlCszoS4mbdhouJvmJ/jNfQudISkJRwfCuur98WS8nZEBTwZKKxfjVmE
-	 6jhwK6tIAPB5ImqGyEB0w9a2NqjKA4mTnCVHR66ckMlt2ji58qaIlBBlehqeDIkepb
-	 k8SNZiNNaRmUw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XV79X65rGz4wbr;
-	Fri, 18 Oct 2024 12:56:48 +1100 (AEDT)
-Date: Fri, 18 Oct 2024 12:56:49 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@redhat.com>
-Cc: Ankit Nautiyal <ankit.k.nautiyal@intel.com>, Imre Deak
- <imre.deak@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- DRI <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
-Message-ID: <20241018125649.4475512d@canb.auug.org.au>
+	s=arc-20240116; t=1729216728; c=relaxed/simple;
+	bh=3VKVxlQn4222drRfHlL4MQZPDF/tpVIgsAbP/Nb4Wus=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=k0XcwGPJ/Eu+kfDG8MUD0lR3QRWt9tT5F/fP3ORMYBxHGwVNecTa36ddmwq04DoeCySgaXjZtf9u9JIPTvuEraAzdbWrTVywO9ldg0R3rH4IV9+wZQ96jwnAf7Qxz5Yhgn8oqiC2e4nz0rKgO7143EvZkHM57kFYyC0uo4CQeuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=sFxZPRUb; arc=none smtp.client-ip=68.232.139.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1729216727; x=1760752727;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3VKVxlQn4222drRfHlL4MQZPDF/tpVIgsAbP/Nb4Wus=;
+  b=sFxZPRUb1sDLcB+NCGejixQeJwLFGHSk0gwrHHsXvDBi+q6gA/+Eyz5T
+   1VlvZVfsEQTbplstCK+n2lUmuS4N/DzPCo9o2FC+5SCghCm95j0JOhyFk
+   S8KV2wJVsqOGyLWmWbIcuSZM9R8GsFxmfo+mPBsCKPlmDB/Orwq7LYcgt
+   oBDoSjl2JWBmZiuBIO0osHEijXUhpYypIMSi6HCLIkIy8LsXF4bsokgEx
+   VVXcafjmaBVZe1WIzzgf+3SkqXD203qm6veWe9l1MFBwVgLaKgu062q2d
+   8ZNLl4rACGesD8aMs6YXpHo8uwNbF/FjssKAx/uB4Wfx04WcGg4b/5cXK
+   A==;
+X-CSE-ConnectionGUID: eDyda2KRTwW8SIQfcEZmLw==
+X-CSE-MsgGUID: d78Q1tnKTGKVpUZOkFLWQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="176343305"
+X-IronPort-AV: E=Sophos;i="6.11,212,1725289200"; 
+   d="scan'208";a="176343305"
+Received: from unknown (HELO oym-r3.gw.nic.fujitsu.com) ([210.162.30.91])
+  by esa5.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 10:58:39 +0900
+Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
+	by oym-r3.gw.nic.fujitsu.com (Postfix) with ESMTP id 4B2A3D6473;
+	Fri, 18 Oct 2024 10:58:36 +0900 (JST)
+Received: from oym-om1.fujitsu.com (oym-om1.o.css.fujitsu.com [10.85.58.161])
+	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id ECF6AD8BB1;
+	Fri, 18 Oct 2024 10:58:33 +0900 (JST)
+Received: from sm-x86-mem01.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
+	by oym-om1.fujitsu.com (Postfix) with ESMTP id C0F0040072DBA;
+	Fri, 18 Oct 2024 10:58:33 +0900 (JST)
+From: Yoshihiro Furudera <fj5100bi@fujitsu.com>
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>
+Subject: [PATCH] i2c: designware: Add ACPI HID for DWAPB I2C controller on Fujitsu MONAKA
+Date: Fri, 18 Oct 2024 01:58:26 +0000
+Message-Id: <20241018015826.2925075-1-fj5100bi@fujitsu.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/COgixQydqsn1b56oW9SrweM";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
 
---Sig_/COgixQydqsn1b56oW9SrweM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch enables DWAPB I2C controller support on Fujitsu MONAKA.
 
-Hi all,
+Signed-off-by: Yoshihiro Furudera <fj5100bi@fujitsu.com>
+---
+ drivers/i2c/busses/i2c-designware-platdrv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Today's linux-next merge of the drm tree got a conflict in:
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index 2d0c7348e491..c04af315a4f9 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -351,6 +351,7 @@ static const struct acpi_device_id dw_i2c_acpi_match[] = {
+ 	{ "AMDI0019", ACCESS_INTR_MASK | ARBITRATION_SEMAPHORE },
+ 	{ "AMDI0510", 0 },
+ 	{ "APMC0D0F", 0 },
++	{ "FUJI200B", 0 },
+ 	{ "HISI02A1", 0 },
+ 	{ "HISI02A2", 0 },
+ 	{ "HISI02A3", 0 },
+-- 
+2.34.1
 
-  drivers/gpu/drm/i915/display/intel_dp_mst.c
-
-between commit:
-
-  69b3d8721267 ("drm/i915/dp_mst: Handle error during DSC BW overhead/slice=
- calculation")
-
-from the drm-fixes tree and commit:
-
-  f2e2092a979c ("drm/i915/display: Use joined pipes in dsc helpers for slic=
-es, bpp")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/i915/display/intel_dp_mst.c
-index eeaedd979354,4765bda154c1..000000000000
---- a/drivers/gpu/drm/i915/display/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/display/intel_dp_mst.c
-@@@ -147,19 -156,6 +148,19 @@@ static int intel_dp_mst_calc_pbn(int pi
-  	return DIV_ROUND_UP(effective_data_rate * 64, 54 * 1000);
-  }
- =20
- +static int intel_dp_mst_dsc_get_slice_count(const struct intel_connector =
-*connector,
- +					    const struct intel_crtc_state *crtc_state)
- +{
- +	const struct drm_display_mode *adjusted_mode =3D
- +		&crtc_state->hw.adjusted_mode;
-- 	int num_joined_pipes =3D crtc_state->joiner_pipes;
-++	int num_joined_pipes =3D intel_crtc_num_joined_pipes(crtc_state);
- +
- +	return intel_dp_dsc_get_slice_count(connector,
- +					    adjusted_mode->clock,
- +					    adjusted_mode->hdisplay,
- +					    num_joined_pipes);
- +}
- +
-  static int intel_dp_mst_find_vcpi_slots_for_bpp(struct intel_encoder *enc=
-oder,
-  						struct intel_crtc_state *crtc_state,
-  						int max_bpp,
-
---Sig_/COgixQydqsn1b56oW9SrweM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcRwGEACgkQAVBC80lX
-0GwsUgf9ECD2mr/mFq+fMgD2By0ridFlFYOWazFyUXl8dCBFmYk+CgKOo9nNJhp7
-5GZnvHQVR9dSTrM0GLo1QuUHzfU/XKh9sQSB9KdRg5K4wLVt8QX3k84mMxUb3VzW
-PBNIWN7foKxYLTh4Vuc+47P5+2T/cgdQ5xc9uwu8U9nD7ZkIGe0RkW1oetRzMpFb
-MQuhoo4iINAqmOnPBIvDVeHFf7Dy5h7eRD4rv/KXPOozt5VhttDZNx1yEvjLTRqR
-2ephN5Mc/Yndrzy00orrVlQRRsyhDdianq+EnvqHZ9KClmJKXRJlLzu4hKA+XCqn
-rZQhnrOXGGAln2/8hxXjokxDzhVD0g==
-=UKhi
------END PGP SIGNATURE-----
-
---Sig_/COgixQydqsn1b56oW9SrweM--
 
