@@ -1,216 +1,243 @@
-Return-Path: <linux-kernel+bounces-371414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796219A3ABF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:02:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13499A3AC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A91A1F27D2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A541F28F50
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D262B200CBE;
-	Fri, 18 Oct 2024 10:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7680B2010EE;
+	Fri, 18 Oct 2024 10:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="S+Qi8/9t"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F0MXG8dk"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDD51D63DF;
-	Fri, 18 Oct 2024 10:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729245753; cv=fail; b=NlmN9E4VsvVzCVqAYmtDp5jeFo+0RSLl2anfIOl7ih+wDtKlyF3c1RLgE3tPs9lVfbZUOgbdVo8wkDCXhhTRR3EzpMnK5ihrVIhOioK4tWGmPcRsWBU8aJ6vBehYwAZTtJRybeb7htwWhhUqMgX53MRZlvgTT+CC2s4OD7ux2EQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729245753; c=relaxed/simple;
-	bh=U/aUk7kQtEE9ZCzQF7nB4NW/XjuMp92wO6KJRdynOng=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=f7Sf5z/HCwMlW0RyX7thYMQ/3CWVqVKFY3Eb2yYSkpUQRsm+7YtkZBkE4F73UGxCxYUfJO2UG7CXex1/WYm9yp3tRR0TdK4TfjJuDlw1t7K9ZfhbRWIIoRVNB8WSYcTLcs5ehG0saLhr2WfRwdWUcqN+rbhKrYQ5XpXC1JlPmzU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=S+Qi8/9t; arc=fail smtp.client-ip=40.107.236.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XOecK54TnOwldn7dmfEZP2giLiIcGKHrK3iQyVuvuIs0Q00ndgaCzmUNcMprlQ9AxcSgHVEi0gThadjxlD6gZdrKxyf4PPOzgBza+G2ft66P8mOHogNPNmFwMipaE66OIaIdh0jloaM47a/4K3o+E9fuh5i9QHrRknYNpJfuZglSArE0IV4g8jXWwJDv3cmcSkX6x3sFPSjI36UHJwtBhhQ/b8FgyAPFET4AM7o1f7MTmvyqVNx9mDis3P+hjHn/CV9GfL13GnbVsFRV1kxW+LPquUGK34lKFMjmtgNEhG/CyxtEOhw5HM32FQvMn7ObkVcMMYkz5r839lmxI30NoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uSYfuA6oAhIMp0ofJteb9kOPPrifcrTuYrtNG2pPgFs=;
- b=DgKFMHKB9/xVmyknXv9aiACDNCmLFhmB+2Pek8eF6ZptGf3nokuUSICoMqdOXC9CaMbKPFeY6nuOyyzd0QsCBiMojr+Ve259YqHd4fpKmpJEAd9wuuWzBZOgizLQndPco8x5w3D05TynhxYUqdDHRBRUDH29I94dfFXQvCOKpQnwSeQBoCcURM2LL/0KWRZOmMEMquCmgJTbSj0de72YXREdvNBMHCTdvgwoN13IU/u8YQEelv2K7PDXrEdfpT8CwrQnd9Rp03dm/6xhbR21NMmFKYHCk60sDYGkrQResmfm9HsMFx69jfDoPTzN0nG3pxp+kNBry6VuU2P1ZpJiAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uSYfuA6oAhIMp0ofJteb9kOPPrifcrTuYrtNG2pPgFs=;
- b=S+Qi8/9tB9CjgsvKdcPS1hbpx0FjUh4vhojx/lCTi6XbyIVZ4jWyoOJ2DxX0wAeuvagDyZTTkyfv1aZr8yUusNcxSZgVYdoonJpry9ZnlTX4mjakDbQ8Odw16HEkEma1MlbNrRUiSeA3PJqsnwrnrQ7Sbkv00MVPb09v0pWB6gQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
- MN0PR12MB6128.namprd12.prod.outlook.com (2603:10b6:208:3c4::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8069.18; Fri, 18 Oct 2024 10:02:28 +0000
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6%4]) with mapi id 15.20.8069.016; Fri, 18 Oct 2024
- 10:02:28 +0000
-Message-ID: <b79eb294-0c03-47d6-9117-3e76c4b73dad@amd.com>
-Date: Fri, 18 Oct 2024 17:02:20 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: SVM: Disable AVIC on SNP-enabled system without
- HvInUseWrAllowed feature
-Content-Language: en-US
-To: Joao Martins <joao.m.martins@oracle.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, david.kaplan@amd.com,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20240930055035.31412-1-suravee.suthikulpanit@amd.com>
- <2d5f2f91-2c3a-4b0e-bacd-aeac6d4da724@oracle.com>
-From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
-In-Reply-To: <2d5f2f91-2c3a-4b0e-bacd-aeac6d4da724@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR04CA0165.apcprd04.prod.outlook.com (2603:1096:4::27)
- To DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123981D63DF
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729245830; cv=none; b=W2Bwkj61iylYlqFg7/zATxlZXtkIK07gFQCKfKBdipg0XU1iKysekEaln4XtbfakH51X2ZLrdGX3CZcnY0o37CtXlrnu0520AkhyqrWXiAU/Wa3tIytBUowvhWh+1DLWTNvYOGdWQqUkI4vOfvt5JwqVshWyIJZA5HGr3R1areY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729245830; c=relaxed/simple;
+	bh=DWyx/3YGe3huLlMU54X3fY0AM74cinw8tnManxqSsHw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZhOjp0ZgGrpi8DukUOV3C5Vd2IMOrjQ997lfObNfPzOinaozDehcWhPuaeFu1Lf1hb4AlCeLhFRgQ/MQhvmTdJR5gwX0zHWhHOetYg0UqK8xaC1oK9xw8P3uud+NDvc+l/5hIctc+EGdY08JCHtCW5E6MGc0V0gn/GoNBFDHnBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F0MXG8dk; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e38ebcc0abso22708727b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729245828; x=1729850628; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qhb0Ic3bcpMXH2km/HoGTBWj+bbxwR5zeev1bJh+028=;
+        b=F0MXG8dkWvpgv2754gONbOH+2MoNpZ8xI8ubjla71ce1L6hCqus6lhWh5jbkj/zVfy
+         EIu7vtbugPuhgdhUsmZKljJ3eC58UPRxN5aEy0IQ7MDaqg5+QgovKnSiTFgRy8N2sZEM
+         AdfqqIKBgOIIi5IsaEFXKMnlI66BxhakJKOK1ICNXimraMwUDxo64PuwIY8w5OEnkpHi
+         Uyk0oYv0jzIjEfOMfXpJwsLCKWDvodPr3xktuna5ga0Beo6igUJvvFlHeb3M0+4S4SsM
+         argThhzAolCtpbosvw/tOprHnpkejGhYdgR6Ksaz/79mw3ZzNy/oPwq2cA6fLaGtfSpx
+         3G5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729245828; x=1729850628;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qhb0Ic3bcpMXH2km/HoGTBWj+bbxwR5zeev1bJh+028=;
+        b=qJi6LEPJ7ZSc6b2bv1MQcmN5sBVjLoz/f7x3MoBLAh73po3t86twmm10gFciltEl+V
+         vftidj63uwOgE/fIHdJifTMwmWuq8E9DcCpZF7ayJ4RQKFwjgxlxZfHZhhn++IyFW7x7
+         2HTF6BmSCjE7NbcqPLtF/DkikP7MZYhz7EhyP+C3UzvtHe2K+/gUgcz4MD12l0Lmf8Iu
+         ibkAfWenMyHjDjjAue/VFcuGOI3HS17FEKBTGW/nZf/ywqdvoq6eVo2grLQd2zWEk/vI
+         d7nXQ5i1Vm0utQoJvQPO0C7KaEN5m+8ouQ1SH+riOBGTYT0OPnrxd8Lbja2+ctRDm7k7
+         fKtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4MHS4vHtl7ke30xtKQbw5c92IhvagUVVdCVQBM/yEGB/g1JAsEZqvGS2oe9mEYwaSxreVDLQXiCA+0y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRkahtMqDJIEX+X3Pf333DH7eCNySD73BjSidpmeQxSFdAiTQU
+	tlma3XDkuEbhCuKl8zURagpZXJTyhW9OlbmPggmv2e8FcTgVo5vAr9EN6HUsQ8OuoQ/oeAJRhxh
+	9nLWdr7jMcj4LN/CRUSxw8i0VEZGS2smvCMDZgA==
+X-Google-Smtp-Source: AGHT+IG6+GNKdTTardBqrOSFafCoHKmDQ8VI6s29ziEBvjyDm72unVmqb/41tRAeouig0145z02Jy13eFHz5Np1TynU=
+X-Received: by 2002:a05:690c:112:b0:6e3:34ee:6780 with SMTP id
+ 00721157ae682-6e5bf9e2dd9mr14707267b3.22.1729245827020; Fri, 18 Oct 2024
+ 03:03:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|MN0PR12MB6128:EE_
-X-MS-Office365-Filtering-Correlation-Id: 700840a9-17e2-463c-ad11-08dcef5bf8e1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RUN4VTBiNnllZU9ZUHlDYWZGWFB1NUYyUjRlVHQwUTlxOU1JbVk0VjBDYmls?=
- =?utf-8?B?aXN5MFVmaDZwUUQyKytjRjNqeUhuK1prVU1qUXBCS1NFaGIxV0FndXZtZVEv?=
- =?utf-8?B?N0djOTkrRFRRdU9WamRHTnNNQTBQVG1vQm5yY3E4TFVhTTRhdE9ZMGVUMzlG?=
- =?utf-8?B?ZUZuYTJ0N011ajlyRitVMXVLeFhRK2U1S0VXMHRsWUNxZU9qcitFUzF5R1JY?=
- =?utf-8?B?SWNhMi9jaFdYdFlBekNvelBpWU91UHdEcnZobytmeU85akcwWGVCU2U1aTQ3?=
- =?utf-8?B?WDczcE9HY3lmTTdXc2NyNjhqSUpibFFFM0M0SCtYWTZCUHlxOCtjZ3YyTTkw?=
- =?utf-8?B?a0NoVlN6UHI1bEVMR3lPV1NncVVxQTYwbVBUemVJUXBXdmdxdmpVSmZtN1V2?=
- =?utf-8?B?Z1RQN1NmSGoxcTVZTVFoRUVOOWIzckdrWEhxYWJRck9ydVN3RU1CVUtzZ2NV?=
- =?utf-8?B?WkhEMXVEV0ZzdXdBY1VXS21iVjNuVjVQdUNSUUczS0xaOVJzaE9jUitXb3NZ?=
- =?utf-8?B?VGpFTXBPY0hJT0Q2RlJyS1ZXSDVjYWh0MURldkd2M3ZyOXRhN0JxY0RiU1ZJ?=
- =?utf-8?B?QmdNaklzRWJsZlJncVRzeFlyM0dyc2FiWE1LK0VFR1BQT3p4b2dWcW9kS2tn?=
- =?utf-8?B?OUNTamZBUmFZNEdZaUhqWk9OUmJvYXBMN21sdk96SW1LZkYzS3hLVkM1bUc1?=
- =?utf-8?B?RlZwdU8wS1dSbkVQWlpWc3JYbUxGVENTaUw2S2R4M2I1b095SnJVYUpMQnFh?=
- =?utf-8?B?ZXl1L201TlcxVDFkb2g0NlhaYkN0bHlvV0NybGdmdEdINmV3U0ZjenRCY0pJ?=
- =?utf-8?B?OTRNZllyWjdJa2p4OFBnd001OFRhVWNiTUtnTk5iNUUvZzlXck5DMzhJMVFj?=
- =?utf-8?B?UmUxTjlVWXhycVhkeUhWSW5hbkVvRTFkc2RmemtQLzZIYmc1ZTZnWGVoVTMv?=
- =?utf-8?B?aWFzaUVHTktaQThkaTZDVEJIWFBpYlAxSGlzS1NkYXJ5QlNmZTdCNHNzSHFo?=
- =?utf-8?B?L0JBYzFDS2xuK3JobElEVmh2clEwamZZNEMwR1hPRUw1YUliSTQ1RFNyTUhS?=
- =?utf-8?B?aFdLeGI2enRjN3JkWjBoemZWMGRhaW1oSjR6RkUySzJHNlcrKzZPdVk3Z2ZU?=
- =?utf-8?B?RWVMZG9FaXp2cVpjc1gxQ1NROGVCMVBTNDl2cGJZU25qeVJHdmdUL0dIcGFs?=
- =?utf-8?B?dXVoRDBnU3ZKVWdXWDdVRnRhcVFnYU4xWVRrNDduYW1NdEdvZHVaYkQzVXIx?=
- =?utf-8?B?eVppeXRDSmJtRHJLUzh5a2RXSUcyMXhFMHN0cHYwcDNRby9MSVNXa21CVTNs?=
- =?utf-8?B?UVJHR0hyOE90M1NKQUxhazlBM0pwN1VsRG9JWTcxZ2F6UmZWVUVNbTZML0V1?=
- =?utf-8?B?Q3hpbnN3bUt1WTlRTXpTUUU5SHRpU295Zmt2MmM1bUJDb3N6UnBuOC9LRHVa?=
- =?utf-8?B?aVpNNlI2MnFEbFFZQUdpM0FrRk1ybGJETWFLRC8zU3k2QS8zRUJjYWltaTlP?=
- =?utf-8?B?bWhUVDJ1aVhuUjBhbm9CcXFZeGFCNm5FUGhIcWNjcXZOeldhRElUM0VDZFpH?=
- =?utf-8?B?NEo1VHpGZGd6U1NKK1NrellLc1VrTHA1cGlQbTdCY3Noby9Yb25tckJSc05u?=
- =?utf-8?B?V1hRVUZMU3VkWGZVdFZ2U2NnRU5IVWlMcFY5V2FST2NYa0orZUI1TkVlUHVq?=
- =?utf-8?B?UjVBaWI1Zyt2VWJVT3hESkk3RjJLQ1dGQTNBQ1duTE1USWpqbmRwOTl0T2lz?=
- =?utf-8?Q?/FEh0C6xssvCHZDQxZOuDlQclwSisIyKBVaC6dK?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MllydWdpdG1sdTliRGhpOFN2aUI1a1diODZpV0pGYjNuRGZKekNycmJ5UVA2?=
- =?utf-8?B?V25hdkhQSzl4MDZTaUYyeTBkRks5bFA0bVl6bkhEM3VxNm1vMmdjYW44VGw3?=
- =?utf-8?B?dlBJRVRzY0NzK0g3MVFlOEdmQUFheUdmVXZVUWVzY3A1TWNlRWhTUG5BS0Np?=
- =?utf-8?B?TEtrekNsenc2cWhtT0pFelJlYVduUGwwd3NBM3NjSmRUcHRNQzdNZ2pMTWFl?=
- =?utf-8?B?WTVwUzVINTdMRVBUOFNRM1IxY1pVdjJDaXN1c1ZIRWpJb3FEMjJXcWd5Mmg2?=
- =?utf-8?B?OGhVcGpBSzlDTHR5bndqZFBUL1ZRZHJhNDZIZndkVFIwc1IwV0l5UlA1b2F6?=
- =?utf-8?B?SWJZZk5UYVp3SjhhWnlwT2FPNVBJaGxVa1pEaDN2MXRXUm96MkFaYzU4SE9S?=
- =?utf-8?B?dmxRdkRsUisvQ1NFTWwyeXY1OW9CYTZtZDQxTFZhRXhaVmF2eUhyajhWYmhC?=
- =?utf-8?B?NTR0cmRXNlJaSjZGU254SXBYRUdhVVQydm1VSWkxM2Q5cFBNR1ljZ3JPNHpr?=
- =?utf-8?B?VnF5QVRNWUhWR0w0RFRSc29xQ1l1YVRoNDFJVEtCSUo5S0FYS0FZYmRKN0VE?=
- =?utf-8?B?d3NqQ2VPMjNzY1lOdS8rdjMwVk14aGRGYlg3cDk0eHlHS243UEpVK0EzUmtW?=
- =?utf-8?B?SjJEb0NQd0lrUDgxcmRjd0twZU1waW0rYlNZZ1B3YnMxTUFEUFhPVzJ5VWpi?=
- =?utf-8?B?VEV3UUxTdUg5VHRDRE9mcWl5OVczM0I3ay9TNVJUdy9hbDZ1am5xV3Z2TDBS?=
- =?utf-8?B?Zkc3WGpjL3plS2FMdWI0VFJjSUEwVjhxQUNmMHFacjNCN3dpSjkrWnlnYjFx?=
- =?utf-8?B?Wmk2OXg2Z28wbW5jYmFoNFhDMXArVnpTcUpndTRrczZweW1XNVM5MTIwcjB3?=
- =?utf-8?B?SVlTVzhUMzEveXlDeUtzdkNqRU9DTXBIVlMvZGlzdTg3dlVRbjNvZFhQRjhQ?=
- =?utf-8?B?MXM4R29YWi9rb3BkZVk2c2FKSHN0aXNoTEdrNDFaWGRqL3F0czZ3YmlzWHZQ?=
- =?utf-8?B?a2cxSG9UTitRZHNZWXRCdStVM3g3WGY5RHBuSW1uSFdJN2ZTQWx6UkM4NWc4?=
- =?utf-8?B?bVlDdXozRlY0RkFXNktYZ2pGZFVpVHpsV2NJNTY2cmVuWFI3UG9wL21tbHBP?=
- =?utf-8?B?cERyVzFEajdIcHZISWs1bjJaRnIzTUpyUHBDZCs2UnNVdWREKzlKdk5wc1Qy?=
- =?utf-8?B?RFhQMWwzTm1RdXlHM2xkMTVJQk4zaVlybHVDOFZpWHFPaGFSU29pY045bnJE?=
- =?utf-8?B?UjhndXIyRVFabzJobVYvVGtoWTRDV1gvN2xyaXE1a2NVZlFJMkhNWk9zdE02?=
- =?utf-8?B?Nnk5S2NtVEVZYTlJdmMyR3VXWHJ0dTJ3RmJLVHk5ZDFJRGYzSDNmclNGMlY5?=
- =?utf-8?B?WlBmSjFBcWhOcE4zWHF6cnBKelRndkpwNllVMldBOUNOYUpNaFRZYldjdnNN?=
- =?utf-8?B?b3hPeGRCUjBQU21vWGNWSldYRXRzanJ5Z2svVGNyUGlWb0srYVlyZHdtSXFl?=
- =?utf-8?B?cG5VMzM1Zk9ZN2JndzZnb2lsUkIvRUVxS1U0YVgweis2MHZNV1c4WGE4UmZQ?=
- =?utf-8?B?ZlVxTjdnZFYvQzR2YXFHK3lVZnhienAvV2M0OExna1pORHBsYjlwakplMHQ2?=
- =?utf-8?B?eERta0J0c3Nwd3hFR1NobzBHTTVrQWFZYnN4dVhWNWZaY0VkVzNYYWpCeWdq?=
- =?utf-8?B?QzU0QnZmVFUwa3NjaUxZU3Ixc2w3WkZIZk9jdWJVMnpsMFRneTlyalQyUmNF?=
- =?utf-8?B?OU45RktVeTh3VForSG1iajNicWtIa0hrdUY1YWVTYkd6d2pwN2E2UjNrS2o0?=
- =?utf-8?B?bUVYL01vWkh4c25XRGt4UlhOU3NnVmM0YkR4ejA2UkFTR2JsVWt2ZzFrU2w2?=
- =?utf-8?B?MGRiZW9oL05CT3pPWWVxcTM5TUpmUERpRmZFTHg3S1V2MkY4c0NVSlZZbUsz?=
- =?utf-8?B?YTN6NThha2NhR2FtSWxDYUx1d2RNQ0pWUUFkYWpMek5NL1pLbTVPTjZGeFdJ?=
- =?utf-8?B?ckFPUUtwNXlFOU1LRmVKUkM3eE0ydkhZbElrck1ES05Gdldmd05Idk5YUXRk?=
- =?utf-8?B?Snp6SUFWUVZDMWJEU1FMWGtmdWJKeFdyTEpFc2JaaytVbzViWXdGREJGaWoz?=
- =?utf-8?Q?t66/gQHDN8gX874qMlS0UeW5A?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 700840a9-17e2-463c-ad11-08dcef5bf8e1
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 10:02:27.9953
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Mg8ukpbCvZGmTPv8F1qW2p4221t9V4M+6vr/MPfVYVy8oOENWjLWC9Ml4iK8i8rdCmHyKYq3dr112kCQZzXvtQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6128
+References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
+ <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+ <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
+ <3969bae0-eeb8-447a-86a5-dfdac0b136cd@rock-chips.com> <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
+ <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
+In-Reply-To: <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 18 Oct 2024 12:03:10 +0200
+Message-ID: <CAPDyKFogrPEEe1A3Kghjj3-SSJT2xEoKfo_hU7KZk+d9bZxEYQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K . Petersen" <martin.petersen@oracle.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Joao,
+On Fri, 18 Oct 2024 at 11:20, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>
+> Hi Ulf,
+>
+> =E5=9C=A8 2024/10/18 17:07, Ulf Hansson =E5=86=99=E9=81=93:
+> > On Thu, 10 Oct 2024 at 03:21, Shawn Lin <shawn.lin@rock-chips.com> wrot=
+e:
+> >>
+> >> Hi Ulf
+> >>
+> >> =E5=9C=A8 2024/10/9 21:15, Ulf Hansson =E5=86=99=E9=81=93:
+> >>> [...]
+> >>>
+> >>>> +
+> >>>> +static int ufs_rockchip_runtime_suspend(struct device *dev)
+> >>>> +{
+> >>>> +       struct ufs_hba *hba =3D dev_get_drvdata(dev);
+> >>>> +       struct ufs_rockchip_host *host =3D ufshcd_get_variant(hba);
+> >>>> +       struct generic_pm_domain *genpd =3D pd_to_genpd(dev->pm_doma=
+in);
+> >>>
+> >>> pd_to_genpd() isn't safe to use like this. It's solely to be used by
+> >>> genpd provider drivers.
+> >>>
+> >>>> +
+> >>>> +       clk_disable_unprepare(host->ref_out_clk);
+> >>>> +
+> >>>> +       /*
+> >>>> +        * Shouldn't power down if rpm_lvl is less than level 5.
+> >>>
+> >>> Can you elaborate on why we must not power-off the power-domain when
+> >>> level is less than 5?
+> >>>
+> >>
+> >> Because ufshcd driver assume the controller is active and the link is =
+on
+> >> if level is less than 5. So the default resume policy will not try to
+> >> recover the registers until the first error happened. Otherwise if the
+> >> level is >=3D5, it assumes the controller is off and the link is down,
+> >> then it will restore the registers and link.
+> >>
+> >> And the level is changeable via sysfs.
+> >
+> > Okay, thanks for clarifying.
+> >
+> >>
+> >>> What happens if we power-off anyway when the level is less than 5?
+> >>>
+> >>>> +        * This flag will be passed down to platform power-domain dr=
+iver
+> >>>> +        * which has the final decision.
+> >>>> +        */
+> >>>> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
+> >>>> +               genpd->flags |=3D GENPD_FLAG_RPM_ALWAYS_ON;
+> >>>> +       else
+> >>>> +               genpd->flags &=3D ~GENPD_FLAG_RPM_ALWAYS_ON;
+> >>>
+> >>> The genpd->flags is not supposed to be changed like this - and
+> >>> especially not from a genpd consumer driver.
+> >>>
+> >>> I am trying to understand a bit more of the use case here. Let's see
+> >>> if that helps me to potentially suggest an alternative approach.
+> >>>
+> >>
+> >> I was not familiar with the genpd part, so I haven't come up with
+> >> another solution. It would be great if you can guide me to the right
+> >> way.
+> >
+> > I have been playing with the existing infrastructure we have at hand
+> > to support this, but I need a few more days to be able to propose
+> > something for you.
+> >
+>
+> Much appreciate.
+>
+> >>
+> >>>> +
+> >>>> +       return ufshcd_runtime_suspend(dev);
+> >>>> +}
+> >>>> +
+> >>>> +static int ufs_rockchip_runtime_resume(struct device *dev)
+> >>>> +{
+> >>>> +       struct ufs_hba *hba =3D dev_get_drvdata(dev);
+> >>>> +       struct ufs_rockchip_host *host =3D ufshcd_get_variant(hba);
+> >>>> +       int err;
+> >>>> +
+> >>>> +       err =3D clk_prepare_enable(host->ref_out_clk);
+> >>>> +       if (err) {
+> >>>> +               dev_err(hba->dev, "failed to enable ref out clock %d=
+\n", err);
+> >>>> +               return err;
+> >>>> +       }
+> >>>> +
+> >>>> +       reset_control_assert(host->rst);
+> >>>> +       usleep_range(1, 2);
+> >>>> +       reset_control_deassert(host->rst);
+> >>>> +
+> >>>> +       return ufshcd_runtime_resume(dev);
+> >>>> +}
+> >>>> +
+> >>>> +static int ufs_rockchip_system_suspend(struct device *dev)
+> >>>> +{
+> >>>> +       struct ufs_hba *hba =3D dev_get_drvdata(dev);
+> >>>> +       struct ufs_rockchip_host *host =3D ufshcd_get_variant(hba);
+> >>>> +
+> >>>> +       /* Pass down desired spm_lvl to Firmware */
+> >>>> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_C=
+ONFIG,
+> >>>> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0,=
+ 0, 0, NULL);
+> >>>
+> >>> Can you please elaborate on what goes on here? Is this turning off th=
+e
+> >>> power-domain that the dev is attached to - or what is actually
+> >>> happening?
+> >>>
+> >>
+> >> This smc call is trying to ask firmware not to turn off the power-domi=
+an
+> >> that the UFS is attached to and also not to turn off the power of UFS
+> >> conntroller.
+> >
+> > Okay, thanks for clarifying!
+> >
+> > A follow up question, don't you need to make a corresponding smc call
+> > to inform the FW that it's okay to turn off the power-domain at some
+> > point?
+> >
+>
+> Yes. Each time entering sleep, we teach FW if it need to turn off or
+> keep power-domain, for instance "hba->spm_lvl < 5 ? 1 : 0" , 0 means
+> off and 1 means on.
 
-On 10/1/2024 6:04 PM, Joao Martins wrote:
-> On 30/09/2024 06:50, Suravee Suthikulpanit wrote:
->> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
->> index dd4682857c12..921b6de80e24 100644
->> --- a/arch/x86/include/asm/cpufeatures.h
->> +++ b/arch/x86/include/asm/cpufeatures.h
->> @@ -448,6 +448,7 @@
->>   #define X86_FEATURE_SME_COHERENT	(19*32+10) /* AMD hardware-enforced cache coherency */
->>   #define X86_FEATURE_DEBUG_SWAP		(19*32+14) /* "debug_swap" AMD SEV-ES full debug state swap support */
->>   #define X86_FEATURE_SVSM		(19*32+28) /* "svsm" SVSM present */
->> +#define X86_FEATURE_HV_INUSE_WR_ALLOWED	(19*32+30) /* Write to in-use hypervisor-owned pages allowed */
->>   
->>   /* AMD-defined Extended Feature 2 EAX, CPUID level 0x80000021 (EAX), word 20 */
->>   #define X86_FEATURE_NO_NESTED_DATA_BP	(20*32+ 0) /* No Nested Data Breakpoints */
->> diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
->> index 4b74ea91f4e6..42f2caf17d6a 100644
->> --- a/arch/x86/kvm/svm/avic.c
->> +++ b/arch/x86/kvm/svm/avic.c
->> @@ -1199,6 +1199,12 @@ bool avic_hardware_setup(void)
->>   		return false;
->>   	}
->>   
->> +	if (cc_platform_has(CC_ATTR_HOST_SEV_SNP) &&
->> +	    !boot_cpu_has(X86_FEATURE_HV_INUSE_WR_ALLOWED)) {
->> +		pr_warn("AVIC disabled: missing HvInUseWrAllowed on SNP-enabled system");
->> +		return false;
->> +	}
->> +
-> 
-> Wouldn't be better to make this is APICv inhibit to allow non-SNP guests to work
-> with AVIC?
+I see. So you need to make the call each time when entering the system susp=
+end?
 
-I was considering the APICV inhibit as well, and decided to go with 
-disabling AVIC since it does not require additional 
-APICV_INHIBIT_REASON_XXX flag, and we can simply disable AVIC support 
-during kvm-amd driver initialization.
+Or would it be okay to just make it once, when the spm_lvl is changed?
 
-After rethink this, it is better to use per-VM APICv inhibition instead 
-since certain AVIC data structures will be needed for secure AVIC 
-support in the future.
+Another way to deal with it, would be to make the smc call each time
+the power-domain is turned-on, based on spm_lvl too of course.
 
-I will update this patch and send out V2.
+Would that work?
 
-Thanks,
-Suravee
+[...]
+
+Kind regards
+Uffe
 
