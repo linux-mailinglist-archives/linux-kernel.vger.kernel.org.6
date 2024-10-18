@@ -1,233 +1,144 @@
-Return-Path: <linux-kernel+bounces-372269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCDB9A467A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:05:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB039A467D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63611F23C54
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:05:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92F9BB21BE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32F6204F6B;
-	Fri, 18 Oct 2024 19:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1060E20493C;
+	Fri, 18 Oct 2024 19:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5uvTqpE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sQ54KQRq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aF12Kn2z"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045E1185B48;
-	Fri, 18 Oct 2024 19:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CC717DFF2;
+	Fri, 18 Oct 2024 19:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729278302; cv=none; b=qZbchbqTRHckq7z0Fez8GeqyT65fRy3DCKnH4xgDM54K17t3TcuiPMGIr0zeGCxQIfND6ne0msO4ZbCdwaghBeVBjMSz64hwOWteijB3+pnw3W83lruwCB+bNLlyexwSokzQIjS//bO+h06JeGVOqnCXjru8njD2tWcNWtrVRbc=
+	t=1729278449; cv=none; b=aGIvfUjLjLGTRYahjIuS4J+D0mVTqyqaPcf01dGEM1M3yDnYmYQvvHGgGnyD/JHwltvs8myllFHF0xOC0Mey6GDeDlo326qdVWQQ+qUFoZqf1vVrec9n88joy4dwqgEbLrIn+ibST7shDZSYo4+BVS3ZX+e/zmrXiBSwIauhvB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729278302; c=relaxed/simple;
-	bh=FPm25//FWOl+CC1MWzk9hQUI9w5QiPt15s8anu8dklE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=PtZZpCKiUiDW2GhcM3rSnXGO+n3vLYmwIbeNOpdHWDW4UGAsKxjEcvET+Rx0RbnJBsXqNafBIXdi6bzpWzdyM3oaji9cuGWK60bC02mrT0ZOKhLR3JnhA+zgmm77vC2Kzj/KCK7JUTJNM6/Kt9m0Hw82ehDRPoBHsm9LEjUcWcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5uvTqpE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12FA0C4CEC3;
-	Fri, 18 Oct 2024 19:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729278301;
-	bh=FPm25//FWOl+CC1MWzk9hQUI9w5QiPt15s8anu8dklE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q5uvTqpERQM/xf087llem64Geo2ZtGqg+DGlihon2UFTSlgjhC5vcPMah+RtPR5jM
-	 V9+ZHf5VFZjTmcJKtPceJvVyS89pTxSHtXENhw0ugAcvlBG6zaDYCdpiePQ9T4NkJw
-	 yYakgWahYaH/gaXTAb0ZaK9Vl26Y4TZHqqw28s36BYO6YrF6GxaiOZZWpK4raV87ID
-	 0ysPDESKTrAl8uBRXz//pA6XT++5p9W6jOADfciBCpAsxs9lJEyR+z9SP5o3THMssx
-	 tyXLYLe23fAQn89EO4XXbpUekwhntYEad85YicmT7GWnJqiLCAR0TKmHOIvH3/pNMO
-	 E7PgKiSEfhCCw==
+	s=arc-20240116; t=1729278449; c=relaxed/simple;
+	bh=MUCnaqYtp6FUSHYWGi7XpYuc4fm9uYT9I4byykh5jGQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=P56shw7p55ZlPYX8wRvCWDzDjkJ0b3NdKXTKMnwP4/ApvlED2UbEqmJPoBR49HWPdvbhD229FhfvG1g6ROax7fY8YKB+dOPmUqQE1fXzlVUgeIuOc/xcTabsZWFjpOm9pHGIdeFLwpZfKRcRSgGF+IiFXk3JUyEOPKCamPUwnHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sQ54KQRq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aF12Kn2z; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id DDA2D1140132;
+	Fri, 18 Oct 2024 15:07:25 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 18 Oct 2024 15:07:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1729278445;
+	 x=1729364845; bh=NCDYgiCcmLhn3h92PgqbtX3OsVgoU9rUVw0S8go6zNA=; b=
+	sQ54KQRq78Qb5wWyNRN2nGiw2NAttZnMlcO8oKskd1ZsxGWKBPBj+W6BRFYTZBP0
+	6wlIuMjm2LReflJ5bm6BkiUZCpvBjZ3jgvAtZSOxdAh3E3trphVYAWYrFda47o4M
+	L17jI0OJ5Zz80jWeml6EjIj0ZhQvUQR8XAK9b4zGi7jLxvVefHRQJT6FPFammJZJ
+	ye/+D/RJczjj77vveD/RMELcZyGEBpzSXbdhirzgziTUHkL5SceY+6vWG/8JGd6x
+	t/wH0A+Fj0Dxu0GwbazH+RooBTCU8NcUR8ZkI07KHBqbD1Oo5IcFFSWEsIxsj1gy
+	vXiD3gZQ8teSqvldEC41LQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729278445; x=
+	1729364845; bh=NCDYgiCcmLhn3h92PgqbtX3OsVgoU9rUVw0S8go6zNA=; b=a
+	F12Kn2zF0n/rOiJkddykWFQahiPeQa2JJ0jP7diOCdWozEd8CTrNdB6hfDjgasQ6
+	s0lv4mdxqD0PFZZ8iL9LFOiP2GGmHrYi5GSM3Xt9JygPImgAeKP75az+XD5PAaZY
+	O/kQ5kW6WfDEA39WgQ0lNyOFbf2kFg+Nn6GcIizDyiHAwnq/yKuKHlW2gC7uhA50
+	MtxiIwtYOrAB5AJ/DytxS3NakWK0KYwTA9S+0rj2DhmA8dEaWUhVl9iiTjhunauy
+	64HjI92bdEw6rEwjJ5gpzTbPtjUsk+VmyaVHCL0k2qHLZAB4oWsvQvcI6HVeytzA
+	b3miTx6ozNpN6pq1Cr/aQ==
+X-ME-Sender: <xms:7bESZ8oFHwgzf6XF_5O12erNLSdnTLrB_BGE_5oiWVBOO4PRe6CO8w>
+    <xme:7bESZyoPlx7Nkpi_X-kK9n4C7xIGtYlaL0bkFgTqP_H1T8ZdeZRRJRUQMv_kccKnl
+    u9YtWtm512zcKxO5d8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehfedgudefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    uddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsggvnhhjrghmihhnrdgsvghrgh
+    esihhnthgvlhdrtghomhdprhgtphhtthhopegurghnihgvlhdrghgrsggrhiesihhnthgv
+    lhdrtghomhdprhgtphhtthhopegvmhhmrghnuhgvlhdrghhruhhmsggrtghhsehinhhtvg
+    hlrdgtohhmpdhrtghpthhtohepghhrvghgohhrhidrghhrvggvnhhmrghnsehinhhtvghl
+    rdgtohhmpdhrtghpthhtohepihhlrghnrdhpvggvrhesihhnthgvlhdrtghomhdprhgtph
+    htthhopehjohhhrghnnhgvshdrsggvrhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohep
+    mhhirhhirghmrdhrrggthhgvlhdrkhhorhgvnhgslhhithesihhnthgvlhdrtghomhdprh
+    gtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhvrghlohes
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:7bESZxOJCRwtSaeZyCfnsKiRxSLH5JI8Mujmca_qH3rFMzxo1XhJVA>
+    <xmx:7bESZz7bnZ0Z0G9nMI_nDJ1xDbIg4PFBhTlDaJL1XM5t9PXDjHpe6g>
+    <xmx:7bESZ77RmwxuHnX3dg0Pwy_qGfTB05CCpcNIjwTyfMjJ6ANZgcsUEA>
+    <xmx:7bESZzie1_yxdMcPZPZgDwfFu4ji35sDH-Uz-sWT7q1PNpjQG0impQ>
+    <xmx:7bESZ4xPskXTfyF2OGcQ7GlehuKXf_PP7Y5BGImr_qG3YDPvdhyy6-Ym>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 81B0D2220071; Fri, 18 Oct 2024 15:07:25 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 18 Oct 2024 22:04:56 +0300
-Message-Id: <D4Z5ZUHK76A8.18SJLAWKCZ5IX@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>,
- <akpm@linux-foundation.org>, <Liam.Howlett@oracle.com>,
- <lorenzo.stoakes@oracle.com>, <vbabka@suse.cz>, <jannh@google.com>
-Cc: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
- <ebpqwerty472123@gmail.com>, <paul@paul-moore.com>, <zohar@linux.ibm.com>,
- <dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
- <jmorris@namei.org>, <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <bpf@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, <stable@vger.kernel.org>,
- <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>, "Roberto Sassu"
- <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v2] mm: Split critical region in remap_file_pages() and
- invoke LSMs in between
-X-Mailer: aerc 0.18.2
-References: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+MIME-Version: 1.0
+Date: Fri, 18 Oct 2024 19:07:05 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Kalle Valo" <kvalo@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Miri Korenblit" <miriam.rachel.korenblit@intel.com>,
+ "Johannes Berg" <johannes.berg@intel.com>,
+ "Emmanuel Grumbach" <emmanuel.grumbach@intel.com>,
+ "Gregory Greenman" <gregory.greenman@intel.com>,
+ "Daniel Gabay" <daniel.gabay@intel.com>,
+ "Benjamin Berg" <benjamin.berg@intel.com>, "Ilan Peer" <ilan.peer@intel.com>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <d78b5354-b265-4e45-9a6a-996273026402@app.fastmail.com>
+In-Reply-To: <87a5f1qtts.fsf@kernel.org>
+References: <20241018151841.3821671-1-arnd@kernel.org>
+ <87a5f1qtts.fsf@kernel.org>
+Subject: Re: [PATCH] iwlwifi: work around -Wenum-compare-conditional warning
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri Oct 18, 2024 at 7:14 PM EEST, Roberto Sassu wrote:
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+On Fri, Oct 18, 2024, at 16:06, Kalle Valo wrote:
+> Arnd Bergmann <arnd@kernel.org> writes:
 >
-> Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
-> remap_file_pages()") fixed a security issue, it added an LSM check when
-> trying to remap file pages, so that LSMs have the opportunity to evaluate
-> such action like for other memory operations such as mmap() and mprotect(=
-).
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> This is one of only three -Wenum-compare-conditional warnings we get
+>> in randconfig builds:
+>>
+>> drivers/net/wireless/intel/iwlwifi/mvm/sta.c:4331:17: error: conditional expression between different enumeration types ('enum iwl_fw_sta_type' and 'enum iwl_sta_type') [-Werror,-Wenum-compare-conditional]
+>>  4331 |         u32 type = mld ? STATION_TYPE_PEER : IWL_STA_LINK;
+>>       |                        ^ ~~~~~~~~~~~~~~~~~   ~~~~~~~~~~~~
+>>
+>> This is a false positive since the code works as intended, but the
+>> warning is otherwise sensible, so slightly rewrite it in order to
+>> not trigger the warning.
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 >
-> However, that commit called security_mmap_file() inside the mmap_lock loc=
-k,
-> while the other calls do it before taking the lock, after commit
-> 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
->
-> This caused lock inversion issue with IMA which was taking the mmap_lock
-> and i_mutex lock in the opposite way when the remap_file_pages() system
-> call was called.
->
-> Solve the issue by splitting the critical region in remap_file_pages() in
-> two regions: the first takes a read lock of mmap_lock, retrieves the VMA
-> and the file descriptor associated, and calculates the 'prot' and 'flags'
-> variables; the second takes a write lock on mmap_lock, checks that the VM=
-A
-> flags and the VMA file descriptor are the same as the ones obtained in th=
-e
-> first critical region (otherwise the system call fails), and calls
-> do_mmap().
->
-> In between, after releasing the read lock and before taking the write loc=
-k,
-> call security_mmap_file(), and solve the lock inversion issue.
->
-> Cc: stable@vger.kernel.org # v6.12-rcx
-> Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap=
-_file_pages()")
-> Reported-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.4=
-6d20.0036.GAE@google.com/
-> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Jann Horn <jannh@google.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Tested-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Tested-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  mm/mmap.c | 69 +++++++++++++++++++++++++++++++++++++++++--------------
->  1 file changed, 52 insertions(+), 17 deletions(-)
->
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 9c0fb43064b5..f731dd69e162 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1640,6 +1640,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, st=
-art, unsigned long, size,
->  	unsigned long populate =3D 0;
->  	unsigned long ret =3D -EINVAL;
->  	struct file *file;
-> +	vm_flags_t vm_flags;
-> =20
->  	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. See D=
-ocumentation/mm/remap_file_pages.rst.\n",
->  		     current->comm, current->pid);
-> @@ -1656,12 +1657,60 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, =
-start, unsigned long, size,
->  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
->  		return ret;
-> =20
-> -	if (mmap_write_lock_killable(mm))
-> +	if (mmap_read_lock_killable(mm))
->  		return -EINTR;
-> =20
-> +	/*
-> +	 * Look up VMA under read lock first so we can perform the security
-> +	 * without holding locks (which can be problematic). We reacquire a
-> +	 * write lock later and check nothing changed underneath us.
-> +	 */
->  	vma =3D vma_lookup(mm, start);
-> =20
-> -	if (!vma || !(vma->vm_flags & VM_SHARED))
-> +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-> +		mmap_read_unlock(mm);
-> +		return -EINVAL;
-> +	}
-> +
-> +	prot |=3D vma->vm_flags & VM_READ ? PROT_READ : 0;
-> +	prot |=3D vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
-> +	prot |=3D vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
+> Is this and the other rtw89 patch for current release or -next?
 
-Not an actual review comment but we don't have a conversion macro and/or
-inline for this, do we (and opposite direction)?
+Up to you, the warning has existed for a long time at W=1
+level, so the patch applies to current and stable kernels
+as well, but it's not a regression or particularly important.
 
-> +
-> +	flags &=3D MAP_NONBLOCK;
-> +	flags |=3D MAP_SHARED | MAP_FIXED | MAP_POPULATE;
-> +	if (vma->vm_flags & VM_LOCKED)
-> +		flags |=3D MAP_LOCKED;
-> +
-> +	/* Save vm_flags used to calculate prot and flags, and recheck later. *=
-/
-> +	vm_flags =3D vma->vm_flags;
-> +	file =3D get_file(vma->vm_file);
-> +
-> +	mmap_read_unlock(mm);
-> +
-> +	/* Call outside mmap_lock to be consistent with other callers. */
-> +	ret =3D security_mmap_file(file, prot, flags);
-> +	if (ret) {
-> +		fput(file);
-> +		return ret;
-> +	}
-> +
-> +	ret =3D -EINVAL;
-> +
-> +	/* OK security check passed, take write lock + let it rip. */
-> +	if (mmap_write_lock_killable(mm)) {
-> +		fput(file);
-> +		return -EINTR;
-> +	}
-> +
-> +	vma =3D vma_lookup(mm, start);
-> +
-> +	if (!vma)
-> +		goto out;
-> +
-> +	/* Make sure things didn't change under us. */
-> +	if (vma->vm_flags !=3D vm_flags)
-> +		goto out;
-> +	if (vma->vm_file !=3D file)
->  		goto out;
-> =20
->  	if (start + size > vma->vm_end) {
-> @@ -1689,25 +1738,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, =
-start, unsigned long, size,
->  			goto out;
->  	}
-> =20
-> -	prot |=3D vma->vm_flags & VM_READ ? PROT_READ : 0;
-> -	prot |=3D vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
-> -	prot |=3D vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
-> -
-> -	flags &=3D MAP_NONBLOCK;
-> -	flags |=3D MAP_SHARED | MAP_FIXED | MAP_POPULATE;
-> -	if (vma->vm_flags & VM_LOCKED)
-> -		flags |=3D MAP_LOCKED;
-> -
-> -	file =3D get_file(vma->vm_file);
-> -	ret =3D security_mmap_file(vma->vm_file, prot, flags);
-> -	if (ret)
-> -		goto out_fput;
->  	ret =3D do_mmap(vma->vm_file, start, size,
->  			prot, flags, 0, pgoff, &populate, NULL);
-> -out_fput:
-> -	fput(file);
->  out:
->  	mmap_write_unlock(mm);
-> +	fput(file);
->  	if (populate)
->  		mm_populate(ret, populate);
->  	if (!IS_ERR_VALUE(ret))
+It would be nice to turn on the warning by default in 6.13
+once the three patches I sent get applied.
 
-BR, Jarkko
+      Arnd
 
