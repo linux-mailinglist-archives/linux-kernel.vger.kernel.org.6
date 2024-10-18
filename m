@@ -1,225 +1,236 @@
-Return-Path: <linux-kernel+bounces-372449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DBF9A48AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:02:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A30499A48AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C491F25AEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:01:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E27285A1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FA818DF73;
-	Fri, 18 Oct 2024 21:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C86D18E36A;
+	Fri, 18 Oct 2024 21:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UNVT3fJd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lESD7k/1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C450A13541B
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 21:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA98113541B;
+	Fri, 18 Oct 2024 21:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729285313; cv=none; b=tMqLF3zfK+8t7GSevxcGLkatugFExbv3mYhIRcRmHFXsU1J6yMo3iOvacbgeBLrnXgdaNHOQYVvWVVNMlpLRArI+gzw3jEN4A49pXzTr/DUs18/UDRNHbopBy6NKY7gQw/SqqsmvWGYH1Wxhgxs0UvweT24TvTfWCMqUmiZleAo=
+	t=1729285547; cv=none; b=qgZz6v16sPzPiTOdrH9EDS0XhuvlHG9P2ZstbrwN0aOMg0qa1hvQWvwtADpqsD/fvAEf4U1MPI1cI7T8TIsKpmSTearHZeesYsA17AUxQXEjQ8cMZmwZ8nH4X2k5RK8n+132iATblunq8w4IsAYMk9nCTFHZsxz7e3QO6h7JDlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729285313; c=relaxed/simple;
-	bh=ixH/ghtHgcJy0Lmj13nWNNLNotx8rlF13wh8Dq9sPZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=M9uCvl5SAVMOjR3HdUs3z30BzmuSr1hDGOiq9/7jngWRJcxl+lOKUwM/TlMYna76AUvy4e3qsbKXuEx3xOY7SPY5+ZF5saVR9mCeSQKz1/ep8i+4e0xDuiRWHPdceTPfhqAjX9MDXMRLx7KW2EtWWU0cbsKjirb7LiTrU22iFpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UNVT3fJd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ICGTe5020850;
-	Fri, 18 Oct 2024 21:01:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pDHC/e17+8DUmuZglJqWLj+6wKJ0YGpCOEYVA4nBZ+Q=; b=UNVT3fJd+z+Y0UXX
-	fCVjVaOXT6FMsit1CKxgO1hpAC13008BfYBGZhqLGyMiUI4czKk2Gz52qkb/PzEm
-	9Gmt5Kn/m4CmM8fUcxtgslpLR7FcoztFDPY/2v+gu4vmWq8da+McUXfB69kxLFU2
-	F9VAG+goaHZmyOgqM1eDKLwjnTi6QHmX3S933SbxTHFFLPzDExkU7Gdq8aFx78fR
-	Mp0QI81+NW1FgKLyeAkZwANk1lZZIjdc47V7l873xtp+rwm/7iSzVds0wcU1vPqr
-	wFzh0LaRNfNVJd5FpnjSAiRsA+2Ysi3CxHnMLIY9KnT4e9vEBzYNd68l89IG8BsD
-	ayJ2iA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bexpawq5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 21:01:47 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IL1kLC010399
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 21:01:46 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
- 2024 14:01:45 -0700
-Message-ID: <1c16640f-0bc3-2692-910f-09ea5869a5b6@quicinc.com>
-Date: Fri, 18 Oct 2024 15:01:45 -0600
+	s=arc-20240116; t=1729285547; c=relaxed/simple;
+	bh=6TEWzcQk/Ii5egWgylmELYefpSW63zGGTg/MZlxt0lI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ok9ov7Bv344k4TYB8aS14N6jS3a8s0pvGCCPNaJbGcYGQLj4tTa24EOyuNEkKBcCcYmsNBxbiEwgDB59CVgsRThB1t+/Q4oGkhOrDazuG8K3raZ91GuOy9LWmYJYPRTYfBUm0U6lsTmX37bND6HR6eb2HrFu50/TmY2pHuc5Qks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lESD7k/1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B98DBC4CEC3;
+	Fri, 18 Oct 2024 21:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729285547;
+	bh=6TEWzcQk/Ii5egWgylmELYefpSW63zGGTg/MZlxt0lI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lESD7k/1n/H8rLy75a1X8n9tbQ71YyNXhtnUranFCepf+vZkmj/54oFFAz5bHsMG+
+	 ZH5lIfO6G4TjsBoNHkZF6KUW8kaSybcfBBNruAG1yrjmL+UE202vPaq5WiVS7cXdoT
+	 4B9dEmQdiWx2baCnS9Mg10ZbHl88cTRuF0yoyeHjYpBp6KGk5NRM0kU0NKad2hINBW
+	 pzdo0D4+ec6+XTu0DDDNOr6H1YtGKO9J6OMslRGi86eAEwl9PGdoUrybx1lpU0syXk
+	 6ASdMIKJZAoQcoqYzqEMtvIhV3SkElNZQeV7CUHCooWFRVns7suw2SidBfAkgp2alm
+	 nciSrX9hGN+vQ==
+Date: Fri, 18 Oct 2024 22:05:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	akpm@linux-foundation.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pedro.falcato@gmail.com,
+	willy@infradead.org, vbabka@suse.cz, Liam.Howlett@oracle.com,
+	rientjes@google.com, keescook@chromium.org
+Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
+Message-ID: <6aefd38b-d758-4e7c-a910-254251c2a294@sirena.org.uk>
+References: <CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com>
+ <CABi2SkVEMRHV3swrbb6M5RA6GQpFVVx855CGwdQ1xiz3tygiqA@mail.gmail.com>
+ <f9b9422c-216d-422e-94b4-d8814b0b277e@lucifer.local>
+ <CABi2SkWAv4LXvR1Wb1e31eyZ35JfyieXhDOq1bp_ZvHPLLg-qA@mail.gmail.com>
+ <e0f440b0-5a45-4218-8c51-27f848c0617b@lucifer.local>
+ <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
+ <1f8eff74-005b-4fa9-9446-47f4cdbf3e8d@sirena.org.uk>
+ <CABi2SkV38U-ZCAq9W091zYkOM1m5e-C27YmVXdTCi-t+p_W_fQ@mail.gmail.com>
+ <a2652ed4-ea8b-4b56-bac6-6479b3df6c14@sirena.org.uk>
+ <CABi2SkVF3OtRcq9cCgLh_hOjxRnWq0owypw++xodrEfm=dt_qA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V4 09/10] accel/amdxdna: Add error handling
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20241011231244.3182625-1-lizhi.hou@amd.com>
- <20241011231244.3182625-10-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20241011231244.3182625-10-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3d8QqqbVV7ximTssG3lBjpEsrs6mGESp
-X-Proofpoint-ORIG-GUID: 3d8QqqbVV7ximTssG3lBjpEsrs6mGESp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- clxscore=1015 spamscore=0 lowpriorityscore=0 mlxlogscore=999 adultscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180134
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BIKQqdtpthE9HG51"
+Content-Disposition: inline
+In-Reply-To: <CABi2SkVF3OtRcq9cCgLh_hOjxRnWq0owypw++xodrEfm=dt_qA@mail.gmail.com>
+X-Cookie: What is the sound of one hand clapping?
 
-On 10/11/2024 5:12 PM, Lizhi Hou wrote:
-> When there is a hardware error, the NPU firmware notifies the host through
-> a mailbox message. The message includes details of the error, such as the
-> tile and column indexes where the error occurred.
-> 
-> The driver starts a thread to handle the NPU error message. The thread
-> stops the clients which are using the column where error occurred. Then
-> the driver resets that column.
-> 
-> Co-developed-by: Min Ma<min.ma@amd.com>
-> Signed-off-by: Min Ma<min.ma@amd.com>
-> Signed-off-by: Lizhi Hou<lizhi.hou@amd.com>
-> ---
->   drivers/accel/amdxdna/Makefile       |   1 +
->   drivers/accel/amdxdna/aie2_error.c   | 356 +++++++++++++++++++++++++++
->   drivers/accel/amdxdna/aie2_message.c |  19 ++
->   drivers/accel/amdxdna/aie2_pci.c     |  32 +++
->   drivers/accel/amdxdna/aie2_pci.h     |   9 +
->   5 files changed, 417 insertions(+)
->   create mode 100644 drivers/accel/amdxdna/aie2_error.c
-> 
-> diff --git a/drivers/accel/amdxdna/Makefile b/drivers/accel/amdxdna/Makefile
-> index a688c378761f..ed6f87910880 100644
-> --- a/drivers/accel/amdxdna/Makefile
-> +++ b/drivers/accel/amdxdna/Makefile
-> @@ -2,6 +2,7 @@
->   
->   amdxdna-y := \
->   	aie2_ctx.o \
-> +	aie2_error.o \
->   	aie2_message.o \
->   	aie2_pci.o \
->   	aie2_psp.o \
-> diff --git a/drivers/accel/amdxdna/aie2_error.c b/drivers/accel/amdxdna/aie2_error.c
-> new file mode 100644
-> index 000000000000..d2787549f3b7
-> --- /dev/null
-> +++ b/drivers/accel/amdxdna/aie2_error.c
-> @@ -0,0 +1,356 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2023-2024, Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <drm/drm_cache.h>
-> +#include <drm/drm_device.h>
-> +#include <drm/drm_print.h>
-> +#include <drm/gpu_scheduler.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/kthread.h>
-> +#include <linux/kernel.h>
-> +
-> +#include "aie2_msg_priv.h"
-> +#include "aie2_pci.h"
-> +#include "amdxdna_mailbox.h"
-> +#include "amdxdna_pci_drv.h"
-> +
-> +struct async_event {
-> +	struct amdxdna_dev_hdl		*ndev;
-> +	struct async_event_msg_resp	resp;
-> +	struct workqueue_struct		*wq;
-> +	struct work_struct		work;
-> +	u8				*buf;
-> +	dma_addr_t			addr;
-> +	u32				size;
-> +};
-> +
-> +struct async_events {
-> +	struct workqueue_struct		*wq;
-> +	u8				*buf;
-> +	dma_addr_t			addr;
-> +	u32				size;
-> +	u32				event_cnt;
-> +	struct async_event		event[] __counted_by(event_cnt);
-> +};
-> +
-> +/*
-> + * Below enum, struct and lookup tables are porting from XAIE util header file.
-> + *
-> + * Below data is defined by AIE device and it is used for decode error message
-> + * from the device.
-> + */
-> +
-> +enum aie_module_type {
-> +	AIE_MEM_MOD = 0,
-> +	AIE_CORE_MOD,
-> +	AIE_PL_MOD,
-> +};
-> +
-> +enum aie_error_category {
-> +	AIE_ERROR_SATURATION = 0,
-> +	AIE_ERROR_FP,
-> +	AIE_ERROR_STREAM,
-> +	AIE_ERROR_ACCESS,
-> +	AIE_ERROR_BUS,
-> +	AIE_ERROR_INSTRUCTION,
-> +	AIE_ERROR_ECC,
-> +	AIE_ERROR_LOCK,
-> +	AIE_ERROR_DMA,
-> +	AIE_ERROR_MEM_PARITY,
-> +	/* Unknown is not from XAIE, added for better category */
-> +	AIE_ERROR_UNKNOWN,
-> +};
-> +
-> +/* Don't pack, unless XAIE side changed */
-> +struct aie_error {
-> +	u8			row;
-> +	u8			col;
-> +	u32			mod_type;
-> +	u8			event_id;
-> +};
 
-This looks like it is a structure to decode data from an external 
-device.  Assuming that is so, the wrong types are used here.  Should be 
-the "__" types like "__u8", no?  Normal u8, etc are kernel internal only 
-types.
+--BIKQqdtpthE9HG51
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +struct aie_err_info {
-> +	u32			err_cnt;
-> +	u32			ret_code;
-> +	u32			rsvd;
-> +	struct aie_error	payload[] __counted_by(err_cnt);
-> +};
-> +
-> +struct aie_event_category {
-> +	u8			event_id;
-> +	enum aie_error_category category;
-> +};
+On Fri, Oct 18, 2024 at 12:32:37PM -0700, Jeff Xu wrote:
+> On Fri, Oct 18, 2024 at 11:37=E2=80=AFAM Mark Brown <broonie@kernel.org> =
+wrote:
+> > On Fri, Oct 18, 2024 at 11:06:20AM -0700, Jeff Xu wrote:
 
+> > Test 106 here is called "test_munmap_free_multiple_ranges_with_split:
+> > line:2573" which automated systems aren't going to be able to associate
+> > with the passing "test_munmap_free_multiple_ranges_with_split", nor with
+> > any failures that occur on any other lines in the function.
+
+> I see. That will happen when those tests are modified and line number
+> changes. I could see reasoning for this argument, especially when
+> those tests are flaky and get updated often.
+
+> In practice, I hope any of those kernel self-test failures should get
+> fixed immediately, or even better, run before dev submitting the patch
+> that affects the mm area.
+
+That's not the entire issue - it is also a problem that the test name
+is not the same between passes and failures so automated systems can't
+associate the failures with the passes.  When a test starts failing they
+will see the passing test disappear and a new test appear that has never
+worked.  This will mean that for example if they have bisection support
+or UI for showing when a test started regressing those won't work.  The
+test name needs to be stable, diagnostics identifying why or where it
+failed should be separate prints.
+
+Actually, prompted by the comments below about test variants I've now
+run the test and see that what's in -next is also broken in that it's
+running a lot of the tests twice with sealing enabled or disabled but
+not including this in the reported test name resulting in most of the
+tests reporting like this:
+
+   ok 11 test_seal_mprotect
+   ok 12 test_seal_mprotect
+
+which is also going to confuse automated systems, they have a hard time
+working out which instance is which (generally the test numbers get
+ignored between runs as they're not at all stable).  The test names need
+to roll in the parameterisation:
+
+   ok 11 test_seal_mprotect seal=3Dtrue
+   ok 12 test_seal_mprotect seal=3Dfalse
+
+(or something, the specific format doesn't matter so long as the names
+are both stable and distinct).
+
+> Having line number does help dev to go to error directly, and I'm not
+> against filling in the "action" field, but you might also agree with
+> me, finding unique text for each error would require some decent
+> amount of time, especially for large tests such as mseal_test.
+
+In these situations if it's a typical Unix API function setting errno
+that failed I tend to end up writing diagnostics like:
+=09
+	ksft_perror("open()")
+
+possibly with some of the arguments included as well, or something
+equivalently basic for other kinds of error.  This is fairly mindless so
+quick and easy to do and more robust against line number slips if you're
+not looking at exactly the same version of the code, sometimes it's even
+enough you don't even need to look at the test to understand why it's
+upset.
+
+> > Honestly this just sounds and looks like kselftest_harness.h, it's
+> > ASSERT_ and EXPECT_ macros sound exactly like what you're looking for
+> > for asserts.  The main gotchas with it are that it's not particularly
+
+> OK, I didn't know that ASSERT_ and EXPECT_ were part of the test fixture.
+
+> If I  switch to test_fixture, e,g, using TEST(test_name)
+
+> how do I pass the "seal" flag to it ?
+> e.g. how do I run the same test twice, first seal =3D true, and second se=
+al=3Dfalse.
+
+>         test_seal_mmap_shrink(false);
+>         test_seal_mmap_shrink(true);
+
+That looks like fixture variants to me, using those with
+kselftest_harness.h will also fix the problem with duplicate test names
+being used since it generates different names for each instance of the
+test.  Something like:
+
+FIXTURE(with_seal)
+{
+};
+
+FIXTURE_VARIANT(with_seal)
+{
+	bool seal;
+};
+
+FIXTURE_VARIANT_ADD(with_seal, yes)
+{
+	.seal =3D true,
+};
+
+FIXTURE_VARIANT_ADD(with_seal, no)
+{
+	.seal =3D false,
+};
+
+FIXTURE_SETUP(with_seal)
+{
+}
+
+FIXTURE_TEARDOWN(with_seal)
+{
+}
+
+then a bunch of tests using that fixture:
+
+TEST_F(with_seal, test_seal_mmap_shrink)
+{
+	if (variant->seal) {
+		/* setup sealing */
+	}
+
+	...
+}
+
+TEST_F(with_seal, test_seal_mprotect)
+{
+	if (variant->seal) {
+		/* setup sealing */
+	}
+
+	...
+}
+
+You don't need to actually set up anything in your fixture, but you do
+need to have setup and teardown functions so the framework can emit
+required boilerplate.  The gcs-locking.c test I recently added in -next=20
+is an example of a similar thing where we just need the variants,
+there's no actual fixture.
+
+--BIKQqdtpthE9HG51
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcSzaQACgkQJNaLcl1U
+h9AB9wf/T8iHWb/5rF1+cR1qJwESbckaccw/2Uq7G5bAg8rSmYL4EfDwQ0gT2wiC
+tgkchnn6bmLYnSsfESWOWDU0Eme/rSzdpFR4iz3nr5vT8kq6KE8DfQmrXihnzc5V
+8B3NRbhQoU52gPREYVjWp7vsQKButoN3ipniO5E4fdtdf5R/wT0tEqqTU/ViwlSE
+2Ls8L39I31D6/HDrCY1mHqXvJcyuXmOrHaEU5m+hTyb3gn7L+O/FMos0y4O4h915
+RmISRBJDDKVyxGGiz4FPHCk4pv/mPiwC58ZT1WCX7fg76dzYUg+fIZ28NqCPb4rJ
+VEKp0xTaZHZuIHbKr2uNLxfdwdkNLw==
+=mikf
+-----END PGP SIGNATURE-----
+
+--BIKQqdtpthE9HG51--
 
