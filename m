@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-372126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297349A44C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:32:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488329A44C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7BC41F2465D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:32:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F7D1C21A6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB5B20492D;
-	Fri, 18 Oct 2024 17:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E78205ADA;
+	Fri, 18 Oct 2024 17:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eX7KpWI7"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BdCBp7la"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D304205AC2
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402D8205AC6
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729272669; cv=none; b=dosy66uc4K+l5rPG/YM8m3QcsxnqlF2HQX8YovfaehSW6MDoQovULeKaB1IN/R/7w4fpTntmC++Nc2Wk3Xt7hU5bBDz94q+BxfhD/CdYKgaLVbSrxo7vcf486aemsYMk6c8Oi/W28qqc7exr60ye5G9x+HA2wG4DAcd+Pt2Ap2U=
+	t=1729272675; cv=none; b=bUIcJ8UPFeZIh8lNrf+zMml49hOq/36qKH8qPE6YgxAgjzhs0xbpCBCxYGXnNmiSr6nw75hsdwRmqsWsk6Lhjw9/28EGwYnOHQO5iXGAlYsgfLjVxY9Ey8kej0Isw74EBhAcUVVyLiqDCr1kFdgOdTWXbAN2BjhH6KaSuhmNOzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729272669; c=relaxed/simple;
-	bh=0ZU3PBuusYz0BC8RPwMscqOGtYWO9M254Vd7xILudqU=;
+	s=arc-20240116; t=1729272675; c=relaxed/simple;
+	bh=OtgBNzwT10q1fgJ73my79dtV2veuEsi813cYK1MYapI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CmH4AR+dToAw4Ng+0rVYQEQQmQgO+ZpTaRbY5bGU5CUY45dEywWSPvS7znz24+VS45aQVpIgsbIUGZTxv28/E86V1eXQ01UqmNl5LtxH3tHkOpZu13m8Qai7OxrpU8Qkv0CPfvsBA4HDmVUvTfZhZio3gRLv2ugrNnbk0/rMFbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eX7KpWI7; arc=none smtp.client-ip=209.85.210.181
+	 MIME-Version; b=Cych6q8TS/0sf1gMAs3Vt7bdb6RaY6NZ4AI1xiPU/niVxK7I3NTAsBvMv49KWB2CVJhNHCwbs8+mc7kndcDewrdjsMgPMKcTFfvsY3cSBbqHtP48INMCU359gsalWHp1dkpGDxpXWZiorhHvJFKg9VJ4alttuxS0krCiKCwTtg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdCBp7la; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e7086c231so1828618b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:31:07 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea0ff74b15so1592197a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:31:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729272667; x=1729877467; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729272672; x=1729877472; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EPaaeu37JE/wM6SvauUhRnxy0xWFM+VjQPTyakMCkTU=;
-        b=eX7KpWI7Ft/IoJRr0+qPd22FJBYSBn9n1/JeK5zkC866Lu45+2cnhsOF+r1pnBKPtL
-         Si/Tj4Risfbh8Sb/Zz4rgND0NyERN20keFKSTMtlR6EVs5albiffLhHqmb2Btyc5WN3e
-         gcV9LMsDHX3csVSh4esjSkb3x9SNBWJFqdaKs8ey75ZuxygNr3n1TEkulp3Z2PErt8fC
-         RrUQkqGCWmQp0y4ZyFSkGpKZ2NDRmQGzsv92y+U4seQgm5WXaKpyDVuC8ZyuLuBJi2nV
-         zZ6PyxA+rX7eVhqWjFu8lccMPxngX59jhFS1R3/Qb0/XMrcTSvCqjagPOf8Zrf+X95Gw
-         Z7yg==
+        bh=maqsHecWoRrqy0atrv0EioRwOZB99TyG0W2HP4lfnAU=;
+        b=BdCBp7laJl9ycTaWhrrR/hUZfz/XPh/fUh4VqhkuSUQzB23NhxIyA60nhPspxtjydk
+         ZVWBZLtMgYO7i8EMT6EHcFUP1Z7NVvP8a/esxdpZ895IIXfn2+K5M1JNIMhCfK8znAfq
+         g8h4hTy0DNSYEbNTK1YgLtd0psgcV5WljTnj25dlEhEmcH+DRDghDqt0rC25aJZq/D5G
+         6uc9iJbjAC7ctHKKwgjVQbYE1kjS2hpS2CbTD/HpDvUuP0y8CGo/JeJWt0H4WQi7BgW8
+         jCOAf4sWxXK8DMA04dLdAh3Q+JmkzkoUhsLyAeqRd8WcTNp/lxHplMiELo90ygIIKBw9
+         o7hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729272667; x=1729877467;
+        d=1e100.net; s=20230601; t=1729272672; x=1729877472;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EPaaeu37JE/wM6SvauUhRnxy0xWFM+VjQPTyakMCkTU=;
-        b=A4i2T4Fgneqd65W+fu7MufCRqqxO/lG4AYc2SDFemF6y9tuvfXXnKsO5XMQC1BRbjS
-         yh7roBKiinyeIkTZz999qVH5AsYOwPba9wHlNx3nwWDjEcGocNSD9vukqWXDOEYBCT5o
-         zr7jazegEH70SAIu/ZFi2bCyphG/PViRaxq1W5hmfV5yVK2gvRCA3sZMbDC1LamrkKDk
-         zxgwYBjhR/qqUN9u3nU4CS549MpODFLlVUxi51o3DyHULr5wQSf440Yl7uRIK3Lb2ocp
-         gCchAtvzSkX7VaGL8mcpv3h43bcoYBG013GSkiiZmeNGtLZJEN4B6sgvtQMiJ/LPMZtE
-         Ruug==
-X-Forwarded-Encrypted: i=1; AJvYcCUtFFSgBqZTzbAVK2MLLHVS3RL1FpgegJ7icxX6soDdvNLbVGU1RWonFnKPfHz6DbA/x9O7+vn8D9aFTpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaxUpCYxg4A6p9PfCh5xY7ORCdcK2RUSSKG6qUjMpZ9cEFrLlv
-	Yb49SVXoXnqEHRz6PjbAFV+GNeHg6bNUdqYSr9jRjYAgwlkOebmV
-X-Google-Smtp-Source: AGHT+IEEe+ByOf1Adz9XWU2Tes8g7tZEwmexWC38hJ63m0WcdhEx6XCci2ar7YRCIZhlcwi/ce3HQw==
-X-Received: by 2002:a05:6a00:2d25:b0:71e:5950:97d2 with SMTP id d2e1a72fcca58-71ea3328e08mr4294187b3a.17.1729272666771;
-        Fri, 18 Oct 2024 10:31:06 -0700 (PDT)
+        bh=maqsHecWoRrqy0atrv0EioRwOZB99TyG0W2HP4lfnAU=;
+        b=Nj2IXXX0ew9TE5fWvwZgqpD5fe6WilNQB009dU2sBXWfv3m0niEqhzWkeouy380yRM
+         yFDXvKlQ8p2FTIJL7pzX0AxrDORYtPlaBQPy0Z7eAzIDlnH14DpVMXaL5tKLJvuep99N
+         6PvkQ4DSrhr4Se9fVChImjgRo5jjVP6Oj5EoQs6H4LwKfy6IxC63yVU5ecrGR+O8a8Cw
+         7KWMaEwwU+3YcWByHZVLafaL3wee792zEMxrarWNNH4stlk0ZdDAqI3iCh4hMxlbjPes
+         5Okt2cwCw2od8btkSmHP245FE6oEOtNidAND/9Wuh0jRHGrd7q2QtOwJnKKkSzEomgUm
+         cjKg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5hoxL4QPYekgGzobr+75ZejmcxO+TK7/W0wC5AjuP6HuhGepKImBm1LT15O+dJncuUVC9odTL6abp9Oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ+Aa4N+ntQmP29bkvUXW3NkQEPySaxRgJc+vdMglKJSqm4UwB
+	ZGyH4/GEUqJ8AK0Uxy+gtI1t+ifuggzPUNfDhfziAis4E5xSfUST
+X-Google-Smtp-Source: AGHT+IGCcfcvV3hhkWCRVZ4L4+07qgofxPBOFcgBhHnT233XbATfjI7cFHkLMcuk8gJsatcgaCUiZQ==
+X-Received: by 2002:a05:6a20:43a0:b0:1d9:a90:8879 with SMTP id adf61e73a8af0-1d92c502994mr4770966637.21.1729272672394;
+        Fri, 18 Oct 2024 10:31:12 -0700 (PDT)
 Received: from dw-tp.ibmuc.com ([171.76.80.151])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea3311f51sm1725242b3a.36.2024.10.18.10.31.01
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea3311f51sm1725242b3a.36.2024.10.18.10.31.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 10:31:05 -0700 (PDT)
+        Fri, 18 Oct 2024 10:31:11 -0700 (PDT)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: kasan-dev@googlegroups.com,
@@ -83,9 +83,9 @@ Cc: kasan-dev@googlegroups.com,
 	Pavithra Prakash <pavrampu@linux.vnet.ibm.com>,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v3 09/12] book3s64/hash: Add kfence functionality
-Date: Fri, 18 Oct 2024 22:59:50 +0530
-Message-ID: <5c2b61941b344077a2b8654dab46efa0322af3af.1729271995.git.ritesh.list@gmail.com>
+Subject: [PATCH v3 10/12] book3s64/radix: Refactoring common kfence related functions
+Date: Fri, 18 Oct 2024 22:59:51 +0530
+Message-ID: <f4a787224fbe5bb787158ace579780c0257f6602.1729271995.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1729271995.git.ritesh.list@gmail.com>
 References: <cover.1729271995.git.ritesh.list@gmail.com>
@@ -97,297 +97,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that linear map functionality of debug_pagealloc is made generic,
-enable kfence to use this generic infrastructure.
+Both radix and hash on book3s requires to detect if kfence
+early init is enabled or not. Hash needs to disable kfence
+if early init is not enabled because with kfence the linear map is
+mapped using PAGE_SIZE rather than 16M mapping.
+We don't support multiple page sizes for slb entry used for kernel
+linear map in book3s64.
 
-1. Define kfence related linear map variables.
-   - u8 *linear_map_kf_hash_slots;
-   - unsigned long linear_map_kf_hash_count;
-   - DEFINE_RAW_SPINLOCK(linear_map_kf_hash_lock);
-2. The linear map size allocated in RMA region is quite small
-   (KFENCE_POOL_SIZE >> PAGE_SHIFT) which is 512 bytes by default.
-3. kfence pool memory is reserved using memblock_phys_alloc() which has
-   can come from anywhere.
-   (default 255 objects => ((1+255) * 2) << PAGE_SHIFT = 32MB)
-4. The hash slot information for kfence memory gets added in linear map
-   in hash_linear_map_add_slot() (which also adds for debug_pagealloc).
+This patch refactors out the common functions required to detect kfence
+early init is enabled or not.
 
-Reported-by: Pavithra Prakash <pavrampu@linux.vnet.ibm.com>
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- arch/powerpc/include/asm/kfence.h     |   5 -
- arch/powerpc/mm/book3s64/hash_utils.c | 162 +++++++++++++++++++++++---
- 2 files changed, 149 insertions(+), 18 deletions(-)
+ arch/powerpc/include/asm/kfence.h        |  8 ++++++--
+ arch/powerpc/mm/book3s64/pgtable.c       | 13 +++++++++++++
+ arch/powerpc/mm/book3s64/radix_pgtable.c | 12 ------------
+ arch/powerpc/mm/init-common.c            |  1 +
+ 4 files changed, 20 insertions(+), 14 deletions(-)
 
 diff --git a/arch/powerpc/include/asm/kfence.h b/arch/powerpc/include/asm/kfence.h
-index f3a9476a71b3..fab124ada1c7 100644
+index fab124ada1c7..1f7cab58ab2c 100644
 --- a/arch/powerpc/include/asm/kfence.h
 +++ b/arch/powerpc/include/asm/kfence.h
-@@ -10,7 +10,6 @@
- 
- #include <linux/mm.h>
- #include <asm/pgtable.h>
--#include <asm/mmu.h>
- 
- #ifdef CONFIG_PPC64_ELF_ABI_V1
+@@ -15,7 +15,7 @@
  #define ARCH_FUNC_PREFIX "."
-@@ -26,10 +25,6 @@ static inline void disable_kfence(void)
+ #endif
  
- static inline bool arch_kfence_init_pool(void)
+-#ifdef CONFIG_KFENCE
++extern bool kfence_early_init;
+ extern bool kfence_disabled;
+ 
+ static inline void disable_kfence(void)
+@@ -27,7 +27,11 @@ static inline bool arch_kfence_init_pool(void)
  {
--#ifdef CONFIG_PPC64
--	if (!radix_enabled())
--		return false;
--#endif
  	return !kfence_disabled;
  }
- #endif
-diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
-index f51f2cd9bf22..558d6f5202b9 100644
---- a/arch/powerpc/mm/book3s64/hash_utils.c
-+++ b/arch/powerpc/mm/book3s64/hash_utils.c
-@@ -40,6 +40,7 @@
- #include <linux/random.h>
- #include <linux/elf-randomize.h>
- #include <linux/of_fdt.h>
-+#include <linux/kfence.h>
+-#endif
++
++static inline bool kfence_early_init_enabled(void)
++{
++	return IS_ENABLED(CONFIG_KFENCE) && kfence_early_init;
++}
  
- #include <asm/interrupt.h>
- #include <asm/processor.h>
-@@ -66,6 +67,7 @@
- #include <asm/pte-walk.h>
- #include <asm/asm-prototypes.h>
- #include <asm/ultravisor.h>
-+#include <asm/kfence.h>
+ #ifdef CONFIG_PPC64
+ static inline bool kfence_protect_page(unsigned long addr, bool protect)
+diff --git a/arch/powerpc/mm/book3s64/pgtable.c b/arch/powerpc/mm/book3s64/pgtable.c
+index f4d8d3c40e5c..1563a8c28feb 100644
+--- a/arch/powerpc/mm/book3s64/pgtable.c
++++ b/arch/powerpc/mm/book3s64/pgtable.c
+@@ -37,6 +37,19 @@ EXPORT_SYMBOL(__pmd_frag_nr);
+ unsigned long __pmd_frag_size_shift;
+ EXPORT_SYMBOL(__pmd_frag_size_shift);
  
- #include <mm/mmu_decl.h>
- 
-@@ -271,7 +273,7 @@ void hash__tlbiel_all(unsigned int action)
- 		WARN(1, "%s called on pre-POWER7 CPU\n", __func__);
- }
- 
--#ifdef CONFIG_DEBUG_PAGEALLOC
-+#if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_KFENCE)
- static void kernel_map_linear_page(unsigned long vaddr, unsigned long idx,
- 				   u8 *slots, raw_spinlock_t *lock)
- {
-@@ -325,11 +327,13 @@ static void kernel_unmap_linear_page(unsigned long vaddr, unsigned long idx,
- 				     mmu_linear_psize,
- 				     mmu_kernel_ssize, 0);
- }
-+#endif
- 
-+#ifdef CONFIG_DEBUG_PAGEALLOC
- static u8 *linear_map_hash_slots;
- static unsigned long linear_map_hash_count;
- static DEFINE_RAW_SPINLOCK(linear_map_hash_lock);
--static inline void hash_debug_pagealloc_alloc_slots(void)
-+static void hash_debug_pagealloc_alloc_slots(void)
- {
- 	unsigned long max_hash_count = ppc64_rma_size / 4;
- 
-@@ -352,7 +356,8 @@ static inline void hash_debug_pagealloc_alloc_slots(void)
- 		      __func__, linear_map_hash_count, &ppc64_rma_size);
- }
- 
--static inline void hash_debug_pagealloc_add_slot(phys_addr_t paddr, int slot)
-+static inline void hash_debug_pagealloc_add_slot(phys_addr_t paddr,
-+							int slot)
- {
- 	if (!debug_pagealloc_enabled() || !linear_map_hash_count)
- 		return;
-@@ -386,20 +391,148 @@ static int hash_debug_pagealloc_map_pages(struct page *page, int numpages,
- 	return 0;
- }
- 
--int hash__kernel_map_pages(struct page *page, int numpages, int enable)
-+#else /* CONFIG_DEBUG_PAGEALLOC */
-+static inline void hash_debug_pagealloc_alloc_slots(void) {}
-+static inline void hash_debug_pagealloc_add_slot(phys_addr_t paddr, int slot) {}
-+static int __maybe_unused
-+hash_debug_pagealloc_map_pages(struct page *page, int numpages, int enable)
- {
--	return hash_debug_pagealloc_map_pages(page, numpages, enable);
-+	return 0;
- }
-+#endif /* CONFIG_DEBUG_PAGEALLOC */
- 
--#else /* CONFIG_DEBUG_PAGEALLOC */
--int hash__kernel_map_pages(struct page *page, int numpages,
--					 int enable)
 +#ifdef CONFIG_KFENCE
-+static u8 *linear_map_kf_hash_slots;
-+static unsigned long linear_map_kf_hash_count;
-+static DEFINE_RAW_SPINLOCK(linear_map_kf_hash_lock);
-+
-+static phys_addr_t kfence_pool;
-+
-+static inline void hash_kfence_alloc_pool(void)
++extern bool kfence_early_init;
++static int __init parse_kfence_early_init(char *arg)
 +{
++	int val;
 +
-+	/* allocate linear map for kfence within RMA region */
-+	linear_map_kf_hash_count = KFENCE_POOL_SIZE >> PAGE_SHIFT;
-+	linear_map_kf_hash_slots = memblock_alloc_try_nid(
-+					linear_map_kf_hash_count, 1,
-+					MEMBLOCK_LOW_LIMIT, ppc64_rma_size,
-+					NUMA_NO_NODE);
-+	if (!linear_map_kf_hash_slots) {
-+		pr_err("%s: memblock for linear map (%lu) failed\n", __func__,
-+				linear_map_kf_hash_count);
-+		goto err;
-+	}
-+
-+	/* allocate kfence pool early */
-+	kfence_pool = memblock_phys_alloc_range(KFENCE_POOL_SIZE, PAGE_SIZE,
-+				MEMBLOCK_LOW_LIMIT, MEMBLOCK_ALLOC_ANYWHERE);
-+	if (!kfence_pool) {
-+		pr_err("%s: memblock for kfence pool (%lu) failed\n", __func__,
-+				KFENCE_POOL_SIZE);
-+		memblock_free(linear_map_kf_hash_slots,
-+				linear_map_kf_hash_count);
-+		linear_map_kf_hash_count = 0;
-+		goto err;
-+	}
-+	memblock_mark_nomap(kfence_pool, KFENCE_POOL_SIZE);
-+
-+	return;
-+err:
-+	pr_info("Disabling kfence\n");
-+	disable_kfence();
-+}
-+
-+static inline void hash_kfence_map_pool(void)
-+{
-+	unsigned long kfence_pool_start, kfence_pool_end;
-+	unsigned long prot = pgprot_val(PAGE_KERNEL);
-+
-+	if (!kfence_pool)
-+		return;
-+
-+	kfence_pool_start = (unsigned long) __va(kfence_pool);
-+	kfence_pool_end = kfence_pool_start + KFENCE_POOL_SIZE;
-+	__kfence_pool = (char *) kfence_pool_start;
-+	BUG_ON(htab_bolt_mapping(kfence_pool_start, kfence_pool_end,
-+				    kfence_pool, prot, mmu_linear_psize,
-+				    mmu_kernel_ssize));
-+	memblock_clear_nomap(kfence_pool, KFENCE_POOL_SIZE);
-+}
-+
-+static inline void hash_kfence_add_slot(phys_addr_t paddr, int slot)
- {
-+	unsigned long vaddr = (unsigned long) __va(paddr);
-+	unsigned long lmi = (vaddr - (unsigned long)__kfence_pool)
-+					>> PAGE_SHIFT;
-+
-+	if (!kfence_pool)
-+		return;
-+	BUG_ON(!is_kfence_address((void *)vaddr));
-+	BUG_ON(lmi >= linear_map_kf_hash_count);
-+	linear_map_kf_hash_slots[lmi] = slot | 0x80;
-+}
-+
-+static int hash_kfence_map_pages(struct page *page, int numpages, int enable)
-+{
-+	unsigned long flags, vaddr, lmi;
-+	int i;
-+
-+	WARN_ON_ONCE(!linear_map_kf_hash_count);
-+	local_irq_save(flags);
-+	for (i = 0; i < numpages; i++, page++) {
-+		vaddr = (unsigned long)page_address(page);
-+		lmi = (vaddr - (unsigned long)__kfence_pool) >> PAGE_SHIFT;
-+
-+		/* Ideally this should never happen */
-+		if (lmi >= linear_map_kf_hash_count) {
-+			WARN_ON_ONCE(1);
-+			continue;
-+		}
-+
-+		if (enable)
-+			kernel_map_linear_page(vaddr, lmi,
-+					       linear_map_kf_hash_slots,
-+					       &linear_map_kf_hash_lock);
-+		else
-+			kernel_unmap_linear_page(vaddr, lmi,
-+						 linear_map_kf_hash_slots,
-+						 &linear_map_kf_hash_lock);
-+	}
-+	local_irq_restore(flags);
- 	return 0;
- }
--static inline void hash_debug_pagealloc_alloc_slots(void) {}
--static inline void hash_debug_pagealloc_add_slot(phys_addr_t paddr, int slot) {}
--#endif /* CONFIG_DEBUG_PAGEALLOC */
-+#else
-+static inline void hash_kfence_alloc_pool(void) {}
-+static inline void hash_kfence_map_pool(void) {}
-+static inline void hash_kfence_add_slot(phys_addr_t paddr, int slot) {}
-+static int __maybe_unused
-+hash_kfence_map_pages(struct page *page, int numpages, int enable)
-+{
++	if (get_option(&arg, &val))
++		kfence_early_init = !!val;
 +	return 0;
 +}
++early_param("kfence.sample_interval", parse_kfence_early_init);
 +#endif
 +
-+#if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_KFENCE)
-+int hash__kernel_map_pages(struct page *page, int numpages, int enable)
-+{
-+	void *vaddr = page_address(page);
-+
-+	if (is_kfence_address(vaddr))
-+		return hash_kfence_map_pages(page, numpages, enable);
-+	else
-+		return hash_debug_pagealloc_map_pages(page, numpages, enable);
-+}
-+
-+static void hash_linear_map_add_slot(phys_addr_t paddr, int slot)
-+{
-+	if (is_kfence_address(__va(paddr)))
-+		hash_kfence_add_slot(paddr, slot);
-+	else
-+		hash_debug_pagealloc_add_slot(paddr, slot);
-+}
-+#else
-+static void hash_linear_map_add_slot(phys_addr_t paddr, int slot) {}
-+#endif
- 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
  /*
-  * 'R' and 'C' update notes:
-@@ -559,7 +692,8 @@ int htab_bolt_mapping(unsigned long vstart, unsigned long vend,
- 			break;
- 
- 		cond_resched();
--		hash_debug_pagealloc_add_slot(paddr, ret);
-+		/* add slot info in debug_pagealloc / kfence linear map */
-+		hash_linear_map_add_slot(paddr, ret);
- 	}
- 	return ret < 0 ? ret : 0;
+  * This is called when relaxing access to a hugepage. It's also called in the page
+diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
+index b0d927009af8..311e2112d782 100644
+--- a/arch/powerpc/mm/book3s64/radix_pgtable.c
++++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
+@@ -363,18 +363,6 @@ static int __meminit create_physical_mapping(unsigned long start,
  }
-@@ -940,7 +1074,7 @@ static void __init htab_init_page_sizes(void)
- 	bool aligned = true;
- 	init_hpte_page_sizes();
  
--	if (!debug_pagealloc_enabled()) {
-+	if (!debug_pagealloc_enabled_or_kfence()) {
- 		/*
- 		 * Pick a size for the linear mapping. Currently, we only
- 		 * support 16M, 1M and 4K which is the default
-@@ -1261,6 +1395,7 @@ static void __init htab_initialize(void)
- 	prot = pgprot_val(PAGE_KERNEL);
+ #ifdef CONFIG_KFENCE
+-static bool __ro_after_init kfence_early_init = !!CONFIG_KFENCE_SAMPLE_INTERVAL;
+-
+-static int __init parse_kfence_early_init(char *arg)
+-{
+-	int val;
+-
+-	if (get_option(&arg, &val))
+-		kfence_early_init = !!val;
+-	return 0;
+-}
+-early_param("kfence.sample_interval", parse_kfence_early_init);
+-
+ static inline phys_addr_t alloc_kfence_pool(void)
+ {
+ 	phys_addr_t kfence_pool;
+diff --git a/arch/powerpc/mm/init-common.c b/arch/powerpc/mm/init-common.c
+index 2978fcbe307e..745097554bea 100644
+--- a/arch/powerpc/mm/init-common.c
++++ b/arch/powerpc/mm/init-common.c
+@@ -33,6 +33,7 @@ bool disable_kuep = !IS_ENABLED(CONFIG_PPC_KUEP);
+ bool disable_kuap = !IS_ENABLED(CONFIG_PPC_KUAP);
+ #ifdef CONFIG_KFENCE
+ bool __ro_after_init kfence_disabled;
++bool __ro_after_init kfence_early_init = !!CONFIG_KFENCE_SAMPLE_INTERVAL;
+ #endif
  
- 	hash_debug_pagealloc_alloc_slots();
-+	hash_kfence_alloc_pool();
- 	/* create bolted the linear mapping in the hash table */
- 	for_each_mem_range(i, &base, &end) {
- 		size = end - base;
-@@ -1277,6 +1412,7 @@ static void __init htab_initialize(void)
- 		BUG_ON(htab_bolt_mapping(base, base + size, __pa(base),
- 				prot, mmu_linear_psize, mmu_kernel_ssize));
- 	}
-+	hash_kfence_map_pool();
- 	memblock_set_current_limit(MEMBLOCK_ALLOC_ANYWHERE);
- 
- 	/*
+ static int __init parse_nosmep(char *p)
 -- 
 2.46.0
 
