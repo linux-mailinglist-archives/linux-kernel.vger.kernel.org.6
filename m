@@ -1,70 +1,86 @@
-Return-Path: <linux-kernel+bounces-371653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F8D9A3DEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:10:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA479A3DEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D836EB24678
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:09:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6450CB24B42
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2101DA4E;
-	Fri, 18 Oct 2024 12:09:52 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D601D69E;
+	Fri, 18 Oct 2024 12:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WMgPtJOt"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5268A210FB;
-	Fri, 18 Oct 2024 12:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBD518028
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729253392; cv=none; b=B6V6oZ1LL1Wi3e7y63BxjQ3o7h0Mxtz+ipmwAswaWkbGelcmtW1p62o4n4nf1jgYiL53e7eCUT0/a3VYq8AtSs4x27hcZ4+XLRPEpi+a7rYG+McIRXS/iq9eDGu3UA0XH1QTP7SbaoMP4kIN+CamnaPwIVXVJuIPaglae/AoH6c=
+	t=1729253473; cv=none; b=KaEF/JbCVsRj8V7eqv33CWHhadH1XhJouuM7uWq+L3YpUGoasnfFiqcl3UiUBJqbfTbZulMyXqJvJGJwmeu/cIM1S4u0eDSA2DzD5rU61zF+CS40GZG0kyYtrjPZhKv1cHHvhrHQsWKCfDIgXWhY5hrbAuhWPooI44avLEcaHoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729253392; c=relaxed/simple;
-	bh=Z6IY0WLrQ+mbUTBQmT45upWo6R76pXinWA8IODszsrk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aKkm6+phAs7y4kVkh1quc/54oPsy04Mh1AIu0GdUh2LnTo4vvTlkGF2Esc1a/W+6+uumwEJP0tWkOdlPCvXm/MzfwUJkmG+DVHBCrQRrKPWu//kClqeiltVZrB6Z+PLg880wDS1LXoDG6rUeQYeJ4dhDQNK2F8mfxOMc6JBeb6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XVNlz0vkNz6HJjB;
-	Fri, 18 Oct 2024 20:09:03 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D7A21400F4;
-	Fri, 18 Oct 2024 20:09:46 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 18 Oct 2024 14:09:45 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Fri, 18 Oct 2024 14:09:45 +0200
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: "dave.jiang@intel.com" <dave.jiang@intel.com>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
-Subject: RE: [RFC PATCH 0/4] Updates for CXL Event Records
-Thread-Topic: [RFC PATCH 0/4] Updates for CXL Event Records
-Thread-Index: AQHbH+k/0+IXcnhOQkao9dWzrwOFcLKMOZUAgAAzP8A=
-Date: Fri, 18 Oct 2024 12:09:45 +0000
-Message-ID: <5ca992144d644d2b88feb89c8fb5eabd@huawei.com>
-References: <20241016163349.1210-1-shiju.jose@huawei.com>
- <20241018120414.00006c61@Huawei.com>
-In-Reply-To: <20241018120414.00006c61@Huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
+	s=arc-20240116; t=1729253473; c=relaxed/simple;
+	bh=nshwy4YmoJw0jGdEpwSGaBuAdYlD+Lztn5xLB9hKFLg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hfabdStcVo9juf4sMsSdiUK2QPGBr4JSK41qv9n3TQYytCYWRinthrzUnTzPBd/XNCHmGEgAXtdpHNXzl1MOLzAaruXMSWngglaDr3aeXQI8mslaAXqwr5vGdkGq6eUwvd+xuw7U4hcaQc9JnH1zXzmbx887obvdDKHhOdfIEm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WMgPtJOt; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb3da341c9so21985581fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:11:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729253469; x=1729858269; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+dP4y57dpvhGZO8kM1bT3Kzo6ofN0wKTJz+jjLsNKtc=;
+        b=WMgPtJOt9YFAbiygaDxe7tfeZJ6aPijI383WXlIqeLOiLjccpsySG+YjtL/OQazgs7
+         u278u3sixFJXbbzyAYIgbgCp9WPLBRDD2hAGh6oxfzkDRjJeUungcZS9DKgbpA/CWKcE
+         vbfegsFPZ3ZEUMAZoKEM9ogV4bqGrl32qxNvnvZ9QNcylxPJMVxhZrN6pGsLcgRXcuIV
+         GQ9Qaq2r2gN3KxLda79SPSQzSpSscsjHipUyasJ1J6e/xDnzJDbQ6Pcr3GOC233tSjwd
+         9LqhYMuWKNeG2oiqe0LX4k5gPyGVMGj+3glSimeR7dbM72OvgKLeqQRMfwsG20Tm2EtQ
+         ETOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729253469; x=1729858269;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+dP4y57dpvhGZO8kM1bT3Kzo6ofN0wKTJz+jjLsNKtc=;
+        b=UtT1Mw+EeGwuuwuSidTC7TjMeXPVBxNQpdmUXyJ/uCW3AUmyL1K4lVEKbt3zoNKNuC
+         GR7eIyoJAT0kcgNtZVSt5wXo9jDpCZO1mgmooz7cOyBU2uJMPy9lgLoP+DTGS7A5NFhb
+         1sxiRNEs70QkXpl1s1xF79jMLCO8l13zsVMdf0AUER4isKFZHgAuoAYin+sgPIJsFA+r
+         qtQmcjulQfYAU+SrE9lA4soru2eOJvTLkhiK88qYuLwZ4PUKSeTIB49MzycCcMzoBO04
+         6LjTI3mKx79MXTN+cDa8hGS8N2JL5h0Rb+tQ0uvrwGkIBFAiu6z7ndeQrnVRZsuqNM96
+         jMLA==
+X-Gm-Message-State: AOJu0YyrEPDE3qr9bfFRcw+t/fvL4xnkjKjo2xuqDQXdedaFLoiUcx+5
+	IYBRpGlmb0BxmxATxWRVPRrYCL738OCRr9+9OVXWK9Cs84cK4M68kbreSAtY6ik=
+X-Google-Smtp-Source: AGHT+IERqjgfjd2KcdtAegt7UEtSmI59Xh+MNOddMx8ewokEGCeMvlEXmBUej+QBSbS8xMPwi6b2ig==
+X-Received: by 2002:a2e:920d:0:b0:2fb:3bef:6233 with SMTP id 38308e7fff4ca-2fb831e739fmr10390581fa.33.1729253468977;
+        Fri, 18 Oct 2024 05:11:08 -0700 (PDT)
+Received: from ?IPv6:2804:5078:817:9d00:58f2:fc97:371f:2? ([2804:5078:817:9d00:58f2:fc97:371f:2])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea33119e0sm1290881b3a.6.2024.10.18.05.11.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 05:11:08 -0700 (PDT)
+Message-ID: <5a88e070b7bb8dcfe495e9c120c0d62c992c4e7c.camel@suse.com>
+Subject: Re: [PATCH 1/2] printk: Introduce LOUD_CON flag
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
+  Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, Greg Kroah-Hartman	
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Date: Fri, 18 Oct 2024 09:11:04 -0300
+In-Reply-To: <84plnz29zv.fsf@jogness.linutronix.de>
+References: <20241016-printk-loud-con-v1-0-065e4dad6632@suse.com>
+	 <20241016-printk-loud-con-v1-1-065e4dad6632@suse.com>
+	 <84plnz29zv.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,56 +88,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
+On Wed, 2024-10-16 at 20:17 +0206, John Ogness wrote:
+> Hi Marcus,
+>=20
+> On 2024-10-16, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
+> > Introduce LOUD_CON flag to printk.
+>=20
+> Generally speaking, I do not like the name "LOUD_CON". The flag is
+> related to records, not consoles. Something like "NO_SUPPRESS" or
+> "FORCE_PRINT" might be more appropriate. Note that naming is not my
+> strength.
 
+Makes sense. I'll talk with Petr to check which better name we case,
+but personally speaking I liked FORCE_CON that he suggested.
 
->-----Original Message-----
->From: Jonathan Cameron <jonathan.cameron@huawei.com>
->Sent: 18 October 2024 12:04
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: dave.jiang@intel.com; dan.j.williams@intel.com; alison.schofield@intel=
-.com;
->vishal.l.verma@intel.com; ira.weiny@intel.com; dave@stgolabs.net; linux-
->cxl@vger.kernel.org; linux-kernel@vger.kernel.org; Linuxarm
-><linuxarm@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
-><prime.zeng@hisilicon.com>
->Subject: Re: [RFC PATCH 0/4] Updates for CXL Event Records
->
->On Wed, 16 Oct 2024 17:33:45 +0100
-><shiju.jose@huawei.com> wrote:
->
->> From: Shiju Jose <shiju.jose@huawei.com>
->>
->> CXL spec rev 3.1 CXL Event Records has updated w.r.t CXL spec rev 3.0.
->> Add updates for the above spec changes in the CXL events records and
->> CXL trace events implementation.
->>
->> Note: Please apply following fix patch first if not present.
->> https://patchwork.kernel.org/project/cxl/patch/20241014143003.1170-1-s
->> hiju.jose@huawei.com/
->>
->> Shiju Jose (4):
->>   cxl/events: Updates for CXL Common Event Record Format
->>   cxl/events: Updates for CXL General Media Event Record
->>   cxl/events: Updates for CXL DRAM Event Record
->>   cxl/events: Updates for CXL Memory Module Event Record
->>
->>  drivers/cxl/core/trace.h | 201 +++++++++++++++++++++++++++++++++------
->>  include/cxl/event.h      |  20 +++-
->>  2 files changed, 190 insertions(+), 31 deletions(-)
->>
->
->Hi Shiju,
->
->Why are these an RFC?  Seem in a good state to me and the questions I'm se=
-eing
->are naming stuff that to me doesn't justify RFC status.
->
->Jonathan
+>=20
+> > The new flag will make it possible to
+> > create a context where printk messages will never be suppressed.
+> > This
+> > new context information will be stored in the already existing
+> > printk_context per-CPU variable. This variable was changed from
+> > 'int' to
+> > 'unsigned int' to avoid issues with automatic casting.
+> >=20
+> > This mechanism will be used in the next patch to create a
+> > loud_console
+> > context on sysrq handling, removing an existing workaround on the
+> > loglevel global variable. The workaround existed to make sure that
+> > sysrq
+> > header messages were sent to all consoles.
+>=20
+> IMO the more interesting aspect is that the "loud" flag is stored in
+> the
+> ringbuffer so that the message is not suppressed, even if printed
+> later
+> (for example because it was deferred). This actually even fixes a bug
+> since the current workaround will not perform as expected if the
+> sysrq
+> records are deferred (for example due to threaded printing or
+> consoles
+> that are registered later).
 
-Hi Jonathan,
+Indeed, I'll describe that this new behavior fixes a problem.
 
-I add RFC since it is v1.  I will exclude RFC in v2. =20
+>=20
+> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > index beb808f4c367..b893825fe21d 100644
+> > --- a/kernel/printk/printk.c
+> > +++ b/kernel/printk/printk.c
+> > @@ -1321,6 +1321,7 @@ static void boot_delay_msec(int level)
+> > =C2=A0	unsigned long timeout;
+> > =C2=A0
+> > =C2=A0	if ((boot_delay =3D=3D 0 || system_state >=3D SYSTEM_RUNNING)
+> > +		|| is_printk_console_loud()
+> > =C2=A0		|| suppress_message_printing(level)) {
+>=20
+> I do not think "loud" should be a reason to skip the delays. The
+> delays
+> are there to slow down printing. I would think that for "loud"
+> messages,
+> this is even more important. I suppose this function (as well as
+> printk_delay()) would need a new boolean parameter whether it is a
+> "loud" message. Then:
+>=20
+> 	|| (!loud_con && suppress_message_printing(level))
 
-Thanks,
-Shiju
+Done locally, thanks!
+
+>=20
+> > @@ -2273,6 +2274,9 @@ int vprintk_store(int facility, int level,
+> > =C2=A0	if (dev_info)
+> > =C2=A0		flags |=3D LOG_NEWLINE;
+> > =C2=A0
+> > +	if (is_printk_console_loud())
+> > +		flags |=3D LOG_LOUD_CON;
+> > +
+> > =C2=A0	if (flags & LOG_CONT) {
+> > =C2=A0		prb_rec_init_wr(&r, reserve_size);
+> > =C2=A0		if (prb_reserve_in_last(&e, prb, &r, caller_id,
+> > PRINTKRB_RECORD_MAX)) {
+>=20
+> I guess LOG_LOUD_CON should also be set in the LOG_CONT case (like
+> LOG_NEWLINE does).
+>=20
+> > diff --git a/kernel/printk/printk_safe.c
+> > b/kernel/printk/printk_safe.c
+> > index 2b35a9d3919d..4618988baeea 100644
+> > --- a/kernel/printk/printk_safe.c
+> > +++ b/kernel/printk/printk_safe.c
+> > @@ -12,7 +12,30 @@
+> > =C2=A0
+> > =C2=A0#include "internal.h"
+> > =C2=A0
+> > -static DEFINE_PER_CPU(int, printk_context);
+> > +static DEFINE_PER_CPU(unsigned int, printk_context);
+> > +
+> > +#define PRINTK_SAFE_CONTEXT_MASK		0x0000ffffU
+> > +#define PRINTK_LOUD_CONSOLE_CONTEXT_MASK	0xffff0000U
+> > +#define PRINTK_LOUD_CONSOLE_CONTEXT_OFFSET	0x00010000U
+> > +
+> > +void noinstr printk_loud_console_enter(void)
+> > +{
+> > +	cant_migrate();
+> > +	this_cpu_add(printk_context,
+> > PRINTK_LOUD_CONSOLE_CONTEXT_OFFSET);
+> > +}
+>=20
+> Have you tested this with lockdep? AFAICT, the write_sysrq_trigger()
+> path can migrate since it is only using rcu_read_lock() in
+> __handle_sysrq().
+
+Now I have and I found the error. Let me investigate how I can proceed
+here.
+
+Thanks a lot for the review!
+
+>=20
+> John Ogness
+
 
