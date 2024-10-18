@@ -1,122 +1,282 @@
-Return-Path: <linux-kernel+bounces-371988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217D29A42F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:53:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 013629A42D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B59021F23EE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:53:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F1EC1C21EF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD422022F5;
-	Fri, 18 Oct 2024 15:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="jAB1voQ+"
-Received: from forward204d.mail.yandex.net (forward204d.mail.yandex.net [178.154.239.217])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFFA20263D;
+	Fri, 18 Oct 2024 15:46:29 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5F2204019;
-	Fri, 18 Oct 2024 15:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1E620E32D;
+	Fri, 18 Oct 2024 15:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729266744; cv=none; b=hvQ5RPIbpw4D3jffu+jbO6fpAWkoZt5y7uE+TUqhpPj8OLhK8b8dpxD3Ke98aB7iSw1ChHmX1tMS7JrAz8rORV+Lf04I+PNnai7RIsGg4rgXUnkgQ1/y/hZ84DoCUFwjl1OECoA9lyug1WQtrNZpatqBkF1KSZaYc7xo/sBJGSs=
+	t=1729266389; cv=none; b=mB6S/t0dEw3o0hN3+1KAUT9NBMMifiSPO3xYI1DzoeY7rNMQkPrRH7juqaBY2wfA9aAq/N5HTxuuqQSb/PA6ZwczsvEedeTdLUjHTc5CAHUmP67xaloBm6fX9znNdjrBtoX6JJfvqQ5KWYXAJTR6mvp4AtRaQYDEdSk2wK2+0Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729266744; c=relaxed/simple;
-	bh=7H0Q9U1UYxEFlkYaqSBmwzFL11HxpvwRT6aZlOH7Ypw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I+SIWRJGkUEIJTAUQeKX/wPScqFgQB/1uvWjnm+XK62+LNtY0khiij75TPtRzNcP6CmaiSrhrV4nr71BBBVGVCMqT5j5WliOgfQzupSkzYX1eV61muEfsNPYPBbcPKbrJWAcLwXzTdrM0BHpWC1TSBXZEldeUqa+MShjdwp1Nz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=jAB1voQ+; arc=none smtp.client-ip=178.154.239.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
-Received: from forward102d.mail.yandex.net (forward102d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d102])
-	by forward204d.mail.yandex.net (Yandex) with ESMTPS id 19AF26488F;
-	Fri, 18 Oct 2024 18:45:13 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:36a7:0:640:faa7:0])
-	by forward102d.mail.yandex.net (Yandex) with ESMTPS id 636EF6098E;
-	Fri, 18 Oct 2024 18:45:04 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 0jQoPjE7LqM0-eNKpu7n7;
-	Fri, 18 Oct 2024 18:45:03 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
-	t=1729266303; bh=bMXPLZvnJ4EGZ5ZCRb5TWGuQf6he/CI/uDpcRlMFVfI=;
-	h=Cc:Message-Id:To:From:Date:Subject;
-	b=jAB1voQ+ZfXuqwEoJA06wECx+2IvkApJNYHxhOqoyaUGYUvpECFl2gJfoc/egSpxl
-	 7QrbNAXtvbFJccaRwGIfW2/IIEzwlzt596dAEKnacGjwjmJHIKjk082QHzc8zHNDmS
-	 /UxKMngEIyfLtGXZl4pDSLtE2eps/fznNG1bYavs=
-Authentication-Results: mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net; dkim=pass header.i=@0upti.me
-From: Ilya Katsnelson <me@0upti.me>
-Date: Fri, 18 Oct 2024 18:45:00 +0300
-Subject: [PATCH] netfliter: xtables: fix typo causing some targets to not
- load on IPv6
+	s=arc-20240116; t=1729266389; c=relaxed/simple;
+	bh=Glu9EEYI3POgW8Wu9mgRgNu1kjCiRyAiURBAWhJbhlY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ji5yDh563PIebDBGg/wR+slQKO/9+eaL3H1FCFTEmkSfvMxomZhDzSOX1gZaCeELwSt5BQxUhqwdh7CzSvp6xn0vdYQBJ9vlw3o1J91Iz0WmOKLaSs88+bBBfWUlR+oTlUK6gutMtLg/YVLoxmdzaZX60lhXXKwnnPOwtGFpRYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XVT7Q0fzBz9v7NR;
+	Fri, 18 Oct 2024 23:26:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 3FC59140FBB;
+	Fri, 18 Oct 2024 23:46:17 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwC3Ry+6ghJn0PUZAw--.23355S2;
+	Fri, 18 Oct 2024 16:46:16 +0100 (CET)
+Message-ID: <784c68fa023e99c53cd07265f0524e386815b443.camel@huaweicloud.com>
+Subject: Re: [RFC][PATCH] mm: Split locks in remap_file_pages()
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz, 
+	jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	ebpqwerty472123@gmail.com, paul@paul-moore.com, zohar@linux.ibm.com, 
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Kirill A. Shutemov"
+	 <kirill.shutemov@linux.intel.com>, stable@vger.kernel.org, 
+	syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com, Roberto Sassu
+	 <roberto.sassu@huawei.com>
+Date: Fri, 18 Oct 2024 17:45:59 +0200
+In-Reply-To: <fa8cad07-c6d5-42aa-b58b-27ddbf86c1c5@lucifer.local>
+References: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
+	 <fa8cad07-c6d5-42aa-b58b-27ddbf86c1c5@lucifer.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241018-xtables-typos-v1-1-02a51789c0ec@0upti.me>
-X-B4-Tracking: v=1; b=H4sIAHuCEmcC/x3MQQqAIBBA0avErBNyaCFdJVpojjUQKU5EId49a
- fkW/xcQykwCU1cg083C8WzQfQfrbs+NFPtmwAFHPWijnsu6g0Rdb4qifCDrnXEa0UNrUqbAz/+
- bl1o/jyleKF8AAAA=
-X-Change-ID: 20241018-xtables-typos-dfeadb8b122d
-To: Pablo Neira Ayuso <pablo@netfilter.org>, 
- Jozsef Kadlecsik <kadlec@netfilter.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Florian Westphal <fw@strlen.de>, Sasha Levin <sashal@kernel.org>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ilya Katsnelson <me@0upti.me>
-X-Mailer: b4 0.14.2
-X-Yandex-Filter: 1
+X-CM-TRANSID:LxC2BwC3Ry+6ghJn0PUZAw--.23355S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Gr4UWrykZFy7Cr1DWr43GFg_yoW7tr4fpF
+	95tas8KF4kXFyxZrn2q3WUWFyrtrW8KFyUu3y3tF1rA3sFvF1fKr4fGFy5uF4DArykCF95
+	ZF4jyr9xGFWDAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	jIksgUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABGcRxH8LzQAAsN
 
-These were added with the wrong family in 4cdc55e, which seems
-to just have been a typo, but now ip6tables rules with --set-mark
-don't work anymore, which is pretty bad.
+On Fri, 2024-10-18 at 16:42 +0100, Lorenzo Stoakes wrote:
+> On Fri, Oct 18, 2024 at 04:47:10PM +0200, Roberto Sassu wrote:
+> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> >=20
+> > Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
+> > remap_file_pages()") fixed a security issue, it added an LSM check when
+> > trying to remap file pages, so that LSMs have the opportunity to evalua=
+te
+> > such action like for other memory operations such as mmap() and mprotec=
+t().
+> >=20
+> > However, that commit called security_mmap_file() inside the mmap_lock l=
+ock,
+> > while the other calls do it before taking the lock, after commit
+> > 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
+> >=20
+> > This caused lock inversion issue with IMA which was taking the mmap_loc=
+k
+> > and i_mutex lock in the opposite way when the remap_file_pages() system
+> > call was called.
+> >=20
+> > Solve the issue by splitting the critical region in remap_file_pages() =
+in
+> > two regions: the first takes a read lock of mmap_lock and retrieves the=
+ VMA
+> > and the file associated, and calculate the 'prot' and 'flags' variable;=
+ the
+> > second takes a write lock on mmap_lock, checks that the VMA flags and t=
+he
+> > VMA file descriptor are the same as the ones obtained in the first crit=
+ical
+> > region (otherwise the system call fails), and calls do_mmap().
+> >=20
+> > In between, after releasing the read lock and taking the write lock, ca=
+ll
+> > security_mmap_file(), and solve the lock inversion issue.
+>=20
+> Great description!
+>=20
+> >=20
+> > Cc: stable@vger.kernel.org
+> > Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in rem=
+ap_file_pages()")
+> > Reported-by: syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com
+> > Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220=
+.46d20.0036.GAE@google.com/
+> > Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com> (Calculate prot a=
+nd flags earlier)
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>=20
+> Other than some nits below:
+>=20
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>=20
+> I think you're definitely good to un-RFC here.
 
-Fixes: 4cdc55ec6222 ("netfilter: xtables: avoid NFPROTO_UNSPEC where needed")
-Signed-off-by: Ilya Katsnelson <me@0upti.me>
----
- net/netfilter/xt_NFLOG.c | 2 +-
- net/netfilter/xt_mark.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Perfect, will do. Thank you!
 
-diff --git a/net/netfilter/xt_NFLOG.c b/net/netfilter/xt_NFLOG.c
-index d80abd6ccaf8f71fa70605fef7edada827a19ceb..6dcf4bc7e30b2ae364a1cd9ac8df954a90905c52 100644
---- a/net/netfilter/xt_NFLOG.c
-+++ b/net/netfilter/xt_NFLOG.c
-@@ -79,7 +79,7 @@ static struct xt_target nflog_tg_reg[] __read_mostly = {
- 	{
- 		.name       = "NFLOG",
- 		.revision   = 0,
--		.family     = NFPROTO_IPV4,
-+		.family     = NFPROTO_IPV6,
- 		.checkentry = nflog_tg_check,
- 		.destroy    = nflog_tg_destroy,
- 		.target     = nflog_tg,
-diff --git a/net/netfilter/xt_mark.c b/net/netfilter/xt_mark.c
-index f76fe04fc9a4e19f18ac323349ba6f22a00eafd7..65b965ca40ea7ea5d9feff381b433bf267a424c4 100644
---- a/net/netfilter/xt_mark.c
-+++ b/net/netfilter/xt_mark.c
-@@ -62,7 +62,7 @@ static struct xt_target mark_tg_reg[] __read_mostly = {
- 	{
- 		.name           = "MARK",
- 		.revision       = 2,
--		.family         = NFPROTO_IPV4,
-+		.family         = NFPROTO_IPV6,
- 		.target         = mark_tg,
- 		.targetsize     = sizeof(struct xt_mark_tginfo2),
- 		.me             = THIS_MODULE,
+Roberto
 
----
-base-commit: 75aa74d52f43e75d0beb20572f98529071b700e5
-change-id: 20241018-xtables-typos-dfeadb8b122d
-
-Best regards,
--- 
-Ilya Katsnelson <me@0upti.me>
+> > ---
+> >  mm/mmap.c | 62 ++++++++++++++++++++++++++++++++++++++++---------------
+> >  1 file changed, 45 insertions(+), 17 deletions(-)
+> >=20
+> > diff --git a/mm/mmap.c b/mm/mmap.c
+> > index 9c0fb43064b5..762944427e03 100644
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -1640,6 +1640,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, =
+start, unsigned long, size,
+> >  	unsigned long populate =3D 0;
+> >  	unsigned long ret =3D -EINVAL;
+> >  	struct file *file;
+> > +	vm_flags_t vm_flags;
+> >=20
+> >  	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. See=
+ Documentation/mm/remap_file_pages.rst.\n",
+> >  		     current->comm, current->pid);
+> > @@ -1656,12 +1657,53 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long=
+, start, unsigned long, size,
+> >  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
+> >  		return ret;
+> >=20
+> > -	if (mmap_write_lock_killable(mm))
+> > +	if (mmap_read_lock_killable(mm))
+> > +		return -EINTR;
+>=20
+> I'm kinda verbose generally, but I'd love a comment like:
+>=20
+> 	/*
+> 	 * Look up VMA under read lock first so we can perform the security
+> 	 * without holding locks (which can be problematic). We reacquire a
+> 	 * write lock later and check nothing changed underneath us.
+> 	 */
+>=20
+> > +
+> > +	vma =3D vma_lookup(mm, start);
+> > +
+> > +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
+> > +		mmap_read_unlock(mm);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	prot |=3D vma->vm_flags & VM_READ ? PROT_READ : 0;
+> > +	prot |=3D vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
+> > +	prot |=3D vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
+> > +
+> > +	flags &=3D MAP_NONBLOCK;
+> > +	flags |=3D MAP_SHARED | MAP_FIXED | MAP_POPULATE;
+> > +	if (vma->vm_flags & VM_LOCKED)
+> > +		flags |=3D MAP_LOCKED;
+> > +
+> > +	/* Save vm_flags used to calculate prot and flags, and recheck later.=
+ */
+> > +	vm_flags =3D vma->vm_flags;
+> > +	file =3D get_file(vma->vm_file);
+> > +
+> > +	mmap_read_unlock(mm);
+> > +
+>=20
+> Maybe worth adding a comment to explain why you're doing this without the
+> lock so somebody looking at this later can understand the dance?
+>=20
+> > +	ret =3D security_mmap_file(file, prot, flags);
+> > +	if (ret) {
+> > +		fput(file);
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret =3D -EINVAL;
+> > +
+>=20
+> Again, being verbose, I'd put something here like:
+>=20
+> 	/* OK security check passed, take write lock + let it rip */
+>=20
+> > +	if (mmap_write_lock_killable(mm)) {
+> > +		fput(file);
+> >  		return -EINTR;
+> > +	}
+> >=20
+> >  	vma =3D vma_lookup(mm, start);
+> >=20
+> > -	if (!vma || !(vma->vm_flags & VM_SHARED))
+> > +	if (!vma)
+> > +		goto out;
+> > +
+>=20
+> I'd also add something like:
+>=20
+> 	/* Make sure things didn't change under us. */
+>=20
+> > +	if (vma->vm_flags !=3D vm_flags)
+> > +		goto out;
+> > +
+>=20
+> And drop this newline to group them together (super nitty I know, sorry!)
+>=20
+> > +	if (vma->vm_file !=3D file)
+> >  		goto out;
+> >=20
+> >  	if (start + size > vma->vm_end) {
+> > @@ -1689,25 +1731,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long=
+, start, unsigned long, size,
+> >  			goto out;
+> >  	}
+> >=20
+> > -	prot |=3D vma->vm_flags & VM_READ ? PROT_READ : 0;
+> > -	prot |=3D vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
+> > -	prot |=3D vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
+> > -
+> > -	flags &=3D MAP_NONBLOCK;
+> > -	flags |=3D MAP_SHARED | MAP_FIXED | MAP_POPULATE;
+> > -	if (vma->vm_flags & VM_LOCKED)
+> > -		flags |=3D MAP_LOCKED;
+> > -
+> > -	file =3D get_file(vma->vm_file);
+> > -	ret =3D security_mmap_file(vma->vm_file, prot, flags);
+> > -	if (ret)
+> > -		goto out_fput;
+> >  	ret =3D do_mmap(vma->vm_file, start, size,
+> >  			prot, flags, 0, pgoff, &populate, NULL);
+> > -out_fput:
+> > -	fput(file);
+> >  out:
+> >  	mmap_write_unlock(mm);
+> > +	fput(file);
+> >  	if (populate)
+> >  		mm_populate(ret, populate);
+> >  	if (!IS_ERR_VALUE(ret))
+> > --
+> > 2.34.1
+> >=20
+>=20
+> These are just nits, this looks good to me!
 
 
