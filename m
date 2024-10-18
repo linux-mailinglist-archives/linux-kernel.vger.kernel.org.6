@@ -1,85 +1,83 @@
-Return-Path: <linux-kernel+bounces-371674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F289A3E74
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:31:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126299A3E76
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F0B1F226E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:31:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF8AB285F52
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA6A26AD9;
-	Fri, 18 Oct 2024 12:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF152AF16;
+	Fri, 18 Oct 2024 12:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MCrnzQuN"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="bYkYiKHn"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2431344C8F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C62288BD
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729254687; cv=none; b=Dwfvoe1ggur4NUuQsVCpYRTweUHb6dHQ7A3xT3Um76paNprgLaSDstuj/gorZJJOspDYKknAoszejz5YxpRuBpjJs3aCTi89EcE+G99MqSAPILkwNo9i3KUVNjzBwLrueoLjUmlCodMDfKyTxYxJZEqi1QSg6+gm7sf4iIstYVQ=
+	t=1729254691; cv=none; b=VUASIBaCeVZhmybcqSyTsGs6FTGT73aNuEj61snDDh4/1jpZNVWIINDF5xgF3soe79CvV1BaGZik/gK37ZRqNNPFXRFKt+VP0n82ggxb1/KzvzdINoxeZWdeGtVTSljULsrgov8/bAPTaRTa5lGEhb2AERo4fYLPDxnC1VUi1N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729254687; c=relaxed/simple;
-	bh=aw6mseRDDe/wDjXyXjamvdSdeBFmFUV1YRWwiLwkZ7g=;
+	s=arc-20240116; t=1729254691; c=relaxed/simple;
+	bh=YepgUkJ2lToDPFN225mu6ARD4Ji0n/Z2/yUcAuje8jo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XSwDui0QV6i3PLU/wOizAykdzVRoKk6J6m/h4DsdlCeJXDf9t36yamZ6WMgfwqEwiH4qO9UXYdzq5X9e9qg+3bh0ScqN/m9BdrhftTtL5OK86Jqqa9ChQP9RsJQtXfJm/LOU0ZIbRGEdpVXptg10U1tzqo47V3ZJGUevFST6gKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MCrnzQuN; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539fb49c64aso3016322e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:31:24 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqOasnZpYq3dchddF2WdFbpBt8tCA+lyE5/KC00wUpsAqezyhowHanXh+ZZErDaAEsYPWuLUQ5l/X9wgqGB68/GJnOH9OFO8p1hI3ap5mQ5jhIOwUvn+xs3o40ZC6nc5ktyx713PpjWMJmO1/fBUHrTQfJePJusXNNJ0HxvNzYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=bYkYiKHn; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b1457ba751so166913985a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:31:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729254683; x=1729859483; darn=vger.kernel.org;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1729254687; x=1729859487; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8AGZam4n06viI04ibKwIHu8ebEmTULIu0XIfkMmLleM=;
-        b=MCrnzQuNdYkWa+tBc0nCdU3U2iKs8wT/4lKeJ6CSBEwjCjMSbruiBaSpCPrh2Tb7cn
-         vGiOrd5oUOacNJ+yp7RawYKGS5Tw/fUQVUnjmfoyd4COGUwEl+1/3RcoQqP9Y59QSoQd
-         AG5JOdv5/VcR5Iu44TXVHfOogAaVkmKCR39oL0eQ96+TCl5B+NfPUFQ4xTyjZ+X6EOl/
-         sghcoayxVFjcfhRa/ZShHwqIToZB+6GMc3JdP1ftrKe+eBC+yQ/QwlicZCI6um45Hh0K
-         BCYQRtJUWrE79pnk5vZkJb6Q01i6eR/QW6NFeHihcE28mMx1tgsg/DvIpEOj7euIav2P
-         50tg==
+        bh=Ljwrlb/z0YLznPxkxUIrF1QefOIilHj7zulCESswlBA=;
+        b=bYkYiKHnlAYEYRD7neztBhrxGYXee2IBDMkJBh75+yl7aoNSWqdpQFbDiRoThk3GAJ
+         2SC+cHGeBIDiKWLu4CqmBltkNHPNzUl353tISrgnqABBD8SxXyYpUcr2C9WbNC97zXbA
+         hef/jM0H1oZy2iYhVWxVxGeVJTQ2AvVUMDscukLc6MhPijAGpojEdtSRge5MsZ4JRieK
+         dJRPe9f05PsTOwaDRfxe1aSIqbJtmhQyN+ubf6Ut/bZLoM+Y/Sar7KZYCirhLEW8vTEQ
+         HJ7TeY31lqStrdufY+dZ1/vI+k2XXTzYoelxtrof6JV6CRQwlBSMq6ukpnWSZSx4ifRL
+         Ik0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729254683; x=1729859483;
+        d=1e100.net; s=20230601; t=1729254687; x=1729859487;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8AGZam4n06viI04ibKwIHu8ebEmTULIu0XIfkMmLleM=;
-        b=cvw69idgSDjfAGxKDGVxJx0/m+S/tHY+6sROna0WaoIy8de7wEWMeanRi3T26ysEwl
-         jBHEDYKOtlYHDiXiffJyRoDCatNWgp8OhGC5EGr6JoBbplCVO5a9aN2SXS+h4/qvENCL
-         tjWi/JIrkjeY4mrvXXYFAgRsAgtiv1VPLqhZz55hB0AvboyXLlpzKbH5jIPA4yOoTBtu
-         5WTRVeKtuSKXeZB9i/UJwUH0Tg5z0VZWh7IOe4LFLVPe2VKYpqf9PaK9Hcs+0yoc7LXH
-         m+sMltK7+3MuTy0+O/m8owEPqJ1ovSQ6EyhWWJCgHrMhhg+bb5tDN1DM/S4EnkO2mZ2Q
-         Pf/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXdsWyNKnyV2CqwCZ1BqjykE+1uxWC3Nk8yitp/ocK/hm5xoCfQjDVOvn7NNd5rPxngUZyz1TimjL0sZuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPk7lWXjzwWnpv252f/faoXQdt3f3IPKpwvujrwk3lWT98F/4+
-	KSIZZuTf/rnX3CpmacSyfvALG4ViN2iFfwcCrEU70lx3BL6yAGeRe1QEhoUDse0=
-X-Google-Smtp-Source: AGHT+IF5+uQbidjUeJm/YIP54JRQhHenrE8LF08c1wGN7AL7hbF7Y70yrjPM2DsLa+7UkJwLWiqkDA==
-X-Received: by 2002:a05:6512:1384:b0:53a:64:6818 with SMTP id 2adb3069b0e04-53a154c9d93mr2164357e87.47.1729254683205;
-        Fri, 18 Oct 2024 05:31:23 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a1521fecdsm206273e87.298.2024.10.18.05.31.21
+        bh=Ljwrlb/z0YLznPxkxUIrF1QefOIilHj7zulCESswlBA=;
+        b=dec+vurIEdzqHbmZDVSnmJWwL1pidekoilgUsQkdHtT8zxOpnKZ/MZduNfiU5jNoHt
+         axiKVSFScd3VNY47HeQ+7XHtazelC5+fJTQtUKT/jUmGuJf4vE13cs8ygBDzrU03mrmz
+         QAQz4ztQ6fr29kP8F53ZQtbuimIykAXS7UUkphLpIOZzFnGLn51VeSuRWeDkl2gp37Jy
+         2vYcGg/mboqw/DjaXTTiqhJMitVzSkBoOZitvLuE6xC0dEfXJ9pVdLTt7dp/2LV2K9OC
+         fuXc6VOpORYNwDcJ524ekoIL0dJ9slh+I1D5jB6Y90nfQL8IUq57l0jOsLwYtArBZJqY
+         IyNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWomw/NzMfEdvABObnhzIBTZ4ROo7Q1S5JJizLp4kpUu5jLB/5cvFD9uKZ8IjZfbbwLdyVfdR1iJ8ZxsZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+3MJcCxenTf+n4OtfLkr3RGt6QkcAzTyOAfdtaHNMSQTHJcBD
+	E6r50ilF6TCAbRD4BywBZJ2gnymrdhW+v1+f0K946IO9trfabRHsx2+VqtYXDRw=
+X-Google-Smtp-Source: AGHT+IEpkqPl93VHak2DLYK90RodDlnBgH2nXjIf3o6uxKklx+2vSWQ80oe+0osSbgMlMBVXosCFnQ==
+X-Received: by 2002:a05:620a:468f:b0:7b1:3bf8:b3cc with SMTP id af79cd13be357-7b157b5a96amr270233785a.17.1729254687596;
+        Fri, 18 Oct 2024 05:31:27 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b15700b3f3sm63750785a.136.2024.10.18.05.31.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 05:31:22 -0700 (PDT)
-Date: Fri, 18 Oct 2024 15:31:20 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, marex@denx.de, stefan@agner.ch
-Subject: Re: [PATCH 4/5] drm/bridge: imx8mp-hdmi-tx: Set output_port to 1
-Message-ID: <vvsj6ri2ke25nzocbq736yv7rphzma6pn3yk2uh7iu43zfe2sa@2fwye4k4w6he>
-References: <20241018064813.2750016-1-victor.liu@nxp.com>
- <20241018064813.2750016-5-victor.liu@nxp.com>
+        Fri, 18 Oct 2024 05:31:26 -0700 (PDT)
+Date: Fri, 18 Oct 2024 08:31:22 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, nphamcs@gmail.com,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, lnyng@meta.com
+Subject: Re: [PATCH 0/1] memcg/hugetlb: Adding hugeTLB counters to memory
+ controller
+Message-ID: <20241018123122.GB71939@cmpxchg.org>
+References: <20241017160438.3893293-1-joshua.hahnjy@gmail.com>
+ <ZxI0cBwXIuVUmElU@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,56 +86,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018064813.2750016-5-victor.liu@nxp.com>
+In-Reply-To: <ZxI0cBwXIuVUmElU@tiehlicka>
 
-On Fri, Oct 18, 2024 at 02:48:12PM +0800, Liu Ying wrote:
-> Set DW HDMI platform data's output_port to 1 in imx8mp_dw_hdmi_probe()
-> so that dw_hdmi_probe() called by imx8mp_dw_hdmi_probe() can tell the
-> DW HDMI bridge core driver about the output port we are using, hence
-> the next bridge can be found in dw_hdmi_parse_dt() according to the port
-> index, and furthermore the next bridge can be attached to bridge chain in
-> dw_hdmi_bridge_attach() when the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag is
-> set.  The output_port value aligns to the value used by devicetree.
-> This is a preparation for making the i.MX8MP LCDIF driver use
-> drm_bridge_connector which requires the DRM_BRIDGE_ATTACH_NO_CONNECTOR
-> flag.
+On Fri, Oct 18, 2024 at 12:12:00PM +0200, Michal Hocko wrote:
+> On Thu 17-10-24 09:04:37, Joshua Hahn wrote:
+> > HugeTLB usage is a metric that can provide utility for monitors hoping
+> > to get more insight into the memory usage patterns in cgroups. It also
+> > helps identify if large folios are being distributed efficiently across
+> > workloads, so that tasks that can take most advantage of reduced TLB
+> > misses are prioritized.
+> > 
+> > While cgroupv2's hugeTLB controller does report this value, some users
+> > who wish to track hugeTLB usage might not want to take on the additional
+> > overhead or the features of the controller just to use the metric.
+> > This patch introduces hugeTLB usage in the memcg stats, mirroring the
+> > value in the hugeTLB controller and offering a more fine-grained
+> > cgroup-level breakdown of the value in /proc/meminfo.
 > 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
->  drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> index 8fcc6d18f4ab..54a53f96929a 100644
-> --- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> @@ -96,6 +96,7 @@ static int imx8mp_dw_hdmi_probe(struct platform_device *pdev)
->  		return dev_err_probe(dev, PTR_ERR(hdmi->pixclk),
->  				     "Unable to get pixel clock\n");
->  
-> +	plat_data->output_port = 1;
+> This seems really confusing because memcg controller is not responsible
+> for the hugetlb memory. Could you be more specific why enabling hugetlb
+> controller is not really desirable when the actual per-group tracking is
+> needed?
 
-This will break compatibility with older DT files, which don't have
-output port. I think you need to add output_port_optional flag to
-dw_hdmi_plat_data and still return 0 from dw_hdmi_parse_dt() if the flag
-is set, but there is no remote node.
+We have competition over memory, but not specifically over hugetlb.
 
-Last, but not least, this changes behaviour of the connector.
-dw_hdmi_connector_create() implements CEC support, handles
-ycbcr_420_allowed, HDR metadata, etc.
+The maximum hugetlb footprint of jobs is known in advance, and we
+configure hugetlb_cma= accordingly. There are no static boot time
+hugetlb reservations, and there is no opportunistic use of hugetlb
+from jobs or other parts of the system. So we don't need control over
+the hugetlb pool, and no limit enforcement on hugetlb specifically.
 
-We are slowly moving towards the supporting all of this in bridge
-connector via the HDMI Connector framework, but this is not
-implemented for now.
+However, memory overall is overcommitted between job and system
+management. If the main job is using hugetlb, we need that to show up
+in memory.current and be taken into account for memory.high and
+memory.low enforcement. It's the old memory fungibility argument: if
+you use hugetlb, it should reduce the budget for cache/anon.
 
->  	plat_data->mode_valid = imx8mp_hdmi_mode_valid;
->  	plat_data->phy_ops = &imx8mp_hdmi_phy_ops;
->  	plat_data->phy_name = "SAMSUNG HDMI TX PHY";
-> -- 
-> 2.34.1
-> 
+Nhat's recent patch to charge hugetlb to memcg accomplishes that.
 
--- 
-With best wishes
-Dmitry
+However, we now have potentially a sizable portion of memory in
+memory.current that doesn't show up in memory.stat. Joshua's patch
+addresses that, so userspace can understand its memory footprint.
+
+I hope that makes sense.
 
