@@ -1,150 +1,139 @@
-Return-Path: <linux-kernel+bounces-371403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023FF9A3A9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:57:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651319A3AA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7751F250D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26DF0287DF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CFD201023;
-	Fri, 18 Oct 2024 09:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8EE201005;
+	Fri, 18 Oct 2024 09:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BIM3AfgM"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hlQXTOE5"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15B3200CB6
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AE5168C3F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729245415; cv=none; b=g4qG81cODNfVU7ZjedB4jAX+QNS2eVhyAVTa5ZanCumKgZTUgFpFB8U5ROl8D/QxGUFLrPkiEFVV6ZnIgh+YDctEsE0KE75J8rpycqoCeYKceiHYBDJCFnMDPAAKBaq8XWE7v9CZqZZQBlx/Qo6lMpNCO8tEj/2ah7+CuSGg3VY=
+	t=1729245453; cv=none; b=uYDuVBr6Lav1tAmGehuBHeJxws9zGmUBHgMhmgyWidwr2LjYNammO+ao/3eJVSkRXs64KYfHmThaVfKBoPO+tUY1KeGztNJt3Pj0nIREg4Hzj55MREv18KkiPp3v1GOa7w8WJQ4tJrL1XOKFstVCT9KFZixV8TCmlHVaV2n+gOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729245415; c=relaxed/simple;
-	bh=7F02LSuaYG6QJFBmCRDKkgg4PK0fEcpJQMSscDg7UlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ft9gZ/zYkqPfWvqv88dzzIgJDwjgCamVngaaGTvoofJ3ynbog7Oa7vmVKQ19dq0RNreom7uk81koV7w9/yJQY7o2rE9dxAbwzD6q93NXSmWQDT/Y+RYCDxhowuJaN9yRZ8VTtc9bNtlo2fiVH040x7r/qXHVsLq4Trcv83jtA98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BIM3AfgM; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb599aac99so20685511fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:56:53 -0700 (PDT)
+	s=arc-20240116; t=1729245453; c=relaxed/simple;
+	bh=ppPiXEetbt7hM7JgNh/mkoO4MmccshLeXaKKm/hvPWg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b9xbr9qkvoX/gUvCtU6dVe6JADEO1gTHaL7QU4jrYMX1Jw/6S4bpqyWA1egbA0HFbg3qrnEFGYOFctmh+/bTVLKFeou5Tqn6uk9T8BmMMxZvk3zwwXTR/IPrEBsWzHNfvCWF1DjuLNb2deJAW+nnwjA5AvIQJTymX26hRuJ7OFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hlQXTOE5; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e59dadebso2801596e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:57:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729245412; x=1729850212; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7LNTOM/u0GLXGMOI0m9ADZhvsMR3Q86VPixhtk5oFIY=;
-        b=BIM3AfgMvpJS9rTaYmiGjRV26sQbxtxXSenjIjGpWs9EsiCbI64jdLUP3cuNkjK+Ag
-         6kuEi3GZg8X87YyOGjBwJkUSP4ISP4nye58NfH8GU0Kmg9T1BsRJqG87qwg5Rx8EP9c2
-         qkLOQvVdopL+v4k7lvXnuu3D+AdZN8YpHv818PYI+yqw5r/UUe+bSmNldKvqFOiPkUS7
-         7yEKf8MLDn+yG6mp9bQmpH9e8waoXstOUK6EnAT18eUAiFxpqORiEuRq4zYgTDSu952B
-         DW2AWmlJLL5pCzeUiaxgncBGZ9iQH6sQ1kbVZcK1AcnpzuMjXCoiHV3Wv7ZUL/tMKCX3
-         oEtQ==
+        d=gmail.com; s=20230601; t=1729245450; x=1729850250; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TwDAxn8hr5/Z6eYXB0TyuhQ+73+e0ZHcccVnO8hBXVk=;
+        b=hlQXTOE5RalsTWdkXeu5zvd+543JRHKCRzwCraOkoJ/xv+vQbHXbiGcfcUYXZ5R6n7
+         JcmhU9Vjr+052lz9WRux+fMDXrSB4tWgmrwJrj6hukHy9vsgFPHasd8RPGWfKj0gzF9r
+         hce/1R0sPcMb+CBE3jXxlR2HTONuno83g7yyx76L1DxPTJYJzVlo6XJEfEuJN1MrOmfb
+         MJuguPXzb+Eb48pDfYwNKefUzDP0/xJTBxML2zC1YpW6YYoQsFt27LJTeIiNLRbSaCvq
+         meyfe3MhDAjs3QlhLLNRZ/fUrcTRygU0JtkIjOT6Vw5AM/YkjJWjS2KGXvYX3E3osxK0
+         ef+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729245412; x=1729850212;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7LNTOM/u0GLXGMOI0m9ADZhvsMR3Q86VPixhtk5oFIY=;
-        b=h7Ap8chRfN8wgCaByX6Md7af7lI6a2vOjnUnegsOFuN1kkYwQH3l9txur/uNkdjfwa
-         tMzmXlYNEtHsngVkk+WSFiomYr6tXzJdedNP5ShFnvBiqBFkayXxQi/NopgIWFl61RSg
-         vedLT/qAEQiHRcEjpGwTbrt1h1p19iB33yyKnzcB9RKQVYP06BzsMn6jXfS+2HtCSao6
-         CGn3AyS0SBm2wm8Y5iOq+Ltt/Ds1AwGk3efOhYj/84d1j0Y756okORysvJM0XfBzzRs8
-         APrJfAs8dIFLhBvGyTDSIGqv8I/BEWEfMnb8lRpjvlNO8iUbvoSvRFSF+nC3bpXL1ZVn
-         iu3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUKEU4yUSVeP9aNS1yCoytRdfTv/ac/S04JrtOF5JIcN8vMSoSvgpTqs+UON873qZOKy2E/NPOnMOyBRrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPrydXpR5/1qwHxZxqYgWsBGv7cZKYiNqhz1PoBGHcuOVgfJ9H
-	vkzpSvRHD1OeZGLZSwyWjfnJU0NOKg6XRSnbnWas45OtrI5KsXp+JzRtMeGemEE=
-X-Google-Smtp-Source: AGHT+IGeK8KzMr9lXPmuFDOy4a4IgVl3STdpDnUlPNvFi3vc36Dx0SsuLqG1dmfqX8sdyi9pbmxBAg==
-X-Received: by 2002:a05:651c:211d:b0:2fa:cc12:67de with SMTP id 38308e7fff4ca-2fb83208e04mr9201491fa.32.1729245411950;
-        Fri, 18 Oct 2024 02:56:51 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809a6a7dsm1776881fa.10.2024.10.18.02.56.49
+        d=1e100.net; s=20230601; t=1729245450; x=1729850250;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TwDAxn8hr5/Z6eYXB0TyuhQ+73+e0ZHcccVnO8hBXVk=;
+        b=WPJ6Hy8bQQxu04z2+8HFCV56z8EB9hnslahHLGSJ0JEtoLhv33oO1FGY7NuoGNvpwe
+         s5Fa+kLqz9xpZ51bds9q7d7oq8o3ook3q8usILhFnEwq1evdCrSQ6CztoQ7lbI2VZk/4
+         2nWvn+NAX8Z9GRTw5zOmX7KvzCXn9YInFvkOjV5945/yHzOzxGHUt++A1y2l8w3HbAan
+         O5QcawiRF78k1dVCwJTZvrjEFYmAXhdGTIIGvBP5LQS1rmA+tg0Z4WnmJ1jyjtuuWicQ
+         5MNckihKQhvqTXFEBc45p8RYUWjF5XeZoSaHhiC4GbjMHJNkRu4tUUMdSd7epvJbpikw
+         pxSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqjeOl2eQyVrhpbBa8jgWz75szHmRWxyE6edS3ELlktcSn46NEGZgX1FDn1ko+pvca85xHPAs0wQw4hTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHkOXZatgEKMaWAeSFtGwiPMZln0lWLMBmHphtQdxsJu3i/1Z1
+	8buesYdffTxBOZOxBsvJnPTo7nhXU/h0VpOJF8XnSyxgCKNGULRb
+X-Google-Smtp-Source: AGHT+IFCdbzl4ckoe26AeOzCWVdM876/TTRWm6BE0Bt9Ffroxi6NaMANv0pUCg2ewGZ8WDCvFjiHkQ==
+X-Received: by 2002:a05:6512:1598:b0:539:f886:31d6 with SMTP id 2adb3069b0e04-53a1520bd09mr1167492e87.2.1729245450115;
+        Fri, 18 Oct 2024 02:57:30 -0700 (PDT)
+Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151b91c0sm175166e87.77.2024.10.18.02.57.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 02:56:50 -0700 (PDT)
-Date: Fri, 18 Oct 2024 12:56:48 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kalpak Kawadkar <quic_kkawadka@quicinc.com>
-Subject: Re: [PATCH 07/14] clk: qcom: clk-branch: Add support for SREG branch
- ops
-Message-ID: <scwpcovoazmd4yrwtczghx4e5eopqoknknqzcr23wjve65bmxh@ih5efkh53g3h>
-References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
- <20241017-sar2130p-clocks-v1-7-f75e740f0a8d@linaro.org>
- <be8639d0add779bcac0314d3c433d01b.sboyd@kernel.org>
- <we4stuv7td5jmvicsvsjowqg76merg5lmlgqj6dvqvqecsw7xk@bfz2kdjnt6kb>
- <5904599efffa7ce747772c0dcc1c897b.sboyd@kernel.org>
+        Fri, 18 Oct 2024 02:57:29 -0700 (PDT)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Date: Fri, 18 Oct 2024 11:57:20 +0200
+Subject: [PATCH] mtd: spi-nor: atmel: provide .size to the at25ff321a entry
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5904599efffa7ce747772c0dcc1c897b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241018-at25ff321a-v1-1-c8380f80c289@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAP8wEmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0ML3cQSI9O0NGMjw0TdpOTkZMM0MwNTY4skJaCGgqLUtMwKsGHRsbW
+ 1AN6JB4hcAAAA
+X-Change-ID: 20241018-at25ff321a-bccc1f60538b
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=883;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=ppPiXEetbt7hM7JgNh/mkoO4MmccshLeXaKKm/hvPWg=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBnEjEESYKpmzIrRnTizN1GadHCi897sXAkb4PE1
+ HwCMGtRFbKJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZxIxBAAKCRCIgE5vWV1S
+ MsS0D/4inV4ltStzrIHXTMDf0XFIFsLY4A0au67eF7n2e1zXL5WQhFNkG4A0ygvgBjmzqs1Q32Z
+ 3cR//0UBINRQ5mRjPnhf+Cs86Gfy0qgHW2QvuEk+koEs+L2LImtrOQKG/GFofSCh9ICfKjef7r1
+ bewkX6peCo9GjrjxQwUnjIK9CbhJgVaBULTv52JmWJUpnD0tek+atfdntANoWtIT7OCLx5CIKfl
+ uPDRtr3DuzCY7uNnrvWqpnnY6dpufoBSsc4qZuC3/el732PcYkNd1qilruISxljUKxBS0Skko11
+ 4FNa+wkFzEgR0/fyi0LoqkymzjExTYY16VPD2JCOF5b9QQDdJWnbmF29QGhWrMua4gOxZFHP9Hn
+ oMYd+RrlYsWjiHRHIBnj6/H2JvMKXcyaDji05TVA/E23TCDoTg5KCfkGNLxVON/1LtZYHSQrXku
+ e0MxXPXLX0DhdAVoLijVUjWsUqDg7FkWdeLYssEvPRfnG5Sd43uekrRLi4deKImrEuAJRxk6Zjl
+ eyaVfk3rjjN653wPavDTDeG+fokFaAmW1fclAFmqdXstrAxhg3FcmhM0EBQp5lLWsdJ7JAyO/c6
+ Ls8Rq9vzQYXOZl4ienEN9LyB+r/vMXFxnaokWZMZXI1I0RwTypee7AIQxBZgOajyV0WajtzEYzp
+ vgZKwEWeowG7ZLw==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-On Thu, Oct 17, 2024 at 03:28:13PM -0700, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2024-10-17 15:00:03)
-> > On Thu, Oct 17, 2024 at 11:10:20AM -0700, Stephen Boyd wrote:
-> > > Quoting Dmitry Baryshkov (2024-10-17 09:56:57)
-> > > > From: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
-> > > > 
-> > > > Add support for SREG branch ops. This is for the clocks which require
-> > > 
-> > > What is SREG? Can you spell it out?
-> > 
-> > Unfortunately, no idea. This is the only register name I know.
-> > 
-> 
-> Can someone inside qcom tell us?
+Set size of the flash for the at25ff321a entry.
 
-Taniya, could you possibly help us? This is for gcc_video_axi0_sreg /
-gcc_video_axi1_sreg / gcc_iris_ss_hf_axi1_sreg /
-gcc_iris_ss_spd_axi1_sreg clocks on the SAR2130P platform.
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+ drivers/mtd/spi-nor/atmel.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> > 
-> > > 
-> > > >         u8      halt_check;
-> > > 
-> > > Instead of adding these new members can you wrap the struct in another
-> > > struct? There are usually a lot of branches in the system and this
-> > > bloats those structures when the members are never used.
-> > > 
-> > >       struct clk_sreg_branch {
-> > >               u32 sreg_enable_reg;
-> > >               u32 sreg_core_ack_bit;
-> > >               u32 sreg_periph_ack_bit;
-> > >               struct clk_branch branch;
-> > >       };
-> > > 
-> > > But I'm not even sure that is needed vs. just putting a clk_regmap
-> > > inside because the clk_ops don't seem to use any of these other members?
-> > 
-> > Yes, nice idea. Is it ok to keep the _branch suffix or we'd better
-> > rename it dropping the _branch (and move to another source file while we
-> > are at it)?
-> > 
-> 
-> I don't really care. Inside qcom they called things branches in the
-> hardware and that name was carried into the code. If sreg is a branch
-> then that would make sense. From the 'core_ack' and 'periph_ack' it
-> actually looks like some sort of power switch masquerading as a clk.
+diff --git a/drivers/mtd/spi-nor/atmel.c b/drivers/mtd/spi-nor/atmel.c
+index 45d1153a04a07b7c61f46b117311b24ab695038f..cc7217e96d0139a06d46f10e35c545f604464b3c 100644
+--- a/drivers/mtd/spi-nor/atmel.c
++++ b/drivers/mtd/spi-nor/atmel.c
+@@ -214,6 +214,7 @@ static const struct flash_info atmel_nor_parts[] = {
+ 	}, {
+ 		.id = SNOR_ID(0x1f, 0x47, 0x08),
+ 		.name = "at25ff321a",
++		.size = SZ_4M,
+ 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_SWP_IS_VOLATILE,
+ 		.fixups = &atmel_nor_global_protection_fixups
+ 	}, {
 
-Ack.
+---
+base-commit: 200289db261f0c8131a5756133e9d30966289c3b
+change-id: 20241018-at25ff321a-bccc1f60538b
 
-
+Best regards,
 -- 
-With best wishes
-Dmitry
+Marcus Folkesson <marcus.folkesson@gmail.com>
+
 
