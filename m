@@ -1,147 +1,168 @@
-Return-Path: <linux-kernel+bounces-370895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5659A3362
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:27:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7113E9A3366
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8B12820E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:27:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24271C23081
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155C216BE20;
-	Fri, 18 Oct 2024 03:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB43115445B;
+	Fri, 18 Oct 2024 03:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuP83qmv"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="U9YT4aHz"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A42155744;
-	Fri, 18 Oct 2024 03:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7E320E31F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729222015; cv=none; b=BEhgOG0cI2oJ43w0RGBDtSuqjWYmUlX1jA7SF1/rol+bPa59lNtvtcmG6FTMSZHhyBlj/h82c6VZgqSjSA9QDnTLXoM5Q4wG+FeZXJ7ol1PPijjqRiUKt5Ybe78FxxtvNiJdMpXIfjruRxhh8sveZr4/zhkEB2wwNveIAeab6a4=
+	t=1729222578; cv=none; b=rNx2qEjp4TmOfC7wsrV9pb2iPo+bTEDXJpswe4MyuRjef3AjuDtuo3e8UacXdB+wyNjFbz1CjR/FN6EnTpfpCTwQNGQuGa5LyXyyTLrFy59CTb1ex65dy1ptUV+qK9ntO/EOAvxF9RKL5HZIs7KYzg0Z9n8/rKxFO3yOSdLXtqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729222015; c=relaxed/simple;
-	bh=pp0xdFEq2xvTLyyQpNjgiFlzJ7fppjTZ/wj9ohuCh4Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fprPOHt9MAlw7JkgQIVCfMMGo/aySpqrc/WoXQP2GoJfInEfg6W8DfkejSjfXgURxrb2rB3zBRIllJd4OR3B5M0yDN4oaelstaauDrIS5Fzb48lGa4BL4vvWT8DAjFQVs2MCEMClACuCi3vtenQ0DMTYxkjwZ7KCo/jVMiArRHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cuP83qmv; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6cbf0e6414aso7856726d6.1;
-        Thu, 17 Oct 2024 20:26:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729222013; x=1729826813; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RRFYsm7JQn6FoiV+R8mnl3y+fSii5MhmQCkaq6Im0Kk=;
-        b=cuP83qmv3CZVrBrhP0f2Ec/2c/nqcuo/tyOmYDsOD6TAyeEmejjZr7ZUf4eld80coB
-         Tf6cyqKwJdKAWXeBc8QRPlu5MiSGb2yy/X8cPf/G2/R/Yk65xWKCQ+KeV1vJdsU2T+zz
-         qaRLxhTnSTfwps2Y+ym9Hq9kFkM0qZHkIzfaaY+IvgqtnEjzX7eHA0es+TFM1+rW4SlY
-         z4RTMYX4EUHxam/P6vqvH+bIp/olGWiQCj6GNE/2PqjVPAaw7LdcYAU828KLnJcSLPOP
-         alctmxaY3Efz2GZ8m9ENqzCtZu2Ag9jExCTSx2EpqMDaATchRlkdNHJbh1FpWRyDIzDn
-         34Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729222013; x=1729826813;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RRFYsm7JQn6FoiV+R8mnl3y+fSii5MhmQCkaq6Im0Kk=;
-        b=Na1PuXzzg1jKCSnjyaPtsDudrzETDuOYcmzuGUX6VDN02ToZayitpwTa2ClioQQZ5c
-         N+pJu4FLupmhj189slDBrV1tAdYqfyvOyjI9H6VBOh5XRE62kIqwphB/g28/fQq6K6PH
-         /Mej1FWBGA4v1coKHBHeaifAcwyNIMez1CaNgiMGyFpXU++1wJatsp3y1URxOMnbNxj8
-         4WvpHNQz5K5ZzAiCeM/rgUb6f8fQ3q/4JTT45plPANlgBFOtN34srx9bq7yBRVD8xx1Q
-         pt0zxHYQ1gcxYIQWOcfzyADt12QnsUdCzZ9usAVG/Dk21MvsqYPIo23GHcdVS35IPmDd
-         o9Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUvDGLxWlbLlOM6suztB92GIvVNs2SCCsc07HwMPWOhtn8S3o21FPNaEvXbzZKfQPiWZQEN24W3+mQCAdHvJ09j@vger.kernel.org, AJvYcCV07kidwxbGopKwO6CIX95P7s64aJrqMt87jfhdFDyJX4+pt3Nhfz3MB46HdEXI6pH4WSoSOZf4wOWhbHzs@vger.kernel.org, AJvYcCVDwZUNYZ6cROdty/BFrNwFckcNB5pHaZ06JLXgJPX9dKqNPpootMhFDyLhj2rZqz00K1RQfNPM3iIG@vger.kernel.org, AJvYcCVOicuADKNTElrLokmUd76/qM1b7vQqAv5k0/+GRvXplT/jiDCNZ4BfHjjn9PMeH2RZztE8LGhAf89Dpaue@vger.kernel.org, AJvYcCWRrOpoCi86lkWsWukupqn8PqrUycrbDSphRYd6EBVDr2XYKyPDeJws4naGIgX2OFzqYxyi5DVL9HUya+A=@vger.kernel.org, AJvYcCWomsp4f0K61hGmT+G35HyOulJP5uLY04+kHTOxEgccoUU3aohjwZW8+ZCFNRtZQy4FuEQdb9aRYjuEvQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFISAIFPyoclc3bN3gs6gDzzfVKYQzgBL0bHvEXSPcrq10vjYC
-	3b61rKeUrpQ0DhyG4ivG8umCmWJhynyI4fHNU7apJ82+KxXLapE6
-X-Google-Smtp-Source: AGHT+IGbNm4J7504L9d7tSHokebTr/bSREZo9pNVg4bVFxle2lyocyWjoZsfEt0kWM+ekwkhqpJNeg==
-X-Received: by 2002:a05:6214:3d13:b0:6cd:4972:59af with SMTP id 6a1803df08f44-6cde150b8famr20524116d6.14.1729222012692;
-        Thu, 17 Oct 2024 20:26:52 -0700 (PDT)
-Received: from [10.56.180.205] (syn-076-188-177-122.res.spectrum.com. [76.188.177.122])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cde1366d72sm2925836d6.116.2024.10.17.20.26.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 20:26:52 -0700 (PDT)
-Message-ID: <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
-Date: Thu, 17 Oct 2024 23:26:49 -0400
+	s=arc-20240116; t=1729222578; c=relaxed/simple;
+	bh=qh46V5QJ0S5FbKr0cToN5MJ7FlTejE4OIsYSSNAKMQU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HqR3qKRCzHlJ7KE0V44WjVjQ3FyG5hLf87S2cvVTfuvb15TvYFCbC55UcauLKfcE5kkQnV7sV1wJ8ohSkOrfdLq37xjHvLTK+4Asx/+kl7+gn8tpZCtKr5HyM8pvZeUsXxL6RbT2YAHxvg/19LuAh+O0HkTmaTPi8XpKL9E4y/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=U9YT4aHz; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1729222514;
+	bh=dJt0LZgs1we73SmL7597byDoDeUoixIoLW4Jf9xhQ1w=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=U9YT4aHztTFvJDbjXKHF3AstQ9Mns9MAcKxxQAw42sTi1nntUyYt9e23DmAQBYF+2
+	 7Od3zBHbP3duCjHczD5RovqQY08wEtk+DaB850M5KuGeN2K+m8TZt4yW8/LDKU3wFh
+	 v1TCDCwqq8He7TaFs+2Q/AXqcS5E3yWj80VJAi00=
+X-QQ-mid: bizesmtpsz9t1729222508t4opddc
+X-QQ-Originating-IP: N9SNgAW4on53IO1biD0K/z4f73woKuokm0dUG5+ll/s=
+Received: from localhost.localdomain ( [125.76.217.162])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 18 Oct 2024 11:35:06 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 14635534401801183075
+From: Gou Hao <gouhao@uniontech.com>
+To: xiang@kernel.org,
+	chao@kernel.org
+Cc: linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	gouhaojake@163.com
+Subject: [PATCH] erofs: simplify definition of the log functions
+Date: Fri, 18 Oct 2024 11:35:00 +0800
+Message-Id: <20241018033500.13833-1-gouhao@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
-To: Christoph Hellwig <hch@infradead.org>, Eric Biggers <ebiggers@kernel.org>
-Cc: Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk,
- song@kernel.org, yukuai3@huawei.com, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, adrian.hunter@intel.com, quic_asutoshd@quicinc.com,
- ritesh.list@gmail.com, ulf.hansson@linaro.org, andersson@kernel.org,
- konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-hardening@vger.kernel.org, quic_srichara@quicinc.com,
- quic_varada@quicinc.com
-References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
- <20240916085741.1636554-2-quic_mdalam@quicinc.com>
- <20240921185519.GA2187@quark.localdomain> <ZvJt9ceeL18XKrTc@infradead.org>
-Content-Language: en-US
-From: Adrian Vovk <adrianvovk@gmail.com>
-In-Reply-To: <ZvJt9ceeL18XKrTc@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: NDtUtlvFer7v2yh8T/W30O4bU1VmTNB0ZMtiFoIKuaiGGibea+vvG4yg
+	0Vk9rJ3Tv7TTELH4YK38jQV8UNMc08bU9VqnyBB2jlxHY6ntLb2B3kxW13oZDft/nriicKe
+	7lF77bQKOmXD8Vb5UL+I2qFoiSEtWNu6CEidytx9fwcvB95++wUdB3q8+CmuyT0NGaCpbn3
+	YAp55ErMSAGtnOY9JU2lPMGJ00HZp/Es2UaemDNWlncm6yqCfy8US57IsJfAXlIp4L8GpJB
+	eZzCHQrfn/MaF8bdnFOWDRgOfkip/cKDV609eI+Hl5spZNI7vhn9MbgUzMqjPUlna4YUNfS
+	Yyr/FxkTJcK/TCnHkgzAjR4+aG3OoOyxOy+wX+A7Q6dq8FI9WfmIyTy2aGjE/wXTR3fbZ46
+	fZ26zy6ZNqUv5qcMN7AATviCggaB+f9AKzGqu6p3KR1xq+hJeYR/SsYX4yFMVqlTG6OwMt2
+	xNjZNzQFRFbhLC5eHymxQYtRnR7maWPRfFpNvsgSGoVPdhP0rZdfj/JbTRgGzU6knmU1UnW
+	JO3Znv3U2iH9sYHQgpfR8CoUmQAzfV4t6LM2hGXRAi/Y6Yus1CZmsEuRVt//SYFfXgyVsS7
+	Oq7am9iuiRhhrjEY4Otx4EPiyRtrBElUfeKkgFFj61q1jMyOlagmg4EAE+mQs8oqEedK9gn
+	Ep5xU5fP6V5mpj1KzaEbr4j0YnNcDJqNtydQ2zBxHijKwAmJvipUurWRFSuMoSUKHRGRv52
+	qNpjwjJywoPilQ/4077cNwtKAGqkcxcgc+CNJJ/Gb48Ekgm2X+4aNGtHuZA8yf3mE+Sf+fG
+	PaD4S21ogawPw5nBfXAfaZlVM97X1Yd01kp1mTMbbq+irnhjMwhNQ3V9roIdKaL5CeZsavJ
+	0P+B6akDwWJXEGcN2Jr3FuZYzpChRtvGQwe7e9JGYihR6SXcpkrVN5cjQqpQ2zY7cMiEPPV
+	KRS5O8JZoi6vFx27yRupmP7h1
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On 9/24/24 03:44, Christoph Hellwig wrote:
-> On Sat, Sep 21, 2024 at 11:55:19AM -0700, Eric Biggers wrote:
->> (https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/drivers/md/dm-default-key.c),
->> and I've been looking for the best way to get the functionality upstream.  The
->> main challenge is that dm-default-key is integrated with fscrypt, such that if
->> fscrypt encrypts the data, then the data isn't also encrypted with the block
->> device key.  There are also cases such as f2fs garbage collection in which
->> filesystems read/write raw data without en/decryption by any key.  So
->> essentially a passthrough mode is supported on individual I/O requests.
-> Adding a default key is not the job of a block remapping driver.  You'll
-> need to fit that into the file system and/or file system level helpers.
+using printk instead of pr_info/err, reduce
+redundant code.
 
-fscrypt isn't the only thing that would use such functionality. If you 
-put it in the filesystem layer then you're only serving fscrypt when 
-there are other usecases that don't involve filesystems at all.
+Signed-off-by: Gou Hao <gouhao@uniontech.com>
+---
+ fs/erofs/internal.h |  9 ++++-----
+ fs/erofs/super.c    | 28 +++++++---------------------
+ 2 files changed, 11 insertions(+), 26 deletions(-)
 
-Let's say I'm using LVM, so I've got a physical partition that stores a 
-couple different virtual partitions. I can use dm-default-key both 
-underneath the physical partition, and on top of some of the virtual 
-partitions. In such a configuration, the virtual partitions with their 
-own dm-default-key instance get encrypted with their own key and passed 
-through the lower dm-default-key instance onto the hardware. Virtual 
-partitions that lack their own dm-default-key are encrypted once by the 
-lower dm-default-key instance. There's no filesystem involved here, and 
-yet to avoid the cost of double-encryption we need the passthrough 
-functionality of dm-default-key. This scenario is constrained entirely 
-to the block layer.
-
-Other usecases involve loopback devices. This is a real scenario of 
-something we do in userspace. I have a loopback file, with a partition 
-table inside where some partitions are encrypted and others are not. I 
-would like to store this loopback file in a filesystem that sits on top 
-of a dm-crypt protected partition. With the current capabilities of the 
-kernel, I'd have to double-encrypt. But with dm-default-key, I could 
-encrypt just once. Unlike the previous case, this time there's a layer 
-of filesystem between the block devices, but it still can't do anything: 
-the filesystem that stores the loopback device can't do anything because 
-it has no idea that any encryption is happening. fscrypt isn't being 
-used, nor can it be used since the file is only partially encrypted, so 
-the filesystem is unaware that the contents of the loopback file are 
-encrypted. And the filesystem doesn't know that it's encrypted from 
-below by its block device. So what can the filesystem do if, as far as 
-it can tell, nothing is being encrypted?
-
-Best,
-
-Adrian
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 4efd578d7c62..ae87e855e815 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -24,14 +24,13 @@
+ #undef pr_fmt
+ #define pr_fmt(fmt) "erofs: " fmt
+ 
+-__printf(3, 4) void _erofs_err(struct super_block *sb,
++__printf(3, 4) void _erofs_printk(struct super_block *sb,
+ 			       const char *function, const char *fmt, ...);
+ #define erofs_err(sb, fmt, ...)	\
+-	_erofs_err(sb, __func__, fmt "\n", ##__VA_ARGS__)
+-__printf(3, 4) void _erofs_info(struct super_block *sb,
+-			       const char *function, const char *fmt, ...);
++	_erofs_printk(sb, __func__, KERN_ERR fmt "\n", ##__VA_ARGS__)
+ #define erofs_info(sb, fmt, ...) \
+-	_erofs_info(sb, __func__, fmt "\n", ##__VA_ARGS__)
++	_erofs_printk(sb, __func__, KERN_INFO fmt "\n", ##__VA_ARGS__)
++
+ #ifdef CONFIG_EROFS_FS_DEBUG
+ #define DBG_BUGON               BUG_ON
+ #else
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 666873f745da..64c3258ddf9a 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -18,37 +18,23 @@
+ 
+ static struct kmem_cache *erofs_inode_cachep __read_mostly;
+ 
+-void _erofs_err(struct super_block *sb, const char *func, const char *fmt, ...)
++void _erofs_printk(struct super_block *sb, const char *func, const char *fmt, ...)
+ {
+ 	struct va_format vaf;
+ 	va_list args;
++	int level;
+ 
+ 	va_start(args, fmt);
+ 
+-	vaf.fmt = fmt;
++	level = printk_get_level(fmt);
++	vaf.fmt = printk_skip_level(fmt);
+ 	vaf.va = &args;
+ 
+ 	if (sb)
+-		pr_err("(device %s): %s: %pV", sb->s_id, func, &vaf);
++		printk("%c%c(device %s): %s: %pV",
++				KERN_SOH_ASCII, level, sb->s_id, func, &vaf);
+ 	else
+-		pr_err("%s: %pV", func, &vaf);
+-	va_end(args);
+-}
+-
+-void _erofs_info(struct super_block *sb, const char *func, const char *fmt, ...)
+-{
+-	struct va_format vaf;
+-	va_list args;
+-
+-	va_start(args, fmt);
+-
+-	vaf.fmt = fmt;
+-	vaf.va = &args;
+-
+-	if (sb)
+-		pr_info("(device %s): %pV", sb->s_id, &vaf);
+-	else
+-		pr_info("%pV", &vaf);
++		printk("%c%c%s: %pV", KERN_SOH_ASCII, level, func, &vaf);
+ 	va_end(args);
+ }
+ 
+-- 
+2.43.0
 
 
