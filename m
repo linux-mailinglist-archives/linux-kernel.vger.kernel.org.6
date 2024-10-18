@@ -1,154 +1,188 @@
-Return-Path: <linux-kernel+bounces-372516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B209A49B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:39:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0395B9A49B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93C031F25334
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F071F244FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88A8190068;
-	Fri, 18 Oct 2024 22:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7330190664;
+	Fri, 18 Oct 2024 22:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="v/v4/brA"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEfuZZiY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B50188CDC
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 22:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D3A188A18;
+	Fri, 18 Oct 2024 22:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729291148; cv=none; b=H2j0W4s/7lnVCCC5Z5JzFNZ3YggfEDC0CGNYAjgFLG84qDDRes9YRa6qraMB3O0SYpi70W1pb0d4DNfbxjMOGOne7FtUJceD0YjkODi3jbNDuMAERat8CTnyiKhomiXP/FjodZH6JJJDg6UNn30pN5hpC1jD/4zNpzLqRoZzY4w=
+	t=1729291261; cv=none; b=a9Z1+oaAczWOj3p3P6nVoWRgKeo5GOBwL0sfsIehCirvKTf8BQVG7+1O7Go9cmw4w9V8u9+L9w2clZUfhAkFi2KG4PuotiUsoh+LInj8XZYeGk8uR7x5szgp0ZdE5YZMYXoHUXhGUWIaDYga/ntF9esSHvfARsU0BRNAOCur7X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729291148; c=relaxed/simple;
-	bh=BTxBIctsFGuIebMRImYSOtEASqlxEeBV+vnkWsXEWww=;
+	s=arc-20240116; t=1729291261; c=relaxed/simple;
+	bh=AkeNo/tk92UbTjmdHz4UbsBIgtAYxTSYnCUb4J5AiLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZmmAKCjAjKtcSKzy0CXZgzaXAETJwE7vKSp/n+FkS2nDduEXwrG8sJOwTsFcll1iQGJHcvav3r1+emUIWP7yibut9RFvX3ugreckb3yXg084oMTaQGlVh+C/ZasahxMZMjBK1RH23pZfgAnF8PlhMJFGq3cgCs4wJE62Ti+01g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=v/v4/brA; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6cbceb48613so15435836d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1729291143; x=1729895943; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=27O84oor1VFOi2QdCyPslhDi+MuWwwNB8nDvjSXIg5I=;
-        b=v/v4/brA5fGWsJrUtt1EAFACqo+tx5zKDL4DYsY4MvKD0Ueqe6hNZs0vqTGP9RqH57
-         rpuPg6EIG7S7hk2wO1DJd+TQTTFz7j311kwgzzOlUZF/sBACWXuaKcw5E2Yl6914bQxX
-         Wa1MvAVTvB1UwqT1GhFQxggT550vWR2BjPrQ/JOFYRlXIhgo3tFAEU8uQV5JsZnuPQKX
-         MVvyYHKzX/7wwplQ9XjbG0cLb5ONEYnf3Rkf1KHfCqyvC6xNguhPIHeA+csbiYuUhcUM
-         MjXy801kksfrr99yluCek8/gGSVufAw0KewBAheSz5lQg8UWXOLmS9v+h0COcM9Ymtse
-         1ivA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729291143; x=1729895943;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=27O84oor1VFOi2QdCyPslhDi+MuWwwNB8nDvjSXIg5I=;
-        b=gIDx90mrdlBe5VllS1EjORaGaljswDX3z7LL6EeY1PTFHLc4BdUbzwwuNbAfs5vT5/
-         2CfSDQOH3RH7SwrQUuD8Be+rzY2jQqevEkCAOM1QWzSXZEDVvg/rg7Qe9LKNcHD/uEGv
-         iZYFjppjkNQwZXrQRatoAvCRZ7nx40MGH/nmxBsyqa3zwe/wvxUNsFARBitCmt2JBIx4
-         wLXR5pzGuhfdlAjkFD0Kh111bzBvJSvnwxVbX5jNF0qC9pqtI//5OcWSr51JShgrAqHZ
-         Rqwazey9rft1gLC7AEBFSCfA7gNNy1GT6AlGQc0fSIZzJMS6gv7x+kW3JI6wSythlYEQ
-         8etw==
-X-Forwarded-Encrypted: i=1; AJvYcCXisGusntfcY6V0+szSBOYqGHWNKCyWXhWO0El5EAuPK92ZbM07207falNLTUVFZU6UgKYrANKQ7ApKpjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFColSG0bydOwjfeKpf/YIz/KXlawH1+64gqDK+kGAmdy2yFdY
-	MrlZCDYDEck0h6JojFYxxllrQyTrn8UBvFcH3MCBWG5TBzw05foC+NTlmAaxA78=
-X-Google-Smtp-Source: AGHT+IFJ7PMB0YWbSXcu0BJe/T0BQhm3CnzjPN0ToSLmEoHdAVs7NdsRrZlFVzkEuSF5l5ZKvIKWNg==
-X-Received: by 2002:a05:6214:469c:b0:6c7:50bf:a443 with SMTP id 6a1803df08f44-6cde1583893mr60176556d6.30.1729291143089;
-        Fri, 18 Oct 2024 15:39:03 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cde111ccd4sm11346246d6.26.2024.10.18.15.38.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 15:38:59 -0700 (PDT)
-Date: Fri, 18 Oct 2024 18:38:55 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	"Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm, zswap: don't touch the XArray lock if there is no
- entry to free
-Message-ID: <20241018223855.GC81612@cmpxchg.org>
-References: <20241018192525.95862-1-ryncsn@gmail.com>
- <ZxK7G3S0N42ejJMh@casper.infradead.org>
- <CAMgjq7AjBMJAE-rj2MmB53FrQKcsARK5tZ3sKB4+uhWhkQ=EGA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aibnaq+lxQmAfPMzHABl42O8KU9C6AVmh45mgq5cuxRkeA108cA5jzv5wydakP6egINFP0S1ztATx8NrabVv7wjdbG1dK8I5BUAi/eQHcOFxZM9gjDcoYtCokFb/98g9xiiEccyymvYlKbsHgwVDxSiT9KsrkYDHuUgLwDnRW2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEfuZZiY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1664C4CEC3;
+	Fri, 18 Oct 2024 22:40:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729291260;
+	bh=AkeNo/tk92UbTjmdHz4UbsBIgtAYxTSYnCUb4J5AiLE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FEfuZZiY9ByqoBy8I9AFOCFq56jmWhFmK3zzcnvop+h9aWq7A+ljGSoa9190KOHR/
+	 0fEUhaMJN/fJ5fOnfuVkRFYyupkZJiQXG5SL3Ey+TFv5t9IKI3o3Nvh3KW/0oASXo+
+	 s+Im/aKJLt99jnQ47Bv8Ir0EHb4AFlT9S19UcRSVMZhTqV0HMIhqRh/jwNof13Kud0
+	 kTTuFHD4AsPqXtGSrJoQlbh222xkJaBv9sEdIquJrAH4wTsrsb8GHvOvUvcJfwJLbg
+	 8k7HV+wnkclc+mvhu96OHF6/qkIy5hxjpj0jaAnYWztQ/ssbeiDEi/f6TjL/uPRy05
+	 DMbLkZgVUnYlA==
+Date: Fri, 18 Oct 2024 15:40:58 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Zong-Zhe Yang <kevin_yang@realtek.com>,
+	Kuan-Chung Chen <damon.chen@realtek.com>,
+	Chih-Kang Chang <gary.chang@realtek.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] rtw89: -Wenum-compare-conditional warnings
+Message-ID: <20241018224058.GA2635543@thelio-3990X>
+References: <20241018152311.4023979-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMgjq7AjBMJAE-rj2MmB53FrQKcsARK5tZ3sKB4+uhWhkQ=EGA@mail.gmail.com>
+In-Reply-To: <20241018152311.4023979-1-arnd@kernel.org>
 
-On Sat, Oct 19, 2024 at 04:01:18AM +0800, Kairui Song wrote:
-> On Sat, Oct 19, 2024 at 3:46 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Sat, Oct 19, 2024 at 03:25:25AM +0800, Kairui Song wrote:
-> > >       if (xa_empty(tree))
-> > >               return;
-> > >
-> > > -     entry = xa_erase(tree, offset);
-> > > -     if (entry)
-> > > +     rcu_read_lock();
-> > > +     entry = xas_load(&xas);
-> > > +     if (entry) {
-> >
-> > You should call xas_reset() here.  And I'm not sure it's a great idea to
-> > spin waiting for the xa lock while holding the RCU read lock?  Probably
-> > not awful but I could easily be wrong.
-
-Spinlocks already implicitly acquire an RCU read-side lock before
-beginning to spin, so we shouldn't be worse for wear by doing this.
-
-> Thanks for the review. I thought about it, that could cancel this optimization.
+On Fri, Oct 18, 2024 at 03:23:07PM +0000, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Oh, and there is a thing I forgot to mention (maybe I should add some
-> comments about it?). If xas_load found an entry, that entry must be
-> pinned by HAS_CACHE or swap slot count right now, and one entry can
-> only be freed once.
-> So it should be safe here?
+> This is one of three drivers that trigger -Wenum-compare-conditional warnings
+> with clang:
 > 
-> This might be a little fragile though, maybe this optimization can
-> better be done after some zswap invalidation path cleanup.
+> drivers/net/wireless/realtek/rtw89/core.c:1806:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
+>  1806 |                 return eht ? NL80211_RATE_INFO_EHT_GI_0_8 :
+>       |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>  1807 |                              NL80211_RATE_INFO_HE_GI_0_8;
+>       |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/net/wireless/realtek/rtw89/core.c:1810:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
+>  1810 |                 return eht ? NL80211_RATE_INFO_EHT_GI_1_6 :
+>       |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>  1811 |                              NL80211_RATE_INFO_HE_GI_1_6;
+>       |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/net/wireless/realtek/rtw89/core.c:1813:14: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
+>  1813 |                 return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
+>       |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>  1814 |                              NL80211_RATE_INFO_HE_GI_3_2;
+>       |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/net/wireless/realtek/rtw89/core.c:1818:15: error: conditional expression between different enumeration types ('enum nl80211_eht_gi' and 'enum nl80211_he_gi') [-Werror,-Wenum-compare-conditional]
+>  1818 |                         return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
+>       |                                    ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>  1819 |                                      NL80211_RATE_INFO_HE_GI_3_2;
+>       |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> In this case, all four warnings can be easily avoided by splitting the
+> function into two separate ones, in a way that helps readability as well,
+> at the expense of a few extra source lines.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-This seems fine too, exlusivity during invalidation is a fundamental
-property of swap. If a load were possible, we'd be freeing an entry
-with ptes pointing to it (or readahead a slot whose backing space has
-been discarded). If a store were possible, we could write new data
-into a dead slot and lose it. Even the swapcache bypass path in
-do_swap_page() must at least acquire HAS_CACHE due to this.
+I agree this is slightly less compact but I think it is more obvious,
+especially in the face of the warning.
 
-So from a swap POV, if we find an entry here it's guaranteed to remain
-in the tree by the calling context. The xa lock is for protection the
-tree structure against concurrent changes (e.g. from adjacent entries).
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-With that said, is there still a way for the tree to change internally
-before we acquire the lock? Such that tree + index might end up
-pointing to the same contents in a different memory location?
-
-AFAIK there are two possible ways:
-
-- xas_split() - this shouldn't be possible because we don't do large
-  entries inside the zswap trees.
-
-- xas_shrink() - this could move the entry from a node to xa->head,
-  iff it's the last entry in the tree and its index is 0. Swap offset
-  0 is never a valid swap entry (swap header), but unfortunately we
-  have split trees so it could happen to any offset that is a multiple
-  of SWAP_ADDRESS_SPACE_PAGES. AFAICS xas_store() doesn't detect such
-  a transition. And making it do that honestly sounds a bit hairy...
-
-So this doesn't look safe to me without a reload :(
+> ---
+>  drivers/net/wireless/realtek/rtw89/core.c | 48 +++++++++++++++++------
+>  1 file changed, 37 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
+> index bba5bde95bb4..62e873fa1659 100644
+> --- a/drivers/net/wireless/realtek/rtw89/core.c
+> +++ b/drivers/net/wireless/realtek/rtw89/core.c
+> @@ -1858,32 +1858,58 @@ static void rtw89_core_rx_process_phy_sts(struct rtw89_dev *rtwdev,
+>  					  phy_ppdu);
+>  }
+>  
+> -static u8 rtw89_rxdesc_to_nl_he_eht_gi(struct rtw89_dev *rtwdev,
+> -				       u8 desc_info_gi,
+> -				       bool rx_status, bool eht)
+> +static u8 rtw89_rxdesc_to_nl_he_gi(struct rtw89_dev *rtwdev,
+> +				   u8 desc_info_gi,
+> +				   bool rx_status)
+> +{
+> +	switch (desc_info_gi) {
+> +	case RTW89_GILTF_SGI_4XHE08:
+> +	case RTW89_GILTF_2XHE08:
+> +	case RTW89_GILTF_1XHE08:
+> +		return NL80211_RATE_INFO_HE_GI_0_8;
+> +	case RTW89_GILTF_2XHE16:
+> +	case RTW89_GILTF_1XHE16:
+> +		return NL80211_RATE_INFO_HE_GI_1_6;
+> +	case RTW89_GILTF_LGI_4XHE32:
+> +		return NL80211_RATE_INFO_HE_GI_3_2;
+> +	default:
+> +		rtw89_warn(rtwdev, "invalid gi_ltf=%d", desc_info_gi);
+> +		if (rx_status)
+> +			return NL80211_RATE_INFO_HE_GI_3_2;
+> +		return U8_MAX;
+> +	}
+> +}
+> +
+> +static u8 rtw89_rxdesc_to_nl_eht_gi(struct rtw89_dev *rtwdev,
+> +				    u8 desc_info_gi,
+> +				    bool rx_status)
+>  {
+>  	switch (desc_info_gi) {
+>  	case RTW89_GILTF_SGI_4XHE08:
+>  	case RTW89_GILTF_2XHE08:
+>  	case RTW89_GILTF_1XHE08:
+> -		return eht ? NL80211_RATE_INFO_EHT_GI_0_8 :
+> -			     NL80211_RATE_INFO_HE_GI_0_8;
+> +		return NL80211_RATE_INFO_EHT_GI_0_8;
+>  	case RTW89_GILTF_2XHE16:
+>  	case RTW89_GILTF_1XHE16:
+> -		return eht ? NL80211_RATE_INFO_EHT_GI_1_6 :
+> -			     NL80211_RATE_INFO_HE_GI_1_6;
+> +		return NL80211_RATE_INFO_EHT_GI_1_6;
+>  	case RTW89_GILTF_LGI_4XHE32:
+> -		return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
+> -			     NL80211_RATE_INFO_HE_GI_3_2;
+> +		return NL80211_RATE_INFO_EHT_GI_3_2;
+>  	default:
+>  		rtw89_warn(rtwdev, "invalid gi_ltf=%d", desc_info_gi);
+>  		if (rx_status)
+> -			return eht ? NL80211_RATE_INFO_EHT_GI_3_2 :
+> -				     NL80211_RATE_INFO_HE_GI_3_2;
+> +			return NL80211_RATE_INFO_EHT_GI_3_2;
+>  		return U8_MAX;
+>  	}
+>  }
+>  
+> +static u8 rtw89_rxdesc_to_nl_he_eht_gi(struct rtw89_dev *rtwdev,
+> +				       u8 desc_info_gi,
+> +				       bool rx_status, bool eht)
+> +{
+> +	return eht ? rtw89_rxdesc_to_nl_eht_gi(rtwdev, desc_info_gi, rx_status) :
+> +		     rtw89_rxdesc_to_nl_he_gi(rtwdev, desc_info_gi, rx_status);
+> +}
+> +
+>  static
+>  bool rtw89_check_rx_statu_gi_match(struct ieee80211_rx_status *status, u8 gi_ltf,
+>  				   bool eht)
+> -- 
+> 2.39.5
+> 
 
