@@ -1,151 +1,155 @@
-Return-Path: <linux-kernel+bounces-371159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB559A372E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:32:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 572E29A3731
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AAAE283248
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:32:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33821F23054
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0E5189B9D;
-	Fri, 18 Oct 2024 07:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E6216D4E6;
+	Fri, 18 Oct 2024 07:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="s44Td5Rm"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="t/Gp0m7T";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="ZsDjhZvv"
+Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BDA186613
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CD9188003
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729236713; cv=none; b=lZiCKF/WAfrkeoX61LIRDZqmwdW7do8ge8AaVjAoWkyW63f4FCjbbFTwVpPx0gqaO3i7cP1P9jSPTOko6actVUlQSa1YVgCzGPsTKtaR+CkZsd6Kxn95J8VBokCusKQRZTyCDV7o1mtcAejZc0Ayy0rI2xG2yv/0YmNNJuPHKNY=
+	t=1729236745; cv=none; b=DvNW1Es02bYMm03kv0PCrsCcLBGFYuSKphb9MrzIerwTqv/2oxMK3IznzA039Utf5FtB0i5YsFawADYFsRmwPTiTIwcJMK0bqiYvm1o/VYyefr6zVsbf1K+8x9GVs7m+T+EdfkUoaPg/KteJ2WSV6wbqVWhlNrjtmcqRYrHXAXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729236713; c=relaxed/simple;
-	bh=Bcyhl5kY/sOHE7DfxpuYkTfNLNsdv4JRLJMRoGawewE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GQ27BYbbZmbJz2ZmXRcWozCekBSUPa1/RvseZrHPkpC4e/AiSqtx7KcKx0XpxMNFYKs5ip8WUrfrNjpdXtzZDsLdlOzY7BVpUMHpaQ92tvbF0GpOAVNvZhX1as05Nvp4WP1rD+By/+vIeLEOcwAeBFJA+vDN4Cj4spl8NgoPw/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=s44Td5Rm; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1729236708; x=1731828708;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Bcyhl5kY/sOHE7DfxpuYkTfNLNsdv4JRLJMRoGawewE=;
-	b=s44Td5RmMuxgg8qTb4MyALbP+OHEFB0oimt92MugzfRwXrBhaft6tqWd7OyB2lw/
-	IkQHtKqKWh0D3tA+/hipMmwo/DtMjE1SDYlRRXHCWHkPO2RcMQ6gXHRuqsylyLV4
-	4I7KqGb2er4ZyIplOl89igPglt6n6NRIC24TvEesfnA=;
-X-AuditID: ac14000a-4577e70000004e2a-8c-67120ee3e23a
-Received: from Diagnostix.phytec.de (Diagnostix.phytec.de [172.25.0.14])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id B3.A2.20010.3EE02176; Fri, 18 Oct 2024 09:31:47 +0200 (CEST)
-Received: from Berlix.phytec.de (172.25.0.12) by Diagnostix.phytec.de
- (172.25.0.14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 18 Oct
- 2024 09:31:47 +0200
-Received: from Berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4]) by
- berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4%4]) with mapi id 15.01.2507.006;
- Fri, 18 Oct 2024 09:31:47 +0200
-From: Yannic Moog <Y.Moog@phytec.de>
-To: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "marex@denx.de" <marex@denx.de>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
-	<festevam@gmail.com>, "isaac.scott@ideasonboard.com"
-	<isaac.scott@ideasonboard.com>, "kernel@dh-electronics.com"
-	<kernel@dh-electronics.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "victor.liu@nxp.com"
-	<victor.liu@nxp.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "shawnguo@kernel.org"
-	<shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: imx8mp-phyboard-pollux: Set Video PLL1
- frequency to 506.8 MHz
-Thread-Topic: [PATCH] arm64: dts: imx8mp-phyboard-pollux: Set Video PLL1
- frequency to 506.8 MHz
-Thread-Index: AQHbIEJYdOojGCieyEaB2fu4YX6curKL/YeA
-Date: Fri, 18 Oct 2024 07:31:47 +0000
-Message-ID: <7094f3c17319ccb4676e7b539fc4bb52bea674e6.camel@phytec.de>
-References: <20241017031146.157996-1-marex@denx.de>
-In-Reply-To: <20241017031146.157996-1-marex@denx.de>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <617401BAA2C620438450CA58711C95DE@phytec.de>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1729236745; c=relaxed/simple;
+	bh=ZhaL1Kv0REb9l4nfCMKxPrXkvaeya1vprE3n5Ut4Scs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CNrWMzGPl9l9Ozh1R/UkVdoyTaK9sAujJP1dY4xZbE7UfdYxwfkSOs+KLD8MzF7JNyhQua4k90j/rjCN7FHYpzNFexzrpKGS8q4SeUKlbrsQWE49LYPMBzc9mRLc5+XHx6To/Z0lDa09zaGo0YWA22wjyKi6bmwA5I6cN6zQo+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=t/Gp0m7T; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=ZsDjhZvv; arc=none smtp.client-ip=103.2.141.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1729237643; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=8PDd4QTcUgUWvTz38ShhzLJf4muGLCDzjQvYxmLqn1k=; b=t/Gp0m7TZ35aF0Bj0i4hYM8tRg
+	NtbdFYkTO3BhdVNudEphxUMpFUz1w16PGYONisKh4j7vUXm4fCrnc5EHrJSNBjEdIVOZtmJJIR2ea
+	GOrqzF4RKTSGAE330GyldNIQL71L2UcwhixOYkhJF0Qvc8+wo6m+hWM8TXpN2lMhmGD/ieYlcylFU
+	bK7vXRkLeHRjNGGjh8AiS3nUmBdt9Ln6a90YjcEEZo3wqBhtDNuJPDn+R+ch0rs31vXJfylYE+lLc
+	Iu70nLejYmaC6khApWxHC9+uI2LXZxWNeSkzKDliPXiY2f//xkYlJMEUGf1TqUBaF7LKRWR7Ol6jQ
+	DF5AWEoQ==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1729236743; h=from : subject
+ : to : message-id : date;
+ bh=8PDd4QTcUgUWvTz38ShhzLJf4muGLCDzjQvYxmLqn1k=;
+ b=ZsDjhZvvkyYYuDResZu/1hBcx0FC3kf5KPujHFXNskUucy6e4nnnHQ5KA9c1XR3TcZr1Y
+ cCz0bhsO4MekTFK7qyKPJPbFPiUHLI7fXF4VH3XnFGukZBLNM27u/ysfK1a9gGUuw7DsTJf
+ WYdv7lMwmBCPziTm6kAoQmhlXB1nZ3ITN1vCGh7L414OAnuD7YK7RqIiMRc4mmhtfnsqTit
+ p4mow9V9xH2IlI7nBknrd4o3OhvtytjrpI3/Wq+TwgKyI9vwNXTorbEaIFHr3ojyLYBYb8l
+ yEoLxNkjYS6WsTTD7JFqNiTK4SM1uXnd7wRWZUilRrAvGfjjv1trKeTrXr7g==
+Received: from [10.172.233.58] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1t1hSn-TRjyG1-4L; Fri, 18 Oct 2024 07:31:57 +0000
+Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.97.1-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1t1hSm-FnQW0hPkgPp-nZ6G; Fri, 18 Oct 2024 07:31:56 +0000
+Date: Fri, 18 Oct 2024 09:32:07 +0200
+From: Remi Pommarel <repk@triplefau.lt>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+ Jeff Johnson <jjohnson@kernel.org>,
+ Cedric Veilleux <veilleux.cedric@gmail.com>
+Subject: Re: [PATCH 1/2] wifi: ath10k: Implement ieee80211 flush_sta callback
+Message-ID: <ZxIO90syOrMCD-_e@pilgrim>
+References: <cover.1728741827.git.repk@triplefau.lt>
+ <481540132c62b16f6d823b7556c11a0ce68f5c58.1728741827.git.repk@triplefau.lt>
+ <f9422f76-4a9f-4b37-8a4e-271b1344668d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsWyRpKBT/cxn1C6wcNzVhZr9p5jsph/5Byr
-	xcOr/hYz77WyWbw7/Z7Z4vORG2wWq6buZLF4Oesem8Wmx9dYLS7vmsNm8aatkdHi/54d7BZ/
-	t29isXixRdziW9tmdgd+j3mzTrB43Du+h9lj56y77B6zO2ayemxa1cnmsXlJvceLzTMZPTa+
-	28Hk0f/XwOPzJrkArigum5TUnMyy1CJ9uwSujEXrFjMXHJGueHTzLVsD4wupLkZODgkBE4k3
-	kw+wdzFycQgJrGOSONF/gg3CecwosWvxEihnA6PEussvWUBa2ARUJE7OuMQIYosIlEh82NwO
-	VsQsMJ1VYtqZXnaQhLBAgsT3P03MXYwcQEWJEofOy0DUG0kcm/8erIRFQFVi+otfbCA2r4Cb
-	ROusi6wgtpCAscTpTUuYQGxOoPM6vmwB28UoICuxYcN5ZhCbWUBcYtOz76wQLwhILNkDEZcQ
-	EJV4+fgfVFxe4sStaUwgJzALaEqs36UP0Wohcbz9LhOErSgxpfshO8QJghInZz5hmcAoPgvJ
-	hlkI3bOQdM9C0j0LSfcCRtZVjEK5mcnZqUWZ2XoFGZUlqcl6KambGEEJQ4SBawdj3xyPQ4xM
-	HIyHGCU4mJVEeJPqBdOFeFMSK6tSi/Lji0pzUosPMUpzsCiJ867uCE4VEkhPLEnNTk0tSC2C
-	yTJxcEo1MMr4XZnmdP5M4Ns9M63ZmEyP/up6vqdQ+RXHiQMz5rsoZxgnLz7XlXflWtH6FYdk
-	pTruy51J8pRc+vF8S5tlxKNERydu8de7e96mv1JnqFzPbu9icVfqnNfEMw3XrmlW/1bcni5e
-	vp9lr4zzwS/cbHM3Trr19b6+6/T/Zz7738mfFTbH6NGctQFKLMUZiYZazEXFiQDp8wIMBgMA
-	AA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9422f76-4a9f-4b37-8a4e-271b1344668d@quicinc.com>
+X-Smtpcorp-Track: idOLJlbuGJ8J.7atAI7LKQdGz.EFgMqAGnVQb
+Feedback-ID: 510616m:510616apGKSTK:510616ssHRJDegKN
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-T24gVGh1LCAyMDI0LTEwLTE3IGF0IDA1OjExICswMjAwLCBNYXJlayBWYXN1dCB3cm90ZToNCj4g
-VGhlIExWRFMgcGFuZWwgb24gdGhpcyBkZXZpY2UgdXNlcyA3Mi40IE1IeiBwaXhlbCBjbG9jaywg
-c2V0IElNWDhNUF9WSURFT19QTEwxDQo+IHRvIDcyLjQgKiA3ID0gNTA2LjggTUh6IHNvIHRoZSBM
-REIgc2VyaWFsaXplciBhbmQgTENESUZ2MyBzY2Fub3V0IGVuZ2luZSBjYW4NCj4gcmVhY2ggYWNj
-dXJhdGUgcGl4ZWwgY2xvY2sgb2YgZXhhY3RseSA3Mi40IE1Iei4NCj4gDQo+IFdpdGhvdXQgdGhp
-cyBwYXRjaCwgdGhlIFZpZGVvIFBMTDEgZnJlcXVlbmN5IGlzIHRoZSBkZWZhdWx0IHNldCBpbiBp
-bXg4bXAuZHRzaQ0KPiB3aGljaCBpcyAxMDM5LjUgTUh6LCB3aGljaCBkaXZpZGVzIGRvd24gdG8g
-aW5hY2N1cmF0ZSBwaXhlbCBjbG9jayBvZiA3NC4yNSBNSHoNCj4gd2hpY2ggd29ya3MgZm9yIHRo
-aXMgcGFydGljdWxhciBwYW5lbCBieSBzaGVlciBjaGFuY2UuDQo+IA0KPiBTdG9wIHRha2luZyB0
-aGF0IGNoYW5jZSBhbmQgc2V0IGNvcnJlY3QgYWNjdXJhdGUgcGl4ZWwgY2xvY2sgZnJlcXVlbmN5
-IGluc3RlYWQuDQo+IA0KPiBGaXhlczogMzI2ZDg2ZTE5N2ZjICgiYXJtNjQ6IGR0czogaW14OG1w
-LXBoeWJvYXJkLXBvbGx1eC1yZGs6IGFkZCBldG1sIHBhbmVsIHN1cHBvcnQiKQ0KPiBSZXBvcnRl
-ZC1ieTogSXNhYWMgU2NvdHQgPGlzYWFjLnNjb3R0QGlkZWFzb25ib2FyZC5jb20+DQo+IFNpZ25l
-ZC1vZmYtYnk6IE1hcmVrIFZhc3V0IDxtYXJleEBkZW54LmRlPg0KDQpSZXZpZXdlZC1ieTogWWFu
-bmljIE1vb2cgPHkubW9vZ0BwaHl0ZWMuZGU+DQpUZXN0ZWQtYnk6IFlhbm5pYyBNb29nIDx5Lm1v
-b2dAcGh5dGVjLmRlPg0KDQo+IC0tLQ0KPiBDYzogQ29ub3IgRG9vbGV5IDxjb25vcitkdEBrZXJu
-ZWwub3JnPg0KPiBDYzogRmFiaW8gRXN0ZXZhbSA8ZmVzdGV2YW1AZ21haWwuY29tPg0KPiBDYzog
-SXNhYWMgU2NvdHQgPGlzYWFjLnNjb3R0QGlkZWFzb25ib2FyZC5jb20+DQo+IENjOiBLcnp5c3p0
-b2YgS296bG93c2tpIDxrcnprK2R0QGtlcm5lbC5vcmc+DQo+IENjOiBMaXUgWWluZyA8dmljdG9y
-LmxpdUBueHAuY29tPg0KPiBDYzogUGVuZ3V0cm9uaXggS2VybmVsIFRlYW0gPGtlcm5lbEBwZW5n
-dXRyb25peC5kZT4NCj4gQ2M6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+IENjOiBT
-YXNjaGEgSGF1ZXIgPHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU+DQo+IENjOiBTaGF3biBHdW8gPHNo
-YXduZ3VvQGtlcm5lbC5vcmc+DQo+IENjOiBZYW5uaWMgTW9vZyA8eS5tb29nQHBoeXRlYy5kZT4N
-Cj4gQ2M6IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnDQo+IENjOiBpbXhAbGlzdHMubGludXgu
-ZGV2DQo+IENjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gQ2M6IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gLS0tDQo+IE5vdGU6IEkgZG8gbm90IGhhdmUg
-dGhlIGJvYXJkLCBidXQgSXNhYWMgcmVwb3J0ZWQgdGhleSB0ZXN0ZWQgaXQgc3VjY2Vzc2Z1bGx5
-Lg0KPiDCoMKgwqDCoMKgIFRCIHdvdWxkIGJlIG5pY2UuDQo+IC0tLQ0KPiDCoC4uLi9kdHMvZnJl
-ZXNjYWxlL2lteDhtcC1waHlib2FyZC1wb2xsdXgtcmRrLmR0c8KgwqDCoMKgIHwgMTIgKysrKysr
-KysrKysrDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYg
-LS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bXAtcGh5Ym9hcmQtcG9s
-bHV4LXJkay5kdHMNCj4gYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bXAtcGh5
-Ym9hcmQtcG9sbHV4LXJkay5kdHMNCj4gaW5kZXggNTBkZWJlODIxYzQyMS4uOWMxMDJhY2I4MDUy
-YyAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1wLXBo
-eWJvYXJkLXBvbGx1eC1yZGsuZHRzDQo+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNj
-YWxlL2lteDhtcC1waHlib2FyZC1wb2xsdXgtcmRrLmR0cw0KPiBAQCAtMjE4LDYgKzIxOCwxOCBA
-QCBsZGJfbHZkc19jaDE6IGVuZHBvaW50IHsNCj4gwqAJfTsNCj4gwqB9Ow0KPiDCoA0KPiArJm1l
-ZGlhX2Jsa19jdHJsIHsNCj4gKwkvKg0KPiArCSAqIFRoZSBMVkRTIHBhbmVsIG9uIHRoaXMgZGV2
-aWNlIHVzZXMgNzIuNCBNSHogcGl4ZWwgY2xvY2ssDQo+ICsJICogc2V0IElNWDhNUF9WSURFT19Q
-TEwxIHRvIDcyLjQgKiA3ID0gNTA2LjggTUh6IHNvIHRoZSBMREINCj4gKwkgKiBzZXJpYWxpemVy
-IGFuZCBMQ0RJRnYzIHNjYW5vdXQgZW5naW5lIGNhbiByZWFjaCBhY2N1cmF0ZQ0KPiArCSAqIHBp
-eGVsIGNsb2NrIG9mIGV4YWN0bHkgNzIuNCBNSHouDQo+ICsJICovDQo+ICsJYXNzaWduZWQtY2xv
-Y2stcmF0ZXMgPSA8NTAwMDAwMDAwPiwgPDIwMDAwMDAwMD4sDQo+ICsJCQnCoMKgwqDCoMKgwqAg
-PDA+LCA8MD4sIDw1MDAwMDAwMDA+LA0KPiArCQkJwqDCoMKgwqDCoMKgIDw1MDY4MDAwMDA+Ow0K
-PiArfTsNCj4gKw0KPiDCoCZzbnZzX3B3cmtleSB7DQo+IMKgCXN0YXR1cyA9ICJva2F5IjsNCj4g
-wqB9Ow0KDQo=
+On Thu, Oct 17, 2024 at 02:19:51PM -0700, Jeff Johnson wrote:
+> On 10/12/2024 7:13 AM, Remi Pommarel wrote:
+> > When a STA reassociates, mac80211's _sta_info_move_state() waits for all
+> > pending frame to be flushed before removing the key (so that no frame
+> > get sent unencrypted after key removable [0]). When a driver does not
+> > implement the flush_sta callback, ieee80211_flush_queues() is called
+> > instead which effectively stops the whole queue until it is completely
+> > drained.
+> > 
+> > The ath10k driver configure all STAs of one vdev to share the same
+> > queue. So when flushing one STA this is the whole vdev queue that is
+> > blocked until completely drained causing Tx to other STA to also stall
+> > this whole time.
+> > 
+> > One easy way to reproduce the issue is to connect two STAs (STA0 and
+> > STA1) to an ath10k AP. While Generating a bunch of traffic from AP to
+> > STA0 (e.g. fping -l -p 20 <STA0-IP>) disconnect STA0 from AP without
+> > clean disassociation (e.g. remove power, reboot -f). Then as soon as
+> > STA0 is effectively disconnected from AP (either after inactivity
+> > timeout or forced with iw dev AP station del STA0), its queues get
+> > flushed using ieee80211_flush_queues(). This causes STA1 to suffer a
+> > connectivity stall for about 5 seconds (see ATH10K_FLUSH_TIMEOUT_HZ).
+> > 
+> > Implement a flush_sta callback in ath10k to wait only for a specific
+> > STA pending frames to be drained (without stopping the whole HW queue)
+> > to fix that.
+> > 
+> > [0]: commit 0b75a1b1e42e ("wifi: mac80211: flush queues on STA removal")
+> > 
+> > Reported-by: Cedric Veilleux <veilleux.cedric@gmail.com>
+> 
+> checkpatch.pl reports:
+> WARNING:BAD_REPORTED_BY_LINK: Reported-by: should be immediately followed by Closes: with a URL to the report
+
+It has been reported on mailing list should I put the thread link here ?
+
+> 
+> > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+> > ---
+> >  drivers/net/wireless/ath/ath10k/core.h   |  4 +++
+> >  drivers/net/wireless/ath/ath10k/htt.h    |  4 +++
+> >  drivers/net/wireless/ath/ath10k/htt_tx.c | 32 ++++++++++++++++++
+> >  drivers/net/wireless/ath/ath10k/mac.c    | 43 +++++++++++++++++++++++-
+> >  drivers/net/wireless/ath/ath10k/txrx.c   |  3 ++
+> >  5 files changed, 85 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/wireless/ath/ath10k/core.h b/drivers/net/wireless/ath/ath10k/core.h
+> > index 446dca74f06a..4709e4887efc 100644
+> > --- a/drivers/net/wireless/ath/ath10k/core.h
+> > +++ b/drivers/net/wireless/ath/ath10k/core.h
+> > @@ -558,6 +558,10 @@ struct ath10k_sta {
+> >  	u8 rate_ctrl[ATH10K_TID_MAX];
+> >  	u32 rate_code[ATH10K_TID_MAX];
+> >  	int rtscts[ATH10K_TID_MAX];
+> > +	/* protects num_fw_queued */
+> > +	spinlock_t sta_tx_lock;
+> > +	wait_queue_head_t empty_tx_wq;
+> > +	unsigned int num_fw_queued;
+> 
+> is there a reason to prefer a spinlocked value instead of using an atomic without additional locking?
+
+No reason except to mimic what is done for num_pending. Can move that to
+atomic if needed be.
+
+Thanks,
+
+-- 
+Remi
 
