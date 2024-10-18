@@ -1,143 +1,223 @@
-Return-Path: <linux-kernel+bounces-371707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1899A3EE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:53:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35999A3EE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9B11F27640
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD712876C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A1C1DB37A;
-	Fri, 18 Oct 2024 12:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740B718E351;
+	Fri, 18 Oct 2024 12:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4Dp4b1b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f23ZtOr7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871A41D86ED;
-	Fri, 18 Oct 2024 12:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EC71684A5;
+	Fri, 18 Oct 2024 12:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729255951; cv=none; b=gpyEzUL+K/M/3G6hxp5DlFey0ba+wrHzJDhRp9LPu3Kge6uJXfg+KFub5RLJFy90TQdopccvKZXJvqws0faWFPKG2Lk9/OWQHeBsUvkzmsS22ITCesQ8/HEm9LLrSLBiDsHYcWFeQ12PbriColH9FpBd81Y0L92rwoc6S5AsyzE=
+	t=1729255985; cv=none; b=j+c53D78Sj1tcqorzU+m+fHwnc4JVB5C8FgA+f7q20eDLnyXGbOlB3dqWpDY9jeGZU9F6+zS1TUTQ+ddvXdL1xdqc6JGKVfw5FrRvxKxzM/pY6pWLGojN0tE7BipO5U4BWWwpKJAp6T4+Et8R6dB28VFI4ihXVSEyTNf9bjOtAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729255951; c=relaxed/simple;
-	bh=UZ7u6Rc9FfmOf9m8EMUtl5zNNPrd8QgWBd/z2NMe2/4=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Z29EsF2n+m4+XT6TB/GGPfOExNwB3S17WSJLOjjzIIlP9C1ioEDy5kMmkihLvgcbw+X9AnFRgLUG3LsPh/TdfWY+qk+jgI+M5POE4hSxvIFau8uMrfvt0LhGtQ2ehUHGG+wH5wlwPJAO+1y+wxqeo0NAJ8z/XKSfa0C5mixgDYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4Dp4b1b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3C83C4CED5;
-	Fri, 18 Oct 2024 12:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729255951;
-	bh=UZ7u6Rc9FfmOf9m8EMUtl5zNNPrd8QgWBd/z2NMe2/4=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=d4Dp4b1bhEoSEo8VPxz5mdVm/h2XfneCMhHY1ULlfDpzajAjvBxHHAeP4pRnvfQci
-	 CPahwtCoYkCZvNUHVEmqwv7bLEEkMb3/f0R5dYeRvCcDtkxWBXPYq5T8abV6uv976w
-	 AQ9Lq1oC83NCl99T3/psWrKa2Fct2dT/jnFCH7Ke9EzusScZFGJhM9ikduhvyZdwml
-	 anF0HUaXcMNzhuBBvaON7AtWxV3MFxwrCnjlWOGkepbqG50PwKsQnKkR84AgxJRi4J
-	 7emgm8smTa/NZwRz+PhZTtMHqrFx7Iswag893Hf6TQowKt5+Ds4J9xuu5FSc2CDcmt
-	 hRHVbMk4eeHVw==
-Date: Fri, 18 Oct 2024 07:52:30 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1729255985; c=relaxed/simple;
+	bh=b9gUE/jzWBC5t5K2aMiR9zLyjAPDbhQuIteHBVt79pI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=YBDZrTGGAw/vihYZvYnt9V2NZef777F7Bcne9y1kYx+F+LqB/Mhfks29qEqJn8pKtgc2eUUMWFJGAmuyAPpYwEppgZLdbNpX4h52j/GoZydPTnPT4p6tSY5E50nBEq0XRQu0zEycnVFz7J5Q5OdUlchG9unsUfT1HrVtcihk/RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f23ZtOr7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I9Fgqm027127;
+	Fri, 18 Oct 2024 12:53:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=zUpM5w7c9M0XLVSJKLDnk4
+	zozs5nGrMe9DlAGxkEIts=; b=f23ZtOr73pXrNnnLVGM/tjA9KVIPX7xW3TkWXH
+	RJJeeq4UKGp3/7zEj0sXAcO+RtyIeIgCa6Xy1WXOll5sXlCVmfdifgvoaOEZ+Jw2
+	e4SK/ZCZPQIqUZOf618xUbky4FTGdlpMzXVruBVMUTjsw904wSw87qbRrQVZcWpc
+	Q38S+g1C1BagOXIxoFWB4JKCpblG4ICfLwjFioYn2hk/r3QyMHwnLt0tRimbZgE2
+	BLFh5wYm7ZEV8aSqz2swmx1yy10ZleTThwesP9V7V3dAjNQltm3GgI4h2UK8tu2I
+	sKCoGYZZM0TY09L30+OVakrnJCYOPRUnRphRVjuVAvI4NxjQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ay8jcb57-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 12:53:02 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ICr1u3013480
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Oct 2024 12:53:01 GMT
+Received: from hu-kamalw-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 18 Oct 2024 05:52:58 -0700
+From: Kamal Wadhwa <quic_kamalw@quicinc.com>
+Date: Fri, 18 Oct 2024 18:22:35 +0530
+Subject: [PATCH] Input: gpio-keys - fix un-responsive keys issue on
+ hibernate exit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- devicetree@vger.kernel.org, Hsin-Yi Wang <hsinyi@chromium.org>, 
- Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Enric Balletbo i Serra <eballetbo@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241018-post-reset-v1-0-5aadb7550037@chromium.org>
-References: <20241018-post-reset-v1-0-5aadb7550037@chromium.org>
-Message-Id: <172925540096.17773.4550001283125132036.robh@kernel.org>
-Subject: Re: [PATCH 0/2] Using i2c-hid-of-elan driver instead of i2c-hid-of
- driver
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241018-unresponsive-gpio-keys-hibernate-v1-1-12f5e9962054@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABJaEmcC/x3NQQrCMBBG4auUWTuQtC6qVxEXrfnTDsIkzGhRS
+ u9ucPlt3tvJYQKna7eTYROXog3x1NFjnXQBS2qmPvTnGOLIbzV4LeqygZcqhZ/4Oq8yw3R6gYe
+ YcgrDnMN4oZaphiyf/+J2P44fe6eTT3IAAAA=
+X-Change-ID: 20241018-unresponsive-gpio-keys-hibernate-31dfd03bf089
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Jishnu
+ Prakash" <quic_jprakash@quicinc.com>,
+        Rakesh Kota
+	<quic_kotarake@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>,
+        Kamal Wadhwa
+	<quic_kamalw@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729255978; l=3576;
+ i=quic_kamalw@quicinc.com; s=20241018; h=from:subject:message-id;
+ bh=b9gUE/jzWBC5t5K2aMiR9zLyjAPDbhQuIteHBVt79pI=;
+ b=MC2oAUzpujzBz9Qf+je0slAFaSksuo9xN2ZPvlCpFqR9IMn2dOGAiQHbgWOFmzJYUIiiFPnrb
+ dNJrSwX4DQZCRh9wNOv0Lo2kelCAqyC9ZmWBrb3rpY31ARf2B8egHWu
+X-Developer-Key: i=quic_kamalw@quicinc.com; a=ed25519;
+ pk=XbPE6DM5/mJi2tsiYwMCJCZ4O5XPMqColJRlGVcM7Hs=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: iJx31FgaZ4WvmRHvVME1Hj6igzFDbh2W
+X-Proofpoint-ORIG-GUID: iJx31FgaZ4WvmRHvVME1Hj6igzFDbh2W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 suspectscore=0 adultscore=0
+ mlxscore=0 malwarescore=0 bulkscore=0 spamscore=0 clxscore=1011
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410180081
 
+GPIO IRQ setting may get reset during hibernate mode, as device
+is completely powered off. This can cause the GPIO keys to become
+un-responsive after hibernate-exit.
 
-On Fri, 18 Oct 2024 12:03:03 +0000, Hsin-Te Yuan wrote:
-> After commit 2be404486c05 ("HID: i2c-hid-of: Add reset GPIO support to
-> i2c-hid-of"), i2c-hid-of driver resets the touchscreen without having
-> proper post-reset delay on OF platform.  From the commit message of that
-> commit, not to decribe poset-reset delay in device tree is intended.
-> Instead, describing the delay in platform data and changing to use
-> specialized driver is more preferable solution.
-> 
-> Also workaround the race condition of pinctrl used by touchscreen and
-> trackpad in this series to avoid merge conflict.
-> 
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> ---
-> Hsin-Te Yuan (2):
->       arm64: dts: mediatek: mt8183: Fix race condition of pinctrl
->       arm64: dts: mediatek: mt8183: Switch to Elan touchscreen driver
-> 
->  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-burnet.dts |  2 --
->  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts  |  3 ---
->  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts   | 12 +++---------
->  .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts   | 11 ++---------
->  .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts   | 11 ++---------
->  .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts   | 11 ++---------
->  .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel.dtsi |  3 ---
->  .../boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper.dtsi      |  3 ---
->  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico.dts   |  3 ---
->  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico6.dts  |  3 ---
->  .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow.dtsi |  3 ---
->  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi       | 10 +++-------
->  12 files changed, 12 insertions(+), 63 deletions(-)
-> ---
-> base-commit: eca631b8fe808748d7585059c4307005ca5c5820
-> change-id: 20241018-post-reset-ac66b0351613
-> 
-> Best regards,
-> --
-> Hsin-Te Yuan <yuanhsinte@chromium.org>
-> 
-> 
-> 
+To fix this problem, re-request IRQs in restore() callback, in the
+hibernate exit flow.
 
+Also, to keep the software in-sync with actual IRQ state in hardware,
+disable and free the IRQs before entering hibernate(in freeze()
+callback). Note that without this extra step, the IRQ re-request in
+restore() may not work properly.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Besides this issue scenario, another usecase where this change
+may be useful is - where these IRQs need to be handled by a low-power
+co-processor during hibernate state. In this case too, these IRQs
+need to be freed/re-requested during entry/exit transitions for
+hibernate mode. so that co-processer can handle them, while main
+processor is in hibernate.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Signed-off-by: Kamal Wadhwa <quic_kamalw@quicinc.com>
+---
+ drivers/input/keyboard/gpio_keys.c | 67 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 66 insertions(+), 1 deletion(-)
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 380fe8dab3b06379f9744e8190a4afcc0aee20b4..8c123e1b14ae34d3d15380eeb96b4a522732573c 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -1041,6 +1041,66 @@ gpio_keys_disable_wakeup(struct gpio_keys_drvdata *ddata)
+ 	}
+ }
+ 
++static int gpio_keys_freeze(struct device *dev)
++{
++	struct gpio_keys_drvdata *ddata = dev_get_drvdata(dev);
++	struct gpio_button_data *bdata;
++	int i;
++
++	for (i = 0; i < ddata->pdata->nbuttons; i++) {
++		bdata = &ddata->data[i];
++
++		if (!bdata->irq)
++			continue;
++
++		mutex_lock(&ddata->disable_lock);
++		gpio_keys_disable_button(bdata);
++		mutex_unlock(&ddata->disable_lock);
++
++		devm_free_irq(dev, bdata->irq, bdata);
++	}
++
++	return 0;
++}
++
++static int gpio_keys_restore(struct device *dev)
++{
++	struct gpio_keys_drvdata *ddata = dev_get_drvdata(dev);
++	struct gpio_button_data *bdata;
++	int error = 0, i;
++	irq_handler_t isr;
++	unsigned long irqflags;
++	const char *desc;
++
++	for (i = 0; i < ddata->pdata->nbuttons; i++) {
++		bdata = &ddata->data[i];
++		desc = bdata->button->desc ? bdata->button->desc : "gpio_keys";
++		if (!bdata->irq)
++			continue;
++
++		if (bdata->gpiod) {
++			isr = gpio_keys_gpio_isr;
++			irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
++		} else {
++			isr = gpio_keys_irq_isr;
++			irqflags = 0;
++		}
++
++		if (!bdata->button->can_disable)
++			irqflags = IRQF_SHARED;
++
++		error = devm_request_any_context_irq(dev, bdata->irq,
++						     isr, irqflags, desc, bdata);
++		if (error < 0) {
++			dev_err(dev, "Unable to claim irq %d; error %d\n",
++				bdata->irq, error);
++			return error;
++		}
++	}
++
++	return 0;
++}
++
+ static int gpio_keys_suspend(struct device *dev)
+ {
+ 	struct gpio_keys_drvdata *ddata = dev_get_drvdata(dev);
+@@ -1083,7 +1143,12 @@ static int gpio_keys_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static DEFINE_SIMPLE_DEV_PM_OPS(gpio_keys_pm_ops, gpio_keys_suspend, gpio_keys_resume);
++static const struct dev_pm_ops gpio_keys_pm_ops = {
++	.freeze = gpio_keys_freeze,
++	.restore = gpio_keys_restore,
++	.suspend = gpio_keys_suspend,
++	.resume = gpio_keys_resume,
++};
+ 
+ static void gpio_keys_shutdown(struct platform_device *pdev)
+ {
 
-  pip3 install dtschema --upgrade
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241018-unresponsive-gpio-keys-hibernate-31dfd03bf089
 
-
-New warnings running 'make CHECK_DTBS=y mediatek/mt8183-kukui-jacuzzi-burnet.dtb mediatek/mt8183-kukui-jacuzzi-cozmo.dtb mediatek/mt8183-kukui-jacuzzi-damu.dtb mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dtb mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dtb mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dtb mediatek/mt8183-kukui-jacuzzi-pico.dtb mediatek/mt8183-kukui-jacuzzi-pico6.dtb' for 20241018-post-reset-v1-0-5aadb7550037@chromium.org:
-
-arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico.dtb: dpi@14015000: power-domains: False schema does not allow [[92, 7]]
-	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,dpi.yaml#
-arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: dpi@14015000: power-domains: False schema does not allow [[94, 7]]
-	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,dpi.yaml#
-arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dtb: dpi@14015000: power-domains: False schema does not allow [[92, 7]]
-	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,dpi.yaml#
-arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico6.dtb: dpi@14015000: power-domains: False schema does not allow [[90, 7]]
-	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,dpi.yaml#
-arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-burnet.dtb: dpi@14015000: power-domains: False schema does not allow [[92, 7]]
-	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,dpi.yaml#
-
-
-
-
+Best regards,
+-- 
+Kamal Wadhwa <quic_kamalw@quicinc.com>
 
 
