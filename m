@@ -1,164 +1,142 @@
-Return-Path: <linux-kernel+bounces-371609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59E49A3D4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F559A3D52
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5FE51C219D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:29:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 858A01C21EF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36D7202642;
-	Fri, 18 Oct 2024 11:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3814F4084C;
+	Fri, 18 Oct 2024 11:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fLZn0G+q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="NszY1Dst"
+Received: from alln-iport-1.cisco.com (alln-iport-1.cisco.com [173.37.142.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F46318CBF1
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E541878;
+	Fri, 18 Oct 2024 11:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.142.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729250980; cv=none; b=WsGvPaVxd5pVV2eC8V+q5cjUnnt3gd+qGANwsZE0ZVSuP9YlsdqqevVM/S6klZmL5LjM2y70b42JNYOfhUI8oeI9tljL/RHxAX/Rj6oYoNX8VNV9bnZfRwWw4hLxLe2nFdE7mca76GB+1hxbvAswH+5K1av40df52JuLh5Ay7gY=
+	t=1729251123; cv=none; b=gD/XS7yf7qeWUwV2CQDjewUntljwhlmPFr0riaPG72EwoYNXkvVfsNIiwTrTabOaPh72bQMTFPhAw37WM252OMgX1AtkgayfN1rOBqyIJa+dh4SpIpG53mNkBwQ3ozdCUe29dcBwhXZetZivM/glo69TYtQ49D7ilx/ixufUEGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729250980; c=relaxed/simple;
-	bh=MjnDskMjX8cG2gTKpro8itIwMnxgsfUdurZ3ZhmFgTA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Itj2cW4zQMMgBtnqnHI7clMu7S+iVwJ57VsTmWJRdzy1eEqzGJx9KQNxWMiTF61zD+c2j58Aolfj9YJQmZIKo+HAvitz8YSkkDwRxtX3RJDv0v8h8chOnng/DtuK8SVMWG/ScVD+idFrnYWZ7YvmclN8+k0HO4ZaOk2dBu1bsXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fLZn0G+q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729250976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lX94VYYZhI1GNdILyGrNjIWxjBQHORxdJBShMvr6xl0=;
-	b=fLZn0G+qEvlSGbCA2DHJYyXFjNGmG0uKn2JV+QxF/r+rMahtro0eHq+s3sgcp5btiFZZ3X
-	cTQAJei5p7RTHAXr4bwQMYxEmXqBIIynW0ev1dPLcF3bZWe1O2SymCC9X5/0X8AFPoLYQP
-	r9n2Nt9+BKlH6fZX2YhgAs1z4Q08sBg=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-504-wHvwgIXnNvqEdhKGdLLdDw-1; Fri, 18 Oct 2024 07:29:35 -0400
-X-MC-Unique: wHvwgIXnNvqEdhKGdLLdDw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4316138aff6so5426865e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 04:29:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729250974; x=1729855774;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lX94VYYZhI1GNdILyGrNjIWxjBQHORxdJBShMvr6xl0=;
-        b=mTa9p099H+2faT9FdVEbgyZ6XiVHXe9c5QnkodU1CDQU8XxNWdq72AjMhIU+Ji2FqX
-         lHDpKkhTdgdbVRkhfDnp+ugtAteamLjHE/jvZIL5Q4w/RhaUfb7LDeVdaBkKcLMlbow8
-         4BgqiAYluJIwjtg8SkJ9HO2BZBWwikpuq8HiZHHgsK4F6cGFlkO9eGD37//5S10+YCXP
-         aDlsj4U1NI4I3CWQbBq6vjXVG2r5JkN9dipFlgle5hJU+Kr2StrT6tIW8TzkThXsfeNd
-         qM9GqdSYz96vydap3ar9V/fo8O6yUBsUnUbjA48y4nKQAt+vi6zvQhF5poNJeyZfoqAi
-         TsOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHckWV5aJItFmXDv8FeDsaNvFIp1haFjkj7n0DLaBbklFQ8GBwQTsQcrs0QwZteyW94sARZ5NbW9j3Uw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4BTn4Vqdx++T8l5mleT3GP/UXz89DvIk+fUuyrYP3U3lILE+s
-	zw8N49Ys84g5fcyJxcB52mPJewHG06h108YuycPgTqyBAFo/PQMCrdwbPNTVlZJmSsYSYulU4mm
-	k4IgbljtqubmtvIqXRi61fmvGEaDtqeZRTgJNi2EZAxQx+ANbVEwtwtj63VEyDg==
-X-Received: by 2002:adf:fc86:0:b0:37d:3bad:a503 with SMTP id ffacd0b85a97d-37eb5c41d3emr1579081f8f.40.1729250973936;
-        Fri, 18 Oct 2024 04:29:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxj+RvOltwYR6fUpBQ1sN/oQ7XL95/bAOzHFTi1ZdTbNwHM8snVRBHz14JHHkUGM4OhZdH6A==
-X-Received: by 2002:adf:fc86:0:b0:37d:3bad:a503 with SMTP id ffacd0b85a97d-37eb5c41d3emr1579044f8f.40.1729250973469;
-        Fri, 18 Oct 2024 04:29:33 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf088c63sm1694054f8f.58.2024.10.18.04.29.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 04:29:32 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id C221A160ACC7; Fri, 18 Oct 2024 13:29:30 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Simon Horman <horms@kernel.org>, Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi
- <lorenzo@kernel.org>, Andrii Nakryiko <andriin@fb.com>, Jussi Maki
- <joamaki@gmail.com>, Jay Vosburgh <jv@jvosburgh.net>, Andy Gospodarek
- <andy@greyhouse.net>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
- <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Nikolay Aleksandrov
- <razor@blackwall.org>
-Subject: Re: [PATCHv2 net-next 2/3] bonding: use correct return value
-In-Reply-To: <20241018094139.GD1697@kernel.org>
-References: <20241017020638.6905-1-liuhangbin@gmail.com>
- <20241017020638.6905-3-liuhangbin@gmail.com> <878qumzszs.fsf@toke.dk>
- <ZxGv2s4bl5VQV4g-@fedora> <20241018094139.GD1697@kernel.org>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 18 Oct 2024 13:29:30 +0200
-Message-ID: <87o73hy7hh.fsf@toke.dk>
+	s=arc-20240116; t=1729251123; c=relaxed/simple;
+	bh=8ems0K1QyHygi1SqtXgmSrGquVuuN6HMjhVTmKZFanY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nN3kpJZEN33AqIZaoXmPOS9L2EkA1WIqOZ3qoJEsVi58POeKdpJA7bZ/wW/R0lz7oMvH2Aotj0SekqhybFj0DE7DjtL1CJzpjAqEdIbSlqkJF5qipWDFcLDaFGmOJbYoUWncUk1yz+dZjLP5YrCA5Euxa164FJLEnZRvANugDRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=NszY1Dst; arc=none smtp.client-ip=173.37.142.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=cisco.com; i=@cisco.com; l=926; q=dns/txt; s=iport;
+  t=1729251121; x=1730460721;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3DA0NWcgl24vVYnTdhXW/PVgT6zdj6KdLX9kyr/pEYA=;
+  b=NszY1DstJecfkuB5U49ltA9HR+58ifXCYMUVe98hg5PQ57O5G2uTJfWp
+   ZnwUfL2flUCmp7bxW61sIQkdV4yGfoyvBTxTVnOo22IGzIa7UaL8FphjG
+   MLpXDC8vaBp09zANANv4SwE7+ahuxclF/McBdzE9tINNl87lcuAV9yPV/
+   I=;
+X-CSE-ConnectionGUID: rgs88DQdSViD62vmV7vgqg==
+X-CSE-MsgGUID: v9Bi5zXRQ1yrQEL6Ecj8aQ==
+X-IPAS-Result: =?us-ascii?q?A0AZAACDRhJngY0QJK1aHAEBAQEBAQcBARIBAQQEAQGBe?=
+ =?us-ascii?q?wcBAQsBhBlDSIxylUaSIoElA1YPAQEBD0QEAQGFB4olAiY0CQ4BAgQBAQEBA?=
+ =?us-ascii?q?wIDAQEBAQEBAQEBDQEBBQEBAQIBBwUUAQE9BQ47hgiGXSsLAUYpYzEBEoMBg?=
+ =?us-ascii?q?mUDr0CBeTOBAd4zgWwYgTABjUWFZycbgUlEglCBPm+ECoZ9BIdojC2CE1cPg?=
+ =?us-ascii?q?laEC4likT9IgSEDWSECEQFVEw0KCwkFiTWDAAUhBCWBa4EIFoJygkwCgleBZ?=
+ =?us-ascii?q?wlhhDqCO3BigQctgRGBHzpHgTyBNi8bIQtegUOBMAYVBIEbgQaCT2pONwINA?=
+ =?us-ascii?q?jeCJCRcglGGBUADCxgNSBEsNQYOGwY+bgesUUaCXHsTyRWEJKE/GjOqSwGYd?=
+ =?us-ascii?q?yKkGIRmgWc6gVtwFYMiUhkPjlmTAAG3fUYyOwIHCwEBAwmMHoF9AQE?=
+IronPort-Data: A9a23:wOoGAaw90NN0lwCqKK96t+fMxirEfRIJ4+MujC+fZmUNrF6WrkVVm
+ 2YcXmvUM/bcZDT2fNt/aYm08xwHvpfUz9ZhTwI+/FhgHilAwSbn6Xt1DatR0we6dJCroJdPt
+ p1GAjX4BJlpCCKa/FH1a+iJQUBUjcmgXqD7BPPPJhd/TAplTDZJoR94kobVuKYw6TSCK13L4
+ IqaT/H3Ygf/h2csazJMt8pvlTs21BjMkGJA1rABTagjUG/2zxE9EJ8ZLKetGHr0KqE8NvK6X
+ evK0Iai9Wrf+Ro3Yvv9+losWhRXKlJ6FVHmZkt+A8BOsDAbzsAB+vpT2M4nVKtio27hc+adZ
+ zl6ncfYpQ8BZsUgkQmGOvVSO3kW0aZuoNcrLZUj2CCe5xWuTpfi/xlhJFs5Jt1I1t97Ol9P2
+ aJCNjUzMQ6Mnu3jldpXSsE07igiBMDvOIVavjRryivUSK56B5vCWK7No9Rf2V/chOgXQq2YP
+ JRfMGQpNUiZC/FMEg9/5JYWlvihmWPtYjtwo1OOrq1x6G/WpOB0+OOzYIWOJ4DVG625mG6G9
+ 0jHonbJOChDJcam5B7b33mu1ub2yHaTtIU6T+DgqaUw3zV/3Fc7Ah0bUVSyqOKRhUm5VNZSb
+ UcT/0IGqbAz+VaiStjmXjW7rWSCsxpaXMBfe8Ug7wuN4qnZ+QCUAi4DVDEpQNkvss4oTDos3
+ 1nPhNrlBTV0saOcTFqZ97GdtzT0PjIaRUcBegcATA0Y85/op4RbphbOSMtzVa24lNv4HRnuz
+ D2Q6isznbMeiYgMzarT1VTGhS+844DCTyYr6QjNGGGo9AV0YMiifYPA1LTAxf9EKIDcShyKu
+ 2IJ3pDCqusPFpqK0ieKRY3hAY1F+d6fPyaM0XJWE6If9hjzoWCmQ99O7yhxcRIB3tk/RRflZ
+ 0rauAV07ZBVPWe3YaIfX25XI5p3pUQHPYq5Ps04fuZzjo5NmBhrFRyChHJ8PUi2wCDAcolmZ
+ f93lPpA615BVMyLKxLsF48gPUcDnHxW+I8qbcmTI+6b+bSffmWJbrwOLUGDaOs0hIvd/1+Eq
+ ocHb5PUlUQEOAEbXsUx2dNDRbztBSVqba0aV+QNL4Zv3yI/Qjh4UK6LqV/fU9M9xf8L/gs3w
+ p1NchQFkAWk3yKvxfSiYXF4Y7SnRodksX8+JmQtO13us0XPkq7xhJrzg6AfJOF9nMQ6lKYcZ
+ 6BcJ6297gFnEGWvF8I1N8il9NQKmdXCrV7mAhdJlxBvIc8xHlOYqo6Mk8mG3HBmMxdbfPAW+
+ 9WIvj43i7JaL+i+JK46sM6S8m4=
+IronPort-HdrOrdr: A9a23:aCspAKH/qu+NZ1GppLqE6ceALOsnbusQ8zAXPo5KJiC9Ffbo8v
+ xG88576faZslsssRIb6LK90de7IU80nKQdieJ6AV7IZmfbUQWTQL2KxLGSpwEIYxeOldK0Ec
+ xbAs5D4BqaNykcsfrH
+X-Talos-CUID: =?us-ascii?q?9a23=3AL3nCgGpZlgi4fe5Lv0is/YDmUdoqaS2N4E7cGHG?=
+ =?us-ascii?q?5JTgzVrirFkGf4awxxg=3D=3D?=
+X-Talos-MUID: =?us-ascii?q?9a23=3AY2w6gA8qFmdmBrH3cm1CtdSQf9k5yaXzGnA3qMw?=
+ =?us-ascii?q?XofCpEXJdMDXNhQ3iFw=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.11,213,1725321600"; 
+   d="scan'208";a="368735476"
+Received: from alln-l-core-04.cisco.com ([173.36.16.141])
+  by alln-iport-1.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 18 Oct 2024 11:30:53 +0000
+Received: from sjc-ads-7158.cisco.com (sjc-ads-7158.cisco.com [10.30.217.233])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by alln-l-core-04.cisco.com (Postfix) with ESMTPS id 60B26180001B2;
+	Fri, 18 Oct 2024 11:30:50 +0000 (GMT)
+Received: by sjc-ads-7158.cisco.com (Postfix, from userid 1776881)
+	id D3019CC1280; Fri, 18 Oct 2024 04:30:49 -0700 (PDT)
+From: Bartosz Wawrzyniak <bwawrzyn@cisco.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: xe-linux-external@cisco.com,
+	Daniel Walker <danielwa@cisco.com>,
+	Bartosz Stania <sbartosz@cisco.com>,
+	Bartosz Wawrzyniak <bwawrzyn@cisco.com>
+Subject: [PATCH] PCI: cadence: Lower severity of message when phy-names property is absent in DTS
+Date: Fri, 18 Oct 2024 11:30:43 +0000
+Message-Id: <20241018113045.2050295-1-bwawrzyn@cisco.com>
+X-Mailer: git-send-email 2.28.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.30.217.233, sjc-ads-7158.cisco.com
+X-Outbound-Node: alln-l-core-04.cisco.com
 
-Simon Horman <horms@kernel.org> writes:
+The phy-names property is optional, so the message indicating its absence
+during the probe should be of 'info' severity rather than 'error' severity.
 
-> On Fri, Oct 18, 2024 at 12:46:18AM +0000, Hangbin Liu wrote:
->> On Thu, Oct 17, 2024 at 04:47:19PM +0200, Toke H=C3=B8iland-J=C3=B8rgens=
-en wrote:
->> > > diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/b=
-ond_main.c
->> > > index f0f76b6ac8be..6887a867fe8b 100644
->> > > --- a/drivers/net/bonding/bond_main.c
->> > > +++ b/drivers/net/bonding/bond_main.c
->> > > @@ -5699,7 +5699,7 @@ static int bond_xdp_set(struct net_device *dev=
-, struct bpf_prog *prog,
->> > >  		if (dev_xdp_prog_count(slave_dev) > 0) {
->> > >  			SLAVE_NL_ERR(dev, slave_dev, extack,
->> > >  				     "Slave has XDP program loaded, please unload before enslav=
-ing");
->> > > -			err =3D -EOPNOTSUPP;
->> > > +			err =3D -EEXIST;
->> >=20
->> > Hmm, this has been UAPI since kernel 5.15, so can we really change it
->> > now? What's the purpose of changing it, anyway?
->>=20
->> I just think it should return EXIST when the error is "Slave has XDP pro=
-gram
->> loaded". No special reason. If all others think we should not change it,=
- I
->> can drop this patch.
->
-> Hi Toke,
->
-> Could you add some colour to what extent user's might rely on this error =
-code?
->
-> Basically I think that if they do then we shouldn't change this.
+Signed-off-by: Bartosz Wawrzyniak <bwawrzyn@cisco.com>
+---
+ drivers/pci/controller/cadence/pcie-cadence.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Well, that's the trouble with UAPI, we don't really know. In libxdp and
-xdp-tools we look at the return code to provide a nicer error message,
-like:
-
-https://github.com/xdp-project/xdp-tools/blob/master/lib/libxdp/libxdp.c#L6=
-15
-
-and as a signal to fall back to loading the programme without a dispatcher:
-
-https://github.com/xdp-project/xdp-tools/blob/master/lib/libxdp/libxdp.c#L1=
-824
-
-Both of these cases would be unaffected (or even improved) by this
-patch, so in that sense I don't have a concrete objection, just a
-general "userspace may react to this". In other words, my concern is
-more of a general "we don't know, so this seems risky". If any of you
-have more information about how bonding XDP is generally used, that may
-help get a better idea of this?
-
--Toke
+diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+index 4251fac5e310..88122d480432 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence.c
++++ b/drivers/pci/controller/cadence/pcie-cadence.c
+@@ -197,7 +197,7 @@ int cdns_pcie_init_phy(struct device *dev, struct cdns_pcie *pcie)
+ 
+ 	phy_count = of_property_count_strings(np, "phy-names");
+ 	if (phy_count < 1) {
+-		dev_err(dev, "no phy-names.  PHY will not be initialized\n");
++		dev_info(dev, "no phy-names.  PHY will not be initialized\n");
+ 		pcie->phy_count = 0;
+ 		return 0;
+ 	}
+-- 
+2.28.0
 
 
