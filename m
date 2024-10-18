@@ -1,502 +1,246 @@
-Return-Path: <linux-kernel+bounces-371439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1EA79A3B15
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:14:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F9B9A3B1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505411F25F13
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:14:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70F228412C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD002010E2;
-	Fri, 18 Oct 2024 10:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBF720124D;
+	Fri, 18 Oct 2024 10:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="E78oKcep"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIlnjr9h"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC74188A18;
-	Fri, 18 Oct 2024 10:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729246474; cv=pass; b=cOa8k4W5Zj5qvCbxU4EuhvPszg/zH7F75x/vNhUxVukfvQmPnMB/l52NxBoY6is70SwLvdYJVEgQZ9TwbEjaQbUxjdcbYhwfW583f4w06CaaOmKmg99raC6GFp1j8cAF49umdqdDKkh0myIsr2cJR68OOI9Z/+zeGzUxlYH61w8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729246474; c=relaxed/simple;
-	bh=NYvOUxpVgYoK3sYkpSJnOD/N7FKJJHg08DiKJLhL9UU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Bz7dYisfL+mcZQG4Lf7bCPi0YxuhMj6ZYQE0SaS8T1Vdtv5bXQAL4Ghd8feckOZM8Am1REnySFvps5URQQV3YWAkvm7VX+m8G6cwohIneCEpM/y4DttajsWCZbtUewWTYASCDkM4VrF1guJCAJ3BPOrvoUKb1h8oC54k7ioqcKI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=E78oKcep; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1729246456; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gMGzn/9eEyiJVQ1DsuOobKU1bbqK4wzcv55WxSJVsJDSf0fw8M2MXWty4QoAdH0CETVvH8dzlmUCmQxshCuN3vD7JQnVtQ3QBpNybWGNWnsr+6sKoq6PBiwG7LzzOBj9FynnwTuFLKRP6AKZLNbnBTCG5fdgc/ufind1bFd/k2M=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1729246456; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=UhMDyqiYC37BE8WnfdqPMkYIHUHA3WhURp8QKOLssWg=; 
-	b=eX67o5OyuUbUSuNdbDO+0ItyM0zzp6fiL1Q5Bfyn1MGt0goj82iGGZsDOnpKxGIfrMNxV2pB9DUQSGbfRuo/EJWbIR8xNaKWSFFTbObEeDHaezGrd0mSzg3dd+BfNQVZpMJxiDT1B5ppR2w5XRzkpGAyFko7nfuFB1pu0upfOCw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
-	dmarc=pass header.from=<laura.nao@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729246456;
-	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=UhMDyqiYC37BE8WnfdqPMkYIHUHA3WhURp8QKOLssWg=;
-	b=E78oKcepe44F2PW4Y7UriCg5ZbjRyqqDssSEj1UkWGGBFci/B+vhSWg6nvDj3tdF
-	OQN79d+0m9Y6yXof83SsPp76Q1UTwm24iH8+MwdttiGTpw59Frbky+1ljUAa21yy7N9
-	Rq2ZKxrFGIGv7GBuqPsew49zy8opXhQnbhoqc5m0=
-Received: by mx.zohomail.com with SMTPS id 1729246455946654.0125228174601;
-	Fri, 18 Oct 2024 03:14:15 -0700 (PDT)
-From: Laura Nao <laura.nao@collabora.com>
-To: shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kernel@collabora.com,
-	kernelci@lists.linux.dev,
-	tim.bird@sony.com,
-	mhiramat@kernel.org,
-	Laura Nao <laura.nao@collabora.com>
-Subject: [PATCH v2] kselftests: Add test to detect boot event slowdowns
-Date: Fri, 18 Oct 2024 12:14:39 +0200
-Message-Id: <20241018101439.20849-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991EA201102;
+	Fri, 18 Oct 2024 10:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729246619; cv=none; b=jnOPcLzxw2SCWeqSKUyJc83JoigBUaDUJ8uke3R3ovC2z/NuC587wA3jfuwOeb5j6IYgBq4xTNXa1jbGbaKMsKj84e3obLnhjz1OJk2AhvRBtmG92hHZ8HLrT6h3YvJje1IHSe+8qYofPjpSFlsp+I0SETWOalOYW6o0O0QqwD0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729246619; c=relaxed/simple;
+	bh=+C6O8bl4Wumi7Bso/HhpToTetTJ74t0+tksPzYy4D80=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nJ1PUB4CGNrxxinZMsS2+UeG66xk15DIcQcXIIzmIH+r4o5E+H/aH2nQD5TqdcUbUqffHfTE/j/U+hx5yi3vTsDBc4R9rgmywOb+ibH/l05bvmOvB3Iyaoq0w9QFLW9kTsLLCZScwcXPr4Gm3F4PTbYQV+RGRrXt5TOJl6PWVLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIlnjr9h; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d55f0cf85so1401982f8f.3;
+        Fri, 18 Oct 2024 03:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729246616; x=1729851416; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uGYyqvKLXNV3yQm6wNAxTILfVW50eFL+iw4yPkNAvaM=;
+        b=HIlnjr9himRLwQF6eEKHZqXoCto+wIHJQNK5OpbusKDiGPl4rCUxOjW5IbaMURvmJi
+         b0TXoOrkQAnD9cG6vTAcnAIr3vK39+xJ5crnA/qvVF5fMkn/obeB9ll3HpVjETYyvIXh
+         +gg9EtmTjWoDjbyqkD/A+e88UZyOZ+R67jZJOS/hJ3sl+6+4YDUQ+n5uREsCRLc2XBHj
+         ZtdyqyD8UPlgdD4UumCPQZ91exAyYQ2KeMEW+9dWoCQ8BPGJlS8wuqGZ7vW31AU6otGV
+         5wzQIVqpfPu6w1p1oB6HtvV3AkB2JShkgVm9sGL0r1YaVc6wO49kzsQgbpd0KcfGbUtm
+         Gc9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729246616; x=1729851416;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uGYyqvKLXNV3yQm6wNAxTILfVW50eFL+iw4yPkNAvaM=;
+        b=CmiqfC1D0ytlIeYjTpZoL2qAZ0IrfhWxyyU7uk2SD2FNjmEANsigas1QO2tkecZ4wa
+         v5GlYGN7OE8zS42hb6OGoIdMKcs2XYyviS9ZLjkV6Pes9gAm6gaI9FsxI3BfgrDt60DQ
+         fg72jpqiqpZIBIhpoa/vQ/yuphKfoIkrhBUdow7PxYsTwqLYLjtsP7TQruvqfZzUy38F
+         sASgTEU5a2L+sXtHNPPKiySLRoVu9SxTwb3gAPJnbJq2yT0wnbJlF71Qan+7iwmqpLwp
+         ooBcnly78i6BsHNmFEjZj3yIWI1t5+KCslUvlM6QephYixIKIP6R8J3gTysywXslKdtF
+         o1Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUJk5SkJ06Vk8qPzKexnbckJrsOSdDIDFpIoIF6UxHq5MslkzAD9WSAWXdI8MAKoju8gKt2tihNf1JloQ==@vger.kernel.org, AJvYcCUPszkQU4qn8vSTMvateb74t8RDrXAuUYF1x47aZyOo5gZWM/oK+c7IDHVt96bUOrsculBTPXjb3Aw=@vger.kernel.org, AJvYcCUqbtVKQVTvbbgsqdESIqcgRWbBtmElMTo0/glGoOPjVxHSoNvKylL/XYYTU1RTWjjlj9MK37a+7i3BBIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKRvRg0s3TvO7MRa5X4S6+kPxyYUr3RGpKvT4Ru4fBN9Qxw6rE
+	ey81e7Tg5ecISvS1REZ3yQ6cKtbaAtgfUD2cg6CSDBKw2MnH8BhB
+X-Google-Smtp-Source: AGHT+IGdcyh6Gf7+XdA0F5Fka3lGLAqY8PjB7JzYKEhk1BAYCdN6tGDecX3y1r/LOyydpUzFiWDQng==
+X-Received: by 2002:a05:6000:18d:b0:37d:3e8b:846f with SMTP id ffacd0b85a97d-37ea2198341mr1380652f8f.24.1729246615672;
+        Fri, 18 Oct 2024 03:16:55 -0700 (PDT)
+Received: from localhost (host-79-18-120-72.retail.telecomitalia.it. [79.18.120.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf0693ebsm1529146f8f.42.2024.10.18.03.16.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 03:16:55 -0700 (PDT)
+From: Matteo Martelli <matteomartelli3@gmail.com>
+Subject: [PATCH v4 0/5] iio: fix possible race condition during access of
+ available info lists
+Date: Fri, 18 Oct 2024 12:16:39 +0200
+Message-Id: <20241018-iio-read-avail-release-v4-0-53c8ac618585@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIc1EmcC/3XPwQ6CMAwG4FcxOzvTdSDgyfcwHsZWsImK2cyiI
+ by7hRMx4da/Tb+mo0oUmZI67UYVKXPi4Smh2O+Uv7lnT5qDZIWABdSAmnnQkVzQLju+S3knl0j
+ 71gZ0hkzb1EqWX5E6/izw5Sr5xuk9xO9yJ5u5u5AGwG6R2WjQvgLvq9B4JDj3D5kf/PBQM5lxz
+ VSbDAqDRQmAoayPDf0zdsWYcpOxwjhvCeoOS3l3zUzT9AO6vYtnSgEAAA==
+X-Change-ID: 20240802-iio-read-avail-release-cb3d2a1e1b98
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Alisa-Dariana Roman <alisa.roman@analog.com>, 
+ Christian Eggers <ceggers@arri.de>, Peter Rosin <peda@axentia.se>, 
+ Paul Cercueil <paul@crapouillou.net>, Sebastian Reichel <sre@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Matteo Martelli <matteomartelli3@gmail.com>
+X-Mailer: b4 0.14.2
 
-Introduce a new kselftest to identify slowdowns in key boot events.
-This test uses ftrace to monitor the start and end times, as well as
-the durations of all initcalls, and compares these timings to reference
-values to identify significant slowdowns.
-The script functions in two modes: the 'generate' mode allows to create
-a JSON file containing initial reference timings for all initcalls from
-a known stable kernel. The 'test' mode can be used during subsequent
-boots to assess current timings against the reference values and
-determine if there are any significant differences.
-The test ships with a bootconfig file for setting up ftrace and a
-configuration fragment for the necessary kernel configs.
+Some iio drivers currently share an available info list buffer that
+might be changed while iio core prints it to sysfs. This could cause the
+buffer shared with iio core to be corrupted. However, note that I was
+able to trigger the race condition only by adding a delay between each
+sysfs_emit_at calls in the iio_format_list() to force the concurrent
+access to the shared available list buffer.
 
-Signed-off-by: Laura Nao <laura.nao@collabora.com>
+This patch set extends the iio APIs and fixes some affected drivers.
+
+Summary:
+- Patch 1: iio core: introduce a iio info release callback to let
+  drivers share a copy of their available info list and later free it.
+
+- Patch 2:
+    - inkern: make consumers copy and release the available info lists
+      of their producers, necessary after patch 1.
+    - iio-mux, iio-rescale, dpot-dac, ingenic-battery: adapt consumers
+      to inkern API change by freeing the now copied available lists of
+      their producers.
+
+- Patch 3: pac1921: handle the current scale available info via the
+  read_avail+read_avail_release_resource APIs instead of using an ad-hoc
+  ext_info attribute. The latter was used to avoid the risk of a race in
+  the available list.
+
+- Patch 4,5: ad7192, as73211: fix the possible race in the drivers by
+  copying/releasing the affected available lists.
+
+Tested:
+- pac1921: could not reproduce the race condition with the new APIs,
+  even with additional delays among the sysfs_emit_at calls during a
+  shunt resistor write. No new issue found after the change.
+
+- iio-mux, iio-rescale, dpot-dac: tested with pac1921 as producer, which
+  was adapted to produce a mock raw available info list.
+  The tests did not cover the driver features but focused on assessing
+  the function call sequence. For example the following traced function
+  graph shows a read of the dpot mocked out voltage (with ftrace
+  filters: pac1921* iio* dpot* kmemdup_array* kfree*):
+
+ 3)               |  iio_read_channel_info_avail [industrialio]() {
+ 3)               |    dpot_dac_read_avail [dpot_dac]() {
+ 3)               |      iio_read_avail_channel_raw [industrialio]() {
+ 3)               |        iio_channel_read_avail [industrialio]() {
+ 3)               |          pac1921_read_avail [pac1921]() {
+ 3)   5.208 us    |            kmemdup_array();
+ 3) + 11.459 us   |          }
+ 3)   3.167 us    |          kmemdup_array();
+ 3)               |          pac1921_read_avail_release_res [pac1921]() {
+ 3)   1.709 us    |            kfree();
+ 3)   4.458 us    |          }
+ 3) + 25.750 us   |        }
+ 3) + 31.792 us   |      }
+ 3) + 35.000 us   |    }
+ 3) + 37.083 us   |    iio_format_list [industrialio]();
+ 3)               |    dpot_dac_read_avail_release_res [dpot_dac]() {
+ 3)   1.583 us    |      kfree();
+ 3)   4.250 us    |    }
+ 3) + 84.292 us   |  }
+
+- ingenic-battery: also tested with mock available info produced by the
+  pac1921 driver. Following the traced graph part that should correspond
+  to the ingenic_battery_set_scale() flow (which is not traceable with
+  the additional ingenic* ftrace filter for some reason):
+
+ 2)               |  ingenic_battery_probe [ingenic_battery]() {
+                ...
+ 2)               |    iio_read_max_channel_raw [industrialio]() {
+ 2)               |      iio_channel_read_avail [industrialio]() {
+ 2)               |        pac1921_read_avail [pac1921]() {
+ 2)   4.333 us    |          kmemdup_array();
+ 2) + 10.834 us   |        }
+ 2)   3.500 us    |        kmemdup_array();
+ 2)               |        pac1921_read_avail_release_res [pac1921]() {
+ 2)   1.791 us    |          kfree();
+ 2)   4.625 us    |        }
+ 2) + 26.291 us   |      }
+ 2)   1.583 us    |      kfree();
+ 2) + 35.750 us   |    }
+ 2)               |    iio_read_avail_channel_attribute [industrialio]() {
+ 2)               |      iio_channel_read_avail [industrialio]() {
+ 2)               |        pac1921_read_avail [pac1921]() {
+ 2)   3.250 us    |          kmemdup_array();
+ 2)   8.209 us    |        }
+ 2)   3.458 us    |        kmemdup_array();
+ 2)               |        pac1921_read_avail_release_res [pac1921]() {
+ 2)   1.542 us    |          kfree();
+ 2)   4.292 us    |        }
+ 2) + 21.417 us   |      }
+ 2) + 26.333 us   |    }
+ 2)               |    iio_write_channel_attribute [industrialio]() {
+ 2)   4.375 us    |      pac1921_write_raw [pac1921]();
+ 2)   9.625 us    |    }
+ 2)   1.666 us    |    kfree();
+ 2) * 47810.08 us |  }
+
+Not tested:
+- ad7192, as73211
+
+Link: https://lore.kernel.org/linux-iio/20240724-iio-pac1921-v4-0-723698e903a3@gmail.com/
+
+Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
 ---
-Hello,
+Changes in v4:
+- Patch 2: inkern, ingenic-battery: use cleanup free instead of the
+  "goto out" pattern
+- Link to v3: https://lore.kernel.org/r/20241015-iio-read-avail-release-v3-0-ac3e08f25cb3@gmail.com
 
-This v2 is a follow-up to RFCv1[1] and includes changes based on feedback
-from the LPC 2024 session [2], along with some other fixes.
+Changes in v3:
+- Rebased on top of iio-togreg
+- Squash and reorder commits to allow bisection without memleaks
+- Edit summary in cover letter to match new patch order
+- Patch 2: inkern: add comment to clarify the need of the producer's buffer copy
+- Patch 5: as73211: update comment on mutex declaration
+- Link to v2: https://lore.kernel.org/r/20241007-iio-read-avail-release-v2-0-245002d5869e@gmail.com
 
-[1] https://lore.kernel.org/all/20240725110622.96301-1-laura.nao@collabora.com/
-[2] https://www.youtube.com/watch?v=rWhW2-Vzi40
-
-After reviewing other available tests and considering the feedback from
-discussions at Plumbers, I decided to stick with the bootconfig file
-approach but extend it to track all initcalls instead of a fixed set of
-functions or events. The bootconfig file can be expanded and adapted to
-track additional functions if needed for specific use cases.
-
-I also defined a synthetic event to calculate initcall durations, while
-still tracking their start and end times. Users are then allowed to choose
-whether to compare start times, end times, or durations. Support for
-specifying different rules for different initcalls has also been added.
-
-In RFCv1, there was some discussion about using existing tools like
-bootgraph.py. However, the output from these tools is mainly for manual
-inspection (e.g., HTML visual output), whereas this test is designed to run
-in automated CI environments too. The kselftest proposed here combines the
-process of generating reference data and running tests into a single script
-with two modes, making it easy to integrate into automated workflows.
-
-Many of the features in this v2 (e.g., generating a JSON reference file,
-comparing timings, and reporting results in KTAP format) could potentially
-be integrated into bootgraph.py with some effort.
-However, since this test is intended for automated execution rather than
-manual use, I've decided to keep it separate for now and explore the
-options suggested at LPC, such as using ftrace histograms for initcall
-latencies. I'm open to revisiting this decision and working toward
-integrating the changes into bootgraph.py if there's a strong preference
-for unifying the tools.
-
-Let me know your thoughts.
-
-A comprehensive changelog is reported below.
-
-Thanks,
-
-Laura
----
 Changes in v2:
-- Updated ftrace configuration to track all initcall start times, end
-  times, and durations, and generate a histogram.
-- Modified test logic to compare initcall durations by default, with the
-  option to compare start or end times if needed.
-- Added warnings if the initcalls in the reference file differ from those
-  detected in the running system.
-- Combined the scripts into a single script with two modes: one for
-  generating the reference file and one for running the test.
-- Added support for specifying different rules for individual initcalls.
-- Switched the reference format from YAML to JSON.
-- Added metadata to the reference file, including kernel version, kernel
-  configuration, and cmdline.
-- Link to v1: https://lore.kernel.org/all/20240725110622.96301-1-laura.nao@collabora.com/
----
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/boot-time/Makefile    |  16 ++
- tools/testing/selftests/boot-time/bootconfig  |  15 +
- tools/testing/selftests/boot-time/config      |   6 +
- .../selftests/boot-time/test_boot_time.py     | 265 ++++++++++++++++++
- 5 files changed, 303 insertions(+)
- create mode 100644 tools/testing/selftests/boot-time/Makefile
- create mode 100644 tools/testing/selftests/boot-time/bootconfig
- create mode 100644 tools/testing/selftests/boot-time/config
- create mode 100755 tools/testing/selftests/boot-time/test_boot_time.py
+- Patch 4: as73211: remove one blank line
+- Patch 6: consumers: fix typo in commit message
+- Patch 7: ingenic-battery: add missing header include
+- Link to v1: https://lore.kernel.org/r/20241003-iio-read-avail-release-v1-0-c70cc7d9c2e0@gmail.com
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index b38199965f99..1bb20d1e3854 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -3,6 +3,7 @@ TARGETS += acct
- TARGETS += alsa
- TARGETS += amd-pstate
- TARGETS += arm64
-+TARGETS += boot-time
- TARGETS += bpf
- TARGETS += breakpoints
- TARGETS += cachestat
-diff --git a/tools/testing/selftests/boot-time/Makefile b/tools/testing/selftests/boot-time/Makefile
-new file mode 100644
-index 000000000000..cdcdc1bbe779
---- /dev/null
-+++ b/tools/testing/selftests/boot-time/Makefile
-@@ -0,0 +1,16 @@
-+PY3 = $(shell which python3 2>/dev/null)
-+
-+ifneq ($(PY3),)
-+
-+TEST_PROGS := test_boot_time.py
-+
-+include ../lib.mk
-+
-+else
-+
-+all: no_py3_warning
-+
-+no_py3_warning:
-+	@echo "Missing python3. This test will be skipped."
-+
-+endif
-\ No newline at end of file
-diff --git a/tools/testing/selftests/boot-time/bootconfig b/tools/testing/selftests/boot-time/bootconfig
-new file mode 100644
-index 000000000000..e4b89a33b7a3
---- /dev/null
-+++ b/tools/testing/selftests/boot-time/bootconfig
-@@ -0,0 +1,15 @@
-+ftrace.event {
-+    synthetic.initcall_latency {
-+        # Synthetic event to record initcall latency, start, and end times
-+        fields = "unsigned long func", "u64 lat", "u64 start", "u64 end"
-+        actions = "hist:keys=func.sym,start,end:vals=lat:sort=lat"
-+    }
-+    initcall.initcall_start {
-+        # Capture the start time (ts0) when initcall starts
-+        actions = "hist:keys=func:ts0=common_timestamp.usecs"
-+    }
-+    initcall.initcall_finish {
-+        # Capture the end time, calculate latency, and trigger synthetic event
-+        actions = "hist:keys=func:lat=common_timestamp.usecs-$ts0:start=$ts0:end=common_timestamp.usecs:onmatch(initcall.initcall_start).initcall_latency(func,$lat,$start,$end)"
-+    }
-+}
-\ No newline at end of file
-diff --git a/tools/testing/selftests/boot-time/config b/tools/testing/selftests/boot-time/config
-new file mode 100644
-index 000000000000..bcb646ec3cd8
---- /dev/null
-+++ b/tools/testing/selftests/boot-time/config
-@@ -0,0 +1,6 @@
-+CONFIG_TRACING=y
-+CONFIG_BOOTTIME_TRACING=y
-+CONFIG_BOOT_CONFIG_EMBED=y
-+CONFIG_BOOT_CONFIG_EMBED_FILE="tools/testing/selftests/boot-time/bootconfig"
-+CONFIG_SYNTH_EVENTS=y
-+CONFIG_HIST_TRIGGERS=y
-\ No newline at end of file
-diff --git a/tools/testing/selftests/boot-time/test_boot_time.py b/tools/testing/selftests/boot-time/test_boot_time.py
-new file mode 100755
-index 000000000000..556dacf04b6d
---- /dev/null
-+++ b/tools/testing/selftests/boot-time/test_boot_time.py
-@@ -0,0 +1,265 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (c) 2024 Collabora Ltd
-+#
-+# This script reads the
-+# /sys/kernel/debug/tracing/events/synthetic/initcall_latency/hist file,
-+# extracts function names and timings, and compares them against reference
-+# timings provided in an input JSON file to identify significant boot
-+# slowdowns.
-+# The script operates in two modes:
-+# - Generate Mode: parses initcall timings from the current kernel's ftrace
-+#   event histogram and generates a JSON reference file with function
-+#   names, start times, end times, and latencies.
-+# - Test Mode: compares current initcall timings against the reference
-+#   file, allowing users to define a maximum allowed difference between the
-+#   values (delta). Users can also apply custom delta thresholds for
-+#   specific initcalls using regex-based overrides. The comparison can be
-+#   done on latency, start, or end times.
-+#
-+
-+import os
-+import sys
-+import argparse
-+import gzip
-+import json
-+import re
-+import subprocess
-+
-+this_dir = os.path.dirname(os.path.realpath(__file__))
-+sys.path.append(os.path.join(this_dir, "../kselftest/"))
-+
-+import ksft
-+
-+def load_reference_from_json(file_path):
-+    """
-+    Load reference data from a JSON file and returns the parsed data.
-+    @file_path: path to the JSON file.
-+    """
-+
-+    try:
-+        with open(file_path, 'r', encoding="utf-8") as file:
-+            return json.load(file)
-+    except FileNotFoundError:
-+        ksft.print_msg(f"Error: File {file_path} not found.")
-+        ksft.exit_fail()
-+    except json.JSONDecodeError:
-+        ksft.print_msg(f"Error: Failed to decode JSON from {file_path}.")
-+        ksft.exit_fail()
-+
-+
-+def mount_debugfs(path):
-+    """
-+    Mount debugfs at the specified path if it is not already mounted.
-+    @path: path where debugfs should be mounted
-+    """
-+    # Check if debugfs is already mounted
-+    with open('/proc/mounts', 'r', encoding="utf-8") as mounts:
-+        for line in mounts:
-+            if 'debugfs' in line and path in line:
-+                print(f"debugfs is already mounted at {path}")
-+                return True
-+
-+    # Mount debugfs
-+    try:
-+        subprocess.run(['mount', '-t', 'debugfs', 'none', path], check=True)
-+        return True
-+    except subprocess.CalledProcessError as e:
-+        print(f"Failed to mount debugfs: {e.stderr}")
-+        return False
-+
-+
-+def ensure_unique_function_name(func, initcall_entries):
-+    """
-+    Ensure the function name is unique by appending a suffix if necessary.
-+    @func: the original function name.
-+    @initcall_entries: a dictionary containing parsed initcall entries.
-+    """
-+    i = 2
-+    base_func = func
-+    while func in initcall_entries:
-+        func = f'{base_func}[{i}]'
-+        i += 1
-+    return func
-+
-+
-+def parse_initcall_latency_hist():
-+    """
-+    Parse the ftrace histogram for the initcall_latency event, extracting
-+    function names, start times, end times, and latencies. Return a
-+    dictionary where each entry is structured as follows:
-+    {
-+        <function symbolic name>: {
-+            "start": <start time>,
-+            "end": <end time>,
-+            "latency": <latency>
-+        }
-+    }
-+    """
-+
-+    pattern = re.compile(r'\{ func: \[\w+\] ([\w_]+)\s*, start: *(\d+), end: *(\d+) \} hitcount: *\d+  lat: *(\d+)')
-+    initcall_entries = {}
-+
-+    try:
-+        with open('/sys/kernel/debug/tracing/events/synthetic/initcall_latency/hist', 'r', encoding="utf-8") as hist_file:
-+            for line in hist_file:
-+                match = pattern.search(line)
-+                if match:
-+                    func = match.group(1).strip()
-+                    start = int(match.group(2))
-+                    end = int(match.group(3))
-+                    latency = int(match.group(4))
-+
-+                    # filter out unresolved names
-+                    if not func.startswith("0x"):
-+                        func = ensure_unique_function_name(func, initcall_entries)
-+
-+                        initcall_entries[func] = {
-+                            "start": start,
-+                            "end": end,
-+                            "latency": latency
-+                        }
-+    except FileNotFoundError:
-+        print("Error: Histogram file not found.")
-+
-+    return initcall_entries
-+
-+
-+def compare_initcall_list(ref_initcall_entries, cur_initcall_entries):
-+    """
-+    Compare the current list of initcall functions against the reference
-+    file. Print warnings if there are unique entries in either.
-+    @ref_initcall_entries: reference initcall entries.
-+    @cur_initcall_entries: current initcall entries.
-+    """
-+    ref_entries = set(ref_initcall_entries.keys())
-+    cur_entries = set(cur_initcall_entries.keys())
-+
-+    unique_to_ref = ref_entries - cur_entries
-+    unique_to_cur = cur_entries - ref_entries
-+
-+    if (unique_to_ref):
-+        ksft.print_msg(
-+            f"Warning: {list(unique_to_ref)} not found in current data. Consider updating reference file.")
-+    if unique_to_cur:
-+        ksft.print_msg(
-+            f"Warning: {list(unique_to_cur)} not found in reference data. Consider updating reference file.")
-+
-+
-+def run_test(ref_file_path, delta, overrides, mode):
-+    """
-+    Run the test comparing the current timings with the reference values.
-+    @ref_file_path: path to the JSON file containing reference values.
-+    @delta: default allowed difference between reference and current
-+    values.
-+    @overrides: override rules in the form of regex:threshold.
-+    @mode: the comparison mode (either 'start', 'end', or 'latency').
-+    """
-+
-+    ref_data = load_reference_from_json(ref_file_path)
-+
-+    ref_initcall_entries = ref_data['data']
-+    cur_initcall_entries = parse_initcall_latency_hist()
-+
-+    compare_initcall_list(ref_initcall_entries, cur_initcall_entries)
-+
-+    ksft.set_plan(len(ref_initcall_entries))
-+
-+    for func_name in ref_initcall_entries:
-+        effective_delta = delta
-+        for regex, override_delta in overrides.items():
-+            if re.match(regex, func_name):
-+                effective_delta = override_delta
-+                break
-+        if (func_name in cur_initcall_entries):
-+            ref_metric = ref_initcall_entries[func_name].get(mode)
-+            cur_metric = cur_initcall_entries[func_name].get(mode)
-+            if (cur_metric > ref_metric and (cur_metric - ref_metric) >= effective_delta):
-+                ksft.test_result_fail(func_name)
-+                ksft.print_msg(f"'{func_name}' {mode} differs by "
-+                               f"{(cur_metric - ref_metric)} usecs.")
-+            else:
-+                ksft.test_result_pass(func_name)
-+        else:
-+            ksft.test_result_skip(func_name)
-+
-+
-+def generate_reference_file(file_path):
-+    """
-+    Generate a reference file in JSON format, containing kernel metadata
-+    and initcall timing data.
-+    @file_path: output file path.
-+    """
-+    metadata = {}
-+
-+    config_file = "/proc/config.gz"
-+    if os.path.isfile(config_file):
-+        with gzip.open(config_file, "rt", encoding="utf-8") as f:
-+            config = f.read()
-+            metadata["config"] = config
-+
-+    metadata["version"] = os.uname().release
-+
-+    cmdline_file = "/proc/cmdline"
-+    if os.path.isfile(cmdline_file):
-+        with open(cmdline_file, "r", encoding="utf-8") as f:
-+            cmdline = f.read().strip()
-+            metadata["cmdline"] = cmdline
-+
-+    ref_data = {
-+        "metadata": metadata,
-+        "data": parse_initcall_latency_hist(),
-+    }
-+
-+    with open(file_path, "w", encoding='utf-8') as f:
-+        json.dump(ref_data, f, indent=4)
-+        print(f"Generated {file_path}")
-+
-+
-+if __name__ == "__main__":
-+    parser = argparse.ArgumentParser(
-+        description="")
-+
-+    subparsers = parser.add_subparsers(dest='mode', required=True, help='Choose between generate or test modes')
-+
-+    generate_parser = subparsers.add_parser('generate', help="Generate a reference file")
-+    generate_parser.add_argument('out_ref_file', nargs='?', default='reference_initcall_timings.json',
-+                                 help='Path to output JSON reference file (default: reference_initcall_timings.json)')
-+
-+    compare_parser = subparsers.add_parser('test', help='Test against a reference file')
-+    compare_parser.add_argument('in_ref_file', help='Path to JSON reference file')
-+    compare_parser.add_argument(
-+        'delta', type=int, help='Maximum allowed delta between the current and the reference timings (usecs)')
-+    compare_parser.add_argument('--override', '-o', action='append', type=str,
-+                                help="Specify regex-based rules as regex:delta (e.g., '^acpi_.*:50')")
-+    compare_parser.add_argument('--mode', '-m', default='latency', choices=[
-+                                'start', 'end', 'latency'],
-+                                help="Comparison mode: 'latency' (default) for latency, 'start' for start times, or 'end' for end times.")
-+
-+    args = parser.parse_args()
-+
-+    if args.mode == 'generate':
-+        generate_reference_file(args.out_ref_file)
-+        sys.exit(0)
-+
-+    # Process overrides
-+    overrides = {}
-+    if args.override:
-+        for override in args.override:
-+            try:
-+                pattern, delta = override.split(":")
-+                overrides[pattern] = int(delta)
-+            except ValueError:
-+                print(f"Invalid override format: {override}. Expected format is 'regex:delta'.")
-+                sys.exit(1)
-+
-+    # Ensure debugfs is mounted
-+    if not mount_debugfs("/sys/kernel/debug"):
-+        ksft.exit_fail()
-+
-+    ksft.print_header()
-+
-+    run_test(args.in_ref_file, args.delta, overrides, args.mode)
-+
-+    ksft.finished()
+---
+Matteo Martelli (5):
+      iio: core: add read_avail_release_resource callback to fix race
+      iio: consumers: copy/release available info from producer to fix race
+      iio: pac1921: use read_avail+release APIs instead of custom ext_info
+      iio: ad7192: copy/release available filter frequencies to fix race
+      iio: as73211: copy/release available integration times to fix race
+
+ drivers/iio/adc/ad7192.c               |  22 +++++-
+ drivers/iio/adc/pac1921.c              | 128 ++++++++++++---------------------
+ drivers/iio/afe/iio-rescale.c          |   8 +++
+ drivers/iio/dac/dpot-dac.c             |   8 +++
+ drivers/iio/industrialio-core.c        |  14 +++-
+ drivers/iio/inkern.c                   |  34 +++++++--
+ drivers/iio/light/as73211.c            |  25 +++++--
+ drivers/iio/multiplexer/iio-mux.c      |   8 +++
+ drivers/power/supply/ingenic-battery.c |   4 +-
+ include/linux/iio/consumer.h           |   4 +-
+ include/linux/iio/iio.h                |   4 ++
+ 11 files changed, 158 insertions(+), 101 deletions(-)
+---
+base-commit: c3e9df514041ec6c46be83801b1891392f4522f7
+change-id: 20240802-iio-read-avail-release-cb3d2a1e1b98
+
+Best regards,
 -- 
-2.30.2
+Matteo Martelli <matteomartelli3@gmail.com>
 
 
