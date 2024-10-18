@@ -1,251 +1,252 @@
-Return-Path: <linux-kernel+bounces-371925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2519A4234
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:21:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CC19A423A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1321F27E8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:21:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60BA8288774
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDB22022FE;
-	Fri, 18 Oct 2024 15:21:39 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E3E2010E6;
+	Fri, 18 Oct 2024 15:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="AIZnqn0c"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1042022E2;
-	Fri, 18 Oct 2024 15:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567581D7989;
+	Fri, 18 Oct 2024 15:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729264899; cv=none; b=QkBkmZoWs/KjCz/2Ou8hbz5dKXPJtz1axbV5m/vAkGcaOorYgHiY/tXa6BtmZ3b5CwTxO1z7ti+d0/1RawZpK+Zo9sSI0AZd/yP7XvgiI4y7DtOHj3wR6CyfSJGTOPZNUnK1WNTyhvLECdRCbueAJv2TdfQZiDKDmSkoMZkrzRU=
+	t=1729264962; cv=none; b=bh2Icj4EGlLfs3JVUDzc34f9j/pJ1SK3QwfFDA/JOHmU/ISC4/+1uK6YJLWja+a2gRr17yx9jrvT8SzV+P7ZtfBR0d7oYmAA0mkYaSdX3L4H7KArtSVrLpCgp3sYWtKzXvOapfHZYrB9sb2oI8o5aybt/DdjoEQVFoHOoU21Qbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729264899; c=relaxed/simple;
-	bh=Eo5wuFuRpaLEIgjilNUa0Gym27FY4otmWggnMJqNR/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NvRDeQqNy/dKphHRaQ0zBFWKYf163x1nNiysrwg+h0Aw99tupMsas+5Sd+OjfVxIhjvWBBGuXiNrMHfKgQgQ0q9c/+ETlCHguQPCPjD4hc1fF9tZDyas6NVFQjsAtMJHSvkLAX8b3hqSS7FgqHZJJvGcYvX1MMP5FBVh4SJJprs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3386C4CEC5;
-	Fri, 18 Oct 2024 15:21:37 +0000 (UTC)
-Date: Fri, 18 Oct 2024 11:22:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tatsuya S <tatsuya.s2862@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ftrace: Fix function name for trampoline
-Message-ID: <20241018112203.75307abe@gandalf.local.home>
-In-Reply-To: <20241012124152.2078-1-tatsuya.s2862@gmail.com>
-References: <20241012124152.2078-1-tatsuya.s2862@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729264962; c=relaxed/simple;
+	bh=SSpKaVaCX27nL5SxgyzizMtsMVImkADVzoBCLGb09Mk=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
+	 In-Reply-To:References; b=CYZ83zziAZhGG6eI/nCyNpIdeosSbVn+5UNBNUgcl3hiF2lP37g/kDk3RDc8R1xndcf9GJSv9YQ8erIUBGPtShPeKsvP5wr1qGLsBkdRWsfe+lJkJFfCmcVCPqLsnL7hVDJZUq+k24bv+pcCQ21NHUKWttzob+oiA5lrdnuHRnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=AIZnqn0c; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1729264937; x=1729869737; i=frank-w@public-files.de;
+	bh=nYO/ZWwzw37Yw09J81DGKU8898+LB3M5uGlP4gdXjqU=;
+	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
+	 Content-Type:Date:In-Reply-To:References:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=AIZnqn0cRCQTHsnWPwGY1EisV+fQDC0WkiPE76y2Ze3JfwdCfNLWcV1UeGe0dkSx
+	 MCFIYCdol7BqAj4jPprgIaHdwu5oXu9zorbcIdKWWB4oQCHwKjmf51gPGVc7uBWh2
+	 G6p9cqAImrD0P8jQEB0MyvIhuNgtv0eUjn4d9mBftkyYojyrAehCA8VveUcFSb1+y
+	 SbTeeTLGoUin0QcjgXIk407gBmz0uOo00yRxVE9T8SBui4ihHAuPI9wQF8fCQThb2
+	 CiL9chUWVUaUZNeEHz5EIvzbFwOZ+FX2KGy37DfsBC7qhmBG9NVDF2MRSU2eVHe0h
+	 m42Bc5iH+KM/Bp0JMA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [217.61.156.70] ([217.61.156.70]) by web-mail.gmx.net
+ (3c-app-gmx-bs21.server.lan [172.19.170.73]) (via HTTP); Fri, 18 Oct 2024
+ 17:22:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Message-ID: <trinity-c4ba2a12-a350-4681-b2f5-e04c27bb3630-1729264937213@3c-app-gmx-bs21>
+From: Frank Wunderlich <frank-w@public-files.de>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <linux@fw-web.de>, Linus Walleij
+ <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang
+ <sean.wang@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ daniel@makrotopia.org, john@phrozen.org, ansuelsmth@gmail.com,
+ eladwf@gmail.com, Sam Shih <sam.shih@mediatek.com>,
+ =?UTF-8?Q?Ar=C4=B1n=C3=A7_=C3=9CNAL?= <arinc.unal@arinc9.com>
+Subject: Aw: Re: [PATCH v4 2/4] pinctrl: mediatek: add MT7988 pinctrl driver
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 18 Oct 2024 17:22:17 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <d1a9f533-3a9e-47c2-9476-c54653b56e68@collabora.com>
+References: <20241009165222.5670-1-linux@fw-web.de>
+ <20241009165222.5670-3-linux@fw-web.de>
+ <d1a9f533-3a9e-47c2-9476-c54653b56e68@collabora.com>
+Content-Transfer-Encoding: quoted-printable
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:LhGHiJlaXI887Ob46HR55sDLtu+gghtsz7L1HjmF/g2v//30/Su9ziz6UJFD51KjA2b8h
+ MOOtaYbkh3YWrl752DWj6BWxAFq8n1ffWe1cBnFDAM2BYoGsqLUQyjEYDoiBYeNeS0j0L2FoycJP
+ NI/giYUHQ3RXj8LSSzb6KrhJCW/iUCcqWXxgODtLaVcAW4+hxlfNa/vG0afkmt+P5mIP3PRwigvR
+ zhFWPV0jluHR8dOWX31a0QHdq+bE01ldfDW47Xqhu6RA91qmFb2Ky/I2cdb4hrWXKQLY4aUPH0gU
+ BI=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:L2sIoFh25S4=;5fTiyybGU9Ehmit0sEVxGFXQvqP
+ y3IlCKOyyZpabjtj9f2QPKH7uH46/p3Q2cOdcnaDaXt93hhjnT7hCIiFFvF5DDxovcPxna20w
+ JgH1Ejg+BpzEzY7GnLwT56LNVS29KJ1oF4pC5n2wd2Nr9NvOHMbIE5BwlWdKUXWX6OKw/PbBF
+ t2hvXCuWnXpVdvYFCmGSP4p4fWXQVl5RWVlxRJ1rJUYockZ9EppNPTz0pe3t/VillfznQ3tfV
+ yG9GdhNneph7U5oY27kRZ83dgQjasFTgAQu5faRdqphxWft65wA/bK5zsNFgH8FPXM7RrOs+v
+ b5GQLZUjerUHE+JjGP86/Yhqdc+yjoum7L8tCiPFu0c3F2kT1ZiQXhb9ULlfpg2vSbZqa1Gnh
+ CDRp+66GtUcfnh8nqSBEyUdy4u1jI5JuBEYUtq1l8a0KA+Bp15Y9/2SiOuWvB9acDtLwgeWwz
+ 4kCEqW2MtCoBKGur2B0nOe3j776xlyRyiUPn6auPo26XvN1sStqZP6NA0Za2hC/tlGUSOG/Fk
+ kRNwTyovrIkm9I9vs+aGlw9Ee8ThP4Rg1WCTU5qHc2WzgLA5R/Oxzq2iZINTX7SSvINivfMJP
+ /wDVN2dfnem44VLEq5dV81w9aiDIaalEHThdfkGRymqNDFGMsFzkB4R+vTM7V3Y6T8/aitspT
+ fZog3nDkTZ5e6nPCxMmhS0wSo/pj1AhqPgGV3T3V0g==
 
-On Sat, 12 Oct 2024 21:41:51 +0900
-Tatsuya S <tatsuya.s2862@gmail.com> wrote:
+Hi Angelo
 
-> The issue that unrelated function name is shown on stack trace like
-> following even though it should be trampoline code address is caused by
-> the creation of trampoline code in the area where .init.text section
-> of module was freed after module is loaded.
-> 
-> bash-1344    [002] .....    43.644608: <stack trace>
->   => (MODULE INIT FUNCTION)
->   => vfs_write
->   => ksys_write
->   => do_syscall_64
->   => entry_SYSCALL_64_after_hwframe  
-> 
-> To resolve this, when function address of stack trace entry is in
-> trampoline, output without looking up symbol name.
-> 
-> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
-> ---
-> V1 -> V2: Instead of checking trampoline when displaying "trace" results,
-> 	  it stores trampoline when generating the stacktrace entry.
+> Gesendet: Donnerstag, 10=2E Oktober 2024 um 14:28 Uhr
+> Betreff: Re: [PATCH v4 2/4] pinctrl: mediatek: add MT7988 pinctrl driver
+>
+> Il 09/10/24 18:52, Frank Wunderlich ha scritto:
+> > From: Daniel Golle <daniel@makrotopia=2Eorg>
+> >=20
+> > Add pinctrl driver for the MediaTek MT7988 SoC=2E
+> >=20
+> > Signed-off-by: Sam Shih <sam=2Eshih@mediatek=2Ecom>
+> > Signed-off-by: Daniel Golle <daniel@makrotopia=2Eorg>
+> > [correctly initialise for the function_desc structure]
+> > Signed-off-by: Ar=C4=B1n=C3=A7 =C3=9CNAL <arinc=2Eunal@arinc9=2Ecom>
+> > Signed-off-by: Frank Wunderlich <frank-w@public-files=2Ede>
+> > ---
+> >   drivers/pinctrl/mediatek/Kconfig          |    7 +
+> >   drivers/pinctrl/mediatek/Makefile         |    1 +
+> >   drivers/pinctrl/mediatek/pinctrl-mt7988=2Ec | 1526 +++++++++++++++++=
+++++
+> >   3 files changed, 1534 insertions(+)
+> >   create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7988=2Ec
+> >=20
+> > diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediat=
+ek/Kconfig
+> > index 7af287252834=2E=2E952110c783d4 100644
+> > --- a/drivers/pinctrl/mediatek/Kconfig
+> > +++ b/drivers/pinctrl/mediatek/Kconfig
+> > @@ -187,6 +187,13 @@ config PINCTRL_MT7986
+> >   	default ARM64 && ARCH_MEDIATEK
+> >   	select PINCTRL_MTK_MOORE
+> >  =20
+> > +config PINCTRL_MT7988
+> > +	bool "Mediatek MT7988 pin control"
+> > +	depends on OF
+> > +	depends on ARM64 || COMPILE_TEST
+> > +	default ARM64 && ARCH_MEDIATEK
+> > +	select PINCTRL_MTK_MOORE
+> > +
+> >   config PINCTRL_MT8167
+> >   	bool "MediaTek MT8167 pin control"
+> >   	depends on OF
+> > diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/media=
+tek/Makefile
+> > index 680f7e8526e0=2E=2E2b47ce030b54 100644
+> > --- a/drivers/pinctrl/mediatek/Makefile
+> > +++ b/drivers/pinctrl/mediatek/Makefile
+> > @@ -27,6 +27,7 @@ obj-$(CONFIG_PINCTRL_MT7623)		+=3D pinctrl-mt7623=2E=
+o
+> >   obj-$(CONFIG_PINCTRL_MT7629)		+=3D pinctrl-mt7629=2Eo
+> >   obj-$(CONFIG_PINCTRL_MT7981)		+=3D pinctrl-mt7981=2Eo
+> >   obj-$(CONFIG_PINCTRL_MT7986)		+=3D pinctrl-mt7986=2Eo
+> > +obj-$(CONFIG_PINCTRL_MT7988)		+=3D pinctrl-mt7988=2Eo
+> >   obj-$(CONFIG_PINCTRL_MT8167)		+=3D pinctrl-mt8167=2Eo
+> >   obj-$(CONFIG_PINCTRL_MT8173)		+=3D pinctrl-mt8173=2Eo
+> >   obj-$(CONFIG_PINCTRL_MT8183)		+=3D pinctrl-mt8183=2Eo
+> > diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7988=2Ec b/drivers/pin=
+ctrl/mediatek/pinctrl-mt7988=2Ec
+> > new file mode 100644
+> > index 000000000000=2E=2E5479f4fa47a7
+> > --- /dev/null
+> > +++ b/drivers/pinctrl/mediatek/pinctrl-mt7988=2Ec
+> > @@ -0,0 +1,1526 @@
+> > +// SPDX-License-Identifier: GPL-2=2E0
+> > +/*
+> > + * The MT7988 driver based on Linux generic pinctrl binding=2E
+> > + *
+> > + * Copyright (C) 2020 MediaTek Inc=2E
+> > + * Author: Sam Shih <sam=2Eshih@mediatek=2Ecom>
+> > + */
+> > +
+> > +#include "pinctrl-moore=2Eh"
+> > +
+> > +enum MT7988_PINCTRL_REG_PAGE {
+>=20
+> Lowercase name for the enumeration, please=2E
 
-I'm sorry. I guess I wasn't clear. I meant to do the tests in the recording
-of the trampoline, and do not add them or replace them. I rather not add
-this meta data to the ring buffer.
+will do in next version
 
-> 
->  kernel/trace/trace.c         | 24 ++++++++++++++++--------
->  kernel/trace/trace_entries.h |  2 ++
->  kernel/trace/trace_output.c  |  7 +++++++
->  3 files changed, 25 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 1c69ca1f1088..92a8e76a0cd7 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -988,7 +988,8 @@ static inline void trace_access_lock_init(void)
->  #endif
->  
->  #ifdef CONFIG_STACKTRACE
-> -static void __ftrace_trace_stack(struct trace_buffer *buffer,
-> +static void __ftrace_trace_stack(struct trace_array *tr,
-> +				 struct trace_buffer *buffer,
->  				 unsigned int trace_ctx,
->  				 int skip, struct pt_regs *regs);
->  static inline void ftrace_trace_stack(struct trace_array *tr,
-> @@ -997,7 +998,8 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
->  				      int skip, struct pt_regs *regs);
->  
->  #else
-> -static inline void __ftrace_trace_stack(struct trace_buffer *buffer,
-> +static inline void __ftrace_trace_stack(struct trace_array *tr,
-> +					struct trace_buffer *buffer,
->  					unsigned int trace_ctx,
->  					int skip, struct pt_regs *regs)
->  {
-> @@ -2928,7 +2930,8 @@ struct ftrace_stacks {
->  static DEFINE_PER_CPU(struct ftrace_stacks, ftrace_stacks);
->  static DEFINE_PER_CPU(int, ftrace_stack_reserve);
->  
-> -static void __ftrace_trace_stack(struct trace_buffer *buffer,
-> +static void __ftrace_trace_stack(struct trace_array *tr,
-> +				 struct trace_buffer *buffer,
->  				 unsigned int trace_ctx,
->  				 int skip, struct pt_regs *regs)
->  {
-> @@ -2986,6 +2989,11 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
->  	memcpy(&entry->caller, fstack->calls,
->  	       flex_array_size(entry, caller, nr_entries));
->  
-> +#ifdef CONFIG_DYNAMIC_FTRACE
-> +	entry->trampoline = tr->ops ? tr->ops->trampoline : 0;
-> +	entry->trampoline_size = tr->ops ? tr->ops->trampoline_size : 0;
-> +#endif
-> +
->  	if (!call_filter_check_discard(call, entry, buffer, event))
->  		__buffer_unlock_commit(buffer, event);
->  
+> > +	GPIO_BASE,
+> > +	IOCFG_TR_BASE,
+> > +	IOCFG_BR_BASE,
+> > +	IOCFG_RB_BASE,
+> > +	IOCFG_LB_BASE,
+> > +	IOCFG_TL_BASE,
+> > +};
+> > +
+>=20
+> =2E=2Esnip=2E=2E
+>=20
+> > +static const struct mtk_eint_hw mt7988_eint_hw =3D {
+> > +	=2Eport_mask =3D 7,
+> > +	=2Eports =3D 7,
+> > +	=2Eap_num =3D ARRAY_SIZE(mt7988_pins),
+> > +	=2Edb_cnt =3D 16,
+>=20
+> Are you sure that the EINT controller in this SoC doesn't have the
+> DBNC_SET and DBNC_CLR registers?
+>=20
+> Another way of asking the same thing: are you sure that this SoC does
+> not support interrupt debounce?
 
-I meant here we can add something like:
+Got information from MTK, that hw debounce is only available for pins 0 to=
+ 15,
+and does not support pins with numbers 16 or higher and definition here is=
+ correct=2E
 
-/* Make the marker not exactly -1, but max int to be something somewhat unique */
-#define FTRACE_TRAMPOLINE_MARKER	((unsigned long)MAX_INT)
+> > +};
+> > +
+> > +static const char * const mt7988_pinctrl_register_base_names[] =3D {
+> > +	"gpio",	 "iocfg_tr", "iocfg_br",
+> > +	"iocfg_rb", "iocfg_lb", "iocfg_tl",
+> > +};
+> > +
+> > +static struct mtk_pin_soc mt7988_data =3D {
+> > +	=2Ereg_cal =3D mt7988_reg_cals,
+> > +	=2Epins =3D mt7988_pins,
+> > +	=2Enpins =3D ARRAY_SIZE(mt7988_pins),
+> > +	=2Egrps =3D mt7988_groups,
+> > +	=2Engrps =3D ARRAY_SIZE(mt7988_groups),
+> > +	=2Efuncs =3D mt7988_functions,
+> > +	=2Enfuncs =3D ARRAY_SIZE(mt7988_functions),
+> > +	=2Eeint_hw =3D &mt7988_eint_hw,
+> > +	=2Egpio_m =3D 0,
+> > +	=2Eies_present =3D false,
+> > +	=2Ebase_names =3D mt7988_pinctrl_register_base_names,
+> > +	=2Enbase_names =3D ARRAY_SIZE(mt7988_pinctrl_register_base_names),
+> > +	=2Ebias_disable_set =3D mtk_pinconf_bias_disable_set,
+> > +	=2Ebias_disable_get =3D mtk_pinconf_bias_disable_get,
+> > +	=2Ebias_set =3D mtk_pinconf_bias_set,
+> > +	=2Ebias_get =3D mtk_pinconf_bias_get,
+> > +	=2Epull_type =3D mt7988_pull_type,
+> > +	=2Ebias_set_combo =3D mtk_pinconf_bias_set_combo,
+> > +	=2Ebias_get_combo =3D mtk_pinconf_bias_get_combo,
+> > +	=2Edrive_set =3D mtk_pinconf_drive_set_rev1,
+> > +	=2Edrive_get =3D mtk_pinconf_drive_get_rev1,
+> > +	=2Eadv_pull_get =3D mtk_pinconf_adv_pull_get,
+> > +	=2Eadv_pull_set =3D mtk_pinconf_adv_pull_set,
+> > +};
+> > +
+> > +static const struct of_device_id mt7988_pinctrl_of_match[] =3D {
+>=20
+> Please compress that to a single line=2E
+>=20
+> { =2Ecompatible =3D "mediatek,mt7988-pinctrl" },
 
+will do in next version
 
-	if (regs) {
-		nr_entries = stack_trace_save_regs(regs, fstack->calls,
-						   size, skip);
-	} else {
-		nr_entries = stack_trace_save(fstack->calls, size, skip);
-	}
+> Cheers,
+> Angelo
 
-+	if (tr->ops && tr->ops->trampoline) {
-+		unsigned long tramp_start = tr->ops->trampoline;
-+		unsigned long tramp_end = tramp_start + tr->ops->trampoline_size;
-+		unsigned long *calls = fstack->calls;
-+
-+		/* Mark any trampolines */
-+		for (int i = 0; i < nr_entries; i++) {
-+			if (calls[i] >= tramp_start && calls[i] < tramp_end) {
-+				calls[i] = FTRACE_TRAMPOLINE_MARKER;
-+		}
-+	}
-+
-	event = __trace_buffer_lock_reserve(buffer, TRACE_STACK,
-				    struct_size(entry, caller, nr_entries),
-				    trace_ctx);
-	if (!event)
-		goto out;
-	entry = ring_buffer_event_data(event);
-
-	entry->size = nr_entries;
-	memcpy(&entry->caller, fstack->calls,
-	       flex_array_size(entry, caller, nr_entries));
-
-
-> @@ -3005,7 +3013,7 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
->  	if (!(tr->trace_flags & TRACE_ITER_STACKTRACE))
->  		return;
->  
-> -	__ftrace_trace_stack(buffer, trace_ctx, skip, regs);
-> +	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, regs);
->  }
->  
->  void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
-> @@ -3014,7 +3022,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
->  	struct trace_buffer *buffer = tr->array_buffer.buffer;
->  
->  	if (rcu_is_watching()) {
-> -		__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
-> +		__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
->  		return;
->  	}
->  
-> @@ -3031,7 +3039,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
->  		return;
->  
->  	ct_irq_enter_irqson();
-> -	__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
-> +	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
->  	ct_irq_exit_irqson();
->  }
->  
-> @@ -3048,8 +3056,8 @@ void trace_dump_stack(int skip)
->  	/* Skip 1 to skip this function. */
->  	skip++;
->  #endif
-> -	__ftrace_trace_stack(printk_trace->array_buffer.buffer,
-> -			     tracing_gen_ctx(), skip, NULL);
-> +	__ftrace_trace_stack(printk_trace, printk_trace->array_buffer.buffer,
-> +				tracing_gen_ctx(), skip, NULL);
->  }
->  EXPORT_SYMBOL_GPL(trace_dump_stack);
->  
-> diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-> index c47422b20908..81b84241e3b3 100644
-> --- a/kernel/trace/trace_entries.h
-> +++ b/kernel/trace/trace_entries.h
-> @@ -190,6 +190,8 @@ FTRACE_ENTRY(kernel_stack, stack_entry,
->  
->  	F_STRUCT(
->  		__field(	int,		size	)
-> +		__field(	unsigned long,	trampoline	)
-> +		__field(	unsigned long,	trampoline_size	)
->  		__stack_array(	unsigned long,	caller,	FTRACE_STACK_ENTRIES, size)
->  	),
->  
-> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-> index 868f2f912f28..fbd066e9c9fa 100644
-> --- a/kernel/trace/trace_output.c
-> +++ b/kernel/trace/trace_output.c
-> @@ -1246,6 +1246,13 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
->  			break;
->  
->  		trace_seq_puts(s, " => ");
-> +		if (field->trampoline && field->trampoline_size &&
-> +			(*p) + delta >= field->trampoline &&
-> +			(*p) + delta < field->trampoline + field->trampoline_size) {
-
-Then the above can simply be:
-
-		if ((*p) == FTRACE_TRAMPOLINE_MARKER) {
-			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
-			continue;
-		}
-
-since the value is useless anyway.
-
--- Steve
-
-
-> +			trace_seq_printf(s, "0x%08lx", (*p) + delta);
-> +			trace_seq_puts(s, " [FTRACE TRAMPOLINE]\n");
-> +			continue;
-> +		}
->  		seq_print_ip_sym(s, (*p) + delta, flags);
->  		trace_seq_putc(s, '\n');
->  	}
-
+regards Frank
 
