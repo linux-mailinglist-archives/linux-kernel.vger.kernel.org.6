@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-372004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C9039A432B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:04:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19ED09A432E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5076AB21271
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F52286619
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C7C200B93;
-	Fri, 18 Oct 2024 16:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC7B200BA7;
+	Fri, 18 Oct 2024 16:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uheKiSvL"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H2y9nBIa"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDCD133987
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 16:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D0E133987
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 16:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729267479; cv=none; b=b6776zJDfrzLQsam+lzgcP8BuGemgOLzzLlk9LuyVDjxvkoQ7lo7xEn6p4Aup91ugmPQrEpX2kaBcDHuhtCNWtfCk2QzxwNnPli8X6Ng9oLhoFGR0172JjVgJNl2NCnFjBoKeJhM9GPrq8R6PVBJ6BV/GJ578WmwTfp36puf+mM=
+	t=1729267546; cv=none; b=oNdbjbfQlE9W2EL1mOLJte3YrmWaPEifECgvMEVM4ziK3jnijQEUDxWOlwbjxNFlSG8kaEy7WjCPdMdlSfGlKGDJ2mWOA6VmBn+3xPlGAE0yRUtg5BLJsKNLxpnbgZ9Je/tU+z4Ry4KugLduvBbPRLYlWWCo0uH8Nee6vGcOv/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729267479; c=relaxed/simple;
-	bh=inlYmE1jkrrFn4f3Uk0ZGHGC9Ou3kuwAezYOZ+WS5/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ILvfXOdFzN4UQp0Pxoh2aIalP3MZVwpyYdd65LYIygOYYD6SoeiyCRcJ6Y6ajZ670G0cERy98nGmxTDl6iPrb2fziM+8xeOdXGDvvNVOAl1qokCGCXd7LT/JOdQVPSGooIwNfXLxU4wT8GF1rsPLIu9dm59nXFTRTc+jfafbjSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uheKiSvL; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460a8d1a9b7so253761cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:04:37 -0700 (PDT)
+	s=arc-20240116; t=1729267546; c=relaxed/simple;
+	bh=6zIz7rLqvlLD78tMosqFxFhvxskFnkIyYamCQ3zyCFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hq0DrwQ2T3IlOAjB8jKyFs8dWDj3TeqdZxNxlqBEwoEtMdWWribne/v5Imgsu7zwCkVXcDQz9GoBGmyU9q2/9hJv7yCj7nBuRmwcT7dKxJwWLkbOimvjKMpd3PetX41Io0OsIIpyXEzCG75cYZLn0dBPeoJb5vcrYpdSF5/aaGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H2y9nBIa; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb443746b8so27141501fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:05:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729267476; x=1729872276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=txzJ41KP+IG2jzYwjNeONh64Ul17CPWMb2WeMlBT1K8=;
-        b=uheKiSvLv3RBS2j+3aIR/SC5iCxT6blxyNxdn5bwGdU2+quEJRvz0bVf93OVWZkiZW
-         4HAq3nNllK6blEc8bals7SLQPtiYSm9WRpGTynb1gecndYjikg0BmbCkZ2EWiJiEYvad
-         UKX9CDTQSiXxEwU6Vc1mDKNMVJOozs/oVP2QvXXUHpuPTzNUj7mkXvpFYfPPII2z2EC2
-         ot/RqW4exjaWw6cYj7cTxoS6xii/gPf8t9i904X3YfWnr27sJ4dTT4ZGRPsbT+sn6oYj
-         KY1U/7Wwjh2sfTOh3Q6KsBuTKy+jjH8OLepnaraxZOhK/oM4TxRDbO6HYrxIR/zjSaFi
-         oR2Q==
+        d=linaro.org; s=google; t=1729267543; x=1729872343; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8lHZpTCnaSttFJL3uIXwXWK6iRmjck9Nu4C1mKRZ028=;
+        b=H2y9nBIaYobKk45t8wMYJlQKH8/e+yxoOkRZHMFB9C2En6LMwp1WzHGkkfF5RhpDVQ
+         d46Tie4/ANS8rC8sevdixK3eeqRaxUXYlkRYeydmUL5d1gXqEF/D5LBSLjiqP8BwSS/v
+         /aJwpOkbOcE7IcWtI1IQwaFChA8KejM5JajkrDN+8lZxvEaIRwJJBlpOULQ6j8D5ed2e
+         XlUMNsQ95JnifZlJGEdE+mEwKoLYOe427fCL/Z3tSvt0JZw/hnh0uIqsHEeF0gPOn2UC
+         nrmb+ZldzXeKpN1SyI7FZaVPPGfQ76Q0zDHkZwUwLIr09+p+pOOn8Tt2pMLjKSRrweVN
+         De4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729267476; x=1729872276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=txzJ41KP+IG2jzYwjNeONh64Ul17CPWMb2WeMlBT1K8=;
-        b=Do69Su+7/Fx3yCpacJKJGIlSFMa8mtSSGJV8pUBEWlvfiEgO9HI+boNnJ8U0eSF51l
-         OFJQ9dEGpVInS9B9yxHsxpTCcBWWHr26KZzDu9amvvwoywlC/hlcyoPIw6+zVocXo4cV
-         TY7qPFL052yJLqJ5attcM0vQYZdR2P0jjNSNDKeH9A1rwch1ATha1+h9PcprU1gv4QuK
-         5MLAO2V9S9WFInfOajANsaaJw66TOo8d0rJ7W2dz6MtxHpqEE00qToggUinOW/rS6fAD
-         f53non3hbnThlcM0m3sG31HuJFgh8mogI8TWI3F/T34f/HL6nbWfsKMx9Mk1XF9sxXsX
-         oo4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWu6CwEvA+gZHgWnCogYIkTDoPiMu0HkdVAPFvDsso2zAzfiQOKBQprErHVYeoYPwBj9t1oRfHWMVVZNrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN/WXo5fx63Fxhjv682p+R4bVyAJn21EXd5jfuYjYMoVCzQpkb
-	iITx0SW4lYpLuvJid+blRcqfGt+/ffKSGgy7vFTsuHRG5cjCJVepYlI9UkJmfa1HqqSOBe8r4Es
-	E7Qi5ynFERz+ilHfagOHOjV9qPVzJBnj9/f3u
-X-Google-Smtp-Source: AGHT+IFQG+EGiekTkeB05IxiF0O0r7KvtKqW4HJXohUooeRpV2q0MrbuBuWAeTds5JJTI5Aqfm71otuz2Ld2rT6smr0=
-X-Received: by 2002:a05:622a:7b0a:b0:460:46a8:9e67 with SMTP id
- d75a77b69052e-460ad735ad8mr3690811cf.10.1729267475834; Fri, 18 Oct 2024
- 09:04:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729267543; x=1729872343;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8lHZpTCnaSttFJL3uIXwXWK6iRmjck9Nu4C1mKRZ028=;
+        b=fsPsZbe2O/eOA9ae0QYZHzKkHtBzvDvEOaPlgKeXcsTszvszWEZ66do9zonB8n5jlb
+         iGg6ory3Mbqw2E46DmGMCjkUEaj8zhCTRwUszw8EZrR+DVWJ1cInjJrrT7uQJVBUprSB
+         DzYugXttDt7NeY5238BwEHgdgEv4Te/QYoj52tD3cNSuu00XChUJDGba/USPtFR76eFo
+         Www8F5BnKZY7+JFya/PtyJA8V7eyoDKe9jbgWY1xwqsod+hA9DknpIQY/9OpkO+4UaZV
+         T4ICBC4hUd526hrCNde2nYn7kti6U7TbH2NMRH+K75S+8J0V4YAY1iKrOztaGbPj+NNz
+         2xQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbWHSoI2WAlcaPE+E5Axt3W6Pls+NsO+PnhJLqJk5BtYTfP+/RqQENKo2NvogNLB+KHM8QZxDyY6F5e9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg5nLfNzfKi9mqlhbHkrDl8dxKcfoKdG3r0m2Z2sb6GNqVB7d4
+	5E67QyPSilPJ8Gfhk3kOO32Qe2ERJjmf1DikW/9N7qgB1bqgkkpL46A/qZ+ffks+lYrW27ibqnr
+	4k6w=
+X-Google-Smtp-Source: AGHT+IEpeWFLJ8yL29qE6iphuWnFhSa96/H/Y2vX/YZ6kUiZe2MzqHfEFttDD3Eg9ojiGCjOGWPbXw==
+X-Received: by 2002:a2e:712:0:b0:2fb:5504:7966 with SMTP id 38308e7fff4ca-2fb831e92aemr16524871fa.30.1729267542646;
+        Fri, 18 Oct 2024 09:05:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809a69f3sm2445361fa.26.2024.10.18.09.05.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 09:05:41 -0700 (PDT)
+Date: Fri, 18 Oct 2024 19:05:38 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/imx: parallel-display: add legacy bridge Kconfig
+ dependency
+Message-ID: <ccpkyf46bbfe4z4lo76kokixocgfofc4gltifnlesnvfuj4ndc@q66ke2mf5uqu>
+References: <20241015073004.4066457-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014203646.1952505-1-surenb@google.com> <20241014203646.1952505-6-surenb@google.com>
- <CAJD7tkY0zzwX1BCbayKSXSxwKEGiEJzzKggP8dJccdajsr_bKw@mail.gmail.com>
- <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com> <6a2a84f5-8474-432f-b97e-18552a9d993c@redhat.com>
- <CAJuCfpGkuaCh+PxKbzMbu-81oeEdzcfjFThoRk+-Cezf0oJWZg@mail.gmail.com>
- <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com> <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
- <ZxJcryjDUk_LzOuj@tiehlicka>
-In-Reply-To: <ZxJcryjDUk_LzOuj@tiehlicka>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 18 Oct 2024 09:04:24 -0700
-Message-ID: <CAJuCfpGV3hwCRJj6D-SnSOc+VEe5=_045R1aGJEuYCL7WESsrg@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
- refs in page flags
-To: Michal Hocko <mhocko@suse.com>
-Cc: David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org, 
-	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, mcgrof@kernel.org, 
-	rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, tglx@linutronix.de, 
-	bp@alien8.de, xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
-	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
-	yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org, 
-	iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015073004.4066457-1-arnd@kernel.org>
 
-On Fri, Oct 18, 2024 at 6:03=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
-e:
->
-> On Tue 15-10-24 08:58:59, Suren Baghdasaryan wrote:
-> > On Tue, Oct 15, 2024 at 8:42=E2=80=AFAM David Hildenbrand <david@redhat=
-.com> wrote:
-> [...]
-> > > Right, I think what John is concerned about (and me as well) is that
-> > > once a new feature really needs a page flag, there will be objection
-> > > like "no you can't, we need them for allocation tags otherwise that
-> > > feature will be degraded".
-> >
-> > I do understand your concern but IMHO the possibility of degrading a
-> > feature should not be a reason to always operate at degraded capacity
-> > (which is what we have today). If one is really concerned about
-> > possible future regression they can set
-> > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS=3Dn and keep what we have today. That'=
-s
-> > why I'm strongly advocating that we do need
-> > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS so that the user has control over how
-> > this scarce resource is used.
->
-> I really do not think users will know how/why to setup this and I wouldn'=
-t
-> even bother them thinking about that at all TBH.
->
-> This is an implementation detail. It is fine to reuse unused flags space
-> as a storage as a performance optimization but why do you want users to
-> bother with that? Why would they ever want to say N here?
+On Tue, Oct 15, 2024 at 07:29:57AM +0000, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The driver now uses the legacy bridge helper code but can be configured
+> to get built without it:
+> 
+> ERROR: modpost: "devm_imx_drm_legacy_bridge" [drivers/gpu/drm/imx/ipuv3/parallel-display.ko] undefined!
+> 
+> Add the required dependency, same as in the ldb driver.
+> 
+> Fixes: f94b9707a1c9 ("drm/imx: parallel-display: switch to imx_legacy_bridge / drm_bridge_connector")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/drm/imx/ipuv3/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-In this patch you can find a couple of warnings that look like this:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-pr_warn("With module %s there are too many tags to fit in %d page flag
-bits. Memory profiling is disabled!\n", mod->name,
-NR_UNUSED_PAGEFLAG_BITS);
-emitted when we run out of page flag bits during a module loading,
-
-pr_err("%s: alignment %lu is incompatible with allocation tag
-indexing, disable CONFIG_PGALLOC_TAG_USE_PAGEFLAGS",  mod->name,
-align);
-emitted when the arch-specific section alignment is incompatible with
-alloc_tag indexing.
-
-I'll change the first one to also specifically guide the user to
-disable CONFIG_PGALLOC_TAG_USE_PAGEFLAGS.
-When these happen, memory profiling gets disabled automatically. These
-two cases would be the main ones when the user would want to disable
-CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to keep memory profiling enabled.
-I also think when we auto-disable memory profiling at runtime like
-that, I should make /proc/allocinfo empty so that it's apparent it is
-disabled and the user does not use stale data.
-
-
-> --
-> Michal Hocko
-> SUSE Labs
+-- 
+With best wishes
+Dmitry
 
