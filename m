@@ -1,237 +1,155 @@
-Return-Path: <linux-kernel+bounces-371374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DE49A3A34
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:39:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F349A39CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF0B41C23AD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:39:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F6A91F253F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214881FF7DF;
-	Fri, 18 Oct 2024 09:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762881EF0A3;
+	Fri, 18 Oct 2024 09:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="N8Pg9fH2"
-Received: from mail-m10162.netease.com (mail-m10162.netease.com [154.81.10.162])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iZWU85ec"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DF5187858;
-	Fri, 18 Oct 2024 09:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.162
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5CE193084
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729244369; cv=none; b=GMuVNxBl8UkXexWFFt/To9/zOkazVblP6WII9kUsvmW99tHnNEJJ6wo4b2Z6d7zm2apBJFKscH5dAfuByJFfPM9KgGNaU0mTgFgDb7AAz3C9yMh2kehisfKo1NnE+fkmkde5e8Mgd/BJu7m3JfOIa6A9zjG//J1VuHmbKwqoig8=
+	t=1729243264; cv=none; b=m+Em9jSpBKsf4bBv8VeuO7H1HTnav6RUv2w4fpKvUX7mzneacyA6WtuubicaE9xqAvdnvuzh46s63AMKhhPEWRHOJ7+QmYRc/D36f08qAOtwfPTEt5XmxHmco+a2TaEEX7UPatXJ55uts+m0T7UahdY/I/AcnwSpuE23IyFoogg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729244369; c=relaxed/simple;
-	bh=Of/korwJH8MA1QMUqd3VMrVziKJ3fx5U+jFmiSPX3Sc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PyKuavutWca9N8I7Y29bKTSDe669mht5FMG05kl8cCEghoQM88WA5f8tfyYpjp7byrtTLe521SlPfmZ/dS51tCDCjZff2KybsHa2TqRSBuog+entix9cWlpPyK6/IrkI3yK5FATzdbTLKJkC64fgpH6XK/95wiyG73O/BLv0nfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=N8Pg9fH2; arc=none smtp.client-ip=154.81.10.162
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=N8Pg9fH2I7RyKLns4/qH+WJpXzhQMmW5Xb3E6dlH2BIsP6f0zxX4b/Yi1r+0ITp8ZW7+omPvAZIzNa7+4jHdQMgPGDF3ikOyBAfZwlZ6BZbEEPtO8GqEoshCs/0gcF8ValDl0qHAwG27Q8fvg8O6oeowN49NdEro8kENYXEvBuc=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=deE5f9Ret2wP45i7Ib72XRZhiMvsjcDFrcSbhhoZVEk=;
-	h=date:mime-version:subject:message-id:from;
-Received: from lintao?rock-chips.com (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with SMTP id 9901D2A06A9;
-	Fri, 18 Oct 2024 17:20:08 +0800 (CST)
-Message-ID: <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
-Date: Fri, 18 Oct 2024 17:20:08 +0800
+	s=arc-20240116; t=1729243264; c=relaxed/simple;
+	bh=2m70Uo5edm0oou27BOFno3Tc7nrR3KC/y7H2rhdo2cI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Kguve2Oxb+GImRciwZjhfFDWsSVMXczJqYqmcl6dNiTzrMd/Y+w93d2FrvvEkuCSIUn2TQrYUSVr0mNPIrSOcnEl1D/4q/5QHg1mp6HigI+OyF9fjkmFsVJ0gWx0XGc+cerrwymcBt108cOJ4wy4oM+qGVyqjGA4btoQHxQOJnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iZWU85ec; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d50fad249so1342656f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:21:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729243260; x=1729848060; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/6CJlVFCdkLnXR5mIG5TznNaMuOGXx1zBL9Ig1xKknA=;
+        b=iZWU85ecUfM5JfobrqRPohtE6Qaq+tJ4NSord7rOJxlYRdln2IuKS6HVBKTNMHDsp3
+         gmp9ghZn3PSSunfL5ExtHg0FSdVDzrfz9+RY2cSBT9cCZsM9U2wPGEu2sCP4sUvL6EAn
+         E0qB4OpnkJNeDd/y4Fy0FlS70JerECngT4o3n8UrgU62H947D4SHKJjC4tNPR/TaVJl4
+         fOhoRS+b3oihaoNNlp9VSD+sWG8lEOKwpDotonmNP5EBIxsx3P1MENKu3yPVYW7y8Kj0
+         9u1ByKHB/dhFIhnm6OEQ0MsVa1NScCVgFysJfroTCOVC7kvpNOUItbMWLORfjdiyTUqX
+         4b0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729243260; x=1729848060;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/6CJlVFCdkLnXR5mIG5TznNaMuOGXx1zBL9Ig1xKknA=;
+        b=JMI0cnXanLuvESJPivX2ve/iSPr18UdVckF6CbOPz4oqbzcrNb3/RlLJ0xmI5TkQLv
+         C1js96EzZIkkStajiIWlY+8myHTxmDxKAP7VaJkzCbU450aCaJXu4w7IKGBCEKNcZDmp
+         0ACyc/Pr/2WxS8f02l75EhTCOHBsrj2ZJGOyM2heQxzC4aCWjCFi1RvCpdYQZMosNHc0
+         wGAnLxL4ipSG6qw5BzGo221bgv36qA/zvcg8iGbenArrajS/l1GELc7D2gj/kE3Ddqt9
+         FsK9/f3WZ5JySixiQAoejK1WoJun0V06B1Xb5V/u3E1A5NsfjeNtgOsD4WYQAlMPDgiK
+         Re+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUHbWNriBMWZwP92OrNrdft6NJgStx6fgChL8SDc6tBxHVZVbwrxTJQ+nRDMKLsl6Fq634BddwFVIp4pBc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKoPe55YE0S90VYfeVwoLfAt2GmIdhvUhFUK4zxvQcM6gxn/4z
+	ZrtOyI+gyNXH1j4iWnh6WSEXLbuCr2m0JWneDKtULyhRifm6HMqpBaat8bzXAN0=
+X-Google-Smtp-Source: AGHT+IEjc8x6P1fiXZXvuy0RRWf3NASza2rMgKQJv+Xo7tziKvwCXEKE7ppPcNk2dKWu+ZlA7d9gqg==
+X-Received: by 2002:adf:9bce:0:b0:374:c3e4:d6de with SMTP id ffacd0b85a97d-37eb47693ebmr1176601f8f.41.1729243259689;
+        Fri, 18 Oct 2024 02:20:59 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:6e2b:4562:2d66:575e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf0eccbasm1390562f8f.81.2024.10.18.02.20.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 02:20:59 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,  Linus Walleij
+ <linus.walleij@linaro.org>,  Rob Herring <robh@kernel.org>,  Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Neil
+ Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  Bartosz Golaszewski
+ <brgl@bgdev.pl>,  linux-gpio@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Add support for Amlogic A4
+ SoCs
+In-Reply-To: <4127b448-a914-4c69-b938-29512995326f@amlogic.com> (Xianwei
+	Zhao's message of "Fri, 18 Oct 2024 17:01:09 +0800")
+References: <20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com>
+	<20241018-a4_pinctrl-v3-1-e76fd1cf01d7@amlogic.com>
+	<4a79f996-9d82-48b2-8a93-d7917413ed8c@kernel.org>
+	<1jttd9rein.fsf@starbuckisacylon.baylibre.com>
+	<4127b448-a914-4c69-b938-29512995326f@amlogic.com>
+Date: Fri, 18 Oct 2024 11:20:58 +0200
+Message-ID: <1jmsj1rclh.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, Rob Herring <robh+dt@kernel.org>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, YiFeng Zhao <zyf@rock-chips.com>,
- Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
-To: Ulf Hansson <ulf.hansson@linaro.org>
-References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
- <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
- <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
- <3969bae0-eeb8-447a-86a5-dfdac0b136cd@rock-chips.com>
- <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
-Content-Language: en-GB
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkseSFZCH0xCSEhDHUMYTkJWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a929eed6a9403aakunm9901d2a06a9
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6P0k6ERw4AjItKTUwDRwKSA4P
-	ODhPC0JVSlVKTElCSU9ISUpISUtMVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUNJS0I3Bg++
+Content-Type: text/plain
 
-Hi Ulf,
+On Fri 18 Oct 2024 at 17:01, Xianwei Zhao <xianwei.zhao@amlogic.com> wrote:
 
-在 2024/10/18 17:07, Ulf Hansson 写道:
-> On Thu, 10 Oct 2024 at 03:21, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->>
->> Hi Ulf
->>
->> 在 2024/10/9 21:15, Ulf Hansson 写道:
->>> [...]
->>>
->>>> +
->>>> +static int ufs_rockchip_runtime_suspend(struct device *dev)
->>>> +{
->>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
->>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->>>> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
->>>
->>> pd_to_genpd() isn't safe to use like this. It's solely to be used by
->>> genpd provider drivers.
->>>
->>>> +
->>>> +       clk_disable_unprepare(host->ref_out_clk);
->>>> +
->>>> +       /*
->>>> +        * Shouldn't power down if rpm_lvl is less than level 5.
->>>
->>> Can you elaborate on why we must not power-off the power-domain when
->>> level is less than 5?
->>>
->>
->> Because ufshcd driver assume the controller is active and the link is on
->> if level is less than 5. So the default resume policy will not try to
->> recover the registers until the first error happened. Otherwise if the
->> level is >=5, it assumes the controller is off and the link is down,
->> then it will restore the registers and link.
->>
->> And the level is changeable via sysfs.
-> 
-> Okay, thanks for clarifying.
-> 
->>
->>> What happens if we power-off anyway when the level is less than 5?
->>>
->>>> +        * This flag will be passed down to platform power-domain driver
->>>> +        * which has the final decision.
->>>> +        */
->>>> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
->>>> +               genpd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
->>>> +       else
->>>> +               genpd->flags &= ~GENPD_FLAG_RPM_ALWAYS_ON;
->>>
->>> The genpd->flags is not supposed to be changed like this - and
->>> especially not from a genpd consumer driver.
->>>
->>> I am trying to understand a bit more of the use case here. Let's see
->>> if that helps me to potentially suggest an alternative approach.
->>>
->>
->> I was not familiar with the genpd part, so I haven't come up with
->> another solution. It would be great if you can guide me to the right
->> way.
-> 
-> I have been playing with the existing infrastructure we have at hand
-> to support this, but I need a few more days to be able to propose
-> something for you.
-> 
+> Hi Jerome,
+>    Thanks for your reply.
+>
+> On 2024/10/18 16:39, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>> On Fri 18 Oct 2024 at 10:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> 
+>>> On 18/10/2024 10:10, Xianwei Zhao via B4 Relay wrote:
+>>>> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>>>
+>>>> Add the new compatible name for Amlogic A4 pin controller, and add
+>>>> a new dt-binding header file which document the detail pin names.
+>> the change does not do what is described here. At least the description
+>> needs updating.
+>> 
+>
+> Will do.
+>
+>> So if the pin definition is now in the driver, does it mean that pins have
+>> to be referenced in DT directly using the made up numbers that are
+>> created in pinctrl-amlogic-a4.c at the beginning of patch #2 ?
+>> 
+>
+> Yes.
+>
+>> If that's case, it does not look very easy a read.
+>> 
+>
+> It does happen. The pin definition does not fall under the category of
+> binding.
+>
+> https://lore.kernel.org/all/106f4321-59e8-49b9-bad3-eeb57627c921@amlogic.com/
 
-Much appreciate.
+So the expectation is that people will write something like:
 
->>
->>>> +
->>>> +       return ufshcd_runtime_suspend(dev);
->>>> +}
->>>> +
->>>> +static int ufs_rockchip_runtime_resume(struct device *dev)
->>>> +{
->>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
->>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->>>> +       int err;
->>>> +
->>>> +       err = clk_prepare_enable(host->ref_out_clk);
->>>> +       if (err) {
->>>> +               dev_err(hba->dev, "failed to enable ref out clock %d\n", err);
->>>> +               return err;
->>>> +       }
->>>> +
->>>> +       reset_control_assert(host->rst);
->>>> +       usleep_range(1, 2);
->>>> +       reset_control_deassert(host->rst);
->>>> +
->>>> +       return ufshcd_runtime_resume(dev);
->>>> +}
->>>> +
->>>> +static int ufs_rockchip_system_suspend(struct device *dev)
->>>> +{
->>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
->>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->>>> +
->>>> +       /* Pass down desired spm_lvl to Firmware */
->>>> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_CONFIG,
->>>> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0, 0, 0, NULL);
+ reset-gpios = <&gpio 42 GPIO_ACTIVE_LOW>;
+
+And others will go in the driver to see that is maps to GPIOX_10 ? the number
+being completly made up, with no link to anything HW/Datasheet
+whatsoever ?
+
+This is how things should be done now ?
+
+>
+>>>>
+>>>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 >>>
->>> Can you please elaborate on what goes on here? Is this turning off the
->>> power-domain that the dev is attached to - or what is actually
->>> happening?
+>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 >>>
->>
->> This smc call is trying to ask firmware not to turn off the power-domian
->> that the UFS is attached to and also not to turn off the power of UFS
->> conntroller.
-> 
-> Okay, thanks for clarifying!
-> 
-> A follow up question, don't you need to make a corresponding smc call
-> to inform the FW that it's okay to turn off the power-domain at some
-> point?
-> 
+>>> Best regards,
+>>> Krzysztof
+>> --
+>> Jerome
 
-Yes. Each time entering sleep, we teach FW if it need to turn off or 
-keep power-domain, for instance "hba->spm_lvl < 5 ? 1 : 0" , 0 means
-off and 1 means on.
-
->>
->> Per your comment at patch 4, should I use GENPD_FLAG_ALWAYS_ON +
->> arm_smccc_smc here in system suspend?
->>
->>>> +
->>>> +       return ufshcd_system_suspend(dev);
->>>> +}
->>>> +
->>>> +static const struct dev_pm_ops ufs_rockchip_pm_ops = {
->>>> +       SET_SYSTEM_SLEEP_PM_OPS(ufs_rockchip_system_suspend, ufshcd_system_resume)
->>>> +       SET_RUNTIME_PM_OPS(ufs_rockchip_runtime_suspend, ufs_rockchip_runtime_resume, NULL)
->>>> +       .prepare         = ufshcd_suspend_prepare,
->>>> +       .complete        = ufshcd_resume_complete,
->>>> +};
->>>> +
->>>> +static struct platform_driver ufs_rockchip_pltform = {
->>>> +       .probe = ufs_rockchip_probe,
->>>> +       .remove = ufs_rockchip_remove,
->>>> +       .driver = {
->>>> +               .name = "ufshcd-rockchip",
->>>> +               .pm = &ufs_rockchip_pm_ops,
->>>> +               .of_match_table = ufs_rockchip_of_match,
->>>> +       },
->>>> +};
->>>> +module_platform_driver(ufs_rockchip_pltform);
->>>> +
->>>
->>> [...]
-> 
-> Kind regards
-> Uffe
-> 
-
+-- 
+Jerome
 
