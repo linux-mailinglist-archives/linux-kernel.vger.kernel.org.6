@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-372361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3622D9A47AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:07:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDAF9A47AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81ED0B250FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:07:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83A52B251E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C081B205ADD;
-	Fri, 18 Oct 2024 20:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9BA206941;
+	Fri, 18 Oct 2024 20:07:33 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB73202F9A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE00205ABA
 	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 20:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729282052; cv=none; b=pTwFNcljZltPBuztYOqaKCNMLlGKR9B15kXdUAKSt7i0OJOXf9rQVmBPEuykjmKq9pn6/5fLcs48MV4f7MTZHFT3UzcmkpFZrNOJ79RxihsZslKy49vjuZGtOsYYfuD1nbo2MZMx16ssBvcfSfVPoZVTbTPLYyeArGP251iV9sA=
+	t=1729282052; cv=none; b=eTB8UurxD4QX8QHSeL+rA7CuIwlhHhApKgaj1uh+bQeDFlQRP2JjcRNINBJXCHZQYJiQB8ino7IizcmYvOe+CwsM4GRi/hstZ82Oh+z+XYwBBxYcN6xF0x4Zm+sOkcHjWI249p0YP5agGNtru/m9TM8YUFG7tJ95p1V0uPRPF/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729282052; c=relaxed/simple;
-	bh=SfUWvzRGDAFXYgqa45km32/gh6Cn2XijcHcfJf/uzSo=;
+	bh=RGO6OEHIuswcIR56IbAUE5Z10gkWfl1hIWGObojACzA=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=NWdJMtc66opPWdqgGLqlMCMEkkEilKtHTraGtbWsCdP+aAc8YJ2jAXCgxb0FlFB3Hotda/YGjORZBqO3kWyx6dE9mBneLZlG696oEwup069uBt5FEOfKp4xDMm02FFi/8mUQtRGXy7KUtsD0lrCcnbE1+T6ZZTNLhqr4UeyCUDQ=
+	 Content-Type; b=ihJ4gbMiGq2F6Er2A7FnGciWGWUv5nTWHtKhpSW33YpJj+tpz/AJ5iTyR67DvIviaWXKHFNaUwVvDgVI7B+F0lQAmYzhz8iqRY/O+AVHBF9fLvIoMEc1o/uRUQFUkOXBgIvItbRCnnuj3NBZtvTEq5NRmmaaYoa/M4/2OioJ17Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A3C8C4CEC7;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E060C4CED2;
 	Fri, 18 Oct 2024 20:07:32 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1t1tGQ-00000004ExF-3ZRy;
-	Fri, 18 Oct 2024 16:07:58 -0400
-Message-ID: <20241018200758.725471379@goodmis.org>
+	id 1t1tGR-00000004Exo-00wl;
+	Fri, 18 Oct 2024 16:07:59 -0400
+Message-ID: <20241018200758.870680323@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 18 Oct 2024 16:07:47 -0400
+Date: Fri, 18 Oct 2024 16:07:48 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- Petr Pavlu <petr.pavlu@suse.com>
-Subject: [for-next][PATCH 1/3] ring-buffer: Limit time with disabled interrupts in rb_check_pages()
+ Julia Lawall <Julia.Lawall@inria.fr>
+Subject: [for-next][PATCH 2/3] ring-buffer: Reorganize kerneldoc parameter names
 References: <20241018200746.849970367@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,216 +52,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Petr Pavlu <petr.pavlu@suse.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
 
-The function rb_check_pages() validates the integrity of a specified
-per-CPU tracing ring buffer. It does so by traversing the underlying
-linked list and checking its next and prev links.
+Reorganize kerneldoc parameter names to match the parameter
+order in the function header.
 
-To guarantee that the list isn't modified during the check, a caller
-typically needs to take cpu_buffer->reader_lock. This prevents the check
-from running concurrently, for example, with a potential reader which
-can make the list temporarily inconsistent when swapping its old reader
-page into the buffer.
-
-A problem with this approach is that the time when interrupts are
-disabled is non-deterministic, dependent on the ring buffer size. This
-particularly affects PREEMPT_RT because the reader_lock is a raw
-spinlock which doesn't become sleepable on PREEMPT_RT kernels.
-
-Modify the check so it still attempts to traverse the entire list, but
-gives up the reader_lock between checking individual pages. Introduce
-for this purpose a new variable ring_buffer_per_cpu.cnt which is bumped
-any time the list is modified. The value is used by rb_check_pages() to
-detect such a change and restart the check.
+Problems identified using Coccinelle.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20240715145141.5528-1-petr.pavlu@suse.com
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+Link: https://lore.kernel.org/20240930112121.95324-22-Julia.Lawall@inria.fr
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ring_buffer.c | 97 ++++++++++++++++++++++++++++----------
- 1 file changed, 72 insertions(+), 25 deletions(-)
+ kernel/trace/ring_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index fb04445f92c3..a6a1c26ea2e3 100644
+index a6a1c26ea2e3..696d422d5b35 100644
 --- a/kernel/trace/ring_buffer.c
 +++ b/kernel/trace/ring_buffer.c
-@@ -482,6 +482,8 @@ struct ring_buffer_per_cpu {
- 	unsigned long			nr_pages;
- 	unsigned int			current_context;
- 	struct list_head		*pages;
-+	/* pages generation counter, incremented when the list changes */
-+	unsigned long			cnt;
- 	struct buffer_page		*head_page;	/* read from head */
- 	struct buffer_page		*tail_page;	/* write to tail */
- 	struct buffer_page		*commit_page;	/* committed pages */
-@@ -1475,40 +1477,88 @@ static void rb_check_bpage(struct ring_buffer_per_cpu *cpu_buffer,
- 	RB_WARN_ON(cpu_buffer, val & RB_FLAG_MASK);
- }
- 
-+static bool rb_check_links(struct ring_buffer_per_cpu *cpu_buffer,
-+			   struct list_head *list)
-+{
-+	if (RB_WARN_ON(cpu_buffer,
-+		       rb_list_head(rb_list_head(list->next)->prev) != list))
-+		return false;
-+
-+	if (RB_WARN_ON(cpu_buffer,
-+		       rb_list_head(rb_list_head(list->prev)->next) != list))
-+		return false;
-+
-+	return true;
-+}
-+
- /**
-  * rb_check_pages - integrity check of buffer pages
-  * @cpu_buffer: CPU buffer with pages to test
+@@ -2437,9 +2437,9 @@ EXPORT_SYMBOL_GPL(__ring_buffer_alloc);
+  * __ring_buffer_alloc_range - allocate a new ring_buffer from existing memory
+  * @size: the size in bytes per cpu that is needed.
+  * @flags: attributes to set for the ring buffer.
++ * @order: sub-buffer order
+  * @start: start of allocated range
+  * @range_size: size of allocated range
+- * @order: sub-buffer order
+  * @key: ring buffer reader_lock_key.
   *
-  * As a safety measure we check to make sure the data pages have not
-  * been corrupted.
-- *
-- * Callers of this function need to guarantee that the list of pages doesn't get
-- * modified during the check. In particular, if it's possible that the function
-- * is invoked with concurrent readers which can swap in a new reader page then
-- * the caller should take cpu_buffer->reader_lock.
-  */
- static void rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
- {
--	struct list_head *head = rb_list_head(cpu_buffer->pages);
--	struct list_head *tmp;
-+	struct list_head *head, *tmp;
-+	unsigned long buffer_cnt;
-+	unsigned long flags;
-+	int nr_loops = 0;
- 
--	if (RB_WARN_ON(cpu_buffer,
--			rb_list_head(rb_list_head(head->next)->prev) != head))
-+	/*
-+	 * Walk the linked list underpinning the ring buffer and validate all
-+	 * its next and prev links.
-+	 *
-+	 * The check acquires the reader_lock to avoid concurrent processing
-+	 * with code that could be modifying the list. However, the lock cannot
-+	 * be held for the entire duration of the walk, as this would make the
-+	 * time when interrupts are disabled non-deterministic, dependent on the
-+	 * ring buffer size. Therefore, the code releases and re-acquires the
-+	 * lock after checking each page. The ring_buffer_per_cpu.cnt variable
-+	 * is then used to detect if the list was modified while the lock was
-+	 * not held, in which case the check needs to be restarted.
-+	 *
-+	 * The code attempts to perform the check at most three times before
-+	 * giving up. This is acceptable because this is only a self-validation
-+	 * to detect problems early on. In practice, the list modification
-+	 * operations are fairly spaced, and so this check typically succeeds at
-+	 * most on the second try.
-+	 */
-+again:
-+	if (++nr_loops > 3)
- 		return;
- 
--	if (RB_WARN_ON(cpu_buffer,
--			rb_list_head(rb_list_head(head->prev)->next) != head))
-+	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-+	head = rb_list_head(cpu_buffer->pages);
-+	if (!rb_check_links(cpu_buffer, head))
-+		goto out_locked;
-+	buffer_cnt = cpu_buffer->cnt;
-+	tmp = head;
-+	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- 		return;
- 
--	for (tmp = rb_list_head(head->next); tmp != head; tmp = rb_list_head(tmp->next)) {
--		if (RB_WARN_ON(cpu_buffer,
--				rb_list_head(rb_list_head(tmp->next)->prev) != tmp))
--			return;
-+	while (true) {
-+		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
- 
--		if (RB_WARN_ON(cpu_buffer,
--				rb_list_head(rb_list_head(tmp->prev)->next) != tmp))
--			return;
-+		if (buffer_cnt != cpu_buffer->cnt) {
-+			/* The list was updated, try again. */
-+			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-+			goto again;
-+		}
-+
-+		tmp = rb_list_head(tmp->next);
-+		if (tmp == head)
-+			/* The iteration circled back, all is done. */
-+			goto out_locked;
-+
-+		if (!rb_check_links(cpu_buffer, tmp))
-+			goto out_locked;
-+
-+		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- 	}
-+
-+out_locked:
-+	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- }
- 
- /*
-@@ -2535,6 +2585,7 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned long nr_pages)
- 
- 	/* make sure pages points to a valid page in the ring buffer */
- 	cpu_buffer->pages = next_page;
-+	cpu_buffer->cnt++;
- 
- 	/* update head page */
- 	if (head_bit)
-@@ -2641,6 +2692,7 @@ rb_insert_pages(struct ring_buffer_per_cpu *cpu_buffer)
- 			 * pointer to point to end of list
- 			 */
- 			head_page->prev = last_page;
-+			cpu_buffer->cnt++;
- 			success = true;
- 			break;
- 		}
-@@ -2876,12 +2928,8 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
- 		 */
- 		synchronize_rcu();
- 		for_each_buffer_cpu(buffer, cpu) {
--			unsigned long flags;
--
- 			cpu_buffer = buffer->buffers[cpu];
--			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
- 			rb_check_pages(cpu_buffer);
--			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- 		}
- 		atomic_dec(&buffer->record_disabled);
- 	}
-@@ -5299,6 +5347,7 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
- 	rb_list_head(reader->list.next)->prev = &cpu_buffer->reader_page->list;
- 	rb_inc_page(&cpu_buffer->head_page);
- 
-+	cpu_buffer->cnt++;
- 	local_inc(&cpu_buffer->pages_read);
- 
- 	/* Finally update the reader page to the new head */
-@@ -5838,12 +5887,9 @@ void
- ring_buffer_read_finish(struct ring_buffer_iter *iter)
- {
- 	struct ring_buffer_per_cpu *cpu_buffer = iter->cpu_buffer;
--	unsigned long flags;
- 
- 	/* Use this opportunity to check the integrity of the ring buffer. */
--	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
- 	rb_check_pages(cpu_buffer);
--	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- 
- 	atomic_dec(&cpu_buffer->resize_disabled);
- 	kfree(iter->event);
-@@ -6758,6 +6804,7 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
- 		cpu_buffer->pages = cpu_buffer->new_pages.next;
- 		cpu_buffer->new_pages.next->prev = cpu_buffer->new_pages.prev;
- 		cpu_buffer->new_pages.prev->next = cpu_buffer->new_pages.next;
-+		cpu_buffer->cnt++;
- 
- 		/* Clear the new_pages list */
- 		INIT_LIST_HEAD(&cpu_buffer->new_pages);
+  * Currently the only flag that is available is the RB_FL_OVERWRITE
 -- 
 2.45.2
 
