@@ -1,166 +1,173 @@
-Return-Path: <linux-kernel+bounces-372391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537BD9A4804
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:31:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0A69A47FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 22:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06ACC1F24C04
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:31:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102D51F23AAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC0020ADC6;
-	Fri, 18 Oct 2024 20:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF74F206E79;
+	Fri, 18 Oct 2024 20:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="NE7xqnXO"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C7LY96X4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C09C205AD0;
-	Fri, 18 Oct 2024 20:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3423F17BB0D;
+	Fri, 18 Oct 2024 20:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729283477; cv=none; b=KaJjbLH91eRR4C31ptwvfVeJOoPjQL70s8yQ6Ct2wjuP0qqWodHD63vUVyK2ELIGqABLT/tfw06O/fNBhXcjKgZGeNXp5XBvjkD/KTu8k94UGzcmQOMbP9XfZe/U41th52AmIvSZaEszNEZPxEhgx8O9gabQ3fUp9EoEQeq2fXI=
+	t=1729283466; cv=none; b=nftIuklyInIPRYo3BWoZp7hAPmexem/wvnp+5yhl9kKksN7oIaKkmpMQEDlTLn4e3lGsYdLmt7q6I/4VvFiKDTw/F1kn0c9yDqQkKEnSTlYBizVFonuuIiCzhsiljUZ8EH62353mJZOgN8vhntaIXeKLtJIh/BzFTX1eEn3K5yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729283477; c=relaxed/simple;
-	bh=jxYSW0+WyHMobClrGQdCqB0UMbeyFIjEC0GrZW/fC9Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T2RHrw4Fy+U+RsYTfy6S5LrB0Hr0OYh3JypXRslXKTytPrXgLnHCSIGCzB1ZXA1PacqDHveu7a9Jw8o3BAQPyc7vdRQJ0Zhd1y+MxvmuJo0aJKsEgA2HeijEWzDZ9f+f07VWZZnGBM8orOAGanca5oGQjo4KxhMq4xSdqHzCYAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=NE7xqnXO; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IA8c1L032610;
-	Fri, 18 Oct 2024 13:31:06 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=A0Q/vfb2zuwjqqaxDrXkBkV
-	HcAMRGfStVQ8Ldd9N6bE=; b=NE7xqnXOtjY0k5PHMefhNvx4Rd4AJwMWVI7EmVD
-	Y/CsI7mCJKZKT/ypxkVzzd7/K747NJ0MKM1qGhQ++JN06YaebuliZVFgbAQ1tj53
-	Aig/QozkCUB9tuvNzVn51/eN90ZD/3WxuzeWg3NuCsLU2baK4A+YyNew97HmvuFi
-	bJx/ir8Jd29WebGvZpNofYZvJxgYyqgzioi0PLnjiXMZyC4l1UTPCzuASJ6+/OzX
-	UjN5gW5hqXf5/VcriYm1GGVo+SgVUHTrJJnkZvnaHPikz9QaFEn8pDk2de014Z7b
-	vP7VNfEbRhG8od5BwFhB4KX75rGrfDWBjVCBVMouNV3wGvQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42bnnbhbp0-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 13:31:06 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 18 Oct 2024 13:31:05 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 18 Oct 2024 13:31:05 -0700
-Received: from hyd1425.marvell.com (unknown [10.29.37.152])
-	by maili.marvell.com (Postfix) with ESMTP id 11E313F704C;
-	Fri, 18 Oct 2024 13:31:00 -0700 (PDT)
-From: Sai Krishna <saikrishnag@marvell.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
-        <gakula@marvell.com>, <lcherian@marvell.com>, <jerinj@marvell.com>,
-        <hkelam@marvell.com>, <sbhatta@marvell.com>
-CC: Sai Krishna <saikrishnag@marvell.com>
-Subject: [net-next PATCH 0/6] CN20K silicon with mbox support
-Date: Sat, 19 Oct 2024 02:00:52 +0530
-Message-ID: <20241018203058.3641959-1-saikrishnag@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729283466; c=relaxed/simple;
+	bh=DDNmL8tvVOoBT6fJAABXhTxzRTimVNhJ+y3KpUF68Vo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L1JnzL/cy7CY29ZCg1IxaDyQOCb5ugQd/QRsNiIBC5T9hb8tmdwZCLGdlfbHfQN2hW/0QIBmh6CqTKcFK+a1T/kIJOSOv2jCbIFc687kiqqiz63Wpkm/7FYFSlvd1V903ySsXTlPJmwlooEshWMDB+A31y3PSwF9ngXEI/D9FIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C7LY96X4; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729283465; x=1760819465;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DDNmL8tvVOoBT6fJAABXhTxzRTimVNhJ+y3KpUF68Vo=;
+  b=C7LY96X44yzK4NT9FcD6qIes0oXTd7aEAe7AY4S8ohVTqLvev6xXQ4C9
+   4TosxqmJC/h/dRxACPf0XWMkViBzVWC8PabqvJKItK0NKIPsADyZHug2b
+   JBPhVa+czpL7wbCv0Tjwf06mmmsbob5jK37494KJyK5p6K1UPobL4Jzt9
+   vMoKrkTmcxDvZrWdZzBD9KdZCX8qF+HPpF5a3MnQuyv0dirOggbdBJpJm
+   /NAWtc9NP252wZThuYgNImcn4BPCd731ffDYoFNQWr5wEqdDcTEz7PRy5
+   uhvNrIoeYkGn8kFCEKwOSVRhXmd9ISM9MzH00/ToIDLPFiNmEl9tnhsyb
+   A==;
+X-CSE-ConnectionGUID: 4rmz1b+eS7yoJxYHo+ZJqg==
+X-CSE-MsgGUID: 7TVW2SVAQTmZscnp2shqmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39381801"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="39381801"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 13:31:04 -0700
+X-CSE-ConnectionGUID: kHKCqmdSTMizBJKbSAVRSg==
+X-CSE-MsgGUID: 4F6PttTRRy6ypKFOUdWFFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="102267390"
+Received: from bdomingu-mobl1.amr.corp.intel.com (HELO desk) ([10.125.148.176])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 13:31:02 -0700
+Date: Fri, 18 Oct 2024 13:30:53 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: Re: [PATCH v4 02/10] x86/cpu/topology: Add CPU type to struct
+ cpuinfo_topology
+Message-ID: <20241018203053.2x6oyws3dkxfw6rm@desk>
+References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
+ <20240930-add-cpu-type-v4-2-104892b7ab5f@linux.intel.com>
+ <20241018161956.GCZxKKrLeTg0VTdfWA@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: eaZWN6p9uiWHU477aeG15V6wP_JKPE4W
-X-Proofpoint-ORIG-GUID: eaZWN6p9uiWHU477aeG15V6wP_JKPE4W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018161956.GCZxKKrLeTg0VTdfWA@fat_crate.local>
 
-CN20K is the next generation silicon in the Octeon series with various
-improvements and new features.
+On Fri, Oct 18, 2024 at 06:19:56PM +0200, Borislav Petkov wrote:
+> On Mon, Sep 30, 2024 at 07:47:24AM -0700, Pawan Gupta wrote:
+> > Subject: Re: [PATCH v4 02/10] x86/cpu/topology: Add CPU type to struct...
+> 
+> x86/cpu: ...
+> 
+> is enough.
 
-Along with other changes the mailbox communication mechanism between RVU
-(Resource virtualization Unit) SRIOV PFs/VFs with Admin function (AF) has
-also gone through some changes.
+Ok.
 
-Some of those changes are
-- Separate IRQs for mbox request and response/ack.
-- Configurable mbox size, default being 64KB.
-- Ability for VFs to communicate with RVU AF instead of going through
-  parent SRIOV PF.
+> > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+> > index 4a686f0e5dbf..61c8336bc99b 100644
+> > --- a/arch/x86/include/asm/processor.h
+> > +++ b/arch/x86/include/asm/processor.h
+> > @@ -105,6 +105,17 @@ struct cpuinfo_topology {
+> >  	// Cache level topology IDs
+> >  	u32			llc_id;
+> >  	u32			l2c_id;
+> > +
+> > +	// Hardware defined CPU-type
+> > +	union {
+> > +		u32		hw_cpu_type;
+> > +		struct {
+> > +			/* CPUID.1A.EAX[23-0] */
+> 
+> Might as well stick to only // comments as we do those in headers now.
 
-Due to more memory requirement due to configurable mbox size, mbox memory
-will now have to be allocated by
-- AF (PF0) for communicating with other PFs and all VFs in the system.
-- PF for communicating with it's child VFs.
+Will do.
 
-On previous silicons mbox memory was reserved and configured by firmware.
+> > +			u32	intel_core_native_model_id:24;
+> 
+> wow, that needs a whole breath to speak: "intel_core_native_model_id".
 
-This patch series add basic mbox support for AF (PF0) <=> PFs and
-PF <=> VFs. AF <=> VFs communication and variable mbox size support will
-come in later.
+Yes, it needs to be shortened.
 
-Patch #1 Supported co-existance of bit encoding PFs and VFs in 16-bit
-         hardware pcifunc format between CN20K silicon and older octeon
-         series. Also exported PF,VF masks and shifts present in mailbox
-         module to all other modules.
+> "core" and "native" look like they wanna go. What is that field supposed to
+> mean even?
 
-Patch #2 Added basic mbox operation APIs and structures to support both
-         CN20K and previous version of silicons.
+In combination with core_type, this field can be used to uniquely identify
+the microarchitecture.
 
-Patch #3 This patch adds support for basic mbox infrastructure
-         implementation for CN20K silicon in AF perspective. There are
-         few updates w.r.t MBOX ACK interrupt and offsets in CN20k.
-         
-Patch #4 Added mbox implementation between NIC PF and AF for CN20K.
+I will drop "core", but can we keep "native"? "native" is used in SDM to
+define this field. Also model_id could be confused with model number.
 
-Patch #5 Added mbox communication support between AF and AF's VFs.
+  From Intel SDM Vol. 2A:
 
-Patch #6 This patch adds support for MBOX communication between NIC PF and
-         its VFs.
+  Bits 23-00: Native model ID of the core. The core-type and native model
+  ID can be used to uniquely identify the microarchitecture of the core.
+  This native model ID is not unique across core types, and not related to
+  the model ID reported in CPUID leaf 01H, and does not identify the SOC.
 
-Sai Krishna (5):
-  octeontx2-af: CN20k basic mbox operations and structures
-  octeontx2-af: CN20k mbox to support AF REQ/ACK functionality
-  octeontx2-pf: CN20K mbox REQ/ACK implementation for NIC PF
-  octeontx2-af: CN20K mbox implementation for AF's VF
-  octeontx2-pf: CN20K mbox implementation between PF-VF
 
-Subbaraya Sundeep (1):
-  octeontx2: Set appropriate PF, VF masks and shifts based on silicon
+> > +			/* CPUID.1A.EAX[31-24] */
+> > +			u32	intel_core_type:8;
+> > +		};
+> > +	};
+> >  };
+> 
+> ...
+> 
+> > +enum x86_topology_hw_cpu_type topology_hw_cpu_type(struct cpuinfo_x86 *c)
+> > +{
+> > +	if (c->x86_vendor == X86_VENDOR_INTEL)
+> > +		return c->topo.intel_core_type;
+> > +
+> > +	return c->topo.hw_cpu_type;
+> 
+> Huh, the other vendors are not enabled. This should return
+> TOPO_HW_CPU_TYPE_UNKNOWN then.
+> 
+> I know, it does but make explicit pls.
 
- .../ethernet/marvell/octeontx2/af/Makefile    |   3 +-
- .../ethernet/marvell/octeontx2/af/cn20k/api.h |  34 ++
- .../marvell/octeontx2/af/cn20k/mbox_init.c    | 423 ++++++++++++++++++
- .../ethernet/marvell/octeontx2/af/cn20k/reg.h |  81 ++++
- .../marvell/octeontx2/af/cn20k/struct.h       |  40 ++
- .../net/ethernet/marvell/octeontx2/af/mbox.c  | 123 ++++-
- .../net/ethernet/marvell/octeontx2/af/mbox.h  |  13 +
- .../net/ethernet/marvell/octeontx2/af/rvu.c   | 187 +++++---
- .../net/ethernet/marvell/octeontx2/af/rvu.h   |  55 ++-
- .../marvell/octeontx2/af/rvu_struct.h         |   6 +-
- .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +-
- .../ethernet/marvell/octeontx2/nic/cn10k.c    |  18 +-
- .../ethernet/marvell/octeontx2/nic/cn10k.h    |   1 +
- .../ethernet/marvell/octeontx2/nic/cn20k.c    | 254 +++++++++++
- .../ethernet/marvell/octeontx2/nic/cn20k.h    |  17 +
- .../marvell/octeontx2/nic/otx2_common.h       |  35 +-
- .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 145 ++++--
- .../ethernet/marvell/octeontx2/nic/otx2_reg.h |  49 +-
- .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  44 +-
- 19 files changed, 1383 insertions(+), 147 deletions(-)
- create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/api.h
- create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/mbox_init.c
- create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/reg.h
- create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/cn20k/struct.h
- create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn20k.c
- create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn20k.h
+Yes, topo.hw_cpu_type is initialized to TOPO_HW_CPU_TYPE_UNKNOWN. We should
+not ideally need the vendor check at all. As long as topo.hw_cpu_type has
+the core type, returning it should be enough here. For Intel hw_cpu_type
+also has the native_model_id, that is why we need the vendor check.
 
--- 
-2.25.1
-
+If AMD or other vendors have similar use case, it makes sense to add the
+explicit vendor check. Please let me know if thats the likely case.
 
