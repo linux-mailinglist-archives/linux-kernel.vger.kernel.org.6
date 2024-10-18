@@ -1,297 +1,341 @@
-Return-Path: <linux-kernel+bounces-371980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0159A42E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8CA39A42EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063E71C25D13
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:51:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDCA51C25EE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BD2202656;
-	Fri, 18 Oct 2024 15:50:49 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B873D2022C5;
+	Fri, 18 Oct 2024 15:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="10BFEsGb"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2052.outbound.protection.outlook.com [40.107.95.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78943168488;
-	Fri, 18 Oct 2024 15:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729266649; cv=none; b=SRNj4sVjm2TWyOZdhQPOAvYCn/PSTusR8bhKf00EH6XJH/HLbipK65br1DfWg9xf9ZyT4s/EUb2t/bapM7iShg4Cb4vi14xAELBpmabtP2F9IIhEGUcyPPdux70P17V8OrXkie2yCAtyvFo3qiHKtpAb+82U0DdIFssQdKm9TJI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729266649; c=relaxed/simple;
-	bh=q6a3s5rOmOXUmMUoQAySD+G51ycl3tgw3tbHO9jKGI0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PYz69pbYQWRMdigGJUHwuvPi5SUse96P1jBvQ1k8KoUp1Vsr2WJnTya4l8iUR/a9EKGRkFoSTR1lVKtkJkvZAFV8t/PQ1trkydazXw/bgKV0/Z5+rO09hxzg7ini7MNUirpsrV46aHRGQU6kRTYhNgTM0tzUi9H1HJGpFStF484=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XVTDN66Lqz9v7JC;
-	Fri, 18 Oct 2024 23:30:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 168A2140B08;
-	Fri, 18 Oct 2024 23:50:35 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwCnCMm9gxJn0hohAw--.60739S2;
-	Fri, 18 Oct 2024 16:50:34 +0100 (CET)
-Message-ID: <e7c6f3538ad24620014d914785afc2a49294dabf.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH] mm: Split locks in remap_file_pages()
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	ebpqwerty472123@gmail.com, paul@paul-moore.com, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Kirill A. Shutemov"
-	 <kirill.shutemov@linux.intel.com>, stable@vger.kernel.org, 
-	syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com, Roberto Sassu
-	 <roberto.sassu@huawei.com>
-Date: Fri, 18 Oct 2024 17:50:19 +0200
-In-Reply-To: <784c68fa023e99c53cd07265f0524e386815b443.camel@huaweicloud.com>
-References: <20241018144710.3800385-1-roberto.sassu@huaweicloud.com>
-	 <fa8cad07-c6d5-42aa-b58b-27ddbf86c1c5@lucifer.local>
-	 <784c68fa023e99c53cd07265f0524e386815b443.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD451165EFC;
+	Fri, 18 Oct 2024 15:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729266673; cv=fail; b=QQnuaF6mLuagj4lF5qRlH/sBMO+ET9nt0e2hnh6lyZy7UYZtt7vTyfyQFuQ3FWAjMxv6y2PUmfW8VbL1LcOdq2bNZ/lpybZo671tvs7dJe1lIw0/12r8s4VZ8VBNMDkboSWJ5s5QTkIVy9Q0buLA8eWoK0t1ddUocJB/jSXaQYc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729266673; c=relaxed/simple;
+	bh=xlhwMagr14Rzm+LOcYp61mOIKgTN1sK7e8+t+Xoeeik=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hdJ4fnWreTZHGupTGiCU0ft4ReTagiizjRsGhNXmrR62KsJbomrAKS68ES/u4l6VmFgDXceCFMGXdE8/ZjuT2dmt04RJHXp3ElCv44Mrfo+CXub06KU6LjU0x0YRVyjZ3XNmYOibVUEARJCv1P29Kg6c+2qF77fvNhxQaBR5eik=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=10BFEsGb; arc=fail smtp.client-ip=40.107.95.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ylrgyskbp5psqLICA9tZlBvziZORkcLgpn6D/hh0JSWmemWkcjdowB06ViowA2Wi2vTBZ5GeWBe3XNQlpLlRR3moEwdR5LAeXgL6P4P2zXi5vKXFtx3f5pCGZRDcmNkh4wgrm5mt8pED75vo1YLEuPQpL18cc96usDJ4wQC8OLKpjuVGUKsmUCODvzTjoBAXFw9VY42j9LS+rqRRg42xbzXn00B/K5yUaY5/4I8vsC60e3i6QWumljU2CkmofHJnRoV8EGngN/+RhN1yBqYiVem57Sumj2zaRoxO5SC5ms5cAn+KAXE1YAq8GvXqdKDEMLQOl3V8ucBA95Z2S7r9Vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4a5Tha1iakzBKB4iW8fwtvDeFL62BFgi5bXX52GdTDw=;
+ b=Iv3S6tnzm7wsBH59MbyymJx2jJrlHQcfO+9glViLRWGnmLUvRqoXjW2yPq2lOv2HIfjY/DMYgpQjWMQmlPacbn/oCqGhyHSRiDGUhhuNGD5nWEvA8xU8I/Jhrc5Dam1SgjM11oxTX7XnsMBHww5PlowNmkZKuvNby8mEu8UjDoyuewhHCcOmMrmrD1G/eJt2ah/Pa/XHWOR/FPDquTv/PY1Lj2eH3vyxX5EVu5padiUnGYhI2BD5frjVTYWQw1FpAFMl2JvcmomkI0/hYCClwXQ6+9TjbvNrE1cpTfXeWja3jBe6y5JWz8M7D4MVnidiMQXq+qED9AQhLJ7u8JiLbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4a5Tha1iakzBKB4iW8fwtvDeFL62BFgi5bXX52GdTDw=;
+ b=10BFEsGbCMPQ2T/O3lZID8QhvO5BOdBnoNfuyyfLPrQnwo/5+dx34O/xb7tUVfGUzDW/uwqV3/+18bI/aEzQ6v91q0ghETJkKsRrryLPMdwNJwYYadJh57da9K0hklG2t+sSm9D+uk9mdnR448f4ttxbhD8IBbniONtoeNxZbaY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by BY5PR12MB4180.namprd12.prod.outlook.com (2603:10b6:a03:213::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.21; Fri, 18 Oct
+ 2024 15:51:04 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.8069.020; Fri, 18 Oct 2024
+ 15:51:04 +0000
+Message-ID: <2ef3c008-81db-a3b1-19bb-6f60c6aa617c@amd.com>
+Date: Fri, 18 Oct 2024 10:50:59 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v8 23/25] x86/resctrl: Update assignments on event
+ configuration changes
+Content-Language: en-US
+To: Reinette Chatre <reinette.chatre@intel.com>,
+ Babu Moger <babu.moger@amd.com>, corbet@lwn.net, fenghua.yu@intel.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
+ tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
+ kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
+ jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
+ kirill.shutemov@linux.intel.com, jithu.joseph@intel.com,
+ kai.huang@intel.com, kan.liang@linux.intel.com,
+ daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
+ ilpo.jarvinen@linux.intel.com, peternewman@google.com,
+ maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
+References: <cover.1728495588.git.babu.moger@amd.com>
+ <715b84c29f4ec849a79698ad43218d4a486422d3.1728495588.git.babu.moger@amd.com>
+ <03b278b5-6c15-4d09-9ab7-3317e84a409e@intel.com>
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <03b278b5-6c15-4d09-9ab7-3317e84a409e@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0077.namprd13.prod.outlook.com
+ (2603:10b6:806:23::22) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwCnCMm9gxJn0hohAw--.60739S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKw1rXFyxCw43tr48ZFyDAwb_yoWxGF48pF
-	95J3WqkF4UXFyxCrnFq3WqgFyFyry8KryUu3y3JFy8Ar9FvF1fKrWfGFy5uF4DArs7AFZ5
-	ZF4jyrZxGFZ8AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	j7l19UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABGcRw-kLwQABsC
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|BY5PR12MB4180:EE_
+X-MS-Office365-Filtering-Correlation-Id: e85f4740-7b14-49dd-c76b-08dcef8cabeb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MUNBRC9vTzZzTWdzU0g1M2hlYjdnZlZaclk4eXBGTThHM0lHOU0rbk5uY0U5?=
+ =?utf-8?B?WmVZYTh1bllEcGptMjd5ZW9xUWNjbUFZdWFnS2RsTHNlVEtMcTluWTA3U2ds?=
+ =?utf-8?B?RjZ0YkhQM3hrSTB4dWVxMmdjLzFHWVZwUEFmTXJkNDl6YURCNmxNeTM5SlJk?=
+ =?utf-8?B?VjRueUI2OVdQczdYT0EvYkVaaHNrZzNiK20ycVhwMGZPcCtkUkc3VHJrNVdo?=
+ =?utf-8?B?cndGRFRsYnkvY2dCcWFpZXNjQWxTcXpQYlRwN1Q2K3IxVjdOaXRjSTJiMzdu?=
+ =?utf-8?B?dlhTVmp3K3ppeUJ5WFYxWGRMeWY0QXFkWnZFaGkrQnZIbEFZUVJHQ0hvbjR0?=
+ =?utf-8?B?a3hlZ2dBcGhRQldoSU5NSU5ZT0htRThCZnFRczFON2xFQU52S3htK2FqNGZH?=
+ =?utf-8?B?SGZZemdtcGZCMnYyM0lQaHNkTlIxcE1mQTM2bUcwZkJGRTd4dE8vL2xFZzR1?=
+ =?utf-8?B?VFlJOC9PY2ZHR2dnN285U3pvcGhRL1ZGY0hMYVFOZEQrbEJsenJPVnlkdHMv?=
+ =?utf-8?B?c1J1QngyTFpsNmVPOHZzTnVCMWRRdFRFZ2tjYndEMGFZcXFzUkxiRTZCUGpt?=
+ =?utf-8?B?ZnhmTHpxWXR2aElRK0lBc2YyNWJGWE1HSThIQnRjLzNyNjZmeWlZbTI4OE5o?=
+ =?utf-8?B?VTZPU3Y1bWF0M3NUckVxWHFJaVRCYy92dlBJeVFjTDBIbkNwcG1hTlFubHRR?=
+ =?utf-8?B?S3psWVdiSTBCd0hHWGU3L0xsNDFvTmQyZFNQTXNwaGtVSk96UjZtVHBOd3Zl?=
+ =?utf-8?B?Y1lxQWpRWG9uM1ArbXlsaTBmaGMxOFpJNWQycHNmaDVhNStNQXpYM2c0TVJE?=
+ =?utf-8?B?NVczVFhrbzVoVk1ObUZyV3pJaHZrTndmWmI5UnJHNHNLdzVaOUwzeVdHdjln?=
+ =?utf-8?B?R3EzeG5KWmdqTEFhNllHTkxPczZyOFoyWU10Q0JyaXp3ZWJ3Z0FkRkpTdWx6?=
+ =?utf-8?B?SjltSTAzUHRTTTNzWGFLcDREclhZdUtOcHNLcXBxdVFacDFSdmZMZkNSenp2?=
+ =?utf-8?B?ZkxEbnl4WEJQRGM3bTljUmdEaEdtd3dSN1E5QWNuR0ZvRzlNcTFWczBrSVVO?=
+ =?utf-8?B?enFMZGNGb01QZUtGSFNxZ0lObWo3dlFOOUEzMXI2SnBJVElERENYTVdoVTF6?=
+ =?utf-8?B?enRYOGQ1TG0rSTJsYjQ3cEM5YVlqS3FFK3VDWENQNytwRXZwZzJuNUN3Q2p1?=
+ =?utf-8?B?UWR0S1VtTWU3bHd2by9ma2hHYmhUc3FCTlNHVTJ5NUs3NHF5V3YrUmRod2ln?=
+ =?utf-8?B?RUxONWVhUlBJazlwZVhiaHpTMm9VTTI1dUZhUERicmpBS2FPRjRhSjY1N0Ev?=
+ =?utf-8?B?NmRvclpveVpOZXlRRjRCNTVvVFA5eGZIZXRMbldFSzJmZzByR0x1WmFsMU9q?=
+ =?utf-8?B?eDFHUFJONHlmMDBtcnFKbmFuc1hEZW8vZXBYZzIyYWVBRHJxSW9hekY4amUz?=
+ =?utf-8?B?aGVpM3FsRDdkQkpkVWNITFRmcHlUMUFSazJIajZNeGpqN1A4TXd6RzVYWHpw?=
+ =?utf-8?B?V1B3enZKWkIyVDVUN3FUS09PdTc3NmdFVDZPVVNZOVpJZXpraTBhL3BWOFJn?=
+ =?utf-8?B?OUZHWU84RXNqM0hpZVIzbTBqbGUvVERVNWpxTG12eklRcVltZG1VRWhNbmIw?=
+ =?utf-8?B?eXFYVlJsblNJc3ZYNVlsbUdmbkFheVZKakQ5WjVOM1FneWplaHNhQlY0S1hu?=
+ =?utf-8?B?Um5FbXBrbDNDeUtKbms3dGsvTUxIWjE3VHVwck5YdGUxblVQdnlUa0VMYS9s?=
+ =?utf-8?Q?i0KZN+wzu+XFXavSYgzB9eY5Cn09LHBQbIyIgGr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aDI3U0JJK0k5MmU1enZ2bjBTUXc4U2p6R1UvNjh3TjRGTk5rTFFuM2I5Q1Z6?=
+ =?utf-8?B?elRtKy9xQ25PZWx1bXpJb05NVXR6RGZvUTA5azR2RnY3TldoQTl2ZU4zbXli?=
+ =?utf-8?B?QnM4UVlRdWNscEU5S2VNdUxMVFhmeTB2Vng0R051N1VINWVkYlJvNXFWWmxY?=
+ =?utf-8?B?QXRwMHhwcDJJdkY1TzhWZk5KR2Zhd2lPUXBuKzVlUjFheUk2Z2RESEhQK0pk?=
+ =?utf-8?B?akpjVk5QT2NPSlpTOXVzUXF3TnE1VXVOZVRGQ2thYWN4L3NpcGI1dGVMbjRZ?=
+ =?utf-8?B?VW1oWGZpdWtuSEpoSmxJQ0VMMU9nVG94TXpURDdYOERkdU5LMUJWVUxLVDda?=
+ =?utf-8?B?QnpQc0Q3UXBzNEtxZGR5YklnSEdmazZyT1QwUm9uL3RaTFFpVVNlRTRGbFJ5?=
+ =?utf-8?B?ZW5YaGM5YjF2dnZvZTVUcTF5WkRlNU5jRWhqK1lwV1NBL0pOR0krRnJiTGRt?=
+ =?utf-8?B?ak9HU2puck1XMGpNVmx5WkVENzJzdEFjSG5GbVRacTByRGxRcHp4WXYxTFE3?=
+ =?utf-8?B?S1VRUVJSeDdrd3hWa1poaHkyZElzbHZ2Z2ZsOTh6SHFtamM3b3l4UDJOYTBq?=
+ =?utf-8?B?QnRYanpCdFA0T3RYbjc0bHAvbnBucG5udjFwQnIzY25ZVk1WMjN4NGFHeXVq?=
+ =?utf-8?B?OEMrWnQwQWt0UVplRlNWMit3OU5kR25naUdhczZFcGZzVkFLbDY4RS9RMEZi?=
+ =?utf-8?B?K3NZYnc2dVg0bUZldFhHcnVUdG5ZeHI0UjQ1US92OFNtWTkvdmh5UWNMVHY3?=
+ =?utf-8?B?K0ZRamdKQWtjalBnVDdvVGM5L3JnWld1V0NPa05FTlhZQ3EvY3VodWNTVmtm?=
+ =?utf-8?B?dmkvL3RkTDR2dk16S3FQbHlaSVBncmI5emVVa1MyU21mTnJEeHA5Nkx4T2VD?=
+ =?utf-8?B?L3J1RW1MTCt2T0tCZGtXRUlOekhkMklDNnFRQnRzUFM1SE04Q0xZa1ZyQ0Zl?=
+ =?utf-8?B?UDB4NmQra2ZUUXdGRzJJWjQ3dEE5K1l4V3M2TTl0Yk54UmdBb2k4Z0JhZmRk?=
+ =?utf-8?B?a2pmaFVoSTZNcUpiTXZ3NmJQR0hzUGlhRVRJOGg5d3ExSEJaaS9hRGU2ekRP?=
+ =?utf-8?B?NVN4SHAwTnFxU05BaSt3M1NOQWlsanE3UkgyL0N3elkvWHpjT1BNUi9wTDRm?=
+ =?utf-8?B?K2d6WnMrZ0pTenFWVTJkQUJSenloTlJic2xDL2tZL0F4ckd4ZmVvbWdEanZw?=
+ =?utf-8?B?TVlPeThyQ1lSVzFTV21NRVNDSWdyYXphTlY0V0daVFRKR0NPSHg3dXlYc0Rz?=
+ =?utf-8?B?eUEreXNjU1RvNVNHQnlDVGJaOFhqWmxRbjdoMEpwUDU3dm9wUXlCa3dvL0Vh?=
+ =?utf-8?B?dlEyUmQ1dnhQSDFobkRFazhhWmE2c1AvMVN4UFpjUlhDOGtVRXlid1VkZlFU?=
+ =?utf-8?B?T3ZHK1hhTFpHbWJLTndsZXQ1K24zbnNyd2VEOTVkNWRVRDcwWWMvNVNwdVF6?=
+ =?utf-8?B?cWFja3piTVBpN240RUxxQU1LM0o4UzRNVnI2R0FCc3dvSnBPRTg3NE9mWmow?=
+ =?utf-8?B?UjV3NFhXZ2NvejM0U0xHc0lCd0hyRTh3V1JNUTcwYkJNRlkxUUE0aWRRZjNs?=
+ =?utf-8?B?bXZxNVpvdHZ4YWZMNG5WR0Z6NG9TVEpkaUEyMFRrTi82SkpkWGxtREZjbmJv?=
+ =?utf-8?B?WHJNV3VyMG9QOUNvcG9EdFM5dmpHdzRyeFBaaHBPcFBpcDB3MmJucllMNDc0?=
+ =?utf-8?B?YlkyYXhMQkdRUkFhUDR4VHZQQzBYTllUU3RBazZkZlRnT3k4UXlpWHFxN0la?=
+ =?utf-8?B?bm0xNHRvRUpFS0pBSnhPR1RvWDNtQXN0R3NIcSszdHFXcHBuL28yd2l2NzA4?=
+ =?utf-8?B?SU92KzJDYzRQMlAvVklMUXRYZ1Y3RUJpeWdmM2NHT29iRENnNFc3akpTNmVy?=
+ =?utf-8?B?K2NaV3QyNStERFFXNlJpd0VVVFhGU2VrSWM5NkY5cjBFcHB3NVQrSE9lZW1O?=
+ =?utf-8?B?YmhIdkRaZDlNdkZTZ0RUdWZUbUdIMHJSZVhZMEgxYTRjWWlXbWR2MFpJVmxP?=
+ =?utf-8?B?TFRTY3M3RHZGRThQUlpNcjEvOWkrZmVrNURGQ0ltazIwYjhxZk1jWHpXY1Uy?=
+ =?utf-8?B?VUFTdVlSV3M4ZnZFc3hXUXlwRVA3clZybUlBdVNXOXlHN2RzWTNqM01OVlVa?=
+ =?utf-8?Q?n4XKCm0PeTnB+I6mwivsYUlE+?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e85f4740-7b14-49dd-c76b-08dcef8cabeb
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 15:51:04.0217
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: myFhXy46FuT+J7dt3l2vcnNGmFQk9VzOMJb+MbVdsqKlgOmdyq5JpcHJiwqLZNp3
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4180
 
-On Fri, 2024-10-18 at 17:45 +0200, Roberto Sassu wrote:
-> On Fri, 2024-10-18 at 16:42 +0100, Lorenzo Stoakes wrote:
-> > On Fri, Oct 18, 2024 at 04:47:10PM +0200, Roberto Sassu wrote:
-> > > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > >=20
-> > > Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
-> > > remap_file_pages()") fixed a security issue, it added an LSM check wh=
-en
-> > > trying to remap file pages, so that LSMs have the opportunity to eval=
-uate
-> > > such action like for other memory operations such as mmap() and mprot=
-ect().
-> > >=20
-> > > However, that commit called security_mmap_file() inside the mmap_lock=
- lock,
-> > > while the other calls do it before taking the lock, after commit
-> > > 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
-> > >=20
-> > > This caused lock inversion issue with IMA which was taking the mmap_l=
-ock
-> > > and i_mutex lock in the opposite way when the remap_file_pages() syst=
-em
-> > > call was called.
-> > >=20
-> > > Solve the issue by splitting the critical region in remap_file_pages(=
-) in
-> > > two regions: the first takes a read lock of mmap_lock and retrieves t=
-he VMA
-> > > and the file associated, and calculate the 'prot' and 'flags' variabl=
-e; the
-> > > second takes a write lock on mmap_lock, checks that the VMA flags and=
- the
-> > > VMA file descriptor are the same as the ones obtained in the first cr=
-itical
-> > > region (otherwise the system call fails), and calls do_mmap().
-> > >=20
-> > > In between, after releasing the read lock and taking the write lock, =
-call
-> > > security_mmap_file(), and solve the lock inversion issue.
-> >=20
-> > Great description!
-> >=20
-> > >=20
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in r=
-emap_file_pages()")
-> > > Reported-by: syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com
-> > > Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a02=
-20.46d20.0036.GAE@google.com/
-> > > Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com> (Calculate prot=
- and flags earlier)
-> > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> >=20
-> > Other than some nits below:
-> >=20
-> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> >=20
-> > I think you're definitely good to un-RFC here.
->=20
-> Perfect, will do. Thank you!
+Hi Reinette,
 
-I'm just going to change a bit the commit title:
+On 10/15/2024 10:40 PM, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 10/9/24 10:39 AM, Babu Moger wrote:
+>> Users can modify the configuration of assignable events. Whenever the
+>> event configuration is updated, MBM assignments must be revised across
+>> all monitor groups within the impacted domains.
+>>
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+> ...
+> 
+>> ---
+>>   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 49 ++++++++++++++++++++++++++
+>>   1 file changed, 49 insertions(+)
+>>
+>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> index f890d294e002..cf2e0ad0e4f4 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> @@ -1669,6 +1669,7 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
+>>   }
+>>   
+>>   struct mon_config_info {
+>> +	struct rdt_resource *r;
+>>   	struct rdt_mon_domain *d;
+>>   	u32 evtid;
+>>   	u32 mon_config;
+>> @@ -1694,11 +1695,46 @@ u32 resctrl_arch_mon_event_config_get(struct rdt_mon_domain *d,
+>>   	return INVALID_CONFIG_VALUE;
+>>   }
+>>   
+>> +static void mbm_cntr_event_update(int cntr_id, unsigned int index, u32 val)
+>> +{
+>> +	union l3_qos_abmc_cfg abmc_cfg = { 0 };
+>> +	struct rdtgroup *prgrp, *crgrp;
+>> +	int update = 0;
+>> +
+>> +	/* Check if the cntr_id is associated to the event type updated */
+>> +	list_for_each_entry(prgrp, &rdt_all_groups, rdtgroup_list) {
+>> +		if (prgrp->mon.cntr_id[index] == cntr_id) {
+>> +			abmc_cfg.split.bw_src = prgrp->mon.rmid;
+>> +			update = 1;
+>> +			goto out_update;
+>> +		}
+>> +		list_for_each_entry(crgrp, &prgrp->mon.crdtgrp_list, mon.crdtgrp_list) {
+>> +			if (crgrp->mon.cntr_id[index] == cntr_id) {
+>> +				abmc_cfg.split.bw_src = crgrp->mon.rmid;
+>> +				update = 1;
+>> +				goto out_update;
+>> +			}
+>> +		}
+> 
+> This code looks like it is better suited for resctrl fs. Note that
+> after the arch fs split struct rdtgroup is private to resctrl fs.
 
-mm: Split critical region in remap_file_pages() and invoke LSMs in
-between
+ok
 
-Roberto
+> 
+>> +	}
+>> +
+>> +out_update:
+>> +	if (update) {
+>> +		abmc_cfg.split.cfg_en = 1;
+>> +		abmc_cfg.split.cntr_en = 1;
+>> +		abmc_cfg.split.cntr_id = cntr_id;
+>> +		abmc_cfg.split.bw_type = val;
+>> +		wrmsrl(MSR_IA32_L3_QOS_ABMC_CFG, abmc_cfg.full);
+>> +	}
+>> +}
+>> +
+>>   void resctrl_arch_mon_event_config_set(void *info)
+>>   {
+>>   	struct mon_config_info *mon_info = info;
+>> +	struct rdt_mon_domain *d = mon_info->d;
+>> +	struct rdt_resource *r = mon_info->r;
+>>   	struct rdt_hw_mon_domain *hw_dom;
+>>   	unsigned int index;
+>> +	int cntr_id;
+>>   
+>>   	index = mon_event_config_index_get(mon_info->evtid);
+>>   	if (index == INVALID_CONFIG_INDEX)
+>> @@ -1718,6 +1754,18 @@ void resctrl_arch_mon_event_config_set(void *info)
+>>   		hw_dom->mbm_local_cfg =  mon_info->mon_config;
+>>   		break;
+>>   	}
+>> +
+>> +	/*
+>> +	 * Update the assignment if the domain has the cntr_id's assigned
+>> +	 * to event type updated.
+>> +	 */
+>> +	if (resctrl_arch_mbm_cntr_assign_enabled(r)) {
+>> +		for (cntr_id = 0; cntr_id < r->mon.num_mbm_cntrs; cntr_id++) {
+>> +			if (test_bit(cntr_id, d->mbm_cntr_map))
+>> +				mbm_cntr_event_update(cntr_id, index,
+>> +						      mon_info->mon_config);
+>> +		}
+>> +	}
+>>   }
+>>   
+>>   /**
+>> @@ -1805,6 +1853,7 @@ static void mbm_config_write_domain(struct rdt_resource *r,
+>>   	mon_info.d = d;
+>>   	mon_info.evtid = evtid;
+>>   	mon_info.mon_config = val;
+>> +	mon_info.r = r;
+>>   
+>>   	/*
+>>   	 * Update MSR_IA32_EVT_CFG_BASE MSR on one of the CPUs in the
+> 
+> If I understand correctly, mbm_config_write_domain() paints itself into a corner by
+> calling arch code via IPI. As seen above it needs resctrl help to get all the information
+> and doing so from the arch helper is not appropriate.
+> 
+> How about calling a resctrl fs helper via IPI instead? For example:
+> 
+> resctrl_mon_event_config_set() {
+> 
+> 	resctrl_arch_mon_event_config_set();
+> 
+> 	if (resctrl_arch_mbm_cntr_assign_enabled(r)) {
+> 		for (cntr_id = 0; cntr_id < r->mon.num_mbm_cntrs; cntr_id++) {
+> 			if (test_bit(cntr_id, d->mbm_cntr_map)) {
+> 				/* determine rmid */
+> 				resctrl_arch_config_cntr()
 
-> Roberto
->=20
-> > > ---
-> > >  mm/mmap.c | 62 ++++++++++++++++++++++++++++++++++++++++-------------=
---
-> > >  1 file changed, 45 insertions(+), 17 deletions(-)
-> > >=20
-> > > diff --git a/mm/mmap.c b/mm/mmap.c
-> > > index 9c0fb43064b5..762944427e03 100644
-> > > --- a/mm/mmap.c
-> > > +++ b/mm/mmap.c
-> > > @@ -1640,6 +1640,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long=
-, start, unsigned long, size,
-> > >  	unsigned long populate =3D 0;
-> > >  	unsigned long ret =3D -EINVAL;
-> > >  	struct file *file;
-> > > +	vm_flags_t vm_flags;
-> > >=20
-> > >  	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. S=
-ee Documentation/mm/remap_file_pages.rst.\n",
-> > >  		     current->comm, current->pid);
-> > > @@ -1656,12 +1657,53 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned lo=
-ng, start, unsigned long, size,
-> > >  	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
-> > >  		return ret;
-> > >=20
-> > > -	if (mmap_write_lock_killable(mm))
-> > > +	if (mmap_read_lock_killable(mm))
-> > > +		return -EINTR;
-> >=20
-> > I'm kinda verbose generally, but I'd love a comment like:
-> >=20
-> > 	/*
-> > 	 * Look up VMA under read lock first so we can perform the security
-> > 	 * without holding locks (which can be problematic). We reacquire a
-> > 	 * write lock later and check nothing changed underneath us.
-> > 	 */
-> >=20
-> > > +
-> > > +	vma =3D vma_lookup(mm, start);
-> > > +
-> > > +	if (!vma || !(vma->vm_flags & VM_SHARED)) {
-> > > +		mmap_read_unlock(mm);
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	prot |=3D vma->vm_flags & VM_READ ? PROT_READ : 0;
-> > > +	prot |=3D vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
-> > > +	prot |=3D vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
-> > > +
-> > > +	flags &=3D MAP_NONBLOCK;
-> > > +	flags |=3D MAP_SHARED | MAP_FIXED | MAP_POPULATE;
-> > > +	if (vma->vm_flags & VM_LOCKED)
-> > > +		flags |=3D MAP_LOCKED;
-> > > +
-> > > +	/* Save vm_flags used to calculate prot and flags, and recheck late=
-r. */
-> > > +	vm_flags =3D vma->vm_flags;
-> > > +	file =3D get_file(vma->vm_file);
-> > > +
-> > > +	mmap_read_unlock(mm);
-> > > +
-> >=20
-> > Maybe worth adding a comment to explain why you're doing this without t=
-he
-> > lock so somebody looking at this later can understand the dance?
-> >=20
-> > > +	ret =3D security_mmap_file(file, prot, flags);
-> > > +	if (ret) {
-> > > +		fput(file);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	ret =3D -EINVAL;
-> > > +
-> >=20
-> > Again, being verbose, I'd put something here like:
-> >=20
-> > 	/* OK security check passed, take write lock + let it rip */
-> >=20
-> > > +	if (mmap_write_lock_killable(mm)) {
-> > > +		fput(file);
-> > >  		return -EINTR;
-> > > +	}
-> > >=20
-> > >  	vma =3D vma_lookup(mm, start);
-> > >=20
-> > > -	if (!vma || !(vma->vm_flags & VM_SHARED))
-> > > +	if (!vma)
-> > > +		goto out;
-> > > +
-> >=20
-> > I'd also add something like:
-> >=20
-> > 	/* Make sure things didn't change under us. */
-> >=20
-> > > +	if (vma->vm_flags !=3D vm_flags)
-> > > +		goto out;
-> > > +
-> >=20
-> > And drop this newline to group them together (super nitty I know, sorry=
-!)
-> >=20
-> > > +	if (vma->vm_file !=3D file)
-> > >  		goto out;
-> > >=20
-> > >  	if (start + size > vma->vm_end) {
-> > > @@ -1689,25 +1731,11 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned lo=
-ng, start, unsigned long, size,
-> > >  			goto out;
-> > >  	}
-> > >=20
-> > > -	prot |=3D vma->vm_flags & VM_READ ? PROT_READ : 0;
-> > > -	prot |=3D vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
-> > > -	prot |=3D vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
-> > > -
-> > > -	flags &=3D MAP_NONBLOCK;
-> > > -	flags |=3D MAP_SHARED | MAP_FIXED | MAP_POPULATE;
-> > > -	if (vma->vm_flags & VM_LOCKED)
-> > > -		flags |=3D MAP_LOCKED;
-> > > -
-> > > -	file =3D get_file(vma->vm_file);
-> > > -	ret =3D security_mmap_file(vma->vm_file, prot, flags);
-> > > -	if (ret)
-> > > -		goto out_fput;
-> > >  	ret =3D do_mmap(vma->vm_file, start, size,
-> > >  			prot, flags, 0, pgoff, &populate, NULL);
-> > > -out_fput:
-> > > -	fput(file);
-> > >  out:
-> > >  	mmap_write_unlock(mm);
-> > > +	fput(file);
-> > >  	if (populate)
-> > >  		mm_populate(ret, populate);
-> > >  	if (!IS_ERR_VALUE(ret))
-> > > --
-> > > 2.34.1
-> > >=20
-> >=20
-> > These are just nits, this looks good to me!
->=20
+The call resctrl_arch_config_cntr() requires both RMID and CLOSID. So, 
+we will have to find the rdtgroup here (not just RMID, we need CLOSID also).
 
+Yea. I think it can be done. Let me try.
+
+
+> 			}
+> 		}
+> 	}
+> }
+> 
+> 
+> mbm_config_write_domain() {
+> 
+> 	...
+> 	smp_call_function_any(&d->hdr.cpu_mask, resctrl_mon_event_config_set, ...)
+> 	...
+> 
+> }
+> 
+> By removing reset of arch state from resctrl_arch_config_cntr() this works well with the
+> resctrl_arch_reset_rmid_all() that is done from mbm_config_write_domain().
+> Even though resctrl_arch_config_cntr() contains a smp_call_function_any() it should
+> already be running on CPU in mask and thus should just run on local CPU.
+
+Ok.
+-- 
+- Babu Moger
 
