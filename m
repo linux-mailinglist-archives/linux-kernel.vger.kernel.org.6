@@ -1,90 +1,77 @@
-Return-Path: <linux-kernel+bounces-371961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9D89A429F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:39:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA319A42AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3C92816B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C891E1C20850
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4921A2022D1;
-	Fri, 18 Oct 2024 15:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0C82022C5;
+	Fri, 18 Oct 2024 15:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UkMjGaYO"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fKPFoVSn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEC01FF60E
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF581FF60E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729265935; cv=none; b=kBPX3d/xsZrYi19os2N22SH4XN3yauug2oe4cHut248fcKBwx5U5TbnD3zrV63eN37u3zBak1EXJxyLFav8cwhgvYXWsmuGqD+ky6uqod2HLJRcBu+NR37AZtJU9IZypqWy/S7RwaVtd2EeIviJd4ZLDIRNkStEm80ZsdC3APcM=
+	t=1729266017; cv=none; b=uSSL91LLMW1/uYOB8kv/IlEAMMU3k2r/xa0g/lihS85w2EeVz83T5gR2MnWUbXUZHZCCxlgyuFjQiYt0Ka59q1ElwDD9Q8GPOgp4anTEEOUDbFMJfIxqUuBscixAnmGR9ahpTLj6QbSHW5GX371EyEZ9/1y3W7ooZRIVbpUpBf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729265935; c=relaxed/simple;
-	bh=uxi1OQOzkpqjBsttpbYxBDUhlZCDok1vzymmwSbNxGk=;
+	s=arc-20240116; t=1729266017; c=relaxed/simple;
+	bh=JwhDul0KWehdjzF8RUVNvZuD0KzaRzk5sOiMKzR8xWI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tf/YGZRGyafrZ/4bXC+Ao37F5BnuDRLgDRilHlnFAdkVl3Z3zRxYpD/o8+OnmBx88SIkn5LEQSZ6AUJKtU4Zbl28BAgWg2Mw59fQlG2hsnwA+ISJpTQAxPqKcXpe42dcpTfpWIA7tTU8JfEe9I65NNnI9JYriwkM+1Gmxmdza84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UkMjGaYO; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e3f35268so164178e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:38:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729265931; x=1729870731; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZGZilrMaCPY/RlLKnQENee50lNaEUfTtoARSumrgroE=;
-        b=UkMjGaYOcJDy3MHJ3as4LBCmJXHLrdJrI/GjwV1GA5e+SmfGgNogVH4PcarvJ2dAjT
-         OIy7VXmFzzOV2VF8nIqhZuYVcKC9k8rC3bj9h7JLmIjctnoJw5RSBcqkGab4SUP/MbKh
-         pFarrj8EOdW8bF/8ObSDWdj/CQmulb7mEpqLyjimvyRqC76W0tmlviW2Ear1D+NcmBjr
-         4T8HirismmD1k80KEOr4a35qFK2KF2mfDMZVdGDVQqQLTf140JP7WXgzyUgsvsWvFnZK
-         2LSAzll7MywWGxlZtsba7RPo7N4FWV7Tou73rQ9ktY/hY20kKb2daG95CdkWc20EqcHJ
-         Z9rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729265931; x=1729870731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZGZilrMaCPY/RlLKnQENee50lNaEUfTtoARSumrgroE=;
-        b=bJSulFAyzIlrmWui4kn35AgBar8Cq28AKxJ45MJln+95jydRxS4grpTu60fltQdVOE
-         jh7hYkVLG1QuDAlRPJjf8GvJ+3JqFE50fA0ed5FIq0DHpx8XgLspZyV6yrtubm5q/3GY
-         rVqA1tF+dMg8VWrIS4dDlmgIxe95t4qYcg5NSGS07XGlTLIa48aM2TMk5ZnBXlUo3EET
-         5paP3p2UVz1FEtE4L7Fv7nZ5HOq/+F4CDlxc+RkQm+ScBGU+4vjuJc/J801yDj3Pu4XJ
-         VbT/2PIOpdbVGmhdKDjq6e+O7ul3CQLgTSl/mEHPZ//ev5XdkBNtY7akMCXyxy6NTxRw
-         TfGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDs2uKYupnbOcIPRqf19FVlGmcr0RQozZQ+cPD4o7lihMpfzwrJTZDmge4EFQsNPS2oupfmTtv/ztGHWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdql9/AQIYLnLRHXzw1/EUQ0zAi0fvp6O4Sm/SQsblcgrkdEnQ
-	XUfuHIXEGXTEXOxZNhTbht6FVBGYPQZE+HzSE6jGlrAm+WC4/YtHRmKb0fiMcTw=
-X-Google-Smtp-Source: AGHT+IGPxdR5IjipXz8Z5jLLpSRS/Ug36kYGe2HYxW1QPJYSzrMZ+7vrq7n1t4UL0NTRyaJjVPQBCQ==
-X-Received: by 2002:a05:6512:33d3:b0:536:9f02:17b4 with SMTP id 2adb3069b0e04-53a1544961amr1854340e87.40.1729265931172;
-        Fri, 18 Oct 2024 08:38:51 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151f0bdbsm245785e87.175.2024.10.18.08.38.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 08:38:49 -0700 (PDT)
-Date: Fri, 18 Oct 2024 18:38:48 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jie Luo <quic_luoj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, 
-	quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
-	bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH v4 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
-Message-ID: <cqgkc3qpupbv47rqxiyhe2m466zxcxepyfcgyaieo2sggffprx@mstqi4pqoiqc>
-References: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com>
- <20241015-qcom_ipq_cmnpll-v4-4-27817fbe3505@quicinc.com>
- <abro3enahzbugcwokcyyhwybbokestbigvzhywxhnfrdjihni3@7ej2hkgbgtf6>
- <b336724c-1fea-4e1e-9477-66f53d746f09@quicinc.com>
- <CAA8EJprVNOLO-CoorNhvKrrSD1bNKdFrzth5BL0GHXffPv62jw@mail.gmail.com>
- <32dbf7ee-1190-401c-b6b1-bc8c70a5158c@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGwIgpV7A1rOI6ZV59Ds7u2ZEKkVRy1/lN4XV8XCFb1s9UR/XHhEAluEYkBZkSYS4kbVUI8OfdaW5toF7I6YrMCsWdwKznZqjgohsb3BcTJHvLOR367w/ta3OsNb/uh6aR5iZ6Re3obvUwEOnSWoWmuc4OuV/1A4zW5gEAL7PGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fKPFoVSn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729266014;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L7sF+ux8tQB6rtv2OQ9q9fbX718Icj+2tzphppaDZ3A=;
+	b=fKPFoVSn98tPmDPFXKw+8xZachdEdFDE7H+udwyLZjugokED4Upm5JgauKiQ8qfApUlT3S
+	c2TVxqoUasmNTFwYOMavZtPrR3s3G4vX1qiL2NTY7nTmkWcufAFWQZL/SGuVYdEouSmRjT
+	8Xmc+64VrBCEnkVX2uYSaibtfuOsgoM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-633-9VZDhXIJN6-ai3qN3pH6Fg-1; Fri,
+ 18 Oct 2024 11:40:10 -0400
+X-MC-Unique: 9VZDhXIJN6-ai3qN3pH6Fg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E8B231964CF3;
+	Fri, 18 Oct 2024 15:40:06 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.28])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 39A1F1955D5A;
+	Fri, 18 Oct 2024 15:39:10 +0000 (UTC)
+Date: Fri, 18 Oct 2024 23:39:00 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Gregory Price <gourry@gourry.net>, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	bhelgaas@google.com, ilpo.jarvinen@linux.intel.com,
+	mika.westerberg@linux.intel.com, ying.huang@intel.com,
+	tglx@linutronix.de, takahiro.akashi@linaro.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] resource,kexec: walk_system_ram_res_rev must retain
+ resource flags
+Message-ID: <ZxKBFMAecrL25Fwb@MiWiFi-R3L-srv>
+References: <20241017190347.5578-1-gourry@gourry.net>
+ <ZxHFgmHPe3Cow2n8@MiWiFi-R3L-srv>
+ <ZxJTDq-PxxxIgzfv@smile.fi.intel.com>
+ <ZxJoLxyfAHxd18UM@MiWiFi-R3L-srv>
+ <ZxJ13aKBqEotI593@smile.fi.intel.com>
+ <ZxJ2NxXpqowd73om@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,113 +80,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <32dbf7ee-1190-401c-b6b1-bc8c70a5158c@quicinc.com>
+In-Reply-To: <ZxJ2NxXpqowd73om@smile.fi.intel.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Oct 18, 2024 at 10:03:08PM +0800, Jie Luo wrote:
-> 
-> 
-> On 10/18/2024 4:11 PM, Dmitry Baryshkov wrote:
-> > On Fri, 18 Oct 2024 at 09:55, Jie Luo <quic_luoj@quicinc.com> wrote:
-> > > 
-> > > 
-> > > 
-> > > On 10/18/2024 6:32 AM, Dmitry Baryshkov wrote:
-> > > > On Tue, Oct 15, 2024 at 10:16:54PM +0800, Luo Jie wrote:
-> > > > > The CMN PLL clock controller allows selection of an input
-> > > > > clock rate from a defined set of input clock rates. It in-turn
-> > > > > supplies fixed rate output clocks to the hardware blocks that
-> > > > > provide ethernet functions such as PPE (Packet Process Engine)
-> > > > > and connected switch or PHY, and to GCC.
+On 10/18/24 at 05:52pm, Andy Shevchenko wrote:
+> On Fri, Oct 18, 2024 at 05:51:09PM +0300, Andy Shevchenko wrote:
+> > On Fri, Oct 18, 2024 at 09:52:47PM +0800, Baoquan He wrote:
+> > > On 10/18/24 at 03:22pm, Andy Shevchenko wrote:
+> > > > On Fri, Oct 18, 2024 at 10:18:42AM +0800, Baoquan He wrote:
+> > > > > On 10/17/24 at 03:03pm, Gregory Price wrote:
+> > > > > > walk_system_ram_res_rev() erroneously discards resource flags when
+> > > > > > passing the information to the callback.
+> > > > > > 
+> > > > > > This causes systems with IORESOURCE_SYSRAM_DRIVER_MANAGED memory to
+> > > > > > have these resources selected during kexec to store kexec buffers
+> > > > > > if that memory happens to be at placed above normal system ram.
 > > > > > 
-> > > > > Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> > > > > ---
-> > > > >    arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi |  6 +++++-
-> > > > >    arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 20 +++++++++++++++++++-
-> > > > >    2 files changed, 24 insertions(+), 2 deletions(-)
+> > > > > Sorry about that. I haven't checked IORESOURCE_SYSRAM_DRIVER_MANAGED
+> > > > > memory carefully, wondering if res could be set as
+> > > > > 'IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY' plus
+> > > > > IORESOURCE_SYSRAM_DRIVER_MANAGED in iomem_resource tree.
 > > > > > 
-> > > > > diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> > > > > index 91e104b0f865..77e1e42083f3 100644
-> > > > > --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> > > > > +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> > > > > @@ -3,7 +3,7 @@
-> > > > >     * IPQ9574 RDP board common device tree source
-> > > > >     *
-> > > > >     * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-> > > > > - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-> > > > > + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> > > > >     */
-> > > > > 
-> > > > >    /dts-v1/;
-> > > > > @@ -164,6 +164,10 @@ &usb3 {
-> > > > >       status = "okay";
-> > > > >    };
-> > > > > 
-> > > > > +&cmn_pll_ref_clk {
-> > > > > +    clock-frequency = <48000000>;
-> > > > > +};
-> > > > > +
-> > > > >    &xo_board_clk {
-> > > > >       clock-frequency = <24000000>;
-> > > > >    };
-> > > > > diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > > > > index 14c7b3a78442..93f66bb83c5a 100644
-> > > > > --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > > > > +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > > > > @@ -3,10 +3,11 @@
-> > > > >     * IPQ9574 SoC device tree source
-> > > > >     *
-> > > > >     * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-> > > > > - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-> > > > > + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> > > > >     */
-> > > > > 
-> > > > >    #include <dt-bindings/clock/qcom,apss-ipq.h>
-> > > > > +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
-> > > > >    #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
-> > > > >    #include <dt-bindings/interconnect/qcom,ipq9574.h>
-> > > > >    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > > > @@ -19,6 +20,11 @@ / {
-> > > > >       #size-cells = <2>;
-> > > > > 
-> > > > >       clocks {
-> > > > > +            cmn_pll_ref_clk: cmn-pll-ref-clk {
-> > > > > +                    compatible = "fixed-clock";
-> > > > > +                    #clock-cells = <0>;
-> > > > > +            };
+> > > > > Anyway, the change in this patch is certainly better. Thanks.
 > > > > 
-> > > > Which block provides this clock? If it is provided by the external XO
-> > > > then it should not be a part of the SoC dtsi.
+> > > > Can we get more test cases in the respective module, please?
 > > > 
-> > > The on-chip WiFi block supplies this reference clock. So keeping it in
-> > > the SoC DTSI is perhaps appropriate.
+> > > Do you mean testing CXL memory in kexec/kdump? No, we can't. Kexec/kdump
+> > > test cases basically is system testing, not unit test or module test. It
+> > > needs run system and then jump to 2nd kernel, vm can be used but it
+> > > can't cover many cases existing only on baremetal. Currenly, Redhat's
+> > > CKI is heavily relied on to test them, however I am not sure if system
+> > > with CXL support is available in our LAB.
+> > > 
+> > > Not sure if I got you right.
 > > 
-> > Then maybe it should be provided by the WiFi device node? At least you
-> > should document your design decisions in the commit message.
+> > I meant since we touch resource.c, we should really touch resource_kunit.c
+> > *in addition to*.
 > 
-> This CMN PLL reference clock is fixed rate and is automatically
-> generated by the SoC's internal Wi-Fi hardware block with no software
-> configuration required from the Wi-Fi side.
-> 
-> Sure, I will enhance the commit message to add the information on the
-> fixed reference clock from Wi-Fi block. Hope this is ok.
+> And to be more clear, there is no best time to add test cases than
+> as early as possible. So, can we add the test cases to the (new) APIs,
+> so we want have an issue like the one this patch fixes?
 
-We have other fixed clocks which are provided by hardware blocks.
-Without additional details it is impossible to answer whether it is fine
-or not.
+I will have a look at kernel/resource_kunit.c to see if I can add
+something for walk_system_ram_res_rev(). Thanks.
 
-> 
-> > 
-> > Also, I don't think this node passes DT schema validation. Did you check it?
-> 
-> Yes, the DT is validated against the schema, I have shared the logs
-> below. Could you please let me know If anything needs rectification?
-
-I see, you are setting the cmn_pll_ref_clk frequency in the
-ipq9574-rdp-common.dtsi file. If the PLL is internal to the SoC, why is
-the frequency set outside of it? Is it generated by multiplying the XO
-clk? Should you be using fixed-factor clock instead?
-
--- 
-With best wishes
-Dmitry
 
