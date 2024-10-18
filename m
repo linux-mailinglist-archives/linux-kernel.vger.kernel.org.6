@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-371891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB959A41DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:01:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A81F9A41DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FFC728C6F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A0A228C79B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB51200BB1;
-	Fri, 18 Oct 2024 15:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206E5200C8C;
+	Fri, 18 Oct 2024 15:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SjxUftEc"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AQ5e+kKl"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BA278C91
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7B91D7E3D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729263671; cv=none; b=nADgnqqRIShKhh3SuN6untfo6dFVW6631732UR0NX/x3fRX+2/yRXoczvsK96Ho9TDFrhngm/z8ZMcjnOpgsLt3mlPpuFC+rid0IjV71Sr+gEjcAliJLKxh8tD96vFi1yg9LHmfTK/UxeA88/A0TNNK5hvqeNxnX0vHJn+et2gY=
+	t=1729263672; cv=none; b=Xw4ibabmrwRT9SPY4ZGF3fLedIK3jWjfeU9XcrNi6wr8jS9JxA52KyHOmondPXp3Qfxp9O5delF1mb2Q/MtHMYEGUe+y98XdvDCiTuWgNGIgOEyGGc3hCHTI6QZirzZyKl0kuuOekmlXo2KYJ72DyhGSgQ20d+pfb5WvoZ2NrSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729263671; c=relaxed/simple;
-	bh=6ychNUbuINVXdsVvpz1dtumTWLHjSfyYtkHsRdDm454=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=svQ/sDd90MY3G9kccHI7MbRGZ8UkeVGPrsvFjLNdXIc3dydVRt5BUy/BzxdpT6pyX/n+Cq7KFK6MGZdcrs1968ksJ/7o1ZUym8NybjQf0F4oSKF9Zly2kZjJ7NA+R8ip6QYBGVnfjgpRqmRmawe15TMf/bSgQSVn1AfrYCXmcf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SjxUftEc; arc=none smtp.client-ip=91.218.175.182
+	s=arc-20240116; t=1729263672; c=relaxed/simple;
+	bh=7ZpSoewhKU7eN4frzrDG+nKfoYaE4waFluXDMv9yrEI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=lhUECY3JGhBWG6q9oKcwfzdcBUMicSLxEmXgch+J59r0qLCsXXoGm145zdeVKX2vetPBMNSv36wwKKSpPuUzCqrV+6N8Ii3q+oszIZogMa4+j5/RFJRwgi4F5kSCgd1iTSwNb300kctn7ReMRlhh08S3aSV8kREd+A3pX7CDeBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AQ5e+kKl; arc=none smtp.client-ip=91.218.175.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729263666;
+	t=1729263668;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UvvnK4fcSjvxd/X21ONu95YZX+qIikjbIWJ5EiCB+vg=;
-	b=SjxUftEcZ9LhZd8b5mye63Ons/SiQeK/cDCvpnCn+sTSV05/2gCLj6Nfef9H/oVRZ1IP4q
-	YY3qDHjWzDZL7YNHPTJ9R9N503iXH/JPQHDi/2QU4400a0ZjzhT9T8gQ7AZLfm9crJDR5+
-	nzHfCSevk9YlFBUE18M1wZeGMEwQJhE=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ydd5/5k0GyzrDpIcMZoEJ/GlEO8PTBGwqqIyFBsrzJU=;
+	b=AQ5e+kKlXfWgQ+4/9Qe5hKblGe0DBFgg0bHn+PuSb+c3ScIazmYfJik0xHBLc4vLDav9Na
+	hZXEkGx89tT5pElf2ueAxaFrFdDknkVHsAPDC8N6BLT/FUxRNJM+zN3cdaxb3qBgGUtkAy
+	bH7xvgYmroXdZstnQTMA5NtvUOopsWw=
 From: Sean Anderson <sean.anderson@linux.dev>
 To: Christoph Hellwig <hch@lst.de>,
 	iommu@lists.linux.dev
@@ -50,9 +52,11 @@ Cc: Robin Murphy <robin.murphy@arm.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>,
 	linux-kernel@vger.kernel.org,
 	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH v2 0/4] dma-mapping: Trace more error paths
-Date: Fri, 18 Oct 2024 11:00:33 -0400
-Message-Id: <20241018150036.2878190-1-sean.anderson@linux.dev>
+Subject: [PATCH v2 1/4] dma-mapping: Use macros to define events in a class
+Date: Fri, 18 Oct 2024 11:00:34 -0400
+Message-Id: <20241018150036.2878190-2-sean.anderson@linux.dev>
+In-Reply-To: <20241018150036.2878190-1-sean.anderson@linux.dev>
+References: <20241018150036.2878190-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,25 +66,114 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Some DMA functions are not traced when they fail. I found this pretty
-confusing, since it seems like the device skips calling the DMA function
-and fails anyway. This series adds some additional tracepoints to
-address this.
+Use a macro to avoid repeating the parameters and arguments for each event
+in a class.
+
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+---
 
 Changes in v2:
-- Use macros to define events in a class
+- New
 
-Sean Anderson (4):
-  dma-mapping: Use macros to define events in a class
-  dma-mapping: Trace dma_alloc/free direction
-  dma-mapping: Use trace_dma_alloc for dma_alloc* instead of using
-    trace_dma_map
-  dma-mapping: Trace more error paths
+ include/trace/events/dma.h | 60 ++++++++++++++++++--------------------
+ 1 file changed, 28 insertions(+), 32 deletions(-)
 
- include/trace/events/dma.h | 213 ++++++++++++++++++++++++++++++-------
- kernel/dma/mapping.c       |  37 ++++---
- 2 files changed, 198 insertions(+), 52 deletions(-)
-
+diff --git a/include/trace/events/dma.h b/include/trace/events/dma.h
+index b0f41265191c..3d348cea4d7c 100644
+--- a/include/trace/events/dma.h
++++ b/include/trace/events/dma.h
+@@ -65,15 +65,14 @@ DECLARE_EVENT_CLASS(dma_map,
+ 		decode_dma_attrs(__entry->attrs))
+ );
+ 
+-DEFINE_EVENT(dma_map, dma_map_page,
+-	TP_PROTO(struct device *dev, phys_addr_t phys_addr, dma_addr_t dma_addr,
+-		 size_t size, enum dma_data_direction dir, unsigned long attrs),
+-	TP_ARGS(dev, phys_addr, dma_addr, size, dir, attrs));
++#define DEFINE_MAP_EVENT(name) \
++DEFINE_EVENT(dma_map, name, \
++	TP_PROTO(struct device *dev, phys_addr_t phys_addr, dma_addr_t dma_addr, \
++		 size_t size, enum dma_data_direction dir, unsigned long attrs), \
++	TP_ARGS(dev, phys_addr, dma_addr, size, dir, attrs))
+ 
+-DEFINE_EVENT(dma_map, dma_map_resource,
+-	TP_PROTO(struct device *dev, phys_addr_t phys_addr, dma_addr_t dma_addr,
+-		 size_t size, enum dma_data_direction dir, unsigned long attrs),
+-	TP_ARGS(dev, phys_addr, dma_addr, size, dir, attrs));
++DEFINE_MAP_EVENT(dma_map_page);
++DEFINE_MAP_EVENT(dma_map_resource);
+ 
+ DECLARE_EVENT_CLASS(dma_unmap,
+ 	TP_PROTO(struct device *dev, dma_addr_t addr, size_t size,
+@@ -104,15 +103,14 @@ DECLARE_EVENT_CLASS(dma_unmap,
+ 		decode_dma_attrs(__entry->attrs))
+ );
+ 
+-DEFINE_EVENT(dma_unmap, dma_unmap_page,
+-	TP_PROTO(struct device *dev, dma_addr_t addr, size_t size,
+-		 enum dma_data_direction dir, unsigned long attrs),
+-	TP_ARGS(dev, addr, size, dir, attrs));
++#define DEFINE_UNMAP_EVENT(name) \
++DEFINE_EVENT(dma_unmap, name, \
++	TP_PROTO(struct device *dev, dma_addr_t addr, size_t size, \
++		 enum dma_data_direction dir, unsigned long attrs), \
++	TP_ARGS(dev, addr, size, dir, attrs))
+ 
+-DEFINE_EVENT(dma_unmap, dma_unmap_resource,
+-	TP_PROTO(struct device *dev, dma_addr_t addr, size_t size,
+-		 enum dma_data_direction dir, unsigned long attrs),
+-	TP_ARGS(dev, addr, size, dir, attrs));
++DEFINE_UNMAP_EVENT(dma_unmap_page);
++DEFINE_UNMAP_EVENT(dma_unmap_resource);
+ 
+ TRACE_EVENT(dma_alloc,
+ 	TP_PROTO(struct device *dev, void *virt_addr, dma_addr_t dma_addr,
+@@ -279,15 +277,14 @@ DECLARE_EVENT_CLASS(dma_sync_single,
+ 		__entry->size)
+ );
+ 
+-DEFINE_EVENT(dma_sync_single, dma_sync_single_for_cpu,
+-	TP_PROTO(struct device *dev, dma_addr_t dma_addr, size_t size,
+-		 enum dma_data_direction dir),
+-	TP_ARGS(dev, dma_addr, size, dir));
++#define DEFINE_SYNC_SINGLE_EVENT(name) \
++DEFINE_EVENT(dma_sync_single, name, \
++	TP_PROTO(struct device *dev, dma_addr_t dma_addr, size_t size, \
++		 enum dma_data_direction dir), \
++	TP_ARGS(dev, dma_addr, size, dir))
+ 
+-DEFINE_EVENT(dma_sync_single, dma_sync_single_for_device,
+-	TP_PROTO(struct device *dev, dma_addr_t dma_addr, size_t size,
+-		 enum dma_data_direction dir),
+-	TP_ARGS(dev, dma_addr, size, dir));
++DEFINE_SYNC_SINGLE_EVENT(dma_sync_single_for_cpu);
++DEFINE_SYNC_SINGLE_EVENT(dma_sync_single_for_device);
+ 
+ DECLARE_EVENT_CLASS(dma_sync_sg,
+ 	TP_PROTO(struct device *dev, struct scatterlist *sgl, int nents,
+@@ -326,15 +323,14 @@ DECLARE_EVENT_CLASS(dma_sync_sg,
+ 				sizeof(unsigned int), sizeof(unsigned int)))
+ );
+ 
+-DEFINE_EVENT(dma_sync_sg, dma_sync_sg_for_cpu,
+-	TP_PROTO(struct device *dev, struct scatterlist *sg, int nents,
+-		 enum dma_data_direction dir),
+-	TP_ARGS(dev, sg, nents, dir));
++#define DEFINE_SYNC_SG_EVENT(name) \
++DEFINE_EVENT(dma_sync_sg, name, \
++	TP_PROTO(struct device *dev, struct scatterlist *sg, int nents, \
++		 enum dma_data_direction dir), \
++	TP_ARGS(dev, sg, nents, dir))
+ 
+-DEFINE_EVENT(dma_sync_sg, dma_sync_sg_for_device,
+-	TP_PROTO(struct device *dev, struct scatterlist *sg, int nents,
+-		 enum dma_data_direction dir),
+-	TP_ARGS(dev, sg, nents, dir));
++DEFINE_SYNC_SG_EVENT(dma_sync_sg_for_cpu);
++DEFINE_SYNC_SG_EVENT(dma_sync_sg_for_device);
+ 
+ #endif /*  _TRACE_DMA_H */
+ 
 -- 
 2.35.1.1320.gc452695387.dirty
 
