@@ -1,139 +1,303 @@
-Return-Path: <linux-kernel+bounces-371404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651319A3AA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:57:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA6E9A3AA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26DF0287DF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:57:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CB521C22A40
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8EE201005;
-	Fri, 18 Oct 2024 09:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F982010FB;
+	Fri, 18 Oct 2024 09:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hlQXTOE5"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dUB9rGKc"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AE5168C3F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED4C168C3F;
+	Fri, 18 Oct 2024 09:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729245453; cv=none; b=uYDuVBr6Lav1tAmGehuBHeJxws9zGmUBHgMhmgyWidwr2LjYNammO+ao/3eJVSkRXs64KYfHmThaVfKBoPO+tUY1KeGztNJt3Pj0nIREg4Hzj55MREv18KkiPp3v1GOa7w8WJQ4tJrL1XOKFstVCT9KFZixV8TCmlHVaV2n+gOM=
+	t=1729245500; cv=none; b=jkIlNzja1i/kpxkx7ubW0zJRsDBamRQv/59PTyE6SOFPbtL6++tKI1p3xVFZ8727hJcdeqvyYCIGwdDoMYvX+MhM8PJnlCzT8PEWoyblufZZ5F7QvwmsbsXJr4FetcOjY+vtRZP6LGPv+p+bGUC8/ODOz4IbKmmnVAhTKMBMCw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729245453; c=relaxed/simple;
-	bh=ppPiXEetbt7hM7JgNh/mkoO4MmccshLeXaKKm/hvPWg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b9xbr9qkvoX/gUvCtU6dVe6JADEO1gTHaL7QU4jrYMX1Jw/6S4bpqyWA1egbA0HFbg3qrnEFGYOFctmh+/bTVLKFeou5Tqn6uk9T8BmMMxZvk3zwwXTR/IPrEBsWzHNfvCWF1DjuLNb2deJAW+nnwjA5AvIQJTymX26hRuJ7OFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hlQXTOE5; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1729245500; c=relaxed/simple;
+	bh=RxjxoaWibi3r7ypqg1RV1u630u8UMksVWQsEjPjQRI4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nd7C4uBevDQ5Dw7BtofqQ2bHalRAqA+mL/lDiKBfEGa46TRaNih6c4NdYawdj/TDtITWXyyBsWG+REY1jZiWITxduFnkCD5lXHMj1vKwKkBHIggYFjG5XNotr0tYRLWM07zQGa6ZrZbs0SWOFnNU4+t61SfU7RTG5iQABWLLt1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dUB9rGKc; arc=none smtp.client-ip=209.85.221.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e59dadebso2801596e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:57:31 -0700 (PDT)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-50d73699e13so1085194e0c.1;
+        Fri, 18 Oct 2024 02:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729245450; x=1729850250; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TwDAxn8hr5/Z6eYXB0TyuhQ+73+e0ZHcccVnO8hBXVk=;
-        b=hlQXTOE5RalsTWdkXeu5zvd+543JRHKCRzwCraOkoJ/xv+vQbHXbiGcfcUYXZ5R6n7
-         JcmhU9Vjr+052lz9WRux+fMDXrSB4tWgmrwJrj6hukHy9vsgFPHasd8RPGWfKj0gzF9r
-         hce/1R0sPcMb+CBE3jXxlR2HTONuno83g7yyx76L1DxPTJYJzVlo6XJEfEuJN1MrOmfb
-         MJuguPXzb+Eb48pDfYwNKefUzDP0/xJTBxML2zC1YpW6YYoQsFt27LJTeIiNLRbSaCvq
-         meyfe3MhDAjs3QlhLLNRZ/fUrcTRygU0JtkIjOT6Vw5AM/YkjJWjS2KGXvYX3E3osxK0
-         ef+A==
+        d=gmail.com; s=20230601; t=1729245497; x=1729850297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DPpZTWjWEG1v5cy6SxF4NADkulnuY6pZjEIXudXOass=;
+        b=dUB9rGKcm+GIWMdmaRP1rwV/m6F6XmnRkOwZi12e4E8DosM88rai2n8T7YDE1Yop7o
+         gGcfTUY0yqDjDr1gzyMwvpRRSra+VaT1KA5k7QKyGTv2KHzTs++I2s5nR8vwnMis6oye
+         ijeiW1KPPNzzeVngDdWmb7GfcVrTnMoP8O977cb3oZXotjc3bBAxsOmJQCxnkMbDAVf9
+         sMa8b1J8w8h9P3a1zZwVe2YzoqMy1qSRzwXKTtt2o2R9P69KTqO2/l6lOTm8CKbcPplF
+         ShsbPZgED5YjufLT0NOFm62v2zwlbRZfhZX4rRYIZKBz9QayIctJPKeZn0GghKZnZtHI
+         Z1ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729245450; x=1729850250;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TwDAxn8hr5/Z6eYXB0TyuhQ+73+e0ZHcccVnO8hBXVk=;
-        b=WPJ6Hy8bQQxu04z2+8HFCV56z8EB9hnslahHLGSJ0JEtoLhv33oO1FGY7NuoGNvpwe
-         s5Fa+kLqz9xpZ51bds9q7d7oq8o3ook3q8usILhFnEwq1evdCrSQ6CztoQ7lbI2VZk/4
-         2nWvn+NAX8Z9GRTw5zOmX7KvzCXn9YInFvkOjV5945/yHzOzxGHUt++A1y2l8w3HbAan
-         O5QcawiRF78k1dVCwJTZvrjEFYmAXhdGTIIGvBP5LQS1rmA+tg0Z4WnmJ1jyjtuuWicQ
-         5MNckihKQhvqTXFEBc45p8RYUWjF5XeZoSaHhiC4GbjMHJNkRu4tUUMdSd7epvJbpikw
-         pxSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqjeOl2eQyVrhpbBa8jgWz75szHmRWxyE6edS3ELlktcSn46NEGZgX1FDn1ko+pvca85xHPAs0wQw4hTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHkOXZatgEKMaWAeSFtGwiPMZln0lWLMBmHphtQdxsJu3i/1Z1
-	8buesYdffTxBOZOxBsvJnPTo7nhXU/h0VpOJF8XnSyxgCKNGULRb
-X-Google-Smtp-Source: AGHT+IFCdbzl4ckoe26AeOzCWVdM876/TTRWm6BE0Bt9Ffroxi6NaMANv0pUCg2ewGZ8WDCvFjiHkQ==
-X-Received: by 2002:a05:6512:1598:b0:539:f886:31d6 with SMTP id 2adb3069b0e04-53a1520bd09mr1167492e87.2.1729245450115;
-        Fri, 18 Oct 2024 02:57:30 -0700 (PDT)
-Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151b91c0sm175166e87.77.2024.10.18.02.57.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 02:57:29 -0700 (PDT)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Fri, 18 Oct 2024 11:57:20 +0200
-Subject: [PATCH] mtd: spi-nor: atmel: provide .size to the at25ff321a entry
+        d=1e100.net; s=20230601; t=1729245497; x=1729850297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DPpZTWjWEG1v5cy6SxF4NADkulnuY6pZjEIXudXOass=;
+        b=XXK9/g7CRLmbo8b4Nm0wt2VF4gmffxDQlnc2z6RHyBbNqOfhwQ48NrQ60fLw3C4Vpg
+         QjgdyQG5P0JKaqcOTMaom8ZX8ycLTkngCg040qwhJRpe0ilfikIz+f18bQ5JKjm2qvxV
+         1uqQcCtCWr6xwBjnxv4OGNLWSGdsNQuduLiYhFbcls1BJAWGbDH+NLqejad3tIhlFnjy
+         qI+KvFPF1JAZdU5kCmVGqIMNk+/8aoCB4i7QmfF+7NfTojUGBe303jrpV2toZS7C0VsS
+         GO8vWWnwRVxyRxHN9ErCVAALzQRDjrtGA1kwMrf4Y5OVsN3xVq0pfH1hIegezUMDQ56l
+         zJlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUO2fbfDAlxVIIBG2tgUPJjDZeKZekK0inmqmKHbbng70FWGUmjzpFz5HH6wXK4JgI7foIgPaPfw28O0d8=@vger.kernel.org, AJvYcCXI8zcic7vJUOUJzPEpFfddSID2h7tJ71x8xFiBL2BfMDUaeRLCXUP4NG+v3+2V/KZhyXaKW8QKN7NiOuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7G4xnX0XmIlRevsx8JMGEJD7EZ61fKUejREqPFhWgCtYdkv8D
+	HJIoBy42ClO6oblXR4P5KH7OIg6b2q0U8/Qeh/IKT2vBYVceQ9Rw9BqNAQInqY+EdbMr6QUkGIM
+	zNv383Dj0icBonFb8EzBP9JS8bj0=
+X-Google-Smtp-Source: AGHT+IFXJ4F8jEvoGAAYw0+G/Dn320SoLgxCd3uTwb6YBEza087rLF4+x22EGPi7bzezztXM0XTQ2+loObGLZrxVtDo=
+X-Received: by 2002:a05:6122:3d0d:b0:50a:cbdb:b929 with SMTP id
+ 71dfb90a1353d-50dd9bf9117mr623915e0c.2.1729245495487; Fri, 18 Oct 2024
+ 02:58:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241018-at25ff321a-v1-1-c8380f80c289@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAP8wEmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDA0ML3cQSI9O0NGMjw0TdpOTkZMM0MwNTY4skJaCGgqLUtMwKsGHRsbW
- 1AN6JB4hcAAAA
-X-Change-ID: 20241018-at25ff321a-bccc1f60538b
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=883;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=ppPiXEetbt7hM7JgNh/mkoO4MmccshLeXaKKm/hvPWg=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBnEjEESYKpmzIrRnTizN1GadHCi897sXAkb4PE1
- HwCMGtRFbKJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZxIxBAAKCRCIgE5vWV1S
- MsS0D/4inV4ltStzrIHXTMDf0XFIFsLY4A0au67eF7n2e1zXL5WQhFNkG4A0ygvgBjmzqs1Q32Z
- 3cR//0UBINRQ5mRjPnhf+Cs86Gfy0qgHW2QvuEk+koEs+L2LImtrOQKG/GFofSCh9ICfKjef7r1
- bewkX6peCo9GjrjxQwUnjIK9CbhJgVaBULTv52JmWJUpnD0tek+atfdntANoWtIT7OCLx5CIKfl
- uPDRtr3DuzCY7uNnrvWqpnnY6dpufoBSsc4qZuC3/el732PcYkNd1qilruISxljUKxBS0Skko11
- 4FNa+wkFzEgR0/fyi0LoqkymzjExTYY16VPD2JCOF5b9QQDdJWnbmF29QGhWrMua4gOxZFHP9Hn
- oMYd+RrlYsWjiHRHIBnj6/H2JvMKXcyaDji05TVA/E23TCDoTg5KCfkGNLxVON/1LtZYHSQrXku
- e0MxXPXLX0DhdAVoLijVUjWsUqDg7FkWdeLYssEvPRfnG5Sd43uekrRLi4deKImrEuAJRxk6Zjl
- eyaVfk3rjjN653wPavDTDeG+fokFaAmW1fclAFmqdXstrAxhg3FcmhM0EBQp5lLWsdJ7JAyO/c6
- Ls8Rq9vzQYXOZl4ienEN9LyB+r/vMXFxnaokWZMZXI1I0RwTypee7AIQxBZgOajyV0WajtzEYzp
- vgZKwEWeowG7ZLw==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+References: <20241014173840.412695-1-tomm.merciai@gmail.com>
+ <20241014175452.GB13238@pendragon.ideasonboard.com> <Zw4IrU8bOOtq26Gx@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+ <Zw6aZiBvRM5hvqVn@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+ <20241016200836.GF30496@pendragon.ideasonboard.com> <ZxIoR6T6V0WgDdq0@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+In-Reply-To: <ZxIoR6T6V0WgDdq0@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 18 Oct 2024 10:57:49 +0100
+Message-ID: <CA+V-a8vw=hb+RZ_8haw30QHHRO3fzGoOZyERUba-MV3bYLTxWA@mail.gmail.com>
+Subject: Re: [PATCH] media: i2c: ov5645: add HAS_EVENTS supporty
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, sakari.ailus@linux.intel.com, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Set size of the flash for the at25ff321a entry.
+Hi Tommaso,
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- drivers/mtd/spi-nor/atmel.c | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, Oct 18, 2024 at 10:28=E2=80=AFAM Tommaso Merciai <tomm.merciai@gmai=
+l.com> wrote:
+>
+> Hi Laurent,
+>
+> On Wed, Oct 16, 2024 at 11:08:36PM +0300, Laurent Pinchart wrote:
+> > Hi Tommaso,
+> >
+> > On Tue, Oct 15, 2024 at 06:37:58PM +0200, Tommaso Merciai wrote:
+> > > On Tue, Oct 15, 2024 at 08:16:13AM +0200, Tommaso Merciai wrote:
+> > > > On Mon, Oct 14, 2024 at 08:54:52PM +0300, Laurent Pinchart wrote:
+> > > > > On Mon, Oct 14, 2024 at 07:38:40PM +0200, Tommaso Merciai wrote:
+> > > > > > Controls can be exposed to userspace via a v4l-subdevX device, =
+and
+> > > > > > userspace has to be able to subscribe to control events so that=
+ it is
+> > > > > > notified when the control changes value.
+> > > > > > Add missing HAS_EVENTS support: flag and .(un)subscribe_event()=
+.
+> > > > > >
+> > > > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > > > > > ---
+> > > > > >  drivers/media/i2c/ov5645.c | 10 +++++++++-
+> > > > > >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5=
+645.c
+> > > > > > index 0c32bd2940ec..2c5145d5c616 100644
+> > > > > > --- a/drivers/media/i2c/ov5645.c
+> > > > > > +++ b/drivers/media/i2c/ov5645.c
+> > > > > > @@ -29,6 +29,7 @@
+> > > > > >  #include <linux/slab.h>
+> > > > > >  #include <linux/types.h>
+> > > > > >  #include <media/v4l2-ctrls.h>
+> > > > > > +#include <media/v4l2-event.h>
+> > > > > >  #include <media/v4l2-fwnode.h>
+> > > > > >  #include <media/v4l2-subdev.h>
+> > > > > >
+> > > > > > @@ -1034,6 +1035,11 @@ static const struct v4l2_subdev_video_op=
+s ov5645_video_ops =3D {
+> > > > > >       .s_stream =3D ov5645_s_stream,
+> > > > > >  };
+> > > > > >
+> > > > > > +static const struct v4l2_subdev_core_ops ov5645_subdev_core_op=
+s =3D {
+> > > > > > +     .subscribe_event =3D v4l2_ctrl_subdev_subscribe_event,
+> > > > > > +     .unsubscribe_event =3D v4l2_event_subdev_unsubscribe,
+> > > > > > +};
+> > > > > > +
+> > > > > >  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops =
+=3D {
+> > > > > >       .enum_mbus_code =3D ov5645_enum_mbus_code,
+> > > > > >       .enum_frame_size =3D ov5645_enum_frame_size,
+> > > > > > @@ -1043,6 +1049,7 @@ static const struct v4l2_subdev_pad_ops o=
+v5645_subdev_pad_ops =3D {
+> > > > > >  };
+> > > > > >
+> > > > > >  static const struct v4l2_subdev_ops ov5645_subdev_ops =3D {
+> > > > > > +     .core =3D &ov5645_subdev_core_ops,
+> > > > > >       .video =3D &ov5645_video_ops,
+> > > > > >       .pad =3D &ov5645_subdev_pad_ops,
+> > > > > >  };
+> > > > > > @@ -1178,7 +1185,8 @@ static int ov5645_probe(struct i2c_client=
+ *client)
+> > > > > >
+> > > > > >       v4l2_i2c_subdev_init(&ov5645->sd, client, &ov5645_subdev_=
+ops);
+> > > > > >       ov5645->sd.internal_ops =3D &ov5645_internal_ops;
+> > > > > > -     ov5645->sd.flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE;
+> > > > > > +     ov5645->sd.flags |=3D V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > > > > > +                         V4L2_SUBDEV_FL_HAS_EVENTS;
+> > > > >
+> > > > > Instead of patching every subdev driver, should we handle all of =
+this in
+> > > > > the subdev core ? If a control handler is set for the subdev, we =
+could
+> > > > > set the HAS_EVENTS flag automatically, and default to
+> > > > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscr=
+ibe()
+> > > > > if there are no control operations.
+> > >
+> > > Premit:
+> > >  - Don't know if I'm wrong eh.
+> >
+> > Nobody knows :-)
+> >
+> > > This can be done into:
+> > >
+> > > __v4l2_subdev_init_finalize()
+> > >
+> > > Adding:
+> > >
+> > >     if (sd->ctrl_handler)
+> > >             sd->flags |=3D V4L2_SUBDEV_FL_HAS_EVENTS;
+> > >
+> > > And check if there are no control operations using:
+> > >
+> > > bool has_subscribe_event;
+> > > bool has_unsubscribe_event;
+> > >
+> > >
+> > > has_subscribe_event =3D v4l2_subdev_has_op(sd, core, subscribe_event)=
+;
+> > > has_unsubscribe_event =3D v4l2_subdev_has_op(sd, core, unsubscribe_ev=
+ent);
+> > >
+> > > if (!has_subscribe_event)
+> > >     assign v4l2_ctrl_subdev_subscribe_event as default .subscribe ops=
+(somehow)
+> >
+> > We can't change the ops structure as it's constant. Something like this
+> > could do:
+> >
+> > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2=
+-core/v4l2-subdev.c
+> > index 3a4ba08810d2..41ae18a0d41e 100644
+> > --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> > @@ -691,10 +691,24 @@ static long subdev_do_ioctl(struct file *file, un=
+signed int cmd, void *arg,
+> >               return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NON=
+BLOCK);
+> >
+> >       case VIDIOC_SUBSCRIBE_EVENT:
+> > -             return v4l2_subdev_call(sd, core, subscribe_event, vfh, a=
+rg);
+> > +             if (v4l2_subdev_has_op(sd, core, subscribe_event))
+> > +                     return v4l2_subdev_call(sd, core, subscribe_event=
+, vfh,
+> > +                                             arg);
+> > +             else if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
+> > +                      vfh->ctrl_handler)
+> > +                     return v4l2_ctrl_subdev_subscribe_event(sd, vfh, =
+arg);
+> > +             else
+> > +                     return -ENOIOCTLCMD;
+> >
+> >       case VIDIOC_UNSUBSCRIBE_EVENT:
+> > -             return v4l2_subdev_call(sd, core, unsubscribe_event, vfh,=
+ arg);
+> > +             if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
+> > +                     return -ENOIOCTLCMD;
+> > +
+> > +             if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
+> > +                     return v4l2_subdev_call(sd, core, unsubscribe_eve=
+nt,
+> > +                                             vfh, arg);
+> > +             else
+> +                       return v4l2_event_subdev_unsubscribe(sd, vfh, arg=
+);
+>
+> Thanks for your "more than an hint :)"
+> I'm able to test this on ov5645:
+>
+> Adding:
+>
+> +++ b/drivers/media/i2c/ov5645.c
+> @@ -1238,6 +1238,12 @@ static int ov5645_probe(struct i2c_client *client)
+>
+>         ov5645_init_state(&ov5645->sd, NULL);
+>
+> +       ret =3D v4l2_subdev_init_finalize(&ov5645->sd);
+> +       if (ret < 0) {
+> +               dev_err(dev, "subdev initialization error %d\n", ret);
+> +               goto err_free_state;
+> +       }
+> +
+>         ret =3D v4l2_async_register_subdev(&ov5645->sd);
+>         if (ret < 0) {
+>                 dev_err(dev, "could not register v4l2 device\n");
+> @@ -1251,6 +1257,8 @@ static int ov5645_probe(struct i2c_client *client)
+>
+>         return 0;
+>
+> +err_free_state:
+> +       v4l2_subdev_cleanup(&ov5645->sd);
+>  err_pm_runtime:
+>         pm_runtime_disable(dev);
+>         pm_runtime_put_noidle(dev);
+> @@ -1272,6 +1280,7 @@ static void ov5645_remove(struct i2c_client *client=
+)
+>
+>         v4l2_async_unregister_subdev(&ov5645->sd);
+>         media_entity_cleanup(&ov5645->sd.entity);
+> +       v4l2_subdev_cleanup(&ov5645->sd);
+>         v4l2_ctrl_handler_free(&ov5645->ctrls);
+>         pm_runtime_disable(ov5645->dev);
+>         if (!pm_runtime_status_suspended(ov5645->dev))
+>
+> Then from the compliance tool I'm getting now good results:
+>
+> Total for device /dev/v4l-subdev1: 44, Succeeded: 44, Failed: 0, Warnings=
+: 0
+>
+> I will send these 2 patches later if you agree (1 v4l2-subdev 1 ov5645.c)
+> Thanks again.
+>
+Thank you for the patch.
 
-diff --git a/drivers/mtd/spi-nor/atmel.c b/drivers/mtd/spi-nor/atmel.c
-index 45d1153a04a07b7c61f46b117311b24ab695038f..cc7217e96d0139a06d46f10e35c545f604464b3c 100644
---- a/drivers/mtd/spi-nor/atmel.c
-+++ b/drivers/mtd/spi-nor/atmel.c
-@@ -214,6 +214,7 @@ static const struct flash_info atmel_nor_parts[] = {
- 	}, {
- 		.id = SNOR_ID(0x1f, 0x47, 0x08),
- 		.name = "at25ff321a",
-+		.size = SZ_4M,
- 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_SWP_IS_VOLATILE,
- 		.fixups = &atmel_nor_global_protection_fixups
- 	}, {
+I am currently working on adding support for V4L2_SUBDEV_FL_HAS_EVENTS
+and subscribe hooks[1] (and some more features [0] for ov5645 driver),
+since the patch series adds internal pad which needs rework based on
+patch series from Sakari which I will do soon and send v3 patches for
+ov5645 driver.
 
----
-base-commit: 200289db261f0c8131a5756133e9d30966289c3b
-change-id: 20241018-at25ff321a-bccc1f60538b
+[0] https://lore.kernel.org/all/20240910170610.226189-1-prabhakar.mahadev-l=
+ad.rj@bp.renesas.com/
+[1] https://lore.kernel.org/all/20240910170610.226189-2-prabhakar.mahadev-l=
+ad.rj@bp.renesas.com/
 
-Best regards,
--- 
-Marcus Folkesson <marcus.folkesson@gmail.com>
-
+Cheers,
+Prabhakar
 
