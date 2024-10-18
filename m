@@ -1,251 +1,180 @@
-Return-Path: <linux-kernel+bounces-371230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E2469A3846
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:14:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD7D9A384A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D86D1C23E6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:14:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E9BEB259CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D873918CC16;
-	Fri, 18 Oct 2024 08:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2822118C92E;
+	Fri, 18 Oct 2024 08:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kOlmq9Rc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LNeddTMH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D84935894;
-	Fri, 18 Oct 2024 08:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB9A161313
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729239243; cv=none; b=mQIjXEfVU+MQdvRoiiO6OiXDhDb0eCv0RldK6zZVT9yXERCmcJqZef0EM+/W6Slugam9uYdQzU9nzM2KuzQdiDEIXIKpW0vbFuOPK1LcnldR/OTRkf3THtEAhdUI0SfpnWqmYBGasmTG4FzZB/2BLiw/q4Mi50cjZ8YWjbNsIU0=
+	t=1729239329; cv=none; b=BBID8z7dduNKFqc3mBPU4fPSv0+M2OIOLOuDctPXYltdGRobH36ng6rda9EYF3Z9/dBXamCBm+xA+a7mnz9UWEvfFstBdiIXY3r8AD7DJfIf6DKVRFSUenIkTMv0fJQ5pHP2ZrdIkqKtpqrhimkAQx4g1I0gc1rHA+DNIRGn9Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729239243; c=relaxed/simple;
-	bh=9M2ZFKh5EYNsXgXthlrq+TmwyPMVyp546Z0aNa8FWG4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GkcJRMJTcEBTiPwa+TxWFkeOSrwqJh2AuH/uwEmz+Jo+7BR452Uy+qTPTmKXSlvPS/f/vBXGyjSdkeM2qw7jl0qoccrqJFnyhuf8SR2zgQ9xxWyGn9KouGI+cJ0fLjiB1yRrzQ0puIWUXDgjDs7oCLJyjQFCODZGlI8Vq+wCsJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kOlmq9Rc; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729239242; x=1760775242;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=9M2ZFKh5EYNsXgXthlrq+TmwyPMVyp546Z0aNa8FWG4=;
-  b=kOlmq9RcbPsuP6/jp8lGx4Dl/tSDJXzF/TURGW2/elp4o75GStknA4D0
-   ifS+P+bz1TH0o2cPj52EMSg6Zz6M8XptFPFmMBFp37MAkUptptB/qglAo
-   7n6JcskjpZxG3kWRXHBtnPNqham2Z00i6iz3nHsquvVIY2Tbkt2degRRj
-   d8PA+g0pCpPtc24UpVZ6Mvobd4rDDawqWwVwJfWMEqBSELBbo4GV3a7sI
-   UUxD4ISbmGTl4HY9GU1s5HwzZlID3fHWF3QCjJfdhEcY6lA8Qi56nEOwp
-   QacEx/HjNeYoP240NPUUX5RF01TyzsVEgOnEAC1YzUj8xK25z0FYnugpN
-   Q==;
-X-CSE-ConnectionGUID: 9M+UGCeoShSjB7t0Y7XCjw==
-X-CSE-MsgGUID: u9jZK4vDQNGUhhH0TkW6bA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28551641"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28551641"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:14:01 -0700
-X-CSE-ConnectionGUID: bllfLIC7RFK3XZHW8sPelQ==
-X-CSE-MsgGUID: 3EzKOC95TEWReFouP9fvxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="82767457"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.217])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:13:57 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 18 Oct 2024 11:13:54 +0300 (EEST)
-To: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
-cc: irenic.rajneesh@gmail.com, Hans de Goede <hdegoede@redhat.com>, 
-    david.e.box@linux.intel.com, skhan@linuxfoundation.org, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] platform/x86/intel/pmc: Fix pmc_core_iounmap to call
- iounmap for valid addresses
-In-Reply-To: <20241018051018.8505-1-vamsikrishna.brahmajosyula@gmail.com>
-Message-ID: <55d1aa2e-fd44-70af-460e-4f029908d12c@linux.intel.com>
-References: <20241018051018.8505-1-vamsikrishna.brahmajosyula@gmail.com>
+	s=arc-20240116; t=1729239329; c=relaxed/simple;
+	bh=RyCuiX7Z7beQNgjkYjzS1E6I9EFHABI+uLFOdorHDUA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LcQSO1XA0C0kujMcJwA0FAxngmLsiDVeNVgPXoYct2L+TuGzWb3gYxkviu0EUXymfnnaAJr1pl/xlrM67r7Z+ZBCoEgMbEeu0DEQy+VkCUIFKumU/QANsPFRbmQkVpr3Ho+Shwv2wC4S8jxXnyBQ0DqdDi6zCHZ2zG52U19HMhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LNeddTMH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729239326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yr2YuJLh1oBlVb3LAJ7sYOHk9wkq05eBctRIWz59ZDw=;
+	b=LNeddTMH8AlEWYJBJR6TdYyS31gX1hZoA0dU3PXI4KA1Zq127bA1bepsU/kJ1uukFAeUzo
+	ibTjBKCgQYEhDhu1B1yhW/zLc7/8Iua9Z2/hD6eqkHdQGrm9T3pjdCtdZEiUfy4hyY5Dsg
+	EbroMNA6cxm6ZCUgt9XoaX1P/O9kfwE=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-39-OsPcKr6MNhysMZ0WhfjD6Q-1; Fri, 18 Oct 2024 04:15:25 -0400
+X-MC-Unique: OsPcKr6MNhysMZ0WhfjD6Q-1
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-5e4df21f22dso1721014a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:15:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729239324; x=1729844124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yr2YuJLh1oBlVb3LAJ7sYOHk9wkq05eBctRIWz59ZDw=;
+        b=eBig3g1pNj9JpHuPqumKQ2eTkY+Q/De1+oCGFVFzlXutMBEs5ALssM5n+C8NilG45i
+         zNr7RggkrUuXP0iBjGhWhpMn4UEcxBUbQnr9wR+pOl1z3i/nKxRgMECr3D5oEba6oNku
+         mo2AMzzJanGlE5slB/fvLhCvO3dB3UjMWLRuiN5C+TZO+oyfCqQmfaDpdicb9HgXv3M/
+         DbeuyUDfXLhTrmDGh7n5SVi7EvGf38WuT6Do6wdpxSwgSzuq7Ek6Pk4pJyWAXGSJlTD1
+         k6QoEMX2oSB5SdutRazMC8PgN+qk+RL+SWzDTyU6W5GdV8aCuGAZ07S0ZPiWIq+/C/8g
+         Ig0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW3PmNqKXk8vXpLavU8VawZJGEo3GfC80XuZ5le8D5MKC7qx0qo7GEsrvl9NvMXFZ0acf/ghMYfkRiKoUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgDF7tBWwKS3KLPu2zQqkG11yBpvwx3fzwV0ipXr1QyoWjXKEM
+	gFclx/SZxMPm45LsBbM80fAtrjFo06w5V71OjirhgV4eoo2X5gT5RompmMYBMl810zOTKBu9unL
+	dztQDJ0IE9FE6me0AgTe/eRMkfifUVmNumTXwfrwo3wItkcoGSPQQKc/L0KvOXvgahrq780D0TZ
+	K9WxCD0BEmYotaXzmDPcAGyD0ic8C2cIqXDf8k
+X-Received: by 2002:a05:6a21:178a:b0:1d8:aa1d:b30c with SMTP id adf61e73a8af0-1d92c9f8becmr2035170637.1.1729239324402;
+        Fri, 18 Oct 2024 01:15:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGLD3LtPmdn3YgZFunCmr4YCke9ZeVKhkDNBtOgm6i/o4DVa5u2WpwUUag2e6tVVnOKvDE1CSmiKahP3Ex3VII=
+X-Received: by 2002:a05:6a21:178a:b0:1d8:aa1d:b30c with SMTP id
+ adf61e73a8af0-1d92c9f8becmr2035126637.1.1729239323920; Fri, 18 Oct 2024
+ 01:15:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20241008-rss-v5-0-f3cf68df005d@daynix.com> <20241008-rss-v5-7-f3cf68df005d@daynix.com>
+ <CACGkMEsPNTr3zcstsQGoOiQdCFQ+6EG6cSGiZzNxONsH9Xm=Aw@mail.gmail.com> <4bc7dfaa-a7cd-41f4-a917-e71b5c7241f7@daynix.com>
+In-Reply-To: <4bc7dfaa-a7cd-41f4-a917-e71b5c7241f7@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 18 Oct 2024 16:15:12 +0800
+Message-ID: <CACGkMEtt7a4+gadQt2=3zz+MCUtueuWj+zwaHR_gXCvLg=0PcQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v5 07/10] tun: Introduce virtio-net RSS
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 18 Oct 2024, Vamsi Krishna Brahmajosyula wrote:
+On Sat, Oct 12, 2024 at 6:29=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
+.com> wrote:
+>
+> On 2024/10/09 17:14, Jason Wang wrote:
+> > On Tue, Oct 8, 2024 at 2:55=E2=80=AFPM Akihiko Odaki <akihiko.odaki@day=
+nix.com> wrote:
+> >>
+> >> RSS is a receive steering algorithm that can be negotiated to use with
+> >> virtio_net. Conventionally the hash calculation was done by the VMM.
+> >> However, computing the hash after the queue was chosen defeats the
+> >> purpose of RSS.
+> >>
+> >> Another approach is to use eBPF steering program. This approach has
+> >> another downside: it cannot report the calculated hash due to the
+> >> restrictive nature of eBPF steering program.
+> >>
+> >> Introduce the code to perform RSS to the kernel in order to overcome
+> >> thse challenges. An alternative solution is to extend the eBPF steerin=
+g
+> >> program so that it will be able to report to the userspace, but I didn=
+'t
+> >> opt for it because extending the current mechanism of eBPF steering
+> >> program as is because it relies on legacy context rewriting, and
+> >> introducing kfunc-based eBPF will result in non-UAPI dependency while
+> >> the other relevant virtualization APIs such as KVM and vhost_net are
+> >> UAPIs.
+> >>
+> >> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> >> ---
+> >>   drivers/net/tap.c           | 11 +++++-
+> >>   drivers/net/tun.c           | 57 ++++++++++++++++++++-------
+> >>   drivers/net/tun_vnet.h      | 96 +++++++++++++++++++++++++++++++++++=
+++++++----
+> >>   include/linux/if_tap.h      |  4 +-
+> >>   include/uapi/linux/if_tun.h | 27 +++++++++++++
+> >>   5 files changed, 169 insertions(+), 26 deletions(-)
+> >>
 
-> 50c6dbdfd introduced a WARN when adrress ranges of iounmap are
-> invalid. On Thinkpad P1 Gen 7 (Meteor Lake-P) this caused the
-> following warning to appear.
-> 
-> WARNING: CPU: 7 PID: 713 at arch/x86/mm/ioremap.c:461 iounmap+0x58/0x1f0
-> Modules linked in: rfkill(+) snd_timer(+) fjes(+) snd soundcore intel_pmc_core(+)
-> int3403_thermal(+) int340x_thermal_zone intel_vsec pmt_telemetry acpi_pad pmt_class
-> acpi_tad int3400_thermal acpi_thermal_rel joydev loop nfnetlink zram xe drm_suballoc_helper
-> nouveau i915 mxm_wmi drm_ttm_helper gpu_sched drm_gpuvm drm_exec drm_buddy i2c_algo_bit
-> crct10dif_pclmul crc32_pclmul ttm crc32c_intel polyval_clmulni rtsx_pci_sdmmc ucsi_acpi
-> polyval_generic mmc_core hid_multitouch drm_display_helper ghash_clmulni_intel typec_ucsi
-> nvme sha512_ssse3 video sha256_ssse3 nvme_core intel_vpu sha1_ssse3 rtsx_pci cec typec
-> nvme_auth i2c_hid_acpi i2c_hid wmi pinctrl_meteorlake serio_raw ip6_tables ip_tables fuse
-> CPU: 7 UID: 0 PID: 713 Comm: (udev-worker) Not tainted 6.12.0-rc2iounmap+ #42
-> Hardware name: LENOVO 21KWCTO1WW/21KWCTO1WW, BIOS N48ET19W (1.06 ) 07/18/2024
-> RIP: 0010:iounmap+0x58/0x1f0
-> Code: 85 6a 01 00 00 48 8b 05 e6 e2 28 04 48 39 c5 72 19 eb 26 cc cc cc 48 ba 00 00 00 00 00 00 32 00 48 8d 44 02 ff 48 39 c5 72 23 <0f> 0b 48 83 c4 08 5b 5d 41 5c c3 cc cc cc cc 48 ba 00 00 00 00 00
-> RSP: 0018:ffff888131eff038 EFLAGS: 00010207
-> RAX: ffffc90000000000 RBX: 0000000000000000 RCX: ffff888e33b80000
-> RDX: dffffc0000000000 RSI: ffff888e33bc29c0 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: ffff8881598a8000 R09: ffff888e2ccedc10
-> R10: 0000000000000003 R11: ffffffffb3367634 R12: 00000000fe000000
-> R13: ffff888101d0da28 R14: ffffffffc2e437e0 R15: ffff888110b03b28
-> FS:  00007f3c1d4b3980(0000) GS:ffff888e33b80000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00005651cfc93578 CR3: 0000000124e4c002 CR4: 0000000000f70ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
-> PKRU: 55555554
-> Call Trace:
-> <TASK>
-> ? __warn.cold+0xb6/0x176
-> ? iounmap+0x58/0x1f0
-> ? report_bug+0x1f4/0x2b0
-> ? handle_bug+0x58/0x90
-> ? exc_invalid_op+0x17/0x40
-> ? asm_exc_invalid_op+0x1a/0x20
-> ? iounmap+0x58/0x1f0
-> pmc_core_ssram_get_pmc+0x477/0x6c0 [intel_pmc_core]
-> ? __pfx_pmc_core_ssram_get_pmc+0x10/0x10 [intel_pmc_core]
-> ? __pfx_do_pci_enable_device+0x10/0x10
-> ? pci_wait_for_pending+0x60/0x110
-> ? pci_enable_device_flags+0x1e3/0x2e0
-> ? __pfx_mtl_core_init+0x10/0x10 [intel_pmc_core]
-> pmc_core_ssram_init+0x7f/0x110 [intel_pmc_core]
-> mtl_core_init+0xda/0x130 [intel_pmc_core]
-> ? __mutex_init+0xb9/0x130
-> pmc_core_probe+0x27e/0x10b0 [intel_pmc_core]
-> ? _raw_spin_lock_irqsave+0x96/0xf0
-> ? __pfx_pmc_core_probe+0x10/0x10 [intel_pmc_core]
-> ? __pfx_mutex_unlock+0x10/0x10
-> ? __pfx_mutex_lock+0x10/0x10
-> ? device_pm_check_callbacks+0x82/0x370
-> ? acpi_dev_pm_attach+0x234/0x2b0
-> platform_probe+0x9f/0x150
-> really_probe+0x1e0/0x8a0
-> __driver_probe_device+0x18c/0x370
-> ? __pfx___driver_attach+0x10/0x10
-> driver_probe_device+0x4a/0x120
-> __driver_attach+0x190/0x4a0
-> ? __pfx___driver_attach+0x10/0x10
-> bus_for_each_dev+0x103/0x180
-> ? __pfx_bus_for_each_dev+0x10/0x10
-> ? klist_add_tail+0x136/0x270
-> bus_add_driver+0x2fc/0x540
-> driver_register+0x1a5/0x360
-> ? __pfx_pmc_core_driver_init+0x10/0x10 [intel_pmc_core]
-> do_one_initcall+0xa4/0x380
-> ? __pfx_do_one_initcall+0x10/0x10
-> ? kasan_unpoison+0x44/0x70
-> do_init_module+0x296/0x800
-> load_module+0x5090/0x6ce0
-> ? __pfx_load_module+0x10/0x10
-> ? ima_post_read_file+0x193/0x200
-> ? __pfx_ima_post_read_file+0x10/0x10
-> ? rw_verify_area+0x152/0x4c0
-> ? kernel_read_file+0x257/0x750
-> ? __pfx_kernel_read_file+0x10/0x10
-> ? __pfx_filemap_get_read_batch+0x10/0x10
-> ? init_module_from_file+0xd1/0x130
-> init_module_from_file+0xd1/0x130
-> ? __pfx_init_module_from_file+0x10/0x10
-> ? __pfx__raw_spin_lock+0x10/0x10
-> ? __pfx_cred_has_capability.isra.0+0x10/0x10
-> idempotent_init_module+0x236/0x770
-> ? __pfx_idempotent_init_module+0x10/0x10
-> ? fdget+0x58/0x3f0
-> ? security_capable+0x7d/0x110
-> __x64_sys_finit_module+0xbe/0x130
-> do_syscall_64+0x82/0x160
-> ? __pfx_filemap_read+0x10/0x10
-> ? __pfx___fsnotify_parent+0x10/0x10
-> ? vfs_read+0x3a6/0xa30
-> ? vfs_read+0x3a6/0xa30
-> ? __seccomp_filter+0x175/0xc60
-> ? __pfx___seccomp_filter+0x10/0x10
-> ? fdget_pos+0x1ce/0x500
-> ? syscall_exit_to_user_mode_prepare+0x149/0x170
-> ? syscall_exit_to_user_mode+0x10/0x210
-> ? do_syscall_64+0x8e/0x160
-> ? switch_fpu_return+0xe3/0x1f0
-> ? syscall_exit_to_user_mode+0x1d5/0x210
-> ? do_syscall_64+0x8e/0x160
-> ? exc_page_fault+0x76/0xf0
-> entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> RIP: 0033:0x7f3c1d6d155d
-> Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 83 58 0f 00 f7 d8 64 89 01 48
-> RSP: 002b:00007ffe6309db38 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-> RAX: ffffffffffffffda RBX: 0000557c212550a0 RCX: 00007f3c1d6d155d
-> RDX: 0000000000000000 RSI: 00007f3c1cd943bd RDI: 0000000000000025
-> RBP: 00007ffe6309dbf0 R08: 00007f3c1d7c7b20 R09: 00007ffe6309db80
-> R10: 0000557c21255270 R11: 0000000000000246 R12: 00007f3c1cd943bd
-> R13: 0000000000020000 R14: 0000557c21255c80 R15: 0000557c21255240
-> </TASK>
-> 
-> no_free_ptr(tmp_ssram) sets tmp_ssram NULL while assigning ssram.
-> pmc_core_iounmap calls iounmap unconditionally causing the above
-> warning to appear during boot.
-> 
-> Fix it by checking for a valid address before calling iounmap.
-> 
-> Also in the function pmc_core_ssram_get_pmc return -ENOMEM when
-> ioremap fails similar to other instances in the file.
-> 
-> Fixes: a01486dc4bb1 ("platform/x86/intel/pmc: Cleanup SSRAM discovery")
-> Signed-off-by: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
+[...]
 
-Please send a v3 which includes the Reviewed-by tags that were given to 
-you for v1.
+> >> diff --git a/include/uapi/linux/if_tun.h b/include/uapi/linux/if_tun.h
+> >> index d11e79b4e0dc..4887f97500a8 100644
+> >> --- a/include/uapi/linux/if_tun.h
+> >> +++ b/include/uapi/linux/if_tun.h
+> >> @@ -75,6 +75,14 @@
+> >>    *
+> >>    * The argument is a pointer to &struct tun_vnet_hash.
+> >>    *
+> >> + * The argument is a pointer to the compound of the following in orde=
+r if
+> >> + * %TUN_VNET_HASH_RSS is set:
+> >> + *
+> >> + * 1. &struct tun_vnet_hash
+> >> + * 2. &struct tun_vnet_hash_rss
+> >> + * 3. Indirection table
+> >> + * 4. Key
+> >> + *
+> >
+> > Let's try not modify uAPI. We can introduce new ioctl if necessary.
+>
+> 2, 3, and 4 are new additions. Adding a separate ioctl for them means we
+> need to call two ioctls to configure RSS and it is hard to design the
+> interactions with them.
+>
+> For example, if we set TUN_VNET_HASH_RSS with TUNSETVNETHASH before
+> setting struct tun_vnet_hash_rss with another ioctl, tuntap will enable
+> RSS with undefined parameters. Setting struct tun_vnet_hash_rss with
+> TUN_VNET_HASH_RSS unset also sounds unreasnoable.
+>
+> Letting the new ioctl set TUN_VNET_HASH_RSS does not help either.
+> TUNSETVNETHASH still sets the bitmask of allowed hash types so RSS will
+> depend on two ioctls.
 
-Our (maintainers') tools capture Reviewed-by tags for the latest version 
-of your patch but do not collect them from the earlier versions so it's 
-the patch submitters job to collect them when sending a new version.
+I meant let's avoid introducing an ioctl with function 1 in one patch,
+and adding 2,3,4 in exactly the same ioctl in the following. It breaks
+the uABI consistency and bisection.
 
--- 
- i.
+We can add all in one patch.
 
-> ---
-> v2: Updated commit message based on review comments (David E. Box)
-> ---
->  drivers/platform/x86/intel/pmc/core_ssram.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/intel/pmc/core_ssram.c b/drivers/platform/x86/intel/pmc/core_ssram.c
-> index c259c96b7dfd..8504154b649f 100644
-> --- a/drivers/platform/x86/intel/pmc/core_ssram.c
-> +++ b/drivers/platform/x86/intel/pmc/core_ssram.c
-> @@ -29,7 +29,7 @@
->  #define LPM_REG_COUNT		28
->  #define LPM_MODE_OFFSET		1
-> 
-> -DEFINE_FREE(pmc_core_iounmap, void __iomem *, iounmap(_T));
-> +DEFINE_FREE(pmc_core_iounmap, void __iomem *, if (_T) iounmap(_T))
-> 
->  static u32 pmc_core_find_guid(struct pmc_info *list, const struct pmc_reg_map *map)
->  {
-> @@ -262,6 +262,8 @@ pmc_core_ssram_get_pmc(struct pmc_dev *pmcdev, int pmc_idx, u32 offset)
-> 
->  	ssram_base = ssram_pcidev->resource[0].start;
->  	tmp_ssram = ioremap(ssram_base, SSRAM_HDR_SIZE);
-> +	if (!tmp_ssram)
-> +		return -ENOMEM;
-> 
->  	if (pmc_idx != PMC_IDX_MAIN) {
->  		/*
-> 
-> base-commit: 4d939780b70592e0f4bc6c397e52e518f8fb7916
-> --
-> 2.47.0
-> 
+Thanks
+
 
