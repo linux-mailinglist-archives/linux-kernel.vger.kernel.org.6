@@ -1,174 +1,192 @@
-Return-Path: <linux-kernel+bounces-371273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD469A3902
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:46:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107DD9A3905
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66EC81C22503
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:46:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F37F1C23616
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0A718F2EF;
-	Fri, 18 Oct 2024 08:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771F5190054;
+	Fri, 18 Oct 2024 08:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="imkgZeYh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhRDr5Lu"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9622A18E02A;
-	Fri, 18 Oct 2024 08:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B13E18EFF1;
+	Fri, 18 Oct 2024 08:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729241206; cv=none; b=UG8fE8mUJ8luqMCvYmk4Sh9fvUW/a88e72XH0oBGW1cC+sMw/POtI//k5Jf+s5WMbsXjEE0HYKYMzCI8EPVIQmIM0ZIeVTUQ/GL5TKDjoY1dOsJeDQoCGcRo5i4xGhDpltQInTckW2vq6mA0QJDKlWYH2/Yk4wgN1+keV5BrQSQ=
+	t=1729241217; cv=none; b=Pkrl7bs/gqutoIAsULzxzawFpB/p1ZYrU7w4cyvQvpO2a1YKW7BFT4rQz/7sVYfrfq/gGLph6+AuGxK5Je6JyM+oLdSWgGjmNyGTiaC+Cg1rzciMDUJZk45/nUKlOCr5rlE7370WOa0MnysHysxASpV4xpyJM9qDVoflaTgAns4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729241206; c=relaxed/simple;
-	bh=BmG3pmF+wqE21ChhB3j93ImO3VVkibr0t+QlXetDkQg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=IOWRrmvpXWuYcRcFkiBs2GB78OeY+wyVAZrGEMdXo3gQl0IFM5PW1LGXlzgYqvx9+msmpNZR0D3Y751E+CnZUCUPe8wiPrzehL7VZhoIBkUSnQTq+rY29olnV7Rv4C7kQj2iRxyTV+b3UrTeQ0jLrCt3znj7PpLV96/L/+owi3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=imkgZeYh; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729241204; x=1760777204;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=BmG3pmF+wqE21ChhB3j93ImO3VVkibr0t+QlXetDkQg=;
-  b=imkgZeYhiWIo+dNh0PywJeew4HnLrtkK+DakEGaVekeAfBYKQFKtkXhT
-   ZNUG4cCiHrHBESMCGOPX7odBbzc1KowoKUI4P0sQN+ZOl+4mv5yDoRk1I
-   jIm+zvXgM3TfefluaqPDaQ1A2HN1NuAnkDbdqIeacUyXP4XNfVQYRY19B
-   loB2vLx/xR37CWJcxMoc/85Uk+bHDO1em3pApMnntJHY6O/idW5DXYgui
-   RHpGAyI5K912NUsf47Q/sXqbxfJxI2Ch+k1JfCxKaIGyigoHahxOhJ74i
-   EPQkXt7gcxy5IvtdyP6FyvFrR4O+hZ3EPSdWNJCH2rBPdXqs3TtyeGoEc
-   g==;
-X-CSE-ConnectionGUID: K666Z4MiS1yY7hX09qTIRA==
-X-CSE-MsgGUID: xFaGO5QtS4W6Z1ISUDCSSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="16380138"
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="16380138"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:46:43 -0700
-X-CSE-ConnectionGUID: IrccAmt4S++RH26u/lFQUw==
-X-CSE-MsgGUID: IMCEz9l0SOqvSvg6xwrkWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="109617903"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.217])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 01:46:41 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 18 Oct 2024 11:46:37 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
-    peternewman@google.com, babu.moger@amd.com, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 02/15] selftests/resctrl: Print accurate buffer size
- as part of MBM results
-In-Reply-To: <f7c200b42bf514e587e88e5be6e866fa797eed66.1729218182.git.reinette.chatre@intel.com>
-Message-ID: <68a7ff59-289c-1d50-d454-ab2fcf6baf22@linux.intel.com>
-References: <cover.1729218182.git.reinette.chatre@intel.com> <f7c200b42bf514e587e88e5be6e866fa797eed66.1729218182.git.reinette.chatre@intel.com>
+	s=arc-20240116; t=1729241217; c=relaxed/simple;
+	bh=tfE4V3W8ykmNE09bvwGw+LdTUj5YFdV78WhZB/lzxR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZgGnR1+USbOyVF8hQUZNOb21yDjTmyfCn1uUkQbasWVh4OPUtkOLjZ9mSUWOkeZn29kNx/u6hBQCwCft0SYV1284Na0UhO4WV1N8vZLGwqdC+q4ZcgGFYo3j6EWc+UDNaEkrmaE27Sfs48WAU0bUOfc3+Jn15KRtMC4fMQQotzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhRDr5Lu; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb561f273eso19334181fa.2;
+        Fri, 18 Oct 2024 01:46:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729241214; x=1729846014; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ftsjmpU0affWST2ixW5xYnYew3ZAwBw9E/4OsheRmi8=;
+        b=fhRDr5LuL+r5j+pmpagL/+glG2lj5zgm+ErqVXvfsjBUm8MHMmk+WSzIHytYq+qTgm
+         OT3XxEerpnFfAyZ+jlEdbieqv/thVquj9npRuTSt80NiBw2Lro2kBWokjeiUdz3srq6+
+         q/CpPnH4CTNiGxB6u2EtftW3UWV7boRoV8t9uKG2gaSWLZQt6ypNVmZwVIE+Lnpmoj7O
+         0SgniLxJLNHUsIXR7Cr2Cxa3Kv9+pKx8uTrd7uKGc5yCdNtSaBNDQuWCBmP60LtUpjXq
+         rODcXT1LwuuxlX+4PmSc9lmvmnI2X4UtIGcFZM9RkWemTPZssXjkv+mZvPSSrwI+Q5fs
+         HA1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729241214; x=1729846014;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ftsjmpU0affWST2ixW5xYnYew3ZAwBw9E/4OsheRmi8=;
+        b=DAGLDAbpMIS+pmCx/SNyZShDGU2GOtMZBun4+ldP5BxR3zBxX1t3XwnrrIe5//6Uue
+         +B0J4tkE7PM6vBqiYddompDD5szLXGGfai5AHO2kybcANKyxJyiGeiOX1MDLrzqV4Zfc
+         yURA1dasFVplBdRK5mmTNGFPNIvbFjieeEvUz9oxPQbBD93xW82L2bx5tkSJE/AS1q/u
+         10f3rhmxIgj0yKE7IzlLTZVPl6bG75cN1pDJeUCM16V0LHyeqIR1AEecmkpsaIL1Kun4
+         pg8IoISR9RpE7WOVkUAaCYWEk+S80OvoKK0VwjmGQjqF9AALmSGb7wy1ocH14nLQvazQ
+         ouqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcaALFTUaxdaATezby4ffYuWS0c1v3nA9a26uW5WvvFWsRMr1hNQXUxaKfMfFoHx9asFR2uk77YWKjqtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWp+oTSeLYcAG36FPPU47dQG/E4ljflX1ObSGIRiC0ACK8VHTA
+	mgwtwHMFmgNpPEi3lz4FnLCEcur8k4LXL1/giPXSAcRDX80yNbTIP8rNQvLcY2joweaNqBhonW3
+	Vl0RreKYCfP85hsF626sAejI4p2zG8ZneiQdl1sDg
+X-Google-Smtp-Source: AGHT+IEXYTlUVTz6d9hr6wtJg18uXsksAynXi0Q8ifViYQ6L4DUtCzdSzNGLed1bEO0ib551F1BEc3HUTw69WFEA1x4=
+X-Received: by 2002:a2e:4a19:0:b0:2fa:d84a:bd83 with SMTP id
+ 38308e7fff4ca-2fb82fb1e9dmr5696031fa.24.1729241213929; Fri, 18 Oct 2024
+ 01:46:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20241008054615.43062-1-yang.li85200@gmail.com>
+ <20241016095626.8162-1-yang.li85200@gmail.com> <CAJF2gTQ5D8fU9rSs7V28S9c5+ZPuQSJW7inQtoFsM6X6gBgOKg@mail.gmail.com>
+ <CA+N+=zu0=scmv9w7iZE2ZebxBVpvVb1eeoJ-qi=vhac-JhLthg@mail.gmail.com>
+In-Reply-To: <CA+N+=zu0=scmv9w7iZE2ZebxBVpvVb1eeoJ-qi=vhac-JhLthg@mail.gmail.com>
+From: yang li <yang.li85200@gmail.com>
+Date: Fri, 18 Oct 2024 16:46:42 +0800
+Message-ID: <CA+N+=zsB=wd2G-nsYT9xxvsgBMtnOMUJb8ru8XHaqusX2nzzEg@mail.gmail.com>
+Subject: Re: [PATCH v2] csky: fix csky_cmpxchg_fixup not working
+To: Guo Ren <guoren@kernel.org>
+Cc: linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 17 Oct 2024, Reinette Chatre wrote:
+Hi Guo Ren:
+I used the readelf tool to view the address of csky_cmpxchg_ldw,
+and used printk("0x%x\n",csky_cmpxchg_ldw) and
+printk("0x%x\n",&csky_cmpxchg_ldw) to print it out in the code.
+ The result is that printk("0x%x\n",&csky_cmpxchg_ldw) prints the
+correct result.
 
-> By default the MBM test uses the "fill_buf" benchmark to keep reading
-> from a buffer with size DEFAULT_SPAN while measuring memory bandwidth.
-> User space can provide an alternate benchmark or amend the size of
-> the buffer "fill_buf" should use.
-> 
-> Analysis of the MBM measurements do not require that a buffer be used
-> and thus do not require knowing the size of the buffer if it was used
-> during testing. Even so, the buffer size is printed as informational
-> as part of the MBM test results. What is printed as buffer size is
-> hardcoded as DEFAULT_SPAN, even if the test relied on another benchmark
-> (that may or may not use a buffer) or if user space amended the buffer
-> size.
-> 
-> Ensure that accurate buffer size is printed when using "fill_buf"
-> benchmark and omit the buffer size information if another benchmark
-> is used.
-> 
-> Fixes: ecdbb911f22d ("selftests/resctrl: Add MBM test")
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> ---
-> Backporting is not recommended. Backporting this fix will be
-> a challenge with all the refactoring done since then. This issue
-> does not impact default tests and there is no sign that
-> folks run these tests with anything but the defaults. This issue is
-> also minor since it does not impact actual test runs or results,
-> just the information printed during a test run.
-> 
-> Changes since V2:
-> - Make user input checks more robust. (Ilpo)
-> 
-> Changes since V1:
-> - New patch.
-> ---
->  tools/testing/selftests/resctrl/mbm_test.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
-> index 6b5a3b52d861..36ae29a03784 100644
-> --- a/tools/testing/selftests/resctrl/mbm_test.c
-> +++ b/tools/testing/selftests/resctrl/mbm_test.c
-> @@ -40,7 +40,8 @@ show_bw_info(unsigned long *bw_imc, unsigned long *bw_resc, size_t span)
->  	ksft_print_msg("%s Check MBM diff within %d%%\n",
->  		       ret ? "Fail:" : "Pass:", MAX_DIFF_PERCENT);
->  	ksft_print_msg("avg_diff_per: %d%%\n", avg_diff_per);
-> -	ksft_print_msg("Span (MB): %zu\n", span / MB);
-> +	if (span)
-> +		ksft_print_msg("Span (MB): %zu\n", span / MB);
->  	ksft_print_msg("avg_bw_imc: %lu\n", avg_bw_imc);
->  	ksft_print_msg("avg_bw_resc: %lu\n", avg_bw_resc);
->  
-> @@ -138,15 +139,26 @@ static int mbm_run_test(const struct resctrl_test *test, const struct user_param
->  		.setup		= mbm_setup,
->  		.measure	= mbm_measure,
->  	};
-> +	char *endptr = NULL;
-> +	size_t span = 0;
->  	int ret;
->  
->  	remove(RESULT_FILE_NAME);
->  
-> +	if (uparams->benchmark_cmd[0] && strcmp(uparams->benchmark_cmd[0], "fill_buf") == 0) {
-> +		if (uparams->benchmark_cmd[1]) {
-> +			errno = 0;
-> +			span = strtoul(uparams->benchmark_cmd[1], &endptr, 10);
-> +			if (errno || *endptr != '\0')
+include/linux/linkage.h
+#define GLOBAL(name)  \
+        .globl name ASM_NL \
+        name:
+#endif
 
-This no longer catches "" string as error. I tested strtoul() with an 
-empty string and errno remains at 0.
+arch/csky/kernel/atomic.S:
+GLOBAL(csky_cmpxchg_ldw)
+so
+.globl  csky_cmpxchg_ldw   --->globl symbol
+csky_cmpxchg_ldw:             --->label symbol
 
-> +				return -errno;
 
-Another issue is that in cases where errno=0 (both *endptr != '\0' and 
-endptr == uparams->benchmark_cmd[1]), this function doesn't return 
-a proper error code but -0.
-
--- 
- i.
-
-> +		}
-> +	}
-> +
->  	ret = resctrl_val(test, uparams, uparams->benchmark_cmd, &param);
->  	if (ret)
->  		return ret;
->  
-> -	ret = check_results(DEFAULT_SPAN);
-> +	ret = check_results(span);
->  	if (ret && (get_vendor() == ARCH_INTEL))
->  		ksft_print_msg("Intel MBM may be inaccurate when Sub-NUMA Clustering is enabled. Check BIOS configuration.\n");
->  
-> 
-
+yang li <yang.li85200@gmail.com> =E4=BA=8E2024=E5=B9=B410=E6=9C=8818=E6=97=
+=A5=E5=91=A8=E4=BA=94 16:33=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi Guo Ren:
+> I used the readelf tool to view the address of csky_cmpxchg_ldw,
+> and used printk("0x%x\n",csky_cmpxchg_ldw) and
+> printk("0x%x\n",&csky_cmpxchg_ldw) to print it out in the code.
+>  The result is that printk("0x%x\n",&csky_cmpxchg_ldw) prints the
+> correct result.
+>
+> include/linux/linkage.h
+> #define GLOBAL(name)  \
+>         .globl name ASM_NL \
+>         name:
+> #endif
+>
+> arch/csky/kernel/atomic.S:
+> GLOBAL(csky_cmpxchg_ldw)
+> so
+> .globl  csky_cmpxchg_ldw   --->globl symbol
+> csky_cmpxchg_ldw:             --->label symbol
+>
+>
+>
+>
+> Guo Ren <guoren@kernel.org> =E4=BA=8E2024=E5=B9=B410=E6=9C=8817=E6=97=A5=
+=E5=91=A8=E5=9B=9B 14:05=E5=86=99=E9=81=93=EF=BC=9A
+>>
+>> On Wed, Oct 16, 2024 at 5:56=E2=80=AFPM Yang Li <yang.li85200@gmail.com>=
+ wrote:
+>> >
+>> > In the csky_cmpxchg_fixup function, it is incorrect to use the global
+>> >  variable csky_cmpxchg_stw to determine the address where the exceptio=
+n
+>> >  occurred.The global variable csky_cmpxchg_stw stores the opcode at th=
+e
+>> >  time of the exception, while &csky_cmpxchg_stw shows the address wher=
+e
+>> >  the exception occurred.
+>> >
+>> > Signed-off-by: Yang Li <yang.li85200@gmail.com>
+>> > ---
+>> > V1 -> V2:Eliminate compilation warnings
+>> >
+>> >  arch/csky/mm/fault.c | 4 ++--
+>> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/arch/csky/mm/fault.c b/arch/csky/mm/fault.c
+>> > index a885518ce1dd..5226bc08c336 100644
+>> > --- a/arch/csky/mm/fault.c
+>> > +++ b/arch/csky/mm/fault.c
+>> > @@ -45,8 +45,8 @@ static inline void csky_cmpxchg_fixup(struct pt_regs=
+ *regs)
+>> >         if (trap_no(regs) !=3D VEC_TLBMODIFIED)
+>> >                 return;
+>> >
+>> > -       if (instruction_pointer(regs) =3D=3D csky_cmpxchg_stw)
+>> > -               instruction_pointer_set(regs, csky_cmpxchg_ldw);
+>> > +       if (instruction_pointer(regs) =3D=3D (unsigned long)&csky_cmpx=
+chg_stw)
+>> > +               instruction_pointer_set(regs, (unsigned long)&csky_cmp=
+xchg_ldw);
+>> csky_cmpxchg_ldw(stw) is a label symbol, not a variable.
+>>
+>> arch/csky/kernel/atomic.S:
+>> GLOBAL(csky_cmpxchg_ldw)
+>> GLOBAL(csky_cmpxchg_stw)
+>>
+>> Your modification does not affect the ASM output.
+>>
+>> (gdb) p main
+>> $1 =3D {void (void)} 0x5fa <main>
+>> (gdb) p &main
+>> $2 =3D (void (*)(void)) 0x5fa <main>
+>>
+>> >         return;
+>> >  }
+>> >  #endif
+>> > --
+>> > 2.34.1
+>> >
+>>
+>>
+>> --
+>> Best Regards
+>>  Guo Ren
 
