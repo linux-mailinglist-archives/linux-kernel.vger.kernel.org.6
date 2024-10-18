@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-371723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD3159A3F39
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:13:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D6B9A3F3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00ED21C248BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1FD28384F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DC51C3F10;
-	Fri, 18 Oct 2024 13:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794FC1F947;
+	Fri, 18 Oct 2024 13:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="YhneUlKo";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="l4abCq4G"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c5heL++I"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13151CD2B;
-	Fri, 18 Oct 2024 13:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E040C18E351
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729257190; cv=none; b=U9SIFD0EJhyi14JrzLfr69ItfeVZ58O0BCY7pwOlq47DzpTAbDq/CKvg+HfuSZ+k37H2uZdUJPhq9iMzGy0pTtv48vb4ypcoP2uns2ee+GNXhJofy9jjgMxZYZG+D5DOal8IyVBRp6Q6GK1Aq/4IAl8EHbFtJ2eo4bBrqflZTYY=
+	t=1729257230; cv=none; b=Ji/gjoSMXjeV4YY7uSkN3Y/H0onoDYqROF0KGbB9eUMHYv9PXGGy9LUT33H9ZNkqxr6kp2phAOWmYH9GYHXmUjSs12MTLnByHLLO6OQNuQsc9IwCTsulwReTFKQCKA4ivvghM+AD+4RtLCkrbkIYhXHvL58feB/C8j669L8WSU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729257190; c=relaxed/simple;
-	bh=2vmr+dE/VV7F+z9njB5tZ6dmwWw4bhIy2k2SVn0tfOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ohs7hjiIXdO8pxhC3rO9vFEoAbZLoloe/NimhWmImdm4zn67aA2QdDoPu1zLndL+MUmmLPtONXZagSqrKManw4/E1BvY/HUfql8PsbIPNGQGyiJAuE3kKqcp/Zm1tBGd/ia0Pl7P3rlvgFVV1N6KWbjgq9XFXzoHilWd/j15uBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=YhneUlKo; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=l4abCq4G reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1729257230; c=relaxed/simple;
+	bh=XJsufPU8oDUNT2IVUxN0YngUgeNFIQN/QtzNcOQLQoA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oD6PZOmneTXIdL6C9yII8P9AJLuJ+KvVP9B8hNpkQMUL5I+7kZ9P1072ixTqVnYwecXnOeS/azutE7y4+Kc7h4NPlJraz7upxBBiRL5zC/TxTgf1he7uFfftWpeD80xqqyGayRPj1hSgVsfVS2OW+SgZQKZpsP+LTUw5SBd4czM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c5heL++I; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a3b450320aso7750815ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:13:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1729257186; x=1760793186;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xrzeEoBsCionoKUR266fpAo3BaG9LZtKR8xkrwhis4I=;
-  b=YhneUlKovNsk86GlrG+BYnV58hBV4grN+vg4ewF2tQCVXIPmTVldkz50
-   ygbpGeewjNDJ/RlCb+VUnyYP2nAnWZ8ZopSGc0XWdkMq1aaStgb8CzK6h
-   +LgJokAdYkJjVAuTDHVjPQ+KLCDC2sBvjnN969rTUFHMVgDLBo1hch3tw
-   7leywoW/WOOtDrsI+HsaVO/rCxw7QC9tgsxm6b1dSV47x/g66Oasprh3A
-   dVWClESnWS6UKW9j1kJ1+pkZ2YfT15aIe0fTlJCAOdIXeoAZiNpMl7xbh
-   7lBembHXlnCOL7b0HpRglElACR4/YePzVC66BkdL5zEYR4P52/2z2hXV4
-   Q==;
-X-CSE-ConnectionGUID: 3KoUDJEnQRaRloi9VBQ63A==
-X-CSE-MsgGUID: NPQH+y/pSTScykETWFj9YQ==
-X-IronPort-AV: E=Sophos;i="6.11,213,1725314400"; 
-   d="scan'208";a="39543900"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 18 Oct 2024 15:12:58 +0200
-X-CheckPoint: {67125EDA-9-BD84CFBF-E7C15A70}
-X-MAIL-CPID: 1966C4EF9B0FB9E0C3310EAEA66099E9_3
-X-Control-Analysis: str=0001.0A682F19.67125EDA.0060,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AB87F16ACBC;
-	Fri, 18 Oct 2024 15:12:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1729257173;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=xrzeEoBsCionoKUR266fpAo3BaG9LZtKR8xkrwhis4I=;
-	b=l4abCq4GzoqmZ9BJX3njeI/FwjZI05uwLBz+mQMuGVbCBcbm1vRsJbUvYSO5vvavbmWhEv
-	y38ZqQMrSpXDdl5nfXYT/JHFBzztTs0+BGKJtB9TRP8jNwct3OJ9BGPLlxMHQ1nzO+uSHY
-	jW9NvLXRt1L/k40SMmI0ImpPm8H38zP7b5Z7XVkCk3kS16WZnpnoRaHh4qSSAYXxmc0YCj
-	H7nii7oha2YVtDLjD33iRrAzwTQHHLIjVaVBh6G8uWt63MyibvhKD5GUYIZfI3gEY9CsBw
-	/LumWuZE7UPbJBgSvdhgHmK6/uEGDhg9kGk6WHA9AhAxqiQ2JZRqA/LO6JWM2g==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, marex@denx.de, stefan@agner.ch, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 4/5] drm/bridge: imx8mp-hdmi-tx: Set output_port to 1
-Date: Fri, 18 Oct 2024 15:12:49 +0200
-Message-ID: <5035853.0VBMTVartN@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <vvsj6ri2ke25nzocbq736yv7rphzma6pn3yk2uh7iu43zfe2sa@2fwye4k4w6he>
-References: <20241018064813.2750016-1-victor.liu@nxp.com> <20241018064813.2750016-5-victor.liu@nxp.com> <vvsj6ri2ke25nzocbq736yv7rphzma6pn3yk2uh7iu43zfe2sa@2fwye4k4w6he>
+        d=chromium.org; s=google; t=1729257228; x=1729862028; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/IpCOxbbfuWTu34K+8DA6jyFkd8ceqHknAK97seFFAo=;
+        b=c5heL++IqhWwPQME0+13DvayfGUO2s+tcYutI+VRn4hLUb70WdqfS5rn0905UK39RI
+         H9ZqbGXvW9o3jjNk7skn6foF3O2hsLHTnpusknuv31lOQVi0lWfT8/mpadjudGX8oblN
+         xEmm8e0Fc6IIU6woXLXB0UmwZMc0vn48OEosw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729257228; x=1729862028;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/IpCOxbbfuWTu34K+8DA6jyFkd8ceqHknAK97seFFAo=;
+        b=pNAs2gD7nxG/cA8hGsmZ2texBljkbE9oHrSfUIbIdaJjeCaJGzIhzWEgo+3ZBowdJF
+         SKZkZ5xc7gRcGxsaEgYnO8nFeUyPuWuGq8fuy7XiNUIBxeLpnvP0K/oFX52SAjUQz+zn
+         YBgKHopAHQts/O7vV+tnc1jbQRDyZ/0aTT8lkLQzoZKet7STAF5LR0MZAN98GgzJo40s
+         nT+2tLiePKO3MlzT+5YyBCRZH454knLgxGWMzh5mFHWnf1ersz/Kutr1kjTKYrXBBieZ
+         IIYiNSuDmmOpaGgkN1BdZ6wyPmBQBNwmHoWo2skRbRYqfc9FJGYpIY49nyGXY2FnAzxD
+         HY5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU9JYdpmK6YX2R/TTPCqQD+t/KcPQMe71FKmQ6k0NixDo5xBTG8Yaarcj6nsYVATr48tR7EFylQW3FSG/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ0BBu6GiV1zeK135y+9NGW7W8IQgRtMwAajT0beL8KfYkbw0Y
+	wQ8Y3CGbedNVnTXbTO4BaHZ+TRjxe3EphysR/eATOWbzPzFKskQbVdL+T4Da3w==
+X-Google-Smtp-Source: AGHT+IFBfEFVY3g0oM2/BGGdZ3Q6Mpfn3MSyJk6cOSoXomUIoUgVnQhq517tPvH61wPvt73sh3wORw==
+X-Received: by 2002:a05:6e02:1389:b0:3a0:ac0d:22b9 with SMTP id e9e14a558f8ab-3a3f4058abamr22270665ab.6.1729257227812;
+        Fri, 18 Oct 2024 06:13:47 -0700 (PDT)
+Received: from yuanhsinte.c.googlers.com (176.220.194.35.bc.googleusercontent.com. [35.194.220.176])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc256cc8sm1120222a12.56.2024.10.18.06.13.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 06:13:47 -0700 (PDT)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Subject: [PATCH v2 0/4] Using i2c-hid-of-elan driver instead of i2c-hid-of
+ driver
+Date: Fri, 18 Oct 2024 13:13:40 +0000
+Message-Id: <20241018-post-reset-v2-0-28d539d79e18@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAARfEmcC/23MQQ6CMBCF4auQWVvTobYYV97DsChlhFlAyRSJh
+ vTuVtYu/5e8b4dEwpTgVu0gtHHiOJeoTxWE0c8DKe5LQ63rC2q8qiWmVQklWpUPznXaWHRooBw
+ WoSe/D+zRlh45rVE+h73hb/3LbKi0st73XWOt1qa5h1HixK/pHGWANuf8Bb7o+m2nAAAA
+X-Change-ID: 20241018-post-reset-ac66b0351613
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>, 
+ Hsin-Yi Wang <hsinyi@chromium.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+ Hans de Goede <hdegoede@redhat.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-7be4f
 
-Am Freitag, 18. Oktober 2024, 14:31:20 CEST schrieb Dmitry Baryshkov:
-> On Fri, Oct 18, 2024 at 02:48:12PM +0800, Liu Ying wrote:
-> > Set DW HDMI platform data's output_port to 1 in imx8mp_dw_hdmi_probe()
-> > so that dw_hdmi_probe() called by imx8mp_dw_hdmi_probe() can tell the
-> > DW HDMI bridge core driver about the output port we are using, hence
-> > the next bridge can be found in dw_hdmi_parse_dt() according to the port
-> > index, and furthermore the next bridge can be attached to bridge chain =
-in
-> > dw_hdmi_bridge_attach() when the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag is
-> > set.  The output_port value aligns to the value used by devicetree.
-> > This is a preparation for making the i.MX8MP LCDIF driver use
-> > drm_bridge_connector which requires the DRM_BRIDGE_ATTACH_NO_CONNECTOR
-> > flag.
-> >=20
-> > Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> > ---
-> >  drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c b/drivers/gpu/=
-drm/bridge/imx/imx8mp-hdmi-tx.c
-> > index 8fcc6d18f4ab..54a53f96929a 100644
-> > --- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> > +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> > @@ -96,6 +96,7 @@ static int imx8mp_dw_hdmi_probe(struct platform_devic=
-e *pdev)
-> >  		return dev_err_probe(dev, PTR_ERR(hdmi->pixclk),
-> >  				     "Unable to get pixel clock\n");
-> > =20
-> > +	plat_data->output_port =3D 1;
->=20
-> This will break compatibility with older DT files, which don't have
-> output port. I think you need to add output_port_optional flag to
-> dw_hdmi_plat_data and still return 0 from dw_hdmi_parse_dt() if the flag
-> is set, but there is no remote node.
->=20
-> Last, but not least, this changes behaviour of the connector.
-> dw_hdmi_connector_create() implements CEC support, handles
-> ycbcr_420_allowed, HDR metadata, etc.
+After commit 2be404486c05 ("HID: i2c-hid-of: Add reset GPIO support to
+i2c-hid-of"), i2c-hid-of driver resets the touchscreen without having
+proper post-reset delay on OF platform.  From the commit message of that
+commit, not to decribe poset-reset delay in device tree is intended.
+Instead, describing the delay in platform data and changing to use
+specialized driver is more preferable solution.
 
-Mh, I was suspecting the same, but I couldn't see any regression regarding =
-CEC.
-Maybe the change is not doing what it is supposed to do...
-I'll check again on Monday.
+Also workaround the race condition of pinctrl used by touchscreen and
+trackpad in this series to avoid merge conflict.
+
+Adding other second source touchscreen used by some mt8183 devices in
+this series since this should be based on the workaround of pinctrl
+issue.
+
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+---
+Changes in v2:
+- Add second source touchscreen patches since they should based on the
+  first patch of this series.
+- Link to v1: https://lore.kernel.org/r/20241018-post-reset-v1-0-5aadb7550037@chromium.org
+
+---
+Hsin-Te Yuan (4):
+      arm64: dts: mediatek: mt8183: Fix race condition of pinctrl
+      arm64: dts: mediatek: mt8183: Switch to Elan touchscreen driver
+      arm64: dts: mediatek: mt8183: kenzo: Support second source touchscreen
+      arm64: dts: mediatek: mt8183: willow: Support second source touchscreen
+
+ arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-burnet.dts |  2 --
+ arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts  |  3 ---
+ arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts   | 12 +++---------
+ .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts   | 11 ++---------
+ .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts   | 11 ++---------
+ .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts   | 11 ++---------
+ .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel.dtsi |  3 ---
+ .../boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper.dtsi      |  3 ---
+ arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico.dts   |  3 ---
+ arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico6.dts  |  3 ---
+ .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow.dtsi |  3 ---
+ arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi       | 10 +++-------
+ 12 files changed, 12 insertions(+), 63 deletions(-)
+---
+base-commit: eca631b8fe808748d7585059c4307005ca5c5820
+change-id: 20241018-post-reset-ac66b0351613
 
 Best regards,
-Alexander
-
-> We are slowly moving towards the supporting all of this in bridge
-> connector via the HDMI Connector framework, but this is not
-> implemented for now.
->=20
-> >  	plat_data->mode_valid =3D imx8mp_hdmi_mode_valid;
-> >  	plat_data->phy_ops =3D &imx8mp_hdmi_phy_ops;
-> >  	plat_data->phy_name =3D "SAMSUNG HDMI TX PHY";
->=20
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+-- 
+Hsin-Te Yuan <yuanhsinte@chromium.org>
 
 
