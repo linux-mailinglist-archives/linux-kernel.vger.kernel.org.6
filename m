@@ -1,191 +1,153 @@
-Return-Path: <linux-kernel+bounces-372344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE71A9A4774
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:55:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187DC9A4778
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AF371C21EFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:55:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C584B2842A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926CD206053;
-	Fri, 18 Oct 2024 19:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C57516EB4C;
+	Fri, 18 Oct 2024 19:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="o5OkhPZT"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="enAOv2qV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EBC205AB4
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E917817
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729281329; cv=none; b=uk+a1T8apnNxbLObxQvjYanRgmbwuoY04NkEkoBcpwrB9QBnlpYBGp8X78ncHJZyI88VAL8ABXRkSpmrSC2Xwn5NmcyMGUMEgNfksQe2Di5x7GNxNV0z5+8d5KpOwUKzR+c3lJVrGFrK6weXisuKtZsi5/P8+RM2cLs5bJE6qJw=
+	t=1729281499; cv=none; b=KYoDER6PM3/cffskJH1mO0MhUMKl75KbEd1Wx38xTtNJCXPBTfxG+RRRnp+yO+zbIsWvfXcC7DgpwB/oNrdkNg5biY3sgPQyKi5YWlgNVonJ40QxMaZaFiCh4z65O1emCiVQYEgzQG409ugM31ov8pF4DnR3rPPUcGSEBvFICC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729281329; c=relaxed/simple;
-	bh=RmylGS6Qr0WvETJPAnY4axDK5fjypcsmHzFNSYzPXwI=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=HdtGQXJ2cfNA5nHtmlNkK7BWds7gjonpdkNtmjO1SZ7rivV9SflZo5Hdz/G9yO3eLfJbGsu6fmA468png+/OCJQ1TT0nBe84RPDsDs6D+fwVTXqvZfHbKxZB4IK1uVqsy+mT5kPldHsoLlitskZT34tidY6GoD6fId8mJM2vtns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=o5OkhPZT; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-287b8444ff3so1118143fac.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:55:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1729281326; x=1729886126; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g7oEArfVPSnqpsijZaXynZDVD27FkpdWWYcqDGTZCjw=;
-        b=o5OkhPZTZVX9QIbbxwdcFBp9AstGQ2SXYC+eJMtL11/6HiRMNwEaYwQybKmRBKRJSi
-         zF7D4xwyHLasBXhJcpoc+wByEV/zxfmToOZONXtF8NxTynZcqlseWkMi400hkNYAdYce
-         9Wp0HFhz7xvQpKJZrH5ohUp6fnxmEOW5HfpHnAPwlnSpRmL/20vL4tdU6LB3RhfReWBL
-         Ls9ZcWX6ig2QIymlCB3lGhUkpC/Yq7mbmsa5cVtGWGTcTmDHqEq2EOnvIxVDCr+0H9eJ
-         F7cBRInIWzlwQli9cSvDNZywnVCIrS1r8OwHqnebgL8SWEWQsoVRySoJXMdADDU62d0O
-         NznQ==
+	s=arc-20240116; t=1729281499; c=relaxed/simple;
+	bh=82sYqD5s+7hIOtXqNsdn8pKxRLGsL54DcQPgvuBtjes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ak+WMXnGONIougsUI4rd+7sRNtBGX3wBYOTZwNMncTkosqTBio3GZUv8qUGh0F0o1rUdtUWpzjDNNWSiGwuJ340HAMGVLPK7kUqFS2l8I4qtpcOSTrNpQ+H5IkNd8GxgP4DR8YokDtTy+KHuJkkSTNW42D4WuxUul9y5xH2Lpik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=enAOv2qV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IDuiNF029899
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:58:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	17H7VN6qnXXJuVQsrDHyc4u5oFUS85hKz7JjpkIBFxQ=; b=enAOv2qVfFOqAZs3
+	Hj+1SryuUMNEsrrYPma/Spi/PsFdLg8uYOHRd6yChn54ILaDQqs+HFjI6EhTbsz7
+	7+r0PltmJrDPcGOyFJBcgGskMgL+6+CTVaqXL/oBpef2q2j9wYu97kfT73e1ZxDH
+	SJk5XgYniFg2etwoCgSzXCgSp8pBKTnbx5jUn2XIIg2Lmq8Bg/mn+0OMS+PZ0YlK
+	/bBUhtmRqoUaE1rf5Ya0K+zX4PQwvTleklv15D1w9L/h7Gbask/yZaFEkyiOwpAL
+	GxbRjkecEZgX25ErYPk0uy8KlYj3b0e6LCqevfs5wCQhwb/RkUl+0wJRkDxKUHz/
+	olydew==
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bs0mry44-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:58:17 +0000 (GMT)
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ab67710b5so28810439f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:58:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729281326; x=1729886126;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g7oEArfVPSnqpsijZaXynZDVD27FkpdWWYcqDGTZCjw=;
-        b=sH1wMnRLdpoA7IPnwVCVUixw1/PqKW/2TkMf1Vrd8Y5mvF0GIj3Y/D2JpvaEufp6xh
-         FA7Q/j1b5zMAPfb2mjS6ugDt28GohWoulK8HeBQcMcxt6+DsgrIbV3d0TDE/Y+c7d/JC
-         aQkCxPfGznmUtZzq226MGk/eDoDM1jLerb3zPYtb64LIrtOPkVKvLR9HSNYpDTW56ulE
-         0+zDQWmjVx8+Jm9whap5sYKnOs12pahATEc2zRpM3TNjD5ZNsMf2b2btWNlgydNaYGIN
-         pKM83W/Q8QqIvnjlg0NqEXXinq334bZ+oKVjfujpOUIet5mG81kASV7y+mmdEYZv4jz7
-         9OLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/QNFs3xqHoKjmozZSCnRkZjWeIzI5BxLcA4ivLayGMQwMHLoxQNDtgQiUsk15IxAQDRwPa34N0cxT28I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQtcR6HlYnLSG04ltVr9/sqZD9yGYVha1CBWNXEW9oyVnC1c1h
-	ThQLb6ktI38HnBfO/unT840uD+6uq6FWE0ZCRauCSqoRtlCOYDMPPjXclEkbv90=
-X-Google-Smtp-Source: AGHT+IGY1tzB8tvAIhD1Nhz0GdPFPRb4Y+29JKXvh/Pt6G+JZiqk0pPm8ialvF1A0Tuv6DdzKtllhw==
-X-Received: by 2002:a05:6870:82a0:b0:277:d360:8971 with SMTP id 586e51a60fabf-2892c549c2amr3875076fac.43.1729281325632;
-        Fri, 18 Oct 2024 12:55:25 -0700 (PDT)
-Received: from localhost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc226816sm1742765a12.24.2024.10.18.12.55.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 12:55:25 -0700 (PDT)
-Date: Fri, 18 Oct 2024 12:55:25 -0700 (PDT)
-X-Google-Original-Date: Fri, 18 Oct 2024 12:55:21 PDT (-0700)
-Subject:     Re: [PATCH v5 1/2] riscv: perf: add guest vs host distinction
-In-Reply-To: <a67d527dc1b11493fe11f7f53584772fdd983744.1728980031.git.zhouquan@iscas.ac.cn>
-CC: anup@brainfault.org, ajones@ventanamicro.com, atishp@atishpatra.org,
-  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, Mark Rutland <mark.rutland@arm.com>,
-  alexander.shishkin@linux.intel.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-  linux-riscv@lists.infradead.org, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
-  linux-perf-users@vger.kernel.org, zhouquan@iscas.ac.cn
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: zhouquan@iscas.ac.cn, Marc Zyngier <maz@kernel.org>
-Message-ID: <mhng-c9ba919e-b4a4-4bb9-bdba-f4d3295a930b@palmer-ri-x1c9a>
+        d=1e100.net; s=20230601; t=1729281496; x=1729886296;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=17H7VN6qnXXJuVQsrDHyc4u5oFUS85hKz7JjpkIBFxQ=;
+        b=s7v76K1PZ3mMTEO52otmU72vXMq0imINN7UyJV1/dmR89lWIVU5JohH1HtrDsGrpx3
+         7pZCklcAevq/+gYbkQdMI04ZgwSNWLCdoJKJvHsZXUqQvvP+JmBu8NpIN9KsyhpxXQrj
+         SYgSmIEh4T6qbM33twPdem9bwMiKj4Xk22qThOLepynlqOH42/7Hmi7JWe6Kb2wrV7DL
+         Vq+prZjbBB3Dk/iDV+7CipyZZNRf/cOaEq1u2wdGZX5EHsnQqWOTHhw0ahncwok1bzVk
+         MhcUaxOJWdJsKLzClWItLHCsfvOfUHoaREnjRxlSdOwqVhv5bTIdqYmqy2XUr4LQCYAq
+         eNsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXxk9GSIbI0QKaAYurSkHN8tDjR90JpZsIw42HT1AEKgBHDiamA7UoyedW9YPUOFSzh84YMBD8a2x4yM5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqNvn+S0VcXZ3v5cESnwuSeA7SWhxkViLGXqW9YNlO8J7TQQ8w
+	c1TikK8FmGmO2r05kyXAhbr1CWTzPMnBvHTO4Y2TUGnEULsn8WRaGyC0s9XS7n85aCLpg4QAs7X
+	iuu0M8tE1+cCA5i7fTUdTDzsqbIpBXxC0HFdz0aFKkso5+Gx8ywH2iqYMbt5O1LY=
+X-Received: by 2002:a05:6e02:1705:b0:39a:f126:9d86 with SMTP id e9e14a558f8ab-3a3f3fc94b4mr7183695ab.0.1729281496148;
+        Fri, 18 Oct 2024 12:58:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqsPyEr/Lwj74Qskarn7NoA+u+1X8YWX9tKtJRLbScUlYeXVIFDyeC9CKm8mQ47T95ZjMwYg==
+X-Received: by 2002:a05:6e02:1705:b0:39a:f126:9d86 with SMTP id e9e14a558f8ab-3a3f3fc94b4mr7183625ab.0.1729281495736;
+        Fri, 18 Oct 2024 12:58:15 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68ad506asm131676266b.57.2024.10.18.12.58.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 12:58:14 -0700 (PDT)
+Message-ID: <940da07b-1286-4b88-8384-16ca2f996d90@oss.qualcomm.com>
+Date: Fri, 18 Oct 2024 21:58:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/22] wifi: ath12k: add ath12k_hw_regs for IPQ5332
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
+Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        P Praneesh <quic_ppranees@quicinc.com>,
+        Balamurugan S <quic_bselvara@quicinc.com>
+References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
+ <20241015182637.955753-6-quic_rajkbhag@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241015182637.955753-6-quic_rajkbhag@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: jSMNGtX_ACb30q-fIlz7sPeT1q3uBMRI
+X-Proofpoint-GUID: jSMNGtX_ACb30q-fIlz7sPeT1q3uBMRI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 priorityscore=1501 phishscore=0 malwarescore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410180127
 
-On Tue, 15 Oct 2024 01:42:50 PDT (-0700), zhouquan@iscas.ac.cn wrote:
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
->
-> Introduce basic guest support in perf, enabling it to distinguish
-> between PMU interrupts in the host or guest, and collect
-> fundamental information.
->
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
+> From: P Praneesh <quic_ppranees@quicinc.com>
+> 
+> Add register addresses (ath12k_hw_regs) for new ath12k AHB based
+> WiFi device IPQ5332.
+> 
+> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
+> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
+> 
+> Signed-off-by: P Praneesh <quic_ppranees@quicinc.com>
+> Co-developed-by: Balamurugan S <quic_bselvara@quicinc.com>
+> Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
+> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
 > ---
->  arch/riscv/include/asm/perf_event.h |  6 +++++
->  arch/riscv/kernel/perf_callchain.c  | 38 +++++++++++++++++++++++++++++
->  2 files changed, 44 insertions(+)
->
-> diff --git a/arch/riscv/include/asm/perf_event.h b/arch/riscv/include/asm/perf_event.h
-> index 665bbc9b2f84..38926b4a902d 100644
-> --- a/arch/riscv/include/asm/perf_event.h
-> +++ b/arch/riscv/include/asm/perf_event.h
-> @@ -8,7 +8,11 @@
->  #ifndef _ASM_RISCV_PERF_EVENT_H
->  #define _ASM_RISCV_PERF_EVENT_H
->
-> +#ifdef CONFIG_PERF_EVENTS
->  #include <linux/perf_event.h>
-> +extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
-> +extern unsigned long perf_misc_flags(struct pt_regs *regs);
-> +#define perf_misc_flags(regs) perf_misc_flags(regs)
->  #define perf_arch_bpf_user_pt_regs(regs) (struct user_regs_struct *)regs
->
->  #define perf_arch_fetch_caller_regs(regs, __ip) { \
-> @@ -17,4 +21,6 @@
->  	(regs)->sp = current_stack_pointer; \
->  	(regs)->status = SR_PP; \
->  }
-> +#endif
-> +
->  #endif /* _ASM_RISCV_PERF_EVENT_H */
-> diff --git a/arch/riscv/kernel/perf_callchain.c b/arch/riscv/kernel/perf_callchain.c
-> index c7468af77c66..c2c81a80f816 100644
-> --- a/arch/riscv/kernel/perf_callchain.c
-> +++ b/arch/riscv/kernel/perf_callchain.c
-> @@ -28,11 +28,49 @@ static bool fill_callchain(void *entry, unsigned long pc)
->  void perf_callchain_user(struct perf_callchain_entry_ctx *entry,
->  			 struct pt_regs *regs)
->  {
-> +	if (perf_guest_state()) {
-> +		/* TODO: We don't support guest os callchain now */
-> +		return;
 
-That seems kind of weird, but it looks like almost exactly the same 
-thing Marc did in 75e424620a4f ("arm64: perf: add guest vs host 
-discrimination").  I think it's safe, as we'll basically just silently 
-display no backtrace and we can always just fail to backtrace.
+[...]
 
-That said: I don't understand why we can't backtrace inside a guest?  If 
-we can get the registers and memory it seems like we should be able to.  
-Maybe I'm missing something?
+> +	/* CE base address */
+> +	.hal_umac_ce0_src_reg_base = 0x00740000,
+> +	.hal_umac_ce0_dest_reg_base = 0x00741000,
+> +	.hal_umac_ce1_src_reg_base = 0x00742000,
+> +	.hal_umac_ce1_dest_reg_base = 0x00743000,
+> +};
+> +
+>  static const struct ath12k_hw_regs wcn7850_regs = {
+>  	/* SW2TCL(x) R0 ring configuration address */
+>  	.hal_tcl1_ring_id = 0x00000908,
+> @@ -1126,7 +1210,7 @@ static const struct ath12k_hw_params ath12k_hw_params[] = {
+>  		.internal_sleep_clock = false,
+>  
+>  		.hw_ops = &qcn9274_ops,
+> -		.regs = NULL,
+> +		.regs = &ipq5332_regs,
 
-> +	}
-> +
->  	arch_stack_walk_user(fill_callchain, entry, regs);
->  }
->
->  void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
->  			   struct pt_regs *regs)
->  {
-> +	if (perf_guest_state()) {
-> +		/* TODO: We don't support guest os callchain now */
-> +		return;
-> +	}
-> +
->  	walk_stackframe(NULL, regs, fill_callchain, entry);
->  }
-> +
-> +unsigned long perf_instruction_pointer(struct pt_regs *regs)
-> +{
-> +	if (perf_guest_state())
-> +		return perf_guest_get_ip();
-> +
-> +	return instruction_pointer(regs);
-> +}
-> +
-> +unsigned long perf_misc_flags(struct pt_regs *regs)
-> +{
-> +	unsigned int guest_state = perf_guest_state();
-> +	unsigned long misc = 0;
-> +
-> +	if (guest_state) {
-> +		if (guest_state & PERF_GUEST_USER)
-> +			misc |= PERF_RECORD_MISC_GUEST_USER;
-> +		else
-> +			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
-> +	} else {
-> +		if (user_mode(regs))
-> +			misc |= PERF_RECORD_MISC_USER;
-> +		else
-> +			misc |= PERF_RECORD_MISC_KERNEL;
-> +	}
-> +
-> +	return misc;
-> +}
+This makes me believe the patches should be reordered (or perhaps
+this should be squashed with "add ath12k_hw_params for IPQ5332"?)
+
+Konrad
 
