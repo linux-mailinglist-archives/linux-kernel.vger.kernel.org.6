@@ -1,91 +1,51 @@
-Return-Path: <linux-kernel+bounces-371540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F8F9A3C6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:59:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A734D9A3C92
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CB2A1F226A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297751F21E46
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA262038C9;
-	Fri, 18 Oct 2024 10:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyoCebT0"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AC1204926;
+	Fri, 18 Oct 2024 11:00:13 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C06D2076A5;
-	Fri, 18 Oct 2024 10:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CED82040AF;
+	Fri, 18 Oct 2024 11:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729248898; cv=none; b=PGYljJVF5oIsmL0/p9A7yIa/5iwrkVZ0gyiYCBQQ9q7dEl1JN/l4ciWH8JRcGw9F+wmI23n07nvhYJnNKNICAQeUViR2V6RmKgOjlxSCbq85jL/npMYzS0xSrp72YnIGrIcy1rfx9zG9sVzygo3jp7Ajdo5nBvv4Z2aa/c+TlNg=
+	t=1729249212; cv=none; b=FCHeUrYl/H9U/asG3MXUwxEO571abd+O2BjAqH26kyxBlL3LGQEtqrMNxkyYC+kFn/HE3Lm8Tkl5y1uRh5BuVp2L+uNGhnRg39YarIRdev6XuJL2JlLBQ8l8mpI0iq6eGXFuB1hwbGJ0XuBI7sjE2sYVcCFAMKeqsXvwPKPzlRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729248898; c=relaxed/simple;
-	bh=qmf9WfIviTtJwSgU5Q0mUQTSQ+PhALIXkUuHCsZsb04=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lWatHwIZsFuUeBrLtrRUcqWi2SdUJ1gFpfgqBLX1yUmEgUbMFl4AEJ4DyYH+uvO7+RjcHBWlPLqU4wJ1M6SrRqPLNYdkNzwo/wSsOyN5c3+5iop4qpVbZAF2lBWtztKQwxDg+fc4Ka9WjodMl8NJVp+U+aQsRdEUBBGOolP7WAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DyoCebT0; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c693b68f5so21566425ad.1;
-        Fri, 18 Oct 2024 03:54:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729248896; x=1729853696; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gbe7qhvT8ntO58X7PAXaQ3B+VwyPxi6oPgIOkOOFc4A=;
-        b=DyoCebT0qhdsaQoYcj36G2CTx/ueX0SImtsaFYGbPHPpN4zRhGpqWto3/Y0cNGYYnm
-         xia8ZXgzxWlAckLmrQS6Ujt2o7jJrc3eeGt1WYA0sw4NYznbhAhV91LiVGKnimklag4q
-         CvMhWNmiOCopow3UQH8dw+heO4eXupxPZiM3Q88OFT4bMlQrMMeYMmpWjgk3sjRciLe1
-         1mY/1J7JG4lIAmuDpfAKifLycnJtnAoTmUldKCQNi3bSwUiNte5y5nk5C4sQJ+j902h6
-         M+wZXSixSAyT3/dZF58WifcrXsBfxZMAKGywCpV2viN0IkLVzQyyRhGhrdYrL1bZhpHv
-         Xjsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729248896; x=1729853696;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gbe7qhvT8ntO58X7PAXaQ3B+VwyPxi6oPgIOkOOFc4A=;
-        b=CHHprBemU+V9nplmUcMi6tFXabmmrS/Flz+L4MaJC547kx6ou49NdNGElpgbTxoCC2
-         E3yEadYvJar+UH+8t2pYJG6gmTDrLFtLlcVt+n1u49TMtJvXMJLRkfk52zuEbRtQRb0H
-         utCRQbNKH+atuASOsFlPPuV08WJsbss0UeqRD/zfLic0PETVJekW2VUQ4js9GKDyKo3e
-         PkqbkShEL5KCQERBMefP3Mi+hxSvUEY3eaol9Xop2NC/1KQCkbIsSoul8435HLzgNqpX
-         5v6sZ7+GV4lVuASHuJkOn+I3HsjT7FkUEWadDenpIjyOx2wRFgrpUb8f1+xC9doS8Kdt
-         O91A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmz8m+SRoMX/ytQYTV2WYCzfJua+JRKm3T4YKANzZ+Y6xmcWBMC1N8JUclP56SBJ41qjNdzi6XYHEYMZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlmuAf44mqQv0Mmkt55VnDPgKZGHzUZwNVIUx+aPaidnPswKJA
-	nMCWRIBJcbzYmLtnS5okVhrcds9IwX8/E3MRnLSyElrfjQuGpxU6
-X-Google-Smtp-Source: AGHT+IFgvOo4jI1IkmyMPwudwrlZSTUtS0Cp+rO5DDOEKe6bcfUVkFDpC5zoHRcT1p1Vt/zjNsaMdA==
-X-Received: by 2002:a17:902:f68f:b0:20c:ce1f:13bd with SMTP id d9443c01a7336-20e5a75a5b9mr22736325ad.18.1729248896001;
-        Fri, 18 Oct 2024 03:54:56 -0700 (PDT)
-Received: from localhost.localdomain ([2402:7500:47a:11ee:3789:3bcf:d64f:bc9a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8fa20esm10237455ad.234.2024.10.18.03.54.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 03:54:55 -0700 (PDT)
-From: Victor Shih <victorshihgli@gmail.com>
-To: ulf.hansson@linaro.org,
-	adrian.hunter@intel.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	benchuanggli@gmail.com,
-	Lucas.Lai@genesyslogic.com.tw,
-	HL.Liu@genesyslogic.com.tw,
-	Greg.tu@genesyslogic.com.tw,
-	dlunev@chromium.org,
-	Victor Shih <victorshihgli@gmail.com>,
-	Ben Chuang <ben.chuang@genesyslogic.com.tw>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Lucas Lai <lucas.lai@genesyslogic.com.tw>
-Subject: [PATCH V23 16/16] mmc: sdhci-pci-gli: enable UHS-II mode for GL9767
-Date: Fri, 18 Oct 2024 18:53:33 +0800
-Message-Id: <20241018105333.4569-17-victorshihgli@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241018105333.4569-1-victorshihgli@gmail.com>
-References: <20241018105333.4569-1-victorshihgli@gmail.com>
+	s=arc-20240116; t=1729249212; c=relaxed/simple;
+	bh=+kILLm7E02nB7lkEB8m/50Fam9uplw7Ttry8DUwWmTo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ub7bLeQ6MZZAnZNNnjWpUZJ2XYjwEuffQ5lzPF7WSYla7pkHvqjhhln5VXIUlM5J8johsd7b6gtMpm6782LSZ+Ey8XB4CSA2d45KzcgcRQ843ehNOITAGAUDDbVtbBJcH6AAwadO3ivxbCH0A+2jdkd1vqM65/ASGx5w07qjpbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XVMCW57DHz20qcW;
+	Fri, 18 Oct 2024 18:59:19 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 121A514022D;
+	Fri, 18 Oct 2024 19:00:06 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 18 Oct 2024 19:00:05 +0800
+From: Yunsheng Lin <linyunsheng@huawei.com>
+To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
+	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>, Shuah
+ Khan <skhan@linuxfoundation.org>
+Subject: [PATCH net-next v22 00/14] Replace page_frag with page_frag_cache for sk_page_frag()
+Date: Fri, 18 Oct 2024 18:53:37 +0800
+Message-ID: <20241018105351.1960345-1-linyunsheng@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,342 +53,343 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-From: Victor Shih <victor.shih@genesyslogic.com.tw>
+After [1], there are still two implementations for page frag:
 
-Changes are:
- * Enable the internal clock when do reset on UHS-II mode.
- * Increase timeout value before detecting UHS-II interface.
- * Add vendor settings for UHS-II mode.
- * Use the function sdhci_gli_wait_software_reset_done() for gl9767 reset.
- * Remove unnecessary code from sdhci_gl9767_reset().
+1. mm/page_alloc.c: net stack seems to be using it in the
+   rx part with 'struct page_frag_cache' and the main API
+   being page_frag_alloc_align().
+2. net/core/sock.c: net stack seems to be using it in the
+   tx part with 'struct page_frag' and the main API being
+   skb_page_frag_refill().
 
-Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
-Signed-off-by: Lucas Lai <lucas.lai@genesyslogic.com.tw>
---
+This patchset tries to unfiy the page frag implementation
+by replacing page_frag with page_frag_cache for sk_page_frag()
+first. net_high_order_alloc_disable_key for the implementation
+in net/core/sock.c doesn't seems matter that much now as pcp
+is also supported for high-order pages:
+commit 44042b449872 ("mm/page_alloc: allow high-order pages to
+be stored on the per-cpu lists")
 
-Updates in V21:
- - Remove unnecessary code from sdhci_gl9767_reset().
+As the related change is mostly related to networking, so
+targeting the net-next. And will try to replace the rest
+of page_frag in the follow patchset.
 
-Updates in V20:
- - Use the function sdhci_gli_wait_software_reset_done() for gl9767 reset.
+After this patchset:
+1. Unify the page frag implementation by taking the best out of
+   two the existing implementations: we are able to save some space
+   for the 'page_frag_cache' API user, and avoid 'get_page()' for
+   the old 'page_frag' API user.
+2. Future bugfix and performance can be done in one place, hence
+   improving maintainability of page_frag's implementation.
 
-Updates in V19:
- - Use sdhci_gli_enable_internal_clock() to simplify the code
-   in the sdhci_gl9767_reset().
- - Directly reading the SDHCI_PRESENT_STATE register to replace
-   the get_cd() avoids the possibility of the get_cd() sleeping
-   in the sdhci_gl9767_set_card_detect_debounce_time().
- - Refine the position of gli_set_9767() in the sdhci_gl9767_reset().
+Kernel Image changing:
+    Linux Kernel   total |      text      data        bss
+    ------------------------------------------------------
+    after     45250307 |   27274279   17209996     766032
+    before    45254134 |   27278118   17209984     766032
+    delta        -3827 |      -3839        +12         +0
 
-Updates in V18:
- - Add new register settings for gl9767.
- - Add card_event in the sdhci_ops for gl9767.
- - Add sdhci_gl9767_set_card_detect_debounce_time()
-   to configure the gl9767.
- - Adjust the sdhci_gl9767_reset() process for gl9767.
+Performance validation:
+1. Using micro-benchmark ko added in patch 1 to test aligned and
+   non-aligned API performance impact for the existing users, there
+   is no notiable performance degradation. Instead we seems to have
+   some major performance boot for both aligned and non-aligned API
+   after switching to ptr_ring for testing, respectively about 200%
+   and 10% improvement in arm64 server as below.
 
-Updates in V17:
- - Use mmc_card_uhs2() to simplify the code in the sdhci_gl9767_reset().
- - Use mmc_card_uhs2() to simplify the code in the
-   sdhci_gl9767_set_power().
- - Add sdhci_gli_overcurrent_event_enable() to sdhci_gl9767_set_power().
+2. Use the below netcat test case, we also have some minor
+   performance boot for replacing 'page_frag' with 'page_frag_cache'
+   after this patchset.
+   server: taskset -c 32 nc -l -k 1234 > /dev/null
+   client: perf stat -r 200 -- taskset -c 0 head -c 20G /dev/zero | taskset -c 1 nc 127.0.0.1 1234
 
-Updates in V15:
- - Add gl9767 to support uhs2 function.
+In order to avoid performance noise as much as possible, the testing
+is done in system without any other load and have enough iterations to
+prove the data is stable enough, complete log for testing is below:
 
----
+perf stat -r 200 -- insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000
+perf stat -r 200 -- insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000 test_align=1
+taskset -c 32 nc -l -k 1234 > /dev/null
+perf stat -r 200 -- taskset -c 0 head -c 20G /dev/zero | taskset -c 1 nc 127.0.0.1 1234
 
- drivers/mmc/host/sdhci-pci-gli.c | 202 ++++++++++++++++++++++++++++++-
- 1 file changed, 201 insertions(+), 1 deletion(-)
+*After* this patchset:
 
-diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
-index 708138eecaa7..cf2486ec7b9a 100644
---- a/drivers/mmc/host/sdhci-pci-gli.c
-+++ b/drivers/mmc/host/sdhci-pci-gli.c
-@@ -174,6 +174,15 @@
- #define PCI_GLI_9755_MISC	    0x78
- #define   PCI_GLI_9755_MISC_SSC_OFF    BIT(26)
- 
-+#define SDHCI_GLI_9767_SD_HOST_OPERATION_CTL				0x508
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_CMD_CONFLICT_CHECK	  BIT(0)
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE			  GENMASK(21, 16)
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_PLUG_IN_VALUE	  0x05
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_PLUG_OUT_VALUE	  0x3F
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE		  GENMASK(23, 22)
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE_1MS	  0x2
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE_10MS	  0x3
-+
- #define SDHCI_GLI_9767_GM_BURST_SIZE			0x510
- #define   SDHCI_GLI_9767_GM_BURST_SIZE_AXI_ALWAYS_SET	  BIT(8)
- 
-@@ -210,6 +219,13 @@
- #define   PCIE_GLI_9767_SCR_CORE_PWR_D3_OFF		  BIT(21)
- #define   PCIE_GLI_9767_SCR_CFG_RST_DATA_LINK_DOWN	  BIT(30)
- 
-+#define PCIE_GLI_9767_RESET_REG				0x8E4
-+#define   PCIE_GLI_9767_RESET_REG_SD_HOST_SW_RESET	  BIT(0)
-+
-+#define PCIE_GLI_9767_UHS2_PHY_SET_REG1				0x90C
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR		  GENMASK(31, 29)
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE	  0x3
-+
- #define PCIE_GLI_9767_SDHC_CAP			0x91C
- #define   PCIE_GLI_9767_SDHC_CAP_SDEI_RESULT	  BIT(5)
- 
-@@ -228,9 +244,15 @@
- #define   PCIE_GLI_9767_SD_EXPRESS_CTL_SD_EXPRESS_MODE	  BIT(1)
- 
- #define PCIE_GLI_9767_SD_DATA_MULTI_CTL				0x944
-+#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2		  BIT(5)
-+#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL	  BIT(8)
- #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME	  GENMASK(23, 16)
- #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME_VALUE	  0x64
- 
-+#define PCIE_GLI_9767_UHS2_PHY_SET_REG2					0x948
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING		  GENMASK(22, 21)
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE		  0x0
-+
- #define PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2			0x950
- #define   PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2_SDEI_COMPLETE	  BIT(0)
- 
-@@ -240,6 +262,28 @@
- #define PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2				0x958
- #define   PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2_SDEI_COMPLETE_SIGNAL_EN	  BIT(0)
- 
-+#define PCIE_GLI_9767_UHS2_CTL1				0x95C
-+#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS		  BIT(5)
-+#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE	  0x1
-+#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL		  BIT(6)
-+#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE	  0x1
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN		  GENMASK(10, 7)
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE	  0x3
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV		  GENMASK(14, 11)
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE	  0xf
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS		  GENMASK(16, 15)
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE	  0x0
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV		  GENMASK(18, 17)
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE	  0x0
-+#define   PCIE_GLI_9767_UHS2_CTL1_PDRST			  BIT(25)
-+#define   PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE		  0x1
-+
-+#define PCIE_GLI_9767_UHS2_CTL2			0x964
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC		  GENMASK(3, 0)
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE	  0xb
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL	  BIT(6)
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE	  0x1
-+
- #define GLI_MAX_TUNING_LOOP 40
- 
- /* Genesys Logic chipset */
-@@ -1155,6 +1199,31 @@ static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned int clock)
- 	gl9767_vhs_read(pdev);
- }
- 
-+static void sdhci_gl9767_set_card_detect_debounce_time(struct sdhci_host *host)
-+{
-+	u32 value;
-+
-+	value = sdhci_readl(host, SDHCI_GLI_9767_SD_HOST_OPERATION_CTL);
-+	value &= ~(SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE |
-+		   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE);
-+	if (sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT)
-+		value |= FIELD_PREP(SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE,
-+				    SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_PLUG_IN_VALUE) |
-+			 FIELD_PREP(SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE,
-+				    SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE_1MS);
-+	else
-+		value |= FIELD_PREP(SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE,
-+				    SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_PLUG_OUT_VALUE) |
-+			 FIELD_PREP(SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE,
-+				    SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE_10MS);
-+	sdhci_writel(host, value, SDHCI_GLI_9767_SD_HOST_OPERATION_CTL);
-+}
-+
-+static void sdhci_gl9767_card_event(struct sdhci_host *host)
-+{
-+	sdhci_gl9767_set_card_detect_debounce_time(host);
-+}
-+
- static void gli_set_9767(struct sdhci_host *host)
- {
- 	u32 value;
-@@ -1162,6 +1231,12 @@ static void gli_set_9767(struct sdhci_host *host)
- 	value = sdhci_readl(host, SDHCI_GLI_9767_GM_BURST_SIZE);
- 	value &= ~SDHCI_GLI_9767_GM_BURST_SIZE_AXI_ALWAYS_SET;
- 	sdhci_writel(host, value, SDHCI_GLI_9767_GM_BURST_SIZE);
-+
-+	value = sdhci_readl(host, SDHCI_GLI_9767_SD_HOST_OPERATION_CTL);
-+	value &= ~SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_CMD_CONFLICT_CHECK;
-+	sdhci_writel(host, value, SDHCI_GLI_9767_SD_HOST_OPERATION_CTL);
-+
-+	sdhci_gl9767_set_card_detect_debounce_time(host);
- }
- 
- static void gl9767_hw_setting(struct sdhci_pci_slot *slot)
-@@ -1200,7 +1275,43 @@ static void gl9767_hw_setting(struct sdhci_pci_slot *slot)
- 
- static void sdhci_gl9767_reset(struct sdhci_host *host, u8 mask)
- {
--	sdhci_reset(host, mask);
-+	struct sdhci_pci_slot *slot = sdhci_priv(host);
-+	struct pci_dev *pdev = slot->chip->pdev;
-+	u32 value;
-+
-+	/* need internal clock */
-+	if (mask & SDHCI_RESET_ALL) {
-+		sdhci_gli_enable_internal_clock(host);
-+
-+		gl9767_vhs_write(pdev);
-+
-+		pci_read_config_dword(pdev, PCIE_GLI_9767_RESET_REG, &value);
-+		value &= ~PCIE_GLI_9767_RESET_REG_SD_HOST_SW_RESET;
-+		pci_write_config_dword(pdev, PCIE_GLI_9767_RESET_REG, value);
-+
-+		if (read_poll_timeout_atomic(pci_read_config_dword, value,
-+					     !(value & PCIE_GLI_9767_RESET_REG_SD_HOST_SW_RESET),
-+					     1, 5, true, pdev, PCIE_GLI_9767_RESET_REG, &value)) {
-+			pr_warn("%s: %s: Reset SDHC AHB and TL-AMBA failure.\n",
-+				__func__, mmc_hostname(host->mmc));
-+			gl9767_vhs_read(pdev);
-+			return;
-+		}
-+		gl9767_vhs_read(pdev);
-+	}
-+
-+	if (mmc_card_uhs2(host->mmc)) {
-+		if (mask & (SDHCI_RESET_CMD | SDHCI_RESET_DATA)) {
-+			sdhci_writeb(host, mask, SDHCI_SOFTWARE_RESET);
-+			sdhci_gli_uhs2_reset_sd_tran(host);
-+			sdhci_gli_wait_software_reset_done(host, mask);
-+		} else {
-+			sdhci_uhs2_reset(host, mask);
-+		}
-+	} else {
-+		sdhci_reset(host, mask);
-+	}
-+
- 	gli_set_9767(host);
- }
- 
-@@ -1291,6 +1402,86 @@ static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios *ios)
- 	return 0;
- }
- 
-+static void gl9767_vendor_init(struct sdhci_host *host)
-+{
-+	struct sdhci_pci_slot *slot = sdhci_priv(host);
-+	struct pci_dev *pdev = slot->chip->pdev;
-+	u32 value;
-+
-+	gl9767_vhs_write(pdev);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR,
-+			    PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, value);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING,
-+			    PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, value);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS,
-+			    PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL,
-+			    PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN,
-+			    PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV,
-+			    PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS,
-+			    PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_RECV,
-+			    PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_PDRST,
-+			    PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, value);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC,
-+			    PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC_CTL,
-+			    PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-+
-+	gl9767_vhs_read(pdev);
-+}
-+
-+static void sdhci_gl9767_set_power(struct sdhci_host *host, unsigned char mode,	unsigned short vdd)
-+{
-+	struct sdhci_pci_slot *slot = sdhci_priv(host);
-+	struct pci_dev *pdev = slot->chip->pdev;
-+	u32 value;
-+
-+	if (mmc_card_uhs2(host->mmc)) {
-+		gl9767_vhs_write(pdev);
-+
-+		pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, &value);
-+		value |= PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
-+			 PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL;
-+		pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, value);
-+
-+		gl9767_vhs_read(pdev);
-+
-+		sdhci_gli_overcurrent_event_enable(host, false);
-+		sdhci_uhs2_set_power(host, mode, vdd);
-+		sdhci_gli_overcurrent_event_enable(host, true);
-+	} else {
-+		gl9767_vhs_write(pdev);
-+
-+		pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, &value);
-+		value &= ~(PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
-+			   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL);
-+		pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, value);
-+
-+		gl9767_vhs_read(pdev);
-+
-+		sdhci_gli_overcurrent_event_enable(host, false);
-+		sdhci_set_power(host, mode, vdd);
-+		sdhci_gli_overcurrent_event_enable(host, true);
-+	}
-+}
-+
- static int gli_probe_slot_gl9750(struct sdhci_pci_slot *slot)
- {
- 	struct sdhci_host *host = slot->host;
-@@ -1327,6 +1518,7 @@ static int gli_probe_slot_gl9767(struct sdhci_pci_slot *slot)
- 	host->mmc->caps2 |= MMC_CAP2_SD_EXP;
- 	host->mmc_host_ops.init_sd_express = gl9767_init_sd_express;
- 	sdhci_enable_v4_mode(host);
-+	gl9767_vendor_init(host);
- 
- 	return 0;
- }
-@@ -1830,12 +2022,20 @@ static const struct sdhci_ops sdhci_gl9767_ops = {
- 	.reset			 = sdhci_gl9767_reset,
- 	.set_uhs_signaling	 = sdhci_set_uhs_signaling,
- 	.voltage_switch		 = sdhci_gl9767_voltage_switch,
-+	.dump_uhs2_regs		 = sdhci_uhs2_dump_regs,
-+	.set_timeout		 = sdhci_uhs2_set_timeout,
-+	.irq			 = sdhci_uhs2_irq,
-+	.set_power		 = sdhci_gl9767_set_power,
-+	.uhs2_pre_detect_init	 = sdhci_gli_pre_detect_init,
-+	.card_event		 = sdhci_gl9767_card_event,
- };
- 
- const struct sdhci_pci_fixes sdhci_gl9767 = {
- 	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
- 	.quirks2	= SDHCI_QUIRK2_BROKEN_DDR50,
- 	.probe_slot	= gli_probe_slot_gl9767,
-+	.add_host	= sdhci_pci_uhs2_add_host,
-+	.remove_host	= sdhci_pci_uhs2_remove_host,
- 	.ops		= &sdhci_gl9767_ops,
- #ifdef CONFIG_PM_SLEEP
- 	.resume		= sdhci_pci_gli_resume,
+ Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000' (200 runs):
+
+         17.758393      task-clock (msec)         #    0.004 CPUs utilized            ( +-  0.51% )
+                 5      context-switches          #    0.293 K/sec                    ( +-  0.65% )
+                 0      cpu-migrations            #    0.008 K/sec                    ( +- 17.21% )
+                74      page-faults               #    0.004 M/sec                    ( +-  0.12% )
+          46128650      cycles                    #    2.598 GHz                      ( +-  0.51% )
+          60810511      instructions              #    1.32  insn per cycle           ( +-  0.04% )
+          14764914      branches                  #  831.433 M/sec                    ( +-  0.04% )
+             19281      branch-misses             #    0.13% of all branches          ( +-  0.13% )
+
+       4.240273854 seconds time elapsed                                          ( +-  0.13% )
+
+ Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000 test_align=1' (200 runs):
+
+         17.348690      task-clock (msec)         #    0.019 CPUs utilized            ( +-  0.66% )
+                 5      context-switches          #    0.310 K/sec                    ( +-  0.84% )
+                 0      cpu-migrations            #    0.009 K/sec                    ( +- 16.55% )
+                74      page-faults               #    0.004 M/sec                    ( +-  0.11% )
+          45065287      cycles                    #    2.598 GHz                      ( +-  0.66% )
+          60755389      instructions              #    1.35  insn per cycle           ( +-  0.05% )
+          14747865      branches                  #  850.085 M/sec                    ( +-  0.05% )
+             19272      branch-misses             #    0.13% of all branches          ( +-  0.13% )
+
+       0.935251375 seconds time elapsed                                          ( +-  0.07% )
+
+ Performance counter stats for 'taskset -c 0 head -c 20G /dev/zero' (200 runs):
+
+      16626.042731      task-clock (msec)         #    0.607 CPUs utilized            ( +-  0.03% )
+           3291020      context-switches          #    0.198 M/sec                    ( +-  0.05% )
+                 1      cpu-migrations            #    0.000 K/sec                    ( +-  0.50% )
+                85      page-faults               #    0.005 K/sec                    ( +-  0.16% )
+       30581044838      cycles                    #    1.839 GHz                      ( +-  0.05% )
+       34962744631      instructions              #    1.14  insn per cycle           ( +-  0.01% )
+        6483883671      branches                  #  389.984 M/sec                    ( +-  0.02% )
+          99624551      branch-misses             #    1.54% of all branches          ( +-  0.17% )
+
+      27.370305077 seconds time elapsed                                          ( +-  0.01% )
+
+
+*Before* this patchset:
+
+Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000' (200 runs):
+
+         21.587934      task-clock (msec)         #    0.005 CPUs utilized            ( +-  0.72% )
+                 6      context-switches          #    0.281 K/sec                    ( +-  0.28% )
+                 1      cpu-migrations            #    0.047 K/sec                    ( +-  0.50% )
+                73      page-faults               #    0.003 M/sec                    ( +-  0.12% )
+          56080697      cycles                    #    2.598 GHz                      ( +-  0.72% )
+          61605150      instructions              #    1.10  insn per cycle           ( +-  0.05% )
+          14950196      branches                  #  692.526 M/sec                    ( +-  0.05% )
+             19410      branch-misses             #    0.13% of all branches          ( +-  0.18% )
+
+       4.603530546 seconds time elapsed                                          ( +-  0.11% )
+
+ Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000 test_align=1' (200 runs):
+
+         20.988297      task-clock (msec)         #    0.006 CPUs utilized            ( +-  0.81% )
+                 7      context-switches          #    0.316 K/sec                    ( +-  0.54% )
+                 1      cpu-migrations            #    0.048 K/sec                    ( +-  0.70% )
+                73      page-faults               #    0.003 M/sec                    ( +-  0.11% )
+          54512166      cycles                    #    2.597 GHz                      ( +-  0.81% )
+          61440941      instructions              #    1.13  insn per cycle           ( +-  0.08% )
+          14906043      branches                  #  710.207 M/sec                    ( +-  0.08% )
+             19927      branch-misses             #    0.13% of all branches          ( +-  0.17% )
+
+       3.438041238 seconds time elapsed                                          ( +-  1.11% )
+
+ Performance counter stats for 'taskset -c 0 head -c 20G /dev/zero' (200 runs):
+
+      17364.040855      task-clock (msec)         #    0.624 CPUs utilized            ( +-  0.02% )
+           3340375      context-switches          #    0.192 M/sec                    ( +-  0.06% )
+                 1      cpu-migrations            #    0.000 K/sec
+                85      page-faults               #    0.005 K/sec                    ( +-  0.15% )
+       32077623335      cycles                    #    1.847 GHz                      ( +-  0.03% )
+       35121047596      instructions              #    1.09  insn per cycle           ( +-  0.01% )
+        6519872824      branches                  #  375.481 M/sec                    ( +-  0.02% )
+         101877022      branch-misses             #    1.56% of all branches          ( +-  0.14% )
+
+      27.842745343 seconds time elapsed                                          ( +-  0.02% )
+
+
+Note, ipv4-udp, ipv6-tcp and ipv6-udp is also tested with the below script:
+nc -u -l -k 1234 > /dev/null
+perf stat -r 4 -- head -c 51200000000 /dev/zero | nc -N -u 127.0.0.1 1234
+
+nc -l6 -k 1234 > /dev/null
+perf stat -r 4 -- head -c 51200000000 /dev/zero | nc -N ::1 1234
+
+nc -l6 -k -u 1234 > /dev/null
+perf stat -r 4 -- head -c 51200000000 /dev/zero | nc -u -N ::1 1234
+
+CC: Alexander Duyck <alexander.duyck@gmail.com>
+CC: Shuah Khan <skhan@linuxfoundation.org>
+
+1. https://lore.kernel.org/all/20240228093013.8263-1-linyunsheng@huawei.com/
+
+Change log:
+V22:
+   1. Fix some typo as noted by Bagas.
+   2. Remove page_frag_cache_page_offset() as it is not really related to
+      this patchset.
+
+V21:
+   1. Do renaming as suggested by Alexander.
+   2. Filter out the test results of dmesg in script as suggested by
+      Shuah.
+
+V20:
+   1. Rename skb_copy_to_page_nocache() to skb_add_frag_nocache().
+   2. Define the PFMEMALLOC_BIT as the ORDER_MASK + 1 as suggested by
+      Alexander.
+
+V19:
+   1. Rebased on latest net-next.
+   2. Use wait_for_completion_timeout() instead of wait_for_completion()
+      in page_frag_test.c
+
+V18:
+   1. Fix a typo in test_page_frag.sh pointed out by Alexander.
+   2. Move some inline helper into c file, use ternary operator and
+      move the getting of the size as suggested by Alexander.
+
+V17:
+   1. Add TEST_FILES in Makefile for test_page_frag.sh.
+
+V16:
+   1. Add test_page_frag.sh to handle page_frag_test.ko and add testing
+      for prepare API.
+   2. Move inline helper unneeded outside of the page_frag_cache.c to
+      page_frag_cache.c.
+   3. Reset nc->offset when reusing an old page.
+
+V15:
+   1. Fix the compile error pointed out by Simon.
+   2. Fix Other mistakes when using new API naming and refactoring.
+
+V14:
+   1. Drop '_va' Renaming patch and use new API naming.
+   2. Use new refactoring to enable more codes to be reusable.
+   3. And other minor suggestions from Alexander.
+
+V13:
+   1. Move page_frag_test from mm/ to tools/testing/selftest/mm
+   2. Use ptr_ring to replace ptr_pool for page_frag_test.c
+   3. Retest based on the new testing ko, which shows a big different
+      result than using ptr_pool.
+
+V12:
+   1. Do not treat page_frag_test ko as DEBUG feature.
+   2. Make some improvement for the refactoring in patch 8.
+   3. Some other minor improvement as Alexander's comment.
+
+RFC v11:
+   1. Fold 'page_frag_cache' moving change into patch 2.
+   2. Optimizate patch 3 according to discussion in v9.
+
+V10:
+   1. Change Subject to "Replace page_frag with page_frag_cache for sk_page_frag()".
+   2. Move 'struct page_frag_cache' to sched.h as suggested by Alexander.
+   3. Rename skb_copy_to_page_nocache().
+   4. Adjust change between patches to make it more reviewable as Alexander's comment.
+   5. Use 'aligned_remaining' variable to generate virtual address as Alexander's
+      comment.
+   6. Some included header and typo fix as Alexander's comment.
+   7. Add back the get_order() opt patch for xtensa arch
+
+V9:
+   1. Add check for test_alloc_len and change perm of module_param()
+      to 0 as Wang Wei' comment.
+   2. Rebased on latest net-next.
+
+V8: Remove patch 2 & 3 in V7, as free_unref_page() is changed to call
+    pcp_allowed_order() and used in page_frag API recently in:
+    commit 5b8d75913a0e ("mm: combine free_the_page() and free_unref_page()")
+
+V7: Fix doc build warning and error.
+
+V6:
+   1. Fix some typo and compiler error for x86 pointed out by Jakub and
+      Simon.
+   2. Add two refactoring and optimization patches.
+
+V5:
+   1. Add page_frag_alloc_pg() API for tls_device.c case and refactor
+      some implementation, update kernel bin size changing as bin size
+      is increased after that.
+   2. Add ack from Mat.
+
+RFC v4:
+   1. Update doc according to Randy and Mat's suggestion.
+   2. Change probe API to "probe" for a specific amount of available space,
+      rather than "nonzero" space according to Mat's suggestion.
+   3. Retest and update the test result.
+
+v3:
+   1. Use new layout for 'struct page_frag_cache' as the discussion
+      with Alexander and other sugeestions from Alexander.
+   2. Add probe API to address Mat' comment about mptcp use case.
+   3. Some doc updating according to Bagas' suggestion.
+
+v2:
+   1. reorder test module to patch 1.
+   2. split doc and maintainer updating to two patches.
+   3. refactor the page_frag before moving.
+   4. fix a type and 'static' warning in test module.
+   5. add a patch for xtensa arch to enable using get_order() in
+      BUILD_BUG_ON().
+   6. Add test case and performance data for the socket code.
+
+Yunsheng Lin (14):
+  mm: page_frag: add a test module for page_frag
+  mm: move the page fragment allocator from page_alloc into its own file
+  mm: page_frag: use initial zero offset for page_frag_alloc_align()
+  mm: page_frag: avoid caller accessing 'page_frag_cache' directly
+  xtensa: remove the get_order() implementation
+  mm: page_frag: reuse existing space for 'size' and 'pfmemalloc'
+  mm: page_frag: some minor refactoring before adding new API
+  mm: page_frag: use __alloc_pages() to replace alloc_pages_node()
+  net: rename skb_copy_to_page_nocache() helper
+  mm: page_frag: introduce prepare/probe/commit API
+  mm: page_frag: add testing for the newly added prepare API
+  net: replace page_frag with page_frag_cache
+  mm: page_frag: update documentation for page_frag
+  mm: page_frag: add an entry in MAINTAINERS for page_frag
+
+ Documentation/mm/page_frags.rst               | 176 ++++++-
+ MAINTAINERS                                   |  12 +
+ arch/xtensa/include/asm/page.h                |  18 -
+ .../chelsio/inline_crypto/chtls/chtls.h       |   3 -
+ .../chelsio/inline_crypto/chtls/chtls_io.c    | 101 ++--
+ .../chelsio/inline_crypto/chtls/chtls_main.c  |   3 -
+ drivers/net/tun.c                             |  47 +-
+ drivers/vhost/net.c                           |   2 +-
+ include/linux/gfp.h                           |  22 -
+ include/linux/mm_types.h                      |  18 -
+ include/linux/mm_types_task.h                 |  21 +
+ include/linux/page_frag_cache.h               | 457 ++++++++++++++++++
+ include/linux/sched.h                         |   2 +-
+ include/linux/skbuff.h                        |   1 +
+ include/net/sock.h                            |  30 +-
+ kernel/exit.c                                 |   3 +-
+ kernel/fork.c                                 |   3 +-
+ mm/Makefile                                   |   1 +
+ mm/page_alloc.c                               | 136 ------
+ mm/page_frag_cache.c                          | 238 +++++++++
+ net/core/skbuff.c                             |  64 +--
+ net/core/skmsg.c                              |  12 +-
+ net/core/sock.c                               |  32 +-
+ net/ipv4/ip_output.c                          |  28 +-
+ net/ipv4/tcp.c                                |  26 +-
+ net/ipv4/tcp_output.c                         |  25 +-
+ net/ipv6/ip6_output.c                         |  28 +-
+ net/kcm/kcmsock.c                             |  21 +-
+ net/mptcp/protocol.c                          |  47 +-
+ net/rxrpc/conn_object.c                       |   4 +-
+ net/rxrpc/local_object.c                      |   4 +-
+ net/sunrpc/svcsock.c                          |   6 +-
+ net/tls/tls_device.c                          | 100 ++--
+ tools/testing/selftests/mm/Makefile           |   3 +
+ tools/testing/selftests/mm/page_frag/Makefile |  18 +
+ .../selftests/mm/page_frag/page_frag_test.c   | 264 ++++++++++
+ tools/testing/selftests/mm/run_vmtests.sh     |  12 +
+ tools/testing/selftests/mm/test_page_frag.sh  | 202 ++++++++
+ 38 files changed, 1711 insertions(+), 479 deletions(-)
+ create mode 100644 include/linux/page_frag_cache.h
+ create mode 100644 mm/page_frag_cache.c
+ create mode 100644 tools/testing/selftests/mm/page_frag/Makefile
+ create mode 100644 tools/testing/selftests/mm/page_frag/page_frag_test.c
+ create mode 100755 tools/testing/selftests/mm/test_page_frag.sh
+
 -- 
-2.25.1
+2.33.0
 
 
