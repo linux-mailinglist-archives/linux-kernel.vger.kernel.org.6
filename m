@@ -1,161 +1,151 @@
-Return-Path: <linux-kernel+bounces-371177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D86C09A3768
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:40:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6939A376B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D7F2866B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:40:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A271F21EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E36185B6F;
-	Fri, 18 Oct 2024 07:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4C115FA92;
+	Fri, 18 Oct 2024 07:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lLcg+raO"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Qg+V1dlE";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="A5vezJ58"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E15D1514C9
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034E91514C9;
+	Fri, 18 Oct 2024 07:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729237238; cv=none; b=DYWQZUtMLUFyMh7fT4v+KYnkLO5DjyeVjTCPsSMcwI+mF24mgIKrcV64+/q5qlcKn03FJSyR79eAfDUs1qtwIm180e4kE+BVxJ2jQkM2Q3FJ9wAl2ly0VCUAVOIxV5z0h+rDDfyyPhhzJQwwBNlHFmy9gEjHynzRUKYWXQE5xTI=
+	t=1729237281; cv=none; b=uUwI47d0E6bI+LyNFvrNpVcA+82lvCFwdhTCZOfAHjZURU6dR2TqyKtR/O8pyh3mttu/JN35W7pJQpPXBQKEC5ezQA3TLD2IVR6yI2juyC5iVIFTOhlgF+nffh2VAPDBna1XR+UCV/SUnCbY3JKrqx3iwN0iB00rZkh6A6hlAV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729237238; c=relaxed/simple;
-	bh=J7++oK4VxTW1J0SujDnFfT3ORIFaBmJp3wp2yMw6p4A=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=LTCE19gCyR7Sbq26/jbvbl6N/wTvAy56000he5LKYbAoPweqY/E9uBCbBspeajVv08secXVpVfunRCs+4DO4h7JKE0las+IQ6SCNHW1Pe+jc5WLEu3DIu4MY5F6q6dWSIAxXJxVaMvM1D7o+t9DEPLh7XnBbOfcJyBmYz2V9sFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lLcg+raO; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HJS9Bs025117;
-	Fri, 18 Oct 2024 07:40:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=aB4+XUWJxp+dZ02JgErKT/qQEJA9
-	r3SbzM+17IkQ7Yw=; b=lLcg+raOhpkvOZUH182ts0atCRmjXpOpQcjMjNOkWDlA
-	LKdeSszPq7xTMN9fBlDz35YMQpiyzi0j5vXl+/x4EM344rhIh16E4uE2735rRMd3
-	kvB9X/yS3WMGoR9m4WIdUyK35v+yWSLni9dSvAqlSdUYMI0jX1paWUei+Dyad3Vl
-	RhboiYo4vi768L0GhCs+0TuSTXwD/QYLfMA7f70KZsFRXANTi3Oc4Qg00UqGvPhr
-	GUO6ZnmQnkQ1zkQq9dVqqKb3rcUmE3rxCOp6KHR0GychReABSm4vA3es2vqpgbBx
-	+Ehsm0vcxj9E+VX9Gia3CXOtWuyepp/GAe26IYO+wQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42asbd7kmc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 07:40:22 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49I7eLO8011160;
-	Fri, 18 Oct 2024 07:40:21 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42asbd7km8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 07:40:21 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49I6Spkl005946;
-	Fri, 18 Oct 2024 07:40:20 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 428651atnq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 07:40:20 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49I7eJKl20841106
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Oct 2024 07:40:20 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D2BEB58058;
-	Fri, 18 Oct 2024 07:40:19 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 105CD58057;
-	Fri, 18 Oct 2024 07:40:16 +0000 (GMT)
-Received: from [9.43.51.48] (unknown [9.43.51.48])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 18 Oct 2024 07:40:15 +0000 (GMT)
-Message-ID: <56940325-8474-42f7-97b4-fabbd3ea0da0@linux.ibm.com>
-Date: Fri, 18 Oct 2024 13:10:13 +0530
+	s=arc-20240116; t=1729237281; c=relaxed/simple;
+	bh=kJJb+9+gvxgl+O4Q1Dlj/U2lQhq8hK7p6SFgPAYZe9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UdshNB/DBABO0HXPnXxLqRRp42uyKauTyqTVgwShuaDFsixQFbPFyGeysxkKEZS4Pi6/z5EeFtL0KLhkeNa6WCz/hsx0OaYy8JZkk0u4pzqXUN9bnxwCNr30OprbrweisV4k1Z0fCKTPrauvlzYBfT+8N5qSI4LvPPNRyr16G3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Qg+V1dlE; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=A5vezJ58 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1729237279; x=1760773279;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=7CJ/y+7WtdFv9s7kRyjk4o6RfcgvWIF9H/8Zc6HTNCs=;
+  b=Qg+V1dlEKZ69UXxfRrSh4oAY9279dGGyQp4RDokpPSPWQhd/1assHKID
+   vlkqp3Mjs/6FVh+I8o4Yr+oGTDnj4wOKJoCbh0SBGwSzPx8NayA19IFIU
+   ztfG68uoqm0UWg7Y7KUpAQyzsPxz6FWN/F0Biq48CKJnLeultQf9KTgzi
+   BzRwIpuzTsUqhJ5rncpc6dObXgYW9oF/7BNno4+ucq03nyeIV1VdVkyL9
+   aE8zemK7FtMg4ILkoSPxwJNDZ+lrnNrcE9b0P2h5TiYJAUnMEFvb6FI6s
+   cRTGLYWTbn4ekszaW7lmCxhwExfpUPfAj9cWgoUpxMGgwYMTZzqu8iD5N
+   A==;
+X-CSE-ConnectionGUID: urIKLa/HRiqZcUgrcvqZFA==
+X-CSE-MsgGUID: SY6XoutYT7iowEnEPbMmtw==
+X-IronPort-AV: E=Sophos;i="6.11,213,1725314400"; 
+   d="scan'208";a="39535062"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 18 Oct 2024 09:41:16 +0200
+X-CheckPoint: {6712111C-29-65F98A6A-FADAF7F3}
+X-MAIL-CPID: 7642140A76B7BABC054D44A6F64FB81D_5
+X-Control-Analysis: str=0001.0A682F28.6712111D.0022,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2878716806F;
+	Fri, 18 Oct 2024 09:41:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1729237272;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=7CJ/y+7WtdFv9s7kRyjk4o6RfcgvWIF9H/8Zc6HTNCs=;
+	b=A5vezJ58xi3an0iZ0JXp06Bb7Zf24EuNaLVpcSe8ZeP+aNsDX6mKou87N5xcKkxRu1UVyW
+	aZt1oA5xZIpKoQpiESTCK9MbpNiHlzPgrY98l3ggLmLlwvfBDxaefkejnNT6m7rmCLpG/P
+	zj6UE4fbcZpVinaqU2NCxJ91x1IX+qWxwrSz1+yCUHkeNDlxnTaXdXVWItO3FpXcY5Rtja
+	O7OVuXZYC2baTELvSN9ysCaLDS32oQ9BAkHDr+207McKaCGOhLxujZMTvFg7k7LGgOxb0w
+	HFDbRl+Gt/1cYp6YHKcdF/R4XtFADWeVWgc1UcwC020kw8xS9vxFq9N9h41Nsw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, marex@denx.de, stefan@agner.ch, dmitry.baryshkov@linaro.org, Liu Ying <victor.liu@nxp.com>
+Subject: Re: [PATCH 1/5] arm64: dts: imx8mp-kontron-bl-osm-s: Add HDMI connector
+Date: Fri, 18 Oct 2024 09:41:08 +0200
+Message-ID: <864627577.0ifERbkFSE@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20241018064813.2750016-2-victor.liu@nxp.com>
+References: <20241018064813.2750016-1-victor.liu@nxp.com> <20241018064813.2750016-2-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-6.12-5 tag
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: fjd9GPTKh4Q1PJa0jkezPHKo29pJuN8m
-X-Proofpoint-GUID: XQT0JPKv-g7xJhvfE-TsIWA-TeiKoc2C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0 mlxscore=0
- clxscore=1011 adultscore=0 priorityscore=1501 mlxlogscore=660
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180045
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
+
+Am Freitag, 18. Oktober 2024, 08:48:09 CEST schrieb Liu Ying:
+> Add a HDMI connector to connect with i.MX8MP HDMI TX output.
+> This is a preparation for making the i.MX8MP LCDIF driver use
+> drm_bridge_connector which requires the DRM_BRIDGE_ATTACH_NO_CONNECTOR
+> flag.  With that flag, the DW HDMI bridge core driver would
+> try to attach the next bridge which is the HDMI connector.
+>=20
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+
+Looks similar to imx8mp-tqma8mpql-mba8mpxl.dts, so:
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+
+> ---
+>  .../dts/freescale/imx8mp-kontron-bl-osm-s.dts | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts b/=
+arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts
+> index 0eb9e726a9b8..445bf5a46c6a 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts
+> @@ -23,6 +23,17 @@ extcon_usbc: usbc {
+>  		id-gpios =3D <&gpio1 10 GPIO_ACTIVE_HIGH>;
+>  	};
+> =20
+> +	hdmi-connector {
+> +		compatible =3D "hdmi-connector";
+> +		type =3D "a";
+> +
+> +		port {
+> +			hdmi_in: endpoint {
+> +				remote-endpoint =3D <&hdmi_tx_out>;
+> +			};
+> +		};
+> +	};
+> +
+>  	leds {
+>  		compatible =3D "gpio-leds";
+> =20
+> @@ -168,6 +179,14 @@ &hdmi_tx {
+>  	pinctrl-0 =3D <&pinctrl_hdmi>;
+>  	ddc-i2c-bus =3D <&i2c2>;
+>  	status =3D "okay";
+> +
+> +	ports {
+> +		port@1 {
+> +			hdmi_tx_out: endpoint {
+> +				remote-endpoint =3D <&hdmi_in>;
+> +			};
+> +		};
+> +	};
+>  };
+> =20
+>  &hdmi_tx_phy {
+>=20
 
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
-
-Hi Linus,
-
-Please pull my first pullrequest for powerpc tree.
-
-My gpg key is available in pgpkeys.git and it is signed by Michael Ellerman and others.
-
-https://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git/commit/?id=5931604633197aa5cdbf6c4c9de0f08ab931615f
-
-Please pull some more powerpc fixes for 6.12:
-
-The following changes since commit 8956c582ac6b1693a351230179f898979dd00bdf:
-
-  powerpc/8xx: Fix kernel DTLB miss on dcbz (2024-10-11 15:53:06 +1100)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.12-5
-
-for you to fetch changes up to cf8989d20d64ad702a6210c11a0347ebf3852aa7:
-
-  powerpc/powernv: Free name on error in opal_event_init() (2024-10-16 09:26:50 +1100)
-
-- ------------------------------------------------------------------
-powerpc fixes for 6.12 #5
-
- - To prevent possible memory leak, free "name" on error in opal_event_init()
-
-Thanks to: Michael Ellerman, 2639161967.
-
-- ------------------------------------------------------------------
-Michael Ellerman (1):
-      powerpc/powernv: Free name on error in opal_event_init()
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
 
- arch/powerpc/platforms/powernv/opal-irqchip.c | 1 +
- 1 file changed, 1 insertion(+)
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEqX2DNAOgU8sBX3pRpnEsdPSHZJQFAmcSCXYACgkQpnEsdPSH
-ZJQUwRAAjPQqxLvWlexOaz8Q+bIW04WxENK9t2ke4njWuBJsh7N2k4F+hphGtTjU
-qLBU+MeawQoAIjMptcSLoruxIQsYdGqN/oFp+u5+kKEVwC2aTDJBHAw4FnjxUJQ4
-ztZk5vc9/PuvrafRfEuIsujIvmuCHFh9gzflgQbgArXZ2NFKKdy+CyBonryO0/DQ
-5IXO8S91PCx20xhveLWwIdUIpK1bBZQmttwx4QWLNmB7ZtbOv05h2tlDo0Fwv1eC
-oAWitl6r85ISBcSXGKu6teIIhxMSi4l2/LJl1cuhl4v37r6JXi1EPkAtvMQQK40P
-tahvl3/8Oxb8QRO/cvDS23jM588AJ5zIassRlYucRWrJJ4G32MvK/4Ftz+Hs0kF9
-ioADX1tl416w9wpMtGanSao1fieNQF2RnuTm55DFtSEzZOETxayPjDK2hg3s/iy1
-qp2sFKRdSx+Ljbm/WDDGN2o6PlwWUS3HOu9d/CJEwpGu9Sv0zyOlxLHDteRR5fho
-BYLTBRI10T92pFMFCG1/gli27fx7OiPud44vc9gk9a9ymO8oF4+/IVLDSX6gpFiY
-uuM5s/P6sGkKCuIH85nUQZQPgK0z3T8zdt4hqUTepBsoBd24BRf0abOzwUkENXdB
-UxWylfW9jbhYAZtqhSXYFBSKOzXpz3vGBRuUKQ5GG+3lA+fIjng=
-=Xm97
------END PGP SIGNATURE-----
 
