@@ -1,53 +1,56 @@
-Return-Path: <linux-kernel+bounces-371026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A619A3553
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:26:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F329A3554
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5908FB212DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:26:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5727B21991
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D57184523;
-	Fri, 18 Oct 2024 06:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46781865EA;
+	Fri, 18 Oct 2024 06:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BM+rKPOt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8jlWh+4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530F32BAEF
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12034185B68
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729232808; cv=none; b=tz2Ap2EPkQZY1nUT7Mzan3oWqHe/NFy3CpRKEAbxQAdz2xLtDUGjs7MGhwaWL+fAXsSMagAdPc5yuXS4S5HDaNKqNTatsMQBRQ1VbUW43QeriAds39dO2lMwZA3VFgbvIuf4u7oq/ldsc8wjc/O0mzy+aSprk4q4Vfwy6Bb+0EA=
+	t=1729232810; cv=none; b=i42o37Et7JPSGjc3iFyRlGhfi5Gkum6369akK3DiVch0FqqZoNb2HKUApDIsTsOB/KCjjLnmkromdQghQ2exPn/VjIB1vYfICYcMeaC+amuE69O6jKIyR9SN19HbhfxX9cp9Fwkkfj0xk/PxyFpwmToibRPYJPgi0+YxDL6h2uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729232808; c=relaxed/simple;
-	bh=7A5TJzuMgQQEj4Vo64PmUWu+4ittU4tPXAhcTNhgg34=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GcNp6HCd+8SkpOVG671kOpiifg8HhzISApqyOJwBcBCUhpUgB7td5DjQy3FnEm8IfbmcaGlgeN+9o16Ro4hEDUnHmE4pV+d+8TAeKJgKLKplFW9GFJ3lMygEqZ76QNYdFru06RV1FSQRDzdl/+qFscTdeDwaNHmuM6//LdsJ2S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BM+rKPOt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5F1BC4CEC3;
-	Fri, 18 Oct 2024 06:26:46 +0000 (UTC)
+	s=arc-20240116; t=1729232810; c=relaxed/simple;
+	bh=YDbEYfqH5QdtjigKgVD4ialWiRbwxPVZKrn1ldhPIkE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SPVQMVOFxbLvKjcuIbx7lQ2m6MB80Q6TjB/1hTQNAlKodZX6lx7y+pzJKh6mLGYj0gOKfdNizhTK3XPs7dJvKj9g5CsQAs3CaMYaF0Rxyye1iZuStndoyovh4e4c48/o24hAHgVutlHlNqynmDi2yMVFLIrQ8+7HRfYBmO1i9OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8jlWh+4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B60AC4CECF;
+	Fri, 18 Oct 2024 06:26:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729232807;
-	bh=7A5TJzuMgQQEj4Vo64PmUWu+4ittU4tPXAhcTNhgg34=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BM+rKPOtJFDR0IWOy4FPyKzGJpuEhlqEZ8wuFwvOPXpmK9MthKCfKt6uvzNu2cUQY
-	 zk6yr4UpqlEqiL540qO0Eh2MXMtSN0RWIR+f5ZBvVIkCW6YQXws6t7i2ZFEJMgumd5
-	 BlLPhkrdhpue8Gf8nHYEB9n+ViSsRPxjj7S1joP/HhpNixP2iD75UafIkvHZ1Zyubn
-	 XLveugqEiT61zshvJFbDVaD2ArVIzt5CAC1rCKzWM/lH8CtVgRp00teB4yzS2+HqYn
-	 0kXytu7s3oDgs7TSLmf+k7IRSdaxGqH75dkuU641TNWWv26S4XFgY8yhnt+ZiI31oQ
-	 umY+LU34eddag==
+	s=k20201202; t=1729232809;
+	bh=YDbEYfqH5QdtjigKgVD4ialWiRbwxPVZKrn1ldhPIkE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=K8jlWh+44XiVhSGiHFKsH8jsPXnXCnFNl4ojrKKfU8rPpQK8KWLVaq7ZyM2mESb7a
+	 T2l33YpKCdAqrgMO78A8mkqq9/epz38zcQdkKWER5s5k1RZbclnYWjNqshCarShtgc
+	 2STOsuK8jGm/bSfAP9mCg9aBW5vL6xnn7TuHimBq7PqKYoYnLMRHsZOjHunhz8QbFU
+	 5Vy4rx2uzM95z2lDKxPo1Ghot2tHozVK9yrCzwWNdJ83rxT+FyFQCrla6prY0/LWsu
+	 p6Yt3w6ArJFj/E4Y5xtN1jYgvqSVviFlzJnVkuOXA6DVnGU6iQpgyQ33GSHN57MNiu
+	 3cjW37nI5IF7Q==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
 	Chao Yu <chao@kernel.org>
-Subject: [PATCH 1/3] f2fs: zone: introduce first_zoned_segno in f2fs_sb_info
-Date: Fri, 18 Oct 2024 14:26:36 +0800
-Message-Id: <20241018062638.2619214-1-chao@kernel.org>
+Subject: [PATCH 2/3] f2fs: zone: allow IPU for regular file in regular block device
+Date: Fri, 18 Oct 2024 14:26:37 +0800
+Message-Id: <20241018062638.2619214-2-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20241018062638.2619214-1-chao@kernel.org>
+References: <20241018062638.2619214-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,100 +59,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-first_zoned_segno() returns a fixed value, let's cache it in
-structure f2fs_sb_info to avoid redundant calculation.
+blkzoned feature enables lfs mode by default, for data updates from
+regular file, it only allow to use OPU, this patch changes to allow
+to use IPU if regular file's data block locates in regular block
+device, if data block locates in zoned block device, it still uses
+OPU.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/f2fs.h    |  1 +
- fs/f2fs/segment.c |  4 ++--
- fs/f2fs/segment.h | 10 ----------
- fs/f2fs/super.c   | 13 +++++++++++++
- 4 files changed, 16 insertions(+), 12 deletions(-)
+ fs/f2fs/data.c | 12 ++++++++++--
+ fs/f2fs/f2fs.h |  5 +++++
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 949b6bb957c7..c6d0e4aa12e3 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2648,8 +2648,16 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
+ 		return false;
+ 	if (fio && is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+ 		return true;
+-	if (f2fs_lfs_mode(sbi))
+-		return true;
++	if (f2fs_lfs_mode(sbi)) {
++		/* no regular block device in mainarea */
++		if (!f2fs_blkzoned_has_regular_section(sbi))
++			return true;
++		/* blkaddr locates in sequential zone */
++		if (fio && __is_valid_data_blkaddr(fio->old_blkaddr) &&
++			GET_SEGNO(sbi, fio->old_blkaddr) >=
++					sbi->first_zoned_segno)
++			return true;
++	}
+ 	if (S_ISDIR(inode->i_mode))
+ 		return true;
+ 	if (IS_NOQUOTA(inode))
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0ff7f2812312..55bcd411257a 100644
+index 55bcd411257a..6781b4fab43f 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1760,6 +1760,7 @@ struct f2fs_sb_info {
- 	unsigned int dirty_device;		/* for checkpoint data flush */
- 	spinlock_t dev_lock;			/* protect dirty_device */
- 	bool aligned_blksize;			/* all devices has the same logical blksize */
-+	unsigned int first_zoned_segno;		/* first zoned segno */
- 
- 	/* For write statistics */
- 	u64 sectors_written_start;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index e1003e262184..a1806976f4ad 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2732,7 +2732,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_PRIOR_CONV || pinning)
- 			segno = 0;
- 		else
--			segno = max(first_zoned_segno(sbi), *newseg);
-+			segno = max(sbi->first_zoned_segno, *newseg);
- 		hint = GET_SEC_FROM_SEG(sbi, segno);
- 	}
- #endif
-@@ -2744,7 +2744,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 	if (secno >= MAIN_SECS(sbi) && f2fs_sb_has_blkzoned(sbi)) {
- 		/* Write only to sequential zones */
- 		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_ONLY_SEQ) {
--			hint = GET_SEC_FROM_SEG(sbi, first_zoned_segno(sbi));
-+			hint = GET_SEC_FROM_SEG(sbi, sbi->first_zoned_segno);
- 			secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
- 		} else
- 			secno = find_first_zero_bit(free_i->free_secmap,
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index cd6325f3b9ca..838c436266f4 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -971,13 +971,3 @@ static inline void wake_up_discard_thread(struct f2fs_sb_info *sbi, bool force)
- 	dcc->discard_wake = true;
- 	wake_up_interruptible_all(&dcc->discard_wait_queue);
- }
--
--static inline unsigned int first_zoned_segno(struct f2fs_sb_info *sbi)
--{
--	int devi;
--
--	for (devi = 0; devi < sbi->s_ndevs; devi++)
--		if (bdev_is_zoned(FDEV(devi).bdev))
--			return GET_SEGNO(sbi, FDEV(devi).start_blk);
--	return 0;
--}
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 0d96e352b4ac..9325d8dc7f7d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4223,6 +4223,16 @@ static void f2fs_record_error_work(struct work_struct *work)
- 	f2fs_record_stop_reason(sbi);
+@@ -4790,6 +4790,11 @@ static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
+ 	f2fs_invalidate_compress_page(sbi, blkaddr);
  }
  
-+static inline unsigned int get_first_zoned_segno(struct f2fs_sb_info *sbi)
++static inline bool f2fs_blkzoned_has_regular_section(struct f2fs_sb_info *sbi)
 +{
-+	int devi;
-+
-+	for (devi = 0; devi < sbi->s_ndevs; devi++)
-+		if (bdev_is_zoned(FDEV(devi).bdev))
-+			return GET_SEGNO(sbi, FDEV(devi).start_blk);
-+	return 0;
++	return f2fs_sb_has_blkzoned(sbi) && sbi->first_zoned_segno;
 +}
 +
- static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
-@@ -4623,6 +4633,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	/* For write statistics */
- 	sbi->sectors_written_start = f2fs_get_sectors_written(sbi);
+ #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+ #define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
  
-+	/* get segno of first zoned block device */
-+	sbi->first_zoned_segno = get_first_zoned_segno(sbi);
-+
- 	/* Read accumulated write IO statistics if exists */
- 	seg_i = CURSEG_I(sbi, CURSEG_HOT_NODE);
- 	if (__exist_node_summaries(sbi))
 -- 
 2.40.1
 
