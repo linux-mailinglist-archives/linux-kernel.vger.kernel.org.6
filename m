@@ -1,306 +1,166 @@
-Return-Path: <linux-kernel+bounces-371295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFC19A395B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:03:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BBE99A395F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C3B1F22524
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:03:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 839BBB22472
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9460F190075;
-	Fri, 18 Oct 2024 09:03:16 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1C218EFF1;
+	Fri, 18 Oct 2024 09:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j0RsXq22"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1F718E028;
-	Fri, 18 Oct 2024 09:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DB718FDA6
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729242195; cv=none; b=Pe5PPM6glP11oNLaHaEONOovxBko4nPFxHXs+HEyn6OZrSS6BZNFvKQQQcUASmmy5KLeVoa2sSfFeXvehnwrZsmoK6dHKeGf80U5ksQDUrntkl+f29iLEOX+1h7Dvelbv/vR1Yw0MFSe/ix7Xa63kJkXPci617aXzvdgna0VXZ4=
+	t=1729242218; cv=none; b=pKp9GTgMrKr3dH9A20y+gs0ZST/4Ih8CO/Kh25lfSJC989Ia8Jacvr/Xiq+lL0bFQNlmSjdwYxT2tTV1psoiRae1HTN51PEwY7IfCVfFf0e7cqkQUCvPi/Vrz/aXGJR7LIc9ri7Q5yU+S3pxu9J4clbhbXEN2WaEC/mZtuSEiV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729242195; c=relaxed/simple;
-	bh=7nnWLfvroPjQ3WSiLUmBIOWohRKgJsHdFTrjyFHfjxA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ae/PNii/UMjffZE1stMFk/rnBcD9WpeY7MEFme4HpUp96YvdLjtgBwTbcm3LgFz9zb07UJk8CvsAimrtTBpjAECMGFirEqI4wgRnn9KJPAg3Pr8zEUIF1m2qP5jlqGGuawJJ4puNMkSZ9hrqD+HeTHM73tV1TgvP/VClahiytC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XVJbR06lDz6K6YX;
-	Fri, 18 Oct 2024 17:01:23 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id C6075140CF4;
-	Fri, 18 Oct 2024 17:03:09 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 18 Oct
- 2024 11:03:09 +0200
-Date: Fri, 18 Oct 2024 10:03:07 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: "Li, Ming4" <ming4.li@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Fan
- Ni" <fan.ni@samsung.com>, Navneet Singh <navneet.singh@intel.com>, "Jonathan
- Corbet" <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, "Dan
- Williams" <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 21/28] cxl/extent: Process DCD events and realize
- region extents
-Message-ID: <20241018100307.000008a9@Huawei.com>
-In-Reply-To: <67117e57479b3_2cee2942d@iweiny-mobl.notmuch>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-21-c261ee6eeded@intel.com>
-	<4337ddd9-312b-4fb7-9597-81e8b00d57cb@intel.com>
-	<6706de3530f5c_40429294b8@iweiny-mobl.notmuch>
-	<20241010155014.00004bdd@Huawei.com>
-	<67117e57479b3_2cee2942d@iweiny-mobl.notmuch>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729242218; c=relaxed/simple;
+	bh=MAuK9ZpjaW//o3+/lqn2ofD4D+7bWlq6mbU3DdRjkEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jbfK6meIV19j+05cY04w/67V9j9WKBWLBkdGPO/qDtNe73jCf+d7uF0GD3mWdnHA0W7A1+of+ibIsOgJtAi+ay4QjbT9mFmxv9itYCEE52lXh+/0lTL0uYEsqA5U5jktWrDnRSHmpnPJ0kxLiJRaxRC4wPigrohq+tu3t6UIRS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j0RsXq22; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e38fc62b9fso19660547b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:03:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729242215; x=1729847015; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9pfIMsORbWEsl/vnzFg7G1qoNU1sMiSopJc4WsDjiQ=;
+        b=j0RsXq222A7yum92BGgzlKcK5m5nNJKzoGCAr0MsCjn92PwYGV5XDyPyB8U5lvxj0J
+         AXaPA7HAmof/33PqmSboRUyCJAAT3ocDUImuEhjjEg8Pd3m5w0/p8gVxMPvV7LbPCzVf
+         Jja5fuuTEKPCTkSZDmbFZcrusxKHe+GpSC4H9gaU9jJmneDVreYiurGGralnzlq9xdgo
+         tisgsiq7UBVMTL304T7cNnZMIfvuUuOjsG/78rNv2Bnz0JE9CXFY6PRkZ01PigMN+F3Z
+         5hOfTs3H75dnbGVZgQv8fFoUf3seL71t8KeB5b+wQQKYRJt3pv6gFPQ+cGTdbu985wWl
+         kg4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729242215; x=1729847015;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y9pfIMsORbWEsl/vnzFg7G1qoNU1sMiSopJc4WsDjiQ=;
+        b=P+8CVog0vvRjs8hzecGpl4ruOJMdO5jaIgHWArHg0CdBXerSAn3fWiCrjeCkdY2bK8
+         EmBOdINuuD3bbwXl6CVfE906ZD5X1QzuPgTWt7sNtfUwW4sklvkPeUukjln3CN+tk3xP
+         RlIYSJVjGz5MXwDFRT+OjS1RlRyd5Dm53WndbOnqsnEMIXgSx3QmQwMJlroUm4jYgJ/L
+         u16PxD6xtN5Ur4/H9YL5HlSUtsLrTFBoXHxVkvZ6rwTsheOtbhWJ3Pcl6hVBBF9HG4b8
+         U/VVcnLlJT8oqlxF53ZaFHpgF9MSzaPK4mpkHLHRNiR3EbWG6CNxG28e4P0qQslnx7tK
+         rs+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXrkJWvIkUyeZU5CvGSgqaDduC4xcIYEtqDCqkGrNg3s2QUtoaKYZ+3KcDBJv0Dvfv9nPLDKIzJfAGVHNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7lLx0gck+IsHY2gLbchLyZ8vruBK+VqX7PlOklBV9u5dvhYuY
+	HNZ1OtdH13gJI/oyJrbjst6ZspEjPNhilLzTDU2gUVThz04hI3+PY9Dq473e3FpX7X6BF3k/TlZ
+	Le+KKpMw9UrO0dxVdqJEjmmcav1JpF9ttbkeZTA==
+X-Google-Smtp-Source: AGHT+IEIdqLJnXhR9eBPZC+aIkQ6YsTEogGzB+/bb0aWbntjO40LQ3cW1sY0LwG4AT1TVSM2B1Norwd2BmiIa/TTqSI=
+X-Received: by 2002:a05:690c:9a0d:b0:6e3:28af:730d with SMTP id
+ 00721157ae682-6e5bfc611efmr17451427b3.43.1729242213908; Fri, 18 Oct 2024
+ 02:03:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20241016135409.2494140-1-quic_bpothuno@quicinc.com>
+ <mvzwlbeopenn5hpll3rmkdwcc7r7ir263nwvlh2hiy73qeipl6@nh4angyrt5p2> <LV8PR02MB102398337D13C6E0160E0FD14E7402@LV8PR02MB10239.namprd02.prod.outlook.com>
+In-Reply-To: <LV8PR02MB102398337D13C6E0160E0FD14E7402@LV8PR02MB10239.namprd02.prod.outlook.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 18 Oct 2024 12:03:22 +0300
+Message-ID: <CAA8EJpqJgxPErHkce8avfZUkU1D9rEiWTDQqJhUe_nm6n_PODg@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_pas: disable auto boot for wpss
+To: "Balaji Pothunoori (QUIC)" <quic_bpothuno@quicinc.com>
+Cc: "andersson@kernel.org" <andersson@kernel.org>, 
+	"mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"ath11k@lists.infradead.org" <ath11k@lists.infradead.org>, Kalle Valo <kvalo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 17 Oct 2024 16:15:03 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
+On Fri, 18 Oct 2024 at 11:42, Balaji Pothunoori (QUIC)
+<quic_bpothuno@quicinc.com> wrote:
+>
+> > -----Original Message-----
+> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Sent: Friday, October 18, 2024 3:59 AM
+> > To: Balaji Pothunoori (QUIC) <quic_bpothuno@quicinc.com>
+> > Cc: andersson@kernel.org; mathieu.poirier@linaro.org; linux-arm-
+> > msm@vger.kernel.org; linux-remoteproc@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; ath11k@lists.infradead.org; Kalle Valo
+> > <kvalo@kernel.org>
+> > Subject: Re: [PATCH] remoteproc: qcom_q6v5_pas: disable auto boot for wpss
+> >
+> > On Wed, Oct 16, 2024 at 07:24:09PM +0530, Balaji Pothunoori wrote:
+> > > auto_boot flag ensures to take the firmware and boots it up during the
+> > > wpss remoteproc start.
+> > > wpss host driver would like to control the load and unload of the
+> > > firmware during the load and unload of the driver.
+> > > Hence, disable the "auto boot" for wpss.
+> >
+> > Which driver?
+> ath11k_ahb.ko
+>
+> What is the reason for manual control?
+> > The board seems to function properly with the ath11k driver, which doesn't
+> > seem to require manual control.
+> >
+> The rproc "atomic_t power" variable is incremented during:
+> a. WPSS rproc auto boot.
+> b. AHB power on for ath11k.
+>
+> During AHB power off (rmmod ath11k_ahb.ko), rproc_shutdown fails to unload the WPSS firmware because the rproc->power value is '2', causing the atomic_dec_and_test(&rproc->power) condition to fail.
+> Consequently, during AHB power on (insmod ath11k_ahb.ko), QMI_WLANFW_HOST_CAP_REQ_V01 fails due to the host and firmware QMI states being out of sync.
 
-> Jonathan Cameron wrote:
-> > On Wed, 9 Oct 2024 14:49:09 -0500
-> > Ira Weiny <ira.weiny@intel.com> wrote:
-> >   
-> > > Li, Ming4 wrote:  
-> > > > On 10/8/2024 7:16 AM, ira.weiny@intel.com wrote:    
-> > > > > From: Navneet Singh <navneet.singh@intel.com>
-> > > > >    
-> 
-> [snip]
-> 
-> > >   
-> > > > > +static int cxl_send_dc_response(struct cxl_memdev_state *mds, int opcode,
-> > > > > +				struct xarray *extent_array, int cnt)
-> > > > > +{
-> > > > > +	struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;
-> > > > > +	struct cxl_mbox_dc_response *p;
-> > > > > +	struct cxl_mbox_cmd mbox_cmd;
-> > > > > +	struct cxl_extent *extent;
-> > > > > +	unsigned long index;
-> > > > > +	u32 pl_index;
-> > > > > +	int rc;
-> > > > > +
-> > > > > +	size_t pl_size = struct_size(p, extent_list, cnt);
-> > > > > +	u32 max_extents = cnt;
-> > > > > +
-> > > > > +	/* May have to use more bit on response. */
-> > > > > +	if (pl_size > cxl_mbox->payload_size) {
-> > > > > +		max_extents = (cxl_mbox->payload_size - sizeof(*p)) /
-> > > > > +			      sizeof(struct updated_extent_list);
-> > > > > +		pl_size = struct_size(p, extent_list, max_extents);
-> > > > > +	}
-> > > > > +
-> > > > > +	struct cxl_mbox_dc_response *response __free(kfree) =
-> > > > > +						kzalloc(pl_size, GFP_KERNEL);
-> > > > > +	if (!response)
-> > > > > +		return -ENOMEM;
-> > > > > +
-> > > > > +	pl_index = 0;
-> > > > > +	xa_for_each(extent_array, index, extent) {
-> > > > > +
-> > > > > +		response->extent_list[pl_index].dpa_start = extent->start_dpa;
-> > > > > +		response->extent_list[pl_index].length = extent->length;
-> > > > > +		pl_index++;
-> > > > > +		response->extent_list_size = cpu_to_le32(pl_index);
-> > > > > +
-> > > > > +		if (pl_index == max_extents) {
-> > > > > +			mbox_cmd = (struct cxl_mbox_cmd) {
-> > > > > +				.opcode = opcode,
-> > > > > +				.size_in = struct_size(response, extent_list,
-> > > > > +						       pl_index),
-> > > > > +				.payload_in = response,
-> > > > > +			};
-> > > > > +
-> > > > > +			response->flags = 0;
-> > > > > +			if (pl_index < cnt)
-> > > > > +				response->flags &= CXL_DCD_EVENT_MORE;    
-> > > > 
-> > > > It should be 'response->flags |= CXL_DCD_EVENT_MORE' here.    
-> > > 
-> > > Ah yea.  Good catch.
-> > >   
-> > > > 
-> > > > Another issue is if 'cnt' is N times bigger than 'max_extents'(e,g. cnt=20, max_extents=10). all responses will be sent in this xa_for_each(), and CXL_DCD_EVENT_MORE will be set in the last response but it should not be set in these cases.
-> > > >     
-> > > 
-> > > Ah yes.  cnt must be decremented.  As I looked at the patch just now the
-> > > 
-> > > 	if (cnt == 0 || pl_index)
-> > > 
-> > > ... seemed very wrong to me.  That change masked this bug.
-> > > 
-> > > This should fix it:
-> > > 
-> > > diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> > > index d66beec687a0..99200274dea8 100644
-> > > --- a/drivers/cxl/core/mbox.c
-> > > +++ b/drivers/cxl/core/mbox.c
-> > > @@ -1119,10 +1119,11 @@ static int cxl_send_dc_response(struct cxl_memdev_state *mds, int opcode,
-> > >                         if (rc)
-> > >                                 return rc;
-> > >                         pl_index = 0;
-> > > +                       cnt -= pl_index;
-> > >                 }
-> > >         }
-> > >  
-> > > -       if (cnt == 0 || pl_index) {  
-> > 
-> > I thought this cnt == 0 check was to deal with the no valid
-> > extents case where an empty reply is needed.  
-> 
-> Yes but the bug found by Ming needs to be handled too.  I see Fan is also
-> questioning this code.
-> 
-> So...  for clarity among all of us here is the new function.  I'm not thrilled
-> with the use of a goto but I think it is ok here.
+Please move these details to the commit message and add Fixes/cc:stable tags.
 
-Easy enough to avoid and I don't think it hurts readability much to do so.
-
-Your code should work though.
-
-> 
-> Ira
-> 
-> static int cxl_send_dc_response(struct cxl_memdev_state *mds, int opcode,      
->                                struct xarray *extent_array, int cnt)           
-> {                                                                              
->        struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;                    
->        struct cxl_mbox_dc_response *p;                                         
->        struct cxl_mbox_cmd mbox_cmd;                                           
->        struct cxl_extent *extent;                                              
->        unsigned long index;                                                    
->        u32 pl_index;                                                           
->        int rc;                                                                 
->                                                                                
->        size_t pl_size = struct_size(p, extent_list, cnt);                      
->        u32 max_extents = cnt;                                              
->                                                                                
->        /* May have to use more bit on response. */                             
->        if (pl_size > cxl_mbox->payload_size) {                                 
->                max_extents = (cxl_mbox->payload_size - sizeof(*p)) /           
->                              sizeof(struct updated_extent_list);               
->                pl_size = struct_size(p, extent_list, max_extents);
-             
->        }                                                                       
->                                                                                
->        struct cxl_mbox_dc_response *response __free(kfree) =                   
->                                                kzalloc(pl_size, GFP_KERNEL);   
->        if (!response)                                                          
->                return -ENOMEM;                                                 
->                                                                                
->        pl_index = 0;                                                           
->        if (cnt == 0)                                                           
->                goto send_zero_accepted;
->        xa_for_each(extent_array, index, extent) {                              
->                response->extent_list[pl_index].dpa_start = extent->start_dpa;  
->                response->extent_list[pl_index].length = extent->length;        
->                pl_index++;                                                     
->                response->extent_list_size = cpu_to_le32(pl_index);    
-
-Why set this here - to me makes more sense to set it only once but I can
-see the logic either way.
-         
->   
->                if (pl_index == max_extents) {                                  
->                        mbox_cmd = (struct cxl_mbox_cmd) {                      
->                                .opcode = opcode,                               
->                                .size_in = struct_size(response, extent_list,   
->                                                       pl_index),               
->                                .payload_in = response,                         
->                        };                                                      
->                                                                                
->                        response->flags = 0;                                    
->                        if (pl_index < cnt)                                     
->                                response->flags &= CXL_DCD_EVENT_MORE;          
->                                                                                
->                        rc = cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);        
->                        if (rc)                                                 
->                                return rc;                                      
->                        cnt -= pl_index;                                        
->                        pl_index = 0;                                          
->                }                                                               
->        }                                                                       
->                                                                                
->        if (!pl_index)                                                          
->                return 0;                                                       
->                                                                                
-> send_zero_accepted:                                                            
->        mbox_cmd = (struct cxl_mbox_cmd) {                                      
->                .opcode = opcode,                                               
->                .size_in = struct_size(response, extent_list,                   
->                                       pl_index),                               
->                .payload_in = response,                                         
->        };                                                                      
->                                                                                
->        response->flags = 0;                                                    
->        return cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);                      
-> }                
+>
+> Therefore, this change disables rproc auto boot for WPSS.
+> > >
+> > > Signed-off-by: Balaji Pothunoori <quic_bpothuno@quicinc.com>
+> > > ---
+> > > Cc: ath11k@lists.infradead.org
+> > > Cc: Kalle Valo <kvalo@kernel.org>
+> > > ---
+> > >  drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c
+> > > b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > index ef82835e98a4..05963d7924df 100644
+> > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > @@ -1344,7 +1344,7 @@ static const struct adsp_data
+> > sc7280_wpss_resource = {
+> > >     .crash_reason_smem = 626,
+> > >     .firmware_name = "wpss.mdt",
+> > >     .pas_id = 6,
+> > > -   .auto_boot = true,
+> > > +   .auto_boot = false,
+> > >     .proxy_pd_names = (char*[]){
+> > >             "cx",
+> > >             "mx",
+> > > --
+> > > 2.34.1
+> > >
+> >
+> > --
+> > With best wishes
+> > Dmitry
+>
+> Regards,
+> Balaji.
 
 
-Alternative form for what you have...
-                                                              
-	if (cnt != 0) { /* Something to send */
-                 xa_for_each(extent_array, index, extent) {
-			response->extent_list[pl_index].dpa_start = extent->start_dpa;
-			response->extent_list[pl_index].length = extent->length;
-			pl_index++;
-			response->extent_list_size = cpu_to_le32(pl_index);                 
-			if (pl_index != max_extents) /* Space for more? */
-				continue;
 
-			/* Send what we have */
-			response->flags = 0; 
-			if (pl_index < cnt)                                     
-				response->flags &= CXL_DCD_EVENT_MORE;
-			
-			mbox_cmd = (struct cxl_mbox_cmd) {                      
-				.opcode = opcode,                               
-				.size_in = struct_size(response, extent_list,   
-						       pl_index),               
-				.payload_in = response,                         
-			};
-
-			rc = cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);        
-			if (rc)                                                 
-				return rc;                                      
-			cnt -= pl_index;                                        
-			pl_index = 0;
-		}
-		if (!pl_index)
-			return 0;
-	}
-
-	/* Catch left overs + send if zero length */
-	response->flags = 0;
-	mbox_cmd = (struct cxl_mbox_cmd) {                                      
-		.opcode = opcode,                                               
-		.size_in = struct_size(response, extent_list, pl_index),                               
-		.payload_in = response,                                         
-	};                                                                      
-                                                                                                                                    
-	return cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);                      
-}
-
-                                                
-
-> 
-
+-- 
+With best wishes
+Dmitry
 
