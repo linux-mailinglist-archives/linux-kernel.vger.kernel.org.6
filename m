@@ -1,97 +1,122 @@
-Return-Path: <linux-kernel+bounces-371972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E5D9A42CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:44:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217D29A42F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52221F220DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B59021F23EE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF687202F85;
-	Fri, 18 Oct 2024 15:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD422022F5;
+	Fri, 18 Oct 2024 15:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmMpoP8L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="jAB1voQ+"
+Received: from forward204d.mail.yandex.net (forward204d.mail.yandex.net [178.154.239.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070CD202F6F;
-	Fri, 18 Oct 2024 15:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5F2204019;
+	Fri, 18 Oct 2024 15:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729266230; cv=none; b=iy02ugNp8xRPtfszRn5dbnpNWZkyEw06PV7HA+AUfSiyl06iQdyvGT35euwoJTIWyaGF9WUMP3d5WNWS61DbS3t2cFksPoqFBK6YWyLBfHAXvzGc6ny2Gi7Kix09D3bINej5upp6uTQeeWqXi619+z15U+/5VPMBaT3LJKwqeRQ=
+	t=1729266744; cv=none; b=hvQ5RPIbpw4D3jffu+jbO6fpAWkoZt5y7uE+TUqhpPj8OLhK8b8dpxD3Ke98aB7iSw1ChHmX1tMS7JrAz8rORV+Lf04I+PNnai7RIsGg4rgXUnkgQ1/y/hZ84DoCUFwjl1OECoA9lyug1WQtrNZpatqBkF1KSZaYc7xo/sBJGSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729266230; c=relaxed/simple;
-	bh=yLPhDrjBa2PQrXV7feG71oQYsfM5y4GsTMKAIF+feNQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dDa9Gb31bisWJcLbHU3M0Wt87naXemBGlNf7N+2h1s3gVbAfmX178d1Gb7aTk2cezKav9GgToBbfX3mRlkLvB/V6fMwLL2RNCn+u6YFknTYByhb3J25RQw9xmyRBPTcC/ay80gXdM57UMsj3fZvQwffcSSGtzBeoiOXd0lQz2As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmMpoP8L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0279C4CEC3;
-	Fri, 18 Oct 2024 15:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729266229;
-	bh=yLPhDrjBa2PQrXV7feG71oQYsfM5y4GsTMKAIF+feNQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cmMpoP8LpHqTg8oXYmjZHh6P6jurnTomJ71eAHiVJwKfXcrVZcQpoKFR59NmRQSAz
-	 zfSj3QHof0Nz5sHGh8OEGPcHG1vk2jl7891yLEtvXElp8K2abyEaRdEd1NEZz99r6y
-	 W2+4sv08w3hWlXMcdxtwZqDPTPMMY08wmG7XSVgheBxA0oyi1UFG2JKkw1uDHhAsUg
-	 yPqepPGQcT2B/sjcv44G1X0k0RXnlM9fHdvn5Hkfh9wTRNz6bWmI8O5k6AxDmox11L
-	 mJ0fw+0vkzVJ3U7ZyCz+Gak9qcurIZ7n3nM5BgK/DE9f15hk0mXoKNkzht22aaAeJZ
-	 oGtRxaRef+u4A==
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a3b8964134so8322035ab.1;
-        Fri, 18 Oct 2024 08:43:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVlMLbQAourLoOeyrIpAZHiyoSBn7b0AZe+Py0vJIwRMvOts/A88ESzz3Kun2S4mntLd/XlrJyho5LHZq4=@vger.kernel.org, AJvYcCXVgJRMwmMdJCLmsFqHZc18HgtSgQEJ44P4OnmZ84HwSUmYZHQv/UHsO4SgEvRNyaKdmB9yJQofyLeNTQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhsACEQnfJ5ygF1YDn1b8rk0iH8oEFpSnMtxYOV9D5FV+bjKHe
-	PfjAc188Lf6bAUIwACUloedn+JjP6kwF6k4DYbYg5N9bp7at98T21/XKSEVkKXaaFkeAsi+FH0s
-	ABVLlvB4yVHvpKQbxNll7Ebv7OJA=
-X-Google-Smtp-Source: AGHT+IHFpFE0Kj6PFo9ccLnygl6SCDirXvAqzWYKtnyFJVnnBEv7qjSm/Jq4mj50pU5cvvMfRbhMvUxgsKTOObQJi0M=
-X-Received: by 2002:a05:6e02:12c6:b0:3a0:4a91:224f with SMTP id
- e9e14a558f8ab-3a3f40474d0mr26290395ab.1.1729266229026; Fri, 18 Oct 2024
- 08:43:49 -0700 (PDT)
+	s=arc-20240116; t=1729266744; c=relaxed/simple;
+	bh=7H0Q9U1UYxEFlkYaqSBmwzFL11HxpvwRT6aZlOH7Ypw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I+SIWRJGkUEIJTAUQeKX/wPScqFgQB/1uvWjnm+XK62+LNtY0khiij75TPtRzNcP6CmaiSrhrV4nr71BBBVGVCMqT5j5WliOgfQzupSkzYX1eV61muEfsNPYPBbcPKbrJWAcLwXzTdrM0BHpWC1TSBXZEldeUqa+MShjdwp1Nz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=jAB1voQ+; arc=none smtp.client-ip=178.154.239.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
+Received: from forward102d.mail.yandex.net (forward102d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d102])
+	by forward204d.mail.yandex.net (Yandex) with ESMTPS id 19AF26488F;
+	Fri, 18 Oct 2024 18:45:13 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:36a7:0:640:faa7:0])
+	by forward102d.mail.yandex.net (Yandex) with ESMTPS id 636EF6098E;
+	Fri, 18 Oct 2024 18:45:04 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 0jQoPjE7LqM0-eNKpu7n7;
+	Fri, 18 Oct 2024 18:45:03 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
+	t=1729266303; bh=bMXPLZvnJ4EGZ5ZCRb5TWGuQf6he/CI/uDpcRlMFVfI=;
+	h=Cc:Message-Id:To:From:Date:Subject;
+	b=jAB1voQ+ZfXuqwEoJA06wECx+2IvkApJNYHxhOqoyaUGYUvpECFl2gJfoc/egSpxl
+	 7QrbNAXtvbFJccaRwGIfW2/IIEzwlzt596dAEKnacGjwjmJHIKjk082QHzc8zHNDmS
+	 /UxKMngEIyfLtGXZl4pDSLtE2eps/fznNG1bYavs=
+Authentication-Results: mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net; dkim=pass header.i=@0upti.me
+From: Ilya Katsnelson <me@0upti.me>
+Date: Fri, 18 Oct 2024 18:45:00 +0300
+Subject: [PATCH] netfliter: xtables: fix typo causing some targets to not
+ load on IPv6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011011630.2002803-1-yukuai1@huaweicloud.com>
- <CAPhsuW4UCFbtrxXVfCaXFvCWYhb8He0tGSHq8UZ_4dWX=ZMs3A@mail.gmail.com> <20241018145643.0000788f@linux.intel.com>
-In-Reply-To: <20241018145643.0000788f@linux.intel.com>
-From: Song Liu <song@kernel.org>
-Date: Fri, 18 Oct 2024 08:43:38 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4VLYdbrXP5y1x-bi4UW-Rh24nQafRktnx3csgewdCc8A@mail.gmail.com>
-Message-ID: <CAPhsuW4VLYdbrXP5y1x-bi4UW-Rh24nQafRktnx3csgewdCc8A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] md: enhance faulty checking for blocked handling
-To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, mariusz.tkaczyk@intel.com, 
-	linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, yukuai3@huawei.com, 
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241018-xtables-typos-v1-1-02a51789c0ec@0upti.me>
+X-B4-Tracking: v=1; b=H4sIAHuCEmcC/x3MQQqAIBBA0avErBNyaCFdJVpojjUQKU5EId49a
+ fkW/xcQykwCU1cg083C8WzQfQfrbs+NFPtmwAFHPWijnsu6g0Rdb4qifCDrnXEa0UNrUqbAz/+
+ bl1o/jyleKF8AAAA=
+X-Change-ID: 20241018-xtables-typos-dfeadb8b122d
+To: Pablo Neira Ayuso <pablo@netfilter.org>, 
+ Jozsef Kadlecsik <kadlec@netfilter.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Florian Westphal <fw@strlen.de>, Sasha Levin <sashal@kernel.org>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ilya Katsnelson <me@0upti.me>
+X-Mailer: b4 0.14.2
+X-Yandex-Filter: 1
 
-On Fri, Oct 18, 2024 at 5:56=E2=80=AFAM Mariusz Tkaczyk
-<mariusz.tkaczyk@linux.intel.com> wrote:
->
-> On Thu, 17 Oct 2024 23:46:58 -0700
-> Song Liu <song@kernel.org> wrote:
->
-> > Mariusz, you have run some tests on v1, but didn't give your
-> > Tested-by tag. Would you mind rerun the test and reply with
-> > the tag?
-> >
-> > Thanks,
-> > Song
->
-> Hi Song,
-> I see no functional difference between v1 and v2 feel free to add it.
-> I will be hard to rerun these tests right now.
->
-> Tested-by: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+These were added with the wrong family in 4cdc55e, which seems
+to just have been a typo, but now ip6tables rules with --set-mark
+don't work anymore, which is pretty bad.
 
-Applied to md-6.13 branch.
+Fixes: 4cdc55ec6222 ("netfilter: xtables: avoid NFPROTO_UNSPEC where needed")
+Signed-off-by: Ilya Katsnelson <me@0upti.me>
+---
+ net/netfilter/xt_NFLOG.c | 2 +-
+ net/netfilter/xt_mark.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Song
+diff --git a/net/netfilter/xt_NFLOG.c b/net/netfilter/xt_NFLOG.c
+index d80abd6ccaf8f71fa70605fef7edada827a19ceb..6dcf4bc7e30b2ae364a1cd9ac8df954a90905c52 100644
+--- a/net/netfilter/xt_NFLOG.c
++++ b/net/netfilter/xt_NFLOG.c
+@@ -79,7 +79,7 @@ static struct xt_target nflog_tg_reg[] __read_mostly = {
+ 	{
+ 		.name       = "NFLOG",
+ 		.revision   = 0,
+-		.family     = NFPROTO_IPV4,
++		.family     = NFPROTO_IPV6,
+ 		.checkentry = nflog_tg_check,
+ 		.destroy    = nflog_tg_destroy,
+ 		.target     = nflog_tg,
+diff --git a/net/netfilter/xt_mark.c b/net/netfilter/xt_mark.c
+index f76fe04fc9a4e19f18ac323349ba6f22a00eafd7..65b965ca40ea7ea5d9feff381b433bf267a424c4 100644
+--- a/net/netfilter/xt_mark.c
++++ b/net/netfilter/xt_mark.c
+@@ -62,7 +62,7 @@ static struct xt_target mark_tg_reg[] __read_mostly = {
+ 	{
+ 		.name           = "MARK",
+ 		.revision       = 2,
+-		.family         = NFPROTO_IPV4,
++		.family         = NFPROTO_IPV6,
+ 		.target         = mark_tg,
+ 		.targetsize     = sizeof(struct xt_mark_tginfo2),
+ 		.me             = THIS_MODULE,
+
+---
+base-commit: 75aa74d52f43e75d0beb20572f98529071b700e5
+change-id: 20241018-xtables-typos-dfeadb8b122d
+
+Best regards,
+-- 
+Ilya Katsnelson <me@0upti.me>
+
 
