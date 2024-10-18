@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-370861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F6D9A32FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:45:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A533E9A32FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62A031F225A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFFEB282163
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFBA153800;
-	Fri, 18 Oct 2024 02:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2A6126C10;
+	Fri, 18 Oct 2024 02:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zVQp2LCk"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Pp5Os3ka"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8539153365;
-	Fri, 18 Oct 2024 02:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D19381C4
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729219548; cv=none; b=EOIhMqbSi8u+Jl45Y18yAVHu6K1KicND9wVcAAEp51Ap1HfmbSlzZU0Fc7sO4dG9tNQO1T6IrlvxrHqPkB1ZCnboQLXePKr6T7DsbBaxy1gOB0YUROd3d590Qic/lKm0xScPis7Io187CiFcdiBq72wLxIubkny/dbDkAX58qDY=
+	t=1729219710; cv=none; b=Vcoy4UvY30xAeVfqdIOT8oUGQTXBHWTuJdzFOaUOJUX7FF7T4gUDINfWQXJcUrdCP0+fk/NDCRR+SLJzyM+F9EIGDufvcoRnhUJaRuF7Iqw/rnOahEfp1vHAml1m1++RXEZjh/g4sNox/CjuqjwQKjJ5AH9RpRtpNz2RR6pNZ7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729219548; c=relaxed/simple;
-	bh=TPRq9oRY3+aEbUmQaAeSiOoL+i3XIx/8Gv87Cj1T/2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IB5ZXbg/V6QcaiHBTod6XWry5d0kdJUjQws8f7FDDb3KwYfQhP88oH1nLZBZCCWKaiacqbAkGJjK8luZyLSw/JkhIFHc6BAOXrzCri8EHB1Eksp+KvG4IwZfIg5m7tqGVhcQRWbwT/g3jXSWDWMlia3G1PUVtXHrPtPz8Y4kI54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zVQp2LCk; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=K5max6BF00alHy8d08PHc5nApuudaCk55ogs9a07ktk=; b=zVQp2LCkaAYSBC8E1Kd5C8uPtm
-	MM7ls+02UyJN02FPMzIFRhoMQS1O0VSE8kdo4TPqEllQ/JkPoMYe/N/Z6CyeeNobydntiRVv5mqmN
-	xu2topanQCV4PD0BaQbC9o0K384AwwC8FDaHF2e0lnhFtgrcf65ixtiA5gofW1joVKXA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t1czf-00AJR9-B1; Fri, 18 Oct 2024 04:45:35 +0200
-Date: Fri, 18 Oct 2024 04:45:35 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michel Alex <Alex.Michel@wiedemann-group.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Dan Murphy <dmurphy@ti.com>,
-	Waibel Georg <Georg.Waibel@wiedemann-group.com>,
-	Appelt Andreas <Andreas.Appelt@wiedemann-group.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net v2] net: phy: dp83822: Fix reset pin definitions
-Message-ID: <1ec3bf2e-e908-444a-ac5e-c3fd62e50b62@lunn.ch>
-References: <AS1P250MB060858238D6D869D2E063282A9462@AS1P250MB0608.EURP250.PROD.OUTLOOK.COM>
- <20241016132911.0865f8bb@fedora.home>
- <AS1P250MB0608A798661549BF83C4B43EA9462@AS1P250MB0608.EURP250.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1729219710; c=relaxed/simple;
+	bh=4qnqftPF0lmrjv9V/IEcd2K0CbqYtNQQ0cmDwipG7/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=InbGJtZzvHjfhkN2qNOPYAHkyNAzaSINYtoFpEDiCnVDuSlV7vPrSdKlgyIXJ2kTuPOcYd+EY0GLpLox0GUN1Z01ROvBErm3sqMXgqE2L5fhO7DqiJH+F9BKJNHQ4mqpEeEFFnEtcLSStQBzhpxC3r8BdSaIkRuIfzyMm2gw6vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Pp5Os3ka; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1729219669;
+	bh=/w+j7hdy3vSS/0F5ZYtOXWOHGIP8CwQeuxD4AU/wBO0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Pp5Os3kavfTmFCoI9U9Lni74EWxiBpwAHFfm76nCKnLiID5GkDvZ0NePq7vLWmTwa
+	 OfVuoZeevG7FoDr2rJ4dv0NS3L7XArdwDpqmy9pWnhQMsQ2yEMwGSR88xoXsJ2c78R
+	 PySbdNnZplUWpaF0BZHUReYW1VMbKQbRJdY2IRqg=
+X-QQ-mid: bizesmtp77t1729219647t1se00wc
+X-QQ-Originating-IP: UZACEGoQIW/1zaVSnLCVaswfPR2CALpF8BnK+W0vua8=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 18 Oct 2024 10:47:25 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 5159950436051782867
+From: WangYuli <wangyuli@uniontech.com>
+To: akpm@linux-foundation.org,
+	jesse.brandeburg@intel.com,
+	colin.i.king@gmail.com,
+	wangyuli@uniontech.com,
+	horms@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts/spelling.txt: Add typo "exprienced" and "rewritting"
+Date: Fri, 18 Oct 2024 10:47:19 +0800
+Message-ID: <C1FE2459CF066CA5+20241018024719.58325-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS1P250MB0608A798661549BF83C4B43EA9462@AS1P250MB0608.EURP250.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: M75I2DDAzREFleFXGqxsGbRjREvusOgts9W6uvi0E3bRvjse624yw0iy
+	vA/2W5lOQN/voJrn+ss65K+HdyCSzKCnG7xRzmbsBvqa5jNE6DLtc3RVzmXjn4xZ1S1XbFP
+	hRHvYH3xdRCkVPbO8cIDc2TQSUmEi773NZCMONunz/R9EIhfMMCQZCxOhnqatAtvV5ZA2A2
+	YgTCZj+RhXFc/kt5h55Qm4wZXlGW0OP7T2fiFhk7t2WFxCaK5+sJPqkz42Xwf5JPPddUt5y
+	+QSe01rVPTTdiIXI+Tw0N23OnIDi7cCFcJSWITpX4C7KkuhEy4P10vPxruolHQXDZxvDFy/
+	UTHyFCRVvWscDI2UVCbm2RUeMnFjkXMTFiWa9Len9FJ357ceK+81WwOZdR3MYfponnPQnrQ
+	biOu054AnKQ93Pj4cqUi9fFJcxw0MVyI9Qw/wgkQy3U08EQ/n5T3hlTKdH/HsdYhZkXfAXu
+	Y2zyzwUfrZXeTv9haaZ0R02DKYtaqwLvDlvqk21+ApjsJySGage2C9aKAWvBPNFsHNiBs4H
+	SpnDyOwzZBjv5jMlsEgwJ2rFeX09y6+faFMR0Qv1Dwno4dZ7iTZxeRuXoP1IZpvSz99gHPH
+	7oT0VFRkQqbUVPNradtbOrpI5zhIqjcg4NuGFGxROw6ATJZwN1iqfhuqL66mUvTh6GEReAw
+	Y6ZTERMiqCwWsZCnmmS2Id+9NForxi87hP5N0qFmYPX5h6+CSUEdOng8z5CwVrupfkJfpS8
+	CGpwO/uIedesk2Pr8fVCaqOmQVJzLMfe6zOJCu8JX6kcTmnPnMsVSSQCGTSoBUkK8GzUBeX
+	ywAdqBZpWlfoCnQNfSiqjpzM3MIUlRJ8GolE4PgkUtPHbTYQCDe10JEvhNXfQTP+XgFREjT
+	8zEzaD5oomwribJlbPPaGWrUHuyXSporkYalLRd3IY+alY50GSO8tTxm3cdQpFmkKEvdQko
+	FjiEx8vvBpo0QmUgycagxVeVzHKf7UCjB1z3VZhZvF1PA7ve6hREmz0eKILHGMHuKAFTuQ/
+	j1VrXkLA==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-On Wed, Oct 16, 2024 at 12:11:15PM +0000, Michel Alex wrote:
-> This change fixes a rare issue where the PHY fails to detect a link
-> due to incorrect reset behavior.
-> 
-> The SW_RESET definition was incorrectly assigned to bit 14, which is the
-> Digital Restart bit according to the datasheet. This commit corrects
-> SW_RESET to bit 15 and assigns DIG_RESTART to bit 14 as per the
-> datasheet specifications.
-> 
-> The SW_RESET define is only used in the phy_reset function, which fully
-> re-initializes the PHY after the reset is performed. The change in the
-> bit definitions should not have any negative impact on the functionality
-> of the PHY.
-> 
-> v2:
-> - added Fixes tag
-> - improved commit message
+Add typo "exprienced" and "rewritting".
+They were found and fixed in follow patches:
 
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 5dc39fd5ef35 ("net: phy: DP83822: Add ability to advertise Fiber connection")
-> Signed-off-by: Alex Michel <alex.michel@wiedemann-group.com>
-
-Please create a new thread for each new patch submission. The
-machinary testing patches does not understand it when you just add a
-new version to an existing thread.
-
-
-    Andrew
-
+Link: https://lore.kernel.org/all/90D42CB167CA0842+20241018021910.31359-1-wangyuli@uniontech.com/
+Link: https://lore.kernel.org/all/45F06B5D4CA9F444+20241018023340.47617-1-wangyuli@uniontech.com/
+Suggested-by: Simon Horman <horms@kernel.org>
+Link: https://lore.kernel.org/all/20241017162846.GA51712@kernel.org/
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
-pw-bot: cr
+ scripts/spelling.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index 554329a074ce..5d3aa4fe0dfb 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -659,6 +659,7 @@ explict||explicit
+ explictely||explicitly
+ explictly||explicitly
+ expresion||expression
++exprienced||experienced
+ exprimental||experimental
+ extened||extended
+ exteneded||extended
+@@ -1362,6 +1363,7 @@ reuest||request
+ reuqest||request
+ reutnred||returned
+ revsion||revision
++rewritting||rewriting
+ rmeoved||removed
+ rmeove||remove
+ rmeoves||removes
+-- 
+2.45.2
+
 
