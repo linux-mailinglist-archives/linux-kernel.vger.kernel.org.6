@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-370747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D11E9A3195
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:07:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C92BE9A3199
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A412849DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:07:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 099A728380B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A04A6FC3;
-	Fri, 18 Oct 2024 00:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2E9E573;
+	Fri, 18 Oct 2024 00:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RX9Ouqrq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WZoMf++t"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FC72F29;
-	Fri, 18 Oct 2024 00:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E6D6FB6;
+	Fri, 18 Oct 2024 00:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729210062; cv=none; b=p+/22HvTwi3Hx0KLc+zs8ht6bcT86kE7MVQMYX800nvkfIXh7yBgJdSaimAi0NoGznWDIMkOGGF8Ar4yIS8yTfQtHY5Cu3Hb3ewfn81TPiK96FuGUz+XDOfhDaNj9siM4CJ4y1JvQaT5WkoD+1kaoinXl/SpMs7i+mBHTUEWEBk=
+	t=1729210147; cv=none; b=cST8LYtGFPvHS1NjxVsM07cwmv3Y43I+96uwIItGX1WrGNC7FoZu3nkYZmXVCltzryu9K90suTiAx2l8a99JKxXM6pExKFj1ShMWIZDGtsdz4fOmuhx26K7xMX6GDe+0ipg/NN5lDdgG6aJREK+YjvwEzzoqsECWUvTRWbQtxyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729210062; c=relaxed/simple;
-	bh=D9ULUqk+TbUqMTKGR0bFo25YiiZ2cs6nBE1a1b8WqFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YdYec5faevHtXowN9MxcrRc4Umqg616XfKG4Vn9DjkHEh6oqBy2/8tdvgMT73kUkTs8UPK/WwVCUYdy6f73qp3dmhtOkyXVney8BgyovzFS6dzxQdhkPU2f6UrMPKt+FPtCBg6gyluFW55Ae07dhSDFA51EZIXCu0zFLH7+Ekfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RX9Ouqrq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HDcuMX016699;
-	Fri, 18 Oct 2024 00:07:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uxBavpTgL71vWYYy2sA8sf5j3chQYVV9GD147SGaeIE=; b=RX9Ouqrq4NFVay6j
-	q4ttG0ZDVQRxiFHqWMz1ETLYdt9a14mSskOsu4TE50T7xoN7Yz1fi1sDfPZMXDCw
-	Nid3g40KR97d0eIZ6brHzq3xJa0t7AKSCcSoS1FsTDUta85y2SVt5RKKQm0XC+UZ
-	ftQLUofQozfcyUcqlpajRTWKzTMpeConXTyXCrqh/KO8LjdXl+5S0psOcWaD3SwG
-	eOo+yjKkMRzwm4hTVhc4CuOPc0GaEqSVtAgn1QRp3uyc4I+1HGARPsbBQgpR7NKS
-	e8ZqYMKHlVOTbVP2mGtD6UeD4JYw2esaE4AGL3vN9Ffk9mC3fy0oma7dgzZ3FTyN
-	IRBG3A==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42a8w6pdcw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 00:07:15 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49I07EUv021198
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 00:07:14 GMT
-Received: from [10.71.112.85] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 17 Oct
- 2024 17:07:13 -0700
-Message-ID: <5847c380-75ce-492a-9a30-0899b7ebe98c@quicinc.com>
-Date: Thu, 17 Oct 2024 17:07:12 -0700
+	s=arc-20240116; t=1729210147; c=relaxed/simple;
+	bh=mQPM1pH8yD5jSbTcIrl78Q+k4c+ekIYxXoz4DoEeLP8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gKcblmNlwnMesTSRI5seWMZx7aRw9aWyLYPdHAWoHnePSTDEXFhOF7CNEDyaU21nVi5yuDcNo1sWCzykHXEyNGAWr7teAHMv2LFzDFM4ZshTVqxaU1lvqoOoYWBL3uDYfl6pfuf8I628AHct9ixzS66rxskJnz4utBT3b7OX92g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WZoMf++t; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729210142; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
+	bh=Io75B3fvXXRmUHmAeKwtQ0SdGJZvo/arwhIScIU6xXg=;
+	b=WZoMf++tt1SvwR9gZfagvE79Nql2zcE9+jMMvR93QiZkSbuU/wspk5qNMMK7QHJxZVQ+tc6X68B49o6VivhN72Dz6Am0jUci4YywuL/X+T1nG14aY5OfE33rPiQ75oexY5VEFwxVImIEc2nWW9T9IZ9YOQVZwI1Y+DNRVtTUazU=
+Received: from 30.246.161.56(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WHM.wlo_1729210139 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 18 Oct 2024 08:09:00 +0800
+Message-ID: <75ec37d9-f0cd-4fd5-8f81-7bfdc8b4e3c6@linux.alibaba.com>
+Date: Fri, 18 Oct 2024 08:08:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,74 +47,217 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v29 01/33] xhci: support setting interrupt moderation IMOD
- for secondary interrupters
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <lgirdwood@gmail.com>, <tiwai@suse.com>,
-        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
-        <Thinh.Nguyen@synopsys.com>, <broonie@kernel.org>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-References: <20241015212915.1206789-1-quic_wcheng@quicinc.com>
- <20241015212915.1206789-2-quic_wcheng@quicinc.com>
- <2024101747-defog-squiggly-ef54@gregkh>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <2024101747-defog-squiggly-ef54@gregkh>
-Content-Type: text/plain; charset="UTF-8"
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+Subject: Re: [PATCH v14 3/3] ACPI: APEI: handle synchronous exceptions in task
+ work
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mingo@redhat.com,
+ robin.murphy@arm.com, bp@alien8.de, rafael@kernel.org,
+ wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
+ tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
+ james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
+ will@kernel.org, jarkko@kernel.org, linux-acpi@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
+ ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
+ baolin.wang@linux.alibaba.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20241014084240.18614-4-xueshuai@linux.alibaba.com>
+ <20241017105621.00000c1e@Huawei.com>
+In-Reply-To: <20241017105621.00000c1e@Huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IbNrRGE8x9UV4v1k3a1frmTMQ3tDVf0N
-X-Proofpoint-ORIG-GUID: IbNrRGE8x9UV4v1k3a1frmTMQ3tDVf0N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 mlxlogscore=607
- malwarescore=0 impostorscore=0 priorityscore=1501 suspectscore=0
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410170163
 
-Hi Greg,
 
-On 10/16/2024 11:40 PM, Greg KH wrote:
-> On Tue, Oct 15, 2024 at 02:28:43PM -0700, Wesley Cheng wrote:
->> From: Mathias Nyman <mathias.nyman@linux.intel.com>
+
+在 2024/10/17 17:56, Jonathan Cameron 写道:
+> On Mon, 14 Oct 2024 16:42:40 +0800
+> Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+> 
+>> The memory uncorrected error could be signaled by asynchronous interrupt
+>> (specifically, SPI in arm64 platform), e.g. when an error is detected by
+>> a background scrubber, or signaled by synchronous exception
+>> (specifically, data abort excepction in arm64 platform), e.g. when a CPU
+> 
+> exception
+> 
+>> tries to access a poisoned cache line. Currently, both synchronous and
+>> asynchronous error use memory_failure_queue() to schedule
+>> memory_failure() exectute in kworker context.
+> memory_failure() to execute in kworker context.
+> 
+> (spell check in general)
+
+Sorry for typos. Will fix it in next version. Thanks.
 >>
->> Allow creators of xHCI secondary interrupters to specify the interrupt
->> moderation interval value in nanoseconds when creating the interrupter.
+>> As a result, when a user-space process is accessing a poisoned data, a
+>> data abort is taken and the memory_failure() is executed in the kworker
+>> context:
+> context, memory_failure():
+> //No subject of the following two bullets otherwise.
+
+I see, will fix it.
 >>
->> If not sure what value to use then use the xhci driver default
->> xhci->imod_interval
+>>    - will send wrong si_code by SIGBUS signal in early_kill mode, and
+>>    - can not kill the user-space in some cases resulting a synchronous
+>>      error infinite loop
 >>
->> Suggested-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
->> Link: https://lore.kernel.org/r/20240905143300.1959279-13-mathias.nyman@linux.intel.com
->> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Issue 1: send wrong si_code in early_kill mode
+>>
+>> Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
+>> MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
+>> could be used to determine whether a synchronous exception occurs on
+>> ARM64 platform.  When a synchronous exception is detected, the kernel is
+>> expected to terminate the current process which has accessed poisoned
+>> page. This is done by sending a SIGBUS signal with an error code
+>> BUS_MCEERR_AR, indicating an action-required machine check error on
+>> read.
+>>
+>> However, when kill_proc() is called to terminate the processes who have
+>> the poisoned page mapped, it sends the incorrect SIGBUS error code
+>> BUS_MCEERR_AO because the context in which it operates is not the one
+>> where the error was triggered.
+>>
+>> To reproduce this problem:
+>>
+>>    #sysctl -w vm.memory_failure_early_kill=1
+>>    vm.memory_failure_early_kill = 1
+>>
+>>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
+>>    #einj_mem_uc single
+>>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+>>    injecting ...
+>>    triggering ...
+>>    signal 7 code 5 addr 0xffffb0d75000
+>>    page not present
+>>    Test passed
+>>
+>> The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
+>> error and it is not fact.
+>>
+>> After this patch:
+>>
+>>    # STEP1: enable early kill mode
+>>    #sysctl -w vm.memory_failure_early_kill=1
+>>    vm.memory_failure_early_kill = 1
+>>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
+>>    #einj_mem_uc single
+>>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+>>    injecting ...
+>>    triggering ...
+>>    signal 7 code 4 addr 0xffffb0d75000
+>>    page not present
+>>    Test passed
+>>
+>> The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
+>> error as we expected.
+>>
+>> Issue 2: a synchronous error infinite loop
+>>
+>> If a user-space process, e.g. devmem, a poisoned page which has been set
+> 
+> devmem accesses a poisoned page for which the HWPoison flag is set
+> 
+>> HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
+>> current processs with error info. Because the memory_failure() is
+>> executed in the kworker contex, it will just do nothing but return
+> 
+> context
+> 
+>> EFAULT. So, devmem will access the posioned page and trigger an
+>> excepction again, resulting in a synchronous error infinite loop. Such
+> 
+> exception
+
+I see, will fix it.
+
+> 
+>> loop may cause platform firmware to exceed some threshold and reboot
+>> when Linux could have recovered from this error.
+>>
+>> To reproduce this problem:
+>>
+>>    # STEP 1: inject an UCE error, and kernel will set HWPosion flag for related page
+>>    #einj_mem_uc single
+>>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+>>    injecting ...
+>>    triggering ...
+>>    signal 7 code 4 addr 0xffffb0d75000
+>>    page not present
+>>    Test passed
+>>
+>>    # STEP 2: access the same page and it will trigger a synchronous error infinite loop
+>>    devmem 0x4092d55b400
+>>
+>> To fix above two issues, queue memory_failure() as a task_work so that it runs in
+>> the context of the process that is actually consuming the poisoned data.
+>>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> Tested-by: Ma Wupeng <mawupeng1@huawei.com>
+>> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+>> Reviewed-by: Xiaofei Tan <tanxiaofei@huawei.com>
+>> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> One other trivial comment inline.
+> 
+> Whilst this also looks fine to me, there are others who (hopefully)
+> understand these paths better than me.  With that said.
+> 
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+Thank you for valuable comments.
+
+> 
 >> ---
->>  drivers/usb/host/xhci-mem.c | 8 +++++++-
->>  drivers/usb/host/xhci.c     | 4 ++--
->>  drivers/usb/host/xhci.h     | 5 ++++-
->>  3 files changed, 13 insertions(+), 4 deletions(-)
-> This is already in 6.12-rc1, which makes me confused as to what tree you
-> made this series against.
+>>   drivers/acpi/apei/ghes.c | 78 +++++++++++++++++++++++-----------------
+>>   include/acpi/ghes.h      |  3 --
+>>   include/linux/mm.h       |  1 -
+>>   mm/memory-failure.c      | 13 -------
+>>   4 files changed, 45 insertions(+), 50 deletions(-)
+>>
+>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>> index f2ee28c44d7a..95e9520eb803 100644
+>> --- a/drivers/acpi/apei/ghes.c
+>> +++ b/drivers/acpi/apei/ghes.c
+>> @@ -467,28 +467,42 @@ static void ghes_clear_estatus(struct ghes *ghes,
+>>   }
+>>   
+>>   /*
+>> - * Called as task_work before returning to user-space.
+>> - * Ensure any queued work has been done before we return to the context that
+>> - * triggered the notification.
+>> + * struct ghes_task_work - for synchronous RAS event
+>> + *
+>> + * @twork:                callback_head for task work
+>> + * @pfn:                  page frame number of corrupted page
+>> + * @flags:                work control flags
+>> + *
+>> + * Structure to pass task work to be handled before
+>> + * returning to user-space via task_work_add().
+>>    */
+>> -static void ghes_kick_task_work(struct callback_head *head)
+>> +struct ghes_task_work {
+>> +	struct callback_head twork;
+>> +	u64 pfn;
+>> +	int flags;
+>> +};
+>> +
+>> +static void memory_failure_cb(struct callback_head *twork)
+>>   {
+>> -	struct acpi_hest_generic_status *estatus;
+>> -	struct ghes_estatus_node *estatus_node;
+>> -	u32 node_len;
+>> +	struct ghes_task_work *twcb = container_of(twork, struct ghes_task_work, twork);
+>> +	unsigned long pfn = twcb->pfn;
+> 
+> This local variable is not used consistently.  I'd just
+> drop it in favor of always accessing via twcb->pfn
 
-Sorry, I didn't fetch the latest changes from usb-next.  In this case, should I rebase and resbumit?
+Agreed, will remove local pfn.
 
-Thanks
 
-Wesley Cheng
-
-> thanks,
->
-> greg k-h
+Best Regards,
+Shuai
 
