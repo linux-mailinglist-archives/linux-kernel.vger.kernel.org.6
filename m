@@ -1,140 +1,118 @@
-Return-Path: <linux-kernel+bounces-372275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90BD09A4689
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:10:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B6669A4686
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C02911C22DA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:10:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1885C1F2480B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37394204F86;
-	Fri, 18 Oct 2024 19:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FA4205148;
+	Fri, 18 Oct 2024 19:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qjOeBQlZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CHxuVbDy"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cPPgRW+N"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE642040A5;
-	Fri, 18 Oct 2024 19:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175182040A5;
+	Fri, 18 Oct 2024 19:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729278575; cv=none; b=ARK80zLbM8XwRBmdB/BTmqrTBGDEXU/bvlUqHfcEw21DurTCfKv9lSE5pvXBkLoVr/wCvgEY1UEpH5HOFVdDX93IboglUH+Lzcsalxo+ntEmsAdkMVdCaLTIT38Nt5tN/a9dZ9W6b3ZKgIrd2sBAwqkUreRWdqopy64G3A2Krtc=
+	t=1729278562; cv=none; b=rhCqpVlGvxSKtfdi9iApuH7BP6/m9N0+6Pgla3/35zlhQJv5lerSlgGPpnrOqJjuOcWrqdcDnO1d3VPqULKfTfxt8HN1MGF5fYE+d9oIags2VQTmmR8Pd0PtSt2mN/1K06+/gC/Tr56tsQoqKsrwCFZHlIdXPlayK+owc6L3KEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729278575; c=relaxed/simple;
-	bh=xFO+xL5Ht2yDe+kUYFr9A1J+8iJb6w7Ml2SfdltszJQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=s0MVLGv+IUd2l36BXO7HwQgcahnrT11XwcDdgBKa8kKSGZ/Sp9Lpl2eUu6ltGLUUhjPXkR3CXNBItBppMpQHBaNq7tOvNdUQtw4HiXbDqkoJo7IgdtLUKQ2QRvoMF/9ExG0fEO8OFYySQwq+0Kp/FiTNZVLjm6Ec7y1J1b8t0fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qjOeBQlZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CHxuVbDy; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 55CE813803B0;
-	Fri, 18 Oct 2024 15:09:32 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 18 Oct 2024 15:09:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1729278572;
-	 x=1729364972; bh=frwaSkezvHV5tmSPShTPgiPDW3lBR2mqZQtqKpeH0GM=; b=
-	qjOeBQlZ8dXOFniyCz2j6qPBbXeVFmSiRV829V1C4RqCz794S3iospjedJVE3Rqd
-	MK5CvSANvX+s/3Jzc2n/2xBVxwAoyg8nb97nGRgB5LHb4ARg47meSeNMu64hbQmE
-	CGwhzAqMUdzAPu3IbxNzjmnNSCwOY9s98kUyFCFSmiX4wZtXx67XYxhBzZkSAZwd
-	Z8Xbrdtz94UWk6uBAZMZJCvsyYwg+qvHnmiWuoX1M3/RqKghmdr9lp3FqWWq0aDM
-	4JQ6tl3JTqO01fd+vS+uZ+gbW9/CFmNuFMle1RV+ZXaZZWwHcnrUarHc4UINYOtS
-	r00GD6NKoaqHUvvnvoFMVQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729278572; x=
-	1729364972; bh=frwaSkezvHV5tmSPShTPgiPDW3lBR2mqZQtqKpeH0GM=; b=C
-	HxuVbDyIE7bKe2P0mRkJ3C17YdlBWh/EGL9J8vvld81+R7RUdBO95SajqqRzCZ/J
-	28vUe4J7NwhLyVAVdqpQXBf9QrSgySc4Wy9zbpY9wHM+G1BCZMPKzJmdoABPH+Aq
-	1fj7Q8SnZKD2KQiJojgqH1GxYZUOhoGxeqSJ94/5EEBHRE6N6P5QZZJsRoiL8Uo/
-	8MB6EagCLZYJG3AR1hddLJxIsa//AU+W3Z09GZkxepTXB1WIwAJgILY8hxbfSR1T
-	qqJGx77eIWtQOOMefRTmthNQenZ0p8XDd8Dfso5ThDsT9k4jGyIPeVnkuf8KeEzr
-	vg9jAAY1HoTLrCGYi6nLg==
-X-ME-Sender: <xms:arISZxwEJKecQb-bTM7r7sWTdzEFjCKLZKTUXslTMtYREiChHwZh-Q>
-    <xme:arISZxQEzd8QPuOFSM3Su2_f29q_WwVtm7PKhNcjVA-yVUS5GAzek791jIHhR_-Kx
-    RlBg_OaZ8a2smjdASU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehfedgudefvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpeefhfehteffuddvgfeigefhjeetvdekteekjeef
-    keekleffjeetvedvgefhhfeihfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
-    rhhnuggsrdguvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopehkuhhnihihuhesrghmrgiiohhnrdgtohhmpdhrtghpthhtohepuggrvhgv
-    mhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhooh
-    hglhgvrdgtohhmpdhrtghpthhtoheplhhiiigvthgrohdusehhuhgrfigvihdrtghomhdp
-    rhgtphhtthhopegrlhgvkhhsrghnuggvrhdrlhhosggrkhhinhesihhnthgvlhdrtghomh
-    dprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughsrghh
-    vghrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegthhgvnhhtrghosehkhihlihhnohhsrdgtnh
-X-ME-Proxy: <xmx:arISZ7UMxY021cv6ge7h3dtvj5aX83pjpfTP-bXbqtUcjW6olKxG4w>
-    <xmx:arISZzhzEFhsTEIo6NaWe4d4_32fUMt6ufqaOzkxfLWiv0w7D4WlEg>
-    <xmx:arISZzAjaUq2s2w5_lOXCZ3sRut57oU56z8zNa2qbE_U2JBxx1RGzA>
-    <xmx:arISZ8K3h7UM3MbrsXpBKsVCve8isugUO6pWHNUeFYfstUbxHQvn1g>
-    <xmx:bLISZwI_Y2lyN5-xuWmgopPpk44WF8ouNT1XFy3iGQ-cOHCyKV_Jj9Ep>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BA4DD2220071; Fri, 18 Oct 2024 15:09:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729278562; c=relaxed/simple;
+	bh=D99S00RyTTISFxr8e+C424y45Q8rUv8zo9O97MdVQnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+oH98LbhHlca1D8ksMROjdPWpzYY+h9I1SRNTvMyQH1IRxrmOEvyW+a+Gw7kO/xgjS/xwU3+9qiErHJ14R6QHE9bXxoBh8xA0oWvl4ZBzSFs9mkkNWjOy1jrC4Ux3R1ppQO1J6zE+uubOVGM3laBzt21a8ieiOxs205tR4wPd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cPPgRW+N; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ce65c8e13so21979445ad.1;
+        Fri, 18 Oct 2024 12:09:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729278560; x=1729883360; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tCWiI7Mk5Pc1ToBG0yRJeA7emmBaVqdcvJdezV41wZ8=;
+        b=cPPgRW+NqLUSBdTYly8D7mH4DjyCvWptTypxAKuda0+fAoEEurPml6SaFnov1JxlRt
+         wiVI3DvoMZ3ycVkP8NqeMQhCtxBx8acEbqF8T5jj5vqpNOXhdvUKRXil3t2oq+svzEPZ
+         LJLcL4qWv0eFSSVStwDpIKK1ZaCnAIzM56pu/tJtHmo9Ncu87K/q+OZWKwn1VRtelve5
+         p51oPd/kwR0pqMJIan1IyJwAy/kyZiiAvwLgCs1LqkaDgLBZrB0mnm7hqG+/ZRXAFOcB
+         5dFp5dIlVLugwTZk1uyZSzrxHO9RDX/mNKln3Qk58QajLVnTmK6618A2JXE0ZMwr8nXM
+         D3vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729278560; x=1729883360;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tCWiI7Mk5Pc1ToBG0yRJeA7emmBaVqdcvJdezV41wZ8=;
+        b=EFSPKABCPYSAa5iXtnMkBy2IIH6GIV6pj2uhR2ZEH8PBl9APbRL9FDGlEv2r5IT/nb
+         8fkbKhAc+3HM2XxWowomNm74vCimcGmwExwJaiSEE8pvmmmectQgvN5MzHXAW80CC1RF
+         oyd9tnz90b7q3Q/ySOhm3kQpRUpNNFMXz/UDGN4GyKzk6GsYGdu4UvmO5iIrmjdFivl+
+         F+0Sg2PazTCF6S3agAYxnbR5igkABbw9YmBxYne2GYM04ugAYBKn/+Ow25w6K9YKZI3d
+         rITi5g5XOsCuBjqqrBrIAM1cAwzPem4ky834htR9eBQoB8eMaaNjpDhABrcHOvjy18YX
+         mcPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUE4zGPjzvESE0GC2lwzQarM4rDbTYJtypFpoAyl8Uj3y7cLPoNoHs82BizXmmMLuAzg0VTV8TdqDdenx6U@vger.kernel.org, AJvYcCUoX7ew7OkdThWBirB+oCaHe6xtkBOi/nNnHbTq8x8ySTz7PJ+A3E/gsrLN7xWAu4X286W3n3UqOomygAQ=@vger.kernel.org, AJvYcCVWf+YeMy0NBMrIpfE47w9WgAKiJ2jNl8fjlxaKrmIkGQusvArrz+FalGvlXET8kST7uok05RmTXzk=@vger.kernel.org, AJvYcCXc+r0DrKnVI41gKR9WETHKUSxdHCKz1mryNoF3jrSe3yd/UkvI6X5S0rpQIZNySRdMl3DkSW7sjfvi@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr8+S+c4azvyz5OXbPVv+6O0bBk01F9IaJVI9cK2xrA5v6Mjus
+	eb/WmvM+WMiF7YtyWMPDZrctKLaN3XMJWq/JAiRfl1f4br9Lc9mv
+X-Google-Smtp-Source: AGHT+IEruX+cxyVH+gwEEsGDweblTcIgnGhNv3IgeQH5Htuac5wGmq7mHQTOxWYmy6TV37BjA3ZgmQ==
+X-Received: by 2002:a17:902:c94e:b0:20c:dd71:c94f with SMTP id d9443c01a7336-20e5a95110fmr44504275ad.41.1729278560033;
+        Fri, 18 Oct 2024 12:09:20 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:351c:e27f:10e5:484c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a71eae8sm16052525ad.45.2024.10.18.12.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 12:09:19 -0700 (PDT)
+Date: Fri, 18 Oct 2024 12:09:16 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Yassine Oudjana <yassine.oudjana@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	jason-ch chen <Jason-ch.Chen@mediatek.com>,
+	Chen Zhong <chen.zhong@mediatek.com>,
+	Flora Fu <flora.fu@mediatek.com>,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 6/6] Input: mtk-pmic-keys - Add support for MT6328
+Message-ID: <ZxKyXFZFFNwD6Tsg@google.com>
+References: <20241018081050.23592-1-y.oudjana@protonmail.com>
+ <20241018081050.23592-7-y.oudjana@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 18 Oct 2024 19:09:10 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Kuniyuki Iwashima" <kuniyu@amazon.com>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Alexander Lobakin" <aleksander.lobakin@intel.com>,
- "Kunwu Chan" <chentao@kylinos.cn>, "David S . Miller" <davem@davemloft.net>,
- "David Ahern" <dsahern@kernel.org>, "Eric Dumazet" <edumazet@google.com>,
- "Jakub Kicinski" <kuba@kernel.org>, linux-kernel@vger.kernel.org,
- "Li Zetao" <lizetao1@huawei.com>, Netdev <netdev@vger.kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>
-Message-Id: <95170855-21fc-45b4-a393-176883f7dd52@app.fastmail.com>
-In-Reply-To: <20241018163100.88905-1-kuniyu@amazon.com>
-References: <20241018151217.3558216-1-arnd@kernel.org>
- <20241018163100.88905-1-kuniyu@amazon.com>
-Subject: Re: [PATCH] ipmr: Don't mark ip6mr_rtnl_msg_handlers as __initconst
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018081050.23592-7-y.oudjana@protonmail.com>
 
-On Fri, Oct 18, 2024, at 16:31, Kuniyuki Iwashima wrote:
-> From: Arnd Bergmann <arnd@kernel.org>
-> Date: Fri, 18 Oct 2024 15:12:14 +0000
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> This gets referenced by the ip6_mr_cleanup function, so it must not be
->> discarded early:
->> 
->> WARNING: modpost: vmlinux: section mismatch in reference: ip6_mr_cleanup+0x14 (section: .exit.text) -> ip6mr_rtnl_msg_handlers (section: .init.rodata)
->> ERROR: modpost: Section mismatches detected.
->> Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.
->> 
->> Fixes: 3ac84e31b33e ("ipmr: Use rtnl_register_many().")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Hi,
->
-> I posted this yesterday.
-> https://lore.kernel.org/netdev/20241017174732.39487-1-kuniyu@amazon.com/
+On Fri, Oct 18, 2024 at 11:10:48AM +0300, Yassine Oudjana wrote:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
+> 
+> Add a compatible string and related data for the PMIC keys on the
+> MT6328 PMIC.
+> 
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Right, your may be better then. I was confused by the
-function name suggesting that this would be called in the
-module_exit path, but I now see that it is only called
-at init time, so that works.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-     Arnd
+Feel free to merge with the rest of the patches.
+
+Thanks.
+
+-- 
+Dmitry
 
