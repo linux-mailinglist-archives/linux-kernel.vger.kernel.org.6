@@ -1,164 +1,190 @@
-Return-Path: <linux-kernel+bounces-370931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EE49A33E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:35:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072079A33EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 06:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8A7F1F21FD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:35:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7699F1F22809
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 04:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653D017332B;
-	Fri, 18 Oct 2024 04:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2C7176FA4;
+	Fri, 18 Oct 2024 04:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="b5zFpXEj"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A/SDwm3A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4830120E31F;
-	Fri, 18 Oct 2024 04:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A760A176AB5;
+	Fri, 18 Oct 2024 04:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729226151; cv=none; b=aqZoaAwRtfjTTZDsAkJnidvquLg0Gtp8LakzCeTOALSmDxTxwFUDwMHTMrxPe1S8fzWKFf/Kg5V67Zc+7aNUrjEJKwaeG/dkFkKNH2yr/bIWuHHaQgG83FthxIMtq3dBDM68rTgsxtfIwcPiNFCKqHgaHue90JLugF/fy+UUdjs=
+	t=1729226230; cv=none; b=I1reBNQjbvZvCiBB9T+jcRt2SnV1tzc+rrjeJR2mSCwJB9U7DeFDoW3I3vKqcZQ0g/pSiCivlRV2jljk+NLuCN08fqeRXmJ8+FFczTsZZaQWuYVXbf0stO55gUyO5g5M28v/ZTCp9xy15tjdZKxXTp3sQDBCAPebm+AX2BKVUvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729226151; c=relaxed/simple;
-	bh=NP6NRlGAEnQ5DtECIzxbpzRPTglwkI6hJiT85COeZ08=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZBMaJnxkgPaGtKxB7suPBoaadHLYcs6UhzeeNMNys/cv9/e43POv+uwoq//yGDK3ik5OHIdACt4Arl4Xdyu670Y6U+XpEfaJueuSYUFBIq4QiGdUzlLfUYDuTNeh8q594xDQgzLNAM83ddGuQovb5C6pzxTUNmnC1McfxEbhs6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=b5zFpXEj; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1729226148;
-	bh=NP6NRlGAEnQ5DtECIzxbpzRPTglwkI6hJiT85COeZ08=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=b5zFpXEjm4MUZAcbjgBPLYTCResrTNytMosa0d77qnI+oRFx4+Lx/Fbqp+I1PdGMy
-	 WkCK+ulvFt6yvnspwxFkm8q++0f/A4VQJ6XJfs75LXG4Jl8T9+FQ/eVzgRGbBQdaDa
-	 vm4s4i6LjuTEWH4LkOFp98t4IygoiaCXjFXL0StvJEGW+48QTVKnvlfl53agABsUck
-	 Roo1uKq7MM+qrYCRJ75Rbdu8rHELyMIjpF6iwFjlfcTWJEc0WVweC/UT35ucuNxUbB
-	 cFtofEqrt+NEL0wqn+xF39N0Qz4VSV5ZkaI4RA/Rhr7C6/ldTkDoICzEsGluod8tGR
-	 Ip2jyKQFt5yOA==
-Received: from [192.168.68.112] (203-173-0-39.dyn.iinet.net.au [203.173.0.39])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 243FE681B1;
-	Fri, 18 Oct 2024 12:35:47 +0800 (AWST)
-Message-ID: <0361287ca986cb6101fae2b269b2fe14eea84158.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] ARM: dts: aspeed: Add device tree for Ampere's Mt.
- Jefferson BMC
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>, Chanh Nguyen
-	 <chanh@os.amperecomputing.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Khanh Pham
- <khpham@amperecomputing.com>, linux-arm-kernel@lists.infradead.org, Thang
- Nguyen <thang@os.amperecomputing.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Phong Vo <phong@os.amperecomputing.com>, Conor Dooley
- <conor+dt@kernel.org>, Rob Herring <robh+dt@kernel.org>, OpenBMC Maillist
- <openbmc@lists.ozlabs.org>, Open Source Submission
- <patches@amperecomputing.com>, Quan Nguyen <quan@os.amperecomputing.com>, 
- linux-aspeed@lists.ozlabs.org
-Date: Fri, 18 Oct 2024 15:05:46 +1030
-In-Reply-To: <b16b82d7-60e1-428d-bc7a-8a236ebb98ca@amperemail.onmicrosoft.com>
-References: <20241014105031.1963079-1-chanh@os.amperecomputing.com>
-	 <172891445289.1127319.4114892374425336022.robh@kernel.org>
-	 <b5919d904c9f06a618a54d49bc895c3081a511e4.camel@codeconstruct.com.au>
-	 <e8e31fb4-4a9f-4ea9-be4d-9ba29d824cc5@amperemail.onmicrosoft.com>
-	 <7555c528c90e6151f54d0e17c278527f95fac184.camel@codeconstruct.com.au>
-	 <c42be4ea-9902-4fac-8b1e-afc38fe04bad@amperemail.onmicrosoft.com>
-	 <f833ef3b873d0e71581dd138f046b19fa3fdeaf2.camel@codeconstruct.com.au>
-	 <b16b82d7-60e1-428d-bc7a-8a236ebb98ca@amperemail.onmicrosoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1729226230; c=relaxed/simple;
+	bh=U1fgLhH6lmdomPuzPUhhgaMswZjBn491Xqqurfw0z7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cko8iAiRR0l99ldPecypTFZPKB7Uq5JLCv3Khg2QGnbmpwB50KAbmKIrXiIN1T2p6ollf83f4ZJxZCTpxOb9pvejKJfztUH+3pHXX1by36SDKqWcGKd4vPHTFbiZhJ/yug/YHlA6Jcw+DJ2mPfRJneTUjyJUEKpGldm/DMUCRII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A/SDwm3A; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729226227; x=1760762227;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U1fgLhH6lmdomPuzPUhhgaMswZjBn491Xqqurfw0z7o=;
+  b=A/SDwm3Aom81pH0hvNFoSZVpNdQr5rY/g/1SBExa1cFAM09MAXGIihUH
+   u4AwPszTxX+P9TKdpFCC882i3TZ49Rr3aONXsFNIUUdbXLRCHQXfgABon
+   iWUPvm4o7wB7ax/X500j/NRgPb1nRNR5t5oU8IzJzMb8K/EM20rGH0xOV
+   BQ85dMV5Zgpxx0jkHeZcwzV887DOMd4s2Q3B12hsZlLbk/8WZe2rxPR3Q
+   KQxrnYvNC8xXwB6GiLDP12AWX0EBgE4wYI0usziUoaEL9e/7kEOXSMGq9
+   eojJhMsdfY/LeN+qZePt7Nw9SQ8NCCZX+gqeJMoXCnLYZ459BbiewfpXJ
+   g==;
+X-CSE-ConnectionGUID: eHivP1OSQICbO06CLktUnA==
+X-CSE-MsgGUID: /BD00JnMTEqEYDk1WACUyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28875673"
+X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
+   d="scan'208";a="28875673"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 21:37:07 -0700
+X-CSE-ConnectionGUID: 1rr+7d3USUqhm9O0KJNYpw==
+X-CSE-MsgGUID: c2UWR/ciRdmAVsTJmFOJgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
+   d="scan'208";a="83394723"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 17 Oct 2024 21:37:04 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1ejW-000NGr-1J;
+	Fri, 18 Oct 2024 04:37:02 +0000
+Date: Fri, 18 Oct 2024 12:36:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Marcos Paulo de Souza <mpdesouza@suse.com>
+Subject: Re: [PATCH 2/2] tty: sysrq: Use printk_loud_console context on
+ __handle_sysrq
+Message-ID: <202410181205.VT06PKmP-lkp@intel.com>
+References: <20241016-printk-loud-con-v1-2-065e4dad6632@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016-printk-loud-con-v1-2-065e4dad6632@suse.com>
 
-On Thu, 2024-10-17 at 17:02 +0700, Chanh Nguyen wrote:
->=20
-> On 17/10/2024 07:08, Andrew Jeffery wrote:
-> > [EXTERNAL EMAIL NOTICE: This email originated from an external sender. =
-Please be mindful of safe email handling and proprietary information protec=
-tion practices.]
-> >=20
-> >=20
-> > Hi Chanh,
-> >=20
-> > On Wed, 2024-10-16 at 17:26 +0700, Chanh Nguyen wrote:
-> > >=20
-> > > On 16/10/2024 12:07, Andrew Jeffery wrote:
-> > > > You can also find discussions where other maintainers (Guenter, hwm=
-on
-> > > > maintainer; Krzysztof, devicetree maintainer) have asked that "pmbu=
-s"
-> > > > not be used as a compatible:
-> > > >=20
-> > > > https://lore.kernel.org/all/f76798ea-6edd-4888-8057-c09aaed88f25@ro=
-eck-us.net/
-> > > >=20
-> > >=20
-> > > Hi Andrew,
-> > > I checked the discussion at
-> > > https://lore.kernel.org/all/f76798ea-6edd-4888-8057-c09aaed88f25@roec=
-k-us.net/
-> > > . It seems the maintainers don't want to use the "pmbus" compatible f=
-or
-> > > specific devices. The maintaners require an explicitly compatible fro=
-m
-> > > device list in drivers/hwmon/pmbus/pmbus.c .
-> > >=20
-> >=20
-> > There are two problems:
-> >=20
-> > 1. Describing your _hardware_ (not drivers) in the devicetree
-> > 2. Binding a driver to your device
-> >=20
-> > You ultimately care about both 1 and 2 as you want Linux to do
-> > something useful with the device, but for the purpose of this patch
-> > adding the devicetree, 1 is what matters and 2 is not really a part of
-> > the considerations.
-> >=20
-> > What needs to be the case is that the devicetree describes the device
-> > via an appropriate compatible string for the device (manufacturer and
-> > part number). Prior to that, the compatible string for the device needs
-> > to be documented in a devicetree binding. This may be the trivial-
-> > devices binding if there are no extra properties that need to be
-> > described, or you may need to write your own binding document for the
-> > device if it's more complex and one doesn't yet exist.
-> >=20
-> > So whatever is in pmbus.c needs to be fixed later on if your device is
-> > not yet supported by it, but that's a separate problem (2) to the
-> > problem you have here (1).
-> >=20
-> > Who is the manufacturer and what is the part number?
-> >=20
-> >=20
-> > Andrew
->=20
-> Thank Andrew for your explanation! I'm so happy to receive comments from=
-=20
-> you.
->=20
-> I'll remove the PSU node with "pmbus" compatible in the patch v2. We'll=
-=20
-> discuss more to have a suitable PSU node later.
->=20
-> I'm preparing the patch v2. Summary, I need to update as the below list.
-> 1. Add Mt. Jefferson board compatible binding as Krzysztof pointed.
-> 2. Remove the PSU node with "pmbus" compatible.
+Hi Marcos,
 
-Sounds good. Thanks.
+kernel test robot noticed the following build errors:
 
->=20
-> If you have any other comments on patch v1 please don't hesitate to=20
-> point out; I'll update that in patch v2.
+[auto build test ERROR on 1d227fcc72223cbdd34d0ce13541cbaab5e0d72f]
 
-I had one query on v1.
+url:    https://github.com/intel-lab-lkp/linux/commits/Marcos-Paulo-de-Souza/printk-Introduce-LOUD_CON-flag/20241017-010521
+base:   1d227fcc72223cbdd34d0ce13541cbaab5e0d72f
+patch link:    https://lore.kernel.org/r/20241016-printk-loud-con-v1-2-065e4dad6632%40suse.com
+patch subject: [PATCH 2/2] tty: sysrq: Use printk_loud_console context on __handle_sysrq
+config: i386-buildonly-randconfig-001-20241018 (https://download.01.org/0day-ci/archive/20241018/202410181205.VT06PKmP-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241018/202410181205.VT06PKmP-lkp@intel.com/reproduce)
 
-Andrew
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410181205.VT06PKmP-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+>> drivers/tty/sysrq.c:600:2: error: call to undeclared function 'printk_loud_console_enter'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     600 |         printk_loud_console_enter();
+         |         ^
+>> drivers/tty/sysrq.c:610:4: error: call to undeclared function 'printk_loud_console_exit'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     610 |                         printk_loud_console_exit();
+         |                         ^
+   drivers/tty/sysrq.c:614:4: error: call to undeclared function 'printk_loud_console_exit'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     614 |                         printk_loud_console_exit();
+         |                         ^
+   drivers/tty/sysrq.c:632:3: error: call to undeclared function 'printk_loud_console_exit'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     632 |                 printk_loud_console_exit();
+         |                 ^
+   4 errors generated.
+
+
+vim +/printk_loud_console_enter +600 drivers/tty/sysrq.c
+
+   582	
+   583	void __handle_sysrq(u8 key, bool check_mask)
+   584	{
+   585		const struct sysrq_key_op *op_p;
+   586		int orig_suppress_printk;
+   587		int i;
+   588	
+   589		orig_suppress_printk = suppress_printk;
+   590		suppress_printk = 0;
+   591	
+   592		rcu_sysrq_start();
+   593		rcu_read_lock();
+   594		/*
+   595		 * Enter in the console_loud context so that sysrq header is shown to
+   596		 * provide the user with positive feedback.  We do not simply emit this
+   597		 * at KERN_EMERG as that would change message routing in the consumers
+   598		 * of /proc/kmsg.
+   599		 */
+ > 600		printk_loud_console_enter();
+   601	
+   602		op_p = __sysrq_get_key_op(key);
+   603		if (op_p) {
+   604			/*
+   605			 * Should we check for enabled operations (/proc/sysrq-trigger
+   606			 * should not) and is the invoked operation enabled?
+   607			 */
+   608			if (!check_mask || sysrq_on_mask(op_p->enable_mask)) {
+   609				pr_info("%s\n", op_p->action_msg);
+ > 610				printk_loud_console_exit();
+   611				op_p->handler(key);
+   612			} else {
+   613				pr_info("This sysrq operation is disabled.\n");
+   614				printk_loud_console_exit();
+   615			}
+   616		} else {
+   617			pr_info("HELP : ");
+   618			/* Only print the help msg once per handler */
+   619			for (i = 0; i < ARRAY_SIZE(sysrq_key_table); i++) {
+   620				if (sysrq_key_table[i]) {
+   621					int j;
+   622	
+   623					for (j = 0; sysrq_key_table[i] !=
+   624							sysrq_key_table[j]; j++)
+   625						;
+   626					if (j != i)
+   627						continue;
+   628					pr_cont("%s ", sysrq_key_table[i]->help_msg);
+   629				}
+   630			}
+   631			pr_cont("\n");
+   632			printk_loud_console_exit();
+   633		}
+   634		rcu_read_unlock();
+   635		rcu_sysrq_end();
+   636	
+   637		suppress_printk = orig_suppress_printk;
+   638	}
+   639	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
