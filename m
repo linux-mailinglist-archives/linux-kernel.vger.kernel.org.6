@@ -1,197 +1,401 @@
-Return-Path: <linux-kernel+bounces-372182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E169A455D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:01:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A739A455F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22F5281022
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:01:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8931F22201
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE0C20400F;
-	Fri, 18 Oct 2024 18:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C650520403F;
+	Fri, 18 Oct 2024 18:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnaIJb93"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j2D9p7Sl"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF8D8472
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8744C2038CA
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729274508; cv=none; b=c3i6eIVA6rFWPeB8c6cc4RyNAcNekPtiX0/kUdJKnS4GTthirciN3vwWjrv6yYFS6WcnqoKSyVydJ7VF6DGJDne9DSPl9820lF3sXOWf5SZUAR+xgwAdgE2zDWM+DxbrK33BJ11tYPK2gBKtpEJd2Bq4zRLJNP+7qqPVw8O0DIM=
+	t=1729274517; cv=none; b=KTJyukqbi/X8TDCkGnDm9JfsUsnhEqQgbksaifSRbtzDR5ibFP6Evz+cg/QCJKAw6u2fsgywTABlBCXZmYvmyVYaQecZrB+6yKfpXTHMaRe8NVc2zDiLNBPUgEo/YDarXmndHvSe+EIgNWr6Hhx6aUxXt7XXvrjUgTX8otdYVGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729274508; c=relaxed/simple;
-	bh=K9iP6PdeQgdWCq3Rbuk861TAHFq5xMTtm7aZZ9cx9B0=;
+	s=arc-20240116; t=1729274517; c=relaxed/simple;
+	bh=8rcchnUfthLl38vpr9Vp7U+3St9EqoU1pWs8x/Ug5SQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D/R++Jt+XpovD0QK+DsLWdPQ7UFX18fgXwK0xQryelCHFagGFualim1tT5hteiyPRrCrlDUEjaDMp4rYp7tvqcBhZe5LO2ZrDNwtiZdzofetaQVPsKNnAvwEaYYRe1NJWo3lofrCy0mkwNgv7f24TqIDPqHsT9uIgSt/sex2ZY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnaIJb93; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a628b68a7so238126366b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:01:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=IRsZoSNWEuZJGmvOOGHNJiBlBdYv+BxVd8bWnMNex++VE8Oiv1EHDsK9IRkp7CsdFz7sVluGQGiPtbNIKDV/GGxWwXo/1ZF+pi3TjrEFJssiI3BdF1Nu2iMHhZWO8LdwQ3kCiKA1a4hkMjiKidgjucw8SohIVKgkBKX8whB+igY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j2D9p7Sl; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-288824e9cc4so302355fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 11:01:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729274505; x=1729879305; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1729274514; x=1729879314; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jZP1PTg8KCruR+VGTNIQOL+OxzWxissRAP6zaBFG7zk=;
-        b=hnaIJb93PPiW099TQVkNDQogKMOJoPNDRxaYToYGlUo98Qmb9juBEAZOLfnc1UIkba
-         /himX4x/6Gk4YZkao5TzzsjVrCGd4z69eX47473apu+y2b0olU7z5igwVMlOdkx/phXi
-         gG+BbxvoE1OSkmcvUAjeJZfoCDRrPXIhTLs+BPqcFrmhnUZ05Qd2fHsEEb3foghq6oL8
-         uyv5yVmoWbX/xU6I+mtx8SwhgHhqmN+ZSLAR/1k4Uk9AXCAFGjw5JK0qEh8DsLSTKgy8
-         rNyePKqjGGHDmxhnCYNxg/Ua8gcoCpcmlXndSIzEOiGd6aLlSMsVKvT3mNACh4Hq6O4E
-         fmeQ==
+        bh=9OKp72oFdRRG8t+D/9JG91r+3KRfEXqiJBYSKDyOMOA=;
+        b=j2D9p7SlxpG0hbJm6mWvncKT+FihaATtJrSuCL1ixga68Rrhe0SCto80r/CMKCp8WT
+         sRdTIlz1baqqY5urpqWQ84KWyswMR6/C4SdZeAcLx/1+IVDA8FJ+wj00I7fMSyRx8f/t
+         nKiDfZ19O1BMOFy5unW//n5EruUj6+f/aLpAk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729274505; x=1729879305;
+        d=1e100.net; s=20230601; t=1729274514; x=1729879314;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jZP1PTg8KCruR+VGTNIQOL+OxzWxissRAP6zaBFG7zk=;
-        b=vg2Vgd9iekX6Ppc7EFUKU4AOX0OYPigo0p7LNpb8xzQo7z+/PqouLiCO436eJwDelZ
-         rJKikTvbC4s0VOFqsgPdqIa2dWfR2PrKbNb8jiCeOHVSqHdwB8wFrBnJVjglKVzwHYHT
-         /i0ZVCpr+gh/9cmqo4iLPjJn9FmdHf+LIR47Q7mHnrqF8vqpiyM2x+lzSRAcpCwnbqjq
-         kET9NIm8lPh7jY9EWkL0rzMV0tqLxOJgjFPosEpwUhhbsEpF3HwaSSJjb71SeKqTBKDr
-         CcUcZ+hJDRLtpm1IeeQ9cZimwDRojPSdjYsY5YHeKWtTRPn60g9v+n/Sae/a7DOKdFk2
-         CSjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPZQSzimsJfziCGKhvf8PNVKv2qo03T8HomhhIf8BqdFC4Vyy0qrW/LErln7MhG/HXK+7f/2g9+uTmQCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/lwYb75Y5Qk+J4ZTUoMwemm83ydaw7MCoMGiztSq9TAs/YCe8
-	GX+ybNu7wR8RWFGq+MgC3piB3c114I6/xFxBmi1G3199C2JMLxuOLrPx9VPAkPHADhxoCai2Wrq
-	w08ObpR/MOjm9/CjlMx4TDRdHhT8=
-X-Google-Smtp-Source: AGHT+IGZ44anXLhHUZ28NxKBH31ZqRaXFtBonich+uDZLtBgQ1AQa2zbPcfX7utnzYulvJaeNlvWjptZ3Rcie9K/Jes=
-X-Received: by 2002:a17:906:4788:b0:a99:d797:c132 with SMTP id
- a640c23a62f3a-a9a69a6605dmr279322866b.16.1729274504774; Fri, 18 Oct 2024
- 11:01:44 -0700 (PDT)
+        bh=9OKp72oFdRRG8t+D/9JG91r+3KRfEXqiJBYSKDyOMOA=;
+        b=I+UZZrbNuPwGv2ejRaGlSLD3Bn6df4U7pAw1e2eQgS1SVlA9eog4/4EMF3z4gm//gi
+         qjE3gt7rVNzqkEZkyIjDpS4D3dEBz25EqJbTeeA4R4cNDsBGadVsxVSHzf/PY31yEvTL
+         u34Sgfgcq7pqjwmtED3ptlgMp06dgYEOJSXkMGEVr3dD6WuyNuhuAGXYxpuufRJk4ZNJ
+         bdSFbCVq1TXORNOKcIufwyCrPkWzBIGhmepJRL9Df2iQwNBNYov0acH+TmVzuFWX2Xgg
+         XGDWmes07TjyhHVRLpYXAveSQA3tpXXjqsitSL5BlIELuEKZD8G3OlD0v/qqol54UQh9
+         vLcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYoE7/uf/ZC8Sc+lQugwhJBvnxsmkbSknrpcywJDZzxX+Xrv6nkccpebeRYZvfME8zwdWfNVY5Ltoiyuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUTBwy9eDH2Bng3NoCyRuXW+ZA4APJ2tzbTh2lPzrbnWJ5l1G0
+	RWTUIO9EOCDMDsur+zkdEj+TJs6xrXUC9wX40ZzcQwN3hBkbtWtC2hRlhj4ItZ2f2APHDvR+PJF
+	YUDw10RvKyI9HSuP1L/i9gLbQn+sMwXYrVy9d
+X-Google-Smtp-Source: AGHT+IGKPvjDV4dZmtSKWkrmR0IHyPkLSBZLU0gQOTWtc6F9ygGetic1QXOrzVfdzggME43tb3cFYb+uxSD7ggykO7U=
+X-Received: by 2002:a05:6870:f115:b0:27c:df37:9e0c with SMTP id
+ 586e51a60fabf-2892c3426e3mr779683fac.8.1729274514353; Fri, 18 Oct 2024
+ 11:01:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1729218573.git.baolin.wang@linux.alibaba.com> <e8863e289577e0dc1e365b5419bf2d1c9a24ae3d.1729218573.git.baolin.wang@linux.alibaba.com>
-In-Reply-To: <e8863e289577e0dc1e365b5419bf2d1c9a24ae3d.1729218573.git.baolin.wang@linux.alibaba.com>
-From: Yang Shi <shy828301@gmail.com>
-Date: Fri, 18 Oct 2024 11:01:32 -0700
-Message-ID: <CAHbLzkopxqo+5BTcqf_M7Enn2+0K1TvtTeW2wiLicySac3B1mA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mm: shmem: update iocb->ki_pos directly to
- simplify tmpfs read logic
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org, 
-	david@redhat.com, wangkefeng.wang@huawei.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
+References: <e7ea2b84-8d10-40fe-a14f-837bca851ea9@lucifer.local>
+ <fd927106-2fc3-4b96-8014-2c517229bc99@lucifer.local> <CABi2SkUpCf+aOa2sPED8CosG5ccqjFd7ouot8gXi9ECqsHiZhw@mail.gmail.com>
+ <4944ce41-9fe1-4e22-8967-f6bd7eafae3f@lucifer.local> <CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com>
+ <CABi2SkVEMRHV3swrbb6M5RA6GQpFVVx855CGwdQ1xiz3tygiqA@mail.gmail.com>
+ <f9b9422c-216d-422e-94b4-d8814b0b277e@lucifer.local> <CABi2SkWAv4LXvR1Wb1e31eyZ35JfyieXhDOq1bp_ZvHPLLg-qA@mail.gmail.com>
+ <e0f440b0-5a45-4218-8c51-27f848c0617b@lucifer.local> <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
+ <c56aac50-83b5-45f2-8ddb-6980c22c059b@lucifer.local>
+In-Reply-To: <c56aac50-83b5-45f2-8ddb-6980c22c059b@lucifer.local>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 18 Oct 2024 11:01:40 -0700
+Message-ID: <CABi2SkUiazcOnGZxVyb21jCa1gzOaQ1NPzjGJVX5a3kw1BBE0Q@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, akpm@linux-foundation.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pedro.falcato@gmail.com, willy@infradead.org, broonie@kernel.org, 
+	vbabka@suse.cz, Liam.Howlett@oracle.com, rientjes@google.com, 
+	keescook@chromium.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 8:00=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
-> Use iocb->ki_pos to check if the read bytes exceeds the file size and to
-> calculate the bytes to be read can help simplify the code logic. Meanwhil=
-e,
-> this is also a preparation for improving tmpfs large folios read performa=
-ce
+HHi Lorenzo
 
-s/performace/performance
+On Thu, Oct 17, 2024 at 11:38=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Thu, Oct 17, 2024 at 12:49:40PM -0700, Jeff Xu wrote:
+> > On Thu, Oct 17, 2024 at 12:00=E2=80=AFPM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > On Thu, Oct 17, 2024 at 11:47:15AM -0700, Jeff Xu wrote:
+> > > > On Thu, Oct 17, 2024 at 11:29=E2=80=AFAM Lorenzo Stoakes
+> > > > <lorenzo.stoakes@oracle.com> wrote:
+> > > > >
+> > > > > On Thu, Oct 17, 2024 at 11:14:20AM -0700, Jeff Xu wrote:
+> > > > > > Hi Lorenzo and Muhammad
+> > > > > >
+> > > > > > Reviving this thread since the merging window is closed and we =
+have
+> > > > > > more time to review /work on this code in the next few weeks.
+> > > > > >
+> > > > > > On Fri, Sep 13, 2024 at 3:50=E2=80=AFPM Jeff Xu <jeffxu@chromiu=
+m.org> wrote:
+> > > > > > >
+> > > > > > > Hi Lorenzo
+> > > > > > >
+> > > > > > > On Sat, Sep 7, 2024 at 12:28=E2=80=AFPM Lorenzo Stoakes
+> > > > > > > <lorenzo.stoakes@oracle.com> wrote:
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > I also suggest we figure out this FAIL_TEST_IF_FALSE() thin=
+g at this point
+> > > > > > > > too - I may be missing something, but I cannot for the life=
+ me understand
+> > > > > > > > why we have to assert negations only, and other self tests =
+do not do this.
+> > > > > > > >
+> > > > > > > My most test-infra related comments comes from Muhammad Usama=
+ Anjum
+> > > > > > > (added into this email), e.g. assert is not recommended.[1] ,
+> > > > > > >
+> > > > > > > [1] https://lore.kernel.org/all/148fc789-3c03-4490-a653-6a4e5=
+8f336b6@collabora.com/
+> > > > > > >
+> > > > > > Specifically regarding Lorenzo's comments about FAIL_TEST_IF_FA=
+LSE
+> > > > > >
+> > > > > > Muhammad Usama Anjum doesn't want assert being used in selftest=
+ (see
+> > > > > > [1] above), and I quote:
+> > > > > > "We don't want to terminate the test if one test fails because =
+of assert. We
+> > > > > > want the sub-tests to get executed in-dependent of other tests.
+> > > > > >
+> > > > > > ksft_test_result(condition, fmt, ...);
+> > > > > > ksft_test_result_pass(fmt, ...);"
+> > > > > >
+> > > > > > FAIL_TEST_IF_FALSE is a wrapper for ksft_test_result macro, and
+> > > > > > replacement of assert.
+> > > > > >
+> > > > > > Please let me know if you have questions on this and Muhammad m=
+ight
+> > > > > > also help to clarify the requirement if needed.
+> > > > > >
+> > > > > > Thanks
+> > > > > > -Jeff
+> > > > >
+> > > > > Right this is about not failing the test i.e. equivalent of an ex=
+pect
+> > > > > rather than an assert, which makes sense.
+> > > > >
+> > > > > What I'm saying is we should have something more like
+> > > > >
+> > > > > EXPECT_TRUE()
+> > > > > EXPECT_FALSE()
+> > > > >
+> > > > > etc.
+> > > > >
+> > > > > Which would avoid these confusing
+> > > > >
+> > > > >         FAIL_TEST_IF_FALSE(!expr)
+> > > >
+> > > > FAIL_TEST_IF_FALSE(expr) is the right way to use this macro.
+> > >
+> > > But you don't only test position conditions, you also test negative o=
+nes.
+> > >
+> > So it is not a problem with the MACRO, but where is it used ?
+> >
+> >         ret =3D sys_mseal(ptr, size);
+> >         FAIL_TEST_IF_FALSE(!ret);
+> >
+> > Take this example, it would be
+> > assert(!ret)
+> >
+> > The syscall return usually returns 0 to indicate success, where a
+> > negative comes from, but dev should be so used to (!ret), it is a
+> > common pattern to check syscall return code. e.g assert(!ret)
+> >
+> > Or do you have specific examples of code that caused confusion ?
+> >
+> >
+> > > 'Fail test if false false thing' is really confusing and hard to read=
+.
+> > >
+> > > I struggle to understand your tests as a result.
+> > >
+> > > I understand 'fail test if false' is expressive in a way, but it's re=
+ally hard
+> > > to parse.
+> > >
+> > If you just read it  as assert(), would that be easier ? (or you don't
+> > like assert() ?)
+> >
+> > > Obviously it's also misleading in that you're saying 'fail the test _=
+later_
+> > > if false', which I hadn't even realised...
+> > >
+> > > It's well established in basically all normal test suites that:
+> > >
+> > > * assert =3D fail test _here_ if this fails (actually a valid thing t=
+o do if
+> > >            you assert something that means the test simply cannot
+> > >            reasonably continue if that condition is false).
+> > > * expect =3D the test will now fail, but carry on.
+> > >
+> > > I mean you work for a company that does this :) [0] this is a very we=
+ll
+> > > established precedent.
+> > >
+> > > [0]:https://github.com/google/googletest
+> > >
+> > Let's use expect as an example, let's say I create a new Macro:
+> > TEST_EXPECT_TRUE, which basically is same syntax as
+> > FAIL_TEST_IF_FALSE, I'm not sure how it is different: you still have
+> > !ret in the code.
+> >
+> >  ret =3D sys_mseal(ptr, size);
+> >  TEST_EXPECT_TRUE(!ret);
+> >
+> > Or is the FAIL_xxx_IF_FALSE pattern more un-readable than  EXPECT_TURE
+> > ? maybe ..
+> >
+> > > >
+> > > > It is same syntax as assert(expr), e.g:
+> > > >
+> > > > man assert(expr)
+> > > >        assert - abort the program if assertion is false
+> > > >
+> > > > FAIL_TEST_IF_FALSE is a replacement for assert,  instead of abortin=
+g
+> > > > the program, it just reports failure in this test.
+> > >
+> > > So doesn't at all do what assert does, because that _does_ terminate
+> > > execution on failure...
+> > >
+> > I don't know what you mean, the test case will fail, but the next test
+> > case will run. This the point, the mseal_test continues to run all
+> > test cases to finish, even if one of the test cases is failed.
+> >
+> > > We are writing unit tests in a test framework, let's use very well
+> > > established industry practices please.
+> > >
+> > > Also note that you don't even need to reinvent the wheel, there is a
+> > > fully-featured test harness available in
+> > > tools/testing/selftests/kselftest_harness.h with both ASSERT_xxx() an=
+d
+> > > EXPECT_xxx() helpers.
+> > >
+> > The EXPECT_xxx() doesn't take care of reporting though,  or maybe it
+> > needs to be combined with FIXTURE_SETUP, FIXTURE_TEARDOWN. I haven't
+> > spent much time on those, but on brief look, it seems it is for
+> > repeating some tests, which doesn't exactly fit into what I needed,
+> > e.g. the sealed memory won't be unmapped.
+> > It is possible that those tests can be adopted to use test fixtures,
+> > but I don't see significant gain for that.
+> >
+> > > I've used it extensively myself and it works well.
+> > >
+> > > I'd basically suggest you use that. Though moving existing tests to t=
+hat
+> > > would be some churn.
+> > >
+> > > On the other hand I really can't accept patches which are totally
+> > > unreadable to me, so you'll need to fix this one way or another, and =
+the
+> > > churn is worth it as a one-time cost to be honest.
+> > >
+> > > >
+> > > > Is this still confusing ?
+> > > > (The FAIL_TEST_IF_FALSE is already a descriptive name, and the synt=
+ax
+> > > > of assert is well known.)
+> > >
+> > > It's a super misleading name as it says nothing about _WHEN_ the test
+> > > fails. Also the syntax of assert() may be well known but you don't ca=
+ll
+> > > this function assert, you don't reference assert anywhere, and you do=
+n't do what
+> > > assert() does so, you know, That's not a great example.
+> > >
+> > > The semantics of unit test frameworks are very well known, and alread=
+y
+> > > implemented for you, and also do not require you to do unreadable dou=
+ble
+> > > negations for no reason, so let's use those please.
+> > >
+> > As stated previously, I'm not sure whether the test fixture is
+> > benefiting mseal_test at this moment.  But I'm open for future
+> > conversion when I have time for this. For now, I like to get those
+> > tests in so we can properly detect  possible regression for memory
+> > sealing.
+> >
+> > What will help you better review this code? Would the below help ?
+> >
+> > s/FAIL_TEST_IF_FALSE/TEST_EXPECT_TRUE/g
+>
+> Jeff, you're falling into your usual pattern of being unreasonably
+> argumentative for apparently no reason and I really don't have time to
+> constantly respond inline when you're just ignoring what I tell you.
+>
+> You do this on nearly all code review and this just isn't working. If you
+> want to effectively be involved in mseal you need to LISTEN.
+>
+> The more you do this the less patient everybody gets with you and the les=
+s
+> likely your series will ever get merged. This is not good for mseal or
+> anybody involved.
+>
+> On this issue - either use sensible macros that YOU ARE DEFINING, not
+> assert.h, but YOU, that allow you to evaluate whether a condition is true
+> or false - or I will not accept your unreadable test code.
+>
+> It's that simple and I'm done discussing this.
 
-> in the following patch.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Thanks for your time on discussing this.
 
-The patch looks good to me. Reviewed-by: Yang Shi <shy828301@gmail.com>
+Please, if I may say, when presenting your argument, keep it technical
+and avoid personal attack. Using personal attacks rather than using
+logic to refute your argument is =E2=80=9CAd Hominem Fallacy=E2=80=9D [1]  =
+and will
+make it harder to get your point across.
 
-> ---
->  mm/shmem.c | 35 +++++++++++------------------------
->  1 file changed, 11 insertions(+), 24 deletions(-)
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 66eae800ffab..93642aa8d1aa 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -3106,27 +3106,19 @@ static ssize_t shmem_file_read_iter(struct kiocb =
-*iocb, struct iov_iter *to)
->         unsigned long offset;
->         int error =3D 0;
->         ssize_t retval =3D 0;
-> -       loff_t *ppos =3D &iocb->ki_pos;
->
-> -       index =3D *ppos >> PAGE_SHIFT;
-> -       offset =3D *ppos & ~PAGE_MASK;
-> +       offset =3D iocb->ki_pos & ~PAGE_MASK;
->
->         for (;;) {
->                 struct folio *folio =3D NULL;
->                 struct page *page =3D NULL;
-> -               pgoff_t end_index;
->                 unsigned long nr, ret;
-> -               loff_t i_size =3D i_size_read(inode);
-> +               loff_t end_offset, i_size =3D i_size_read(inode);
->
-> -               end_index =3D i_size >> PAGE_SHIFT;
-> -               if (index > end_index)
-> +               if (unlikely(iocb->ki_pos >=3D i_size))
->                         break;
-> -               if (index =3D=3D end_index) {
-> -                       nr =3D i_size & ~PAGE_MASK;
-> -                       if (nr <=3D offset)
-> -                               break;
-> -               }
->
-> +               index =3D iocb->ki_pos >> PAGE_SHIFT;
->                 error =3D shmem_get_folio(inode, index, 0, &folio, SGP_RE=
-AD);
->                 if (error) {
->                         if (error =3D=3D -EINVAL)
-> @@ -3148,18 +3140,14 @@ static ssize_t shmem_file_read_iter(struct kiocb =
-*iocb, struct iov_iter *to)
->                  * We must evaluate after, since reads (unlike writes)
->                  * are called without i_rwsem protection against truncate
->                  */
-> -               nr =3D PAGE_SIZE;
->                 i_size =3D i_size_read(inode);
-> -               end_index =3D i_size >> PAGE_SHIFT;
-> -               if (index =3D=3D end_index) {
-> -                       nr =3D i_size & ~PAGE_MASK;
-> -                       if (nr <=3D offset) {
-> -                               if (folio)
-> -                                       folio_put(folio);
-> -                               break;
-> -                       }
-> +               if (unlikely(iocb->ki_pos >=3D i_size)) {
-> +                       if (folio)
-> +                               folio_put(folio);
-> +                       break;
->                 }
-> -               nr -=3D offset;
-> +               end_offset =3D min_t(loff_t, i_size, iocb->ki_pos + to->c=
-ount);
-> +               nr =3D min_t(loff_t, end_offset - iocb->ki_pos, PAGE_SIZE=
- - offset);
->
->                 if (folio) {
->                         /*
-> @@ -3199,8 +3187,8 @@ static ssize_t shmem_file_read_iter(struct kiocb *i=
-ocb, struct iov_iter *to)
->
->                 retval +=3D ret;
->                 offset +=3D ret;
-> -               index +=3D offset >> PAGE_SHIFT;
->                 offset &=3D ~PAGE_MASK;
-> +               iocb->ki_pos +=3D ret;
->
->                 if (!iov_iter_count(to))
->                         break;
-> @@ -3211,7 +3199,6 @@ static ssize_t shmem_file_read_iter(struct kiocb *i=
-ocb, struct iov_iter *to)
->                 cond_resched();
->         }
->
-> -       *ppos =3D ((loff_t) index << PAGE_SHIFT) + offset;
->         file_accessed(file);
->         return retval ? retval : error;
->  }
-> --
-> 2.39.3
->
+[1] https://www.txst.edu/philosophy/resources/fallacy-definitions/ad-homine=
+m.html#:~:text=3D(Attacking%20the%20person)%3A%20This,who%20is%20making%20t=
+he%20argument.
+
+Additionally, The mseal_test was reviewed-by Muhammad Usama Anjum
+during original RFC discussion. IIUC, Muhammad Usama Anjum has domain
+knowledge for selftest infra, and I have relied on Muhammad=E2=80=99s comme=
+nts
+and implemented all those comments.
+
+I'm not saying there is no room for improvement, but it should happen
+in more respectful and constructive ways. In any case, I hope we have
+common interest  and passion to  get more test coverage to avoid
+future regression.  Given that we had 2 regressions in the past during
+code reviews and a pending regression to fix at this moment in memory
+sealing area,  the benefit of additional test coverage is obvious.
+
+Specific on FAIL_TEST_IF_FALS macro, during the course of this
+discussion, your comments have started with, and I quote:
+
+=E2=80=9C Why do we not have a FAIL_TEST_IF_TRUE()? This is crazy.
+  Would be nice to have something human-readable like ASSERT_EQ() or
+ASSERT_TRUE() or ASSERT_FALSE().=E2=80=9D
+
+=E2=80=9CThis is beyond horrible. You really have to add more asserts.=E2=
+=80=9D
+
+TO my response:
+
+=E2=80=9CASSERT_EQ and ASSERT_TURE are not recommended by the self-test. Th=
+e
+FAIL_TEST_IF_FAIL wrap will take care of some of the admin tasks
+related to self-test infra, such as counting how many tests are
+failing.=E2=80=9D
+
+And your question:
+=E2=80=9Cwhy we have to assert negations only, and other self tests do not =
+do this.=E2=80=9D
+
+And my response:
+"My most test-infra related comments comes from Muhammad Usama Anjum"
+(added into this email), e.g. assert is not recommended.[1] ,
+[1] https://lore.kernel.org/all/148fc789-3c03-4490-a653-6a4e58f336b6@collab=
+ora.com/"
+
+And my additional  try to clarify about your question about negations:
+=E2=80=9CSo it is not a problem with the MACRO, but where is it used ?
+        ret =3D sys_mseal(ptr, size);
+        FAIL_TEST_IF_FALSE(!ret);
+Take this example, it would be
+assert(!ret)
+The syscall return usually returns 0 to indicate success, where a
+negative comes from, but dev should be so used to (!ret), it is a
+common pattern to check syscall return code. e.g assert(!ret)"
+
+And I offer an alternative approach for macro naming:
+"ret =3D sys_mseal(ptr, size);
+TEST_EXPECT_TRUE(!ret);"
+
+Which you didn=E2=80=99t respond to directly.
+
+Given the situation, I think it might be best to let domain experts
+from the testinfra team, such as Muhammad to suggestion a better
+replacement for this macro.
+
+Best regards,
+-Jeff
 
