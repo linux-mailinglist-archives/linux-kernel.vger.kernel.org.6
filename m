@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-370752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26C79A31A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:23:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F385F9A31A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 02:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D57B1C22E7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:23:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A4761F23CE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77702C190;
-	Fri, 18 Oct 2024 00:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9402E64A;
+	Fri, 18 Oct 2024 00:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eh8kmKWy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dehxJw9o"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2639520E307;
-	Fri, 18 Oct 2024 00:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0CB288BD;
+	Fri, 18 Oct 2024 00:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729210982; cv=none; b=NeNplVTo2MbvyAr61+ymw8clwW89re73qjypsEWnZsI8carUS1oKwZ4t4yMU8pJ8mpWV6x/ffgVjk5n4nB3DwkP2XtHgzv57ILFEeUOw2RcggPWWQPuCFhBRYNM+nrIs+Eq0GV54Tq2r7rhhZ7l6s+yF4AbpddazMnyY6mgzllg=
+	t=1729211334; cv=none; b=n5zA2K/oKZr2rQUhLD7rtcp9oIPOlopa+zYqzzBYZ0cX2THkQUNQ+W0xNYH5Ue1AbEGBgoEHa8/75vQy4tyMVq36wM+lNGfYp9qOUvpjB+RvgnSC31IRnqTfSjPNwWecCc3bAeYy2uFjroVYIXEpc+2WdoL7x3RtvvgMQpHh2yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729210982; c=relaxed/simple;
-	bh=mm617MohGOfK7LHgQ7hK/GoPRl7lE/vc9SFRSwsYdms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJQQld54Dq0J7XekraWthqltr956Ih0YpbHof04IXB/tq6P5wmctYtnBiJPIq7y143FRD3XVmaA1MLMp6MWd/Q0ZPUrD0Ta+K8E51fvqujpVVeNjFoL4ulEqqhg5fqYXThT6idnJt8bvAxrXIJVNQ1wpoD2aJKEUYA9sL4d6gqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eh8kmKWy; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729210980; x=1760746980;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mm617MohGOfK7LHgQ7hK/GoPRl7lE/vc9SFRSwsYdms=;
-  b=eh8kmKWyuR4I5aW2zpD64ak53NRbD/NI0BTXVUbZPvfvdmKs2mjY+weF
-   OfZrVN0y0bZlN8PmwAapxShzPG0nI8TJ53H+Obl7Evi6oMvL6I03DlGpi
-   ibyJs/g4ULMD6VwMDqnPm0nmYVfb0fDIJWctQoT4egwJO4oMUZIRXdLTb
-   jCEuzlEN0Dcv2NhKWhTLCVw5YGvA5MuewQi9mPCzqqOtnNZacjigOBaEl
-   Ghf9hdZucZNetfR4MhyQznn8qcxDYSF1r5ecxgICypFsC8uBgsrKwdvs2
-   2wilXE+oiGNTRUMbTUhS0ECg3WRtG45PpomEF2ibzXKZyIIzW+Z8YG/JY
-   g==;
-X-CSE-ConnectionGUID: qzXT0z+1TYGojdGKX2sGmQ==
-X-CSE-MsgGUID: OuZ1GrvNSPWsbP/aw5MsVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28825509"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28825509"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 17:22:58 -0700
-X-CSE-ConnectionGUID: 5lmcvQweTwStCz5lNLTSaw==
-X-CSE-MsgGUID: oPJiw1muQzelQTbAnAWsFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="83539278"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.109.53])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 17:22:58 -0700
-Date: Thu, 17 Oct 2024 17:22:56 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Li Zhijian <lizhijian@fujitsu.com>
-Cc: linux-cxl@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>
-Subject: Re: [PATCH] testing/cxl: Fix abused pci_bus_read_config_word() on
- platform device
-Message-ID: <ZxGqYPGNaVWoLuP6@aschofie-mobl2.lan>
-References: <20241016015213.900985-1-lizhijian@fujitsu.com>
+	s=arc-20240116; t=1729211334; c=relaxed/simple;
+	bh=66JK6/b1M8aQHeHPNU95vd+XneCAyUjXNMq4l7qyCgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OfeO2wcOjdCIe9x8UUfUooGPphF96mEXpawjTKGf1P7SfxYHiwD4OTs0H4ekcWGlJiUj5LabJKO/WdHkKd6e1rCttXNalXsvxWIT+tXBGtSsayKSgOnDa3h1CUHhvZ/j8o0AJtCzVYYqhRv4v1qFT1+ccibgIMQFA2rtX/WNDWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dehxJw9o; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e3fca72a41so711419a91.1;
+        Thu, 17 Oct 2024 17:28:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729211332; x=1729816132; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VS42CEOIYrRc+NNmogoeY9NbTxTmXfv18Zco17bkt8w=;
+        b=dehxJw9ohxxY+1qoapWZdmy7LGZSPeocEp+o5lX3l2dqR7FOW2JzcKAq5OWrc/6zIe
+         lMvS4TackIRbqoz3zEW7YqzQ9BJtl/jYq3nibVkEZPORKXLZ7MosxNQonbnzhzPduhAa
+         5ls6MLEESbuxEifi/I0UASEmOJQj2SHFf7JglAfr67Yr/vZgXRT+yFwZWC/m9B5QnyHx
+         DifpwRl8fewtxZ3fsc4EDdC9bN1aExZeEKlIuqo5MKjWQCdgbUv/kDG05NvD559rvCAc
+         Fve8pf8FHlu5d6Dxh0g6s4hFGW3663Be37PD1xP312K5Cqa9lzaHUw3z3ZmaFf+IQcic
+         ZBZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729211332; x=1729816132;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VS42CEOIYrRc+NNmogoeY9NbTxTmXfv18Zco17bkt8w=;
+        b=hP9EZM25SxXeMXz5Ah1jUgqq/ISOG2RIFpV8i2h4Op0yEEHZ/0xefyFajS03GiQT+7
+         The2rAos0jMNPslLyMhFMuxLSrxaDUd3L+l2gouiYZg24/Db+vpJOTdlSGrvOGSKh1Ur
+         N0Uv7QolEQZGWu93AZjFANzPSfJJyAxWnXsI9/Y0NU1qqfuHOyMYivESJVlKHvvKyD8I
+         NlPb16fCpgOjZpZ2/Bcb+k2KKImmjU/H1i57Tp7rgdcTgKyLSJvrhcd7sdcGvT6t+pUe
+         UDpeMCf+RF0pHQR3LAAtU6ISeEYc09YOIFmLm6q9ROoiE6Q9h3IS7ifhaO3d4fzot4jg
+         UTFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgd3pzeB3JxY85ZvFBKj4oQ0ArXc76rRGwGAxNR6wsaJDHytFew3genGqaLwJjHSTiZL+wECjXjbU=@vger.kernel.org, AJvYcCVs6KDSJiEEqmZA0dCiOJ1+XxcqxIp0JLuflyDP9aoFZocX0lPiCwkRMVfAAjSyWInQBwnIu9KxJLus4CLC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzodn5OrNu/8eeOCp/e5daenHmzCQni7P6Enc9p6QpjA4h4Vu+7
+	8KACxRO/Kh+YzHRy/uXF9Bl+Fp+VczKPeVQSxFxQzDUEnYldBQg1
+X-Google-Smtp-Source: AGHT+IEkRunm2xCYdMhWzONzRfVZrh/svDR8PAIr0bJqnPz6tBPPyU0slKLCobQynF6UYzPxuJfHhg==
+X-Received: by 2002:a17:90a:f189:b0:2e2:7f8f:3ad7 with SMTP id 98e67ed59e1d1-2e5615d6941mr981771a91.7.1729211332088;
+        Thu, 17 Oct 2024 17:28:52 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:136e:2635:ea46:fe25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e55d8036a8sm541199a91.31.2024.10.17.17.28.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 17:28:51 -0700 (PDT)
+Date: Thu, 17 Oct 2024 17:28:48 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Wolfram Sang <wsa@kernel.org>, itewqq <shipeiqu@sjtu.edu.cn>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: smbus: make i2c_smbus_read_block_data() safer
+Message-ID: <ZxGrwObOFkNuCn_w@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,73 +79,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016015213.900985-1-lizhijian@fujitsu.com>
 
-On Wed, Oct 16, 2024 at 09:52:13AM +0800, Li Zhijian wrote:
-> The cxl_region_shared_upstream_bandwidth_update() in clx_core works on
-> PCI/PCIe CXL device only while cxl_test was implemeneted by platform
-> device.
-> 
-> Mock a cxl_region_shared_upstream_bandwidth_update() which does nothing
-> for cxl_core so that the cxl_test goes well.
-> 
-> Abuse cxl_region_shared_upstream_bandwidth_update() on platform device
-> will cause a kernel panic with calltrace:
+i2c_smbus_read_block_data() is dangerous to use because it may deliver
+up to I2C_SMBUS_BLOCK_MAX (32) bytes, which may be surprising to the
+caller. Callers tend to allocate buffers of sizes big enough to hold
+data from a well-behaving device and do not expect that
+i2c_smbus_read_block_data() may attempt to write more data than
+expected.
 
-snip
+To make i2c_smbus_read_block_data() safer to use change it so that
+it accepts size of the supplied buffer as another argument and ensure
+that it will not copy more data than the size of the buffer.
 
-> ---
->  tools/testing/cxl/Kbuild      | 2 ++
->  tools/testing/cxl/mock_cdat.c | 8 ++++++++
->  2 files changed, 10 insertions(+)
->  create mode 100644 tools/testing/cxl/mock_cdat.c
-> 
-> diff --git a/tools/testing/cxl/Kbuild b/tools/testing/cxl/Kbuild
-> index b1256fee3567..ed9f50dee3f5 100644
-> --- a/tools/testing/cxl/Kbuild
-> +++ b/tools/testing/cxl/Kbuild
-> @@ -15,6 +15,7 @@ ldflags-y += --wrap=devm_cxl_add_rch_dport
->  ldflags-y += --wrap=cxl_rcd_component_reg_phys
->  ldflags-y += --wrap=cxl_endpoint_parse_cdat
->  ldflags-y += --wrap=cxl_dport_init_ras_reporting
-> +ldflags-y += --wrap=cxl_region_shared_upstream_bandwidth_update
->  
->  DRIVERS := ../../../drivers
->  CXL_SRC := $(DRIVERS)/cxl
-> @@ -61,6 +62,7 @@ cxl_core-y += $(CXL_CORE_SRC)/pci.o
->  cxl_core-y += $(CXL_CORE_SRC)/hdm.o
->  cxl_core-y += $(CXL_CORE_SRC)/pmu.o
->  cxl_core-y += $(CXL_CORE_SRC)/cdat.o
-> +cxl_core-y += mock_cdat.o
->  cxl_core-$(CONFIG_TRACING) += $(CXL_CORE_SRC)/trace.o
->  cxl_core-$(CONFIG_CXL_REGION) += $(CXL_CORE_SRC)/region.o
->  cxl_core-y += config_check.o
-> diff --git a/tools/testing/cxl/mock_cdat.c b/tools/testing/cxl/mock_cdat.c
-> new file mode 100644
-> index 000000000000..99974153b3f6
-> --- /dev/null
-> +++ b/tools/testing/cxl/mock_cdat.c
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (c) 2024 FUJITSU LIMITED. All rights reserved. */
-> +
-> +#include <cxl.h>
-> +
-> +void __wrap_cxl_region_shared_upstream_bandwidth_update(struct cxl_region *cxlr)
-> +{
-> +}
+To allow users to gradually transition to the new API employ some
+macro trickery allowing calling i2c_smbus_read_block_data() with either
+3 or 4 arguments. When called with 3 arguments it is assumed that
+the buffer size is I2C_SMBUS_BLOCK_MAX bytes. Once everyone is
+transitioned to the 4 argument form the macros should be removed.
 
-The addition of file mock_cdat.c made me wonder why this wrapper couldn't join
-all the other __wrap's defined in test/mock.c. I tried, as you probably did,
-and see the circular dependency. I mention it here in case anyone else has a
-way to simplify this.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ Documentation/i2c/dev-interface.rst |  5 +++--
+ drivers/i2c/i2c-core-smbus.c        | 21 +++++++++++++--------
+ include/linux/i2c.h                 | 19 +++++++++++++++++--
+ 3 files changed, 33 insertions(+), 12 deletions(-)
 
-Otherwise LGTM:
-Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+diff --git a/Documentation/i2c/dev-interface.rst b/Documentation/i2c/dev-interface.rst
+index c277a8e1202b..4df5330aca00 100644
+--- a/Documentation/i2c/dev-interface.rst
++++ b/Documentation/i2c/dev-interface.rst
+@@ -161,9 +161,10 @@ for details) through the following functions::
+   __s32 i2c_smbus_process_call(int file, __u8 command, __u16 value);
+   __s32 i2c_smbus_block_process_call(int file, __u8 command, __u8 length,
+                                      __u8 *values);
+-  __s32 i2c_smbus_read_block_data(int file, __u8 command, __u8 *values);
++  __s32 i2c_smbus_read_block_data(int file, __u8 command, __u8 length,
++                                  __u8 *values);
+   __s32 i2c_smbus_write_block_data(int file, __u8 command, __u8 length,
+-                                   __u8 *values);
++                                   const __u8 *values);
+ 
+ All these transactions return -1 on failure; you can read errno to see
+ what happened. The 'write' transactions return 0 on success; the
+diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+index e3b96fc53b5c..9a076397f555 100644
+--- a/drivers/i2c/i2c-core-smbus.c
++++ b/drivers/i2c/i2c-core-smbus.c
+@@ -207,11 +207,11 @@ s32 i2c_smbus_write_word_data(const struct i2c_client *client, u8 command,
+ EXPORT_SYMBOL(i2c_smbus_write_word_data);
+ 
+ /**
+- * i2c_smbus_read_block_data - SMBus "block read" protocol
++ * __i2c_smbus_read_block_data - SMBus "block read" protocol
+  * @client: Handle to slave device
+  * @command: Byte interpreted by slave
+- * @values: Byte array into which data will be read; big enough to hold
+- *	the data returned by the slave.  SMBus allows at most 32 bytes.
++ * @length: size of the @values array. SMBus allows at most 32 bytes
++ * @values: Byte array into which data will be read
+  *
+  * This executes the SMBus "block read" protocol, returning negative errno
+  * else the number of data bytes in the slave's response.
+@@ -221,22 +221,27 @@ EXPORT_SYMBOL(i2c_smbus_write_word_data);
+  * support this; its emulation through I2C messaging relies on a specific
+  * mechanism (I2C_M_RECV_LEN) which may not be implemented.
+  */
+-s32 i2c_smbus_read_block_data(const struct i2c_client *client, u8 command,
+-			      u8 *values)
++s32 __i2c_smbus_read_block_data(const struct i2c_client *client, u8 command,
++				u8 length, u8 *values)
+ {
+ 	union i2c_smbus_data data;
++	int ret_len;
+ 	int status;
+ 
++	if (length > I2C_SMBUS_BLOCK_MAX)
++		return -EINVAL;
++
+ 	status = i2c_smbus_xfer(client->adapter, client->addr, client->flags,
+ 				I2C_SMBUS_READ, command,
+ 				I2C_SMBUS_BLOCK_DATA, &data);
+ 	if (status)
+ 		return status;
+ 
+-	memcpy(values, &data.block[1], data.block[0]);
+-	return data.block[0];
++	ret_len = min(length, data.block[0]);
++	memcpy(values, &data.block[1], ret_len);
++	return ret_len;
+ }
+-EXPORT_SYMBOL(i2c_smbus_read_block_data);
++EXPORT_SYMBOL(__i2c_smbus_read_block_data);
+ 
+ /**
+  * i2c_smbus_write_block_data - SMBus "block write" protocol
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 377def497298..799477aea903 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -174,8 +174,23 @@ i2c_smbus_write_word_swapped(const struct i2c_client *client,
+ }
+ 
+ /* Returns the number of read bytes */
+-s32 i2c_smbus_read_block_data(const struct i2c_client *client,
+-			      u8 command, u8 *values);
++s32 __i2c_smbus_read_block_data(const struct i2c_client *client,
++				u8 command, u8 length, u8 *values);
++/*
++ * This monstrosity allows to call i2c_smbus_read_block_data() with either
++ * 3 or 4 arguments and will be removed once all users have been switched
++ * to the 4 argument version.
++ */
++#define __i2c_smbus_read_block_data_3arg(client, cmd, values)			\
++	__i2c_smbus_read_block_data(client, cmd, I2C_SMBUS_BLOCK_MAX, values)
++#define __i2c_smbus_read_block_data_4arg(client, cmd, length, values)		\
++	__i2c_smbus_read_block_data(client, cmd, length, values)
++#define __i2c_smbus_read_block_data_impl(_1, _2, _3, _4, impl, ...) impl
++#define i2c_smbus_read_block_data(client, cmd, varargs...)			\
++	__i2c_smbus_read_block_data_impl(client, cmd, varargs,			\
++					 __i2c_smbus_read_block_data_4arg,	\
++					 __i2c_smbus_read_block_data_3arg)	\
++					 (client, cmd, varargs)
+ s32 i2c_smbus_write_block_data(const struct i2c_client *client,
+ 			       u8 command, u8 length, const u8 *values);
+ /* Returns the number of read bytes */
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
 
-
-> -- 
-> 2.44.0
-> 
+-- 
+Dmitry
 
