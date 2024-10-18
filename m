@@ -1,1407 +1,336 @@
-Return-Path: <linux-kernel+bounces-370888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC18E9A334D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BBB79A334F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C78CCB22514
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:21:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC7D5B23A6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7B015380B;
-	Fri, 18 Oct 2024 03:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E4C168C3F;
+	Fri, 18 Oct 2024 03:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DEZ2FMR/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GgqFXXJp"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2050.outbound.protection.outlook.com [40.107.22.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92702176AC8;
-	Fri, 18 Oct 2024 03:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729221623; cv=none; b=jnZ/V11xtADK7jwUeLQti63yXT8oZ/zodby3MeIFqoOJwCSBGAzxKH7fuy+G/Hyaf4HV9VPj22YGPaQi0j+hRdIHJAnQW5605s1ZzFBGBEoreoVYYpfMqT/PyimI7g+XvkgrHuoJ2/+BjrkLypF/Zo5TMScleIXjSOHca2ZTZEw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729221623; c=relaxed/simple;
-	bh=03PDxu1IvnB2w9X1WVFR8HRR2WqHAjheI/UxrDmVZxo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=uQFoPnSrY4nIGNiiIMg3RwVAWc+ERxWr1NlZVrAWMll0UDPXv8LupcwXHUV46bollX6rrh/vXx+gBkOKkyLYswIIQwTPGPy6kTMjMFLDlZ1EsQsLx+pbY2HJgy2qX+YB5/+8Ih46BcAQPUqAFTB3y9pqO/JfuB66cjdTMYQy3og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DEZ2FMR/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HMAjna017520;
-	Fri, 18 Oct 2024 03:20:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gfsd9Jf1VhUEGP57ftJKLgYbEDy6LVEFRFPbaRZdS0g=; b=DEZ2FMR/p5rqzrRm
-	oIggDmP5jN2TXPMo7sCjC/HGpsEoFtgW7oy24WJQ00ru3gcmi98Nk1pmCGWn9tgP
-	2rI/91YuNpXxsph+jOHiyjtQVZIseoEiy5YH1FR68yiU07I3i3CILdoG4F3xg4s7
-	Rzj28tXb43owdhwGii8HV3vqbQfd199QhItLg1wxIBHwivTTguaQIMQbO5u/dhQ/
-	YTMssuZogW07foZwEl4AtP2epoSVUWGyUFamVuHJs+hH6qRe0BVRHU2+DkmbelyU
-	yw+Jhe1lWi3mEAhsPGDupGsqZUJ9Msu3HsI17xIrm9jwjj46sGo5gHvAPkoX3zbS
-	BCgRRg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42b0rx2gwy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 03:20:13 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49I3KCWl012061
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 03:20:12 GMT
-Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 17 Oct 2024 20:20:08 -0700
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-Date: Fri, 18 Oct 2024 11:19:32 +0800
-Subject: [PATCH v3 2/2] pinctrl: qcom: add the tlmm driver for QCS8300
- platforms
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133061684A5;
+	Fri, 18 Oct 2024 03:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729221635; cv=fail; b=L0J9KA96Hj5VBiPYkU5ohVMvFRn8PO+OmgYCpL4kP/W7AgL6KUrOe2wch6RRfnhCGObJtxxZYgQ5gwhj4meEpJMav/7R/E6g85sx8a5kkpy7E+CGMatS27I7b//766qLkU4AoZ30jfbiN9sC2t0TYyDZHz13vA+GKdHONBONRig=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729221635; c=relaxed/simple;
+	bh=9bbDiGv3tYTXV3fYg0kHdv0CqBbwfbtkG6Dfe0O3iNc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pjqNdRaLVA7H/Hdnuye1oQQ/ye7Wl3NOeHu6ZGZD3m16WtcKgUPSav6+Rd2jpoziYAtGHsrSMQ9oabrsoUUfqwVMPnaOvipLNEJrz15Y8Z1jAg9/FjsgmY5liUEigzvnvLn/m0zpH9RQp2UoIFZ42y1KBvHnMFUthxCM5LopOXk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GgqFXXJp; arc=fail smtp.client-ip=40.107.22.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NiHC6rHPZH9azCSvYYcC0OmnPwey39VbK+8dwJkfZ1uKqsKsXGCdecgB8zA+YHmuGt5hyiGHC2sBM2Srtwj/sHdh63W7QK95fQSZ1Td875mDgT4bhRsbdmcIhz/Odl22ETPcyiS++4jMrN0BsyVy7QoRTvVF+ewV8te4MFWn2GmAPhXsR2+s69U4wGvI5VUzqthrDhe0OC9m2/JRB4YGQ57zL0F523FO94ZVTk8kT+TaX9VP1WJNbqwvSWlHE1kcIv7Y0jLum8I+AnnocP09/kDMZr+LhsWjVB26U5Xhur3eE2Hr12KVQZDHTB4d9muNEPHgQCi+Kip1B7jWcsBWtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9bbDiGv3tYTXV3fYg0kHdv0CqBbwfbtkG6Dfe0O3iNc=;
+ b=FCX62VkTEKQSNaeD4vMb8imdSpEf45k/hWW940n5Go5amZluwTMADo1DRTRRx+by3MSqR6HDoIIJYggKwq9qBWM3bq6me8POAB3YHGDugSqTqEHulZEjhya/KzDn0cKGYjp6r3OkVlc3ZUDx6MpIoBkgzStdHprAUwasXN1Iafc3fBo7j8If7ly4oMvpHrlqLgPRUf6CuZzlpaRS0b6lbdWLNJ2dP+Pmx400XmJpVYe+j+BlYrvc/o0BQA+Sno2XA4GVq2DGxuxQQdVuli7euaH2EriOWIKA1PnneamhIOETvUHrDjbCiHEaoOhE4Yr8oFoWBn4xcTpWWDskVmvJRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9bbDiGv3tYTXV3fYg0kHdv0CqBbwfbtkG6Dfe0O3iNc=;
+ b=GgqFXXJpJPd2YDbaCm3NlSpvR1RVbbBRfcrJkRc4OdegiCDXK0wLbB6zPPNC/KgfefJD+2MqEEmk065G031gO9mhNRU0OLInmuSx4dNxwHdNZCBZOQahVJBIw+3lGzEaYqkoAS/UXA2on2NHvOSCdX0g5UpOPtHUOzkz+EFguZ7Ez163g9PTpRUR8ZjJgWVzIfmYy3lVFj4N2y4K2jiLAlh+FyjkB1V8u1J1+qd1R6SQyGRiNPHiHCy8KNFWaKMrhYSS8TG7NB8QmBwbCi7fmjuAa+eKmlMv+SSegdlfTuuR328PnjHINKDcvkFVLJVu2MPKiRQz+EuSX7eCszTx6A==
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
+ by AM9PR04MB8538.eurprd04.prod.outlook.com (2603:10a6:20b:435::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Fri, 18 Oct
+ 2024 03:20:29 +0000
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334%7]) with mapi id 15.20.8069.016; Fri, 18 Oct 2024
+ 03:20:29 +0000
+From: Bough Chen <haibo.chen@nxp.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
+	<festevam@gmail.com>, dl-S32 <S32@nxp.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/4] mmc: host: sdhci-esdhc-imx: refactor the system PM
+ logic
+Thread-Topic: [PATCH 2/4] mmc: host: sdhci-esdhc-imx: refactor the system PM
+ logic
+Thread-Index: AQHbHf5hd7QD6nrSMUOqpbNFCm+ShrKK7wQAgADLNKCAAB5fYA==
+Date: Fri, 18 Oct 2024 03:20:29 +0000
+Message-ID:
+ <DU0PR04MB9496801A4571142F914BBF4990402@DU0PR04MB9496.eurprd04.prod.outlook.com>
+References: <20241014060130.1162629-1-haibo.chen@nxp.com>
+ <20241014060130.1162629-3-haibo.chen@nxp.com>
+ <CAPDyKFr37wLYxdFJ-Lgbq7PbWyiQz+CuwMxwgeeP3QpMvdyjqg@mail.gmail.com>
+ <DU0PR04MB949604108991809742E83E5D90402@DU0PR04MB9496.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <DU0PR04MB949604108991809742E83E5D90402@DU0PR04MB9496.eurprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9496:EE_|AM9PR04MB8538:EE_
+x-ms-office365-filtering-correlation-id: f1162568-0944-455c-d768-08dcef23d13f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|1800799024|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?UmNxeVlnZCt3OU9DRVpOd1lqRUFBeWo5SldOOGZLSC9rZGkzRDdDNnpPMzh3?=
+ =?utf-8?B?dVJQRzk0dWNReDJWazRJL0RUR3dqNTRZUG04anZndFNVTnNSNXlORFpKOWdO?=
+ =?utf-8?B?RjNycWRhRlJRRmFpa2pDZ3BwQWZjOGNEM2M3TjNQOW9md1diRUt6am1SdFVt?=
+ =?utf-8?B?WUFrUGpzNEh6M0VVblg4THBQd2pJb3BMOUVDMjl1bTNKZ0RjaWZhTGtORTd3?=
+ =?utf-8?B?QUl5ZzJuYlFDYkRxMjRaZFV1Y1puUTRYekE4WXFCejZoaks3cVptLzduTndw?=
+ =?utf-8?B?Tnl4VGh2ZTZVbTRteElETWFHcVFtWEE1dDV5djhBdmsvRUEra0xrbFFOY2xV?=
+ =?utf-8?B?elE2ckZrV2U4Q3llcjBVRHZ6RERtbVBqRjZ4WG5wNWlXelV0VzVHN2RSQUdF?=
+ =?utf-8?B?RkhmVmkva256V2N3eUplbncyMGkvbDVLVkNNRWozMnhRMjBxNkZpUGd5Nkp2?=
+ =?utf-8?B?eEk0Y1RxNVBqYjNwOHJ6RzhmdjlOUWpySzhjZDUwNXVHU3NmZGxSOHFKME9j?=
+ =?utf-8?B?cXU1Ymt5dWMyd1VEQkkzajgvbEFsR0F1ZzBlMmQyV0h5OXNlUFNFeHRlTlVh?=
+ =?utf-8?B?ckVqd0xGRmhXcXFBbUhsdVk1aVVkQ2E0Nll6QnAyRks4R0tjaE51RDFWeU5S?=
+ =?utf-8?B?OHYxc2Q1bjJEbngxR21Ib01GWkFuN1N0MVUyc3hPWmtjWk9EQk1kd0NLSk0v?=
+ =?utf-8?B?eCtRN1JxRXkwNHpJdmVVZk5jdGpLNFA1c2p6NTFQU2ZRVEplSEJ2S0phTzg3?=
+ =?utf-8?B?TnF4bUVCYU5rdDlHSmVqb3BPUHZxaW9zVXpVVEtzUjdrdUVRVmpMREtZTGhV?=
+ =?utf-8?B?NTYzRFRxUktERDQ4Zk1RTjBZejU1SVU3SHVQVDFjYXYzNWRueUxSTUpEL1hH?=
+ =?utf-8?B?RnpoUEtqalJOY0Jvam5lQlUyeU9mUmJXOEdrWExHL3AyY01GbjRtT3VQbTg2?=
+ =?utf-8?B?NzQ3OUo2cjZTUitoNmQzcTRlWlVBWXFGOTBTWnZ1b0Roa0RGRjJ3Qmc1ZTJy?=
+ =?utf-8?B?dG5SZksyYUZTRnVlZloyOFZxRU55TmkyMzJNTnEwcWk2SzJzSCtGaDJ3ckZs?=
+ =?utf-8?B?RFZwelQ0aEQ3VGRoOVhnVk1JV3hDbU83QjBIY2hCKytieUg4aHFzR1Uxajdq?=
+ =?utf-8?B?SUxEdXh3ZnYvS2tEWGFKTTlOQ0h2MmlaM0o4bnpDMDR3OGF0R1BNWjNEVHlU?=
+ =?utf-8?B?bERjcFZXNnUxRUNZaXJOb0JYcGYrTXpJZ05pZVNsRVpYOEZWMCtpNWFCNGQ0?=
+ =?utf-8?B?eFFUcERNR2pkc3ZhNWRmS3BzbkZ0bldad09IY1VVbkQ4aklUN3p3WEtzdXZI?=
+ =?utf-8?B?TXpQaW04SS84ektlT295L2pGREZQR2Z1NWdUb2dJb2JwNGh2S1RQK08ya3k4?=
+ =?utf-8?B?encvMWI3bHE4b2hkUlZPZHZmb3dEd1JMWkt5UmpjSE9lTVd6anJ4U0xrWHBU?=
+ =?utf-8?B?MDNaU0dEL0RYTnpXYlhXeGxVQk9KN0dpNkZmbVJSTXpkTkVhRGlFM05xMnJ0?=
+ =?utf-8?B?cUhzTy8wZlQ0SnREczR0Q05oUGgyckZGRHVNTHdTd2JJRnVUaGZnKzBQTTVi?=
+ =?utf-8?B?bHVNTTV5TU50SklsbWZydWxKNCtsaWltbWVFbk9aVUxZZkQ3LzlwdzBaU0xV?=
+ =?utf-8?B?dDg0bHh6ZEk4MERQd2lFRjBjM1JvUzBuUW4vSGdNVjM0azRrVi9oR2hCajlt?=
+ =?utf-8?B?RGt4NXRNWWUydUxuY0toZWIrRFc4NENSM2xsZDhGRm1Oem1abVp4V0d5LzZL?=
+ =?utf-8?B?cmowQTJVZEZodHdlc0lwY2xvcGFnQi93UitkWXdZb25pTlhlc20rQTI4UUF2?=
+ =?utf-8?Q?kdyZng3MgfnWvpHli44kDTiF52/UKxd0MNJQw=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?VVRmT204bG1uYUpIYWJvdVhYVGRzQXZxaDdaZytqb3dUSnFvNm1Vd2dyQUlJ?=
+ =?utf-8?B?M0RGemFWOHAyRHdON3dCN0ZCY01GUDIzM29ETUdiaENRbFgwZjRPUGdWNU92?=
+ =?utf-8?B?MjZmaklsS1B6c1JqWEIwaUIrK0hER2NxUjRGWmR2dE1yb0EwZnpLRXkvdzRH?=
+ =?utf-8?B?WnlqNFhJSDl1K1VYUEVyZVRERDc4WVVrUjZlZjdtUFpOV1YySDJ6NXNlc3JU?=
+ =?utf-8?B?SWdRdGZLQ1VMRVQwUFpyQ3FiY3N5cGpxc095eDRxbUhPWUFpaTJiY2c4R25p?=
+ =?utf-8?B?YUlhaDVkdkVHWlhEZ1M0clUySU10L3dsK1UrV2ZLWWt5VTJWd1Z6RHp1OHd2?=
+ =?utf-8?B?bVM2ZlZRTGtBUFp1bVp1OElGc3VqZ0x1SW5RR0VyWnNIclA3cVVmTFdlVkxF?=
+ =?utf-8?B?WkgyRDI1MWxwMytwV0xTbGYxd3pJU0lXbzdXQklVSUYzVjYvZDJYdmlLNDg5?=
+ =?utf-8?B?dVovTy9KV2J5RzZrTXVpU3FoMmlMdFZ0M3E5UHJzb0JnczFkZzhXYUprTVIv?=
+ =?utf-8?B?NWI2eXVsNUhRUWxSaWVGUWl6NGRDbGRGaFl4QnY3c3VTQUlUbHJLdm5HVGN5?=
+ =?utf-8?B?Z1ZRQXp3RjBYcWpGby90d21uRU9CUTVtTjh5RjdGc09lOFVFNkhZeTY5Tm91?=
+ =?utf-8?B?STFPQUhhRCtFdDdkSEFSbkR5QWI0RXdybXRjQ254N0gxcXdHZ1hNVVhwd0pj?=
+ =?utf-8?B?dzBDazBUMmxpb1VKd0F6YTF5SFdlbDRRbWJKYlpmWWhRb3BEaEs3Q1FDZ2JZ?=
+ =?utf-8?B?bkphSkVFemIwbTJtbTVldU5SMGRnbWlHTGRzc1ZoMjRIMzdBYTMwUUxNM05G?=
+ =?utf-8?B?QUlHRTdMaWswUzVkZnlzWEFmeWZ0cStML3d0bzNDV0pDQnlxaVloSDc4ZGYy?=
+ =?utf-8?B?aW9RckNjR0pIaTB0OXYrdFFXenpLN3ZOTklVaXh5NUNWVmFQTjcwbzNkcjV3?=
+ =?utf-8?B?U3ZHSU43K29MOHp1WU9hRVp3MytDcmhFSTkwZmtSNi9EWFRyRXNIMkRwdVRk?=
+ =?utf-8?B?dUIzdVdreFRDOWcxdktwT3VtSm95K29VUGNTbzVrRHpkOGVIbnFETmlPQXdP?=
+ =?utf-8?B?Z3hPV0dNQW5BWXpHcUdsNVNNcjV3eDdPQnFNdkowL2RWKzErdkxZSThJeFox?=
+ =?utf-8?B?TXJjdmFUaHduWGdqa1dIU2FTcTBEOWM0WkM2L1V5WG5zd2ZKREtUTEFVOUxW?=
+ =?utf-8?B?NjVBQU1mRGhncmdNQjF1MXdWckcwcllpQ2gzMVYyZUtNVllTSmhDVGdBOWMy?=
+ =?utf-8?B?emhJQXpWTTQ5Zm00ZjYwLzd2SE9pejN4L0p2NHg1TFZCOHA4NStTOWI0QmhF?=
+ =?utf-8?B?VmFRcVExcjhBWWRqaW9Dc2thbnBjNkRJRXVJVUVwT1FWc0xQVWo4NWcyRjR6?=
+ =?utf-8?B?aS9TMnhUK3VhZUFJbGFiYnQ3b01YRjVFL0ZPVVdJY1NrM1dvVnZIVmhnU3BI?=
+ =?utf-8?B?NWZrdWd1VkV2Z2hBUURUeHJ1R2lkamRLNUdnbTlQOStvenNZTG5NV2dpNXp1?=
+ =?utf-8?B?VXlpNG9zTEpISEFMaDZpOFdvUHRYYmFydktVYlN6VUdaM09rMnliZUZoM0Nm?=
+ =?utf-8?B?Z3dpS1pNSFphSHJEZzZ2YU9abWV1ckdBOXkwOHd1eUt6SzRoYWRWNXQ2L0xE?=
+ =?utf-8?B?akRXdmwzRXhIOVJlYytnT1NVT3RwK3JoTVZ2ZEhWZTRJbXoyeDVoc2pDS09y?=
+ =?utf-8?B?UGt0SWwzRUJuQzdLczdNT0NEbHEyOGNJT3Z6ck9vczc2WVZDaU16NlBPZ3h0?=
+ =?utf-8?B?Y0M2bXBLQ0dtRjFRQ0wvcGllaE5MWUpNZHJ3cFdzLzZrZmJHUEovTk9mV0Rn?=
+ =?utf-8?B?VVEzSXc3amJoN3N3dGJkUTlXdi90YnNPSjhVc3NXci9rZU9KQWRNKzJyUmlX?=
+ =?utf-8?B?eFpqS1lVWnBoUllTUklwWnJuWWI1V21JWU04L0EwemhDeXpiUmkwbVZ4YWZj?=
+ =?utf-8?B?ejRsQXppSnhNengydWZ1QXpZaW16eE52eFViQXJLYkN4dGpPVitlSUlnbTZU?=
+ =?utf-8?B?VkFVRXEyRUQ5dlo3TjYrNjIwbGVBem90SWpPV2RZbTlQd1Q2K01DcmRJelY0?=
+ =?utf-8?B?dmR4L1I5RUdsRGdkbzVRajBjZ1A0cTFuLzREK2NZc0RDWmVyRUVjR0tmWlJK?=
+ =?utf-8?Q?e2XY=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241018-qcs8300_tlmm-v3-2-8b8d3957cf1a@quicinc.com>
-References: <20241018-qcs8300_tlmm-v3-0-8b8d3957cf1a@quicinc.com>
-In-Reply-To: <20241018-qcs8300_tlmm-v3-0-8b8d3957cf1a@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Richard
- Cochran" <richardcochran@gmail.com>
-CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        Jingyi Wang
-	<quic_jingyw@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729221600; l=43190;
- i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
- bh=03PDxu1IvnB2w9X1WVFR8HRR2WqHAjheI/UxrDmVZxo=;
- b=/EgLmNF0xaTjlTe99jqbz+LCV+J4TdVizyTKcyr9SA2ymuZyNGnCIgTV9Zj4lG316x2psnjeb
- 1Kulven7PYaAfhtl7Dm34/pnz0hTgsKfv9JzegKFflZx6+QKZ+8r5e+
-X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
- pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: F5JqdgclTivffksRS3rGyHGcWKatT-st
-X-Proofpoint-ORIG-GUID: F5JqdgclTivffksRS3rGyHGcWKatT-st
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- mlxscore=0 priorityscore=1501 spamscore=0 suspectscore=0 impostorscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180018
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1162568-0944-455c-d768-08dcef23d13f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2024 03:20:29.3246
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: F3GlFWlVkqswrf8s+wIKCs5cu5i12BgQQP3UZlz5tp417e7lIVbTzFVlhrA1MuBPmOnpJQrPICRXuBJRIuDLYg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8538
 
-Add support for QCS8300 TLMM configuration and control via the
-pinctrl framework.
-
-Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
----
- drivers/pinctrl/qcom/Kconfig.msm       |    7 +
- drivers/pinctrl/qcom/Makefile          |    1 +
- drivers/pinctrl/qcom/pinctrl-qcs8300.c | 1246 ++++++++++++++++++++++++++++++++
- 3 files changed, 1254 insertions(+)
-
-diff --git a/drivers/pinctrl/qcom/Kconfig.msm b/drivers/pinctrl/qcom/Kconfig.msm
-index c79f0c3c873d..c5d67539f5c9 100644
---- a/drivers/pinctrl/qcom/Kconfig.msm
-+++ b/drivers/pinctrl/qcom/Kconfig.msm
-@@ -198,6 +198,13 @@ config PINCTRL_QCS615
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  TLMM block found on the Qualcomm QCS615 platform.
- 
-+config PINCTRL_QCS8300
-+	tristate "Qualcomm Technologies QCS8300 pin controller driver"
-+	depends on ARM64 || COMPILE_TEST
-+	help
-+	  This is the pinctrl, pinmux and pinconf driver for the Qualcomm
-+	  TLMM block found on the Qualcomm QCS8300 platform.
-+
- config PINCTRL_QDF2XXX
- 	tristate "Qualcomm Technologies QDF2xxx pin controller driver"
- 	depends on ACPI
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index 715c3b5a636a..7c8385e69e90 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_PINCTRL_MSM8998)   += pinctrl-msm8998.o
- obj-$(CONFIG_PINCTRL_QCM2290)	+= pinctrl-qcm2290.o
- obj-$(CONFIG_PINCTRL_QCS404)	+= pinctrl-qcs404.o
- obj-$(CONFIG_PINCTRL_QCS615)    += pinctrl-qcs615.o
-+obj-$(CONFIG_PINCTRL_QCS8300)	+= pinctrl-qcs8300.o
- obj-$(CONFIG_PINCTRL_QDF2XXX)	+= pinctrl-qdf2xxx.o
- obj-$(CONFIG_PINCTRL_MDM9607)	+= pinctrl-mdm9607.o
- obj-$(CONFIG_PINCTRL_MDM9615)	+= pinctrl-mdm9615.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-qcs8300.c b/drivers/pinctrl/qcom/pinctrl-qcs8300.c
-new file mode 100644
-index 000000000000..ba6de944a859
---- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-qcs8300.c
-@@ -0,0 +1,1246 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include "pinctrl-msm.h"
-+
-+#define REG_SIZE 0x1000
-+#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11)\
-+	{						\
-+		.grp = PINCTRL_PINGROUP("gpio" #id,	\
-+			gpio##id##_pins,		\
-+			ARRAY_SIZE(gpio##id##_pins)),	\
-+		.funcs = (int[]){			\
-+			msm_mux_gpio, /* gpio mode */	\
-+			msm_mux_##f1,			\
-+			msm_mux_##f2,			\
-+			msm_mux_##f3,			\
-+			msm_mux_##f4,			\
-+			msm_mux_##f5,			\
-+			msm_mux_##f6,			\
-+			msm_mux_##f7,			\
-+			msm_mux_##f8,			\
-+			msm_mux_##f9,			\
-+			msm_mux_##f10,			\
-+			msm_mux_##f11 /* egpio mode */	\
-+		},					\
-+		.nfuncs = 12,				\
-+		.ctl_reg = REG_SIZE * id,		\
-+		.io_reg = 0x4 + REG_SIZE * id,		\
-+		.intr_cfg_reg = 0x8 + REG_SIZE * id,	\
-+		.intr_status_reg = 0xc + REG_SIZE * id,	\
-+		.intr_target_reg = 0x8 + REG_SIZE * id,	\
-+		.mux_bit = 2,			\
-+		.pull_bit = 0,			\
-+		.drv_bit = 6,			\
-+		.egpio_enable = 12,		\
-+		.egpio_present = 11,		\
-+		.oe_bit = 9,			\
-+		.in_bit = 0,			\
-+		.out_bit = 1,			\
-+		.intr_enable_bit = 0,		\
-+		.intr_status_bit = 0,		\
-+		.intr_target_bit = 5,		\
-+		.intr_target_kpss_val = 3,	\
-+		.intr_raw_status_bit = 4,	\
-+		.intr_polarity_bit = 1,		\
-+		.intr_detection_bit = 2,	\
-+		.intr_detection_width = 2,	\
-+	}
-+
-+#define SDC_QDSD_PINGROUP(pg_name, ctl, pull, drv)	\
-+	{						\
-+		.grp = PINCTRL_PINGROUP(#pg_name,	\
-+			pg_name##_pins,			\
-+			ARRAY_SIZE(pg_name##_pins)),	\
-+		.ctl_reg = ctl,				\
-+		.io_reg = 0,				\
-+		.intr_cfg_reg = 0,			\
-+		.intr_status_reg = 0,			\
-+		.intr_target_reg = 0,			\
-+		.mux_bit = -1,				\
-+		.pull_bit = pull,			\
-+		.drv_bit = drv,				\
-+		.oe_bit = -1,				\
-+		.in_bit = -1,				\
-+		.out_bit = -1,				\
-+		.intr_enable_bit = -1,			\
-+		.intr_status_bit = -1,			\
-+		.intr_target_bit = -1,			\
-+		.intr_raw_status_bit = -1,		\
-+		.intr_polarity_bit = -1,		\
-+		.intr_detection_bit = -1,		\
-+		.intr_detection_width = -1,		\
-+	}
-+
-+#define UFS_RESET(pg_name, offset)			\
-+	{						\
-+		.grp = PINCTRL_PINGROUP(#pg_name,	\
-+			pg_name##_pins,			\
-+			ARRAY_SIZE(pg_name##_pins)),	\
-+		.ctl_reg = offset,			\
-+		.io_reg = offset + 0x4,			\
-+		.intr_cfg_reg = 0,			\
-+		.intr_status_reg = 0,			\
-+		.intr_target_reg = 0,			\
-+		.mux_bit = -1,				\
-+		.pull_bit = 3,				\
-+		.drv_bit = 0,				\
-+		.oe_bit = -1,				\
-+		.in_bit = -1,				\
-+		.out_bit = 0,				\
-+		.intr_enable_bit = -1,			\
-+		.intr_status_bit = -1,			\
-+		.intr_target_bit = -1,			\
-+		.intr_raw_status_bit = -1,		\
-+		.intr_polarity_bit = -1,		\
-+		.intr_detection_bit = -1,		\
-+		.intr_detection_width = -1,		\
-+	}
-+
-+#define QUP_I3C(qup_mode, qup_offset)			\
-+	{						\
-+		.mode = qup_mode,			\
-+		.offset = qup_offset,			\
-+	}
-+
-+#define QUP_I3C_6_MODE_OFFSET	0xaf000
-+#define QUP_I3C_7_MODE_OFFSET	0xb0000
-+#define QUP_I3C_13_MODE_OFFSET	0xb1000
-+#define QUP_I3C_14_MODE_OFFSET	0xb2000
-+
-+static const struct pinctrl_pin_desc qcs8300_pins[] = {
-+	PINCTRL_PIN(0, "GPIO_0"),
-+	PINCTRL_PIN(1, "GPIO_1"),
-+	PINCTRL_PIN(2, "GPIO_2"),
-+	PINCTRL_PIN(3, "GPIO_3"),
-+	PINCTRL_PIN(4, "GPIO_4"),
-+	PINCTRL_PIN(5, "GPIO_5"),
-+	PINCTRL_PIN(6, "GPIO_6"),
-+	PINCTRL_PIN(7, "GPIO_7"),
-+	PINCTRL_PIN(8, "GPIO_8"),
-+	PINCTRL_PIN(9, "GPIO_9"),
-+	PINCTRL_PIN(10, "GPIO_10"),
-+	PINCTRL_PIN(11, "GPIO_11"),
-+	PINCTRL_PIN(12, "GPIO_12"),
-+	PINCTRL_PIN(13, "GPIO_13"),
-+	PINCTRL_PIN(14, "GPIO_14"),
-+	PINCTRL_PIN(15, "GPIO_15"),
-+	PINCTRL_PIN(16, "GPIO_16"),
-+	PINCTRL_PIN(17, "GPIO_17"),
-+	PINCTRL_PIN(18, "GPIO_18"),
-+	PINCTRL_PIN(19, "GPIO_19"),
-+	PINCTRL_PIN(20, "GPIO_20"),
-+	PINCTRL_PIN(21, "GPIO_21"),
-+	PINCTRL_PIN(22, "GPIO_22"),
-+	PINCTRL_PIN(23, "GPIO_23"),
-+	PINCTRL_PIN(24, "GPIO_24"),
-+	PINCTRL_PIN(25, "GPIO_25"),
-+	PINCTRL_PIN(26, "GPIO_26"),
-+	PINCTRL_PIN(27, "GPIO_27"),
-+	PINCTRL_PIN(28, "GPIO_28"),
-+	PINCTRL_PIN(29, "GPIO_29"),
-+	PINCTRL_PIN(30, "GPIO_30"),
-+	PINCTRL_PIN(31, "GPIO_31"),
-+	PINCTRL_PIN(32, "GPIO_32"),
-+	PINCTRL_PIN(33, "GPIO_33"),
-+	PINCTRL_PIN(34, "GPIO_34"),
-+	PINCTRL_PIN(35, "GPIO_35"),
-+	PINCTRL_PIN(36, "GPIO_36"),
-+	PINCTRL_PIN(37, "GPIO_37"),
-+	PINCTRL_PIN(38, "GPIO_38"),
-+	PINCTRL_PIN(39, "GPIO_39"),
-+	PINCTRL_PIN(40, "GPIO_40"),
-+	PINCTRL_PIN(41, "GPIO_41"),
-+	PINCTRL_PIN(42, "GPIO_42"),
-+	PINCTRL_PIN(43, "GPIO_43"),
-+	PINCTRL_PIN(44, "GPIO_44"),
-+	PINCTRL_PIN(45, "GPIO_45"),
-+	PINCTRL_PIN(46, "GPIO_46"),
-+	PINCTRL_PIN(47, "GPIO_47"),
-+	PINCTRL_PIN(48, "GPIO_48"),
-+	PINCTRL_PIN(49, "GPIO_49"),
-+	PINCTRL_PIN(50, "GPIO_50"),
-+	PINCTRL_PIN(51, "GPIO_51"),
-+	PINCTRL_PIN(52, "GPIO_52"),
-+	PINCTRL_PIN(53, "GPIO_53"),
-+	PINCTRL_PIN(54, "GPIO_54"),
-+	PINCTRL_PIN(55, "GPIO_55"),
-+	PINCTRL_PIN(56, "GPIO_56"),
-+	PINCTRL_PIN(57, "GPIO_57"),
-+	PINCTRL_PIN(58, "GPIO_58"),
-+	PINCTRL_PIN(59, "GPIO_59"),
-+	PINCTRL_PIN(60, "GPIO_60"),
-+	PINCTRL_PIN(61, "GPIO_61"),
-+	PINCTRL_PIN(62, "GPIO_62"),
-+	PINCTRL_PIN(63, "GPIO_63"),
-+	PINCTRL_PIN(64, "GPIO_64"),
-+	PINCTRL_PIN(65, "GPIO_65"),
-+	PINCTRL_PIN(66, "GPIO_66"),
-+	PINCTRL_PIN(67, "GPIO_67"),
-+	PINCTRL_PIN(68, "GPIO_68"),
-+	PINCTRL_PIN(69, "GPIO_69"),
-+	PINCTRL_PIN(70, "GPIO_70"),
-+	PINCTRL_PIN(71, "GPIO_71"),
-+	PINCTRL_PIN(72, "GPIO_72"),
-+	PINCTRL_PIN(73, "GPIO_73"),
-+	PINCTRL_PIN(74, "GPIO_74"),
-+	PINCTRL_PIN(75, "GPIO_75"),
-+	PINCTRL_PIN(76, "GPIO_76"),
-+	PINCTRL_PIN(77, "GPIO_77"),
-+	PINCTRL_PIN(78, "GPIO_78"),
-+	PINCTRL_PIN(79, "GPIO_79"),
-+	PINCTRL_PIN(80, "GPIO_80"),
-+	PINCTRL_PIN(81, "GPIO_81"),
-+	PINCTRL_PIN(82, "GPIO_82"),
-+	PINCTRL_PIN(83, "GPIO_83"),
-+	PINCTRL_PIN(84, "GPIO_84"),
-+	PINCTRL_PIN(85, "GPIO_85"),
-+	PINCTRL_PIN(86, "GPIO_86"),
-+	PINCTRL_PIN(87, "GPIO_87"),
-+	PINCTRL_PIN(88, "GPIO_88"),
-+	PINCTRL_PIN(89, "GPIO_89"),
-+	PINCTRL_PIN(90, "GPIO_90"),
-+	PINCTRL_PIN(91, "GPIO_91"),
-+	PINCTRL_PIN(92, "GPIO_92"),
-+	PINCTRL_PIN(93, "GPIO_93"),
-+	PINCTRL_PIN(94, "GPIO_94"),
-+	PINCTRL_PIN(95, "GPIO_95"),
-+	PINCTRL_PIN(96, "GPIO_96"),
-+	PINCTRL_PIN(97, "GPIO_97"),
-+	PINCTRL_PIN(98, "GPIO_98"),
-+	PINCTRL_PIN(99, "GPIO_99"),
-+	PINCTRL_PIN(100, "GPIO_100"),
-+	PINCTRL_PIN(101, "GPIO_101"),
-+	PINCTRL_PIN(102, "GPIO_102"),
-+	PINCTRL_PIN(103, "GPIO_103"),
-+	PINCTRL_PIN(104, "GPIO_104"),
-+	PINCTRL_PIN(105, "GPIO_105"),
-+	PINCTRL_PIN(106, "GPIO_106"),
-+	PINCTRL_PIN(107, "GPIO_107"),
-+	PINCTRL_PIN(108, "GPIO_108"),
-+	PINCTRL_PIN(109, "GPIO_109"),
-+	PINCTRL_PIN(110, "GPIO_110"),
-+	PINCTRL_PIN(111, "GPIO_111"),
-+	PINCTRL_PIN(112, "GPIO_112"),
-+	PINCTRL_PIN(113, "GPIO_113"),
-+	PINCTRL_PIN(114, "GPIO_114"),
-+	PINCTRL_PIN(115, "GPIO_115"),
-+	PINCTRL_PIN(116, "GPIO_116"),
-+	PINCTRL_PIN(117, "GPIO_117"),
-+	PINCTRL_PIN(118, "GPIO_118"),
-+	PINCTRL_PIN(119, "GPIO_119"),
-+	PINCTRL_PIN(120, "GPIO_120"),
-+	PINCTRL_PIN(121, "GPIO_121"),
-+	PINCTRL_PIN(122, "GPIO_122"),
-+	PINCTRL_PIN(123, "GPIO_123"),
-+	PINCTRL_PIN(124, "GPIO_124"),
-+	PINCTRL_PIN(125, "GPIO_125"),
-+	PINCTRL_PIN(126, "GPIO_126"),
-+	PINCTRL_PIN(127, "GPIO_127"),
-+	PINCTRL_PIN(128, "GPIO_128"),
-+	PINCTRL_PIN(129, "GPIO_129"),
-+	PINCTRL_PIN(130, "GPIO_130"),
-+	PINCTRL_PIN(131, "GPIO_131"),
-+	PINCTRL_PIN(132, "GPIO_132"),
-+	PINCTRL_PIN(133, "UFS_RESET"),
-+	PINCTRL_PIN(134, "SDC1_RCLK"),
-+	PINCTRL_PIN(135, "SDC1_CLK"),
-+	PINCTRL_PIN(136, "SDC1_CMD"),
-+	PINCTRL_PIN(137, "SDC1_DATA"),
-+};
-+
-+#define DECLARE_MSM_GPIO_PINS(pin) \
-+	static const unsigned int gpio##pin##_pins[] = { pin }
-+DECLARE_MSM_GPIO_PINS(0);
-+DECLARE_MSM_GPIO_PINS(1);
-+DECLARE_MSM_GPIO_PINS(2);
-+DECLARE_MSM_GPIO_PINS(3);
-+DECLARE_MSM_GPIO_PINS(4);
-+DECLARE_MSM_GPIO_PINS(5);
-+DECLARE_MSM_GPIO_PINS(6);
-+DECLARE_MSM_GPIO_PINS(7);
-+DECLARE_MSM_GPIO_PINS(8);
-+DECLARE_MSM_GPIO_PINS(9);
-+DECLARE_MSM_GPIO_PINS(10);
-+DECLARE_MSM_GPIO_PINS(11);
-+DECLARE_MSM_GPIO_PINS(12);
-+DECLARE_MSM_GPIO_PINS(13);
-+DECLARE_MSM_GPIO_PINS(14);
-+DECLARE_MSM_GPIO_PINS(15);
-+DECLARE_MSM_GPIO_PINS(16);
-+DECLARE_MSM_GPIO_PINS(17);
-+DECLARE_MSM_GPIO_PINS(18);
-+DECLARE_MSM_GPIO_PINS(19);
-+DECLARE_MSM_GPIO_PINS(20);
-+DECLARE_MSM_GPIO_PINS(21);
-+DECLARE_MSM_GPIO_PINS(22);
-+DECLARE_MSM_GPIO_PINS(23);
-+DECLARE_MSM_GPIO_PINS(24);
-+DECLARE_MSM_GPIO_PINS(25);
-+DECLARE_MSM_GPIO_PINS(26);
-+DECLARE_MSM_GPIO_PINS(27);
-+DECLARE_MSM_GPIO_PINS(28);
-+DECLARE_MSM_GPIO_PINS(29);
-+DECLARE_MSM_GPIO_PINS(30);
-+DECLARE_MSM_GPIO_PINS(31);
-+DECLARE_MSM_GPIO_PINS(32);
-+DECLARE_MSM_GPIO_PINS(33);
-+DECLARE_MSM_GPIO_PINS(34);
-+DECLARE_MSM_GPIO_PINS(35);
-+DECLARE_MSM_GPIO_PINS(36);
-+DECLARE_MSM_GPIO_PINS(37);
-+DECLARE_MSM_GPIO_PINS(38);
-+DECLARE_MSM_GPIO_PINS(39);
-+DECLARE_MSM_GPIO_PINS(40);
-+DECLARE_MSM_GPIO_PINS(41);
-+DECLARE_MSM_GPIO_PINS(42);
-+DECLARE_MSM_GPIO_PINS(43);
-+DECLARE_MSM_GPIO_PINS(44);
-+DECLARE_MSM_GPIO_PINS(45);
-+DECLARE_MSM_GPIO_PINS(46);
-+DECLARE_MSM_GPIO_PINS(47);
-+DECLARE_MSM_GPIO_PINS(48);
-+DECLARE_MSM_GPIO_PINS(49);
-+DECLARE_MSM_GPIO_PINS(50);
-+DECLARE_MSM_GPIO_PINS(51);
-+DECLARE_MSM_GPIO_PINS(52);
-+DECLARE_MSM_GPIO_PINS(53);
-+DECLARE_MSM_GPIO_PINS(54);
-+DECLARE_MSM_GPIO_PINS(55);
-+DECLARE_MSM_GPIO_PINS(56);
-+DECLARE_MSM_GPIO_PINS(57);
-+DECLARE_MSM_GPIO_PINS(58);
-+DECLARE_MSM_GPIO_PINS(59);
-+DECLARE_MSM_GPIO_PINS(60);
-+DECLARE_MSM_GPIO_PINS(61);
-+DECLARE_MSM_GPIO_PINS(62);
-+DECLARE_MSM_GPIO_PINS(63);
-+DECLARE_MSM_GPIO_PINS(64);
-+DECLARE_MSM_GPIO_PINS(65);
-+DECLARE_MSM_GPIO_PINS(66);
-+DECLARE_MSM_GPIO_PINS(67);
-+DECLARE_MSM_GPIO_PINS(68);
-+DECLARE_MSM_GPIO_PINS(69);
-+DECLARE_MSM_GPIO_PINS(70);
-+DECLARE_MSM_GPIO_PINS(71);
-+DECLARE_MSM_GPIO_PINS(72);
-+DECLARE_MSM_GPIO_PINS(73);
-+DECLARE_MSM_GPIO_PINS(74);
-+DECLARE_MSM_GPIO_PINS(75);
-+DECLARE_MSM_GPIO_PINS(76);
-+DECLARE_MSM_GPIO_PINS(77);
-+DECLARE_MSM_GPIO_PINS(78);
-+DECLARE_MSM_GPIO_PINS(79);
-+DECLARE_MSM_GPIO_PINS(80);
-+DECLARE_MSM_GPIO_PINS(81);
-+DECLARE_MSM_GPIO_PINS(82);
-+DECLARE_MSM_GPIO_PINS(83);
-+DECLARE_MSM_GPIO_PINS(84);
-+DECLARE_MSM_GPIO_PINS(85);
-+DECLARE_MSM_GPIO_PINS(86);
-+DECLARE_MSM_GPIO_PINS(87);
-+DECLARE_MSM_GPIO_PINS(88);
-+DECLARE_MSM_GPIO_PINS(89);
-+DECLARE_MSM_GPIO_PINS(90);
-+DECLARE_MSM_GPIO_PINS(91);
-+DECLARE_MSM_GPIO_PINS(92);
-+DECLARE_MSM_GPIO_PINS(93);
-+DECLARE_MSM_GPIO_PINS(94);
-+DECLARE_MSM_GPIO_PINS(95);
-+DECLARE_MSM_GPIO_PINS(96);
-+DECLARE_MSM_GPIO_PINS(97);
-+DECLARE_MSM_GPIO_PINS(98);
-+DECLARE_MSM_GPIO_PINS(99);
-+DECLARE_MSM_GPIO_PINS(100);
-+DECLARE_MSM_GPIO_PINS(101);
-+DECLARE_MSM_GPIO_PINS(102);
-+DECLARE_MSM_GPIO_PINS(103);
-+DECLARE_MSM_GPIO_PINS(104);
-+DECLARE_MSM_GPIO_PINS(105);
-+DECLARE_MSM_GPIO_PINS(106);
-+DECLARE_MSM_GPIO_PINS(107);
-+DECLARE_MSM_GPIO_PINS(108);
-+DECLARE_MSM_GPIO_PINS(109);
-+DECLARE_MSM_GPIO_PINS(110);
-+DECLARE_MSM_GPIO_PINS(111);
-+DECLARE_MSM_GPIO_PINS(112);
-+DECLARE_MSM_GPIO_PINS(113);
-+DECLARE_MSM_GPIO_PINS(114);
-+DECLARE_MSM_GPIO_PINS(115);
-+DECLARE_MSM_GPIO_PINS(116);
-+DECLARE_MSM_GPIO_PINS(117);
-+DECLARE_MSM_GPIO_PINS(118);
-+DECLARE_MSM_GPIO_PINS(119);
-+DECLARE_MSM_GPIO_PINS(120);
-+DECLARE_MSM_GPIO_PINS(121);
-+DECLARE_MSM_GPIO_PINS(122);
-+DECLARE_MSM_GPIO_PINS(123);
-+DECLARE_MSM_GPIO_PINS(124);
-+DECLARE_MSM_GPIO_PINS(125);
-+DECLARE_MSM_GPIO_PINS(126);
-+DECLARE_MSM_GPIO_PINS(127);
-+DECLARE_MSM_GPIO_PINS(128);
-+DECLARE_MSM_GPIO_PINS(129);
-+DECLARE_MSM_GPIO_PINS(130);
-+DECLARE_MSM_GPIO_PINS(131);
-+DECLARE_MSM_GPIO_PINS(132);
-+
-+static const unsigned int ufs_reset_pins[] = { 133 };
-+static const unsigned int sdc1_rclk_pins[] = { 134 };
-+static const unsigned int sdc1_clk_pins[]  = { 135 };
-+static const unsigned int sdc1_cmd_pins[]  = { 136 };
-+static const unsigned int sdc1_data_pins[] = { 137 };
-+
-+enum qcs8300_functions {
-+	msm_mux_gpio,
-+	msm_mux_aoss_cti,
-+	msm_mux_atest_char,
-+	msm_mux_atest_usb2,
-+	msm_mux_audio_ref,
-+	msm_mux_cam_mclk,
-+	msm_mux_cci_async,
-+	msm_mux_cci_i2c_scl,
-+	msm_mux_cci_i2c_sda,
-+	msm_mux_cci_timer,
-+	msm_mux_cri_trng,
-+	msm_mux_dbg_out,
-+	msm_mux_ddr_bist,
-+	msm_mux_ddr_pxi0,
-+	msm_mux_ddr_pxi1,
-+	msm_mux_ddr_pxi2,
-+	msm_mux_ddr_pxi3,
-+	msm_mux_edp0_hot,
-+	msm_mux_edp0_lcd,
-+	msm_mux_edp1_lcd,
-+	msm_mux_egpio,
-+	msm_mux_emac0_mcg0,
-+	msm_mux_emac0_mcg1,
-+	msm_mux_emac0_mcg2,
-+	msm_mux_emac0_mcg3,
-+	msm_mux_emac0_mdc,
-+	msm_mux_emac0_mdio,
-+	msm_mux_emac0_ptp_aux,
-+	msm_mux_emac0_ptp_pps,
-+	msm_mux_gcc_gp1,
-+	msm_mux_gcc_gp2,
-+	msm_mux_gcc_gp3,
-+	msm_mux_gcc_gp4,
-+	msm_mux_gcc_gp5,
-+	msm_mux_hs0_mi2s,
-+	msm_mux_hs1_mi2s,
-+	msm_mux_hs2_mi2s,
-+	msm_mux_ibi_i3c,
-+	msm_mux_jitter_bist,
-+	msm_mux_mdp0_vsync0,
-+	msm_mux_mdp0_vsync1,
-+	msm_mux_mdp0_vsync3,
-+	msm_mux_mdp0_vsync6,
-+	msm_mux_mdp0_vsync7,
-+	msm_mux_mdp_vsync,
-+	msm_mux_mi2s1_data0,
-+	msm_mux_mi2s1_data1,
-+	msm_mux_mi2s1_sck,
-+	msm_mux_mi2s1_ws,
-+	msm_mux_mi2s2_data0,
-+	msm_mux_mi2s2_data1,
-+	msm_mux_mi2s2_sck,
-+	msm_mux_mi2s2_ws,
-+	msm_mux_mi2s_mclk0,
-+	msm_mux_mi2s_mclk1,
-+	msm_mux_pcie0_clkreq,
-+	msm_mux_pcie1_clkreq,
-+	msm_mux_phase_flag,
-+	msm_mux_pll_bist,
-+	msm_mux_pll_clk,
-+	msm_mux_prng_rosc0,
-+	msm_mux_prng_rosc1,
-+	msm_mux_prng_rosc2,
-+	msm_mux_prng_rosc3,
-+	msm_mux_qdss_cti,
-+	msm_mux_qdss_gpio,
-+	msm_mux_qup0_se0,
-+	msm_mux_qup0_se1,
-+	msm_mux_qup0_se2,
-+	msm_mux_qup0_se3,
-+	msm_mux_qup0_se4,
-+	msm_mux_qup0_se5,
-+	msm_mux_qup0_se6,
-+	msm_mux_qup0_se7,
-+	msm_mux_qup1_se0,
-+	msm_mux_qup1_se1,
-+	msm_mux_qup1_se2,
-+	msm_mux_qup1_se3,
-+	msm_mux_qup1_se4,
-+	msm_mux_qup1_se5,
-+	msm_mux_qup1_se6,
-+	msm_mux_qup1_se7,
-+	msm_mux_qup2_se0,
-+	msm_mux_sailss_emac0,
-+	msm_mux_sailss_ospi,
-+	msm_mux_sgmii_phy,
-+	msm_mux_tb_trig,
-+	msm_mux_tgu_ch0,
-+	msm_mux_tgu_ch1,
-+	msm_mux_tgu_ch2,
-+	msm_mux_tgu_ch3,
-+	msm_mux_tsense_pwm1,
-+	msm_mux_tsense_pwm2,
-+	msm_mux_tsense_pwm3,
-+	msm_mux_tsense_pwm4,
-+	msm_mux_usb2phy_ac,
-+	msm_mux_vsense_trigger,
-+	msm_mux__,
-+};
-+
-+static const char * const gpio_groups[] = {
-+	"gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6", "gpio7",
-+	"gpio8", "gpio9", "gpio10", "gpio11", "gpio12", "gpio13", "gpio14",
-+	"gpio15", "gpio16", "gpio17", "gpio18", "gpio19", "gpio20", "gpio21",
-+	"gpio22", "gpio23", "gpio24", "gpio25", "gpio26", "gpio27", "gpio28",
-+	"gpio29", "gpio30", "gpio31", "gpio32", "gpio33", "gpio34", "gpio35",
-+	"gpio36", "gpio37", "gpio38", "gpio39", "gpio40", "gpio41", "gpio42",
-+	"gpio43", "gpio44", "gpio45", "gpio46", "gpio47", "gpio48", "gpio49",
-+	"gpio50", "gpio51", "gpio52", "gpio53", "gpio54", "gpio55", "gpio56",
-+	"gpio57", "gpio58", "gpio59", "gpio60", "gpio61", "gpio62", "gpio63",
-+	"gpio64", "gpio65", "gpio66", "gpio67", "gpio68", "gpio69", "gpio70",
-+	"gpio71", "gpio72", "gpio73", "gpio74", "gpio75", "gpio76", "gpio77",
-+	"gpio78", "gpio79", "gpio80", "gpio81", "gpio82", "gpio83", "gpio84",
-+	"gpio85", "gpio86", "gpio87", "gpio88", "gpio89", "gpio90", "gpio91",
-+	"gpio92", "gpio93", "gpio94", "gpio95", "gpio96", "gpio97", "gpio98",
-+	"gpio99", "gpio100", "gpio101", "gpio102", "gpio103", "gpio104",
-+	"gpio105", "gpio106", "gpio107", "gpio108", "gpio109", "gpio110",
-+	"gpio111", "gpio112", "gpio113", "gpio114", "gpio115", "gpio116",
-+	"gpio117", "gpio118", "gpio119", "gpio120", "gpio121", "gpio122",
-+	"gpio123", "gpio124", "gpio125", "gpio126", "gpio127", "gpio128",
-+	"gpio129", "gpio130", "gpio131", "gpio132",
-+};
-+
-+static const char *const aoss_cti_groups[] = {
-+	"gpio37", "gpio38", "gpio39", "gpio40",
-+};
-+
-+static const char * const atest_char_groups[] = {
-+	"gpio66", "gpio70", "gpio71", "gpio72", "gpio93",
-+};
-+
-+static const char * const atest_usb2_groups[] = {
-+	"gpio63", "gpio83", "gpio92", "gpio74", "gpio84", "gpio87", "gpio67",
-+	"gpio75", "gpio85", "gpio65", "gpio68", "gpio80", "gpio64", "gpio69",
-+	"gpio81",
-+};
-+
-+static const char * const audio_ref_groups[] = {
-+	"gpio105",
-+};
-+
-+static const char * const cam_mclk_groups[] = {
-+	"gpio67", "gpio68", "gpio69",
-+};
-+
-+static const char * const cci_async_groups[] = {
-+	"gpio63", "gpio64", "gpio65", "gpio29", "gpio30", "gpio31",
-+};
-+
-+static const char * const cci_i2c_scl_groups[] = {
-+	"gpio58", "gpio30", "gpio60", "gpio32", "gpio62", "gpio55",
-+};
-+
-+static const char * const cci_i2c_sda_groups[] = {
-+	"gpio57", "gpio29", "gpio59", "gpio31", "gpio61", "gpio54",
-+};
-+
-+static const char *const cci_timer_groups[] = {
-+	"gpio63", "gpio64", "gpio65", "gpio49", "gpio50", "gpio19",
-+	"gpio20", "gpio21", "gpio22", "gpio23",
-+};
-+
-+static const char *const cri_trng_groups[] = {
-+	"gpio92", "gpio90", "gpio91",
-+};
-+
-+static const char *const dbg_out_groups[] = {
-+	"gpio75",
-+};
-+
-+static const char * const ddr_bist_groups[] = {
-+	"gpio53", "gpio54", "gpio55", "gpio56",
-+};
-+
-+static const char *const ddr_pxi0_groups[] = {
-+	"gpio68", "gpio69",
-+};
-+
-+static const char *const ddr_pxi1_groups[] = {
-+	"gpio49", "gpio50",
-+};
-+
-+static const char *const ddr_pxi2_groups[] = {
-+	"gpio52", "gpio83",
-+};
-+
-+static const char *const ddr_pxi3_groups[] = {
-+	"gpio80", "gpio81",
-+};
-+
-+static const char *const edp0_hot_groups[] = {
-+	"gpio94",
-+};
-+
-+static const char *const edp0_lcd_groups[] = {
-+	"gpio48",
-+};
-+
-+static const char *const edp1_lcd_groups[] = {
-+	"gpio49",
-+};
-+
-+static const char *const egpio_groups[] = {
-+	"gpio110", "gpio111", "gpio112", "gpio113", "gpio114", "gpio115",
-+	"gpio116", "gpio117", "gpio118", "gpio119", "gpio120", "gpio121",
-+	"gpio122", "gpio123", "gpio124", "gpio125", "gpio126", "gpio127",
-+	"gpio128", "gpio129", "gpio130", "gpio131", "gpio132",
-+};
-+
-+static const char *const emac0_mcg0_groups[] = {
-+	"gpio10",
-+};
-+
-+static const char *const emac0_mcg1_groups[] = {
-+	"gpio11",
-+};
-+
-+static const char *const emac0_mcg2_groups[] = {
-+	"gpio24",
-+};
-+
-+static const char *const emac0_mcg3_groups[] = {
-+	"gpio79",
-+};
-+
-+static const char *const emac0_mdc_groups[] = {
-+	"gpio5",
-+};
-+
-+static const char *const emac0_mdio_groups[] = {
-+	"gpio6",
-+};
-+
-+static const char * const emac0_ptp_aux_groups[] = {
-+	"gpio24", "gpio31", "gpio32", "gpio79",
-+};
-+
-+static const char * const emac0_ptp_pps_groups[] = {
-+	"gpio24", "gpio29", "gpio30", "gpio79",
-+};
-+
-+static const char *const gcc_gp1_groups[] = {
-+	"gpio35", "gpio84",
-+};
-+
-+static const char *const gcc_gp2_groups[] = {
-+	"gpio36", "gpio81",
-+};
-+
-+static const char *const gcc_gp3_groups[] = {
-+	"gpio69", "gpio82",
-+};
-+
-+static const char *const gcc_gp4_groups[] = {
-+	"gpio68", "gpio83",
-+};
-+
-+static const char *const gcc_gp5_groups[] = {
-+	"gpio76", "gpio77",
-+};
-+
-+static const char * const hs0_mi2s_groups[] = {
-+	"gpio106", "gpio107", "gpio108", "gpio109",
-+};
-+
-+static const char * const hs1_mi2s_groups[] = {
-+	"gpio45", "gpio46", "gpio47", "gpio48",
-+};
-+
-+static const char * const hs2_mi2s_groups[] = {
-+	"gpio49", "gpio50", "gpio51", "gpio52",
-+};
-+
-+static const char * const ibi_i3c_groups[] = {
-+	"gpio17", "gpio18", "gpio19", "gpio20", "gpio37", "gpio38",
-+	"gpio39", "gpio40",
-+};
-+
-+static const char *const jitter_bist_groups[] = {
-+	"gpio97",
-+};
-+
-+static const char *const mdp0_vsync0_groups[] = {
-+	"gpio89",
-+};
-+
-+static const char *const mdp0_vsync1_groups[] = {
-+	"gpio90",
-+};
-+
-+static const char *const mdp0_vsync3_groups[] = {
-+	"gpio91",
-+};
-+
-+static const char *const mdp0_vsync6_groups[] = {
-+	"gpio80",
-+};
-+
-+static const char *const mdp0_vsync7_groups[] = {
-+	"gpio81",
-+};
-+
-+static const char *const mdp_vsync_groups[] = {
-+	"gpio42", "gpio52", "gpio32",
-+};
-+
-+static const char *const mi2s1_data0_groups[] = {
-+	"gpio100",
-+};
-+
-+static const char *const mi2s1_data1_groups[] = {
-+	"gpio101",
-+};
-+
-+static const char *const mi2s1_sck_groups[] = {
-+	"gpio98",
-+};
-+
-+static const char *const mi2s1_ws_groups[] = {
-+	"gpio99",
-+};
-+
-+static const char *const mi2s2_data0_groups[] = {
-+	"gpio104",
-+};
-+
-+static const char *const mi2s2_data1_groups[] = {
-+	"gpio105",
-+};
-+
-+static const char *const mi2s2_sck_groups[] = {
-+	"gpio102",
-+};
-+
-+static const char *const mi2s2_ws_groups[] = {
-+	"gpio103",
-+};
-+
-+static const char *const mi2s_mclk0_groups[] = {
-+	"gpio97",
-+};
-+
-+static const char *const mi2s_mclk1_groups[] = {
-+	"gpio109",
-+};
-+
-+static const char *const pcie0_clkreq_groups[] = {
-+	"gpio1",
-+};
-+
-+static const char *const pcie1_clkreq_groups[] = {
-+	"gpio22",
-+};
-+
-+static const char *const phase_flag_groups[] = {
-+	"gpio66", "gpio56", "gpio118", "gpio117", "gpio116",
-+	"gpio3", "gpio114", "gpio113", "gpio112", "gpio111",
-+	"gpio110", "gpio28", "gpio55", "gpio108", "gpio107",
-+	"gpio106", "gpio105", "gpio104", "gpio103", "gpio102",
-+	"gpio101", "gpio100", "gpio99", "gpio125", "gpio98",
-+	"gpio54", "gpio25", "gpio26", "gpio122", "gpio121",
-+	"gpio120", "gpio9",
-+};
-+
-+static const char *const pll_bist_groups[] = {
-+	"gpio107",
-+};
-+
-+static const char *const pll_clk_groups[] = {
-+	"gpio74",
-+};
-+
-+static const char *const prng_rosc0_groups[] = {
-+	"gpio57",
-+};
-+
-+static const char *const prng_rosc1_groups[] = {
-+	"gpio58",
-+};
-+
-+static const char *const prng_rosc2_groups[] = {
-+	"gpio59",
-+};
-+
-+static const char *const prng_rosc3_groups[] = {
-+	"gpio60",
-+};
-+
-+static const char *const qdss_cti_groups[] = {
-+	"gpio4", "gpio5", "gpio23", "gpio24", "gpio49", "gpio50",
-+	"gpio51", "gpio52",
-+};
-+
-+static const char *const qdss_gpio_groups[] = {
-+	"gpio57", "gpio58", "gpio97", "gpio106",
-+	"gpio59", "gpio107", "gpio60", "gpio108",
-+	"gpio36", "gpio100", "gpio61", "gpio101",
-+	"gpio62", "gpio102", "gpio33", "gpio103",
-+	"gpio34", "gpio104", "gpio75", "gpio105",
-+	"gpio72", "gpio109", "gpio71", "gpio110",
-+	"gpio70", "gpio111", "gpio63", "gpio112",
-+	"gpio64", "gpio113", "gpio65", "gpio114",
-+	"gpio73", "gpio98", "gpio74", "gpio99",
-+};
-+
-+static const char *const qup0_se0_groups[] = {
-+	"gpio17", "gpio18", "gpio19", "gpio20",
-+};
-+
-+static const char *const qup0_se1_groups[] = {
-+	"gpio19", "gpio20", "gpio17", "gpio18",
-+};
-+
-+static const char *const qup0_se2_groups[] = {
-+	"gpio33", "gpio34", "gpio35", "gpio36",
-+};
-+
-+static const char *const qup0_se3_groups[] = {
-+	"gpio25", "gpio26", "gpio27", "gpio28",
-+};
-+
-+static const char *const qup0_se4_groups[] = {
-+	"gpio29", "gpio30", "gpio31", "gpio32",
-+};
-+
-+static const char *const qup0_se5_groups[] = {
-+	"gpio21", "gpio22", "gpio23", "gpio24",
-+};
-+
-+static const char *const qup0_se6_groups[] = {
-+	"gpio80", "gpio81", "gpio82", "gpio83",
-+};
-+
-+static const char *const qup0_se7_groups[] = {
-+	"gpio43", "gpio44", "gpio43", "gpio44",
-+};
-+
-+static const char *const qup1_se0_groups[] = {
-+	"gpio37", "gpio38", "gpio39", "gpio40",
-+};
-+
-+static const char *const qup1_se1_groups[] = {
-+	"gpio39", "gpio40", "gpio37", "gpio38",
-+};
-+
-+static const char *const qup1_se2_groups[] = {
-+	"gpio84", "gpio85", "gpio86", "gpio87", "gpio88",
-+};
-+
-+static const char *const qup1_se3_groups[] = {
-+	"gpio41", "gpio42", "gpio41", "gpio42",
-+};
-+
-+static const char *const qup1_se4_groups[] = {
-+	"gpio45", "gpio46", "gpio47", "gpio48",
-+};
-+
-+static const char *const qup1_se5_groups[] = {
-+	"gpio49", "gpio50", "gpio51", "gpio52",
-+};
-+
-+static const char *const qup1_se6_groups[] = {
-+	"gpio89", "gpio90", "gpio91", "gpio92",
-+};
-+
-+static const char *const qup1_se7_groups[] = {
-+	"gpio91", "gpio92", "gpio89", "gpio90",
-+};
-+
-+static const char *const qup2_se0_groups[] = {
-+	"gpio10", "gpio11", "gpio12", "gpio13",
-+	"gpio14", "gpio15", "gpio16",
-+};
-+
-+static const char *const sailss_emac0_groups[] = {
-+	"gpio15", "gpio16",
-+};
-+
-+static const char *const sailss_ospi_groups[] = {
-+	"gpio15", "gpio16",
-+};
-+
-+static const char *const sgmii_phy_groups[] = {
-+	"gpio4",
-+};
-+
-+static const char *const tb_trig_groups[] = {
-+	"gpio14",
-+};
-+
-+static const char *const tgu_ch0_groups[] = {
-+	"gpio43",
-+};
-+
-+static const char *const tgu_ch1_groups[] = {
-+	"gpio44",
-+};
-+
-+static const char *const tgu_ch2_groups[] = {
-+	"gpio29",
-+};
-+
-+static const char *const tgu_ch3_groups[] = {
-+	"gpio30",
-+};
-+
-+static const char *const tsense_pwm1_groups[] = {
-+	"gpio79",
-+};
-+
-+static const char *const tsense_pwm2_groups[] = {
-+	"gpio78",
-+};
-+
-+static const char *const tsense_pwm3_groups[] = {
-+	"gpio77",
-+};
-+
-+static const char *const tsense_pwm4_groups[] = {
-+	"gpio76",
-+};
-+
-+static const char *const usb2phy_ac_groups[] = {
-+	"gpio7", "gpio8",
-+};
-+
-+static const char *const vsense_trigger_groups[] = {
-+	"gpio67",
-+};
-+
-+static const struct pinfunction qcs8300_functions[] = {
-+	MSM_PIN_FUNCTION(gpio),
-+	MSM_PIN_FUNCTION(aoss_cti),
-+	MSM_PIN_FUNCTION(atest_char),
-+	MSM_PIN_FUNCTION(atest_usb2),
-+	MSM_PIN_FUNCTION(audio_ref),
-+	MSM_PIN_FUNCTION(cam_mclk),
-+	MSM_PIN_FUNCTION(cci_async),
-+	MSM_PIN_FUNCTION(cci_i2c_scl),
-+	MSM_PIN_FUNCTION(cci_i2c_sda),
-+	MSM_PIN_FUNCTION(cci_timer),
-+	MSM_PIN_FUNCTION(cri_trng),
-+	MSM_PIN_FUNCTION(dbg_out),
-+	MSM_PIN_FUNCTION(ddr_bist),
-+	MSM_PIN_FUNCTION(ddr_pxi0),
-+	MSM_PIN_FUNCTION(ddr_pxi1),
-+	MSM_PIN_FUNCTION(ddr_pxi2),
-+	MSM_PIN_FUNCTION(ddr_pxi3),
-+	MSM_PIN_FUNCTION(edp0_hot),
-+	MSM_PIN_FUNCTION(edp0_lcd),
-+	MSM_PIN_FUNCTION(edp1_lcd),
-+	MSM_PIN_FUNCTION(egpio),
-+	MSM_PIN_FUNCTION(emac0_mcg0),
-+	MSM_PIN_FUNCTION(emac0_mcg1),
-+	MSM_PIN_FUNCTION(emac0_mcg2),
-+	MSM_PIN_FUNCTION(emac0_mcg3),
-+	MSM_PIN_FUNCTION(emac0_mdc),
-+	MSM_PIN_FUNCTION(emac0_mdio),
-+	MSM_PIN_FUNCTION(emac0_ptp_aux),
-+	MSM_PIN_FUNCTION(emac0_ptp_pps),
-+	MSM_PIN_FUNCTION(gcc_gp1),
-+	MSM_PIN_FUNCTION(gcc_gp2),
-+	MSM_PIN_FUNCTION(gcc_gp3),
-+	MSM_PIN_FUNCTION(gcc_gp4),
-+	MSM_PIN_FUNCTION(gcc_gp5),
-+	MSM_PIN_FUNCTION(hs0_mi2s),
-+	MSM_PIN_FUNCTION(hs1_mi2s),
-+	MSM_PIN_FUNCTION(hs2_mi2s),
-+	MSM_PIN_FUNCTION(ibi_i3c),
-+	MSM_PIN_FUNCTION(jitter_bist),
-+	MSM_PIN_FUNCTION(mdp0_vsync0),
-+	MSM_PIN_FUNCTION(mdp0_vsync1),
-+	MSM_PIN_FUNCTION(mdp0_vsync3),
-+	MSM_PIN_FUNCTION(mdp0_vsync6),
-+	MSM_PIN_FUNCTION(mdp0_vsync7),
-+	MSM_PIN_FUNCTION(mdp_vsync),
-+	MSM_PIN_FUNCTION(mi2s1_data0),
-+	MSM_PIN_FUNCTION(mi2s1_data1),
-+	MSM_PIN_FUNCTION(mi2s1_sck),
-+	MSM_PIN_FUNCTION(mi2s1_ws),
-+	MSM_PIN_FUNCTION(mi2s2_data0),
-+	MSM_PIN_FUNCTION(mi2s2_data1),
-+	MSM_PIN_FUNCTION(mi2s2_sck),
-+	MSM_PIN_FUNCTION(mi2s2_ws),
-+	MSM_PIN_FUNCTION(mi2s_mclk0),
-+	MSM_PIN_FUNCTION(mi2s_mclk1),
-+	MSM_PIN_FUNCTION(pcie0_clkreq),
-+	MSM_PIN_FUNCTION(pcie1_clkreq),
-+	MSM_PIN_FUNCTION(phase_flag),
-+	MSM_PIN_FUNCTION(pll_bist),
-+	MSM_PIN_FUNCTION(pll_clk),
-+	MSM_PIN_FUNCTION(prng_rosc0),
-+	MSM_PIN_FUNCTION(prng_rosc1),
-+	MSM_PIN_FUNCTION(prng_rosc2),
-+	MSM_PIN_FUNCTION(prng_rosc3),
-+	MSM_PIN_FUNCTION(qdss_cti),
-+	MSM_PIN_FUNCTION(qdss_gpio),
-+	MSM_PIN_FUNCTION(qup0_se0),
-+	MSM_PIN_FUNCTION(qup0_se1),
-+	MSM_PIN_FUNCTION(qup0_se2),
-+	MSM_PIN_FUNCTION(qup0_se3),
-+	MSM_PIN_FUNCTION(qup0_se4),
-+	MSM_PIN_FUNCTION(qup0_se5),
-+	MSM_PIN_FUNCTION(qup0_se6),
-+	MSM_PIN_FUNCTION(qup0_se7),
-+	MSM_PIN_FUNCTION(qup1_se0),
-+	MSM_PIN_FUNCTION(qup1_se1),
-+	MSM_PIN_FUNCTION(qup1_se2),
-+	MSM_PIN_FUNCTION(qup1_se3),
-+	MSM_PIN_FUNCTION(qup1_se4),
-+	MSM_PIN_FUNCTION(qup1_se5),
-+	MSM_PIN_FUNCTION(qup1_se6),
-+	MSM_PIN_FUNCTION(qup1_se7),
-+	MSM_PIN_FUNCTION(qup2_se0),
-+	MSM_PIN_FUNCTION(sailss_emac0),
-+	MSM_PIN_FUNCTION(sailss_ospi),
-+	MSM_PIN_FUNCTION(sgmii_phy),
-+	MSM_PIN_FUNCTION(tb_trig),
-+	MSM_PIN_FUNCTION(tgu_ch0),
-+	MSM_PIN_FUNCTION(tgu_ch1),
-+	MSM_PIN_FUNCTION(tgu_ch2),
-+	MSM_PIN_FUNCTION(tgu_ch3),
-+	MSM_PIN_FUNCTION(tsense_pwm1),
-+	MSM_PIN_FUNCTION(tsense_pwm2),
-+	MSM_PIN_FUNCTION(tsense_pwm3),
-+	MSM_PIN_FUNCTION(tsense_pwm4),
-+	MSM_PIN_FUNCTION(usb2phy_ac),
-+	MSM_PIN_FUNCTION(vsense_trigger),
-+};
-+
-+/*
-+ * Every pin is maintained as a single group, and missing or non-existing pin
-+ * would be maintained as dummy group to synchronize pin group index with
-+ * pin descriptor registered with pinctrl core.
-+ * Clients would not be able to request these dummy pin groups.
-+ */
-+static const struct msm_pingroup qcs8300_groups[] = {
-+	[0] = PINGROUP(0, _, _, _, _, _, _, _, _, _, _, _),
-+	[1] = PINGROUP(1, pcie0_clkreq, _, _, _, _, _, _, _, _, _, _),
-+	[2] = PINGROUP(2, _, _, _, _, _, _, _, _, _, _, _),
-+	[3] = PINGROUP(3, phase_flag, _, _, _, _, _, _, _, _, _, _),
-+	[4] = PINGROUP(4, sgmii_phy, qdss_cti, _, _, _, _, _, _, _, _, _),
-+	[5] = PINGROUP(5, emac0_mdc, qdss_cti, _, _, _, _, _, _, _, _, _),
-+	[6] = PINGROUP(6, emac0_mdio, _, _, _, _, _, _, _, _, _, _),
-+	[7] = PINGROUP(7, usb2phy_ac, _, _, _, _, _, _, _, _, _, _),
-+	[8] = PINGROUP(8, usb2phy_ac, _, _, _, _, _, _, _, _, _, _),
-+	[9] = PINGROUP(9, phase_flag, _, _, _, _, _, _, _, _, _, _),
-+	[10] = PINGROUP(10, qup2_se0, emac0_mcg0, _, _, _, _, _, _, _, _, _),
-+	[11] = PINGROUP(11, qup2_se0, emac0_mcg1, _, _, _, _, _, _, _, _, _),
-+	[12] = PINGROUP(12, qup2_se0, _, _, _, _, _, _, _, _, _, _),
-+	[13] = PINGROUP(13, qup2_se0, _, _, _, _, _, _, _, _, _, _),
-+	[14] = PINGROUP(14, qup2_se0, tb_trig, _, _, _, _, _, _, _, _, _),
-+	[15] = PINGROUP(15, qup2_se0, _, sailss_ospi, sailss_emac0, _, _, _, _, _, _, _),
-+	[16] = PINGROUP(16, qup2_se0, _, _, sailss_ospi, sailss_emac0, _, _, _, _, _, _),
-+	[17] = PINGROUP(17, qup0_se0, qup0_se1, ibi_i3c, _, _, _, _, _, _, _, _),
-+	[18] = PINGROUP(18, qup0_se0, qup0_se1, ibi_i3c, _, _, _, _, _, _, _, _),
-+	[19] = PINGROUP(19, qup0_se1, qup0_se0, cci_timer, ibi_i3c, _, _, _, _, _, _, _),
-+	[20] = PINGROUP(20, qup0_se1, qup0_se0, cci_timer, ibi_i3c, _, _, _, _, _, _, _),
-+	[21] = PINGROUP(21, qup0_se5, cci_timer, _, _, _, _, _, _, _, _, _),
-+	[22] = PINGROUP(22, pcie1_clkreq, qup0_se5, cci_timer, _, _, _, _, _, _, _, _),
-+	[23] = PINGROUP(23, qup0_se5, cci_timer, qdss_cti, _, _, _, _, _, _, _, _),
-+	[24] = PINGROUP(24, qup0_se5, emac0_ptp_aux, emac0_ptp_pps, qdss_cti,
-+			emac0_mcg2, _, _, _, _, _, _),
-+	[25] = PINGROUP(25, qup0_se3, phase_flag, _, _, _, _, _, _, _, _, _),
-+	[26] = PINGROUP(26, qup0_se3, phase_flag, _, _, _, _, _, _, _, _, _),
-+	[27] = PINGROUP(27, qup0_se3, _, _, _, _, _, _, _, _, _, _),
-+	[28] = PINGROUP(28, qup0_se3, phase_flag, _, _, _, _, _, _, _, _, _),
-+	[29] = PINGROUP(29, qup0_se4, cci_i2c_sda, cci_async, emac0_ptp_pps,
-+			tgu_ch2, _, _, _, _, _, _),
-+	[30] = PINGROUP(30, qup0_se4, cci_i2c_scl, cci_async, emac0_ptp_pps,
-+			tgu_ch3, _, _, _, _, _, _),
-+	[31] = PINGROUP(31, qup0_se4, cci_i2c_sda, cci_async, emac0_ptp_aux, _, _, _, _, _, _, _),
-+	[32] = PINGROUP(32, qup0_se4, cci_i2c_scl, emac0_ptp_aux, mdp_vsync, _, _, _, _, _, _, _),
-+	[33] = PINGROUP(33, qup0_se2, qdss_gpio, _, _, _, _, _, _, _, _, _),
-+	[34] = PINGROUP(34, qup0_se2, qdss_gpio, _, _, _, _, _, _, _, _, _),
-+	[35] = PINGROUP(35, qup0_se2, gcc_gp1, _, _, _, _, _, _, _, _, _),
-+	[36] = PINGROUP(36, qup0_se2, gcc_gp2, qdss_gpio, _, _, _, _, _, _, _, _),
-+	[37] = PINGROUP(37, qup1_se0, ibi_i3c, qup1_se1, aoss_cti, _, _, _, _, _, _, _),
-+	[38] = PINGROUP(38, qup1_se0, ibi_i3c, qup1_se1, aoss_cti, _, _, _, _, _, _, _),
-+	[39] = PINGROUP(39, qup1_se1, ibi_i3c, qup1_se0, aoss_cti, _, _, _, _, _, _, _),
-+	[40] = PINGROUP(40, qup1_se1, ibi_i3c, qup1_se0, aoss_cti, _, _, _, _, _, _, _),
-+	[41] = PINGROUP(41, qup1_se3, _, _, _, _, _, _, _, _, _, _),
-+	[42] = PINGROUP(42, qup1_se3, _, mdp_vsync, _, _, _, _, _, _, _, _),
-+	[43] = PINGROUP(43, qup0_se7, _, tgu_ch0, _, _, _, _, _, _, _, _),
-+	[44] = PINGROUP(44, qup0_se7, _, tgu_ch1, _, _, _, _, _, _, _, _),
-+	[45] = PINGROUP(45, qup1_se4, hs1_mi2s, _, _, _, _, _, _, _, _, _),
-+	[46] = PINGROUP(46, qup1_se4, hs1_mi2s, _, _, _, _, _, _, _, _, _),
-+	[47] = PINGROUP(47, qup1_se4, hs1_mi2s, _, _, _, _, _, _, _, _, _),
-+	[48] = PINGROUP(48, qup1_se4, hs1_mi2s, edp0_lcd, _, _, _, _, _, _, _, _),
-+	[49] = PINGROUP(49, qup1_se5, hs2_mi2s, cci_timer, qdss_cti, edp1_lcd,
-+			ddr_pxi1, _, _, _, _, _),
-+	[50] = PINGROUP(50, qup1_se5, hs2_mi2s, cci_timer, qdss_cti, _, ddr_pxi1, _, _, _, _, _),
-+	[51] = PINGROUP(51, qup1_se5, hs2_mi2s, qdss_cti, _, _, _, _, _, _, _, _),
-+	[52] = PINGROUP(52, qup1_se5, hs2_mi2s, qdss_cti, mdp_vsync, ddr_pxi2, _, _, _, _, _, _),
-+	[53] = PINGROUP(53, ddr_bist, _, _, _, _, _, _, _, _, _, _),
-+	[54] = PINGROUP(54, cci_i2c_sda, phase_flag, ddr_bist, _, _, _, _, _, _, _, _),
-+	[55] = PINGROUP(55, cci_i2c_scl, phase_flag, ddr_bist, _, _, _, _, _, _, _, _),
-+	[56] = PINGROUP(56, phase_flag, ddr_bist, _, _, _, _, _, _, _, _, _),
-+	[57] = PINGROUP(57, cci_i2c_sda, prng_rosc0, qdss_gpio, _, _, _, _, _, _, _, _),
-+	[58] = PINGROUP(58, cci_i2c_scl, prng_rosc1, qdss_gpio, _, _, _, _, _, _, _, _),
-+	[59] = PINGROUP(59, cci_i2c_sda, prng_rosc2, qdss_gpio, _, _, _, _, _, _, _, _),
-+	[60] = PINGROUP(60, cci_i2c_scl, prng_rosc3, qdss_gpio, _, _, _, _, _, _, _, _),
-+	[61] = PINGROUP(61, cci_i2c_sda, qdss_gpio, _, _, _, _, _, _, _, _, _),
-+	[62] = PINGROUP(62, cci_i2c_scl, qdss_gpio, _, _, _, _, _, _, _, _, _),
-+	[63] = PINGROUP(63, cci_timer, cci_async, qdss_gpio, atest_usb2, _, _, _, _, _, _, _),
-+	[64] = PINGROUP(64, cci_timer, cci_async, qdss_gpio, atest_usb2, _, _, _, _, _, _, _),
-+	[65] = PINGROUP(65, cci_timer, cci_async, qdss_gpio, atest_usb2, _, _, _, _, _, _, _),
-+	[66] = PINGROUP(66, phase_flag, _, atest_char, _, _, _, _, _, _, _, _),
-+	[67] = PINGROUP(67, cam_mclk, vsense_trigger, atest_usb2, _, _, _, _, _, _, _, _),
-+	[68] = PINGROUP(68, cam_mclk, gcc_gp4, atest_usb2, ddr_pxi0, _, _, _, _, _, _, _),
-+	[69] = PINGROUP(69, cam_mclk, gcc_gp3, atest_usb2, ddr_pxi0, _, _, _, _, _, _, _),
-+	[70] = PINGROUP(70, qdss_gpio, atest_char, _, _, _, _, _, _, _, _, _),
-+	[71] = PINGROUP(71, qdss_gpio, atest_char, _, _, _, _, _, _, _, _, _),
-+	[72] = PINGROUP(72, qdss_gpio, atest_char, _, _, _, _, _, _, _, _, _),
-+	[73] = PINGROUP(73, _, qdss_gpio, _, _, _, _, _, _, _, _, _),
-+	[74] = PINGROUP(74, pll_clk, qdss_gpio, atest_usb2, _, _, _, _, _, _, _, _),
-+	[75] = PINGROUP(75, _, dbg_out, qdss_gpio, atest_usb2, _, _, _, _, _, _, _),
-+	[76] = PINGROUP(76, gcc_gp5, tsense_pwm4, _, _, _, _, _, _, _, _, _),
-+	[77] = PINGROUP(77, gcc_gp5, tsense_pwm3, _, _, _, _, _, _, _, _, _),
-+	[78] = PINGROUP(78, tsense_pwm2, _, _, _, _, _, _, _, _, _, _),
-+	[79] = PINGROUP(79, emac0_ptp_aux, emac0_ptp_pps, emac0_mcg3, _,
-+			tsense_pwm1, _, _, _, _, _, _),
-+	[80] = PINGROUP(80, qup0_se6, mdp0_vsync6, _, atest_usb2, ddr_pxi3, _, _, _, _, _, _),
-+	[81] = PINGROUP(81, qup0_se6, mdp0_vsync7, gcc_gp2, _, atest_usb2, ddr_pxi3, _, _, _, _, _),
-+	[82] = PINGROUP(82, qup0_se6, gcc_gp3, _, _, _, _, _, _, _, _, _),
-+	[83] = PINGROUP(83, qup0_se6, gcc_gp4, _, atest_usb2, ddr_pxi2, _, _, _, _, _, _),
-+	[84] = PINGROUP(84, qup1_se2, gcc_gp1, _, atest_usb2, _, _, _, _, _, _, _),
-+	[85] = PINGROUP(85, qup1_se2, _, atest_usb2, _, _, _, _, _, _, _, _),
-+	[86] = PINGROUP(86, qup1_se2, _, _, _, _, _, _, _, _, _, _),
-+	[87] = PINGROUP(87, qup1_se2, _, atest_usb2, _, _, _, _, _, _, _, _),
-+	[88] = PINGROUP(88, qup1_se2, _, _, _, _, _, _, _, _, _, _),
-+	[89] = PINGROUP(89, qup1_se6, qup1_se7, mdp0_vsync0, _, _, _, _, _, _, _, _),
-+	[90] = PINGROUP(90, qup1_se6, qup1_se7, mdp0_vsync1, cri_trng, _, _, _, _, _, _, _),
-+	[91] = PINGROUP(91, qup1_se7, qup1_se6, mdp0_vsync3, cri_trng, _, _, _, _, _, _, _),
-+	[92] = PINGROUP(92, qup1_se7, qup1_se6, cri_trng, _, atest_usb2, _, _, _, _, _, _),
-+	[93] = PINGROUP(93, atest_char, _, _, _, _, _, _, _, _, _, _),
-+	[94] = PINGROUP(94, edp0_hot, _, _, _, _, _, _, _, _, _, _),
-+	[95] = PINGROUP(95, _, _, _, _, _, _, _, _, _, _, _),
-+	[96] = PINGROUP(96, _, _, _, _, _, _, _, _, _, _, _),
-+	[97] = PINGROUP(97, mi2s_mclk0, jitter_bist, qdss_gpio, _, _, _, _, _, _, _, _),
-+	[98] = PINGROUP(98, mi2s1_sck, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _),
-+	[99] = PINGROUP(99, mi2s1_ws, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _),
-+	[100] = PINGROUP(100, mi2s1_data0, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _),
-+	[101] = PINGROUP(101, mi2s1_data1, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _),
-+	[102] = PINGROUP(102, mi2s2_sck, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _),
-+	[103] = PINGROUP(103, mi2s2_ws, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _),
-+	[104] = PINGROUP(104, mi2s2_data0, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _),
-+	[105] = PINGROUP(105, mi2s2_data1, audio_ref, phase_flag, _, qdss_gpio, _, _, _, _, _, _),
-+	[106] = PINGROUP(106, hs0_mi2s, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _),
-+	[107] = PINGROUP(107, hs0_mi2s, pll_bist, phase_flag, _, qdss_gpio, _, _, _, _, _, _),
-+	[108] = PINGROUP(108, hs0_mi2s, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _),
-+	[109] = PINGROUP(109, hs0_mi2s, mi2s_mclk1, qdss_gpio, _, _, _, _, _, _, _, _),
-+	[110] = PINGROUP(110, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _, egpio),
-+	[111] = PINGROUP(111, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _, egpio),
-+	[112] = PINGROUP(112, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _, egpio),
-+	[113] = PINGROUP(113, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _, egpio),
-+	[114] = PINGROUP(114, phase_flag, _, qdss_gpio, _, _, _, _, _, _, _, egpio),
-+	[115] = PINGROUP(115, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[116] = PINGROUP(116, phase_flag, _, _, _, _, _, _, _, _, _, egpio),
-+	[117] = PINGROUP(117, phase_flag, _, _, _, _, _, _, _, _, _, egpio),
-+	[118] = PINGROUP(118, phase_flag, _, _, _, _, _, _, _, _, _, egpio),
-+	[119] = PINGROUP(119, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[120] = PINGROUP(120, phase_flag, _, _, _, _, _, _, _, _, _, egpio),
-+	[121] = PINGROUP(121, phase_flag, _, _, _, _, _, _, _, _, _, egpio),
-+	[122] = PINGROUP(122, phase_flag, _, _, _, _, _, _, _, _, _, egpio),
-+	[123] = PINGROUP(123, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[124] = PINGROUP(124, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[125] = PINGROUP(125, phase_flag, _, _, _, _, _, _, _, _, _, egpio),
-+	[126] = PINGROUP(126, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[127] = PINGROUP(127, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[128] = PINGROUP(128, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[129] = PINGROUP(129, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[130] = PINGROUP(130, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[131] = PINGROUP(131, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[132] = PINGROUP(132, _, _, _, _, _, _, _, _, _, _, egpio),
-+	[133] = UFS_RESET(ufs_reset, 0x92000),
-+	[134] = SDC_QDSD_PINGROUP(sdc1_rclk, 0x89000, 15, 0),
-+	[135] = SDC_QDSD_PINGROUP(sdc1_clk, 0x89000, 13, 6),
-+	[136] = SDC_QDSD_PINGROUP(sdc1_cmd, 0x89000, 11, 3),
-+	[137] = SDC_QDSD_PINGROUP(sdc1_data, 0x89000, 9, 0),
-+};
-+
-+static const struct msm_gpio_wakeirq_map qcs8300_pdc_map[] = {
-+	{ 0, 169 },   { 1, 174 },   { 2, 221 },   { 3, 176 },   { 4, 171 },
-+	{ 9, 198 },   { 10, 187 },  { 11, 188 },  { 13, 211 },  { 16, 203 },
-+	{ 17, 213 },  { 18, 209 },  { 19, 201 },  { 20, 230 },  { 21, 231 },
-+	{ 22, 175 },  { 23, 170 },  { 24, 232 },  { 28, 235 },  { 29, 216 },
-+	{ 31, 208 },  { 32, 200 },  { 36, 212 },  { 37, 177 },  { 38, 178 },
-+	{ 39, 184 },  { 40, 185 },  { 42, 186 },  { 44, 194 },  { 45, 173 },
-+	{ 48, 195 },  { 51, 215 },  { 52, 197 },  { 53, 192 },  { 56, 193 },
-+	{ 66, 238 },  { 67, 172 },  { 68, 182 },  { 69, 179 },  { 70, 181 },
-+	{ 71, 202 },  { 72, 183 },  { 73, 189 },  { 74, 196 },  { 75, 190 },
-+	{ 76, 191 },  { 77, 204 },  { 78, 206 },  { 79, 207 },  { 83, 214 },
-+	{ 84, 205 },  { 87, 237 },  { 89, 225 },  { 90, 217 },  { 91, 218 },
-+	{ 92, 226 },  { 93, 227 },  { 94, 228 },  { 95, 236 },  { 97, 199 },
-+	{ 98, 229 },  { 99, 180 },  { 100, 220 }, { 101, 239 }, { 102, 219 },
-+	{ 103, 233 }, { 104, 234 }, { 105, 223 }, { 129, 210 }, { 130, 222 },
-+};
-+
-+static const struct msm_pinctrl_soc_data qcs8300_pinctrl = {
-+	.pins = qcs8300_pins,
-+	.npins = ARRAY_SIZE(qcs8300_pins),
-+	.functions = qcs8300_functions,
-+	.nfunctions = ARRAY_SIZE(qcs8300_functions),
-+	.groups = qcs8300_groups,
-+	.ngroups = ARRAY_SIZE(qcs8300_groups),
-+	.ngpios = 133,
-+	.wakeirq_map = qcs8300_pdc_map,
-+	.nwakeirq_map = ARRAY_SIZE(qcs8300_pdc_map),
-+	.egpio_func = 11,
-+};
-+
-+static int qcs8300_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return msm_pinctrl_probe(pdev, &qcs8300_pinctrl);
-+}
-+
-+static const struct of_device_id qcs8300_pinctrl_of_match[] = {
-+	{ .compatible = "qcom,qcs8300-tlmm", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, qcs8300_pinctrl_of_match);
-+
-+static struct platform_driver qcs8300_pinctrl_driver = {
-+	.driver = {
-+		.name = "qcs8300-tlmm",
-+		.of_match_table = qcs8300_pinctrl_of_match,
-+	},
-+	.probe = qcs8300_pinctrl_probe,
-+	.remove = msm_pinctrl_remove,
-+};
-+
-+static int __init qcs8300_pinctrl_init(void)
-+{
-+	return platform_driver_register(&qcs8300_pinctrl_driver);
-+}
-+arch_initcall(qcs8300_pinctrl_init);
-+
-+static void __exit qcs8300_pinctrl_exit(void)
-+{
-+	platform_driver_unregister(&qcs8300_pinctrl_driver);
-+}
-+module_exit(qcs8300_pinctrl_exit);
-+
-+MODULE_DESCRIPTION("QTI QCS8300 pinctrl driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.25.1
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCb3VnaCBDaGVuDQo+IFNlbnQ6
+IDIwMjTlubQxMOaciDE45pelIDk6MjMNCj4gVG86IFVsZiBIYW5zc29uIDx1bGYuaGFuc3NvbkBs
+aW5hcm8ub3JnPg0KPiBDYzogYWRyaWFuLmh1bnRlckBpbnRlbC5jb207IGxpbnV4LW1tY0B2Z2Vy
+Lmtlcm5lbC5vcmc7IGlteEBsaXN0cy5saW51eC5kZXY7DQo+IHNoYXduZ3VvQGtlcm5lbC5vcmc7
+IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7IGtlcm5lbEBwZW5ndXRyb25peC5kZTsNCj4gZmVzdGV2
+YW1AZ21haWwuY29tOyBkbC1TMzIgPFMzMkBueHAuY29tPjsNCj4gbGludXgtYXJtLWtlcm5lbEBs
+aXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1Ympl
+Y3Q6IFJFOiBbUEFUQ0ggMi80XSBtbWM6IGhvc3Q6IHNkaGNpLWVzZGhjLWlteDogcmVmYWN0b3Ig
+dGhlIHN5c3RlbSBQTQ0KPiBsb2dpYw0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0t
+LQ0KPiA+IEZyb206IFVsZiBIYW5zc29uIDx1bGYuaGFuc3NvbkBsaW5hcm8ub3JnPg0KPiA+IFNl
+bnQ6IDIwMjTlubQxMOaciDE35pelIDIxOjA3DQo+ID4gVG86IEJvdWdoIENoZW4gPGhhaWJvLmNo
+ZW5AbnhwLmNvbT4NCj4gPiBDYzogYWRyaWFuLmh1bnRlckBpbnRlbC5jb207IGxpbnV4LW1tY0B2
+Z2VyLmtlcm5lbC5vcmc7DQo+ID4gaW14QGxpc3RzLmxpbnV4LmRldjsgc2hhd25ndW9Aa2VybmVs
+Lm9yZzsgcy5oYXVlckBwZW5ndXRyb25peC5kZTsNCj4gPiBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7
+IGZlc3RldmFtQGdtYWlsLmNvbTsgZGwtUzMyIDxTMzJAbnhwLmNvbT47DQo+ID4gbGludXgtYXJt
+LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
+DQo+ID4gU3ViamVjdDogUmU6IFtQQVRDSCAyLzRdIG1tYzogaG9zdDogc2RoY2ktZXNkaGMtaW14
+OiByZWZhY3RvciB0aGUNCj4gPiBzeXN0ZW0gUE0gbG9naWMNCj4gPg0KPiA+IE9uIE1vbiwgMTQg
+T2N0IDIwMjQgYXQgMDg6MDAsIDxoYWliby5jaGVuQG54cC5jb20+IHdyb3RlOg0KPiA+ID4NCj4g
+PiA+IEZyb206IEhhaWJvIENoZW4gPGhhaWJvLmNoZW5AbnhwLmNvbT4NCj4gPiA+DQo+ID4gPiBD
+dXJyZW50IHN1c3BlbmQvcmVzdW1lIGxvZ2ljIGhhcyBvbmUgaXNzdWUuIGluIHN1c3BlbmQsIHdp
+bGwgY29uZmlnDQo+ID4gPiByZWdpc3RlciB3aGVuIGNhbGwgc2RoY2lfc3VzcGVuZF9ob3N0KCks
+IGJ1dCBhdCB0aGlzIHRpbWUsIGNhbid0DQo+ID4gPiBndWFyYW50ZWUgaG9zdCBpbiBydW50aW1l
+IHJlc3VtZSBzdGF0ZS4gaWYgbm90LCB0aGUgcGVyIGNsb2NrIGlzDQo+ID4gPiBnYXRlIG9mZiwg
+YWNjZXNzIHJlZ2lzdGVyIHdpbGwgaHVuZy4NCj4gPiA+DQo+ID4gPiBOb3cgdXNlIHBtX3J1bnRp
+bWVfZm9yY2Vfc3VzcGVuZC9yZXN1bWUoKSBpbg0KPiBOT0lSUV9TWVNURU1fU0xFRVBfUE0sDQo+
+ID4gPiBhZGQgaW4gTk9JUlEgc3RhZ2UgY2FuIGNvdmVyIFNESU8gd2FrZXVwIGZlYXR1cmUsIGJl
+Y2F1c2UgaW4NCj4gPiA+IGludGVycnVwdCBoYW5kbGVyLCB0aGVyZSBpcyByZWdpc3RlciBhY2Nl
+c3MsIG5lZWQgdGhlIHBlciBjbG9jayBvbi4NCj4gPiA+DQo+ID4gPiBJbiBzZGhjaV9lc2RoY19z
+dXNwZW5kL3NkaGNpX2VzZGhjX3Jlc3VtZSwgcmVtb3ZlDQo+ID4gPiBzZGhjaV9zdXNwZW5kX2hv
+c3QoKSBhbmQgc2RoY2lfcmVzdW1lX2hvc3QoKSwgYWxsIGFyZSBoYW5kbGVkIGluDQo+ID4gPiBy
+dW50aW1lIFBNIGNhbGxiYWNrcyBleGNlcHQgdGhlIHdha2V1cCBpcnEgc2V0dGluZy4NCj4gPiA+
+DQo+ID4gPiBSZW1vdmUgcGluY3RybF9wbV9zZWxlY3RfZGVmYXVsdF9zdGF0ZSgpIGluIHNkaGNp
+X2VzZGhjX3Jlc3VtZSwNCj4gPiA+IGJlY2F1c2UNCj4gPiA+IHBtX3J1bnRpbWVfZm9yY2VfcmVz
+dW1lKCkgYWxyZWFkeSBjb25maWcgdGhlIHBpbmN0cmwgc3RhdGUgYWNjb3JkaW5nDQo+ID4gPiB0
+byBpb3MgdGltaW5nLCBhbmQgaGVyZSBjb25maWcgdGhlIGRlZmF1bHQgcGluY3RybCBzdGF0ZSBh
+Z2FpbiBpcw0KPiA+ID4gd3JvbmcgZm9yDQo+ID4gPiBTRElPMy4wIGRldmljZSBpZiBpdCBrZWVw
+IHBvd2VyIGluIHN1c3BlbmQuDQo+ID4NCj4gPiBJIGhhZCBhIGxvb2sgYXQgdGhlIGNvZGUgLSBh
+bmQgeWVzLCB0aGVyZSBhcmUgY2VydGFpbmx5IHNldmVyYWwNCj4gPiBwcm9ibGVtcyB3aXRoIFBN
+IHN1cHBvcnQgaW4gdGhpcyBkcml2ZXIuDQo+ID4NCj4gPiA+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5
+OiBIYWlibyBDaGVuIDxoYWliby5jaGVuQG54cC5jb20+DQo+ID4gPiAtLS0NCj4gPiA+ICBkcml2
+ZXJzL21tYy9ob3N0L3NkaGNpLWVzZGhjLWlteC5jIHwgMzkNCj4gPiA+ICsrKysrKysrKysrKysr
+Ky0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxOSBpbnNlcnRpb25zKCsp
+LCAyMCBkZWxldGlvbnMoLSkNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMv
+aG9zdC9zZGhjaS1lc2RoYy1pbXguYw0KPiA+ID4gYi9kcml2ZXJzL21tYy9ob3N0L3NkaGNpLWVz
+ZGhjLWlteC5jDQo+ID4gPiBpbmRleCBjNzU4MmFkNDUxMjMuLjE4ZmViZmViNjBjZiAxMDA2NDQN
+Cj4gPiA+IC0tLSBhL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktZXNkaGMtaW14LmMNCj4gPiA+ICsr
+KyBiL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktZXNkaGMtaW14LmMNCj4gPiA+IEBAIC0xODcxLDEx
+ICsxODcxLDEzIEBAIHN0YXRpYyBpbnQgc2RoY2lfZXNkaGNfc3VzcGVuZChzdHJ1Y3QgZGV2aWNl
+DQo+ID4gKmRldikNCj4gPiA+ICAgICAgICAgc3RydWN0IHBsdGZtX2lteF9kYXRhICppbXhfZGF0
+YSA9IHNkaGNpX3BsdGZtX3ByaXYocGx0Zm1faG9zdCk7DQo+ID4gPiAgICAgICAgIGludCByZXQ7
+DQo+ID4gPg0KPiA+ID4gLSAgICAgICBpZiAoaG9zdC0+bW1jLT5jYXBzMiAmIE1NQ19DQVAyX0NR
+RSkgew0KPiA+ID4gLSAgICAgICAgICAgICAgIHJldCA9IGNxaGNpX3N1c3BlbmQoaG9zdC0+bW1j
+KTsNCj4gPiA+IC0gICAgICAgICAgICAgICBpZiAocmV0KQ0KPiA+ID4gLSAgICAgICAgICAgICAg
+ICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiA+IC0gICAgICAgfQ0KPiA+ID4gKyAgICAgICAvKg0K
+PiA+ID4gKyAgICAgICAgKiBTd2l0Y2ggdG8gcnVudGltZSByZXN1bWUgZm9yIHR3byByZWFzb25z
+Og0KPiA+ID4gKyAgICAgICAgKiAxLCB0aGVyZSBpcyByZWdpc3RlciBhY2Nlc3MsIHNvIG5lZWQg
+dG8gbWFrZSBzdXJlIGdhdGUgb24gaXBnDQo+IGNsb2NrLg0KPiA+DQo+ID4gWW91IGFyZSByaWdo
+dCB0aGF0IHdlIG5lZWQgdG8gY2FsbCBwbV9ydW50aW1lX2dldF9zeW5jKCkgZm9yIHRoaXMgcmVh
+c29uLg0KPiA+DQo+ID4gSG93ZXZlciwgdGhlIHJlYWwgcXVlc3Rpb24gaXMgcmF0aGVyOyBVbmRl
+ciB3aGF0IGNpcmN1bXN0YW5jZXMgZG8gd2UNCj4gPiByZWFsbHkgbmVlZCB0byBtYWtlIGEgcmVn
+aXN0ZXIgYWNjZXNzIGJleW9uZCB0aGlzIHBvaW50Pw0KPiA+DQo+ID4gSWYgdGhlIGRldmljZSBp
+cyBhbHJlYWR5IHJ1bnRpbWUgc3VzcGVuZGVkLCBJIGFtIHN1cmUgd2UgY291bGQganVzdA0KPiA+
+IGxlYXZlIGl0IGluIHRoYXQgc3RhdGUgd2l0aG91dCBoYXZpbmcgdG8gdG91Y2ggYW55IG9mIGl0
+cyByZWdpc3RlcnMuDQo+ID4NCj4gPiBBcyBJIHVuZGVyc3RhbmQgaXQsIHRoZXJlIGFyZSBtYWlu
+bHkgdHdvIHJlYXNvbnMgd2h5IHRoZSBkZXZpY2UgbWF5IGJlDQo+ID4gcnVudGltZSByZXN1bWVk
+IGF0IHRoaXMgcG9pbnQ6DQo+ID4gKikgVGhlIHJ1bnRpbWUgUE0gdXNhZ2UgY291bnQgaGFzIGJl
+ZW4gYnVtcGVkIGluDQo+ID4gc2RoY2lfZW5hYmxlX3NkaW9faXJxKCksIHNpbmNlIHRoZSBTRElP
+IGlycXMgYXJlIGVuYWJsZWQgYW5kIGl0J3MNCj4gPiBsaWtlbHkgdGhhdCB3ZSB3aWxsIGNvbmZp
+Z3VyZSB0aGVtIGZvciBzeXN0ZW0gd2FrZXVwIHRvby4NCj4gPiAqKSBUaGUgZGV2aWNlIGhhcyBi
+ZWVuIHVzZWQsIGJ1dCBub3RoaW5nIHJlYWxseSBwcmV2ZW50cyBpdCBmcm9tIGJlaW5nDQo+ID4g
+cHV0IGludG8gYSBsb3cgcG93ZXIgc3RhdGUgdmlhIHRoZSAtPnJ1bnRpbWVfc3VzcGVuZCgpIGNh
+bGxiYWNrLg0KPiA+DQo+ID4gPiArICAgICAgICAqIDIsIG1ha2Ugc3VyZSB0aGUgcG1fcnVudGlt
+ZV9mb3JjZV9zdXNwZW5kKCkgaW4gTk9JUlENCj4gPiA+ICsgc3RhZ2UNCj4gPiByZWFsbHkNCj4g
+PiA+ICsgICAgICAgICogICAgaW52b2tlIGl0cyAtPnJ1bnRpbWVfc3VzcGVuZCBjYWxsYmFjay4N
+Cj4gPiA+ICsgICAgICAgICovDQo+ID4NCj4gPiBSYXRoZXIgdGhhbiB1c2luZyB0aGUgKm5vaXJx
+LWNhbGxiYWNrcywgd2Ugc2hvdWxkIGJlIGFibGUgdG8gY2FsbA0KPiA+IHBtX3J1bnRpbWVfZm9y
+Y2Vfc3VzcGVuZCgpIGZyb20gc2RoY2lfZXNkaGNfc3VzcGVuZCgpLiBBbmQgdmljZSB2ZXJzYQ0K
+PiA+IGZvciBzZGhjaV9lc2RoY19yZXN1bWUoKS4NCj4gPg0KPiA+IEFsdGhvdWdoLCBhY2NvcmRp
+bmcgdG8gbXkgZWFybGllciBjb21tZW50IGFib3ZlLCB3ZSBhbHNvIG5lZWQgdG8gdGFrZQ0KPiA+
+IGludG8gYWNjb3VudCB0aGUgU0RJTyBpcnEuIElmIGl0J3MgYmVpbmcgZW5hYmxlZCBmb3Igc3lz
+dGVtIHdha2V1cCwgd2UNCj4gPiBtdXN0IG5vdCBwdXQgdGhlIGNvbnRyb2xsZXIgaW50byBsb3cg
+cG93ZXIgbW9kZSBieSBjYWxsaW5nDQo+ID4gcG1fcnVudGltZV9mb3JjZV9zdXNwZW5kKCksIG90
+aGVyd2lzZSB3ZSB3aWxsIG5vdCBiZSBhYmxlIHRvIGRlbGl2ZXIgdGhlDQo+IHdha2V1cCwgcmln
+aHQ/DQo+IA0KPiBUaGFua3MgZm9yIHlvdXIgY2FyZWZ1bCByZXZpZXchDQo+IFllcywgSSBhZ3Jl
+ZS4NCg0KSGkgVWxmLA0KDQpTb3JyeSwgSSBtYXliZSBnaXZlIHRoZSB3cm9uZyBhbnN3ZXIuDQoN
+CkkgZG91YmxlIGNoZWNrIHRoZSBJUCwgdXNkaGMgY2FuIHN1cHBvcnQgc2RpbyBpcnEgd2FrZXVw
+IGV2ZW4gd2hlbiB1c2RoYyBjbG9jayBnYXRlIG9mZi4NClNvIHRvIHNhdmUgcG93ZXIsIG5lZWQg
+dG8gY2FsbCBwbV9ydW50aW1lX2ZvcmNlX3N1c3BlbmQoKSB0byBnYXRlIG9mZiB0aGUgY2xvY2sg
+d2hlbiBlbmFibGUgc2RpbyBpcnEgZm9yIHN5c3RlbSB3YWtldXAuDQpUaGlzIGlzIHRoZSBtYWlu
+IHJlYXNvbiBJIGludm9sdmUgcG1fcnVudGltZV9mb3JjZV9zdXNwZW5kIGluIG5vaXJxIHN0YWdl
+LCBiZWNhdXNlIGluIHNkaGNpX2lycSwgdGhlcmUgaXMgcmVnaXN0ZXIgYWNjZXNzLCBuZWVkIGdh
+dGUgb24gY2xvY2suDQoNCkJlc3QgUmVnYXJkcw0KSGFpYm8gQ2hlbiANCg0KDQo+IA0KPiA+DQo+
+ID4gPiArICAgICAgIHBtX3J1bnRpbWVfZ2V0X3N5bmMoZGV2KTsNCj4gPiA+DQo+ID4gPiAgICAg
+ICAgIGlmICgoaW14X2RhdGEtPnNvY2RhdGEtPmZsYWdzICYNCj4gPiBFU0RIQ19GTEFHX1NUQVRF
+X0xPU1RfSU5fTFBNT0RFKSAmJg0KPiA+ID4gICAgICAgICAgICAgICAgIChob3N0LT50dW5pbmdf
+bW9kZSAhPSBTREhDSV9UVU5JTkdfTU9ERV8xKSkNCj4geyBAQA0KPiA+ID4gLTE4ODMsMTIgKzE4
+ODUsMTEgQEAgc3RhdGljIGludCBzZGhjaV9lc2RoY19zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRl
+dikNCj4gPiA+ICAgICAgICAgICAgICAgICBtbWNfcmV0dW5lX25lZWRlZChob3N0LT5tbWMpOw0K
+PiA+ID4gICAgICAgICB9DQo+ID4gPg0KPiA+ID4gLSAgICAgICBpZiAoaG9zdC0+dHVuaW5nX21v
+ZGUgIT0gU0RIQ0lfVFVOSU5HX01PREVfMykNCj4gPiA+IC0gICAgICAgICAgICAgICBtbWNfcmV0
+dW5lX25lZWRlZChob3N0LT5tbWMpOw0KPiA+ID4gLQ0KPiA+ID4gLSAgICAgICByZXQgPSBzZGhj
+aV9zdXNwZW5kX2hvc3QoaG9zdCk7DQo+ID4gPiAtICAgICAgIGlmIChyZXQpDQo+ID4gPiAtICAg
+ICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiA+ICsgICAgICAgaWYgKGRldmljZV9tYXlfd2Fr
+ZXVwKGRldikpIHsNCj4gPiA+ICsgICAgICAgICAgICAgICByZXQgPSBzZGhjaV9lbmFibGVfaXJx
+X3dha2V1cHMoaG9zdCk7DQo+ID4gPiArICAgICAgICAgICAgICAgaWYgKCFyZXQpDQo+ID4gPiAr
+ICAgICAgICAgICAgICAgICAgICAgICBkZXZfd2FybihkZXYsICJGYWlsZWQgdG8gZW5hYmxlIGly
+cQ0KPiB3YWtldXBcbiIpOw0KPiA+ID4gKyAgICAgICB9DQo+ID4gPg0KPiA+ID4gICAgICAgICBy
+ZXQgPSBwaW5jdHJsX3BtX3NlbGVjdF9zbGVlcF9zdGF0ZShkZXYpOw0KPiA+ID4gICAgICAgICBp
+ZiAocmV0KQ0KPiA+ID4gQEAgLTE5MDQsMjIgKzE5MDUsMTggQEAgc3RhdGljIGludCBzZGhjaV9l
+c2RoY19yZXN1bWUoc3RydWN0IGRldmljZQ0KPiA+ICpkZXYpDQo+ID4gPiAgICAgICAgIHN0cnVj
+dCBzZGhjaV9ob3N0ICpob3N0ID0gZGV2X2dldF9kcnZkYXRhKGRldik7DQo+ID4gPiAgICAgICAg
+IGludCByZXQ7DQo+ID4gPg0KPiA+ID4gLSAgICAgICByZXQgPSBwaW5jdHJsX3BtX3NlbGVjdF9k
+ZWZhdWx0X3N0YXRlKGRldik7DQo+ID4gPiArICAgICAgIHJldCA9IG1tY19ncGlvX3NldF9jZF93
+YWtlKGhvc3QtPm1tYywgZmFsc2UpOw0KPiA+ID4gICAgICAgICBpZiAocmV0KQ0KPiA+ID4gICAg
+ICAgICAgICAgICAgIHJldHVybiByZXQ7DQo+ID4gPg0KPiA+ID4gICAgICAgICAvKiByZS1pbml0
+aWFsaXplIGh3IHN0YXRlIGluIGNhc2UgaXQncyBsb3N0IGluIGxvdyBwb3dlciBtb2RlICovDQo+
+ID4gPiAgICAgICAgIHNkaGNpX2VzZGhjX2lteF9od2luaXQoaG9zdCk7DQo+ID4NCj4gPiBUaGlz
+IGxvb2tzIGxpa2UgYW5vdGhlciBzcGVjaWFsIHVzZS1jYXNlLiBJZiBJIHVuZGVyc3RhbmQgY29y
+cmVjdGx5LA0KPiA+IG9uIHNvbWUgcGxhdGZvcm1zIHNvbWUgYWRkaXRpb25hbCByZS1pbml0aWFs
+aXphdGlvbiBvZiB0aGUgY29udHJvbGxlcg0KPiA+IG1heSBiZSBuZWVkZWQgYXQgc3lzdGVtIHJl
+c3VtZS4NCj4gPg0KPiA+IElmIHlvdSB3YW50IHRvIG1vdmUgdG93YXJkcyB1c2luZyBwbV9ydW50
+aW1lX2ZvcmNlX3N1c3BlbmR8cmVzdW1lKCksIEkNCj4gPiBzdWdnZXN0IG1vdmluZyB0aGUgYWJv
+dmUgY2FsbCBpbnRvIHRoZSAtPnJ1bnRpbWVfcmVzdW1lKCkgY2FsbGJhY2suIFRvDQo+ID4gYWxs
+b3cgdGhlIC0+cnVudGltZV9yZXN1bWUoKSBjYWxsYmFjayB0byBrbm93IHdoZW4gdGhpcw0KPiA+
+IHJlLWluaXRpYWxpemF0aW9uIGlzIG5lZWRlZCwgd2UgY2FuIHVzZSBhIGZsYWcgdGhhdCB3ZSBz
+ZXQgaGVyZSBhbmQNCj4gPiBjbGVhciBpbiB0aGUgLT5ydW50aW1lX3Jlc3VtZSgpIGNhbGxiYWNr
+Lg0KPiANCj4gWWVzLCBJIGNhbiBkbyBsaWtlIHRoYXQuIFNlZW1zIEkgY2FuIHJlbW92ZSB0aGUg
+Tk9JUlEgaW4gdjIuDQo+IA0KPiBUaGFua3MgZm9yIHlvdXIgc3VnZ2VzdGlvbg0KPiANCj4gUmVn
+YXJkcw0KPiBIYWlibyBDaGVuDQo+IA0KPiANCj4gPg0KPiA+ID4NCj4gPiA+IC0gICAgICAgcmV0
+ID0gc2RoY2lfcmVzdW1lX2hvc3QoaG9zdCk7DQo+ID4gPiAtICAgICAgIGlmIChyZXQpDQo+ID4g
+PiAtICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiA+IC0NCj4gPiA+IC0gICAgICAgaWYg
+KGhvc3QtPm1tYy0+Y2FwczIgJiBNTUNfQ0FQMl9DUUUpDQo+ID4gPiAtICAgICAgICAgICAgICAg
+cmV0ID0gY3FoY2lfcmVzdW1lKGhvc3QtPm1tYyk7DQo+ID4gPiArICAgICAgIGlmIChob3N0LT5p
+cnFfd2FrZV9lbmFibGVkKQ0KPiA+ID4gKyAgICAgICAgICAgICAgIHNkaGNpX2Rpc2FibGVfaXJx
+X3dha2V1cHMoaG9zdCk7DQo+ID4gPg0KPiA+ID4gLSAgICAgICBpZiAoIXJldCkNCj4gPiA+IC0g
+ICAgICAgICAgICAgICByZXQgPSBtbWNfZ3Bpb19zZXRfY2Rfd2FrZShob3N0LT5tbWMsIGZhbHNl
+KTsNCj4gPiA+ICsgICAgICAgcG1fcnVudGltZV9tYXJrX2xhc3RfYnVzeShkZXYpOw0KPiA+ID4g
+KyAgICAgICBwbV9ydW50aW1lX3B1dF9hdXRvc3VzcGVuZChkZXYpOw0KPiA+ID4NCj4gPiA+ICAg
+ICAgICAgcmV0dXJuIHJldDsNCj4gPiA+ICB9DQo+ID4gPiBAQCAtMjAxMSw2ICsyMDA4LDggQEAg
+c3RhdGljIGNvbnN0IHN0cnVjdCBkZXZfcG1fb3BzDQo+ID4gPiBzZGhjaV9lc2RoY19wbW9wcw0K
+PiA+ID0gew0KPiA+ID4gICAgICAgICBTRVRfU1lTVEVNX1NMRUVQX1BNX09QUyhzZGhjaV9lc2Ro
+Y19zdXNwZW5kLA0KPiA+IHNkaGNpX2VzZGhjX3Jlc3VtZSkNCj4gPiA+ICAgICAgICAgU0VUX1JV
+TlRJTUVfUE1fT1BTKHNkaGNpX2VzZGhjX3J1bnRpbWVfc3VzcGVuZCwNCj4gPiA+ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgc2RoY2lfZXNkaGNfcnVudGltZV9yZXN1bWUsDQo+IE5V
+TEwpDQo+ID4gPiArDQo+IFNFVF9OT0lSUV9TWVNURU1fU0xFRVBfUE1fT1BTKHBtX3J1bnRpbWVf
+Zm9yY2Vfc3VzcGVuZCwNCj4gPiA+ICsNCj4gcG1fcnVudGltZV9mb3JjZV9yZXN1bWUpDQo+ID4g
+PiAgfTsNCj4gPiA+DQo+ID4gPiAgc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgc2RoY2lf
+ZXNkaGNfaW14X2RyaXZlciA9IHsNCj4gPiA+IC0tDQo+ID4gPiAyLjM0LjENCj4gPiA+DQo+ID4N
+Cj4gPiBLaW5kIHJlZ2FyZHMNCj4gPiBVZmZlDQo=
 
