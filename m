@@ -1,590 +1,325 @@
-Return-Path: <linux-kernel+bounces-371484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3310B9A3BB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65FAB9A3BBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60F71F252A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:37:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D38691F219FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FA420111F;
-	Fri, 18 Oct 2024 10:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C4D201253;
+	Fri, 18 Oct 2024 10:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PZ/IMDtE"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5qDllu0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zDevfyyu";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5qDllu0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zDevfyyu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046EB2010F7;
-	Fri, 18 Oct 2024 10:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBBF20100F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729247829; cv=none; b=Scc6RxkGHbGrcFTQTnbFg4mxYJk2ormureG9Jbezs5/u8GuPkE2ZsaTmuEtsHYKpK10i9cscT8TaOUQVZ7nSqS4qbBShRvozmUNJN81g3P+Jciz4YpxoWVRE5edo/jDKWTLUzVEPAfW5DKRZch0wAuvnRn9cLje6QwBxRN69qmQ=
+	t=1729247950; cv=none; b=t9t5XY+CItyY7No3X2kul5QRky3fYYZznJ9K7oD+wGvW/zDs69QvzW8HiQlByQ2ZfAbQmNF/NUP8EK6x4nfiUR4ra7NLjQvp92qB0FEFmYnjL/hK5ufd7xGXd4IepLViF4fOt/05cSTJfgVNubTZdCnwCwnTcRWEi+lMPWY/m5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729247829; c=relaxed/simple;
-	bh=2lL3a4ukv7hE+Tm21Go/buadzbDAVtkTQ8E6SLrrIC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=dWu+TyUERxncp1HH0TSrutb21o7Sd7FOhxi4I9F1ReoA07sjkeKqRONej+oK1yowQ/6hoeAXWcI4u5Mpw/y8V8AVixKAO2wV61l42am6urYatrmw92rXwcJ7MG3AMMout9ZUke2UcE1LHdh00wE3CrE57N41Rrexo0lDuB6LiFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PZ/IMDtE; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I9Z15s017591;
-	Fri, 18 Oct 2024 10:37:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=tvs5nrteYX9b0NR7QwB2irmwBPXl
-	eLoG10Fg7mWdBq0=; b=PZ/IMDtE69UYElzFxYovLbdiGEscl1/zM5fXIMLqWVrE
-	Gji5U0bFr4d6U6ii0al52+8955Je0tSp7NsdD0+vvlNkFhBW9kRSqq4/Dk2uoJru
-	mI74Xr5B6ZmJXfmjJgi7wdjaEmULorwHNIc0fKEInwKCw8ujjF3EZdcQv0koPy9w
-	0jL8y4Oz+Rqgwt+CSFkPzSfZ/POuqFckanSbgSExEWUKPYdE1jTilDcL3x5wyCVh
-	lBytgOyniWrM921J002HFME0K8RcwIK7RmIiTGLfqh5seykGlrBFauFOXRBTYu9i
-	HosL0+2L5BxCAsxgSXjJprNaStQzPB7CD0dnX+Y14A==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ar0u82x7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 10:37:05 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49I92G6B007025;
-	Fri, 18 Oct 2024 10:37:04 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xkktjw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 10:37:04 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49IAb0Xu34669128
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Oct 2024 10:37:00 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6A83E2004F;
-	Fri, 18 Oct 2024 10:37:00 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 147982004B;
-	Fri, 18 Oct 2024 10:37:00 +0000 (GMT)
-Received: from osiris (unknown [9.171.52.217])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 18 Oct 2024 10:37:00 +0000 (GMT)
-Date: Fri, 18 Oct 2024 12:36:58 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] s390 fixes for 6.12-rc4
-Message-ID: <20241018103658.17670-D-hca@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: bcuURlwRleF_QE16zHDRU8DdLGOHxjeI
-X-Proofpoint-ORIG-GUID: bcuURlwRleF_QE16zHDRU8DdLGOHxjeI
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729247950; c=relaxed/simple;
+	bh=kWWf5+ZNA5XTWzEJTraCxvhJ+fX/GNmYbTVv0uklt2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kiye6/tyoL+6CZb8+0Ln6lFb2NC1vYCuLiiGipv5OxqUJa5DsFCEPTlAzkNAFA8QJQqoBQkiiA37jNf0aq30fA2GJbcG90mKwzko79oxtSaHOrG1+uKmLDXh+Fm9iikazEd9EAVuDn4OUiSxqABVVLyzDJcg9dQCknYYPhVKh7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5qDllu0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zDevfyyu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5qDllu0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zDevfyyu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A54B621BF8;
+	Fri, 18 Oct 2024 10:39:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729247945; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ozwXIWkpXcg50b896+nuP1zivKP4tXFYrjzfWgZ5oeE=;
+	b=Q5qDllu0wWbvrnk13a+0DxO9nRSCvlTS+I/166417GHZCsrG06TpTWcf9o6pceo/ckniZQ
+	cUJMV2gUuLic5jP0UrAd1laxEtjiGONV3ZNnC+YkwFZQ5nGc3bdGS0kvzLSoBO87D/oHfL
+	0pK6S92wb9QRwWvJDGwe5ALEgGtPwnw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729247945;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ozwXIWkpXcg50b896+nuP1zivKP4tXFYrjzfWgZ5oeE=;
+	b=zDevfyyuv6uRHDnBLs2yWJievdUaQ4PDhRtGPkbuBbLrg1O2O9gpGfdhO9ZmSQLP50Gxpx
+	VFHAPw9+/lcXOvCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729247945; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ozwXIWkpXcg50b896+nuP1zivKP4tXFYrjzfWgZ5oeE=;
+	b=Q5qDllu0wWbvrnk13a+0DxO9nRSCvlTS+I/166417GHZCsrG06TpTWcf9o6pceo/ckniZQ
+	cUJMV2gUuLic5jP0UrAd1laxEtjiGONV3ZNnC+YkwFZQ5nGc3bdGS0kvzLSoBO87D/oHfL
+	0pK6S92wb9QRwWvJDGwe5ALEgGtPwnw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729247945;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ozwXIWkpXcg50b896+nuP1zivKP4tXFYrjzfWgZ5oeE=;
+	b=zDevfyyuv6uRHDnBLs2yWJievdUaQ4PDhRtGPkbuBbLrg1O2O9gpGfdhO9ZmSQLP50Gxpx
+	VFHAPw9+/lcXOvCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8CEED13433;
+	Fri, 18 Oct 2024 10:39:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cO7+Ick6EmfHcAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 18 Oct 2024 10:39:05 +0000
+Message-ID: <1b9a603d-fcc1-416f-bc90-c53af07d46d7@suse.cz>
+Date: Fri, 18 Oct 2024 12:39:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- spamscore=0 bulkscore=0 adultscore=0 mlxlogscore=999 phishscore=0
- suspectscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180067
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] mm/slub: Avoid list corruption when removing a slab
+ from the full list
+Content-Language: en-US
+To: "yuan.gao" <yuan.gao@ucloud.cn>, cl@linux.com, penberg@kernel.org,
+ rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+ roman.gushchin@linux.dev, 42.hyeyoo@gmail.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20241018064435.7695-1-yuan.gao@ucloud.cn>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20241018064435.7695-1-yuan.gao@ucloud.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FREEMAIL_TO(0.00)[ucloud.cn,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-Hi Linus,
+On 10/18/24 08:44, yuan.gao wrote:
+> Boot with slub_debug=UFPZ.
+> 
+> If allocated object failed in alloc_consistency_checks, all objects of
+> the slab will be marked as used, and then the slab will be removed from
+> the partial list.
+> 
+> When an object belonging to the slab got freed later, the remove_full()
+> function is called. Because the slab is neither on the partial list nor
+> on the full list, it eventually lead to a list corruption (actually a
+> list poison being detected).
+> 
+> So we need to mark and isolate the slab page with metadata corruption,
+> do not put it back in circulation.
+> 
+> Because the debug caches avoid all the fastpaths, reusing the frozen bit
+> to mark slab page with metadata corruption seems to be fine.
+> 
+> [ 4277.385669] list_del corruption, ffffea00044b3e50->next is LIST_POISON1 (dead000000000100)
+> [ 4277.387023] ------------[ cut here ]------------
+> [ 4277.387880] kernel BUG at lib/list_debug.c:56!
+> [ 4277.388680] invalid opcode: 0000 [#1] PREEMPT SMP PTI
+> [ 4277.389562] CPU: 5 PID: 90 Comm: kworker/5:1 Kdump: loaded Tainted: G           OE      6.6.1-1 #1
+> [ 4277.392113] Workqueue: xfs-inodegc/vda1 xfs_inodegc_worker [xfs]
+> [ 4277.393551] RIP: 0010:__list_del_entry_valid_or_report+0x7b/0xc0
+> [ 4277.394518] Code: 48 91 82 e8 37 f9 9a ff 0f 0b 48 89 fe 48 c7 c7 28 49 91 82 e8 26 f9 9a ff 0f 0b 48 89 fe 48 c7 c7 58 49 91
+> [ 4277.397292] RSP: 0018:ffffc90000333b38 EFLAGS: 00010082
+> [ 4277.398202] RAX: 000000000000004e RBX: ffffea00044b3e50 RCX: 0000000000000000
+> [ 4277.399340] RDX: 0000000000000002 RSI: ffffffff828f8715 RDI: 00000000ffffffff
+> [ 4277.400545] RBP: ffffea00044b3e40 R08: 0000000000000000 R09: ffffc900003339f0
+> [ 4277.401710] R10: 0000000000000003 R11: ffffffff82d44088 R12: ffff888112cf9910
+> [ 4277.402887] R13: 0000000000000001 R14: 0000000000000001 R15: ffff8881000424c0
+> [ 4277.404049] FS:  0000000000000000(0000) GS:ffff88842fd40000(0000) knlGS:0000000000000000
+> [ 4277.405357] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 4277.406389] CR2: 00007f2ad0b24000 CR3: 0000000102a3a006 CR4: 00000000007706e0
+> [ 4277.407589] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [ 4277.408780] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [ 4277.410000] PKRU: 55555554
+> [ 4277.410645] Call Trace:
+> [ 4277.411234]  <TASK>
+> [ 4277.411777]  ? die+0x32/0x80
+> [ 4277.412439]  ? do_trap+0xd6/0x100
+> [ 4277.413150]  ? __list_del_entry_valid_or_report+0x7b/0xc0
+> [ 4277.414158]  ? do_error_trap+0x6a/0x90
+> [ 4277.414948]  ? __list_del_entry_valid_or_report+0x7b/0xc0
+> [ 4277.415915]  ? exc_invalid_op+0x4c/0x60
+> [ 4277.416710]  ? __list_del_entry_valid_or_report+0x7b/0xc0
+> [ 4277.417675]  ? asm_exc_invalid_op+0x16/0x20
+> [ 4277.418482]  ? __list_del_entry_valid_or_report+0x7b/0xc0
+> [ 4277.419466]  ? __list_del_entry_valid_or_report+0x7b/0xc0
+> [ 4277.420410]  free_to_partial_list+0x515/0x5e0
+> [ 4277.421242]  ? xfs_iext_remove+0x41a/0xa10 [xfs]
+> [ 4277.422298]  xfs_iext_remove+0x41a/0xa10 [xfs]
+> [ 4277.423316]  ? xfs_inodegc_worker+0xb4/0x1a0 [xfs]
+> [ 4277.424383]  xfs_bmap_del_extent_delay+0x4fe/0x7d0 [xfs]
+> [ 4277.425490]  __xfs_bunmapi+0x50d/0x840 [xfs]
+> [ 4277.426445]  xfs_itruncate_extents_flags+0x13a/0x490 [xfs]
+> [ 4277.427553]  xfs_inactive_truncate+0xa3/0x120 [xfs]
+> [ 4277.428567]  xfs_inactive+0x22d/0x290 [xfs]
+> [ 4277.429500]  xfs_inodegc_worker+0xb4/0x1a0 [xfs]
+> [ 4277.430479]  process_one_work+0x171/0x340
+> [ 4277.431227]  worker_thread+0x277/0x390
+> [ 4277.431962]  ? __pfx_worker_thread+0x10/0x10
+> [ 4277.432752]  kthread+0xf0/0x120
+> [ 4277.433382]  ? __pfx_kthread+0x10/0x10
+> [ 4277.434134]  ret_from_fork+0x2d/0x50
+> [ 4277.434837]  ? __pfx_kthread+0x10/0x10
+> [ 4277.435566]  ret_from_fork_asm+0x1b/0x30
+> [ 4277.436280]  </TASK>
+> 
+> v4:
+>  - Rephrase wording.
+>  - Remove a useless add_full().
+> 
+> v3:
+>  - Reuse slab->fronzen bit as a corrupted marker.
+>  - https://lore.kernel.org/all/20241011102020.58087-1-yuan.gao@ucloud.cn/
+> 
+> v2:
+>  - Call remove_partial() and add_full() only for slab folios.
+>  - https://lore.kernel.org/linux-mm/20241007091850.16959-1-yuan.gao@ucloud.cn/
+> 
+> v1:
+>  - https://lore.kernel.org/linux-mm/20241006044755.79634-1-yuan.gao@ucloud.cn/
+> 
+> Signed-off-by: yuan.gao <yuan.gao@ucloud.cn>
+> Fixes: 643b113849d8 ("slub: enable tracking of full slabs")
+> Suggested-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
 
-please pull s390 fixes for 6.12-rc4.
+Applied, thanks!
 
-Thanks,
-Heiko
+> ---
+>  mm/slab.h | 5 +++++
+>  mm/slub.c | 9 ++++++++-
+>  2 files changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/slab.h b/mm/slab.h
+> index 6c6fe6d630ce..8d7caf50ef96 100644
+> --- a/mm/slab.h
+> +++ b/mm/slab.h
+> @@ -73,6 +73,11 @@ struct slab {
+>  						struct {
+>  							unsigned inuse:16;
+>  							unsigned objects:15;
+> +							/*
+> +							 * If slab debugging is enabled then the
+> +							 *	frozen bit can be reused to indicate
+> +							 *	that the slab was corrupted
+> +							 */
+>  							unsigned frozen:1;
+>  						};
+>  					};
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 5b832512044e..15ba89fef89a 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -1423,6 +1423,11 @@ static int check_slab(struct kmem_cache *s, struct slab *slab)
+>  			slab->inuse, slab->objects);
+>  		return 0;
+>  	}
+> +	if (slab->frozen) {
+> +		slab_err(s, slab, "Slab disabled since SLUB metadata consistency check failed");
+> +		return 0;
+> +	}
+> +
+>  	/* Slab_pad_check fixes things up after itself */
+>  	slab_pad_check(s, slab);
+>  	return 1;
+> @@ -1603,6 +1608,7 @@ static noinline bool alloc_debug_processing(struct kmem_cache *s,
+>  		slab_fix(s, "Marking all objects used");
+>  		slab->inuse = slab->objects;
+>  		slab->freelist = NULL;
+> +		slab->frozen = 1; /* mark consistency-failed slab as frozen */
+>  	}
+>  	return false;
+>  }
+> @@ -2744,7 +2750,8 @@ static void *alloc_single_from_partial(struct kmem_cache *s,
+>  	slab->inuse++;
+>  
+>  	if (!alloc_debug_processing(s, slab, object, orig_size)) {
+> -		remove_partial(n, slab);
+> +		if (folio_test_slab(slab_folio(slab)))
+> +			remove_partial(n, slab);
+>  		return NULL;
+>  	}
+>  
 
-The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
-
-  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.12-3
-
-for you to fetch changes up to b4fa00fd428bf7648d4ac5d0c8b61882902ec516:
-
-  s390: Update defconfigs (2024-10-16 11:32:32 +0200)
-
-----------------------------------------------------------------
-s390 fixes for 6.12-rc4
-
-- Fix PCI error recovery by handling error events correctly
-
-- Fix CCA crypto card behavior within protected execution environment
-
-- Two KVM commits which fix virtual vs physical address handling bugs
-  in KVM pfault handling
-
-- Fix return code handling in pckmo_key2protkey()
-
-- Deactivate sclp console as late as possible so that outstanding
-  messages appear on the console instead of being dropped on reboot
-
-- Convert newlines to CRLF instead of LFCR for the sclp vt220 driver,
-  as required by the vt220 specification
-
-- Initialize also psw mask in perf_arch_fetch_caller_regs() to make
-  sure that user_mode(regs) will return false
-
-- Update defconfigs
-
-----------------------------------------------------------------
-Harald Freudenberger (1):
-      s390/ap: Fix CCA crypto card behavior within protected execution environment
-
-Heiko Carstens (2):
-      s390: Initialize psw mask in perf_arch_fetch_caller_regs()
-      s390: Update defconfigs
-
-Holger Dengler (1):
-      s390/pkey_pckmo: Return with success for valid protected key types
-
-Michael Mueller (1):
-      KVM: s390: Change virtual to physical address access in diag 0x258 handler
-
-Nico Boehr (1):
-      KVM: s390: gaccess: Check if guest address is in memslot
-
-Niklas Schnelle (1):
-      s390/pci: Handle PCI error codes other than 0x3a
-
-Thomas Wei?schuh (2):
-      s390/sclp: Deactivate sclp after all its users
-      s390/sclp_vt220: Convert newlines to CRLF instead of LFCR
-
- arch/s390/configs/debug_defconfig    | 13 +++++++++++--
- arch/s390/configs/defconfig          | 14 ++++++++++++--
- arch/s390/configs/zfcpdump_defconfig |  1 +
- arch/s390/include/asm/perf_event.h   |  1 +
- arch/s390/kvm/diag.c                 |  2 +-
- arch/s390/kvm/gaccess.c              |  4 ++++
- arch/s390/kvm/gaccess.h              | 14 ++++++++------
- arch/s390/pci/pci_event.c            | 17 +++++++++--------
- drivers/s390/char/sclp.c             |  3 ++-
- drivers/s390/char/sclp_vt220.c       |  4 ++--
- drivers/s390/crypto/ap_bus.c         |  3 +--
- drivers/s390/crypto/ap_bus.h         |  2 +-
- drivers/s390/crypto/ap_queue.c       | 28 ++++++++++++++++++++--------
- drivers/s390/crypto/pkey_pckmo.c     |  1 +
- 14 files changed, 74 insertions(+), 33 deletions(-)
-
-diff --git a/arch/s390/configs/debug_defconfig b/arch/s390/configs/debug_defconfig
-index 9b57add02cd5..fb0e9a1d9be2 100644
---- a/arch/s390/configs/debug_defconfig
-+++ b/arch/s390/configs/debug_defconfig
-@@ -50,7 +50,6 @@ CONFIG_NUMA=y
- CONFIG_HZ_100=y
- CONFIG_CERT_STORE=y
- CONFIG_EXPOLINE=y
--# CONFIG_EXPOLINE_EXTERN is not set
- CONFIG_EXPOLINE_AUTO=y
- CONFIG_CHSC_SCH=y
- CONFIG_VFIO_CCW=m
-@@ -95,6 +94,7 @@ CONFIG_BINFMT_MISC=m
- CONFIG_ZSWAP=y
- CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD=y
- CONFIG_ZSMALLOC_STAT=y
-+CONFIG_SLAB_BUCKETS=y
- CONFIG_SLUB_STATS=y
- # CONFIG_COMPAT_BRK is not set
- CONFIG_MEMORY_HOTPLUG=y
-@@ -426,6 +426,13 @@ CONFIG_DEVTMPFS_SAFE=y
- # CONFIG_FW_LOADER is not set
- CONFIG_CONNECTOR=y
- CONFIG_ZRAM=y
-+CONFIG_ZRAM_BACKEND_LZ4=y
-+CONFIG_ZRAM_BACKEND_LZ4HC=y
-+CONFIG_ZRAM_BACKEND_ZSTD=y
-+CONFIG_ZRAM_BACKEND_DEFLATE=y
-+CONFIG_ZRAM_BACKEND_842=y
-+CONFIG_ZRAM_BACKEND_LZO=y
-+CONFIG_ZRAM_DEF_COMP_DEFLATE=y
- CONFIG_BLK_DEV_LOOP=m
- CONFIG_BLK_DEV_DRBD=m
- CONFIG_BLK_DEV_NBD=m
-@@ -486,6 +493,7 @@ CONFIG_DM_UEVENT=y
- CONFIG_DM_FLAKEY=m
- CONFIG_DM_VERITY=m
- CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=y
-+CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_PLATFORM_KEYRING=y
- CONFIG_DM_SWITCH=m
- CONFIG_DM_INTEGRITY=m
- CONFIG_DM_VDO=m
-@@ -535,6 +543,7 @@ CONFIG_NLMON=m
- CONFIG_MLX4_EN=m
- CONFIG_MLX5_CORE=m
- CONFIG_MLX5_CORE_EN=y
-+# CONFIG_NET_VENDOR_META is not set
- # CONFIG_NET_VENDOR_MICREL is not set
- # CONFIG_NET_VENDOR_MICROCHIP is not set
- # CONFIG_NET_VENDOR_MICROSEMI is not set
-@@ -695,6 +704,7 @@ CONFIG_NFSD=m
- CONFIG_NFSD_V3_ACL=y
- CONFIG_NFSD_V4=y
- CONFIG_NFSD_V4_SECURITY_LABEL=y
-+# CONFIG_NFSD_LEGACY_CLIENT_TRACKING is not set
- CONFIG_CIFS=m
- CONFIG_CIFS_UPCALL=y
- CONFIG_CIFS_XATTR=y
-@@ -740,7 +750,6 @@ CONFIG_CRYPTO_DH=m
- CONFIG_CRYPTO_ECDH=m
- CONFIG_CRYPTO_ECDSA=m
- CONFIG_CRYPTO_ECRDSA=m
--CONFIG_CRYPTO_SM2=m
- CONFIG_CRYPTO_CURVE25519=m
- CONFIG_CRYPTO_AES_TI=m
- CONFIG_CRYPTO_ANUBIS=m
-diff --git a/arch/s390/configs/defconfig b/arch/s390/configs/defconfig
-index df4addd1834a..88be0a734b60 100644
---- a/arch/s390/configs/defconfig
-+++ b/arch/s390/configs/defconfig
-@@ -48,7 +48,6 @@ CONFIG_NUMA=y
- CONFIG_HZ_100=y
- CONFIG_CERT_STORE=y
- CONFIG_EXPOLINE=y
--# CONFIG_EXPOLINE_EXTERN is not set
- CONFIG_EXPOLINE_AUTO=y
- CONFIG_CHSC_SCH=y
- CONFIG_VFIO_CCW=m
-@@ -89,6 +88,7 @@ CONFIG_BINFMT_MISC=m
- CONFIG_ZSWAP=y
- CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD=y
- CONFIG_ZSMALLOC_STAT=y
-+CONFIG_SLAB_BUCKETS=y
- # CONFIG_COMPAT_BRK is not set
- CONFIG_MEMORY_HOTPLUG=y
- CONFIG_MEMORY_HOTREMOVE=y
-@@ -416,6 +416,13 @@ CONFIG_DEVTMPFS_SAFE=y
- # CONFIG_FW_LOADER is not set
- CONFIG_CONNECTOR=y
- CONFIG_ZRAM=y
-+CONFIG_ZRAM_BACKEND_LZ4=y
-+CONFIG_ZRAM_BACKEND_LZ4HC=y
-+CONFIG_ZRAM_BACKEND_ZSTD=y
-+CONFIG_ZRAM_BACKEND_DEFLATE=y
-+CONFIG_ZRAM_BACKEND_842=y
-+CONFIG_ZRAM_BACKEND_LZO=y
-+CONFIG_ZRAM_DEF_COMP_DEFLATE=y
- CONFIG_BLK_DEV_LOOP=m
- CONFIG_BLK_DEV_DRBD=m
- CONFIG_BLK_DEV_NBD=m
-@@ -476,6 +483,7 @@ CONFIG_DM_UEVENT=y
- CONFIG_DM_FLAKEY=m
- CONFIG_DM_VERITY=m
- CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=y
-+CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_PLATFORM_KEYRING=y
- CONFIG_DM_SWITCH=m
- CONFIG_DM_INTEGRITY=m
- CONFIG_DM_VDO=m
-@@ -525,6 +533,7 @@ CONFIG_NLMON=m
- CONFIG_MLX4_EN=m
- CONFIG_MLX5_CORE=m
- CONFIG_MLX5_CORE_EN=y
-+# CONFIG_NET_VENDOR_META is not set
- # CONFIG_NET_VENDOR_MICREL is not set
- # CONFIG_NET_VENDOR_MICROCHIP is not set
- # CONFIG_NET_VENDOR_MICROSEMI is not set
-@@ -682,6 +691,7 @@ CONFIG_NFSD=m
- CONFIG_NFSD_V3_ACL=y
- CONFIG_NFSD_V4=y
- CONFIG_NFSD_V4_SECURITY_LABEL=y
-+# CONFIG_NFSD_LEGACY_CLIENT_TRACKING is not set
- CONFIG_CIFS=m
- CONFIG_CIFS_UPCALL=y
- CONFIG_CIFS_XATTR=y
-@@ -726,7 +736,6 @@ CONFIG_CRYPTO_DH=m
- CONFIG_CRYPTO_ECDH=m
- CONFIG_CRYPTO_ECDSA=m
- CONFIG_CRYPTO_ECRDSA=m
--CONFIG_CRYPTO_SM2=m
- CONFIG_CRYPTO_CURVE25519=m
- CONFIG_CRYPTO_AES_TI=m
- CONFIG_CRYPTO_ANUBIS=m
-@@ -767,6 +776,7 @@ CONFIG_CRYPTO_LZ4=m
- CONFIG_CRYPTO_LZ4HC=m
- CONFIG_CRYPTO_ZSTD=m
- CONFIG_CRYPTO_ANSI_CPRNG=m
-+CONFIG_CRYPTO_JITTERENTROPY_OSR=1
- CONFIG_CRYPTO_USER_API_HASH=m
- CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
-diff --git a/arch/s390/configs/zfcpdump_defconfig b/arch/s390/configs/zfcpdump_defconfig
-index 8c2b61363bab..bcbaa069de96 100644
---- a/arch/s390/configs/zfcpdump_defconfig
-+++ b/arch/s390/configs/zfcpdump_defconfig
-@@ -49,6 +49,7 @@ CONFIG_ZFCP=y
- # CONFIG_HVC_IUCV is not set
- # CONFIG_HW_RANDOM_S390 is not set
- # CONFIG_HMC_DRV is not set
-+# CONFIG_S390_UV_UAPI is not set
- # CONFIG_S390_TAPE is not set
- # CONFIG_VMCP is not set
- # CONFIG_MONWRITER is not set
-diff --git a/arch/s390/include/asm/perf_event.h b/arch/s390/include/asm/perf_event.h
-index 66200d4a2134..29ee289108c5 100644
---- a/arch/s390/include/asm/perf_event.h
-+++ b/arch/s390/include/asm/perf_event.h
-@@ -49,6 +49,7 @@ struct perf_sf_sde_regs {
- };
- 
- #define perf_arch_fetch_caller_regs(regs, __ip) do {			\
-+	(regs)->psw.mask = 0;						\
- 	(regs)->psw.addr = (__ip);					\
- 	(regs)->gprs[15] = (unsigned long)__builtin_frame_address(0) -	\
- 		offsetof(struct stack_frame, back_chain);		\
-diff --git a/arch/s390/kvm/diag.c b/arch/s390/kvm/diag.c
-index 2a32438e09ce..74f73141f9b9 100644
---- a/arch/s390/kvm/diag.c
-+++ b/arch/s390/kvm/diag.c
-@@ -77,7 +77,7 @@ static int __diag_page_ref_service(struct kvm_vcpu *vcpu)
- 	vcpu->stat.instruction_diagnose_258++;
- 	if (vcpu->run->s.regs.gprs[rx] & 7)
- 		return kvm_s390_inject_program_int(vcpu, PGM_SPECIFICATION);
--	rc = read_guest(vcpu, vcpu->run->s.regs.gprs[rx], rx, &parm, sizeof(parm));
-+	rc = read_guest_real(vcpu, vcpu->run->s.regs.gprs[rx], &parm, sizeof(parm));
- 	if (rc)
- 		return kvm_s390_inject_prog_cond(vcpu, rc);
- 	if (parm.parm_version != 2 || parm.parm_len < 5 || parm.code != 0x258)
-diff --git a/arch/s390/kvm/gaccess.c b/arch/s390/kvm/gaccess.c
-index e65f597e3044..a688351f4ab5 100644
---- a/arch/s390/kvm/gaccess.c
-+++ b/arch/s390/kvm/gaccess.c
-@@ -828,6 +828,8 @@ static int access_guest_page(struct kvm *kvm, enum gacc_mode mode, gpa_t gpa,
- 	const gfn_t gfn = gpa_to_gfn(gpa);
- 	int rc;
- 
-+	if (!gfn_to_memslot(kvm, gfn))
-+		return PGM_ADDRESSING;
- 	if (mode == GACC_STORE)
- 		rc = kvm_write_guest_page(kvm, gfn, data, offset, len);
- 	else
-@@ -985,6 +987,8 @@ int access_guest_real(struct kvm_vcpu *vcpu, unsigned long gra,
- 		gra += fragment_len;
- 		data += fragment_len;
- 	}
-+	if (rc > 0)
-+		vcpu->arch.pgm.code = rc;
- 	return rc;
- }
- 
-diff --git a/arch/s390/kvm/gaccess.h b/arch/s390/kvm/gaccess.h
-index b320d12aa049..3fde45a151f2 100644
---- a/arch/s390/kvm/gaccess.h
-+++ b/arch/s390/kvm/gaccess.h
-@@ -405,11 +405,12 @@ int read_guest_abs(struct kvm_vcpu *vcpu, unsigned long gpa, void *data,
-  * @len: number of bytes to copy
-  *
-  * Copy @len bytes from @data (kernel space) to @gra (guest real address).
-- * It is up to the caller to ensure that the entire guest memory range is
-- * valid memory before calling this function.
-  * Guest low address and key protection are not checked.
-  *
-- * Returns zero on success or -EFAULT on error.
-+ * Returns zero on success, -EFAULT when copying from @data failed, or
-+ * PGM_ADRESSING in case @gra is outside a memslot. In this case, pgm check info
-+ * is also stored to allow injecting into the guest (if applicable) using
-+ * kvm_s390_inject_prog_cond().
-  *
-  * If an error occurs data may have been copied partially to guest memory.
-  */
-@@ -428,11 +429,12 @@ int write_guest_real(struct kvm_vcpu *vcpu, unsigned long gra, void *data,
-  * @len: number of bytes to copy
-  *
-  * Copy @len bytes from @gra (guest real address) to @data (kernel space).
-- * It is up to the caller to ensure that the entire guest memory range is
-- * valid memory before calling this function.
-  * Guest key protection is not checked.
-  *
-- * Returns zero on success or -EFAULT on error.
-+ * Returns zero on success, -EFAULT when copying to @data failed, or
-+ * PGM_ADRESSING in case @gra is outside a memslot. In this case, pgm check info
-+ * is also stored to allow injecting into the guest (if applicable) using
-+ * kvm_s390_inject_prog_cond().
-  *
-  * If an error occurs data may have been copied partially to kernel space.
-  */
-diff --git a/arch/s390/pci/pci_event.c b/arch/s390/pci/pci_event.c
-index dbe95ec5917e..d4f19d33914c 100644
---- a/arch/s390/pci/pci_event.c
-+++ b/arch/s390/pci/pci_event.c
-@@ -280,18 +280,19 @@ static void __zpci_event_error(struct zpci_ccdf_err *ccdf)
- 		goto no_pdev;
- 
- 	switch (ccdf->pec) {
--	case 0x003a: /* Service Action or Error Recovery Successful */
-+	case 0x002a: /* Error event concerns FMB */
-+	case 0x002b:
-+	case 0x002c:
-+		break;
-+	case 0x0040: /* Service Action or Error Recovery Failed */
-+	case 0x003b:
-+		zpci_event_io_failure(pdev, pci_channel_io_perm_failure);
-+		break;
-+	default: /* PCI function left in the error state attempt to recover */
- 		ers_res = zpci_event_attempt_error_recovery(pdev);
- 		if (ers_res != PCI_ERS_RESULT_RECOVERED)
- 			zpci_event_io_failure(pdev, pci_channel_io_perm_failure);
- 		break;
--	default:
--		/*
--		 * Mark as frozen not permanently failed because the device
--		 * could be subsequently recovered by the platform.
--		 */
--		zpci_event_io_failure(pdev, pci_channel_io_frozen);
--		break;
- 	}
- 	pci_dev_put(pdev);
- no_pdev:
-diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
-index f3621adbd5de..fbffd451031f 100644
---- a/drivers/s390/char/sclp.c
-+++ b/drivers/s390/char/sclp.c
-@@ -1195,7 +1195,8 @@ sclp_reboot_event(struct notifier_block *this, unsigned long event, void *ptr)
- }
- 
- static struct notifier_block sclp_reboot_notifier = {
--	.notifier_call = sclp_reboot_event
-+	.notifier_call = sclp_reboot_event,
-+	.priority      = INT_MIN,
- };
- 
- static ssize_t con_pages_show(struct device_driver *dev, char *buf)
-diff --git a/drivers/s390/char/sclp_vt220.c b/drivers/s390/char/sclp_vt220.c
-index 218ae604f737..33b9c968dbcb 100644
---- a/drivers/s390/char/sclp_vt220.c
-+++ b/drivers/s390/char/sclp_vt220.c
-@@ -319,7 +319,7 @@ sclp_vt220_add_msg(struct sclp_vt220_request *request,
- 	buffer = (void *) ((addr_t) sccb + sccb->header.length);
- 
- 	if (convertlf) {
--		/* Perform Linefeed conversion (0x0a -> 0x0a 0x0d)*/
-+		/* Perform Linefeed conversion (0x0a -> 0x0d 0x0a)*/
- 		for (from=0, to=0;
- 		     (from < count) && (to < sclp_vt220_space_left(request));
- 		     from++) {
-@@ -328,8 +328,8 @@ sclp_vt220_add_msg(struct sclp_vt220_request *request,
- 			/* Perform conversion */
- 			if (c == 0x0a) {
- 				if (to + 1 < sclp_vt220_space_left(request)) {
--					((unsigned char *) buffer)[to++] = c;
- 					((unsigned char *) buffer)[to++] = 0x0d;
-+					((unsigned char *) buffer)[to++] = c;
- 				} else
- 					break;
- 
-diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
-index 60cea6c24349..e14638936de6 100644
---- a/drivers/s390/crypto/ap_bus.c
-+++ b/drivers/s390/crypto/ap_bus.c
-@@ -1864,13 +1864,12 @@ static inline void ap_scan_domains(struct ap_card *ac)
- 		}
- 		/* if no queue device exists, create a new one */
- 		if (!aq) {
--			aq = ap_queue_create(qid, ac->ap_dev.device_type);
-+			aq = ap_queue_create(qid, ac);
- 			if (!aq) {
- 				AP_DBF_WARN("%s(%d,%d) ap_queue_create() failed\n",
- 					    __func__, ac->id, dom);
- 				continue;
- 			}
--			aq->card = ac;
- 			aq->config = !decfg;
- 			aq->chkstop = chkstop;
- 			aq->se_bstate = hwinfo.bs;
-diff --git a/drivers/s390/crypto/ap_bus.h b/drivers/s390/crypto/ap_bus.h
-index 0b275c719319..f4622ee4d894 100644
---- a/drivers/s390/crypto/ap_bus.h
-+++ b/drivers/s390/crypto/ap_bus.h
-@@ -272,7 +272,7 @@ int ap_test_config_usage_domain(unsigned int domain);
- int ap_test_config_ctrl_domain(unsigned int domain);
- 
- void ap_queue_init_reply(struct ap_queue *aq, struct ap_message *ap_msg);
--struct ap_queue *ap_queue_create(ap_qid_t qid, int device_type);
-+struct ap_queue *ap_queue_create(ap_qid_t qid, struct ap_card *ac);
- void ap_queue_prepare_remove(struct ap_queue *aq);
- void ap_queue_remove(struct ap_queue *aq);
- void ap_queue_init_state(struct ap_queue *aq);
-diff --git a/drivers/s390/crypto/ap_queue.c b/drivers/s390/crypto/ap_queue.c
-index 8c878c5aa31f..9a0e6e4d8a5e 100644
---- a/drivers/s390/crypto/ap_queue.c
-+++ b/drivers/s390/crypto/ap_queue.c
-@@ -22,6 +22,11 @@ static void __ap_flush_queue(struct ap_queue *aq);
-  * some AP queue helper functions
-  */
- 
-+static inline bool ap_q_supported_in_se(struct ap_queue *aq)
-+{
-+	return aq->card->hwinfo.ep11 || aq->card->hwinfo.accel;
-+}
-+
- static inline bool ap_q_supports_bind(struct ap_queue *aq)
- {
- 	return aq->card->hwinfo.ep11 || aq->card->hwinfo.accel;
-@@ -1104,18 +1109,19 @@ static void ap_queue_device_release(struct device *dev)
- 	kfree(aq);
- }
- 
--struct ap_queue *ap_queue_create(ap_qid_t qid, int device_type)
-+struct ap_queue *ap_queue_create(ap_qid_t qid, struct ap_card *ac)
- {
- 	struct ap_queue *aq;
- 
- 	aq = kzalloc(sizeof(*aq), GFP_KERNEL);
- 	if (!aq)
- 		return NULL;
-+	aq->card = ac;
- 	aq->ap_dev.device.release = ap_queue_device_release;
- 	aq->ap_dev.device.type = &ap_queue_type;
--	aq->ap_dev.device_type = device_type;
--	// add optional SE secure binding attributes group
--	if (ap_sb_available() && is_prot_virt_guest())
-+	aq->ap_dev.device_type = ac->ap_dev.device_type;
-+	/* in SE environment add bind/associate attributes group */
-+	if (ap_is_se_guest() && ap_q_supported_in_se(aq))
- 		aq->ap_dev.device.groups = ap_queue_dev_sb_attr_groups;
- 	aq->qid = qid;
- 	spin_lock_init(&aq->lock);
-@@ -1196,10 +1202,16 @@ bool ap_queue_usable(struct ap_queue *aq)
- 	}
- 
- 	/* SE guest's queues additionally need to be bound */
--	if (ap_q_needs_bind(aq) &&
--	    !(aq->se_bstate == AP_BS_Q_USABLE ||
--	      aq->se_bstate == AP_BS_Q_USABLE_NO_SECURE_KEY))
--		rc = false;
-+	if (ap_is_se_guest()) {
-+		if (!ap_q_supported_in_se(aq)) {
-+			rc = false;
-+			goto unlock_and_out;
-+		}
-+		if (ap_q_needs_bind(aq) &&
-+		    !(aq->se_bstate == AP_BS_Q_USABLE ||
-+		      aq->se_bstate == AP_BS_Q_USABLE_NO_SECURE_KEY))
-+			rc = false;
-+	}
- 
- unlock_and_out:
- 	spin_unlock_bh(&aq->lock);
-diff --git a/drivers/s390/crypto/pkey_pckmo.c b/drivers/s390/crypto/pkey_pckmo.c
-index 98079b1ed6db..beeca8827c46 100644
---- a/drivers/s390/crypto/pkey_pckmo.c
-+++ b/drivers/s390/crypto/pkey_pckmo.c
-@@ -324,6 +324,7 @@ static int pckmo_key2protkey(const u8 *key, u32 keylen,
- 		memcpy(protkey, t->protkey, t->len);
- 		*protkeylen = t->len;
- 		*protkeytype = t->keytype;
-+		rc = 0;
- 		break;
- 	}
- 	case TOKVER_CLEAR_KEY: {
 
