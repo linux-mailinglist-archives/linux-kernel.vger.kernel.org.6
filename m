@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-371310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2179A3988
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:11:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FAC9A398B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD461F25057
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CD3A1F2565E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DE018FDB2;
-	Fri, 18 Oct 2024 09:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C92C190075;
+	Fri, 18 Oct 2024 09:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0OrtOG6Y"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IDJ/WP8t"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B251917E7
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9281F191F74
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 09:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729242630; cv=none; b=LjthrxatE0CgqtYY0KnWEy9q4QTlZUyq/TjorPvNVzfs37O7zXalqITHt+z9JqO0RNVKsHCJdwLrGGu6KGdRXFiHdu3zP3nYTbyy9vCy2buOYL1cW1IhLkr7yDzuZCC2yz6m3SUq3PO+iTeUbxQKt6J61qawd9EewFMBDon090o=
+	t=1729242632; cv=none; b=NVjgLeH9Qu1ZAnWrzB1No1cslx7rAtZz3COgBC3sWgXn6Wm+4YqBpMxKavA6CNQdQ4070dB6TTe0h+NrGmGx1Lu7nq0NCB/vG+NXGleyEJkrBB6lWiO0c2/5RQZP9uwDhxhINTXvui7awTYOOy3lOBu7fUKAqhA8dgrByEVzQgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729242630; c=relaxed/simple;
-	bh=ShKnfVnA13yZAURxSbfkTfcYBLmCdqbi8FWGA7M737A=;
+	s=arc-20240116; t=1729242632; c=relaxed/simple;
+	bh=PrpJFSn1v8nec0wiPaBWRUGeCDKvtDkJixy1vIPLnV0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J9uld7v0xkDr1a87R6kWAA7+X8t5iYiqf/AwaZEEoQX/QNyw5/lkkcIHlvAJERiFhCqknE8ElpgQ052Idyh+9AmGmwnNedRYkOjITa8A4xCSpT2pzPNg7HYqxzYNxZEnfIdowdI9T8x3FrJMPKOLU8SVjldn/YA7dH9bWlzADEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0OrtOG6Y; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:To:Cc; b=M1nkjcVpl+YsVRCG2HG/wxdbqiEFagdeJLa/j9pCJUQtOA9YhyAt95tCbdzTEdSOjx2sOGg0rh3SiOG26/uW+d+JToJ9D3IXqd9RpeYt1x7ZhywR4DrUNyIg8MTBuKxOM4cfbYIDVPJPykUcxrlOsfbN27g70Ka4V+6szuO0rDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IDJ/WP8t; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so18978495e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:10:28 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43152b79d25so17924455e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 02:10:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729242627; x=1729847427; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729242629; x=1729847429; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=U0tIf0jtJWFltu4ODvVnK3F2kIEgN0qMoeq7qRt5Wac=;
-        b=0OrtOG6YydfSWJiPhZYVGmXhQP16KXqVllp5aPSNV8gJxOBCh/r1X+7TNHHJlcy/78
-         5p3vK1jr2ZDmJH5phMOMMDyu8UzvL6kx8oYLrqzEyMjPohjRHvXMdLtYdA3QbSSWDadZ
-         ifUAHDVQXy8z5Dzs+BtYnF2bkwM70GR3M16rjJd8lWVxwmjoBtfulXMm9ve6QIdhdcgo
-         lhk4fQCrDn22iuYRhdDoy/04FUrzlgPEbNxLpxNpUoQR1YOKhhvN5rS2UluDGXDnPKu7
-         ImcEsKWBPCjKCoSoDt9/QORN63Z/J1XLi/y2WzxMl1401KEx/5LlNBIJRSevHoeMhuJw
-         OBGw==
+        bh=IQ9+jptp7Dks8GR7GteYZhyJSD9aHU2HeME8AuCmILE=;
+        b=IDJ/WP8tEn1jvshLljmQkpKyXPpgyubb25HYdEze5iYWtFbetBj8ugn776nJQMwwEN
+         kr4H06KtpaWVeIpaVfx5ALf2FD0ZPL5H+45HbIGqf6Zgux8r9nlC5/2460kx05eVxv4v
+         hMEnNQZrfhgZunz/6GaEOi/elYL61f2kzUZrVaY/xXlK03uOzHQcPbs3mDuSjBOqqCrx
+         Segres0XrLWa1CF74/0R2a03bjiX8tqhLSZpGlCth4D1rQGQ1XIlQvNifAjmPGkcAI3B
+         6UGGmXRklw7AhQxN4agL1dmBdlVwx+2dbWIwXlkuYsYukuirgRIBTOaGUMehvI/RAqPm
+         lNGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729242627; x=1729847427;
+        d=1e100.net; s=20230601; t=1729242629; x=1729847429;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U0tIf0jtJWFltu4ODvVnK3F2kIEgN0qMoeq7qRt5Wac=;
-        b=Ed6c42mzfDtSGtalozAZ7F4T59pstaq2dqcFsuLkfUCrmm9ehQmm+iZRHMJl1xXxvW
-         acLwIq5+95yxZxghbYAoKtJoWKtNrkcMSochRL/KdMauKhwhWsYpFL2iGGAgTYjLqsuK
-         pqnJqgJKBKUPfjs5C1U8lcUCpbFPcw7yeLJw1RK8FRrwUEFD/m3ohmi5O3RN8LccgHLC
-         VbN3KzVa190ldr9Wy8dEKhyB6JaWPSKkDLf61Ydo4FAqU4od4eoqH5KRGCxb8MPjxxA1
-         2R6rgXoysVWK+fyRcY4J5d7ylRMP1W6lBrped35Y5eVsPQ3gNPlmwmEmg3TeWN98LFtJ
-         UlrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKcaMsXrrC6dn1tSQpcUr2dLyqGQwazv3j5pl6F2WoghRXFy5F9BezUDg7gUzVmInHFUBAwQTzkyjPUw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzonzo3FEvda1h+jayzqLavUHqwFUfidukQZnxXD3cnZ6Kf1dti
-	OQqYAy+qzxA9XU7utsK2+7jNWmWmKYjzT28zPXIa5pGo2+kMYAJI2aouNNhtUbo=
-X-Google-Smtp-Source: AGHT+IGzh7emw0kamIRsyCmcyboccj8tMVEfGoaug2/eeFdI230uT4IxNKyEXz3mEkzh8Ug8d7T5Ug==
-X-Received: by 2002:a05:600c:35d3:b0:431:5f1c:8359 with SMTP id 5b1f17b1804b1-4316163bc87mr14364015e9.15.1729242627290;
-        Fri, 18 Oct 2024 02:10:27 -0700 (PDT)
+        bh=IQ9+jptp7Dks8GR7GteYZhyJSD9aHU2HeME8AuCmILE=;
+        b=MJdRxzQB0ESa9ELEdUYm3SM3y5Zrgu9NbMOXp+pZ/VpfgOU0tTpMVmlttvj8UqPknJ
+         87pH5vyG/EpDHLWQBobtCSCINQwA6QktOwMrpxCRi9jj6VBlP7xNx4Xyg28zElvNAh9h
+         +efXTCOf0mCUejV0vqefRpziIFZFC8qV9VP484/HyBiVgbVdbUErTdXdEmRx7HyTzmkh
+         yB7oRrOgAX0QDBL5Lk+r80uY0DEz04Qy3pIUhM4C+HIKLG4W3gu52vpWxqnLQ2HPEcMm
+         aum0tn4AEU+uS0Mox3V6sVNcXW6eqawUNyZands1Fa97w1RzrmvY5G0Q24iAKXWr5CbX
+         SHDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSsYCfIYL53UBcm7bEc98uGNxmgBZ2GHBBw6gQfa58bOwErmsCAaarduhZQIpJ7dvoW2eLwR6qKxZJD30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv7cHdtGcREJa6tKDO9Uj6Ga940fU/xwwKu5XQoA+qWpF6YHVk
+	0kxjD0qosQdFlO566SGtKTqK7YtuzsAp0VEK8kPARQRdVq1IAzKcfxS7SMB/Z8c=
+X-Google-Smtp-Source: AGHT+IFmqL8sHA3yU+jyEcXkUGG9y3Ve5K2STpHvAB3B5giEyg4OKEDNCoHJjkz0nT9f6TRUOnZ6lg==
+X-Received: by 2002:a05:600c:3513:b0:431:4a83:2d80 with SMTP id 5b1f17b1804b1-431615c0697mr13134425e9.0.1729242628874;
+        Fri, 18 Oct 2024 02:10:28 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:45a3:93e:5196:d8ce])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160dbe76bsm18700455e9.10.2024.10.18.02.10.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160dbe76bsm18700455e9.10.2024.10.18.02.10.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 02:10:26 -0700 (PDT)
+        Fri, 18 Oct 2024 02:10:27 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 18 Oct 2024 11:10:13 +0200
-Subject: [PATCH v5 5/8] gpiolib: add a per-gpio_device line state
- notification workqueue
+Date: Fri, 18 Oct 2024 11:10:14 +0200
+Subject: [PATCH v5 6/8] gpio: cdev: put emitting the line state events on a
+ workqueue
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241018-gpio-notify-in-kernel-events-v5-5-c79135e58a1c@linaro.org>
+Message-Id: <20241018-gpio-notify-in-kernel-events-v5-6-c79135e58a1c@linaro.org>
 References: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
 In-Reply-To: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -86,90 +86,164 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2506;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4814;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=0P2NY394anUazMVeFpGs/9LRMhoWr2qMp3sLio3SuhQ=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnEiX6qgpb2193BrTFH70zRNYR224K0KltZ2UYm
- orfLeQF1HqJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxIl+gAKCRARpy6gFHHX
- cm1uD/9V/+YzJf5zaldzKgAUqnBq0Kq0Zo1xnpIzc6qJF7vydT8E2DZZrUoEzon3SmCQeH21KS5
- 0pAFsASGdyT5YjuYDs3ggyzxsU3vPg+uBrQSrk8yNpTuK3TeA6x6ZGDcJDnaafeZnIuLoZABETu
- yDi922XFAfFsTmRf3sZr0viwEgwbTjrtcuST7J0vk5eavz61PDU0wKxIcNHLsU1FBfpNKPBZdxP
- pXQK+5N1sZBKEWuk7KAWGkfxvx7AjbBDdMF2UPoYCMUgMLWvz/SIDOdKXKb2+YmDQwvGm2ST3gg
- 4X0TRHoiU7MhlydTq7GxkJ+fYyede8QFU5qsuBrH4VNV+9Va9/GpJCbkCwrUIYtIKhJoqpJ0xan
- tCU6qiXUnkv5KYweMozJST3Hk114AmFjXmYU/Rlpkbew6mr52UqTP+eshSUhq8f68d8C02OGuwD
- adaErvEiFmGGiNbfWThiS4jx+Q3LvR5/pyJoS/ZL6L/B/SU28gbxZ6NcrN2Xlzrtb1Nkk50C4dQ
- 2qwLbE+LLhOErOluTCcVTPbsnu8xYlNCXIGbECwy5Ooe14e6EFvWYkVoViG2xghKWNso0fl4ymz
- 5LaatgZxIoQ++Jqv/lN5U91jwjVy/dUobjiOy70WR/HK1CI274BxMTUDjsEnIHgmlir9x8oize3
- D2yrXJ3bo4Fvs+A==
+ bh=8oH0OI5uVpWymK+8p6k+EMIaU2WzdTdaL9nSO2G6k4U=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnEiX7hW6vtWqYx1czNkm1yo2NiV1EAvlNZn0x9
+ lL1z8mzDRaJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxIl+wAKCRARpy6gFHHX
+ crkbD/96p00C/wm4UJamFYsrbsS4zC9BxFflYyeS1729zFWFg85I9O6a5WQGMg8glJohrrkbls3
+ kDfgbdeQxPAEaWVoG/cWshAy8x09nXd8R+zMGWdeU3ZlhDr6iXR73N3x/d9rQ/vietCb0PAc7L9
+ HnsuVR/o/IZwwCj1xnNhv+hVRTUPEYx2J/V/CJc20V+D4F4KeyCNRhXnTrI9YdTvZRcgAfrZ8BU
+ KRI7lIUGZCPtfCE28utFrO6cWvhWHzpR+Q7WuTjk/DxwbDFUVHql0EXl1GI1YgANs9eO9PtXtuG
+ DzV/MmLGIEnlwQwFiaZhk8wjabZcrX6ODshIBGJ1vWUP9rlvTzgrehxquS3n3/vQVAzSCTPKrms
+ SIy///AoIPQeSX+vJZjsupC5YfKpbP1UXYIiQEHhTEtDimWsXDGYW1UAl9MWFblX+rxT8ocmM6B
+ DnkTIUuRN2pLkSPi8G37kzwmkX1aI/LpuDw9nUKM2lE2V2F+kSMGc5SEZObXNdY8YMP8EZ3rwVo
+ gnwvs68lEapYLn1s/vEdt3AaJT2plXPTTz4r05WbTrW4WwPqI685N7yqQGVHqpXy0ZzUiyt7q21
+ YqRfDOdFRRa7v4IpwOpCpXXA1vtX6633P2ZfR0fUqDyIySuEitFrfTZT+72qfd9YLQWipwhxsr/
+ glsWgRus6XSrUkw==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-In order to prepare the line state notification mechanism for working in
-atomic context as well, add a dedicated, high-priority, ordered
-workqueue to GPIO device which will be used to queue the events fron any
-context for them to be emitted always in process context.
+In order to allow line state notifications to be emitted from atomic
+context (for instance: from gpiod_direction_input/output()), we must
+stop calling any sleeping functions in lineinfo_changed_notify(). To
+that end let's use the new workqueue.
+
+Let's atomically allocate small structures containing the required data
+and fill it with information immediately upon being notified about the
+change except for the pinctrl state which will be retrieved later from
+process context. We can pretty reliably do this as pin functions are
+typically set once per boot.
+
+Let's make sure to bump the reference count of GPIO device and the GPIO
+character device file descriptor to keep both alive until the event was
+queued.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib-cdev.c | 6 ++++++
- drivers/gpio/gpiolib.h      | 4 ++++
- 2 files changed, 10 insertions(+)
+ drivers/gpio/gpiolib-cdev.c | 82 +++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 71 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index 0cba74381687..b242fdb1ad28 100644
+index b242fdb1ad28..7759dca92f8b 100644
 --- a/drivers/gpio/gpiolib-cdev.c
 +++ b/drivers/gpio/gpiolib-cdev.c
-@@ -2749,6 +2749,11 @@ int gpiolib_cdev_register(struct gpio_device *gdev, dev_t devt)
- 	gdev->chrdev.owner = THIS_MODULE;
- 	gdev->dev.devt = MKDEV(MAJOR(devt), gdev->id);
+@@ -2333,6 +2333,7 @@ struct gpio_chardev_data {
+ #ifdef CONFIG_GPIO_CDEV_V1
+ 	atomic_t watch_abi_version;
+ #endif
++	struct file *fp;
+ };
  
-+	gdev->line_state_wq = alloc_ordered_workqueue(dev_name(&gdev->dev),
-+						      WQ_HIGHPRI);
-+	if (!gdev->line_state_wq)
-+		return -ENOMEM;
-+
- 	ret = cdev_device_add(&gdev->chrdev, &gdev->dev);
- 	if (ret)
- 		return ret;
-@@ -2765,6 +2770,7 @@ int gpiolib_cdev_register(struct gpio_device *gdev, dev_t devt)
- 
- void gpiolib_cdev_unregister(struct gpio_device *gdev)
- {
-+	destroy_workqueue(gdev->line_state_wq);
- 	cdev_device_del(&gdev->chrdev, &gdev->dev);
- 	blocking_notifier_call_chain(&gdev->device_notifier, 0, NULL);
+ static int chipinfo_get(struct gpio_chardev_data *cdev, void __user *ip)
+@@ -2502,28 +2503,86 @@ static long gpio_ioctl_compat(struct file *file, unsigned int cmd,
  }
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 8daba06eb472..8737e1641278 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/notifier.h>
- #include <linux/srcu.h>
-+#include <linux/workqueue.h>
+ #endif
  
- #define GPIOCHIP_NAME	"gpiochip"
++struct lineinfo_changed_ctx {
++	struct work_struct work;
++	struct gpio_v2_line_info_changed chg;
++	struct gpio_device *gdev;
++	struct gpio_chardev_data *cdev;
++};
++
++static void lineinfo_changed_func(struct work_struct *work)
++{
++	struct lineinfo_changed_ctx *ctx =
++			container_of(work, struct lineinfo_changed_ctx, work);
++	struct gpio_chip *gc;
++	int ret;
++
++	if (!(ctx->chg.info.flags & GPIO_V2_LINE_FLAG_USED)) {
++		/*
++		 * If nobody set the USED flag earlier, let's see with pinctrl
++		 * now. We're doing this late because it's a sleeping function.
++		 * Pin functions are in general much more static and while it's
++		 * not 100% bullet-proof, it's good enough for most cases.
++		 */
++		scoped_guard(srcu, &ctx->gdev->srcu) {
++			gc = srcu_dereference(ctx->gdev->chip, &ctx->gdev->srcu);
++			if (gc &&
++			    !pinctrl_gpio_can_use_line(gc, ctx->chg.info.offset))
++				ctx->chg.info.flags |= GPIO_V2_LINE_FLAG_USED;
++		}
++	}
++
++	ret = kfifo_in_spinlocked(&ctx->cdev->events, &ctx->chg, 1,
++				  &ctx->cdev->wait.lock);
++	if (ret)
++		wake_up_poll(&ctx->cdev->wait, EPOLLIN);
++	else
++		pr_debug_ratelimited("lineinfo event FIFO is full - event dropped\n");
++
++	gpio_device_put(ctx->gdev);
++	fput(ctx->cdev->fp);
++	kfree(ctx);
++}
++
+ static int lineinfo_changed_notify(struct notifier_block *nb,
+ 				   unsigned long action, void *data)
+ {
+ 	struct gpio_chardev_data *cdev =
+ 		container_of(nb, struct gpio_chardev_data, lineinfo_changed_nb);
+-	struct gpio_v2_line_info_changed chg;
++	struct lineinfo_changed_ctx *ctx;
+ 	struct gpio_desc *desc = data;
+-	int ret;
  
-@@ -44,6 +45,8 @@
-  * @list: links gpio_device:s together for traversal
-  * @line_state_notifier: used to notify subscribers about lines being
-  *                       requested, released or reconfigured
-+ * @line_state_wq: used to emit line state events from a separate thread in
-+ *                 process context
-  * @device_notifier: used to notify character device wait queues about the GPIO
-  *                   device being unregistered
-  * @srcu: protects the pointer to the underlying GPIO chip
-@@ -70,6 +73,7 @@ struct gpio_device {
- 	void			*data;
- 	struct list_head        list;
- 	struct blocking_notifier_head line_state_notifier;
-+	struct workqueue_struct	*line_state_wq;
- 	struct blocking_notifier_head device_notifier;
- 	struct srcu_struct	srcu;
+ 	if (!test_bit(gpio_chip_hwgpio(desc), cdev->watched_lines))
+ 		return NOTIFY_DONE;
  
+-	memset(&chg, 0, sizeof(chg));
+-	chg.event_type = action;
+-	chg.timestamp_ns = ktime_get_ns();
+-	gpio_desc_to_lineinfo(desc, &chg.info, false);
++	/*
++	 * If this is called from atomic context (for instance: with a spinlock
++	 * taken by the atomic notifier chain), any sleeping calls must be done
++	 * outside of this function in process context of the dedicated
++	 * workqueue.
++	 *
++	 * Let's gather as much info as possible from the descriptor and
++	 * postpone just the call to pinctrl_gpio_can_use_line() until the work
++	 * is executed.
++	 */
+ 
+-	ret = kfifo_in_spinlocked(&cdev->events, &chg, 1, &cdev->wait.lock);
+-	if (ret)
+-		wake_up_poll(&cdev->wait, EPOLLIN);
+-	else
+-		pr_debug_ratelimited("lineinfo event FIFO is full - event dropped\n");
++	ctx = kzalloc(sizeof(*ctx), GFP_ATOMIC);
++	if (!ctx) {
++		pr_err("Failed to allocate memory for line info notification\n");
++		return NOTIFY_DONE;
++	}
++
++	ctx->chg.event_type = action;
++	ctx->chg.timestamp_ns = ktime_get_ns();
++	gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
++	/* Keep the GPIO device alive until we emit the event. */
++	ctx->gdev = gpio_device_get(desc->gdev);
++	ctx->cdev = cdev;
++	/* Keep the file descriptor alive too. */
++	get_file(ctx->cdev->fp);
++
++	INIT_WORK(&ctx->work, lineinfo_changed_func);
++	queue_work(ctx->gdev->line_state_wq, &ctx->work);
+ 
+ 	return NOTIFY_OK;
+ }
+@@ -2683,6 +2742,7 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
+ 		goto out_unregister_line_notifier;
+ 
+ 	file->private_data = cdev;
++	cdev->fp = file;
+ 
+ 	ret = nonseekable_open(inode, file);
+ 	if (ret)
 
 -- 
 2.43.0
