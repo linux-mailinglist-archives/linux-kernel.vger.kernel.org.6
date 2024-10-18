@@ -1,449 +1,188 @@
-Return-Path: <linux-kernel+bounces-371239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7776A9A3862
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:20:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D179A3865
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE8DEB21E0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 358F7285CAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A3A18CBFC;
-	Fri, 18 Oct 2024 08:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D196C18CBF5;
+	Fri, 18 Oct 2024 08:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="evpP7Z8V"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2057.outbound.protection.outlook.com [40.107.105.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j0ke+elu"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE9C18BBAE;
-	Fri, 18 Oct 2024 08:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729239642; cv=fail; b=JfsNgWNF4OgSIj1dDcjfctPJwyqtmQqrC5dVLXncxmUYHMZYWfWz+QrSZ4rx0eIHTCv0Al3i0+W/tphdbpFfi0H5zal+52opwsR3GCgV5gu5R2uBxv4L5PQQQ9a7uxXDk3UAtgFST9ldJK/nrx5pcPz2MSYYmOqScUNjBGSYnTU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729239642; c=relaxed/simple;
-	bh=VWJPu7TP+0tD4eR4lHjh6EROycX7cayPc7xQ6cDaE3U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=i2jAqkFqWgiXsSotNHR06okoPVYeAdnL/ha7jXcT5iS6N1OKEfsalUQp9kGVWUkuYs4sLA1i4aNIAywRUTIHyeDW2O25jHE4e7WqRZZstaN6V8s7QHIYj0PKNvNncbYL8R+Ma9w2KRsW7msdn6XptmcrL80L/uhs5jgXMwlYAtw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=evpP7Z8V; arc=fail smtp.client-ip=40.107.105.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aoTi/AKCNYQYeiHnhNUnQJ/cmmyKOZgua3oe/kQJZZJfJgeSi8UXrWskwLKykud5AyasvVmdvGolAB+Qy5W5DOL5MaG7RrzkwlePSCz8IhbjTTXzS0S3MzO+vUGpKbXU0Yh79iJRUyQrCHMYBefoGN4+5mM3kiEyjrVeEXTiIm2YlJjwKzwLG8A+Nxy9a04rx5+dbT6kgpbenKHJ7iW0BM+y+amwB8Y1Fv/FthL6nq/wKPeKOMK+PYg91JC9ZOt80RMWbK/KYVeD93NBThD+jU1rE9cdiWdfVNCkduwfNgZUASyxJnHJgtmnpVRPEuDdn7+d2pMil+XbTgk/NHIIaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y+2R5b+ulSNs/Jhpw1XlLHKy5uJisFAfr2lXIIyx0wg=;
- b=SHFMOQuc2owIyPqUsDE9ZvJpWJsJeFlbe0BGTuDGoIqeOaYeOIIWWAbqXprSTiV7O2rMd2ArKcuByy85jwOwfhmclE+I3rxbRmaBsvkV+TE78odelON2inOLKyDnHj0IFAC8m941NX8+PUltBZXWdu5fyCVbrzaCN/jAQBYWjLxUsePGE4laeC1nZj9JH95o+f6qcBrxsaYVDpNsfJOSMDPebqbdf5SaH/1larzMj4bXP28cVg9fiVRc6VA4Kitz6/PYuAaAG4yD1D9wy24nJ43KmhP4TaKExbkvTU7fwAFraGtU7aJx8v6Zg8KSTNV35EFUGBXV7i7u94Hgw259sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y+2R5b+ulSNs/Jhpw1XlLHKy5uJisFAfr2lXIIyx0wg=;
- b=evpP7Z8V45WEoK0PZLxcI+UAfsP1GqLhcwZrt62lTily7X0z6X+4iM83J99J6jkZ1G3H6cewHqpnM3P/5sryep21HiMjN4mcoRytkNvZMSTiXHJMp5eZ2QZmiMDpsJb+4a5ri+lXg3i+9sULg17sedVgH9+4EBN8w8NZtjCcuc7Clq2zv1DgMnXzJMaDvSBqLijsAFSogmy5JakSwPMgAfYaZe3MdPZCGK88msvYQYjl5TqVFvJXC3K+1b961lh+ehKoqW2eN6keId6CI35PCH5bSUlEJuH3pvOYPrDDk9jsVqw3KXQF4Qdp1a8GaVHVKVkmU45scwZh5TTA8FkG3A==
-Received: from PAXPR04MB8254.eurprd04.prod.outlook.com (2603:10a6:102:1cd::24)
- by AM9PR04MB8260.eurprd04.prod.outlook.com (2603:10a6:20b:3e6::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.21; Fri, 18 Oct
- 2024 08:20:37 +0000
-Received: from PAXPR04MB8254.eurprd04.prod.outlook.com
- ([fe80::2755:55ac:5d6f:4f87]) by PAXPR04MB8254.eurprd04.prod.outlook.com
- ([fe80::2755:55ac:5d6f:4f87%6]) with mapi id 15.20.8069.020; Fri, 18 Oct 2024
- 08:20:37 +0000
-From: Ming Qian <ming.qian@nxp.com>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, "mchehab@kernel.org"
-	<mchehab@kernel.org>
-CC: "yunkec@google.com" <yunkec@google.com>, "nicolas@ndufresne.ca"
-	<nicolas@ndufresne.ca>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
-	<festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>, "X.H. Bao"
-	<xiahong.bao@nxp.com>, Ming Zhou <ming.zhou@nxp.com>, Eagle Zhou
-	<eagle.zhou@nxp.com>, Tao Jiang <tao.jiang_2@nxp.com>, "Ming Qian (OSS)"
-	<ming.qian@oss.nxp.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [EXT] Re: [RFC v2 5/6] media: v4l2-ctrls: Add video roi ctrls
-Thread-Topic: [EXT] Re: [RFC v2 5/6] media: v4l2-ctrls: Add video roi ctrls
-Thread-Index: AQHbISD6w753PFG7vEq1Etab1CQe97KMC3EAgAAe8eA=
-Date: Fri, 18 Oct 2024 08:20:36 +0000
-Message-ID:
- <PAXPR04MB825420D7C8A88111F0F8084EE7402@PAXPR04MB8254.eurprd04.prod.outlook.com>
-References: <20241018054448.3190423-1-ming.qian@nxp.com>
- <20241018054448.3190423-6-ming.qian@nxp.com>
- <6bde2e39-b422-490f-b3b1-142a5671e770@xs4all.nl>
-In-Reply-To: <6bde2e39-b422-490f-b3b1-142a5671e770@xs4all.nl>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8254:EE_|AM9PR04MB8260:EE_
-x-ms-office365-filtering-correlation-id: 8ea28c23-a19a-4d34-e4a1-08dcef4dbea2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|1800799024|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?kbXiwyih1zXmtf/RmaphsCAp+i+2d0gE5ApLAhG5RsXX1iv9dWWsMg4X1VpE?=
- =?us-ascii?Q?vZADCqT40vIRf2/jDi3mFeT72jBx68eNYPDPeBBBCRjH3sdn5Ns/BkFYNKfS?=
- =?us-ascii?Q?97tHPjUdGkBo/uQuFZxcw3piNNidLPj0paN/JBtf5Fl2CsJJtsLSTb9djIod?=
- =?us-ascii?Q?5eL9PMHnmaVYe3VemtCLr87Ugu3yL+i2MXhbRObEF3O84x+edajI51yqcfWE?=
- =?us-ascii?Q?Tzd7qRJbzDa/sA252JsI9BpECkKttfnBuxvT5cmDJ9hMtxeEQlvUfxr5tTTX?=
- =?us-ascii?Q?grDiqM1UFkCrh7f1c+pO+7eZAUam1NXAFY0+K3WxERL45k7XRwLNpoSM3hNy?=
- =?us-ascii?Q?+nTZZD1dTG+y3+xH6ky6iRhWjpSNSrFaBYYOQIK6C/wpXi/r2yiqpp2cesgs?=
- =?us-ascii?Q?ilGRIsmnEIwzMEvPbajsy60iZlfhghe+1pqFmRWiDtDCeODr3etJ1iOq/2ZF?=
- =?us-ascii?Q?8T/hPFfQboxugxcSKvsJwAVMjtjbAUcnZpFJkUTW4FkSVc+rfRmIkMvA6GBu?=
- =?us-ascii?Q?2nF9KKqyl9dXBkO16PwtgfgXaCEDG9ZWh1LgAHMS+NxkEbZBh08Fj2SIbY1T?=
- =?us-ascii?Q?4kTFP34imBWve9QYihZPMEIEqaNLo74qHJgZWj5vG94IU7MDrpLXzb3XhVYB?=
- =?us-ascii?Q?E5FZb2FX7FJopyusG+n1HonWkSaiVZcPafo9QYq+tQwtq+Y250i4fqmhsi4g?=
- =?us-ascii?Q?1RHJ0TqLWhQ/S95aPnI6ghRTyusEBJl9l0uGcpGQ0iGU5PKLE6tMWsOBE0lM?=
- =?us-ascii?Q?8CmrfLv7rZrvPgHvDjIx87Joy4H3J9wp6INFDzw5jW8p7H6SQY4Co9WFqSxg?=
- =?us-ascii?Q?L5maAo4pxkaoPtSexGJUbgEuhKxndv+kfehBjC7TIfTSGDXBNxM04KeFLCxW?=
- =?us-ascii?Q?3bcbVIzQBwLs1cicpZHZrtAIY0zASdEji+1QHdHg82G0N4DfmQBZo/8qOMEn?=
- =?us-ascii?Q?3TtX/+2hhT355xen9IDN0sDaY3Z6+eG2bgKV+cIbyLJ9WwDMn6SwhPLBAyd2?=
- =?us-ascii?Q?c7J/K3ALWaoWgGa7xzL/Tptkvp2sMMwdLCMlxi0+daAYig4X0twtanHorj3P?=
- =?us-ascii?Q?5tIlQnon9Tgt7H9K1JmJze1FPnY44DdG+sSH6FaxVhe55xJxrGfDx6HYx0IH?=
- =?us-ascii?Q?4wkCOQBHRtJNPusF6z43kPRs5bdBvkwha44VkwguL3qepOBthJyLbmhwIEJ4?=
- =?us-ascii?Q?C1nTdMRn6DDVcqgye5nv+DyIaN5SOdqtgrcerVC4oWYZkYWKUidoj925D9E0?=
- =?us-ascii?Q?F79XV2m/8wk4A65X7pK+pI7ErLZLveSblMpBUEiybfkj8OYAIrdToCDi7khd?=
- =?us-ascii?Q?6a3LJia0O3outyyKSJaNxA3x+L4kFLu/fYygRc1RteoGcfeCKjtC34nvTLvQ?=
- =?us-ascii?Q?y44NYIY=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8254.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?GsEqD7qnbTQJ58kbc83H1qoJYfNxtJ1CXe5LZjOsI0wavOG3AB+Koyyz0kRq?=
- =?us-ascii?Q?W9aph4pJ5QFJssW2disJWAvhhtp7k8O9vZHV1THpXM8Bs0sAdsGJKPTs9+CZ?=
- =?us-ascii?Q?HYKx0A9eCB3Kompef6VWihSsYOm7IfgooEqZKGC4YpK/AQ+X3eyVStXuwhuu?=
- =?us-ascii?Q?vY5VYhWquIa98agFzsdkf4yUZXUUqqtvX/FTXcKRzsnsLbaJunHVf/SyDqfc?=
- =?us-ascii?Q?GASkJsR7GchJbIu1O3yKB/LGF7H6spP4N3mYZuN2sPYm2QY4DkyI8nzJX7rm?=
- =?us-ascii?Q?5OkBqxzZTM6VGvEwumef5rtwWD33HPQ3lp35M6foT8E/rUUOM6RU+zwJIi01?=
- =?us-ascii?Q?XUg+eYResH+JEMxNj3QhDGS71oBGqxyT13h2e2LYP1klZBVvuOPPzzve8QLZ?=
- =?us-ascii?Q?Xtaz7QPIPjhcx3z4QJFbKUvgmAiwXZOFYFURdW1u+YQQQTD/N1pC4dXacn4u?=
- =?us-ascii?Q?tCJx2Wtwama0lvDbrEokL5BE5FG++2Mg2WZK193QhBxPiIo+FR8OWqf4kA4v?=
- =?us-ascii?Q?3rv/wCCc7Yw9kHPH4FpAfwyBgmzFKMaK5yHE03g6J1zGH3q6Ygg9lhMNR4mW?=
- =?us-ascii?Q?5PnLOA9NdRHbrLYQD6S2qx9i69pVjK5NX2Lacng2AlA9mkaEeDWl5M+nlvdv?=
- =?us-ascii?Q?+1NT5OSuAt49lUMOfTNVvhTilnOD3qSwyZMjaInsO7GsGQqTYi85YIqeflB1?=
- =?us-ascii?Q?ZKSthNvZJaMMN5yRP8iAZEEwmOw8i7CurpGPY6TgqiLzEGvnJlrnb9DD5SZZ?=
- =?us-ascii?Q?ft0WRJmV2Ln8b2GBftNkz6rCeLjLGMIwuuRVLQb2TFNkTPK/OFbxmZv5dqVE?=
- =?us-ascii?Q?P9yxY8gE65Fk/dJYvwFTrgzKJSwVPhDPwXPjAw8WMQ/uPalsfbXsIobiwoXr?=
- =?us-ascii?Q?A/mSDuhRMNFpB5VDFatLVwuUdESiBjpCxpSGsBpzeOq8SbLP8VeCpTUEnnSP?=
- =?us-ascii?Q?dU3ZFP9HNRH0jJ0DPqwuaTV5FhMAUcHDxEqcZB5cm0UVh8ldHAG8Li20T3Q1?=
- =?us-ascii?Q?urkdkd85trr35YqeRRXNUjHlQoJnlnwR1Qil4tc12zkxdBrj+K0cebamw9rE?=
- =?us-ascii?Q?hWEyWHNCPt9314gvNafpSxYGVLTmgj1YNdXGU6vwqutSk2sNgRwK8SGLaWh7?=
- =?us-ascii?Q?mNgm058wj5BtWo19nBfoVK0oXqyfoBkAl8GCh7JWW1/faax5PqjqWgpgorH3?=
- =?us-ascii?Q?UplnlMK5ZFUMqgrT5kL/E/5d8qDjghqg4Htm8ftsJ4zP9ajrfLrN8ZmC/UM3?=
- =?us-ascii?Q?F14oVcqHbego8dL/GyR8bUn0UeGDdDeBxQnNrVLyM75+0hncPb5wTtyxWMDl?=
- =?us-ascii?Q?CXgPSowC0YhIpLultI44p6KdnI+GXgaHlonaiRYdwDMyXBJCoOo6gHKn+ySX?=
- =?us-ascii?Q?uNBvheygQGWNqY/M2AwwsfAaD9uqz8WPsdq5hff2iLsGqmCajNtbkVCpHlpK?=
- =?us-ascii?Q?Bux2UW3EcZg0UBrfJxJhvQpv+GeSs3WjoXQhLrdYqzqIf473+aCHXQsSEI3n?=
- =?us-ascii?Q?uUG2ishnePnrpUn4NlfTRNusU4TAN0MMhBI4Q3Jdx95+7KnNW7l4T662u50n?=
- =?us-ascii?Q?fQNx3q4OxK8fBWicsO8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2A6186616
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729239688; cv=none; b=OJ7QbghNTK+uPeesmD2Sv/JR0SCbmazkH5D0ipz32tZz6mQP4+HPFY4RLVu+mZSRwATRJ+C+AVFMclg1uDU6p4sGw3DJOdQj1p72GMvxFsoI89eDtnrrSaq9or971b2rX4+H3kHzzC9kva4vKW3DMLStG0uTimjZrTGnl29squw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729239688; c=relaxed/simple;
+	bh=+b1cMWRvd2/m165u4jRfl6bdFWmMjC5X8GKJ0se5ktk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KMlQBZwrkKxk9ibdm7MZnXW/sY6pyMTVIwSkDZH2GLFgG7hTvr4tS3R44+iZBGXl+ejPVaTyC6V2P66OXb2LD/G+/LENsB/AVYPRnX3jgBkk+2OPBGOwor/xwZIhwWN9uxA48KdB+WQEy7OhsSGvXvfE23weXGGyaqxiu2N83OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j0ke+elu; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cbb1cf324so15466445ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729239685; x=1729844485; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2sw2cnvD53O5L8zKGOZV5sbNVDe/+IEjxX86rJilqAk=;
+        b=j0ke+elu0OGjMHJZKJ1aG2SpcsTrrfMvjw6NL7rEsL1w1LkjZjpPbqxilX2wbkIpk9
+         cmJKA0AIrz09fbFyrINYIbETOVEzdm4uYtrS+lOYqoUXC3NEcN4lRUWyH0DnMMg9KXDl
+         /xuSsUT4W/LfHHR8PKU5j5UxPqRvbgKUDdLNE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729239685; x=1729844485;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2sw2cnvD53O5L8zKGOZV5sbNVDe/+IEjxX86rJilqAk=;
+        b=NgAY3FrgmM4cMWvVKZKCSVCDe9li2rzKy3VTiRlo/50gckX5RvAm1TKcq7A050pOnu
+         s7qiB07+ITXwk/UGMTdGVWD20pdE2O6Oj64lurKiHOlhrivCJv0uw/l2KPt0BZwqEh6r
+         IEJluo6Q2gVjSqWjitwMEVAkbxGeoP8bMk3N9ZhmWiwGazL7URVkWyQmOudsCffQz0bN
+         j4bkt+A3WXvLkd/UQ39HpYyVoE541OESIugXrncXi5vwXnsz2sN8OElmodjIcH82eMIz
+         VdzH3nUlgL394xJf8PS+3P+XpFTlXcYa0Et42hEP2WHf2SDpV3BHg9J5Sjf0+T22jw1V
+         S3AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0fXqZFgRo51J0G7SLRHcmvYCzZrN06QfBgNgOgzUKubfiPDyDrNIhkRR+KWri1JnRI6RmpJywMzPEdXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoncd2F3WAW4lDYHD1wmOAU8zwdk3aBJrQOrJ2x4/myADgdwco
+	3aMAqLcUwgqAKok4Buv0Ao3dPzgJ2gRREX4LOPvjNK/B0TmKxBCZT4/44lWmow==
+X-Google-Smtp-Source: AGHT+IFOJPmAyaUnxkdtc6GJUuyr1a/qUKidE/urORfJ7bfMi/Vu+97DNhgccSxR9H9P6CXOMHrp/w==
+X-Received: by 2002:a17:90b:814:b0:2e2:a96c:f00d with SMTP id 98e67ed59e1d1-2e56185d15bmr1863982a91.21.1729239684929;
+        Fri, 18 Oct 2024 01:21:24 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:5e77:354e:2385:7baa])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e55da79303sm1315149a91.52.2024.10.18.01.21.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 01:21:24 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	devicetree@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] arm64: dts: mediatek: mt8186-corsola-voltorb: Merge speaker codec nodes
+Date: Fri, 18 Oct 2024 16:21:11 +0800
+Message-ID: <20241018082113.1297268-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8254.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ea28c23-a19a-4d34-e4a1-08dcef4dbea2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2024 08:20:36.9103
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VQBQk7+RQKapKCnFPTpzh9NrHB7H9T0o8GMBw5KHLxubuv/5qW6wZExRO+qOOZeDBUzpzn1h220juDHB2HzzYg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8260
+Content-Transfer-Encoding: 8bit
 
-Hi Hans,
+The Voltorb device uses a speaker codec different from the original
+Corsola device. When the Voltorb device tree was first added, the new
+codec was added as a separate node when it should have just replaced the
+existing one.
 
->-----Original Message-----
->From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
->Sent: Friday, October 18, 2024 2:28 PM
->To: Ming Qian <ming.qian@nxp.com>; mchehab@kernel.org
->Cc: yunkec@google.com; nicolas@ndufresne.ca; s.hauer@pengutronix.de;
->kernel@pengutronix.de; festevam@gmail.com; dl-linux-imx <linux-
->imx@nxp.com>; X.H. Bao <xiahong.bao@nxp.com>; Ming Zhou
-><ming.zhou@nxp.com>; Eagle Zhou <eagle.zhou@nxp.com>; Tao Jiang
-><tao.jiang_2@nxp.com>; Ming Qian (OSS) <ming.qian@oss.nxp.com>;
->imx@lists.linux.dev; linux-media@vger.kernel.org; linux-
->kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
->Subject: [EXT] Re: [RFC v2 5/6] media: v4l2-ctrls: Add video roi ctrls
->
->Caution: This is an external email. Please take care when clicking links o=
-r
->opening attachments. When in doubt, report the message using the 'Report
->this email' button
->
->
->On 18/10/2024 07:44, Ming Qian wrote:
->> Add some ctrls to support the video encoder ROI feature.
->> Support 2 encoder ROI configurations that are rectangular region and
->> QP map
->>
->> Signed-off-by: Ming Qian <ming.qian@nxp.com>
->> Signed-off-by: TaoJiang <tao.jiang_2@nxp.com>
->> ---
->>  .../media/v4l/ext-ctrls-codec.rst             | 73 +++++++++++++++++++
->>  drivers/media/v4l2-core/v4l2-ctrls-defs.c     | 29 ++++++++
->>  include/uapi/linux/v4l2-controls.h            | 11 +++
->>  3 files changed, 113 insertions(+)
->>
->> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst
->> b/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst
->> index 4a379bd9e3fb..6b972247778c 100644
->> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst
->> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst
->> @@ -1667,6 +1667,79 @@ enum
->v4l2_mpeg_video_h264_hierarchical_coding_type -
->>      Codecs need to always use the specified range, rather then a HW cus=
-tom
->range.
->>      Applicable to encoders
->>
->> +``V4L2_CID_MPEG_VIDEO_ROI_MODE``
->> +    (enum)
->> +
->> +enum v4l2_mpeg_video_roi_mode -
->> +    Video roi mode. Possible values are:
->> +
->> +
->> +
->> +.. flat-table::
->> +    :header-rows:  0
->> +    :stub-columns: 0
->> +
->> +    * - ``V4L2_MPEG_VIDEO_ROI_MODE_NONE``
->> +      - No ROI in the MPEG stream
->> +    * - ``V4L2_MPEG_VIDEO_ROI_MODE_RECT``
->> +      - Rectangle ROI mode
->> +    * - ``V4L2_MPEG_VIDEO_ROI_MODE_MAP``
->> +      - Map ROI mode
->> +
->> +``V4L2_CID_MPEG_VIDEO_ROI_RECT (struct)``
->> +    Select rectangular regions and specify the QP offset. The
->> +    struct :c:type:`v4l2_ctrl_video_region_param` provides the
->> +    rectangular region and the parameter to describe QP offset.
->> +    The maximum number of rectangular regions depends on the
->> +    hardware.  This control is a dynamically sized array. This
->> +    control is applicable when ``V4L2_CID_MPEG_VIDEO_ROI_MODE``
->> +    value is ``V4L2_MPEG_VIDEO_ROI_MODE_RECT``. Applicable to
->> +    encoders.
->> +
->> +.. c:type:: v4l2_ctrl_video_region_param
->> +
->> +.. raw:: latex
->> +
->> +    \small
->> +
->> +.. tabularcolumns:: |p{4.0cm}|p{4.0cm}|p{4.0cm}|
->> +
->> +.. flat-table:: struct v4l2_ctrl_video_region_param
->> +    :header-rows:  0
->> +    :stub-columns: 0
->> +    :widths:       1 1 1
->> +
->> +    * - struct :c:type:`v4l2_rect`
->> +      - ``rect``
->> +      - The rectangular region
->
->What is the unit? I assume pixels. And inside what larger area is this rec=
-tangle
->located? It probably needs to refer to one of the SEL_TGT targets as descr=
-ibed
->here:
->
->https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fhverku=
-il.
->home.xs4all.nl%2Fspec%2Fuserspace-api%2Fv4l%2Fv4l2-selection-
->targets.html&data=3D05%7C02%7Cming.qian%40nxp.com%7Cfe9348ba24504eb
->d98f608dcef3dffcf%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C63
->8648296786960098%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAi
->LCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata
->=3DcTXaNWLZs4l6IytSu9TWmEb7OyvF4viby9IjpOJXvmE%3D&reserved=3D0
->
+Merge the two nodes. The only differences are the compatible string and
+the GPIO line property name. This keeps the device node path for the
+speaker codec the same across the MT8186 Chromebook line. Also rename
+the related labels and node names from having rt1019p to speaker codec.
 
-We want to use pixels as the unit, but for some detailed encoder, there
-may be alignment constraints, and the rectangular area should be inside
-the encoded picture size, for example, we encode a 720P H.264 stream,
-the largest area is 1280x720@(0,0). This doesn't involve scaling up or
-down. I'm not sure if it's possible to align to crop or compose.
+Cc: <stable@vger.kernel.org> # v6.11+
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+This is technically not a fix, but having the same device tree structure
+in stable kernels would be more consistent for consumers of the device
+tree. Hence the request for a stable backport.
 
-Currently, we want to choose an area and increase or decrease the image
-quality. so we want to use a parameter to set the qp offset.
+Changes since v1:
+- Dropped Fixes tag, since this is technically a cleanup, not a fix
+- Rename existing rt1019p related node names and labels to the generic
+  "speaker codec" name
+---
+ .../dts/mediatek/mt8186-corsola-voltorb.dtsi  | 21 +++++--------------
+ .../boot/dts/mediatek/mt8186-corsola.dtsi     |  8 +++----
+ 2 files changed, 9 insertions(+), 20 deletions(-)
 
->> +    * - __s32
->> +      - ``parameter``
->> +      -
->
->So what is the parameter? It has no description.
->
-
-I newly add a ctrl type V4L2_CTRL_TYPE_REGION, and this struct is
-related to the type, so I thought I need to define a general argument to
-meet different needs, then this type can support a series of controls.
-For this patch, it's qp offset.
-I thought if I name it as qp_offset, the ctrl type can't be used on
-other similar controls.
-Is it better to rename it or add more description and keep the name?
-
->> +    * - __u32
->> +      - ``reserved[2]``
->> +      -
->
->Add "Applications and drivers must set this to zero."
->
-
-Yes, I missed it
-
->> +
->> +.. raw:: latex
->> +
->> +    \normalsize
->> +
->> +``V4L2_CID_MPEG_VIDEO_ROI_MAP (integer)``
->> +    Specifies the QP offset for each block. This control is a
->> +    dynamically sized array. The array size can be calculated
->> +    from video resolution and the roi map block size which can
->> +    be got from ``V4L2_CID_MPEG_VIDEO_ROI_MAP_BLOCK_SIZE``. This
->> +    control is applicable when ``V4L2_CID_MPEG_VIDEO_ROI_MODE``
->> +    value is ``V4L2_MPEG_VIDEO_ROI_MODE_MAP``. Applicable to
->> +    encoders.
->> +
->> +``V4L2_CID_MPEG_VIDEO_ROI_MAP_BLOCK_SIZE (struct)``
->> +    This control returns the roi block size in pixels. The struct
->> +    :c:type:`v4l2_area` provides the width and height in separate
->> +    fields. This control is applicable when
->> +    ``V4L2_CID_MPEG_VIDEO_ROI_MODE`` value is
->> +    ``V4L2_MPEG_VIDEO_ROI_MODE_MAP``. This control depends on the
->> +    encoding format. Applicable to encoders.
->> +
->>  .. raw:: latex
->>
->>      \normalsize
->> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
->> b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
->> index 1ea52011247a..54219a3b215a 100644
->> --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
->> +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
->> @@ -612,6 +612,13 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
->>               NULL,
->>       };
->>
->> +     static const char * const mpeg_video_roi_mode[] =3D {
->> +             "None",
->> +             "Rectangle",
->> +             "Map",
->> +             NULL,
->> +     };
->> +
->>       switch (id) {
->>       case V4L2_CID_MPEG_AUDIO_SAMPLING_FREQ:
->>               return mpeg_audio_sampling_freq; @@ -750,6 +757,8 @@
->> const char * const *v4l2_ctrl_get_menu(u32 id)
->>               return camera_orientation;
->>       case V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE:
->>               return intra_refresh_period_type;
->> +     case V4L2_CID_MPEG_VIDEO_ROI_MODE:
->> +             return mpeg_video_roi_mode;
->>       default:
->>               return NULL;
->>       }
->> @@ -971,6 +980,10 @@ const char *v4l2_ctrl_get_name(u32 id)
->>       case V4L2_CID_MPEG_VIDEO_FRAME_LTR_INDEX:               return "Fr=
-ame
->LTR Index";
->>       case V4L2_CID_MPEG_VIDEO_USE_LTR_FRAMES:                return "Us=
-e LTR
->Frames";
->>       case V4L2_CID_MPEG_VIDEO_AVERAGE_QP:                    return "Av=
-erage
->QP Value";
->> +     case V4L2_CID_MPEG_VIDEO_ROI_MODE:                      return "Vi=
-deo ROI
->Mode";
->> +     case V4L2_CID_MPEG_VIDEO_ROI_RECT:                      return "Vi=
-deo ROI
->Rectangle";
->> +     case V4L2_CID_MPEG_VIDEO_ROI_MAP:                       return "Vi=
-deo ROI
->Map";
->> +     case V4L2_CID_MPEG_VIDEO_ROI_MAP_BLOCK_SIZE:            return
->"Video ROI Map Block Size";
->>       case V4L2_CID_FWHT_I_FRAME_QP:                          return "FW=
-HT I-Frame
->QP Value";
->>       case V4L2_CID_FWHT_P_FRAME_QP:                          return "FW=
-HT P-
->Frame QP Value";
->>
->> @@ -1512,6 +1525,22 @@ void v4l2_ctrl_fill(u32 id, const char **name,
->enum v4l2_ctrl_type *type,
->>               *type =3D V4L2_CTRL_TYPE_INTEGER;
->>               *flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
->>               break;
->> +     case V4L2_CID_MPEG_VIDEO_ROI_MODE:
->> +             *type =3D V4L2_CTRL_TYPE_MENU;
->> +             *flags |=3D V4L2_CTRL_FLAG_UPDATE;
->> +             break;
->> +     case V4L2_CID_MPEG_VIDEO_ROI_RECT:
->> +             *type =3D V4L2_CTRL_TYPE_REGION;
->> +             *flags |=3D V4L2_CTRL_FLAG_DYNAMIC_ARRAY |
->V4L2_CTRL_FLAG_HAS_WHICH_MIN_MAX;
->> +             break;
->> +     case V4L2_CID_MPEG_VIDEO_ROI_MAP:
->> +             *type =3D V4L2_CTRL_TYPE_INTEGER;
->> +             *flags |=3D V4L2_CTRL_FLAG_DYNAMIC_ARRAY |
->V4L2_CTRL_FLAG_HAS_WHICH_MIN_MAX;
->> +             break;
->> +     case V4L2_CID_MPEG_VIDEO_ROI_MAP_BLOCK_SIZE:
->> +             *type =3D V4L2_CTRL_TYPE_AREA;
->> +             *flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
->> +             break;
->>       case V4L2_CID_PIXEL_RATE:
->>               *type =3D V4L2_CTRL_TYPE_INTEGER64;
->>               *flags |=3D V4L2_CTRL_FLAG_READ_ONLY; diff --git
->> a/include/uapi/linux/v4l2-controls.h
->> b/include/uapi/linux/v4l2-controls.h
->> index 974fd254e573..169a676fd64c 100644
->> --- a/include/uapi/linux/v4l2-controls.h
->> +++ b/include/uapi/linux/v4l2-controls.h
->> @@ -900,6 +900,17 @@ enum v4l2_mpeg_video_av1_level {
->>
->>  #define V4L2_CID_MPEG_VIDEO_AVERAGE_QP  (V4L2_CID_CODEC_BASE +
->657)
->>
->> +enum v4l2_mpeg_video_roi_mode {
->> +     V4L2_MPEG_VIDEO_ROI_MODE_NONE,
->> +     V4L2_MPEG_VIDEO_ROI_MODE_RECT,
->> +     V4L2_MPEG_VIDEO_ROI_MODE_MAP
->> +};
->> +
->> +#define V4L2_CID_MPEG_VIDEO_ROI_MODE         (V4L2_CID_CODEC_BASE
->+ 658)
->> +#define V4L2_CID_MPEG_VIDEO_ROI_RECT         (V4L2_CID_CODEC_BASE +
->659)
->> +#define V4L2_CID_MPEG_VIDEO_ROI_MAP          (V4L2_CID_CODEC_BASE +
->660)
->> +#define V4L2_CID_MPEG_VIDEO_ROI_MAP_BLOCK_SIZE
->(V4L2_CID_CODEC_BASE + 661)
->> +
->>  /*  MPEG-class control IDs specific to the CX2341x driver as defined by=
- V4L2
->*/
->>  #define V4L2_CID_CODEC_CX2341X_BASE
->(V4L2_CTRL_CLASS_CODEC | 0x1000)
->>  #define V4L2_CID_MPEG_CX2341X_VIDEO_SPATIAL_FILTER_MODE
->(V4L2_CID_CODEC_CX2341X_BASE+0)
+diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-voltorb.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola-voltorb.dtsi
+index 52ec58128d56..b495a241b443 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8186-corsola-voltorb.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-voltorb.dtsi
+@@ -10,12 +10,6 @@
+ 
+ / {
+ 	chassis-type = "laptop";
+-
+-	max98360a: max98360a {
+-		compatible = "maxim,max98360a";
+-		sdmode-gpios = <&pio 150 GPIO_ACTIVE_HIGH>;
+-		#sound-dai-cells = <0>;
+-	};
+ };
+ 
+ &cpu6 {
+@@ -59,19 +53,14 @@ &cluster1_opp_15 {
+ 	opp-hz = /bits/ 64 <2200000000>;
+ };
+ 
+-&rt1019p{
+-	status = "disabled";
+-};
+-
+ &sound {
+ 	compatible = "mediatek,mt8186-mt6366-rt5682s-max98360-sound";
+-	status = "okay";
++};
+ 
+-	spk-hdmi-playback-dai-link {
+-		codec {
+-			sound-dai = <&it6505dptx>, <&max98360a>;
+-		};
+-	};
++&speaker_codec {
++	compatible = "maxim,max98360a";
++	sdmode-gpios = <&pio 150 GPIO_ACTIVE_HIGH>;
++	/delete-property/ sdb-gpios;
+ };
+ 
+ &spmi {
+diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
+index c7580ac1e2d4..cf288fe7a238 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
+@@ -259,15 +259,15 @@ spk-hdmi-playback-dai-link {
+ 			mediatek,clk-provider = "cpu";
+ 			/* RT1019P and IT6505 connected to the same I2S line */
+ 			codec {
+-				sound-dai = <&it6505dptx>, <&rt1019p>;
++				sound-dai = <&it6505dptx>, <&speaker_codec>;
+ 			};
+ 		};
+ 	};
+ 
+-	rt1019p: speaker-codec {
++	speaker_codec: speaker-codec {
+ 		compatible = "realtek,rt1019p";
+ 		pinctrl-names = "default";
+-		pinctrl-0 = <&rt1019p_pins_default>;
++		pinctrl-0 = <&speaker_codec_pins_default>;
+ 		#sound-dai-cells = <0>;
+ 		sdb-gpios = <&pio 150 GPIO_ACTIVE_HIGH>;
+ 	};
+@@ -1195,7 +1195,7 @@ pins {
+ 		};
+ 	};
+ 
+-	rt1019p_pins_default: rt1019p-default-pins {
++	speaker_codec_pins_default: speaker-codec-default-pins {
+ 		pins-sdb {
+ 			pinmux = <PINMUX_GPIO150__FUNC_GPIO150>;
+ 			output-low;
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
 
