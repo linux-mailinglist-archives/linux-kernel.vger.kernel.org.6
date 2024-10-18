@@ -1,79 +1,85 @@
-Return-Path: <linux-kernel+bounces-371673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6EA9A3E71
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:31:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F289A3E74
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01142285599
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:31:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F0B1F226E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E849E18028;
-	Fri, 18 Oct 2024 12:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA6A26AD9;
+	Fri, 18 Oct 2024 12:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z+2nDTxf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MCrnzQuN"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFF620E323;
-	Fri, 18 Oct 2024 12:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2431344C8F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729254674; cv=none; b=f9jT+unLfO+gWgMkmcjC6HpGzIUiIGlluThgJo2VwnhSZwX9nw2AzYqOv2no21LlDXoajZgnvnbvTLebTA4rJDr7FLfg9kTIn/15CZCNxN9bN1hkS2BvvxUXotALt+/uC//40f3fLJFNf/lEOmq9h63/YDQiKuSnyVkD+V15a5s=
+	t=1729254687; cv=none; b=Dwfvoe1ggur4NUuQsVCpYRTweUHb6dHQ7A3xT3Um76paNprgLaSDstuj/gorZJJOspDYKknAoszejz5YxpRuBpjJs3aCTi89EcE+G99MqSAPILkwNo9i3KUVNjzBwLrueoLjUmlCodMDfKyTxYxJZEqi1QSg6+gm7sf4iIstYVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729254674; c=relaxed/simple;
-	bh=YP4ryAVQ6mxQmShuV+kis5u6NU6ySMg9qusRdIUZQ7M=;
+	s=arc-20240116; t=1729254687; c=relaxed/simple;
+	bh=aw6mseRDDe/wDjXyXjamvdSdeBFmFUV1YRWwiLwkZ7g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TgQod0HayCk6PSrbykFGUBHF++7WCfK3oX3htcFvvArrLCPAqfkY4cMbL7X27b0ThTG2PAH5hiuPWOE54dzryxau0xfErVrWYUX8asi8dra8ZelJYfQcec9btzD5jUFvU9e1QRhiU/Q1/IdHAinnkTVXniDyrZehvHtHLFlaRXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z+2nDTxf; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729254673; x=1760790673;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YP4ryAVQ6mxQmShuV+kis5u6NU6ySMg9qusRdIUZQ7M=;
-  b=Z+2nDTxf9mRvBCAH+1EdeepbGedXbomKbLM5rhr0wKUBwTwhbdMqugN/
-   ghLNyKLmpcVz5cr0zec/y+5TKcZNZZf5eeTtksyeLcTNXjtjOsf144XyM
-   esf6n+M0OhbvAqCAZ5oaGB2d/lZGYGdDuvrdksYhRlossy6GINYNCDkrF
-   XdK22nQyNLssXkVpq4+j8vzEIDju9X15QI32bjJ8+wFLxSYcOsBior7WF
-   AOyJ2CICtnlKBwBHpWc0FwIHc8Wciyt2+i+7zGKIa6sJow8J4Ku2lWGvY
-   /S8ggnM9RWu4F2BfSxGHkeMyjIU6i8iyRAPL5+/U4MKTCKymMThbYhWx7
-   w==;
-X-CSE-ConnectionGUID: 4OgStquhTHGx6+xI9iz+IQ==
-X-CSE-MsgGUID: bCHgIM/XTM+LVC6ybjazxQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28875716"
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="28875716"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:31:12 -0700
-X-CSE-ConnectionGUID: asULgpfwRPCnZJ0v/ixNkg==
-X-CSE-MsgGUID: rXrtIxgBSISh+tpNbvGoFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="109591173"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 05:31:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t1m8H-00000004SZ1-34nZ;
-	Fri, 18 Oct 2024 15:31:05 +0300
-Date: Fri, 18 Oct 2024 15:31:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: tiwai@suse.de, robh+dt@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
-	pierre-louis.bossart@linux.intel.com, shenghao-ding@ti.com,
-	navada@ti.com, 13916275206@139.com, v-hampiholi@ti.com, v-po@ti.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	liam.r.girdwood@intel.com, yung-chuan.liao@linux.intel.com,
-	broonie@kernel.org, antheas.dk@gmail.com
-Subject: Re: [PATCH v2] ALSA: hda/tas2781: Add speaker id check for ASUS
- projects
-Message-ID: <ZxJVCb13lQ4h2KRD@smile.fi.intel.com>
-References: <20241018071118.3298-1-baojun.xu@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XSwDui0QV6i3PLU/wOizAykdzVRoKk6J6m/h4DsdlCeJXDf9t36yamZ6WMgfwqEwiH4qO9UXYdzq5X9e9qg+3bh0ScqN/m9BdrhftTtL5OK86Jqqa9ChQP9RsJQtXfJm/LOU0ZIbRGEdpVXptg10U1tzqo47V3ZJGUevFST6gKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MCrnzQuN; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539fb49c64aso3016322e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:31:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729254683; x=1729859483; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8AGZam4n06viI04ibKwIHu8ebEmTULIu0XIfkMmLleM=;
+        b=MCrnzQuNdYkWa+tBc0nCdU3U2iKs8wT/4lKeJ6CSBEwjCjMSbruiBaSpCPrh2Tb7cn
+         vGiOrd5oUOacNJ+yp7RawYKGS5Tw/fUQVUnjmfoyd4COGUwEl+1/3RcoQqP9Y59QSoQd
+         AG5JOdv5/VcR5Iu44TXVHfOogAaVkmKCR39oL0eQ96+TCl5B+NfPUFQ4xTyjZ+X6EOl/
+         sghcoayxVFjcfhRa/ZShHwqIToZB+6GMc3JdP1ftrKe+eBC+yQ/QwlicZCI6um45Hh0K
+         BCYQRtJUWrE79pnk5vZkJb6Q01i6eR/QW6NFeHihcE28mMx1tgsg/DvIpEOj7euIav2P
+         50tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729254683; x=1729859483;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8AGZam4n06viI04ibKwIHu8ebEmTULIu0XIfkMmLleM=;
+        b=cvw69idgSDjfAGxKDGVxJx0/m+S/tHY+6sROna0WaoIy8de7wEWMeanRi3T26ysEwl
+         jBHEDYKOtlYHDiXiffJyRoDCatNWgp8OhGC5EGr6JoBbplCVO5a9aN2SXS+h4/qvENCL
+         tjWi/JIrkjeY4mrvXXYFAgRsAgtiv1VPLqhZz55hB0AvboyXLlpzKbH5jIPA4yOoTBtu
+         5WTRVeKtuSKXeZB9i/UJwUH0Tg5z0VZWh7IOe4LFLVPe2VKYpqf9PaK9Hcs+0yoc7LXH
+         m+sMltK7+3MuTy0+O/m8owEPqJ1ovSQ6EyhWWJCgHrMhhg+bb5tDN1DM/S4EnkO2mZ2Q
+         Pf/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXdsWyNKnyV2CqwCZ1BqjykE+1uxWC3Nk8yitp/ocK/hm5xoCfQjDVOvn7NNd5rPxngUZyz1TimjL0sZuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPk7lWXjzwWnpv252f/faoXQdt3f3IPKpwvujrwk3lWT98F/4+
+	KSIZZuTf/rnX3CpmacSyfvALG4ViN2iFfwcCrEU70lx3BL6yAGeRe1QEhoUDse0=
+X-Google-Smtp-Source: AGHT+IF5+uQbidjUeJm/YIP54JRQhHenrE8LF08c1wGN7AL7hbF7Y70yrjPM2DsLa+7UkJwLWiqkDA==
+X-Received: by 2002:a05:6512:1384:b0:53a:64:6818 with SMTP id 2adb3069b0e04-53a154c9d93mr2164357e87.47.1729254683205;
+        Fri, 18 Oct 2024 05:31:23 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a1521fecdsm206273e87.298.2024.10.18.05.31.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 05:31:22 -0700 (PDT)
+Date: Fri, 18 Oct 2024 15:31:20 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, marex@denx.de, stefan@agner.ch
+Subject: Re: [PATCH 4/5] drm/bridge: imx8mp-hdmi-tx: Set output_port to 1
+Message-ID: <vvsj6ri2ke25nzocbq736yv7rphzma6pn3yk2uh7iu43zfe2sa@2fwye4k4w6he>
+References: <20241018064813.2750016-1-victor.liu@nxp.com>
+ <20241018064813.2750016-5-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,97 +88,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018071118.3298-1-baojun.xu@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241018064813.2750016-5-victor.liu@nxp.com>
 
-On Fri, Oct 18, 2024 at 03:11:18PM +0800, Baojun Xu wrote:
-> Add speaker id check by gpio in ACPI for ASUS projects.
-> In other vendors, speaker id was checked by BIOS, and was applied in
-> last bit of subsys id, so we can load corresponding firmware binary file
-> for its speaker by subsys id.
-> But in ASUS project, the firmware binary name will be appended an extra
-> number to tell the speakers from different vendors. And this single digit
-> come from gpio level of speaker id in BIOS.
-
-...
-
-> +	sub = acpi_get_subsystem_id(ACPI_HANDLE(physdev));
-> +	if (IS_ERR(sub)) {
-> +		dev_err(p->dev, "Failed to get SUBSYS ID.\n");
-> +		goto err;
-> +	}
-> +	// Speaker id was needed for ASUS projects.
-> +	if (strstr(sub, TAS2781_ASUS_ID)) {
-
-strstr() is wrong. You can get 1043 in the middle of the bigger number,
-or even text.
-
-> +		ret = devm_acpi_dev_add_driver_gpios(p->dev,
-> +			tas2781_speaker_id_gpios);
-> +		if (ret) {
-> +			dev_err(p->dev, "Unable to add GPIO.\n");
-
-> +			goto err;
-
-No need. If this fails, the below most likely fail as well.
-
-> +		}
-> +		p->speaker_id = devm_gpiod_get(p->dev, "speakerid", GPIOD_IN);
-> +		if (IS_ERR(p->speaker_id)) {
-> +			dev_err(p->dev, "Failed to get Speaker id.\n");
-> +			goto err;
-> +		}
-> +	} else {
-> +		p->speaker_id = NULL;
-> +	}
-
-...
-
-> +	if (tas_priv->speaker_id != NULL) {
-> +		// Speaker id need to be checked for ASUS only.
-> +		spk_id = gpiod_get_value(tas_priv->speaker_id);
-> +		if (spk_id < 0 || spk_id > 1) {
-
-When "> 1" is possible? Isn't it a dead code?
-
-> +			// Speaker id is not valid, use default.
-> +			dev_dbg(tas_priv->dev, "Wrong spk_id = %d\n", spk_id);
-> +			spk_id = 0;
-> +		}
-> +		scnprintf(tas_priv->coef_binaryname,
-
-Why 'c' variant? You do not check the return value anyway. So, what's the point?
-
-> +			  sizeof(tas_priv->coef_binaryname),
-> +			  "TAS2XXX%04X%01d.bin",
-> +			  lower_16_bits(codec->core.subsystem_id),
-> +			  spk_id);
-> +	} else {
-> +		scnprintf(tas_priv->coef_binaryname,
-
-Ditto.
-
-> +			  sizeof(tas_priv->coef_binaryname),
-> +			  "TAS2XXX%04X.bin",
-> +			  lower_16_bits(codec->core.subsystem_id));
-> +	}
-
-...
-
-> @@ -793,7 +844,6 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
->  	const char *device_name;
->  	int ret;
+On Fri, Oct 18, 2024 at 02:48:12PM +0800, Liu Ying wrote:
+> Set DW HDMI platform data's output_port to 1 in imx8mp_dw_hdmi_probe()
+> so that dw_hdmi_probe() called by imx8mp_dw_hdmi_probe() can tell the
+> DW HDMI bridge core driver about the output port we are using, hence
+> the next bridge can be found in dw_hdmi_parse_dt() according to the port
+> index, and furthermore the next bridge can be attached to bridge chain in
+> dw_hdmi_bridge_attach() when the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag is
+> set.  The output_port value aligns to the value used by devicetree.
+> This is a preparation for making the i.MX8MP LCDIF driver use
+> drm_bridge_connector which requires the DRM_BRIDGE_ATTACH_NO_CONNECTOR
+> flag.
+> 
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> ---
+>  drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> index 8fcc6d18f4ab..54a53f96929a 100644
+> --- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> @@ -96,6 +96,7 @@ static int imx8mp_dw_hdmi_probe(struct platform_device *pdev)
+>  		return dev_err_probe(dev, PTR_ERR(hdmi->pixclk),
+>  				     "Unable to get pixel clock\n");
 >  
-> -
->  	tas_hda = devm_kzalloc(&clt->dev, sizeof(*tas_hda), GFP_KERNEL);
->  	if (!tas_hda)
->  		return -ENOMEM;
+> +	plat_data->output_port = 1;
 
-Stray change.
+This will break compatibility with older DT files, which don't have
+output port. I think you need to add output_port_optional flag to
+dw_hdmi_plat_data and still return 0 from dw_hdmi_parse_dt() if the flag
+is set, but there is no remote node.
+
+Last, but not least, this changes behaviour of the connector.
+dw_hdmi_connector_create() implements CEC support, handles
+ycbcr_420_allowed, HDR metadata, etc.
+
+We are slowly moving towards the supporting all of this in bridge
+connector via the HDMI Connector framework, but this is not
+implemented for now.
+
+>  	plat_data->mode_valid = imx8mp_hdmi_mode_valid;
+>  	plat_data->phy_ops = &imx8mp_hdmi_phy_ops;
+>  	plat_data->phy_name = "SAMSUNG HDMI TX PHY";
+> -- 
+> 2.34.1
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+With best wishes
+Dmitry
 
