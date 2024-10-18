@@ -1,132 +1,127 @@
-Return-Path: <linux-kernel+bounces-371675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126299A3E76
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:31:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 433599A3E77
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF8AB285F52
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 688E91C238C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF152AF16;
-	Fri, 18 Oct 2024 12:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8074084C;
+	Fri, 18 Oct 2024 12:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="bYkYiKHn"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUD+nsid"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C62288BD
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D01315E8B;
+	Fri, 18 Oct 2024 12:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729254691; cv=none; b=VUASIBaCeVZhmybcqSyTsGs6FTGT73aNuEj61snDDh4/1jpZNVWIINDF5xgF3soe79CvV1BaGZik/gK37ZRqNNPFXRFKt+VP0n82ggxb1/KzvzdINoxeZWdeGtVTSljULsrgov8/bAPTaRTa5lGEhb2AERo4fYLPDxnC1VUi1N4=
+	t=1729254699; cv=none; b=Tc++ozQXWsv2rsZFHHwlLxGxysGp6s5sIqTtIsEAnplsk7wOsv6qzz9X/IJ4GlFjfccrvbY+RDYcEWcUvStKeAb3BFLBAGu8ZsJaECiztUcSca8Wa7Bz9TGdev3CFLuNOQVqEnpGpguY+sVN3vFxd3pQGQQbjJ+peEJHm4XuwGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729254691; c=relaxed/simple;
-	bh=YepgUkJ2lToDPFN225mu6ARD4Ji0n/Z2/yUcAuje8jo=;
+	s=arc-20240116; t=1729254699; c=relaxed/simple;
+	bh=2+K8JMMFpl8RPAVm0w2i40EW28QgBoA4YuGXOYb4GiI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iqOasnZpYq3dchddF2WdFbpBt8tCA+lyE5/KC00wUpsAqezyhowHanXh+ZZErDaAEsYPWuLUQ5l/X9wgqGB68/GJnOH9OFO8p1hI3ap5mQ5jhIOwUvn+xs3o40ZC6nc5ktyx713PpjWMJmO1/fBUHrTQfJePJusXNNJ0HxvNzYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=bYkYiKHn; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b1457ba751so166913985a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:31:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1729254687; x=1729859487; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ljwrlb/z0YLznPxkxUIrF1QefOIilHj7zulCESswlBA=;
-        b=bYkYiKHnlAYEYRD7neztBhrxGYXee2IBDMkJBh75+yl7aoNSWqdpQFbDiRoThk3GAJ
-         2SC+cHGeBIDiKWLu4CqmBltkNHPNzUl353tISrgnqABBD8SxXyYpUcr2C9WbNC97zXbA
-         hef/jM0H1oZy2iYhVWxVxGeVJTQ2AvVUMDscukLc6MhPijAGpojEdtSRge5MsZ4JRieK
-         dJRPe9f05PsTOwaDRfxe1aSIqbJtmhQyN+ubf6Ut/bZLoM+Y/Sar7KZYCirhLEW8vTEQ
-         HJ7TeY31lqStrdufY+dZ1/vI+k2XXTzYoelxtrof6JV6CRQwlBSMq6ukpnWSZSx4ifRL
-         Ik0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729254687; x=1729859487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ljwrlb/z0YLznPxkxUIrF1QefOIilHj7zulCESswlBA=;
-        b=dec+vurIEdzqHbmZDVSnmJWwL1pidekoilgUsQkdHtT8zxOpnKZ/MZduNfiU5jNoHt
-         axiKVSFScd3VNY47HeQ+7XHtazelC5+fJTQtUKT/jUmGuJf4vE13cs8ygBDzrU03mrmz
-         QAQz4ztQ6fr29kP8F53ZQtbuimIykAXS7UUkphLpIOZzFnGLn51VeSuRWeDkl2gp37Jy
-         2vYcGg/mboqw/DjaXTTiqhJMitVzSkBoOZitvLuE6xC0dEfXJ9pVdLTt7dp/2LV2K9OC
-         fuXc6VOpORYNwDcJ524ekoIL0dJ9slh+I1D5jB6Y90nfQL8IUq57l0jOsLwYtArBZJqY
-         IyNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWomw/NzMfEdvABObnhzIBTZ4ROo7Q1S5JJizLp4kpUu5jLB/5cvFD9uKZ8IjZfbbwLdyVfdR1iJ8ZxsZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+3MJcCxenTf+n4OtfLkr3RGt6QkcAzTyOAfdtaHNMSQTHJcBD
-	E6r50ilF6TCAbRD4BywBZJ2gnymrdhW+v1+f0K946IO9trfabRHsx2+VqtYXDRw=
-X-Google-Smtp-Source: AGHT+IEpkqPl93VHak2DLYK90RodDlnBgH2nXjIf3o6uxKklx+2vSWQ80oe+0osSbgMlMBVXosCFnQ==
-X-Received: by 2002:a05:620a:468f:b0:7b1:3bf8:b3cc with SMTP id af79cd13be357-7b157b5a96amr270233785a.17.1729254687596;
-        Fri, 18 Oct 2024 05:31:27 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b15700b3f3sm63750785a.136.2024.10.18.05.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 05:31:26 -0700 (PDT)
-Date: Fri, 18 Oct 2024 08:31:22 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, nphamcs@gmail.com,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, akpm@linux-foundation.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, lnyng@meta.com
-Subject: Re: [PATCH 0/1] memcg/hugetlb: Adding hugeTLB counters to memory
- controller
-Message-ID: <20241018123122.GB71939@cmpxchg.org>
-References: <20241017160438.3893293-1-joshua.hahnjy@gmail.com>
- <ZxI0cBwXIuVUmElU@tiehlicka>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSKUphduEPczf/t4EqL4IFMzsAkQoDqYmiAWXpjMuAYPLEEg8o9KKW+22RkN4z+svM5HxgScLyhwBWqBlpR8DNCIYNxjuBrsfdTwaS+MPmSkx3f7qLbG/t1/Q9XqlVVXE3yZub5wyEvP8wvWjRg2EUqU87nWU8MB0XX6RcLrFn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUD+nsid; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55FFFC4CEC3;
+	Fri, 18 Oct 2024 12:31:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729254698;
+	bh=2+K8JMMFpl8RPAVm0w2i40EW28QgBoA4YuGXOYb4GiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YUD+nsid9VzEBbh2NmxFsxNQBGXprPAjlVdjqbi13ZKRToLz4C2Ly9X+waY/tatkX
+	 NjSpVEb886Lul0a4pZn50e3Lv4x7jpGNT5T/HOtQau3BrZNG/TCV5qPQs3r4jvNQWM
+	 OxHZvChkmadG7HcOhMYuS90CdtdWQjr3RmLLCl6+hj02GEY+KAN9b8DAKgesFNK3uL
+	 jJFlAcCw6vf40aI2fJgZ+j7sRzvOpLQ1n9Hyqpj7KzJiR2g/VLZfS9YgsfDCPMH8Ba
+	 bIzbyBsN+MITSGzEmt8R2ZxDzVN1i5W0NmWrCiNrw2nGYV2V1sJIlKQn0yZGIuTPMC
+	 P/DhNc7AfGpfg==
+Date: Fri, 18 Oct 2024 14:31:36 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>, Miguel Ojeda <ojeda@kernel.org>,
+	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>
+Subject: Re: [PATCH v4] checkpatch: Remove broken sleep/delay related checks
+Message-ID: <ZxJVKEouOke_sbd9@localhost.localdomain>
+References: <20241014-devel-anna-maria-b4-timers-flseep-v3-16-dc8b907cb62f@linutronix.de>
+ <20241016100531.7153-1-anna-maria@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ZxI0cBwXIuVUmElU@tiehlicka>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241016100531.7153-1-anna-maria@linutronix.de>
 
-On Fri, Oct 18, 2024 at 12:12:00PM +0200, Michal Hocko wrote:
-> On Thu 17-10-24 09:04:37, Joshua Hahn wrote:
-> > HugeTLB usage is a metric that can provide utility for monitors hoping
-> > to get more insight into the memory usage patterns in cgroups. It also
-> > helps identify if large folios are being distributed efficiently across
-> > workloads, so that tasks that can take most advantage of reduced TLB
-> > misses are prioritized.
-> > 
-> > While cgroupv2's hugeTLB controller does report this value, some users
-> > who wish to track hugeTLB usage might not want to take on the additional
-> > overhead or the features of the controller just to use the metric.
-> > This patch introduces hugeTLB usage in the memcg stats, mirroring the
-> > value in the hugeTLB controller and offering a more fine-grained
-> > cgroup-level breakdown of the value in /proc/meminfo.
+Le Wed, Oct 16, 2024 at 12:05:31PM +0200, Anna-Maria Behnsen a écrit :
+> checkpatch.pl checks for several things related to sleep and delay
+> functions. In all warnings the outdated documentation is referenced. All
+> broken parts are listed one by one in the following with an explanation why
+> this check is broken. For a basic background of those functions please also
+> refere to the updated function descriptions of udelay(), nsleep_range() and
+> msleep().
 > 
-> This seems really confusing because memcg controller is not responsible
-> for the hugetlb memory. Could you be more specific why enabling hugetlb
-> controller is not really desirable when the actual per-group tracking is
-> needed?
+> Be aware: The change is done with a perl knowledge of the level "I'm able
+> to spell perl".
+> 
+> The following checks are broken:
+> 
+> - Check: (! ($delay < 10) )
+>   Message: "usleep_range is preferred over udelay;
+>             see Documentation/timers/timers-howto.rst\n"
+>   Why is the check broken: When it is an atomic context, udelay() is
+>                            mandatory.
+> 
+> - Check: ($min eq $max)
+>   Message:  "usleep_range should not use min == max args;
+>              see Documentation/timers/timers-howto.rst\n"
+>   Why is the check broken: When the requested accuracy for the sleep
+>                            duration requires it, it is also valid to use
+>                            min == max.
+> 
+> - Check: ($delay > 2000)
+>   Message: "long udelay - prefer mdelay;
+>             see arch/arm/include/asm/delay.h\n"
+>   Why is the check broken: The threshold when to start using mdelay() to
+>                            prevent an overflow depends on
+>                            MAX_UDELAY_MS. This value is architecture
+>                            dependent. The used value for the check and
+>                            reference is arm specific. Generic would be 5ms,
+>                            but this would "break" arm, loongarch and mips
+>                            and also the arm value might "break" mips and
+>                            loongarch in some configurations.
+> 
+> - Check: ($1 < 20)
+>   Message: "msleep < 20ms can sleep for up to 20ms;
+>             see Documentation/timers/timers-howto.rst\n"
+>   Why is the check broken: msleep(1) might sleep up to 20ms but only on a
+>                            HZ=100 system. On a HZ=1000 system this will be
+>                            2ms. This means, the threshold cannot be hard
+>                            coded as it depends on HZ (jiffy granularity and
+>                            timer wheel bucket/level granularity) and also
+>                            on the required accuracy of the callsite. See
+>                            msleep() and also the USLEEP_RANGE_UPPER_BOUND
+>                            value.
+> 
+> Remove all broken checks. Update checkpatch documentation accordingly.
+> 
+> Cc: Andy Whitcroft <apw@canonical.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-We have competition over memory, but not specifically over hugetlb.
-
-The maximum hugetlb footprint of jobs is known in advance, and we
-configure hugetlb_cma= accordingly. There are no static boot time
-hugetlb reservations, and there is no opportunistic use of hugetlb
-from jobs or other parts of the system. So we don't need control over
-the hugetlb pool, and no limit enforcement on hugetlb specifically.
-
-However, memory overall is overcommitted between job and system
-management. If the main job is using hugetlb, we need that to show up
-in memory.current and be taken into account for memory.high and
-memory.low enforcement. It's the old memory fungibility argument: if
-you use hugetlb, it should reduce the budget for cache/anon.
-
-Nhat's recent patch to charge hugetlb to memcg accomplishes that.
-
-However, we now have potentially a sizable portion of memory in
-memory.current that doesn't show up in memory.stat. Joshua's patch
-addresses that, so userspace can understand its memory footprint.
-
-I hope that makes sense.
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
 
