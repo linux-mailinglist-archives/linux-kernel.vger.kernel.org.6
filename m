@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-371831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6923E9A4101
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:21:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3779A4103
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192431F2461A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:21:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D718B1F2464E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CD01EE007;
-	Fri, 18 Oct 2024 14:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA42E1FCF61;
+	Fri, 18 Oct 2024 14:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzgiulS2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="gf+2gEda"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85386BFCA;
-	Fri, 18 Oct 2024 14:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF031EE03D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 14:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729261272; cv=none; b=jo/qCOJ9aUUuWeyCFHK0EGI4qnVfTTA4F/6VGnMIHqqFnQcgXDNSwCBoIeKRpzzE4q1oWhyYkRQqA576i49GbS0oO1ey4CZ9PXkJ6Irz+JorQUn47JcP1njxikoYw98wGUBeuXyFW/q5gMMGYw4JtA1yOEQbnJ7JPQtqg9Jswsc=
+	t=1729261284; cv=none; b=CRiaVf4HuI6aoavBIqPUMsNndqwitfSVbNOC1QdvJUneP/tW9wLFYJCNryz3s74UC465ar+JDWllyCcM2ZF/ZgVqNEJsgVguP71Qe2AmwzxQB+1dnVOz/tmtJEc4U1IggUnuxv6goGV7Yhyq4YQq6dzh6YOmOy1g9N+XaTow3qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729261272; c=relaxed/simple;
-	bh=ECioSBta/T4Mm2R7F7k6DzVa2u7XNruvIlcI8+i/QpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZMqT4bjXYd/2DH41AO0E0C+zdQoLA9u/ScUKEcTs5EUyn92sJgZRSA4aGktj6D3JNNqCQrVuiutB0w1UUReG4JVT2+0NBIzkfTDOe5pqGn4vI50MtwbTfxAOeQxvoMcXf3/SeIFKNez/zWBFi1MO5c4QMCaDE5nZ3ZtoRX2EgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzgiulS2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13439C4CEC3;
-	Fri, 18 Oct 2024 14:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729261271;
-	bh=ECioSBta/T4Mm2R7F7k6DzVa2u7XNruvIlcI8+i/QpQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DzgiulS2sJiiET79pCk8UL6iUrgtZJKNk5FGkDO/3047qLeVO2618KzPRpD6KtVb5
-	 J0XNeo/tcmc6lvSkyRWzfa4w3KGfY7vn/Wn/lncrbFK1Kx/en1kHTQ9TmevfTqOI7l
-	 2MT4zu/Omkc06EzF2Z628YPpCiLUdcczFXr+stzg/QoUTMsBtHpCpUmTeua5sM1gRP
-	 X9FgZuhtQ8twS2+B+KCEEBDc0pHhO3knrJtUPVkkSliMcfdwCH05Jp7sIbktyFrCN2
-	 kbkaPfJnmgPAx/8qjKsBd1CTye84JBGP3HgMyQbm/0+P1iASjnEO8RMkc2XsjxEELD
-	 Xip+3Zsd1kVqA==
-Date: Fri, 18 Oct 2024 15:21:04 +0100
-From: Simon Horman <horms@kernel.org>
-To: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-Cc: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrii Nakryiko <andriin@fb.com>, Jussi Maki <joamaki@gmail.com>,
-	Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Nikolay Aleksandrov <razor@blackwall.org>
-Subject: Re: [PATCHv2 net-next 2/3] bonding: use correct return value
-Message-ID: <20241018142104.GP1697@kernel.org>
-References: <20241017020638.6905-1-liuhangbin@gmail.com>
- <20241017020638.6905-3-liuhangbin@gmail.com>
- <878qumzszs.fsf@toke.dk>
- <ZxGv2s4bl5VQV4g-@fedora>
- <20241018094139.GD1697@kernel.org>
- <87o73hy7hh.fsf@toke.dk>
+	s=arc-20240116; t=1729261284; c=relaxed/simple;
+	bh=xHybtiKyTxNA1jI8buXYvXG734IlXSdiFFZRHOOaxdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YTxPBRWtzmqrhSQybsbjVBYm+lIzbJlfMoMiKzdKVg/MScC277IbprM172NKwDtItqgVbqsollUrTG2ZrJycVJM4LRjvX9Wtut1sF8CIONPrLjpE0SNMy+n+A1AQtaeXz6EU1Z6m05BepJEp+tL/dK0bU9JAeWn++IVut8X+9yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=gf+2gEda; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c8b557f91so23255955ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:21:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729261279; x=1729866079; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yxkU0SurZ3ytvyybPNhQLE8bgWu3q/xADixl58fl7SE=;
+        b=gf+2gEdauu4iblVqH0Q8ixqqzmkR672MxZGaEGuTwcUofb3qD9OVe+U1LH3DZwNaO0
+         UWvOQy7hB5rFSqc0EPKKSN7pcjHfKFuZa8U/3W30/f5wXyagc335BEcfwFf/9erOTTch
+         iwX0sNKBTkKdc0I0GBvvZ5QSpKhZg1gGZlMth1KWytRbNeqWd/CiztxeORbF5ldViAWY
+         TNkzfpizE+5b1eDVHhpusX79DPKwugtZ3EUJGwOUjpCTxCcR6FADs6dNDZC//T8p3kxf
+         TawCxxvASl1gP/v9cBQJ32yNL0KuxNEcJ/IMPaNBLVVmETArdLZ5islYnuesfT85GO3v
+         +ytw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729261279; x=1729866079;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yxkU0SurZ3ytvyybPNhQLE8bgWu3q/xADixl58fl7SE=;
+        b=g5NkwJ//Uq80KJcrP7Oes6iLoPCqrt127U3qNTyLX0z1jorPHdHcPWS/wNqZrkwEkX
+         swSO37JTi+wnU+a0RsNH2xMbseR463d7RKoBqM9HXy0qofuNHQ8VbHK/thEEDtKa0WwV
+         pB7zhOq0Ez6659HGcRfP+oeKyf71p1mboNHsn9qprVSHvl0KRIkdBKOkk86/cNIVI4di
+         mxs7dP7OZ+BzdcaneDULvAJrIGBl+BjsCbqj3yWkgvoCWZu12Hqox2UL/6a/Ckzub8Bp
+         IaElPjYmIOqLSLFwd9gq0EywVu7IKKNszV8PAjWrrp4vrJiA7NPd91wacKGXoUfFOsl1
+         U9bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVL7Eu7OpyKVieo1uQX/H9kuHoARnOYChMiL9eQuXgru88bTRvTSA6hNCak0po+6EiSj7/C0wczqcKQTwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+neHr4LJxev0X9cC/PsPkyXeJkODjosle5KcEdcfhXqaTGGG6
+	tbKMSOcVQJGlojO6oiTaBrVBNS5jak7w0QWZM0GPmlELH4sYmSpz6T1oyC32jp8=
+X-Google-Smtp-Source: AGHT+IGZk6UCrT0VIMAN6pIiPBhEinc4i35+NJcdRK7GjNJnOyc6aLd4dZkz49tcq67yLWma6DwkOw==
+X-Received: by 2002:a17:903:234b:b0:20c:fa0b:5297 with SMTP id d9443c01a7336-20e5a78e147mr33139555ad.26.1729261279129;
+        Fri, 18 Oct 2024 07:21:19 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8f9f34sm13138225ad.235.2024.10.18.07.21.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 07:21:18 -0700 (PDT)
+Message-ID: <cb9d65fe-47b9-4539-a8d0-9863e8ebf49f@kernel.dk>
+Date: Fri, 18 Oct 2024 08:21:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87o73hy7hh.fsf@toke.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 2/2] blk-mq: add support for CPU latency limits
+To: Tero Kristo <tero.kristo@linux.intel.com>
+Cc: hch@lst.de, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241018075416.436916-1-tero.kristo@linux.intel.com>
+ <20241018075416.436916-3-tero.kristo@linux.intel.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241018075416.436916-3-tero.kristo@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 18, 2024 at 01:29:30PM +0200, Toke Høiland-Jørgensen wrote:
-> Simon Horman <horms@kernel.org> writes:
-> 
-> > On Fri, Oct 18, 2024 at 12:46:18AM +0000, Hangbin Liu wrote:
-> >> On Thu, Oct 17, 2024 at 04:47:19PM +0200, Toke Høiland-Jørgensen wrote:
-> >> > > diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> >> > > index f0f76b6ac8be..6887a867fe8b 100644
-> >> > > --- a/drivers/net/bonding/bond_main.c
-> >> > > +++ b/drivers/net/bonding/bond_main.c
-> >> > > @@ -5699,7 +5699,7 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
-> >> > >  		if (dev_xdp_prog_count(slave_dev) > 0) {
-> >> > >  			SLAVE_NL_ERR(dev, slave_dev, extack,
-> >> > >  				     "Slave has XDP program loaded, please unload before enslaving");
-> >> > > -			err = -EOPNOTSUPP;
-> >> > > +			err = -EEXIST;
-> >> > 
-> >> > Hmm, this has been UAPI since kernel 5.15, so can we really change it
-> >> > now? What's the purpose of changing it, anyway?
-> >> 
-> >> I just think it should return EXIST when the error is "Slave has XDP program
-> >> loaded". No special reason. If all others think we should not change it, I
-> >> can drop this patch.
-> >
-> > Hi Toke,
-> >
-> > Could you add some colour to what extent user's might rely on this error code?
-> >
-> > Basically I think that if they do then we shouldn't change this.
-> 
-> Well, that's the trouble with UAPI, we don't really know. In libxdp and
-> xdp-tools we look at the return code to provide a nicer error message,
-> like:
-> 
-> https://github.com/xdp-project/xdp-tools/blob/master/lib/libxdp/libxdp.c#L615
-> 
-> and as a signal to fall back to loading the programme without a dispatcher:
-> 
-> https://github.com/xdp-project/xdp-tools/blob/master/lib/libxdp/libxdp.c#L1824
-> 
-> Both of these cases would be unaffected (or even improved) by this
-> patch, so in that sense I don't have a concrete objection, just a
-> general "userspace may react to this". In other words, my concern is
-> more of a general "we don't know, so this seems risky". If any of you
-> have more information about how bonding XDP is generally used, that may
-> help get a better idea of this?
+On 10/18/24 1:30 AM, Tero Kristo wrote:
+> @@ -2700,11 +2701,62 @@ static void blk_mq_plug_issue_direct(struct blk_plug *plug)
+>  static void __blk_mq_flush_plug_list(struct request_queue *q,
+>  				     struct blk_plug *plug)
+>  {
+> +	struct request *req, *next;
+> +	struct blk_mq_hw_ctx *hctx;
+> +	int cpu;
+> +
+>  	if (blk_queue_quiesced(q))
+>  		return;
+> +
+> +	rq_list_for_each_safe(&plug->mq_list, req, next) {
+> +		hctx = req->mq_hctx;
+> +
+> +		if (next && next->mq_hctx == hctx)
+> +			continue;
+> +
+> +		if (q->disk->cpu_lat_limit < 0)
+> +			continue;
+> +
+> +		hctx->last_active = jiffies + msecs_to_jiffies(q->disk->cpu_lat_timeout);
+> +
+> +		if (!hctx->cpu_lat_limit_active) {
+> +			hctx->cpu_lat_limit_active = true;
+> +			for_each_cpu(cpu, hctx->cpumask) {
+> +				struct dev_pm_qos_request *qos;
+> +
+> +				qos = per_cpu_ptr(hctx->cpu_lat_qos, cpu);
+> +				dev_pm_qos_add_request(get_cpu_device(cpu), qos,
+> +						       DEV_PM_QOS_RESUME_LATENCY,
+> +						       q->disk->cpu_lat_limit);
+> +			}
+> +			schedule_delayed_work(&hctx->cpu_latency_work,
+> +					      msecs_to_jiffies(q->disk->cpu_lat_timeout));
+> +		}
+> +	}
+> +
 
-Yes, that is the trouble with the UAPI. I was hoping you might be able to
-provide the clarity you ask for above. But alas, things are as clear as
-mud.
+This is, quite literally, and insane amount of cycles to add to the hot
+issue path. You're iterating each request in the list, and then each CPU
+in the mask of the hardware context for each request.
 
-In lieu of more information I suggest caution and dropping this change for
-now.
+This just won't fly, not at all. Like the previous feedback, please
+figure out a way to make this cheaper. This means don't iterate a bunch
+of stuff.
+
+Outside of that, lots of styling issues here too, but none of that
+really matters until the base mechanism is at least half way sane.
 
 -- 
-pw-bot: cr
+Jens Axboe
 
