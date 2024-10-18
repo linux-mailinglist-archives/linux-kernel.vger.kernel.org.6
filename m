@@ -1,141 +1,157 @@
-Return-Path: <linux-kernel+bounces-371519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1C19A3C3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D0B9A3C3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3901F1C2244E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:54:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA28D1C21B9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFB2202644;
-	Fri, 18 Oct 2024 10:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CB2202F9A;
+	Fri, 18 Oct 2024 10:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bmEbsZcN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="sW2za9oG"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8EB202647
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08E202F7B;
+	Fri, 18 Oct 2024 10:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729248744; cv=none; b=FHb0dFVPemsmkmNfQIFQfMmev4ntK6cC3OArb6uJYjBKgskayqsG+Hbaif2uMJ/SfZa8ZLhmghE6GovMvbkbk4nAbVZULgxXMt4d/HkS2EXSyHsHEK1m5hXw3soGFL57pWBB4coKuv/1McFrADmxmYmfsyxxfs1joFFfjraZX4E=
+	t=1729248761; cv=none; b=OKEU/t7Agb+yvQ6p3FDVvBZAQ5Oqq1V2ogm3TeDoIatp6K1OBzS604fpQqOYNjr35CrYGU9QGcLIs/QiYYfo30s15A9lvwi1rJOwme8VGikkXI3YpxvFX4EzOsSG5jinrNs67fIR5tceCn+6AuHHUUMCoOzQr7kJznhJ9syfYc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729248744; c=relaxed/simple;
-	bh=hlo66ijJb/Cdj770+zC+26WFSb2kI1W9QVwVBxx18DQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hYgWGeTDBQCZaCK1phsMngog+tqTvANrUXm3CPUX+W1C5T/4gduuckievq/x1o8WsW2BBUOSm1kr1hvKmoUfG85R2UGP9z6IvL/bwwMmEH1NoKEn60HOhdytTh5t7eXssIHal99iRc0Ddy3uClpnBPX2S73V0zxoznK/M7ZQgN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bmEbsZcN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729248742;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hlo66ijJb/Cdj770+zC+26WFSb2kI1W9QVwVBxx18DQ=;
-	b=bmEbsZcN86sM4xyrCE0ADC98o7Xzw/M+FWFOi8bF+fFVf4xzzCCN+nUsiO1Bpl/KwLR4y0
-	ho7LupfUqO2lHOdSraGX8P+TzXiNuuBSB/3Ot3n/Zjs1pj+RuNnl6aWkwJxbX0sIrTubFs
-	Nd9F7zzdPeHiapYDbRoBkDzRvFbGNRc=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-398-Hrn0JGMxMUqV9LTCrZBS-A-1; Fri, 18 Oct 2024 06:52:20 -0400
-X-MC-Unique: Hrn0JGMxMUqV9LTCrZBS-A-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4608a1a8d3eso41581051cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:52:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729248740; x=1729853540;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hlo66ijJb/Cdj770+zC+26WFSb2kI1W9QVwVBxx18DQ=;
-        b=UUk6G/GvMaROJmo97+eGwx0VwCspgvz6Tei4oDPM+oUIjeg6PAZeTK9m4oyUdQGnuQ
-         E+Wjflz80wGcQkyJZ4qB7EoEPETcbxGlvHuJaj0m4pjfMwCzcfvs7HkAeGDSQ8Zgq1Mv
-         vYp7MYmyJ1x2/9zAhwwtDe7HJU3X+dvBxvVPvh9AQ3pttm0C75Z4kVpHXQsRWVJg9qB8
-         xKFZiCvF1DkMbMw1DnyYrrNQXxoJMZzdpoI3OdUizEBLGKx8cUhGj1zy4fm/wgNHQlWE
-         OhG8m368f7hpstMWCIbMcsG1TYTeV7s6G0xkoQdF+dyNWSf/aq+6Nq5d+S3yzIfo2w8F
-         jjsA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1RfxdRFJd16qVJ1PrSBbpC1Sg3OO0attvJP+/q6KP4A7ygkG6WeLXHno+ZwxtWtpJxEzb0u/33nia5XM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+4RV/POcWxQeGbUTil6xuZZ6JtV3JVpL5qbNfM1Vjj/XRbImM
-	TcMrxMpTaw3T09CxrJKSOcIgNFhQtmiKPMHax/dD/oPpv+NuJhrCPY8LXnpLJiMSsttu+XvEKXR
-	JV+lTl+T3MXCcfnNuE8GnxeLnGrahoeMqD0+7KwyocEdlwAx+/xZw8CIbuufbdQ==
-X-Received: by 2002:a05:622a:4c6:b0:460:927e:c245 with SMTP id d75a77b69052e-460aee14cfbmr30643751cf.4.1729248740419;
-        Fri, 18 Oct 2024 03:52:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEItGrt1ABtCJZWw3PgN20DLJ0r2+a0t2Y2RjfBNB5gtKNiYltQvcJbpnnnEkYFE0v3Vlk5hw==
-X-Received: by 2002:a05:622a:4c6:b0:460:927e:c245 with SMTP id d75a77b69052e-460aee14cfbmr30643441cf.4.1729248740071;
-        Fri, 18 Oct 2024 03:52:20 -0700 (PDT)
-Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460ae971993sm6164351cf.38.2024.10.18.03.52.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 03:52:19 -0700 (PDT)
-Message-ID: <0cf0ffed63a8645c49f043877c526b2ab0abf96e.camel@redhat.com>
-Subject: Re: [PATCH v8 2/6] PCI: Deprecate pcim_iounmap_regions()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Wu Hao <hao.wu@intel.com>, Tom Rix
- <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>, Xu Yilun
- <yilun.xu@intel.com>,  Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, Richard
- Cochran <richardcochran@gmail.com>, Damien Le Moal <dlemoal@kernel.org>,
- Hannes Reinecke <hare@suse.de>, Chaitanya Kulkarni <kch@nvidia.com>,  Al
- Viro <viro@zeniv.linux.org.uk>, Li Zetao <lizetao1@huawei.com>,
- linux-block@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-fpga@vger.kernel.org,  linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org, linux-pci@vger.kernel.org
-Date: Fri, 18 Oct 2024 12:52:15 +0200
-In-Reply-To: <Zw-XkFcaXjlF5az0@smile.fi.intel.com>
-References: <20241016094911.24818-2-pstanner@redhat.com>
-	 <20241016094911.24818-4-pstanner@redhat.com>
-	 <Zw-XkFcaXjlF5az0@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729248761; c=relaxed/simple;
+	bh=WeLj5Q6mLGVX6uIa0uQK/eue8seMS98Gd0FVJcgXVpQ=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=HKynWi9ezp/nPJhc89mmHoOgt+COeEdVnjoP2DLh+q6QOYCqY3ADXTVwMq8nfuI3pHbX+eL1glA12EN4mWNf8/6FSPG+pPvI0n626mwSLevMwMiwO8vQ89XrQyj/Bcjj2p/QmB4q12RDkWdhmplFbZTpcj5wy6zJmig7B8HnLss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=sW2za9oG; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1729248756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oSgaCXhYCTyaqW7QXeST4qmKxHMaP1eI9yKLIfIiBVU=;
+	b=sW2za9oGS9xzHI/cAhOXgA55SqvcaRZd4ZjEW9S05evi598emFFzmbR51pWaFAqaxgSFT6
+	cmwASG3LXRhOaqKHfE2M4ppss24PwAUIiFjs6FfFQz2Xtz6nQPtQp5q7yha6Nch253qcb6
+	8M9r3ssLT9MQPu8t7VwvYTLlBKDBM2Ggd+2jdiT7gs+1u+TgeT50Yf2LDZN0quT7xPU14y
+	KBmkgvLU2ovN9kRpRuUYmtLsyatdSsGljMPKYrASNqwz+2yELdr0OekF9pX8ad5H6BpEFF
+	U2mDEPKY0E5LfDdUuYCyrWoPOeBVlYkh+nh8Xg2LaBLeaaEIXKvR+VhDIRKDiw==
+Date: Fri, 18 Oct 2024 12:52:35 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Frank Wang <frawang.cn@gmail.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
+ tim.chen@rock-chips.com, yubing.zhang@rock-chips.com, Frank Wang
+ <frank.wang@rock-chips.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: soc: rockchip: add rk3576 vo1-grf
+ syscon
+In-Reply-To: <3cd260c8-86e5-4833-b23e-b73dc6417f81@gmail.com>
+References: <20241017025230.28752-1-frawang.cn@gmail.com>
+ <ca0ee8752791f53bac23933e1582dd86@manjaro.org>
+ <d2a200aa-1301-4940-a39c-0412fe741994@gmail.com>
+ <ee27926c06bedd62f417dbd7d01ce8b3@manjaro.org>
+ <3cd260c8-86e5-4833-b23e-b73dc6417f81@gmail.com>
+Message-ID: <5175d8a9b007ce1c6c12bcc09d78dfda@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Wed, 2024-10-16 at 13:38 +0300, Andy Shevchenko wrote:
-> On Wed, Oct 16, 2024 at 11:49:05AM +0200, Philipp Stanner wrote:
-> > pcim_ionumap_region() has recently been made a public function and
-> > does
-> > not have the disadvantage of having to deal with the legacy iomap
-> > table,
-> > as pcim_iounmap_regions() does.
-> >=20
-> > Deprecate pcim_iounmap_regions().
->=20
-> ...
->=20
-> > + * This function is DEPRECATED. Do not use it in new code.
->=20
-> Interestingly that the syntax of the DEPRECATED is not documented
-> (yet?),
-> however the sphinx parser hints us about **DEPRECATED** format =E2=80=94 =
-see
-> Documentation/sphinx/parse-headers.pl:251. In any case the above
-> seems
-> like second used (in a form of the full sentence) and will be updated
-> in accordance with the above mentioned script.
+Hello Frank,
 
-Can't completely follow =E2=80=93 so one should always write "**DEPRECATED*=
-*",
-correct?
+On 2024-10-18 09:34, Frank Wang wrote:
+> On 2024/10/18 14:37, Dragan Simic wrote:
+>> On 2024-10-18 08:18, Frank Wang wrote:
+>>> On 2024/10/18 13:02, Dragan Simic wrote:
+>>>> On 2024-10-17 04:52, Frank Wang wrote:
+>>>>> From: Frank Wang <frank.wang@rock-chips.com>
+>>>>> 
+>>>>> Add rockchip,rk3576-vo1-grf syscon compatible, the vo1-grf is
+>>>>> configured in usbdp phy driver.
+>>>>> 
+>>>>> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+>>>>> ---
+>>>>> Changelog:
+>>>>> v2:
+>>>>>  - This is a new patch adds rk3576-vo1-grf syscon.
+>>>> 
+>>>> Could you, please, clarify a bit why is this additional patch
+>>>> needed in this series?
+>>> 
+>>> I mentioned in the commit content. The usbdp-phy driver select dp
+>>> lanes via configuring the vo1-grf.
+>> 
+>> Yes, I already saw that in the patch description.  Though, and
+>> I apologize if I'm missing something obvious, I can't see where
+>> is it actually used in the code?  Is it yet to be used in the
+>> dts(i) files?
+>> 
+>> I'd appreciate if you could clarify that just a bit further, so
+>> I can hopefully understand it better.
+> 
+> Yes, the usbdp_phy node in dts(i) will assign the vo1-grf phandle like 
+> this:
+> 
+> usbdp_phy: phy@2b010000 {
+>         ...
+>         rockchip,vo-grf = <&vo1_grf>;
+> };
+> 
+> And the usbdp-phy driver parses it and assign to udphy->vogrf, it uses
+> in rk_udphy_dplane_select().
+> 
+> The related codes have already existed in the current driver, so for
+> RK3576, just only need to do a configuration.
 
-Is that a blocker for you?
+Great, thanks for the detailed explanation!  This confirms
+my latest assumption and everything is looking good, so please
+free to include:
 
-All the docstrings in pci/pci.c and pci/devres.c so far just use
-"DEPRECATED".
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
 
-
-P.
-
+>>>>> v1:
+>>>>>  - none
+>>>>> 
+>>>>>  Documentation/devicetree/bindings/soc/rockchip/grf.yaml | 2 ++
+>>>>>  1 file changed, 2 insertions(+)
+>>>>> 
+>>>>> diff --git 
+>>>>> a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+>>>>> b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+>>>>> index 50d727f4b76c6..fd42217ab85e7 100644
+>>>>> --- a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+>>>>> @@ -33,6 +33,7 @@ properties:
+>>>>>                - rockchip,rk3576-usb-grf
+>>>>>                - rockchip,rk3576-usbdpphy-grf
+>>>>>                - rockchip,rk3576-vo0-grf
+>>>>> +              - rockchip,rk3576-vo1-grf
+>>>>>                - rockchip,rk3576-vop-grf
+>>>>>                - rockchip,rk3588-bigcore0-grf
+>>>>>                - rockchip,rk3588-bigcore1-grf
+>>>>> @@ -283,6 +284,7 @@ allOf:
+>>>>>          compatible:
+>>>>>            contains:
+>>>>>              enum:
+>>>>> +              - rockchip,rk3576-vo1-grf
+>>>>>                - rockchip,rk3588-vo-grf
+>>>>>                - rockchip,rk3588-vo0-grf
+>>>>>                - rockchip,rk3588-vo1-grf
 
