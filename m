@@ -1,93 +1,177 @@
-Return-Path: <linux-kernel+bounces-371906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC78E9A4209
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:13:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB6D9A420A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46C27B2128A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:13:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3CBE1F24DC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EC2200BB7;
-	Fri, 18 Oct 2024 15:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584262010EE;
+	Fri, 18 Oct 2024 15:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf0eO50I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IiWT5Tyk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D7D76C61;
-	Fri, 18 Oct 2024 15:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C656E18C03B
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729264383; cv=none; b=g3vDouhcOrLbAfQG1fGMdX8Ldz4zGhPr3vX5FIwj3XMkIJ7ZmnTjvlrPRYZxiwn0BpdK9iopizsNRr3z0Xqv4XrxveTtxA/h5xZUunTuAPO+ZoyUCM6RqSb1EFegQjxyXwYWQaUwsBGSe0vAUqJWySB+/d7oIG1PWmgbNCEah78=
+	t=1729264385; cv=none; b=JlvKaQCBsC5VWekqGziNGXi5ue70u+bMqAt3OfQ9kBu4KNHNP4mqVIPxmQHp55ffUs4nsTaYC8rUF2N0ewFiIJsJKWY3JFjwtJp8fxvaNZTSw2zISFEDCYwt7KKmhmiIhdJVQITQJMIf19EI9huKOTNUqwSye/JSF1ooD5QUKAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729264383; c=relaxed/simple;
-	bh=4/LoPNWFMLOtRjQ2F1SWn+Sgmq2mlkEMHTBeAJ0+Sts=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=okygfkDXKPr1NU+hs72l3bW5m1WnurXFFCsYN4f9K6QTqg00OkXXbgbL9r5Oo4y9s11qpzlzLG1gBDgnRwH4ho+z8jYAxdr4GQe+4J4JBdPLJVyoZdqoe5spvYqldQzCJTUyIvAYnVAL9Qoq51Mk7dul7JFyIj+cbokwap6RHpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf0eO50I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9C33C4CEC3;
-	Fri, 18 Oct 2024 15:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729264383;
-	bh=4/LoPNWFMLOtRjQ2F1SWn+Sgmq2mlkEMHTBeAJ0+Sts=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Zf0eO50IFcBdjC4gKtwzS+B/O423DZOxwfR0DF10Yo3ApzX7RN+qHkv7TV0yPW6UU
-	 ewdR2DNjZWB+2ohT6qNOeXTkPsCBEYQ7XGd4dl5sk6tlRb5O+rfqPGZIZRqqk274gH
-	 5ASnOXh1mTXoXKhMOzn9NBwK7pdNawa5OihBgornEmtLRXxnVjoH4ODymBWjwZt3v8
-	 ZpBzxjpQI2nnxW9Gdllumxi16BE1BVUbJyvM7APCxPlD9a65vIirTwJNOmhvEyPtf7
-	 nzlj5kke0T+exfPGWNCIGyDefFQvmG+tzrm8oqsFfaWQfoLG9/j1zGUclLcP9zEEeR
-	 6Fmscvoo/0hIw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Helge Deller <deller@gmx.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fbdev/wm8505fb: select CONFIG_FB_IOMEM_FOPS
-Date: Fri, 18 Oct 2024 15:12:49 +0000
-Message-Id: <20241018151258.3574617-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1729264385; c=relaxed/simple;
+	bh=eBFyHuU4E/9BoBQNfe0gSd5ZcQkdyqxz/AFN9Nnonb0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IEaFH83HAkPYNgZWLccsAYABvLKLNTTqhdoT7ig2J1iSjkKdD6FGMeda4h9UUZQaAZ6z9zzRRACAY822E5clpgWMQEYBETqrKzcsAR8VPdu5wi0iSl8G3L1wO7nZJY8ymjl2e/coxlVit/C+Q62yBXz94ZLB65GAPGb1HjzfR7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IiWT5Tyk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729264380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ixRaAJjdwgiD3B2eVmEHoXxVBFDgzzMnBg/7UFYCa0A=;
+	b=IiWT5Tykjh1OX2qA9C8SyHEfq7RMLdmVzk6sLPT9ZUx1IzLqvcMU5azyWMxj+zQkxmAG5P
+	5+MBDZGvBWXcdHnJxd/q9jTU0b0gHqbCby85FHHh/FelrZPDmZ1SpeNyeyVucKrggwE7t5
+	qrZuySzxksOXpspP8TqDsTNocBMoWOM=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-161-LQ2JE3vQMLCd6SWD-eDaXw-1; Fri, 18 Oct 2024 11:12:57 -0400
+X-MC-Unique: LQ2JE3vQMLCd6SWD-eDaXw-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315b7b0c16so13762355e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:12:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729264376; x=1729869176;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ixRaAJjdwgiD3B2eVmEHoXxVBFDgzzMnBg/7UFYCa0A=;
+        b=YkryjEab7vI+hFYa+kPjqDy8AG2wlRA+JnmC/sjqBRw59oLxxanovQVtTtS6cOYYtG
+         KF2rapGdCaxLQI2T6q00jkOQOwHZ8BNYM8GUztNJuhWwzWHR+nRDG1MFZ/EXhlHfs17L
+         52INJoeds9JmEe3DauvoGHOuFj0yWEXot9FCsa4MDyt6JW6/4BmAhOdv2vHdhHPNvPS9
+         YlJJ7PgeUiS8h3o/jcWcUHHkAZX9HIA6Qc88i9oIaC5Ngbt8xHkfTG3R/OFnF8tFWKB3
+         S32d1QmHjTMLgvfIjTFEXhX1BV3UXhNz5JigJjbLQ3K4PBCOFLGmQTUqnDMxcYZQo6Zj
+         dIXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVBoD1FpstvgY5P+kBLwA5Po0ZZyK0Po0FDpUIb9I16XV7FuDV7eNyYDgwEKm4UUpi/YaDDgMgBTwsLJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8iM0p63uiFDPDm2XxlPfj+HzTEnGqjXpTQEBJRg14yuKHyCEh
+	Aiyex/RfWxEtvbHW2ANPT9eQjn3LNaqHhnNpN6XlYRYBxveq70vsnjysTEFBSPt1q6CMJaxfoEh
+	rI10JpvCG6j3qMS8i7pdsp6Ywaj7v3Zuy1+et2Tul6xur4a+opFH92N3gqKbXeQ==
+X-Received: by 2002:a05:600c:3b08:b0:42c:b4f2:7c30 with SMTP id 5b1f17b1804b1-43161687de8mr22566135e9.23.1729264376180;
+        Fri, 18 Oct 2024 08:12:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG77fttbsxPU1cMWJemc5kB4011mRgzso/alGu+zWk34bjkH92MoIoR3nxyEFm/IZcqN7WhUQ==
+X-Received: by 2002:a05:600c:3b08:b0:42c:b4f2:7c30 with SMTP id 5b1f17b1804b1-43161687de8mr22565835e9.23.1729264375700;
+        Fri, 18 Oct 2024 08:12:55 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c707:2400:68a3:92e0:906f:b69d? (p200300cbc707240068a392e0906fb69d.dip0.t-ipconnect.de. [2003:cb:c707:2400:68a3:92e0:906f:b69d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431606c64c7sm29634985e9.37.2024.10.18.08.12.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 08:12:54 -0700 (PDT)
+Message-ID: <c5491ed1-18b3-4579-818d-6c9765550993@redhat.com>
+Date: Fri, 18 Oct 2024 17:12:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: export copy_to_kernel_nofault
+To: Arnd Bergmann <arnd@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Marco Elver <elver@google.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20241018151112.3533820-1-arnd@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241018151112.3533820-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 18.10.24 17:11, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> This symbol is now used on the kasan test module, so it needs to be
+> exported.
+> 
+> ERROR: modpost: "copy_to_kernel_nofault" [mm/kasan/kasan_test.ko] undefined!
+> 
+> Fixes: 44749130ffb4 ("kasan: migrate copy_user_test to kunit")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   mm/maccess.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/mm/maccess.c b/mm/maccess.c
+> index 3ca55ec63a6a..8f0906180a94 100644
+> --- a/mm/maccess.c
+> +++ b/mm/maccess.c
+> @@ -82,6 +82,7 @@ long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
+>   	pagefault_enable();
+>   	return -EFAULT;
+>   }
+> +EXPORT_SYMBOL_GPL(copy_to_kernel_nofault);
+>   
+>   long strncpy_from_kernel_nofault(char *dst, const void *unsafe_addr, long count)
+>   {
 
-The fb_io_mmap() function is used in the file operations but
-not enabled in all configurations unless FB_IOMEM_FOPS gets
-selected:
+Acked-by: David Hildenbrand <david@redhat.com>
 
-ld.lld-20: error: undefined symbol: fb_io_mmap
->>> referenced by wm8505fb.c
->>>               drivers/video/fbdev/wm8505fb.o:(wm8505fb_ops) in archive vmlinux.a
-
-Fixes: 11754a504608 ("fbdev/wm8505fb: Initialize fb_ops to fbdev I/O-memory helpers")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/video/fbdev/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-index 9957dde4a3f6..961d7f5bbbc2 100644
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@ -1388,6 +1388,7 @@ config FB_VT8500
- config FB_WM8505
- 	bool "Wondermedia WM8xxx-series frame buffer support"
- 	depends on (FB = y) && HAS_IOMEM && (ARCH_VT8500 || COMPILE_TEST)
-+	select FB_IOMEM_FOPS
- 	select FB_SYS_FILLRECT if (!FB_WMT_GE_ROPS)
- 	select FB_SYS_COPYAREA if (!FB_WMT_GE_ROPS)
- 	select FB_SYS_IMAGEBLIT
 -- 
-2.39.5
+Cheers,
+
+David / dhildenb
 
 
