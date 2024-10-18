@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-370965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046369A347B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:48:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6B39A347C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C5B71C212E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:48:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36C4B1F244BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E38E17DFE8;
-	Fri, 18 Oct 2024 05:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BC3184528;
+	Fri, 18 Oct 2024 05:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RaaSsAW+"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zlKinVhF"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53AE1714A4
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C7C16A956
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729230451; cv=none; b=eX6ENfKwgQX+psn/cvvJSGmxQvbqU3G26xMak2BAc78PZPsshqUTD3sQXEhQ+qkpnz+Mru7Y0xZTlHauJ1t7E3o/XFkQhst3uywY9koUSA8WrbUxQFEH1sylYwvj1McVtKT5Vzvj2aHR3KhZybIlDcNiV2lQoc2ovwTwdASFTnM=
+	t=1729230453; cv=none; b=oq12r6kqV9GwO7MojKPlhaNOs9FnGYiRUpXEnUjGKZaHyd39YKa5SuTOiINgUHtybXoMEhN01J8mbT0jG/F0/U7NUxU6ngXg06p/ylcP6ClFnZ82buysy7O90jKFaBqZEEJI3btzP9nHs9GAEREbbgQkB+S0Rs4pA8Z1S0T2ijU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729230451; c=relaxed/simple;
-	bh=Be9XG85+7HH1poiSwiKb5Q0p1njOYAcmV4hvbUMH2pw=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=F8mF7btmCrul5aJKiW6FKUf6is7ThVeAyBevxJ2Vt7jRmqoK2+gnYQ3RFlCl4YB/NHdd6fBPQuNoeE3y2fRnvv54/k8iEKwZAGM2+DGCxRF5xCP+bClFjhfCEvZNkkHyV5iuzFoTqqFV98BPgRRKqa+sw2fwmQpyftxVgzMDUWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RaaSsAW+; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1729230453; c=relaxed/simple;
+	bh=YP95DtVxXZ3m+MQlhugoobD6ADZipWZQ6/Y1bwP+wc8=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Content-Type; b=a/jDN9qTP7Kd0mloH5YTYRvQFmcHIXUEDq2k/bpEq5Mmkc7gVta9F+42C3LBl7q0PA4YXyTqIk5GZ86KmZRMyLhevibEWxKljwdCoTWzCIz7A9ERprcW5IzQ0KuNonjFuPxFAFKogf9miYqwO3ZLRs12kEmQgVtJXcNSmDEPhXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zlKinVhF; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2974759f5fso2039997276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:47:29 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e38fabff35so33154167b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:47:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729230449; x=1729835249; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VrQeD5sru+L6xsNKe/FlD8yMmpNuX81cs9n3mjgfW1s=;
-        b=RaaSsAW+epgTl0H2h7pR5GzMSzQdfqTlW+P19EEyTGrgbBD8AiyVjydbe5JAluDm35
-         RUPkBR8N+S5sB7wZB+i6Ds62Qpx/uKT8p2LxwevytAjXu1nC8lK1pffmxwT3L2di8qsY
-         OQ/5W3ql7CRUak7+J4h89zcKHRIMgqLHcUTtDueTZzzyhvh91FjTDb0c6DSL0sZUhfNM
-         t3cyKm3f3VmAse5MwCnSWdg/Ql6Su1PDXi/7WHnfLJtc+jAxaRYvOXNmdHcTQ5zcubYn
-         vQVGDpdEILUeOljAvTljosJsLfokjT8ERupyJKEuZYnF8AJTQSsGkIhZ/ZetXLU/W31l
-         ZwEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729230449; x=1729835249;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+        d=google.com; s=20230601; t=1729230451; x=1729835251; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=VrQeD5sru+L6xsNKe/FlD8yMmpNuX81cs9n3mjgfW1s=;
-        b=FdY0py3ruuOJGKdamWqhB+kciXEijwPANY3U3NTJUneEk/qsyqbEVVWQhSbcYnsUGO
-         VIADystHf7C0tAl8dbCYx3fZMIjA77TlayKeOq0E+1ib1y11jNTmgdrD9K2XTxaqkCHg
-         idbpwvdTQLOf5B+urjpSDtQGG8alrddz31JXY+/3mBYBxLmCJU6htDiT9ydHnXD2xn4/
-         eKXa5vtdSQ58oyHQtlHHkPmatUGTPa6g51cIAIIxLsgKiurzQChckuhkbn57WzyQxw1I
-         0e7duA9ioouFeMzc7Ni2zQiovjgMbLhxGZy6iLDm0+kqZ6lfO0XGRR6HsafvZAKKcMGC
-         haFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhXJI13YUdk7b1M4ZPCgueOM8hMlxvKAZeaA1thcspzbA+L38chNlvPfafIqFWs4SJuv39AfStgkhqOq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYmN4VV2g69SczUyC4g2EhIbZXJNtP1heVUzST1yPbeeFVAJwk
-	KQj99vRbpRzZoqCx4h5lqwVLX5a4RO3r+K2pT21E0H8goZ1OiyW+c239jQx+aZb5y9twRzfGUXN
-	NQ2rxPg==
-X-Google-Smtp-Source: AGHT+IGvMxo4IadnWSZnubeWMpuJOJ/5tIo85LiRdyaxo/4QBcuMEWS68hP1qt6QarMqEQAZZouDD/gt0Fme
+        bh=vGsyk1AzrV7bGd+qNQRt08SgX/qTGBP7C2TEAC3B6es=;
+        b=zlKinVhFKOmSqIT7P8RYozj3VJj3LiNFEYoUKQtApo0Kblp9xxzF+Abk+l2eb8Ue/m
+         of6SRwkEIgilJfH5BEcLxA6f1nNMwCkFQNyDT3nOFLXr3GpwPwrwNBPYcX0M9FxH936x
+         OocpEATgGgzcqh+duxRleXO+/g+HdGZGv7hGibq9CtoCmQnBIrWUSsdt54BMGT/IQDgT
+         zirHdgIUfGYKSmbMqslnpp4J8vz3caqPZPjnAmMtdKpKHIR+RPTkN1oyKBx+/WdOwEgz
+         G7cMcJRkAMntd8mDmjPtq2L6JW9M15HFt9U86pjxKf1gw8cUEdahWUGJmOdn1GI1qsos
+         fKdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729230451; x=1729835251;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vGsyk1AzrV7bGd+qNQRt08SgX/qTGBP7C2TEAC3B6es=;
+        b=Ov/wEaQWavB0eEC7St56gsRglY7FDCvBVoa8dDE7IfdPP0YIvRcXnGUvqbiI247jka
+         jM577J7T6iX8skfSv2EpxXvIjTDBp4OIXwQBhDm1YRVhNUEukS2pgqH47N82Ucu9dAEM
+         uKNZeA35s1dq/tQUAPOr6l9n7oFG87uNq6EeLHU38XvORc/+4hyjhPVAbWghDbLnu35C
+         O2TuacofA/BQXW1OBX6vewKViKOXj3YGenIg3oLBZIE13NyQ9LD0/Sw+18zhfVqhH7CD
+         x7GjqPmWxZj55u//AUhgQZEm6mkH86xNK5MIziY5klmQn52V1LG1tJuOlm64dlkyQlQX
+         RLJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBliUy+ErfisYORYyCtZHRs6acF/F0sxx7FLq8DPoNB+2bsf/l0FTd0tVX89JgNnyrLXOGWS/snFbIGvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR0is8rwrhBWHSJsmvFCCu3OYE+iGZHtNnYfWjABBXCMaovbv2
+	OEV4ycPpQewKMMlv6Y0QRDuYXd6GZbpFgFd24cyKngWZZIRZWwzrEU2oAAXcMX9xx7DBoMkdOWJ
+	qEVOF6Q==
+X-Google-Smtp-Source: AGHT+IElZxi4gKlHpKHuQcILQunGIrccEF/5kNieA5pjiK5bJX7QyzdVU789CKgaouu+VvSlRqh+Z8wc5LlT
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:30c5:9d92:bcd:7977])
- (user=irogers job=sendgmr) by 2002:a25:844c:0:b0:e20:2da6:ed77 with SMTP id
- 3f1490d57ef6-e2bb3268464mr3521276.5.1729230448659; Thu, 17 Oct 2024 22:47:28
- -0700 (PDT)
-Date: Thu, 17 Oct 2024 22:47:10 -0700
-Message-Id: <20241018054719.1004128-1-irogers@google.com>
+ (user=irogers job=sendgmr) by 2002:a05:690c:368d:b0:6e2:12e5:356f with SMTP
+ id 00721157ae682-6e5bfd21dbbmr472747b3.3.1729230450809; Thu, 17 Oct 2024
+ 22:47:30 -0700 (PDT)
+Date: Thu, 17 Oct 2024 22:47:11 -0700
+In-Reply-To: <20241018054719.1004128-1-irogers@google.com>
+Message-Id: <20241018054719.1004128-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241018054719.1004128-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH v3 0/9] Run tests in parallel showing number of tests running
+Subject: [PATCH v3 1/9] tools subcmd: Add non-waitpid check_if_command_finished()
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,84 +90,70 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Avoid waitpid so that stdout/stderr aren't destroyed prior to wanting
-to read them for display. When running on a color terminal, display
-the number of running tests (1 if sequential). To avoid previous
-flicker, only delete and refresh the display line when it changes. An
-earlier version of this code is here:
-https://lore.kernel.org/lkml/20240701044236.475098-1-irogers@google.com/
+Using waitpid can cause stdout/stderr of the child process to be
+lost. Use Linux's /prod/<pid>/status file to determine if the process
+has reached the zombie state. Use the 'status' file rather than 'stat'
+to avoid issues around skipping the process name.
 
-Add a signal handler for perf tests so that unexpected signals are
-displayed and test clean up is possible.
+Tested-by: James Clark <james.clark@linaro.org>
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/lib/subcmd/run-command.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-In perf test add an "exclusive" flag that causes a test to be run with
-no other test. Set this flag manually for C tests and via a
-"(exclusive)" in the test description for shell tests. Add the flag to
-shell tests that may fail when run with other tests.
-
-Change the perf test loop to run in two passes. For parallel
-execution, the first pass runs all tests that can be run in parallel
-then the 2nd runs remaining tests sequentially. This causes the
-"exclusive" tests to be run last and with test numbers moderately out
-of alignment.
-
-Change the default to be to run tests in parallel. Running tests in
-parallel brings the execution time down to less than half.
-
-v3: Mark additional shell tests as "(exclusive)" to avoid issues with
-    shared resources suggested by Namhyung. Add dependent signal
-    handler change so that kill/ctrl-C don't leave lots of processes,
-    previously sent here:
-    https://lore.kernel.org/lkml/20241017052137.225514-1-irogers@google.com/
-
-v2: Fix inaccurate remaining counts when running specific
-    tests. Rename "remaining" to "active" to better reflect the
-    testing behavior. Move the exclusive flag to test cases and not
-    entire suites. Add more "(exclusive)" flags to test as
-    suggested-by James Clark. Remove "(exclusive)" flag from test
-    descriptions to keep the command line output more concise. Add
-    James Clark's tested-by.
-
-Ian Rogers (9):
-  tools subcmd: Add non-waitpid check_if_command_finished()
-  perf test: Display number of active running tests
-  perf test: Reduce scope of parallel variable
-  perf test: Avoid list test blocking on writing to stdout
-  perf test: Tag parallel failing shell tests with "(exclusive)"
-  perf test: Add a signal handler around running a test
-  perf test: Run parallel tests in two passes
-  perf test: Make parallel testing the default
-  perf test: Add a signal handler to kill forked child processes
-
- tools/lib/subcmd/run-command.c                |  33 ++
- tools/perf/tests/builtin-test.c               | 304 ++++++++++++------
- .../tests/shell/coresight/asm_pure_loop.sh    |   2 +-
- .../shell/coresight/memcpy_thread_16k_10.sh   |   2 +-
- .../coresight/thread_loop_check_tid_10.sh     |   2 +-
- .../coresight/thread_loop_check_tid_2.sh      |   2 +-
- .../shell/coresight/unroll_loop_thread_10.sh  |   2 +-
- tools/perf/tests/shell/list.sh                |   5 +-
- .../tests/shell/perftool-testsuite_report.sh  |   2 +-
- tools/perf/tests/shell/probe_vfs_getname.sh   |   2 +-
- .../shell/record+script_probe_vfs_getname.sh  |   2 +-
- tools/perf/tests/shell/record.sh              |   2 +-
- tools/perf/tests/shell/record_lbr.sh          |   2 +-
- tools/perf/tests/shell/record_offcpu.sh       |   2 +-
- tools/perf/tests/shell/stat_all_pmu.sh        |   2 +-
- tools/perf/tests/shell/stat_bpf_counters.sh   |   2 +-
- tools/perf/tests/shell/test_arm_coresight.sh  |   2 +-
- .../tests/shell/test_arm_coresight_disasm.sh  |   2 +-
- tools/perf/tests/shell/test_arm_spe.sh        |   2 +-
- tools/perf/tests/shell/test_data_symbol.sh    |   2 +-
- tools/perf/tests/shell/test_intel_pt.sh       |   2 +-
- .../perf/tests/shell/test_stat_intel_tpebs.sh |   2 +-
- .../tests/shell/trace+probe_vfs_getname.sh    |   2 +-
- tools/perf/tests/task-exit.c                  |   9 +-
- tools/perf/tests/tests-scripts.c              |   7 +-
- tools/perf/tests/tests.h                      |   9 +
- tools/perf/util/color.h                       |   1 +
- 27 files changed, 293 insertions(+), 115 deletions(-)
-
+diff --git a/tools/lib/subcmd/run-command.c b/tools/lib/subcmd/run-command.c
+index 4e3a557a2f37..0a764c25c384 100644
+--- a/tools/lib/subcmd/run-command.c
++++ b/tools/lib/subcmd/run-command.c
+@@ -2,6 +2,7 @@
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <ctype.h>
+ #include <fcntl.h>
+ #include <string.h>
+ #include <linux/string.h>
+@@ -217,8 +218,40 @@ static int wait_or_whine(struct child_process *cmd, bool block)
+ 
+ int check_if_command_finished(struct child_process *cmd)
+ {
++#ifdef __linux__
++	char filename[FILENAME_MAX + 12];
++	char status_line[256];
++	FILE *status_file;
++
++	/*
++	 * Check by reading /proc/<pid>/status as calling waitpid causes
++	 * stdout/stderr to be closed and data lost.
++	 */
++	sprintf(filename, "/proc/%d/status", cmd->pid);
++	status_file = fopen(filename, "r");
++	if (status_file == NULL) {
++		/* Open failed assume finish_command was called. */
++		return true;
++	}
++	while (fgets(status_line, sizeof(status_line), status_file) != NULL) {
++		char *p;
++
++		if (strncmp(status_line, "State:", 6))
++			continue;
++
++		fclose(status_file);
++		p = status_line + 6;
++		while (isspace(*p))
++			p++;
++		return *p == 'Z' ? 1 : 0;
++	}
++	/* Read failed assume finish_command was called. */
++	fclose(status_file);
++	return 1;
++#else
+ 	wait_or_whine(cmd, /*block=*/false);
+ 	return cmd->finished;
++#endif
+ }
+ 
+ int finish_command(struct child_process *cmd)
 -- 
 2.47.0.105.g07ac214952-goog
 
