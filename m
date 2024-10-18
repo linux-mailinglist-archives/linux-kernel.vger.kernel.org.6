@@ -1,72 +1,89 @@
-Return-Path: <linux-kernel+bounces-371998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C4F9A431B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:00:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E16379A431C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8CD428A5DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:00:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1AB828A669
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C4B2022E9;
-	Fri, 18 Oct 2024 16:00:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9A62022E9;
+	Fri, 18 Oct 2024 16:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGIivg4N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF47202655;
-	Fri, 18 Oct 2024 16:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84441133987;
+	Fri, 18 Oct 2024 16:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729267209; cv=none; b=Sra37mqqdFbJr0mNNTEVbxHUzp59fGIn1bxPqwjpqV3rDvso7ERrofN8mT/F7MfNNh6WZ1pJxmasMvIMKA5fHKjaYa4UseWEiL9mQamlqPeyzzcXO4NcJhOeFTHSGuZhH1c8/VTbOfOk0Ix2UTyvWP0hBU4UFA+YRWYF6Jpn2jc=
+	t=1729267249; cv=none; b=bpH+Lz7qOik5TwP6Z4wZzv8W9EprfKUrmpcMNSaghDuMMIeNRjLF2LUSw+MQFOrXunmSljtz0xRr9GqCu8Nj6i0sFCOGU3mO+DJHv/WXAk/T5+P9hcy5k0qj2ErEnRpytuy4++qHmlWaHl6Kd+KxCszDxhRk+kEXR23syVv8jQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729267209; c=relaxed/simple;
-	bh=VoO68KJ8tGrGVPKMEzuQ087VzqhbpAOrJ+LGyTFrwYg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QXwkoXunD2+Ej5eOvp33geyDk739bl/8XE6GTw2j8VW8N/jV83jsirKnKOxuGKbxJg2kfns18Mwcr6lZ9Rufn8OKx5sY/K5eM1PW5d4tXFYs88XJPWssJzuGaNiceNg/twIUT8qf/afWzLtXJVZ0cWlLmcnojqDNdwHVgQYisfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XVTsj1VP3z67fBs;
-	Fri, 18 Oct 2024 23:59:21 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 93C1414038F;
-	Sat, 19 Oct 2024 00:00:04 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 18 Oct
- 2024 18:00:04 +0200
-Date: Fri, 18 Oct 2024 17:00:02 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] PCI: Move struct pci_bus_resource into bus.c
-Message-ID: <20241018170002.00000391@Huawei.com>
-In-Reply-To: <20241017141111.44612-2-ilpo.jarvinen@linux.intel.com>
-References: <20241017141111.44612-1-ilpo.jarvinen@linux.intel.com>
-	<20241017141111.44612-2-ilpo.jarvinen@linux.intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729267249; c=relaxed/simple;
+	bh=zpANFnWRoD/eiFZ7gwBmD53a0CBzxsDQACKvAdJxOQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o0sB9KPnpvbn4SNCODn/Pwa3utX89meaStvAj7QEwGfJ7KvbfRYolI7cRHtvCTvL//3L9AwerdJqm0KQox+MMQ7hyTiuSoTHa6PGMnL1vGMjKAcaIqCKlvBd5ZYWxoZ+zIzbj3wy7gfTLq2H5ojk51ayk1A/OKGiZRLcIAHWvCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGIivg4N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F41AC4CEC3;
+	Fri, 18 Oct 2024 16:00:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729267249;
+	bh=zpANFnWRoD/eiFZ7gwBmD53a0CBzxsDQACKvAdJxOQc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LGIivg4N8xOI7/UzmnLo/36YZfk+O1ZFXx0sUzJxiUuN3MZIjKswB37/Gag4a6ghp
+	 wt+/Y2fQhiA07gdSwtICiWJEXZlhSJmdlex4U9pWma5+YV/CI/iQCDzMzZ0T0iUIi/
+	 N4WEZY5bbPWfpbmD9I9Efcw57/qT+3RNxW+RJQgFAZByNdCCugInx/Bxd/lLV6XqoF
+	 uJFioGWO8KxdBiIuR6YkDYTM+BSO+zm9mGUp6BxG34I2Xdg6OwvGBWj+JejMcjR/5j
+	 mwJ9GHmrk5ya1Q7LqczXMUnhL5ap0GZxUd2mQ0uaBlx/Yp7skp79lprS2X322zpX49
+	 bg9TT91CM8g3g==
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a3bb6a020dso8730885ab.2;
+        Fri, 18 Oct 2024 09:00:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCViKggKbG6j/Xudkg+zI3oF1tPnmv1YaKKqhrAs2sm6gadNRUsBaClCDzf8FlV9q/mWxxDUMHb1p/ZAlBs=@vger.kernel.org, AJvYcCWzhVsw4n2ytCyhT0F5F6TGzK8nso0A3nWf/p56Ueo1Q/JWdEtYJBILhT9X5YoQ7O5oZwL1FXEcdUL+wQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy11ilYjD+FlgE/0jmBsm4kM/szMAXDmr7A9WlNCYz4chs97Gin
+	sAggekIKReMMD5dIQtwiac2ktb7SDSOidIyRZYGmyWWRT1NKFsf7m+riahgswbcqa/VvoJMolIv
+	VaERJ9uzkrR81W8IO4ChEfWPepoI=
+X-Google-Smtp-Source: AGHT+IFlrNh+N+VKMRzqF1ezmRpKwU3q8j91DjeGUAArWFVU8LBtk5jcETATAn4F4d+fyxp0gY8wP++PUX1UbYJZNBM=
+X-Received: by 2002:a05:6e02:1caf:b0:3a0:92b1:ec3c with SMTP id
+ e9e14a558f8ab-3a3f405085cmr35023505ab.4.1729267248737; Fri, 18 Oct 2024
+ 09:00:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+References: <20241007084831.48067-1-ubizjak@gmail.com> <27983c29-dbf0-4105-8176-739971a071b4@intel.com>
+In-Reply-To: <27983c29-dbf0-4105-8176-739971a071b4@intel.com>
+From: Song Liu <song@kernel.org>
+Date: Fri, 18 Oct 2024 09:00:37 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6VKssKDCLCbxYMzbt2GBuxMfJp1AbSDRX-TwDBRu0h_A@mail.gmail.com>
+Message-ID: <CAPhsuW6VKssKDCLCbxYMzbt2GBuxMfJp1AbSDRX-TwDBRu0h_A@mail.gmail.com>
+Subject: Re: [PATCH] md/raid5-ppl: Use atomic64_inc_return() in ppl_new_iounit()
+To: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+Cc: Uros Bizjak <ubizjak@gmail.com>, linux-raid@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Yu Kuai <yukuai3@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, 17 Oct 2024 17:11:09 +0300
-Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+On Tue, Oct 8, 2024 at 12:38=E2=80=AFAM Artur Paszkiewicz
+<artur.paszkiewicz@intel.com> wrote:
+>
+> On 10/7/24 10:48, Uros Bizjak wrote:
+> > Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
+> > to use optimized implementation and ease register pressure around
+> > the primitive for targets that implement optimized variant.
+> >
+> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> > Cc: Song Liu <song@kernel.org>
+> > Cc: Yu Kuai <yukuai3@huawei.com>
+>
+> Reviewed-by: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
 
-> The struct pci_bus_resource is only used in bus.c so move it there.
->=20
-> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-LGTM
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Applied to md-6.13. Thanks for the patch!
+
+Song
 
