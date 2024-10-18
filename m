@@ -1,139 +1,154 @@
-Return-Path: <linux-kernel+bounces-371594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376DD9A3D0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:14:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7E49A3D0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC92D285DA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C26051F23FE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A169B20400A;
-	Fri, 18 Oct 2024 11:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298C620262D;
+	Fri, 18 Oct 2024 11:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LKDXb9ul"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNL1I3g9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B4F20127B;
-	Fri, 18 Oct 2024 11:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FD2200CB6;
+	Fri, 18 Oct 2024 11:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729250003; cv=none; b=cw2odtgjPTFSWx2JoOQNe2fU5+BQHwUxSH87pizQu3yrRAcPaY1gfawunHAY/hKTLnkUavBBXkDphtf5s54NRT87ecbmaTPsyiIoiT/QLULShXGmUCJTJkv4Iy9wftsqZGmOz/UdTaKmKe2vaIDlQ+vify4u8ukabqM5UtaDUVA=
+	t=1729250026; cv=none; b=C34ZIfg5KmfEJPRE59103GXAT/DckWyuC9phl/mXVTTXz6/dWtZH5LwYGnRVTmRxiWcWhuDkoZ5gtxMoROC3dEMfY2cA0b6aJ+dtri383rT7/fH/NqwZH6cGYVlyX6OF/8yUoW03l/EKPPDgrMp0C691f7zkwtVqn+iVVw7sfLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729250003; c=relaxed/simple;
-	bh=k4rZ40imsAEygLBTe5J0QmS/xB9+x4t22Hk+dbVRrCk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=RTGtxOC58jn3Cr3pvMepvThFm1CbPev69NONbvx4ybSHswlsf+G/D9+yfH0bpboXU8CVN43gn8jmM67LFsoDBQz2gy0kvHQOFAowVAhgkgFQ5tQ+USe4oUvYsyyvor/VFSJsne37YisiYJye7LUdo0L0bh1WBlVbKq27Rmtml38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LKDXb9ul; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I4v78d016585;
-	Fri, 18 Oct 2024 11:13:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	73JEBDCxLZfc/Av2g444hWOmVABNunvuaxBMCo63u3s=; b=LKDXb9ulTFHwd/ez
-	iSc28SjPrCkpCqASa6GwSsQghqCsRp2cqY9C7WiuCLI1pHjV1Sf0WZOblex+mC2s
-	T5p3WGHn7HG8eQRfep0imlLurXJmgelMyr3miepBpEDDa6+92bW7Px+JL0BiTHSS
-	8ZrKstpkgGaoh9Ox7kHw384lhxQOpw8D1SDKCu0tbiy7G5hBVoKdiQlFB7K2UCDL
-	FSj/4TVpWk8AtWqezsw/YmfCYp8MihhKxdlIhjxdzESnjqK5/s6asjcq26z0vSIG
-	Sel6zp0pPYd52scIErBt4X/jOa3YXYIJUtY7SeoEjPp1OlWt4Rowf0sqxZdb6Aj4
-	qtwfgw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bh3p95gu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 11:13:18 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IBDHom014060
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 11:13:17 GMT
-Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 18 Oct 2024 04:13:13 -0700
-From: Imran Shaik <quic_imrashai@quicinc.com>
-Date: Fri, 18 Oct 2024 16:42:34 +0530
-Subject: [PATCH 6/6] clk: qcom: Add support for Video Clock Controller on
- QCS8300
+	s=arc-20240116; t=1729250026; c=relaxed/simple;
+	bh=6fjFvPjtW49gvS3feK/6QYpKDGIrQ/9y5cATnWJJL9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I8JTV2bmhdZMhmszRuJ2effxVD9ylnGMw0mUOOrowmUmJcx/MnJ6XYRrXKudl/t21YiQzYjYmUSIXZnYDWl58RZP9YEjhLHKDvY1urALkQuZfX94tN5dCS9vrFTzXoz3UueODZvKu3dEoe1ku0Nx+6oK8L9gbFw15wOYJoZerp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNL1I3g9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90738C4CEC3;
+	Fri, 18 Oct 2024 11:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729250026;
+	bh=6fjFvPjtW49gvS3feK/6QYpKDGIrQ/9y5cATnWJJL9s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mNL1I3g9nMZEnPIzQKWMrqQvUjAHUjxChxaf01cbzXgh0qxcy4CPQFmAjb/4uHvhu
+	 o1E2qDUaWYOfAeWGoUdDuIwqgKfG8PlDbmglHJGCYvGNvkiPEswRMilo9b139QIGuY
+	 Eedsa+k+hJDXZDISmMlc3A9rl6SZB5DlXiHa5FPMgtz3yMPfQ75mS1KwWCkqZ27HUV
+	 qo4udth1+jpeFFYAdv65k26xwGVY/3FrXaEuwNbdVCjvgtMwdw67WNydWqR2VONs+T
+	 nfJEcoZQ5AIDlUxgVQt9GTqJfogDjUKrR/S9J4DhtiehcKPMHM3EETiTn5FB1HSm77
+	 7Zz1QErd4fymg==
+Date: Fri, 18 Oct 2024 13:13:41 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho
+ Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: Re: [PATCH] media: uvcvideo: Stop stream during unregister
+Message-ID: <20241018131341.2e95df71@foz.lan>
+In-Reply-To: <20240926-uvc_stop_streaming-v1-1-038180fafe5f@chromium.org>
+References: <20240926-uvc_stop_streaming-v1-1-038180fafe5f@chromium.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241018-qcs8300-mm-patches-v1-6-859095e0776c@quicinc.com>
-References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
-In-Reply-To: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>
-X-Mailer: b4 0.14.1
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7Y7TQFIXw3gcoQqYhrAgM78wKi3vHRGY
-X-Proofpoint-ORIG-GUID: 7Y7TQFIXw3gcoQqYhrAgM78wKi3vHRGY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
- clxscore=1015 phishscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180071
 
-Add support to the QCS8300 Video clock controller by extending
-the SA8775P Video clock controller, which is mostly identical
-but QCS8300 has minor difference.
+Em Thu, 26 Sep 2024 05:59:06 +0000
+Ricardo Ribalda <ribalda@chromium.org> escreveu:
 
-Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
----
- drivers/clk/qcom/videocc-sa8775p.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> uvc_unregister_video() can be called asynchronously from
+> uvc_disconnect(). If the device is still streaming when that happens, a
+> plethora of race conditions can occur.
+> 
+> Make sure that the device has stopped streaming before exiting this
+> function.
+> 
+> If the user still holds handles to the driver's file descriptors, any
+> ioctl will return -ENODEV from the v4l2 core.
+> 
+> This change makes uvc more consistent with the rest of the v4l2 drivers
+> using the vb2_fop_* and vb2_ioctl_* helpers.
+> 
+> Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-diff --git a/drivers/clk/qcom/videocc-sa8775p.c b/drivers/clk/qcom/videocc-sa8775p.c
-index bf5de411fd5d..d0494ba81f5f 100644
---- a/drivers/clk/qcom/videocc-sa8775p.c
-+++ b/drivers/clk/qcom/videocc-sa8775p.c
-@@ -524,6 +524,7 @@ static struct qcom_cc_desc video_cc_sa8775p_desc = {
- 
- static const struct of_device_id video_cc_sa8775p_match_table[] = {
- 	{ .compatible = "qcom,sa8775p-videocc" },
-+	{ .compatible = "qcom,qcs8300-videocc" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, video_cc_sa8775p_match_table);
-@@ -550,6 +551,9 @@ static int video_cc_sa8775p_probe(struct platform_device *pdev)
- 	clk_lucid_evo_pll_configure(&video_pll0, regmap, &video_pll0_config);
- 	clk_lucid_evo_pll_configure(&video_pll1, regmap, &video_pll1_config);
- 
-+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-videocc"))
-+		regmap_write(regmap, video_cc_mvs0c_div2_div_clk_src.reg, 2);
-+
- 	/* Keep some clocks always enabled */
- 	qcom_branch_set_clk_en(regmap, 0x80ec); /* VIDEO_CC_AHB_CLK */
- 	qcom_branch_set_clk_en(regmap, 0x8144); /* VIDEO_CC_SLEEP_CLK */
+I didn't test it, but the patch looks OK on my eyes.
 
--- 
-2.25.1
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
+> ---
+> This patch was part of the series:
+> https://patchwork.linuxtv.org/project/linux-media/list/?series=13064
+> 
+> Moved out from it to ease the review.
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 32 +++++++++++++++++++++++++++++++-
+>  1 file changed, 31 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index f0febdc08c2d..bee150b852e4 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -1919,11 +1919,41 @@ static void uvc_unregister_video(struct uvc_device *dev)
+>  	struct uvc_streaming *stream;
+>  
+>  	list_for_each_entry(stream, &dev->streams, list) {
+> +		/* Nothing to do here, continue. */
+>  		if (!video_is_registered(&stream->vdev))
+>  			continue;
+>  
+> +		/*
+> +		 * For stream->vdev we follow the same logic as:
+> +		 * vb2_video_unregister_device().
+> +		 */
+> +
+> +		/* 1. Take a reference to vdev */
+> +		get_device(&stream->vdev.dev);
+> +
+> +		/* 2. Ensure that no new ioctls can be called. */
+>  		video_unregister_device(&stream->vdev);
+> -		video_unregister_device(&stream->meta.vdev);
+> +
+> +		/* 3. Wait for old ioctls to finish. */
+> +		mutex_lock(&stream->mutex);
+> +
+> +		/* 4. Stop streaming. */
+> +		uvc_queue_release(&stream->queue);
+> +
+> +		mutex_unlock(&stream->mutex);
+> +
+> +		put_device(&stream->vdev.dev);
+> +
+> +		/*
+> +		 * For stream->meta.vdev we can directly call:
+> +		 * vb2_video_unregister_device().
+> +		 */
+> +		vb2_video_unregister_device(&stream->meta.vdev);
+> +
+> +		/*
+> +		 * Now both vdevs are not streaming and all the ioctls will
+> +		 * return -ENODEV.
+> +		 */
+>  
+>  		uvc_debugfs_cleanup_stream(stream);
+>  	}
+> 
+> ---
+> base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
+> change-id: 20240926-uvc_stop_streaming-6e9fd20e97bc
+> 
+> Best regards,
+
+
+
+Thanks,
+Mauro
 
