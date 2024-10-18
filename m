@@ -1,91 +1,71 @@
-Return-Path: <linux-kernel+bounces-371468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03ED59A3B7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:28:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E0E9A3B7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8843285927
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:28:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A81E1F23A09
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B82B20100F;
-	Fri, 18 Oct 2024 10:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336B520111A;
+	Fri, 18 Oct 2024 10:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bX7xhte0"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="P37ZQDP5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C85168C3F
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803BF168C3F;
+	Fri, 18 Oct 2024 10:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729247287; cv=none; b=JYYuDmsyke52DjmVdshvzm1DerOtC8jiV2dndjEwTx5pMeaclg+yTdOxA4j9Pkc4rynLW1CG9GMndu4w5XPF+oDkA6PV7z62GEEUHyQhtqsib8F2EzdqMeH8FcQDlnilVh+2ezvrIh3D2vb58+OEdI+je+wGDOM0/N4Fx4ZGNUM=
+	t=1729247291; cv=none; b=TiwvU8i8wijoCivo27ydVr6R0w+eHvUM6+bl2pEV3Bln/VuPezHU3mRJ0ItoH0fTxiFftWF+Z/ZZDaXShykkA+BBVHawF0j8sEgJPi4NUpE7Cw4mqDxnvLmTU0f1nMhCizmjkqSwMDKIKJlsYHwqzJW8jxCi5Pq3OvWWCiPp3YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729247287; c=relaxed/simple;
-	bh=x2GDt2t8xGxiZF0J3X6YiqT5UKSyMxpJP/dyTFIT94M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j1PD6QYJCxeVXb83fTZ1tuaZF4E3+1O2i4sRyvE0fS9GIWkaoT+FggVaX/zL2wifKeoIAKkqJC28Bql/ARkvu3p5PPLM1/Zt0pfmb/LHfSQFIocrC3EkBA3YRDYOU+fUbHxRpDWYxNM2NRQVhk5yiIwGSy2yR/06lEoi58O+jQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bX7xhte0; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729247282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=5KHT3ff6M8Nx/a1xS5GHR/zH/l+13M2qwmmTdtYZIM8=;
-	b=bX7xhte0tWU2pjujPDcrlqJj4dfUrqU8DdZbf0cNur1y9XJ5SAYEsYWV1JhK0tU5r8RWZl
-	p66PrsPNTQJmzjBEpo0hAtOfl3+d4vfYoy+HCPfFRn2AruJ1Y9Vo83NoLpf0/aKuwHXIIc
-	HNoG+GXe2Cg6izwSP1DSbz7ATxSFO5g=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Christian Brauner <brauner@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	"Tyler Hicks (Microsoft)" <code@tyhicks.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Yan Zhen <yanzhen@vivo.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] proc: Fix W=1 build kernel-doc warning
-Date: Fri, 18 Oct 2024 12:27:03 +0200
-Message-ID: <20241018102705.92237-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1729247291; c=relaxed/simple;
+	bh=2ydi4xpyLhuUxVf5xZR3h0Khm/4a9TI3tUL2cCB0hDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aXIKl0IbygsrZVm2Q3aeY4gsXDPXhMCIuzyynluAjTv8WE5nN7md4Ug6A/HLwyJfGAO08dodjZ25Np2p/8i9W3mOvisBG9cImL29zh3tw9q9i4QGLydrOwsmUxxZyUJe+zkPmzlymV1zEq+3PqArffKdWwMRcB9HraDMvrcfhjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=P37ZQDP5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF55EC4CEC3;
+	Fri, 18 Oct 2024 10:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729247291;
+	bh=2ydi4xpyLhuUxVf5xZR3h0Khm/4a9TI3tUL2cCB0hDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P37ZQDP5/525xkXwSNG16z7sLKcETMMyJvEeEPNFpJfEnV4IMnCmEmNs6EWEz7pUf
+	 kRASfk8HFPsaP/SYNG5yjgZS1RQsFj6g2mkcA/xi8qxz9VMLUYdY3Uxlmseh6A3faj
+	 TbGH1grsBDWx5Kf21eOiyBGYETOboT3BXIzNTAS4=
+Date: Fri, 18 Oct 2024 12:28:08 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+Cc: Breno Leitao <leitao@debian.org>, stable@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5.15, 5.10, 5.4, 4.19 1/1] KVM: Fix a data race on
+ last_boosted_vcpu in kvm_vcpu_on_spin()
+Message-ID: <2024101802-unlearned-bullish-3ca2@gregkh>
+References: <20241017175623.2045625-1-saeed.mirzamohammadi@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017175623.2045625-1-saeed.mirzamohammadi@oracle.com>
 
-Building the kernel with W=1 generates the following warning:
+On Thu, Oct 17, 2024 at 10:56:13AM -0700, Saeed Mirzamohammadi wrote:
+> From: Breno Leitao <leitao@debian.org>
+> 
+> commit 49f683b41f28918df3e51ddc0d928cb2e934ccdb upstream.
+> 
 
-  fs/proc/fd.c:81: warning: This comment starts with '/**',
-                   but isn't a kernel-doc comment.
+Now queued up, thanks.
 
-Use a normal comment for the helper function proc_fdinfo_permission().
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- fs/proc/fd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 1f54a54bfb91..5e391cbca7a3 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -77,7 +77,7 @@ static int seq_fdinfo_open(struct inode *inode, struct file *file)
- 	return single_open(file, seq_show, inode);
- }
- 
--/**
-+/*
-  * Shared /proc/pid/fdinfo and /proc/pid/fdinfo/fd permission helper to ensure
-  * that the current task has PTRACE_MODE_READ in addition to the normal
-  * POSIX-like checks.
--- 
-2.47.0
-
+greg k-h
 
