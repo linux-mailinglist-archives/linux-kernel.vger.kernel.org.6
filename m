@@ -1,122 +1,87 @@
-Return-Path: <linux-kernel+bounces-371890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1549A41D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:00:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB959A41DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65BB31F260BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:00:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FFC728C6F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6992E1EE009;
-	Fri, 18 Oct 2024 15:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB51200BB1;
+	Fri, 18 Oct 2024 15:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8P9/+fp"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SjxUftEc"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3202AD16;
-	Fri, 18 Oct 2024 15:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BA278C91
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729263642; cv=none; b=ll/pMg8AI8Pb4mOJQYbi2K+dFh7etARTXB0dWxj9VexeS/zYQBHQYM10Gls3S2VR0beT340eM0nCgCHFYzjmJzEF7gAP3jCmTe4yu2dESkDe9p4b8QnNidxY/8Kb4OjogpkCn5h7Lpeg36mj2PwdsDFXpmJzb60b76TgSQR0qdE=
+	t=1729263671; cv=none; b=nADgnqqRIShKhh3SuN6untfo6dFVW6631732UR0NX/x3fRX+2/yRXoczvsK96Ho9TDFrhngm/z8ZMcjnOpgsLt3mlPpuFC+rid0IjV71Sr+gEjcAliJLKxh8tD96vFi1yg9LHmfTK/UxeA88/A0TNNK5hvqeNxnX0vHJn+et2gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729263642; c=relaxed/simple;
-	bh=1pVbcKB5uGrnYq5PjyQqbovbftHfEmq3Zi/7Eb/j3aw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XJ923p0YiVyt9Gy4cCM3Ozux0imFxnMjpMGBg/x34BymTNwpOLD6ZboQxEzljBNNgjzuAknhWJW91ABxPXC3548tAFVgPqeAtuZAWjN7+dpUgwWU0UGkCHdccWqYLMl6WDoGXR4OO4EtwPtN67Zomm0kQ8WK8ux3hedfL8d+BiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i8P9/+fp; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539eb97f26aso2709811e87.2;
-        Fri, 18 Oct 2024 08:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729263638; x=1729868438; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dIKOdZ6mvFQDxiH7HbWkkYnZ6JyR6pvYOT67zOBxAXs=;
-        b=i8P9/+fpTXAQd04ehNlGZayUolI3gjVTTWHQf0V85ampahhbyerpCnFshDVMQQGIhS
-         8TuukK9VvYLvlL8MLVO+1p/djYzqMvPFKRxTTXYyG8NSENsixn80kgS6Nx33Sxn8p6Bl
-         lfL1IObcDCPfXyVoiAmTqqRIDeGiPzDHLGuobvUvyjMICpXL0iL7PfJ7IscMeqAXr6Aj
-         xZEt9GNzoTZCWIk8QArx6T3y0AwgRlDrD4lsapUSU/A1psE1MavQLYdaTCWtA4SdkPE2
-         qEaVxl4/gpwL4wOP7OsGJ/D9NYMe6s/h9U6tFvJMm/d+4PWYv05bvgEkaIP2aT2T1LTn
-         9Icg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729263638; x=1729868438;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dIKOdZ6mvFQDxiH7HbWkkYnZ6JyR6pvYOT67zOBxAXs=;
-        b=eKH90vNZlmN2ws8ZItAqojDyGJgAJwBAI6tw5YhOomADYe1pQ0zyR9dA6xPMqv3/Ue
-         jkiY4kOkit1+S7EZZBjFcrKxDtHEOT1n+NTTos4eiTLToJb5HzbUSd2y20TkZIvboKsT
-         SAuX6nVZ2HLXuN5J/oWx2W6+JYSTkw+j25cOpiFcRsLpCAcpAn5yLQrZSE5u0lAMHylG
-         IPtjmrcReCD9ShlWv+eM6KhA5xyHagzfDmQQJGqfx0DFxSXE2FOvZQ3kJ8so4FpjrbOF
-         DqCuI4nGn7jRf/+nWKM3784v7jn66xbqoNznulR36Irdvd0Xx3JNVTHkXjwNWuS3Hlsp
-         RSaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjPtDeLl8ICJteeMeeFzmwLwQBve9eIZoHJNIvqyWrXDW2sIsPHRAcL9YHNd6cb+8oUEsI6kHTZqTO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+kN07dWnhW3+Hw8yBNsVoWdrpxghkw0scHMCetFc1z5dFlCml
-	Hat0YNtzc5UREn5xg9iDcdITNRnXmUEdz7YzoYKO+wqazW5Xbli2k8oaYdtH/U0voXgf8EMNO6+
-	RmTacUEKe9vqemBGB6VicXhv5LhDRzdLqYyY=
-X-Google-Smtp-Source: AGHT+IHwXQ20b409yN7+yfUZ1sUfNSkZ5np1XrDl50YR+emCF7VvuE3bfUinG/w54J/aPOQKgrUTBkqs+N1w/JZ887E=
-X-Received: by 2002:ac2:4c48:0:b0:539:f699:4954 with SMTP id
- 2adb3069b0e04-53a1546ca04mr1887475e87.58.1729263638326; Fri, 18 Oct 2024
- 08:00:38 -0700 (PDT)
+	s=arc-20240116; t=1729263671; c=relaxed/simple;
+	bh=6ychNUbuINVXdsVvpz1dtumTWLHjSfyYtkHsRdDm454=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=svQ/sDd90MY3G9kccHI7MbRGZ8UkeVGPrsvFjLNdXIc3dydVRt5BUy/BzxdpT6pyX/n+Cq7KFK6MGZdcrs1968ksJ/7o1ZUym8NybjQf0F4oSKF9Zly2kZjJ7NA+R8ip6QYBGVnfjgpRqmRmawe15TMf/bSgQSVn1AfrYCXmcf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SjxUftEc; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729263666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UvvnK4fcSjvxd/X21ONu95YZX+qIikjbIWJ5EiCB+vg=;
+	b=SjxUftEcZ9LhZd8b5mye63Ons/SiQeK/cDCvpnCn+sTSV05/2gCLj6Nfef9H/oVRZ1IP4q
+	YY3qDHjWzDZL7YNHPTJ9R9N503iXH/JPQHDi/2QU4400a0ZjzhT9T8gQ7AZLfm9crJDR5+
+	nzHfCSevk9YlFBUE18M1wZeGMEwQJhE=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Christoph Hellwig <hch@lst.de>,
+	iommu@lists.linux.dev
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	linux-kernel@vger.kernel.org,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH v2 0/4] dma-mapping: Trace more error paths
+Date: Fri, 18 Oct 2024 11:00:33 -0400
+Message-Id: <20241018150036.2878190-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 18 Oct 2024 10:00:27 -0500
-Message-ID: <CAH2r5mvOjw1o6RcYu8OHCANy+Z2+9ONS+tYjRFbX_o3QgT95Kg@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Please pull the following changes since commit
-8e929cb546ee42c9a61d24fae60605e9e3192354:
+Some DMA functions are not traced when they fail. I found this pretty
+confusing, since it seems like the device skips calling the DMA function
+and fails anyway. This series adds some additional tracepoints to
+address this.
 
-  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
+Changes in v2:
+- Use macros to define events in a class
 
-are available in the Git repository at:
+Sean Anderson (4):
+  dma-mapping: Use macros to define events in a class
+  dma-mapping: Trace dma_alloc/free direction
+  dma-mapping: Use trace_dma_alloc for dma_alloc* instead of using
+    trace_dma_map
+  dma-mapping: Trace more error paths
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.12-rc3-smb3-client-fixes
-
-for you to fetch changes up to 6aca91c416f626fc0c5146cc4450ea86b831f3dd:
-
-  cifs: Remove unused functions (2024-10-16 00:30:52 -0500)
-
-----------------------------------------------------------------
-two fixes for stable, and two small cleanup fixes
-- Fix possible double free setting xattrs
-- Fix slab out of bounds with large ioctl payload
-- Remove 3 unused functions, and an unused variable that could be confusing
-----------------------------------------------------------------
-Advait Dhamorikar (1):
-      smb/client: Fix logically dead code
-
-Dr. David Alan Gilbert (1):
-      cifs: Remove unused functions
-
-Paulo Alcantara (1):
-      smb: client: fix OOBs when building SMB2_IOCTL request
-
-Su Hui (1):
-      smb: client: fix possible double free in smb2_set_ea()
-
- fs/smb/client/cifsproto.h |  9 ---------
- fs/smb/client/compress.c  |  4 ----
- fs/smb/client/connect.c   | 12 ------------
- fs/smb/client/sess.c      | 32 --------------------------------
- fs/smb/client/smb2ops.c   |  3 ++-
- fs/smb/client/smb2pdu.c   |  9 +++++++++
- 6 files changed, 11 insertions(+), 58 deletions(-)
-
+ include/trace/events/dma.h | 213 ++++++++++++++++++++++++++++++-------
+ kernel/dma/mapping.c       |  37 ++++---
+ 2 files changed, 198 insertions(+), 52 deletions(-)
 
 -- 
-Thanks,
+2.35.1.1320.gc452695387.dirty
 
-Steve
 
