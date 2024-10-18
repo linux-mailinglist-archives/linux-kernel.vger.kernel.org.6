@@ -1,215 +1,183 @@
-Return-Path: <linux-kernel+bounces-371243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D4D9A3879
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:26:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339C49A387E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 549C01C224AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:26:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 683DFB2167F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C6A18E039;
-	Fri, 18 Oct 2024 08:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2500318E03C;
+	Fri, 18 Oct 2024 08:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ote0cm8h"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JCL8YQw/"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5377D15445B;
-	Fri, 18 Oct 2024 08:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B501515445B;
+	Fri, 18 Oct 2024 08:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729239972; cv=none; b=adlYNHv8js4EliAVqthS9HXIrYBRgp5yf8ItV83tarIz16fvK7o12FG85pDAQrZ6rqeZUKrKhLnAZZXtuFEFvQ7YXoGBKXILxy6HUZHJpe4eYSgwX0GqHRGESBG19HWxUfEY0YYgPuc65JmjbFS5VXomLZonnWc22Ig2hC6oTeA=
+	t=1729240037; cv=none; b=lDfU//SkqR1ppUS2hBAb1oUatW5NfdEjEw8vAec3i1BFPDZz/KIiRx4aBbOjyOZNwM1GTI414L1wMVECsN2VnqQSesceSY+fi7ZxYOz0EXttTUDWaB5qbA1W+0uZ1MyfhrhhB+pIziJ0DbICvwQ4dk2LyqTT7fkTpFsavqHxdFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729239972; c=relaxed/simple;
-	bh=9r43XS4+hO3CCCvk2gQSw9q1OhEUnIT0UTONLiSknSA=;
+	s=arc-20240116; t=1729240037; c=relaxed/simple;
+	bh=vY66x2SoulDdjzUHC1V5UlWbbN9kMgqwz0Gejb66sPc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZzxIGqj4hngo3UxFyMT7qihs2mZDfdwwUl+mhPFYmzbL7NwHKRF3jAW3HzfYFf50aWErv5kwxzdPAWLhm7723lTqw7UsE4QJK/OsYWYBqAxuGFIUprQRdNeOj3rpBYRf9pDyLAXdsVDcJF2GZGzz7d2UyZHIy5ptVoZS34zqOYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ote0cm8h; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gJboHb/BMbPaOUcsvW06gXD2GtuhaNwdjAM91CMzA8I=; b=Ote0cm8hlN5HfkRMzMjzlIp4r9
-	Gc9nZqHlik7uUgyLRW0BRJJW/eDOeYEbXgpr2jRwtpdaJ1lJmK8R/dhFAGkPUoqeSl8oCQPy9JczE
-	WUOl1SXPaMKC3ZNRLA+D0HJ4iMV/qPPItcBKarrRAXvaIIrDdKwC1M3VOhhE+rFPF4LcNMJpEduWn
-	43GY9EpcNvxhkcijhRjsGdMyicVLB8dmoJ5Om5p+UaOerCWFdH2A7nVLjKmXpOiCce4Qq8kN+cQdO
-	hjMXX7et8C+0oPj0nAeFExog5/AqmxKRDbgN/NZdwauacFjSG6VWWlLilw9ojFXieqEALZDnGIZJW
-	ZRdbdZ0g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1iJB-0000000Civ3-1t6G;
-	Fri, 18 Oct 2024 08:26:07 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 823773005AF; Fri, 18 Oct 2024 10:26:05 +0200 (CEST)
-Date: Fri, 18 Oct 2024 10:26:05 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, oleg@redhat.com,
-	rostedt@goodmis.org, mhiramat@kernel.org, mingo@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-	paulmck@kernel.org
-Subject: Re: [PATCH v2 tip/perf/core 1/2] uprobes: allow put_uprobe() from
- non-sleepable softirq context
-Message-ID: <20241018082605.GD17263@noisy.programming.kicks-ass.net>
-References: <20241008002556.2332835-1-andrii@kernel.org>
- <20241008002556.2332835-2-andrii@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zt7GA8qL26W5wVZPYsOpppeksO4rP2tfon4mrRAn6BY5OtEj0rk639voAh7s/QOwRsu6XQv1NVWLmMGfSW+RTS8ZYDjO8iu1U+aOQcFmB8oyQtERIGbaIHa4aBlJ2yhkJsNwIxeU3uOo49cEoL1CkdGg4AJdLszAYb0eyMqDKCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JCL8YQw/; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2848B6000A;
+	Fri, 18 Oct 2024 08:27:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729240027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HYZqWJOrMw2Irw153l1uJNluFx1K3Z8Z9DI3eyECDmk=;
+	b=JCL8YQw/xrIPm1niefqTAkk4oOkObcRoN3YA8XYUhIgBh0S+nEBLvb5nonCx8dom4dihUV
+	ZAi0tg00z+aNWOoLgLqTtY3Pd3d764iSWJLrRyfk67yg5opeMLKgkyF+aOTOq2JVbv9m0N
+	I3jHVMdmut8hClBU6yt99ZyWLK7wLLvX3hOpRTL8Z53vw/0zm9uteV07DKXVDD+rhmQAX9
+	qgjMZM17Y6445SFG9FwJHFMtn8Nkwav7Ee1JjV50wL9fFgRdvIwOhnMsZDl0V3QD7+867F
+	7D3N2CRqmNg2tc3zJecGWC8jX3hOFuBMIuBXWwNYuI57yh9PPYenc088NjZhFg==
+Date: Fri, 18 Oct 2024 10:27:06 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Joseph Jang <jjang@nvidia.com>
+Cc: "shuah@kernel.org" <shuah@kernel.org>,
+	"avagin@google.com" <avagin@google.com>,
+	"amir73il@gmail.com" <amir73il@gmail.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	Matt Ochs <mochs@nvidia.com>, Koba Ko <kobak@nvidia.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 1/2] selftest: rtc: Add to check rtc alarm status for
+ alarm related test
+Message-ID: <20241018082706d7b167ab@mail.local>
+References: <20240524013807.154338-1-jjang@nvidia.com>
+ <20240524013807.154338-2-jjang@nvidia.com>
+ <20240620193654d3cd1f05@mail.local>
+ <c0db5bd6-8c6a-4017-911e-f3e01cd522ed@nvidia.com>
+ <c900db54-d764-4389-ad9a-bc2be61eedd2@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241008002556.2332835-2-andrii@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c900db54-d764-4389-ad9a-bc2be61eedd2@nvidia.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Mon, Oct 07, 2024 at 05:25:55PM -0700, Andrii Nakryiko wrote:
-> Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), which
-> makes it unsuitable to be called from more restricted context like softirq.
+On 18/10/2024 12:26:44+0800, Joseph Jang wrote:
+> 
+> 
+> On 2024/6/24 9:43 AM, Joseph Jang wrote:
+> > 
+> > 
+> > On 2024/6/21 3:36 AM, Alexandre Belloni wrote:
+> > > On 23/05/2024 18:38:06-0700, Joseph Jang wrote:
+> > > > In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
+> > > > ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
+> > > > skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
+> > > > code. This design may miss detecting real problems when the
+> > > > efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
+> > > > ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
+> > > > 
+> > > > In order to make rtctest more explicit and robust, we propose to use
+> > > > RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
+> > > > running alarm related tests. If the kernel does not support RTC_PARAM_GET
+> > > > ioctl interface, we will fallback to check the error number of
+> > > > (RTC_ALM_SET/RTC_WKALM_SET) ioctl call for alarm feature detection.
+> > > > 
+> > > > Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
+> > > > as optional")
+> > > > 
+> > > > Reviewed-by: Koba Ko <kobak@nvidia.com>
+> > > > Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+> > > > Signed-off-by: Joseph Jang <jjang@nvidia.com>
+> > > > ---
+> > > >    tools/testing/selftests/rtc/Makefile  |  2 +-
+> > > >    tools/testing/selftests/rtc/rtctest.c | 64 +++++++++++++++++++++++++++
+> > > >    2 files changed, 65 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
+> > > > index 55198ecc04db..6e3a98fb24ba 100644
+> > > > --- a/tools/testing/selftests/rtc/Makefile
+> > > > +++ b/tools/testing/selftests/rtc/Makefile
+> > > > @@ -1,5 +1,5 @@
+> > > >    # SPDX-License-Identifier: GPL-2.0
+> > > > -CFLAGS += -O3 -Wl,-no-as-needed -Wall
+> > > > +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/
+> > > 
+> > > Is this change actually needed?
+> > 
+> > If we didn't include "-I../../../../usr/include/" in rtctest Makefile,
+> > we may encounter build errors like the following because rtctest default
+> > look at the header file from /usr/include/linux/rtc.h which miss the
+> > definition of struct rtc_param, RTC_PARAM_FEATURES and RTC_PARAM_GET.
+> > 
+> > rtctest.c: In function ‘get_rtc_alarm_state’:
+> > rtctest.c:94:15: error: variable ‘param’ has initializer but incomplete
+> > type
+> >      94 |        struct rtc_param param = { 0 };
+> >         |               ^~~~~~~~~
+> > rtctest.c:94:35: warning: excess elements in struct initializer
+> >      94 |        struct rtc_param param = { 0 };
+> >         |                                   ^
+> > rtctest.c:94:35: note: (near initialization for ‘param’)
+> > rtctest.c:94:25: error: storage size of ‘param’ isn’t known
+> >      94 |        struct rtc_param param = { 0 };
+> >         |                         ^~~~~
+> > rtctest.c:98:22: error: ‘RTC_PARAM_FEATURES’ undeclared (first use in
+> > this function)
+> >      98 |        param.param = RTC_PARAM_FEATURES;
+> >         |                      ^~~~~~~~~~~~~~~~~~
+> > rtctest.c:98:22: note: each undeclared identifier is reported only once
+> > for each function it appears in
+> > rtctest.c:100:23: error: ‘RTC_PARAM_GET’ undeclared (first use in this
+> > function); did you mean ‘RTC_ALM_SET’?
+> >     100 |        rc = ioctl(fd, RTC_PARAM_GET, &param);
+> >         |                       ^~~~~~~~~~~~~
+> >         |                       RTC_ALM_SET
+> > 
+> > After adding "-I../../../../usr/include/", the rtctest will look at
+> > linux kernel source header files from
+> > <Linux root directory>/usr/include/linux/rtc.h to find the definition of
+> > struct rtc_param, RTC_PARAM_FEATURES and RTC_PARAM_GET and fix the
+> > rtctest build errors.
+> > 
+> > 
+> > Thank you,
+> > Joseph.
+> > 
+> >  >
+> Hi Alexandre,
+> 
+> Thank you for reviewing the kernel patch [PATCH 1/2].
+> We are still not sure if we could include linux headers files from kernel
+> source directory by the following change ?
+> 
+> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
+> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/
 
-This is delayed_uprobe_lock, right?
+I guess this is ok, I expected Shuah to take this path too.
 
-So can't we do something like so instead? 
+> 
+> Thank you,
+> Joseph.
+> 
+> 
 
----
- kernel/events/uprobes.c | 40 +++++++++++++++++++++++-----------------
- 1 file changed, 23 insertions(+), 17 deletions(-)
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 2a0059464383..d17a9046de35 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -83,9 +83,11 @@ struct delayed_uprobe {
- 	struct list_head list;
- 	struct uprobe *uprobe;
- 	struct mm_struct *mm;
-+	struct rcu_head rcu;
- };
- 
--static DEFINE_MUTEX(delayed_uprobe_lock);
-+/* XXX global state; use per mm list instead ? */
-+static DEFINE_SPINLOCK(delayed_uprobe_lock);
- static LIST_HEAD(delayed_uprobe_list);
- 
- /*
-@@ -289,9 +291,11 @@ delayed_uprobe_check(struct uprobe *uprobe, struct mm_struct *mm)
- {
- 	struct delayed_uprobe *du;
- 
--	list_for_each_entry(du, &delayed_uprobe_list, list)
-+	guard(rcu)();
-+	list_for_each_entry_rcu(du, &delayed_uprobe_list, list) {
- 		if (du->uprobe == uprobe && du->mm == mm)
- 			return du;
-+	}
- 	return NULL;
- }
- 
-@@ -308,7 +312,8 @@ static int delayed_uprobe_add(struct uprobe *uprobe, struct mm_struct *mm)
- 
- 	du->uprobe = uprobe;
- 	du->mm = mm;
--	list_add(&du->list, &delayed_uprobe_list);
-+	scoped_guard(spinlock, &delayed_uprobe_lock)
-+		list_add_rcu(&du->list, &delayed_uprobe_list);
- 	return 0;
- }
- 
-@@ -316,19 +321,21 @@ static void delayed_uprobe_delete(struct delayed_uprobe *du)
- {
- 	if (WARN_ON(!du))
- 		return;
--	list_del(&du->list);
--	kfree(du);
-+	scoped_guard(spinlock, &delayed_uprobe_lock)
-+		list_del(&du->list);
-+	kfree_rcu(du, rcu);
- }
- 
- static void delayed_uprobe_remove(struct uprobe *uprobe, struct mm_struct *mm)
- {
--	struct list_head *pos, *q;
- 	struct delayed_uprobe *du;
-+	struct list_head *pos;
- 
- 	if (!uprobe && !mm)
- 		return;
- 
--	list_for_each_safe(pos, q, &delayed_uprobe_list) {
-+	guard(rcu)();
-+	list_for_each_rcu(pos, &delayed_uprobe_list) {
- 		du = list_entry(pos, struct delayed_uprobe, list);
- 
- 		if (uprobe && du->uprobe != uprobe)
-@@ -434,12 +441,10 @@ static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
- 			return ret;
- 	}
- 
--	mutex_lock(&delayed_uprobe_lock);
- 	if (d > 0)
- 		ret = delayed_uprobe_add(uprobe, mm);
- 	else
- 		delayed_uprobe_remove(uprobe, mm);
--	mutex_unlock(&delayed_uprobe_lock);
- 
- 	return ret;
- }
-@@ -645,9 +650,7 @@ static void put_uprobe(struct uprobe *uprobe)
- 	 * gets called, we don't get a chance to remove uprobe from
- 	 * delayed_uprobe_list from remove_breakpoint(). Do it here.
- 	 */
--	mutex_lock(&delayed_uprobe_lock);
- 	delayed_uprobe_remove(uprobe, NULL);
--	mutex_unlock(&delayed_uprobe_lock);
- 
- 	call_rcu_tasks_trace(&uprobe->rcu, uprobe_free_rcu);
- }
-@@ -1350,13 +1353,18 @@ static void build_probe_list(struct inode *inode,
- /* @vma contains reference counter, not the probed instruction. */
- static int delayed_ref_ctr_inc(struct vm_area_struct *vma)
- {
--	struct list_head *pos, *q;
- 	struct delayed_uprobe *du;
-+	struct list_head *pos;
- 	unsigned long vaddr;
- 	int ret = 0, err = 0;
- 
--	mutex_lock(&delayed_uprobe_lock);
--	list_for_each_safe(pos, q, &delayed_uprobe_list) {
-+	/*
-+	 * delayed_uprobe_list is added to when the ref_ctr is not mapped
-+	 * and is consulted (this function) when adding maps. And since
-+	 * mmap_lock serializes these, it is not possible miss an entry.
-+	 */
-+	guard(rcu)();
-+	list_for_each_rcu(pos, &delayed_uprobe_list) {
- 		du = list_entry(pos, struct delayed_uprobe, list);
- 
- 		if (du->mm != vma->vm_mm ||
-@@ -1370,9 +1378,9 @@ static int delayed_ref_ctr_inc(struct vm_area_struct *vma)
- 			if (!err)
- 				err = ret;
- 		}
-+
- 		delayed_uprobe_delete(du);
- 	}
--	mutex_unlock(&delayed_uprobe_lock);
- 	return err;
- }
- 
-@@ -1596,9 +1604,7 @@ void uprobe_clear_state(struct mm_struct *mm)
- {
- 	struct xol_area *area = mm->uprobes_state.xol_area;
- 
--	mutex_lock(&delayed_uprobe_lock);
- 	delayed_uprobe_remove(NULL, mm);
--	mutex_unlock(&delayed_uprobe_lock);
- 
- 	if (!area)
- 		return;
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
