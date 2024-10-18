@@ -1,121 +1,311 @@
-Return-Path: <linux-kernel+bounces-370885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B069A333D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C8F9A333B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 707782855E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:17:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8416628557F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A3413E04B;
-	Fri, 18 Oct 2024 03:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3395B155744;
+	Fri, 18 Oct 2024 03:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="qdvBHEWT"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7157C3FB3B
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEDbctta"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6865215573F
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729221465; cv=none; b=A9iCT1bKfmlkeE5dZVTgiO8JOYeseww921QadlVTVwkt5NYA1AagABZrsJZ6bJbPlPPzjNGLlP9Fz7v0GVe+I3fn3i259mB4rkyc1rF9o278dSBf1tEokfjbBnSzomrj2TsgLprpfQ57td+9CCUtn+M4RJYpOxi9FQNDPpVO+sw=
+	t=1729221299; cv=none; b=hrsTScALlBQmZ/y22x/iqJ1/s71Zy1V2Tp34yFswZ4jwlswI17pobYdkqSohIlKApa/HvNiUmdZgPB7Y2E3PetAWbx05TsBNCt06EnvLlZxuGL5rHw1Lmwg7cg3TPWM3tRhGzMtoS4nsR3lLFBYoVe6ln8zYue7zHN811AV7FJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729221465; c=relaxed/simple;
-	bh=cUrpr9qroScqXZT5dhpQhY0mis+F5rsSbBg6Ficg7MA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WQJN2iUJhmSx9X9vTHWhSg3BOP0Z/dziWB8zUYfL7DPZp23LbIEl97a2JFtnfqmZmJNOFtOE4CUPuJKpmelmMlH0YdsCI/uMFm1IXtOwoTbxibYNj2IJroflm4yO9Uo1wpzyVecstB+SFK1UBHGaR5jlp+vIo2A3bcAldiN5JTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=qdvBHEWT; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=yEk24EEbUheM26KZ9Y5UZSg71Glq65ticUsqrmiR49g=;
-	b=qdvBHEWTAB+JUPEtaDPM9Ll5UYrYHsKf2aglfn8A8DYK3g/+bg9RLAP2SFu8zV
-	K8LyrJbdtjWsYTWWXHbGXSvCgg3NuzKiraACCIZjvWAaMpaUb6PCRNZAZP4/swcs
-	7kUKoDJDUzoPNTwfR0WDf+Da6MVQYZ45p02+Seixsnj8U=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgC3Acab0hFnc11BAA--.2050S3;
-	Fri, 18 Oct 2024 11:14:37 +0800 (CST)
-Date: Fri, 18 Oct 2024 11:14:34 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Marek Vasut <marex@denx.de>
-Cc: linux-arm-kernel@lists.infradead.org, kernel@dh-electronics.com,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Arnd Bergmann <arnd@arndb.de>, Fabio Estevam <festevam@gmail.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] soc: imx8m: Probe the SoC driver as platform
- driver
-Message-ID: <ZxHSmt0Aml3Zkewe@dragon>
-References: <20240929184930.73049-1-marex@denx.de>
+	s=arc-20240116; t=1729221299; c=relaxed/simple;
+	bh=KmjEbRrzxhUWGgngpu8Dj+x57SzWITnUXqEIo2h7KmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bueugR2RUFP6t9VIfWXvZKn+paEpnWakWGy3niEod6sCdFknfUkQDcZOpIh1jjouo3Qn03fBloCHReXVLnSzsUHfe1ArtEb4SoVNdxmva6jsTnVR9okYXl7zCRA9ARukHxFcwZTuEh/CThRly6dlIFb1WWPbA8FS/8PEgD/P6zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KEDbctta; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 151EAC4AF0B
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:14:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729221299;
+	bh=KmjEbRrzxhUWGgngpu8Dj+x57SzWITnUXqEIo2h7KmI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KEDbcttaC0lftx/o5BrzS/1jUpAT4GohW8Gk/HxQkKAXr1ptcn2qEvn5lcbUhjI6R
+	 ezYvgkhC9J0p7iYU8CcQ6aqtjHrCwdlWLsGZ56Vm2tn/Gl/prhxKLPYtpWN9OJipmx
+	 AkOrmjMLeATT3109HsKfq+8o8g66xKI29JxMRvDVXIPm+SZ9HrSCdGaJ0VGXvx+ov8
+	 PP9lviZOLbuWGJfJtFxoM+4bFrcA2H72moUY7giLAawy7j1w7KnzWyTafIDeHvEEGm
+	 7zSJeaCdf3Zm58yXFzBLjWYVGVeEJlKULEiFKjAVV6cL1IPNVVSy5o4PDRjaJc+6Ok
+	 0+JRS/rNxrqAQ==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso2855085a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 20:14:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW5286wbsdYgFOFiP3YKhO6DZ2SBXHt6H5gmNaJPvS1UnR1IQUatjlk8Bdef60VSNzbW785gnbhycymF6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7vDustEPyLf9zzgmZM7ieQgoq3BiKb+7eYwYubzhuqr4n9fpP
+	bXKCo93wdk+Iatkgt9AzOw+dJhVcOPIXBDwPNnfQr+pnNW8QqEwIw+KGTHyOsjRcvg60FfRy3Ay
+	FWTl/jioho6BTq7pQ5vwqUyNlvcU=
+X-Google-Smtp-Source: AGHT+IHMwkL76z+Ol37VNEyMkdkYO1NcJNpqPS9mcoMfV4MNVSUCFQBM09k1qZRevzoF1k9j62ZTRvRsKFV2zS/9W7c=
+X-Received: by 2002:a17:907:6e86:b0:a99:e82a:87ee with SMTP id
+ a640c23a62f3a-a9a69cd2ffemr63769566b.57.1729221297651; Thu, 17 Oct 2024
+ 20:14:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240929184930.73049-1-marex@denx.de>
-X-CM-TRANSID:Ms8vCgC3Acab0hFnc11BAA--.2050S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww1UtF4kZry3uF4DZryftFb_yoW8KFy3pF
-	4fJr17CF4kGr47Aw17Ar45Ar45tayUA3W8Xr1xJr18uF15Cr1UAF1xtFWxGryDArWjqFn3
-	tF1qq3y8tF4rJaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j2NtsUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAhh8ZWcRl-6bMQABs3
+References: <20241014035855.1119220-1-maobibo@loongson.cn> <20241014035855.1119220-2-maobibo@loongson.cn>
+In-Reply-To: <20241014035855.1119220-2-maobibo@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 18 Oct 2024 11:14:45 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5QkULWp6fciR1Lnds0r00fUdrmj86K_wBuxd0D=RkaXQ@mail.gmail.com>
+Message-ID: <CAAhV-H5QkULWp6fciR1Lnds0r00fUdrmj86K_wBuxd0D=RkaXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] LoongArch: Set initial pte entry with PAGE_GLOBAL
+ for kernel space
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 29, 2024 at 08:49:16PM +0200, Marek Vasut wrote:
-> With driver_async_probe=* on kernel command line, the following trace is
-> produced because on i.MX8M Plus hardware because the soc-imx8m.c driver
-> calls of_clk_get_by_name() which returns -EPROBE_DEFER because the clock
-> driver is not yet probed. This was not detected during regular testing
-> without driver_async_probe.
-> 
-> Convert the SoC code to platform driver and instantiate a platform device
-> in its current device_initcall() to probe the platform driver. Rework
-> .soc_revision callback to always return valid error code and return SoC
-> revision via parameter. This way, if anything in the .soc_revision callback
-> return -EPROBE_DEFER, it gets propagated to .probe and the .probe will get
-> retried later.
-> 
-> "
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 1 at drivers/soc/imx/soc-imx8m.c:115 imx8mm_soc_revision+0xdc/0x180
-> CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-next-20240924-00002-g2062bb554dea #603
-> Hardware name: DH electronics i.MX8M Plus DHCOM Premium Developer Kit (3) (DT)
-> pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : imx8mm_soc_revision+0xdc/0x180
-> lr : imx8mm_soc_revision+0xd0/0x180
-> sp : ffff8000821fbcc0
-> x29: ffff8000821fbce0 x28: 0000000000000000 x27: ffff800081810120
-> x26: ffff8000818a9970 x25: 0000000000000006 x24: 0000000000824311
-> x23: ffff8000817f42c8 x22: ffff0000df8be210 x21: fffffffffffffdfb
-> x20: ffff800082780000 x19: 0000000000000001 x18: ffffffffffffffff
-> x17: ffff800081fff418 x16: ffff8000823e1000 x15: ffff0000c03b65e8
-> x14: ffff0000c00051b0 x13: ffff800082790000 x12: 0000000000000801
-> x11: ffff80008278ffff x10: ffff80008209d3a6 x9 : ffff80008062e95c
-> x8 : ffff8000821fb9a0 x7 : 0000000000000000 x6 : 00000000000080e3
-> x5 : ffff0000df8c03d8 x4 : 0000000000000000 x3 : 0000000000000000
-> x2 : 0000000000000000 x1 : fffffffffffffdfb x0 : fffffffffffffdfb
-> Call trace:
->  imx8mm_soc_revision+0xdc/0x180
->  imx8_soc_init+0xb0/0x1e0
->  do_one_initcall+0x94/0x1a8
->  kernel_init_freeable+0x240/0x2a8
->  kernel_init+0x28/0x140
->  ret_from_fork+0x10/0x20
-> ---[ end trace 0000000000000000 ]---
-> SoC: i.MX8MP revision 1.1
-> "
-> 
-> Signed-off-by: Marek Vasut <marex@denx.de>
+Hi, Bibo,
 
-Applied all, thanks!
+I applied this patch but drop the part of arch/loongarch/mm/kasan_init.c:
+https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.g=
+it/commit/?h=3Dloongarch-next&id=3D15832255e84494853f543b4c70ced50afc403067
 
+Because kernel_pte_init() should operate on page-table pages, not on
+data pages. You have already handle page-table page in
+mm/kasan/init.c, and if we don't drop the modification on data pages
+in arch/loongarch/mm/kasan_init.c, the kernel fail to boot if KASAN is
+enabled.
+
+Huacai
+
+On Mon, Oct 14, 2024 at 11:59=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wro=
+te:
+>
+> Unlike general architectures, there are two pages in one TLB entry
+> on LoongArch system. For kernel space, it requires both two pte
+> entries with PAGE_GLOBAL bit set, else HW treats it as non-global
+> tlb, there will be potential problems if tlb entry for kernel space
+> is not global. Such as fail to flush kernel tlb with function
+> local_flush_tlb_kernel_range() which only flush tlb with global bit.
+>
+> With function kernel_pte_init() added, it can be used to init pte
+> table when it is created for kernel address space, and the default
+> initial pte value is PAGE_GLOBAL rather than zero at beginning.
+>
+> Kernel address space areas includes fixmap, percpu, vmalloc, kasan
+> and vmemmap areas set default pte entry with PAGE_GLOBAL set.
+>
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> ---
+>  arch/loongarch/include/asm/pgalloc.h | 13 +++++++++++++
+>  arch/loongarch/include/asm/pgtable.h |  1 +
+>  arch/loongarch/mm/init.c             |  4 +++-
+>  arch/loongarch/mm/kasan_init.c       |  4 +++-
+>  arch/loongarch/mm/pgtable.c          | 22 ++++++++++++++++++++++
+>  include/linux/mm.h                   |  1 +
+>  mm/kasan/init.c                      |  8 +++++++-
+>  mm/sparse-vmemmap.c                  |  5 +++++
+>  8 files changed, 55 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/loongarch/include/asm/pgalloc.h b/arch/loongarch/includ=
+e/asm/pgalloc.h
+> index 4e2d6b7ca2ee..b2698c03dc2c 100644
+> --- a/arch/loongarch/include/asm/pgalloc.h
+> +++ b/arch/loongarch/include/asm/pgalloc.h
+> @@ -10,8 +10,21 @@
+>
+>  #define __HAVE_ARCH_PMD_ALLOC_ONE
+>  #define __HAVE_ARCH_PUD_ALLOC_ONE
+> +#define __HAVE_ARCH_PTE_ALLOC_ONE_KERNEL
+>  #include <asm-generic/pgalloc.h>
+>
+> +static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+> +{
+> +       pte_t *pte;
+> +
+> +       pte =3D (pte_t *) __get_free_page(GFP_KERNEL);
+> +       if (!pte)
+> +               return NULL;
+> +
+> +       kernel_pte_init(pte);
+> +       return pte;
+> +}
+> +
+>  static inline void pmd_populate_kernel(struct mm_struct *mm,
+>                                        pmd_t *pmd, pte_t *pte)
+>  {
+> diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/includ=
+e/asm/pgtable.h
+> index 9965f52ef65b..22e3a8f96213 100644
+> --- a/arch/loongarch/include/asm/pgtable.h
+> +++ b/arch/loongarch/include/asm/pgtable.h
+> @@ -269,6 +269,7 @@ extern void set_pmd_at(struct mm_struct *mm, unsigned=
+ long addr, pmd_t *pmdp, pm
+>  extern void pgd_init(void *addr);
+>  extern void pud_init(void *addr);
+>  extern void pmd_init(void *addr);
+> +extern void kernel_pte_init(void *addr);
+>
+>  /*
+>   * Encode/decode swap entries and swap PTEs. Swap PTEs are all PTEs that
+> diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
+> index 8a87a482c8f4..9f26e933a8a3 100644
+> --- a/arch/loongarch/mm/init.c
+> +++ b/arch/loongarch/mm/init.c
+> @@ -198,9 +198,11 @@ pte_t * __init populate_kernel_pte(unsigned long add=
+r)
+>         if (!pmd_present(pmdp_get(pmd))) {
+>                 pte_t *pte;
+>
+> -               pte =3D memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+> +               pte =3D memblock_alloc_raw(PAGE_SIZE, PAGE_SIZE);
+>                 if (!pte)
+>                         panic("%s: Failed to allocate memory\n", __func__=
+);
+> +
+> +               kernel_pte_init(pte);
+>                 pmd_populate_kernel(&init_mm, pmd, pte);
+>         }
+>
+> diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_ini=
+t.c
+> index 427d6b1aec09..34988573b0d5 100644
+> --- a/arch/loongarch/mm/kasan_init.c
+> +++ b/arch/loongarch/mm/kasan_init.c
+> @@ -152,6 +152,8 @@ static void __init kasan_pte_populate(pmd_t *pmdp, un=
+signed long addr,
+>                 phys_addr_t page_phys =3D early ?
+>                                         __pa_symbol(kasan_early_shadow_pa=
+ge)
+>                                               : kasan_alloc_zeroed_page(n=
+ode);
+> +               if (!early)
+> +                       kernel_pte_init(__va(page_phys));
+>                 next =3D addr + PAGE_SIZE;
+>                 set_pte(ptep, pfn_pte(__phys_to_pfn(page_phys), PAGE_KERN=
+EL));
+>         } while (ptep++, addr =3D next, addr !=3D end && __pte_none(early=
+, ptep_get(ptep)));
+> @@ -287,7 +289,7 @@ void __init kasan_init(void)
+>                 set_pte(&kasan_early_shadow_pte[i],
+>                         pfn_pte(__phys_to_pfn(__pa_symbol(kasan_early_sha=
+dow_page)), PAGE_KERNEL_RO));
+>
+> -       memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+> +       kernel_pte_init(kasan_early_shadow_page);
+>         csr_write64(__pa_symbol(swapper_pg_dir), LOONGARCH_CSR_PGDH);
+>         local_flush_tlb_all();
+>
+> diff --git a/arch/loongarch/mm/pgtable.c b/arch/loongarch/mm/pgtable.c
+> index eb6a29b491a7..228ffc1db0a3 100644
+> --- a/arch/loongarch/mm/pgtable.c
+> +++ b/arch/loongarch/mm/pgtable.c
+> @@ -38,6 +38,28 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+>  }
+>  EXPORT_SYMBOL_GPL(pgd_alloc);
+>
+> +void kernel_pte_init(void *addr)
+> +{
+> +       unsigned long *p, *end;
+> +       unsigned long entry;
+> +
+> +       entry =3D (unsigned long)_PAGE_GLOBAL;
+> +       p =3D (unsigned long *)addr;
+> +       end =3D p + PTRS_PER_PTE;
+> +
+> +       do {
+> +               p[0] =3D entry;
+> +               p[1] =3D entry;
+> +               p[2] =3D entry;
+> +               p[3] =3D entry;
+> +               p[4] =3D entry;
+> +               p +=3D 8;
+> +               p[-3] =3D entry;
+> +               p[-2] =3D entry;
+> +               p[-1] =3D entry;
+> +       } while (p !=3D end);
+> +}
+> +
+>  void pgd_init(void *addr)
+>  {
+>         unsigned long *p, *end;
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ecf63d2b0582..6909fe059a2c 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3818,6 +3818,7 @@ void *sparse_buffer_alloc(unsigned long size);
+>  struct page * __populate_section_memmap(unsigned long pfn,
+>                 unsigned long nr_pages, int nid, struct vmem_altmap *altm=
+ap,
+>                 struct dev_pagemap *pgmap);
+> +void kernel_pte_init(void *addr);
+>  void pmd_init(void *addr);
+>  void pud_init(void *addr);
+>  pgd_t *vmemmap_pgd_populate(unsigned long addr, int node);
+> diff --git a/mm/kasan/init.c b/mm/kasan/init.c
+> index 89895f38f722..ac607c306292 100644
+> --- a/mm/kasan/init.c
+> +++ b/mm/kasan/init.c
+> @@ -106,6 +106,10 @@ static void __ref zero_pte_populate(pmd_t *pmd, unsi=
+gned long addr,
+>         }
+>  }
+>
+> +void __weak __meminit kernel_pte_init(void *addr)
+> +{
+> +}
+> +
+>  static int __ref zero_pmd_populate(pud_t *pud, unsigned long addr,
+>                                 unsigned long end)
+>  {
+> @@ -126,8 +130,10 @@ static int __ref zero_pmd_populate(pud_t *pud, unsig=
+ned long addr,
+>
+>                         if (slab_is_available())
+>                                 p =3D pte_alloc_one_kernel(&init_mm);
+> -                       else
+> +                       else {
+>                                 p =3D early_alloc(PAGE_SIZE, NUMA_NO_NODE=
+);
+> +                               kernel_pte_init(p);
+> +                       }
+>                         if (!p)
+>                                 return -ENOMEM;
+>
+> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> index edcc7a6b0f6f..c0388b2e959d 100644
+> --- a/mm/sparse-vmemmap.c
+> +++ b/mm/sparse-vmemmap.c
+> @@ -184,6 +184,10 @@ static void * __meminit vmemmap_alloc_block_zero(uns=
+igned long size, int node)
+>         return p;
+>  }
+>
+> +void __weak __meminit kernel_pte_init(void *addr)
+> +{
+> +}
+> +
+>  pmd_t * __meminit vmemmap_pmd_populate(pud_t *pud, unsigned long addr, i=
+nt node)
+>  {
+>         pmd_t *pmd =3D pmd_offset(pud, addr);
+> @@ -191,6 +195,7 @@ pmd_t * __meminit vmemmap_pmd_populate(pud_t *pud, un=
+signed long addr, int node)
+>                 void *p =3D vmemmap_alloc_block_zero(PAGE_SIZE, node);
+>                 if (!p)
+>                         return NULL;
+> +               kernel_pte_init(p);
+>                 pmd_populate_kernel(&init_mm, pmd, p);
+>         }
+>         return pmd;
+> --
+> 2.39.3
+>
 
