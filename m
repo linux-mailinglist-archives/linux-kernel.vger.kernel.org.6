@@ -1,291 +1,147 @@
-Return-Path: <linux-kernel+bounces-370894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077349A335C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:26:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5659A3362
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 05:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67CB6B2246A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:26:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8B12820E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBED015B0FE;
-	Fri, 18 Oct 2024 03:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155C216BE20;
+	Fri, 18 Oct 2024 03:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="EbDnrPM6"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazolkn19011029.outbound.protection.outlook.com [52.103.13.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuP83qmv"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3A3155744
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.13.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729221970; cv=fail; b=asbNhIISOgFtoMlP3VdKauY5slkjncLXhTxacRAztbUkdELy3k/0gQoEzChInXqlCu6dG5mOn8PxuR2MfrCeNpyv3jLmBNeUuEVTkbY/8ls2kSRvV0Mzp3kwTvdhlIg56zClKsKEhmAjWYGITnKr/GBQygU6f4j8HeOIpTBmKaA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729221970; c=relaxed/simple;
-	bh=ykrK6yBmbAfwKLRFy4c9b7aOUbwh71XYA5L8S5nzyZQ=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=gUptvhEWXf/x59qyr+ly2TekMFbOpT5tL7CiQnEDSwmwbDStrHuvWcb6GACruBeZWAwHiJajwPGc/HzwcP6EiMTGqHu3i51ZupWi19+QUtbs4HVsxuogencdq6BJHw02dkAF+CCUiVnAtzEufk4RuPHkAzH6sd3ADQ18gVKLR70=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=EbDnrPM6; arc=fail smtp.client-ip=52.103.13.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xcbdlN4vkMGo+wBvCtY9GteV/SC5yfBteF+PvP1TyU9yHfblXfu/1pt8tLjmFg3A1cLZSsiRdXmB961dcXd3C1dK87X6fzXTH+e+AOk29WKxnzduP0fgNYjf+X0GMWuYUCgI43SbQx76ATb4X/tBt6uwmjz+V70dVn5oQEEhG4qUtA56HitDhEpSG82IkeH+1BSH9RdfCf8mKESFkEDEss86ZaVs7VxkfX5dojtYTG3rkJgIQPU0hPKXItCFC/QXqb4jQtZCND6NKuz3veE0G6pYytWs80z4xUihfHsQxDFrj0t0c+wswiYpSesIT7XVrxREuP7TrDQjU9RCnquRmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R13C9+NvGLeChFn8sIvHp+NNg4CtFwgOTV82fJ+W/Og=;
- b=ml+lQ2yUUVrsbxchK6tZi/nrH9BsyCCtZKhkRdOl/vH9ANNEnCYkjajGgBIBgKpvxKtZIYBDY//W3AW+DYn9w46xbbLTPsN8aYWNdwm9b4+Ryr9gasXdI1h4veJtv1mJOTDjQI/mb/4ILsNid6YTuCVXUjTBpIzEB82Yo435HT1pSYbwX5ym3y3+UT050w+1Ig56e07V+tCltSfxlNMgq5aI4amio2oSkmxpB2yboOnpRZwAYvxLrT2k3F/k9MHqyz8vM06BeU7TCyCOYlLLzJdgV1zV/+m890AjZt7qioNAJsSK5ZTPhrZh5wDR8MmqqKOdIVfhPwbF1ttpK1QI8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R13C9+NvGLeChFn8sIvHp+NNg4CtFwgOTV82fJ+W/Og=;
- b=EbDnrPM6tzc+lBnrnn9NX5Uv1N13f4tUn5Dqw0cG5tNAvXDSWS61ZbelD5wFLbxNPthT+R+LHXDUt4pg2JJ/daayF4LsreMdihLBiiRu/Uldtv9nTO/BzPwIhkERYF5YrHv8asXlmjyj58JLlt1337ukQ5Vm7hNegg83oBZCkfhA9ihGID6fjAuBsJu7JK7yny9n4vqruO801VuPrYmChbbFpNhfC6djTxvMHP6fDzICroEO/f8G4Pkuo3Co/BVALIRp/z9ls/z5rOCae0VXHvmHSlZrAYJukEU6vEwkyOOJsRd1osKlBt50LyKevW+QtX7/tlXWBIphbMQQ6eEqjQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by CH3PR02MB10535.namprd02.prod.outlook.com (2603:10b6:610:20b::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.19; Fri, 18 Oct
- 2024 03:26:05 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8069.016; Fri, 18 Oct 2024
- 03:26:05 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Michael Kelley <mhklinux@outlook.com>, Stuart Hayes
-	<stuart.w.hayes@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
-	Martin Belanger <Martin.Belanger@dell.com>, Oliver O'Halloran
-	<oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>, Keith Busch
-	<kbusch@kernel.org>, Lukas Wunner <lukas@wunner.de>, David Jeffery
-	<djeffery@redhat.com>, Jeremy Allison <jallison@ciq.com>, Jens Axboe
-	<axboe@fb.com>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
-	<sagi@grimberg.me>, "linux-nvme@lists.infradead.org"
-	<linux-nvme@lists.infradead.org>, Nathan Chancellor <nathan@kernel.org>, Jan
- Kiszka <jan.kiszka@seimens.com>, Bert Karwatzki <spasswolf@web.de>
-Subject: RE: [PATCH v9 0/4] shut down devices asynchronously
-Thread-Topic: [PATCH v9 0/4] shut down devices asynchronously
-Thread-Index: AQHbGnTLCx/N5yqLpEGGHHPLbQxGQrKA6nvggAr0qtA=
-Date: Fri, 18 Oct 2024 03:26:05 +0000
-Message-ID:
- <SN6PR02MB41571E2DD410D09CE7494B38D4402@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20241009175746.46758-1-stuart.w.hayes@gmail.com>
- <BN7PR02MB41480DE777B9C224F3C2DF43D4792@BN7PR02MB4148.namprd02.prod.outlook.com>
-In-Reply-To:
- <BN7PR02MB41480DE777B9C224F3C2DF43D4792@BN7PR02MB4148.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH3PR02MB10535:EE_
-x-ms-office365-filtering-correlation-id: c3fbf216-7f7f-40b3-222a-08dcef24996c
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|8062599003|19110799003|8060799006|15080799006|3412199025|440099028|102099032|56899033|1710799026;
-x-microsoft-antispam-message-info:
- paegFFLa4/QWw6646ph5LJRolbLRCDZFU31XoW1AbfVpsajJjbU79WPzTTvzcfd9qRT26k5+gHywunUHmxGetFkPxpGvXb929gZpDoscv+1si8qSztmXNu+LQkLuLWlbVD10C9jbPUwNaB30aIPVctvW/AQRpQRVCEKxGEA/wlM8q7WMBPTRH10pkRHZ69yygSSAPy/AzOW+ahLLEvYygJVdemQxnaWhJFFx0NzKb5wkhG6K+Ny3wIhAvOS+e6EwZk7UD5dLJ8UmWe7Rq69+Tr+4AngzpP4kl4/ep4Xiw3zPU8vq9MedMoTQs/a/fn1AVQ3/zmj/U/iEoe4unzbGYHpIERi/Ad44UUVTczaAQan/jUTZ6kWRsaiwst2PRYkwL04UuzN1/AVNL+GJqvHpWb0k6onr4n2yhvLMbX6c+X5b9n/h4khTkcmbDdvKKtojHW7s2/Q8GwR6bYwGTpayw3kdiKFiMzI68W7BfqmrHIl7t6BnaCqULTSmWCNXNdcc7JT7fpcR1h38IhXC7a+EzeUN/q17QRJku6YCsF5LS5omOtAD5h5XqCODazwh6tdjoG+9+FZPrMZhHmLmWBmxWwtH906B7dUIKPedivaX3ZZbf4jySlQWQAoocepVNE2bg2ucvmFWFe1bC5Rbn82IVsyD03xGNhRhPbFV2O58ueRxr4QykI8xYjXtNN8dx6uSlQBxdCnodb6QoTUtbCUBa7KJ3q8l2ScQdRFBNJ3irmE=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?jZwzRm9XoE554RixVeGpALj8CeyGbkn8yBEbUhItHsSIsJilajZ6VPIJRvwF?=
- =?us-ascii?Q?Gr/8LkssXcQDuSHpeVOFPJTqxTo4wwYvRFULqLwQ1QFEcgMbKNekRnLRRfkP?=
- =?us-ascii?Q?dn0ZAVv6i3G16Oukk/T6Ca6fffV9YJbRIMiYqyYEJbJ6/iq4emeMeOOmutY6?=
- =?us-ascii?Q?JtM68z4aLNjzFBzyb+fewAWtCpMlsgYvJw9e0MJfLWfPbtBiq0HcZME3qCu1?=
- =?us-ascii?Q?bi+63MXBcoeLM5Y31P6xIXLEBvcAn2TaAofK+1RKOoKsOk60sHnCaCwcGIvU?=
- =?us-ascii?Q?k7vGWnc48FIVwWRG7mFPgW6++E6cD9jDVjMCeD/Qkj9gtDR6I6o3hNmIu7SA?=
- =?us-ascii?Q?ejbMEBnfaugqqsm/bBnuUB6GbeF2ICuGh46waz4hqMu3iaFr5on8DKWhhhJQ?=
- =?us-ascii?Q?yuTRDavT6v/emlum+gtTSMkeE9lbfVNNttQ7mt743ehKnimBZkxuH+NduUC0?=
- =?us-ascii?Q?g5Il09A2jqnx4d7VTws5fWOfijCC66hwl9HbzMv2ZuM54DalJxWXqLO5YhkQ?=
- =?us-ascii?Q?NvJiEsPVGxsyOG7FnmovshDDiRGZMU/fb4C+hg+aQBgCM0wPpNrCvez/7xv3?=
- =?us-ascii?Q?P55Lucj6bR30dWtH5k5VXcjvJEFJZsAD+I5c9V2pLgnzFm1XoAkxZQqtjW11?=
- =?us-ascii?Q?UVtW6Uk4lNT1p5La/8jHV+XrziJgavn99YKZtEvBPxzfTAG8xZryCmG8JCXt?=
- =?us-ascii?Q?6Cyk+qDE1/5V619G7oD+V17cRIT2l7SaWvPk83S9nUcJabWe+oDwSPgDasFn?=
- =?us-ascii?Q?r3+yWrNX+K5YlzJan47OloJs35MnknV3/xTJs/uiSyMClr2vgQgwyM1vKUMZ?=
- =?us-ascii?Q?Nb//T0rW02zoYpKRS6ng2j3oUfb9xXvdkH29bhUuLljw45S9mYx2o5saYIxw?=
- =?us-ascii?Q?KsngHR9T19grxuUyMrDhjD4H0PvT09oKPb+4/zklZ1wvdguy424Vg2tNYTJN?=
- =?us-ascii?Q?I4X++1CXhB0MKyXMjjI2oZHVhGmk9UUkgDLSS7TqhsNVJ/knGY5eCLzmM027?=
- =?us-ascii?Q?IFhyHqFGGgy30B1mWqskjrKprhUmm8xd4IKlEmYLYYFOXbI9NGz/HaBQsFnm?=
- =?us-ascii?Q?WiSON7yxVTdrWucqGD8SHlQppasWsH+jPlREKd7dkfLLqu6KLk1Nf8p3E6KW?=
- =?us-ascii?Q?TSryAdkIKETgSs667d/ZqJP7/dw7HL7K1dq0XfRiYt7EDebnn5t8SAn8RQZh?=
- =?us-ascii?Q?Wz/YdwBWO0Ym+R+umn31y8QcDRizJrg8/XbB0WGJfXdGlXb8d42eAD18b78?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A42155744;
+	Fri, 18 Oct 2024 03:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729222015; cv=none; b=BEhgOG0cI2oJ43w0RGBDtSuqjWYmUlX1jA7SF1/rol+bPa59lNtvtcmG6FTMSZHhyBlj/h82c6VZgqSjSA9QDnTLXoM5Q4wG+FeZXJ7ol1PPijjqRiUKt5Ybe78FxxtvNiJdMpXIfjruRxhh8sveZr4/zhkEB2wwNveIAeab6a4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729222015; c=relaxed/simple;
+	bh=pp0xdFEq2xvTLyyQpNjgiFlzJ7fppjTZ/wj9ohuCh4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fprPOHt9MAlw7JkgQIVCfMMGo/aySpqrc/WoXQP2GoJfInEfg6W8DfkejSjfXgURxrb2rB3zBRIllJd4OR3B5M0yDN4oaelstaauDrIS5Fzb48lGa4BL4vvWT8DAjFQVs2MCEMClACuCi3vtenQ0DMTYxkjwZ7KCo/jVMiArRHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cuP83qmv; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6cbf0e6414aso7856726d6.1;
+        Thu, 17 Oct 2024 20:26:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729222013; x=1729826813; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RRFYsm7JQn6FoiV+R8mnl3y+fSii5MhmQCkaq6Im0Kk=;
+        b=cuP83qmv3CZVrBrhP0f2Ec/2c/nqcuo/tyOmYDsOD6TAyeEmejjZr7ZUf4eld80coB
+         Tf6cyqKwJdKAWXeBc8QRPlu5MiSGb2yy/X8cPf/G2/R/Yk65xWKCQ+KeV1vJdsU2T+zz
+         qaRLxhTnSTfwps2Y+ym9Hq9kFkM0qZHkIzfaaY+IvgqtnEjzX7eHA0es+TFM1+rW4SlY
+         z4RTMYX4EUHxam/P6vqvH+bIp/olGWiQCj6GNE/2PqjVPAaw7LdcYAU828KLnJcSLPOP
+         alctmxaY3Efz2GZ8m9ENqzCtZu2Ag9jExCTSx2EpqMDaATchRlkdNHJbh1FpWRyDIzDn
+         34Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729222013; x=1729826813;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RRFYsm7JQn6FoiV+R8mnl3y+fSii5MhmQCkaq6Im0Kk=;
+        b=Na1PuXzzg1jKCSnjyaPtsDudrzETDuOYcmzuGUX6VDN02ToZayitpwTa2ClioQQZ5c
+         N+pJu4FLupmhj189slDBrV1tAdYqfyvOyjI9H6VBOh5XRE62kIqwphB/g28/fQq6K6PH
+         /Mej1FWBGA4v1coKHBHeaifAcwyNIMez1CaNgiMGyFpXU++1wJatsp3y1URxOMnbNxj8
+         4WvpHNQz5K5ZzAiCeM/rgUb6f8fQ3q/4JTT45plPANlgBFOtN34srx9bq7yBRVD8xx1Q
+         pt0zxHYQ1gcxYIQWOcfzyADt12QnsUdCzZ9usAVG/Dk21MvsqYPIo23GHcdVS35IPmDd
+         o9Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUvDGLxWlbLlOM6suztB92GIvVNs2SCCsc07HwMPWOhtn8S3o21FPNaEvXbzZKfQPiWZQEN24W3+mQCAdHvJ09j@vger.kernel.org, AJvYcCV07kidwxbGopKwO6CIX95P7s64aJrqMt87jfhdFDyJX4+pt3Nhfz3MB46HdEXI6pH4WSoSOZf4wOWhbHzs@vger.kernel.org, AJvYcCVDwZUNYZ6cROdty/BFrNwFckcNB5pHaZ06JLXgJPX9dKqNPpootMhFDyLhj2rZqz00K1RQfNPM3iIG@vger.kernel.org, AJvYcCVOicuADKNTElrLokmUd76/qM1b7vQqAv5k0/+GRvXplT/jiDCNZ4BfHjjn9PMeH2RZztE8LGhAf89Dpaue@vger.kernel.org, AJvYcCWRrOpoCi86lkWsWukupqn8PqrUycrbDSphRYd6EBVDr2XYKyPDeJws4naGIgX2OFzqYxyi5DVL9HUya+A=@vger.kernel.org, AJvYcCWomsp4f0K61hGmT+G35HyOulJP5uLY04+kHTOxEgccoUU3aohjwZW8+ZCFNRtZQy4FuEQdb9aRYjuEvQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFISAIFPyoclc3bN3gs6gDzzfVKYQzgBL0bHvEXSPcrq10vjYC
+	3b61rKeUrpQ0DhyG4ivG8umCmWJhynyI4fHNU7apJ82+KxXLapE6
+X-Google-Smtp-Source: AGHT+IGbNm4J7504L9d7tSHokebTr/bSREZo9pNVg4bVFxle2lyocyWjoZsfEt0kWM+ekwkhqpJNeg==
+X-Received: by 2002:a05:6214:3d13:b0:6cd:4972:59af with SMTP id 6a1803df08f44-6cde150b8famr20524116d6.14.1729222012692;
+        Thu, 17 Oct 2024 20:26:52 -0700 (PDT)
+Received: from [10.56.180.205] (syn-076-188-177-122.res.spectrum.com. [76.188.177.122])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cde1366d72sm2925836d6.116.2024.10.17.20.26.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 20:26:52 -0700 (PDT)
+Message-ID: <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
+Date: Thu, 17 Oct 2024 23:26:49 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3fbf216-7f7f-40b3-222a-08dcef24996c
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2024 03:26:05.1075
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR02MB10535
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
+To: Christoph Hellwig <hch@infradead.org>, Eric Biggers <ebiggers@kernel.org>
+Cc: Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk,
+ song@kernel.org, yukuai3@huawei.com, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, adrian.hunter@intel.com, quic_asutoshd@quicinc.com,
+ ritesh.list@gmail.com, ulf.hansson@linaro.org, andersson@kernel.org,
+ konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-hardening@vger.kernel.org, quic_srichara@quicinc.com,
+ quic_varada@quicinc.com
+References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
+ <20240916085741.1636554-2-quic_mdalam@quicinc.com>
+ <20240921185519.GA2187@quark.localdomain> <ZvJt9ceeL18XKrTc@infradead.org>
+Content-Language: en-US
+From: Adrian Vovk <adrianvovk@gmail.com>
+In-Reply-To: <ZvJt9ceeL18XKrTc@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Michael Kelley <mhklinux@outlook.com> Sent: Thursday, October 10, 202=
-4 9:22 PM
->=20
-> From: Stuart Hayes <stuart.w.hayes@gmail.com> Sent: Wednesday, October 9,=
- 2024 10:58 AM
-> >
-> > This adds the ability for the kernel to shutdown devices asynchronously=
-.
-> >
-> > Only devices with drivers that enable it are shut down asynchronously.
-> >
-> > This can dramatically reduce system shutdown/reboot time on systems tha=
-t
-> > have multiple devices that take many seconds to shut down (like certain
-> > NVMe drives). On one system tested, the shutdown time went from 11 minu=
-tes
-> > without this patch to 55 seconds with the patch.
->=20
-> I've been testing this series against a 6.11.0 kernel in an Azure VM, whi=
-ch
-> is running as a guest on the Microsoft Hyper-V hypervisor. The VM has 16 =
-vCPUs,
-> 128 Gbytes of memory, and two physical NVMe controllers that are mapped
-> into the VM so that it can access them directly.
->=20
-[snip]
->=20
-> But here's the kicker:  The overall process of shutting down the devices
-> took *longer* with the patch set than without.  Here's the same output
-> from a 6.11.0 kernel without the patch set:
->=20
-[snip]
->=20
-> Any thoughts on what might be causing this?  I haven't gone into the
-> details of your algorithms for parallelizing, but is there any extra
-> overhead that could be adding to the time? Or maybe this is
-> something unique to Hyper-V guests. The overall difference is only
-> a few 10's of milliseconds, so not that big of a deal. But maybe it's
-> an indicator that something unexpected is happening that we should
-> understand.
->=20
-> I'll keep thinking about the issue and see if I can get any more insight.
+On 9/24/24 03:44, Christoph Hellwig wrote:
+> On Sat, Sep 21, 2024 at 11:55:19AM -0700, Eric Biggers wrote:
+>> (https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/drivers/md/dm-default-key.c),
+>> and I've been looking for the best way to get the functionality upstream.  The
+>> main challenge is that dm-default-key is integrated with fscrypt, such that if
+>> fscrypt encrypts the data, then the data isn't also encrypted with the block
+>> device key.  There are also cases such as f2fs garbage collection in which
+>> filesystems read/write raw data without en/decryption by any key.  So
+>> essentially a passthrough mode is supported on individual I/O requests.
+> Adding a default key is not the job of a block remapping driver.  You'll
+> need to fit that into the file system and/or file system level helpers.
 
-I've debugged this enough to now know what is happening. I see the
-same behavior in two different environments:
+fscrypt isn't the only thing that would use such functionality. If you 
+put it in the filesystem layer then you're only serving fscrypt when 
+there are other usecases that don't involve filesystems at all.
 
-1) A Hyper-V VM with 8 vCPUs running on my local laptop. It has
-no NVMe devices, so there's no opportunity for parallelism with this
-patch set.
+Let's say I'm using LVM, so I've got a physical partition that stores a 
+couple different virtual partitions. I can use dm-default-key both 
+underneath the physical partition, and on top of some of the virtual 
+partitions. In such a configuration, the virtual partitions with their 
+own dm-default-key instance get encrypted with their own key and passed 
+through the lower dm-default-key instance onto the hardware. Virtual 
+partitions that lack their own dm-default-key are encrypted once by the 
+lower dm-default-key instance. There's no filesystem involved here, and 
+yet to avoid the cost of double-encryption we need the passthrough 
+functionality of dm-default-key. This scenario is constrained entirely 
+to the block layer.
 
-2) A Raspberry Pi 5 with 4 CPUs. Linux is running on the bare metal.
-It has one NVMe device via the Pi 5 M.2 HAT.
+Other usecases involve loopback devices. This is a real scenario of 
+something we do in userspace. I have a loopback file, with a partition 
+table inside where some partitions are encrypted and others are not. I 
+would like to store this loopback file in a filesystem that sits on top 
+of a dm-crypt protected partition. With the current capabilities of the 
+kernel, I'd have to double-encrypt. But with dm-default-key, I could 
+encrypt just once. Unlike the previous case, this time there's a layer 
+of filesystem between the block devices, but it still can't do anything: 
+the filesystem that stores the loopback device can't do anything because 
+it has no idea that any encryption is happening. fscrypt isn't being 
+used, nor can it be used since the file is only partially encrypted, so 
+the filesystem is unaware that the contents of the loopback file are 
+encrypted. And the filesystem doesn't know that it's encrypted from 
+below by its block device. So what can the filesystem do if, as far as 
+it can tell, nothing is being encrypted?
 
-In both cases, the loop in device_shutdown() goes through a lot of
-devices:  492 in my Hyper-V VM, and 577 in the Pi 5. With the code
-in this patch set, all the devices get added to the async_wq in
-kernel/async.c. So async_wq quickly gets heavily populated.
+Best,
 
-In the process, the workqueue code spins up additional worker threads
-to handle the load.  On the Hyper-V VM, 210 to 230 new kernel
-threads are created during device_shutdown(), depending on the
-timing. On the Pi 5, 253 are created. The max for this workqueue is
-WQ_DFL_ACTIVE (256).
-
-Creating all these new worker threads, and scheduling and
-synchronizing them takes 30 to 40 milliseconds of additional time
-compared to the original code. On the Hyper-V VM, device_shutdown()
-completes in about 5 millisecond with the original code, and +/- 40
-milliseconds with the new async code. The Pi 5 results are more
-variable, but also have roughly 30 to 40 milliseconds additional.
-
-Is all this extra work a problem? I don't know. Clearly, there's big
-benefit in parallelizing the NVMe shutdown, and in those situations
-the extra 30 to 40 milliseconds can be ignored. But I wonder if there
-are other situations whether the extra elapsed time and CPU
-consumption might be a problem.
-
-I also wonder about scalability. Does everything still work if
-device_shutdown is processing 5000 devices? Is there a possibility
-of deadlock if async_wq can only have 256 active items out of
-5000 queued ones?
-
-Michael Kelley
-
->=20
-> >
-> > Changes from V8:
-> >
-> > Deal with shutdown hangs resulting when a parent/supplier device is
-> >   later in the devices_kset list than its children/consumers:
-> >   * Ignore sync_state_only devlinks for shutdown dependencies
-> >   * Ignore shutdown_after for devices that don't want async shutdown
-> >   * Add a sanity check to revert to sync shutdown for any device that
-> >     would otherwise wait for a child/consumer shutdown that hasn't
-> >     already been scheduled
-> >
-> > Changes from V7:
-> >
-> > Do not expose driver async_shutdown_enable in sysfs.
-> > Wrapped a long line.
-> >
-> > Changes from V6:
-> >
-> > Removed a sysfs attribute that allowed the async device shutdown to be
-> > "on" (with driver opt-out), "safe" (driver opt-in), or "off"... what wa=
-s
-> > previously "safe" is now the only behavior, so drivers now only need to
-> > have the option to enable or disable async shutdown.
-> >
-> > Changes from V5:
-> >
-> > Separated into multiple patches to make review easier.
-> > Reworked some code to make it more readable
-> > Made devices wait for consumers to shut down, not just children
-> >   (suggested by David Jeffery)
-> >
-> > Changes from V4:
-> >
-> > Change code to use cookies for synchronization rather than async domain=
-s
-> > Allow async shutdown to be disabled via sysfs, and allow driver opt-in =
-or
-> >   opt-out of async shutdown (when not disabled), with ability to contro=
-l
-> >   driver opt-in/opt-out via sysfs
-> >
-> > Changes from V3:
-> >
-> > Bug fix (used "parent" not "dev->parent" in device_shutdown)
-> >
-> > Changes from V2:
-> >
-> > Removed recursive functions to schedule children to be shutdown before
-> >   parents, since existing device_shutdown loop will already do this
-> >
-> > Changes from V1:
-> >
-> > Rewritten using kernel async code (suggested by Lukas Wunner)
-> >
-> >
-> > Stuart Hayes (4):
-> >   driver core: don't always lock parent in shutdown
-> >   driver core: separate function to shutdown one device
-> >   driver core: shut down devices asynchronously
-> >   nvme-pci: Make driver prefer asynchronous shutdown
-> >
-> >  drivers/base/base.h           |   4 +
-> >  drivers/base/core.c           | 137 +++++++++++++++++++++++++++-------
-> >  drivers/nvme/host/pci.c       |   1 +
-> >  include/linux/device/driver.h |   2 +
-> >  4 files changed, 118 insertions(+), 26 deletions(-)
-> >
-> > --
-> > 2.39.3
-> >
->=20
+Adrian
 
 
