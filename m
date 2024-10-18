@@ -1,126 +1,181 @@
-Return-Path: <linux-kernel+bounces-371204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357469A37E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 041629A37EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF8A2851B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940E7282887
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 08:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0950218C34C;
-	Fri, 18 Oct 2024 07:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77B218C34C;
+	Fri, 18 Oct 2024 08:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BK63DK2h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HheCNWsE"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079CC18C335
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530122905
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729238324; cv=none; b=qCi6Mz6B7+MUOAqgCwkwpZCRDldtMUMl0Un3IfU4/lkZLtRKkLFUjkTdXklWdkglo83Sh2KNiKKClTrXlORfLNF+BqtR0BHsf18jLUEzCBf2wLXhbFT7rGlXjbIPJlzQl0Lp84N/mciVRqTUttFUPJPGvXNHqEDZFrtbisot5cs=
+	t=1729238499; cv=none; b=Zz8sSFK+i0qz3O2lUONlp4hwyT5YEp+7EINTCZ+W7muLXAf0AMOC2H/WBTRsmLwKkg2HU7ypTXqBgP0lh++iOFE1fQ6r3F5aYSu8UqGXmdfkpGJDfM+N/sLyO2dysAZ8i9fEGiwSnV04jIrATUlmMw0HTUTM0Cq6V+YzK08oZZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729238324; c=relaxed/simple;
-	bh=s+HlrfHqP69nqmDhgJNxMWvtR8m57Il9I98x50Qn7Cg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=N+fLKCIqkgoIhrYqJ539gfgJr2O759/QqLEpZRKCJSQ4wr5mqBfz3GqNvzYIMwILw+vyKdWEItYQci7SuJ0+2OHCbW9ky/C5uSToRD8GZYD542NVMC7c+bZ7PwIYWOxVKiuX8juIVdd5GKdnqf/+mXyWkAECwFQUaMXYQ8SzQ6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BK63DK2h; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729238323; x=1760774323;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=s+HlrfHqP69nqmDhgJNxMWvtR8m57Il9I98x50Qn7Cg=;
-  b=BK63DK2hRfwzPwcl6Q6uxcy+5qgzr4Eq6m2821tTbH/RBnZQOPLuDDaR
-   AMdcGvALoqwxetQUb2bC1AD/BHfuMUmGlq3tV8BQ/ZgLdEpaFvLqRPeFF
-   exTNEMQaXsmbY1tem4UeFrbNy+cvigCZY3rXwb5YHfBh9PaeC9s0GkXuU
-   iO59UYeu7qBk2OQ///inQyrsAspX4htfqSE5A9eZi0ye7iwGQPKczcQtI
-   pzxB9p38eaOweK+KWDF1AQ4BCcTHEn4L7T+Ns+1HmNOKeADHYeQF2zd+H
-   m9ucHwrBW/o0zgJ0kMVyijpIhcVhHs/g9/G2HPtz/MlZmvJRNiyGrmHyM
-   g==;
-X-CSE-ConnectionGUID: NmNNZk+gQbGBzmCzlz6SLw==
-X-CSE-MsgGUID: l3+HYY8HTtS/ZDufw6Cnmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="46257545"
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="46257545"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 00:58:42 -0700
-X-CSE-ConnectionGUID: kBNgLfcKTdKJVQbYBLmJpQ==
-X-CSE-MsgGUID: 7HOiqOcVQpaecsJmkvw2Tw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="116254824"
-Received: from klitkey1-mobl1.ger.corp.intel.com ([10.245.246.169])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 00:58:40 -0700
-Message-ID: <316b41e631572a02a89bab2456cfb373f3e667ae.camel@linux.intel.com>
-Subject: Re: [PATCH 1/1] nvme-pci: Add CPU latency pm-qos handling
-From: Tero Kristo <tero.kristo@linux.intel.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-kernel@vger.kernel.org, axboe@kernel.dk, 
-	linux-nvme@lists.infradead.org, sagi@grimberg.me, kbusch@kernel.org
-Date: Fri, 18 Oct 2024 10:58:36 +0300
-In-Reply-To: <20241015132928.GA3961@lst.de>
-References: <20241004101014.3716006-1-tero.kristo@linux.intel.com>
-	 <20241004101014.3716006-2-tero.kristo@linux.intel.com>
-	 <20241007061926.GA800@lst.de>
-	 <913b063d0638614bc95d92969879d2096ffc0722.camel@linux.intel.com>
-	 <20241009080052.GA16711@lst.de>
-	 <accb9ceb501197b71259d8d3996c461dcef1e7d6.camel@linux.intel.com>
-	 <0feb16b0bc3515b0a77f33a3e18568f62236b691.camel@linux.intel.com>
-	 <20241015132928.GA3961@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1729238499; c=relaxed/simple;
+	bh=8ovph5y0A23XzSJBvL9GdMOf0/7jPqTKDtM0IsGcR04=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OFSzYAn+zNd7eqEfK5q8dEt65MKkXqw8O4uK4pb9YmCHuAwoyCPwWvPaMoWaAnFtmMSg6MN2VBhk6UuhWAFTjpCizsf9K8zp+HQNZ7V0H6xyxgceDF1tv4OyODY1YANMdy8mgtgQuMHprthaxWWIticZnswxa5i8J+vGUZ6wVqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HheCNWsE; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43158625112so16947805e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 01:01:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729238494; x=1729843294; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2lTz8l1UclVPCITrywV/lum/6C9QLLRs5jdJuEPb+bA=;
+        b=HheCNWsEEcR2QY+Fns/2oe4lZOjqrKJHVhcOYRx0qRiws67NRgYJPgnK5/3yMuS5ye
+         0XlWbiOhFH1jAKEfxhXfHHSSlHa5dxazV5kCdyriQRh/NWND1DX2Sw2wV+1K8I1GtQUn
+         n6F8E1hsSt+PYkuZBQX+IJn7P+8YmrNIDAITeo6ivPysrc4mNJpDe6oXZGdMSRSay+Tp
+         Bd/wq6SSLS0t2FLBbes8HrRVhSFGR0lNprqTRBN9MPuMDDbsFQwFKNixtkSS7rZPYQTC
+         y1uI6spFLwLK00LIlCAF2/yImo9yC0KARnlojp9l5VDxfm5Cy51MxHCwb3WUcepRst/f
+         ypsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729238494; x=1729843294;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2lTz8l1UclVPCITrywV/lum/6C9QLLRs5jdJuEPb+bA=;
+        b=H++FBUkcqPcVPCQC+Pt8T6vDF4lo1hNiqY5m1ieZmkjPavggQpc6M4YeQ2AYbbvRXM
+         62ZK6Kq0wwLa8E55BkDe57tLTwWQCnGQAgqjn7HB2eHzQsSl2x7n8Sb5Z6vJZ1TEk7AE
+         H8GQSx4aTeAsB3lzQlyqQyYZGO4N82RYrS2LO2foN97csABgBiEemNmVGWcm31+v+cPu
+         q5kKYQLl+b7RW8YLPqXmKOtxB6a0iLr9fVjakvU7PB4GrHnPmxqKjnmqz3bdxKrqzBL0
+         c5br/Bb4/05WDjS3UqQRFYKsw8D4peTjBaGrRqXbl97EGiONxE2sr/M4L0cijVYEFDxg
+         E6kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFiAoomxpHX5UdWonwU+ocrBcmsygh91pDBVUFyIy27UNpEbuxXqvuEBsB/vgCKpFhvy5kdL/vKCnm8bY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAC6ZBCdW+yisVz3CnRFOvPJQZ6MxUviiwZNzoYYqTiLJMZM29
+	gKZeDjeuH6JaNiC+0KRsv7mSLgw4lzu3/ml0nx1+lnZIuFqkFvIjTYEATHktGig=
+X-Google-Smtp-Source: AGHT+IGDkXmRRBnRxsp9c/nQ3lTWNTikvHm0j5gHCsEnCHiP+nAyR9HIQRd+8X3xc+5htjMP6BRC9Q==
+X-Received: by 2002:a5d:4e49:0:b0:37d:3301:9891 with SMTP id ffacd0b85a97d-37ea2164d8bmr1069922f8f.17.1729238494519;
+        Fri, 18 Oct 2024 01:01:34 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:10a5:e010:83e:5234:8493:ff24? ([2a05:6e02:10a5:e010:83e:5234:8493:ff24])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf140718sm1212564f8f.112.2024.10.18.01.01.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 01:01:34 -0700 (PDT)
+Message-ID: <f1035052-f35f-426c-862b-72401f3cd23c@baylibre.com>
+Date: Fri, 18 Oct 2024 10:01:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] irqchip: Kconfig: Added module build support for
+ the TI interrupt aggregator
+To: Andrew Davis <afd@ti.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ vishalm@ti.com, Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+ Kevin Hilman <khilman@baylibre.com>, Nicolas Frayer <nfrayer@baylibre.com>
+References: <20241016-timodules-v3-0-fa71091ade98@baylibre.com>
+ <20241016-timodules-v3-2-fa71091ade98@baylibre.com>
+ <0c2ae869-d04f-481d-b770-ec54f4d2e658@ti.com>
+Content-Language: en-US
+From: Guillaume LA ROQUE <glaroque@baylibre.com>
+In-Reply-To: <0c2ae869-d04f-481d-b770-ec54f4d2e658@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-10-15 at 15:29 +0200, Christoph Hellwig wrote:
-> On Tue, Oct 15, 2024 at 12:25:37PM +0300, Tero Kristo wrote:
-> > I've been giving this some thought offline, but can't really think
-> > of
-> > how this could be done in the generic layers; the code needs to
-> > figure
-> > out the interrupt that gets fired by the activity, to prevent the
-> > CPU
-> > that is going to handle that interrupt to go into deep idle,
-> > potentially ruining the latency and throughput of the request. The
-> > knowledge of this interrupt mapping only resides in the driver
-> > level,
-> > in this case NVMe.
-> >=20
-> > One thing that could be done is to prevent the whole feature to be
-> > used
-> > on setups where the number of cpus per irq is above some threshold;
-> > lets say 4 as an example.
->=20
-> As a disclaimer I don't really understand the PM QOS framework, just
-> the NVMe driver and block layer.
->=20
-> With that my gut feeling is that all this latency management should
-> be driven by the blk_mq_hctx structure, the block layer equivalent
-> to a queue.=C2=A0 And instead of having a per-cpu array of QOS requests
-> per device, there should one per cpu in the actual mask of the
-> hctx, so that you only have to iterate this local shared data
-> structure.
->=20
-> Preferably there would be one single active check per hctx and
-> not one per cpu, e.g. when the block layer submits commands
-> it has to do one single check instead of an iteration.=C2=A0 Similarly
-> the block layer code would time out the activity once per hctx,
-> and only then iterate the (usually few) CPUs per hctx.
->=20
+Le 16/10/2024 à 15:48, Andrew Davis a écrit :
+> On 10/16/24 4:41 AM, Guillaume La Roque wrote:
+>> From: Nicolas Frayer <nfrayer@baylibre.com>
+>>
+>> Added module build support in Kconfig for the TI SCI interrupt 
+>> aggregator
+>> driver. The driver's default build is built-in and it also depends on
+>> ARCH_K3 as the driver uses some 64 bit ops and should only be built
+>> for 64 bit platforms.
+>>
+>> Signed-off-by: Nicolas Frayer <nfrayer@baylibre.com>
+>> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+>> ---
+>>   arch/arm64/Kconfig.platforms      | 1 -
+>>   drivers/irqchip/Kconfig           | 5 +++--
+>>   drivers/irqchip/irq-ti-sci-inta.c | 1 +
+>>   3 files changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+>> index 393845a3ae5c..9dea47decfbd 100644
+>> --- a/arch/arm64/Kconfig.platforms
+>> +++ b/arch/arm64/Kconfig.platforms
+>> @@ -135,7 +135,6 @@ config ARCH_K3
+>>       select SOC_TI
+>>       select TI_MESSAGE_MANAGER
+>>       select TI_SCI_PROTOCOL
+>> -    select TI_SCI_INTA_IRQCHIP
+>>       select TI_K3_SOCINFO
+>>       help
+>>         This enables support for Texas Instruments' K3 multicore SoC
+>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+>> index a958731404e9..9646322345e4 100644
+>> --- a/drivers/irqchip/Kconfig
+>> +++ b/drivers/irqchip/Kconfig
+>> @@ -544,10 +544,11 @@ config TI_SCI_INTR_IRQCHIP
+>>         TI System Controller, say Y here. Otherwise, say N.
+>>     config TI_SCI_INTA_IRQCHIP
+>> -    bool
+>> -    depends on TI_SCI_PROTOCOL
+>> +    tristate "TI SCI INTA Interrupt Controller"
+>> +    depends on ARCH_K3 && TI_SCI_PROTOCOL
+>
+> You can still compile test, just gate it on 64BIT (or ARM64 if those
+> 64bit ops are only available on ARM64).
+>
+> depends on ARCH_K3 || (COMPILE_TEST && ARM64)
+>
+> BTW, the last time this was posted the feedback was that if this
+> was compiled as a module we might have issues with dependent drivers
+> not having this IRQ ready as it may be loaded later. I think this
+> would only cause probe defers if the drivers are well behaving, but
+> something to double check.
 
-Thanks for the feedback, I have now reworked + retested my patches
-against blk-mq, just posted them to the block mailing list also.
 
--Tero
+we already use this patch in android kernel mainline and 6.6 without 
+issue to load all drivers.
+
+i will try with your yocto sdk before post v4 to confirm it's still OK.
+
+Guillaume
+
+>
+> Andrew
+>
+>>       select IRQ_DOMAIN_HIERARCHY
+>>       select TI_SCI_INTA_MSI_DOMAIN
+>> +    default ARCH_K3
+>>       help
+>>         This enables the irqchip driver support for K3 Interrupt 
+>> aggregator
+>>         over TI System Control Interface available on some new TI's 
+>> SoCs.
+>> diff --git a/drivers/irqchip/irq-ti-sci-inta.c 
+>> b/drivers/irqchip/irq-ti-sci-inta.c
+>> index b83f5cbab123..a887efba262c 100644
+>> --- a/drivers/irqchip/irq-ti-sci-inta.c
+>> +++ b/drivers/irqchip/irq-ti-sci-inta.c
+>> @@ -743,3 +743,4 @@ 
+>> module_platform_driver(ti_sci_inta_irq_domain_driver);
+>>     MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ti.com>");
+>>   MODULE_DESCRIPTION("K3 Interrupt Aggregator driver over TI SCI 
+>> protocol");
+>> +MODULE_LICENSE("GPL");
+>>
+
 
