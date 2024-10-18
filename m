@@ -1,153 +1,118 @@
-Return-Path: <linux-kernel+bounces-371982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3956B9A42EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:51:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF5B9A42F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EAEA1C26094
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:51:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5486B257D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE854202623;
-	Fri, 18 Oct 2024 15:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAEF2038D4;
+	Fri, 18 Oct 2024 15:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXCSdq51"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ei5UJSO8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8F913A271;
-	Fri, 18 Oct 2024 15:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEEA2036E8
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729266703; cv=none; b=VHAZef34/esUzVho4dZdNKVVJ6UVt6cF+tg+5P4RL1o8x5Yn3qM/i8ODoxOfUc8Sr7z99sbQm3LJ26t94EpEviI7ZLhE7GYd6kudVnIjjZ4c/xKb5MZCnnFNeCf5lXs1MZ5p/bCsFFprFfpQziLIumHRBPKdxg48tXBSKNUaBDw=
+	t=1729266721; cv=none; b=kfkvicnHUmPztFP0uxv8M8UbCg5QM76a7CNKWnxsDU2Z8Bl2thKKwD8csS79a/N2MggWizyY9/MJ3y4dJ+gn0Skw9i/9n6CVfwFRio+3U5qTjL49fkKvk+CvenPbzBL/TWuU1IEgWAzJVLWPSvbRQMThkjKmNFz8P0iU+iE70fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729266703; c=relaxed/simple;
-	bh=QVzTZxjNOE0M1li/z0q6FSJEzTWtod6BICNDhR24qUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NYlqLL8X6o91vPDc117e7WICc/b3xTeoYQiuKYaEkSJPlSX2niOtMGOVgZvBNJhYHXF9JBaTvfgW/jYhoGzo5da44In7FbzHDJDGSPbFXT62VPULXpB4v+UAOUFAsrJ3b8H+YUd6fsUtNGvFk1cUK5AJUyFmwa0nLK0HuA1GXXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXCSdq51; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91E26C4CEC5;
-	Fri, 18 Oct 2024 15:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729266702;
-	bh=QVzTZxjNOE0M1li/z0q6FSJEzTWtod6BICNDhR24qUM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DXCSdq51uOyQQhpJZ40UXNptH/SNbKTR/8WEJ6FEvQb4o6MKnhKV2+CzODP9oyraF
-	 rJLp3yEPIfmcrEnIw9mSa6i9RK3mrOVyucYwpiqjA21jc+t1zgCyK3THidQM5eOC8/
-	 jSWruEAsSfKui9OU9V2xGnJTSWUyojOp6jk1G0AfxPPv9LB481CkClbEeDG8S35toe
-	 Cx6R20I7IrW+yCJskmG+EY1Q3rbGNvMVGeI0gYF7nunUW6bYuh0y5uFOugPBJFGPvk
-	 xH2um8OJbUfAtIyFN1LMFCs7JR831YdyjajX0ivd3VlwLolSZuST6ek320TmTYdSDs
-	 xsUCsbS8WlzSg==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5eb70a7739aso918429eaf.3;
-        Fri, 18 Oct 2024 08:51:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuAQQco5vYstblsP7wHDQlPXlZ4sqr4HNku1y9nt1150iCGCsHQlKaNaGA8nyOOoi8dTRaF11GASv/CLljENssZzSyLA==@vger.kernel.org, AJvYcCWQLgb/eeh003jpqyY8yu4TIRV4z1qilEI6bzGLujAo/2iPrOK7LiUtcN50y1D3uZhkv+ru6swDYpoWaQI=@vger.kernel.org, AJvYcCXUP/RLMv9J59sFhKmmlbvb9tfb7RGuEjPkFehW6HDJpSbkyF3RnNpC6TjhQkTlrC/E/UwMqOIVzRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUW5A07+d8XX3jF37kF8oNB1KTBjF6JMsfrk7aHxm2fRlj1KrM
-	YovAo3B9wq/Z2L1aJS3vxhNYE2cuqCen1t+vG5jCbeNQTuSMDPKHWW7ACmzP1pGqWMQuBJZuH9J
-	S6gqcO76+sawwbweDqEw0oOnJCHk=
-X-Google-Smtp-Source: AGHT+IFxBxqPqrTUzPnKxGUsZDhzcA+u57J6btm+kB1rkP0e/cNWH8xugrpHsm2L/ujl7kqV3FzfAy/1E84umq5cGXg=
-X-Received: by 2002:a05:6870:468e:b0:25d:f0ba:eab7 with SMTP id
- 586e51a60fabf-2892c2dee3emr2676610fac.18.1729266701780; Fri, 18 Oct 2024
- 08:51:41 -0700 (PDT)
+	s=arc-20240116; t=1729266721; c=relaxed/simple;
+	bh=ZxL5yzrkp0sbWiTtd9xTe9Q8uvk3sazPRgkNCIfxgig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z6awz7+2DI6QRBxr9DfS3VkGQgqjlO3p3I2aEBD4ss3NLReUtqOZxDp8uWWDUj9L+zFYWkrxLcduFfmcYY5/PYdOS+f/h7c+Mqg2VzAt773wa7lL1bl3TuJ/m1hbKW0U4SpyJEKTk84YG/+QJb/O9BOGWmif7syVrqElsFe2FEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ei5UJSO8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 372B940E0263;
+	Fri, 18 Oct 2024 15:51:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id LpvUSfkn-CsZ; Fri, 18 Oct 2024 15:51:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729266713; bh=H8QyrzRtlH1+pvQVjieoWcW1mIPMHGJ/BT51L6MI4aw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ei5UJSO8f/yhwgHEacdOjPdGQuIs34TQc5pbU3YYe4HvK9z4bdTJxZJxXkQJMJcES
+	 XnfYUoceDR3NugGvU/NRS6jRGfSPj8WDRRgfCIcB9MVQRgsnpgm4JuD9Hz1fqQzLs8
+	 RQeZq5ZVDQVxHf3W0BS5OXtrau0sHW0bdDXNWcuqi3s7OmYr9rYiNSzh+EZVtRUAHN
+	 VNBuluJA3+3lTGFDk4uvVC2KuHSvjxbILkLToTfc3DY7o/X0r6wfleXoIio/SZBCEm
+	 n7TgMHjVC8Zeln4jSeI8DjGhoMGKa8SmC1eXq3nBk8s3Jvb7QvWiBgJB9hN5pYVtTc
+	 DHeiFkd+xBWhDzqj3NV7PW5dZXIjp3R97NeUU3SpBTxnBVTTqC8GNnCMwBRAtFthFg
+	 cCXSXsm3cXS9+3rPGEMMcsLCOGrKWjMcOy3y3nRG3YERQ56WyVP6cMbOnZRA+wlUX8
+	 pw/1pM2QZFpOzWEgrroVKRB7zgspzb0Tvwg652HcWfjjTC26nVqlc3nNw4Dx4trzBH
+	 WOEUW63PKy6b22DUG2z/S4u75FRH06DiXplfn5QR6bYS+UcHowLiW0QY2gyxxR8qYY
+	 yaBDM8gB2qS6R8MigaNIspeMmDxIiehXdNiRb1VFzH3FSWx7wKQBjsNSdbaJ9ptj8k
+	 Q8tGy57dtT7/8hGEcBP6zJjA=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EB5F340E0163;
+	Fri, 18 Oct 2024 15:51:47 +0000 (UTC)
+Date: Fri, 18 Oct 2024 17:51:43 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
+Subject: Re: AMD zen microcode updates breaks boot
+Message-ID: <20241018155143.GIZxKED9YcF0Jg1CWZ@fat_crate.local>
+References: <13fe104b-d83b-4d6d-a348-1103d402540d@kernel.dk>
+ <20241017100257.GAZxDg0VqDAesee00m@fat_crate.local>
+ <3400cf0b-85ca-4ec2-a8a0-c9d75889d573@kernel.dk>
+ <20241017141314.GDZxEbenNT6XF4jIaA@fat_crate.local>
+ <4d4bf52a-dd91-48ad-8949-198b2ffbc9da@kernel.dk>
+ <20241017142707.GEZxEeu3YHvnEMmd32@fat_crate.local>
+ <a395a18b-3478-45dd-aabd-ccc9d0851318@kernel.dk>
+ <20241018115857.GBZxJNgZY-NedtPrxX@fat_crate.local>
+ <20241018124943.GDZxJZZxtwA9O9eqiU@fat_crate.local>
+ <79296353-1fa3-458a-b055-88bc6a772180@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017210439.3449324-1-david.e.box@linux.intel.com>
-In-Reply-To: <20241017210439.3449324-1-david.e.box@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 18 Oct 2024 17:51:28 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j0ZG=2chXuAkc2NDp1+-_SKrGx1s0MHyNdr8weNqPbgQ@mail.gmail.com>
-Message-ID: <CAJZ5v0j0ZG=2chXuAkc2NDp1+-_SKrGx1s0MHyNdr8weNqPbgQ@mail.gmail.com>
-Subject: Re: [PATCH V3 1/2] platform/x86/intel/pmc: Refactor platform resume
- functions to use cnl_resume()
-To: "David E. Box" <david.e.box@linux.intel.com>
-Cc: david.e.box@intel.com, hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, rjw@rjwysocki.net, 
-	srinivas.pandruvada@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <79296353-1fa3-458a-b055-88bc6a772180@kernel.dk>
 
-On Thu, Oct 17, 2024 at 11:04=E2=80=AFPM David E. Box
-<david.e.box@linux.intel.com> wrote:
->
-> Several platform resume functions currently call pmc_core_send_ltr_ignore=
-()
-> and pmc_core_resume_common(), both of which are already called by
-> cnl_resume(). Simplify the code by having these functions call cnl_resume=
-()
-> directly.
->
-> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
-> ---
-> V3 - no change
->
-> V2 - New patch. Split from V1
+On Fri, Oct 18, 2024 at 07:30:15AM -0600, Jens Axboe wrote:
+> At least on mine, the BIOS has an option that says something like "L3
+> cache as numa domain", which is on and why there's 32 nodes on that box.
+> It's pretty handy for testing since there's a crap ton of CPUs, as it
+> makes affinity handling easier.
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Right, so two boxes I tested with this:
 
->
->  drivers/platform/x86/intel/pmc/arl.c | 3 +--
->  drivers/platform/x86/intel/pmc/lnl.c | 3 +--
->  drivers/platform/x86/intel/pmc/mtl.c | 3 +--
->  3 files changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/=
-intel/pmc/arl.c
-> index e10527c4e3e0..05dec4f5019f 100644
-> --- a/drivers/platform/x86/intel/pmc/arl.c
-> +++ b/drivers/platform/x86/intel/pmc/arl.c
-> @@ -687,9 +687,8 @@ static void arl_d3_fixup(void)
->  static int arl_resume(struct pmc_dev *pmcdev)
->  {
->         arl_d3_fixup();
-> -       pmc_core_send_ltr_ignore(pmcdev, 3, 0);
->
-> -       return pmc_core_resume_common(pmcdev);
-> +       return cnl_resume(pmcdev);
->  }
->
->  int arl_core_init(struct pmc_dev *pmcdev)
-> diff --git a/drivers/platform/x86/intel/pmc/lnl.c b/drivers/platform/x86/=
-intel/pmc/lnl.c
-> index e7a8077d1a3e..be029f12cdf4 100644
-> --- a/drivers/platform/x86/intel/pmc/lnl.c
-> +++ b/drivers/platform/x86/intel/pmc/lnl.c
-> @@ -546,9 +546,8 @@ static void lnl_d3_fixup(void)
->  static int lnl_resume(struct pmc_dev *pmcdev)
->  {
->         lnl_d3_fixup();
-> -       pmc_core_send_ltr_ignore(pmcdev, 3, 0);
->
-> -       return pmc_core_resume_common(pmcdev);
-> +       return cnl_resume(pmcdev);
->  }
->
->  int lnl_core_init(struct pmc_dev *pmcdev)
-> diff --git a/drivers/platform/x86/intel/pmc/mtl.c b/drivers/platform/x86/=
-intel/pmc/mtl.c
-> index 91f2fa728f5c..fc6a89b8979f 100644
-> --- a/drivers/platform/x86/intel/pmc/mtl.c
-> +++ b/drivers/platform/x86/intel/pmc/mtl.c
-> @@ -988,9 +988,8 @@ static void mtl_d3_fixup(void)
->  static int mtl_resume(struct pmc_dev *pmcdev)
->  {
->         mtl_d3_fixup();
-> -       pmc_core_send_ltr_ignore(pmcdev, 3, 0);
->
-> -       return pmc_core_resume_common(pmcdev);
-> +       return cnl_resume(pmcdev);
->  }
->
->  int mtl_core_init(struct pmc_dev *pmcdev)
->
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> --
-> 2.43.0
->
->
+* 2 socket, a bit different microcode:
+
+[   22.947525] smp: Brought up 32 nodes, 512 CPUs
+
+* your CPU, one socket:
+
+[   26.830137] smp: Brought up 16 nodes, 255 CPUs
+[   37.770789] microcode: Current revision: 0x0aa00215
+[   37.776231] microcode: Updated early from: 0x0aa00215
+
+and both boot with my debugging patch just fine.
+
+Hmm.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
