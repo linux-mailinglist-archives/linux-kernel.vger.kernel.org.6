@@ -1,175 +1,150 @@
-Return-Path: <linux-kernel+bounces-371656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00439A3DF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:15:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA669A3DF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7FC31C22F72
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:15:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704E7282D3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DA61CABA;
-	Fri, 18 Oct 2024 12:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0224207A;
+	Fri, 18 Oct 2024 12:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qacFLmdb"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2uIDxnQ"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9842420E336
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD9842077;
+	Fri, 18 Oct 2024 12:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729253710; cv=none; b=RPS3T7SghCFb5bWUc9NduvmIYu5yP3t3eF2NYrZYmy1RBgrOexJNMm4NyGJlsi1JycniMtgqV6YUhBMrIunlluT+HSqOBBObb4TZsoQjf80zNarDUY8V0BPnCtA4UE1en0a/HilkgPTWGyl1hLuI/fem8LKmF5JRRCEf9GFIDEg=
+	t=1729253743; cv=none; b=sBbt9WdzG05R2/cpEKUulcw2wJUmuYeLEndolft38oyHxdY5GDmrQJA+uYKPaxA12WLueD4dSXj9XbyeLxihz1OLznO9KOxzyyG/jm8sf3aj8F+vXaWNjcYbrmDFil8b+0fPZfDa6lN+PD31oOcuUo4VNHfh5pjQPGIgQMAPk18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729253710; c=relaxed/simple;
-	bh=now3J6G/3UbZHE/WU7lQXQuwfG3tyrUmFgArj673/oY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=envg6EFbTzMLV52duwqACGZYx6Hjr5YIQKjiw0X7kKo9kaU5rxkXHC59n0iGaMbuOSngAPFtnjskKn/ruWSlIfdejJwuSzQK0dKo7z3EqJMgka9XQIcbPflftq2EhWNWMgvSL4x1jG1Au12AmyhDtyWbpqWWYvkOFrO1uHL7gVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qacFLmdb; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so21401341fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 05:15:07 -0700 (PDT)
+	s=arc-20240116; t=1729253743; c=relaxed/simple;
+	bh=IE5eND4JS389Mg64lkLSdqShAg+vwI2qRCJ1rs2mbGU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RhNJFiBkcMrrf+AArJSfMg214tb4SXkzQpNsllA3nHVE3ygYrkZIHq66fXE/ETc0jyYAbtnlzQmNI3ZMNCaqC8JqIbXEpduT9k4N5Deb9bt/MPEzJ5s9Z1bF58JKY96YAEpoKzeCZmYwnX6imbsvExllXxvKiI1kIXYWL3l9uhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2uIDxnQ; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4608da1bea5so13069421cf.1;
+        Fri, 18 Oct 2024 05:15:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729253706; x=1729858506; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QjL3pHhlawZmked9cDer2cCqaq7RfeznftLlGVpNcgU=;
-        b=qacFLmdbv3M6lPk1Zl4m0BJwqmNpjCKaMDd3Ujga13csVqAa7MZAOxazsyLuFSSGZU
-         xP6D7Uh3dKSYB4vhd7freRCHBXWAnUfbU39dRFY2BQGntuJAoNUqSpWZJ7b+Zm3cg1qh
-         FG0ZZNZ+75u583IfvhaUh15Bvlh+9AenoozSNDn0Rv7Beve9fT+URw9MxOPrtaf3c1ao
-         Do0+yLpIT1Bd+Vt7Uh/96t6e2C7SB0YJq0zryCXHf7o1CfjVeKp92DshMRxSeC2eOmvz
-         uAFvJJ6LIPEfeLzJpetX/HG76mb1B96d5YNR4qs39RGGKbCwGRLtAb/0Cr8WPNxZiNX8
-         qwNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729253706; x=1729858506;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1729253741; x=1729858541; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QjL3pHhlawZmked9cDer2cCqaq7RfeznftLlGVpNcgU=;
-        b=W3xfL+5pF4MGDHY0W6jb43u90V/Ed+BjKivnhdZLgKT0FuNcPlpge8Fd9G8NKjAl0M
-         FsXLcXjz4/9fyxvk96YmEn0sarfZhKMu6mJanez3EVdWMMWp6umZ1JIidTgKncVoljEg
-         Iol7GJucHqb9dKmQEK4j8KOw7BYeW9f5C53x/6HZMkARxA2UsLkvOosAAvpwja2rNH1V
-         cHUPuRQkrMpywetiX01HKS4Y2gn0oBD4YIGB8h66KqUPKhzaTKKy8GtUE4B2FtRiqYyh
-         wGQ23vjBrn1oEX5OFAstu2SZa+bIMonxA3ed0sc9qq3bWs7WZl3RDNj7xe4ZkDeaoDsH
-         APHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXaYAmNCF41a1qbbSADRk7wfmxkG5meydF8XmCSDWLEjFh6OrdwvN8Pxl/vUtyTaddiCxI3/GlYB5DZ5I4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPyWkgAih5Ripy54FTB0ZL5dnPz6IMPPwtKNAmKHgdAYJzunuY
-	fpntd9B4tEcut+L+84rsy116ZfNs7s31yPRggP2TTU7aAQ2MxMhZvVpE61Zhacw=
-X-Google-Smtp-Source: AGHT+IF5eDKvPUdoitD+7fdWywacF4U/7oQTrEfnwaNWZvVwt8eJAqa0dkV02VzR/63JN4AWDeU6JA==
-X-Received: by 2002:a05:651c:b13:b0:2fb:569a:553d with SMTP id 38308e7fff4ca-2fb8323b1fdmr11544041fa.42.1729253705640;
-        Fri, 18 Oct 2024 05:15:05 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809f9b62sm2015311fa.96.2024.10.18.05.15.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 05:15:04 -0700 (PDT)
-Date: Fri, 18 Oct 2024 15:15:01 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, marex@denx.de, stefan@agner.ch
-Subject: Re: [PATCH 5/5] drm: lcdif: Use drm_bridge_connector
-Message-ID: <7isauhmti3vtyseanqveizlhrwmg2iade6kixhhx27edfk4bbm@yj4mekgbvpj4>
-References: <20241018064813.2750016-1-victor.liu@nxp.com>
- <20241018064813.2750016-6-victor.liu@nxp.com>
+        bh=20pjU3e//rgq26Yi05Ys1N4I2o5U5qD7ybOOR7293q4=;
+        b=G2uIDxnQpuBwUgWhgo8zozCqGk9kiKfHCRgd2rwA9t0AdTqJe0I+14JCkCTBhtqZ0H
+         osORUaYfQrUe5jsVQQ4tnX9D9l1Bf09hC8H+K9EWglrUuiUbAec+YxeHaqdKxKO4IRho
+         X0yV9M5fkylaa3MQ0OahdeB66W/EVgAOrYBRbyWax0w0moDZTqMWahBj3cIU2Ngt8zvb
+         tjvqMox/t/HoVEgI+a+v4x4/Tepnmr3QYAj3o0r7y8txOX3g21458MUhJhVPdvbAMR4c
+         Vi0BONgpmcck8n1+wflhJYcxfCbc6/pI1p6XZgJ37I3yVzOhFwSP63JLuHgFh96kdQen
+         V5GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729253741; x=1729858541;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=20pjU3e//rgq26Yi05Ys1N4I2o5U5qD7ybOOR7293q4=;
+        b=O/mix2MH3tzsSM9xnilPj9hXrMdCHMu8PcV9koReyvOPyZSdivgyS89YOC3TdsSBbq
+         j0bkZp9G6KsRJ35YHkEIMw9VvVsuO9Hijf88CGevkYxp/0/NqUOGPzpL+QAxrB+Ea826
+         pYG3dZuPqEHNqbpxI4XrUBPU+dwgfJkcNm2q2QZ9hePe8jjhKyIJ6VQSKYgyvINvIbpr
+         9QwEdcrhBOcv8fNMz5PprRJIboA+OLm3xdskf027mnIQLxEZbuY9QSj8srgYSbjWlozq
+         /DCvo8gjA7zB8zM98YCfPqwmn5XWtp2zFLWqrhxzWFmbw0WU9Kb7CwK6HDvb6ugO43It
+         rsOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJFEduUYIoYDzfkgXErp9oYkz9FZcsnD4XYUFRLXh1monzyh6qD6RGjJwmdtfDxl+cz9ecKrJFdFdCSmE=@vger.kernel.org, AJvYcCWPrTaqfdwfFJSa9kurEbHn4VdIl2zhQ1KUYBDfey+HJtH01i39jFda5tcDsir/WqJd85i9WNAEpYde3vF7@vger.kernel.org, AJvYcCXboH3wgffKNN4B53gqI4FWGZC6boNHZxlXwp0ZC11TedtYapEjFaiogqNHfp/hUTrv/6KHGQdjDRUE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlDw/dOwsc8bBoyx1R2AeSk+XG+HFp0LPIZMLnC6CE1tnAEHsC
+	XMuq0ogNIFR5zLbxtQc1qhukFG8cOBwzoamS9scr9cYk4g3mVvbJVuNyuMsXRx5TXSIusR4NVKw
+	pAPxQAPNk8BYkRY/mHoHP7xkQqZc=
+X-Google-Smtp-Source: AGHT+IHznlnIPkcD1o9NThG4Pn7268Gn9GiD6LokW8b2HqLdTDhxkp1K0M7XBv6+w0jbPY3BaPJt8cM+9Prcjg21UIk=
+X-Received: by 2002:ac8:5a01:0:b0:45f:bca0:b8d2 with SMTP id
+ d75a77b69052e-460aed53cfemr26349851cf.20.1729253741145; Fri, 18 Oct 2024
+ 05:15:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018064813.2750016-6-victor.liu@nxp.com>
+References: <20241016-cs42l84-v1-0-8d7e9d437d2d@gmail.com> <20241016-cs42l84-v1-2-8d7e9d437d2d@gmail.com>
+ <abe88a18-28fb-40e5-8bd2-3fde5de9cb56@sirena.org.uk>
+In-Reply-To: <abe88a18-28fb-40e5-8bd2-3fde5de9cb56@sirena.org.uk>
+From: James Calligeros <jcalligeros99@gmail.com>
+Date: Fri, 18 Oct 2024 22:15:29 +1000
+Message-ID: <CAHgNfTwGM8tEsp5SfYp2XmqN2qC557kGyuDwCJfcoxpc7wGSOQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ASoC: cs42l84: Add new codec driver
+To: Mark Brown <broonie@kernel.org>
+Cc: =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+	David Rhodes <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, asahi@lists.linux.dev, 
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Hector Martin <marcan@marcan.st>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 18, 2024 at 02:48:13PM +0800, Liu Ying wrote:
-> Initialize a connector by calling drm_bridge_connector_init() for
-> each encoder so that down stream bridge drivers don't need to create
-> connectors any more.
-> 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
->  drivers/gpu/drm/mxsfb/Kconfig     |  1 +
->  drivers/gpu/drm/mxsfb/lcdif_drv.c | 17 ++++++++++++++++-
->  2 files changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mxsfb/Kconfig b/drivers/gpu/drm/mxsfb/Kconfig
-> index 264e74f45554..06c95e556380 100644
-> --- a/drivers/gpu/drm/mxsfb/Kconfig
-> +++ b/drivers/gpu/drm/mxsfb/Kconfig
-> @@ -27,6 +27,7 @@ config DRM_IMX_LCDIF
->  	depends on DRM && OF
->  	depends on COMMON_CLK
->  	depends on ARCH_MXC || COMPILE_TEST
-> +	select DRM_BRIDGE_CONNECTOR
->  	select DRM_CLIENT_SELECTION
+Hi Mark,
 
-Missing `select DRM_DISPLAY_HELPER`. LGTM otherwise.
+On Wed, Oct 16, 2024 at 10:23=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
+ote:
+> > +static const struct regmap_config cs42l84_regmap =3D {
+> > +     .reg_bits =3D 16,
+> > +     .val_bits =3D 8,
+> > +
+> > +     .volatile_reg =3D cs42l84_volatile_register,
+> > +
+> > +     .max_register =3D 0xffff,
+>
+> Does that register actually exist?
 
->  	select DRM_MXS
->  	select DRM_KMS_HELPER
-> diff --git a/drivers/gpu/drm/mxsfb/lcdif_drv.c b/drivers/gpu/drm/mxsfb/lcdif_drv.c
-> index 58ccad9c425d..d4521da6675e 100644
-> --- a/drivers/gpu/drm/mxsfb/lcdif_drv.c
-> +++ b/drivers/gpu/drm/mxsfb/lcdif_drv.c
-> @@ -16,7 +16,9 @@
->  
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_bridge.h>
-> +#include <drm/drm_bridge_connector.h>
->  #include <drm/drm_client_setup.h>
-> +#include <drm/drm_connector.h>
->  #include <drm/drm_drv.h>
->  #include <drm/drm_encoder.h>
->  #include <drm/drm_fbdev_dma.h>
-> @@ -56,6 +58,7 @@ static int lcdif_attach_bridge(struct lcdif_drm_private *lcdif)
->  		struct device_node *remote;
->  		struct of_endpoint of_ep;
->  		struct drm_encoder *encoder;
-> +		struct drm_connector *connector;
->  
->  		remote = of_graph_get_remote_port_parent(ep);
->  		if (!of_device_is_available(remote)) {
-> @@ -97,13 +100,25 @@ static int lcdif_attach_bridge(struct lcdif_drm_private *lcdif)
->  			return ret;
->  		}
->  
-> -		ret = drm_bridge_attach(encoder, bridge, NULL, 0);
-> +		ret = drm_bridge_attach(encoder, bridge, NULL,
-> +					DRM_BRIDGE_ATTACH_NO_CONNECTOR);
->  		if (ret) {
->  			of_node_put(ep);
->  			return dev_err_probe(dev, ret,
->  					     "Failed to attach bridge for endpoint%u\n",
->  					     of_ep.id);
->  		}
-> +
-> +		connector = drm_bridge_connector_init(lcdif->drm, encoder);
-> +		if (IS_ERR(connector)) {
-> +			ret = PTR_ERR(connector);
-> +			dev_err(dev, "Failed to initialize bridge connector: %d\n",
-> +				ret);
-> +			of_node_put(ep);
-> +			return ret;
-> +		}
-> +
-> +		drm_connector_attach_encoder(connector, encoder);
->  	}
->  
->  	return 0;
-> -- 
-> 2.34.1
-> 
+It is likely that the highest register is the ID register, which would matc=
+h
+CS42L42. Setting that here does not break anything.
 
--- 
-With best wishes
-Dmitry
+> > +static int cs42l84_mute_stream(struct snd_soc_dai *dai, int mute, int =
+stream)
+> > +{
+> > +     struct snd_soc_component *component =3D dai->component;
+> > +     struct cs42l84_private *cs42l84 =3D snd_soc_component_get_drvdata=
+(component);
+> > +     unsigned int regval;
+> > +     int ret;
+>
+> > +                             ret =3D regmap_read_poll_timeout(cs42l84-=
+>regmap,
+> > +                                                            CS42L84_PL=
+L_LOCK_STATUS,
+> > +                                                            regval,
+> > +                                                            (regval & =
+CS42L84_PLL_LOCK_STATUS_LOCKED),
+> > +                                                            CS42L84_PL=
+L_LOCK_POLL_US,
+> > +                                                            CS42L84_PL=
+L_LOCK_TIMEOUT_US);
+> > +                             if (ret < 0)
+> > +                                     dev_warn(component->dev, "PLL fai=
+led to lock: %d\n", ret);
+>
+> This is too heavyweight for a mute operation, do you really need one?
+
+Unfortunately it seems that way. This was carried over directly from CS42L4=
+2,
+and as the comment in the function states, the internal power supply
+will discharge
+itself and crash the chip if the PLL is set up before any of the interfaces
+are fully enabled. This is corroborrated by the CS42L42 datasheet. I've spe=
+nt
+some time today trying to work around this, but trying to sequence and enab=
+le
+the PLL anywhere more sensible either causes the chip to crash or causes
+audible clock jitter artefacts.
+
+Regards,
+James
 
