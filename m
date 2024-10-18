@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-372462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7719A48DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:24:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9ADB9A48E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 23:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB2FB1F22963
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F521F2394C
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD8B205ABA;
-	Fri, 18 Oct 2024 21:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B42205AD1;
+	Fri, 18 Oct 2024 21:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vfsVGrmw"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjb0TRwL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE1A204953
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 21:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A65C18C92A;
+	Fri, 18 Oct 2024 21:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729286649; cv=none; b=gRTVsL6YwEC/o2dINYoRTJI/I2mqY9ZbSMxwXikB1JVTIZNtVj03dxOuGCqVGc+ZNGVkGzTUpRmZaR0dPrEcvhvymjLJ/Y3VmKzPA2DnHE1M0blv2YGcjLXQ3nn5a2a1WgKCfvdgrmKj58KB4eoD30zlZmc7kzispZSA1MDoJTM=
+	t=1729286763; cv=none; b=raBIyaru+1+nIoTW6T7jFBdClhsIOMUwalRcrlGyu31Yy6B/XKvfPRQx9uUX2RnVEc+yA8WbmDFqD7gFK0lttprFAXcpazWgnO0KE49hDPtF0PkUk6NexntT63DMKZYxG5ErvAAPUGgNMXVPKGt2nxNj2vRjb5oxXwGu5VCdI+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729286649; c=relaxed/simple;
-	bh=BBdrTo4hw8HK2E2yA2d+cEkf0HPodq5gdVba/Qop9iQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=igPWVNwbi7xMblTgb6DZoDk9A1f+f2+jibRyIjCaUQT7fdSal5xH5JDOG4oyFn8QZecIhvgmhgVbXC6dsgCMC4Hgl1/8Vo9/itJx9zddqdOh5oXYTod5AQpB5Zo5qTzVH5ydpmrRlMU6nPZahMRCtDQ5ca+A3+yoy0e+m8PHg6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vfsVGrmw; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2884910c846so1391134fac.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 14:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729286645; x=1729891445; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cu3ywbeiueAiLpZlAoRlOExXhdy9SqJHCZ3asIlIMCc=;
-        b=vfsVGrmwnPxfgarfd07e65/IIFOUJKs0goW19UPls3ATqdmX6LbxB1eH60mt/qW6yS
-         526BRrAOp6S3GIqlXpnzaNswJaNaNlt4w+8t8rOFtt+tQjJavh3ilZX86YgeTGdCpHDU
-         Gd23vkeK4aFLGSvcr4KmOyE3XfCbRWXVgjQm7dHjUo0Qv4grOMeY5a9KPpE4ow/XGAhb
-         nsGtUGRlNaZLaiGOJiA0NErfc4Ef24CaJiB5fSOYq7vy2FGQIpxx6xqBJ64mS28CZUAv
-         YQ90CTWMvdtOmoP2eb+1IZ/UvwVdDbD8pqocuW0uskxelPiYZ5uxn3ts4kL1WWE/y/Vd
-         VTew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729286645; x=1729891445;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cu3ywbeiueAiLpZlAoRlOExXhdy9SqJHCZ3asIlIMCc=;
-        b=hh6g6Vk6MjMR9QjsDSBu9EkRutJMg5n80y+CPbTh5tCyWT/oXS123uULYInA6NdKoW
-         H4cfaMmD6Io7xOfnSdrJeEJAUaEzDk+SG/HuvycTgGjXswQNNfPYyjVggIGvjNGoM0/o
-         DiAtqMllTFL8KE96UqdnCfsFYinLONXHgut0sr5wmP5+4rLJky/xG5pug4r68Oe40SFB
-         cFQEJSFbri3r5hQKBzsjV40oEVMJ3z5HQMKA2MVGhcCfxjoihittrgI4DexmKH2ZkyvL
-         7azaiSQZPLz1x4BhYKFNPB98oXCyDXO2K0fuW26mh01Dsl8i+veCWRZal7+go/9e+beD
-         sb1w==
-X-Forwarded-Encrypted: i=1; AJvYcCW7vHJ+2SGnlI1tIuqhJt+W7puS+RiKQ9HhlEiF/TAAB9vCEQkGzEIwODx0K4KeiXjU1jMTpRn04/1WI7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgXRGea28rgxYJ1LwLNNnjVH8FWeAWRS+Xp93bpJ26l7pf2giw
-	yW58Yyj3XHQAZyxPRKU1WyR+mnaD/HQeqGSSmgtDYpiK1OD7MKlExT/8Ss6V4uU=
-X-Google-Smtp-Source: AGHT+IG96hABqMhdjCx/0hJEiSV691+QsSLQw+YPEtTi9KNT3Z86pZV8qtEDnp5uMzq0c6TALZYKhw==
-X-Received: by 2002:a05:6870:7183:b0:288:b7f0:f8fc with SMTP id 586e51a60fabf-2892c5a9404mr3647435fac.41.1729286645453;
-        Fri, 18 Oct 2024 14:24:05 -0700 (PDT)
-Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2892af3f393sm683309fac.38.2024.10.18.14.24.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 14:24:04 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 18 Oct 2024 16:24:01 -0500
-Subject: [PATCH] iio: dac: ad8460: fix DT compatible
+	s=arc-20240116; t=1729286763; c=relaxed/simple;
+	bh=ud+pt89q3E9Fzyl9qzIkdMTd5lgetY/I/nL6Z3p94bc=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=qV6OhipbnnRCgTGI441onlCD1GHpXtZ40N5+Me6I1/J1lp6fe4lhdaa+VFpcNq0sgG5bPGlRT5ZVwFXZeUxdGBEUliNi+46OfA8D9Fe78gV+FhcMxbgmall9WN9eml6yCqvAuPrmlEI5WGjbHeoNayjW1w1ZkFpaejbjpK6R3ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjb0TRwL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E733C4CEC3;
+	Fri, 18 Oct 2024 21:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729286762;
+	bh=ud+pt89q3E9Fzyl9qzIkdMTd5lgetY/I/nL6Z3p94bc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bjb0TRwL2km/JR7zNqb88KXMgK4f9BPU1ZPPqObP7Lzjg4qXvLTiPhvWZXei9SYiv
+	 o0tzlj2iO1R4vqKObTU9HU83pZGXMQzCYm7Uj4MBbzo1dzhcoQelZodzV8Www0w/Mt
+	 A+foP2QqCAK/0rXgM2f/5pogzH958V/hEBJ1rqCWGVW5y3emdBRJgvEa3Qo/X6ej5v
+	 PFwbLyJD9kIEk6GYNNx+/oBrIjxE/kGgXoJwIDMjPTuFOD0SX9WhS4BqElZL7tGI2G
+	 k/8t3VYsq8nIsuHPc2GLh30OoO8BlJIi+9c1VDkcYmLxyOmTOBItGDDjpCbKBYkB7/
+	 OD5cT+WkqTNcg==
+Message-ID: <cbe8cfae-e700-4c2a-849e-b7b457130608@kernel.org>
+Date: Fri, 18 Oct 2024 14:26:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241018-iio-adc-ad8460-fix-dt-compatible-v1-1-058231638527@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAPDREmcC/x2NQQqDMBBFryKzdiATojW9irhIk7EdaI0kIgXx7
- g4u3uLB4/8DKhfhCs/mgMK7VMmLCrUNxE9Y3oyS1MEa68jQgCIZQ4rK4HqDs/wxbRjzbw2bvL6
- MnubOeE8Pyw50Zi2s0X0xTud5AbBCE2NyAAAA
-To: Mariel Tinaco <Mariel.Tinaco@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.1
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Fan Wu <wufan@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: bluca@debian.org, paul@paul-moore.com,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] IPE fixes for 6.12-rc4
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Fix the DT compatible string in the of_device_id table to match the
-binding documentation. There should not be a space after the comma.
+Hi Linus,
 
-Fixes: a976ef24c625 ("iio: dac: support the ad8460 Waveform DAC")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/dac/ad8460.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This PR addresses several issues identified by Luca when attempting to 
+enable IPE on Debian [1] and systemd [2]. It includes four commits 
+focused on enhancing functionality and resolving issues:
 
-diff --git a/drivers/iio/dac/ad8460.c b/drivers/iio/dac/ad8460.c
-index dc8c76ba573d..6706c8112094 100644
---- a/drivers/iio/dac/ad8460.c
-+++ b/drivers/iio/dac/ad8460.c
-@@ -924,7 +924,7 @@ static int ad8460_probe(struct spi_device *spi)
- }
- 
- static const struct of_device_id ad8460_of_match[] = {
--	{ .compatible = "adi, ad8460" },
-+	{ .compatible = "adi,ad8460" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ad8460_of_match);
+The first and second commits address issues with IPE policy update 
+errors and policy update version check, improving the clarity of error 
+messages for better understanding by userspace programs.
+The third and fourth commits enable IPE policies to be signed by 
+secondary and platform keyrings, facilitating broader use across general 
+Linux distributions like Debian.
+The final commit updates the IPE entry in the MAINTAINERS file to 
+reflect the new tree URL and my updated email from kernel.org.
 
----
-base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
-change-id: 20241018-iio-adc-ad8460-fix-dt-compatible-91f5099172e4
+As this is my first PR submission to you, I apologize in advance for any 
+mistakes. Could you please consider merging these changes into v6.12-rc4?
 
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
+Thanks,
+Fan
+
+Link: https://salsa.debian.org/kernel-team/linux/-/merge_requests/1233 [1]
+Link: 
+https://github.com/systemd/systemd/commit/394c61416c19bcc3231d3f717b72ef9d90b89ee7 
+[2]
+--
+The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
+
+   Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
+
+are available in the Git repository at:
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git 
+tags/ipe-pr-20241018
+
+for you to fetch changes up to 917a15c37d371bc40b5ad13df366e29bd49c04a1:
+
+   MAINTAINERS: update IPE tree url and Fan Wu's email (2024-10-18 
+12:15:37 -0700)
+
+----------------------------------------------------------------
+ipe/stable-6.12 PR 20241018
+
+----------------------------------------------------------------
+Fan Wu (1):
+       MAINTAINERS: update IPE tree url and Fan Wu's email
+
+Luca Boccassi (4):
+       ipe: return -ESTALE instead of -EINVAL on update when new policy 
+has a lower version
+       ipe: also reject policy updates with the same version
+       ipe: allow secondary and platform keyrings to install/update policies
+       ipe: fallback to platform keyring also if key in trusted keyring 
+is rejected
+
+  Documentation/admin-guide/LSM/ipe.rst |  7 +++++--
+  MAINTAINERS                           |  4 ++--
+  security/ipe/Kconfig                  | 19 +++++++++++++++++++
+  security/ipe/policy.c                 | 18 +++++++++++++++---
+  4 files changed, 41 insertions(+), 7 deletions(-)
 
 
