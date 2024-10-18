@@ -1,172 +1,95 @@
-Return-Path: <linux-kernel+bounces-371466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D379E9A3B70
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:25:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1289A3B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59C6AB2898C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:25:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B701F26A5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E86D20125F;
-	Fri, 18 Oct 2024 10:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F342010E6;
+	Fri, 18 Oct 2024 10:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YpvMh+kL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEqiHmDl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF8E1D0E36;
-	Fri, 18 Oct 2024 10:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5EF18C938;
+	Fri, 18 Oct 2024 10:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729247024; cv=none; b=Fw5+R0AaNGap/Nq9GVID9M002wL1CuxSBzlXaRx8POs8WQq7e9tznw4pB4F2TIykkSzpJXZfR2EpcO3XI7nQFmn4Z70bQZlOexazUOVYKCHrh/1VF815xggmDtnPQI+1y/rCn/htb5lu9/+XpxNRVgPD2KrquQ9oIK/0xBvhL1Y=
+	t=1729247079; cv=none; b=g82PnxHY0ETnoTEyxHrClPoNl//oKHS5VKUS8DtlvIBxlMgBhXOTM47LrD6hOL14sKA2heAYLLKo753hdqXUQKPmGcvBDqsSY/pdxjyJEM/3u3C+jrVLnfxZPonR7bSOasl7NazvqIEJavKGGXcVzD7EJkmOmqb3C9s806wJsek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729247024; c=relaxed/simple;
-	bh=cu8iM3qloYhW73lJztVkKgCpFoh3lDpuTJlTVBDp4Pg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ScCuonNOxQVuvUcaDgM7RnDdR8oFwhQk5ZNZuj1KutpopxyRDuzwI/rqtEIzrA+6LQTL6BFWnvE0MjNicN3rdgvV7O/78XKUdejAYWJxWPTENTr94Sk5DovXr5G63HAAvVd7umjYtO3zeuzHd6tVkhWxMwlQ9zBdoaIS8zUU5eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YpvMh+kL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I1gN5t022062;
-	Fri, 18 Oct 2024 10:23:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Y0eQ/+mZ/DlkJ2oiZtADEUydVH3jecP10XpmJP5ZxTg=; b=YpvMh+kL2oJJo52u
-	s45WDLnedKiAKIA2GFH4oUYMttj5WfmAw45CM+iZBu0X8F9PKHyZJl/rCr5cyzRK
-	E7z2WT0H58T4XhpUi6pXnSXikY3h8SarsVsmJ+jfIGRa0ZBROo4bne48gDL3JAhi
-	CrZFdD8SPMyfcxSp6Ha6mZySHvMHXBoTGp2hRNVsvXqiemfQDheK7g/TLmI/eECA
-	nkdQKiEKEBmrldm83MdEfNKkePI+ti5l3IRT1DJmkZnTRVs9PsgvYiExc2Yn6nRm
-	5FFC/h1puwcPNhpkJWis8G47sOjm5L8BZpwznnwRDnLdz5aGTBTAZCxP63HoQH8z
-	bMrWuQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42be8c9c8g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 10:23:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IANXFF016269
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 10:23:33 GMT
-Received: from [10.216.0.54] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
- 2024 03:23:26 -0700
-Message-ID: <479f7aa2-0401-40d5-8e2f-d7512aeab0c0@quicinc.com>
-Date: Fri, 18 Oct 2024 15:53:22 +0530
+	s=arc-20240116; t=1729247079; c=relaxed/simple;
+	bh=cWX64qorojrVQ5gx13d3kqEmpkphq2oQIx91nL2B81c=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=qbgMiHqpLDEqwNbCiYDFc5IWzwhPbF/ssv5SqbE869aqxu5ch4tuQxan1idLrfM7lWhctSpBcwYOWUpfFzxy9z9Y240neHPidU0RTPM2vRQyqLtaFVf2Uwk/VtasvYTRidiUP77yiuYhqZl43K5VaVmFSuCGOKbq6DslCWMCI9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEqiHmDl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBC6C4CECF;
+	Fri, 18 Oct 2024 10:24:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729247079;
+	bh=cWX64qorojrVQ5gx13d3kqEmpkphq2oQIx91nL2B81c=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=rEqiHmDlbXHi19ZDDGDIrdmMBHBHsHGuEuxZKzv+9Ceo0AEAiadc4BjtPox3md3+k
+	 x0w+oWU2bTwUCPTnu6YvbY2E6aKq8AFxbe1x8+zGuE9uznQRZUE97POg6Kl0ZEoVui
+	 t4UUfwNvh0Wf7myerJJA/JiaP1rg80ACocc1PgU9a/HgOI//R0nUEgciHdhEYWcOBM
+	 rT9dxAtvxDY8Vke4RDEwcPqsFnj9ijK5UxrUH5jeuiol0Ii1uhzSWHbFkCV5TXnzm/
+	 Gl9WsM2F8s1/GUVYMZbO8nTnkA0u1vQacWth/JSL23RnDOZAWLtfJGwcHXTE8bRGdZ
+	 0aKFk+NRxfJiA==
+Date: Fri, 18 Oct 2024 12:24:36 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+cc: Thomas Kuehne <thomas.kuehne@gmx.li>, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+    Benjamin Tissoires <bentiss@kernel.org>, 
+    Nathan Chancellor <nathan@kernel.org>, 
+    Nick Desaulniers <ndesaulniers@google.com>, 
+    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH v2 1/1] HID: debug: Remove duplicates from 'keys'
+In-Reply-To: <20241016133523.899754-1-andriy.shevchenko@linux.intel.com>
+Message-ID: <nycvar.YFH.7.76.2410181224270.20286@cbobk.fhfr.pm>
+References: <20241016133523.899754-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] phy: qcom: qmp-usbc: Add qmp configuration for
- QCS615
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Wesley Cheng
-	<quic_wcheng@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Tingwei
- Zhang" <quic_tingweiz@quicinc.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <quic_ppratap@quicinc.com>,
-        <quic_jackp@quicinc.com>
-References: <20241017130701.3301785-1-quic_kriskura@quicinc.com>
- <20241017130701.3301785-6-quic_kriskura@quicinc.com>
- <CAA8EJprcOU6qeJvHH+MVoPnQ+mGcos=pDOVBSeSUfBGw-KR6tA@mail.gmail.com>
- <aa68e5ab-86a6-430e-92d8-ed89b4eb37f7@quicinc.com>
- <CAA8EJprkq-Cct9Uk1Jwqc5Rn8mx8THTRgwCzDx=8ZgbCpwD7qw@mail.gmail.com>
- <684582c3-3559-4c54-8257-cb952bbfe2ec@quicinc.com>
- <l4wpt5qin3ezkowf3puvodrm5wjsptd4a32f4qrzcuuquo6kq6@j2orv5z5quln>
-Content-Language: en-US
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-In-Reply-To: <l4wpt5qin3ezkowf3puvodrm5wjsptd4a32f4qrzcuuquo6kq6@j2orv5z5quln>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IpwPcAoJYgyVx804yfn7aMePnjv4O_g5
-X-Proofpoint-ORIG-GUID: IpwPcAoJYgyVx804yfn7aMePnjv4O_g5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- spamscore=0 bulkscore=0 phishscore=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 lowpriorityscore=0 impostorscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180066
+Content-Type: text/plain; charset=US-ASCII
 
+On Wed, 16 Oct 2024, Andy Shevchenko wrote:
 
-
-On 10/18/2024 3:41 PM, Dmitry Baryshkov wrote:
-> On Fri, Oct 18, 2024 at 05:01:48PM +0800, Tingwei Zhang wrote:
->> On 10/18/2024 4:06 PM, Dmitry Baryshkov wrote:
->>> On Fri, 18 Oct 2024 at 10:48, Tingwei Zhang <quic_tingweiz@quicinc.com> wrote:
->>>>
->>>> On 10/18/2024 2:27 AM, Dmitry Baryshkov wrote:
->>>>> On Thu, 17 Oct 2024 at 16:07, Krishna Kurapati
->>>>> <quic_kriskura@quicinc.com> wrote:
->>>>>>
->>>>>> Provide PHY configuration for the USB QMP PHY for QCS615 Platform.
->>>>>>
->>>>>> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
->>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>>
->>>>> After checking platform details,
->>>>>
->>>>> Unreviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>>
->>>>> Please perform global s/QCS615/SM6150/ and s/qcs615/sm6150/
->>>>
->>>> QCS615 and SM6150 are different variants of the same SoC. QCS615 is an
->>>> IoT variant, while SM6150 is a mobile variant. We are currently adding
->>>> QCS615 SoC support to the upstream Kernel, as it is in an active
->>>> development stage and we anticipate many products based on this SoC. On
->>>> the other hand, the SM6150 is an older mobile platform that is unlikely
->>>> to be used in new designs. For a product introduction of the QCS615,
->>>> please refer to
->>>> https://docs.qualcomm.com/bundle/publicresource/87-83838-1_REV_A_Qualcomm_IQ6_Series_Product_Brief.pdf
->>>
->>> Yes, I guessed so. It would have been nice if it was documented this
->>> way from the beginning.
->>>
->>> Please note that we usually get support for the mobile SoC first. So
->>> in most of the cases devices use mobile compatible even for IoT
->>> platforms, see qrb5165, qrb4210, qcm6490 and other similar platforms.
->>> I simply asked to follow the established pattern.
->>
->> Yes, we start from mobile variant for most of the platforms. There are some
->> exceptions like sc7180 and sc7280 which we started from compute variant
->> since they are widely used by compute platform on upstream Kernel. I think
->> we have similar case here. QCS615 will be widely used by IOT products on
->> upstream Kernel. We should have clarified this from beginning so there's no
->> ambiguity.
+> Duplicates in 'keys prevents kernel builds with clang, `make W=1` and
+> CONFIG_WERROR=y, for example:
 > 
-> After offline discussion with Krzysztof, I'll lift my objection, so
-> still Reviewed-by.
+> drivers/hid/hid-debug.c:3443:18: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
+>  3443 |         [KEY_HANGEUL] = "HanGeul",              [KEY_HANGUP_PHONE] = "HangUpPhone",
+>       |                         ^~~~~~~~~
+> drivers/hid/hid-debug.c:3217:18: note: previous initialization is here
+>  3217 |         [KEY_HANGUEL] = "Hangeul",              [KEY_HANJA] = "Hanja",
+>       |                         ^~~~~~~~~
 > 
+> Fix this by removing them.
+> 
+> The logic of removal is that, remove...
+> 1) if there is a constant that uses another defined constant, OR
+> 2) the one that appears later in the list.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> v2: fixed which one to remove for KEY_HANGEUL (Jiri)
+>  drivers/hid/hid-debug.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
-Thanks Dmitry.
+Applied, thanks.
 
-Can you help review patch-4 of the series. I made the changes you 
-suggested on v1 (uppercase to lowercase and removing un-necessary re-inits).
+-- 
+Jiri Kosina
+SUSE Labs
 
-Regards,
-Krishna,
 
