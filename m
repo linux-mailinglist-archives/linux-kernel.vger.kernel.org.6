@@ -1,141 +1,170 @@
-Return-Path: <linux-kernel+bounces-371097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70ABE9A366A
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:02:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F20F9A3670
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C0461F2471D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:02:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 506B3B22E5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C3517DE06;
-	Fri, 18 Oct 2024 07:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5791A17C7A3;
+	Fri, 18 Oct 2024 07:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p1wrrSAD"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hvTN4Szf"
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9CE10F2
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE1520E33D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729234929; cv=none; b=tNioiIYc2pEe2x2yk+Ci/VjjRUf8Hv7F1Zu3uQvmtUJQIzD1xCv2Ov4fx3vdkZMc0Vhuyi9274hmkZzYdp/G7d4F8AHAoplj67p/uUtnnZsDxoVbLdTlTYLfWV7dZQ7XK02fLF3JnfjF/v138LXEC6p5e/iv2nrxpiK9N4k/iHo=
+	t=1729235129; cv=none; b=jEC/E5Q70tjS1Ukh3nDcIvPayAQH6tKYeFJ85wHUJEpXp0HTJANqr9WMb/jkbabIZNZExqC5P/C8rqrzrj6vyxwLK72GzV6PHkFuniA4VX1ybSGrYqVOeGvMbr5lJ2DkVo9sM115y/De1tHI9r+YfVPPpnWcQ3AFbmevk5C9NoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729234929; c=relaxed/simple;
-	bh=1OC0axrSY7PkHXgA7IuqEdTf6UvHuS/1KrSO/7HZDCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XzywTuBBnRBvNj/Pm2gPH0zBAcfQ2tl7mAdruXZ+BoKUlfOLK42Gx2HxCAqPbeH7BojceEv3yt9pVLvIdmflZij2p0+AgI8UOVNuaBRrup/RvC32TCroAwnS94yKjjwYjY+3jYSsj5SQC5e8FvuvbHjooV2m/VsuYJJNWrLSIIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p1wrrSAD; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6745d52b-ff44-41eb-bb2f-de01a44dbf0e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729234924;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oF1gq4IAx7BN7XK2CjsboktwzJFb5VHajZh+5K/TUag=;
-	b=p1wrrSAD7qkI2+C7fZwernvcRSqk4sz1evK6tFbn60nkkXiROGlU+3E9r/DhyqX5nVDWdM
-	UEPdjQD3lDvsFN6BYh8DnbiAv5ODMMXUqtCyF6MRtV8qDCd31k967lesOKCZm7Vy/8TM9t
-	GmCGeqhO4Aih0Ayqk/YEJuzLlDwKbwo=
-Date: Fri, 18 Oct 2024 15:01:57 +0800
+	s=arc-20240116; t=1729235129; c=relaxed/simple;
+	bh=UD1X7+y4g7xOHbFbP2xrOZwrUf3MVbc6tglEQbeFGag=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=o5VyUFTKL9BeZvJoytdX0hhm8W48pX+Mit3czMiAXAf/QrnGOwA8IK+2htFpFu7fQoNsPbakR7128b4uF0EkqLmrk5bF/OFUGCNeYQzWP/DvPYTc6Nw7A8rqC1S9rYEL5rylazXoXBSajYiulQ6SDztejIpHdRrh0pHLscGWNeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hvTN4Szf; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4a5ad828a0fso529893137.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:05:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729235125; x=1729839925; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3EsDn71iKRJbsLqCH6cdyCF8oxK7HkDcTIVHp+N4J44=;
+        b=hvTN4SzfeDHnbtNMxnLMn/kHSIav7tEoR4etNilFHbL+beRU6K1Wjf1EmGK8UrtUaI
+         ycWgvXJ59sSJnopOdvGJKaQdJmDsCTXSDCcJcsMc5UEJ7UChcWI0A87rAiOpuZCRnGf2
+         QaNw/6FYIVFRDOicyyl0hFc9UuuKKoBKMblU6TuM+FeeR1LQhhb1X3+mPb0yGRPoIqto
+         ul2aclJ+tRlpcQsIpq5unZ0mg0lpDwROlRNLH0699Hwj7X5F2YXc/suLN3pxAFH6vVog
+         HalubfVVK1RIjkw+9AW6riwEOXoQAc3FEt34yJXu20YTC/7FQTIB7Qm+/wiV2NypG7xV
+         5Vcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729235125; x=1729839925;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3EsDn71iKRJbsLqCH6cdyCF8oxK7HkDcTIVHp+N4J44=;
+        b=S2WyPZjOtQ01In8IfuTg//MKAASAgtHP4n8nwluhXgQC4JWHE0X9D+DnN/cgYtaTs0
+         SzPgx4nMVwKGs2cj80b1uuhl7RJFWoO/GGsMmM4g8pUqw28puD192wXQDbmGq3uQT0Dv
+         Q7+VfHygllgS3uqlWanHp9NIAM50AVXtTmq7srPMSrRWevgHXxi4lo49+xY8h67gy0cz
+         8y3dDSJOFggmAOXf/RP06Gq7GXvpfwwuAvZ/lxGHS63XEHj5XXolqzfg4ymc/fo/a+Cr
+         V5AliElHUwYQstNBmEoc1MNhSZ//G8E2LOsPd1GQMMHb7SXjOkxMXUY8Dt4+gZGW9jkk
+         5wfw==
+X-Gm-Message-State: AOJu0Yz1qQgMbx0gST2gIYBcxQZ9kLHjRzpWq34BFo3ncP0LzxOzeFx6
+	O1HdUPtnOzLcZtFXD5qqZdT0u0UvD2PPRmHMDINpnDAlbeCwZZ3PawHx2PBRIfMeiCkH+P5nHOB
+	PdcqxrE/PvZXcTEJP4hQBVNOYqz0/JeJoyPocc+waSix1qdLptNs=
+X-Google-Smtp-Source: AGHT+IEMKaiswjTQniXEOdUFmx1XXP3WE2nVkQ6nLj/7XG+PW7CpRN/Fzi2UzGnsKtcggkXYx1K6vFJBvNS/bVGOk1s=
+X-Received: by 2002:a05:6102:e0d:b0:493:bcbd:4633 with SMTP id
+ ada2fe7eead31-4a5d6a8c469mr1644327137.3.1729235124950; Fri, 18 Oct 2024
+ 00:05:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] docs/zh_CN: update the translation of
- process/submitting-patches.rst
-To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241017111419.3396605-1-dzm91@hust.edu.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20241017111419.3396605-1-dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 18 Oct 2024 12:35:13 +0530
+Message-ID: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
+Subject: Qemu v9.0.2: Boot failed qemu-arm with Linux next-20241017 tag.
+To: open list <linux-kernel@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, qemu-devel@nongnu.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Aishwarya TCV <Aishwarya.TCV@arm.com>, 
+	Peter Maydell <peter.maydell@linaro.org>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
+The QEMU-ARMv7 boot has failed with the Linux next-20241017 tag.
+The boot log is incomplete, and no kernel crash was detected.
+However, the system did not proceed far enough to reach the login prompt.
 
+Please find the incomplete boot log links below for your reference.
+The Qemu version is 9.0.2.
+The arm devices TI beaglebone x15 boot pass.
 
+This is always reproducible.
+First seen on Linux next-20241017 tag.
+  Good: next-20241016
+  Bad: next-20241017
 
-在 2024/10/17 19:14, Dongliang Mu 写道:
-> Update to commit eb5ed2fae197 ("docs: submitting-patches: Advertise b4")
->
-> scripts/checktranstatus.py reports:
->
-> Documentation/translations/zh_CN/process/submitting-patches.rst
-> commit eb5ed2fae197 ("docs: submitting-patches: Advertise b4")
-> commit 413e775efaec ("Documentation: fix links to mailing list services")
-> 2 commits needs resolving in total
->
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+qemu-armv7:
+  boot:
+    * clang-19-lkftconfig
+    * gcc-13-lkftconfig
+    * clang-nightly-lkftconfig
 
-Thanks,
-Yanteng
-> ---
->   .../zh_CN/process/submitting-patches.rst      | 19 ++++++++++---------
->   1 file changed, 10 insertions(+), 9 deletions(-)
->
-> diff --git a/Documentation/translations/zh_CN/process/submitting-patches.rst b/Documentation/translations/zh_CN/process/submitting-patches.rst
-> index 7ca16bda3709..f7ae584a439e 100644
-> --- a/Documentation/translations/zh_CN/process/submitting-patches.rst
-> +++ b/Documentation/translations/zh_CN/process/submitting-patches.rst
-> @@ -105,7 +105,7 @@ xyzzy do frotz”或“[I]changed xyzzy to do frotz”，就好像你在命令
->   当链接到邮件列表存档时，请首选lore.kernel.org邮件存档服务。用邮件中的
->   ``Message-ID`` 头（去掉尖括号）可以创建链接URL。例如::
->   
-> -    Link: https://lore.kernel.org/r/30th.anniversary.repost@klaava.Helsinki.FI/
-> +    Link: https://lore.kernel.org/30th.anniversary.repost@klaava.Helsinki.FI
->   
->   请检查该链接以确保可用且指向正确的邮件。
->   
-> @@ -195,11 +195,8 @@ scripts/get_maintainer.pl在这个步骤中非常有用。如果您找不到正
->   在MAINTAINERS文件中查找子系统特定的列表；您的补丁可能会在那里得到更多的关注。
->   不过，请不要发送垃圾邮件到无关的列表。
->   
-> -许多与内核相关的列表托管在vger.kernel.org上；您可以在
-> -http://vger.kernel.org/vger-lists.html 上找到它们的列表。不过，也有与内核相关
-> -的列表托管在其他地方。
-> -
-> -不要一次发送超过15个补丁到vger邮件列表！！！！
-> +许多与内核相关的列表托管在 kernel.org 上；您可以在 https://subspace.kernel.org
-> +上找到它们的列表。不过，也有与内核相关的列表托管在其他地方。
->   
->   Linus Torvalds是决定改动能否进入 Linux 内核的最终裁决者。他的邮件地址是
->   torvalds@linux-foundation.org 。他收到的邮件很多，所以一般来说最好 **别**
-> @@ -621,6 +618,13 @@ Fixes: 指示补丁修复了之前提交的一个问题。它可以便于确定
->   的工作所基于的树的提交哈希。你应该在封面邮件或系列的第一个补丁中添加它，它应
->   该放在 ``---`` 行的下面或所有其他内容之后，即只在你的电子邮件签名之前。
->   
-> +工具
-> +----
-> +
-> +这个过程的许多技术方面可以使用 b4 自动完成，其文档可在
-> +https://b4.docs.kernel.org/en/latest/ 查看。该工具可帮助处理诸如追踪依赖项、运行
-> +checkpatch 以及格式化和发送邮件等事务。
-> +
->   参考文献
->   --------
->   
-> @@ -643,9 +647,6 @@ Greg Kroah-Hartman，“如何惹恼内核子系统维护人员”
->   
->     <http://www.kroah.com/log/linux/maintainer-06.html>
->   
-> -不！！！别再发巨型补丁炸弹给linux-kernel@vger.kernel.org的人们了！
-> -  <https://lore.kernel.org/r/20050711.125305.08322243.davem@davemloft.net>
-> -
->   内核 Documentation/translations/zh_CN/process/coding-style.rst
->   
->   Linus Torvalds关于标准补丁格式的邮件
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+Boot log:
+-------
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 6.12.0-rc3-next-20241017
+(tuxmake@tuxmake) (arm-linux-gnueabihf-gcc (Debian 13.3.0-5) 13.3.0,
+GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP @1729156545
+[    0.000000] CPU: ARMv7 Processor [414fc0f0] revision 0 (ARMv7), cr=10c5387d
+[    0.000000] CPU: div instructions available: patching division code
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
+[    0.000000] OF: fdt: Machine model: linux,dummy-virt
+[    0.000000] random: crng init done
+[    0.000000] earlycon: pl11 at MMIO 0x09000000 (options '')
+[    0.000000] printk: legacy bootconsole [pl11] enabled
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] efi: UEFI not found.
+[    0.000000] cma: Size (0x04000000) of region at 0x00000000 exceeds
+limit (0x00000000)
+[    0.000000] cma: Failed to reserve 64 MiB on node -1
+
+<nothing after this>
+
+Boot log link,
+-----
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/log
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/details/
+
+Build images:
+------
+ - https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/
+
+Steps to reproduce via qemu:
+----------------
+/usr/bin/qemu-system-arm -cpu cortex-a15 \
+          -machine virt,gic-version=3 \
+          -nographic -nic none -m 4G -monitor \
+          none -no-reboot -smp 2 \
+          -kernel zImage \
+          -append \"console=ttyAMA0,115200 rootwait root=/dev/vda
+debug verbose console_msg_format=syslog systemd.log_level=warning rw
+earlycon\"
+          -drive
+file=debian_trixie_armhf_rootfs.ext4,if=none,format=raw,id=hd0 \
+          -device virtio-blk-device,drive=hd0
+
+Steps to reproduce with tuxrun reproducer:
+---------------
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/reproducer
+
+Boot history compare link:
+------------------------
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/history/
+
+metadata:
+----
+  git describe: next-20241017
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  git sha: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/
+  toolchain: clang-19, gcc-13 and clang-nightly
+  config: lkftconfig
+  arch: arm
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
