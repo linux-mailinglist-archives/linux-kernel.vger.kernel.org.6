@@ -1,135 +1,146 @@
-Return-Path: <linux-kernel+bounces-371412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BB69A3ABB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:01:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64C99A3AB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 089501C2306B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:01:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 797F41F26C5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE5017D378;
-	Fri, 18 Oct 2024 10:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068E91EF94D;
+	Fri, 18 Oct 2024 10:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="zARhtP6g"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UhK2w9zI"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1971D2709
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD88014E2DF
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729245703; cv=none; b=tlG9ECBl1WqnWekTvHhm/OJIhWShKoI7kCS8fI73db9dqOBjx+CJKvhJfPjRbwRs+RkUoIw7sxFJLSOfe+dY0Jx0hFMEnPmtVRytNB8jnojnX5YlQmm/H9DKjaVykGyEsgDf1S8gWiR/ObaSKKltC5GRXElCyuAIVYDIHuwIQBE=
+	t=1729245694; cv=none; b=hm5T2u5ALr7c+raLxdX8uP2/XWO/fn92dWlvH10eWJOhrSslvw74Ib1ae32LBTOzaj6IlcaPNPT0hub2ofY2IPLVti54qYopTHJTgEwpVDQ9rw6YIS+GYBDa+/8zhvr6kVYOLYp8w07+qE4aeEF6eVS0FiguOoUK2w87NL1lGyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729245703; c=relaxed/simple;
-	bh=kpVs6QNuH4t46SoaItN6OY7yKe1EfynK3SlqSS5AI0w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=AWe7hxXTwTJLRpl9yasSkTIPXVl+IRxSZcitxGErGJSr9B4I1OSKADWDELuvOR3ULc1GZkKQcRnO/ckmqq/QLm0kVTOPxxZYTKwYapTn8dNVsnP/nx4lDCzPgcPrWCgxDcUCuLo0qKnCwghlbCjHGQCftT+UvmgBf8l3Iq04AZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=zARhtP6g; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1729245694; c=relaxed/simple;
+	bh=ByQvZv98BC+L8p1DTuZl2zlqdFxenNAcm24+PlvMt0s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WN99qauHypbdrOILNpwlmrbZ/ywewNGvxk74dY/2yJHUbafqs12uIWcHWruF1nb/ZxWpCnPBGSR885q61L6tWHOlWgFSGT6VQHSGOol4uh+XSEi6PUBbB6W3wmpFNtuIYsgqPdnSk4DWKRMcIIdo5P8bAAqIuSuFM4Rj7Ev62bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UhK2w9zI; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c973697b52so2361019a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 03:01:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729245691; x=1729850491; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EceJMD5TFFW28sEBYAnTnnk355nDba/Ev8Vf3NXQHxQ=;
+        b=UhK2w9zI+RoF0YroymDbRJbS4TpLxVDayGlT4lVyDTQy+LWwo/1fijgrvMnLUfB+o6
+         CtNeUnPniRYX3VruJt0HCodxCpU2l3DPDADct7DbnCru6zxQnX3WaZ+9YtvFagrAhbEe
+         LKRTT9PnSD9PVa5KafVk3t8Y6GGcNtkLGl1X/AK01J5KGmP+UA9ljBuR0UGmkaQAqcUI
+         dhV4UUuMjoJdQEUkLE4RWa1xv2+mWCGrBVISLCCeEuOd+kxzxHD8KqyLpuN1bdlkC2RL
+         /K7Jri7h4yUixVjl9IyV6x3EFBSdgCUq1vOaAN3gVPqpfwqPVhuFOTw40tUjsJHNTV0e
+         h9VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729245691; x=1729850491;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=EceJMD5TFFW28sEBYAnTnnk355nDba/Ev8Vf3NXQHxQ=;
+        b=hrPOdr/G8DiChxOanoecyMqo/lHgQnBdSUj224AKC8yKcMgUl6vTLH8/I6Wu2+FdE3
+         6UxPItD6G667K+9W6agJWZevDKN1B9LUalsu9kB+WWqNXpzjxRX7m1RuUxOLCRgOw7KA
+         La+PHAFcLqD4UAKhKTDx7IXQrVSNASFIzZP64RquOH1qp3baiqRSf3EhRUEfvaTgXnL1
+         WB+jX1MubFKKO23Ox9M173TYW/1Z9WeP/3JzeUJEuvu3FgSMxxWqeZhYz+TpVGfAShz9
+         O0soZUnDP5CtCFCnUCGB/USjDSXPjABA93AIC9rTNwi/GQsHnlFrMcZJ5MXNPBnJt0GM
+         VwBw==
+X-Gm-Message-State: AOJu0YwV6ldNr9smqfrVGBvkk2VrEyekWpwOgkOIdnG5tNFj7ZbBiy8H
+	f0m14tExwAHlaFKdNkxb9QJumv8hTZrgis4dGMsLq5F6UdWon4FTYPR5pbSVHiI=
+X-Google-Smtp-Source: AGHT+IEDSxbCrlx25fjyK8bHdzmrM1cAxNXPz/tyNwGjzf/ZGH+OdLM0Jm8+kkTlgW5Frk6BCtFLAw==
+X-Received: by 2002:a17:907:7da1:b0:a9a:2d04:b577 with SMTP id a640c23a62f3a-a9a69ba71d2mr175520566b.32.1729245691269;
+        Fri, 18 Oct 2024 03:01:31 -0700 (PDT)
+Received: from draig.lan ([85.9.250.243])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68a8d9e4sm73106566b.9.2024.10.18.03.01.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 03:01:30 -0700 (PDT)
+Received: from draig (localhost [IPv6:::1])
+	by draig.lan (Postfix) with ESMTP id 413755F863;
+	Fri, 18 Oct 2024 11:01:29 +0100 (BST)
+From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: open list <linux-kernel@vger.kernel.org>,  Linux ARM
+ <linux-arm-kernel@lists.infradead.org>,  lkft-triage@lists.linaro.org,
+  Linux Regressions <regressions@lists.linux.dev>,  qemu-devel@nongnu.org,
+  Arnd Bergmann <arnd@arndb.de>,  Mark Brown <broonie@kernel.org>,  Catalin
+ Marinas <catalin.marinas@arm.com>,  Aishwarya TCV <Aishwarya.TCV@arm.com>,
+  Peter Maydell <peter.maydell@linaro.org>,  Anders Roxell
+ <anders.roxell@linaro.org>
+Subject: Re: Qemu v9.0.2: Boot failed qemu-arm with Linux next-20241017 tag.
+In-Reply-To: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
+	(Naresh Kamboju's message of "Fri, 18 Oct 2024 12:35:13 +0530")
+References: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
+User-Agent: mu4e 1.12.6; emacs 29.4
+Date: Fri, 18 Oct 2024 11:01:29 +0100
+Message-ID: <87v7xp91c6.fsf@draig.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1729245699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vq44XNSVqgHa/XdP4NFnLGc5+igXGHK+t/VxbE7OtsE=;
-	b=zARhtP6gRoKin5kG2ZnJBZbv96O3U2ZSa/PGkCLH/fcf5CX88L2gh5hWbFXPG77XIWSFFw
-	5OkITriS7d0SQOWbZ1hVw8r8U7/7MtJeN1lirpHCADvF072HPESLQVtSKVm0PidTFpwwF3
-	0/zQ302uM8dhMjS3TeFjIDyb6PGGbCwnGa0J2iXAXiirC5JG8DQeTOk/tQGtQhuzdMt8yN
-	crX6WK3RoUmjPqQdgMp33lZgUIbQ5EdvZYHz1sQUC5QewlCqXqwdbK5nmjy/7wgPJJm1JT
-	wuCyiQLqQyQGJISEoqWvihLAEhBQimw4vOAXoGyLG0WmmNSGsvydvVx6O2BsTw==
-Content-Type: multipart/signed;
- boundary=257bc4f7e0a51fb6aba1bc06018e6c2e1bcf34f65203598562bde9d8737d;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Fri, 18 Oct 2024 12:01:29 +0200
-Message-Id: <D4YUFQSAR6RX.LS5RY03XCV3J@cknow.org>
-Subject: Re: (subset) [PATCH v2 0/4] rockchip: Fix several DT validation
- errors
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: <linux-rockchip@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241008113344.23957-1-didi.debian@cknow.org>
- <D4X8GJV0W6JL.32E469JSATFEP@cknow.org>
- <D4YTW4DVRT68.1Z97ZHDYWTKHT@cknow.org> <4604343.LvFx2qVVIh@diego>
-In-Reply-To: <4604343.LvFx2qVVIh@diego>
-X-Migadu-Flow: FLOW_OUT
-
---257bc4f7e0a51fb6aba1bc06018e6c2e1bcf34f65203598562bde9d8737d
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi,
+Naresh Kamboju <naresh.kamboju@linaro.org> writes:
 
-On Fri Oct 18, 2024 at 11:37 AM CEST, Heiko St=C3=BCbner wrote:
-> Am Freitag, 18. Oktober 2024, 11:35:51 CEST schrieb Diederik de Haas:
-> > On Wed Oct 16, 2024 at 2:35 PM CEST, Diederik de Haas wrote:
-> > > On Wed Oct 16, 2024 at 11:41 AM CEST, Diederik de Haas wrote:
-> > > > Please revert the 4th patch.
-> > > >
-> > > > I must have messed up my testing previously, but BT does not work o=
-n the
-> > > > PineNote with the 4th patch applied and does work with it reverted.
-> > >
-> > > FWIW, I figured out what went wrong.
-> > > My testing was correct, but redo-ing the implementation to make it re=
-ady
-> > > for submission wasn't very smart.
-> > >
-> > > With ``shutdown-gpios =3D <&gpio0 RK_PC4 GPIO_ACTIVE_HIGH>;``
-> > > it does work correctly, but I forgot to change GPIO_ACTIVE_LOW to
-> > > GPIO_ACTIVE_HIGH before submitting.
-> > >
-> > > I'll first figure out a better procedure before making a new submissi=
-on,
-> > > so the revert is still the best approach IMO.
-> >=20
-> > I've now done a new submission:
-> > https://lore.kernel.org/linux-rockchip/20241018092237.6774-1-didi.debia=
-n@cknow.org/
-> >=20
-> > So please don't revert the 4th patch now.
+> The QEMU-ARMv7 boot has failed with the Linux next-20241017 tag.
+> The boot log is incomplete, and no kernel crash was detected.
+> However, the system did not proceed far enough to reach the login prompt.
 >
-> hehe ok :-) .
-> I meant to ask if the fix wasn't simply toggling the gpio polarity, and
-> I guess with your patch you were faster than my question.
+> Please find the incomplete boot log links below for your reference.
+> The Qemu version is 9.0.2.
+> The arm devices TI beaglebone x15 boot pass.
+>
+> This is always reproducible.
+> First seen on Linux next-20241017 tag.
+>   Good: next-20241016
+>   Bad: next-20241017
+>
+> qemu-armv7:
+>   boot:
+>     * clang-19-lkftconfig
+>     * gcc-13-lkftconfig
+>     * clang-nightly-lkftconfig
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> Boot log:
+> -------
+> [    0.000000] Booting Linux on physical CPU 0x0
+> [    0.000000] Linux version 6.12.0-rc3-next-20241017
+> (tuxmake@tuxmake) (arm-linux-gnueabihf-gcc (Debian 13.3.0-5) 13.3.0,
+> GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP @1729156545
+> [    0.000000] CPU: ARMv7 Processor [414fc0f0] revision 0 (ARMv7), cr=3D1=
+0c5387d
+> [    0.000000] CPU: div instructions available: patching division code
+> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction =
+cache
+> [    0.000000] OF: fdt: Machine model: linux,dummy-virt
+> [    0.000000] random: crng init done
+> [    0.000000] earlycon: pl11 at MMIO 0x09000000 (options '')
+> [    0.000000] printk: legacy bootconsole [pl11] enabled
+> [    0.000000] Memory policy: Data cache writealloc
+> [    0.000000] efi: UEFI not found.
+> [    0.000000] cma: Size (0x04000000) of region at 0x00000000 exceeds
+> limit (0x00000000)
+> [    0.000000] cma: Failed to reserve 64 MiB on node -1
 
-I already knew that was the fix the moment I opened the other dts(i)
-files with the same wireless+bt module.
-While it was tempting to immediately sent the fix, I realized that
-being (too) eager to sent it out would be a recipe for another screw up.
+Is this a highmem related thing. Passing -m 2G allows it to get further
+and 4G is obviously at the limit of 32 bit?
 
-And I wanted to think through why it happened in the first place and
-that's because my submission process is all manual with an 'insane' long
-`git send-email` command, hand-crafted.
-So I better learn `b4` (properly) so my focus can be on the patches and
-less on the submission process.
-
-Making a mistake/screw up sucks, but not learning from them is bad.
-
-Cheers,
-  Diederik
-
---257bc4f7e0a51fb6aba1bc06018e6c2e1bcf34f65203598562bde9d8737d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZxIx/AAKCRDXblvOeH7b
-blibAQDCucJM71C9TwS9Yr98OdbZHEg1kv4+sXW9YlDFAfaGQwD/fYlIrQ8AxlTb
-Om8V7JZLgB2t4JwXokIVFR1o0O06NwM=
-=HJWw
------END PGP SIGNATURE-----
-
---257bc4f7e0a51fb6aba1bc06018e6c2e1bcf34f65203598562bde9d8737d--
+--=20
+Alex Benn=C3=A9e
+Virtualisation Tech Lead @ Linaro
 
