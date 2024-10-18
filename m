@@ -1,296 +1,237 @@
-Return-Path: <linux-kernel+bounces-371339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E0A9A39CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:20:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DE49A3A34
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 11:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A34028568D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:20:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF0B41C23AD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A351EF0A3;
-	Fri, 18 Oct 2024 09:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214881FF7DF;
+	Fri, 18 Oct 2024 09:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPlW4y9n"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="N8Pg9fH2"
+Received: from mail-m10162.netease.com (mail-m10162.netease.com [154.81.10.162])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D05190665;
-	Fri, 18 Oct 2024 09:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DF5187858;
+	Fri, 18 Oct 2024 09:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729243213; cv=none; b=H6I77zC6dvQfcBQD442jjaSIImpmWzH+0uiG1DXrMtu9uM529N65rwvqq5lbwH7itedN4A25KOqiEC5pWnNHY0hmK7oDQimwq6hX7ToUUZLiTZPQn26ZLOas/3iSRJIn3SwIsjYdNVHhvDdFqfcOoJ181WW3xJxtljQdGje8rlo=
+	t=1729244369; cv=none; b=GMuVNxBl8UkXexWFFt/To9/zOkazVblP6WII9kUsvmW99tHnNEJJ6wo4b2Z6d7zm2apBJFKscH5dAfuByJFfPM9KgGNaU0mTgFgDb7AAz3C9yMh2kehisfKo1NnE+fkmkde5e8Mgd/BJu7m3JfOIa6A9zjG//J1VuHmbKwqoig8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729243213; c=relaxed/simple;
-	bh=0Q2KDEP0qq3PAiq/FDJibeD0M+vUwjUeKaUtocNKyOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hhFEOuk4cIAB5HoDrb3Ve1aBuu5r1cpLBDzWtr+m6F1pl1ToLX7Osy9rfCsOIrq87NEDgmYntei3GDN/LzhxUFHDRn+IX8yet1wm1bvcmGTUpIusgMKdXxmkoGftYNEv7nH/ypeAxca1WAB0501Y4UNja6GXa80mRGswAz9Sr8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GPlW4y9n; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314f38d274so24613135e9.1;
-        Fri, 18 Oct 2024 02:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729243210; x=1729848010; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oxu7aS4Jv02dvxySCdMe6qqTPQFuzAQt/P2vOVwqeLs=;
-        b=GPlW4y9nzEhQV/UM/0ItXAzuBBbj8Qq+0l/90vW7JOWzVTtpK6UHFslmjwjhm2d+Fn
-         TWggR95Ok1puSHW+aH7roXIksIXYg6I1zm+qTmmgi5Fzmxsv1iZfCKgvSeyrn/H7Fcx9
-         77G9s/xK8uf9mpuFYdABi3zN2sOBk6/fquftAsK/vlrCvsUw6AptcSQyI6XhqxqCt05D
-         tcoAuGfvs4PHeJJbsHM6gXB0WxApw774w8yYDbF/A7SCY4L8VcxnI2/9ma99anWLmSEm
-         x4LEBoAKE1ghao8tVjbuI5unr/53JVCOzzJ/xzl2wJx/cvT3+DdpF/h9WcQMV3tLFh+h
-         9Zag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729243210; x=1729848010;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oxu7aS4Jv02dvxySCdMe6qqTPQFuzAQt/P2vOVwqeLs=;
-        b=P3CoZWoW5GZIq+ZBmrJ7csczE23haZzG7LM8XX7gBsSgey+GRV9oqkcCnHZoXGW9k+
-         ElmOe6pSeqFahRGX3qEPQHKB5rLmJd9+yMibeoGvZe+mSVJh1ll6FCs2MmmRJ3N/7D7c
-         3F2uk8n2/MRFw4yU8hIwVwtnLjgYuQYUdTiDakpl4dZ43a6Gd+fIIeZzkW8dORoB/KeQ
-         FlViI5FLDJGLchfQp6zuOBF6NjNkyBOC/XJYRd5a1zUjcNOb4LrwWM+eks+FUs6qPE09
-         F9389w4Gubv2ub35VV8PHD02u3uQ82QrifUasJJANhpxNimD+i1Z7CMsVppHKTQf/GJS
-         76kw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/mgZo0FL/W/PGxc+gDcHXF0jkUl/yKwTQviGOOIhIou1vec2PEixH1dDzGiVByZLxDPbwrOeTGUt2dns=@vger.kernel.org, AJvYcCWIWL3t4nPEi2yeFZtpUPPgnk3UUmKCjzC5iAYohMxrwRHfT5mIBBdj2g/bqGtDulRXwFC31uukfS6f2qI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhwhyx+i5hPnT85+hL23Hu4C004TtTq+wYFEbKZ1s672tV7WBi
-	BN4WB/6wjnn8Z8pKVMr+pEGOyL75krF9XGXAA9u2AGJTaXZaqMnu
-X-Google-Smtp-Source: AGHT+IEzesBa7EdinoBbue9zF/6mRcpA92tyNukPTgU3ZZhCU3Hx3wKED8/AwnFcpiT8PwGZB1Cd1g==
-X-Received: by 2002:a05:600c:3b1e:b0:42c:a8cb:6a5a with SMTP id 5b1f17b1804b1-43161636cd1mr17115065e9.15.1729243209528;
-        Fri, 18 Oct 2024 02:20:09 -0700 (PDT)
-Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-51-176.cust.vodafonedsl.it. [188.217.51.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43160e4424asm18495345e9.32.2024.10.18.02.20.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 02:20:09 -0700 (PDT)
-Date: Fri, 18 Oct 2024 11:20:07 +0200
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: sakari.ailus@linux.intel.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: ov5645: add HAS_EVENTS supporty
-Message-ID: <ZxIoR6T6V0WgDdq0@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-References: <20241014173840.412695-1-tomm.merciai@gmail.com>
- <20241014175452.GB13238@pendragon.ideasonboard.com>
- <Zw4IrU8bOOtq26Gx@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <Zw6aZiBvRM5hvqVn@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <20241016200836.GF30496@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1729244369; c=relaxed/simple;
+	bh=Of/korwJH8MA1QMUqd3VMrVziKJ3fx5U+jFmiSPX3Sc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PyKuavutWca9N8I7Y29bKTSDe669mht5FMG05kl8cCEghoQM88WA5f8tfyYpjp7byrtTLe521SlPfmZ/dS51tCDCjZff2KybsHa2TqRSBuog+entix9cWlpPyK6/IrkI3yK5FATzdbTLKJkC64fgpH6XK/95wiyG73O/BLv0nfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=N8Pg9fH2; arc=none smtp.client-ip=154.81.10.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=N8Pg9fH2I7RyKLns4/qH+WJpXzhQMmW5Xb3E6dlH2BIsP6f0zxX4b/Yi1r+0ITp8ZW7+omPvAZIzNa7+4jHdQMgPGDF3ikOyBAfZwlZ6BZbEEPtO8GqEoshCs/0gcF8ValDl0qHAwG27Q8fvg8O6oeowN49NdEro8kENYXEvBuc=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=deE5f9Ret2wP45i7Ib72XRZhiMvsjcDFrcSbhhoZVEk=;
+	h=date:mime-version:subject:message-id:from;
+Received: from lintao?rock-chips.com (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with SMTP id 9901D2A06A9;
+	Fri, 18 Oct 2024 17:20:08 +0800 (CST)
+Message-ID: <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
+Date: Fri, 18 Oct 2024 17:20:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016200836.GF30496@pendragon.ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, Rob Herring <robh+dt@kernel.org>,
+ "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, YiFeng Zhao <zyf@rock-chips.com>,
+ Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
+To: Ulf Hansson <ulf.hansson@linaro.org>
+References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
+ <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+ <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
+ <3969bae0-eeb8-447a-86a5-dfdac0b136cd@rock-chips.com>
+ <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
+Content-Language: en-GB
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkseSFZCH0xCSEhDHUMYTkJWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a929eed6a9403aakunm9901d2a06a9
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6P0k6ERw4AjItKTUwDRwKSA4P
+	ODhPC0JVSlVKTElCSU9ISUpISUtMVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUNJS0I3Bg++
 
-Hi Laurent,
+Hi Ulf,
 
-On Wed, Oct 16, 2024 at 11:08:36PM +0300, Laurent Pinchart wrote:
-> Hi Tommaso,
+在 2024/10/18 17:07, Ulf Hansson 写道:
+> On Thu, 10 Oct 2024 at 03:21, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>>
+>> Hi Ulf
+>>
+>> 在 2024/10/9 21:15, Ulf Hansson 写道:
+>>> [...]
+>>>
+>>>> +
+>>>> +static int ufs_rockchip_runtime_suspend(struct device *dev)
+>>>> +{
+>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
+>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+>>>> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+>>>
+>>> pd_to_genpd() isn't safe to use like this. It's solely to be used by
+>>> genpd provider drivers.
+>>>
+>>>> +
+>>>> +       clk_disable_unprepare(host->ref_out_clk);
+>>>> +
+>>>> +       /*
+>>>> +        * Shouldn't power down if rpm_lvl is less than level 5.
+>>>
+>>> Can you elaborate on why we must not power-off the power-domain when
+>>> level is less than 5?
+>>>
+>>
+>> Because ufshcd driver assume the controller is active and the link is on
+>> if level is less than 5. So the default resume policy will not try to
+>> recover the registers until the first error happened. Otherwise if the
+>> level is >=5, it assumes the controller is off and the link is down,
+>> then it will restore the registers and link.
+>>
+>> And the level is changeable via sysfs.
 > 
-> On Tue, Oct 15, 2024 at 06:37:58PM +0200, Tommaso Merciai wrote:
-> > On Tue, Oct 15, 2024 at 08:16:13AM +0200, Tommaso Merciai wrote:
-> > > On Mon, Oct 14, 2024 at 08:54:52PM +0300, Laurent Pinchart wrote:
-> > > > On Mon, Oct 14, 2024 at 07:38:40PM +0200, Tommaso Merciai wrote:
-> > > > > Controls can be exposed to userspace via a v4l-subdevX device, and
-> > > > > userspace has to be able to subscribe to control events so that it is
-> > > > > notified when the control changes value.
-> > > > > Add missing HAS_EVENTS support: flag and .(un)subscribe_event().
-> > > > > 
-> > > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> > > > > ---
-> > > > >  drivers/media/i2c/ov5645.c | 10 +++++++++-
-> > > > >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> > > > > index 0c32bd2940ec..2c5145d5c616 100644
-> > > > > --- a/drivers/media/i2c/ov5645.c
-> > > > > +++ b/drivers/media/i2c/ov5645.c
-> > > > > @@ -29,6 +29,7 @@
-> > > > >  #include <linux/slab.h>
-> > > > >  #include <linux/types.h>
-> > > > >  #include <media/v4l2-ctrls.h>
-> > > > > +#include <media/v4l2-event.h>
-> > > > >  #include <media/v4l2-fwnode.h>
-> > > > >  #include <media/v4l2-subdev.h>
-> > > > >  
-> > > > > @@ -1034,6 +1035,11 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
-> > > > >  	.s_stream = ov5645_s_stream,
-> > > > >  };
-> > > > >  
-> > > > > +static const struct v4l2_subdev_core_ops ov5645_subdev_core_ops = {
-> > > > > +	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-> > > > > +	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
-> > > > > +};
-> > > > > +
-> > > > >  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
-> > > > >  	.enum_mbus_code = ov5645_enum_mbus_code,
-> > > > >  	.enum_frame_size = ov5645_enum_frame_size,
-> > > > > @@ -1043,6 +1049,7 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
-> > > > >  };
-> > > > >  
-> > > > >  static const struct v4l2_subdev_ops ov5645_subdev_ops = {
-> > > > > +	.core = &ov5645_subdev_core_ops,
-> > > > >  	.video = &ov5645_video_ops,
-> > > > >  	.pad = &ov5645_subdev_pad_ops,
-> > > > >  };
-> > > > > @@ -1178,7 +1185,8 @@ static int ov5645_probe(struct i2c_client *client)
-> > > > >  
-> > > > >  	v4l2_i2c_subdev_init(&ov5645->sd, client, &ov5645_subdev_ops);
-> > > > >  	ov5645->sd.internal_ops = &ov5645_internal_ops;
-> > > > > -	ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-> > > > > +	ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
-> > > > > +			    V4L2_SUBDEV_FL_HAS_EVENTS;
-> > > > 
-> > > > Instead of patching every subdev driver, should we handle all of this in
-> > > > the subdev core ? If a control handler is set for the subdev, we could
-> > > > set the HAS_EVENTS flag automatically, and default to
-> > > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> > > > if there are no control operations.
-> > 
-> > Premit:
-> >  - Don't know if I'm wrong eh.
+> Okay, thanks for clarifying.
 > 
-> Nobody knows :-)
+>>
+>>> What happens if we power-off anyway when the level is less than 5?
+>>>
+>>>> +        * This flag will be passed down to platform power-domain driver
+>>>> +        * which has the final decision.
+>>>> +        */
+>>>> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
+>>>> +               genpd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
+>>>> +       else
+>>>> +               genpd->flags &= ~GENPD_FLAG_RPM_ALWAYS_ON;
+>>>
+>>> The genpd->flags is not supposed to be changed like this - and
+>>> especially not from a genpd consumer driver.
+>>>
+>>> I am trying to understand a bit more of the use case here. Let's see
+>>> if that helps me to potentially suggest an alternative approach.
+>>>
+>>
+>> I was not familiar with the genpd part, so I haven't come up with
+>> another solution. It would be great if you can guide me to the right
+>> way.
 > 
-> > This can be done into:
-> > 
-> > __v4l2_subdev_init_finalize()
-> > 
-> > Adding:
-> > 
-> > 	if (sd->ctrl_handler)
-> > 		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-> > 
-> > And check if there are no control operations using:
-> > 
-> > bool has_subscribe_event;
-> > bool has_unsubscribe_event;
-> > 
-> > 
-> > has_subscribe_event = v4l2_subdev_has_op(sd, core, subscribe_event);
-> > has_unsubscribe_event = v4l2_subdev_has_op(sd, core, unsubscribe_event);
-> > 
-> > if (!has_subscribe_event)
-> > 	assign v4l2_ctrl_subdev_subscribe_event as default .subscribe ops(somehow)
+> I have been playing with the existing infrastructure we have at hand
+> to support this, but I need a few more days to be able to propose
+> something for you.
 > 
-> We can't change the ops structure as it's constant. Something like this
-> could do:
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> index 3a4ba08810d2..41ae18a0d41e 100644
-> --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> @@ -691,10 +691,24 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
->  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
-> 
->  	case VIDIOC_SUBSCRIBE_EVENT:
-> -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
-> +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> +			return v4l2_subdev_call(sd, core, subscribe_event, vfh,
-> +						arg);
-> +		else if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
-> +			 vfh->ctrl_handler)
-> +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-> +		else
-> +			return -ENOIOCTLCMD;
-> 
->  	case VIDIOC_UNSUBSCRIBE_EVENT:
-> -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
-> +		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
-> +			return -ENOIOCTLCMD;
-> +
-> +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> +			return v4l2_subdev_call(sd, core, unsubscribe_event,
-> +						vfh, arg);
-> +		else
-+			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
 
-Thanks for your "more than an hint :)"
-I'm able to test this on ov5645:
+Much appreciate.
 
-Adding:
-
-+++ b/drivers/media/i2c/ov5645.c
-@@ -1238,6 +1238,12 @@ static int ov5645_probe(struct i2c_client *client)
- 
-        ov5645_init_state(&ov5645->sd, NULL);
- 
-+       ret = v4l2_subdev_init_finalize(&ov5645->sd);
-+       if (ret < 0) {
-+               dev_err(dev, "subdev initialization error %d\n", ret);
-+               goto err_free_state;
-+       }
-+
-        ret = v4l2_async_register_subdev(&ov5645->sd);
-        if (ret < 0) {
-                dev_err(dev, "could not register v4l2 device\n");
-@@ -1251,6 +1257,8 @@ static int ov5645_probe(struct i2c_client *client)
- 
-        return 0;
- 
-+err_free_state:
-+       v4l2_subdev_cleanup(&ov5645->sd);
- err_pm_runtime:
-        pm_runtime_disable(dev);
-        pm_runtime_put_noidle(dev);
-@@ -1272,6 +1280,7 @@ static void ov5645_remove(struct i2c_client *client)
- 
-        v4l2_async_unregister_subdev(&ov5645->sd);
-        media_entity_cleanup(&ov5645->sd.entity);
-+       v4l2_subdev_cleanup(&ov5645->sd);
-        v4l2_ctrl_handler_free(&ov5645->ctrls);
-        pm_runtime_disable(ov5645->dev);
-        if (!pm_runtime_status_suspended(ov5645->dev))
-
-Then from the compliance tool I'm getting now good results:
-
-Total for device /dev/v4l-subdev1: 44, Succeeded: 44, Failed: 0, Warnings: 0
-
-I will send these 2 patches later if you agree (1 v4l2-subdev 1 ov5645.c)
-Thanks again.
-
-Regards,
-Tommaso
-
+>>
+>>>> +
+>>>> +       return ufshcd_runtime_suspend(dev);
+>>>> +}
+>>>> +
+>>>> +static int ufs_rockchip_runtime_resume(struct device *dev)
+>>>> +{
+>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
+>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+>>>> +       int err;
+>>>> +
+>>>> +       err = clk_prepare_enable(host->ref_out_clk);
+>>>> +       if (err) {
+>>>> +               dev_err(hba->dev, "failed to enable ref out clock %d\n", err);
+>>>> +               return err;
+>>>> +       }
+>>>> +
+>>>> +       reset_control_assert(host->rst);
+>>>> +       usleep_range(1, 2);
+>>>> +       reset_control_deassert(host->rst);
+>>>> +
+>>>> +       return ufshcd_runtime_resume(dev);
+>>>> +}
+>>>> +
+>>>> +static int ufs_rockchip_system_suspend(struct device *dev)
+>>>> +{
+>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
+>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+>>>> +
+>>>> +       /* Pass down desired spm_lvl to Firmware */
+>>>> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_CONFIG,
+>>>> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0, 0, 0, NULL);
+>>>
+>>> Can you please elaborate on what goes on here? Is this turning off the
+>>> power-domain that the dev is attached to - or what is actually
+>>> happening?
+>>>
+>>
+>> This smc call is trying to ask firmware not to turn off the power-domian
+>> that the UFS is attached to and also not to turn off the power of UFS
+>> conntroller.
 > 
->  #ifdef CONFIG_VIDEO_ADV_DEBUG
->  	case VIDIOC_DBG_G_REGISTER:
+> Okay, thanks for clarifying!
 > 
-> > if (!has_unsubscribe_event)
-> > 	assign v4l2_event_subdev_unsubscribe as default .unsubscribe ops (somehow)
-> > 
-> > 
-> > Or maybe v4l2_subdev_init_finalize() it's too late?
-> > I'm completely wrong? What do you think?
+> A follow up question, don't you need to make a corresponding smc call
+> to inform the FW that it's okay to turn off the power-domain at some
+> point?
 > 
-> I like v4l2_subdev_init_finalize() as we're pushing all subdev drivers
-> to use it, so it's an extra incentive.
+
+Yes. Each time entering sleep, we teach FW if it need to turn off or 
+keep power-domain, for instance "hba->spm_lvl < 5 ? 1 : 0" , 0 means
+off and 1 means on.
+
+>>
+>> Per your comment at patch 4, should I use GENPD_FLAG_ALWAYS_ON +
+>> arm_smccc_smc here in system suspend?
+>>
+>>>> +
+>>>> +       return ufshcd_system_suspend(dev);
+>>>> +}
+>>>> +
+>>>> +static const struct dev_pm_ops ufs_rockchip_pm_ops = {
+>>>> +       SET_SYSTEM_SLEEP_PM_OPS(ufs_rockchip_system_suspend, ufshcd_system_resume)
+>>>> +       SET_RUNTIME_PM_OPS(ufs_rockchip_runtime_suspend, ufs_rockchip_runtime_resume, NULL)
+>>>> +       .prepare         = ufshcd_suspend_prepare,
+>>>> +       .complete        = ufshcd_resume_complete,
+>>>> +};
+>>>> +
+>>>> +static struct platform_driver ufs_rockchip_pltform = {
+>>>> +       .probe = ufs_rockchip_probe,
+>>>> +       .remove = ufs_rockchip_remove,
+>>>> +       .driver = {
+>>>> +               .name = "ufshcd-rockchip",
+>>>> +               .pm = &ufs_rockchip_pm_ops,
+>>>> +               .of_match_table = ufs_rockchip_of_match,
+>>>> +       },
+>>>> +};
+>>>> +module_platform_driver(ufs_rockchip_pltform);
+>>>> +
+>>>
+>>> [...]
 > 
-> > > Well :)
-> > > Not every subdev drivers, but only the ones I'm testing.
-> > > 
-> > > Yesterday I was playing with ov5645 :) And I got:
-> > > 
-> > > v4l2-compliance -d /dev/v4l-subdev1
-> > > 
-> > > test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-> > > fail: v4l2-test-controls.cpp(1108): subscribe event for control 'User Controls' failed
-> > > 
-> > > Joke apart fully agree and thanks for your hint!
-> > > I will take  a look :)
-> > > 
-> > > > >  	ov5645->pad.flags = MEDIA_PAD_FL_SOURCE;
-> > > > >  	ov5645->sd.dev = &client->dev;
-> > > > >  	ov5645->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> Kind regards
+> Uffe
 > 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+
 
