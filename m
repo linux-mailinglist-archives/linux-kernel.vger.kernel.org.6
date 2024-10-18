@@ -1,48 +1,63 @@
-Return-Path: <linux-kernel+bounces-370804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0B79A3243
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:49:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EACCB9A3245
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 03:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912211F23F76
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:49:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EABCB23AD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239BC84D02;
-	Fri, 18 Oct 2024 01:49:33 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F202E64A;
-	Fri, 18 Oct 2024 01:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20E1126C07;
+	Fri, 18 Oct 2024 01:53:06 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2CA20E327;
+	Fri, 18 Oct 2024 01:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729216172; cv=none; b=ofF5LnXfd6BhlX/v8vpFveqaBucmTw3lwioeCNkdu4TFSAUWkSB0iGX47mb5f+jJPmV+uFsHAGuLjBZ1hA4HbWEab8DiBXCYjr3aw4L3o2hPRtZNZuhYeMrhaMzGrLHPm8cchcDdF3pN+tieb7QwBAp5h4DBtCms5kcW8WCUhes=
+	t=1729216386; cv=none; b=eMNZivKTD0B16dXiIcXyBOz6oeBpdqsTfOPhilZYcDfvEPUqs0gN2Q6XPjepMqXlhaqNtbPwN4YN6y1s8UiR/w8VSXbk9l5tVVngjraKl4dDjDEWeEVo1ooKOntXoJ/5yRJb9Db/gCRIly5WcXIt6b4K46V6ayN0RWN6gcedJkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729216172; c=relaxed/simple;
-	bh=Lt/4wEswi50wYeLdKZRBDV2B8BQ79W67NiEasMAgFoU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lXGwA89Eh2L86kiUaKz9aAHhzO2/eOKJLT+/UPKUxuCVx4dxWG3Wpf2G/JqNOzihAI4EwTSB1cBHLZ1HoXtGk4XH31xQG9pdIlx4zSjj49iZKMKc647uX6TZOtUytM8B3uDiH4oA5ekASl0gcU0c+8q1YDi0481E0zzfLRkSf+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=129.150.39.64
+	s=arc-20240116; t=1729216386; c=relaxed/simple;
+	bh=GwT3A+NOL2q0+cWVmACAjiU4di5jpTAluA9HNpF8cyo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MiWnqMKiN5nWx2jI0E6utWyaZpqwGaj5CPNYrEKVjC06r0R5atGNqMhobIRU00PB6Pw0LKhPsw8BgvRd0jqbCmWtzGWDOgYuUj/iq8YdYyrvWSSBgin9EkOl3Cu9mjvSBo/3bKy+cmZgpmLeFppPmlSdgoGMLa9zwmd00mySQdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.79.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app1 (Coremail) with SMTP id HgEQrAB3fn6WvhFnZbkACA--.16579S2;
-	Fri, 18 Oct 2024 09:49:10 +0800 (CST)
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app2 (Coremail) with SMTP id HwEQrABHTgJhvxFn+E4XAQ--.3867S2;
+	Fri, 18 Oct 2024 09:52:33 +0800 (CST)
 Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wDnOAyWvhFntQJhAA--.61876S2;
-	Fri, 18 Oct 2024 09:49:10 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____wB3M8ZcvxFnm+lRAA--.59195S2;
+	Fri, 18 Oct 2024 09:52:28 +0800 (CST)
 From: Dongliang Mu <dzm91@hust.edu.cn>
 To: si.yanteng@linux.dev,
 	Alex Shi <alexs@kernel.org>,
 	Yanteng Si <siyanteng@loongson.cn>,
 	Jonathan Corbet <corbet@lwn.net>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
 	Dongliang Mu <dzm91@hust.edu.cn>
 Cc: hust-os-kernel-patches@googlegroups.com,
 	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] docs/zh_CN: update the translation of process/email-clients.rst
-Date: Fri, 18 Oct 2024 09:49:01 +0800
-Message-ID: <20241018014908.3783976-1-dzm91@hust.edu.cn>
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v2] docs/zh_CN: update the translation of process/programming-language.rst
+Date: Fri, 18 Oct 2024 09:52:18 +0800
+Message-ID: <20241018015226.3786020-1-dzm91@hust.edu.cn>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,72 +67,149 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrAB3fn6WvhFnZbkACA--.16579S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFWfGFykur4UGF43Kr4fuFg_yoW8KFWxpr
-	nrKFyxta18Ga4UtFWUGryv9ry8AFyfGrW7JF97twnFqrn5tw40vFsIyrnxXF93Kr10ya45
-	XryDKr90vryUuFUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQSb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+X-CM-TRANSID:HwEQrABHTgJhvxFn+E4XAQ--.3867S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoW3WrW3Gw18WF1rCF4fZr43ZFb_yoW7tryfpF
+	W7Kr9rKa18J3WxCrZ7Kr12vr1FkFZ5Ka48trWUt3WYyF40ya9IqFyxKr43J342vryxCFWD
+	Z34fuFW8X3y3AFDanT9S1TB71UUUU1UqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUHmb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
 	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
 	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
 	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
+	1q6r43M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
 	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
 	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtw
+	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVW8ZVWrXw
 	CF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Y
-	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_GFv_Wrylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU3YFADUUUU
+	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Wrv_ZF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6IIYr7AKxVW8JVW5
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU5
+	2eHPUUUUU==
 X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Update to commit 91031ca349ee ("docs: improve comment consistency in
-.muttrc example configuration")
+Update to commit 0b02076f9953 ("docs: programming-language: add Rust
+programming language section")
 
 scripts/checktransupdate.py reports:
 
-Documentation/translations/zh_CN/process/email-clients.rst
-commit 91031ca349ee ("docs: improve comment consistency in .muttrc
-example configuration")
-commit 7fe7de7be828 ("Docs/process/email-clients: Document HacKerMaiL")
-commit 9c03bc90c065 ("Documentation: process: Revert "Document suitability
-of Proton Mail for kernel development"")
-commit 1d2ed9234c85 ("Documentation: process: Document suitability of
-Proton Mail for kernel development")
-4 commits needs resolving in total
+Documentation/translations/zh_CN/process/programming-language.rst
+commit 0b02076f9953 ("docs: programming-language: add Rust programming
+language section")
+commit 38484a1d0c50 ("docs: programming-language: remove mention of the
+Intel compiler")
+2 commits needs resolving in total
 
 Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 ---
 v1->v2: revise the script name
- .../translations/zh_CN/process/email-clients.rst         | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ .../zh_CN/process/programming-language.rst    | 78 +++++++------------
+ 1 file changed, 30 insertions(+), 48 deletions(-)
 
-diff --git a/Documentation/translations/zh_CN/process/email-clients.rst b/Documentation/translations/zh_CN/process/email-clients.rst
-index 34d51cdadc7b..a70393089df3 100644
---- a/Documentation/translations/zh_CN/process/email-clients.rst
-+++ b/Documentation/translations/zh_CN/process/email-clients.rst
-@@ -197,7 +197,7 @@ Mutt不自带编辑器，所以不管你使用什么编辑器，不自动断行
- Mutt 是高度可配置的。 这里是个使用mutt通过 Gmail 发送的补丁的最小配置::
+diff --git a/Documentation/translations/zh_CN/process/programming-language.rst b/Documentation/translations/zh_CN/process/programming-language.rst
+index fabdc338dbfb..55f132a4b212 100644
+--- a/Documentation/translations/zh_CN/process/programming-language.rst
++++ b/Documentation/translations/zh_CN/process/programming-language.rst
+@@ -3,25 +3,22 @@
+ :Original: :ref:`Documentation/process/programming-language.rst <programming_language>`
+ :Translator: Alex Shi <alex.shi@linux.alibaba.com>
  
-   # .muttrc
--  # ================  IMAP ====================
-+  # ================  IMAP  ====================
-   set imap_user = 'yourusername@gmail.com'
-   set imap_pass = 'yourpassword'
-   set spoolfile = imaps://imap.gmail.com/INBOX
-@@ -325,3 +325,10 @@ Gmail网页客户端自动地把制表符转换为空格。
- 另一个问题是Gmail还会把任何含有非ASCII的字符的消息改用base64编码，如欧洲人的
- 名字。
+-.. _cn_programming_language:
+-
+ 程序设计语言
+ ============
  
-+HacKerMaiL (TUI)
-+****************
+-内核是用C语言 :ref:`c-language <cn_c-language>` 编写的。更准确地说，内核通常是用 :ref:`gcc <cn_gcc>`
+-在 ``-std=gnu11`` :ref:`gcc-c-dialect-options <cn_gcc-c-dialect-options>` 下编译的：ISO C11的 GNU 方言
+-
+-这种方言包含对语言 :ref:`gnu-extensions <cn_gnu-extensions>` 的许多扩展，当然，它们许多都在内核中使用。
++内核是用 C 编程语言编写的 [zh_cn_c-language]_。更准确地说，内核通常使用 ``gcc`` [gcc]_ 编译，
++并且使用 ``-std=gnu11`` [zh_cn_gcc-c-dialect-options]_：这是 ISO C11 的 GNU 方言。
++``clang`` [zh_cn_clang]_ 也得到了支持，详见文档：
++:ref:`使用 Clang/LLVM 构建 Linux <kbuild_llvm>`。
+ 
+-对于一些体系结构，有一些使用 :ref:`clang <cn_clang>` 和 :ref:`icc <cn_icc>` 编译内核
+-的支持，尽管在编写此文档时还没有完成，仍需要第三方补丁。
++这种方言包含对 C 语言的许多扩展 [zh_cn_gnu-extensions]_，当然，它们许多都在内核中使用。
+ 
+ 属性
+ ----
+ 
+-在整个内核中使用的一个常见扩展是属性（attributes） :ref:`gcc-attribute-syntax <cn_gcc-attribute-syntax>`
++在整个内核中使用的一个常见扩展是属性（attributes） [zh_cn_gcc-attribute-syntax]_。
+ 属性允许将实现定义的语义引入语言实体（如变量、函数或类型），而无需对语言进行
+-重大的语法更改（例如添加新关键字） :ref:`n2049 <cn_n2049>`
++重大的语法更改（例如添加新关键字） [zh_cn_n2049]_。
+ 
+ 在某些情况下，属性是可选的（即不支持这些属性的编译器仍然应该生成正确的代码，
+ 即使其速度较慢或执行的编译时检查/诊断次数不够）
+@@ -30,42 +27,27 @@
+ ``__attribute__((__pure__))`` ），以检测可以使用哪些关键字和/或缩短代码, 具体
+ 请参阅 ``include/linux/compiler_attributes.h``
+ 
+-.. _cn_c-language:
+-
+-c-language
+-   http://www.open-std.org/jtc1/sc22/wg14/www/standards
+-
+-.. _cn_gcc:
+-
+-gcc
+-   https://gcc.gnu.org
+-
+-.. _cn_clang:
+-
+-clang
+-   https://clang.llvm.org
+-
+-.. _cn_icc:
+-
+-icc
+-   https://software.intel.com/en-us/c-compilers
+-
+-.. _cn_gcc-c-dialect-options:
+-
+-c-dialect-options
+-   https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
+-
+-.. _cn_gnu-extensions:
+-
+-gnu-extensions
+-   https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
+-
+-.. _cn_gcc-attribute-syntax:
+-
+-gcc-attribute-syntax
+-   https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
+-
+-.. _cn_n2049:
++Rust
++----
+ 
+-n2049
+-   http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
++内核对 Rust 编程语言 [zh_cn_rust-language]_ 的支持是实验性的，并且可以通过配置选项
++``CONFIG_RUST`` 来启用。Rust 代码使用 ``rustc`` [rustc]_ 编译器在
++``--edition=2021`` [zh_cn_rust-editions]_ 选项下进行编译。版本（Editions）是一种
++在语言中引入非后向兼容的小型变更的方式。
 +
-+HacKerMaiL (hkml) 是一个基于公共收件箱的简单邮件管理工具，它不需要订阅邮件列表。
-+该工具由 DAMON 维护者开发和维护，旨在支持 DAMON 和通用内核子系统的基本开发工作
-+流程。详细信息可参考 HacKerMaiL 的 README 文件
-+(https://github.com/sjp38/hackermail/blob/master/README.md)。
++除此之外，内核中还使用了一些不稳定的特性 [zh_cn_rust-unstable-features]_。这些不稳定
++的特性将来可能会发生变化，因此，一个重要的目标是达到仅使用稳定特性的程度。
++
++具体请参阅 Documentation/rust/index.rst
++
++.. [zh_cn_c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
++.. [gcc] https://gcc.gnu.org
++.. [zh_cn_clang] https://clang.llvm.org
++.. [zh_cn_gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
++.. [zh_cn_gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
++.. [zh_cn_gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
++.. [zh_cn_n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
++.. [zh_cn_rust-language] https://www.rust-lang.org
++.. [rustc] https://doc.rust-lang.org/rustc/
++.. [zh_cn_rust-editions] https://doc.rust-lang.org/edition-guide/editions/
++.. [zh_cn_rust-unstable-features] https://github.com/Rust-for-Linux/linux/issues/2
 -- 
 2.43.0
 
