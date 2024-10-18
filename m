@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-372163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F689A452D
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:44:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9489A452F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30AE9B21088
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DECF1C2120D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C49F204F78;
-	Fri, 18 Oct 2024 17:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E21205127;
+	Fri, 18 Oct 2024 17:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIzd0MvG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1T8IUrJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C28D204F61;
-	Fri, 18 Oct 2024 17:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E36204080;
+	Fri, 18 Oct 2024 17:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729273425; cv=none; b=K2/nOVVw0kTjxkMRBncuEdFGx5zX3fOQDSazvLbkJ5mAeBILwRt3WWpsE5JU8szlvBzV3KDVWYGrVTJYc+WC5rDJEMKV/g2LDVuCReDjC2E67gaux1iDQx2fu7uaFP1LRVYG5AHRlK1hQ5b9RQzmCqBgjhJVwZ9GjyktX733OsI=
+	t=1729273429; cv=none; b=ZGgN3ZbFp3NbQSvcWGKWQK2b2N9VmS2gJNWBGUmaol76I0v6mac3+i7PVgtM/wymdEXTzg493kv+O764gu6CR4HhY4kt9nALN9UpSD9bZjWsiwvirWsNcTzDLrBsBLuRvgTblxbisG9byia0gJ1PgKIZfUbFYhPAc5fZEfhwTpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729273425; c=relaxed/simple;
-	bh=XbeyX7FNDvoei3M13wTCf/2lpZ7+fW2VCTRPNVZNE+Q=;
+	s=arc-20240116; t=1729273429; c=relaxed/simple;
+	bh=2p5IF+ZWqEFOVQII1ShdYMBDiQsd1dQKUutWOu5irWY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VqC6TuBcl29sEJd/uRWa17TWG8Zs26iWgcDCZEy/gtGGIw70HrII9oSl9ZIpwjGpVJ5Ru5E7Lr6yrEQOZYCY3AqtwP2jIteQcDoQSF3avkM6w0d0N2z6eXs3m8qggZerbRyQDsDmUZ6xh5LFZpkr2nj1CSbCjr+ZuKkztRdyo+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIzd0MvG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F19BDC4CEC5;
-	Fri, 18 Oct 2024 17:43:42 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qIyBSQQdFkpp2ic1houiZaKFMAgGPubkEJcEJiLx+dco/i1wntBv9CwI0dJrhR1cDywYyRty2+wxRLAeof8Zm4IlprzVUQFvDeyLNZLwHNzcrUws8Ty7ibcT1g9PdG3vR+B8gdZpCSHPJoPHII9wdhs7r6QdBHSeXWInszArGx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1T8IUrJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E0B7C4CED3;
+	Fri, 18 Oct 2024 17:43:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729273424;
-	bh=XbeyX7FNDvoei3M13wTCf/2lpZ7+fW2VCTRPNVZNE+Q=;
+	s=k20201202; t=1729273428;
+	bh=2p5IF+ZWqEFOVQII1ShdYMBDiQsd1dQKUutWOu5irWY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=GIzd0MvGmMYK3Bfj9BzYhzagaM5G44stCvZx+ikR2dsO+1wyxiS7PV63zcuYistOP
-	 a0etq+SfIZ78vO/8bCg+C4wnpir6EINk2DJ1HU3T0klqa54yIKMCdJTDOZy0NimNBC
-	 333VhLoggzddiYxk6P8YLY8gBQCZPun6LxsnTkHG8qy5KvVLldZ8NGrlZ40lpI8y6n
-	 5oD80cekAjJgfeAkUqyS/eNpNzCbkDhROEHd7ytPVWnQRA1z4i0a1tIFANGc7578FW
-	 O6mN5TCSAP7/OO0FP03z18AdvnSmr3stbIW3FSA7e3cd5W3yukHR2ggl8X99peBxPm
-	 SmhPeIb5gka2A==
+	b=o1T8IUrJUhY5KGJNL+zwwNnfzbqqkscpjyP1e1H/qp48L0poiB3hHP97ti/3u7KRr
+	 puJMukpI4FgMxM8KpYzEBEbqURtEgn78kk2G6hpr6Bvk40PJL0PIgXfgD0CgF0BgKC
+	 fb1HyiIzdlIlrjqP+aZTi0JRmEC7B28QTvduYJYZqMx0/RLJhgW+YtLmmA3ycPPUy9
+	 GdGGzVtu3yE8aWWAyxutle0lRO4zKMTZQ+Oji8iHiLK95OVaKPT/1xoC8AR9YNOTu5
+	 Umx7DwgT2dNy/UADghqExqnKIDTIUQdTXIaaEqHEfaU6loMwoguqoPtcmrWNOGcPgU
+	 QwOeWHA822dFQ==
 From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
- Tang Bin <tangbin@cmss.chinamobile.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Prabhakar <prabhakar.csengg@gmail.com>
 Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-In-Reply-To: <20241016011851.2023-1-tangbin@cmss.chinamobile.com>
-References: <20241016011851.2023-1-tangbin@cmss.chinamobile.com>
-Subject: Re: [PATCH] ASoC: mediatek: mt8188: remove unnecessary variable
- assignment
-Message-Id: <172927342272.163659.4351031993017950860.b4-ty@kernel.org>
-Date: Fri, 18 Oct 2024 18:43:42 +0100
+ linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241011175346.1093649-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20241011175346.1093649-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH] ASoC: rsnd: Refactor port handling with helper for
+ endpoint node selection
+Message-Id: <172927342605.163659.12231131431088875442.b4-ty@kernel.org>
+Date: Fri, 18 Oct 2024 18:43:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,11 +66,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Wed, 16 Oct 2024 09:18:51 +0800, Tang Bin wrote:
-> In the function mt8188_adda_mtkaif_init, 'val' to 0 is repeated,
-> thus delete one.
+On Fri, 11 Oct 2024 18:53:46 +0100, Prabhakar wrote:
+> Refactor the code responsible for selecting the correct device node for
+> audio endpoint parsing in the rsnd driver. A new helper function
+> `rsnd_pick_endpoint_node_for_ports()` is introduced to handle the
+> selection of the endpoint node by checking whether the port is named
+> 'port' or 'ports'.
 > 
+> This change simplifies the logic in both `rsnd_dai_of_node()` and
+> `rsnd_dai_probe()` functions by replacing repetitive condition checks
+> with the new helper.
 > 
+> [...]
 
 Applied to
 
@@ -74,8 +85,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: mediatek: mt8188: remove unnecessary variable assignment
-      commit: d3170359c96082302e7b6de624cb8592d8954e7d
+[1/1] ASoC: rsnd: Refactor port handling with helper for endpoint node selection
+      commit: daf5e3c68144bdb7e605f46853febc7bb257d44d
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
