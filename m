@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-371958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364199A4296
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:36:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AA49A4295
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A56F1C21733
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EDBD1F22DC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF7B202F79;
-	Fri, 18 Oct 2024 15:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02D320262E;
+	Fri, 18 Oct 2024 15:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="e2V3VSDj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNFS19f6"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1531B20264A
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729265766; cv=pass; b=IHAMCdwSm8bkcNF31Ipxry2a2IrOlaxWixS9clQ9w0u+Kxjc3VbguWzHASv/HTljS9eNKTCVrYieES/YqtUIuRbPXZtHBJCcuX60IKK4FfUmwJkm9rA5u32/MJyuxZYCBsZj3GUNLaPBaDFLOiUL1oKuIro9BLPe48RXEq0xSHI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729265766; c=relaxed/simple;
-	bh=TTjgERT1j7zRCds3Wd71jv3rrWVnzNhHRuptk9kOdl8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=S75GvgAHHQie50/y4l0xwvxTAlgSoIWfdDtybbLdzdXg4YOrY/BBA7DVyS7PO8y8AdqhFTCIhr9jafjoNtZ7MhSZZ6k9n+90HtZStwRnCZ9mVeFALGW7nAk7qigZwvb53cKyjzJsqVsFayAmHHukS01FQaUSZOQqSJg2cZbR3Pw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=e2V3VSDj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1729265745; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aQyQBusFZIb/ZEXLjysjnvx7xcIDBH50NCc1SsJEGFaAioommL7NodDrKczj69qoBNd8TNl7LdWu2fC0L3GEmA9qLsefL17TDpky1pYads7aAXvmFNeiIFjYc/QeYPtok/uhQgSKJPMpKIb2TZbMu9cUVLrlj7iq7FCmoxpbAGA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1729265745; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=vK9cq2ZngeWSVzdJsao8iPFTL4bdq6eIbds0MpoMbKg=; 
-	b=oLaTCpSIMW/tdCEoU7N37PGfEBZRsWsIAuJYMYZud6VtiRnYWiGaX4uSZTL2AhbM0/Tqo4AU1vD2vJ4PAhMGfIKjLX/uuflJ7fX3zoD8An2U92JEafBmVTxV9qsZTpYwn65M4sJSqMRP7OQO+G69xC37qJIHJl/tdm9QK5yho5Q=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729265745;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=vK9cq2ZngeWSVzdJsao8iPFTL4bdq6eIbds0MpoMbKg=;
-	b=e2V3VSDjtBuWtnNtw91z0m01AQIseK9DsrhlMxh/ax5yRvguCqFRzjAOX3SU5nCP
-	72mctSYqOCXUTJttNPp/ofYs/rlsHudFU5nbEz635T6OesdfcrcHOrTYngkNgDmA891
-	7X46TKdief8py4ucNy5CM2ZJ4maoQ0hIY2ojBTuQ=
-Received: by mx.zohomail.com with SMTPS id 1729265744087820.2806321613441;
-	Fri, 18 Oct 2024 08:35:44 -0700 (PDT)
-Message-ID: <58eba1ba-c943-4a16-8706-8efde7ee7eb2@collabora.com>
-Date: Fri, 18 Oct 2024 20:35:35 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400E81F429B
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 15:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729265764; cv=none; b=ptIQlbXqLV8YA+/hsHXBIkPyOo4UWQ4/TqOkkcTx4QJrPmaatjSxIO6XdaNnyISpDXfi0NJgXZJDjtykxQ8WrvJj6Cju5EtdCuFire0IhMxNTJMGP9HjQ0quEfPPuFFoFgH7boCjkW8SanfIm6zuI+HYJGK5ner5sB8PUEfMh2k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729265764; c=relaxed/simple;
+	bh=kEjY45TS5YmXa/acGnmU61z+8wLLu3ZsyHORAdZt2JA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ftbL1deVgR1eJ2fO1qPSP9v8dcRw2cMNjUw24i2NU2D5/UaMKGEvmmaGcUqlQPZeqpLRq00+Ak+xgLCeYA3tfkFVJawqkKI/fk2+Ld6sjatfheq4okEGaqysfoWKdaVd88L/xIX7Hfs4RKGrXYxNi+ItYMb9duC9nAF3pbz7dM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNFS19f6; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d808ae924so1532262f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 08:36:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729265760; x=1729870560; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ADiKcUQrhytxciJ2JO2dLlP4GRgcbRDCG0c/xTRtFX0=;
+        b=dNFS19f6GJpXR2xj4+AJfyfqIptFWwX2k3oVqz4laGaFh7IfZRvGzlwriJtvIKUnDO
+         MncDIBLGh6Rn3QYXr3ojdVJFakxj+KJ1u8gP+sMQ5PC45alC6aYJyZ4g8eol6JUuV3Q2
+         afqjyzanjL9zRuB4gGdwLgS5g0svpnzBhwgE0NDf5LVHY0VufZBJryKKLPoh6u0mF2N5
+         BprMT6ztHoo25648i5zVyfRt/yttKRMNCczxNFdbvdXTpNOz0OjOOzYyxu1N58O2Rw8n
+         pAyUl3ILV7QQy/Qcsg1bUVs0dEQI/eRcoEgR96g9dm4KVEyzOHfLgdVmKtEpLdhwK7aA
+         KVCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729265760; x=1729870560;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ADiKcUQrhytxciJ2JO2dLlP4GRgcbRDCG0c/xTRtFX0=;
+        b=mcf1HLecI4BrXI7lJzs1Puw3m3QFSVZTYWd8BVh+F79X7NNyQ6MJWRcZGWFs/D1j+a
+         LdXTM+fmkeer5UqVGvCa3+kyAxnXhm6H9QgWtJ4GitX/M21KmihCXTH85bVR/F5jqp9U
+         Ns2BNMAcz0Cyd4/1oQ5A+0S6Utowo22gLXLjuF16YqFJEoiCsiYdaOn/CJYe0csClhK1
+         jKcr1v7pFJsei9kdBf9umDyQSYBRVZgNT2phMMUFEPAmXBdT4IItTKpY4fatGOTOSwtj
+         9EcwCG2v1CF/EYMdygPQzbC4+Sm/r+m2j2ruH3eYkVG0R1MMG++jIrHnPT3Yn2IezTFt
+         uh1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVdqn0vn7GL2+jR2F1Ee7xBFol0G+vm2A79+LEN/EgA3pZpajoTIziY4x8YQ6IOH0gytFJAxr+cTqmPeoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvIIGY00xqGeQ706/9ntCjF54dkgPNwBJn/XxnvW8/7NWLi2Mh
+	XFgG6tbbxXGWfhpfO7nXhZGyIvUuNBDxcGvJEOpQwe4scg7iBPUw/2dxwLq5JOUfZBFo+Y42TFs
+	HBDhlSLbjeJcZQKOrcUH1aNMWUY4=
+X-Google-Smtp-Source: AGHT+IG486ukXM7P/nmrtW7oHmy+w7LlPC071fffEcEQoFvoTZ0NFiF+e65nYbE7f7LRAyeEU2r/BeFNVpGJm64smBI=
+X-Received: by 2002:a5d:6d03:0:b0:37d:47b0:6adc with SMTP id
+ ffacd0b85a97d-37eab4d1248mr2731666f8f.4.1729265760377; Fri, 18 Oct 2024
+ 08:36:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>,
- Baolin Wang <baolin.wang@linux.alibaba.com>
-Subject: Re: [PATCH] mm: Remove unused has_isolate_pageblock
-To: Luoxi Li <kaixa@kiloview.com>, linux-mm@kvack.org
-References: <20241018092235.2764859-1-kaixa@kiloview.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241018092235.2764859-1-kaixa@kiloview.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+References: <20241018151112.3533820-1-arnd@kernel.org>
+In-Reply-To: <20241018151112.3533820-1-arnd@kernel.org>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Fri, 18 Oct 2024 17:35:49 +0200
+Message-ID: <CA+fCnZdHBkFYGODVc=Qc_gmrmsuXbE0vUyYnG4s7TrvG5v7E4Q@mail.gmail.com>
+Subject: Re: [PATCH] mm: export copy_to_kernel_nofault
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Marco Elver <elver@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/18/24 2:22 PM, Luoxi Li wrote:
-> has_isolate_pageblock() has been unused since commit 55612e80e722
-> ("mm: page_alloc: close migratetype race between freeing and stealing")
-> 
-> Remove it.
-> 
-> Signed-off-by: Luoxi Li <kaixa@kiloview.com>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-
+On Fri, Oct 18, 2024 at 5:11=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> This symbol is now used on the kasan test module, so it needs to be
+> exported.
+>
+> ERROR: modpost: "copy_to_kernel_nofault" [mm/kasan/kasan_test.ko] undefin=
+ed!
+>
+> Fixes: 44749130ffb4 ("kasan: migrate copy_user_test to kunit")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  include/linux/page-isolation.h | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
-> index c16db0067090..73dc2c1841ec 100644
-> --- a/include/linux/page-isolation.h
-> +++ b/include/linux/page-isolation.h
-> @@ -3,10 +3,6 @@
->  #define __LINUX_PAGEISOLATION_H
->  
->  #ifdef CONFIG_MEMORY_ISOLATION
-> -static inline bool has_isolate_pageblock(struct zone *zone)
-> -{
-> -	return zone->nr_isolate_pageblock;
-> -}
->  static inline bool is_migrate_isolate_page(struct page *page)
->  {
->  	return get_pageblock_migratetype(page) == MIGRATE_ISOLATE;
-> @@ -16,10 +12,6 @@ static inline bool is_migrate_isolate(int migratetype)
->  	return migratetype == MIGRATE_ISOLATE;
+>  mm/maccess.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/mm/maccess.c b/mm/maccess.c
+> index 3ca55ec63a6a..8f0906180a94 100644
+> --- a/mm/maccess.c
+> +++ b/mm/maccess.c
+> @@ -82,6 +82,7 @@ long copy_to_kernel_nofault(void *dst, const void *src,=
+ size_t size)
+>         pagefault_enable();
+>         return -EFAULT;
 >  }
->  #else
-> -static inline bool has_isolate_pageblock(struct zone *zone)
-> -{
-> -	return false;
-> -}
->  static inline bool is_migrate_isolate_page(struct page *page)
+> +EXPORT_SYMBOL_GPL(copy_to_kernel_nofault);
+>
+>  long strncpy_from_kernel_nofault(char *dst, const void *unsafe_addr, lon=
+g count)
 >  {
->  	return false;
+> --
+> 2.39.5
+>
 
--- 
-BR,
-Muhammad Usama Anjum
+Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
 
+Thank you!
 
