@@ -1,237 +1,398 @@
-Return-Path: <linux-kernel+bounces-372314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D619A4703
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:31:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D629A4702
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 21:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A0F61C23643
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15AA41F24232
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1384205AA8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDAA757F3;
 	Fri, 18 Oct 2024 19:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ok54+v9i"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="e3owpdES"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A5A188735
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729279902; cv=fail; b=jITTaaSN3+9gVLrCM51sOJEVK9ql+/KP9REvK73jErPE1hSo3Ff5ctYhrAFFVXbvabI7L3Zek8okch5fyDBk48f03fQHlTVmL9UIjOn7DF8iS9fbnCs+VxLi/Ul3RMqjoYAJDgR2qnSKgw8oSHPf5FTbeZyYKMz25ME+VhhWLI4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DCA20E33D
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729279902; cv=none; b=a3oDg9IttOHfUe0KNWeZqsjTWmxDw2RyZ/dbQTJjYqA1oaIfX/RvRzPP+pLVVajzFW8rk26UmnB/YWP9dTiz1zf/i6LR95bTJQtiFVMlT6IjFcBKYk12UC0aZWaLv6jlPCcAxBftZfZnVTAqBjNb3zvOXbmoNPrd3lIgdpKQOzI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729279902; c=relaxed/simple;
-	bh=x4A51VJzyv8k6/GklERtJUwi4z4XYuVohinWbiHRuUk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hqhB3AGGVrJqiD0+HbGAlFk9HiUA16aG4fG5gqVZIRw0Wi3SWiwlaJMRE+TfLYFyezKmCMJCzUO1P9CdkDAV+3J4uSDaHnQaWgDpanwwfG++4ohfEQwaPh/Nx9OJzQ4w19gNoMGXkSa2PRD+NpvIjw3mWsGxO5dIWEyOv+fzNeg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ok54+v9i; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729279901; x=1760815901;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=x4A51VJzyv8k6/GklERtJUwi4z4XYuVohinWbiHRuUk=;
-  b=Ok54+v9ifNbblVbn2G64+oJhqHdYm/P5BxnTC4279459nhSybxyzsK6k
-   9l6Tgb3w42fj7EzosrWF6kqCjGLcGQwsTip3tRt5W/22x8ofLuTJDuLdC
-   3E1ykQrkDOUu+Ii7NcZxLwL9zDenFZWinJa1LC8WFlKunTpRk6PqEtpH0
-   VeG/8HYoYvFGCslyWrDiznWcqYhjDMHPAGcykJ3XFyWIDiGzbqJg7+t66
-   u3OGu8fLfbajX19wJaQD08c+ckqL+a4j6QI7i2xnfdb2vHBlAVNSrPZCJ
-   TYpAzPnr6fia2D3Y4bBpFNtXYQZsLRchetGEH1M3mowVBnofYbIjXDoen
-   Q==;
-X-CSE-ConnectionGUID: mx94IhumSCeo3laMBa4Kdw==
-X-CSE-MsgGUID: h9EdjyoaRmyaS3ceGdIwUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28705858"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28705858"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 12:31:40 -0700
-X-CSE-ConnectionGUID: 9U/TC2+WT4i2ZtyFK3Ppgg==
-X-CSE-MsgGUID: DF91YQFdTAGxHxzc55GVSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
-   d="scan'208";a="78611632"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Oct 2024 12:31:38 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 18 Oct 2024 12:31:35 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 18 Oct 2024 12:31:31 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 18 Oct 2024 12:31:31 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.46) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 18 Oct 2024 12:30:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nHY6wH7rcYqaG5nXfbZSwYVK8bs0h+mEtbhn/xyTIXyhaQXzVtX4FXLnzNzj0MKutDUoVQw/PH80Bjred4oCEhOVNiPxRfz2hL/ppG20TqM8g0yZTjWIZ5grX/OQQ+94N0igNDS/PFjFe8kw6kjB1GSYVOVLuJCTU/lk6gEIEHkxVZNJoyDxBH9xlDPGyEh7iIhEpdKafqDOmDF8tna4nzRC6KQ/m038lr/0exaSxmuWZak+v3/qIZ4Sow7Vg3GB9wyWdyyNGvm/EQZke7VGz4IVXKLJZvNqrhl9CNhAHM4ioEE4RgkLemjLqAhUS8UpzGQ1eIfIOv0V1TPRgzDSbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VVmhsZybpJ/frUnHfBvTBru3s9MrKpzOl11owurrawk=;
- b=ylQjv7HiBfTs/LYdqeInTgJrdufpDCQBZ4D7hD68448ITZ4AXYNHSvpWGjn+/XzoTFvSmZkmUdMo+76F1ebNRcYI96Ur5ompVa3C2ff5X3ZSZ2uPRryCtjYz8KXn5EE/AeQfYKUNKPaKsHjRKCXS52j24xsIUZMyk4SfNx6yyARAJ+iSZwICUPR8BZe+l6qQEn7dlr539ns6QwZIjyM6eoo5SNOJ286eU/2WLbmeeFqbARTb/i1zYh/kL0gFRk3xJXThmzaqndeN5ZRdWzvP1oWBszVWzgshKv9VQ2T3hyPOFCBioarg3hlYviBvx58h28IA7b9/j1h4woyqGYL/oQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by SA2PR11MB5003.namprd11.prod.outlook.com (2603:10b6:806:11e::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.21; Fri, 18 Oct
- 2024 19:30:52 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.8069.016; Fri, 18 Oct 2024
- 19:30:52 +0000
-Date: Fri, 18 Oct 2024 14:30:49 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>, "Ingo
- Molnar" <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Umesh
- Nerlige Ramappa <umesh.nerlige.ramappa@intel.com>, Ian Rogers
-	<irogers@google.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Subject: Re: [PATCH 1/5] perf: Add dummy pmu module
-Message-ID: <iofg6cidwvbewldlwy7rz67jljs24unnszv6kdat6tvafkrl6f@4shqyxjid6ev>
-References: <20241008183501.1354695-1-lucas.demarchi@intel.com>
- <20241008183501.1354695-2-lucas.demarchi@intel.com>
- <20241016085102.GW17263@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241016085102.GW17263@noisy.programming.kicks-ass.net>
-X-ClientProxiedBy: MW4PR03CA0249.namprd03.prod.outlook.com
- (2603:10b6:303:b4::14) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	bh=wjUS32+CQL2ugHw+l0A/U1QC/0+VpyJuqbK2xurv/3o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hRrC1yIztnXQnBNm5jLJGcm5x+wq9l9UnZNcjNTHV3EMRaDLdmstjRV2IeYq0bH6H/lEHjUvZC6NnnDhp3aRvCxub0IisvMPEdECMeyooLgFypKoSThqdak6AmYZBAvl50Li8HRPY63FW9OUAOIk41pIX28ixrCZKQUAOVGFJFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=e3owpdES; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f2b95775so3141904e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 12:31:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atishpatra.org; s=google; t=1729279896; x=1729884696; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q5+f1ndZOD1I0MZDk9+m1YrIuOy4ctmGYdn7Pfhl7j8=;
+        b=e3owpdESbBGXEjBST+VYWyTafJiCBHKzgsgCrdebhfM3gtipNLjwG4tqg22AxsuMUr
+         DgKxjWTtRvDN+YFaP3Z+SUTW4c0i9FZENDSuIuY7qTuVYUdydUbZbWrAt84yEJTQ8Skd
+         P/c38LBUOFTqdvLJJVYo++VJUcvRa+9t6+AGc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729279896; x=1729884696;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q5+f1ndZOD1I0MZDk9+m1YrIuOy4ctmGYdn7Pfhl7j8=;
+        b=k2TwXcfxbFMQXsu4NVoDfnRiJraLXjrsKzzZCiGBxni8AhioHG+0OHPykz7RKRTjMc
+         pLVSX9o+0iU/zu3x/8ty/xYGznfNqPnlmFfrfzYquXqA9N3FrH95RRVX+VDEJ/U4WkYL
+         g1olJc1c/PHWEbx2xKbjcg7KcdbqJ2Rm4PojzbcPJYMtJeS+GZteKpXwT/hukWcd+sLw
+         6NleqosMCYnUuREW179JgwqjEntiECB12A0Nz9PxV3bZlG/wRddzk/7SFTbtZC2+xhp4
+         m2r2EU+J3KTglZodXY/yZooX9/2/qYeJpIIoElqYCfcstxPno4wwnej8vSfpXYS3Xdyy
+         4Lhw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPHXWXuaWvheoFM9nqIdK0nbD9DJkSOqH3+1quXJYV/UDsajHZEZ51Zb26EtKXCAXFXk40V9X2qVcpM/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQIvHNjjUk2zfeHvhbMIXRLt/aHgFVcOENb5eupWIQXuxWmFG0
+	tcPzBbRH85YfoCW9CGMO88l91VgVQViqTBaz/hcd7aLImqWV01VuTIDOKv6Q7p/l0+FDPWljHaD
+	GQSKUx4DcSua/l0dmg0ZtkVU8qXOTxvZwwrZHi5NXHXAxRlTVCg==
+X-Google-Smtp-Source: AGHT+IETeMlzGRso815J4CTv+uxhL7fwllyynCoRPhVRlXdTD/FNhGDmVkq2YD+U5Cneko/uE8SOQJx5yxx7P3DBa6c=
+X-Received: by 2002:a05:6512:b98:b0:539:959e:f0d0 with SMTP id
+ 2adb3069b0e04-53a15444851mr3569218e87.21.1729279896356; Fri, 18 Oct 2024
+ 12:31:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|SA2PR11MB5003:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8e72db5-5acc-49f8-6a5d-08dcefab60af
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?E43Kx/atmL/0dkqGZL2fc/ZcNEkTdhu1PceAPVnFmsoeSe8VKYnr0Jf98wZq?=
- =?us-ascii?Q?MRPow5g5xMfTCiOZMkr+xGkOcUvnyDsfrIrbg/bKUdtxv60aZAcpMMGDu1pM?=
- =?us-ascii?Q?XV0dWLVTAq6VVAgStiaGsP7hSW+YdP2CZ8Xu3yKkze+PzKmciL4mIQi7/dmN?=
- =?us-ascii?Q?HZ3j1MARf96g4GlJgiHju/OxQHxGO9nnDs3ixq7tdt0xv5oAF0MQAWNerqCS?=
- =?us-ascii?Q?I/rbq0n82lmIniUx+nIytlgAcCfdyeIXYr5kANmluSx9ZU9Rda45GAFyx1Ab?=
- =?us-ascii?Q?uJTr4iD9RnfEBi27+H5yrNPrOOL5+w9V6+y5sNql/vMXX8ukv49ZFei/JGDr?=
- =?us-ascii?Q?8hZA9LKOK4xouvrF/qD0NPQqk5Js8Lsw0DXqsNiGeY3MOid4zSpIsJD2u+OF?=
- =?us-ascii?Q?RN3DC+7GYlXSlhjzgzPVKGqNaH32iferIxrWpfGw2Vm+EchumfIrze7m1QE3?=
- =?us-ascii?Q?D3LHSnzgUVAmv65I2mWjGDrpXWFu8HgtxlSiiMwaoQOoFDRBuk6TIfwUATwW?=
- =?us-ascii?Q?YQZu1bRrUtwKvjoo8u6oXlJCSk6PWddUM+FIO6F/EBw4yCM00wQeQbPmODWO?=
- =?us-ascii?Q?Kyb65NCsCXBTllSKuvAJX7KdlhEW9dRl113Ipjp06jRz84JCLHBR6dElSj4n?=
- =?us-ascii?Q?LAyTowNEAGu6YF/5ks+C2qES5d9hfqbQNJcU6HozfZtreKpjN2WvZh75dgss?=
- =?us-ascii?Q?6pd9YirsBLyJf/zY33IdEb4IeEZhZXlp+w/T09lztaAbqyNQeNzR+TxLtFwu?=
- =?us-ascii?Q?SP425/lG2+xClw3IHNzi164SWYnNkWRT8eJBRHNHzyf4vILEqWuPlPsXaqrq?=
- =?us-ascii?Q?V1DKCNZpDBxAehLWSoWM9pWR9xlD8m2VdbinjC767leN9kZ0ixg5RyxpRCmt?=
- =?us-ascii?Q?eofdkJaMC1KP5wssQPrlUw0y9c1Uqi8L70MH8/kN2pDZ+HNwUT8d0PRcOZzo?=
- =?us-ascii?Q?0QaeGpRyh/WU5/vN4/BfggG8FPNEWeB1IaXmu21tgnrNOgm4uXZE9vMe/PJa?=
- =?us-ascii?Q?SndU9n38bE5/8qVIMVZ3QJq3lrO9+fD/oJE9EGolcym2e5YFtzLnH8gh3xr8?=
- =?us-ascii?Q?s39q6wP9Q4XkcsKT5Tzeju5nDTMblA8R2Sc0uMrc6X/QsyAI8CCRv741rYMD?=
- =?us-ascii?Q?6CXixQS7wYpu6mEYkkDFo1nM8HgxLuorOMk1jdloFvwvBOyypaS+OTbkVYdI?=
- =?us-ascii?Q?Ag1YbyEkhIEigHvG5vpA+mN37s73+2CHsEXs0iCOQlD5heW3Lvkk+jl4aiwV?=
- =?us-ascii?Q?g80A73Uxdr2tBhrv0gtShnlzHLHg50DoJoRrDRcbWcjVWVW5pWbtle94dN4r?=
- =?us-ascii?Q?MjAYhniN1NJ/LQbWu1z2RYR4?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KkQxnKDZlCqgvxVEkPL3jeebnLDxI0gCt1a7plxauMlUe9waiyNNtBjiKsxW?=
- =?us-ascii?Q?v1olB8XFN2CjelhO0spx5x9G0ukzxyga8oSRZuincz5fln3qa3sOtWrkE07U?=
- =?us-ascii?Q?YOBQia3vsPyWIsM+8nmNyElSZO98Q/UmiWsC/9aaJ++RQoy8mpjj4RsLQG1L?=
- =?us-ascii?Q?wRo2epkx+fcgn2BomfdVujg9AMo26gKhxF1PetdYEPSpjJYDgO8ecsR8nMN0?=
- =?us-ascii?Q?lIioJ64Q4fpy5J9pX6NTPUiXxF5LX3jHgu4rRRhGGOzEngx+h/5oi9OSjkBN?=
- =?us-ascii?Q?qHuHIoW9ygso7gZ1kQF4Pvh0y+Sy224k/76SD8CpppCKwP4dpX3/QBbO4z7w?=
- =?us-ascii?Q?X9FyGYRI24zQzhcImMcmuQJneq8E5fAxMEmZRY9M+SWjM63B8apoyr4DMsnr?=
- =?us-ascii?Q?0bw2KjmGO16Z/eyje789MY28yo6LbQ9bG2TlyRzlhRNpaX4FOCBnvwATHFJL?=
- =?us-ascii?Q?zKyxAxrRtZSRXjvRP3c6ytkt5zWyXbKBXaB775o1q8g8TWQaj5edF3vIDmrz?=
- =?us-ascii?Q?9eOuEgS/2JO2j3gd1dgrOYNgYqRwgcPgIa6NBPKjcScwkpJKspjqqLI56T25?=
- =?us-ascii?Q?Lb4NJjkV5RvqZJWBVNuIQogmJwvP+YYZkqZHTZMhJL1mp97/jPsAafX+ITGv?=
- =?us-ascii?Q?ipf7BAgZ7LiH+EpHJ2axdn7e8yJtiq4yL6cJOufSFF8EgnmECpVwXWkWojFM?=
- =?us-ascii?Q?qFz20ODnw2SMaqaEkF2CRiBVIfFu1CtNp96IBPv5XP6YLSYahtrsSubDU21N?=
- =?us-ascii?Q?SIksSeRKQteryZUUTDhw2iIg4i8sCfIFg9gMPz5G6nYOjvV3TF9V7BvrlxqV?=
- =?us-ascii?Q?QFI17OTm0t8r2ud8Eedx/MDVQa9nq03MTiGWXxMcst/UkOKM8YDVnBBrOtSA?=
- =?us-ascii?Q?9H2zErOmbnOcJMIpDWNskQ4jhiS1aMefkgnRDE/gpp9bLLtbNHqB2TyBUY7v?=
- =?us-ascii?Q?+MNyu+A0dSzofJZLPnXUPdfv0uEXR6B/ebG8tcPSR3kUDppMEiaJBE3rFOiV?=
- =?us-ascii?Q?m9lyQd997qWSqkJ3RRcNn4cwB23q3y9wxAtz/ZAJUzMnj0b3LRC0ANy1hB5T?=
- =?us-ascii?Q?bIkzvld0ITT0OGwSg1ZmrRJvCBvajdkQRWNdbhvS9hiPNUn9tSHhii1j0y45?=
- =?us-ascii?Q?f6D3OhhbLeAWU3br7LhQj7XKH+4R2Tg6BbEw0dI5ijerDIykCVPkwrBr82YB?=
- =?us-ascii?Q?jFmc2VRV/wa+2ARmd5DTslLYZYgsv2u+6sYq4JDQrg8MyYr0Q++DprcgXt50?=
- =?us-ascii?Q?Zqfdzi9vXoTEacXVmx0Z5kmiSardtVM5yqUnRhQmR1iYBa3k8YizunIpDGf8?=
- =?us-ascii?Q?Df7cBQnAi0YnCClX6KeH8E1uvw7gt8Po/nWmV9yeQMcdSchaYT6tAurYR53Q?=
- =?us-ascii?Q?jGfDFAlQv8INQq9IYhtWlXeeo8OFQxcQoFLZAvt3gmdmXEVA8LBQ4wYKPSdK?=
- =?us-ascii?Q?QFcIZsBLFYXe33xpsSHiY99h807vgQaBzdkUaqFgK1PamIrbhiy1ARzOV7KN?=
- =?us-ascii?Q?KDm4YM4uiFuGtiyCWkRD2j9yGwjkZELHskNQq6ZSTTirhClNqN/06WU5Ge/F?=
- =?us-ascii?Q?QBcuY76OJ+84G0dk0G07NilWrEG7Xadvdx78gfUMLxPNwQyaW5OeS0tmkAug?=
- =?us-ascii?Q?Nw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8e72db5-5acc-49f8-6a5d-08dcefab60af
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 19:30:52.2189
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: naqO9fUGh25ntNDJtcDVu21/kE+4fxcm88h7NQNpL/kKW1vclvLxKuZgeM2Jt6spEK/Hpmoyp9EMXuWdJUiiybAFkIOHPpef8FHZeSXUevs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5003
-X-OriginatorOrg: intel.com
+References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-10-apatel@ventanamicro.com>
+In-Reply-To: <20240719160913.342027-10-apatel@ventanamicro.com>
+From: Atish Patra <atishp@atishpatra.org>
+Date: Fri, 18 Oct 2024 12:31:24 -0700
+Message-ID: <CAOnJCU+a+axzHNM=caCE7h6bvZ5Z7RTd6fxZmOgTyXGZ+p9d=g@mail.gmail.com>
+Subject: Re: [PATCH 09/13] RISC-V: KVM: Use nacl_csr_xyz() for accessing
+ H-extension CSRs
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 10:51:02AM +0200, Peter Zijlstra wrote:
->On Tue, Oct 08, 2024 at 01:34:57PM -0500, Lucas De Marchi wrote:
->> +static int parse_device(const char __user *ubuf, size_t size, u32 *instance)
->> +{
->> +	char buf[16];
->> +	ssize_t len;
->> +
->> +	if (size > sizeof(buf) - 1)
->> +		return -E2BIG;
->> +
->> +	len = strncpy_from_user(buf, ubuf, sizeof(buf));
->> +	if (len < 0 || len >= sizeof(buf) - 1)
->> +		return -E2BIG;
->> +
->> +	if (kstrtou32(buf, 0, instance))
->> +		return -EINVAL;
->> +
->> +	return size;
->> +}
+On Fri, Jul 19, 2024 at 9:09=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
+> wrote:
 >
->I had to change this to:
+> When running under some other hypervisor, prefer nacl_csr_xyz()
+> for accessing H-extension CSRs in the run-loop. This makes CSR
+> access faster whenever SBI nested acceleration is available.
 >
->+static int parse_device(const char __user *ubuf, size_t size, u32 *instance)
->+{
->+       int ret = kstrtouint_from_user(ubuf, size, 0, instance);
->+       if (ret) {
->+               printk("suckage: %d\n", ret);
->+               return ret;
->+       }
->+       return size;
->+}
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  arch/riscv/kvm/mmu.c        |   4 +-
+>  arch/riscv/kvm/vcpu.c       | 103 +++++++++++++++++++++++++-----------
+>  arch/riscv/kvm/vcpu_timer.c |  28 +++++-----
+>  3 files changed, 87 insertions(+), 48 deletions(-)
 >
->because otherwise it didn't want to work for me; I kept getting garbage
->at the end and things failing. Specifically, it looked like the string
->presented by userspace was not '\0' terminated, ubuf was pointing to
->"1...garbage..." and size was 1.
+> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+> index b63650f9b966..45ace9138947 100644
+> --- a/arch/riscv/kvm/mmu.c
+> +++ b/arch/riscv/kvm/mmu.c
+> @@ -15,7 +15,7 @@
+>  #include <linux/vmalloc.h>
+>  #include <linux/kvm_host.h>
+>  #include <linux/sched/signal.h>
+> -#include <asm/csr.h>
+> +#include <asm/kvm_nacl.h>
+>  #include <asm/page.h>
+>  #include <asm/pgtable.h>
+>
+> @@ -732,7 +732,7 @@ void kvm_riscv_gstage_update_hgatp(struct kvm_vcpu *v=
+cpu)
+>         hgatp |=3D (READ_ONCE(k->vmid.vmid) << HGATP_VMID_SHIFT) & HGATP_=
+VMID;
+>         hgatp |=3D (k->pgd_phys >> PAGE_SHIFT) & HGATP_PPN;
+>
+> -       csr_write(CSR_HGATP, hgatp);
+> +       ncsr_write(CSR_HGATP, hgatp);
+>
+>         if (!kvm_riscv_gstage_vmid_bits())
+>                 kvm_riscv_local_hfence_gvma_all();
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index 957e1a5e081b..00baaf1b0136 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -17,8 +17,8 @@
+>  #include <linux/sched/signal.h>
+>  #include <linux/fs.h>
+>  #include <linux/kvm_host.h>
+> -#include <asm/csr.h>
+>  #include <asm/cacheflush.h>
+> +#include <asm/kvm_nacl.h>
+>  #include <asm/kvm_vcpu_vector.h>
+>
+>  #define CREATE_TRACE_POINTS
+> @@ -361,10 +361,10 @@ void kvm_riscv_vcpu_sync_interrupts(struct kvm_vcpu=
+ *vcpu)
+>         struct kvm_vcpu_csr *csr =3D &vcpu->arch.guest_csr;
+>
+>         /* Read current HVIP and VSIE CSRs */
+> -       csr->vsie =3D csr_read(CSR_VSIE);
+> +       csr->vsie =3D ncsr_read(CSR_VSIE);
+>
+>         /* Sync-up HVIP.VSSIP bit changes does by Guest */
+> -       hvip =3D csr_read(CSR_HVIP);
+> +       hvip =3D ncsr_read(CSR_HVIP);
+>         if ((csr->hvip ^ hvip) & (1UL << IRQ_VS_SOFT)) {
+>                 if (hvip & (1UL << IRQ_VS_SOFT)) {
+>                         if (!test_and_set_bit(IRQ_VS_SOFT,
+> @@ -561,26 +561,49 @@ static void kvm_riscv_vcpu_setup_config(struct kvm_=
+vcpu *vcpu)
+>
+>  void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+>  {
+> +       void *nsh;
+>         struct kvm_vcpu_csr *csr =3D &vcpu->arch.guest_csr;
+>         struct kvm_vcpu_config *cfg =3D &vcpu->arch.cfg;
+>
+> -       csr_write(CSR_VSSTATUS, csr->vsstatus);
+> -       csr_write(CSR_VSIE, csr->vsie);
+> -       csr_write(CSR_VSTVEC, csr->vstvec);
+> -       csr_write(CSR_VSSCRATCH, csr->vsscratch);
+> -       csr_write(CSR_VSEPC, csr->vsepc);
+> -       csr_write(CSR_VSCAUSE, csr->vscause);
+> -       csr_write(CSR_VSTVAL, csr->vstval);
+> -       csr_write(CSR_HEDELEG, cfg->hedeleg);
+> -       csr_write(CSR_HVIP, csr->hvip);
+> -       csr_write(CSR_VSATP, csr->vsatp);
+> -       csr_write(CSR_HENVCFG, cfg->henvcfg);
+> -       if (IS_ENABLED(CONFIG_32BIT))
+> -               csr_write(CSR_HENVCFGH, cfg->henvcfg >> 32);
+> -       if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN)) {
+> -               csr_write(CSR_HSTATEEN0, cfg->hstateen0);
+> +       if (kvm_riscv_nacl_sync_csr_available()) {
+> +               nsh =3D nacl_shmem();
+> +               nacl_csr_write(nsh, CSR_VSSTATUS, csr->vsstatus);
+> +               nacl_csr_write(nsh, CSR_VSIE, csr->vsie);
+> +               nacl_csr_write(nsh, CSR_VSTVEC, csr->vstvec);
+> +               nacl_csr_write(nsh, CSR_VSSCRATCH, csr->vsscratch);
+> +               nacl_csr_write(nsh, CSR_VSEPC, csr->vsepc);
+> +               nacl_csr_write(nsh, CSR_VSCAUSE, csr->vscause);
+> +               nacl_csr_write(nsh, CSR_VSTVAL, csr->vstval);
+> +               nacl_csr_write(nsh, CSR_HEDELEG, cfg->hedeleg);
+> +               nacl_csr_write(nsh, CSR_HVIP, csr->hvip);
+> +               nacl_csr_write(nsh, CSR_VSATP, csr->vsatp);
+> +               nacl_csr_write(nsh, CSR_HENVCFG, cfg->henvcfg);
+> +               if (IS_ENABLED(CONFIG_32BIT))
+> +                       nacl_csr_write(nsh, CSR_HENVCFGH, cfg->henvcfg >>=
+ 32);
+> +               if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN)=
+) {
+> +                       nacl_csr_write(nsh, CSR_HSTATEEN0, cfg->hstateen0=
+);
+> +                       if (IS_ENABLED(CONFIG_32BIT))
+> +                               nacl_csr_write(nsh, CSR_HSTATEEN0H, cfg->=
+hstateen0 >> 32);
+> +               }
+> +       } else {
+> +               csr_write(CSR_VSSTATUS, csr->vsstatus);
+> +               csr_write(CSR_VSIE, csr->vsie);
+> +               csr_write(CSR_VSTVEC, csr->vstvec);
+> +               csr_write(CSR_VSSCRATCH, csr->vsscratch);
+> +               csr_write(CSR_VSEPC, csr->vsepc);
+> +               csr_write(CSR_VSCAUSE, csr->vscause);
+> +               csr_write(CSR_VSTVAL, csr->vstval);
+> +               csr_write(CSR_HEDELEG, cfg->hedeleg);
+> +               csr_write(CSR_HVIP, csr->hvip);
+> +               csr_write(CSR_VSATP, csr->vsatp);
+> +               csr_write(CSR_HENVCFG, cfg->henvcfg);
+>                 if (IS_ENABLED(CONFIG_32BIT))
+> -                       csr_write(CSR_HSTATEEN0H, cfg->hstateen0 >> 32);
+> +                       csr_write(CSR_HENVCFGH, cfg->henvcfg >> 32);
+> +               if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN)=
+) {
+> +                       csr_write(CSR_HSTATEEN0, cfg->hstateen0);
+> +                       if (IS_ENABLED(CONFIG_32BIT))
+> +                               csr_write(CSR_HSTATEEN0H, cfg->hstateen0 =
+>> 32);
+> +               }
+>         }
+>
+>         kvm_riscv_gstage_update_hgatp(vcpu);
+> @@ -603,6 +626,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cp=
+u)
+>
+>  void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>  {
+> +       void *nsh;
+>         struct kvm_vcpu_csr *csr =3D &vcpu->arch.guest_csr;
+>
+>         vcpu->cpu =3D -1;
+> @@ -618,15 +642,28 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>                                          vcpu->arch.isa);
+>         kvm_riscv_vcpu_host_vector_restore(&vcpu->arch.host_context);
+>
+> -       csr->vsstatus =3D csr_read(CSR_VSSTATUS);
+> -       csr->vsie =3D csr_read(CSR_VSIE);
+> -       csr->vstvec =3D csr_read(CSR_VSTVEC);
+> -       csr->vsscratch =3D csr_read(CSR_VSSCRATCH);
+> -       csr->vsepc =3D csr_read(CSR_VSEPC);
+> -       csr->vscause =3D csr_read(CSR_VSCAUSE);
+> -       csr->vstval =3D csr_read(CSR_VSTVAL);
+> -       csr->hvip =3D csr_read(CSR_HVIP);
+> -       csr->vsatp =3D csr_read(CSR_VSATP);
+> +       if (kvm_riscv_nacl_available()) {
 
-oh... it's the sysfs (that PCI drivers use) that is guaranteed to be
-nul-terminated. debugfs is not. And it probably worked for me because of
-CONFIG_INIT_STACK_ALL_ZERO=y that comes from my distro.
+Should we leave a comment here why ncsr_read is not efficient here
+i.e. due to block access ?
 
-and this version is also shorter and simpler.
+> +               nsh =3D nacl_shmem();
+> +               csr->vsstatus =3D nacl_csr_read(nsh, CSR_VSSTATUS);
+> +               csr->vsie =3D nacl_csr_read(nsh, CSR_VSIE);
+> +               csr->vstvec =3D nacl_csr_read(nsh, CSR_VSTVEC);
+> +               csr->vsscratch =3D nacl_csr_read(nsh, CSR_VSSCRATCH);
+> +               csr->vsepc =3D nacl_csr_read(nsh, CSR_VSEPC);
+> +               csr->vscause =3D nacl_csr_read(nsh, CSR_VSCAUSE);
+> +               csr->vstval =3D nacl_csr_read(nsh, CSR_VSTVAL);
+> +               csr->hvip =3D nacl_csr_read(nsh, CSR_HVIP);
+> +               csr->vsatp =3D nacl_csr_read(nsh, CSR_VSATP);
+> +       } else {
+> +               csr->vsstatus =3D csr_read(CSR_VSSTATUS);
+> +               csr->vsie =3D csr_read(CSR_VSIE);
+> +               csr->vstvec =3D csr_read(CSR_VSTVEC);
+> +               csr->vsscratch =3D csr_read(CSR_VSSCRATCH);
+> +               csr->vsepc =3D csr_read(CSR_VSEPC);
+> +               csr->vscause =3D csr_read(CSR_VSCAUSE);
+> +               csr->vstval =3D csr_read(CSR_VSTVAL);
+> +               csr->hvip =3D csr_read(CSR_HVIP);
+> +               csr->vsatp =3D csr_read(CSR_VSATP);
+> +       }
+>  }
+>
+>  static void kvm_riscv_check_vcpu_requests(struct kvm_vcpu *vcpu)
+> @@ -681,7 +718,7 @@ static void kvm_riscv_update_hvip(struct kvm_vcpu *vc=
+pu)
+>  {
+>         struct kvm_vcpu_csr *csr =3D &vcpu->arch.guest_csr;
+>
+> -       csr_write(CSR_HVIP, csr->hvip);
+> +       ncsr_write(CSR_HVIP, csr->hvip);
+>         kvm_riscv_vcpu_aia_update_hvip(vcpu);
+>  }
+>
+> @@ -728,7 +765,9 @@ static void noinstr kvm_riscv_vcpu_enter_exit(struct =
+kvm_vcpu *vcpu)
+>         kvm_riscv_vcpu_swap_in_guest_state(vcpu);
+>         guest_state_enter_irqoff();
+>
+> -       hcntx->hstatus =3D csr_swap(CSR_HSTATUS, gcntx->hstatus);
+> +       hcntx->hstatus =3D ncsr_swap(CSR_HSTATUS, gcntx->hstatus);
+> +
+> +       nsync_csr(-1UL);
+>
+>         __kvm_riscv_switch_to(&vcpu->arch);
+>
+> @@ -863,8 +902,8 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
+>                 trap.sepc =3D vcpu->arch.guest_context.sepc;
+>                 trap.scause =3D csr_read(CSR_SCAUSE);
+>                 trap.stval =3D csr_read(CSR_STVAL);
+> -               trap.htval =3D csr_read(CSR_HTVAL);
+> -               trap.htinst =3D csr_read(CSR_HTINST);
+> +               trap.htval =3D ncsr_read(CSR_HTVAL);
+> +               trap.htinst =3D ncsr_read(CSR_HTINST);
+>
+>                 /* Syncup interrupts state with HW */
+>                 kvm_riscv_vcpu_sync_interrupts(vcpu);
+> diff --git a/arch/riscv/kvm/vcpu_timer.c b/arch/riscv/kvm/vcpu_timer.c
+> index 75486b25ac45..96e7a4e463f7 100644
+> --- a/arch/riscv/kvm/vcpu_timer.c
+> +++ b/arch/riscv/kvm/vcpu_timer.c
+> @@ -11,8 +11,8 @@
+>  #include <linux/kvm_host.h>
+>  #include <linux/uaccess.h>
+>  #include <clocksource/timer-riscv.h>
+> -#include <asm/csr.h>
+>  #include <asm/delay.h>
+> +#include <asm/kvm_nacl.h>
+>  #include <asm/kvm_vcpu_timer.h>
+>
+>  static u64 kvm_riscv_current_cycles(struct kvm_guest_timer *gt)
+> @@ -72,12 +72,12 @@ static int kvm_riscv_vcpu_timer_cancel(struct kvm_vcp=
+u_timer *t)
+>  static int kvm_riscv_vcpu_update_vstimecmp(struct kvm_vcpu *vcpu, u64 nc=
+ycles)
+>  {
+>  #if defined(CONFIG_32BIT)
+> -               csr_write(CSR_VSTIMECMP, ncycles & 0xFFFFFFFF);
+> -               csr_write(CSR_VSTIMECMPH, ncycles >> 32);
+> +       ncsr_write(CSR_VSTIMECMP, ncycles & 0xFFFFFFFF);
+> +       ncsr_write(CSR_VSTIMECMPH, ncycles >> 32);
+>  #else
+> -               csr_write(CSR_VSTIMECMP, ncycles);
+> +       ncsr_write(CSR_VSTIMECMP, ncycles);
+>  #endif
+> -               return 0;
+> +       return 0;
+>  }
+>
+>  static int kvm_riscv_vcpu_update_hrtimer(struct kvm_vcpu *vcpu, u64 ncyc=
+les)
+> @@ -289,10 +289,10 @@ static void kvm_riscv_vcpu_update_timedelta(struct =
+kvm_vcpu *vcpu)
+>         struct kvm_guest_timer *gt =3D &vcpu->kvm->arch.timer;
+>
+>  #if defined(CONFIG_32BIT)
+> -       csr_write(CSR_HTIMEDELTA, (u32)(gt->time_delta));
+> -       csr_write(CSR_HTIMEDELTAH, (u32)(gt->time_delta >> 32));
+> +       ncsr_write(CSR_HTIMEDELTA, (u32)(gt->time_delta));
+> +       ncsr_write(CSR_HTIMEDELTAH, (u32)(gt->time_delta >> 32));
+>  #else
+> -       csr_write(CSR_HTIMEDELTA, gt->time_delta);
+> +       ncsr_write(CSR_HTIMEDELTA, gt->time_delta);
+>  #endif
+>  }
+>
+> @@ -306,10 +306,10 @@ void kvm_riscv_vcpu_timer_restore(struct kvm_vcpu *=
+vcpu)
+>                 return;
+>
+>  #if defined(CONFIG_32BIT)
+> -       csr_write(CSR_VSTIMECMP, (u32)t->next_cycles);
+> -       csr_write(CSR_VSTIMECMPH, (u32)(t->next_cycles >> 32));
+> +       ncsr_write(CSR_VSTIMECMP, (u32)t->next_cycles);
+> +       ncsr_write(CSR_VSTIMECMPH, (u32)(t->next_cycles >> 32));
+>  #else
+> -       csr_write(CSR_VSTIMECMP, t->next_cycles);
+> +       ncsr_write(CSR_VSTIMECMP, t->next_cycles);
+>  #endif
+>
+>         /* timer should be enabled for the remaining operations */
+> @@ -327,10 +327,10 @@ void kvm_riscv_vcpu_timer_sync(struct kvm_vcpu *vcp=
+u)
+>                 return;
+>
+>  #if defined(CONFIG_32BIT)
+> -       t->next_cycles =3D csr_read(CSR_VSTIMECMP);
+> -       t->next_cycles |=3D (u64)csr_read(CSR_VSTIMECMPH) << 32;
+> +       t->next_cycles =3D ncsr_read(CSR_VSTIMECMP);
+> +       t->next_cycles |=3D (u64)ncsr_read(CSR_VSTIMECMPH) << 32;
+>  #else
+> -       t->next_cycles =3D csr_read(CSR_VSTIMECMP);
+> +       t->next_cycles =3D ncsr_read(CSR_VSTIMECMP);
+>  #endif
+>  }
+>
+> --
+> 2.34.1
+>
 
-thanks
-Lucas De Marchi
+Otherwise, LGTM.
+
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
+
+--=20
+Regards,
+Atish
 
