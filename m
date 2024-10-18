@@ -1,112 +1,87 @@
-Return-Path: <linux-kernel+bounces-371780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2EAB9A4039
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:44:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A7C39A4042
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D9E81C249C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:44:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B084287B14
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638AE2036F9;
-	Fri, 18 Oct 2024 13:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDDA1F4262;
+	Fri, 18 Oct 2024 13:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2AkFMk4m"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R10EhPlt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA6B20264A
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38F7204082;
+	Fri, 18 Oct 2024 13:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729258898; cv=none; b=vB03l5pZZRT4ZBrwJSi1/o1B2HH/7zXhLxRW7MSF0/2u1iKZb0wHCKt05d0LPVcfaMEdo0C6U4EaMT1rw5kMuuuOZwI6xH5dWsVwotjeWopfcirvxqHMpn6Vt/LbZ5SltmhyHkXSBtI1c505qBRw9TJizu5qTMhiaL4paAl1h4o=
+	t=1729258911; cv=none; b=TXFRUDlhp4YDFZPNmP9co6yy7QqhScVRTvMZ1giQ2BtJ7nayJDGYTG2UJzQMZ8lgxn25yZHFKr6iuNhaaZ3m4ET3L+9148pmDadqOMTEKu1l3JaxzSFGlvvcPrHS20lRnmiBwIGTAHt06+tJjfaVIYG5nM42oLsLkLZDKaX5mI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729258898; c=relaxed/simple;
-	bh=kh5oD6A/6KbJFilOKOiK9/PajEa/k9LBfHKTJY9YqPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bSWQK0ygzxPA0z1kr3CK1Ku1YmNMY+Xz/nDH9/+bKJDSbhhfM0ZW/YKNpexhTCDv/xiRAZbUEC1GE77+UGhOPyRljt31TAd8Mk1l0dWMJJXH7q4AvOK6dVPXQ3gUVOx8RwiC86lwDaymoCknc4wTOP6oBiBMwj7Hl5MUU+HW49M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2AkFMk4m; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e67d12d04so1614368b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 06:41:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729258896; x=1729863696; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b1VnLrCVNMejlDWuQ0DoAd9DQoJYLg29l4ybJKv1YpA=;
-        b=2AkFMk4m5Ug+e2Ms8pjJir9IVANUVVyJLnI+ghfFL+hXBtnHRUFLuemfkclOjGLuqB
-         cUMMMp3vpKvpPSsgxZ89sVpWYcID3kgiZ5OYsyKMReeZgbvGu1tU7Ozwghbevu1Omavr
-         ibJxE5ikX+0J/5GOfWAEsaZVXcp1Xvv6BNufy7CKI/LpNgSvFrDIlM59zVgoZwJEp1Jy
-         J2O7B1jEvO4zUj5CR1ggpkovsjbW/NWpAnm8AKvp5xDj3+q5euZnbSRATuu+uCcRDA0k
-         jhTAKvq2izosVHso3xUJftPtFuc2fOHS7S9YHD80fIdheaaZBlJhcD3yIPFCPGOJ1ftm
-         cYPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729258896; x=1729863696;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b1VnLrCVNMejlDWuQ0DoAd9DQoJYLg29l4ybJKv1YpA=;
-        b=TJ03UqvErGR29h0dBN/SgNIZo6v2XOCsK+6AysXLA5ePRb2ShsQ0HVZWTaOKSsQ/+1
-         wiaH8sfe3PzzyulbkVRCHC5N5P0h7v4zFcnI83mDaD5ZN9/4bGE5K/KIQCpJ9IIHTUxh
-         kvMUG3Ej6qQLGelRjgzZ7nZoFi5W1t3MJANJtUtSZq60B3hAXPf6EeLH731ab2ABpSrI
-         cTGL50ZRTZvIku1WBfGtD+NeVvUzAF9StqeBujpG0MReaiFYGPBJE4KEmRkgVm1ffCuz
-         4AqeNuEQhEZ4XUD3ObD3wsbpIgymqBHhVgKWYWqWpBnKMos0PXqD1B6idURtRUtxXl4/
-         H/Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlWo7IQgcn6gyWDPLl1qZVY1i2yLMJmAnjoZVR425xtNeTeTAwb614h8DYi+CIAVo+opUvL7tFMaLorfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAljKGLy8FGnAIf4BE6e77tPPC8JFKq188Dg7eyIZ9PEWvuVQX
-	NttO1oftZ9gobG91N8StzUtmGnV4iFkLh69SiUQzcs371OyOA6rsIet6H+8ZzA0=
-X-Google-Smtp-Source: AGHT+IG1/mO3+HiIvU3+IE0QD88Z1xxPcN2N+LR7fjbokMxSsXIpqBDobU3fEylpeyFNFDelrHqPNg==
-X-Received: by 2002:a05:6a00:2d8d:b0:71e:4cff:2654 with SMTP id d2e1a72fcca58-71ea31d289dmr3631082b3a.6.1729258896041;
-        Fri, 18 Oct 2024 06:41:36 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea3409928sm1420212b3a.113.2024.10.18.06.41.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 06:41:35 -0700 (PDT)
-Message-ID: <9e42e6a2-f6ad-4fb5-af9b-72d0c7f6889b@kernel.dk>
-Date: Fri, 18 Oct 2024 07:41:33 -0600
+	s=arc-20240116; t=1729258911; c=relaxed/simple;
+	bh=21eSaiMs6bSA+M6WRqtBWIC4lt+Jg5SW91YTEzH4tjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zo/J5noc1yz3RT7sQSq3GIjWK1jQGWLtsh/BusSd91Nkf3iAyCAgtOo37T+l1/tD/f1zdEgKsLOhLsNIFd324DPLiwQUO/MvkVGcNXlHdp7xMvRtePqgzdP6eZiOEMNH1tSkIxQ/ujY0TFqmzbVDf3Y57s7S0uglK+iZhAjztcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R10EhPlt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F52FC4CEC3;
+	Fri, 18 Oct 2024 13:41:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729258911;
+	bh=21eSaiMs6bSA+M6WRqtBWIC4lt+Jg5SW91YTEzH4tjw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R10EhPltK9KfY0zks8SwL8MVMReYrC6YguS+yuDtHf1G5wxkCtaZWjLa0b2W4eWol
+	 oJT+TGrdWEQnUCxvmmnO1EpEQas1W53Z+3Q+2cGE3W/Anmat8nj1WBNME5gRLTQxRn
+	 zoUDjpdimAN+FuRKIyoM0vtjxGnPLBYH4Hf21fe5NHAAwWLLBaIoXg4CQFomGawJoV
+	 dBKE09EAOwbxmGxQ0XIKIl8ymUMJ+k+29UJgHhCqjv9F7SkHJFn5KcTc507n9SBxwm
+	 Gr4axDNR3QUlvi8jz8xl3dEraOhGI0q0z4YBMBIP61R3xhY7qersRTaCkct7kfTbdO
+	 Cyj2sGSgAQ0Kg==
+Date: Fri, 18 Oct 2024 08:41:50 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Roger Quadros <rogerq@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-omap@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>
+Subject: Re: [PATCH v3 2/2] dt-bindings: clock: ti: Convert divider.txt to
+ json-schema
+Message-ID: <172925890948.85490.14873977244491233773.robh@kernel.org>
+References: <20241018085347.95071-1-andreas@kemnade.info>
+ <20241018085347.95071-3-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/8] block atomic writes for xfs
-To: John Garry <john.g.garry@oracle.com>, cem@kernel.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, hare@suse.de,
- martin.petersen@oracle.com, catherine.hoang@oracle.com, mcgrof@kernel.org,
- ritesh.list@gmail.com, ojaswin@linux.ibm.com, brauner@kernel.org,
- djwong@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- dchinner@redhat.com, hch@lst.de
-References: <20241016100325.3534494-1-john.g.garry@oracle.com>
- <8107c05d-1222-4e47-bbcd-eba64e085669@oracle.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <8107c05d-1222-4e47-bbcd-eba64e085669@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018085347.95071-3-andreas@kemnade.info>
 
-On 10/18/24 3:29 AM, John Garry wrote:
-> On 16/10/2024 11:03, John Garry wrote:
-> 
-> Hi Jens,
-> 
-> There are block changes in this series. I was going to ask Carlos to
-> queue this work via the XFS tree, so can you let me know whether you
-> have any issue with those (block) changes. There is a fix included,
-> which I can manually backport to stable (if not autoselected).
-> 
-> Note that I still plan on sending a v10 for this series, to fix a
-> small documentation issue which Darrick noticed.
 
-To avoid conflicts, let's do a separate branch that we can both pull in.
-I'll take a closer look and set that up once you post v10.
+On Fri, 18 Oct 2024 10:53:47 +0200, Andreas Kemnade wrote:
+> Convert the OMAP divider clock device tree binding to json-schema.
+> Specify the creator of the original binding as a maintainer.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  .../bindings/clock/ti/composite.txt           |   2 +-
+>  .../devicetree/bindings/clock/ti/divider.txt  | 115 -----------
+>  .../bindings/clock/ti/ti,divider-clock.yaml   | 193 ++++++++++++++++++
+>  3 files changed, 194 insertions(+), 116 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti/divider.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
+> 
 
--- 
-Jens Axboe
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
