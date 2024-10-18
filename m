@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-371432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4AD9A3B02
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:11:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F52B9A3B3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8661C222F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D111F2684D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E35201108;
-	Fri, 18 Oct 2024 10:11:03 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC5D201253;
+	Fri, 18 Oct 2024 10:17:31 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8612010E3
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC516201105;
+	Fri, 18 Oct 2024 10:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729246263; cv=none; b=HfA3P3K79kOql6qBTQFg8aCH0DbwxjGVXMohOlKFmaPkoTPIYhuDlKH/KM8GXfb1ndkcSWFV/YvXgP1Ruzjcg3vqLx2xXaCzbPqwkLylNpUhjf8hcYphbgrBNRRmDV8KtNk6QIt91CGfAC17qpHRVkiLM5UDKWf9I4xi1n1Tf04=
+	t=1729246650; cv=none; b=nCTvL/YHmtsk7+8pi3O6qkb19MWhkwjm92JwoxhFw7eKjzOYEe8hcGtd2DEkozBZpkTLQzHsUWUvp/psTbJpZAn78A9cDSMOG+fYr8FMvxa645333OxnxeKl7F9KGOqZPg7KRIUyQCpFzZZ87MBlX9tIyNZrhniJqEy6FGR1Dgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729246263; c=relaxed/simple;
-	bh=x43sJi0dOKoOBeDWC6bZvnawZIwckrCVEOgJLmdwhZU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tR7nv72tk+S+xEMY4gRPI65oE9EgxCVYZbmqd5STrZSglXp+hdvDyNmMq0fqyt1t4gfEhk0nD/6f7jdEoWlT7KIrZCtVTUBSkY+Ym1+953ldAf2y911o6FmwJ/7IL8q1eW3lCgicOqWkmBEam/b621sVKBuxEx5QojJlm/Noimk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+	s=arc-20240116; t=1729246650; c=relaxed/simple;
+	bh=sPlNRJ4iB0rTlHTKUhqZHx3dCitEzP2AnfeECVBMu+I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FS/GywkhCp1W40/X6pGqES4KeKzd+bN16vlUvYz04vndK5iuRKnkRXxqigcy//qidoQzbNMq+kClY9fVY9lVBtUENkHooMANZv11FalC2ljktYaOidMpekDO6OaJpikXuQPGjjSHB1DLGQPvDhaHEoXPa1BcHx11IDQI70wQTsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XVL5V3Nhyz1T8sv;
-	Fri, 18 Oct 2024 18:09:02 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 854F81800D5;
-	Fri, 18 Oct 2024 18:10:57 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 18 Oct
- 2024 18:10:56 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <christian.koenig@amd.com>, <ray.huang@amd.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<karolina.stolarek@intel.com>, <Arunpravin.PaneerSelvam@amd.com>,
-	<thomas.hellstrom@linux.intel.com>, <asomalap@amd.com>,
-	<ruanjinjie@huawei.com>, <quic_jjohnson@quicinc.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/ttm/tests: Fix memory leak in ttm_bo_kunit_init()
-Date: Fri, 18 Oct 2024 18:10:18 +0800
-Message-ID: <20241018101018.706555-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XVLFj3Yjtz1j9k1;
+	Fri, 18 Oct 2024 18:16:09 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1242F14010D;
+	Fri, 18 Oct 2024 18:17:26 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 18 Oct 2024 18:17:25 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <shenjian15@huawei.com>, <salil.mehta@huawei.com>
+CC: <liuyonglong@huawei.com>, <wangpeiyang1@huawei.com>,
+	<shaojijie@huawei.com>, <lanhao@huawei.com>, <chenhao418@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V2 net 0/9] There are some bugfix for the HNS3 ethernet driver
+Date: Fri, 18 Oct 2024 18:10:50 +0800
+Message-ID: <20241018101059.1718375-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-The struct file allocated in drm_gem_object_init() is not freed
-by ttm_bo_kunit_init(), which cause the folling memory leak.
+There are some bugfix for the HNS3 ethernet driver
 
-	unreferenced object 0xffffff80cb18d500 (size 360):
-	  comm "kunit_try_catch", pid 2149, jiffies 4295089512
-	  hex dump (first 32 bytes):
-	    01 00 00 00 00 00 00 00 00 00 00 00 ad 4e ad de  .............N..
-	    ff ff ff ff 00 00 00 00 ff ff ff ff ff ff ff ff  ................
-	  backtrace (crc ddf6bd5e):
-	    [<000000002be7594b>] kmemleak_alloc+0x34/0x40
-	    [<000000001b27be1f>] kmem_cache_alloc_noprof+0x254/0x2d8
-	    [<00000000405acfaa>] alloc_empty_file+0x68/0x170
-	    [<00000000dbe51815>] alloc_file_pseudo+0x108/0x1a0
-	    [<00000000949320a0>] __shmem_file_setup+0x1b4/0x25c
-	    [<000000009db3a347>] shmem_file_setup+0x30/0x3c
-	    [<0000000093e9ae86>] drm_gem_object_init+0x34/0x78
-	    [<000000007a24c4bb>] ttm_bo_kunit_init+0x1c0/0x3d8 [ttm_kunit_helpers]
-	    [<00000000ab75e6de>] 0xffffffe699023b24
-	    [<00000000cfb8042e>] kunit_try_run_case+0x13c/0x3ac
-	    [<0000000003bffcc3>] kunit_generic_run_threadfn_adapter+0x80/0xec
-	    [<000000003f986493>] kthread+0x2e8/0x374
-	    [<00000000ac1ed701>] ret_from_fork+0x10/0x20
-	......
-
-Add kunit_action_obj_fput() to fput it automatically.
-
-Cc: stable@vger.kernel.org
-Fixes: 9afc1e0aa485 ("drm/ttm/tests: Add tests for ttm_resource and ttm_sys_man")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ChangeLog:
+v1 -> v2:
+  - Pass IRQF_NO_AUTOEN to request_irq(), suggested by Jakub.
+  - Rewrite the commit logs of 'net: hns3: default enable tx bounce buffer when smmu enabled'
+    and 'net: hns3: add sync command to sync io-pgtable'.
+v1: https://lore.kernel.org/all/20241011094521.3008298-1-shaojijie@huawei.com/
+---
 
-diff --git a/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c b/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-index 9ff216ec58ef..5e1e5fe41bb9 100644
---- a/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-+++ b/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-@@ -2,6 +2,8 @@
- /*
-  * Copyright © 2023 Intel Corporation
-  */
-+#include <linux/file.h>
-+
- #include <drm/ttm/ttm_tt.h>
- 
- #include "ttm_kunit_helpers.h"
-@@ -168,6 +170,14 @@ int ttm_device_kunit_init_bad_evict(struct ttm_test_devices *priv,
- }
- EXPORT_SYMBOL_GPL(ttm_device_kunit_init_bad_evict);
- 
-+static void kunit_action_obj_fput(void *ptr)
-+{
-+	struct drm_gem_object *obj = ptr;
-+
-+	if (obj->filp)
-+		fput(obj->filp);
-+}
-+
- struct ttm_buffer_object *ttm_bo_kunit_init(struct kunit *test,
- 					    struct ttm_test_devices *devs,
- 					    size_t size,
-@@ -188,6 +198,9 @@ struct ttm_buffer_object *ttm_bo_kunit_init(struct kunit *test,
- 	err = drm_gem_object_init(devs->drm, &bo->base, size);
- 	KUNIT_ASSERT_EQ(test, err, 0);
- 
-+	err = kunit_add_action_or_reset(test, kunit_action_obj_fput, &bo->base);
-+	KUNIT_ASSERT_EQ(test, err, 0);
-+
- 	bo->bdev = devs->ttm_dev;
- 	bo->destroy = dummy_ttm_bo_destroy;
- 
+Hao Lan (4):
+  net: hns3: fixed reset failure issues caused by the incorrect reset
+    type
+  net: hns3: fix missing features due to dev->features configuration too
+    early
+  net: hns3: Resolved the issue that the debugfs query result is
+    inconsistent.
+  net: hns3: fixed hclge_fetch_pf_reg accesses bar space out of bounds
+    issue
+
+Jian Shen (3):
+  net: hns3: add sync command to sync io-pgtable
+  net: hns3: don't auto enable misc vector
+  net: hns3: initialize reset_timer before hclgevf_misc_irq_init()
+
+Jie Wang (1):
+  net: hns3: fix kernel crash when 1588 is sent on HIP08 devices
+
+Peiyang Wang (1):
+  net: hns3: default enable tx bounce buffer when smmu enabled
+
+ .../ethernet/hisilicon/hns3/hns3_debugfs.c    |  4 +-
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 59 ++++++++++++++++++-
+ .../net/ethernet/hisilicon/hns3/hns3_enet.h   |  2 +
+ .../ethernet/hisilicon/hns3/hns3_ethtool.c    | 33 +++++++++++
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 45 +++++++++++---
+ .../hisilicon/hns3/hns3pf/hclge_ptp.c         |  3 +
+ .../hisilicon/hns3/hns3pf/hclge_regs.c        |  9 +--
+ .../hisilicon/hns3/hns3vf/hclgevf_main.c      | 40 ++++++++++---
+ .../hisilicon/hns3/hns3vf/hclgevf_regs.c      |  9 +--
+ 9 files changed, 178 insertions(+), 26 deletions(-)
+
 -- 
-2.34.1
+2.33.0
 
 
