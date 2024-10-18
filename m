@@ -1,144 +1,151 @@
-Return-Path: <linux-kernel+bounces-372034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08459A4399
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:19:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9110C9A43A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 562141F24A69
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:19:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A6F0281564
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 16:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C272F2038CC;
-	Fri, 18 Oct 2024 16:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DCB2038AD;
+	Fri, 18 Oct 2024 16:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U3oTuCvq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AXqYqzwA"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426DE1D2B0E;
-	Fri, 18 Oct 2024 16:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CE8202651;
+	Fri, 18 Oct 2024 16:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729268350; cv=none; b=E+AwptEMosoIoIWggnU6uKL4c1KKpAGsBFpUCt37B+RELk2mF9IwSwt+MlvQqG/SxXBRAic7CvRFbdlGaD07LATpY0GHrmB7QO0cnixNvCL58WGkj3hj3MR+3sdReuAHzwx77dvd1inPRjSMLNUreTCwYHa+QCWELX2dY2QJVCM=
+	t=1729268431; cv=none; b=g+fIqG2eTvqsnxuqnYPPiO5jCTZvgbQflTTrQabySsITYD13eLhRSdLuH4wlyh15s7xtx05q4M1X3MeE5xjljHzVGYlUAeJxTNOZzCi7ufNkTAFpt4CkJVurPQZ6nPvYNzhKWXbEYByMVwst0dXqfiTfzGHbThjigH22Q/EaIWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729268350; c=relaxed/simple;
-	bh=tcbRbVNMWQX8Cib3Qs1Uk8S03xO7ytk4ZwFHOcQ24H8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q5vkDLB2d8JeiJ2CwDDg6NAmjCKZAqvkCD8/dhGhN6ZiAekVJZc5OtV3v06X5ndFYauQxERaHxP3CIt10f4Rjb3zc+g0IpYbqDxNs9WiuTZb677+OBxeqwXwMm2Ney6Nln1ojZFcEr5FxNxpq0vjVFk7LvhSZXMx+nhYWnrstSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U3oTuCvq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IBapIE019324;
-	Fri, 18 Oct 2024 16:19:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	X9yWHtce5E627XFATNma/BqkF4zKRZm72cz3DZRf6as=; b=U3oTuCvqdP/zwIO9
-	YkbF1eide7r77GED2LvFs9rC6Ab1LbgvvCGBX/j0N8Yz2Y3unJHbV3YlrkaO+I07
-	ZfOW3gyi2uejK3pvxVSy0IKHLec9f2xfHy/NM8i4D+5c/RmCmYQshsAlaT3afpbc
-	9viHPGbPpUF5f/D8jYdO+WAvyd1APU6ZNhTt71tvOK1fV49+c/bC4tuXivnUfixv
-	wq26cM1IyH7cYaSJPDmz9Hz7S01qgJKcB1koTrXxK3WQv8Pni7RG/RjehSQgcOa1
-	beBL/PPTEJrVs9st8SjKYOvgKWatqf3KTNHelEbSu2Q1hzJ5WDjuBvS1k0TY0iUE
-	WVNuJQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bexpa8jt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 16:18:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IGIwrs022059
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 16:18:58 GMT
-Received: from [10.216.12.9] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
- 2024 09:18:55 -0700
-Message-ID: <753a6661-9d52-93da-23a4-d33dab4a396b@quicinc.com>
-Date: Fri, 18 Oct 2024 21:48:50 +0530
+	s=arc-20240116; t=1729268431; c=relaxed/simple;
+	bh=mkVYt2W5JOK0CvpUDNHo8dPYoJDfSL/8UCOFmOypSx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3IZfFnyTAftYlM/oSUwiO8oOk8lDVd1/5kIlX4XKr1HXEZqxsq/kWxL9z66eV1VqMQ6gpzOTsIrfP62l8BEFGkXVevWhaOjSAGYQxeVomQ+ndf58fb1e0pwvnZ7k+cSRPhfSmJr/ujW3a++8uS1+98AkwLqELMqTTkzvMMDJrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AXqYqzwA; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C9A8540E015F;
+	Fri, 18 Oct 2024 16:20:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id YDifM9s0iqSI; Fri, 18 Oct 2024 16:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729268422; bh=xAbSibuOma7sKDAZvFzI/jo58IkQccgwolksqNCMrZw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AXqYqzwACXfOfbviQ0eFvl2TZ9vjOqJa7IjGA7k8wTzcpUBXvT6z3scpSlc78Al5l
+	 e3U+LTW3XTLt14U/oWiEkpWKstLPvs5tlQiIWb/wdVDwD7HOV8N+n5gQImeV3f0dRs
+	 c0kAAE0Ig0mJOcaz5szPcgjTZxbFEtopiFOG9f8OVECMDwjKNXo+n0U3fv12b1VHj0
+	 z90Hxin8C3MjK8kWI3bOq/7TR7eP/fvRxreYX08yZ9oSwewdHO9dZDnnyACCFJuhEm
+	 OFfQSr7LREtkK1oEqyiYbGgdWB3i+ywexHJlwAOKSlMKv077jqPT2dWSjRCDMFX3by
+	 w3Z0ODCFu84H2KCMOS5FITEuI/AYU57ca4H+4Vk/doI7lbVqn5KUZmlYsOuf8BTNJf
+	 U5VuoNMqzLbZFsApKN/hN5moZojCxEQXAQe1j74uziOn9KznkijIN7miDTwLpsNnzM
+	 XqU9mgKyzRXUvI+vFuCVHkmh4fCHAu2hPunxKio1WvR02hUmAJL9Qb6DfgAW4NM4cz
+	 Xvib9NsejahQM29aqxQWW0wZZDtkdUIbeCeKeguK8DaWd4h3J6fmA8As9FBNR0tu7u
+	 /RlczOwf8IAHA13/Xl76hFvIYnP8jJm/x8Dz0nbtbq+IsKtLBaw6olo8Js5KfX/wZV
+	 mMFEsUtI+X5qvRglS4q3VZGI=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1B37540E0169;
+	Fri, 18 Oct 2024 16:20:02 +0000 (UTC)
+Date: Fri, 18 Oct 2024 18:19:56 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: Re: [PATCH v4 02/10] x86/cpu/topology: Add CPU type to struct
+ cpuinfo_topology
+Message-ID: <20241018161956.GCZxKKrLeTg0VTdfWA@fat_crate.local>
+References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
+ <20240930-add-cpu-type-v4-2-104892b7ab5f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 2/2] wifi: ath10k: Flush only requested txq in
- ath10k_flush()
-Content-Language: en-US
-To: Remi Pommarel <repk@triplefau.lt>, <ath10k@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        Cedric
- Veilleux <veilleux.cedric@gmail.com>
-References: <cover.1728741827.git.repk@triplefau.lt>
- <3baf9565d72291a0b730d9a53fc1ee9610dcc91f.1728741827.git.repk@triplefau.lt>
-From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-In-Reply-To: <3baf9565d72291a0b730d9a53fc1ee9610dcc91f.1728741827.git.repk@triplefau.lt>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: z1Zm4QQINbQxOO4v76qhrGdKTnXXEbSa
-X-Proofpoint-ORIG-GUID: z1Zm4QQINbQxOO4v76qhrGdKTnXXEbSa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- clxscore=1015 spamscore=0 lowpriorityscore=0 mlxlogscore=999 adultscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180104
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240930-add-cpu-type-v4-2-104892b7ab5f@linux.intel.com>
 
+On Mon, Sep 30, 2024 at 07:47:24AM -0700, Pawan Gupta wrote:
+> Subject: Re: [PATCH v4 02/10] x86/cpu/topology: Add CPU type to struct...
 
+x86/cpu: ...
 
-On 10/12/2024 7:43 PM, Remi Pommarel wrote:
-> The ieee80211 flush callback can be called to flush only part of all hw
-> queues. The ath10k's flush callback implementation (i.e. ath10k_flush())
-> was waiting for all pending frames of all queues to be flushed ignoring
-> the queue parameter. Because only the queues to be flushed are stopped
-> by mac80211, skb can still be queued to other queues meanwhile. Thus
-> ath10k_flush() could fail (and wait 5sec holding ar->conf lock) even if
-> the requested queues are flushed correctly.
-> 
-> A way to reproduce the issue is to use two different APs because
-> each vdev has its own hw queue in ath10k. Connect STA0 to AP0 and STA1
-> to AP1. Then generate traffic from AP0 to STA0 and kill STA0 without
-> clean disassociation frame (e.g. unplug power cable, reboot -f, ...).
-> Now if we were to flush AP1's queue, ath10k_flush() would fail (and
-> effectively block 5 seconds with ar->conf or even wiphy's lock held)
-> with the following warning:
-> 
->   ath10k_pci 0000:01:00.0: failed to flush transmit queue (skip 0 ar-state 2): 0
-> 
-> Wait only for pending frames of the requested queues to be flushed in
-> ath10k_flush() to avoid that long blocking.
-> 
-> Reported-by: Cedric Veilleux <veilleux.cedric@gmail.com>
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> ---
->   drivers/net/wireless/ath/ath10k/htt.h    |  7 +++--
->   drivers/net/wireless/ath/ath10k/htt_tx.c | 18 ++++++++++---
->   drivers/net/wireless/ath/ath10k/mac.c    | 33 +++++++++++++++++-------
->   drivers/net/wireless/ath/ath10k/txrx.c   |  2 +-
->   4 files changed, 44 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath10k/htt.h b/drivers/net/wireless/ath/ath10k/htt.h
-> index d150f9330941..33054fc4d9fb 100644
-> --- a/drivers/net/wireless/ath/ath10k/htt.h
-> +++ b/drivers/net/wireless/ath/ath10k/htt.h
-> @@ -1870,6 +1870,7 @@ struct ath10k_htt {
->   	spinlock_t tx_lock;
->   	int max_num_pending_tx;
->   	int num_pending_tx;
-> +	int pending_per_queue[IEEE80211_MAX_QUEUES];
+is enough.
 
-Something like num_pending_per_queue[] to align with the existing
-packet counter looks better?
+> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+> index 4a686f0e5dbf..61c8336bc99b 100644
+> --- a/arch/x86/include/asm/processor.h
+> +++ b/arch/x86/include/asm/processor.h
+> @@ -105,6 +105,17 @@ struct cpuinfo_topology {
+>  	// Cache level topology IDs
+>  	u32			llc_id;
+>  	u32			l2c_id;
+> +
+> +	// Hardware defined CPU-type
+> +	union {
+> +		u32		hw_cpu_type;
+> +		struct {
+> +			/* CPUID.1A.EAX[23-0] */
 
-Vasanth
+Might as well stick to only // comments as we do those in headers now.
+
+> +			u32	intel_core_native_model_id:24;
+
+wow, that needs a whole breath to speak: "intel_core_native_model_id".
+
+"core" and "native" look like they wanna go. What is that field supposed to
+mean even?
+
+> +			/* CPUID.1A.EAX[31-24] */
+> +			u32	intel_core_type:8;
+> +		};
+> +	};
+>  };
+
+...
+
+> +enum x86_topology_hw_cpu_type topology_hw_cpu_type(struct cpuinfo_x86 *c)
+> +{
+> +	if (c->x86_vendor == X86_VENDOR_INTEL)
+> +		return c->topo.intel_core_type;
+> +
+> +	return c->topo.hw_cpu_type;
+
+Huh, the other vendors are not enabled. This should return
+TOPO_HW_CPU_TYPE_UNKNOWN then.
+
+I know, it does but make explicit pls.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
