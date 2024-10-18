@@ -1,680 +1,235 @@
-Return-Path: <linux-kernel+bounces-372225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5A19A45D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:26:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8D09A45DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 20:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C4E61F238AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:26:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A38A1C25BA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 18:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B44204F85;
-	Fri, 18 Oct 2024 18:25:11 +0000 (UTC)
-Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52862205AA0;
+	Fri, 18 Oct 2024 18:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="WsDnDGek"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11020082.outbound.protection.outlook.com [52.101.56.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF9C180A80;
-	Fri, 18 Oct 2024 18:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729275910; cv=none; b=Iiv6NYPW2cLfdPrP3xsgLBx+a+FJ7s2uSZ87VMMbdysnhTQ9sPA8EkoJOBVgFjOf+maMi+EMSwjynUmaUlYFp+D3kSSIYkVYND8txqZ9cNLBzDw1iRoT5e5TVNrbL2zW0K2cAoOHcKVOt+Ynl8KQNZ90v5zXMCkDmHGCoTzGi0I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729275910; c=relaxed/simple;
-	bh=7p1ablzyG42LmGvPcr0ySAJxvdlNjDyIH/CHDwMrNnM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nF/exOzCYwVlPyVMI0gAiWWAs1Inys9/UtWRRUluc6S5O1tR08ePxi3wAjQPNS8W8hGEQ9kinPYH0BpbkfBSeEtQ+RhDE7rLevSrd4o/QhUiIlgrx1b9gL+I6CS4r9OnKf8x1ZZDrOpOh8T3o88OUGazg+EWOx1Fi65PjTbTCNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
-	by finn.localdomain with esmtp (Exim 4.95)
-	(envelope-from <tharvey@gateworks.com>)
-	id 1t1rep-0013QU-U3;
-	Fri, 18 Oct 2024 18:25:04 +0000
-From: Tim Harvey <tharvey@gateworks.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CC42040B2;
+	Fri, 18 Oct 2024 18:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729275939; cv=fail; b=YGUEW9z5U/Iotw8UoFmPKwV+767XdfOUetuzPxuXtjyf846M1g4WR6r0xVMd5umICvkpvQTjy+ykKH+HFoGFxuFeuOTQCYJJ5Pop/Dc0drC12RKBfipSAcygzPtAYhMTfwWEUt1RGDqtZhbKUMzTx6YW09HX4BgrPGtt/sfqo5o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729275939; c=relaxed/simple;
+	bh=c6DB9xS7MRcLqZIxINVRaAbmf/GxDb/O6l8n5lOkfvs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=QIm7xlb8zhlSvYFkfECHoVdwEtkuk/WE3hVUOpyG0S8upcDrabYusYHgBJrT6UPk3nTa08cwzrI9vCn29opaejZTH/SFvh4dd8Xoj3qhoswF3HwNwO6pbp7kMpXyVOk1nvIGRQOtsEYo3FQQ4KVEYSgZx79HmvANXj2TYwT7Cws=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=WsDnDGek; arc=fail smtp.client-ip=52.101.56.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wsGag66tGwIXGB286rLt0roU58QOXagXAd5RrC182FiFqV0T4MFu/DFM68hQ4XwLueGjgKs89ScVMtQHPoj0abESNxco0VEBkkCzLBXQ2Bbvsm+/CJ0FBsJGfA8fLfN/ieGcgD0OjUwVj6oUw5Z7cEaevLEGSeQGFgXLkgUu2wUUfuBX2JzuOV1pNaQZor2XAf9/JozmBX6omPzebG+Ls4uhD88WuHKjg2udXomWfxjNremHodPaYHQRYXaEE2clc8pO9uaR55JNszSs6EfOtTrfB0iJgZxcqPZFK8T9IyyLCWBzzkvF/ckDZHTTqBHJBF+EYMFWhYvSgOCk4c0Lmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=il99dkPd0kNT29Ru6xUAHWsS81Z3wRoyekGNbgkUCWc=;
+ b=u8zzQ7n40ZWOhB9nLLvYWC/ooNeNi1/NIE7FjPnDhsJGPZI4DR7Mp91n944fA41yoBLZS0+3+2ttGNgMtWb86kwwjBHQ+svaXMjfX3tAG4mHWIGDlIeJfcR4fLXbdHwdTQfA+kZPW9kR4YY2xxE+k8tB29jbtq9aCKgMUHzVMpVX7bOuh9q4j65U+m3MXGG4harz4z6LSmtKdpZys8vg0NB7ZxjUWWdFToMoSwp8R9Bp2Urf2Gq2ABq9tulgDAPUtKaar+35FpGR+ti+ufQFa+hzekC2DPRNW/DWjCY7MlxrkY9x8FM82bu1OTVSV/TDUdpHJXGno0D6mGeVuMJGTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=il99dkPd0kNT29Ru6xUAHWsS81Z3wRoyekGNbgkUCWc=;
+ b=WsDnDGekYYjrFMIxi9baWx04X0YjlQf+pg0vLbqSSRWrk6lTmQsUR1PyFKzKFcukhSTHB579NGmtbw88nvIZzIawtjIWusS099c03af8SIGbSLk7MXlgNqqRbhG6KFwNorNCgW3MJGAV0pgz9GVtNZfLOwsWp9etluFxszfbU5o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+Received: from BY5PR21MB1443.namprd21.prod.outlook.com (2603:10b6:a03:21f::18)
+ by BY1PR21MB3893.namprd21.prod.outlook.com (2603:10b6:a03:52d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.11; Fri, 18 Oct
+ 2024 18:25:35 +0000
+Received: from BY5PR21MB1443.namprd21.prod.outlook.com
+ ([fe80::2c5a:1a34:2c8d:48ef]) by BY5PR21MB1443.namprd21.prod.outlook.com
+ ([fe80::2c5a:1a34:2c8d:48ef%7]) with mapi id 15.20.8093.011; Fri, 18 Oct 2024
+ 18:25:35 +0000
+From: Haiyang Zhang <haiyangz@microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: haiyangz@microsoft.com,
+	kys@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	stephen@networkplumber.org,
+	davem@davemloft.net,
 	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Cc: Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH 2/2] arm64: dts: imx: Add i.MX8M Plus Gateworks GW82XX-2X support
-Date: Fri, 18 Oct 2024 11:24:46 -0700
-Message-Id: <20241018182444.817848-2-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241018182444.817848-1-tharvey@gateworks.com>
-References: <20241018182444.817848-1-tharvey@gateworks.com>
+	stable@vger.kernel.org
+Subject: [PATCH net,v3] hv_netvsc: Fix VF namespace also in synthetic NIC NETDEV_REGISTER event
+Date: Fri, 18 Oct 2024 11:25:22 -0700
+Message-Id: <1729275922-17595-1-git-send-email-haiyangz@microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain
+X-ClientProxiedBy: MW4P223CA0022.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:303:80::27) To BY5PR21MB1443.namprd21.prod.outlook.com
+ (2603:10b6:a03:21f::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Sender: LKML haiyangz <lkmlhyz@microsoft.com>
+X-MS-Exchange-MessageSentRepresentingType: 2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR21MB1443:EE_|BY1PR21MB3893:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2b31f0b3-9d6a-4a26-92e9-08dcefa241ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|7416014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?T8ZoJBogi0YT4pkDrQmgxdebHVgXw5E72Y42jO4adUDWWizAFIBuEMyVKmmX?=
+ =?us-ascii?Q?+JmFQ9WcNsm3OVieS9qsQTapT0FANYjmxUo1yXge7JqYjpB9KWobCxTk/I76?=
+ =?us-ascii?Q?QgygDlCLPGHhcN2Eaoi/uYQNPNnuNi8ZfJ2Skg0wUWqwJ15Wox0OANdCwL07?=
+ =?us-ascii?Q?VX/pIuUsReiArsU7lOibZd3hS4JwZfCRkVZJeT0s9q8NKeQuQlCx/Z1F/1Pq?=
+ =?us-ascii?Q?XqUgi1v1jVLjuh8BMoWmul7iO0Sn1ZsfYJbv2DQ7/vgR4PWTPnno/0MBWLRu?=
+ =?us-ascii?Q?/5Ql6bd5BBVED3+CgPSW5E2IykGbhX9cYy6Rbt3ABX71uFNgSv7CDmA7GG9q?=
+ =?us-ascii?Q?W7TQFaZ2D1YCPbvQQNrqr2v1mzuDs2S2JDjTdXNtQ+1vmHqDC6Z3frVVN7Ks?=
+ =?us-ascii?Q?we8niXC8b8Zg6UZxghFsfygpMJ0JQeLqtLwDFrk2vG6fP9G7pN7eV1u6SjdY?=
+ =?us-ascii?Q?ds0RJAolYGpcO9eq2/XSXx06Ss64P2flXsUM3NZzghTLlCn2D4TVyfIFEkfQ?=
+ =?us-ascii?Q?fH1NHO1+RTKLZ/z+NZfFEJ5maqRkkfTD/5rIBCtr4spho7FI/mIoLYFbUVcH?=
+ =?us-ascii?Q?eLx8gQRT1TO7L4QAyozlfQLW+waCz2erNkvmC3rBXpcMOvgZTkNkWX50JeC0?=
+ =?us-ascii?Q?KBQVL8sOXYX9VN+ZOOYrquRivR1zSqzqwEa7na5AO3RdswyYq9I/4Wi9CBx8?=
+ =?us-ascii?Q?Pa5ttjEpDc4mA9IQ/gjxccPFHFwEYghmq2bnEbSnFi55H1+AXLMfBlLfTBt+?=
+ =?us-ascii?Q?PGJ+X3WqYiJ8KF8blfkeQcabpM/kYqWPJwjD1A7rHWETspmBDCwtpXkt9fTQ?=
+ =?us-ascii?Q?B6+4G0L21kKkWVyHxcljwC771XV0PHAxb3LDP4Hhmty+tpNSpDSj/J2rkfi0?=
+ =?us-ascii?Q?4CUso3q1FNhY7hE5xe2ubt6dsHsw0DF/STMGA73yd58tYWUrFgyoFachHucV?=
+ =?us-ascii?Q?oviZxlJRLRviNFW0HcBGhMmYmU43AMoVIV/wXqLnuRlP/dJYM6MQnFg+5mW1?=
+ =?us-ascii?Q?G6BBnsxZ7xJp9fiKA39fguxx6yYvDFFIxBkHmyOlZ7z08l938qLmb8E386gB?=
+ =?us-ascii?Q?E4pjfU6xuD5X14vMuKwViBHsmadsCfFlep6HjhDwHumUpb9qyqqorpz3nBcc?=
+ =?us-ascii?Q?MP0gUW8CsqZn526a2oVmhhf55mSWXNYkkgXrzV7awHr25Y9n5VqiL2iDwwke?=
+ =?us-ascii?Q?PMRZ85m1YAaL1uc+CW7nU4kBsGd9Co+oTqrpBh9NBrGFTn9mJSzQ55XnV9Ga?=
+ =?us-ascii?Q?N13RqaruXEbvlsKw0odGcLHgklef1lQ1ZZJRBzxm/G0vd9M3ZVF+hrHB0WiQ?=
+ =?us-ascii?Q?4WmDglKV6eCKaqz9sWPAsQkpLENS5MFVJCXG4lf1T8URieAIPZq7a6Hv1mov?=
+ =?us-ascii?Q?U6zkzuk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR21MB1443.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?43BPD4eORsNx6/e/C9acdBOX0nEqxwn7RaJfuMfUeiI5SDcnUD9yWECoNFH1?=
+ =?us-ascii?Q?kpMn+mN45PDxZ12nD+RvUa7OCodiUEYOcmWvmbpW6ZVXaQQr1e+WIm0olHRz?=
+ =?us-ascii?Q?CXaAmT471LvLZvN+Z9mO37LdD/5NmUlor9NijP/Pon7OucbId3pj8pkXzqHh?=
+ =?us-ascii?Q?IRMfitdbOaktKeFVAMIYmRCC0UBerKeQi1PhIFCV4igjRj1tNMuCwenIc4dr?=
+ =?us-ascii?Q?etdLUViTPWAH7YzEnnX3B04aK5y3QzLOhoch3Cf69PmFzsR1NZCrm/rBzeW1?=
+ =?us-ascii?Q?fnZDpYlHG5NqZlnSw9EFXScZZLrevXuvkn9y5u6nOlfQHHCMB/Ffo37khV1P?=
+ =?us-ascii?Q?csY/evUv2o04QmF6qNkOKO7629CDKgaf6POu3Ucn58isKVvbnI3oeh2fw0Wn?=
+ =?us-ascii?Q?llOFCHa1U57LpDAR04YzRFDiYeeyw6kKdL3Ic/8LGIfnfqy/ElY1HCyKvUcr?=
+ =?us-ascii?Q?V0+3Urx+muIEw3WNSFNby/kVjp+OQ1sETjY13wglupqt/346qcqkkXjx7KCD?=
+ =?us-ascii?Q?d9h7g0gbVvHJBqAQavGdgpU1tbcgIjdsczp2U3WFRjIIeuES7CcKvMNRd2+3?=
+ =?us-ascii?Q?rDxkoNkPBiPKeOeyRH7ZCZu4d9729iFNAXCTo15Iyl+/rhxqTgM01Owz1SXz?=
+ =?us-ascii?Q?lwSM5hF4vXMjbPFak10eZSOwxylvUYzfrGlKtXYaLx9ofCUIt+A2g1klpDIR?=
+ =?us-ascii?Q?vJJPHQVLL9KhVbS2lxkzwPBqJkbE4iczjmv4wd6P2ytkNXcvkQAblQH2k/AJ?=
+ =?us-ascii?Q?NfFq3nedwYxYmA5BoPdnrxPVB5NjDL6cc0QTnXBkpNRV1aUlH77tZuzGMt97?=
+ =?us-ascii?Q?VnaSCY+r+T2mKufIlsKY68yDKWScMBnr+NL+TK6pbYLYUOkblDfD3AKiG5NW?=
+ =?us-ascii?Q?W71LXaG4hWAHZ0TZxss71Nz8kiP7CxU8d8DC3tKb+uqOoOWMKT28p9SvvAYT?=
+ =?us-ascii?Q?25tBH9aWYG3fEi10wKJtP2GbRRrhZXt7EH5t4omZd31asc6Y47uaHmlc9rr3?=
+ =?us-ascii?Q?YdF8JqIjPG4PdFpZAtcwz97S/mR6Vre/PBoDkbM2OnZyA9lLpQdzJ/1vceZe?=
+ =?us-ascii?Q?Kwtewbk6CCv6mJsoeNqfXOZUueC7xCbUIbDgA9VLOMkSZVUTUa7fBtVfy7u1?=
+ =?us-ascii?Q?wYljWJOs2DD2ocy1R3hf6nVwTJtwrAiVpK6Wnk1dSajbMab78MwRzgDTiYzm?=
+ =?us-ascii?Q?wegKzuSHZP7gMxO2ePsW8XshWOKKpdukC3DZv2P+hzuHc4N4lEjXlKbu3/8K?=
+ =?us-ascii?Q?rNSUCRQ9ygFVJPMywal4NB2HKA1mimEhbE3UDmb9F6YV1FYDAGWHBHkvKjv3?=
+ =?us-ascii?Q?OU70E0JDLE9OBQG9Rcg4NpeSuN1NAPgnp8HQ/6Tir6tvyKnKRKpKO4L5Ap+8?=
+ =?us-ascii?Q?DYT+DzEso/1aoTOJnDZlPwyFmb5LaCLIlWCGW9n7gdqvwZ/JF/zX9Tghchj3?=
+ =?us-ascii?Q?jDDOTmaLjNSb68ZQPE8J7VbchsS+vvDGtNr7hQSs+XClSQq0S/abmcnnPeGf?=
+ =?us-ascii?Q?GTtSw4+lQxrVg98dnlTRF6+ZFfuhXMthfIwAPiAn14m8joDNd9l2wiX+N43v?=
+ =?us-ascii?Q?GvyoCGsGRV0lh5DAJuVKMBvtBTtJuRT894dsuOpo?=
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b31f0b3-9d6a-4a26-92e9-08dcefa241ce
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR21MB1443.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 18:25:35.0270
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eSYngAH+iEb54bJoN6FAtVJgKvntaNtWkPRsiDHVZfB13l88y2JB9q6iU2o2jjs1DsE1TUGVaaQMOCwk0vjZfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR21MB3893
 
-The Gateworks GW82XX-2X is an ARM based single board computer (SBC)
-comprised of the i.MX8M Plus based gw702x SoM and the gw82xx baseboard
-featuring:
- - i.MX8M Plus SoC
- - LPDDR4 DRAM
- - eMMC FLASH
- - Gateworks System Controller (GSC)
- - microSD (1.8V/3.3V Capable)
- - panel status bi-color LED
- - pushbutton switch
- - fan controller with tachometer
- - USB Type-C connector
- - PCIe switch
- - 2x GbE RJ45 connectors
- - multi-protocol RS232/RS485/RS422 Serial ports
- - 2x Flexible Socket Adapters with SDIO/UART/USB/PCIe
-   (for M.2 and miniPCIe expansion)
- - 2x isolated CAN
- - GPS
- - accelerometer
- - magnetometer
- - off-board connectors for: SPI, GPIO, I2C, ADC
- - Wide range DC power input
- - support for 802.3at PoE (via adapter)
+The existing code moves VF to the same namespace as the synthetic NIC
+during netvsc_register_vf(). But, if the synthetic device is moved to a
+new namespace after the VF registration, the VF won't be moved together.
 
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+To make the behavior more consistent, add a namespace check for synthetic
+NIC's NETDEV_REGISTER event (generated during its move), and move the VF
+if it is not in the same namespace.
+
+Cc: stable@vger.kernel.org
+Fixes: c0a41b887ce6 ("hv_netvsc: move VF to same namespace as netvsc device")
+Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
 ---
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../dts/freescale/imx8mp-venice-gw82xx-2x.dts |  19 +
- .../dts/freescale/imx8mp-venice-gw82xx.dtsi   | 537 ++++++++++++++++++
- 3 files changed, 557 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx-2x.dts
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx.dtsi
+v3: Use RCT order as suggested by Simon.
+v2: Move my fix to synthetic NIC's NETDEV_REGISTER event as suggested by Stephen.
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 91b72a1d5bb8..d1f205187454 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -196,6 +196,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw72xx-2x.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw73xx-2x.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw74xx.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw75xx-2x.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw82xx-2x.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-nonwifi-dahlia.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-nonwifi-dev.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-nonwifi-ivy.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx-2x.dts b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx-2x.dts
-new file mode 100644
-index 000000000000..597813308630
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx-2x.dts
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 Gateworks Corporation
-+ */
-+
-+/dts-v1/;
-+
-+#include "imx8mp.dtsi"
-+#include "imx8mp-venice-gw702x.dtsi"
-+#include "imx8mp-venice-gw82xx.dtsi"
-+
-+/ {
-+	model = "Gateworks Venice GW82xx-2x i.MX8MP Development Kit";
-+	compatible = "gateworks,imx8mp-gw82xx-2x", "fsl,imx8mp";
-+
-+	chosen {
-+		stdout-path = &uart2;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx.dtsi
-new file mode 100644
-index 000000000000..83e7dada92f6
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx.dtsi
-@@ -0,0 +1,537 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 Gateworks Corporation
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/phy/phy-imx8-pcie.h>
-+
-+/ {
-+	aliases {
-+		ethernet1 = &eth1;
-+		fsa1 = &fsa0;
-+		fsa2 = &fsa1;
-+	};
-+
-+	led-controller {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio_leds>;
-+
-+		led-0 {
-+			function = LED_FUNCTION_STATUS;
-+			color = <LED_COLOR_ID_GREEN>;
-+			gpios = <&gpio4 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "on";
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led-1 {
-+			function = LED_FUNCTION_STATUS;
-+			color = <LED_COLOR_ID_RED>;
-+			gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+	};
-+
-+	pcie0_refclk: clock-pcie0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <100000000>;
-+	};
-+
-+	pps {
-+		compatible = "pps-gpio";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pps>;
-+		gpios = <&gpio4 3 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	reg_usb2_vbus: regulator-usb2 {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_usb2_en>;
-+		regulator-name = "usb2_vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpio4 12 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	reg_usdhc2_vmmc: regulator-usdhc2-vmmc {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_usdhc2_vmmc>;
-+		regulator-name = "VDD_3V3_SD";
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <3300000>;
-+		gpio = <&gpio2 19 0>; /* SD2_RESET */
-+		enable-active-high;
-+		off-on-delay-us = <12000>;
-+		startup-delay-us = <100>;
-+	};
-+};
-+
-+&ecspi2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_spi2>;
-+	cs-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>,	/* CS0 onboard TPM */
-+		   <&gpio5 13 GPIO_ACTIVE_LOW>, /* CS1 off-board J32 SPI */
-+		   <&gpio1 12 GPIO_ACTIVE_LOW>, /* CS3 off-board J52 FSA1 */
-+		   <&gpio4 26 GPIO_ACTIVE_LOW>; /* CS2 off-board J51 FSA2 */
-+	status = "okay";
-+
-+	tpm@0 {
-+		compatible = "atmel,attpm20p", "tcg,tpm_tis-spi";
-+		reg = <0x0>;
-+		spi-max-frequency = <10000000>;
-+	};
-+};
-+
-+&flexcan1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_can1>;
-+	status = "okay";
-+};
-+
-+&flexcan2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_can2>;
-+	status = "okay";
-+};
-+
-+&gpio1 {
-+	gpio-line-names =
-+		"", "", "", "",
-+		"", "", "", "",
-+		"", "", "", "",
-+		"", "fsa2_gpio1", "", "",
-+		"", "", "", "",
-+		"", "", "", "",
-+		"", "", "", "",
-+		"", "", "", "";
-+};
-+
-+&gpio4 {
-+	gpio-line-names =
-+		"", "", "", "",
-+		"", "", "", "",
-+		"dio1", "fsa1_gpio2", "", "dio0",
-+		"", "", "", "",
-+		"", "", "", "",
-+		"", "", "rs485_en", "rs485_term",
-+		"fsa2_gpio2", "fsa1_gpio1", "", "rs485_half",
-+		"", "", "", "";
-+};
-+
-+&i2c2 {
-+	accelerometer@19 {
-+		compatible = "st,lis2de12";
-+		reg = <0x19>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_accel>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
-+		st,drdy-int-pin = <1>;
-+	};
-+
-+	magnetometer@1e {
-+		compatible = "st,lis2mdl";
-+		reg = <0x1e>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_mag>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
-+		st,drdy-int-pin = <1>;
-+	};
-+};
-+
-+&i2c3 {
-+	i2c-mux@70 {
-+		compatible = "nxp,pca9548";
-+		reg = <0x70>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* J30 */
-+		fsa1: i2c@0 {
-+			reg = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_fsa2i2c>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			gpio@20 {
-+				compatible = "nxp,pca9555";
-+				reg = <0x20>;
-+				interrupt-parent = <&gpio4>;
-+				interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+			};
-+
-+			eeprom@54 {
-+				compatible = "atmel,24c02";
-+				reg = <0x54>;
-+				pagesize = <16>;
-+			};
-+
-+			eeprom@55 {
-+				compatible = "atmel,24c02";
-+				reg = <0x55>;
-+				pagesize = <16>;
-+			};
-+		};
-+
-+		/* J29 */
-+		fsa0: i2c@1 {
-+			reg = <1>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_fsa1i2c>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			gpio@20 {
-+				compatible = "nxp,pca9555";
-+				reg = <0x20>;
-+				interrupt-parent = <&gpio4>;
-+				interrupts = <14 IRQ_TYPE_EDGE_FALLING>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+			};
-+
-+			eeprom@54 {
-+				compatible = "atmel,24c02";
-+				reg = <0x54>;
-+				pagesize = <16>;
-+			};
-+
-+			eeprom@55 {
-+				compatible = "atmel,24c02";
-+				reg = <0x55>;
-+				pagesize = <16>;
-+			};
-+		};
-+
-+		/* J33 */
-+		i2c@2 {
-+			reg = <2>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+};
-+
-+&pcie_phy {
-+	clocks = <&pcie0_refclk>;
-+	clock-names = "ref";
-+	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_INPUT>;
-+	fsl,clkreq-unsupported;
-+	status = "okay";
-+};
-+
-+&pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pcie0>;
-+	reset-gpio = <&gpio4 29 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+
-+	pcie@0,0 {
-+		reg = <0x0000 0 0 0 0>;
-+		device_type = "pci";
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		pcie@0,0 {
-+			reg = <0x0000 0 0 0 0>;
-+			device_type = "pci";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			pcie@7,0 {
-+				reg = <0x3800 0 0 0 0>;
-+				device_type = "pci";
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				ranges;
-+
-+				eth1: ethernet@0,0 {
-+					reg = <0x0000 0 0 0 0>;
-+					#address-cells = <3>;
-+					#size-cells = <2>;
-+					ranges;
-+					local-mac-address = [00 00 00 00 00 00];
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+/* GPS */
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart1>;
-+	status = "okay";
-+};
-+
-+/* RS232 */
-+&uart4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart4>;
-+	status = "okay";
-+};
-+
-+/* USB1 - FSA1 */
-+&usb3_0 {
-+	fsl,permanently-attached;
-+	fsl,disable-port-power-control;
-+	status = "okay";
-+};
-+
-+&usb3_phy0 {
-+	status = "okay";
-+};
-+
-+&usb_dwc3_0 {
-+	adp-disable;
-+	hnp-disable;
-+	srp-disable;
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+/* USB2 - USB3.0 Hub */
-+&usb3_1 {
-+	fsl,permanently-attached;
-+	fsl,disable-port-power-control;
-+	status = "okay";
-+};
-+
-+&usb3_phy1 {
-+	vbus-supply = <&reg_usb2_vbus>;
-+	status = "okay";
-+};
-+
-+&usb_dwc3_1 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+/* SDIO 1.8V */
-+&usdhc1 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
-+	bus-width = <4>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+/* microSD */
-+&usdhc2 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
-+	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
-+	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
-+	cd-gpios = <&gpio2 12 GPIO_ACTIVE_HIGH>; /* CD is active high */
-+	bus-width = <4>;
-+	vmmc-supply = <&reg_usdhc2_vmmc>;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	pinctrl_hog: hoggrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI1_RXD6__GPIO4_IO08	0x40000146 /* DIO1 */
-+			MX8MP_IOMUXC_SAI1_TXC__GPIO4_IO11	0x40000146 /* DIO0 */
-+			MX8MP_IOMUXC_SAI2_MCLK__GPIO4_IO27	0x40000106 /* RS485_HALF */
-+			MX8MP_IOMUXC_SAI2_RXC__GPIO4_IO22	0x40000106 /* RS485_EN */
-+			MX8MP_IOMUXC_SAI2_RXD0__GPIO4_IO23	0x40000106 /* RS485_TERM */
-+		>;
-+	};
-+
-+	pinctrl_accel: accelgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI2_RXFS__GPIO4_IO21	0x150	/* IRQ# */
-+		>;
-+	};
-+
-+	pinctrl_can1: can1grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SPDIF_TX__CAN1_TX		0x154
-+			MX8MP_IOMUXC_SPDIF_RX__CAN1_RX		0x154
-+		>;
-+	};
-+
-+	pinctrl_can2: can2grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI5_RXD3__CAN2_TX		0x154
-+			MX8MP_IOMUXC_SAI5_MCLK__CAN2_RX		0x154
-+		>;
-+	};
-+
-+	pinctrl_gpio_leds: gpioledgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI1_RXC__GPIO4_IO01	0x6	/* LEDG */
-+			MX8MP_IOMUXC_SAI1_RXD3__GPIO4_IO05	0x6	/* LEDR */
-+		>;
-+	};
-+
-+	pinctrl_fsa1i2c: fsa1i2cgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI1_TXD2__GPIO4_IO14	0x1d0		/* FSA1_ALERT# */
-+			MX8MP_IOMUXC_SAI2_TXC__GPIO4_IO25	0x400001d0	/* FSA1_GPIO1 */
-+			MX8MP_IOMUXC_SAI1_RXD7__GPIO4_IO09	0x400001d0	/* FSA1_GPIO2 */
-+		>;
-+	};
-+
-+	pinctrl_fsa2i2c: fsa2i2cgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI1_RXD2__GPIO4_IO04	0x1d0		/* FSA2_ALERT# */
-+			MX8MP_IOMUXC_GPIO1_IO13__GPIO1_IO13	0x400001d0	/* FSA2_GPIO1 */
-+			MX8MP_IOMUXC_SAI2_TXFS__GPIO4_IO24	0x400001d0	/* FSA2_GPIO2 */
-+		>;
-+	};
-+
-+	pinctrl_mag: maggrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI3_RXFS__GPIO4_IO28	0x140	/* IRQ# */
-+		>;
-+	};
-+
-+	pinctrl_pcie0: pcie0grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI3_RXC__GPIO4_IO29	0x106	/* PERST# */
-+		>;
-+	};
-+
-+	pinctrl_pps: ppsgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI1_RXD1__GPIO4_IO03	0x146
-+		>;
-+	};
-+
-+	pinctrl_reg_usb2_en: regusb2grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI1_TXD0__GPIO4_IO12	0x146	/* USBHUB_RST# */
-+		>;
-+	};
-+
-+	pinctrl_spi2: spi2grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_ECSPI2_SCLK__ECSPI2_SCLK	0xd0
-+			MX8MP_IOMUXC_ECSPI2_MOSI__ECSPI2_MOSI	0xd0
-+			MX8MP_IOMUXC_ECSPI2_MISO__ECSPI2_MISO	0xd0
-+			MX8MP_IOMUXC_ECSPI2_SS0__GPIO5_IO13	0x140	/* J32_CS */
-+			MX8MP_IOMUXC_GPIO1_IO10__GPIO1_IO10	0x140	/* TPM_CS */
-+			MX8MP_IOMUXC_GPIO1_IO12__GPIO1_IO12	0x140	/* FSA1_CS */
-+			MX8MP_IOMUXC_SAI2_TXD0__GPIO4_IO26	0x140	/* FSA2_CS */
-+		>;
-+	};
-+
-+	pinctrl_uart1: uart1grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_UART1_RXD__UART1_DCE_RX	0x140
-+			MX8MP_IOMUXC_UART1_TXD__UART1_DCE_TX	0x140
-+		>;
-+	};
-+
-+	pinctrl_uart4: uart4grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_UART4_RXD__UART4_DCE_RX	0x140
-+			MX8MP_IOMUXC_UART4_TXD__UART4_DCE_TX	0x140
-+		>;
-+	};
-+
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD1_CLK__USDHC1_CLK	0x190
-+			MX8MP_IOMUXC_SD1_CMD__USDHC1_CMD	0x1d0
-+			MX8MP_IOMUXC_SD1_DATA0__USDHC1_DATA0	0x1d0
-+			MX8MP_IOMUXC_SD1_DATA1__USDHC1_DATA1	0x1d0
-+			MX8MP_IOMUXC_SD1_DATA2__USDHC1_DATA2	0x1d0
-+			MX8MP_IOMUXC_SD1_DATA3__USDHC1_DATA3	0x1d0
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_100mhz: usdhc1-100mhzgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD1_CLK__USDHC1_CLK	0x194
-+			MX8MP_IOMUXC_SD1_CMD__USDHC1_CMD	0x1d4
-+			MX8MP_IOMUXC_SD1_DATA0__USDHC1_DATA0	0x1d4
-+			MX8MP_IOMUXC_SD1_DATA1__USDHC1_DATA1	0x1d4
-+			MX8MP_IOMUXC_SD1_DATA2__USDHC1_DATA2	0x1d4
-+			MX8MP_IOMUXC_SD1_DATA3__USDHC1_DATA3	0x1d4
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_200mhz: usdhc1-200mhzgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD1_CLK__USDHC1_CLK	0x196
-+			MX8MP_IOMUXC_SD1_CMD__USDHC1_CMD	0x1d6
-+			MX8MP_IOMUXC_SD1_DATA0__USDHC1_DATA0	0x1d6
-+			MX8MP_IOMUXC_SD1_DATA1__USDHC1_DATA1	0x1d6
-+			MX8MP_IOMUXC_SD1_DATA2__USDHC1_DATA2	0x1d6
-+			MX8MP_IOMUXC_SD1_DATA3__USDHC1_DATA3	0x1d6
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK	0x190
-+			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD	0x1d0
-+			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d0
-+			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d0
-+			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d0
-+			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d0
-+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc1
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK	0x194
-+			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD	0x1d4
-+			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d4
-+			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d4
-+			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d4
-+			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4
-+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc1
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK	0x196
-+			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD	0x1d6
-+			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d6
-+			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d6
-+			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d6
-+			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d6
-+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc1
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_vmmc: usdhc2-vmmc-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD2_RESET_B__GPIO2_IO19	0x1d0
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_gpio: usdhc2gpiogrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD2_CD_B__GPIO2_IO12	0x1c4
-+		>;
-+	};
-+};
+---
+ drivers/net/hyperv/netvsc_drv.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 153b97f8ec0d..23180f7b67b6 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -2798,6 +2798,31 @@ static struct  hv_driver netvsc_drv = {
+ 	},
+ };
+ 
++/* Set VF's namespace same as the synthetic NIC */
++static void netvsc_event_set_vf_ns(struct net_device *ndev)
++{
++	struct net_device_context *ndev_ctx = netdev_priv(ndev);
++	struct net_device *vf_netdev;
++	int ret;
++
++	vf_netdev = rtnl_dereference(ndev_ctx->vf_netdev);
++	if (!vf_netdev)
++		return;
++
++	if (!net_eq(dev_net(ndev), dev_net(vf_netdev))) {
++		ret = dev_change_net_namespace(vf_netdev, dev_net(ndev),
++					       "eth%d");
++		if (ret)
++			netdev_err(vf_netdev,
++				   "Cannot move to same namespace as %s: %d\n",
++				   ndev->name, ret);
++		else
++			netdev_info(vf_netdev,
++				    "Moved VF to namespace with: %s\n",
++				    ndev->name);
++	}
++}
++
+ /*
+  * On Hyper-V, every VF interface is matched with a corresponding
+  * synthetic interface. The synthetic interface is presented first
+@@ -2810,6 +2835,11 @@ static int netvsc_netdev_event(struct notifier_block *this,
+ 	struct net_device *event_dev = netdev_notifier_info_to_dev(ptr);
+ 	int ret = 0;
+ 
++	if (event_dev->netdev_ops == &device_ops && event == NETDEV_REGISTER) {
++		netvsc_event_set_vf_ns(event_dev);
++		return NOTIFY_DONE;
++	}
++
+ 	ret = check_dev_is_matching_vf(event_dev);
+ 	if (ret != 0)
+ 		return NOTIFY_DONE;
 -- 
-2.25.1
+2.34.1
 
 
