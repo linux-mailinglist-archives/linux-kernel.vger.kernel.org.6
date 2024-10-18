@@ -1,125 +1,185 @@
-Return-Path: <linux-kernel+bounces-371803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC47F9A407F
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:54:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3189F9A4080
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CD11C21999
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22ED288721
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 13:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E35C1D9686;
-	Fri, 18 Oct 2024 13:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8651F4260;
+	Fri, 18 Oct 2024 13:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyTfWsGC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="j2tazT2w"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2041.outbound.protection.outlook.com [40.107.243.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B8F2010EE;
-	Fri, 18 Oct 2024 13:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729259595; cv=none; b=oju76S2IzHFfTFOEFuvdcsk4wGzCkcM4ageTeC//acMnw2kGCAW8uRnUf9TdcPgDfa35Kmdr59WMVbWrv7zOEmMcZB29TlbUjIX/43s723HiYMp9dBd1u2z2ZE9ennA33thM3rubw7znJ28Pg5ihTXJ+Ic1BImIUCJsFaanHXqs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729259595; c=relaxed/simple;
-	bh=f1mO30JIws68FKWhn6Nc99NCDoEbGvfLG0lKrfaS32A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ya8uDGRwMPBnNRiJd3OQIJ9Slpxv5s/VQWHSyf5Q2T7UQN3J17BkKH1piqoyfCC6PmSUmSw2uKAxLQTdKajjZbdG+rhAlV3W8m2XnulxlSrCw5cNrJPgkJf2OGCainrZZwrAEbPmjfcYoO2l/xHGLz4dMKuqA0sI9/evznvncEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyTfWsGC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EFDDC4CEC3;
-	Fri, 18 Oct 2024 13:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729259595;
-	bh=f1mO30JIws68FKWhn6Nc99NCDoEbGvfLG0lKrfaS32A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pyTfWsGCvrdNvdtdP2v6mowNQTpwkQRy1kwWzwgc3kquMjvTdL8u94RgZFLdK4vSD
-	 HFaF4AKdHwg+wkTnNR0+tHf7JnFfKvMWE//kbzEAxCjELsLD7oNdlLn80YQD70/1pY
-	 osYLDyxauLpolayHu+A5WzM1jwdi0Y/2ohKHUsNVZpx8Y4hC1SG3XoU0S5cuhhA/fv
-	 LSOjOF6pZlJsz7i8Wp3DLHVv/qeV5FbaXuZkc43NQ4p+jhzNNGtkx/3Hij1Npk3iO4
-	 Lt+ykN012RxRQqCxLzlEk2dOIATygV9Y+KnwYU3OVtkBZ3U6l+TVYrFb67IN0iObAN
-	 WWbtEQctklm0A==
-Date: Fri, 18 Oct 2024 08:53:14 -0500
-From: Rob Herring <robh@kernel.org>
-To: Wojciech Siudy <wojciech.siudy@nokia.com>
-Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, andi.shyti@kernel.org, peda@axentia.se
-Subject: Re: [PATCH v5 1/2] dt-bindings: i2c: pca954x: Add timeout reset
- property
-Message-ID: <20241018135314.GA91900-robh@kernel.org>
-References: <20241018100338.19420-1-wojciech.siudy@nokia.com>
- <20241018100338.19420-2-wojciech.siudy@nokia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BF81EE020
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 13:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729259631; cv=fail; b=Tig+vSNLgh/2f9YyWU1b5B6QzZy/MdqtMpPww2jHSn/iSYrSq2c1FiaLibdKqCJ4J3mRGVo8PhG4cdJ7p8syk9jF7a8oW4VNN3PhmAzOReWodcDVa9wNjKg2uxzG4ZkB4Myi1lqyX1lbdg+XpOgwh74MkNcxey+QUzcT82ZDsns=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729259631; c=relaxed/simple;
+	bh=Sj3xeWHcj+6WlElndLtvBptc3OlmnggshWqC5UA/7Xk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KM5KV3dSt0GvusygFMQj8PRufBXRYimfsPNuQcrHcllXCJiTE0yZtgeIfbBYV6g9rigWeMikMX5sIWUUYNOgOqZ3QqVCaTWTXEIu4p2fixN8N3JGnD/AmnITzZTK1sV79P8ZUQfJTBcGFK9cOpvhC8dVaJ5JE7jOCt/G3DKJFDc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=j2tazT2w; arc=fail smtp.client-ip=40.107.243.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PkmD9LqBuJElMGonCux/kPMtHiRSjed48wnx1oAfigcqkYxUNSsxwtj7vJ9Q7WAxy3s6zuZyt8rFVms8+9XwBJNI5lTeC70FlYSj75quWBeD9S1TwEj4ZVMXUmVHLDHfyKh+3uUqKpTpvtZvwas2rEyLlrVAC79oG5401hPaypImHhmFkoRHmIrZbq6bDDNYzI8F+dtapvkz1QWhw62h0mdZWypHq/PVjv8y0nckVi5xE58toAGMUW6PNm3zPAq2EOWEu/rsc5YVMNyJc3FqV1LI8j5udXqDQhxpeMPgpsY7+0zWtQ5pk+ZqHDLcOnyGQL+QhnWBu7cyonqRD7LBAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l7IydsLF+BEVM2RMNwSplLttAOK0KAENbuiEdaKIwWY=;
+ b=aFLkkPr074d46v1Dft3YjrLC5m+vutg12lhZmGMIu087v8pOyJgkrAqN3aY2R2gGZNxjYXk8gNqTeey6/fk6OqdRjivfVcxTqTPgeYz7XovwuWAzwosStw7NiG/Iy6ON1taypIPmkzGGkW5J0xvNQmshj/Sb/UBBwdnVys3S1Xr0idZGXdL0txg7D84RNO1cFReHo19HJnh0rVH1ciMKHq7kMBEaNItkKhWxfczu+R5p7yDb3u6rn9jXdKLPxjv2jV5Wkt4yipOLbhRr9laD1jDJzmW3mvf+QBarVVXoTdQNqLYK7G+vBJTdBzYnGvMaDD1lU8ENIW3qSOxACM/ltg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l7IydsLF+BEVM2RMNwSplLttAOK0KAENbuiEdaKIwWY=;
+ b=j2tazT2wH82Ppny0syaMT+pSoaxxwvSNghTcSXEH7enxiwoCie2qVs1jUtuJfVShVUapiIdsq5WmhKBk0R776ta/Uv270UIrQ0YVqVVKTbWYUFK1cKMd4X92snOBHk4DgRF8W7xHf/nQGwsyitu8Z2owHytrzKuKpCoBBt4ssWHrgFnnIWa+2Bt1gYVTHZHMzRXJn2xiwZUqtDwp4d2vm0uLBRQkymJswEZ6Y0Os6pn7mZDHE2v9b90WFu6GlINKU/NVTO+g+QaglPw36NUkQvsCLuqeg9TK8utBV9iOIrlz2GhR30D5AfrF4EuK0VeUsVuy0ahXJUm7JCwHIgRxBw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by PH0PR12MB8798.namprd12.prod.outlook.com (2603:10b6:510:28d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.24; Fri, 18 Oct
+ 2024 13:53:45 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8069.020; Fri, 18 Oct 2024
+ 13:53:45 +0000
+Date: Fri, 18 Oct 2024 10:53:43 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH v8 07/10] iommufd: Fault-capable hwpt
+ attach/detach/replace
+Message-ID: <20241018135343.GA1914429@nvidia.com>
+References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
+ <20240702063444.105814-8-baolu.lu@linux.intel.com>
+ <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
+ <20241015125420.GK1825128@ziepe.ca>
+ <CABQgh9E+AnuyJgcM9tf1gEOUqcC_QSrA__Xha9sKYZp=NVRwhQ@mail.gmail.com>
+ <20241016152503.GB4020792@ziepe.ca>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016152503.GB4020792@ziepe.ca>
+X-ClientProxiedBy: BN9PR03CA0899.namprd03.prod.outlook.com
+ (2603:10b6:408:13c::34) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018100338.19420-2-wojciech.siudy@nokia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH0PR12MB8798:EE_
+X-MS-Office365-Filtering-Correlation-Id: 929f9f81-55d1-4275-064d-08dcef7c4869
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?r+QJLR8zKlItyvlsbueNQd3eCAnueIbeiFDFiFOdyg7Ixl3pG3Mg5Xth8zlq?=
+ =?us-ascii?Q?jDXeouUNJHw3rIwXGlP/kmCNp5up5eeB6/KtkbzzMQiEdweZT7gxuAqu+75k?=
+ =?us-ascii?Q?/C599dTxaEB6+uPq3mQecIdX9ALhhFnfJI544bJC2UsYfDoCoU3GUPlj/X0R?=
+ =?us-ascii?Q?L1Vgs6xI60l9lwqtJjn83aZCrNOXnZuUjFBBUyMEljLbWhg6aDGyxej6ao9K?=
+ =?us-ascii?Q?+5GwXt6lrs1N5KjV7vvVvj3Q/00l6ls3QyVCYsi+g1TLdygkIaETCNhCwXhH?=
+ =?us-ascii?Q?U1E58zGvtRzkQzeByz1L0uO7Wd8vr/wHYeEmEQm6DvA+mz5u3TuGPiZ5vjnl?=
+ =?us-ascii?Q?ig4kPBfVjAz4dkl3QtdeWM3RvmGf+fEEvNiZgXMJ/Z/wRVWM2l87Sk9NUK3z?=
+ =?us-ascii?Q?R9q9OT7m4CIq5EXMU+ogXqlBAiq+uKAFB4XuadUp6w7jfTVBT5j5IFmcQ1t5?=
+ =?us-ascii?Q?SsvVhyPFwLiBmc5/XuqKI99Xx22lT1q7I51lxfOlQvn6fnd5RJd1cpanpXP2?=
+ =?us-ascii?Q?AcKWFfPHNdWsWlhVWskGJHPM/YsAL+LmLCWDd3A6R2MRjwWvok3Tn+L59LzM?=
+ =?us-ascii?Q?60mjk77nBswuxd5BskmZZbSO4TCzw8I9IJmz1j/hqdPn/nZ6Kb6q9gCyYcGv?=
+ =?us-ascii?Q?uy9n1GES1ymNzosQF3aXtH8LEixtnO3OXt/pBBskwaN8C+DvrzP/v8aWIblU?=
+ =?us-ascii?Q?lOJQE3g8tvCiycVGXkeGy/W1jeDPG43ocUSH3YciA579DBqHKmEdYL6+fvEZ?=
+ =?us-ascii?Q?9Ax/sVZ1UuUaoL2D5YjbzNkrwPnl3JX4KkfwaAVQ9zcK6DLxQFnEiYe1sT6e?=
+ =?us-ascii?Q?OlTehIO5DcyQZUV+tvJCCdaUBQ0bZqKOrp+f/rBlBl9EVXST6/YunY3YRkJB?=
+ =?us-ascii?Q?Hrv8az582AginZT0DyzvJoAJDgxEjYeUXB45doHZjtrQMgkRivA136wYHhY5?=
+ =?us-ascii?Q?JzVcKkZ7Jukkmv5j5aLxk+mXW7fnBFYWzSud2ekLKaHZGVYTKwbZMYTYbP8m?=
+ =?us-ascii?Q?QW1p+CDc2x/GAdlT3dHbGCtOOObCdUwOwm+mtJL/lHPt2tAHG6ijAFRQtij4?=
+ =?us-ascii?Q?+mpQ88IgMD+MLqAwfJlFKGeopLCPflv375kcUtefemNKw3dKoYwYnN4us3nl?=
+ =?us-ascii?Q?3o6WjdMcnnU4pTLheDwCrApibPtfSj1TGPO+HvDth6gOkitBcjObCjHA0Anu?=
+ =?us-ascii?Q?dF3IoXydkmfMT/hDD1mpCuD00NnGdEew1BVzc7qOJc/Tc58D3kqykEyMW+d5?=
+ =?us-ascii?Q?SNQhIwrpAhkUUyLUXqe7cjzdeesaVVD9PggjoywD04CPdCUonYxb64L2VFqr?=
+ =?us-ascii?Q?07iTpIDKQk5PZaPlMfA6Az8e?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HtnHJzGOVCLkvxtE7serZq6/IkFu5UbZyI1oAoP+DZbn4pdHFApDJPsGgy8a?=
+ =?us-ascii?Q?gBZjlpeXf39/nREtMZvMth8Qqhn0ohw2R5uDpTytNcHQhr7CD67yX1BXeFTu?=
+ =?us-ascii?Q?cYvn5SnL/z3fanGf4NADLBoun097fitM8oBIAowWTw0bjqLqMVzo8eB5M7nq?=
+ =?us-ascii?Q?O1bQbZYNwuCkcOyTB8wO5cKRio6vQ9QrYzMAezuLujb58hbqFBOl2auRLKXb?=
+ =?us-ascii?Q?jALlxvWLEpX1p8batNXDheoiUFWDHulICwzzkhtqpn1al/9ZCoT9E1R2Dqlv?=
+ =?us-ascii?Q?l2az8cBNUsd1O1RMj5oxeTk3XDYntTIT2irR3kFxbZUspzjgP8SpseDgIO8r?=
+ =?us-ascii?Q?dh5jwxi/EvJy/owunm1a9RX69yWWnz/ZETkCQ3j9+4rrHR4OvTbWi7A7xv+v?=
+ =?us-ascii?Q?ExTcPnKdh1dktw4g7yz3xmBZO9A0FmxbWAYfF6x6u/EW11PyhoP8LxC9sXjg?=
+ =?us-ascii?Q?uXoUOmCkg7v6t1NKVfwubVjUAhing+utwBEHNnEUWsIgj9H5r77GUGCl8Sm1?=
+ =?us-ascii?Q?VKD4FPYZtnon4hRVc87gXsomFZ7guf/Drf6l970523OdAAcjH+Nj2PrGPeEB?=
+ =?us-ascii?Q?ijF1+ycPTRafGWxJNxINppUfe6KIwQ794iuQZ/sD4/tMQHXVuY6rK5j0rCEg?=
+ =?us-ascii?Q?iShDRNqI8a38SVvREXDKKTPAg/okPbbIrBVWdQnTjg74HWYgX2OkquCrXCIf?=
+ =?us-ascii?Q?e0GcDTpxTkn9vE/4amcFdsIfWYhNeVKzDJjMVXK6Hh5IhFa5YISdFpE5KNQ/?=
+ =?us-ascii?Q?6jV5QkKDcWBhUkS8rlMEyVqgSPYtN/RoJRfYKKeAocEHUolOtkWzVKdvZofY?=
+ =?us-ascii?Q?nJzdcl7/GMRrYc+qXwUA5CuZQUWmxBRtx6qHHoyjsB1AN0yGWSqaJSBt1Zl4?=
+ =?us-ascii?Q?odi1IuQak8dw+rn/XyNjWL4NI+Z8mman5gEgWVzUGhYBpqvVuJnRh2bdLs5e?=
+ =?us-ascii?Q?oaIF1XaS2pVRK9sOl+CLPY5/Un5wclOLBvJ960K4A4z4Y/w/5vniPZYl9Ixq?=
+ =?us-ascii?Q?y4vZi9gOQo8OijzEiBxZ1tXFdlHTgJpov1fjcWBq/rKk/3jqYipmzc6rlEyK?=
+ =?us-ascii?Q?bF1IPWSnNiF060HazSJX64bfDIto5zQYmBDumPOcGMDQXWQ2jQUdPy/0ZKD0?=
+ =?us-ascii?Q?+fdNh1/EAcWaS7raEyOimBKYpvDxVND4ZP/vUgRckPrq60vsSlfWXZABq9P1?=
+ =?us-ascii?Q?opO/9GXyjl8ysSh8Fjy43H3GMB5s3oVrCMv9KsvtgBE/GfmRewlkRvhyPATo?=
+ =?us-ascii?Q?DUCVgy1tAzvFKpzIH5FUwihWG28F1+EXou47vfezImI4KVte8e7W5UzvYBJf?=
+ =?us-ascii?Q?Ro2JBcY3Tnx4dKB5RcBr+5UiOcWgD0YEWh3gpQi9GINmJuUIxtOrv1R8mzNQ?=
+ =?us-ascii?Q?STYumAcl6GEVLS9lTCu7SaeJKfOLtemK8rcZxJqVK7Wn4y9PAvc7JoZfGWZe?=
+ =?us-ascii?Q?+IJvdca729hvGK9HjKqEQa9PgUHRYLNSA3egjHir8HjsUSVedgpU4sgh1FZq?=
+ =?us-ascii?Q?zV9R4kI6mr7KnygzzLcibYmWRygJzhGHzGkD7x+bWKFOK0xYljRjenCu+yd4?=
+ =?us-ascii?Q?IOLpnCUO40rfA317W4k=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 929f9f81-55d1-4275-064d-08dcef7c4869
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2024 13:53:45.3900
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jw7kfxlewsXL9+Jw7cC9lOVsvYM7ZAzQy7MROL9+w3xJjhup0DOOCn46kWdpjur8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8798
 
-On Fri, Oct 18, 2024 at 12:03:37PM +0200, Wojciech Siudy wrote:
-> For cases when the mux shares reset line with other chips we cannot
-> use it always when channel selection or deselection times out, because
-> it could break them without proper init/probe. The property is
-> necessary, because reset lines are board-specific.
+On Wed, Oct 16, 2024 at 12:25:03PM -0300, Jason Gunthorpe wrote:
+> > > smmu-v3 needs some more fixing to move that
+> > > arm_smmu_master_enable_sva() logic into domain attachment.
+> > 
+> > Will think about this, Thanks Jason
 > 
-> Signed-off-by: Wojciech Siudy <wojciech.siudy@nokia.com>
-> 
-> ---
-> Changelog:
-> v5:
->   * Declare dependency of a new property
-> ---
->  .../devicetree/bindings/i2c/i2c-mux-pca954x.yaml      | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml b/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml
-> index 9aa0585200c9..37882a5a8c87 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.yaml
-> @@ -63,6 +63,11 @@ properties:
->        necessary for example, if there are several multiplexers on the bus and
->        the devices behind them use same I2C addresses.
->  
-> +  i2c-mux-timeout-reset:
-> +    type: boolean
-> +    description: Sends reset pulse if channel selection or deselection times
-> +      out. Do not use if other chips share the same reset line.
+> Can you test it if a patch is made?
 
-If you have a reset GPIO for the mux, then why wouldn't just use it on 
-timeout? What happens if you timeout and don't have this property? Just 
-give up? 
+Here it is:
 
-Does the timeout time need to be configurable?
+https://github.com/jgunthorpe/linux/commits/smmuv3_nesting/
 
-> +
->    idle-state:
->      description: if present, overrides i2c-mux-idle-disconnect
->      $ref: /schemas/mux/mux-controller.yaml#/properties/idle-state
-> @@ -88,6 +93,9 @@ properties:
->        register activates a channel to detect a stuck high fault. On fault the
->        channel is isolated from the upstream bus.
->  
-> +dependencies:
-> +  i2c-mux-timeout-reset: [ reset-gpios ]
-> +
->  required:
->    - compatible
->    - reg
-> @@ -146,6 +154,9 @@ examples:
->              interrupt-parent = <&ipic>;
->              interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
->              interrupt-controller;
-> +            reset-gpios = <&gpio1 27 1>;
-> +            i2c-mux-idle-disconnect;
-> +            i2c-mux-timeout-reset;
->              #interrupt-cells = <2>;
->  
->              i2c@2 {
-> -- 
-> 2.34.1
-> 
+fa1528253d2210 iommu: Remove IOMMU_DEV_FEAT_SVA
+5675560a272cf5 iommu/vt-d: Check if SVA is supported when attaching the SVA domain
+94bc2b9525b508 iommu/arm-smmu-v3: Put iopf enablement in the domain attach path
+
+Let me know..
+
+Jason
 
