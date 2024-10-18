@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-372127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488329A44C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7194A9A44C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 19:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F7D1C21A6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:33:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900561C22DFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E78205ADA;
-	Fri, 18 Oct 2024 17:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF0C205E3B;
+	Fri, 18 Oct 2024 17:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BdCBp7la"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3MCwPtK"
 Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402D8205AC6
-	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF9F205E06
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729272675; cv=none; b=bUIcJ8UPFeZIh8lNrf+zMml49hOq/36qKH8qPE6YgxAgjzhs0xbpCBCxYGXnNmiSr6nw75hsdwRmqsWsk6Lhjw9/28EGwYnOHQO5iXGAlYsgfLjVxY9Ey8kej0Isw74EBhAcUVVyLiqDCr1kFdgOdTWXbAN2BjhH6KaSuhmNOzE=
+	t=1729272679; cv=none; b=lNwUeyZQT9K03tgfhju4YBAAzHo2Cij38TkDX1MRQpMiOZ51Eo9atqmgHIa5FThpZxoxwnrqtLE3oZk0UBVjvl0PljIsXi8luMhFhYXhcuFA4cMgIyw0v2pCOdHbwyYryo5tW2PMg2R8HJp0eD3BLDsGI26aBJhgKZqvcPu5lSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729272675; c=relaxed/simple;
-	bh=OtgBNzwT10q1fgJ73my79dtV2veuEsi813cYK1MYapI=;
+	s=arc-20240116; t=1729272679; c=relaxed/simple;
+	bh=dfXVagvKCrtVIK4lQC9jHDb/cboUbJl9srs8w+qOFtg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cych6q8TS/0sf1gMAs3Vt7bdb6RaY6NZ4AI1xiPU/niVxK7I3NTAsBvMv49KWB2CVJhNHCwbs8+mc7kndcDewrdjsMgPMKcTFfvsY3cSBbqHtP48INMCU359gsalWHp1dkpGDxpXWZiorhHvJFKg9VJ4alttuxS0krCiKCwTtg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdCBp7la; arc=none smtp.client-ip=209.85.215.176
+	 MIME-Version; b=MBk6xmf/CsFizCAYVwz+IEPy+6Wbu5QeGBL4/xt+d/wlCHdo6v68LiPVL4sFopSaLW7Z71c6esyTDSKVl+YKoZM8DbBUUKCjDjPsPp2pIYo5MsKJGQ0CT4o8hsnCGC4XSoSEseJHbfRi2QD8kuO3rwy/LxhePf2RY+nqoNvsE20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N3MCwPtK; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea0ff74b15so1592197a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:31:13 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7db908c9c83so1573523a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 10:31:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729272672; x=1729877472; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729272677; x=1729877477; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=maqsHecWoRrqy0atrv0EioRwOZB99TyG0W2HP4lfnAU=;
-        b=BdCBp7laJl9ycTaWhrrR/hUZfz/XPh/fUh4VqhkuSUQzB23NhxIyA60nhPspxtjydk
-         ZVWBZLtMgYO7i8EMT6EHcFUP1Z7NVvP8a/esxdpZ895IIXfn2+K5M1JNIMhCfK8znAfq
-         g8h4hTy0DNSYEbNTK1YgLtd0psgcV5WljTnj25dlEhEmcH+DRDghDqt0rC25aJZq/D5G
-         6uc9iJbjAC7ctHKKwgjVQbYE1kjS2hpS2CbTD/HpDvUuP0y8CGo/JeJWt0H4WQi7BgW8
-         jCOAf4sWxXK8DMA04dLdAh3Q+JmkzkoUhsLyAeqRd8WcTNp/lxHplMiELo90ygIIKBw9
-         o7hg==
+        bh=M+pQKseSbUwQ7nDgMGbwYxJsHyJez2ZBxycyN9iER7I=;
+        b=N3MCwPtKI+88BAI0jeG6mPQUyvz/qGEHP7FKzjIPuwtsn91S8IHAYIBCdda3smj5xA
+         81o8bS6++qYOP30cfoVicxQTrOhl+Xnphc5uZb63u3/5IA9zFeG9K/Vy3F91RI6e+LTF
+         uN2M20QsWc0/R4mJgunLGE3bk1ppKPFGLgZoUb+VxCtrRkCZHYr68RycfyogiRjl5aNI
+         w5Nr9z2NkVAepoXrgjdDRo3j2gYRwJHUyTq4YW7y9rJMdMp7m5iA6ANhqOEp4LPr3HII
+         3STAh3X+t/SXsPoPRiry4XZDlo77GEdex6R2qln5uMorjED01HvooAJlcqdhOW2o/uCX
+         RgTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729272672; x=1729877472;
+        d=1e100.net; s=20230601; t=1729272677; x=1729877477;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=maqsHecWoRrqy0atrv0EioRwOZB99TyG0W2HP4lfnAU=;
-        b=Nj2IXXX0ew9TE5fWvwZgqpD5fe6WilNQB009dU2sBXWfv3m0niEqhzWkeouy380yRM
-         yFDXvKlQ8p2FTIJL7pzX0AxrDORYtPlaBQPy0Z7eAzIDlnH14DpVMXaL5tKLJvuep99N
-         6PvkQ4DSrhr4Se9fVChImjgRo5jjVP6Oj5EoQs6H4LwKfy6IxC63yVU5ecrGR+O8a8Cw
-         7KWMaEwwU+3YcWByHZVLafaL3wee792zEMxrarWNNH4stlk0ZdDAqI3iCh4hMxlbjPes
-         5Okt2cwCw2od8btkSmHP245FE6oEOtNidAND/9Wuh0jRHGrd7q2QtOwJnKKkSzEomgUm
-         cjKg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5hoxL4QPYekgGzobr+75ZejmcxO+TK7/W0wC5AjuP6HuhGepKImBm1LT15O+dJncuUVC9odTL6abp9Oc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ+Aa4N+ntQmP29bkvUXW3NkQEPySaxRgJc+vdMglKJSqm4UwB
-	ZGyH4/GEUqJ8AK0Uxy+gtI1t+ifuggzPUNfDhfziAis4E5xSfUST
-X-Google-Smtp-Source: AGHT+IGCcfcvV3hhkWCRVZ4L4+07qgofxPBOFcgBhHnT233XbATfjI7cFHkLMcuk8gJsatcgaCUiZQ==
-X-Received: by 2002:a05:6a20:43a0:b0:1d9:a90:8879 with SMTP id adf61e73a8af0-1d92c502994mr4770966637.21.1729272672394;
-        Fri, 18 Oct 2024 10:31:12 -0700 (PDT)
+        bh=M+pQKseSbUwQ7nDgMGbwYxJsHyJez2ZBxycyN9iER7I=;
+        b=gejKZGgvJccDUnFZWFkARByHuQndJPCNK6loDsDZ9pQtBuOdjsuF3DkMAqrP3hkQg5
+         6wA8T8lHX6z3uNC+kbxJCxbkUsuJJ03fzKtgm+TP2LXX3hWIXeefPsk3ryFvSpAW5gml
+         BaWmV/fVif6erRz8sQ+3r5obxtWlTPVJ7VC08jfEdMUBHWtweu8e76fF5itTvOB5l/iU
+         5tLGWb+pLd0/YSmwvc1RKU4EjZITY9JRDboE7cIk/kQyaS9/Zi8AVKdOjb7S4VXY3bHo
+         LQnmsl9afL6++e25gALGNz3vcnmRx8rz2WMR47S7rp4LOP4NrOouyhcyeEqRQ54/APx7
+         oc6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUXN8dD/MEqAQBrtlE2GaY5MfofkM1+NXFg+6nSwE6qepczG+ZXwR4rO32ogKecLUFVtSJSoNLh1s84L4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFao/XWw2t1rjeJDmyyOJckwt1WZkXQtIy7Dtoytm7Mxo8zRLQ
+	5BhjGc/hPjK4gEhXe5o3z8KV0Ap1+EQ0L7TQfd+Dk8F5kyu4kkhG
+X-Google-Smtp-Source: AGHT+IFVWe1xUi/sLyBKrxUXKe/50HIPEi+N9laTmy/mjDBIPEDqbRrd1jNCsq8LdLHdy/KQ/lg9Ig==
+X-Received: by 2002:a05:6a21:168d:b0:1d9:61b:9607 with SMTP id adf61e73a8af0-1d92c4a0231mr4271987637.6.1729272677039;
+        Fri, 18 Oct 2024 10:31:17 -0700 (PDT)
 Received: from dw-tp.ibmuc.com ([171.76.80.151])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea3311f51sm1725242b3a.36.2024.10.18.10.31.07
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea3311f51sm1725242b3a.36.2024.10.18.10.31.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 10:31:11 -0700 (PDT)
+        Fri, 18 Oct 2024 10:31:16 -0700 (PDT)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: kasan-dev@googlegroups.com,
@@ -83,9 +83,9 @@ Cc: kasan-dev@googlegroups.com,
 	Pavithra Prakash <pavrampu@linux.vnet.ibm.com>,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v3 10/12] book3s64/radix: Refactoring common kfence related functions
-Date: Fri, 18 Oct 2024 22:59:51 +0530
-Message-ID: <f4a787224fbe5bb787158ace579780c0257f6602.1729271995.git.ritesh.list@gmail.com>
+Subject: [PATCH v3 11/12] book3s64/hash: Disable kfence if not early init
+Date: Fri, 18 Oct 2024 22:59:52 +0530
+Message-ID: <4a6eea8cfd1cd28fccfae067026bff30cbec1d4b.1729271995.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1729271995.git.ritesh.list@gmail.com>
 References: <cover.1729271995.git.ritesh.list@gmail.com>
@@ -97,109 +97,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Both radix and hash on book3s requires to detect if kfence
-early init is enabled or not. Hash needs to disable kfence
-if early init is not enabled because with kfence the linear map is
-mapped using PAGE_SIZE rather than 16M mapping.
-We don't support multiple page sizes for slb entry used for kernel
-linear map in book3s64.
+Enable kfence on book3s64 hash only when early init is enabled.
+This is because, kfence could cause the kernel linear map to be mapped
+at PAGE_SIZE level instead of 16M (which I guess we don't want).
 
-This patch refactors out the common functions required to detect kfence
-early init is enabled or not.
+Also currently there is no way to -
+1. Make multiple page size entries for the SLB used for kernel linear
+   map.
+2. No easy way of getting the hash slot details after the page table
+   mapping for kernel linear setup. So even if kfence allocate the
+   pool in late init, we won't be able to get the hash slot details in
+   kfence linear map.
+
+Thus this patch disables kfence on hash if kfence early init is not
+enabled.
 
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- arch/powerpc/include/asm/kfence.h        |  8 ++++++--
- arch/powerpc/mm/book3s64/pgtable.c       | 13 +++++++++++++
- arch/powerpc/mm/book3s64/radix_pgtable.c | 12 ------------
- arch/powerpc/mm/init-common.c            |  1 +
- 4 files changed, 20 insertions(+), 14 deletions(-)
+ arch/powerpc/mm/book3s64/hash_utils.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/include/asm/kfence.h b/arch/powerpc/include/asm/kfence.h
-index fab124ada1c7..1f7cab58ab2c 100644
---- a/arch/powerpc/include/asm/kfence.h
-+++ b/arch/powerpc/include/asm/kfence.h
-@@ -15,7 +15,7 @@
- #define ARCH_FUNC_PREFIX "."
- #endif
+diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
+index 558d6f5202b9..2f5dd6310a8f 100644
+--- a/arch/powerpc/mm/book3s64/hash_utils.c
++++ b/arch/powerpc/mm/book3s64/hash_utils.c
+@@ -410,6 +410,8 @@ static phys_addr_t kfence_pool;
  
--#ifdef CONFIG_KFENCE
-+extern bool kfence_early_init;
- extern bool kfence_disabled;
- 
- static inline void disable_kfence(void)
-@@ -27,7 +27,11 @@ static inline bool arch_kfence_init_pool(void)
+ static inline void hash_kfence_alloc_pool(void)
  {
- 	return !kfence_disabled;
- }
--#endif
-+
-+static inline bool kfence_early_init_enabled(void)
-+{
-+	return IS_ENABLED(CONFIG_KFENCE) && kfence_early_init;
-+}
++	if (!kfence_early_init_enabled())
++		goto err;
  
- #ifdef CONFIG_PPC64
- static inline bool kfence_protect_page(unsigned long addr, bool protect)
-diff --git a/arch/powerpc/mm/book3s64/pgtable.c b/arch/powerpc/mm/book3s64/pgtable.c
-index f4d8d3c40e5c..1563a8c28feb 100644
---- a/arch/powerpc/mm/book3s64/pgtable.c
-+++ b/arch/powerpc/mm/book3s64/pgtable.c
-@@ -37,6 +37,19 @@ EXPORT_SYMBOL(__pmd_frag_nr);
- unsigned long __pmd_frag_size_shift;
- EXPORT_SYMBOL(__pmd_frag_size_shift);
+ 	/* allocate linear map for kfence within RMA region */
+ 	linear_map_kf_hash_count = KFENCE_POOL_SIZE >> PAGE_SHIFT;
+@@ -1074,7 +1076,7 @@ static void __init htab_init_page_sizes(void)
+ 	bool aligned = true;
+ 	init_hpte_page_sizes();
  
-+#ifdef CONFIG_KFENCE
-+extern bool kfence_early_init;
-+static int __init parse_kfence_early_init(char *arg)
-+{
-+	int val;
-+
-+	if (get_option(&arg, &val))
-+		kfence_early_init = !!val;
-+	return 0;
-+}
-+early_param("kfence.sample_interval", parse_kfence_early_init);
-+#endif
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- /*
-  * This is called when relaxing access to a hugepage. It's also called in the page
-diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
-index b0d927009af8..311e2112d782 100644
---- a/arch/powerpc/mm/book3s64/radix_pgtable.c
-+++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
-@@ -363,18 +363,6 @@ static int __meminit create_physical_mapping(unsigned long start,
- }
- 
- #ifdef CONFIG_KFENCE
--static bool __ro_after_init kfence_early_init = !!CONFIG_KFENCE_SAMPLE_INTERVAL;
--
--static int __init parse_kfence_early_init(char *arg)
--{
--	int val;
--
--	if (get_option(&arg, &val))
--		kfence_early_init = !!val;
--	return 0;
--}
--early_param("kfence.sample_interval", parse_kfence_early_init);
--
- static inline phys_addr_t alloc_kfence_pool(void)
- {
- 	phys_addr_t kfence_pool;
-diff --git a/arch/powerpc/mm/init-common.c b/arch/powerpc/mm/init-common.c
-index 2978fcbe307e..745097554bea 100644
---- a/arch/powerpc/mm/init-common.c
-+++ b/arch/powerpc/mm/init-common.c
-@@ -33,6 +33,7 @@ bool disable_kuep = !IS_ENABLED(CONFIG_PPC_KUEP);
- bool disable_kuap = !IS_ENABLED(CONFIG_PPC_KUAP);
- #ifdef CONFIG_KFENCE
- bool __ro_after_init kfence_disabled;
-+bool __ro_after_init kfence_early_init = !!CONFIG_KFENCE_SAMPLE_INTERVAL;
- #endif
- 
- static int __init parse_nosmep(char *p)
+-	if (!debug_pagealloc_enabled_or_kfence()) {
++	if (!debug_pagealloc_enabled() && !kfence_early_init_enabled()) {
+ 		/*
+ 		 * Pick a size for the linear mapping. Currently, we only
+ 		 * support 16M, 1M and 4K which is the default
 -- 
 2.46.0
 
