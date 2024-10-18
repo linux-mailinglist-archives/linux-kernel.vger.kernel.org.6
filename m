@@ -1,91 +1,99 @@
-Return-Path: <linux-kernel+bounces-371156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6DA9A3729
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:30:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF229A372A
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 09:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2B80B218D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747181F2290D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 07:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0859217995E;
-	Fri, 18 Oct 2024 07:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ncJphnVH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1272717BEAE;
+	Fri, 18 Oct 2024 07:31:32 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638713D96D;
-	Fri, 18 Oct 2024 07:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4217E13D51E
+	for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 07:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729236645; cv=none; b=cNlZEIdvpvMXDx6EvP2jSDAsNSL5v6rOwh2zG6a1MybBLcIscAM3aV/QG9uC2lOrz7CQlruCpnsvz62dp1ETKpl1VwEAxbMztB4FWaYyggVyoNK4y/55oDG1pk2iyfA8flMsZTurkTI7RBKd5K8b5A26DblNpOf0lawUDV7KWJU=
+	t=1729236691; cv=none; b=qWKn5WBQ+kMwO8Vjo+SjOh13+0AvzT8WKppkO+GwcqG58NARA83E/w6/lsNrISJrozE/3MsJczPLpR7hKerN3bjigeqkd03aMpsK05756sv7utcLhaWSdZouf2lzVj2cwTJ/1iDi0mEIwYBJMaOI0AWAWVb/H8E4uwHEiN3i57s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729236645; c=relaxed/simple;
-	bh=m43fdzdIoDLBpaLwCnX4Nku8XgZwC/0ohcah5I8Q/7E=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dRiVUPx0LIRuOsqYYPCOLWhEtHtFP8rjrJHKSCsSHIm1rXz9Ip/sOE6LovidFcvzTfIoH7RmRn4Mbh1XvJ0o00ChlF0OCr+VeWDvb9lUVfvRU3IFbdhvg2VNY96dmFTVLYdQ+q+j3WLsnDvB/sjitxkY5kf774Eyb6bdNmadB84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ncJphnVH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E84C5C4CEC3;
-	Fri, 18 Oct 2024 07:30:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729236645;
-	bh=m43fdzdIoDLBpaLwCnX4Nku8XgZwC/0ohcah5I8Q/7E=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ncJphnVHkY07GS1vfnAxVsXaSM6aR1B2JKscWH231a4BmudCVAjrjCSwCAlqZmJ1N
-	 tQaK7muAec2Im3i+PwkluPcKY5SptP/TXjzUaq5OM5z2vrYEKNS5mN1QIoIeSHV179
-	 0F3AL2S4hnpF1rBdIozTHOrIzb5VyJKRV90NtfkiLeP6lnA7Vk/nkIFTGYsf1aPy0W
-	 GtOwho0L++p182L+qCbWwI8C5Deau+Wlq5o4S17s8Mx/4Ss5KW4BCuBMRDwwvtjJbg
-	 elaLqJSmLN8Bhp+zSObZlFAO9Rb38shj7npmnE57BOlC3W421WyoZI5bBkVDH2RUKH
-	 XL5I+OW/mTjEQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCD13805CC0;
-	Fri, 18 Oct 2024 07:30:51 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729236691; c=relaxed/simple;
+	bh=FwxLymgIGX19bQ3q5+ZUKoMF7qjKIFs/m/upHfQjmJo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fkpOVfqQVrLp/2SNHB7JzrQx3FpZ4j94oCGFpSJODtFJU2Hqz7SBue4X4ipG5sZgUZcffS6+6XhyKVYdbMWadSBUNGvHUNehhBRLoorfmiSoI6f0u4I0jXoA6BsqxLO4tb3oy0BoqyG9VcqEkx4F4jTSDvAjusGGcFlZxkkl97s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c27c72d5so16133235ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 00:31:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729236689; x=1729841489;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GzXkhfT9/F2JC3M0BsEDAkKgZtNlAin3Z8M1bsi6SHM=;
+        b=rVXNnwUfsH9z1TeSuNe7KRyCXe3EWlJKEO5wgmi4cjBekbXkRTHSCoF4epgxF2PSBB
+         UJvxwDyR5OuTyf2Fl1kN7tLSUwWOzVe451hz53WnGh/q8aP6bwLGPZsTvZwQM5bNDobY
+         nnVjf/LxYcgUf38LSPs0TsjOz83Lz1Ov1VqqC+ov/ODzWIkcpJnKwLEOcuAqkgyEQw/R
+         sTR6O+MwoTdEkhotrG5Qfw3ja8ICy2mKKjWF8UG9KVnV4PMp091CNMB/yyvgTmbQ18ji
+         OpLIXFFLZGWNFlt3WxzGuxeb4L9In0D5utfbDIMr9G1uLbfjoKrlcCrnBNYBgLm8c6KF
+         Re9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVLETt8qFV+NZfLt/0LWk1tJ+Dg9P3LXbEwRYRLbpiy3h1fG+xnFQEx5uNBe3QiAVDpkqlgTuXY83UYWRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGitBgVbbm5JgCaOTMEjz6T8mHsJWkZNEURLfcDQHAeA9uzxuk
+	xrfrR4F4XSQ5yUABE7/PV5Lg6gLPsV2sDAAlFIB+lbbnKB2hX/J1Axgy7uAmexejyHKKRAfAv4e
+	C/zEcKSTXdLl2G030o6PUZgAldC7Xd1nXP/ewYj5Db0B0qQSNsobLD4k=
+X-Google-Smtp-Source: AGHT+IFySUjvgG3Fl/szHy+Coj3vJjzvXk/L63ixiuhUZyvUQfFUQNj8qSben04A5CXrGYP1+XPl4tfLrEs3JS28u6E47iL5hN9j
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [GIT PULL] Networking for v6.12-rc4
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172923665054.3024291.11065813317278264417.git-patchwork-notify@kernel.org>
-Date: Fri, 18 Oct 2024 07:30:50 +0000
-References: <20241017132022.37781-1-pabeni@redhat.com>
-In-Reply-To: <20241017132022.37781-1-pabeni@redhat.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1389:b0:3a0:90c7:f1b with SMTP id
+ e9e14a558f8ab-3a3f40623e0mr15094615ab.12.1729236689484; Fri, 18 Oct 2024
+ 00:31:29 -0700 (PDT)
+Date: Fri, 18 Oct 2024 00:31:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67120ed1.050a0220.10f4f4.000d.GAE@google.com>
+Subject: [syzbot] Monthly f2fs report (Oct 2024)
+From: syzbot <syzbot+list5742c28e505b5188ee8a@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+Hello f2fs maintainers/developers,
 
-This pull request was applied to netdev/net.git (main)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+This is a 31-day syzbot report for the f2fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/f2fs
 
-On Thu, 17 Oct 2024 15:20:22 +0200 you wrote:
-> Hi Linus!
-> 
-> The following changes since commit 1d227fcc72223cbdd34d0ce13541cbaab5e0d72f:
-> 
->   Merge tag 'net-6.12-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-10-10 12:36:35 -0700)
-> 
-> are available in the Git repository at:
-> 
-> [...]
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 7 issues are still open and 47 have been fixed so far.
 
-Here is the summary with links:
-  - [GIT,PULL] Networking for v6.12-rc4
-    https://git.kernel.org/netdev/net/c/07d6bf634bc8
+Some of the still happening issues:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Ref Crashes Repro Title
+<1> 1071    Yes   INFO: task hung in f2fs_balance_fs
+                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
+<2> 70      No    INFO: task hung in vfs_rename
+                  https://syzkaller.appspot.com/bug?extid=6165bc9800cd6e1fe958
+<3> 2       Yes   possible deadlock in f2fs_evict_inode
+                  https://syzkaller.appspot.com/bug?extid=7988d9999219aea9f2db
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
