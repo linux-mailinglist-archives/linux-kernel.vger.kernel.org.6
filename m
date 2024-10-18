@@ -1,229 +1,302 @@
-Return-Path: <linux-kernel+bounces-371647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4059A3DCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:05:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF849A3DD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 14:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2076FB22650
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:05:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DB091F22409
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C0B1BC49;
-	Fri, 18 Oct 2024 12:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8121CD2B;
+	Fri, 18 Oct 2024 12:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3y1fBM+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JLAU8fU7"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81046E555;
-	Fri, 18 Oct 2024 12:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B646FC3;
+	Fri, 18 Oct 2024 12:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729253125; cv=none; b=RpXuWa/l4x7lN+rxvN4rjRm03XflWV1cdMYgpIHW52xswHwhRfF7H+ztq3SGmTH+x5U2BUMFPmDxeRkgWU4AkRn3n1xNXbAWwZ0lmDWjNa70i/4nOKtGUDo3AnXpjOZIX2O6qo6VUqJ/RQEXyNL6AjVeAVE11Oc/i2gK8bmm4tw=
+	t=1729253242; cv=none; b=JTYF2DDwOGU0Qfu7b6rbWf21EHKiNIn9PupG4f9grGtR0ng/ircYghtQUENYbAXz3BYkU8H6xT6BaCmxx3t3RnJXhdelvTI7fbcZKK2ZETwRT/5HOOYg8QzayXASZr92rK5fBv6PeBzAg2KNKGdNA/l2bAbzwBrK2PGmO5s0m9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729253125; c=relaxed/simple;
-	bh=9mQ1F+VIqnWPlvM54TelqSqxN4ITH/c6dqxPDvxNFJw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YtNLm6nWbJJCwNrF/RqlRnz2QK9WhUUARBlCsteMesRusAvI5Ob+ejyjEB5ykIvqfTcj58wHyr1/A8Wzbqr/I9BHG2f+AdjCRWaKjSkzudx5QvtonzBvY7i7mxtHriD3BE9aMGFrtj5iQcqsjnTCV4s4Q8yK6e4r6HZNuM/ZD9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3y1fBM+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2BE4C4CEC7;
-	Fri, 18 Oct 2024 12:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729253125;
-	bh=9mQ1F+VIqnWPlvM54TelqSqxN4ITH/c6dqxPDvxNFJw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=W3y1fBM+WdYOfqO6V/PectKYxNHnFN0WxUNy6Onvgx0TuA48/HdBO7OlFkF0Y14Kf
-	 /7GnlLHvu3+yDBmwNVPRWGWwb+328xlsjIwd2xpIECYiuwbM/JGZBuCeQ9UN58Y9Wk
-	 3aRNsS7wLwNhNiwcOWqLYPujn1oR+Z/8/9tp37BETdIKMwArMxjrcQOnFktJT3aXXo
-	 nDsHJFTOFkrUJvfXnxie0I5VCaVaGisjHVPTEc5W69lqop2fk85uv2ys12EckLruRl
-	 hausqoh5er4s7BOOs8hL3ZqhWLHNN3nwIyKoQifHc5MqtkPeqElLlOL0jpfcRAw0at
-	 2+wAMrRSMDO6w==
-Message-ID: <2ed155300b60cb12758322628919c9c631744243.camel@kernel.org>
-Subject: Re: [PATCH 0/6] nfsd: update the delstid patches for latest draft
- changes
-From: Jeff Layton <jlayton@kernel.org>
-To: Olga Kornievskaia <aglo@umich.edu>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, Olga
- Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom
- Talpey <tom@talpey.com>, Jonathan Corbet <corbet@lwn.net>, Trond Myklebust
- <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,  Thomas Haynes
- <loghyr@gmail.com>, linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org
-Date: Fri, 18 Oct 2024 08:05:22 -0400
-In-Reply-To: <CAN-5tyF4=JC4gmFvb2tF-k+15=gzB7-gkW6mHuaA_8Gzr4dSrA@mail.gmail.com>
-References: <20241014-delstid-v1-0-7ce8a2f4dd24@kernel.org>
-	 <CAN-5tyF4=JC4gmFvb2tF-k+15=gzB7-gkW6mHuaA_8Gzr4dSrA@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
+	s=arc-20240116; t=1729253242; c=relaxed/simple;
+	bh=URBOnJ/Ss5PaWSgCKIzSeXHcUY8k6lxtjhkvPrc0xhg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qVSlsoTcKY69YlrjRL4Vo1ajyWkonVCBHgwY8l5YixPxU6KtaZP49dw/VaKogpAZIjCvKSG4Gry/NR6miiXZ6Cm1EOUARlaDVKqGqs3Po/G+AmCBOVDBTkYfDFlVC2EV2NphBo8v4IRmdRChvgomiOKQ7UXotOxYZBvMPeTR+30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JLAU8fU7; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1729253240; x=1760789240;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=URBOnJ/Ss5PaWSgCKIzSeXHcUY8k6lxtjhkvPrc0xhg=;
+  b=JLAU8fU75hGvk5c7edYg4XPv4MjvKJyZIgZfa4t8zVa6xIGUYXlKY73Z
+   uLKS4aOOKJq/KPczXNKo+upOV6SyeY/G1nkfIOH3sFWlplwdzHBUI2vtY
+   8TpEinMnJ6ZDHx7EUDHPDzTz7NXronUAjqHtcVIPXTtF+NR01ND6/JiEj
+   +cgGkhSEqTmfma7ZYwMKOLZZxx75GcwCL7zuhQ0bdc1l3jNFdMBFPyeCD
+   nTWFgEvCS+Ulqz/Xamklk0W+cldy3EeC7GNWP0POgzgOhuJqgfF55GUa0
+   IrUbfOu1JFddNi0aTmHpNy0VKeboXzQuu+LMpN83OhcNcjlc3ovoMiKRi
+   A==;
+X-CSE-ConnectionGUID: cunrz4YRRpeQeLPu+b1Gow==
+X-CSE-MsgGUID: k0qZE7O+S2uBKo6Hk5OdGw==
+X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
+   d="scan'208";a="32981640"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Oct 2024 05:07:13 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 18 Oct 2024 05:06:48 -0700
+Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Fri, 18 Oct 2024 05:06:46 -0700
+From: <victor.duicu@microchip.com>
+To: <matteomartelli3@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>
+CC: <marius.cristea@microchip.com>, <victor.duicu@microchip.com>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5] iio: adc: pac1921: Add ACPI support to Microchip pac1921
+Date: Fri, 18 Oct 2024 15:06:24 +0300
+Message-ID: <20241018120624.15409-1-victor.duicu@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+cate: Fri, 18 Oct 2024 14:11:37 +0300
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, 2024-10-17 at 18:39 -0400, Olga Kornievskaia wrote:
-> Seeing strangeness in a network trace with this patch series where
-> SETATTR is sent with time_deleg_access and server is returning with
-> EINVAL. Test is open() with read delegation, triggering a cb_recall
-> via a local access. I can see that the client has changed from sending
-> just a delegreturn to sending a setattr+delegreturn. Is there no
-> server support and this is normal to return EINVAL.
->=20
+From: Victor Duicu <victor.duicu@microchip.com>
 
-No, that's a server bug. I think it's this in nfsd4_setattr:
+This driver implements ACPI support to Microchip pac1921.
+The driver can read shunt resistor value and label from ACPI table.
 
-        if (deleg_attrs || (setattr->sa_iattr.ia_valid & ATTR_SIZE)) {
-                status =3D nfs4_preprocess_stateid_op(rqstp, cstate,
-                                &cstate->current_fh, &setattr->sa_stateid,
-                                WR_STATE, NULL, &st);
-                if (status)
-                        return status;
-        }
+Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
+---
 
-We're asking for a WR_STATE in the nfs4_preprocess_stateid_op, but
-there isn't one. There is only a read delegation, so we get back
-BAD_STATEID and that eventually runs into -EINVAL. I'll need to look
-over this and figure out how to fix it properly.
+The patch was tested on minnowboard and sama5.
 
-Thanks for the bug report.
+Differences related to previous versions:
+v5:
+- set maximum acceptable value of shunt resistor to 2KOHM in devicetree,
+ACPI table and user input. The chosen value is lesser than INT_MAX,
+which is about 2.1KOHM.
+- in pac1921_match_acpi_device and pac1921_parse_of_fw change to only
+  read 32b values for resistor shunt.
 
-> On Mon, Oct 14, 2024 at 3:27=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
-wrote:
-> >=20
-> > This patchset is an update to the delstid patches that went into Chuck'=
-s
-> > nfsd-next branch recently. The original versions of the spec left out
-> > OPEN_DELEGATE_READ_ATTRS_DELEG and OPEN_DELEGATE_WRITE_ATTRS_DELEG. Thi=
-s
-> > set adds proper support for them.
-> >=20
-> > My suggestion is to drop these two patches from nfsd-next:
-> >=20
-> >     544c67cc0f26 nfsd: handle delegated timestamps in SETATTR
-> >     eee2c04ca5c1 nfsd: add support for delegated timestamps
-> >=20
-> > ...and then apply this set on top of the remaining pile. The resulting
-> > set is a bit larger than the original, as I took the liberty of adding
-> > some more symbols to the autogenerated part of the spec.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> > Jeff Layton (6):
-> >       nfsd: drop inode parameter from nfsd4_change_attribute()
-> >       nfsd: switch to autogenerated definitions for open_delegation_typ=
-e4
-> >       nfsd: rename NFS4_SHARE_WANT_* constants to OPEN4_SHARE_ACCESS_WA=
-NT_*
-> >       nfsd: prepare delegation code for handing out *_ATTRS_DELEG deleg=
-ations
-> >       nfsd: add support for delegated timestamps
-> >       nfsd: handle delegated timestamps in SETATTR
-> >=20
-> >  Documentation/sunrpc/xdr/nfs4_1.x    |  22 ++++-
-> >  fs/nfsd/nfs4callback.c               |  42 ++++++++-
-> >  fs/nfsd/nfs4proc.c                   |  26 ++++-
-> >  fs/nfsd/nfs4state.c                  | 178 ++++++++++++++++++++++++++-=
---------
-> >  fs/nfsd/nfs4xdr.c                    |  57 ++++++++---
-> >  fs/nfsd/nfs4xdr_gen.c                |  19 +++-
-> >  fs/nfsd/nfs4xdr_gen.h                |   2 +-
-> >  fs/nfsd/nfsd.h                       |   2 +
-> >  fs/nfsd/nfsfh.c                      |  11 +--
-> >  fs/nfsd/nfsfh.h                      |   3 +-
-> >  fs/nfsd/state.h                      |  18 ++++
-> >  fs/nfsd/xdr4cb.h                     |  10 +-
-> >  include/linux/nfs4.h                 |   2 +-
-> >  include/linux/sunrpc/xdrgen/nfs4_1.h |  35 ++++++-
-> >  include/linux/time64.h               |   5 +
-> >  15 files changed, 348 insertions(+), 84 deletions(-)
-> > ---
-> > base-commit: 9f8009c5be9367d01cd1627d6a379b4c642d8a28
-> > change-id: 20241014-delstid-bf05220ad941
-> >=20
-> > Best regards,
-> > --
-> > Jeff Layton <jlayton@kernel.org>
-> >=20
-> >=20
+v4:
+- change name of pac1921_shunt_is_valid to pac1921_shunt_is_invalid.
+- fix coding style.
+- in pac1921_parse_of_fw change back to device_property_read_u32.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+v3:
+- simplify and make inline function pac1921_shunt_is_valid. Make argument u64.
+- fix link to DSM documentation.
+- in pac1921_match_acpi_device and pac1921_parse_of_fw, the shunt value is
+read as u64.
+- in pac1921_parse_of_fw remove code for reading label value from
+devicetree.
+- in pac1921_write_shunt_resistor cast the multiply result to u64 in order
+to fix overflow.
+
+v2:
+- remove name variable from priv. Driver reads label attribute with
+sysfs.
+- define pac1921_shunt_is_valid function.
+- move default assignments in pac1921_probe to original position.
+- roll back coding style changes.
+- add documentation for DSM(the linked document was used as reference).
+- remove acpi_match_device in pac1921_match_acpi_device.
+- remove unnecessary null assignment and comment.
+- change name of function pac1921_match_of_device to
+pac1921_parse_of_fw.
+
+v1:
+- initial version for review.
+
+ drivers/iio/adc/pac1921.c | 109 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 96 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+index a96fae546bc1..9622b0da6196 100644
+--- a/drivers/iio/adc/pac1921.c
++++ b/drivers/iio/adc/pac1921.c
+@@ -67,6 +67,13 @@ enum pac1921_mxsl {
+ #define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain (HW default) */
+ #define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample (HW default) */
+ 
++#define PAC1921_ACPI_GET_UOHMS_VALS             0
++#define PAC1921_ACPI_GET_LABEL			1
++#define PAC1921_DSM_UUID                        "f7bb9932-86ee-4516-a236-7a7a742e55cb"
++/*The maximum accepted value of shunt_resistor is 2Kohms */
++#define PAC1921_MAX_SHUNT_VALUE_OHMS		2000
++#define PAC1921_MAX_SHUNT_VALUE_UOHMS		2000000000
++
+ /*
+  * Pre-computed scale factors for BUS voltage
+  * format: IIO_VAL_INT_PLUS_NANO
+@@ -204,6 +211,11 @@ struct pac1921_priv {
+ 	} scan;
+ };
+ 
++static inline bool pac1921_shunt_is_invalid(u32 shunt_val)
++{
++	return (shunt_val == 0 || shunt_val > PAC1921_MAX_SHUNT_VALUE_UOHMS);
++}
++
+ /*
+  * Check if first integration after configuration update has completed.
+  *
+@@ -781,7 +793,7 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
+ 					    const char *buf, size_t len)
+ {
+ 	struct pac1921_priv *priv = iio_priv(indio_dev);
+-	u64 rshunt_uohm;
++	u32 rshunt_uohm;
+ 	int val, val_fract;
+ 	int ret;
+ 
+@@ -791,9 +803,13 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
+ 	ret = iio_str_to_fixpoint(buf, 100000, &val, &val_fract);
+ 	if (ret)
+ 		return ret;
++	
++	/* This check is to ensure val*MICRO won't overflow*/
++	if (val < 0 || val > PAC1921_MAX_SHUNT_VALUE_OHMS)
++		return -EINVAL;
+ 
+ 	rshunt_uohm = val * MICRO + val_fract;
+-	if (rshunt_uohm == 0 || rshunt_uohm > INT_MAX)
++	if (pac1921_shunt_is_invalid(rshunt_uohm))
+ 		return -EINVAL;
+ 
+ 	guard(mutex)(&priv->lock);
+@@ -1150,6 +1166,71 @@ static void pac1921_regulator_disable(void *data)
+ 	regulator_disable(regulator);
+ }
+ 
++/*
++ * documentation related to the ACPI device definition
++ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
++ */
++static int pac1921_match_acpi_device(struct i2c_client *client, struct pac1921_priv *priv,
++				     struct iio_dev *indio_dev)
++{
++	acpi_handle handle;
++	union acpi_object *rez;
++	guid_t guid;
++	char *label;
++	u32 temp;
++
++	guid_parse(PAC1921_DSM_UUID, &guid);
++	handle = ACPI_HANDLE(&client->dev);
++
++	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_UOHMS_VALS, NULL);
++	if (!rez)
++		return dev_err_probe(&client->dev, -EINVAL,
++				     "Could not read shunt from ACPI table\n");
++
++	temp = rez->package.elements[0].integer.value;
++	ACPI_FREE(rez);
++
++	if (pac1921_shunt_is_invalid(temp))
++		return dev_err_probe(&client->dev, -EINVAL, "Invalid shunt resistor\n");
++
++	priv->rshunt_uohm = temp;
++	pac1921_calc_current_scales(priv);
++
++	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_LABEL, NULL);
++	if (!rez)
++		return dev_err_probe(&client->dev, -EINVAL,
++				     "Could not read label from ACPI table\n");
++
++	label = devm_kmemdup(&client->dev, rez->package.elements->string.pointer,
++			     (size_t)rez->package.elements->string.length + 1,
++			     GFP_KERNEL);
++	label[rez->package.elements->string.length] = '\0';
++	indio_dev->label = label;
++	ACPI_FREE(rez);
++
++	return 0;
++}
++
++static int pac1921_parse_of_fw(struct i2c_client *client, struct pac1921_priv *priv)
++{
++	int ret;
++	struct device *dev = &client->dev;
++
++	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
++				       &priv->rshunt_uohm);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Cannot read shunt resistor property\n");
++
++	if (pac1921_shunt_is_invalid(priv->rshunt_uohm))
++		return dev_err_probe(dev, -EINVAL, "Invalid shunt resistor: %u\n",
++				     priv->rshunt_uohm);
++
++	pac1921_calc_current_scales(priv);
++
++	return 0;
++}
++
+ static int pac1921_probe(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+@@ -1176,17 +1257,13 @@ static int pac1921_probe(struct i2c_client *client)
+ 	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
+ 	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
+ 
+-	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
+-				       &priv->rshunt_uohm);
+-	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Cannot read shunt resistor property\n");
+-	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
+-		return dev_err_probe(dev, -EINVAL,
+-				     "Invalid shunt resistor: %u\n",
+-				     priv->rshunt_uohm);
+-
+-	pac1921_calc_current_scales(priv);
++	if (ACPI_HANDLE(&client->dev))
++		ret = pac1921_match_acpi_device(client, priv, indio_dev);
++	else
++		ret = pac1921_parse_of_fw(client, priv);
++	if (ret < 0)
++		return dev_err_probe(&client->dev, ret,
++				     "parameter parsing error\n");
+ 
+ 	priv->vdd = devm_regulator_get(dev, "vdd");
+ 	if (IS_ERR(priv->vdd))
+@@ -1243,11 +1320,17 @@ static const struct of_device_id pac1921_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, pac1921_of_match);
+ 
++static const struct acpi_device_id pac1921_acpi_match[] = {
++	{ "MCHP1921" },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, pac1921_acpi_match);
+ static struct i2c_driver pac1921_driver = {
+ 	.driver	 = {
+ 		.name = "pac1921",
+ 		.pm = pm_sleep_ptr(&pac1921_pm_ops),
+ 		.of_match_table = pac1921_of_match,
++		.acpi_match_table = pac1921_acpi_match
+ 	},
+ 	.probe = pac1921_probe,
+ 	.id_table = pac1921_id,
+
+base-commit: 57573ace0c1b142433dfe3d63ebf375269c80fc1
+-- 
+2.43.0
+
 
