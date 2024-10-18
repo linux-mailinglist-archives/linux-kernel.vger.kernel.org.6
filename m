@@ -1,154 +1,251 @@
-Return-Path: <linux-kernel+bounces-371926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A9D9A4237
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:22:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2519A4234
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 17:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48C032866E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:22:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1321F27E8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 15:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535DE20101C;
-	Fri, 18 Oct 2024 15:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="fq7uaf0m"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDB22022FE;
+	Fri, 18 Oct 2024 15:21:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F39B200BB2;
-	Fri, 18 Oct 2024 15:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1042022E2;
+	Fri, 18 Oct 2024 15:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729264929; cv=none; b=atfj/fvzEobC7OPrJP30GD0iQu8w3ADU6BADEXJBrXcDoEPdPX/Zkmt1xliKprGNdbsjF1Xb7gWMOjsIr5D7IBPx1zPja7RAnuYkGmjeN+7ckLDtxTajSHMsJrcbQcVPyEUq3D2uBv5IY2lh2gtaDiX14vJf93n+grfmNhkOajo=
+	t=1729264899; cv=none; b=QkBkmZoWs/KjCz/2Ou8hbz5dKXPJtz1axbV5m/vAkGcaOorYgHiY/tXa6BtmZ3b5CwTxO1z7ti+d0/1RawZpK+Zo9sSI0AZd/yP7XvgiI4y7DtOHj3wR6CyfSJGTOPZNUnK1WNTyhvLECdRCbueAJv2TdfQZiDKDmSkoMZkrzRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729264929; c=relaxed/simple;
-	bh=GFnk9pWA4jTHk/peui6zTYHdQgbmeSFGM0QLWLFoD54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eClwLHrNWrG5f6AMOq2xXoBsGagTcjzeP9aOSoMobZa2hDxIh9tnG1o51XNJZVbKDObjXSgF9fV+7Wdg+Lm4DbvdJSYqCG8KLQ29bOmnCXU9j3pst10sfISeV7XoEWV3827sh2m9YKxIqhKatFdj75V5VG5xYGtQi+giZ8gjT/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=fq7uaf0m; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1729264913; x=1729869713; i=deller@gmx.de;
-	bh=PX6VK8Wu/KjUGeHBXCFkx/jxNlw2dzyABWxlMNKiUGE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=fq7uaf0mJQ5SPC4lINmz+MbT5dstJ7gz/KUVjO5A2B2f/t7L7d+sf5NTDVRvQyog
-	 pOEfHA9U4o6Ly06RaSB6cXJirqFyEDCBwq9164tG1vIiY2aNL8uG1PgSFHN5DUmf3
-	 GQtgSB5jL2QroZaIXgadkKvpsoDEQ2EHMkCkWM7BGdfSVwFWejdXBZJa3LBxfDVoB
-	 mtjJEHKBNvsrA3UywXqwyM+q/I5W5eiXKRZFUL7qyPcY3sjNrZ7bfoBFwfoZEOH18
-	 sK0Vhg2deLJUio9rCi1ef03tMbFimJnyj1Zqd/NWQYpcz8wskOmw5Y76mTVwSK3ZE
-	 uOohpcvDVX70ll7nZg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N3KPg-1u0tyk41Kc-00uz0y; Fri, 18
- Oct 2024 17:21:53 +0200
-Message-ID: <42e4e6b4-05c1-4e12-b6d6-d07b7d44c592@gmx.de>
-Date: Fri, 18 Oct 2024 17:21:51 +0200
+	s=arc-20240116; t=1729264899; c=relaxed/simple;
+	bh=Eo5wuFuRpaLEIgjilNUa0Gym27FY4otmWggnMJqNR/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NvRDeQqNy/dKphHRaQ0zBFWKYf163x1nNiysrwg+h0Aw99tupMsas+5Sd+OjfVxIhjvWBBGuXiNrMHfKgQgQ0q9c/+ETlCHguQPCPjD4hc1fF9tZDyas6NVFQjsAtMJHSvkLAX8b3hqSS7FgqHZJJvGcYvX1MMP5FBVh4SJJprs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3386C4CEC5;
+	Fri, 18 Oct 2024 15:21:37 +0000 (UTC)
+Date: Fri, 18 Oct 2024 11:22:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tatsuya S <tatsuya.s2862@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ftrace: Fix function name for trampoline
+Message-ID: <20241018112203.75307abe@gandalf.local.home>
+In-Reply-To: <20241012124152.2078-1-tatsuya.s2862@gmail.com>
+References: <20241012124152.2078-1-tatsuya.s2862@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev/wm8505fb: select CONFIG_FB_IOMEM_FOPS
-To: Arnd Bergmann <arnd@kernel.org>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241018151258.3574617-1-arnd@kernel.org>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20241018151258.3574617-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:VYMOrfsD/aY7fho3C9Po9tnM74xgqJjn7ICLLmnBgadTxV1eYHF
- IDyzeA3FKO7UBLCdhx9cp6S/tos15tRFpx6McZX+s8cZ151Z4WODbe+VPh6ZSVuOgdNHzQl
- P+WhYm8HXwKhBtuZVl/TRPeRcjzmhPuWfKBFy8QYPcXYUtd8mgSJroVZh0Sbf2bEZFuuVAl
- fXZcGEW+LSsaG9Yy+08Ww==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:H9VPzDtQf0U=;nSRfwufOexpp/GC5PO/xx8IseYh
- j2NuEWV7+uG+ypwTwLu5Ytptybjbj6xTaTwK5qGG6uT8ZCnLztXcgQAIBiTqObium37PZarIR
- I0WckGx5apNQA7PT6CwIVa0uUL8cBvEivviBeucaMZTM6uqAR3SCEOVVcRd/xGN7rC0YokaGv
- Z1xGEIkNOfuEmcgsJHCFHFQlolZVBavn0RshWthoB31zhh4XemErBR65xAjUZQlNvDeAN6iNI
- u0V9097nBqa+Mfl0CotlgqvEAOVawWpbQKFkPzUyhLrmTUvIfyYpe7a+UnSZtG0KU5l7Ph201
- 9ssDccI7XdyVHxImFesKi+pDnfR5mTsP0CIJ7O5rE2GwVP9kpYDLLR3PNu2xSKwt4xOXMMi4J
- IJapEgIQxseA2J7yxA50Q/Xqny//I4dP5n2AXKgz3sbIs+SgxfAntX5m9vN50rIZW4W5P+1zy
- WW2guctJFAYkor6v+eoFRK9r3jdIxNfiFCNNdtROvRfz4+oHALBUnRPVZt2dO2XrmQIQLKHst
- 6z51JUOgDhgQYl0DbySpJIJttgujdjcoo1+YifLqnWZk+v91kbSlgTYWjVOYrmhKBipre+tRE
- B1wY275/OREU3tbhWP2EJUxGLI2ZKMp8mKa5U+VP7pZd38JPvxSnNSM0s32eyHXRPrJCRINrR
- z5T9VqzbEn8zch52Us8cTxeKzNZMMEA4HMI/RzDf/TMJ4JV0qdxA1COFVoWbfoRuUb00Oh+CO
- WJmJZwl/2bOUL38wAELkajVWLap+9hOawulTAfcX88feh9WXCuAy+X7hErAX+nK+voQB/lfyb
- NB5CwfDmHWv0n+Ay1T5uexIQ==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 10/18/24 17:12, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The fb_io_mmap() function is used in the file operations but
-> not enabled in all configurations unless FB_IOMEM_FOPS gets
-> selected:
->
-> ld.lld-20: error: undefined symbol: fb_io_mmap
->>>> referenced by wm8505fb.c
->>>>                drivers/video/fbdev/wm8505fb.o:(wm8505fb_ops) in archi=
-ve vmlinux.a
->
-> Fixes: 11754a504608 ("fbdev/wm8505fb: Initialize fb_ops to fbdev I/O-mem=
-ory helpers")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Sat, 12 Oct 2024 21:41:51 +0900
+Tatsuya S <tatsuya.s2862@gmail.com> wrote:
 
-applied.
-Thanks!
-Helge
+> The issue that unrelated function name is shown on stack trace like
+> following even though it should be trampoline code address is caused by
+> the creation of trampoline code in the area where .init.text section
+> of module was freed after module is loaded.
+> 
+> bash-1344    [002] .....    43.644608: <stack trace>
+>   => (MODULE INIT FUNCTION)
+>   => vfs_write
+>   => ksys_write
+>   => do_syscall_64
+>   => entry_SYSCALL_64_after_hwframe  
+> 
+> To resolve this, when function address of stack trace entry is in
+> trampoline, output without looking up symbol name.
+> 
+> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
+> ---
+> V1 -> V2: Instead of checking trampoline when displaying "trace" results,
+> 	  it stores trampoline when generating the stacktrace entry.
+
+I'm sorry. I guess I wasn't clear. I meant to do the tests in the recording
+of the trampoline, and do not add them or replace them. I rather not add
+this meta data to the ring buffer.
+
+> 
+>  kernel/trace/trace.c         | 24 ++++++++++++++++--------
+>  kernel/trace/trace_entries.h |  2 ++
+>  kernel/trace/trace_output.c  |  7 +++++++
+>  3 files changed, 25 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 1c69ca1f1088..92a8e76a0cd7 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -988,7 +988,8 @@ static inline void trace_access_lock_init(void)
+>  #endif
+>  
+>  #ifdef CONFIG_STACKTRACE
+> -static void __ftrace_trace_stack(struct trace_buffer *buffer,
+> +static void __ftrace_trace_stack(struct trace_array *tr,
+> +				 struct trace_buffer *buffer,
+>  				 unsigned int trace_ctx,
+>  				 int skip, struct pt_regs *regs);
+>  static inline void ftrace_trace_stack(struct trace_array *tr,
+> @@ -997,7 +998,8 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+>  				      int skip, struct pt_regs *regs);
+>  
+>  #else
+> -static inline void __ftrace_trace_stack(struct trace_buffer *buffer,
+> +static inline void __ftrace_trace_stack(struct trace_array *tr,
+> +					struct trace_buffer *buffer,
+>  					unsigned int trace_ctx,
+>  					int skip, struct pt_regs *regs)
+>  {
+> @@ -2928,7 +2930,8 @@ struct ftrace_stacks {
+>  static DEFINE_PER_CPU(struct ftrace_stacks, ftrace_stacks);
+>  static DEFINE_PER_CPU(int, ftrace_stack_reserve);
+>  
+> -static void __ftrace_trace_stack(struct trace_buffer *buffer,
+> +static void __ftrace_trace_stack(struct trace_array *tr,
+> +				 struct trace_buffer *buffer,
+>  				 unsigned int trace_ctx,
+>  				 int skip, struct pt_regs *regs)
+>  {
+> @@ -2986,6 +2989,11 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
+>  	memcpy(&entry->caller, fstack->calls,
+>  	       flex_array_size(entry, caller, nr_entries));
+>  
+> +#ifdef CONFIG_DYNAMIC_FTRACE
+> +	entry->trampoline = tr->ops ? tr->ops->trampoline : 0;
+> +	entry->trampoline_size = tr->ops ? tr->ops->trampoline_size : 0;
+> +#endif
+> +
+>  	if (!call_filter_check_discard(call, entry, buffer, event))
+>  		__buffer_unlock_commit(buffer, event);
+>  
+
+I meant here we can add something like:
+
+/* Make the marker not exactly -1, but max int to be something somewhat unique */
+#define FTRACE_TRAMPOLINE_MARKER	((unsigned long)MAX_INT)
+
+
+	if (regs) {
+		nr_entries = stack_trace_save_regs(regs, fstack->calls,
+						   size, skip);
+	} else {
+		nr_entries = stack_trace_save(fstack->calls, size, skip);
+	}
+
++	if (tr->ops && tr->ops->trampoline) {
++		unsigned long tramp_start = tr->ops->trampoline;
++		unsigned long tramp_end = tramp_start + tr->ops->trampoline_size;
++		unsigned long *calls = fstack->calls;
++
++		/* Mark any trampolines */
++		for (int i = 0; i < nr_entries; i++) {
++			if (calls[i] >= tramp_start && calls[i] < tramp_end) {
++				calls[i] = FTRACE_TRAMPOLINE_MARKER;
++		}
++	}
++
+	event = __trace_buffer_lock_reserve(buffer, TRACE_STACK,
+				    struct_size(entry, caller, nr_entries),
+				    trace_ctx);
+	if (!event)
+		goto out;
+	entry = ring_buffer_event_data(event);
+
+	entry->size = nr_entries;
+	memcpy(&entry->caller, fstack->calls,
+	       flex_array_size(entry, caller, nr_entries));
+
+
+> @@ -3005,7 +3013,7 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+>  	if (!(tr->trace_flags & TRACE_ITER_STACKTRACE))
+>  		return;
+>  
+> -	__ftrace_trace_stack(buffer, trace_ctx, skip, regs);
+> +	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, regs);
+>  }
+>  
+>  void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+> @@ -3014,7 +3022,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+>  	struct trace_buffer *buffer = tr->array_buffer.buffer;
+>  
+>  	if (rcu_is_watching()) {
+> -		__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
+> +		__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+>  		return;
+>  	}
+>  
+> @@ -3031,7 +3039,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+>  		return;
+>  
+>  	ct_irq_enter_irqson();
+> -	__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
+> +	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+>  	ct_irq_exit_irqson();
+>  }
+>  
+> @@ -3048,8 +3056,8 @@ void trace_dump_stack(int skip)
+>  	/* Skip 1 to skip this function. */
+>  	skip++;
+>  #endif
+> -	__ftrace_trace_stack(printk_trace->array_buffer.buffer,
+> -			     tracing_gen_ctx(), skip, NULL);
+> +	__ftrace_trace_stack(printk_trace, printk_trace->array_buffer.buffer,
+> +				tracing_gen_ctx(), skip, NULL);
+>  }
+>  EXPORT_SYMBOL_GPL(trace_dump_stack);
+>  
+> diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+> index c47422b20908..81b84241e3b3 100644
+> --- a/kernel/trace/trace_entries.h
+> +++ b/kernel/trace/trace_entries.h
+> @@ -190,6 +190,8 @@ FTRACE_ENTRY(kernel_stack, stack_entry,
+>  
+>  	F_STRUCT(
+>  		__field(	int,		size	)
+> +		__field(	unsigned long,	trampoline	)
+> +		__field(	unsigned long,	trampoline_size	)
+>  		__stack_array(	unsigned long,	caller,	FTRACE_STACK_ENTRIES, size)
+>  	),
+>  
+> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+> index 868f2f912f28..fbd066e9c9fa 100644
+> --- a/kernel/trace/trace_output.c
+> +++ b/kernel/trace/trace_output.c
+> @@ -1246,6 +1246,13 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
+>  			break;
+>  
+>  		trace_seq_puts(s, " => ");
+> +		if (field->trampoline && field->trampoline_size &&
+> +			(*p) + delta >= field->trampoline &&
+> +			(*p) + delta < field->trampoline + field->trampoline_size) {
+
+Then the above can simply be:
+
+		if ((*p) == FTRACE_TRAMPOLINE_MARKER) {
+			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
+			continue;
+		}
+
+since the value is useless anyway.
+
+-- Steve
+
+
+> +			trace_seq_printf(s, "0x%08lx", (*p) + delta);
+> +			trace_seq_puts(s, " [FTRACE TRAMPOLINE]\n");
+> +			continue;
+> +		}
+>  		seq_print_ip_sym(s, (*p) + delta, flags);
+>  		trace_seq_putc(s, '\n');
+>  	}
 
 
