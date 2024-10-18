@@ -1,185 +1,134 @@
-Return-Path: <linux-kernel+bounces-371517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364799A3C31
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C959A3C2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11941F20EEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:53:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23C01F21BC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5112040AB;
-	Fri, 18 Oct 2024 10:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479062038D7;
+	Fri, 18 Oct 2024 10:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AfFlT7H2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F8Qt7nny"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150F0204091;
-	Fri, 18 Oct 2024 10:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABA6202624;
+	Fri, 18 Oct 2024 10:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729248664; cv=none; b=XSK5DVbCPxwScVK8m57Wd4WXB9WNbFl8wdqetlW3L2iCSd8sJzCKUaz7jea+BFGa90MQPYXGOu79Oj06X+3twvwGCf/cuZGmCW66RNKr03PQ1YQ5Eml8fhage0LwcW+fNo+WIRimMU6xnQ6J6adOtAlMl9na/Y2YyuJ/Kfdx3Pg=
+	t=1729248660; cv=none; b=OF8Vavu89S8yOCplKYvhMCbcCAFcWeLC0J3VzePQX+/h8UvWviBeyqP9CwVHfNmxzkuYk1rVCN1OK3o/Si+y3N/s+22oKgKsJqfMrWX6VmBT6Wt78VitpwGLWhL8rkPp4HoaBYxVfq+CAU5QRu46lzsZzHnYeMfptWIIeRWwM8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729248664; c=relaxed/simple;
-	bh=tBFnHSDdOhzLjrQwe0jISzdmTRPCueB4BcNOtgLI+3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Gt+Jg4WbrNKq2l+h5G0PtwbngaBbbPo6Ujda2saUCzttxDQ0xNbK0k7EsbFyuwr2NW534Mu90/1qz9feSGBsSpW0n975XovFUGbvNr5YPG7xglE4fYArgyNgS3tazb2PRwn8DDboL/Od9D+XU3X8AiuPxwARagQNG4FwXlEuxWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AfFlT7H2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49I0NOQF006343;
-	Fri, 18 Oct 2024 10:50:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	izzVpy94D2rcOVSHLBZnR3I6g+orYHLyLlH0uKEqglw=; b=AfFlT7H2jpEJj3TY
-	mS5Z0zh+Bn+swokUTVq/Z1SWxp9fa1YTJNcxiK4Aw31asxaushpkPKAg7RdDJoff
-	Xz70XsNuNfnHKvWOLlSzzfnekX0A8VT/UP6/fMtMAdEm3Xa6N37EaNYRt66HGNGW
-	93t//EQ7OedMk4n7D2XV+twgQRuYMBEQ748jfxKpIHlX0mEURaDnNK1+AyDk5htX
-	3dJQyzQ+iaTN0+0o820smHPoI1rugXx1vWOU2iqD7MtBx0SdFPF/2eDWbBobsJVS
-	G10KFGXovuZjRcIJYdhehQzduFLFW7eGwj5uDMoHoMs3yupx/BnMkW1yZV1EIxPl
-	cNF1zw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42bd3asjfm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 10:50:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49IAoqkC006177
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Oct 2024 10:50:52 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 18 Oct
- 2024 03:50:48 -0700
-Message-ID: <67795327-74d5-4b5d-b778-bd0f90c58e97@quicinc.com>
-Date: Fri, 18 Oct 2024 16:20:45 +0530
+	s=arc-20240116; t=1729248660; c=relaxed/simple;
+	bh=syJdLYnz5Q70PDNaZn4aYfuviFa7wVVgde/vmOAQEWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gYoqvieJsGZtjHj0ldzIANVX1VH1YQ2HvUWCgk6mg8GGI/788kZ2rHa3C5X9koLAjtgEb/pG3SSIMrBueAUKp5vU5sIEPGLajf5B+rFnsdx3chQLiXP6xpsiTyiAmbXSEKzWAYwyXOJxQO/JL1rqwOa+yIY24w16gLZHPCvqsww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F8Qt7nny; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2cU22bSglzDVdcqTFPBtq8HXbywO/nkwltNcPNsssAM=; b=F8Qt7nnyXIJ8jUCjfss2VhOk6T
+	OL+E8R1+Q8R8f4UfvHPXgvDIQRA+b+byCTuu51OwS1XmFmu4bjyQiorxdW3zWARXdUvATqvjnKQHs
+	f4U4i+aDTWIwFXdhvka0Wwh5j1+FcNwWlZMT20dHWAeR9U6AfuPxyRUn0CTWx5nHLnzd3B6ja2Zb4
+	78JNWbjq+Rs6675gYYcgcUoIfvvkf9mmoMoCwrfEy7gnemkgB4ac92puyrNHdTLZnlmrGTC9NRrs5
+	nSIm74T6PIyMDp0heZmtasmGiWzF47jq3ixeqQABHpfDawd/SdF0hQy007EC+39cIEP98r5680OB1
+	+7bzyI5w==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1kZK-0000000D0vl-1n9N;
+	Fri, 18 Oct 2024 10:50:55 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 860333005AF; Fri, 18 Oct 2024 12:50:54 +0200 (CEST)
+Date: Fri, 18 Oct 2024 12:50:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Kees Cook <keescook@chromium.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Dan Carpenter <error27@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v3] cleanup: adjust scoped_guard() macros to avoid
+ potential warning
+Message-ID: <20241018105054.GB36494@noisy.programming.kicks-ass.net>
+References: <20241011121535.28049-1-przemyslaw.kitszel@intel.com>
+ <202410131151.SBnGQot0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/14] clk: qcom: clk-branch: Add support for SREG branch
- ops
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Stephen Boyd
-	<sboyd@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kalpak Kawadkar
-	<quic_kkawadka@quicinc.com>
-References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
- <20241017-sar2130p-clocks-v1-7-f75e740f0a8d@linaro.org>
- <be8639d0add779bcac0314d3c433d01b.sboyd@kernel.org>
- <we4stuv7td5jmvicsvsjowqg76merg5lmlgqj6dvqvqecsw7xk@bfz2kdjnt6kb>
- <5904599efffa7ce747772c0dcc1c897b.sboyd@kernel.org>
- <scwpcovoazmd4yrwtczghx4e5eopqoknknqzcr23wjve65bmxh@ih5efkh53g3h>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <scwpcovoazmd4yrwtczghx4e5eopqoknknqzcr23wjve65bmxh@ih5efkh53g3h>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: etGaqT_EFU2sNd1-erJG_mizPIeoWCZz
-X-Proofpoint-ORIG-GUID: etGaqT_EFU2sNd1-erJG_mizPIeoWCZz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 impostorscore=0 clxscore=1015 mlxlogscore=860
- malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410180069
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202410131151.SBnGQot0-lkp@intel.com>
 
+On Sun, Oct 13, 2024 at 12:01:24PM +0800, kernel test robot wrote:
+> >> drivers/firewire/core-transaction.c:912:2: warning: variable 'handler' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+>      912 |         scoped_guard(rcu) {
+>          |         ^~~~~~~~~~~~~~~~~
+>    include/linux/cleanup.h:197:2: note: expanded from macro 'scoped_guard'
+>      197 |         __scoped_guard(_name, /* empty */, __UNIQUE_ID(label), args)
+>          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/cleanup.h:190:3: note: expanded from macro '__scoped_guard'
+>      190 |                 if (!__guard_ptr(_name)(&scope) && __is_cond_ptr(_name)) {      \
+>          |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/compiler.h:55:28: note: expanded from macro 'if'
+>       55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
+>          |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/compiler.h:57:30: note: expanded from macro '__trace_if_var'
+>       57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+>          |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/firewire/core-transaction.c:921:7: note: uninitialized use occurs here
+>      921 |         if (!handler)
+>          |              ^~~~~~~
+>    include/linux/compiler.h:55:47: note: expanded from macro 'if'
+>       55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
+>          |                                               ^~~~
+>    include/linux/compiler.h:57:52: note: expanded from macro '__trace_if_var'
+>       57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+>          |                                                    ^~~~
+>    drivers/firewire/core-transaction.c:912:2: note: remove the 'if' if its condition is always false
+>      912 |         scoped_guard(rcu) {
+>          |         ^
+>    include/linux/cleanup.h:197:2: note: expanded from macro 'scoped_guard'
+>      197 |         __scoped_guard(_name, /* empty */, __UNIQUE_ID(label), args)
+>          |         ^
+>    include/linux/cleanup.h:190:3: note: expanded from macro '__scoped_guard'
+>      190 |                 if (!__guard_ptr(_name)(&scope) && __is_cond_ptr(_name)) {      \
+>          |                 ^
+>    include/linux/compiler.h:55:23: note: expanded from macro 'if'
+>       55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
+>          |                       ^
+>    drivers/firewire/core-transaction.c:903:36: note: initialize the variable 'handler' to silence this warning
+>      903 |         struct fw_address_handler *handler;
+>          |                                           ^
+>          |                                            = NULL
+>    1 warning generated.
 
+So this goes away when we do:
 
-On 10/18/2024 3:26 PM, Dmitry Baryshkov wrote:
-> On Thu, Oct 17, 2024 at 03:28:13PM -0700, Stephen Boyd wrote:
->> Quoting Dmitry Baryshkov (2024-10-17 15:00:03)
->>> On Thu, Oct 17, 2024 at 11:10:20AM -0700, Stephen Boyd wrote:
->>>> Quoting Dmitry Baryshkov (2024-10-17 09:56:57)
->>>>> From: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
->>>>>
->>>>> Add support for SREG branch ops. This is for the clocks which require
->>>>
->>>> What is SREG? Can you spell it out?
->>>
->>> Unfortunately, no idea. This is the only register name I know.
->>>
->>
->> Can someone inside qcom tell us?
-> 
-> Taniya, could you possibly help us? This is for gcc_video_axi0_sreg /
-> gcc_video_axi1_sreg / gcc_iris_ss_hf_axi1_sreg /
-> gcc_iris_ss_spd_axi1_sreg clocks on the SAR2130P platform.
-> 
-
-SREG(Shift Register) are the register interface for clock branches which 
-can control memories connected to them.
-
-In principle these SREGs are not required to be controlled via SW 
-interface, but on SAR2130P, we had to control them to flush out the 
-pipeline for users of Video.
-
-We are looking into the feasibility of extending the current 
-'clk_branch2_mem_ops' and can share the patch.
-
-You could also drop these clock interfaces for now to move ahead, as I 
-do not see VideoCC support and bring them as part of those Clock 
-controller support.
-
->>
->>>
->>>>
->>>>>          u8      halt_check;
->>>>
->>>> Instead of adding these new members can you wrap the struct in another
->>>> struct? There are usually a lot of branches in the system and this
->>>> bloats those structures when the members are never used.
->>>>
->>>>        struct clk_sreg_branch {
->>>>                u32 sreg_enable_reg;
->>>>                u32 sreg_core_ack_bit;
->>>>                u32 sreg_periph_ack_bit;
->>>>                struct clk_branch branch;
->>>>        };
->>>>
->>>> But I'm not even sure that is needed vs. just putting a clk_regmap
->>>> inside because the clk_ops don't seem to use any of these other members?
->>>
->>> Yes, nice idea. Is it ok to keep the _branch suffix or we'd better
->>> rename it dropping the _branch (and move to another source file while we
->>> are at it)?
->>>
->>
->> I don't really care. Inside qcom they called things branches in the
->> hardware and that name was carried into the code. If sreg is a branch
->> then that would make sense. From the 'core_ack' and 'periph_ack' it
->> actually looks like some sort of power switch masquerading as a clk.
-> 
-> Ack.
-> 
-> 
-
--- 
-Thanks & Regards,
-Taniya Das.
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -323,7 +323,7 @@ static __maybe_unused const bool class_#
+  */
+ #define __scoped_guard(_name, _fail, _label, args...)				\
+ 	for (CLASS(_name, scope)(args);	true; ({ goto _label; }))		\
+-		if (!__guard_ptr(_name)(&scope) && __is_cond_ptr(_name)) {	\
++		if (__is_cond_ptr(_name) && !__guard_ptr(_name)(&scope)) {	\
+ 			_fail;							\
+ _label:										\
+ 			break;							\
 
