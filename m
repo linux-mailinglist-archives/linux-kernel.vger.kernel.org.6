@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-371511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-371512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5DBB9A3C1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D11DB9A3C1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 12:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D79511C21026
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:51:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C031C23D3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 10:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5789E202F71;
-	Fri, 18 Oct 2024 10:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50101202F86;
+	Fri, 18 Oct 2024 10:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDp7zqhK"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWmXRq34"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EA52022F9;
-	Fri, 18 Oct 2024 10:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A7A202620;
+	Fri, 18 Oct 2024 10:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729248641; cv=none; b=hjzOMRCO/sTdD1xgxA+PeVfrqDBjrR8Z8nceNksaijq0h2aCJqfFyQfsRStQdtLbw8wECVAYALuvj7X7IJPG+u4ztYUY+WFrQsX7fyOO4ThNLnkV6JoW9Den+qGK5in8qWYXBwkHFX/cnliMaGHtGDXoUZRzeHbUXfxcbcWXR2A=
+	t=1729248642; cv=none; b=CezuxM98se5x53a8w9v3DEUPVhSvlG9OWN5Bh4M88S0nc0O6+bmh9tOL+DHB5VskVCsXwV/SIzLqRnfsPySyaAfJgVXEgc5u/AFIg9QlrHL8Jsvm38Pw/p2v90TmxmbSoD3dKg3sxqAcp6W6e3wj1oqjlQrjTZ+yhU9ODVtogBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729248641; c=relaxed/simple;
-	bh=HI79Pkt7n2LlJw3bJJcop8gJ0T5QnqUto0lUkIYJO6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W9L0YFt9VLRf1JpuAKShdAbqHtcVRhnolrHshxhjI8wXZlynbR26SRDo4iib0odEi+nS3FE7L4p4/PZBSOrfL1rqq/ddC2L4hbzrTPUwIzp7aa7kkTIZwSsbWmISD1ZGaorffzH6NiOTFJrPfPkWWgpUIQ5X9weYiES54+2GBgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RDp7zqhK; arc=none smtp.client-ip=209.85.222.47
+	s=arc-20240116; t=1729248642; c=relaxed/simple;
+	bh=E+3KLj+KeDz4T4Ju/Jg5+vwxJgYsOhayerSq8YuPCNY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=X2DT1BV2SVoBcIk2pOKvnOFF7tFzbvswyswU3O1kqedQZl+qKF5adDNNGFSN8uykgcCqrZJwjbV/Yuo7t2FOI7weQTwGy7HllP0JhfUA1TVRkkkpfGTWlB0tH1IfVE20bO0TM/unTkHdXYyVXFvF5/5OSphXRasNZgFpaejFaAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nWmXRq34; arc=none smtp.client-ip=209.85.222.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-84fb56d2fb2so601497241.3;
-        Fri, 18 Oct 2024 03:50:39 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b1507c42faso117763385a.0;
+        Fri, 18 Oct 2024 03:50:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729248639; x=1729853439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=um8CJgoH8YP7qg2KspbA5c0NLRN95mVz+O4+Mbauz+0=;
-        b=RDp7zqhKhp7o4Py3oqnUS96r5gMmEr2zOiEnSIM40QHcKtoe+uRJm2ykl0VAsIiVLW
-         qI8uO8GNCwUk3iW+Umx7kTm0CCbI9khOwdFo5ToctXYfgpJmXsxTNeLF3S0nOJvyQi+L
-         poDijbB3xV6qjSWR7KQPx/eKs6eCIhqVaQFPrg9a3lGrkwT3KO+YnnegKZDzvrcxfQG0
-         Qv7HtOdzDLlBvn9KaC29M7PlzaDQ1aUt5pw6GpcuUvC4gMvHDaLVifN3lwigmRw5eidN
-         nAT5P9rWPfutfSuPHgXJplRgsy/2Y1uPmWb5M2fmueArJtbwEDC46Sh18BIlY0HeuXX/
-         5EMg==
+        d=gmail.com; s=20230601; t=1729248640; x=1729853440; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q2+OQEgh0fCG5oZB9bP27eMnsujYhSchw3YP6zGdLsg=;
+        b=nWmXRq34c5BpIa+tn/S4HtqNRaFqFPuKKga287H6Cd9QU97ySNOTy+aY143tV+Qp1o
+         injgOqQ8DMrkV/zGZUdaR590eFiK36vrbmUoCjkrGJDU1fuKrxPslR96wumv/hRfgS5B
+         VjZswFnkLz3fBHIY2Y+LxoCA/fGJIqytwPqAphFlpcoZdoefGnkgo0YhVBcc86bRH/d5
+         POV5epcIt55pl1X0Yv/yKmaUemOz8HF+lH7cEDcuUvWzcSceQBE/zNsenwomI2UhX741
+         5//hMuTZLI3/S9LK6puVOp3O6Onzs1aE2/jhRDqLkKnSwCBMELoLecaYYXAZOPw/tznt
+         zV+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729248639; x=1729853439;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=um8CJgoH8YP7qg2KspbA5c0NLRN95mVz+O4+Mbauz+0=;
-        b=fwUomVpMqNh4VXIgRMlZVzZD0IZUAoZnfLRr4BcYyIredGE4pvMQ+l4Kaxk13AHbSX
-         WIlSGGSW8+fffVo6XkIG4EH6WvCkWTcH3Bfa2BsBN2mNrxQlC+ZCK4//ocV5f5VFgxKJ
-         D51VK420g3aO9Bt7dd+TovM+oZPZ1MRgm44NdiMr71gaybzeA17P3YbBKLv3suNe7Shx
-         er81lv+S3aYfNIdNMXikYvOT3JfK3oc/G+qH84FGofgubEvK62CSkZ9H6evMpWZaK0uG
-         /AuMYf58MxHCfHOZyB9e45BiZnGAngTp2g3gXTnjn+0PRLcSbSPx+SuqwvBXAxbKc/x0
-         Idvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcH04ZhJ0Y+6b2/hoVmsKfBwKxdo2sUfg8cBE9DUrIxN6JKyMFZaxQLKEc1Rs9xwxx0NNT/SjQT6M=@vger.kernel.org, AJvYcCXPp0YujBMV7OqpsntCIh+h80t3J7aZ60XUzexjesD8ANs7/0Y1AzULCWNqzRzgrZ3yIWoL2D9KCuvlMKC2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC3Xex7YVCzCtTsoFJfFa5L5P8l1DSSXzPHPv3so5WM2h3HiHq
-	Mwrrt+s+p8E9EBoXTl/gaE1SIHC/Du2UT2GbT0XAJRDouywngnm+tIgKZlc0
-X-Google-Smtp-Source: AGHT+IH8Mn5he2yfHltuZbtxUYmes0GQVaKU8iMC8ELro74qZ/ahKHro38OTgzSJU4H0qaepttvaZA==
-X-Received: by 2002:a05:6102:1608:b0:4a4:97bc:c0d7 with SMTP id ada2fe7eead31-4a5d6ae16a3mr1399174137.8.1729248638707;
-        Fri, 18 Oct 2024 03:50:38 -0700 (PDT)
-Received: from localhost (fwdproxy-ash-003.fbsv.net. [2a03:2880:20ff:3::face:b00c])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b156fa5618sm58452385a.65.2024.10.18.03.50.37
+        d=1e100.net; s=20230601; t=1729248640; x=1729853440;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q2+OQEgh0fCG5oZB9bP27eMnsujYhSchw3YP6zGdLsg=;
+        b=azMXHlIMKfwnIo0iiskjE519Nkb/ok0tgaDFmeT4zY7dYeSxqKHAOhbFfXLXH9Snv6
+         lXR6OBAk9+XYYR8qntUa4+Bv1K6uCn0YNOqMo30hQsJgF7sfgI9QlGjAIWbQ2MYHcoSd
+         uFg93l65KWduX+CZMlOuA0T0bL3WeG/9bhlFQAXUlHpcKiVLHYvDWLQP/CZEKnKYpWj1
+         jSKFunOmycLmUX7efWa4sX3kiOqMNZTpJxZ3MCZBDoog69v/L3xedAMHzQx7UfHdOLpf
+         dpNXnLd++12Y/zSqNqXwZjeWvtXyrMiA3Of78+qoCAhdudLpdIaqxF47RQ2fI5I22YbY
+         UIng==
+X-Forwarded-Encrypted: i=1; AJvYcCWDh/ZOB+mC7LHBZIRz7jVd0Tkdfyg2MPYZEJoTrQU0t7miX1P80KJB0oyqKzA/8xzg/tkFTjhZA0w=@vger.kernel.org, AJvYcCXn0o4/oSp7yWlPtjuh3gmMch03C9r+Qe3MyTcjQK2+c5wfXYWFy+Sl9tIq8PFKE7tkzGARTB4vTc6uEB0j@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFVc7Id8qSIJRezLBEU+soZPzroJMTmOM74VJaZ0uwQTuxlYoT
+	SrPtdyj8dUQvPDYh67qBfMeEy6iaLVi1Sr+uajvDalayeqhIRLQI
+X-Google-Smtp-Source: AGHT+IExnPa9OX7aimLs3HML3KX6QH8HCRkuDhHElKsmz6WwfmgBG4EaxhA/mKXEbRMU3PnKMeQz8Q==
+X-Received: by 2002:a05:620a:4708:b0:7b1:3c19:a665 with SMTP id af79cd13be357-7b14d51d341mr914254285a.19.1729248639792;
+        Fri, 18 Oct 2024 03:50:39 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-017.fbsv.net. [2a03:2880:20ff:11::face:b00c])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b156fe5b6fsm57894985a.82.2024.10.18.03.50.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 03:50:38 -0700 (PDT)
+        Fri, 18 Oct 2024 03:50:39 -0700 (PDT)
 From: Usama Arif <usamaarif642@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -83,10 +85,12 @@ Cc: hannes@cmpxchg.org,
 	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	Usama Arif <usamaarif642@gmail.com>
-Subject: [RFC 0/4] mm: zswap: add support for zswapin of large folios
-Date: Fri, 18 Oct 2024 11:48:38 +0100
-Message-ID: <20241018105026.2521366-1-usamaarif642@gmail.com>
+Subject: [RFC 1/4] mm/zswap: skip swapcache for swapping in zswap pages
+Date: Fri, 18 Oct 2024 11:48:39 +0100
+Message-ID: <20241018105026.2521366-2-usamaarif642@gmail.com>
 X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20241018105026.2521366-1-usamaarif642@gmail.com>
+References: <20241018105026.2521366-1-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,154 +99,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-After large folio zswapout support added in [1], this patch adds
-support for zswapin of large folios to bring it on par with zram.
-This series makes sure that the benefits of large folios (fewer
-page faults, batched PTE and rmap manipulation, reduced lru list,
-TLB coalescing (for arm64 and amd)) are not lost at swap out when
-using zswap.
+As mentioned in [1], there is a significant improvement in no
+readahead swapin performance for super fast devices when skipping
+swapcache.
 
-It builds on top of [2] which added large folio swapin support for
-zram and provides the same level of large folio swapin support as
-zram, i.e. only supporting swap count == 1.
+With large folio zswapin support added in later patches, this will also
+mean this path will also act as "readahead" by swapping in multiple
+pages into large folios. further improving performance.
 
-Patch 1 skips swapcache for swapping in zswap pages, this should improve
-no readahead swapin performance [3], and also allows us to build on large
-folio swapin support added in [2], hence is a prerequisite for patch 3.
+[1] https://lore.kernel.org/all/1505886205-9671-5-git-send-email-minchan@kernel.org/T/#m5a792a04dfea20eb7af4c355d00503efe1c86a93
 
-Patch 3 adds support for large folio zswapin. This patch does not add
-support for hybrid backends (i.e. folios partly present swap and zswap).
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+---
+ include/linux/zswap.h |  6 ++++++
+ mm/memory.c           |  3 ++-
+ mm/page_io.c          |  1 -
+ mm/zswap.c            | 46 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 54 insertions(+), 2 deletions(-)
 
-The main performance benefit comes from maintaining large folios *after*
-swapin, large folio performance improvements have been mentioned in previous
-series posted on it [2],[4], so have not added those. Below is a simple
-microbenchmark to measure the time needed *for* zswpin of 1G memory (along
-with memory integrity check).
-
-                                |  no mTHP (ms) | 1M mTHP enabled (ms)
-Base kernel                     |   1165        |    1163
-Kernel with mTHP zswpin series  |   1203        |     738
-
-The time measured was pretty consistent between runs (~1-2% variation).
-There is 36% improvement in zswapin time with 1M folios. The percentage
-improvement is likely to be more if the memcmp is removed.
-
-diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/selftests/cgroup/test_zswap.c
-index 40de679248b8..77068c577c86 100644
---- a/tools/testing/selftests/cgroup/test_zswap.c
-+++ b/tools/testing/selftests/cgroup/test_zswap.c
-@@ -9,6 +9,8 @@
- #include <string.h>
- #include <sys/wait.h>
- #include <sys/mman.h>
-+#include <sys/time.h>
-+#include <malloc.h>
- 
- #include "../kselftest.h"
- #include "cgroup_util.h"
-@@ -407,6 +409,74 @@ static int test_zswap_writeback_disabled(const char *root)
-        return test_zswap_writeback(root, false);
+diff --git a/include/linux/zswap.h b/include/linux/zswap.h
+index d961ead91bf1..e418d75db738 100644
+--- a/include/linux/zswap.h
++++ b/include/linux/zswap.h
+@@ -27,6 +27,7 @@ struct zswap_lruvec_state {
+ unsigned long zswap_total_pages(void);
+ bool zswap_store(struct folio *folio);
+ bool zswap_load(struct folio *folio);
++bool zswap_present_test(swp_entry_t swp, int nr_pages);
+ void zswap_invalidate(swp_entry_t swp);
+ int zswap_swapon(int type, unsigned long nr_pages);
+ void zswap_swapoff(int type);
+@@ -49,6 +50,11 @@ static inline bool zswap_load(struct folio *folio)
+ 	return false;
  }
  
-+static int zswapin_perf(const char *cgroup, void *arg)
++static inline bool zswap_present_test(swp_entry_t swp, int nr_pages)
 +{
-+       long pagesize = sysconf(_SC_PAGESIZE);
-+       size_t memsize = MB(1*1024);
-+       char buf[pagesize];
-+       int ret = -1;
-+       char *mem;
-+       struct timeval start, end;
-+
-+       mem = (char *)memalign(2*1024*1024, memsize);
-+       if (!mem)
-+               return ret;
-+
-+       /*
-+        * Fill half of each page with increasing data, and keep other
-+        * half empty, this will result in data that is still compressible
-+        * and ends up in zswap, with material zswap usage.
-+        */
-+       for (int i = 0; i < pagesize; i++)
-+               buf[i] = i < pagesize/2 ? (char) i : 0;
-+
-+       for (int i = 0; i < memsize; i += pagesize)
-+               memcpy(&mem[i], buf, pagesize);
-+
-+       /* Try and reclaim allocated memory */
-+       if (cg_write_numeric(cgroup, "memory.reclaim", memsize)) {
-+               ksft_print_msg("Failed to reclaim all of the requested memory\n");
-+               goto out;
-+       }
-+
-+       gettimeofday(&start, NULL);
-+       /* zswpin */
-+       for (int i = 0; i < memsize; i += pagesize) {
-+               if (memcmp(&mem[i], buf, pagesize)) {
-+                       ksft_print_msg("invalid memory\n");
-+                       goto out;
-+               }
-+       }
-+       gettimeofday(&end, NULL);
-+       printf ("zswapin took %fms to run.\n", (end.tv_sec - start.tv_sec)*1000 + (double)(end.tv_usec - start.tv_usec) / 1000);
-+       ret = 0;
-+out:
-+       free(mem);
-+       return ret;
++	return false;
 +}
 +
-+static int test_zswapin_perf(const char *root)
+ static inline void zswap_invalidate(swp_entry_t swp) {}
+ static inline int zswap_swapon(int type, unsigned long nr_pages)
+ {
+diff --git a/mm/memory.c b/mm/memory.c
+index 03e5452dd0c0..49d243131169 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4289,7 +4289,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 	swapcache = folio;
+ 
+ 	if (!folio) {
+-		if (data_race(si->flags & SWP_SYNCHRONOUS_IO) &&
++		if ((data_race(si->flags & SWP_SYNCHRONOUS_IO) ||
++		    zswap_present_test(entry, 1)) &&
+ 		    __swap_count(entry) == 1) {
+ 			/* skip swapcache */
+ 			folio = alloc_swap_folio(vmf);
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 4aa34862676f..2a15b197968a 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -602,7 +602,6 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
+ 	unsigned long pflags;
+ 	bool in_thrashing;
+ 
+-	VM_BUG_ON_FOLIO(!folio_test_swapcache(folio) && !synchronous, folio);
+ 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+ 	VM_BUG_ON_FOLIO(folio_test_uptodate(folio), folio);
+ 
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 7f00cc918e7c..f4b03071b2fb 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1576,6 +1576,52 @@ bool zswap_store(struct folio *folio)
+ 	return ret;
+ }
+ 
++static bool swp_offset_in_zswap(unsigned int type, pgoff_t offset)
 +{
-+       int ret = KSFT_FAIL;
-+       char *test_group;
-+
-+       test_group = cg_name(root, "zswapin_perf_test");
-+       if (!test_group)
-+               goto out;
-+       if (cg_create(test_group))
-+               goto out;
-+
-+       if (cg_run(test_group, zswapin_perf, NULL))
-+               goto out;
-+
-+       ret = KSFT_PASS;
-+out:
-+       cg_destroy(test_group);
-+       free(test_group);
-+       return ret;
++	return (offset >> SWAP_ADDRESS_SPACE_SHIFT) <  nr_zswap_trees[type];
 +}
 +
- /*
-  * When trying to store a memcg page in zswap, if the memcg hits its memory
-  * limit in zswap, writeback should affect only the zswapped pages of that
-@@ -584,6 +654,7 @@ struct zswap_test {
-        T(test_zswapin),
-        T(test_zswap_writeback_enabled),
-        T(test_zswap_writeback_disabled),
-+       T(test_zswapin_perf),
-        T(test_no_kmem_bypass),
-        T(test_no_invasive_cgroup_shrink),
- };
-
-[1] https://lore.kernel.org/all/20241001053222.6944-1-kanchana.p.sridhar@intel.com/
-[2] https://lore.kernel.org/all/20240821074541.516249-1-hanchuanhua@oppo.com/
-[3] https://lore.kernel.org/all/1505886205-9671-5-git-send-email-minchan@kernel.org/T/#u
-[4] https://lwn.net/Articles/955575/
-
-Usama Arif (4):
-  mm/zswap: skip swapcache for swapping in zswap pages
-  mm/zswap: modify zswap_decompress to accept page instead of folio
-  mm/zswap: add support for large folio zswapin
-  mm/zswap: count successful large folio zswap loads
-
- Documentation/admin-guide/mm/transhuge.rst |   3 +
- include/linux/huge_mm.h                    |   1 +
- include/linux/zswap.h                      |   6 ++
- mm/huge_memory.c                           |   3 +
- mm/memory.c                                |  16 +--
- mm/page_io.c                               |   2 +-
- mm/zswap.c                                 | 120 ++++++++++++++-------
- 7 files changed, 99 insertions(+), 52 deletions(-)
-
++/* Returns true if the entire folio is in zswap */
++bool zswap_present_test(swp_entry_t swp, int nr_pages)
++{
++	pgoff_t offset = swp_offset(swp), tree_max_idx;
++	int max_idx = 0, i = 0, tree_offset = 0;
++	unsigned int type = swp_type(swp);
++	struct zswap_entry *entry = NULL;
++	struct xarray *tree;
++
++	while (i < nr_pages) {
++		tree_offset = offset + i;
++		/* Check if the tree exists. */
++		if (!swp_offset_in_zswap(type, tree_offset))
++			return false;
++
++		tree = swap_zswap_tree(swp_entry(type, tree_offset));
++		XA_STATE(xas, tree, tree_offset);
++
++		tree_max_idx = tree_offset % SWAP_ADDRESS_SPACE_PAGES ?
++			ALIGN(tree_offset, SWAP_ADDRESS_SPACE_PAGES) :
++			ALIGN(tree_offset + 1, SWAP_ADDRESS_SPACE_PAGES);
++		max_idx = min(offset + nr_pages, tree_max_idx) - 1;
++		rcu_read_lock();
++		xas_for_each(&xas, entry, max_idx) {
++			if (xas_retry(&xas, entry))
++				continue;
++			i++;
++		}
++		rcu_read_unlock();
++		/*
++		 * If xas_for_each exits because entry is NULL and
++		 * the number of entries checked are less then max idx,
++		 * then zswap does not contain the entire folio.
++		 */
++		if (!entry && offset + i <= max_idx)
++			return false;
++	}
++
++	return true;
++}
++
+ bool zswap_load(struct folio *folio)
+ {
+ 	swp_entry_t swp = folio->swap;
 -- 
 2.43.5
 
