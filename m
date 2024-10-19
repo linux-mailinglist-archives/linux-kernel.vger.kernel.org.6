@@ -1,189 +1,129 @@
-Return-Path: <linux-kernel+bounces-372784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5DDF9A4D25
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:36:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2C79A4D2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CFEB1F22968
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:36:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350931C21579
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5124D1E0084;
-	Sat, 19 Oct 2024 11:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BA51E0494;
+	Sat, 19 Oct 2024 11:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhYcqAjN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KjJ65Mgr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9186218FDA3;
-	Sat, 19 Oct 2024 11:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DD11DFD8A;
+	Sat, 19 Oct 2024 11:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729337791; cv=none; b=nBZoGA2cNg3/RVRlKtIInfe4EMTijquIhRmXyssUA8YALXm7MtLE9E5sD8Pzvlsig3tB5VUr36A7xgUcqeA0+Rb6wssYN6lVkBZyD2G5xSP58sVKjY3t5iUQdwMslIg3l8kzAqSXGs3CMpPa1ppfgd5bsKPwo9As9thIu0mD62Q=
+	t=1729337917; cv=none; b=f2IgTm7N+T41rRhDNkWEi4cFNNFEDCCY5hncsE75A24Cov7qvSqDk5MZMElLeD7ndvFx7rs/STjsaSYI/ZZKGIoXTncTiIpelJpsZi+4yreRuE4H7VYuUx0xilaw+b8/+1DSYyMY3RhJaRjcLdspdEPaMkHOLPQniXauUtnndkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729337791; c=relaxed/simple;
-	bh=AoYUksVy1/NcyqpEo/Od4emIysf0jcpyQy+I/XrN6Vw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qNRmye9CGNGl2uBoVoTnMZarh6C4EEOyjdXYvZeK+zlYdHd+mjOH+9Jvs1MKVxVnHyCEkNNDmIHNQIgNrDOQIHfEKr3MxLM2XUcMyNNjjWVWlzAfz+TcUwyDTt7xqTB9JVVPb35la7Du+uSKlQ5VjMiu1Su5tOYuV1AcUqPrYzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhYcqAjN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3393C4CEC5;
-	Sat, 19 Oct 2024 11:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729337791;
-	bh=AoYUksVy1/NcyqpEo/Od4emIysf0jcpyQy+I/XrN6Vw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WhYcqAjN9ndlY0a1CVIXsefWOX9y4FlJHmtpcxYUG2UvSHLWI5hnB/+tDa6qGVOUk
-	 7fXB0EmIh5MHMy12X/Bfuk0aYdplAH0qwfLRPgcdXseT4fKxRmhBTi6ld3ME1+mb+F
-	 n+EiBChBu4qjOnMYzQl9Pwbjv6sIUyZVXMqDX1Y2cSnLOGkb4/iyr6jqbx/PrxUigZ
-	 YLNNnGH+Hxh22YHl6JocYDjnYcZ3LBlYaQK6NtnG/jVfuuOI4vzv2Mm4vTWiKoCM+1
-	 vnT9paIvD4N4WBBLsx2eneEGOgbRAgaBfnQkXP25Qzr4+EVfs/RBv3nNvq9Q2Tre0l
-	 b2HQHmNZ5vpSA==
-Date: Sat, 19 Oct 2024 12:36:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Justin Weiss <justin@justinweiss.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Derek J . Clark"
- <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxlcg==?=
- <philm@manjaro.org>
-Subject: Re: [PATCH v2 3/6] dt-bindings: iio: imu: Add Bosch BMI260
-Message-ID: <20241019123623.210ac09d@jic23-huawei>
-In-Reply-To: <20241018233723.28757-4-justin@justinweiss.com>
-References: <20241018233723.28757-1-justin@justinweiss.com>
-	<20241018233723.28757-4-justin@justinweiss.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729337917; c=relaxed/simple;
+	bh=xliTeRKq8Ubg/8gWFk66TUUJKGg3G+7WxNX6IRvq7qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UCdI11XR/TJU13Qv8m3VkzICPkRrWyY89y6eaninFaxlE9JwIml/UOdqYJzy4sJA1LxIt9pSN0X8CjIsMuoGgb2binjARWCwA8E0dZHuhKNEXORNO52d7XYX5L48ceSOPRU/3qBXPgq9vt08uaaSyJMfUmO/iVxISbe3QcsVD+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KjJ65Mgr; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729337915; x=1760873915;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xliTeRKq8Ubg/8gWFk66TUUJKGg3G+7WxNX6IRvq7qc=;
+  b=KjJ65MgrXPuKxIj/QG3WvCQVzlYWtgqxWLEsN1ff23b8CpsLm+IIrgFz
+   a5SQTgWtU4P1E4h/G76liZyfO1fqNsIQhlyv3zs3QfxP9OwENdG6MVV3v
+   i4Mz+An52ouuUIewhrcN6WACcAUrQ+xhRb82iceooawd38eHEyLa1/Nie
+   WnJztP4QlFmmJphbWgjDu+dY/5TC6kUDY8Ud9C2Gf8cq/4HJqqMmBjl2r
+   D5D7+gNW7CojXNe8cIkRPolGvVPxjbr38KKubrb3K/Wx/O/GAGPO1FkhF
+   Pdb/oww9svrAKa/XT3oVScy9xH1LwnMgdhPlrojU7A4kWMg3/bGwLhMv4
+   w==;
+X-CSE-ConnectionGUID: 6SQePbhlSd66NpBWVH2PJA==
+X-CSE-MsgGUID: Pud+/K0BTRSPjWTjKjw+3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11230"; a="40262594"
+X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
+   d="scan'208";a="40262594"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 04:38:34 -0700
+X-CSE-ConnectionGUID: U4X/UXW+T2qVHBo2wlcC8g==
+X-CSE-MsgGUID: BiRAVVjCTzC4QrZJdDJmDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
+   d="scan'208";a="83890979"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 19 Oct 2024 04:38:30 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t27mu-000OwL-0Y;
+	Sat, 19 Oct 2024 11:38:28 +0000
+Date: Sat, 19 Oct 2024 19:38:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Antonio Quartulli <antonio@openvpn.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, sd@queasysnail.net,
+	ryazanov.s.a@gmail.com, Andrew Lunn <andrew@lunn.ch>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, openvpn-devel@lists.sourceforge.net,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v9 11/23] ovpn: store tunnel and transport
+ statistics
+Message-ID: <202410191934.uhcv7iPs-lkp@intel.com>
+References: <20241016-b4-ovpn-v9-11-aabe9d225ad5@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016-b4-ovpn-v9-11-aabe9d225ad5@openvpn.net>
 
-On Fri, 18 Oct 2024 16:36:09 -0700
-Justin Weiss <justin@justinweiss.com> wrote:
+Hi Antonio,
 
-> Add devicetree description document for Bosch BMI260, a 6-Axis IMU.
->=20
-> Signed-off-by: Justin Weiss <justin@justinweiss.com>
-Looks like this would be much better as an additional compatible id
-in the existing bosch,bmi270.yaml binding doc.
+kernel test robot noticed the following build warnings:
 
-=46rom a quick comparison they look nearly identical.
-Even if there are small differences the dt binding schema allows
-those to be expressed in a single file.
+[auto build test WARNING on 6d858708d465669ba7de17e9c5691eb4019166e8]
 
-Jonathan
+url:    https://github.com/intel-lab-lkp/linux/commits/Antonio-Quartulli/netlink-add-NLA_POLICY_MAX_LEN-macro/20241016-092722
+base:   6d858708d465669ba7de17e9c5691eb4019166e8
+patch link:    https://lore.kernel.org/r/20241016-b4-ovpn-v9-11-aabe9d225ad5%40openvpn.net
+patch subject: [PATCH net-next v9 11/23] ovpn: store tunnel and transport statistics
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
 
-> ---
->  .../bindings/iio/imu/bosch,bmi260.yaml        | 77 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 78 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,bmi26=
-0.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/imu/bosch,bmi260.yaml =
-b/Documentation/devicetree/bindings/iio/imu/bosch,bmi260.yaml
-> new file mode 100644
-> index 000000000000..6786b5e4d0fa
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/imu/bosch,bmi260.yaml
-> @@ -0,0 +1,77 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/imu/bosch,bmi260.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Bosch BMI260 6-Axis IMU
-> +
-> +maintainers:
-> +  - Justin Weiss <justin@justinweiss.com>
-> +
-> +description: |
-> +  BMI260 is a 6-axis inertial measurement unit that can measure accelera=
-tion and
-> +  angular velocity. The sensor also supports configurable interrupt even=
-ts such
-> +  as motion detection and step counting. The sensor can communicate over
-> +  I2C or SPI.
-> +  https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi260/
-> +
-> +properties:
-> +  compatible:
-> +    const: bosch,bmi260
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vdd-supply: true
-> +  vddio-supply: true
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  interrupt-names:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      enum:
-> +        - INT1
-> +        - INT2
-> +
-> +  drive-open-drain:
-> +    description:
-> +      set if the specified interrupt pins should be configured as
-> +      open drain. If not set, defaults to push-pull.
-> +
-> +  mount-matrix:
-> +    description:
-> +      an optional 3x3 mounting rotation matrix.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +  - vddio-supply
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        imu@68 {
-> +            compatible =3D "bosch,bmi260";
-> +            reg =3D <0x68>;
-> +            vdd-supply =3D <&vdd>;
-> +            vddio-supply =3D <&vddio>;
-> +            interrupt-parent =3D <&gpio1>;
-> +            interrupts =3D <16 IRQ_TYPE_EDGE_RISING>;
-> +            interrupt-names =3D "INT1";
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6011af70c12e..73b6b7721dd8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4047,6 +4047,7 @@ BOSCH SENSORTEC BMI270 IMU IIO DRIVER
->  M:	Alex Lanzano <lanzano.alex@gmail.com>
->  L:	linux-iio@vger.kernel.org
->  S:	Maintained
-> +F:	Documentation/devicetree/bindings/iio/imu/bosch,bmi260.yaml
->  F:	Documentation/devicetree/bindings/iio/imu/bosch,bmi270.yaml
->  F:	drivers/iio/imu/bmi270/
-> =20
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410191934.uhcv7iPs-lkp@intel.com/
 
+includecheck warnings: (new ones prefixed by >>)
+>> drivers/net/ovpn/io.c: socket.h is included more than once.
+
+vim +25 drivers/net/ovpn/io.c
+
+    16	
+    17	#include "ovpnstruct.h"
+    18	#include "peer.h"
+    19	#include "io.h"
+    20	#include "bind.h"
+    21	#include "crypto.h"
+    22	#include "crypto_aead.h"
+    23	#include "netlink.h"
+    24	#include "proto.h"
+  > 25	#include "socket.h"
+    26	#include "udp.h"
+    27	#include "skb.h"
+  > 28	#include "socket.h"
+    29	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
