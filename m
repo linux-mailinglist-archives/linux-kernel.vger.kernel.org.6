@@ -1,97 +1,141 @@
-Return-Path: <linux-kernel+bounces-372626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161049A4B2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 06:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22ACC9A4B2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 06:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C023283C14
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47A8A1C214FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2EE1D460F;
-	Sat, 19 Oct 2024 04:17:10 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F748632;
-	Sat, 19 Oct 2024 04:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62AB19341F;
+	Sat, 19 Oct 2024 04:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFKgaWMF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1810F20334
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 04:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729311430; cv=none; b=VPmnN7cI6g3kyiPghoibU+/qZquaRBicon2pVOx2lx5shPKPp8dYBo7wOsy9RQvE7az2bXcztUiNR4sHGOzNKrgTRXogM7/ptlaHUobbOh2sRjdrNWklwamtD03/ZxirN8iUxTxXHZMT09Pub1Zq6xUOJxyk69Uc6LPeSGNcMH8=
+	t=1729312249; cv=none; b=p7XFoCF57YwnG0SINo1rwhOxrmg0Y6hx0VRiyAq4mdo4unODRpM7745h8R5b01YuN+aCtjyDM3oJ/DwedHkFaBCD73lzBCl3/O/WMZmtv9Bx+sQv8C7y4xGuymkkFnejoesYu2Bhx7Sbfi6P/vE/P1BNLjhYSG62G2F/yZgD0mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729311430; c=relaxed/simple;
-	bh=ORboWYAB3a+WiHzlqEMwz+qMTrrxRx3it6Fi2P2A2QM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fs5dxZbgcElohtOGp+EBKeQ8OddzMq0fMzsBpU450DfouUI+lvD6qiyLbRBjTtyCOUkJvNgFsdpNd9KxYg/ie06me9XweHPtagBkRGoixGvPa+DRbbKBZmx6dwNcU5raqsMpFFXlFPPVCPIWazyrSD8CELZEbVujqptgjAgfNuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 49J4DXwK031623;
-	Fri, 18 Oct 2024 23:13:33 -0500
-Received: (from segher@localhost)
-	by gate.crashing.org (8.14.1/8.14.1/Submit) id 49J4DTL3031612;
-	Fri, 18 Oct 2024 23:13:29 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Fri, 18 Oct 2024 23:13:29 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
-Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        naveen@kernel.org, maddy@linux.ibm.com, arnd@arndb.de,
-        chentao@kylinos.cn, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] powerpc/spufs: Replace snprintf() with the safer scnprintf() variant
-Message-ID: <20241019041329.GL29862@gate.crashing.org>
-References: <ZxIcI0QRFGZLCNRl@mail.google.com> <20241018153843.GJ29862@gate.crashing.org> <ZxL0U6bziCxhySUO@mail.google.com>
+	s=arc-20240116; t=1729312249; c=relaxed/simple;
+	bh=xGZYzUZaNhbgIIphtXmixmECPAq8Xmc2kT4MtBKGUVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qN/nFChWpz84aJxFHbhKYSdy4uPnYPWmWpFP0KUpVNJL86/KqWbuDk1GjJ6NCs9Aldbstiy+kfHazaOv+KZLWWlCFaLwenIycH4B7xhKMzQjy2oXWeDZgg7ulNbA8oQUUSIPOu3PclU729FemTwov0uAlfnWOMeUm2HhHCgmoAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFKgaWMF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78DDEC4CEC7;
+	Sat, 19 Oct 2024 04:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729312248;
+	bh=xGZYzUZaNhbgIIphtXmixmECPAq8Xmc2kT4MtBKGUVw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=dFKgaWMF+D37efttGTa1Cf7UIluq5A/piPYukiq5KvTWiU35c2rXYqENj8fB5T1Cc
+	 nozsO3xD/EIiuWvaxozbos9zfd5L/1jLc7zFGmPu24NRE8uzWNRpnFtiK6quNaCf00
+	 IPvfWpGVYLY13j/NmSTxHWXPiPGRj9f/1WFJTGbJkIt6MTInJIXtjqXYmjv7GAYuYQ
+	 5+MDNmTotQsDx768Lys6+1cP0L15FXEm54dn6XVaZH9r0RFouMY0LJ6n/WENyRIUdM
+	 AqvPS/XvCPQAx7AeudGeORu48DJgOxAWzGYvyyTHnunQWb6GvOMPADn0Q+DJsd2SaC
+	 4uT0P75j2MidA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id ECD74CE0995; Fri, 18 Oct 2024 21:30:47 -0700 (PDT)
+Date: Fri, 18 Oct 2024 21:30:47 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, mingo@kernel.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, frederic@kernel.org, efault@gmx.de
+Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
+Message-ID: <b4c64bb3-5f2f-476d-bb67-8b45efb5aad1@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20241011144341.mQKXkGkm@linutronix.de>
+ <dcffa722-986a-437b-abb9-af9f4de852df@paulmck-laptop>
+ <20241015112224.KdvzKo80@linutronix.de>
+ <87ed4hrp45.fsf@oracle.com>
+ <20241017080439.9od9eoBO@linutronix.de>
+ <871q0emji1.fsf@oracle.com>
+ <0c04a986-91d0-4f6d-bd4e-ca00d1cd710a@paulmck-laptop>
+ <87zfn1jk43.fsf@oracle.com>
+ <c886bdf4-23d0-4c12-ae44-454226e92265@paulmck-laptop>
+ <87iktokihj.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxL0U6bziCxhySUO@mail.google.com>
-User-Agent: Mutt/1.4.2.3i
+In-Reply-To: <87iktokihj.fsf@oracle.com>
 
-Hi!
-
-On Sat, Oct 19, 2024 at 12:50:43PM +1300, Paulo Miguel Almeida wrote:
-> On Fri, Oct 18, 2024 at 10:38:43AM -0500, Segher Boessenkool wrote:
-> > On Fri, Oct 18, 2024 at 09:28:19PM +1300, Paulo Miguel Almeida wrote:
-> > > The C99 standard specifies that {v}snprintf() returns the length of the
-> > > data that *would have been* written if there were enough space.
-> > 
-> > Not including the trailing zero byte, and it can also return negative if
-> > there was an encoding error.  Yes.
-> > 
-> > Not that this matters at all for your patch, so why mention it?
-> > 
-> > 
-> > Segher
+On Fri, Oct 18, 2024 at 06:07:52PM -0700, Ankur Arora wrote:
 > 
-> Thanks for taking the time to review this patch.
+> Paul E. McKenney <paulmck@kernel.org> writes:
 > 
-> Is the objection with the change in itself or just the commit message?
+> > On Fri, Oct 18, 2024 at 12:18:04PM -0700, Ankur Arora wrote:
+> >>
+> >> Paul E. McKenney <paulmck@kernel.org> writes:
+> >>
+> >> > On Thu, Oct 17, 2024 at 03:50:46PM -0700, Ankur Arora wrote:
+> >> >> Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+> >> >> > On 2024-10-15 15:13:46 [-0700], Ankur Arora wrote:
+> >> >> >> Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+> >> >> >>
+> >> [ ... ]
+> >> >> Sure. But, that's just begging the question.
+> >> >>
+> >> >> We want _NONE and _VOLUNTARY to go away because keeping cond_resched()
+> >> >> around incurs a cost.
+> >> >
+> >> > When you say "go away", do you mean for your use cases?  Or globally?
+> >>
+> >> When I say "want _ to go away" I mean: cond_resched() is deleterious
+> >> to performance since you are forced to have code which can do the
+> >> rescheduling check synchronously -- when this could easily be done
+> >> asynchronously (as the non voluntary models do).
+> >>
+> >> And this either means poor performance (ex. in the page zeroing code
+> >> where it would be more optimal to work on continguous ranges) or
+> >> gyrations like the ones that xen_pv_evtchn_do_upcall() and the
+> >> Xen hypervisor have to go through.
+> >>
+> >> And, as we've discussed before, the cond_resched() interface, while it
+> >> works, is not ideal.
+> >
+> > I would expect that many instances of cond_resched() could go away given
+> > lazy preemption, but I would not be surprised if there were some that
+> > needed to stay around.
+> >
+> > Your thought being that if *all* instance of cond_resched() go away,
+> > then PREEMPT_NONE also goes away?
+> 
+> If *all* instances of cond_resched() go away, is there anything left of
+> PREEMPT_NONE?
 
-Mostly the commit message.  But because it is confusing, it makes the
-patch itself uncertain as well.
+Yes, namely its relationship to PREEMPT_RCU.  Which, yes, can be adjusted,
+perhaps even as Sebastian suggested.  But such an adjustment cannot be
+applied suddenly without warning.
 
-The patch is probably fine fwiw, as far as I can see.  But the commit
-message is not. And the commit message is by far the most important
-part of any patch!
+> > Given how long PREEMPT_NONE has been
+> > around, this would need to be done (and communicated) quite carefully.
+> 
+> I don't think there's any question about that.
 
-> If it's the later, I'm happy to tweak it to what you would like see.
+Whew!!!
 
-It is not about what I want to see.  It is about what you want to say
-to justify the patch!
+> >> Also, a man can dream!
+> >
+> > Fair enough, just be very careful to distinguish dreams from reality.  ;-)
+> 
+> I've generally not found that to be a problem, but thanks for the warning.
 
-In this case, just leave out all the irrelevant stuff, just say why you
-think scnprintf is better than what you replace?
+"It is a service that I provide."  ;-)
 
-Everythihng you did say is about why what you are removing was good.
-Not a great patch justification :-)
-
-
-Segher
+							Thanx, Paul
 
