@@ -1,152 +1,116 @@
-Return-Path: <linux-kernel+bounces-372971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C799A501D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 19:30:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B30F29A5021
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 19:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E131F27D68
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E4BB1F23021
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D69F18EFD8;
-	Sat, 19 Oct 2024 17:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C7518E37B;
+	Sat, 19 Oct 2024 17:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="liNMkBxu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ncLvRWwy"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAF918D629
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 17:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B72C18FC9D;
+	Sat, 19 Oct 2024 17:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729358994; cv=none; b=S7Q26LiC5FN/UqON26+0juC/enfWoFWlioRrBh+pbLuG6vquXgIQ5R5/jUFVkebXUruRumiekRokXJlTTxBPGFbN86l4bNCzK80QS3kuDrXtutQx0JWOliM2EImiSAtdSWIwx67MyacSWJ6gtYAAhdb3u48V88u5Hn4CZhnw+3U=
+	t=1729359905; cv=none; b=BOT31fIztWkeniyfkTPho1rgpIYhziGOzcC30dOsAOsulg17vr1jmm0WjVWHPjeun79bw7o0lgLmRZ09p76gSWgaTeocts7HjifakWJ+ZGiZGU7/mo265uniX0MV/2w1v45Jd5hZy+9GmyMcESO8ihcuTd/h0VKk0Gnez/loonI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729358994; c=relaxed/simple;
-	bh=MFhNPISShuBCTSvLSqLqLUm7Mu6JuRwmhaAZNqzQcBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kIOIcZIECMW9qtBBTbMuy1FVB55egm+lFyqK+cdUh3cuoM0m16l07h3RcdQfeth9zeHwcpO1uYagQ0YS2T+boge+jTpoYrgVJnH4aX4so7azXAA0/vIuTl9IcxfdMn+l4HcNUjysu3VTBtR1bj9WuRC2gazHRIUGURi7d32wdmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=liNMkBxu; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729358992; x=1760894992;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MFhNPISShuBCTSvLSqLqLUm7Mu6JuRwmhaAZNqzQcBY=;
-  b=liNMkBxuUQN5lSfD66NFwNu5fWFrIgnKkd1hKnSzxOH2XrBwkSHDlZVv
-   9pgC/Qbw8dm7tVwHGj2UCAZqb2s88A20LxZuF28gyiPQdr/2wpAKeokUt
-   lwMYsTCZdzNKUvzZeCQ4yPIFfBW4JYK9jMQZ9yFsUG2lNXh9cWf9oiWNI
-   pQZylYffxzT4YN0OmnMBOC21SUMPD2cHD0QBXE7O6UAnwzIZdDq+bXfaJ
-   iCOUXteuhqiuRct7V0uBv5PoiknMtJeHNE77R+GXcuADAEmv8ZQSbdbZc
-   QlhHLHDL/Vnnf8lTWAX+I6gH3BTFYVJtQZ890IRJyYTx8Q+ctzU0GFbEA
-   Q==;
-X-CSE-ConnectionGUID: 7SL2BhWKRz+CgonrmjUkfA==
-X-CSE-MsgGUID: TUA7kHJKS3C4OSVRrl9bAQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11230"; a="16495177"
-X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
-   d="scan'208";a="16495177"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 10:29:51 -0700
-X-CSE-ConnectionGUID: bqOwgFENTIm0tJ3lJKJ5Hw==
-X-CSE-MsgGUID: VcT2kwryQNe84o/CsNutQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
-   d="scan'208";a="79290935"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 19 Oct 2024 10:29:45 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t2DGo-000PHe-0H;
-	Sat, 19 Oct 2024 17:29:42 +0000
-Date: Sun, 20 Oct 2024 01:28:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Chan <ericchancf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Kai Huang <kai.huang@intel.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>
-Subject: Re: [PATCH 2/2] x86/mm: Make memremap(MEMREMAP_WB) map memory as
- encrypted by default
-Message-ID: <202410200112.Ut6HtXKD-lkp@intel.com>
-References: <20241017155642.1942514-3-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1729359905; c=relaxed/simple;
+	bh=NZE8zSnUWmDXLsUVhD56gHK8qtI4r/t43Zp/rgthYv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z5dJJnfcADyyeU4YUY6/1Jay49QKyR7hRb9MbE4gOKZSlzIm+C6o/MoanIBZqWxlg7zo67wqZc33V1FuAEJPcPAKuzIsa+dEdQvbLs+qngoLXYjW2lfkrtmnMKpe1YFIbQkR7vLhV6X7MnXvAu0uvhI6ATJRyYKWe4fw/VgEzFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ncLvRWwy; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729359896;
+	bh=NZE8zSnUWmDXLsUVhD56gHK8qtI4r/t43Zp/rgthYv4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ncLvRWwyS8rIrN2bKTiI/fsu2q66JQH4rEBbEW/WUACLWcqYhrbV2WQ7f87gi/aVN
+	 VKlBxPCk3c6V6KXoFU47xRhYk0lU9bjAu0fpCokbvbHRcatfoKtT+Pah+scR4tblfv
+	 Ih7tIBIqwLi7kuTpGmcP1TIXkkRCnKYuOs0r/FhnhHbOX304xlvHJhIm9gQywLIZmd
+	 yQfNTwxeXUu36dCDlfxr+Hrw3aABFKjjBMz6mLqgx4tb4A0OXotwPwJTvfhXBKlT0r
+	 IdgNGZVUY9MSo+6bXpW5I6kv4en23W6ZhXEtgwSRlt2kGAZG/1NhXJZkyivPLEZE8y
+	 0ysbkTdNiyBiw==
+Received: from [192.168.1.90] (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DF67517E3692;
+	Sat, 19 Oct 2024 19:44:55 +0200 (CEST)
+Message-ID: <d4dd6971-7a01-40d3-a25b-dc56a9630442@collabora.com>
+Date: Sat, 19 Oct 2024 20:44:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017155642.1942514-3-kirill.shutemov@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] arm64: dts: rockchip: Enable HDMI0 on rock-5a
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Luis de Arquer <ldearquer@gmail.com>, Alexandre ARNOUD <aarnoud@me.com>,
+ kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241019-rk3588-hdmi0-dt-v2-0-466cd80e8ff9@collabora.com>
+ <20241019-rk3588-hdmi0-dt-v2-5-466cd80e8ff9@collabora.com>
+ <a90437be-eae6-4dc9-93fa-fd4af8ad9bed@kwiboo.se>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <a90437be-eae6-4dc9-93fa-fd4af8ad9bed@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Kirill,
+Hi Jonas,
 
-kernel test robot noticed the following build warnings:
+On 10/19/24 4:02 PM, Jonas Karlman wrote:
+> Hi Cristian,
+> 
+> On 2024-10-19 12:12, Cristian Ciocaltea wrote:
+>> Add the necessary DT changes to enable HDMI0 on Radxa ROCK 5A.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts | 52 ++++++++++++++++++++++++
+>>  1 file changed, 52 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+>> index 87fce8d9a964cd53d179ce214ae1c0ff505a2dce..2b141af5e709b0bc2193dbfb2327e6bc1fdaa502 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+>> @@ -5,6 +5,7 @@
+>>  #include <dt-bindings/gpio/gpio.h>
+>>  #include <dt-bindings/leds/common.h>
+>>  #include <dt-bindings/pinctrl/rockchip.h>
+>> +#include <dt-bindings/soc/rockchip,vop2.h>
+>>  #include "rk3588s.dtsi"
+>>  
+>>  / {
+>> @@ -35,6 +36,17 @@ chosen {
+>>  		stdout-path = "serial2:1500000n8";
+>>  	};
+>>  
+>> +	hdmi0-con {
+>> +		compatible = "hdmi-connector";
+>> +		type = "a";
+> 
+> ROCK 5A use micro HDMI connector type, so this should be type = "d".
 
-[auto build test WARNING on tip/master]
-[also build test WARNING on tip/x86/mm linus/master tip/auto-latest tip/x86/core v6.12-rc3 next-20241018]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Indeed, good catch, will fix in v3.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kirill-A-Shutemov/memremap-Pass-down-MEMREMAP_-flags-to-arch_memremap_wb/20241018-001138
-base:   tip/master
-patch link:    https://lore.kernel.org/r/20241017155642.1942514-3-kirill.shutemov%40linux.intel.com
-patch subject: [PATCH 2/2] x86/mm: Make memremap(MEMREMAP_WB) map memory as encrypted by default
-config: i386-randconfig-061-20241019 (https://download.01.org/0day-ci/archive/20241020/202410200112.Ut6HtXKD-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241020/202410200112.Ut6HtXKD-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410200112.Ut6HtXKD-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> arch/x86/mm/ioremap.c:509:37: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem * @@
-   arch/x86/mm/ioremap.c:509:37: sparse:     expected void *
-   arch/x86/mm/ioremap.c:509:37: sparse:     got void [noderef] __iomem *
-   arch/x86/mm/ioremap.c:511:33: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem * @@
-   arch/x86/mm/ioremap.c:511:33: sparse:     expected void *
-   arch/x86/mm/ioremap.c:511:33: sparse:     got void [noderef] __iomem *
-
-vim +509 arch/x86/mm/ioremap.c
-
-   505	
-   506	void *arch_memremap_wb(phys_addr_t phys_addr, size_t size, unsigned long flags)
-   507	{
-   508		if (flags & MEMREMAP_DEC)
- > 509			return ioremap_cache(phys_addr, size);
-   510	
-   511		return ioremap_encrypted(phys_addr, size);
-   512	}
-   513	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Cristian
 
