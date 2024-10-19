@@ -1,208 +1,85 @@
-Return-Path: <linux-kernel+bounces-372806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496169A4D8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:56:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 619F59A4D8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2F71B25650
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9189F1C212F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4151E0B8B;
-	Sat, 19 Oct 2024 11:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2274D1E0481;
+	Sat, 19 Oct 2024 11:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JnKmWoay"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="YQM8s/IB"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A601E04B7;
-	Sat, 19 Oct 2024 11:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B2F17DE36;
+	Sat, 19 Oct 2024 11:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729338748; cv=none; b=jEaUbJbEQVr1cIiVL5Hngc5IdGyODWCiOlKjD4hNkYdT21kyogSHl/MEdmejGxqmrCxSkgs+UvN4OJLHTwXaRKBTWTFOUGG5PkNG81dDiju2R6UJ9x1curV221B+GqwLpfyuYUrjEn9vIHdsuvmis6ORskY8dK5UAGT5SlpZ+fM=
+	t=1729339060; cv=none; b=D2dSjY0JzxCQQetkbwnPqjC0SMqsVc5qjD74qcWo4JHJ9En68d6MISgbCtfbBmPlGG0tyqtGSzZacaXuDwpHx0FdDghireg/SLVsxEVmY0xyDv6yJTsbMbEdIKZbHzvCgnH1k/BVvDGNkEZQDKdmMAWtAdOGUvuTIbz7nnpJKlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729338748; c=relaxed/simple;
-	bh=b7NVwrOnb2BCwyvcz8TEDalOhz7k0I5C6ajKPj0qW98=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SF3Nv4P/LXoLqwasuOsOYYHFlGzyNjcWwEWJYrC5nFeBf1D6seB7V71HAigKc0pKWGTEskG5mFi0+XBNG7X9SrfXeYeToCOraktWu+H1xUeJK/urBaTjOefxkEbpWmw+QGkdqIs6Ok58e9QQG1u6k3al9ZeAs1w85Ppt+ojT8co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JnKmWoay; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso2332889a91.3;
-        Sat, 19 Oct 2024 04:52:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729338746; x=1729943546; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TcCobt2mC1z+TR6O67zCBK8k7nUf6ZEbehWixO+szIg=;
-        b=JnKmWoay82sbZtMCS9piKcS1VseYvQwuDnrp+RwV/6ZbBHXdP0E2mfyA4NRgY5ORxk
-         Th8lS+w1+0CpJseiqSuKWUU4chkOMOVxko8IweeGNBgN8Ry9MlwBkt1mjD+D9KC7cmd+
-         CSAwrsZiML1QCwdkl1vsRJbOyFZOzPn4YhJ/eV0oseRzKBiX5+it0gPp2kOi4DVjqBTw
-         BwBzHDJiRSfXiMt55oA4ggK8PXnSAO+WbWJfd0/4DcAQrLqz426LFIk5myXPMv3jUxlu
-         qKA/qSLalkumhOWmnyIKLYfZEfUEC5uP6K5h0fRLFsyj0EoQ3E22wR/hEODlsAPiA9il
-         918Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729338746; x=1729943546;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TcCobt2mC1z+TR6O67zCBK8k7nUf6ZEbehWixO+szIg=;
-        b=VydTk7Viy6a5Kyg6vDx5HuS0OpnWfKvMlqKaYTErOftUhQiGkwSj+YEgUF2Lv+yNKT
-         34ekox23hi2cs7oHZCfLPsTzAwuJBCzZ2GS6Th+sD/uLEMYxz6mEXQ/mCdpxevV5FL98
-         tiE6PSpiM2JipGaAMploHoPvrhqm/xV1CbO/pslxeSVU+udjuq8zaPSMU+sj3neahjAx
-         L3LkUbFheJX0YLNOlSBNMNclKIeDi/kKdx2BNt6/69lZkWlZ4rL/6TAB5WnCPIzDCkW6
-         8TG1N89BTfNh7qtRZdktQaKvHPJZEVU6hSqqRsLT1R8Z+qvYl5OvIsRbbEE68XHi8KsA
-         f7iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZvM2Q0q+1tpmdttcgYgjjfcoCJ81VdKamiEKXZo3ovue4reQcLnP+Cpo6CYac3h4OlNXuO3ShK+bj+fbnvVy4@vger.kernel.org, AJvYcCXkhnB/wleYrauaPLd2S8Rxd20ghto8i+EgEOxMyG13MEGTrHiB8iT27AwHPSJ/BcW893I274RIaiHq+0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+TVEtYGu94MG9y1RqmItGEhEynfK3ZYbCQJnYTOAHr3Y33vow
-	/ZeOfYCrUI7Mk0JOsQmOhspZey3JtrHd3hFEsj/khbVDsVMrUyNH
-X-Google-Smtp-Source: AGHT+IGr7TDoDZLZABzVodXS3kaumggPe/3qcRR5CFL22s1nHdPVZD8j+8SAtq9XqlCimG4JaBSK5A==
-X-Received: by 2002:a17:90a:986:b0:2e2:d15c:1a24 with SMTP id 98e67ed59e1d1-2e56167f574mr6476351a91.23.1729338745837;
-        Sat, 19 Oct 2024 04:52:25 -0700 (PDT)
-Received: from Emma ([2401:4900:1c96:190:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5611d4416sm3907065a91.19.2024.10.19.04.52.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 04:52:25 -0700 (PDT)
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-Date: Sat, 19 Oct 2024 11:52:21 +0000
-Subject: [PATCH] selftests: tc-testing: Fixed typo error
+	s=arc-20240116; t=1729339060; c=relaxed/simple;
+	bh=8/wmceTo6G2lpk6TYCNpIrivHXKb0CY3wokeFJRg+9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WSh8hTm8z7zOVU2vQPl2hw6M6Ie9+qottECYNaa9NJkwai44ulnuzlLLRepRD9El9q31JduSxantaZbQdi5CMgr9Mnuj+TwJlepHt0pPiVhdxaiGobBwnstoNb7jsQ3pCLr4u2MCTpEfJLcliyzp2fk1D/qJjaDeMXSV7WTwT2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=YQM8s/IB; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=BRvT0dMiFdoI7FUuP4LFCDbjeUzNW9+o1+iJAw9zO/Y=; b=YQM8s/IBvgYi2t+uBMrt4f7oBd
+	VmAsA4HBaVXmxlCEN/+DTy4Co6dza7RnvwhSPLvNInP1y1eX0M4pwlNF37dU1d3gpYaeRNgImaln9
+	ErRks/WwSVL+fkvmhiBpV+X+8lQOojhNzV/EkrXzZnk1Rgyy5xuF3iZ9DbVIpAHdieYg7rmBJjOYm
+	DOMIbrBeh0/RxGAN58iN0k2LK/nw2HX4lm79N791jZdK/vKBBQ+jC04rsX0gsQU0MAeTCQUmMqwtz
+	kO+B/3XigmLAPCOTAYK/AMwkLUvLM7QR5iljRgMlnw7SEQRAQrxXVvnQd9ZYRaeMtL37yWxNerzit
+	q6daP9pw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1t285F-00AaOg-2d;
+	Sat, 19 Oct 2024 19:57:26 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 19 Oct 2024 19:57:25 +0800
+Date: Sat, 19 Oct 2024 19:57:25 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: olivia@selenic.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] hwrng: histb-rng: Fix the wrong format specifier
+Message-ID: <ZxOepXJHs4m40unK@gondor.apana.org.au>
+References: <20241009064244.6420-1-zhujun2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241019-multiple_spell_error-v1-1-facff43b5610@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAHSdE2cC/x2M3QpAQBQGX0Xn2pbdZOVVJPn5cGqxnUVK3t1m7
- uZi5qEAYQSqkocEFwfetyg6TWhYum2G4jE6mczkOtNWrac72Du0wcO5FiK7qLI3hZ0iyC3F1As
- mvv9t3bzvB441ahhmAAAA
-To: Jamal Hadi Salim <jhs@mojatatu.com>, 
- Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, 
- Anup <anupnewsmail@gmail.com>, Karan Sanghavi <karansanghvi98@gmail.com>, 
- Simon Horman <horms@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729338742; l=4399;
- i=karansanghvi98@gmail.com; s=20241017; h=from:subject:message-id;
- bh=b7NVwrOnb2BCwyvcz8TEDalOhz7k0I5C6ajKPj0qW98=;
- b=BlyI5J3X1LqLKvIWVA3maYCsIRRglafKpwm/auGhgCrwsbvdUdAFdImyxM2YNILQY1cVEY7v3
- UoyVldmqCDHCZ6KrQyI92OU+aOn5usrMUDwRbuMZoKYSc/E1Vix/20N
-X-Developer-Key: i=karansanghvi98@gmail.com; a=ed25519;
- pk=UAcbefT1C06npNVDJHdgpPqTm4WE9IhaA1fmJb3A37Y=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009064244.6420-1-zhujun2@cmss.chinamobile.com>
 
-Corrected the multiple and different typo errors in json files
+On Tue, Oct 08, 2024 at 11:42:44PM -0700, Zhu Jun wrote:
+> The format specifier of "unsigned int" in sprintf() should be "%u", not
+> "%d".
+> 
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+> ---
+> Changes:
+> v1:fix the subject line, it has to be in the subsystem style
+> 
+>  drivers/char/hw_random/histb-rng.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-- "diffferent" is corrected to "different".
-- "muliple" and "miltiple" is corrected to "multiple".
-
-Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
----
- tools/testing/selftests/tc-testing/tc-tests/filters/basic.json  | 6 +++---
- tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json | 6 +++---
- tools/testing/selftests/tc-testing/tc-tests/filters/flow.json   | 2 +-
- tools/testing/selftests/tc-testing/tc-tests/filters/route.json  | 2 +-
- 4 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/filters/basic.json b/tools/testing/selftests/tc-testing/tc-tests/filters/basic.json
-index d1278de8ebc3..c9309a44a87e 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/filters/basic.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/filters/basic.json
-@@ -67,7 +67,7 @@
-     },
-     {
-         "id": "4943",
--        "name": "Add basic filter with cmp ematch u32/link layer and miltiple actions",
-+        "name": "Add basic filter with cmp ematch u32/link layer and multiple actions",
-         "category": [
-             "filter",
-             "basic"
-@@ -155,7 +155,7 @@
-     },
-     {
-         "id": "32d8",
--        "name": "Add basic filter with cmp ematch u32/network layer and miltiple actions",
-+        "name": "Add basic filter with cmp ematch u32/network layer and multiple actions",
-         "category": [
-             "filter",
-             "basic"
-@@ -243,7 +243,7 @@
-     },
-     {
-         "id": "62d7",
--        "name": "Add basic filter with cmp ematch u32/transport layer and miltiple actions",
-+        "name": "Add basic filter with cmp ematch u32/transport layer and multiple actions",
-         "category": [
-             "filter",
-             "basic"
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json b/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json
-index 03723cf84379..35c9a7dbe1c4 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json
-@@ -67,7 +67,7 @@
-     },
-     {
-         "id": "0234",
--        "name": "Add cgroup filter with cmp ematch u32/link layer and miltiple actions",
-+        "name": "Add cgroup filter with cmp ematch u32/link layer and multiple actions",
-         "category": [
-             "filter",
-             "cgroup"
-@@ -155,7 +155,7 @@
-     },
-     {
-         "id": "2733",
--        "name": "Add cgroup filter with cmp ematch u32/network layer and miltiple actions",
-+        "name": "Add cgroup filter with cmp ematch u32/network layer and multiple actions",
-         "category": [
-             "filter",
-             "cgroup"
-@@ -1189,7 +1189,7 @@
-     },
-     {
-         "id": "4319",
--        "name": "Replace cgroup filter with diffferent match",
-+        "name": "Replace cgroup filter with different match",
-         "category": [
-             "filter",
-             "cgroup"
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/filters/flow.json b/tools/testing/selftests/tc-testing/tc-tests/filters/flow.json
-index 58189327f644..996448afe31b 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/filters/flow.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/filters/flow.json
-@@ -507,7 +507,7 @@
-     },
-     {
-         "id": "4341",
--        "name": "Add flow filter with muliple ops",
-+        "name": "Add flow filter with multiple ops",
-         "category": [
-             "filter",
-             "flow"
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/filters/route.json b/tools/testing/selftests/tc-testing/tc-tests/filters/route.json
-index 8d8de8f65aef..05cedca67cca 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/filters/route.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/filters/route.json
-@@ -111,7 +111,7 @@
-     },
-     {
-         "id": "7994",
--        "name": "Add route filter with miltiple actions",
-+        "name": "Add route filter with multiple actions",
-         "category": [
-             "filter",
-             "route"
-
----
-base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-change-id: 20241017-multiple_spell_error-8b267ffffe47
-
-Best regards,
+Patch applied.  Thanks.
 -- 
-Karan Sanghavi <karansanghvi98@gmail.com>
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
