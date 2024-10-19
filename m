@@ -1,92 +1,87 @@
-Return-Path: <linux-kernel+bounces-372740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D97F9A4C84
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:22:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696C99A4C72
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DDBFB22ACF
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:22:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 921541C224B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB8D1DED65;
-	Sat, 19 Oct 2024 09:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mBfmEjwe"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DE71DE2D8;
+	Sat, 19 Oct 2024 09:05:38 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FB41DD0FE;
-	Sat, 19 Oct 2024 09:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A724188A3A
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729329730; cv=none; b=ige37uFADqCyJlDLIY2f5Xelvwlu//Gbu333Uu3I+fXhZwhbsVo4W8/Gx5CIQZV2WNT3kKx530fv4H9gFY5L1p3rO6BfP6auN63NfKhY8/eXFmYo/qifLp1UsNzr3z7MhHlqKZticjHa9rW8NKuRSFN6dudoJdRro/D6ER7TUr0=
+	t=1729328737; cv=none; b=j8G8VNAIuIIbNryh55PhRTUIN5el1R/i57kInW1GjSBwaOWsTqU7sjWp1Fk+uL9SHuJF8V9tznp2+z6yCdvGnTmoNCrZmrCH4qzjiYPSp5wMMYM/5f6DTmN7fawnbRg14SJ1umuGFeEh4enyrjgVgpfLYS/oTyzUy6UIGsrSERQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729329730; c=relaxed/simple;
-	bh=ddx/wzHX3BBS9AnzKxxwJZVSrSQneUJZVZUhyLhbx0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hMuwL/aoz30x+AaWf4fAx1qnLt0Z/yU5/Pp9117vdDfjMIu537X7p7HnHraD2INiNgMWRJKOMxmp/ZnEP8R0iDg5QqKISLliYok3STEAZuxY52Gf3LsNW++feQv30kmDxCAcjSTdok5OVo1se5t2m1VJOEYd/Bth4wiGV4tifS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mBfmEjwe; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729329726;
-	bh=ddx/wzHX3BBS9AnzKxxwJZVSrSQneUJZVZUhyLhbx0c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mBfmEjweJWeFSDGFz/tgFi9f2CaY0gRzttWfGLKQgxZG4VTqT+oRrU2FHkhaSnyAa
-	 gbmk5TyxCgOX0EvKZIGstgBKwYYzq41EvofkiE/9oEeEYuUJuHtOEcwcTcaqrA6Q7O
-	 afPN8Iqu2TVOvE5/b+5JNQdgrwu8/MDvuxKUoB7zHPQ3A79X8h39AtHXvEeoWZVdVy
-	 qyH0uYbsa5ch18ur18X5xkmV+v6JiXm/GBWCvHw7LmbPo/2mmyOWf2VXOgaiOLZlnD
-	 r202+GUiCqAw8GM+3NHd1/sYbVbMCLhTuZ2H43/cCD6fgGX97FY9cyrlYd2KRdN2W+
-	 q4/EQX2Qob5zg==
-Received: from [192.168.1.90] (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 014F817E11E2;
-	Sat, 19 Oct 2024 11:22:05 +0200 (CEST)
-Message-ID: <1313314d-5398-4ed1-ab54-f0dadc638103@collabora.com>
-Date: Sat, 19 Oct 2024 12:22:05 +0300
+	s=arc-20240116; t=1729328737; c=relaxed/simple;
+	bh=sll1pvU9oGSpnOezRYBcS3+Gds8wLTQ6SFKgbQE8vxM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dUve4hJq7rSEvjB9tiWqNq6CoSeC3pQH9XTy4csLJZ6+UPBPbQPgteUcjl2IO6cm7QZzEyuCXKXfdOvjja9GFjiSg6h6JxMTWbcI1DKhUcax5vGrIfYIPdLDUBpgjrk9fX/871bl6+TzB2WlFpT82C0rgX0HxRH0OS9dw5CFedA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XVwbX2hLNz1T8SP;
+	Sat, 19 Oct 2024 17:03:36 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id B15E618006C;
+	Sat, 19 Oct 2024 17:05:32 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 19 Oct
+ 2024 17:05:32 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <ericvh@kernel.org>, <lucho@ionkov.net>, <asmadeus@codewreck.org>,
+	<linux_oss@crudebyte.com>, <m.grzeschik@pengutronix.de>,
+	<yuehaibing@huawei.com>, <gregkh@linuxfoundation.org>
+CC: <v9fs@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] 9p/trans_usbg: Fix incorrect error check in usb9pfs_alloc_instance()
+Date: Sat, 19 Oct 2024 17:23:02 +0800
+Message-ID: <20241019092302.212221-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] arm64: dts: rockchip: Enable HDMI0 on rock-5b
-To: FUKAUMI Naoki <naoki@radxa.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Luis de Arquer <ldearquer@gmail.com>, Alexandre ARNOUD <aarnoud@me.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241019-rk3588-hdmi0-dt-v1-0-bd8f299feacd@collabora.com>
- <20241019-rk3588-hdmi0-dt-v1-2-bd8f299feacd@collabora.com>
- <5E49B36195743C7C+3eb032f1-fda6-4a61-bcaa-8ce34256cb51@radxa.com>
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Content-Language: en-US
-In-Reply-To: <5E49B36195743C7C+3eb032f1-fda6-4a61-bcaa-8ce34256cb51@radxa.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On 10/19/24 4:41 AM, FUKAUMI Naoki wrote:
-> Hi,
-> 
-> thank you very much for your work!
-> 
-> On 10/19/24 06:39, Cristian Ciocaltea wrote:
->> Add the necessary DT changes to enable HDMI0 on Rock 5B.
-> 
-> Rock 5B -> (Radxa) ROCK 5B
-> 
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> 
-> Tested-by: FUKAUMI Naoki <naoki@radxa.com>
+kzalloc() should use NULL check not a IS_ERR() check.
 
-Thanks for testing! Will send v2 with updated description.
+Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ net/9p/trans_usbg.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
+index 975b76839dca..6b694f117aef 100644
+--- a/net/9p/trans_usbg.c
++++ b/net/9p/trans_usbg.c
+@@ -909,9 +909,9 @@ static struct usb_function_instance *usb9pfs_alloc_instance(void)
+ 	usb9pfs_opts->buflen = DEFAULT_BUFLEN;
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+-	if (IS_ERR(dev)) {
++	if (!dev) {
+ 		kfree(usb9pfs_opts);
+-		return ERR_CAST(dev);
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	usb9pfs_opts->dev = dev;
+-- 
+2.34.1
+
 
