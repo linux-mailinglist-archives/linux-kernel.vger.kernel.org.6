@@ -1,322 +1,267 @@
-Return-Path: <linux-kernel+bounces-372568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834A79A4A69
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB529A4A6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE51D1F23E92
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:09:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70D491F23E61
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC01EEDE;
-	Sat, 19 Oct 2024 00:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E113B653;
+	Sat, 19 Oct 2024 00:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYOCy4IZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fD7jR+Mt"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001C5173;
-	Sat, 19 Oct 2024 00:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A3363C
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 00:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729296548; cv=none; b=VgMTenedrRdbeznA5o4YzMuXFXBaa1M1uimdD/MZIVbFK1fovgkE07/C1EY2Nl37DHFmxbYKGRtPD1fi+ZwVfd2H/O84o/Q/wZdcebOIZ3jPZNongaSlHZmKGHhlPFyuFol+HhEQFYy8z+Ch2jyHZZ+99euc4nQZ8lr4V3saZP0=
+	t=1729296617; cv=none; b=IsLl4zoFDGE0OjqGi0Xry9ztg8ASdPhWXMoMRK451k1Ond7G5/TpK0i81fYLMxrcIrITQqgkIXnAsyWVDYxtSkePjTE3267+3I9Hu9PCu4lFY9Um6weUw2HuEjELYUbShGFbFCAP4/9Klf0BAD5zDw53QzHVECahsP02Xl7S/5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729296548; c=relaxed/simple;
-	bh=jzUKTbSkd04sRQh3xPurQDxdL63C7Ml+w1QQqgW6N1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l4zKhYMKjiNYzpSvMYWqVUudXCGfCujhWPeEls2L8U5a4h0WEgb5Ki3Hy3eMd6N4jSCKEWNKOWODw9/AHNlwDumd4gkiC/G3Mgi/xNgk95xfqN7BJc0ktny9KDY6prsIzQJaJUO59CNABllWxQ6XpwiknvLJEbcUBXPkHMhYROQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYOCy4IZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D9A2C4CEC3;
-	Sat, 19 Oct 2024 00:09:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729296547;
-	bh=jzUKTbSkd04sRQh3xPurQDxdL63C7Ml+w1QQqgW6N1A=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=oYOCy4IZxG3PVJzueGEjbsvi7U+2fwBd/z4MFq29Kyd7PBDvPzHnImWZUA1p48H/w
-	 7YWtxD8Y/uyEorZQXUE+LdVUpAcjG53TSidiHGFV1WtV6wJmpPYKOq1g8C60a1G4ar
-	 mov7Wo6g/8zIEMSTc0NG/P2Xy1NRWrmaH253+9d0K89XBm1uW+1LJrGpWBzlgce7m6
-	 /g8Yy4uASYe0WxFxqRl4G7INq1Sp8crj+qyN4H03spbkhFNiTq2fKGnfnCDQDIe0F0
-	 HWEtl9pQcQc7BS/xq4o8Gf8//APYIzvIjn1ZSgFwvZjaMDTImDsNVfcnVt+nLp7TeI
-	 +xqvcVQKit0Kw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1E2EDCE0995; Fri, 18 Oct 2024 17:09:07 -0700 (PDT)
-Date: Fri, 18 Oct 2024 17:09:07 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, oleg@redhat.com,
-	rostedt@goodmis.org, mhiramat@kernel.org, mingo@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org
-Subject: Re: [PATCH v2 tip/perf/core 2/2] uprobes: SRCU-protect uretprobe
- lifetime (with timeout)
-Message-ID: <c728b2bf-f188-4602-9b1c-b05e3bdea324@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241008002556.2332835-1-andrii@kernel.org>
- <20241008002556.2332835-3-andrii@kernel.org>
- <20241018101647.GA36494@noisy.programming.kicks-ass.net>
- <CAEf4BzZaZGE7Kb+AZkN0eTH+0ny-_0WUxKT7ydDzAfEwP8cKVg@mail.gmail.com>
+	s=arc-20240116; t=1729296617; c=relaxed/simple;
+	bh=9YE7dqGfVDQ/xH6Sdx54Ef6PxJ+cJabmZ9vzvXPouRY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gDHnvzn8rlk0jI4tsBoLvkzZ12bZ7IHGELOepemywY2TYZoxd7KbWDInBi+UNdMfqHCsXIWpMNHs5B0gDO35PNqLIot6tedxsplM2S928pRNYZa2KC8lax2WFIKy1aZPpCT0AC01E/TTFlNDPtQ4U0pIqtXCu1PrIV1TCuhTo2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fD7jR+Mt; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-28893cc3acdso438003fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:10:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729296614; x=1729901414; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E22HImJZ028W/1sQ4maAbpjY4QAR955Gkk9SdRCpvUQ=;
+        b=fD7jR+MtDCj3/nnkGWJvDef832IaUFNUGhQ3yI6u7ebatdSGu2CzvhD4WSk7PfIyVU
+         9wFmFFIHFlB3DnMI9XuQFAATV42E1iwRA4Hf9c8YCGi0iVTV3SJFHRsVB1cuMHR7cv1U
+         A4+yOyxc3W/LXOMwsAtQsTsA7wH+SfcndIrgM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729296614; x=1729901414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E22HImJZ028W/1sQ4maAbpjY4QAR955Gkk9SdRCpvUQ=;
+        b=rI2fGjw7M/v0c+fX2az6L7Tq+E39fpG8IDw/oYp3wH27G6uq5P2VMwpDgSpTnpyaV8
+         ouzdyycnwGFa5973Ea31V0z5vdKUeO0hWJMzOM55nDtQUNnSXpgnam2UiVAk+pbgMO5U
+         Qrso056JQHQl49uyRVpEkRIeCjmKzs2B39LLZCHD8WuGsm/Os/w2IqIb1niLt8mFtju2
+         IzeQRkGbIzyoyyM/Qz5dbrR96bZMIAUKPeBOroGtVNXxRDYXqT+1K7pQKXJYeQy+4zwx
+         +bb8VRsBnWG/7CoztZn1wWiaS1CTfXsjBYwQjiWNVTMLC8OXu7kvgELZC+uNjxcrp3os
+         WqtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgWdSifV2/oNyt/t/4fiz2FgXrt10wfg7C3fgidRoqQfTktObGc1jQi2gu9vx0oT5KPGlAvWfg4n63iYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPqHoStX3I56kOcGntDz5EGPP48nELK3z0o1T/vc8ws163rE9D
+	Cun9jcGbKKBW7F3Oc5KkM+r2OdhqznbvNE92o5UW28UHZBgaPXALRnU+fLNuC+f9VkGvXJSgRre
+	t8fvRLKQHyZEhhs8MLk/qBbEUdeZzfS06HMkh
+X-Google-Smtp-Source: AGHT+IFIihPyXoNPdentrsybY42eayzsimY1yFxEH7573nql2cE6j/C/m4TScAB/nVOH3efQdB/x8+eCEYm3oUOJiR8=
+X-Received: by 2002:a05:6870:95a1:b0:27b:9f8a:7a80 with SMTP id
+ 586e51a60fabf-2892c55337bmr967265fac.13.1729296613985; Fri, 18 Oct 2024
+ 17:10:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZaZGE7Kb+AZkN0eTH+0ny-_0WUxKT7ydDzAfEwP8cKVg@mail.gmail.com>
+References: <CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com>
+ <CABi2SkVEMRHV3swrbb6M5RA6GQpFVVx855CGwdQ1xiz3tygiqA@mail.gmail.com>
+ <f9b9422c-216d-422e-94b4-d8814b0b277e@lucifer.local> <CABi2SkWAv4LXvR1Wb1e31eyZ35JfyieXhDOq1bp_ZvHPLLg-qA@mail.gmail.com>
+ <e0f440b0-5a45-4218-8c51-27f848c0617b@lucifer.local> <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
+ <1f8eff74-005b-4fa9-9446-47f4cdbf3e8d@sirena.org.uk> <CABi2SkV38U-ZCAq9W091zYkOM1m5e-C27YmVXdTCi-t+p_W_fQ@mail.gmail.com>
+ <a2652ed4-ea8b-4b56-bac6-6479b3df6c14@sirena.org.uk> <CABi2SkVF3OtRcq9cCgLh_hOjxRnWq0owypw++xodrEfm=dt_qA@mail.gmail.com>
+ <6aefd38b-d758-4e7c-a910-254251c2a294@sirena.org.uk>
+In-Reply-To: <6aefd38b-d758-4e7c-a910-254251c2a294@sirena.org.uk>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 18 Oct 2024 17:10:01 -0700
+Message-ID: <CABi2SkUG8bhKQeHd_pvLw4y3ZY+Z8CvxZ_iV4YhTc+JQqe9TxA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
+To: Mark Brown <broonie@kernel.org>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	akpm@linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pedro.falcato@gmail.com, willy@infradead.org, 
+	vbabka@suse.cz, Liam.Howlett@oracle.com, rientjes@google.com, 
+	keescook@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 18, 2024 at 11:22:09AM -0700, Andrii Nakryiko wrote:
-> On Fri, Oct 18, 2024 at 3:16 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Mon, Oct 07, 2024 at 05:25:56PM -0700, Andrii Nakryiko wrote:
-> >
-> 
-> [...]
-> 
-> > > +
-> > > +             /* We lost the race, undo refcount bump (if it ever happened) */
-> > > +             if (uprobe)
-> > > +                     put_uprobe(uprobe);
-> > > +             /*
-> > > +              * Even if hprobe_consume() or another hprobe_expire() wins
-> > > +              * the state update race and unlocks SRCU from under us, we
-> > > +              * still have a guarantee that underyling uprobe won't be
-> > > +              * freed due to ongoing caller's SRCU lock region, so we can
-> > > +              * return it regardless. The caller then can attempt its own
-> > > +              * try_get_uprobe() to preserve the instance, if necessary.
-> > > +              * This is used in dup_utask().
-> > > +              */
-> > > +             return uprobe;
-> > > +     }
-> > > +     default:
-> > > +             WARN(1, "unknown hprobe state %d", hstate);
-> > > +             return NULL;
-> > > +     }
-> > > +}
-> >
-> > So... after a few readings I think I'm mostly okay with this. But I got
-> > annoyed by the whole HPROBE_STABLE with uprobe=NULL weirdness. Also,
-> > that data_race() usage is weird, what is that about?
-> 
-> People keep saying that evil KCSAN will come after me if I don't add
-> data_race() for values that can change under me, so I add it to make
-> it explicit that it's fine. But I can of course just drop data_race(),
-> as it has no bearing on correctness.
+HI Mark
 
-Use data_race() if you know that the compiler cannot mess you up or when
-its messing you up is acceptable.  An example of the latter is code that
-gathers statistics or debug information, at least in some cases.
+On Fri, Oct 18, 2024 at 2:05=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Fri, Oct 18, 2024 at 12:32:37PM -0700, Jeff Xu wrote:
+> > On Fri, Oct 18, 2024 at 11:37=E2=80=AFAM Mark Brown <broonie@kernel.org=
+> wrote:
+> > > On Fri, Oct 18, 2024 at 11:06:20AM -0700, Jeff Xu wrote:
+>
+> > > Test 106 here is called "test_munmap_free_multiple_ranges_with_split:
+> > > line:2573" which automated systems aren't going to be able to associa=
+te
+> > > with the passing "test_munmap_free_multiple_ranges_with_split", nor w=
+ith
+> > > any failures that occur on any other lines in the function.
+>
+> > I see. That will happen when those tests are modified and line number
+> > changes. I could see reasoning for this argument, especially when
+> > those tests are flaky and get updated often.
+>
+> > In practice, I hope any of those kernel self-test failures should get
+> > fixed immediately, or even better, run before dev submitting the patch
+> > that affects the mm area.
+>
+> That's not the entire issue - it is also a problem that the test name
+> is not the same between passes and failures so automated systems can't
+> associate the failures with the passes.
+I failed to understand this part.
+Maybe you meant the failing logging  is not the same across the
+multiple versions of test code, by testname you meant "failing
+logging"
 
-Something like READ_ONCE() or atomic_read() is better when the compiler
-can mess you up.
+>When a test starts failing they
+> will see the passing test disappear and a new test appears that has never
+> worked.
+ > This will mean that for example if they have bisection support
+> or UI for showing when a test started regressing those won't work.  The
+> test name needs to be stable, diagnostics identifying why or where it
+> failed should be separate prints.
+>
+If the test hasn't been changed for a while,  and start failing. Then
+it is quite easy to run the same test on recent code changes. I think
+you might agree with me on this. The only thing that bisec needs to
+check is if the entire tests are failing or not.
 
-For more information:  https://lwn.net/Articles/793253/
-https://lwn.net/Articles/799218/
+I haven't used the biset functionality, so I'm not sure how it works
+exactly, e.g. when it runs on the old version of kernel, does it use
+the test binary from the old kernel ? or the test binary provided by
+dev ?
 
-							Thanx, Paul
+> Actually, prompted by the comments below about test variants I've now
+> run the test and see that what's in -next is also broken in that it's
+> running a lot of the tests twice with sealing enabled or disabled but
+> not including this in the reported test name resulting in most of the
+> tests reporting like this:
+>
+>    ok 11 test_seal_mprotect
+>    ok 12 test_seal_mprotect
+>
+> which is also going to confuse automated systems, they have a hard time
+> working out which instance is which (generally the test numbers get
+> ignored between runs as they're not at all stable).  The test names need
+> to roll in the parameterisation:
+>
+>    ok 11 test_seal_mprotect seal=3Dtrue
+>    ok 12 test_seal_mprotect seal=3Dfalse
+>
+> (or something, the specific format doesn't matter so long as the names
+> are both stable and distinct).
+>
+Yes. Agree that this is a limitation of this macro.
 
-> > And then there's the case where we end up doing:
-> >
-> >   try_get_uprobe()
-> >   put_uprobe()
-> >   try_get_uprobe()
-> >
-> > in the dup path. Yes, it's unlikely, but gah.
-> >
-> >
-> > So how about something like this?
-> 
-> Yep, it makes sense to start with HPROBE_GONE if it's already NULL, no
-> problem. I'll roll those changes in.
-> 
-> I'm fine with the `bool get` flag as well. Will incorporate all that
-> into the next revision, thanks!
-> 
-> The only problem I can see is in the assumption that `srcu_idx < 0` is
-> never going to be returned by srcu_read_lock(). Paul says that it can
-> only be 0 or 1, but it's not codified as part of a contract. So until
-> we change that, probably safer to pass an extra bool specifying
-> whether srcu_idx is valid or not, is that OK?
-> 
-> (and I assume you want me to drop verbose comments for various states, right?)
-> 
-> 
-> 
-> >
-> > ---
-> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > index 06ec41c75c45..efb4f5ee6212 100644
-> > --- a/kernel/events/uprobes.c
-> > +++ b/kernel/events/uprobes.c
-> > @@ -657,20 +657,19 @@ static void put_uprobe(struct uprobe *uprobe)
-> >         call_srcu(&uretprobes_srcu, &uprobe->rcu, uprobe_free_srcu);
-> >  }
-> >
-> > -/* Initialize hprobe as SRCU-protected "leased" uprobe */
-> > -static void hprobe_init_leased(struct hprobe *hprobe, struct uprobe *uprobe, int srcu_idx)
-> > +static void hprobe_init(struct hprobe *hprobe, struct uprobe *uprobe, int srcu_idx)
-> >  {
-> > -       hprobe->state = HPROBE_LEASED;
-> > -       hprobe->uprobe = uprobe;
-> > -       hprobe->srcu_idx = srcu_idx;
-> > -}
-> > +       enum hprobe_state state = HPROBE_GONE;
-> >
-> > -/* Initialize hprobe as refcounted ("stable") uprobe (uprobe can be NULL). */
-> > -static void hprobe_init_stable(struct hprobe *hprobe, struct uprobe *uprobe)
-> > -{
-> > -       hprobe->state = HPROBE_STABLE;
-> > +       if (uprobe) {
-> > +               state = HPROBE_LEASED;
-> > +               if (srcu_idx < 0)
-> > +                       state = HPROBE_STABLE;
-> > +       }
-> > +
-> > +       hprobe->state = state;
-> >         hprobe->uprobe = uprobe;
-> > -       hprobe->srcu_idx = -1;
-> > +       hprobe->srcu_idx = srcu_idx;
-> >  }
-> >
-> >  /*
-> > @@ -713,8 +712,7 @@ static void hprobe_finalize(struct hprobe *hprobe, enum hprobe_state hstate)
-> >                 __srcu_read_unlock(&uretprobes_srcu, hprobe->srcu_idx);
-> >                 break;
-> >         case HPROBE_STABLE:
-> > -               if (hprobe->uprobe)
-> > -                       put_uprobe(hprobe->uprobe);
-> > +               put_uprobe(hprobe->uprobe);
-> >                 break;
-> >         case HPROBE_GONE:
-> >         case HPROBE_CONSUMED:
-> > @@ -739,8 +737,9 @@ static void hprobe_finalize(struct hprobe *hprobe, enum hprobe_state hstate)
-> >   * refcount, so caller has to attempt try_get_uprobe(), if it needs to
-> >   * preserve uprobe beyond current SRCU lock region. See dup_utask().
-> >   */
-> > -static struct uprobe* hprobe_expire(struct hprobe *hprobe)
-> > +static struct uprobe *hprobe_expire(struct hprobe *hprobe, bool get)
-> >  {
-> > +       struct uprobe *uprobe = NULL;
-> >         enum hprobe_state hstate;
-> >
-> >         /*
-> > @@ -749,25 +748,18 @@ static struct uprobe* hprobe_expire(struct hprobe *hprobe)
-> >          */
-> >         lockdep_assert(rcu_read_lock_held() && srcu_read_lock_held(&uretprobes_srcu));
-> >
-> > -       hstate = data_race(READ_ONCE(hprobe->state));
-> > +       hstate = READ_ONCE(hprobe->state);
-> >         switch (hstate) {
-> >         case HPROBE_STABLE:
-> > -               /* uprobe is properly refcounted, return it */
-> > -               return hprobe->uprobe;
-> > +               uprobe = hprobe->uprobe;
-> > +               break;
-> > +
-> >         case HPROBE_GONE:
-> > -               /*
-> > -                * SRCU was unlocked earlier and we didn't manage to take
-> > -                * uprobe refcnt, so it's effectively NULL
-> > -                */
-> > -               return NULL;
-> >         case HPROBE_CONSUMED:
-> > -               /*
-> > -                * uprobe was consumed, so it's effectively NULL as far as
-> > -                * uretprobe processing logic is concerned
-> > -                */
-> > -               return NULL;
-> > -       case HPROBE_LEASED: {
-> > -               struct uprobe *uprobe = try_get_uprobe(hprobe->uprobe);
-> > +               break;
-> > +
-> > +       case HPROBE_LEASED:
-> > +               uprobe = try_get_uprobe(hprobe->uprobe);
-> >                 /*
-> >                  * Try to switch hprobe state, guarding against
-> >                  * hprobe_consume() or another hprobe_expire() racing with us.
-> > @@ -778,27 +770,26 @@ static struct uprobe* hprobe_expire(struct hprobe *hprobe)
-> >                 if (try_cmpxchg(&hprobe->state, &hstate, uprobe ? HPROBE_STABLE : HPROBE_GONE)) {
-> >                         /* We won the race, we are the ones to unlock SRCU */
-> >                         __srcu_read_unlock(&uretprobes_srcu, hprobe->srcu_idx);
-> > -                       return uprobe;
-> > +                       break;
-> >                 }
-> >
-> >                 /* We lost the race, undo refcount bump (if it ever happened) */
-> > -               if (uprobe)
-> > +               if (uprobe && !get) {
-> >                         put_uprobe(uprobe);
-> > -               /*
-> > -                * Even if hprobe_consume() or another hprobe_expire() wins
-> > -                * the state update race and unlocks SRCU from under us, we
-> > -                * still have a guarantee that underyling uprobe won't be
-> > -                * freed due to ongoing caller's SRCU lock region, so we can
-> > -                * return it regardless. The caller then can attempt its own
-> > -                * try_get_uprobe() to preserve the instance, if necessary.
-> > -                * This is used in dup_utask().
-> > -                */
-> > +                       uprobe = NULL;
-> > +               }
-> > +
-> >                 return uprobe;
-> > -       }
-> > +
-> >         default:
-> >                 WARN(1, "unknown hprobe state %d", hstate);
-> >                 return NULL;
-> >         }
-> > +
-> > +       if (uprobe && get)
-> > +               return try_get_uprobe(uprobe);
-> > +
-> > +       return uprobe;
-> >  }
-> >
-> >  static __always_inline
-> > @@ -1920,9 +1911,8 @@ static void ri_timer(struct timer_list *timer)
-> >         /* RCU protects return_instance from freeing. */
-> >         guard(rcu)();
-> >
-> > -       for_each_ret_instance_rcu(ri, utask->return_instances) {
-> > -               hprobe_expire(&ri->hprobe);
-> > -       }
-> > +       for_each_ret_instance_rcu(ri, utask->return_instances)
-> > +               hprobe_expire(&ri->hprobe, false);
-> >  }
-> >
-> >  static struct uprobe_task *alloc_utask(void)
-> > @@ -1975,10 +1965,7 @@ static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
-> >
-> >                 *n = *o;
-> >
-> > -               /* see hprobe_expire() comments */
-> > -               uprobe = hprobe_expire(&o->hprobe);
-> > -               if (uprobe) /* refcount bump for new utask */
-> > -                       uprobe = try_get_uprobe(uprobe);
-> > +               uprobe = hprobe_expire(&o->hprobe, true);
-> >
-> >                 /*
-> >                  * New utask will have stable properly refcounted uprobe or
-> > @@ -1986,7 +1973,7 @@ static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
-> >                  * need to preserve full set of return_instances for proper
-> >                  * uretprobe handling and nesting in forked task.
-> >                  */
-> > -               hprobe_init_stable(&n->hprobe, uprobe);
-> > +               hprobe_init(&n->hprobe, uprobe, -1);
-> >
-> >                 n->next = NULL;
-> >                 rcu_assign_pointer(*p, n);
-> > @@ -2131,7 +2118,7 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
-> >
-> >         utask->depth++;
-> >
-> > -       hprobe_init_leased(&ri->hprobe, uprobe, srcu_idx);
-> > +       hprobe_init(&ri->hprobe, uprobe, srcu_idx);
-> >         ri->next = utask->return_instances;
-> >         rcu_assign_pointer(utask->return_instances, ri);
-> >
+> > Having line number does help dev to go to error directly, and I'm not
+> > against filling in the "action" field, but you might also agree with
+> > me, finding unique text for each error would require some decent
+> > amount of time, especially for large tests such as mseal_test.
+>
+> In these situations if it's a typical Unix API function setting errno
+> that failed I tend to end up writing diagnostics like:
+>
+>         ksft_perror("open()")
+>
+> possibly with some of the arguments included as well, or something
+> equivalently basic for other kinds of error.  This is fairly mindless so
+> quick and easy to do and more robust against line number slips if you're
+> not looking at exactly the same version of the code, sometimes it's even
+> enough you don't even need to look at the test to understand why it's
+> upset.
+>
+I understand what you are saying, but personally, I still think line
+numbers are a faster and more direct way to failure.
+
+> > > Honestly this just sounds and looks like kselftest_harness.h, it's
+> > > ASSERT_ and EXPECT_ macros sound exactly like what you're looking for
+> > > for asserts.  The main gotchas with it are that it's not particularly
+>
+> > OK, I didn't know that ASSERT_ and EXPECT_ were part of the test fixtur=
+e.
+>
+> > If I  switch to test_fixture, e,g, using TEST(test_name)
+>
+> > how do I pass the "seal" flag to it ?
+> > e.g. how do I run the same test twice, first seal =3D true, and second =
+seal=3Dfalse.
+>
+> >         test_seal_mmap_shrink(false);
+> >         test_seal_mmap_shrink(true);
+>
+> That looks like fixture variants to me, using those with
+> kselftest_harness.h will also fix the problem with duplicate test names
+> being used since it generates different names for each instance of the
+> test.  Something like:
+>
+> FIXTURE(with_seal)
+> {
+> };
+>
+> FIXTURE_VARIANT(with_seal)
+> {
+>         bool seal;
+> };
+>
+> FIXTURE_VARIANT_ADD(with_seal, yes)
+> {
+>         .seal =3D true,
+> };
+>
+> FIXTURE_VARIANT_ADD(with_seal, no)
+> {
+>         .seal =3D false,
+> };
+>
+> FIXTURE_SETUP(with_seal)
+> {
+> }
+>
+> FIXTURE_TEARDOWN(with_seal)
+> {
+> }
+>
+> then a bunch of tests using that fixture:
+>
+> TEST_F(with_seal, test_seal_mmap_shrink)
+> {
+>         if (variant->seal) {
+>                 /* setup sealing */
+>         }
+>
+>         ...
+> }
+>
+> TEST_F(with_seal, test_seal_mprotect)
+> {
+>         if (variant->seal) {
+>                 /* setup sealing */
+>         }
+>
+>         ...
+> }
+>
+> You don't need to actually set up anything in your fixture, but you do
+> need to have setup and teardown functions so the framework can emit
+> required boilerplate.  The gcs-locking.c test I recently added in -next
+> is an example of a similar thing where we just need the variants,
+> there's no actual fixture.
+
+Thanks! This is really helpful, I think the existing mseal_test can be
+quickly converted using this example.
+
+(A side note: if selftest documentation is updated to include this
+example, it will be much easier to future dev to follow)
+
+Thanks
+-Jeff
 
