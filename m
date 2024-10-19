@@ -1,228 +1,141 @@
-Return-Path: <linux-kernel+bounces-372745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E739A4CA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:32:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122609A4CA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D819B284FC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:32:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357FC1C22290
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E761DEFD8;
-	Sat, 19 Oct 2024 09:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FA91DEFE8;
+	Sat, 19 Oct 2024 09:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="md0/PKJK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iO/gYTPn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC0520E30B;
-	Sat, 19 Oct 2024 09:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1340920E30B;
+	Sat, 19 Oct 2024 09:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729330338; cv=none; b=PnteSP+MIl4tjBFNQBr2cJx9YVqtb9BfHEHEJe0HVNCjzrXfrYrm6dbgjUxw4D0ZqFVJ4L8AHEA3xOMf0LBdKdT+KoOeFjXFTjAhDyyrqsJK4dm0ZkdotooVng01I4o6TsrT6RIJPt9BE+jjfvZjHPX94V4TTYOEGBZ7O5TlScI=
+	t=1729330448; cv=none; b=QENPJOQ0LO61ZKrPfyC0KUPCjCdBs5kXx1tbI9LlVw1TKjrFyMGsaYJQ4CYPdcd51dYeb0/Agl+RTxbKnIMY0DGtgeda9I21HEAu4m1EOOhDIGcGNWCbfFT+IXk15SKJUTxxMyd6bZDAry5foBy3S8Z9REmPPYz/Afjws0F8Fzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729330338; c=relaxed/simple;
-	bh=tB7aWDAdrkdsI5yozn2T3Ljd6EKa3pao5xOUFU7nDuQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpXP+7/4DKUc7y2WrIj7nlhd+zEGm/vqYixsBv9HHLT/LAS+PZJahScnrF7vtR9pOBxXGEzmxkp4Qc3NMtKvK2/nlFtd4QLnu2hx8unxy31IP+P1B+OVWc7ig+/kk0gl2V45nuP9dGtX0bpy5EZauHnUZnvjPwAHul8ycogE51w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=md0/PKJK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49J6QlrC000372;
-	Sat, 19 Oct 2024 09:31:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Hgx2tTwrqqvVBfxhaLy1gvXS
-	6S7MhvjClP7ml6upya8=; b=md0/PKJK8DiQcoyWfDEg27QQrA9aHyibg2bRRAHE
-	K9w14w6lpr1LQn/5XI9LyqtpE6uBV03bMeKtD5LH5deZGqakkdor3yn1EW1nDhve
-	9jU3Iwp6j34y+TlPgaCXKEzqPAys0YNCsl43ARazc1CLyvb1E7AVF5xFIztdpq93
-	L8sP2EDB88WAQh+/ywQmQ1sb5Fy6GnhLssGg4UdtgSy94cSdbNIxncFq1fb3z+aY
-	ZaZ8NDD+1ZmfSoGQ1u0zcp/dXoHxLASQRSInPgSYnC6w21CNWyu4qeOsUKw26/bs
-	VjAdaF7Qz276oHR3XkR3vRSmPMDAfice83vsg5UBsLzQnA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vxra2f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 19 Oct 2024 09:31:56 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49J9Vu9F019795
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 19 Oct 2024 09:31:56 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sat, 19 Oct 2024 02:31:50 -0700
-Date: Sat, 19 Oct 2024 15:01:46 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Arnd Bergmann <arnd@kernel.org>
-CC: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        "Nathan
- Chancellor" <nathan@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Sean Paul
-	<sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
-Subject: Re: [PATCH] drm: a6xx: avoid excessive stack usage
-Message-ID: <20241019093146.kdp25pir5onjmg4g@hu-akhilpo-hyd.qualcomm.com>
-References: <20241018151143.3543939-1-arnd@kernel.org>
+	s=arc-20240116; t=1729330448; c=relaxed/simple;
+	bh=wIgGqw4Rh+8ZoDZH34lbZQsu5hpqUW78taz2QwcuK04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kOcgoMx7gU7qV1Y7NbQYemvRPkWsItknAAbUrBR/ODidqL3mPnHBR/JP0fs0S64fhaatNuxSBAjqGkdRt0sAKdH5YAlx4DtuQygMkqi/h2OkhQN6q0MTskyCfYwCsBNRBbbEOjYCgEuqzKrEBP5NwH/XJ+Xmd/7vUYFMPuBFsmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iO/gYTPn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C87FEC4CEC5;
+	Sat, 19 Oct 2024 09:34:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729330447;
+	bh=wIgGqw4Rh+8ZoDZH34lbZQsu5hpqUW78taz2QwcuK04=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iO/gYTPnRsZlVSlDPmGKyKBKJDXLwXwJZHGmSV2wE0SxOg1QcPqL9QYGBq4c+AvMz
+	 Ix4aJlEQpMjnwuYbyaMgshn04Y657USw75kIWd08/bDasGpKtcpA8NZeQVnxllgeJA
+	 NhBOS3R1WmtLCX80QxpZosaUheW2z6jCN/MHQdBdJKPnmr5NRdXpY+YAml8/tqeBcw
+	 BzZh1tzfVGwy9XIfim6fVERWlAgNUgg2wNSd3tBRd3H6MvD9XOQ5oTpH7ewzR/SZ2Y
+	 a5wsiafOGaM4etd5rDcVhJiSUvQ6wTtMPNpfZlUSgXDm3ZCfVJb1CPFHEhDwi3MKSj
+	 CtzgEFdUT4/XA==
+Date: Sat, 19 Oct 2024 10:34:02 +0100
+From: Simon Horman <horms@kernel.org>
+To: Lee Trager <lee@trager.us>
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Alexander Duyck <alexanderduyck@fb.com>,
+	Jakub Kicinski <kuba@kernel.org>, kernel-team@meta.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mohsin Bashir <mohsin.bashr@gmail.com>,
+	Sanman Pradhan <sanmanpradhan@meta.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] eth: fbnic: Add devlink dev flash support
+Message-ID: <20241019093402.GT1697@kernel.org>
+References: <20241012023646.3124717-1-lee@trager.us>
+ <20241012023646.3124717-3-lee@trager.us>
+ <8502a496-f83d-470c-a84d-081a7c7e2cae@linux.dev>
+ <20241015104353.GC569285@kernel.org>
+ <61e80187-49d0-4ad8-a66a-0c3901963201@trager.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018151143.3543939-1-arnd@kernel.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: c7ebgBZlxI-XvLuA55_ZBEz9X2lqhSug
-X-Proofpoint-GUID: c7ebgBZlxI-XvLuA55_ZBEz9X2lqhSug
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- clxscore=1011 malwarescore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
- lowpriorityscore=0 adultscore=0 phishscore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410190068
+In-Reply-To: <61e80187-49d0-4ad8-a66a-0c3901963201@trager.us>
 
-On Fri, Oct 18, 2024 at 03:11:38PM +0000, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Fri, Oct 18, 2024 at 03:48:26PM -0700, Lee Trager wrote:
+> On 10/15/24 3:43 AM, Simon Horman wrote:
 > 
-> Clang-19 and above sometimes end up with multiple copies of the large
-> a6xx_hfi_msg_bw_table structure on the stack. The problem is that
-> a6xx_hfi_send_bw_table() calls a number of device specific functions to
-> fill the structure, but these create another copy of the structure on
-> the stack which gets copied to the first.
+> > On Mon, Oct 14, 2024 at 12:18:36PM +0100, Vadim Fedorenko wrote:
+> > > On 12/10/2024 03:34, Lee Trager wrote:
+> > > > fbnic supports updating firmware using a PLDM image signed and distributed
+> > > > by Meta. PLDM images are written into stored flashed. Flashing does not
+> > > > interrupt operation.
+> > > > 
+> > > > On host reboot the newly flashed UEFI driver will be used. To run new
+> > > > control or cmrt firmware the NIC must be power cycled.
+> > > > 
+> > > > Signed-off-by: Lee Trager <lee@trager.us>
+> > ...
+> > 
+> > > > diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
+> > ...
+> > 
+> > > > +/**
+> > > > + * fbnic_send_component_table - Send PLDM component table to the firmware
+> > > > + * @context: PLDM FW update structure
+> > > > + * @component: The component to send
+> > > > + * @transfer_flag: Flag indication location in component tables
+> > > > + *
+> > > > + * Read relevant data from component table and forward it to the firmware.
+> > > > + * Check response to verify if the firmware indicates that it wishes to
+> > > > + * proceed with the update.
+> > > > + *
+> > > > + * Return: zero on success
+> > > > + *	    negative error code on failure
+> > > > + */
+> > > > +static int fbnic_send_component_table(struct pldmfw *context,
+> > > > +				      struct pldmfw_component *component,
+> > > > +				      u8 transfer_flag)
+> > > > +{
+> > > > +	struct device *dev = context->dev;
+> > > > +	u16 id = component->identifier;
+> > > > +	u8 test_string[80];
+> > > > +
+> > > > +	switch (id) {
+> > > > +	case QSPI_SECTION_CMRT:
+> > > > +	case QSPI_SECTION_CONTROL_FW:
+> > > > +	case QSPI_SECTION_OPTION_ROM:
+> > > > +		break;
+> > > > +	default:
+> > > > +		dev_err(dev, "Unknown component ID %u\n", id);
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +
+> > > > +	dev_dbg(dev, "Sending PLDM component table to firmware\n");
+> > > > +
+> > > > +	/* Temp placeholder */
+> > > > +	memcpy(test_string, component->version_string,
+> > > > +	       min_t(u8, component->version_len, 79));
+> > > > +	test_string[min_t(u8, component->version_len, 79)] = 0;
+> > > Looks like this construction can be replaced with strscpy().
+> > > There were several patchsets in the tree to use strscpy(), let's follow
+> > > the pattern.
+> > While looking at these lines, I'm unsure why min_t() is being used
+> > instead of min() here. As version_len is unsigned and 79 is a positive
+> > constant, I believe min() should be fine here.
 > 
-> If the functions get inlined, that busts the warning limit:
-> 
-> drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
+> clang complains if I'm not explicit with the type by using min_t()
 
-Why does this warning says that the limit is 1024? 1024 bytes is too small, isn't it?
+Thanks, and sorry for not checking what clang says.
+That is a good enough reason for this for me.
 
--Akhil.
-
-> 
-> Mark all of them as 'noinline_for_stack' ensure we only have one copy
-> of the structure per function.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 21 +++++++++++----------
->  1 file changed, 11 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> index cdb3f6e74d3e..5699e0420eb8 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> @@ -259,7 +259,8 @@ static int a6xx_hfi_send_perf_table(struct a6xx_gmu *gmu)
->  		NULL, 0);
->  }
->  
-> -static void a618_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +/* noinline to avoid having multiple copies of 'msg' on stack */
-> +static noinline_for_stack void a618_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	/* Send a single "off" entry since the 618 GMU doesn't do bus scaling */
->  	msg->bw_level_num = 1;
-> @@ -287,7 +288,7 @@ static void a618_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  	msg->cnoc_cmds_data[1][0] =  0x60000001;
->  }
->  
-> -static void a619_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +static noinline_for_stack void a619_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	msg->bw_level_num = 13;
->  
-> @@ -346,7 +347,7 @@ static void a619_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  	msg->cnoc_cmds_data[0][0] = 0x40000000;
->  }
->  
-> -static void a640_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +static noinline_for_stack void a640_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	/*
->  	 * Send a single "off" entry just to get things running
-> @@ -385,7 +386,7 @@ static void a640_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  	msg->cnoc_cmds_data[1][2] =  0x60000001;
->  }
->  
-> -static void a650_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +static noinline_for_stack void a650_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	/*
->  	 * Send a single "off" entry just to get things running
-> @@ -416,7 +417,7 @@ static void a650_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  	msg->cnoc_cmds_data[1][0] =  0x60000001;
->  }
->  
-> -static void a690_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +static noinline_for_stack void a690_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	/*
->  	 * Send a single "off" entry just to get things running
-> @@ -447,7 +448,7 @@ static void a690_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  	msg->cnoc_cmds_data[1][0] =  0x60000001;
->  }
->  
-> -static void a660_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +static noinline_for_stack void a660_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	/*
->  	 * Send a single "off" entry just to get things running
-> @@ -478,7 +479,7 @@ static void a660_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  	msg->cnoc_cmds_data[1][0] =  0x60000001;
->  }
->  
-> -static void adreno_7c3_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +static noinline_for_stack void adreno_7c3_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	/*
->  	 * Send a single "off" entry just to get things running
-> @@ -509,7 +510,7 @@ static void adreno_7c3_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  	msg->cnoc_cmds_data[1][0] =  0x60000001;
->  }
->  
-> -static void a730_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +static noinline_for_stack void a730_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	msg->bw_level_num = 12;
->  
-> @@ -565,7 +566,7 @@ static void a730_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  	msg->cnoc_cmds_data[1][0] = 0x60000001;
->  }
->  
-> -static void a740_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +static noinline_for_stack void a740_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	msg->bw_level_num = 1;
->  
-> @@ -590,7 +591,7 @@ static void a740_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  	msg->cnoc_cmds_data[1][0] = 0x60000001;
->  }
->  
-> -static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> +static noinline_for_stack void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	/* Send a single "off" entry since the 630 GMU doesn't do bus scaling */
->  	msg->bw_level_num = 1;
-> -- 
-> 2.39.5
-> 
+...
 
