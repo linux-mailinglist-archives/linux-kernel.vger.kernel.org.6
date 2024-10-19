@@ -1,136 +1,115 @@
-Return-Path: <linux-kernel+bounces-372763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D67989A4CD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:17:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7119A4CC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 828131F22CF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 312D2283C55
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F091DE8B0;
-	Sat, 19 Oct 2024 10:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FD41DF96B;
+	Sat, 19 Oct 2024 10:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="NhMFqeM1"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="agwCIdAp"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5A318C34B;
-	Sat, 19 Oct 2024 10:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E21218755C;
+	Sat, 19 Oct 2024 10:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729333037; cv=none; b=CuV7K1TUWyur2L41jc3Az5yDOcwRtRpDvYMAlWBvZn41fga/gi/4pJt4WW6hGcEXPrypS1rODffux21FKIukfoynWyL3gLtQb9N+L6X2NsRXG1hXfGcPu/dsDJZs+WMLV8GpbQyQWwXSktEzQGP8dS3sz+gjDwKPU/ifTvZIOdg=
+	t=1729332766; cv=none; b=XkBKxC1t+lwOZq+21Euq4+Au8WhddjHAoXlZM4IiVbIwPtwRbRvfWIr7W5eWJUSrTDK+yQ3A9Ee1oFmXOGXwMOJG3mJ74jjzkEGc32cevBNJSs3AR4qO5qsoqCEaw+RAL8iZ7s5+8zL+m2dYwPVvMRgTAOOf9p7qV5dORFrQyYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729333037; c=relaxed/simple;
-	bh=EEoegO5HOQfYcl3gGqouvUqNUEa6zCKW1b8JWwcSwno=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qNcmXbi3/0/Rg2EEZePBaxZXciCqvflpkAXIUR63ZxyGJ9LcLERYIEenbrsC0h2uJcb3gvxrKY2h+2FNrH6tNVbzujL1QbFZ3SOxyjDsFri9E5IdxB+TpaqvjKiGc5XPO7lYklkSWmpW/u0Eg3lTUK0mvCXwaIiYcF4+lbY8HQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=NhMFqeM1; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1729332413; bh=EEoegO5HOQfYcl3gGqouvUqNUEa6zCKW1b8JWwcSwno=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=NhMFqeM1xVfZLawOWT92RfW8LTIOJfidwNp7MHnmkEBLJateXf6PVaPck2LUqDeS9
-	 L+wZ2/Vm2kGurlrUdKzeMsmY/dNoppxdhMlYDKiOqgn87zlRQTmxGHO5UHZFJDo3FR
-	 xYuxtG/a5fdw0XwYNfGVAIa2TMrrJSVpLYx0808o=
-From: Luca Weiss <luca@lucaweiss.eu>
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject:
- Re: [PATCH v2] rpmsg: qcom_smd: Improve error handling for
- qcom_smd_parse_edge
-Date: Sat, 19 Oct 2024 12:06:50 +0200
-Message-ID: <2827287.mvXUDI8C0e@g550jk>
-In-Reply-To: <20240606-apcs-mboxes-v2-1-41b9e91effb6@z3ntu.xyz>
-References: <20240606-apcs-mboxes-v2-1-41b9e91effb6@z3ntu.xyz>
+	s=arc-20240116; t=1729332766; c=relaxed/simple;
+	bh=WX/NBZEjkntFun/D0pGIVbOd18uKP04lnSuDqn9OWBo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cFbjq18MOM+83Y0QkJKEsJgBFI9OAZpl5e2B69kEMPMRQ3JBcsSoOG2EaLMxF3cYS83vGj705BhrEQgGm7XCszdGrYeahWtDbb5XZXwwyTmjaAkc38gwADrhCF99zXtxfjHRkof3lmwDbwv3NurVofwk2qHZJhcGYx5I8ohW+tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=agwCIdAp; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729332762;
+	bh=WX/NBZEjkntFun/D0pGIVbOd18uKP04lnSuDqn9OWBo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=agwCIdApCuVlTvjEXHtj1nG5GT2GHfu26JRn9CN2NKEWYk5/oyrCR4+T6RllP7jBf
+	 pYij70OW4JKVPkrXUd4GpZHyXewcJahsdUHLXM0tzkO/EmgoKh9/BYru5OtHUHNyLW
+	 N37J2bOmpow6nkjlRddl0PEqGaVzZR9I4JztwZAMS/BMcEzZmOOa9zWpbW3u7kL1aG
+	 7mQCLY0CeBB6LwDeUL0/xz06j0R4X7MJmnlt8wBid1AVIEruerRgzJFG9dabdCScPW
+	 REwnta+SfYXN25v7w8a3oYzuCWAepZIDxgPeJUi2H3DNZXVaXGPZXq9Jbduz7FOhk4
+	 rblRQdO4SOy+Q==
+Received: from localhost (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1139D17E1395;
+	Sat, 19 Oct 2024 12:12:42 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v2 0/5] Enable HDMI0 on several RK3588 based boards
+Date: Sat, 19 Oct 2024 13:12:09 +0300
+Message-Id: <20241019-rk3588-hdmi0-dt-v2-0-466cd80e8ff9@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPmFE2cC/2WNyw6CMBBFf4XM2jFtEW1Z+R+GRenDTgRqWkI0h
+ H+3krhyeU5yz10hu0QuQ1utkNxCmeJUQBwqMEFPd4dkC4Ng4sQZl5gedSMlBjsSQzsj17xuLGO
+ Xs/ZQVs/kPL324q0rHCjPMb33g4V/7a+l/loLR4a9lV4o5Z029mriMOg+Jn00cYRu27YP+nQz3
+ 7IAAAA=
+X-Change-ID: 20241018-rk3588-hdmi0-dt-1a135d0076af
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Luis de Arquer <ldearquer@gmail.com>, Alexandre ARNOUD <aarnoud@me.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, FUKAUMI Naoki <naoki@radxa.com>
+X-Mailer: b4 0.14.2
 
-On Donnerstag, 6. Juni 2024 21:01:36 MESZ Luca Weiss wrote:
-> When the mailbox driver has not probed yet, the error message "failed to
-> parse smd edge" is just going to confuse users, so improve the error
-> prints a bit.
-> 
-> Cover the last remaining exits from qcom_smd_parse_edge with proper
-> error prints, especially the one for the mbox_chan deserved
-> dev_err_probe to handle EPROBE_DEFER nicely. And add one for ipc_regmap
-> also to be complete.
-> 
-> With this done, we can remove the outer print completely.
+Since the initial support for the RK3588 HDMI TX Controller [1] has been
+merged as of next-20241018, let's enable the HDMI0 output port for the
+following boards: Radxa ROCK 5A & 5B, Rockchip RK3588 EVB1 V10, Xunlong
+Orange Pi 5+.
 
-Ping, looks like this is still pending.
+@Luis: Could you please verify this series still works as expected on
+your Orange Pi device?
 
-Regards
-Luca
+Thanks,
+Cristian
 
-> 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
-> Changes in v2:
-> - Rebase on qcom for-next, drop dts patches which have been applied
-> - Improve error printing situation (Bjorn)
-> - Link to v1: https://lore.kernel.org/r/20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz
-> ---
->  drivers/rpmsg/qcom_smd.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index 43f601c84b4f..06e6ba653ea1 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -1369,7 +1369,8 @@ static int qcom_smd_parse_edge(struct device *dev,
->  	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
->  	if (IS_ERR(edge->mbox_chan)) {
->  		if (PTR_ERR(edge->mbox_chan) != -ENODEV) {
-> -			ret = PTR_ERR(edge->mbox_chan);
-> +			ret = dev_err_probe(dev, PTR_ERR(edge->mbox_chan),
-> +					    "failed to acquire IPC mailbox\n");
->  			goto put_node;
->  		}
->  
-> @@ -1386,6 +1387,7 @@ static int qcom_smd_parse_edge(struct device *dev,
->  		of_node_put(syscon_np);
->  		if (IS_ERR(edge->ipc_regmap)) {
->  			ret = PTR_ERR(edge->ipc_regmap);
-> +			dev_err(dev, "failed to get regmap from syscon: %d\n", ret);
->  			goto put_node;
->  		}
->  
-> @@ -1501,10 +1503,8 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
->  	}
->  
->  	ret = qcom_smd_parse_edge(&edge->dev, node, edge);
-> -	if (ret) {
-> -		dev_err(&edge->dev, "failed to parse smd edge\n");
-> +	if (ret)
->  		goto unregister_dev;
-> -	}
->  
->  	ret = qcom_smd_create_chrdev(edge);
->  	if (ret) {
-> 
-> ---
-> base-commit: 2c79712cc83b172ce26c3086ced1c1fae087d8fb
-> change-id: 20240423-apcs-mboxes-12ee6c01a5b3
-> 
-> Best regards,
-> 
+[1]: https://lore.kernel.org/all/20241016-b4-rk3588-bridge-upstream-v10-0-87ef92a6d14e@collabora.com/
 
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v2:
+- Updated descriptions for rock-5a & rock-5b patches to include Radxa,
+  per Naoki's review; also collected his Tested-by on the latter
+- Included Naoki's HPD pin related fix in rock-5a patch and dropped the
+  UNTESTED prefix from the subject
+- Link to v1: https://lore.kernel.org/r/20241019-rk3588-hdmi0-dt-v1-0-bd8f299feacd@collabora.com
 
+---
+Cristian Ciocaltea (5):
+      arm64: dts: rockchip: Add HDMI0 node to rk3588
+      arm64: dts: rockchip: Enable HDMI0 on rock-5b
+      arm64: dts: rockchip: Enable HDMI0 on rk3588-evb1
+      arm64: dts: rockchip: Enable HDMI0 on orangepi-5-plus
+      arm64: dts: rockchip: Enable HDMI0 on rock-5a
 
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi      | 41 +++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts   | 47 +++++++++++++++++++
+ .../boot/dts/rockchip/rk3588-orangepi-5-plus.dts   | 47 +++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts    | 47 +++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts   | 52 ++++++++++++++++++++++
+ 5 files changed, 234 insertions(+)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241018-rk3588-hdmi0-dt-1a135d0076af
 
 
