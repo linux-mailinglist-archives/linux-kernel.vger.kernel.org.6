@@ -1,284 +1,525 @@
-Return-Path: <linux-kernel+bounces-372633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533EF9A4B3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F3F9A4B43
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4D01F22EB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:11:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D53041F22F7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240B21D6195;
-	Sat, 19 Oct 2024 05:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F011D5ABA;
+	Sat, 19 Oct 2024 05:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="cNdaZ/U6"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazolkn19010016.outbound.protection.outlook.com [52.103.2.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2847Lu/"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE7818872A;
-	Sat, 19 Oct 2024 05:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729314682; cv=fail; b=XdaZ8ubTDxnbWmHTSq81Jpr5qRLTwq9EoZIUeX1DfWxwcg5MACKQGf1JupRwszmmJqImGhC9VBcHcISDk52J59EK1p+rkPA/MRY/3T247P7aftgYZsbdiCUaYiNCixuzcOO8BdtTvfVe1WGZet+e8h3lKBNMGe5TSyP2sYB1lvo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729314682; c=relaxed/simple;
-	bh=N1NCsCQq/a2UuLlDV7NAxwk+2iQGe0OFfpL5J7MIph8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=S6yhhIzNwwk5kvMkMak2h7n5gms0uWlOouQlKjR9xLR0N7DO4i11EglOg1Z1RIS3mvkuCDoFOme4/sLYDEuO5Ol+Xi+VAC9xW3Li/k321xgLIKK4v77hzTr0jnRHGrEZ4p31VyX8uFHtVQuSLMxgtdT7JlIelGVpIoRRmsNP7XY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=cNdaZ/U6; arc=fail smtp.client-ip=52.103.2.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yag//04gAqOpfmxdKVj/HTqSZDrv96reG9dnjPnmbl8DlYGkZ4wNR8PaU+wmk6rTHaUwXuv97mUVEQGS5nHRIzfgr0XqeaslAoJlDq0w7FTdGDZ3m77SV8kW/BDdnpBEQrD1v0+qsPRHT6pKxa69OgoruD7XyLVvREMJ2AaiIrpplko3c9QuFjAEcMwDd9g6L4DrMCXadvLD+KX6ldvGeKWLZv1IQIjES0+HuzqZATdnX0or012Eg37XeOAbodwEL/ff8NevherWXsP+a2A0KJgPPi7TZ/CmRSxNCcDUMP0GH25+A6trd8+kTXM10GItxTxQlNEsH44tPdAWb7P0BA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=llm5civONHWGtFjuGCu8jsP/ljZTLecaUgeevi0V1eM=;
- b=wbze2gSglj1UokBZ04wrTa3y1HN6rLXPaQKaMlRFf1UkWOfUdtwcizzXia47BNZ6Q2NugzsWcnkCqBA0eiDCk1anpQfF4gf1R4a3nQCstYHi75UuzNRp1OZ10y5rAfXqvWWSd4ap4DBbFJkFz2YKAFcFVcln7AtLImzSFPmi/QuyXn4ohqj1tEj1CdQa6VPG9FfRKSivE0lvWuh6xHBFGSBowdIcTcKdITmOFvRsNAw+1JRG5skP7WVazmC8LOREyAzK5qiDTgUTy8Bz217dAbTvdPXu+6kCEHMrdhFDStonUN4rdLQYpsi5ciUAOGsleu9RgN0rJPJkGrcg8Zfevg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=llm5civONHWGtFjuGCu8jsP/ljZTLecaUgeevi0V1eM=;
- b=cNdaZ/U60VFIAuDMWFbWg0DlGvA7PCjBzM6GDiVJFd6zm5k+WiSKrQTKWIELSvz41sq73C770pwH00Xg8tYbQdtDuJ8wO0DzpxBde5nruYzUbg0VUAOPQaJRMC6m8lRvU9pDNWdrh/02NWpbcx2dlOE7aY+ZLl3WBhaus8lbiFXLpNbM85w9lCRMTcQOlm7TScr2EYF1qVNx4DZOplLVRhC0XWBp18BaVTWW3L52rsVe1K5HXTYYRuj29N7IevELvnpcKV8a784pxS980eWY917kTCsBAM6s31d7uYo+sBMJd4OOyev7Ao2CohDsZPgkN2f489b4Glw/o9hF6pnnAQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by CY8PR02MB9425.namprd02.prod.outlook.com (2603:10b6:930:73::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Sat, 19 Oct
- 2024 05:11:16 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8069.016; Sat, 19 Oct 2024
- 05:11:16 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>
-CC: "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang
-	<haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
-	<decui@microsoft.com>, "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini
-	<pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, Juergen Gross
-	<jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Gaosheng Cui
-	<cuigaosheng1@huawei.com>, Michael Roth <michael.roth@amd.com>, Tom Lendacky
-	<thomas.lendacky@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, Kai Huang
-	<kai.huang@intel.com>, Andi Kleen <ak@linux.intel.com>, Sean Christopherson
-	<seanjc@google.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "xen-devel@lists.xenproject.org"
-	<xen-devel@lists.xenproject.org>, Dave Hansen <dave.hansen@intel.com>
-Subject: RE: [PATCH] x86/mtrr: Rename mtrr_overwrite_state() to
- guest_force_mtrr_state()
-Thread-Topic: [PATCH] x86/mtrr: Rename mtrr_overwrite_state() to
- guest_force_mtrr_state()
-Thread-Index: AQHbH7lXKN74uyRaU0+LX19wrvgpfbKNiJAw
-Date: Sat, 19 Oct 2024 05:11:16 +0000
-Message-ID:
- <SN6PR02MB4157C91EE70F4EF4B6EDDE46D4412@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20241015095818.357915-1-kirill.shutemov@linux.intel.com>
- <20241016105048.757081-1-kirill.shutemov@linux.intel.com>
-In-Reply-To: <20241016105048.757081-1-kirill.shutemov@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CY8PR02MB9425:EE_
-x-ms-office365-filtering-correlation-id: af00db32-885f-4cac-75fb-08dceffc7573
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799006|8060799006|461199028|8062599003|19110799003|102099032|440099028|3412199025;
-x-microsoft-antispam-message-info:
- lB7isbQS0VOlEiWsmJuxnBKWBpsIbjc5N6hU3ZhsWX/4ObibUllBxSvWodpFVsjYsYGXXN/xKnxGwPkSyQ9ASfjrmI7qOs0VyRHtX9S5mbQ/QCOsh+GpTj1DkzbUxQEqWCAGXCCg33XqW9Bu9iOL2/jxUTmeZgNsZxJ+D8zZNQAyOfJlgcg6+q4gyOgDig6tQ7tIleXweyWIKY3xV0cViUW0QrihB4zvRj/UuQsSh7UVbAv2trxv8ZbWepkoUp5wfQVL8URkhuHAj9Cf+2NrTI0zlFg8qTJT0HjpnLWIHFxme3fEmTHpaRvzJf594nkNPJMTx9VyRmLHYOyNwENgx+OPnvm6z/j7aPYARfilKdXb3HRiw/H8yvP72Yb5hCdPPgnXbDOlV2pgV8xe6XJWxCsMoQId8ZWrTt9PZHhW4IwD4cU/qXePHYGJLaN7PBOqstzlPJTACDwSRxb7f9+oCv6fb807+gASZxwOvLxeOg5oABDnx3G5RL9AoB5AfKN1/V+9PYulS5LBrjntAzq8cNvRIEVly2BwtnBSlKIkoV7+VySScWCeyER4d1ZYsigFBdTuKtPtOMzH/HNDRCO3+xR/9zbZjUkLxw2kUel70Hh+UODLZZs2JzvxcXREJ2ix/ExAfG8FkxsEGIKrM+Ahxck+EJ+49swn+Bviw2qZBdGTQ/ov/HIT8ys1LoE84/1NaYxFRX6RheTw3ediHrjKOA==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?WuAQ5V+pUZJdlWkPr1YxbICXRIQwjULl7wH9bxdcIieJW7V1d4L6wj86l2ub?=
- =?us-ascii?Q?sr4XDvNfvFRss7hcmbrKqw9ImTAmzXkYVW+bOUBc8ReFggHceYagWZ2szZBO?=
- =?us-ascii?Q?ryzdY0Ap1fYniDQyuXQ0WfZ2108Em3lVmr+sWxBGL1u4l18zdi4feDjQL81z?=
- =?us-ascii?Q?Cv7TEIqPIhAQbMYeO7BDkAKq1mdCv9R+H1Ym94CYpZgGXlpe5ZPXhvGnKyCX?=
- =?us-ascii?Q?HA1Vzc8kdn8Umn4txDVLsXlmxUKju5B9CNiVE1sKn+SwCWCCwnCxJnhgMRVd?=
- =?us-ascii?Q?Cebo5sZA3/ge7ou99arQAvzWFrP3fW8AmGx2Ue12xDwWXpINmNN9XxHbVC/Y?=
- =?us-ascii?Q?tq2GS5RV48plG29KkBVyImZnqGofCIOiVUIhXPZWXcg5Yk1kxOwbf6I0wFVv?=
- =?us-ascii?Q?6wDDIOmj8tdIAwMRi1opAkSoqydGbkC4CjOaK0VeBUHCYmzvKhcV+eLia3Pj?=
- =?us-ascii?Q?X8Z9l6/jIwpWYCe41zvj3mBC1xsm9Xdddg2hqKRcmsIlyrdVKDb89k/iZreC?=
- =?us-ascii?Q?ZuDL8gUBLITk/uWFJmWuJ3h7eDIhTzLWzAJbrbVRN+ef8GUx3/Skdr75uQYp?=
- =?us-ascii?Q?orqVwwrZrMftQ1WalrSI43VZqdbT+aWGfrU8Bz0BrOgihWbu3AW/lszkOUAG?=
- =?us-ascii?Q?v2mNdHtg5dZJC8yE5EerxQCRB96YbK6BO0OGwPSg0efcWcAGe+eQjJ+XbccK?=
- =?us-ascii?Q?qpvi1or5tcX0mjmIg6sYIQCSMhOwNfWLbXvnKyYs59oFpmy2lThvmJUf7DHP?=
- =?us-ascii?Q?FMJGUOVZcspwehk6/ea3Zk9oTyCZDtS5Im6lrx09+MHhIZ29UFn05k5zD+z+?=
- =?us-ascii?Q?gMqEi14QdIU/ezYVtqcXaMIReiGwUxZ9rNy3vwSuF2dIxDwpExLjgACWoD+3?=
- =?us-ascii?Q?eSjo0/Tl+kC+IOgP9Iw/nQciqdiI729EoFLDl0MhiZG9sa1HG1HteL5M62X3?=
- =?us-ascii?Q?cu1wGwzyZNYXwviB+31TgQcEtShVqAH9yENy5M2cJca3qTBMgzzJjl3v4aoK?=
- =?us-ascii?Q?c8qoUNeZJFsmJqWgnoKVSumFof2m3lTUW1SsJhNemtjp/SnwOizIvncdz6Ex?=
- =?us-ascii?Q?TxCAGJ7czrMnChnzn0af0iONNJuAgZKv2TB3GvX9VSRk67Vq2Antx3kBr5vM?=
- =?us-ascii?Q?NUcjRsN9TCSiEsXl5Rf/xn2IBP0sCVaVg+/ma9iPeqsCT5nTbXTo1iQrl4hc?=
- =?us-ascii?Q?g3FwpFOSgV25ugMqDZxSNMPLWNVs+ydACMfXSJnwq3QqfrJvQF9+JemkUEs?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E8D1CC8A3;
+	Sat, 19 Oct 2024 05:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729314764; cv=none; b=iiiDUOmjAqU7BlSTW4SwBva1zI/x7NzCTtLy0358R4FBxKpoCN3V3ERgdR/3Hd7ONgwr5l4iCcdAUOrfvz7tM6xN0jRmacC1q8/3mVAtseev/s1N1bYEfkbjKKz8O6w+dalyJ/f2P1GMYlB4lSO4beYRZGdUkWVbqPstciZt+wI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729314764; c=relaxed/simple;
+	bh=3wwp6mNq52ljBWFrdmcUTM5lM5GU2bPG/Rwe2Uo3zAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CRaAYeiUeeyTf+gY4FchDobFDAN6JtuqnWpo1zDkhL9fyQooVDx8Vnz94PMRJRrSfcB/L/l2KOaBDUPF77J1wqc4SBSdRBtNUDC6zWph1lH1bf1buN2wrsxIq/97RrOf6QV5aOEdBG3Np+m8SudrXVdWmzRQbCCsAn4qqK0WuB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2847Lu/; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e59a9496f9so33677117b3.0;
+        Fri, 18 Oct 2024 22:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729314761; x=1729919561; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VaMvfH9xw7iwhP6gOC9Jb/Mc5nX1vxnwkZ0cnou9VP8=;
+        b=a2847Lu/n0OGGb4yU90p0oIu0Yu9qeywUgDO1hSDCE7nvVd5Y05aQI02MEQeyVroKl
+         EkdhrQKt9UJODk1eA6FEGr6J0sXlyXYwK2z7fXHXmcn8JliPCWRZ6+YvmzNSG513wR4L
+         yu1JSnC/Nqq/1gGkYBI05NIpIn47RIzz0mzuaWFDRX7Dt1YZu1E7gZ4JsFal+X6qnGHJ
+         jWURxRHWGjmgeb2n0ST2ofS+Cg6iCP8F+Drmjq2vX9ylOMeKK1wMzMwslELEwgeJjYI7
+         k2dTGs5Ps0UiIRo+JowpfSG+fdV74KdtNoFiUTMAbMyiX2oMoFJp3EVsx4+NPEtxz1+A
+         /t3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729314761; x=1729919561;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VaMvfH9xw7iwhP6gOC9Jb/Mc5nX1vxnwkZ0cnou9VP8=;
+        b=q7G19WiDa+/B6gTu5uOejVpR2qtynuH8wQ+mAYcMOF24kx79KOd7RQXMZxVU7/aOJD
+         FKIrNtrWBhfXNvuqJ3XFD5T/H9Tn2FvzArxa/AzSWcsP6wrrJDNYOIW64BXF56rhB22F
+         UQahn3KoeOwQOg+H3Pdmsl5JLqa11sPEY+KKI0Ci/mJIrMLYFW6CYbAvVo0dqhfrnhnG
+         ZLhDSfr8A+NxhO219NuNABNohc/nNtwEM/dlG7D+VN6YnyvanqkHZ7+3oxybg1EPgs86
+         0Q9CJMIfdQ2+1EOSSk5y0Slidnh2XrJMGlJqRKQyq91i5KanCmnf+mriGpy8PLOXCfpY
+         GJjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdTswfRml8aDSI5IJ2cXPEtqmgDJoGjg7oPZu/SHl/FFcbSxAtDE4cnzliPRHZ/MbRrDWX2wyGPGiC5Ry8@vger.kernel.org, AJvYcCXMtf7DfOvi/j4xdF1HSwUOxdZbcktdnRuVSFxYGaVmWnKHB3MUOLd2lNsZhj8duHNYSuB2lShNkUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS5r7BIQS8CFFG6O9x2VEADIaF2QWzOTB3yNTxlNTvLxFpF0Cq
+	+84fS444DwhKtTxMCWFPtRU/9Ql7Tomh6CfoEzjVLG+vNj1csphi
+X-Google-Smtp-Source: AGHT+IER7zvYYTqnvc/6+danFJXkgeQcNj8O3MAIaGA7tor1KCqNkzbrp98gCoQ3uOxMAAOPUV4Pug==
+X-Received: by 2002:a05:690c:9a06:b0:6e3:17b4:aeee with SMTP id 00721157ae682-6e5bfc67b08mr50904327b3.43.1729314761113;
+        Fri, 18 Oct 2024 22:12:41 -0700 (PDT)
+Received: from [192.168.2.226] ([107.175.133.150])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5c00e4d90sm6248247b3.53.2024.10.18.22.12.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 22:12:39 -0700 (PDT)
+Message-ID: <12d30624-88eb-44a1-9e42-99f553c2d732@gmail.com>
+Date: Sat, 19 Oct 2024 13:12:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: af00db32-885f-4cac-75fb-08dceffc7573
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Oct 2024 05:11:16.0574
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR02MB9425
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs/zh_CN: add translation of dev-tools/kmsan.rst
+To: Haoyang Liu <tttturtleruss@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
+ Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20241015202949.538149-1-tttturtleruss@hust.edu.cn>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <20241015202949.538149-1-tttturtleruss@hust.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com> Sent: Wednesday,=
- October 16, 2024 3:51 AM
->=20
-> Rename the helper to better reflect its function.
->=20
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Suggested-by: Dave Hansen <dave.hansen@intel.com>
+For the translation part, 
+Reviewed-by: Alex Shi <alexs@kernel.org>
+
+
+On 10/16/24 04:29, Haoyang Liu wrote:
+> Add translation of kmsan.rst and remove it from TODO list.
+> 
+> Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
 > ---
->  arch/x86/hyperv/ivm.c              |  2 +-
->  arch/x86/include/asm/mtrr.h        | 10 +++++-----
->  arch/x86/kernel/cpu/mtrr/generic.c |  6 +++---
->  arch/x86/kernel/cpu/mtrr/mtrr.c    |  2 +-
->  arch/x86/kernel/kvm.c              |  2 +-
->  arch/x86/xen/enlighten_pv.c        |  4 ++--
->  6 files changed, 13 insertions(+), 13 deletions(-)
->=20
-> diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
-> index 60fc3ed72830..90aabe1fd3b6 100644
-> --- a/arch/x86/hyperv/ivm.c
-> +++ b/arch/x86/hyperv/ivm.c
-> @@ -664,7 +664,7 @@ void __init hv_vtom_init(void)
->  	x86_platform.guest.enc_status_change_finish =3D hv_vtom_set_host_visibi=
-lity;
->=20
->  	/* Set WB as the default cache mode. */
-> -	mtrr_overwrite_state(NULL, 0, MTRR_TYPE_WRBACK);
-> +	guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
->  }
->=20
->  #endif /* defined(CONFIG_AMD_MEM_ENCRYPT) ||
-> defined(CONFIG_INTEL_TDX_GUEST) */
-> diff --git a/arch/x86/include/asm/mtrr.h b/arch/x86/include/asm/mtrr.h
-> index 4218248083d9..c69e269937c5 100644
-> --- a/arch/x86/include/asm/mtrr.h
-> +++ b/arch/x86/include/asm/mtrr.h
-> @@ -58,8 +58,8 @@ struct mtrr_state_type {
->   */
->  # ifdef CONFIG_MTRR
->  void mtrr_bp_init(void);
-> -void mtrr_overwrite_state(struct mtrr_var_range *var, unsigned int num_v=
-ar,
-> -			  mtrr_type def_type);
-> +void guest_force_mtrr_state(struct mtrr_var_range *var, unsigned int num=
-_var,
-> +			    mtrr_type def_type);
->  extern u8 mtrr_type_lookup(u64 addr, u64 end, u8 *uniform);
->  extern void mtrr_save_fixed_ranges(void *);
->  extern void mtrr_save_state(void);
-> @@ -75,9 +75,9 @@ void mtrr_disable(void);
->  void mtrr_enable(void);
->  void mtrr_generic_set_state(void);
->  #  else
-> -static inline void mtrr_overwrite_state(struct mtrr_var_range *var,
-> -					unsigned int num_var,
-> -					mtrr_type def_type)
-> +static inline void guest_force_mtrr_state(struct mtrr_var_range *var,
-> +					  unsigned int num_var,
-> +					  mtrr_type def_type)
->  {
->  }
->=20
-> diff --git a/arch/x86/kernel/cpu/mtrr/generic.c b/arch/x86/kernel/cpu/mtr=
-r/generic.c
-> index 7b29ebda024f..2fdfda2b60e4 100644
-> --- a/arch/x86/kernel/cpu/mtrr/generic.c
-> +++ b/arch/x86/kernel/cpu/mtrr/generic.c
-> @@ -423,7 +423,7 @@ void __init mtrr_copy_map(void)
->  }
->=20
->  /**
-> - * mtrr_overwrite_state - set static MTRR state
-> + * guest_force_mtrr_state - set static MTRR state for a guest
->   *
->   * Used to set MTRR state via different means (e.g. with data obtained f=
-rom
->   * a hypervisor).
-> @@ -436,8 +436,8 @@ void __init mtrr_copy_map(void)
->   * @num_var: length of the @var array
->   * @def_type: default caching type
->   */
-> -void mtrr_overwrite_state(struct mtrr_var_range *var, unsigned int num_v=
-ar,
-> -			  mtrr_type def_type)
-> +void guest_force_mtrr_state(struct mtrr_var_range *var, unsigned int num=
-_var,
-> +			    mtrr_type def_type)
->  {
->  	unsigned int i;
->=20
-> diff --git a/arch/x86/kernel/cpu/mtrr/mtrr.c b/arch/x86/kernel/cpu/mtrr/m=
-trr.c
-> index 989d368be04f..ecbda0341a8a 100644
-> --- a/arch/x86/kernel/cpu/mtrr/mtrr.c
-> +++ b/arch/x86/kernel/cpu/mtrr/mtrr.c
-> @@ -625,7 +625,7 @@ void mtrr_save_state(void)
->  static int __init mtrr_init_finalize(void)
->  {
->  	/*
-> -	 * Map might exist if mtrr_overwrite_state() has been called or if
-> +	 * Map might exist if guest_force_mtrr_state() has been called or if
->  	 * mtrr_enabled() returns true.
->  	 */
->  	mtrr_copy_map();
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 21e9e4845354..7a422a6c5983 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -983,7 +983,7 @@ static void __init kvm_init_platform(void)
->  	x86_platform.apic_post_init =3D kvm_apic_init;
->=20
->  	/* Set WB as the default cache mode for SEV-SNP and TDX */
-> -	mtrr_overwrite_state(NULL, 0, MTRR_TYPE_WRBACK);
-> +	guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
->  }
->=20
->  #if defined(CONFIG_AMD_MEM_ENCRYPT)
-> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-> index d6818c6cafda..633469fab536 100644
-> --- a/arch/x86/xen/enlighten_pv.c
-> +++ b/arch/x86/xen/enlighten_pv.c
-> @@ -171,7 +171,7 @@ static void __init xen_set_mtrr_data(void)
->=20
->  	/* Only overwrite MTRR state if any MTRR could be got from Xen. */
->  	if (reg)
-> -		mtrr_overwrite_state(var, reg, MTRR_TYPE_UNCACHABLE);
-> +		guest_force_mtrr_state(var, reg, MTRR_TYPE_UNCACHABLE);
->  #endif
->  }
->=20
-> @@ -195,7 +195,7 @@ static void __init xen_pv_init_platform(void)
->  	if (xen_initial_domain())
->  		xen_set_mtrr_data();
->  	else
-> -		mtrr_overwrite_state(NULL, 0, MTRR_TYPE_WRBACK);
-> +		guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
->=20
->  	/* Adjust nr_cpu_ids before "enumeration" happens */
->  	xen_smp_count_cpus();
-> --
-> 2.45.2
->=20
-
-LGTM
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+>  .../translations/zh_CN/dev-tools/index.rst    |   2 +-
+>  .../translations/zh_CN/dev-tools/kmsan.rst    | 392 ++++++++++++++++++
+>  2 files changed, 393 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/translations/zh_CN/dev-tools/kmsan.rst
+> 
+> diff --git a/Documentation/translations/zh_CN/dev-tools/index.rst b/Documentation/translations/zh_CN/dev-tools/index.rst
+> index 6a8c637c0be1..869d0be24bff 100644
+> --- a/Documentation/translations/zh_CN/dev-tools/index.rst
+> +++ b/Documentation/translations/zh_CN/dev-tools/index.rst
+> @@ -20,6 +20,7 @@ Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+>  
+>     testing-overview
+>     sparse
+> +   kmsan
+>     kcov
+>     kcsan
+>     gcov
+> @@ -32,7 +33,6 @@ Todolist:
+>  
+>   - checkpatch
+>   - coccinelle
+> - - kmsan
+>   - kfence
+>   - kgdb
+>   - kselftest
+> diff --git a/Documentation/translations/zh_CN/dev-tools/kmsan.rst b/Documentation/translations/zh_CN/dev-tools/kmsan.rst
+> new file mode 100644
+> index 000000000000..81bc338f5086
+> --- /dev/null
+> +++ b/Documentation/translations/zh_CN/dev-tools/kmsan.rst
+> @@ -0,0 +1,392 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +.. include:: ../disclaimer-zh_CN.rst
+> +
+> +:Original: Documentation/dev-tools/kmsan.rst
+> +:Translator: 刘浩阳 Haoyang Liu <tttturtleruss@hust.edu.cn>
+> +
+> +=======================
+> +内核内存消毒剂（KMSAN）
+> +=======================
+> +
+> +KMSAN 是一个动态错误检测器，旨在查找未初始化值的使用。它基于编译器插桩，类似于用
+> +户空间的 `MemorySanitizer tool`_。
+> +
+> +需要注意的是 KMSAN 并不适合生产环境，因为它会大幅增加内核内存占用并降低系统运行速度。
+> +
+> +使用方法
+> +========
+> +
+> +构建内核
+> +--------
+> +
+> +要构建带有 KMSAN 的内核，你需要一个较新的 Clang (14.0.6+)。
+> +请参阅 `LLVM documentation`_ 了解如何构建 Clang。
+> +
+> +现在配置并构建一个启用 CONFIG_KMSAN 的内核。
+> +
+> +示例报告
+> +--------
+> +
+> +以下是一个 KMSAN 报告的示例::
+> +
+> +  =====================================================
+> +  BUG: KMSAN: uninit-value in test_uninit_kmsan_check_memory+0x1be/0x380 [kmsan_test]
+> +   test_uninit_kmsan_check_memory+0x1be/0x380 mm/kmsan/kmsan_test.c:273
+> +   kunit_run_case_internal lib/kunit/test.c:333
+> +   kunit_try_run_case+0x206/0x420 lib/kunit/test.c:374
+> +   kunit_generic_run_threadfn_adapter+0x6d/0xc0 lib/kunit/try-catch.c:28
+> +   kthread+0x721/0x850 kernel/kthread.c:327
+> +   ret_from_fork+0x1f/0x30 ??:?
+> +
+> +  Uninit was stored to memory at:
+> +   do_uninit_local_array+0xfa/0x110 mm/kmsan/kmsan_test.c:260
+> +   test_uninit_kmsan_check_memory+0x1a2/0x380 mm/kmsan/kmsan_test.c:271
+> +   kunit_run_case_internal lib/kunit/test.c:333
+> +   kunit_try_run_case+0x206/0x420 lib/kunit/test.c:374
+> +   kunit_generic_run_threadfn_adapter+0x6d/0xc0 lib/kunit/try-catch.c:28
+> +   kthread+0x721/0x850 kernel/kthread.c:327
+> +   ret_from_fork+0x1f/0x30 ??:?
+> +
+> +  Local variable uninit created at:
+> +   do_uninit_local_array+0x4a/0x110 mm/kmsan/kmsan_test.c:256
+> +   test_uninit_kmsan_check_memory+0x1a2/0x380 mm/kmsan/kmsan_test.c:271
+> +
+> +  Bytes 4-7 of 8 are uninitialized
+> +  Memory access of size 8 starts at ffff888083fe3da0
+> +
+> +  CPU: 0 PID: 6731 Comm: kunit_try_catch Tainted: G    B       E     5.16.0-rc3+ #104
+> +  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
+> +  =====================================================
+> +
+> +报告指出本地变量 ``uninit`` 在 ``do_uninit_local_array()`` 中未初始化。
+> +第三个堆栈跟踪对应于该变量创建的位置。
+> +
+> +第一个堆栈跟踪显示了未初始化值的使用位置（在
+> +``test_uninit_kmsan_check_memory()``）。
+> +工具显示了局部变量中未初始化的字节及其被复制到其他内存位置前的堆栈。
+> +
+> +KMSAN 会在以下情况下报告未初始化的值 ``v``:
+> +
+> + - 在条件判断中，例如 ``if (v) { ... }``；
+> + - 在索引或指针解引用中，例如 ``array[v]`` 或 ``*v``；
+> + - 当它被复制到用户空间或硬件时，例如 ``copy_to_user(..., &v, ...)``；
+> + - 当它作为函数参数传递，并且启用 ``CONFIG_KMSAN_CHECK_PARAM_RETVAL`` 时（见下文）。
+> +
+> +这些情况（除了复制数据到用户空间或硬件外，这是一个安全问题）被视为 C11 标准下的未定义行为。
+> +
+> +禁用插桩
+> +--------
+> +
+> +可以用 ``__no_kmsan_checks`` 标记函数。这样，KMSAN 会忽略该函数中的未初始化值，
+> +并将其输出标记为已初始化。如此，用户不会收到与该函数相关的 KMSAN 报告。
+> +
+> +KMSAN 还支持 ``__no_sanitize_memory`` 函数属性。KMSAN 不会对拥有该属性的函数进行
+> +插桩，这在我们不希望编译器干扰某些底层代码（例如标记为 ``noinstr`` 的代码，该
+> +代码隐式添加了 ``__no_sanitize_memory``）时可能很有用。
+> +
+> +然而，这会有代价：此类函数的栈分配将具有不正确的影子/初始值，可能导致误报。来
+> +自非插桩代码的函数也可能接收到不正确的元数据。
+> +
+> +
+> +作为经验之谈，避免显式使用 ``__no_sanitize_memory``。
+> +
+> +也可以通过 Makefile 禁用 KMSAN 对某个文件（例如 main.o）的作用::
+> +
+> +  KMSAN_SANITIZE_main.o := n
+> +
+> +或者对整个目录::
+> +
+> +  KMSAN_SANITIZE := n
+> +
+> +将其应用到文件或目录中的每个函数。大多数用户不会需要 KMSAN_SANITIZE
+> +的代码被 KMSAN 破坏（例如在早期启动时运行）。
+> +
+> +还可以通过调用 ``kmsan_disable_current()`` 和 ``kmsan_enable_current()``
+> +暂时对当前任务禁用 KMSAN 检查。每个 ``kmsan_enable_current()`` 必须在
+> +``kmsan_disable_current()`` 之后调用；这些调用对可以嵌套。在调用时需要注意保持
+> +嵌套区域简短，并且尽可能使用其他方法禁用插桩。
+> +
+> +支持
+> +====
+> +
+> +为了使用 KMSAN，内核必须使用 Clang 构建，到目前为止，Clang 是唯一支持 KMSAN
+> +的编译器。内核插桩过程基于用户空间的 `MemorySanitizer tool`_。
+> +
+> +目前运行时库仅支持 x86_64 架构。
+> +
+> +KMSAN 的工作原理
+> +================
+> +
+> +KMSAN 阴影内存
+> +--------------
+> +
+> +KMSAN 将一个元数据字节（也称为阴影字节）与每个内核内存字节关联。仅当内核内存字节
+> +的相应位未初始化时，阴影字节中的一个比特位才会被设置。将内存标记为未初始化（即
+> +将其阴影字节设置为 ``0xff``）称为中毒，将其标记为已初始化（将阴影字节设置为
+> +``0x00``）称为解毒。
+> +
+> +当在栈上分配新变量时，默认情况下它会中毒，这由编译器插入的插桩代码完成（除非它
+> +是立即初始化的栈变量）。任何未使用 ``__GFP_ZERO`` 的堆分配也会中毒。
+> +
+> +编译器插桩还跟踪阴影值在代码中的使用。当需要时，插桩代码会调用 ``mm/kmsan/`` 中
+> +的运行时库以持久化阴影值。
+> +
+> +基本或复合类型的阴影值是长度相同的字节数组。当常量值写入内存时，该内存会被解毒
+> +。当从内存读取值时，其阴影内存也会被获取，并传递到所有使用该值的操作中。对于每
+> +个需要一个或多个值的指令，编译器会生成代码根据这些值及其阴影来计算结果的阴影。
+> +
+> +
+> +示例::
+> +
+> +  int a = 0xff;  // i.e. 0x000000ff
+> +  int b;
+> +  int c = a | b;
+> +
+> +在这种情况下， ``a`` 的阴影为 ``0``， ``b`` 的阴影为 ``0xffffffff``，
+> +``c`` 的阴影为 ``0xffffff00``。这意味着 ``c`` 的高三个字节未初始化，而低字节已
+> +初始化。
+> +
+> +起源跟踪
+> +--------
+> +
+> +每四字节的内核内存都有一个所谓的源点与之映射。这个源点描述了在程序执行中，未初
+> +始化值的创建点。每个源点都与完整的分配栈（对于堆分配的内存）或包含未初始化变
+> +量的函数（对于局部变量）相关联。
+> +
+> +当一个未初始化的变量在栈或堆上分配时，会创建一个新的源点值，并将该变量的初始值
+> +填充为这个值。当从内存中读取一个值时，其初始值也会被读取并与阴影一起保留。对于
+> +每个接受一个或多个值的指令，结果的源点是与任何未初始化输入相对应的源点之一。如
+> +果一个污染值被写入内存，其起源也会被写入相应的存储中。
+> +
+> +示例 1::
+> +
+> +  int a = 42;
+> +  int b;
+> +  int c = a + b;
+> +
+> +在这种情况下， ``b`` 的源点是在函数入口时生成的，并在加法结果写入内存之前存储到
+> +``c`` 的源点中。
+> +
+> +如果几个变量共享相同的源点地址，则它们被存储在同一个四字节块中。在这种情况下，
+> +对任何变量的每次写入都会更新所有变量的源点。在这种情况下我们必须牺牲精度，因
+> +为为单独的位（甚至字节）存储源点成本过高。
+> +
+> +示例 2::
+> +
+> +  int combine(short a, short b) {
+> +    union ret_t {
+> +      int i;
+> +      short s[2];
+> +    } ret;
+> +    ret.s[0] = a;
+> +    ret.s[1] = b;
+> +    return ret.i;
+> +  }
+> +
+> +如果 ``a`` 已初始化而 ``b`` 未初始化，则结果的阴影为 0xffff0000，结果的源点为
+> +``b`` 的源点。 ``ret.s[0]`` 会有相同的起源，但它不会被使用，因为该变量已初始化。
+> +
+> +如果两个函数参数都未初始化，则只保留第二个参数的源点。
+> +
+> +源点链
+> +~~~~~~
+> +
+> +为了便于调试，KMSAN 在每次将未初始化值存储到内存时都会创建一个新的源点。新的源点
+> +引用了其创建栈以及值的前一个起源。这可能导致内存消耗增加，因此我们在运行时限制
+> +了源点链的长度。
+> +
+> +Clang 插桩 API
+> +--------------
+> +
+> +Clang 插桩通过在内核代码中插入定义在 ``mm/kmsan/instrumentation.c`` 中的函数调用
+> +来实现。
+> +
+> +
+> +阴影操作
+> +~~~~~~~~
+> +
+> +对于每次内存访问，编译器都会发出一个函数调用，该函数返回一对指针，指向给定内存
+> +的阴影和原始地址::
+> +
+> +  typedef struct {
+> +    void *shadow, *origin;
+> +  } shadow_origin_ptr_t
+> +
+> +  shadow_origin_ptr_t __msan_metadata_ptr_for_load_{1,2,4,8}(void *addr)
+> +  shadow_origin_ptr_t __msan_metadata_ptr_for_store_{1,2,4,8}(void *addr)
+> +  shadow_origin_ptr_t __msan_metadata_ptr_for_load_n(void *addr, uintptr_t size)
+> +  shadow_origin_ptr_t __msan_metadata_ptr_for_store_n(void *addr, uintptr_t size)
+> +
+> +函数名依赖于内存访问的大小。
+> +
+> +编译器确保对于每个加载的值，其阴影和原始值都从内存中读取。当一个值存储到内存时
+> +，其阴影和原始值也会通过元数据指针进行存储。
+> +
+> +处理局部变量
+> +~~~~~~~~~~~~
+> +
+> +一个特殊的函数用于为局部变量创建一个新的原始值，并将该变量的原始值设置为该值::
+> +
+> +  void __msan_poison_alloca(void *addr, uintptr_t size, char *descr)
+> +
+> +访问每个任务数据
+> +~~~~~~~~~~~~~~~~
+> +
+> +在每个插桩函数的开始处，KMSAN 插入一个对 ``__msan_get_context_state()`` 的调用
+> +::
+> +
+> +  kmsan_context_state *__msan_get_context_state(void)
+> +
+> +``kmsan_context_state`` 在 ``include/linux/kmsan.h`` 中声明::
+> +
+> +  struct kmsan_context_state {
+> +    char param_tls[KMSAN_PARAM_SIZE];
+> +    char retval_tls[KMSAN_RETVAL_SIZE];
+> +    char va_arg_tls[KMSAN_PARAM_SIZE];
+> +    char va_arg_origin_tls[KMSAN_PARAM_SIZE];
+> +    u64 va_arg_overflow_size_tls;
+> +    char param_origin_tls[KMSAN_PARAM_SIZE];
+> +    depot_stack_handle_t retval_origin_tls;
+> +  };
+> +
+> +KMSAN 使用此结构体在插桩函数之间传递参数阴影和原始值（除非立刻通过
+> + ``CONFIG_KMSAN_CHECK_PARAM_RETVAL`` 检查参数）。
+> +
+> +将未初始化的值传递给函数
+> +~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +Clang 的 MemorySanitizer 插桩有一个选项 ``-fsanitize-memory-param-retval``，该
+> +选项使编译器检查按值传递的函数参数，以及函数返回值。
+> +
+> +该选项由 ``CONFIG_KMSAN_CHECK_PARAM_RETVAL`` 控制，默认启用以便 KMSAN 更早报告
+> +未初始化的值。有关更多细节，请参考 `LKML discussion`_。
+> +
+> +由于 LLVM 中的实现检查的方式（它们仅应用于标记为 ``noundef`` 的参数），并不是所
+> +有参数都能保证被检查，因此我们不能放弃 ``kmsan_context_state`` 中的元数据存储
+> +。
+> +
+> +字符串函数
+> +~~~~~~~~~~~
+> +
+> +编译器将对 ``memcpy()``/``memmove()``/``memset()`` 的调用替换为以下函数。这些函
+> +数在数据结构初始化或复制时也会被调用，确保阴影和原始值与数据一起复制::
+> +
+> +  void *__msan_memcpy(void *dst, void *src, uintptr_t n)
+> +  void *__msan_memmove(void *dst, void *src, uintptr_t n)
+> +  void *__msan_memset(void *dst, int c, uintptr_t n)
+> +
+> +错误报告
+> +~~~~~~~~
+> +
+> +对于每个值的使用，编译器发出一个阴影检查，在值中毒的情况下调用
+> +``__msan_warning()``::
+> +
+> +  void __msan_warning(u32 origin)
+> +
+> +``__msan_warning()`` 使 KMSAN 运行时打印错误报告。
+> +
+> +内联汇编插桩
+> +~~~~~~~~~~~~
+> +
+> +KMSAN 对每个内联汇编输出进行插桩，调用::
+> +
+> +  void __msan_instrument_asm_store(void *addr, uintptr_t size)
+> +
+> +，该函数解除内存区域的污染。
+> +
+> +这种方法可能会掩盖某些错误，但也有助于避免许多位操作、原子操作等中的假阳性。
+> +
+> +有时传递给内联汇编的指针不指向有效内存。在这种情况下，它们在运行时被忽略。
+> +
+> +
+> +运行时库
+> +--------
+> +
+> +代码位于 ``mm/kmsan/``。
+> +
+> +每个任务 KMSAN 状态
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +每个 task_struct 都有一个关联的 KMSAN 任务状态，它保存 KMSAN
+> +上下文（见上文）和一个每个任务计数器以禁止 KMSAN 报告::
+> +
+> +  struct kmsan_context {
+> +    ...
+> +    unsigned int depth;
+> +    struct kmsan_context_state cstate;
+> +    ...
+> +  }
+> +
+> +  struct task_struct {
+> +    ...
+> +    struct kmsan_context kmsan;
+> +    ...
+> +  }
+> +
+> +KMSAN 上下文
+> +~~~~~~~~~~~~
+> +
+> +在内核任务上下文中运行时，KMSAN 使用 ``current->kmsan.cstate`` 来
+> +保存函数参数和返回值的元数据。
+> +
+> +但在内核运行于中断、softirq 或 NMI 上下文中， ``current`` 不可用时，
+> +KMSAN 切换到每 CPU 中断状态::
+> +
+> +  DEFINE_PER_CPU(struct kmsan_ctx, kmsan_percpu_ctx);
+> +
+> +元数据分配
+> +~~~~~~~~~~
+> +
+> +内核中有多个地方存储元数据。
+> +
+> +1. 每个 ``struct page`` 实例包含两个指向其影子和内存页面的指针
+> +::
+> +
+> +  struct page {
+> +    ...
+> +    struct page *shadow, *origin;
+> +    ...
+> +  };
+> +
+> +在启动时，内核为每个可用的内核页面分配影子和源页面。这是在内核地址空间已经碎片
+> +化时后完成的，完成的相当晚，因此普通数据页面可能与元数据页面任意交错。
+> +
+> +这意味着通常两个相邻的内存页面，它们的影子/源页面可能不是连续的。因此，如果内存
+> +访问跨越内存块的边界，访问影子/源内存可能会破坏其他页面或从中读取错误的值。
+> +
+> +实际上，由相同 ``alloc_pages()`` 调用返回的连续内存页面将具有连续的元数据，而
+> +如果这些页面属于两个不同的分配，它们的元数据页面可能会被碎片化。
+> +
+> +对于内核数据（ ``.data``、 ``.bss`` 等）和每 CPU 内存区域，也没有对元数据连续
+> +性的保证。
+> +
+> +在 ``__msan_metadata_ptr_for_XXX_YYY()`` 遇到两个页面之间的
+> +非连续元数据边界时，它返回指向假影子/源区域的指针::
+> +
+> +  char dummy_load_page[PAGE_SIZE] __attribute__((aligned(PAGE_SIZE)));
+> +  char dummy_store_page[PAGE_SIZE] __attribute__((aligned(PAGE_SIZE)));
+> +
+> +``dummy_load_page`` 被初始化为零，因此读取它始终返回零。对 ``dummy_store_page`` 的
+> +所有写入都被忽略。
+> +
+> +2. 对于 vmalloc 内存和模块，内存范围、影子和源之间有一个直接映射。KMSAN 将
+> +vmalloc 区域缩小了 3/4，仅使前四分之一可用于 ``vmalloc()``。vmalloc
+> +区域的第二个四分之一包含第一个四分之一的影子内存，第三个四分之一保存源。第四个
+> +四分之一的小部分包含内核模块的影子和源。有关更多详细信息，请参阅
+> +``arch/x86/include/asm/pgtable_64_types.h``。
+> +
+> +当一系列页面映射到一个连续的虚拟内存空间时，它们的影子和源页面也以连续区域的方
+> +式映射。
+> +
+> +参考文献
+> +========
+> +
+> +E. Stepanov, K. Serebryany. `MemorySanitizer: fast detector of uninitialized
+> +memory use in C++
+> +<https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43308.pdf>`_.
+> +In Proceedings of CGO 2015.
+> +
+> +.. _MemorySanitizer tool: https://clang.llvm.org/docs/MemorySanitizer.html
+> +.. _LLVM documentation: https://llvm.org/docs/GettingStarted.html
+> +.. _LKML discussion: https://lore.kernel.org/all/20220614144853.3693273-1-glider@google.com/
 
