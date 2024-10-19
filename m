@@ -1,82 +1,94 @@
-Return-Path: <linux-kernel+bounces-373047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47089A5108
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 23:59:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDEA9A512C
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 00:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9881F231D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 21:59:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53CBEB217AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1A5192B61;
-	Sat, 19 Oct 2024 21:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kclr9u9f"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1038B192B96;
+	Sat, 19 Oct 2024 22:03:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C6F155398;
-	Sat, 19 Oct 2024 21:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD6B18D64B
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 22:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729375154; cv=none; b=qnIA9UTAV6IC8Welmrps6UYk4VNBn39hNka7d+3tikA3LVyKwRwLA8cBe4YtUfp5TvyStK/ZJ5JVRG0f36K8jpDX3/3YrOGdDra+gcn0mYm5a+7fm41cxcG2fAoOuJHvfPZ3vM+TrCla6UEkCcB/Fev2S28w2cWVM2kqklKkKBE=
+	t=1729375385; cv=none; b=jvbjJ5zx4+a2tsdrvlwi+APwJWNloDMwxru6yf00WA+k5QCw/6GM6NtmyMweWhH+MPotwTNRP3jfnLhhAy6Hm3UIqbEc+fe4F2ZC0IAluufjo2/s/SuZH37Fp/KCfoVycQ1GDc2n4tzCK2aHxoiDavBIH+tVaNx0gSrrLEneSaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729375154; c=relaxed/simple;
-	bh=yrD63VfEdcugHgSz6cVE0wf++PA5YPtODa3BZ4NeTlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F3Hyp6Loo3NU2NLWKJ/JNfiLZE9b3bqecMz0dOCry6agg+YycxdPRHNuUr4i7biWkBQn1rqMbcbJnWqpPK49CzFwV/w1kTwujLp8O9qwmuBHddLSyZ2xnsZ39H0LeP6+DtMh5El3UeQ3D1iwXkjS0pSZeu/iRuyr69D+wx1SQfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kclr9u9f; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=aVSnEAGht9JOBvdyIP8ZOD2Yn+/la9YFQuf3QOiYD7s=; b=kclr9u9fiD7knSA3p8YbbED/9R
-	Z921HGax6acRFNM7cEr9cBnTGxZTkeH9iKa61ezAHFLB8h8Z60FDu7t7DUHEWn5w1dkX2piDJuVg2
-	FrZ0n7iQKaSIMhbyoYC+hZaEkydv4SBSAo7Q2e3zNaycYP/yWEX96nO79Vq1GBbNvqmY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t2HTS-00AcgD-IQ; Sat, 19 Oct 2024 23:59:02 +0200
-Date: Sat, 19 Oct 2024 23:59:02 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dsa: mv88e6xxx: fix unreleased
- fwnode_handle in setup_port()
-Message-ID: <11c644b5-e6e5-4c4c-9398-7a8e59519370@lunn.ch>
-References: <20241019-mv88e6xxx_chip-fwnode_handle_put-v1-1-fc92c4f16831@gmail.com>
+	s=arc-20240116; t=1729375385; c=relaxed/simple;
+	bh=4r/dnSU2iv58zYZkcF3J2NBOOcfh+f3piDebouy/9IA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Oc9JFjDx2RYRDNdoa8sxKvo6hn+AsqSaI5TjxxILdecbEa9iyzgHqIOcy/AkXWzlnOcZOkheKAokndyv7ZTR7Buc1tzJfhgac0078IHckVriUMbYMBwH6CUa1p83VNJlrIG8U5d8UssH23NASwlecIK/Bl7aghkL12lzFu6mScY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3cc9fa12dso25602975ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 15:03:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729375383; x=1729980183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7RLqbF/44Rgljiqe7gmVwXbfdAgdxhslKmNZMh8Pfbw=;
+        b=Ad6nsOFtlNUPFL4wu1f8gJy5wdlkBIXW6fOnGHM3V4X5vr7lL4lxQlenB52uRKNoap
+         YZlStq/QyTVCciPRTKxmFc8qV+npf5CdA9afQEdXZM1A+FcLmAnXPwEHnhC+br5sE5BY
+         AJ9w6wL157ioxcEBkD38p9ANzRpYPOuJsMJlrhAA2sSlZXcqYKItNj0awW0LXcFQTBT5
+         +UhFkK1Qt4QJsSTiHSv+95ep7bFg5lUnS/ZN80Y5JUMZuL0VlmbKuXRckPgw0u/wxw53
+         bnbDG19lo9NJNsQQz/MUjWU57gdM0moGN576EAm10aLi3I8OxMykbg2zsv+/C80z/21g
+         UMcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMg37FgmmQayujIU0Ij6vQOKwB1M6NjjRNNrREEaDEtepMRSA8GXoBk6RT1hNVxHtJrZ6VyezNMPGT6hI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYJ5gksX8kP9U5fzpc8ZDW8MDWTecr4ClPra/GmNpoUpiQOPCG
+	BYI0rBZTv+vagoZ59eo+agygTsLJLV+Msu6t1/yjIAmX9LOUZ9oNst86H3r3uBSM4Ls4gP3mUds
+	IJ83tAXRPKfDHAY6brEOi3wFf2ls3orqRx6LcLO09Ym9Nm4PkG6XDUis=
+X-Google-Smtp-Source: AGHT+IE96T6mtPOXUI/WweupFLsfamKoYzsTZ0Bbhwr3/cBXtjGsDjI/N0hiSqdkU1zKkxy1ivao0cGe6sBEuVvyhhqrBErxxqXc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241019-mv88e6xxx_chip-fwnode_handle_put-v1-1-fc92c4f16831@gmail.com>
+X-Received: by 2002:a05:6e02:18c6:b0:3a0:8c5f:90c0 with SMTP id
+ e9e14a558f8ab-3a3f4054723mr65915665ab.10.1729375382809; Sat, 19 Oct 2024
+ 15:03:02 -0700 (PDT)
+Date: Sat, 19 Oct 2024 15:03:02 -0700
+In-Reply-To: <00000000000087e83e061dd271bd@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67142c96.050a0220.10f4f4.0021.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] INFO: task hung in eventpoll_release_file (2)
+From: syzbot <syzbot+63ab1a905aebbf410bb7@syzkaller.appspotmail.com>
+To: brauner@kernel.org, gregkh@linuxfoundation.org, isdn@linux-pingi.de, 
+	jack@suse.cz, johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, luiz.von.dentz@intel.com, marcel@holtmann.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Oct 19, 2024 at 10:16:49PM +0200, Javier Carrasco wrote:
-> 'ports_fwnode' is initialized via device_get_named_child_node(), which
-> requires a call to fwnode_handle_put() when the variable is no longer
-> required to avoid leaking memory.
-> 
-> Add the missing fwnode_handle_put() after 'ports_fwnode' has been used
-> and is no longer required.
+syzbot suspects this issue was fixed by commit:
 
-As you point out, the handle is obtained with
-device_get_named_child_node(). It seems odd to use a fwnode_ function
-not a device_ function to release the handle. Is there a device_
-function?
+commit 0023d340ba86cfe50b935829a73adea57ec2c629
+Author: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date:   Tue Sep 10 14:22:36 2024 +0000
 
-	Andrew
+    Bluetooth: CMTP: Mark BT_CMTP as DEPRECATED
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1594c430580000
+start commit:   b31c44928842 Merge tag 'linux_kselftest-kunit-fixes-6.11-r..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
+dashboard link: https://syzkaller.appspot.com/bug?extid=63ab1a905aebbf410bb7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10662bc7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137bba00580000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: Bluetooth: CMTP: Mark BT_CMTP as DEPRECATED
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
