@@ -1,121 +1,153 @@
-Return-Path: <linux-kernel+bounces-372680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295239A4BC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:18:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9936F9A4BD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58E6A1C21379
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:18:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4A42852E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F451D54D3;
-	Sat, 19 Oct 2024 07:17:44 +0000 (UTC)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2B01DDC22;
+	Sat, 19 Oct 2024 07:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gr2sYeJr"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2181D63DC;
-	Sat, 19 Oct 2024 07:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A8F1D54D3;
+	Sat, 19 Oct 2024 07:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729322263; cv=none; b=nmPKgkN/3YLIwgrQ0NxJpuBoNSKrlRzzD1+EISubRqBYOvbePiRe3zwvKxZZRm8im11cqi241kQGzBX0er6GU2nOepuNIASu+uBpDA0v7uGMChSHpKGC/Blf5fA9rOc4/gULYkMPeTBMjNT0tzMgbnr2nALhO2HOIx6qvtZX3Xk=
+	t=1729322433; cv=none; b=YRNB2bap5iKmi6kC9hlpRAHmjoWI7krGd0yvl9dOgRoFv1qtBsAsGLZqw9iBuvGtjumg9sqPvkGKzkvHwE/xPBB5J+D+VIdaf1idG/L3Ymr1zH1r0rN2wqYC2MdjygUrBBmIHw4sY0FrgfdoAzww/AhC/91w6EdxwSUEbR5nsoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729322263; c=relaxed/simple;
-	bh=x77Leu//zcELEFm/jviPtto7y+OnBK4QnxtY2HQIYU0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BfcLHnSeL4qcRDrylHSyEWZ0h+DjTmmM4sOalZ7VcjE5TdNzTeimjJq4QyTR7NCUn7h1ekI21ZoIkvy0RcooR13v5kJ4h8f2e1rNNRdAOybWBYSvGYKYt9JtnXp2O1WId5XF1lYntSSDVya9EVJA7SKiAcZdXW9/PL8Cz/m9irU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=none smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: bizesmtpsz10t1729322183tmx9pd
-X-QQ-Originating-IP: 2wrtZZMSoIeiW4tN+ltGHjUUxkkLFPmvDWr8Q0tu8H4=
-Received: from sonvhi-TianYi510S-07IMB.. ( [116.128.244.171])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 19 Oct 2024 15:16:18 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15998112844559155357
-From: chenxiaosong@chenxiaosong.com
-To: corbet@lwn.net,
-	dhowells@redhat.com,
-	jlayton@kernel.org,
-	brauner@kernel.org,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	trondmy@kernel.org,
-	anna@kernel.org,
-	chuck.lever@oracle.com,
-	neilb@suse.de,
-	okorniev@redhat.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ChenXiaoSong <chenxiaosong@kylinos.cn>
-Subject: [PATCH 3/3] tracing/Documentation: fix compile warning in debugging.rst
-Date: Sat, 19 Oct 2024 15:15:39 +0800
-Message-Id: <20241019071539.125934-4-chenxiaosong@chenxiaosong.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241019071539.125934-1-chenxiaosong@chenxiaosong.com>
-References: <20241019071539.125934-1-chenxiaosong@chenxiaosong.com>
+	s=arc-20240116; t=1729322433; c=relaxed/simple;
+	bh=NrAzHRiXxKtj6O5GYtWbKzt+uZBxQwqk1QpwVk2wTbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type; b=rnrr1HhArJy4xwVCKhVGiSXOARlV289noBn1kTrxJKqIQthEH+mfLnOFvl83kH2th91kWsgdIxN3EAWz1YT26WuNWRAfBRRO9IR8HzbXdkLxPPogr0CW1C5IBMR1iDd6XB1iDSF9jtFoER8crIjeJsl2QQE2h+MD02ubvmH3NQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gr2sYeJr; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53a007743e7so3554250e87.1;
+        Sat, 19 Oct 2024 00:20:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729322429; x=1729927229; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HOSgqBuptd5/+pKaXDmre/ntgdJaEZmL2tgWZn9tjU0=;
+        b=Gr2sYeJrrNLbITb2ay1TvlyPHibj4G1KWY91X7CMM5R4a1JUAwIQ2cwLQTGVevahmf
+         rjXDifhqC01UEaaZWK4oPXRZq0EwaDR5QJ+tCnkDDGgBmYx0slk764KEa0rLaCojnMa7
+         c8ppE9RaBkpyyqp2puDDW+Tn2Ec6FYDxWiFkLlT/W8b60qpbdz3nAiO0IDNMpm6Qvu5i
+         O0wFn8YFdoCwdGJmtl8Pt2r/va9e2Y+g99npygoDAGaZAfmP8fwQEi+Rs9EG9ZpEs2Ml
+         EQXAGDcYX2PFyN/owIfi+lbkZf6/1Fz4fnrv+tXmidJoWlD5vY3oHRjuJyK0gJO4auHP
+         fiRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729322429; x=1729927229;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HOSgqBuptd5/+pKaXDmre/ntgdJaEZmL2tgWZn9tjU0=;
+        b=boTOB8I8qrPLUpmz8PrneIR/v5WSOMEa+pP0A40aoPGh/LtLCIrz+CyYvw3cmPrron
+         DRP7ZEsl8jiwmOB0htVl7J7ZOg3z+gky7T1KzY63CNUZwd4gCQ6/f6GU/Ssvza8RCFPn
+         HCfMQr//AP+t3UnjWbF0I6J2+FEkh266P+RuWKwH4WRwmpF3cjrb9P5mVSF5YQrrpv8K
+         q3LJaRJ0PDDpLdziGv0H8Iv/TdWwg381nOPGKWGR/AqXKQAFghoW4qwxsrMbv3wsHjiY
+         UDRrHntXyUGGe3mOWrKUsSjAwyYrwQEqMJ0e7RkS0UJUtyNwEoaUhm6fLGDeovW1MjTy
+         RJlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUonmIKZ64tS9WpBMqwpV85qxGOVYXOvyoVWZ8unn7FGp7mG10Ce381E22BkAiwYZQxsiMVp7Bst9UR@vger.kernel.org, AJvYcCUss1RpNFrejjZEJwYsFZj6gmheqmpDKS4nO0NYRG8dEnyGKi5NQgDzwjmDFmmCvbg7ftQ2CbNsrGeNZ80=@vger.kernel.org, AJvYcCWBFd0DoIhNxPK1ydR1oJllLTl2SO0BChZh2qGx2mur4tywqQ/srEWdCwFmin/rMuwf2Vm1Fvm3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya/pMnqRG0uj4nH+INqgc4u71/3xTygordDSKJHEtzEPPzyxfn
+	2sYp5W3J7DwHBZJ6JOxSGKNit19eg2PKJpPRaShiIee++02lAIcXn7EzhQ==
+X-Google-Smtp-Source: AGHT+IHUzG5ypUus5uLhkbQT4EyrzUgEy8gdbwiHOwwVV1bpsUKbdfCLljMWbxL0x9RFKubWPR5KXg==
+X-Received: by 2002:a05:6512:3985:b0:539:f23b:59c3 with SMTP id 2adb3069b0e04-53a154b3094mr2557177e87.34.1729322428554;
+        Sat, 19 Oct 2024 00:20:28 -0700 (PDT)
+Received: from foxbook (bgw235.neoplus.adsl.tpnet.pl. [83.28.86.235])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151b9d40sm438219e87.117.2024.10.19.00.20.26
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Sat, 19 Oct 2024 00:20:27 -0700 (PDT)
+Date: Sat, 19 Oct 2024 09:20:23 +0200
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: quic_faisalh@quicinc.com
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, mathias.nyman@intel.com, stable@vger.kernel.org
+Subject: Re: [PATCH] xhci: Fix Link TRB DMA in command ring stopped
+ completion event
+Message-ID: <20241019092023.5d987d7e@foxbook>
+In-Reply-To: <20241018195953.12315-1-quic_faisalh@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: ML8hOghqQD+0/XlLMPZYyEW0x1ZBxbHmjrEen821kLJ3+EqgbZQLh6Cy
-	UkRLh36+wxHT7KAAgoyj7eJ8swsbAQYzMcdcqPAKg5uMJiOUPAxCS+Jdu9NW1N8Y7Cn2y5y
-	M/kHE3rY/sraBmR5uYHJ/GvL4mJEgOOHB3euVodIhelLhReAy9iYv94GVt0IOjpmgLWVcVx
-	w95IZuuX4muGZbdQOXhHr458oRZ6nbSjxHAOsqHLREkmoiSI6Sb5FqCn6RMIDV/gIRbvm02
-	CroCN8cJXutCHZIFvNLXpaV+y/zFRdk1jKFVkuRKXDnNqq1XXajNxExcVsgbPnLC52j7D/D
-	q8vh201husHxCpjjdY/nuFQrrGuF7jJLFhEt6G490NI2Mhe1SzeCrSDFz29ti7+V7H8keD9
-	86MTTsjjm16rY0ZnIHP+qj6QOxQhOHMgadsQ+ICh/AUOA3oiwocHWY1JZHGHe0kM7Xs0yMo
-	vZrAw+ERTmuwM4DwvZLNTBI1an50mQn+eRP3T0TCUQrJdIwsgRDF89jgJlObYHcRB3kW0FV
-	OVssBpf1nx/tbhNPx8gsi1ZddwNJe/r1QOazlNTZ5D+gfm1frvBlCQ1APhSW8Xiw4R2ep0y
-	RfiP0gtSUDtVwRf1T1o4QpLMKMnqyKQGgerzuK6bixjiyev9xucpWWZ5wMPLudypNJWm6q+
-	slQY8ciSVublXTprzNgUJ+qUSr6uUMeZNoTL7VCUVPtbBYOnYi+ttpWcU7DL6lxqoRQfXcd
-	GtW2bPrbDSNfCdODYNbWDgI+HZNrwUZaeUzeH5b0nH3RI3rXpg5cAhhU9FZwxIURRXFFrV+
-	ggV3+YpWJ+4SQxJKa5sso81BakSjpQzb84vjEKxZZCFInb1slSrfaCxDJ6Pwkv8pfHyTHZc
-	x5xLKYDdeOFyq6O3AJ2lrd0Yox+JtGOpjjmY7Ep7QIJtnF1YVszQM/jkWaj4V5oJBcqtpCR
-	V2y9gS7RQn6uUQDkezFSnnQN6R7x+qaU7Lp4=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+Hi,
 
-`make htmldocs` reports the following warning:
+> During the aborting of a command, the software receives a command
+> completion event for the command ring stopped, with the TRB pointing
+> to the next TRB after the aborted command.
+>
+> If the command we abort is located just before the Link TRB in the
+> command ring, then during the 'command ring stopped' completion event,
+> the xHC gives the Link TRB in the event's cmd DMA, which causes a
+> mismatch in handling command completion event.
+>
+> To handle this situation, an additional check has been added to ignore
+> the mismatch error and continue the operation.
 
-  Documentation/trace/debugging.rst: WARNING: document isn't included \
-    in any toctree
+Thanks, I remember having some issues with command aborts, but I blamed
+them on my own bugs, although I never found what the problem was. I may
+take a look at it later, but I'm currently busy with other things.
 
-Fix it by adding debugging.rst to toctree.
+No comment about validity of this patch for now, but a few remarks:
 
-Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
----
- Documentation/trace/index.rst | 1 +
- 1 file changed, 1 insertion(+)
+>+static bool is_dma_link_trb(struct xhci_ring *ring, dma_addr_t dma)
+>+{
+>+	struct xhci_segment *seg;
+>+	union xhci_trb *trb;
+>+	dma_addr_t trb_dma;
+>+	int i;
+>+
+>+	seg = ring->first_seg;
+>+	do {
+>+		for (i = 0; i < TRBS_PER_SEGMENT; i++) {
+>+			trb = &seg->trbs[i];
+>+			trb_dma = seg->dma + (i * sizeof(union xhci_trb));
+>+
+>+			if (trb_is_link(trb) && trb_dma == dma)
+>+				return true;
+>+		}
 
-diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index 0b300901fd75..2827292f8f34 100644
---- a/Documentation/trace/index.rst
-+++ b/Documentation/trace/index.rst
-@@ -36,3 +36,4 @@ Linux Tracing Technologies
-    user_events
-    rv/index
-    hisi-ptt
-+   debugging
--- 
-2.34.1
+You don't need to iterate the array. Something like this should work:
+do {
+	if (in_range(dma, seg->dma, TRB_SEGMENT_SIZE)) {
+		/* found the TRB, check if it's link */
+		trb = &seg->trbs[(dma - seg->dma) / sizeof(*trb)];
+		return trb_is_link(trb);
+	}
+	// try next seg, while (blah blah), return false
 
+We should probably have a helper for (ring, dma)->trb lookups, but
+for stable it may be sensible to do it without excess complication.
 
+>+	if ((!cmd_dequeue_dma || cmd_dma != (u64)cmd_dequeue_dma) &&
+>+	    !(cmd_comp_code == COMP_COMMAND_RING_STOPPED &&
+>+	      is_dma_link_trb(xhci->cmd_ring, cmd_dma))) {
+
+This if statement is quite complex now. I would be tempted to write
+it this way instead:
+
+/* original comment */
+if (cmd_dma != dequeue_dma) {
+	/* your new comment */
+	if (! (RING_STOPPED && is_link)) {
+		warn();
+		return;
+	}
+}
+
+Regards,
+Michal
 
