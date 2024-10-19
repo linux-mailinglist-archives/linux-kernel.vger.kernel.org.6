@@ -1,163 +1,144 @@
-Return-Path: <linux-kernel+bounces-372772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C179A4CF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:15:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C829A4CFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E0FC28362D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:15:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C391F22DAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A51D1DFD8E;
-	Sat, 19 Oct 2024 11:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDF61DFDBD;
+	Sat, 19 Oct 2024 11:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbiizVSS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CMniy5LP"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43451DFD84;
-	Sat, 19 Oct 2024 11:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A483818FC67;
+	Sat, 19 Oct 2024 11:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729336494; cv=none; b=kznEfo1z7HOnEewMqkI2rNBbEccMNBQ3jIRYxrqanloHaMArNO+If5Vnp0XtDAh1FqtWl3nmahVwvuyXvByG602uO+F299GoexU5O5tRNYEM4PZxVZcAGlCvEBUcmFKGcKMpf1t6z+nYQHw8U0z1zpzcR8wYLTkPu794vFDcyBc=
+	t=1729336575; cv=none; b=M+G0Pk0qfLJe8x1abj3fSqK56UuhsVuHBq3XP8S7to13bR4F9z46eurYvZmLr7h+OfPhHiXUjwHLfU42hFtGQ/suLgvayJnWQaSls8cO3Q4iH1SBaHFjHESapMaXTB9M3cVYl0i9Zq1TCDTKJPId6aPhZn68E07a69QH3667OEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729336494; c=relaxed/simple;
-	bh=RyzKcnI3W0eX+0Jx1z9PYMnzdUZZmkR+P6UgLoIhPTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EAzcb6HDQD4ghQ0NyCoZrM+kCGgCZpgcAWMXN/220aTqBYq0WHUuFHUqCvG9h1jMmUKELJnvc0u80K7RSD6XCICotLeQpWk1oA2YdVAq8oFX2QR0pU/BitDH+7tC15CS3bG2IzWP3MoZzuNRvD+KrPpgW0KiCSbtlCL4Lvzp6AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbiizVSS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A133C4CEC5;
-	Sat, 19 Oct 2024 11:14:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729336494;
-	bh=RyzKcnI3W0eX+0Jx1z9PYMnzdUZZmkR+P6UgLoIhPTU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CbiizVSSrktLmoPkBdPiKjAK25UcjRvcN6EbFkdxDFSd/U8Ed9rbpv8mgVqzztozw
-	 /9uRsW5jBqFGE0eZPfJ1HfuqHh9h4Ejr+kFz0r61MLBw/ricUxTDs1AxUI+I6l755Q
-	 xHRuJBGH6f1LNmuSlPua1qpj9Ayq4hxn+fdJiDVoC3D22HRQjdNcr6fSQEqRnmNaJM
-	 i6zL2C20/CFSBa8Pmu8UgWIKem8+JyHNBwBYqaX1bCp74ppaFr4ZiD3c6dSZGxWUIk
-	 leirmMawHEGs5hYHhNiDh+ZHn2t/2+uHIeV9hOFBvGjnBUv6LakZl0JyOEMr3xGFbd
-	 yIp1lMyWnubVA==
-Date: Sat, 19 Oct 2024 12:14:43 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, Jonathan
- Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v1 1/1] iio: magnetometer; bmc150_magn: Drop most likely
- fake ACPI IDs
-Message-ID: <20241019121443.0c2856c7@jic23-huawei>
-In-Reply-To: <e5cfc7d5-3f5c-44a2-a359-7b63ad7bf07a@redhat.com>
-References: <20241018145805.2181682-1-andriy.shevchenko@linux.intel.com>
-	<e5cfc7d5-3f5c-44a2-a359-7b63ad7bf07a@redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729336575; c=relaxed/simple;
+	bh=zy6eBkC6mTD47sGFuSu/kE6O5nq6hr0S/KoQYOZztNY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SPkwe222esR3OHcfLhefl+uno4tWjCyZfmoQ7/SgnNYn6IxGCV+gfMZttxCfdfZtzcS8J/FR1ICDX66xkonHMPPEoE1hnYIbBlSz2seD8Jd7GO40zOpagTs6a3z12H+EKI4aYJTjKO/Nb3S2uCBsMXQWfS/xp0iyLOb4rCHLCUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CMniy5LP; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729336571;
+	bh=zy6eBkC6mTD47sGFuSu/kE6O5nq6hr0S/KoQYOZztNY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=CMniy5LPAE6Nbv0OawIzhTrrk1jWeUuKok05gfHqs0dlVLRnXnvjL7ULDSbVN85a2
+	 xHY748AECrXlSiAVNigckaZ65BnGbRWKrseZk8niPdtXa5fn2m7mpZLZGvta8V0pDN
+	 JCASHZ4p/D2QQYE6amkBGYjnH2NQqBNSt3g05P/jbmUg2rI7Iq5B+4caCZlSaCQLbt
+	 crQ3TZ8Sk7XWlcxWy7bWniVXeOjXaavy6/dyqHa0Jxvipz23Cm4HdqTguHu1EjnGqS
+	 4aFK+STqx4Z1GF4HQM5yVePXAm0D9l+sCTuQefSSxWC8GOuuCw5+gmHx+f6HH/OgdF
+	 rhRJ4jgiIyXXg==
+Received: from localhost (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9058217E1574;
+	Sat, 19 Oct 2024 13:16:11 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v4 0/4] Provide devm_clk_bulk_get_all_enabled() helper
+Date: Sat, 19 Oct 2024 14:15:59 +0300
+Message-Id: <20241019-clk_bulk_ena_fix-v4-0-57f108f64e70@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO+UE2cC/23NSwrCMBQF0K2UjI3k03zqyH2IlCRNbbA2kmhQS
+ vduWlBEO3lwL9zzRhBtcDaCXTGCYJOLzg85lJsCmE4NJwtdkzMgiJSowgSa/lzrez52UHXrHhB
+ zrYSgTDZNC/LsGmyuF/JwzLlz8ebDc/mQ8Ny+sfIfSxgiaCxlVDDJDOJ74/teaR/U1vgLmMFEv
+ hDCVxCSkcoILhhGrdZsDaEfBCMsVxCaESas1FqSkiPzi0zT9AI46PHGPgEAAA==
+X-Change-ID: 20240912-clk_bulk_ena_fix-16ba77358ddf
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Jingoo Han <jingoohan1@gmail.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On Sat, 19 Oct 2024 12:03:19 +0200
-Hans de Goede <hdegoede@redhat.com> wrote:
+Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+return the number of clocks stored in the clk_bulk_data table referenced
+by the clks argument.
 
-> Hi,
-> 
-> On 18-Oct-24 4:58 PM, Andy Shevchenko wrote:
-> > The commits in question do not proove that ACPI IDs exist.
-> > Quite likely it was a cargo cult addition while doing that
-> > for DT-based enumeration. Drop most likely fake ACPI IDs.
-> > 
-> > The to be removed IDs has been checked against the following resources:
-> > 1) DuckDuckGo
-> > 2) Google
-> > 3) MS catalog: https://www.catalog.update.microsoft.com/Search.aspx
-> > This gives no useful results in regard to DSDT, moreover, the official
-> > vendor IDs in the registry for Bosh are BSG and BOSC.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>  
-> 
-> 
-> 
-> These HIDs are also not used in my acpidump collection (mostly
-> BYT / CHT models):
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Some more multichip package devices in here.  Anyhow, on same
-basis as the previous I'll apply the patch and we'll see if anyone shouts.
+That is required in case there is a need to iterate these clocks later,
+therefore I couldn't see any use case of this parameter and should have
+been simply removed from the function declaration.
 
-Jonathan
+The first patch in the series provides devm_clk_bulk_get_all_enabled()
+variant, which is consistent with devm_clk_bulk_get_all() in terms of
+the returned value:
 
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
-> 
-> 
-> > ---
-> >  drivers/iio/magnetometer/bmc150_magn_i2c.c | 9 ---------
-> >  drivers/iio/magnetometer/bmc150_magn_spi.c | 9 ---------
-> >  2 files changed, 18 deletions(-)
-> > 
-> > diff --git a/drivers/iio/magnetometer/bmc150_magn_i2c.c b/drivers/iio/magnetometer/bmc150_magn_i2c.c
-> > index a28d46d59875..17e10a462ac8 100644
-> > --- a/drivers/iio/magnetometer/bmc150_magn_i2c.c
-> > +++ b/drivers/iio/magnetometer/bmc150_magn_i2c.c
-> > @@ -38,14 +38,6 @@ static void bmc150_magn_i2c_remove(struct i2c_client *client)
-> >  	bmc150_magn_remove(&client->dev);
-> >  }
-> >  
-> > -static const struct acpi_device_id bmc150_magn_acpi_match[] = {
-> > -	{"BMC150B", 0},
-> > -	{"BMC156B", 0},
-> > -	{"BMM150B", 0},
-> > -	{},
-> > -};
-> > -MODULE_DEVICE_TABLE(acpi, bmc150_magn_acpi_match);
-> > -
-> >  static const struct i2c_device_id bmc150_magn_i2c_id[] = {
-> >  	{ "bmc150_magn" },
-> >  	{ "bmc156_magn" },
-> > @@ -67,7 +59,6 @@ static struct i2c_driver bmc150_magn_driver = {
-> >  	.driver = {
-> >  		.name	= "bmc150_magn_i2c",
-> >  		.of_match_table = bmc150_magn_of_match,
-> > -		.acpi_match_table = bmc150_magn_acpi_match,
-> >  		.pm	= &bmc150_magn_pm_ops,
-> >  	},
-> >  	.probe		= bmc150_magn_i2c_probe,
-> > diff --git a/drivers/iio/magnetometer/bmc150_magn_spi.c b/drivers/iio/magnetometer/bmc150_magn_spi.c
-> > index abc75a05c46a..c850de1bc79b 100644
-> > --- a/drivers/iio/magnetometer/bmc150_magn_spi.c
-> > +++ b/drivers/iio/magnetometer/bmc150_magn_spi.c
-> > @@ -41,20 +41,11 @@ static const struct spi_device_id bmc150_magn_spi_id[] = {
-> >  };
-> >  MODULE_DEVICE_TABLE(spi, bmc150_magn_spi_id);
-> >  
-> > -static const struct acpi_device_id bmc150_magn_acpi_match[] = {
-> > -	{"BMC150B", 0},
-> > -	{"BMC156B", 0},
-> > -	{"BMM150B", 0},
-> > -	{},
-> > -};
-> > -MODULE_DEVICE_TABLE(acpi, bmc150_magn_acpi_match);
-> > -
-> >  static struct spi_driver bmc150_magn_spi_driver = {
-> >  	.probe		= bmc150_magn_spi_probe,
-> >  	.remove		= bmc150_magn_spi_remove,
-> >  	.id_table	= bmc150_magn_spi_id,
-> >  	.driver = {
-> > -		.acpi_match_table = bmc150_magn_acpi_match,
-> >  		.name	= "bmc150_magn_spi",
-> >  	},
-> >  };  
-> 
+ > 0 if one or more clocks have been stored
+ = 0 if there are no clocks
+ < 0 if an error occurred
+
+Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+the past form of 'enable'.
+
+The next two patches switch existing users of devm_clk_get_enable() to
+the new helper - there were only two, as of next-20240913.
+
+The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
+helper.
+
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v4:
+- Dropped usage of gotos in the new helper implementation to further
+  minimize the diff (Stephen)
+- Link to v3: https://lore.kernel.org/r/20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com
+
+Changes in v3:
+- Made devm_clk_bulk_get_all_enable() use the new helper, as suggested
+  by Stephen to improve diff readability
+- Rebased series onto next-20241017
+- Link to v2: https://lore.kernel.org/r/20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com
+
+Changes in v2:
+- Dropped references to 'broken' API in commit descriptions, per Mani's
+  suggestion
+- Added R-b tags from Angelo and Mani
+- Link to v1: https://lore.kernel.org/r/20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com
+
+---
+Cristian Ciocaltea (4):
+      clk: Provide devm_clk_bulk_get_all_enabled() helper
+      soc: mediatek: pwrap: Switch to devm_clk_bulk_get_all_enabled()
+      PCI: exynos: Switch to devm_clk_bulk_get_all_enabled()
+      clk: Drop obsolete devm_clk_bulk_get_all_enable() helper
+
+ drivers/clk/clk-devres.c                | 23 ++++++++++++-----------
+ drivers/pci/controller/dwc/pci-exynos.c |  2 +-
+ drivers/soc/mediatek/mtk-pmic-wrap.c    |  4 ++--
+ include/linux/clk.h                     | 12 +++++++-----
+ 4 files changed, 22 insertions(+), 19 deletions(-)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20240912-clk_bulk_ena_fix-16ba77358ddf
 
 
