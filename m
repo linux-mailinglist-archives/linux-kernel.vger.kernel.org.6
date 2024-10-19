@@ -1,82 +1,83 @@
-Return-Path: <linux-kernel+bounces-372812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999EF9A4DAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:07:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1EA79A4DC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44FF51F2676B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D0251F262B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F5A1E04AE;
-	Sat, 19 Oct 2024 12:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XujOr3JA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D381E0B85;
+	Sat, 19 Oct 2024 12:25:35 +0000 (UTC)
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551E41917E4;
-	Sat, 19 Oct 2024 12:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF5A1DE887;
+	Sat, 19 Oct 2024 12:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729339656; cv=none; b=lwnjPdxDaA1IqkcRMaQ1gSqrKfqDBdAEDLteo1tLTcCp8PxoSMvhvqbbPPBglpaeIB18iLmSZnS0JgVNDpUsjp0C2K7L/zRQjFmylPejZs4WtJpo9HNrtq7AoWNLyNGOnTPE3MAM9UyhH2mDoPfKzUfnEu3rrl0THFQ2DTtZ4KY=
+	t=1729340735; cv=none; b=AylRSU6x0jW2kUDnexwLlnZQWso0ysf2fZhcUfmy4982FNe7RjKvG/+WAwgm+Uc1f/PVpuBFnzRPLrjib+Z6Kmtentt/wgjQ+UL9XZim3SLEfU/fUTIpPvcld9LnC4+r1pRqwH5wX5JjjWKGBCqe+0LaEsg68Mgtv9YP3mH7THM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729339656; c=relaxed/simple;
-	bh=XMU5vMblnxpY3oDtwaA2eTHZOans/yr06uh4/zpbhX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ITlnY7IwzALFFQPtT4zONOpFiZUZKCqGUbVDqCrY2IjM8cPfsf1sFUzqc3q9+9eLIcvJmGEiIr2H2HgYGZvGKGJ9mHsrWZzoHLEHddKDwjDbrOQ/e63okkypxX6TiAMWoPP80GWxYWvRzd1W0bUjKaeV5K7IeWgmX3PJIuBkE4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XujOr3JA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD9F5C4CEC5;
-	Sat, 19 Oct 2024 12:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729339655;
-	bh=XMU5vMblnxpY3oDtwaA2eTHZOans/yr06uh4/zpbhX0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XujOr3JACR8UKLh9hYZFA6NZM2KBqppF8I4rpjSpbF0AKa01oA477sAxPHTneEA+T
-	 3BtA7jxNFZ4qG8ijSjvevKS1W4T3Sz1G3SkHNLuB/7SdwajSiGPILN8YyO6uHjgERY
-	 W2LcPYjSPFD0mA/UH51l4MNNDJC+Chy/rpH9P68H5mccBUkqjSIRSH002Kjr9iFuJt
-	 JAqWw3MsDEVGcMMKECGMw/BH/7N3WhPqWeVi1GntxJpDSG35Iu0yE3Srwxbkx0gI8H
-	 gVxw2gbLNEpFKlEUwR6IeAG7G8GoE57Kaq19gEpNCJzq1N1wLd40DNHAKuZOPdplgy
-	 9XALvVhk4q4zQ==
-Date: Sat, 19 Oct 2024 13:07:26 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Alisa-Dariana Roman
- <alisa.roman@analog.com>, Christian Eggers <ceggers@arri.de>, Peter Rosin
- <peda@axentia.se>, Paul Cercueil <paul@crapouillou.net>, Sebastian Reichel
- <sre@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 0/5] iio: fix possible race condition during access
- of available info lists
-Message-ID: <20241019130726.336a76d7@jic23-huawei>
-In-Reply-To: <20241018-iio-read-avail-release-v4-0-53c8ac618585@gmail.com>
-References: <20241018-iio-read-avail-release-v4-0-53c8ac618585@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729340735; c=relaxed/simple;
+	bh=83gIlBADgU0w1Q7k794QLQ7+PeOyUylNZ3LEjz601W8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DSvzStPS0vOhoyXnhGAcBku8t/mxzV7anUyXj61VRZ8UHYN/Me7+a7JV1sr9tRXdAfbd1oav3FVIYRrg5l5qfyRs8BhD3gpsVJg667U27g3ygDWj2WqKv578e+5UQoKi+lvjq87FnFg1ilmLI9oDQdONGm7Z29QMY83Pvim64c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
+ m.grzeschik@pengutronix.de, yuehaibing@huawei.com,
+ gregkh@linuxfoundation.org, Yue Haibing <yuehaibing@huawei.com>
+Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH] 9p/trans_usbg: Fix incorrect error check in
+ usb9pfs_alloc_instance()
+Date: Sat, 19 Oct 2024 13:58:37 +0200
+Message-ID: <1854979.Kn10jCkGcg@silver>
+In-Reply-To: <20241019092302.212221-1-yuehaibing@huawei.com>
+References: <20241019092302.212221-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, 18 Oct 2024 12:16:39 +0200
-Matteo Martelli <matteomartelli3@gmail.com> wrote:
+On Saturday, October 19, 2024 11:23:02 AM CEST Yue Haibing wrote:
+> kzalloc() should use NULL check not a IS_ERR() check.
+> 
+> Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-> Some iio drivers currently share an available info list buffer that
-> might be changed while iio core prints it to sysfs. This could cause the
-> buffer shared with iio core to be corrupted. However, note that I was
-> able to trigger the race condition only by adding a delay between each
-> sysfs_emit_at calls in the iio_format_list() to force the concurrent
-> access to the shared available list buffer.
+Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
 
-Other than the 'rules' developing around cleanup.h usage, the series looks
-good to me.  Sadly that stuff is a can of worms for the unwary (and for
-various reasons the usage doc got lost so the guidance is not quite in yet)!
+> ---
+>  net/9p/trans_usbg.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
+> index 975b76839dca..6b694f117aef 100644
+> --- a/net/9p/trans_usbg.c
+> +++ b/net/9p/trans_usbg.c
+> @@ -909,9 +909,9 @@ static struct usb_function_instance *usb9pfs_alloc_instance(void)
+>  	usb9pfs_opts->buflen = DEFAULT_BUFLEN;
+>  
+>  	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+> -	if (IS_ERR(dev)) {
+> +	if (!dev) {
+>  		kfree(usb9pfs_opts);
+> -		return ERR_CAST(dev);
+> +		return ERR_PTR(-ENOMEM);
+>  	}
+>  
+>  	usb9pfs_opts->dev = dev;
+> 
 
-Jonathan
+
 
