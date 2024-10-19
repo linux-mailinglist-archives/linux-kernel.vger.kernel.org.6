@@ -1,131 +1,108 @@
-Return-Path: <linux-kernel+bounces-373027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91CA19A50C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:40:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A659A50CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CD021F2114D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00E581C2151D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEC81922FC;
-	Sat, 19 Oct 2024 20:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3BA1922E3;
+	Sat, 19 Oct 2024 20:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dn7Pi2GT"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="vPXF3yvG"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50391917E7;
-	Sat, 19 Oct 2024 20:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB9713C682
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 20:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729370428; cv=none; b=SBjzwq4WIouMWvJRgYhh2ZwfwSYp7agoZ+S2cZZUsOYvd68n7Jbfo5szQSAF92FuTKg5bQ9XxoxDWJGgKQhl4m3N1GJ7IChJyHnczbCfYoIKq7jLhyGJkJa/9rF/gwgAcvGN4s7+4e8rTi5hsUEqhsfw4ooyRo7/9zOg4jlRUkY=
+	t=1729370534; cv=none; b=TRZLJQxwRyPmu/u4rTt60Bxkg/A75rYaX42WLnFq6eA9VymXwkrBuwL8Knq0XCCcxkqaq5E09K78O04s93A20grGAXudbcRCEuRh1FW8l5K9R8i+0dJc9i18g4KJB3m0B1r9jUe0kVFXapgSRjhFNofqHEg/8MXjmYvKZDn71es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729370428; c=relaxed/simple;
-	bh=LenEoPlLmA1SoqKTjqXO5FKYciLK+4R5R4u0zaMq9I0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Kmf4PPK+DtkiDgkE8wFyO/Lqjn4yFcod8c0NeVg42PqvPQQK4u/RLWIbZOC87MhgQaZ+nY5FwKsY5LlIrZX9UAoM4Us0Zc5Tu/vAw6GYPaex4wtemdaMSbPYcU5l0GGMNcemvNB7uZBYdzZrlqWaL/nZBlRMF7xVBjzmlEKb1qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dn7Pi2GT; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43167ff0f91so10406985e9.1;
-        Sat, 19 Oct 2024 13:40:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729370424; x=1729975224; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cfj+nIxSeExUj4i/poC4m4fdJwm4vgFsgv2pVWjR3Vg=;
-        b=Dn7Pi2GTE1GFP9gieb0v3XovDv8qp2WgDwowJiGemt6LzBaV5hGq+bVv39ClaMTuUP
-         oVN6BEue++69M9HF+LiqP4h4tXauKq2/kjb/i3Rtu5WZluE2xQ7rEoyVcu8aRyxlKK0s
-         5tiwQZbfPGBE58WpYZWso1UZSWfF+VXDDGi2XcZ5fvLHGIWflURsVui+O5keczaLUkFJ
-         gfXWrhympvZKyu8KgQLQMWwfW8QPE3KiizA7CwL6B2jQ+S9eQpeUqXmBzrJ++2HO5rJz
-         mMC69GSi+AdhDb6p8BlHa9QY3AUYXesiiNf7g4K0D2sRHjwsFEbAP9VGh6GlmYCA5K6U
-         cVgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729370424; x=1729975224;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cfj+nIxSeExUj4i/poC4m4fdJwm4vgFsgv2pVWjR3Vg=;
-        b=dje11EIr2LhPuXzfX0/oAR6UXHiUIrbKSGGCSRxbwvDYoNfvcgXfYZ8f5PLpTBu5Ke
-         DwxkzImyUF/uIL4rAFAknHwf9Op0B/6t/DDXmkI6s0y1Wi3/YtmJAlPt+Rdyu1xBfyi9
-         lzj7/QqbfX7gO2SQrCXCfg6I653j5tUoxQTvW0x/TZ8J1bCLzy4s+NP0Yxba1nGdukP8
-         z0asJ3ppbsSg4JljrsZcRQAIqAiwsQV7SEJekkGpTaT7z9AiKdfcbnunr1/a34/G6cI3
-         ApXEml8YAniDmJ8OcO0xgQ3j/7zkk46bmpmhBYqYIapchcYAi06dLeRxLsGzlSIUfcBD
-         hsew==
-X-Forwarded-Encrypted: i=1; AJvYcCV6Vwx4/PKRyaI8GWj65R7YVMPCjmB/JFFhNBjrsSZFdX129YYpOqOIHtz1O8jgvwK2m/efygnEnGTDGYc=@vger.kernel.org, AJvYcCVevSQcm8Sb/nMucT+JaPrbzsLZxFm1OZ9jtTfxA5Kf7IhTqQHa2QiWIQbQeS+dEqrYgz6yBort@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDsgBz+gIMr6tDaPA6F5GKI+Ps07rwkSKSFllbC3Jte3q8M1zh
-	KhRQdUx4XpMMbZv0kw7MM/e0vqnMO6gGP2Bmbx5GscYwkKnPHIBU+UNFEhF3
-X-Google-Smtp-Source: AGHT+IGgu1jSUqYjZKjOYbnXn1nsrIhnYrwxb/3xQlm5EfYze6tjtr3VpH9tLksudem1i/UY2FDKbA==
-X-Received: by 2002:a05:600c:1d01:b0:42c:b74c:d8c3 with SMTP id 5b1f17b1804b1-4316168ff01mr54511965e9.32.1729370424455;
-        Sat, 19 Oct 2024 13:40:24 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-f8f1-d6d3-1513-aa34.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:f8f1:d6d3:1513:aa34])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57124csm3947365e9.8.2024.10.19.13.40.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 13:40:23 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Sat, 19 Oct 2024 22:40:19 +0200
-Subject: [PATCH] usb: typec: fix unreleased fwnode_handle in
- typec_port_register_altmodes()
+	s=arc-20240116; t=1729370534; c=relaxed/simple;
+	bh=ye+sQb4lcoOQCfVxdUhggBdY5bpunrH2WtgJp84HDHk=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKV3S6LY65ydMEVWnYIvhqF9zOiNE+n+Jq70R3THlwzO9IBu0JKvYitLS0NyHks0NG+KsrYIVFve6ePRad3XtAS/e7G7Rzdu1Wrqj7M3b1H/KAvoS1xT66fTAQxnPcptIXze+w9/0YRIE5jQf/aa0UJXypoYeGrCDDvFYLJXeLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=vPXF3yvG; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id 41DC21770FF; Sat, 19 Oct 2024 20:42:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1729370532; bh=ye+sQb4lcoOQCfVxdUhggBdY5bpunrH2WtgJp84HDHk=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=vPXF3yvGzoTaX36QmS5Ubhia6Efa+0RX/GIDyYARchI2/uBcKRKOsk4FtFpBMD2wY
+	 IzOc8D/0qAQ23xnglP3TddH0X+QomOYCRJdmA9LVJSgC3MOy0YrwL0wNaNfkv/FOh2
+	 JvpDdB1ttreZCsuWf0+T7L4IWt/fAN+BkalIDP9eIFlsfjVxOWlKdftqhkfEMXs7PZ
+	 hN5ZTN7OYPDkgNNRprtA43zzB/QwGJuwpBA/31T6MaHFKAKLRX/O1ykazKD/LyrpK5
+	 mq8svYhEoKzqdEL3Wniw3pBTL8Vz/WvlSPGRbjw2L3r6YnLENgxdsKWylUrt17GylR
+	 /ttUDrubo3cYg==
+Date: Sat, 19 Oct 2024 20:42:12 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: jason.wessel@windriver.com, daniel.thompson@linaro.org,
+	dianders@chromium.org, kgdb-bugreport@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] KDB: Fix incorrect treatment of numbers in the CLI
+Message-ID: <20241019204212.GA811391@lichtman.org>
+References: <20241019195715.GA810861@lichtman.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241019-typec-class-fwnode_handle_put-v1-1-a3b5a0a02795@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADIZFGcC/x3MWwqDMBBA0a3IfDtgfNF2KyJikokdkBgyPlrEv
- Rv8PHC5JwhFJoFPdkKknYUXn6DyDMx39BMh22Qoi7JWhXrj+g9k0MyjCLrDL5aG1NmZhrCtqKu
- 2frlGm0ZpSI8QyfHv+Xf9dd2pSwwzbwAAAA==
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Hans de Goede <hdegoede@redhat.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729370422; l=1041;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=LenEoPlLmA1SoqKTjqXO5FKYciLK+4R5R4u0zaMq9I0=;
- b=Q6IrHGjc5yf04kPOWOhyGiHXS5Nl+JAPc+FZ00GrtAaqPHTzB4v0Yt0VlLGp2HHfV5leSOxyr
- hBITbIU+2qMDALA9HgSYiP9VTWZ+QZ5A9jSKuYr2+bbr+hSn2yEWxf1
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241019195715.GA810861@lichtman.org>
 
-The 'altmodes_node' fwnode_handle is never released after it is no
-longer required, which leaks the resource.
+Problem: In many cases, KDB treats invalid commands as numbers and
+instead of printing a usage error, goes ahead and just prints the number
+in hex
 
-Add the required call to fwnode_handle_put() when 'altmodes_node' is no
-longer required.
+Example: This can be demonstrated when typing for example "aaazzz", this
+confuses KDB into thinking this is the hexadecimal 0xAAA
 
-Cc: stable@vger.kernel.org
-Fixes: 7b458a4c5d73 ("usb: typec: Add typec_port_register_altmodes()")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Solution: Transition to using kstrtoul instead of simple_strtoul.
+This function is more strict with what it treats as a number
+and thus solves the issue.
+(also better practice as stated in the definition of simple_strtoul).
+
+v2: Removed redundant if condition I put in v1
+
+Signed-off-by: Nir Lichtman <nir@lichtman.org>
 ---
- drivers/usb/typec/class.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/debug/kdb/kdb_main.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index d61b4c74648d..1eb240604cf6 100644
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -2341,6 +2341,7 @@ void typec_port_register_altmodes(struct typec_port *port,
- 		altmodes[index] = alt;
- 		index++;
- 	}
-+	fwnode_handle_put(altmodes_node);
- }
- EXPORT_SYMBOL_GPL(typec_port_register_altmodes);
+diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+index f5f7d7fb5936..4cbd5cd26821 100644
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -402,18 +402,15 @@ static void kdb_printenv(void)
+  */
+ int kdbgetularg(const char *arg, unsigned long *value)
+ {
+-	char *endp;
+ 	unsigned long val;
  
-
----
-base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
-change-id: 20241019-typec-class-fwnode_handle_put-b3648f5bc51b
-
-Best regards,
+-	val = simple_strtoul(arg, &endp, 0);
+ 
+-	if (endp == arg) {
++	if (kstrtoul(arg, 0, &val) != 0) {
+ 		/*
+ 		 * Also try base 16, for us folks too lazy to type the
+ 		 * leading 0x...
+ 		 */
+-		val = simple_strtoul(arg, &endp, 16);
+-		if (endp == arg)
++		if (kstrtoul(arg, 16, &val) != 0)
+ 			return KDB_BADINT;
+ 	}
+ 
 -- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+2.39.2
 
