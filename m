@@ -1,674 +1,260 @@
-Return-Path: <linux-kernel+bounces-372952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D1C9A4FC7
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:27:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9016A9A4FD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2841C245F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:27:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 127271F25DE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5976191473;
-	Sat, 19 Oct 2024 16:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653D718DF86;
+	Sat, 19 Oct 2024 16:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qaWnqYaS"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDxc04H5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384C818DF65
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 16:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8056216F0E8;
+	Sat, 19 Oct 2024 16:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729355213; cv=none; b=gSIK2rA2qDD+wRQyEmEPQ+TcWbYeU4nvSeQTVXXrFDDrOKBaMpjCECEalWXknVD/9VYvd+IzDdDnehimJIxrnbXHvhEpn9ovGRrUnNziQn1U4c7DDG617u9J/9MR4gjqsge01gQtThtYPkwOIQkrPAZNlLcXXbcLSMcbcBi28/U=
+	t=1729355311; cv=none; b=VbdZN1Wdw4M1ctputYhRqhmpWzSUbZpC9Cz2fh/gnkdgfbUypgI5MGIB2ddRakSLtp1Iqn0gIc63kPGRBljqHYenRSFT2IJ08dbKk3orKApMC4SlnDmfPEdrWcsSXHGtNH2ZKQVbI74NxEMiQTpoelQmE7jwNCWRd4mtBqt2UME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729355213; c=relaxed/simple;
-	bh=9IJyzCE4GaHn616VyWC1aCINwEhMZfazYzFsYxs/DqI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d6bKYP95HvLAtajknRWPpR/rcqk0I/Iy7xFHwkXOEz+XgjNS/djtdoHp0sLpEsN06O26xhsIKGXll0aOQ7QuEfQyRFDVdYDxjUbK7QLnN8/gWOqZII+QpCjrgxPTAdIxMxnDuNEp70bt5ijIyIKqmaR1kJI0gw4KojkHf/eh2WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qaWnqYaS; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so3329110e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:26:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729355209; x=1729960009; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=16G8+YLdPReYNbCbPPpWhAvrlzQ+kcERenlbkmZcLtU=;
-        b=qaWnqYaSLz/pThmGlvGHvxO7krkNniLKhC1J7TQ1iWffeiZl8bbFyIxW/zxNSHm717
-         lg0hSJGJX36jHGqwJh5i31CP/kj+P/zamu/mhSoskx/bH3fp9uKdN8yQOArL+LOfJb9s
-         GVGmVPxrNhB4Ikh0xrhwmX1RBm5riIxBByFJCij7s4f4XTTg7TM+nFDC4/fOJGYT2f/N
-         2eNA05cQLl/4npCCImSMhIU0pZVO+G8IiFQNN6i4X7oV0ZYoHZTszl4j71ytPHj6I7FO
-         cwjF0EhUu1mePeWK6KlJO8gPdY7IxAIlqjgM6pQUdeXsWDJosPKFBxDiljJzcJY426xX
-         02OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729355209; x=1729960009;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=16G8+YLdPReYNbCbPPpWhAvrlzQ+kcERenlbkmZcLtU=;
-        b=Za3cwK5aL2daNDcPgMD4kgsN6WxbE3b6o/8DwlYNRBbuuHI02WcggBebaSpMuZR4Do
-         8/zlkePTIIFNEmV+s6+RxfBv4APrq6DwE4trBEm8w0zaN5XMF7GY2y9B/cwu8cbMYB0+
-         AyuvkbLcV/vDW8+4dWML0KGSQXEUlb5aDTc8yH5o2NsSL9Q7h/QqxLkVBrEmIQ5y2Iwy
-         waQUZrIWM+W2D/hGIWr1TkwY3COUSeviv7SxqD5gIcjCphreT6MJoVB3zcioTlFY4PkM
-         TeHq7P1VQUhiuXecsEmfonJ9P3h/40uB9u1LsLK1sXD2KWvQZhCoYTqFC0o/kpkN2B1X
-         2n0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXvoy+Ai3oVrVi67NLJ8t3OQGTpjZV2BNBHsGwFcn4++vtYvTjnOiryikGoWbEDYVLB/EMQZLxHCOHriD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPsDGqHswy7QjCe2r0FgZKDRpsIehNf9tK7/BEL/ZxP5gZOv0d
-	Dw8tIpMQMVl2RMvpzTgdHats6YkeTC3GPilyPUT2PEdorUXZFezhJow3HoM7arU=
-X-Google-Smtp-Source: AGHT+IGtQFwyylIOslHO+u2spOzWxKXOJ59teT4Gen6bVfg+Wb60THn0JlAUqa8cgOhePPz2UUrssQ==
-X-Received: by 2002:a05:6512:3b82:b0:539:fc23:1497 with SMTP id 2adb3069b0e04-53a154410ebmr2984572e87.9.1729355209174;
-        Sat, 19 Oct 2024 09:26:49 -0700 (PDT)
-Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151f0c65sm576590e87.125.2024.10.19.09.26.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 09:26:47 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 19 Oct 2024 19:26:42 +0300
-Subject: [PATCH 2/2] soc: qcom: llcc: add support for SAR2130P and SAR1130P
+	s=arc-20240116; t=1729355311; c=relaxed/simple;
+	bh=xbGKRbkO5vEWFBFZS51O6UqO3O2/WZ8Ct3XqyqrPkeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qr3xPluQzecaFrhf4H9EmsyAeRXAsovX3pR3sFOrM6Iel+VaUloVwNZR5Gt91Gw5NoK1nggSBzVqpN68v2hyQG4YgEJiMSkv0uSqKfCAjES4Dx49Q2HuBLvox/29oZuecqp5LmMhNu2CoubS1DkU002CEYg85PYxiay+cLKNW1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDxc04H5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F7FC4CEC5;
+	Sat, 19 Oct 2024 16:28:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729355311;
+	bh=xbGKRbkO5vEWFBFZS51O6UqO3O2/WZ8Ct3XqyqrPkeM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FDxc04H5gdhBrTvLDARWJq81Z8FmJmwzP5chg91mN+4DhHqcdsVe7Mz3onEDD2RDO
+	 J7gg7LhkdDJelN4rfjlcDVSMxR3ptFeHtLsMzd2sE/WccoKptEmzlxqJMth0dnGqM6
+	 0hE/JPKGpKhpMCA59bCyJWQTLVGld93d9vorxBF2rL9AGSYxM/kqXZU/GZsrfnPNDQ
+	 rfkhc9MicsoJ41ErgD0pm3bG605Rg/e0sDQKzL0tDrjWpz/oPGs7PkZc2ophR9+fQu
+	 s/NbDoxsJEIl4ADjcyl1zE+tG0yio7wyVHx1x3/NmAz7z+BDjvbJf7TQSuDNNE86iD
+	 krXN5NjTP/+Qw==
+Date: Sat, 19 Oct 2024 09:28:29 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Tengda Wu <wutengda@huaweicloud.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH -next v4 1/2] perf stat: Support inherit events during
+ fork() for bperf
+Message-ID: <ZxPeLaYXsEu9N1f1@google.com>
+References: <20241012023225.151084-1-wutengda@huaweicloud.com>
+ <20241012023225.151084-2-wutengda@huaweicloud.com>
+ <ZxAtLsClDW8x0H_a@google.com>
+ <5c8612d2-a0fb-4853-8b6f-aca85b200edb@huaweicloud.com>
+ <ZxKXFMh6_8E6-z7H@google.com>
+ <093e14a9-4008-4490-9946-5080449935c4@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241019-sar2130p-llcc-v1-2-4e09063d04f2@linaro.org>
-References: <20241019-sar2130p-llcc-v1-0-4e09063d04f2@linaro.org>
-In-Reply-To: <20241019-sar2130p-llcc-v1-0-4e09063d04f2@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14449;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=9IJyzCE4GaHn616VyWC1aCINwEhMZfazYzFsYxs/DqI=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnE93ChdRgcGcy1StCcOqdbrzX1XQ7bAfWV7lXt
- QWzfprHOVeJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxPdwgAKCRAU23LtvoBl
- uIjcD/91iaxwyPN09zf37Dw1Z9JD6lfhxpce9Mn1iqpdaIOQTlztbZQe5YuRxmrNEWRBBRdunJ5
- lDB02e7xai2w3X2nqRBQKzcvzABkR344huF9EVNt2YvWXiepWaW9B/SQzxz3oggOx4EdUvBN3jE
- iiXi9lhOmNTLth2AUBcO/aBFkGIJ+ZJ3UWK8cJNnLPTKKOJzRv7GsxY+UqSSYaTynCNpKEFpMV1
- GZG6TaQbxgVcMmAv3h2+TM5Jf/bEscKEH6CZ+eaRY+b32lbTJt7vzn7lJkrwRNaVzt9XTN4xcvC
- /C1K4R4GShUZ2IfNDJ91qnSY2GFZ87H818WjX8pZQWcsGNfhuiR+7IfadWXQrtsSTwk/0W3BlO8
- yHKnsYZg/YihEiZ7yXl15ASg2XFiEiSa+EPQGG7lHgbNSBHYMhtAoJ0a9lZYBeIhOls7xDidJeh
- SHpRjKv6YFAr5dkcxU1XrmCTQmW3vSs/1u0oFRsHy8dkLJkItb6sl5KWKWKh/MMXjMS6NJZ2aRT
- fNVe6U9tKsytfSZY6Wi0MKy0NUd8amBwg3ojWpu5yKOHaZXzfaKOMhFDCm1ibxeurlFudl0/Kr+
- DWDUfetQ8ukHayBU+qNg0fKQGqCZk7zIHhkRwSNxUAGpCd5bXo46c2/vBnplI0tvagC26UZVFdi
- +5b2GXSK04f5xMA==
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <093e14a9-4008-4490-9946-5080449935c4@huaweicloud.com>
 
-Implement necessary support for the LLCC control on the SAR1130P and
-SAR2130P platforms. These two platforms use different ATTR1_MAX_CAP
-shift and also require manual override for num_banks.
+On Sat, Oct 19, 2024 at 04:27:38PM +0800, Tengda Wu wrote:
+> 
+> 
+> On 2024/10/19 1:12, Namhyung Kim wrote:
+> > On Thu, Oct 17, 2024 at 10:53:46AM +0800, Tengda Wu wrote:
+> >> Hi,
+> >>
+> >> On 2024/10/17 5:16, Namhyung Kim wrote:
+> >>> Hello,
+> >>>
+> >>> On Sat, Oct 12, 2024 at 02:32:24AM +0000, Tengda Wu wrote:
+> >>>> bperf has a nice ability to share PMUs, but it still does not support
+> >>>> inherit events during fork(), resulting in some deviations in its stat
+> >>>> results compared with perf.
+> >>>>
+> >>>> perf stat result:
+> >>>> $ ./perf stat -e cycles,instructions -- ./perf test -w sqrtloop
+> >>>>
+> >>>>    Performance counter stats for './perf test -w sqrtloop':
+> >>>>
+> >>>>        2,316,038,116      cycles
+> >>>>        2,859,350,725      instructions
+> >>>>
+> >>>>          1.009603637 seconds time elapsed
+> >>>>
+> >>>>          1.004196000 seconds user
+> >>>>          0.003950000 seconds sys
+> >>>>
+> >>>> bperf stat result:
+> >>>> $ ./perf stat --bpf-counters -e cycles,instructions -- \
+> >>>>       ./perf test -w sqrtloop
+> >>>>
+> >>>>    Performance counter stats for './perf test -w sqrtloop':
+> >>>>
+> >>>>           18,762,093      cycles
+> >>>>           23,487,766      instructions
+> >>>>
+> >>>>          1.008913769 seconds time elapsed
+> >>>>
+> >>>>          1.003248000 seconds user
+> >>>>          0.004069000 seconds sys
+> >>>>
+> >>>> In order to support event inheritance, two new bpf programs are added
+> >>>> to monitor the fork and exit of tasks respectively. When a task is
+> >>>> created, add it to the filter map to enable counting, and reuse the
+> >>>> `accum_key` of its parent task to count together with the parent task.
+> >>>> When a task exits, remove it from the filter map to disable counting.
+> >>>>
+> >>>> After support:
+> >>>> $ ./perf stat --bpf-counters -e cycles,instructions -- \
+> >>>>       ./perf test -w sqrtloop
+> >>>>
+> >>>>  Performance counter stats for './perf test -w sqrtloop':
+> >>>>
+> >>>>      2,316,252,189      cycles
+> >>>>      2,859,946,547      instructions
+> >>>>
+> >>>>        1.009422314 seconds time elapsed
+> >>>>
+> >>>>        1.003597000 seconds user
+> >>>>        0.004270000 seconds sys
+> >>>>
+> >>>> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+> >>>> ---
+> >>>>  tools/perf/builtin-stat.c                     |  4 +-
+> >>>>  tools/perf/util/bpf_counter.c                 | 57 +++++++++---
+> >>>>  tools/perf/util/bpf_counter.h                 | 13 ++-
+> >>>>  tools/perf/util/bpf_counter_cgroup.c          |  3 +-
+> >>>>  tools/perf/util/bpf_skel/bperf_follower.bpf.c | 87 +++++++++++++++++--
+> >>>>  tools/perf/util/bpf_skel/bperf_u.h            |  5 ++
+> >>>>  6 files changed, 145 insertions(+), 24 deletions(-)
+> >>>>
+> >>>> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> >>>> index 3e6b9f216e80..c27b107c1985 100644
+> >>>> --- a/tools/perf/builtin-stat.c
+> >>>> +++ b/tools/perf/builtin-stat.c
+> >>>> @@ -698,6 +698,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+> >>>>  	char msg[BUFSIZ];
+> >>>>  	unsigned long long t0, t1;
+> >>>>  	struct evsel *counter;
+> >>>> +	struct bpf_stat_opts opts;
+> >>>>  	size_t l;
+> >>>>  	int status = 0;
+> >>>>  	const bool forks = (argc > 0);
+> >>>> @@ -725,7 +726,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+> >>>>  
+> >>>>  	evlist__for_each_entry(evsel_list, counter) {
+> >>>>  		counter->reset_group = false;
+> >>>> -		if (bpf_counter__load(counter, &target)) {
+> >>>> +		opts.inherit = !stat_config.no_inherit;
+> >>>> +		if (bpf_counter__load(counter, &target, &opts)) {
+> >>>
+> >>> Maybe you can just add a boolean member in the struct target.
+> >>
+> >> Yes，this approach would be more straightforward. 
+> >>
+> >> I had considered it before, but, as you see, considering that `inherit` does not
+> >> align well with the `target` semantics, I chose the another one.
+> > 
+> > Well, I think 'inherit' is well aligned with the target semantics.
+> > We want some processes as the targets of the event and we want to
+> > profile their children or not.
+> > 
+> 
+> Ok.
+> 
+> >>
+> >> Anyway, I'll try it. Code changes would be more clean. Thanks.
+> >>
+> >>>
+> >>>
+> >>>>  			err = -1;
+> >>>>  			goto err_out;
+> >>>>  		}
+> >>>> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
+> >>>> index 7a8af60e0f51..00afea6bde63 100644
+> >>>> --- a/tools/perf/util/bpf_counter.c
+> >>>> +++ b/tools/perf/util/bpf_counter.c
+> >>>> @@ -166,7 +166,9 @@ static int bpf_program_profiler_load_one(struct evsel *evsel, u32 prog_id)
+> >>>>  	return -1;
+> >>>>  }
+> >>>>  
+> >>>> -static int bpf_program_profiler__load(struct evsel *evsel, struct target *target)
+> >>>> +static int bpf_program_profiler__load(struct evsel *evsel,
+> >>>> +				      struct target *target,
+> >>>> +				      struct bpf_stat_opts *opts __maybe_unused)
+> >>>>  {
+> >>>>  	char *bpf_str, *bpf_str_, *tok, *saveptr = NULL, *p;
+> >>>>  	u32 prog_id;
+> >>>> @@ -364,6 +366,7 @@ static int bperf_lock_attr_map(struct target *target)
+> >>>>  
+> >>>>  static int bperf_check_target(struct evsel *evsel,
+> >>>>  			      struct target *target,
+> >>>> +			      struct bpf_stat_opts *opts,
+> >>>>  			      enum bperf_filter_type *filter_type,
+> >>>>  			      __u32 *filter_entry_cnt)
+> >>>>  {
+> >>>> @@ -383,7 +386,12 @@ static int bperf_check_target(struct evsel *evsel,
+> >>>>  		*filter_type = BPERF_FILTER_PID;
+> >>>>  		*filter_entry_cnt = perf_thread_map__nr(evsel->core.threads);
+> >>>>  	} else if (target->pid || evsel->evlist->workload.pid != -1) {
+> >>>> -		*filter_type = BPERF_FILTER_TGID;
+> >>>> +		/*
+> >>>> +		 * unlike the PID type, the TGID type implicitly enables
+> >>>> +		 * event inheritance within a single process.
+> >>>> +		 */
+> >>>> +		*filter_type = opts->inherit ?
+> >>>> +				BPERF_FILTER_TGID : BPERF_FILTER_PID;
+> >>>
+> >>> I'm not sure if it's right.  You should be able to use PID type with
+> >>> inheritance.  In this case child processes or threads from the selected
+> >>> thread would be counted only.
+> >>
+> >> Sorry, don't quite understand. TGID type counts together with all sub-threads within
+> >> the same process, which is what inheritance needs to do; while PID type only counts
+> >> for a single thread and should be used when inheritance is turned off. This is equivalent
+> >> to the code above.
+> > 
+> > Let me be clear:
+> > 
+> >  * PID w/o inherit : specified threads only
+> >  * PID w/ inherit  : specified threads + all threads or child process from the threads
+> >  * TGID w/o inherit: specified process (all threads in the process) only
+> >  * TGID w/ inherit : specified process + all children from the processes
+> > 
+> > For the TGID w/o inherit case, it's ok not to track new threads in the
+> > process because they will have the same tgid anyway.
+> > 
+> > So you cannot change the filter type using inherit value.  It should be
+> > used to control whether it tracks new task only.
+> > 
+> 
+> So changing 'TGID w/o inherit' to 'PID w/o inherit' will lose counts of all
+> threads in the process, right?
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/soc/qcom/llcc-qcom.c       | 468 ++++++++++++++++++++++++++++++++++++-
- include/linux/soc/qcom/llcc-qcom.h |  12 +
- 2 files changed, 474 insertions(+), 6 deletions(-)
+Yep.
 
-diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-index a470285f54a875bf2262aac7b0f84ed8fd028ef1..ef84fe3b2af4e777126a8308bfd4ec47b28aeae2 100644
---- a/drivers/soc/qcom/llcc-qcom.c
-+++ b/drivers/soc/qcom/llcc-qcom.c
-@@ -32,6 +32,7 @@
- #define ATTR1_FIXED_SIZE_SHIFT        0x03
- #define ATTR1_PRIORITY_SHIFT          0x04
- #define ATTR1_MAX_CAP_SHIFT           0x10
-+#define ATTR1_MAX_CAP_SHIFT_sar       0x0e
- #define ATTR0_RES_WAYS_MASK           GENMASK(15, 0)
- #define ATTR0_BONUS_WAYS_MASK         GENMASK(31, 16)
- #define ATTR0_BONUS_WAYS_SHIFT        0x10
-@@ -140,6 +141,11 @@ struct qcom_llcc_config {
- 	bool need_llcc_cfg;
- 	bool no_edac;
- 	bool irq_configured;
-+	/*
-+	 * special workarounds for SAR2130P and similar platforms which have
-+	 * slightly different register mapping.
-+	 */
-+	bool is_sar_chip;
- };
+> 
+> It's clear now. Thanks for the explanation.
  
- struct qcom_sct_config {
-@@ -298,6 +304,408 @@ static const struct llcc_slice_config sa8775p_data[] =  {
- 	},
- };
- 
-+static const struct llcc_slice_config sar1130p_data[] = {
-+	{
-+		.usecase_id = LLCC_CPUSS,
-+		.slice_id = 1,
-+		.max_cap = 4096,
-+		.priority = 1,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_VIDSC0,
-+		.slice_id = 2,
-+		.max_cap = 512,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_AUDIO,
-+		.slice_id = 6,
-+		.max_cap = 1024,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_CMPT,
-+		.slice_id = 10,
-+		.max_cap = 1024,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPUHTW,
-+		.slice_id = 11,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPU,
-+		.slice_id = 12,
-+		.max_cap = 3072,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+		.write_scid_en = true,
-+	}, {
-+		.usecase_id = LLCC_MMUHWT,
-+		.slice_id = 13,
-+		.max_cap = 512,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+	}, {
-+		.usecase_id = LLCC_DISP,
-+		.slice_id = 16,
-+		.max_cap = 12800,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_CVP,
-+		.slice_id = 28,
-+		.max_cap = 256,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_APTCM,
-+		.slice_id = 26,
-+		.max_cap = 2048,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x3,
-+		.cache_mode = true,
-+		.dis_cap_alloc = true,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_WRCACHE,
-+		.slice_id = 31,
-+		.max_cap = 256,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_AENPU,
-+		.slice_id = 30,
-+		.max_cap = 3072,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_DISP_LEFT,
-+		.slice_id = 17,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_DISP_RIGHT,
-+		.slice_id = 18,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVCS_LEFT,
-+		.slice_id = 22,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVCS_RIGHT,
-+		.slice_id = 23,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	},
-+};
-+
-+static const struct llcc_slice_config sar2130p_data[] = {
-+	{
-+		.usecase_id = LLCC_CPUSS,
-+		.slice_id = 1,
-+		.max_cap = 6144,
-+		.priority = 1,
-+		.fixed_size = 0,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_VIDSC0,
-+		.slice_id = 2,
-+		.max_cap = 128,
-+		.priority = 2,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_AUDIO,
-+		.slice_id = 6,
-+		.max_cap = 1024,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_CMPT,
-+		.slice_id = 10,
-+		.max_cap = 1024,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPUHTW,
-+		.slice_id = 11,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPU,
-+		.slice_id = 12,
-+		.max_cap = 1536,
-+		.priority = 2,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+		.write_scid_en = true,
-+	}, {
-+		.usecase_id = LLCC_MMUHWT,
-+		.slice_id = 13,
-+		.max_cap = 1024,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_DISP,
-+		.slice_id = 16,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_APTCM,
-+		.slice_id = 26,
-+		.max_cap = 2048,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x3,
-+		.cache_mode = true,
-+		.dis_cap_alloc = true,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_WRCACHE,
-+		.slice_id = 31,
-+		.max_cap = 256,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_VIEYE,
-+		.slice_id = 7,
-+		.max_cap = 7168,
-+		.priority = 4,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_VIDPTH,
-+		.slice_id = 8,
-+		.max_cap = 7168,
-+		.priority = 4,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPUMV,
-+		.slice_id = 9,
-+		.max_cap = 2048,
-+		.priority = 2,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVA_LEFT,
-+		.slice_id = 20,
-+		.max_cap = 7168,
-+		.priority = 5,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3ffffffc,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVA_RIGHT,
-+		.slice_id = 21,
-+		.max_cap = 7168,
-+		.priority = 5,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3ffffffc,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVAGAIN,
-+		.slice_id = 25,
-+		.max_cap = 1024,
-+		.priority = 2,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_AENPU,
-+		.slice_id = 30,
-+		.max_cap = 3072,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_VIPTH,
-+		.slice_id = 29,
-+		.max_cap = 1024,
-+		.priority = 4,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_DISP_LEFT,
-+		.slice_id = 17,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_DISP_RIGHT,
-+		.slice_id = 18,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVCS_LEFT,
-+		.slice_id = 22,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVCS_RIGHT,
-+		.slice_id = 23,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_SPAD,
-+		.slice_id = 24,
-+		.max_cap = 7168,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	},
-+};
-+
- static const struct llcc_slice_config sc7180_data[] =  {
- 	{
- 		.usecase_id = LLCC_CPUSS,
-@@ -2687,6 +3095,28 @@ static const struct qcom_llcc_config sa8775p_cfg[] = {
- 	},
- };
- 
-+static const struct qcom_llcc_config sar1130p_cfg[] = {
-+	{
-+		.sct_data	= sar1130p_data,
-+		.size		= ARRAY_SIZE(sar1130p_data),
-+		.need_llcc_cfg	= true,
-+		.reg_offset	= llcc_v2_1_reg_offset,
-+		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
-+		.is_sar_chip	= true,
-+	},
-+};
-+
-+static const struct qcom_llcc_config sar2130p_cfg[] = {
-+	{
-+		.sct_data	= sar2130p_data,
-+		.size		= ARRAY_SIZE(sar2130p_data),
-+		.need_llcc_cfg	= true,
-+		.reg_offset	= llcc_v2_1_reg_offset,
-+		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
-+		.is_sar_chip	= true,
-+	},
-+};
-+
- static const struct qcom_llcc_config sc7180_cfg[] = {
- 	{
- 		.sct_data	= sc7180_data,
-@@ -2839,6 +3269,16 @@ static const struct qcom_sct_config sa8775p_cfgs = {
- 	.num_config	= ARRAY_SIZE(sa8775p_cfg),
- };
- 
-+static const struct qcom_sct_config sar1130p_cfgs = {
-+	.llcc_config	= sar1130p_cfg,
-+	.num_config	= ARRAY_SIZE(sar1130p_cfg),
-+};
-+
-+static const struct qcom_sct_config sar2130p_cfgs = {
-+	.llcc_config	= sar2130p_cfg,
-+	.num_config	= ARRAY_SIZE(sar2130p_cfg),
-+};
-+
- static const struct qcom_sct_config sc7180_cfgs = {
- 	.llcc_config	= sc7180_cfg,
- 	.num_config	= ARRAY_SIZE(sc7180_cfg),
-@@ -3146,7 +3586,10 @@ static int _qcom_llcc_cfg_program(const struct llcc_slice_config *config,
- 	 */
- 	max_cap_cacheline = max_cap_cacheline / drv_data->num_banks;
- 	max_cap_cacheline >>= CACHE_LINE_SIZE_SHIFT;
--	attr1_val |= max_cap_cacheline << ATTR1_MAX_CAP_SHIFT;
-+	if (cfg->is_sar_chip)
-+		attr1_val |= max_cap_cacheline << ATTR1_MAX_CAP_SHIFT_sar;
-+	else
-+		attr1_val |= max_cap_cacheline << ATTR1_MAX_CAP_SHIFT;
- 
- 	attr1_cfg = LLCC_TRP_ATTR1_CFGn(config->slice_id);
- 
-@@ -3383,12 +3826,23 @@ static int qcom_llcc_probe(struct platform_device *pdev)
- 		goto err;
- 	cfg = &cfgs->llcc_config[cfg_index];
- 
--	ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
--	if (ret)
--		goto err;
-+	/*
-+	 * For some reason register returns incorrect value here.
-+	 * List compatibles instead of using .is_sar_chip since there might be
-+	 * SAR-like chips which have other number of banks.
-+	 */
-+	if (of_device_is_compatible(dev->of_node, "qcom,sar1130p-llcc") ||
-+	    of_device_is_compatible(dev->of_node, "qcom,sar2130p-llcc")) {
-+		num_banks = 2;
-+	} else {
-+		ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
-+		if (ret)
-+			goto err;
-+
-+		num_banks &= LLCC_LB_CNT_MASK;
-+		num_banks >>= LLCC_LB_CNT_SHIFT;
-+	}
- 
--	num_banks &= LLCC_LB_CNT_MASK;
--	num_banks >>= LLCC_LB_CNT_SHIFT;
- 	drv_data->num_banks = num_banks;
- 
- 	drv_data->regmaps = devm_kcalloc(dev, num_banks, sizeof(*drv_data->regmaps), GFP_KERNEL);
-@@ -3486,6 +3940,8 @@ static int qcom_llcc_probe(struct platform_device *pdev)
- static const struct of_device_id qcom_llcc_of_match[] = {
- 	{ .compatible = "qcom,qdu1000-llcc", .data = &qdu1000_cfgs},
- 	{ .compatible = "qcom,sa8775p-llcc", .data = &sa8775p_cfgs },
-+	{ .compatible = "qcom,sar1130p-llcc", .data = &sar1130p_cfgs },
-+	{ .compatible = "qcom,sar2130p-llcc", .data = &sar2130p_cfgs },
- 	{ .compatible = "qcom,sc7180-llcc", .data = &sc7180_cfgs },
- 	{ .compatible = "qcom,sc7280-llcc", .data = &sc7280_cfgs },
- 	{ .compatible = "qcom,sc8180x-llcc", .data = &sc8180x_cfgs },
-diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
-index 2f20281d4ad4352ef59e7b19148cd324c7991012..8e5d78fb4847a232ab17a66c2775552dcb287752 100644
---- a/include/linux/soc/qcom/llcc-qcom.h
-+++ b/include/linux/soc/qcom/llcc-qcom.h
-@@ -54,7 +54,19 @@
- #define LLCC_CAMEXP4	 52
- #define LLCC_DISP_WB	 53
- #define LLCC_DISP_1	 54
-+#define LLCC_VIEYE	 57
-+#define LLCC_VIDPTH	 58
-+#define LLCC_GPUMV	 59
-+#define LLCC_EVA_LEFT	 60
-+#define LLCC_EVA_RIGHT	 61
-+#define LLCC_EVAGAIN	 62
-+#define LLCC_VIPTH	 63
- #define LLCC_VIDVSP	 64
-+#define LLCC_DISP_LEFT	 65
-+#define LLCC_DISP_RIGHT	 66
-+#define LLCC_EVCS_LEFT	 67
-+#define LLCC_EVCS_RIGHT	 68
-+#define LLCC_SPAD	 69
- 
- /**
-  * struct llcc_slice_desc - Cache slice descriptor
+No problem, looking forward to v5.
 
--- 
-2.39.5
+Thanks,
+Namhyung
 
 
