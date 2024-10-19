@@ -1,143 +1,92 @@
-Return-Path: <linux-kernel+bounces-372739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3029A4C82
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:19:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D97F9A4C84
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1572817EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:19:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DDBFB22ACF
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DB81DEFCE;
-	Sat, 19 Oct 2024 09:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB8D1DED65;
+	Sat, 19 Oct 2024 09:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAMAzUxE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mBfmEjwe"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4145A15D5D9;
-	Sat, 19 Oct 2024 09:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FB41DD0FE;
+	Sat, 19 Oct 2024 09:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729329577; cv=none; b=I8IgplRgB6wsrpYLhVzYfFdEB8dTEbhhAB70ltpTzvBiB9RCbezUKm4Nf+fEg3ChcmvnEJ0EtxRNLUhWvOoQWsc6PN9kUuyJ3JGerZL9CYXp8mJyObqtmv3PDRniAIeT8/rlUOB9SR+4N0566sxG5Jc0+lVAP3Pn2m7WpQ3sXzA=
+	t=1729329730; cv=none; b=ige37uFADqCyJlDLIY2f5Xelvwlu//Gbu333Uu3I+fXhZwhbsVo4W8/Gx5CIQZV2WNT3kKx530fv4H9gFY5L1p3rO6BfP6auN63NfKhY8/eXFmYo/qifLp1UsNzr3z7MhHlqKZticjHa9rW8NKuRSFN6dudoJdRro/D6ER7TUr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729329577; c=relaxed/simple;
-	bh=ukAnmrzm5txy+zOC3tzTSzJ2SbJ7TgWf6o+/eiDiXUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U5vrFO76wx0VdyNJVRqKpUCbTbmONYp/8QamSlgihXyn/lktlK6r14OFRvtyYOo35hI6NzxvK4tIpvGPOLcUW3WQHhW/7cV9wYw8ahy1M9IgjSfk4W/LD3EByK4wQE+omjQCpeNpkxkDCxfpsj4KoTHQc97nkyaMGrugabNfoHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAMAzUxE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD284C4CEC5;
-	Sat, 19 Oct 2024 09:19:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729329577;
-	bh=ukAnmrzm5txy+zOC3tzTSzJ2SbJ7TgWf6o+/eiDiXUU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gAMAzUxETaSXCQm3fSd84p2fqg1EqfjQ5ec0S7FngFMpyUNvhWf7nJMyVtJ2xRZPA
-	 RtBfXfO2U/uisgCIYeCWoJVCKDypfIRuIcVWcC+MN6TrhnTOq+LvvfPTsOFEylD+j6
-	 5Z+KoiKs23fZmA+Qpucu0S3pK4D6kH0eYWRGNwEVrW/TEi7+fU6U4Ikp7MguVImM/h
-	 Yez2X4+MnAzO3/QHexQGS6Di7jTO8Our/hr8/L14coKx9QC0XgtNulJwGudfX1WQaS
-	 lDJIPsVjnBLqlUfhkA5GrkvaGzrM+ZqQXfSDcT5WJrnegVI+GK9EuRbPaVSeLaQOO5
-	 feW2a+WdoC2rQ==
-Date: Sat, 19 Oct 2024 10:19:30 +0100
-From: Simon Horman <horms@kernel.org>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrii Nakryiko <andriin@fb.com>, Jussi Maki <joamaki@gmail.com>,
-	Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Nikolay Aleksandrov <razor@blackwall.org>
-Subject: Re: [PATCHv2 net-next 2/3] bonding: use correct return value
-Message-ID: <20241019091930.GS1697@kernel.org>
-References: <20241017020638.6905-1-liuhangbin@gmail.com>
- <20241017020638.6905-3-liuhangbin@gmail.com>
- <878qumzszs.fsf@toke.dk>
- <ZxGv2s4bl5VQV4g-@fedora>
- <20241018094139.GD1697@kernel.org>
- <87o73hy7hh.fsf@toke.dk>
- <20241018142104.GP1697@kernel.org>
- <ZxMCdP1X-h9qyU0u@fedora>
+	s=arc-20240116; t=1729329730; c=relaxed/simple;
+	bh=ddx/wzHX3BBS9AnzKxxwJZVSrSQneUJZVZUhyLhbx0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hMuwL/aoz30x+AaWf4fAx1qnLt0Z/yU5/Pp9117vdDfjMIu537X7p7HnHraD2INiNgMWRJKOMxmp/ZnEP8R0iDg5QqKISLliYok3STEAZuxY52Gf3LsNW++feQv30kmDxCAcjSTdok5OVo1se5t2m1VJOEYd/Bth4wiGV4tifS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mBfmEjwe; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729329726;
+	bh=ddx/wzHX3BBS9AnzKxxwJZVSrSQneUJZVZUhyLhbx0c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mBfmEjweJWeFSDGFz/tgFi9f2CaY0gRzttWfGLKQgxZG4VTqT+oRrU2FHkhaSnyAa
+	 gbmk5TyxCgOX0EvKZIGstgBKwYYzq41EvofkiE/9oEeEYuUJuHtOEcwcTcaqrA6Q7O
+	 afPN8Iqu2TVOvE5/b+5JNQdgrwu8/MDvuxKUoB7zHPQ3A79X8h39AtHXvEeoWZVdVy
+	 qyH0uYbsa5ch18ur18X5xkmV+v6JiXm/GBWCvHw7LmbPo/2mmyOWf2VXOgaiOLZlnD
+	 r202+GUiCqAw8GM+3NHd1/sYbVbMCLhTuZ2H43/cCD6fgGX97FY9cyrlYd2KRdN2W+
+	 q4/EQX2Qob5zg==
+Received: from [192.168.1.90] (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 014F817E11E2;
+	Sat, 19 Oct 2024 11:22:05 +0200 (CEST)
+Message-ID: <1313314d-5398-4ed1-ab54-f0dadc638103@collabora.com>
+Date: Sat, 19 Oct 2024 12:22:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZxMCdP1X-h9qyU0u@fedora>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] arm64: dts: rockchip: Enable HDMI0 on rock-5b
+To: FUKAUMI Naoki <naoki@radxa.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Luis de Arquer <ldearquer@gmail.com>, Alexandre ARNOUD <aarnoud@me.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241019-rk3588-hdmi0-dt-v1-0-bd8f299feacd@collabora.com>
+ <20241019-rk3588-hdmi0-dt-v1-2-bd8f299feacd@collabora.com>
+ <5E49B36195743C7C+3eb032f1-fda6-4a61-bcaa-8ce34256cb51@radxa.com>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Language: en-US
+In-Reply-To: <5E49B36195743C7C+3eb032f1-fda6-4a61-bcaa-8ce34256cb51@radxa.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 19, 2024 at 12:51:00AM +0000, Hangbin Liu wrote:
-> On Fri, Oct 18, 2024 at 03:21:04PM +0100, Simon Horman wrote:
-> > On Fri, Oct 18, 2024 at 01:29:30PM +0200, Toke Høiland-Jørgensen wrote:
-> > > Simon Horman <horms@kernel.org> writes:
-> > > 
-> > > > On Fri, Oct 18, 2024 at 12:46:18AM +0000, Hangbin Liu wrote:
-> > > >> On Thu, Oct 17, 2024 at 04:47:19PM +0200, Toke Høiland-Jørgensen wrote:
-> > > >> > > diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> > > >> > > index f0f76b6ac8be..6887a867fe8b 100644
-> > > >> > > --- a/drivers/net/bonding/bond_main.c
-> > > >> > > +++ b/drivers/net/bonding/bond_main.c
-> > > >> > > @@ -5699,7 +5699,7 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
-> > > >> > >  		if (dev_xdp_prog_count(slave_dev) > 0) {
-> > > >> > >  			SLAVE_NL_ERR(dev, slave_dev, extack,
-> > > >> > >  				     "Slave has XDP program loaded, please unload before enslaving");
-> > > >> > > -			err = -EOPNOTSUPP;
-> > > >> > > +			err = -EEXIST;
-> > > >> > 
-> > > >> > Hmm, this has been UAPI since kernel 5.15, so can we really change it
-> > > >> > now? What's the purpose of changing it, anyway?
-> > > >> 
-> > > >> I just think it should return EXIST when the error is "Slave has XDP program
-> > > >> loaded". No special reason. If all others think we should not change it, I
-> > > >> can drop this patch.
-> > > >
-> > > > Hi Toke,
-> > > >
-> > > > Could you add some colour to what extent user's might rely on this error code?
-> > > >
-> > > > Basically I think that if they do then we shouldn't change this.
-> > > 
-> > > Well, that's the trouble with UAPI, we don't really know. In libxdp and
-> > > xdp-tools we look at the return code to provide a nicer error message,
-> > > like:
-> > > 
-> > > https://github.com/xdp-project/xdp-tools/blob/master/lib/libxdp/libxdp.c#L615
-> > > 
-> > > and as a signal to fall back to loading the programme without a dispatcher:
-> > > 
-> > > https://github.com/xdp-project/xdp-tools/blob/master/lib/libxdp/libxdp.c#L1824
-> > > 
-> > > Both of these cases would be unaffected (or even improved) by this
-> > > patch, so in that sense I don't have a concrete objection, just a
-> > > general "userspace may react to this". In other words, my concern is
-> > > more of a general "we don't know, so this seems risky". If any of you
-> > > have more information about how bonding XDP is generally used, that may
-> > > help get a better idea of this?
-> > 
-> > Yes, that is the trouble with the UAPI. I was hoping you might be able to
-> > provide the clarity you ask for above. But alas, things are as clear as
-> > mud.
-> > 
-> > In lieu of more information I suggest caution and dropping this change for
-> > now.
+On 10/19/24 4:41 AM, FUKAUMI Naoki wrote:
+> Hi,
 > 
-> OK, I will drop this one.
+> thank you very much for your work!
+> 
+> On 10/19/24 06:39, Cristian Ciocaltea wrote:
+>> Add the necessary DT changes to enable HDMI0 on Rock 5B.
+> 
+> Rock 5B -> (Radxa) ROCK 5B
+> 
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> 
+> Tested-by: FUKAUMI Naoki <naoki@radxa.com>
 
-Thanks.
+Thanks for testing! Will send v2 with updated description.
 
