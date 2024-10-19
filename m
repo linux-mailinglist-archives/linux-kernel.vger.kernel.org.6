@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-372688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF919A4BE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1574C9A4BE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EADB283697
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C878D2836E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0EF1DDC22;
-	Sat, 19 Oct 2024 07:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C87E1DD0DE;
+	Sat, 19 Oct 2024 07:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="TDmTMxKW"
-Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=wiredspace.de header.i=@wiredspace.de header.b="0jsJRIhA"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACEE1922DC;
-	Sat, 19 Oct 2024 07:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE8C13C8E2
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 07:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729323865; cv=none; b=GGGzCHvCGe3RcXvskj0nG14bBkMMZPRW0nZBDk8gyasyLeSZ/WZQxIelHTqxuGa5NXV52is2oxk5syOb4inStuKB99FmDILGtODSS0LO2dWaBpSrHM+o24vzMcPKP2cu63qoaw5m5riw20/LydpGDzWmyEUrya1BhuUeCZhmCBo=
+	t=1729323935; cv=none; b=E4cw7TlSvdLtqswHvr+zQn9ma1lb2GlUj4u6E3QOt8GbZvIHGAayfF0cpuE3gww5jq2DF0hg3rwtSUHEgtcMNTITwuVppZla3X/xG+cyJRw6S/jbJUZ6sTv191mNGZkNLlpWp+GY/Wch4u+6F7FSUmEAhyrlSM0HGHybrDEnyBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729323865; c=relaxed/simple;
-	bh=xOE2yI2wDnJw3YNYkHVQvav5aH/2PQWnRqL/b7LMCfI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=l1uA1/QUPNx81a7jAl4D2NlYfwEb1O/4bRVA0BZzgc1nkHMZeMJ7pLXYA/S7wj98XnRaMowtBgKRholkMKSQDpQLQ5DjWS4mT9vDmF2zpI1WyV4Y0LnLrNecBBQheHzJ1F/1djwn06o9IDkS12gzjGxEyxMSFHUyIhHzxiG6fVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=TDmTMxKW; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPv6:::1] ([172.56.209.71])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 49J7eDjD3445452
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sat, 19 Oct 2024 00:40:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 49J7eDjD3445452
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1729323617;
-	bh=6RwBI6Tgq+4KVLmTV8e3LMN7G/Yez/JAfgnrvWDb2Ks=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=TDmTMxKWQQixfvSr3MiW/lLq7AluDqwgPZ/6HEnaZgkwAVrU6QL0QrWTBMaI1Ju0E
-	 ChdbxW042cSF7X3cUbvzuKyWcqGMnXBnwEX9E6RImLLu12HxK50xuyAbsJl1gvAb3k
-	 eUET277bZ4yvZnx7FlvvekmEPGu2r7t7njslndlOnu9g/ZXL6eaMhzJLsju1Cne8r3
-	 6KPRQODvRrhh24l6xlTT5Q9UwUlPeEaF1oPQmTNu+BJi/xR+u7dtNDxnBdWCcebMzl
-	 Kb3LOzL5hhGpVXkYvzm68AqYGSBejB9nRtWwmzMNxawpgWhSmo923pEo0nuKe4uwtd
-	 +aHWuKYopJtqQ==
-Date: Sat, 19 Oct 2024 00:40:04 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>, "bp@alien8.de" <bp@alien8.de>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: =?US-ASCII?Q?RE=3A_=5BPATCH_v2_08/10=5D_x86/mce=3A_Remov?=
- =?US-ASCII?Q?e_the_redundant_zeroing_assignments?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CY8PR11MB71344BDC1A3AB4454FE9446A89412@CY8PR11MB7134.namprd11.prod.outlook.com>
-References: <20241010153202.30876-1-qiuxu.zhuo@intel.com> <20241016123036.21366-1-qiuxu.zhuo@intel.com> <20241016123036.21366-9-qiuxu.zhuo@intel.com> <f5d4d763-0fa2-4d84-8501-28d8cd8a1dde@intel.com> <CY8PR11MB71344BDC1A3AB4454FE9446A89412@CY8PR11MB7134.namprd11.prod.outlook.com>
-Message-ID: <36673130-7548-4BE5-8E70-ACC100A0BDBF@zytor.com>
+	s=arc-20240116; t=1729323935; c=relaxed/simple;
+	bh=/XbF/+NCidevXD141bwG221fG8Yh9aYwrgm2ArnaMzY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=G3pbLmee2ehhIDQf/NhM4Ds+latRFGNCJOIqr1YWszwN7e0S4FqcHsJsQC63aEHur4NcfruGvNZ8VR01DqZj3FpFsbsCBT+mUwOMeFy8uS1vBCDWxo8S6cppAZdjYCieLtXMGAwoKrNyHeZI4NbfwPbLgDm6b4WbD4CpmrCjqAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiredspace.de; spf=pass smtp.mailfrom=wiredspace.de; dkim=pass (1024-bit key) header.d=wiredspace.de header.i=@wiredspace.de header.b=0jsJRIhA; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiredspace.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiredspace.de
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiredspace.de;
+	s=key1; t=1729323926;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jSq9GVLt33+jDNVvC/+rsp4P18o8up9zIaShzUja2qs=;
+	b=0jsJRIhAzV1ql6BxLFLvaM9IqtbrWF3vNA9BZT2osQ/shuSsz/CGbwyp5QniC878ccgPjC
+	cOK7w1i1v2Q3de6G9LVShaGshvciCU3PNH1rIfo0JBtE8u5wiFPcDh/kxiZVM5BZqPbyje
+	7Y9Ey9r4wB58B3EIbMmFAd93X0nxa1c=
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 19 Oct 2024 09:45:22 +0200
+Message-Id: <D4ZM62F6HHAQ.3TLFSGQ3IU0DG@wiredspace.de>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Jocelyn Falempe" <jfalempe@redhat.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/7] drm/panic: avoid reimplementing Iterator::find
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: =?utf-8?q?Thomas_B=C3=B6hler?= <witcher@wiredspace.de>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+References: <20241012075312.16342-1-witcher@wiredspace.de>
+ <CANiq72kG0Ai2DHfERD0aPDVuEpLYrZ_2uYdw17=eeHRp+2Q1Rg@mail.gmail.com>
+In-Reply-To: <CANiq72kG0Ai2DHfERD0aPDVuEpLYrZ_2uYdw17=eeHRp+2Q1Rg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On October 19, 2024 12:37:05 AM PDT, "Zhuo, Qiuxu" <qiuxu=2Ezhuo@intel=2Eco=
-m> wrote:
->> From: Mehta, Sohil <sohil=2Emehta@intel=2Ecom>
->> [=2E=2E=2E]
->> > @@ -1284,8 +1282,6 @@ __mc_scan_banks(struct mce *m, struct pt_regs
->> *regs, struct mce *final,
->> >  		if (!mce_banks[i]=2Ectl)
->> >  			continue;
->> >
->> > -		m->misc =3D 0;
->> > -		m->addr =3D 0;
->> >  		m->bank =3D i;
->> >
->>=20
->> However, in this case, I am not fully convinced if the misc and addr wo=
-uld
->> already be 0 when we reach here=2E
->>=20
->> There are potentially a lot of things that happen in do_machine_check()
->> between mce_gather_info() and __mc_scan_banks()=2E Especially,
->> mce_no_way_out() which could theoretically call mce_read_aux() in some
->> cases=2E
->>=20
->> Maybe it doesn't matter, misc and addr would be overwritten anyway=2E B=
-ut I
->> feel some more details in the commit message would be useful=2E It does=
-n't
->> seem as simple as the brief description makes it sound (at least to me)=
-=2E
->>=20
->
->Your concern is reasonable=2E Thanks!
->
->For both diffs, mce->misc and mce->addr can be guaranteed to be zeroed th=
-e first time
->they reach here=2E However, I didn't notice that both diffs were in a for=
-() loop where=20
->mce->misc and mce->addr could retain the old values assigned by mce_read_=
-aux() in=20
->the previous iteration=2E So need to zero mce-misc and mce->addr in each =
-iteration to=20
->ensure they don't contain stale values=2E=20
->
-> I'll drop this patch in the next version=2E
->
->-Qiuxu
->
+On Sat Oct 12, 2024 at 1:04 PM CEST, Miguel Ojeda wrote:
+> Hi Thomas,
 
-Keep in mind that usually the compiler will remove redundant assignments, =
-and if they are too obscure for the compiler to discover, they are probably=
- too subtle for programmers to not introduce bugs in the future =2E=2E=2E
+Hi Miguel,
+
+>
+> On Sat, Oct 12, 2024 at 9:53=E2=80=AFAM Thomas B=C3=B6hler <witcher@wired=
+space.de> wrote:
+> >
+> > implementing the same logic itself.
+> > Clippy complains about this in the `manual_find` lint:
+>
+> Typically commit messages use newlines between paragraphs.
+
+I wanted to logically group these sentences together, but can also use
+paragraphs of course.
+
+> > Reported-by: Miguel Ojeda <ojeda@kernel.org>
+> > Closes: https://github.com/Rust-for-Linux/linux/issues/1123
+>
+> Since each of these commits fixes part of the issue, I think these are
+> meant to be `Link:`s instead of `Closes:`s according to the docs:
+>
+>     https://docs.kernel.org/process/submitting-patches.html#using-reporte=
+d-by-tested-by-reviewed-by-suggested-by-and-fixes
+>
+> In addition, these should probably have a `Fixes:` tag too -- I should
+> have mentioned that in the issue, sorry.
+
+Good point, I didn't realise this when I read the documentation. I'll
+change/add the trailer as suggested.
+
+> Finally, as a suggestion for the future: for a series like this, it
+> may make sense to have a small/quick cover letter saying something as
+> simple as: "Clippy reports some issues in ... -- this series cleans
+> them up.". Having a cover letter also allows you to give a title to
+> the series.
+
+Makes sense, v2 will have a cover letter :)
+
+> Thanks again!
+
+Thank you for the nits, they're exactly what I've been looking forward
+to!
+
+I'll prepare a v2 within the coming days as I'm currently limited on
+free time, so thank you in advance for the patience.
+
+> Cheers,
+> Miguel
+
+Kind regards,
+
+--=20
+Thomas B=C3=B6hler
+https://wiredspace.de
 
