@@ -1,260 +1,136 @@
-Return-Path: <linux-kernel+bounces-372957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9016A9A4FD0
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:28:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A36379A4FD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 127271F25DE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:28:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D25871C25507
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653D718DF86;
-	Sat, 19 Oct 2024 16:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E4F167DB7;
+	Sat, 19 Oct 2024 16:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDxc04H5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pUZJKrLl"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8056216F0E8;
-	Sat, 19 Oct 2024 16:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143B642A97
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 16:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729355311; cv=none; b=VbdZN1Wdw4M1ctputYhRqhmpWzSUbZpC9Cz2fh/gnkdgfbUypgI5MGIB2ddRakSLtp1Iqn0gIc63kPGRBljqHYenRSFT2IJ08dbKk3orKApMC4SlnDmfPEdrWcsSXHGtNH2ZKQVbI74NxEMiQTpoelQmE7jwNCWRd4mtBqt2UME=
+	t=1729355372; cv=none; b=ggUiIqJE7SaEeA2chOMhlSmafQBNOzSoZYvl9ATf7qziMbpbKmdtU3VS8MzWh+JaJzo7QrycXIMGk+uKlQX4Uy8HmBb+GuwUQ05I5MV1DjSX/lFzoP8KibhgrFWhEGu0lJ1kiLTHO2eNfShkNLpwXRe5OaTz/CX79DtfDWvf3KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729355311; c=relaxed/simple;
-	bh=xbGKRbkO5vEWFBFZS51O6UqO3O2/WZ8Ct3XqyqrPkeM=;
+	s=arc-20240116; t=1729355372; c=relaxed/simple;
+	bh=c5F++auZi2YoIj//vELiQ2ypILgrwOetr/NqqDMRDBw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qr3xPluQzecaFrhf4H9EmsyAeRXAsovX3pR3sFOrM6Iel+VaUloVwNZR5Gt91Gw5NoK1nggSBzVqpN68v2hyQG4YgEJiMSkv0uSqKfCAjES4Dx49Q2HuBLvox/29oZuecqp5LmMhNu2CoubS1DkU002CEYg85PYxiay+cLKNW1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDxc04H5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F7FC4CEC5;
-	Sat, 19 Oct 2024 16:28:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729355311;
-	bh=xbGKRbkO5vEWFBFZS51O6UqO3O2/WZ8Ct3XqyqrPkeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FDxc04H5gdhBrTvLDARWJq81Z8FmJmwzP5chg91mN+4DhHqcdsVe7Mz3onEDD2RDO
-	 J7gg7LhkdDJelN4rfjlcDVSMxR3ptFeHtLsMzd2sE/WccoKptEmzlxqJMth0dnGqM6
-	 0hE/JPKGpKhpMCA59bCyJWQTLVGld93d9vorxBF2rL9AGSYxM/kqXZU/GZsrfnPNDQ
-	 rfkhc9MicsoJ41ErgD0pm3bG605Rg/e0sDQKzL0tDrjWpz/oPGs7PkZc2ophR9+fQu
-	 s/NbDoxsJEIl4ADjcyl1zE+tG0yio7wyVHx1x3/NmAz7z+BDjvbJf7TQSuDNNE86iD
-	 krXN5NjTP/+Qw==
-Date: Sat, 19 Oct 2024 09:28:29 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Tengda Wu <wutengda@huaweicloud.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH -next v4 1/2] perf stat: Support inherit events during
- fork() for bperf
-Message-ID: <ZxPeLaYXsEu9N1f1@google.com>
-References: <20241012023225.151084-1-wutengda@huaweicloud.com>
- <20241012023225.151084-2-wutengda@huaweicloud.com>
- <ZxAtLsClDW8x0H_a@google.com>
- <5c8612d2-a0fb-4853-8b6f-aca85b200edb@huaweicloud.com>
- <ZxKXFMh6_8E6-z7H@google.com>
- <093e14a9-4008-4490-9946-5080449935c4@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AnkK33HRsOpUMA/SQhR1YgoaXNIE53uae6UQGiIrtuiaYEbMZVX/NL+kuOOUDpvnV1NpqDWIbVmd6GD7LOD8EuxpZlr0s2qZh4C0MR2AEpg9wWPg+15dbxL+jiCoJbtN5nVHVw0pBEKGdH3qxjvjtIQyzK6LMPYzO8wAgbHozJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pUZJKrLl; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e13375d3so3454081e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729355368; x=1729960168; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UnhPZOU7UUH1HoSGL559dxSCJP8oqBaVwb2UhbtDqc8=;
+        b=pUZJKrLlANNsynn8ORr6bYCIxl28fZnybqBQukZWRqJbqaM5LBZhomt6/qTQbNoIej
+         AGxloOTqbTgNhuy2RA6YPMHXILufXTpLr3HndXXteXkdl2b+tT/91QKlYMC9cAmnFI60
+         ZmcitkY0PA0cHCgY4lqflrYkw2WqPbo6z5ubWvUZY8mwrr26BDz6dFZ5MCS5+c8qDVMx
+         lvbqaOggZztT2BcAeRS72Iwa/3+dE8L3A5Tnev6HNtQXfegjq+gy3tBB1oWW9zAAAGJ8
+         kd+DAMySOQNVmn8zN7kiUJYKBKknFfFpQNoIVq+xyXVSxXMsDyceCMBZICdou7Ev4tC2
+         ABjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729355368; x=1729960168;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UnhPZOU7UUH1HoSGL559dxSCJP8oqBaVwb2UhbtDqc8=;
+        b=eqWSUFE9IJkGlhgfF7FNNRDBAa4mDaEYO+rqxq4c/onADjaS/VEBGBO20cMr5a/UV5
+         mvqV0KV/jIINFB/tIdsvvJvQJQDdC6+ksXpHriJIrAxLyiVKqEN8xlF3dLyXlZ3s9D+F
+         OT8i7gFWbccjO2P6P3FjZKVTI1mWKSmfecFJa/l+efztQzPMi0jPc9jVm2Yx7RHQyThI
+         bBNxrx8LhW4ZRlcPtDKUh53RMtw5StXlpvepUkDCOp6wQJAnmKNW1nHJVLaAoTF5/Y1r
+         c55f0y/vNoAbmGTbo660Lt5kfqm0E3S17fJhVEGhAlkluGehnWrRXzs6g+JAAk3oPDDv
+         S4iA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoLqkCg1NaVMdlOpOSGRy5xprP379z9pLkb25uSRAV8FlZkf/Y8rtLIpfr7fYWnN+2fUmsViSxe1VKotE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGHE//6bAluaFqAckvSvyKUYrjOMxxu0IW7+1GD5Hb0QrgHzL6
+	v1jip9sLHmTRqJzCkZ/iq889+XTsLetIqPsREEvRVXxNIMVLzR8ohnVNczltpc0=
+X-Google-Smtp-Source: AGHT+IEM0vuztFWZJLrY3x9Ptwp1YKrsO2wSlokW+PM1+qzucLkSShtUc5y5QHzMLT4+vy2o8RAkSg==
+X-Received: by 2002:a05:6512:1383:b0:53a:aea:81cc with SMTP id 2adb3069b0e04-53a1550bdaemr3213330e87.57.1729355368053;
+        Sat, 19 Oct 2024 09:29:28 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a15211401sm573378e87.249.2024.10.19.09.29.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Oct 2024 09:29:26 -0700 (PDT)
+Date: Sat, 19 Oct 2024 19:29:24 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, quic_tengfan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com
+Subject: Re: [PATCH v2 2/3] soc: qcom: llcc: Add LLCC configuration for the
+ QCS8300 platform
+Message-ID: <v73v4qniygxvqgdjcuydgpir2fgxmnltqaxcexoktzesnqfxod@55k43u2gmqqt>
+References: <20241010-qcs8300_llcc-v2-0-d4123a241db2@quicinc.com>
+ <20241010-qcs8300_llcc-v2-2-d4123a241db2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <093e14a9-4008-4490-9946-5080449935c4@huaweicloud.com>
+In-Reply-To: <20241010-qcs8300_llcc-v2-2-d4123a241db2@quicinc.com>
 
-On Sat, Oct 19, 2024 at 04:27:38PM +0800, Tengda Wu wrote:
+On Thu, Oct 10, 2024 at 06:08:47PM +0800, Jingyi Wang wrote:
+> Add LLCC configuration for the QCS8300 platform. There is an errata on
+> LB_CNT information on QCS8300 platform, override the value to get the
+> right number of banks.
 > 
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> ---
+>  drivers/soc/qcom/llcc-qcom.c | 72 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
 > 
-> On 2024/10/19 1:12, Namhyung Kim wrote:
-> > On Thu, Oct 17, 2024 at 10:53:46AM +0800, Tengda Wu wrote:
-> >> Hi,
-> >>
-> >> On 2024/10/17 5:16, Namhyung Kim wrote:
-> >>> Hello,
-> >>>
-> >>> On Sat, Oct 12, 2024 at 02:32:24AM +0000, Tengda Wu wrote:
-> >>>> bperf has a nice ability to share PMUs, but it still does not support
-> >>>> inherit events during fork(), resulting in some deviations in its stat
-> >>>> results compared with perf.
-> >>>>
-> >>>> perf stat result:
-> >>>> $ ./perf stat -e cycles,instructions -- ./perf test -w sqrtloop
-> >>>>
-> >>>>    Performance counter stats for './perf test -w sqrtloop':
-> >>>>
-> >>>>        2,316,038,116      cycles
-> >>>>        2,859,350,725      instructions
-> >>>>
-> >>>>          1.009603637 seconds time elapsed
-> >>>>
-> >>>>          1.004196000 seconds user
-> >>>>          0.003950000 seconds sys
-> >>>>
-> >>>> bperf stat result:
-> >>>> $ ./perf stat --bpf-counters -e cycles,instructions -- \
-> >>>>       ./perf test -w sqrtloop
-> >>>>
-> >>>>    Performance counter stats for './perf test -w sqrtloop':
-> >>>>
-> >>>>           18,762,093      cycles
-> >>>>           23,487,766      instructions
-> >>>>
-> >>>>          1.008913769 seconds time elapsed
-> >>>>
-> >>>>          1.003248000 seconds user
-> >>>>          0.004069000 seconds sys
-> >>>>
-> >>>> In order to support event inheritance, two new bpf programs are added
-> >>>> to monitor the fork and exit of tasks respectively. When a task is
-> >>>> created, add it to the filter map to enable counting, and reuse the
-> >>>> `accum_key` of its parent task to count together with the parent task.
-> >>>> When a task exits, remove it from the filter map to disable counting.
-> >>>>
-> >>>> After support:
-> >>>> $ ./perf stat --bpf-counters -e cycles,instructions -- \
-> >>>>       ./perf test -w sqrtloop
-> >>>>
-> >>>>  Performance counter stats for './perf test -w sqrtloop':
-> >>>>
-> >>>>      2,316,252,189      cycles
-> >>>>      2,859,946,547      instructions
-> >>>>
-> >>>>        1.009422314 seconds time elapsed
-> >>>>
-> >>>>        1.003597000 seconds user
-> >>>>        0.004270000 seconds sys
-> >>>>
-> >>>> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
-> >>>> ---
-> >>>>  tools/perf/builtin-stat.c                     |  4 +-
-> >>>>  tools/perf/util/bpf_counter.c                 | 57 +++++++++---
-> >>>>  tools/perf/util/bpf_counter.h                 | 13 ++-
-> >>>>  tools/perf/util/bpf_counter_cgroup.c          |  3 +-
-> >>>>  tools/perf/util/bpf_skel/bperf_follower.bpf.c | 87 +++++++++++++++++--
-> >>>>  tools/perf/util/bpf_skel/bperf_u.h            |  5 ++
-> >>>>  6 files changed, 145 insertions(+), 24 deletions(-)
-> >>>>
-> >>>> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> >>>> index 3e6b9f216e80..c27b107c1985 100644
-> >>>> --- a/tools/perf/builtin-stat.c
-> >>>> +++ b/tools/perf/builtin-stat.c
-> >>>> @@ -698,6 +698,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
-> >>>>  	char msg[BUFSIZ];
-> >>>>  	unsigned long long t0, t1;
-> >>>>  	struct evsel *counter;
-> >>>> +	struct bpf_stat_opts opts;
-> >>>>  	size_t l;
-> >>>>  	int status = 0;
-> >>>>  	const bool forks = (argc > 0);
-> >>>> @@ -725,7 +726,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
-> >>>>  
-> >>>>  	evlist__for_each_entry(evsel_list, counter) {
-> >>>>  		counter->reset_group = false;
-> >>>> -		if (bpf_counter__load(counter, &target)) {
-> >>>> +		opts.inherit = !stat_config.no_inherit;
-> >>>> +		if (bpf_counter__load(counter, &target, &opts)) {
-> >>>
-> >>> Maybe you can just add a boolean member in the struct target.
-> >>
-> >> Yes，this approach would be more straightforward. 
-> >>
-> >> I had considered it before, but, as you see, considering that `inherit` does not
-> >> align well with the `target` semantics, I chose the another one.
-> > 
-> > Well, I think 'inherit' is well aligned with the target semantics.
-> > We want some processes as the targets of the event and we want to
-> > profile their children or not.
-> > 
-> 
-> Ok.
-> 
-> >>
-> >> Anyway, I'll try it. Code changes would be more clean. Thanks.
-> >>
-> >>>
-> >>>
-> >>>>  			err = -1;
-> >>>>  			goto err_out;
-> >>>>  		}
-> >>>> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
-> >>>> index 7a8af60e0f51..00afea6bde63 100644
-> >>>> --- a/tools/perf/util/bpf_counter.c
-> >>>> +++ b/tools/perf/util/bpf_counter.c
-> >>>> @@ -166,7 +166,9 @@ static int bpf_program_profiler_load_one(struct evsel *evsel, u32 prog_id)
-> >>>>  	return -1;
-> >>>>  }
-> >>>>  
-> >>>> -static int bpf_program_profiler__load(struct evsel *evsel, struct target *target)
-> >>>> +static int bpf_program_profiler__load(struct evsel *evsel,
-> >>>> +				      struct target *target,
-> >>>> +				      struct bpf_stat_opts *opts __maybe_unused)
-> >>>>  {
-> >>>>  	char *bpf_str, *bpf_str_, *tok, *saveptr = NULL, *p;
-> >>>>  	u32 prog_id;
-> >>>> @@ -364,6 +366,7 @@ static int bperf_lock_attr_map(struct target *target)
-> >>>>  
-> >>>>  static int bperf_check_target(struct evsel *evsel,
-> >>>>  			      struct target *target,
-> >>>> +			      struct bpf_stat_opts *opts,
-> >>>>  			      enum bperf_filter_type *filter_type,
-> >>>>  			      __u32 *filter_entry_cnt)
-> >>>>  {
-> >>>> @@ -383,7 +386,12 @@ static int bperf_check_target(struct evsel *evsel,
-> >>>>  		*filter_type = BPERF_FILTER_PID;
-> >>>>  		*filter_entry_cnt = perf_thread_map__nr(evsel->core.threads);
-> >>>>  	} else if (target->pid || evsel->evlist->workload.pid != -1) {
-> >>>> -		*filter_type = BPERF_FILTER_TGID;
-> >>>> +		/*
-> >>>> +		 * unlike the PID type, the TGID type implicitly enables
-> >>>> +		 * event inheritance within a single process.
-> >>>> +		 */
-> >>>> +		*filter_type = opts->inherit ?
-> >>>> +				BPERF_FILTER_TGID : BPERF_FILTER_PID;
-> >>>
-> >>> I'm not sure if it's right.  You should be able to use PID type with
-> >>> inheritance.  In this case child processes or threads from the selected
-> >>> thread would be counted only.
-> >>
-> >> Sorry, don't quite understand. TGID type counts together with all sub-threads within
-> >> the same process, which is what inheritance needs to do; while PID type only counts
-> >> for a single thread and should be used when inheritance is turned off. This is equivalent
-> >> to the code above.
-> > 
-> > Let me be clear:
-> > 
-> >  * PID w/o inherit : specified threads only
-> >  * PID w/ inherit  : specified threads + all threads or child process from the threads
-> >  * TGID w/o inherit: specified process (all threads in the process) only
-> >  * TGID w/ inherit : specified process + all children from the processes
-> > 
-> > For the TGID w/o inherit case, it's ok not to track new threads in the
-> > process because they will have the same tgid anyway.
-> > 
-> > So you cannot change the filter type using inherit value.  It should be
-> > used to control whether it tracks new task only.
-> > 
-> 
-> So changing 'TGID w/o inherit' to 'PID w/o inherit' will lose counts of all
-> threads in the process, right?
+> @@ -3391,6 +3456,12 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>  	num_banks >>= LLCC_LB_CNT_SHIFT;
+>  	drv_data->num_banks = num_banks;
+>  
+> +	/* LB_CNT information is wrong on QCS8300, override the value */
+> +	if (of_device_is_compatible(dev->of_node, "qcom,qcs8300-llcc")) {
+> +		num_banks = 4;
+> +		drv_data->num_banks = 4;
+> +	}
 
-Yep.
+Nit: I think it might be better to skip reading LLCC_COMMON_STATUS0
+register completely and just set num_banks instead. See [1]
 
+[1] https://lore.kernel.org/linux-arm-msm/20241019-sar2130p-llcc-v1-2-4e09063d04f2@linaro.org/
+
+> +
+>  	drv_data->regmaps = devm_kcalloc(dev, num_banks, sizeof(*drv_data->regmaps), GFP_KERNEL);
+>  	if (!drv_data->regmaps) {
+>  		ret = -ENOMEM;
+> @@ -3484,6 +3555,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id qcom_llcc_of_match[] = {
+> +	{ .compatible = "qcom,qcs8300-llcc", .data = &qcs8300_cfgs},
+>  	{ .compatible = "qcom,qdu1000-llcc", .data = &qdu1000_cfgs},
+>  	{ .compatible = "qcom,sa8775p-llcc", .data = &sa8775p_cfgs },
+>  	{ .compatible = "qcom,sc7180-llcc", .data = &sc7180_cfgs },
 > 
-> It's clear now. Thanks for the explanation.
- 
-No problem, looking forward to v5.
+> -- 
+> 2.25.1
+> 
 
-Thanks,
-Namhyung
-
+-- 
+With best wishes
+Dmitry
 
