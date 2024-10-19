@@ -1,89 +1,132 @@
-Return-Path: <linux-kernel+bounces-372866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5129A4E8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:14:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A70D79A4E98
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 075761C2354F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:14:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BDA1C21DFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000A1405F7;
-	Sat, 19 Oct 2024 14:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38673D3B8;
+	Sat, 19 Oct 2024 14:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJOK5MCu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=stoeckmann.org header.i=tobias@stoeckmann.org header.b="UEr8LM4h"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4825328EF;
-	Sat, 19 Oct 2024 14:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFBE537FF;
+	Sat, 19 Oct 2024 14:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729347244; cv=none; b=lgA+lVjtGY2pYVyn94o9hP4w4pYOyJtPNSEOgemHDWAJSrGbTxNfUrbAU6O2ggr+g6yWgEkduXP0SELcJgJ2ZtTEriic+DWoLo7gfbAstneZ/MVgvjAFPSH5+D40+Iqh+qf91koHkjpsR5Wi0CwG8oArohNCm/CY+Tx7bu03f6E=
+	t=1729347617; cv=none; b=YhxbNSG23SI1auOPEQLpjPmDsQuLj1eIwzrqhbx1AjXTooEl39yNCgFAXjXEaE965fkkXUL4NDzBCzUHPxzp/eLkLYrp8TD/1s5vrW/6s8/QoLa27h3ZH4YCwr7wzED9+ZzUz/PVeehWjo6TcOJc9espydYHYUHPxt0Y2VUC5b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729347244; c=relaxed/simple;
-	bh=/YJl37u3gb3ecEanff2bjSph5gRr1jPvWS/wj+kZ9q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BRdr4vM90XOkpcrVf1GcaBpQY7yGAiXf4u+YlWvexCILcP27dSLFLJDz04YNE9cFytanULrlOaDhRYuXZt3OfnSdWCkbCyZZ9Aj5e1OFcRiRHloKFdK9dfQUxsA9G4bRqR7P9UJE2vNheiaT9AzWMx8AdptMezESBEIIXUSyQ7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJOK5MCu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA69C4CEC5;
-	Sat, 19 Oct 2024 14:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729347243;
-	bh=/YJl37u3gb3ecEanff2bjSph5gRr1jPvWS/wj+kZ9q4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PJOK5MCuq81Fzh3S2E4zUpwptLihRWgb5qRhugJY1xYzlDxrciLg3c3RAZS56kkac
-	 rJxVks/RuKKG4+KMozWI/8IwbfCR8KxXmJTrYhr4uTxN9j3IH0isJPPHuyNbeiXyUL
-	 08ST0+8HGmUJd2C0PyT5ituXxYNPESjG+obW7tTqxZJHfN8akl6BJp6vCA5y8CYwjp
-	 g3r9MwIUzqx0hWkkHsHvOoPp8/Oxfp9XarspMSJjTxoSDzsVkjgMFu0JHvp+IZX8z4
-	 0BGS7R+n5X7X7qTojd+jtkt/y9Gahe14GekUPTFuKVY/UbcmzVaqXiF8ex14GMNtIU
-	 ysFUCM814Q3mQ==
-Date: Sat, 19 Oct 2024 15:13:39 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>
-Cc: linux-kernel-mentees@lists.linuxfoundation.org, ricardo@marliere.net,
- skhan@linuxfoundation.org, Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: gyro: list adis16137 in Kconfig description
-Message-ID: <20241019151339.553ee396@jic23-huawei>
-In-Reply-To: <20241019034213.429464-1-0xff07@gmail.com>
-References: <20241019034213.429464-1-0xff07@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729347617; c=relaxed/simple;
+	bh=EubbHA9aWeqeVtquYU1NLEUa+R7xITfA/9u8hXxCp9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Cn/SLGS7qxPvJfKfLVV6V3sv/7uZaGo/Sv8g5tfXPITc47KlIkz6WpT5Q08d4qY+BuH3QN78kwE4cXlzilnlUKwidJH7D+N+rNbXk+XDNtf8NdnFV2A5XJ/V5YVQF5VdPnMcBDMC5PsQwZ2KtcLnhUpMglOJnSmrJZ1QNZ/z3EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stoeckmann.org; spf=pass smtp.mailfrom=stoeckmann.org; dkim=pass (2048-bit key) header.d=stoeckmann.org header.i=tobias@stoeckmann.org header.b=UEr8LM4h; arc=none smtp.client-ip=212.227.126.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stoeckmann.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoeckmann.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stoeckmann.org;
+	s=s1-ionos; t=1729347608; x=1729952408; i=tobias@stoeckmann.org;
+	bh=YaO01H0aBFxXTIh6R9RLuOMde/+nhqIC3cIiUOtVZtY=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=UEr8LM4hJzDNQ0EKNFkxunkdMo/yID6FRlulJgS/xYK0LXgXISoI2pWjVkA0p0dn
+	 +0lxYovsT1CvlJgct7EvftCVL7hAis6BwcKHaNERGMnvFcKh4Ujw/rsU4wD/mgP9w
+	 vxh96Sa5aNYtTq3eEoY8gVD5xhD04qA4gQTZCX0G3j7UF48/nROlbttLUCHQJ4FB+
+	 hqDuxHko4edudbWwi6pS1ES60MbQP/Nbjrk9B4xEB2K+sLnicLBHQz3OmEhdZkvgL
+	 30heWsRdYbQ4C9UecJTTXa2GaJzBxIpqxJlvQiuPKQZvKbpjrOx6ZlRxC/bAXuKZx
+	 a2X6yFIEblbfzAoFLA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([93.225.54.107]) by mrelayeu.kundenserver.de
+ (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1Mpkwn-1tiaKM2UxB-00jzEU; Sat, 19 Oct 2024 16:14:43 +0200
+Date: Sat, 19 Oct 2024 16:14:40 +0200
+From: Tobias Stoeckmann <tobias@stoeckmann.org>
+To: mcgrof@kernel.org
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] module: .strtab must be null terminated
+Message-ID: <5uwynkpfhtqbrq47nqvp2ixpjhstjl7o7uxqp3b6snj233tvzi@avfrbljjpdel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Provags-ID: V03:K1:PC9FP5yhmpbpK6fq2dE79Avr/g93nX5OOYPuxBmEQZVfEsgWtgT
+ UaN2/JEuYkrsKkURBEXtQvGrRqJYvmMbD+IJaHc1wsI/Ys80p/ixmpdNOrI9EMdn5R7qv9c
+ oaz/xvmwdh3/F2dIcItmU8DJt6RGnHICnw5gnf8cGaN6NnDRcc7+aEbJyCk7ZX2qEw/C5P8
+ 28FjWnsAbdUGF0kbfxpmQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TL6FhCzdM2A=;BK/7PJVqPBXIY6thjxytUMHdGGC
+ LzuHYlqS7+QMmYO4De8vWeulVgYRpgEseKy/8csfAXHZfti/bvZece+O/Y1fjVFVh5B0rXbxo
+ U9/JoN+c/AhoqesQIS6zkX4ZS7tFIDMSWmZUVvVS9X3jVEHzA01mqMOTbFIamwI368wRkBpgs
+ ohbSeD+s8DEME1HzzGj9tM64Zw4oZ/Jstb45vf9LhilhF1ggV4C6Yz0VxOZOuetu/4HcvvfNc
+ eNGeD7dvsAaBXc+DO2gM6TqzbV1hbelczI+TTFt5MPKYF5GXmLsoPmT+wAuo6V8kcbRW8SOUj
+ /uArIhToH4HJr2V/9eOA3xhaJDx2h+Y63yvtCF+rQTqmEE1k5pH8vNniR32m/p/47aDGM/blO
+ 3H7dZivJyOBNCSk75poiGDB3yjyQ+lKHps9hLndhvEZKg+9SQemCpiCh8UU/68Eh+gTdvub62
+ 883JGD6WZgAfSoielgRWkJarjWn9ZhGM7DYqwd9Q/All3vbNao+XWkuVE7uouYFSsvKglEjsH
+ yOpfWq/YDZCPrUxNRKQmnhVFn1hVbfM0gganpkej1Jciy6KPgUsj/b5HMwYxI8dBTZmlS10tR
+ yhyiVvMIXeuaaTcy6XpNG8l6g7QzIa5h0R6zhrPqcCDTKiHJQJ6iWjPpXh5gCmB+H5TySaJWY
+ Yb3HXLc53Vk5fMF1praM84OqvlhD83YPvxx6nracvbjoVW2P2mZNDqU2y2iMIT0tbl+Cgu2lw
+ Xt57EWlkUGxo1rEjErfa6fqwZnrcVfCcQ==
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 19 Oct 2024 11:42:05 +0800
-"Yo-Jung (Leo) Lin" <0xff07@gmail.com> wrote:
+The string table must be NUL-terminated, just like the section name table.
 
-> The adis16136 driver also supports the adis16137 model, but it is not
-> mentioned in the Kconfig help. Add it to the description in Kconfig.
-> 
-> Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
-Applied.
-> ---
->  drivers/iio/gyro/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/gyro/Kconfig b/drivers/iio/gyro/Kconfig
-> index 97b86c4a53a6..3e193ee0fb61 100644
-> --- a/drivers/iio/gyro/Kconfig
-> +++ b/drivers/iio/gyro/Kconfig
-> @@ -27,7 +27,7 @@ config ADIS16136
->  	select IIO_ADIS_LIB_BUFFER if IIO_BUFFER
->  	help
->  	  Say yes here to build support for the Analog Devices ADIS16133, ADIS16135,
-> -	  ADIS16136 gyroscope devices.
-> +	  ADIS16136, ADIS16137 gyroscope devices.
->  
->  config ADIS16260
->  	tristate "Analog Devices ADIS16260 Digital Gyroscope Sensor SPI driver"
+Signed-off-by: Tobias Stoeckmann <tobias@stoeckmann.org>
+=2D--
+In order to create a proof of concept, which I can't get into a simple
+script right now, it's easiest to move '.strtab' to the end of the module
+file, write as many 'A' characters at the end as required according to the
+section size, and try to insert the module.
+
+In dmesg, you can see lines like:
+
+```
+poc: Unknown symbol AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xc6\x=
+e9<\xfe\xff\xff\x8b
+\xff\xc1\xe9\x03\xf3H\xa5\xeb\xa1I\x8b~ \xe8 (err -2)
+```
+=2D--
+ kernel/module/main.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index 49b9bca9d..9c5b373a7 100644
+=2D-- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -1847,6 +1847,18 @@ static int elf_validity_cache_copy(struct load_info=
+ *info, int flags)
+ 	info->index.str =3D shdr->sh_link;
+ 	info->strtab =3D (char *)info->hdr + info->sechdrs[info->index.str].sh_o=
+ffset;
+
++	/*
++	 * The string table must be NUL-terminated, as required
++	 * by the spec. This makes strcmp and pr_* calls that access
++	 * strings in the section safe.
++	 */
++	strhdr =3D &info->sechdrs[info->index.str];
++	if (strhdr->sh_size > 0 && info->strtab[strhdr->sh_size - 1] !=3D '\0') =
+{
++		pr_err("module %s: string table isn't null terminated\n",
++		       info->name ?: "(missing .modinfo section or name field)");
++		goto no_exec;
++	}
++
+ 	/*
+ 	 * The ".gnu.linkonce.this_module" ELF section is special. It is
+ 	 * what modpost uses to refer to __this_module and let's use rely
+=2D-
+2.47.0
 
 
