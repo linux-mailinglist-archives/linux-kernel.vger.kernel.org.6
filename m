@@ -1,73 +1,88 @@
-Return-Path: <linux-kernel+bounces-372864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223089A4E86
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:12:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BED9A4E89
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 068601C2151A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:12:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E55C1F26C33
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A74138FB0;
-	Sat, 19 Oct 2024 14:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254AB502B1;
+	Sat, 19 Oct 2024 14:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XacNuF7u"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MfSkb7o3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B351E519
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 14:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EB52207A;
+	Sat, 19 Oct 2024 14:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729347159; cv=none; b=AY17P9NeNXDZ9shBE+qSNEASGbrVmXICUMjDDmj7sFhiRwqHgIqSw4xYb5qZnhs7lIE+wd4BJNTTQDVcvYS8hJMuI4WVr9S54QSBjUKrI8JYI9p+7LkGwnx3vbObgrYKKYHlZ+3oV4EwR1lE+egaltcpgbV4dvwbDG8Kap2OPV0=
+	t=1729347160; cv=none; b=UMm5i+6apdRRPYCFy41vH+E1lmUjRoZkDKmDmQ3dQ0Y4F60Xm4D7lbnkjS6GyyYb0BX+QPQty+exkZog4alIxaIfB2BK6qFupllXJsPb0dQU8Gp3vUFVvQ7XKvvbBnLRxVKkHADH/ZDt5C/pnKtI+85CRq0noFIC/r6tYjfKSdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729347159; c=relaxed/simple;
-	bh=ikxsOS9//BIRhrEbwkUMCVoClNlS/zW9Wh6XXzfhBbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EBnATAW1jlMihskcCCdXyevC9EMF/Ch6Wxg20LHhs/kD08IPLcJ7YyskX3L+XbUJdN6//VVQZgN43Dtmdbufjih0vi5uw51fJKDvuyUEe6o/Q7oZewtDBPm6Y2yPfU6RZ6dpD0OY6uBoCSjcusMXk2hVAG9xg2r4BJlYHgADnYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XacNuF7u; arc=none smtp.client-ip=192.198.163.10
+	s=arc-20240116; t=1729347160; c=relaxed/simple;
+	bh=ZrHmr5VaECy8UuvZjqQ6voSNPqYS2zNatLG+hRePEVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXhjQ69TtoHOlUttpejv1Q5npRY8gG/+0U7k4DqQMUoHyBsoVgxqMc+tFu+0B0wnBcqdUlSgPMkyFOnhjF3SXWSC1tS7JyRbbl6TNJYQ1ayF07XXxwrYx/d1yKjzCKoi9JbLEyfJ1VQjSNn/zrdo9YNrx/CLBA7W+Nrwpo5ErZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MfSkb7o3; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729347156; x=1760883156;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ikxsOS9//BIRhrEbwkUMCVoClNlS/zW9Wh6XXzfhBbU=;
-  b=XacNuF7uWauLzOravbxaFQZlGrf5h7+viL+x3fF6q6ohIHvUvnvIRsJz
-   6QGBuMrV6Mz0rKF6S+y93KqXNjtqVKp856R7Mf+TzjRLhUoGl5jTbmOQX
-   RTV10zxJXMxqLnq5/aphp4WfRNi+n/sPkCD+M2MtvrKvNbkM2qihiIX/J
-   qZ1J1tIRibIR0oWUBkZXoLpFVA2P7Qe0mC7hrWzyb26h+17ETEZe+oZZL
-   csYy9NfZSElf1jn3qY9zo4D+6zeFV8P5c/bKWCrRni9wDCcdzKwv1aXwa
-   PtJy7S7kLGcQOyOLBCj4OsJ77P+rmGdYeSm5Uf9liCVeDzXstfvhhw/N2
-   g==;
-X-CSE-ConnectionGUID: rraLd8n1QeC5SEYIvhOmWg==
-X-CSE-MsgGUID: aputeWxdSuml6U7+YJ0F2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11230"; a="40234591"
+  t=1729347159; x=1760883159;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZrHmr5VaECy8UuvZjqQ6voSNPqYS2zNatLG+hRePEVY=;
+  b=MfSkb7o3kJ60c90kz+h8zChXJPDXB8xYe4VNX2Cg/c7uZqO7z/m9qUtr
+   FIHFLN0Vw5LluXbujvTot7VM8CCxsQnJufwl/n7VA0NyiOkcThbhVn1jK
+   U94ApDP4TPxlf1r3JO21YPcLwWpi36nw50A4niHclnbAuKu2qi3SaaSuA
+   7U72LmXM2Om4OkwhkTUVqujYOedeOoth/+Xv+alHvB9Y0hf5Dt17gn6nz
+   oWVYfvvvw9b14GTDY2oWjtEHnWOnW/LVox52aQCrh/TaAFj1xok2DZ2S+
+   zSf+8FeIuR5MKMHbBu4LV4k9+5MRAwfvFiZVtzyM9Hyb5RpPCCQaw2pMh
+   w==;
+X-CSE-ConnectionGUID: ordxXbAnSSOZ9FSZJgp7DA==
+X-CSE-MsgGUID: P+t0i6GzRKiSERMCl77Tyw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11230"; a="16487351"
 X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
-   d="scan'208";a="40234591"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 07:12:35 -0700
-X-CSE-ConnectionGUID: IBkD6bFfTxCsO1QHrpE92Q==
-X-CSE-MsgGUID: 1fM7OApbSJSVY8k393r61w==
+   d="scan'208";a="16487351"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 07:12:38 -0700
+X-CSE-ConnectionGUID: VHCoxef/St+94kG9sdfBiQ==
+X-CSE-MsgGUID: jMPDadBJSN+1E4RqjaIKOw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
-   d="scan'208";a="109875642"
+   d="scan'208";a="102423448"
 Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 19 Oct 2024 07:12:34 -0700
+  by fmviesa002.fm.intel.com with ESMTP; 19 Oct 2024 07:12:33 -0700
 Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1t2ABz-000P3N-32;
+	id 1t2ABz-000P3P-36;
 	Sat, 19 Oct 2024 14:12:31 +0000
-Date: Sat, 19 Oct 2024 22:12:01 +0800
+Date: Sat, 19 Oct 2024 22:12:02 +0800
 From: kernel test robot <lkp@intel.com>
-To: Brian Gerst <brgerst@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: arch/x86/xen/enlighten_pv.c:1407:28: sparse: sparse: incorrect type
- in initializer (different address spaces)
-Message-ID: <202410192244.k4KFmVBy-lkp@intel.com>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+Subject: Re: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+Message-ID: <202410192150.qZi3WkG1-lkp@intel.com>
+References: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,137 +91,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   3d5ad2d4eca337e80f38df77de89614aa5aaceb9
-commit: 11e36b0f7c2150a6453872b79555767b43c846d0 x86/boot/64: Load the final kernel GDT during early boot directly, remove startup_gdt[]
-date:   8 months ago
-config: x86_64-randconfig-122-20241019 (https://download.01.org/0day-ci/archive/20241019/202410192244.k4KFmVBy-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410192244.k4KFmVBy-lkp@intel.com/reproduce)
+Hi Ciprian,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on abelloni/rtc-next]
+[also build test ERROR on robh/for-next arm64/for-next/core linus/master v6.12-rc3 next-20241018]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ciprian-Costea/dt-bindings-rtc-add-schema-for-NXP-S32G2-S32G3-SoCs/20241015-185302
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
+patch link:    https://lore.kernel.org/r/20241015105133.656360-3-ciprianmarian.costea%40oss.nxp.com
+patch subject: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+config: powerpc-randconfig-001-20241019 (https://download.01.org/0day-ci/archive/20241019/202410192150.qZi3WkG1-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410192150.qZi3WkG1-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410192244.k4KFmVBy-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410192150.qZi3WkG1-lkp@intel.com/
 
-sparse warnings: (new ones prefixed by >>)
->> arch/x86/xen/enlighten_pv.c:1407:28: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct gdt_page * @@
-   arch/x86/xen/enlighten_pv.c:1407:28: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   arch/x86/xen/enlighten_pv.c:1407:28: sparse:     got struct gdt_page *
-   arch/x86/xen/enlighten_pv.c: note: in included file (through arch/x86/include/asm/stackprotector.h, include/linux/stackprotector.h):
-   arch/x86/include/asm/desc.h:54:16: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct gdt_page * @@
-   arch/x86/include/asm/desc.h:54:16: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   arch/x86/include/asm/desc.h:54:16: sparse:     got struct gdt_page *
+All errors (new ones prefixed by >>):
 
-vim +1407 arch/x86/xen/enlighten_pv.c
+   powerpc-linux-ld: drivers/rtc/rtc-s32g.o: in function `s32g_rtc_get_time_or_alrm':
+>> drivers/rtc/rtc-s32g.c:105:(.text+0x1a0): undefined reference to `__udivdi3'
+   powerpc-linux-ld: drivers/rtc/rtc-s32g.o: in function `get_time_left':
+   drivers/rtc/rtc-s32g.c:105:(.text+0x6a8): undefined reference to `__udivdi3'
+   powerpc-linux-ld: drivers/rtc/rtc-s32g.o: in function `sec_to_rtcval':
+   drivers/rtc/rtc-s32g.c:105:(.text+0xbfc): undefined reference to `__udivdi3'
+   powerpc-linux-ld: drivers/rtc/rtc-s32g.o: in function `rtc_clk_src_switch':
+   drivers/rtc/rtc-s32g.c:387:(.text+0x1630): undefined reference to `__udivdi3'
 
-8b87d8cec1b31e Peter Zijlstra   2022-03-08  1311  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1312  /* First C function to be called on Xen boot */
-96e8fc5818686d Juergen Gross    2022-06-30  1313  asmlinkage __visible void __init xen_start_kernel(struct start_info *si)
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1314  {
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1315  	struct physdev_set_iopl set_iopl;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1316  	unsigned long initrd_start = 0;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1317  	int rc;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1318  
-96e8fc5818686d Juergen Gross    2022-06-30  1319  	if (!si)
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1320  		return;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1321  
-96e8fc5818686d Juergen Gross    2022-06-30  1322  	clear_bss();
-96e8fc5818686d Juergen Gross    2022-06-30  1323  
-96e8fc5818686d Juergen Gross    2022-06-30  1324  	xen_start_info = si;
-96e8fc5818686d Juergen Gross    2022-06-30  1325  
-8b87d8cec1b31e Peter Zijlstra   2022-03-08  1326  	__text_gen_insn(&early_xen_iret_patch,
-8b87d8cec1b31e Peter Zijlstra   2022-03-08  1327  			JMP32_INSN_OPCODE, &early_xen_iret_patch, &xen_iret,
-8b87d8cec1b31e Peter Zijlstra   2022-03-08  1328  			JMP32_INSN_SIZE);
-8b87d8cec1b31e Peter Zijlstra   2022-03-08  1329  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1330  	xen_domain_type = XEN_PV_DOMAIN;
-1fe83888a2b776 Roger Pau Monne  2018-06-08  1331  	xen_start_flags = xen_start_info->flags;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1332  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1333  	xen_setup_features();
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1334  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1335  	/* Install Xen paravirt ops */
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1336  	pv_info = xen_info;
-1462eb381b4c27 Peter Zijlstra   2021-06-24  1337  	pv_ops.cpu = xen_cpu_ops.cpu;
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1338  	xen_init_irq_ops();
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1339  
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1340  	/*
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1341  	 * Setup xen_vcpu early because it is needed for
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1342  	 * local_irq_disable(), irqs_disabled(), e.g. in printk().
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1343  	 *
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1344  	 * Don't do the full vcpu_info placement stuff until we have
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1345  	 * the cpu_possible_mask and a non-dummy shared_info.
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1346  	 */
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1347  	xen_vcpu_info_reset(0);
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1348  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1349  	x86_platform.get_nmi_reason = xen_get_nmi_reason;
-f1e525009493cb Juergen Gross    2022-11-23  1350  	x86_platform.realmode_reserve = x86_init_noop;
-f1e525009493cb Juergen Gross    2022-11-23  1351  	x86_platform.realmode_init = x86_init_noop;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1352  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1353  	x86_init.resources.memory_setup = xen_memory_setup;
-979923871f69a4 Thomas Gleixner  2020-01-23  1354  	x86_init.irqs.intr_mode_select	= x86_init_noop;
-3b5244bef15e0e Juergen Gross    2023-08-08  1355  	x86_init.irqs.intr_mode_init	= x86_64_probe_apic;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1356  	x86_init.oem.arch_setup = xen_arch_setup;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1357  	x86_init.oem.banner = xen_banner;
-7b25b9cb0dad83 Pavel Tatashin   2018-07-19  1358  	x86_init.hyper.init_platform = xen_pv_init_platform;
-7b25b9cb0dad83 Pavel Tatashin   2018-07-19  1359  	x86_init.hyper.guest_late_init = xen_pv_guest_late_init;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1360  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1361  	/*
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1362  	 * Set up some pagetable state before starting to set any ptes.
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1363  	 */
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1364  
-0ce0bba4e5e0eb Juergen Gross    2018-07-12  1365  	xen_setup_machphys_mapping();
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1366  	xen_init_mmu_ops();
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1367  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1368  	/* Prevent unwanted bits from being set in PTEs. */
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1369  	__supported_pte_mask &= ~_PAGE_GLOBAL;
-e69b5d308da72c Juergen Gross    2018-07-02  1370  	__default_kernel_pte_mask &= ~_PAGE_GLOBAL;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1371  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1372  	/* Get mfn list */
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1373  	xen_build_dynamic_phys_to_machine();
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1374  
-ae897fda4f507e Jan Beulich      2021-05-20  1375  	/* Work out if we support NX */
-ae897fda4f507e Jan Beulich      2021-05-20  1376  	get_cpu_cap(&boot_cpu_data);
-ae897fda4f507e Jan Beulich      2021-05-20  1377  	x86_configure_nx();
-ae897fda4f507e Jan Beulich      2021-05-20  1378  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1379  	/*
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1380  	 * Set up kernel GDT and segment registers, mainly so that
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1381  	 * -fstack-protector code can be executed.
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1382  	 */
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1383  	xen_setup_gdt(0);
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1384  
-405c018a25fe46 M. Vefa Bicakci  2018-07-24  1385  	/* Determine virtual and physical address sizes */
-405c018a25fe46 M. Vefa Bicakci  2018-07-24  1386  	get_cpu_address_sizes(&boot_cpu_data);
-405c018a25fe46 M. Vefa Bicakci  2018-07-24  1387  
-42b3a4cb5609de Juergen Gross    2017-11-24  1388  	/* Let's presume PV guests always boot on vCPU with id 0. */
-42b3a4cb5609de Juergen Gross    2017-11-24  1389  	per_cpu(xen_vcpu_id, 0) = 0;
-42b3a4cb5609de Juergen Gross    2017-11-24  1390  
-42b3a4cb5609de Juergen Gross    2017-11-24  1391  	idt_setup_early_handler();
-42b3a4cb5609de Juergen Gross    2017-11-24  1392  
-0808e80cb760de Juergen Gross    2017-04-13  1393  	xen_init_capabilities();
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1394  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1395  	/*
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1396  	 * set up the basic apic ops.
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1397  	 */
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1398  	xen_init_apic();
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1399  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1400  	machine_ops = xen_machine_ops;
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1401  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1402  	/*
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1403  	 * The only reliable way to retain the initial address of the
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1404  	 * percpu gdt_page is to remember it here, so we can go and
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1405  	 * mark it RW later, when the initial percpu area is freed.
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1406  	 */
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14 @1407  	xen_initial_gdt = &per_cpu(gdt_page, 0);
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1408  
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1409  	xen_smp_init();
-e1dab14cf68d1e Vitaly Kuznetsov 2017-03-14  1410  
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [y]:
+   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
 
-:::::: The code at line 1407 was first introduced by commit
-:::::: e1dab14cf68d1e03950135969af3faf322f0db04 x86/xen: split off enlighten_pv.c
 
-:::::: TO: Vitaly Kuznetsov <vkuznets@redhat.com>
-:::::: CC: Juergen Gross <jgross@suse.com>
+vim +105 drivers/rtc/rtc-s32g.c
+
+   102	
+   103	static u64 cycles_to_sec(u64 hz, u64 cycles)
+   104	{
+ > 105		return cycles / hz;
+   106	}
+   107	
 
 -- 
 0-DAY CI Kernel Test Service
