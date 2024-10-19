@@ -1,140 +1,158 @@
-Return-Path: <linux-kernel+bounces-372994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7267A9A506E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 21:14:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C359A5078
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 21:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D682BB210FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 19:14:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55FB1B25DB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 19:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4001917F1;
-	Sat, 19 Oct 2024 19:14:10 +0000 (UTC)
-Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54051917C7;
+	Sat, 19 Oct 2024 19:27:22 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A02E320E;
-	Sat, 19 Oct 2024 19:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6667DA59;
+	Sat, 19 Oct 2024 19:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729365250; cv=none; b=OVCWxFjq9igdVAgHuazj4fgF2j23S4MapvaopqfjGAVaHaaZhdwTz0QVLG5mcj+U8WeN3KxRKQv6nZxB1hcMQFGY9LutvXN2SHVeB7W2PqLl6/QsQpxvqqkEZ+ZEHRgLYS2A/Xf9r5ZDx1H9qs8rmL2yGKW0xY+dQaoWL46VvG8=
+	t=1729366042; cv=none; b=TB/bpSSbiXrpEVztwXktTfSLSw9uAO2dgImDoQFqaE6cWDiwLTmr+SRT4ltV9rzBXs6BpO4aZt04TJJJtG/sW/QIUptJ7sVxA/fBF41Q63XFrPi7uxGTefMbG8uMQ8DHW1GwHXXuJ+2dzRbEvxEg8ALg/p2c96Sin1MWc/TTx1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729365250; c=relaxed/simple;
-	bh=1PmlXZ08rwRzhTA6Y6VmiDm2MHi60DUvNyiBGaJrRAw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JkhlNNKtj3pDMfXf3j6iaHRskPCNBwAKcxjufRJapTGjyny3VDk2bleEL4MgYFIwSh5S38rh+Wn+R6QyCNiGCVvOQR/sbT2Uit4KrbVtK+SBGqddC2EyRXTShUGQEqY+0zJNv7FkLZ3SxTgPan7WpXZoIkCWD8246uzu4loyj98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: by air.basealt.ru (Postfix, from userid 490)
-	id B8EC62F20246; Sat, 19 Oct 2024 19:13:57 +0000 (UTC)
-X-Spam-Level: 
-Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
-	by air.basealt.ru (Postfix) with ESMTPSA id C4E1D2F20226;
-	Sat, 19 Oct 2024 19:13:56 +0000 (UTC)
-From: Vasiliy Kovalev <kovalev@altlinux.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kovalev@altlinux.org,
-	lvc-patches@linuxtesting.org,
-	dutyrok@altlinux.org,
-	gerben@altlinux.org,
-	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-Date: Sat, 19 Oct 2024 22:13:03 +0300
-Message-Id: <20241019191303.24048-1-kovalev@altlinux.org>
-X-Mailer: git-send-email 2.33.8
+	s=arc-20240116; t=1729366042; c=relaxed/simple;
+	bh=j/bvNcIqqxs5We+N9wHWo701XMwdB2xFIu8i+jNLozI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z+zsRNzvZ+f7ceO4hiDBRVK1NJ7CONXDLSwH9iCjZKaQTOkb/zefQUfA8Ypxj/Z+/WBa3LBOCZQAblYIj3ZSKEEDyUkOrOMd+5STkXPBibIeG2OcDH9UpmFigEX2loWETbNxEXQ+pSCT/dLF3uU+dVkabETKh433U/TrQ2KlzE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3846C4CEC5;
+	Sat, 19 Oct 2024 19:27:20 +0000 (UTC)
+Date: Sat, 19 Oct 2024 15:27:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ryan Roberts <ryan.roberts@arm.com>
+Subject: [PATCH] fgraph: Give ret_stack its own kmem cache
+Message-ID: <20241019152719.321772eb@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Syzbot reported an issue in hfs subsystem:
+From: Steven Rostedt <rostedt@goodmis.org>
 
-BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
-BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
-BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
-Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
+The ret_stack (shadow stack used by function graph infrastructure) is
+created for every task on the system when function graph is enabled. Give
+it its own kmem_cache. This will make it easier to see how much memory is
+being used specifically for function graph shadow stacks.
 
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
- memcpy_from_page include/linux/highmem.h:423 [inline]
- hfs_bnode_read fs/hfs/bnode.c:35 [inline]
- hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
- hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
- hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
- hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdir fs/namei.c:4300 [inline]
- __se_sys_mkdir fs/namei.c:4298 [inline]
- __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbdd6057a99
+In the future, this size may change and may not be a power of two. Having
+its own cache can also keep it from fragmenting memory.
 
-Add a check for key length in hfs_bnode_read_key to prevent
-out-of-bounds memory access. If the key length is invalid, the
-key buffer is cleared, improving stability and reliability.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
-Cc: stable@vger.kernel.org
-Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- fs/hfs/bnode.c     | 6 ++++++
- fs/hfsplus/bnode.c | 6 ++++++
- 2 files changed, 12 insertions(+)
+ kernel/trace/fgraph.c | 35 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 30 insertions(+), 5 deletions(-)
 
-diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-index 6add6ebfef8967..cb823a8a6ba960 100644
---- a/fs/hfs/bnode.c
-+++ b/fs/hfs/bnode.c
-@@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
- 	else
- 		key_len = tree->max_key_len + 1;
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 51e81b299a0d..51849bc42d3a 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -172,6 +172,8 @@ enum {
+ DEFINE_STATIC_KEY_FALSE(kill_ftrace_graph);
+ int ftrace_graph_active;
  
-+	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
-+		memset(key, 0, sizeof(hfs_btree_key));
-+		pr_err("hfs: Invalid key length: %d\n", key_len);
-+		return;
-+	}
++static struct kmem_cache *fgraph_stack_cachep;
 +
- 	hfs_bnode_read(node, key, off, key_len);
+ static struct fgraph_ops *fgraph_array[FGRAPH_ARRAY_SIZE];
+ static unsigned long fgraph_array_bitmask;
+ 
+@@ -1022,8 +1024,11 @@ static int alloc_retstack_tasklist(unsigned long **ret_stack_list)
+ 	int start = 0, end = FTRACE_RETSTACK_ALLOC_SIZE;
+ 	struct task_struct *g, *t;
+ 
++	if (WARN_ON_ONCE(!fgraph_stack_cachep))
++		return -ENOMEM;
++
+ 	for (i = 0; i < FTRACE_RETSTACK_ALLOC_SIZE; i++) {
+-		ret_stack_list[i] = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
++		ret_stack_list[i] = kmem_cache_alloc(fgraph_stack_cachep, GFP_KERNEL);
+ 		if (!ret_stack_list[i]) {
+ 			start = 0;
+ 			end = i;
+@@ -1054,7 +1059,7 @@ static int alloc_retstack_tasklist(unsigned long **ret_stack_list)
+ 	rcu_read_unlock();
+ free:
+ 	for (i = start; i < end; i++)
+-		kfree(ret_stack_list[i]);
++		kmem_cache_free(fgraph_stack_cachep, ret_stack_list[i]);
+ 	return ret;
  }
  
-diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
-index 87974d5e679156..079ea80534f7de 100644
---- a/fs/hfsplus/bnode.c
-+++ b/fs/hfsplus/bnode.c
-@@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
- 	else
- 		key_len = tree->max_key_len + 2;
+@@ -1117,9 +1122,12 @@ void ftrace_graph_init_idle_task(struct task_struct *t, int cpu)
+ 	if (ftrace_graph_active) {
+ 		unsigned long *ret_stack;
  
-+	if (key_len > sizeof(hfsplus_btree_key) || key_len < 1) {
-+		memset(key, 0, sizeof(hfsplus_btree_key));
-+		pr_err("hfsplus: Invalid key length: %d\n", key_len);
-+		return;
-+	}
++		if (WARN_ON_ONCE(!fgraph_stack_cachep))
++			return;
 +
- 	hfs_bnode_read(node, key, off, key_len);
+ 		ret_stack = per_cpu(idle_ret_stack, cpu);
+ 		if (!ret_stack) {
+-			ret_stack = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
++			ret_stack = kmem_cache_alloc(fgraph_stack_cachep, GFP_KERNEL);
+ 			if (!ret_stack)
+ 				return;
+ 			per_cpu(idle_ret_stack, cpu) = ret_stack;
+@@ -1139,7 +1147,10 @@ void ftrace_graph_init_task(struct task_struct *t)
+ 	if (ftrace_graph_active) {
+ 		unsigned long *ret_stack;
+ 
+-		ret_stack = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
++		if (WARN_ON_ONCE(!fgraph_stack_cachep))
++			return;
++
++		ret_stack = kmem_cache_alloc(fgraph_stack_cachep, GFP_KERNEL);
+ 		if (!ret_stack)
+ 			return;
+ 		graph_init_task(t, ret_stack);
+@@ -1154,7 +1165,11 @@ void ftrace_graph_exit_task(struct task_struct *t)
+ 	/* NULL must become visible to IRQs before we free it: */
+ 	barrier();
+ 
+-	kfree(ret_stack);
++	if (ret_stack) {
++		if (WARN_ON_ONCE(!fgraph_stack_cachep))
++			return;
++		kmem_cache_free(fgraph_stack_cachep, ret_stack);
++	}
  }
  
+ #ifdef CONFIG_DYNAMIC_FTRACE
+@@ -1290,6 +1305,16 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ 
+ 	mutex_lock(&ftrace_lock);
+ 
++	if (!fgraph_stack_cachep) {
++		fgraph_stack_cachep = kmem_cache_create("fgraph_stack",
++							SHADOW_STACK_SIZE,
++							SHADOW_STACK_SIZE, 0, NULL);
++		if (!fgraph_stack_cachep) {
++			ret = -ENOMEM;
++			goto out;
++		}
++	}
++
+ 	if (!fgraph_array[0]) {
+ 		/* The array must always have real data on it */
+ 		for (i = 0; i < FGRAPH_ARRAY_SIZE; i++)
 -- 
-2.33.8
+2.45.2
 
 
