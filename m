@@ -1,130 +1,160 @@
-Return-Path: <linux-kernel+bounces-372770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747CD9A4CF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:12:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5229B9A4CF5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A19651C21487
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:12:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14D702842A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13231DFD8E;
-	Sat, 19 Oct 2024 11:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEF61DFD80;
+	Sat, 19 Oct 2024 11:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="eQKWuXLH"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bR60Y4xt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4358017BB3F;
-	Sat, 19 Oct 2024 11:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D7317BB3F;
+	Sat, 19 Oct 2024 11:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729336314; cv=none; b=MQRfNGnmImCYPQp7pHqodLlmu/uAvbgCVhelryW+JvHLAZrTb3XAoXF3fa4RoRhdmBUr5GY23dzUkOmubs+Itx6Hsza7UkWfDldLaQB/m+ZTpkkcdhPIKqaAv2uYWkoa92peePNKqSUVbNodmPVw2nmwGcZ9G9t3zdj7hX5aE1c=
+	t=1729336342; cv=none; b=Vi96WJdV6LdPG+M029u81yvzBAGL/Uym0VIXSBeHxgpfwxdSFaYufO0HlAo68SbQ/brbOA08fSU1iYjV+a/9omffYkBLTwt0V/ku6tMiyDscM1o0V154YTYwomf27Lst0NDSDBUkT1LqgPrfJPcwjV3ZeF7heEk0r1ep67cKnl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729336314; c=relaxed/simple;
-	bh=+Znl7udYsby1/ZbrW23K5tfSc02/nhO7vkOijqLyuP4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=snn3WQFZ6jvqEN17MxSVpWHh5UYYZLnwTF57H8YGKrE+J54O+J9tAmis23wl7bmmosr4L69bdBt+97l6aJaiUWiZ4GEiYtZBOCqhOgO68KUZs2IZbLv6yx8M3WjnURo9S7Kij6IVogdMzcdXTmMg8HaXJ1K/rH96fa616oGyBts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=eQKWuXLH; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=KzS/lrMPI8bnJVJeAs/gylf+o2SxkgLZL1IoOva2gG8=; b=eQKWuXLHb9NaSeddkSMqhRSket
-	qEkgiiLfLRVVnZ0bXDuembXv9oWj++mpJl9Lzzml2wr+bF00/OLxyel2AAshs85EJoAulHQ0HFX1w
-	VgkQP8WxE3mT4rst4DfT6vU6Wsb3lZwen8lNKcR2xW4ggRGvV4Ea7oxGMfFYsO5AaP4cHK3N2DD10
-	msND8EWlyeTTead0VM4ERDS7uFbep8G3ZPzdzaROVM0tzR3YCplOVeFLBXM2qtIg0v/92KydLYxP6
-	lSLTt6OR3clK57R+xHqOrZqwM9Yqiy9MEOMo4F7vfUt+VU1zbuLKeZpBKLL0xF8CX+pDwUtwStVTS
-	55xUC27A==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: tony@atomide.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	aaro.koskinen@iki.fi,
-	khilman@baylibre.com,
-	Roger Quadros <rogerq@kernel.org>
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH] ARM: dts: ti/omap: omap4-epson-embt2ws: add charger
-Date: Sat, 19 Oct 2024 13:11:21 +0200
-Message-Id: <20241019111121.331477-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1729336342; c=relaxed/simple;
+	bh=TqgsntDo86/XPtJOfcK/dtla1EZezr99AZKkx6rJncw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WszUNxOcaL16IrNxDlD8Ea1TmAMdI8wb1sqyWwtP6OkiBADrdp6p/kFET8yEopEt1nh/WCAmIFtszOuCYNoV3XhVuZb4XoddvZOP3dMbHnw2T7dvUOlI4vCX30CFRul1QF/IwkCQOFSYJcwpi6OUv2EKPg/hB36dw0R2i5nglYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bR60Y4xt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC3DDC4CEC5;
+	Sat, 19 Oct 2024 11:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729336342;
+	bh=TqgsntDo86/XPtJOfcK/dtla1EZezr99AZKkx6rJncw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bR60Y4xtH5/bADxOrujSsV2mSA9H3OJRyG13NZBmkBYHHjcG5qCFMcADRSZYPabxJ
+	 sdYov5km3gc9RqGfgmPWZbkS6Ui+97CSkMf6xKv8I0pQNiz5Tg4pm63/wKPlUczQ16
+	 ehK6m1ItPlQvn5CLqdSl2vBnlXzj2OdlKijw8wFHNc2duuFViEbed19zbD5rydXrRG
+	 hAAkpfZhFGWI3a1RL9TpF0oBfVGXzjh+gkqNPUdWqftWsqaS3FrfYG0ZJ0RRaUCMIu
+	 4YwIkWJS40ilwiTL6PYZyPvNfY2kdw56NeqMGj+sENFTWcWKDCwPfmp4CGFiBofv90
+	 vsF1IJ9D0t0sg==
+Date: Sat, 19 Oct 2024 12:12:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen
+ <lars@metafoo.de>
+Subject: Re: [PATCH v1 1/1] iio: gyro: bmg160: Drop most likely fake ACPI
+ IDs
+Message-ID: <20241019121214.262af972@jic23-huawei>
+In-Reply-To: <aa7f2214-203d-4b7d-82f3-188fdc6b8673@redhat.com>
+References: <20241018145732.2181309-1-andriy.shevchenko@linux.intel.com>
+	<aa7f2214-203d-4b7d-82f3-188fdc6b8673@redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add charger and battery definition for the Epson Moverio BT-200 to make
-charging working.
+On Sat, 19 Oct 2024 12:33:55 +0200
+Hans de Goede <hdegoede@redhat.com> wrote:
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 28 ++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+> Hi,
+> 
+> On 18-Oct-24 4:57 PM, Andy Shevchenko wrote:
+> > The commits in question do not proove that ACPI IDs exist.
+> > Quite likely it was a cargo cult addition while doing that
+> > for DT-based enumeration. Drop most likely fake ACPI IDs.
+> > 
+> > The to be removed IDs has been checked against the following resources:
+> > 1) DuckDuckGo
+> > 2) Google
+> > 3) MS catalog: https://www.catalog.update.microsoft.com/Search.aspx
+> > This gives no useful results in regard to DSDT, moreover, the official
+> > vendor IDs in the registry for Bosh are BSG and BOSC.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  drivers/iio/gyro/bmg160_i2c.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/drivers/iio/gyro/bmg160_i2c.c b/drivers/iio/gyro/bmg160_i2c.c
+> > index 672d0b720f61..a81814df5205 100644
+> > --- a/drivers/iio/gyro/bmg160_i2c.c
+> > +++ b/drivers/iio/gyro/bmg160_i2c.c
+> > @@ -39,8 +39,6 @@ static void bmg160_i2c_remove(struct i2c_client *client)
+> >  
+> >  static const struct acpi_device_id bmg160_acpi_match[] = {
+> >  	{"BMG0160", 0},
+> > -	{"BMI055B", 0},
+> > -	{"BMI088B", 0},
+> >  	{},
+> >  };
+> >    
+> 
+> Doing a grep on my acpidump collection shows that the BMI prefix is used
+> for some Bosch IMU-s. It seems that some of the Bosch ACPI HID
+> prefixes are like this:
+> 
+> Bosch Measurement Accel -> BMAxxxx
+> Bosch Measurement Gyro  -> BMGxxxx
+> Bosch Measurement IMU   -> BMIxxxx
+> 
+> In itself these 3 non official vendor prefixis seem to be quite
+> wildly used and such are not an indication that a HID is not in use.
+> 
+> But using BMI which is for IMU-s in a non IMU driver is suspect.
+> Note that has Jonathan has pointed out there is a valid BMI0160
+> HID used by the drivers/iio/imu/bmi160/ code.
+> 
+> I also notice a "BMI055A" HID in the bmc150-accel-[i2c|spi].c drivers,
+> which seems equally wrong.
+> 
+> It seems that if anything there should be a "BMI055" (no suffix) HID
+> for drivers/iio/imu/bno055/bno055_i2c.c, but we should only add that
+> if we actually encounter it in the wild.
+> 
+> TL;DR:
+> 
+> I agree with the removal of the "BMI055B" and "BMI088B" ACPI HIDs
+> from this driver, because if these are valid for anything they
+> are valid for the bno055 + some unknown 088 IMU drivers and not
+> for a gyro driver.
 
-diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-index 339e52ba3614b..5d4c10325b322 100644
---- a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-+++ b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-@@ -17,6 +17,24 @@ memory@80000000 {
- 		reg = <0x80000000 0x40000000>; /* 1024M */
- 	};
- 
-+	battery: battery {
-+		compatible = "simple-battery";
-+		device-chemistry = "lithium-ion";
-+		charge-full-design-microamp-hours = <2720000>;
-+		voltage-max-design-microvolt = <4200000>;
-+		voltage-min-design-microvolt = <3300000>;
-+
-+		constant-charge-voltage-max-microvolt = <4200000>;
-+		/*
-+		 * vendor kernel says max charge 1400000, input limit 900000
-+		 * and charges only with dcp chargers. So it is unclear what
-+		 * is really allowed. Play safe for now and restrict things
-+		 * here. Maybe 900000 is just the limit of the vendor charger?
-+		 */
-+		constant-charge-current-max-microamp = <900000>;
-+		charge-term-current-microamp = <200000>;
-+	};
-+
- 	backlight-left {
- 		compatible = "pwm-backlight";
- 		pwms = <&twl_pwm 1 7812500>;
-@@ -87,6 +105,14 @@ twl: pmic@48 {
- 		#interrupt-cells = <1>;
- 		system-power-controller;
- 
-+		charger {
-+			compatible = "ti,twl6032-charger", "ti,twl6030-charger";
-+			interrupts = <2>, <5>;
-+			io-channels = <&gpadc 10>;
-+			io-channel-names = "vusb";
-+			monitored-battery = <&battery>;
-+		};
-+
- 		rtc {
- 			compatible = "ti,twl4030-rtc";
- 			interrupts = <11>;
-@@ -166,7 +192,7 @@ twl_pwmled: pwmled {
- 			#pwm-cells = <2>;
- 		};
- 
--		gpadc {
-+		gpadc: gpadc {
- 			compatible = "ti,twl6032-gpadc";
- 			interrupts = <3>;
- 			#io-channel-cells = <1>;
--- 
-2.39.2
+Not so simple.  The BMI055 is a multi sensor package. So two
+MEMS devices shoved in the same chip package. Bus is shared, but separate
+chip selects and entirely unrelated register sets. We handle these
+in DT via _gyro / _accel postfixes on the compatible.
+
+These used to be common in IMUs though it seems fully integrated
+ones have replaced them.
+
+https://lore.kernel.org/all/1409655597-28781-1-git-send-email-irina.tirdea@intel.com/
+
+The A/B thing makes me particularly suspicious as that's a novel
+invention for something not in the wild.
+
+Still, if we have no evidence this one is actually used (and it's an
+ancient device so I doubt we'll get new users!) I'm not against
+removing the IDs and see if anyone shouts.  On that basis I'll queue
+this up.
+
+Jonathan
+
+
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
 
 
