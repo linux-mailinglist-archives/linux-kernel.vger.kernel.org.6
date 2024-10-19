@@ -1,239 +1,111 @@
-Return-Path: <linux-kernel+bounces-372586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532FF9A4ABD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:47:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11BBE9A4ABE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A7A8283DF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:47:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DC61B21FAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A04192D9A;
-	Sat, 19 Oct 2024 00:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1301990A2;
+	Sat, 19 Oct 2024 00:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UQbF/m9a"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e4CMuT6S"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55BF20E31C
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 00:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9CA20E31C
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 00:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729298837; cv=none; b=frvpqgG2n/HntyGUiBUX2Vo5+BT8b4/gPwMyHtxWePqXT5WwIG8YQgG32nLjGlg9JZTuZU6pniW7UOVYjXyyFJzYCT/UlC85kEvzJiy/8yiyetuh/VxeY8GfFdu7Wx6Iughhw1MYwsb5xFS+RRHjEuN73peok4W3R6PKL73XeX8=
+	t=1729298932; cv=none; b=D18Ji8bGiv7khx6RAqmVLB9J3+dlX15NOqtLLS6cZuZ4SxrZ+hiYLlw/XCZ0C29MToWtGmAeaK7DARKzF4nizDGgLiwj9wQO1ZjPFFnnQiOFAVajydHTjUmi5A4Xof6NfVq+if5V43pkgro+4cnOu5jkKJkcOta/SEfiToqPbhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729298837; c=relaxed/simple;
-	bh=MWkc4kgSdYY1yY5/8fZILHwaGX69K2uYbgzuUy1Xg2g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W6l3z8VXjmYy+loB89NgJeu7xrdyu2Jg0VqXAxKYpBltKSWr+9qK6vNiJF9IJVYKXKwZPIQpKC4AwmQw6uSBr5vlJKIv5QNtTwHT6Vlgaw7i5MQWEzywwNyHbo8/qOPbXLmzRMv7ujMx8/xncM6D3hy1LxqwCIMRnNPzjPayPuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UQbF/m9a; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2f771446-be6a-3b7c-4595-be8c8188145a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729298832;
+	s=arc-20240116; t=1729298932; c=relaxed/simple;
+	bh=zxy6CVaPGBT/4hy8i0ysqF5Vh5/hv0JzciEqXjlH0T8=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=GYQDRwvmNY3wFCwKHNUunpBoSMwvgvtYydgRop5wayPTZnLCR4W3F0NHsnL4Ck9oNP4SqzYmXSkBw4FAYH5RY9UUDQ1IeDWoEVfhgW8pRaJBAHMju39rjOwtkild5G+axUDJY3SlnDsj6os3XMi7gHQKl1Rw27vAoKtp+P87Gmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e4CMuT6S; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729298929;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/EFA0Vboc98xveNpC5j8v99xfq8WC2DXWWIW59XaPa8=;
-	b=UQbF/m9aBp2wwPK2nX/EDFTe0ZDcXloTBaw30su5QZcHQwyAnoMq7OrCQzigKT9wJthTcL
-	mD66NBPZMcZ8DYC8PssNN+hyZioYpiiZ5j8gJKFaoaolZAObalt3GcdEgnkzpBRetRTq93
-	WLrTRmnYHeuNl3q3ZfMgd7gwULexKS0=
-Date: Sat, 19 Oct 2024 08:46:43 +0800
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JgCLbnQyx/xtWKFjluiXxC49uB//JvT7pDOfovgSmM0=;
+	b=e4CMuT6SKFZkQVAcgtQIjGO+b7I4qNWeyMPAgFW6ndAsBeIFh91AQEpbp5xamuxxAaRVP8
+	5OgW38jCfl/uhm577ioXnTxgslZQofwgl2Xc6ADpirt9/4MdLGs8SnRFkCOLAszUAAjqYM
+	qrKxoL4U8qap4CvCKhQnTkmheLfB8jU=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-318-A_jDSBasNhWkaG2f6miJLA-1; Fri, 18 Oct 2024 20:48:47 -0400
+X-MC-Unique: A_jDSBasNhWkaG2f6miJLA-1
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b14cb9f6f5so531765485a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:48:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729298927; x=1729903727;
+        h=content-transfer-encoding:mime-version:user-agent:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JgCLbnQyx/xtWKFjluiXxC49uB//JvT7pDOfovgSmM0=;
+        b=NWDnVbvzMWrumuymf0EZefMckIQg86Q3XD5x5yizXONLEPE5HMbyuuRPiiJMbvovKL
+         bbOCYlPw6kKdsfqJbfTawrVTagPSz+s/U+8vA4U/gHimi05F8ey+/Gis9pyTvBXUxNHE
+         UZ48EDunlGW4U5ff5nCUgadLa8TWNo/gB2xp2d1Go1JkH2ESBLeve5844S0Y3S0Du/d0
+         oQHyUwLHSJPQscrQYscbHWZ8/PXzli5Z3E9bEV/Un3rr90eVRvJ94j3h34oFs+vlyCWF
+         BW8XhnK7W3xFDVzg2XVk6RDSmaU84TcF1+M4Xf3E8EUZpuwNf8wwhlUfYKRyUYanxP0F
+         ZjVQ==
+X-Gm-Message-State: AOJu0YwMHsQfK2hO92dIyfX+jPXglApj/x6o+Pt3Vw5Fz1Uuhv8q7ZEj
+	U3ROQd0poqrJtMnNyKyX21fy5HSF1o2raMgLL8rzxeSZeZ/wdUgjtJMSR7kAws1lrKHKPEjzX4W
+	BULF1k2xUPF8QqCnNPs8Z+RY2JeiW7dc23zEGt3DZs0tINnuCo86ExTCSfBz2PQ==
+X-Received: by 2002:a05:620a:4003:b0:7b1:168f:52f5 with SMTP id af79cd13be357-7b157c08dffmr432594885a.57.1729298927391;
+        Fri, 18 Oct 2024 17:48:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbE+fH5q/tzPt4fAPBab7mipkiwt2i+4EmfiwvNgIQgqm7/iIcs96vJqnUL1fCVgCWkk0D4Q==
+X-Received: by 2002:a05:620a:4003:b0:7b1:168f:52f5 with SMTP id af79cd13be357-7b157c08dffmr432593685a.57.1729298927022;
+        Fri, 18 Oct 2024 17:48:47 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:760d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b156f9509fsm117950685a.30.2024.10.18.17.48.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 17:48:46 -0700 (PDT)
+Message-ID: <c9d8269bff69f6359731d758e3b1135dedd7cc61.camel@redhat.com>
+Subject: vmx_pmu_caps_test fails on Skylake based CPUS due to read only LBRs
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>
+Date: Fri, 18 Oct 2024 20:48:45 -0400
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] mm/codetag: move ref and tag null pointer check to
- alloc_tag_add
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, yuzhao@google.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
-References: <20241018152925.138341-1-hao.ge@linux.dev>
- <20241018162559.143548-1-hao.ge@linux.dev>
- <CAJuCfpEnRQ9p4V22wWMNwcHMYjToJETwrxkVNMV_EM46WbcF5g@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-In-Reply-To: <CAJuCfpEnRQ9p4V22wWMNwcHMYjToJETwrxkVNMV_EM46WbcF5g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
 
-Hi Suren
+Hi,
 
+Our CI found another issue, this time with vmx_pmu_caps_test.
 
-On 10/19/24 01:30, Suren Baghdasaryan wrote:
-> On Fri, Oct 18, 2024 at 9:26 AM Hao Ge <hao.ge@linux.dev> wrote:
->> From: Hao Ge <gehao@kylinos.cn>
->>
->> When we compile and load lib/slub_kunit.c,it will cause a panic.
->>
->> The root cause is that __kmalloc_cache_noprof was directly called
->> instead of kmem_cache_alloc,which resulted in no alloc_tag being
->> allocated.This caused current->alloc_tag to be null,leading to a
->> null pointer dereference in alloc_tag_ref_set.
->>
->> Despite the fact that my colleague Pei Xiao will later fix the code
->> in slub_kunit.c,we still need to move the null pointer check for ref
->> and tag to alloc_tag_add here.
->> It is sufficient for us to issue a warning to the user;
->> It should not lead to a panic.
->>
->> Here is the log for the panic:
->>
->> [   74.779373][ T2158] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
->> [   74.780130][ T2158] Mem abort info:
->> [   74.780406][ T2158]   ESR = 0x0000000096000004
->> [   74.780756][ T2158]   EC = 0x25: DABT (current EL), IL = 32 bits
->> [   74.781225][ T2158]   SET = 0, FnV = 0
->> [   74.781529][ T2158]   EA = 0, S1PTW = 0
->> [   74.781836][ T2158]   FSC = 0x04: level 0 translation fault
->> [   74.782288][ T2158] Data abort info:
->> [   74.782577][ T2158]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->> [   74.783068][ T2158]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->> [   74.783533][ T2158]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->> [   74.784010][ T2158] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000105f34000
->> [   74.784586][ T2158] [0000000000000020] pgd=0000000000000000, p4d=0000000000000000
->> [   74.785293][ T2158] Internal error: Oops: 0000000096000004 [#1] SMP
->> [   74.785805][ T2158] Modules linked in: slub_kunit kunit ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_mangle 4
->> [   74.790661][ T2158] CPU: 0 UID: 0 PID: 2158 Comm: kunit_try_catch Kdump: loaded Tainted: G        W        N 6.12.0-rc3+ #2
->> [   74.791535][ T2158] Tainted: [W]=WARN, [N]=TEST
->> [   74.791889][ T2158] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
->> [   74.792479][ T2158] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> [   74.793101][ T2158] pc : alloc_tagging_slab_alloc_hook+0x120/0x270
->> [   74.793607][ T2158] lr : alloc_tagging_slab_alloc_hook+0x120/0x270
->> [   74.794095][ T2158] sp : ffff800084d33cd0
->> [   74.794418][ T2158] x29: ffff800084d33cd0 x28: 0000000000000000 x27: 0000000000000000
->> [   74.795095][ T2158] x26: 0000000000000000 x25: 0000000000000012 x24: ffff80007b30e314
->> [   74.795822][ T2158] x23: ffff000390ff6f10 x22: 0000000000000000 x21: 0000000000000088
->> [   74.796555][ T2158] x20: ffff000390285840 x19: fffffd7fc3ef7830 x18: ffffffffffffffff
->> [   74.797283][ T2158] x17: ffff8000800e63b4 x16: ffff80007b33afc4 x15: ffff800081654c00
->> [   74.798011][ T2158] x14: 0000000000000000 x13: 205d383531325420 x12: 5b5d383734363537
->> [   74.798744][ T2158] x11: ffff800084d337e0 x10: 000000000000005d x9 : 00000000ffffffd0
->> [   74.799476][ T2158] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008219d188 x6 : c0000000ffff7fff
->> [   74.800206][ T2158] x5 : ffff0003fdbc9208 x4 : ffff800081edd188 x3 : 0000000000000001
->> [   74.800932][ T2158] x2 : 0beaa6dee1ac5a00 x1 : 0beaa6dee1ac5a00 x0 : ffff80037c2cb000
->> [   74.801656][ T2158] Call trace:
->> [   74.801954][ T2158]  alloc_tagging_slab_alloc_hook+0x120/0x270
->> [   74.802494][ T2158]  __kmalloc_cache_noprof+0x148/0x33c
->> [   74.802976][ T2158]  test_kmalloc_redzone_access+0x4c/0x104 [slub_kunit]
->> [   74.803607][ T2158]  kunit_try_run_case+0x70/0x17c [kunit]
->> [   74.804124][ T2158]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
->> [   74.804768][ T2158]  kthread+0x10c/0x118
->> [   74.805141][ T2158]  ret_from_fork+0x10/0x20
->> [   74.805540][ T2158] Code: b9400a80 11000400 b9000a80 97ffd858 (f94012d3)
->> [   74.806176][ T2158] SMP: stopping secondary CPUs
->> [   74.808130][ T2158] Starting crashdump kernel...
->>
->> Fixes: e0a955bf7f61 ("mm/codetag: add pgalloc_tag_copy()")
->> Signed-off-by: Hao Ge <gehao@kylinos.cn>
->> ---
->> v2: Modify the errors in the title and commit message.
->>      Remove the empty lines that were mistakenly added in version v1.
->> ---
->>   include/linux/alloc_tag.h | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
->> index 1f0a9ff23a2c..8603e3a9df10 100644
->> --- a/include/linux/alloc_tag.h
->> +++ b/include/linux/alloc_tag.h
->> @@ -137,10 +137,6 @@ static inline void alloc_tag_sub_check(union codetag_ref *ref) {}
->>   /* Caller should verify both ref and tag to be valid */
->>   static inline void __alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *tag)
->>   {
->> -       alloc_tag_add_check(ref, tag);
->> -       if (!ref || !tag)
->> -               return;
->> -
-> Unfortunately this change will result in __alloc_tag_ref_set() and
-> alloc_tag_ref_set() missing the following important check from
-> alloc_tag_sub_check():
->
+On 'Intel(R) Xeon(R) Gold 6328HL CPU' I see that all LBR msrs (from/to and TOS),
+are always read only - even when LBR is disabled - once I disable the feature in DEBUG_CTL,
+all LBR msrs reset to 0, and you can't change their value manually.
+Freeze LBRS on PMI seems not to affect this behavior.
 
-Maybe I missed something here, I'm a bit confused. Can you give me an 
-example to explain it?
+I don't know if this is how the hardware is supposed to work (Intel's manual doesn't mention anything about this), 
+or if it is something platform specific, because this system also was found to have LBRs enabled 
+(IA32_DEBUGCTL.LBR == 1) after a fresh boot, as if BIOS left them enabled - I don't have an idea on why.
 
-Thanks
+The problem is that vmx_pmu_caps_test writes 0 to LBR_TOS via KVM_SET_MSRS, and KVM actually passes this write to
+actual hardware msr (this is somewhat wierd), and since the MSR is not writable and silently drops writes instead,
+once the test tries to read it, it gets some random value instead.
+
+Any advice?
+
+Best regards,
+	Maxim Levitsky
 
 
-Best regards
-Hao
-
-
-> WARN_ONCE(ref && ref->ct,
->    "alloc_tag was not cleared (got tag for %s:%u)\n",
->    ref->ct->filename, ref->ct->lineno);
->
-> I think the change below would fix this issue without the above
-> mentioned side-effect:
->
-> -static inline void __alloc_tag_ref_set(union codetag_ref *ref, struct
-> alloc_tag *tag)
-> +static inline bool __alloc_tag_ref_set(union codetag_ref *ref, struct
-> alloc_tag *tag)
->   {
->          alloc_tag_add_check(ref, tag);
->          if (!ref || !tag)
-> -                return;
-> +                return false;
->
->          ref->ct = &tag->ct;
-> +        return true;
->   }
->
-> -static inline void alloc_tag_ref_set(union codetag_ref *ref, struct
-> alloc_tag *tag)
-> +static inline bool alloc_tag_ref_set(union codetag_ref *ref, struct
-> alloc_tag *tag)
->   {
-> -        __alloc_tag_ref_set(ref, tag);
-> +        if (unlikely(!__alloc_tag_ref_set(ref, tag)))
-> +                return false;
-> +
->          /*
->           * We need in increment the call counter every time we have a new
->           * allocation or when we split a large allocation into smaller ones.
->           * Each new reference for every sub-allocation needs to increment call
->           * counter because when we free each part the counter will be
-> decremented.
->           */
->          this_cpu_inc(tag->counters->calls);
-> +        return true;
->   }
->
->   static inline void alloc_tag_add(union codetag_ref *ref, struct
-> alloc_tag *tag, size_t bytes)
->   {
-> -        alloc_tag_ref_set(ref, tag);
-> -        this_cpu_add(tag->counters->bytes, bytes);
-> +        if (likely(alloc_tag_ref_set(ref, tag)))
-> +                this_cpu_add(tag->counters->bytes, bytes);
->   }
->
-> Could you please confirm this fix?
-> Thanks,
-> Suren.
->
->>          ref->ct = &tag->ct;
->>   }
->>
->> @@ -158,6 +154,10 @@ static inline void alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *t
->>
->>   static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag, size_t bytes)
->>   {
->> +       alloc_tag_add_check(ref, tag);
->> +       if (!ref || !tag)
->> +               return;
->> +
->>          alloc_tag_ref_set(ref, tag);
->>          this_cpu_add(tag->counters->bytes, bytes);
->>   }
->> --
->> 2.25.1
->>
 
