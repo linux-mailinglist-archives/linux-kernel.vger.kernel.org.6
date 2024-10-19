@@ -1,180 +1,138 @@
-Return-Path: <linux-kernel+bounces-372574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FAA99A4A79
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:23:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D7C9A4AA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EAE31F23E9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48A591C21E62
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAC62AF07;
-	Sat, 19 Oct 2024 00:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3715317B427;
+	Sat, 19 Oct 2024 00:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="MV1ZB5l/"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UX7YVdUx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F237BEED6;
-	Sat, 19 Oct 2024 00:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E546166F00;
+	Sat, 19 Oct 2024 00:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729297366; cv=none; b=F1i/HTG93QXAs0+VhS8mhZItTjj+zFYLZKyqsRBwU9SGoxJ46nVoVePFZYFlyXHG6njauoxY9mcLYFW4nED1i6TuAz5SxHlMM/LHlNnWqXaibzRhw8QzM+4vjY68ICEzivh6rc91287dKXC9kbnHVPGcd2wh6usue3H4KKx3wOo=
+	t=1729297637; cv=none; b=DVIjtW1plu3U54eQ2pdzWTBGHkcIyjWhTzzbZkpSguYKrqm/TZ8B2As2gWilKWrsee9RUC03TYWsHBzI2wL2PCHqEUnwRcHGOlf1eVw7EOmPix4lTAzi0SAciOPGlXzBlN04+R6ka4VRRSEriSG9CIhG8NYrsPNLN4GpEYlTjaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729297366; c=relaxed/simple;
-	bh=OjwqcLjusCuMEujKAIY1zbhzHKZz5/39jsD/YDCvrOw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kk6E3GAo8syZJjuwcr0FCWmbIyFNE7h6LPu200ev6c6cQDegwG5rXTehn0QcbUv63YZUFqNYKUJkJhSoFq9kNbgnKjbfv+O/dDnLG0RgTtATzXr+EjTIlp4h/aZtSfi1duOnvDdBNtzJeHIXw8KhnufW+PpcrZnbIZsO1jnyv1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=MV1ZB5l/; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1729297364; x=1760833364;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=YkFWxEAH8ig0VPlLUWEewmJ7RrvUMzN5ZoJU/RdWdBU=;
-  b=MV1ZB5l/pcvNHUsSj2IPRHhN9t1rIocw0FxbzBPE9SDPHbtrzsXe4INY
-   0MNwq+tsAHFz1E+2Bfe8Rdh313Cm7bay4Nxw3fntasmlnBegLEhTfHR2k
-   A4YMTsTRviW2V6N+Hg9EAjXxBYlqi6/J5mBq4NFDM6qghV3LkJrIh/dIi
-   E=;
-X-IronPort-AV: E=Sophos;i="6.11,214,1725321600"; 
-   d="scan'208";a="240571657"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 00:22:40 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:49767]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.59.23:2525] with esmtp (Farcaster)
- id 8dcfac51-37b9-4a09-8c82-c69ae0a4798c; Sat, 19 Oct 2024 00:22:39 +0000 (UTC)
-X-Farcaster-Flow-ID: 8dcfac51-37b9-4a09-8c82-c69ae0a4798c
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Sat, 19 Oct 2024 00:22:39 +0000
-Received: from 6c7e67c6786f.amazon.com (10.187.170.44) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Sat, 19 Oct 2024 00:22:35 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <denkenz@gmail.com>
-CC: <agross@kernel.org>, <almasrymina@google.com>, <asml.silence@gmail.com>,
-	<axboe@kernel.dk>, <davem@davemloft.net>, <edumazet@google.com>,
-	<krisman@suse.de>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<manivannan.sadhasivam@linaro.org>, <marcel@holtmann.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [RFC PATCH v1 04/10] net: qrtr: Report sender endpoint in aux data
-Date: Fri, 18 Oct 2024 17:22:32 -0700
-Message-ID: <20241019002232.43313-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20241018181842.1368394-5-denkenz@gmail.com>
-References: <20241018181842.1368394-5-denkenz@gmail.com>
+	s=arc-20240116; t=1729297637; c=relaxed/simple;
+	bh=XpzszTUw/nXjc6n+zFmxRLkcGB/oPankYYv5sQFIh/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o49r6pnSdl27Gz47o4VH89g3/8Xy+CiUYegLCGjTvIaFpZ9KfD33DzZkxiQIKVpA4a4Mi/WmyKS/Q8ZoS6nkqGs0nXcQ27GLrpE82tKGdRrOwvC08FiQohcy4zFtdfqjMgpuqnAVJVBTuJtyvo4JHaL1ITDtakK7e53nss69vgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UX7YVdUx; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729297635; x=1760833635;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XpzszTUw/nXjc6n+zFmxRLkcGB/oPankYYv5sQFIh/Y=;
+  b=UX7YVdUxnzjzxwJ5fZegEWPT1rgn3QUTsNyGecCbs8VdVQWAvr7wiDmS
+   FOmt04Ck5/YoRXj0NSt1DRomwLcQEZ3BkPAxIbApiZb2iIdDpq9WMRuGg
+   yFBQN2gAzZCordoIShtn9cwoM6i4mRimWvkLD4k86s1s9xLluxyXE0Syt
+   FccyI0QriapOCzozFqsaEOnBAE9SpBUsZwWl6/QepZhplhxjZ0okqmJgh
+   ek8v10VefBNLyTGltnCrNg5m/GAVzuDJ5HrmQV299XZntVkNAkgCmqYn6
+   D6/WvSWFRuc75zMkb5i+v2QHpEV69c/Gj8tg1SL2oU8Jkn7eLiLz2fIF8
+   g==;
+X-CSE-ConnectionGUID: Wo4GxFC2Rs+IDsNColV4zA==
+X-CSE-MsgGUID: rNPjA97xRt+uTf0G1vw8lw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28977087"
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="28977087"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 17:27:15 -0700
+X-CSE-ConnectionGUID: bccPquIaRFSenCipGZI1Lw==
+X-CSE-MsgGUID: ZsMos1PaRsWVxJHIHDYSzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
+   d="scan'208";a="116470078"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 18 Oct 2024 17:27:13 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1xJG-000OT3-24;
+	Sat, 19 Oct 2024 00:27:10 +0000
+Date: Sat, 19 Oct 2024 08:26:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jennifer Berringer <jberring@redhat.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, Jennifer Berringer <jberring@redhat.com>
+Subject: Re: [PATCH 3/3] power: reset: nvmem-reboot-mode: fix write for small
+ cells
+Message-ID: <202410190829.e98plEvU-lkp@intel.com>
+References: <20241017160904.2803663-3-jberring@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D043UWC001.ant.amazon.com (10.13.139.202) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017160904.2803663-3-jberring@redhat.com>
 
-From: Denis Kenzior <denkenz@gmail.com>
-Date: Fri, 18 Oct 2024 13:18:22 -0500
-> @@ -1234,6 +1247,78 @@ static int qrtr_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
->  	return rc;
->  }
->  
-> +static int qrtr_setsockopt(struct socket *sock, int level, int optname,
-> +			   sockptr_t optval, unsigned int optlen)
-> +{
-> +	struct qrtr_sock *ipc = qrtr_sk(sock->sk);
-> +	struct sock *sk = sock->sk;
-> +	unsigned int val = 0;
-> +	int rc = 0;
-> +
-> +	if (level != SOL_QRTR)
-> +		return -ENOPROTOOPT;
-> +
-> +	if (optlen >= sizeof(val) &&
-> +	    copy_from_sockptr(&val, optval, sizeof(val)))
-> +		return -EFAULT;
-> +
-> +	lock_sock(sk);
+Hi Jennifer,
 
-This seems unnecessary to me.
+kernel test robot noticed the following build errors:
 
-sk_setsockopt(), do_ip_setsockopt(), and do_ipv6_setsockopt() do not
-hold lock_sock() for assign_bit().
+[auto build test ERROR on 98f7e32f20d28ec452afb208f9cffc08448a2652]
 
-Also, QRTR_BIND_ENDPOINT in a later patch will not need lock_sock()
-neither.  The value is u32, so you can use WRITE_ONCE() here and
-READ_ONCE() in getsockopt().
+url:    https://github.com/intel-lab-lkp/linux/commits/Jennifer-Berringer/nvmem-core-add-nvmem_cell_write_variable_u32/20241018-001140
+base:   98f7e32f20d28ec452afb208f9cffc08448a2652
+patch link:    https://lore.kernel.org/r/20241017160904.2803663-3-jberring%40redhat.com
+patch subject: [PATCH 3/3] power: reset: nvmem-reboot-mode: fix write for small cells
+config: i386-randconfig-015-20241019 (https://download.01.org/0day-ci/archive/20241019/202410190829.e98plEvU-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410190829.e98plEvU-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410190829.e98plEvU-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/power/reset/nvmem-reboot-mode.c: In function 'nvmem_reboot_mode_write':
+>> drivers/power/reset/nvmem-reboot-mode.c:27:15: error: implicit declaration of function 'nvmem_cell_write_variable_u32'; did you mean 'nvmem_cell_read_variable_le_u32'? [-Werror=implicit-function-declaration]
+      27 |         ret = nvmem_cell_write_variable_u32(nvmem_rbm->cell, magic);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |               nvmem_cell_read_variable_le_u32
+   cc1: some warnings being treated as errors
 
 
-> +
-> +	switch (optname) {
-> +	case QRTR_REPORT_ENDPOINT:
-> +		assign_bit(QRTR_F_REPORT_ENDPOINT, &ipc->flags, val);
-> +		break;
-> +	default:
-> +		rc = -ENOPROTOOPT;
-> +	}
-> +
-> +	release_sock(sk);
-> +
-> +	return rc;
-> +}
-> +
-> +static int qrtr_getsockopt(struct socket *sock, int level, int optname,
-> +			   char __user *optval, int __user *optlen)
-> +{
-> +	struct qrtr_sock *ipc = qrtr_sk(sock->sk);
-> +	struct sock *sk = sock->sk;
-> +	unsigned int val;
-> +	int len;
-> +	int rc = 0;
-> +
-> +	if (level != SOL_QRTR)
-> +		return -ENOPROTOOPT;
-> +
-> +	if (get_user(len, optlen))
-> +		return -EFAULT;
-> +
-> +	if (len < sizeof(val))
-> +		return -EINVAL;
-> +
-> +	lock_sock(sk);
+vim +27 drivers/power/reset/nvmem-reboot-mode.c
 
-Same remark.
+    18	
+    19	static int nvmem_reboot_mode_write(struct reboot_mode_driver *reboot,
+    20					    unsigned int magic)
+    21	{
+    22		int ret;
+    23		struct nvmem_reboot_mode *nvmem_rbm;
+    24	
+    25		nvmem_rbm = container_of(reboot, struct nvmem_reboot_mode, reboot);
+    26	
+  > 27		ret = nvmem_cell_write_variable_u32(nvmem_rbm->cell, magic);
+    28		if (ret < 0)
+    29			dev_err(reboot->dev, "update reboot mode bits failed\n");
+    30	
+    31		return ret;
+    32	}
+    33	
 
-
-> +
-> +	switch (optname) {
-> +	case QRTR_REPORT_ENDPOINT:
-> +		val = test_bit(QRTR_F_REPORT_ENDPOINT, &ipc->flags);
-> +		break;
-> +	default:
-> +		rc = -ENOPROTOOPT;
-> +	}
-> +
-> +	release_sock(sk);
-> +
-> +	if (rc)
-> +		return rc;
-> +
-> +	len = sizeof(int);
-> +
-> +	if (put_user(len, optlen) ||
-> +	    copy_to_user(optval, &val, len))
-> +		rc = -EFAULT;
-> +
-> +	return rc;
-> +}
-> +
->  static int qrtr_release(struct socket *sock)
->  {
->  	struct sock *sk = sock->sk;
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
