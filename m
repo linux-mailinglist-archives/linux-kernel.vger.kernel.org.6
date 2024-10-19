@@ -1,68 +1,94 @@
-Return-Path: <linux-kernel+bounces-372643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4729A4B62
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:46:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E65559A4B67
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63E6D1F22CD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:46:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401FC1C21AAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D181D6194;
-	Sat, 19 Oct 2024 05:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F801D7E4E;
+	Sat, 19 Oct 2024 05:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPLyJG5P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="AKGPua7U"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745791D5AC6;
-	Sat, 19 Oct 2024 05:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9352F1CCB38;
+	Sat, 19 Oct 2024 05:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729316787; cv=none; b=HDRGuSibVyAZrdo5xchwmqsbWmoGccWz3Vz3/pd2JH1jy3DEAB5vXI9nPlrLSzp9zuevWoG33Ntr5+wDlprVUbW0OBQ1RthJOxFAenEBsX5wmOj50/KX6s/3LW7J8dT3L6VQVsBhrcWxslK0zIBQGu22gsUlpun1TLkYQUvF+HI=
+	t=1729317047; cv=none; b=mjr/g5OMaX5ICav/VMVvEPaubBDTe3DttKTh5IcrtP29vrAaD1mZ0Z2zuQ6aakABzj+flJSsUd/nBYFhVhz5YJCbdK45b0zGYECOPtRK9f55igsAPu3V0Eygxq9W7Qv7b/ic2ZfM1cWswyCBbKCCJ+ywXuMSEGQQuMc2oWmvgEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729316787; c=relaxed/simple;
-	bh=EgetYIpgfpK7YmRAwBVwIZeFmcKxRnjFAEuWjcwEPQg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=ADH4tenBjuXxlswOZ6BEIJ1WPqhpk4Jq9QQe1dneqMTMwjJU3eAf5/1+QhXaUlXH4fEkKA1FZi0VzxjT0Lp//C36ehhbB470moP0fneLae5bz+h5n2wIG+gaLebJaLHKUn+SrP4J44QTJ9jkdOxDYjkF8DgkA9zZXjJuc3erfbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPLyJG5P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30574C4CEC7;
-	Sat, 19 Oct 2024 05:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729316787;
-	bh=EgetYIpgfpK7YmRAwBVwIZeFmcKxRnjFAEuWjcwEPQg=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=EPLyJG5Pkqmh5kDVxWuVhB1PSN6ynt2RjM5rnRdkHyzQz1w7r4vj9k2BAEETOVzrW
-	 RZRYqTxKehYfKmvoe9rUVn5HMWzswufMrbaJh3NXzzxVgRL46EkXY4U9r5D8IwBFhT
-	 JK4LibAtSO24nT6nKfIayXC+UuuSwNtuhVCusXAaIL8bCopKbIiUN3WL1XcAuYa/DE
-	 aMgsqA3VL8Ve1GWzygukXScRs98/UPEaQDuQv8+RBbi+xqejNVj3qUoKDRmP68aETD
-	 ktefJ4roGjY2s5T1PkvxuPG2OdWAvlbG0Qkh7yqlkS9BvPoiWCN9ah8ebGnlwOYZWl
-	 DP8DL8tBTi9aw==
-Message-ID: <e06c8991a365766a325cabe3ce2bcdc5.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729317047; c=relaxed/simple;
+	bh=Yd4Fs47R95Xhl+hYjNiRRFQTEKOFnFFuNP4IpGSs/9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbjswK6UyXHSwbQR1JVJw1ThaAwiUS6jDXdUsEEyA0Hv53DvHLx6AnT0KVGzeTGUUN+cK5x2JpeMwPJ/u80NMOQC1zGc8DWApI7s81IEFhUI32viptc4v/KldmnHPY9tNzVSyVUt8FkAkr4oSicHq0/5/oYITVmNTNPBMM3G+Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=AKGPua7U; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id 8528C1770FF; Sat, 19 Oct 2024 05:50:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1729317044; bh=Yd4Fs47R95Xhl+hYjNiRRFQTEKOFnFFuNP4IpGSs/9I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AKGPua7Ua3Z1OwV2WqvPaj5TCQzptroNZ+Am+q/Z1eZTg1Qjrv66We+AzeoEDrstf
+	 gGJ806uyhfohoKzjT6hsMzxz+Z4xyr5HA+7YgpoldDD2Aexy/ey4sH01A885lPb3ag
+	 dO4jwfjFRIyKy5mtgkG7/r6512hOjRXzDQ2kVCxwg2e/zg8Z58fKYtp6Q5LTJxYqfk
+	 FiGxoMqGZ8N/KyfrHPBwHTazANdFmqmy+ygVyIdyffIfi5MtiHoHC1XBnZrtCx4Qr3
+	 lNa6F/q6M3nE7mBh33/NvAfYHY3dsSOnVCYiTrTA3memr25UQ84+t5yQI0o5a2WtXb
+	 3ZebGvYfXTNXg==
+Date: Sat, 19 Oct 2024 05:50:44 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org,
+	dianders@chromium.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] Documentation: English fixes in kgdb/kdb article
+Message-ID: <20241019055044.GA803351@lichtman.org>
+References: <20241018163136.GA795979@lichtman.org>
+ <20241018175540.GA796909@lichtman.org>
+ <20241018223536.GA799515@lichtman.org>
+ <87wmi5vwgh.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241018085347.95071-3-andreas@kemnade.info>
-References: <20241018085347.95071-1-andreas@kemnade.info> <20241018085347.95071-3-andreas@kemnade.info>
-Subject: Re: [PATCH v3 2/2] dt-bindings: clock: ti: Convert divider.txt to json-schema
-From: Stephen Boyd <sboyd@kernel.org>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Roger Quadros <rogerq@kernel.org>, Tero Kristo <kristo@kernel.org>, Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Date: Fri, 18 Oct 2024 22:46:25 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wmi5vwgh.fsf@trenco.lwn.net>
 
-Quoting Andreas Kemnade (2024-10-18 01:53:47)
-> Convert the OMAP divider clock device tree binding to json-schema.
-> Specify the creator of the original binding as a maintainer.
->=20
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
+On Fri, Oct 18, 2024 at 05:10:38PM -0600, Jonathan Corbet wrote:
+> A couple of comments..
+> 
+> Nir Lichtman <nir@lichtman.org> writes:
+> 
+> > Minor grammar and typos fixed in the kgdb/kdb article
+> >
+> > Signed-off-by: Nir Lichtman <nir@lichtman.org>
+> > ---
+> 
+> When you post followup versions to a patch, please put an explanation in
+> this space saying what has changed; that makes life easier for
+> reviewers. 
+> 
+> >  Documentation/dev-tools/kgdb.rst | 16 +++++++---------
+> >  1 file changed, 7 insertions(+), 9 deletions(-)
+> 
+> Beyond that, it is good to wait a little while before posting new
+> versions to let other reviews come through.  Three iterations in one day
+> are a bit much.
+> 
+> That said, the patch looks OK now; I'll apply it shortly.
+> 
+> Thanks,
+> 
+> jon
 
-Applied to clk-next
+Noted, thanks
 
