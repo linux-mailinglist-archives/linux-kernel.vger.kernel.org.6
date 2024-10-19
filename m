@@ -1,102 +1,104 @@
-Return-Path: <linux-kernel+bounces-373064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F179A51B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 00:57:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7FC99A51B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 01:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00664B25F10
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:57:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0150B1C210A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 23:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE5A193062;
-	Sat, 19 Oct 2024 22:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B63A192B74;
+	Sat, 19 Oct 2024 23:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U00Bhue5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZQ5rrQp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9257D20E30B;
-	Sat, 19 Oct 2024 22:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC0C137E;
+	Sat, 19 Oct 2024 23:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729378626; cv=none; b=kX5DpPxp8KssVwBa+wOgVPmqPRUH54uNagjpKpIevnBQGPrPBBsvdDCWTUTldwIP6z80UR1clv0xlDCTviWhCze77AI3jSDzX/g/58RuREi+pdbBLqb1xcwCmf8BopoaPVg1rQ/MUwk+1FFvuxMaY4C2bKF+AnrzvmhAh8omvRk=
+	t=1729379609; cv=none; b=fq/83XHZ9BCA+VlE+2sokpr2I0aRUUfBPO8UZ9uS6EwZtS0Ei1DK2vAGClyiASb/uj/uFqd9t/k4xsTGLl7kR8k/ZuKDRbxahwKHUkC87FFYWhYjrp6nEcvxGb5jqgWxN6D5FO8d3EnhbtBWq8Vm++bEvOmoHhJu1leDFOTmSU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729378626; c=relaxed/simple;
-	bh=GMkLHvRnZGJtzjtdeNAUL8UOKS7DHVy67CBq9JbkoZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GUJdwZV6qaTImEkiiwlqC6SkavDPL+6Re/pjVyLMtfZlHNQ8lhLncYFCHqbQb+FUK+uwqgWkZsLAUx/cppO+hsneAf6J7HZvexGJ65LmSokLliHTirfuNshBnaFbaSiGYy0kURCuviyqhWua7s7dGZuZSdgGGWIzTlCZ0N3qRF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U00Bhue5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2330C4CEC5;
-	Sat, 19 Oct 2024 22:57:05 +0000 (UTC)
+	s=arc-20240116; t=1729379609; c=relaxed/simple;
+	bh=vWUeb4y4cuKpHehQY2zJm9jpvextoPdgt8ZZCnuZFUc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t5OJ4J506LQlv+gOviqWJM6GQnuQ1bSc7JTpJc/+sJ9cdqK2+dIapW7ufoKDuHabpPNobnTR02szVCUpq568vtvFXxjSCCsiKtfh6oE/yddpPBGhOKknm5FE40q7K5A69ONU5fLX4RrpHq4AmuxangXLEpeQr4CqqH94XS1BmhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZQ5rrQp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB056C4CEC5;
+	Sat, 19 Oct 2024 23:13:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729378626;
-	bh=GMkLHvRnZGJtzjtdeNAUL8UOKS7DHVy67CBq9JbkoZI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U00Bhue5iIHc38+7K+ZB2GAYxUsO4UTUNzFhLjIFH/SBdWQi5GAd+6XCU9cfYIxK9
-	 1rpxefzEkuo9j22QVzZ2e0iickU55iLgJ5h3DRq/i3bINu9vdVDnqaE+bflRIWZvCi
-	 NXo14kFvmyjoZ3OWln6fspyvUYuglP5eAhbUoIkycgRvDAEABCe/Q90ri5Nd+Z64fR
-	 EdZJWBgnX+3sS8MH+Gf1BGhB+r8DWGwI8TnTFXZMTtQQTyh7Qvgja4HMtJZbDeousF
-	 JBTHtAhrOo3KP+QJyXxCUF+rqb6pdl5Jy5MRYI6jp15kWDwJKfK5VTy45vHEhUWePP
-	 uk594+46j0QAA==
-Date: Sat, 19 Oct 2024 15:57:04 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] module: sign with sha512 instead of sha1 by default
-Message-ID: <ZxQ5QJAa-iv4S6sw@bombadil.infradead.org>
-References: <52ee32c0c92afc4d3263cea1f8a1cdc809728aff.1729088288.git.linux@leemhuis.info>
+	s=k20201202; t=1729379609;
+	bh=vWUeb4y4cuKpHehQY2zJm9jpvextoPdgt8ZZCnuZFUc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FZQ5rrQpQqtiKqZcbUQX2jPLTNEwdt9YCYvhmbRDlv/ihOII9I3F4T/1Hx0nwIv79
+	 huL/NQqdhbvx9yO/osINQHWiPlus7wUinWpEZ3HhSHl9VbwQItgDo7BAqPr5wdjbk2
+	 +LYRhqEnO+AIu54T1/9Qfdp/+fkbmrT/nowVBv6v6KU2RBJM03m7ovaRbNz7DI0fSc
+	 4rQ6D03mYdLFenH8uTVBGpAaUMkcWbeXX6AtYuSn6wehY8e4N8WsqfI/5T7r5hce+q
+	 d8iObuHoHyiHRiiuQ+8XRG8PIm4Yp2ZhjaymP56s8EIb2h73xx4jXHjjIM5NkbdBEt
+	 +K1b2vT/WRyAg==
+From: SeongJae Park <sj@kernel.org>
+To: damon@lists.linux.dev
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: DAMON Beer/Coffee/Tea chat reminder for the week of 2024-10-21
+Date: Sat, 19 Oct 2024 16:13:26 -0700
+Message-Id: <20241019231326.72299-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52ee32c0c92afc4d3263cea1f8a1cdc809728aff.1729088288.git.linux@leemhuis.info>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 04:18:41PM +0200, Thorsten Leemhuis wrote:
-> Switch away from using sha1 for module signing by default and use the
-> more modern sha512 instead, which is what among others Arch, Fedora,
-> RHEL, and Ubuntu are currently using for their kernels.
-> 
-> Sha1 has not been considered secure against well-funded opponents since
-> 2005[1]; since 2011 the NIST and other organizations furthermore
-> recommended its replacement[2]. This is why OpenSSL on RHEL9, Fedora
-> Linux 41+[3], and likely some other current and future distributions
-> reject the creation of sha1 signatures, which leads to a build error of
-> allmodconfig configurations:
-> 
->   80A20474797F0000:error:03000098:digital envelope routines:do_sigver_init:invalid digest:crypto/evp/m_sigver.c:342:
->   make[4]: *** [.../certs/Makefile:53: certs/signing_key.pem] Error 1
->   make[4]: *** Deleting file 'certs/signing_key.pem'
->   make[4]: *** Waiting for unfinished jobs....
->   make[3]: *** [.../scripts/Makefile.build:478: certs] Error 2
->   make[2]: *** [.../Makefile:1936: .] Error 2
->   make[1]: *** [.../Makefile:224: __sub-make] Error 2
->   make[1]: Leaving directory '...'
->   make: *** [Makefile:224: __sub-make] Error 2
-> 
-> This change makes allmodconfig work again and sets a default that is
-> more appropriate for current and future users, too.
-> 
-> Link: https://www.schneier.com/blog/archives/2005/02/cryptanalysis_o.html [1]
-> Link: https://csrc.nist.gov/projects/hash-functions [2]
-> Link: https://fedoraproject.org/wiki/Changes/OpenSSLDistrustsha1SigVer [3]
-> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+Hello,
 
-Thanks!
 
-Tested-by: kdevops <kdevops@lists.linux.dev> [0]
-Links: https://github.com/linux-kdevops/linux-modules-kpd/actions/runs/11420092929/job/31775404330 # [0]
+This is yet another reminder of upcoming DAMON Beer/Coffee/Tea chats
+(https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing).
 
-Applied and pushed!
+Dedicated-topic discussions
+---------------------------
 
-  Luis
+Next three time slots that I reserved in advance for possible future dedicated
+topic discussions are as below.
+
+- 2024-10-23 (Wed) 09:30 PT (not yet reserved)
+- 2024-11-04 (Mon) 18:00 PT (not yet reserved)
+- 2024-11-20 (Wed) 09:30 PT (not yet reserved)
+
+Please reach out to me (sj@kernel.org or whatever) to reserve the
+not-yet-reserved time slots for your topics.  The reservation is made in a
+First-Come First-Served way, and I will send a Google Meet link to
+reservation-confirmed attendees.
+
+Please note that other time slots are also available based on the demands.
+
+Any-topic discussions
+---------------------
+
+Next three time slots for any topic (no reservation is required) are scheduled
+as below:
+
+- 2024-10-21 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2024-11-06 (Wed) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2024-11-18 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
+
+Shared Calendar
+---------------
+
+You can get the schedule via this shared Google Calendar:
+https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
+
+You can also get the past and upcoming schedules via
+https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
+
+
+Thanks,
+SJ
 
