@@ -1,163 +1,125 @@
-Return-Path: <linux-kernel+bounces-372814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4509A4DAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:09:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086A59A4DC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5076BB25EF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:09:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEBAD283A2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADF01E04AB;
-	Sat, 19 Oct 2024 12:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978B31E0B80;
+	Sat, 19 Oct 2024 12:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDi1kQnD"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FjNrm0cd"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB5D1E0497;
-	Sat, 19 Oct 2024 12:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9AF1DE2AE;
+	Sat, 19 Oct 2024 12:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729339743; cv=none; b=DnjPVtN7ZjQjMtH9n04ha9CJGUrTg2074dlMAfRgG/+0DRm5gGljIcfkkls4KFvMEv7ue4XytYWknu7N8sKrx+9f3QKq04nQa+/nMF49Qa4S9v6dXcioK2Crmo1pDJfD5EI7j9Xr/axkt22i2i5RMm94zW9A0S2abTEUWWcXvrY=
+	t=1729340043; cv=none; b=EKXH6AjkpdXxbQ3hNqvpj6K9lAqwejt6QBS4urfFW4Oe7Tmu/uJgpwjORM0Z3QhJWhJTL41gwzDWoRKGjQ8NAT9dEI+glr3PpaGGzzciU1uc0hN8ICONYkx1Kwwqawk7M6HKYAcmXshGg+UVw9sDMF3fzhQVnUV1UUvgRqAlHTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729339743; c=relaxed/simple;
-	bh=aWpXp64R1ZdsAExMlekEcQjsrf5zry9qe2T+DzRd+z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C8HcIZVWsZjPdPGtMPHKwoiXARuBifS+4Q2etHHV3EyuoRopTH8NDTmlDFRWqzdHyWaJiK/BF7jb43RTMRcuUrz5s/4bV2yYVdrajimMN5gU0o3Ey61OMFjKXY5YCO2nv/kokxibMGa9nqzgy0/4JnqiXrv5nUGYRiUmZ3KuMbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DDi1kQnD; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7e6ed072cdaso2146427a12.0;
-        Sat, 19 Oct 2024 05:09:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729339741; x=1729944541; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=URaCTtzRBRQ3eOPnATzkwpXp8SklgqBrCw6MZgMahAM=;
-        b=DDi1kQnDICSCQF2+HCXWD30fA/DDX2gtdMIShiwonIk03P6dsH3yfJRXQROPR+zv5R
-         8GV8Tg44vV9gun5NJyLCn5OTyux2MVoBP9K96HC3s+QfKY6X6Byhc8zv3VNMrPEJxpre
-         B2dqD5MLJwEplpv4PJSTu2aWLYixt96yCMkDefHKOHStMSrjeSBbrnDdY0U3/40DSZvd
-         U/Aq6smnlncRxa/kMWSs09G3Rgd7EJzattpoLLkUsMFJ0Rux3IF3uOmbK5F/xndj5KMD
-         hp/t5aoRAWBoSA2rIZpv5EoVxqPDweeHb4E2ELbLl3SBr4UN+dmDILUu+JWwwZSpT5My
-         M4aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729339741; x=1729944541;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=URaCTtzRBRQ3eOPnATzkwpXp8SklgqBrCw6MZgMahAM=;
-        b=c+jpbe70TvSUa9TVQ+Axrvfeg3dc1buDvuaaDykVJzDYAIniW7RE5aQLICx3GVQ4hx
-         pR8LtoxV80OUEKTLy/3xymNuzp3L8S79MUonCVJfJV6hRnTSHM/b/3aovoXLdVkO3qSK
-         J3+umOHu4LaZkW/nw9JYxWszRsurMfd5GTlOHDs8eovd9wxtKZGUjeCQDDlADi4t/wCo
-         TyVBl0mvjWc2Ox/KT3iUw9GIlHla780jFK96cawYF/myz/57lQVcovgaTKncOdtBMiNj
-         mrdBzkJnUVlDOK0fvQYJg0htezJccBzMJYIN2t92c1AjHTI3Y2bxB+UdMDi1x04fhE+/
-         yezw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbtf97K36Z6Bg6gCo7zEFARnEvLiGjVFnwlOg+5p2wF5oHys88PbBVksr7JGe5wbxbrj2o5boNCGkd0RG9@vger.kernel.org, AJvYcCUeZRos8ktUsO/PBpSW2+jtrO07NT6o7LJ+Uii4xNdAv18cLO/NBnYZwqn95yR4dTXVYWxbWBceyDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQWWrssg2UB6U7muaKPJS0iUzjNwF5Y7UukL6AP3J+x3r92dGR
-	l5zbugz4xu7aEuwzppkupPuCBVMfkPQgfkMqNA2bvgK4SHq2Qe9cusvwX8AOwGykMQ==
-X-Google-Smtp-Source: AGHT+IElUe6HfZmYRY33iKeaoCdrLY4wdfbJkOhr4S2CC8sZmfrHprqSmh6M750j2euiywPO2Muklg==
-X-Received: by 2002:a17:90a:c398:b0:2e2:9077:a3b4 with SMTP id 98e67ed59e1d1-2e5616c3c91mr6805881a91.7.1729339741206;
-        Sat, 19 Oct 2024 05:09:01 -0700 (PDT)
-Received: from Emma ([2401:4900:1c96:190:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5612dcacdsm3877901a91.50.2024.10.19.05.08.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 05:09:00 -0700 (PDT)
-Date: Sat, 19 Oct 2024 12:08:55 +0000
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Tomasz Duszynski <tduszyns@gmail.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Shuah Khan <skhan@linuxfoundation.org>, Karan Sanghavi <karansanghavi98@gmail.com>
-Subject: Re: [PATCH] iio: chemical: sps30: Add Null pointer check
-Message-ID: <upme6hy6sroszgdhj7ucg6iksxuim26grhgaypegu2vzdtsp6z@ne33c5yhbhe2>
-References: <20241018-cid1593398badshift-v1-1-11550a10ff25@gmail.com>
- <20241019122133.13d59dfb@jic23-huawei>
+	s=arc-20240116; t=1729340043; c=relaxed/simple;
+	bh=Zh3CNlvJGgEu6+hGG/XSE58JLkiLtoLZGdNKNVgf8xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S4aXxeA9h6nFHaPErO7pwBW8uvbJiOb6v8bgVfsj6GHEDjNZf+cRuJ/S+qlDEGpmUCk+EOykhPZW/gedg62uoOzYbEo3zs6qCBuEltf+F/+UtSZS5E5vG6IAso37FhjqJpxMuzHQUsvgCOUCrtTVrEf8wGJQ+Hu0fwntqyqbxyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FjNrm0cd; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D9759E0002;
+	Sat, 19 Oct 2024 12:13:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729340037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J3svayMFxw0v0m0oN6qpWeSzMSDxNCpu8Ituu40pyy0=;
+	b=FjNrm0cdmER2Z/qwTmF1DxYAsGtb+6BspLseSNudntV/cu8KhLEs+8bTYfC0kPh7ABgjBZ
+	OUKy6XJXA4+itlgqghRr2nrVRNgQYMELkeI/ESsddtihHMkQA5fVEwE4G9iVRy/JXeFpiR
+	1InCfl6J4Ww6fpqkpg68H5saJKLUhcRc0iGNb968J39GFDlPhMXwzdeYVm2izTlTCkWRq1
+	KKEiNe10mcKf+fpLBvWO27+ZuKQEvcKjV8Sb/C2XgMQwaMRWqOcj2UqEYpeQdMYeMNYqWK
+	E6LP7wJq8ekZ5QA+UJkqs1yUtP88lNYYgUcmMPWmKFzc6kTxyI8GzQ09oeSd/Q==
+Message-ID: <4d438cdf-7e16-4a75-b2ca-d3dea6f1c045@bootlin.com>
+Date: Sat, 19 Oct 2024 14:13:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241019122133.13d59dfb@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 2/6] selftests/bpf: add missing ns cleanups in
+ btf_skc_cls_ingress
+To: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ ebpf@linuxfoundation.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Lorenz Bauer <lmb@cloudflare.com>, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20241016-syncookie-v1-0-3b7a0de12153@bootlin.com>
+ <20241016-syncookie-v1-2-3b7a0de12153@bootlin.com>
+ <18cb274a-a214-42c0-bcec-cbda34703893@linux.dev>
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <18cb274a-a214-42c0-bcec-cbda34703893@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-On Sat, Oct 19, 2024 at 12:21:33PM +0100, Jonathan Cameron wrote:
-> On Fri, 18 Oct 2024 18:54:42 +0000
-> Karan Sanghavi <karansanghvi98@gmail.com> wrote:
-> 
-> > Add a Null pointer check before assigning and incrementing
-> > the null pointer
-> > 
-> > Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-> 
-> It would be a bug if rsp_size was anything other than 0 and rsp is NULL.
-> So this looks like a false positive as the loop will never be
-> entered.
-> 
-> How did you find it, in particular have you managed to trigger this
-> in the driver?
-> 
-> Jonathan
-> 
->
+Hi Martin, thanks for the review !
 
-I found this bug in Coverity scan with Cid: 1504707.
-Link below, for the same.
-https://scan7.scan.coverity.com/#/project-view/51946/11354?selectedIssue=1504707
+On 10/19/24 01:57, Martin KaFai Lau wrote:
+> On 10/16/24 11:35 AM, Alexis Lothoré (eBPF Foundation) wrote:
+>> btf_skc_cls_ingress.c currently runs two subtests, and create a
+>> dedicated network namespace for each, but never cleans up the created
+>> namespace once the test has ended.
+>>
+>> Add missing namespace cleanup after each namespace to avoid accumulating
+>> namespaces for each new subtest. While at it, switch namespace
+>> management to netns_{new,free}
+>>
+>> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
 
-Rsp here is a void pointer received from the function arguments 
-which can be NULL for a no respone call.
-Thus incrementing the NULL pointer can lead to some unexpected 
-behavior which cross my mind thus added the check. 
+[...]
+
+>>   -    if (CHECK(unshare(CLONE_NEWNET), "create netns",
+>> -          "unshare(CLONE_NEWNET): %s (%d)",
+>> -          strerror(errno), errno))
+>> -        return -1;
+>> +    ns = netns_new(TEST_NS, true);
+>> +    if (!ASSERT_OK_PTR(ns, "create and join netns"))
+>> +        return ns;
+>>         if (CHECK(system("ip link set dev lo up"),
+>>             "ip link set dev lo up", "failed\n"))
+> 
+> nit. netns_new() takes care of "lo up" also, so the above can be removed.
+
+Ah, indeed, I missed it in make_netns. Thanks, I'll remove this part from the
+test then.
+> 
+> test_progs.c has restore_netns() after each test, so the netns was not cleaned
+> up. The second unshare should have freed the earlier netns also.
+> 
+> Using netns_new() removed the boiler plate codes. It is nice to see this change
+> here regardless.
 
 
-> > ---
-> >  drivers/iio/chemical/sps30_i2c.c | 20 +++++++++++---------
-> >  1 file changed, 11 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/iio/chemical/sps30_i2c.c b/drivers/iio/chemical/sps30_i2c.c
-> > index 1b21b6bcd0e7..d2142e4c748c 100644
-> > --- a/drivers/iio/chemical/sps30_i2c.c
-> > +++ b/drivers/iio/chemical/sps30_i2c.c
-> > @@ -105,16 +105,18 @@ static int sps30_i2c_command(struct sps30_state *state, u16 cmd, void *arg, size
-> >  		return ret;
-> >  
-> >  	/* validate received data and strip off crc bytes */
-> > -	tmp = rsp;
-> > -	for (i = 0; i < rsp_size; i += 3) {
-> > -		crc = crc8(sps30_i2c_crc8_table, buf + i, 2, CRC8_INIT_VALUE);
-> > -		if (crc != buf[i + 2]) {
-> > -			dev_err(state->dev, "data integrity check failed\n");
-> > -			return -EIO;
-> > +	if (rsp) {
-> > +		tmp = rsp;
-> > +		for (i = 0; i < rsp_size; i += 3) {
-> > +			crc = crc8(sps30_i2c_crc8_table, buf + i, 2, CRC8_INIT_VALUE);
-> > +			if (crc != buf[i + 2]) {
-> > +				dev_err(state->dev, "data integrity check failed\n");
-> > +				return -EIO;
-> > +			}
-> > +
-> > +			*tmp++ = buf[i];
-> > +			*tmp++ = buf[i + 1];
-> >  		}
-> > -
-> > -		*tmp++ = buf[i];
-> > -		*tmp++ = buf[i + 1];
-> >  	}
-> >  
-> >  	return 0;
-> > 
-> > ---
-> > base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
-> > change-id: 20241018-cid1593398badshift-9c512a3b92d9
-> > 
-> > Best regards,
->
-Thank you,
-Karan.
+
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
