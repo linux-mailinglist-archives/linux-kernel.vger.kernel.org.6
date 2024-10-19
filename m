@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-372597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6819C9A4AD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 03:29:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977669A4ADC
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 03:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1376F1F225F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:29:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C656E1C21039
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06761BDABE;
-	Sat, 19 Oct 2024 01:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6291BE241;
+	Sat, 19 Oct 2024 01:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BtiCETiZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C1GEIIsX"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3311BD51F;
-	Sat, 19 Oct 2024 01:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1CB1BDA9A
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 01:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729301362; cv=none; b=GWxfYLBV8Frat7j2cZ1Csdt+cSkHBtDYU/hxWCtaJbsRVK+rAQtg+7ri8JKiRNp3w3pKU3jgZI20dVTNLYV2/4pLoOjaK9wSxEA2wOsBInT0rttIzB1qnhTJWHfNSg4GewhlATBhrzxRxqwMF7n2VM/i3H3liT/ZPIniBzEazPE=
+	t=1729301388; cv=none; b=Y9+RTGFyiUN32aGHKI9HrfRzYX7LEEKVRwWu1m1JzNX+mqQZvIDFjNQVio4raKbKDYUlYoGt2fVEt5bfFS1waSQBsqp/s7kUC7SEVrNS5f278k9sJKHvSv6HJ9M1m2kJWS6YHDPMYYnkSdnBM+iXxdNmSWd3nw+WfDEZ8m6G1NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729301362; c=relaxed/simple;
-	bh=5ruJRAia0ZJOhuZD+l/+ZaMAqPzgQPUVJ0vyGiY72+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MXAgElnSUEBgoQMrUn67Le7fJjeJEL3Gf/piFthWZFi2QxyCOeJ0jJbifWPlw9TQansrzlGRaLGVZMgxVzL1gUUia0/CUiPM3GDLakwpiUht4v98l25ayRnDzp4y5/MKJQSiht4rD2J055+1NZmace72oZrVW/2hE8yzLuZvaEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BtiCETiZ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729301360; x=1760837360;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5ruJRAia0ZJOhuZD+l/+ZaMAqPzgQPUVJ0vyGiY72+U=;
-  b=BtiCETiZ7Xx5zBf1Lp9/+dO4CEwURw2s6QbuAZ+G+Sihl27UWipDKN2U
-   99pYqphXOZ6cvkKYTltXu/hIScBM3GG/xF89XEK1PIzgIqXWn+TpU59xG
-   rGXWz0+fqjL9dMEtwYercL+mFviswppaunzCVQSDixNJwOH8vbliAfJsa
-   H/lVXQQxFAxb2iMOjnn8T3eIWtV6DfxvU8KLpDGyWZeQBCJOSXePKCjEc
-   Li+NNaFDsSf6/6NR9XLpsUPHXhw1CleGomqj+gTQME2RP8u3AVF2FRlK3
-   t8Ma0RDKj7jOOSZGZ0/tWIU+tuv6ER1H9sBbQ9DulhsWi/VQAQXSdl5p8
-   w==;
-X-CSE-ConnectionGUID: 7r0zlM3hQxCflVOph00guw==
-X-CSE-MsgGUID: VfIjw1clQA6T0kWGUhpxhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="46346055"
-X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
-   d="scan'208";a="46346055"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 18:29:18 -0700
-X-CSE-ConnectionGUID: cmrRBeX1Q7+VuDJJjqRnNw==
-X-CSE-MsgGUID: egPLdJZtTNSJRPuAyL8N4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
-   d="scan'208";a="78987586"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 18 Oct 2024 18:29:15 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1yHI-000OXK-2Z;
-	Sat, 19 Oct 2024 01:29:12 +0000
-Date: Sat, 19 Oct 2024 09:28:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Marcos Paulo de Souza <mpdesouza@suse.com>
-Subject: Re: [PATCH 1/2] printk: Introduce LOUD_CON flag
-Message-ID: <202410190915.WgFGTQdE-lkp@intel.com>
-References: <20241016-printk-loud-con-v1-1-065e4dad6632@suse.com>
+	s=arc-20240116; t=1729301388; c=relaxed/simple;
+	bh=3mtGNq9cGSGYrfQFZeSpQbC6OnKLuvDcJ3My6WR3hg8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=C//amlKmNe0YxZHVU9ED8HKFzA60hdh3rFkWAJn4oJIya+1aq2EuZ195kpeUWwe3RO+wqK7Lz6rGEf0P6+POKqfXk6AHGn7bUdDg/5q8ZtxyExhAETwLO0O3v7QRpaQ2LxW76p46WToQ6bUVLonhVN+ljafXShkgQk4d7lLHdto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C1GEIIsX; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e297a366304so4358515276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:29:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729301384; x=1729906184; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YuCuzNJhXO6NMFow4//rMdfOZm/3Ta56iibLMueqV4o=;
+        b=C1GEIIsX0Grr6+TDcrAUL+w5wqRsARy485p3C6OArX6GycOuzV9D3kU/6WDhVX/HVS
+         NGDfPC0NGKlTATdn5A+4L40gdy/4Xpu85Q+0P6qICzVwyLLsnz2Wmr+K7ffPyncmoEct
+         g5Ctj6/bHQddFexJUt775QlZ6tBjJtIPGBNCvQ11gZv6EdwOMA1U79XEsw2dHQMYL6lK
+         kmjEk83BsSTycScO353qcGOnlM2rU+hLN+hzZlyHFYCFW0A7hnV0HE6+qsfgyVNFi6OE
+         1wlurTQgF4YiQDtyYBB2ACM5XOtRqANIg7frtm37pT3TJXOtn3KJuPb/GETdaMlCTGTv
+         A74Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729301384; x=1729906184;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YuCuzNJhXO6NMFow4//rMdfOZm/3Ta56iibLMueqV4o=;
+        b=qh9GNlVb9eA1HJvnjzw5/ZBOAD30gkXsxgp9z4b1AQGL/qWcSDhtZZhboiLVFdfMjs
+         UiJUoE3saOnCAWIN4ErPaRYEutCexpb7kXzLWSL2y/iI38gAAUs5wsokoDsLUaJ/iy+X
+         GuNn+1ICppcJz3iVFDWCTC1EXqte0Sf8wMhtAFrCsK7sSQ/2qx7Xv50wlHCtM5qfftFj
+         gdKshohOa7o5rnidpy7QeOB0OZAYHio0lvalG3U2jaSYhU9B6VnmDOrH43CbBS4HifXw
+         a6xxNch8JYJMGlgaDkh2nOiHXLH+9ZRyUpz8pzFwNP5q9aTJaQwDL5JgHLnntRFqujNW
+         sBtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIqh0UifZ7EEPrYospzD+u/kIjxOIrD97K4a9spuM0p3ul4InrYm2f4vcO2+AFQ1NyL21Ir3uCJvjaGO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgHIwDb5qa6nrhGIlfkGHobkcHwUjVypHb6txYxmJWEnuI1pTU
+	l9GNy3agJtdZ/zQ+Wg46KqJoDfy8MuL9vfxyQODTVdyFreLQhAph+Ye3YXxjjOIwwHx9J1SV3Dv
+	MKMRJSgcx0KMSDoDfXQ==
+X-Google-Smtp-Source: AGHT+IFmq0/1EPi5496WrRokUU9WA5t7S1WG8rkiw/MIseZ9iZLjY0dGBCILI69xXidmtmdxWEdpgYhtiPqAdLd2
+X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:13d:fb22:ac12:a84b])
+ (user=jthoughton job=sendgmr) by 2002:a25:81d0:0:b0:e28:eaba:356a with SMTP
+ id 3f1490d57ef6-e2bb16d53e4mr14075276.9.1729301383632; Fri, 18 Oct 2024
+ 18:29:43 -0700 (PDT)
+Date: Sat, 19 Oct 2024 01:29:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016-printk-loud-con-v1-1-065e4dad6632@suse.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+Message-ID: <20241019012940.3656292-1-jthoughton@google.com>
+Subject: [PATCH 0/2] mm: multi-gen LRU: Have secondary MMUs participate in MM_WALK
+From: James Houghton <jthoughton@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	James Houghton <jthoughton@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	David Stevens <stevensd@google.com>, Yu Zhao <yuzhao@google.com>, Wei Xu <weixugc@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Marcos,
+Today, the MM_WALK capability causes MGLRU to clear the young bit from
+PMDs and PTEs during the page table walk before eviction, but MGLRU does
+not call the clear_young() MMU notifier in this case. By not calling
+this notifier, the MM walk takes less time/CPU, but it causes pages that
+are accessed mostly through KVM / secondary MMUs to appear younger than
+they should be.
 
-kernel test robot noticed the following build warnings:
+We do call the clear_young() notifier today, but only when attempting to
+evict the page, so we end up clearing young/accessed information less
+frequently for secondary MMUs than for mm PTEs, and therefore they
+appear younger and are less likely to be evicted. Therefore, memory that
+is *not* being accessed mostly by KVM will be evicted *more* frequently,
+worsening performance.
 
-[auto build test WARNING on 1d227fcc72223cbdd34d0ce13541cbaab5e0d72f]
+ChromeOS observed a tab-open latency regression when enabling MGLRU with
+a setup that involved running a VM:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Marcos-Paulo-de-Souza/printk-Introduce-LOUD_CON-flag/20241017-010521
-base:   1d227fcc72223cbdd34d0ce13541cbaab5e0d72f
-patch link:    https://lore.kernel.org/r/20241016-printk-loud-con-v1-1-065e4dad6632%40suse.com
-patch subject: [PATCH 1/2] printk: Introduce LOUD_CON flag
-config: x86_64-randconfig-001-20241018 (https://download.01.org/0day-ci/archive/20241019/202410190915.WgFGTQdE-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410190915.WgFGTQdE-lkp@intel.com/reproduce)
+		Tab-open latency histogram (ms)
+Version		p50	mean	p95	p99	max
+base		1315	1198	2347	3454	10319
+mglru		2559	1311	7399	12060	43758
+fix		1119	926	2470	4211	6947
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410190915.WgFGTQdE-lkp@intel.com/
+This series replaces the final non-selftest patchs from this series[1],
+which introduced a similar change (and a new MMU notifier) with KVM
+optimizations. I'll send a separate series (to Sean and Paolo) for the
+KVM optimizations.
 
-All warnings (new ones prefixed by >>):
+This series also makes proactive reclaim with MGLRU possible for KVM
+memory. I have verified that this functions correctly with the selftest
+from [1], but given that that test is a KVM selftest, I'll send it with
+the rest of the KVM optimizations later. Andrew, let me know if you'd
+like to take the test now anyway.
 
->> vmlinux.o: warning: objtool: printk_loud_console_enter+0x11: call to __cant_migrate() leaves .noinstr.text section
->> vmlinux.o: warning: objtool: printk_loud_console_exit+0x11: call to __cant_migrate() leaves .noinstr.text section
+[1]: https://lore.kernel.org/linux-mm/20240926013506.860253-18-jthoughton@google.com/
 
+Yu Zhao (2):
+  mm: multi-gen LRU: remove MM_LEAF_OLD and MM_NONLEAF_TOTAL stats
+  mm: multi-gen LRU: use {ptep,pmdp}_clear_young_notify()
+
+ include/linux/mmzone.h |   7 ++-
+ mm/rmap.c              |   9 ++--
+ mm/vmscan.c            | 105 +++++++++++++++++++++--------------------
+ 3 files changed, 60 insertions(+), 61 deletions(-)
+
+
+base-commit: b5d43fad926a3f542cd06f3c9d286f6f489f7129
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0.105.g07ac214952-goog
+
 
