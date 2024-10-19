@@ -1,177 +1,111 @@
-Return-Path: <linux-kernel+bounces-372872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB26D9A4E9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:21:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D519A4E93
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 859F21F271CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98AA1F22A8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E61433C9;
-	Sat, 19 Oct 2024 14:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D3D38FB0;
+	Sat, 19 Oct 2024 14:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stoeckmann.org header.i=tobias@stoeckmann.org header.b="dhFnehI+"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzomkAnX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C0529D06;
-	Sat, 19 Oct 2024 14:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0C915C3;
+	Sat, 19 Oct 2024 14:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729347667; cv=none; b=IM39SBSAGP0078HOcoSmAfk7v5BWXv4NM5jzfUPRkmQd62npRNChX0uz31p4Lbse/iuzbso7Bqkmal0BtVAyeQ4WVhic06y5J4aqFmNmmZFYi69+8R2zYLRPfMrCDin4LG7cbxtkbIzYTsTpupeGUw+yXqCv+/Z4eDoh3l+TDkw=
+	t=1729347425; cv=none; b=DIKz12dEa1WW57bVsZPwwNrJcpdifTo/fuwtcBURZ2EE9jjLXl+9l5ju0YksHw9QlF5c4HkvRMnT+NIwnrqpU9dS0fUEaQ0/jyVnU8e8Sckn4nV3S0RRZbBKEmsexZp/zfv6EttBj/OY7rVHc+ueUbDNexoDGp6WIEw6NT4fw+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729347667; c=relaxed/simple;
-	bh=c7RiOr1Ac/fzc8VMDMux8kD1mZMdxJEJAcE0RWw3ieE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ocbv0F3wxYnyrWlea4XkuqtYBDrso487iiFAR8M0ZbHbSP/u0u52dXziFiEaOSuj5/Pikl+hbNEykX0ctvJvVkydWMvM8qjYDsRck558i5wfVWlwPAAjoFxPotFjTFeZ6dDdbJuyMa57XaAIs6tTiUo7tdb9VxcMb9f5dV469kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stoeckmann.org; spf=pass smtp.mailfrom=stoeckmann.org; dkim=pass (2048-bit key) header.d=stoeckmann.org header.i=tobias@stoeckmann.org header.b=dhFnehI+; arc=none smtp.client-ip=212.227.126.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stoeckmann.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoeckmann.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stoeckmann.org;
-	s=s1-ionos; t=1729347659; x=1729952459; i=tobias@stoeckmann.org;
-	bh=3nKCnyI8qt6wdcOrLc2pSwcWxAAi245mb4c+KnX/UsI=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dhFnehI++eTfUBOOdo9amJ/yJpFFJg+cXYKET3Of3Ad4zlQO5DzjZ4Fu6RtrKudj
-	 vH1uqAuUNC0Q2nsmfrhAW/aHfvF0bL6u/1mBPddFe/WFpOXpzfXCRkgyZZJrR5dry
-	 tzYfp7ikrjqOFcjga6NBEHf/sDFPxP01d71EnMne9xIR/QJzSEv9uFG6S9lvPWbSi
-	 RgtLFFg/W84CXp/SNLMllWN88e6obCEcHkwtrNHcbfyN7QMJJOARRKOm6VvWnoj2b
-	 Qag83x+R/X0jB1aqZZ1eBVfuItgCKTEEC9liA684AfwieSRocDaTalJgq82LxifF8
-	 EHM845CwXmcD7BBpFg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([93.225.54.107]) by mrelayeu.kundenserver.de
- (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1N0Fl9-1tok9h3S6B-00tAbZ; Sat, 19 Oct 2024 16:15:34 +0200
-Date: Sat, 19 Oct 2024 16:15:32 +0200
-From: Tobias Stoeckmann <tobias@stoeckmann.org>
-To: mcgrof@kernel.org
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] module: check symbol name offsets
-Message-ID: <2hhrajjoxixnkhtlhhqzjxki4iuhr362345wgrmg6uzbfhlupo@hgbjsb5wizir>
+	s=arc-20240116; t=1729347425; c=relaxed/simple;
+	bh=9ZBGfZdLPG2dOgxZEu6wPgkmAHTntw+usd99xmNtw/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q32hzfGlXEuLYL9JzAGzApQg2KqYLWdTP4wkKZaUF3Dp+sZu6iakuG7KaqCBvusc+wbgF3KL3E3eIsthWgF8fxRvqTUOfy/8zCH5hEF9afZr7ZDIq2/qoeU97trkZ5VHckYw/YKLIg+F2qWRLIIuQmfpT7naQP9iw44PD+LWNEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzomkAnX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13FBEC4CEC5;
+	Sat, 19 Oct 2024 14:16:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729347425;
+	bh=9ZBGfZdLPG2dOgxZEu6wPgkmAHTntw+usd99xmNtw/U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SzomkAnXpFIbvsd/71sSCHctzdy+eAjFWBvYEv/XDoVHhlgRRDDQWMoQ/vTm2G33r
+	 TFzhZ8T0ANnX4Ce7bCkh5dWOya6oYwwObgFSWYakIjGe3TuWrgeL5M2Q2DXJsW/zrh
+	 lXx5hE17uYddu95deq47TV+JByjcJMR2fRsdhOTlYzubdy7JRUZ51Qj9e7tEocwIfA
+	 LpcbFP02LHWWwCorsbN4hg/Y5kVOvbP/tRINEoYeaB7qPTEaltzoPjTfE/Cf9HqmRq
+	 Z+Lm2KHV9sMWCg9TC/nahaNCBMVNICyNa9yqDed6B6qjkGvj8tyEIdWyBgtR3attaI
+	 C+FrsbIH4N2mA==
+Date: Sat, 19 Oct 2024 15:16:30 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/4] dt-bindings: iio: light: veml6075: document
+ rset-kohms
+Message-ID: <20241019151630.22f2c0c9@jic23-huawei>
+In-Reply-To: <20241017-veml6070-integration-time-v1-3-3507d17d562a@gmail.com>
+References: <20241017-veml6070-integration-time-v1-0-3507d17d562a@gmail.com>
+	<20241017-veml6070-integration-time-v1-3-3507d17d562a@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Provags-ID: V03:K1:/tAdUMrLljt5tYcwL6EGwqCKXUJdCEO67Ni5LiSUiK+AX2N+jps
- 1M55LaDgbJhMVZlpz/gE/ccm5/NhhjFh6h2agfeF5TytVY8jmnV8aI9v1sFcNyOdzyYfreB
- j1Ek7mz8DNueHGh4v5OrQSew0VlWjlWdGOq+Es8w2Qn7Ehc9UmClgnzjNJTzNUyWxx8fQJM
- 3Ls+fQN+YrDCLBF/paFPQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:C0dOTkl2OKY=;CRRWzZnronMJlRcvVLU/G0IH63X
- m/eYZNV62zoUZS2v+X9os074J0jKj7jJm72LIpTcTsWvGhF1WovKccJSoqlCkOYD+H2fZd1Id
- 4drYouWGForjhGukf+pJ51Q9MkSEkT5VMi5Sq3T6TDs0ciqR/6dLimVxfCDxRQShXzhUpbfQt
- KWJNUpMWOv2nGyl9ZfDR0EPOct99QlMRIvNQIh2UA+FVBqy7qv02rOxAjOsJ08x+c5K0l12d+
- E4sfFcycdzQWYZuZMu1Iyh+On6HZ2GI6WsqlgaJ/3Mvr4a91O8eRJBOC7NPuQ9hK2oSIIplsd
- k5VACNBlQTnEkyF/Z0We3rd5bziPNgWENG4HQxbyWNn050aBes7qOWR6Xkq2QaEN4JfLrRbZe
- /tluUzkwoe4fAE+ZyPx9X0rANxPB5pwAwcNpeKmONWAw4xiq+FufFRDPsklutGnOiI90oGoOv
- no0Hx0X4RkdCV9DXXC5fEq4bb5ig9Ln8XYDFIXsjNflcmj4bJ9HrP36NQ8ANFQkBlocW5K4N4
- /0Hzgeqe3rKcRUDrl7Rf8EeIYyev0FNDFoA2r+OLc6e+il6rY8A5r0MdemxkgreorcKEX5e7G
- Rvto4yVK8uWFPbJ9Yp2srw7ue6h0l+0svBAGBcXKyV126qClfb86ANbSmTTGDcnMbafF0IXca
- sQ00drXYzjrrcXE6bDsH7Zf1OuPhfERzgIvoobOIihU3tTE70ClwPZuBIqM3ILMAw8Aw0DtWy
- 8qhHF/RHKm234CfDsROS+hjtQ27XgMH6w==
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-It must be verified that the symbol name offsets point into the
-string table, not outside of it.
+On Thu, 17 Oct 2024 23:39:27 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-Signed-off-by: Tobias Stoeckmann <tobias@stoeckmann.org>
-=2D--
-Proof of Concept:
+> The veml6070 provides a configurable integration time by means of an
+> extertnal resistor (Rset in the datasheet) with values between 75 and
+Spell check descriptions.  external
 
-1. Create "poc.sh"
-
-```
-cat > poc.sh << EOF
-#!/bin/sh
-# Sets an illegal symbol name offset in supplied uncompressed module
-# usage: ./poc file.ko
-
-MODULE=3D"$1"
-BASE=3D$(readelf -S $MODULE | grep '\.symtab' | awk '{ print $5 }')
-if [ $(getconf LONG_BIT) =3D '64' ]
-then
-	OFF=3D24
-else
-	OFF=3D16
-fi
-ADDR=3D$(python -c "print(int(0x$BASE) + $OFF)")
-echo -n 'AAAA' | dd bs=3D1 count=3D4 of=3D$MODULE seek=3D$ADDR conv=3Dnotr=
-unc
-echo $ADDR
-EOF
-```
-
-2. Choose a module which works for your system (adjust if compressed)
-
-```
-cp $(find /lib/modules/$(uname -r) |grep ko$ | head -n 1) poc.ko
-```
-
-3. Modify module
-
-```
-sh poc.sh poc.ko
-```
-
-4. Try to insert
-
-```
-insmod poc.ko
-```
-
-In dmesg, you can see lines like:
-
-```
-BUG: unable to handle page fault for address: ffff9802022d6f81
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 100000067 P4D 100000067 PUD 0
-=2D--
- kernel/module/main.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 9c5b373a7..c926960ae 100644
-=2D-- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -1688,6 +1688,7 @@ static int elf_validity_cache_copy(struct load_info =
-*info, int flags)
- {
- 	unsigned int i;
- 	Elf_Shdr *shdr, *strhdr;
-+	Elf_Sym *sym;
- 	int err;
- 	unsigned int num_mod_secs =3D 0, mod_idx;
- 	unsigned int num_info_secs =3D 0, info_idx;
-@@ -1859,6 +1860,17 @@ static int elf_validity_cache_copy(struct load_info=
- *info, int flags)
- 		goto no_exec;
- 	}
-
-+	/* Symbol names must point into string table. */
-+	shdr =3D &info->sechdrs[info->index.sym];
-+	sym =3D (void *)info->hdr + shdr->sh_offset;
-+	for (i =3D 1; i < shdr->sh_size / sizeof(Elf_Sym); i++) {
-+		if (sym[i].st_name >=3D strhdr->sh_size) {
-+			pr_err("module %s: illegal symbol name offset encountered\n",
-+			       info->name ?: "(missing .modinfo section or name field)");
-+			goto no_exec;
-+		}
-+	}
-+
- 	/*
- 	 * The ".gnu.linkonce.this_module" ELF section is special. It is
- 	 * what modpost uses to refer to __this_module and let's use rely
-=2D-
-2.47.0
+> 1200 kohms.
+> 
+> Document rset-kohms to select the integration time.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>  .../devicetree/bindings/iio/light/vishay,veml6075.yaml   | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml b/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
+> index 96c1317541fa..3d3ffeaa22df 100644
+> --- a/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
+> +++ b/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
+> @@ -29,6 +29,22 @@ required:
+>    - reg
+>    - vdd-supply
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - vishay,veml6070
+> +    then:
+> +      properties:
+> +        rset-kohms:
+> +          $ref: /schemas/types.yaml#/definitions/uint32
+> +          description: |
+> +            Value in kilo Ohms of the Rset resistor used to select
+> +            the integration time.
+> +          minimum: 75
+> +          maximum: 1200
+> +
+>  additionalProperties: false
+>  
+>  examples:
+> 
 
 
