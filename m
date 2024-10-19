@@ -1,79 +1,92 @@
-Return-Path: <linux-kernel+bounces-372571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A809A4A70
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:18:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3EBE9A4A75
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77C131C21F74
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:18:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AF511F23DF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8D6443D;
-	Sat, 19 Oct 2024 00:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF79C2AD29;
+	Sat, 19 Oct 2024 00:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXFphR7a"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="PYB9fJvZ"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E3836D;
-	Sat, 19 Oct 2024 00:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA699224CF;
+	Sat, 19 Oct 2024 00:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729297074; cv=none; b=r76xVYF6OVw5ZMBRULUVyYyQsQlg0AY/W7DB9ynItbLHmNavlczR8AhUfuAVd7+i8vKC94l9LGJbtnU8UiIg5fWFfrv1a/4GbaiwnehzEGj/8Dwb/5v/ZUzpxcQGFEVI4sdIxksjQaqDawtQRFJbsrka39GgrGntrkzHM8LQXJc=
+	t=1729297246; cv=none; b=S2FjRX9BDssP/hI70Z4cvzVIRRtnSAStyFjVQ1eh+AQEnAG+CT5fK2Pp7zBcsOw2QbRtLwMhHm9ZwkTUv1+wdk/j3oFQNx+t028UAWBwiy7nU1pE/t9masaNX/74cAh3LmzhUCvIVNSAdmpo+2Jdlc8Fk+BDcOsf8N2YeWezODM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729297074; c=relaxed/simple;
-	bh=tlY43JdjyV9axML2Cr8ljY1YNibBQDW552pvjjR2y2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UIrWXXQBKMrvB8J2qsOU3oO4+QsyZURzeN1oFvmp9BJJVQR/YCM44foB3Jr0noZYAmXG6u53NqaLunrJli2Wc7tVFMapq1UnJa8jNETgfbpzLq/ZcbJhfZqKMCuWKTwOsuTPeEHr4S0i/nL+v7gQx2uI0/20yDXGSQ3lyUabK8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXFphR7a; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e7086c231so2042971b3a.0;
-        Fri, 18 Oct 2024 17:17:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729297072; x=1729901872; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G7RF0iiaJKXm5pkfZ7lhDtquCyKsXt73L2NkYBEIh1M=;
-        b=HXFphR7aRD954bE0UvSxQ1QG6ZKJRnXvENZwftxNk5HPpm23Xqfwkn4DDu0kPOOUbB
-         qdcDA5v4fyyNxeasorBXMES/lNTYgAHiyfIzY4lsRz/ts1VvQKb8ziYJUWVsPTQmgNdr
-         znCxsjIincSpf9RtCCSNa6ZPYD6AJIF2NAJjH7Vy1R2GCBhHeEx7VKP9SlImBnkxNoWW
-         Iv7uBAxsy16UBL1/5VUhfEUaWO1kDhFyIQlz5DZqRGV6o/w6ZV5Re8rMnQT5elm8dzhF
-         ETJ+Rfvkmoz/6iMsnqZw2is0svtKgpYqTVhvZCkJDR3cFb1r9r2Vj1xp+5L3AVrLXmXh
-         6I+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729297072; x=1729901872;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G7RF0iiaJKXm5pkfZ7lhDtquCyKsXt73L2NkYBEIh1M=;
-        b=SHba4r47BUjZv1a90Rc774psb8/DT+sJ+qfjOX4HRQzn7C46a7DtwF2eUqeVqXlfOQ
-         3nh55xuzz7ivUds7AxzVTjOnKilvluls1Tr7DZYt5C/rH2xl8NTTxzmyPAAKwszckf/K
-         FBnaFJGjiNsSDeD5dQz7B1Wnju0d7QHNmHhfu6/yk46Skz896XG+iUo8kik07i2WIOCp
-         6dN1W1R56QMZVIs+ow/vGpEpJldksraagg9i3PD8PshuBZ/y01LNaMXe1O59pq12tJsy
-         8x91qaEa4CdZohL6l0bFQfJ++DnAbAsj5hfYsCk0D5J5NT+jkFajgLBey7IG+7+smSb7
-         G6uw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrnGx/tcvW/df6v0GWwfeHa7XSYLLP9q64UGlukCVm+dWNEY9igOhJnYz6+cX6xpV6GvWbL+FVIu6MVNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuj7Rzm7GKVyHLyx4I9btKo59KbsSahhoxawtZOecW/0ies1Q2
-	nu4DBARvaEwTD5GqorHMB6Ka+qDoHy8YmeGYmzRdHoXfHao0iUIXw6lPkg==
-X-Google-Smtp-Source: AGHT+IGKFwEzolzTkzQOBaAfATzsSX0XJ+paTA5NvABrHpfnr6bFHD3In7H+gx+VOiga6XQgDzEFgQ==
-X-Received: by 2002:a05:6a00:1954:b0:71e:6c65:e7c8 with SMTP id d2e1a72fcca58-71ea33542b8mr5895410b3a.23.1729297071497;
-        Fri, 18 Oct 2024 17:17:51 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:351c:e27f:10e5:484c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea33ffccasm2075771b3a.132.2024.10.18.17.17.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 17:17:50 -0700 (PDT)
-Date: Fri, 18 Oct 2024 17:17:48 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: Oliver Graute <oliver.graute@kococonnector.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Felix Kaechele <felix@kaechele.ca>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Li Zetao <lizetao1@huawei.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: edt-ft5x06 - fix regmap leak when probe fails
-Message-ID: <ZxL6rIlVlgsAu-Jv@google.com>
+	s=arc-20240116; t=1729297246; c=relaxed/simple;
+	bh=qI5l1jsqzoUe0LmaPMq9oX46BlP9hJIre2mnGkMU4CE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnFcEAj0H/yW00l1ZXMqqPiCGGjewrVi2B9Rx851wzJbYD+4jKVVrIJOKCO7NLUmonsOZX1uMCLxOqioEcBh71mT4bluv/x8VjPaX9CgjN4aPGe7W0aUYy6UyRE8zK5RPVOTk7mvheyWEEcJyb+FfF8KXiLBcBgaosyvXKltr/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=PYB9fJvZ; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=zdDTvBQFkrAbA5UYsiAGy1L58PcaCZM1pS4G5GVb73Q=; b=PYB9fJvZq646VxX9D/D6jU4RSV
+	WLOvBXYenBE+50AuDfcfPeNRirfZqz7oH+8dk3oc/5Zaj6H6/Ju+R5yGCtbu8SgfBB2CFvOCKic9M
+	pPX0eFVYzLLZuXXaTDRt7lA7b3jkW7eZc4E2tLDSzOPs5aMaGN4JDs1ITCn/y9qu16L738mPm5xDH
+	BwYPpZp0yUC8/9oBrPkxcL0/8g4YqpayJbJRA5lV1j1mjGaRfMghyHt47R5aNsgcgxN7vygZeK/jR
+	i40azgCN3t7PtUAHwpoBIQ9/bB43LwqBZZdeaHo7qQUkuZMEwOInEbU2oRRTcBWZlhdUzJXC+l8UP
+	nUsoHnzQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1t1xCD-00AVu7-2K;
+	Sat, 19 Oct 2024 08:19:54 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 19 Oct 2024 08:19:53 +0800
+Date: Sat, 19 Oct 2024 08:19:53 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"yosryahmed@google.com" <yosryahmed@google.com>,
+	"nphamcs@gmail.com" <nphamcs@gmail.com>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>,
+	"surenb@google.com" <surenb@google.com>,
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"zanussi@kernel.org" <zanussi@kernel.org>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"mcgrof@kernel.org" <mcgrof@kernel.org>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"joel.granados@kernel.org" <joel.granados@kernel.org>,
+	"bfoster@redhat.com" <bfoster@redhat.com>,
+	"willy@infradead.org" <willy@infradead.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [RFC PATCH v1 01/13] crypto: acomp - Add a poll() operation to
+ acomp_alg and acomp_req
+Message-ID: <ZxL7KUGUroiOYssf@gondor.apana.org.au>
+References: <20241018064101.336232-1-kanchana.p.sridhar@intel.com>
+ <20241018064101.336232-2-kanchana.p.sridhar@intel.com>
+ <ZxIUXX-FGxOO1qy1@gondor.apana.org.au>
+ <SJ0PR11MB5678CE94DDBDEC00EA693293C9402@SJ0PR11MB5678.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,78 +95,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <SJ0PR11MB5678CE94DDBDEC00EA693293C9402@SJ0PR11MB5678.namprd11.prod.outlook.com>
 
-The driver neglects to free the instance of I2C regmap constructed at
-the beginning of the edt_ft5x06_ts_probe() method when probe fails.
-Additionally edt_ft5x06_ts_remove() is freeing the regmap too early,
-before the rest of the device resources that are managed by devm are
-released.
+On Fri, Oct 18, 2024 at 11:01:10PM +0000, Sridhar, Kanchana P wrote:
+>
+> Thanks for your code review comments. Are you referring to how the
+> async/poll interface is enabled at the level of say zswap (by setting a
+> flag in the acomp_req), followed by the iaa_crypto driver testing for
+> the flag and submitting the request and returning -EINPROGRESS.
+> Wouldn't we still need a separate API to do the polling?
 
-Fix this by installing a custom devm action that will ensure that the
-regmap is released at the right time during normal teardown as well as
-in case of probe failure.
+Correct me if I'm wrong, but I think what you want to do is this:
 
-Note that devm_regmap_init_i2c() could not be used because the driver
-may replace the original regmap with a regmap specific for M06 devices
-in the middle of the probe, and using devm_regmap_init_i2c() would
-result in releasing the M06 regmap too early.
+	crypto_acomp_compress(req)
+	crypto_acomp_poll(req)
 
-Reported-by: Li Zetao <lizetao1@huawei.com>
-Fixes: 9dfd9708ffba ("Input: edt-ft5x06 - convert to use regmap API")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/touchscreen/edt-ft5x06.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+So instead of adding this interface, where the poll essentially
+turns the request synchronous, just move this logic into the driver,
+based on a flag bit in req.
 
-diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-index ed9b71c11f71..2f4d66957969 100644
---- a/drivers/input/touchscreen/edt-ft5x06.c
-+++ b/drivers/input/touchscreen/edt-ft5x06.c
-@@ -1096,6 +1096,14 @@ static void edt_ft5x06_ts_set_regs(struct edt_ft5x06_ts_data *tsdata)
- 	}
- }
- 
-+static void edt_ft5x06_exit_regmap(void *arg)
-+{
-+	struct edt_ft5x06_ts_data *data = arg;
-+
-+	if (!IS_ERR_OR_NULL(data->regmap))
-+		regmap_exit(data->regmap);
-+}
-+
- static void edt_ft5x06_disable_regulators(void *arg)
- {
- 	struct edt_ft5x06_ts_data *data = arg;
-@@ -1129,6 +1137,16 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 		return PTR_ERR(tsdata->regmap);
- 	}
- 
-+	/*
-+	 * We are not using devm_regmap_init_i2c() and instead install a
-+	 * custom action because we may replace regmap with M06-specific one
-+	 * and we need to make sure that it will not be released too early.
-+	 */
-+	error = devm_add_action_or_reset(&client->dev, edt_ft5x06_exit_regmap,
-+					 tsdata);
-+	if (error)
-+		return error;
-+
- 	chip_data = device_get_match_data(&client->dev);
- 	if (!chip_data)
- 		chip_data = (const struct edt_i2c_chip_data *)id->driver_data;
-@@ -1322,7 +1340,6 @@ static void edt_ft5x06_ts_remove(struct i2c_client *client)
- 	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
- 
- 	edt_ft5x06_ts_teardown_debugfs(tsdata);
--	regmap_exit(tsdata->regmap);
- }
- 
- static int edt_ft5x06_ts_suspend(struct device *dev)
+Cheers,
 -- 
-2.47.0.rc1.288.g06298d1525-goog
-
-
--- 
-Dmitry
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
