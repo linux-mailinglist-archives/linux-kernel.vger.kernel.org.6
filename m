@@ -1,265 +1,184 @@
-Return-Path: <linux-kernel+bounces-372635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5CC9A4B45
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:14:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CF49A4B48
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8BB1C219D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882021C21730
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3691D54EE;
-	Sat, 19 Oct 2024 05:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01CD1D5CF4;
+	Sat, 19 Oct 2024 05:20:05 +0000 (UTC)
 Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC711CC8A3
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 05:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4848D1CC8A3
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 05:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729314870; cv=none; b=fD7L2ayqlzgyyevuoLqFw4z4tOV5+nPFSa2qnDw+/3j/yGYQb0lVkvTKRNpHkJy1jKI9q6qSiEV+aduSsfoIiHP5Yk0H5SuD5aXgvsyAX9SK5QJ4dmAt85hUCPmV/W1uQhwRYzmjjUjT71fmVeAUvp+o9vOJjkxaYAd8r2EZXMA=
+	t=1729315205; cv=none; b=lQ4Ec0Qw+XDcqhZg0nVGvr8LX5MppxhlULxewzFXKb8UxBvsOB4+mOI40nakkR+m/dGcpDz0ysMSrdwc3noDiM13LgsvbFwzd7vC6WKlRcxviWorar/7PnxJ+GwxVA1S3FH6U9xIUFUH4P6KvAe6/NlkBVKm/DVooIwemx/td34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729314870; c=relaxed/simple;
-	bh=jQqJd3f2riE0QHl/3tzAbyAQqQxAvlfbNxbeI6AspEw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=phfvZt+KUvjDI7RMTfzXh4aqywIodDUNOZnpW7Fc4JI8WkJuvGCrTj6g3CLPVZmfDFjrYqA6fUTu8Ausa+EZE63x+LYJUr4oVmoyaJd3/19adh6zupKLlK+6cE29DgUL5R6JhXVboKFN/5K7JCY0/Zi9XwxYUMNzsIAysrbABU4=
+	s=arc-20240116; t=1729315205; c=relaxed/simple;
+	bh=fyuvITcQCsYlvsn8rW8Eakh+VpT6R3gvHiTF9T8hfYo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CAJPfcLESPdCflyWfvGhhV/U1wp8mCoUlHZ5HK9tJu/fr5Fg+rb5tGDTEp4Qj2OevXclrXZ+8BRR9eBwLhuRqG7IYjsziNWFPA7FxRMnPbqiHQXlahQ+V6ruEvZ4kG+vEClNcMm0M+u1eK+My75Nz8nisbHYweUBGoRaM27jwwc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3ae3c2cacso27864345ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 22:14:28 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so23411825ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 22:20:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729314867; x=1729919667;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tEYw0fhHA0VYRi0ziT7jMy1rPvXCW3e+5w0LF2njhaQ=;
-        b=T+rzdP0AT12jEUET1LaI4o3ewO4mpH1tg1FM/DNnkr3PVoo6sGoHFW3zv91iXVqZ/q
-         G+3uSVFuQ/tSIYxEFctaPWH+h10qtZhqjdWTuPeITxRPGjTuueawPpgCoj9cEe8lzDhN
-         rqtIlcaivV1jwdbWBtfgk/0+jYHUW+lzyCfwW28BUSZFCSWs5nHfiQrlyLDUK8oHFD3j
-         SyKpom7nPmIA3tsySz4HMumkFJZ9HXm0rxQGTj7GEkjuKBCmF5DDpc35Yp9K+YC79ebG
-         Z15YooRVy1AVTBNmFVkUVHedg5yhbogkxGpXE1+tCaBm3AfFbxGV6AcN9rF4Fbeabgz4
-         Dlcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUy4xoITQEUz9Oow0LA135wuUGSijNip4mtduWbIqqA3KqNSMk4ApG2hm3ILiYdnBbTWo8CrC9ohyndwn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxMMtNe+FO/z3h44vXRHOx+tbaiqWm58Z2KPWn49xMTGfLh0zf
-	ARsV3cFhmnU9ARDDlZ1kZMvsseDqsdKVZMcrQChzYtaRE/43A+c5jDwckpAPcBk13QvgEW5hPdw
-	nuLR8AitRCRKQCjyz1pCRUq3jj03/HngLzN7hQylAazkZNlBS3JHPG3g=
-X-Google-Smtp-Source: AGHT+IHKyA2DYOhiRSurMjGgDp4dpao/kX+IPqQnuHuZG25RHasWFKPsZ/Cd4NN7e+bF4nBELaydBRoN/5P/exYv39XIfqHrkfLI
+        d=1e100.net; s=20230601; t=1729315202; x=1729920002;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QlxeE9Vr5F5vKty6EBmDxdWCPl9yGNSG5XRCNC14GcM=;
+        b=LTrb81b2OjJmxwcDDECKZtTfJH8VtSyiIk5XHxdbpfjeh/a0W/7OFl2wiVxDVMRNC2
+         4De9gnPkYM3wZ/fa+o92JpM9GBlzIYUnUewXdBilt6tt4MR2nlNiFfW5LjY5oRVyzD3Z
+         3QkXyKhJgSJtsLtccju70y2ZtZW0Rkr0KVV9vKFIdgg7JOhqE1yw7uzMPG+4G9GgBguA
+         1ojNoUCPv5qwufeXqPWtUzZmYSPI2r29ujdUllKLKz1k+spalpzFOK5T3vaNUxIB39GQ
+         TgvHzmL/EM9aiM/sEVBiJKQkleoTWX6IeOPVNK4x3lFxbciRHE5u+ggVkBLwGS2Eej2N
+         Ytuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIYZSK/3mcZ6c5yBmDw1TmJUfoSFpkryi72ZE1iYMns+3haxn1z3dh6khx82Kfw7fLKVVwzXvWWocJj6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKlvaXp9m52bGTXApQXYIOIY69gBT99uMxfi7I7tha/FhKWo7x
+	acFuP7dw3O2rVfdHKuKS6lx9TlmEjSmHfkYdUZr2ex5lvOm8vWGONh4y465vi5xvTCCDvKYrqzs
+	UqiHLQtlNB5Fyg+0M9jAOuji4YJyFv3XVf7+a9sfH8JtPRcc+4qOxR/Y=
+X-Google-Smtp-Source: AGHT+IHDOX9xUrAoICrzmF/Qx6PZYlpzPgB1YaSRu2i/o/0q9TaHs9HEUIrz2vTjGWZwjvKqmpon7Rqp5xkZp+Daj33zTRKQXERK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c541:0:b0:3a0:926a:8d31 with SMTP id
- e9e14a558f8ab-3a3f40a86aemr55249035ab.16.1729314867183; Fri, 18 Oct 2024
- 22:14:27 -0700 (PDT)
-Date: Fri, 18 Oct 2024 22:14:27 -0700
+X-Received: by 2002:a92:c54e:0:b0:3a0:a80a:997c with SMTP id
+ e9e14a558f8ab-3a3f40ab41dmr36985375ab.19.1729315202208; Fri, 18 Oct 2024
+ 22:20:02 -0700 (PDT)
+Date: Fri, 18 Oct 2024 22:20:02 -0700
+In-Reply-To: <CAKYAXd8Sai7+S1AnAhLtnYWKwZMoAUgUmq_9HRG=oKSg4p-CnQ@mail.gmail.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67134033.050a0220.1e4b4d.001f.GAE@google.com>
-Subject: [syzbot] [nilfs?] possible deadlock in nilfs_dirty_inode (4)
-From: syzbot <syzbot+9ef37ac20608f4836256@syzkaller.appspotmail.com>
-To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <67134182.050a0220.34b26a.0000.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
+From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
-syzbot found the following issue on:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in __exfat_get_dentry_set
 
-HEAD commit:    eca631b8fe80 Merge tag 'f2fs-6.12-rc4' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=101f4030580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
-dashboard link: https://syzkaller.appspot.com/bug?extid=9ef37ac20608f4836256
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1705f85f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17d81887980000
+loop0: detected capacity change from 0 to 256
+exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0x726052d3, utbl_chksum : 0xe619d30d)
+=====================================================
+BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x10ca/0x1500 fs/exfat/dir.c:810
+ __exfat_get_dentry_set+0x10ca/0x1500 fs/exfat/dir.c:810
+ exfat_get_dentry_set+0x57/0xf60 fs/exfat/dir.c:865
+ __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:46
+ __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
+ exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
+ exfat_write_failed fs/exfat/inode.c:421 [inline]
+ exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:485
+ generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
+ __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
+ exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-eca631b8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/830e1433408d/vmlinux-eca631b8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5538dfbaa4ef/bzImage-eca631b8.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/049290da6bbe/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/c0f1baa786eb/mount_4.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9ef37ac20608f4836256@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-rc3-syzkaller-00013-geca631b8fe80 #0 Not tainted
-------------------------------------------------------
-kswapd0/73 is trying to acquire lock:
-ffff888011a34610 (sb_internal#2){.+.+}-{0:0}, at: nilfs_dirty_inode+0x158/0x200 fs/nilfs2/inode.c:1110
-
-but task is already holding lock:
-ffffffff8ea37160 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6844 [inline]
-ffffffff8ea37160 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7226
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       __fs_reclaim_acquire mm/page_alloc.c:3834 [inline]
-       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3848
-       might_alloc include/linux/sched/mm.h:318 [inline]
-       prepare_alloc_pages+0x147/0x5b0 mm/page_alloc.c:4493
-       __alloc_pages_noprof+0x16f/0x710 mm/page_alloc.c:4722
-       alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
-       alloc_pages_noprof mm/mempolicy.c:2345 [inline]
-       folio_alloc_noprof+0x128/0x180 mm/mempolicy.c:2352
-       filemap_alloc_folio_noprof+0xdf/0x500 mm/filemap.c:1010
-       __filemap_get_folio+0x446/0xbd0 mm/filemap.c:1952
-       block_write_begin+0x66/0x120 fs/buffer.c:2226
-       nilfs_write_begin+0xa0/0x110 fs/nilfs2/inode.c:259
-       page_symlink+0x2a6/0x4a0 fs/namei.c:5362
-       nilfs_symlink+0x236/0x380 fs/nilfs2/namei.c:153
-       vfs_symlink+0x137/0x2e0 fs/namei.c:4615
-       do_symlinkat+0x222/0x3a0 fs/namei.c:4641
-       __do_sys_symlink fs/namei.c:4662 [inline]
-       __se_sys_symlink fs/namei.c:4660 [inline]
-       __x64_sys_symlink+0x7a/0x90 fs/namei.c:4660
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&nilfs->ns_segctor_sem){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
-       nilfs_transaction_begin+0x320/0x6e0 fs/nilfs2/segment.c:223
-       nilfs_symlink+0x135/0x380 fs/nilfs2/namei.c:140
-       vfs_symlink+0x137/0x2e0 fs/namei.c:4615
-       do_symlinkat+0x222/0x3a0 fs/namei.c:4641
-       __do_sys_symlink fs/namei.c:4662 [inline]
-       __se_sys_symlink fs/namei.c:4660 [inline]
-       __x64_sys_symlink+0x7a/0x90 fs/namei.c:4660
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (sb_internal#2){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1716 [inline]
-       sb_start_intwrite include/linux/fs.h:1899 [inline]
-       nilfs_transaction_begin+0x216/0x6e0 fs/nilfs2/segment.c:220
-       nilfs_dirty_inode+0x158/0x200 fs/nilfs2/inode.c:1110
-       __mark_inode_dirty+0x2ee/0xe90 fs/fs-writeback.c:2493
-       mark_inode_dirty_sync include/linux/fs.h:2479 [inline]
-       iput+0x1f1/0xa50 fs/inode.c:1900
-       __dentry_kill+0x20d/0x630 fs/dcache.c:615
-       shrink_kill+0xa9/0x2c0 fs/dcache.c:1060
-       shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1087
-       prune_dcache_sb+0x10f/0x180 fs/dcache.c:1168
-       super_cache_scan+0x34f/0x4b0 fs/super.c:221
-       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
-       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
-       shrink_one+0x43b/0x850 mm/vmscan.c:4818
-       shrink_many mm/vmscan.c:4879 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4957 [inline]
-       shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
-       kswapd_shrink_node mm/vmscan.c:6765 [inline]
-       balance_pgdat mm/vmscan.c:6957 [inline]
-       kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  sb_internal#2 --> &nilfs->ns_segctor_sem --> fs_reclaim
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&nilfs->ns_segctor_sem);
-                               lock(fs_reclaim);
-  rlock(sb_internal#2);
-
- *** DEADLOCK ***
-
-2 locks held by kswapd0/73:
- #0: ffffffff8ea37160 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6844 [inline]
- #0: ffffffff8ea37160 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7226
- #1: ffff888011a340e0 (&type->s_umount_key#44){++++}-{3:3}, at: super_trylock_shared fs/super.c:562 [inline]
- #1: ffff888011a340e0 (&type->s_umount_key#44){++++}-{3:3}, at: super_cache_scan+0x94/0x4b0 fs/super.c:196
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 73 Comm: kswapd0 Not tainted 6.12.0-rc3-syzkaller-00013-geca631b8fe80 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write include/linux/fs.h:1716 [inline]
- sb_start_intwrite include/linux/fs.h:1899 [inline]
- nilfs_transaction_begin+0x216/0x6e0 fs/nilfs2/segment.c:220
- nilfs_dirty_inode+0x158/0x200 fs/nilfs2/inode.c:1110
- __mark_inode_dirty+0x2ee/0xe90 fs/fs-writeback.c:2493
- mark_inode_dirty_sync include/linux/fs.h:2479 [inline]
- iput+0x1f1/0xa50 fs/inode.c:1900
- __dentry_kill+0x20d/0x630 fs/dcache.c:615
- shrink_kill+0xa9/0x2c0 fs/dcache.c:1060
- shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1087
- prune_dcache_sb+0x10f/0x180 fs/dcache.c:1168
- super_cache_scan+0x34f/0x4b0 fs/super.c:221
- do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
- shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
- shrink_one+0x43b/0x850 mm/vmscan.c:4818
- shrink_many mm/vmscan.c:4879 [inline]
- lru_gen_shrink_node mm/vmscan.c:4957 [inline]
- shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
- kswapd_shrink_node mm/vmscan.c:6765 [inline]
- balance_pgdat mm/vmscan.c:6957 [inline]
- kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+Uninit was stored to memory at:
+ memcpy_to_iter lib/iov_iter.c:65 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
+ copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
+ shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3162
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_read+0x278/0x760 fs/read_write.c:923
+ lo_read_simple drivers/block/loop.c:283 [inline]
+ do_req_filebacked drivers/block/loop.c:516 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+
+Uninit was stored to memory at:
+ memcpy_from_iter lib/iov_iter.c:73 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ __copy_from_iter lib/iov_iter.c:249 [inline]
+ copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
+ copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
+ generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
+ shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3216
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
+ lo_write_bvec drivers/block/loop.c:243 [inline]
+ lo_write_simple drivers/block/loop.c:264 [inline]
+ do_req_filebacked drivers/block/loop.c:511 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4756
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
+ alloc_pages_noprof mm/mempolicy.c:2345 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
+ __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
+ block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
+ exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:434
+ exfat_extend_valid_size fs/exfat/file.c:553 [inline]
+ exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 6003 Comm: syz.0.15 Not tainted 6.12.0-rc3-syzkaller-g3d5ad2d4eca3-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Tested on:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+commit:         3d5ad2d4 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16155240580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5242e0e980477c72
+dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=142fbc5f980000
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
