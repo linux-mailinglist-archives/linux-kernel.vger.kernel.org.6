@@ -1,122 +1,102 @@
-Return-Path: <linux-kernel+bounces-372752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DAC9A4CB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:44:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42A79A4CB5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9641A1C22331
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C583284699
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E791DFD9C;
-	Sat, 19 Oct 2024 09:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A4E1DE3B8;
+	Sat, 19 Oct 2024 09:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MOg1sR9B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iEzAFHIi"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5CE1DF74B;
-	Sat, 19 Oct 2024 09:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DBF18A6D5
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729331077; cv=none; b=PXnaTjk677dcEPy+pNNDyba8S305vvEvQyjtKSYU+VlAuSkFqypjrStMmFla+m97QE1+N5vavYHrj3O3tpsvEVW87gO/LdXvzPvHK/UPhsrX1ucWwPhUPNKoFZshtlRpW83wg+I0SNXTVgCPtEvCxdNqpI60TlGUHm75Q1d2NTU=
+	t=1729331362; cv=none; b=AdWoHQyMVBaU9SF1cVwKoIZIv/i8fd4Hmt7+LakbbvDzv0TF3sqp9k4fnfF6bi8jzC3C3yc2bJD2bOEefF/002tPv6BSeQH2eX2uL5qkyxizzLnOv7ZeNxNCCIIROsBnkKJDvA/X+mJc+F0NeJhlKFVkIuEN9tDTitxTnYiO7UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729331077; c=relaxed/simple;
-	bh=8JKQHEed5f/WTiLw6VZKnZcCY2h2Gs+L+t+SxwiypVI=;
+	s=arc-20240116; t=1729331362; c=relaxed/simple;
+	bh=KdRRrdfxOsxFkMNPK+2L/N5jq7O5fFXuSwYnktpXVIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bInJ+2Qx+BwQR25IB0H1FiW56i5o3DmnoGG/31SN3mdR4NJ67KA0XeKlnGMlR7RFuKSJJuLzffa+n5R6Do1kva/kLiVYz87oMu/d6trJXUluiirNNNmXN5dzNTALNGCsxBNApEaosZOcdQ75X2R5tw7olKQnuJBUAsaoCm1IvNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MOg1sR9B; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729331076; x=1760867076;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8JKQHEed5f/WTiLw6VZKnZcCY2h2Gs+L+t+SxwiypVI=;
-  b=MOg1sR9BxCy/3od0ljh0pQj1Yw2NIa+wczzGJ4v22KT4Te6OBkUnksel
-   0XSmk5ebPn3PS908x0+7UlAW1YrqL2X1ozirGdaICtK1j5kYvjDd1bv5H
-   6d5ZcMu+9mf5MMFVAzJ0sJBu780T7yEsDJsDCaL9E010oJkw9IGTKRDje
-   MHiwfXSymWjQ8HcfTTBiyB6qE56gV456Q7tBYiWdm+DOie9VQ7hm5K7mO
-   67tLQfAf73y4hlAUOvRYvRqjzhPwsxAdubtQIGuLuRxnuc5NC3cwS5nyU
-   JVJJyq/ncwh1nWZRENbYWus4PiFsfD2rseahfFtj2qfCr+VrzB5INKCjI
-   Q==;
-X-CSE-ConnectionGUID: rzH9TSsMSDuGph5uGy2EcA==
-X-CSE-MsgGUID: 9J0JqVt4SSCWXUkaPeAQQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28995780"
-X-IronPort-AV: E=Sophos;i="6.11,215,1725346800"; 
-   d="scan'208";a="28995780"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 02:44:32 -0700
-X-CSE-ConnectionGUID: BACNGPuUQ1WafYM+UNO0rg==
-X-CSE-MsgGUID: OQg0m7ppRs2uezzrmdjyyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,215,1725346800"; 
-   d="scan'208";a="79145234"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 19 Oct 2024 02:44:28 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t260X-000OsF-20;
-	Sat, 19 Oct 2024 09:44:25 +0000
-Date: Sat, 19 Oct 2024 17:43:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.oltean@nxp.com,
-	claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, Frank.Li@nxp.com,
-	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
-	bhelgaas@google.com, horms@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, imx@lists.linux.dev,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v3 net-next 06/13] net: enetc: build enetc_pf_common.c as
- a separate module
-Message-ID: <202410191715.TQmESUy9-lkp@intel.com>
-References: <20241017074637.1265584-7-wei.fang@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NPC2zYzo+ipeR48f4IOSDyp3HnAcoGInbr56g5/uEq0i7UkzLHt2vo8CBysiYASMcPFmwu0/1jbWdr7OKNGbN7Wu1HX1EwIcFhw50y6NoNG5xRoStQmGxMEeM6UVAlYOiiVYjs2PWlp63aClK9qOExQz0392wnusDQt74xgcbKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iEzAFHIi; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E0BEB40E0263;
+	Sat, 19 Oct 2024 09:49:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id DBfWlFqW7xXi; Sat, 19 Oct 2024 09:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729331353; bh=1LzGwMCPr0rKWMNsv7I1BDJwgYNv+rQJmqePVjQkhSg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iEzAFHIi7GDjIeTXw+bbddhSNReahIB9tqFSMr1tAYVTZvw7+9fn5JPAczF9Mhe93
+	 qsxaC5csZRG7pqOnmnTXkIMKNPeJrwvM9ENnuK4V+pzizFKwlZa5pSEbmWOJNgHe7i
+	 IptmRvt3r1Q6jQywBlLrhfxzJBdlA9t5Szaf3T5LL+wiq6l1K4ssfjxT8Wx3r0A9Ox
+	 Cr44gIg108YnPpQuq07aAVh8QaYJ5qlkRgco7Ebssls8LniEbXPT/MA8sF2k6UaW9K
+	 ACw4ktq+eWBlJf07ZG+6a8G308RWu/tU/h3C0gAYUKEo4+L15e8hA2JI3+utcjj+30
+	 jEZsw9ayI5lfskg81gPdj9qP4xnmXc2QsXFNTJY8gDoEtgLAGbHfmMiCiWPU/2iO+o
+	 rdu4kc+XwpdgRgnNIWvtVZHDJRfiP7WuMuvOp+5GtDNseiaumSjSEOubosw29L+xDS
+	 Uzd6Q1s5J2Wgoh2do5dNu9HhX8blAvWAp9R54CqQo1q3U9qB0BP1FhxmAyqCnQuqX1
+	 E2rCowOWAd0z+aXipIiL6XyBrdvmdPacS40kUgCQ8VhEKSnfWpIF2x7XJbYdI91wW0
+	 RptEO9WhQ/M+/eVTYLoW9r+h08xCxFo7l/0PtKjq5egOjDe2qfnYV2EJZc9RFBLUzS
+	 ir95mJG5xf/siG+5kJfkLi9Q=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C778F40E0184;
+	Sat, 19 Oct 2024 09:49:06 +0000 (UTC)
+Date: Sat, 19 Oct 2024 11:49:00 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Oerg866 <oerg866@googlemail.com>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/microcode: Fix crashes on early 486 CPUs due to
+ usage of 'cpuid'.
+Message-ID: <20241019094900.GBZxOAjKWsvPpHJQ0w@fat_crate.local>
+References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241017074637.1265584-7-wei.fang@nxp.com>
+In-Reply-To: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
 
-Hi Wei,
+On Sat, Oct 19, 2024 at 08:29:04AM +0200, Oerg866 wrote:
+> They assume the host CPU supports the CPUID instruction, which
+> the pre-"enhanced" 486 type ones do not.
 
-kernel test robot noticed the following build errors:
+"host"?
 
-[auto build test ERROR on net-next/main]
+How exactly are you triggering this?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-net-add-compatible-string-for-i-MX95-EMDIO/20241017-160848
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241017074637.1265584-7-wei.fang%40nxp.com
-patch subject: [PATCH v3 net-next 06/13] net: enetc: build enetc_pf_common.c as a separate module
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20241019/202410191715.TQmESUy9-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410191715.TQmESUy9-lkp@intel.com/reproduce)
+Are you running some weird guest or is it real hardware?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410191715.TQmESUy9-lkp@intel.com/
+Any chance you can share details so that I can try to reproduce here in a VM?
 
-All errors (new ones prefixed by >>):
-
-   m68k-linux-ld: drivers/net/ethernet/freescale/enetc/enetc_pf_common.o: in function `enetc_pf_netdev_setup':
->> enetc_pf_common.c:(.text+0x55e): undefined reference to `enetc_set_ethtool_ops'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+Thx.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
