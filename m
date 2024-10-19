@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-372779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6199A4D13
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:20:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C099A4D15
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304FF1F22997
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:20:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF7EDB22C08
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657391DFDBF;
-	Sat, 19 Oct 2024 11:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEA81DFDB6;
+	Sat, 19 Oct 2024 11:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XhIhRl1W"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6/3tdCD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9B1190688;
-	Sat, 19 Oct 2024 11:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1499B190688;
+	Sat, 19 Oct 2024 11:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729336823; cv=none; b=sftefAHADwKfD6qrVKx8gt2WEYfZZqXmz1Go7hEb5Un3uBDhIX1L9yFBd/DGxIqFtdsF5K+5325HJvFLJ+Nb6F/xM6OQq6YpuXr7NGgLLMYj2yroYyjNfsKfnAYYkzvEa05gnEQ84R4W+FfJhgO8KYQnxmXnDUI+CopwbJ2CUHQ=
+	t=1729336901; cv=none; b=bC/cBPhxsebf1UYVLD/dI9eEawlq3uTLhal1Ukg63rUVVDyJmCdSAP/c4KS7unD2HOG8OuWShbtdT4mb8VqI30JLVgBkJR3LzancGIjFGPi4EljIAe7H3TacdOiQJAQp7EjluXLZXlUsKImFXTT8vXKZamkJigcm3dNqRgODjZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729336823; c=relaxed/simple;
-	bh=fgM8dTXtogJtNbM27u29QltmLJFMCoLsfeW9/uhqMqM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mf/28mKW9zY25vh2LTYanTYQM4a6WdTJ5iDfdESfyijAL3u/9Io9sihHm6lZ1v+s+j+haoqkyYTPz9Z9OX16cUCP+g1HfCTrYpJxDvS8i0q8AruuWohd5B7+VqK9WnHyzdVKOzAHcCJQRdWL9q6hBQKuvtW7f0T1c15sj8Kq2gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XhIhRl1W; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729336819;
-	bh=fgM8dTXtogJtNbM27u29QltmLJFMCoLsfeW9/uhqMqM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XhIhRl1WjbKZQ+6IgcdASB3u6DRcer54NStItAFOZjmoAll1fvPNLoyB4DXDNkBs4
-	 aBvU8QCX6v+fuWSeAsMn0iW3pGIV0yNxpivb/CkuO0PwSK67EWkS0LDd/kKIa3CaFt
-	 sji7AM/Bbvqx97vGIijbg8vPrq/DWfcUGlSIPIeFdcXkHjEfOeJtPjhKNKLccpbWJT
-	 XAmRQkDj5w7rSO1WkS2TC8E5YOVgsMCkXeAue2+KUcK3WIazSoVOIQyJ+tQrkxDWPk
-	 UoZeM1zjOa50zZFaiT27nRbhvmr5sPruDdJoY+QpObAl8Ck+lsofSgeQ5RBXEpyXCL
-	 RUK0Lhe583A1Q==
-Received: from [192.168.1.90] (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3759717E1411;
-	Sat, 19 Oct 2024 13:20:19 +0200 (CEST)
-Message-ID: <9455cce5-af97-48cb-8042-24b714f29401@collabora.com>
-Date: Sat, 19 Oct 2024 14:20:18 +0300
+	s=arc-20240116; t=1729336901; c=relaxed/simple;
+	bh=SCOetsuGhfRBZ8vqKCa3ek94gu4iy9K9KCUmNwI3Mp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZME7NvGd6p8pzN3dTOK6457Rd7wCzUlJzD1cxAolOamvkow1ZaR69ZpmfY8NnmMlf/jF1dMiYfciPZG3LMZFSvneQJuTMR/wKvz/NbWxtjJvLqJEwQ3mzH5ANCOQtw2KwJVit8Zql1pcw5Wa5GMflX9c8zyLTkVtACzeo0wVX4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6/3tdCD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13AF5C4CEC5;
+	Sat, 19 Oct 2024 11:21:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729336900;
+	bh=SCOetsuGhfRBZ8vqKCa3ek94gu4iy9K9KCUmNwI3Mp0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=S6/3tdCDllu2W5eRL/wtq0TZnYHw1FbFTL/gbyLzS1DYABjzuArbWE46AWJxUlWJO
+	 /w4QP20oHlSXkmCmrbWYf1W71nKAebJsso4zRFMIdPTiFudzPtSQOF+IxlTyoCqCbV
+	 4LrheCa57/Dr+0q2i0IcuZYOpnsVU2DRa5Q+CGfCp9PzI3vPkBlgOKJ49e3lvMrvY8
+	 EmekIKCleMqBrTNpPzP78QVqmxMj0aS+tHjneN26XF3txgnWeyQdQtUsKXLAJhXbEg
+	 6wC1DEqmy6Yh2SWu6hZHifxgdO4hQNbcLr4eo1d/Kazgbt4EnSGqnBG2ZEmV2eIu/Z
+	 kf2lNxyE6iusg==
+Date: Sat, 19 Oct 2024 12:21:33 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Karan Sanghavi <karansanghvi98@gmail.com>
+Cc: Tomasz Duszynski <tduszyns@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>, Karan Sanghavi
+ <karansanghavi98@gmail.com>
+Subject: Re: [PATCH] iio: chemical: sps30: Add Null pointer check
+Message-ID: <20241019122133.13d59dfb@jic23-huawei>
+In-Reply-To: <20241018-cid1593398badshift-v1-1-11550a10ff25@gmail.com>
+References: <20241018-cid1593398badshift-v1-1-11550a10ff25@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] clk: Provide devm_clk_bulk_get_all_enabled()
- helper
-To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Russell King <linux@armlinux.org.uk>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com>
- <20241018-clk_bulk_ena_fix-v3-1-57e8bb82460c@collabora.com>
- <c0afdf9f8c9773ef83274cb119d14c90.sboyd@kernel.org>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <c0afdf9f8c9773ef83274cb119d14c90.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 10/19/24 8:56 AM, Stephen Boyd wrote:
-> Quoting Cristian Ciocaltea (2024-10-17 16:17:29)
->> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
->> index 82ae1f26e634572b943d18b8d86267f0a69911a6..0d0fe364b66a8590d5e7c63dc6c1e70c59d53e89 100644
->> --- a/drivers/clk/clk-devres.c
->> +++ b/drivers/clk/clk-devres.c
->> @@ -230,25 +239,27 @@ int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
->>                 return -ENOMEM;
->>  
->>         ret = clk_bulk_get_all(dev, &devres->clks);
->> -       if (ret > 0) {
->> -               *clks = devres->clks;
->> -               devres->num_clks = ret;
->> -       } else {
->> -               devres_free(devres);
->> -               return ret;
->> -       }
->> +       if (ret <= 0)
->> +               goto err_free_devres;
+On Fri, 18 Oct 2024 18:54:42 +0000
+Karan Sanghavi <karansanghvi98@gmail.com> wrote:
+
+> Add a Null pointer check before assigning and incrementing
+> the null pointer
 > 
-> Please don't use goto so that the diff is minimized.
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
 
-Done in v4:
+It would be a bug if rsp_size was anything other than 0 and rsp is NULL.
+So this looks like a false positive as the loop will never be
+entered.
 
-https://lore.kernel.org/all/20241019-clk_bulk_ena_fix-v4-0-57f108f64e70@collabora.com/
+How did you find it, in particular have you managed to trigger this
+in the driver?
 
-Regards,
-Cristian
+Jonathan
+
+
+> ---
+>  drivers/iio/chemical/sps30_i2c.c | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/iio/chemical/sps30_i2c.c b/drivers/iio/chemical/sps30_i2c.c
+> index 1b21b6bcd0e7..d2142e4c748c 100644
+> --- a/drivers/iio/chemical/sps30_i2c.c
+> +++ b/drivers/iio/chemical/sps30_i2c.c
+> @@ -105,16 +105,18 @@ static int sps30_i2c_command(struct sps30_state *state, u16 cmd, void *arg, size
+>  		return ret;
+>  
+>  	/* validate received data and strip off crc bytes */
+> -	tmp = rsp;
+> -	for (i = 0; i < rsp_size; i += 3) {
+> -		crc = crc8(sps30_i2c_crc8_table, buf + i, 2, CRC8_INIT_VALUE);
+> -		if (crc != buf[i + 2]) {
+> -			dev_err(state->dev, "data integrity check failed\n");
+> -			return -EIO;
+> +	if (rsp) {
+> +		tmp = rsp;
+> +		for (i = 0; i < rsp_size; i += 3) {
+> +			crc = crc8(sps30_i2c_crc8_table, buf + i, 2, CRC8_INIT_VALUE);
+> +			if (crc != buf[i + 2]) {
+> +				dev_err(state->dev, "data integrity check failed\n");
+> +				return -EIO;
+> +			}
+> +
+> +			*tmp++ = buf[i];
+> +			*tmp++ = buf[i + 1];
+>  		}
+> -
+> -		*tmp++ = buf[i];
+> -		*tmp++ = buf[i + 1];
+>  	}
+>  
+>  	return 0;
+> 
+> ---
+> base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+> change-id: 20241018-cid1593398badshift-9c512a3b92d9
+> 
+> Best regards,
+
 
