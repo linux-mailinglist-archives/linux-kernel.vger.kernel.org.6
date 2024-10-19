@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-373017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2965C9A50A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:05:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08DA49A50A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1DC1C20F38
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:05:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA011F21DB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A6C1917F9;
-	Sat, 19 Oct 2024 20:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61A11922FA;
+	Sat, 19 Oct 2024 20:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bcP4Aht7"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pxwURgA7"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA7E18DF6B
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 20:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B494718DF6B
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 20:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729368348; cv=none; b=P2M4Tc5BEC9RRJwxPzmO+LCKb+Xq5zybON/+dlBPezhUW21qUDCtOCkJgjAAHbyW4Iobh5v+s9TJlFQJ6sH80+Qrgqqa9AdzxEkjWYdw2MFZLeUQL+4dDYbLnHvH3haQWu6DjtjAxW9d09KqJLzwr0OrwTO+13upZbvFnHstCQk=
+	t=1729368355; cv=none; b=EAnCearfuihd8tcFe60S9Ppaej0BqbV0FChSAcLVkA1QjaKf/zSnFEoTQIjYmKXPX7flS+VU+lkAIBbbs8Ef8fAFFQKwZCvtPGe0fT1fYRsJpYhCB4u13JaKk4ug/ZY8FloIUKp/d05XtBKy/KbtPpXqBAOGVRKlua//xHQ/Tic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729368348; c=relaxed/simple;
-	bh=TzzvmyZr6inHri4Kx8qN0rk8PqsshAgOnei6iJkGU0s=;
+	s=arc-20240116; t=1729368355; c=relaxed/simple;
+	bh=ubyNnrZhiaMQq8/hYSoeAZh4yBQ1VnnDy0BiHRky//c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fg7Ais3n7eTjxExG7gRocsDWKj59HcllpLBFkDxnb6KoUhIJjX+RV9JQhKQfovf+1Dl6CPHUQpRdhsBBXr52RzzK7Zg5XdSZDSeqpTTGZRGdyOKp2IYsdPp1fmol7K3FA/LXH7YzxsKX3SGwY4rjWn2W9znENopL4GWJjvyUq5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bcP4Aht7; arc=none smtp.client-ip=91.218.175.180
+	 MIME-Version; b=E9E0Pmx4vn2lqktY+PPiSQzEwlzNY7nU0hAFskrfGVBHGhDbRUS9fBkEjC2bGxd1K5cwIfkuHFybGM9uIenljgkL4slpt6bApi25L8J77PuDFDNqLnJl+jvhxK4xwYQmsZhMynhGW3HSGqh45cnoKHUEz2rHXhqb2pj/MT0LQTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pxwURgA7; arc=none smtp.client-ip=91.218.175.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729368342;
+	t=1729368350;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4WYLOQhw/RKMm5QY26fFHeUV0OebPBM++WNDwYTSgLM=;
-	b=bcP4Aht74vh1QtzRH0g69+XKAHTMJpvXN0Wa7F08TjlqYGXloYOp0D/MzMK08HaBpj+uRO
-	G/3jTRCW5tczqqL6HVcLJoHInDeuDs+f7f8/S3HAzGrf2WcmvxSSunJQty3jhJBTjPASrD
-	m6p5zx9Cb8yYfKGxbasHSx0gRPm47hQ=
+	bh=d3wMrWNe4ffhz35E1D8kp0cFdgzpqIVuDUYnHWxkBco=;
+	b=pxwURgA7PyU7peAAgKJyUbiK+yvC1UefONpv1wUnkVgB5GB7bjL/8hphXtTJF9/jEIznKk
+	jyTFa2ej4c3UGpH86nnAb6ZmdSmkgauH6gCF2k9S5nue4vYvDYzyIstaHdHNelSBlOQmsS
+	2iGyJK3CKttXxq4xxb6to0bjjmm878c=
 From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
@@ -67,11 +67,12 @@ Cc: Dominik Haller <d.haller@phytec.de>,
 	DRI Development List <dri-devel@lists.freedesktop.org>,
 	Linux Kernel List <linux-kernel@vger.kernel.org>,
 	Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Subject: [PATCH v5 08/13] drm/mipi-dsi: Add helper to find input format
-Date: Sun, 20 Oct 2024 01:35:25 +0530
-Message-Id: <20241019200530.270738-1-aradhya.bhatia@linux.dev>
-In-Reply-To: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
+Subject: [PATCH v5 09/13] drm/bridge: cdns-dsi: Support atomic bridge APIs
+Date: Sun, 20 Oct 2024 01:35:26 +0530
+Message-Id: <20241019200530.270738-2-aradhya.bhatia@linux.dev>
+In-Reply-To: <20241019200530.270738-1-aradhya.bhatia@linux.dev>
 References: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
+ <20241019200530.270738-1-aradhya.bhatia@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,85 +84,115 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Aradhya Bhatia <a-bhatia1@ti.com>
 
-Add a helper API that can be used by the DSI hosts to find the required
-input bus format for the given output dsi pixel format.
+Change the existing (and deprecated) bridge hooks, to the bridge
+atomic APIs.
+
+Add drm helpers for duplicate_state, destroy_state, and bridge_reset
+bridge hooks.
+
+Further add support for the input format negotiation hook.
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
 Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 ---
- drivers/gpu/drm/drm_mipi_dsi.c | 37 ++++++++++++++++++++++++++++++++++
- include/drm/drm_mipi_dsi.h     |  1 +
- 2 files changed, 38 insertions(+)
+ .../gpu/drm/bridge/cadence/cdns-dsi-core.c    | 51 ++++++++++++++++---
+ 1 file changed, 43 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-index 5e5c5f84daac..076826f2445a 100644
---- a/drivers/gpu/drm/drm_mipi_dsi.c
-+++ b/drivers/gpu/drm/drm_mipi_dsi.c
-@@ -36,6 +36,8 @@
- #include <drm/drm_mipi_dsi.h>
- #include <drm/drm_print.h>
- 
-+#include <linux/media-bus-format.h>
-+
- #include <video/mipi_display.h>
- 
- /**
-@@ -870,6 +872,41 @@ ssize_t mipi_dsi_generic_read(struct mipi_dsi_device *dsi, const void *params,
+diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+index 284c468db6c3..7341e609dc8b 100644
+--- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
++++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+@@ -658,7 +658,8 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+ 	return MODE_OK;
  }
- EXPORT_SYMBOL(mipi_dsi_generic_read);
  
-+/**
-+ * drm_mipi_dsi_get_input_bus_fmt() - Get the required MEDIA_BUS_FMT_* based
-+ *				      input pixel format for a given DSI output
-+ *				      pixel format
-+ * @dsi_format: pixel format that a DSI host needs to output
-+ *
-+ * Various DSI hosts can use this function during their
-+ * &drm_bridge_funcs.atomic_get_input_bus_fmts operation to ascertain
-+ * the MEDIA_BUS_FMT_* pixel format required as input.
-+ *
-+ * RETURNS:
-+ * a 32-bit MEDIA_BUS_FMT_* value on success or 0 in case of failure.
-+ */
-+u32 drm_mipi_dsi_get_input_bus_fmt(enum mipi_dsi_pixel_format dsi_format)
+-static void cdns_dsi_bridge_disable(struct drm_bridge *bridge)
++static void cdns_dsi_bridge_atomic_disable(struct drm_bridge *bridge,
++					   struct drm_bridge_state *old_bridge_state)
+ {
+ 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+ 	struct cdns_dsi *dsi = input_to_dsi(input);
+@@ -682,7 +683,8 @@ static void cdns_dsi_bridge_disable(struct drm_bridge *bridge)
+ 	pm_runtime_put(dsi->base.dev);
+ }
+ 
+-static void cdns_dsi_bridge_post_disable(struct drm_bridge *bridge)
++static void cdns_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
++						struct drm_bridge_state *old_bridge_state)
+ {
+ 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+ 	struct cdns_dsi *dsi = input_to_dsi(input);
+@@ -758,7 +760,8 @@ static void cdns_dsi_init_link(struct cdns_dsi *dsi)
+ 	dsi->link_initialized = true;
+ }
+ 
+-static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
++static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
++					  struct drm_bridge_state *old_bridge_state)
+ {
+ 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+ 	struct cdns_dsi *dsi = input_to_dsi(input);
+@@ -911,7 +914,8 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
+ 	writel(tmp, dsi->regs + MCTL_MAIN_EN);
+ }
+ 
+-static void cdns_dsi_bridge_pre_enable(struct drm_bridge *bridge)
++static void cdns_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
++					      struct drm_bridge_state *old_bridge_state)
+ {
+ 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+ 	struct cdns_dsi *dsi = input_to_dsi(input);
+@@ -923,13 +927,44 @@ static void cdns_dsi_bridge_pre_enable(struct drm_bridge *bridge)
+ 	cdns_dsi_hs_init(dsi);
+ }
+ 
++static u32 *cdns_dsi_bridge_get_input_bus_fmts(struct drm_bridge *bridge,
++					       struct drm_bridge_state *bridge_state,
++					       struct drm_crtc_state *crtc_state,
++					       struct drm_connector_state *conn_state,
++					       u32 output_fmt,
++					       unsigned int *num_input_fmts)
 +{
-+	switch (dsi_format) {
-+	case MIPI_DSI_FMT_RGB888:
-+		return MEDIA_BUS_FMT_RGB888_1X24;
++	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
++	struct cdns_dsi *dsi = input_to_dsi(input);
++	struct cdns_dsi_output *output = &dsi->output;
++	u32 *input_fmts;
 +
-+	case MIPI_DSI_FMT_RGB666:
-+		return MEDIA_BUS_FMT_RGB666_1X24_CPADHI;
++	*num_input_fmts = 0;
 +
-+	case MIPI_DSI_FMT_RGB666_PACKED:
-+		return MEDIA_BUS_FMT_RGB666_1X18;
++	input_fmts = kzalloc(sizeof(*input_fmts), GFP_KERNEL);
++	if (!input_fmts)
++		return NULL;
 +
-+	case MIPI_DSI_FMT_RGB565:
-+		return MEDIA_BUS_FMT_RGB565_1X16;
++	input_fmts[0] = drm_mipi_dsi_get_input_bus_fmt(output->dev->format);
++	if (!input_fmts[0])
++		return NULL;
 +
-+	default:
-+		/* Unsupported DSI Format */
-+		return 0;
-+	}
++	*num_input_fmts = 1;
++
++	return input_fmts;
 +}
-+EXPORT_SYMBOL(drm_mipi_dsi_get_input_bus_fmt);
 +
- /**
-  * mipi_dsi_dcs_write_buffer() - transmit a DCS command with payload
-  * @dsi: DSI peripheral device
-diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index 94400a78031f..9e2804e3a2b0 100644
---- a/include/drm/drm_mipi_dsi.h
-+++ b/include/drm/drm_mipi_dsi.h
-@@ -293,6 +293,7 @@ void mipi_dsi_generic_write_multi(struct mipi_dsi_multi_context *ctx,
- 				  const void *payload, size_t size);
- ssize_t mipi_dsi_generic_read(struct mipi_dsi_device *dsi, const void *params,
- 			      size_t num_params, void *data, size_t size);
-+u32 drm_mipi_dsi_get_input_bus_fmt(enum mipi_dsi_pixel_format dsi_format);
+ static const struct drm_bridge_funcs cdns_dsi_bridge_funcs = {
+ 	.attach = cdns_dsi_bridge_attach,
+ 	.mode_valid = cdns_dsi_bridge_mode_valid,
+-	.disable = cdns_dsi_bridge_disable,
+-	.pre_enable = cdns_dsi_bridge_pre_enable,
+-	.enable = cdns_dsi_bridge_enable,
+-	.post_disable = cdns_dsi_bridge_post_disable,
++	.atomic_disable = cdns_dsi_bridge_atomic_disable,
++	.atomic_pre_enable = cdns_dsi_bridge_atomic_pre_enable,
++	.atomic_enable = cdns_dsi_bridge_atomic_enable,
++	.atomic_post_disable = cdns_dsi_bridge_atomic_post_disable,
++	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
++	.atomic_reset = drm_atomic_helper_bridge_reset,
++	.atomic_get_input_bus_fmts = cdns_dsi_bridge_get_input_bus_fmts,
+ };
  
- #define mipi_dsi_msleep(ctx, delay)	\
- 	do {				\
+ static int cdns_dsi_attach(struct mipi_dsi_host *host,
 -- 
 2.34.1
 
