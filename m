@@ -1,221 +1,174 @@
-Return-Path: <linux-kernel+bounces-372750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2929A4CAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:38:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F6E9A4CB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62CEC1F239DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:38:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97B8D1F2387F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8ADC1DEFF0;
-	Sat, 19 Oct 2024 09:38:35 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204511DF759;
+	Sat, 19 Oct 2024 09:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bv7kXMeQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF531DEFD5
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BCA1CCB38;
+	Sat, 19 Oct 2024 09:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729330715; cv=none; b=PZfqhP881KIv5OXqs/KEX26+1OdoBqJWucvlhFxYoSpFLey2+lmBIej0zbGUoOyuByLmsG44eZIUzMhf0PihJmnNkhbl6bOPdlJlSk8du/qxGA7jrD4RM4ZWo+vOAb/JHGdF060xTfBnTlk4gbjjXix/d5TWxPSw9Da4xKwPTwA=
+	t=1729331075; cv=none; b=lx71SvCsIJLav7GrP/cGRYce0K51/Zso/aPAtUxTyth2iquCCt+wWFUYYGQfwFdSo0jVsm5BL8NXOVSZ6GvPAgGcoomFbc+hJYJYw9ml1lGPnD3yZZSFjCLeQ/lH1dGvQym6WUGF9wxqLfWsu2mDgzm/FErhtogNHcFgWDNQlPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729330715; c=relaxed/simple;
-	bh=I20eAtM1sueVrolMX5f8jvCYaEOwWpWJHyx0Ra0pf+E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UoaKq4so9cJYZLE9XQQOexlT/ZVXC4LzgQerEuIj6CE8u8Gf0cXSBe+NRA6P+/fCTb4KwY/JBHO2U2QDLHEKIJJk/RKWyg8wgMcUP9M0z0r1uBRiPG3lVR/2pc3nwY67Rm0+raW44aBvaSbpXxR1qwt2fqvTWYO/qFivgcNxko8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83aaca0efc6so291272439f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 02:38:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729330712; x=1729935512;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FpGfap+bbwD6ZDUMdIGioCyFzGa4Wx1sgehvuo3v+IY=;
-        b=xN8j2HXxi0Ta0KtUpjxBIPObpoZZOROVQnnTJFOST7WEQNiWE72ghuit3bL1GrP+qv
-         GFqWVNoFmj0Ka0l1ZOk4u+EvQEx0XQjHQTGZU56R4qcI46sNnmwBWOZ2YuoGL5c+87/f
-         AjgraXJIps+BbCvfdX/dj5aH/5X1lO/d228LWXprZ5aK9pct5EPkyf9pdTOW4q3p/iCg
-         Zr71ZZDRJPSfhkaZCwSFr/SbgJ1XRSB6kftd2rtZ2kWUz6lTilFOY7aA/iuGLADa0GGh
-         PKcAK1aJzFdKdR4ZVEBC/xIZ2GGfBAW5JPHMN9Z7vzNJoduoMA2YjmcrJSHAXgHW9AIO
-         B6VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhgS9sS4fAnAz6LtT5KmFABnwE4TU6APUi320yAxZCRD8nCvt4gYP273Z0s+bO8ITq+x80+HzXcrR5vsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/jTEroW/doK2toHCFga/FG0JUT8eL+ipZTYWfsJOgvbyG16Hz
-	Xu3D4ZCK6EPHsjWDJ34kotyoxIOR1t2TUMKEfl0ba9HwtYgj06O5dXDf71Lkkgh08h64ZtLnkNU
-	5iQ2H9v7eIf8qJuHFTvmGPsESO5nBbyhcwpfR7Y8fw1f3iVeo1LODrwI=
-X-Google-Smtp-Source: AGHT+IFNx5RXfnLOOOF2nnUF7dWDk7fKnqYv2619GjRnBg76F+1t3sAyIgsYhpt/yXYpnysJBgoCRKnMKrtrCNhmN6x+Cc510uQR
+	s=arc-20240116; t=1729331075; c=relaxed/simple;
+	bh=QX8/nemducOmQswsWe9Bi0VvgQBgVJdn0IlaRkFtIso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGeqI5XU247u338RNYW5OpfTVsWVgBsIARx5NFzya18BfS41i8vf+2pIsDdLr4WEQMOmbgs9d14tOceroh1eCzq7M4UdQhVYD3dPKVmlHt/C9cNGC3K/z76E00cYItChoPPLypmMS4JKhdIJmSvWSjOMF6UpQwcR85uObBpTSPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bv7kXMeQ; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729331072; x=1760867072;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QX8/nemducOmQswsWe9Bi0VvgQBgVJdn0IlaRkFtIso=;
+  b=Bv7kXMeQ1DdRsmA/9yU37SJnXJaGjggZJWTWPzV4DIKX37h0/bzblXCf
+   7KPUpXeZ+9mRJGUP9jYDPxgmxm379UufK8/ev61KUkb25djdBO1X2HxqN
+   xXso/lvUwLgvHBPcZjq/TlAPW8XbJGSOrb7oGT4kCDOPG/jhOkBwy7MDx
+   WxW9fsPGBBRznLKdGc75pi3+nFJV0IAKOk67vYFvQdZsoht3UDp3kRcjQ
+   gdXgbAwWhnt/QftVV5Wx1HabrIyW3SKEvy3GCz+l8GtgRwz8GY92rdlzR
+   yQYZJSrTHyEvjQ0fkoO0jQNYlm02eOuWaTYzR1/uaDV+JRdOi3TY8G/bD
+   A==;
+X-CSE-ConnectionGUID: Wcyxw59WRemxv4Jp0D+EZg==
+X-CSE-MsgGUID: wL45fbQ+QZK8t3D8yueItg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28995770"
+X-IronPort-AV: E=Sophos;i="6.11,215,1725346800"; 
+   d="scan'208";a="28995770"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 02:44:31 -0700
+X-CSE-ConnectionGUID: X6HaMBOMTZKR/RO4MH0ySw==
+X-CSE-MsgGUID: 7lKwWQgETyGgi6Hmw0eIxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,215,1725346800"; 
+   d="scan'208";a="79145233"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 19 Oct 2024 02:44:28 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t260X-000OsD-1w;
+	Sat, 19 Oct 2024 09:44:25 +0000
+Date: Sat, 19 Oct 2024 17:43:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+Subject: Re: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+Message-ID: <202410191711.oc5s2ZYc-lkp@intel.com>
+References: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2192:b0:3a0:985b:ddb4 with SMTP id
- e9e14a558f8ab-3a3f404ff3amr49955855ab.2.1729330712142; Sat, 19 Oct 2024
- 02:38:32 -0700 (PDT)
-Date: Sat, 19 Oct 2024 02:38:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67137e18.050a0220.1e4b4d.0025.GAE@google.com>
-Subject: [syzbot] [v9fs?] WARNING in v9fs_session_init
-From: syzbot <syzbot+6cecd33924c207032259@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
-	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
-	v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
 
-Hello,
+Hi Ciprian,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    eca631b8fe80 Merge tag 'f2fs-6.12-rc4' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b2c030580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=64667415a04ab9c4
-dashboard link: https://syzkaller.appspot.com/bug?extid=6cecd33924c207032259
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+[auto build test WARNING on abelloni/rtc-next]
+[also build test WARNING on robh/for-next arm64/for-next/core linus/master v6.12-rc3 next-20241018]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ciprian-Costea/dt-bindings-rtc-add-schema-for-NXP-S32G2-S32G3-SoCs/20241015-185302
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
+patch link:    https://lore.kernel.org/r/20241015105133.656360-3-ciprianmarian.costea%40oss.nxp.com
+patch subject: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+config: alpha-randconfig-r071-20241019 (https://download.01.org/0day-ci/archive/20241019/202410191711.oc5s2ZYc-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-eca631b8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b977614f67ec/vmlinux-eca631b8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/72397bc76f94/bzImage-eca631b8.xz
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410191711.oc5s2ZYc-lkp@intel.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6cecd33924c207032259@syzkaller.appspotmail.com
+smatch warnings:
+drivers/rtc/rtc-s32g.c:221 s32g_rtc_read_time() warn: unsigned 'sec' is never less than zero.
+drivers/rtc/rtc-s32g.c:221 s32g_rtc_read_time() warn: error code type promoted to positive: 'sec'
+drivers/rtc/rtc-s32g.c:239 s32g_rtc_read_alarm() warn: unsigned 'sec' is never less than zero.
+drivers/rtc/rtc-s32g.c:239 s32g_rtc_read_alarm() warn: error code type promoted to positive: 'sec'
 
-------------[ cut here ]------------
-kmem_cache of name '9p-fcall-cache' already exists
-WARNING: CPU: 0 PID: 6253 at mm/slab_common.c:107 kmem_cache_sanity_check mm/slab_common.c:107 [inline]
-WARNING: CPU: 0 PID: 6253 at mm/slab_common.c:107 __kmem_cache_create_args+0xb0/0x3c0 mm/slab_common.c:294
-Modules linked in:
-CPU: 0 UID: 0 PID: 6253 Comm: syz.3.288 Not tainted 6.12.0-rc3-syzkaller-00013-geca631b8fe80 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:107 [inline]
-RIP: 0010:__kmem_cache_create_args+0xb0/0x3c0 mm/slab_common.c:294
-Code: 98 48 3d 10 bb f1 8d 74 25 48 8b 7b 60 48 89 ee e8 b5 98 34 09 85 c0 75 e0 90 48 c7 c7 68 20 58 8d 48 89 ee e8 31 b1 7e ff 90 <0f> 0b 90 90 be 20 00 00 00 48 89 ef e8 3f 9a 34 09 48 85 c0 0f 85
-RSP: 0018:ffffc900033e78f0 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff8880481808c0 RCX: ffffc9002447c000
-RDX: 0000000000040000 RSI: ffffffff814e38c6 RDI: 0000000000000001
-RBP: ffffffff8ca1dfe0 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000001000 R14: ffffc900033e79e0 R15: 0000000000020018
-FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f5696b40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000020001740 CR3: 0000000063442000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- v9fs_session_init+0x1f8/0x1a80 fs/9p/v9fs.c:410
- v9fs_mount+0xc6/0xa50 fs/9p/vfs_super.c:122
- legacy_get_tree+0x109/0x220 fs/fs_context.c:662
- vfs_get_tree+0x8f/0x380 fs/super.c:1800
- do_new_mount fs/namespace.c:3507 [inline]
- path_mount+0x6e1/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount fs/namespace.c:4032 [inline]
- __ia32_sys_mount+0x292/0x310 fs/namespace.c:4032
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf7f17579
-CPU: 0 UID: 0 PID: 6253 Comm: syz.3.288 Not tainted 6.12.0-rc3-syzkaller-00013-geca631b8fe80 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x3d/0x1f0 lib/dump_stack.c:120
- panic+0x71d/0x800 kernel/panic.c:354
- check_panic_on_warn+0xab/0xb0 kernel/panic.c:243
- __warn+0xf6/0x3d0 kernel/panic.c:748
- __report_bug lib/bug.c:199 [inline]
- report_bug+0x3c0/0x580 lib/bug.c:219
- handle_bug+0x54/0xa0 arch/x86/kernel/traps.c:285
- exc_invalid_op+0x17/0x50 arch/x86/kernel/traps.c:309
- asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
-RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:107 [inline]
-RIP: 0010:__kmem_cache_create_args+0xb0/0x3c0 mm/slab_common.c:294
-Code: 98 48 3d 10 bb f1 8d 74 25 48 8b 7b 60 48 89 ee e8 b5 98 34 09 85 c0 75 e0 90 48 c7 c7 68 20 58 8d 48 89 ee e8 31 b1 7e ff 90 <0f> 0b 90 90 be 20 00 00 00 48 89 ef e8 3f 9a 34 09 48 85 c0 0f 85
-RSP: 0018:ffffc900033e78f0 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff8880481808c0 RCX: ffffc9002447c000
-RDX: 0000000000040000 RSI: ffffffff814e38c6 RDI: 0000000000000001
-RBP: ffffffff8ca1dfe0 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000001000 R14: ffffc900033e79e0 R15: 0000000000020018
- kmem_cache_create_usercopy include/linux/slab.h:361 [inline]
- p9_client_create+0xe04/0x1150 net/9p/client.c:1042
- v9fs_session_init+0x1f8/0x1a80 fs/9p/v9fs.c:410
- v9fs_mount+0xc6/0xa50 fs/9p/vfs_super.c:122
- legacy_get_tree+0x109/0x220 fs/fs_context.c:662
- vfs_get_tree+0x8f/0x380 fs/super.c:1800
- do_new_mount fs/namespace.c:3507 [inline]
- path_mount+0x6e1/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount fs/namespace.c:4032 [inline]
- __ia32_sys_mount+0x292/0x310 fs/namespace.c:4032
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf7f17579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f569656c EFLAGS: 00000296 ORIG_RAX: 0000000000000015
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000020000180
-RDX: 0000000020000200 RSI: 0000000000000000 RDI: 0000000020000280
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+vim +/sec +221 drivers/rtc/rtc-s32g.c
 
+   210	
+   211	static int s32g_rtc_read_time(struct device *dev,
+   212				      struct rtc_time *tm)
+   213	{
+   214		struct rtc_priv *priv = dev_get_drvdata(dev);
+   215		u64 sec;
+   216	
+   217		if (!tm)
+   218			return -EINVAL;
+   219	
+   220		sec = s32g_rtc_get_time_or_alrm(priv, RTCCNT_OFFSET);
+ > 221		if (sec < 0)
+   222			return -EINVAL;
+   223	
+   224		rtc_time64_to_tm(sec, tm);
+   225	
+   226		return 0;
+   227	}
+   228	
+   229	static int s32g_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+   230	{
+   231		struct rtc_priv *priv = dev_get_drvdata(dev);
+   232		u32 rtcc, sec_left;
+   233		u64 sec;
+   234	
+   235		if (!alrm)
+   236			return -EINVAL;
+   237	
+   238		sec = s32g_rtc_get_time_or_alrm(priv, RTCVAL_OFFSET);
+ > 239		if (sec < 0)
+   240			return -EINVAL;
+   241	
+   242		rtc_time64_to_tm(sec, &alrm->time);
+   243	
+   244		rtcc = ioread32(priv->rtc_base + RTCC_OFFSET);
+   245		alrm->enabled = sec && (rtcc & RTCC_RTCIE);
+   246	
+   247		alrm->pending = 0;
+   248		if (alrm->enabled && !get_time_left(dev, priv, &sec_left))
+   249			alrm->pending = !!sec_left;
+   250	
+   251		return 0;
+   252	}
+   253	
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
