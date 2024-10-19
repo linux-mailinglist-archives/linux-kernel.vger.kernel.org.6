@@ -1,231 +1,133 @@
-Return-Path: <linux-kernel+bounces-373022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC6F9A50AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:07:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27E69A50B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33C31B2665B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:07:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0D091C21701
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8044C192B99;
-	Sat, 19 Oct 2024 20:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0450F191F97;
+	Sat, 19 Oct 2024 20:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BMYh/ZhX"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqGBTlbZ"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC34192585
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 20:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAE51917CD;
+	Sat, 19 Oct 2024 20:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729368380; cv=none; b=XutstTjhxzLJG3n5Pso9jONMPgQTKdbFr3gq6t9yJdz+BcZ1erVbgMNid3M7mZe7oMMfuoD2tdchvrNasN8pHLa0OZDF3Nj1azmbE8p2MJ8d7GL0bq/VZPRviSXJ9JuoQXoXlvr+bpvJF49XHSz6jpszxqEFxSuVZWF+y3ZNpC8=
+	t=1729369016; cv=none; b=pLeX+gFwMoReWKq3xPV0FxfZoj7khilAMFtZt3eDVvERK6jSA6pKZ/SBjj0imcmwjb72DV7aWGcS/CDYCJYs14CrpVigwX608dkJt7WXo4Vy1rFMzVdydoEf/UXhJ3DHVkRT7GtRfg0obTA250rtczzt4FNk+R+MhaQ8BBjSCEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729368380; c=relaxed/simple;
-	bh=UERUDC3XUWr3jLYZibPf/gXkFSAIRH7MaUmsXzKWFjU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bFW+/0JwOcD4AFIAf/+3CsGzA+HtISnfj+cf6swNJ4kV/rXrClm/STtsvdJwJ8RJKeVR2xCz5DhuEvGzcjZAcEeHquF77W+Rbn7fX8YIabj4nQPmI6ZJhFups80x0FrVTvrU+C3l31fUgvvuNocMtQVDbbdeAA4NzbrkWgXReL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BMYh/ZhX; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729368375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MomBfC6s5I7qc72i5NikheUPdujvsPHHXt70Q6r3yPA=;
-	b=BMYh/ZhX42oQxkt0fRDXYxsbwZmAe/BjQF46BHScJ62+XtH4oFwAG4FXsep6InVHCfNg56
-	6br/kWNaPkFrKriBwC6fdfRhf/8rtolm21GoKbU3TBxmsECQyiSRd6urJO4pMXuoVHaekP
-	x0G2j/TTpQPHdqUvP/GWOzpxv0BQYxA=
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Dominik Haller <d.haller@phytec.de>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Devarsh Thakkar <devarsht@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>,
-	Udit Kumar <u-kumar1@ti.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>,
-	DRI Development List <dri-devel@lists.freedesktop.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Subject: [PATCH v5 13/13] drm/bridge: cdns-dsi: Use pre_enable/post_disable to enable/disable
-Date: Sun, 20 Oct 2024 01:35:30 +0530
-Message-Id: <20241019200530.270738-6-aradhya.bhatia@linux.dev>
-In-Reply-To: <20241019200530.270738-1-aradhya.bhatia@linux.dev>
-References: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
- <20241019200530.270738-1-aradhya.bhatia@linux.dev>
+	s=arc-20240116; t=1729369016; c=relaxed/simple;
+	bh=WGyWuzIPw0J/dmy6own3hVDgAgVliWmQ/oQWiEc2R/8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CJpfcKSQgDwYnVzry3rQ85dgDA0Mj4vV3ehW33SD0Xz9EO9aJSiHDCRT1SkbRpnuKVuF5Sbcy2IKfCeJEn88qv7FGZIQXbZkjLe1gtj+V5bNHIVDEq4ntjJh74Q/Eh1WNylRxsb6C/Exqk5MWDANk16jm8FrJQ2vDDA7zy57YPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqGBTlbZ; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d58377339so3469524f8f.1;
+        Sat, 19 Oct 2024 13:16:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729369013; x=1729973813; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gCFUfAS3DdB6fd3tKnHrbKzJIT9FSusJvapqVdNoyss=;
+        b=CqGBTlbZStR/APXQANTdxHcCsJCRAp8yY94zjvCtrsKj2mQTIo7pwmiibC+fRpWj2Y
+         oeCrKSzO0oTVV9+bjkCvVAlkemNa9mcJ6Xp+eHI1tuKnNm1JYUIMx3CpwJbm1OzwoAdq
+         9Zxlu1/CfAG3XAJpfptCvpBzfd6fF5kaxF1IYJK7qxX9qlxkp7M2Qd/afc8qz1lD6AR9
+         xZRhft2eITtmfnFweEdHxiOC1eO45KkHHwbmY7nl7gNwCtal+c+r9k2doV5UJTiPCTWY
+         c8rZtF8KUVNXvFGNAzwvSyrMnQXRD1HTesJr5bxNN+b6MVJ5vat5FMiDjJm1R9d9vgEe
+         wrJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729369013; x=1729973813;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gCFUfAS3DdB6fd3tKnHrbKzJIT9FSusJvapqVdNoyss=;
+        b=KiKvXMZUb8I8G1SxWPIxXbQaORmf8sm8jj3QdsGAxUSWc3+P1oWvsNnaIWkhs9MLCp
+         Hs02lWp52uTTG87okDW41RcJZ1NNzuHyYm0pe8yEMr5JvMN8RP4Kf0RqT9ppPyzTQN5a
+         yFPrumQvD95CVApGdF+MejfEb8R/S5ToQ5ua+K+ADS8K2cajof2+1AMp/fuv8T1t6zDc
+         VerHOoXt86DE5f3/GbcHgHhhUAyx1fboEV/dcK8I6/FA6nUUYWHyxDPuO0wIaZEbQ89Z
+         68BLMpI5yzfu6mVACUXv/SddOwHahISLufqQFgMx+J8zdj5O4SWI67cOY+f1cYkdI8lD
+         H/ug==
+X-Forwarded-Encrypted: i=1; AJvYcCXHC4R49Oxsqe+Z50w+pP2w1Y0Rz+LOQ8RoqKp1BuWrr9Gj0a1w6l1n1gDuK2o29ONx2fq51m/LO7n4g6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF3sAIr1f7Um496gd+YaLY0RBV1Tr1tWore9WG2BFd1S0uCJX3
+	xQc+CtAHOVJSnva2uD8PAYG3iISVI1Al163yFFWMqKrNKwX+FdoI
+X-Google-Smtp-Source: AGHT+IHlPmb8yCIvpKBKucnd7AvPyW0lCLtMxnj8KwmpqNXihHkQRUEv9kMi9WCwmrbrcHvaLPc+Dw==
+X-Received: by 2002:a5d:4d01:0:b0:37c:cc4b:d1d6 with SMTP id ffacd0b85a97d-37eab2e3550mr5411985f8f.27.1729369012589;
+        Sat, 19 Oct 2024 13:16:52 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-f8f1-d6d3-1513-aa34.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:f8f1:d6d3:1513:aa34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0ba7923sm248838f8f.114.2024.10.19.13.16.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Oct 2024 13:16:51 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Sat, 19 Oct 2024 22:16:49 +0200
+Subject: [PATCH net-next] net: dsa: mv88e6xxx: fix unreleased fwnode_handle
+ in setup_port()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241019-mv88e6xxx_chip-fwnode_handle_put-v1-1-fc92c4f16831@gmail.com>
+X-B4-Tracking: v=1; b=H4sIALETFGcC/x2N0QqDIBhGXyX+6wkpTdxeZQwJ/aofmolaE6J3n
+ +zywOGckzISI9OzOynh4MxbaCBvHbllDDME+8akejXIXj7E5zAGutZq3cJRTN+wedim+hU27kW
+ Mzg3wUt+VNtQyMWHi+l+8KKCIgFrofV0/hqusG3wAAAA=
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
+ Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729369011; l=1147;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=WGyWuzIPw0J/dmy6own3hVDgAgVliWmQ/oQWiEc2R/8=;
+ b=VXShLh+GjX3fmLIg3jWVw83lQq8hHQzNHU8k3ZJBh4Fq24kLiDox/H9qobtth0Tzbj/87Jeqr
+ r2poxqkm5JLCgMQ6d7Lee5zNG56jZ6canCBpUrkUKspiLBXdYacwih8
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-From: Aradhya Bhatia <a-bhatia1@ti.com>
+'ports_fwnode' is initialized via device_get_named_child_node(), which
+requires a call to fwnode_handle_put() when the variable is no longer
+required to avoid leaking memory.
 
-The cdns-dsi controller requires that it be turned on completely before
-the input DPI's source has begun streaming[0]. Not having that, allows
-for a small window before cdns-dsi enable and after cdns-dsi disable
-where the previous entity (in this case tidss's videoport) to continue
-streaming DPI video signals. This small window where cdns-dsi is
-disabled but is still receiving signals causes the input FIFO of
-cdns-dsi to get corrupted. This causes the colors to shift on the output
-display. The colors can either shift by one color component (R->G, G->B,
-B->R), or by two color components (R->B, G->R, B->G).
+Add the missing fwnode_handle_put() after 'ports_fwnode' has been used
+and is no longer required.
 
-Since tidss's videoport starts streaming via crtc enable hooks, we need
-cdns-dsi to be up and running before that. Now that the bridges are
-pre_enabled before crtc is enabled, and post_disabled after crtc is
-disabled, use the pre_enable and post_disable hooks to get cdns-dsi
-ready and running before the tidss videoport to get pass the color shift
-issues.
-
-[0]: See section 12.6.5.7.3 "Start-up Procedure" in J721E SoC TRM
-     TRM Link: http://www.ti.com/lit/pdf/spruil1
-
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Fixes: 94a2a84f5e9e ("net: dsa: mv88e6xxx: Support LED control")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
- .../gpu/drm/bridge/cadence/cdns-dsi-core.c    | 62 ++++++++++---------
- 1 file changed, 34 insertions(+), 28 deletions(-)
+ drivers/net/dsa/mv88e6xxx/chip.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index 79d8c2264c14..dfeb53841ebc 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -658,13 +658,28 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
- 	return MODE_OK;
- }
- 
--static void cdns_dsi_bridge_atomic_disable(struct drm_bridge *bridge,
--					   struct drm_bridge_state *old_bridge_state)
-+static void cdns_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
-+						struct drm_bridge_state *old_bridge_state)
- {
- 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
- 	struct cdns_dsi *dsi = input_to_dsi(input);
- 	u32 val;
- 
-+	/*
-+	 * The cdns-dsi controller needs to be disabled after it's DPI source
-+	 * has stopped streaming. If this is not followed, there is a brief
-+	 * window before DPI source is disabled and after cdns-dsi controller
-+	 * has been disabled where the DPI stream is still on, but the cdns-dsi
-+	 * controller is not ready anymore to accept the incoming signals. This
-+	 * is one of the reasons why a shift in pixel colors is observed on
-+	 * displays that have cdns-dsi as one of the bridges.
-+	 *
-+	 * To mitigate this, disable this bridge from the bridge post_disable()
-+	 * hook, instead of the bridge _disable() hook. The bridge post_disable()
-+	 * hook gets called after the CRTC disable, where often many DPI sources
-+	 * disable their streams.
-+	 */
-+
- 	val = readl(dsi->regs + MCTL_MAIN_DATA_CTL);
- 	val &= ~(IF_VID_SELECT_MASK | IF_VID_MODE | VID_EN | HOST_EOT_GEN |
- 		 DISP_EOT_GEN);
-@@ -683,15 +698,6 @@ static void cdns_dsi_bridge_atomic_disable(struct drm_bridge *bridge,
- 	pm_runtime_put(dsi->base.dev);
- }
- 
--static void cdns_dsi_bridge_atomic_post_disable(struct drm_bridge *bridge,
--						struct drm_bridge_state *old_bridge_state)
--{
--	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
--	struct cdns_dsi *dsi = input_to_dsi(input);
--
--	pm_runtime_put(dsi->base.dev);
--}
--
- static void cdns_dsi_hs_init(struct cdns_dsi *dsi)
- {
- 	struct cdns_dsi_output *output = &dsi->output;
-@@ -760,8 +766,8 @@ static void cdns_dsi_init_link(struct cdns_dsi *dsi)
- 	dsi->link_initialized = true;
- }
- 
--static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
--					  struct drm_bridge_state *old_bridge_state)
-+static void cdns_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
-+					      struct drm_bridge_state *old_bridge_state)
- {
- 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
- 	struct cdns_dsi *dsi = input_to_dsi(input);
-@@ -776,6 +782,21 @@ static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
- 	if (WARN_ON(pm_runtime_get_sync(dsi->base.dev) < 0))
- 		return;
- 
-+	/*
-+	 * The cdns-dsi controller needs to be enabled before it's DPI source
-+	 * has begun streaming. If this is not followed, there is a brief window
-+	 * after DPI source enable and before cdns-dsi controller enable where
-+	 * the DPI stream is on, but the cdns-dsi controller is not ready to
-+	 * accept the incoming signals. This is one of the reasons why a shift
-+	 * in pixel colors is observed on displays that have cdns-dsi as one of
-+	 * the bridges.
-+	 *
-+	 * To mitigate this, enable this bridge from the bridge pre_enable()
-+	 * hook, instead of the bridge _enable() hook. The bridge pre_enable()
-+	 * hook gets called before the CRTC enable, where often many DPI sources
-+	 * enable their streams.
-+	 */
-+
- 	if (dsi->platform_ops && dsi->platform_ops->enable)
- 		dsi->platform_ops->enable(dsi);
- 
-@@ -912,19 +933,6 @@ static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
- 	writel(tmp, dsi->regs + MCTL_MAIN_EN);
- }
- 
--static void cdns_dsi_bridge_atomic_pre_enable(struct drm_bridge *bridge,
--					      struct drm_bridge_state *old_bridge_state)
--{
--	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
--	struct cdns_dsi *dsi = input_to_dsi(input);
--
--	if (WARN_ON(pm_runtime_get_sync(dsi->base.dev) < 0))
--		return;
--
--	cdns_dsi_init_link(dsi);
--	cdns_dsi_hs_init(dsi);
--}
--
- static u32 *cdns_dsi_bridge_get_input_bus_fmts(struct drm_bridge *bridge,
- 					       struct drm_bridge_state *bridge_state,
- 					       struct drm_crtc_state *crtc_state,
-@@ -968,9 +976,7 @@ static int cdns_dsi_bridge_atomic_check(struct drm_bridge *bridge,
- static const struct drm_bridge_funcs cdns_dsi_bridge_funcs = {
- 	.attach = cdns_dsi_bridge_attach,
- 	.mode_valid = cdns_dsi_bridge_mode_valid,
--	.atomic_disable = cdns_dsi_bridge_atomic_disable,
- 	.atomic_pre_enable = cdns_dsi_bridge_atomic_pre_enable,
--	.atomic_enable = cdns_dsi_bridge_atomic_enable,
- 	.atomic_post_disable = cdns_dsi_bridge_atomic_post_disable,
- 	.atomic_check = cdns_dsi_bridge_atomic_check,
- 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
+index da19a3b05549..8c6797af8777 100644
+--- a/drivers/net/dsa/mv88e6xxx/chip.c
++++ b/drivers/net/dsa/mv88e6xxx/chip.c
+@@ -3379,6 +3379,7 @@ static int mv88e6xxx_setup_port(struct mv88e6xxx_chip *chip, int port)
+ 				break;
+ 			}
+ 		}
++		fwnode_handle_put(ports_fwnode);
+ 	} else {
+ 		dev_dbg(chip->dev, "no ethernet ports node defined for the device\n");
+ 	}
+
+---
+base-commit: 160a810b2a8588187ec2b1536d0355c0aab8981c
+change-id: 20241019-mv88e6xxx_chip-fwnode_handle_put-acc4ed165268
+
+Best regards,
 -- 
-2.34.1
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
