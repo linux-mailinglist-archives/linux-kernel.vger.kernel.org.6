@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-372706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04959A4C14
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:41:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B0B9A4C15
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A73EB22D4B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:41:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F4551C2205C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779301DF275;
-	Sat, 19 Oct 2024 08:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A9E1DF97F;
+	Sat, 19 Oct 2024 08:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wiredspace.de header.i=@wiredspace.de header.b="elMYD0Ul"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (1024-bit key) header.d=wiredspace.de header.i=@wiredspace.de header.b="m0y1ce7n"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9CF38FB0
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 08:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEA01DE88C
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 08:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729327281; cv=none; b=iVLpbJJv1ziBojT9V/m9FLW2Wo+FWKgtL4niMXCmQctx0irPnR04x85M9HhlPh3H+BTWOaIqJrrALIDsAUVCFf7LG3OM3WmWp4rKT4hhhdtfMFDf+3wws+9qQIuldfzzudnPW536ZOcQoyUAMvpIqafd05n/hTFRspvAZj0HzL8=
+	t=1729327285; cv=none; b=mExlVJSboNMNVawkzGbmkQLI3+k715JVnAJcRnCJR3S4D2jtWAyfP5owJb4X7zkBWr67h6FnS8bVGgYTcxgIGefw0iJJRnsKDdECUemk4ba1PuHGntEctyhOnY7U+L8FtslNmVdjAIu7f+qhBbiB9di5Bf1YKkJFMkp6zYmWifE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729327281; c=relaxed/simple;
-	bh=er4PjG88WtdHMGxq4I2UcqzhmfHX2ibGY4X4NDNYNyc=;
+	s=arc-20240116; t=1729327285; c=relaxed/simple;
+	bh=jFvbfoF4vUgK+eUQ3fW6irvU22g1V0ojLeWPPl9urpg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dr0d/0Z8QUUXhjcYso32ddyblxoBM5Q/u/FD5IV7HJjd4KKvUguEvs0IVWO4Jm/CmCJ8+dGl9F1dJPbCaKtvTTT6+Q3fE6iU9imF5qhNMH1fAFMl+jArMM+QMowjmVgij5isSjakog8426yar2UZmnXVl90LB7sHZJ8/5EiP/cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiredspace.de; spf=pass smtp.mailfrom=wiredspace.de; dkim=pass (1024-bit key) header.d=wiredspace.de header.i=@wiredspace.de header.b=elMYD0Ul; arc=none smtp.client-ip=95.215.58.175
+	 MIME-Version:Content-Type; b=lOWx4SCL2g9tlMKwnYsqVn2avynzibxr6JPT3HYJNpYShiNM9rVrVhEaSnbBmypsD1GnE46v11ZYzB6y/NyI+w/nkQC25T9L3mzNSxalfAwKH5/LK1uKyo1e9KCIOvAgOBIvTZY5VaYnigWBiX21r/g7BmhYbs6Z5Q5yXLos0g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiredspace.de; spf=pass smtp.mailfrom=wiredspace.de; dkim=pass (1024-bit key) header.d=wiredspace.de header.i=@wiredspace.de header.b=m0y1ce7n; arc=none smtp.client-ip=91.218.175.186
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiredspace.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiredspace.de
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiredspace.de;
-	s=key1; t=1729327276;
+	s=key1; t=1729327281;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5h88aRCX075gQyacCBN//xbLtbJ+w9Ld3N3jt4xAwmA=;
-	b=elMYD0Ulyk0Ph6cf+QJs8Gb5ybPcrTxhHxPtJxdXOERuk4TzCZt85jgcGI02gA2eO9rnOy
-	ZHaIxZmXqamLRy7xXhUt7Lshwb/1UyddIaGj4f2TcPOnvqV/yRTERoMxf0nMjD0nMOQsuV
-	SQuTBf4WV/+Rs8eQnQtC5HIELNW9QOU=
+	bh=GZJoXg9fLkkYOrnCoSAzjaA03NEPR/GiNSjvi3pIFiM=;
+	b=m0y1ce7npY1kLNzuEMuldTSJ2g1cJbw7j8g1T/IWzM40vyfb2lt05ZEj7D4up5xZ7Ucmgo
+	Be/F6InlFhpOxY4IwAlrfrSjGUt3SLvt9b/LLYkyxzpqUFYKflJgmBx4mFWpvuGHF5Ib1r
+	O65tDXZs70ajyQjSzSi/WSRh15Azk8U=
 From: =?UTF-8?q?Thomas=20B=C3=B6hler?= <witcher@wiredspace.de>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
@@ -61,9 +61,9 @@ Cc: Boqun Feng <boqun.feng@gmail.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	=?UTF-8?q?Thomas=20B=C3=B6hler?= <witcher@wiredspace.de>
-Subject: [PATCH v2 1/7] drm/panic: avoid reimplementing Iterator::find
-Date: Sat, 19 Oct 2024 10:22:46 +0200
-Message-ID: <20241019084048.22336-2-witcher@wiredspace.de>
+Subject: [PATCH v2 2/7] drm/panic: remove unnecessary borrow in alignment_pattern
+Date: Sat, 19 Oct 2024 10:22:47 +0200
+Message-ID: <20241019084048.22336-3-witcher@wiredspace.de>
 In-Reply-To: <20241019084048.22336-1-witcher@wiredspace.de>
 References: <20241019084048.22336-1-witcher@wiredspace.de>
 Precedence: bulk
@@ -76,29 +76,23 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Rust's standard library's `std::iter::Iterator` trait provides a function
-`find` that finds the first element that satisfies a predicate.
-The function `Version::from_segments` is doing the same thing but is
-implementing the same logic itself.
+The function `alignment_pattern` returns a static reference to a `u8`
+slice. The borrow of the returned element in `ALIGNMENT_PATTERNS` is
+already a reference as defined in the array definition above so this
+borrow is unnecessary and removed by the compiler. Clippy notes this in
+`needless_borrow`:
 
-Clippy complains about this in the `manual_find` lint:
-
-    error: manual implementation of `Iterator::find`
-       --> drivers/gpu/drm/drm_panic_qr.rs:212:9
+    error: this expression creates a reference which is immediately dereferenced by the compiler
+       --> drivers/gpu/drm/drm_panic_qr.rs:245:9
         |
-    212 | /         for v in (1..=40).map(|k| Version(k)) {
-    213 | |             if v.max_data() * 8 >= segments.iter().map(|s| s.total_size_bits(v)).sum() {
-    214 | |                 return Some(v);
-    215 | |             }
-    216 | |         }
-    217 | |         None
-        | |____________^ help: replace with an iterator: `(1..=40).map(|k| Version(k)).find(|&v| v.max_data() * 8 >= segments.iter().map(|s| s.total_size_bits(v)).sum())`
+    245 |         &ALIGNMENT_PATTERNS[self.0 - 1]
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: change this to: `ALIGNMENT_PATTERNS[self.0 - 1]`
         |
-        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_find
-        = note: `-D clippy::manual-find` implied by `-D warnings`
-        = help: to override `-D warnings` add `#[allow(clippy::manual_find)]`
+        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_borrow
+        = note: `-D clippy::needless-borrow` implied by `-D warnings`
+        = help: to override `-D warnings` add `#[allow(clippy::needless_borrow)]`
 
-Use `Iterator::find` instead to make the intention clearer.
+Remove the unnecessary borrow.
 
 Fixes: cb5164ac43d0 ("drm/panic: Add a QR code panic screen")
 Reported-by: Miguel Ojeda <ojeda@kernel.org>
@@ -106,29 +100,22 @@ Link: https://github.com/Rust-for-Linux/linux/issues/1123
 Signed-off-by: Thomas Böhler <witcher@wiredspace.de>
 Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
 ---
- drivers/gpu/drm/drm_panic_qr.rs | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_panic_qr.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-index 1ef56cb07dfb..76decf49e678 100644
+index 76decf49e678..7adfaa3d6222 100644
 --- a/drivers/gpu/drm/drm_panic_qr.rs
 +++ b/drivers/gpu/drm/drm_panic_qr.rs
-@@ -209,12 +209,9 @@
- impl Version {
-     /// Returns the smallest QR version than can hold these segments.
-     fn from_segments(segments: &[&Segment<'_>]) -> Option<Version> {
--        for v in (1..=40).map(|k| Version(k)) {
--            if v.max_data() * 8 >= segments.iter().map(|s| s.total_size_bits(v)).sum() {
--                return Some(v);
--            }
--        }
--        None
-+        (1..=40)
-+            .map(Version)
-+            .find(|&v| v.max_data() * 8 >= segments.iter().map(|s| s.total_size_bits(v)).sum())
+@@ -239,7 +239,7 @@ fn g1_blk_size(&self) -> usize {
      }
  
-     fn width(&self) -> u8 {
+     fn alignment_pattern(&self) -> &'static [u8] {
+-        &ALIGNMENT_PATTERNS[self.0 - 1]
++        ALIGNMENT_PATTERNS[self.0 - 1]
+     }
+ 
+     fn poly(&self) -> &'static [u8] {
 -- 
 2.46.2
 
