@@ -1,135 +1,150 @@
-Return-Path: <linux-kernel+bounces-372991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C753B9A5064
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 21:03:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C06459A5068
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 21:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 448B7B25F7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 19:03:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30889284E8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 19:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFDF1917CD;
-	Sat, 19 Oct 2024 19:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07142190685;
+	Sat, 19 Oct 2024 19:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jau/RVHS"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROZR3hgU"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0607DA68;
-	Sat, 19 Oct 2024 19:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6D6320E
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 19:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729364591; cv=none; b=sSL63I9xnt/2oo8goQ1REClbdB8h4qnkVHZCqVNw2u64QucPyXBQjLfDIK7Q5mBCB0W4nXYC9++GPeM0h4O3t5VogwuiWWhh1XvKklAwvWALZQD4uLcb4g42K5gubca+9gnhfbI5z+vsLv4E/UOKShvgO7owk5gLJNO4UipnjSE=
+	t=1729365001; cv=none; b=m1p9mWgCdd74PHr+9WGdGvRwRffV7henMOjlhxp215qYKfmCZR5p4zPP12U6XHnZRVLw5wWWnRBfOptxhxmOcm0IVv4JPBJMbEZjw/gfTMsJSf/UCKu8sVEhDnkGLQTmEJRFoiIy8Ns/32C2E7/w8POgchYx97Fs+I53LX1/D0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729364591; c=relaxed/simple;
-	bh=jH4u32RSFUNm+YD2QqJ6p7d11UHEJDkb2T/r6BNhRGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e4Abm5UHtKLXyN6+/1C0vF37w/hFf6eckBmuwRBtKEKoYXNC9qhCLVB5LrwGR8B4NwtMiVUTy+Jey5a3HYMBujd0nykRB0MhRCIzL6d3G/3QiU5QtrtsFnbHFTmmonrbAHmfHFQlENvWNl1xZTVw2Fmsbu8HXsck0OHkqUbSQYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jau/RVHS; arc=none smtp.client-ip=209.85.167.53
+	s=arc-20240116; t=1729365001; c=relaxed/simple;
+	bh=ejHnmaav8X6sc7lPL9ctHCcvGsPSIGdC7FIsmz7rHoQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=pk5sLWaB/LG1HiRt4epoO0F/fd/QL2kJgbM7l99dTCy1p/h1iEO3ujYlL6Iu7QnzrtkSDD6PX6IfXND7C3GaT5VvjXYSOMa5/HXMV2y9/NaoiGo2HzlejANULV9B9Oax4WM9b/VXWq+P+3frE3HtzghDfvdmvChkkn9RSYnssBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ROZR3hgU; arc=none smtp.client-ip=209.85.160.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so3651808e87.1;
-        Sat, 19 Oct 2024 12:03:09 -0700 (PDT)
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2887abeefbdso1638776fac.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 12:09:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729364588; x=1729969388; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=79kPyqLh2zEwTMD+j8/MFpAmQYB2epf/WtlkHCaRqSI=;
-        b=Jau/RVHSPyxegfiEn/QPyn6XFxiORlxdWXFZilGNtj+mLSCCv5AXc1fYJJMrBKYIyB
-         iFhevpjF3kCv9aFwqRDGXTYLZahT73jKJhZB07DSNujix2+vJ2FTuE1nDmK+9QA5/tkd
-         WorXTdON9s2BKM5hT5vf6PHLn18DwTqe8fd9egg7IL8YuFZBGW7FoasKg9UPXuiWjuhi
-         Qp1lsFNQmM+xLYv0PhPjF4sCpx34MUoyBYXWb6wbowhJvGjgQKeXmRfVQNlxyYWiSqSG
-         kv/fgGJ1oxp5jl4NrnHY4QR2AYu6mme4VYNZXOztuwlb5su2YKJxOX4zu5dcEkZjNTgF
-         1jLg==
+        d=gmail.com; s=20230601; t=1729364998; x=1729969798; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=caP6QQozkZdh1dmKjhDleElX58hylqMyVpFx0NpRri4=;
+        b=ROZR3hgUz4nctJ3AGbydn+VtBNm3JflefQ7pis9E4tWQ+LiKcqJIid1Eux8VMTNbnq
+         rnu8URJL5ozD7H5IpjXl4SA18XgZH64aScK3mDWZZpfOX9NC1dmBfvnhMOGcXCGE3WbR
+         RKJ5QazQXJeXCekK14j5BGDY8FczvsH2zAjIzwnyGEuaL6g+8rleydRFKJsqwjp0LYz2
+         LAmS6IJqU/u0xTJ5rE0vSb9qhKeq9VCJ19TNoCLlvRJNTcDPBCmAb7LXGT0SSWb0aKyj
+         WsRr+CU8Bp06cBmAZ/yFFbjIhR4shMo3tL0WYVNi3ONTkegODfMHCoJ0cJ3KHLmBjBGF
+         i0Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729364588; x=1729969388;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1729364998; x=1729969798;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=79kPyqLh2zEwTMD+j8/MFpAmQYB2epf/WtlkHCaRqSI=;
-        b=W2oU5qyqpF2uMzmyX//4eDTENyIqDt+r6aNAlb8Y0E1rSut1GSaKcu5sCnBTzKkU6m
-         l9wqkKtuxX+OS5wEIjHFCnuSJR7r5T8OB3/LPRXpEgXkEiHoaL80NTfiLEEbsHQHF9Fn
-         XlMSK+SOEPX2QlDkPMSpKLX1zwHJciZwn08uQUh6yCltEDG0HxdHArHgIonajRNaXUf4
-         RMS7aCZEXJN5B+SE2E5pZLOVp0EmAzfBaFyyd1mH1BeEGEPbyOXZby3KlhOdadshju+2
-         rSR9KQKVqcxHkprZ6hOoTtvtgFHZ0ZWGPFK8bekXQg6HpCMq6Atxmk3sGLcWgd12Ae68
-         yYgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWaZ1yTM43sNzHOovqv3id0KMGgkRmh68i5Xg/57u9dI0mS+shz/k2zAIbAzdSbvjjKXRAdIwkRKWA@vger.kernel.org, AJvYcCVSyPpmsqG9rytK/PhXDhKRZPZePUZXO4TYvkgX30tzWF785cvNdTZ/EzXDiiiGdI9Gpsx2tUSXUiN3cI/1UQ==@vger.kernel.org, AJvYcCXJJDHpRuFbDVfrjZjvztalLFXcox93KIuG1sq1JtTBLZl8r0PpVWFTh93wroHFyDP++yLqMqa1EH4ql/Zd@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNSvjugc6RbAeAG8K3rTUOib4kqdZ1jNPjAE1uZffqnNtbw5qb
-	BGhrlrTPRWCrRG9+qUtPHEWCARUrPOuPFsfS3IY3WzwwFdPF7w86nT3aihZR
-X-Google-Smtp-Source: AGHT+IErIzIdf4qvDgdzkOKWc2GGHw0Jt1dEjgYflhoSkB+6edzwHy6hovrUFGuS8H1Xc7HJa5z9tw==
-X-Received: by 2002:a05:6512:1307:b0:539:ed5e:e224 with SMTP id 2adb3069b0e04-53a1520b1c7mr3579748e87.7.1729364587181;
-        Sat, 19 Oct 2024 12:03:07 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:a311:80b0:1c80:9433:9060:39fc:2954])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a223e5556sm21514e87.8.2024.10.19.12.03.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 12:03:06 -0700 (PDT)
-From: Maya Matuszczyk <maccraft123mc@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Maya Matuszczyk <maccraft123mc@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: qcom: x1e80100-crd Rename "Twitter" to "Tweeter"
-Date: Sat, 19 Oct 2024 21:02:15 +0200
-Message-ID: <20241019190214.3337-2-maccraft123mc@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        bh=caP6QQozkZdh1dmKjhDleElX58hylqMyVpFx0NpRri4=;
+        b=mTND/B5vFGF6waIs3s8oTUSvjHr91RAU6P/Bntl0xxyhRIVeoKEg0l9qNXHRcrLauE
+         7+FzChrxYIQtSSNlpApTQgJdueF9ss8A1Lrlc8WN7XrEQPQSjuenNcD42HRIoMPFx6pq
+         KtQ51I7igvfwuV7mVQN86ygNYkvKIy8fp4kT5oGfuLveycLyakexmCliWde9LkT1LL2f
+         EyxpVg1WjLiZrOSQLXbiH0yHEJqtsW7bECNOqpEG3vfp/Wit540Tpv86Jx/G4GiS/6sY
+         EcgaXRMeSFoBITZk2ilkGdUwT/eyub3SC/HBkfFWD0bNYB8Nq/VhI7+ueQuPfV53f4zr
+         tJzg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7y1gsIhI+Nhip9wMUwD6m/g7rzAfoPMdQd4inbPeU80EviZUv0nWTlyxGNQpsdTIet+ORdJ+Ll9Tzjgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxL24B8kQbCDg0LbhjCDr5SMK4pQd3R6H2NieW2cOh/zxBZyv0
+	lRVG/g0IZ9uGDg5MxqraEY4odBhoWi6QThiMOGenEPf47qReWemMIvDAoODsA28kKR1WoaMVawi
+	qFkAiNEe4zhPd8j1TIxj9G2c4eFMSsRpi
+X-Google-Smtp-Source: AGHT+IEqHdFFFNKO5rKXhi8r0P8K4vNUNFAExAm2Pq1Q/xTJzFUF3JHD0DS0m0I/IE9RJII9aINQqVcVAIhUS6kMb1g=
+X-Received: by 2002:a05:6870:71d2:b0:287:29a0:cfe4 with SMTP id
+ 586e51a60fabf-2892c4f191dmr5198963fac.32.1729364998487; Sat, 19 Oct 2024
+ 12:09:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Muni Sekhar <munisekharrms@gmail.com>
+Date: Sun, 20 Oct 2024 00:39:47 +0530
+Message-ID: <CAHhAz+iHsEaEkhEFNPyiiR-N-eLYYa3dFArO3rLvGdGKnWbm2w@mail.gmail.com>
+Subject: Assistance Needed for Kernel mode driver Soft Lockup Issue
+To: kernelnewbies <kernelnewbies@kernelnewbies.org>, 
+	kernel-hardening-sc.1597159196.oakfigcenbmaokmiekdo-munisekharrms=gmail.com@lists.openwall.com, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This makes the name consistent with both other x1e80100 devices and the
-dictionary. A UCM fix was merged already and is required in order for
-sound to work after this commit.
+Dear Linux Kernel Developers,
 
-Signed-off-by: Maya Matuszczyk <maccraft123mc@gmail.com>
----
- arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I am encountering a soft lockup issue in my system related to the
+continuous while loop in the empty_rx_fifo() function. Below is the
+relevant code:
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-index 10b28d870f08..004353220dc5 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-@@ -177,9 +177,9 @@ sound {
- 		compatible = "qcom,x1e80100-sndcard";
- 		model = "X1E80100-CRD";
- 		audio-routing = "WooferLeft IN", "WSA WSA_SPK1 OUT",
--				"TwitterLeft IN", "WSA WSA_SPK2 OUT",
-+				"TweeterLeft IN", "WSA WSA_SPK2 OUT",
- 				"WooferRight IN", "WSA2 WSA_SPK2 OUT",
--				"TwitterRight IN", "WSA2 WSA_SPK2 OUT",
-+				"TweeterRight IN", "WSA2 WSA_SPK2 OUT",
- 				"IN1_HPHL", "HPHL_OUT",
- 				"IN2_HPHR", "HPHR_OUT",
- 				"AMIC2", "MIC BIAS2",
-@@ -933,7 +933,7 @@ left_tweeter: speaker@0,1 {
- 		reg = <0 1>;
- 		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
- 		#sound-dai-cells = <0>;
--		sound-name-prefix = "TwitterLeft";
-+		sound-name-prefix = "TweeterLeft";
- 		vdd-1p8-supply = <&vreg_l15b_1p8>;
- 		vdd-io-supply = <&vreg_l12b_1p2>;
- 		qcom,port-mapping = <4 5 6 7 11 13>;
-@@ -986,7 +986,7 @@ right_tweeter: speaker@0,1 {
- 		reg = <0 1>;
- 		reset-gpios = <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
- 		#sound-dai-cells = <0>;
--		sound-name-prefix = "TwitterRight";
-+		sound-name-prefix = "TweeterRight";
- 		vdd-1p8-supply = <&vreg_l15b_1p8>;
- 		vdd-io-supply = <&vreg_l12b_1p2>;
- 		qcom,port-mapping = <4 5 6 7 11 13>;
--- 
-2.45.2
 
+#include <linux/io.h> // For readw()
+
+#define FIFO_STATUS 0x0014
+#define FIFO_MAN_READ 0x0015
+#define RX_FIFO_EMPTY 0x01 // Assuming RX_FIFO_EMPTY is defined as 0x01
+
+static inline uint16_t read16_shifted(void __iomem *addr, u32 offset)
+{
+    void __iomem *target_addr =3D addr + (offset << 1); // Left shift
+the offset by 1 and add to the base address
+    uint16_t value =3D readw(target_addr); // Read the 16-bit value from
+the calculated address
+    return value;
+}
+
+void empty_rx_fifo(void __iomem *addr)
+{
+    while (!(read16_shifted(addr, FIFO_STATUS) & RX_FIFO_EMPTY)) {
+        read16_shifted(addr, FIFO_MAN_READ); // Keep reading from the
+FIFO until it's empty
+    }
+}
+
+Explanation:
+Function Name: read16_shifted =E2=80=94 The function reads a 16-bit value f=
+rom
+an offset address with a left shift operation.
+Operation: It shifts the offset left by 1 (offset << 1), adds it to
+the base address, and reads the value from the new address.
+The empty_rx_fifo function is designed to clear out the RX FIFO, but
+I've encountered soft lockup issues. Specifically, the system logs
+repeated soft lockup messages in the kernel log, with a time gap of
+roughly 28 seconds between them (as per the kernel log timestamps).
+Here's an example log:
+
+watchdog: BUG: soft lockup - CPU#0 stuck for 23s!
+
+In all cases, the RIP points to:
+RIP: 0010:read16_shifted+0x11/0x20
+
+
+Analysis:
+The soft lockup seems to be caused by the continuous while loop in the
+empty_rx_fifo() function. The RX FIFO takes a considerable amount of
+time to empty, sometimes up to 1000 seconds. As a result, from the
+first occurrence of the soft lockup trace, the log repeats
+approximately every 28 seconds for the entire 1000 seconds duration.
+After 1000 seconds, the system resumes normal operation.
+
+Questions:
+1. How should I best handle this kind of issue? Even if the hardware
+takes time, I would like advice on the best approach to prevent these
+lockups.
+2. Do soft lockup issues auto-recover like this? Is this something I
+should consider serious, or can it be ignored?
+
+I would appreciate any guidance on how to resolve or mitigate this problem.
+
+
+--=20
+Thanks,
+Sekhar
 
