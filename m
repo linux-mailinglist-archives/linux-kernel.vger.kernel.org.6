@@ -1,142 +1,100 @@
-Return-Path: <linux-kernel+bounces-372910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA379A4F16
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:25:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634FD9A4F18
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E731F223D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:25:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF04EB259B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E12154BF0;
-	Sat, 19 Oct 2024 15:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66AF14B970;
+	Sat, 19 Oct 2024 15:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmsCbAJ4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AyG7JtEC"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420B5EAC7;
-	Sat, 19 Oct 2024 15:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5396CEAC7;
+	Sat, 19 Oct 2024 15:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729351496; cv=none; b=qJMbig154CCejWQx4Udz5nqQtLhVzh1SzNQjDwxwwKE2BgNPxuX7OJ+/KdE4XBiVYDH36CyyaP8eh6ifD4QxEVTKy9Y0SuyC5uheUXD/qFJ9TXVCM3Pze1rxk4Il/By10ZJlAXZuFXJ3MBENzgQa6gPcyhFvhRf1XC55MJpWyow=
+	t=1729351532; cv=none; b=Sj/MnnkzozSCCxIny1cY89RTb4ZsVa87NEHidjWPiHnXvuUy7GEPBywboEwCvzYdBa8E8hb4F6K+PMY0FrGm/ZpNcDozWequWxr8HPfmtj70xednx8IvUzyPyzN5dTqesgNcqozcEs7w7irx30mtaP/SEyGp1p5oDT29zD+OXxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729351496; c=relaxed/simple;
-	bh=2rgS0ryQcXd05F22SgBalZfutACrIoPMjOz8GLEHDzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bsD7DvXFRzr/pdy1lGb3MbvjH380IDFBXt+edIcSENfubFzx0GEfAF/xfJ80MVSIvL3R5AxA7IWIRHRNA6bsZ+EK/9coMuoqNLd7mCDSgXnIXV21ZFvAX39NOnfTwMlrZkA7S4RTKCd0wn0Dqbn3jJB+gNdmWVMdZfizZkmvrtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmsCbAJ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE1DBC4CEC5;
-	Sat, 19 Oct 2024 15:24:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729351495;
-	bh=2rgS0ryQcXd05F22SgBalZfutACrIoPMjOz8GLEHDzQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dmsCbAJ4qJscKBC0cidSAIpv20f4l8U/gkgqDaUwK7zBHMWieDdoWrnjJQ0RCwgIt
-	 +q1PS/UX2cenveSLzYl32doM4qjsaltPQZpIKztST0Yj2RDW3ai39M5smZET6TAM7R
-	 N+CeVP1wWTw0BXik8ovmJsAMuKt5NpATv/FHr6cpV8YtMATASpWiiq//t53k2FCIZL
-	 fLVm9AHTI0DBaQ0h+hU/2vxXisB+1DYngVx3TPHXFjzFIIHchahNhgBikaz3vT68Fo
-	 tbGdS6rob/uvypJJYYU2BOPnEgpiKbVjHFXzdGLaYFteE+Wppeq8CjPG9LL3s8Tgvy
-	 rfRfDuTm2KFEw==
-Date: Sat, 19 Oct 2024 16:24:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dlechner@baylibre.com, Mark Brown
- <broonie@kernel.org>
-Subject: Re: [PATCH v6 7/8] iio: dac: ad3552r: add high-speed platform
- driver
-Message-ID: <20241019162437.500b6ac4@jic23-huawei>
-In-Reply-To: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-7-eeef0c1e0e56@baylibre.com>
-References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
-	<20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-7-eeef0c1e0e56@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729351532; c=relaxed/simple;
+	bh=VGpUeFJ9CXGCHzG7wfKHVaaoZcBpkxpWYGXVicoxglQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hH02stmW56QFB1q04GhWCqbWI6LbojGSDId99yzzUJnoPaCcKOKwWVOt6dtN3NQnLNX4wLWexkdOmEeJH1OJW9cviHDiPSVHrtsOK1bw5GXOyaFu6+p1o9FUXrjYA7mnU5ZfF7oFjZcopwvCj1OhwqeN2n4yW9hJ65+DrdP658s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AyG7JtEC; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c9a664e65fso3587597a12.1;
+        Sat, 19 Oct 2024 08:25:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729351528; x=1729956328; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IqOxPIGSWxdyAWdKZgznaaC0m5Gn9KejcbfH9xhAtts=;
+        b=AyG7JtEC9HfI0yKWwntsATxsdPG4no43mLLP6mX5gGIEWPYwv+aMbpDyIlyLzAaMqc
+         sPKyEMcX1U1DwUMnoKz6PZrRBGAOOVw0Cu1yDAoOQyns1JaZG3oUbP5/fpDVLSlEMmIS
+         dNfV8/n6sVxVtZFExUqQMiD6PF+WBzEMjDGUbXDnbbQ5NEaDnTS6Q8j3c10HaijrcDlU
+         Ce4NcjZ2fnq57sGBxb8T8ghnS53+8uhM14P45TRtuA4b1jmZcGsmPoUSg7+XlkUtRqzu
+         wT5hcJC3eDZAZhcJ/lmWNnLwOHXC3d9ou4z3HUN5nLnbq+z3CH6qzrbn/QlUI907Q5TY
+         J1Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729351528; x=1729956328;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IqOxPIGSWxdyAWdKZgznaaC0m5Gn9KejcbfH9xhAtts=;
+        b=PsTOmZOBZqPGNEUCX3Fxpa1PYNWWUFoZz+NIFNYjsF8Wf7lqaASw7/4hZTld8lwYIR
+         9r1rCmseOOkOfqMycGeQbMnztm2k0nCptgC1me/siFi8aNlAECp/t3O32HsDC6ypUAs7
+         YSUrhT05UNsl7iS1jrK4m6YS2UP6Qt/rZyFaC6305S1DVW/DedRiLtEyAWxqsIyVW8CA
+         Fuoe9pQXyxq2oPqOqJoKJwX1QBWAPanhcnHf8Z2+Ljw096U7+RyHy5NuxUfdZSbKct6J
+         rX+k9ECtwLMu3C54+nVCEr1BOBO1570NfSKX8rr/ggZCoEigPkvifB51nUN/bc3k0nbK
+         8jkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLQ/5vIIqKBYOUUKPjhXDLXCdmEZBQM6mTblGSbxqiXzvziu150wtEYifdcKuZ5VjLFSWy8rdRWJ69AY8=@vger.kernel.org, AJvYcCXMkYo0ZYsN4Sv4ySEnUbGexZX1C0P6UPnjDrxarM/89enE3hC8aHr91c4rWTvndv+LoL1i4RDDhkqx8J09Mw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWuRjGv0Vdwfm5VJGMfmBp9RgcerHfITO/YfKdbrpJbyXi0XzG
+	gLtD8vx7XQjSq3t8a/14eZlvW0w11RYhWx23tcaFTAzdBg5eO1E=
+X-Google-Smtp-Source: AGHT+IFWDsDPsXARX8DbF/3BZ+lp4G/6LnDqEvJX/elkC+I2gkZGFfudkczxuhVBVtCUiVahi5/uww==
+X-Received: by 2002:a17:906:c150:b0:a9a:478:2ee3 with SMTP id a640c23a62f3a-a9a69c970f3mr535012566b.40.1729351528224;
+        Sat, 19 Oct 2024 08:25:28 -0700 (PDT)
+Received: from p183 ([46.53.252.171])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68c284dfsm223950866b.197.2024.10.19.08.25.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Oct 2024 08:25:27 -0700 (PDT)
+Date: Sat, 19 Oct 2024 18:25:25 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Tobias Stoeckmann <tobias@stoeckmann.org>
+Cc: mcgrof@kernel.org, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] module: .strtab must be null terminated
+Message-ID: <abafecde-06b4-46ae-9249-2584f6610763@p183>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Mon, 14 Oct 2024 12:08:13 +0200
-Angelo Dureghello <adureghello@baylibre.com> wrote:
+> +	strhdr = &info->sechdrs[info->index.str];
+> +	if (strhdr->sh_size > 0 && info->strtab[strhdr->sh_size - 1] != '\0') {
+> +		pr_err("module %s: string table isn't null terminated\n",
+> +		       info->name ?: "(missing .modinfo section or name field)");
+> +		goto no_exec;
+> +	}
 
-> From: Angelo Dureghello <adureghello@baylibre.com>
-> 
-> Add High Speed ad3552r platform driver.
-> 
-> The ad3552r DAC is controlled by a custom (fpga-based) DAC IP
-> through the current AXI backend, or similar alternative IIO backend.
-> 
-> Compared to the existing driver (ad3552r.c), that is a simple SPI
-> driver, this driver is coupled with a DAC IIO backend that finally
-> controls the ad3552r by a fpga-based "QSPI+DDR" interface, to reach
-> maximum transfer rate of 33MUPS using dma stream capabilities.
-> 
-> All commands involving QSPI bus read/write are delegated to the backend
-> through the provided APIs for bus read/write.
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-Hi Angelo,
+Reviewed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 
-You have lots of review already. Just one trivial addition from me.
+The _very_ correct test is "there must be NUL between last index used
+and the end of the section somewhere".
 
-Jonathan
+.shstrtab has the same overly restrictive test:
 
-> diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
-> new file mode 100644
-> index 000000000000..cb29a600e141
-> --- /dev/null
-> +++ b/drivers/iio/dac/ad3552r-hs.c
-> @@ -0,0 +1,526 @@
+	if (info->secstrings[strhdr->sh_size - 1] != '\0') {
 
-> +static int ad3552r_hs_buffer_postenable(struct iio_dev *indio_dev)
-> +{
-
-> +
-> +	switch (*indio_dev->active_scan_mask) {
-> +	case AD3552R_CH0_ACTIVE:
-> +		st->single_channel = true;
-> +		loop_len = 2;
-> +		val = AD3552R_REG_ADDR_CH_DAC_16B(0);
-> +		break;
-> +	case AD3552R_CH1_ACTIVE:
-> +		st->single_channel = true;
-> +		loop_len = 2;
-> +		val = AD3552R_REG_ADDR_CH_DAC_16B(1);
-> +		break;
-> +	case AD3552R_CH0_CH1_ACTIVE:
-	case AD3552R_CH0_ACTIVE | AD3552R_CH1_ACTIVE:
-
-
-> diff --git a/drivers/iio/dac/ad3552r.h b/drivers/iio/dac/ad3552r.h
-> index 088eb8ecfac6..fc00ed4c2565 100644
-> --- a/drivers/iio/dac/ad3552r.h
-> +++ b/drivers/iio/dac/ad3552r.h
-
-> @@ -129,6 +131,11 @@
->  #define AD3552R_GAIN_SCALE				1000
->  #define AD3552R_LDAC_PULSE_US				100
->  
-> +#define AD3552R_CH0_ACTIVE				BIT(0)
-> +#define AD3552R_CH1_ACTIVE				BIT(1)
-> +#define AD3552R_CH0_CH1_ACTIVE				(AD3552R_CH0_ACTIVE | \
-> +							 AD3552R_CH1_ACTIVE)
-
-I'd just put that one inline in the case statement.
-
-> +
->  #define AD3552R_MAX_RANGES	5
->  #define AD3542R_MAX_RANGES	6
->  
-> 
-
+But, of course, it doesn't matter in practice.
 
