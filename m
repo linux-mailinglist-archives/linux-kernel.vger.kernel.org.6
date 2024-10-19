@@ -1,111 +1,168 @@
-Return-Path: <linux-kernel+bounces-372587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11BBE9A4ABE
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:49:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B376B9A4AC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DC61B21FAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9202846EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1301990A2;
-	Sat, 19 Oct 2024 00:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CD91990CE;
+	Sat, 19 Oct 2024 00:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e4CMuT6S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mfUIGGy9"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9CA20E31C
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 00:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7280820E31C;
+	Sat, 19 Oct 2024 00:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729298932; cv=none; b=D18Ji8bGiv7khx6RAqmVLB9J3+dlX15NOqtLLS6cZuZ4SxrZ+hiYLlw/XCZ0C29MToWtGmAeaK7DARKzF4nizDGgLiwj9wQO1ZjPFFnnQiOFAVajydHTjUmi5A4Xof6NfVq+if5V43pkgro+4cnOu5jkKJkcOta/SEfiToqPbhU=
+	t=1729299072; cv=none; b=C0AwNNsEXR7oH85yZlLaKuY2r8nM6azOKoX/3NDDENx74uJ4Ce/9I4Z0lE8YfecULTRxVIwlGVVXJxm8hV6zuC4VrrjAIekDUPaBA4u5O4PRTGwimxguKA0ZcTtFPMKeuJAiVGjRGwJVa1mkrJ8V5qjNMCFFi0HoLlx/UcSvP+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729298932; c=relaxed/simple;
-	bh=zxy6CVaPGBT/4hy8i0ysqF5Vh5/hv0JzciEqXjlH0T8=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=GYQDRwvmNY3wFCwKHNUunpBoSMwvgvtYydgRop5wayPTZnLCR4W3F0NHsnL4Ck9oNP4SqzYmXSkBw4FAYH5RY9UUDQ1IeDWoEVfhgW8pRaJBAHMju39rjOwtkild5G+axUDJY3SlnDsj6os3XMi7gHQKl1Rw27vAoKtp+P87Gmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e4CMuT6S; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729298929;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=JgCLbnQyx/xtWKFjluiXxC49uB//JvT7pDOfovgSmM0=;
-	b=e4CMuT6SKFZkQVAcgtQIjGO+b7I4qNWeyMPAgFW6ndAsBeIFh91AQEpbp5xamuxxAaRVP8
-	5OgW38jCfl/uhm577ioXnTxgslZQofwgl2Xc6ADpirt9/4MdLGs8SnRFkCOLAszUAAjqYM
-	qrKxoL4U8qap4CvCKhQnTkmheLfB8jU=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-318-A_jDSBasNhWkaG2f6miJLA-1; Fri, 18 Oct 2024 20:48:47 -0400
-X-MC-Unique: A_jDSBasNhWkaG2f6miJLA-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b14cb9f6f5so531765485a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:48:47 -0700 (PDT)
+	s=arc-20240116; t=1729299072; c=relaxed/simple;
+	bh=MD5kkzyjVlGnny+gqQDDv1+RFxFDxvzSYdWohCFC5o4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HnwPpz23hgFWe7QZRy0Ab/NxN9azNsya7h3F4w2IpDulb7RIo8U9hpB7vW5HAUZn9JGt/tS3IR5W0E9LG1oQ4cddgN62h1abYsJqr2cvGGerrMORkdhy3pfazHpgQ3ICh+OeZsJdeci2bsBIVuJIWc+VJqmkCfke/dSG11uWn6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mfUIGGy9; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c767a9c50so26156145ad.1;
+        Fri, 18 Oct 2024 17:51:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729299069; x=1729903869; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FL67X8g8ez0faSQl99ijSyvjCoKB8ojvzNqVtmVcfiE=;
+        b=mfUIGGy9bR9aKPRo55Evj5Y0+Syw/iJz2/yhdhO+b63hHvIHvYDxUA4Ui3G3+UmBHF
+         J1Iz8GUcEliAjAfmLwQqHL2mZKvgiWNxOcsfxrku6y4ZsOmRCTzsXz6nGHpxuZ1Vq1d6
+         XUyGqsxaFwmAjY017JagKBpd9uY7PRmIupDMo59mPAYkYPwIFcIGR5ERu6qb2ytDIkOn
+         Rvn6t8PFzt3PXkGZC405xgF0bzEfEyegSPqg+Zh3TrhApgKjaYqi1v4Rfd9KUMnVxAbh
+         l+PI2T9OQ2LH6XTlWvnIOXHa3/Blz+X/eH6rNMkoIt6k5ijcibNIUC8v8Uvks2N8/9Gn
+         Yh+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729298927; x=1729903727;
-        h=content-transfer-encoding:mime-version:user-agent:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JgCLbnQyx/xtWKFjluiXxC49uB//JvT7pDOfovgSmM0=;
-        b=NWDnVbvzMWrumuymf0EZefMckIQg86Q3XD5x5yizXONLEPE5HMbyuuRPiiJMbvovKL
-         bbOCYlPw6kKdsfqJbfTawrVTagPSz+s/U+8vA4U/gHimi05F8ey+/Gis9pyTvBXUxNHE
-         UZ48EDunlGW4U5ff5nCUgadLa8TWNo/gB2xp2d1Go1JkH2ESBLeve5844S0Y3S0Du/d0
-         oQHyUwLHSJPQscrQYscbHWZ8/PXzli5Z3E9bEV/Un3rr90eVRvJ94j3h34oFs+vlyCWF
-         BW8XhnK7W3xFDVzg2XVk6RDSmaU84TcF1+M4Xf3E8EUZpuwNf8wwhlUfYKRyUYanxP0F
-         ZjVQ==
-X-Gm-Message-State: AOJu0YwMHsQfK2hO92dIyfX+jPXglApj/x6o+Pt3Vw5Fz1Uuhv8q7ZEj
-	U3ROQd0poqrJtMnNyKyX21fy5HSF1o2raMgLL8rzxeSZeZ/wdUgjtJMSR7kAws1lrKHKPEjzX4W
-	BULF1k2xUPF8QqCnNPs8Z+RY2JeiW7dc23zEGt3DZs0tINnuCo86ExTCSfBz2PQ==
-X-Received: by 2002:a05:620a:4003:b0:7b1:168f:52f5 with SMTP id af79cd13be357-7b157c08dffmr432594885a.57.1729298927391;
-        Fri, 18 Oct 2024 17:48:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHbE+fH5q/tzPt4fAPBab7mipkiwt2i+4EmfiwvNgIQgqm7/iIcs96vJqnUL1fCVgCWkk0D4Q==
-X-Received: by 2002:a05:620a:4003:b0:7b1:168f:52f5 with SMTP id af79cd13be357-7b157c08dffmr432593685a.57.1729298927022;
-        Fri, 18 Oct 2024 17:48:47 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:760d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b156f9509fsm117950685a.30.2024.10.18.17.48.46
+        d=1e100.net; s=20230601; t=1729299069; x=1729903869;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FL67X8g8ez0faSQl99ijSyvjCoKB8ojvzNqVtmVcfiE=;
+        b=FQOxsZXfjPWufy8q3dUAS65HKcItAmG2JFBh4cmyFXbFNZp5+lvVyIPwthbejeQFiw
+         cWFyktYcTc9+qT2DQlebuvo0xe/t3zG2HK+eYex6sH/3PfFargT6WCZnKCU3gKc8JWI/
+         AJDaq/PXNQfgHvGOcjfx9NTb1/eFBkrH4t3qIKwZPyINODVxBBc4tw4HsDot8lt3h5Pq
+         t82sBsLBeeyi6bofsVUM65cBxvBwzHI8agqeTVEGdqj9NmuiLxWL41gbHyGhdBfJskpF
+         ATQDx5tCSnlYLLcTQcWyYNR/xyeQOVNCcIW4+A0nGhUR2OJMO7rvzqL+IQ3SUQng/6Fs
+         TP5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV/LyoaH2bGNe0/sgXvMjjQUZXMFCVSpf5H1z2ffLdnBxrPtK6CuP/FgeC601IUWz6WnzsYzi89@vger.kernel.org, AJvYcCWQUCtrD+3m+iNCrq9EZKoG1qVniZX9lo2GwnAYHHLSqA+sNWKv0YC8Ziux0v6UHKh2pO8=@vger.kernel.org, AJvYcCWeyTMY2Y5TqnS3mTOXrQOFVZ9e/X1inVMrFjF5lHTK7pvmPjlJu+A89o4QO4ZNW+kDVR01MQowo4QV@vger.kernel.org, AJvYcCWmNlobGS9L1UAKuZWbmAEnYr9fVySSPLJJNXSE27qkT5VPQAngw/acEAS6EGcCx3WAjPBsI0xcFpYe9gCZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt8ZRLsAmfKnPa+OB5/ptLDGVes3EN0HmxK16SVbZXOaV+SqU7
+	8nvJ8+uen9u9+Qy/EWIGTZKOI3hWO7vIi1nwpajtH5i4e+AAGiwy
+X-Google-Smtp-Source: AGHT+IEiV0cgKjHKe/2kpiCIm2aoibAX3dlE1cBZR9js0twjZlqgxio5Kuo8jbhyx35sK6LlhoZUUA==
+X-Received: by 2002:a17:903:192:b0:20b:9c8c:e9f3 with SMTP id d9443c01a7336-20e5a7663c2mr41358935ad.14.1729299069456;
+        Fri, 18 Oct 2024 17:51:09 -0700 (PDT)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc28b869sm1967300a12.68.2024.10.18.17.51.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 17:48:46 -0700 (PDT)
-Message-ID: <c9d8269bff69f6359731d758e3b1135dedd7cc61.camel@redhat.com>
-Subject: vmx_pmu_caps_test fails on Skylake based CPUS due to read only LBRs
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>
-Date: Fri, 18 Oct 2024 20:48:45 -0400
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+        Fri, 18 Oct 2024 17:51:09 -0700 (PDT)
+Date: Sat, 19 Oct 2024 00:51:00 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
+	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrii Nakryiko <andriin@fb.com>, Jussi Maki <joamaki@gmail.com>,
+	Jay Vosburgh <jv@jvosburgh.net>,
+	Andy Gospodarek <andy@greyhouse.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	Nikolay Aleksandrov <razor@blackwall.org>
+Subject: Re: [PATCHv2 net-next 2/3] bonding: use correct return value
+Message-ID: <ZxMCdP1X-h9qyU0u@fedora>
+References: <20241017020638.6905-1-liuhangbin@gmail.com>
+ <20241017020638.6905-3-liuhangbin@gmail.com>
+ <878qumzszs.fsf@toke.dk>
+ <ZxGv2s4bl5VQV4g-@fedora>
+ <20241018094139.GD1697@kernel.org>
+ <87o73hy7hh.fsf@toke.dk>
+ <20241018142104.GP1697@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241018142104.GP1697@kernel.org>
 
-Hi,
+On Fri, Oct 18, 2024 at 03:21:04PM +0100, Simon Horman wrote:
+> On Fri, Oct 18, 2024 at 01:29:30PM +0200, Toke Høiland-Jørgensen wrote:
+> > Simon Horman <horms@kernel.org> writes:
+> > 
+> > > On Fri, Oct 18, 2024 at 12:46:18AM +0000, Hangbin Liu wrote:
+> > >> On Thu, Oct 17, 2024 at 04:47:19PM +0200, Toke Høiland-Jørgensen wrote:
+> > >> > > diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> > >> > > index f0f76b6ac8be..6887a867fe8b 100644
+> > >> > > --- a/drivers/net/bonding/bond_main.c
+> > >> > > +++ b/drivers/net/bonding/bond_main.c
+> > >> > > @@ -5699,7 +5699,7 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
+> > >> > >  		if (dev_xdp_prog_count(slave_dev) > 0) {
+> > >> > >  			SLAVE_NL_ERR(dev, slave_dev, extack,
+> > >> > >  				     "Slave has XDP program loaded, please unload before enslaving");
+> > >> > > -			err = -EOPNOTSUPP;
+> > >> > > +			err = -EEXIST;
+> > >> > 
+> > >> > Hmm, this has been UAPI since kernel 5.15, so can we really change it
+> > >> > now? What's the purpose of changing it, anyway?
+> > >> 
+> > >> I just think it should return EXIST when the error is "Slave has XDP program
+> > >> loaded". No special reason. If all others think we should not change it, I
+> > >> can drop this patch.
+> > >
+> > > Hi Toke,
+> > >
+> > > Could you add some colour to what extent user's might rely on this error code?
+> > >
+> > > Basically I think that if they do then we shouldn't change this.
+> > 
+> > Well, that's the trouble with UAPI, we don't really know. In libxdp and
+> > xdp-tools we look at the return code to provide a nicer error message,
+> > like:
+> > 
+> > https://github.com/xdp-project/xdp-tools/blob/master/lib/libxdp/libxdp.c#L615
+> > 
+> > and as a signal to fall back to loading the programme without a dispatcher:
+> > 
+> > https://github.com/xdp-project/xdp-tools/blob/master/lib/libxdp/libxdp.c#L1824
+> > 
+> > Both of these cases would be unaffected (or even improved) by this
+> > patch, so in that sense I don't have a concrete objection, just a
+> > general "userspace may react to this". In other words, my concern is
+> > more of a general "we don't know, so this seems risky". If any of you
+> > have more information about how bonding XDP is generally used, that may
+> > help get a better idea of this?
+> 
+> Yes, that is the trouble with the UAPI. I was hoping you might be able to
+> provide the clarity you ask for above. But alas, things are as clear as
+> mud.
+> 
+> In lieu of more information I suggest caution and dropping this change for
+> now.
 
-Our CI found another issue, this time with vmx_pmu_caps_test.
+OK, I will drop this one.
 
-On 'Intel(R) Xeon(R) Gold 6328HL CPU' I see that all LBR msrs (from/to and TOS),
-are always read only - even when LBR is disabled - once I disable the feature in DEBUG_CTL,
-all LBR msrs reset to 0, and you can't change their value manually.
-Freeze LBRS on PMI seems not to affect this behavior.
-
-I don't know if this is how the hardware is supposed to work (Intel's manual doesn't mention anything about this), 
-or if it is something platform specific, because this system also was found to have LBRs enabled 
-(IA32_DEBUGCTL.LBR == 1) after a fresh boot, as if BIOS left them enabled - I don't have an idea on why.
-
-The problem is that vmx_pmu_caps_test writes 0 to LBR_TOS via KVM_SET_MSRS, and KVM actually passes this write to
-actual hardware msr (this is somewhat wierd), and since the MSR is not writable and silently drops writes instead,
-once the test tries to read it, it gets some random value instead.
-
-Any advice?
-
-Best regards,
-	Maxim Levitsky
-
-
+Thanks
+Hangbin
 
