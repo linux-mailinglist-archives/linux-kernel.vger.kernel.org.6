@@ -1,174 +1,146 @@
-Return-Path: <linux-kernel+bounces-372580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1190D9A4AAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:37:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86E19A4AB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F57284D57
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0671F226E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CEB1922F8;
-	Sat, 19 Oct 2024 00:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B66E1922ED;
+	Sat, 19 Oct 2024 00:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gcv56uEv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pU6GiByr"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05E029CF6;
-	Sat, 19 Oct 2024 00:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF3F29CF6;
+	Sat, 19 Oct 2024 00:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729298243; cv=none; b=Qb11SaxX/l/QytKuqvrgiZpkmqVsnznAPua261ymEWily8dQjQQWoc1V+ZgU62QwALO6wn/c3DIc960OeukJCMYEygj41uwlvVF/JU1YcgA/mKdiF9BtEsPEpwbhgkBIR5qDfrnBptjyDYOjU8MwoILlAQN8NfGFh+v3fZQQpyQ=
+	t=1729298328; cv=none; b=tbq+RDhkmkrV8dLB7610YGv/GXu3yxbNsf4D8Jed8jQ0A4AhP4YfggVWD37nCKJaSYxmAuPAy1DZDt5r09ZdDDq23dgscTe5RZf79UKsJBiesxygSKoLr39f1LmPK9ShrvMfj584FWB3/MVtDxsYpZJVZljh9R9zI+GOOxPBygk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729298243; c=relaxed/simple;
-	bh=PfaYoaaPCu5DWdfaaTW12VQJY6h3MD3ntyNmux/6daA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ciharSbb853aMxwfR/JYpIm01UBK3efcveTcBALA54yNldnDIi1V/hp1vK3O03AJ1F++6mdlSQnekrdLlOMOwZBrXgZKt1EzJpLGB09xOiI/BK1BZRnzo3G9CLEbGr5xEvU3+sbXW+z0FeJHb2lohwfOZ49n000ZNjBGYI13aos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gcv56uEv; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729298241; x=1760834241;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PfaYoaaPCu5DWdfaaTW12VQJY6h3MD3ntyNmux/6daA=;
-  b=gcv56uEva/ctlcfisaZHxrXvvu0APnuamyfhAUh3Jfzvx1YxkuMIcm14
-   GB/tP+4qx0qFnlb17rnW+WFVKAmCdG82AOXsayVk4I82LiAm3jH8zWyFC
-   lb5q+0R0NPVgKz868Jh/+b2cOxpQFXL+Ecf8iHYu/3s0gwt3BxvtE85ko
-   8L+J6bg8XVVGDobC4HAT0buGdXfWy5Lzb0wqaMOFH5ftzNtSvMkAbaEyT
-   PF13VZ+qrPi1Qk4oLEibUqoOuCamUfRbIpZ6Ao39MhB0jKZkJnK7JtI2w
-   18Y2v3gz6TnHjuvI6dZ0J4L6KdjMiCgvvvZ9xXvCN1GmFO28Sw7gcDKzp
-   g==;
-X-CSE-ConnectionGUID: P2Y5Ib0YQ0KooHhXYQO8/A==
-X-CSE-MsgGUID: x90PeKqvT3GUstjntTtZ6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="29054681"
-X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
-   d="scan'208";a="29054681"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 17:37:18 -0700
-X-CSE-ConnectionGUID: 6YMgxZiVR9emesg1GpNAHA==
-X-CSE-MsgGUID: 7zFAV9PvT6+fQq/pN8dEoA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,214,1725346800"; 
-   d="scan'208";a="109771570"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 18 Oct 2024 17:37:13 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1xSw-000OTl-3C;
-	Sat, 19 Oct 2024 00:37:10 +0000
-Date: Sat, 19 Oct 2024 08:36:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Guillaume Stols <gstols@baylibre.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-	aardelean@baylibre.com, dlechner@baylibre.com,
-	jstephan@baylibre.com, nuno.sa@analog.com,
-	Guillaume Stols <gstols@baylibre.com>
-Subject: Re: [PATCH v5 7/8] iio: adc: ad7606: Add iio-backend support
-Message-ID: <202410190802.CLaySBOq-lkp@intel.com>
-References: <20241015-ad7606_add_iio_backend_support-v5-7-654faf1ae08c@baylibre.com>
+	s=arc-20240116; t=1729298328; c=relaxed/simple;
+	bh=lyUmwSP2Z3VUSJb/ROJNqLwP+S/dVxdakV7oW54hie4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=umoGxdOc/24BxRwlH7v0bvwCzaIyrGXmyzbGLNOcCuF7dbp/1m1b/p2dx4FoE1ftxfbVn3Sualg1Slvq/XtcSF9l1S/eMGZngSjWevUbHPkFZymUHQTjy67s1gJ3CAQTi4NUBpdqSUcAaqTFBspKrAHhfLN1CDwErfLvZc5D5KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pU6GiByr; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729298324;
+	bh=lyUmwSP2Z3VUSJb/ROJNqLwP+S/dVxdakV7oW54hie4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=pU6GiByrYU3Mgtu7xjor6dsWgBnGxiocIDECQBCBTFvOQ60IVyT/MJnTYmB3p5hgm
+	 Tc021m9Dof+36499ThGi1tvPbp/J0HPUcfmCTctw/i77WWR7gthNCJzCn6f6NZqemy
+	 YXwNCv4W3sGMtnEEjCAMJRobie3+0iFzMtGJDBRE1dujE9K9E0vvHKMp45GFylhZpt
+	 iwmeBLuzuls6FOU1hJJsXZmV4N2t25L5I2zHxSN0CaNO2ollJxqbce3iy0bwrzM+9y
+	 f7pkI6W7st9TQyqyoeYB9JasIGcu+MFHuW8LvgQQ6ZXbN6z5lIk+4f4jGfmOtaYrJQ
+	 L/RFyzyGBm0bw==
+Received: from localhost (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 429C817E0F6B;
+	Sat, 19 Oct 2024 02:38:44 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Sat, 19 Oct 2024 03:38:10 +0300
+Subject: [PATCH] arm64: dts: rockchip: Drop invalid clock-names from es8388
+ codec nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015-ad7606_add_iio_backend_support-v5-7-654faf1ae08c@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241019-es8328-dt-fixes-v1-1-ca77d5ce21ad@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAHH/EmcC/x3LMQqAMAxA0atIZgNtFKxeRRyqjZqlSiMiSO9uc
+ Xx8/gvKSVhhqF5IfIvKEQtsXcGy+7gxSigGMtRaY3tkdQ05DBeu8rAi07wE8s74roVynYn/UKZ
+ xyvkDxOWZ8GEAAAA=
+X-Change-ID: 20241019-es8328-dt-fixes-e2bcd2a80a74
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-Hi Guillaume,
+The binding for Everest ES8328/ES8388 audio CODEC doesn't support the
+'clock-names' property:
 
-kernel test robot noticed the following build warnings:
+  rk3588-orangepi-5-plus.dtb: audio-codec@11: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+    from schema $id: http://devicetree.org/schemas/sound/everest,es8328.yaml#
 
-[auto build test WARNING on 465644ac29536d10178b5ca4684d0b84765b9fa4]
+Since the related audio driver is also not making use of it, drop the
+invalid property from all es8388 codec nodes.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Guillaume-Stols/dt-bindings-iio-adc-ad7606-Remove-spi-cpha-from-required/20241015-215831
-base:   465644ac29536d10178b5ca4684d0b84765b9fa4
-patch link:    https://lore.kernel.org/r/20241015-ad7606_add_iio_backend_support-v5-7-654faf1ae08c%40baylibre.com
-patch subject: [PATCH v5 7/8] iio: adc: ad7606: Add iio-backend support
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20241019/202410190802.CLaySBOq-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410190802.CLaySBOq-lkp@intel.com/reproduce)
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Several DT fixes involving the usage of the Everest ES8328/ES8388 audio
+CODEC.
+---
+ arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts      | 1 -
+ arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts  | 1 -
+ arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts      | 1 -
+ arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts | 1 -
+ 4 files changed, 4 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410190802.CLaySBOq-lkp@intel.com/
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts
+index 2c41e017f4f402e9c7eea80955219ee23f2f582d..ca1d3253d3e1f4c6f272a27737b5660c099538e5 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts
+@@ -114,7 +114,6 @@ &i2c1 {
+ 	es8388: es8388@11 {
+ 		compatible = "everest,es8388";
+ 		reg = <0x11>;
+-		clock-names = "mclk";
+ 		clocks = <&cru SCLK_I2S_8CH_OUT>;
+ 		#sound-dai-cells = <0>;
+ 	};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+index c73fecf1c73c94944bb25e1243d5390b84241338..4cfce107be73652ba5eb2c03e3e2ca0c65ed5d50 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+@@ -328,7 +328,6 @@ es8388: audio-codec@11 {
+ 		compatible = "everest,es8388";
+ 		reg = <0x11>;
+ 		clocks = <&cru I2S0_8CH_MCLKOUT>;
+-		clock-names = "mclk";
+ 		AVDD-supply = <&vcc_1v8_s0>;
+ 		DVDD-supply = <&vcc_1v8_s0>;
+ 		HPVDD-supply = <&vcc_3v3_s0>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts b/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
+index 50c7a5e9af1904b87925bc526752a87deb3460a6..177e00d45b3d19e91525e62b5ce40d1079bea330 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
+@@ -316,7 +316,6 @@ es8388: audio-codec@11 {
+ 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
+ 		assigned-clock-rates = <12288000>;
+ 		clocks = <&cru I2S0_8CH_MCLKOUT>;
+-		clock-names = "mclk";
+ 		AVDD-supply = <&avcc_1v8_codec_s0>;
+ 		DVDD-supply = <&avcc_1v8_codec_s0>;
+ 		HPVDD-supply = <&vcc_3v3_s0>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts b/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
+index d8c50fdcca3b57e50d70325e1d7a7efad2e314bd..8ba111d9283fefcf77093be7f74705d06f67edfa 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
+@@ -377,7 +377,6 @@ es8388: audio-codec@11 {
+ 		assigned-clock-rates = <12288000>;
+ 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
+ 		AVDD-supply = <&vcc_3v3_s3>;
+-		clock-names = "mclk";
+ 		clocks = <&cru I2S0_8CH_MCLKOUT>;
+ 		DVDD-supply = <&vcc_1v8_s3>;
+ 		HPVDD-supply = <&vcc_3v3_s3>;
 
-All warnings (new ones prefixed by >>):
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241019-es8328-dt-fixes-e2bcd2a80a74
 
->> drivers/iio/adc/ad7606_par.c:173:22: warning: unused variable 'back' [-Wunused-variable]
-     173 |         struct iio_backend *back;
-         |                             ^~~~
-   1 warning generated.
-
-
-vim +/back +173 drivers/iio/adc/ad7606_par.c
-
-   164	
-   165	static int ad7606_par_probe(struct platform_device *pdev)
-   166	{
-   167		const struct ad7606_chip_info *chip_info;
-   168		const struct platform_device_id *id;
-   169		struct resource *res;
-   170		void __iomem *addr;
-   171		resource_size_t remap_size;
-   172		int irq;
- > 173		struct iio_backend *back;
-   174	
-   175		/*
-   176		 * If a firmware node is available (ACPI or DT), platform_device_id is null
-   177		 * and we must use get_match_data.
-   178		 */
-   179		if (dev_fwnode(&pdev->dev)) {
-   180			chip_info = device_get_match_data(&pdev->dev);
-   181			if (device_property_present(&pdev->dev, "io-backends"))
-   182				/*
-   183				 * If a backend is available ,call the core probe with backend
-   184				 * bops, otherwise use the former bops.
-   185				 */
-   186				return ad7606_probe(&pdev->dev, 0, NULL,
-   187						    chip_info,
-   188						    &ad7606_bi_bops);
-   189		} else {
-   190			id = platform_get_device_id(pdev);
-   191			chip_info = (const struct ad7606_chip_info *)id->driver_data;
-   192		}
-   193	
-   194		irq = platform_get_irq(pdev, 0);
-   195		if (irq < 0)
-   196			return irq;
-   197	
-   198		addr = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-   199		if (IS_ERR(addr))
-   200			return PTR_ERR(addr);
-   201	
-   202		remap_size = resource_size(res);
-   203	
-   204		return ad7606_probe(&pdev->dev, irq, addr, chip_info,
-   205				    remap_size > 1 ? &ad7606_par16_bops :
-   206				    &ad7606_par8_bops);
-   207	}
-   208	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
