@@ -1,85 +1,121 @@
-Return-Path: <linux-kernel+bounces-372980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38149A5039
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:10:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79619A503D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CEE4B25E3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:10:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D294D1C2157B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BC819068E;
-	Sat, 19 Oct 2024 18:10:47 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E117B647;
+	Sat, 19 Oct 2024 18:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKK1sKiz"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2122D8BEC;
-	Sat, 19 Oct 2024 18:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ADD79D2
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 18:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729361446; cv=none; b=H1+Fcxg+ADhPzZB0Tun2EjxaQgX9JYFPlbAeqYmKS+iNI6nPQGVTV1OLmY47Adt9zE9GpFPeFgATEasTgIaoQT96+CtzazmhTE2R0mt6pDyigWonY5SG/PQTS1P0XAOOPh+2J9NYacvEoNnb6yoOguKHMhBe6D8b+KLFPhACydQ=
+	t=1729361803; cv=none; b=uNbz2eUEt7ja6MR3AWGN0CpSah8XcXwzouMeEDLS7DHmBzHlXNruGApiFV4Nkk6LwfzVrdiNfQhdPKGeRkNz6R5uijmTUet0/ZBPqEENUhyvXzGeLG72QLmzMU5u8cke4Cmpwc1fjFiuwZK3vKUQa8cfeRBGiNlZBRaV6VNndno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729361446; c=relaxed/simple;
-	bh=e1kwW6oqJtPR3kUxGh9gF7pabWu8VMmDmw978jmL250=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvYf7KDXr+BuSz1rpAoRlikBobI2xTjVl36qyusekdqWuJOB4pNcB4c5qI5KfiGk84b3o/pdVqPHwZQvqky7H4lzkiOx2uGRsBpr7cmHYws94b3kisp7Vychp8uhyxwG6L5nRx4o9BzvJ/B2oA4/MjaImxd3XMNEvSsSVudbGsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=46366 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1t2DuI-004JIk-QF; Sat, 19 Oct 2024 20:10:33 +0200
-Date: Sat, 19 Oct 2024 20:10:29 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Ilya Katsnelson <me@0upti.me>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Florian Westphal <fw@strlen.de>, Sasha Levin <sashal@kernel.org>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ignat@cloudflare.com, Phil Sutter <phil@nwl.cc>
-Subject: Re: [PATCH v2] netfilter: xtables: fix typo causing some targets to
- not load on IPv6
-Message-ID: <ZxP2FUVCmettzj7B@calendula>
-References: <20241019-xtables-typos-v2-1-6b8b1735dc8e@0upti.me>
+	s=arc-20240116; t=1729361803; c=relaxed/simple;
+	bh=fm4/TW/XP6VyjNkR7aVNVPKpRM/+37sn/T2jS9WV0ik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J6cbpP/vWwC4v7fxdQzyjYbc20VydXdB1RY4gt1I6s4g/1d266GoaUGOjjTIhPpUJjrYZZa0HO2nn8pyL9gYBdxFPhs91uFmPoILRaBYYHGVigAPqtWMIAMJuNoagVI57pb7iqGqzoEURO1WD7xYQZox7/hTkKVx7ks3VEBVqkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SKK1sKiz; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb3110b964so29468881fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 11:16:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729361799; x=1729966599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fm4/TW/XP6VyjNkR7aVNVPKpRM/+37sn/T2jS9WV0ik=;
+        b=SKK1sKizczEgTHfecxOhWciuXpxmAIQT6V2QIa7024IHh+swSNpX1QFtF4MlvTa+d+
+         ERC5whxdqoxknZxbFuh+5z57LIQaMy8SS2ZqtCqCInFhd3xoDDOlIcsz8U/FccKiWEoQ
+         V2WnPqfM70supDwmrfUEMo6cEBowDHXHyliqCubgDW10NL6pcU/8jRuHlFsJrgx/Bp7F
+         1+lEGvCmbOSVLEfmE0G0pM0tZmosfdKF3s4HlNwjDtfQMxqWZpbfaxFmtTvcVpwB/AKp
+         u+hxir/uKaoyLZ/NcrJKt23fYPngPRxiIIKMR9NMNnhXzA3KqhuPn4fDH8oixXNgHyek
+         8fhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729361799; x=1729966599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fm4/TW/XP6VyjNkR7aVNVPKpRM/+37sn/T2jS9WV0ik=;
+        b=sLoxNEz7Jzgj96ZHnEfgBR4a/0LtI9GIyzr8vbv/8QQopATf2jmI9DB6mLo+Wno6yZ
+         LTUQ66YNiIVnQ2UnOraiURQD40m8ZGhyyKP79JtsYKLY/F4qkz00H8h4UdltDf3oD0GI
+         Y5PMEUMRkQccEPLU3xB/4vZs7q2nb8lNpC8zdLFUjuZcsWqqKWwLPtuynRnYbjt8oHhV
+         mub7GgpNd7XncmiupSfa7wbOlZeBGVt1VgBB5kqpE2mBqWcfKtIKXjGhNkET9w2EGKbH
+         /qyy5OHRiw3LIpMwUzRT+f6UikPR3uvGakLRfQE6qVpB/d6Ps4YvElXJNX3svcLq+Xtz
+         RlGw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3n60tPHaY9oJhdZAstlpL+kNG4SQ7uwYVP0VgTu7goMTeiV0abdt1c0AcTyASJk7JvOe+4ghPTipT43g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIuqsGj1kV5s0umGoov1gilFjXStFK0u2lW0koWdQSuAWMCTrX
+	NVhg1x1UgccH449puErv/zws2ffVwSoK5hs9c62sf3EmjZ3l8nZTLvVLD3VrLgDeqO8egDrQYk1
+	VPCCx8WbtS9M5UL5K6kuZVz0QUjQQW5Y+y0vjzw==
+X-Google-Smtp-Source: AGHT+IGUIof/qmUxPJlydOgfWxZ3IUmvMmAPDvHqH5LTK6/M1DHw70PzZPpjH+qyF5nhY1Ls17fpniLDuexAWk7NRWk=
+X-Received: by 2002:a05:6512:1582:b0:52c:9e82:a971 with SMTP id
+ 2adb3069b0e04-53a15441e9bmr3361553e87.7.1729361798914; Sat, 19 Oct 2024
+ 11:16:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241019-xtables-typos-v2-1-6b8b1735dc8e@0upti.me>
-X-Spam-Score: -1.9 (-)
+References: <20241016-02-k1-pinctrl-v5-0-03d395222e4f@gentoo.org>
+In-Reply-To: <20241016-02-k1-pinctrl-v5-0-03d395222e4f@gentoo.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 19 Oct 2024 20:16:28 +0200
+Message-ID: <CACRpkdYnaJsKKfcdhHeMGTTp86M+wNODzZx2e=OYbxQ4Jc4Rjw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] riscv: spacemit: add pinctrl support to K1 SoC
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Yangyu Chen <cyy@cyyself.name>, 
+	Jesse Taube <mr.bossman075@gmail.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
+	Meng Zhang <zhangmeng.kevin@spacemit.com>, Meng Zhang <kevin.z.m@hotmail.com>, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 16, 2024 at 3:00=E2=80=AFAM Yixun Lan <dlan@gentoo.org> wrote:
 
-Thanks for your patch.
+> This series adds pinctrl support to SpacemiT's K1 SoC, the controller
+> uses a single register to describe all pin functions, including
+> bias pull up/down, drive strength, schmitter trigger, slew rate,
+> strong pull-up, mux mode. In patch #3, we add the pinctrl property of
+> uart device for the Bananapi-F3 board.
+>
+> You can find the pinctrl docs of K1 here[1], and the original vendor's
+> pinctrl dts data here[2].
+>
+> Note, we rewrite this series as an independent pinctrl driver for K1 SoC,
+> which means it does not use pinctrl-single driver as the model anymore,
+> see the suggestion from Krzysztof at [3].
+>
+> Link: https://developer.spacemit.com/documentation?token=3DAn1vwTwKaigaXR=
+kYfwmcznTXned [1]
+> Link: https://gitee.com/bianbu-linux/linux-6.1/blob/bl-v1.0.y/arch/riscv/=
+boot/dts/spacemit/k1-x_pinctrl.dtsi [2]
+> Link: https://lore.kernel.org/all/b7a01cba-9f68-4a6f-9795-b9103ee81d8b@ke=
+rnel.org/ [3]
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
 
-On Sat, Oct 19, 2024 at 08:05:07AM +0300, Ilya Katsnelson wrote:
-> These were added with the wrong family in 4cdc55e, which seems
-> to just have been a typo, but now ip6tables rules with --set-mark
-> don't work anymore, which is pretty bad.
+Patches 1 & 2 applied to the pin control tree for v6.13!
 
-There is at least one more issue, TRACE is missing this chunk:
+Please take patch 3 through the SoC tree.
 
-diff --git a/net/netfilter/xt_TRACE.c b/net/netfilter/xt_TRACE.c
-index f3fa4f11348c..a642ff09fc8e 100644
---- a/net/netfilter/xt_TRACE.c
-+++ b/net/netfilter/xt_TRACE.c
-@@ -49,6 +49,7 @@ static struct xt_target trace_tg_reg[] __read_mostly = {
-                .target         = trace_tg,
-                .checkentry     = trace_tg_check,
-                .destroy        = trace_tg_destroy,
-+               .me             = THIS_MODULE,
-        },
- #endif
- };
+Yours,
+Linus Walleij
 
