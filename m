@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-372927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23ED9A4F5B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:45:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87DB39A4F5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EC6AB245D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:45:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7F061C2283C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C668D190477;
-	Sat, 19 Oct 2024 15:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76F918DF84;
+	Sat, 19 Oct 2024 15:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EWOA8Ub1"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m0CxVHr/"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EDA18C333
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 15:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AA118D65C
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 15:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729352705; cv=none; b=Ao2v9hJCBmRv8C7kUXvKmFM4Lq4nSc3wbmKKZqDQ5uiohT0webbhxSE5h38oKMcf22SnarJlyWH2xApf5WmJFpDJkep25FtnAL/MZWJvMyy+/3gn+RUYaz6ipl3HLSakpF2mFhU2zrHr4kcL7Ucf3RsMtEfAjIeFGMi6DkRi35Q=
+	t=1729352707; cv=none; b=Yzsh9HO3fneF3d0rEcbgC30YhyEbYXs/LMOcV10fa6oqWMSRHVoQWpdjiHia10czwV2DJhDevP0nJ4MmCQm2WO0xK4/I+o+J9vmKfgv0s3bqQrWsKQpVkOH9J7adYFsbyVYdOIQsehNFH6SBobfjutZ6fPK3wSoIeDOulc2zbqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729352705; c=relaxed/simple;
-	bh=5Y/fABq9b4vk+PutXYP52URTjzKP/DzFXovrE11VWQU=;
+	s=arc-20240116; t=1729352707; c=relaxed/simple;
+	bh=wqC70bOah27TMfxQ2glRfy3QrAMoCD3pFAIgaonQdmQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vqm5MZjfDZ9PFP+YDgjwFlex3tbqx91iDFA+XJbTp2EMWXh+xZ47kXwJLLSwE85FHMUEimKL5qVTdjvgRByPABsSbwK8S5/s6Mq1VcmjWI7Q7tWkVoaJBEG0rRlvy4FVahwLOU0/7N8tpGSQgpfkpyKet3lnwsgbEx4TgxDMHrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EWOA8Ub1; arc=none smtp.client-ip=209.85.208.177
+	 In-Reply-To:To:Cc; b=ntaOX4l+KYo7dWMb02TsT9NFCLqeWqd65b8/SwuPMcVpxH3QpDg68OqPx44sDpAwUMHbjCPQ68J5HX8M+skc8rECrdfk0k/Wma8TtXXEt7o5+re5f4iyOHQfD8aPCMy6e3RsSQNU9jDOtWFp86VuTQakyQiNmG4Q1zbzzPpytYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m0CxVHr/; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso44116371fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 08:45:02 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539983beb19so3461477e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 08:45:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729352701; x=1729957501; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729352703; x=1729957503; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gYfkdNF3O8TZS4V0T1JegIJYADXSJj7bD5ghT8EX1Qg=;
-        b=EWOA8Ub1XQChankSp9rkAGqUxRsWu7kRSrdWaLbnMtulLezgkJUHD5r55B9SKNqQEC
-         PtqY1+o7ZlNQMKjkVqrdrlGGqk4Qkd2mGV3L1j3kPOX2h0P9GCWwmEd8ZySyPp/T7HNQ
-         H8EcJ5y179BJhApZbLqXelds/M1LQaf+s7ktWWLh8cvIHwXuBgvoQcVUMCJkiBqXVeK/
-         +vlwWqi+iNmwNXE4WHCdlvttkXft2QnGcsW0Z0XtIAWJ7G8ySGmbAss1xIP9PHIg5Ofy
-         9fouvBDGjOhaULAnKgeIgePeqi2KhDuvzVo3LE+BRhQr1BzRt9TlswoKUtsGUVhJiHQB
-         Ap0w==
+        bh=rN0Z8gyf6mR0qAxMHxD4icK0YDjnXtFcT7Z/8yHw46M=;
+        b=m0CxVHr/P64bmL5Z4pQ0VND/XKe0MODqgsiA60ux0DmAhi8pLxWyqUy5VKyxIYXh/S
+         pxqHqiMaoBflvIAA5ejjq5EFOhZEaUg4b+1xXMMnjeTQ01A8kzIMUFNhfByISUpWd8yE
+         zxoY5MV3zW9GS9hpUAg9PZAe4ueAQ1CQsob3LjJeX5/EOtk5/OOND8ACi3Wnn+Pwh7gE
+         L2sg8vDhpzQdPZCUMYVsamAVsEla8kAD6sYFLvpXZgADp5vyjHH1xYXh9UnETt3GWKal
+         6o3GGgtCgVnsf/l/B7/AtipEEwUkSTRFWhW90q3kjcLDQu5jE07jY7Xce1UtVuXmWHmD
+         H5GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729352701; x=1729957501;
+        d=1e100.net; s=20230601; t=1729352703; x=1729957503;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gYfkdNF3O8TZS4V0T1JegIJYADXSJj7bD5ghT8EX1Qg=;
-        b=NNYhWTaxEzPVWUk6veZ6U9ey0RZ7PG8XcjVP/hoPH0s2Og0m0qBtH04nV103lhrx15
-         CybVRJRYhZBQsyLHO/IHZuRt/N8WKzceBd2X8xy2suFMAaxaANzOnVe+O9UAtN8/Usby
-         IU6gQqTQxdpqMEJX8UvODtiYbhKiGNzuGFJFgMCsYMMceyUVKGCz3nrj05Rmk2dZF/7s
-         oevDWXjZXoQKya9J3Rzxvfb6aEGH14qxtxMtNDzvht1mErGjK2Q013KoNY2/cMpxTGGT
-         KmP+lwNmBIF4J4SuEJfHhc/xNSl9/Qf6AhPoKWP+RF5/glM5djm8wX6faubRj282y7dC
-         n7Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8lyN4G/cZOloWoVli71MIsoX910jevpT27604BabjjVLxRl8nav2t3HQUfVv9QKnN9V6wJgYF9rZJX3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW7w6JlAw0RibMK/1GhbHm52RSe2jxUTX/3tX2piS07CkHYS4Q
-	aUqGC/nfnX6ZJ1qgkemdSymCd/GPfaJ5kmZkS9cllDZioaFUBCUzBHWVuMHQHsw=
-X-Google-Smtp-Source: AGHT+IGH6Y5P6FyFHKtLYJ0fUjT05rH9kh6VARZhWP0R9zDdHuzkdQyoqFz2sXtSlq05GusZGgw/YA==
-X-Received: by 2002:a05:6512:1188:b0:539:8f3c:4586 with SMTP id 2adb3069b0e04-53a154da832mr5560399e87.55.1729352701053;
-        Sat, 19 Oct 2024 08:45:01 -0700 (PDT)
+        bh=rN0Z8gyf6mR0qAxMHxD4icK0YDjnXtFcT7Z/8yHw46M=;
+        b=hUZDDLXwYIumivlBptt9zcIOIrer/XPXdL1lVTL6M20iFm3Nt99uf6qXra+oTQl36V
+         AqgMyVFXo5hllKBQAYzfWiNTRQ15HbUTC4qBBHZySlbaoj1vMWAvnNd+kUWY4UQBC0ji
+         2Qttu2igsPXOpiQF9XzbSWdnRvLTmE8ibvIF7nusZGVgEJQ/SnY6hoe8gUAHBgdmcgvm
+         c8xpt2XBr7Mp1nth1CPL9g9dhvCAUnOK0KlGqtsKYvpJEZXUXgwW9C1Sq5NBKQmc5Kax
+         YPx6SxrLY56F3706xH1fQjaZyev0177PRoFUoQV6HBeTiF1HxGAmTcnzI64FSQYrf84W
+         1aww==
+X-Forwarded-Encrypted: i=1; AJvYcCWn6fFlyWEioOBQc+vIj/kH/d6Np1hzfoqQtWhaZBNL/GsixnMvXbMcN+J+T9KiJ2K6yxBaF6Z+Lqkf2oY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3aWTMLz9A7oxPjhOKBzLeQ7HvYxyGcOG4dFAxPnL7/l0/8K0/
+	rAG/Kl0ZkUuuNteBpBZzqKZUDAEPSlTWl0AeKMXrD7QnduA/UFqIyvl61Fb+PAI=
+X-Google-Smtp-Source: AGHT+IEay7Vo2Kk2nzsC3j+Ne4YxOJWR+srmUQz0G5GEAGaEz01t6UUWXMTE04zP6RKDs3g7ratJzQ==
+X-Received: by 2002:a05:6512:3b2a:b0:539:8e77:9129 with SMTP id 2adb3069b0e04-53a154e7787mr3021542e87.44.1729352702668;
+        Sat, 19 Oct 2024 08:45:02 -0700 (PDT)
 Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a15211401sm562854e87.249.2024.10.19.08.44.58
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a15211401sm562854e87.249.2024.10.19.08.45.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 08:44:59 -0700 (PDT)
+        Sat, 19 Oct 2024 08:45:02 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 19 Oct 2024 18:44:51 +0300
-Subject: [PATCH 2/6] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Add
- SAR2130P compatible
+Date: Sat, 19 Oct 2024 18:44:52 +0300
+Subject: [PATCH 3/6] phy: qualcomm: qmp-combo: add support for SAR2130P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241019-sar2130p-phys-v1-2-bf06fcea2421@linaro.org>
+Message-Id: <20241019-sar2130p-phys-v1-3-bf06fcea2421@linaro.org>
 References: <20241019-sar2130p-phys-v1-0-bf06fcea2421@linaro.org>
 In-Reply-To: <20241019-sar2130p-phys-v1-0-bf06fcea2421@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -88,51 +87,162 @@ To: Vinod Koul <vkoul@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1242;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6620;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=5Y/fABq9b4vk+PutXYP52URTjzKP/DzFXovrE11VWQU=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnE9P0W3I/EDrNDCVj5yB0/w7HCAzPrYSmmTAYW
- KQgQDeBCxmJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxPT9AAKCRAU23LtvoBl
- uIKXD/0T87NUhAJmFDsDGEks/ElPd0y0NKgCp/ExgE17orDaDiLFy2A4uL2VsI1ok63vOi8DT/8
- 1dC2T3tv1Wznedh+WvW2wUi7d1BEGmtUswsmzovHCEL0CuXrQIFGPIckYWu8fKeLJe3X+3SgHbM
- WgJiuba5KMJpnGjlo7S2IN7bJ97QRmoL1eCGhU3ZXJ/82w7CH8Ades8G9+lkTv5SGuKIDpA2uX2
- 3dFEyDdTkdcweBI86WW2rh/trWaxAbnVWqA9RNsjF6QryqBb6hS91qOCCe9n7TxeHr3DeQ1RG6+
- eOqIGyWv164RunqLJ4kJGWaaoLrJ7vfyaDvo/ATYDXPed9C9TX2xJPuViEzTUcXLsaFiit57dPi
- 0wrXxLRGJdQggJTAm1czG9xLhWLUhHQ5EjqqlVBeGo0TQtcTcT93NWewoyrnsFs2ha70/chNh27
- sXIBYCg+cf5S6hLCdjtk5bb4DVUYUpo5h9J9HVxptVfU8/q0S3CB0KWm05H1MXzYQWHeuyaRXqc
- 88b/0WcJzup88PE+ukO5i7KVtkZx3VIxHEsDc6Eywz3BWMF178wFR5Nm7YgfMTGXGrlzNf6Gfpf
- sBro9Hidm0BOKxf/lk5lNdxeF/r7potcps0lK9ZTqbvEcJpT0jw7vfSuyMtvK6Ezq/ZU3p67dB3
- Cm6WafXl4uirKYQ==
+ bh=wqC70bOah27TMfxQ2glRfy3QrAMoCD3pFAIgaonQdmQ=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnE9P07to+EHtNhIlWbSg8/s0Np9BFsUq0QQW0q
+ 2NgqCJ8zUyJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxPT9AAKCRAU23LtvoBl
+ uE9VD/0cApzW125RB8c12QVXYjdBT86M/q1XHNZ2hJTJOJ5V8mrLWJUuzYz9SszXd3J2P27xQKV
+ BwV5fDv92xDagGuX5xiXbTZq2P0EKbYVR2KVViQ/wv4DqTs6jH3VgAf4hQjw7WWHij5A+UmKJTe
+ 1fbkzZtDiqyhtTzmz7kOLLwOraChF9vZZ7lDVolJRxEf0ZIkmuf1obePDMOwAl2U5K9TLoXYkzY
+ Yml8VRoWSsWEMBZ6YCKgtr+EnwZeFBaawRNl3bT+kQUbqyXCf+elfSmuhl/UjrzopXvYphBVQqf
+ wwQ/iv6Yp2DwsYLT6XUZieEFs97lid+FgWFhBg63KWMtapLJ9sz4usxrlPCYTOFtQ+yVVn5srmx
+ TRQlC9a43iuDZBIPUrnTN1+dtwS+N56kctHbPa91w7QxlG1JCM2bI8l7eQCLA0I5oYmbxCr+c47
+ 3BmrM6CFgOFevcDm8KvRUZMjX3YDkc1msmpbhah6GgfmYr4xVNolkjMtaUcCY/9sikGobwtkYIL
+ d2go8E0XA0x8YbiscRQiRF7F4C80XnnRh38gUik/ugiknduGdtJYdEMJrpm4ppPsrssvpKiK4NB
+ wDViJqSc1+SaQrybx97Ts8hkrfarFy33NyWRXNVC/wg32xEGXndSxhxM9wFZnzgardAwLMInzni
+ yuoZQ74HMUOSXlA==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Document compatible for the QMP PCIe PHY on SAR2130P platform.
+Extend the USB+DP combo QMP PHY driver to support the SAR2130P platform.
+It mosly follows the SM8550 QMP PHY, but the QSERDES programming
+differs, most likely because of the parent clock rate differences.
+
+NOTE: The DP part wasn't yet tested, but it is not possible to support
+just the USB part of the PHY. DP part might require additional fixes
+later.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 100 ++++++++++++++++++++++++++++++
+ 1 file changed, 100 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-index 3c16330a58ec68da32486637e02ae89af9a06a3a..9b3b6fedd70ee924e7757ce531bdab0fb6a3cd8d 100644
---- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-@@ -18,6 +18,7 @@ properties:
-     enum:
-       - qcom,sa8775p-qmp-gen4x2-pcie-phy
-       - qcom,sa8775p-qmp-gen4x4-pcie-phy
-+      - qcom,sar2130p-qmp-gen3x2-pcie-phy
-       - qcom,sc8180x-qmp-pcie-phy
-       - qcom,sc8280xp-qmp-gen3x1-pcie-phy
-       - qcom,sc8280xp-qmp-gen3x2-pcie-phy
-@@ -139,6 +140,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - qcom,sar2130p-qmp-gen3x2-pcie-phy
-               - qcom,sc8180x-qmp-pcie-phy
-               - qcom,sdm845-qhp-pcie-phy
-               - qcom,sdm845-qmp-pcie-phy
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+index 643045c9024eaa5de81f64ecfd10ff8845faf120..05ec1a0226460d23873db1dfe9dcbc6ce1953b2e 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+@@ -400,6 +400,57 @@ static const struct qmp_phy_init_tbl qmp_v3_usb3_pcs_tbl[] = {
+ 	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_RUN_TIME, 0x13),
+ };
+ 
++static const struct qmp_phy_init_tbl sar2130p_usb3_serdes_tbl[] = {
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE1_MODE1, 0x55),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE2_MODE1, 0x0e),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CP_CTRL_MODE1, 0x02),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_RCTRL_MODE1, 0x16),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_CCTRL_MODE1, 0x36),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CORECLK_DIV_MODE1, 0x04),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP1_MODE1, 0x2e),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP2_MODE1, 0x82),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MODE1, 0x04),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MSB_MODE1, 0x01),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START1_MODE1, 0x55),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START2_MODE1, 0xd5),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START3_MODE1, 0x05),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_HSCLK_SEL_1, 0x01),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE1_MODE1, 0x25),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE2_MODE1, 0x02),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BIN_VCOCAL_CMP_CODE1_MODE1, 0xb7),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BIN_VCOCAL_CMP_CODE2_MODE1, 0x1e),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BIN_VCOCAL_CMP_CODE1_MODE0, 0xb7),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BIN_VCOCAL_CMP_CODE2_MODE0, 0x1e),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE1_MODE0, 0x55),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_STEP_SIZE2_MODE0, 0x0e),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CP_CTRL_MODE0, 0x02),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_RCTRL_MODE0, 0x16),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_PLL_CCTRL_MODE0, 0x36),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP1_MODE0, 0x12),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP2_MODE0, 0x34),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MODE0, 0x04),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DEC_START_MSB_MODE0, 0x01),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START1_MODE0, 0x55),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START2_MODE0, 0xd5),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_DIV_FRAC_START3_MODE0, 0x05),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE1_MODE0, 0x25),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE2_MODE0, 0x02),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_BG_TIMER, 0x0e),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_EN_CENTER, 0x01),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_PER1, 0x31),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SSC_PER2, 0x01),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SYSCLK_BUF_ENABLE, 0x0c),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_SYSCLK_EN_SEL, 0x1a),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_LOCK_CMP_CFG, 0x14),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_VCO_TUNE_MAP, 0x04),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CORE_CLK_EN, 0x20),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_CMN_CONFIG_1, 0x04),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_AUTO_GAIN_ADJ_CTRL_1, 0xb6),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_AUTO_GAIN_ADJ_CTRL_2, 0x4b),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_AUTO_GAIN_ADJ_CTRL_3, 0x37),
++	QMP_PHY_INIT_CFG(QSERDES_V6_COM_ADDITIONAL_MISC, 0x0c),
++};
++
+ static const struct qmp_phy_init_tbl sm6350_usb3_rx_tbl[] = {
+ 	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN, 0x0b),
+ 	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL2, 0x0f),
+@@ -1730,6 +1781,51 @@ static const struct qmp_combo_offsets qmp_combo_offsets_v5 = {
+ 	.dp_dp_phy	= 0x2200,
+ };
+ 
++static const struct qmp_phy_cfg sar2130p_usb3dpphy_cfg = {
++	.offsets		= &qmp_combo_offsets_v3,
++
++	.serdes_tbl		= sar2130p_usb3_serdes_tbl,
++	.serdes_tbl_num		= ARRAY_SIZE(sar2130p_usb3_serdes_tbl),
++	.tx_tbl			= sm8550_usb3_tx_tbl,
++	.tx_tbl_num		= ARRAY_SIZE(sm8550_usb3_tx_tbl),
++	.rx_tbl			= sm8550_usb3_rx_tbl,
++	.rx_tbl_num		= ARRAY_SIZE(sm8550_usb3_rx_tbl),
++	.pcs_tbl		= sm8550_usb3_pcs_tbl,
++	.pcs_tbl_num		= ARRAY_SIZE(sm8550_usb3_pcs_tbl),
++	.pcs_usb_tbl		= sm8550_usb3_pcs_usb_tbl,
++	.pcs_usb_tbl_num	= ARRAY_SIZE(sm8550_usb3_pcs_usb_tbl),
++
++	.dp_serdes_tbl		= qmp_v6_dp_serdes_tbl,
++	.dp_serdes_tbl_num	= ARRAY_SIZE(qmp_v6_dp_serdes_tbl),
++	.dp_tx_tbl		= qmp_v6_dp_tx_tbl,
++	.dp_tx_tbl_num		= ARRAY_SIZE(qmp_v6_dp_tx_tbl),
++
++	.serdes_tbl_rbr		= qmp_v6_dp_serdes_tbl_rbr,
++	.serdes_tbl_rbr_num	= ARRAY_SIZE(qmp_v6_dp_serdes_tbl_rbr),
++	.serdes_tbl_hbr		= qmp_v6_dp_serdes_tbl_hbr,
++	.serdes_tbl_hbr_num	= ARRAY_SIZE(qmp_v6_dp_serdes_tbl_hbr),
++	.serdes_tbl_hbr2	= qmp_v6_dp_serdes_tbl_hbr2,
++	.serdes_tbl_hbr2_num	= ARRAY_SIZE(qmp_v6_dp_serdes_tbl_hbr2),
++	.serdes_tbl_hbr3	= qmp_v6_dp_serdes_tbl_hbr3,
++	.serdes_tbl_hbr3_num	= ARRAY_SIZE(qmp_v6_dp_serdes_tbl_hbr3),
++
++	.swing_hbr_rbr		= &qmp_dp_v5_voltage_swing_hbr_rbr,
++	.pre_emphasis_hbr_rbr	= &qmp_dp_v6_pre_emphasis_hbr_rbr,
++	.swing_hbr3_hbr2	= &qmp_dp_v5_voltage_swing_hbr3_hbr2,
++	.pre_emphasis_hbr3_hbr2 = &qmp_dp_v5_pre_emphasis_hbr3_hbr2,
++
++	.dp_aux_init		= qmp_v4_dp_aux_init,
++	.configure_dp_tx	= qmp_v4_configure_dp_tx,
++	.configure_dp_phy	= qmp_v4_configure_dp_phy,
++	.calibrate_dp_phy	= qmp_v4_calibrate_dp_phy,
++
++	.regs			= qmp_v6_usb3phy_regs_layout,
++	.reset_list		= msm8996_usb3phy_reset_l,
++	.num_resets		= ARRAY_SIZE(msm8996_usb3phy_reset_l),
++	.vreg_list		= qmp_phy_vreg_l,
++	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
++};
++
+ static const struct qmp_phy_cfg sc7180_usb3dpphy_cfg = {
+ 	.offsets		= &qmp_combo_offsets_v3,
+ 
+@@ -3767,6 +3863,10 @@ static int qmp_combo_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id qmp_combo_of_match_table[] = {
++	{
++		.compatible = "qcom,sar2130p-qmp-usb3-dp-phy",
++		.data = &sar2130p_usb3dpphy_cfg,
++	},
+ 	{
+ 		.compatible = "qcom,sc7180-qmp-usb3-dp-phy",
+ 		.data = &sc7180_usb3dpphy_cfg,
 
 -- 
 2.39.5
