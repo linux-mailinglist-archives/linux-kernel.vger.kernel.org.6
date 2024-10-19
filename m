@@ -1,121 +1,79 @@
-Return-Path: <linux-kernel+bounces-372981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79619A503D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:16:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BDF9A5041
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D294D1C2157B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:16:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293CE1F22504
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E117B647;
-	Sat, 19 Oct 2024 18:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C86E19067A;
+	Sat, 19 Oct 2024 18:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKK1sKiz"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KL1/g2JU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ADD79D2
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 18:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DF479D2;
+	Sat, 19 Oct 2024 18:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729361803; cv=none; b=uNbz2eUEt7ja6MR3AWGN0CpSah8XcXwzouMeEDLS7DHmBzHlXNruGApiFV4Nkk6LwfzVrdiNfQhdPKGeRkNz6R5uijmTUet0/ZBPqEENUhyvXzGeLG72QLmzMU5u8cke4Cmpwc1fjFiuwZK3vKUQa8cfeRBGiNlZBRaV6VNndno=
+	t=1729361848; cv=none; b=Ja10Qp/Kf79dJVOZOU4X2tacIBvO0So+TKkz6KMZRItTVRyGOcXBE/NqaWGXUR81Kr7Ej120gA02u+pt8qVXxvQLyCE8AXoOux1VP3RUOi7obc3Cz+949cTcnb4fs309rf5QiziU1OqyYt/hdsRNPURHWbBZTBIdZ1mW9R9sM24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729361803; c=relaxed/simple;
-	bh=fm4/TW/XP6VyjNkR7aVNVPKpRM/+37sn/T2jS9WV0ik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J6cbpP/vWwC4v7fxdQzyjYbc20VydXdB1RY4gt1I6s4g/1d266GoaUGOjjTIhPpUJjrYZZa0HO2nn8pyL9gYBdxFPhs91uFmPoILRaBYYHGVigAPqtWMIAMJuNoagVI57pb7iqGqzoEURO1WD7xYQZox7/hTkKVx7ks3VEBVqkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SKK1sKiz; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb3110b964so29468881fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 11:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729361799; x=1729966599; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fm4/TW/XP6VyjNkR7aVNVPKpRM/+37sn/T2jS9WV0ik=;
-        b=SKK1sKizczEgTHfecxOhWciuXpxmAIQT6V2QIa7024IHh+swSNpX1QFtF4MlvTa+d+
-         ERC5whxdqoxknZxbFuh+5z57LIQaMy8SS2ZqtCqCInFhd3xoDDOlIcsz8U/FccKiWEoQ
-         V2WnPqfM70supDwmrfUEMo6cEBowDHXHyliqCubgDW10NL6pcU/8jRuHlFsJrgx/Bp7F
-         1+lEGvCmbOSVLEfmE0G0pM0tZmosfdKF3s4HlNwjDtfQMxqWZpbfaxFmtTvcVpwB/AKp
-         u+hxir/uKaoyLZ/NcrJKt23fYPngPRxiIIKMR9NMNnhXzA3KqhuPn4fDH8oixXNgHyek
-         8fhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729361799; x=1729966599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fm4/TW/XP6VyjNkR7aVNVPKpRM/+37sn/T2jS9WV0ik=;
-        b=sLoxNEz7Jzgj96ZHnEfgBR4a/0LtI9GIyzr8vbv/8QQopATf2jmI9DB6mLo+Wno6yZ
-         LTUQ66YNiIVnQ2UnOraiURQD40m8ZGhyyKP79JtsYKLY/F4qkz00H8h4UdltDf3oD0GI
-         Y5PMEUMRkQccEPLU3xB/4vZs7q2nb8lNpC8zdLFUjuZcsWqqKWwLPtuynRnYbjt8oHhV
-         mub7GgpNd7XncmiupSfa7wbOlZeBGVt1VgBB5kqpE2mBqWcfKtIKXjGhNkET9w2EGKbH
-         /qyy5OHRiw3LIpMwUzRT+f6UikPR3uvGakLRfQE6qVpB/d6Ps4YvElXJNX3svcLq+Xtz
-         RlGw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3n60tPHaY9oJhdZAstlpL+kNG4SQ7uwYVP0VgTu7goMTeiV0abdt1c0AcTyASJk7JvOe+4ghPTipT43g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIuqsGj1kV5s0umGoov1gilFjXStFK0u2lW0koWdQSuAWMCTrX
-	NVhg1x1UgccH449puErv/zws2ffVwSoK5hs9c62sf3EmjZ3l8nZTLvVLD3VrLgDeqO8egDrQYk1
-	VPCCx8WbtS9M5UL5K6kuZVz0QUjQQW5Y+y0vjzw==
-X-Google-Smtp-Source: AGHT+IGUIof/qmUxPJlydOgfWxZ3IUmvMmAPDvHqH5LTK6/M1DHw70PzZPpjH+qyF5nhY1Ls17fpniLDuexAWk7NRWk=
-X-Received: by 2002:a05:6512:1582:b0:52c:9e82:a971 with SMTP id
- 2adb3069b0e04-53a15441e9bmr3361553e87.7.1729361798914; Sat, 19 Oct 2024
- 11:16:38 -0700 (PDT)
+	s=arc-20240116; t=1729361848; c=relaxed/simple;
+	bh=OjfRNG+8+VXyvc/ydeEaopvwIQezxqX7F7mkQOYQPa4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AsvLS6EvIT2Rl3SsLdQps2dlrSmVpEfHnRlF3EG0VJjIgB6bysehNzqnhcG72q1539827zTkATOpcbX9kpKw7jlI1YLOrO9D0SYZSSXMG5WFeju37OamA/Sf4oD0V3wWTtwFMlUKNkAR2FLtTwwbrRj9+JZ5pGSqCf67lkzDqYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KL1/g2JU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7F01C4CEC5;
+	Sat, 19 Oct 2024 18:17:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729361847;
+	bh=OjfRNG+8+VXyvc/ydeEaopvwIQezxqX7F7mkQOYQPa4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KL1/g2JU6oOG/pSe8bdjey/XWgdJf6llUp3HVG0C/QbMTZ3p3gNDb2u6+oipbtOQF
+	 6XxUzQRe2u/OHmNAylz7Zk7RAUXNjQQuLzSl8llJroTUvXCyFxKuS7b8hrdLX4dnfU
+	 6IrNnt3grvQrREPFUE63HASAVc6a8a7BoI3Tk9vLtLzt/MHm+8pIxgPS5/FY/4iC4h
+	 lJ2DeOgkXjKS93fTrxEYOAO4Y1J7H70xLt27X51E2az8JUppYBm2uQy3v/sH1ErNHX
+	 8N0jTPj3VVAAPH19fkqaOu9cI5WWjDFS02az2dutth/jWNwjx11qAfniFrNc4f3kqY
+	 62AlMCxUN5suw==
+Date: Sat, 19 Oct 2024 19:17:23 +0100
+From: Simon Horman <horms@kernel.org>
+To: Karan Sanghavi <karansanghvi98@gmail.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Anup <anupnewsmail@gmail.com>
+Subject: Re: [PATCH] selftests: tc-testing: Fixed typo error
+Message-ID: <20241019181723.GV1697@kernel.org>
+References: <20241019-multiple_spell_error-v1-1-facff43b5610@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016-02-k1-pinctrl-v5-0-03d395222e4f@gentoo.org>
-In-Reply-To: <20241016-02-k1-pinctrl-v5-0-03d395222e4f@gentoo.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 19 Oct 2024 20:16:28 +0200
-Message-ID: <CACRpkdYnaJsKKfcdhHeMGTTp86M+wNODzZx2e=OYbxQ4Jc4Rjw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] riscv: spacemit: add pinctrl support to K1 SoC
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Yangyu Chen <cyy@cyyself.name>, 
-	Jesse Taube <mr.bossman075@gmail.com>, Jisheng Zhang <jszhang@kernel.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
-	Meng Zhang <zhangmeng.kevin@spacemit.com>, Meng Zhang <kevin.z.m@hotmail.com>, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241019-multiple_spell_error-v1-1-facff43b5610@gmail.com>
 
-On Wed, Oct 16, 2024 at 3:00=E2=80=AFAM Yixun Lan <dlan@gentoo.org> wrote:
+On Sat, Oct 19, 2024 at 11:52:21AM +0000, Karan Sanghavi wrote:
+> Corrected the multiple and different typo errors in json files
+> 
+> - "diffferent" is corrected to "different".
+> - "muliple" and "miltiple" is corrected to "multiple".
+> 
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
 
-> This series adds pinctrl support to SpacemiT's K1 SoC, the controller
-> uses a single register to describe all pin functions, including
-> bias pull up/down, drive strength, schmitter trigger, slew rate,
-> strong pull-up, mux mode. In patch #3, we add the pinctrl property of
-> uart device for the Bananapi-F3 board.
->
-> You can find the pinctrl docs of K1 here[1], and the original vendor's
-> pinctrl dts data here[2].
->
-> Note, we rewrite this series as an independent pinctrl driver for K1 SoC,
-> which means it does not use pinctrl-single driver as the model anymore,
-> see the suggestion from Krzysztof at [3].
->
-> Link: https://developer.spacemit.com/documentation?token=3DAn1vwTwKaigaXR=
-kYfwmcznTXned [1]
-> Link: https://gitee.com/bianbu-linux/linux-6.1/blob/bl-v1.0.y/arch/riscv/=
-boot/dts/spacemit/k1-x_pinctrl.dtsi [2]
-> Link: https://lore.kernel.org/all/b7a01cba-9f68-4a6f-9795-b9103ee81d8b@ke=
-rnel.org/ [3]
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+Thanks,
 
-Patches 1 & 2 applied to the pin control tree for v6.13!
+This addresses all the spelling errors in these files that
+I see flagged by codespell.
 
-Please take patch 3 through the SoC tree.
-
-Yours,
-Linus Walleij
+Reviewed-by: Simon Horman <horms@kernel.org>
 
