@@ -1,201 +1,296 @@
-Return-Path: <linux-kernel+bounces-372613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EC19A4AFB
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:44:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 524919A4AFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96935283217
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:44:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 735091C21B3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021991CCB50;
-	Sat, 19 Oct 2024 02:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A9F1CCECF;
+	Sat, 19 Oct 2024 02:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Er/EvWlR"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DpKDdMyc"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E84EAC7
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 02:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2393E1C232A;
+	Sat, 19 Oct 2024 02:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729305879; cv=none; b=tip+qioGPXVnVap3reOcK/I1lmejTa9PCWm2kyLc4AqLCXemEWwp0JTGMjeibEDkBdzy8LIUl0Kn3KV5xF0gycgvSNnjH6xzg8nBpj+El3rsM41ztS15YwwXQig7Z9Fqv8wcjaknZAmFXYWrOGGWY1Fw9CYDVnv7nYURYxCsBjg=
+	t=1729305902; cv=none; b=QfQ/O5VTHRJJvZa4Jot3dX2JhjzeMkrTMM1ZrDfVAvHr8exKhaz8SHpjmQqZWu2DkrSo6F05igWnbucyTp5WyitPSmux0Xj/AjdAjUBwaKijq+PrERYAPDAhsZIOnwO9YDLoyFd0SEI6FZI0W61JDZC9jCQLtGUiZ5sJ6Ik+JBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729305879; c=relaxed/simple;
-	bh=3Y4rIZqNrh6l40orc03l2GAGIWW2NKOwVZ/4xRp9llM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BtErVTg+MVhAk7CuMzTk6aUNdibDJV2mC5Iw98rNHfKxPlblUx+1zo4AUR9iVx1sML/4utgUD1mi+OJoovcnOGx7TSFVmeIy7Gb+RBjaa13IX85rEV6xCJ71rTmb5bHPGVQCqD60wNtrpCRf1cVKC8+zn5qKiTxVybobgbdwezk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Er/EvWlR; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e2e427b07dso23637167b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:44:36 -0700 (PDT)
+	s=arc-20240116; t=1729305902; c=relaxed/simple;
+	bh=ARrF3jX5p3ssMP3L92pFlpzp4705luKl11VJbp+bM3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lFVJW7JQzcT7jBluC9ba+3u+QVSy+miweoPQsCPTAt4r123/oExvK065YycOeplPwXAa7hpdaLqOpLnjtGdlT2PnIYEUqvy28MxbKEUmUDagh922hnfmUW+hJNlEfwCTd5eX5K/gcsd+x3HFRCssXZX+YJI/H0Qwtz41DnBElKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DpKDdMyc; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso2303962a91.1;
+        Fri, 18 Oct 2024 19:44:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729305875; x=1729910675; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=miaF/bzpaXxt5iwAcqBRvDZdA63BMI9c1o0s4Dvr9rc=;
-        b=Er/EvWlRwvbnYp3MJuyf1diJ15+d08q6A93wfjPIA0K4aqT6Gwro3ff1KMmXl0EfoA
-         qYhUZwqAeJfCgjFZDX4O81e8+nI/qJInVCPKR24A7AlwL4yyz1bpyOMpFIhVBAwcsHES
-         UW1K1SmacI/0Dh0KL4BhIjwIof2xVc4rDeenxe1aD0nIulndHX+mtAIheMYL0rn+Wbj9
-         GM3Lqkm88S63WbEKFLrxfxC2WEkWmLyGeseqLgylyTGPDcyxJUqkjKIcmdLBapWPhQ7k
-         EqP0nTDPQxdLuybTNcYaEuzbC8/8oW7dbODNnMOpI/77VzjFyj6Xl1yx85bYWV6B9NaI
-         5b/Q==
+        d=gmail.com; s=20230601; t=1729305899; x=1729910699; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LqRxljumtD5Kyj1iLBGvC7QxtAEi2bp/81JCWPq5wvE=;
+        b=DpKDdMychQie7kM2grrpTx49hz2xYwHp6v2cD1M5Iaz2yAMqpiZxyI+9sWsoJkqWo3
+         Qb8VxJwG3tlyuNHnurG/dTuIo0zbNpXnxXV+uXExJu9kbDN5F7ifk+3kfrwqAjbtY38e
+         Ewm7BqE77fu8mAD/kqaDqnUSWNxqIVx6dMaekmErM8LxbrdWPi22zJOWWxNDxopXTEVs
+         cd8Ei53HDuj9tLOE0ANh92q1qry8dhLfz3Ga2wrdswOFKqsyloHo90zYPs7aTqumZ3hs
+         AfTwhuzLG9/wOORrcPfH6jXmvQ1V2MmJ2/HNSovQNgppIjPknsGO7RfC+PQR6eTzqnQw
+         Z+sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729305875; x=1729910675;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=miaF/bzpaXxt5iwAcqBRvDZdA63BMI9c1o0s4Dvr9rc=;
-        b=ONQaAySFQ6eTsebNpF3RIqsTTmeCZ4+qdZXxmS7JUHlo5zonHz0Hlbx4nJngw/qU1g
-         X76Gcsykear5VkBeY3aCxNSAf2JlC7zWAziPhy8UPvJaHcGaLw7+V+l8eSyvbk9v1uAG
-         ObA6W9Tw9gZMpF/lFDHG8VHNqlQ+3erDxbkwgjiPrBnfHYyG7oso9tSC3fLKlEnEo355
-         ys2WGfAPKOiqSaiCDaImBguS+VWhq5aI0FF5yHNUshXpOkZLS8RwbW0mOmfO126+r30p
-         BGQD/VPdoWs1o8jtTlQtqkQdhk16bzDZFFvBSnkZWwgpd52oq8aG3XHzyeefN4NnxUpy
-         mVsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVv5Le0ibZehFfxJyThbQJhl3hu/vqhobPo5nS4XxRqQYH/jhsNF2gcAbdQo9BLDVXtp38Upr1eMb1iiWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsHiJmrkU1pjuL7RlFpDSkC/Vp/U6vRv8B7E4yFsljllveUJug
-	NfJau2FHtYWXw7KRsw61cxGxpb68wGUzaCa/zcFi5R5JsaGASVIST4g/Tqqc/HeYCTJNuLRyKRs
-	kMgbdOKyXlwrqSVtaZ4sDmp4mrDJFA/RrDQoTrg==
-X-Google-Smtp-Source: AGHT+IET/AXMNwoRFwVXHuhBACWA9SQCiFexSXwoY0rVTaRw1no0IViR/dKMbVXvof5PtqZm9DbMaQZ30RW3YSLJrLM=
-X-Received: by 2002:a05:690c:ecc:b0:65f:a0e5:8324 with SMTP id
- 00721157ae682-6e5bf72bf64mr50318227b3.4.1729305875248; Fri, 18 Oct 2024
- 19:44:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729305899; x=1729910699;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LqRxljumtD5Kyj1iLBGvC7QxtAEi2bp/81JCWPq5wvE=;
+        b=Sxltp7gOSC+3kYtsX1VxO+ZnEAFdLPmPV2G+QUwu4NukHWJ+nxu2Zh1T8gGfq7vWpV
+         EJi8P+5RqqXs1BAAupDritLFCI+P8i1nebQAvJ6XkYZDDNkNDsXpPhHam/cO93wKBanY
+         K8KsxFnnNVlyNzIZDoX77vNOdC+oszY39jvkrzDt/u+dkqc8mZM279fJQtDnKamjaBeW
+         XuFG30M9m0AwQNARBHnwWoQwSEK7SB094+vNu+NQYacQf3A+dzCAVn2gopwjZ0zjSHx2
+         qZjTMcWau4zsrHZ/OKPVvHCZQgEGkya3MHpMQKRVKD6W5dOiIC58uLBXukPe3W0w7cPm
+         0YXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsB4fyy5cPd0trHvgjvhIvGhaNw4LcCeud3fQUt/pEC3xskE1oS6/4E09Mm8aAH1ud3WBsXChA0G8iPJ8=@vger.kernel.org, AJvYcCWyh0QqoeZE2W3iaKlEIPbNGmqa6SUsHd+U0/5b/9D3uD2TQDpIPZH8E2YKoAtcp39r7sQ0rRRd4P7u/A65a5WL2+mx@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTVl+MbE1IHLgiNHIjPfwVG3Z/oQbASNjVvTgPZ9X8DaaCvlYO
+	YbxTIGwRcSueC+da/LlO2NcHLzscmDw64xjqPfTm0cvVftMBqsGFgHB85g6g
+X-Google-Smtp-Source: AGHT+IH8UCw+EdbMrQzGgpRvdXCXnlQQHoewJTHwNWvgH0VZga7XoqifRPP+puuGHIZ4xBiiAYcvkw==
+X-Received: by 2002:a17:90b:3c47:b0:2e2:bd68:b8d8 with SMTP id 98e67ed59e1d1-2e5616dea4dmr4775849a91.8.1729305899219;
+        Fri, 18 Oct 2024 19:44:59 -0700 (PDT)
+Received: from ?IPV6:240d:1a:13a:f00:4c7c:ec82:af16:5780? ([240d:1a:13a:f00:4c7c:ec82:af16:5780])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e55da43a30sm2978963a91.37.2024.10.18.19.44.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 19:44:58 -0700 (PDT)
+Message-ID: <baa84463-113e-4362-ae3f-1ceb8adc9b64@gmail.com>
+Date: Sat, 19 Oct 2024 11:44:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241012073543.1388069-1-victor.liu@nxp.com> <20241012073543.1388069-6-victor.liu@nxp.com>
- <4a7rwguypyaspgr5akpxgw4c45gph4h3lx6nkjv3znn32cldrk@k7qskts7ws73>
- <07b47f70-5dab-4813-97fa-388a0c0f42e9@nxp.com> <dvcdy32dig3w3r3a7eib576zaumsoxw4xb5iw6u6b2rds3zaov@lvdevbyl6skf>
- <90e0c4ac-1636-4936-ba40-2f7693bc6b32@nxp.com> <lcogrc6uztckwwwsuag5tlk5otidmo7rudsl7zshe3wpfot3wc@ziljns5phhfe>
- <d5d62f61-808f-4c40-bc71-4e168baf4b1b@nxp.com>
-In-Reply-To: <d5d62f61-808f-4c40-bc71-4e168baf4b1b@nxp.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 19 Oct 2024 05:44:23 +0300
-Message-ID: <CAA8EJpqcm66+3d6Qi02pjmiBipFeV7dDdY8m=NR2Q=L9EgRVcA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS
- to HDMI converter
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com, 
-	will@kernel.org, quic_bjorande@quicinc.com, geert+renesas@glider.be, 
-	arnd@arndb.de, nfraprado@collabora.com, o.rempel@pengutronix.de, 
-	y.moog@phytec.de, marex@denx.de, isaac.scott@ideasonboard.com, 
-	biju.das.jz@bp.renesas.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ftrace: Fix function name for trampoline
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20241012124152.2078-1-tatsuya.s2862@gmail.com>
+ <20241018112203.75307abe@gandalf.local.home>
+Content-Language: en-US
+From: t s <tatsuya.s2862@gmail.com>
+In-Reply-To: <20241018112203.75307abe@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 15 Oct 2024 at 09:27, Liu Ying <victor.liu@nxp.com> wrote:
+
+On 2024/10/19 0:22, Steven Rostedt wrote:
+> On Sat, 12 Oct 2024 21:41:51 +0900
+> Tatsuya S <tatsuya.s2862@gmail.com> wrote:
 >
-> On 10/14/2024, Dmitry Baryshkov wrote:
-> > On Mon, Oct 14, 2024 at 01:33:44PM +0800, Liu Ying wrote:
-> >> On 10/14/2024, Dmitry Baryshkov wrote:
-> >>> On Sat, Oct 12, 2024 at 05:14:13PM +0800, Liu Ying wrote:
-> >>>> On 10/12/2024, Dmitry Baryshkov wrote:
-> >>>>> On Sat, Oct 12, 2024 at 03:35:39PM +0800, Liu Ying wrote:
-> >>>>>> Document ITE IT6263 LVDS to HDMI converter.
-> >>>>>>
-> >>>>>> Product link:
-> >>>>>> https://www.ite.com.tw/en/product/cate1/IT6263
-> >>>>>>
-> >>>>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> >>>>>> ---
-> >>>>>> v2:
-> >>>>>> * Document number of LVDS link data lanes.  (Biju)
-> >>>>>> * Simplify ports property by dropping "oneOf".  (Rob)
-> >>>>>>
-> >>>>>>  .../bindings/display/bridge/ite,it6263.yaml   | 276 ++++++++++++++++++
-> >>>>>>  1 file changed, 276 insertions(+)
-> >>>>>>  create mode 100644 Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
-> >>>>>>
-> >>>>>> diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml b/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
-> >>>>>> new file mode 100644
-> >>>>>> index 000000000000..bc2bbec07623
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
-> >>>>>> @@ -0,0 +1,276 @@
-> >>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>>>>> +%YAML 1.2
-> >>>>>> +---
-> >>>>>> +$id: http://devicetree.org/schemas/display/bridge/ite,it6263.yaml#
-> >>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>>>>> +
-> >>>>>> +title: ITE IT6263 LVDS to HDMI converter
-> >>>>>> +
-> >>>>>> +maintainers:
-> >>>>>> +  - Liu Ying <victor.liu@nxp.com>
-> >>>>>> +
-> >>>>>> +description: |
-> >>>>>> +  The IT6263 is a high-performance single-chip De-SSC(De-Spread Spectrum) LVDS
-> >>>>>> +  to HDMI converter.  Combined with LVDS receiver and HDMI 1.4a transmitter,
-> >>>>>> +  the IT6263 supports LVDS input and HDMI 1.4 output by conversion function.
-> >>>>>> +  The built-in LVDS receiver can support single-link and dual-link LVDS inputs,
-> >>>>>> +  and the built-in HDMI transmitter is fully compliant with HDMI 1.4a/3D, HDCP
-> >>>>>> +  1.2 and backward compatible with DVI 1.0 specification.
-> >>>>>> +
-> >>>>>> +  The IT6263 also encodes and transmits up to 8 channels of I2S digital audio,
-> >>>>>> +  with sampling rate up to 192KHz and sample size up to 24 bits. In addition,
-> >>>>>> +  an S/PDIF input port takes in compressed audio of up to 192KHz frame rate.
-> >>>>>> +
-> >>>>>> +  The newly supported High-Bit Rate(HBR) audio by HDMI specifications v1.3 is
-> >>>>>> +  provided by the IT6263 in two interfaces: the four I2S input ports or the
-> >>>>>> +  S/PDIF input port.  With both interfaces the highest possible HBR frame rate
-> >>>>>> +  is supported at up to 768KHz.
-> >>>>>> +
-> >>>>>> +properties:
-> >>>>>
-> >>>>> No LVDS data-mapping support?
-> >>>>
-> >>>> It is enough to document number of LVDS link data lanes
-> >>>> because OS should be able to determine the data-mapping
-> >>>> by looking at the number and the data-mapping capability
-> >>>> of the other side of the LVDS link.
-> >>>
-> >>> From what I can see, data-mapping is specified on the consumer sink side
-> >>> of the LVDS link. This means it should go to the bridge's device node.
-> >>
-> >> Then, I won't define data-lanes, because data-mapping implies it,
-> >> e.g., jeida-24 implies data lanes 0/1/2/3, see lvds-data-mapping.yaml.
-> >>
-> >> Please let me know which one you prefer.
-> >
-> > I'd prefer data-mapping.
+>> The issue that unrelated function name is shown on stack trace like
+>> following even though it should be trampoline code address is caused by
+>> the creation of trampoline code in the area where .init.text section
+>> of module was freed after module is loaded.
+>>
+>> bash-1344    [002] .....    43.644608: <stack trace>
+>>    => (MODULE INIT FUNCTION)
+>>    => vfs_write
+>>    => ksys_write
+>>    => do_syscall_64
+>>    => entry_SYSCALL_64_after_hwframe
+>>
+>> To resolve this, when function address of stack trace entry is in
+>> trampoline, output without looking up symbol name.
+>>
+>> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
+>> ---
+>> V1 -> V2: Instead of checking trampoline when displaying "trace" results,
+>> 	  it stores trampoline when generating the stacktrace entry.
+
+Thank you for review.
+
+> I'm sorry. I guess I wasn't clear. I meant to do the tests in the recording
+> of the trampoline, and do not add them or replace them. I rather not add
+> this meta data to the ring buffer.
 >
-> Before I go ahead to use it, I'd like to get confirmation that
-> it'll cover data mapping which supports 30-bit RGB pixel transmission,
-> because it is something supported by IT6263 as I mentioned in v1
-> dt-binding discussion.  For now, data-mapping only supports jeida-18,
-> jeida-24 and vesa-24, see lvds-data-mapping.yaml.  And, I'm not
-> sure the 30-bit data mappings specified in IT6263 datasheet are
-> standard or not.
+>>   kernel/trace/trace.c         | 24 ++++++++++++++++--------
+>>   kernel/trace/trace_entries.h |  2 ++
+>>   kernel/trace/trace_output.c  |  7 +++++++
+>>   3 files changed, 25 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+>> index 1c69ca1f1088..92a8e76a0cd7 100644
+>> --- a/kernel/trace/trace.c
+>> +++ b/kernel/trace/trace.c
+>> @@ -988,7 +988,8 @@ static inline void trace_access_lock_init(void)
+>>   #endif
+>>   
+>>   #ifdef CONFIG_STACKTRACE
+>> -static void __ftrace_trace_stack(struct trace_buffer *buffer,
+>> +static void __ftrace_trace_stack(struct trace_array *tr,
+>> +				 struct trace_buffer *buffer,
+>>   				 unsigned int trace_ctx,
+>>   				 int skip, struct pt_regs *regs);
+>>   static inline void ftrace_trace_stack(struct trace_array *tr,
+>> @@ -997,7 +998,8 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+>>   				      int skip, struct pt_regs *regs);
+>>   
+>>   #else
+>> -static inline void __ftrace_trace_stack(struct trace_buffer *buffer,
+>> +static inline void __ftrace_trace_stack(struct trace_array *tr,
+>> +					struct trace_buffer *buffer,
+>>   					unsigned int trace_ctx,
+>>   					int skip, struct pt_regs *regs)
+>>   {
+>> @@ -2928,7 +2930,8 @@ struct ftrace_stacks {
+>>   static DEFINE_PER_CPU(struct ftrace_stacks, ftrace_stacks);
+>>   static DEFINE_PER_CPU(int, ftrace_stack_reserve);
+>>   
+>> -static void __ftrace_trace_stack(struct trace_buffer *buffer,
+>> +static void __ftrace_trace_stack(struct trace_array *tr,
+>> +				 struct trace_buffer *buffer,
+>>   				 unsigned int trace_ctx,
+>>   				 int skip, struct pt_regs *regs)
+>>   {
+>> @@ -2986,6 +2989,11 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
+>>   	memcpy(&entry->caller, fstack->calls,
+>>   	       flex_array_size(entry, caller, nr_entries));
+>>   
+>> +#ifdef CONFIG_DYNAMIC_FTRACE
+>> +	entry->trampoline = tr->ops ? tr->ops->trampoline : 0;
+>> +	entry->trampoline_size = tr->ops ? tr->ops->trampoline_size : 0;
+>> +#endif
+>> +
+>>   	if (!call_filter_check_discard(call, entry, buffer, event))
+>>   		__buffer_unlock_commit(buffer, event);
+>>   
+> I meant here we can add something like:
+>
+> /* Make the marker not exactly -1, but max int to be something somewhat unique */
+> #define FTRACE_TRAMPOLINE_MARKER	((unsigned long)MAX_INT)
+>
+>
+> 	if (regs) {
+> 		nr_entries = stack_trace_save_regs(regs, fstack->calls,
+> 						   size, skip);
+> 	} else {
+> 		nr_entries = stack_trace_save(fstack->calls, size, skip);
+> 	}
+>
+> +	if (tr->ops && tr->ops->trampoline) {
+> +		unsigned long tramp_start = tr->ops->trampoline;
+> +		unsigned long tramp_end = tramp_start + tr->ops->trampoline_size;
+> +		unsigned long *calls = fstack->calls;
+> +
+> +		/* Mark any trampolines */
+> +		for (int i = 0; i < nr_entries; i++) {
+> +			if (calls[i] >= tramp_start && calls[i] < tramp_end) {
+> +				calls[i] = FTRACE_TRAMPOLINE_MARKER;
+> +		}
+> +	}
+> +
+> 	event = __trace_buffer_lock_reserve(buffer, TRACE_STACK,
+> 				    struct_size(entry, caller, nr_entries),
+> 				    trace_ctx);
+> 	if (!event)
+> 		goto out;
+> 	entry = ring_buffer_event_data(event);
+>
+> 	entry->size = nr_entries;
+> 	memcpy(&entry->caller, fstack->calls,
+> 	       flex_array_size(entry, caller, nr_entries));
+>
+>> @@ -3005,7 +3013,7 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+>>   	if (!(tr->trace_flags & TRACE_ITER_STACKTRACE))
+>>   		return;
+>>   
+>> -	__ftrace_trace_stack(buffer, trace_ctx, skip, regs);
+>> +	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, regs);
+>>   }
+>>   
+>>   void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+>> @@ -3014,7 +3022,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+>>   	struct trace_buffer *buffer = tr->array_buffer.buffer;
+>>   
+>>   	if (rcu_is_watching()) {
+>> -		__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
+>> +		__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+>>   		return;
+>>   	}
+>>   
+>> @@ -3031,7 +3039,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+>>   		return;
+>>   
+>>   	ct_irq_enter_irqson();
+>> -	__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
+>> +	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+>>   	ct_irq_exit_irqson();
+>>   }
+>>   
+>> @@ -3048,8 +3056,8 @@ void trace_dump_stack(int skip)
+>>   	/* Skip 1 to skip this function. */
+>>   	skip++;
+>>   #endif
+>> -	__ftrace_trace_stack(printk_trace->array_buffer.buffer,
+>> -			     tracing_gen_ctx(), skip, NULL);
+>> +	__ftrace_trace_stack(printk_trace, printk_trace->array_buffer.buffer,
+>> +				tracing_gen_ctx(), skip, NULL);
+>>   }
+>>   EXPORT_SYMBOL_GPL(trace_dump_stack);
+>>   
+>> diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+>> index c47422b20908..81b84241e3b3 100644
+>> --- a/kernel/trace/trace_entries.h
+>> +++ b/kernel/trace/trace_entries.h
+>> @@ -190,6 +190,8 @@ FTRACE_ENTRY(kernel_stack, stack_entry,
+>>   
+>>   	F_STRUCT(
+>>   		__field(	int,		size	)
+>> +		__field(	unsigned long,	trampoline	)
+>> +		__field(	unsigned long,	trampoline_size	)
+>>   		__stack_array(	unsigned long,	caller,	FTRACE_STACK_ENTRIES, size)
+>>   	),
+>>   
+>> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+>> index 868f2f912f28..fbd066e9c9fa 100644
+>> --- a/kernel/trace/trace_output.c
+>> +++ b/kernel/trace/trace_output.c
+>> @@ -1246,6 +1246,13 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
+>>   			break;
+>>   
+>>   		trace_seq_puts(s, " => ");
+>> +		if (field->trampoline && field->trampoline_size &&
+>> +			(*p) + delta >= field->trampoline &&
+>> +			(*p) + delta < field->trampoline + field->trampoline_size) {
+> Then the above can simply be:
+>
+> 		if ((*p) == FTRACE_TRAMPOLINE_MARKER) {
+> 			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
+> 			continue;
+> 		}
+>
+> since the value is useless anyway.
+>
+> -- Steve
 
-It is not. At the time the standards were written, nobody was actually
-thinking about the 30bpp panels.
-
-> Note that if we use data-lanes instead, then this is not a concern
-> from DT PoV, as data mapping can be inferred by OS.
-
-It can not. There is no way to determine if JEIDA or VESA / SPWG
-format is being used if it is not declared.
-Moreover, <uapi/linux/media-bus-format.h> doesn't declare 1X7X5
-formats. If you are to support 30bpp LVDS, you'd need to define two
-corresponding constants, then extend data-mapping definition and code
-by documenting 5-lane LVDS as standards extension to support 30bpp
-transfers.
+OK.
 
 
--- 
-With best wishes
-Dmitry
+Thanks.
+
+>
+>
+>> +			trace_seq_printf(s, "0x%08lx", (*p) + delta);
+>> +			trace_seq_puts(s, " [FTRACE TRAMPOLINE]\n");
+>> +			continue;
+>> +		}
+>>   		seq_print_ip_sym(s, (*p) + delta, flags);
+>>   		trace_seq_putc(s, '\n');
+>>   	}
 
