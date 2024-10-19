@@ -1,147 +1,130 @@
-Return-Path: <linux-kernel+bounces-373011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAAB9A5095
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 21:56:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB0A9A5093
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 21:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE66C2829CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 19:56:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43A2D1C21203
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 19:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38231922E9;
-	Sat, 19 Oct 2024 19:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD80192D64;
+	Sat, 19 Oct 2024 19:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="njWLYzFX"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozwN2g6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A26A191F9E
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 19:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258F2191F9E;
+	Sat, 19 Oct 2024 19:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729367714; cv=none; b=hY0ANeF+6Zl9CvePReOZbI8jNBbn18T0CmzVQAF7l9Gi2Y8DP8lHnmmy/7ZalakglOk+mxkXMcuxe+k0QPRe8exqRcAde7sz2RUG9SN4myMuvb2A89u+mypWJ8Oct3WE+JhUg8SWVVnCerL5hmaLQwuIX1RZm0n3TTjZ6FhfvYg=
+	t=1729367707; cv=none; b=VU8g79KxLS9+k6LEyfSxCOGrIE79MWTj6geyrnByfHzI+vw/GnHVZc4GyTlqB0dEmw2zol/nJ3bgnVF0JWcTncNwqS9OMHbB5HsOq7ote5/HdJrVqY/EbVeJgICwXTA/blI+3BTEZpXobj7iuR3Bz8EQd7hcbG0JWo0amF5rdn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729367714; c=relaxed/simple;
-	bh=WdQ2hz7/MOEryhgHMStcnr6OUGAJNkdRnnmAxH5qLpM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M5Gir1QGLOBPJ8i3KZoCjzQOZIvenbxxPbvehhqvpvzh/l9TfrpzUdHjlArGeQartODPYkTrMTwBpiKMpZi98S6E/9W0NJKjLJji0FHQhaGCgICO0WwuvfhsRL4xmp6XGlllYSwEQGljmuswV4Tg4qBD2FBc/tmlH7wK/CRdTO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=njWLYzFX; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729367710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PO/TdRn23ZIa6Ulm1byLhq3WCR3eNfCu+hdPp9XsOA8=;
-	b=njWLYzFXC5v9gx3mAZnW8zGdlOiKdPozykSAx1ees8feZiuB+hG1SMY6hXlpnjqDuwmSmS
-	FE1MWr9Lsffl4j2t7wnPDs5Cbv3V5SSMlRbfq4HywI5OVCMl4DjSVodpyBJnVA8Mq1s7Gl
-	/mc6GkZsPOjvpOdRPhlQCp/NLk0YDw4=
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Dominik Haller <d.haller@phytec.de>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Devarsh Thakkar <devarsht@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>,
-	Udit Kumar <u-kumar1@ti.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>,
-	DRI Development List <dri-devel@lists.freedesktop.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Subject: [PATCH v5 07/13] drm/bridge: cdns-dsi: Wait for Clk and Data Lanes to be ready
-Date: Sun, 20 Oct 2024 01:24:05 +0530
-Message-Id: <20241019195411.266860-8-aradhya.bhatia@linux.dev>
-In-Reply-To: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
-References: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
+	s=arc-20240116; t=1729367707; c=relaxed/simple;
+	bh=7MAUSRCQnRqnMctSVtXWQsLwh2FgeqZO0xMrp6YRx2c=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=i5e8S7DlQsrlyssvEyXgflMaS2Hz5oGsTHi2NI+Wm7LtV6qdhdyN6zFC0PjqBfqfZseTmvDdxlJWkMC7UyEyt3Vcq/sZrFB1GOz4XIiQFOy8CMuOk9kSvvcgvTKQybFPRnQgOG2JoWlCz390xkA9AyARd4DCie+z8KQCAKeP5PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozwN2g6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B967C4CEC7;
+	Sat, 19 Oct 2024 19:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729367706;
+	bh=7MAUSRCQnRqnMctSVtXWQsLwh2FgeqZO0xMrp6YRx2c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ozwN2g6XlW+gNLTTYjH9j/AG4n0I4Bqzm+esQeALNDTLMvwEFJf1iJ5by6IohzP+w
+	 ZmYlmczutpPxiVOfMsYbllNG/Fw+//t7rrGrKE+HYtUX3EfH3/UN+duGn1hIErOhUN
+	 IMPuwVdT+WK1vUMmo7QsIswpsLErf3QCBvAq4n2GYXRvhIseVqviydiTQsnv0edHBz
+	 wWqg/Kb8D5KBrFoRzDNARi7nYQjpiwVy/w6mDOIM3lW4e1v+Wyqvq75Jfx2aYfINlR
+	 vJDdgrqcseNPqLTRwAoRFRz7GO+guLSALwauEKvOtwdB71Qpq2Ybvby45GcBn9iNJW
+	 umvCXcxUPomTw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 19 Oct 2024 22:55:02 +0300
+Message-Id: <D501OQWL1TT4.24C0QEV958D75@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Peter Huewe"
+ <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>
+Cc: "Stefan Berger" <stefanb@linux.ibm.com>, "Pengyu Ma"
+ <mapengyu@gmail.com>, <stable@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 5/5] tpm: flush the auth session only when /dev/tpm0
+ is open
+X-Mailer: aerc 0.18.2
+References: <20241015205842.117300-1-jarkko@kernel.org>
+ <20241015205842.117300-6-jarkko@kernel.org>
+In-Reply-To: <20241015205842.117300-6-jarkko@kernel.org>
 
-From: Aradhya Bhatia <a-bhatia1@ti.com>
+On Tue Oct 15, 2024 at 11:58 PM EEST, Jarkko Sakkinen wrote:
+> Instead of flushing and reloading the auth session for every single
+> transaction, keep the session open unless /dev/tpm0 is used. In practice
+> this means applying TPM2_SA_CONTINUE_SESSION to the session attributes.
+> Flush the session always when /dev/tpm0 is written.
+>
+> Reported-by: Pengyu Ma <mapengyu@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
+> Cc: stable@vger.kernel.org # v6.10+
+> Fixes: 7ca110f2679b ("tpm: Address !chip->auth in tpm_buf_append_hmac_ses=
+sion*()")
+> Tested-by: Pengyu Ma <mapengyu@gmail.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+> v5:
+> - No changes.
+> v4:
+> - Changed as bug.
+> v3:
+> - Refined the commit message.
+> - Removed the conditional for applying TPM2_SA_CONTINUE_SESSION only when
+>   /dev/tpm0 is open. It is not required as the auth session is flushed,
+>   not saved.
+> v2:
+> - A new patch.
+> ---
+>  drivers/char/tpm/tpm-chip.c       | 1 +
+>  drivers/char/tpm/tpm-dev-common.c | 1 +
+>  drivers/char/tpm/tpm-interface.c  | 1 +
+>  drivers/char/tpm/tpm2-sessions.c  | 3 +++
+>  4 files changed, 6 insertions(+)
+>
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 0ea00e32f575..7a6bb30d1f32 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -680,6 +680,7 @@ void tpm_chip_unregister(struct tpm_chip *chip)
+>  	rc =3D tpm_try_get_ops(chip);
+>  	if (!rc) {
+>  		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> +			tpm2_end_auth_session(chip);
+>  			tpm2_flush_context(chip, chip->null_key);
+>  			chip->null_key =3D 0;
+>  		}
+> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev=
+-common.c
+> index 4bc07963e260..c6fdeb4feaef 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -29,6 +29,7 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, =
+struct tpm_space *space,
+> =20
+>  #ifdef CONFIG_TCG_TPM2_HMAC
+>  	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> +		tpm2_end_auth_session(chip);
+>  		tpm2_flush_context(chip, chip->null_key);
 
-Once the DSI Link and DSI Phy are initialized, the code needs to wait
-for Clk and Data Lanes to be ready, before continuing configuration.
-This is in accordance with the DSI Start-up procedure, found in the
-Technical Reference Manual of Texas Instrument's J721E SoC[0] which
-houses this DSI TX controller.
+The reporter has done already too much so unless someone is willing to
+verify these with matching hardware specs patch by patch I'm not into
+meking any changes. It makes the flow factors better still what it used
+to be and final result is not messy. It is good enough in my books and
+performance fixes are sensitive.
 
-If the previous bridge (or crtc/encoder) are configured pre-maturely,
-the input signal FIFO gets corrupt. This introduces a color-shift on the
-display.
-
-Allow the driver to wait for the clk and data lanes to get ready during
-DSI enable.
-
-[0]: See section 12.6.5.7.3 "Start-up Procedure" in J721E SoC TRM
-     TRM Link: http://www.ti.com/lit/pdf/spruil1
-
-Fixes: e19233955d9e ("drm/bridge: Add Cadence DSI driver")
-Tested-by: Dominik Haller <d.haller@phytec.de>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
----
- drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index e4c0968313af..284c468db6c3 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -767,7 +767,7 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
- 	struct phy_configure_opts_mipi_dphy *phy_cfg = &output->phy_opts.mipi_dphy;
- 	unsigned long tx_byte_period;
- 	struct cdns_dsi_cfg dsi_cfg;
--	u32 tmp, reg_wakeup, div;
-+	u32 tmp, reg_wakeup, div, status;
- 	int nlanes;
- 
- 	if (WARN_ON(pm_runtime_get_sync(dsi->base.dev) < 0))
-@@ -784,6 +784,19 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
- 	cdns_dsi_init_link(dsi);
- 	cdns_dsi_hs_init(dsi);
- 
-+	/*
-+	 * Now that the DSI Link and DSI Phy are initialized,
-+	 * wait for the CLK and Data Lanes to be ready.
-+	 */
-+	tmp = CLK_LANE_RDY;
-+	for (int i = 0; i < nlanes; i++)
-+		tmp |= DATA_LANE_RDY(i);
-+
-+	if (readl_poll_timeout(dsi->regs + MCTL_MAIN_STS, status,
-+			       status & tmp, 100, 500000))
-+		dev_err(dsi->base.dev,
-+			"Timed Out: DSI-DPhy Clock and Data Lanes not ready.\n");
-+
- 	writel(HBP_LEN(dsi_cfg.hbp) | HSA_LEN(dsi_cfg.hsa),
- 	       dsi->regs + VID_HSIZE1);
- 	writel(HFP_LEN(dsi_cfg.hfp) | HACT_LEN(dsi_cfg.hact),
--- 
-2.34.1
-
+BR, Jarkko
 
