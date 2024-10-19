@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-372735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696C99A4C72
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:05:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74639A4C77
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 921541C224B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:05:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 529B91F22F4C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DE71DE2D8;
-	Sat, 19 Oct 2024 09:05:38 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A091DED43;
+	Sat, 19 Oct 2024 09:06:51 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A724188A3A
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D4E18DF6F;
+	Sat, 19 Oct 2024 09:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729328737; cv=none; b=j8G8VNAIuIIbNryh55PhRTUIN5el1R/i57kInW1GjSBwaOWsTqU7sjWp1Fk+uL9SHuJF8V9tznp2+z6yCdvGnTmoNCrZmrCH4qzjiYPSp5wMMYM/5f6DTmN7fawnbRg14SJ1umuGFeEh4enyrjgVgpfLYS/oTyzUy6UIGsrSERQ=
+	t=1729328811; cv=none; b=EBaf36xvRIz0u3q1py9I8bhQ/YRU8jqlVEvFQfVkJxoIBmmDwvftZNV/U+D4yMDOGkOBwOupebL3CoGI/PjBQ3JdHKwoFwFGmfswmsa8H7iWvX/05kDT5oulDBuFY993irZThm1zr5KanWPROkL9zJHZML9RMg50eNLAWb+JTVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729328737; c=relaxed/simple;
-	bh=sll1pvU9oGSpnOezRYBcS3+Gds8wLTQ6SFKgbQE8vxM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dUve4hJq7rSEvjB9tiWqNq6CoSeC3pQH9XTy4csLJZ6+UPBPbQPgteUcjl2IO6cm7QZzEyuCXKXfdOvjja9GFjiSg6h6JxMTWbcI1DKhUcax5vGrIfYIPdLDUBpgjrk9fX/871bl6+TzB2WlFpT82C0rgX0HxRH0OS9dw5CFedA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+	s=arc-20240116; t=1729328811; c=relaxed/simple;
+	bh=IotfTlG/EjPB/YRAH8pw3SksaP3QMNRc+dyUvAzjS/E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A6PMXJgrPy46mB0eDFXTLgSMWMytqSZ7DbioYrnxU3ztNlKPM1mTUdoxbqEQsFUw3+v9N35mLjSRK4pfURQHe6gAMjy0T7khkvWEWIKNdP6ONPqZrh/mVbgtOGfwJfkxLRdcYIZmLoNb7Hiygyqx7kvmWEFXGK0Eb4FH+TU0lPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XVwbX2hLNz1T8SP;
-	Sat, 19 Oct 2024 17:03:36 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XVwdb1c6Cz1j9kZ;
+	Sat, 19 Oct 2024 17:05:23 +0800 (CST)
 Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id B15E618006C;
-	Sat, 19 Oct 2024 17:05:32 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 07DA01A0188;
+	Sat, 19 Oct 2024 17:06:41 +0800 (CST)
 Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
  (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 19 Oct
- 2024 17:05:32 +0800
+ 2024 17:06:40 +0800
 From: Yue Haibing <yuehaibing@huawei.com>
-To: <ericvh@kernel.org>, <lucho@ionkov.net>, <asmadeus@codewreck.org>,
-	<linux_oss@crudebyte.com>, <m.grzeschik@pengutronix.de>,
-	<yuehaibing@huawei.com>, <gregkh@linuxfoundation.org>
-CC: <v9fs@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] 9p/trans_usbg: Fix incorrect error check in usb9pfs_alloc_instance()
-Date: Sat, 19 Oct 2024 17:23:02 +0800
-Message-ID: <20241019092302.212221-1-yuehaibing@huawei.com>
+To: <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>,
+	<mpdesouza@suse.com>, <gniebler@suse.com>
+CC: <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH] btrfs: Fix passing 0 to ERR_PTR in btrfs_search_dir_index_item()
+Date: Sat, 19 Oct 2024 17:23:57 +0800
+Message-ID: <20241019092357.212439-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,33 +54,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  dggpemf500002.china.huawei.com (7.185.36.57)
 
-kzalloc() should use NULL check not a IS_ERR() check.
+Return NULL instead of passing to ERR_PTR while ret is zero, this fix
+smatch warnings:
 
-Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
+fs/btrfs/dir-item.c:353
+ btrfs_search_dir_index_item() warn: passing zero to 'ERR_PTR'
+
+Fixes: 9dcbe16fccbb ("btrfs: use btrfs_for_each_slot in btrfs_search_dir_index_item")
 Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 ---
- net/9p/trans_usbg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/dir-item.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
-index 975b76839dca..6b694f117aef 100644
---- a/net/9p/trans_usbg.c
-+++ b/net/9p/trans_usbg.c
-@@ -909,9 +909,9 @@ static struct usb_function_instance *usb9pfs_alloc_instance(void)
- 	usb9pfs_opts->buflen = DEFAULT_BUFLEN;
+diff --git a/fs/btrfs/dir-item.c b/fs/btrfs/dir-item.c
+index 001c0c2f872c..cdb30ec7366a 100644
+--- a/fs/btrfs/dir-item.c
++++ b/fs/btrfs/dir-item.c
+@@ -350,7 +350,7 @@ btrfs_search_dir_index_item(struct btrfs_root *root, struct btrfs_path *path,
+ 	if (ret > 0)
+ 		ret = 0;
  
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
--	if (IS_ERR(dev)) {
-+	if (!dev) {
- 		kfree(usb9pfs_opts);
--		return ERR_CAST(dev);
-+		return ERR_PTR(-ENOMEM);
- 	}
+-	return ERR_PTR(ret);
++	return ret ? ERR_PTR(ret) : NULL;
+ }
  
- 	usb9pfs_opts->dev = dev;
+ struct btrfs_dir_item *btrfs_lookup_xattr(struct btrfs_trans_handle *trans,
 -- 
 2.34.1
 
