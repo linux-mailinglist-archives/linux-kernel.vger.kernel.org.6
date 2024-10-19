@@ -1,98 +1,197 @@
-Return-Path: <linux-kernel+bounces-372637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB9E9A4B4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:29:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8319A4B50
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ACC71C2174B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:29:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5251F22C32
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D841D432A;
-	Sat, 19 Oct 2024 05:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3941D416B;
+	Sat, 19 Oct 2024 05:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="Kkv4AU+Y"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="od2+UPDr"
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E6D29AF;
-	Sat, 19 Oct 2024 05:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDA3187848
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 05:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729315742; cv=none; b=ceWq/TmPVaj9PHJNtcqVEplJNgbNiYjqOSqJS63Zo8cN7ie+/5jRmS5FVRUuJl8Lhc/q71Jp6t4eAK16RgwkMPSSa5r5QYixyVrsKZR4XVgNjSESio7eoEhaYXoIaH9LkSUQbLHRak15AkDxq+IRsO8/JSr+Wb4QmAgnOBNHCg0=
+	t=1729316189; cv=none; b=cJnf9OCxshg4bzVD4PNUbyYCiJ2f8FPdLdOmmGLJWLRJ3qXPTeDN4b9eqVwujYBtwbZ9u7gUWrzyeIJQUk70D+zF2p20z4JHEL1g2vGupJzhc6A4YzlLEuOcE59TUyR5lkG2wj7S+5Hsft+PeL8PFo5UI9mBaSGutYVma3LkXao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729315742; c=relaxed/simple;
-	bh=9drtG3/cH4RiYcuYy/wzZPCuMwYPjfonb7/fKLLqggk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sCGfBSUO8UIh/I2IXk5s1vQnXps+XRxwmImq3qOoUDZw99LL7b2OoQnd2agvBeuCtyh1nQxZYBAG5JJHrmz6ZkmrCg+T78rdiMZ0BuOVFGlXuPP3ptIItdvhsJwZv0YjKF6wlu5/TwMnOz51zpsPG4oBlvbFhXZJ99ZNPjdyHR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=Kkv4AU+Y; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=nVFGjf04is2fecvjXt6D+ulwXScKCzZWDCMOsjNplQg=;
-	t=1729315740; x=1729747740; b=Kkv4AU+YjwyWe5HiQR0HRfG/GgZTYQIP0X4hRV0eSPBEB19
-	cbP2Eex/L23TUmTnJMIctU+pK/aBEeZ6Bj5a+o3GewSIgPT5McYqXmIg4vzvK/f452WeHEXpSc7v5
-	ipU4EctWCiPXiSrixV1oBeWShglV1FbZkWtAhTECs+IO443ltOKpTX9UCUAdt7sRiKAG2zWhSH8Pu
-	3m78ZMbiF8ivHhrj7p0nhXYCv0M6S0XFpuZWOB6o1O0b7dKu+rymxpV3obTchPLPtehidP4yuS5W1
-	USdeh1akoRSnA/RawCeflzn/zcuEKg0xiz/KIZ5ujjvGWkobwnJ37jdLvFVmoAEA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t221I-0003ZW-Jy; Sat, 19 Oct 2024 07:28:56 +0200
-Message-ID: <3f388aaa-b449-4026-b50e-87d9033d09cc@leemhuis.info>
-Date: Sat, 19 Oct 2024 07:28:55 +0200
+	s=arc-20240116; t=1729316189; c=relaxed/simple;
+	bh=eYJKIDjRTwY3Rk9kGcr2qmp+hceUxdxx2Saubylp8dA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XZB77/rTov81vD9jW/eyfZNQga2j/kla/zO8U6kNyqswxaUHqfQO618n4B5aKO+BVANj4Rh4cc8hGOse5Pwre1JsfF7429okyhtDvxtCS387bm8WNoqzrLoRQCTQk3/Z+8nSkQNfkBHrE4/SQxESoLPJV4OcTyDAhxbnZXdO7yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=od2+UPDr; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4a5b15cedd6so873878137.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 22:36:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729316186; x=1729920986; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lzfvgqsAxHWenBWftlkZ/uVSGEyAz3grmzhqBSSTfDI=;
+        b=od2+UPDrRKDY5tmnr5KXJ3fV9gdJ953B9CdKTN7qVoa6oUjxTMHJgghTUBvCf2GRhY
+         TkVxgSIdRllBsuO8eQ+N2+MpKxR12VYSn84L88Of1/9TIs31Nm6imI+i5cCsjTXkKYz0
+         n3nLwzf6OPBu97JQ66Adku8axOtURwNzkacsc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729316186; x=1729920986;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lzfvgqsAxHWenBWftlkZ/uVSGEyAz3grmzhqBSSTfDI=;
+        b=mKQph5f3OwP8n2Ev4Z1WqB6cMRpVpqsCwxSKi3ckxCQmJaJjGiks4Cg2f8fHmuiVuV
+         caW4lK8hDxVvMcZr2mT5vAdaQRqVNowEgdRVDMmV37FEO6YeDUeKcbwt71ot/VVBTmkg
+         vaRSefTsmrEnzW89DD8yid3x8IWLmBTjHw2y+d6ioX0YapYJ9sGWJ/txTQ1NzAXV5n2B
+         aoSZCQWuIOS0EVq/8mcDmwxMYHdpElrLaGRZd3fKvck1a7St/XJuzORzc3vdCkgZEcR+
+         1BlH4iODJapLl4q6LB22WI7xLDE9+69yUkmwX6xZBMv/imVFiPgv0r6/sJsiUPyiP9o+
+         S18A==
+X-Forwarded-Encrypted: i=1; AJvYcCXLmP6+tRX4maEeAJMWsOBKmci9POH/3enbFjCyhwV8xNgqb1MFB+wp34MEUlllWXseFzcG2vV5g8mTnCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqEIpYA72qn2+e6j8swZZeqoVoJCFQZ8tWKPUqMGrJXolBJ1PZ
+	bWZoP3E+l/9ipLww98n6yck9dHinJ5J+8kgn5gLz5B9+552vKHl98/IIhUTXWPg6PMHo1I7LdnW
+	jJA==
+X-Google-Smtp-Source: AGHT+IE6eEnQvtK466rHWPjJPIHwPxKaEGmURvsJDWkZ8d08O0CD9lb+qs0MnH10PHFrc0hX4qqHhw==
+X-Received: by 2002:a05:6102:a4d:b0:4a3:cc16:e4db with SMTP id ada2fe7eead31-4a5d6bec5f5mr5500604137.27.1729316186043;
+        Fri, 18 Oct 2024 22:36:26 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-851e58e3093sm457279241.23.2024.10.18.22.36.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 22:36:25 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4a47d70cd8aso837493137.1
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 22:36:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7OPy9u+BPnoH4LW4hEsVUWaNokYAaZ9/vPJil2571a4yshzPZpbG3VunkFC7jGg/BucR4hAem+LZIAUg=@vger.kernel.org
+X-Received: by 2002:a05:6102:3711:b0:48f:de23:14f0 with SMTP id
+ ada2fe7eead31-4a5d6ad1703mr5830263137.8.1729316184547; Fri, 18 Oct 2024
+ 22:36:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] 9p: Avoid creating multiple slab caches with the same
- name
-To: Vlastimil Babka <vbabka@suse.cz>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Dominique Martinet <asmadeus@codewreck.org>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
- Jason Gunthorpe <jgg@nvidia.com>, Pedro Falcato <pedro.falcato@gmail.com>
-References: <20240807094725.2193423-1-pedro.falcato@gmail.com>
- <20241018172804.GA2151929@nvidia.com>
- <CAKbZUD0Z_Kyumx3ourywUYhfksGNgJWrCpjAdnxtsbwS4vMRkA@mail.gmail.com>
- <1cb07628-269c-4d6c-9936-f3a2b233165f@leemhuis.info>
- <b6852c2d-3371-47a4-bfeb-049f4048e88a@suse.cz>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <b6852c2d-3371-47a4-bfeb-049f4048e88a@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1729315740;6a3e10a2;
-X-HE-SMSGID: 1t221I-0003ZW-Jy
+References: <20241018-post-reset-v1-0-5aadb7550037@chromium.org> <172925540096.17773.4550001283125132036.robh@kernel.org>
+In-Reply-To: <172925540096.17773.4550001283125132036.robh@kernel.org>
+From: Fei Shao <fshao@chromium.org>
+Date: Sat, 19 Oct 2024 13:35:47 +0800
+X-Gmail-Original-Message-ID: <CAC=S1njH=D247j80MezGPHjwg_ZLWtH5gasXfOB-Y9Geq50frA@mail.gmail.com>
+Message-ID: <CAC=S1njH=D247j80MezGPHjwg_ZLWtH5gasXfOB-Y9Geq50frA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Using i2c-hid-of-elan driver instead of i2c-hid-of driver
+To: "Rob Herring (Arm)" <robh@kernel.org>, Hsin-Te Yuan <yuanhsinte@chromium.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
+	Hsin-Yi Wang <hsinyi@chromium.org>, Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18.10.24 23:38, Vlastimil Babka wrote:
-> On 10/18/24 8:54 PM, Thorsten Leemhuis wrote:
+On Fri, Oct 18, 2024 at 8:57=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
+>
+>
+> On Fri, 18 Oct 2024 12:03:03 +0000, Hsin-Te Yuan wrote:
+> > After commit 2be404486c05 ("HID: i2c-hid-of: Add reset GPIO support to
+> > i2c-hid-of"), i2c-hid-of driver resets the touchscreen without having
+> > proper post-reset delay on OF platform.  From the commit message of tha=
+t
+> > commit, not to decribe poset-reset delay in device tree is intended.
+> > Instead, describing the delay in platform data and changing to use
+> > specialized driver is more preferable solution.
+> >
+> > Also workaround the race condition of pinctrl used by touchscreen and
+> > trackpad in this series to avoid merge conflict.
+> >
+> > Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+> > ---
+> > Hsin-Te Yuan (2):
+> >       arm64: dts: mediatek: mt8183: Fix race condition of pinctrl
+> >       arm64: dts: mediatek: mt8183: Switch to Elan touchscreen driver
+> >
+> >  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-burnet.dts |  2 --
+> >  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts  |  3 ---
+> >  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts   | 12 +++-=
+--------
+> >  .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts   | 11 ++--=
+-------
+> >  .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts   | 11 ++--=
+-------
+> >  .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts   | 11 ++--=
+-------
+> >  .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel.dtsi |  3 ---
+> >  .../boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper.dtsi      |  3 ---
+> >  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico.dts   |  3 ---
+> >  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico6.dts  |  3 ---
+> >  .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow.dtsi |  3 ---
+> >  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi       | 10 +++-=
+------
+> >  12 files changed, 12 insertions(+), 63 deletions(-)
+> > ---
+> > base-commit: eca631b8fe808748d7585059c4307005ca5c5820
+> > change-id: 20241018-post-reset-ac66b0351613
+> >
+> > Best regards,
+> > --
+> > Hsin-Te Yuan <yuanhsinte@chromium.org>
+> >
+> >
+> >
+>
+>
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+>
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+>
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+>
+>   pip3 install dtschema --upgrade
+>
+>
+> New warnings running 'make CHECK_DTBS=3Dy mediatek/mt8183-kukui-jacuzzi-b=
+urnet.dtb mediatek/mt8183-kukui-jacuzzi-cozmo.dtb mediatek/mt8183-kukui-jac=
+uzzi-damu.dtb mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dtb mediatek/mt8183=
+-kukui-jacuzzi-fennel-sku6.dtb mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dt=
+b mediatek/mt8183-kukui-jacuzzi-pico.dtb mediatek/mt8183-kukui-jacuzzi-pico=
+6.dtb' for 20241018-post-reset-v1-0-5aadb7550037@chromium.org:
+>
+> arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico.dtb: dpi@14015000:=
+ power-domains: False schema does not allow [[92, 7]]
+>         from schema $id: http://devicetree.org/schemas/display/mediatek/m=
+ediatek,dpi.yaml#
+> arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: dpi@14015000:=
+ power-domains: False schema does not allow [[94, 7]]
+>         from schema $id: http://devicetree.org/schemas/display/mediatek/m=
+ediatek,dpi.yaml#
+> arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dtb: dpi@14015000=
+: power-domains: False schema does not allow [[92, 7]]
+>         from schema $id: http://devicetree.org/schemas/display/mediatek/m=
+ediatek,dpi.yaml#
+> arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico6.dtb: dpi@14015000=
+: power-domains: False schema does not allow [[90, 7]]
+>         from schema $id: http://devicetree.org/schemas/display/mediatek/m=
+ediatek,dpi.yaml#
+> arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-burnet.dtb: dpi@1401500=
+0: power-domains: False schema does not allow [[92, 7]]
+>         from schema $id: http://devicetree.org/schemas/display/mediatek/m=
+ediatek,dpi.yaml#
+>
 
->>> FWIW, seems to have been picked up into 9pfs-next
->>> (https://github.com/martinetd/linux/commit/79efebae4afc2221fa814c3cae001bede66ab259).
->>> Seems like we're just missing a PR to Linus?
-> 
-> If was Dominique, not Eric, see:
-> https://lore.kernel.org/all/ZvBIl8b9RRK9jgtJ@codewreck.org/
+I sent a patch that should fix these errors:
+https://lore.kernel.org/all/20241019052935.553886-1-fshao@chromium.org/
 
-Ahh, sorry, missed that. Apologies again.
-
-> Can you send it as mentioned in the email? :)
-
-Dominique: thx for sending that PR!
-
-Ciao, Thorsten
-
+Regards,
+Fei
 
