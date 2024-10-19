@@ -1,129 +1,291 @@
-Return-Path: <linux-kernel+bounces-372767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C74569A4CE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:36:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D069A4CEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EF7A2837E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:36:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 602DA2841B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D4A1DF977;
-	Sat, 19 Oct 2024 10:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kEF1cgSz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735181DF96D;
+	Sat, 19 Oct 2024 10:51:27 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A537D1DE4FE;
-	Sat, 19 Oct 2024 10:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B7242AA0
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 10:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729334195; cv=none; b=eVoM8E/5SMCfel3V3F9becXf2+Nwv25ZZwMVFyLkSGxTNWUu+JiNXctZ1tpd5yumXV/jgHJFJRJn8s6bR01JOc2OxZVhwS+0lR82Q3g/q4K/GY2230tJRnysmy4JbetandvfpO4WmtJtfGaOwKumDGvJkbtnGh8H+GIPU56sRYs=
+	t=1729335086; cv=none; b=eAI6enH/8g/ePOOlPMEyV6IF3T2LDzRNNEnFirE9GFVAzAgGtm+bByq34VTxy+SoXNI+lnuSiZterrignrAbVktYbknfev76rtMTcuZNBAnQsMlYLiX41vfMJ58O7G/K8Ri2eEVfHFCqf9R5wa1nrEstL4qvPiz0SIRvV3rURsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729334195; c=relaxed/simple;
-	bh=UipNdPw5pGNY1kN1FE/U/T/fYmGN6H1910arigY7NCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zpjxa4nAeyx6epCdijnj8Xe+y+XOHymStmszrXqFRMogqe+wo6md0bXV7gZ4r3CISQ+sHzzlBCEvFS70xq+NDBiXJDYZi/483ODtoIgTHRFjQpviOoO4pYO5Ap9Ciyb1DbYQ7/KSal538LkyDsC6UImbvqO9cr9WAuZu3l3edpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kEF1cgSz; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729334194; x=1760870194;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UipNdPw5pGNY1kN1FE/U/T/fYmGN6H1910arigY7NCc=;
-  b=kEF1cgSztPOJgUlFGi/c0dCq/Bthh0Gf051ciyQ23+eGK8suReOOTrAO
-   55i2L4CL0TWBOBkfb9yD1yJhWMOsnhoLS1PNU9FyiBndPB/DsNetYdZJ9
-   dNfkC4nqE4XHvOz4s6VO88eOm8kG+IZv+2NxjAJle6lzb7EeVWet8aUfA
-   RpDDawBTn5dpSVJ6yUfQKy379jrR93BmG89gOgg+5i7yG12YG/6Yq+89l
-   S+qVIvyATrSHBlVq1PiHpZdNhB7wVotBDzVKH1J6674BnWzVn0jqb/pBm
-   f1wgWMumoLMD0DJMtubCN3PXxA9Z7PXoKkt7ZG9tCDyasI7nX6pdHd6og
-   A==;
-X-CSE-ConnectionGUID: iuahNjVbTNSVgcp8BhOWjQ==
-X-CSE-MsgGUID: O3TndJdEQRu1th6agrp+cQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="39491155"
-X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
-   d="scan'208";a="39491155"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 03:36:33 -0700
-X-CSE-ConnectionGUID: 4Hsu7CY1Q3yNdZHnqQIOzg==
-X-CSE-MsgGUID: zGKS7FqpR1iuq7oKnwQgYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
-   d="scan'208";a="79902047"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 19 Oct 2024 03:36:29 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t26os-000Otn-1o;
-	Sat, 19 Oct 2024 10:36:26 +0000
-Date: Sat, 19 Oct 2024 18:36:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
-	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-Subject: Re: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-Message-ID: <202410191710.kHHObl1i-lkp@intel.com>
-References: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
+	s=arc-20240116; t=1729335086; c=relaxed/simple;
+	bh=cWkl2H2aUkfPQ4f+MVYM3tK2aR35BWP5R4PX9TWtldU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f7FVL39CAw3KjiuM6txNr/162QTj3/2fWLbTuZr4pQdD5KpfQfgaGjYaEDgjkRkfpIXK3bGiXmhcNum/CLmx3E0/XWIjP+lbTU8jX+32w9xTl7sFXOzcR+UPhMCQ9iHNdkhsezgjegxjBlF6OB19vVuEDAvjsxLfHjTSjrlejhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3ae3c2cacso29128075ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 03:51:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729335084; x=1729939884;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tGwjJGj/HWxhCPkzEgvah/3ffvHt6IGVDRr4kOEQlJ8=;
+        b=nmwHgsCmfX2oFMl4wwW0xzWZglu6/62y1K2pPfE2zhiWRrqYzh6Pnf3sMyCjSUIpWy
+         tIevLhaegeN8S6ReGm4l9hq8ynvi8gUymjR0JUVAYTzoNj/oBCxdtczjJTf1YnDLJaUJ
+         KLFaSCKU4gmHHpIO99zWYt7m/CH9HdbGqYLJW3T6KtmPMHhVRZcGu09Yza8jtvpGAoFZ
+         DD+/6Lp1Pk4e641NA9NHNC0XvopieTBNe9ZpS3fk+8Ru7NZcrsoRa8IHhG7a6OtASIra
+         2M8ySfkV7H1xRBM/fL/szN38IEaqzAp633UhK82ZxTWQ30mfVCfF4inuipd3fv/vo5z+
+         NGWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQoRXrzuffY1014hihcRHMt/iVx+L8NwoSUTu6dYWR10kWg9c5geUP1jPzmlJhokZxURpTDO6DVyjuPXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx7fpHsZADMkGA6LWmgCLGUwq2NAv8a8ioD88vZEoVWuN/HdPD
+	BvSeKnie0wfJSt0gmHq0eHVK0KcSxRvw3iYjQfjAhdhrzm88QthG4OhDjAgX09YZU9JpOWz+dRF
+	/bUVw4f0FEuXvejdprwiEWO3jP0lN9hQdUaaNUjJKEtdG/WcIiMn/HRY=
+X-Google-Smtp-Source: AGHT+IECuEt/4ypPW8j/SkvyZW5HGjDJZToorFfYWAynEcrHrdcPs822IU1bprve5s/Ci0ehlFLDn+UW7qGIiPNJVV4m3JB1nd06
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
+X-Received: by 2002:a05:6e02:1c29:b0:3a2:aed1:12a6 with SMTP id
+ e9e14a558f8ab-3a3f4059d87mr46011525ab.6.1729335083751; Sat, 19 Oct 2024
+ 03:51:23 -0700 (PDT)
+Date: Sat, 19 Oct 2024 03:51:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67138f2b.050a0220.1e4b4d.0026.GAE@google.com>
+Subject: [syzbot] [bpf?] KASAN: slab-out-of-bounds Read in bpf_inode_storage_free
+From: syzbot <syzbot+eff9059eb9bb5f59b754@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
+	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ciprian,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on abelloni/rtc-next]
-[also build test ERROR on robh/for-next arm64/for-next/core linus/master v6.12-rc3 next-20241018]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    c964ced77262 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16fa3030580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
+dashboard link: https://syzkaller.appspot.com/bug?extid=eff9059eb9bb5f59b754
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ciprian-Costea/dt-bindings-rtc-add-schema-for-NXP-S32G2-S32G3-SoCs/20241015-185302
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
-patch link:    https://lore.kernel.org/r/20241015105133.656360-3-ciprianmarian.costea%40oss.nxp.com
-patch subject: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-config: arm-randconfig-r123-20241018 (https://download.01.org/0day-ci/archive/20241019/202410191710.kHHObl1i-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20241019/202410191710.kHHObl1i-lkp@intel.com/reproduce)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410191710.kHHObl1i-lkp@intel.com/
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c964ced7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e937ef58569a/vmlinux-c964ced7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f1df9880ca4b/bzImage-c964ced7.xz
 
-All errors (new ones prefixed by >>):
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+eff9059eb9bb5f59b754@syzkaller.appspotmail.com
 
-   arm-linux-gnueabi-ld: drivers/rtc/rtc-s32g.o: in function `cycles_to_sec':
->> rtc-s32g.c:(.text.cycles_to_sec+0x60): undefined reference to `__aeabi_uldivmod'
-   arm-linux-gnueabi-ld: drivers/rtc/rtc-s32g.o: in function `rtc_clk_src_switch':
-   rtc-s32g.c:(.text.rtc_clk_src_switch+0x110): undefined reference to `__aeabi_uldivmod'
+loop0: detected capacity change from 0 to 4096
+ntfs3(loop0): Different NTFS sector size (2048) and media sector size (512).
+==================================================================
+BUG: KASAN: slab-out-of-bounds in bpf_inode_storage_free+0x133/0x300 kernel/bpf/bpf_inode_storage.c:68
+Read of size 8 at addr ffff88803db65458 by task syz.0.0/5109
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+CPU: 0 UID: 0 PID: 5109 Comm: syz.0.0 Not tainted 6.12.0-rc3-syzkaller-00087-gc964ced77262 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ bpf_inode_storage_free+0x133/0x300 kernel/bpf/bpf_inode_storage.c:68
+ security_inode_free+0xe3/0x1a0 security/security.c:1727
+ __destroy_inode+0x2d9/0x670 fs/inode.c:290
+ destroy_inode fs/inode.c:313 [inline]
+ evict+0x78b/0x9b0 fs/inode.c:756
+ ntfs_fill_super+0x40f9/0x4730 fs/ntfs3/super.c:1512
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1635
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f901ab7f79a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f901b952e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f901b952ef0 RCX: 00007f901ab7f79a
+RDX: 000000002001f340 RSI: 000000002001f380 RDI: 00007f901b952eb0
+RBP: 000000002001f340 R08: 00007f901b952ef0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000002001f380
+R13: 00007f901b952eb0 R14: 000000000001f329 R15: 000000002001f3c0
+ </TASK>
+
+Allocated by task 5109:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
+ lsm_inode_alloc security/security.c:756 [inline]
+ security_inode_alloc+0x37/0x310 security/security.c:1692
+ inode_init_always_gfp+0x988/0xcd0 fs/inode.c:235
+ inode_init_always include/linux/fs.h:3088 [inline]
+ alloc_inode+0x9f/0x1a0 fs/inode.c:272
+ iget5_locked+0x4a/0xa0 fs/inode.c:1335
+ ntfs_iget5+0xc9/0x3870 fs/ntfs3/inode.c:530
+ ntfs_fill_super+0x3168/0x4730 fs/ntfs3/super.c:1335
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1635
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 5109:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kmem_cache_free+0x1a2/0x420 mm/slub.c:4681
+ rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+ rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+ handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1037 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1037
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
+ __call_rcu_common kernel/rcu/tree.c:3086 [inline]
+ call_rcu+0x167/0xa70 kernel/rcu/tree.c:3190
+ __destroy_inode+0x2d9/0x670 fs/inode.c:290
+ destroy_inode fs/inode.c:313 [inline]
+ evict+0x78b/0x9b0 fs/inode.c:756
+ ntfs_fill_super+0x3366/0x4730 fs/ntfs3/super.c:1363
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1635
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88803db653f0
+ which belongs to the cache lsm_inode_cache of size 80
+The buggy address is located 24 bytes to the right of
+ allocated 80-byte region [ffff88803db653f0, ffff88803db65440)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x3db65
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 04fff00000000000 ffff8880304073c0 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080240024 00000001f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5111, tgid 5111 (udevd), ts 82220703988, free_ts 77769752471
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2412
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2578
+ new_slab mm/slub.c:2631 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
+ __slab_alloc+0x58/0xa0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4141
+ lsm_inode_alloc security/security.c:756 [inline]
+ security_inode_alloc+0x37/0x310 security/security.c:1692
+ inode_init_always_gfp+0x988/0xcd0 fs/inode.c:235
+ inode_init_always include/linux/fs.h:3088 [inline]
+ alloc_inode+0x9f/0x1a0 fs/inode.c:272
+ new_inode_pseudo fs/inode.c:1104 [inline]
+ new_inode+0x22/0x1d0 fs/inode.c:1123
+ __shmem_get_inode mm/shmem.c:2806 [inline]
+ shmem_get_inode+0x34a/0xd70 mm/shmem.c:2877
+ shmem_mknod+0x5f/0x1e0 mm/shmem.c:3573
+ shmem_mkdir+0x33/0x70 mm/shmem.c:3634
+page last free pid 5104 tgid 5104 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_folios+0xf12/0x18d0 mm/page_alloc.c:2686
+ folios_put_refs+0x76c/0x860 mm/swap.c:1007
+ free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ exit_mmap+0x496/0xc40 mm/mmap.c:1877
+ __mmput+0x115/0x390 kernel/fork.c:1347
+ exit_mm+0x220/0x310 kernel/exit.c:571
+ do_exit+0x9b2/0x28e0 kernel/exit.c:926
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
+ x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88803db65300: fc fc 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+ ffff88803db65380: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fa fb
+>ffff88803db65400: fb fb fb fb fb fb fb fb fc fc fc fc fa fb fb fb
+                                                    ^
+ ffff88803db65480: fb fb fb fb fb fb fc fc fc fc fa fb fb fb fb fb
+ ffff88803db65500: fb fb fb fb fc fc fc fc 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
