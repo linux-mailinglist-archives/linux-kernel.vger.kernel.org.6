@@ -1,123 +1,99 @@
-Return-Path: <linux-kernel+bounces-372683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051989A4BD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:33:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D0F9A4BDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC057282DF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815471C21459
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C1A1D7E31;
-	Sat, 19 Oct 2024 07:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBbGe+1r"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1E31DD545;
+	Sat, 19 Oct 2024 07:35:21 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0E01CC890;
-	Sat, 19 Oct 2024 07:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD781CC890;
+	Sat, 19 Oct 2024 07:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729323191; cv=none; b=FTyIuleEeeBs0m13VSe+S2hGDA8QkwzYYCZuUXq1Ev5t09EZ/ewAhA9wIVBARyHQRFLrA+OHLMSwirb7gmiErzCUAq0TdnN9lTfdAnNLGjUWxSqwnYT8YMOuasyucI3iIKC4wbP/pJ//B2rOP9H7v5GZVXaEtOAQHZxXslw3b3Q=
+	t=1729323321; cv=none; b=AvQOq3dDLyZ+qz32YMkipY/EdQHMEUt05pnecQaGOUbiXFz3Pyc7JmXGrxZoBMCAI5yqNawkUfwb4guMRJBrdMiJOuOZ6S9QVSNav4trppwPvKiR2dsSPEI89GaGugOgE38r3BC7MayvIowd/Kg3sMtlBAfa2gJIEBUsAjobPxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729323191; c=relaxed/simple;
-	bh=PM1w9jPYNHRU+duHImk/IOAFy3VpBGInZe9wWXFLRc8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WRr1zljhxcTnftpM/ZrADoz4UZLI4d39Gw6t1Uv6UdmGXGVaWfjsr7TLttH4nF875Vm1Y4SStRqj0wlbBzZaNapb7yzNQoEHtCUdfh+VKCdo4Uqbr+4qjpFmWmk7NwPXCO6GGUhOCg8eXUl+x/wUUmELtuta/PhkusBVal5p448=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBbGe+1r; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c767a9c50so27798305ad.1;
-        Sat, 19 Oct 2024 00:33:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729323189; x=1729927989; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lIu+bEoFl/+r/8JR6eoKiKy3olXY3TGY7BGrpwebwk=;
-        b=TBbGe+1rwybie9lrDsL9ng/c5RIBoW/PuWiaSdRttfo/cS75EkS32EW1uXSdur8ZEv
-         8P7GXi8wJ46ryCRM18BVL/FKXf1T6UH9bGRs8D5AD+PFhpJo9Xnrc41uIzQYqsv63zXM
-         ItBerq2z8YucduHJUC/AzJLi5DF1a5kQ4YvEfnXKFgsazANa5FRKOuQccs57rX6xqh8a
-         Zs4r3+IlOGj3rbHfXrT/nPGlx9ulPvSZPm2n3gtQ5XTJ84Oswu1bWSyL7LTKSndCNKRJ
-         Wy1Kmr1LDr4vpTgfHb1yLpdDX4686V9TN2b7xkR8aLn0CxkQvHcT8E2DN2kl4E+9MqKP
-         7hWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729323189; x=1729927989;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4lIu+bEoFl/+r/8JR6eoKiKy3olXY3TGY7BGrpwebwk=;
-        b=p+wAr1OfeMr6DRgv2ISGoVDRlkbQS6vVWFBpHZlwjcLbpjqeb19L96lPScV2DzP686
-         3jCZM6i+1wN7mVcGojInPIQqFg8mrjXnSnv4P6kewmopaXrguGxMqAM3s1u43HOMy9zc
-         dUqZeVhfBl+/5pDD1C7Qfzv5TRO1KH+KkznQfzTG9PLKiTqJvWl7WXIPlFXYsJbBLT0t
-         H82dhwM8sj5uhU7QtiNViXP6+Mn6E/XKaUrwa3+EgirtqKf2dD5Uip0smyOc7khM8ciq
-         xMN6PhIQDSZgCw1UK6g7WDip9wuDYz12s/9pY5yEh07umx1mPju3bn43vyV/1NGMxceq
-         twVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnfgYfaLs8B4X73feJmavx+gK0xa+OdVAsdBN9ch0c0upBpRqFBumHR4EDBfSH3CmX2Uw0q70KpwWM7g==@vger.kernel.org, AJvYcCXDp7h36jT4kibL7pReAavadaz9sXXWKxoWwwGIpQV7Q6j9BnKxOvJTiy748T8qTMK/qEacSEXx2dpi6cM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwutfhPb9eq9AxTHbNTDiSrbt4baSuUgK8kTgWPUw7VRWyozDbS
-	FcjLE/twzEqpq8Z2IzXIlCTG4+TA/CblsrhbPTMhjhqKbppuummzv/gMMQ==
-X-Google-Smtp-Source: AGHT+IGeCPFVsEf+ZjSSJ0DmPlGqLZtKnyfJ6/ukYudRaS6qlR3B/jq99wetB1TY62zsPU+MSfvDQA==
-X-Received: by 2002:a17:902:d505:b0:1fa:1dd8:947a with SMTP id d9443c01a7336-20e5a92837emr58392975ad.46.1729323188843;
-        Sat, 19 Oct 2024 00:33:08 -0700 (PDT)
-Received: from ubuntu.worldlink.com.np ([27.34.65.170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8f3d42sm22877205ad.211.2024.10.19.00.33.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 00:33:08 -0700 (PDT)
-From: Dipendra Khadka <kdipendra88@gmail.com>
-To: lee@kernel.org,
-	pavel@ucw.cz
-Cc: Dipendra Khadka <kdipendra88@gmail.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] leds: bcm6328: Replace divide condition with comparison for shift value
-Date: Sat, 19 Oct 2024 07:33:01 +0000
-Message-ID: <20241019073302.35499-1-kdipendra88@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729323321; c=relaxed/simple;
+	bh=l42ub1ifaXNW+eMZdGn+KTBSPRYAIUn7ijrbKKYoq0o=;
+	h=Subject:From:To:CC:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=fiY13+ygFtrMkzapyeAKH7MtOfWl46hKMMlVHEmDoFs7jg/BunPd9zZhPbigvnNlOX2uvWfncH0JQb5vAhGmB3FOHzg1jPyilBtMDJpJVWDYcbFSObQzcFiG/u0poPYHR24jxMDAMXq8bbH+TSbg/f1fwJ+vGJHt/mzkRV8YXwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XVtbv691vzySKF;
+	Sat, 19 Oct 2024 15:33:47 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id DED6F18009B;
+	Sat, 19 Oct 2024 15:35:14 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 19 Oct 2024 15:35:14 +0800
+Subject: Re: [PATCH v4] ACPI: GTDT: Tighten the check for the array of
+ platform timer structures
+From: Hanjun Guo <guohanjun@huawei.com>
+To: Zheng Zengkai <zhengzengkai@huawei.com>, <lpieralisi@kernel.org>,
+	<sudeep.holla@arm.com>, <mark.rutland@arm.com>, <maz@kernel.org>,
+	<rafael@kernel.org>, <lenb@kernel.org>
+CC: <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241016095458.34126-1-zhengzengkai@huawei.com>
+ <c1b7159e-3bd1-ff2d-da94-fcf5a48220d2@huawei.com>
+Message-ID: <48e969ca-d43f-6d48-1b7e-7377086f8881@huawei.com>
+Date: Sat, 19 Oct 2024 15:35:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <c1b7159e-3bd1-ff2d-da94-fcf5a48220d2@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-Fixes the following Smatch warnings:
-drivers/leds/leds-bcm6328.c:116 bcm6328_led_mode() warn: replace divide condition 'shift / 16' with 'shift >= 16'
-drivers/leds/leds-bcm6328.c:360 bcm6328_led() warn: replace divide condition 'shift / 16' with 'shift >= 16'
+On 2024/10/19 14:41, Hanjun Guo wrote:
+> On 2024/10/16 17:54, Zheng Zengkai wrote:
+>> As suggested by Marc and Lorenzo, first we need to check whether the
+>> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
+>> de-referencing what it points at to detect the length of the platform
+>> timer struct and then check that the length of current platform_timer
+>> struct is also valid, i.e. the length is not zero and within gtdt_end.
+>> Now next_platform_timer() only checks against gtdt_end for the entry of
+>> subsequent platform timer without checking the length of it and will
+>> not report error if the check failed and the existing check in function
+>> acpi_gtdt_init() is also not enough.
+>>
+>> Modify the for_each_platform_timer() iterator and use it combined with
+>> a dedicated check function platform_timer_valid() to do the check
+>> against table length (gtdt_end) for each element of platform timer
+>> array in function acpi_gtdt_init(), making sure that both their entry
+>> and length actually fit in the table.
+>>
+>> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>> Co-developed-by: Marc Zyngier <maz@kernel.org>
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> 
+> Nit: since there is a "Co-developed-by:" for Marc, the
+> "Signed-off-by:" can be removed.
 
-Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
----
-v2:
- - Changed the patch subject as suggested
- - Changed the patch description
-v1: https://lore.kernel.org/all/20240922174020.49856-1-kdipendra88@gmail.com/
- drivers/leds/leds-bcm6328.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Forget about this comment, the guide from submit patches needs
+the Signed-off-by:, sorry for the noise.
 
-diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
-index 29f5bad61796..592bbf4b7e35 100644
---- a/drivers/leds/leds-bcm6328.c
-+++ b/drivers/leds/leds-bcm6328.c
-@@ -113,7 +113,7 @@ static void bcm6328_led_mode(struct bcm6328_led *led, unsigned long value)
- 	unsigned long val, shift;
- 
- 	shift = bcm6328_pin2shift(led->pin);
--	if (shift / 16)
-+	if (shift >= 16)
- 		mode = led->mem + BCM6328_REG_MODE_HI;
- 	else
- 		mode = led->mem + BCM6328_REG_MODE_LO;
-@@ -357,7 +357,7 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
- 		break;
- 	case LEDS_DEFSTATE_KEEP:
- 		shift = bcm6328_pin2shift(led->pin);
--		if (shift / 16)
-+		if (shift >= 16)
- 			mode = mem + BCM6328_REG_MODE_HI;
- 		else
- 			mode = mem + BCM6328_REG_MODE_LO;
--- 
-2.43.0
-
+Thanks
+Hanjun
 
