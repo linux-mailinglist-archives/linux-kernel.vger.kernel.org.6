@@ -1,112 +1,239 @@
-Return-Path: <linux-kernel+bounces-372585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C159A4AB9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:43:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 532FF9A4ABD
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44811F22AA5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A7A8283DF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C801922F4;
-	Sat, 19 Oct 2024 00:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A04192D9A;
+	Sat, 19 Oct 2024 00:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A/gTqk81"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UQbF/m9a"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD5329CF6;
-	Sat, 19 Oct 2024 00:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55BF20E31C
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 00:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729298604; cv=none; b=CdI4ClV/9pgX0HeHN6m/DTqwTywtrIQjocTnq6lKn97ggLJoURa/VMx0++Wb+I0m6FRdaF3z/EXdfYl7oHhdHPY367sJX75/PLM8VLA5uAILzoRmveE1mLOtwYB5Z+Nj9jVIbAmpTzGGuxn5ZSrdtFEh38LCRltvkg04C5d3AgM=
+	t=1729298837; cv=none; b=frvpqgG2n/HntyGUiBUX2Vo5+BT8b4/gPwMyHtxWePqXT5WwIG8YQgG32nLjGlg9JZTuZU6pniW7UOVYjXyyFJzYCT/UlC85kEvzJiy/8yiyetuh/VxeY8GfFdu7Wx6Iughhw1MYwsb5xFS+RRHjEuN73peok4W3R6PKL73XeX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729298604; c=relaxed/simple;
-	bh=nqf8q4GUqAZCCdp2wBZWAnoftYc47n6AWiSbMm+iR9U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UX/9jXm1OCnj6dK3Rmdg0t2iSZ6VsCMXO4xMnt5zCbs4SgyYY+bVIwmHyGbnzc5rouCZTU2FecDnH0sbXqoqpT9NRpXNt+ucKNsM3WbaAzsh+WuCL67opf1h9xxDsDR1hwTEB87cH4qe/1Ffb2a1JCTLVIu88BOruyv7wKp8bS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A/gTqk81; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729298600;
-	bh=nqf8q4GUqAZCCdp2wBZWAnoftYc47n6AWiSbMm+iR9U=;
-	h=From:Date:Subject:To:Cc:From;
-	b=A/gTqk81zv4BjzTzHHkwld7nMQ9bnWiZ6SOhQEKz3gZtlvy9cJKJzJklnlFyPKG3F
-	 Mfgd01+FgrIbA5ka1jQlYTvEBdMv1q+yDkktWaQn08ymGAsdubwn031fBCLZG6BrJ5
-	 1De2supJN89KEqxJWPeGRe0axbe1WvLZa0c/J9FVxncWrkJsLpn2Cecbmrpgk7w2/8
-	 MfXMjrZb/IqvaRSJRkPFXPGsjON5o2t97lEwc3I9DbvUFX9FG6lgZndD++x/Re5tLL
-	 9qksKPNZQa8Fd1Grktkhx3VyqT5SHTECEDHUHci3Dl6hD0tPmduJdVnpD3nbzywzLl
-	 iQJ4xB6CXPHog==
-Received: from localhost (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1B8F317E0F6C;
-	Sat, 19 Oct 2024 02:43:20 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Sat, 19 Oct 2024 03:43:14 +0300
-Subject: [PATCH] ASoC: dt-bindings: everest,es8328: Document audio graph
- port
+	s=arc-20240116; t=1729298837; c=relaxed/simple;
+	bh=MWkc4kgSdYY1yY5/8fZILHwaGX69K2uYbgzuUy1Xg2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W6l3z8VXjmYy+loB89NgJeu7xrdyu2Jg0VqXAxKYpBltKSWr+9qK6vNiJF9IJVYKXKwZPIQpKC4AwmQw6uSBr5vlJKIv5QNtTwHT6Vlgaw7i5MQWEzywwNyHbo8/qOPbXLmzRMv7ujMx8/xncM6D3hy1LxqwCIMRnNPzjPayPuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UQbF/m9a; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2f771446-be6a-3b7c-4595-be8c8188145a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729298832;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/EFA0Vboc98xveNpC5j8v99xfq8WC2DXWWIW59XaPa8=;
+	b=UQbF/m9aBp2wwPK2nX/EDFTe0ZDcXloTBaw30su5QZcHQwyAnoMq7OrCQzigKT9wJthTcL
+	mD66NBPZMcZ8DYC8PssNN+hyZioYpiiZ5j8gJKFaoaolZAObalt3GcdEgnkzpBRetRTq93
+	WLrTRmnYHeuNl3q3ZfMgd7gwULexKS0=
+Date: Sat, 19 Oct 2024 08:46:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241019-es8328-doc-port-v1-1-25c1d1b5c65c@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAKEAE2cC/x3MywqAIBBA0V+RWTfgo4f2K9EicqzZpGhEEP170
- vIs7n2gUGYqMIoHMl1cOB4VqhGw7suxEbKvBi11q6RySMUabdHHFVPMJyrZd8EaN5B2UKuUKfD
- 9H6f5fT8IFNxRYQAAAA==
-X-Change-ID: 20241019-es8328-doc-port-1065f8397e29
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- David Yang <yangxiaohua@everest-semi.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, kernel@collabora.com, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Subject: Re: [PATCH v2] mm/codetag: move ref and tag null pointer check to
+ alloc_tag_add
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, yuzhao@google.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+References: <20241018152925.138341-1-hao.ge@linux.dev>
+ <20241018162559.143548-1-hao.ge@linux.dev>
+ <CAJuCfpEnRQ9p4V22wWMNwcHMYjToJETwrxkVNMV_EM46WbcF5g@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <CAJuCfpEnRQ9p4V22wWMNwcHMYjToJETwrxkVNMV_EM46WbcF5g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The ES8328/ES8388 audio codec is currently used in conjunction with
-audio-graph-card to provide an endpoint for binding with the other side
-of the audio link.
+Hi Suren
 
-This is achieved via the 'port' property, which is not supported by the
-binding:
 
-  rk3588s-indiedroid-nova.dtb: audio-codec@11: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
-    from schema $id: http://devicetree.org/schemas/sound/everest,es8328.yaml#
+On 10/19/24 01:30, Suren Baghdasaryan wrote:
+> On Fri, Oct 18, 2024 at 9:26 AM Hao Ge <hao.ge@linux.dev> wrote:
+>> From: Hao Ge <gehao@kylinos.cn>
+>>
+>> When we compile and load lib/slub_kunit.c,it will cause a panic.
+>>
+>> The root cause is that __kmalloc_cache_noprof was directly called
+>> instead of kmem_cache_alloc,which resulted in no alloc_tag being
+>> allocated.This caused current->alloc_tag to be null,leading to a
+>> null pointer dereference in alloc_tag_ref_set.
+>>
+>> Despite the fact that my colleague Pei Xiao will later fix the code
+>> in slub_kunit.c,we still need to move the null pointer check for ref
+>> and tag to alloc_tag_add here.
+>> It is sufficient for us to issue a warning to the user;
+>> It should not lead to a panic.
+>>
+>> Here is the log for the panic:
+>>
+>> [   74.779373][ T2158] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
+>> [   74.780130][ T2158] Mem abort info:
+>> [   74.780406][ T2158]   ESR = 0x0000000096000004
+>> [   74.780756][ T2158]   EC = 0x25: DABT (current EL), IL = 32 bits
+>> [   74.781225][ T2158]   SET = 0, FnV = 0
+>> [   74.781529][ T2158]   EA = 0, S1PTW = 0
+>> [   74.781836][ T2158]   FSC = 0x04: level 0 translation fault
+>> [   74.782288][ T2158] Data abort info:
+>> [   74.782577][ T2158]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>> [   74.783068][ T2158]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>> [   74.783533][ T2158]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>> [   74.784010][ T2158] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000105f34000
+>> [   74.784586][ T2158] [0000000000000020] pgd=0000000000000000, p4d=0000000000000000
+>> [   74.785293][ T2158] Internal error: Oops: 0000000096000004 [#1] SMP
+>> [   74.785805][ T2158] Modules linked in: slub_kunit kunit ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_mangle 4
+>> [   74.790661][ T2158] CPU: 0 UID: 0 PID: 2158 Comm: kunit_try_catch Kdump: loaded Tainted: G        W        N 6.12.0-rc3+ #2
+>> [   74.791535][ T2158] Tainted: [W]=WARN, [N]=TEST
+>> [   74.791889][ T2158] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+>> [   74.792479][ T2158] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>> [   74.793101][ T2158] pc : alloc_tagging_slab_alloc_hook+0x120/0x270
+>> [   74.793607][ T2158] lr : alloc_tagging_slab_alloc_hook+0x120/0x270
+>> [   74.794095][ T2158] sp : ffff800084d33cd0
+>> [   74.794418][ T2158] x29: ffff800084d33cd0 x28: 0000000000000000 x27: 0000000000000000
+>> [   74.795095][ T2158] x26: 0000000000000000 x25: 0000000000000012 x24: ffff80007b30e314
+>> [   74.795822][ T2158] x23: ffff000390ff6f10 x22: 0000000000000000 x21: 0000000000000088
+>> [   74.796555][ T2158] x20: ffff000390285840 x19: fffffd7fc3ef7830 x18: ffffffffffffffff
+>> [   74.797283][ T2158] x17: ffff8000800e63b4 x16: ffff80007b33afc4 x15: ffff800081654c00
+>> [   74.798011][ T2158] x14: 0000000000000000 x13: 205d383531325420 x12: 5b5d383734363537
+>> [   74.798744][ T2158] x11: ffff800084d337e0 x10: 000000000000005d x9 : 00000000ffffffd0
+>> [   74.799476][ T2158] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008219d188 x6 : c0000000ffff7fff
+>> [   74.800206][ T2158] x5 : ffff0003fdbc9208 x4 : ffff800081edd188 x3 : 0000000000000001
+>> [   74.800932][ T2158] x2 : 0beaa6dee1ac5a00 x1 : 0beaa6dee1ac5a00 x0 : ffff80037c2cb000
+>> [   74.801656][ T2158] Call trace:
+>> [   74.801954][ T2158]  alloc_tagging_slab_alloc_hook+0x120/0x270
+>> [   74.802494][ T2158]  __kmalloc_cache_noprof+0x148/0x33c
+>> [   74.802976][ T2158]  test_kmalloc_redzone_access+0x4c/0x104 [slub_kunit]
+>> [   74.803607][ T2158]  kunit_try_run_case+0x70/0x17c [kunit]
+>> [   74.804124][ T2158]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
+>> [   74.804768][ T2158]  kthread+0x10c/0x118
+>> [   74.805141][ T2158]  ret_from_fork+0x10/0x20
+>> [   74.805540][ T2158] Code: b9400a80 11000400 b9000a80 97ffd858 (f94012d3)
+>> [   74.806176][ T2158] SMP: stopping secondary CPUs
+>> [   74.808130][ T2158] Starting crashdump kernel...
+>>
+>> Fixes: e0a955bf7f61 ("mm/codetag: add pgalloc_tag_copy()")
+>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>> ---
+>> v2: Modify the errors in the title and commit message.
+>>      Remove the empty lines that were mistakenly added in version v1.
+>> ---
+>>   include/linux/alloc_tag.h | 8 ++++----
+>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+>> index 1f0a9ff23a2c..8603e3a9df10 100644
+>> --- a/include/linux/alloc_tag.h
+>> +++ b/include/linux/alloc_tag.h
+>> @@ -137,10 +137,6 @@ static inline void alloc_tag_sub_check(union codetag_ref *ref) {}
+>>   /* Caller should verify both ref and tag to be valid */
+>>   static inline void __alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *tag)
+>>   {
+>> -       alloc_tag_add_check(ref, tag);
+>> -       if (!ref || !tag)
+>> -               return;
+>> -
+> Unfortunately this change will result in __alloc_tag_ref_set() and
+> alloc_tag_ref_set() missing the following important check from
+> alloc_tag_sub_check():
+>
 
-Document the missing property.
+Maybe I missed something here, I'm a bit confused. Can you give me an 
+example to explain it?
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- Documentation/devicetree/bindings/sound/everest,es8328.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks
 
-diff --git a/Documentation/devicetree/bindings/sound/everest,es8328.yaml b/Documentation/devicetree/bindings/sound/everest,es8328.yaml
-index a0f4670fa38c8435b63566f7383c940b4950caa4..ed18e40dcaacf7eed39fa659795efb1518678379 100644
---- a/Documentation/devicetree/bindings/sound/everest,es8328.yaml
-+++ b/Documentation/devicetree/bindings/sound/everest,es8328.yaml
-@@ -50,6 +50,10 @@ properties:
-   HPVDD-supply:
-     description: Regulator providing analog output voltage 3.3V
- 
-+  port:
-+    $ref: audio-graph-port.yaml#
-+    unevaluatedProperties: false
-+
- required:
-   - compatible
-   - clocks
 
----
-base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
-change-id: 20241019-es8328-doc-port-1065f8397e29
+Best regards
+Hao
 
+
+> WARN_ONCE(ref && ref->ct,
+>    "alloc_tag was not cleared (got tag for %s:%u)\n",
+>    ref->ct->filename, ref->ct->lineno);
+>
+> I think the change below would fix this issue without the above
+> mentioned side-effect:
+>
+> -static inline void __alloc_tag_ref_set(union codetag_ref *ref, struct
+> alloc_tag *tag)
+> +static inline bool __alloc_tag_ref_set(union codetag_ref *ref, struct
+> alloc_tag *tag)
+>   {
+>          alloc_tag_add_check(ref, tag);
+>          if (!ref || !tag)
+> -                return;
+> +                return false;
+>
+>          ref->ct = &tag->ct;
+> +        return true;
+>   }
+>
+> -static inline void alloc_tag_ref_set(union codetag_ref *ref, struct
+> alloc_tag *tag)
+> +static inline bool alloc_tag_ref_set(union codetag_ref *ref, struct
+> alloc_tag *tag)
+>   {
+> -        __alloc_tag_ref_set(ref, tag);
+> +        if (unlikely(!__alloc_tag_ref_set(ref, tag)))
+> +                return false;
+> +
+>          /*
+>           * We need in increment the call counter every time we have a new
+>           * allocation or when we split a large allocation into smaller ones.
+>           * Each new reference for every sub-allocation needs to increment call
+>           * counter because when we free each part the counter will be
+> decremented.
+>           */
+>          this_cpu_inc(tag->counters->calls);
+> +        return true;
+>   }
+>
+>   static inline void alloc_tag_add(union codetag_ref *ref, struct
+> alloc_tag *tag, size_t bytes)
+>   {
+> -        alloc_tag_ref_set(ref, tag);
+> -        this_cpu_add(tag->counters->bytes, bytes);
+> +        if (likely(alloc_tag_ref_set(ref, tag)))
+> +                this_cpu_add(tag->counters->bytes, bytes);
+>   }
+>
+> Could you please confirm this fix?
+> Thanks,
+> Suren.
+>
+>>          ref->ct = &tag->ct;
+>>   }
+>>
+>> @@ -158,6 +154,10 @@ static inline void alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *t
+>>
+>>   static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag, size_t bytes)
+>>   {
+>> +       alloc_tag_add_check(ref, tag);
+>> +       if (!ref || !tag)
+>> +               return;
+>> +
+>>          alloc_tag_ref_set(ref, tag);
+>>          this_cpu_add(tag->counters->bytes, bytes);
+>>   }
+>> --
+>> 2.25.1
+>>
 
