@@ -1,114 +1,110 @@
-Return-Path: <linux-kernel+bounces-372838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193E89A4E1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:14:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D539A4E21
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CE8EB228C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:14:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A91E11C2310A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7D129D0C;
-	Sat, 19 Oct 2024 13:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097442AF17;
+	Sat, 19 Oct 2024 13:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iVd0TSCV"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TgNZPk/A"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5481620DF4
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 13:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94C78BEC
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 13:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729343661; cv=none; b=X0SrzS0QJYwlJIr2wwDMEcYsj4K/niim3vfqbwvh7MzQsHYlrO7QFvop3maHkrLsCNf7VrB217EpMpJXttEqk7Sng5/Gpnavsk+Ibx67PVZ9KRLw6w+zG5sBnV/En1xpZ7TLqMnY8dNJiwJlIMol7R/+OFHR/UJmu07l9YdEQzw=
+	t=1729343759; cv=none; b=usrz5kTgf2/jZM2sQbP9cB4g+RUMTkAUcFfBPIcUXquKzxJFwI8H3xcwsCsUawTBoAB3wIDTQgYyDDWitYF/ecHEptJqiJZxqG6u0E1g8oNS+ldekGvHNAGNjCF31y09mk572ssfjyHzAI9+eYETmfxvMSj1WYrO5pUmerBXg0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729343661; c=relaxed/simple;
-	bh=nFttUmTwQuRiqVsH4U6ZQZ/PMt4PrXLz7NgQU/oEK8s=;
+	s=arc-20240116; t=1729343759; c=relaxed/simple;
+	bh=wISQD/DiPmIf9nJtmm3pdMffWiKrAmYAz8lDC5keNaY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1WxyqLt6Zcg72bPk2ddWcVJmioJDVRweON53oaT9Ak4XL0ptdWhToVSs7b9atg/t4sUGin71em6dsBMFBCjsdXGdF3umJi8NwUtbwql0M71Weoy3bsgnI2k9rZSWpXGTieN3hfOuuJKcStmGsvE4qSDIbtBJmX0a6gmar1fpZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iVd0TSCV; arc=none smtp.client-ip=209.85.208.180
+	 Content-Type:Content-Disposition:In-Reply-To; b=RchjaG0tZuKD5jqGLiZAYW/q7p1fIZl1CjKsE8MFvts4U4s2Sak4M+0wQwQ3rz3xyd2BsqsPT8m50+0UNzhq1owTYbbUNyz6flaP4TYd/UvqIOLWLuWDpfEETirkzp6L60Jxmgxt75hKkx36c1OGSRzdVgssbBm5wtb68bCNxCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TgNZPk/A; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb599aac99so31268501fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 06:14:19 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f7606199so3451763e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 06:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729343657; x=1729948457; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DsxiJAaLUxZ8WyINPgvN9VPitcA+1/D6dK458s/cN50=;
-        b=iVd0TSCVd29MGdEkzPPi3/Q7NxQWVYxAnYSCP16F3d+41BjMVfosxmaPo3YZp7EiHb
-         72Z5mgnMa6FXmFmbVsaGoGSMNRILGLbbCgUZZHRyJj61tsxSQw+1xmQcNYgJ1JIqPZ9d
-         zkFVRcnYbSHQR0+amdxn40BYJcvhT2RUOkJm/AIxb1YpjV5axeV5enuN/pEDEwbIINk3
-         1KOx6Nwp5PB5Lc7uOdxpROAfRrHGGaKwlzq2WWbfq+fy69HFu9iLFYSfoPXgVQuKzcAE
-         hnGnYRPVKNCzOkkTi6uVOFz2iFOV7ENkqZbppXxu8oD/lZ2aSpTFQY+JoRrsOcC4+kzV
-         5PYg==
+        d=linaro.org; s=google; t=1729343754; x=1729948554; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nLoh5AgznUgCvu6vNVjF8MRQRk0OBbGWJlXddyz8ddc=;
+        b=TgNZPk/AFrSxalV3Pmt+6FoQ4aaYZEQYLxPxIPZevJUopeuazvj1mucDc/NtRItd+t
+         kWGLgKGyb8eXtrd6fk4Dha+BROIFnR2FVMABf6RS6ksn88d2YjO9es+lZpOOb+7htBRX
+         WbVXK3grEMqm4WDl6y2ndz0tRnMDuF6NcdVjrq+g7no/KbD+FV3Bn1eOr0aPuJmVqLbe
+         6Pivxj5JfRdzIlaLV9z+GgKN3DDiRXxvgHZ7/+3L+7XsjdtoKmcaS5xPqoQt3NDrW8gC
+         TUHC+qmOTtML2l31RiBTbBNnYV3LlOrX1XeP7pWZOiVzuIOqzYva1n8vC8G7gh7phuSu
+         JevA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729343657; x=1729948457;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DsxiJAaLUxZ8WyINPgvN9VPitcA+1/D6dK458s/cN50=;
-        b=eV/REb+3r8zWdkp8vgyqqbyNDKtGXS8HGPK2Jw5i8zHUs2wjSKu3aMGEIJYKlcMIIH
-         8fLE/B/liDrIJQ/B6Oy5QFlbKSAn84KONFYHAC96eBgOdkBDpFS/l/RkATiCxQ0zmMn9
-         iCFPJTXRhzVZ9H2Z/C2DbJAQ0S9mNqFHU4yVFK4SoS59N9+ET0X/N7Z6ZsY9dHUFpWaO
-         SUyBVGG+mVAZfH1EmnzjHc3TKL/xz/hSU8zQkFx79Nmyy/5LX00lxWddU/tN5IIO6nUk
-         F8JqP0FqXxAV2jLKAbMsHa80tZOKR/ofumM4/BhU1V3vb7h4drDAvT9j36BO6NRY7Ek6
-         msNg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4QW3mhg5H5QgxQzNL9Ae+HJL5t/eLbaVaxopfY6Gt7NmhGMaCEjoaMnIrFvURguxaspgD4+aA40MQ6iE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLW5LXlge5OV/ZXvBRS7f/wKR+DAZImWVXk0KR5MytscVo9Wo4
-	1qKdA+UxA8wcPKpFGGkuaaPPI/Ww+hNiyElh/wOzUv7N0/CaFeTuzI06jTaN3D4=
-X-Google-Smtp-Source: AGHT+IEjv+MXakpefCsgi5HLZxPHwYDurtx/yD0nuWtCXMQYx9C38W3JKkkERUExxV4d2KBsbM6yEQ==
-X-Received: by 2002:a2e:e01:0:b0:2fa:cdd1:4f16 with SMTP id 38308e7fff4ca-2fb82ea761bmr22402471fa.14.1729343657256;
-        Sat, 19 Oct 2024 06:14:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729343754; x=1729948554;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nLoh5AgznUgCvu6vNVjF8MRQRk0OBbGWJlXddyz8ddc=;
+        b=LrtyZTbcvztxbbrnVd1j0EFSF90ORm86XAau+U5pf5wbHZGDQFu69Zc4okKj0d5oAJ
+         XhOY7kzh8CvTmP1nycOWuTp+9BIzmr5TNjWWfJ1dkyOYamS1pnMpMcpbRVbrErWE8yBD
+         EtqU1I+UMrP8kMauDFzMaZ/OgPBHHpLS2hbPpTBiGAhnaJPP6JPJ8v4WKuPFogt3n7x5
+         KwcsITd8bzt8Y0JittdEFX0RF/CYOUXnvSl2GhU5dKnbSBSsLCcrGUFfzjFp4X2/xmHz
+         XQyeXjC8SCI5qdHhDxcsA4hWzEKigmFE9RRT3U8mS66m0fOcACAmDlqa71QqXmT5OFI0
+         EZUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRzSRqeOyz41yH1CVQiy8T2910fiNIZwmGfaVM3XSRZH4Vy0JXiO299UDQPLg9a6syfI6J8sQxZjS7qnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzQQXJ8PIumiqTBMzAtPSeLSzMIuThgLgxfgTbog3dAfGsyWiD
+	TjI9x+oS+M0V0d1C9WZDE5n2ypbMB7vvRU8T3EPRUQt8Zcv0xFBz0HRV++5g38E=
+X-Google-Smtp-Source: AGHT+IEFu0zK/9TF3cCcvEBZ0sen2jyT+GhSIm6vpUBEVskQof02UdUG/LGmK+X/rDmb1iKrzkMzDg==
+X-Received: by 2002:a05:6512:b92:b0:539:f922:bd4e with SMTP id 2adb3069b0e04-53a15219231mr3301905e87.23.1729343753896;
+        Sat, 19 Oct 2024 06:15:53 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb80712069sm5028321fa.0.2024.10.19.06.14.14
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151b90b5sm533532e87.88.2024.10.19.06.15.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 06:14:15 -0700 (PDT)
-Date: Sat, 19 Oct 2024 16:14:13 +0300
+        Sat, 19 Oct 2024 06:15:52 -0700 (PDT)
+Date: Sat, 19 Oct 2024 16:15:51 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Arnd Bergmann <arnd@kernel.org>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Nathan Chancellor <nathan@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] drm: a6xx: avoid excessive stack usage
-Message-ID: <k42wmgziqia6balqsrfualbg73giesjxxtyaldkxsrdxkro2li@6neybqsu27me>
-References: <20241018151143.3543939-1-arnd@kernel.org>
- <20241019093146.kdp25pir5onjmg4g@hu-akhilpo-hyd.qualcomm.com>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [PATCH RFC 04/14] pinctrl: qcom: spmi-mpp: Add PM8937 compatible
+Message-ID: <bg66uzc7i7bsounvl3vrhweiwbtvsomrt4tfkpojd63zd2ynrn@2pk4pypken5g>
+References: <20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org>
+ <20241019-msm8917-v1-4-f1f3ca1d88e5@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241019093146.kdp25pir5onjmg4g@hu-akhilpo-hyd.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241019-msm8917-v1-4-f1f3ca1d88e5@mainlining.org>
 
-On Sat, Oct 19, 2024 at 03:01:46PM +0530, Akhil P Oommen wrote:
-> On Fri, Oct 18, 2024 at 03:11:38PM +0000, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > Clang-19 and above sometimes end up with multiple copies of the large
-> > a6xx_hfi_msg_bw_table structure on the stack. The problem is that
-> > a6xx_hfi_send_bw_table() calls a number of device specific functions to
-> > fill the structure, but these create another copy of the structure on
-> > the stack which gets copied to the first.
-> > 
-> > If the functions get inlined, that busts the warning limit:
-> > 
-> > drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
+On Sat, Oct 19, 2024 at 01:50:41PM +0200, Barnabás Czémán wrote:
+> The PM8937 provides 4 MPPs.
+> Add a compatible to support them.
 > 
-> Why does this warning says that the limit is 1024? 1024 bytes is too small, isn't it?
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Kernel stacks are expected to be space limited, so 1024 is a logical
-limit for a single function.
-
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
 With best wishes
