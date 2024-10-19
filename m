@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-373019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC4E9A50AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:06:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2759A9A50AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A591F220D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:06:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46DBD1C214D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A748A191F95;
-	Sat, 19 Oct 2024 20:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6DE1922F3;
+	Sat, 19 Oct 2024 20:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sGlFlqLO"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="J8X2qPhC"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D8818DF6B
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 20:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216691925B7
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 20:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729368362; cv=none; b=XpyHgtm8FgEpMAm3yV3rRXgl15XBZjuLn0zBsf+9Op+0UasuwpkCrZmqGkuuMXFL4O1ypJDRj49+DSP1P39ugBjF47ki/FUrK/8q0CC9ho1a5XNWExD+c931P+vH196RgIYj1Psff4TDp/TJwKpgvwdTgf2hcW8y1/PvVcey1nE=
+	t=1729368367; cv=none; b=gCtyLScCil97OjdZojTqm68sUxthmCp4+Sffm0qrjQShVUA9eGONsLyjTZfdyhQUoSuDFmLgBgIri73n4LReV7Y+RohDJ8FHEewAPa/EHRD9Lh3HSMnyT5+HlNHEdtU3hR7EMtpIL5DYpML1dyvg9zyi06Pi1XyWmXBC+kPH1QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729368362; c=relaxed/simple;
-	bh=U+FOLny38uWyLzFC4uGBbzrzoC13KPeu8FMGt2iq7mM=;
+	s=arc-20240116; t=1729368367; c=relaxed/simple;
+	bh=gtiSM17gt7gIX1u0evkwjcCLqWGmYBS6OoNEZ4MKQUw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dB5I9kEdc+UdiVrpxSKmb6/m/3o4EnJMYYGTWv3HEAR4xO2Q/gs4IPeUTxznjESEM506DrP54XkWO/RkN8FQUHpj1njsBjqbfQTYJVgr3wxPa9ckiDLu1rHkyxppFshjvwDyjDP8OvTfqYKmSVaJxnYNH18kRw9HVWb+wfx9sJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sGlFlqLO; arc=none smtp.client-ip=91.218.175.179
+	 MIME-Version; b=BLHF2EFUSMhMzSItpD58BVtyZjAQL8yiBNLH5FpR9VUoV7WQzxxT6MimvccH93plUKc6iKWEF/vy7lInWkH42B20yzBOt8FeTOmYJ2o9bBZ4f4iRbTn0iEBPpzYXXGGsXDhJGgbjScp0hsbdY9VAOnJBbdb/bKVsZHKLyHdotz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=J8X2qPhC; arc=none smtp.client-ip=91.218.175.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729368357;
+	t=1729368363;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WHy4UUgPh9N0ZC0J41EsAiZ6O2IrnN2dRQMhtI05dJ4=;
-	b=sGlFlqLOyrbVccCyPRSqBK4SYymhJLelbwM7RUicOigZKwZuViE77lSuPuZ1rfyC1sbhUU
-	s8z59DYhaq6nJQaGGgelDBm1P3lo6TLSfXncgFi8b9tAxz1YtLxr5bCOs59mEz/KEd/64X
-	wdtUOoEOWLnOzaUf18kiiDxgdChk2c4=
+	bh=p/FQaXG0b2YwvUvBytmEDjYRTIaIDCFBgU8bD+QAH/4=;
+	b=J8X2qPhCKbAfc4GMwbX5gyDuV0Eb/4WOlf759e9CamvXTksrLiEc4iMaHrKvNQY7vOSplt
+	wSmsT6/Kcu2kNpiraMWUXjZLOjxIY4RhfgLaSWRYlCCiqSr+VQBIOxMvr5FaVk92jYgVZK
+	QbLXSvVgCwYudKkgajqKRE/B/wJC0Zw=
 From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Dominik Haller <d.haller@phytec.de>,
 	DRI Development List <dri-devel@lists.freedesktop.org>,
 	Linux Kernel List <linux-kernel@vger.kernel.org>,
 	Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Subject: [PATCH v5 10/13] drm/bridge: cdns-dsi: Move DSI mode check to _atomic_check()
-Date: Sun, 20 Oct 2024 01:35:27 +0530
-Message-Id: <20241019200530.270738-3-aradhya.bhatia@linux.dev>
+Subject: [PATCH v5 11/13] drm/atomic-helper: Separate out Encoder-Bridge enable and disable
+Date: Sun, 20 Oct 2024 01:35:28 +0530
+Message-Id: <20241019200530.270738-4-aradhya.bhatia@linux.dev>
 In-Reply-To: <20241019200530.270738-1-aradhya.bhatia@linux.dev>
 References: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
  <20241019200530.270738-1-aradhya.bhatia@linux.dev>
@@ -84,84 +84,177 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Aradhya Bhatia <a-bhatia1@ti.com>
 
-At present, the DSI mode configuration check happens during the
-_atomic_enable() phase, which is not really the best place for this.
-Moreover, if the mode is not valid, the driver gives a warning and
-continues the hardware configuration.
+The way any singular display pipeline, in need of a modeset, gets
+enabled is as follows -
 
-Move the DSI mode configuration check to _atomic_check() instead, which
-can properly report back any invalid mode, before the _enable phase even
-begins.
+	CRTC Enable
+	All Bridge Pre-Enable
+	Encoder Enable
+	All Bridge Enable
+
+- and the disable path is exactly the reverse of this.
+
+The CRTC enable/disable occurs by looping over the old and new CRTC
+states, while the bridge pre-enable, encoder enable, and bridge enable
+occur by looping through the new connector states of the display
+pipelines.
+
+At the moment, the encoder and bridge operations are grouped together
+and occur under the same loops.
+
+Separate out the enable/disable loops of the encoder and bridge
+operations into a different function, to make way for the re-ordering of
+the enable and disable sequence of all these display elements.
+
+This patch doesn't alter in any way the ordering of CRTC/encoder/bridge
+enable and disable, but merely helps to cleanly set up for the next
+patch and to make sure that the bisectibility remains intact.
 
 Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
 Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 ---
- drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 18 +++++++++++++++---
- drivers/gpu/drm/bridge/cadence/cdns-dsi-core.h |  1 +
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_atomic_helper.c | 97 +++++++++++++++++------------
+ 1 file changed, 57 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index 7341e609dc8b..79d8c2264c14 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -769,7 +769,7 @@ static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
- 	struct drm_display_mode *mode;
- 	struct phy_configure_opts_mipi_dphy *phy_cfg = &output->phy_opts.mipi_dphy;
- 	unsigned long tx_byte_period;
--	struct cdns_dsi_cfg dsi_cfg;
-+	struct cdns_dsi_cfg dsi_cfg = dsi->dsi_cfg;
- 	u32 tmp, reg_wakeup, div, status;
- 	int nlanes;
- 
-@@ -782,8 +782,6 @@ static void cdns_dsi_bridge_atomic_enable(struct drm_bridge *bridge,
- 	mode = &bridge->encoder->crtc->state->adjusted_mode;
- 	nlanes = output->dev->lanes;
- 
--	WARN_ON_ONCE(cdns_dsi_check_conf(dsi, mode, &dsi_cfg, false));
--
- 	cdns_dsi_init_link(dsi);
- 	cdns_dsi_hs_init(dsi);
- 
-@@ -954,6 +952,19 @@ static u32 *cdns_dsi_bridge_get_input_bus_fmts(struct drm_bridge *bridge,
- 	return input_fmts;
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 5186d2114a50..7741fbcc8fc7 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1122,11 +1122,10 @@ crtc_needs_disable(struct drm_crtc_state *old_state,
  }
  
-+static int cdns_dsi_bridge_atomic_check(struct drm_bridge *bridge,
-+					struct drm_bridge_state *bridge_state,
-+					struct drm_crtc_state *crtc_state,
-+					struct drm_connector_state *conn_state)
-+{
-+	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
-+	struct cdns_dsi *dsi = input_to_dsi(input);
-+	struct drm_display_mode *mode = &crtc_state->mode;
-+	struct cdns_dsi_cfg *dsi_cfg = &dsi->dsi_cfg;
-+
-+	return cdns_dsi_check_conf(dsi, mode, dsi_cfg, false);
+ static void
+-disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
++encoder_bridge_chain_disable(struct drm_device *dev, struct drm_atomic_state *old_state)
+ {
+ 	struct drm_connector *connector;
+ 	struct drm_connector_state *old_conn_state, *new_conn_state;
+-	struct drm_crtc *crtc;
+ 	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
+ 	int i;
+ 
+@@ -1189,6 +1188,16 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
+ 
+ 		drm_atomic_bridge_chain_post_disable(bridge, old_state);
+ 	}
 +}
 +
- static const struct drm_bridge_funcs cdns_dsi_bridge_funcs = {
- 	.attach = cdns_dsi_bridge_attach,
- 	.mode_valid = cdns_dsi_bridge_mode_valid,
-@@ -961,6 +972,7 @@ static const struct drm_bridge_funcs cdns_dsi_bridge_funcs = {
- 	.atomic_pre_enable = cdns_dsi_bridge_atomic_pre_enable,
- 	.atomic_enable = cdns_dsi_bridge_atomic_enable,
- 	.atomic_post_disable = cdns_dsi_bridge_atomic_post_disable,
-+	.atomic_check = cdns_dsi_bridge_atomic_check,
- 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
- 	.atomic_reset = drm_atomic_helper_bridge_reset,
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.h b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.h
-index 5db5dbbbcaad..b785df45bc59 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.h
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.h
-@@ -77,6 +77,7 @@ struct cdns_dsi {
- 	bool link_initialized;
- 	bool phy_initialized;
- 	struct phy *dphy;
-+	struct cdns_dsi_cfg dsi_cfg;
- };
++static void
++disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
++{
++	struct drm_crtc *crtc;
++	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
++	int i;
++
++	encoder_bridge_chain_disable(dev, old_state);
  
- #endif /* !__CDNS_DSI_H__ */
+ 	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
+ 		const struct drm_crtc_helper_funcs *funcs;
+@@ -1445,6 +1454,51 @@ static void drm_atomic_helper_commit_writebacks(struct drm_device *dev,
+ 	}
+ }
+ 
++static void
++encoder_bridge_chain_enable(struct drm_device *dev, struct drm_atomic_state *old_state)
++{
++	struct drm_connector *connector;
++	struct drm_connector_state *new_conn_state;
++	int i;
++
++	for_each_new_connector_in_state(old_state, connector, new_conn_state, i) {
++		const struct drm_encoder_helper_funcs *funcs;
++		struct drm_encoder *encoder;
++		struct drm_bridge *bridge;
++
++		if (!new_conn_state->best_encoder)
++			continue;
++
++		if (!new_conn_state->crtc->state->active ||
++		    !drm_atomic_crtc_needs_modeset(new_conn_state->crtc->state))
++			continue;
++
++		encoder = new_conn_state->best_encoder;
++		funcs = encoder->helper_private;
++
++		drm_dbg_atomic(dev, "enabling [ENCODER:%d:%s]\n",
++			       encoder->base.id, encoder->name);
++
++		/*
++		 * Each encoder has at most one connector (since we always steal
++		 * it away), so we won't call enable hooks twice.
++		 */
++		bridge = drm_bridge_chain_get_first_bridge(encoder);
++		drm_atomic_bridge_chain_pre_enable(bridge, old_state);
++
++		if (funcs) {
++			if (funcs->atomic_enable)
++				funcs->atomic_enable(encoder, old_state);
++			else if (funcs->enable)
++				funcs->enable(encoder);
++			else if (funcs->commit)
++				funcs->commit(encoder);
++		}
++
++		drm_atomic_bridge_chain_enable(bridge, old_state);
++	}
++}
++
+ /**
+  * drm_atomic_helper_commit_modeset_enables - modeset commit to enable outputs
+  * @dev: DRM device
+@@ -1465,8 +1519,6 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+ 	struct drm_crtc *crtc;
+ 	struct drm_crtc_state *old_crtc_state;
+ 	struct drm_crtc_state *new_crtc_state;
+-	struct drm_connector *connector;
+-	struct drm_connector_state *new_conn_state;
+ 	int i;
+ 
+ 	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
+@@ -1491,42 +1543,7 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+ 		}
+ 	}
+ 
+-	for_each_new_connector_in_state(old_state, connector, new_conn_state, i) {
+-		const struct drm_encoder_helper_funcs *funcs;
+-		struct drm_encoder *encoder;
+-		struct drm_bridge *bridge;
+-
+-		if (!new_conn_state->best_encoder)
+-			continue;
+-
+-		if (!new_conn_state->crtc->state->active ||
+-		    !drm_atomic_crtc_needs_modeset(new_conn_state->crtc->state))
+-			continue;
+-
+-		encoder = new_conn_state->best_encoder;
+-		funcs = encoder->helper_private;
+-
+-		drm_dbg_atomic(dev, "enabling [ENCODER:%d:%s]\n",
+-			       encoder->base.id, encoder->name);
+-
+-		/*
+-		 * Each encoder has at most one connector (since we always steal
+-		 * it away), so we won't call enable hooks twice.
+-		 */
+-		bridge = drm_bridge_chain_get_first_bridge(encoder);
+-		drm_atomic_bridge_chain_pre_enable(bridge, old_state);
+-
+-		if (funcs) {
+-			if (funcs->atomic_enable)
+-				funcs->atomic_enable(encoder, old_state);
+-			else if (funcs->enable)
+-				funcs->enable(encoder);
+-			else if (funcs->commit)
+-				funcs->commit(encoder);
+-		}
+-
+-		drm_atomic_bridge_chain_enable(bridge, old_state);
+-	}
++	encoder_bridge_chain_enable(dev, old_state);
+ 
+ 	drm_atomic_helper_commit_writebacks(dev, old_state);
+ }
 -- 
 2.34.1
 
