@@ -1,115 +1,181 @@
-Return-Path: <linux-kernel+bounces-372609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077939A4AED
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:14:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BC09A4AF8
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B90DB21C4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:14:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DE501C21BA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BA81CC8AD;
-	Sat, 19 Oct 2024 02:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqOWwoio"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C599F1CCB4F;
+	Sat, 19 Oct 2024 02:41:25 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F97137E;
-	Sat, 19 Oct 2024 02:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD751BDAAF;
+	Sat, 19 Oct 2024 02:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729304039; cv=none; b=i8m876aBz+84d1mwHxF15H1oCZ0TUhijLWhxBJlhvtbql7dnNEzKnJAySl3LwkJY4laZEMbzvjGjBS0ZuCBQbrlja3naAtofJdTJ8NdezWL5EUvyH+cZdjWQ8Gl8YQiO9m7BW0V1EN6YAOkTcmCJxQmrZtlVDnmVbM913sx2zlE=
+	t=1729305685; cv=none; b=F3fJcnRgVb2klTH6QL59HD1Wq/pHePtkY5RuVlbZXxVD0bV93JPckGxEcX34uE2A3GL4EIWZDB4bnXG6zMda0ErdjLkrkDercHUiXi90p7ypPur8S6KRs1kWanyz6+AaKGdBmWZ0DQDuviH3ZtXM7Fqop0ashdqL4yNJT5mAKQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729304039; c=relaxed/simple;
-	bh=hex4J5I3lxjPeyOhVGg+WdoyiHo81glgLww98b4OQmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HWAPm1rfhVfteGQwCgW76UFR/UftzQCXjISuqOvdb+v3g0XuU/6VD+C56fQIeFv5x2HDx4ZJxRrDgVRpUu69piLfaStYjVM5IMWXi54wOfiE2wGdhowfDJEgP2oJFClTSigN7qr6V6rhElBfDYSh0tEzilfuXtXP2bOvEdIJmiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqOWwoio; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea80863f12so1341700a12.1;
-        Fri, 18 Oct 2024 19:13:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729304037; x=1729908837; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m3OBhiG6hpLJQg9Qq6gvNx63LfPAP30OwnCahO0IdDw=;
-        b=mqOWwoiok6/Rw6mBaUIhW/sKOc8WyaXUwFVi1aWjCtb5dAc5XuyR+ImGQyVwzSnmgh
-         +TI3ANoX+W/mexGbNx1Ke2Hh4swiPktEXLMw6DJWxanWZJZoslqopp2nyghe4AyKvXXH
-         jg2b/zrAEYoaUEd3JI0Vl1xamgP9eMUy4GkrKau3c3vWYrdcCi7a1rN0NJXlPEYAlEat
-         xfGZePd+mUXKYFY8N/xjDWrJzn6I9u4ob8eol2uV/VthblsqOX0N1NY0ncYbIcnwnovW
-         qS1SbW5sxVYQ0qBK04RJ/fu5f19ZBhpS67SXSzP4fi+E4m/lEBMc4p0ZHG7HOhYw6nUD
-         aX9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729304037; x=1729908837;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m3OBhiG6hpLJQg9Qq6gvNx63LfPAP30OwnCahO0IdDw=;
-        b=gzvQAToM1bL6eYKLtAIOc42KPSRNiSvc6dT4zB98MjvnV2vv1ho2YHkr7os67PHRRV
-         nIXwHyo3CaoXE8ichskKvHa8kqcBDVikr7GIrai+iP+n7KBui5TXYYd8cZjwnfGSXFQH
-         x0AJGgh7wM/rHmuKvE0YOuQQkcTeXAFzUj2GcAAv/8y17Wf7m/KiuajSzfLHMbAKKIQf
-         wob0GDJCZ46LQ5qSxJ704EeQ0MIA5s1I9OKVzAgDrVGXQAOVAB/nxzSKsXoaldyT9GlM
-         rIjXwF+5oGse+PWxeXstaPz51TqrbTaD2SPGKmUeMfJ6Ilx+ztqZN2fqaASDtE5hyRZV
-         C0jA==
-X-Forwarded-Encrypted: i=1; AJvYcCUotwf8NdOd2XwJSBYn0nbdlhES1TEtrpdsddfXbAD6ZUUGe5hg2HSW/KbrwWjWvaaNJZL4gHyA2IxWXlNq@vger.kernel.org, AJvYcCV58yUTCDsNQGE6ZdQfp9wChv5pzcgp38hvaI+vMwDMIZ8DZ5bJVV+kOgbUjikgchd1ozAqADHTr4QNhU+O1Wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVKpDSKKe654xHC0p2WpVAbF9UyJUoW82qSK51Vc+hDcq3kQUq
-	ZBT2s4OOPp6cbhVGSMs8oRKqC2GfqmJiYbOAxWpHMnrmlsYSTqTC
-X-Google-Smtp-Source: AGHT+IE4I/Iv1lLYcMF2ZZmIIaMutEWKICjcPsDAVtltpIWvp0LxjTcOiq0LVYwKdoAvk+M0c2j6qw==
-X-Received: by 2002:a05:6a21:a4c1:b0:1d8:d6b6:94c6 with SMTP id adf61e73a8af0-1d92c4ad359mr6963538637.2.1729304036708;
-        Fri, 18 Oct 2024 19:13:56 -0700 (PDT)
-Received: from mail.google.com (125-239-144-11-fibre.sparkbb.co.nz. [125.239.144.11])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea3311d59sm2229509b3a.16.2024.10.18.19.13.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 19:13:56 -0700 (PDT)
-Date: Sat, 19 Oct 2024 15:13:49 +1300
-From: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
-To: geoff@infradead.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc: paulo.miguel.almeida.rodenas@gmail.com, linux-hardening@vger.kernel.org
-Subject: [PATCH][next] powerpc/ps3: replace open-coded sysfs_emit function
-Message-ID: <ZxMV3YvSulJFZ8rk@mail.google.com>
+	s=arc-20240116; t=1729305685; c=relaxed/simple;
+	bh=UzjDwqhpvxNW8+/cRxptfg4HWKRfjIWdNCm5/YldLOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IYbpunpMyfW2hf1GqbLeLBnbpRi6D1tzVyIKYgnuiNLQQLQg7eiwINijtV/rx+SbJWc+DEQuyW5/lPH3zFmlmir6mCWaZ+fWsfOcYxVTnwKwnA09cIhJSCrdqHsA3eQFy3s97iy9aqgmEVH81T43wfcFgRuuwavKGWPSoD9CMRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XVlk92X8pz1T88X;
+	Sat, 19 Oct 2024 10:23:45 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5347E18006C;
+	Sat, 19 Oct 2024 10:25:41 +0800 (CST)
+Received: from [10.174.179.113] (10.174.179.113) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 19 Oct 2024 10:25:40 +0800
+Message-ID: <1ae4bc8e-caa3-5ba1-f018-30b4a2801955@huawei.com>
+Date: Sat, 19 Oct 2024 10:25:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v2 net 3/4] ixgbe: Fix passing 0 to ERR_PTR in
+ ixgbe_run_xdp()
+Content-Language: en-US
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+CC: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <ast@kernel.org>, <daniel@iogearbox.net>,
+	<hawk@kernel.org>, <john.fastabend@gmail.com>, <vedang.patel@intel.com>,
+	<jithu.joseph@intel.com>, <andre.guedes@intel.com>, <horms@kernel.org>,
+	<jacob.e.keller@intel.com>, <sven.auhagen@voleatech.de>,
+	<alexander.h.duyck@intel.com>, <intel-wired-lan@lists.osuosl.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>
+References: <20241018023734.1912166-1-yuehaibing@huawei.com>
+ <20241018023734.1912166-4-yuehaibing@huawei.com> <ZxJTHIc3HPKxkD09@boxer>
+From: Yue Haibing <yuehaibing@huawei.com>
+In-Reply-To: <ZxJTHIc3HPKxkD09@boxer>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-sysfs_emit() helper function should be used when formatting the value
-to be returned to user space.
+On 2024/10/18 20:22, Maciej Fijalkowski wrote:
+> On Fri, Oct 18, 2024 at 10:37:33AM +0800, Yue Haibing wrote:
+>> ixgbe_run_xdp() converts customed xdp action to a negative error code
+>> with the sk_buff pointer type which be checked with IS_ERR in
+>> ixgbe_clean_rx_irq(). Remove this error pointer handing instead use
+>> plain int return value.
+>>
+>> Fixes: 924708081629 ("ixgbe: add XDP support for pass and drop actions")
+>> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 23 ++++++++-----------
+>>  1 file changed, 9 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+>> index 8b8404d8c946..78bf97ab0524 100644
+>> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+>> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+>> @@ -1908,10 +1908,6 @@ bool ixgbe_cleanup_headers(struct ixgbe_ring *rx_ring,
+>>  {
+>>  	struct net_device *netdev = rx_ring->netdev;
+>>  
+>> -	/* XDP packets use error pointer so abort at this point */
+>> -	if (IS_ERR(skb))
+>> -		return true;
+>> -
+>>  	/* Verify netdev is present, and that packet does not have any
+>>  	 * errors that would be unacceptable to the netdev.
+>>  	 */
+>> @@ -2219,9 +2215,9 @@ static struct sk_buff *ixgbe_build_skb(struct ixgbe_ring *rx_ring,
+>>  	return skb;
+>>  }
+>>  
+>> -static struct sk_buff *ixgbe_run_xdp(struct ixgbe_adapter *adapter,
+>> -				     struct ixgbe_ring *rx_ring,
+>> -				     struct xdp_buff *xdp)
+>> +static int ixgbe_run_xdp(struct ixgbe_adapter *adapter,
+>> +			 struct ixgbe_ring *rx_ring,
+>> +			 struct xdp_buff *xdp)
+> 
+> please align args. checkpatch didn't yell at you?
 
-This patch replaces open-coded sysfs_emit() in sysfs .show() callbacks
+These have aligned in my patch and checkpatch passed.
 
-Link: https://github.com/KSPP/linux/issues/105
-Signed-off-by: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
----
- arch/powerpc/platforms/ps3/system-bus.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+yuehaibing@localhost:~/code/net$ ./scripts/checkpatch.pl 0003-ixgbe-Fix-passing-0-to-ERR_PTR-in-ixgbe_run_xdp.patch
+total: 0 errors, 0 warnings, 0 checks, 67 lines checked
 
-diff --git a/arch/powerpc/platforms/ps3/system-bus.c b/arch/powerpc/platforms/ps3/system-bus.c
-index b9a7d9bae687..afbaabf182d0 100644
---- a/arch/powerpc/platforms/ps3/system-bus.c
-+++ b/arch/powerpc/platforms/ps3/system-bus.c
-@@ -453,10 +453,9 @@ static ssize_t modalias_show(struct device *_dev, struct device_attribute *a,
- 	char *buf)
- {
- 	struct ps3_system_bus_device *dev = ps3_dev_to_system_bus_dev(_dev);
--	int len = snprintf(buf, PAGE_SIZE, "ps3:%d:%d\n", dev->match_id,
--			   dev->match_sub_id);
- 
--	return (len >= PAGE_SIZE) ? (PAGE_SIZE - 1) : len;
-+	return sysfs_emit(buf, "ps3:%d:%d\n", dev->match_id,
-+			  dev->match_sub_id);
- }
- static DEVICE_ATTR_RO(modalias);
- 
--- 
-2.47.0
+0003-ixgbe-Fix-passing-0-to-ERR_PTR-in-ixgbe_run_xdp.patch has no obvious style problems and is ready for submission.
 
+> 
+>>  {
+>>  	int err, result = IXGBE_XDP_PASS;
+>>  	struct bpf_prog *xdp_prog;
+>> @@ -2271,7 +2267,7 @@ static struct sk_buff *ixgbe_run_xdp(struct ixgbe_adapter *adapter,
+>>  		break;
+>>  	}
+>>  xdp_out:
+>> -	return ERR_PTR(-result);
+>> +	return result;
+>>  }
+>>  
+>>  static unsigned int ixgbe_rx_frame_truesize(struct ixgbe_ring *rx_ring,
+>> @@ -2329,6 +2325,7 @@ static int ixgbe_clean_rx_irq(struct ixgbe_q_vector *q_vector,
+>>  	unsigned int offset = rx_ring->rx_offset;
+>>  	unsigned int xdp_xmit = 0;
+>>  	struct xdp_buff xdp;
+>> +	int xdp_res;
+>>  
+>>  	/* Frame size depend on rx_ring setup when PAGE_SIZE=4K */
+>>  #if (PAGE_SIZE < 8192)
+>> @@ -2374,12 +2371,10 @@ static int ixgbe_clean_rx_irq(struct ixgbe_q_vector *q_vector,
+>>  			/* At larger PAGE_SIZE, frame_sz depend on len size */
+>>  			xdp.frame_sz = ixgbe_rx_frame_truesize(rx_ring, size);
+>>  #endif
+>> -			skb = ixgbe_run_xdp(adapter, rx_ring, &xdp);
+>> +			xdp_res = ixgbe_run_xdp(adapter, rx_ring, &xdp);
+>>  		}
+>>  
+>> -		if (IS_ERR(skb)) {
+>> -			unsigned int xdp_res = -PTR_ERR(skb);
+>> -
+>> +		if (xdp_res) {
+>>  			if (xdp_res & (IXGBE_XDP_TX | IXGBE_XDP_REDIR)) {
+>>  				xdp_xmit |= xdp_res;
+>>  				ixgbe_rx_buffer_flip(rx_ring, rx_buffer, size);
+>> @@ -2399,7 +2394,7 @@ static int ixgbe_clean_rx_irq(struct ixgbe_q_vector *q_vector,
+>>  		}
+>>  
+>>  		/* exit if we failed to retrieve a buffer */
+>> -		if (!skb) {
+>> +		if (!xdp_res && !skb) {
+>>  			rx_ring->rx_stats.alloc_rx_buff_failed++;
+>>  			rx_buffer->pagecnt_bias++;
+>>  			break;
+>> @@ -2413,7 +2408,7 @@ static int ixgbe_clean_rx_irq(struct ixgbe_q_vector *q_vector,
+>>  			continue;
+>>  
+>>  		/* verify the packet layout is correct */
+>> -		if (ixgbe_cleanup_headers(rx_ring, rx_desc, skb))
+>> +		if (xdp_res || ixgbe_cleanup_headers(rx_ring, rx_desc, skb))
+>>  			continue;
+>>  
+>>  		/* probably a little skewed due to removing CRC */
+>> -- 
+>> 2.34.1
+>>
+> 
+> 
+> .
 
