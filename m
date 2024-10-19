@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-372954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FF79A4FCB
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:27:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C889A4FCD
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33DE11C24C18
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:27:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28855B260B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F74E16F0E8;
-	Sat, 19 Oct 2024 16:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EBA16F0E8;
+	Sat, 19 Oct 2024 16:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="qKMiUYSu"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="UY9izS8k"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0282118C333
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 16:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B7418D623
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 16:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729355245; cv=none; b=FMF2Nt63hyTK35Ypny5oAB0WY+LpG6ARhKG4yvi/DV0CVySZMjKPN5Q5wsQtXQ3KAB0xrzRWWVgFgvHudz2HvaCdnbS9DDuFk6W/txiqLvRYjkk5syAzV0bNQc8UYc4bVopAf59bsawRwS6t+eP8TI6lrNBYgDAtr/mKe8HZADc=
+	t=1729355269; cv=none; b=OkV3ssCNbvauM0qMg/Egii9x7N1hZXOqLzHafN/GGvBjt+kI3qohaXOzUbL2/oTz5Q3JrmrJZOnr2AG4NZb0nYPb4uXq4UHq4wLxa19T2dPwK9r/z8A0CFwszU/wOBVxT/MyYlYFbsa3tb57le3RH756dm/xjMTV/gZrcSL23hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729355245; c=relaxed/simple;
-	bh=Xl9vdTyOqGPq3WHHBASIoOO4M9v0AMy2nVdhepmVFX8=;
+	s=arc-20240116; t=1729355269; c=relaxed/simple;
+	bh=2QWlxf7+gAhVvRG3k5VPkJmnqUBJn3gQSo3pXC3zq2s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pB4ZvgkqJBvXJbVut7fsYn5U2n4NCbbQM+E4FfHQD1O+2mFgKeAgsXXk9TuvXqhHZI82FDC9grMYiUQESyAOp7Yx0jB6Sgb1eaYu2Hx+G3bvGKBAK68PxNPZVYzmTZoaUP964QTB4NEOpOENJcfYN17nlakbQpK9ZX4ZUn7hZnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=qKMiUYSu; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version; b=jVNH2zC+Ts87D2xWG7juDeRBDdGM0T6J67t4xu71x1GvapY6So11PaoPqZDFGVPKCEEhLuJwOBKbg/yZY2+rp4SkwNdwD5FXcRLT7JSMYjwtYX6bYdfYBUXNh8z2UIlDuH+unRETjZo4ilYx3xRGVBnhx1QCijQC3Puny/7TJwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=UY9izS8k; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c77459558so27734215ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:27:23 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c6f492d2dso36817935ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:27:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1729355243; x=1729960043; darn=vger.kernel.org;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1729355267; x=1729960067; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ayyCub6qQl7nB8NfvKhUdob3RBjft3xPo4E//xagIW0=;
-        b=qKMiUYSulTI25J6gRyT/jqnqUzgQCrLaf4yhzClHIhExnOkfmAJ/+bYAx6JqMdsDen
-         v7HGaO/YccvH8c/HLljnlM4+txlwBI36zg3bpCgGjEgbf8yOBWWi1teBIjhnWAhIDek1
-         iHdbG44zIMjbqqOJI1+ftFv+p9AcOdo1vuC2Ne83+CvRfOQ5ExoCwhixwOSASpI8VVNM
-         8MOlOyXer07CsIFi25RC5RoYeVeXTIVMHfu3SNK9MpkdN4TS1ReELUGSA9MfKkreFdJj
-         +MBK9bUlloxJRkBl5HidCvQ0qd8o/oqXX7XVPmi4D2yOWvyhbMWWsw1sZi66ifflmXE0
-         vheg==
+        bh=PSdP3C8YdR1jmbqfSauKDLLYk+KUcp0Cb8mVBlRfeWA=;
+        b=UY9izS8kjOfVVhyVSqIY+LEpLeGW+ONAjrf3SKyeCKp4Ed++L8pMyeLiShJS0zQ9hL
+         E+FuXcMkie06vbhhFqo9NC7Dt48xM4L0bqkuXEBo/TZLNw+ao6S8XNGth25ifja4FVq2
+         +nA8D/MAHo6v5Sq6CKh85/FeNUAAP6tt1UpH4+6g8eqgObrR7jK4pm16thuB4o6/PiCf
+         OfWmMdafMDX7dzrXk/o0KHqaKqVkdMwnpQV5TRzdKZNjMOoU6Q9w23/kR98wz9vxaYlg
+         DEXhTXXG5SpF5ND7EI2YHXppzaLDBJRqhkPjVw0sXb5KCr5vEMX2m6YRv006PNxRSgAD
+         g9OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729355243; x=1729960043;
+        d=1e100.net; s=20230601; t=1729355267; x=1729960067;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ayyCub6qQl7nB8NfvKhUdob3RBjft3xPo4E//xagIW0=;
-        b=IYvSjEl6t2l144g6qMRsX3CYZfdQmkUKoLYukImRMx3leNV0l28wZcoieSdSVL4RHY
-         LjbDeAVgfrhetL1WrR+Ji7g3PDzAProxk/bGJ6kjsG1ZHG8RjSN8hiRR4FuWSnSZ4HVB
-         Hy9FudoJgwT06UBrdYfYSfggDQs0uih+BYVv2zZDiSFNmqCDDD+5+PuimkyrOYXl6p8t
-         ps/B3VV0GN58NXIqZXzHpfgNMjBzf+0y2KJe/ri5saOycg/yx7w5L1baaX88v2dpHVCp
-         cASwbNXaU8FqOhKrVQ0D35ZWgTIwXe0aS4AXSnkbUBhZn+/vFiRqSa+L0Q2QbKWfLKJm
-         pckQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsqdxmdHMi17ZCu3Mt0YhxYhD7BYjqwifYMSwxSstH94Kyen4MH5jHM82DvifwpqgNtdNMK0FA11MHRi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC4UdjhD2pWLURDUxulNdGVUuv1ka6XDjDJl0YQ1td1pqsB4BF
-	1uiKvS2U9zh/kkOvCZ6JXUQ1ce1Gs3Hh5bwzw3wXcBNcXb9xmM2M9SHeAIrFphI=
-X-Google-Smtp-Source: AGHT+IGRiLKGL85dRLzDgmFfmI4bKce+qOy+rBWCEkJrRSeKD6oaU3345MPGRp8gkNXz5lOalMXPMQ==
-X-Received: by 2002:a17:903:32cb:b0:20c:9da6:65af with SMTP id d9443c01a7336-20e5a9581d1mr88430965ad.57.1729355243177;
-        Sat, 19 Oct 2024 09:27:23 -0700 (PDT)
+        bh=PSdP3C8YdR1jmbqfSauKDLLYk+KUcp0Cb8mVBlRfeWA=;
+        b=SiDmYTqLvRgnDV4r0GB+NmCddVLQckpjWN4Y34FMoLc5Tx9JZj5iXY2UQepOcoaKbs
+         wOOzx6JNRN1KoOQI9lKHvBt9FYVkPtsMx0hPjjf0ECCOBSbcZ6zdiqsWHbRDKEKJoctX
+         wge/ZIs3z6YRP7UQNojIAk1JK4Xcldy/6m4MFu8whvXNFZeIVlb9OuckTchg/LeHSUzA
+         CeLDefkRbAkq8SKjMeb1iIH9qBc6tJQvG5ES00sV8dPvYIvZUziTj13wuc3RBFxM7X/O
+         k+mq7IpsmJpLpIN7RqDQNy9jlVTbuDtyKKrQboO8YJ5ZC9JOurQabfp9TLuufE90ejl3
+         uN/g==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Dp7N0bGR/R9pc/vPmAQEURNpXxmNWiJTKSXvXiA4ct7Pt1j6q9CHQLWbk9HA3ri00UOXJ+HZHoYU+wA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye1Tq8mdkAS5satt4kQY8NUNKdN564o9luSneLacmg9wOzvH8H
+	JezSgE5JNRQ7jSmYtZvU3K1RLdxD5Wcz8ByUzUHd0Hb24Fows7dFJa7vWoWIQ6Q=
+X-Google-Smtp-Source: AGHT+IFB/lgLKenWFczXSTZ1QqSP6gxMxesJeEKkKsnhxr1xTnsZpi3fsqyNQ8NSXbyKQ9CWcBpXjA==
+X-Received: by 2002:a17:902:db04:b0:20c:9062:fb88 with SMTP id d9443c01a7336-20e5a70d863mr80409155ad.1.1729355267302;
+        Sat, 19 Oct 2024 09:27:47 -0700 (PDT)
 Received: from localhost.localdomain ([2a11:3:200::30df])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8de4bdsm29567625ad.180.2024.10.19.09.27.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e5a8de4bdsm29567625ad.180.2024.10.19.09.27.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 09:27:22 -0700 (PDT)
+        Sat, 19 Oct 2024 09:27:46 -0700 (PDT)
 From: Guodong Xu <guodong@riscstar.com>
 To: Conor Dooley <conor@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -90,11 +90,10 @@ Cc: Paul Walmsley <paul.walmsley@sifive.com>,
 	devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
 	Guodong Xu <guodong@riscstar.com>
-Subject: [PATCH v4 1/3] dt-bindings: vendor: add deepcomputing
-Date: Sun, 20 Oct 2024 00:26:03 +0800
-Message-Id: <20241019162605.308475-2-guodong@riscstar.com>
+Subject: [PATCH v4 2/3] dt-bindings: riscv: starfive: add deepcomputing,fml13v01
+Date: Sun, 20 Oct 2024 00:26:04 +0800
+Message-Id: <20241019162605.308475-3-guodong@riscstar.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241019162605.308475-1-guodong@riscstar.com>
 References: <20241019162605.308475-1-guodong@riscstar.com>
@@ -110,34 +109,39 @@ From: Sandie Cao <sandie.cao@deepcomputing.io>
 
 From: Sandie Cao <sandie.cao@deepcomputing.io>
 
-Add "deepcomputing" to the Devicetree Vendor Prefix Registry.
+Add "deepcomputing,fml13v01" as a StarFive SoC-based board.
+
+The DeepComputing FML13V01 board incorporates a StarFive JH7110 SoC, and
+it's designed for the Framework Laptop 13 Chassis, which has (Framework)
+SKU FRANHQ0001.
 
 Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-[elder@riscstar.com: revised the description]
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+[elder@riscstar.com: considerably shortened the description]
 Signed-off-by: Alex Elder <elder@riscstar.com>
 Signed-off-by: Guodong Xu <guodong@riscstar.com>
 ---
-v4: Updated description
-v3: Add Krzysztof's ack
-v2: Add deepcomputing into Vendor Prefix Registery
+v4: Added Rob's Ack
+    Updated description
+    Changed board name from fm7110 to fml13v01
+v3: No change
+v2: Add deepcomputing,fm7110 into model compatible list
 
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/riscv/starfive.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index b320a39de7fe..f8bb3df65797 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -356,6 +356,8 @@ patternProperties:
-     description: DataImage, Inc.
-   "^davicom,.*":
-     description: DAVICOM Semiconductor, Inc.
-+  "^deepcomputing,.*":
-+    description: DeepComputing (HK) Limited
-   "^dell,.*":
-     description: Dell Inc.
-   "^delta,.*":
+diff --git a/Documentation/devicetree/bindings/riscv/starfive.yaml b/Documentation/devicetree/bindings/riscv/starfive.yaml
+index 4d5c857b3cac..7ef85174353d 100644
+--- a/Documentation/devicetree/bindings/riscv/starfive.yaml
++++ b/Documentation/devicetree/bindings/riscv/starfive.yaml
+@@ -26,6 +26,7 @@ properties:
+ 
+       - items:
+           - enum:
++              - deepcomputing,fml13v01
+               - milkv,mars
+               - pine64,star64
+               - starfive,visionfive-2-v1.2a
 -- 
 2.34.1
 
