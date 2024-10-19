@@ -1,53 +1,98 @@
-Return-Path: <linux-kernel+bounces-373050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7489A5133
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 00:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 216179A5142
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 00:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58286B22706
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:10:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEBE3B2339D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35C8192B61;
-	Sat, 19 Oct 2024 22:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED6D192D69;
+	Sat, 19 Oct 2024 22:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVFOJYGg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3/Gl4uf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1389813C816;
-	Sat, 19 Oct 2024 22:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C837647F53;
+	Sat, 19 Oct 2024 22:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729375822; cv=none; b=WPALMXhSMDtoIhwIrccNVs+3FdOSRHtFCXUOcRoHFMT5097UKm51eS25+JIoVCGbE5/EdeUiiegzjijw89KOJOOsha02T1q0zkIpZ2mT3Y22gy69DNbn3VU9EAwmPzElmbih4D9fvlG93uCE27mgpCBuEzmdRVjce9SXMR3o1C8=
+	t=1729376234; cv=none; b=bPYTtgHg5njHBvkLZ9vQ58eklhvocJ8JIQHGgn6oydzCXdXRulgZeNZr618MRBp/LO7QvBhjbwdfZSPb41yw+fz8z+wrLrb52U7witVQKwYR5acEmwe6fGTb+5xlhngOSJGpjqxhDB7TFxHFXZyEg9Yv1au9silV9JrUb7LjZCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729375822; c=relaxed/simple;
-	bh=0B0VcEbPn1VvdEiFRhd+49vZuwZkGAIaCtI+62iJep8=;
+	s=arc-20240116; t=1729376234; c=relaxed/simple;
+	bh=Z2c0wsfmuX1zi8SflpbS251BcU2hxlDOujSruYyu/d0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sa8VL4fensrXmljaEiuPGIC+8s8+xWWRclEXTob1fD4x0j+I1y6SEteMblhvOefBEjoQVCedZMHw97vKawdcaTDEN8Vno8MQWzFtTr3QgcC+YnBYomcM7nKJ5o2hycFdppV0lhxNDzIZ5et+X14Dqe/i7JF/xeUfZGpnTWiTmok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVFOJYGg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50E34C4CEC5;
-	Sat, 19 Oct 2024 22:10:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ep6vGmEM6thKxeHMYCkQ2ihUoH2L33cAIh50WSmS1QEWddxgoUWHv6ZZrgXDZ5SsGftxFkODdoWoFtFWsGMgEYtVa9Om/eN1TWdUcLVb9RFSFXdPL8KIfbkV0oQJgofC1KqWxOYiIMi+u5JbhI827l4eSyth8ohv0DZBvvNmIVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3/Gl4uf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2BF9C4CEC5;
+	Sat, 19 Oct 2024 22:17:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729375821;
-	bh=0B0VcEbPn1VvdEiFRhd+49vZuwZkGAIaCtI+62iJep8=;
+	s=k20201202; t=1729376233;
+	bh=Z2c0wsfmuX1zi8SflpbS251BcU2hxlDOujSruYyu/d0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JVFOJYGgh3szznAZyAoNv3lVXQ0bnY0MsM9k39NIGkWUYnHM1hNzYeNK0yoQ6ZdqJ
-	 kKGSwRCrDC9U+v/TgX1iSFYo7qCzT9AZlcfodgE52M1sBilrd6+d2r2cSpOyU6+waP
-	 D6LUKZXJedlFNntgM1JvHWlU8+HH3eq7viW2aV61wK7teCk29ol5BEwOQoNJRUmqZy
-	 tqVhPxAJ0ddru7hRgFV413wkuJZS5YqeWt1xyMsDSVWFSOV62Adm8hTfBqkJVHGxc9
-	 KHP6UZimE/OSAnsqsQz0z88IcfrGBiFhGTi3maKPp6MRehGk1bmfk2CEMjWJc4TgxM
-	 60HMeDgRoRGOA==
-Date: Sat, 19 Oct 2024 15:10:19 -0700
+	b=Y3/Gl4ufOW+DMjq3rv6lYuhhIdTKFTpnYyq9HW3K85Fpw/HAzL0vMrW4IM6WgA6ot
+	 bjEzE8mPv3G48TEzrc49STj8tErEueRnWJWErlpFGCRDNYXxf9im+wvXTmSV4zaKV0
+	 ldRIuiJMSPHK7+jcRgJoan6AukGaTfuRN0fLb0k4bEoOLO4bzzu30c0zr4xQe5rqsB
+	 ele2dWq5/Lat3gCmSxFXcXRfJdqOONJR5Y9PAtRblqYiPb3tzG5o6SkuYpbslQB3Wg
+	 ZrBARuLjQoY8sKdBblenF5FJQAR6rsrhvv/Ra8Vcs8mcf/tC+y4RqwTBTJVaeAg57/
+	 Qr4B5j9wt3E/A==
+Date: Sat, 19 Oct 2024 15:17:10 -0700
 From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Maurer <mmaurer@google.com>, Song Liu <song@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com
-Subject: Re: [PATCH 00/12] Module Validation Refactor
-Message-ID: <ZxQuS1KDS0-ekHOz@bombadil.infradead.org>
-References: <20241015231651.3851138-1-mmaurer@google.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v6 1/8] mm: vmalloc: group declarations depending on
+ CONFIG_MMU together
+Message-ID: <ZxQv5vUuaFBT6Kxd@bombadil.infradead.org>
+References: <20241016122424.1655560-1-rppt@kernel.org>
+ <20241016122424.1655560-2-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,25 +101,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241015231651.3851138-1-mmaurer@google.com>
+In-Reply-To: <20241016122424.1655560-2-rppt@kernel.org>
 
-On Tue, Oct 15, 2024 at 11:16:34PM +0000, Matthew Maurer wrote:
-> Split out from Extended MODVERSIONS Support [1]
+On Wed, Oct 16, 2024 at 03:24:17PM +0300, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
-> This series refactors module validation during loading to ensure that
-> everything is checked on its way in. This is intended to make the code
-> robust enough that we can more confidently add new pieces like extended
-> MODVERSIONS.
+> There are a couple of declarations that depend on CONFIG_MMU in
+> include/linux/vmalloc.h spread all over the file.
 > 
-> [1] https://lore.kernel.org/all/20240925233854.90072-1-mmaurer@google.com/
+> Group them all together to improve code readability.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Thanks! KPD [0] picked this up and ran automated tests for us using kdevops,
-and the tests passed [1], I've included that into the last commit log and
-pushed to modules-next [2].
-
-[0] https://github.com/facebookincubator/kernel-patches-daemon
-[1] https://github.com/linux-kdevops/linux-modules-kpd/actions/runs/11420095343
-[2] git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
   Luis
 
