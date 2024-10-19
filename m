@@ -1,95 +1,66 @@
-Return-Path: <linux-kernel+bounces-372677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B709A4BBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:13:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640AF9A4BCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DBE71F23777
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0E41F2377E
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37E31DDC33;
-	Sat, 19 Oct 2024 07:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mH+E7fWv"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0641DE2A2;
+	Sat, 19 Oct 2024 07:17:56 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEC91D7E5B;
-	Sat, 19 Oct 2024 07:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745901D7E5B;
+	Sat, 19 Oct 2024 07:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729321915; cv=none; b=ZJt7hFPS3Pt4ArXL0+0/JGonaeHv/zLtsihAydmXwFG+IG5xWv8mCV6hPA9wJtWc7RBHE/QKRYiKd/i5mTgw4c98lONT0igoZP+f8JUq2oGSVCWr13qYzLKaEuxbjIOjlrniGhFuWGkRJ/0z28+6g0mWWgg+3Ad/nXrihcjj0X8=
+	t=1729322276; cv=none; b=JFmvLf3Usq3LocFYsDBYf2P//3wbytklJr944VaBa27XAQF8uePs+m3GZcz3ZyBKRiMwpq3KAdIKYh2p07HhHBPE5amzXmoE4dM17Z0BQeB0JCfQ/xDdXuNCRcDdlQr9Gu8lmvFJH0ZffGCcgQuc86PD9I1N6Y8+TmP14KR8rxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729321915; c=relaxed/simple;
-	bh=gyYDzQGKOqgYMYaJdzUg3i6tJ8ixJ54mQLbSTkrE1/Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ss1rlZKfLSuwgEGQLDP/zNYNx9IFqCqQXzT88d0igCfmR1wirYs3uiOWvx5G7kfZzggdsrIbnTcHKDghst2R+uJ3wr877Ct1p7ikdFNA+7I1ioxyEFv5O0rVBTbHpPY46zzh81du/dINYUZB0jqqi7V7WD8gI8b/Gq3rqXWtsMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mH+E7fWv; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c77459558so25624925ad.0;
-        Sat, 19 Oct 2024 00:11:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729321912; x=1729926712; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Gn+yGZNlg35IH0UZAn+lxJ6+L1bLg4klZElPzwowdU=;
-        b=mH+E7fWvdqEoGZRLaRghNCw5mMVBNrSbww20HRsh3eSZaxfxPv+pfyOzVXrtggf/Ip
-         NJUSNLNHzdKcZsYXhRh1XLK5iA2hWpiFirXV8QD7qXXT5zcnCb4of6sdNOMOrf5hacUn
-         j3WfXmzKR7JXh0chK7kvoeqvLeh44utWMvq+4bRdaRx/Ulaa8v0wv68vsnuTtWtg+627
-         PvNJIoRj/jG2ysowVW7EN4rdxibLHQSDPRI4B62Xa+yDGY9tnoS050h0QJvX1y94xUh3
-         EGX+9PUqSYbmcVU1xkkIHbzvxqVebA1jlP4NeFGpQpzH43kR1djVirmKA6pU576+TkZI
-         CCcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729321912; x=1729926712;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7Gn+yGZNlg35IH0UZAn+lxJ6+L1bLg4klZElPzwowdU=;
-        b=dDGg1JdVIjcwZfRCUBoLjpXgBht+3PDPle37tA7CHkhv1MKCMFAEmVEac0YHAYTwvx
-         fYoYzC5Fwtq7Qi/JtMTqu1JIP8ltcFlHpo5omDnE/zdrZtD9qsQ7C3znZJkiu7SXy3ZN
-         FGsJqPuYX2NHDlJgdbQ+h7MvdhuRP4eaUSwp0XX18GSaRISu0LlyEyFnF1nYyswK5IxP
-         Av2GMWViXiN5gXKt+vvKvsVJ3vVtOMSIrZUKfC77e5wtLT7K9TiHE5omeMCHpLa0bDfm
-         YewWHs3dO3VmPrB+eDU3xH4ouiLjs396/kcVLP1dJqaASI+84nRAkYckdQa6r9TaNM6k
-         ZWBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqw7Q9bBFcYN9NYuqGkuUVR6nuMl8Rve9sohItPj+A8DIEX+zOOZn6LObmbD1j4Knh8yk=@vger.kernel.org, AJvYcCXd1K8rPoJ3HPoC3KYI9wEL6C8Rtu2d73CiaES4AZI9cDg1rb5U2Y5vJ1HLqHKm57Ruj0tEmmV0JoUM7mgT@vger.kernel.org, AJvYcCXsFSAUIsKCKG/zpBXoMuFxFpDV9Uv+R7oKwGew49gqz72JATZyTE+rGof7a8wtU+QmapWjtvfo@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjfLhK1uQeWdGJ5CWEMF/bang3Bqb1kI+tFPW8OsfD4zZhPwzI
-	qExVqOEc4/K9EsR3Be42z1H9T2Kc0JSi+mAYK2GdByQ/oiGS56+rVnbDJQmhh9g=
-X-Google-Smtp-Source: AGHT+IE/SkDlNN6p0OGPS3TeQrfyaFsGLBzlRh1iKulhu+uDf+sHLST8POK39eHc2Pb5oKWkazqeww==
-X-Received: by 2002:a17:903:1c7:b0:20d:2ce5:750d with SMTP id d9443c01a7336-20e5a725bfbmr72473375ad.12.1729321912151;
-        Sat, 19 Oct 2024 00:11:52 -0700 (PDT)
-Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20e5a8d6408sm22609135ad.166.2024.10.19.00.11.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 00:11:51 -0700 (PDT)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: Martin KaFai Lau <martin.lau@linux.dev>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	bpf@vger.kernel.org (open list:BPF [NETWORKING] (tcx & tc BPF, sock_addr)),
-	netdev@vger.kernel.org (open list:BPF [NETWORKING] (tcx & tc BPF, sock_addr)),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Daniel Yang <danielyangkang@gmail.com>,
-	syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-Subject: [PATCH net] Drop packets with invalid headers to prevent KMSAN infoleak
-Date: Sat, 19 Oct 2024 00:11:39 -0700
-Message-Id: <20241019071149.81696-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1729322276; c=relaxed/simple;
+	bh=8Ci7FKbEJ8wfLsbm3P5p52CFIcHLE48XvNrbxWMT8WY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Oomx9dtlasPNtkOkdTcw88DPhfKARnR+SsFW6hTTzXkzWpDCQIcZTqAPTrkX7rRidDG9HI1b4SYDSapRJiwYHI3443LA9YPycKn7K6Sc7gdSwn3wxRtDBv2MFG3Wk2GrMr/Xd55zbEJl0GKlfmgh2tFz3Y1b/QtGlNYzaxbDbp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
+X-QQ-mid: bizesmtpsz10t1729322145t2gcni
+X-QQ-Originating-IP: MmLkSV7nZrQb/cnEymHleci7bWjXBsTzQKwQIpxawNo=
+Received: from sonvhi-TianYi510S-07IMB.. ( [116.128.244.171])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 19 Oct 2024 15:15:42 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11545662678210868571
+From: chenxiaosong@chenxiaosong.com
+To: corbet@lwn.net,
+	dhowells@redhat.com,
+	jlayton@kernel.org,
+	brauner@kernel.org,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	trondmy@kernel.org,
+	anna@kernel.org,
+	chuck.lever@oracle.com,
+	neilb@suse.de,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ChenXiaoSong <chenxiaosong@kylinos.cn>
+Subject: [PATCH 0/3] Documentation: update nfs idmapper doc and fix compile issues
+Date: Sat, 19 Oct 2024 15:15:36 +0800
+Message-Id: <20241019071539.125934-1-chenxiaosong@chenxiaosong.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,44 +68,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: OKKvvo6f47/b1g/xBdGInirOOSnzX73ova/Cc+PhSJRh8qb6o/WAzm9v
+	WdLadKDKmeCNlr8RML8LFmu5f7yYvLo2gHbO4eKUozQ62gRBk+cZbSuVUF2MwzU9yDuS+CD
+	m2WfHLaRHHKDgDniy26yYiL+rZuqGo2djT4Hiu+94aTNXezOSxO/StiCzVTckYFcis8VSIu
+	23RMYKjNGZSlGJQ7+s9BqgMAn9zoFmPepY9yweqebdmuD82AyPVO+Hmp1+iBHX5n/jW4oQt
+	rQmjD4DT9NcDRNr5D+PRPw5AfQN+itV4OHNG9sPPMZgHfioZsxEfs31DcS6boOYtFntDSDd
+	KT2o+FyU0WBbgXfqBXnAL7zaw9pPF9sYXjj8tvZ93tSDg7GvIwFLrtMTEFWuPV/qcxZqP7U
+	rYKwgQsjhg+oxYGuz98UzZIsfmo8YSlvBJQRQfSsdDZw4mizA3Cyoyf0He4q/Tup36AijtM
+	usHJ04uSW7c7k6xRZOWkCsBg3bTNHFFUgjsILG2tzTALz4Qx/dzGj4XzkGzl8O0gxsXISCE
+	uOs06MoswGU0MuX54c5mVbRLrs6j1ZL7OeaFuGNPcbnTi5gy177LUvN8tq8JSrJKhUvfbU8
+	ihpfcLK3VM9GwU/WReMvn6ZNsNEKAIyPwADzgAoaQF1HKEk33iCEub48SP9Jtg6y/dvuKni
+	0+4qiX9aqL/pc0j+uw/WQJWSpw4Tn9MTPVJMbq4Cs7RP0JKMpRLjESAX7oZZbgCaSimw7W8
+	L9TWfCjEFk+2CaEMTrWd5LsIAhME+ovclfsOOnB+irm/zrtNF5atwikRssyhCjjjUGunfp3
+	JrDJ6phh9s8E39O9gQZcKT06W3OGbeYzYQTobXVXCwilFOiVg+/KEzgVZDnyf4sk0m8H1GW
+	HrkHhd1UNWzkxdqUxBFrkvBcE7rMk5TDpDeBonYT0dPUrIuC53bgz3QFCXjH0LJDrVUcVjy
+	lytU=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-KMSAN detects uninitialized memory stored to memory by
-bpf_clone_redirect(). Adding a check to the transmission path to find
-malformed headers prevents this issue. Specifically, we check if the length
-of the data stored in skb is less than the minimum device header length.
-If so, drop the packet since the skb cannot contain a valid device header.
-Also check if mac_header_len(skb) is outside the range provided of valid
-device header lengths.
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 
-Testing this patch with syzbot removes the bug.
+Keep usage of `nfsidmap` consistent with nfsidmap manual.
 
-Fixes: 88264981f208 ("Merge tag 'sched_ext-for-6.12' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext")
-Reported-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=346474e3bf0b26bd3090
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
----
- net/core/filter.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Additionally, fix compile error and warning when running `make htmldocs`.
 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index cd3524cb3..92d8f2098 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -2191,6 +2191,13 @@ static int __bpf_redirect_common(struct sk_buff *skb, struct net_device *dev,
- 		return -ERANGE;
- 	}
- 
-+	if (unlikely(skb->len < dev->min_header_len ||
-+		     skb_mac_header_len(skb) < dev->min_header_len ||
-+		     skb_mac_header_len(skb) > dev->hard_header_len)) {
-+		kfree_skb(skb);
-+		return -ERANGE;
-+	}
-+
- 	bpf_push_mac_rcsum(skb);
- 	return flags & BPF_F_INGRESS ?
- 	       __bpf_rx_skb(dev, skb) : __bpf_tx_skb(dev, skb);
+ChenXiaoSong (3):
+  Documentation: nfs: idmapper: keep consistent with nfsidmap manual
+  docs: filesystems: fix compile error in netfs_library.rst
+  tracing/Documentation: fix compile warning in debugging.rst
+
+ Documentation/admin-guide/nfs/nfs-idmapper.rst | 59 ++++++++++++++++++++++++++++++++---------------------------
+ Documentation/filesystems/netfs_library.rst    |  1 -
+ Documentation/trace/index.rst                  |  1 +
+ 3 files changed, 33 insertions(+), 28 deletions(-)
+
 -- 
-2.39.2
+2.34.1
 
 
