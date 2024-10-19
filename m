@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-372608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82CF89A4AEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:04:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077939A4AED
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02AF8B21B3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:04:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B90DB21C4C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4747E1CC17B;
-	Sat, 19 Oct 2024 02:04:28 +0000 (UTC)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BA81CC8AD;
+	Sat, 19 Oct 2024 02:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqOWwoio"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572571EA87
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 02:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F97137E;
+	Sat, 19 Oct 2024 02:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729303467; cv=none; b=KDe7ZSf7uPvS1Q41f1H4vTOU1uliJEu1fA5IxsKb3/sEhWJluc0e1PXHPDNUKz2J2qwaOu2kW7UmXZvpA/Nhx0qiMrbgKNqYf2h3UwjC6ulrh5q+wLjr2HvFS2SjuXyfsce3GlSmjjNfMT2ZCDObmsZLy6noYN2mM/OjWFxJfjw=
+	t=1729304039; cv=none; b=i8m876aBz+84d1mwHxF15H1oCZ0TUhijLWhxBJlhvtbql7dnNEzKnJAySl3LwkJY4laZEMbzvjGjBS0ZuCBQbrlja3naAtofJdTJ8NdezWL5EUvyH+cZdjWQ8Gl8YQiO9m7BW0V1EN6YAOkTcmCJxQmrZtlVDnmVbM913sx2zlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729303467; c=relaxed/simple;
-	bh=/66BogwaGO1TZ9c3mvfdx1XuHHVfDnGLOwb/j9TwsWA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=BWPcuMZapKsdeuNuEK3Sm06zg1imD34OEWtOGFoItYuZi21Sz2ExyHhd7KPRcclRA+ZzdftPEatfDX63Sfej44m8azD5n2eg5K2L+NMCrFrhT60MVsUjWknAezK+Jz1ZYJctarAk9chc3UEtWyGkOPQWjNc1Z0hG1mECfOA2/qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	s=arc-20240116; t=1729304039; c=relaxed/simple;
+	bh=hex4J5I3lxjPeyOhVGg+WdoyiHo81glgLww98b4OQmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HWAPm1rfhVfteGQwCgW76UFR/UftzQCXjISuqOvdb+v3g0XuU/6VD+C56fQIeFv5x2HDx4ZJxRrDgVRpUu69piLfaStYjVM5IMWXi54wOfiE2wGdhowfDJEgP2oJFClTSigN7qr6V6rhElBfDYSh0tEzilfuXtXP2bOvEdIJmiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqOWwoio; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539e59dadebso3790538e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:04:25 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea80863f12so1341700a12.1;
+        Fri, 18 Oct 2024 19:13:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729304037; x=1729908837; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m3OBhiG6hpLJQg9Qq6gvNx63LfPAP30OwnCahO0IdDw=;
+        b=mqOWwoiok6/Rw6mBaUIhW/sKOc8WyaXUwFVi1aWjCtb5dAc5XuyR+ImGQyVwzSnmgh
+         +TI3ANoX+W/mexGbNx1Ke2Hh4swiPktEXLMw6DJWxanWZJZoslqopp2nyghe4AyKvXXH
+         jg2b/zrAEYoaUEd3JI0Vl1xamgP9eMUy4GkrKau3c3vWYrdcCi7a1rN0NJXlPEYAlEat
+         xfGZePd+mUXKYFY8N/xjDWrJzn6I9u4ob8eol2uV/VthblsqOX0N1NY0ncYbIcnwnovW
+         qS1SbW5sxVYQ0qBK04RJ/fu5f19ZBhpS67SXSzP4fi+E4m/lEBMc4p0ZHG7HOhYw6nUD
+         aX9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729303462; x=1729908262;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/66BogwaGO1TZ9c3mvfdx1XuHHVfDnGLOwb/j9TwsWA=;
-        b=ZtliI+yBQsGxw4nzcTNowGaRSBmTVAVgmYn8UCxDamCEoJkUhVryjIhLzhVckCX7JX
-         UvWEBiJahOH36QORmsiKX+AbzhRVbmP3s32X0vTYVg8hYrHKdj38KIBAMwDobk1t6nFV
-         hVchcYCHTTvNX1LMSdjJ/8/yiCEYhxRiEDdf6qK0nf7VdslOcOo3rvlBu7E9jdLugpZb
-         nVyCHPdXEJkAOZFHzPwn2ZGYsD2sxtsNUqpwLOoMAZ/hHaPRTxzqb0OmqY8xNHxy+NvK
-         nQ0jGFCX+UodQswiCCUUo2aiyLeFRVOuUDitoKSgZQB+O13PnLLpy5hDA+U8r4c6Fb8E
-         4pZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYODoLyg+k/fBDn575XIpz4yrQaKutSSyEAH7McF432creHglVeGUYs8mcp1CI7C520lNbonoXPjeMc/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlS+3CLkPFXftW9cMv0LkcRmIfKfuILcKA7tEgkR9/9OkNxApL
-	sQLh7cH6fB0wN2WCzN+WpJxr+sCGqs48KabpU+tfbMp9dUKeUd0YzXowj8tI
-X-Google-Smtp-Source: AGHT+IEYhuXfXWa93G47IuUPannpnI1F6F1HxYAGt3ywgBFSKb88+8V3H4ovoDFBN39nVqgcI5kSNQ==
-X-Received: by 2002:a05:6512:691:b0:539:fc26:74bd with SMTP id 2adb3069b0e04-53a1522a903mr2795483e87.27.1729303461968;
-        Fri, 18 Oct 2024 19:04:21 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a152041edsm373566e87.184.2024.10.18.19.04.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 19:04:20 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so30738971fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:04:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXLs9toW7lR9QNoaPx0LXEg2ihAKJZdGm+/yCCzJF/YNu5zyH1e946PydhLLFAQzi9H9sZWm58Lx8bw82I=@vger.kernel.org
-X-Received: by 2002:a05:651c:2105:b0:2fb:5a7e:5072 with SMTP id
- 38308e7fff4ca-2fb83200a6bmr25649951fa.34.1729303460314; Fri, 18 Oct 2024
- 19:04:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729304037; x=1729908837;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m3OBhiG6hpLJQg9Qq6gvNx63LfPAP30OwnCahO0IdDw=;
+        b=gzvQAToM1bL6eYKLtAIOc42KPSRNiSvc6dT4zB98MjvnV2vv1ho2YHkr7os67PHRRV
+         nIXwHyo3CaoXE8ichskKvHa8kqcBDVikr7GIrai+iP+n7KBui5TXYYd8cZjwnfGSXFQH
+         x0AJGgh7wM/rHmuKvE0YOuQQkcTeXAFzUj2GcAAv/8y17Wf7m/KiuajSzfLHMbAKKIQf
+         wob0GDJCZ46LQ5qSxJ704EeQ0MIA5s1I9OKVzAgDrVGXQAOVAB/nxzSKsXoaldyT9GlM
+         rIjXwF+5oGse+PWxeXstaPz51TqrbTaD2SPGKmUeMfJ6Ilx+ztqZN2fqaASDtE5hyRZV
+         C0jA==
+X-Forwarded-Encrypted: i=1; AJvYcCUotwf8NdOd2XwJSBYn0nbdlhES1TEtrpdsddfXbAD6ZUUGe5hg2HSW/KbrwWjWvaaNJZL4gHyA2IxWXlNq@vger.kernel.org, AJvYcCV58yUTCDsNQGE6ZdQfp9wChv5pzcgp38hvaI+vMwDMIZ8DZ5bJVV+kOgbUjikgchd1ozAqADHTr4QNhU+O1Wk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVKpDSKKe654xHC0p2WpVAbF9UyJUoW82qSK51Vc+hDcq3kQUq
+	ZBT2s4OOPp6cbhVGSMs8oRKqC2GfqmJiYbOAxWpHMnrmlsYSTqTC
+X-Google-Smtp-Source: AGHT+IE4I/Iv1lLYcMF2ZZmIIaMutEWKICjcPsDAVtltpIWvp0LxjTcOiq0LVYwKdoAvk+M0c2j6qw==
+X-Received: by 2002:a05:6a21:a4c1:b0:1d8:d6b6:94c6 with SMTP id adf61e73a8af0-1d92c4ad359mr6963538637.2.1729304036708;
+        Fri, 18 Oct 2024 19:13:56 -0700 (PDT)
+Received: from mail.google.com (125-239-144-11-fibre.sparkbb.co.nz. [125.239.144.11])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea3311d59sm2229509b3a.16.2024.10.18.19.13.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 19:13:56 -0700 (PDT)
+Date: Sat, 19 Oct 2024 15:13:49 +1300
+From: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
+To: geoff@infradead.org, mpe@ellerman.id.au, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc: paulo.miguel.almeida.rodenas@gmail.com, linux-hardening@vger.kernel.org
+Subject: [PATCH][next] powerpc/ps3: replace open-coded sysfs_emit function
+Message-ID: <ZxMV3YvSulJFZ8rk@mail.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240908214718.36316-1-andrej.skvortzov@gmail.com>
- <20240908214718.36316-2-andrej.skvortzov@gmail.com> <CAGb2v65Laka+YaPyAecwxEhMkoodrXnDPn+UTwZUS_wsSBMzyg@mail.gmail.com>
- <ZuazIgLz5PP_Z8Cn@skv.local>
-In-Reply-To: <ZuazIgLz5PP_Z8Cn@skv.local>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 19 Oct 2024 10:04:06 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66-saec9RcQsCTNOz_Tz4+BSFPdDd6CEA+RrGcF6kCY=A@mail.gmail.com>
-Message-ID: <CAGb2v66-saec9RcQsCTNOz_Tz4+BSFPdDd6CEA+RrGcF6kCY=A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: sun50i-a64-pinephone: Add AF8133J to PinePhone
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Shoji Keita <awaittrot@shjk.jp>, 
-	Icenowy Zheng <icenowy@aosc.io>, Andre Przywara <andre.przywara@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sun, Sep 15, 2024 at 6:12=E2=80=AFPM Andrey Skvortsov
-<andrej.skvortzov@gmail.com> wrote:
->
-> Hi Chen-Yu Tsai,
->
-> On 24-09-09 16:08, Chen-Yu Tsai wrote:
-> > On Mon, Sep 9, 2024 at 5:48=E2=80=AFAM Andrey Skvortsov
-> > <andrej.skvortzov@gmail.com> wrote:
-> > >
-> > > From: Icenowy Zheng <icenowy@aosc.io>
-> > >
-> > > New batches of PinePhones switched the magnetometer to AF8133J from
-> > > LIS3MDL because lack of ST components.
-> > >
-> > > Both chips use the same PB1 pin, but in different modes.
-> > > LIS3MDL uses it as an gpio input to handle interrupt.
-> > > AF8133J uses it as an gpio output as a reset signal.
-> > >
-> > > It wasn't possible at runtime to enable both device tree nodes and
-> > > detect supported sensor at probe time, because both drivers try to
-> > > acquire the same gpio in different modes.
-> > >
-> > > Device tree fixup will be done in firmware without introducing new bo=
-ard
-> > > revision and new dts.
-> >
-> > FYI I've been working on an in-kernel prober [1] for such alternative
-> > components. This does not require firmware support.
-> >
-> > [1] https://lore.kernel.org/all/20240904090016.2841572-1-wenst@chromium=
-.org/
->
-> Thank you for the information.
->
-> I've tried to use in-kernel prober from your v7 patchset [1] on top of
-> -next and it worked without any changes to firmware.
->
-> Since there is still on-going review of your patches it looks like
-> it's to early to submit my changes for review. But I'm ready to test
-> your new patches.
+sysfs_emit() helper function should be used when formatting the value
+to be returned to user space.
 
-FYI I'm open to either approach. If the firmware can do it, that is also
-fine. I don't know if it makes sense to have both disabled by default
-though? That would break existing users, but so would the in-kernel
-prober approach, which requires both components be marked as
-"fail-needs-probe", and also requires that the kernel driver be enabled.
+This patch replaces open-coded sysfs_emit() in sysfs .show() callbacks
 
-In other words, I think the firmware approach is friendlier for existing
-users that have the original batches.
+Link: https://github.com/KSPP/linux/issues/105
+Signed-off-by: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
+---
+ arch/powerpc/platforms/ps3/system-bus.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/arch/powerpc/platforms/ps3/system-bus.c b/arch/powerpc/platforms/ps3/system-bus.c
+index b9a7d9bae687..afbaabf182d0 100644
+--- a/arch/powerpc/platforms/ps3/system-bus.c
++++ b/arch/powerpc/platforms/ps3/system-bus.c
+@@ -453,10 +453,9 @@ static ssize_t modalias_show(struct device *_dev, struct device_attribute *a,
+ 	char *buf)
+ {
+ 	struct ps3_system_bus_device *dev = ps3_dev_to_system_bus_dev(_dev);
+-	int len = snprintf(buf, PAGE_SIZE, "ps3:%d:%d\n", dev->match_id,
+-			   dev->match_sub_id);
+ 
+-	return (len >= PAGE_SIZE) ? (PAGE_SIZE - 1) : len;
++	return sysfs_emit(buf, "ps3:%d:%d\n", dev->match_id,
++			  dev->match_sub_id);
+ }
+ static DEVICE_ATTR_RO(modalias);
+ 
+-- 
+2.47.0
 
-ChenYu
-
-
-> [1] https://lore.kernel.org/all/20240911072751.365361-1-wenst@chromium.or=
-g/
->
-> --
-> Best regards,
-> Andrey Skvortsov
->
 
