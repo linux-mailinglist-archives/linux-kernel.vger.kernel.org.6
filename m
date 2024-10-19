@@ -1,164 +1,147 @@
-Return-Path: <linux-kernel+bounces-372607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DA79A4AE8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 03:57:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82CF89A4AEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA46428456F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:57:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02AF8B21B3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD8D1CC897;
-	Sat, 19 Oct 2024 01:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmiNoVH1"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4747E1CC17B;
+	Sat, 19 Oct 2024 02:04:28 +0000 (UTC)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD60192D98
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 01:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572571EA87
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 02:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729303065; cv=none; b=seIH+InlQc1skXiKXMRfL3KaAbh1rvlPOCR23owp2YXxFhB9+miX+YdtGbRx37CupjkWAPpHlqfRNZcgCVl5BNnxRA9GlXhCEfwxWBJLMZ7d0L4VgEslj9bQ7OnHmPe09NfOS6LdHcn0WB+WaPTByL16yt7I7rAHZ8M3SfGzl+w=
+	t=1729303467; cv=none; b=KDe7ZSf7uPvS1Q41f1H4vTOU1uliJEu1fA5IxsKb3/sEhWJluc0e1PXHPDNUKz2J2qwaOu2kW7UmXZvpA/Nhx0qiMrbgKNqYf2h3UwjC6ulrh5q+wLjr2HvFS2SjuXyfsce3GlSmjjNfMT2ZCDObmsZLy6noYN2mM/OjWFxJfjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729303065; c=relaxed/simple;
-	bh=VegzcmNKSCsDw6nnEH9RQsjVDD/QUcApo+a5M39zyK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPxwHjq9S0zeSUBP1okuHabgZ/GxskHzvnMLF7evVbdOa4JJL8HIRE3xQMf/rf1psw7qBML2dYgOK+6WzccF2V21qxfD929owoLeOjuGFEtydEMEU27YnBcmzEE8fJuur8NZLx3g0BcLR81AeN040UFIF4rrNGwGwkePCQhKOPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmiNoVH1; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1729303467; c=relaxed/simple;
+	bh=/66BogwaGO1TZ9c3mvfdx1XuHHVfDnGLOwb/j9TwsWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=BWPcuMZapKsdeuNuEK3Sm06zg1imD34OEWtOGFoItYuZi21Sz2ExyHhd7KPRcclRA+ZzdftPEatfDX63Sfej44m8azD5n2eg5K2L+NMCrFrhT60MVsUjWknAezK+Jz1ZYJctarAk9chc3UEtWyGkOPQWjNc1Z0hG1mECfOA2/qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c96df52c52so3349477a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:57:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729303061; x=1729907861; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EsGhrsXB+GEbAkiYIA6Lsvq2VDZw4frkC3ls3LwMZRU=;
-        b=cmiNoVH1EXNvItPU6omx/lZ9VHYb1Z7etO11JDK4mleEV6a/HfE7Nl2rMBRHhsTOv0
-         lGDLMBAEELY89owWIf/kz14NOLq5qOa32NbuYyAcqqmMuiLfVuGsglsaesApR2MdFP3i
-         Jh+4nWui0Fa2IIXZGJr4eqzOa7wXtnl0yyhdHt9iP8MZOKYSbeKRJctCnnteGovYnOBH
-         4Vvt5QhcZgvqvBDydaE4E/lCr/FjIc5Rzj9RO7fRNl2Ljxa/rwTou13UnkU1nQ/99Chj
-         YyxFYzaxJPmQX21BYBkxI3boIBlBAuE8cefDnjwcRmawYGFrXn/eXT8D5LxkMNsXQUFX
-         pNjg==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539e59dadebso3790538e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:04:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729303061; x=1729907861;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EsGhrsXB+GEbAkiYIA6Lsvq2VDZw4frkC3ls3LwMZRU=;
-        b=rjidqxwq9fwrijKyFfSsK34an5RFlbj8UymqknQYlrOl6V/+1dNqQFYookJ6EfyXas
-         KO5xG3KocA1oZ+GRknEU+l7WIFCvcaZkf2WA9nvHmBcPAzdIAidFL3BwmjsESgxYOqz9
-         APhQ40M9fES4K0FyHMnki2XmHD7GCICAqfByKkY7wP1XUK8DFibai5EcYCrInMxNAs7n
-         kVf63CSPBzmPW+kWGD66Bddobjw/TUsSrI8uso9DnsMOn6jTizQsh0VLmBVV4xrQl8Zm
-         nCsnMBILQfeelFn8qX4/QRLMy5zxvYDyqAk4w3xP1LrDXjWXyL+nWG7r9XdJpsCea01T
-         y6ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUXAPkbkz5kQXrGrKrDqcCX3JtJyq7rDfzGYDhKJnm57plFCvUi0WlLw7Wu9ogGn7l7cU8g12cakpbvVOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIz7WRnBS7YfmtjZrQo1JybyUEv8oiJxwSqtGoMIuY7JuXuGwT
-	aKoCxcLUhxArjD5Bdm8dQVKb2QogCtDUVlYwszY9F3PcfONJxhTnVts2TMYj
-X-Google-Smtp-Source: AGHT+IGzN92B0YhZid6l/XPw1axH0jrfo8cRbNJwxi4WWYg/jDIZN0nTlcnXM93mtqlVGhTwhKg+nA==
-X-Received: by 2002:a17:907:cf8a:b0:a9a:835b:fc77 with SMTP id a640c23a62f3a-a9a835bff99mr21814866b.8.1729303061306;
-        Fri, 18 Oct 2024 18:57:41 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68bc46fcsm157715866b.111.2024.10.18.18.57.38
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 18 Oct 2024 18:57:39 -0700 (PDT)
-Date: Sat, 19 Oct 2024 01:57:38 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: suhua <suhua.tanke@gmail.com>
-Cc: rppt@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, suhua <suhua1@kingsoft.com>
-Subject: Re: [PATCH] memblock: Uniform initialization all reserved pages to
- MIGRATE_MOVABLE
-Message-ID: <20241019015738.5oy7l6fzbmpeixgk@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20241017064449.5235-1-suhua1@kingsoft.com>
+        d=1e100.net; s=20230601; t=1729303462; x=1729908262;
+        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/66BogwaGO1TZ9c3mvfdx1XuHHVfDnGLOwb/j9TwsWA=;
+        b=ZtliI+yBQsGxw4nzcTNowGaRSBmTVAVgmYn8UCxDamCEoJkUhVryjIhLzhVckCX7JX
+         UvWEBiJahOH36QORmsiKX+AbzhRVbmP3s32X0vTYVg8hYrHKdj38KIBAMwDobk1t6nFV
+         hVchcYCHTTvNX1LMSdjJ/8/yiCEYhxRiEDdf6qK0nf7VdslOcOo3rvlBu7E9jdLugpZb
+         nVyCHPdXEJkAOZFHzPwn2ZGYsD2sxtsNUqpwLOoMAZ/hHaPRTxzqb0OmqY8xNHxy+NvK
+         nQ0jGFCX+UodQswiCCUUo2aiyLeFRVOuUDitoKSgZQB+O13PnLLpy5hDA+U8r4c6Fb8E
+         4pZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYODoLyg+k/fBDn575XIpz4yrQaKutSSyEAH7McF432creHglVeGUYs8mcp1CI7C520lNbonoXPjeMc/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlS+3CLkPFXftW9cMv0LkcRmIfKfuILcKA7tEgkR9/9OkNxApL
+	sQLh7cH6fB0wN2WCzN+WpJxr+sCGqs48KabpU+tfbMp9dUKeUd0YzXowj8tI
+X-Google-Smtp-Source: AGHT+IEYhuXfXWa93G47IuUPannpnI1F6F1HxYAGt3ywgBFSKb88+8V3H4ovoDFBN39nVqgcI5kSNQ==
+X-Received: by 2002:a05:6512:691:b0:539:fc26:74bd with SMTP id 2adb3069b0e04-53a1522a903mr2795483e87.27.1729303461968;
+        Fri, 18 Oct 2024 19:04:21 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a152041edsm373566e87.184.2024.10.18.19.04.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 19:04:20 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so30738971fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 19:04:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXLs9toW7lR9QNoaPx0LXEg2ihAKJZdGm+/yCCzJF/YNu5zyH1e946PydhLLFAQzi9H9sZWm58Lx8bw82I=@vger.kernel.org
+X-Received: by 2002:a05:651c:2105:b0:2fb:5a7e:5072 with SMTP id
+ 38308e7fff4ca-2fb83200a6bmr25649951fa.34.1729303460314; Fri, 18 Oct 2024
+ 19:04:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241017064449.5235-1-suhua1@kingsoft.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20240908214718.36316-1-andrej.skvortzov@gmail.com>
+ <20240908214718.36316-2-andrej.skvortzov@gmail.com> <CAGb2v65Laka+YaPyAecwxEhMkoodrXnDPn+UTwZUS_wsSBMzyg@mail.gmail.com>
+ <ZuazIgLz5PP_Z8Cn@skv.local>
+In-Reply-To: <ZuazIgLz5PP_Z8Cn@skv.local>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 19 Oct 2024 10:04:06 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66-saec9RcQsCTNOz_Tz4+BSFPdDd6CEA+RrGcF6kCY=A@mail.gmail.com>
+Message-ID: <CAGb2v66-saec9RcQsCTNOz_Tz4+BSFPdDd6CEA+RrGcF6kCY=A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: sun50i-a64-pinephone: Add AF8133J to PinePhone
+To: Andrey Skvortsov <andrej.skvortzov@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Shoji Keita <awaittrot@shjk.jp>, 
+	Icenowy Zheng <icenowy@aosc.io>, Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 02:44:49PM +0800, suhua wrote:
->Currently when CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set, the reserved
->pages are initialized to MIGRATE_MOVABLE by default in memmap_init.
+On Sun, Sep 15, 2024 at 6:12=E2=80=AFPM Andrey Skvortsov
+<andrej.skvortzov@gmail.com> wrote:
 >
->Reserved memory mainly stores the metadata of struct page. When
->HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON=Y and hugepages are allocated,
->the memory occupied by the struct page metadata will be freed.
+> Hi Chen-Yu Tsai,
 >
->Before this patch:
->when CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set, the freed memory was
->placed on the Movable list;
->When CONFIG_DEFERRED_STRUCT_PAGE_INIT=Y, the freed memory was placed on
->the Unmovable list.
+> On 24-09-09 16:08, Chen-Yu Tsai wrote:
+> > On Mon, Sep 9, 2024 at 5:48=E2=80=AFAM Andrey Skvortsov
+> > <andrej.skvortzov@gmail.com> wrote:
+> > >
+> > > From: Icenowy Zheng <icenowy@aosc.io>
+> > >
+> > > New batches of PinePhones switched the magnetometer to AF8133J from
+> > > LIS3MDL because lack of ST components.
+> > >
+> > > Both chips use the same PB1 pin, but in different modes.
+> > > LIS3MDL uses it as an gpio input to handle interrupt.
+> > > AF8133J uses it as an gpio output as a reset signal.
+> > >
+> > > It wasn't possible at runtime to enable both device tree nodes and
+> > > detect supported sensor at probe time, because both drivers try to
+> > > acquire the same gpio in different modes.
+> > >
+> > > Device tree fixup will be done in firmware without introducing new bo=
+ard
+> > > revision and new dts.
+> >
+> > FYI I've been working on an in-kernel prober [1] for such alternative
+> > components. This does not require firmware support.
+> >
+> > [1] https://lore.kernel.org/all/20240904090016.2841572-1-wenst@chromium=
+.org/
 >
->After this patch, the freed memory is placed on the Movable list
->regardless of whether CONFIG_DEFERRED_STRUCT_PAGE_INIT is set.
+> Thank you for the information.
 >
->Eg:
->echo 500000 > /proc/sys/vm/nr_hugepages
->cat /proc/pagetypeinfo
+> I've tried to use in-kernel prober from your v7 patchset [1] on top of
+> -next and it worked without any changes to firmware.
 >
->before：
->Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
->…
->Node    0, zone   Normal, type    Unmovable     51      2      1     28     53     35     35     43     40     69   3852
->Node    0, zone   Normal, type      Movable   6485   4610    666    202    200    185    208     87     54      2    240
->Node    0, zone   Normal, type  Reclaimable      2      2      1     23     13      1      2      1      0      1      0
->Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
->Node    0, zone   Normal, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
->Unmovable ≈ 15GB
->
->after：
->Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
->…
->Node    0, zone   Normal, type    Unmovable      0      1      1      0      0      0      0      1      1      1      0
->Node    0, zone   Normal, type      Movable   1563   4107   1119    189    256    368    286    132    109      4   3841
->Node    0, zone   Normal, type  Reclaimable      2      2      1     23     13      1      2      1      0      1      0
->Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
->Node    0, zone   Normal, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
->
->Signed-off-by: suhua <suhua1@kingsoft.com>
+> Since there is still on-going review of your patches it looks like
+> it's to early to submit my changes for review. But I'm ready to test
+> your new patches.
 
-Looks good to me.
+FYI I'm open to either approach. If the firmware can do it, that is also
+fine. I don't know if it makes sense to have both disabled by default
+though? That would break existing users, but so would the in-kernel
+prober approach, which requires both components be marked as
+"fail-needs-probe", and also requires that the kernel driver be enabled.
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+In other words, I think the firmware approach is friendlier for existing
+users that have the original batches.
 
->---
-> mm/mm_init.c | 4 ++++
-> 1 file changed, 4 insertions(+)
+
+ChenYu
+
+
+> [1] https://lore.kernel.org/all/20240911072751.365361-1-wenst@chromium.or=
+g/
 >
->diff --git a/mm/mm_init.c b/mm/mm_init.c
->index 4ba5607aaf19..6dbf2df23eee 100644
->--- a/mm/mm_init.c
->+++ b/mm/mm_init.c
->@@ -722,6 +722,10 @@ static void __meminit init_reserved_page(unsigned long pfn, int nid)
-> 		if (zone_spans_pfn(zone, pfn))
-> 			break;
-> 	}
->+
->+	if (pageblock_aligned(pfn))
->+		set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE_MOVABLE);
->+
-> 	__init_single_page(pfn_to_page(pfn), pfn, zid, nid);
-> }
-> #else
->-- 
->2.34.1
+> --
+> Best regards,
+> Andrey Skvortsov
 >
-
--- 
-Wei Yang
-Help you, Help me
 
