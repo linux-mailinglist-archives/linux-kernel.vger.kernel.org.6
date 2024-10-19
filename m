@@ -1,81 +1,137 @@
-Return-Path: <linux-kernel+bounces-372899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D6A99A4EF8
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:09:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B159A4EF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 337FDB22F0A
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFCD6B22F62
 	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D8E18734F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E57186616;
 	Sat, 19 Oct 2024 15:08:54 +0000 (UTC)
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/T5qP4t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE8B173;
-	Sat, 19 Oct 2024 15:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F3426AFB;
+	Sat, 19 Oct 2024 15:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729350533; cv=none; b=iV9qXTHUvP2lhhk562PrrGe7nLxTXddXdcllbGanGgqs26CdaiOTVIJ5KquGdspw27CEcCle8iEATu0xCsyCetkYF8st6vahEypVLuMPUn61ibUdJ57Y7E98MwhFz+cgIVC6Eg+WhRRFMvFfgON5N/UOGRv4KokZmDA3qU7dQ0s=
+	t=1729350533; cv=none; b=MsyXksmmSOlqxDUDW+/CT/PbaiGp2MwMeodXIyR63+o1R6i/CfzV+KH2vz7x64QXtZLaNKAA5PJ748YViqB4Rl77f/q6N/ENNunRimZtu86cvim4vDHLB1Yj9lZLeki5LQCfvBWh6B4qnK6aIjjZJde/QUrKmA6FCwYGWPt3QnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729350533; c=relaxed/simple;
-	bh=INBbBIlLs/UrNavyh1+opMYimFV6zgGy/6n+UeZOc3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OiOFyL/5lssKYiNd4MPss8iIIZr280ie44HrrK6kLwPcQD3QXLfMZVpIZw4GtcLnrCa00LSpFp5KV4QEG9QRYjqWkGtgtxzglmf24Spq5RzVzarGQ6nYqFH2SS/sF7eTTuT0fctbq7x49FhOmdEyWMoUKtbFXLlt9gD56ATXZfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stoeckmann.org; spf=pass smtp.mailfrom=stoeckmann.org; arc=none smtp.client-ip=212.227.17.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stoeckmann.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoeckmann.org
-Received: from localhost ([93.225.54.107]) by mrelayeu.kundenserver.de
- (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis) id
- 1Md6ZB-1taPTk3uyp-00clms; Sat, 19 Oct 2024 17:07:56 +0200
-Date: Sat, 19 Oct 2024 17:07:53 +0200
-From: Tobias Stoeckmann <tobias@stoeckmann.org>
-To: mcgrof@kernel.org
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] module: check symbol name offsets
-Message-ID: <nnleg2smcmp2x57bwgt5rgty445up4yrzybgrhwtfscxstrkrs@qujmpvuotgjb>
-References: <2hhrajjoxixnkhtlhhqzjxki4iuhr362345wgrmg6uzbfhlupo@hgbjsb5wizir>
+	bh=1zoGatUV0szsy3n6OGzZTifLwUWLh1RgjlzgjoOPEO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HGhuOLJB/9cuRwYmnqJkQKKfbfYBouRQ95hLjt+ppooo9FrRNqwWWcPA9mN8XX+8aXxpHv4Xn6urlLuEN7U8Eg7ujlK7PiUpb0que8Ed9bXWHeh9sHJ1gNJXksvHhxc6sC5bvBHx8SGWR580/ZIt6Rabd06brTK5mN1GAMmW6PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/T5qP4t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D469CC4CEC5;
+	Sat, 19 Oct 2024 15:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729350532;
+	bh=1zoGatUV0szsy3n6OGzZTifLwUWLh1RgjlzgjoOPEO4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Y/T5qP4tl6Tr7F58l5hYXNhQzXgpsDP0+qrJK2XZXwzEM3oz5FQPMvcMxRH9WPnEf
+	 PLVuLn2Mh2amipsvuuyGZZ4xZgYar1sSKczcW3tR2zTYN8myAgv8lg8i3FPdJBpLBd
+	 j0l6AX3PtDYumKoMN4A+9eg7X1JLYNTthmWo0ZGQHWo5TdcaFsVBwuvj7FMxo+W3bM
+	 ahAq6oyTswV7aaeYP2nnVsYkW11E8Pn3NKBflRTV7hc9AfuBtsKJl6PTZVpyCyyVf2
+	 n+4c3sLCkO7uCqAnqeuoMYDuOiM9O2p61i9OBNJRoppybV4L10fTORozEVX2sj4nnM
+	 8uGnrvMYZ3sCw==
+Date: Sat, 19 Oct 2024 16:08:17 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Angelo Dureghello <adureghello@baylibre.com>, David Lechner 
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Lars-Peter Clausen  <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski  <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Olivier Moysan  <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown 
+ <broonie@kernel.org>
+Subject: Re: [PATCH v6 4/8] iio: dac: adi-axi-dac: extend features
+Message-ID: <20241019160817.10c3a2bf@jic23-huawei>
+In-Reply-To: <ca3bb7c87a15ebb8e1284aa2da312cd00de49159.camel@gmail.com>
+References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+	<20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-4-eeef0c1e0e56@baylibre.com>
+	<ab559026-7e95-4adc-9978-6db30982b2a6@baylibre.com>
+	<bw2ldm54tg6klzfod5t5y6eb34dr4mcttojz4uulxqm5stk2hw@rmgpibnx6xsd>
+	<ca3bb7c87a15ebb8e1284aa2da312cd00de49159.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2hhrajjoxixnkhtlhhqzjxki4iuhr362345wgrmg6uzbfhlupo@hgbjsb5wizir>
-X-Provags-ID: V03:K1:rau0UUGU44g6KWu5N2S9A/ZpMC/NdEZEytoT3IlxDTqLNj1cc3S
- sqD0HpdvFplq9+9BoRzP7suz2FHC1+7hh5fvamUZ5JHUv0xLIcbwu8Gkv4tJszHhxLkWqpn
- qu4QJ0rCbJX+xrj2dBEkCm43YdXrwwxhCkIhByhNGr4Qnj7Ru3DgUGWU8/w5Hw0zQ56IP3E
- rkXYZhhe6dXKvbKNwN0/w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SBsBRdvZB58=;eJa5AV4wYgXg3NNR6bJBxIoTr1t
- 46DES3iIK1/O+UE4s/aP8NPsTYzEJkTMSSYeZh6vA0ed2rEWbNV94OC7tlBttOVvdG945BJ5+
- uIXOEf4sr9V3i2QBkctFeaifhgOO1MVCX8MdeI3zCAs+iyyZOR6ocULKcGpWny217NPBIZBJz
- 30kQvYWxzPyvqAbnp+ZCF8pEX3gOK7RN8vUxLpNn/t+6hUxhoM8BO2Lp0gDCvisjyjsqJxmxx
- lGbo28h65KF7rGe0lNTwYxK/Z5pfr+76IL/AGLfDSowkJTTYF7wDVzyxaoQ4nBXQJtzIBXlRc
- jDcfeU1Cb9rGk4PLji8v/diZkllHmHmsJ3gzaOFCvDC2MnPErq8lYzRrKeCipp5heIbavBfDh
- PpGnRcwlBC5kdjwH1bfIcYrmkvT6iSDfQgdBte6ZvyU2aQqApwGm8EMW0ScbOqgUhSSrAPKC0
- 0oiVraV5FA9cD2d6VesAW3B+cHCw6ZQAoRt0JFLQ26J4rdW3E38aKBxafx1Dl5rVjWiJooJ0o
- nA4UTY0KwrSWMB6iXj9NzVU2i0J/HKa7uVRK+4OEJwpIsGFGmfFfwSIIPOLoMto0llZC2bJX2
- 5XnspdEByU6qEDmI8pS6Cq0kNgNjZQA3rmShsnAWkt1M7rntr7ZTVFRosNkB2jcnRgxjw1SxL
- 2Xo0AOmud71ivhs+qXm7G8lRz33ryMc17J8FREtyaC5UartKjMgttYOtlErugAndbsQ5hbalp
- Om1TaXXPlAbnIRNZhgN/r8vCrufeYsU5w==
-
-On Sat, Oct 19, 2024 at 04:15:33PM +0200, Tobias Stoeckmann wrote:
-> +		if (sym[i].st_name >= strhdr->sh_size) {
-
-Please note that this commit only makes sense being applied AFTER
-the other patch sent, i.e. "module: .strtab must be null terminated"
-because that patch modifies strhdr before this line.
-
-Sorry for messing up the PATCH 1/2 and 2/2 connection.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
 
-With kind regards
+> > > > =C2=A0static int axi_dac_probe(struct platform_device *pdev)
+> > > > =C2=A0{
+> > > > -	const unsigned int *expected_ver;
+> > > > =C2=A0	struct axi_dac_state *st;
+> > > > =C2=A0	void __iomem *base;
+> > > > =C2=A0	unsigned int ver;
+> > > > @@ -566,15 +793,26 @@ static int axi_dac_probe(struct platform_devi=
+ce *pdev)
+> > > > =C2=A0	if (!st)
+> > > > =C2=A0		return -ENOMEM;
+> > > > =C2=A0
+> > > > -	expected_ver =3D device_get_match_data(&pdev->dev);
+> > > > -	if (!expected_ver)
+> > > > +	st->info =3D device_get_match_data(&pdev->dev);
+> > > > +	if (!st->info)
+> > > > =C2=A0		return -ENODEV;
+> > > > =C2=A0
+> > > > -	clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
+> > > > +	clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk"); =20
+> > >=20
+> > > This will break existing users that don't have clock-names
+> > > in the DT. It should be fine to leave it as NULL in which
+> > > case it will get the clock at index 0 in the clocks array
+> > > even if there is more than one clock.
+> > >  =20
+> >=20
+> > mm, are there existing users except this hs driver right now ?
+> >=20
+> > Clock names are actually described in the example, and if missing,
+> > also retrieving "dac_clk" would fail.
+> >  =20
+>=20
+> There's already a frontend DAC using the generic DAC implementation. So, =
+in theory,
+> yes... We can already have users not setting clock-names in DT that would=
+ now fail to
+> probe with this patch. David is only suggesting leaving this call to NULL=
+. For
+> dac_clk we do need the *id in devm_clk_get_enabled().
+>=20
+> Maybe it would also be worth mentioning in the bindings that s_axi_aclk n=
+eeds to be
+> the first entry in clocks and clock-names for backward compatibility.
 
-Tobias
+Usual trick for this is match on clk name first and then fallback to no name
+to pick up old DT that didn't set clk names.
+
+That way should be no need constrain the order when it is specified.
+Slight hicup is new DT, old kernel. In which case maybe the wrong clock is =
+started
+but I think you only have the multiple clocks for new cases so this should =
+be fine.
+
+Just sprinkle some comments alongside the fallback code to say why it is th=
+ere.
+
+
+Jonathan
+
+>=20
+> - Nuno S=C3=A1
+> > >  =20
+>=20
+
 
