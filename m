@@ -1,131 +1,200 @@
-Return-Path: <linux-kernel+bounces-372907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE869A4F09
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:16:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D308F9A4F2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDF231C24182
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:16:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EF4F1F27079
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4309418660F;
-	Sat, 19 Oct 2024 15:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59913188A0D;
+	Sat, 19 Oct 2024 15:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbfXxFBN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CtnDC+a4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8646410E4;
-	Sat, 19 Oct 2024 15:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A4412B94;
+	Sat, 19 Oct 2024 15:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729350992; cv=none; b=mpnFUVlH+bn5wKRdRnGt9Fz8kFC4YOacRTwBLPYPZllpNI2UniLlWwYxDINfjPO0OZNOcZ+Qd8vZZJ1loPW8SCtnvSes085U2BkgLVzgyx82Z005Drv3Bh+llr/zw+odD/Mm4sZNBarkOJ/c2FQK/rhmdjsUkmzRv5ivKMzh1MQ=
+	t=1729352301; cv=none; b=lAaWCPUElFjqNB4JhVF2IZpHIfSxA3+6YtRpuyrNI4ayUSnm8BZyvA6ApNLMfFZdRtMSPoCbpJ0oktZ8Ql6Cpgoy9IqmAAKbNYrhyDC6FEWIoN6SBUkBp3Nl5xwTiydPbdZUU4hlV69Ak8cSi156f0hupDgiAipeV/nImL2fexI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729350992; c=relaxed/simple;
-	bh=3/eaC3Oc0bPaRKKVcrfUBzt/D2U5MUHCT+S7BOLzJtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R12rCP2v32hyOumlhHzkYkMz8qzAr6B2or+u5FgTdQ3vWU1U1tCM3Gwj7+V1cHcFTQ0S7Sz+i7fu+WfFwj4kPhY9Vgq+Qt4eQS7btCkIFyrsJEf0y9A1OFvnJkFJULedQchomMlL75f0l9qyLAXfmedauV3MFNGg+UfOhd99OLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbfXxFBN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECDD3C4CEC5;
-	Sat, 19 Oct 2024 15:16:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729350991;
-	bh=3/eaC3Oc0bPaRKKVcrfUBzt/D2U5MUHCT+S7BOLzJtY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lbfXxFBN7TMDXS/C8c0H7QXTadXfiatUwzfLzl5AjNp/CXIKZ6A8xtG8R429xeGIb
-	 Jcg8Z9/1eCxXwsCPJBX35Nq5lC4mNoD1b5CeYNfycTVuFW09xnqJwBnVc8NR8QOG3K
-	 nWIaUvmxOXsqRQao7kKib56VRQofuDhfV8zAIG6jn2OfN5YaLh36N8Fadv4U/PBKFn
-	 6rZzU3j1MEUOzRlLdLVNgqnTq06VKJU7KOhKJT6PPzx/LFMuOyz+K6zkbanD2IezLa
-	 6i4KGCwaIUEnEnySCSy0H9D3Fm6YzhVx3bCaj0LNbDwNNrE8s2+bHFi0ZTHCsHQBz6
-	 lcOGH5IDdu1PQ==
-Date: Sat, 19 Oct 2024 16:15:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dlechner@baylibre.com, Mark Brown
- <broonie@kernel.org>
-Subject: Re: [PATCH v6 6/8] iio: dac: ad3552r: extract common code (no
- changes in behavior intended)
-Message-ID: <20241019161546.026f02e7@jic23-huawei>
-In-Reply-To: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-6-eeef0c1e0e56@baylibre.com>
-References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
-	<20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-6-eeef0c1e0e56@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729352301; c=relaxed/simple;
+	bh=Cu7yHmohtP/E8jkXxeHzgFg4vscebnXSd6FQEfOAmN0=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=WwqxvWMletfl5LLtH66q7nosjHOYDflyfYi/zLdGPtTpVzqu4tbQ2LPQi0QYRcVMCctK48g1z/NFabaytNkTx214/bblRfzI7lxT0LhBpp55yYef/CL8wYLVhNnx+OmH5SbvwN/ue645KLUI8xvZOhmeTbc8UlA6OKtETBJ+YSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CtnDC+a4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49JDB847023912;
+	Sat, 19 Oct 2024 15:38:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=qs8Q+il509YMyUfeoH1F98
+	25BtzaHdk2l9pbd9/cZeY=; b=CtnDC+a4y2JhHzi8WIzPbvfnTnIfF6IQmjsqkV
+	R5qgbFOoXew3q12t3dHQjQjAkjunSeKisehEbQCnJJA22TkLZCEUdwvPvbgbrblv
+	46ZA8A2PdbTwPBr2kbKSwd+vQZ4YaxkNP3+2e7yA3jhv4PYhc80mmD2BXZ+WIHn9
+	VDIPyRxTNSn0Pn6erf/IdT7gvitVPP/EgyHN44kdJFOGbmEeQ6cJKg4dyYLVtgnV
+	6sAVSBXmpIkrkknOK0nFRJ1c00bb9QQpos+GwDqC1XYNQ2BNbZSujbA4R+6pN2hK
+	i/t2omeGuNaIUEOwy6ch+oUG3/45eC5KrjGi5PhYLSLbJhWQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6sj8sxe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 19 Oct 2024 15:38:03 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49JFc1tA024767
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 19 Oct 2024 15:38:01 GMT
+Received: from hu-mahap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sat, 19 Oct 2024 08:37:54 -0700
+From: Mahadevan <quic_mahap@quicinc.com>
+Subject: [PATCH v4 0/5] Display enablement changes for Qualcomm SA8775P
+ platform
+Date: Sat, 19 Oct 2024 20:46:34 +0530
+Message-ID: <20241019-patchv3_1-v4-0-a95d8f0eae37@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFLNE2cC/03Myw6CMBCF4Vchs7ZkplwEV76HMaSOg50FFAsSE
+ 8K7W125O19y8m8wS1SZ4ZRtEGXVWcOYUB4yYO/Ghxi9J4NFW2JboJncwn4tOjI1It+YqrKVBtJ
+ /itLr+9e6XJP7GAaz+Cjur2BrIqTimFuLSFVjyDxfyt3gvJvO36kj5xwG2PcPpH4Cz50AAAA=
+X-Change-ID: 20240930-patchv3_1-600cbc1549e8
+To: Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mahadevan <quic_mahap@quicinc.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Kalyan Thota <quic_kalyant@quicinc.com>,
+        Jayaprakash Madisetty <quic_jmadiset@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729352274; l=3206;
+ i=quic_mahap@quicinc.com; s=20241001; h=from:subject:message-id;
+ bh=Cu7yHmohtP/E8jkXxeHzgFg4vscebnXSd6FQEfOAmN0=;
+ b=pO+Vfk6/rP8Oh8sBi03D1cgOAqn1zafX5LdB3b32mzL7xaACVpDU0620Kc89mD3rAzLMmBoU4
+ b9lW5wIyvrhADy4YwZ6IgS3slpc2/+Wdhja/Zj3l/aDDB/KsNklx+Cg
+X-Developer-Key: i=quic_mahap@quicinc.com; a=ed25519;
+ pk=Xc9CA438o9mZKp4uZ8vZMclALnJ8XtlKn/n3Y42mMBI=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: goaCu0HOL00icKSPx1FxtaqXuDba6h7N
+X-Proofpoint-ORIG-GUID: goaCu0HOL00icKSPx1FxtaqXuDba6h7N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ bulkscore=0 phishscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410190113
 
-On Mon, 14 Oct 2024 12:08:12 +0200
-Angelo Dureghello <adureghello@baylibre.com> wrote:
+This series introduces support to enable the Mobile Display Subsystem (MDSS)
+and Display Processing Unit (DPU) for the Qualcomm SA8775P target. It
+includes the addition of the hardware catalog, compatible string,
+relevant device tree changes, and their YAML bindings.
 
-> From: Angelo Dureghello <adureghello@baylibre.com>
-> 
-> Extracting common code, to share common code to be used later
-> by the AXI driver version (ad3552r-axi.c).
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-One suggestion inline.
+---
+In this series
+- PATCH 1: "dt-bindings: display/msm: Document MDSS on SA8775P" depends on dp
+  binding documetion in this change:
+  https://lore.kernel.org/all/20240923113150.24711-5-quic_mukhopad@quicinc.com/
+- PATCH 5: "arm64: dts: qcom: sa8775p: add display dt nodes for MDSS0 and DPU"
+  depends on the clock enablement change:
+  https://lore.kernel.org/all/20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com/
 
-Jonathan
+---
+[v5]
+- Update clock-name of display-controller in MDSS documentation to align with
+  qcom,sm8650-dpu.yaml. [Rob]
+- Update power-domains of display-controller in DT to do proper voting on MMCX
+  rail. [Internal Review]
 
-> ---
->  drivers/iio/dac/Makefile         |   2 +-
->  drivers/iio/dac/ad3552r-common.c | 170 ++++++++++++++++++++++
->  drivers/iio/dac/ad3552r.c        | 303 ++++-----------------------------------
->  drivers/iio/dac/ad3552r.h        | 200 ++++++++++++++++++++++++++
->  4 files changed, 398 insertions(+), 277 deletions(-)
-> 
-> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> index 621d553bd6e3..c92de0366238 100644
-> --- a/drivers/iio/dac/Makefile
-> +++ b/drivers/iio/dac/Makefile
-> @@ -4,7 +4,7 @@
->  #
->  
->  # When adding new entries keep the list in alphabetical order
-> -obj-$(CONFIG_AD3552R) += ad3552r.o
-> +obj-$(CONFIG_AD3552R) += ad3552r.o ad3552r-common.o
->  obj-$(CONFIG_AD5360) += ad5360.o
->  obj-$(CONFIG_AD5380) += ad5380.o
->  obj-$(CONFIG_AD5421) += ad5421.o
-> diff --git a/drivers/iio/dac/ad3552r-common.c b/drivers/iio/dac/ad3552r-common.c
-> new file mode 100644
-> index 000000000000..9a892abf99ac
-> --- /dev/null
-> +++ b/drivers/iio/dac/ad3552r-common.c
-> @@ -0,0 +1,170 @@
+[v4]
+- Removed new YAML added for sa8775p dpu dt-binding documention as it is similar
+  to qcom,sm8650-dpu.yaml and added the compatible in same. [Krzysztof]
 
-> +
-> +u16 ad3552r_calc_custom_gain(u8 p, u8 n, s16 goffs)
-> +{
-> +	u16 reg;
-> +
-> +	reg = FIELD_PREP(AD3552R_MASK_CH_RANGE_OVERRIDE, 1);
-> +	reg |= FIELD_PREP(AD3552R_MASK_CH_GAIN_SCALING_P, p);
-> +	reg |= FIELD_PREP(AD3552R_MASK_CH_GAIN_SCALING_N, n);
-> +	reg |= FIELD_PREP(AD3552R_MASK_CH_OFFSET_BIT_8, abs(goffs));
-> +	reg |= FIELD_PREP(AD3552R_MASK_CH_OFFSET_POLARITY, goffs < 0);
-Trivial but whilst here, to me this is no more readable than.
+[v3]
+-Edited copyright for catalog changes. [Dmitry]
+-Fix dt_binding_check tool errors(update reg address as address-cells and
+ size-cells of root node one and maintain the same for child nodes of mdss,
+ added additionalProperties in schema).
+ [Rob, Bjorn, Krzysztof]
+-Add QCOM_ICC_TAG_ACTIVE_ONLY interconnect path tag to mdp0-mem and mdp1-mem
+ path in devicetree. [Dmitry]
+-Update commit subject and message for DT change. [Dmitry]
+-Remove interconnect path tags from dt bindings. (ref sm8450-mdss yaml)
 
-	return FIELD_PREP(AD3552R_MASK_CH_RANGE_OVERRIDE, 1) |
-	       FIELD_PREP(AD3552R_MASK_CH_GAIN_SCALING_P, p) |
-	       FIELD_PREP(AD3552R_MASK_CH_GAIN_SCALING_N, n) |
-	       FIELD_PREP(AD3552R_MASK_CH_OFFSET_BIT_8, abs(goffs)) |
-	       FIELD_PREP(AD3552R_MASK_CH_OFFSET_POLARITY, goffs < 0);
+[v2]
+- Updated cover letter subject and message. [Dmitry]
+- Use fake DISPCC nodes to avoid clock dependencies in dt-bindings. [Dmitry]
+- Update bindings by fixing dt_binding_check tool errors (update includes in example),
+  adding proper spacing and indentation in the binding example, droping unused labels,
+  droping status disable, adding reset node. [Dmitry, Rob, Krzysztof]
+- Reorder compatible string of MDSS and DPU based on alphabetical order.[Dmitry]
+- add reg_bus_bw in msm_mdss_data. [Dmitry]
+- Fix indentation in the devicetree. [Dmitry]
 
-> +
-> +	return reg;
-> +}
->
+--
+2.34.1
+
+---
+Mahadevan (5):
+      dt-bindings: display/msm: Document MDSS on SA8775P
+      dt-bindings: display/msm: Document the DPU for SA8775P
+      drm/msm: mdss: Add SA8775P support
+      drm/msm/dpu: Add SA8775P support
+      arm64: dts: qcom: sa8775p: add display dt nodes for MDSS0 and DPU
+
+ .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 241 ++++++++++
+ .../bindings/display/msm/qcom,sm8650-dpu.yaml      |   1 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              |  89 ++++
+ .../drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h    | 485 +++++++++++++++++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+ drivers/gpu/drm/msm/msm_mdss.c                     |  11 +
+ 8 files changed, 830 insertions(+)
+---
+base-commit: e390603cfa79c860ed35e073f5fe77805b067a8e
+change-id: 20240930-patchv3_1-600cbc1549e8
+
+Best regards,
+-- 
+Mahadevan <quic_mahap@quicinc.com>
+
 
