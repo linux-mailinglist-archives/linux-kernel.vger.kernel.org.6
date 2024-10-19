@@ -1,147 +1,85 @@
-Return-Path: <linux-kernel+bounces-372979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ED69A5036
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:09:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E38149A5039
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8A11F25DE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:09:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CEE4B25E3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D2C18E758;
-	Sat, 19 Oct 2024 18:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="AQsNfew+"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BC819068E;
+	Sat, 19 Oct 2024 18:10:47 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1558918990E
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 18:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2122D8BEC;
+	Sat, 19 Oct 2024 18:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729361365; cv=none; b=YEnvuHJCRBGpWhAVa1RrmKa+OHtY9/bzI41apxFvgi+yeBlEsMpVFO2F9eevK+3h10WPetHFN9XHglTVcz+dY3q76EfKk1QT3BReZh4qpHmivHVQJ9BToRuCWuvk/nvzTDuLKGb9pINRlCgujZXHPA5RS4Ygy755Zx31CCVxBtg=
+	t=1729361446; cv=none; b=H1+Fcxg+ADhPzZB0Tun2EjxaQgX9JYFPlbAeqYmKS+iNI6nPQGVTV1OLmY47Adt9zE9GpFPeFgATEasTgIaoQT96+CtzazmhTE2R0mt6pDyigWonY5SG/PQTS1P0XAOOPh+2J9NYacvEoNnb6yoOguKHMhBe6D8b+KLFPhACydQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729361365; c=relaxed/simple;
-	bh=EWobNxr/fu8G78jXjGTzejsIyUdAaSkwE4u8iTfF/nc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=f7GXQ16AQ6AIPJnGf9h4SjIiqZDBbuHVartYdgAaIuu/Bscl1RRjd5vq/d/lF0iQwtMb8ZURDzV77A+nPSf2QcM7nlEeMr6cKcxiJ9z0ikOFfdx6hP9hYyTvZJOrvQEYIrU9DFdhgfndbN++g9tyATJ3KyK208ToibvhkCM1kKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=AQsNfew+; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1729361446; c=relaxed/simple;
+	bh=e1kwW6oqJtPR3kUxGh9gF7pabWu8VMmDmw978jmL250=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvYf7KDXr+BuSz1rpAoRlikBobI2xTjVl36qyusekdqWuJOB4pNcB4c5qI5KfiGk84b3o/pdVqPHwZQvqky7H4lzkiOx2uGRsBpr7cmHYws94b3kisp7Vychp8uhyxwG6L5nRx4o9BzvJ/B2oA4/MjaImxd3XMNEvSsSVudbGsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=46366 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1t2DuI-004JIk-QF; Sat, 19 Oct 2024 20:10:33 +0200
+Date: Sat, 19 Oct 2024 20:10:29 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Ilya Katsnelson <me@0upti.me>
+Cc: Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Florian Westphal <fw@strlen.de>, Sasha Levin <sashal@kernel.org>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ignat@cloudflare.com, Phil Sutter <phil@nwl.cc>
+Subject: Re: [PATCH v2] netfilter: xtables: fix typo causing some targets to
+ not load on IPv6
+Message-ID: <ZxP2FUVCmettzj7B@calendula>
+References: <20241019-xtables-typos-v2-1-6b8b1735dc8e@0upti.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1729361355;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f3RtjINZGSgrKRy2wNDqwWrIHrIIPJ53FJ8P+x6DkhI=;
-	b=AQsNfew+K6F+CLgKgr50utpQXBypfTUxchrOeI73zMAcWok/7hgMhCo6fub0UnDP6iuk5d
-	ZutrSF4lZ5udnjXawQlruQMscn5kBPnMmo1oBfOpCu+wW68/QujudwXWre10YG4AD1vj8j
-	Cz5ZOjRz+xwUEhUCEYXsnPJme9hUa3DABRy4c7ypl0BcmJAzWRPT7n3udouF89ohdHBCVC
-	i4/6mGEHDVrbMtmh/v6HKjrwxqyfkT3jfGi8R99cBpi+eAxk9HRv0kFBqsBeqoITrqq1ya
-	3OjTbRJemUVysfTQbgYf1LvJ8i1Af0xMBNNQFjB2gxCVywk8mf1pyN/Ye/Y5nA==
-Content-Type: multipart/signed;
- boundary=eb9158f3fd3022c747c09e202d1d0a175e416ede785f1ca7d155a4b18fff;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Sat, 19 Oct 2024 20:09:02 +0200
-Message-Id: <D4ZZFL98AMFI.1TDPL2DJPSQ3D@cknow.org>
-Cc: <heiko@sntech.de>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Prepare RK356x SoC dtsi files
- for per-variant OPPs
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Dragan Simic" <dsimic@manjaro.org>,
- <linux-rockchip@lists.infradead.org>
-References: <cover.1728752527.git.dsimic@manjaro.org>
- <cc2aed3116a57dd50e2bb15ab41b12784adfafe3.1728752527.git.dsimic@manjaro.org> <D4U30AUOH6UR.1QPH47KN5EWE4@cknow.org>
-In-Reply-To: <D4U30AUOH6UR.1QPH47KN5EWE4@cknow.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241019-xtables-typos-v2-1-6b8b1735dc8e@0upti.me>
+X-Spam-Score: -1.9 (-)
 
---eb9158f3fd3022c747c09e202d1d0a175e416ede785f1ca7d155a4b18fff
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Hi,
 
-Hi Dragan,
+Thanks for your patch.
 
-On Sat Oct 12, 2024 at 9:41 PM CEST, Diederik de Haas wrote:
-> On Sat Oct 12, 2024 at 7:04 PM CEST, Dragan Simic wrote:
-> > =20
-> > -&pipegrf {
-> > -	compatible =3D "rockchip,rk3566-pipe-grf", "syscon";
->
-> This seems unrelated?
->
-> > +&cpu0 {
-> > +	operating-points-v2 =3D <&cpu0_opp_table>;
-> >  };
-> > =20
-> > -&power {
-> > -	power-domain@RK3568_PD_PIPE {
-> > -		reg =3D <RK3568_PD_PIPE>;
-> > -		clocks =3D <&cru PCLK_PIPE>;
-> > -		pm_qos =3D <&qos_pcie2x1>,
-> > -			 <&qos_sata1>,
-> > -			 <&qos_sata2>,
-> > -			 <&qos_usb3_0>,
-> > -			 <&qos_usb3_1>;
-> > -		#power-domain-cells =3D <0>;
-> > -	};
->
-> This seems unrelated to me and possibly a functional change?
-> If this was intended, then a description in the commit message would be
-> nice why this is appropriate and possibly moved to a separate patch?
->
-> > +&cpu1 {
-> > +	operating-points-v2 =3D <&cpu0_opp_table>;
-> > +};
-> > +
-> > +&cpu2 {
-> > +	operating-points-v2 =3D <&cpu0_opp_table>;
-> >  };
-> > =20
-> > -&usb_host0_xhci {
-> > -	phys =3D <&usb2phy0_otg>;
-> > -	phy-names =3D "usb2-phy";
-> > -	extcon =3D <&usb2phy0>;
-> > -	maximum-speed =3D "high-speed";
->
-> This also looks unrelated and a functional change?
->
-> > +&cpu3 {
-> > +	operating-points-v2 =3D <&cpu0_opp_table>;
-> >  };
-> > =20
-> > -&vop {
-> > -	compatible =3D "rockchip,rk3566-vop";
->
-> This also looks unrelated?
+On Sat, Oct 19, 2024 at 08:05:07AM +0300, Ilya Katsnelson wrote:
+> These were added with the wrong family in 4cdc55e, which seems
+> to just have been a typo, but now ip6tables rules with --set-mark
+> don't work anymore, which is pretty bad.
 
-It turns out I was wrong.
-The elements I thought were removed, aren't removed.
+There is at least one more issue, TRACE is missing this chunk:
 
-Sorry for the noise.
-
-Diederik
-
---eb9158f3fd3022c747c09e202d1d0a175e416ede785f1ca7d155a4b18fff
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZxP1wwAKCRDXblvOeH7b
-bnomAQCauVO5HYPsaXNdYa5Tz50X1ZlJC7CDUvnlwWrQif3qFQEApyYcsmXRi4Xv
-ePPHwirwTWwZXt6w4Rr5ksGu3kE2Rg4=
-=NC6L
------END PGP SIGNATURE-----
-
---eb9158f3fd3022c747c09e202d1d0a175e416ede785f1ca7d155a4b18fff--
+diff --git a/net/netfilter/xt_TRACE.c b/net/netfilter/xt_TRACE.c
+index f3fa4f11348c..a642ff09fc8e 100644
+--- a/net/netfilter/xt_TRACE.c
++++ b/net/netfilter/xt_TRACE.c
+@@ -49,6 +49,7 @@ static struct xt_target trace_tg_reg[] __read_mostly = {
+                .target         = trace_tg,
+                .checkentry     = trace_tg_check,
+                .destroy        = trace_tg_destroy,
++               .me             = THIS_MODULE,
+        },
+ #endif
+ };
 
