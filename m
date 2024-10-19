@@ -1,129 +1,169 @@
-Return-Path: <linux-kernel+bounces-372785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FD09A4D2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:38:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB009A4D2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A1B3280E68
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3AB0280E41
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9171D1E0489;
-	Sat, 19 Oct 2024 11:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F311E009C;
+	Sat, 19 Oct 2024 11:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GY9QP4Y5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVASYNh8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A0B1DFDB6;
-	Sat, 19 Oct 2024 11:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E60318CBF7;
+	Sat, 19 Oct 2024 11:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729337917; cv=none; b=Z2mYt+InSHZ/WSALTwuY18OpyphdIwURd1NFvPVerVv/0m2SbzgJKMU6FlmqF8iMpn+IEZRdfkmoYNU8maOtKPc/r/AWmJipSSFbNOvPemcNtUAX3o2iWpTZlf/58/uQVPWNfVZN2BLd+GLab/KcjLwzfZfQ/53wI5gMuIv4TPA=
+	t=1729338021; cv=none; b=aSyYXsKwUQMolpOEPpQfWHYKlX1ZlXSGpuRR1nAuvO5mkUnUwOW8gXt3rk37pLJp9i3it/LsguIoLPYk3MmHvZlqtsyud+BK7DpVOP26HNv56Ipbe98T53AUjYR/F4u0JFhoXRytwExB3BOZD6MDh3eaA52+F0R+zaIV8QDVoCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729337917; c=relaxed/simple;
-	bh=marhkCyYZCh3NCtWnDi9k3n1MPLfEDhO9JL7aJPEMs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWM76UhvieZ0QjK7tbG0mFZfMsstb3I2pKV+Yu1WOTrEt5siL33+6EAt5ltctQZ2Ayb4mhy4GU6RYYAAYJWW+cnUWPGBOpyw97Ym4IwLy+Eivd8N/5pN7+rnzdUiwrgxbjHmF8/CcnTMdG6qQy+VXgqBmneqfVU1bTUsvRB4hVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GY9QP4Y5; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729337914; x=1760873914;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=marhkCyYZCh3NCtWnDi9k3n1MPLfEDhO9JL7aJPEMs8=;
-  b=GY9QP4Y5Em1tMCniss+5kCeBuCOonwc7nJTc2FD84q6YgujiDiwUUbxp
-   iUDbVgbyF7LbdkCLYD5I5qBSEPfy/Ds5b8NdYTS/XxkzMxDDu4m/wS4eW
-   +YYpV01ppFM7LNVEGqrbICjlsBf5xez9MkxHfE4pRlFWx3m2RSeyzaCM+
-   jyRK0C+OQ5hTzdDLYD+J/ctJWTurIFrrR/tk5eYYANkP3ckgNDLZqwcyx
-   KTnaz6Q5Se0MjT7zViKNA4Dki7KSiitOtnZQl7vSuG/sL/nXQu7A4SIE7
-   ty6IznXxmNxhec1s1TFCL+Z31Ij82vyYs8vqJiXUz4fRujtTjl6th7khf
-   g==;
-X-CSE-ConnectionGUID: 2S8yN2zwQ8aRhTZOKZdIeA==
-X-CSE-MsgGUID: Av5koOjxT5qmlreOVZoGNw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46328538"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="46328538"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 04:38:34 -0700
-X-CSE-ConnectionGUID: jknId/GiSzil637xYRnm0A==
-X-CSE-MsgGUID: IKV8DZGdRXu0KWTBqrP/2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
-   d="scan'208";a="79067264"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 19 Oct 2024 04:38:31 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t27mu-000OwT-0m;
-	Sat, 19 Oct 2024 11:38:28 +0000
-Date: Sat, 19 Oct 2024 19:38:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Vedang Nagar <quic_vnagar@quicinc.com>
-Subject: Re: [PATCH v4 25/28] media: iris: implement power scaling for vpu2
- and vpu3
-Message-ID: <202410191943.XTP992Za-lkp@intel.com>
-References: <20241014-qcom-video-iris-v4-v4-25-c5eaa4e9ab9e@quicinc.com>
+	s=arc-20240116; t=1729338021; c=relaxed/simple;
+	bh=v4LkJ80NQPm85wR1G2ziYwxdba3NkVX/9/XwrEpfKJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g2LSqmtxFjqEJa87GFoDvDdJU/7YwPkJ5d3rXTKSBxExTlYBqRxH8sTdO73DyV0u3h7Xv1Tmd93i44IgDaedEXUVz5RJ++67/WA1dotq2gVRKKMZcvmPsXOf322wc5GKUc80cvCvR5Vs7QhGt27E049IoUhNCIfv1Z8VV5MqUX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVASYNh8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EC56C4CEC5;
+	Sat, 19 Oct 2024 11:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729338020;
+	bh=v4LkJ80NQPm85wR1G2ziYwxdba3NkVX/9/XwrEpfKJk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RVASYNh8QV6z1j2M3mrQdgp2SzqMwQEupADP1lKkQM8Ky4UqNfpP7hxnkiy39VhaL
+	 DEjpHpa1VhayTRDdcGBj5mlp+yd8lx84JavkIIFCjb1Tc/RL/clqjTBre3K12frHE5
+	 KSYxm7Np/Y8cd+mJEPSXw0wTxytitNhUJAmW1/HxeM0lIO1h1P9ytPXhL8sOUUvzj3
+	 s5f6W8XeR8PwEtyC14dTlaVYoblVyRJGEolSe2NNPjjmZ1M31sdQEEbKvOQ/soclMR
+	 GmSEj+gpX0iEmqJsCZywxV0gf5Hjz0LI9n9fa83Q06xLbrJfOuzsPMxNcLPmJe48q/
+	 +KTQ3bdBf442w==
+Date: Sat, 19 Oct 2024 12:40:13 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Derek J . Clark"
+ <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxlcg==?=
+ <philm@manjaro.org>
+Subject: Re: [PATCH v2 4/6] iio: imu: bmi270: Add support for BMI260
+Message-ID: <20241019124013.0575e05b@jic23-huawei>
+In-Reply-To: <20241018233723.28757-5-justin@justinweiss.com>
+References: <20241018233723.28757-1-justin@justinweiss.com>
+	<20241018233723.28757-5-justin@justinweiss.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014-qcom-video-iris-v4-v4-25-c5eaa4e9ab9e@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Dikshita,
+On Fri, 18 Oct 2024 16:36:10 -0700
+Justin Weiss <justin@justinweiss.com> wrote:
 
-kernel test robot noticed the following build errors:
+> Adds support for the Bosch BMI260 6-axis IMU to the Bosch BMI270
+> driver. Setup and operation is nearly identical to the Bosch BMI270,
+> but has a different chip ID and requires different firmware.
+> 
+> Firmware is requested and loaded from userspace.
+> 
+> Signed-off-by: Justin Weiss <justin@justinweiss.com>
+Trivial comments inline and a discussion on whether my earlier
+don't use an array comment makes sense in this particular case.
 
-[auto build test ERROR on 67cefecf2a039b9ed0030b9213ceafcd45e6f9e3]
+Jonathan
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dikshita-Agarwal/dt-bindings-media-Add-video-support-for-QCOM-SM8550-SoC/20241014-171950
-base:   67cefecf2a039b9ed0030b9213ceafcd45e6f9e3
-patch link:    https://lore.kernel.org/r/20241014-qcom-video-iris-v4-v4-25-c5eaa4e9ab9e%40quicinc.com
-patch subject: [PATCH v4 25/28] media: iris: implement power scaling for vpu2 and vpu3
-config: microblaze-allyesconfig (https://download.01.org/0day-ci/archive/20241019/202410191943.XTP992Za-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410191943.XTP992Za-lkp@intel.com/reproduce)
+> ---
+>  drivers/iio/imu/bmi270/bmi270.h      |  1 +
+>  drivers/iio/imu/bmi270/bmi270_core.c | 25 +++++++++++++++++++++++--
+>  drivers/iio/imu/bmi270/bmi270_i2c.c  | 13 +++++++++++++
+>  drivers/iio/imu/bmi270/bmi270_spi.c  |  8 ++++++++
+>  4 files changed, 45 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
+> index 2e8d85a4e419..51e374fd4290 100644
+> --- a/drivers/iio/imu/bmi270/bmi270.h
+> +++ b/drivers/iio/imu/bmi270/bmi270.h
+> @@ -14,6 +14,7 @@ struct bmi270_data {
+>  };
+>  
+>  enum bmi270_device_type {
+> +	BMI260,
+>  	BMI270,
+>  };
+>  
+> diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
+> index 799df78ec862..b30201dc4e22 100644
+> --- a/drivers/iio/imu/bmi270/bmi270_core.c
+> +++ b/drivers/iio/imu/bmi270/bmi270_core.c
+> @@ -11,6 +11,8 @@
+>  #include "bmi270.h"
+>  
+>  #define BMI270_CHIP_ID_REG				0x00
+> +#define BMI160_CHIP_ID_VAL				0xD1
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410191943.XTP992Za-lkp@intel.com/
+This one looks like a cut and paste error.
 
-All errors (new ones prefixed by >>):
+> +#define BMI260_CHIP_ID_VAL				0x27
+>  #define BMI270_CHIP_ID_VAL				0x24
+>  #define BMI270_CHIP_ID_MSK				GENMASK(7, 0)
+>  
+> @@ -55,6 +57,7 @@
+>  #define BMI270_PWR_CTRL_ACCEL_EN_MSK			BIT(2)
+>  #define BMI270_PWR_CTRL_TEMP_EN_MSK			BIT(3)
+>  
+> +#define BMI260_INIT_DATA_FILE "bmi260-init-data.fw"
+>  #define BMI270_INIT_DATA_FILE "bmi270-init-data.fw"
+>  
+>  enum bmi270_scan {
+> @@ -67,6 +70,11 @@ enum bmi270_scan {
+>  };
+>  
+>  const struct bmi270_chip_info bmi270_chip_info[] = {
+> +	[BMI260] = {
+> +		.name = "bmi260",
+> +		.chip_id = BMI260_CHIP_ID_VAL,
+> +		.fw_name = BMI260_INIT_DATA_FILE,
+> +	},
+>  	[BMI270] = {
+>  		.name = "bmi270",
+>  		.chip_id = BMI270_CHIP_ID_VAL,
+> @@ -163,8 +171,21 @@ static int bmi270_validate_chip_id(struct bmi270_data *bmi270_device)
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "Failed to read chip id");
+>  
+> -	if (chip_id != BMI270_CHIP_ID_VAL)
+> -		dev_info(dev, "Unknown chip id 0x%x", chip_id);
+> +	/*
+> +	 * Some manufacturers use "BMI0160" for both the BMI160 and
+> +	 * BMI260. If the device is actually a BMI160, the bmi160
+> +	 * driver should handle it and this driver should not.
+> +	 */
+> +	if (chip_id == BMI160_CHIP_ID_VAL)
+> +		return -ENODEV;
+> +
+> +	if (chip_id != bmi270_device->chip_info->chip_id)
+> +		dev_info(dev, "Unexpected chip id 0x%x", chip_id);
+> +
+> +	if (chip_id == BMI260_CHIP_ID_VAL)
 
-   microblaze-linux-ld: drivers/media/platform/qcom/iris/iris_vpu3.o: in function `iris_vpu3_calculate_frequency':
->> .tmp_gl_iris_vpu3.o:(.text+0x52c): undefined reference to `__divdi3'
->> microblaze-linux-ld: .tmp_gl_iris_vpu3.o:(.text+0x568): undefined reference to `__udivdi3'
+Ah. My argument on separate IDs means you'd have to do it this way whereas
+I was thinking maybe a loop would be a better idea.  Ah well if we
+get a lot of supported chips, then we can rethink how to handle this.
+For now what you have here is fine and should deal with lack of appropriate
+ACPI ID mess.
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +		bmi270_device->chip_info = &bmi270_chip_info[BMI260];
+> +	else if (chip_id == BMI270_CHIP_ID_VAL)
+> +		bmi270_device->chip_info = &bmi270_chip_info[BMI270];
+>  
+>  	return 0;
+>  }
 
