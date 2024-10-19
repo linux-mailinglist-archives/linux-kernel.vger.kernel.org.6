@@ -1,96 +1,95 @@
-Return-Path: <linux-kernel+bounces-372676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D4C9A4BBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B709A4BBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D5E21F2359C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:13:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DBE71F23777
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A491E0B68;
-	Sat, 19 Oct 2024 07:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37E31DDC33;
+	Sat, 19 Oct 2024 07:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZgJWlyhW"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mH+E7fWv"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B921E00B9;
-	Sat, 19 Oct 2024 07:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEC91D7E5B;
+	Sat, 19 Oct 2024 07:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729321870; cv=none; b=ftYBLVYsARhavZ2ZMQ/e4UxFTWIWcymaQpjke7E4rtNfoC2mvEeNIPqZoBUunr6RyW/tl9Inh/SND3rXkjIrEMRKCTRtAh0iyZQWA6CFF/OjWKakN3Z+0d8DTki2LdlqbYx6MWl3LrY5w0UuULALf+YOJALBrb99ZqRMaU0xH/M=
+	t=1729321915; cv=none; b=ZJt7hFPS3Pt4ArXL0+0/JGonaeHv/zLtsihAydmXwFG+IG5xWv8mCV6hPA9wJtWc7RBHE/QKRYiKd/i5mTgw4c98lONT0igoZP+f8JUq2oGSVCWr13qYzLKaEuxbjIOjlrniGhFuWGkRJ/0z28+6g0mWWgg+3Ad/nXrihcjj0X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729321870; c=relaxed/simple;
-	bh=8Rdvbq2qfDE7PP1NFqb9ER6XI8O/ncdkDxKnGaV5Ua8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n3FkZuXxlt0YWBJ3LAVw/cQybp8GYiH4m8zIgHdMCCs6RIjdApkNcYFb24E7KbOdaS/qE8DYbSGsdYFvMqqPo28SfgCobFkCC//h4yt7Z5qgkRvV/c+2uBYz1k4qZ00Hmzg1gyi+yZwfSYeYkUYZdZBEyTyzAfy5kVOdQ8fa9h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZgJWlyhW; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1729321915; c=relaxed/simple;
+	bh=gyYDzQGKOqgYMYaJdzUg3i6tJ8ixJ54mQLbSTkrE1/Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ss1rlZKfLSuwgEGQLDP/zNYNx9IFqCqQXzT88d0igCfmR1wirYs3uiOWvx5G7kfZzggdsrIbnTcHKDghst2R+uJ3wr877Ct1p7ikdFNA+7I1ioxyEFv5O0rVBTbHpPY46zzh81du/dINYUZB0jqqi7V7WD8gI8b/Gq3rqXWtsMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mH+E7fWv; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99eb8b607aso277572266b.2;
-        Sat, 19 Oct 2024 00:11:08 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c77459558so25624925ad.0;
+        Sat, 19 Oct 2024 00:11:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729321867; x=1729926667; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kzy3+/mox2Buapv8j2OU8DMyaGI/RgG1tSMX4+L61bY=;
-        b=ZgJWlyhWapXA7ILUY8hchK1uhKr8IzNYzMc9PLWrZUn25RKHV888KfDK48QSrP8ojP
-         1qs/83vxIMTo5JIdjU4gZcJTEocOT81g9tj+WgS71Tkm++bwj/d4rfIVF8NQmM3B5qpP
-         PMTwdLb5L96O2JgNyijyQoVy456GACFz2mg7DIjgrLo7imAKr7R17k6LGS/WcGLNswom
-         bidRQ9BMJHeG0PAI0/UL3QuJ+rpnDz+QYX8qQiUPGVC60xOSfjsQRBGvHo9rJlouUpwp
-         9Hi51dkZE8Bk+NMjI5sqRz3Tvxh4dodizAJiUV3UMTnl97KsFAShJJ1JD80yySsCLvZj
-         YV9w==
+        d=gmail.com; s=20230601; t=1729321912; x=1729926712; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Gn+yGZNlg35IH0UZAn+lxJ6+L1bLg4klZElPzwowdU=;
+        b=mH+E7fWvdqEoGZRLaRghNCw5mMVBNrSbww20HRsh3eSZaxfxPv+pfyOzVXrtggf/Ip
+         NJUSNLNHzdKcZsYXhRh1XLK5iA2hWpiFirXV8QD7qXXT5zcnCb4of6sdNOMOrf5hacUn
+         j3WfXmzKR7JXh0chK7kvoeqvLeh44utWMvq+4bRdaRx/Ulaa8v0wv68vsnuTtWtg+627
+         PvNJIoRj/jG2ysowVW7EN4rdxibLHQSDPRI4B62Xa+yDGY9tnoS050h0QJvX1y94xUh3
+         EGX+9PUqSYbmcVU1xkkIHbzvxqVebA1jlP4NeFGpQpzH43kR1djVirmKA6pU576+TkZI
+         CCcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729321867; x=1729926667;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kzy3+/mox2Buapv8j2OU8DMyaGI/RgG1tSMX4+L61bY=;
-        b=dPD/JOJ7GmTvJAV69wLr/hIS0X5wMYMU6g8BEcN4H6X4hJZkK1dQnLxI82xk73Ud2e
-         c5HPEjMJKRqIYuDrbjyi4j1OQ4V4Y2QIM5IIAXgRAjaBxeBt/PMrDoYCLErP1T2kwpM1
-         +9GdWXSuvpCM4NpNZaR9Fbp4YoukJ9GOjrFUoWGIWxUKmSCH9BgFAuIOjnMheLCrZ84B
-         crplunZdDRYkXqM9Dw78++O5dC6UAPW9f/vSS6d9TcB0NzlB+VF8aSc3CJ794MuxzoMT
-         gedN7pDXVbeuxZsEr9c2m/VJX0DKA/qY1WIwDTzLx9/DJbMzJk3jzBe8NsCKgZ11S4n/
-         RVMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHc2zJlixGyaoP1JS3YgarTcIl5wP1NeVB3ouBhg1m+qNP5V1007dJfz3ez3v7yR8TWSqdcv4cJh6K9pc=@vger.kernel.org, AJvYcCWZND2WGmQ4+0LuJvAe5oPjDmtYTm39KYZUex5evzIHbADUSbEa8ha5SOIBztTcH6oD2pXUWyvnNMIaiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGS7c7GmsBw7Z5RIIFgvBiFai95tdyVqHQgP1ANYZ668mD71+Z
-	xPNc3WVw/tb1x7W5mda2MKJGSsuVgy/ECcOoXXsg7XyG/yegV9+q
-X-Google-Smtp-Source: AGHT+IGZIRwgVgg1BdPksrFMh32OAbnzMG5ExBavQuLgkOmWN/ZJyj1zGihqDyRijK+wUugTMmXfag==
-X-Received: by 2002:a17:906:730e:b0:a99:e939:d69e with SMTP id a640c23a62f3a-a9a69c67624mr373039666b.51.1729321866457;
-        Sat, 19 Oct 2024 00:11:06 -0700 (PDT)
-Received: from localhost.localdomain ([79.175.114.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68c27841sm180566666b.192.2024.10.19.00.11.04
+        d=1e100.net; s=20230601; t=1729321912; x=1729926712;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7Gn+yGZNlg35IH0UZAn+lxJ6+L1bLg4klZElPzwowdU=;
+        b=dDGg1JdVIjcwZfRCUBoLjpXgBht+3PDPle37tA7CHkhv1MKCMFAEmVEac0YHAYTwvx
+         fYoYzC5Fwtq7Qi/JtMTqu1JIP8ltcFlHpo5omDnE/zdrZtD9qsQ7C3znZJkiu7SXy3ZN
+         FGsJqPuYX2NHDlJgdbQ+h7MvdhuRP4eaUSwp0XX18GSaRISu0LlyEyFnF1nYyswK5IxP
+         Av2GMWViXiN5gXKt+vvKvsVJ3vVtOMSIrZUKfC77e5wtLT7K9TiHE5omeMCHpLa0bDfm
+         YewWHs3dO3VmPrB+eDU3xH4ouiLjs396/kcVLP1dJqaASI+84nRAkYckdQa6r9TaNM6k
+         ZWBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqw7Q9bBFcYN9NYuqGkuUVR6nuMl8Rve9sohItPj+A8DIEX+zOOZn6LObmbD1j4Knh8yk=@vger.kernel.org, AJvYcCXd1K8rPoJ3HPoC3KYI9wEL6C8Rtu2d73CiaES4AZI9cDg1rb5U2Y5vJ1HLqHKm57Ruj0tEmmV0JoUM7mgT@vger.kernel.org, AJvYcCXsFSAUIsKCKG/zpBXoMuFxFpDV9Uv+R7oKwGew49gqz72JATZyTE+rGof7a8wtU+QmapWjtvfo@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjfLhK1uQeWdGJ5CWEMF/bang3Bqb1kI+tFPW8OsfD4zZhPwzI
+	qExVqOEc4/K9EsR3Be42z1H9T2Kc0JSi+mAYK2GdByQ/oiGS56+rVnbDJQmhh9g=
+X-Google-Smtp-Source: AGHT+IE/SkDlNN6p0OGPS3TeQrfyaFsGLBzlRh1iKulhu+uDf+sHLST8POK39eHc2Pb5oKWkazqeww==
+X-Received: by 2002:a17:903:1c7:b0:20d:2ce5:750d with SMTP id d9443c01a7336-20e5a725bfbmr72473375ad.12.1729321912151;
+        Sat, 19 Oct 2024 00:11:52 -0700 (PDT)
+Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20e5a8d6408sm22609135ad.166.2024.10.19.00.11.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 00:11:05 -0700 (PDT)
-From: Aleksandar Rikalo <arikalo@gmail.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Aleksandar Rikalo <arikalo@gmail.com>,
-	Chao-ying Fu <cfu@wavecomp.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Ungerer <gerg@kernel.org>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>,
-	Paul Burton <paulburton@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH v7 12/12] MIPS: mobileye: dts: eyeq6h: Enable cluster support
-Date: Sat, 19 Oct 2024 09:10:37 +0200
-Message-Id: <20241019071037.145314-13-arikalo@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241019071037.145314-1-arikalo@gmail.com>
-References: <20241019071037.145314-1-arikalo@gmail.com>
+        Sat, 19 Oct 2024 00:11:51 -0700 (PDT)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: Martin KaFai Lau <martin.lau@linux.dev>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	bpf@vger.kernel.org (open list:BPF [NETWORKING] (tcx & tc BPF, sock_addr)),
+	netdev@vger.kernel.org (open list:BPF [NETWORKING] (tcx & tc BPF, sock_addr)),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Daniel Yang <danielyangkang@gmail.com>,
+	syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
+Subject: [PATCH net] Drop packets with invalid headers to prevent KMSAN infoleak
+Date: Sat, 19 Oct 2024 00:11:39 -0700
+Message-Id: <20241019071149.81696-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,32 +98,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
+KMSAN detects uninitialized memory stored to memory by
+bpf_clone_redirect(). Adding a check to the transmission path to find
+malformed headers prevents this issue. Specifically, we check if the length
+of the data stored in skb is less than the minimum device header length.
+If so, drop the packet since the skb cannot contain a valid device header.
+Also check if mac_header_len(skb) is outside the range provided of valid
+device header lengths.
 
-The CM3.5 device used in EyeQ6H SoCs incorrectly reports the status
-for Hardware Cache Initialization (HCI). This commit adds a property
-to acknowledge this issue, which enables the use of the second CPU
-cluster.
+Testing this patch with syzbot removes the bug.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: Aleksandar Rikalo <arikalo@gmail.com>
+Fixes: 88264981f208 ("Merge tag 'sched_ext-for-6.12' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext")
+Reported-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=346474e3bf0b26bd3090
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
 ---
- arch/mips/boot/dts/mobileye/eyeq6h.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ net/core/filter.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq6h.dtsi b/arch/mips/boot/dts/mobileye/eyeq6h.dtsi
-index 1db3c3cda2e3..4ea85dfd4eed 100644
---- a/arch/mips/boot/dts/mobileye/eyeq6h.dtsi
-+++ b/arch/mips/boot/dts/mobileye/eyeq6h.dtsi
-@@ -18,6 +18,7 @@ cpu@0 {
- 			compatible = "img,i6500";
- 			reg = <0>;
- 			clocks = <&occ_cpu>;
-+			cm3-l2-config-hci-broken;
- 		};
- 	};
+diff --git a/net/core/filter.c b/net/core/filter.c
+index cd3524cb3..92d8f2098 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -2191,6 +2191,13 @@ static int __bpf_redirect_common(struct sk_buff *skb, struct net_device *dev,
+ 		return -ERANGE;
+ 	}
  
++	if (unlikely(skb->len < dev->min_header_len ||
++		     skb_mac_header_len(skb) < dev->min_header_len ||
++		     skb_mac_header_len(skb) > dev->hard_header_len)) {
++		kfree_skb(skb);
++		return -ERANGE;
++	}
++
+ 	bpf_push_mac_rcsum(skb);
+ 	return flags & BPF_F_INGRESS ?
+ 	       __bpf_rx_skb(dev, skb) : __bpf_tx_skb(dev, skb);
 -- 
-2.25.1
+2.39.2
 
 
