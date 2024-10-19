@@ -1,83 +1,82 @@
-Return-Path: <linux-kernel+bounces-372616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38659A4B04
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:51:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A73A9A4B05
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B94FB2298E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:51:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA979B22999
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311C11CCB5C;
-	Sat, 19 Oct 2024 02:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3222B1CF2B9;
+	Sat, 19 Oct 2024 02:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oe/7in0O"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ah6eMTly"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E261CC88D;
-	Sat, 19 Oct 2024 02:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EBC1CF29D;
+	Sat, 19 Oct 2024 02:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729306286; cv=none; b=Ws+3o5xb7sZXwMzDynDihx1B9Uj819pG6M/mGhUTa2KLd7h8avD7VrJdmeuUoPbduHUlIua9lsAt5e4opyR15fkK4CIkiuLRYia3vpWsE54ML2etExwJsmKis1VpLCc2JWYFMHtjz/HRAsS7JW2506ACTGi0zOF7bkdhB1BmELk=
+	t=1729306562; cv=none; b=aaILDJCnumuy+vmD2V7/WEGGxJiYoXRFEO41EdCwzmgj1qkHh5TTUBjkDfA/fZ+1NT3D9sCzsb9fQPZw+AlAwL+5BfjRXQpNbpB+99idQhlP8NrMuVSpY3Hq6eA1lMdl86rPBS747Yr0nPcD/mmRreMEyF7Be1+DLq+0vYyKM1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729306286; c=relaxed/simple;
-	bh=0zSB8vXur4XDPcBJSsROa06yuMfwtiCjG5gslnBgxMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFKy2A9WBzVosxOGzIRiWgbmlkuw+YGJMT/9g4zhXq1AbYyhqZCbxG2m0+X3YTx60GfrSWttY2J9sqxzrDrzr1BTXXe0dBSQrV4iKAjlMzBEizr5yzOt4h6U9H0k9vaqRHc5ZzQEnOB/IMGhz7wfOgmGcsN+mMk94EB9GqQdhRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oe/7in0O; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729306285; x=1760842285;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0zSB8vXur4XDPcBJSsROa06yuMfwtiCjG5gslnBgxMY=;
-  b=Oe/7in0OGFmFNmj2EcSX8IbaqaPPCuB+eIAeZG3MPpWMylsgAehJCCvh
-   f54ETQmLRF1GnSUCHpwvXN7lkLcYjO83WLxSQIfEMZD3puyYMWDvDVwVI
-   uAWRFTJ3ve26Qx2XWOJZ7nsBarQ3BR/b3ViisPEBnjOOzffK67KzWZxhj
-   RZA664rRAbqRoFlg908GkbwUVxPBsN+JR3gRI7p4BpfOZPCL9UkPBCD/X
-   kPTghHYZCzghZm+HZ1cuAYhe8gSmSQ4WntEyr92jsKOPy1m3s+R7uwUKv
-   wlafYHXdU/e6sMGJ7C5UACmBLpSDVwBKEWAaqxu1i5ZtJICHewe7azYMW
-   g==;
-X-CSE-ConnectionGUID: djFH5ADgTu6ZC4iN+kb6kA==
-X-CSE-MsgGUID: 83UHn8ZxQuSActXgoF5kIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29011052"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29011052"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 19:51:24 -0700
-X-CSE-ConnectionGUID: qAwpvV+cSraBHH8n9v98Wg==
-X-CSE-MsgGUID: OY1W/BkoTriJ4nD1ZP6RKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,215,1725346800"; 
-   d="scan'208";a="83604768"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 18 Oct 2024 19:51:18 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1zYi-000Ocb-2R;
-	Sat, 19 Oct 2024 02:51:16 +0000
-Date: Sat, 19 Oct 2024 10:51:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Anjali Kulkarni <anjali.k.kulkarni@oracle.com>, davem@davemloft.net,
-	Liam.Howlett@oracle.com
-Cc: oe-kbuild-all@lists.linux.dev, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, jiri@resnulli.us,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	akpm@linux-foundation.org, shuah@kernel.org,
-	linux-kselftest@vger.kernel.org, anjali.k.kulkarni@oracle.com,
-	peili.io@oracle.com
-Subject: Re: [PATCH net-next v5 2/3] connector/cn_proc: Kunit tests for
- threads hash table
-Message-ID: <202410191051.p3iFT9om-lkp@intel.com>
-References: <20241017181436.2047508-3-anjali.k.kulkarni@oracle.com>
+	s=arc-20240116; t=1729306562; c=relaxed/simple;
+	bh=5/Q6mMEQKt/YqZpUFUqGN3VO5GRE3MysNt+6xXWT0ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KyZ2m9grBEp1NakdT+1oNJy4+AaZuvmNlcE8hr7qGWGWzKpInmbQh6uS2tUVu+/nDBwC1EbwT8/MQeLHeOVvy6lIczHiyBEZaGj27g4/Ygh2oKZGY53GyTfV3HOQueYWn9OrZieIAB8ggiEnNP88t/1W3dl/ZTIo1Q2jHYlLGqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ah6eMTly; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2e23f2931so2259419a91.0;
+        Fri, 18 Oct 2024 19:56:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729306560; x=1729911360; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zjvn7HsbY/vgKPllNGPzOYRc5ty961DmQb25tJ1aZoI=;
+        b=Ah6eMTlyVEJVvgBTYjQPgmieI7BjIh0g/awujXCY/cKljD0njNGkZp0PoOkn4erYzh
+         sza+5tsyDNkwUXzaRH5iUnj58ha1Pklw6yl6ctmZQannXE9vEik7syW40EOGAMfqKg3o
+         c6ZJgXnHqCNTyHA2J/I5Odx+3Va72k4eyM7g60vIpaJo1RF70TCdEmlJhHnWycyj/V31
+         +IOJRCV64/oEnDXybWvrVj5ZXFtQBy1WEC+cgvdNE8jmjcszV0WvBy0bViRe6xXRkzWD
+         6XHyMs/ciX6qIxMM5qbOCO8o2W2fSSKee6IsXtSDxWQ12i8uiDVpm+w+EmNp2bXyjUwm
+         X+pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729306560; x=1729911360;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zjvn7HsbY/vgKPllNGPzOYRc5ty961DmQb25tJ1aZoI=;
+        b=lO3B+WsF5tna2tzFRMJo4uYN8tVvWbt+MhpqIEmzmpDM1073QGCSvSfiT1ytVaPzZi
+         GC6o0BL6zS2X9qUhqdzwgw3hLUgNxXubmkP0sSUZ2GCufo3pNQHbkVQFfpKWCpIP0K64
+         HVbB24zt3WW7GAnmxXrKInHoyn5feLSaBWnQknPudo9aUDNhrU0wTf+AcXE0CNkU8N0Z
+         TuSfg1X1JzRiVMBmgIQzjuk9YDrmxN3z7HCsrILPKe46i+6NRSxjtZxsQY/gvqqiU8PR
+         PVtS1y/KyiVBQbf1PyIlDBD5gDGgaJSn6x2v2oZkha+tO8jR6gufQ3veZf3AzSYAiW4R
+         RhNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUE1WW83p7wHeqD1uGtT5TS6QFEd1o+d48hToP+Ha9B1ttr5nFnVOdWSkYnYAepoZ8ZqzTQRUto3EgjZJEsAq0=@vger.kernel.org, AJvYcCVTTVgxJjEwQqVjLuefvaOv3CpGXWmFXFZh9xxPU54IGweTo8jjewKAIUDU5WOWlnQAtAQGrWkPSGQzsiXGR3lYIw==@vger.kernel.org, AJvYcCVs73llRcBxOfguq0HxYJnVTwqyZh/Q9D278ZV7UI6kKcrnIrWLkRa5PnsBqungB1ZnPEaeiPmRsXa2nyY+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJd16nQHjzQW44sEyktdverM0hY6K5smAKMyoNBFPRA958C21m
+	zkHpjy4lEop8VbglWya1vAZa2N8+Aklmi9Vay4pFYPfRyR/lu1/J
+X-Google-Smtp-Source: AGHT+IEPqWiwtVaGplrYbUc0xpArNcC0LaqOO99PH7sLEakviT8UYNXgSidnH4I5Y7jc0N37OI9r7Q==
+X-Received: by 2002:a17:90a:8a83:b0:2e2:e2f1:aee with SMTP id 98e67ed59e1d1-2e5617487d7mr5072291a91.22.1729306559845;
+        Fri, 18 Oct 2024 19:55:59 -0700 (PDT)
+Received: from mail.google.com (125-239-144-11-fibre.sparkbb.co.nz. [125.239.144.11])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e58390d63bsm522052a91.0.2024.10.18.19.55.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 19:55:59 -0700 (PDT)
+Date: Sat, 19 Oct 2024 15:55:48 +1300
+From: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: paulo.miguel.almeida.rodenas@gmail.com, linux-hardening@vger.kernel.org
+Subject: [PATCH][next] perf/x86/amd: replace snprintf with sysfs_emit helper
+ function
+Message-ID: <ZxMftFRJ1b91KbRV@mail.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,38 +85,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017181436.2047508-3-anjali.k.kulkarni@oracle.com>
 
-Hi Anjali,
+sysfs_emit() helper function should be used when formatting the value to
+be returned to user space as per the documentation. No need to replicate
+logic in sysfs .show() callbacks.
 
-kernel test robot noticed the following build errors:
+This patch replaces open-coded sysfs_emit() logic sysfs .show()
+callbacks.
 
-[auto build test ERROR on net-next/main]
+Signed-off-by: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
+---
+ arch/x86/events/amd/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Anjali-Kulkarni/connector-cn_proc-Add-hash-table-for-threads/20241018-021755
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241017181436.2047508-3-anjali.k.kulkarni%40oracle.com
-patch subject: [PATCH net-next v5 2/3] connector/cn_proc: Kunit tests for threads hash table
-config: x86_64-randconfig-104-20241019 (https://download.01.org/0day-ci/archive/20241019/202410191051.p3iFT9om-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410191051.p3iFT9om-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410191051.p3iFT9om-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/slub_kunit.o
->> ERROR: modpost: "cn_del_get_exval" [lib/cn_hash_test.ko] undefined!
->> ERROR: modpost: "cn_table_empty" [lib/cn_hash_test.ko] undefined!
->> ERROR: modpost: "cn_display_hlist" [lib/cn_hash_test.ko] undefined!
->> ERROR: modpost: "cn_add_elem" [lib/cn_hash_test.ko] undefined!
->> ERROR: modpost: "cn_get_exval" [lib/cn_hash_test.ko] undefined!
-
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index b4a1a2576510..bbada8e3e491 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -1346,7 +1346,7 @@ static ssize_t branches_show(struct device *cdev,
+ 			      struct device_attribute *attr,
+ 			      char *buf)
+ {
+-	return snprintf(buf, PAGE_SIZE, "%d\n", x86_pmu.lbr_nr);
++	return sysfs_emit(buf, "%d\n", x86_pmu.lbr_nr);
+ }
+ 
+ static DEVICE_ATTR_RO(branches);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
+
 
