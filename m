@@ -1,146 +1,102 @@
-Return-Path: <linux-kernel+bounces-372660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1099A4B94
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:39:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C96F9A4B98
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B85F1C21BA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 06:39:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C293FB21AFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 06:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34011DC759;
-	Sat, 19 Oct 2024 06:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfyitq0g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4661DD0DE;
+	Sat, 19 Oct 2024 06:41:29 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B771D47BC;
-	Sat, 19 Oct 2024 06:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2571D2704;
+	Sat, 19 Oct 2024 06:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729319959; cv=none; b=B8/0IhToHm1dX9cgpiBTJSMQa3pd1Cx73CX3xrKU6ZVoQ8DimdbiAYz7uysNF+iQ3ZiPHs0/TM3V5EY9Bzvws10H3cThCNELeTEAt+yXuVQRX5g10ldUqvssbrx64hoUY1OdLPZa0TVtcc8553mB4gZ3DGk8SblAMigmCTvRFiU=
+	t=1729320089; cv=none; b=KvvHV/sKOiELZQxojEUDrJ4YDdLjXTO3JQD9wHVdutAg4NxSlDid3kZV/dBBN22Ci3c9Daqsv34fC+OUF9xDTALbA5H1LvwuP3vLCCtqK1I0AURBP50UezZdjSbvRMn8zc4/i6nabSCIfdl3NKhwikxNc8zKLEZFixIbrdBKzIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729319959; c=relaxed/simple;
-	bh=2OMqzVV1EHVYDVSMR6YrmRol1GFScxEW2/cG43gGBZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FV9vNHFYsyTySHM01oGkLtZR8xhFuvzWX79tZmvXDxMrgtBfj2Vmxdx2vtE94rFXKRkAFGooVxJ5QBQ2U+pBOVETxqFsrl0X2cwaQHknqt9O+bdqYEpHdj/r46w/DoZQ+DePspvDN2Sua1QqfA9qwptb7H209GYNDa0/fv0DLt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfyitq0g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC56C4CEC5;
-	Sat, 19 Oct 2024 06:39:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729319958;
-	bh=2OMqzVV1EHVYDVSMR6YrmRol1GFScxEW2/cG43gGBZA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kfyitq0g+eNsCUvGPY8UFb64I29nqIMBVUJzAQRMaqe4govc4ekAzCVaZIM1Mm5t2
-	 De0baG0JRk5Sn7wiCQ/7DP9qIxE9IOX66phqXAbTxfGl/+xLyJWgEJnoQLqRMq9UtA
-	 8ZSCn+wnkydfst9+wfhl65xq0XV+pPhqBTLQcISZ5bFFGklAABtuxJn6FjY5NRez8p
-	 kylw+jHNRfImc7tAhWZe3CaA5LazyF31QuE+GG/l0KLwdhP1kEcE/9QD/c6ZTmJX9A
-	 sE3zys05kgQmnkOwZk+LYit6abp39oWgKhJ0U7cPpLfnyNg2K91zARhVTRMeUM0Kqo
-	 j2xHUvH03rodg==
-Date: Sat, 19 Oct 2024 08:39:13 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Philipp Stanner <pstanner@redhat.com>, Hans Verkuil
- <hverkuil@xs4all.nl>, Kevin Hao <haokexin@gmail.com>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Kees Cook
- <keescook@chromium.org>
-Subject: Re: [PATCH v2 04/13] media: dvb_frontend: don't play tricks with
- underflow values
-Message-ID: <20241019083913.5fb953ac@foz.lan>
-In-Reply-To: <4D0C7D12-C645-4766-B7B1-0B34B2129579@kernel.org>
-References: <cover.1729230718.git.mchehab+huawei@kernel.org>
- <8d6193ed8d53ce94d595cb431627bbc7783c0e4c.1729230718.git.mchehab+huawei@kernel.org>
- <ab51f981844c700d4e66b366c8d2abde7c5947bf.camel@redhat.com>
- <4D0C7D12-C645-4766-B7B1-0B34B2129579@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1729320089; c=relaxed/simple;
+	bh=sDY5sKHK1RUNYpSHzuRV0CuT80rp/8pk8NwaBaz8Zzw=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UHG0lmL9ysz5m+++7e9JLXolLC6sUbUEZ5JWHuh3RUwN6BEyA2QjH14jjwlF5nu4jGFDQdvdS8+XYlmimAhw31JYkrnLNnutbM6pkr8NJWDxEkUuHZODYu3IxITrMEhf5VB7A/AqJlgihYPkAk98+pK5/Nn7jA4XOfDH4OP4FLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XVsPp0ZVhz1SCpM;
+	Sat, 19 Oct 2024 14:39:58 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7FFF41A0188;
+	Sat, 19 Oct 2024 14:41:16 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 19 Oct 2024 14:41:15 +0800
+Subject: Re: [PATCH v4] ACPI: GTDT: Tighten the check for the array of
+ platform timer structures
+To: Zheng Zengkai <zhengzengkai@huawei.com>, <lpieralisi@kernel.org>,
+	<sudeep.holla@arm.com>, <mark.rutland@arm.com>, <maz@kernel.org>,
+	<rafael@kernel.org>, <lenb@kernel.org>
+CC: <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241016095458.34126-1-zhengzengkai@huawei.com>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <c1b7159e-3bd1-ff2d-da94-fcf5a48220d2@huawei.com>
+Date: Sat, 19 Oct 2024 14:41:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241016095458.34126-1-zhengzengkai@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-Em Fri, 18 Oct 2024 07:37:52 -0700
-Kees Cook <kees@kernel.org> escreveu:
+On 2024/10/16 17:54, Zheng Zengkai wrote:
+> As suggested by Marc and Lorenzo, first we need to check whether the
+> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
+> de-referencing what it points at to detect the length of the platform
+> timer struct and then check that the length of current platform_timer
+> struct is also valid, i.e. the length is not zero and within gtdt_end.
+> Now next_platform_timer() only checks against gtdt_end for the entry of
+> subsequent platform timer without checking the length of it and will
+> not report error if the check failed and the existing check in function
+> acpi_gtdt_init() is also not enough.
+> 
+> Modify the for_each_platform_timer() iterator and use it combined with
+> a dedicated check function platform_timer_valid() to do the check
+> against table length (gtdt_end) for each element of platform timer
+> array in function acpi_gtdt_init(), making sure that both their entry
+> and length actually fit in the table.
+> 
+> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Co-developed-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
 
-> On October 18, 2024 4:44:20 AM PDT, Philipp Stanner <pstanner@redhat.com>=
- wrote:
-> >On Fri, 2024-10-18 at 07:53 +0200, Mauro Carvalho Chehab wrote: =20
-> >> fepriv->auto_sub_step is unsigned. Setting it to -1 is just a
-> >> trick to avoid calling continue, as reported by Coverity.
-> >>=20
-> >> It relies to have this code just afterwards:
-> >>=20
-> >> 	if (!ready) fepriv->auto_sub_step++;
-> >>=20
-> >> Simplify the code by simply setting it to zero and use
-> >> continue to return to the while loop.
-> >>=20
-> >> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2") =20
-> >
-> >Oh wow, back to the big-bang-commit ^^'
-> >
-> >So is this a bug or not? It seems to me that the uint underflows to
-> >UINT_MAX, and then wrapps around to 0 again through the ++..
-> >
-> >I take the liberty of ++CCing Kees, since I heard him talk a lot about
-> >overflowing on Plumbers.
-> >
-> >If it's not a bug, I would not use "Fixes". If it is a bug, it should
-> >be backported to stable, agreed?
+Nit: since there is a "Co-developed-by:" for Marc, the
+"Signed-off-by:" can be removed. The rest of the patch looks
+good to me.
 
-There is a long thread about Fixes: tag at ksummit ML.
+I did a test again Kunpeng ARM sever and no regressions,
+hopefully will not trigger firmware bugs for other
+platforms.
 
-	https://lore.kernel.org/all/20240714192914.1e1d3448@gandalf.local.home/T/
+Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
+Tested-by: Hanjun Guo <guohanjun@huawei.com>
 
-My conclusions for it is that:
-
-1. Fixes: !=3D Cc: stable.
-   This is even somewhat stated at
-   Documentation/process/stable-kernel-rules.rst when it defines additional
-   rules for Cc: stable;
-
-2. As result of (1), all Cc: stable need fixes, but not all fixes: need=20
-   a Cc: stable. Btw, I double-checked it with a -stable maintainer
-   (Greg);
-
-3. It seems that most of people at ksummit discussion (including me)=20
-   use Fixes: when the patch is not doing an improvement.
-
-> >Plus, is there a report-link somewhere by Coverty that could be linked
-> >with "Closes: "? =20
-
-Coverity issues are not publicly visible (and IMO it shouldn't).=20
-We should not add closes: to something that only the ones with access
-to it may see.
-
-> Yeah, this is "avoid currently harmless overflow" fix. It is just avoidin=
-g depending on the wrapping behavior, which is an improvement but not reall=
-y a "bug fix"; more a code style that will keep future work of making the k=
-ernel wrapping-safe.
-
-It is a fix in the sense that it solves an issue reported by Coverity.
-
-> >> =C2=A0		if (!ready) fepriv->auto_sub_step++; =20
-> > =20
->=20
-> But this change seems incomplete. The above line is no longer needed.
-
-Yes, this is now a dead code.
-
-> And I actually think this could be refractored to avoid needing "ready" a=
-t all?
-
-Yeah, it sounds a good idea to place the zig-zag drift calculus on a
-separate function, doing some cleanups in the process.
-
-I'll add it to my todo list.
-
-Thanks,
-Mauro
+Thanks
+Hanjun
 
