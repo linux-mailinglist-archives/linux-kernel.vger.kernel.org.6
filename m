@@ -1,267 +1,166 @@
-Return-Path: <linux-kernel+bounces-372697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5EFA9A4BFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9AB9A4C07
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B16D3B22531
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:28:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 091ADB22CC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525781DE88E;
-	Sat, 19 Oct 2024 08:27:52 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86A21DEFE8;
+	Sat, 19 Oct 2024 08:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ORUMewL+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241F812B17C;
-	Sat, 19 Oct 2024 08:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31E51DE3B8;
+	Sat, 19 Oct 2024 08:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729326471; cv=none; b=M2LxE1GwxHkq5NJ73F2pz9OISX4wQrbWWar+i0//qZ/Kr76VDVa4grrlZCyhQ+6hAlHNq1r785045JQKbJmp0ZQ0JCysMyVZJQmcqM9UapKSV+8MoIw8fx7ptIyeCMbPyAWpZ71jQxD1ISDaJTz+LKKktcm+gF9cLU4mGVIZxmA=
+	t=1729326622; cv=none; b=oCLCl3WHjXMETuRLDf2iI0edE7eoo6u+dTkHogb1B/2CJKvw9hfNolsaOrQrUHqQt5/Iv6aYfMsxk+sXjDN3tuhH0X9F7tL9D9UVinIxLQqFKjtXEQaXz28LOS6B4p/CNbgH3E2GE1+cXVNNiAUa2aKTRTE53hnCT9y4AnQ2Xds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729326471; c=relaxed/simple;
-	bh=YSH+HUdHMn0lUKeHVzgggYhFri4b1LePkWEKTNcbj1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kDXVZq/2DgA2vbvoLyWzfCi4huA7F8JPShcoSXZCxKActarym+jcc6Xor8PWRhL5cx3PBG+pU3/9Ht84lTSvvsZYArd5QJ/XV8IQc6XfZbgGRj0tHXfUHF2hdbpM13smuZt/+ckVH4OztvEE7H1jtNgrpkBXtvjzJlfBh+uUkiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XVvnk05Zkz4f3lVd;
-	Sat, 19 Oct 2024 16:27:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 1115E1A058E;
-	Sat, 19 Oct 2024 16:27:40 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP1 (Coremail) with SMTP id cCh0CgDXAi96bRNnmEeOEQ--.60398S2;
-	Sat, 19 Oct 2024 16:27:39 +0800 (CST)
-Message-ID: <093e14a9-4008-4490-9946-5080449935c4@huaweicloud.com>
-Date: Sat, 19 Oct 2024 16:27:38 +0800
+	s=arc-20240116; t=1729326622; c=relaxed/simple;
+	bh=wTzKEK+zguBgJkUF22dXSocOn+at58n7Xma9AE7SZIc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3Yj/6eCfa+FSqCYNM1162DRkVHrjcIlNZrTf6P1CszjzBGCmfpj0aQDq4R5JwD5fJyjBfXIi68Fencb2STqFZzRNM20YyICCV3h9KTke4qFCfU4deb/5mgGmZ9vdT4j/sv0Apv7JIIgx7Wx6z0nFy5AB/9bQnMuQxk43OkO+0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ORUMewL+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49J805p3030117;
+	Sat, 19 Oct 2024 08:29:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=emllR5JbPryq2TscDbpDv5cW
+	SwVM0+1pn14ciuws77o=; b=ORUMewL+t29qNQUByzmn/UrHs2WSjgY3CzAo/A8B
+	ES+WXGn7JXLm1rS2HrpdzDm2cRlCW4ku18nZ9+GpT5D6VCggPuX4aH3PT7SMTDbf
+	8lbPSUDot1yhi3XONHNXv8R1+aq4sx+0cHdEwts8JNvYhy6hI6dK0Y9Xszmysl/6
+	IxH2KMJgqqwJZJZt4X/VR7qAvTiPnlZZltc6zKEMGN96nhtUoEuPjnFwRgAz7qKD
+	krzzVgCgpjwysFyBWlqBIBxY9fXF4Sv0+Ttxzec+bpJC1xRI3k95xBaZiC6XNZaP
+	Rx4KyUCuw0uSTy51gabOqhj2L7aMIF5FWQ9CZz1hRe81sA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6sj87r9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 19 Oct 2024 08:29:56 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49J8TtIm015223
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 19 Oct 2024 08:29:55 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sat, 19 Oct 2024 01:29:48 -0700
+Date: Sat, 19 Oct 2024 13:59:44 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon
+	<nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH RFC 3/3] arm64: dts: qcom: x1e80100: Add ACD levels for
+ GPU
+Message-ID: <20241019082944.w2xnks54i34vj4qx@hu-akhilpo-hyd.qualcomm.com>
+References: <20241012-gpu-acd-v1-0-1e5e91aa95b6@quicinc.com>
+ <20241012-gpu-acd-v1-3-1e5e91aa95b6@quicinc.com>
+ <5axuqj4hetfkgg2f53ph4um24b7xfyumktreglxqyzfsdhy25e@deucq7vqxq5l>
+ <20241015193540.mcpp2dvkmikruncj@hu-akhilpo-hyd.qualcomm.com>
+ <921d3a39-d95c-4156-b376-44e8dc6a6467@kernel.org>
+ <20241017061217.mmq27egyg5cdlubb@hu-akhilpo-hyd.qualcomm.com>
+ <9ac861ae-b0b1-4f7a-a002-7d2048132ef3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v4 1/2] perf stat: Support inherit events during
- fork() for bperf
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20241012023225.151084-1-wutengda@huaweicloud.com>
- <20241012023225.151084-2-wutengda@huaweicloud.com>
- <ZxAtLsClDW8x0H_a@google.com>
- <5c8612d2-a0fb-4853-8b6f-aca85b200edb@huaweicloud.com>
- <ZxKXFMh6_8E6-z7H@google.com>
-Content-Language: en-US
-From: Tengda Wu <wutengda@huaweicloud.com>
-In-Reply-To: <ZxKXFMh6_8E6-z7H@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDXAi96bRNnmEeOEQ--.60398S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFykZF17KF1rAw13Cr45ZFb_yoWxWF15pF
-	W7Ka4jkw4kXFW5Cw12qa1DXr9ayw1SgrW3Wr13trW8t3WDtr9xWFyxJFyYkFn7XrykCr10
-	qr4j9rWxurZrArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <9ac861ae-b0b1-4f7a-a002-7d2048132ef3@kernel.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gCOussZQS0CKV-Lk2cyLze9bBgMj7q8d
+X-Proofpoint-ORIG-GUID: gCOussZQS0CKV-Lk2cyLze9bBgMj7q8d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ bulkscore=0 phishscore=0 mlxlogscore=289 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410190059
 
-
-
-On 2024/10/19 1:12, Namhyung Kim wrote:
-> On Thu, Oct 17, 2024 at 10:53:46AM +0800, Tengda Wu wrote:
->> Hi,
->>
->> On 2024/10/17 5:16, Namhyung Kim wrote:
->>> Hello,
->>>
->>> On Sat, Oct 12, 2024 at 02:32:24AM +0000, Tengda Wu wrote:
->>>> bperf has a nice ability to share PMUs, but it still does not support
->>>> inherit events during fork(), resulting in some deviations in its stat
->>>> results compared with perf.
->>>>
->>>> perf stat result:
->>>> $ ./perf stat -e cycles,instructions -- ./perf test -w sqrtloop
->>>>
->>>>    Performance counter stats for './perf test -w sqrtloop':
->>>>
->>>>        2,316,038,116      cycles
->>>>        2,859,350,725      instructions
->>>>
->>>>          1.009603637 seconds time elapsed
->>>>
->>>>          1.004196000 seconds user
->>>>          0.003950000 seconds sys
->>>>
->>>> bperf stat result:
->>>> $ ./perf stat --bpf-counters -e cycles,instructions -- \
->>>>       ./perf test -w sqrtloop
->>>>
->>>>    Performance counter stats for './perf test -w sqrtloop':
->>>>
->>>>           18,762,093      cycles
->>>>           23,487,766      instructions
->>>>
->>>>          1.008913769 seconds time elapsed
->>>>
->>>>          1.003248000 seconds user
->>>>          0.004069000 seconds sys
->>>>
->>>> In order to support event inheritance, two new bpf programs are added
->>>> to monitor the fork and exit of tasks respectively. When a task is
->>>> created, add it to the filter map to enable counting, and reuse the
->>>> `accum_key` of its parent task to count together with the parent task.
->>>> When a task exits, remove it from the filter map to disable counting.
->>>>
->>>> After support:
->>>> $ ./perf stat --bpf-counters -e cycles,instructions -- \
->>>>       ./perf test -w sqrtloop
->>>>
->>>>  Performance counter stats for './perf test -w sqrtloop':
->>>>
->>>>      2,316,252,189      cycles
->>>>      2,859,946,547      instructions
->>>>
->>>>        1.009422314 seconds time elapsed
->>>>
->>>>        1.003597000 seconds user
->>>>        0.004270000 seconds sys
->>>>
->>>> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
->>>> ---
->>>>  tools/perf/builtin-stat.c                     |  4 +-
->>>>  tools/perf/util/bpf_counter.c                 | 57 +++++++++---
->>>>  tools/perf/util/bpf_counter.h                 | 13 ++-
->>>>  tools/perf/util/bpf_counter_cgroup.c          |  3 +-
->>>>  tools/perf/util/bpf_skel/bperf_follower.bpf.c | 87 +++++++++++++++++--
->>>>  tools/perf/util/bpf_skel/bperf_u.h            |  5 ++
->>>>  6 files changed, 145 insertions(+), 24 deletions(-)
->>>>
->>>> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
->>>> index 3e6b9f216e80..c27b107c1985 100644
->>>> --- a/tools/perf/builtin-stat.c
->>>> +++ b/tools/perf/builtin-stat.c
->>>> @@ -698,6 +698,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->>>>  	char msg[BUFSIZ];
->>>>  	unsigned long long t0, t1;
->>>>  	struct evsel *counter;
->>>> +	struct bpf_stat_opts opts;
->>>>  	size_t l;
->>>>  	int status = 0;
->>>>  	const bool forks = (argc > 0);
->>>> @@ -725,7 +726,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->>>>  
->>>>  	evlist__for_each_entry(evsel_list, counter) {
->>>>  		counter->reset_group = false;
->>>> -		if (bpf_counter__load(counter, &target)) {
->>>> +		opts.inherit = !stat_config.no_inherit;
->>>> +		if (bpf_counter__load(counter, &target, &opts)) {
->>>
->>> Maybe you can just add a boolean member in the struct target.
->>
->> Yes，this approach would be more straightforward. 
->>
->> I had considered it before, but, as you see, considering that `inherit` does not
->> align well with the `target` semantics, I chose the another one.
+On Thu, Oct 17, 2024 at 09:05:50AM +0200, Krzysztof Kozlowski wrote:
+> On 17/10/2024 08:12, Akhil P Oommen wrote:
+> > On Wed, Oct 16, 2024 at 09:50:04AM +0200, Krzysztof Kozlowski wrote:
+> >> On 15/10/2024 21:35, Akhil P Oommen wrote:
+> >>> On Mon, Oct 14, 2024 at 09:40:13AM +0200, Krzysztof Kozlowski wrote:
+> >>>> On Sat, Oct 12, 2024 at 01:59:30AM +0530, Akhil P Oommen wrote:
+> >>>>> Update GPU node to include acd level values.
+> >>>>>
+> >>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> >>>>> ---
+> >>>>>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 11 ++++++++++-
+> >>>>>  1 file changed, 10 insertions(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> >>>>> index a36076e3c56b..e6c500480eb1 100644
+> >>>>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> >>>>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> >>>>> @@ -3323,60 +3323,69 @@ zap-shader {
+> >>>>>  			};
+> >>>>>  
+> >>>>>  			gpu_opp_table: opp-table {
+> >>>>> -				compatible = "operating-points-v2";
+> >>>>> +				compatible = "operating-points-v2-adreno";
+> >>>>
+> >>>> This nicely breaks all existing users of this DTS. Sorry, no. We are way
+> >>>> past initial bringup/development. One year past.
+> > 
+> > How do I identify when devicetree is considered stable? An arbitrary
+> > time period doesn't sound like a good idea. Is there a general consensus
+> > on this?
+> > 
+> > X1E chipset is still considered under development at least till the end of this
+> > year, right?
 > 
-> Well, I think 'inherit' is well aligned with the target semantics.
-> We want some processes as the targets of the event and we want to
-> profile their children or not.
+> Stable could be when people already get their consumer/final product
+> with it. I got some weeks ago Lenovo T14s laptop and since yesterday
+> working fine with Ubuntu:
+> https://discourse.ubuntu.com/t/ubuntu-24-10-concept-snapdragon-x-elite/48800
 > 
-
-Ok.
-
->>
->> Anyway, I'll try it. Code changes would be more clean. Thanks.
->>
->>>
->>>
->>>>  			err = -1;
->>>>  			goto err_out;
->>>>  		}
->>>> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
->>>> index 7a8af60e0f51..00afea6bde63 100644
->>>> --- a/tools/perf/util/bpf_counter.c
->>>> +++ b/tools/perf/util/bpf_counter.c
->>>> @@ -166,7 +166,9 @@ static int bpf_program_profiler_load_one(struct evsel *evsel, u32 prog_id)
->>>>  	return -1;
->>>>  }
->>>>  
->>>> -static int bpf_program_profiler__load(struct evsel *evsel, struct target *target)
->>>> +static int bpf_program_profiler__load(struct evsel *evsel,
->>>> +				      struct target *target,
->>>> +				      struct bpf_stat_opts *opts __maybe_unused)
->>>>  {
->>>>  	char *bpf_str, *bpf_str_, *tok, *saveptr = NULL, *p;
->>>>  	u32 prog_id;
->>>> @@ -364,6 +366,7 @@ static int bperf_lock_attr_map(struct target *target)
->>>>  
->>>>  static int bperf_check_target(struct evsel *evsel,
->>>>  			      struct target *target,
->>>> +			      struct bpf_stat_opts *opts,
->>>>  			      enum bperf_filter_type *filter_type,
->>>>  			      __u32 *filter_entry_cnt)
->>>>  {
->>>> @@ -383,7 +386,12 @@ static int bperf_check_target(struct evsel *evsel,
->>>>  		*filter_type = BPERF_FILTER_PID;
->>>>  		*filter_entry_cnt = perf_thread_map__nr(evsel->core.threads);
->>>>  	} else if (target->pid || evsel->evlist->workload.pid != -1) {
->>>> -		*filter_type = BPERF_FILTER_TGID;
->>>> +		/*
->>>> +		 * unlike the PID type, the TGID type implicitly enables
->>>> +		 * event inheritance within a single process.
->>>> +		 */
->>>> +		*filter_type = opts->inherit ?
->>>> +				BPERF_FILTER_TGID : BPERF_FILTER_PID;
->>>
->>> I'm not sure if it's right.  You should be able to use PID type with
->>> inheritance.  In this case child processes or threads from the selected
->>> thread would be counted only.
->>
->> Sorry, don't quite understand. TGID type counts together with all sub-threads within
->> the same process, which is what inheritance needs to do; while PID type only counts
->> for a single thread and should be used when inheritance is turned off. This is equivalent
->> to the code above.
+> All chipsets are under development, even old SM8450, but we avoid
+> breaking it while doing that.
 > 
-> Let me be clear:
-> 
->  * PID w/o inherit : specified threads only
->  * PID w/ inherit  : specified threads + all threads or child process from the threads
->  * TGID w/o inherit: specified process (all threads in the process) only
->  * TGID w/ inherit : specified process + all children from the processes
-> 
-> For the TGID w/o inherit case, it's ok not to track new threads in the
-> process because they will have the same tgid anyway.
-> 
-> So you cannot change the filter type using inherit value.  It should be
-> used to control whether it tracks new task only.
-> 
+I still have questions about the practicality especially in IoT/Auto chipsets,
+but I will try to get it clarified when I face them.
 
-So changing 'TGID w/o inherit' to 'PID w/o inherit' will lose counts of all
-threads in the process, right?
+I will go ahead and send out the v2 series addressing the suggestions.
 
-It's clear now. Thanks for the explanation.
+-Akhil.
 
-Tengda
-
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
