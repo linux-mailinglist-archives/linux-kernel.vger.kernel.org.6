@@ -1,106 +1,83 @@
-Return-Path: <linux-kernel+bounces-372848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686EB9A4E4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:23:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C1879A4E50
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987501C228FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:23:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C016286B31
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A021917DD;
-	Sat, 19 Oct 2024 13:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C832827468;
+	Sat, 19 Oct 2024 13:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDRdH2Vj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b="ZU6em9aA"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2409B190074;
-	Sat, 19 Oct 2024 13:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D652F3E
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 13:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729344081; cv=none; b=Zpbq3h2T+zWOielULeH/in+igpCclw3YwNZz/A4aopjfC6HEWOF92368VlxR3rI2v4xE44cUvTFrvZMfST6OTTm2FK8KqDreAsWD/5y0Mfgmdo9VwL6EuohPR1QKgDCdSYMhMwvZa55plnjzvDgPksat+Z/04qYIYnfEb+GiVCQ=
+	t=1729344715; cv=none; b=bgJF4o9JFgY8lmiH9EHnGLJ+iJG5D2F25oRj4jemd3HL/k6ki/xZZlX32mHuloZGjRkUFGw2U9/35PGqqphalRwYoSDJHMi/1b7/gZQMkECcJ39kheHVIl9nIqdyNQZHraaKAoknvxYht13gqIo17eaxELn7aRBaHnr26HBlwJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729344081; c=relaxed/simple;
-	bh=or3247cKJ1jKd4U/sgvypGpqvn18gzAUK+zAzepboWc=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=RasJ9m73VDGUY11rN9m3EcVBNYZPZ3l9QZsfroOnaBB+7X27cpxNGXWdqWD6bvXcCuLSvAB6OPYlDZzXw3Rk+yl5w69Hqi5rEHEUv1DkX0FeU1HO5QXSAVTcIEjs4Jhl46jg1HezKRIYa53/7DwYMdSn3LtTmB1JWrDFQGgsHAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDRdH2Vj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90B64C4CED1;
-	Sat, 19 Oct 2024 13:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729344080;
-	bh=or3247cKJ1jKd4U/sgvypGpqvn18gzAUK+zAzepboWc=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=KDRdH2VjyfkDPGVIvimt99E565twkG3eVFjqmTSCjYICabR7cl3Xl0YZVdOYDGwS4
-	 wJFUJKvGuQeFOlYDvEnXujaj4tSG3kKdJ8L0oOOh9+uOm0P7TWybkjTyMUYzLte3JM
-	 u1LSFQKbg9mQf9vyTDuCaZk1DOQ6cVCJlr1zHWzXy2+jlMfWQ46I9tDDjf0MoyD/Kz
-	 KBkEbXJrPNZ3HHBwVA9jUjannhvRFOup7HqO1+f7nfyPyJrH+pp36T35/8c8KPAWyr
-	 wkNlvb8NLx+mG7hVwRg0J4+mo8nuYV2KgRutTVnQXbkTMMsVY1FrJwpZl3LEJC7m9b
-	 X9m+Y9levIQ3w==
-Date: Sat, 19 Oct 2024 08:21:19 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1729344715; c=relaxed/simple;
+	bh=3uA+4Jqdwqd9dFB6jSaxZAZNklbfjMvVgVgoXH0QSzc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=F0DqTS5IL8ncK4h8sYWEuKlQjQaVib4OZEYc9uuSSfQwls2aBqy7fAxKup0upCXRPsx+nhVzBfYkNjUOfDxBFvVLornlQ9HyWasWfEBQahaK7m4FxCJT9P9FWz/Ceh543gmPlskKUGCkN0KY3DSPEnFAuyXICf3YtT/eGZQDXdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org; spf=pass smtp.mailfrom=bit-x.org; dkim=pass (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b=ZU6em9aA; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-x.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-x.org;
+	s=ds202404; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	To:From:Subject:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5TGw17weq5HY8ZColL7s69Slbc3Phl1/ZTJZ2ka15U4=; b=ZU6em9aAl6sYY1nv7bo136dnbo
+	K6tPjGYVJN/sfzf6OVlwCTEFvFD/ocxL4SNyd1HQxi3Lcef4W2Vs+bM9Rtnazx1ZotMLi9Gj76JUn
+	WpWKrcB9GxHGRuD9RbotjbT2YC5ropIm0GbACNRm/mL8rQ0m+sD/BunEp/kdt3MBRCaYem12A3A6+
+	mbbm7wm6k56qgOQvwveWNpVEDhLk0kkJ1FQ2QAzxCGXXlV4E+LzF4LN23p1zd+O9k4LqaNmBY2fEC
+	1K8XFi0rC9NzikLM3fPAGzRWYoYUh7BxshSuJwKXKk0iQAo/bgj7BrCh3OHRgqeV6EM245dQIr63P
+	dWumVODQ==;
+Received: from [2a02:fe1:716d:5f00:f940:7ace:518d:8015] (port=52831)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <ywe_caerlyn@bit-x.org>)
+	id 1t29YX-004uej-V3
+	for linux-kernel@vger.kernel.org;
+	Sat, 19 Oct 2024 15:31:46 +0200
+Message-ID: <507f8cad-b815-4c4d-b0c5-108d7b13c1b8@bit-x.org>
+Date: Sat, 19 Oct 2024 15:31:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, 
- Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
- Amit Kucheria <amitk@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, 
- linux-gpio@vger.kernel.org, Thara Gopinath <thara.gopinath@gmail.com>, 
- linux-arm-msm@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, 
- Joerg Roedel <joro@8bytes.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, iommu@lists.linux.dev, 
- linux-pm@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>, 
- Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-In-Reply-To: <20241019-msm8917-v1-13-f1f3ca1d88e5@mainlining.org>
-References: <20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org>
- <20241019-msm8917-v1-13-f1f3ca1d88e5@mainlining.org>
-Message-Id: <172934407034.3231899.7392899989980103960.robh@kernel.org>
-Subject: Re: [PATCH RFC 13/14] dt-bindings: arm: qcom: Add Xiaomi Redmi 5A
+User-Agent: Mozilla Thunderbird
+Subject: Philosophy now Macro Perfect.
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe_caerlyn@bit-x.org>
+To: linux-kernel@vger.kernel.org
+References: <28e46d4d-ffff-4b36-8c6f-84cde4fda72e@bit-x.org>
+In-Reply-To: <28e46d4d-ffff-4b36-8c6f-84cde4fda72e@bit-x.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+I do believe the philosophical groundwork is now perfected. I now use Im 
+as divine, which is Macro Perfect (these concepts refer eachother, and 
+now this is done completely perfect aswell). It is now similar to the 
+original symbol!
 
-On Sat, 19 Oct 2024 13:50:50 +0200, Barnabás Czémán wrote:
-> Document Xiaomi Remi 5A (riva).
-> 
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
+Its quite an event now, this, so please do check out my page, and 
+encourage Bit X, (as it once was about) and this philosophy background.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+This is what will be necessary for a mainstream adoptation of Open Source.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241019-msm8917-v1-13-f1f3ca1d88e5@mainlining.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Light.
+Ywe Cærlyn.
+Bishop, Bit X.
 
