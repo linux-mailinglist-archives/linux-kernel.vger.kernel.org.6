@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-372891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33549A4EE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:55:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581579A4EE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DBE91F234D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:55:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875621C23EB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF66717DE36;
-	Sat, 19 Oct 2024 14:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175E3183CA6;
+	Sat, 19 Oct 2024 14:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X+1FPevQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KryZxhla"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90DF148301;
-	Sat, 19 Oct 2024 14:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5691922338;
+	Sat, 19 Oct 2024 14:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729349744; cv=none; b=KizxYkN9KJ7w/hJkKp0mWZwDgmlYK3Al0IlxoPqQEkrCghC/B732zhfL2peXKCOa4evCi921zkX6ocHKHBaRATr5TldLz8wQ6UUD1pqsMEWClNEukeDTf64tqYWlcS1jWWdgzCUuzndPFvsDhUTFbRmMzPUHvwsAL4c+nxkRoIA=
+	t=1729349760; cv=none; b=A5KYTpSvuoHTZ65QefOxxiVqsyN5CNyNo+0qazuZUs/SDHXhikBkaI7fwjj6z/Z/tXLy5eR064lymQvNhtJhRX191oiHKvjTGnthd27q8jfVrRbZGqEm2vrUnatXjwVP5L1338oVURb8IN2S/IyIecXJnZqypVQCAP20mEjrLF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729349744; c=relaxed/simple;
-	bh=xLGc/fkE70XqNDOSKMtczAKjs2MSYYL8whgVc/JqJSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GP00JXEYoMou8q7hSJyv/1tIE/93FIDZKy+BAGB3vgt6nBkZxWx1/ExElDgTIQJOcrWrCDYHtonHDLkwEQkrNfa0K/yqyjw7W9sPGHKhuXfaoCoXGqu1VBY2nzX3X1TLK+YJXen8Ft65H4dIANyWz/7AFcCYKkhrHl2lztpcUCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X+1FPevQ; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729349742; x=1760885742;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xLGc/fkE70XqNDOSKMtczAKjs2MSYYL8whgVc/JqJSY=;
-  b=X+1FPevQuefMM3I5xUf9am9hCfof/dN76iH5q/xTPm9zVdS9ns4BO76q
-   Bg+sqQz4zj5iTx51KxQQ+GfeGH9Ic4+/OzSnEkV5MU2QGZ/RL7AIKFr3D
-   YuYtrPK/d3eFZxZv9phqliO0QnSzwk1h5eM89/1UJ62qprhJZmvweTYT2
-   iksyqmEjcUEVfa/rHG2qG0ipp3PrHfFhxc4iiH5S0ylz3t/O3bcGdYt5n
-   aDdXUj4wdZQPuRF7xb32BHPMSl0Old507TupXaVUPLF0J52YJu/gQbPhZ
-   lo36+EkOV9GqokTt35zpq5JawLpqDsBm7Xk0X+HJ8/6Fy9T5UKg49rcN4
-   A==;
-X-CSE-ConnectionGUID: nLnZzuUfSLKq2tCYTvfLWQ==
-X-CSE-MsgGUID: hleZ16COSMeYuwroX4oOMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11230"; a="32790397"
-X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
-   d="scan'208";a="32790397"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 07:55:41 -0700
-X-CSE-ConnectionGUID: 6uBQQkNuRlm0VF+g8SreCg==
-X-CSE-MsgGUID: uulSNiABQ7uT9RqAe/UI2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
-   d="scan'208";a="79046680"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 19 Oct 2024 07:55:36 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t2Are-000P5z-0k;
-	Sat, 19 Oct 2024 14:55:34 +0000
-Date: Sat, 19 Oct 2024 22:54:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Kurt Kanzenbach <kurt@linutronix.de>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	George McCollister <george.mccollister@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Rosen Penev <rosenp@gmail.com>, Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Breno Leitao <leitao@debian.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv7 net-next 2/6] net: ibm: emac: remove custom init/exit
- functions
-Message-ID: <202410192213.VVMV5TxH-lkp@intel.com>
-References: <20241015200222.12452-4-rosenp@gmail.com>
+	s=arc-20240116; t=1729349760; c=relaxed/simple;
+	bh=oK4Pcb440cKuVgZfd/oc6U9n/M8yHkAa6Bb5dH4nkh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tXVk1W506w8jAdHoBkB5JBZ7DlvKRCJLrhCZHWvpYQf9fruLLrJQyfFg8bWVgooNxBHZ+XbwXpX2unj8+QZJFK5PqcLqwMu/7hhtQ4kq3k6xKD17miiYjOQSdqU1D6NZKyGTvi8AYLLxqVZW64nLaf42JBU75ylBtWCBr8SY9n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KryZxhla; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA9B5C4CEC5;
+	Sat, 19 Oct 2024 14:55:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729349760;
+	bh=oK4Pcb440cKuVgZfd/oc6U9n/M8yHkAa6Bb5dH4nkh8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KryZxhlaGTCKuS6bK/dGEL4JJpC1paCUEVI3faG0uS0lln53sbv9GcvLLvkYpvgYK
+	 VJzWRrjc7lmRWVggMOB76IZC+IWnfFTcCWVML6/ULRSQn5ebi1i3Deavy9sKeqCYzW
+	 7plZpubSuoiTXgSOjkuZcjOBtvGIrjvn4VkNmbt7UP4WAi8wOfPULpskk0gXrRsT+4
+	 BaJY4IR+Wy05w+nvZbfo48tb3jr2IwvXETm5DQi8BX7k9cChNykL6xCPypbK0FC+FI
+	 pUrH+2KX9S0rOBUv8FBbq9sqEWfgOR09NtETUlXNX4jsFUqmphEugLAPKngwsXTNUe
+	 304E/ghYvgiPQ==
+Date: Sat, 19 Oct 2024 15:55:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Ramona Alexandra Nechita <ramona.nechita@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Cosmin Tanislav <cosmin.tanislav@analog.com>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Alexandru Ardelean
+ <alexandru.ardelean@analog.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Nuno Sa
+ <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Ana-Maria
+ Cusco <ana-maria.cusco@analog.com>, George Mois <george.mois@analog.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] dt-bindings: iio: adc: add a7779 doc
+Message-ID: <20241019155510.1885393b@jic23-huawei>
+In-Reply-To: <7f3ccd71-f885-4f84-bda3-cb2adaffc4fa@linaro.org>
+References: <20241014143204.30195-1-ramona.nechita@analog.com>
+	<20241014143204.30195-2-ramona.nechita@analog.com>
+	<7f3ccd71-f885-4f84-bda3-cb2adaffc4fa@linaro.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015200222.12452-4-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rosen,
+On Mon, 14 Oct 2024 19:59:47 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-kernel test robot noticed the following build errors:
+> On 14/10/2024 16:31, Ramona Alexandra Nechita wrote:
+> > Add dt bindings for AD7779 8-channel, simultaneous sampling ADC
+> > family with eight full =CE=A3-=CE=94 ADCs on chip and ultra-low input
+> > current to allow direct sensor connection.
+> >=20
+> > Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com> =20
+>=20
+> <form letter>
+> This is a friendly reminder during the review process.
+>=20
+> It looks like you received a tag and forgot to add it.
+>=20
+> If you do not know the process, here is a short explanation:
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+> versions, under or above your Signed-off-by tag. Tag is "received", when
+> provided in a message replied to you on the mailing list. Tools like b4
+> can help here. However, there's no need to repost patches *only* to add
+> the tags. The upstream maintainer will do that for tags received on the
+> version they apply.
+>=20
+> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/su=
+bmitting-patches.rst#L577
+>=20
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
+>=20
+> Best regards,
+> Krzysztof
+>=20
+If we go around again, please also fix the part number in the patch title.
 
-[auto build test ERROR on net-next/main]
+Jonathan
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-ibm-emac-use-netif_receive_skb_list/20241016-040516
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241015200222.12452-4-rosenp%40gmail.com
-patch subject: [PATCHv7 net-next 2/6] net: ibm: emac: remove custom init/exit functions
-config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20241019/202410192213.VVMV5TxH-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241019/202410192213.VVMV5TxH-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410192213.VVMV5TxH-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/core.o: in function `emac_init':
->> core.c:(.init.text+0x8): multiple definition of `init_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.init.text+0x8): first defined here
-   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/core.o: in function `emac_exit':
-   core.c:(.exit.text+0x8): multiple definition of `cleanup_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.exit.text+0x8): first defined here
-   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/zmii.o: in function `zmii_driver_init':
-   zmii.c:(.init.text+0x8): multiple definition of `init_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.init.text+0x8): first defined here
-   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/zmii.o: in function `zmii_driver_exit':
-   zmii.c:(.exit.text+0x8): multiple definition of `cleanup_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.exit.text+0x8): first defined here
-   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/rgmii.o: in function `rgmii_driver_init':
-   rgmii.c:(.init.text+0x8): multiple definition of `init_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.init.text+0x8): first defined here
-   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/rgmii.o: in function `rgmii_driver_exit':
-   rgmii.c:(.exit.text+0x8): multiple definition of `cleanup_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.exit.text+0x8): first defined here
-   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/tah.o: in function `tah_driver_init':
-   tah.c:(.init.text+0x8): multiple definition of `init_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.init.text+0x8): first defined here
-   powerpc64-linux-ld: drivers/net/ethernet/ibm/emac/tah.o: in function `tah_driver_exit':
-   tah.c:(.exit.text+0x8): multiple definition of `cleanup_module'; drivers/net/ethernet/ibm/emac/mal.o:mal.c:(.exit.text+0x8): first defined here
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
