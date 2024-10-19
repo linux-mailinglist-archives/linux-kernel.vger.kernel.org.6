@@ -1,168 +1,384 @@
-Return-Path: <linux-kernel+bounces-372588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B376B9A4AC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:51:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAAAB9A4AC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9202846EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A7AF1F2328B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CD91990CE;
-	Sat, 19 Oct 2024 00:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8639C198E92;
+	Sat, 19 Oct 2024 00:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mfUIGGy9"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wDpRG3mX"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7280820E31C;
-	Sat, 19 Oct 2024 00:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C10198E84
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 00:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729299072; cv=none; b=C0AwNNsEXR7oH85yZlLaKuY2r8nM6azOKoX/3NDDENx74uJ4Ce/9I4Z0lE8YfecULTRxVIwlGVVXJxm8hV6zuC4VrrjAIekDUPaBA4u5O4PRTGwimxguKA0ZcTtFPMKeuJAiVGjRGwJVa1mkrJ8V5qjNMCFFi0HoLlx/UcSvP+Y=
+	t=1729299212; cv=none; b=JK+RtWXHsowGO0swA5vVGf9VqN/DkFaH9X1jsNgut706oi+BiY0BDfh1DW0FpJq4pueiKEfoJbpZggSEFNCGLcUl+kRbdp9njResovnUv9AJ74WEvivIRv+r1c0PfEGvdwBCYusthgQmxqhqD8v6DQGnxKJ2T1oDRWc81g0cSyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729299072; c=relaxed/simple;
-	bh=MD5kkzyjVlGnny+gqQDDv1+RFxFDxvzSYdWohCFC5o4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HnwPpz23hgFWe7QZRy0Ab/NxN9azNsya7h3F4w2IpDulb7RIo8U9hpB7vW5HAUZn9JGt/tS3IR5W0E9LG1oQ4cddgN62h1abYsJqr2cvGGerrMORkdhy3pfazHpgQ3ICh+OeZsJdeci2bsBIVuJIWc+VJqmkCfke/dSG11uWn6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mfUIGGy9; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c767a9c50so26156145ad.1;
-        Fri, 18 Oct 2024 17:51:10 -0700 (PDT)
+	s=arc-20240116; t=1729299212; c=relaxed/simple;
+	bh=fxJP6TH0Kf88Cju3h2DOUOHhzoA+0mHGNQ0kONReDZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sJLFDMee4BjzeJXNn7Ho+WYVt9QDwya0vIViUGeOV2wlMZsaZFFDz9N3twK/zumI4QoxlUxULpTXMmYmMsVQK7pItxlyzDhuYmuGMkwGCACeVv/FV15uNl5cwOmtLjTza8UY53PIiGkT0UBzoIH0p4Q7zkViM9+EVcXEJMtxx5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wDpRG3mX; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso378191166b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729299069; x=1729903869; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FL67X8g8ez0faSQl99ijSyvjCoKB8ojvzNqVtmVcfiE=;
-        b=mfUIGGy9bR9aKPRo55Evj5Y0+Syw/iJz2/yhdhO+b63hHvIHvYDxUA4Ui3G3+UmBHF
-         J1Iz8GUcEliAjAfmLwQqHL2mZKvgiWNxOcsfxrku6y4ZsOmRCTzsXz6nGHpxuZ1Vq1d6
-         XUyGqsxaFwmAjY017JagKBpd9uY7PRmIupDMo59mPAYkYPwIFcIGR5ERu6qb2ytDIkOn
-         Rvn6t8PFzt3PXkGZC405xgF0bzEfEyegSPqg+Zh3TrhApgKjaYqi1v4Rfd9KUMnVxAbh
-         l+PI2T9OQ2LH6XTlWvnIOXHa3/Blz+X/eH6rNMkoIt6k5ijcibNIUC8v8Uvks2N8/9Gn
-         Yh+A==
+        d=linaro.org; s=google; t=1729299208; x=1729904008; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lC+kKjnHN4Mbf8H0HShnBhmWgFVk4d57CzYOuvwy+Pk=;
+        b=wDpRG3mXu96pvWXP5EQOWkK3kFmMnydXQtdYHymWI5UEwtnpL0kWH7FPiL4lebnMAu
+         b0++Sci56XXFfr4NasrxM1SGy2y0nLdcVOgoeeCkKtnMxhSvlo7LBl1Y46/a8sfS3/BU
+         27gvXFdSUx2txqdvMtsbOtYIDibUsjFC7mySDmH3bOJm2UvAU8L199sqUvY7sHdl1/2K
+         KwKe6p6FwOJNVUujd0NIlFBi8nlxByMfn2rFncE2aeQKnYpN2RsSpkbaQ9Ilt8czdTNP
+         7ByWUyXxcS0UjjFFXlH8/+ThhAhVm8LzAdPaa0j7rEt+DNUt9nm29LLMi2W1S4sWvelD
+         Nnjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729299069; x=1729903869;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1729299208; x=1729904008;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FL67X8g8ez0faSQl99ijSyvjCoKB8ojvzNqVtmVcfiE=;
-        b=FQOxsZXfjPWufy8q3dUAS65HKcItAmG2JFBh4cmyFXbFNZp5+lvVyIPwthbejeQFiw
-         cWFyktYcTc9+qT2DQlebuvo0xe/t3zG2HK+eYex6sH/3PfFargT6WCZnKCU3gKc8JWI/
-         AJDaq/PXNQfgHvGOcjfx9NTb1/eFBkrH4t3qIKwZPyINODVxBBc4tw4HsDot8lt3h5Pq
-         t82sBsLBeeyi6bofsVUM65cBxvBwzHI8agqeTVEGdqj9NmuiLxWL41gbHyGhdBfJskpF
-         ATQDx5tCSnlYLLcTQcWyYNR/xyeQOVNCcIW4+A0nGhUR2OJMO7rvzqL+IQ3SUQng/6Fs
-         TP5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV/LyoaH2bGNe0/sgXvMjjQUZXMFCVSpf5H1z2ffLdnBxrPtK6CuP/FgeC601IUWz6WnzsYzi89@vger.kernel.org, AJvYcCWQUCtrD+3m+iNCrq9EZKoG1qVniZX9lo2GwnAYHHLSqA+sNWKv0YC8Ziux0v6UHKh2pO8=@vger.kernel.org, AJvYcCWeyTMY2Y5TqnS3mTOXrQOFVZ9e/X1inVMrFjF5lHTK7pvmPjlJu+A89o4QO4ZNW+kDVR01MQowo4QV@vger.kernel.org, AJvYcCWmNlobGS9L1UAKuZWbmAEnYr9fVySSPLJJNXSE27qkT5VPQAngw/acEAS6EGcCx3WAjPBsI0xcFpYe9gCZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt8ZRLsAmfKnPa+OB5/ptLDGVes3EN0HmxK16SVbZXOaV+SqU7
-	8nvJ8+uen9u9+Qy/EWIGTZKOI3hWO7vIi1nwpajtH5i4e+AAGiwy
-X-Google-Smtp-Source: AGHT+IEiV0cgKjHKe/2kpiCIm2aoibAX3dlE1cBZR9js0twjZlqgxio5Kuo8jbhyx35sK6LlhoZUUA==
-X-Received: by 2002:a17:903:192:b0:20b:9c8c:e9f3 with SMTP id d9443c01a7336-20e5a7663c2mr41358935ad.14.1729299069456;
-        Fri, 18 Oct 2024 17:51:09 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eacc28b869sm1967300a12.68.2024.10.18.17.51.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 17:51:09 -0700 (PDT)
-Date: Sat, 19 Oct 2024 00:51:00 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
-	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrii Nakryiko <andriin@fb.com>, Jussi Maki <joamaki@gmail.com>,
-	Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Nikolay Aleksandrov <razor@blackwall.org>
-Subject: Re: [PATCHv2 net-next 2/3] bonding: use correct return value
-Message-ID: <ZxMCdP1X-h9qyU0u@fedora>
-References: <20241017020638.6905-1-liuhangbin@gmail.com>
- <20241017020638.6905-3-liuhangbin@gmail.com>
- <878qumzszs.fsf@toke.dk>
- <ZxGv2s4bl5VQV4g-@fedora>
- <20241018094139.GD1697@kernel.org>
- <87o73hy7hh.fsf@toke.dk>
- <20241018142104.GP1697@kernel.org>
+        bh=lC+kKjnHN4Mbf8H0HShnBhmWgFVk4d57CzYOuvwy+Pk=;
+        b=fuEujOIyCqEHpwhuh52+5wT6AsXy/hq5FCQxfVtY672zKBjFwq9YNTcoCGDNFsrmTs
+         pfF+OL9jj4iR65Olr85bLJXPO0jHwaqSJCxUkWyuIJEvehlTdMsPCgtt+WxDdEWDu+1Q
+         xoStLWfSUZC7Ub/GerFUVA6zMncsjDLtp7r0FuZrRZf8Tl0lLT9Xr4fiSnGU0CiUOpZ4
+         HwJaUPHqos+ZAxJX68qmojeB6NnS47gLWzSoVgjac1pslKgql2iXUon5D08DRxjaFuEY
+         ZvNfRaShvJiBjGJXf4rWOQgHpDCSJ3P0xdqt90g6POnNpZWxbHHo85uHTfZdW18/zzZt
+         qY5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVqUyTuUTbK/uddL/JXI1VR0s6XXcpxNKClzzR8Qgq8QOhfMfwnvYAYkvrsfNkrdKU2HhZyuF8ZkzXszns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrRVCQbeETJaEm4pT35qbkvD49z6OXDnAaNXxpI6oYJIap+cfH
+	AGpodB7fVR9dTRq/4efJD+88VxyubWELvpyRACTrEUMEwP8kxS8hdZFTVWCNrms=
+X-Google-Smtp-Source: AGHT+IHf/aIS9ByQ7hRwPT8KFuGH1SyFkxmybGXDN9u0/DXROuk9s58q/ntAna6EEjs0NGHCd4R2Nw==
+X-Received: by 2002:a17:907:9284:b0:a99:4601:b9d8 with SMTP id a640c23a62f3a-a9a69de8cbbmr336906366b.63.1729299208375;
+        Fri, 18 Oct 2024 17:53:28 -0700 (PDT)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68bc49bfsm152566166b.101.2024.10.18.17.53.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 17:53:27 -0700 (PDT)
+Message-ID: <752f6195-335f-453d-b449-898b0a924126@linaro.org>
+Date: Sat, 19 Oct 2024 01:53:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241018142104.GP1697@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/12] clk: qcom: camcc-qcs615: Add QCS615 camera clock
+ controller driver
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20241019-qcs615-mm-clockcontroller-v1-0-9f1ca2048287@quicinc.com>
+ <20241019-qcs615-mm-clockcontroller-v1-4-9f1ca2048287@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241019-qcs615-mm-clockcontroller-v1-4-9f1ca2048287@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 18, 2024 at 03:21:04PM +0100, Simon Horman wrote:
-> On Fri, Oct 18, 2024 at 01:29:30PM +0200, Toke Høiland-Jørgensen wrote:
-> > Simon Horman <horms@kernel.org> writes:
-> > 
-> > > On Fri, Oct 18, 2024 at 12:46:18AM +0000, Hangbin Liu wrote:
-> > >> On Thu, Oct 17, 2024 at 04:47:19PM +0200, Toke Høiland-Jørgensen wrote:
-> > >> > > diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> > >> > > index f0f76b6ac8be..6887a867fe8b 100644
-> > >> > > --- a/drivers/net/bonding/bond_main.c
-> > >> > > +++ b/drivers/net/bonding/bond_main.c
-> > >> > > @@ -5699,7 +5699,7 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
-> > >> > >  		if (dev_xdp_prog_count(slave_dev) > 0) {
-> > >> > >  			SLAVE_NL_ERR(dev, slave_dev, extack,
-> > >> > >  				     "Slave has XDP program loaded, please unload before enslaving");
-> > >> > > -			err = -EOPNOTSUPP;
-> > >> > > +			err = -EEXIST;
-> > >> > 
-> > >> > Hmm, this has been UAPI since kernel 5.15, so can we really change it
-> > >> > now? What's the purpose of changing it, anyway?
-> > >> 
-> > >> I just think it should return EXIST when the error is "Slave has XDP program
-> > >> loaded". No special reason. If all others think we should not change it, I
-> > >> can drop this patch.
-> > >
-> > > Hi Toke,
-> > >
-> > > Could you add some colour to what extent user's might rely on this error code?
-> > >
-> > > Basically I think that if they do then we shouldn't change this.
-> > 
-> > Well, that's the trouble with UAPI, we don't really know. In libxdp and
-> > xdp-tools we look at the return code to provide a nicer error message,
-> > like:
-> > 
-> > https://github.com/xdp-project/xdp-tools/blob/master/lib/libxdp/libxdp.c#L615
-> > 
-> > and as a signal to fall back to loading the programme without a dispatcher:
-> > 
-> > https://github.com/xdp-project/xdp-tools/blob/master/lib/libxdp/libxdp.c#L1824
-> > 
-> > Both of these cases would be unaffected (or even improved) by this
-> > patch, so in that sense I don't have a concrete objection, just a
-> > general "userspace may react to this". In other words, my concern is
-> > more of a general "we don't know, so this seems risky". If any of you
-> > have more information about how bonding XDP is generally used, that may
-> > help get a better idea of this?
+On 18/10/2024 20:12, Taniya Das wrote:
+> Add support for the camera clock controller for camera clients to
+> be able to request for camcc clocks on QCS615 platform.
 > 
-> Yes, that is the trouble with the UAPI. I was hoping you might be able to
-> provide the clarity you ask for above. But alas, things are as clear as
-> mud.
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>   drivers/clk/qcom/Kconfig        |   10 +
+>   drivers/clk/qcom/Makefile       |    1 +
+>   drivers/clk/qcom/camcc-qcs615.c | 1588 +++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 1599 insertions(+)
 > 
-> In lieu of more information I suggest caution and dropping this change for
-> now.
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 30eb8236c9d80071a87e0332cfac7b667a08824a..bdb1c672dd90d96814b214afd234341e37e3c470 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -460,6 +460,16 @@ config QCM_DISPCC_2290
+>   	  Say Y if you want to support display devices and functionality such as
+>   	  splash screen.
+>   
+> +config QCS_CAMCC_615
+> +	tristate "QCS615 Camera Clock Controller"
+> +	depends on ARM64 || COMPILE_TEST
+> +	select QCS_GCC_615
+> +	help
+> +	  Support for the camera clock controller on Qualcomm Technologies, Inc
+> +	  QCS615 devices.
+> +	  Say Y if you want to support camera devices and functionality such as
+> +	  capturing pictures.
+> +
+>   config QCS_GCC_404
+>   	tristate "QCS404 Global Clock Controller"
+>   	help
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 2b378667a63ff6eca843d7bef638a5422d35c3d3..f69c1bc13d3eca1859d9e849399e55175df869c3 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -69,6 +69,7 @@ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+>   obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+>   obj-$(CONFIG_QCM_GCC_2290) += gcc-qcm2290.o
+>   obj-$(CONFIG_QCM_DISPCC_2290) += dispcc-qcm2290.o
+> +obj-$(CONFIG_QCS_CAMCC_615) += camcc-qcs615.o
+>   obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
+>   obj-$(CONFIG_QCS_Q6SSTOP_404) += q6sstop-qcs404.o
+>   obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
+> diff --git a/drivers/clk/qcom/camcc-qcs615.c b/drivers/clk/qcom/camcc-qcs615.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..2341ddb57598eaaa7fa35300ae6635ff40da99ae
+> --- /dev/null
+> +++ b/drivers/clk/qcom/camcc-qcs615.c
+> @@ -0,0 +1,1588 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/qcom,qcs615-camcc.h>
+> +
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-divider.h"
+> +#include "clk-regmap-mux.h"
+> +#include "common.h"
+> +#include "gdsc.h"
+> +#include "reset.h"
+> +
+> +enum {
+> +	DT_BI_TCXO,
+> +	DT_BI_TCXO_AO,
+> +};
+> +
+> +enum {
+> +	P_BI_TCXO,
+> +	P_CAM_CC_PLL0_OUT_AUX,
+> +	P_CAM_CC_PLL1_OUT_AUX,
+> +	P_CAM_CC_PLL2_OUT_AUX2,
+> +	P_CAM_CC_PLL2_OUT_EARLY,
+> +	P_CAM_CC_PLL3_OUT_MAIN,
+> +};
+> +
+> +static const struct pll_vco brammo_vco[] = {
+> +	{ 500000000, 1250000000, 0 },
+> +};
+> +
+> +static const struct pll_vco spark_vco[] = {
+> +	{ 1000000000, 2100000000, 0 },
+> +	{ 750000000, 1500000000, 1 },
+> +	{ 500000000, 1000000000, 2 },
+> +	{ 300000000, 500000000, 3 },
+> +	{ 550000000, 1100000000, 4 },
+> +};
+> +
+> +/* 600MHz configuration */
+> +static const struct alpha_pll_config cam_cc_pll0_config = {
+> +	.l = 0x1f,
+> +	.alpha_hi = 0x40,
+> +	.alpha_en_mask = BIT(24),
+> +	.vco_val = 0x2 << 20,
+> +	.vco_mask = 0x3 << 20,
+> +	.aux_output_mask = BIT(1),
+> +	.config_ctl_val = 0x4001055b,
+> +	.test_ctl_hi_val = 0x1,
+> +	.test_ctl_hi_mask = 0x1,
+> +};
+> +
+> +static struct clk_alpha_pll cam_cc_pll0 = {
+> +	.offset = 0x0,
+> +	.vco_table = spark_vco,
+> +	.num_vco = ARRAY_SIZE(spark_vco),
+> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+> +	.clkr = {
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "cam_cc_pll0",
+> +			.parent_data = &(const struct clk_parent_data) {
+> +				.index = DT_BI_TCXO,
+> +			},
+> +			.num_parents = 1,
+> +			.ops = &clk_alpha_pll_ops,
+> +		},
+> +	},
+> +};
+> +
+> +/* 808MHz configuration */
+> +static struct alpha_pll_config cam_cc_pll1_config = {
+> +	.l = 0x2A,
+> +	.alpha_hi = 0x15,
+> +	.alpha = 0x55555555,
+> +	.alpha_en_mask = BIT(24),
+> +	.vco_val = 0x2 << 20,
+> +	.vco_mask = 0x3 << 20,
+> +	.aux_output_mask = BIT(1),
+> +	.config_ctl_val = 0x4001055b,
+> +	.test_ctl_hi_val = 0x1,
+> +	.test_ctl_hi_mask = 0x1,
+> +};
+> +
+> +static struct clk_alpha_pll cam_cc_pll1 = {
+> +	.offset = 0x1000,
+> +	.vco_table = spark_vco,
+> +	.num_vco = ARRAY_SIZE(spark_vco),
+> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+> +	.clkr = {
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "cam_cc_pll1",
+> +			.parent_data = &(const struct clk_parent_data) {
+> +				.index = DT_BI_TCXO,
+> +			},
+> +			.num_parents = 1,
+> +			.ops = &clk_alpha_pll_ops,
+> +		},
+> +	},
+> +};
+> +
+> +/* 960MHz configuration */
+> +static struct alpha_pll_config cam_cc_pll2_config = {
+> +	.l = 0x32,
+> +	.vco_val = 0x0 << 20,
 
-OK, I will drop this one.
+zero shifted any direction is still zero
 
-Thanks
-Hangbin
+zed.c
+
+#include <stdio.h>
+#include <stdint.h>
+
+int main(int argc, char *argv[])
+{
+	uint32_t a = 0, b = 0 << 20;
+
+	printf("a = %d b = %d\n", a, b);
+
+	return 0;
+}
+
+gcc -o zed zed.c
+
+a = 0 b = 0
+
+> +static struct gdsc bps_gdsc = {
+> +	.gdscr = 0x6004,
+> +	.en_rest_wait_val = 0x2,
+> +	.en_few_wait_val = 0x2,
+> +	.clk_dis_wait_val = 0xf,
+> +	.pd = {
+> +		.name = "bps_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
+> +};
+> +
+> +static struct gdsc ife_0_gdsc = {
+> +	.gdscr = 0x9004,
+> +	.en_rest_wait_val = 0x2,
+> +	.en_few_wait_val = 0x2,
+> +	.clk_dis_wait_val = 0xf,
+> +	.pd = {
+> +		.name = "ife_0_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = POLL_CFG_GDSCR,
+> +};
+> +
+> +static struct gdsc ife_1_gdsc = {
+> +	.gdscr = 0xa004,
+> +	.en_rest_wait_val = 0x2,
+> +	.en_few_wait_val = 0x2,
+> +	.clk_dis_wait_val = 0xf,
+> +	.pd = {
+> +		.name = "ife_1_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = POLL_CFG_GDSCR,
+> +};
+
+Shouldn't these have RETAIN flags ?
+
+> +
+> +static struct gdsc ipe_0_gdsc = {
+> +	.gdscr = 0x7004,
+> +	.en_rest_wait_val = 0x2,
+> +	.en_few_wait_val = 0x2,
+> +	.clk_dis_wait_val = 0xf,
+> +	.pd = {
+> +		.name = "ipe_0_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> +};
+
+I'd say those flags are very aspirational suggest POLL_CFG_GDSCR | 
+RETAIN_FF_ENABLE.
+
+
+> +
+> +static struct gdsc titan_top_gdsc = {
+> +	.gdscr = 0xb134,
+> +	.en_rest_wait_val = 0x2,
+> +	.en_few_wait_val = 0x2,
+> +	.clk_dis_wait_val = 0xf,
+> +	.pd = {
+> +		.name = "titan_top_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = POLL_CFG_GDSCR,
+> +};
+> 
+
+As Dmitry queried, TOP_GDSC should almost certainly be the parent of the 
+IFE/IPE/BPS and others.
+
+> +static int cam_cc_qcs615_probe(struct platform_device *pdev)
+> +{
+> +	struct regmap *regmap;
+> +
+> +	regmap = qcom_cc_map(pdev, &cam_cc_qcs615_desc);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	clk_alpha_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
+> +	clk_alpha_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
+> +	clk_alpha_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
+> +	clk_alpha_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
+
+Got to be missing something like
+
+         /* Keep some clocks always-on */
+         qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAMCC_GDSC_CLK */
+
+If the GDSC gets declocked everything beneath it - including the stuff 
+in RETAIN goes away...
+
+Smells wrong.
+
+---
+bod
 
