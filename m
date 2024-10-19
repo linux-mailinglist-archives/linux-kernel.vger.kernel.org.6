@@ -1,85 +1,167 @@
-Return-Path: <linux-kernel+bounces-372809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB7F9A4D96
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 13:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9FBF9A4D9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC41BB25C67
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:59:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E52CB22116
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E28D1E0B8F;
-	Sat, 19 Oct 2024 11:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40201E04A4;
+	Sat, 19 Oct 2024 12:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Cnxhyzu7"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhQq5cRR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764471E0B83;
-	Sat, 19 Oct 2024 11:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D73628EF;
+	Sat, 19 Oct 2024 12:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729339140; cv=none; b=ptrEuah850zkgxM+KAZSdWJ/QsZbYkUBNFCwLNbkNnxqjqzpj0hZiTqPEr0kUT3I9tXfseOcWnN/lh81UtOZNSQ7DIcnN+2v4SE6/YNhwAhPNkgkhgv5GPd2C+cYHqOu7u+s+RX90JOZpepChPUmz56bX+faatt9Gf/kvO11Ur0=
+	t=1729339463; cv=none; b=Q9RYNQw5MCDUcW4OMqos+cVzUxKFuFl4Bg9IARYqlKrl/eZS353mHKsZk6cL3jDM58Chne+iLMdQ9AmHQKnCzD986dLWoGCPG1VemtUznbNId4lWxKNg2iFR8MkpOIQney2JWs+50Vyw1xH2fWTnxF6ApiPAmxkutjJMM3E7EOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729339140; c=relaxed/simple;
-	bh=Rx2QSXIFvXzwubwtDo40/YkX5ETE3HN3I74n6hbnyZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XvJ63hUBfJsNaEvChsNYrZuUpYSk4bbk9th/qXFEhz64gtOf7RgQCOgFiLQMUxeyZCPmloAQyKPqmIOi7714vQw03uGnlkWhBAQ49x+MKBazvDbu93DkBFit0CqAwPbtY6BHAVFJt9UTSIcF3+kvQLyeaIxF1QSd4YdxUGjy9rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Cnxhyzu7; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=20MYQxjL7WtkK1J1xglr5JfbDuyUPR3dOaf6k2YM+nw=; b=Cnxhyzu7JbApoynlotLJWnnDef
-	9Y8/Q4pFLlxzYfjCn7H2cYyBN+f5AkGVtnLFQiEgff/3cT3h12FUmpfCQbMCFRTIhhEgnfHWlJ0uS
-	z/4wx9ZEnv6bpax/0EKRDwKzWxZzvhLKojaTZNlg2foFLSoPeh33PSzN34IW+htfLHuhljmY94mxq
-	IDK//sfMc5QkpM44IJpfgW3vXu7CiPkeizvOhBUg7fMtb4oz3Wp9TrIDRYPUDMzg3CEnwFdUVdoJu
-	Q55xQj4wTNBzYOkKBCY0f8XLrqQ8JjRiTk1MZPorsBFDgkzW4QNsqe4WbcIY2efs4pSxzrpfB8uFR
-	UyzSrHkA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1t286e-00AaPC-0f;
-	Sat, 19 Oct 2024 19:58:53 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 19 Oct 2024 19:58:52 +0800
-Date: Sat, 19 Oct 2024 19:58:52 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] crypto: crypto4xx_core: avoid explicit resource
-Message-ID: <ZxOe_LN9iEhH3w6_@gondor.apana.org.au>
-References: <20241010194821.18970-1-rosenp@gmail.com>
+	s=arc-20240116; t=1729339463; c=relaxed/simple;
+	bh=iflsmVDvSJnfEanvEwKT7iKmKWPw5/HBrPRt8P5wumo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Kk6ZSTtTZgLDhEM2+vXaqD0Te7jakCa1sUuIsaYvJFWFMHJbtMAeRgVHxomCDuyh38yVwl8G7fI3bOvwJcz5TVaR7tG1cevoyaw/tzcBaT6fYD832JC7E8Ov7zCvK0aD2YwkY40M6VKWx32dm0wIblfQO8EO86Q1dBXfefSgen4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhQq5cRR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E05BC4CEC5;
+	Sat, 19 Oct 2024 12:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729339462;
+	bh=iflsmVDvSJnfEanvEwKT7iKmKWPw5/HBrPRt8P5wumo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QhQq5cRRAhhGNy2tm1ca4/8glZTU1ZwSBNrJyEg0X0W/4uGoYwPAuGX/CNtdLj9kb
+	 lMmHw85uJRe6Yvx99fS8KyX+LMvPzu3lB99lHMlj/8BeWJPmC3p3C7S9OwZJd63OP6
+	 e98gSMZJYEZmUlt8EM6uXywQB4PA24MAla3kdXCCcw/NyL9FcMw75lEl8fiaCUkAzq
+	 /mZ7XNueFiLbeMRZ9xmb96/OGJ8YYMiovov1qcV10TEyoorwPpwHmI6OWyH/XDvb2j
+	 Xol5gF6kDqZ2xlqlfBhx+eS/1GEyEk+9NRXELu2Fr5n80EVMYb/TF0iAExloDReIHE
+	 cy0yAT6zUy9BQ==
+Date: Sat, 19 Oct 2024 13:04:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Alisa-Dariana Roman
+ <alisa.roman@analog.com>, Christian Eggers <ceggers@arri.de>, Peter Rosin
+ <peda@axentia.se>, Paul Cercueil <paul@crapouillou.net>, Sebastian Reichel
+ <sre@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] iio: consumers: copy/release available info from
+ producer to fix race
+Message-ID: <20241019130414.014a6384@jic23-huawei>
+In-Reply-To: <20241018-iio-read-avail-release-v4-2-53c8ac618585@gmail.com>
+References: <20241018-iio-read-avail-release-v4-0-53c8ac618585@gmail.com>
+	<20241018-iio-read-avail-release-v4-2-53c8ac618585@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010194821.18970-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 12:48:20PM -0700, Rosen Penev wrote:
-> There's no use for the resource struct. Just use
-> devm_platform_ioremap_resource to simplify the code.
-> 
-> Avoids the need to iounmap manually.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  drivers/crypto/amcc/crypto4xx_core.c | 17 +++++------------
->  1 file changed, 5 insertions(+), 12 deletions(-)
+On Fri, 18 Oct 2024 12:16:41 +0200
+Matteo Martelli <matteomartelli3@gmail.com> wrote:
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> Consumers need to call the producer's read_avail_release_resource()
+> callback after reading producer's available info. To avoid a race
+> condition with the producer unregistration, change inkern
+> iio_channel_read_avail() so that it copies the available info from the
+> producer and immediately calls its release callback with info_exists
+> locked.
+> 
+> Also, modify the users of iio_read_avail_channel_raw() and
+> iio_read_avail_channel_attribute() to free the copied available buffers
+> after calling these functions.
+> 
+> Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+Hi Matteo,
+
+The cleanup.h stuff is new and comes with footguns. As such the
+'rules' applied are perhaps stricter than then will be in the long term.
+https://lore.kernel.org/all/172294149613.2215.3274492813920223809.tip-bot2@tip-bot2/
+is what we have today. Particularly the last few paragraphs on usage.
+
+> @@ -857,7 +879,7 @@ static int iio_channel_read_min(struct iio_channel *chan,
+>  				int *val, int *val2, int *type,
+>  				enum iio_chan_info_enum info)
+>  {
+> -	const int *vals;
+> +	const int *vals __free(kfree) = NULL;
+
+Unlike below this one is 'almost' ok because there isn't much below. However,
+still not good because of the risk of future code putting something in between.
+At very minimum move it down to just before the place it's allocated.
+
+It's a bit messy but maybe what we need is:
+
+int *iio_read_avail_channel_attribute_retvals(struct iio_channel *chan,
+				     	      int *type, int *length,
+				              enum iio_chan_info_enum attr)
+{
+	int *vals;
+	int ret;
+
+	ret = iio_read_avail_channel_attribute(chan, &vals, type, len, attr;
+	if (ret)
+		return ERR_PTR(ret);
+
+	return vals;
+}
+
+Then you can do
+	const int *vals __free(kfree) =
+		iio_channel_read_avail_retvals(chan, type, &length, info);
+
+	if (IS_ERR(vals))
+		...
+
+and obey the suggested style for cleanup.h usage.
+
+Would need some clear comments on why it exists though!
+(+ maybe a better name)
+
+
+>  	int length;
+>  	int ret;
+>  
+
+> diff --git a/drivers/power/supply/ingenic-battery.c b/drivers/power/supply/ingenic-battery.c
+> index 0a40f425c27723ccec49985b8b5e14a737b6a7eb..6b7856e69f5fb7b8b73166b9b6825f4af7b19129 100644
+> --- a/drivers/power/supply/ingenic-battery.c
+> +++ b/drivers/power/supply/ingenic-battery.c
+> @@ -6,12 +6,14 @@
+>   * based on drivers/power/supply/jz4740-battery.c
+>   */
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/iio/consumer.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/power_supply.h>
+>  #include <linux/property.h>
+> +#include <linux/slab.h>
+>  
+>  struct ingenic_battery {
+>  	struct device *dev;
+> @@ -62,7 +64,7 @@ static int ingenic_battery_get_property(struct power_supply *psy,
+>   */
+>  static int ingenic_battery_set_scale(struct ingenic_battery *bat)
+>  {
+> -	const int *scale_raw;
+> +	const int *scale_raw __free(kfree) = NULL;
+This isn't a good pattern as per the docs I just replied to v3 with.
+Whilst the code is functionally correct today, it is fragile for the reasons
+in those docs.
+
+>  	int scale_len, scale_type, best_idx = -1, best_mV, max_raw, i, ret;
+>  	u64 max_mV;
+>  
+
 
