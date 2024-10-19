@@ -1,167 +1,458 @@
-Return-Path: <linux-kernel+bounces-372575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6354A9A4A9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C209A4AA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD62228343F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72471F23F00
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895FF16C850;
-	Sat, 19 Oct 2024 00:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19471922EF;
+	Sat, 19 Oct 2024 00:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IG5DhDY1"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uexD/jq8"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE44160884
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 00:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24228191F94
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 00:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729297626; cv=none; b=ENAgTcdsQ/3jf2UW6n/05h+l2tzaSlZOtHchE2E6g8WXstUDu02Y/rcVgBoUfKnNX4pP34UNQbRIeegKzN6cIneU4QAMri36F7a7kCPSy4ybd/wudMC7TR//7mZhaStkFJcM7HyuHs/45lOML4tN3T18uoDP3HlqK6/ryoguVXY=
+	t=1729297849; cv=none; b=eO85hwFH9M4x8Gakv5qqwLEww5FOp8duwZChWy50YEoypbO3HFoq7Zkh4C5fnZ0Zce8jDTQMdPgQpMcisvLmYvJZgbH9pSD87xFBzRfrqNqGkMgSD8d/1s95jp04Hqn/c1q9Yefyto6vtK8ANbhZ14zMOnP6Uz8DH9PMLuQ0lkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729297626; c=relaxed/simple;
-	bh=mC8LyQ7/Ic1MxJvGuzEDAsCOFfYxeIZNcLFx4btzmXw=;
+	s=arc-20240116; t=1729297849; c=relaxed/simple;
+	bh=8bjhY3fyWEYub3ts6cL8vQGQfnWUD8MKG1y4Bd6UjAM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MPV9b7JR0J0LNtkcfSLzHuW121ocqtjqej3mdi9spRiTt3CZ9uQBDii4ZbQMXf4f+tQkEsXprpTqhvnzLSQedfBeu7ZR4F4guije1E7RyxpqUnl6I1o7YOWBDbViq4iwJB1jlRhG/rzIsAYSrsNWOeGla7ahuXxd9ktk/8eHnDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IG5DhDY1; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5eb8dd1385aso663315eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 17:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729297624; x=1729902424; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sWuWGHAAelbSJMtiFqn1+UQTsoAFrJ5pUxKEak7CgJU=;
-        b=IG5DhDY1r/Yfd3JCDLVyoO6PiOjHhLupw8jmk72FvkoUFXZ0cm9DZKGZmEuRGycxWZ
-         X2Kk9rjxISlM82I6It7LoZISzR1kHuxAIKEYGNRPm4vpStxq1/EFbZa833hvOGROnYei
-         d4XGckjMQTZNeUADOQbK+sCBHzN17128TFlEGn+4cskrPaGazNpMtN23CQmTNbkP8aIi
-         N8F9jaMg8CTNTPtHPCM5tgbPoZsmVexPxECYhV0vZMZ2qhs+7lK76bsPnlFHHElrHy/z
-         7lMvARsxEQmpVedFA3fTmpff7po4gwT9z6UyvsHDF3RYNZ8Pa4cY7CxuBjmfHlJ14zDd
-         OWuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729297624; x=1729902424;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sWuWGHAAelbSJMtiFqn1+UQTsoAFrJ5pUxKEak7CgJU=;
-        b=Y2hyEDmzWDakZj57YF6lua/3xDZnoex0gz1F2yQqcqXArsVHxsj7MMgahBMjqC3AIy
-         CGUTkatXzD5OaAygIvdZvJf6kcsmAA0yLY+o3qFGXX5ZpGVZPohijFVuLL+gHR76vkMU
-         KOpvnXzPwiAmSYM37ha5/cBZVsOkVOt9AaJcrsMnYdjO+/0Z9L0PFGxryxp/eTZegmgg
-         hq9VQmfYS5onOq+206i/UyulAp/Z32ieX0loDiAMn4oD2Pu2KGmw/yDu1zt+lraEAn+C
-         Ow5I5JqFUxDd06Gxtr0O5pBFhRBlzsgWGezAUp5sX9Ds8i/oOuS6BQYHX8OH2WgSh4Wq
-         hPHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYXIzi++B9Vo9aD+uKj5V3c9kat5+EAx8nF/csb6gRV7Q9QIfdbl2L9lg53Me1IE3i9XDB1Km5nvgkuyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIN04f4LWda3H6BtjF/VCiDxwdmXsHw3XyOVJr1XNdTOe933qZ
-	nOqXcVzNyT3PjEV7YzU0zoMQ1ByE1RgKoJsSfanuzU1JFiAEzSWy
-X-Google-Smtp-Source: AGHT+IESX5Hsh4rByt9TT7qRj6nBeyiiqVeM++X9wRFAXHn7aXUasUZUsEjtFPx2JIwhR54muwYLPA==
-X-Received: by 2002:a05:6808:bd5:b0:3e6:264:2988 with SMTP id 5614622812f47-3e602d8c1d2mr4171867b6e.35.1729297624025;
-        Fri, 18 Oct 2024 17:27:04 -0700 (PDT)
-Received: from [192.168.1.22] (syn-067-048-091-116.res.spectrum.com. [67.48.91.116])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e602a47df4sm621930b6e.40.2024.10.18.17.27.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 17:27:03 -0700 (PDT)
-Message-ID: <7ec51cc8-b64f-4956-b4e6-4b67f1a8fa76@gmail.com>
-Date: Fri, 18 Oct 2024 19:27:01 -0500
+	 In-Reply-To:Content-Type; b=Zk/ETCa08mE3mcQKzUYkXNy6GZTAzyjTMa/wXQxTW9b4c2QnKSn2ST90eyfPgxo7zaFodnQmO4Wu6ZQM81r9prwu66mu3scSOUXBmYAWPayLeay4tkGdcO5pKflfiV+uzj6Nj+fzDLY2ES4i5Drimx3hdt6U2Ks0mQgL68jTlik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uexD/jq8; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <43f0d39a-b353-4f38-85f7-e0a557f911f9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729297843;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vQqknBHkBHp7SLl5cKxu6mLg1IO4q1QAVqIR3aA/3WI=;
+	b=uexD/jq8WOw6h3h6ZEMdvCszPdwecJwYw8BOLNdGpMWovSXOzcz9Qz4ZVW1oBLtz04emvB
+	XnEeEJznRSDu1zjFfODKRu0k9RvXZLVsFE8qc+8Rmar4423GTZudsur6weuEBVBn/8fOMv
+	2FV0/LxAHIzDhS5du+VnOrrMcT2EUlI=
+Date: Fri, 18 Oct 2024 17:30:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/4] shut down devices asynchronously
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Lukas Wunner <lukas@wunner.de>
-Cc: Michael Kelley <mhklinux@outlook.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Martin Belanger <Martin.Belanger@dell.com>,
- Oliver O'Halloran <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>,
- Keith Busch <kbusch@kernel.org>, David Jeffery <djeffery@redhat.com>,
- Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- Nathan Chancellor <nathan@kernel.org>, Jan Kiszka <jan.kiszka@seimens.com>,
- Bert Karwatzki <spasswolf@web.de>
-References: <20241009175746.46758-1-stuart.w.hayes@gmail.com>
- <BN7PR02MB41480DE777B9C224F3C2DF43D4792@BN7PR02MB4148.namprd02.prod.outlook.com>
- <SN6PR02MB41571E2DD410D09CE7494B38D4402@SN6PR02MB4157.namprd02.prod.outlook.com>
- <2024101809-granola-coat-9a1d@gregkh> <ZxInC1U7WiB7FNkJ@wunner.de>
- <2024101808-subscribe-unwrapped-ee3d@gregkh>
+Subject: Re: [PATCH bpf-next 4/6] selftests/bpf: add ipv4 and dual ipv4/ipv6
+ support in btf_skc_cls_ingress
+To: =?UTF-8?Q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?=
+ <alexis.lothore@bootlin.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ ebpf@linuxfoundation.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Lorenz Bauer <lmb@cloudflare.com>, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20241016-syncookie-v1-0-3b7a0de12153@bootlin.com>
+ <20241016-syncookie-v1-4-3b7a0de12153@bootlin.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
 Content-Language: en-US
-From: stuart hayes <stuart.w.hayes@gmail.com>
-In-Reply-To: <2024101808-subscribe-unwrapped-ee3d@gregkh>
+In-Reply-To: <20241016-syncookie-v1-4-3b7a0de12153@bootlin.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10/18/2024 4:37 AM, Greg Kroah-Hartman wrote:
-> On Fri, Oct 18, 2024 at 11:14:51AM +0200, Lukas Wunner wrote:
->> On Fri, Oct 18, 2024 at 07:49:51AM +0200, Greg Kroah-Hartman wrote:
->>> On Fri, Oct 18, 2024 at 03:26:05AM +0000, Michael Kelley wrote:
->>>> In the process, the workqueue code spins up additional worker threads
->>>> to handle the load.  On the Hyper-V VM, 210 to 230 new kernel
->>>> threads are created during device_shutdown(), depending on the
->>>> timing. On the Pi 5, 253 are created. The max for this workqueue is
->>>> WQ_DFL_ACTIVE (256).
->> [...]
->>> I don't think we can put this type of load on all systems just to handle
->>> one specific type of "bad" hardware that takes long periods of time to
->>> shutdown, sorry.
->>
->> Parallelizing shutdown means shorter reboot times, less downtime,
->> less cost for CSPs.
+On 10/16/24 11:35 AM, Alexis Lothoré (eBPF Foundation) wrote:
+> btf_skc_cls_ingress test currently checks that syncookie and
+> bpf_sk_assign/release helpers behave correctly in multiple scenarios,
+> but only with ipv4 socket.
 > 
-> For some systems, yes, but as have been seen here, it comes at the
-> offset of a huge CPU load at shutdown, with sometimes longer reboot
-> times.
+> Increase those helpers coverage by adding testing support for IPv6-only
+> sockets and IPv4/IPv6 sockets. The rework is mostly based on features
+> brought earlier in test_tcp_check_syncookie.sh to cover some fixes
+> performed on those helpers, but test_tcp_check_syncookie.sh is not
+> integrated in test_progs. The most notable changes linked to this are:
+> - some rework in the corresponding eBPF program to support both types of
+>    traffic
+> - the switch from start_server to start_server_str to allow to check
+>    some socket options
+> - the introduction of new subtests for ipv4 and ipv4/ipv6
 > 
->> Modern servers (e.g. Sierra Forest with 288 cores) should handle
->> this load easily and may see significant benefits from parallelization.
+> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+> ---
+> The rework has been tested in a local Qemu environment and in CI:
+>    # ./test_progs -a btf_skc_cls_ingress
+>    #38/1    btf_skc_cls_ingress/conn_ipv4:OK
+>    #38/2    btf_skc_cls_ingress/conn_ipv6:OK
+>    #38/3    btf_skc_cls_ingress/conn_dual:OK
+>    #38/4    btf_skc_cls_ingress/syncookie_ipv4:OK
+>    #38/5    btf_skc_cls_ingress/syncookie_ipv6:OK
+>    #38/6    btf_skc_cls_ingress/syncookie_dual:OK
+>    #38      btf_skc_cls_ingress:OK
+>    Summary: 1/6 PASSED, 0 SKIPPED, 0 FAILED
+> ---
+>   .../selftests/bpf/prog_tests/btf_skc_cls_ingress.c | 116 ++++++++++++++++++---
+>   .../selftests/bpf/progs/test_btf_skc_cls_ingress.c |  81 +++++++++-----
+>   2 files changed, 161 insertions(+), 36 deletions(-)
 > 
-> "may see", can you test this?
+> diff --git a/tools/testing/selftests/bpf/prog_tests/btf_skc_cls_ingress.c b/tools/testing/selftests/bpf/prog_tests/btf_skc_cls_ingress.c
+> index a20d104f9909e5ba20ddc4c107b910956f042fc1..e0f8fe818f4230a1d5bf0118133c5a9fb50345e1 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/btf_skc_cls_ingress.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/btf_skc_cls_ingress.c
+> @@ -19,6 +19,15 @@
+>   
+>   #define TEST_NS "skc_cls_ingress"
+>   
+> +#define BIT(n)		(1 << (n))
+> +#define TEST_MODE_IPV4	BIT(0)
+> +#define TEST_MODE_IPV6	BIT(1)
+> +#define TEST_MODE_DUAL	(TEST_MODE_IPV4 | TEST_MODE_IPV6)
+> +
+> +#define SERVER_ADDR_IPV4	"127.0.0.1"
+> +#define SERVER_ADDR_IPV6	"::1"
+> +#define SERVER_ADDR_DUAL	"::0"
+> +
+>   static struct netns_obj *prepare_netns(struct test_btf_skc_cls_ingress *skel)
+>   {
+>   	LIBBPF_OPTS(bpf_tc_hook, qdisc_lo, .attach_point = BPF_TC_INGRESS);
+> @@ -57,6 +66,7 @@ static struct netns_obj *prepare_netns(struct test_btf_skc_cls_ingress *skel)
+>   
+>   static void reset_test(struct test_btf_skc_cls_ingress *skel)
+>   {
+> +	memset(&skel->bss->srv_sa4, 0, sizeof(skel->bss->srv_sa4));
+>   	memset(&skel->bss->srv_sa6, 0, sizeof(skel->bss->srv_sa6));
+>   	skel->bss->listen_tp_sport = 0;
+>   	skel->bss->req_sk_sport = 0;
+> @@ -71,26 +81,84 @@ static void print_err_line(struct test_btf_skc_cls_ingress *skel)
+>   		printf("bpf prog error at line %u\n", skel->bss->linum);
+>   }
+>   
+> -static void run_test(struct test_btf_skc_cls_ingress *skel, bool gen_cookies)
+> +static int v6only_true(int fd, void *opts)
+> +{
+> +	int mode = true;
+> +
+> +	return setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &mode, sizeof(mode));
+> +}
+> +
+> +static int v6only_false(int fd, void *opts)
+> +{
+> +	int mode = false;
+> +
+> +	return setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &mode, sizeof(mode));
+> +}
+> +
+> +static void run_test(struct test_btf_skc_cls_ingress *skel, bool gen_cookies,
+> +		     int ip_mode)
+>   {
+>   	const char *tcp_syncookies = gen_cookies ? "2" : "1";
+>   	int listen_fd = -1, cli_fd = -1, srv_fd = -1, err;
+> +	struct network_helper_opts opts = { 0 };
+> +	struct sockaddr_storage *addr;
+>   	struct sockaddr_in6 srv_sa6;
+> -	socklen_t addrlen = sizeof(srv_sa6);
+> +	struct sockaddr_in srv_sa4;
+> +	socklen_t addr_len;
+> +	int sock_family;
+> +	char *srv_addr;
+>   	int srv_port;
+>   
+> +	switch (ip_mode) {
+> +	case TEST_MODE_IPV4:
+> +		sock_family = AF_INET;
+> +		srv_addr = SERVER_ADDR_IPV4;
+> +		addr = (struct sockaddr_storage *)&srv_sa4;
+> +		addr_len = sizeof(srv_sa4);
+> +		break;
+> +	case TEST_MODE_IPV6:
+> +		opts.post_socket_cb = v6only_true;
+> +		sock_family = AF_INET6;
+> +		srv_addr = SERVER_ADDR_IPV6;
+> +		addr = (struct sockaddr_storage *)&srv_sa6;
+> +		addr_len = sizeof(srv_sa6);
+> +		break;
+> +	case TEST_MODE_DUAL:
+> +		opts.post_socket_cb = v6only_false;
+> +		sock_family = AF_INET6;
+> +		srv_addr = SERVER_ADDR_DUAL;
+> +		addr = (struct sockaddr_storage *)&srv_sa6;
+> +		addr_len = sizeof(srv_sa6);
+> +		break;
+> +	default:
+> +			break;
+
+nit. indentation is off.
+
+better directly "return;", in case future something complains vars are not init.
+
+> +	}
+> +
+>   	if (write_sysctl("/proc/sys/net/ipv4/tcp_syncookies", tcp_syncookies))
+>   		return;
+>   
+> -	listen_fd = start_server(AF_INET6, SOCK_STREAM, "::1", 0, 0);
+> +	listen_fd = start_server_str(sock_family, SOCK_STREAM, srv_addr,  0,
+> +				     &opts);
+>   	if (!ASSERT_OK_FD(listen_fd, "start server"))
+>   		return;
+>   
+> -	err = getsockname(listen_fd, (struct sockaddr *)&srv_sa6, &addrlen);
+> +	err = getsockname(listen_fd, (struct sockaddr *)addr, &addr_len);
+>   	if (!ASSERT_OK(err, "getsockname(listen_fd)"))
+>   		goto done;
+> -	memcpy(&skel->bss->srv_sa6, &srv_sa6, sizeof(srv_sa6));
+> -	srv_port = ntohs(srv_sa6.sin6_port);
+> +
+> +	switch (ip_mode) {
+> +	case TEST_MODE_IPV4:
+> +		memcpy(&skel->bss->srv_sa4, &srv_sa4, sizeof(srv_sa4));
+> +		srv_port = ntohs(srv_sa4.sin_port);
+> +		break;
+> +	case TEST_MODE_IPV6:
+> +	case TEST_MODE_DUAL:
+> +		memcpy(&skel->bss->srv_sa6, &srv_sa6, sizeof(srv_sa6));
+> +		srv_port = ntohs(srv_sa6.sin6_port);
+> +		break;
+> +	default:
+> +			break;
+
+indentation off. also "goto done;"
+
+> +	}
+>   
+>   	cli_fd = connect_to_fd(listen_fd, 0);
+>   	if (!ASSERT_OK_FD(cli_fd, "connect client"))
+> @@ -127,14 +195,34 @@ static void run_test(struct test_btf_skc_cls_ingress *skel, bool gen_cookies)
+>   		close(srv_fd);
+>   }
+>   
+> -static void test_conn(struct test_btf_skc_cls_ingress *skel)
+> +static void test_conn_ipv4(struct test_btf_skc_cls_ingress *skel)
+> +{
+> +	run_test(skel, false, TEST_MODE_IPV4);
+> +}
+> +
+> +static void test_conn_ipv6(struct test_btf_skc_cls_ingress *skel)
+> +{
+> +	run_test(skel, false, TEST_MODE_IPV6);
+> +}
+> +
+> +static void test_conn_dual(struct test_btf_skc_cls_ingress *skel)
+> +{
+> +	run_test(skel, false, TEST_MODE_DUAL);
+> +}
+> +
+> +static void test_syncookie_ipv4(struct test_btf_skc_cls_ingress *skel)
+> +{
+> +	run_test(skel, true, TEST_MODE_IPV4);
+> +}
+> +
+> +static void test_syncookie_ipv6(struct test_btf_skc_cls_ingress *skel)
+>   {
+> -	run_test(skel, false);
+> +	run_test(skel, true, TEST_MODE_IPV6);
+>   }
+>   
+> -static void test_syncookie(struct test_btf_skc_cls_ingress *skel)
+> +static void test_syncookie_dual(struct test_btf_skc_cls_ingress *skel)
+>   {
+> -	run_test(skel, true);
+> +	run_test(skel, true, TEST_MODE_DUAL);
+>   }
+>   
+>   struct test {
+> @@ -144,8 +232,12 @@ struct test {
+>   
+>   #define DEF_TEST(name) { #name, test_##name }
+>   static struct test tests[] = {
+> -	DEF_TEST(conn),
+> -	DEF_TEST(syncookie),
+> +	DEF_TEST(conn_ipv4),
+> +	DEF_TEST(conn_ipv6),
+> +	DEF_TEST(conn_dual),
+> +	DEF_TEST(syncookie_ipv4),
+> +	DEF_TEST(syncookie_ipv6),
+> +	DEF_TEST(syncookie_dual),
+>   };
+>   
+>   void test_btf_skc_cls_ingress(void)
+> diff --git a/tools/testing/selftests/bpf/progs/test_btf_skc_cls_ingress.c b/tools/testing/selftests/bpf/progs/test_btf_skc_cls_ingress.c
+> index f0759efff6ef15d2663927400dd064c53b020f78..cd528f8792ff2eb14683cbc13e8b0f3fd38329e9 100644
+> --- a/tools/testing/selftests/bpf/progs/test_btf_skc_cls_ingress.c
+> +++ b/tools/testing/selftests/bpf/progs/test_btf_skc_cls_ingress.c
+> @@ -10,6 +10,7 @@
+>   #endif
+>   
+>   struct sockaddr_in6 srv_sa6 = {};
+> +struct sockaddr_in srv_sa4 = {};
+>   __u16 listen_tp_sport = 0;
+>   __u16 req_sk_sport = 0;
+>   __u32 recv_cookie = 0;
+> @@ -18,8 +19,8 @@ __u32 linum = 0;
+>   
+>   #define LOG() ({ if (!linum) linum = __LINE__; })
+>   
+> -static void test_syncookie_helper(struct ipv6hdr *ip6h, struct tcphdr *th,
+> -				  struct tcp_sock *tp,
+> +static void test_syncookie_helper(void *iphdr, int iphdr_size,
+> +				  struct tcphdr *th, struct tcp_sock *tp,
+>   				  struct __sk_buff *skb)
+>   {
+>   	if (th->syn) {
+> @@ -38,7 +39,7 @@ static void test_syncookie_helper(struct ipv6hdr *ip6h, struct tcphdr *th,
+>   			return;
+>   		}
+>   
+> -		mss_cookie = bpf_tcp_gen_syncookie(tp, ip6h, sizeof(*ip6h),
+> +		mss_cookie = bpf_tcp_gen_syncookie(tp, iphdr, iphdr_size,
+>   						   th, 40);
+>   		if (mss_cookie < 0) {
+>   			if (mss_cookie != -ENOENT)
+> @@ -48,7 +49,7 @@ static void test_syncookie_helper(struct ipv6hdr *ip6h, struct tcphdr *th,
+>   		}
+>   	} else if (gen_cookie) {
+>   		/* It was in cookie mode */
+> -		int ret = bpf_tcp_check_syncookie(tp, ip6h, sizeof(*ip6h),
+> +		int ret = bpf_tcp_check_syncookie(tp, iphdr, iphdr_size,
+>   						  th, sizeof(*th));
+>   
+>   		if (ret < 0) {
+> @@ -60,26 +61,63 @@ static void test_syncookie_helper(struct ipv6hdr *ip6h, struct tcphdr *th,
+>   	}
+>   }
+>   
+> -static int handle_ip6_tcp(struct ipv6hdr *ip6h, struct __sk_buff *skb)
+> +static int handle_ip_tcp(struct ethhdr *eth, struct __sk_buff *skb)
+>   {
+> -	struct bpf_sock_tuple *tuple;
+> +	struct bpf_sock_tuple *tuple = NULL;
+> +	unsigned int tuple_len = 0;
+>   	struct bpf_sock *bpf_skc;
+> -	unsigned int tuple_len;
+> +	struct ipv6hdr *ip6h;
+> +	void *iphdr = NULL;
+> +	int iphdr_size = 0;
+> +	struct iphdr *ip4h;
+
+nit. All new "= 0;" and "= NULL;" init should not be needed.
+
+>   	struct tcphdr *th;
+>   	void *data_end;
+>   
+>   	data_end = (void *)(long)(skb->data_end);
+>   
+> -	th = (struct tcphdr *)(ip6h + 1);
+> -	if (th + 1 > data_end)
+> -		return TC_ACT_OK;
+> +	switch (eth->h_proto) {
+> +	case bpf_htons(ETH_P_IP):
+> +		ip4h = (struct iphdr *)(eth + 1);
+> +		if (ip4h + 1 > data_end)
+> +			return TC_ACT_OK;
+> +		if (ip4h->protocol != IPPROTO_TCP)
+> +			return TC_ACT_OK;
+> +		th = (struct tcphdr *)(ip4h + 1);
+> +		if (th + 1 > data_end)
+> +			return TC_ACT_OK;
+> +		/* Is it the testing traffic? */
+> +		if (th->dest != srv_sa4.sin_port)
+> +			return TC_ACT_OK;
+> +		tuple_len = sizeof(tuple->ipv4);
+> +		tuple = (struct bpf_sock_tuple *)&ip4h->saddr;
+> +		iphdr = ip4h;
+> +		iphdr_size = sizeof(*ip4h);
+> +		break;
+> +	case bpf_htons(ETH_P_IPV6):
+> +		ip6h = (struct ipv6hdr *)(eth + 1);
+> +		if (ip6h + 1 > data_end)
+> +			return TC_ACT_OK;
+> +		if (ip6h->nexthdr != IPPROTO_TCP)
+> +			return TC_ACT_OK;
+> +		th = (struct tcphdr *)(ip6h + 1);
+> +		if (th + 1 > data_end)
+> +			return TC_ACT_OK;
+> +		/* Is it the testing traffic? */
+> +		if (th->dest != srv_sa6.sin6_port)
+> +			return TC_ACT_OK;
+> +		tuple_len = sizeof(tuple->ipv6);
+> +		tuple = (struct bpf_sock_tuple *)&ip6h->saddr;
+> +		iphdr = ip6h;
+> +		iphdr_size = sizeof(*ip6h);
+> +		break;
+> +	default:
+> +			return TC_ACT_OK;
+
+indentation is off also.
+
+> +	}
+>   
+> -	/* Is it the testing traffic? */
+> -	if (th->dest != srv_sa6.sin6_port)
+> +	if (!tuple) {
+
+!tuple should not be possible. can be removed.
+
+> +		LOG();
+>   		return TC_ACT_OK;
+> -
+> -	tuple_len = sizeof(tuple->ipv6);
+> -	tuple = (struct bpf_sock_tuple *)&ip6h->saddr;
+> +	}
+>   	if ((void *)tuple + tuple_len > data_end) {
+>   		LOG();
+>   		return TC_ACT_OK;
+> @@ -126,7 +164,7 @@ static int handle_ip6_tcp(struct ipv6hdr *ip6h, struct __sk_buff *skb)
+>   
+>   		listen_tp_sport = tp->inet_conn.icsk_inet.sk.__sk_common.skc_num;
+>   
+> -		test_syncookie_helper(ip6h, th, tp, skb);
+> +		test_syncookie_helper(iphdr, iphdr_size, th, tp, skb);
+>   		bpf_sk_release(tp);
+>   		return TC_ACT_OK;
+>   	}
+> @@ -142,7 +180,6 @@ static int handle_ip6_tcp(struct ipv6hdr *ip6h, struct __sk_buff *skb)
+>   SEC("tc")
+>   int cls_ingress(struct __sk_buff *skb)
+>   {
+> -	struct ipv6hdr *ip6h;
+>   	struct ethhdr *eth;
+>   	void *data_end;
+>   
+> @@ -152,15 +189,11 @@ int cls_ingress(struct __sk_buff *skb)
+>   	if (eth + 1 > data_end)
+>   		return TC_ACT_OK;
+>   
+> -	if (eth->h_proto != bpf_htons(ETH_P_IPV6))
+> -		return TC_ACT_OK;
+> -
+> -	ip6h = (struct ipv6hdr *)(eth + 1);
+> -	if (ip6h + 1 > data_end)
+> +	if (eth->h_proto != bpf_htons(ETH_P_IP) &&
+> +	    eth->h_proto != bpf_htons(ETH_P_IPV6))
+>   		return TC_ACT_OK;
+>   
+> -	if (ip6h->nexthdr == IPPROTO_TCP)
+> -		return handle_ip6_tcp(ip6h, skb);
+> +	return handle_ip_tcp(eth, skb);
+>   
+>   	return TC_ACT_OK;
+
+The last double return should have been removed also.
+
+>   }
 > 
->> Perhaps a solution is to cap async shutdown based on the number of cores,
->> but always use async for certain device classes (e.g. nvme_subsys_class)?
-> 
-> Maybe, but as-is, we can't take the changes this way, sorry.  That is a
-> regression from the situation of working hardware that many people have.
-> 
-> thanks,
-> 
-> greg k-h
-
-Thank you both for your time and effort considering this.  It didn't 
-occur to me that an extra few 10s of milliseconds (or maxing out the 
-async workqueue) would be an issue.
-
-To answer your earlier question (Michael), there shouldn't be a 
-possibility of deadlock regardless of the number of devices. While the 
-device shutdowns are scheduled on a workqueue rather than run in a loop, 
-they are still scheduled in the same order as they are without this 
-patch, any any device that is scheduled for shutdown should never have 
-to wait for device that hasn't yet been scheduled. So even if only one 
-device shutdown could be scheduled at a time, it should still work 
-without deadlocking--it just wouldn't be able to do shutdowns in parallel.
-
-And I believe there is still a benefit to having async shutdown enabled 
-even with one core. The NVMe shutdowns that take a while involve waiting 
-for drives to finish commands, so they are mostly just sleeping. 
-Workqueues will schedule another worker if one worker sleeps, so even a 
-single core system should be able to get a number of NVMe drives started 
-on their shutdowns in parallel.
-
-I'll see what I can to do limit the amount of stuff that gets put on the
-workqueue, though.  I can likely limit it to just the asynchronous 
-device shutdowns (NVMe shutdowns), plus any devices that have to wait 
-for them (i.e., any devices of which they are dependents or consumers).
-
-
-
 
 
