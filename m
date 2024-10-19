@@ -1,140 +1,146 @@
-Return-Path: <linux-kernel+bounces-372659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA7E9A4B92
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:37:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1099A4B94
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B9711C22067
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 06:37:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B85F1C21BA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 06:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB6A1DD0FE;
-	Sat, 19 Oct 2024 06:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34011DC759;
+	Sat, 19 Oct 2024 06:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NhUQ8glH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfyitq0g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5842218C910;
-	Sat, 19 Oct 2024 06:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B771D47BC;
+	Sat, 19 Oct 2024 06:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729319843; cv=none; b=uqrsME8UYNDtWRPqze2HVOqYdT+FwW8U/MEfh6cLlPitEWX66Sy3/pU8NkrFOj3mcr+q5vfKcZoVBYNJwUKtRwuN7WutYGGHYba4OaLK1N7samhyyamtxtZ0kYS1x/LXDdbMrl4GbKPv/QO1W5JOdC/AWDQCbt5+qDHomAoOAN0=
+	t=1729319959; cv=none; b=B8/0IhToHm1dX9cgpiBTJSMQa3pd1Cx73CX3xrKU6ZVoQ8DimdbiAYz7uysNF+iQ3ZiPHs0/TM3V5EY9Bzvws10H3cThCNELeTEAt+yXuVQRX5g10ldUqvssbrx64hoUY1OdLPZa0TVtcc8553mB4gZ3DGk8SblAMigmCTvRFiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729319843; c=relaxed/simple;
-	bh=d+OfuxX+wO0ke54IoY1Ryl3CW+g91wnVudMKr1kFKs0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hTXTToFx01NmBfQKvc1lMRbqN2kCrv2CZX2KsM/0Myqr4M9JmJHDvLGPd4/BXv5BSQCRrNbWTXRXBZ7h4rAAlHzQEBc7QTudjVInr/NC2o04tx/q36fQ9BLCCsQh/3HOR3TKcVVzskW8VwiJ78jzbNHdOe1/CaRbA8pzODA4c+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NhUQ8glH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49J6RY6p015932;
-	Sat, 19 Oct 2024 06:37:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=6RQwXFFMv3XGJHxGGVvTYcAav9yaMccdRgUiYwxWfQQ=; b=Nh
-	UQ8glHxhG0gCWyrE4mLzpklZHWskYlcgWKkshnVoUOt6DmVqWVklr7yFLZEfZiLW
-	LjRJDaJJSt6+3t27ze1LPyQqvfyX71+ORxdYJPJqugMxLFBN4M0X0vTs9w1sl8iA
-	aCUPss7Yi6cfAp2XON5tokXwhjTtUfSorgfZJO2PYbzP5QxOluCpEoSYVNeOFZSv
-	G0WUpGuB2u447I3EzuzaJMlM8yc+9nuWXaCBR7kChqKYrJM63kZfT7C5q1wYgCAR
-	66/yHYEpd8ukyysoHsIqOPE8y+oAe/LP6PCfq82tRloaMku2jgCapIUEmH/aK6J0
-	o5pKilDCnxcCYNoQqE/Q==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vc02rv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 19 Oct 2024 06:37:16 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49J6bF4T002895
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 19 Oct 2024 06:37:15 GMT
-Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 18 Oct 2024 23:37:11 -0700
-From: Manish Pandey <quic_mapa@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>
-Subject: [PATCH V3] arm64: dts: qcom: qcm6490-idp: Add UFS nodes
-Date: Sat, 19 Oct 2024 12:06:59 +0530
-Message-ID: <20241019063659.6324-1-quic_mapa@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1729319959; c=relaxed/simple;
+	bh=2OMqzVV1EHVYDVSMR6YrmRol1GFScxEW2/cG43gGBZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FV9vNHFYsyTySHM01oGkLtZR8xhFuvzWX79tZmvXDxMrgtBfj2Vmxdx2vtE94rFXKRkAFGooVxJ5QBQ2U+pBOVETxqFsrl0X2cwaQHknqt9O+bdqYEpHdj/r46w/DoZQ+DePspvDN2Sua1QqfA9qwptb7H209GYNDa0/fv0DLt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfyitq0g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC56C4CEC5;
+	Sat, 19 Oct 2024 06:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729319958;
+	bh=2OMqzVV1EHVYDVSMR6YrmRol1GFScxEW2/cG43gGBZA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kfyitq0g+eNsCUvGPY8UFb64I29nqIMBVUJzAQRMaqe4govc4ekAzCVaZIM1Mm5t2
+	 De0baG0JRk5Sn7wiCQ/7DP9qIxE9IOX66phqXAbTxfGl/+xLyJWgEJnoQLqRMq9UtA
+	 8ZSCn+wnkydfst9+wfhl65xq0XV+pPhqBTLQcISZ5bFFGklAABtuxJn6FjY5NRez8p
+	 kylw+jHNRfImc7tAhWZe3CaA5LazyF31QuE+GG/l0KLwdhP1kEcE/9QD/c6ZTmJX9A
+	 sE3zys05kgQmnkOwZk+LYit6abp39oWgKhJ0U7cPpLfnyNg2K91zARhVTRMeUM0Kqo
+	 j2xHUvH03rodg==
+Date: Sat, 19 Oct 2024 08:39:13 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Philipp Stanner <pstanner@redhat.com>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Kevin Hao <haokexin@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Kees Cook
+ <keescook@chromium.org>
+Subject: Re: [PATCH v2 04/13] media: dvb_frontend: don't play tricks with
+ underflow values
+Message-ID: <20241019083913.5fb953ac@foz.lan>
+In-Reply-To: <4D0C7D12-C645-4766-B7B1-0B34B2129579@kernel.org>
+References: <cover.1729230718.git.mchehab+huawei@kernel.org>
+ <8d6193ed8d53ce94d595cb431627bbc7783c0e4c.1729230718.git.mchehab+huawei@kernel.org>
+ <ab51f981844c700d4e66b366c8d2abde7c5947bf.camel@redhat.com>
+ <4D0C7D12-C645-4766-B7B1-0B34B2129579@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 0XZDcDQFlDPoJdddZd9MntHUrVwVkUKF
-X-Proofpoint-ORIG-GUID: 0XZDcDQFlDPoJdddZd9MntHUrVwVkUKF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 phishscore=0 bulkscore=0 mlxscore=0 adultscore=0
- mlxlogscore=610 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410190045
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Add UFS host controller and Phy nodes for Qualcomm qcm6490-idp board.
+Em Fri, 18 Oct 2024 07:37:52 -0700
+Kees Cook <kees@kernel.org> escreveu:
 
-Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
----
+> On October 18, 2024 4:44:20 AM PDT, Philipp Stanner <pstanner@redhat.com>=
+ wrote:
+> >On Fri, 2024-10-18 at 07:53 +0200, Mauro Carvalho Chehab wrote: =20
+> >> fepriv->auto_sub_step is unsigned. Setting it to -1 is just a
+> >> trick to avoid calling continue, as reported by Coverity.
+> >>=20
+> >> It relies to have this code just afterwards:
+> >>=20
+> >> 	if (!ready) fepriv->auto_sub_step++;
+> >>=20
+> >> Simplify the code by simply setting it to zero and use
+> >> continue to return to the while loop.
+> >>=20
+> >> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2") =20
+> >
+> >Oh wow, back to the big-bang-commit ^^'
+> >
+> >So is this a bug or not? It seems to me that the uint underflows to
+> >UINT_MAX, and then wrapps around to 0 again through the ++..
+> >
+> >I take the liberty of ++CCing Kees, since I heard him talk a lot about
+> >overflowing on Plumbers.
+> >
+> >If it's not a bug, I would not use "Fixes". If it is a bug, it should
+> >be backported to stable, agreed?
 
-Changes from v2:
- - Included the board name qcm6490-idp in the subject (Thanks Konrad).
- - 'regulator-allow-set-load' for UFS regulator has been raised in
-   https://lore.kernel.org/linux-arm-msm/20241016100511.2890983-1-quic_kotarake@quicinc.com/
+There is a long thread about Fixes: tag at ksummit ML.
 
-Changes from v1:
- - updated correct patchset number.
+	https://lore.kernel.org/all/20240714192914.1e1d3448@gandalf.local.home/T/
 
- arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
----
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-index 5f3d4807ac43..c5fb153614e1 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-@@ -702,6 +702,25 @@
- 	status = "okay";
- };
- 
-+&ufs_mem_hc {
-+	reset-gpios = <&tlmm 175 GPIO_ACTIVE_LOW>;
-+	vcc-supply = <&vreg_l7b_2p952>;
-+	vcc-max-microamp = <800000>;
-+	vccq-supply = <&vreg_l9b_1p2>;
-+	vccq-max-microamp = <900000>;
-+	vccq2-supply = <&vreg_l9b_1p2>;
-+	vccq2-max-microamp = <900000>;
-+
-+	status = "okay";
-+};
-+
-+&ufs_mem_phy {
-+	vdda-phy-supply = <&vreg_l10c_0p88>;
-+	vdda-pll-supply = <&vreg_l6b_1p2>;
-+
-+	status = "okay";
-+};
-+
- &usb_1 {
- 	status = "okay";
- };
--- 
-2.17.1
+My conclusions for it is that:
 
+1. Fixes: !=3D Cc: stable.
+   This is even somewhat stated at
+   Documentation/process/stable-kernel-rules.rst when it defines additional
+   rules for Cc: stable;
+
+2. As result of (1), all Cc: stable need fixes, but not all fixes: need=20
+   a Cc: stable. Btw, I double-checked it with a -stable maintainer
+   (Greg);
+
+3. It seems that most of people at ksummit discussion (including me)=20
+   use Fixes: when the patch is not doing an improvement.
+
+> >Plus, is there a report-link somewhere by Coverty that could be linked
+> >with "Closes: "? =20
+
+Coverity issues are not publicly visible (and IMO it shouldn't).=20
+We should not add closes: to something that only the ones with access
+to it may see.
+
+> Yeah, this is "avoid currently harmless overflow" fix. It is just avoidin=
+g depending on the wrapping behavior, which is an improvement but not reall=
+y a "bug fix"; more a code style that will keep future work of making the k=
+ernel wrapping-safe.
+
+It is a fix in the sense that it solves an issue reported by Coverity.
+
+> >> =C2=A0		if (!ready) fepriv->auto_sub_step++; =20
+> > =20
+>=20
+> But this change seems incomplete. The above line is no longer needed.
+
+Yes, this is now a dead code.
+
+> And I actually think this could be refractored to avoid needing "ready" a=
+t all?
+
+Yeah, it sounds a good idea to place the zig-zag drift calculus on a
+separate function, doing some cleanups in the process.
+
+I'll add it to my todo list.
+
+Thanks,
+Mauro
 
