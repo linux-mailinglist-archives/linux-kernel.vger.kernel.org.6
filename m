@@ -1,124 +1,165 @@
-Return-Path: <linux-kernel+bounces-372879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1719A4EB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 447A89A4EB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7911C232FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A041C23DB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E9114386D;
-	Sat, 19 Oct 2024 14:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A860155747;
+	Sat, 19 Oct 2024 14:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oB3ayMje"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tfx5eoxT"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CDE28F1;
-	Sat, 19 Oct 2024 14:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E1F83A18
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 14:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729348469; cv=none; b=XSz/Ikha7wlFO+ZzI73mcTFSDgbRJ2d/qJWNbZVPVCu4edyVhz7D5vbXWqRvHK9/KjN7zQlaY9TCv679wpDkfgJ4H1pPxeOY7GWeQVnDWjJa0DWbbfpSknOskm6G20vmfWaWhX8XmLGzNedIHoedsP6ERy27zzIMXUAHedZiHnA=
+	t=1729348713; cv=none; b=bLvsHpwPDh4KYgPnWY/w957VCJqHE5i44gllFudaonBwIRfSRmqsdUTRfnrybRn4OP36NtgisZKWzdHqvLAAvmTZEJSSa1agv3MPrZqvVoigcFmmZZjhO3rhYkSQaRzgda6Wi7H6N6hel+iMh1pDBi9r8+9Fs/v+uon+TibZO00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729348469; c=relaxed/simple;
-	bh=EN2pJm8CsnqE5Nqnwx01B6lZEI8XjbHkYX+r0Te3o+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SFJG0CJCLM9yOequaj7LVhbgnmtr46ILUcu5YNj+3Q3Ui2FVDL5t9OC9o2kX4xiEcbDDdtU+OOj4UWhvgZtbjtbqjVnkv6eW/21FtmLD/Dk8Jtc6NPjWoSFpH4RsFVuCxCV7WmNT/ycnICN2SMk8uugIQIJnzP8geFUB7V9weNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oB3ayMje; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E49B9C4CEC5;
-	Sat, 19 Oct 2024 14:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729348468;
-	bh=EN2pJm8CsnqE5Nqnwx01B6lZEI8XjbHkYX+r0Te3o+Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oB3ayMjeIakUXhrSgPyVyCClsu2ylGaxMtwmrpyhvBEOsijT6rP+ngZA+bE5aPyL8
-	 DArGsFfCn3eh7tTPb8A2ew/Y4JnVSBjyL/USfA4KmAWIzzqHfsh4r2cHhaLZYJT1Rd
-	 STXNir8WPdpoWjKQJtTgCVpyMlgCmRGVkfczQi8s26BYuwUZ1qdsxuHn3txT1Oe66B
-	 dUmmSNh7JYQSUGwmnMWo9GBacvIXY2XuWEPKywqXglPQrEk1cf7N3q+GNwJrE8uqys
-	 xEwBfpCWdUHNy04EDf6KN2AUiZvpAt0hIa/xNBcJ48WShFyAgHMot58SBOqwXG/k5l
-	 r69JjaMj8sgCg==
-Date: Sat, 19 Oct 2024 15:33:59 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rishi Gupta <gupt21@gmail.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] iio: light: veml6030: fix microlux value calculation
-Message-ID: <20241019153359.43f0c1af@jic23-huawei>
-In-Reply-To: <20241016-veml6030-fix-processed-micro-v1-1-4a5644796437@gmail.com>
-References: <20241016-veml6030-fix-processed-micro-v1-1-4a5644796437@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729348713; c=relaxed/simple;
+	bh=uSr8iW8u072v5rIzh2Xvj2FyMIHzFYehI3ht9DlONgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iuzvOYDSpXucX7S3UBj1Lp+7A4nK4gcssAjYGD7+bpLjJO+4Hqj2INqf1/JkPhyerDZNSjmaGABSfIsHg33G2MwkeTzovm3z98KbrgdxJFyhqtcK7ywkY86YFwoO6bS2LbexoPlmFLeXw27RAEU0OW2DDHCFdFDzmFqAkPnO09M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tfx5eoxT; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso43772951fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 07:38:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729348708; x=1729953508; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mZ3yQ1UiurVnRgduM5emLowFyOjkjJUfniSP6diFGgE=;
+        b=Tfx5eoxTgECFR9oPkbucJ2Z1Q3b57CxDo6YS6+NfBn/zf9qBUQ26uWBsiA65gPsKas
+         1bXmP8lRTspgVwxAKa8muq0ibKTVsTQWtCArFKHfnIUXvSooiCHBFpFEZEgvThdSeuky
+         LpZMnSJskZ+cpKMvooRY7OBGi7jeYziKWS4uQPvKwszeNLpkXOl2Nun+Hy+cBH+jTVn4
+         n4wv2HYBLw5IYrDTivk/SgvriFD27O9jeiUZNB0wl/fFgHFI3NVvTHU6c3GfnZTwzmE2
+         76KhOOBhVi1+3X+COGkG3oOE2JGgIE2qPV6plHlRmsYpyN6xFBp36fAWNVz9MYdCj2bc
+         4+Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729348708; x=1729953508;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mZ3yQ1UiurVnRgduM5emLowFyOjkjJUfniSP6diFGgE=;
+        b=npXcjQyUgmBMVIjobAqojvOexIE08ULbvmgY/UulZat8ntLen08KFP9VZAPlvIk6cv
+         eh+ULpb1SLnM/n5tx/sT2ot3KRKClpqlsFLTwCDshbsXJ7EvPLzZZW2kSFbXXc5gZJ2Z
+         9WEPGXukcjppEyfPNptLz1m0xKhaxwBQQrAsChDa9861LC9AWP7/kgW4ILAb8yMt/zJY
+         nOKZItpq9XrRzWdCkT5zwQZ3brnzRmXHGEp2Xw40zxwxSG+LJe3h0NwtV6n2Qc/UDSuL
+         M9/iWlkkeD927ZulmwRuooMPVLAxMCOmr+zyzKa/do1wsod2vYBBJGTT7zfe6oNa20+N
+         cMsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwNfKVgGbDJNL6qbIyOadQVe52cd3Uds9oRO5W0v4oRXRTwX0HnO2EES3hnA0nj4CvLnSrlwl+eYHHzvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzfNHXNTlBPPrnPszrwdh/pc/9XHp15mUBwzDGkr50IPQ9Dz+p
+	AvtOK78Ott/OFQo+0Oa/ffYc5FjXl71zHuUONT8E9k5uMrjNTZFho8M5v07b/PI=
+X-Google-Smtp-Source: AGHT+IGnt7E9LzAEkP0FypPLsT5f0JfGLMaOFtDn02NOfEsnFzpNbn/3gWRj0jSNp1qcIMjsdz4/OQ==
+X-Received: by 2002:a05:6512:350f:b0:536:55cc:963e with SMTP id 2adb3069b0e04-53a154ca15bmr3965578e87.44.1729348708487;
+        Sat, 19 Oct 2024 07:38:28 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151f0b42sm543903e87.168.2024.10.19.07.38.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Oct 2024 07:38:28 -0700 (PDT)
+Date: Sat, 19 Oct 2024 17:38:25 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: barnabas.czeman@mainlining.org
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [PATCH RFC 14/14] arm64: dts: qcom: Add Xiaomi Redmi 5A
+Message-ID: <jj4ky6uuidv3rdjl7q4ehe7cdgcjxtnmtcufmy462gznkjiex2@pptv6aufsudj>
+References: <20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org>
+ <20241019-msm8917-v1-14-f1f3ca1d88e5@mainlining.org>
+ <pyr3t3kcpjj5zor226fwembjsbpp5zh7mpe2a3bqmwnbqccj7h@a55efscym3s7>
+ <46f7b167220a7d54242e9457d00d67e2@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <46f7b167220a7d54242e9457d00d67e2@mainlining.org>
 
-On Wed, 16 Oct 2024 19:04:31 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+On Sat, Oct 19, 2024 at 03:57:54PM +0200, barnabas.czeman@mainlining.org wrote:
+> On 2024-10-19 15:48, Dmitry Baryshkov wrote:
+> > On Sat, Oct 19, 2024 at 01:50:51PM +0200, Barnabás Czémán wrote:
+> > > Add initial support for Xiaomi Redmi 5A (riva).
+> > > 
+> > > Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/Makefile                |   1 +
+> > >  arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts | 295
+> > > +++++++++++++++++++++++
+> > >  2 files changed, 296 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/Makefile
+> > > b/arch/arm64/boot/dts/qcom/Makefile
+> > > index 065bb19481c16db2affd291826d420c83a89c52a..79add0e07d8a5f3362d70b0aaaaa9b8c48e31239
+> > > 100644
+> > > --- a/arch/arm64/boot/dts/qcom/Makefile
+> > > +++ b/arch/arm64/boot/dts/qcom/Makefile
+> > > @@ -59,6 +59,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+=
+> > > msm8916-wingtech-wt86518.dtb
+> > >  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt86528.dtb
+> > >  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt88047.dtb
+> > >  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-yiming-uz801v3.dtb
+> > > +dtb-$(CONFIG_ARCH_QCOM)	+= msm8917-xiaomi-riva.dtb
+> > >  dtb-$(CONFIG_ARCH_QCOM)	+= msm8929-wingtech-wt82918hd.dtb
+> > >  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-huawei-kiwi.dtb
+> > >  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-longcheer-l9100.dtb
+> > > diff --git a/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
+> > > b/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..7553f73603fc87797b0d424a2af6f2da65c90f5f
+> > > --- /dev/null
+> > > +++ b/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
+> > > @@ -0,0 +1,295 @@
+> > > +// SPDX-License-Identifier: BSD-3-Clause
+> > > +/*
+> > > + * Copyright (c) 2023, Barnabas Czeman
+> > > + */
+> > > +
+> > > +/dts-v1/;
+> > > +
+> > > +#include <dt-bindings/arm/qcom,ids.h>
+> > > +#include <dt-bindings/gpio/gpio.h>
+> > > +#include <dt-bindings/input/linux-event-codes.h>
+> > > +#include <dt-bindings/leds/common.h>
+> > > +#include "msm8917.dtsi"
+> > > +#include "pm8937.dtsi"
+> > > +
+> > > +/ {
+> > > +	model = "Xiaomi Redmi 5A (riva)";
+> > > +	compatible = "xiaomi,riva", "qcom,msm8917";
+> > > +	chassis-type = "handset";
+> > > +
+> > > +	qcom,msm-id = <QCOM_ID_MSM8917 0>;
+> > > +	qcom,board-id = <0x1000b 2>, <0x2000b 2>;
+> > 
+> > Is this required to boot?
+> Yes
 
-> The raw value conversion to obtain a measurement in lux as
-> INT_PLUS_MICRO does not calculate the decimal part properly to display
-> it as micro (in this case microlux). It only calculates the module to
-> obtain the decimal part from a resolution that is 10000 times the
-> provided in the datasheet (0.5376 lux/cnt for the veml6030). The
-> resulting value must still be multiplied by 100 to make it micro.
-> 
-> This bug was introduced with the original implementation of the driver.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 7b779f573c48 ("iio: light: add driver for veml6030 ambient light sensor")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Applied to the fixes-togreg branch of iio.git.
+Hmm, did you verify the dts against DT bindings? I think you need to fix
+them.
 
-Thanks,
 
-Jonathan
-
-> ---
-> I found this almost by chance while testing new supported devices. The
-> decimal part was always suspiciously small, and when I compared samples
-> to the expected value according to the datasheet, it became clear what was
-> going on.
-> 
-> Example with a veml7700 (same resolution as the veml6030):
-> 
-> Resolution for gain = 1/8, IT = 100 ms: 0.5736 lux/cnt.
-> 
-> cat in_illuminance_raw in_illuminance_input
-> 40
-> 21.005040 -> wrong! 40 * 0.5736 is 21.504.
-> 
-> Tested with a veml6035 and a veml7700, the same will happen with the
-> original veml6030, as the operation is identical for all devices.
-> ---
->  drivers/iio/light/veml6030.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
-> index d6f3b104b0e6..a0bf03e37df7 100644
-> --- a/drivers/iio/light/veml6030.c
-> +++ b/drivers/iio/light/veml6030.c
-> @@ -691,7 +691,7 @@ static int veml6030_read_raw(struct iio_dev *indio_dev,
->  			}
->  			if (mask == IIO_CHAN_INFO_PROCESSED) {
->  				*val = (reg * data->cur_resolution) / 10000;
-> -				*val2 = (reg * data->cur_resolution) % 10000;
-> +				*val2 = (reg * data->cur_resolution) % 10000 * 100;
->  				return IIO_VAL_INT_PLUS_MICRO;
->  			}
->  			*val = reg;
-> 
-> ---
-> base-commit: 15e7d45e786a62a211dd0098fee7c57f84f8c681
-> change-id: 20241016-veml6030-fix-processed-micro-616d00d555dc
-> 
-> Best regards,
-
+-- 
+With best wishes
+Dmitry
 
