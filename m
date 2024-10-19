@@ -1,163 +1,129 @@
-Return-Path: <linux-kernel+bounces-372766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C2F9A4CE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:34:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74569A4CE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 12:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 574CC1C211E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:34:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EF7A2837E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B2C1DF749;
-	Sat, 19 Oct 2024 10:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D4A1DF977;
+	Sat, 19 Oct 2024 10:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b4CyEaMU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kEF1cgSz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABC6187858
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 10:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A537D1DE4FE;
+	Sat, 19 Oct 2024 10:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729334044; cv=none; b=TFZugDclpAvUsiDcwj/743duTNHyFOIehpmPH72lhxlFtjY38+1ASaKd3uFNOfpJzKUtUTwGd73IT6U1YL/RCS++FBxKuN8BNCtqqB6lEuvJIntQAp59nvTyPp9N2bHaIsT1HHNX9YDMsWCpD1KorbaaHsrhrPGjzUwQLar+URw=
+	t=1729334195; cv=none; b=eVoM8E/5SMCfel3V3F9becXf2+Nwv25ZZwMVFyLkSGxTNWUu+JiNXctZ1tpd5yumXV/jgHJFJRJn8s6bR01JOc2OxZVhwS+0lR82Q3g/q4K/GY2230tJRnysmy4JbetandvfpO4WmtJtfGaOwKumDGvJkbtnGh8H+GIPU56sRYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729334044; c=relaxed/simple;
-	bh=WKD2VUu1VUZFL/i+siPCUW1cDpqRV46S8o+S7UVVOvI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fd/LMdjZbJbdPu4ZKZTSLkvsA8ViituEvZpDa0eaD33jkKoFJHBfcz9lGzqrnYEeqCWGSE1B5RQczkyIkRDzrF9y8v9C3iIh630x5+xeuFN7Zxu0lpm7XAS/c66CZa8UQZNVTWFwrjiYj5sUCTEIqIwoFtp85q8MK1g7anBpQhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b4CyEaMU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729334040;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ilk3CSIftMozUI7syqFVY15ByMjnzeurICXCGBQvEc=;
-	b=b4CyEaMUs/Ll95v9jJxZpeb6DZQtgGd7shG2JSpx5PFIrawc39gSKe5Ak8phRaUMhjB74k
-	UTfYhmUpv9Pqd3tc/Teh/xOMwQofspsJV7lsaSoPG/UdQuyN0Msh29nby+qpxqGBl6C4ed
-	Py5+/mhCDTuFoOyRr4OOS2YiQq6xQhA=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-647-I6DNXvOuN-CqGgPquKGb2w-1; Sat, 19 Oct 2024 06:33:59 -0400
-X-MC-Unique: I6DNXvOuN-CqGgPquKGb2w-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a99efe7369dso268178566b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 03:33:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729334038; x=1729938838;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ilk3CSIftMozUI7syqFVY15ByMjnzeurICXCGBQvEc=;
-        b=gEroHjJl6RRFSeAe1h2EHBM6RsMAG9WAkhk63ET2oT6Ig6+ZJKk1UO3GIVbccF0kaZ
-         z5K2XidJggkVC6DSSjislTALKxWbMBRxMreVHVHYNI+EipTrvdz9ePJAY9qykv5tsW9X
-         UeNrttDmfqTs7BNY+zd2P9pa5KuwA1qRFD9QGoi77xNr3wN+kEB2Zo4ZSOqbjxQA8szJ
-         PDM3hvMZKtpip/RpbmMaJtjNYgvJTKHdo+uzC30Hcy8jzzrRQm3Ou8+uyd0EV7sLXXIw
-         KaVVdqu27zp5M84QSVYHYQSIMNmAEO0DMpfAL91ZlaD0GgmUA0oo56SoHXX4oGnmJV8Q
-         WLhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVA1wlq6TmhhqJzwS00muFk5U0wpUwI3DTd/V9+Mf4DJ4olb2uNAeDAz4K0q/IQN20+2gfYpl8Q4al0U/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbzUVYoXULOVsVDdqyuPdSHk/Iszwxhesq2uf9TWBj+q/lcrRw
-	BJL0gPUkImyJJbK0QGoWNUh/fu1AVUG4k1/5TOYEwiW4r5fbIFqMreLXzb+jgUjifHqS2fl/Qb2
-	Hswqlxj9c/3B63U9k5hJMYcrahOYEt+tacAc7dhXdBl5NhyssD9Pg5E0OYsvQzg==
-X-Received: by 2002:a17:907:9404:b0:a99:ee26:f416 with SMTP id a640c23a62f3a-a9a4c2ef2a6mr984291266b.14.1729334037879;
-        Sat, 19 Oct 2024 03:33:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHiRLik/Qx7H7nLBueSJfiADvAIJ6pdoT4Rr1fTobbt7uumNL3SmFFDQ+LERBNDSORlGnSucw==
-X-Received: by 2002:a17:907:9404:b0:a99:ee26:f416 with SMTP id a640c23a62f3a-a9a4c2ef2a6mr984289666b.14.1729334037498;
-        Sat, 19 Oct 2024 03:33:57 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68a921c9sm201127066b.4.2024.10.19.03.33.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Oct 2024 03:33:56 -0700 (PDT)
-Message-ID: <aa7f2214-203d-4b7d-82f3-188fdc6b8673@redhat.com>
-Date: Sat, 19 Oct 2024 12:33:55 +0200
+	s=arc-20240116; t=1729334195; c=relaxed/simple;
+	bh=UipNdPw5pGNY1kN1FE/U/T/fYmGN6H1910arigY7NCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zpjxa4nAeyx6epCdijnj8Xe+y+XOHymStmszrXqFRMogqe+wo6md0bXV7gZ4r3CISQ+sHzzlBCEvFS70xq+NDBiXJDYZi/483ODtoIgTHRFjQpviOoO4pYO5Ap9Ciyb1DbYQ7/KSal538LkyDsC6UImbvqO9cr9WAuZu3l3edpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kEF1cgSz; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729334194; x=1760870194;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UipNdPw5pGNY1kN1FE/U/T/fYmGN6H1910arigY7NCc=;
+  b=kEF1cgSztPOJgUlFGi/c0dCq/Bthh0Gf051ciyQ23+eGK8suReOOTrAO
+   55i2L4CL0TWBOBkfb9yD1yJhWMOsnhoLS1PNU9FyiBndPB/DsNetYdZJ9
+   dNfkC4nqE4XHvOz4s6VO88eOm8kG+IZv+2NxjAJle6lzb7EeVWet8aUfA
+   RpDDawBTn5dpSVJ6yUfQKy379jrR93BmG89gOgg+5i7yG12YG/6Yq+89l
+   S+qVIvyATrSHBlVq1PiHpZdNhB7wVotBDzVKH1J6674BnWzVn0jqb/pBm
+   f1wgWMumoLMD0DJMtubCN3PXxA9Z7PXoKkt7ZG9tCDyasI7nX6pdHd6og
+   A==;
+X-CSE-ConnectionGUID: iuahNjVbTNSVgcp8BhOWjQ==
+X-CSE-MsgGUID: O3TndJdEQRu1th6agrp+cQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="39491155"
+X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
+   d="scan'208";a="39491155"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 03:36:33 -0700
+X-CSE-ConnectionGUID: 4Hsu7CY1Q3yNdZHnqQIOzg==
+X-CSE-MsgGUID: zGKS7FqpR1iuq7oKnwQgYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
+   d="scan'208";a="79902047"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 19 Oct 2024 03:36:29 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t26os-000Otn-1o;
+	Sat, 19 Oct 2024 10:36:26 +0000
+Date: Sat, 19 Oct 2024 18:36:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+Subject: Re: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+Message-ID: <202410191710.kHHObl1i-lkp@intel.com>
+References: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] iio: gyro: bmg160: Drop most likely fake ACPI IDs
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-References: <20241018145732.2181309-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241018145732.2181309-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
 
-Hi,
+Hi Ciprian,
 
-On 18-Oct-24 4:57 PM, Andy Shevchenko wrote:
-> The commits in question do not proove that ACPI IDs exist.
-> Quite likely it was a cargo cult addition while doing that
-> for DT-based enumeration. Drop most likely fake ACPI IDs.
-> 
-> The to be removed IDs has been checked against the following resources:
-> 1) DuckDuckGo
-> 2) Google
-> 3) MS catalog: https://www.catalog.update.microsoft.com/Search.aspx
-> This gives no useful results in regard to DSDT, moreover, the official
-> vendor IDs in the registry for Bosh are BSG and BOSC.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/iio/gyro/bmg160_i2c.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/iio/gyro/bmg160_i2c.c b/drivers/iio/gyro/bmg160_i2c.c
-> index 672d0b720f61..a81814df5205 100644
-> --- a/drivers/iio/gyro/bmg160_i2c.c
-> +++ b/drivers/iio/gyro/bmg160_i2c.c
-> @@ -39,8 +39,6 @@ static void bmg160_i2c_remove(struct i2c_client *client)
->  
->  static const struct acpi_device_id bmg160_acpi_match[] = {
->  	{"BMG0160", 0},
-> -	{"BMI055B", 0},
-> -	{"BMI088B", 0},
->  	{},
->  };
->  
+kernel test robot noticed the following build errors:
 
-Doing a grep on my acpidump collection shows that the BMI prefix is used
-for some Bosch IMU-s. It seems that some of the Bosch ACPI HID
-prefixes are like this:
+[auto build test ERROR on abelloni/rtc-next]
+[also build test ERROR on robh/for-next arm64/for-next/core linus/master v6.12-rc3 next-20241018]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Bosch Measurement Accel -> BMAxxxx
-Bosch Measurement Gyro  -> BMGxxxx
-Bosch Measurement IMU   -> BMIxxxx
+url:    https://github.com/intel-lab-lkp/linux/commits/Ciprian-Costea/dt-bindings-rtc-add-schema-for-NXP-S32G2-S32G3-SoCs/20241015-185302
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
+patch link:    https://lore.kernel.org/r/20241015105133.656360-3-ciprianmarian.costea%40oss.nxp.com
+patch subject: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+config: arm-randconfig-r123-20241018 (https://download.01.org/0day-ci/archive/20241019/202410191710.kHHObl1i-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20241019/202410191710.kHHObl1i-lkp@intel.com/reproduce)
 
-In itself these 3 non official vendor prefixis seem to be quite
-wildly used and such are not an indication that a HID is not in use.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410191710.kHHObl1i-lkp@intel.com/
 
-But using BMI which is for IMU-s in a non IMU driver is suspect.
-Note that has Jonathan has pointed out there is a valid BMI0160
-HID used by the drivers/iio/imu/bmi160/ code.
+All errors (new ones prefixed by >>):
 
-I also notice a "BMI055A" HID in the bmc150-accel-[i2c|spi].c drivers,
-which seems equally wrong.
+   arm-linux-gnueabi-ld: drivers/rtc/rtc-s32g.o: in function `cycles_to_sec':
+>> rtc-s32g.c:(.text.cycles_to_sec+0x60): undefined reference to `__aeabi_uldivmod'
+   arm-linux-gnueabi-ld: drivers/rtc/rtc-s32g.o: in function `rtc_clk_src_switch':
+   rtc-s32g.c:(.text.rtc_clk_src_switch+0x110): undefined reference to `__aeabi_uldivmod'
 
-It seems that if anything there should be a "BMI055" (no suffix) HID
-for drivers/iio/imu/bno055/bno055_i2c.c, but we should only add that
-if we actually encounter it in the wild.
-
-TL;DR:
-
-I agree with the removal of the "BMI055B" and "BMI088B" ACPI HIDs
-from this driver, because if these are valid for anything they
-are valid for the bno055 + some unknown 088 IMU drivers and not
-for a gyro driver.
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
