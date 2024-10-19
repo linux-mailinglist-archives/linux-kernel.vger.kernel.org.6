@@ -1,81 +1,54 @@
-Return-Path: <linux-kernel+bounces-372742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6363D9A4C8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:25:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 206D49A4C93
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 11:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0DE1B22B65
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7621C212F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 09:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E811D1DE4F2;
-	Sat, 19 Oct 2024 09:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B5B1DEFC2;
+	Sat, 19 Oct 2024 09:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VznYs3u7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PE1db8Qj"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECD018D645
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28B818D645;
+	Sat, 19 Oct 2024 09:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729329942; cv=none; b=CnlSqtiez0EzZ6GZFrAaZIXuXYjpHQ86UxNQ9X1FvLCtdGu0shrRx2f6+0Rhlo2OqRqFf2QPznPz59aiUtkO06aIQNUNpBucmM7EIOGfUn5rl2NxNbZasD9YKZbrFyMDsugGrxktCztcFSt6Q7Yi7OmrrxZrtRNaQ9Mj/tYV+so=
+	t=1729330006; cv=none; b=eLIvaVpZefdRidz71BzoMZpzhauSitzJEq1y65Qd9v1FkMB9cPyr35gYRD/Gy46xWgYX8fyzx7FlNN7mrxzUihDQdCGQcq4Po7Xj5ukdnzx4K9cgO2AdTRQaSE2JdOHlS12M8CIx37FcGzCbskdt43Z87jZVsjhEGVH53hznlmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729329942; c=relaxed/simple;
-	bh=i0fR3kovI1j8669XAP0ejV5MvppAs/IucPsKP2nqvfY=;
+	s=arc-20240116; t=1729330006; c=relaxed/simple;
+	bh=A12LOSwmWFWHo6OAqeCHBFM788woPfeCycyMJZEpZNE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oj+67y2xibZah4TUlrdh+omYy8th1ISWvgLxmFeLVxdVXQakM+EqUNG7G+bR8zuJtEGL60pxNfNs+Fbjjgd2COtCVetWf+zRxLbKr8sjeUZQdgdX6Waolq84nHRAe3d/iczMVYsxsE8yepSM2epqp4jz3H4VNKDhk/tDiWEl02E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VznYs3u7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49J6R1bP032474
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:25:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+ri+83Yu4ZXb1/js5f/3dc6wHAHC3KvCprDKA8rk/2c=; b=VznYs3u7IKxt1wsB
-	zX9m+YafNkaZaNn77DwHVbLQttF3/dwGmmTilc01NQEDWBXtS472E40EDNAzxKEJ
-	9nJnI4adL0MqX/faCDfGf/znpi9XoH25BDTw1RnHIYLHb2EvEMiD4VB4DzoS0NCR
-	q7LpQXfGBCx9C/FqNPRSyY6kg8osZH6SCo2voug8V7AWaSondoOZy1vDEKpiaWVt
-	iyN+t+FnV/5eQ6/oI3x16j3cdnRtsHbSGgZ50GMzxuPxeXVA1K4qLlc3muZBKk65
-	7xG72+IOHP/8pzg0bW38wR9WkLDSlfpCa+GPboXygT7PPzvx6ohePcXWe0C8aoxW
-	0alWvA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6rj0anm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:25:39 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbf5a3192aso8850796d6.1
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 02:25:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729329939; x=1729934739;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ri+83Yu4ZXb1/js5f/3dc6wHAHC3KvCprDKA8rk/2c=;
-        b=fb9ocajKHSLEh9F+la3EcyALr6td8Z3nyhuBvJiD4lGKb1OntnFCYUnKoj/bb2H2/m
-         HLsaT3+dfuR9ybdhrPjNlz15fRBN9q++3+qcEm9WWHBnQpGdHAbzwcPpQqA6fccc1Ceq
-         SV4e9pu7+kF3mXN8V5xj9fStfAFvrxVc09YL5Q/9Fi2g+FaWos4ZNXP4HvxCOGcYpKgV
-         vp0Q/8LP5fvdeo7L0GSdCD/ttmJa5Skz7JdlI59r7kxrtI+TYNc3Hff1MNpgKKWKPMA4
-         fUrc1BcO1GrFwTZg6wQ8kW8BGW1Q/SAi/ishA4eWETJpsLsLZzegVzYqR+Pbfnob4dHY
-         Zcpg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9Z6xb297FNpFxRAqe9m4LRFWzj7AZRVvvDyDjYXMEH6oUytgilqUDgEzVTsp7MlWcwNPhikW4V2JdHq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx55ER9MpY18A3VulSv+JQ354FT7qfdIzW3yj0F6BRx0M0dCoHZ
-	a85samKs8aIx52tFzrvlrBlhCqyjj4z79+3e8yQjcMCQ+Egm5KsjEIqw9qtOWtOxMJmjeBspyUN
-	IbL2/VCfcsTquOwg0vlWIuqWCgWX48h9SvKiYgorx7cSKrnZcVL5wcRHyKeaAhv8=
-X-Received: by 2002:a05:6214:c48:b0:6cb:6e29:bad4 with SMTP id 6a1803df08f44-6cde1608419mr33897126d6.11.1729329938604;
-        Sat, 19 Oct 2024 02:25:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHo97/Ubq2Cj/vhLVuZ991o9JQ0HdC0i8f/KYoL1rOT218sW7MZ/fq/TieusFevpWQBzqRjuQ==
-X-Received: by 2002:a05:6214:c48:b0:6cb:6e29:bad4 with SMTP id 6a1803df08f44-6cde1608419mr33897006d6.11.1729329938291;
-        Sat, 19 Oct 2024 02:25:38 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68c2e62fsm194944566b.220.2024.10.19.02.25.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Oct 2024 02:25:37 -0700 (PDT)
-Message-ID: <0bde12c0-0c36-4d7c-9538-25d1b55d2fa9@oss.qualcomm.com>
-Date: Sat, 19 Oct 2024 11:25:34 +0200
+	 In-Reply-To:Content-Type; b=piExGEXs1B0yJb0oWvjrrF4DIgvch3jid1DGr83Giiq4+kRBmWB0gIrPuEfHxTmRuKE+dj/p6J4UIAWok5OPVfZs1+cTSIqHENCAagMScttUAqAM8oqOkMMpJRddOOSdZdd6c4zbTb9QBYetClXBhIcS3ID5rv9SJWmtJZiMFxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PE1db8Qj; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729330001;
+	bh=A12LOSwmWFWHo6OAqeCHBFM788woPfeCycyMJZEpZNE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PE1db8QjIBupkMdNIrG4YsYoZRKa5J9xhd2j6Omop7Dd3oakQwCE1QFjAR06nef/i
+	 Kgypx0zlrxxotC9eqe98yc/UBsoIdRdWWGiHg9IZybMYj8ZWvN/m+IIBFRRqnfVbiO
+	 8Zu+XAugPRAJpMLLpQmxyQJYNiG0XBOkAUeCDHhQCRL1aj6mfoBQU0HyIAP9mKxgC7
+	 2cFMnp6AxO/r3Q3l29Z5aSzxHGVgbCVSjX8WC6sc4cptQ9bkEi8a5rQfg+rnOeyetb
+	 TCQs/f7/yB/9T457Y5hh5vZXOQkTlPGyW3MJtKhiOIJnkUr7+dNJ9ULEJNYK8zPTjb
+	 +gfPNC7tYOmCg==
+Received: from [192.168.1.90] (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7981017E124E;
+	Sat, 19 Oct 2024 11:26:41 +0200 (CEST)
+Message-ID: <a8a29b83-b76a-42a7-a383-6b82731d13fd@collabora.com>
+Date: Sat, 19 Oct 2024 12:26:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,42 +56,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 8/8] arm64: dts: qcom: ipq9574: Disable eMMC node
-To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org,
-        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        manivannan.sadhasivam@linaro.org, arnd@arndb.de, esben@geanix.com,
-        nikita.shubin@maquefel.me, linux-arm-msm@vger.kernel.org,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20241010070510.1504250-1-quic_mdalam@quicinc.com>
- <20241010070510.1504250-9-quic_mdalam@quicinc.com>
+Subject: Re: [PATCH UNTESTED 5/5] arm64: dts: rockchip: Enable HDMI0 on
+ rock-5a
+To: FUKAUMI Naoki <naoki@radxa.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Luis de Arquer <ldearquer@gmail.com>, Alexandre ARNOUD <aarnoud@me.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241019-rk3588-hdmi0-dt-v1-0-bd8f299feacd@collabora.com>
+ <20241019-rk3588-hdmi0-dt-v1-5-bd8f299feacd@collabora.com>
+ <6FF0CF3856870371+bbebd66b-e19c-40c2-863b-1d6c5c30c461@radxa.com>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241010070510.1504250-9-quic_mdalam@quicinc.com>
+In-Reply-To: <6FF0CF3856870371+bbebd66b-e19c-40c2-863b-1d6c5c30c461@radxa.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 0EbBZYk2VpLnj1MQxI_aFAsz5rGeiQ4G
-X-Proofpoint-ORIG-GUID: 0EbBZYk2VpLnj1MQxI_aFAsz5rGeiQ4G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 spamscore=0
- impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- mlxlogscore=459 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410190067
+Content-Transfer-Encoding: 8bit
 
-On 10.10.2024 9:05 AM, Md Sadre Alam wrote:
-> Disable eMMC node for rdp433, since rdp433
-> default boot mode is norplusnand
+On 10/19/24 7:42 AM, FUKAUMI Naoki wrote:
+> Hi,
 > 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> ---
+> On 10/19/24 06:39, Cristian Ciocaltea wrote:
+>> Add the necessary DT changes to enable HDMI0 on Rock 5A.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>   arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts | 47 ++++++++++++++
+>> ++++++++++
+>>   1 file changed, 47 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts b/arch/
+>> arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+>> index
+>> 87fce8d9a964cd53d179ce214ae1c0ff505a2dce..1fd122250b0c70e729b7a2239ab5f288a6387a70 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+>> @@ -5,6 +5,7 @@
+>>   #include <dt-bindings/gpio/gpio.h>
+>>   #include <dt-bindings/leds/common.h>
+>>   #include <dt-bindings/pinctrl/rockchip.h>
+>> +#include <dt-bindings/soc/rockchip,vop2.h>
+>>   #include "rk3588s.dtsi"
+>>     / {
+>> @@ -35,6 +36,17 @@ chosen {
+>>           stdout-path = "serial2:1500000n8";
+>>       };
+>>   +    hdmi0-con {
+>> +        compatible = "hdmi-connector";
+>> +        type = "a";
+>> +
+>> +        port {
+>> +            hdmi0_con_in: endpoint {
+>> +                remote-endpoint = <&hdmi0_out_con>;
+>> +            };
+>> +        };
+>> +    };
+>> +
+>>       leds {
+>>           compatible = "gpio-leds";
+>>           pinctrl-names = "default";
+>> @@ -296,6 +308,26 @@ &gmac1_rgmii_clk
+>>       status = "okay";
+>>   };
+>>   +&hdmi0 {
+>> +    status = "okay";
+>> +};
+> 
+> on ROCK 5A, HPD pin is different.
+> 
+> how about this?
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts b/arch/
+> arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+> index f4293d666368..600028fcad88 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
+> @@ -314,6 +314,9 @@ &gmac1_rgmii_clk
+>  };
+> 
+>  &hdmi0 {
+> +    pinctrl-names = "default";
+> +    pinctrl-0 = <&hdmim0_tx0_cec &hdmim1_tx0_hpd
+> +             &hdmim0_tx0_scl &hdmim0_tx0_sda>;
+>      status = "okay";
+>  };
+> 
 
-If eMMC is absent on this board, remove the whole &sdhc_1{} section
+Thanks for figuring this out!
 
-Konrad
+Regards,
+Cristian
+
 
