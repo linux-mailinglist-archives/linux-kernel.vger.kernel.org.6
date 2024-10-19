@@ -1,172 +1,78 @@
-Return-Path: <linux-kernel+bounces-372975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B849A502B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 19:52:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4189A502E
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 19:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47DE52848E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:52:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44535282406
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9848118FC9D;
-	Sat, 19 Oct 2024 17:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185A418E764;
+	Sat, 19 Oct 2024 17:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bcxRXkYW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C16snsNC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3277F2F2F;
-	Sat, 19 Oct 2024 17:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599D81891A9;
+	Sat, 19 Oct 2024 17:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729360366; cv=none; b=qg+MEWVVPxT7LswVQzyikzZvuVIORJR+DcjXjsFYjo6NxpIRGc9QWTi+l4uuTOnXPrNDB/jfZ2ZSgfvK5xECzcW9Ha4X1kuAM7Gpd7dPXFIhGFOXDfO7cW8Fm8iLkN8sYq0VepMQmNNUNyxNXlr1oYktIqMdUmWEZ6S54biDPuU=
+	t=1729360437; cv=none; b=usvQqAWESQ8TrahFedHhDsvUQRr1qcPuii7nVOvSe71MVTS4Tn4gETIPdQKTfgWrj06HPhfjWqnDEE/A8e7NS2/ChrjMk8fRCe6LEPti1vqiKrgXTZoP35oknjDAKltOwi5ONpsyKsGHY3p62T4SQ4J+rLolutMWizkODAqlZho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729360366; c=relaxed/simple;
-	bh=sDC3BBP3o3pyI9b3om/e/G0CfoeRN0560j8xwPhITRk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DYR1CE7ewpy4+1FiDW6tFuKa/QIWAMcefKO5uww5r0vZApI9AgPEEwmUZLDDbA/yDsuBoKyhldpRyWb9++tLp1gkVdMJNtKot6JlAepKhyUJszdFk+5ZR7Sgg/UwjycBt7ZLkuDVswdv8mBuQD7kSKt4nkn3Mi/mLtNmHWLs/t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bcxRXkYW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49JHCkRJ005529;
-	Sat, 19 Oct 2024 17:52:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	i/hbgokUVLypeCZmR+eiHup995hvVAkdjDDle3EgDYo=; b=bcxRXkYW8LTo1fZl
-	fVhyda0ovFFOR/pGbuY8Svl+uhN3LqUTYHEqe72isKC5fWZjAGLT4Y9/O0v/ulxX
-	TRQGHCxLjeM5VP1lWBSp7npf+Hzb3i6xkmj8tm25I5bSljZHuSGrKallTffVtJN4
-	5w/j/D27h5mCwQyQxx147fHDwlNzqoGs5PiLPiY57vezixk0iXXmCWoi9WvjdHGd
-	8CGFOfbGVM6qBkdtOG1SarYZezAioErdk0S8kFzZTbRwqvbBqqViMAOD5e3xbM/C
-	NMGhpVKv4dbCZrBpJCxPXk14P4G5uEQnFElNttt5jP6NmXa8Dpix4s2agrFx4x+D
-	G0HSZQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6vurxrx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 19 Oct 2024 17:52:40 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49JHqdhe032076
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 19 Oct 2024 17:52:39 GMT
-Received: from [10.216.44.170] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 19 Oct
- 2024 10:52:36 -0700
-Message-ID: <e64f1487-b3a8-4035-90f8-0062649996fd@quicinc.com>
-Date: Sat, 19 Oct 2024 23:22:33 +0530
+	s=arc-20240116; t=1729360437; c=relaxed/simple;
+	bh=CUxZZ7g3YwwZk8QoJwzYhmLSYCo9Bj8leGRbrYhf2is=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=SamGDjp9C7A/OnqwCBq+3SW5LLyKSagiUUBNWtME+TRlmMwL+RHJQA91pmPqGrsDoZhzCuaH1dmdc/BxDLAoscmBNb1vqhsKbP7flhXQFw5Yz2XvDYszG7rwAfIaQGJIGWhO4Yv1wMSqXam6lyaFPhQCV2GSWLt/Q3fgPkGK/20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C16snsNC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE678C4CEC5;
+	Sat, 19 Oct 2024 17:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729360437;
+	bh=CUxZZ7g3YwwZk8QoJwzYhmLSYCo9Bj8leGRbrYhf2is=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=C16snsNCdqRVx8SZyhRfoGM/99nnwQs86wFSAjo35LuM1gh5wDuQbV90VmrIWiqwa
+	 Hy5/oQp1SqBf5/DS7M4a8NkXeBOMSYFXv1diem7rKnNO1+y+t7LmrcyKx1zjyGVfjw
+	 kPjB3IzzYVtM7nO7/ZUnhfktFoLDj4oO6/Gsojjg2ax/sl4zVY5/IGglWlnI5GlOpW
+	 2AjfKb7bhZuUlIl9bXw753brrv6Zcrema9DkZsMZvgvjuqSNMUT113LtzHhq7INYdd
+	 bbffVU0PxZGfaYoH6z7s26pHhb1ZiNQV2jDYl2Yvv/8R/VVL+ztqllP2X5YD60wV9d
+	 QaQ9xt4/fEBag==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBA243805CC0;
+	Sat, 19 Oct 2024 17:54:03 +0000 (UTC)
+Subject: Re: [git pull] Input updates for v6.12-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZxMlEQ8nV_0l6MqH@google.com>
+References: <ZxMlEQ8nV_0l6MqH@google.com>
+X-PR-Tracked-List-Id: <linux-input.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZxMlEQ8nV_0l6MqH@google.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.12-rc3
+X-PR-Tracked-Commit-Id: 2de01e0e57f3ebe7f90b08f6bca5ce0f3da3829f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f9e4825524aaf28af6b2097776616f27c31d6847
+Message-Id: <172936044265.3448898.9774471618815502061.pr-tracker-bot@kernel.org>
+Date: Sat, 19 Oct 2024 17:54:02 +0000
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xhci: Fix Link TRB DMA in command ring stopped completion
- event
-To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
-CC: <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <mathias.nyman@intel.com>,
-        <stable@vger.kernel.org>
-References: <20241019092023.5d987d7e@foxbook>
-Content-Language: en-US
-From: Faisal Hassan <quic_faisalh@quicinc.com>
-In-Reply-To: <20241019092023.5d987d7e@foxbook>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: FF2AaW0JV8-jBqFB3y_VEZSG_GtmLnx5
-X-Proofpoint-GUID: FF2AaW0JV8-jBqFB3y_VEZSG_GtmLnx5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- mlxlogscore=999 bulkscore=0 spamscore=0 mlxscore=0 clxscore=1011
- suspectscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410190131
 
-Hi Michal,
+The pull request you sent on Fri, 18 Oct 2024 20:18:41 -0700:
 
-On 10/19/2024 12:50 PM, Michał Pecio wrote:
-> Hi,
-> 
->> During the aborting of a command, the software receives a command
->> completion event for the command ring stopped, with the TRB pointing
->> to the next TRB after the aborted command.
->>
->> If the command we abort is located just before the Link TRB in the
->> command ring, then during the 'command ring stopped' completion event,
->> the xHC gives the Link TRB in the event's cmd DMA, which causes a
->> mismatch in handling command completion event.
->>
->> To handle this situation, an additional check has been added to ignore
->> the mismatch error and continue the operation.
-> 
-> Thanks, I remember having some issues with command aborts, but I blamed
-> them on my own bugs, although I never found what the problem was. I may
-> take a look at it later, but I'm currently busy with other things.
-> 
-> No comment about validity of this patch for now, but a few remarks:
-> 
->> +static bool is_dma_link_trb(struct xhci_ring *ring, dma_addr_t dma)
->> +{
->> +	struct xhci_segment *seg;
->> +	union xhci_trb *trb;
->> +	dma_addr_t trb_dma;
->> +	int i;
->> +
->> +	seg = ring->first_seg;
->> +	do {
->> +		for (i = 0; i < TRBS_PER_SEGMENT; i++) {
->> +			trb = &seg->trbs[i];
->> +			trb_dma = seg->dma + (i * sizeof(union xhci_trb));
->> +
->> +			if (trb_is_link(trb) && trb_dma == dma)
->> +				return true;
->> +		}
-> 
-> You don't need to iterate the array. Something like this should work:
-> do {
-> 	if (in_range(dma, seg->dma, TRB_SEGMENT_SIZE)) {
-> 		/* found the TRB, check if it's link */
-> 		trb = &seg->trbs[(dma - seg->dma) / sizeof(*trb)];
-> 		return trb_is_link(trb);
-> 	}
-> 	// try next seg, while (blah blah), return false
-> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.12-rc3
 
-Sure, this looks good. Let me revise the patch.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f9e4825524aaf28af6b2097776616f27c31d6847
 
-> We should probably have a helper for (ring, dma)->trb lookups, but
-> for stable it may be sensible to do it without excess complication.
-> 
->> +	if ((!cmd_dequeue_dma || cmd_dma != (u64)cmd_dequeue_dma) &&
->> +	    !(cmd_comp_code == COMP_COMMAND_RING_STOPPED &&
->> +	      is_dma_link_trb(xhci->cmd_ring, cmd_dma))) {
-> 
-> This if statement is quite complex now. I would be tempted to write
-> it this way instead:
-> 
-> /* original comment */
-> if (cmd_dma != dequeue_dma) {
-> 	/* your new comment */
-> 	if (! (RING_STOPPED && is_link)) {
-> 		warn();
-> 		return;
-> 	}
-> }
-> 
-> Regards,
-> Michal
+Thank you!
 
-Thank you for the suggestions. I will submit a v2 version.
-
-Regards,
-Faisal
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
