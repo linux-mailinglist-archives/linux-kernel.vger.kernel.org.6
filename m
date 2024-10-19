@@ -1,397 +1,180 @@
-Return-Path: <linux-kernel+bounces-372601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408269A4ADF
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 03:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2980F9A4AE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 03:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07CD628370F
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3ADD1F22463
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5708A1C07E1;
-	Sat, 19 Oct 2024 01:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wQv/w5u1"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAA21CC160;
+	Sat, 19 Oct 2024 01:41:58 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5662C1BE226
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 01:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722DBA47;
+	Sat, 19 Oct 2024 01:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729301390; cv=none; b=PoqZWw3D8zcbqJoKBpXR7nRBIaRH9zIXn0XjQ81FRGhz0QbfuhToKVQLWmLNUlIXPkZCg+g8iItiDB/R9bHwmqqkBHs0robcBNUrDt0SI2gtJb0UsMjFPRGNxm1oItCm3Jhm5zFWbTYxFtIjsN5Xfb2qI0tlVSyIcOGDoZnNIqI=
+	t=1729302118; cv=none; b=KM8RPiLemOFWKA16qJDW6RhgX0I8DNxUgUoB5T+/KVxFbVC98+GEgsiuqhhmCijs/ugD6YDVzNyDP5EkTcTHpd5Njw8mioSx2uXQjyqurbELotmIUP6MrLcVUMvImvjoIZ0o7vhUmmWDvZhpKLn+qdFP2MWlGNUVZupvHxz29qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729301390; c=relaxed/simple;
-	bh=QIezdTSRPHRnsz35ebM++m8bsNTvgEcRASfkNHbnPuA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OlC6nZ9DeVhdW3YQdiSc+lswYdLF3V0lav00lOIhuCgvSVd0ICV2D7Rzy9ioISjNNmXe1nIT/mcs/XRjOdM4zoTzQ+TdCo9tLpsTy3bohpKug2Ig78FnIomLU/BLi1834b1LkFu7ZpPcCHWSFfp/gwPsWgQotn7roOSNDXzJ1Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wQv/w5u1; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6dbbeee08f0so51151677b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:29:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729301387; x=1729906187; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eKoy9FeSC1Po3W3xcBQFvk5zP5oePGJ83EILIsAFUYs=;
-        b=wQv/w5u1Bys3IZKspZ1Hsg5160Cej5LQ+aDnmOjWIxMX9AAnIzd0PjM3ElfASiC5a1
-         qtXEf7VPCbexAI7BAhbJNsGD7b1UHEaMyWpTQZxqfC0pWhJeUW14jM0CafTunMJMjyyG
-         Ekzo1X6Ny4pgoSckkHRxSfFcmMgvwE29yPyZrlemePF3LyAjvjHPSOjuwMPcxTboFtYJ
-         tB/LKdB7IJaCaeBGC43CZ4IpC1HsBBY4QkDc1bYnl4Lw96KWfjaQLGhG6KhLcig3fogd
-         hgfWIJBzsexCkqNnJfxgMVrAzozOKWnFUYrSzKWsj1rXsxYrQVwTteG6eU51Rgd6Lxxl
-         foUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729301387; x=1729906187;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eKoy9FeSC1Po3W3xcBQFvk5zP5oePGJ83EILIsAFUYs=;
-        b=EZe2fCT3LFfQ74HQmeE4pjD/5TT99XFCcHQYdDFgT6CQlQ0TMb5OA2+T/oYy71O41U
-         KRtka8KKjajFY/UKDOTcbKlWAC4YZ5d8ECWW63/LKvn0g/zPJUblAbIEWm7aee1YZTU1
-         1IS78dmon4okqeGlcGVpRCf00Cr7b1ZnjoHa9FNSbCxKKO2lxbc/Tbs7E3gVTnN8QCme
-         n1ig9buIP2R0MJZY8fFoiOs6b0F5IU/w5d1AJV1KKSkbKD0XhtOwP+QmsQ5uzo1MaoQd
-         z0yrxNkyH05nKUbEXVeXBi/Z9e1X1hTAGuoE8iGuZG0yAWavVgx44CCDAihDio0Qu5he
-         WaeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlryiWUPp9h0rWQJlGeftRjP6HiERMiDyA1oSR9Q3TcBsNnW8UNlnGmI/S/ZzKqoDBjXibc4xDlrUmpsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+p4ej5cNEVteDZhiQB7nicxHBBHftfGl34x+Lx0lsB7h7zrc6
-	f2WH1TWUAev5BftTm1wBJirW29P6Qn9z/h7ZFNfSn36KbCxb3jx2oU2de4nUJEZkSnUj47GI65g
-	2jLDUr8XcYOsCuiEXRA==
-X-Google-Smtp-Source: AGHT+IHp8tdxBCI9Q7uz6H+aiHlGXfLOJyM6qNf9CDG0PcOfLQK4TggfImr4/05l5Ruj7HVq1yX93CVhFQoj5Pw0
-X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:13d:fb22:ac12:a84b])
- (user=jthoughton job=sendgmr) by 2002:a25:9346:0:b0:e2b:cca2:69e1 with SMTP
- id 3f1490d57ef6-e2bcca26b2amr2712276.3.1729301386945; Fri, 18 Oct 2024
- 18:29:46 -0700 (PDT)
-Date: Sat, 19 Oct 2024 01:29:39 +0000
-In-Reply-To: <20241019012940.3656292-1-jthoughton@google.com>
+	s=arc-20240116; t=1729302118; c=relaxed/simple;
+	bh=BOk05Y/y0uAQe31NhNWG1MGnKCYCls7rUmmoZZRLibw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tz3nwEYagKDRqxR9qdc1irGFxBY7d916Rw9KROokT2ZFUSWRPu02PpnHwH9gmNHiwU0aLARGe04fl5MJGmiRhwvRfJL7hjzOC7ReXoKhvQTAVZeYTi1Q/507oZZRVCf3ZW9x6IPjDDwoDKbSGHbvnnnYlZ/zj58A4AnZz2qrhaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: bizesmtpip4t1729302101tvi18dz
+X-QQ-Originating-IP: ynXIJcmp3WHc/o4G+1XDGVUvagsnCUWFysOJgE/1ozI=
+Received: from [IPV6:240f:10b:7440:1:cb8d:6c02 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 19 Oct 2024 09:41:36 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13226523954872317656
+Message-ID: <5E49B36195743C7C+3eb032f1-fda6-4a61-bcaa-8ce34256cb51@radxa.com>
+Date: Sat, 19 Oct 2024 10:41:35 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241019012940.3656292-1-jthoughton@google.com>
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Message-ID: <20241019012940.3656292-3-jthoughton@google.com>
-Subject: [PATCH 2/2] mm: multi-gen LRU: use {ptep,pmdp}_clear_young_notify()
-From: James Houghton <jthoughton@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
-	James Houghton <jthoughton@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	David Stevens <stevensd@google.com>, Yu Zhao <yuzhao@google.com>, Wei Xu <weixugc@google.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] arm64: dts: rockchip: Enable HDMI0 on rock-5b
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Luis de Arquer <ldearquer@gmail.com>, Alexandre ARNOUD <aarnoud@me.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241019-rk3588-hdmi0-dt-v1-0-bd8f299feacd@collabora.com>
+ <20241019-rk3588-hdmi0-dt-v1-2-bd8f299feacd@collabora.com>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <20241019-rk3588-hdmi0-dt-v1-2-bd8f299feacd@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NgRM4dHY2JYJ4NeKvRKHj+KVewdSLzxYb+M5RWQiXGgWkLMw7T91cEdT
+	DdXIUZ/Q7iruiKeSrX49Gmu69OoTJEHekUOfFzWndc8g1XxSfnbcXXn29kDqWNKV+ngw6MV
+	VlhWJyd80Ia//u2VGGmNPVCZsnhomF/tfn0mxNskRB8ijydZ8Vi1ufpFGc0Aq4nu0REzsJH
+	PfwP+DisqKjJxgiaWKkVFCnmhPRzlsunUtW26aD6RLZwpWeObwM2ErUTBnXXpnEVn85gjr5
+	cPp6x+kFXROaoUrOZ3UIkMPibTPBsgv4x0vl1VpoNTSbv2xc//ZETx4e9RoFbvEtxsuRphu
+	1YoWAT3mTALdhMPU3xRj8s9LFUUbEx5/GGtdu/51D5WC+IFWVpYHY1X1zmbIGggYZIXwuTY
+	HJwFXO84T7uUfNtmtJR30snP1ys7xUWJHgM1bS3f3zbKz2vUE1Med+SvkBAhOUB27+kSq+j
+	efeLGrmo4KhT9OoXkCVjuO3XKNyWf14JNDPPXzQJ24cfuXkPHdKhQD3N1GfVL9T0WgrLNQ9
+	dVCeeImHAYbbt1BNvXB3AMZXe1GsHk219VWXrqiTtbU+fJECsB2p2gWTcVD+z+jV2XCXgL1
+	kW/ubsQOc6tKyHFJFyws0puqrndxvPWrnF0ssztrg2qr/UPVh4YOgYEGNlAysvnLul0f8W7
+	s4h3wHOnFiXjlDQMyHfnJd/TIhke779x64x2kFCLZDGuDjjs7oqMbE1w3Xl6WG/wzfNLuxS
+	6abkjaCAVloBiCYnIH1ZGBSyvQ9Mxru0unbNVfFyX5iZG8PLa4tFXJ41lBvvve75srkr2Pz
+	3FEEf4k+Thp8cRfs7Jtt//BW5V3xievJs72wuVm7ZHrr5Mc5Vr0KYyUgzP9R3mKoPXmQ0rR
+	n16TTmkiIjN5DUzLELAJHeMKzNkB/n65nhZS07aChtM=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-From: Yu Zhao <yuzhao@google.com>
+Hi,
 
-When the MM_WALK capability is enabled, memory that is mostly accessed
-by a VM appears younger than it really is, therefore this memory will be
-less likely to be evicted. Therefore, the presence of a running VM can
-significantly increase swap-outs for non-VM memory, regressing the
-performance for the rest of the system.
+thank you very much for your work!
 
-Fix this regression by always calling {ptep,pmdp}_clear_young_notify()
-whenever we clear the young bits on PMDs/PTEs.
+On 10/19/24 06:39, Cristian Ciocaltea wrote:
+> Add the necessary DT changes to enable HDMI0 on Rock 5B.
 
-Fixes: bd74fdaea146 ("mm: multi-gen LRU: support page table walks")
-Reported-by: David Stevens <stevensd@google.com>
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: James Houghton <jthoughton@google.com>
----
- include/linux/mmzone.h |  5 ++-
- mm/rmap.c              |  9 ++---
- mm/vmscan.c            | 91 +++++++++++++++++++++++-------------------
- 3 files changed, 55 insertions(+), 50 deletions(-)
+Rock 5B -> (Radxa) ROCK 5B
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 691c635d8d1f..2e8c4307c728 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -557,7 +557,7 @@ struct lru_gen_memcg {
- 
- void lru_gen_init_pgdat(struct pglist_data *pgdat);
- void lru_gen_init_lruvec(struct lruvec *lruvec);
--void lru_gen_look_around(struct page_vma_mapped_walk *pvmw);
-+bool lru_gen_look_around(struct page_vma_mapped_walk *pvmw);
- 
- void lru_gen_init_memcg(struct mem_cgroup *memcg);
- void lru_gen_exit_memcg(struct mem_cgroup *memcg);
-@@ -576,8 +576,9 @@ static inline void lru_gen_init_lruvec(struct lruvec *lruvec)
- {
- }
- 
--static inline void lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
-+static inline bool lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
- {
-+	return false;
- }
- 
- static inline void lru_gen_init_memcg(struct mem_cgroup *memcg)
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 2c561b1e52cc..4785a693857a 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -896,13 +896,10 @@ static bool folio_referenced_one(struct folio *folio,
- 			return false;
- 		}
- 
--		if (pvmw.pte) {
--			if (lru_gen_enabled() &&
--			    pte_young(ptep_get(pvmw.pte))) {
--				lru_gen_look_around(&pvmw);
-+		if (lru_gen_enabled() && pvmw.pte) {
-+			if (lru_gen_look_around(&pvmw))
- 				referenced++;
--			}
--
-+		} else if (pvmw.pte) {
- 			if (ptep_clear_flush_young_notify(vma, address,
- 						pvmw.pte))
- 				referenced++;
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 60669f8bba46..29c098790b01 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -56,6 +56,7 @@
- #include <linux/khugepaged.h>
- #include <linux/rculist_nulls.h>
- #include <linux/random.h>
-+#include <linux/mmu_notifier.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/div64.h>
-@@ -3293,7 +3294,8 @@ static bool get_next_vma(unsigned long mask, unsigned long size, struct mm_walk
- 	return false;
- }
- 
--static unsigned long get_pte_pfn(pte_t pte, struct vm_area_struct *vma, unsigned long addr)
-+static unsigned long get_pte_pfn(pte_t pte, struct vm_area_struct *vma, unsigned long addr,
-+				 struct pglist_data *pgdat)
- {
- 	unsigned long pfn = pte_pfn(pte);
- 
-@@ -3305,13 +3307,20 @@ static unsigned long get_pte_pfn(pte_t pte, struct vm_area_struct *vma, unsigned
- 	if (WARN_ON_ONCE(pte_devmap(pte) || pte_special(pte)))
- 		return -1;
- 
-+	if (!pte_young(pte) && !mm_has_notifiers(vma->vm_mm))
-+		return -1;
-+
- 	if (WARN_ON_ONCE(!pfn_valid(pfn)))
- 		return -1;
- 
-+	if (pfn < pgdat->node_start_pfn || pfn >= pgdat_end_pfn(pgdat))
-+		return -1;
-+
- 	return pfn;
- }
- 
--static unsigned long get_pmd_pfn(pmd_t pmd, struct vm_area_struct *vma, unsigned long addr)
-+static unsigned long get_pmd_pfn(pmd_t pmd, struct vm_area_struct *vma, unsigned long addr,
-+				 struct pglist_data *pgdat)
- {
- 	unsigned long pfn = pmd_pfn(pmd);
- 
-@@ -3323,9 +3332,15 @@ static unsigned long get_pmd_pfn(pmd_t pmd, struct vm_area_struct *vma, unsigned
- 	if (WARN_ON_ONCE(pmd_devmap(pmd)))
- 		return -1;
- 
-+	if (!pmd_young(pmd) && !mm_has_notifiers(vma->vm_mm))
-+		return -1;
-+
- 	if (WARN_ON_ONCE(!pfn_valid(pfn)))
- 		return -1;
- 
-+	if (pfn < pgdat->node_start_pfn || pfn >= pgdat_end_pfn(pgdat))
-+		return -1;
-+
- 	return pfn;
- }
- 
-@@ -3334,10 +3349,6 @@ static struct folio *get_pfn_folio(unsigned long pfn, struct mem_cgroup *memcg,
- {
- 	struct folio *folio;
- 
--	/* try to avoid unnecessary memory loads */
--	if (pfn < pgdat->node_start_pfn || pfn >= pgdat_end_pfn(pgdat))
--		return NULL;
--
- 	folio = pfn_folio(pfn);
- 	if (folio_nid(folio) != pgdat->node_id)
- 		return NULL;
-@@ -3400,20 +3411,16 @@ static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
- 		total++;
- 		walk->mm_stats[MM_LEAF_TOTAL]++;
- 
--		pfn = get_pte_pfn(ptent, args->vma, addr);
-+		pfn = get_pte_pfn(ptent, args->vma, addr, pgdat);
- 		if (pfn == -1)
- 			continue;
- 
--		if (!pte_young(ptent)) {
--			continue;
--		}
--
- 		folio = get_pfn_folio(pfn, memcg, pgdat, walk->can_swap);
- 		if (!folio)
- 			continue;
- 
--		if (!ptep_test_and_clear_young(args->vma, addr, pte + i))
--			VM_WARN_ON_ONCE(true);
-+		if (!ptep_clear_young_notify(args->vma, addr, pte + i))
-+			continue;
- 
- 		young++;
- 		walk->mm_stats[MM_LEAF_YOUNG]++;
-@@ -3479,21 +3486,22 @@ static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area
- 		/* don't round down the first address */
- 		addr = i ? (*first & PMD_MASK) + i * PMD_SIZE : *first;
- 
--		pfn = get_pmd_pfn(pmd[i], vma, addr);
--		if (pfn == -1)
--			goto next;
--
--		if (!pmd_trans_huge(pmd[i])) {
--			if (!walk->force_scan && should_clear_pmd_young())
-+		if (pmd_present(pmd[i]) && !pmd_trans_huge(pmd[i])) {
-+			if (!walk->force_scan && should_clear_pmd_young() &&
-+			    !mm_has_notifiers(args->mm))
- 				pmdp_test_and_clear_young(vma, addr, pmd + i);
- 			goto next;
- 		}
- 
-+		pfn = get_pmd_pfn(pmd[i], vma, addr, pgdat);
-+		if (pfn == -1)
-+			goto next;
-+
- 		folio = get_pfn_folio(pfn, memcg, pgdat, walk->can_swap);
- 		if (!folio)
- 			goto next;
- 
--		if (!pmdp_test_and_clear_young(vma, addr, pmd + i))
-+		if (!pmdp_clear_young_notify(vma, addr, pmd + i))
- 			goto next;
- 
- 		walk->mm_stats[MM_LEAF_YOUNG]++;
-@@ -3551,24 +3559,18 @@ static void walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
- 		}
- 
- 		if (pmd_trans_huge(val)) {
--			unsigned long pfn = pmd_pfn(val);
- 			struct pglist_data *pgdat = lruvec_pgdat(walk->lruvec);
-+			unsigned long pfn = get_pmd_pfn(val, vma, addr, pgdat);
- 
- 			walk->mm_stats[MM_LEAF_TOTAL]++;
- 
--			if (!pmd_young(val)) {
--				continue;
--			}
--
--			/* try to avoid unnecessary memory loads */
--			if (pfn < pgdat->node_start_pfn || pfn >= pgdat_end_pfn(pgdat))
--				continue;
--
--			walk_pmd_range_locked(pud, addr, vma, args, bitmap, &first);
-+			if (pfn != -1)
-+				walk_pmd_range_locked(pud, addr, vma, args, bitmap, &first);
- 			continue;
- 		}
- 
--		if (!walk->force_scan && should_clear_pmd_young()) {
-+		if (!walk->force_scan && should_clear_pmd_young() &&
-+		    !mm_has_notifiers(args->mm)) {
- 			if (!pmd_young(val))
- 				continue;
- 
-@@ -4042,13 +4044,13 @@ static void lru_gen_age_node(struct pglist_data *pgdat, struct scan_control *sc)
-  * the PTE table to the Bloom filter. This forms a feedback loop between the
-  * eviction and the aging.
-  */
--void lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
-+bool lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
- {
- 	int i;
- 	unsigned long start;
- 	unsigned long end;
- 	struct lru_gen_mm_walk *walk;
--	int young = 0;
-+	int young = 1;
- 	pte_t *pte = pvmw->pte;
- 	unsigned long addr = pvmw->address;
- 	struct vm_area_struct *vma = pvmw->vma;
-@@ -4064,12 +4066,15 @@ void lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
- 	lockdep_assert_held(pvmw->ptl);
- 	VM_WARN_ON_ONCE_FOLIO(folio_test_lru(folio), folio);
- 
-+	if (!ptep_clear_young_notify(vma, addr, pte))
-+		return false;
-+
- 	if (spin_is_contended(pvmw->ptl))
--		return;
-+		return true;
- 
- 	/* exclude special VMAs containing anon pages from COW */
- 	if (vma->vm_flags & VM_SPECIAL)
--		return;
-+		return true;
- 
- 	/* avoid taking the LRU lock under the PTL when possible */
- 	walk = current->reclaim_state ? current->reclaim_state->mm_walk : NULL;
-@@ -4077,6 +4082,9 @@ void lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
- 	start = max(addr & PMD_MASK, vma->vm_start);
- 	end = min(addr | ~PMD_MASK, vma->vm_end - 1) + 1;
- 
-+	if (end - start == PAGE_SIZE)
-+		return true;
-+
- 	if (end - start > MIN_LRU_BATCH * PAGE_SIZE) {
- 		if (addr - start < MIN_LRU_BATCH * PAGE_SIZE / 2)
- 			end = start + MIN_LRU_BATCH * PAGE_SIZE;
-@@ -4090,7 +4098,7 @@ void lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
- 
- 	/* folio_update_gen() requires stable folio_memcg() */
- 	if (!mem_cgroup_trylock_pages(memcg))
--		return;
-+		return true;
- 
- 	arch_enter_lazy_mmu_mode();
- 
-@@ -4100,19 +4108,16 @@ void lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
- 		unsigned long pfn;
- 		pte_t ptent = ptep_get(pte + i);
- 
--		pfn = get_pte_pfn(ptent, vma, addr);
-+		pfn = get_pte_pfn(ptent, vma, addr, pgdat);
- 		if (pfn == -1)
- 			continue;
- 
--		if (!pte_young(ptent))
--			continue;
--
- 		folio = get_pfn_folio(pfn, memcg, pgdat, can_swap);
- 		if (!folio)
- 			continue;
- 
--		if (!ptep_test_and_clear_young(vma, addr, pte + i))
--			VM_WARN_ON_ONCE(true);
-+		if (!ptep_clear_young_notify(vma, addr, pte + i))
-+			continue;
- 
- 		young++;
- 
-@@ -4144,6 +4149,8 @@ void lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
- 	/* feedback from rmap walkers to page table walkers */
- 	if (mm_state && suitable_to_scan(i, young))
- 		update_bloom_filter(mm_state, max_seq, pvmw->pmd);
-+
-+	return true;
- }
- 
- /******************************************************************************
--- 
-2.47.0.105.g07ac214952-goog
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
+Tested-by: FUKAUMI Naoki <naoki@radxa.com>
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+> ---
+>   arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 47 +++++++++++++++++++++++++
+>   1 file changed, 47 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> index d6fff5b86b87020f115ce64795aee90c002a2255..0c3baf74981b714eb2a1edbc3fbbb69cd688cfc2 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> @@ -4,6 +4,7 @@
+>   
+>   #include <dt-bindings/gpio/gpio.h>
+>   #include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/soc/rockchip,vop2.h>
+>   #include "rk3588.dtsi"
+>   
+>   / {
+> @@ -37,6 +38,17 @@ analog-sound {
+>   		pinctrl-0 = <&hp_detect>;
+>   	};
+>   
+> +	hdmi0-con {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi0_con_in: endpoint {
+> +				remote-endpoint = <&hdmi0_out_con>;
+> +			};
+> +		};
+> +	};
+> +
+>   	leds {
+>   		compatible = "gpio-leds";
+>   		pinctrl-names = "default";
+> @@ -192,6 +204,26 @@ &gpu {
+>   	status = "okay";
+>   };
+>   
+> +&hdmi0 {
+> +	status = "okay";
+> +};
+> +
+> +&hdmi0_in {
+> +	hdmi0_in_vp0: endpoint {
+> +		remote-endpoint = <&vp0_out_hdmi0>;
+> +	};
+> +};
+> +
+> +&hdmi0_out {
+> +	hdmi0_out_con: endpoint {
+> +		remote-endpoint = <&hdmi0_con_in>;
+> +	};
+> +};
+> +
+> +&hdptxphy_hdmi0 {
+> +	status = "okay";
+> +};
+> +
+>   &i2c0 {
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&i2c0m2_xfer>;
+> @@ -858,3 +890,18 @@ &usb_host1_xhci {
+>   &usb_host2_xhci {
+>   	status = "okay";
+>   };
+> +
+> +&vop_mmu {
+> +	status = "okay";
+> +};
+> +
+> +&vop {
+> +	status = "okay";
+> +};
+> +
+> +&vp0 {
+> +	vp0_out_hdmi0: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
+> +		reg = <ROCKCHIP_VOP2_EP_HDMI0>;
+> +		remote-endpoint = <&hdmi0_in_vp0>;
+> +	};
+> +};
 
