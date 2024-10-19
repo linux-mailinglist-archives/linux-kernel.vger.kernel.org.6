@@ -1,151 +1,119 @@
-Return-Path: <linux-kernel+bounces-372727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD6E9A4C62
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:50:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4229A4C6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56D0EB21658
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:50:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3F45283216
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1441E1053;
-	Sat, 19 Oct 2024 08:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="BDMnWk26"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FA51E0E16
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 08:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182451DFD80;
+	Sat, 19 Oct 2024 08:56:39 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D211DE88E;
+	Sat, 19 Oct 2024 08:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729327695; cv=none; b=uvWBmuYKrjInVvBile/W6InIs+WJ+u3vv8OHOVANUPHE+upaWNIz72GICI98achL8Z9LaA/B49QSzfENyOqAyt5mpbkDoH4arsL4adqe+7THAwU0Y0KJh1kOh2s2F+oY5acxa55zCKxoCGtb1P1QM9dJRk00yat71M6uAvIgo08=
+	t=1729328198; cv=none; b=lNqBdXG9BZuYmn/9sCvrdaJOydktMn5w/z9bLzE69SVBOfDxn8kX7FAr0ZmZh8tZDl/dfeNda41+AbjKGQ6oWObwws+XW74HIJ/Y0CKgEfmmnImjPZ+NvFhEp8CZ8tJ9I9jfS/qUqdZAUOXUOJR4O+xW2pTjBT+8UUPc4AZj6kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729327695; c=relaxed/simple;
-	bh=8GAcD1p4qmOxAT6LKl7/yGsIxlJCeks3lmvdsRJmH8U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=si/yt9zcOHPijONWzUQg/50apxhPnObfXClhCdz04JM9oKh3JjsUwF5gFdR8cPjf+VnGR3GcqNk/A3dB6hI3Ry9SXaY9DTwE+4EjROtL/5J96EP2mdF5M4AEKhgIYkS/kxE8f6bRw27OfO8EDUmlKzz6r9uFCW/AKjOMc7GGe8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=BDMnWk26; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d47b38336so2028158f8f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 01:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1729327692; x=1729932492; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iR9u43Hyk1vIKlajLYqnwdEXv51OaTqN1pUoQT3Fdw0=;
-        b=BDMnWk26U1NXmigmt9PPdQJsjydfhPNLC20W/rjKSc0fdXeT9HE4BoXu7dRPs2i4MD
-         188C70Jx0VaAn8l/X0tc8qti3Ws3KxYeifODbCtRR85A23/AO5etkJKMbrDRSh+Ec8yJ
-         8TmbGHAd+iKqXTIR5GMRPWcMbRLxZT09JBUAQiFeH6PH0MBlhTPW7u9ZSXi/5MKNI65c
-         n/eKzY5oPCD0FqIXpGm3fRwnbAD0YiTkMvq3AdbAYkDFOrYgm8L1dUIaKpdTJJTtny9h
-         rRMHpaR6bVo1flmmo2xiDMhlwSkN5UkMPWLbhOHKD2BG3VDOlUiqphVfvcZKHnw0eUqp
-         93wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729327692; x=1729932492;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iR9u43Hyk1vIKlajLYqnwdEXv51OaTqN1pUoQT3Fdw0=;
-        b=UrgTKA+aMPD1kmvA45bKrV9mYPlo/uBHXdA+MXjcwC770GIX9LzHN5q3jLR/HtodfC
-         DWGNFW4WjDf7P+tGsIIKaMpAOvKjYr6EOwGlMbXR+jQJwGbg6+J2I3Y8yW3KiMMbFB/O
-         INW9YdQUbKq0e3KFgSQaqvC8/aIpZWF5KOvmXJmu56wQ5VLQ+h43qUFbbdqPhmAVzMYi
-         WbsdVdjDAdP9pFQFAkVfGZVLQpUTcACR35jjpMAqtXGdn4GywokqycVjryhEjNSU/i22
-         uS+XxyZTOX2bYNBtze3XqYAh/fJLuhNBTuB8OmakGygyD4zFT8U/9IBONjpUpCX6NemK
-         0wTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXPjQVZi+Cy0QS9I7AnFGiAufBOLnPjtaeo6KLZTrzhFM95kqQO/HKzVM+RimZImpkfC/emNv3NURMTYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9BbIr/5wD65zOZfM+OCUaT0vXyL21emMGbVJm1NCroPpMspjX
-	bhMAkRRRdzW9GPPDdnF5At0PSGRSHswSRkm3oecbs2Vbp/aXx0r5ahvvr/JD6Uk=
-X-Google-Smtp-Source: AGHT+IHsNssw3nPyESTNLOiP+9Mlv4+US3nWRprCJSeU2x+CacNFKb3J8zoQ9J/1GgCM0O9zmVhHzQ==
-X-Received: by 2002:a5d:61ce:0:b0:37c:c5be:1121 with SMTP id ffacd0b85a97d-37eab4d1227mr3498805f8f.9.1729327692261;
-        Sat, 19 Oct 2024 01:48:12 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.23])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf0eccbasm3898731f8f.81.2024.10.19.01.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 01:48:11 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com,
-	magnus.damm@gmail.com,
-	p.zabel@pengutronix.de
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v4 12/12] arm64: defconfig: Enable VBATTB clock and Renesas RTCA-3 flags
-Date: Sat, 19 Oct 2024 11:47:38 +0300
-Message-Id: <20241019084738.3370489-13-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1729328198; c=relaxed/simple;
+	bh=1KTsm1FbxTkZygRnRaYqVZdq3K2ggDGiBp0zQ52nPsU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qQI50/gmOqAudGhhjnFud7rqUKH8EyZ0y4iS0/UvceJr2mxSIn/HMG4zjmgW9/tJbCCN6GqdW1VPLgiYG/DmU0zvxqJTxi1Gf+s0AqytfvTEqXj9hVP8LZSONqK/9QiAltxZcbYjPYy5fczcgsSpm0X4338ZlS5J7yW6Ayo8Hsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app1 (Coremail) with SMTP id HgEQrADHzzsNdBNnDI4fCA--.49092S2;
+	Sat, 19 Oct 2024 16:55:41 +0800 (CST)
+Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wAH8UIMdBNnstxuAA--.62062S2;
+	Sat, 19 Oct 2024 16:55:40 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: si.yanteng@linux.dev,
+	alexs@kernel.org,
+	corbet@lwn.net,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Dongliang Mu <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/6] docs/zh_CN: update the translation of mm/hmm.rst
+Date: Sat, 19 Oct 2024 16:54:51 +0800
+Message-ID: <82259a2656549c90591dc3873f3d2e8a4fb41233.1729327831.git.dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1729327831.git.dzm91@hust.edu.cn>
+References: <cover.1729327831.git.dzm91@hust.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HgEQrADHzzsNdBNnDI4fCA--.49092S2
+Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF1ktrWDZFWkur43tr45trb_yoW8CFyfpF
+	97KrWxKa17t345Kr4xGF17Za18u3WIgayxJryxXan2qrn8ta97t398trWFgasxX3ykZFW5
+	ZanxKrWfZ34FywUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQab7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_JF
+	0_Jw1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
+	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
+	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
+	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMx
+	AIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkE
+	bVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
+	I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04
+	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7Cj
+	xVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jfvtZUUUUU=
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Update to commit 406c4c5ee4ea ("docs:mm: fix spelling mistakes in
+heterogeneous memory management page")
 
-Enable the Renesas VBATTB clock and RTCA-3 RTC drivers. These are
-available on the Renesas RZ/G3S SoC. VBATTB is the clock provider for
-the RTC counter.
+scripts/checktransupdate.py reports:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Documentation/translations/zh_CN/mm/hmm.rst
+commit 406c4c5ee4ea ("docs:mm: fix spelling mistakes in heterogeneous
+memory management page")
+commit 090a7f1009b8 ("docs/mm: remove references to hmm_mirror ops and
+clean typos")
+commit d56b699d76d1 ("Documentation: Fix typos")
+3 commits needs resolving in total
+
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 ---
+ Documentation/translations/zh_CN/mm/hmm.rst | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-Changes in v4:
-- squashed w/ patch "arm64: defconfig: Enable Renesas RTCA-3 flag" from v3
-- updated patch description
-- collected tags
-
-Changes in v3:
-- update patch title and description
-- dropped CONFIG_MFD_RENESAS_VBATTB
-
-Changes in v2:
-- added CONFIG_MFD_RENESAS_VBATTB
-- added vendor name in the VBATTB clock flag
-
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 8067bf051377..e3252e24bd4d 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1216,6 +1216,7 @@ CONFIG_RTC_DRV_IMX_SC=m
- CONFIG_RTC_DRV_MT6397=m
- CONFIG_RTC_DRV_XGENE=y
- CONFIG_RTC_DRV_TI_K3=m
-+CONFIG_RTC_DRV_RENESAS_RTCA3=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_BCM2835=y
- CONFIG_DMA_SUN6I=m
-@@ -1362,6 +1363,7 @@ CONFIG_SM_VIDEOCC_8250=y
- CONFIG_QCOM_HFPLL=y
- CONFIG_CLK_GFM_LPASS_SM8250=m
- CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
-+CONFIG_CLK_RENESAS_VBATTB=y
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_TEGRA186_TIMER=y
+diff --git a/Documentation/translations/zh_CN/mm/hmm.rst b/Documentation/translations/zh_CN/mm/hmm.rst
+index babbbe756c0f..0669f947d0bc 100644
+--- a/Documentation/translations/zh_CN/mm/hmm.rst
++++ b/Documentation/translations/zh_CN/mm/hmm.rst
+@@ -129,13 +129,7 @@ struct page可以与现有的 mm 机制进行最简单、最干净的集成。
+   int hmm_range_fault(struct hmm_range *range);
+ 
+ 如果请求写访问，它将在丢失或只读条目上触发缺页异常（见下文）。缺页异常使用通用的 mm 缺
+-页异常代码路径，就像 CPU 缺页异常一样。
+-
+-这两个函数都将 CPU 页表条目复制到它们的 pfns 数组参数中。该数组中的每个条目对应于虚拟
+-范围中的一个地址。HMM 提供了一组标志来帮助驱动程序识别特殊的 CPU 页表项。
+-
+-在 sync_cpu_device_pagetables() 回调中锁定是驱动程序必须尊重的最重要的方面，以保
+-持事物正确同步。使用模式是::
++页异常代码路径，就像 CPU 缺页异常一样。使用模式是::
+ 
+  int driver_populate_range(...)
+  {
 -- 
-2.39.2
+2.43.0
 
 
