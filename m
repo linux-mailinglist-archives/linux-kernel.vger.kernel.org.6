@@ -1,84 +1,53 @@
-Return-Path: <linux-kernel+bounces-373049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A239A512F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 00:07:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7489A5133
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 00:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F57E283FDE
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:07:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58286B22706
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58B6192B66;
-	Sat, 19 Oct 2024 22:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35C8192B61;
+	Sat, 19 Oct 2024 22:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="miJoMlMf"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVFOJYGg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160F713C816;
-	Sat, 19 Oct 2024 22:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1389813C816;
+	Sat, 19 Oct 2024 22:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729375646; cv=none; b=C5GeoMbJ5RSEZ22Qy5hV/fU1Bz7dDeSjssd/UKRyfWlgzgcyulGNhLEJKudjAMqUysmx4zVhPD12ThPf4tDkxKxHO9yqMwXNdd6q0XZeCM8D1VxInUY0ic6rTxUWYX4ZK1CHw0EwgIJiUZBGqC7CxRga3wavCTIV31nYBIgCNN4=
+	t=1729375822; cv=none; b=WPALMXhSMDtoIhwIrccNVs+3FdOSRHtFCXUOcRoHFMT5097UKm51eS25+JIoVCGbE5/EdeUiiegzjijw89KOJOOsha02T1q0zkIpZ2mT3Y22gy69DNbn3VU9EAwmPzElmbih4D9fvlG93uCE27mgpCBuEzmdRVjce9SXMR3o1C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729375646; c=relaxed/simple;
-	bh=0LUTZqUipEXL14ilbJk6721G/0g/yF0ZGfCWetGB1W4=;
+	s=arc-20240116; t=1729375822; c=relaxed/simple;
+	bh=0B0VcEbPn1VvdEiFRhd+49vZuwZkGAIaCtI+62iJep8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fwnPRENaJEp07VLDJEyblAN0gfpNkKUSYr+kScPiFznIhaOJIi71otyQl9bpj5fl+CWwCR7te46lHr8VPrGJN3/jY4WVldjhahz1pFXp9uBBG5muJ6tNCek32EMwJ6yMynV5gdwekkDf7qRk4rZ/kuyJVxTAV6hLN9AKZNAFBHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=miJoMlMf; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a0f198d38so439124966b.1;
-        Sat, 19 Oct 2024 15:07:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729375642; x=1729980442; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ohj4wBioIhDNTozf+32bPov1V5/3rrHwgVYb++NtFDk=;
-        b=miJoMlMfsnnown8R6z+epkH0IXduAXLz7A4KYp24fyHcqXw7psy4Hnkb3bZyyl/l+X
-         vqzt2jFa39CRpmxnIYG95E9Wq9b7KVbwLfF9b4c+a3hT7c+oXFufpoKqD4TAPAyLisGh
-         xWZhDhJ82k7iBl/nXh1Z7BnKVPrAO250vFIfcD0Z2Adae5eRGNllFA3O7Nj3pUQhy/dU
-         0a+nHn8Yb4j39aXciF18PoSCq17jkAec+UupmgL7UHecqTewe24ep7y8oQDYmBVvtaSl
-         /ngI2z19+uoBrZoMZJtFxBug8w81Ba+eSScnamXS8FU8Ad07vUOAqIlwuJfySBSlrrwE
-         3wcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729375642; x=1729980442;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ohj4wBioIhDNTozf+32bPov1V5/3rrHwgVYb++NtFDk=;
-        b=ZEtVCXJpK3kfp43+KY0hlLeZnz0/3iLP/nDcPtvK9CGzQHZIosdyDgdNBU1gWABQEp
-         t9d2Fku1GD5gBb7KGPw0qAtgxg4Vl7Z9g41pKtezqrbBaA/0xn/I9M98XUUA2Bx0HDLF
-         E+ZXZrTQaQUeqNgr51TYpggukRMHEvKgpt1+vCx5XnAbyYuYlHRJt1SVZxhfn3NFzBKK
-         xQqK/DYyxf+js1wWU3BB/fVT8Ks8VQ0vHtUI/G17zLe2PfIxaGO4eNpz+bQNHt5GrBi+
-         ml1bYWD8RsYssee37wnu1nhUw7qqd2St5RVrUyQiqnLzpKAi3/si7R2Kse7tVcsTooG3
-         qdeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGoCAmd+jb8r+7hG/VvVyt1nLvFt5STe/X8GKjsXUdWV/2XrBHk4yPfA/goXP9UtX2htimw9YmnNdPDqE=@vger.kernel.org, AJvYcCXhckdwrlDFkykq3mR3GqOTkiAPI4GbzFlj4zn5lO8aVD60vQEBjsq5cFSBui6oIVbZYJBaOYup0w6pHDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJsTHZQLrveSufC0jcaO4j3wdyaJSEBqJr96CgZxhsExaBLEZk
-	ghYFO/KKT2qt2kFGqxd6cZnIPBjfiYyX1ZBxPFl7FGAuIk0XRjmaBuT7Tw==
-X-Google-Smtp-Source: AGHT+IFSyRepdvilXBxT3R+fRt5ciE419Oga/5nfiIh3Vtb3V9YWSon+b0afFdmKHLadj2rwrsf17Q==
-X-Received: by 2002:a17:907:728b:b0:a99:e5d5:5654 with SMTP id a640c23a62f3a-a9a69773f30mr722364466b.6.1729375642097;
-        Sat, 19 Oct 2024 15:07:22 -0700 (PDT)
-Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-51-176.cust.vodafonedsl.it. [188.217.51.176])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912f62cbsm23855166b.76.2024.10.19.15.07.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 15:07:21 -0700 (PDT)
-Date: Sun, 20 Oct 2024 00:07:19 +0200
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: laurent.pinchart@ideasonboard.com, prabhakar.csengg@gmail.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: v4l2-subdev: Refactor events
-Message-ID: <ZxQtlwVZ9JfIM8tl@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-References: <20241018171104.1624426-1-tomm.merciai@gmail.com>
- <ZxK3VsNdFjULfRxK@kekkonen.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sa8VL4fensrXmljaEiuPGIC+8s8+xWWRclEXTob1fD4x0j+I1y6SEteMblhvOefBEjoQVCedZMHw97vKawdcaTDEN8Vno8MQWzFtTr3QgcC+YnBYomcM7nKJ5o2hycFdppV0lhxNDzIZ5et+X14Dqe/i7JF/xeUfZGpnTWiTmok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVFOJYGg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50E34C4CEC5;
+	Sat, 19 Oct 2024 22:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729375821;
+	bh=0B0VcEbPn1VvdEiFRhd+49vZuwZkGAIaCtI+62iJep8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JVFOJYGgh3szznAZyAoNv3lVXQ0bnY0MsM9k39NIGkWUYnHM1hNzYeNK0yoQ6ZdqJ
+	 kKGSwRCrDC9U+v/TgX1iSFYo7qCzT9AZlcfodgE52M1sBilrd6+d2r2cSpOyU6+waP
+	 D6LUKZXJedlFNntgM1JvHWlU8+HH3eq7viW2aV61wK7teCk29ol5BEwOQoNJRUmqZy
+	 tqVhPxAJ0ddru7hRgFV413wkuJZS5YqeWt1xyMsDSVWFSOV62Adm8hTfBqkJVHGxc9
+	 KHP6UZimE/OSAnsqsQz0z88IcfrGBiFhGTi3maKPp6MRehGk1bmfk2CEMjWJc4TgxM
+	 60HMeDgRoRGOA==
+Date: Sat, 19 Oct 2024 15:10:19 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Maurer <mmaurer@google.com>, Song Liu <song@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com
+Subject: Re: [PATCH 00/12] Module Validation Refactor
+Message-ID: <ZxQuS1KDS0-ekHOz@bombadil.infradead.org>
+References: <20241015231651.3851138-1-mmaurer@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,112 +56,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxK3VsNdFjULfRxK@kekkonen.localdomain>
+In-Reply-To: <20241015231651.3851138-1-mmaurer@google.com>
 
-Hi Sakari,
-
-On Fri, Oct 18, 2024 at 07:30:30PM +0000, Sakari Ailus wrote:
-> Hi Tommaso,
+On Tue, Oct 15, 2024 at 11:16:34PM +0000, Matthew Maurer wrote:
+> Split out from Extended MODVERSIONS Support [1]
 > 
-> Thanks for working on this.
-
-In real it's a Laurent's suggestion :)
-
+> This series refactors module validation during loading to ensure that
+> everything is checked on its way in. This is intended to make the code
+> robust enough that we can more confidently add new pieces like extended
+> MODVERSIONS.
 > 
-> On Fri, Oct 18, 2024 at 07:11:03PM +0200, Tommaso Merciai wrote:
-> > Controls can be exposed to userspace via a v4l-subdevX device, and
-> > userspace has to be able to subscribe to control events so that it is
-> > notified when the control changes value.
-> > If a control handler is set for the subdev then set the HAS_EVENTS
-> > flag automatically into v4l2_subdev_init_finalize() and use
-> > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> > as default if subdev don't have .(un)subscribe control operations.
-> > 
-> > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> > ---
-> >  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
-> >  1 file changed, 20 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> > index 3a4ba08810d2..77ca829b9983 100644
-> > --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> > @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
-> >  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
-> >  
-> >  	case VIDIOC_SUBSCRIBE_EVENT:
-> > -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
-> > +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> > +			return v4l2_subdev_call(sd, core, subscribe_event,
-> > +						vfh, arg);
-> > +
-> > +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
-> > +		     vfh->ctrl_handler)
-> > +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-> > +
-> > +		return -ENOIOCTLCMD;
-> 
-> While this mostly does the same thing, I prefer the order of tests below.
-> Could you align event subscription with unsubscription?
+> [1] https://lore.kernel.org/all/20240925233854.90072-1-mmaurer@google.com/
 
-What about:
+Thanks! KPD [0] picked this up and ran automated tests for us using kdevops,
+and the tests passed [1], I've included that into the last commit log and
+pushed to modules-next [2].
 
-	case VIDIOC_SUBSCRIBE_EVENT:
-		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
-			return -ENOIOCTLCMD;
+[0] https://github.com/facebookincubator/kernel-patches-daemon
+[1] https://github.com/linux-kdevops/linux-modules-kpd/actions/runs/11420095343
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git
 
-		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-			return v4l2_subdev_call(sd, core, subscribe_event,
-						vfh, arg);
-
-		if (!vfh->ctrl_handler)
-			return -ENOTTY;
-
-		return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-
-	case VIDIOC_UNSUBSCRIBE_EVENT:
-		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
-			return -ENOIOCTLCMD;
-
-		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-			return v4l2_subdev_call(sd, core, unsubscribe_event,
-						vfh, arg);
-
-		return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
-
-?
-
-Thanks & Regards,
-Tommaso
-
-> 
-> >  
-> >  	case VIDIOC_UNSUBSCRIBE_EVENT:
-> > -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
-> > +		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
-> > +			return -ENOIOCTLCMD;
-> > +
-> > +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> > +			return v4l2_subdev_call(sd, core, unsubscribe_event,
-> > +						vfh, arg);
-> > +
-> > +		return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
-> >  
-> >  #ifdef CONFIG_VIDEO_ADV_DEBUG
-> >  	case VIDIOC_DBG_G_REGISTER:
-> > @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
-> >  		}
-> >  	}
-> >  
-> > +	if (sd->ctrl_handler)
-> > +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-> > +
-> >  	state = __v4l2_subdev_state_alloc(sd, name, key);
-> >  	if (IS_ERR(state))
-> >  		return PTR_ERR(state);
-> 
-> -- 
-> Kind regards,
-> 
-> Sakari Ailus
+  Luis
 
