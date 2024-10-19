@@ -1,184 +1,142 @@
-Return-Path: <linux-kernel+bounces-372636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70CF49A4B48
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C5619A4B4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 07:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882021C21730
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11E2283F61
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01CD1D5CF4;
-	Sat, 19 Oct 2024 05:20:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD5D1D63D0;
+	Sat, 19 Oct 2024 05:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h9YJIla7"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4848D1CC8A3
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 05:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BE8174EF0
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 05:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729315205; cv=none; b=lQ4Ec0Qw+XDcqhZg0nVGvr8LX5MppxhlULxewzFXKb8UxBvsOB4+mOI40nakkR+m/dGcpDz0ysMSrdwc3noDiM13LgsvbFwzd7vC6WKlRcxviWorar/7PnxJ+GwxVA1S3FH6U9xIUFUH4P6KvAe6/NlkBVKm/DVooIwemx/td34=
+	t=1729315811; cv=none; b=Qny0COcEtgjrRxNCK+AIAcmSzVuNpYSgXXYPfvb37/aIL3nP4EV9XXUyL9yIllVl2/Cx7Efw7oLQkXqQGfeHJg/YpYVu+DPPN6XrZ5+1fg50Hnny3vRSA+jNbzcJRs0rFAgz1EEaUPp+ZNULKYtN4chGWed3RqC+CJhLVz2SEqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729315205; c=relaxed/simple;
-	bh=fyuvITcQCsYlvsn8rW8Eakh+VpT6R3gvHiTF9T8hfYo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CAJPfcLESPdCflyWfvGhhV/U1wp8mCoUlHZ5HK9tJu/fr5Fg+rb5tGDTEp4Qj2OevXclrXZ+8BRR9eBwLhuRqG7IYjsziNWFPA7FxRMnPbqiHQXlahQ+V6ruEvZ4kG+vEClNcMm0M+u1eK+My75Nz8nisbHYweUBGoRaM27jwwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so23411825ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 22:20:03 -0700 (PDT)
+	s=arc-20240116; t=1729315811; c=relaxed/simple;
+	bh=2rABYizdoNQ/oKIRusin4/uvQCSNqBZYhvbp98Qmdd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ctBSKmUXROUdagZSH1P79TfZ9ePi/hb5YxCzGyU1wLanP02xYXVyU9uwJuN2DMflLui+hVbaOz++JJsTf3Cl3gkT56ktMyFLRqrwhl5l+jT8lllxiiX9pYxM8s28jCaCfzAWNgS3hIxbpNk/D/9sZD2iz38lF6GjAQ9Yoq5gwxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=h9YJIla7; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20cdb889222so29449465ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 22:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729315809; x=1729920609; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cJNuS83mrwWL8W8iH3SFWUNmmnjimhgt4bHtgaT67XI=;
+        b=h9YJIla7KViGmD1a4TTR1+wdAMewo/FRAlQze81FHNheXcqccKBqWoWvOCmSWsx3Nc
+         OOX0SSDljo1VpEzTRLI+mugkLaK+7ztvm4Lj+WcSyF5OPskOVyNtD1Dtx8FEF6BvLvxk
+         A5z0AgrdYFwQrFi53yDLAROOjrS+3TjCRc6kg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729315202; x=1729920002;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QlxeE9Vr5F5vKty6EBmDxdWCPl9yGNSG5XRCNC14GcM=;
-        b=LTrb81b2OjJmxwcDDECKZtTfJH8VtSyiIk5XHxdbpfjeh/a0W/7OFl2wiVxDVMRNC2
-         4De9gnPkYM3wZ/fa+o92JpM9GBlzIYUnUewXdBilt6tt4MR2nlNiFfW5LjY5oRVyzD3Z
-         3QkXyKhJgSJtsLtccju70y2ZtZW0Rkr0KVV9vKFIdgg7JOhqE1yw7uzMPG+4G9GgBguA
-         1ojNoUCPv5qwufeXqPWtUzZmYSPI2r29ujdUllKLKz1k+spalpzFOK5T3vaNUxIB39GQ
-         TgvHzmL/EM9aiM/sEVBiJKQkleoTWX6IeOPVNK4x3lFxbciRHE5u+ggVkBLwGS2Eej2N
-         Ytuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIYZSK/3mcZ6c5yBmDw1TmJUfoSFpkryi72ZE1iYMns+3haxn1z3dh6khx82Kfw7fLKVVwzXvWWocJj6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKlvaXp9m52bGTXApQXYIOIY69gBT99uMxfi7I7tha/FhKWo7x
-	acFuP7dw3O2rVfdHKuKS6lx9TlmEjSmHfkYdUZr2ex5lvOm8vWGONh4y465vi5xvTCCDvKYrqzs
-	UqiHLQtlNB5Fyg+0M9jAOuji4YJyFv3XVf7+a9sfH8JtPRcc+4qOxR/Y=
-X-Google-Smtp-Source: AGHT+IHDOX9xUrAoICrzmF/Qx6PZYlpzPgB1YaSRu2i/o/0q9TaHs9HEUIrz2vTjGWZwjvKqmpon7Rqp5xkZp+Daj33zTRKQXERK
+        d=1e100.net; s=20230601; t=1729315809; x=1729920609;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cJNuS83mrwWL8W8iH3SFWUNmmnjimhgt4bHtgaT67XI=;
+        b=koOnMt7TW6qR0nYLht7GXAkDy3cv3AaUZVWOgpHJydjSqdV1XRVVnEuDek3geOsiVq
+         UpmyF/K97h9Oey1EXDLQsFG44AGhXxSoH+/JRD+0sUgTHNP1VaenFFRtlYEams9+FWsD
+         NQ0+L2sqehXJuvP/orOVl7r1WUcaz8+sgoNH+yrJ06Efpn+gReERxyR5r2ztSsKkdgom
+         TrfSIooRuwSn63JkIgXOAOcFVJd9WVe4lcf/OPipDGgR87gLkiL/tSJl5ITWya8m7lHO
+         VICQ7+b6QLHpO61u+Ge3HAD1k/Xd216GcSVgEdU0Qn6sbnM+w6UTAqnW+tbApYksXwIi
+         ivRw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7o/OZe5Xm3pFCQ6vlWDFQigHTkAE3z0qkC4CdoGAHMMoD/VTCZbMutLR9sKBkovzNEQFoofTX9ixPCRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR1E9FNN5CnKd7C1atR5ou29AiL+KywrdXJGXzFQQBT/F7GusC
+	N7KaIaOnjGU6tLt+z40OXx9GJqu/skqDg7kfDiHMxEz6UW2zDchBQJFxyDEy1aM3iKqBJ7C7dys
+	=
+X-Google-Smtp-Source: AGHT+IH7n9UXYo5nlALMpZiRBbTQ8pp4m9cx7aacSoU54soAc/R6mjW8EzAU5xHiakUlodnb2D1f8Q==
+X-Received: by 2002:a05:6a21:458a:b0:1d7:118a:327b with SMTP id adf61e73a8af0-1d92c4a1d2emr6720501637.9.1729315808788;
+        Fri, 18 Oct 2024 22:30:08 -0700 (PDT)
+Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:baba:fa50:ff3b:337])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea333bea3sm2370438b3a.57.2024.10.18.22.30.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 22:30:08 -0700 (PDT)
+From: Fei Shao <fshao@chromium.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: Fei Shao <fshao@chromium.org>,
+	CK Hu <ck.hu@mediatek.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] dt-bindings: display: mediatek: dpi: Update device list with power-domains
+Date: Sat, 19 Oct 2024 13:26:56 +0800
+Message-ID: <20241019052935.553886-1-fshao@chromium.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54e:0:b0:3a0:a80a:997c with SMTP id
- e9e14a558f8ab-3a3f40ab41dmr36985375ab.19.1729315202208; Fri, 18 Oct 2024
- 22:20:02 -0700 (PDT)
-Date: Fri, 18 Oct 2024 22:20:02 -0700
-In-Reply-To: <CAKYAXd8Sai7+S1AnAhLtnYWKwZMoAUgUmq_9HRG=oKSg4p-CnQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67134182.050a0220.34b26a.0000.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
-From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+There are two kinds of MediaTek DPI devices in the tree: the ones with a
+power domain and those without (or missing). The former are the majority
+and are more common in newer DTs. Only three older DTs fall into the
+latter category: MT2701, MT7623 and MT8192.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in __exfat_get_dentry_set
+However, the current binding only allows particular DPI devices to have
+power domains, which results in spurious binding check errors against
+existing and new DTs.
 
-loop0: detected capacity change from 0 to 256
-exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0x726052d3, utbl_chksum : 0xe619d30d)
-=====================================================
-BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x10ca/0x1500 fs/exfat/dir.c:810
- __exfat_get_dentry_set+0x10ca/0x1500 fs/exfat/dir.c:810
- exfat_get_dentry_set+0x57/0xf60 fs/exfat/dir.c:865
- __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:46
- __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
- exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
- exfat_write_failed fs/exfat/inode.c:421 [inline]
- exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:485
- generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
- __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
- exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
- do_iter_readv_writev+0x88a/0xa30
- vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_sys_pwritev2 fs/read_write.c:1224 [inline]
- __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
- __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
- x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Instead of diligently maintaining the allowed list, let's do it the
+other way around - create an exception list for devices that are fine
+not specifying a power domain. This list is expected to be fixed, and it
+encourages new MTK DPI devices to describe their power domain whenever
+possible; if not, those should be listed with proper rationale.
 
-Uninit was stored to memory at:
- memcpy_to_iter lib/iov_iter.c:65 [inline]
- iterate_bvec include/linux/iov_iter.h:123 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
- copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
- shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3162
- do_iter_readv_writev+0x88a/0xa30
- vfs_iter_read+0x278/0x760 fs/read_write.c:923
- lo_read_simple drivers/block/loop.c:283 [inline]
- do_req_filebacked drivers/block/loop.c:516 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
- loop_workfn+0x48/0x60 drivers/block/loop.c:1969
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Signed-off-by: Fei Shao <fshao@chromium.org>
+---
 
-Uninit was stored to memory at:
- memcpy_from_iter lib/iov_iter.c:73 [inline]
- iterate_bvec include/linux/iov_iter.h:123 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- __copy_from_iter lib/iov_iter.c:249 [inline]
- copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
- copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
- generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
- shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3216
- do_iter_readv_writev+0x88a/0xa30
- vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
- lo_write_bvec drivers/block/loop.c:243 [inline]
- lo_write_simple drivers/block/loop.c:264 [inline]
- do_req_filebacked drivers/block/loop.c:511 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
- loop_workfn+0x48/0x60 drivers/block/loop.c:1969
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ .../bindings/display/mediatek/mediatek,dpi.yaml   | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-Uninit was created at:
- __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4756
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof mm/mempolicy.c:2345 [inline]
- folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
- filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
- __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
- block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
- exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:434
- exfat_extend_valid_size fs/exfat/file.c:553 [inline]
- exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
- do_iter_readv_writev+0x88a/0xa30
- vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_sys_pwritev2 fs/read_write.c:1224 [inline]
- __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
- __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
- x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 6003 Comm: syz.0.15 Not tainted 6.12.0-rc3-syzkaller-g3d5ad2d4eca3-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
-
-
-Tested on:
-
-commit:         3d5ad2d4 Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16155240580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5242e0e980477c72
-dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=142fbc5f980000
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+index 3a82aec9021c..c464642bbfb6 100644
+--- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+@@ -81,14 +81,13 @@ required:
+ 
+ allOf:
+   - if:
+-      not:
+-        properties:
+-          compatible:
+-            contains:
+-              enum:
+-                - mediatek,mt6795-dpi
+-                - mediatek,mt8173-dpi
+-                - mediatek,mt8186-dpi
++      properties:
++        compatible:
++          contains:
++            enum:
++              - mediatek,mt2701-dpi
++              - mediatek,mt7623-dpi
++              - mediatek,mt8192-dpi
+     then:
+       properties:
+         power-domains: false
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
 
