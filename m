@@ -1,169 +1,102 @@
-Return-Path: <linux-kernel+bounces-372867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FB69A4E90
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:17:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CBE9A4E96
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0B3D1C23BE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:17:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8971B20F41
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 14:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE35838FB0;
-	Sat, 19 Oct 2024 14:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231114594C;
+	Sat, 19 Oct 2024 14:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="oiEWqF7s"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGmjSfsp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3998115C3
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 14:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660E715C3;
+	Sat, 19 Oct 2024 14:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729347419; cv=none; b=iB6ABFBuzIdk2WyTyu+IJHwVkRPM0kenyLptNBbcyYaQlR9z+alBPVzj7rzJXFDgezDFj+N7ESrOLtrrkqO745McNTjJcveOAR4EUpY93gLDMV8BloZitQmhW9xMDUbq7+iHI+Dk6pF1l5rHefqWT0tdQhUyt+g6+QDZT6xSlXI=
+	t=1729347525; cv=none; b=AH37vGRxjhim5pdyz0gYkWOlfnx3azmyYhKRmTN3PtHgtKGdDQnjGSABmpv0qyR6MLDljA4hl1x9Q4PL7mD4ledzfzF3uNPMc7hs/wGCbam93WZG2//7VkIIGl7EJ3umtHaC2fNuV5s1VsK6ZeMx135wBiwe+fKPEnz4+bQDYEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729347419; c=relaxed/simple;
-	bh=qfeFyKWSeWg05vNifWelioEjA0kkQ+RAGToocF3RQXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZXaB5drAbocP/fraeVKyhlRAWP+U1d9z7FpgFd+PdzoEBq/BXsxievIeXr2fRuszrKJ6dukSpgsqi9u1oxxjwQvi2Gcs+O5ETnWYLHcAK2z1dbvYjhUre9QkTfFQ4hT0aK9Nrii4g+FEAWSdHg1/K6V1j+2FMRsArlpoiNiHvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=oiEWqF7s; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1729347405;
-	bh=qfeFyKWSeWg05vNifWelioEjA0kkQ+RAGToocF3RQXU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oiEWqF7sTLXrz7do2I45MU3h9GnxoASkakIBLXLfO8QPbyFcjud2WS7a4OHr+O/j6
-	 mSZXAZ+gLrbHF+5i8CqYp+heOCBk0HRmg9xEfocwgikxIkEKz10dFDgcvhPeShqBpA
-	 GBeauy9gbC60noyWg48dH5RYqqm+DI5v5PyxTYX4=
-Date: Sat, 19 Oct 2024 14:16:42 +0000
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Hildenbrand <david@redhat.com>, 
-	Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>, 
-	Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>, 
-	Miroslav Benes <mbenes@suse.cz>, Oliver Upton <oliver.upton@linux.dev>, 
-	Will Deacon <will@kernel.org>, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 44/57] arm64: Align sections to PAGE_SIZE_MAX
-Message-ID: <69533deb-dc77-49c3-a256-49efee308905@t-8ch.de>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-44-ryan.roberts@arm.com>
+	s=arc-20240116; t=1729347525; c=relaxed/simple;
+	bh=FoB3f3cbdhsCpDvMeAP0ESyBwjXzV5M/yFi+NyuiCSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kn+wfLAxjAMQsWemf2mEvpczT9ANYLLvandGzTGULd+U0K1dWz44MDSICYZZQJ3dj3FZ9i4j/hVZOsnGKvDSYNPf0mp9yLFwmbeN6jq3BApz9HjlIUs8VLa4/2RWkqLFv9LoVdcPRyx5f10oyZ0ixGfWWXAHc2NKofw3v8wf3UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGmjSfsp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BF61C4CEC5;
+	Sat, 19 Oct 2024 14:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729347524;
+	bh=FoB3f3cbdhsCpDvMeAP0ESyBwjXzV5M/yFi+NyuiCSE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qGmjSfspzlaEwBo1bayAImq2gWQKbLmrMniCTcDDipRRMAY3xrS2z8mQb+U9znhw3
+	 59Nja4up1YST5HA3//qZ2heiCSyq0Es/dPjBS8xzZfzDQi9BxqnpcYFDcgD7SxO2jz
+	 bE1TL4rVr6gVoutt2z9g1jX4CDgmuC8s+ixPqAP4tXeuvQgTTw5YgA2alwak/osj3q
+	 Q4M9KkF2Hn17Ohm20UvvYmoiTN4z7yXN2dnMI7ONCJeKmXzT/77MkEeeWBvTrLl1uQ
+	 t22MkHvXs2I2pnz+lrb0L99b/PXCf+ULlu0WUeNoWQf/M8YDtFj1+DlC8ozycdyBAR
+	 bSS1n0ZsdnfnQ==
+Date: Sat, 19 Oct 2024 15:18:09 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] iio: light: veml6070: use unsigned int instead of
+ unsigned
+Message-ID: <20241019151809.5d2052cf@jic23-huawei>
+In-Reply-To: <20241017-veml6070-integration-time-v1-1-3507d17d562a@gmail.com>
+References: <20241017-veml6070-integration-time-v1-0-3507d17d562a@gmail.com>
+	<20241017-veml6070-integration-time-v1-1-3507d17d562a@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014105912.3207374-44-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2024-10-14 11:58:51+0100, Ryan Roberts wrote:
-> Increase alignment of sections in nvhe hyp, vdso and final vmlinux image
-> from PAGE_SIZE to PAGE_SIZE_MAX. For compile-time PAGE_SIZE,
-> PAGE_SIZE_MAX == PAGE_SIZE so there is no change. For boot-time
-> PAGE_SIZE, PAGE_SIZE_MAX is the largest selectable page size.
+On Thu, 17 Oct 2024 23:39:25 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+
+> Trivial modification to use the recommended keyword 'int' after
+> 'unsigned' for unsigned integers.
 > 
-> For a boot-time page size build, image size is comparable to a 64K page
-> size compile-time build. In future, it may be desirable to optimize
-> run-time memory consumption by freeing unused padding pages when the
-> boot-time selected page size is less than PAGE_SIZE_MAX.
-> 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Applied.
+
 > ---
+>  drivers/iio/light/veml6070.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> ***NOTE***
-> Any confused maintainers may want to read the cover note here for context:
-> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
-> 
->  arch/arm64/include/asm/memory.h     |  4 +--
->  arch/arm64/kernel/vdso-wrap.S       |  4 +--
->  arch/arm64/kernel/vdso.c            |  7 +++---
->  arch/arm64/kernel/vdso/vdso.lds.S   |  4 +--
->  arch/arm64/kernel/vdso32-wrap.S     |  4 +--
->  arch/arm64/kernel/vdso32/vdso.lds.S |  4 +--
->  arch/arm64/kernel/vmlinux.lds.S     | 38 ++++++++++++++---------------
->  arch/arm64/kvm/hyp/nvhe/hyp.lds.S   |  2 +-
->  8 files changed, 34 insertions(+), 33 deletions(-)
-
-> diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-> index 89b6e78400023..1efe98909a2e0 100644
-> --- a/arch/arm64/kernel/vdso.c
-> +++ b/arch/arm64/kernel/vdso.c
-> @@ -195,7 +195,7 @@ static int __setup_additional_pages(enum vdso_abi abi,
->  
->  	vdso_text_len = vdso_info[abi].vdso_pages << PAGE_SHIFT;
->  	/* Be sure to map the data page */
-> -	vdso_mapping_len = vdso_text_len + VVAR_NR_PAGES * PAGE_SIZE;
-> +	vdso_mapping_len = vdso_text_len + VVAR_NR_PAGES * PAGE_SIZE_MAX;
->  
->  	vdso_base = get_unmapped_area(NULL, 0, vdso_mapping_len, 0, 0);
->  	if (IS_ERR_VALUE(vdso_base)) {
-> @@ -203,7 +203,8 @@ static int __setup_additional_pages(enum vdso_abi abi,
->  		goto up_fail;
+> diff --git a/drivers/iio/light/veml6070.c b/drivers/iio/light/veml6070.c
+> index 898e285322d4..484b767df481 100644
+> --- a/drivers/iio/light/veml6070.c
+> +++ b/drivers/iio/light/veml6070.c
+> @@ -87,14 +87,14 @@ static const struct iio_chan_spec veml6070_channels[] = {
 >  	}
+>  };
 >  
-> -	ret = _install_special_mapping(mm, vdso_base, VVAR_NR_PAGES * PAGE_SIZE,
-> +	ret = _install_special_mapping(mm, vdso_base,
-> +				       VVAR_NR_PAGES * PAGE_SIZE_MAX,
->  				       VM_READ|VM_MAYREAD|VM_PFNMAP,
->  				       vdso_info[abi].dm);
->  	if (IS_ERR(ret))
-> @@ -212,7 +213,7 @@ static int __setup_additional_pages(enum vdso_abi abi,
->  	if (system_supports_bti_kernel())
->  		gp_flags = VM_ARM64_BTI;
->  
-> -	vdso_base += VVAR_NR_PAGES * PAGE_SIZE;
-> +	vdso_base += VVAR_NR_PAGES * PAGE_SIZE_MAX;
->  	mm->context.vdso = (void *)vdso_base;
->  	ret = _install_special_mapping(mm, vdso_base, vdso_text_len,
->  				       VM_READ|VM_EXEC|gp_flags|
-
-> diff --git a/arch/arm64/kernel/vdso/vdso.lds.S b/arch/arm64/kernel/vdso/vdso.lds.S
-> index 45354f2ddf706..f7d1537a689e8 100644
-> --- a/arch/arm64/kernel/vdso/vdso.lds.S
-> +++ b/arch/arm64/kernel/vdso/vdso.lds.S
-> @@ -18,9 +18,9 @@ OUTPUT_ARCH(aarch64)
->  
->  SECTIONS
+> -static int veml6070_to_uv_index(unsigned val)
+> +static int veml6070_to_uv_index(unsigned int val)
 >  {
-> -	PROVIDE(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE);
-> +	PROVIDE(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE_MAX);
->  #ifdef CONFIG_TIME_NS
-> -	PROVIDE(_timens_data = _vdso_data + PAGE_SIZE);
-> +	PROVIDE(_timens_data = _vdso_data + PAGE_SIZE_MAX);
+>  	/*
+>  	 * conversion of raw UV intensity values to UV index depends on
+>  	 * integration time (IT) and value of the resistor connected to
+>  	 * the RSET pin (default: 270 KOhm)
+>  	 */
+> -	unsigned uvi[11] = {
+> +	unsigned int uvi[11] = {
+>  		187, 373, 560, /* low */
+>  		746, 933, 1120, /* moderate */
+>  		1308, 1494, /* high */
+> 
 
-This looks like it also needs a change to vvar_fault() in vdso.c.
-The symbols are now always PAGE_SIZE_MAX apart, while vvar_fault() works
-in page offsets (vmf->pgoff) that are based on the runtime PAGE_SIZE and
-it expects hardcoded offsets.
-
-As test you can use tools/testing/selftests/timens/timens.
-
-(I can't test this right now, so it's only a suspicion)
-
->  #endif
->  	. = VDSO_LBASE + SIZEOF_HEADERS;
-
-> diff --git a/arch/arm64/kernel/vdso32/vdso.lds.S b/arch/arm64/kernel/vdso32/vdso.lds.S
-> index 8d95d7d35057d..c46d18a69d1ce 100644
-> --- a/arch/arm64/kernel/vdso32/vdso.lds.S
-> +++ b/arch/arm64/kernel/vdso32/vdso.lds.S
-> @@ -18,9 +18,9 @@ OUTPUT_ARCH(arm)
->  
->  SECTIONS
->  {
-> -	PROVIDE_HIDDEN(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE);
-> +	PROVIDE_HIDDEN(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE_MAX);
->  #ifdef CONFIG_TIME_NS
-> -	PROVIDE_HIDDEN(_timens_data = _vdso_data + PAGE_SIZE);
-> +	PROVIDE_HIDDEN(_timens_data = _vdso_data + PAGE_SIZE_MAX);
->  #endif
->  	. = VDSO_LBASE + SIZEOF_HEADERS;
 
