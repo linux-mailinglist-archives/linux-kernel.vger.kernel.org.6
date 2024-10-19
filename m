@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-373055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 472D99A5160
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 00:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9454E9A516E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 00:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07AB3283F5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31EB62842D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B931F937;
-	Sat, 19 Oct 2024 22:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C40193071;
+	Sat, 19 Oct 2024 22:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WsBARTou"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CErL8/nt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556D418D622;
-	Sat, 19 Oct 2024 22:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6022F3E;
+	Sat, 19 Oct 2024 22:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729376474; cv=none; b=Rey5oYJSE1T6ef/KgRzwWr67tkvfehIZW9/fOdIc2Y4PEDVPGRbUftJMNDLeRA8m7zFwn8i2IuZIsrL69SieYxXS/E4rVlO5D90y8nFvb84/4gEvcm8vLlDKkoiAAloRPlu/GEl4/4ufjnSTJwJV7DkSAoHKQvGbH76x8klMkJw=
+	t=1729377045; cv=none; b=HPjWdX7b9nc6oxwBV7yY1m8omn1ZS1J++kg+ETkgtK1pnVGoFn4MxpUZlQo41ze0DogA+4b8XZCtjzW6JBVh38yomtyLHm7jkgBNtxF67nNrHv9I0b89R2zUdLx9lyyD3chUGFf2doEYeUSEFhA/eXTZaokboDlzCmyRAZ65lFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729376474; c=relaxed/simple;
-	bh=DW2f0dCd7lmAs3F0ZOU9WDzrALgv7Yd8I1/TQsqoAu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TgPK3SWTUcF0bgVW8Pk6SoM1Xy1jnzJ+TBxqpoypv3Vh9f5QvmSpeSwUqeEKrGeIqXl3feRUQ/18p0e4TswslHCLXYgAiRakqotnhpH7xBpGd5sDzgsq579AfRIICJd7SZSOnNgYnb9omqQN4KTGiENV4N/JLyqWam7Qv8Hm2sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WsBARTou; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so1630965e9.3;
-        Sat, 19 Oct 2024 15:21:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729376470; x=1729981270; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y+Gi4zOMS2jtf4kmC902rpd5Em2fADaOylgewPthYiY=;
-        b=WsBARTou73hKgbs0WEWwfhOQUJwtw1tXM93vU8q4vNyZazCUc6edvpbXoY556srnux
-         Om26BmAYehr6e9DGfTHL2igTy/ZRkfIugs2KVeige4rgybxU6+EoEIl8TbnRY/PtqMIz
-         zAPPSk729J4ZkuVEtogAc+9mqBDtapnwhY+XOcmOnlquRiM5aENaOWVFINlULKrB73f4
-         g/hp7suZtlv5IPl8T/zdxxvSo3oMd9fZJbLsZJoCrcTPtooRiWKYGtH5P8t57T9yiTjX
-         2UkL1NLbLFL19+rVcz5tSZSdWLEp7cQ7kJhjCwOj/JYWc3jeSQPfD7VWZifDzkBMFQp8
-         H8iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729376470; x=1729981270;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y+Gi4zOMS2jtf4kmC902rpd5Em2fADaOylgewPthYiY=;
-        b=PYlnkPeuEjAY1WPSwBapTgODlBaOsy33gHt91jr4VM/RTD5b1nMUGz5sNpDz8O9YsE
-         nX9AAjC+OZ5/TGDtcJ9HjMj+QAX/lAUZ230Hj+h5IIDQGGKRm87kpcK+boWCW3oADGJr
-         LJ5QmpOEaHmt4FDHdl5Irt2baxGko3g/63Di9Fai0zTG98SJaBhKt5Pp6xksXyneOBnT
-         oagDqw2mHAg7aabVWPmKUSy9sjZIEID0iY30uCIS/k5nogX4uly+VKPoOpXiPIvAdbDs
-         lYOTzLvV9QunSQslvuJ6iQFqXarP88bMqFZJHlrzhHSypMzwxNou2ALrkjNBb2pzUBMR
-         CrSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUvBMW+fePIoAY7ny8qAWmKk0wxuDRQEvU39yvkEBoBlMItPQN3xj8EkqWT0MjQ+pwZFzdf4uE@vger.kernel.org, AJvYcCWUaUjcFON8sBUKKBPqT8razpre0iBVBFD1WRfAkmsiTKsNmlpI9O4WtONBem0cXjq8ZG1XbfULBp+l1+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxS+SFg1faVYfb+Ywa1YErd4+IaCadUN7WH9d1crmY9xzCwHK8
-	0i+V7loCGfutozIX4mYAfrSCQpnLwJ3gFUQvYXqZQQMyIk0AW8fY
-X-Google-Smtp-Source: AGHT+IGhTtntpNIh8+aiXLujY4nU+cM525H6B8/VTJu7AzjO1voGW77dY5iSbAaxEovF+6H77/+aGg==
-X-Received: by 2002:a05:600c:458e:b0:431:52b7:a485 with SMTP id 5b1f17b1804b1-43161655dd0mr48393245e9.19.1729376470237;
-        Sat, 19 Oct 2024 15:21:10 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:b52e:418b:b11e:b488? (2a02-8389-41cf-e200-b52e-418b-b11e-b488.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:b52e:418b:b11e:b488])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc88esm5660595e9.46.2024.10.19.15.21.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Oct 2024 15:21:09 -0700 (PDT)
-Message-ID: <f148a61d-4ad5-4f62-b1f0-d216e1873067@gmail.com>
-Date: Sun, 20 Oct 2024 00:21:07 +0200
+	s=arc-20240116; t=1729377045; c=relaxed/simple;
+	bh=QyfIXk+096xDFBJfNhGtA+h7+x144NJyXqGZEWCxEbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jl1M2eFIEzSNUMBIMYoOwunPXr3Yp1W9tlTK3M0Cn/4W19L0O7qQeZvFXUVWUdZFlYwLEI5ZIcKLibhP7V90cICzNoYWWVfaPrcNXJedRScuH/ixG2bJ6U6oN7NTzGZERSfDWy/m0jCyyDGTa39nqjDee++02RQyzhJN47uxCUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CErL8/nt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF36EC4CEC5;
+	Sat, 19 Oct 2024 22:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729377044;
+	bh=QyfIXk+096xDFBJfNhGtA+h7+x144NJyXqGZEWCxEbA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CErL8/nta/6r/1WJkkwG/t5evnd+rztuMKPvEAcvD2SnHlbG8tiM8oebQum4YnbtM
+	 jKRTZBaC+ATcd4VCxL5682bSGxbHvqjRzPrn6cR/xecdWEBWr3gweQycvt1RfyCGs7
+	 MiXNOy+V4Fewi4RfizJAsZmsup5CQWNXqWmaamyVMyXGW/hUqx3sW49nhqNlGd3ZzY
+	 ETj4BkT4BYSwhfn/AQ96YSvs+Sq6IlTIlZXVNMpeHMX+0ZQjv+FZRA/RKrz+t3dZ4u
+	 1qH1N38SWuCE3fte75V0TIkKwCKF9lts668sBgQlwW5eAV1dEKJXhxg+1WEdnmmBQI
+	 jKYmcc+lcknEw==
+Date: Sat, 19 Oct 2024 15:30:41 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v6 4/8] module: prepare to handle ROX allocations for text
+Message-ID: <ZxQzEdJqU6TCEH5f@bombadil.infradead.org>
+References: <20241016122424.1655560-1-rppt@kernel.org>
+ <20241016122424.1655560-5-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: dsa: mv88e6xxx: fix unreleased
- fwnode_handle in setup_port()
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Linus Walleij <linus.walleij@linaro.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241019-mv88e6xxx_chip-fwnode_handle_put-v1-1-fc92c4f16831@gmail.com>
- <11c644b5-e6e5-4c4c-9398-7a8e59519370@lunn.ch>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <11c644b5-e6e5-4c4c-9398-7a8e59519370@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016122424.1655560-5-rppt@kernel.org>
 
-On 19/10/2024 23:59, Andrew Lunn wrote:
-> On Sat, Oct 19, 2024 at 10:16:49PM +0200, Javier Carrasco wrote:
->> 'ports_fwnode' is initialized via device_get_named_child_node(), which
->> requires a call to fwnode_handle_put() when the variable is no longer
->> required to avoid leaking memory.
->>
->> Add the missing fwnode_handle_put() after 'ports_fwnode' has been used
->> and is no longer required.
+On Wed, Oct 16, 2024 at 03:24:20PM +0300, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
-> As you point out, the handle is obtained with
-> device_get_named_child_node(). It seems odd to use a fwnode_ function
-> not a device_ function to release the handle. Is there a device_
-> function?
+> In order to support ROX allocations for module text, it is necessary to
+> handle modifications to the code, such as relocations and alternatives
+> patching, without write access to that memory.
 > 
-> 	Andrew
+> One option is to use text patching, but this would make module loading
+> extremely slow and will expose executable code that is not finally formed.
+> 
+> A better way is to have memory allocated with ROX permissions contain
+> invalid instructions and keep a writable, but not executable copy of the
+> module text. The relocations and alternative patches would be done on the
+> writable copy using the addresses of the ROX memory.
+> Once the module is completely ready, the updated text will be copied to ROX
+> memory using text patching in one go and the writable copy will be freed.
+> 
+> Add support for that to module initialization code and provide necessary
+> interfaces in execmem.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
+Reviewd-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Hi Andrew,
-
-device_get_named_child_node() receives a pointer to a *device*, and
-returns a child node (a pointer to an *fwnode_handle*). That is what has
-to be released, and therefore fwnode_handle_put() is the right one.
-
-Note that device_get_named_child_node() documents how to release the
-fwnode pointer:
-
-"The caller is responsible for calling fwnode_handle_put() on the
-returned fwnode pointer."
-
-Best regards,
-Javier Carrasco
-
+  Luis
 
