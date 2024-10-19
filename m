@@ -1,165 +1,196 @@
-Return-Path: <linux-kernel+bounces-372942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B159A4F97
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:10:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9199A4F9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B441287666
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:09:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29EB5B23D04
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEB418BBA9;
-	Sat, 19 Oct 2024 16:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F2118BBB0;
+	Sat, 19 Oct 2024 16:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KvvaeNvA"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284852F3E;
-	Sat, 19 Oct 2024 16:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k9thH5UB"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A7A38DD8
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 16:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729354193; cv=none; b=j3hSYjtygvzJhqVeIcYG0WZ0dH2hu3SsV9sBpIR2DT1QNGfsAy5jimaNsCcVWVyKb2/znGaO5vShanL0y5dVY/izZdPgNIS86pJKms2XuH1cb6XEo5mAw+1p57bGBt0yDcgzTFNNEU7y/3gT62UMHolWf5WFgDUbKFtuYT8hmYs=
+	t=1729354400; cv=none; b=llSS+r1/4Af1kEqCYuUgZiSf1NYIcR8T9WiLvqoCxNj81cwz+dteBHSrdJfnR84c+3Vkt8KtvvSbTaakiysUAViIF/wV9V+wAkcYhsPqzfJzTrapNkSzs8aNSkOJ1vl8+FQvzpPgEgmOOWeaGBj9l9zIXe+hKlalQ7ZRmpyHHQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729354193; c=relaxed/simple;
-	bh=Y2o35mOQRiYxgDsfAod1PSAbtNHLv+FsmzP1zrcG+U4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ui7cUC416xRnlKuxNS3gUO1RQxDPlgeTWrUzW/yzGspQax7NiitvGkhZjRZvZ152x3ZU7QL7B338m2Uj5JUQNW05iTaYWr2C0ACOlypGHcX7JnGQqaSOAL30kA0OpIZ+ShDLHz96i0ueWVunhUAIKlK4QDNAVPiCxtsVezGXCYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KvvaeNvA; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=/nbGo
-	3iWxU6M38i9I2wk5DzIIidP1/C0p11d4f3XdLo=; b=KvvaeNvA0vkVfW+4DeNHV
-	UCFbe+UlxmY3OUxBEc8O6jstVibziWjSSBEyrGgLVFZmMt9pWZvF/ckY5ePoqrg5
-	O6+CmKxtTAhrvXpkk8nk3xamWqKgdyMk2Vma4p/q/8xzHAmMtxRQQYEMrZypUSTT
-	0/1p/gioheq0akAXLD780A=
-Received: from localhost.localdomain (unknown [114.253.22.201])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wCnz6a32RNn7NcBCA--.25777S2;
-	Sun, 20 Oct 2024 00:09:31 +0800 (CST)
-From: Dingyan Li <18500469033@163.com>
-To: stern@rowland.harvard.edu,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] usb: storage: use US_BULK_FLAG_OUT instead of constant values
-Date: Sun, 20 Oct 2024 00:08:22 +0800
-Message-Id: <20241019160822.6862-1-18500469033@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729354400; c=relaxed/simple;
+	bh=8lBiGI3bJlCZOOUYTUqzSYteTk7WhaUcq+DBRoI4O08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H7Mehkn8US2BfiRaYHPGaQCzt5chxNS4NYhhvqy3CPZCqqHkcuSrzqBFqKbBf60CDjNBBOrcSH64MLSeLG4NqPEGoXriDCcAmJV3e7BUPja1m1+nK3GF6oaT/Yi5zSart6yH2jdzCRpBGv4qS+Gx2jKPjxMfqwqZcPgZ05PeU4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k9thH5UB; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539983beb19so3473329e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 09:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729354396; x=1729959196; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eyqsi5/T3uW08fQdohg8/tA9trO3ULnXgBI887qHaFA=;
+        b=k9thH5UBgB/1v4FvZ0JjQw03/WknIRw57HEhLX0IvHthPBgovrljIWQw0lEjxZORRz
+         2Rhki7i0SOSpjk1Dm0mXWDpY3xCbW1HL8g4AFKC6qrNs8ocrGCPlkY/BZxNl7K967Ob5
+         CpYcpsIpBLwF1TEr41UUzdy109sUPmE4nWJYA9bKZ4cm9F0K/ExZlFvzx4TnWu0jrrDf
+         MHizMGWnUYdCdSDc1UMME+2vdv25TaqOZtgP7EAxWyPkPomCKkFAJi0nu7oP1bmzGpwC
+         gthwBpjppMEbcTGv5d6XqtO7AotYnvDLAygt5IrBjLO3ZdCdneDS1E5hOlaNlJ7TbSaP
+         KREw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729354396; x=1729959196;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eyqsi5/T3uW08fQdohg8/tA9trO3ULnXgBI887qHaFA=;
+        b=so2rmCIUpAdgZ8/U+29M0UqFYeoP0SHUh0nTtGgXp81zrCSwfZn72CX1WhdMn/+4lB
+         W/JvlyXLvBa06e/Npo9E2mt63bckTwIwwMPi8HjSgWDe/6Jtj2OKNYA5Hhst61DxA406
+         P8EKaPH4Abqt/aG4Z7NfaVJ30GyUCZTr9/QjXeOAmBydIwn3rbzTucipnASEM0XRS6kP
+         yxBfGL2abEl1k+4bXUZELPyEz3eK0TOXfsij6p1a0LhHtOUvFb1hkeZyzYjhqqjwLOt1
+         z9M5BSxCKnntlnk2o+VLj59eWFc2/h7Dp2g+yVgXzKIQRq+m7V1XQpVDFkFxZVWCz6eJ
+         tR1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVbZxtTlyTT5ethVI4jGCoeBX1JXc2ETF4F48rOrHpksE0sFpMtS7iVTDPWg/kS2ZYuA0USx2YyyFYRlvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfoXwwqu6z+eMEu9+oU1/kLMqCsRjY6GFiAvItyA+z9KnXrJNK
+	k9IqtZfltB/SmEyUVzYOpIbL8U5fqh5H4ogXzjm8oMI2O5ZD+4PLWnvQQsiOXEs=
+X-Google-Smtp-Source: AGHT+IFWgrZia2nkdXraoHHT50Jbl2vwki91dY9I8mJ543UJdCNHT1fkfo2f/WFCMjjCtYRhtihkIw==
+X-Received: by 2002:a05:6512:b9b:b0:539:f1a6:6ca5 with SMTP id 2adb3069b0e04-53a1549dbf9mr3051471e87.26.1729354396042;
+        Sat, 19 Oct 2024 09:13:16 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a151b92f7sm562207e87.71.2024.10.19.09.13.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Oct 2024 09:13:14 -0700 (PDT)
+Date: Sat, 19 Oct 2024 19:13:12 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Mahadevan P <quic_mahap@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kalyan Thota <quic_kalyant@quicinc.com>, Jayaprakash Madisetty <quic_jmadiset@quicinc.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 0/5] Display enablement changes for Qualcomm SA8775P
+ platform
+Message-ID: <nka6tuz5ackflwzkvqwkn2sqt4rgmmib3n5sywdawsfay7xyte@nejv7uuldg3z>
+References: <20241019-patchv3_1-v4-0-a95d8f0eae37@quicinc.com>
+ <85873886-c578-4f42-a46e-728f9a92f837@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCnz6a32RNn7NcBCA--.25777S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZr4DGrWUuFy3uryrCFWDtwb_yoWrur4Upa
-	yDA3y5CFyrKF4Fvw4DJw4UCFWrAwnYgr9rKFWfC3s5ur9xZa48GF90kFZ8Xw1rWrnrZFy2
-	kr4qqF4UCryFgwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnMa8UUUUU=
-X-CM-SenderInfo: jprykiiquwmiitt6il2tof0z/xtbBZwp9y2cTyut26gAAsS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <85873886-c578-4f42-a46e-728f9a92f837@quicinc.com>
 
-Macros with good names offer better readability. Besides, fix an error
-in the comments. In the flags, direction is in bit 7 instead of bit 0.
+On Sat, Oct 19, 2024 at 09:13:23PM +0530, Mahadevan P wrote:
+> I apologize for the inconvenience caused by uploading the incorrect patch
+> (v4). Kindly disregard it.
 
-Signed-off-by: Dingyan Li <18500469033@163.com>
----
- drivers/usb/storage/ene_ub6250.c | 8 ++++----
- drivers/usb/storage/realtek_cr.c | 4 ++--
- drivers/usb/storage/transport.c  | 2 +-
- include/linux/usb/storage.h      | 2 +-
- 4 files changed, 8 insertions(+), 8 deletions(-)
+One thing makes me wonder. You are using b4 tool. It should handle
+versioning, changelogs, etc for you. However despite all of that you
+somehow have sent a duplicate version of the patchset. And the changelog
+also doesn't follow B4 style (which is useful BTW).
 
-diff --git a/drivers/usb/storage/ene_ub6250.c b/drivers/usb/storage/ene_ub6250.c
-index a4bfbecbf16c..fd46e81388d2 100644
---- a/drivers/usb/storage/ene_ub6250.c
-+++ b/drivers/usb/storage/ene_ub6250.c
-@@ -737,7 +737,7 @@ static int sd_scsi_write(struct us_data *us, struct scsi_cmnd *srb)
- 	memset(bcb, 0, sizeof(struct bulk_cb_wrap));
- 	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
- 	bcb->DataTransferLength = blenByte;
--	bcb->Flags  = 0x00;
-+	bcb->Flags  = US_BULK_FLAG_OUT;
- 	bcb->CDB[0] = 0xF0;
- 	bcb->CDB[5] = (unsigned char)(bnByte);
- 	bcb->CDB[4] = (unsigned char)(bnByte>>8);
-@@ -1163,7 +1163,7 @@ static int ms_read_copyblock(struct us_data *us, u16 oldphy, u16 newphy,
- 	memset(bcb, 0, sizeof(struct bulk_cb_wrap));
- 	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
- 	bcb->DataTransferLength = 0x200*len;
--	bcb->Flags = 0x00;
-+	bcb->Flags = US_BULK_FLAG_OUT;
- 	bcb->CDB[0] = 0xF0;
- 	bcb->CDB[1] = 0x08;
- 	bcb->CDB[4] = (unsigned char)(oldphy);
-@@ -1759,7 +1759,7 @@ static int ms_scsi_write(struct us_data *us, struct scsi_cmnd *srb)
- 		memset(bcb, 0, sizeof(struct bulk_cb_wrap));
- 		bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
- 		bcb->DataTransferLength = blenByte;
--		bcb->Flags  = 0x00;
-+		bcb->Flags  = US_BULK_FLAG_OUT;
- 		bcb->CDB[0] = 0xF0;
- 		bcb->CDB[1] = 0x04;
- 		bcb->CDB[5] = (unsigned char)(bn);
-@@ -1931,7 +1931,7 @@ static int ene_load_bincode(struct us_data *us, unsigned char flag)
- 	memset(bcb, 0, sizeof(struct bulk_cb_wrap));
- 	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
- 	bcb->DataTransferLength = sd_fw->size;
--	bcb->Flags = 0x00;
-+	bcb->Flags = US_BULK_FLAG_OUT;
- 	bcb->CDB[0] = 0xEF;
- 
- 	result = ene_send_scsi_cmd(us, FDIR_WRITE, buf, 0);
-diff --git a/drivers/usb/storage/realtek_cr.c b/drivers/usb/storage/realtek_cr.c
-index 0c423916d7bf..54ffff86c6fa 100644
---- a/drivers/usb/storage/realtek_cr.c
-+++ b/drivers/usb/storage/realtek_cr.c
-@@ -212,7 +212,7 @@ static int rts51x_bulk_transport(struct us_data *us, u8 lun,
- 	/* set up the command wrapper */
- 	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
- 	bcb->DataTransferLength = cpu_to_le32(buf_len);
--	bcb->Flags = (dir == DMA_FROM_DEVICE) ? US_BULK_FLAG_IN : 0;
-+	bcb->Flags = (dir == DMA_FROM_DEVICE) ? US_BULK_FLAG_IN : US_BULK_FLAG_OUT;
- 	bcb->Tag = ++us->tag;
- 	bcb->Lun = lun;
- 	bcb->Length = cmd_len;
-@@ -301,7 +301,7 @@ static int rts51x_bulk_transport_special(struct us_data *us, u8 lun,
- 	/* set up the command wrapper */
- 	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
- 	bcb->DataTransferLength = cpu_to_le32(buf_len);
--	bcb->Flags = (dir == DMA_FROM_DEVICE) ? US_BULK_FLAG_IN : 0;
-+	bcb->Flags = (dir == DMA_FROM_DEVICE) ? US_BULK_FLAG_IN : US_BULK_FLAG_OUT;
- 	bcb->Tag = ++us->tag;
- 	bcb->Lun = lun;
- 	bcb->Length = cmd_len;
-diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storage/transport.c
-index 7449e379077a..9d767f6bf722 100644
---- a/drivers/usb/storage/transport.c
-+++ b/drivers/usb/storage/transport.c
-@@ -1133,7 +1133,7 @@ int usb_stor_Bulk_transport(struct scsi_cmnd *srb, struct us_data *us)
- 	bcb->Signature = cpu_to_le32(US_BULK_CB_SIGN);
- 	bcb->DataTransferLength = cpu_to_le32(transfer_length);
- 	bcb->Flags = srb->sc_data_direction == DMA_FROM_DEVICE ?
--		US_BULK_FLAG_IN : 0;
-+		US_BULK_FLAG_IN : US_BULK_FLAG_OUT;
- 	bcb->Tag = ++us->tag;
- 	bcb->Lun = srb->device->lun;
- 	if (us->fflags & US_FL_SCM_MULT_TARG)
-diff --git a/include/linux/usb/storage.h b/include/linux/usb/storage.h
-index 2827ce72e502..8539956bc2be 100644
---- a/include/linux/usb/storage.h
-+++ b/include/linux/usb/storage.h
-@@ -53,7 +53,7 @@ struct bulk_cb_wrap {
- 	__le32	Signature;		/* contains 'USBC' */
- 	__u32	Tag;			/* unique per command id */
- 	__le32	DataTransferLength;	/* size of data */
--	__u8	Flags;			/* direction in bit 0 */
-+	__u8	Flags;			/* direction in bit 7 */
- 	__u8	Lun;			/* LUN normally 0 */
- 	__u8	Length;			/* length of the CDB */
- 	__u8	CDB[16];		/* max command */
+Could you (and possibly some of your colleagues) please stop doing
+whatever strange things you are doing and just use the tool properly?
+This way, each time you send a series you'll get an automatic version
+rollup _and_ a properly formatted changelog with all the links to the
+previous iterations, etc.
+
+Please stop making your life harder than it is and just use the tool in
+a way it should be used. At the same time it will make our (maintainers
+/ reviewers) life much easier.
+
+Thank you.
+
+> 
+> On 10/19/2024 8:46 PM, Mahadevan wrote:
+> > This series introduces support to enable the Mobile Display Subsystem (MDSS)
+> > and Display Processing Unit (DPU) for the Qualcomm SA8775P target. It
+> > includes the addition of the hardware catalog, compatible string,
+> > relevant device tree changes, and their YAML bindings.
+> > 
+> > ---
+> > In this series
+> > - PATCH 1: "dt-bindings: display/msm: Document MDSS on SA8775P" depends on dp
+> >    binding documetion in this change:
+> >    https://lore.kernel.org/all/20240923113150.24711-5-quic_mukhopad@quicinc.com/
+> > - PATCH 5: "arm64: dts: qcom: sa8775p: add display dt nodes for MDSS0 and DPU"
+> >    depends on the clock enablement change:
+> >    https://lore.kernel.org/all/20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com/
+> > 
+> > ---
+> > [v5]
+> > - Update clock-name of display-controller in MDSS documentation to align with
+> >    qcom,sm8650-dpu.yaml. [Rob]
+> > - Update power-domains of display-controller in DT to do proper voting on MMCX
+> >    rail. [Internal Review]
+> > 
+> > [v4]
+> > - Removed new YAML added for sa8775p dpu dt-binding documention as it is similar
+> >    to qcom,sm8650-dpu.yaml and added the compatible in same. [Krzysztof]
+> > 
+> > [v3]
+> > -Edited copyright for catalog changes. [Dmitry]
+> > -Fix dt_binding_check tool errors(update reg address as address-cells and
+> >   size-cells of root node one and maintain the same for child nodes of mdss,
+> >   added additionalProperties in schema).
+> >   [Rob, Bjorn, Krzysztof]
+> > -Add QCOM_ICC_TAG_ACTIVE_ONLY interconnect path tag to mdp0-mem and mdp1-mem
+> >   path in devicetree. [Dmitry]
+> > -Update commit subject and message for DT change. [Dmitry]
+> > -Remove interconnect path tags from dt bindings. (ref sm8450-mdss yaml)
+> > 
+> > [v2]
+> > - Updated cover letter subject and message. [Dmitry]
+> > - Use fake DISPCC nodes to avoid clock dependencies in dt-bindings. [Dmitry]
+> > - Update bindings by fixing dt_binding_check tool errors (update includes in example),
+> >    adding proper spacing and indentation in the binding example, droping unused labels,
+> >    droping status disable, adding reset node. [Dmitry, Rob, Krzysztof]
+> > - Reorder compatible string of MDSS and DPU based on alphabetical order.[Dmitry]
+> > - add reg_bus_bw in msm_mdss_data. [Dmitry]
+> > - Fix indentation in the devicetree. [Dmitry]
+> > 
+> > --
+> > 2.34.1
+> > 
+> > ---
+> > Mahadevan (5):
+> >        dt-bindings: display/msm: Document MDSS on SA8775P
+> >        dt-bindings: display/msm: Document the DPU for SA8775P
+> >        drm/msm: mdss: Add SA8775P support
+> >        drm/msm/dpu: Add SA8775P support
+> >        arm64: dts: qcom: sa8775p: add display dt nodes for MDSS0 and DPU
+> > 
+> >   .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 241 ++++++++++
+> >   .../bindings/display/msm/qcom,sm8650-dpu.yaml      |   1 +
+> >   arch/arm64/boot/dts/qcom/sa8775p.dtsi              |  89 ++++
+> >   .../drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h    | 485 +++++++++++++++++++++
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   1 +
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+> >   drivers/gpu/drm/msm/msm_mdss.c                     |  11 +
+> >   8 files changed, 830 insertions(+)
+> > ---
+> > base-commit: e390603cfa79c860ed35e073f5fe77805b067a8e
+> > change-id: 20240930-patchv3_1-600cbc1549e8
+> > 
+> > Best regards,
+
 -- 
-2.25.1
-
+With best wishes
+Dmitry
 
