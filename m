@@ -1,125 +1,104 @@
-Return-Path: <linux-kernel+bounces-372662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264AE9A4B99
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:45:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 401A19A4B9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A90F31F2287B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 06:45:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB86F1F227C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 06:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BC81D5CF1;
-	Sat, 19 Oct 2024 06:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGSmcD13"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4077F1DD861;
+	Sat, 19 Oct 2024 06:47:31 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C9D17C22A
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 06:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B9C1D7E4E;
+	Sat, 19 Oct 2024 06:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729320343; cv=none; b=YbWZDacamNO7ZdY8fbaQphXkYpsljxz7hPyIBFION55+ZwyXitrVEApIiLnbpGJQvHpp3E1aigus3Ey+0zCYdJkg17v5C+EfQPwzo0+IO27Um/SFSAgPREh5/YOn+iLgjd45jFUf14WHzMRlSW9uC7fNwz4LZCYaDuBKA+tIz64=
+	t=1729320450; cv=none; b=cSpTyKonrQVmhC77UHTLB8hplQFSwJ5jiVMSdzhQsS4FbzSswCOo71DV5FHSvBtg8gE8Sx1vlvOiYfge/6XOZkpZnq1+eB0yGc2WPAIfFs9gCZBT8liFraH9uyvukM9QMme/fLMGCa6s6bkKdi9UlVVtZQoVrljYTtmHtk1t8f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729320343; c=relaxed/simple;
-	bh=wTUixt+BbMqQ/Ysusg9cMMvxAyJMxvwCB9wzUw3vUIE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=kE9Da/V5wr4oGbIaG7i3th90xpwa43XXbAzDOxYBopDSiWH2NAPQe3+wdXrlc4eGnYwuECVLIOfHn+chUYZrGtsjxqY7TnqZE4SuU3CmVBmohATqMDlhoGq50VlRp4gdEepQUYxRKUHZCV/ue1Cjs+bEXaB2K75QynVS44N2pgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WGSmcD13; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso3048408e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 23:45:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729320340; x=1729925140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I/xBFEYk5+1PnZWk62QbDei5REpQoLrsRgMuFoSkY2M=;
-        b=WGSmcD13gFOwi54AxcUsyC8zYPgV5Ya9B66dYK8Xpvf2D1nTBmyREqU716zLXqf3Xa
-         APduqQ585YdMCg2lrCxjvAeLSNVgzR+SzE4ACcXyUz4d+DARFN6RAEPf1ffFni/dgjP1
-         HU0rpFDc9iT7UBgAkqLAZjuwSsAZlPqzZQhohGSxZc/AXZ0/sv/H3lNgMWkuD51grQBt
-         67Zj9jvdRVE0nqeeKh1P+0ctqQ1xXrvivczDUIvJhFG1iUS7nSR4rQYoYGUgZ7cAseQ6
-         Yyg22pIXKy3CaOzIINJ6Mlpx89ueYQHg5fQ6hLRU+0ovmps0I+yP5Jw9RbDzljlk/zTM
-         Dezg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729320340; x=1729925140;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=I/xBFEYk5+1PnZWk62QbDei5REpQoLrsRgMuFoSkY2M=;
-        b=K2dguiNZZjZqv3wRooi4Z9+MpF5zqlXxMyPmGT7qzC4cSj/5IcepuX9xFRnLXSoC9Y
-         F5gCU/Us3bABBdB5MV3O4HfdJTSflwUfSr+Z/80xXDL3rkmKOYKypFgt88Xh2yfYehvD
-         wBh9HPp9kfAEY7BY6Z2OiHwYMD7YQz2a2UXDjCoWgAGCJJtQ40dE2rzpu4CN/l3nhOLl
-         gYBXzwswcHxdrQ2SHrcrfQd+JvIZyjr9cQzBHS0lmv9YLzP5G8MGcP8B9aXAZrvOWNyk
-         EA6Vu7HWKvnuKjf52Dz6RG5iU1L90u41KmtlTkRLMEwvfwhjPuRlrJqI43ERaPT8rprD
-         bAsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVf19UiHUiqo89QwwAOWwMhwh2yTNqGYo48kTuFs39UJ6IDNBPueK+sCByUssAH6fwG0aX87sTflL4R5W4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC2pxlTIv5khKUZ2vwDkxCh7QK3GKuqJG2EmjDZMfsVY3ISlo+
-	+E9f0/aFUURTThFvAwv/11gOQ7rxylBTBhIZZ8FwDSMdUlFg6b0D
-X-Google-Smtp-Source: AGHT+IGj+oVaKApjcHHkZ5rbaWGEk7pnvLlMQPmRLcjNNo1A92fJ0dMwx1gGK6vOZmivsNapG6RqWg==
-X-Received: by 2002:a05:6512:224e:b0:52e:9762:2ba4 with SMTP id 2adb3069b0e04-53a154a9eecmr3025761e87.25.1729320339483;
-        Fri, 18 Oct 2024 23:45:39 -0700 (PDT)
-Received: from [192.168.2.105] (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ca0b076d7dsm1519593a12.14.2024.10.18.23.45.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 23:45:39 -0700 (PDT)
-Message-ID: <96ae2b42-c0ce-4d9a-8933-eb874dc5589b@gmail.com>
-Date: Sat, 19 Oct 2024 08:45:37 +0200
+	s=arc-20240116; t=1729320450; c=relaxed/simple;
+	bh=TuluZFAJeAyvx3XPIHzgTg8IdC0i7SLk3CLtCI5BVXs=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=n0P3PPBa0pDIgMW3WfIIp2vo2r2CTfKa8pQBcy2AdEudxMbToi9b7PVTQHJvxmmE2RAFcbwZlcdCcHnjRmEqYk4c9Ysk5pGu1oD0S/ve7JN6i3fsC7CYaOAb+k52MvHSv5XwYhIkfDwF2yPwWWL4okpUN/pQ78/iZH7MideN2Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XVsXk1ds5zyT9X;
+	Sat, 19 Oct 2024 14:45:58 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3BA43140258;
+	Sat, 19 Oct 2024 14:47:25 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 19 Oct 2024 14:47:24 +0800
+Subject: Re: [PATCH] acpi/arm64: remove unnecessary cast
+To: Min-Hua Chen <minhuadotchen@gmail.com>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+CC: <linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240917233827.73167-1-minhuadotchen@gmail.com>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <e7632dd4-6009-53f3-e61a-ccb15d9f88f3@huawei.com>
+Date: Sat, 19 Oct 2024 14:47:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Subject: [RFC] staging: fieldbus: Proposal to delete driver
-To: Sven Van Asbroeck <TheSven73@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: "Ricardo B. Marliere" <ricardo@marliere.net>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Ruan Jinjie <ruanjinjie@huawei.com>, Zhu Wang <wangzhu9@huawei.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Deepak R Varma <drv@mailo.com>, Ajith P V <ajithpv.linux@gmail.com>,
- Tian Tao <tiantao6@hisilicon.com>,
- Rikard Falkeborn <rikard.falkeborn@gmail.com>,
- Ding Xiang <dingxiang@cmss.chinamobile.com>,
- Jing Xiangfeng <jingxiangfeng@huawei.com>,
- Cristiane Naves <cristianenavescardoso09@gmail.com>,
- YueHaibing <yuehaibing@huawei.com>,
- Oscar Gomez Fuente <oscargomezf@gmail.com>,
- Nicholas Mc Guire <hofrat@osadl.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20240917233827.73167-1-minhuadotchen@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-Dear Sirs,
+On 2024/9/18 7:38, Min-Hua Chen wrote:
+> DEFINE_RES_IRQ returns struct resource type, so it is
+> unnecessary to cast it to struct resource.
+> 
+> Remove the unnecessary cast to fix the following sparse warnings:
+> 
+> drivers/acpi/arm64/gtdt.c:355:19: sparse: warning: cast to non-scalar
+> drivers/acpi/arm64/gtdt.c:355:19: sparse: warning: cast from non-scalar
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+> ---
+>   drivers/acpi/arm64/gtdt.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> index c0e77c1c8e09..24bd479de91f 100644
+> --- a/drivers/acpi/arm64/gtdt.c
+> +++ b/drivers/acpi/arm64/gtdt.c
+> @@ -352,7 +352,7 @@ static int __init gtdt_import_sbsa_gwdt(struct acpi_gtdt_watchdog *wd,
+>   	}
+>   
+>   	irq = map_gt_gsi(wd->timer_interrupt, wd->timer_flags);
+> -	res[2] = (struct resource)DEFINE_RES_IRQ(irq);
+> +	res[2] = DEFINE_RES_IRQ(irq);
+>   	if (irq <= 0) {
+>   		pr_warn("failed to map the Watchdog interrupt.\n");
+>   		nr_res--;
+> 
 
-Sven Van Asbroeck contributed this driver in 2019.
+It's a minor issue, but I think it deserves a patch to make
+the code cleaner,
 
-The following points let me propose to delete the driver:
-- This driver generates maintenance workload
-- only 11 patches during the last 3 years. Part of the patches seem to 
-be motivated because of maintenance (for example - remove deprecated 
-function)
-- Maintainer lost interest, last "Reviewed-by:" is May 2021
-- no blog about usage of this driver
+Acked-by: Hanjun Guo <guohanjun@huawei.com>
 
-The staging subsystem is the way for drivers into the kernel - at 
-current speed and interest this is never going to happen.
-
-I think that fieldbus is an interesting topic. But when almost nobody 
-cares about this driver, it does not make sense to keep it.
-
-Please consider that support will remain for years in the longterm kernels.
-
-Thanks for any response about your thoughts.
-
-No response will result in a patch for removal in 14 days. This time can 
-be shorted or extended by appropriate comments.
-
-Bye Philipp
+Thanks
+Hanjun
 
