@@ -1,54 +1,82 @@
-Return-Path: <linux-kernel+bounces-373028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A659A50CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:42:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860AF9A50CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 22:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00E581C2151D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0681F227CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3BA1922E3;
-	Sat, 19 Oct 2024 20:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340EA1922F2;
+	Sat, 19 Oct 2024 20:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="vPXF3yvG"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUrB6OvU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB9713C682
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 20:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B28149E00;
+	Sat, 19 Oct 2024 20:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729370534; cv=none; b=TRZLJQxwRyPmu/u4rTt60Bxkg/A75rYaX42WLnFq6eA9VymXwkrBuwL8Knq0XCCcxkqaq5E09K78O04s93A20grGAXudbcRCEuRh1FW8l5K9R8i+0dJc9i18g4KJB3m0B1r9jUe0kVFXapgSRjhFNofqHEg/8MXjmYvKZDn71es=
+	t=1729370735; cv=none; b=W0P45wkxrrFxVAeKyQPhEM/6qv3vps/mhfQH7xMTZe2TQLqnLx9ZKDWZnccUTdyiKiSnlyNcbSh/Iao0Kc11QbvaSPz3GNndxNR3Tlptr1wSso2GG+Eg7e3+dTpVdNFdf6GAGupbzIW9+DO/qpvtG0hnc3DtmEly2nFkCTGKnyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729370534; c=relaxed/simple;
-	bh=ye+sQb4lcoOQCfVxdUhggBdY5bpunrH2WtgJp84HDHk=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OKV3S6LY65ydMEVWnYIvhqF9zOiNE+n+Jq70R3THlwzO9IBu0JKvYitLS0NyHks0NG+KsrYIVFve6ePRad3XtAS/e7G7Rzdu1Wrqj7M3b1H/KAvoS1xT66fTAQxnPcptIXze+w9/0YRIE5jQf/aa0UJXypoYeGrCDDvFYLJXeLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=vPXF3yvG; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 41DC21770FF; Sat, 19 Oct 2024 20:42:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1729370532; bh=ye+sQb4lcoOQCfVxdUhggBdY5bpunrH2WtgJp84HDHk=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=vPXF3yvGzoTaX36QmS5Ubhia6Efa+0RX/GIDyYARchI2/uBcKRKOsk4FtFpBMD2wY
-	 IzOc8D/0qAQ23xnglP3TddH0X+QomOYCRJdmA9LVJSgC3MOy0YrwL0wNaNfkv/FOh2
-	 JvpDdB1ttreZCsuWf0+T7L4IWt/fAN+BkalIDP9eIFlsfjVxOWlKdftqhkfEMXs7PZ
-	 hN5ZTN7OYPDkgNNRprtA43zzB/QwGJuwpBA/31T6MaHFKAKLRX/O1ykazKD/LyrpK5
-	 mq8svYhEoKzqdEL3Wniw3pBTL8Vz/WvlSPGRbjw2L3r6YnLENgxdsKWylUrt17GylR
-	 /ttUDrubo3cYg==
-Date: Sat, 19 Oct 2024 20:42:12 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: jason.wessel@windriver.com, daniel.thompson@linaro.org,
-	dianders@chromium.org, kgdb-bugreport@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] KDB: Fix incorrect treatment of numbers in the CLI
-Message-ID: <20241019204212.GA811391@lichtman.org>
-References: <20241019195715.GA810861@lichtman.org>
+	s=arc-20240116; t=1729370735; c=relaxed/simple;
+	bh=gmwDQ6No3ct9TKBBHTtT4Yw2AFEeVWE9FZaRD6OcRhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BMAFWbvZZSaVZQBTtvBYYMT6jsCZgMW6UPHCEkhgLNvjPtrEVm6moRKAFOfZyvWHZqh6fpPV4t86w+oJvvmkaO94ScJGeh9ostjiaqY61kV0Lfq4Y1ZdVxyg6c8Y8/PqpeUkDsGexZKw7/BrYKiC/wOro+Jn4F+cP0PsKYF49D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUrB6OvU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3166CC4CEC5;
+	Sat, 19 Oct 2024 20:45:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729370735;
+	bh=gmwDQ6No3ct9TKBBHTtT4Yw2AFEeVWE9FZaRD6OcRhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gUrB6OvUzAE3AfRej4jnJKDKbxYWz+cZRF2tn/UZIEQYCHBDOXpBVYbDfJraR7l8n
+	 gQHPGSDOLU6fVoOcnonflRVT6kmlZLGBMcBzFjGdoU/5eToXxY3a2X6/CoWL8Y6Blw
+	 vKtGYWIsOvdhlXC92kFcqafZsLC9tpLm7bpbk3P2Skg4OChT+D7E4n3UBt7xZTHfsB
+	 ThVIQ4MslwI+4PFogaRVcMfc7eHKw/pCuD9frmWslk5PHbQLkDb3S+jXyJ1ktn0C0+
+	 mYdgaWvRjSyREVgG2REjeZMLJkqmzh0Pzohff1f2PBtHLM/G7NDMxg99n+rxReWrI4
+	 CLsyhOwQepJiQ==
+Date: Sat, 19 Oct 2024 13:45:32 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Helge Deller <deller@gmx.de>
+Cc: Matthew Maurer <mmaurer@google.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, masahiroy@kernel.org,
+	ndesaulniers@google.com, ojeda@kernel.org, gary@garyguo.net,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Naveen N Rao <naveen@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	neal@gompa.dev, marcan@marcan.st, j@jannau.net,
+	asahi@lists.linux.dev, linux-modules@vger.kernel.org,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v5 14/16] modules: Support extended MODVERSIONS info
+Message-ID: <ZxQabNukxBo3utbh@bombadil.infradead.org>
+References: <20240925233854.90072-1-mmaurer@google.com>
+ <20240925233854.90072-15-mmaurer@google.com>
+ <ZwmlEYdS0aPVF32k@bombadil.infradead.org>
+ <CAGSQo01o4fWYwSzZHX5dyTUKcaCSZ7z-hPQ8w63tgBPGbM_UCA@mail.gmail.com>
+ <ZwmnnMmqVWLaelvQ@bombadil.infradead.org>
+ <Zwm4lXdKB9RfPQ5M@bombadil.infradead.org>
+ <Zwm4v_1wh5RwuHxF@bombadil.infradead.org>
+ <CAGSQo03df-tnmwcz4nh3qtuQPKQ2zLHW0juQyKUXGsdeS7QkLA@mail.gmail.com>
+ <ZxBKkJu-XPOGs-NG@bombadil.infradead.org>
+ <9f3f6bd9-47d1-45fa-aa6b-9e0a80a5ebc6@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,52 +85,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241019195715.GA810861@lichtman.org>
+In-Reply-To: <9f3f6bd9-47d1-45fa-aa6b-9e0a80a5ebc6@gmx.de>
 
-Problem: In many cases, KDB treats invalid commands as numbers and
-instead of printing a usage error, goes ahead and just prints the number
-in hex
+On Thu, Oct 17, 2024 at 02:08:19PM +0200, Helge Deller wrote:
+> Hi Luis,
+> 
+> On 10/17/24 01:21, Luis Chamberlain wrote:
+> > That sounds great. Yeah, the above would be great to test. A while ago
+> > I wrote a new modules selftests in order to test possible improvements
+> > on find_symbol() but I also did this due to push the limits of the
+> > numbers of symbols we could support. I wrote all this to also test the
+> > possible 64-bit alignment benefits of __ksymtab_ sections on
+> > architectures without CONFIG_HAVE_ARCH_PREL32_RELOCATIONS (e.g. ppc64,
+> > ppc64le, parisc, s390x,...). [....]
+> > 
+> > I forget what we concluded on Helge Deller's alignement patches, I think
+> > there was an idea on how to address the alignment through other means.
+> > 
+> > [0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=20241016-modules-symtab
+> 
+> I stumbled upon the unaligned-memory-access.rst document [1].
+> Please read it, as it is a really good document, and the section
+> "Why unaligned access is bad" states:
+> It should be obvious from the above that if your code causes unaligned
+> memory accesses to happen, your code will not work correctly on certain
+> platforms and will cause performance problems on others.
+> 
+> With this in mind, you really should apply both of my alignment
+> patches which you currently carry in [0].
+> 
+> For parisc I partly solved the issue by fixing the arch-specific kernel unalignment
+> handler, but every time module sections are stored unaligned, it triggers
+> performance degregation on parisc (and other sensitive platforms).
+> 
+> I suggest you apply them unconditionally.
+> 
+> Helge
+> 
+> [1]  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/core-api/unaligned-memory-access.rst
 
-Example: This can be demonstrated when typing for example "aaazzz", this
-confuses KDB into thinking this is the hexadecimal 0xAAA
+You're right, I've just referred to that doc and pushed to the new
+linux modules [2] modules-next branch. This is also great timing so
+that the work that is ongoing for Rust will take this into
+consideration as well. I'll just post the test I wrote as separate
+thing but it surely can be used to help test some of this later.
 
-Solution: Transition to using kstrtoul instead of simple_strtoul.
-This function is more strict with what it treats as a number
-and thus solves the issue.
-(also better practice as stated in the definition of simple_strtoul).
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git
 
-v2: Removed redundant if condition I put in v1
-
-Signed-off-by: Nir Lichtman <nir@lichtman.org>
----
- kernel/debug/kdb/kdb_main.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index f5f7d7fb5936..4cbd5cd26821 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -402,18 +402,15 @@ static void kdb_printenv(void)
-  */
- int kdbgetularg(const char *arg, unsigned long *value)
- {
--	char *endp;
- 	unsigned long val;
- 
--	val = simple_strtoul(arg, &endp, 0);
- 
--	if (endp == arg) {
-+	if (kstrtoul(arg, 0, &val) != 0) {
- 		/*
- 		 * Also try base 16, for us folks too lazy to type the
- 		 * leading 0x...
- 		 */
--		val = simple_strtoul(arg, &endp, 16);
--		if (endp == arg)
-+		if (kstrtoul(arg, 16, &val) != 0)
- 			return KDB_BADINT;
- 	}
- 
--- 
-2.39.2
+  Luis
 
