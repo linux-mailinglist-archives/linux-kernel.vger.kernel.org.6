@@ -1,224 +1,200 @@
-Return-Path: <linux-kernel+bounces-372988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C22B9A505D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:53:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A2B9A505E
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89CDF1F27100
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:53:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B960B25C3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627C91917C0;
-	Sat, 19 Oct 2024 18:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhvO/wF/"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B734190074;
+	Sat, 19 Oct 2024 18:55:07 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB2718D640;
-	Sat, 19 Oct 2024 18:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B78513C682
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 18:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729364002; cv=none; b=PFRQpUhR48N337CNXBIwS/nDXsW0ycOEzJuvJPQHLRRQ1PFxRJ5zCvvNnKjED7HUPMWQqgZn+xBkTQUyZaLYfliUV9i45nTwSj87zleDctBWo65y6a6u20dsF8ArBRZw+jCV3DJ4Uz3MFqjRtul0u3f+NG59ZLM+JOD4804BSXw=
+	t=1729364106; cv=none; b=jFlYGWlbNfP9hyEsgaV4TXrebashD7vDGqXyJlJkFWuV1M0RD9hjcPLA35DGYjU6x3sTxxJHrEJm6320hoKUPOGcbGFw7H0nZbXao9MT44gvqFkp/fj+zBTXn2k1IWrBy0afohCPUdxc9r499n8+XLmrcBelf7wKmpdOOed4CMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729364002; c=relaxed/simple;
-	bh=1PhY70V8GOUc+TLmLYSJrrntcDdtq1eG3y2frVI08Uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yn3nqX9iBONgK30ehaEvu+DR88hLHrraM/Y1DFEHvQoDNBRP65VV7f0ni1rsXtOUpApWvwQZUC3dqcMDc5dZFEPN0JMx/cWOhbWW/5TkYyVFuE9s282Loe6Vx7qJ0pf61Ov/w/eYTQIu48R6/uscoQXnRRENiN8Uqv46IdDPd/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JhvO/wF/; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71ec12160f6so27682b3a.3;
-        Sat, 19 Oct 2024 11:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729363999; x=1729968799; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=DjpGM9T6CWreh9wg2H5SjyS9PX1h20Do3Kr4hgqqd4g=;
-        b=JhvO/wF/PhIWnYl9ICiJdAX/Ac8KakLZc2iLpIGe6IM4SRqUROSBGzY4AcAkSijYj2
-         2MxdlmEQuCu/7Oi7VVvtOdF5ByHDos5YwoTyK5VvXJAVyVYoPBGtYr1cI10buikz68nd
-         gxUZvnFdjmpwnjYuTBIsKfB5IvDg0d1jYIuokBQrsy4p+X/glOG+9RhGp/aMlfNjl+v/
-         kXeaLuuvJZDGias0Ni0fUYTioBFZW4Zt7MqfIjckhqK1b/n0dvR80tRgK+VkfQ23jpD4
-         XsMKb9QZPrl1xFouRqu5JcVpC/e4D0fkjTFZupCn84Yb4LlEJPMJy2Tfxr2YeSjm3ZfN
-         QAZg==
+	s=arc-20240116; t=1729364106; c=relaxed/simple;
+	bh=bUZdpmm4f9yyhEMqqSdQa1SVdt1x1k5ZSrrNMBXR8WY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RvynGIMufGffOZceUbUMCQE86JYIaI9tQ6TGMCtKMJeGXOiPCEQpU+0jcd9Z0U2znhd8yieqzmTJQVql2Eq/uNL0iFIawx4Da7Koq1QqV3zggTP9+96i9pIpnKs8Xt5pXbs0ofMk8iKzcPpXu8jBBNuBWByg6cHViNjUTT9oyAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83ac1f28d2bso115570839f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 11:55:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729363999; x=1729968799;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DjpGM9T6CWreh9wg2H5SjyS9PX1h20Do3Kr4hgqqd4g=;
-        b=SOG1XEaQ2OBCHsw0cHsxAqJyg+m7CvBfq7nP4M2kwLZ1WfbGvJ+LBEice15HW2KkS1
-         WvKCMlO7CgmSomLFTrAPbLflzuuXk+EgFXfWy3IjeVe893io6MOkqG6pu0Uom2LF+pyU
-         Ztl074bIx6NrBV8MIuJsZ9TwO6ZwtnF3XQKDsl7/C/nZ0JOej23AR8DUguYMrzufcQPn
-         i3k9s097ZTZvxCt91esTagsFj2QcYnkvvkG4uY9I840UiSI2KC2tP8pEUnbRAfwGhjXa
-         ZW5zBQ86EMVAJr6mX8/jS4iNRKTy6lXZEBxx7PfyckBd4MONix4cxwrnTUoh2pSHF44R
-         4oWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9NrO63jnEEQ8haN2eSc2ZaJ4nnIN1m610kpw/JTEXO2BH+IKULCJkMauHNIKO2vjULi5GjV3+@vger.kernel.org, AJvYcCVP7bUoApsIPvRtRTmNSWS2Jt0hvpOalMVwAlme2gkjZL9c9MOeo6F4256WacVgfX+dUUa7pDl78Rdi3nY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0Gqwiluw1Jsb1JWKPj71vtnTufa3+qqCzhRQtP9Gc93liJKDX
-	2BZcbbz0j1ETfwHGvdL7UaV933H7FOseFIj3GbfYvYSC8gRTIDGi
-X-Google-Smtp-Source: AGHT+IGhomoq7YA3Lcbm4z7G96mwgHXtfACfJ6DXFPiHy6cItNFe+jAxkrGIRMlYaoMY24koRAgO9g==
-X-Received: by 2002:a05:6a21:670f:b0:1d8:ae90:c647 with SMTP id adf61e73a8af0-1d92c5abfd9mr9249286637.42.1729363998312;
-        Sat, 19 Oct 2024 11:53:18 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d7525sm65086b3a.103.2024.10.19.11.53.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Oct 2024 11:53:17 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <f46542ec-bb43-4a30-900b-d3c9d1763753@roeck-us.net>
-Date: Sat, 19 Oct 2024 11:53:15 -0700
+        d=1e100.net; s=20230601; t=1729364103; x=1729968903;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y/O7auIAjkjVTXqug1jjdNIJG55HYWSLIzYdVPZJLhg=;
+        b=PyGxzEELSQ/VqEI0zk4Z7o/z9POAzkB1GVth4P1fyIc9Qwv6GIak3rl6EZO1Q5I17o
+         zmiJsPATMJU3VHrup3a7gOQvAMX0nwLvHPQsef2ncTCUlEhhbjy97c9l/xtMaZ0n2eKY
+         mfgAbqe5ybecYPcctg1CM5pvvbWuBGg/07/XqyAj7B76mOXCU0HOkpTdphNzn3Ocv6o6
+         gvL08nJHmNLUCyLJnIuoTmMeW0cXumEhnRO9CJRyFoMXZyUW54I0FiuCooj13hIarkjc
+         gCYkdUJC9qcvgBFT91BeBxwDjRQyLVPbuP16TF/wRySX2FoEjDArezABmph1i+HhDzUW
+         TIxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5WvCbkvDkQkC3N5PRB7nb1Ud5QM0HMolryu5EWYusk94csd7vlCr9dzPimI1NVZrv1zmct26sIPu21Hw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVjYjsJHZAPavBCT4WQ1NLr1TngH4eoZljSNDKZpGYyPH0bD0v
+	w9FDr7Dv06qzIuPFttnHwGRl0tM0bSTuxsjZDwNiOPhSnOxoLovecZUWwyTTXO1tbOJye+lrILe
+	FHG7QI7O4f/Zv1ikSngr05uuAi6WzMOlZQrqxwACASZPOF2s/yGeHRlI=
+X-Google-Smtp-Source: AGHT+IFDDk13PQkCAa3iltO4tsGtXBCcRwtUU2rLfLGYNtK9Su9gln4voz8oBLzY0TkKgz/cB+qUaaTbFzcYyscUUXomViwKhSOd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/691] 5.15.168-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Michael Ellerman <mpe@ellerman.id.au>
-References: <20241015112440.309539031@linuxfoundation.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241015112440.309539031@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:216b:b0:3a0:a385:911d with SMTP id
+ e9e14a558f8ab-3a3f3fd3f60mr56692755ab.0.1729364103577; Sat, 19 Oct 2024
+ 11:55:03 -0700 (PDT)
+Date: Sat, 19 Oct 2024 11:55:03 -0700
+In-Reply-To: <2deb0631-ce6c-4b18-8c34-9401198c9d39@nvidia.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67140087.050a0220.1e4b4d.002c.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: cmeiohas@nvidia.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-On 10/15/24 04:19, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.168 release.
-> There are 691 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
-> Anything received after that time might be too late.
-> 
-...
-> Christophe Leroy <christophe.leroy@csgroup.eu>
->      powerpc/mm: Fix boot warning with hugepages and CONFIG_DEBUG_VIRTUAL
-> 
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+BUG: workqueue leaked atomic, lock or RCU: kworker/NUM:NUM[NUM]
 
-This patch triggers a crash when trying to boot various powerpc images.
-
-------------[ cut here ]------------
-kernel BUG at include/linux/scatterlist.h:143!
-Oops: Exception in kernel mode, sig: 5 [#1]
-BE PAGE_SIZE=4K MMU=Hash PREEMPT SMP NR_CPUS=32 NUMA PowerMac
-Modules linked in:
-CPU: 0 PID: 25 Comm: cryptomgr_test Not tainted 5.15.167-00018-g00ef1de6d646 #1
-NIP:  c00000000082c6c0 LR: c00000000082f460 CTR: 0000000000000000
-REGS: c00000000962b540 TRAP: 0700   Not tainted  (5.15.167-00018-g00ef1de6d646)
-MSR:  8000000000028032 <SF,EE,IR,DR,RI>  CR: 84000440  XER: 20000000
-IRQMASK: 0
-GPR00: c00000000082f44c c00000000962b7e0 c000000001ef6c00 c00000000962b9e8
-GPR04: c0000000096e2000 0000000000000008 c00000000962ba48 0000000000000200
-GPR08: 000000003e2a5000 c000000000000000 0000000000000000 0000000000000001
-GPR12: 0000000024000440 c000000002b62000 c00000000011e6b0 c0000000096c8e40
-GPR16: 0000000000000000 c00000000148c300 c00000000148c2f0 0000000000000008
-GPR20: 0000000000000040 c00000000147ddf8 0000000000000040 c00000000956f4a8
-GPR24: c000000002a23c98 c000000001417d18 c0000000096e2000 0000000000000001
-GPR28: 0000000000000008 c00000000962b9e8 00000000000096e2 c0000000096e2000
-NIP [c00000000082c6c0] .sg_set_buf+0x50/0x350
-LR [c00000000082f460] .test_akcipher_one+0x280/0x860
+BUG: workqueue leaked atomic, lock or RCU: kworker/1:4[5339]
+     preempt=0x00000000 lock=0->1 RCU=0->0 workfn=smc_ib_port_event_work
+1 lock held by kworker/1:4/5339:
+ #0: ffffffff8fcd1d48 (rtnl_mutex){+.+.}-{3:3}, at: ib_get_eth_speed+0x13c/0x800 drivers/infiniband/core/verbs.c:1991
+CPU: 1 UID: 0 PID: 5339 Comm: kworker/1:4 Not tainted 6.12.0-rc2-syzkaller-00003-g89e9ae55dc56-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events smc_ib_port_event_work
 Call Trace:
-[c00000000962b7e0] [c00000000956f4f3] 0xc00000000956f4f3 (unreliable)
-[c00000000962b890] [c00000000082f44c] .test_akcipher_one+0x26c/0x860
-[c00000000962bad0] [c00000000082fb14] .alg_test_akcipher+0xd4/0x150
-[c00000000962bb70] [c00000000082bcac] .alg_test+0x15c/0x640
-[c00000000962bcd0] [c000000000829850] .cryptomgr_test+0x40/0x70
-[c00000000962bd50] [c00000000011e880] .kthread+0x1d0/0x1e0
-[c00000000962be10] [c00000000000cc60] .ret_from_kernel_thread+0x58/0x60
-Instruction dump:
-fbe1fff8 6129ffff fb61ffd8 7c244840 7c9f2378 91810008 7c7d1b78 f821ff51
-7cbc2b78 789ea402 41810078 3b600001 <0b1b0000> 3d220007 7bde3664 39492f20
----[ end trace fdddc57d958f029f ]---
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ process_one_work kernel/workqueue.c:3250 [inline]
+ process_scheduled_works+0x1158/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-The problem affects v5.15.168 and v5.10.227. Reverting the offending patch
-fixes the problem in both branches.
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc2-syzkaller-00003-g89e9ae55dc56-dirty #0 Not tainted
+------------------------------------------------------
+kworker/1:4/5339 is trying to acquire lock:
+ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
 
-My test images do not have hugepages or CONFIG_DEBUG_VIRTUAL enabled.
+but task is already holding lock:
+ffffffff8fcd1d48 (rtnl_mutex){+.+.}-{3:3}, at: ib_get_eth_speed+0x13c/0x800 drivers/infiniband/core/verbs.c:1991
 
-Bisect log is attached. I copied the author and Michael for comments.
+which lock already depends on the new lock.
 
-Guenter
 
----
-# bad: [584a40a22cb9bf5a03135869f11c3106b6200453] Linux 5.15.168
-# good: [3a5928702e7120f83f703fd566082bfb59f1a57e] Linux 5.15.167
-git bisect start 'HEAD' 'v5.15.167'
-# bad: [62356668d855deb075a93fdf9f26888c4f80b7d6] nfs: fix memory leak in error path of nfs4_do_reclaim
-git bisect bad 62356668d855deb075a93fdf9f26888c4f80b7d6
-# bad: [791b3d66d2ef3a64de517651d606afb9521b5d39] drm/bridge: lontium-lt8912b: Validate mode in drm_bridge_funcs::mode_valid()
-git bisect bad 791b3d66d2ef3a64de517651d606afb9521b5d39
-# bad: [4318608dc28ef184158b4045896740716bea23f0] inet: inet_defrag: prevent sk release while still in use
-git bisect bad 4318608dc28ef184158b4045896740716bea23f0
-# bad: [25cf67f8ff2ff04607b556fe4d8d4a402b133d29] ice: fix accounting for filters shared by multiple VSIs
-git bisect bad 25cf67f8ff2ff04607b556fe4d8d4a402b133d29
-# bad: [10c111760128351b2b5ce72bb5345b0e0c89dc36] Input: synaptics - enable SMBus for HP Elitebook 840 G2
-git bisect bad 10c111760128351b2b5ce72bb5345b0e0c89dc36
-# good: [020f5c53c17f66c0a8f2d37dad27ace301b8d8a1] ocfs2: reserve space for inline xattr before attaching reflink tree
-git bisect good 020f5c53c17f66c0a8f2d37dad27ace301b8d8a1
-# good: [d71c5e8cbcf9ced0765f99fd669da2610088e08e] usbnet: ipheth: fix carrier detection in modes 1 and 4
-git bisect good d71c5e8cbcf9ced0765f99fd669da2610088e08e
-# bad: [00ef1de6d64654e069849e79a9878318ad37a093] powerpc/mm: Fix boot warning with hugepages and CONFIG_DEBUG_VIRTUAL
-git bisect bad 00ef1de6d64654e069849e79a9878318ad37a093
-# good: [be4e5f5bdc19cbb6568509d1af1d94cc82537a95] net: phy: vitesse: repair vsc73xx autonegotiation
-git bisect good be4e5f5bdc19cbb6568509d1af1d94cc82537a95
-# first bad commit: [00ef1de6d64654e069849e79a9878318ad37a093] powerpc/mm: Fix boot warning with hugepages and CONFIG_DEBUG_VIRTUAL
+the existing dependency chain (in reverse order) is:
+
+-> #1 (rtnl_mutex){+.+.}-{3:3}:
+       reacquire_held_locks+0x3eb/0x690 kernel/locking/lockdep.c:5350
+       __lock_release kernel/locking/lockdep.c:5539 [inline]
+       lock_release+0x396/0xa30 kernel/locking/lockdep.c:5846
+       process_one_work kernel/workqueue.c:3236 [inline]
+       process_scheduled_works+0xb70/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 ((wq_completion)events){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+       process_one_work kernel/workqueue.c:3204 [inline]
+       process_scheduled_works+0x950/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(rtnl_mutex);
+                               lock((wq_completion)events);
+                               lock(rtnl_mutex);
+  lock((wq_completion)events);
+
+ *** DEADLOCK ***
+
+1 lock held by kworker/1:4/5339:
+ #0: ffffffff8fcd1d48 (rtnl_mutex){+.+.}-{3:3}, at: ib_get_eth_speed+0x13c/0x800 drivers/infiniband/core/verbs.c:1991
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 5339 Comm: kworker/1:4 Not tainted 6.12.0-rc2-syzkaller-00003-g89e9ae55dc56-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events wq_barrier_func
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ process_one_work kernel/workqueue.c:3204 [inline]
+ process_scheduled_works+0x950/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+BUG: workqueue leaked atomic, lock or RCU: kworker/1:4[5339]
+     preempt=0x00000000 lock=1->0 RCU=0->0 workfn=wq_barrier_func
+INFO: lockdep is turned off.
+CPU: 1 UID: 0 PID: 5339 Comm: kworker/1:4 Not tainted 6.12.0-rc2-syzkaller-00003-g89e9ae55dc56-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events wq_barrier_func
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ process_one_work kernel/workqueue.c:3250 [inline]
+ process_scheduled_works+0x1158/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+Tested on:
+
+commit:         89e9ae55 IB/hfi1: make clear_all_interrupts static
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1727fc5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15bcf487980000
 
 
