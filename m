@@ -1,92 +1,82 @@
-Return-Path: <linux-kernel+bounces-372573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3EBE9A4A75
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0F69A4A73
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AF511F23DF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EED161F227D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 00:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF79C2AD29;
-	Sat, 19 Oct 2024 00:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997D42868D;
+	Sat, 19 Oct 2024 00:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="PYB9fJvZ"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6XZkx3q"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA699224CF;
-	Sat, 19 Oct 2024 00:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A54317BA1;
+	Sat, 19 Oct 2024 00:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729297246; cv=none; b=S2FjRX9BDssP/hI70Z4cvzVIRRtnSAStyFjVQ1eh+AQEnAG+CT5fK2Pp7zBcsOw2QbRtLwMhHm9ZwkTUv1+wdk/j3oFQNx+t028UAWBwiy7nU1pE/t9masaNX/74cAh3LmzhUCvIVNSAdmpo+2Jdlc8Fk+BDcOsf8N2YeWezODM=
+	t=1729297217; cv=none; b=NWI4CQ9ACuwpQWgcrZTVNfGGTddrYfk0Cda+3Be5j6TNyydoagXOCs/PVyCPv/jVtE0VrRmtwKFP6EFKtWiKzzwB9lq6twx6UzyzKaSyBGuYOBv811uPmxE9Nyr270XZ2dbqwKAzVCucwYAzLSXfUOtkvsXltehgwsq0cRQpe2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729297246; c=relaxed/simple;
-	bh=qI5l1jsqzoUe0LmaPMq9oX46BlP9hJIre2mnGkMU4CE=;
+	s=arc-20240116; t=1729297217; c=relaxed/simple;
+	bh=DHsdfVtVpF1TREqk2FeZmDdjMBljxPYTU1+YnlLyKTc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZnFcEAj0H/yW00l1ZXMqqPiCGGjewrVi2B9Rx851wzJbYD+4jKVVrIJOKCO7NLUmonsOZX1uMCLxOqioEcBh71mT4bluv/x8VjPaX9CgjN4aPGe7W0aUYy6UyRE8zK5RPVOTk7mvheyWEEcJyb+FfF8KXiLBcBgaosyvXKltr/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=PYB9fJvZ; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=zdDTvBQFkrAbA5UYsiAGy1L58PcaCZM1pS4G5GVb73Q=; b=PYB9fJvZq646VxX9D/D6jU4RSV
-	WLOvBXYenBE+50AuDfcfPeNRirfZqz7oH+8dk3oc/5Zaj6H6/Ju+R5yGCtbu8SgfBB2CFvOCKic9M
-	pPX0eFVYzLLZuXXaTDRt7lA7b3jkW7eZc4E2tLDSzOPs5aMaGN4JDs1ITCn/y9qu16L738mPm5xDH
-	BwYPpZp0yUC8/9oBrPkxcL0/8g4YqpayJbJRA5lV1j1mjGaRfMghyHt47R5aNsgcgxN7vygZeK/jR
-	i40azgCN3t7PtUAHwpoBIQ9/bB43LwqBZZdeaHo7qQUkuZMEwOInEbU2oRRTcBWZlhdUzJXC+l8UP
-	nUsoHnzQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1t1xCD-00AVu7-2K;
-	Sat, 19 Oct 2024 08:19:54 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 19 Oct 2024 08:19:53 +0800
-Date: Sat, 19 Oct 2024 08:19:53 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"yosryahmed@google.com" <yosryahmed@google.com>,
-	"nphamcs@gmail.com" <nphamcs@gmail.com>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"zanussi@kernel.org" <zanussi@kernel.org>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"mcgrof@kernel.org" <mcgrof@kernel.org>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"joel.granados@kernel.org" <joel.granados@kernel.org>,
-	"bfoster@redhat.com" <bfoster@redhat.com>,
-	"willy@infradead.org" <willy@infradead.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: Re: [RFC PATCH v1 01/13] crypto: acomp - Add a poll() operation to
- acomp_alg and acomp_req
-Message-ID: <ZxL7KUGUroiOYssf@gondor.apana.org.au>
-References: <20241018064101.336232-1-kanchana.p.sridhar@intel.com>
- <20241018064101.336232-2-kanchana.p.sridhar@intel.com>
- <ZxIUXX-FGxOO1qy1@gondor.apana.org.au>
- <SJ0PR11MB5678CE94DDBDEC00EA693293C9402@SJ0PR11MB5678.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tzQl62iLxYBT4Zvv48Ha9nnn9uDGVanlEwGTifNxa6sgUPYpWftxDPxNbhX4GZLNn48R3pnsJ6tXADSeuRYBIkHuw0gJg2+vnntcuEyKeqQl6OfNMEeULpw9hIySJP9tRSLiuxFUm6eNfWbKCwwCgcGRdWbXv2/oc9yfnyRDFUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6XZkx3q; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e5a62031aso1912438b3a.1;
+        Fri, 18 Oct 2024 17:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729297213; x=1729902013; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MclcGAu/+C2Il1YEk/4nSZIOYQNfnHadvSeDjFDtqQk=;
+        b=X6XZkx3qlWq6Ns251HIXX46bd739lwNpticVUPt58B2q2gc5n3T4MwFKjS67bbE6Vj
+         yNbyj7gL5jN49i+bLbiHzCvmzybxupGvtcnUo00ctjXX29LjB5Yh6GbH+j9JSkowU08e
+         OmlYxgz3RtL6CIuy8adaPFZnXsOyrYd05bFYMnjQ8WO+pQR7SfGKnRf5fNSqDuw2hddd
+         S14Oge7KfWNwqgXFPwqjaeVUI5S0/FqAYuna1h/KtjgWQ1fjTNAwI/6lzwN/o/zas8IR
+         sSc9+c9kImzZ5x3RrmU0ttJMRi53o98X5hTXzgHBDXkeXvZEwDfij/5Jhlp2Kgt8pBbu
+         E4lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729297213; x=1729902013;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MclcGAu/+C2Il1YEk/4nSZIOYQNfnHadvSeDjFDtqQk=;
+        b=MzbYcSaWKHlRhsqKiqUm0nIIpP0BzgqFVKuRE2RAtYaW1i4ZxWfiu3EpRzTvVEr705
+         z8Pa++QjPONsGmF/rK2tB/0Pl79L1nyZFx30kEsLgfT2VCKxHSFJbvJZmhXTYJnoSFjf
+         v0rtnT9qkb16svW2M+AK9YyAFzDDGmHyPWGvtFss5bn3IIxFn0B+wfIMmUsP+e2G6RF0
+         V14RDIyMX980HjM8rp+yEjKMxMDMYFSZQITSSbFS4mBsgskO5FS0Nm6pc/psg6tXMi7C
+         ERKO97Jn6KZH1H9XYOTLVg+vo8dJsUb6YYFmJGjy4cJ8YRsZMzQ/BIbXoC/RiGZnB3wY
+         50uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVn24oGQ7pDGW/I/tEkrEnnnI7r6ySvU3RpdlG1smspJgjbD4RnM5k6CqGiankFOLLnJg4cdkuY7O9DdgjI@vger.kernel.org, AJvYcCWuN2+89oMCZsJXBEVv4YGWbwi8HnggFugXctpvOAxxaNAOTMMoTZSwbfYu/qbnpUB3vQL145LupDtwkQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc5luAEjpePCJhNbnKnWcPoijus52oCzqdSnet63rhxjRloD3g
+	QTpD6dOLMSi9aqy7ZiyWAbR69rfknPZEwAQqOlLpp9cNIUwh/eif
+X-Google-Smtp-Source: AGHT+IGwQJCXiF6PbbQnZla6hNUHbi07GfpzgRPqPTqZIHuqAQG8+9AM8rNYZ9PjbjZkDxcaquCgxQ==
+X-Received: by 2002:a62:f250:0:b0:71e:374c:b9aa with SMTP id d2e1a72fcca58-71ea323c111mr4277238b3a.27.1729297213352;
+        Fri, 18 Oct 2024 17:20:13 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:351c:e27f:10e5:484c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea3311f16sm2074799b3a.40.2024.10.18.17.20.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Oct 2024 17:20:12 -0700 (PDT)
+Date: Fri, 18 Oct 2024 17:20:09 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Oliver Graute <oliver.graute@gmail.com>
+Cc: Li Zetao <lizetao1@huawei.com>, u.kleine-koenig@pengutronix.de,
+	felix@kaechele.ca, ye.xingchen@zte.com.cn,
+	joelselvaraj.oss@gmail.com, andreas@kemnade.info,
+	viro@zeniv.linux.org.uk, dario.binacchi@amarulasolutions.com,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: edt-ft5x06 - fix memleak when rmmod edt_ft5x06
+Message-ID: <ZxL7OS_mIoZRPhYw@google.com>
+References: <20241010154010.3228450-1-lizetao1@huawei.com>
+ <ZwkjNoa63gH5U6Mu@graute-think>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,28 +85,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SJ0PR11MB5678CE94DDBDEC00EA693293C9402@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <ZwkjNoa63gH5U6Mu@graute-think>
 
-On Fri, Oct 18, 2024 at 11:01:10PM +0000, Sridhar, Kanchana P wrote:
->
-> Thanks for your code review comments. Are you referring to how the
-> async/poll interface is enabled at the level of say zswap (by setting a
-> flag in the acomp_req), followed by the iaa_crypto driver testing for
-> the flag and submitting the request and returning -EINPROGRESS.
-> Wouldn't we still need a separate API to do the polling?
+On Fri, Oct 11, 2024 at 03:08:06PM +0200, Oliver Graute wrote:
+> On 10/10/24, Li Zetao wrote:
+> > When insmod and rmmod the edt_ft5x06 driver, kmemleak reported a
+> > memory leak issue:
+> >   $ modprobe edt-ft5x06
+> >     edt_ft5x06 0-0004: touchscreen probe failed
+> >   $ modprobe -r edt-ft5x06
+> > 
+> >   unreferenced object 0xffff88810b38c8a0 (size 8):
+> >     comm "modprobe", pid 23672, jiffies 4295355205
+> >     hex dump (first 8 bytes):
+> >       93 00 00 00 00 00 00 00                          ........
+> >     backtrace (crc a10fb312):
+> >       [<ffffffff81e12f70>] __kmalloc_noprof+0x2f0/0x3d0
+> >       [<ffffffff8368c3b6>] __regmap_init+0x2d26/0x4810
+> >       [<ffffffffc06b4875>] __regmap_init_i2c+0x65/0x80 [regmap_i2c]
+> >       [<ffffffffc07108a6>] edt_ft5x06_ts_probe+0xd6/0x3410 [edt_ft5x06]
+> >       [<ffffffff83bd85d1>] i2c_device_probe+0x3c1/0x8b0
+> > 	...
+> > 
+> > This is caused by not releasing the tsdata->regmap resource in time on
+> > the probe failure path. By adding the err_regmap_exit label, execute
+> > regmap_exit on the error path to release map resources. However, it
+> > should be noted that during the ts identify stage, regmap_exit may be
+> > performed first and then regmap may be reinitialized, so when
+> > edt_ft5x06_ts_identify() returns an error, it need to check whether the
+> > regmap initialization failed.
+> > 
+> > Fixes: 9dfd9708ffba ("Input: edt-ft5x06 - convert to use regmap API")
+> > Signed-off-by: Li Zetao <lizetao1@huawei.com>
+> 
+> Reviewed-by: Oliver Graute <oliver.graute@kococonnector.com>
 
-Correct me if I'm wrong, but I think what you want to do is this:
+No, this is not the right way to fix the issue. The rest of the driver
+uses managed resources, which means that regmap in error path will be
+freed too early, which may cause issues.
 
-	crypto_acomp_compress(req)
-	crypto_acomp_poll(req)
+We have same issue in driver's remove() path as well.
 
-So instead of adding this interface, where the poll essentially
-turns the request synchronous, just move this logic into the driver,
-based on a flag bit in req.
+I CCed you on a patch that uses devm to release regmap which will make
+sure all resources are released in the right order.
 
-Cheers,
+Thanks.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Dmitry
 
