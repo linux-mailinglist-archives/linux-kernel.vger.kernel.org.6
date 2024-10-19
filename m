@@ -1,77 +1,81 @@
-Return-Path: <linux-kernel+bounces-372599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977669A4ADC
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 03:30:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2090B9A4ADE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 03:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C656E1C21039
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:30:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA021F20C1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 01:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6291BE241;
-	Sat, 19 Oct 2024 01:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0891BE878;
+	Sat, 19 Oct 2024 01:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C1GEIIsX"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="viXTgd/+"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1CB1BDA9A
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 01:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6381BDA9C
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 01:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729301388; cv=none; b=Y9+RTGFyiUN32aGHKI9HrfRzYX7LEEKVRwWu1m1JzNX+mqQZvIDFjNQVio4raKbKDYUlYoGt2fVEt5bfFS1waSQBsqp/s7kUC7SEVrNS5f278k9sJKHvSv6HJ9M1m2kJWS6YHDPMYYnkSdnBM+iXxdNmSWd3nw+WfDEZ8m6G1NI=
+	t=1729301388; cv=none; b=Yj5xTDxS8SiHzFWPF6llOrZ3ujwAQs4mVUDN4kSTLh9u4nSF2CoCMvoBdXYFvwIsowmEkNeNJwAxuSP5b+BNv3OS5m29Vvjz+F7SEN7zfH1QF9yNhejUi/fdNb8cvape9OnPOnyvn2HKlt83ndf24V60WhE6vVVJ0Dk2+KSZcAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729301388; c=relaxed/simple;
-	bh=3mtGNq9cGSGYrfQFZeSpQbC6OnKLuvDcJ3My6WR3hg8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=C//amlKmNe0YxZHVU9ED8HKFzA60hdh3rFkWAJn4oJIya+1aq2EuZ195kpeUWwe3RO+wqK7Lz6rGEf0P6+POKqfXk6AHGn7bUdDg/5q8ZtxyExhAETwLO0O3v7QRpaQ2LxW76p46WToQ6bUVLonhVN+ljafXShkgQk4d7lLHdto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C1GEIIsX; arc=none smtp.client-ip=209.85.219.201
+	bh=ADHj64695AnmWs6scDXXAuyNjPNjewRXryZ8+dKDUIo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YegSYNwEfjCAQ+KqRGmuUUt1HCMu3kFWvzTOmp5Q1Sa1TwKl0GjhZn6F0s1ENDg9AFQufMqVyoHZ4kYAMuZTkGW7/Wg4hEEWD1qGOfEKfjjE0j2ssAgRKA+SFjaq9XS7cRhcr26hwOLlgt7sdvxAvcAuPpvAKOuwWGvOFth8cxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=viXTgd/+; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e297a366304so4358515276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:29:44 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e1fbe2a6b1so48671107b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 18 Oct 2024 18:29:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729301384; x=1729906184; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YuCuzNJhXO6NMFow4//rMdfOZm/3Ta56iibLMueqV4o=;
-        b=C1GEIIsX0Grr6+TDcrAUL+w5wqRsARy485p3C6OArX6GycOuzV9D3kU/6WDhVX/HVS
-         NGDfPC0NGKlTATdn5A+4L40gdy/4Xpu85Q+0P6qICzVwyLLsnz2Wmr+K7ffPyncmoEct
-         g5Ctj6/bHQddFexJUt775QlZ6tBjJtIPGBNCvQ11gZv6EdwOMA1U79XEsw2dHQMYL6lK
-         kmjEk83BsSTycScO353qcGOnlM2rU+hLN+hzZlyHFYCFW0A7hnV0HE6+qsfgyVNFi6OE
-         1wlurTQgF4YiQDtyYBB2ACM5XOtRqANIg7frtm37pT3TJXOtn3KJuPb/GETdaMlCTGTv
-         A74Q==
+        d=google.com; s=20230601; t=1729301385; x=1729906185; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JWmoU09y+6wa+3R3ifZVkoogK5Ofgf3reUuHP39SGJ0=;
+        b=viXTgd/+78WBIA+cBXcXXn9PPKzGgZPL3VXpi9qdNKMmmXitaVomB0T4MCr9+IEzGC
+         vP4IDaPubm2fW4tWyAQyuPctcYAbdWz0aCMaOXBPR5vGob8/keahmg7F1sbDrBYUBfu8
+         5xMqa29W5f8VjBAdTdvh4vGMisq63G45GMCPeOn5x2qxrA6W/Q+3RJXCHHS/CE7r+oBu
+         Co4AgCDiZy8tPkSukpb3LxbZKBdB/v0EIxEhQNNklVjrLdzF/v3SE1FnJtp0mqjNxmCo
+         lf/q/TuZ65fHNjXFUDo3HdaAzq3l1kfB1lNXmA6Zco7jMOMKvCAdi0cgYI08ET5ZTKx5
+         WMdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729301384; x=1729906184;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YuCuzNJhXO6NMFow4//rMdfOZm/3Ta56iibLMueqV4o=;
-        b=qh9GNlVb9eA1HJvnjzw5/ZBOAD30gkXsxgp9z4b1AQGL/qWcSDhtZZhboiLVFdfMjs
-         UiJUoE3saOnCAWIN4ErPaRYEutCexpb7kXzLWSL2y/iI38gAAUs5wsokoDsLUaJ/iy+X
-         GuNn+1ICppcJz3iVFDWCTC1EXqte0Sf8wMhtAFrCsK7sSQ/2qx7Xv50wlHCtM5qfftFj
-         gdKshohOa7o5rnidpy7QeOB0OZAYHio0lvalG3U2jaSYhU9B6VnmDOrH43CbBS4HifXw
-         a6xxNch8JYJMGlgaDkh2nOiHXLH+9ZRyUpz8pzFwNP5q9aTJaQwDL5JgHLnntRFqujNW
-         sBtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIqh0UifZ7EEPrYospzD+u/kIjxOIrD97K4a9spuM0p3ul4InrYm2f4vcO2+AFQ1NyL21Ir3uCJvjaGO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgHIwDb5qa6nrhGIlfkGHobkcHwUjVypHb6txYxmJWEnuI1pTU
-	l9GNy3agJtdZ/zQ+Wg46KqJoDfy8MuL9vfxyQODTVdyFreLQhAph+Ye3YXxjjOIwwHx9J1SV3Dv
-	MKMRJSgcx0KMSDoDfXQ==
-X-Google-Smtp-Source: AGHT+IFmq0/1EPi5496WrRokUU9WA5t7S1WG8rkiw/MIseZ9iZLjY0dGBCILI69xXidmtmdxWEdpgYhtiPqAdLd2
+        d=1e100.net; s=20230601; t=1729301385; x=1729906185;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JWmoU09y+6wa+3R3ifZVkoogK5Ofgf3reUuHP39SGJ0=;
+        b=ZvvZkmukycUCNwCF84C0IMTlpf9zjUjxibhqIqXBDwm98QYkyXhby1k/jYwO/vl9PQ
+         BUFoxltWG1bp8HwOTWtFK/ESySejL11obNbya3kxHIifxsYrVXZhxiDbDiDjZfPrjk2J
+         12zPqI82uxV+YO2o9gCcGAz6aFCOdp3llRuQ8dz7e/9B0JYcWmBcoL/CeUPwmrj6GPY8
+         0uiuFPn9WbwcQLj45uO0WSFAUejwi9HJrpTrn4X2rRrieSYGHhndJ2KFJ96RpPbbgVcR
+         UNj3pv25+vLUS12zDwR6+GIR3nuUnYIktum4Te0iGfGwMM/nxCv84hs1fFRNzTucwLNH
+         vN2w==
+X-Forwarded-Encrypted: i=1; AJvYcCW27JLYO2SkhWaEZaUtHmGVrNsHXoSAc0yCIi/M8KGnbw9Dl+zMxiHgiPCFE76PF8dh5j8qoZygd3mWD9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUXbohH7lEIBGpi960+XUGKVgdr6e1gELks7CpTxQFZYcx9cD/
+	hn885+TSBtwaNZ7X+bsQibPxVJM7BqTyWZDqYqBTDnhSvRLAvjU2sWi33P/1OBoqskSUeOJSazL
+	SBTMSqvabO7NMr5VD2A==
+X-Google-Smtp-Source: AGHT+IE7mxydzjHIcaCtSw9GRjaWSidW3zTmTU0yiTMTLG+FkvhjpHmaauVlHv0Tv7yfhEo/zPT4VQCUKP70YtII
 X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:13d:fb22:ac12:a84b])
- (user=jthoughton job=sendgmr) by 2002:a25:81d0:0:b0:e28:eaba:356a with SMTP
- id 3f1490d57ef6-e2bb16d53e4mr14075276.9.1729301383632; Fri, 18 Oct 2024
- 18:29:43 -0700 (PDT)
-Date: Sat, 19 Oct 2024 01:29:37 +0000
+ (user=jthoughton job=sendgmr) by 2002:a05:690c:2e90:b0:6e3:1627:e866 with
+ SMTP id 00721157ae682-6e5bfbd836bmr424387b3.3.1729301385447; Fri, 18 Oct 2024
+ 18:29:45 -0700 (PDT)
+Date: Sat, 19 Oct 2024 01:29:38 +0000
+In-Reply-To: <20241019012940.3656292-1-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241019012940.3656292-1-jthoughton@google.com>
 X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Message-ID: <20241019012940.3656292-1-jthoughton@google.com>
-Subject: [PATCH 0/2] mm: multi-gen LRU: Have secondary MMUs participate in MM_WALK
+Message-ID: <20241019012940.3656292-2-jthoughton@google.com>
+Subject: [PATCH 1/2] mm: multi-gen LRU: remove MM_LEAF_OLD and
+ MM_NONLEAF_TOTAL stats
 From: James Houghton <jthoughton@google.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
@@ -82,53 +86,94 @@ Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 	linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 
-Today, the MM_WALK capability causes MGLRU to clear the young bit from
-PMDs and PTEs during the page table walk before eviction, but MGLRU does
-not call the clear_young() MMU notifier in this case. By not calling
-this notifier, the MM walk takes less time/CPU, but it causes pages that
-are accessed mostly through KVM / secondary MMUs to appear younger than
-they should be.
+From: Yu Zhao <yuzhao@google.com>
 
-We do call the clear_young() notifier today, but only when attempting to
-evict the page, so we end up clearing young/accessed information less
-frequently for secondary MMUs than for mm PTEs, and therefore they
-appear younger and are less likely to be evicted. Therefore, memory that
-is *not* being accessed mostly by KVM will be evicted *more* frequently,
-worsening performance.
+The removed stats, MM_LEAF_OLD and MM_NONLEAF_TOTAL, are not very
+helpful and become more complicated to properly compute when adding
+test/clear_young() notifiers in MGLRU's mm walk.
 
-ChromeOS observed a tab-open latency regression when enabling MGLRU with
-a setup that involved running a VM:
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: James Houghton <jthoughton@google.com>
+---
+ include/linux/mmzone.h |  2 --
+ mm/vmscan.c            | 14 +++++---------
+ 2 files changed, 5 insertions(+), 11 deletions(-)
 
-		Tab-open latency histogram (ms)
-Version		p50	mean	p95	p99	max
-base		1315	1198	2347	3454	10319
-mglru		2559	1311	7399	12060	43758
-fix		1119	926	2470	4211	6947
-
-This series replaces the final non-selftest patchs from this series[1],
-which introduced a similar change (and a new MMU notifier) with KVM
-optimizations. I'll send a separate series (to Sean and Paolo) for the
-KVM optimizations.
-
-This series also makes proactive reclaim with MGLRU possible for KVM
-memory. I have verified that this functions correctly with the selftest
-from [1], but given that that test is a KVM selftest, I'll send it with
-the rest of the KVM optimizations later. Andrew, let me know if you'd
-like to take the test now anyway.
-
-[1]: https://lore.kernel.org/linux-mm/20240926013506.860253-18-jthoughton@google.com/
-
-Yu Zhao (2):
-  mm: multi-gen LRU: remove MM_LEAF_OLD and MM_NONLEAF_TOTAL stats
-  mm: multi-gen LRU: use {ptep,pmdp}_clear_young_notify()
-
- include/linux/mmzone.h |   7 ++-
- mm/rmap.c              |   9 ++--
- mm/vmscan.c            | 105 +++++++++++++++++++++--------------------
- 3 files changed, 60 insertions(+), 61 deletions(-)
-
-
-base-commit: b5d43fad926a3f542cd06f3c9d286f6f489f7129
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 96dea31fb211..691c635d8d1f 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -460,9 +460,7 @@ struct lru_gen_folio {
+ 
+ enum {
+ 	MM_LEAF_TOTAL,		/* total leaf entries */
+-	MM_LEAF_OLD,		/* old leaf entries */
+ 	MM_LEAF_YOUNG,		/* young leaf entries */
+-	MM_NONLEAF_TOTAL,	/* total non-leaf entries */
+ 	MM_NONLEAF_FOUND,	/* non-leaf entries found in Bloom filters */
+ 	MM_NONLEAF_ADDED,	/* non-leaf entries added to Bloom filters */
+ 	NR_MM_STATS
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 2d0486189804..60669f8bba46 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3405,7 +3405,6 @@ static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
+ 			continue;
+ 
+ 		if (!pte_young(ptent)) {
+-			walk->mm_stats[MM_LEAF_OLD]++;
+ 			continue;
+ 		}
+ 
+@@ -3558,7 +3557,6 @@ static void walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
+ 			walk->mm_stats[MM_LEAF_TOTAL]++;
+ 
+ 			if (!pmd_young(val)) {
+-				walk->mm_stats[MM_LEAF_OLD]++;
+ 				continue;
+ 			}
+ 
+@@ -3570,8 +3568,6 @@ static void walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
+ 			continue;
+ 		}
+ 
+-		walk->mm_stats[MM_NONLEAF_TOTAL]++;
+-
+ 		if (!walk->force_scan && should_clear_pmd_young()) {
+ 			if (!pmd_young(val))
+ 				continue;
+@@ -5262,11 +5258,11 @@ static void lru_gen_seq_show_full(struct seq_file *m, struct lruvec *lruvec,
+ 	for (tier = 0; tier < MAX_NR_TIERS; tier++) {
+ 		seq_printf(m, "            %10d", tier);
+ 		for (type = 0; type < ANON_AND_FILE; type++) {
+-			const char *s = "   ";
++			const char *s = "xxx";
+ 			unsigned long n[3] = {};
+ 
+ 			if (seq == max_seq) {
+-				s = "RT ";
++				s = "RTx";
+ 				n[0] = READ_ONCE(lrugen->avg_refaulted[type][tier]);
+ 				n[1] = READ_ONCE(lrugen->avg_total[type][tier]);
+ 			} else if (seq == min_seq[type] || NR_HIST_GENS > 1) {
+@@ -5288,14 +5284,14 @@ static void lru_gen_seq_show_full(struct seq_file *m, struct lruvec *lruvec,
+ 
+ 	seq_puts(m, "                      ");
+ 	for (i = 0; i < NR_MM_STATS; i++) {
+-		const char *s = "      ";
++		const char *s = "xxxx";
+ 		unsigned long n = 0;
+ 
+ 		if (seq == max_seq && NR_HIST_GENS == 1) {
+-			s = "LOYNFA";
++			s = "TYFA";
+ 			n = READ_ONCE(mm_state->stats[hist][i]);
+ 		} else if (seq != max_seq && NR_HIST_GENS > 1) {
+-			s = "loynfa";
++			s = "tyfa";
+ 			n = READ_ONCE(mm_state->stats[hist][i]);
+ 		}
+ 
 -- 
 2.47.0.105.g07ac214952-goog
 
