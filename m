@@ -1,148 +1,164 @@
-Return-Path: <linux-kernel+bounces-372986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB829A5057
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:42:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28749A5059
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 20:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0201F23FCD
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:42:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24089B22914
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1931917FD;
-	Sat, 19 Oct 2024 18:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="MeanKRtL"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8BC19068E;
+	Sat, 19 Oct 2024 18:44:30 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B036018DF6B;
-	Sat, 19 Oct 2024 18:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A979A2BAE5
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 18:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729363308; cv=none; b=RCguKD5ptuTeFBveUY5FCJtsPsPe9zvTgHEZt6y4x0dtheirGvbhqGRbQbM8XjGmGEJZtGUBJOOCRao0CDz3grDvTh69IrsikzcEP5Syz9slNAhnbLmfry031OYHFPdtYAjd/iww0vS1XefeVL0PR+bqOrZFTRsgzUAoWWKufxQ=
+	t=1729363469; cv=none; b=pquEY9y2NVjNz1P19I9IPjPWaQeOdpt131iQwkT5aJkC9cUrORmNAD9msvwVOPOjPhongmhnFm3qtdb/iRZ9EY0gBDCQ65E78VBIQogy5AIkRNW4tmM1mY3ZKWuQODOn0cHfa8FoASL+cnXvORsp7vktfx09cOF5LsR4zkrcc2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729363308; c=relaxed/simple;
-	bh=8FGcCLj2vFQWBEx14s25jzsnrnffI6LVHwOTizRNass=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2CW35lTym/XMm+QMOSQIgsAXngeeGfNfWag+RWm98QG5m4WEIK3wpdqzfTAoBGNjYbeYWAI9Bjv/BX+6iZUgZhtnUrxuHgOYxIfvCDzecEiSHNQ9YF+sgGwnl5LIxtnAijO1/WhIL+b99QJO2HEIFR8dcOqgxD2VQr4lLx2yvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=MeanKRtL; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=er3taqAhn8eBwUdaGb5l/xyrI+eEqdNBV7XOVKviHw0=; b=Me
-	anKRtLn2EkXxVYiSAToajqB6Uk1owwkd0m4BlBiDmpVUSieClmf0SfGmo9UPOpofnoVby9613NBwU
-	yz/U/LgMq+RvoqjoyIhoF3l9uj5jYJ2X0q2nEIsCc/Wkk52ek2feF/imQYr1yr26YYonR8O3DSC/x
-	6bhDqmsRFqnQiGI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t2EO9-00AcGy-Di; Sat, 19 Oct 2024 20:41:21 +0200
-Date: Sat, 19 Oct 2024 20:41:21 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
-	arnd@arndb.de, jstultz@google.com, sboyd@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/8] rust: time: Introduce Delta type
-Message-ID: <fad19413-8d58-4cf5-82e6-8d4410fd7e50@lunn.ch>
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
- <20241016035214.2229-3-fujita.tomonori@gmail.com>
- <6bc68839-a115-467f-b83e-21be708f78d7@lunn.ch>
- <CANiq72=_9cxkife3=b7acM7LbmwTLcXMX9LZpDP2JMvy=z3qkA@mail.gmail.com>
- <940d2002-650e-4e56-bc12-1aac2031e827@lunn.ch>
- <CANiq72nV2+9cWd1pjjpfr_oG_mQQuwkLaoya9p5uJ4qJ2wS_mw@mail.gmail.com>
+	s=arc-20240116; t=1729363469; c=relaxed/simple;
+	bh=x4cs74ucsFNf1x/XHBm23yVZcuOswBT1g5wLUO2Szg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sKlMOQLXDTL/mtZqZaiSF2cVocHS9iKf07BUvfEysCxsbxmjXdI9RNnwIf1YPkozQIMkoeRRT1eDSdfi+px0G++EE05h6uchYPF+SWyQZfn0R+gSKqw9qwNUoSaR9HwdoU506kA7+sJ86CxO7u/uQHAehzrtQRbgZ2Yk/I+wkkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F406C4CEC5;
+	Sat, 19 Oct 2024 18:44:28 +0000 (UTC)
+Date: Sat, 19 Oct 2024 14:44:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [GIT PULL] ftrace: Two fixes for v6.12
+Message-ID: <20241019144427.5d469ed0@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72nV2+9cWd1pjjpfr_oG_mQQuwkLaoya9p5uJ4qJ2wS_mw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 19, 2024 at 02:21:45PM +0200, Miguel Ojeda wrote:
-> On Fri, Oct 18, 2024 at 6:55 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> >
-> > Did you see my other comment, about not actually using these helpers?
-> > I _guess_ it was not used because it does not in fact round up. So at
-> > least for this patchset, the helpers are useless. Should we be adding
-> > useless helpers? Or should we be adding useful helpers? Maybe these
-> > helpers need a different name, and do actually round up?
-> 
-> Yeah, I saw that -- if I understand you correctly, you were asking why
-> `as_nanos()` is used and not `as_secs()` directly (did you mean
-> `as_micros()`?) by adding rounding on `Delta`'s `as_*()` methods.
-> 
-> So my point here was that a method with a name like `as_*()` has
-> nothing to do with rounding, so I wouldn't add rounding here (it would
-> be misleading).
-> 
-> Now, we can of course have rounding methods in `Delta` for convenience
-> if that is something commonly needed by `Delta`'s consumers like
-> `fsleep()`, that is fine, but those would need to be called
-> differently, e.g. `to_micros_ceil`: `to_` since it is not "free"
-> (following e.g. `to_radians`) and + `_ceil` to follow `div_ceil` from
-> the `int_roundings` feature (and shorter than something like
-> `_rounded_up`).
-> 
-> In other words, I think you see these small `as_*()` functions as
-> "helpers" to do something else, and thus why you say we should provide
-> those that we need (only) and make them do what we need (the
-> rounding). That is fair.
-> 
-> However, another way of viewing these is as typical conversion methods
-> of `Delta`, i.e. the very basic interface for a type like this. Thus
-> Tomonori implemented the very basic interface, and since there was no
-> rounding, then he added it in `fsleep()`.
-> 
-> I agree having rounding methods here could be useful, but I am
-> ambivalent as to whether following the "no unused code" rule that far
-> as to remove very basic APIs for a type like this.
 
-I would say ignoring the rule about an API always having a user has
-led to badly designed code, which is actually going to lead to bugs.
 
-It is clearly a philosophical point, what the base of the type is, and
-what are helpers. For me, the base is a i64 representing nano seconds,
-operations too add, subtract and compare, and a way to get the number
-of nanoseconds in and out.
+Linus,
 
-I see being able to create such a type from microseconds, millisecond,
-seconds and decades as helpers on top of this base. Also, being able
-to extract the number of nanoseconds from the type but expressed in
-microseconds, milliseconds, seconds and months are lossy helpers on
-top of the base.
+ftrace: A couple of fixes to function graph infrastructure
 
-So far, we only have one use case for this type, holding a duration to
-be passed to fsleep(). Rounding down what you pass to fsleep() is
-generally not what the user wants to do, and we should try to design
-the code to avoid this. The current helpers actually encourage such
-bugs, because they round down. Because of this they are currently
-unused. But they are a trap waiting for somebody to fall into. What
-the current users of this type really want is lossy helpers which
-round up. And by reviewing the one user against the API, it is clear
-the current API is wrong.
+- Fix allocation of idle shadow stack allocation during hotplug
 
-So i say, throw away the round down helpers until somebody really
-needs them. That avoids a class of bugs, passing a too low value to
-sleep. Add the one helper which is actually needed right now.
+  If function graph tracing is started when a CPU is offline, if it were
+  come online during the trace then the idle task that represents the CPU
+  will not get a shadow stack allocated for it. This means all function
+  graph hooks that happen while that idle task is running (including in
+  interrupt mode) will have all its events dropped.
 
-There is potentially a better option. Make the actual sleep operation
-part of the type. All the rounding up then becomes part of the core,
-and the developer gets core code which just works correctly, with an
-API which is hard to make do the wrong thing.
+  Switch over to the CPU hotplug mechanism that will have any newly
+  brought on line CPU get a callback that can allocate the shadow stack
+  for its idle task.
 
-	Andrew
+- Fix allocation size of the ret_stack_list array
+
+  When function graph tracing converted over to allowing more than one
+  user at a time, it had to convert its shadow stack from an array of
+  ret_stack structures to an array of unsigned longs. The shadow stacks
+  are allocated in batches of 32 at a time and assigned to every running
+  task. The batch is held by the ret_stack_list array. But when the
+  conversion happened, instead of allocating an array of 32 pointers, it
+  was allocated as a ret_stack itself (PAGE_SIZE). This ret_stack_list
+  gets passed to a function that iterates over what it believes is its
+  size defined by the FTRACE_RETSTACK_ALLOC_SIZE macro (which is 32).
+
+  Luckily (PAGE_SIZE) is greater than 32 * sizeof(long), otherwise this
+  would have been an array overflow. This still should be fixed and the
+  ret_stack_list should be allocated to the size it is expected to be as
+  someday it may end up being bigger than SHADOW_STACK_SIZE.
+
+
+Please pull the latest ftrace-v6.12-rc3 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ftrace-v6.12-rc3
+
+Tag SHA1: b2de656c065361da94455f0b336df15e5ac3dc32
+Head SHA1: fae4078c289a2f24229c0de652249948b1cd6bdb
+
+
+Steven Rostedt (2):
+      fgraph: Use CPU hotplug mechanism to initialize idle shadow stacks
+      fgraph: Allocate ret_stack_list with proper size
+
+----
+ kernel/trace/fgraph.c | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
+---------------------------
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index d7d4fb403f6f..41e7a15dcb50 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -1160,19 +1160,14 @@ void fgraph_update_pid_func(void)
+ static int start_graph_tracing(void)
+ {
+ 	unsigned long **ret_stack_list;
+-	int ret, cpu;
++	int ret;
+ 
+-	ret_stack_list = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
++	ret_stack_list = kcalloc(FTRACE_RETSTACK_ALLOC_SIZE,
++				 sizeof(*ret_stack_list), GFP_KERNEL);
+ 
+ 	if (!ret_stack_list)
+ 		return -ENOMEM;
+ 
+-	/* The cpu_boot init_task->ret_stack will never be freed */
+-	for_each_online_cpu(cpu) {
+-		if (!idle_task(cpu)->ret_stack)
+-			ftrace_graph_init_idle_task(idle_task(cpu), cpu);
+-	}
+-
+ 	do {
+ 		ret = alloc_retstack_tasklist(ret_stack_list);
+ 	} while (ret == -EAGAIN);
+@@ -1242,14 +1237,34 @@ static void ftrace_graph_disable_direct(bool disable_branch)
+ 	fgraph_direct_gops = &fgraph_stub;
+ }
+ 
++/* The cpu_boot init_task->ret_stack will never be freed */
++static int fgraph_cpu_init(unsigned int cpu)
++{
++	if (!idle_task(cpu)->ret_stack)
++		ftrace_graph_init_idle_task(idle_task(cpu), cpu);
++	return 0;
++}
++
+ int register_ftrace_graph(struct fgraph_ops *gops)
+ {
++	static bool fgraph_initialized;
+ 	int command = 0;
+ 	int ret = 0;
+ 	int i = -1;
+ 
+ 	mutex_lock(&ftrace_lock);
+ 
++	if (!fgraph_initialized) {
++		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph_idle_init",
++					fgraph_cpu_init, NULL);
++		if (ret < 0) {
++			pr_warn("fgraph: Error to init cpu hotplug support\n");
++			return ret;
++		}
++		fgraph_initialized = true;
++		ret = 0;
++	}
++
+ 	if (!fgraph_array[0]) {
+ 		/* The array must always have real data on it */
+ 		for (i = 0; i < FGRAPH_ARRAY_SIZE; i++)
 
