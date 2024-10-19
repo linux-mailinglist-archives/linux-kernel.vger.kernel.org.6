@@ -1,204 +1,145 @@
-Return-Path: <linux-kernel+bounces-372611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D660F9A4AF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 04:30:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0041B9A4B0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 05:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1131F22246
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 02:30:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21F121C21521
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 03:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A2E1922E3;
-	Sat, 19 Oct 2024 02:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="JYCUZI7G"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76FE1D0E10;
+	Sat, 19 Oct 2024 03:02:10 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98D8173;
-	Sat, 19 Oct 2024 02:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507241922DC;
+	Sat, 19 Oct 2024 03:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729305033; cv=none; b=BYktryDY8wGm1NNqNXRCqLVVrzzvnTtzW1VL3n0zJ/7FVfiKJaKSL17+i/SML7TIlBPSOOP6sN4qkghr1SwHrJ69In19hbXMIUb/BofwkRGZCG0saqeR8wXjXl/GdUeBiSTzIRAQIVy1k5XgnPBHEIjA4dIzO+gO4AVroDuV/hQ=
+	t=1729306930; cv=none; b=ehsJ94QHYUt9Drm+qju4rzPefGaYD4CjeX+IpMujxDW378JXQ44DKJhBijvsD/IoKjv8O2fu+9wEZIn+cShPRJiC2UculbTN4aVik9YapLifB4mQEF+Zg8Qtk2asKNvilIAvPNlgQ790v9NadPbbWlkNVot3TueWUAciHdSpaRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729305033; c=relaxed/simple;
-	bh=Oip0K2QxhP1Y1VCNrfBc2OtkmiaShvxXZKdALFjKQXY=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QC2t7PfqOgxO5Ht/EJFNtznwdN7RYgBKKdF2CFML6s869Wt3furUYUL4Pkvn6jNSIqrkt8Nh4fKhinP7kjNaUwSnIYQpz7Hrqr71UvHRaJOHl1Lzdh/+plrNDYwR+mBwhmgiYtI77u5ASGumDc+oBK05kMrx+3iGLicOUjzlzmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=JYCUZI7G; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1729305031; x=1760841031;
-  h=from:to:cc:subject:date:message-id:content-id:
-   content-transfer-encoding:mime-version;
-  bh=Oip0K2QxhP1Y1VCNrfBc2OtkmiaShvxXZKdALFjKQXY=;
-  b=JYCUZI7Gb34IZBI2war7ejbsBckPYFBFxqFsGJYHt5ZBPoZIoatyLC5Z
-   OpXdRKseMgCvS3oQBiWzNEl4Z0tLK4FOG7lAwIEnxijZOxDsmK2XVwLMW
-   YwS5MdY9c86MGyYqV1U4aNbSoZFnVd4X7o7jSxK+lUpJY8zwEXqw6Kpg4
-   8=;
-X-IronPort-AV: E=Sophos;i="6.11,215,1725321600"; 
-   d="scan'208";a="442095084"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 02:30:30 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:10567]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.20.142:2525] with esmtp (Farcaster)
- id 0323086f-3675-4851-9233-067136ae1104; Sat, 19 Oct 2024 02:30:29 +0000 (UTC)
-X-Farcaster-Flow-ID: 0323086f-3675-4851-9233-067136ae1104
-Received: from EX19D003UWC003.ant.amazon.com (10.13.138.173) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Sat, 19 Oct 2024 02:30:28 +0000
-Received: from EX19D016UWA004.ant.amazon.com (10.13.139.119) by
- EX19D003UWC003.ant.amazon.com (10.13.138.173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Sat, 19 Oct 2024 02:30:28 +0000
-Received: from EX19D016UWA004.ant.amazon.com ([fe80::92ec:e30c:889c:c2c0]) by
- EX19D016UWA004.ant.amazon.com ([fe80::92ec:e30c:889c:c2c0%5]) with mapi id
- 15.02.1258.034; Sat, 19 Oct 2024 02:30:28 +0000
-From: "Prundeanu, Cristian" <cpru@amazon.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra
-	<peterz@infradead.org>
-CC: "linux-tip-commits@vger.kernel.org" <linux-tip-commits@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "Doebel, Bjoern" <doebel@amazon.de>,
-	"Mohamed Abuelfotoh, Hazem" <abuehaze@amazon.com>, "Blake, Geoff"
-	<blakgeof@amazon.com>, "Saidi, Ali" <alisaidi@amazon.com>, "Csoma, Csaba"
-	<csabac@amazon.com>, "gautham.shenoy@amd.com" <gautham.shenoy@amd.com>
-Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
- RUN_TO_PARITY and move them to sysctl
-Thread-Topic: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
- RUN_TO_PARITY and move them to sysctl
-Thread-Index: AQHbIc7cqYP/Spxn4UemHlrRfl1T1A==
-Date: Sat, 19 Oct 2024 02:30:28 +0000
-Message-ID: <C0E39DE3-EEEB-4A08-850F-A4B7EC809E3A@amazon.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <37DC0201AC13DE4598AFDCDD10A98ADB@amazon.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1729306930; c=relaxed/simple;
+	bh=EsaCZb9yNgCTwt8PrUwFKZZi9IhJEj77/RKWiw+6CO0=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=r4xyICO+pBAocon0XNMdAO84WzmmbNBaQWtf7PHfw1i1+08wnSUxSzmQlt4stcfbol5a1btdpEMFHMajNv4hNf922enGHC0AmtRWPW2iUrneu9xTNtGNi2J2L5kGLtxM6sO8YPcR5/hQgx+IeDb10GrBKXmuRyQSPEr4uVe51zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XVm816B7Zz10Ncc;
+	Sat, 19 Oct 2024 10:42:41 +0800 (CST)
+Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id 21D8E1400E3;
+	Sat, 19 Oct 2024 10:44:38 +0800 (CST)
+Received: from [10.67.110.237] (10.67.110.237) by
+ kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 19 Oct 2024 10:44:37 +0800
+Subject: Re: [PATCH 3/3] perf disasm: Fix not cleaning up disasm_line in
+ symbol__disassemble_raw()
+To: Namhyung Kim <namhyung@kernel.org>
+CC: <atrajeev@linux.vnet.ibm.com>, <peterz@infradead.org>, <mingo@redhat.com>,
+	<acme@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<kjain@linux.ibm.com>, <sesse@google.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241014114248.212711-1-lihuafei1@huawei.com>
+ <20241014114248.212711-3-lihuafei1@huawei.com> <ZxGNwWjlflH1azE7@google.com>
+From: Li Huafei <lihuafei1@huawei.com>
+Message-ID: <2f180ed6-9cea-615d-638a-844ea154e9e1@huawei.com>
+Date: Sat, 19 Oct 2024 10:44:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <ZxGNwWjlflH1azE7@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemf500004.china.huawei.com (7.202.181.242)
 
-T24gMjAyNC0xMC0xOCwgMDI6MDgsICJLIFByYXRlZWsgTmF5YWsiIDxrcHJhdGVlay5uYXlha0Bh
-bWQuY29tPiB3cm90ZToNCg0KPiBNb3N0IG9mIG91ciB0ZXN0aW5nIHVzZWQgc3lzYmVuY2ggYXMg
-dGhlIGJlbmNobWFyayBkcml2ZXIuIEhvdyBkb2VzDQo+IG15c3FsK2hhbW1lcmRiIHdvcmsgc3Bl
-Y2lmaWNhbGx5PyBEbyB0aGUgdGFza3MgZHJpdmluZyB0aGUgcmVxdWVzdCBhcmUNCj4gbG9jYXRl
-ZCBvbiBhIHNlcGFyYXRlIHNlcnZlciBvciBhcmUgY28tbG9jYXRlZCB3aXRoIHRoZSBiZW5jaG1h
-cmtzDQo+IHRocmVhZHMgb24gdGhlIHNhbWUgc2VydmVyPw0KDQpUaGUgaGFtbWVyZGIgdGVzdCBp
-cyBhIGJpdCBtb3JlIGNvbXBsZXggdGhhbiBzeXNiZW5jaC4gSXQgdXNlcyB0d28NCmluZGVwZW5k
-ZW50IHBoeXNpY2FsIG1hY2hpbmVzIHRvIHBlcmZvcm0gYSBUUEMtQyBkZXJpdmVkIHRlc3QgWzFd
-LCBhaW1pbmcNCnRvIHNpbXVsYXRlIGEgcmVhbC13b3JsZCBkYXRhYmFzZSB3b3JrbG9hZC4gVGhl
-IG1hY2hpbmVzIGFyZSBhbGxvY2F0ZWQgYXMNCmFuIEFXUyBFQzIgaW5zdGFuY2UgcGFpciBvbiB0
-aGUgc2FtZSBjbHVzdGVyIHBsYWNlbWVudCBncm91cCBbMl0sIHRvIGF2b2lkDQptZWFzdXJpbmcg
-bmV0d29yayBib3R0bGVuZWNrcyBpbnN0ZWFkIG9mIHNlcnZlciBwZXJmb3JtYW5jZS4gVGhlIFNV
-VA0KaW5zdGFuY2UgcnVucyBteXNxbCBjb25maWd1cmVkIHRvIHVzZSAyIHdvcmtlciB0aHJlYWRz
-IHBlciB2Q1BVICgzMg0KdG90YWwpOyB0aGUgbG9hZCBnZW5lcmF0b3IgaW5zdGFuY2UgcnVucyBo
-YW1tZXJkYiBjb25maWd1cmVkIHdpdGggNjQNCnZpcnR1YWwgdXNlcnMgYW5kIDI0IHdhcmVob3Vz
-ZXMgWzNdLiBFYWNoIHRlc3QgY29uc2lzdHMgb2YgbXVsdGlwbGUNCjIwLW1pbnV0ZSByb3VuZHMs
-IHJ1biBjb25zZWN1dGl2ZWx5IG9uIG11bHRpcGxlIGluZGVwZW5kZW50IGluc3RhbmNlDQpwYWly
-cy4NCg0KWzFdIGh0dHBzOi8vd3d3LnRwYy5vcmcvdHBjYy9kZWZhdWx0NS5hc3ANClsyXSBodHRw
-czovL2RvY3MuYXdzLmFtYXpvbi5jb20vQVdTRUMyL2xhdGVzdC9Vc2VyR3VpZGUvcGxhY2VtZW50
-LXN0cmF0ZWdpZXMuaHRtbA0KWzNdIGh0dHBzOi8vaGFtbWVyZGIuY29tL2RvY3MvY2gwM3MwNS5o
-dG1sDQoNCj4gRGlkIHlvdSBzZWUgYW55IGdsYXJpbmcgY2hhbmdlcyBpbiBzY2hlZHVsZXIgc3Rh
-dGlzdGljcyB3aXRoIHRoZQ0KPiBpbnRyb2R1Y3Rpb24gb2YgRUVWREYgaW4gdjYuNj8gRUVWREYg
-Y29tbWl0cyB1cCB0aWxsIHY2Ljkgd2VyZSBlYXN5IHRvDQo+IHJldmVydCBmcm9tIG15IGV4cGVy
-aWVuY2UgYnV0IEkndmUgbm90IHRyaWVkIGl0IG9uIHY2LjEyLXJjWCB3aXRoIHRoZQ0KPiBFRVZE
-RiBjb21wbGV0ZSBzZXJpZXMuIElzIGFsbCB0aGUgcmVncmVzc2lvbiBzZWVuIHB1cmVseQ0KPiBh
-dHRyaWJ1dGFibGUgdG8gRUVWREYgYWxvbmUgb24gdGhlIG1vcmUgcmVjZW50IGtlcm5lbHM/DQoN
-ClllcywgdGhlIHJlZ3Jlc3Npb24gaXMgYXR0cmlidXRhYmxlIHRvIEVFVkRGOg0KQWZ0ZXIgc2Vl
-aW5nIGluZGljYXRpb25zIHRoYXQgdGhlcmUgd2FzIGEgcGVyZm9ybWFuY2UgZGVncmFkYXRpb24N
-CnNvbWV3aGVyZSBhZnRlciBrZXJuZWwgNi41LCBiaXNlY3QgdGVzdGluZyBuYXJyb3dlZCB0aGUg
-c2FtZSBkZWdyYWRhdGlvbg0KdG8gbWVyZ2UgY29tbWl0IGI0MWJiYjMzY2Y3NSAoTWVyZ2UgYnJh
-bmNoICdzY2hlZC9lZXZkZicgaW50byBzY2hlZC9jb3JlKS4NCkV4cGFuZGluZyB0ZXN0aW5nIHRv
-IGFsbCBzdGFibGUga2VybmVsIHZlcnNpb25zIG5leHQgKDYuNiB0aHJvdWdoIDYuMTEpDQpzaG93
-ZWQgdmVyeSBzaW1pbGFyIHBlcmZvcm1hbmNlIGRhdGEsIGNvbmZpcm1pbmcgdGhhdCBub24tRUVE
-VkYgY2hhbmdlcw0KaW50cm9kdWNlZCBhbG9uZyB0aGUgd2F5IGRvIG5vdCBoYXZlIGFueSBzaWdu
-aWZpY2FudCBpbXBhY3QuDQoNClRlc3Rpbmcga2VybmVsIDYuMTIgYXQgdmFyaW91cyBzdGFnZXMs
-IHN0YXJ0aW5nIHdpdGggY29tbWl0IDIwMDRjZWYxMWVhMA0KKE1lcmdlIHRhZyAnc2NoZWQtY29y
-ZS0yMDI0LTA5LTE5JykgYW5kIGNvbnRpbnVpbmcgd2l0aCB0aGUgdjYuMTItcmNYIHRhZ3MNCmFz
-IHRoZXkgYmVjYW1lIGF2YWlsYWJsZSwgc2hvd3MgYSBkaWZmZXJlbnQgcGVyZm9ybWFuY2UgcHJv
-ZmlsZSB0aGFuDQpwcmV2aW91cyBrZXJuZWxzOiB0aGUgZGVncmFkYXRpb24gaXMgc21hbGxlciB0
-aGFuIDYuNiB0aHJvdWdoIDYuMTEsIGJ1dA0KdGhlIHBvc2l0aXZlIGltcGFjdCBmcm9tIGRpc2Fi
-bGluZyBQTEFDRV9MQUcgYW5kIFJVTl9UT19QQVJJVFkgaXMgYWxzbw0Kc21hbGxlci4gSG93ZXZl
-ciwgYWZ0ZXIgdGVzdGluZyBhIGZyYWN0aW9uYWwgZmFjdG9yaWFsIG9mIGNvbWJpbmF0aW9ucyBm
-b3INCmFsbCBFRVZERi1zcGVjaWZpYyBmZWF0dXJlcywgdGhlIG9ubHkgY29uZmlndXJhdGlvbiB0
-aGF0IHlpZWxkZWQgYmV0dGVyDQpwZXJmb3JtYW5jZSB0aGFuIE5PX1BMQUNFX0xBRytOT19SVU5f
-VE9fUEFSSVRZIHdhcyB3aXRoIGFsbCA3IGZlYXR1cmVzDQpkaXNhYmxlZCAoTk9fUExBQ0VfTEFH
-LCBOT19SVU5fVE9fUEFSSVRZLCBOT19ERUxBWV9ERVFVRVVFLCBOT19ERUxBWV9aRVJPLA0KTk9f
-UExBQ0VfREVBRExJTkVfSU5JVElBTCwgTk9fUExBQ0VfUkVMX0RFQURMSU5FLCBOT19QUkVFTVBU
-X1NIT1JUKS4gQWZ0ZXINCmNvbnNpZGVyaW5nIHRoZSBwb3RlbnRpYWwgaW1wYWN0IG9uIG90aGVy
-IHdvcmtsb2FkcyBhbmQgdGhlIGVhc2Ugb2YNCmJhY2twb3J0aW5nIGZvciB0aGUgdHdvIGJlc3Qg
-b3B0aW9ucywgTk9fUExBQ0VfTEFHK05PX1JVTl9UT19QQVJJVFkgc2VlbWVkDQpsaWtlIHRoZSBi
-ZXR0ZXIgY2hvaWNlIGZvciA2LjEyIGFzIHdlbGwuDQoNCkxvb2tpbmcgYXQgdGhlIGNvbXBhcmF0
-aXZlIGFwZXJmIFs0XSByZXBvcnRzIHNob3dlZCBubyBkaXZlcmdpbmcNCmNvbmZpZ3VyYXRpb24g
-aXNzdWVzLCBhbmQgbm8gbm90aWNlYWJsZSBkaWZmZXJlbmNlcyBpbiB0aGUgUE1VIHN0YXRzDQoo
-d2hpY2ggY29uZmlybXMgdGhlcmUgYXJlIG5vIHVucmVsYXRlZCBzeXN0ZW0gZGlmZmVyZW5jZXMg
-YWZmZWN0aW5nIHRoZQ0KcmVzdWx0cykuDQoNCls0XSBodHRwczovL2dpdGh1Yi5jb20vYXdzL2Fw
-ZXJmDQoNCj4+IEkgaGF2ZW4ndCB0ZXN0ZWQgd2l0aCBTQ0hFRF9CQVRDSCB5ZXQsIHdpbGwgdXBk
-YXRlIHRoZSB0aHJlYWQgd2l0aCByZXN1bHRzDQo+PiBhcyB0aGV5IGFjY3VtdWxhdGUNCg0KVGVz
-dGluZyB3aXRoIFNDSEVEX0JBVENIIChhbmQgZGVmYXVsdCBzY2hlZHVsZXIgc2V0dGluZ3MpIHJl
-c3VsdGVkIGluIG5vDQpzaWduaWZpY2FudCBwZXJmb3JtYW5jZSBjaGFuZ2UuDQoNCkFzIGFuIGFk
-ZGl0aW9uYWwgZGF0YSBwb2ludCwgdXNpbmcgU0NIRURfRklGTyBvciBTQ0hFRF9SUiBmdXJ0aGVy
-IGRlZ3JhZGVkDQp0aGUgbXlzcWwgcGVyZm9ybWFuY2UgKGJ1dCBpbXByb3ZlZCBwb3N0Z3Jlc3Fs
-KS4NCg0KPiBDb3VsZCB5b3UgYWxzbyB0ZXN0IHJ1bm5pbmcgd2l0aDoNCj4gZWNobyBOT19XQUtF
-VVBfUFJFRU1QVElPTiA+IC9zeXMva2VybmVsL2RlYnVnL3NjaGVkL2ZlYXR1cmVzDQoNCkNlcnRh
-aW5seTsgd2lsbCB1cGRhdGUgdGhlIHRocmVhZCB3aGVuIHRoZSByZXN1bHRzIGFyZSBhdmFpbGFi
-bGUuICAgDQoNCj4gT24gYSBzaWRlIG5vdGUsIHdoYXQgaXMgdGhlIENPTkZJR19IWiBhbmQgdGhl
-DQo+IHByZWVtcHRpb24gbW9kZWwgb24geW91ciB0ZXN0IGtlcm5lbCAobW9zdCBvZiBteSB0ZXN0
-aW5nIHdhcyB3aXRoDQo+IENPTkZJRytIWj0yNTAsIHZvbHVudGFyeSBwcmVlbXB0aW9uKQ0KDQpD
-T05GSUdfSFogd2FzIDI1MC4gVGVzdGluZyB3aXRoIG90aGVyIHZhbHVlcyBkaWQgbm90IHJldmVh
-bCBhbnl0aGluZw0KcmVsZXZhbnQgdG8gdGhpcyByZWdyZXNzaW9uIGVpdGhlcjogYm90aCBDRlMg
-YW5kIEVFVkRGIGhhZCBhIHNsaWdodA0KaW1wcm92ZW1lbnQgd2l0aCBDT05GSUdfSFo9MTAwLCBh
-bmQgbm8gY2hhbmdlIG90aGVyd2lzZS4NCg0KUHJlZW1wdGlvbiB3YXMgdGhlIGRlZmF1bHQgKHZv
-bHVudGFyeSkgZm9yIGFsbCB0ZXN0cy4NCg0KPiBUaGUgZGF0YSBpbiB0aGUgbGF0dGVyIGxpbmsg
-aGVscGVkIHJvb3QtY2F1c2UgdGhlIGFjdHVhbCBpc3N1ZSB3aXRoIHRoZQ0KPiBhbGdvcml0aG0g
-dGhhdCB0aGUgYmVuY2htYXJrIGRpc2xpa2VkLiBTaW1pbGFyIGluZm9ybWF0aW9uIGZvciB0aGUN
-Cj4gZGF0YWJhc2UgYmVuY2htYXJrcyB5b3UgYXJlIHJ1bm5pbmcsIGNhbiBoZWxwIG5hcnJvdyBk
-b3duIHRoZSBpc3N1ZS4NCg0KVGhhbmsgeW91IGZvciB0aGUgbGlua3MhIEknbGwgZ2xhZGx5IGNv
-bnRpbnVlIGdhdGhlcmluZyBkYXRhIGFuZCBoZWxwIA0KZGlhZ25vc2UgdGhpcyBpc3N1ZS4gSSBh
-bSBjb25jZXJuZWQsIGhvd2V2ZXIsIHdpdGgga2VlcGluZyB0aGUgZGVmYXVsdCANCmNvbmZpZ3Vy
-YXRpb24gdGhlIHdheSBpdCBjdXJyZW50bHkgaXMgd2hpbGUgdGhlIGludmVzdGlnYXRpb24gY29u
-dGludWVzLg0KDQpEbyB5b3UgaGFwcGVuIHRvIGtub3cgaG93IHRoZSByZXBvcnRlZCBibG9nYmVu
-Y2ggcGVyZm9ybWFuY2UgY29tcGFyZXMgdG8gDQp0aGUgcHJlLUVFVkRGICh2Ni41KSByZXN1bHRz
-Pw0KDQo+IEZyb20gd2hhdCBJIGNhbiB0ZWxsLCB5b3VyIGJlbmNobWFyayBoYXMgYSBzZXQgb2Yg
-dGhyZWFkcyB0aGF0IGxpa2UgdG8NCj4gZ2V0IGNwdSB0aW1lIGFzIGZhc3QgYXMgcG9zc2libGUu
-IFdpdGggRUVWREYgQ29tcGxldGUgKEkgd291bGQgcmVjb21tZW5kDQo+IHVzaW5nIGN1cnJlbnQg
-dGlwOnNjaGVkL3VyZ2VudCBicmFuY2ggdG8gdGVzdCB0aGVtIG91dCkgc2V0dGluZyBhIG1vcmUN
-Cj4gYWdncmVzc2l2ZSBuaWNlIHZhbHVlIHRvIHRoZXNlIHRocmVhZHMgc2hvdWxkIGVuYWJsZSB0
-aGVtIHRvIG5lZ2F0ZSB0aGUNCj4gZWZmZWN0IG9mIFJVTl9UT19QQVJJVFkgdGhhbmtzIHRvIFBS
-RUVNUFRfU0hPUlQuDQo+DQo+IEFzIGZvciBOT19QTEFDRV9MQUcsIHRoZSBERUxBWV9ERVFVRVVF
-IGZlYXR1cmUgc2hvdWxkIGhlbHAgdGFzayBzaGVkIG9mZg0KPiBhbnkgbGFnIGl0IGhhcyBidWls
-dCB1cCBhbmQgc2hvdWxkIHZlcnkgbGlrZWx5IHN0YXJ0IGZyb20gdGhlIHplcm8tbGFnDQo+IHBv
-aW50IHVubGVzcyBpdCBpcyBhIHZlcnkgc2hvcnQgc2xlZXBlci4NCg0KQWdyZWUgd2l0aCB0aGUg
-dGhyZWFkIGFzc2Vzc21lbnQuIEl0IHNlZW1zIHRoYXQgdGhlIGJlc3Qgb3V0Y29tZSBpcyB3aGVu
-DQp0aGUgdGhyZWFkcyBydW4gYXMgZmFzdCBhcyBwb3NzaWJsZSwgd2l0aCBvdmVyaGVhZCBhcyBz
-bWFsbCBhcyBwb3NzaWJsZS4gDQoNCkknbGwgdGVzdCB3aXRoIEVFVkRGIGNvbXBsZXRlIGFzIHdl
-bGwuIE5vdGUgdGhhdCBib3RoIERFTEFZX0RFUVVFVUUgYW5kDQpQUkVFTVBUX1NIT1JUIHdlcmUg
-cGFydCBvZiB0aGUgY29tYmluYXRpb25zIGluIHRoZSB0ZXN0IHN1aXRlIG9uIGNvbW1pdA0KMjAw
-NGNlZjExZWEwLCBhcyBtZW50aW9uZWQgYWJvdmUsIGFuZCBkaWQgbm90IGVmZmVjdCBkcmFtYXRp
-YyBwZXJmb3JtYW5jZQ0KY2hhbmdlcyB3aGVuIGZsaXBwZWQuDQpBdCB0aGF0IHRpbWUgKGFuZCB0
-aGlzIGlzIG5vIGxvbmdlciB0cnVlIGluIHY2LjEyLXJjMikgTk9fREVMQVlfWkVSTyB3YXMNCmFs
-c28gbmVlZGVkIGFsb25nIHdpdGggTk9fUExBQ0VfTEFHIGFuZCBOT19SVU5fVE9fUEFSSVRZLg0K
-DQo+IElzIHRoZXJlIGFueSByZWFzb24gdG8gZmxpcCBpdCB2ZXJ5IGVhcmx5IGludG8gdGhlIGJv
-b3Q/IEhhdmUgeW91IHNlZW4NCj4gYW55dGhpbmcgZ28gYXdyeSB3aXRoIHN5c3RlbSBwcm9jZXNz
-ZXMgZHVyaW5nIGJvb3Qgd2l0aCBFRVZERj8NCg0KSSBoYXZlbid0LCBhcyB0aGlzIGJlbmNobWFy
-a2luZyBpcyBzcGVjaWZpY2FsbHkgbWVhc3VyaW5nIHRoZSBzdGFibGUgc3RhdGUNCm9mIGEgc3lz
-dGVtLg0KVGhlIGJvb3Qgb3JkZXIgYXJndW1lbnQgd2FzIG9ubHkgaW4gdGhlIGNvbnRleHQgb2Yg
-ZGlzY3Vzc2luZyB0aGUNCnN1aXRhYmlsaXR5IG9mIHJjLmxvY2FsIGFzIGNvbXBhcmVkIHRvIHN5
-c2N0bCBmb3IgcGVyc2lzdGluZyBzY2hlZHVsZXINCm9wdGlvbnMuIEl0J3MgY29uY2VpdmFibGUg
-dGhhdCBvcHRpb25zIHdoaWNoIGFyZSBkaWZmZXJlbnQgaW4gYSBzdGFibGUNCnN0YXRlIHRoYW4g
-YXQgc3RhcnR1cCBjb3VsZCBsZWFkIHRvIHByb2Nlc3MgbWFuYWdlbWVudCBvdXRjb21lcyB3aGlj
-aA0KYWZmZWN0IHBlcmZvcm1hbmNlIChhbmQgYXJlIGhhcmRlciB0byByZXByb2R1Y2Ugc2NlbmFy
-aW9zKS4NCg0K
+
+
+On 2024/10/18 6:20, Namhyung Kim wrote:
+> On Mon, Oct 14, 2024 at 07:42:48PM +0800, Li Huafei wrote:
+>> In symbol__disassemble_raw(), the created disasm_line should be
+>> discarded before returning an error.
+> 
+> But other error paths don't need to free the disasm_line because they
+> failed before creating one.  I think the simpler fix is to break the
+> loop when it fails on disasm_line__new().
+> 
+
+Yes, we only need to consider whether to release the created lines when
+the loop fails in the middle. I will send a v2 version later.
+
+Thanks,
+Huafei
+
+> Thanks,
+> Namhyung
+> 
+>>
+>> Fixes: 0b971e6bf1c3 ("perf annotate: Add support to capture and parse raw instruction in powerpc using dso__data_read_offset utility")
+>> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+>> ---
+>>  tools/perf/util/disasm.c | 26 ++++++++++++--------------
+>>  1 file changed, 12 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+>> index 40d99f4d5cc7..4e5becd5eca6 100644
+>> --- a/tools/perf/util/disasm.c
+>> +++ b/tools/perf/util/disasm.c
+>> @@ -1774,25 +1774,23 @@ static int symbol__disassemble_raw(char *filename, struct symbol *sym,
+>>  		offset += 4;
+>>  	}
+>>  
+>> -	/* It failed in the middle */
+>> -	if (offset != len) {
+>> -		struct list_head *list = &notes->src->source;
+>> -
+>> -		/* Discard all lines and fallback to objdump */
+>> -		while (!list_empty(list)) {
+>> -			dl = list_first_entry(list, struct disasm_line, al.node);
+>> -
+>> -			list_del_init(&dl->al.node);
+>> -			disasm_line__free(dl);
+>> -		}
+>> -		count = -1;
+>> -	}
+>> -
+>>  out:
+>>  	free(buf);
+>>  	return count < 0 ? count : 0;
+>>  
+>>  err:
+>> +	if (!list_empty(&notes->src->source)) {
+>> +		struct disasm_line *tmp;
+>> +
+>> +		/*
+>> +		 * It probably failed in the middle of the above loop.
+>> +		 * Release any resources it might add.
+>> +		 */
+>> +		list_for_each_entry_safe(dl, tmp, &notes->src->source, al.node) {
+>> +			list_del(&dl->al.node);
+>> +			disasm_line__free(dl);
+>> +		}
+>> +	}
+>>  	count = -1;
+>>  	goto out;
+>>  }
+>> -- 
+>> 2.25.1
+>>
+> .
+> 
 
