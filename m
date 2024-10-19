@@ -1,147 +1,185 @@
-Return-Path: <linux-kernel+bounces-372941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710439A4F91
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 18:05:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE27D9A4EFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ED641C213C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 16:05:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09CA91C2434B
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E0618BC0F;
-	Sat, 19 Oct 2024 16:05:34 +0000 (UTC)
-Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C18648CDD;
+	Sat, 19 Oct 2024 15:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AAcmgmQV"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776982F3E;
-	Sat, 19 Oct 2024 16:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECA458222
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 15:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729353934; cv=none; b=G0YlJ0TK9XSocRCiP4pbzAFQ9VFYXtZNeyP1xReOUkyMY4Jr7hcFUiYYlwSxZZmQxw5Bu2TelsMOuGJnH/14yFKHFh+xOBmCxfW8t/KnIHWYhXzNQ/NHA5JiKwlT/tkqo8BnBt+5WLkhIwd/OTDj7OX5NHqnjx826rkYKRNB9Bc=
+	t=1729350718; cv=none; b=IbvxPoXhP/8uDI9f+BxjUwFoLxlCmrdUynjm3bpKOHtjQf5Hbkt80qvFvCHuC+GHCYni0t5EEmzU73DPX3fVjvYVG6rjX5THkEAgkygV2XgxBZksPENngIpG8Ak7U+DgwY/18tlh4F2Kv8BJVPwOneCFCtEtcLy0pMq7sdO2Aow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729353934; c=relaxed/simple;
-	bh=D6GF2QLuPg+veL1kNJams82Ezzj9cCPIbLHUxuwnxJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Td8UFi0GnBNfNTQHtrC1G0LZWYzhbVgXYxmQiNruPFrD5WbjS5CmsdnLPu+ma6nKM5smzxxCh2Rj4Q2aucaUogfFR0OrxJ+E+7p20BT0z9TNdYGCJz3a16lkqYr8Kfcgu+aXVY5KwJTw6NM98Ua33l/V786n7Po6oN5/9wjNGmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=none smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=vps-ovh.mhejs.net
-Received: from MUA
-	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98)
-	(envelope-from <mhej@vps-ovh.mhejs.net>)
-	id 1t2B45-00000000lhD-1AsZ;
-	Sat, 19 Oct 2024 17:08:25 +0200
-Message-ID: <1ededf38-8f2a-49ef-8453-85399bf4fe12@maciej.szmigiero.name>
-Date: Sat, 19 Oct 2024 17:08:19 +0200
+	s=arc-20240116; t=1729350718; c=relaxed/simple;
+	bh=5W1Ycz1TWR5v0miD79I8aWCONwKzQgRpNE2SdDTapUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FYfabd/JdjputJTB31VFPEG1xd/arO3P0jZ3WEqlN+g1LKZmhXoIfcyCOT1q/1gVCFBLoJamCgt9IUCxevfN5XINRLSU1QBOCwYQMHPvrx0FyqcJptL3ywLz2tePtTTet0I8zC38RBHiPOm8NVgZ9rICst6c8VCZiM97tYq5TYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AAcmgmQV; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3069406e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 08:11:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729350714; x=1729955514; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Nb/Hai4/ZFPWWuvb61BWUzY8KGM98YH4lS2Tuv7vwwU=;
+        b=AAcmgmQV5UbMyosEODAkZ9g+m5AFlSdCw5z7l6sNxQJZwv4J7wRnws92AtuwetREdf
+         fYdGv1ujdcP0xpMOw/XHmWG8mlkutGknccxrcEDfIPAcuULlc5skxLk2TUuhwTiC19ej
+         Uqq/GP6hk9AJzqQQy2agl/7OqFjMsHp1/r7OBB7pYVM4bH2Nvb/NFowO6YlYVBS7uF3q
+         fdNPxH2Sgp/VSdRdayBglV1ptbAHmEh8M8m32QRd8PlzQmcKBBXL9cn8qgr/aoLyHQA+
+         06TXO2BLA9gvOkMPvxXnVv6+hGwPOuVQsisSPP29TmLgFZUg0W2RDJqJaBkKsv5sPCOw
+         keSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729350714; x=1729955514;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nb/Hai4/ZFPWWuvb61BWUzY8KGM98YH4lS2Tuv7vwwU=;
+        b=nAs9GBtC3DGIxAZ5In+eHkfJBRiRshDkEgZkIV1cJJQKKHS4L7mv4YnwWW/Xhck7SM
+         CWdY486/2CEwnfECfFmtUuiRCxNGadoUjOJddeoT1pIvCVK5XlzeA9MzTa/ViDdsITGG
+         04nGBMKzvM3CI95ping01TjHZqRRb4qSQsNyXDiSAkngAOQuqwxOaY81XBqXGYlLyTps
+         8y7oEGrTndLpYsAlAGjhN/5eDyELowt0HQQ7KMEGKj0ns8hfWt3v1QvacicLdOCRtycl
+         8DRvArSPpBUmc2oYbzJfC5D/sse8nAIozthNDb2/P311mB47B6f03F46xtoUb0GnCH1z
+         GQEw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdShEtCvLADiaofO4XdjGGv2YBnDIRs8UvqO3OG+MYzSp8BKSGsDmBz5dHvngH1t5QRWVT/wlOM3EfBec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkWupQMslhtbY83w/nf/DBtKAjQUbr99XUaOMdLOhq17R5fFRk
+	JTPRtVoFYHhT3vfcmhu09+S6UMC58fgAGD2LNTW1pW6pQhjswTI/rlkGTNCN5Mg=
+X-Google-Smtp-Source: AGHT+IEpTyjPk7DvbEShcUaeYyGDz9czzrSWTbsRLCmDec44UsUXygtFMkhSHXOFLJ9ciGGl8Iw11w==
+X-Received: by 2002:a05:6512:23a5:b0:539:f922:bd3a with SMTP id 2adb3069b0e04-53a0c7525aamr3223014e87.25.1729350713890;
+        Sat, 19 Oct 2024 08:11:53 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a15211a8fsm551733e87.261.2024.10.19.08.11.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Oct 2024 08:11:53 -0700 (PDT)
+Date: Sat, 19 Oct 2024 18:11:51 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Steffen Dirkwinkel <lists@steffen.cc>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	dri-devel@lists.freedesktop.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: xlnx: zynqmp_dpsub: also call
+ drm_helper_hpd_irq_event
+Message-ID: <yc43bbhfcc6nnrgxke2khkgcxxpt7mne2vmrggpkkc7gdwet4e@prpfb2wpgs66>
+References: <20240923074803.10306-1-lists@steffen.cc>
+ <20240924184335.GJ30551@pendragon.ideasonboard.com>
+ <e4626c1d3b28613d1d219c735bcd8525be0f0d9e.camel@dirkwinkel.cc>
+ <20240925163609.GD27666@pendragon.ideasonboard.com>
+ <6cea659387e14f0436105053416a42c4729923b3.camel@dirkwinkel.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Root filesystem read access for firmware load during hibernation
- image writing
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@ucw.cz>, linux-pm <linux-pm@vger.kernel.org>,
- linux-kernel@vger.kernel.org, Russ Weight <russ.weight@linux.dev>,
- Danilo Krummrich <dakr@redhat.com>, Ping-Ke Shih <pkshih@realtek.com>,
- linux-wireless <linux-wireless@vger.kernel.org>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>
-References: <3c95fb54-9cac-4b4f-8e1b-84ca041b57cb@maciej.szmigiero.name>
- <413b1e99-8cfe-4018-9ef3-2f3e21806bad@maciej.szmigiero.name>
- <ZwmwtZivKP8UDx1V@bombadil.infradead.org>
-Content-Language: en-US, pl-PL
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Autocrypt: addr=mail@maciej.szmigiero.name; keydata=
- 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
-Disposition-Notification-To: "Maciej S. Szmigiero"
- <mail@maciej.szmigiero.name>
-In-Reply-To: <ZwmwtZivKP8UDx1V@bombadil.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: mhej@vps-ovh.mhejs.net
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6cea659387e14f0436105053416a42c4729923b3.camel@dirkwinkel.cc>
 
-On 12.10.2024 01:11, Luis Chamberlain wrote:
-> On Sat, Oct 05, 2024 at 03:16:27PM +0200, Maciej S. Szmigiero wrote:
->> The issue below still happens on kernel version 6.11.1.
->>
->> Created a kernel bugzilla entry for it:
->> https://bugzilla.kernel.org/show_bug.cgi?id=219353
->>
->> It would be nice to at least know whether the filesystem read access supposed is
->> to be working normally at PMSG_THAW hibernation stage to assign the issue accordingly.
+On Wed, Oct 09, 2024 at 04:28:26PM +0200, Steffen Dirkwinkel wrote:
+> Hi Laurent,
 > 
-> No, there are races possible if you trigger IO to a fs before a suspend
-> is going on. If you have *more* IO ongoing, then you are likely to stall
-> suspend and not be able to recover.
+> 
+> On Wed, 2024-09-25 at 19:36 +0300, Laurent Pinchart wrote:
+> > Hi Steffen,
+> > 
+> > On Wed, Sep 25, 2024 at 09:54:18AM +0200, Steffen Dirkwinkel wrote:
+> > > On Tue, 2024-09-24 at 21:43 +0300, Laurent Pinchart wrote:
+> > > > On Mon, Sep 23, 2024 at 09:48:03AM +0200, lists@steffen.cc wrote:
+> > > > > From: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
+> > > > > 
+> > > > > With hpd going through the bridge as of commit eb2d64bfcc17
+> > > > > ("drm: xlnx: zynqmp_dpsub: Report HPD through the bridge")
+> > > > > we don't get hotplug events in userspace on zynqmp hardware.
+> > > > > Also sending hotplug events with drm_helper_hpd_irq_event
+> > > > > works.
+> > > > 
+> > > > Why does the driver need to call both drm_helper_hpd_irq_event()
+> > > > and
+> > > > drm_bridge_hpd_notify() ? The latter should end up calling
+> > > > drm_kms_helper_connector_hotplug_event(), which is the same
+> > > > function
+> > > > that drm_helper_hpd_irq_event() calls.
+> > > 
+> > > I don't know why we need drm_helper_hpd_irq_event.
+> > > I'll try to trace what happens on hotplug.
+> > 
+> > Thank you. Let's try to find the best solution based on your
+> > findings.
+> 
+> There's just nothing registering for hpd with
+> "drm_bridge_connector_enable_hpd" or "drm_bridge_hpd_enable". I'm not
+> sure what the correct way to implement this is. In
+> "drivers/gpu/drm/bridge/ti-tfp410.c" the driver registers for the
+> callback and calls "drm_helper_hpd_irq_event" in the callback. I guess
+> we could also do that, but then we might as well call
+> drm_helper_hpd_irq_event directly? Some other drivers just call both
+> like I did here. (drivers/gpu/drm/mediatek/mtk_hdmi.c for example)
+> For "drivers/gpu/drm/msm/hdmi/hdmi_bridge.c" I also can't find the hpd
+> enable call and it just calls drm_bridge_hpd_notify.
 
-That's more or less the same answer as Pavel wrote 2 weeks ago,
-but thanks for confirming it and providing more details on the subject.
+The drm_bridge_connector handles enabling it for you when the driver
+calls drm_kms_helper_poll_init() / drm_kms_helper_poll_enable(). It
+seems zynqmp_kms calls drm_kms_helper_poll_init() too early, before
+creating DP chain, so the HPD doesn't get enabled.
 
-Since it essentially makes this an rtw88/btrtl specific issue (and not
-a generic PM/hibernation one) I have updated and reassigned the
-aforementioned kernel bug accordingly.
+> 
+> > 
+> > > > > Fixes: eb2d64bfcc17 ("drm: xlnx: zynqmp_dpsub: Report HPD
+> > > > > through
+> > > > > the bridge")
+> > > > > Signed-off-by: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/xlnx/zynqmp_dp.c | 4 ++++
+> > > > >  1 file changed, 4 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> > > > > b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> > > > > index 1846c4971fd8..cb823540a412 100644
+> > > > > --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> > > > > +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> > > > > @@ -17,6 +17,7 @@
+> > > > >  #include <drm/drm_fourcc.h>
+> > > > >  #include <drm/drm_modes.h>
+> > > > >  #include <drm/drm_of.h>
+> > > > > +#include <drm/drm_probe_helper.h>
+> > > > >  
+> > > > >  #include <linux/clk.h>
+> > > > >  #include <linux/delay.h>
+> > > > > @@ -1614,6 +1615,9 @@ static void
+> > > > > zynqmp_dp_hpd_work_func(struct
+> > > > > work_struct *work)
+> > > > >  					    hpd_work.work);
+> > > > >  	enum drm_connector_status status;
+> > > > >  
+> > > > > +	if (dp->bridge.dev)
+> > > > > +		drm_helper_hpd_irq_event(dp->bridge.dev);
+> > > > > +
+> > > > >  	status = zynqmp_dp_bridge_detect(&dp->bridge);
+> > > > >  	drm_bridge_hpd_notify(&dp->bridge, status);
+> > > > >  }
+> > 
+> 
 
-As it is just my personal system that is affected by this hibernation
-issue I'm content with just patching its kernel with a simple
-workaround [1].
-WiFi/BT NIC is hardly useful for hibernation snapshot writing anyway.
-
-But of course if someone has the bandwidth to get a clean fix merged
-then it would be great to have this fixed upstream for everyone.
-
->    Luis
-
-Thanks,
-Maciej
-
-[1]: https://github.com/maciejsszmigiero/linux/commit/f6188a940324b4bc8f51dcb1a9ae1a489e57bd1d
-
+-- 
+With best wishes
+Dmitry
 
