@@ -1,100 +1,157 @@
-Return-Path: <linux-kernel+bounces-372912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C175F9A4F1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:32:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354759A4F20
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 17:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794A52865D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F50A1F2704A
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 15:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B6313C8E2;
-	Sat, 19 Oct 2024 15:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFD4188CB5;
+	Sat, 19 Oct 2024 15:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYkm51N2"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RSxock2j"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DE98472;
-	Sat, 19 Oct 2024 15:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC0F2772A
+	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 15:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729351944; cv=none; b=rEU54tV++pfk4AIKw3YEWBKbr5YtjMy+wnzh6D97onG/AyO3TG9lku5BkzFqY6jwtcnjhXRxHHcPxZoA6n1W1c1OqxrDJcsNQpgPdAawVtwS/H9jO61y7aEgHG3O5BpevyFuN4af4/Mj1O12SDhDN5ZOWZPTKIJRxp8HK7+aEP4=
+	t=1729352063; cv=none; b=j0mOWnIbdNVjH3qftAcpdrP+BHdskM2UZ8wMx9a3kqX3POZJwjDFdIiSYw//eMXOpUKUm/9hUy4jvUxxVwL6S1Op1PAvr6N1gdmv3jMD+ZfdJPzvtCAt4yHVenKrRf7HwIc465bNG5V7fDg9lMC/yEGO0+IQQG2VajQQ2a8W6G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729351944; c=relaxed/simple;
-	bh=tMbXRc4YDc45MT1d2qKMPKKlX3fx86b90pw720KiDfI=;
+	s=arc-20240116; t=1729352063; c=relaxed/simple;
+	bh=2VEf0sZkKNyJqV8bPANqoeIKJLjrteDBJkPH+wW3P7Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XUGSnK5+pau/TjjUYf0TwJr0O5s6VWj8pk96Wk9ixm6VmuPg2Ti9xsDpaiWDAe7jPOOypTuvOeFHUJNRxVXemWv0LO2ubEQnWxpOGph+y0TzSS80I+MD0Sdk7ukLAkeRfwIp2Xpcm488lBf3djQ+aOw8T0dIWS8bcMS2hTlL30g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JYkm51N2; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e681bc315so2042233b3a.0;
-        Sat, 19 Oct 2024 08:32:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=NU13E4SA8Hi4rPLXSwbo4zh6ZLXfPCc+cY2q1lRprlfF3j2Ojg7dXAQd6fb0Ecu4dv0twNi1pwfN/VTpaStW9sNNu4ydtq2u+UaatuyAq3YAAT1wYvaoASPNQan5V03DeI6a5o6W6Dj8otObrcGrWeuranorw81jP2urTDYS9eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RSxock2j; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e2908e8d45eso2788919276.2
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 08:34:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729351942; x=1729956742; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1729352059; x=1729956859; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tMbXRc4YDc45MT1d2qKMPKKlX3fx86b90pw720KiDfI=;
-        b=JYkm51N23CZq+6QS9vEVq92VR/egxaVNxF0xb/qtGiyTuDkmt1YLcqVGHyKb5AAzok
-         PSEuNwcKT6+oTvoEecV56nK4DI1pqDf8iVDxPz+voNq0XDSwmfjb9rXFr5oSLjnime2y
-         QVw4hhKnSiYBVT9YwYjNE1vttUzc76Jl8WPFRYqBVzKkK7wdGiqewe7Zvwzwu+jl1r6O
-         oyjqQ/KgZR5scQooDwaXv4kXDNsK/JgD/PXqWOkkHRrWMJiIpEYNSTm+XCGeYlJVVqK6
-         KqwlEYYtKzQinzcbvRb0xYFWgW7ZKR/9ApHK1fMBoad0NBjQNh6U7Pdv9XyINPKIsBQN
-         E7WA==
+        bh=dt9BnWbKgBvIPn8Egk93F8g/4UamVtbhqjDHYRc0VbU=;
+        b=RSxock2j4eFSMhlPud2PzMLhYJac3rWyeEDfgpn6nEyOad4weShuW0oPInoz9hKbG8
+         Ww7E5MQV80gkmZirtXUcT3sGyi4ZKtp275tH4BsfKCP0Laepk+0gV2WD25h77PzZ8Ck9
+         Qb61d6X1prsbHCW6kW+Kuj5dxj5OA7Dl9h3HosI/w+TnOjM+mzsqsQapyJJZaF6mc4Ka
+         fd48+oheIE9sLzbV5e0BiUExUP7Z0PLusAZbv8b6lLFLWYxjO/1IQ04uuoPvgTKjTijU
+         Ld9RDoyrTGzzCyxH0fkWmrCIFrz1YWyuBfy66q1laX3QGf9P16At8QHYI36hm66E3Og4
+         8+iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729351942; x=1729956742;
+        d=1e100.net; s=20230601; t=1729352059; x=1729956859;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tMbXRc4YDc45MT1d2qKMPKKlX3fx86b90pw720KiDfI=;
-        b=IeMElZdPF+mOUV+P8Ny0Y0rqfd78I678T8BADbokmVjLldu0JLmues6zIHVuCO/WoJ
-         zlDPX7sjNvNxY7gRsVrxxJuI9Pwb41X9iSsD/OKsNP1/qMTmXz1hbGzwdThgPaiJaRny
-         USJxrvsmu0klFhl+CmCf5yomKhLv1BK1EVGS/5CEA6hfMCV3F2voLRAuo2rsA/9X47Be
-         FUfuO6dtXIMb72OMmaEyg8T1EJUsmR1prSnaQv11seMeU9LYe2cql6lVkhvp298nntgg
-         M+LIfHKxPfrxXMNRumGbv/lkFEmjsIsRLK9PcWCBwz7GfL7FT7xJkNffhncAPFDpLp+8
-         1Vcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUn7NNEnm5vQN389MsZeckeAKZoMTh5E7nTftzSXOSHsmKCatXhiPUwi0GvPogWZMb++k9KlVWbl3n/VEwR6wY=@vger.kernel.org, AJvYcCXlgPwjrMPsXcrk9LSDQ6eiaW4rZ061DDQ9/BbvALG4YZwlmxBvSOd3PcvVTrA8WzH3KXdbUnfffqWqh7E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6v4ayLbGWfc4urG3YZN3jn/lbiul8jXzBDOXPbL1d/+PkEXuO
-	vzokL5fsFo25RqEuwFhopUe15jWoWmGfF4+kLwltM6XOdeYAPc3NAsn6bj7jcjy4YvVemzugzBo
-	3FmAcVemoWmfk/1Q0Vsub3Z3cEg==
-X-Google-Smtp-Source: AGHT+IFJna+hBKXImW8Ukhf2hjuSYeoPJcv9SN4RAswAP5PzwhWWEEM29I8Tn+A3FSx/U4+sO1kd59bFe5ksAV0udi4=
-X-Received: by 2002:a05:6a00:2da2:b0:71e:6a99:4732 with SMTP id
- d2e1a72fcca58-71ea4255c3emr7246225b3a.11.1729351942310; Sat, 19 Oct 2024
- 08:32:22 -0700 (PDT)
+        bh=dt9BnWbKgBvIPn8Egk93F8g/4UamVtbhqjDHYRc0VbU=;
+        b=F7mtnEK8xYvHgHFiibzNeIZS+2n0bAaWKHiJhawwPRqdBeJ+dwdsq/PY9GMiD2XFL4
+         0WqbPHyJh32HcQPkQT/BjkCFb/oPR4gArOraJWbOCL4ZQsiBOoKZID06Oh/P0d8om1BM
+         NiVatgPmXyO8VdFBQzSBKp0L2/W62MmehBTU2AlZWk8piIbXfkyjQzSDsR8RncYg5dT3
+         SKrpiLxl17TA/0UX7h7rI02ZA6gBAAiZThzsNAzmcAkTW+1/8u19KFkGiL4a/PMA0oy/
+         +HLs2lEPjfqiPod+3C65ggTRH/V7AOXKUlALS1Yd12iPUtIaguRssHIX9Sdj8weo7G9L
+         xoxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGrbBAYNZNXnggqpbaUmklsvBknX/gcoMTWanTZCNUd0tz94xFHWhEL/Y48hvnNINNjrbhTLDt84oZmcY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOh4cNoqzLxJ9/dagMPd7ZOr6EkiuO8bkP+Uv6NQ5Vj1R+C3Ug
+	uR8rGBKSdNpGtGMrcAh6DqzWom6k3+blR81T0w5Z4CDWPk0gIrc7335pX1xN3uOzEfShHIVXl1W
+	w3Jl/uheUAOvMU9NzVrWNKOFBwMuamo2X105W
+X-Google-Smtp-Source: AGHT+IGtdGqzYcDLxnIpfjuAVP5vxoGEl/nSImRtgtKWi9QsQ/qNJR8p9BgodGD1xEymrlwrAaFBjtak2CSZfpvFhTo=
+X-Received: by 2002:a05:690c:f91:b0:6de:c0e:20ef with SMTP id
+ 00721157ae682-6e5bfbdbe14mr53079707b3.7.1729352059439; Sat, 19 Oct 2024
+ 08:34:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801202359.794035-1-frut3k7@gmail.com> <20241009065051.51143-1-frut3k7@gmail.com>
- <b58b5b2e-bf9f-480c-810b-2cef29aab82c@quicinc.com> <CAKEyCaDUfn4jtCdTt9JJ-Qe+CCudORPwcjj5i5=G28ANc+eCRg@mail.gmail.com>
- <87ed4dr5pj.fsf@kernel.org>
-In-Reply-To: <87ed4dr5pj.fsf@kernel.org>
-From: =?UTF-8?Q?Pawe=C5=82_Owoc?= <frut3k7@gmail.com>
-Date: Sat, 19 Oct 2024 17:32:10 +0200
-Message-ID: <CAKEyCaD-1GO1NL-=1E92BE9=XKa2PymOAY14vMmtwYGLsPjeUg@mail.gmail.com>
-Subject: Re: [PATCH v2] wifi: ath10k: add channel 177 for 5 GHz band
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, Jeff Johnson <jjohnson@kernel.org>, 
-	linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sat, 19 Oct 2024 11:34:08 -0400
+Message-ID: <CAHC9VhQP7gBa4AV-Hbh4Bq4fRU6toRmjccv52dGoU-s+MqsmfQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Split critical region in remap_file_pages() and
+ invoke LSMs in between
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	Roberto Sassu <roberto.sassu@huaweicloud.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz, 
+	jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	ebpqwerty472123@gmail.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
+	syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com, 
+	Roberto Sassu <roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 18, 2024 at 1:49=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wrote=
-:
+On Fri, Oct 18, 2024 at 12:15=E2=80=AFPM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 >
-> I wonder how this works with QCA6174, unfortunately I'm not able to test
-> that.
+> Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
+> remap_file_pages()") fixed a security issue, it added an LSM check when
+> trying to remap file pages, so that LSMs have the opportunity to evaluate
+> such action like for other memory operations such as mmap() and mprotect(=
+).
 >
-I only tested on QCA988X, QCA9984 and IPQ4019 as clients.
-> --
-> https://patchwork.kernel.org/project/linux-wireless/list/
+> However, that commit called security_mmap_file() inside the mmap_lock loc=
+k,
+> while the other calls do it before taking the lock, after commit
+> 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
 >
-> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpa=
-tches
+> This caused lock inversion issue with IMA which was taking the mmap_lock
+> and i_mutex lock in the opposite way when the remap_file_pages() system
+> call was called.
+>
+> Solve the issue by splitting the critical region in remap_file_pages() in
+> two regions: the first takes a read lock of mmap_lock, retrieves the VMA
+> and the file descriptor associated, and calculates the 'prot' and 'flags'
+> variables; the second takes a write lock on mmap_lock, checks that the VM=
+A
+> flags and the VMA file descriptor are the same as the ones obtained in th=
+e
+> first critical region (otherwise the system call fails), and calls
+> do_mmap().
+>
+> In between, after releasing the read lock and before taking the write loc=
+k,
+> call security_mmap_file(), and solve the lock inversion issue.
+>
+> Cc: stable@vger.kernel.org # v6.12-rcx
+> Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap=
+_file_pages()")
+> Reported-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.4=
+6d20.0036.GAE@google.com/
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Jann Horn <jannh@google.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Tested-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Tested-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> ---
+>  mm/mmap.c | 69 +++++++++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 52 insertions(+), 17 deletions(-)
+
+Thanks for working on this Roberto, Kirill, and everyone else who had
+a hand in reviewing and testing.
+
+Reviewed-by: Paul Moore <paul@paul-moore.com>
+
+Andrew, I see you're pulling this into the MM/hotfixes-unstable
+branch, do you also plan to send this up to Linus soon/next-week?  If
+so, great, if not let me know and I can send it up via the LSM tree.
+
+We need to get clarity around Roberto's sign-off, but I think that is
+more of an administrative mistake rather than an intentional omission
+:)
+
+--=20
+paul-moore.com
 
