@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-372731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-372728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 403419A4C6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:57:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8D39A4C65
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 10:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E261B2276C
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:56:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 235B31C212BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 08:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F2A1DED7E;
-	Sat, 19 Oct 2024 08:56:38 +0000 (UTC)
-Received: from zg8tmtu5ljy1ljeznc42.icoremail.net (zg8tmtu5ljy1ljeznc42.icoremail.net [159.65.134.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD841DE888;
-	Sat, 19 Oct 2024 08:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.65.134.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074841DE8AE;
+	Sat, 19 Oct 2024 08:56:24 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7545418C34D;
+	Sat, 19 Oct 2024 08:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729328197; cv=none; b=JZJklHK1FQhAbbRspdvC9OXGv9yLsEaqvggCJ2N7Jg5b6p1KnwU4jDkqPMERY9UYQFbMr95vlAdeOdDvKVO4gHPGbAfAtOdkRXG4s93Gj+xGXoidCVOont49BxjyinUqRCugUeqwSvm8wKaKalO8qi9FSO69KTPftPK4czS9xkQ=
+	t=1729328183; cv=none; b=KNm8hd2GTn5INOcFlaPgVvaw6yI4x5Yh7CKS7k7x9lKAv0bP4mdGuODbMAuP6y0kI1yKGmmPmLJMXrYhZOuilubU4vCffzEIeY03ZwW1STeg8SYf2tTYZ7+Vz7quU0Mzxt8iMszXDnQaz+BHydIH1KttB9tZaktJKoRGg71DqWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729328197; c=relaxed/simple;
-	bh=N/wSuX5vcPIyhrsFlGIFS+1AEuqMTVfVFTPVwZDTa1c=;
+	s=arc-20240116; t=1729328183; c=relaxed/simple;
+	bh=+f5mpupx+uPqvl4kzVJHmOmdb5sLaDqTOwYifxQYQiw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U2xmhfHEqGj/QkujXaoDJfBmuc6V78fwc2sqUM7cKKM3vwcc69nCB4m0hVPWwPLbkqReyGTY8yRMQFCu2xK93oSxxBP5kfNbPxMPfG/Fxs6fkaVecdGsxKkxwZyjWBv0EM+6JT6s/zV6wYbYmJ0ZVmMv0/uEaLavZMpq62FYA3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=159.65.134.6
+	 MIME-Version:Content-Type; b=oVIXTuRwZayOuI6GYMN+7CjztkBs3PYzbivbfMOHArXUoti6xUUXXyfBjsBZ6yuDEc4Zd5wjYMRdrxF+bijvGDJX2wtgkWims/gXEyp6PWf2UaqBl0zSmHVUcAGzlIgLE/Ys/40jxv8aKUwA5zRmWfsv0bFgfMZldGzoK8/2dDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.21.223
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
 Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app1 (Coremail) with SMTP id HgEQrADHzn4VdBNnW44fCA--.54170S2;
-	Sat, 19 Oct 2024 16:55:49 +0800 (CST)
+	by app2 (Coremail) with SMTP id HwEQrAAnL88ddBNn8VAaAQ--.6642S2;
+	Sat, 19 Oct 2024 16:55:57 +0800 (CST)
 Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wAH8UIMdBNnstxuAA--.62062S3;
-	Sat, 19 Oct 2024 16:55:48 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____wAH8UIMdBNnstxuAA--.62062S4;
+	Sat, 19 Oct 2024 16:55:56 +0800 (CST)
 From: Dongliang Mu <dzm91@hust.edu.cn>
 To: si.yanteng@linux.dev,
 	alexs@kernel.org,
@@ -41,9 +41,9 @@ To: si.yanteng@linux.dev,
 Cc: hust-os-kernel-patches@googlegroups.com,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] docs/zh_CN: update the translation of mm/active_mm.rst
-Date: Sat, 19 Oct 2024 16:54:52 +0800
-Message-ID: <985f62236dad7c9446272d94bffc20eb8f45ae4b.1729327831.git.dzm91@hust.edu.cn>
+Subject: [PATCH 3/6] docs/zh_CN: update the translation of mm/admon/faq.rst
+Date: Sat, 19 Oct 2024 16:54:53 +0800
+Message-ID: <20e7e17b18542ecbf924234ed40438b95345e514.1729327831.git.dzm91@hust.edu.cn>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1729327831.git.dzm91@hust.edu.cn>
 References: <cover.1729327831.git.dzm91@hust.edu.cn>
@@ -55,11 +55,11 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrADHzn4VdBNnW44fCA--.54170S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZrWfCF47AFW7Gr18Xr17Awb_yoW8GFWUpF
-	1UKrWfK3WIyw13KrWIgw4DW3WrGFsxGa15Kr1UXw1FqF15Ca1vvayak3s8KF97X3yfZFWU
-	C3yfurW3GFy5Aw7anT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:HwEQrAAnL88ddBNn8VAaAQ--.6642S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFWrCw4kXF4kGF45CFyrXrb_yoW8tr1Dp3
+	sakr97Ka48tFyUXr1UGryUZF18JFW7GFW3Jry8J3WDXrsYy3y8Kw4jyry8JFy3Wa48AF98
+	Jr18CryrZFy2vrUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUQab7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
 	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
 	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
@@ -69,45 +69,54 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7ZrWfCF47AFW7Gr18Xr17Awb_yoW8GFWUpF
 	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
 	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMx
 	AIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+	bVWUJVW8JwCFI7km07C267AKxVW8ZVWrXwC20s026c02F40E14v26r1j6r18MI8I3I0E74
 	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04
+	I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04
 	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7Cj
 	xVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jfvtZUUUUU=
 X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Update to commit 88e3009b5283 ("lazy tlb: allow lazy tlb
-mm refcounting to be configurable")
+Update to commit c6bb975aa60b ("Docs/mm/damon/faq: remove old questions")
 
 scripts/checktransupdate.py reports:
 
-Documentation/translations/zh_CN/mm/active_mm.rst
-commit 88e3009b5283 ("lazy tlb: allow lazy tlb mm refcounting
-to be configurable")
-commit ee86588960e2 ("docs/mm: remove useless markup")
-2 commits needs resolving in total
+Documentation/translations/zh_CN/mm/damon/faq.rst
+commit c6bb975aa60b ("Docs/mm/damon/faq: remove old questions")
+1 commits needs resolving in total
 
 Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 ---
- Documentation/translations/zh_CN/mm/active_mm.rst | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../translations/zh_CN/mm/damon/faq.rst         | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-diff --git a/Documentation/translations/zh_CN/mm/active_mm.rst b/Documentation/translations/zh_CN/mm/active_mm.rst
-index c2816f523bd7..b3352668c4c8 100644
---- a/Documentation/translations/zh_CN/mm/active_mm.rst
-+++ b/Documentation/translations/zh_CN/mm/active_mm.rst
-@@ -13,6 +13,11 @@
- Active MM
- =========
+diff --git a/Documentation/translations/zh_CN/mm/damon/faq.rst b/Documentation/translations/zh_CN/mm/damon/faq.rst
+index de4be417494a..234d63f4f072 100644
+--- a/Documentation/translations/zh_CN/mm/damon/faq.rst
++++ b/Documentation/translations/zh_CN/mm/damon/faq.rst
+@@ -13,23 +13,6 @@
+ 常见问题
+ ========
  
-+注意，在配置了 CONFIG_MMU_LAZY_TLB_REFCOUNT=n 的内核中，mm_count 引用计数
-+可能不再包括“懒惰”用户（运行任务中 ->active_mm == mm && ->mm == NULL）。
-+获取和释放这些懒惰引用必须使用 mmgrab_lazy_tlb() 和 mmdrop_lazy_tlb() 这
-+两个辅助函数，它们抽象了这个配置选项。
-+
- 这是一封linux之父回复开发者的一封邮件，所以翻译时我尽量保持邮件格式的完整。
+-为什么是一个新的子系统，而不是扩展perf或其他用户空间工具？
+-==========================================================
+-
+-首先，因为它需要尽可能的轻量级，以便可以在线使用，所以应该避免任何不必要的开销，如内核-用户
+-空间的上下文切换成本。第二，DAMON的目标是被包括内核在内的其他程序所使用。因此，对特定工具
+-（如perf）的依赖性是不可取的。这就是DAMON在内核空间实现的两个最大的原因。
+-
+-
+-“闲置页面跟踪” 或 “perf mem” 可以替代DAMON吗？
+-==============================================
+-
+-闲置页跟踪是物理地址空间访问检查的一个低层次的原始方法。“perf mem”也是类似的，尽管它可以
+-使用采样来减少开销。另一方面，DAMON是一个更高层次的框架，用于监控各种地址空间。它专注于内
+-存管理优化，并提供复杂的精度/开销处理机制。因此，“空闲页面跟踪” 和 “perf mem” 可以提供
+-DAMON输出的一个子集，但不能替代DAMON。
+-
+-
+ DAMON是否只支持虚拟内存？
+ =========================
  
- ::
 -- 
 2.43.0
 
