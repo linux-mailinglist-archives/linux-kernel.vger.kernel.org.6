@@ -1,106 +1,127 @@
-Return-Path: <linux-kernel+bounces-373504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E689A5781
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 989CC9A5776
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1497281D0B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 23:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B3C528147D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 23:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD001465BB;
-	Sun, 20 Oct 2024 23:42:40 +0000 (UTC)
-Received: from sxb1plsmtpa01-05.prod.sxb1.secureserver.net (sxb1plsmtpa01-05.prod.sxb1.secureserver.net [188.121.53.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21142197A67;
+	Sun, 20 Oct 2024 23:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TmfcKBSZ"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6AF20E31D
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 23:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261E7440C
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 23:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729467760; cv=none; b=Aa5W8Au6Sb+8fO9DWpW/6FzVtunQqlCI9RJHxnwCMGpRIZiPgo+4+Go8cSpcAsBiogFRXDqsfVuT8dINg692hFpiTWum8IbrNe327+BdzAtepRWSV222SudKkbCbNYpn9cwn84TTqkORy82WukZ7HN2chZlXQNechVYjT4hCe8s=
+	t=1729466591; cv=none; b=kk17R03aaj/dpMVwRaFCIRtntmUVrqD6oSIYGClhj/r7RoamlwqiQwaiDTmpTXngYZDNSbm8ZSuiuGzbdWLKHO0Qcu+bHxi/dpQ3R06Q2jcgOA9YFu7a+idWevd5TGEJ/3e7A/CxNSop8ULbxjtjoIziHEPJ6m3ChgN4iR+cT4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729467760; c=relaxed/simple;
-	bh=QJaCZm8L71fNVsHth8YmRmDIVISDn+gE4ATzTQbpLs4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ekk5ZG+OzyLiTFmCDXtUX16r6gmIPogpWqtDcjwEqQZmsVo3lWXA8yq3emRrq+a31sqMhyp8KKbUkIZj+oGJGllaP4ju1WSCmcdf/LAUXevfoWQ3rXas/ij93RwWO9pDw8y4e5Q+wnoxhNTCb/AiS2P09R1Q3/kHLIQ4hm/OwvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from phoenix.fritz.box ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPA
-	id 2fGRteujmhxWc2fGit1UlM; Sun, 20 Oct 2024 16:23:29 -0700
-X-CMAE-Analysis: v=2.4 cv=BaET0at2 c=1 sm=1 tr=0 ts=671590f1
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17 a=FXvPX3liAAAA:8
- a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=GeTWYS56exIqEZPe-6AA:9
- a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-From: Phillip Lougher <phillip@squashfs.org.uk>
-To: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org
-Cc: Phillip Lougher <phillip@squashfs.org.uk>,
-	"Lai, Yi" <yi1.lai@linux.intel.com>
-Subject: [PATCH] Squashfs: Fix variable overflow in squashfs_readpage_block
-Date: Mon, 21 Oct 2024 00:22:00 +0100
-Message-Id: <20241020232200.837231-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1729466591; c=relaxed/simple;
+	bh=T7uRNOqXPpDJ66mNu6+5SQJLlQtpLfm/G3nL3qd0+Gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qIfpxXIPs5PY2RmJ/YrICW7vORRtB8S1/ObmMkoxFjWJ/FZLqlVg8T2WlH0/LJUvYsmWo2xy/kB6vIgIHVHsC7xpvmUYXdpAAJz01/b2lbSsYR5biJkvfvPkzZGxBlyFMBD9r/YmSFtZtuAxueMxcvw4iCVQxXJn+I81QW6r+2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TmfcKBSZ; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 20 Oct 2024 19:23:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729466586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DYwUO71iJxjfdmXJVtQz+BNTm0SpwTgVf3GOfBoEnXs=;
+	b=TmfcKBSZOHm2BmMu3epYRnKjwnqle3S010yNgt/DqvW9ovSOhBqxVOjvF7tQetfeD402PX
+	HeR9kBsG7V+fKNZywlruKnfchafGlqphdDqMqVcq2PUTZZQRJ9lCMZfBHDcyQ3yu6OJgVb
+	kVnYHS/+24FiHk7PfY21Fodi3l8VaXs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
+Subject: Re: [PATCH v1] bcachefs: set freespace inited to false if
+ trans_mark_dev_sbs fails
+Message-ID: <b22xc632ptvw3jtkyp5yqj6lxpnbdwlmqxekafuunjxxsaup7n@jrybxzaqj4li>
+References: <20241020170708.67044-2-pZ010001011111@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfOiFdZ96ERph1ovwAJYzsy6got+owpfo+raPw0lQI/d1cTSqKntn27SeNJEw64a5pw9yO6jcJLD/kEW3KCoF9PHlh63c5hVzOJh+BnP+lCfR8Wp3JTTQ
- A2Bk6wJY4kTQY2GMzftYhl7lYjpAnl9FCzh0+clNhGJnEfO8p8Vxj3rcM5FV7kWHtLo7qSvcaZfiww7U3AeHSFHWL6cwR5NpNPJ6M+DNsn3tBOK19ThBSXsu
- RGHacMNTmAYAJh71Frv8CN++uv2AdO8cg85gL6kbtSRYr0Gus0EtZDJzgqv+SSzjs2m/bxptEEGqZYrie33H7w==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241020170708.67044-2-pZ010001011111@proton.me>
+X-Migadu-Flow: FLOW_OUT
 
-Syzbot reports a slab out of bounds access in squashfs_readpage_block().
+On Sun, Oct 20, 2024 at 05:08:45PM +0000, Piotr Zalewski wrote:
+> In bch2_fs_initialize if bch2_trans_mark_dev_sbs fails, set freespace
+> initialized bits to 0 in member's flags and update member cached version
+> for each device. bch2_trans_mark_dev_sbs fails just before freespace
+> init which can left freespace init bits set to true erroneously which later
+> can indirectly trigger BUG condition in bch2_bucket_alloc_freelist[1].
 
-This is caused by an attempt to read page index 0x2000000000.  This value
-(start_index) is stored in an integer loop variable which overflows
-producing a value of 0.  This causes a loop which iterates over pages
-start_index -> end_index to iterate over 0 -> end_index, which ultimately
-causes an out of bounds page array access.
+Err...
 
-Fix by changing variable to a loff_t, and rename to index to
-make it clearer it is a page index, and not a loop count.
+freespace_initialized shouldn't even be set at this point, it's set
+later, in bch2_fs_freespace_init(), naturally.
 
-Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
-Reported-by: "Lai, Yi" <yi1.lai@linux.intel.com>
-Closes: https://lore.kernel.org/all/ZwzcnCAosIPqQ9Ie@ly-workstation/
----
- fs/squashfs/file_direct.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+So - syzbot is feeding us garbage, heh. BCH_MEMBER_FREESPACE_INITIALIZED
+should be false on a non initialized filesystem.
 
-diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
-index 22251743fadf..d19d4db74af8 100644
---- a/fs/squashfs/file_direct.c
-+++ b/fs/squashfs/file_direct.c
-@@ -30,7 +30,8 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
- 	int mask = (1 << (msblk->block_log - PAGE_SHIFT)) - 1;
- 	loff_t start_index = folio->index & ~mask;
- 	loff_t end_index = start_index | mask;
--	int i, n, pages, bytes, res = -ENOMEM;
-+	loff_t index;
-+	int i, pages, bytes, res = -ENOMEM;
- 	struct page **page, *last_page;
- 	struct squashfs_page_actor *actor;
- 	void *pageaddr;
-@@ -45,9 +46,9 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
- 		return res;
- 
- 	/* Try to grab all the pages covered by the Squashfs block */
--	for (i = 0, n = start_index; n <= end_index; n++) {
--		page[i] = (n == folio->index) ? target_page :
--			grab_cache_page_nowait(target_page->mapping, n);
-+	for (i = 0, index = start_index; index <= end_index; index++) {
-+		page[i] = (index == folio->index) ? target_page :
-+			grab_cache_page_nowait(target_page->mapping, index);
- 
- 		if (page[i] == NULL)
- 			continue;
--- 
-2.39.2
+So we actually should be unconditially clearing it (sanitizing our
+input) at the top of bch2_fs_initialize().
 
+> 
+> [1] https://syzkaller.appspot.com/bug?extid=2b6a17991a6af64f9489
+> 
+> Reported-by: syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=2b6a17991a6af64f9489
+> Fixes: bbe682c76789 ("bcachefs: Ensure devices are always correctly initialized")
+> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+> ---
+>  fs/bcachefs/recovery.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
+> index 67bba156cce9..bcec79122f65 100644
+> --- a/fs/bcachefs/recovery.c
+> +++ b/fs/bcachefs/recovery.c
+> @@ -1031,6 +1031,7 @@ int bch2_fs_initialize(struct bch_fs *c)
+>  	struct bkey_inode_buf packed_inode;
+>  	struct qstr lostfound = QSTR("lost+found");
+>  	int ret;
+> +	struct bch_member *m;
+>  
+>  	bch_notice(c, "initializing new filesystem");
+>  	set_bit(BCH_FS_new_fs, &c->flags);
+> @@ -1086,8 +1087,17 @@ int bch2_fs_initialize(struct bch_fs *c)
+>  	bch_verbose(c, "marking superblocks");
+>  	ret = bch2_trans_mark_dev_sbs(c);
+>  	bch_err_msg(c, ret, "marking superblocks");
+> -	if (ret)
+> +	if (ret) {
+> +		mutex_lock(&c->sb_lock);
+> +		for_each_member_device(c, ca) {
+> +			m = bch2_members_v2_get_mut(c->disk_sb.sb, ca->dev_idx);
+> +			SET_BCH_MEMBER_FREESPACE_INITIALIZED(m, false);
+> +			ca->mi = bch2_mi_to_cpu(m);
+> +		}
+> +		mutex_unlock(&c->sb_lock);
+> +
+>  		goto err;
+> +	}
+>  
+>  	for_each_online_member(c, ca)
+>  		ca->new_fs_bucket_idx = 0;
+> -- 
+> 2.47.0
+> 
+> 
 
