@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-373201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5919A53B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:22:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9296B9A53B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4863728332C
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:22:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C29D61C20D2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7F6191F81;
-	Sun, 20 Oct 2024 11:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CEA183CA6;
+	Sun, 20 Oct 2024 11:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQ8o3+Cb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="J8ufdvJy"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB424C7D;
-	Sun, 20 Oct 2024 11:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063664C7D
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 11:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729423341; cv=none; b=mmgWayWYZLGE8kXEdbasfSD5ok0YozLRE1OKFYYTU8BS+rx05AXKUGglfdtKCTGYnBS2GWv4VokiivVAdyTV2JpYVmYXHrM9nRxbBoT/g9YRWwN/fhkn9BvQoygo35exaC0tc5sQUdhLasvQHtOF14bNzgBRhEOmtRkLqaEwAeg=
+	t=1729423411; cv=none; b=WN9X4gBAhn7EznlY9Ud4EugJlIJZFCpJ5pxmkRimYSlhenceu5jwtFJd7QMEonpEEFZSzxrxxCpFMxvWoAPjdRKQ9IvEdEWkUIvI0aqhVvGiH6Bx8SLB10Y4pkx+DGpyLVbfFUW//Ff8rzl1cr4md+ZBSakUZZzTKxCwVepU5i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729423341; c=relaxed/simple;
-	bh=+fygpZbqdJBNFeshez2EXUwOdxXSX4xJ4QEaqrws03g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HwgMM0jx8knA+kyJXC6b6H8WAbFeYtWu9dvZ29EcT+VJKJX4a6yapZ5C6pW4DumKZrbYeHhO6n5dJ3eGDFiUgwOeL017R3Kyezd7RhN2viEQYAhIOUUS79XbucGJzH9te/KJ0fGQQ0jnMvsgpVmelX/vNIjT1bKzr3/mXc2unIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQ8o3+Cb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11DFAC4CEC6;
-	Sun, 20 Oct 2024 11:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729423336;
-	bh=+fygpZbqdJBNFeshez2EXUwOdxXSX4xJ4QEaqrws03g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cQ8o3+Cb4Xne7znnFANFwv8cM1qw4/S+RTDU3+828ZeOTKMleQJ5/nGfWC54H/dpo
-	 b6p7/IR9ZrNzfDHz3jVW6PWqKprzghG5J4Y8gF4WDUasKbpWOpR/v29pInULkBz3yk
-	 pWtBUfbA0RlZhAYc0IBgQ3Ndr31Hvb6qZjxxzmI8dOs83uiQ5+Ea58Wd+mQb3GCrYE
-	 VF6V3C2gHn+maDl8vD82ZpcbBXuHRRGLaOkENIJuQC/IrMbfqk3ygvaaTx9tieoUhS
-	 QUvSgK0iup9ApuofdBemOEBJfG9Q7vPtXDwAslT2YvlgORUN0hpIMm3vhdobiQZc3O
-	 ZKNv7Pc0iVhrw==
-Date: Sun, 20 Oct 2024 12:22:11 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Alexandru Ardelean
- <alexandru.ardelean@analog.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Nuno Sa
- <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, George Mois
- <george.mois@analog.com>, Ana-Maria Cusco <ana-maria.cusco@analog.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v7 2/3] Documentation: ABI: added filter mode doc in
- sysfs-bus-iio
-Message-ID: <20241020122211.1b722092@jic23-huawei>
-In-Reply-To: <20241020120624.5f0f8494@jic23-huawei>
-References: <20241014143204.30195-1-ramona.nechita@analog.com>
-	<20241014143204.30195-3-ramona.nechita@analog.com>
-	<20241020120624.5f0f8494@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729423411; c=relaxed/simple;
+	bh=7ab6qhqpOr1ssykYDytup+FJiV1Hjtf3sZnKjdc3abA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XFxSvCwPjivUMEERjsUVVi5Tl2D0q6QvFfZGmPP2FEquGNIjjHNHQrgruaKLIkgAsGBRHOYZFmelmT6CzC529VijFanCMoi3KNjc+p+Z4H+VMVx+yK36O8MiJsj5IvZstQLHFKSAAXTBD8YARQbNNkvCnckE52yC2DfHq4UDNtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=J8ufdvJy; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729423406;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HakpnS82zsiPFFcOCMvXL4ULTEn0kEgh+KDi+4EqXVQ=;
+	b=J8ufdvJyDC5yOgEJbbgu29wPam8PL+9XepPZ6/m109PAPFElp48Kt2Jx4qmn6f1GFCXRMX
+	hvOnqBxl7LaHUfnDXp1PbjQadEbwSZlOZ+r0u2z/cggVTwOJXPCLBJvWyfUSNz6K7k1GhX
+	6xh3rdo5x+8wKwvW7wnn1MAni4FQIN8=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Alexander Aring <alex.aring@gmail.com>,
+	Stefan Schmidt <stefan@datenfreihafen.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-wpan@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] ieee802154: Replace BOOL_TO_STR() with str_true_false()
+Date: Sun, 20 Oct 2024 13:23:13 +0200
+Message-ID: <20241020112313.53174-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, 20 Oct 2024 12:06:24 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+Replace the custom BOOL_TO_STR() macro with the str_true_false() helper
+function and remove the macro.
 
-> On Mon, 14 Oct 2024 17:31:59 +0300
-> Ramona Alexandra Nechita <ramona.nechita@analog.com> wrote:
-> 
-> > The filter mode / filter type property is used for ad4130
-> > and ad7779 drivers, therefore the ABI doc file for ad4130
-> > was removed, merging both of them in the sysfs-bus-iio.
-> > Since one of the drivers is available from 6.1, the version
-> > has been set to 6.1 for these attributes.
-> > 
-> > Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-> > ---  
-> 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 6011af70c12e..2de269df7d3a 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -1262,7 +1262,6 @@ M:	Cosmin Tanislav <cosmin.tanislav@analog.com>
-> >  L:	linux-iio@vger.kernel.org
-> >  S:	Supported
-> >  W:	https://ez.analog.com/linux-software-drivers
-> > -F:	Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130  
-> ?  Spurious change.
-Ignore that.  Change is correct I'm just being slow this morning!
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ net/ieee802154/trace.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Jonathan
-
-> 
-> >  F:	Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml
-> >  F:	drivers/iio/adc/ad4130.c
-> >    
-> 
-> 
+diff --git a/net/ieee802154/trace.h b/net/ieee802154/trace.h
+index 591ce0a16fc0..284b63a0834e 100644
+--- a/net/ieee802154/trace.h
++++ b/net/ieee802154/trace.h
+@@ -35,8 +35,6 @@
+ #define WPAN_CCA_PR_FMT	"cca_mode: %d, cca_opt: %d"
+ #define WPAN_CCA_PR_ARG __entry->cca_mode, __entry->cca_opt
+ 
+-#define BOOL_TO_STR(bo) (bo) ? "true" : "false"
+-
+ /*************************************************************
+  *			rdev->ops traces		     *
+  *************************************************************/
+@@ -273,7 +271,7 @@ TRACE_EVENT(802154_rdev_set_lbt_mode,
+ 	),
+ 	TP_printk(WPAN_PHY_PR_FMT ", " WPAN_DEV_PR_FMT
+ 		", lbt mode: %s", WPAN_PHY_PR_ARG,
+-		WPAN_DEV_PR_ARG, BOOL_TO_STR(__entry->mode))
++		WPAN_DEV_PR_ARG, str_true_false(__entry->mode))
+ );
+ 
+ TRACE_EVENT(802154_rdev_set_ackreq_default,
+@@ -292,7 +290,7 @@ TRACE_EVENT(802154_rdev_set_ackreq_default,
+ 	),
+ 	TP_printk(WPAN_PHY_PR_FMT ", " WPAN_DEV_PR_FMT
+ 		", ackreq default: %s", WPAN_PHY_PR_ARG,
+-		WPAN_DEV_PR_ARG, BOOL_TO_STR(__entry->ackreq))
++		WPAN_DEV_PR_ARG, str_true_false(__entry->ackreq))
+ );
+ 
+ TRACE_EVENT(802154_rdev_trigger_scan,
+-- 
+2.47.0
 
 
