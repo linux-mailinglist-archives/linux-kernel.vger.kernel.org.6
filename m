@@ -1,129 +1,158 @@
-Return-Path: <linux-kernel+bounces-373430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3A29A568F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:53:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4495A9A5691
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AA6D1C25126
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:53:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C65C4B2113A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD5E197A99;
-	Sun, 20 Oct 2024 19:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7CB195980;
+	Sun, 20 Oct 2024 19:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zb50/3Q+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="KkLQKhjh"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC82D194C92;
-	Sun, 20 Oct 2024 19:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173E71940AA;
+	Sun, 20 Oct 2024 19:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729454001; cv=none; b=RS0uq1UC+c1WcysKI5iT3nf4/m7y4NBND/3AfhgeTiqhprRzjeFTNe481ZyL+i7pLji1aa0KxL+JIQfCfErdNoFCq0Sz+kdUDB01rkF5JYlkozfByv4/ueec5NabVH7mNdWxKAPQIzAXY5jRhinPDvpVt7hGfCvyIVjN05pgwPk=
+	t=1729454157; cv=none; b=IP+IumMgR3/FKeaUdR8j4jsUKmwOsKcWcZHCxcHZbHeRz4skQ8pbqFt+NsC2gv3zWXGcc2OpxH8WEp3jJjHn9h3rK8JMmI1l/1U60t1wTYGqc5GIqYOd0PhuceWHpQ9ixYy1H88v3mCXzpcdvApt2xHPUUVjD0JXvaZmy5wwQug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729454001; c=relaxed/simple;
-	bh=NUl5wLKfXrlmAITdUKRsm1jobjctTNRygTvb2ezjcr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=umqnRuk+g6svxKdzF907CTfc87ZnLqHukci6+A0sN0y7k+fr5/iRDHNXPoDFUBkD8Rrs8LS0v3HGW9Z/82U5WVCfKhrLJACaSTi8VPxqeyLjZ8nisVLO2wQhlGhpcnGPY/+riNshPeV7wvWUWOVQ+HXJLs6tv0UfXSqGZcgyoGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zb50/3Q+; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729453999; x=1760989999;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NUl5wLKfXrlmAITdUKRsm1jobjctTNRygTvb2ezjcr4=;
-  b=Zb50/3Q+xQ9dioyQnBdpdIQDVXy6kPlFfDtVSgGaFbFB+rLgPGskZEnP
-   ODhCFAN6pg6LTofokMnjMPeVKEREWn5gLnmhuhCjhqeuaSc/Jp6yp3LKY
-   IJ1D+SJmqeNGN/KPyNcg4evsFV2BRkky8glCBLY6j8bc6Q7ZzgVVGcCP9
-   vftvLrBEQLThqgIjFHa7u1yctKVmntZfBPNZSO+TxGswtvOMM7gv3t5/+
-   SypeR3UmHr+uQBfyNPA0v66MIdvNuUqL5EVSFZ+yAbrJtDmRcFx9NadXi
-   BbFFHKCGHr5+NNd+zFtsdC2sj9QGrPEgQpNvwwa/pp+6IrX5ZTu2Om3vp
-   w==;
-X-CSE-ConnectionGUID: /4bZzvmVS52N8GCtJzwwvA==
-X-CSE-MsgGUID: JDa8pBFhS/qRfxwvOy5L5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="16557546"
-X-IronPort-AV: E=Sophos;i="6.11,219,1725346800"; 
-   d="scan'208";a="16557546"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 12:53:18 -0700
-X-CSE-ConnectionGUID: Tc2MKGXrSiunSGsS93Nz/w==
-X-CSE-MsgGUID: uK0e0n9VTDK3tsFpNpMgHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,219,1725346800"; 
-   d="scan'208";a="78989802"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 20 Oct 2024 12:53:12 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t2bzC-000Qkv-01;
-	Sun, 20 Oct 2024 19:53:10 +0000
-Date: Mon, 21 Oct 2024 03:52:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Elliot Berman <quic_eberman@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, cros-qcom-dts-watchers@chromium.org,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Shivendra Pratap <quic_spratap@quicinc.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Elliot Berman <quic_eberman@quicinc.com>
-Subject: Re: [PATCH v6 5/5] arm64: dts: qcom: Add PSCI SYSTEM_RESET2 types
- for sa8775p-ride
-Message-ID: <202410210333.KGHmzwGN-lkp@intel.com>
-References: <20241018-arm-psci-system_reset2-vendor-reboots-v6-5-50cbe88b0a24@quicinc.com>
+	s=arc-20240116; t=1729454157; c=relaxed/simple;
+	bh=FXqf308rylK9O4GFeiX3DB1IkXEf6PZvHXBte0bh7+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Do0q7xCDabwb2qjzVTJhHorFyplqgkj5i7AGdpoKrG1Kb4qeODTeLWhBmfGOvmaJ5YDYJlNy7CsRbjYxEb8EU1OHW5+aJtUr4t3xXsTjRrgoXD7DK2QXCQLnv+KEcEw23r9jFAiv1XNHNh5pQfqQ3sZ96qPBmY5E3dzCHFLQ05I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=KkLQKhjh; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1729454098; x=1730058898; i=w_armin@gmx.de;
+	bh=CkD6ffDYZbGzmccN5Buj0EgCQkKmUxEuDqItKcf73UY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=KkLQKhjh9KfqfnH+jHQCvDaKshtOtdau5fQKPQr3outh2rvT5bb0v1kzbGIg21OA
+	 JkUE9t6Ck6sx94ZyIyV68T8KR5LUglzAfQZDwdgkbENrJBCzIapRTFcMDXIpMG181
+	 Ah0lyJFm5FAfd5cPrXUfJ4wFnFetDqoHg6bPuYIVBLssbL/qCKnrK41D40tlQDq3I
+	 Tmtt5WpeJKI9BWi4/kxE5h/9mH1P2UrDYuYibzF0z71P/hUMgqkEgt7jtErlOJEDM
+	 xjwRmqlwGHHLQflBQFQx0UWCtMRPGNEuvux3XTddjh809xipNMGlp6FBh5TRhdXAB
+	 4KD+rmNYjptaKSYcZA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N3se2-1u2F9u1WpE-00uNQl; Sun, 20
+ Oct 2024 21:54:58 +0200
+Message-ID: <eee71aa0-d0db-48a7-ade9-4b444c087de5@gmx.de>
+Date: Sun, 20 Oct 2024 21:54:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018-arm-psci-system_reset2-vendor-reboots-v6-5-50cbe88b0a24@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: asus-wmi: Support setting AIPT modes
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
+ corentin.chary@gmail.com, luke@ljones.dev, hdegoede@redhat.com,
+ ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michael Larabel <Michael@phoronix.com>,
+ Casey Bowman <casey.g.bowman@intel.com>
+References: <20241020065051.1724435-1-srinivas.pandruvada@linux.intel.com>
+ <911ce141-8f20-48fb-bc43-e6d4262dbc81@gmx.de>
+ <c5aee6fc77427daca6e009cd22c3637bffec0219.camel@linux.intel.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <c5aee6fc77427daca6e009cd22c3637bffec0219.camel@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FTzClKUffgmllrQpZmABpd2v6uXOCmXcKwnei3cvpVhsyvgQoMn
+ vsu3rtpyLfapJ+AZ2UI5T02KYBakxkWg0/vmla8Ua/5bvTRCk0jI47MdSI79FirWFoYQii+
+ x12sJLqqzIqlteSQ+em91o70bMF0Fc+Hcplrt6rSFaoV4xOwcY9dFotcB7iziUBeKBhvYY2
+ dudYc1lzeY88GygEpGR9g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9pyDV7uI3VY=;52y21rdlKBeXUve5xbhqn+S9fwD
+ 4e0DzYRqb83q+mfB6YMLP3HfA8MBtvIUUYSxYLa7yiH6Gf1Gu63P7tt88LwPo01c9eezshd42
+ 21wH0NsEsASAxXqQDVNSfmzYGX7OlCBLCqcZTrq+MHJM98dJy7bjkgWaRT0vO2ON9+dFzd1xT
+ O5F3b63TaoQM6XGE6PFTkSP0RTmoakfUHfpIq3/MYVzZKZCleQPrA0lDYgvl02uoV5LLtonIY
+ nZUyuO8RqMlE/W/Urw9wNHBwOvdMt69aJydnPt6NCKTxm4/ypQCk59ErKgdB735XgTPyiz+7d
+ VlUtnawhaSnKhnHd1FGP/uz/BNEK+PWGjcmp7+eWkS09FPhanNTenkxCv5MprZKEz+ri4WzDi
+ RSFdf7In0rC97hTR5hOkViXa2Ae58jWRCw5NjHh78dX7bjX/6C0SuwTfOQHebuLjgMOjLYxvI
+ dqMJ2ftPWTtFRcaLex25RVTa4wtxXJy/u7es8M10483+8IzgDN/xdcpZ7+ogTn3UGy7ORRr45
+ zJZHeuM03bbcq8RYF7lnKIgtkB0J+3R4xRzXjgEKcQCyjVIlzBomM7PwV2N1F6ifYvm51rv1B
+ AZvuyOZEP+ygXzJ9cdH35ilq5p2pJ1w2jbBZbgwB/W7Tji0K3kRp5DJ8JNOk94b6Rj3zfoOH5
+ 0H1uNd21YJEYwCFCdMHHGNt1NmvrUzM+Y86MFczEsQfDWGnDFSTT1Tbog0C7e/Z7PfjuaIYBP
+ PrC9VPL9yxWJ5ubzakgmw++F/p4aSV730x+g+T7rAEGvzoDLArvp67ZAu6HtP3hJQUMk5OAWW
+ Ln2eI8RFytlPbRqmPy2VryBw==
 
-Hi Elliot,
+Am 20.10.24 um 21:27 schrieb srinivas pandruvada:
 
-kernel test robot noticed the following build errors:
+> [...]
+>
+>>> +	adev =3D acpi_dev_get_first_match_dev("PNP0C14", "ATK", -1);
+>> Is there really no way of changing the AIPT mode through the WMI
+>> interface?
+>> I would prefer using the WMI interface if available, since the
+>> firmware might
+>> assume that FANL is only called through the WMI interface.
+>>
+> I wish the same. Didn't find any. Asus is aware of this change which I
+> submitted, they didn't suggest that there is alternative.
+>
+>> Do you have a acpidump from a affected device?
+>>
+> Will send you.
+>
+> Thanks,
+> Srinivas
 
-[auto build test ERROR on 98f7e32f20d28ec452afb208f9cffc08448a2652]
+Thanks,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Elliot-Berman/dt-bindings-power-reset-Convert-mode-properties-to-array/20241019-034308
-base:   98f7e32f20d28ec452afb208f9cffc08448a2652
-patch link:    https://lore.kernel.org/r/20241018-arm-psci-system_reset2-vendor-reboots-v6-5-50cbe88b0a24%40quicinc.com
-patch subject: [PATCH v6 5/5] arm64: dts: qcom: Add PSCI SYSTEM_RESET2 types for sa8775p-ride
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20241021/202410210333.KGHmzwGN-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bfe84f7085d82d06d61c632a7bad1e692fd159e4)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241021/202410210333.KGHmzwGN-lkp@intel.com/reproduce)
+the return value of DSTS() on your device contains:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410210333.KGHmzwGN-lkp@intel.com/
+- 8-bit current AIPT mode
+- 8-bit nothing
+- 8-bit constant 0x07
+- 8-bit constant 0x0a
 
-All errors (new ones prefixed by >>):
+Maybe you can try to find out more about the unknown constants. For the re=
+st, you can use
+the helper functions provided by the driver.
 
->> Error: arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi:504.12-13 syntax error
-   FATAL ERROR: Unable to parse input tree
+Thanks,
+Armin Wolf
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>> Thanks,
+>> Armin Wolf
+>>
+>>> +	if (adev) {
+>>> +		acpi_handle handle =3D acpi_device_handle(adev);
+>>> +
+>>> +		acpi_dev_put(adev);
+>>> +
+>>> +		if (!acpi_has_method(handle, "FANL"))
+>>> +			return 0;
+>>> +
+>>> +		asus->acpi_mgmt_handle =3D handle;
+>>> +		asus->asus_aipt_present =3D true;
+>>> +		dev_info(dev, "ASUS Intelligent Performance
+>>> Technology (AIPT) is present\n");
+>>> +		/*
+>>> +		 * Set the mode corresponding to default Linux
+>>> platform power
+>>> +		 * profile Balanced
+>>> +		 */
+>>> +		asus_wmi_write_aipt_mode(asus, AIPT_STANDARD);
+>>> +	}
+>>> +
+>>>  =C2=A0=C2=A0	return 0;
+>>>  =C2=A0 }
+>>>
+>
 
