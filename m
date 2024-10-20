@@ -1,341 +1,212 @@
-Return-Path: <linux-kernel+bounces-373067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828AD9A51BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 01:31:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CEF59A51C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 02:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 032601F2289D
-	for <lists+linux-kernel@lfdr.de>; Sat, 19 Oct 2024 23:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 716781C20DFE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 00:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA9E192D79;
-	Sat, 19 Oct 2024 23:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1187C1370;
+	Sun, 20 Oct 2024 00:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a6r7uJlC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ZusER0yN"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazolkn19012066.outbound.protection.outlook.com [52.103.14.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BC1190045
-	for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 23:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729380672; cv=none; b=Kw80aJx2YWYA72BaUMpI4UEeJaCNeLoNTCsRmdiLZaldoMO3XJowYbv7aCFEE4dh+ljzLqDLO0hQb6n5AfDVwza7IxgJHIcwYglP39h2Gk0xr2Z1FglelshfaKKFDHR5YSfcj6tpGuIrc1/vKazDK5RbBoUqjj2c3LrT9vcFKlg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729380672; c=relaxed/simple;
-	bh=QJFaiLJx8wP1o0F9cMZ2/TiWHrNvfHJ/0KxFQ/SqVaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UwqtVP2sw1j8/EKT/ceeXq+w4KVjX7mOI5YFOpKVauFeuurHLqbjxES8DQHW9DcMTAqQibt06OyeYV4IwQLLhKtiZMKuZFv71KcbxgmVrwkHtuMHr2QXRnvR0g1N8iUHUc6+Q7RJVLgsTiIWpgZroNUzozJgpbhhQ7b+bpI0opk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a6r7uJlC; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729380670; x=1760916670;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QJFaiLJx8wP1o0F9cMZ2/TiWHrNvfHJ/0KxFQ/SqVaw=;
-  b=a6r7uJlC5Xp8sUTtebtDMoZUMvLdHPJHSmWZ1OROpjb5tfxwBYdOlh7X
-   yNQF+lB4yYVykTE/aB4RqZEpD9pDLeLT9jXW8i/lbWxm6AW4IQKcJqGpQ
-   bbiumYlOHG+D9ALCk979Hqfhm+G5p73UnBQp1tNj9GFaUMAKFYAmpH+AN
-   6YWONOCifwcS8c+WHcw3v3+9gVzeCJp3P7RybG2w6FU7sonP9vs3Cuol8
-   lKZ/1EjLgdBnhUkbQhJtToE5dTm3VDKk5NSuN0Fe6Dl+BppxwJP3DWHMs
-   st0kq5Rf7CJ/IQDv1sSJHulvVYOHP4wdtAJg0/3Nl3oYKxdqb4W8iLIHG
-   Q==;
-X-CSE-ConnectionGUID: doyzEKqCTsuqjqbdusHe/g==
-X-CSE-MsgGUID: yQmFgqiAR5WLc3iBXLP8nw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29052598"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29052598"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 16:31:09 -0700
-X-CSE-ConnectionGUID: Ah9d7WF/Qw2YlxG1P2hU9Q==
-X-CSE-MsgGUID: c6jHdY2PQMeFhMQQ9pJuaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,217,1725346800"; 
-   d="scan'208";a="79590031"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 19 Oct 2024 16:31:05 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t2IuU-000Pdl-0u;
-	Sat, 19 Oct 2024 23:31:02 +0000
-Date: Sun, 20 Oct 2024 07:30:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hermes Wu via B4 Relay <devnull+Hermes.wu.ite.com.tw@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Pin-yen Lin <treapking@chromium.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Kenneth Hung <Kenneth.hung@ite.com.tw>,
-	Pet Weng <Pet.Weng@ite.com.tw>, Hermes Wu <Hermes.wu@ite.com.tw>
-Subject: Re: [PATCH v6 03/10] drm/bridge: it6505: add AUX operation for HDCP
- KSV list read
-Message-ID: <202410200756.KlsPLE8A-lkp@intel.com>
-References: <20241016-upstream-v6-v6-3-4d93a0c46de1@ite.com.tw>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D687B7FD
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 00:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.14.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729383884; cv=fail; b=sD8wYLjWvpIsHypv5bSG1h6wk/KjzCyolKE4KozjY0O8JUutE+c4LA1orHUm2bmSvMpnrj2SsDEdP/wyBbNAIKToS8tCPyE/q+Z1qXurDYspJS8lwxE/JqY6vVO+XUJzrlh6bZK1xG1n8aTKX9u6G8Mi4o49//RZIr1xVo2+Kjw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729383884; c=relaxed/simple;
+	bh=9HZTy72Z0RdbiCW5m0tie/HohlJquYpcWrhPkMitHpk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uAzCAWetcLVOXh67SpOrlqeiDNZK3DEUJ/ITvpVZUN7fyVsbDwRiwDWtw0Lat78D9aSTn2XCypre6yPUedmm48Au616+QM7v0BFhg7/JquxpPP0E0P72KywLVI/F1qiYMK634qWYVNSgrlR8Fea+jMTEgf2rk26FGCf5Cj4SSkg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ZusER0yN; arc=fail smtp.client-ip=52.103.14.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J4YwQerBqru5+Q8/t7VS0wEa0/2E+ceuu1MtUAMNpnXSIY3yzoAvy9uBcW65Xt0WMSHYjKfDXNz9rO+/4mfhGAr3JVHDeHYNGFw3nzkqEtN1avTcDz2YFCzOzmqZfTKzM+Ut1Mcpiet0i9kzxAbesWwzNq9QgHbnP70Yh2Xr8z0n0jxG07YTxry2/7XzY1mIChQ1pynWH5jqgiLiBZ02WaltnquOiE6Ef5CfQR8/a1lA1ppHstdLIz/KlZ0bVSm/y8peWKQ1yhPf07RrwNNZCMSrv0LqAGFZAyBvlPEeB/170gohCRebeM5svBci46oyOksCc++zE+cW6xNX4+pfcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9HZTy72Z0RdbiCW5m0tie/HohlJquYpcWrhPkMitHpk=;
+ b=e3sIjJNOzWdRHPBgJvQxzGRO5s0x4hf6wNxjdfkzeKKpjJ7XMG8z6CPTaLj5yb2mhEyMPn5qxybsejuhWzhRX8cCwdmM5tv5i4l67IVfLO6vVOb5gIX7QB0p13UeXQp8xU5YgOdkUEn5Rpp2GfRTcyfDT0pp7vVWtfSEVqq+1O0UJ8W8Ba196NEOCeyEhQ4jGtD5bqzL814Woxv1R7xZlt5BuA9vYuN95EtoTNNSfHnbB+yYX2iHxTD0cGflPslbDdcLv+EFehSdL9/sE19KbCxsfbTkNd52V47eZB1AH1Ss++euAYObuCb+YiL4/MKCitXPkwIAkuRxivbNY6Ny3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9HZTy72Z0RdbiCW5m0tie/HohlJquYpcWrhPkMitHpk=;
+ b=ZusER0yNjnapZ91G8tqMvmAzd0itasii9XRDAyWK1DCzloomNW+pDq52plPYS/HHnJ+CVXMyhCFRe9OiAPt7lJRH/20Ug5FbgudUctRLrWRXfnlKMbz0azQUD1xBS0bk03rwaIl7t66bQ2VRtKw5DgDLh0ADrpgf/6YT1Olkh0dJpRT4fAIrhZlr4TslshjaVmLh37U3SNktl2td0REoZPPFfOWPkVWEaiOQKqwytNXPL5kuEZKepxzi71JCOX6Qo/95k5JRws3ApH5Nb6VhggBQ4dyUS0/rGV+bBT4fxEOJaeqS1otoETQUIKj2MxZNe9E3a7Qe0ZitKruMWQzYVA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by PH0PR02MB7702.namprd02.prod.outlook.com (2603:10b6:510:56::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.27; Sun, 20 Oct
+ 2024 00:24:38 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8069.016; Sun, 20 Oct 2024
+ 00:24:32 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: stuart hayes <stuart.w.hayes@gmail.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Lukas Wunner <lukas@wunner.de>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J .
+ Wysocki" <rafael@kernel.org>, Martin Belanger <Martin.Belanger@dell.com>,
+	Oliver O'Halloran <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>, Keith
+ Busch <kbusch@kernel.org>, David Jeffery <djeffery@redhat.com>, Jeremy
+ Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>, Christoph Hellwig
+	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>, Nathan
+ Chancellor <nathan@kernel.org>, Jan Kiszka <jan.kiszka@seimens.com>, Bert
+ Karwatzki <spasswolf@web.de>
+Subject: RE: [PATCH v9 0/4] shut down devices asynchronously
+Thread-Topic: [PATCH v9 0/4] shut down devices asynchronously
+Thread-Index:
+ AQHbGnTLCx/N5yqLpEGGHHPLbQxGQrKA6nvggAr0qtCAAC8KgIAAOUaAgAAGUgCAAPiKgIABjJ8g
+Date: Sun, 20 Oct 2024 00:24:32 +0000
+Message-ID:
+ <SN6PR02MB4157B4916F2B8581B9C6E214D4422@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20241009175746.46758-1-stuart.w.hayes@gmail.com>
+ <BN7PR02MB41480DE777B9C224F3C2DF43D4792@BN7PR02MB4148.namprd02.prod.outlook.com>
+ <SN6PR02MB41571E2DD410D09CE7494B38D4402@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <2024101809-granola-coat-9a1d@gregkh> <ZxInC1U7WiB7FNkJ@wunner.de>
+ <2024101808-subscribe-unwrapped-ee3d@gregkh>
+ <7ec51cc8-b64f-4956-b4e6-4b67f1a8fa76@gmail.com>
+In-Reply-To: <7ec51cc8-b64f-4956-b4e6-4b67f1a8fa76@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB7702:EE_
+x-ms-office365-filtering-correlation-id: 85541840-ce4e-4ea4-efb8-08dcf09d91a1
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599003|8060799006|19110799003|15080799006|461199028|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ uMylS/X3J2QYjsUbOwglz1ev1lcdnB7C/QTUBOVZ0PIVmXiGHfhxBZuA9JZqw78h8tbG8iu3+1/9UysifZLvip3QUzq8KNfPdYp+xeUUYV/zAMiBEWMbo/bpC37TZOqpN7ufQjXRETaybYPgn7Rc4uf+tPyMG6ri4DhqkiajHsSOCZNgFrVRve+jrUMutw5R4suvI7Nn3gzLCWJCWKKVY6vKR7hTlJ1WwtYWF1wJ3eHbdm9DcSAmsYegADpxSprJLA3XTx50WEccGveimfZspohm6O14DchcihaH+QbYv9WjoHlcLIMa4P2NtgQo+STDj/upMO7QKXb8Ld+yaHqN6E4dQT0/cfdF/vWEIGq9mvybQl4EjXDcQfOvDpNZMZxtQZxO6myML3+w9QQfWAcYo+du/HrlFyEmld01rDa96Op9hJparIKXUkrzkPgg9NFZUR+liDxG21+PHDvOQZ27BaNSVXV7oGcGB348f8bT20X2ZVhR5PJGeqbaytXB176lniaW2Axw4+J+vK+fCikcn1tPRe5Anxx3zknz81Yd8/QD09mn1JMMtWLaDjQ07ylWF3kY59E/ulGWQ67Q5BO8sF6M3vhBSAwEZXRiz89fUCviWLu23jdi7XBv8MMgNCtb3Be4dws1gIqiyJ4swW4sWPPskKXDy8YjAY4dJbqWQo/UWrdedgBX/bqssyjHVFDDmzyPvBqkgykbBObpGqLteA==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?akhTWk5HR0FxTFoyR2lLQ3FjN0dTWlNUNnlUT3pzeU1KSTB6dEUxTmkwK3dv?=
+ =?utf-8?B?akVnMTF2YzNjYWsrRjNTVHU2RFhZRkxlVEdoWHhqVE1EWUNzbGY1WThJVjQ2?=
+ =?utf-8?B?alJyL09hRUFTMXVLREVtcWlXYUxLY3BhTzZkV0pUcS9xNFdrTXRCYlNmVWlK?=
+ =?utf-8?B?ZmFDZjRaZjVaTzBSU3JzNFJvQ3NOckh5SDlkN0RqRW5xSG5QQVZnK0JhUUxp?=
+ =?utf-8?B?RkYyT1p6WUVxQzZpNU53eS9tVDRsQUVwWXc4TnQwSnJhN3BYeFJRWG9TZmpH?=
+ =?utf-8?B?cG1GU2lXeUJDRVBUVDc0cWFJSERVYzNLVGNSeUNsR1BrVFB5YU0raGV4cFB5?=
+ =?utf-8?B?REZtMXFuNml1SzF4TEppVG9pOE9kWG1JbGE3VWllN3VuSmFzOUFKK0t5NFhq?=
+ =?utf-8?B?cllGZExremI2bUtNNXVLaUlaWlR1aEdiTDJ3TlRMaW1iYVhzUzBLc2dWektn?=
+ =?utf-8?B?QUhTU2dIMXlrajdHcDB2bDBLc1ZmRU5TZjBaOVQ4a1hUWU03ZHZuSW9kTk42?=
+ =?utf-8?B?WnA2NHlTbXdzdkJZYTlQQU1idlNvdVVQTi9GbEVIYzkwN05aUmhNeGVRbWFt?=
+ =?utf-8?B?TENSbEJDRm5ZdnpDenM5ZlorUkFBSllKU3V6emdDWkhtaEE0c1VJRzJZSCsv?=
+ =?utf-8?B?MHo2cnVQVkxYellKSy9oT0VhZERkZUVLdzgwNTJzVXNpdnVGV3FWSWVpUWRV?=
+ =?utf-8?B?aldCbGdCNkl1OFFPOEljSlU0c0RkNXBWbjZ5azd5Q2FTaWxjU1daaTdiY1Nu?=
+ =?utf-8?B?cFRmUG0ydm9OdWIzSGhrWGM5dEF1VFZuZmdKWWhFSmJQbzMwZzM2bVVtTGRE?=
+ =?utf-8?B?VXFja1BDYmcyd0YxS2dib0M2emwvSWtxYjQ1c1J4WDRZOE5NeXNQVXBwVnBN?=
+ =?utf-8?B?SVdXeTR1VmpjVitBeExVNllDN1VvZnB3VTg3aEsrMFFxUlZDOVh2QktoY2pj?=
+ =?utf-8?B?a0tBelkvcWQybDYzNXRBaUhXRUNHckkwQmFKMkJyOGE5ZmN3dHJSblRvN2Ux?=
+ =?utf-8?B?SjVlZWJxZnJBcTJNQzN2UnF2MmRhL251YWZCeDc2b1BGaTNjalZXN3NmZmNo?=
+ =?utf-8?B?czk2Tm5EMzl4OSswcmdtMHJDbEw0UGZBSUVRS1ZwMWNnLytQa0FLdWNsVmp1?=
+ =?utf-8?B?Zk11N2ozOW9iWEFBc2VUZHlKM2hzNTA2NEd3S3BqTXJpbjdGdGFBcDVtdlFa?=
+ =?utf-8?B?R2JHOGlkdDZhVHJVSWMwcDNCZ3dieFJYNUV6bmlaZStONUhzYlNYNklWaUp4?=
+ =?utf-8?B?YmljQVFjZjlCdnRaUUpHbmZrcUZpSGluNEw5cjd3VFA3dW9KYU1zbHRJUGFZ?=
+ =?utf-8?B?dXNMUFR6ckdnQk9OYzZ1cFNqc0J5YkJRcDBvblVvTVpKTkRrRWhab2tXeTB6?=
+ =?utf-8?B?WVhOTkV0ZWJQQitKUUVmb1RlVnlIUXpHUWVBOWNvVi9XckdyNmVoQjJ1RVlL?=
+ =?utf-8?B?NXZGTWg3cExHUkMxNVcrOTBXUjdTWHdtR1Y1VnhHSmRHdlhOMWJaVjdlWEgv?=
+ =?utf-8?B?Y3lYNUVNczROajlPSjZDS0FvdytpUGkzdzlOQWtaSWFuaFI3OCtLc0JXWURQ?=
+ =?utf-8?B?WFduNEFjZzNoejNWam9hZjhTWjY1NnR5YWFlR09uaVdna1Y2bXloRnRqRzlZ?=
+ =?utf-8?Q?4iPnSzVXkmTebn+V7uH4F99pcyy0a/yClgdmpHNzPLCE=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016-upstream-v6-v6-3-4d93a0c46de1@ite.com.tw>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85541840-ce4e-4ea4-efb8-08dcf09d91a1
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2024 00:24:32.3034
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB7702
 
-Hi Hermes,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on b8128f7815ff135f0333c1b46dcdf1543c41b860]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Hermes-Wu-via-B4-Relay/drm-bridge-it6505-Change-definition-of-AUX_FIFO_MAX_SIZE/20241016-155607
-base:   b8128f7815ff135f0333c1b46dcdf1543c41b860
-patch link:    https://lore.kernel.org/r/20241016-upstream-v6-v6-3-4d93a0c46de1%40ite.com.tw
-patch subject: [PATCH v6 03/10] drm/bridge: it6505: add AUX operation for HDCP KSV list read
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241020/202410200756.KlsPLE8A-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bfe84f7085d82d06d61c632a7bad1e692fd159e4)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241020/202410200756.KlsPLE8A-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410200756.KlsPLE8A-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/bridge/ite-it6505.c:13:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/gpu/drm/bridge/ite-it6505.c:13:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/gpu/drm/bridge/ite-it6505.c:13:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   In file included from drivers/gpu/drm/bridge/ite-it6505.c:13:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/gpu/drm/bridge/ite-it6505.c:1004:40: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1004 |         it6505_write(it6505, REG_AUX_CMD_REQ, FIELD_GET(M_AUX_REQ_CMD, cmd));
-         |                                               ^
-   7 warnings and 1 error generated.
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MODVERSIONS
-   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-   Selected by [y]:
-   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +/FIELD_GET +1004 drivers/gpu/drm/bridge/ite-it6505.c
-
-   956	
-   957	static ssize_t it6505_aux_operation(struct it6505 *it6505,
-   958					    enum aux_cmd_type cmd,
-   959					    unsigned int address, u8 *buffer,
-   960					    size_t size, enum aux_cmd_reply *reply)
-   961	{
-   962		int i, ret;
-   963		bool aux_write_check = false;
-   964	
-   965		if (!it6505_get_sink_hpd_status(it6505))
-   966			return -EIO;
-   967	
-   968		/* set AUX user mode */
-   969		it6505_set_bits(it6505, REG_AUX_CTRL, AUX_USER_MODE, AUX_USER_MODE);
-   970	
-   971	aux_op_start:
-   972		/* HW AUX FIFO supports only EDID and DCPD KSV FIFO area */
-   973		if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
-   974			/* AUX EDID FIFO has max length of AUX_FIFO_MAX_SIZE bytes. */
-   975			size = min_t(size_t, size, AUX_FIFO_MAX_SIZE);
-   976			/* Enable AUX FIFO read back and clear FIFO */
-   977			it6505_set_bits(it6505, REG_AUX_CTRL,
-   978					AUX_EN_FIFO_READ | CLR_EDID_FIFO,
-   979					AUX_EN_FIFO_READ | CLR_EDID_FIFO);
-   980	
-   981			it6505_set_bits(it6505, REG_AUX_CTRL,
-   982					AUX_EN_FIFO_READ | CLR_EDID_FIFO,
-   983					AUX_EN_FIFO_READ);
-   984		} else {
-   985			/* The DP AUX transmit buffer has 4 bytes. */
-   986			size = min_t(size_t, size, 4);
-   987			it6505_set_bits(it6505, REG_AUX_CTRL, AUX_NO_SEGMENT_WR,
-   988					AUX_NO_SEGMENT_WR);
-   989		}
-   990	
-   991		/* Start Address[7:0] */
-   992		it6505_write(it6505, REG_AUX_ADR_0_7, (address >> 0) & 0xFF);
-   993		/* Start Address[15:8] */
-   994		it6505_write(it6505, REG_AUX_ADR_8_15, (address >> 8) & 0xFF);
-   995		/* WriteNum[3:0]+StartAdr[19:16] */
-   996		it6505_write(it6505, REG_AUX_ADR_16_19,
-   997			     ((address >> 16) & 0x0F) | ((size - 1) << 4));
-   998	
-   999		if (cmd == CMD_AUX_NATIVE_WRITE)
-  1000			regmap_bulk_write(it6505->regmap, REG_AUX_OUT_DATA0, buffer,
-  1001					  size);
-  1002	
-  1003		/* Aux Fire */
-> 1004		it6505_write(it6505, REG_AUX_CMD_REQ, FIELD_GET(M_AUX_REQ_CMD, cmd));
-  1005	
-  1006		ret = it6505_aux_wait(it6505);
-  1007		if (ret < 0)
-  1008			goto aux_op_err;
-  1009	
-  1010		ret = it6505_read(it6505, REG_AUX_ERROR_STS);
-  1011		if (ret < 0)
-  1012			goto aux_op_err;
-  1013	
-  1014		switch ((ret >> 6) & 0x3) {
-  1015		case 0:
-  1016			*reply = REPLY_ACK;
-  1017			break;
-  1018		case 1:
-  1019			*reply = REPLY_DEFER;
-  1020			ret = -EAGAIN;
-  1021			goto aux_op_err;
-  1022		case 2:
-  1023			*reply = REPLY_NACK;
-  1024			ret = -EIO;
-  1025			goto aux_op_err;
-  1026		case 3:
-  1027			ret = -ETIMEDOUT;
-  1028			goto aux_op_err;
-  1029		}
-  1030	
-  1031		/* Read back Native Write data */
-  1032		if (cmd == CMD_AUX_NATIVE_WRITE) {
-  1033			aux_write_check = true;
-  1034			cmd = CMD_AUX_NATIVE_READ;
-  1035			goto aux_op_start;
-  1036		}
-  1037	
-  1038		if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
-  1039			for (i = 0; i < size; i++) {
-  1040				ret = it6505_read(it6505, REG_AUX_DATA_FIFO);
-  1041				if (ret < 0)
-  1042					goto aux_op_err;
-  1043				buffer[i] = ret;
-  1044			}
-  1045		} else {
-  1046			for (i = 0; i < size; i++) {
-  1047				ret = it6505_read(it6505, REG_AUX_DATA_0_7 + i);
-  1048				if (ret < 0)
-  1049					goto aux_op_err;
-  1050	
-  1051				if (aux_write_check && buffer[size - 1 - i] != ret) {
-  1052					ret = -EINVAL;
-  1053					goto aux_op_err;
-  1054				}
-  1055	
-  1056				buffer[size - 1 - i] = ret;
-  1057			}
-  1058		}
-  1059	
-  1060		ret = i;
-  1061	
-  1062	aux_op_err:
-  1063		if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
-  1064			/* clear AUX FIFO */
-  1065			it6505_set_bits(it6505, REG_AUX_CTRL,
-  1066					AUX_EN_FIFO_READ | CLR_EDID_FIFO,
-  1067					AUX_EN_FIFO_READ | CLR_EDID_FIFO);
-  1068			it6505_set_bits(it6505, REG_AUX_CTRL,
-  1069					AUX_EN_FIFO_READ | CLR_EDID_FIFO, 0x00);
-  1070		}
-  1071	
-  1072		/* Leave AUX user mode */
-  1073		it6505_set_bits(it6505, REG_AUX_CTRL, AUX_USER_MODE, 0);
-  1074	
-  1075		return ret;
-  1076	}
-  1077	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+RnJvbTogc3R1YXJ0IGhheWVzIDxzdHVhcnQudy5oYXllc0BnbWFpbC5jb20+IFNlbnQ6IEZyaWRh
+eSwgT2N0b2JlciAxOCwgMjAyNCA1OjI3IFBNDQo+IA0KPiBPbiAxMC8xOC8yMDI0IDQ6MzcgQU0s
+IEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToNCj4gPiBPbiBGcmksIE9jdCAxOCwgMjAyNCBhdCAx
+MToxNDo1MUFNICswMjAwLCBMdWthcyBXdW5uZXIgd3JvdGU6DQo+ID4+IE9uIEZyaSwgT2N0IDE4
+LCAyMDI0IGF0IDA3OjQ5OjUxQU0gKzAyMDAsIEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToNCj4g
+Pj4+IE9uIEZyaSwgT2N0IDE4LCAyMDI0IGF0IDAzOjI2OjA1QU0gKzAwMDAsIE1pY2hhZWwgS2Vs
+bGV5IHdyb3RlOg0KPiA+Pj4+IEluIHRoZSBwcm9jZXNzLCB0aGUgd29ya3F1ZXVlIGNvZGUgc3Bp
+bnMgdXAgYWRkaXRpb25hbCB3b3JrZXIgdGhyZWFkcw0KPiA+Pj4+IHRvIGhhbmRsZSB0aGUgbG9h
+ZC4gIE9uIHRoZSBIeXBlci1WIFZNLCAyMTAgdG8gMjMwIG5ldyBrZXJuZWwNCj4gPj4+PiB0aHJl
+YWRzIGFyZSBjcmVhdGVkIGR1cmluZyBkZXZpY2Vfc2h1dGRvd24oKSwgZGVwZW5kaW5nIG9uIHRo
+ZQ0KPiA+Pj4+IHRpbWluZy4gT24gdGhlIFBpIDUsIDI1MyBhcmUgY3JlYXRlZC4gVGhlIG1heCBm
+b3IgdGhpcyB3b3JrcXVldWUgaXMNCj4gPj4+PiBXUV9ERkxfQUNUSVZFICgyNTYpLg0KPiA+PiBb
+Li4uXQ0KPiA+Pj4gSSBkb24ndCB0aGluayB3ZSBjYW4gcHV0IHRoaXMgdHlwZSBvZiBsb2FkIG9u
+IGFsbCBzeXN0ZW1zIGp1c3QgdG8gaGFuZGxlDQo+ID4+PiBvbmUgc3BlY2lmaWMgdHlwZSBvZiAi
+YmFkIiBoYXJkd2FyZSB0aGF0IHRha2VzIGxvbmcgcGVyaW9kcyBvZiB0aW1lIHRvDQo+ID4+PiBz
+aHV0ZG93biwgc29ycnkuDQo+ID4+DQo+ID4+IFBhcmFsbGVsaXppbmcgc2h1dGRvd24gbWVhbnMg
+c2hvcnRlciByZWJvb3QgdGltZXMsIGxlc3MgZG93bnRpbWUsDQo+ID4+IGxlc3MgY29zdCBmb3Ig
+Q1NQcy4NCj4gPg0KPiA+IEZvciBzb21lIHN5c3RlbXMsIHllcywgYnV0IGFzIGhhdmUgYmVlbiBz
+ZWVuIGhlcmUsIGl0IGNvbWVzIGF0IHRoZQ0KPiA+IG9mZnNldCBvZiBhIGh1Z2UgQ1BVIGxvYWQg
+YXQgc2h1dGRvd24sIHdpdGggc29tZXRpbWVzIGxvbmdlciByZWJvb3QNCj4gPiB0aW1lcy4NCj4g
+Pg0KPiA+PiBNb2Rlcm4gc2VydmVycyAoZS5nLiBTaWVycmEgRm9yZXN0IHdpdGggMjg4IGNvcmVz
+KSBzaG91bGQgaGFuZGxlDQo+ID4+IHRoaXMgbG9hZCBlYXNpbHkgYW5kIG1heSBzZWUgc2lnbmlm
+aWNhbnQgYmVuZWZpdHMgZnJvbSBwYXJhbGxlbGl6YXRpb24uDQo+ID4NCj4gPiAibWF5IHNlZSIs
+IGNhbiB5b3UgdGVzdCB0aGlzPw0KPiA+DQo+ID4+IFBlcmhhcHMgYSBzb2x1dGlvbiBpcyB0byBj
+YXAgYXN5bmMgc2h1dGRvd24gYmFzZWQgb24gdGhlIG51bWJlciBvZiBjb3JlcywNCj4gPj4gYnV0
+IGFsd2F5cyB1c2UgYXN5bmMgZm9yIGNlcnRhaW4gZGV2aWNlIGNsYXNzZXMgKGUuZy4gbnZtZV9z
+dWJzeXNfY2xhc3MpPw0KPiA+DQo+ID4gTWF5YmUsIGJ1dCBhcy1pcywgd2UgY2FuJ3QgdGFrZSB0
+aGUgY2hhbmdlcyB0aGlzIHdheSwgc29ycnkuICBUaGF0IGlzIGENCj4gPiByZWdyZXNzaW9uIGZy
+b20gdGhlIHNpdHVhdGlvbiBvZiB3b3JraW5nIGhhcmR3YXJlIHRoYXQgbWFueSBwZW9wbGUgaGF2
+ZS4NCj4gPg0KPiA+IHRoYW5rcywNCj4gPg0KPiA+IGdyZWcgay1oDQo+IA0KPiBUaGFuayB5b3Ug
+Ym90aCBmb3IgeW91ciB0aW1lIGFuZCBlZmZvcnQgY29uc2lkZXJpbmcgdGhpcy4gIEl0IGRpZG4n
+dA0KPiBvY2N1ciB0byBtZSB0aGF0IGFuIGV4dHJhIGZldyAxMHMgb2YgbWlsbGlzZWNvbmRzIChv
+ciBtYXhpbmcgb3V0IHRoZQ0KPiBhc3luYyB3b3JrcXVldWUpIHdvdWxkIGJlIGFuIGlzc3VlLg0K
+PiANCj4gVG8gYW5zd2VyIHlvdXIgZWFybGllciBxdWVzdGlvbiAoTWljaGFlbCksIHRoZXJlIHNo
+b3VsZG4ndCBiZSBhDQo+IHBvc3NpYmlsaXR5IG9mIGRlYWRsb2NrIHJlZ2FyZGxlc3Mgb2YgdGhl
+IG51bWJlciBvZiBkZXZpY2VzLiBXaGlsZSB0aGUNCj4gZGV2aWNlIHNodXRkb3ducyBhcmUgc2No
+ZWR1bGVkIG9uIGEgd29ya3F1ZXVlIHJhdGhlciB0aGFuIHJ1biBpbiBhIGxvb3AsDQo+IHRoZXkg
+YXJlIHN0aWxsIHNjaGVkdWxlZCBpbiB0aGUgc2FtZSBvcmRlciBhcyB0aGV5IGFyZSB3aXRob3V0
+IHRoaXMNCj4gcGF0Y2gsIGFueSBhbnkgZGV2aWNlIHRoYXQgaXMgc2NoZWR1bGVkIGZvciBzaHV0
+ZG93biBzaG91bGQgbmV2ZXIgaGF2ZQ0KPiB0byB3YWl0IGZvciBkZXZpY2UgdGhhdCBoYXNuJ3Qg
+eWV0IGJlZW4gc2NoZWR1bGVkLiBTbyBldmVuIGlmIG9ubHkgb25lDQo+IGRldmljZSBzaHV0ZG93
+biBjb3VsZCBiZSBzY2hlZHVsZWQgYXQgYSB0aW1lLCBpdCBzaG91bGQgc3RpbGwgd29yaw0KPiB3
+aXRob3V0IGRlYWRsb2NraW5nLS1pdCBqdXN0IHdvdWxkbid0IGJlIGFibGUgdG8gZG8gc2h1dGRv
+d25zIGluIHBhcmFsbGVsLg0KDQpPSyAtLSBtYWtlcyBzZW5zZS4NCg0KPiANCj4gQW5kIEkgYmVs
+aWV2ZSB0aGVyZSBpcyBzdGlsbCBhIGJlbmVmaXQgdG8gaGF2aW5nIGFzeW5jIHNodXRkb3duIGVu
+YWJsZWQNCj4gZXZlbiB3aXRoIG9uZSBjb3JlLiBUaGUgTlZNZSBzaHV0ZG93bnMgdGhhdCB0YWtl
+IGEgd2hpbGUgaW52b2x2ZSB3YWl0aW5nDQo+IGZvciBkcml2ZXMgdG8gZmluaXNoIGNvbW1hbmRz
+LCBzbyB0aGV5IGFyZSBtb3N0bHkganVzdCBzbGVlcGluZy4NCj4gV29ya3F1ZXVlcyB3aWxsIHNj
+aGVkdWxlIGFub3RoZXIgd29ya2VyIGlmIG9uZSB3b3JrZXIgc2xlZXBzLCBzbyBldmVuIGENCj4g
+c2luZ2xlIGNvcmUgc3lzdGVtIHNob3VsZCBiZSBhYmxlIHRvIGdldCBhIG51bWJlciBvZiBOVk1l
+IGRyaXZlcyBzdGFydGVkDQo+IG9uIHRoZWlyIHNodXRkb3ducyBpbiBwYXJhbGxlbC4NCg0KWWVz
+LCBJIGFncmVlIHRoYXQgYSBzaW5nbGUgY29yZSBzeXN0ZW0gc2hvdWxkIGJlIGFibGUgdG8gZ2V0
+IG11bHRpcGxlDQpOVk1lIGRyaXZlcyBzaHV0dGluZyBkb3duIGluIHBhcmFsbGVsLiBUaGUgcGFy
+YWxsZWxpc20gd291bGQgYmUNCmdvdmVybmVkIGJ5IHRoZSBudW1iZXIgb2Ygd29ya2VyIHByb2Nl
+c3NlcyB0aGF0IHRoZSB3b3JrcXVldWUNCmRlY2lkZXMgYXJlIG5lZWRlZC4gSSBkaWRuJ3QgbG9v
+ayBhdCBob3cgaXQgbWFrZXMgdGhhdCBkZWNpc2lvbi4NCg0KPiANCj4gSSdsbCBzZWUgd2hhdCBJ
+IGNhbiB0byBkbyBsaW1pdCB0aGUgYW1vdW50IG9mIHN0dWZmIHRoYXQgZ2V0cyBwdXQgb24gdGhl
+DQo+IHdvcmtxdWV1ZSwgdGhvdWdoLiAgSSBjYW4gbGlrZWx5IGxpbWl0IGl0IHRvIGp1c3QgdGhl
+IGFzeW5jaHJvbm91cw0KPiBkZXZpY2Ugc2h1dGRvd25zIChOVk1lIHNodXRkb3ducyksIHBsdXMg
+YW55IGRldmljZXMgdGhhdCBoYXZlIHRvIHdhaXQNCj4gZm9yIHRoZW0gKGkuZS4sIGFueSBkZXZp
+Y2VzIG9mIHdoaWNoIHRoZXkgYXJlIGRlcGVuZGVudHMgb3IgY29uc3VtZXJzKS4NCj4gDQoNClll
+cywgYmFzZWQgb24gd2hhdCBJIHNhdywgdGhhdCBzaG91bGQgZWxpbWluYXRlIHRoZSBleHRyYSBv
+dmVyaGVhZA0Kd2hlbiB0aGVyZSBhcmUgbm8gTlZNZSBkZXZpY2VzLCBvciBvbmx5IGEgc21hbGwg
+bnVtYmVyLiBJZiBhIHN5c3RlbSBoYXMNCm9ubHkgYSBjb3VwbGUgb2YgTlZNZSBkZXZpY2VzIChw
+bHVzIHNvbWUgZGVwZW5kZW50L2NvbnN1bWVyIGRldmljZXMpLA0KcHV0dGluZyBhIGZldyBlbnRy
+aWVzIGluIHRoZSBheXNuYyB3b3JrcXVldWUgc2hvdWxkIGJlIG5lZ2xpZ2libGUuIEFuZCB3aGVu
+DQp0aGVyZSBhcmUgbWFueSBOVk1lIGRldmljZXMsIHRoZSBleHRyYSBvdmVyaGVhZCBvZiBtb3Jl
+IGtlcm5lbCB0aHJlYWRzDQppcyBtb3JlIHRoYW4gb2Zmc2V0IGJ5IHRoZSBwYXJhbGxlbGlzbS4N
+Cg0KTWljaGFlbA0K
 
