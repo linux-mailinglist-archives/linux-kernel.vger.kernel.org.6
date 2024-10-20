@@ -1,94 +1,92 @@
-Return-Path: <linux-kernel+bounces-373277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1D69A5494
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:50:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2259A5497
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129711F21CC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:50:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF921C210CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C7119307D;
-	Sun, 20 Oct 2024 14:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5438B194085;
+	Sun, 20 Oct 2024 14:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0v1s0QmU"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hO/jpAxO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF4A1925B8;
-	Sun, 20 Oct 2024 14:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973FB19309B;
+	Sun, 20 Oct 2024 14:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729435816; cv=none; b=lUhbYaw3WsWRYh/g7gTveCkbQ/y8Y5l8Lkc9KMjD4CenH3STegE0aOjDIK1PE4hrr4LAqyiL8XParhnz+qHelvl9Kan5Lukh63jqtoE52ftnuZGvZ/aDZWriUjH4ko+1cfbDbROlTdkBHf7eNGqTHgR4Hh9bqXx9nS6xnTkRH2Y=
+	t=1729435829; cv=none; b=iwSHEJhCcnDTym+OeVF7DVOTPlqGrKVb5MsFatSoN6zI1kHDWCSFI3HMeVjpjTlb9heWzhtjOqPVln3BLP27+S4HlUm8YhUFqsswa6Yld3v2UmZTap3CqTq2XfH1WEW+7QGIRgL6w5xCY+vueXOzSFdmgLri+T/RGBefIH+4GNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729435816; c=relaxed/simple;
-	bh=AVfTH01SvlduefmUhsSdFUoQPyygoRL2NA627woyiEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KaD6h4hNVfyBD5srgbLa91tRD6XhclmXoicdauqSVlscXPwfeEeWxrgSHJPqMjdNg+zXG8cJCg6aeLRN5+BQ3DsUhemCTfGIEWg7p2MN+y/Sa9mMeLkGbC5XWLy6jlUMkPxdH97cunjxW6gxKpT+2dR9YBfsPW6gp6/E/Cs3qY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0v1s0QmU; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=8zSrv9jMkJqjVhr6qHqhDSITJsgarczXcoOi1N3rASw=; b=0v
-	1s0QmUx9NfH7UbqmHsqHUILQYfngh/pdwOJtpC2seEo0UECRM+MMTJKK4uAYWgong3kB/iIr23Vmo
-	ZB+geJc8FywMWksxBRHgGO6ZYOq0IleJVmNIBHxQiQqKrAheyOwN0t17Rl30PNpCmEAhnCBjzVCD/
-	6T5qdsV5pLThyv8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t2XFU-00AeVi-UT; Sun, 20 Oct 2024 16:49:40 +0200
-Date: Sun, 20 Oct 2024 16:49:40 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Fan =?utf-8?B?SGFpbG9uZy/ojIPmtbfpvpk=?= <hailong.fan@siengine.com>
-Cc: Simon Horman <horms@kernel.org>,
-	"2694439648@qq.com" <2694439648@qq.com>,
-	"alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-	"joabreu@synopsys.com" <joabreu@synopsys.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: =?utf-8?B?5Zue5aSNOiDlm57lpI0=?= =?utf-8?Q?=3A?= [PATCH] net:
- stmmac: enable MAC after MTL configuring
-Message-ID: <ecc1aaf4-8676-453f-93bc-fd93d121b694@lunn.ch>
-References: <tencent_6BF819F333D995B4D3932826194B9B671207@qq.com>
- <20241017101857.GE1697@kernel.org>
- <bd7a1be5cec348dab22f7d0c2552967d@siengine.com>
- <9a11c47e-0cd6-4741-a25b-68538763110a@lunn.ch>
- <daf687938ae1413bbc556134b47d0629@siengine.com>
+	s=arc-20240116; t=1729435829; c=relaxed/simple;
+	bh=RwdXc0L0kGeC5u/UtjJYKNmn2j8aWVtx4yvTRebOT8o=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=kw1ZldM0B0+Zx68iAVdN0N+zMYMygP6zshttUELQnfqfQ07uG7um7iRGSG8hDbXOPyrwoejPyDGCkLOAmPEHwJiSjKoucKcoBEPb4HB5YOSUGLKhZdpW0s9gNyijwzD4G+5wc2z9oPO46KTRoWyVnW1DiqxrYRDtc0fkIeEg2nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hO/jpAxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18481C4CEC6;
+	Sun, 20 Oct 2024 14:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729435829;
+	bh=RwdXc0L0kGeC5u/UtjJYKNmn2j8aWVtx4yvTRebOT8o=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hO/jpAxOOuc/2+QZLgMREHGRPAmZ4QWoHqNUyC0chHyHJpXBpUlIWxapZaKud5/lr
+	 z/MGl0GuuPbjrCa0j6bGvsZWkQ7paSpwrFIqIAa9eN/JBulUEuqiun/y/cLttZzhJ7
+	 Imobj8IhDuTGZOs9vxKumwMjOoJYcjDba9xj0IJRxNVXaYS5IwLL7SqL/0sOsKOPrg
+	 pMorzRKy6xMt3GDHQKAM7j/t5LfON5N2nbHDCPv0Tetr+DVPa/xwVt7m1eSv/bA2XU
+	 SravgVIj1HREGVhpwijk/C3l31iYGgfzwIHXgRFW4V2YkaMhOWfD2DbaCnqhdHcKIz
+	 NDS7XCaiMz+gQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DC73805CC0;
+	Sun, 20 Oct 2024 14:50:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <daf687938ae1413bbc556134b47d0629@siengine.com>
+Subject: Re: [PATCH net] net/sun3_82586: fix potential memory leak in
+ sun3_82586_send_packet()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172943583500.3593495.1043464338026707882.git-patchwork-notify@kernel.org>
+Date: Sun, 20 Oct 2024 14:50:35 +0000
+References: <20241015144148.7918-1-wanghai38@huawei.com>
+In-Reply-To: <20241015144148.7918-1-wanghai38@huawei.com>
+To: Wang Hai <wanghai38@huawei.com>
+Cc: sammy@sammy.net, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, zhangxiaoxu5@huawei.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Oct 20, 2024 at 01:45:41AM +0000, Fan Hailong/范海龙 wrote:
-> Hi 
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Andrew Lunn <andrew@lunn.ch>:
+
+On Tue, 15 Oct 2024 22:41:48 +0800 you wrote:
+> The sun3_82586_send_packet() returns NETDEV_TX_OK without freeing skb
+> in case of skb->len being too long, add dev_kfree_skb() to fix it.
 > 
-> Please find new patch in attachments, thanks.
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+> ---
+>  drivers/net/ethernet/i825xx/sun3_82586.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Please read
+Here is the summary with links:
+  - [net] net/sun3_82586: fix potential memory leak in sun3_82586_send_packet()
+    https://git.kernel.org/netdev/net/c/2cb3f56e827a
 
-https://docs.kernel.org/process/submitting-patches.html
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
 
-Attachments are not accepted.
-
-	Andrew
 
