@@ -1,86 +1,118 @@
-Return-Path: <linux-kernel+bounces-373120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E149A526E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 06:27:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB829A526D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 06:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C220B24D2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 04:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4923282F16
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 04:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B70FC0A;
-	Sun, 20 Oct 2024 04:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D48BE5E;
+	Sun, 20 Oct 2024 04:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="opRycYCQ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mla2AEYA"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6BC8BEA;
-	Sun, 20 Oct 2024 04:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7F68F5E;
+	Sun, 20 Oct 2024 04:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729398434; cv=none; b=adI1mgpSp6U5T1qgbj+r4evVH7TmRkZ44DHKx7zAaxB+KqYmzSccMG8ixUEKXQl45V7Y2hvGeYBZkoPdq1PAlNITf477mlbEJvpaOy1ZM1viqHMVZxloNmZ3dgruMbjsiDyLvEQaK5oJNjoVp5nuj2YoxpZYLeJiPtOVhm7sh1s=
+	t=1729398432; cv=none; b=S5hjUAx7lpJBEKg/o7PuUPm4ho3+Oy5g2s2l/ZwuMe6WuoRvshlwzemP9CTpKkb7b10SnKmqzWvoJ1ZA+Y3yKX33pfYVsWJ9V5Wvd9eHvzbKBJs1mnUdxnO2xJkHi0ApYw7uYMxIzR3Qrld9tF7VdquKkdedZwsb9ECdlgfsPAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729398434; c=relaxed/simple;
-	bh=R7afB7kZheRAQV+IWrBAI07VyGBl9Ftr9eBlYQHVTME=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=J09B6HFGuxHoQlKHWMefIwCSVoFWQ6QrFcZzoBbjUXwDl82a65z0RI2Wf9cg3KMVD9PyYOUrX5wtq/5LhcySnqFw5Gw5H9UyFs2EKxYJS1IJrzq9kDLK8OfG60VC8nIJDa52RUXpdsHEvoKrAXKnal97/a7jvcjXF8cCDbiBDiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=opRycYCQ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=rp4NjvAKWUSmea0H5FdYDF5WWKuL4vnrCRAaXVqXY1Y=; b=opRycYCQDKVapUmnAJXqmT6KLN
-	4IspGfbIxNzJcfxTnbPmV9gOl6WVoCM1HtelHa69CiR8P6IVZ2WScZ5qno8J2YzMQqlnUQdxNmElv
-	GPTF2gj5iTfiftsBxu4Ba685cMWQwroNAuEirGPqKHW25BwGSEYI9HBg7o3Lr0HUeW6CUkUeHU9NA
-	08TwNg6EmshHx44V/ely/piHJxr3E5gVGTB8jRixNZVURjA0vzRFxV7/DP8JKr8eneRKgXyWeVEGd
-	EFc8175baAV3V77HbkPww6i/FBGIHtd06DEVs0EqrWke/8nNsoSL08Dl3f84rYSFtIs+Pxp1D76Kc
-	MlwfrZWg==;
-Received: from 2a02-8389-2341-5b80-466b-0bd2-0363-cfd1.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:466b:bd2:363:cfd1] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t2NX1-00000004OwU-18Ph;
-	Sun, 20 Oct 2024 04:27:07 +0000
-Date: Sun, 20 Oct 2024 06:27:04 +0200
-From: Christoph Hellwig <hch@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: [GIT PULL] dma-mapping fix for Linux 6.12
-Message-ID: <ZxSGmK5gbvmANA9U@infradead.org>
+	s=arc-20240116; t=1729398432; c=relaxed/simple;
+	bh=D1RezRlkB9L4TfHEDkozhaaOZUO1U3mlZToPaKXwzXs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZbNWA51Z+MZ36x7CaZ8k5X6JmgiJ5IEx4NgEirsWQHHP5AoBTMUja3vTkGfeqYW1fGCbUl30mg6pMRMfeBWEBazPNsoPwwq1FbVnBaYQYa2o+lxR7YKQcLgIPUT976S968UII5GYPigW2Ve0pIgjt+/celOwecXR5PDAG+t1BT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mla2AEYA; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a0472306cso441675466b.3;
+        Sat, 19 Oct 2024 21:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729398429; x=1730003229; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/5hnJw00SHkS8Yg/z28Fwh+SQ2vwZshL2rzFNrvtoN8=;
+        b=Mla2AEYAhyn9vxDQc0/8PyBR5bWG51Av/Vps72N2hisNiRqNlr7qMGv3AXdLTPWKVY
+         AV05IWwc3zJR6ki/hMrHtDejOMZZz+E8MKMCPH/d8jEgq1JJhqNTyjs7FTMTGvXKFgAi
+         OQwGfE4X2CItGWCxPCC+jmmriI7o5TilFMk1yUSkiD/jpByE2ykrffRS6HWa0Fs9A8jL
+         oH2UlQRJNRQAt4P/iC5630R64fp9+sfJVoRutJJGoNkfVOFhdrIgMC5jwvSwTLUQ5bio
+         Uk4P8kIrhjhouKIkR+jHjMznxgUNmbcGbj8waR0T8LmYaVGnIdBJWO+XoyBQeS1Q4QRF
+         +ODQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729398429; x=1730003229;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/5hnJw00SHkS8Yg/z28Fwh+SQ2vwZshL2rzFNrvtoN8=;
+        b=f5UBpYXlylAdDvi9IIyDx4Q3uG9gE2r2JMKf6PLww5Tw4dybsR4GulSX30xg8gjo3G
+         Kppf1a0ydTOHC9RA3KQ7QVl7eucc29TrjDtdymUrmxW0ZRznc5goHGKTg+OVbf15yDlz
+         fyIT+LLV3TW5yTwpHAQbe1+OvSXRPXrGHHnSa3sTdjXojEaLXGxXajLNq/B0olTjlRdQ
+         ReVpnCm29L8KSUAFB1HmYSfkuFga5Dy9kpdxgRaWKUt9o1AxTqWjn5TjM7ea/0d/+yxl
+         SfFQFJi4MYlD38n4Gjf5OU3tVUb/4vOjxVaLpyb1gkP08Pvy3r8jlMbbGBuEH0sgcvdh
+         9IPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUirV9RTuKwSLLbm010kko8iRW/pONy9a6KHvKgWjspDXxQGJiXyQARA9NsX9mGsZsV37M9GDBSg5lH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO5XaoYZmlYkxwbet/CGFqbuxBtkAaTE0A4p53Mc3Y8RveWnEv
+	5Jk4r/C9o7uONJsoNTHqtyw0YkE0DNzhtSHDxe3aBTpHeMisdiSo
+X-Google-Smtp-Source: AGHT+IEoN4xc5/Tx6bMejoVoteamzsBJhLtm+0tByF4wF1Fd4S52hX2jt8Ei98iyjI+WqELTS1N7MA==
+X-Received: by 2002:a17:906:4fca:b0:a9a:1bb4:800c with SMTP id a640c23a62f3a-a9a6996979amr725802866b.4.1729398428641;
+        Sat, 19 Oct 2024 21:27:08 -0700 (PDT)
+Received: from work.. ([5.250.149.103])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91597c05sm47221866b.195.2024.10.19.21.27.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Oct 2024 21:27:08 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	sfr@canb.auug.org.au,
+	snovitoll@gmail.com
+Subject: [PATCH] Documentation/kasan: fix indentation in translation
+Date: Sun, 20 Oct 2024 09:28:13 +0500
+Message-Id: <20241020042813.3223449-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241016131802.3115788-4-snovitoll@gmail.com>
+References: <20241016131802.3115788-4-snovitoll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit c964ced7726294d40913f2127c3f185a92cb4a41:
+Fix the warning in linux-next (htmldocs):
 
-  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2024-10-16 13:37:59 -0700)
+> Documentation/translations/zh_TW/dev-tools/kasan.rst:410:
+>	ERROR: Unexpected indentation.
 
-are available in the Git repository at:
+This is based on -mm tree (linux-mm-unstable branch).
 
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.12-2024-10-20
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+---
+ Documentation/translations/zh_TW/dev-tools/kasan.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-for you to fetch changes up to 78b2770c935fc1434a95cc17613fe31165b02dfe:
+diff --git a/Documentation/translations/zh_TW/dev-tools/kasan.rst b/Documentation/translations/zh_TW/dev-tools/kasan.rst
+index 35b7fd18a..27fb76451 100644
+--- a/Documentation/translations/zh_TW/dev-tools/kasan.rst
++++ b/Documentation/translations/zh_TW/dev-tools/kasan.rst
+@@ -407,7 +407,7 @@ KASAN連接到vmap基礎架構以懶清理未使用的影子內存。
+ 
+ 所有 KASAN 測試均與 KUnit 測試框架集成，並且可以啟用
+ 透過 ``CONFIG_KASAN_KUNIT_TEST``。可以運行測試並進行部分驗證
+- 以幾種不同的方式自動進行；請參閱下面的說明。
++以幾種不同的方式自動進行；請參閱下面的說明。
+ 
+ 如果偵測到錯誤，每個 KASAN 測試都會列印多個 KASAN 報告之一。
+ 然後測試列印其編號和狀態。
+-- 
+2.34.1
 
-  dma-mapping: fix tracing dma_alloc/free with vmalloc'd memory (2024-10-17 17:41:29 +0200)
-
-----------------------------------------------------------------
-dma-mapping fix for Linux 6.12
-
-Just another small tracing fix from Sean.
-
-----------------------------------------------------------------
-Sean Anderson (1):
-      dma-mapping: fix tracing dma_alloc/free with vmalloc'd memory
-
- include/trace/events/dma.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
 
