@@ -1,104 +1,106 @@
-Return-Path: <linux-kernel+bounces-373248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596689A5453
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D67C39A5455
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84B331C208BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0738E1C20D80
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823CE192D79;
-	Sun, 20 Oct 2024 13:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC4E192D79;
+	Sun, 20 Oct 2024 13:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+CVm9EM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="10DvpkmD"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54EA178372;
-	Sun, 20 Oct 2024 13:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3B2192B71
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 13:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729430555; cv=none; b=bAEVPLauXzScbteDx4qTDdQJmeG/LDu1v1lgtL1YDC7d4eyRTPFfCdRFboHnMmI3x8X6Q6y09BR6d70qcpsM//ovldasNgsEJnp8bkNgVz3qm514z4hzqeajQliy156KQsJs4+8yPv0h68zN6+Tta4DLEowtLGC09P7XDtEKM8U=
+	t=1729430833; cv=none; b=uqvXxv8y4cMvE/mjjZ2O1BSgjAUzCqFwWgWwQJZEdRLgXk1/YybkkojOImH02IDcVQHmKhJtf3T0jbko0Yhm6KyE/wONz4S+RjmF7xaKzKy2BW2RiuhqdrBq7fo4c2YZ5cyimfPnBSZq80/47x7X4vzhH388lX+FyvddUVLfiFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729430555; c=relaxed/simple;
-	bh=Zd3r0CPcOA4nCfzLV8bE9tSPbSIO/H0xsjf7QMppU40=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MXSCqMYkGWvJoQrJ4vqkAeKOnARpX2qBeTh9zsgFGfNvCimp8Om7oJUcUXZ6jsOhlYGXP//BXfU3qvY0xjzagpsZ9LfnATPiiEObhBK6/IDcMzfELqY0Xu+cAXpCON3YRj/aDn7MTpveIzqnxvGzT4o2nFUj1n2Mil2HQMIask8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+CVm9EM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC6EC4CEC6;
-	Sun, 20 Oct 2024 13:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729430555;
-	bh=Zd3r0CPcOA4nCfzLV8bE9tSPbSIO/H0xsjf7QMppU40=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q+CVm9EMNyzpnKJpLYd2wO65NVypY9z6k9AaEGc6xJf4S4OvOwv1JLlA/iOqGYIFY
-	 Ho6dr7g8MoXSxjNA+UeaSVOcDm6+o2FVOOA/LlmF1t0FGhxteBs5KUsD4Z4XpfXqsw
-	 oRxxRxRWA7l/3sFEY31oUIEAK7VoemjwcGBe4qhprZZNDAzMe5/q0NdFh595bKDOZv
-	 rfDC9QTdLSAe5+SRf2HN7BzdtN8sYbaV5GFPhSu63jWp7F0T3qhgnVqS1KeUDAw1VS
-	 guoCCJx1JTYRzUfQ654KbI/cC669+cejDUM2RDYJ4ci0SQWlBZlRQrSRK3wGDLeOb/
-	 5Vh+6/Pv+KJgw==
-Date: Sun, 20 Oct 2024 14:22:24 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Alexandru Ardelean
- <alexandru.ardelean@analog.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Nuno Sa
- <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, George Mois
- <george.mois@analog.com>, Ana-Maria Cusco <ana-maria.cusco@analog.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v7 3/3] drivers: iio: adc: add support for ad777x family
-Message-ID: <20241020142224.27bfdc04@jic23-huawei>
-In-Reply-To: <20241020125437.72c1de38@jic23-huawei>
-References: <20241014143204.30195-1-ramona.nechita@analog.com>
-	<20241014143204.30195-4-ramona.nechita@analog.com>
-	<20241020125437.72c1de38@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729430833; c=relaxed/simple;
+	bh=eBJzOYlqjsdcPdk0yMInJK2l8n0pk3Q6fRoZHJOBNDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QFQaBK7XxVmC3Qj7Dvg1H8yzl93orTef0UmZ8BHa970vzz3YyaIwR9CamwrpRE5Nn9AKWdUziuSoa7SB8qXCA2xZD0GtXYFLfVuQcMrSMejJ4wvJ2XTyF+1jZmz4jfxgtMOC45KN4vkpm6GmKkiCoFjo4n9IU7GpGSxYgGvIiiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=10DvpkmD; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4608e389407so43503831cf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 06:27:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1729430830; x=1730035630; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eBJzOYlqjsdcPdk0yMInJK2l8n0pk3Q6fRoZHJOBNDg=;
+        b=10DvpkmDzxKtVVskYOo3t0dMLkMFjFDHL7Xx1FBftUoKf+IOdngajO7i+i2ReiIWyH
+         EwpXmoraHRNpSVK6Cyol+ycwVIQ2Cxgwlle99DJW/iwkyCINaGbqmg+oitLZVKf1MpIU
+         /PWoPpCF3uSq65UVDxREadSXTVTC4oyIF7fNHCD6C4QXEYR7KR8giNvFNg5ClNkNFK4U
+         Qs7xb4s1MNO5lxtbFHLvR/bCH+RZ9FkH5V7y2IIcB8d+UA7/DUjpgM49tuenp222fved
+         kp+x3RV9VUkaUfLORX0GHuKV5ujyv/WHBNzUAi/YIViM+CQwYsNHtSi1/kFitDVtI7cG
+         MPWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729430830; x=1730035630;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eBJzOYlqjsdcPdk0yMInJK2l8n0pk3Q6fRoZHJOBNDg=;
+        b=di0IL47Om/qemuJVSn2tkVG+lb5u46/lHUI9rdSiUm/jhArY/38u/Vg/aQAUM3VrSu
+         1Vm46JzqGUPSHT/D5OwE+qrhsuUbulDDs8vzGVTibmmxS9DB0iTCKmZU7UEyzzWBzkjr
+         2N9MSVEPzHOgJPbACzCE3R+xiEwdm7QeWN09oqavwNbhzlv+Q2XBf1QYyEHmoBjl9II/
+         1fojpZtVi1g2d20haZRYWnbe9TXEgeAXABN6P6Z+KQ0Oosw9qMK5pFLF6Hlu/qB4/uk0
+         8sO3ESeP1CfQrjL11uTP8lMAEpTH8wpV80N/cYWHlB1r0rgxmk3RGmid9R6LSn3nxYW1
+         O5cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOUM5zSrwLHkmJCSRAh3jJSWaQEd5d6B60nbx0xbARoGRLJ3UDrHRuzTq3kVJUwycxjUhQELXaId9RGro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKQsaCBWwKS6Gay+sNtWgdaznru1llpdJhwHXKPbebVF6Yaavq
+	NzBTcq+rh89kJsoi8Zyo2/PeIpqssyvcvP9HJNI/u0erH4B4YQu9wYWWP9731cAIap3ImfgYRap
+	V+jZpoBMwotweuqESF4WraC9VHaJDsbSk/3C++g==
+X-Google-Smtp-Source: AGHT+IGnWYenAH+ICS/UFFfkdYgfxAxxgdD8o/QX9kkC8wcWWq8eVoZ/61fjMkC/c+9rFwRbkiM8CbwF/i+45YR+acg=
+X-Received: by 2002:a05:622a:4d2:b0:460:92fa:f72e with SMTP id
+ d75a77b69052e-460aed75b47mr141603281cf.33.1729430830268; Sun, 20 Oct 2024
+ 06:27:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241019162605.308475-1-guodong@riscstar.com> <20241019162605.308475-2-guodong@riscstar.com>
+ <2024102029-populate-footage-755a@gregkh>
+In-Reply-To: <2024102029-populate-footage-755a@gregkh>
+From: Guodong Xu <guodong@riscstar.com>
+Date: Sun, 20 Oct 2024 21:26:57 +0800
+Message-ID: <CAH1PCMa4BK2eaVYSmckSDtGr6uhMEF12jHzHwqz-hnKFbQrFRw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: vendor: add deepcomputing
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, rafal@milecki.pl, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Heiko Stuebner <heiko.stuebner@cherry.de>, Michael Zhu <michael.zhu@starfivetech.com>, 
+	Drew Fustini <drew@beagleboard.org>, Alexandru Stan <ams@frame.work>, Daniel Schaefer <dhs@frame.work>, 
+	Sandie Cao <sandie.cao@deepcomputing.io>, Yuning Liang <yuning.liang@deepcomputing.io>, 
+	Huiming Qiu <huiming.qiu@deepcomputing.io>, Alex Elder <elder@riscstar.com>, linux@frame.work, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 20 Oct 2024 12:56:12 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+On Sun, Oct 20, 2024 at 2:21=E2=80=AFPM Greg Kroah-Hartman wrote:
+>
+> On Sun, Oct 20, 2024 at 12:26:03AM +0800, Guodong Xu wrote:
+> > From: Sandie Cao <sandie.cao@deepcomputing.io>
+> >
+> > From: Sandie Cao <sandie.cao@deepcomputing.io>
+>
+> Nit, for some reason this shows up twice, same for patch 2/3 :(
+>
 
-> On Mon, 14 Oct 2024 17:32:00 +0300
-> Ramona Alexandra Nechita <ramona.nechita@analog.com> wrote:
-> 
-> > Add support for AD7770, AD7771, AD7779 ADCs. The device is capable of
-> > sending out data both on DOUT lines interface,as on the SDO line.
-> > The driver currently implements only the SDO data streaming mode. SPI
-> > communication is used alternatively for accessing registers and streaming
-> > data. Register accesses are protected by crc8.
-> > 
-> > Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>  
-> 
-> A few comments inline.  I also tweaked white space in a few places
-> whilst applying.  Target in IIO is still sub 80 chars whenever it
-> doesn't hurt readability.
-> 
-> Also, you had unusual formatting for some of the macros. Avoid mixing
-> tabs then spaces for indentation of the \ 
-> 
-> series applied to the togreg branch of iio.git and initially pushed
-> out as testing so 0-day can take a look.
-> 
-> One missing return in the debugfs register access as well. Please
-> check I fixed that up correctly.
-Seems I missed the cancel button when I noticed the build message
-just as the other email went out.  Sorry for the noise!
-
-> 
-> Thanks,
-> 
-> Jonathan
+Thanks Greg.
+I will fix that.
 
