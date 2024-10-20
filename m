@@ -1,215 +1,138 @@
-Return-Path: <linux-kernel+bounces-373262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817169A5469
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:52:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BD39A546B
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D5BC282D35
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:52:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F15841C20A19
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F019193063;
-	Sun, 20 Oct 2024 13:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1B5192D69;
+	Sun, 20 Oct 2024 13:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="FUn7EJhd"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WFyxrqh1"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D7F1925B8
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 13:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB101714DF
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 13:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729432315; cv=none; b=ttIPcpnfjqc1u1FFccZf98BXld6axUmnAHi+VeQhZsnK/KBkQ1g6husZaXdAZRGpigo5XhhP9sqg8xnKvAPrPvdH3eSunjPHUKZQCMZy/G4yjPZLS94ImxNsCv0Jirl/p1nJITl8OIOrCQyQI/p5pUtnNrkcRLtrYvTScHPDKjc=
+	t=1729432392; cv=none; b=mNxhWRn6HHIoildKIzQGp2mfm7ik1Ycjc/ZWzl9IYULI4QxXh8PaRYQNTdusYE8w957RkIxYjjo005c1W9yvAaCMpShfVhZgphqm0ALd+R3oeqHhUu4B79/gkph0TX2uiFpu6RD0X4OrhieaJL9eV6uQAgEtFQOGBiHGqq505mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729432315; c=relaxed/simple;
-	bh=RsFNGv22sG4fCdMOrDoSctiX3RPx7FkgVT6SE5QOBYw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rWjyOa3p3cKqnEBqsMoGNf4DpPYLVBbqw6M0En0xOz3Uyz57N3WKtA4rpMCNA9sWLdZarGWmoJ0hycQoXSoL0LiOVJapxRS0p/2KTofRechwCKtQG8pwf4bA4u5SyOixirhyLKcSDlv8yAXxSRmtY3iEUq41WKEgkCa8nQ1TZ40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=FUn7EJhd; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cbb1cf324so32219605ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 06:51:52 -0700 (PDT)
+	s=arc-20240116; t=1729432392; c=relaxed/simple;
+	bh=GFp7zW2i3oBiN3HGsQ+XM9wS8osbR69MxAgkiGDHWGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=diA4cA1CKvS/FvodwnxUnpNO9JgGGyxQz/YQjGb7tFiF414SOMDoXB5mQ+8uucY1hx4Po+ckyAEl4bmuFnOA1drjzR/aGdelumkhsF/5T6FeRTyuOu2nUlH3lnGMN1Hpua0doTywav3WJ3Jzt2KFYUpLX/K6NvoRrjl1xkqHNoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WFyxrqh1; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb498a92f6so40439961fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 06:53:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1729432312; x=1730037112; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dihnrmjt0Cx1sW6hIV5b9q9IzCAC+S03ZrQpLAf6DXI=;
-        b=FUn7EJhdgluPG9DXTJ6HoWFURIpaljxZo/R0/IdrAVIh9e1l1XVzBpsWFWdSvRbRcz
-         LX25N52AjOH/aWjUWGLOy7vYzcyWzdb02LsluouCL2TDps989ejZTpFMVlRtTyCESbJV
-         jORj5vXidUZedyrIZKtay9axZ963wkw2i+uP75aRm36jwMvVVkLE1Gayfnz+Z942ETw+
-         WONj1DsrzTOOc6IMC41Mzi4MeA6moTr1D+xfG7LAID256zr6QViqeGlxuepdQKbK2wdx
-         sZguucfJcp/0bYEEVlIyDYygXT1sd4FLHmy9HK8ANtDX3ztw5k1TXFReLHbnXQqWfabb
-         1cmw==
+        d=linaro.org; s=google; t=1729432389; x=1730037189; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Gg1MDIPC7ZdKtGx4DSPHs00Leu3qoibohsRe4EHzNM=;
+        b=WFyxrqh1oIvsSv6tQgTJAUK9J9Q0SDmgOiIDUyhiwcyoVx2BChgFXsDtJpqyHqGbdt
+         JV1edVOmys3l00ZVnwMt/yl6TCNyqkLDgZJlKTe8Q0YsS5uQgKON9pBDyOSv3knqnGFR
+         F2FHD2xPbliXNg21zWpI+Ppol5m+94dCFr6ZD+bkXWVtGzFkMtQL+sg3LRLHmMysuAkl
+         34MW0Y6I2sSg54RF/J7FGkVduXGZXuJpo4BvJ9XSByw3Sp8nz1OPRil5bYc2CBWsgYoO
+         BviR1nQef6mtSjBAWDVLN7mb81RPIjGQFAbGF9PkMN+LkMX36CT5DKco1BFGZlxACqy6
+         s/2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729432312; x=1730037112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dihnrmjt0Cx1sW6hIV5b9q9IzCAC+S03ZrQpLAf6DXI=;
-        b=FkiVF9BwG2AaohLbUg1jDWVJs/QChg9to4SFHzWTr/RthtgCscrFqbEAb+pChEu0b3
-         IulUeN/EieTIfNkdoI8zTDTuYYR+gvMsxdOCdOj4HcNxrIQD1tVOdgFJ6GqbkBhOtL0j
-         6p3kX5TAJtCVFrG6pp/Ul93S5XQVDT8fVM2WcGXCRre/KatlojNbjVW65q8r1+bq6BfB
-         9W06EhiyDC9kiehpfAXjZSg/wgppvbuwd7MX+WXPKgp/Qe8sPMmSlMR+G3HTDnWS5i+c
-         NUb2neFOB3Hetr/R24cTK5QPbhZ5AJ33AD4qOjPZ5mKUgMyGJve88ahSw03tukZPrmPo
-         xr+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Vvm88CixhGTVh7McfIf9NmOAf21Tu5YTtdXSn5vlAD4gh9G+TDRvyNa6lOhh10Xubc7/y/ZOr/cfZBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEAthDZT+8Rq4E/cMyY+OAVuE/VUMEVnJgjgh4NVWantkAQDSd
-	xr8Oyw9o1HDXbApPljM/adm/ijo2Q7f0wdFsCaHuz+qetqKgbM3lrvPgBPUqAgc=
-X-Google-Smtp-Source: AGHT+IE0C8U3ppaL1ZcOhngjMTld2ijPjY1NBwe1b/U8l0HwDFa5HUPH4SIbia5o3FNaHcPCORuA4g==
-X-Received: by 2002:a17:902:e845:b0:20b:ab4b:544a with SMTP id d9443c01a7336-20e5a8ee9e6mr114664235ad.43.1729432311986;
-        Sun, 20 Oct 2024 06:51:51 -0700 (PDT)
-Received: from localhost.localdomain ([2a11:3:200::40df])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee63f0sm10554935ad.3.2024.10.20.06.51.35
+        d=1e100.net; s=20230601; t=1729432389; x=1730037189;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Gg1MDIPC7ZdKtGx4DSPHs00Leu3qoibohsRe4EHzNM=;
+        b=wP5x85fAV4vCLWXHbepvYrvkidTBet5dWpeqx5+S+u/EFcQ+Kgx88kZU5n4aZ1tL2Z
+         J5+NzZ/OpqbiOttCZK4uZzKi/NeNNmyRw1b4iYPxiRntazASelfGH+bevOIW8r3sPrem
+         s8FjrzRW+dGWT9BYppMLe0O+KDj9IRoZOahl3M1YqLly8qrMr+tDEBLv2BrkDsAle7xI
+         U1MRxb+/Q1V/tbBdQQOT+KZHVDcu6YHBiIj++uE3DG38IaL1i6sbULDycWsamsicyDAv
+         Zed/LZtRcTFdpvqolzbm0z//tIJTW6UA9FZeDJNWHf69+P9zb+7k7+/wKhm8DZ219yiN
+         Dtlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWTB3QOoyIYdsXidveEtsro/7oMhA1C+m//LjymE9/1wp/tISbBH+j+2AFoUcGgv9/ho3qxlolLD0+6LE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys55rtnX7BMGb5IVyO8hzZbDg40R9Gi3hr7LTGukolBsHYtY4k
+	e1KpctMqXyItmegfmpvduQGrSoPKJE5w3DQuHSOYrUcTvyNNlorO79Q1zjh+Hs8=
+X-Google-Smtp-Source: AGHT+IHhzOLb5I3egLSSwZjc9BNKis8amHkTwLwjkwvSdniL6EjlNHXASdEegJ8U+tOsgB5Ha2S3CA==
+X-Received: by 2002:a2e:e12:0:b0:2f6:57b1:98b0 with SMTP id 38308e7fff4ca-2fb8320dd55mr29466571fa.42.1729432388467;
+        Sun, 20 Oct 2024 06:53:08 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb9ad60775sm2387881fa.36.2024.10.20.06.53.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 06:51:51 -0700 (PDT)
-From: Guodong Xu <guodong@riscstar.com>
-To: Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	rafal@milecki.pl,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	Michael Zhu <michael.zhu@starfivetech.com>,
-	Drew Fustini <drew@beagleboard.org>,
-	Alexandru Stan <ams@frame.work>,
-	Daniel Schaefer <dhs@frame.work>,
-	Sandie Cao <sandie.cao@deepcomputing.io>,
-	Yuning Liang <yuning.liang@deepcomputing.io>,
-	Huiming Qiu <huiming.qiu@deepcomputing.io>,
-	Alex Elder <elder@riscstar.com>,
-	linux@frame.work,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Guodong Xu <guodong@riscstar.com>
-Subject: [PATCH v5 3/3] riscv: dts: starfive: add DeepComputing FML13V01 board device tree
-Date: Sun, 20 Oct 2024 21:49:59 +0800
-Message-Id: <20241020134959.519462-4-guodong@riscstar.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241020134959.519462-1-guodong@riscstar.com>
-References: <20241020134959.519462-1-guodong@riscstar.com>
+        Sun, 20 Oct 2024 06:53:06 -0700 (PDT)
+Date: Sun, 20 Oct 2024 16:53:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Hermes.wu@ite.com.tw
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Pin-yen Lin <treapking@chromium.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Kenneth Hung <Kenneth.hung@ite.com.tw>, Pet Weng <Pet.Weng@ite.com.tw>
+Subject: Re: [PATCH v6 03/10] drm/bridge: it6505: add AUX operation for HDCP
+ KSV list read
+Message-ID: <ojy6n4hphcohozcqnkbmmiwtyjspbklu5ozmnkkgawzyaz66zk@pozfn4kn3rcs>
+References: <20241016-upstream-v6-v6-0-4d93a0c46de1@ite.com.tw>
+ <20241016-upstream-v6-v6-3-4d93a0c46de1@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016-upstream-v6-v6-3-4d93a0c46de1@ite.com.tw>
 
-From: Sandie Cao <sandie.cao@deepcomputing.io>
+On Wed, Oct 16, 2024 at 03:54:15PM +0800, Hermes Wu via B4 Relay wrote:
+> From: Hermes Wu <Hermes.wu@ite.com.tw>
+> 
+> HDCP KSV list readback can choose to use AUX FIFO or
+> general data register.
+> For some DisplayPort devices, the KSV list must be read
+> in 5 byte boundaries.
+> The original AUX read command does not support these devices.
+> 
+> The AUX command operation control register "REG_AUX_CMD_REQ" uses b[3:0]
+> as AUX operacion control, and b[7:4] are status bits and read only.
+> To change KSV read operation uses "CMD_AUX_NATIVE_READ" from using
+> the data registers to using AUX FIFO.
+> The extended command "CMD_AUX_GET_KSV_LIST" is added as
+> "CMD_AUX_NATIVE_READ" with the 0x10 flag which selects AUX FIFO mode.
+> 
+> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+> ---
+>  drivers/gpu/drm/bridge/ite-it6505.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+> 
 
-The FML13V01 board from DeepComputing incorporates a StarFive JH7110 SoC.
-It is a mainboard designed for the Framework Laptop 13 Chassis, which has
-(Framework) SKU FRANHQ0001.
+> @@ -996,7 +1001,7 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
+>  				  size);
+>  
+>  	/* Aux Fire */
+> -	it6505_write(it6505, REG_AUX_CMD_REQ, cmd);
+> +	it6505_write(it6505, REG_AUX_CMD_REQ, FIELD_GET(M_AUX_REQ_CMD, cmd));
 
-The FML13V01 board features:
-- StarFive JH7110 SoC
-- LPDDR4 8GB
-- eMMC 32GB or 128GB
-- QSPI Flash
-- MicroSD Slot
-- PCIe-based Wi-Fi
-- 4 USB-C Ports
- - Port 1: PD 3.0 (60W Max), USB 3.2 Gen 1, DP 1.4 (4K@30Hz/2.5K@60Hz)
- - Port 2: PD 3.0 (60W Max), USB 3.2 Gen 1
- - Port 3 & 4: USB 3.2 Gen 1
+This needs #include <linux/bitfield.h>
 
-Create the DTS file for the DeepComputing FML13V01 board. Seven device
-nodes have been verified functional and remain enabled: i2c2, i2c5, i2c6
-qspi, mmc0, mmc1 and usb0.  All others remain disabled, or are disabled
-by nodes in "jh7110-deepcomputing-fml13v01.dts".
+Other than that
 
-Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
-[elder@riscstar.com: revised the description, updated some nodes]
-Signed-off-by: Alex Elder <elder@riscstar.com>
-Signed-off-by: Guodong Xu <guodong@riscstar.com>
----
-v5: No change
-v4: Changed model string to "DeepComputing FML13V01"
-    Changed dts filename and Makefile accordingly to reflect the change
-    Updated device nodes status, and verified functional
-    Revised the commit message
-v3: Updated the commit message
-v2: Changed the model and copmatible strings
-    Updated the commit message with board features
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
- arch/riscv/boot/dts/starfive/Makefile         |  1 +
- .../jh7110-deepcomputing-fml13v01.dts         | 44 +++++++++++++++++++
- 2 files changed, 45 insertions(+)
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
 
-diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
-index 7a163a7d6ba3..b3bb12f78e7d 100644
---- a/arch/riscv/boot/dts/starfive/Makefile
-+++ b/arch/riscv/boot/dts/starfive/Makefile
-@@ -8,6 +8,7 @@ DTC_FLAGS_jh7110-starfive-visionfive-2-v1.3b := -@
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-beaglev-starlight.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-visionfive-v1.dtb
- 
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
-new file mode 100644
-index 000000000000..b515b7d04c37
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
-@@ -0,0 +1,44 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2024 DeepComputing (HK) Limited
-+ */
-+
-+/dts-v1/;
-+#include "jh7110-common.dtsi"
-+
-+/ {
-+	model = "DeepComputing FML13V01";
-+	compatible = "deepcomputing,fml13v01", "starfive,jh7110";
-+};
-+
-+&camss {
-+	status = "disabled";
-+};
-+
-+&csi2rx {
-+	status = "disabled";
-+};
-+
-+&gmac0 {
-+	status = "disabled";
-+};
-+
-+&i2c0 {
-+	status = "disabled";
-+};
-+
-+&pwm {
-+	status = "disabled";
-+};
-+
-+&pwmdac {
-+	status = "disabled";
-+};
-+
-+&spi0 {
-+	status = "disabled";
-+};
-+
-+&usb0 {
-+	dr_mode = "host";
-+};
+>  
+>  	ret = it6505_aux_wait(it6505);
+>  	if (ret < 0)
+
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
