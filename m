@@ -1,367 +1,280 @@
-Return-Path: <linux-kernel+bounces-373321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D77DA9A5541
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:38:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16099A5543
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39CA1C20D7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54F63281740
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA86194A7C;
-	Sun, 20 Oct 2024 16:38:34 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67674194A66;
+	Sun, 20 Oct 2024 16:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="I/TzK25e"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B12D1946DA
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 16:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7062209B
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 16:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729442313; cv=none; b=ARzOxpSEbVxeMca69aEQfNwH2IpqWCBVTZsxJUCeONtgiuiIFXHaiC+ChE8mA4T4nCc5OyYEqNL4R2AaxdSa2n80hu/w7GMbabv2FNEGE8rsRob1Z2Ommk4i4e4IEkBI7MqC+65emhF0L5r4Ogh3hT7w3EblDQtSYNRzZm3cDiA=
+	t=1729442623; cv=none; b=Yo/uMLfYS9ZXy8TOMvmGPuMDh+ri0w8hwThQmQkscLFVsWjVBxPHoybjP0/JkS/HjLAUMJrmebOh0biWJtZOmRw/cbDtaEDE36WEQOFbzGpvIy7Y8HXbuB+u4hJg0y9sznrQzjb1vNIdTie7je/hpuCgOz/ao5l8LBIyc2k0buk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729442313; c=relaxed/simple;
-	bh=RNbZMFjGuWRf9PWXyyH3g7ytzX5MviRa0QhwRcU8Z+w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qt96KC4fH7VkMmstHBdpYy0S6F4rCt4kC+iD6Wm8DbVOdZ5KF5uIoEsWKrZtZI+j2EoZRuuoqreq0JwRr/X4Ov8cBx8tFc4sb4ugjA33dTZB5e18YUIxxzeaRAgLNfwtfZSurxH7wJg5pv6H1J8hL9885XLGXzfSrXJAginLgGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso29304405ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 09:38:30 -0700 (PDT)
+	s=arc-20240116; t=1729442623; c=relaxed/simple;
+	bh=aXelq+6UcPxutqyDfCpfiq66JRmQ5hET+F7UNbintns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lg9GcC6B266+zYK/+A565grBUcYZ7NNWDKuBho8PYq9q5UuuIf9fH0torxvT/NvruFiRiJQdLydUrTVmqhEPfyFRe0wihBUefcXzS5kOKh+2Zs9egesP9iDWBraF4Xcq8piZ41P9EFqIjdUfrYNQ8/ZU2ZOCqzQK6eQsatCkkqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=I/TzK25e; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71ec997ad06so98703b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 09:43:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1729442621; x=1730047421; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uuyE0zXThf85ODlV7Yrpi5hwCxVxPXafthR4WU2BoDk=;
+        b=I/TzK25euVtXyEraaC865llkN61ZRrBT97P+4LI3uoCdkTS26pJ9NFwd1Fgo97hiIa
+         w3efV6xfDpvE2YaxsSj7e1AS7AMXdKGITeQnhTsa6vrGxqCtu7asNm6rnDZXoTcxiAyS
+         w+0LzupUDwHRPPzFiKfA/AfYbSKqisx9saJrgjMSmg446klc/D4OkoI6VWFr7oipfXjV
+         xT6cwfKdccbXOwEnMSI9yvA8/Kda8GF3lkJ++9pmDpAvndQRwKVN0xSywos6NxqtjOHE
+         gBTttzWSZkVnVqCuvL1Ay05Voxqg+J0JGP+NDn/zJY+RfHfMUZa2rCXputkukOQbEIpJ
+         v+aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729442310; x=1730047110;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EdjxvHJnuzTO5zwvPQilrVGk1BqZfV5w3kusSwVm8f0=;
-        b=mu2gVuNJHm46tnlun8HXCPGZuEIc9CjSpHoC6zgvWg6QAjLGhac4qQ9lH2BAkWL0aE
-         hhiZqdjlQJwGXdakXpb2hPC1qWsr0LhTmhIFKlBN7OT7AswypgUgj6XUqM235r+nYFjR
-         LKTzJJRmtW7+fydrRDnzY/K+pF3f3mM4iAJE8UchmS2OFe3NU5rHDOvSige3b15RGcad
-         UlqUNxTHH0mHRMar36bdZu3ZCtxyJE0kAwEglcAxW9KMkHHFYxSU9kZipLMNoBq7TnFV
-         c3s30ICxr4BBCYkysGIzBQPcuTDNZNcVVDNrYHFiYICSR53Pc9vYHQ+JWhQWAcueE+n9
-         SO6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXpncoc0PWpq6izJLcFwU+cBrbb2XaQCU0UlgmUSftqTgwOJrfZCa+Txi496G+9l9SpYX0fTvXqqDZMYEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOL5kXr0Vl+s0qRK2F0oZ5n42M10AWcShz35hGznb27D4c2AEA
-	Ah7aIh+xXimz4HyLhx5Ffr0TQzlqOY7CUvPFuSgAH7zZsBzvR6qTeSPTJeFY7m9cNe3N491whAG
-	dGZ8jhOOkB0OK+naxyR8DG6ndyS3V7GTH8penM1PMkux1p0Cpa1iYvtE=
-X-Google-Smtp-Source: AGHT+IE6ARPUYKlje25EoGyFwTm/5XjbKtWMja2OiAyJax3I8AK5V8CReARP0M1QNPGHBPHlVNyXMuCj0Xh1LlKIe5snv33HRfq7
+        d=1e100.net; s=20230601; t=1729442621; x=1730047421;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uuyE0zXThf85ODlV7Yrpi5hwCxVxPXafthR4WU2BoDk=;
+        b=pCp+l/K0MGAjXK63Xj5RJGN3/f/DnJOfGVjsl1k8neYmIfy6aiDt5Kl5TQeoqbVDGM
+         W4DjUridiFFF/8hOa6zgbxl4aKnC/G76WzPHUWjJQ7xwr/ORAXO2J2UFbwz5wXdoxoa6
+         KSVN6a5cfV3jiu72XpMvuKVw4qvWNcmc621qRvJxgS/BUdbPBgliwVDcOyC41h4EEcD6
+         AHD8EEVZqzav1P5oVa8otVJhsQ6loQwaNHklEgDjI7aW0z978xPsi4fhk4LbYIZVPITy
+         9yMi0t5gK9ayTxzFWmuBen4TVVwmGeaWnJ+RoXmUS8GNsk+CRNn0YB7Dtk6IegH1y0b6
+         yJLw==
+X-Gm-Message-State: AOJu0Yz8scZ2S5KQJwOK71Ie3JJ0RXmEgEm0E7cFMNjTm3K/xA8G0oR6
+	4YAz4XB5pucIjB6wHoupLo5+eFoLUPr2PL6Lc4LGUPMhCVcP73BBB87mu4HozHuu3UBuB6PZE2a
+	V
+X-Google-Smtp-Source: AGHT+IHFp/oUg1b/dmDTKrHpwmqnvfJj1a4oSvJqt+BGdzsAhPpsM0P8qLXruvy7sWZ869eHE6N/LA==
+X-Received: by 2002:a05:6a00:198d:b0:71e:4c86:6594 with SMTP id d2e1a72fcca58-71ea320d843mr11915880b3a.10.1729442620838;
+        Sun, 20 Oct 2024 09:43:40 -0700 (PDT)
+Received: from mozart.vkv.me (192-184-160-110.fiber.dynamic.sonic.net. [192.184.160.110])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13ea1d1sm1346265b3a.165.2024.10.20.09.43.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 09:43:40 -0700 (PDT)
+Date: Sun, 20 Oct 2024 09:43:37 -0700
+From: Calvin Owens <calvin@wbinvd.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Rodolfo Giometti <giometti@enneenne.com>,
+	George Spelvin <linux@horizon.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] pps: Remove embedded cdev to fix a use-after-free
+Message-ID: <ZxUzORuz4r4HATOe@mozart.vkv.me>
+References: <ZuMvmbf6Ru_pxhWn@mozart.vkv.me>
+ <8072cd54b02eaebf16739f07e6307271534e21c7.1726119983.git.calvin@wbinvd.org>
+ <2024101350-jinx-haggler-5aca@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c546:0:b0:3a0:378a:884b with SMTP id
- e9e14a558f8ab-3a3f40474c5mr60967495ab.3.1729442310010; Sun, 20 Oct 2024
- 09:38:30 -0700 (PDT)
-Date: Sun, 20 Oct 2024 09:38:29 -0700
-In-Reply-To: <6709234e.050a0220.3e960.0011.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67153205.050a0220.1e4b4d.0048.GAE@google.com>
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-From: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, stern@rowland.harvard.edu, sylv@sylv.io, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2024101350-jinx-haggler-5aca@gregkh>
 
-syzbot has found a reproducer for the following issue on:
+Hi Greg,
 
-HEAD commit:    07b887f8236e xhci: add helper to stop endpoint and wait fo..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e9425f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9878fe11046ea2c6
-dashboard link: https://syzkaller.appspot.com/bug?extid=f342ea16c9d06d80b585
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13a36c87980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a36c87980000
+On Sunday 10/13 at 17:04 +0200, Greg Kroah-Hartman wrote:
+> On Fri, Sep 13, 2024 at 05:24:29PM -0700, Calvin Owens wrote:
+> > On a board running ntpd and gpsd, I'm seeing a consistent use-after-free
+> > in sys_exit() from gpsd when rebooting:
+> > 
+> >     pps pps1: removed
+> >     ------------[ cut here ]------------
+> >     kobject: '(null)' (00000000db4bec24): is not initialized, yet kobject_put() is being called.
+> 
+> Something is wrong with the reference counting here...
+> 
+> >     WARNING: CPU: 2 PID: 440 at lib/kobject.c:734 kobject_put+0x120/0x150
+> >     CPU: 2 UID: 299 PID: 440 Comm: gpsd Not tainted 6.11.0-rc6-00308-gb31c44928842 #1
+> >     Hardware name: Raspberry Pi 4 Model B Rev 1.1 (DT)
+> >     pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> >     pc : kobject_put+0x120/0x150
+> >     lr : kobject_put+0x120/0x150
+> >     sp : ffffffc0803d3ae0
+> >     x29: ffffffc0803d3ae0 x28: ffffff8042dc9738 x27: 0000000000000001
+> >     x26: 0000000000000000 x25: ffffff8042dc9040 x24: ffffff8042dc9440
+> >     x23: ffffff80402a4620 x22: ffffff8042ef4bd0 x21: ffffff80405cb600
+> >     x20: 000000000008001b x19: ffffff8040b3b6e0 x18: 0000000000000000
+> >     x17: 0000000000000000 x16: 0000000000000000 x15: 696e6920746f6e20
+> >     x14: 7369203a29343263 x13: 205d303434542020 x12: 0000000000000000
+> >     x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+> >     x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+> >     x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+> >     x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+> >     Call trace:
+> >      kobject_put+0x120/0x150
+> >      cdev_put+0x20/0x3c
+> >      __fput+0x2c4/0x2d8
+> >      ____fput+0x1c/0x38
+> >      task_work_run+0x70/0xfc
+> >      do_exit+0x2a0/0x924
+> >      do_group_exit+0x34/0x90
+> >      get_signal+0x7fc/0x8c0
+> >      do_signal+0x128/0x13b4
+> >      do_notify_resume+0xdc/0x160
+> >      el0_svc+0xd4/0xf8
+> >      el0t_64_sync_handler+0x140/0x14c
+> >      el0t_64_sync+0x190/0x194
+> >     ---[ end trace 0000000000000000 ]---
+> > 
+> > ...followed by more symptoms of corruption, with similar stacks:
+> > 
+> >     refcount_t: underflow; use-after-free.
+> >     kernel BUG at lib/list_debug.c:62!
+> >     Kernel panic - not syncing: Oops - BUG: Fatal exception
+> > 
+> > This happens because pps_device_destruct() frees the pps_device with the
+> > embedded cdev immediately after calling cdev_del(), but, as the comment
+> > above cdev_del() notes, fops for previously opened cdevs are still
+> > callable even after cdev_del() returns. I think this bug has always
+> > been there: I can't explain why it suddenly started happening every time
+> > I reboot this particular board.
+> > 
+> > In commit d953e0e837e6 ("pps: Fix a use-after free bug when
+> > unregistering a source."), George Spelvin suggested removing the
+> > embedded cdev. That seems like the simplest way to fix this, so I've
+> > implemented his suggestion, with pps_idr becoming the source of truth
+> > for which minor corresponds to which device.
+> 
+> You remove it, but now the structure has no reference counting at all,
+> so you should make it a real "struct device" not just containing a
+> pointer to one.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c447438ae517/disk-07b887f8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1430abb44ca1/vmlinux-07b887f8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/53e62be3705b/bzImage-07b887f8.xz
+It still uses the device refcount. I didn't change that, see the
+kobject_get() (which is confusing and should be get_device() as you note
+below) in pps_cdev_open() before my patch.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com
+> > But now that pps_idr defines userspace visibility instead of cdev_add(),
+> > we need to be sure the pps->dev kobject refcount can't reach zero while
+> > userspace can still find it again. So, the idr_remove() call moves to
+> > pps_unregister_cdev(), and pps_idr now holds a reference to the pps->dev
+> > kobject.
+> 
+> An idr shouldn't be doing the reference counting here, the struct device
+> should be doing it, right?
 
-INFO: task kworker/0:0:8 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc3-syzkaller-00051-g07b887f8236e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:0     state:D stack:24544 pid:8     tgid:8     ppid:2      flags:0x00004000
-Workqueue: pm pm_runtime_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5322 [inline]
- __schedule+0x105f/0x34b0 kernel/sched/core.c:6682
- __schedule_loop kernel/sched/core.c:6759 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6774
- usb_kill_urb.part.0+0x1ca/0x250 drivers/usb/core/urb.c:713
- usb_kill_urb+0x83/0xa0 drivers/usb/core/urb.c:702
- usb_start_wait_urb+0x255/0x4c0 drivers/usb/core/message.c:65
- usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
- usb_control_msg+0x327/0x4b0 drivers/usb/core/message.c:154
- usb_enable_remote_wakeup drivers/usb/core/hub.c:3365 [inline]
- usb_port_suspend+0x339/0xf10 drivers/usb/core/hub.c:3472
- usb_generic_driver_suspend+0xeb/0x1d0 drivers/usb/core/generic.c:302
- usb_suspend_device drivers/usb/core/driver.c:1272 [inline]
- usb_suspend_both+0x66d/0x9c0 drivers/usb/core/driver.c:1443
- usb_runtime_suspend+0x49/0x180 drivers/usb/core/driver.c:1968
- __rpm_callback+0xc5/0x4c0 drivers/base/power/runtime.c:394
- rpm_callback+0x192/0x1d0 drivers/base/power/runtime.c:448
- rpm_suspend+0x2e7/0x1200 drivers/base/power/runtime.c:672
- __pm_runtime_suspend+0xbc/0x160 drivers/base/power/runtime.c:1142
- pm_runtime_autosuspend include/linux/pm_runtime.h:342 [inline]
- usb_runtime_idle+0x4c/0x60 drivers/usb/core/driver.c:2005
- rpm_idle+0x2f7/0x740 drivers/base/power/runtime.c:524
- pm_runtime_work+0x120/0x150 drivers/base/power/runtime.c:970
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task syz-executor264:2749 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc3-syzkaller-00051-g07b887f8236e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor264 state:D stack:27120 pid:2749  tgid:2749  ppid:2655   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5322 [inline]
- __schedule+0x105f/0x34b0 kernel/sched/core.c:6682
- __schedule_loop kernel/sched/core.c:6759 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6774
- rpm_resume+0x5a8/0x1330 drivers/base/power/runtime.c:834
- rpm_resume+0x750/0x1330 drivers/base/power/runtime.c:892
- __pm_runtime_resume+0xb6/0x170 drivers/base/power/runtime.c:1172
- pm_runtime_resume_and_get include/linux/pm_runtime.h:430 [inline]
- usb_autopm_get_interface+0x20/0xe0 drivers/usb/core/driver.c:1833
- wdm_open+0x24a/0x630 drivers/usb/class/cdc-wdm.c:730
- usb_open+0x186/0x220 drivers/usb/core/file.c:47
- chrdev_open+0x237/0x6a0 fs/char_dev.c:414
- do_dentry_open+0x6cb/0x1390 fs/open.c:958
- vfs_open+0x82/0x3f0 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x1e6a/0x2d60 fs/namei.c:3933
- do_filp_open+0x1dc/0x430 fs/namei.c:3960
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5497b6aa11
-RSP: 002b:00007fff3baf7250 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f5497b6aa11
-RDX: 0000000000000002 RSI: 00007fff3baf72e0 RDI: 00000000ffffff9c
-RBP: 00007fff3baf72e0 R08: 000000000000000f R09: 00007fff3baf7067
-R10: 0000000000000000 R11: 0000000000000202 R12: 000000000002ff58
-R13: 00007fff3baf770c R14: 00007fff3baf7720 R15: 00007fff3baf7710
- </TASK>
-INFO: task syz-executor264:2750 blocked for more than 144 seconds.
-      Not tainted 6.12.0-rc3-syzkaller-00051-g07b887f8236e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor264 state:D stack:28384 pid:2750  tgid:2750  ppid:2656   flags:0x00000006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5322 [inline]
- __schedule+0x105f/0x34b0 kernel/sched/core.c:6682
- __schedule_loop kernel/sched/core.c:6759 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6774
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6831
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- wdm_open+0x5d/0x630 drivers/usb/class/cdc-wdm.c:715
- usb_open+0x186/0x220 drivers/usb/core/file.c:47
- chrdev_open+0x237/0x6a0 fs/char_dev.c:414
- do_dentry_open+0x6cb/0x1390 fs/open.c:958
- vfs_open+0x82/0x3f0 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x1e6a/0x2d60 fs/namei.c:3933
- do_filp_open+0x1dc/0x430 fs/namei.c:3960
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5497b6aa11
-RSP: 002b:00007fff3baf7250 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f5497b6aa11
-RDX: 0000000000000002 RSI: 00007fff3baf72e0 RDI: 00000000ffffff9c
-RBP: 00007fff3baf72e0 R08: 000000000000000f R09: 00007fff3baf7067
-R10: 0000000000000000 R11: 0000000000000202 R12: 000000000002ff82
-R13: 00007fff3baf770c R14: 00007fff3baf7720 R15: 00007fff3baf7710
- </TASK>
-INFO: task syz-executor264:2751 blocked for more than 144 seconds.
-      Not tainted 6.12.0-rc3-syzkaller-00051-g07b887f8236e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor264 state:D stack:28224 pid:2751  tgid:2751  ppid:2654   flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5322 [inline]
- __schedule+0x105f/0x34b0 kernel/sched/core.c:6682
- __schedule_loop kernel/sched/core.c:6759 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6774
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6831
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- wdm_release+0x4b/0x440 drivers/usb/class/cdc-wdm.c:764
- __fput+0x3f6/0xb60 fs/file_table.c:431
- task_work_run+0x14e/0x250 kernel/task_work.c:228
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xadd/0x2ce0 kernel/exit.c:939
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
- x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5497b69ab9
-RSP: 002b:00007fff3baf7698 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5497b69ab9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007f5497be4370 R08: ffffffffffffffb8 R09: ffffffffffffffff
-R10: 00007f5497be43c0 R11: 0000000000000246 R12: 00007f5497be4370
-R13: 0000000000000000 R14: 00007f5497be8080 R15: 00007f5497b37c80
- </TASK>
-INFO: task syz-executor264:2753 blocked for more than 144 seconds.
-      Not tainted 6.12.0-rc3-syzkaller-00051-g07b887f8236e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor264 state:D stack:26016 pid:2753  tgid:2753  ppid:2652   flags:0x00000006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5322 [inline]
- __schedule+0x105f/0x34b0 kernel/sched/core.c:6682
- __schedule_loop kernel/sched/core.c:6759 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6774
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6831
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- wdm_open+0x5d/0x630 drivers/usb/class/cdc-wdm.c:715
- usb_open+0x186/0x220 drivers/usb/core/file.c:47
- chrdev_open+0x237/0x6a0 fs/char_dev.c:414
- do_dentry_open+0x6cb/0x1390 fs/open.c:958
- vfs_open+0x82/0x3f0 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x1e6a/0x2d60 fs/namei.c:3933
- do_filp_open+0x1dc/0x430 fs/namei.c:3960
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5497b6aa11
-RSP: 002b:00007fff3baf7250 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f5497b6aa11
-RDX: 0000000000000002 RSI: 00007fff3baf72e0 RDI: 00000000ffffff9c
-RBP: 00007fff3baf72e0 R08: 000000000000000f R09: 00007fff3baf7067
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000030341
-R13: 00007fff3baf770c R14: 00007fff3baf7720 R15: 00007fff3baf7710
- </TASK>
-INFO: task syz-executor264:2754 blocked for more than 144 seconds.
-      Not tainted 6.12.0-rc3-syzkaller-00051-g07b887f8236e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor264 state:D stack:27936 pid:2754  tgid:2754  ppid:2657   flags:0x00000006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5322 [inline]
- __schedule+0x105f/0x34b0 kernel/sched/core.c:6682
- __schedule_loop kernel/sched/core.c:6759 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6774
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6831
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- wdm_open+0x5d/0x630 drivers/usb/class/cdc-wdm.c:715
- usb_open+0x186/0x220 drivers/usb/core/file.c:47
- chrdev_open+0x237/0x6a0 fs/char_dev.c:414
- do_dentry_open+0x6cb/0x1390 fs/open.c:958
- vfs_open+0x82/0x3f0 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x1e6a/0x2d60 fs/namei.c:3933
- do_filp_open+0x1dc/0x430 fs/namei.c:3960
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5497b6aa11
-RSP: 002b:00007fff3baf7250 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f5497b6aa11
-RDX: 0000000000000002 RSI: 00007fff3baf72e0 RDI: 00000000ffffff9c
-RBP: 00007fff3baf72e0 R08: 000000000000000f R09: 00007fff3baf7067
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000030406
-R13: 00007fff3baf770c R14: 00007fff3baf7720 R15: 00007fff3baf7710
- </TASK>
+Right, I was trying to explain that it is now necessary to call
+get_device() to acquire a reference while the device minor is indexed by
+the idr.
 
-Showing all locks held in the system:
-3 locks held by kworker/0:0/8:
- #0: ffff888100eed548 ((wq_completion)pm){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc9000008fd80 ((work_completion)(&dev->power.work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff8881077f7508 (&port_dev->status_lock){+.+.}-{3:3}, at: usb_lock_port drivers/usb/core/hub.c:3206 [inline]
- #2: ffff8881077f7508 (&port_dev->status_lock){+.+.}-{3:3}, at: usb_port_suspend+0x255/0xf10 drivers/usb/core/hub.c:3463
-1 lock held by khungtaskd/30:
- #0: ffffffff88ebb100 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff88ebb100 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff88ebb100 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x7f/0x390 kernel/locking/lockdep.c:6720
-2 locks held by getty/2609:
- #0: ffff88810f7650a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc900000432f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfba/0x1480 drivers/tty/n_tty.c:2211
-2 locks held by syz-executor264/2749:
- #0: ffffffff899dae90 (minor_rwsem){++++}-{3:3}, at: usb_open+0x23/0x220 drivers/usb/core/file.c:38
- #1: ffffffff89a96908 (wdm_mutex){+.+.}-{3:3}, at: wdm_open+0x5d/0x630 drivers/usb/class/cdc-wdm.c:715
-2 locks held by syz-executor264/2750:
- #0: ffffffff899dae90 (minor_rwsem){++++}-{3:3}, at: usb_open+0x23/0x220 drivers/usb/core/file.c:38
- #1: ffffffff89a96908 (wdm_mutex){+.+.}-{3:3}, at: wdm_open+0x5d/0x630 drivers/usb/class/cdc-wdm.c:715
-1 lock held by syz-executor264/2751:
- #0: ffffffff89a96908 (wdm_mutex){+.+.}-{3:3}, at: wdm_release+0x4b/0x440 drivers/usb/class/cdc-wdm.c:764
-2 locks held by syz-executor264/2753:
- #0: ffffffff899dae90 (minor_rwsem){++++}-{3:3}, at: usb_open+0x23/0x220 drivers/usb/core/file.c:38
- #1: ffffffff89a96908 (wdm_mutex){+.+.}-{3:3}, at: wdm_open+0x5d/0x630 drivers/usb/class/cdc-wdm.c:715
-2 locks held by syz-executor264/2754:
- #0: ffffffff899dae90 (minor_rwsem){++++}-{3:3}, at: usb_open+0x23/0x220 drivers/usb/core/file.c:38
- #1: ffffffff89a96908 (wdm_mutex){+.+.}-{3:3}, at: wdm_open+0x5d/0x630 drivers/usb/class/cdc-wdm.c:715
+Before, the minor was deindexed in the idr in ->release(). But now,
+since it is visible the moment it is indexed by the idr, deindexing it
+in ->release() means this could happen during removal:
 
-=============================================
+	CPU1		CPU2
+	---		---
+			pps_unregister_cdev()
+			<...>
+	sys_open()
+	<...>
+	idr_lookup()
+			idr_remove()
+			put_device() <--- ref goes to zero
+	get_device()		     <--- BOOM
+			pps_device_destruct()
+			pps_idr_remove()
 
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc3-syzkaller-00051-g07b887f8236e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xf0c/0x1240 kernel/hung_task.c:379
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
-NMI backtrace for cpu 0 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
-NMI backtrace for cpu 0 skipped: idling at acpi_safe_halt+0x1a/0x20 drivers/acpi/processor_idle.c:111
+By calling get_device() in pps_idr_get(), and by moving the idr
+deindexing from ->release() to pps_unregister_cdev(), we ensure that
+can't happen.
 
+> > 
+> >     pps_core: source serial1 got cdev (251:1)
+> >     <...>
+> >     pps pps1: removed
+> >     pps_core: unregistering pps1
+> >     pps_core: deallocating pps1
+> > 
+> > Fixes: d953e0e837e6 ("pps: Fix a use-after free bug when unregistering a source.")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+> > ---
+> > Changes in v2:
+> > - Don't move pr_debug() from pps_device_destruct() to pps_unregister_cdev()
+> > - Actually add stable@vger.kernel.org to CC
+> > ---
+> >  drivers/pps/pps.c          | 83 ++++++++++++++++++++------------------
+> >  include/linux/pps_kernel.h |  1 -
+> >  2 files changed, 44 insertions(+), 40 deletions(-)
+> > 
+> > diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
+> > index 5d19baae6a38..6980ab17f314 100644
+> > --- a/drivers/pps/pps.c
+> > +++ b/drivers/pps/pps.c
+> > @@ -25,7 +25,7 @@
+> >   * Local variables
+> >   */
+> >  
+> > -static dev_t pps_devt;
+> > +static int pps_major;
+> >  static struct class *pps_class;
+> >  
+> >  static DEFINE_MUTEX(pps_idr_lock);
+> > @@ -296,19 +296,35 @@ static long pps_cdev_compat_ioctl(struct file *file,
+> >  #define pps_cdev_compat_ioctl	NULL
+> >  #endif
+> >  
+> > +static struct pps_device *pps_idr_get(unsigned long id)
+> > +{
+> > +	struct pps_device *pps;
+> > +
+> > +	mutex_lock(&pps_idr_lock);
+> > +	pps = idr_find(&pps_idr, id);
+> > +	if (pps)
+> > +		kobject_get(&pps->dev->kobj);
+> 
+> A driver should never call "raw" kobject calls, this alone makes this
+> not ok :(
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Oh this is silly, sorry: it's simply open coding put_device() and
+get_device(), I'll fix that.
+
+> Please move the structure to be embedded in and then it should be
+> simpler.
+
+I actually tried to do that, but got hung up on the API: what's the
+right way to do what device_create() does for an embedded device struct?
+
+Today, the pps core does:
+
+	pps = kzalloc(sizeof(*pps));
+
+...then later in pps_register_cdev():
+
+	idr_alloc(&newmin, ...);
+	pps->dev = device_create(..., MKDEV(maj, newmin), ...);
+
+To embed the device struct, I guess this would become something like:
+
+	pps = kzalloc(sizeof(*pps));
+	device_initialize(&pps->dev);
+	idr_alloc(&newmin, ...);
+	/* ??? */
+	device_register(&pps->dev);
+
+...but the question marks are what I'm not seeing: what's the proper way
+to accomplish what device_create() does, but in an embedded dev struct?
+Obviously I could just copy device_create(), but I'm sure that's not
+what you want.
+
+Thanks,
+Calvin
+
+> thanks,
+> 
+> greg k-h
 
