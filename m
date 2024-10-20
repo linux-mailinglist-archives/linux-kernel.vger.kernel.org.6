@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-373282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD069A549F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:51:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415F69A54A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E632F1F21D04
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:51:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6995BB234C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EBB194C94;
-	Sun, 20 Oct 2024 14:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A0A19645D;
+	Sun, 20 Oct 2024 14:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPoG6UBF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bWKKrLQs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F74D194C62;
-	Sun, 20 Oct 2024 14:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D58195B37;
+	Sun, 20 Oct 2024 14:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729435835; cv=none; b=YIig/Tpt6e3FbcbVGEtEOMBdgv2fn+HINMV2OnyelPuVvBU62clKP4fgoyNcRBlBItIg2EfkQCXqTaY/tKfkUsBy4gRYb9bGLrvAHWQ3onju3YcXWLjYArJlXn9S9HF0/JNAjWbUwn4QVV7CMgrQiWIv7AYFacnaFb9tOEESxxw=
+	t=1729435837; cv=none; b=Qk5H9Ijm2tL11Lxrmy9WdiGrtjgT5aLqksBK6UiYeuWaXiOXZFU9/fstLl5+k3iPZL5srR5YZ20+zt6RjPIVyYJ56LdfP1CGf4+OAIZgIvckI7biKIjt8fu1S1jSdpWUmp0FQt7r47X5nDdtU7dKNiDHfDIzMYX0BZDe44m6s74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729435835; c=relaxed/simple;
-	bh=OV58zMahopYdwo0F34FJLli1rHSXfWV7zzQzhFSAylc=;
+	s=arc-20240116; t=1729435837; c=relaxed/simple;
+	bh=9RU59F4px6cUHcJgMJoAb4VxkAq92i58smubeGEaDGU=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=He8v3kIaZz75xaPP7U1jk7MTzA1lhVPr2kWGNixOhERKzVWpY9tO9dmooSTfVA3D5OfznnQ89XIj/3u6o7FsHZgpTBuT4a22wYHyaotqRyMdsQfkJ/SrHDfb0nf7DZJQfHEsW7+0HvvpC900608cyYsr5eHbQmWPWBLUVM+7qog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPoG6UBF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 966E5C4CEE9;
-	Sun, 20 Oct 2024 14:50:34 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=h1SCPXSJ/XOm6UG7QvGRAgYXcWwN0oU8zvH9mIFUDinQZz5MECGV9EnbNExLY6m5QmoMHzPGT4Uzcjduen+3Rkhm+QNDSbD8GAWvkV+p8MAtVuJ/FPqUY7954VeiHPTeEg3+38hcLXBEuN4/77RI7cocuO38/XkY+iGmsEhQnHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bWKKrLQs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EC3C4CEC7;
+	Sun, 20 Oct 2024 14:50:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729435834;
-	bh=OV58zMahopYdwo0F34FJLli1rHSXfWV7zzQzhFSAylc=;
+	s=k20201202; t=1729435837;
+	bh=9RU59F4px6cUHcJgMJoAb4VxkAq92i58smubeGEaDGU=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=VPoG6UBF72dAoG4wLJqIXTR+Pxgjdt+eqa3LaKZN7HMFizbnFjBmGME5wCTS0oSTm
-	 E0j8UBeVCwuDvrxZac+cLvQI5kK/tqKWfdGA+XVXMNLIy4gLSNBCBJt0pPNwHpO+/3
-	 75YyldgEw7jUzZMP0IVkK9D8o6HhTw0mqzPQVD642kQzWhYVceTUWie5QUL/Sh9gep
-	 0mGA1qtNaJMTGcZY9Q94vj/kYGJu3I26yBPKBocArCmsBGbeJGnQunrcck+Z124Ghk
-	 h9m3itH7u+WeVlbFwWPhyLy+gy8Nl9w5bK7rgvfsM2Gn1jKhcraiZffBTkrbcMCZSr
-	 v0bg21KNZ6AaQ==
+	b=bWKKrLQscm4fB1iDDqzXGPF1Ry+zJkWwji7bv2se/rAcwgfEPYSu6cDfx/5cfuvlq
+	 Ei3oGoFnQ/QIfbgf+VwKzLxOdgS/8LGhpqYoyynNJf3jBcfok4NJFUQWiJ9VhD+DF+
+	 sR9+sbmBhHdYbzhlw7rnd19E/WKzOPm3atCZzt21TBdaktBrakpb/+CfC2uN0M8+Nj
+	 1HhLUa5IK3y5kDps/a2aLhSRzBW38YyDzlLY0oNCVfaZcHAd13dx9m/1qZoCw/i6jq
+	 f7qWxcufLhYDeaPSLQd3r/K354c8kQClSyPeds+/u5pbMym7YpCxWoVJAB5a1Kmiva
+	 0iBnaXPHMLSpA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCB33805CC0;
-	Sun, 20 Oct 2024 14:50:41 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFFB3805CC0;
+	Sun, 20 Oct 2024 14:50:44 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: pse-pd: Fix out of bound for loop
+Subject: Re: [PATCH net v2] net: phy: dp83822: Fix reset pin definitions
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172943584049.3593495.1897023109009616224.git-patchwork-notify@kernel.org>
-Date: Sun, 20 Oct 2024 14:50:40 +0000
-References: <20241015130255.125508-1-kory.maincent@bootlin.com>
-In-Reply-To: <20241015130255.125508-1-kory.maincent@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: andrew@lunn.ch, kuba@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kyle.swenson@est.tech,
- thomas.petazzoni@bootlin.com, o.rempel@pengutronix.de, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com
+ <172943584335.3593495.815352796490455138.git-patchwork-notify@kernel.org>
+Date: Sun, 20 Oct 2024 14:50:43 +0000
+References: <AS1P250MB0608A798661549BF83C4B43EA9462@AS1P250MB0608.EURP250.PROD.OUTLOOK.COM>
+In-Reply-To: <AS1P250MB0608A798661549BF83C4B43EA9462@AS1P250MB0608.EURP250.PROD.OUTLOOK.COM>
+To: Michel Alex <Alex.Michel@wiedemann-group.com>
+Cc: maxime.chevallier@bootlin.com, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, dmurphy@ti.com,
+ Georg.Waibel@wiedemann-group.com, Andreas.Appelt@wiedemann-group.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Andrew Lunn <andrew@lunn.ch>:
 
-On Tue, 15 Oct 2024 15:02:54 +0200 you wrote:
-> Adjust the loop limit to prevent out-of-bounds access when iterating over
-> PI structures. The loop should not reach the index pcdev->nr_lines since
-> we allocate exactly pcdev->nr_lines number of PI structures. This fix
-> ensures proper bounds are maintained during iterations.
+On Wed, 16 Oct 2024 12:11:15 +0000 you wrote:
+> This change fixes a rare issue where the PHY fails to detect a link
+> due to incorrect reset behavior.
 > 
-> Fixes: 9be9567a7c59 ("net: pse-pd: Add support for PSE PIs")
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> The SW_RESET definition was incorrectly assigned to bit 14, which is the
+> Digital Restart bit according to the datasheet. This commit corrects
+> SW_RESET to bit 15 and assigns DIG_RESTART to bit 14 as per the
+> datasheet specifications.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: pse-pd: Fix out of bound for loop
-    https://git.kernel.org/netdev/net/c/f2767a41959e
+  - [net,v2] net: phy: dp83822: Fix reset pin definitions
+    https://git.kernel.org/netdev/net/c/de96f6a30035
 
 You are awesome, thank you!
 -- 
