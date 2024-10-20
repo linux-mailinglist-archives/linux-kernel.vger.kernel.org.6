@@ -1,132 +1,176 @@
-Return-Path: <linux-kernel+bounces-373159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6499A5312
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:18:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47FA9A532C
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAFC1B2343D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:18:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4C5B1C20D01
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B2129CF0;
-	Sun, 20 Oct 2024 08:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F0382876;
+	Sun, 20 Oct 2024 08:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="jo2crYfQ"
-Received: from mr85p00im-ztdg06011801.me.com (mr85p00im-ztdg06011801.me.com [17.58.23.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aA223NV7"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354B31CFB9
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 08:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7463E49E;
+	Sun, 20 Oct 2024 08:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729412294; cv=none; b=UCovN3MslwuT9TshOuLhoNiblL9NdjCZlSOf3jG5EwA0q69jxPECIlNMeL7+3z+DemFszwZEc/DqVm5nECI7hQ5BX7EQ1j0czuHUIGADCd8JURSdP1ut0lAkdUasGdDtlCulE3tg0JtlMnrgGOyHLAbKXVXWN15AUjwtOQujcHk=
+	t=1729413765; cv=none; b=NJmL5b0w6p7zyKrd9kAvx378hLx3+J7TtcJIvfwShyChOPOjL4NH6GpxQeE1+5hFivyfOTADxU4hw/1o/Kmr8Aj0EyPqZWslibg/WDSARfw5ubfqMnLybXAoMcZDkPKzlBio1LyOESK9zdyRash+jOVj9hqK2OK3mDW6ezyLh3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729412294; c=relaxed/simple;
-	bh=4rRN2upErJXwVYOa3zXJGtjNIRKub+rjNK9urqCnwp8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E8v01oCAEZ9FxUBZDOkAG/K8ZamsuCIxo0TpmfyChi3SajmoB/CF5hB/fP8ujR5HoaJJiHG3gdQEppfhVwguA+y2PpJxVVSr+UA5TAF/oOZV0E7Ervwy9rkumDo3E8maraXWqqBJ6vowR9cUtYsqoUNPF6GWGONjnvcWll6gpQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=jo2crYfQ; arc=none smtp.client-ip=17.58.23.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1729412292;
-	bh=+UZzz+z7p55a5+mo6TK6JWnhlOW39+wGGfYZPaGJKtY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=jo2crYfQmO8Gv4wwWh41gOlsWA5WRua3SyRkVzwCl9CHc41gRxVeoXCAUKr4xLXMp
-	 VSWgVsmXvAfAZDXbWaMXKu9GNy6QDSIM+DyoRwPaZOFhRKGxIG54rfMmdgec2yGWlR
-	 44WLL6D+j7r548/avuiEpX1yZSN5XIWsAe7FuX18jUHLN5ZbFEc3kMY6B/iAklUUX3
-	 OT++rFGJwxAR96T3RliTcxgfTiBadAXXlATuxaPLYRDvh7bKy4DQF1ESQVYD3gsitN
-	 dtxkkdPztAgqkaRaDK+mK3bPfXui3gsZt6eDYdb+gj6b9JuvIA85Hbc4sG5EG2PGup
-	 6aiekBiHLHDCw==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-ztdg06011801.me.com (Postfix) with ESMTPSA id 0679AAC56DC;
-	Sun, 20 Oct 2024 08:18:08 +0000 (UTC)
-Message-ID: <e165fb81-8d96-49dc-9bfd-85ae79ef4f64@icloud.com>
-Date: Sun, 20 Oct 2024 16:18:03 +0800
+	s=arc-20240116; t=1729413765; c=relaxed/simple;
+	bh=vNWd26yYL7mDXS1sgc8y1wS2DTBrq5bkosW7IMvvkZY=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=qbB0VLgsH3sRhKp/Xm1dyAp4a/xW/4FliP+y+3j0GgabfV4TnJ2yWEgbZjNjZ++CHlBawOqlZMhZpvNTTIvUqvAp51oc+0SwStxpwEhBr9nA+BFU7pomktKK27v0rHfYHWuz6MJfi1ItnumZcwdeX6qtyoTlcJ/SdJYSt/yUL5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aA223NV7; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cbca51687so36074215ad.1;
+        Sun, 20 Oct 2024 01:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729413762; x=1730018562; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3BsjchRbolRCeUrwqYNfuaPB9wUJioV3DERXJycmNZE=;
+        b=aA223NV7zeXnvuqGNfmiibc1FLsyAD7JGyEd1/KD5tmCOjr/aKJoUzYUdRwW1Ga316
+         /nKNmXr6kF3mumELXDhMDTEDavWvY4nVOTuQF2ygahfz92P1M7CBMQ3+2JooB47CE+QV
+         g1kqyt5ME3MPMXiA8Ft/FUdQzwRq4IcNEFcidrcrBgMi/3WB6faIdnx8dsrZumoe5z9+
+         quQxNTalBz4dsN8fMEBAkaySkdDRNgFSQsBfNqWjiI7HrKIWKYsUFHZ04BzR+al7+rfp
+         v+FGl2y4cWTKU28ZzuXWTo9w5AR6Sav4Bw44svDRoPBf50dioImfyBw80jQi4XLHSaND
+         HqlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729413762; x=1730018562;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3BsjchRbolRCeUrwqYNfuaPB9wUJioV3DERXJycmNZE=;
+        b=DGtQYb9vXko8k4cGbsnuXHxhD4IIAUybEXQ2f66Qxs+4mR75cGV0Rv985t2yml4FTe
+         gqWaTjj/R40Xn4KJoKi3Z/U5OOHIqRpExgqUjmQKUU0FoNOp/3pixQs+uLCdCngvwYH5
+         36eAwO8yJTpVYDjNecSD7fwnsAOfLtMDRk5YBM8zXwVlEZbGwlhqueL2Qhno/Hl1rhxP
+         R7YRwIBCMgHDOWoKVAxovjtOJvCnA0bgn7+GEJegsm8rIcH2wVIHgidWlpQbu0Zc9ZDZ
+         vTPthNHBeNVHEQDKUTSRjjYPtR5jK7YGAr6RCyaT0fxrAkx86Jr9r8htVU9q5eIWDaxl
+         ft8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVXGE6o/O5PSZrdmsIEFbCeQRqr/62iU0eHeBjBWE7VJGlc6eWhnXUTzGeOAez75Q9WoDJYuO30TmL+@vger.kernel.org, AJvYcCWZ74+d7snE1xUPE75ped6KiJcnCCXPliCf184la8LHZ49O/p04Qctw9dtPSkVwF23K1sjDsGi/QcufLxNt@vger.kernel.org, AJvYcCXUAixytvu4LW5n+6iUv7R9gWpOOq3wBFIshiAGImEDQEvlfqgJhznc2tmAU+fIocyqx3e/1sbLixYcqCWx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI8KVcNLqFRXcRTP3gXXg8dm6Did8T36Z9O+rUglnJnTMrME5i
+	AwSGgQsouvq513U1B3KZQXorAb73yPERZIgyEJALbAv8xHjIMrFZ
+X-Google-Smtp-Source: AGHT+IH2vgQRFWfX/nHs5u1VRrLwo0Tbkm3qpuUq21ijO0NPK7XCTEF17dVcZ5ZgjIfJYcdQGOHCuA==
+X-Received: by 2002:a17:903:2311:b0:20c:e262:2568 with SMTP id d9443c01a7336-20e5a70d7bfmr110782945ad.5.1729413762247;
+        Sun, 20 Oct 2024 01:42:42 -0700 (PDT)
+Received: from dw-tp ([171.76.81.191])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f32e5sm7052325ad.248.2024.10.20.01.42.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 01:42:41 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com, hch@lst.de, cem@kernel.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, hare@suse.de, martin.petersen@oracle.com, catherine.hoang@oracle.com, mcgrof@kernel.org, ojaswin@linux.ibm.com, John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH v10 5/8] fs: iomap: Atomic write support
+In-Reply-To: <20241019125113.369994-6-john.g.garry@oracle.com>
+Date: Sun, 20 Oct 2024 13:51:48 +0530
+Message-ID: <87sesrgp5v.fsf@gmail.com>
+References: <20241019125113.369994-1-john.g.garry@oracle.com> <20241019125113.369994-6-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] phy: core: Add missing of_node_put() in
- of_phy_provider_lookup()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>
-Cc: stable@vger.kernel.org, linux-phy@lists.infradead.org,
- netdev@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241020-phy_core_fix-v1-0-078062f7da71@quicinc.com>
- <20241020-phy_core_fix-v1-5-078062f7da71@quicinc.com>
- <5e828a43-9365-4ac5-b411-0be7188ab8f2@wanadoo.fr>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <5e828a43-9365-4ac5-b411-0be7188ab8f2@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 6BrM4yrglDgG8u6czpMYQdRccmjjapAH
-X-Proofpoint-GUID: 6BrM4yrglDgG8u6czpMYQdRccmjjapAH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-20_05,2024-10-17_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 adultscore=0
- malwarescore=0 spamscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0
- phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410200052
 
-On 2024/10/20 15:23, Christophe JAILLET wrote:
-> Le 20/10/2024 à 07:27, Zijun Hu a écrit :
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
+John Garry <john.g.garry@oracle.com> writes:
 
-[snip]
+> Support direct I/O atomic writes by producing a single bio with REQ_ATOMIC
+> flag set.
+>
+> Initially FSes (XFS) should only support writing a single FS block
+> atomically.
+>
+> As with any atomic write, we should produce a single bio which covers the
+> complete write length.
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  .../filesystems/iomap/operations.rst          | 12 ++++++
+>  fs/iomap/direct-io.c                          | 38 +++++++++++++++++--
+>  fs/iomap/trace.h                              |  3 +-
+>  include/linux/iomap.h                         |  1 +
+>  4 files changed, 49 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+> index b93115ab8748..529f81dd3d2c 100644
+> --- a/Documentation/filesystems/iomap/operations.rst
+> +++ b/Documentation/filesystems/iomap/operations.rst
+> @@ -513,6 +513,18 @@ IOMAP_WRITE`` with any combination of the following enhancements:
+>     if the mapping is unwritten and the filesystem cannot handle zeroing
+>     the unaligned regions without exposing stale contents.
+>  
+> + * ``IOMAP_ATOMIC``: This write is being issued with torn-write
+> +   protection.
+> +   Only a single bio can be created for the write, and the write must
+> +   not be split into multiple I/O requests, i.e. flag REQ_ATOMIC must be
+> +   set.
+> +   The file range to write must be aligned to satisfy the requirements
+> +   of both the filesystem and the underlying block device's atomic
+> +   commit capabilities.
+> +   If filesystem metadata updates are required (e.g. unwritten extent
+> +   conversion or copy on write), all updates for the entire file range
+> +   must be committed atomically as well.
+> +
+>  Callers commonly hold ``i_rwsem`` in shared or exclusive mode before
+>  calling this function.
+>  
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index f637aa0706a3..ed4764e3b8f0 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -271,7 +271,7 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>   * clearing the WRITE_THROUGH flag in the dio request.
+>   */
+>  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua)
+> +		const struct iomap *iomap, bool use_fua, bool atomic)
+>  {
+>  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+>  
+> @@ -283,6 +283,8 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+>  		opflags |= REQ_FUA;
+>  	else
+>  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> +	if (atomic)
+> +		opflags |= REQ_ATOMIC;
+>  
+>  	return opflags;
+>  }
+> @@ -293,7 +295,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> -	loff_t length = iomap_length(iter);
+> +	const loff_t length = iomap_length(iter);
+> +	bool atomic = iter->flags & IOMAP_ATOMIC;
+>  	loff_t pos = iter->pos;
+>  	blk_opf_t bio_opf;
+>  	struct bio *bio;
+> @@ -303,6 +306,9 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	size_t copied = 0;
+>  	size_t orig_count;
+>  
+> +	if (atomic && length != fs_block_size)
+> +		return -EINVAL;
 
->> ---
->>   drivers/phy/phy-core.c | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
->> index 967878b78797..24bd619a33dd 100644
->> --- a/drivers/phy/phy-core.c
->> +++ b/drivers/phy/phy-core.c
->> @@ -143,10 +143,11 @@ static struct phy_provider
->> *of_phy_provider_lookup(struct device_node *node)
->>       list_for_each_entry(phy_provider, &phy_provider_list, list) {
->>           if (phy_provider->dev->of_node == node)
->>               return phy_provider;
->> -
->>           for_each_child_of_node(phy_provider->children, child)
->> -            if (child == node)
->> +            if (child == node) {
->> +                of_node_put(child);
->>                   return phy_provider;
->> +            }
-> 
-> Hi,
-> 
-> Maybe for_each_child_of_node_scoped() to slightly simplify things at the
-> same time?
-> 
+We anyway mandate iov_iter_count() write should be same as sb_blocksize
+in xfs_file_write_iter() for atomic writes.
+This comparison here is not required. I believe we do plan to lift this
+restriction maybe when we are going to add forcealign support right? 
 
-thank you for code review.
+And similarly this needs to be lifted when ext4 adds support for atomic
+write even with bigalloc. I hope we can do so when we add such support, right?
 
-it does not use _scoped() since for_each_child_of_node() usage here is
-very simple and only has one early exit, _scoped() normally is for
-complex case.
+(I guess, that is also the reason we haven't mentioned this restriction
+in description of "IOMAP_ATOMIC" in Documentation.)
 
-i maybe use _scoped() in next revision if one more reviewer also prefers
-it.
-
-thank you.
-
->>       }
->>         return ERR_PTR(-EPROBE_DEFER);
->>
-> 
+-ritesh
 
 
