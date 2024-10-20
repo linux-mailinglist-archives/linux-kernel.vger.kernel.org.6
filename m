@@ -1,151 +1,139 @@
-Return-Path: <linux-kernel+bounces-373148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A680D9A52FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:15:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF2A09A52FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524421F2206A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:15:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82FD81F22034
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D7E25771;
-	Sun, 20 Oct 2024 07:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F9625771;
+	Sun, 20 Oct 2024 07:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyUqYdJ3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5PuEzOr"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3DFDDBE
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 07:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69232BA2D
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 07:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729408525; cv=none; b=OOML2Zh+jnePv4+EQ2AxKMNeL05RnfAqhlrpFMStZVJRzh0cdf+6sIY2Gzt9cj+mG3u+1k1kABwGBTjXE3Nn19ijnveRc/EuBPJiBnPxw6hQlhzVTs7JsjVI7YZbYBH/OcmQqdEmuSGml2ZVltSIaAUmVtCrjuEMOUB2mF1z7+c=
+	t=1729408693; cv=none; b=sg185QIiP+OZIPpWPOYhs7EG5F6xC8pJA0vr3K8P6gKwIQeIicx6ppoKp9yP+jMPEv3fGFHYQpTCxTTh+fL3cK6bcQiE207Ku/v7JEjAwU/E0P4rffkP2xEvA0xE8yNIRl9E3cq1irf0UQp5er1PBEn7PiojLIyjS4EDd84PYXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729408525; c=relaxed/simple;
-	bh=yeNo6luy1/4z52AiDhi7fFi1PCeauLclbjN9yAVUCOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=stxXH/+18h9wzhx06WoMZH6nYZjEDfvLw5hyBz7vqHR9gofguoDqxxbIBvQ0HRkZR6iQ2h33jyV+AWKNCotMFzpDMtvABZfkEiDPzSTA3NcMZsW27OxthoR9Cn2JBIo2KHwmXieOhPVsQGLux+7rx6iNpT6HxOtboDgIQGNpJe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyUqYdJ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F18AC4CEC6;
-	Sun, 20 Oct 2024 07:15:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729408524;
-	bh=yeNo6luy1/4z52AiDhi7fFi1PCeauLclbjN9yAVUCOc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HyUqYdJ31Vf7pF8us/AsUILyQRvw6YB8oGqiGXqNND0GPVWIjtHO9/4xQRjJ8EYqm
-	 95MbjoVIq1jR729Ye+UwW9kjI6MviJHCH/seoV0N3SxBootuOeSG2MFDEHTLw6AllU
-	 K/j1F2kaVAp1Q89vhSGHHUzwd09xi97ai7MN0R+nDZO7dQQY+x+dqS/P5rIbaQrNw1
-	 5b2iOEsukQL2LJ2n4GC3xcRz5+eO/HcENl6TLWwEmQhbdOIdgZBELu7v6L6OA+7h2I
-	 P/X1ZxP2A2GHRV55xGC6FEpk4AkUY5KkkPUXhHFaMLJZPYnylhvwWzwzn/6JZc0fPJ
-	 5hbpGfV/S6u0Q==
-Date: Sun, 20 Oct 2024 10:11:38 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: suhua <suhua.tanke@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, suhua <suhua1@kingsoft.com>
-Subject: Re: [PATCH] memblock: Uniform initialization all reserved pages to
- MIGRATE_MOVABLE
-Message-ID: <ZxStKvw6HwminDub@kernel.org>
-References: <20241017064449.5235-1-suhua1@kingsoft.com>
+	s=arc-20240116; t=1729408693; c=relaxed/simple;
+	bh=DuhaVIt579iaePGxbS7CxuYNp5VFZnfhsFnPQJN+Q34=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MHPfsql6rTCpKC4qhUoMS8e9f3RK26WjgGct3bGtjspftbu2IsbkUuiqUq8XDhVEP8z6DI23z5yIE6x+iu1jJhNi8lCmGanZxrxHRjWTlLci9OfoJHHE118DscbrRSDbP6awmktJfOMY6DAKMcSuvu1iQK9S69fspTUFbDRO42U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5PuEzOr; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e61b47c6cso2782129b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 00:18:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729408690; x=1730013490; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKNNo6ORCMbRFNJ5dKq8wkAXppSzm4Ntz4bE2iMLwtI=;
+        b=d5PuEzOrlmAEhE/aC9WizkiLVYp0sdiVxxGX4oNrDV+nyCz1zsbcSR5mBi8agvd6Fc
+         uINnwOyz/4txpKHvUv6/MCZh1bgUwuP3J5JnkPPAETuok1xplfUXlxXkwq0N1uBUV2Xw
+         cp71pLWpfugFSBueLhEnEngv3LKH+WlHFCt+En+PAkiWv9lYuqQZyUWIrq+05EFfpXRV
+         hiszYfCfKhcWJUywpAXT/yJ36The2amhUJR06hgve27+wMF0ph7/k0H38hDG5MoPDOIO
+         LpuCldJG1Gg+slFSTeWsJwCaCeG702xnI/BJaMbLHgECjY1W3mdTwj719waxyzfN49PW
+         AXZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729408690; x=1730013490;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YKNNo6ORCMbRFNJ5dKq8wkAXppSzm4Ntz4bE2iMLwtI=;
+        b=NG84WTagOe4wqRSulnK3fz8pNqBrl4zlEt/nSbJC6+pSj8pBLZeffVm5pXvk547oM8
+         rs+drnOmUhYDuclQvWPyHlOXPvsCrXT4GhJGyMOFUsvTA5mBS5L2El6rJWtNc7S46C3K
+         tH+nYmnjb3Zx2tWLZKjVGo3B843ncgSP/O+ZVhGmG7jnuLfqX3FzrWtTIBqXaSFZ0B9i
+         N7MPEecNqDvkdCXqkpj+coaNgFBkW6NeawNUhxeWxrSISsPprEXUrFtt8tk2Mqz4+IxT
+         1stbvB6BwuzNOUYuiyIj8EQDI400A57cqP/dT9vQpYhQCpB+8vMqPU9+nCaHYs5DcuW6
+         nUGg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7/jRYnqobjmwv2nLpcyg4iZ5PElCtG9PQi5/O9/DL2AjoF1xKFKR8OLzywf71K7wMWJXdh9ziyuT93VI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY9IURmF1LjIp++rKIAEKZbaT50w29GeTu63p2Jk1uwFdu7RYC
+	xR4wL24B/p7/ES1Uy4SHPeYOWkQvNPox1lv59NqysvghCn1bWZwN
+X-Google-Smtp-Source: AGHT+IHLIEPVve3Ub+lLLowcnXy+dfiLi1sT+/U8BkiDnif9wKxlz1RJhQxh/LVPqCXSZaUmTLdNKQ==
+X-Received: by 2002:a05:6a00:3d15:b0:71e:79a9:ec47 with SMTP id d2e1a72fcca58-71ea3118addmr11926875b3a.6.1729408690471;
+        Sun, 20 Oct 2024 00:18:10 -0700 (PDT)
+Received: from DESKTOP-NBGHJ1C.flets-east.jp (p10213112-ipngn20001marunouchi.tokyo.ocn.ne.jp. [153.220.101.112])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec140781fsm709022b3a.185.2024.10.20.00.18.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 00:18:10 -0700 (PDT)
+From: Ryo Takakura <ryotkkr98@gmail.com>
+To: mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	naveen@kernel.org,
+	maddy@linux.ibm.com,
+	sourabhjain@linux.ibm.com,
+	hbathini@linux.ibm.com,
+	leobras.c@gmail.com,
+	pmladek@suse.com,
+	john.ogness@linutronix.de
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Ryo Takakura <ryotkkr98@gmail.com>
+Subject: [PATCH] powerpc/crash: Allow direct printing on kexec
+Date: Sun, 20 Oct 2024 16:17:55 +0900
+Message-Id: <20241020071755.328706-1-ryotkkr98@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241017064449.5235-1-suhua1@kingsoft.com>
 
-On Thu, Oct 17, 2024 at 02:44:49PM +0800, suhua wrote:
-> Subject: memblock: Uniform initialization all reserved pages to MIGRATE_MOVABLE
+Since the commit af2876b501e4 ("powerpc/crash: Use NMI context for printk
+when starting to crash"), printing has been deferred before shutting down
+non-panicked CPU on kexec to avoid deadlock on logbuf_lock. It is deferred
+until the shutdown of the first kernel and starts booting into the second
+kernel. As a result, there is no messages printed for legacy consoles,
+including crash_kexec_post_notifiers messages which is after the
+syncing of legacy console at printk_legacy_allow_panic_sync().
 
-I'd suggest:
+Let legacy consoles print directly so that we can see messages on kexec, as
+the commit b6cf8b3f3312 ("printk: add lockless ringbuffer") turned printk
+ring buffer lockless and there should be no worries panicked CPU 
+deadlocking writing into ringbuffer after shutting down non-panicked CPU.
 
-memblock: uniformly initialize all reserved pages to MIGRATE_MOVABLE
+Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
+---
 
-> Currently when CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set, the reserved
-> pages are initialized to MIGRATE_MOVABLE by default in memmap_init.
-> 
-> Reserved memory mainly stores the metadata of struct page. When
-> HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON=Y and hugepages are allocated,
-> the memory occupied by the struct page metadata will be freed.
+Hi!
 
-The struct page metadata is not freed with HVO, it is rather pages used for
-vmemmap.
+My understanding is that deferred printing can also be safely removed 
+in terms of console lock as the commit d51507098ff9 ("printk: disable 
+optimistic spin during panic") prevented from spinning in case of panic.
+
+Sincerely,
+Ryo Takakura
+
+---
+ arch/powerpc/kexec/crash.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/powerpc/kexec/crash.c b/arch/powerpc/kexec/crash.c
+index 9ac3266e4965..5e5260e0d964 100644
+--- a/arch/powerpc/kexec/crash.c
++++ b/arch/powerpc/kexec/crash.c
+@@ -269,9 +269,6 @@ static inline void crash_kexec_wait_realmode(int cpu) {}
  
-> Before this patch:
-> when CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set, the freed memory was
-> placed on the Movable list;
-> When CONFIG_DEFERRED_STRUCT_PAGE_INIT=Y, the freed memory was placed on
-> the Unmovable list.
-> 
-> After this patch, the freed memory is placed on the Movable list
-> regardless of whether CONFIG_DEFERRED_STRUCT_PAGE_INIT is set.
-> 
-> Eg:
-
-Please add back the description of the hardware used for this test and how
-much huge pages were allocated at boot.
-
-> echo 500000 > /proc/sys/vm/nr_hugepages
-> cat /proc/pagetypeinfo
-> 
-> before：
-> Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
-> …
-> Node    0, zone   Normal, type    Unmovable     51      2      1     28     53     35     35     43     40     69   3852
-> Node    0, zone   Normal, type      Movable   6485   4610    666    202    200    185    208     87     54      2    240
-> Node    0, zone   Normal, type  Reclaimable      2      2      1     23     13      1      2      1      0      1      0
-> Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-> Node    0, zone   Normal, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
-> Unmovable ≈ 15GB
-> 
-> after：
-> Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
-> …
-> Node    0, zone   Normal, type    Unmovable      0      1      1      0      0      0      0      1      1      1      0
-> Node    0, zone   Normal, type      Movable   1563   4107   1119    189    256    368    286    132    109      4   3841
-> Node    0, zone   Normal, type  Reclaimable      2      2      1     23     13      1      2      1      0      1      0
-> Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-> Node    0, zone   Normal, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
-> 
-> Signed-off-by: suhua <suhua1@kingsoft.com>
-
-checkpatch.pl gives this warning:
-
-WARNING: From:/Signed-off-by: email address mismatch: 'From: suhua <suhua.tanke@gmail.com>' != 'Signed-off-by: suhua <suhua1@kingsoft.com>'
-Please update the commit authorship or signed-off to match.
-
-Also, Signed-off-by should use a known identity, i.e. Name Lastname.
-
-> ---
->  mm/mm_init.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index 4ba5607aaf19..6dbf2df23eee 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -722,6 +722,10 @@ static void __meminit init_reserved_page(unsigned long pfn, int nid)
->  		if (zone_spans_pfn(zone, pfn))
->  			break;
->  	}
-> +
-> +	if (pageblock_aligned(pfn))
-> +		set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE_MOVABLE);
-> +
->  	__init_single_page(pfn_to_page(pfn), pfn, zid, nid);
->  }
->  #else
-> -- 
-> 2.34.1
-> 
-
+ void crash_kexec_prepare(void)
+ {
+-	/* Avoid hardlocking with irresponsive CPU holding logbuf_lock */
+-	printk_deferred_enter();
+-
+ 	/*
+ 	 * This function is only called after the system
+ 	 * has panicked or is otherwise in a critical state.
 -- 
-Sincerely yours,
-Mike.
+2.34.1
+
 
