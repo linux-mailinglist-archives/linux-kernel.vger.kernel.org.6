@@ -1,176 +1,168 @@
-Return-Path: <linux-kernel+bounces-373162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47FA9A532C
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:43:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7289A534D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4C5B1C20D01
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:43:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E9D1F22724
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F0382876;
-	Sun, 20 Oct 2024 08:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E4112EBE7;
+	Sun, 20 Oct 2024 09:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aA223NV7"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="laP+EMK3"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7463E49E;
-	Sun, 20 Oct 2024 08:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941002BB13
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 09:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729413765; cv=none; b=NJmL5b0w6p7zyKrd9kAvx378hLx3+J7TtcJIvfwShyChOPOjL4NH6GpxQeE1+5hFivyfOTADxU4hw/1o/Kmr8Aj0EyPqZWslibg/WDSARfw5ubfqMnLybXAoMcZDkPKzlBio1LyOESK9zdyRash+jOVj9hqK2OK3mDW6ezyLh3Q=
+	t=1729416594; cv=none; b=EWMc32okQJLXCSWZ0IVLe8+exE0GFoSwRmjppjzQrlohJaBkJb5UrND6Q5Nu8xjfdyeOI3AzpbtgVVf1/7XI1eajyz4w510afC+cJ/tK3TPQKEQ1c7sh7N9FphivOBHGs6dfU+NYyFxy7SjBZFMb7FKxCkwGLYCO1gCgEfZNqLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729413765; c=relaxed/simple;
-	bh=vNWd26yYL7mDXS1sgc8y1wS2DTBrq5bkosW7IMvvkZY=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=qbB0VLgsH3sRhKp/Xm1dyAp4a/xW/4FliP+y+3j0GgabfV4TnJ2yWEgbZjNjZ++CHlBawOqlZMhZpvNTTIvUqvAp51oc+0SwStxpwEhBr9nA+BFU7pomktKK27v0rHfYHWuz6MJfi1ItnumZcwdeX6qtyoTlcJ/SdJYSt/yUL5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aA223NV7; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cbca51687so36074215ad.1;
-        Sun, 20 Oct 2024 01:42:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729413762; x=1730018562; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3BsjchRbolRCeUrwqYNfuaPB9wUJioV3DERXJycmNZE=;
-        b=aA223NV7zeXnvuqGNfmiibc1FLsyAD7JGyEd1/KD5tmCOjr/aKJoUzYUdRwW1Ga316
-         /nKNmXr6kF3mumELXDhMDTEDavWvY4nVOTuQF2ygahfz92P1M7CBMQ3+2JooB47CE+QV
-         g1kqyt5ME3MPMXiA8Ft/FUdQzwRq4IcNEFcidrcrBgMi/3WB6faIdnx8dsrZumoe5z9+
-         quQxNTalBz4dsN8fMEBAkaySkdDRNgFSQsBfNqWjiI7HrKIWKYsUFHZ04BzR+al7+rfp
-         v+FGl2y4cWTKU28ZzuXWTo9w5AR6Sav4Bw44svDRoPBf50dioImfyBw80jQi4XLHSaND
-         HqlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729413762; x=1730018562;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3BsjchRbolRCeUrwqYNfuaPB9wUJioV3DERXJycmNZE=;
-        b=DGtQYb9vXko8k4cGbsnuXHxhD4IIAUybEXQ2f66Qxs+4mR75cGV0Rv985t2yml4FTe
-         gqWaTjj/R40Xn4KJoKi3Z/U5OOHIqRpExgqUjmQKUU0FoNOp/3pixQs+uLCdCngvwYH5
-         36eAwO8yJTpVYDjNecSD7fwnsAOfLtMDRk5YBM8zXwVlEZbGwlhqueL2Qhno/Hl1rhxP
-         R7YRwIBCMgHDOWoKVAxovjtOJvCnA0bgn7+GEJegsm8rIcH2wVIHgidWlpQbu0Zc9ZDZ
-         vTPthNHBeNVHEQDKUTSRjjYPtR5jK7YGAr6RCyaT0fxrAkx86Jr9r8htVU9q5eIWDaxl
-         ft8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVXGE6o/O5PSZrdmsIEFbCeQRqr/62iU0eHeBjBWE7VJGlc6eWhnXUTzGeOAez75Q9WoDJYuO30TmL+@vger.kernel.org, AJvYcCWZ74+d7snE1xUPE75ped6KiJcnCCXPliCf184la8LHZ49O/p04Qctw9dtPSkVwF23K1sjDsGi/QcufLxNt@vger.kernel.org, AJvYcCXUAixytvu4LW5n+6iUv7R9gWpOOq3wBFIshiAGImEDQEvlfqgJhznc2tmAU+fIocyqx3e/1sbLixYcqCWx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI8KVcNLqFRXcRTP3gXXg8dm6Did8T36Z9O+rUglnJnTMrME5i
-	AwSGgQsouvq513U1B3KZQXorAb73yPERZIgyEJALbAv8xHjIMrFZ
-X-Google-Smtp-Source: AGHT+IH2vgQRFWfX/nHs5u1VRrLwo0Tbkm3qpuUq21ijO0NPK7XCTEF17dVcZ5ZgjIfJYcdQGOHCuA==
-X-Received: by 2002:a17:903:2311:b0:20c:e262:2568 with SMTP id d9443c01a7336-20e5a70d7bfmr110782945ad.5.1729413762247;
-        Sun, 20 Oct 2024 01:42:42 -0700 (PDT)
-Received: from dw-tp ([171.76.81.191])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f32e5sm7052325ad.248.2024.10.20.01.42.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 01:42:41 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com, hch@lst.de, cem@kernel.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, hare@suse.de, martin.petersen@oracle.com, catherine.hoang@oracle.com, mcgrof@kernel.org, ojaswin@linux.ibm.com, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v10 5/8] fs: iomap: Atomic write support
-In-Reply-To: <20241019125113.369994-6-john.g.garry@oracle.com>
-Date: Sun, 20 Oct 2024 13:51:48 +0530
-Message-ID: <87sesrgp5v.fsf@gmail.com>
-References: <20241019125113.369994-1-john.g.garry@oracle.com> <20241019125113.369994-6-john.g.garry@oracle.com>
+	s=arc-20240116; t=1729416594; c=relaxed/simple;
+	bh=f4+3NrXiOvRx5VMS92z8cndi93FcTfRv/14V0+tnu1I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E86gTYcJkaRloJ+muq6Okx+H8KLQyKJKtBUVSZkA/NV/FcGFzvMLcNCW2l9yBqXSUySs4xmJl9WeDYsti83fJS+/04GSmcxS8AVgegUD8D9N4JqPvMCNUFAwn3u5LjBI3YLR0o+N6ogaYWHO9nhMMCx9OApX/FnNgr92HlnqW4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=laP+EMK3; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49K8Nh63047918;
+	Sun, 20 Oct 2024 03:23:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729412623;
+	bh=xexHhvEe2kVwpZ9LE2L5U2BC9N6li+GrRCgPFQOWfO4=;
+	h=From:To:CC:Subject:Date;
+	b=laP+EMK3VMMsdPOXK2wvd8zPyPRnQXtSw+lyfFAjIxrYSf5112WTgOLYAB1b+tLXF
+	 9QFiiTlC2bRVDlHXdKsUg2nYUZD7Z3oBvHOSwmVUqSGdw/QkjomvkoH3cqiDQd8wSZ
+	 oZE8vGzOVVz+2jlNotxTSKh6sHS2jO37QCF7TAaE=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49K8Nh6D076080
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 20 Oct 2024 03:23:43 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 20
+ Oct 2024 03:23:43 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 20 Oct 2024 03:23:43 -0500
+Received: from LT5CG31242FY.dhcp.ti.com ([10.250.161.55])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49K8Nc6R033118;
+	Sun, 20 Oct 2024 03:23:39 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <baojun.xu@ti.com>, <13564923607@139.com>, <13916275206@139.com>,
+        <navada@ti.com>, <v-hampiholi@ti.com>, <m-shrivastava1@ti.com>,
+        <sakshi@ti.com>, <sandeepk@ti.com>, <robinchen@ti.com>,
+        <alsa-devel@alsa-project.org>, Shenghao Ding <shenghao-ding@ti.com>
+Subject: [PATCH v6] MAINTAINERS: update entries in TEXAS INSTRUMENTS LOW/MIDDLE-POWER AUDIO AMPLIFIER (ASoC/HDA) DRIVERS and add entries for haptic driver
+Date: Sun, 20 Oct 2024 16:23:34 +0800
+Message-ID: <20241020082334.857-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-John Garry <john.g.garry@oracle.com> writes:
+Due to internal re-org, Kevin has no longer maintained audio driver.
+Due to job responsibility change, drop entries for the audio converter
+and add entries for both haptics drivers and middle-power audio amplifier
+drivers. Add audio converter, set the Status as Supported.
 
-> Support direct I/O atomic writes by producing a single bio with REQ_ATOMIC
-> flag set.
->
-> Initially FSes (XFS) should only support writing a single FS block
-> atomically.
->
-> As with any atomic write, we should produce a single bio which covers the
-> complete write length.
->
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  .../filesystems/iomap/operations.rst          | 12 ++++++
->  fs/iomap/direct-io.c                          | 38 +++++++++++++++++--
->  fs/iomap/trace.h                              |  3 +-
->  include/linux/iomap.h                         |  1 +
->  4 files changed, 49 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
-> index b93115ab8748..529f81dd3d2c 100644
-> --- a/Documentation/filesystems/iomap/operations.rst
-> +++ b/Documentation/filesystems/iomap/operations.rst
-> @@ -513,6 +513,18 @@ IOMAP_WRITE`` with any combination of the following enhancements:
->     if the mapping is unwritten and the filesystem cannot handle zeroing
->     the unaligned regions without exposing stale contents.
->  
-> + * ``IOMAP_ATOMIC``: This write is being issued with torn-write
-> +   protection.
-> +   Only a single bio can be created for the write, and the write must
-> +   not be split into multiple I/O requests, i.e. flag REQ_ATOMIC must be
-> +   set.
-> +   The file range to write must be aligned to satisfy the requirements
-> +   of both the filesystem and the underlying block device's atomic
-> +   commit capabilities.
-> +   If filesystem metadata updates are required (e.g. unwritten extent
-> +   conversion or copy on write), all updates for the entire file range
-> +   must be committed atomically as well.
-> +
->  Callers commonly hold ``i_rwsem`` in shared or exclusive mode before
->  calling this function.
->  
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index f637aa0706a3..ed4764e3b8f0 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -271,7 +271,7 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
->   * clearing the WRITE_THROUGH flag in the dio request.
->   */
->  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
-> -		const struct iomap *iomap, bool use_fua)
-> +		const struct iomap *iomap, bool use_fua, bool atomic)
->  {
->  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
->  
-> @@ -283,6 +283,8 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
->  		opflags |= REQ_FUA;
->  	else
->  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
-> +	if (atomic)
-> +		opflags |= REQ_ATOMIC;
->  
->  	return opflags;
->  }
-> @@ -293,7 +295,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  	const struct iomap *iomap = &iter->iomap;
->  	struct inode *inode = iter->inode;
->  	unsigned int fs_block_size = i_blocksize(inode), pad;
-> -	loff_t length = iomap_length(iter);
-> +	const loff_t length = iomap_length(iter);
-> +	bool atomic = iter->flags & IOMAP_ATOMIC;
->  	loff_t pos = iter->pos;
->  	blk_opf_t bio_opf;
->  	struct bio *bio;
-> @@ -303,6 +306,9 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  	size_t copied = 0;
->  	size_t orig_count;
->  
-> +	if (atomic && length != fs_block_size)
-> +		return -EINVAL;
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
-We anyway mandate iov_iter_count() write should be same as sb_blocksize
-in xfs_file_write_iter() for atomic writes.
-This comparison here is not required. I believe we do plan to lift this
-restriction maybe when we are going to add forcealign support right? 
+---
+v6:
+ - fixed spelling mistakes
+v5:
+ - | Reported-by: kernel test robot <lkp@intel.com>
+   | Closes: https://lore.kernel.org/oe-kbuild-all/202410021557.FByBO9Dp-lkp@intel.com/
+v4:
+ - Add Touch Screen support
+v3:
+ - Add Audio converter section
+ - Set the section of LOW/MIDDLE-POWER AUDIO AMPLIFIER as Supported
+v2:
+ - Add the detailed information of the maintained drivers.
+---
+ MAINTAINERS | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-And similarly this needs to be lifted when ext4 adds support for atomic
-write even with bigalloc. I hope we can do so when we add such support, right?
-
-(I guess, that is also the reason we haven't mentioned this restriction
-in description of "IOMAP_ATOMIC" in Documentation.)
-
--ritesh
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 87198c5e589e..d1484b5658e3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22910,25 +22910,42 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/davinci-mcasp-audio.yaml
+ F:	sound/soc/ti/
+ 
+-TEXAS INSTRUMENTS AUDIO (ASoC/HDA) DRIVERS
++TEXAS INSTRUMENTS LOW/MIDDLE-POWER AUDIO AMPLIFIER (ASoC/HDA) & HAPTICS DRIVERS
+ M:	Shenghao Ding <shenghao-ding@ti.com>
+-M:	Kevin Lu <kevin-lu@ti.com>
+ M:	Baojun Xu <baojun.xu@ti.com>
+ L:	linux-sound@vger.kernel.org
+-S:	Maintained
++S:	Supported
++F:	Documentation/devicetree/bindings/input/ti,drv260x.yaml
++F:	Documentation/devicetree/bindings/input/ti,drv266x.yaml
+ F:	Documentation/devicetree/bindings/sound/tas2552.txt
++F:	Documentation/devicetree/bindings/sound/tas5720.txt
+ F:	Documentation/devicetree/bindings/sound/ti,tas2562.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tas2770.yaml
++F:	Documentation/devicetree/bindings/sound/ti,tas2781.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tas27xx.yaml
++F:	Documentation/devicetree/bindings/sound/ti,tas5086.txt
++F:	Documentation/devicetree/bindings/sound/ti,tas57xx.yaml
++F:	Documentation/devicetree/bindings/sound/ti,tas5805m.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tpa6130a2.yaml
++F:	drivers/input/misc/drv2*.c
++F:	include/sound/tas2*.h
++F:	include/sound/tas5086.h
++F:	include/sound/tpa6130a2-plat.h
++F:	sound/pci/hda/tas2781_hda_i2c.c
++F:	sound/soc/codecs/tas2*.*
++F:	sound/soc/codecs/tas5*.*
++F:	sound/soc/codecs/tpa6130a2.*
++
++TEXAS INSTRUMENTS AUDIO Converter (ASoC) and Touch Screen DRIVERS
++L:	linux-sound@vger.kernel.org
++S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/ti,pcm1681.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,pcm3168a.yaml
++F:	Documentation/devicetree/bindings/sound/ti,pcm6240.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tlv320*.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tlv320adcx140.yaml
+-F:	include/sound/tas2*.h
++F:	drivers/input/touchscreen/tsc2*.*
+ F:	include/sound/tlv320*.h
+-F:	include/sound/tpa6130a2-plat.h
+-F:	sound/pci/hda/tas2781_hda_i2c.c
+ F:	sound/soc/codecs/pcm1681.c
+ F:	sound/soc/codecs/pcm1789*.*
+ F:	sound/soc/codecs/pcm179x*.*
+@@ -22938,9 +22955,8 @@ F:	sound/soc/codecs/pcm3060*.*
+ F:	sound/soc/codecs/pcm3168a*.*
+ F:	sound/soc/codecs/pcm5102a.c
+ F:	sound/soc/codecs/pcm512x*.*
+-F:	sound/soc/codecs/tas2*.*
++F:	sound/soc/codecs/pcm6240.*
+ F:	sound/soc/codecs/tlv320*.*
+-F:	sound/soc/codecs/tpa6130a2.*
+ 
+ TEXAS INSTRUMENTS DMA DRIVERS
+ M:	Peter Ujfalusi <peter.ujfalusi@gmail.com>
+-- 
+2.34.1
 
 
