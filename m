@@ -1,157 +1,131 @@
-Return-Path: <linux-kernel+bounces-373210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6369E9A53CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:35:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD29E9A53D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 009D6B22F8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:35:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02CB1C20CB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBBD18DF6B;
-	Sun, 20 Oct 2024 11:35:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0F72A1BB;
-	Sun, 20 Oct 2024 11:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6011191F95;
+	Sun, 20 Oct 2024 11:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAJ0IFZL"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670D2186E58;
+	Sun, 20 Oct 2024 11:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729424143; cv=none; b=LdA3SW7TDp8zZ5N0JMN340H5rPn0ImU6pPCGJH6YFehquvJmhCGETaVozG/XTy5CspzMAMGPuGUAwnXkGarrgadkc4DTraqY2HD8mNtVcg9zsoeAaGaUHAiTuVPFQfoCgj9Jf5EjDd5Fzaaamb8nuHEh2iBaYJ9RZs5pdXUcB0E=
+	t=1729424443; cv=none; b=BduuEr8QK+dq1Reds7tkFEun8NcDj7fBB+FJ//8ETIcOrJuVJFec0UrYq3PvDXgQXA8PpWVa/6Ls2fVB0gZ9h14i6gt/VhBQ+cjDoMbVGuTBr4qCSxKUA1eogt6PN718p5Pj+7pR4idxR97LWLVN1LK+fKpDJtPyS7PLAFbNEHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729424143; c=relaxed/simple;
-	bh=VaaRuCyBRkIo/n7NWbWKipHspm80+to1MIvlczVbwMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+6gbZF5WRC3QqJ2xZv3h8U4lVEvONrdBwknhzL5HbrlgbhGojY55eTghWYn1VAqWcyFY/7y8R0OoaDA208xqxT3U2ftcAcUKr+c6tZni6Xirbzl3PP7HIgbNSY72tyNsGCW9bcsazFr4WqN5BGpudyRHs2/e9TJ9t9DPdYG7So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5882DA7;
-	Sun, 20 Oct 2024 04:36:09 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E4643F58B;
-	Sun, 20 Oct 2024 04:35:39 -0700 (PDT)
-Date: Sun, 20 Oct 2024 12:35:28 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	xueshuai@linux.alibaba.com, zhuo.song@linux.alibaba.com
-Subject: Re: [PATCH] perf/tests: fix record+probe_libc_inet_pton test on
- aarch64
-Message-ID: <20241020113528.GA3209400@e132581.arm.com>
-References: <1728978807-81116-1-git-send-email-renyu.zj@linux.alibaba.com>
- <ZxGL1LF9mVzrUGOU@google.com>
+	s=arc-20240116; t=1729424443; c=relaxed/simple;
+	bh=LZSclOn3sg2DTi+j7QmICefur9TypI9bFU0OWBdbLZ4=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=C2WslwIHgB56HJxnK2hviI/QhonWOsNbTAH8rdQJvTEb6HuYCM2n0wAemr+jedGyrti4//i+KDPkeakGl0sHtbjsLiTyl+pEJl6RbUgGhdel+92oCoVFxsGGQXXJrlQWihJ0rZTAi+MBsyIYvmeCgaWjvRqQGmFtBIgp4UnssUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cAJ0IFZL; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e5130832aso2481411b3a.0;
+        Sun, 20 Oct 2024 04:40:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729424440; x=1730029240; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vUbICe/4LF2trKdQd96Gc7YLcrYUreXzljzyoUzCuwE=;
+        b=cAJ0IFZL9+7WRHuz+rx0/hMlh2bAQWbZwNWgNyIrbipm2RPtKKVXRJcPj6h7xCmfSb
+         ZwLnkk6/ifl+KvIsucOfhFe4wemrOmkhsR8WDftd/gQunq+bHnMYmVJbBzO8mBEoKKBU
+         EmoiZdkYdVqQgnONBJvJ+RPS0IQNvmgJn+ellmcXDQ8bHAIdRN+kwo6pog5/xi4FCuJH
+         8QOlyDiv6I208MAcCDGtdUCOqy9DHSWx9LmWS6j83d20L7X0ms3DcF2/nthH1srv7IBW
+         xvfO0OdwDgD9vqLK9yGFhZlAsjQFjxiCFdUOGDYGjv4B9+BHdk9/xZJ+rZYisL57EowJ
+         eTbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729424440; x=1730029240;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vUbICe/4LF2trKdQd96Gc7YLcrYUreXzljzyoUzCuwE=;
+        b=s6tuaG2ZljPtVrDKDnSUfHXCZRbT3Ai1SS5XW6mKEkdEvOl/OMV7piCzu0Sz6CQHoV
+         QiIKLCOQRBycdpn2n+eKLdOuoyiiXXPEbVKGb9Lk94bOO81+aMXAm6didXsDNu5gWxl+
+         Lz4Wr/bOa+oP1YAh4+7V9R/ZTajXhPqPqYvVWg6TYI76rm/ISPirA+VSyFTReRKCTcgc
+         OgS5OmW4Wb0BE6oL+/qmjNFyuPxCWuCnYwfyJPwn9PsH6tZt0rpK8oFoT9Pt2fPZ9PUl
+         qy1cch0pI3cd0Af8AflqPJ6Gs22gS05kGu4oSOdX2hzJ/IO5cDheGnvfTwl3xrhFeg1X
+         Jbwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFsVQjEPJmjaYd0CnkmnPhfaQKjowOzrQqDQu7F5P3KMva0mUOrIycgiZfJss5FgY6O6MoQh+7qQz8@vger.kernel.org, AJvYcCUXyvNWuGqiid3XORNUJX+4WJKFL6/Tb853RJ8jwsCNchdOvb1gh4v8EGV0XNC4rL3vVG0bK1Nmvw9dfFF4@vger.kernel.org, AJvYcCVc9U/Wk9Z5m/GBCAOFjHx3Ep6S+uMRiHt/hqtyOJjx0qvMs9MuUMlanhwxgfYWdZShAcdknFlj8E4OqACE@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnmSlFIYlSaBIovAdYjBo+HdsbWhvPbAh+BGVwxrHgiEh2kmQB
+	Q9JckO87tCGxO5ZJZZkylZl3bbKMp6sDe6mE2rb7z3qR+fLNzfwA
+X-Google-Smtp-Source: AGHT+IF8ArixtltKuMOBS4gFAzUTxigNcFYIrJKlSo95ockDQwjrWKKyBPcdau9vkhpcJsnR/vgd3g==
+X-Received: by 2002:a05:6a00:2d96:b0:71e:4a51:2007 with SMTP id d2e1a72fcca58-71ea3129934mr11867922b3a.4.1729424440437;
+        Sun, 20 Oct 2024 04:40:40 -0700 (PDT)
+Received: from dw-tp ([171.76.81.191])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1415066sm1030291b3a.198.2024.10.20.04.40.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 04:40:39 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com, hch@lst.de, cem@kernel.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, hare@suse.de, martin.petersen@oracle.com, catherine.hoang@oracle.com, mcgrof@kernel.org, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v10 5/8] fs: iomap: Atomic write support
+In-Reply-To: <cec9eab6-8e3b-47af-94c1-56fa1e449e82@oracle.com>
+Date: Sun, 20 Oct 2024 17:07:41 +0530
+Message-ID: <87o73fgg3e.fsf@gmail.com>
+References: <20241019125113.369994-1-john.g.garry@oracle.com> <20241019125113.369994-6-john.g.garry@oracle.com> <87sesrgp5v.fsf@gmail.com> <cec9eab6-8e3b-47af-94c1-56fa1e449e82@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxGL1LF9mVzrUGOU@google.com>
 
-Hi Namhyung, Jing,
+John Garry <john.g.garry@oracle.com> writes:
 
-On Thu, Oct 17, 2024 at 03:12:36PM -0700, Namhyung Kim wrote:
-> 
-> Hello,
-> 
-> On Tue, Oct 15, 2024 at 03:53:27PM +0800, Jing Zhang wrote:
-> > Since commit 1f85d016768f ("perf test record+probe_libc_inet_pton: Fix
-> > call chain match on x86_64") remove function getaddrinfo() on expected
-> > file, the test failed on aarch64. On aarch64, function getaddrinfo()
-> > show up in the call chain.
-> >
-> > $perf script -i /tmp/perf.data.1PV
-> > ping 2588319 [125] 500119.122843: probe_libc:inet_pton: (ffff9a4f7410)
-> >             ffff9a4f7410 __GI___inet_pton+0x0 (/usr/lib64/libc-2.32.so)
-> >             ffff9a4c5f7c getaddrinfo+0xec (/usr/lib64/libc-2.32.so)
-> >             aaaad6d32b38 [unknown] (/usr/bin/ping)
-> 
-> I'm curious how other ARM folks don't see this.  Does it depend on
-> something other?
+> On 20/10/2024 09:21, Ritesh Harjani (IBM) wrote:
+>>>   -293,7 +295,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>>>   	const struct iomap *iomap = &iter->iomap;
+>>>   	struct inode *inode = iter->inode;
+>>>   	unsigned int fs_block_size = i_blocksize(inode), pad;
+>>> -	loff_t length = iomap_length(iter);
+>>> +	const loff_t length = iomap_length(iter);
+>>> +	bool atomic = iter->flags & IOMAP_ATOMIC;
+>>>   	loff_t pos = iter->pos;
+>>>   	blk_opf_t bio_opf;
+>>>   	struct bio *bio;
+>>> @@ -303,6 +306,9 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>>>   	size_t copied = 0;
+>>>   	size_t orig_count;
+>>>   
+>>> +	if (atomic && length != fs_block_size)
+>>> +		return -EINVAL;
+>> We anyway mandate iov_iter_count() write should be same as sb_blocksize
+>> in xfs_file_write_iter() for atomic writes.
+>> This comparison here is not required. I believe we do plan to lift this
+>> restriction maybe when we are going to add forcealign support right?
+>
+> Yes, we would lift this restriction if and when forcealign is added. Or 
+> when bigalloc is leveraged for ext4 atomic writes.
+>
+> But I think that today it is proper to add this check, as we are saying 
+> that iomap DIO path does not support anything else than fs_block_size.
+>
+> For forcealign, we were introducing support for atomic writes spanning 
+> mixed unwritten and written extents in [0]. We don't have that support 
+> here, so it is prudent to say that we just support fs_block_size.
+>
+> [0] 
+> https://lore.kernel.org/linux-xfs/20240607143919.2622319-4-john.g.garry@oracle.com/
+>
 
-This test has several dependencies. E.g. libtraceevent and IPv6 (one
-of my machines skips the test due to lack IPv6 interface).
+Sure.
 
-This test is definitely a regression on Arm64 machine. I will go back to
-check why this test failure is missed in our CI. If have any update,
-will let you know.
+>> 
+>> And similarly this needs to be lifted when ext4 adds support for atomic
+>> write even with bigalloc. I hope we can do so when we add such support, right?
+>
+> Right
+>
 
-> Then can we make the line optional like we did on s390 recently?
+Thanks for confirming that.
+The patch looks good to me. Please feel free to add - 
 
-I verified two distros (one is libc-2.31 and another is libc-2.37), both of
-them have the symbol "getaddrinfo":
-
-Machine 1:
-
-  # nm -D /usr/lib/aarch64-linux-gnu/libc-2.31.so | grep getaddrinfo
-    00000000000bdf58 T getaddrinfo
-
-Machine 2:
-
-  # /usr/lib/aarch64-linux-gnu/libc.so.6
-  GNU C Library (Debian GLIBC 2.37-16) stable release version 2.37.
-
-  # nm -D /usr/lib/aarch64-linux-gnu/libc.so.6 | grep getaddrinfo
-  00000000000d4da4 T getaddrinfo@@GLIBC_2.17
-  0000000000114260 T getaddrinfo_a@@GLIBC_2.34
-  0000000000114260 T getaddrinfo_a@GLIBC_2.17
-
-I don't see the need for making the line optional. And I don't see any
-requirement for adding conditional check for symbol "gaih_inet".
-
-> > So just remove getaddrinfo() on x86_64.
-> 
-> I'm not sure how it works on other archs.
-
-I have no idea neither. Maybe this patch is fine - it just rolls back to
-old format for rest archs, before if the test can work well on them, then
-this patch just makes it to work again.
-
-However, this patch has a syntax error. Please see below.
-
-> > Fixes: 1f85d016768f ("perf test record+probe_libc_inet_pton: Fix call chain match on x86_64")
-> > Signed-off-by: Jing Zhang <renyu.zj@linux.alibaba.com>
-> > ---
-> >  tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> > index 47a26f2..09d7b0b 100755
-> > --- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> > +++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> > @@ -52,8 +52,12 @@ trace_libc_inet_pton_backtrace() {
-> >               echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
-> >               echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
-> >               ;;
-> > +     x86_64)
-> > +             eventattr='max-stack=3'
-> > +             echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
-
-Please add ";;" at here to break switch, otherwise, it reports syntax
-error.
-
-With this change:
-
-Tested-by: Leo Yan <leo.yan@arm.com>
-
-Thanks for the fixing!
-
-> >       *)
-> >               eventattr='max-stack=3'
-> > +             echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
-> >               echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
-> >               ;;
-> >       esac
-> > --
-> > 1.8.3.1
-> >
-> 
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
