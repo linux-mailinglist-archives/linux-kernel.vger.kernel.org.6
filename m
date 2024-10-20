@@ -1,123 +1,76 @@
-Return-Path: <linux-kernel+bounces-373230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1B19A5405
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:29:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD149A5406
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610D31C20B57
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 12:29:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 403C9B22CBA
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 12:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A780E192593;
-	Sun, 20 Oct 2024 12:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="W7OxQxO+"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787A1191F66;
+	Sun, 20 Oct 2024 12:38:10 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265961F5FD;
-	Sun, 20 Oct 2024 12:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5065722338
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 12:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729427368; cv=none; b=mrr14WHo1Q5PCERUKf/VTXxzk58Fz5ENRK5vK7YLePNyu7bqwKbdzc2qI7D8bH+JcnwCKWVlMxc8BVYtje9X4jsoyskSWvKN25E0+dwpgikACffWHntZ+Wh0CbehP7CZL7bUBTtj0/dmFCKnlIoXgdyd6l1jERC2AM7Gl62Q+vQ=
+	t=1729427890; cv=none; b=ZAyxfruezgnPfF/5LRTh/O0lFmM+PpsG00EqMvbemya9N0sFVSYFmyABrcqWOjWLhzWnGmlcmfwguj6wg/1Vd8nkpucm8LTEK/IX9V7dILvcOVee6a/29c05wb1GWUJcgQtrrsTKli3kU94blRIs2PMXVa2OJ2HqfvoviLwHmrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729427368; c=relaxed/simple;
-	bh=oK7VZ748YZzPlvjiEAflfk6kW/AiZBAXdWoti14V2vY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEtQE9hEOAb2lV8Iv6JyHKTVFHIKSGJC9zeDibISEigKt3Hy2F0DcobHoLON+ZmLdqTlLJwgUKAF4kggZij2QeeqcDmiXx5Q1QeJWLgIH6jZm32yg9W0ikvKH0YSTn0pey2PZP74p0JVL/uHULlsr63C6amekYaZFVrZUlLc5Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=W7OxQxO+; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id 3C59A13801ED;
-	Sun, 20 Oct 2024 08:29:25 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Sun, 20 Oct 2024 08:29:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1729427365; x=1729513765; bh=7c9ju46R6QyN1443WbFxMita+e/d
-	5Edr3KeaNQmPjnE=; b=W7OxQxO+xOboy1uFXuZt2v+1seC0HNg3SRuRcZNc36jq
-	5d6mnAKCmacchvOl/4B72UcDq04TK9SVJ1CgPCAeAGb6LoVGYLCIzEhLynbRqQk3
-	tm+7vZZoRvGQ1raM8oweINlbXX/mEW3ZDJ0yJDZIWdleRPXT0b3zp2lsnd04ty+L
-	fYtYVo6LaXqwpqbTgD6qqJbGkgZhqO8QTYedYOgZnERHBcBM3sOugkVGnSMz5JNY
-	+nT0sziXuGQGsYgtV5hps7d+4vLkOuwboUytdhCE6DywMJIl+YOw5duODT9zxgEJ
-	YKJLRkigN6qy7y1y9LMN+FZoB2RXpeGiXDSSlfA3uw==
-X-ME-Sender: <xms:pPcUZ2ohHBgPVbNDkRas89oib3d_T5avJbotJYTEXCFPDQHstJlQlQ>
-    <xme:pPcUZ0qSrYukrOGqhSPBzqu8NdY8VVYOwrVa8qX5yuY5GTxtD4UANJIuBYxt17t7H
-    tz1LkVwmyvOplg>
-X-ME-Received: <xmr:pPcUZ7Md7mlMwrUXvBdK2hHF9RD1aK22deRLMH02guxXqro315hIQY8nWUq_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehjedghedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepkfguohcuufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdroh
-    hrgheqnecuggftrfgrthhtvghrnhepvddufeevkeehueegfedtvdevfefgudeifeduieef
-    gfelkeehgeelgeejjeeggefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepihguohhstghhsehiughoshgthhdrohhrghdpnhgspghrtghpthht
-    ohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephigrjhhunhdruggvnhhgse
-    hlihhnuhigrdguvghvpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgv
-    thdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
-    epkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughh
-    rghtrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhg
-X-ME-Proxy: <xmx:pPcUZ17j-OjwnTlDTEARwMnKh6-kwLfbxEYMd4cql93xeiKC3rCaNg>
-    <xmx:pPcUZ14HKylRg_RrD98elqCKoyC_waYN1l-p-HU3RNDHQsxPxCj12g>
-    <xmx:pPcUZ1gzf__nwf3M1zHVIzZ2i3iBjSaIWyftKr9JLNsdLAg6zyUDqw>
-    <xmx:pPcUZ_59Bylivw0nDTWr2J_jtHQa_OZm0487qguo9rfgnGHNCFMcfg>
-    <xmx:pfcUZyu13OZx96y9wyeYADZCbf5HXTagqdd6OOn22WzJtv-It-3IY3-1>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 20 Oct 2024 08:29:23 -0400 (EDT)
-Date: Sun, 20 Oct 2024 15:29:21 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: Yajun Deng <yajun.deng@linux.dev>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 net-next] net: vlan: Use vlan_prio instead of vlan_qos
- in mapping
-Message-ID: <ZxT3oVQ27erIoTVz@shredder.mtl.com>
-References: <20241018141233.2568-1-yajun.deng@linux.dev>
+	s=arc-20240116; t=1729427890; c=relaxed/simple;
+	bh=7BEFaaok169hD29f3U7ZM6kdTNs/02qWrX4flaRMq2s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PKa181pfNGt+1N3E+7GhaKnt6cb7nt3I4ZdRMu4UGucKXVigUyD1VBHqrfDvaWtpfN6CY1dbd4A0sbnSysG2nxwah4KAosdq18NHN/pJ1lKU8eNWCF4kVjzPZma0od+uzjdf9A5DmFZZcUKegAYmPp3YX/R0OXdcCI1IdR4LGeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3bb31e3cfso31829875ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 05:38:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729427887; x=1730032687;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7BEFaaok169hD29f3U7ZM6kdTNs/02qWrX4flaRMq2s=;
+        b=t/BjUZZ1uaQYdQJ8XC/npGhqhswieJ+i4yw4wh+qLQbloerO6rK0GwfeeA4DSfBm/5
+         bKzZBhJ8LAVh4AgGNzeLhc8IwW3Em2HsS7nBOl7lLOvnVdPeO6HD7vDP7nbrFxPO9KCy
+         GsMhZWGGFnbZp6IP42B4EhOE81odEpVTWr2skEClnvXFBWUsXmhz4p8dug6AkqNpBoka
+         3ocNWqSnHef5YZBZNYtbdMqWFZ30KmsXlKmx3LMqTIDa63VBNtjPTbsY/8ZRdNU7nlF3
+         6bQibYeXInG88zdG3iGD+UAHFcSvmLsljc4pMKv4SuYBYti2FBgrG8ryeNNIAwhm6zwX
+         iZPw==
+X-Gm-Message-State: AOJu0Yy9D+ejjK7MinzOIGGfAMEfnY3aQ9njGxUX8wFFjdcD04ff/yZb
+	wA+QXO+omTPqSnsmcr1ZgoNHfP8GqZT3oHYDN2FpFPRc5ZHAymTXE9rOJ314yYyJ9uml18I6B6K
+	6qDXA8FGkiiTTAbBGvCKVw7s1DY+Bc8qtIcULJofvJCC6iJudmQX7Bys=
+X-Google-Smtp-Source: AGHT+IHQxMLrpTlNOUY3+z24jXIZ9GMpt30zYHqEcc2D/19izpvqnxwdOKFm75EtXgBAwG31r8RX+spVWCRb4Cl2gvXYXAV8R9L1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018141233.2568-1-yajun.deng@linux.dev>
+X-Received: by 2002:a05:6e02:1a41:b0:3a3:b45b:a8cc with SMTP id
+ e9e14a558f8ab-3a3f407449emr70441655ab.15.1729427887349; Sun, 20 Oct 2024
+ 05:38:07 -0700 (PDT)
+Date: Sun, 20 Oct 2024 05:38:07 -0700
+In-Reply-To: <67109a9f.050a0220.d9b66.0182.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6714f9af.050a0220.1e4b4d.0040.GAE@google.com>
+Subject: Re: [syzbot] kernel BUG in bch2_bucket_alloc_trans
+From: syzbot <syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 18, 2024 at 10:12:33PM +0800, Yajun Deng wrote:
-> The vlan_qos member is used to save the vlan qos, but we only save the
-> priority. Also, we will get the priority in vlan netlink and proc.
-> We can just save the vlan priority using vlan_prio, so we can use vlan_prio
-> to get the priority directly.
-> 
-> For flexibility, we introduced vlan_dev_get_egress_priority() helper
-> function. After this patch, we will call vlan_dev_get_egress_priority()
-> instead of vlan_dev_get_egress_qos_mask() in irdma.ko and rdma_cm.ko.
-> Because we don't need the shift and mask operations anymore.
-> 
-> There is no functional changes.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Not sure I understand the motivation.
+***
 
-IIUC, currently, struct vlan_priority_tci_mapping::vlan_qos is shifted
-and masked in the control path (vlan_dev_set_egress_priority) so that
-these calculations would not need to be performed in the data path where
-the VLAN header is constructed (vlan_dev_hard_header /
-vlan_dev_hard_start_xmit).
+Subject: kernel BUG in bch2_bucket_alloc_trans
+Author: pz010001011111@proton.me
 
-This patch seems to move these calculations to the data path so that
-they would not need to be performed in the control path when dumping the
-priority mapping via netlink / proc.
-
-Why is it a good trade-off?
+#syz test
 
