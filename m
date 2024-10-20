@@ -1,528 +1,286 @@
-Return-Path: <linux-kernel+bounces-373471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72CF9A5731
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 00:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E40619A5733
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 00:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32FB51F2212A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 22:03:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600EA1F2201D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 22:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FE719AA43;
-	Sun, 20 Oct 2024 22:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADE5198A0F;
+	Sun, 20 Oct 2024 22:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b="DGdEmU5T";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J6+OP/Rt"
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="GK/in/cd"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D317E199E93;
-	Sun, 20 Oct 2024 22:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91A936124;
+	Sun, 20 Oct 2024 22:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729461694; cv=none; b=rJWr7HjgjQ/reqZcniVqJyurENHKRpsd2jKdSxJmRBdPBarMP9/cny/ZTQbhevgyEIOVScL77WT4HCTqRfwXuztjYn7FcrP+6lREvzgvBWehl3DinsndpLw6pmxFGfxH47NyITX6UKplTpu61mGjapva08fDFH8C//H7YjQEbes=
+	t=1729462185; cv=none; b=bp2omJayCUCJy4gIkzITTwAh29Rc8aSq7ickRTKEO5XYEeDTlilqg4FzeS0T4Wj/ZwzvvCoL2aTfdCGMCR1bSSRpcBo8HYb5sp0KwS9JKbVLGncbmxjTIlKXtShTKUxs2mm8zv1L+tPKZcsSNMBnm0wrYqoC0o2wFiAsY7zK0BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729461694; c=relaxed/simple;
-	bh=vF8PoZLcemoW7ocQiITA/5LyeyPnNKnsKzS6bvQdmFY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U6yDxtOp/rXV1GULMoC0eRdVOgEF9z5K/9puoNk8BpgW+qlrPnBlhA2XtOI8NvucbuEF+bdFA/QDKLlSdafdxQaRkUO1F45XGRrfl8IsaXGZg/cUsHp1lL8vWBPpjsyDAgy2EaiC5ixSzJRJwcwYibuFPBol1x520vqeJnYDhI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com; spf=pass smtp.mailfrom=justinweiss.com; dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b=DGdEmU5T; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J6+OP/Rt; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=justinweiss.com
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.stl.internal (Postfix) with ESMTP id E4B3311400A8;
-	Sun, 20 Oct 2024 18:01:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sun, 20 Oct 2024 18:01:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=justinweiss.com;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1729461690; x=
-	1729548090; bh=p4bxuKiyW+ioXAqeVJXHXrTilmJtksg0SLU1JDE3quM=; b=D
-	GdEmU5Tj0RjUAmXvcX3BVjQG58R53p3LDGkT/jD1XLehUSQo2d2W6jSbMRYJjhmN
-	aPXIegFFyzpEG+QJQLJFK8Niw+LamE7XXR18K2RZVp+ZINURQZMwaScCQ9cnDUxN
-	8YbZOE3Q/CZcXjaJifhxhZXCjZ30aH3jkXt22uE+vrh8puHHWaCggk/MLmP0DaW0
-	gGV8/CGAKlDJJO0kDNaqf5PeZIWic4HWluxf08CKaifI0xNXeKFWzdkm8Y2bAXh/
-	Wr96+Yafm3kbafK7EywXjsMmBz3y8QMuOTU7WQarvv3/FeqHIp/3mGM3H5c5qxup
-	y8RV+geNmDBSO8oISYX4Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729461690; x=
-	1729548090; bh=p4bxuKiyW+ioXAqeVJXHXrTilmJtksg0SLU1JDE3quM=; b=J
-	6+OP/RtPXYvhM3CZ1oUeOSXEptqoZpS9TznVbzwTti4lCfJYGVdz5pMf7cEgi6W8
-	vODq2gYau+sg3msTgjh68OVOf9Zj/tz6Hp2SyXddnznPnewzMZGJU68HAcCdSQsx
-	7Udq6zgyqzVR00qy7YaXJDDrEJht4ncjbvKD/tCcwBqGe+Fv1Cc2/ynp6SVwGPIy
-	XOyY+5hBJq1fGf6+X86WSgcWAvvCvgK4pgYSnOSPm0GzDHc2NXi2J5VqS+DTcxB1
-	IP+sktGh9IP+Kn61qqs/MTBHhBFoLuxKlhmGC0TpVk5uDq5cYFH3G4Srpyufcg9C
-	7fwsTZJsBrhUO0A0jl23w==
-X-ME-Sender: <xms:un0VZ41pqa8kyl6CNv2fZ__z_QB4FMTYqxtJ67yPXrMzYe1kCah0Bg>
-    <xme:un0VZzG76NvBGqrvGzWKFbZg0NxCBw4z7w3tLTgZcHBgr_PsNXMggggSzl5c66iJp
-    zK3YGBFsYY9S6sUvQ>
-X-ME-Received: <xmr:un0VZw4S0sA2yQBuI7EeNSS7x6heTUVxHBJD_fnLwkEFM-tMokInSwCARspCG5yO9Y9A0H1GrQqkyuxuiCW5BHr0XwNXnp44ivlK-mQpFA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehkedgtdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttden
-    ucfhrhhomheplfhushhtihhnucghvghishhsuceojhhushhtihhnsehjuhhsthhinhifvg
-    hishhsrdgtohhmqeenucggtffrrghtthgvrhhnpeeiffdtvdfgtddvieetffduhfejtdef
-    teelkefgteekgeegffduiefhudeiveejkeenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehjuhhsthhinhesjhhushhtihhnfigvihhsshdrtgho
-    mhdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hlrghniigrnhhordgrlhgvgiesghhmrghilhdrtghomhdprhgtphhtthhopehjihgtvdef
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlrghrshesmhgvthgrfhhoohdruggvpd
-    hrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdo
-    ughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepjhhushhtihhnsehjuhhsthhinhifvghishhsrdgtohhm
-    pdhrtghpthhtoheplhhinhhugidqihhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:un0VZx2wdeMf9pmI83V4Lw7FO0An06tD4wMuTfgMDmNydTJjBXD4Ew>
-    <xmx:un0VZ7HOVVKetEpl-V4qAGPXeZ1cwHZXPPVhBYjORmMXQj8DXqhg1Q>
-    <xmx:un0VZ6-jTrBN0BMlRi4AiDGw3YVGFMHnv3BKXURjCPbjQt-0JHqxbw>
-    <xmx:un0VZwl9fNJFenB59YNOIuGNLttZQlCyyHQ7G78271OMmBAMcaFjiQ>
-    <xmx:un0VZ6fRVRnqtfPHs5dj1RAdGlnx7i6WpnepKeQhBlmwVaZJXWeM8hXN>
-Feedback-ID: icf614246:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 20 Oct 2024 18:01:29 -0400 (EDT)
-From: Justin Weiss <justin@justinweiss.com>
-To: Alex Lanzano <lanzano.alex@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Justin Weiss <justin@justinweiss.com>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Derek J . Clark" <derekjohn.clark@gmail.com>,
-	=?UTF-8?q?Philip=20M=C3=BCller?= <philm@manjaro.org>
-Subject: [PATCH v3 6/6] iio: imu: bmi270: Add scale and sampling frequency to BMI270 IMU
-Date: Sun, 20 Oct 2024 15:00:10 -0700
-Message-ID: <20241020220011.212395-7-justin@justinweiss.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241020220011.212395-1-justin@justinweiss.com>
-References: <20241020220011.212395-1-justin@justinweiss.com>
+	s=arc-20240116; t=1729462185; c=relaxed/simple;
+	bh=nNKPcTp0JXv6DEGqV/f4fFfU3Xlj7YDvmHixgmxA7ow=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=APudgg/RVXsMwZjw0VA/1Qr25cohYZkicdbbKtUS9XtWLPcyOghBn7CeQKWrJzeC+6ZIy9PC3N/lnlPnYgNc4cZ9CUDF4otVlXNJKnNJaR4ukIshKdDbnaWoNrAX5Zbmo6VRWnFHyY4awswgBxxr1uctt/+J2R+ZwFVcqKMZrfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=GK/in/cd; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1729462175; x=1730066975; i=w_armin@gmx.de;
+	bh=nNKPcTp0JXv6DEGqV/f4fFfU3Xlj7YDvmHixgmxA7ow=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=GK/in/cdUCn3lUDDkN+gP6Ujsu8yYK4xiWCmaSsWCqctR+kBgJhdrqn7G05Jj70P
+	 Vr3CNDKfMXFCUklUIIvsQ5mtDeYtxR8XepM9MFEv6Ae3MLC+Wj7vBk16t/4rPs2Q1
+	 w9XfiXRGTMZhS1XtG3clRKUY5TSpWlW1Be+m3C+rP6Twqgq6+CZJIT8ds3DDYFbwg
+	 LNgzKBncuu5D5ExwJlWjEolo7/n53TuTxo8LkU0gTqAgxsq4SMUwMYv8/MN2Hz8E1
+	 id6L2778aA42psPEkROmQq/Fcqb4p0gIWIf6yuZlQVraC1IzmWN97hiEUgz3MYVUR
+	 DYmB2m/RBRxpyaZPOw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MfYLa-1tZks31a0G-00ntus; Mon, 21
+ Oct 2024 00:09:35 +0200
+Message-ID: <b1276fd9-6fc3-41fc-a67e-4a18f0139595@gmx.de>
+Date: Mon, 21 Oct 2024 00:09:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/5] alienware-wmi: added autodetect_thermal_profile
+ for devices with quirk_unknown
+From: Armin Wolf <W_Armin@gmx.de>
+To: Kurt Borja <kuurtb@gmail.com>
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20241017081211.126214-2-kuurtb@gmail.com>
+ <20241017081631.127333-3-kuurtb@gmail.com>
+ <9d30b2ce-68e4-4080-9068-d1c0b5a59284@gmx.de>
+ <bd44d3ce-f34f-4b32-878a-0c9f8d1b131e@gmx.de>
+Content-Language: en-US
+In-Reply-To: <bd44d3ce-f34f-4b32-878a-0c9f8d1b131e@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:KHoNZzzOGkmGA8WjWuC4zIo7q0DsegdOlf5L1P7Q2cEm3/U713b
+ 8GJxD744YujuumQJplRzr+O+1G/EI2GcVTm7xVEkSmMU2kX4FDiKfPIZOgzTmlJj/lzsRev
+ 02WTb36uL3Qfpz3vBD+HLKbjXZzlBDl/03HuYEGtFodTS1MmZ6nfoA4qlFJ9GQTp8RPKvqa
+ Gn+ODheZOzQIdZX76Q/qQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:J3Novxuj57Y=;MIpQsV3srXbOJpgKX6tY/KxpB8Y
+ MZULUNx0Gi4h6FuovIOEj6JCnRWWkVQcV2vpBrkA+APfXJvB3ZgG+ywEiKSsEMzV21C28pR1k
+ jHTUxG2mrSXr1/0bzQW59H9j8z/mWj9dr3nU/NWl0kFDqZ+xe4ILYSPDDDubXEtaeM/LrdaeY
+ cqpgAOWodCiDDVws2dUG6Fr9BaAk8mjibOUjjS4cNOpzrlMfFq0exDfNWlC9NAARDwxWScaK6
+ LLbNkrsrf8cKN2wzuFBIIaOtAgnJXRkAkPFCBxiGc0utY+uIHc0KTsjUFhJyuKClYsnwLYDCR
+ uiy7K0G/ZPjyRXjU06r4N19wypPbEJBpoogVPWG4RhU4DURq0q7An/SKKy/5EbFBmArFdGr9d
+ 6PhnTDIohPLaExMJSVfMETGT10gRqiDZXL2aXnSJ8pyX8jbHJaNOFDUZbKQwrYgoW+2gm2J9X
+ YjMu2Q+8KhhmnK4nfidwuzSqsVrJnyHWrFsTV8Wc4MX4FA9i1s+4Cqfw411+1VZqFxZmJbPPy
+ 2EThkE+FKyCIYzV57E2IgeebuvjmM9etVI6c77Eohhs/R8eyeU3DJA9qwiPDscEmqgRXDbv2V
+ rz0y3P3EIiuCiDOo4IDb+YaaKO/61AyJ1tvVnCstGrhvnttnV6/0HCUZOL2To/Pq6Yhd9aV0o
+ 1YT8HLMbzqfSOb5DsSsxIIiF+O6Z8gQY9TMOslVItPamEJwBqTK2HPulL4Afj6q3QtrOGUWoX
+ fSS4DwYYEO6/qI9AEGgBcn8UvN88WqEbIECSVPvQbPyESL12D2sE8KQ925/AmJpRg9cfujtsv
+ uojRohn0uMMwK7FMzW7p/Ouw==
 
-Add read and write functions and create _available entries.
+Am 20.10.24 um 22:40 schrieb Armin Wolf:
 
-Signed-off-by: Justin Weiss <justin@justinweiss.com>
----
- drivers/iio/imu/bmi270/bmi270_core.c | 340 +++++++++++++++++++++++++++
- 1 file changed, 340 insertions(+)
+> Am 20.10.24 um 22:39 schrieb Armin Wolf:
+>
+>> Am 17.10.24 um 10:16 schrieb Kurt Borja:
+>>
+>>> Added autodetect_thermal_profile for devices with quirk_unknown.
+>>> Autodetection is done through basic conditions most devices with WMAX'=
+s
+>>> thermal interface meet. Function exits returning 0 in case of errors.
+>>>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+>
+Oops, this should have been for patch 5. Please ignore this.
 
-diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-index 5b643afae9f7..3e1e698c4af0 100644
---- a/drivers/iio/imu/bmi270/bmi270_core.c
-+++ b/drivers/iio/imu/bmi270/bmi270_core.c
-@@ -7,6 +7,7 @@
- #include <linux/regmap.h>
- 
- #include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
- #include <linux/iio/triggered_buffer.h>
- #include <linux/iio/trigger_consumer.h>
- 
-@@ -38,6 +39,9 @@
- #define BMI270_ACC_CONF_BWP_NORMAL_MODE			0x02
- #define BMI270_ACC_CONF_FILTER_PERF_MSK			BIT(7)
- 
-+#define BMI270_ACC_CONF_RANGE_REG			0x41
-+#define BMI270_ACC_CONF_RANGE_MSK			GENMASK(1, 0)
-+
- #define BMI270_GYR_CONF_REG				0x42
- #define BMI270_GYR_CONF_ODR_MSK				GENMASK(3, 0)
- #define BMI270_GYR_CONF_ODR_200HZ			0x09
-@@ -46,6 +50,9 @@
- #define BMI270_GYR_CONF_NOISE_PERF_MSK			BIT(6)
- #define BMI270_GYR_CONF_FILTER_PERF_MSK			BIT(7)
- 
-+#define BMI270_GYR_CONF_RANGE_REG			0x43
-+#define BMI270_GYR_CONF_RANGE_MSK			GENMASK(2, 0)
-+
- #define BMI270_INIT_CTRL_REG				0x59
- #define BMI270_INIT_CTRL_LOAD_DONE_MSK			BIT(0)
- 
-@@ -99,6 +106,265 @@ const struct bmi270_chip_info bmi270_chip_info = {
- };
- EXPORT_SYMBOL_NS_GPL(bmi270_chip_info, IIO_BMI270);
- 
-+enum bmi270_sensor_type {
-+	BMI270_ACCEL	= 0,
-+	BMI270_GYRO,
-+};
-+
-+struct bmi270_scale {
-+	int scale;
-+	int uscale;
-+};
-+
-+struct bmi270_odr {
-+	int odr;
-+	int uodr;
-+};
-+
-+static const struct bmi270_scale bmi270_accel_scale[] = {
-+	{ 0, 598 },
-+	{ 0, 1197 },
-+	{ 0, 2394 },
-+	{ 0, 4788 },
-+};
-+
-+static const struct bmi270_scale bmi270_gyro_scale[] = {
-+	{ 0, 1065 },
-+	{ 0, 532 },
-+	{ 0, 266 },
-+	{ 0, 133 },
-+	{ 0, 66 },
-+};
-+
-+struct bmi270_scale_item {
-+	const struct bmi270_scale *tbl;
-+	int num;
-+};
-+
-+static const struct bmi270_scale_item bmi270_scale_table[] = {
-+	[BMI270_ACCEL] = {
-+		.tbl	= bmi270_accel_scale,
-+		.num	= ARRAY_SIZE(bmi270_accel_scale),
-+	},
-+	[BMI270_GYRO] = {
-+		.tbl	= bmi270_gyro_scale,
-+		.num	= ARRAY_SIZE(bmi270_gyro_scale),
-+	},
-+};
-+
-+static const struct bmi270_odr bmi270_accel_odr[] = {
-+	{ 0, 781250 },
-+	{ 1, 562500 },
-+	{ 3, 125000 },
-+	{ 6, 250000 },
-+	{ 12, 500000 },
-+	{ 25, 0 },
-+	{ 50, 0 },
-+	{ 100, 0 },
-+	{ 200, 0 },
-+	{ 400, 0 },
-+	{ 800, 0 },
-+	{ 1600, 0 },
-+};
-+
-+static const u8 bmi270_accel_odr_vals[] = {
-+	0x01,
-+	0x02,
-+	0x03,
-+	0x04,
-+	0x05,
-+	0x06,
-+	0x07,
-+	0x08,
-+	0x09,
-+	0x0A,
-+	0x0B,
-+	0x0C,
-+};
-+
-+static const struct bmi270_odr bmi270_gyro_odr[] = {
-+	{ 25, 0 },
-+	{ 50, 0 },
-+	{ 100, 0 },
-+	{ 200, 0 },
-+	{ 400, 0 },
-+	{ 800, 0 },
-+	{ 1600, 0 },
-+	{ 3200, 0 },
-+};
-+
-+static const u8 bmi270_gyro_odr_vals[] = {
-+	0x06,
-+	0x07,
-+	0x08,
-+	0x09,
-+	0x0A,
-+	0x0B,
-+	0x0C,
-+	0x0D,
-+};
-+
-+struct bmi270_odr_item {
-+	const struct bmi270_odr *tbl;
-+	const u8 *vals;
-+	int num;
-+};
-+
-+static const struct  bmi270_odr_item bmi270_odr_table[] = {
-+	[BMI270_ACCEL] = {
-+		.tbl	= bmi270_accel_odr,
-+		.vals   = bmi270_accel_odr_vals,
-+		.num	= ARRAY_SIZE(bmi270_accel_odr),
-+	},
-+	[BMI270_GYRO] = {
-+		.tbl	= bmi270_gyro_odr,
-+		.vals   = bmi270_gyro_odr_vals,
-+		.num	= ARRAY_SIZE(bmi270_gyro_odr),
-+	},
-+};
-+
-+static int bmi270_set_scale(struct bmi270_data *data,
-+			    int chan_type, int uscale)
-+{
-+	int i;
-+	int reg, mask;
-+	struct bmi270_scale_item bmi270_scale_item;
-+
-+	switch (chan_type) {
-+	case IIO_ACCEL:
-+		reg = BMI270_ACC_CONF_RANGE_REG;
-+		mask = BMI270_ACC_CONF_RANGE_MSK;
-+		bmi270_scale_item = bmi270_scale_table[BMI270_ACCEL];
-+		break;
-+	case IIO_ANGL_VEL:
-+		reg = BMI270_GYR_CONF_RANGE_REG;
-+		mask = BMI270_GYR_CONF_RANGE_MSK;
-+		bmi270_scale_item = bmi270_scale_table[BMI270_GYRO];
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < bmi270_scale_item.num; i++) {
-+		if (bmi270_scale_item.tbl[i].uscale != uscale)
-+			continue;
-+
-+		return regmap_update_bits(data->regmap, reg, mask, i);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int bmi270_get_scale(struct bmi270_data *bmi270_device,
-+			    int chan_type, int *uscale)
-+{
-+	int ret;
-+	unsigned int val;
-+	struct bmi270_scale_item bmi270_scale_item;
-+
-+	switch (chan_type) {
-+	case IIO_ACCEL:
-+		ret = regmap_read(bmi270_device->regmap,
-+				  BMI270_ACC_CONF_RANGE_REG, &val);
-+		if (ret)
-+			return ret;
-+
-+		val = FIELD_GET(BMI270_ACC_CONF_RANGE_MSK, val);
-+		bmi270_scale_item = bmi270_scale_table[BMI270_ACCEL];
-+		break;
-+	case IIO_ANGL_VEL:
-+		ret = regmap_read(bmi270_device->regmap,
-+				  BMI270_GYR_CONF_RANGE_REG, &val);
-+		if (ret)
-+			return ret;
-+
-+		val = FIELD_GET(BMI270_GYR_CONF_RANGE_MSK, val);
-+		bmi270_scale_item = bmi270_scale_table[BMI270_GYRO];
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (val >= bmi270_scale_item.num)
-+		return -EINVAL;
-+
-+	*uscale = bmi270_scale_item.tbl[val].uscale;
-+	return 0;
-+}
-+
-+static int bmi270_set_odr(struct bmi270_data *data, int chan_type,
-+			  int odr, int uodr)
-+{
-+	int i;
-+	int reg, mask;
-+	struct bmi270_odr_item bmi270_odr_item;
-+
-+	switch (chan_type) {
-+	case IIO_ACCEL:
-+		reg = BMI270_ACC_CONF_REG;
-+		mask = BMI270_ACC_CONF_ODR_MSK;
-+		bmi270_odr_item = bmi270_odr_table[BMI270_ACCEL];
-+		break;
-+	case IIO_ANGL_VEL:
-+		reg = BMI270_GYR_CONF_REG;
-+		mask = BMI270_GYR_CONF_ODR_MSK;
-+		bmi270_odr_item = bmi270_odr_table[BMI270_GYRO];
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < bmi270_odr_item.num; i++) {
-+		if (bmi270_odr_item.tbl[i].odr != odr ||
-+		    bmi270_odr_item.tbl[i].uodr != uodr)
-+			continue;
-+
-+		return regmap_update_bits(data->regmap, reg, mask,
-+					  bmi270_odr_item.vals[i]);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int bmi270_get_odr(struct bmi270_data *data, int chan_type,
-+			  int *odr, int *uodr)
-+{
-+	int i, val, ret;
-+	struct bmi270_odr_item bmi270_odr_item;
-+
-+	switch (chan_type) {
-+	case IIO_ACCEL:
-+		ret = regmap_read(data->regmap, BMI270_ACC_CONF_REG, &val);
-+		if (ret)
-+			return ret;
-+
-+		val = FIELD_GET(BMI270_ACC_CONF_ODR_MSK, val);
-+		bmi270_odr_item = bmi270_odr_table[BMI270_ACCEL];
-+		break;
-+	case IIO_ANGL_VEL:
-+		ret = regmap_read(data->regmap, BMI270_GYR_CONF_REG, &val);
-+		if (ret)
-+			return ret;
-+
-+		val = FIELD_GET(BMI270_GYR_CONF_ODR_MSK, val);
-+		bmi270_odr_item = bmi270_odr_table[BMI270_GYRO];
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < bmi270_odr_item.num; i++) {
-+		if (val != bmi270_odr_item.vals[i])
-+			continue;
-+
-+		*odr = bmi270_odr_item.tbl[i].odr;
-+		*uodr = bmi270_odr_item.tbl[i].uodr;
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
- static irqreturn_t bmi270_trigger_handler(int irq, void *p)
- {
- 	struct iio_poll_func *pf = p;
-@@ -161,6 +427,68 @@ static int bmi270_read_raw(struct iio_dev *indio_dev,
- 			return ret;
- 
- 		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_SCALE:
-+		*val = 0;
-+		ret = bmi270_get_scale(bmi270_device, chan->type, val2);
-+		return ret ? ret : IIO_VAL_INT_PLUS_MICRO;
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		ret = bmi270_get_odr(bmi270_device, chan->type, val, val2);
-+		return ret ? ret : IIO_VAL_INT_PLUS_MICRO;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int bmi270_write_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *chan,
-+			    int val, int val2, long mask)
-+{
-+	struct bmi270_data *data = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SCALE:
-+		return bmi270_set_scale(data, chan->type, val2);
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		return bmi270_set_odr(data, chan->type, val, val2);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int bmi270_read_avail(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     const int **vals, int *type, int *length,
-+			     long mask)
-+{
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SCALE:
-+		*type = IIO_VAL_INT_PLUS_MICRO;
-+		switch (chan->type) {
-+		case IIO_ANGL_VEL:
-+			*vals = (const int *)bmi270_gyro_scale;
-+			*length = ARRAY_SIZE(bmi270_gyro_scale) * 2;
-+			return IIO_AVAIL_LIST;
-+		case IIO_ACCEL:
-+			*vals = (const int *)bmi270_accel_scale;
-+			*length = ARRAY_SIZE(bmi270_accel_scale) * 2;
-+			return IIO_AVAIL_LIST;
-+		default:
-+			return -EINVAL;
-+		}
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		*type = IIO_VAL_INT_PLUS_MICRO;
-+		switch (chan->type) {
-+		case IIO_ANGL_VEL:
-+			*vals = (const int *)bmi270_gyro_odr;
-+			*length = ARRAY_SIZE(bmi270_gyro_odr) * 2;
-+			return IIO_AVAIL_LIST;
-+		case IIO_ACCEL:
-+			*vals = (const int *)bmi270_accel_odr;
-+			*length = ARRAY_SIZE(bmi270_accel_odr) * 2;
-+			return IIO_AVAIL_LIST;
-+		default:
-+			return -EINVAL;
-+		}
- 	default:
- 		return -EINVAL;
- 	}
-@@ -168,6 +496,8 @@ static int bmi270_read_raw(struct iio_dev *indio_dev,
- 
- static const struct iio_info bmi270_info = {
- 	.read_raw = bmi270_read_raw,
-+	.write_raw = bmi270_write_raw,
-+	.read_avail = bmi270_read_avail,
- };
- 
- #define BMI270_ACCEL_CHANNEL(_axis) {				\
-@@ -175,6 +505,11 @@ static const struct iio_info bmi270_info = {
- 	.modified = 1,						\
- 	.channel2 = IIO_MOD_##_axis,				\
- 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-+	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ),			\
-+	.info_mask_shared_by_type_available =			\
-+		BIT(IIO_CHAN_INFO_SCALE) |			\
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ),			\
- 	.scan_index = BMI270_SCAN_ACCEL_##_axis,		\
- 	.scan_type = {						\
- 		.sign = 's',					\
-@@ -189,6 +524,11 @@ static const struct iio_info bmi270_info = {
- 	.modified = 1,						\
- 	.channel2 = IIO_MOD_##_axis,				\
- 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-+	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ),			\
-+	.info_mask_shared_by_type_available =			\
-+		BIT(IIO_CHAN_INFO_SCALE) |			\
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ),			\
- 	.scan_index = BMI270_SCAN_GYRO_##_axis,			\
- 	.scan_type = {						\
- 		.sign = 's',					\
--- 
-2.47.0
-
+>>> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+>>>
+>>> ---
+>>> I apologize for the late inclusion. This feature can extend support to
+>>> many devices without having to list them in alienware_quirks.
+>>>
+>>> The conditions for selecting the automatic thermal profile are based o=
+n
+>>> observations on a lot of *issues* in AWCC open source alternatives.
+>>>
+>>> I observed only Dell's G-Series laptops have WMAX_THERMAL_BALANCED
+>>> avaliable and when it's present none of the other profiles are
+>>> avaliable, except for GMODE. When a model has USTT profiles avaliable
+>>> usually they have all USTT profiles avaliable, except for cool on
+>>> mostly
+>>> Alienware devices.
+>>>
+>>> I made another implementation of this function, brute-forcing operatio=
+n
+>>> 0x03 of Thermal_Information, which is the operation that varies the
+>>> most
+>>> across models. I found the implementation too cumbersome to include in
+>>> this series, but it could potentially extend support of this driver to
+>>> all posible devices with this interface automatically.
+>>
+>> I like this patch, automatic configuration is always a nice feature.
+>>
+>> Please add support for operation 0x03, this way the driver can work
+>> automatically
+>> without users having to submit patches adding quirks for their machines=
+.
+>>
+>> Maybe you can use an array for storing the supported thermal mode ids,
+>> like this:
+>>
+>> enum thermal_modes =3D {
+>> =C2=A0=C2=A0=C2=A0=C2=A0THERMAL_MODE_QUIET,
+>> =C2=A0=C2=A0=C2=A0=C2=A0...
+>> =C2=A0=C2=A0=C2=A0=C2=A0THERMAL_MODE_LOW_POWER,
+>> =C2=A0=C2=A0=C2=A0=C2=A0THERMAL_MODE_MAX
+>> };
+>>
+>> const enumplatform_profile_option
+>> thermal_mode_to_platform_profile[THERMAL_MODE_MAX] =3D {
+>> =C2=A0=C2=A0=C2=A0=C2=A0[THERMAL_MODE_QUIET] =3DPLATFORM_PROFILE_QUIET,=
+ ...
+>> };
+>>
+>> const enumthermal_modes
+>> platform_profile_to_thermal_mode[PLATFORM_PROFILE_LAST] =3D {
+>> =C2=A0=C2=A0=C2=A0=C2=A0[PLATFORM_PROFILE_LOW_POWER] =3D THERMAL_MODE_L=
+OW_POWER, ...
+>> };
+>>
+>>
+>> u8 thermal_modes[THERMAL_MODE_MAX] =3D {};
+>>
+>> for (int i =3D 0; i < THERMAL_MODE_MAX; i++) {
+>> =C2=A0=C2=A0=C2=A0=C2=A0thermal_modes[i] =3D call_operation_3(0x06 + i)=
+;
+>> =C2=A0=C2=A0=C2=A0=C2=A0// TODO: Error handling
+>> =C2=A0=C2=A0=C2=A0=C2=A0if (thermal_modes[i] =3D=3D 0xFFFFFFFF)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 continue;
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0set_bit(supported_profiles, thermal_mode_to_pla=
+tform_profile[i]);
+>> }
+>>
+>> then you can use platform_profile_to_thermal_mode[] when setting the
+>> platform profile
+>> and thermal_mode_to_platform_profile[] when getting the platform
+>> profile.
+>> I will leave it up to you on how to handle the existence of GMode.
+>>
+>> This of course is only a rough idea, you can change anything you want
+>> in the above pseudo-code.
+>>
+>> Thanks,
+>> Armin Wolf
+>>
+>>>
+>>> Another possibility is just including every device I observed into
+>>> alienware_quirks, which I can do but I want to know your opinion first=
+.
+>>> ---
+>>> =C2=A0 drivers/platform/x86/dell/alienware-wmi.c | 42
+>>> +++++++++++++++++++++++
+>>> =C2=A0 1 file changed, 42 insertions(+)
+>>>
+>>> diff --git a/drivers/platform/x86/dell/alienware-wmi.c
+>>> b/drivers/platform/x86/dell/alienware-wmi.c
+>>> index 37a898273..a11ff4851 100644
+>>> --- a/drivers/platform/x86/dell/alienware-wmi.c
+>>> +++ b/drivers/platform/x86/dell/alienware-wmi.c
+>>> @@ -30,8 +30,11 @@
+>>> =C2=A0 #define WMAX_METHOD_DEEP_SLEEP_STATUS=C2=A0=C2=A0=C2=A0 0x0C
+>>> =C2=A0 #define WMAX_METHOD_THERMAL_INFORMATION=C2=A0=C2=A0=C2=A0 0x14
+>>> =C2=A0 #define WMAX_METHOD_THERMAL_CONTROL=C2=A0=C2=A0=C2=A0 0x15
+>>> +#define WMAX_METHOD_GMODE_STATUS=C2=A0=C2=A0=C2=A0 0x25
+>>>
+>>> +#define WMAX_ARG_GET_DEFAULT_PROF=C2=A0=C2=A0=C2=A0 0x0A
+>>> =C2=A0 #define WMAX_ARG_GET_CURRENT_PROF=C2=A0=C2=A0=C2=A0 0x0B
+>>> +#define WMAX_ARG_GET_GMODE_STATUS=C2=A0=C2=A0=C2=A0 0x02
+>>>
+>>> =C2=A0 #define WMAX_FAILURE_CODE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 0xFFFFFFFF
+>>>
+>>> @@ -968,6 +971,42 @@ static int thermal_profile_set_ustt(struct
+>>> platform_profile_handler *pprof,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>> =C2=A0 }
+>>>
+>>> +static int autodetect_thermal_profile(void)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 acpi_status status;
+>>> +=C2=A0=C2=A0=C2=A0 u32 in_args;
+>>> +=C2=A0=C2=A0=C2=A0 u32 default_profile;
+>>> +=C2=A0=C2=A0=C2=A0 u32 gmode;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 in_args =3D WMAX_ARG_GET_DEFAULT_PROF;
+>>> +=C2=A0=C2=A0=C2=A0 status =3D alienware_wmax_command(&in_args, sizeof=
+(in_args),
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WMAX_METHOD_THERMAL_INFORMAT=
+ION,
+>>> &default_profile);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (ACPI_FAILURE(status))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 in_args =3D WMAX_ARG_GET_GMODE_STATUS;
+>>> +=C2=A0=C2=A0=C2=A0 status =3D alienware_wmax_command(&in_args, sizeof=
+(in_args),
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WMAX_METHOD_GMODE_STATUS, &g=
+mode);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (ACPI_FAILURE(status))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (default_profile =3D=3D WMAX_THERMAL_BALANCED &=
+& gmode =3D=3D 1) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 quirks->thermal =3D WMAX_T=
+HERMAL_TABLE_SIMPLE;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 quirks->gmode =3D 1;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (default_profile =3D=3D WMAX_THERMAL_USTT_BALAN=
+CED)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 quirks->thermal =3D WMAX_T=
+HERMAL_TABLE_USTT;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (gmode =3D=3D 0 || gmode =3D=3D 1)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 quirks->gmode =3D 1;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>> +}
+>>> +
+>>> =C2=A0 static int create_thermal_profile(void)
+>>> =C2=A0 {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pp_handler.profile_get =3D thermal_prof=
+ile_get;
+>>> @@ -1050,6 +1089,9 @@ static int __init alienware_wmi_init(void)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 goto fail_prep_deepsleep;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>
+>>> +=C2=A0=C2=A0=C2=A0 if (interface =3D=3D WMAX && quirks =3D=3D &quirk_=
+unknown)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 autodetect_thermal_profile=
+();
+>>> +
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (quirks->thermal > 0) {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D create_=
+thermal_profile();
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
+>>
+>
 
