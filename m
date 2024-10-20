@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-373424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B119A567E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:50:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043E89A5681
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839F02827B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:50:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2C3F281215
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782BF197A88;
-	Sun, 20 Oct 2024 19:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D39F19B5A9;
+	Sun, 20 Oct 2024 19:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HTG4Vk3V"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="SWHbH/UC"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B64A199FDE
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 19:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D2B199FA0
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 19:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729453682; cv=none; b=Yy4Ep+Ph57JNXmBAPdzaac1K+5Ye/7OG4TtBPy4LBqjKWw9ORAqjahFrVM0b9B4zIN0Tw93cs6yhV82h+7gIcNI9m54HVBAFrgMb1rSWHX5I4b095zL4UJNj0AxlGkUrb3B0l3fXHnhMRcHAnSB2Rjk8NZY0jubzJvDm1J5t3HA=
+	t=1729453684; cv=none; b=IVaF5ta+JFUYAwLOL94dNHd+8EtNXuUMfGGYnBEoBAoi2HwZX40T9PNvf1omm8pGkkhX6WqUnEg89cKDW3r579SA2a7Ncx56toLtYJ7J5ZaBK7NuydyBgUUKuekhj+XUvQQz/YssUGJiLVlUSjqzIVVwzu9Mjr/xvJYgHeyapJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729453682; c=relaxed/simple;
-	bh=aLBJo1op6p7EbwqsjHLsNImpiFMlqml80zE8MJz+O5c=;
+	s=arc-20240116; t=1729453684; c=relaxed/simple;
+	bh=mLSaXF8SeaTzcuFAeNbbcWgZuvjL1wd64f2tvLOHLpU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dRdC1gOhXeeWfwzeSmQ+y/c2kPwJU+e5xf0I1QsuhbuAXQmk1dNl7YpPsafgvlVdHI2WnpUN7d5BXkOJbjujmCW5VV0cAN7RPVlS52tkFDwSzySkw4+X6JIzyUQpg8MOioy3asxY+gpGjhOsnQEnPY+Gm/I82SimiMoWCZgrpKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HTG4Vk3V; arc=none smtp.client-ip=209.85.216.51
+	 MIME-Version; b=PLv3b39ebHXmaShpOr0l4rNfUB6KdDKYABkH0V4IwR52eFdwkiCZO+F1BndOhTwYUefbFbgi6LjtKtlOS5+60ptmt3Fq23qZmk1xnsvPLBmy1uLhT6COZVO8DMUws4SRVwQAiNkroEaWjaRyP1RrBCMWRpGx8z4Am61Uzo5wbms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=SWHbH/UC; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e31af47681so3057781a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 12:47:59 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2a97c2681so2762070a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 12:48:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1729453679; x=1730058479; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1729453681; x=1730058481; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2PNHY6Ej4ODA3l2FaZRmpOmWoo1Wxqh6777J5n1pDa4=;
-        b=HTG4Vk3Vv2Llo6fx72mBdtKZmypTPIfaVasAzNJ76U9a/pEPWdAMDgTTbOb1zPdftw
-         5WaI1mI4dH7q5V6v7q4PaI6qgZVxCdZY6kXVuzTeCXG+Qc+wYVVTZzoJZgVICPJMZFxZ
-         q2e/1QtmX8ks2x0wtT9RuBcU8Rjx9RtBUQcEA6R6ltqZ5WfC4pbZeusGys0nxTieGrYv
-         ZCXN24v1fQPSHGWKDilHe6hr27XIt8jaimmwrqiBARs3NP5lRILmf5Aq+hWMlHIK80U9
-         zagy76dKyZqq8KH1nuFPCxSkHhP5V2mkh2iYx5Cy9w8S7mPl4r9QxmE6lNSDabVgIKie
-         A7Ow==
+        bh=ff+UABGVAF8CyMX5ftgz7r8rHiofHtO4g4dtHWoIbV8=;
+        b=SWHbH/UCUyCZGHbHmHk+GGz4L2UzVZBPL6JDoO2pSj0vBazFm5qwqSnV4Wo9tmJ3OW
+         AXxSRyaxaZFoMr9+4lCpsiNTmMYKLp8MzfWSG/qx+ytc9Rfd+nwVELM4Obr+l1qzmLZJ
+         G3MdNFvbL0mraS4DBIo2EGcTpsG2xp++pDmXKUWLHxLf9/W3eA0RWQ8rZdVeRy8Pr4ml
+         tpd5GuX3OGZwskK7jW6JLaSHynRN3P2ErOltzJ6wEAkWpebrnqzGc+z9fc30x1kRScbQ
+         DmWp7C2QvKqkwoBeaLeFZbC7iIFPimtaJo90NJ3iKEt4z1mNubfO/sjcXQlzoFb49k53
+         XCww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729453679; x=1730058479;
+        d=1e100.net; s=20230601; t=1729453681; x=1730058481;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2PNHY6Ej4ODA3l2FaZRmpOmWoo1Wxqh6777J5n1pDa4=;
-        b=aSlpNJnoGtpndjTDIKD/rZoY8doG3omRv5qfse9plCWBSJwLPCSzI7Iq+X5O+a53Qg
-         F9+NJQKfqQsNk1UgJgftz2ZUAXF+Mz8gF7jSByawpVTZo1D751NwsckrRuQPAu1H+MID
-         Yf0Qrh1R7iM896jM4W7OdzD+BAMWDwc0E+5w6ysHC0mH403YIA+1wlqpz7sbxC3ZNPp4
-         ZA4QiB+5dISZUZRUGzPg3cCH2mXfBhZzkHkCgmoQvZWOleZxvCnbdEBGguDH0SAikTkY
-         RzZ5ef33Vwv0bSOHFTz2TfthMMicMj2POWhek/4OD3HZkU9f43wKaz9BuHtCn+43UFK7
-         Z8PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHBunGJROG9jzMTwzZTwUSGZwnx2dp15BchGhF2yPYmw6TiKBEqj/iC9a9r62au1gZha9wPsh3/x0j4zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU/4++Gr3ovGkUPLlDfVJElIjxxhcFDTj1Hf6hcmXxuywA1VtK
-	2q0xkRzqparZ3J8AU9d1669OgYlf/ewIq0jYDoDg+k91HTG8UvajZ4tYNQhkPQM=
-X-Google-Smtp-Source: AGHT+IFl/0jkuzkA2N3qfrZw6TQdQzdowPrIIb9QTb2dp0fwvxYkkYmfrYtD1JWF8OFyEwLW30Af0A==
-X-Received: by 2002:a17:90a:15c9:b0:2e2:bad3:e393 with SMTP id 98e67ed59e1d1-2e5616de72amr10854988a91.3.1729453679214;
-        Sun, 20 Oct 2024 12:47:59 -0700 (PDT)
+        bh=ff+UABGVAF8CyMX5ftgz7r8rHiofHtO4g4dtHWoIbV8=;
+        b=ODgNUIu4C91gFR+JzmS95dTzq5Uj11PSowWjqp1klPYcufsXpTxlFF6doKerxHSysP
+         aFp3qNbZlmlUuwBT8J9PyXryXPwdvNhlGf4bRg7ZOQ79teeojPf2mjzWNn+BGbc02/Sl
+         vhzxY/80zwgJFlkzliozHqSZ9xi8DcWWTYHE/Ky0JDcxJeUBsXvd4yQI2IEjQ6wAq85R
+         +jyQtAMdqV2+ZJvrWs5Vuhzo7JF/mvZVOwZgOdozTsr5bf8yHq4JuijL2YomH8OwYKoh
+         MtNbMoqMsqoh2qUqYElCcLgYslWLIFNwMvYJyuCHEVeoBsNXX/ux0dLhBAVRMOE6rARU
+         Lphw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsEX2WI0O2dQsmIngoYlVwrV1Et1xePp8sx6h1HUi2P2y8laGi8gsDbJxFG39Ap6Y3jg4L/virTmyD82o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynArQvUztLRrYmRc/+xbiSzuDMcoO5U0RCpwElQPxMUAlspnXD
+	pLwkASvgCbJLBnr+N/iRP2rkj0QpKPMYZGDguSNRfCfty+B1hRUX7EgWEoPrA1c=
+X-Google-Smtp-Source: AGHT+IF4l6B+I6hyFAY3AFIr33vpTZflrnmvY2Oa86iEJb9FRtrh1tBmUfS3dKy06fjYqz44j4hTMA==
+X-Received: by 2002:a17:90b:1d85:b0:2e2:b937:eeae with SMTP id 98e67ed59e1d1-2e5616db601mr11934750a91.5.1729453681266;
+        Sun, 20 Oct 2024 12:48:01 -0700 (PDT)
 Received: from anup-ubuntu-vm.localdomain ([50.238.223.131])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad365d4dsm1933188a91.14.2024.10.20.12.47.57
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad365d4dsm1933188a91.14.2024.10.20.12.47.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 12:47:58 -0700 (PDT)
+        Sun, 20 Oct 2024 12:48:00 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Palmer Dabbelt <palmer@dabbelt.com>,
 	Paul Walmsley <paul.walmsley@sifive.com>
@@ -78,9 +78,9 @@ Cc: Atish Patra <atishp@atishpatra.org>,
 	linux-kernel@vger.kernel.org,
 	Anup Patel <apatel@ventanamicro.com>,
 	Atish Patra <atishp@rivosinc.com>
-Subject: [PATCH v2 08/13] RISC-V: KVM: Add common nested acceleration support
-Date: Mon, 21 Oct 2024 01:17:29 +0530
-Message-ID: <20241020194734.58686-9-apatel@ventanamicro.com>
+Subject: [PATCH v2 09/13] RISC-V: KVM: Use nacl_csr_xyz() for accessing H-extension CSRs
+Date: Mon, 21 Oct 2024 01:17:30 +0530
+Message-ID: <20241020194734.58686-10-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241020194734.58686-1-apatel@ventanamicro.com>
 References: <20241020194734.58686-1-apatel@ventanamicro.com>
@@ -92,541 +92,283 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a common nested acceleration support which will be shared by
-all parts of KVM RISC-V. This nested acceleration support detects
-and enables SBI NACL extension usage based on static keys which
-ensures minimum impact on the non-nested scenario.
+When running under some other hypervisor, prefer nacl_csr_xyz()
+for accessing H-extension CSRs in the run-loop. This makes CSR
+access faster whenever SBI nested acceleration is available.
 
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 Reviewed-by: Atish Patra <atishp@rivosinc.com>
 ---
- arch/riscv/include/asm/kvm_nacl.h | 239 ++++++++++++++++++++++++++++++
- arch/riscv/kvm/Makefile           |   1 +
- arch/riscv/kvm/main.c             |  51 ++++++-
- arch/riscv/kvm/nacl.c             | 152 +++++++++++++++++++
- 4 files changed, 441 insertions(+), 2 deletions(-)
- create mode 100644 arch/riscv/include/asm/kvm_nacl.h
- create mode 100644 arch/riscv/kvm/nacl.c
+ arch/riscv/kvm/mmu.c        |   4 +-
+ arch/riscv/kvm/vcpu.c       | 103 +++++++++++++++++++++++++-----------
+ arch/riscv/kvm/vcpu_timer.c |  28 +++++-----
+ 3 files changed, 87 insertions(+), 48 deletions(-)
 
-diff --git a/arch/riscv/include/asm/kvm_nacl.h b/arch/riscv/include/asm/kvm_nacl.h
-new file mode 100644
-index 000000000000..8f3e3ebf5017
---- /dev/null
-+++ b/arch/riscv/include/asm/kvm_nacl.h
-@@ -0,0 +1,239 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2024 Ventana Micro Systems Inc.
-+ */
-+
-+#ifndef __KVM_NACL_H
-+#define __KVM_NACL_H
-+
-+#include <linux/jump_label.h>
-+#include <linux/percpu.h>
-+#include <asm/byteorder.h>
-+#include <asm/csr.h>
-+#include <asm/sbi.h>
-+
-+DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_available);
-+#define kvm_riscv_nacl_available() \
-+	static_branch_unlikely(&kvm_riscv_nacl_available)
-+
-+DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_csr_available);
-+#define kvm_riscv_nacl_sync_csr_available() \
-+	static_branch_unlikely(&kvm_riscv_nacl_sync_csr_available)
-+
-+DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_hfence_available);
-+#define kvm_riscv_nacl_sync_hfence_available() \
-+	static_branch_unlikely(&kvm_riscv_nacl_sync_hfence_available)
-+
-+DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_sret_available);
-+#define kvm_riscv_nacl_sync_sret_available() \
-+	static_branch_unlikely(&kvm_riscv_nacl_sync_sret_available)
-+
-+DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_autoswap_csr_available);
-+#define kvm_riscv_nacl_autoswap_csr_available() \
-+	static_branch_unlikely(&kvm_riscv_nacl_autoswap_csr_available)
-+
-+struct kvm_riscv_nacl {
-+	void *shmem;
-+	phys_addr_t shmem_phys;
-+};
-+DECLARE_PER_CPU(struct kvm_riscv_nacl, kvm_riscv_nacl);
-+
-+void __kvm_riscv_nacl_hfence(void *shmem,
-+			     unsigned long control,
-+			     unsigned long page_num,
-+			     unsigned long page_count);
-+
-+int kvm_riscv_nacl_enable(void);
-+
-+void kvm_riscv_nacl_disable(void);
-+
-+void kvm_riscv_nacl_exit(void);
-+
-+int kvm_riscv_nacl_init(void);
-+
-+#ifdef CONFIG_32BIT
-+#define lelong_to_cpu(__x)	le32_to_cpu(__x)
-+#define cpu_to_lelong(__x)	cpu_to_le32(__x)
-+#else
-+#define lelong_to_cpu(__x)	le64_to_cpu(__x)
-+#define cpu_to_lelong(__x)	cpu_to_le64(__x)
-+#endif
-+
-+#define nacl_shmem()							\
-+	this_cpu_ptr(&kvm_riscv_nacl)->shmem
-+
-+#define nacl_scratch_read_long(__shmem, __offset)			\
-+({									\
-+	unsigned long *__p = (__shmem) +				\
-+			     SBI_NACL_SHMEM_SCRATCH_OFFSET +		\
-+			     (__offset);				\
-+	lelong_to_cpu(*__p);						\
-+})
-+
-+#define nacl_scratch_write_long(__shmem, __offset, __val)		\
-+do {									\
-+	unsigned long *__p = (__shmem) +				\
-+			     SBI_NACL_SHMEM_SCRATCH_OFFSET +		\
-+			     (__offset);				\
-+	*__p = cpu_to_lelong(__val);					\
-+} while (0)
-+
-+#define nacl_scratch_write_longs(__shmem, __offset, __array, __count)	\
-+do {									\
-+	unsigned int __i;						\
-+	unsigned long *__p = (__shmem) +				\
-+			     SBI_NACL_SHMEM_SCRATCH_OFFSET +		\
-+			     (__offset);				\
-+	for (__i = 0; __i < (__count); __i++)				\
-+		__p[__i] = cpu_to_lelong((__array)[__i]);		\
-+} while (0)
-+
-+#define nacl_sync_hfence(__e)						\
-+	sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SYNC_HFENCE,		\
-+		  (__e), 0, 0, 0, 0, 0)
-+
-+#define nacl_hfence_mkconfig(__type, __order, __vmid, __asid)		\
-+({									\
-+	unsigned long __c = SBI_NACL_SHMEM_HFENCE_CONFIG_PEND;		\
-+	__c |= ((__type) & SBI_NACL_SHMEM_HFENCE_CONFIG_TYPE_MASK)	\
-+		<< SBI_NACL_SHMEM_HFENCE_CONFIG_TYPE_SHIFT;		\
-+	__c |= (((__order) - SBI_NACL_SHMEM_HFENCE_ORDER_BASE) &	\
-+		SBI_NACL_SHMEM_HFENCE_CONFIG_ORDER_MASK)		\
-+		<< SBI_NACL_SHMEM_HFENCE_CONFIG_ORDER_SHIFT;		\
-+	__c |= ((__vmid) & SBI_NACL_SHMEM_HFENCE_CONFIG_VMID_MASK)	\
-+		<< SBI_NACL_SHMEM_HFENCE_CONFIG_VMID_SHIFT;		\
-+	__c |= ((__asid) & SBI_NACL_SHMEM_HFENCE_CONFIG_ASID_MASK);	\
-+	__c;								\
-+})
-+
-+#define nacl_hfence_mkpnum(__order, __addr)				\
-+	((__addr) >> (__order))
-+
-+#define nacl_hfence_mkpcount(__order, __size)				\
-+	((__size) >> (__order))
-+
-+#define nacl_hfence_gvma(__shmem, __gpa, __gpsz, __order)		\
-+__kvm_riscv_nacl_hfence(__shmem,					\
-+	nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_GVMA,		\
-+			   __order, 0, 0),				\
-+	nacl_hfence_mkpnum(__order, __gpa),				\
-+	nacl_hfence_mkpcount(__order, __gpsz))
-+
-+#define nacl_hfence_gvma_all(__shmem)					\
-+__kvm_riscv_nacl_hfence(__shmem,					\
-+	nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_GVMA_ALL,	\
-+			   0, 0, 0), 0, 0)
-+
-+#define nacl_hfence_gvma_vmid(__shmem, __vmid, __gpa, __gpsz, __order)	\
-+__kvm_riscv_nacl_hfence(__shmem,					\
-+	nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_GVMA_VMID,	\
-+			   __order, __vmid, 0),				\
-+	nacl_hfence_mkpnum(__order, __gpa),				\
-+	nacl_hfence_mkpcount(__order, __gpsz))
-+
-+#define nacl_hfence_gvma_vmid_all(__shmem, __vmid)			\
-+__kvm_riscv_nacl_hfence(__shmem,					\
-+	nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_GVMA_VMID_ALL,	\
-+			   0, __vmid, 0), 0, 0)
-+
-+#define nacl_hfence_vvma(__shmem, __vmid, __gva, __gvsz, __order)	\
-+__kvm_riscv_nacl_hfence(__shmem,					\
-+	nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_VVMA,		\
-+			   __order, __vmid, 0),				\
-+	nacl_hfence_mkpnum(__order, __gva),				\
-+	nacl_hfence_mkpcount(__order, __gvsz))
-+
-+#define nacl_hfence_vvma_all(__shmem, __vmid)				\
-+__kvm_riscv_nacl_hfence(__shmem,					\
-+	nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_VVMA_ALL,	\
-+			   0, __vmid, 0), 0, 0)
-+
-+#define nacl_hfence_vvma_asid(__shmem, __vmid, __asid, __gva, __gvsz, __order)\
-+__kvm_riscv_nacl_hfence(__shmem,					\
-+	nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_VVMA_ASID,	\
-+			   __order, __vmid, __asid),			\
-+	nacl_hfence_mkpnum(__order, __gva),				\
-+	nacl_hfence_mkpcount(__order, __gvsz))
-+
-+#define nacl_hfence_vvma_asid_all(__shmem, __vmid, __asid)		\
-+__kvm_riscv_nacl_hfence(__shmem,					\
-+	nacl_hfence_mkconfig(SBI_NACL_SHMEM_HFENCE_TYPE_VVMA_ASID_ALL,	\
-+			   0, __vmid, __asid), 0, 0)
-+
-+#define nacl_csr_read(__shmem, __csr)					\
-+({									\
-+	unsigned long *__a = (__shmem) + SBI_NACL_SHMEM_CSR_OFFSET;	\
-+	lelong_to_cpu(__a[SBI_NACL_SHMEM_CSR_INDEX(__csr)]);		\
-+})
-+
-+#define nacl_csr_write(__shmem, __csr, __val)				\
-+do {									\
-+	void *__s = (__shmem);						\
-+	unsigned int __i = SBI_NACL_SHMEM_CSR_INDEX(__csr);		\
-+	unsigned long *__a = (__s) + SBI_NACL_SHMEM_CSR_OFFSET;		\
-+	u8 *__b = (__s) + SBI_NACL_SHMEM_DBITMAP_OFFSET;		\
-+	__a[__i] = cpu_to_lelong(__val);				\
-+	__b[__i >> 3] |= 1U << (__i & 0x7);				\
-+} while (0)
-+
-+#define nacl_csr_swap(__shmem, __csr, __val)				\
-+({									\
-+	void *__s = (__shmem);						\
-+	unsigned int __i = SBI_NACL_SHMEM_CSR_INDEX(__csr);		\
-+	unsigned long *__a = (__s) + SBI_NACL_SHMEM_CSR_OFFSET;		\
-+	u8 *__b = (__s) + SBI_NACL_SHMEM_DBITMAP_OFFSET;		\
-+	unsigned long __r = lelong_to_cpu(__a[__i]);			\
-+	__a[__i] = cpu_to_lelong(__val);				\
-+	__b[__i >> 3] |= 1U << (__i & 0x7);				\
-+	__r;								\
-+})
-+
-+#define nacl_sync_csr(__csr)						\
-+	sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SYNC_CSR,			\
-+		  (__csr), 0, 0, 0, 0, 0)
-+
-+/*
-+ * Each ncsr_xyz() macro defined below has it's own static-branch so every
-+ * use of ncsr_xyz() macro emits a patchable direct jump. This means multiple
-+ * back-to-back ncsr_xyz() macro usage will emit multiple patchable direct
-+ * jumps which is sub-optimal.
-+ *
-+ * Based on the above, it is recommended to avoid multiple back-to-back
-+ * ncsr_xyz() macro usage.
-+ */
-+
-+#define ncsr_read(__csr)						\
-+({									\
-+	unsigned long __r;						\
-+	if (kvm_riscv_nacl_available())					\
-+		__r = nacl_csr_read(nacl_shmem(), __csr);		\
-+	else								\
-+		__r = csr_read(__csr);					\
-+	__r;								\
-+})
-+
-+#define ncsr_write(__csr, __val)					\
-+do {									\
-+	if (kvm_riscv_nacl_sync_csr_available())			\
-+		nacl_csr_write(nacl_shmem(), __csr, __val);		\
-+	else								\
-+		csr_write(__csr, __val);				\
-+} while (0)
-+
-+#define ncsr_swap(__csr, __val)						\
-+({									\
-+	unsigned long __r;						\
-+	if (kvm_riscv_nacl_sync_csr_available())			\
-+		__r = nacl_csr_swap(nacl_shmem(), __csr, __val);	\
-+	else								\
-+		__r = csr_swap(__csr, __val);				\
-+	__r;								\
-+})
-+
-+#define nsync_csr(__csr)						\
-+do {									\
-+	if (kvm_riscv_nacl_sync_csr_available())			\
-+		nacl_sync_csr(__csr);					\
-+} while (0)
-+
-+#endif
-diff --git a/arch/riscv/kvm/Makefile b/arch/riscv/kvm/Makefile
-index c1eac0d093de..0fb1840c3e0a 100644
---- a/arch/riscv/kvm/Makefile
-+++ b/arch/riscv/kvm/Makefile
-@@ -16,6 +16,7 @@ kvm-y += aia_device.o
- kvm-y += aia_imsic.o
- kvm-y += main.o
- kvm-y += mmu.o
-+kvm-y += nacl.o
- kvm-y += tlb.o
- kvm-y += vcpu.o
- kvm-y += vcpu_exit.o
-diff --git a/arch/riscv/kvm/main.c b/arch/riscv/kvm/main.c
-index 5682e338ae6d..1fa8be5ee509 100644
---- a/arch/riscv/kvm/main.c
-+++ b/arch/riscv/kvm/main.c
-@@ -10,8 +10,8 @@
- #include <linux/err.h>
- #include <linux/module.h>
+diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+index b63650f9b966..45ace9138947 100644
+--- a/arch/riscv/kvm/mmu.c
++++ b/arch/riscv/kvm/mmu.c
+@@ -15,7 +15,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/kvm_host.h>
+ #include <linux/sched/signal.h>
+-#include <asm/csr.h>
++#include <asm/kvm_nacl.h>
+ #include <asm/page.h>
+ #include <asm/pgtable.h>
+ 
+@@ -732,7 +732,7 @@ void kvm_riscv_gstage_update_hgatp(struct kvm_vcpu *vcpu)
+ 	hgatp |= (READ_ONCE(k->vmid.vmid) << HGATP_VMID_SHIFT) & HGATP_VMID;
+ 	hgatp |= (k->pgd_phys >> PAGE_SHIFT) & HGATP_PPN;
+ 
+-	csr_write(CSR_HGATP, hgatp);
++	ncsr_write(CSR_HGATP, hgatp);
+ 
+ 	if (!kvm_riscv_gstage_vmid_bits())
+ 		kvm_riscv_local_hfence_gvma_all();
+diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+index a972dd46e7e4..0aad58f984ff 100644
+--- a/arch/riscv/kvm/vcpu.c
++++ b/arch/riscv/kvm/vcpu.c
+@@ -17,8 +17,8 @@
+ #include <linux/sched/signal.h>
+ #include <linux/fs.h>
  #include <linux/kvm_host.h>
 -#include <asm/csr.h>
- #include <asm/cpufeature.h>
+ #include <asm/cacheflush.h>
 +#include <asm/kvm_nacl.h>
- #include <asm/sbi.h>
+ #include <asm/kvm_vcpu_vector.h>
  
- long kvm_arch_dev_ioctl(struct file *filp,
-@@ -22,6 +22,12 @@ long kvm_arch_dev_ioctl(struct file *filp,
+ #define CREATE_TRACE_POINTS
+@@ -368,10 +368,10 @@ void kvm_riscv_vcpu_sync_interrupts(struct kvm_vcpu *vcpu)
+ 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
  
- int kvm_arch_enable_virtualization_cpu(void)
+ 	/* Read current HVIP and VSIE CSRs */
+-	csr->vsie = csr_read(CSR_VSIE);
++	csr->vsie = ncsr_read(CSR_VSIE);
+ 
+ 	/* Sync-up HVIP.VSSIP bit changes does by Guest */
+-	hvip = csr_read(CSR_HVIP);
++	hvip = ncsr_read(CSR_HVIP);
+ 	if ((csr->hvip ^ hvip) & (1UL << IRQ_VS_SOFT)) {
+ 		if (hvip & (1UL << IRQ_VS_SOFT)) {
+ 			if (!test_and_set_bit(IRQ_VS_SOFT,
+@@ -572,26 +572,49 @@ static void kvm_riscv_vcpu_setup_config(struct kvm_vcpu *vcpu)
+ 
+ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
  {
-+	int rc;
-+
-+	rc = kvm_riscv_nacl_enable();
-+	if (rc)
-+		return rc;
-+
- 	csr_write(CSR_HEDELEG, KVM_HEDELEG_DEFAULT);
- 	csr_write(CSR_HIDELEG, KVM_HIDELEG_DEFAULT);
++	void *nsh;
+ 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
+ 	struct kvm_vcpu_config *cfg = &vcpu->arch.cfg;
  
-@@ -49,17 +55,21 @@ void kvm_arch_disable_virtualization_cpu(void)
- 	csr_write(CSR_HVIP, 0);
- 	csr_write(CSR_HEDELEG, 0);
- 	csr_write(CSR_HIDELEG, 0);
-+
-+	kvm_riscv_nacl_disable();
- }
- 
- static void kvm_riscv_teardown(void)
- {
- 	kvm_riscv_aia_exit();
-+	kvm_riscv_nacl_exit();
- 	kvm_unregister_perf_callbacks();
- }
- 
- static int __init riscv_kvm_init(void)
- {
- 	int rc;
-+	char slist[64];
- 	const char *str;
- 
- 	if (!riscv_isa_extension_available(NULL, h)) {
-@@ -77,16 +87,53 @@ static int __init riscv_kvm_init(void)
- 		return -ENODEV;
+-	csr_write(CSR_VSSTATUS, csr->vsstatus);
+-	csr_write(CSR_VSIE, csr->vsie);
+-	csr_write(CSR_VSTVEC, csr->vstvec);
+-	csr_write(CSR_VSSCRATCH, csr->vsscratch);
+-	csr_write(CSR_VSEPC, csr->vsepc);
+-	csr_write(CSR_VSCAUSE, csr->vscause);
+-	csr_write(CSR_VSTVAL, csr->vstval);
+-	csr_write(CSR_HEDELEG, cfg->hedeleg);
+-	csr_write(CSR_HVIP, csr->hvip);
+-	csr_write(CSR_VSATP, csr->vsatp);
+-	csr_write(CSR_HENVCFG, cfg->henvcfg);
+-	if (IS_ENABLED(CONFIG_32BIT))
+-		csr_write(CSR_HENVCFGH, cfg->henvcfg >> 32);
+-	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN)) {
+-		csr_write(CSR_HSTATEEN0, cfg->hstateen0);
++	if (kvm_riscv_nacl_sync_csr_available()) {
++		nsh = nacl_shmem();
++		nacl_csr_write(nsh, CSR_VSSTATUS, csr->vsstatus);
++		nacl_csr_write(nsh, CSR_VSIE, csr->vsie);
++		nacl_csr_write(nsh, CSR_VSTVEC, csr->vstvec);
++		nacl_csr_write(nsh, CSR_VSSCRATCH, csr->vsscratch);
++		nacl_csr_write(nsh, CSR_VSEPC, csr->vsepc);
++		nacl_csr_write(nsh, CSR_VSCAUSE, csr->vscause);
++		nacl_csr_write(nsh, CSR_VSTVAL, csr->vstval);
++		nacl_csr_write(nsh, CSR_HEDELEG, cfg->hedeleg);
++		nacl_csr_write(nsh, CSR_HVIP, csr->hvip);
++		nacl_csr_write(nsh, CSR_VSATP, csr->vsatp);
++		nacl_csr_write(nsh, CSR_HENVCFG, cfg->henvcfg);
++		if (IS_ENABLED(CONFIG_32BIT))
++			nacl_csr_write(nsh, CSR_HENVCFGH, cfg->henvcfg >> 32);
++		if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN)) {
++			nacl_csr_write(nsh, CSR_HSTATEEN0, cfg->hstateen0);
++			if (IS_ENABLED(CONFIG_32BIT))
++				nacl_csr_write(nsh, CSR_HSTATEEN0H, cfg->hstateen0 >> 32);
++		}
++	} else {
++		csr_write(CSR_VSSTATUS, csr->vsstatus);
++		csr_write(CSR_VSIE, csr->vsie);
++		csr_write(CSR_VSTVEC, csr->vstvec);
++		csr_write(CSR_VSSCRATCH, csr->vsscratch);
++		csr_write(CSR_VSEPC, csr->vsepc);
++		csr_write(CSR_VSCAUSE, csr->vscause);
++		csr_write(CSR_VSTVAL, csr->vstval);
++		csr_write(CSR_HEDELEG, cfg->hedeleg);
++		csr_write(CSR_HVIP, csr->hvip);
++		csr_write(CSR_VSATP, csr->vsatp);
++		csr_write(CSR_HENVCFG, cfg->henvcfg);
+ 		if (IS_ENABLED(CONFIG_32BIT))
+-			csr_write(CSR_HSTATEEN0H, cfg->hstateen0 >> 32);
++			csr_write(CSR_HENVCFGH, cfg->henvcfg >> 32);
++		if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN)) {
++			csr_write(CSR_HSTATEEN0, cfg->hstateen0);
++			if (IS_ENABLED(CONFIG_32BIT))
++				csr_write(CSR_HSTATEEN0H, cfg->hstateen0 >> 32);
++		}
  	}
  
-+	rc = kvm_riscv_nacl_init();
-+	if (rc && rc != -ENODEV)
-+		return rc;
-+
- 	kvm_riscv_gstage_mode_detect();
+ 	kvm_riscv_gstage_update_hgatp(vcpu);
+@@ -614,6 +637,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
  
- 	kvm_riscv_gstage_vmid_detect();
+ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+ {
++	void *nsh;
+ 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
  
- 	rc = kvm_riscv_aia_init();
--	if (rc && rc != -ENODEV)
-+	if (rc && rc != -ENODEV) {
-+		kvm_riscv_nacl_exit();
- 		return rc;
-+	}
+ 	vcpu->cpu = -1;
+@@ -629,15 +653,28 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+ 					 vcpu->arch.isa);
+ 	kvm_riscv_vcpu_host_vector_restore(&vcpu->arch.host_context);
  
- 	kvm_info("hypervisor extension available\n");
- 
+-	csr->vsstatus = csr_read(CSR_VSSTATUS);
+-	csr->vsie = csr_read(CSR_VSIE);
+-	csr->vstvec = csr_read(CSR_VSTVEC);
+-	csr->vsscratch = csr_read(CSR_VSSCRATCH);
+-	csr->vsepc = csr_read(CSR_VSEPC);
+-	csr->vscause = csr_read(CSR_VSCAUSE);
+-	csr->vstval = csr_read(CSR_VSTVAL);
+-	csr->hvip = csr_read(CSR_HVIP);
+-	csr->vsatp = csr_read(CSR_VSATP);
 +	if (kvm_riscv_nacl_available()) {
-+		rc = 0;
-+		slist[0] = '\0';
-+		if (kvm_riscv_nacl_sync_csr_available()) {
-+			if (rc)
-+				strcat(slist, ", ");
-+			strcat(slist, "sync_csr");
-+			rc++;
-+		}
-+		if (kvm_riscv_nacl_sync_hfence_available()) {
-+			if (rc)
-+				strcat(slist, ", ");
-+			strcat(slist, "sync_hfence");
-+			rc++;
-+		}
-+		if (kvm_riscv_nacl_sync_sret_available()) {
-+			if (rc)
-+				strcat(slist, ", ");
-+			strcat(slist, "sync_sret");
-+			rc++;
-+		}
-+		if (kvm_riscv_nacl_autoswap_csr_available()) {
-+			if (rc)
-+				strcat(slist, ", ");
-+			strcat(slist, "autoswap_csr");
-+			rc++;
-+		}
-+		kvm_info("using SBI nested acceleration with %s\n",
-+			 (rc) ? slist : "no features");
++		nsh = nacl_shmem();
++		csr->vsstatus = nacl_csr_read(nsh, CSR_VSSTATUS);
++		csr->vsie = nacl_csr_read(nsh, CSR_VSIE);
++		csr->vstvec = nacl_csr_read(nsh, CSR_VSTVEC);
++		csr->vsscratch = nacl_csr_read(nsh, CSR_VSSCRATCH);
++		csr->vsepc = nacl_csr_read(nsh, CSR_VSEPC);
++		csr->vscause = nacl_csr_read(nsh, CSR_VSCAUSE);
++		csr->vstval = nacl_csr_read(nsh, CSR_VSTVAL);
++		csr->hvip = nacl_csr_read(nsh, CSR_HVIP);
++		csr->vsatp = nacl_csr_read(nsh, CSR_VSATP);
++	} else {
++		csr->vsstatus = csr_read(CSR_VSSTATUS);
++		csr->vsie = csr_read(CSR_VSIE);
++		csr->vstvec = csr_read(CSR_VSTVEC);
++		csr->vsscratch = csr_read(CSR_VSSCRATCH);
++		csr->vsepc = csr_read(CSR_VSEPC);
++		csr->vscause = csr_read(CSR_VSCAUSE);
++		csr->vstval = csr_read(CSR_VSTVAL);
++		csr->hvip = csr_read(CSR_HVIP);
++		csr->vsatp = csr_read(CSR_VSATP);
 +	}
+ }
+ 
+ static void kvm_riscv_check_vcpu_requests(struct kvm_vcpu *vcpu)
+@@ -692,7 +729,7 @@ static void kvm_riscv_update_hvip(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
+ 
+-	csr_write(CSR_HVIP, csr->hvip);
++	ncsr_write(CSR_HVIP, csr->hvip);
+ 	kvm_riscv_vcpu_aia_update_hvip(vcpu);
+ }
+ 
+@@ -739,7 +776,9 @@ static void noinstr kvm_riscv_vcpu_enter_exit(struct kvm_vcpu *vcpu)
+ 	kvm_riscv_vcpu_swap_in_guest_state(vcpu);
+ 	guest_state_enter_irqoff();
+ 
+-	hcntx->hstatus = csr_swap(CSR_HSTATUS, gcntx->hstatus);
++	hcntx->hstatus = ncsr_swap(CSR_HSTATUS, gcntx->hstatus);
 +
- 	switch (kvm_riscv_gstage_mode()) {
- 	case HGATP_MODE_SV32X4:
- 		str = "Sv32x4";
-diff --git a/arch/riscv/kvm/nacl.c b/arch/riscv/kvm/nacl.c
-new file mode 100644
-index 000000000000..08a95ad9ada2
---- /dev/null
-+++ b/arch/riscv/kvm/nacl.c
-@@ -0,0 +1,152 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2024 Ventana Micro Systems Inc.
-+ */
-+
-+#include <linux/kvm_host.h>
-+#include <linux/vmalloc.h>
++	nsync_csr(-1UL);
+ 
+ 	__kvm_riscv_switch_to(&vcpu->arch);
+ 
+@@ -874,8 +913,8 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
+ 		trap.sepc = vcpu->arch.guest_context.sepc;
+ 		trap.scause = csr_read(CSR_SCAUSE);
+ 		trap.stval = csr_read(CSR_STVAL);
+-		trap.htval = csr_read(CSR_HTVAL);
+-		trap.htinst = csr_read(CSR_HTINST);
++		trap.htval = ncsr_read(CSR_HTVAL);
++		trap.htinst = ncsr_read(CSR_HTINST);
+ 
+ 		/* Syncup interrupts state with HW */
+ 		kvm_riscv_vcpu_sync_interrupts(vcpu);
+diff --git a/arch/riscv/kvm/vcpu_timer.c b/arch/riscv/kvm/vcpu_timer.c
+index 75486b25ac45..96e7a4e463f7 100644
+--- a/arch/riscv/kvm/vcpu_timer.c
++++ b/arch/riscv/kvm/vcpu_timer.c
+@@ -11,8 +11,8 @@
+ #include <linux/kvm_host.h>
+ #include <linux/uaccess.h>
+ #include <clocksource/timer-riscv.h>
+-#include <asm/csr.h>
+ #include <asm/delay.h>
 +#include <asm/kvm_nacl.h>
-+
-+DEFINE_STATIC_KEY_FALSE(kvm_riscv_nacl_available);
-+DEFINE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_csr_available);
-+DEFINE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_hfence_available);
-+DEFINE_STATIC_KEY_FALSE(kvm_riscv_nacl_sync_sret_available);
-+DEFINE_STATIC_KEY_FALSE(kvm_riscv_nacl_autoswap_csr_available);
-+DEFINE_PER_CPU(struct kvm_riscv_nacl, kvm_riscv_nacl);
-+
-+void __kvm_riscv_nacl_hfence(void *shmem,
-+			     unsigned long control,
-+			     unsigned long page_num,
-+			     unsigned long page_count)
-+{
-+	int i, ent = -1, try_count = 5;
-+	unsigned long *entp;
-+
-+again:
-+	for (i = 0; i < SBI_NACL_SHMEM_HFENCE_ENTRY_MAX; i++) {
-+		entp = shmem + SBI_NACL_SHMEM_HFENCE_ENTRY_CONFIG(i);
-+		if (lelong_to_cpu(*entp) & SBI_NACL_SHMEM_HFENCE_CONFIG_PEND)
-+			continue;
-+
-+		ent = i;
-+		break;
-+	}
-+
-+	if (ent < 0) {
-+		if (try_count) {
-+			nacl_sync_hfence(-1UL);
-+			goto again;
-+		} else {
-+			pr_warn("KVM: No free entry in NACL shared memory\n");
-+			return;
-+		}
-+	}
-+
-+	entp = shmem + SBI_NACL_SHMEM_HFENCE_ENTRY_CONFIG(i);
-+	*entp = cpu_to_lelong(control);
-+	entp = shmem + SBI_NACL_SHMEM_HFENCE_ENTRY_PNUM(i);
-+	*entp = cpu_to_lelong(page_num);
-+	entp = shmem + SBI_NACL_SHMEM_HFENCE_ENTRY_PCOUNT(i);
-+	*entp = cpu_to_lelong(page_count);
-+}
-+
-+int kvm_riscv_nacl_enable(void)
-+{
-+	int rc;
-+	struct sbiret ret;
-+	struct kvm_riscv_nacl *nacl;
-+
-+	if (!kvm_riscv_nacl_available())
-+		return 0;
-+	nacl = this_cpu_ptr(&kvm_riscv_nacl);
-+
-+	ret = sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SET_SHMEM,
-+			nacl->shmem_phys, 0, 0, 0, 0, 0);
-+	rc = sbi_err_map_linux_errno(ret.error);
-+	if (rc)
-+		return rc;
-+
+ #include <asm/kvm_vcpu_timer.h>
+ 
+ static u64 kvm_riscv_current_cycles(struct kvm_guest_timer *gt)
+@@ -72,12 +72,12 @@ static int kvm_riscv_vcpu_timer_cancel(struct kvm_vcpu_timer *t)
+ static int kvm_riscv_vcpu_update_vstimecmp(struct kvm_vcpu *vcpu, u64 ncycles)
+ {
+ #if defined(CONFIG_32BIT)
+-		csr_write(CSR_VSTIMECMP, ncycles & 0xFFFFFFFF);
+-		csr_write(CSR_VSTIMECMPH, ncycles >> 32);
++	ncsr_write(CSR_VSTIMECMP, ncycles & 0xFFFFFFFF);
++	ncsr_write(CSR_VSTIMECMPH, ncycles >> 32);
+ #else
+-		csr_write(CSR_VSTIMECMP, ncycles);
++	ncsr_write(CSR_VSTIMECMP, ncycles);
+ #endif
+-		return 0;
 +	return 0;
-+}
-+
-+void kvm_riscv_nacl_disable(void)
-+{
-+	if (!kvm_riscv_nacl_available())
-+		return;
-+
-+	sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SET_SHMEM,
-+		  SBI_SHMEM_DISABLE, SBI_SHMEM_DISABLE, 0, 0, 0, 0);
-+}
-+
-+void kvm_riscv_nacl_exit(void)
-+{
-+	int cpu;
-+	struct kvm_riscv_nacl *nacl;
-+
-+	if (!kvm_riscv_nacl_available())
-+		return;
-+
-+	/* Allocate per-CPU shared memory */
-+	for_each_possible_cpu(cpu) {
-+		nacl = per_cpu_ptr(&kvm_riscv_nacl, cpu);
-+		if (!nacl->shmem)
-+			continue;
-+
-+		free_pages((unsigned long)nacl->shmem,
-+			   get_order(SBI_NACL_SHMEM_SIZE));
-+		nacl->shmem = NULL;
-+		nacl->shmem_phys = 0;
-+	}
-+}
-+
-+static long nacl_probe_feature(long feature_id)
-+{
-+	struct sbiret ret;
-+
-+	if (!kvm_riscv_nacl_available())
-+		return 0;
-+
-+	ret = sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_PROBE_FEATURE,
-+			feature_id, 0, 0, 0, 0, 0);
-+	return ret.value;
-+}
-+
-+int kvm_riscv_nacl_init(void)
-+{
-+	int cpu;
-+	struct page *shmem_page;
-+	struct kvm_riscv_nacl *nacl;
-+
-+	if (sbi_spec_version < sbi_mk_version(1, 0) ||
-+	    sbi_probe_extension(SBI_EXT_NACL) <= 0)
-+		return -ENODEV;
-+
-+	/* Enable NACL support */
-+	static_branch_enable(&kvm_riscv_nacl_available);
-+
-+	/* Probe NACL features */
-+	if (nacl_probe_feature(SBI_NACL_FEAT_SYNC_CSR))
-+		static_branch_enable(&kvm_riscv_nacl_sync_csr_available);
-+	if (nacl_probe_feature(SBI_NACL_FEAT_SYNC_HFENCE))
-+		static_branch_enable(&kvm_riscv_nacl_sync_hfence_available);
-+	if (nacl_probe_feature(SBI_NACL_FEAT_SYNC_SRET))
-+		static_branch_enable(&kvm_riscv_nacl_sync_sret_available);
-+	if (nacl_probe_feature(SBI_NACL_FEAT_AUTOSWAP_CSR))
-+		static_branch_enable(&kvm_riscv_nacl_autoswap_csr_available);
-+
-+	/* Allocate per-CPU shared memory */
-+	for_each_possible_cpu(cpu) {
-+		nacl = per_cpu_ptr(&kvm_riscv_nacl, cpu);
-+
-+		shmem_page = alloc_pages(GFP_KERNEL | __GFP_ZERO,
-+					 get_order(SBI_NACL_SHMEM_SIZE));
-+		if (!shmem_page) {
-+			kvm_riscv_nacl_exit();
-+			return -ENOMEM;
-+		}
-+		nacl->shmem = page_to_virt(shmem_page);
-+		nacl->shmem_phys = page_to_phys(shmem_page);
-+	}
-+
-+	return 0;
-+}
+ }
+ 
+ static int kvm_riscv_vcpu_update_hrtimer(struct kvm_vcpu *vcpu, u64 ncycles)
+@@ -289,10 +289,10 @@ static void kvm_riscv_vcpu_update_timedelta(struct kvm_vcpu *vcpu)
+ 	struct kvm_guest_timer *gt = &vcpu->kvm->arch.timer;
+ 
+ #if defined(CONFIG_32BIT)
+-	csr_write(CSR_HTIMEDELTA, (u32)(gt->time_delta));
+-	csr_write(CSR_HTIMEDELTAH, (u32)(gt->time_delta >> 32));
++	ncsr_write(CSR_HTIMEDELTA, (u32)(gt->time_delta));
++	ncsr_write(CSR_HTIMEDELTAH, (u32)(gt->time_delta >> 32));
+ #else
+-	csr_write(CSR_HTIMEDELTA, gt->time_delta);
++	ncsr_write(CSR_HTIMEDELTA, gt->time_delta);
+ #endif
+ }
+ 
+@@ -306,10 +306,10 @@ void kvm_riscv_vcpu_timer_restore(struct kvm_vcpu *vcpu)
+ 		return;
+ 
+ #if defined(CONFIG_32BIT)
+-	csr_write(CSR_VSTIMECMP, (u32)t->next_cycles);
+-	csr_write(CSR_VSTIMECMPH, (u32)(t->next_cycles >> 32));
++	ncsr_write(CSR_VSTIMECMP, (u32)t->next_cycles);
++	ncsr_write(CSR_VSTIMECMPH, (u32)(t->next_cycles >> 32));
+ #else
+-	csr_write(CSR_VSTIMECMP, t->next_cycles);
++	ncsr_write(CSR_VSTIMECMP, t->next_cycles);
+ #endif
+ 
+ 	/* timer should be enabled for the remaining operations */
+@@ -327,10 +327,10 @@ void kvm_riscv_vcpu_timer_sync(struct kvm_vcpu *vcpu)
+ 		return;
+ 
+ #if defined(CONFIG_32BIT)
+-	t->next_cycles = csr_read(CSR_VSTIMECMP);
+-	t->next_cycles |= (u64)csr_read(CSR_VSTIMECMPH) << 32;
++	t->next_cycles = ncsr_read(CSR_VSTIMECMP);
++	t->next_cycles |= (u64)ncsr_read(CSR_VSTIMECMPH) << 32;
+ #else
+-	t->next_cycles = csr_read(CSR_VSTIMECMP);
++	t->next_cycles = ncsr_read(CSR_VSTIMECMP);
+ #endif
+ }
+ 
 -- 
 2.43.0
 
