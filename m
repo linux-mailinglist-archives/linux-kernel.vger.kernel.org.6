@@ -1,127 +1,197 @@
-Return-Path: <linux-kernel+bounces-373500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989CC9A5776
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:23:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CABB49A5778
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B3C528147D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 23:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE9C281C51
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 23:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21142197A67;
-	Sun, 20 Oct 2024 23:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93621953BB;
+	Sun, 20 Oct 2024 23:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TmfcKBSZ"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EawY5epa"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261E7440C
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 23:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C967462;
+	Sun, 20 Oct 2024 23:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729466591; cv=none; b=kk17R03aaj/dpMVwRaFCIRtntmUVrqD6oSIYGClhj/r7RoamlwqiQwaiDTmpTXngYZDNSbm8ZSuiuGzbdWLKHO0Qcu+bHxi/dpQ3R06Q2jcgOA9YFu7a+idWevd5TGEJ/3e7A/CxNSop8ULbxjtjoIziHEPJ6m3ChgN4iR+cT4o=
+	t=1729466677; cv=none; b=PkY8A7eQ+J6bHlzN5HFiwzERDXqRdUheO9OpzoJu8h3141fR/4w6wLpoBTSoDVzwVpjEb7AybJ21OdtgKTUk+FOtQ6DZB1GXr6VxQtuspNjyN8Z7GFr0buYtwHSbOf4iq2ZWy5zfOCnuAvw06SoJhZzeCo9mMeyJokmFNPQ8xEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729466591; c=relaxed/simple;
-	bh=T7uRNOqXPpDJ66mNu6+5SQJLlQtpLfm/G3nL3qd0+Gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qIfpxXIPs5PY2RmJ/YrICW7vORRtB8S1/ObmMkoxFjWJ/FZLqlVg8T2WlH0/LJUvYsmWo2xy/kB6vIgIHVHsC7xpvmUYXdpAAJz01/b2lbSsYR5biJkvfvPkzZGxBlyFMBD9r/YmSFtZtuAxueMxcvw4iCVQxXJn+I81QW6r+2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TmfcKBSZ; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 20 Oct 2024 19:23:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729466586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DYwUO71iJxjfdmXJVtQz+BNTm0SpwTgVf3GOfBoEnXs=;
-	b=TmfcKBSZOHm2BmMu3epYRnKjwnqle3S010yNgt/DqvW9ovSOhBqxVOjvF7tQetfeD402PX
-	HeR9kBsG7V+fKNZywlruKnfchafGlqphdDqMqVcq2PUTZZQRJ9lCMZfBHDcyQ3yu6OJgVb
-	kVnYHS/+24FiHk7PfY21Fodi3l8VaXs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
-Subject: Re: [PATCH v1] bcachefs: set freespace inited to false if
- trans_mark_dev_sbs fails
-Message-ID: <b22xc632ptvw3jtkyp5yqj6lxpnbdwlmqxekafuunjxxsaup7n@jrybxzaqj4li>
-References: <20241020170708.67044-2-pZ010001011111@proton.me>
+	s=arc-20240116; t=1729466677; c=relaxed/simple;
+	bh=q5+6tiGuH8I+PeYq8sgTXcD2n3fv1os7KsHt4Bflnpw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J5nChgN6v6b3ZfFnNBd2ElizngSd7z28M5DX3phVC84s8q0RkjzI90/C5xe+KSY4Pj9kW8l/bLuYLTdqVgOH1SMBCYHCmYeS3eucHzKeUyw+VoECiCW2i2LEvo8W8/S/OUro3wpU00rv81K0wJkenyNu4DZJ0Bmf/LXXXKxoxZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EawY5epa; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-83abf71f244so69371539f.1;
+        Sun, 20 Oct 2024 16:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729466674; x=1730071474; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=42UobsR/0n1L8B+weH9JLBfiExsdGpMlCqPADTCaHGE=;
+        b=EawY5epameUtA7CpnmT93c4ssplWsz61CbqlRALNwOusZEhqbE2wTN4id3ojoa4GdL
+         uE53cuA4f1E3jT/6z1/nSzvAfyh4Z0KMamo1y2tXP76uHHRlkMyfp3QJTApn1JQ1CSHw
+         a0dkTVJcOxidkKjdaWlQ2vzP+0nzJvmPhXznQDqqldcvRdHP06mFfg3OsG9XdSK/t6kg
+         O2Xj07rt584hrDn19jbyIkk5nlNl7Gjn8azVKyhAGEy3WRnYgrsEYUnvI+6vXP/s0+bV
+         qEAB1UQRattVDsspJ7Oarmpn/m3Pom+LsKldD3n5rxPoi3jbonOtRDTK/u+u21wwGq9T
+         odSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729466674; x=1730071474;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=42UobsR/0n1L8B+weH9JLBfiExsdGpMlCqPADTCaHGE=;
+        b=XCax3IX9KtoMLWYf2hYrHtrb0gwphDJJfVHI+1ITVQlPM9fX8iFmORyaZgC2RrZhS0
+         zP6JV46+fDDUqu03YCoVwb+ZYEPVTyWeBDiXz80cbVaNHqQiGINbW8fF1jfe5iSeG5op
+         ECZUW7swwZRF00yBl+/cIw73bD7oyQaIfMwt9ZWoXgLVBlDMtot22+sCDK0Eo29UB3l6
+         q+TLjbAlhWveLwcai6lJRWVqys6YDNFQOLiq7DLwbcugBDxBsePlKTlm6RYOgMm50yB4
+         MyaF45l0BIzBpskcNLCctc4eDcrx5dTP4d54lr4awidR1zp8IZPAqjesNspnkw0drYjg
+         C3Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3hfORSiF3mrQuWau26pubhL75PEwf2JTWtcGiUiq2EhHZ275YE9DxKgEH4dTSP41RSSP6+7fd2YNli8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJnU17kx2vzfqvfMTzWMYt55kf1NxEFU7h7+8yFNPMhEINgBtT
+	aa/fqcmviPIp/EYno8Sx7fwl3+q9iVMGYldQuXCipVg9VCUTxpkv1TdaDQ==
+X-Google-Smtp-Source: AGHT+IGcwFuqv1ztuvUGJOKLdPLBdimn6j8jJ0kHEZTzIMBAmr3HCcByglSxIkc63LSMeJg3hlaNMw==
+X-Received: by 2002:a05:6602:6343:b0:803:5e55:ecb2 with SMTP id ca18e2360f4ac-83aba2f9a3fmr795577939f.0.1729466673915;
+        Sun, 20 Oct 2024 16:24:33 -0700 (PDT)
+Received: from james-x399.localdomain (71-33-159-223.hlrn.qwest.net. [71.33.159.223])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ad1dce129sm67506739f.34.2024.10.20.16.24.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 16:24:33 -0700 (PDT)
+From: James Hilliard <james.hilliard1@gmail.com>
+To: linux-watchdog@vger.kernel.org
+Cc: James Hilliard <james.hilliard1@gmail.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] watchdog: it87_wdt: add PWRGD enable quirk for Qotom QCML04
+Date: Sun, 20 Oct 2024 17:24:09 -0600
+Message-Id: <20241020232410.2576778-1-james.hilliard1@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241020170708.67044-2-pZ010001011111@proton.me>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 20, 2024 at 05:08:45PM +0000, Piotr Zalewski wrote:
-> In bch2_fs_initialize if bch2_trans_mark_dev_sbs fails, set freespace
-> initialized bits to 0 in member's flags and update member cached version
-> for each device. bch2_trans_mark_dev_sbs fails just before freespace
-> init which can left freespace init bits set to true erroneously which later
-> can indirectly trigger BUG condition in bch2_bucket_alloc_freelist[1].
+For the watchdog timer to work properly on the QCML04 board we need to
+set PWRGD enable in the Environment Controller Configuration Registers
+Special Configuration Register 1 when it is not already set, this may
+be the case when the watchdog is not enabled from within the BIOS.
 
-Err...
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+---
+Changes v2 -> v3:
+  - add linux/bits.h header
+  - check for quirks on all it87 chips
+Changes v1 -> v2:
+  - remove QGLK02/IT87_WDT_BROKEN
+---
+ drivers/watchdog/it87_wdt.c | 38 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-freespace_initialized shouldn't even be set at this point, it's set
-later, in bch2_fs_freespace_init(), naturally.
+diff --git a/drivers/watchdog/it87_wdt.c b/drivers/watchdog/it87_wdt.c
+index 3e8c15138edd..03274e48e834 100644
+--- a/drivers/watchdog/it87_wdt.c
++++ b/drivers/watchdog/it87_wdt.c
+@@ -20,6 +20,8 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/bits.h>
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+@@ -40,6 +42,7 @@
+ #define VAL		0x2f
+ 
+ /* Logical device Numbers LDN */
++#define EC		0x04
+ #define GPIO		0x07
+ 
+ /* Configuration Registers and Functions */
+@@ -73,6 +76,12 @@
+ #define IT8784_ID	0x8784
+ #define IT8786_ID	0x8786
+ 
++/* Environment Controller Configuration Registers LDN=0x04 */
++#define SCR1		0xfa
++
++/* Environment Controller Bits SCR1 */
++#define WDT_PWRGD	0x20
++
+ /* GPIO Configuration Registers LDN=0x07 */
+ #define WDTCTRL		0x71
+ #define WDTCFG		0x72
+@@ -240,6 +249,20 @@ static int wdt_set_timeout(struct watchdog_device *wdd, unsigned int t)
+ 	return ret;
+ }
+ 
++enum {
++	IT87_WDT_OUTPUT_THROUGH_PWRGD	= BIT(0),
++};
++
++static const struct dmi_system_id it87_quirks[] = {
++	{
++		/* Qotom Q30900P (IT8786) */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_NAME, "QCML04"),
++		},
++		.driver_data = (void *)IT87_WDT_OUTPUT_THROUGH_PWRGD,
++	}
++};
++
+ static const struct watchdog_info ident = {
+ 	.options = WDIOF_SETTIMEOUT | WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING,
+ 	.firmware_version = 1,
+@@ -261,8 +284,10 @@ static struct watchdog_device wdt_dev = {
+ 
+ static int __init it87_wdt_init(void)
+ {
++	const struct dmi_system_id *dmi_id;
+ 	u8  chip_rev;
+ 	u8 ctrl;
++	int quirks = 0;
+ 	int rc;
+ 
+ 	rc = superio_enter();
+@@ -273,6 +298,10 @@ static int __init it87_wdt_init(void)
+ 	chip_rev  = superio_inb(CHIPREV) & 0x0f;
+ 	superio_exit();
+ 
++	dmi_id = dmi_first_match(it87_quirks);
++	if (dmi_id)
++		quirks = (long)dmi_id->driver_data;
++
+ 	switch (chip_type) {
+ 	case IT8702_ID:
+ 		max_units = 255;
+@@ -333,6 +362,15 @@ static int __init it87_wdt_init(void)
+ 		superio_outb(0x00, WDTCTRL);
+ 	}
+ 
++	if (quirks & IT87_WDT_OUTPUT_THROUGH_PWRGD) {
++		superio_select(EC);
++		ctrl = superio_inb(SCR1);
++		if (!(ctrl & WDT_PWRGD)) {
++			ctrl |= WDT_PWRGD;
++			superio_outb(ctrl, SCR1);
++		}
++	}
++
+ 	superio_exit();
+ 
+ 	if (timeout < 1 || timeout > max_units * 60) {
+-- 
+2.34.1
 
-So - syzbot is feeding us garbage, heh. BCH_MEMBER_FREESPACE_INITIALIZED
-should be false on a non initialized filesystem.
-
-So we actually should be unconditially clearing it (sanitizing our
-input) at the top of bch2_fs_initialize().
-
-> 
-> [1] https://syzkaller.appspot.com/bug?extid=2b6a17991a6af64f9489
-> 
-> Reported-by: syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=2b6a17991a6af64f9489
-> Fixes: bbe682c76789 ("bcachefs: Ensure devices are always correctly initialized")
-> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
-> ---
->  fs/bcachefs/recovery.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-> index 67bba156cce9..bcec79122f65 100644
-> --- a/fs/bcachefs/recovery.c
-> +++ b/fs/bcachefs/recovery.c
-> @@ -1031,6 +1031,7 @@ int bch2_fs_initialize(struct bch_fs *c)
->  	struct bkey_inode_buf packed_inode;
->  	struct qstr lostfound = QSTR("lost+found");
->  	int ret;
-> +	struct bch_member *m;
->  
->  	bch_notice(c, "initializing new filesystem");
->  	set_bit(BCH_FS_new_fs, &c->flags);
-> @@ -1086,8 +1087,17 @@ int bch2_fs_initialize(struct bch_fs *c)
->  	bch_verbose(c, "marking superblocks");
->  	ret = bch2_trans_mark_dev_sbs(c);
->  	bch_err_msg(c, ret, "marking superblocks");
-> -	if (ret)
-> +	if (ret) {
-> +		mutex_lock(&c->sb_lock);
-> +		for_each_member_device(c, ca) {
-> +			m = bch2_members_v2_get_mut(c->disk_sb.sb, ca->dev_idx);
-> +			SET_BCH_MEMBER_FREESPACE_INITIALIZED(m, false);
-> +			ca->mi = bch2_mi_to_cpu(m);
-> +		}
-> +		mutex_unlock(&c->sb_lock);
-> +
->  		goto err;
-> +	}
->  
->  	for_each_online_member(c, ca)
->  		ca->new_fs_bucket_idx = 0;
-> -- 
-> 2.47.0
-> 
-> 
 
