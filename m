@@ -1,78 +1,104 @@
-Return-Path: <linux-kernel+bounces-373462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F159A56F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 23:19:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892559A56F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 23:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AD8AB214C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EE8B281E66
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A61719883C;
-	Sun, 20 Oct 2024 21:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VlgLoK60"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4554319883C;
+	Sun, 20 Oct 2024 21:25:29 +0000 (UTC)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7808845025;
-	Sun, 20 Oct 2024 21:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0110E45025
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 21:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729459150; cv=none; b=tZTkkeHzKuh0y+PQtrqqdg3Jn4o3ry+HHHqmPnUH+9S9Y4MNo13qI2tfYBZUA8hHyICT3hRPoGvusFEGcsJgL3oLQ4vvNS4LwCwO3QN8y5T7JW53hIRfP+fSWYmL69n9g/61jFR1E5AJ6Ort2e6sNGytHiIA2RY2vsUMz/5Ka+o=
+	t=1729459528; cv=none; b=MV+I0r0VnbkXSWUCC6a7pe0qL2g39UJ7yMq+VX1zDW0MDXbnXIhPcc4/9qVC7TGYzK8QoKqJnPJmSnNPnqxY6LPXiboWQgAdSCcJxWBx/gEHFdV/iKqQ56/E7MJAUVewkolf3w64YPNscmP2kVXbRcp5S1dzD91ft16moq0S8JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729459150; c=relaxed/simple;
-	bh=OZeJUa0mSW+noCK3Rai8Sp1tqeDt/wHMr6AMqYtbes8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IaFkvuvMPBzgd1Aupkgw7V12qBJ/RKci3/QjuFvLgjCtx0hcWP4ihWZ61MKyMUzHkJTbEAohNh8QyDIEGLrj2J4Evnla6FJTbcqxaPJXk9MHS/ViRyV1XTET8iO/jr14xLkuW38qlOJs8gVGP1ZQqKh7dFrpqVRr1HXilzoLWYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VlgLoK60; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D0DC4CEC6;
-	Sun, 20 Oct 2024 21:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729459150;
-	bh=OZeJUa0mSW+noCK3Rai8Sp1tqeDt/wHMr6AMqYtbes8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=VlgLoK60XFAU91BDD8yAv9NMBgdw1eBzJjIYodtEeo967yHN2GGUSFxPC6OK1qz5C
-	 zQTtx4OcceJB6DdmGQ/OUB3hYVo1Swh2es1CAgYq74jNV5GAcg0UI8LJvqHtjl47aB
-	 jMOqldivNl769FDlaVRoDY2cPmArInbYBsgfWaJeIln884T1XvzsZMG2jehtPRK4Me
-	 yF51F9G/UTAExKh2bQlYqjuIS9Da1XWPx7uQNSTuVXblTFreiDy1NpzD3hfdoeieeF
-	 SHZrmz/tAKgysVxUZobYMjflLUCVUZVetEiv68PmWjCqC8S3SAit1tklSfzPEwgR/9
-	 AIf/HeUk2/JVQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EE63805CC0;
-	Sun, 20 Oct 2024 21:19:17 +0000 (UTC)
-Subject: Re: [GIT PULL] Pin control fixes for v6.12
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdZ1K=G+J-Kw1=gbHixuS32DoXGdoja7dOc1O6cR8VeshQ@mail.gmail.com>
-References: <CACRpkdZ1K=G+J-Kw1=gbHixuS32DoXGdoja7dOc1O6cR8VeshQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdZ1K=G+J-Kw1=gbHixuS32DoXGdoja7dOc1O6cR8VeshQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.12-2
-X-PR-Tracked-Commit-Id: 93b8ddc54507a227087c60a0013ed833b6ae7d3c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dd4f50373e508632f01b63eab5a3c0b5debe22e3
-Message-Id: <172945915602.3645781.15115471904500259612.pr-tracker-bot@kernel.org>
-Date: Sun, 20 Oct 2024 21:19:16 +0000
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1729459528; c=relaxed/simple;
+	bh=kFtxmZZNRSShsBtAkbSLJ2rN46/Xm+rm6B8Jq6aaRcI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QjnzCQGun2XKti/1d5ESN0RX1hFERjlMqda4lmkfi6RY8WosLeszYAFWwSm0/5g6CfeyY3dmlM0BicD1hgqqhcG+8MZZwaTjoFYiMlbW2yf+cdrYllpdMjmXzVrw1d9Ibftvq1R0DQuYPkH8Lj8R4Tq2xRx94BoZsB7SRDLpcAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so38467645e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 14:25:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729459525; x=1730064325;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YBn6K4KZnCY0Yxou4W+FGn+th8k+F+/5VdjO8yXNhFw=;
+        b=W7H+UhDe1ofZHo8MvfzPczHA7pFmBdaO5z8eqRpS98b8Z3jvfqyjP0+KGOoIGn+l/J
+         He1wrhyw585Dzy5Ly8i/H1noGZgGbRmykQ0mI6v+fxjl/iiLi8jvux29AR6GniKhN2ia
+         7G8H0pPG7f+H1IMCwLpdBYQp1hhHKQqX0r0/c3oI10Ti3zfModXBWDmjUa6YzJOdnjMy
+         5i26cB3PAUFkLvflA0Rw5A4QbhlttWOjgCQgBWsYEcCTuL2TgyFrDDAhCT7I3c/phjir
+         GA1DpfGhCeqcYwyqpeYUi834V5curZsmXzb7e0hBUCvr60UIep8IMJ+sdhfX0R78ByHR
+         8pCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxba0rUYlPD4VKjj6/y1uPuXjKCvhMHhBcYmZ26Hb7FRBAKLFxZ2hVUU+j6cuVVIUmldS8yS/cPdnsvss=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2u1Mr0qcQ/pqyWegYL/RWZm4o38os3aneIXggNwESa6pYs6Ju
+	fofYZT9c71mKlQT1Egbxrix7P3G3/rGq8wcwm22XxSkRs8FlC5mC
+X-Google-Smtp-Source: AGHT+IFtrJCzlz0z0djFv72MUW7o9jSkK+ZnXNL/7PGcCRVWu2xSW/e7Nb8Efh4wVBq+302s3jx6JQ==
+X-Received: by 2002:a05:600c:1d01:b0:42c:b63e:fe91 with SMTP id 5b1f17b1804b1-4316168f28cmr77354645e9.24.1729459524967;
+        Sun, 20 Oct 2024 14:25:24 -0700 (PDT)
+Received: from [10.100.102.74] (89-138-78-158.bb.netvision.net.il. [89.138.78.158])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f570a97sm34914795e9.9.2024.10.20.14.25.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Oct 2024 14:25:24 -0700 (PDT)
+Message-ID: <6905cfbc-2ae2-487f-aebf-e4b944f2dda4@grimberg.me>
+Date: Mon, 21 Oct 2024 00:25:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvme-sysfs: display max_hw_sectors_kb without requiring
+ namespaces
+To: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
+Cc: Abhishek Bapat <abhishekbapat@google.com>, Jens Axboe <axboe@kernel.dk>,
+ Prashant Malani <pmalani@google.com>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241016213108.549000-1-abhishekbapat@google.com>
+ <ZxE-BE4hLVRR2Zcp@kbusch-mbp.dhcp.thefacebook.com>
+ <20241018051410.GE19831@lst.de>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20241018051410.GE19831@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Sun, 20 Oct 2024 19:39:54 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.12-2
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dd4f50373e508632f01b63eab5a3c0b5debe22e3
 
-Thank you!
+On 18/10/2024 8:14, Christoph Hellwig wrote:
+> On Thu, Oct 17, 2024 at 10:40:36AM -0600, Keith Busch wrote:
+>> On Wed, Oct 16, 2024 at 09:31:08PM +0000, Abhishek Bapat wrote:
+>>> max_hw_sectors based on DMA optimized limitation") introduced a
+>>> limitation on the value of max_hw_sectors_kb, restricting it to 128KiB
+>>> (MDTS = 5). This restricion was implemented to mitigate lockups
+>>> encountered in high-core count AMD servers.
+>> There are other limits that can constrain transfer sizes below the
+>> device's MDTS. For example, the driver can only preallocate so much
+>> space for DMA and SGL descriptors, so 8MB is the current max transfer
+>> sizes the driver can support, and a device's MDTS can be much bigger
+>> than that.
+> Yes.  Plus the virt boundary for PRPs, and for non-PCIe tranfers
+> there's also plenty of other hardware limits due to e.g. the FC HBA
+> and the RDMA HCA limit.  There's also been some talk of a new PCIe
+> SGL variant with hard limits.
+>
+> So I agree that exposting limits on I/O would be very useful, but it's
+> also kinda non-trivial.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I think the ctrl misc device attributes are fine to expose this and other
+types of attributes (like we already do today).
 
