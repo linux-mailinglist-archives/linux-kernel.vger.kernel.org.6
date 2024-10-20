@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-373323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0425B9A5545
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:44:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A31E09A5547
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33B271C20849
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:44:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB001F22337
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E1B194AD5;
-	Sun, 20 Oct 2024 16:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F13194AD6;
+	Sun, 20 Oct 2024 16:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Ml+uN4pW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jjEKczbw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CB91922EE;
-	Sun, 20 Oct 2024 16:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81656AA7;
+	Sun, 20 Oct 2024 16:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729442643; cv=none; b=hXTqyUjkiqpB/4+WAZ/nHZ6n9KU+/0Jf77BABuoEQkntmNa/ZaCAtFd8KRXSRIWFVCtZFTlHYrCytXHuEhxQ0H4dJly01E9xbpOrkT/uvfcE+1j2BSP95da7l3Bb21yldCDCyjgtqcA/JP6zf17DzEb0vT0Vc7TqMefpNVsIung=
+	t=1729442821; cv=none; b=W33J3n0snAQZtQRJCd3p9jFSfKn0U29RRb9ELv/PbS2rLCxMXGf5fP86OJx23Yg7VRpzJwmViFHp9HFaieS9NZeeRk/foOJciWCwZ3llCUeMTVhattHVIeunimT5E3RNzqrDruVdf9JPZvoGDe6guyrevYGtQXXpnzR2eHxxIkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729442643; c=relaxed/simple;
-	bh=GvjUc9EISQVY17P7P0HsrkgLTXZjnepFFKZDU77GjnY=;
+	s=arc-20240116; t=1729442821; c=relaxed/simple;
+	bh=EWVi1GcxrkqX5S7c3qAcXdg9VPY1LGhqqDRaPzBX8Rs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IzYjaNRN9pkSSkrSGOvlz+iI+5kpLs6ttmXvZ4IMGKxSDpGmNBtW8+QxtzM++AttI6B2xz5GXKGXpBCyBv7tokxthgjFU1c+TgobGXUggKFF7vRaHePCnuhpnztFoyHUvHu0cg3d4lGwlIdUJiKRJW39toLGFFzZnBe8UPfzuZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Ml+uN4pW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6A77A78E;
-	Sun, 20 Oct 2024 18:42:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729442534;
-	bh=GvjUc9EISQVY17P7P0HsrkgLTXZjnepFFKZDU77GjnY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ml+uN4pWalDw4CheCRA+UlqUiR6ctf6Iuz+HdtOzygefnkNraxujE3Dxu/XnlljpW
-	 WT95RhLaCTGpsazkzyvA0vbgkl0DctAGYKjAqjw0P/couXPn0d//SPVC5ujiPlbvfk
-	 1oJ+M9G0wW+2kJmm88+hOQavk2NWBsiJqeItYdb4=
-Date: Sun, 20 Oct 2024 19:43:54 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: sakari.ailus@linux.intel.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: v4l2-subdev: Refactor events
-Message-ID: <20241020164354.GG7770@pendragon.ideasonboard.com>
-References: <20241020163534.1720297-1-tomm.merciai@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z1Ki+pCxo2lPg2NVTmdujIOFnMPvap8eMNX2B2z5aNLkjd9+gwHOEFE3C7TS4MOFsaZtZ+FtFUx7XraknVaJf9mm+srJOTlwvXUtwrOp1DDItbtT6jyYkG1r7ls3AL3w2k9tb4IHJqfBb4KBHf2Z605WaXqz/kl+TtGDmJBGIu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jjEKczbw; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729442819; x=1760978819;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EWVi1GcxrkqX5S7c3qAcXdg9VPY1LGhqqDRaPzBX8Rs=;
+  b=jjEKczbwspWmk16i4RdHsLqoV3ge2QWwcYk7M9Yb0oXkHEqx9VBLYqRu
+   /HOj8XIRB7jz9C9B2CYtgakqsYZr7d5T5GhpQJ1Bw9Z6C3r5P6eCSvxae
+   jci17XTu2HtTQEyf9EE9Wd9i8pC2Ly/8pZMFHSySOiKlregaW/2XmwQfR
+   ECy1h9hVWMIkZgp70ozH2kFYerwGeXNnJeS6iqwzzMD7LAB29GaATdTWh
+   0sGrcZamCbZX5VpgZiyTL4DbeXM6voB7sYbVpxvmwkFLfOuw4o3yPLC6/
+   DuOptcpCfJPkSsK7n+q+YCwiIlIC0z3GadNg4rGtwd/ttDL0xXbXi9skA
+   Q==;
+X-CSE-ConnectionGUID: QtFBghdvTpGo/QPCli9frg==
+X-CSE-MsgGUID: 9+qHSpCkSnGSe9p6dcYKpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="29138971"
+X-IronPort-AV: E=Sophos;i="6.11,218,1725346800"; 
+   d="scan'208";a="29138971"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 09:46:58 -0700
+X-CSE-ConnectionGUID: URFWmaxgQyO6rCvrW1T5ug==
+X-CSE-MsgGUID: Af5LEzOVS2SRH54IU5gHmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,218,1725346800"; 
+   d="scan'208";a="79244017"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 20 Oct 2024 09:46:54 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t2Z4u-000QV3-0f;
+	Sun, 20 Oct 2024 16:46:52 +0000
+Date: Mon, 21 Oct 2024 00:46:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andreas Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v3 05/13] rust: hrtimer: allow timer restart from timer
+ handler
+Message-ID: <202410210020.W6cyMg2D-lkp@intel.com>
+References: <20241017-hrtimer-v3-v6-12-rc2-v3-5-59a75cbb44da@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241020163534.1720297-1-tomm.merciai@gmail.com>
+In-Reply-To: <20241017-hrtimer-v3-v6-12-rc2-v3-5-59a75cbb44da@kernel.org>
 
-Hi Tommaso,
+Hi Andreas,
 
-Thank you for the patch.
+kernel test robot noticed the following build errors:
 
-On Sun, Oct 20, 2024 at 06:35:32PM +0200, Tommaso Merciai wrote:
-> Controls can be exposed to userspace via a v4l-subdevX device, and
-> userspace has to be able to subscribe to control events so that it is
-> notified when the control changes value.
-> If a control handler is set for the subdev then set the HAS_EVENTS
-> flag automatically into v4l2_subdev_init_finalize() and use
-> v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> as default if subdev don't have .(un)subscribe control operations.
+[auto build test ERROR on 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b]
 
-I would add here
+url:    https://github.com/intel-lab-lkp/linux/commits/Andreas-Hindborg/rust-time-Add-Ktime-from_ns/20241017-211351
+base:   8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+patch link:    https://lore.kernel.org/r/20241017-hrtimer-v3-v6-12-rc2-v3-5-59a75cbb44da%40kernel.org
+patch subject: [PATCH v3 05/13] rust: hrtimer: allow timer restart from timer handler
+config: um-randconfig-002-20241020 (https://download.01.org/0day-ci/archive/20241021/202410210020.W6cyMg2D-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bfe84f7085d82d06d61c632a7bad1e692fd159e4)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241021/202410210020.W6cyMg2D-lkp@intel.com/reproduce)
 
-This simplifies subdev drivers by avoiding the need to set the
-V4L2_SUBDEV_FL_HAS_EVENTS flag and plug the event handlers, and ensures
-consistency of the API exposed to userspace.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410210020.W6cyMg2D-lkp@intel.com/
 
-And you can also add
+All errors (new ones prefixed by >>):
 
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Now, can we simplify sensor drivers to drop the event handlers and the
-flag ? :-)
-
-> ---
-> Changes since v1:
->  - Aligned event subscription with unsubscription as suggested by LPinchart,
->    SAilus
-> 
->  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> index 3a4ba08810d2..fad8fa1f63e8 100644
-> --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
->  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
->  
->  	case VIDIOC_SUBSCRIBE_EVENT:
-> -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
-> +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> +			return v4l2_subdev_call(sd, core, subscribe_event,
-> +						vfh, arg);
-> +
-> +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
-> +		    vfh->ctrl_handler)
-> +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-> +
-> +		return -ENOIOCTLCMD;
->  
->  	case VIDIOC_UNSUBSCRIBE_EVENT:
-> -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
-> +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> +			return v4l2_subdev_call(sd, core, unsubscribe_event,
-> +						vfh, arg);
-> +
-> +		if (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS)
-> +			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
-> +
-> +		return -ENOIOCTLCMD;
->  
->  #ifdef CONFIG_VIDEO_ADV_DEBUG
->  	case VIDIOC_DBG_G_REGISTER:
-> @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
->  		}
->  	}
->  
-> +	if (sd->ctrl_handler)
-> +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-> +
->  	state = __v4l2_subdev_state_alloc(sd, name, key);
->  	if (IS_ERR(state))
->  		return PTR_ERR(state);
+>> error[E0053]: method `from` has an incompatible type for trait
+   --> rust/kernel/hrtimer.rs:282:20
+   |
+   282 |     fn from(value: bindings::hrtimer_restart) -> Self {
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |                    |
+   |                    expected `u32`, found `i32`
+   |                    help: change the parameter type to match the trait: `u32`
+   |
+   = note: expected signature `fn(u32) -> TimerRestart`
+   found signature `fn(i32) -> TimerRestart`
 
 -- 
-Regards,
-
-Laurent Pinchart
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
