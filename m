@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-373307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796F19A54FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D06BB9A54FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E1F1F221D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:11:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8764E1F21DCF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DE21953A1;
-	Sun, 20 Oct 2024 16:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7067719753F;
+	Sun, 20 Oct 2024 16:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEgobtrm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvCWx5CY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B810A194C8B;
-	Sun, 20 Oct 2024 16:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6EB196D9A;
+	Sun, 20 Oct 2024 16:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729440632; cv=none; b=cLRv4LIk2g2Os5Duqk1mH28TLltYIUk2sImrdq6DZUWbcJPPJ29KaCuqXtVWo8+5v+/OfrAKLcHqc3H3SHamiidoGFTgxIvBKbP2tFyWWYq1+PLxsGtJbfgMcTTmwHTXFigIqUHaspwFBHhLivpP86bnHd467rUulwW3EQOk++8=
+	t=1729440636; cv=none; b=Gw1WzeyYbfNt2MYCkgiXPGAWt1cFsHil2LFTFdeTsmnRLOhbW3wyAAqwzjFvHGiENbn34KWVoU9hdnkBNGqpzxUrsgpY2kFT3Rv8TtSEMRdElrkPCs86yh5L0FdLh1AtCXiq17nGnbOEqdScacK7LmHZDz33EMwzo2xGuHbZ+I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729440632; c=relaxed/simple;
-	bh=yVnx+HBkj75nJ2rVa/9IkwF7i2jMk/szxhnsQUAI/LQ=;
+	s=arc-20240116; t=1729440636; c=relaxed/simple;
+	bh=y0+xXId/09bGlQdedgpY7N+6WcCTvgP6Y5ybpL5Etrg=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=E7P1VYjnJhItbUkXYdOo1nuYphBKQKEtPT/cuffUeKpOvRvO/Grq3SqUyucNpY68FDBt9xERhnDo4kqhlK2JS6Q3TpuzUj9DHertux8muKpejUTgNuWdfofKOHlpp2zRwoaJHqMwFJ3zo+KY1o25fh41JcclleyckJZtJXxWdtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEgobtrm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 522D2C4CEE8;
-	Sun, 20 Oct 2024 16:10:32 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=GtVPQ6LnGOMw98l5XHAAw15X1pZyssBSp7RFuNB8kUoXzemhA0c+j9oUup3KzqqhsDYGqgeRS1/J0rwWKTezdIggue60k5n7KzUpq7LTrM0uxsy/wt/J5PIeDII6BSDuvMOnQevDZssy0RV6ywirSt0YieePx8nWNEU1ezuhoeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvCWx5CY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AB35C4CEC6;
+	Sun, 20 Oct 2024 16:10:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729440632;
-	bh=yVnx+HBkj75nJ2rVa/9IkwF7i2jMk/szxhnsQUAI/LQ=;
+	s=k20201202; t=1729440636;
+	bh=y0+xXId/09bGlQdedgpY7N+6WcCTvgP6Y5ybpL5Etrg=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rEgobtrmkHZhYwC+8y4NXg2T7oNO98xodNId7K4rp+V+ARVRRsdcYBVIbr94U4JZw
-	 27gRUpRaGbTRCHv3WsLActqFMhxMHa6O2fxB+k52vKcjE+kfBh33ncT3pydhwZ3ZrN
-	 L8Vt4SM6cArTIq8+Hgw2XbinOazE6TchEwd4olwPpfvKerQKs5SQfkPNyElC/IgTr+
-	 qn4P9ptIC66qo15xWS89QlSRwPtSiE1mOrAIicrnL+Zg4HVgxMfgK20HMT09wdaZ4d
-	 MJaB7/y2e0BDLnr5CknixlyPlhAUzUDigzo8+84JT9jir1ZMrYYXkAzE2KtjYMFOFX
-	 3pjptWuSHn+Kw==
+	b=EvCWx5CYVpA/bTf9tR+54L4jvMs+BfsH+GpgASMz1OhYCg5rZz+UBgbV+csVUSL4p
+	 ty+xoS5zKE4R6vsV6/yzhgWOFsAq+12YRknUee0sECNSuz32ufWJseBAdpROhMkb0V
+	 wwYmlYno0j0lweuYFjwQyHz23bYI2bZXM3WdIhjoQYsa5wqYg4au5ZAUmtoi6qjVpN
+	 6h2aGkXEg0IhjjRUkC0shHRP5O3JOjQi98DFQWwpxX38mN5R3STp+V4px5TETYipq8
+	 WNBdXtGUOSOTIC70P8XpCyr0KkM3WnK3HzttWMkv8tXRJ5spGrQ8v2zk1k6/hgUQA9
+	 V5XVzu+hMrXRg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70B9C3805CC0;
-	Sun, 20 Oct 2024 16:10:39 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70FDA3805CC0;
+	Sun, 20 Oct 2024 16:10:43 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,36 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next v2] net: ftgmac100: correct the phy interface of NC-SI mode
+Subject: Re: [PATCH] eth: Fix typo 'accelaration'. 'exprienced' and 'rewritting'
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172944063800.3604255.8776132775945938229.git-patchwork-notify@kernel.org>
-Date: Sun, 20 Oct 2024 16:10:38 +0000
-References: <20241018053331.1900100-1-jacky_chou@aspeedtech.com>
-In-Reply-To: <20241018053331.1900100-1-jacky_chou@aspeedtech.com>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, u.kleine-koenig@baylibre.com, jacob.e.keller@intel.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+ <172944064224.3604255.1585916865196633858.git-patchwork-notify@kernel.org>
+Date: Sun, 20 Oct 2024 16:10:42 +0000
+References: <90D42CB167CA0842+20241018021910.31359-1-wangyuli@uniontech.com>
+In-Reply-To: <90D42CB167CA0842+20241018021910.31359-1-wangyuli@uniontech.com>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: michael.chan@broadcom.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, pavan.chebbi@broadcom.com,
+ mchan@broadcom.com, jdmason@kudzu.us, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mcarlson@broadcom.com,
+ benli@broadcom.com, sbaddipa@broadcom.com, linas@austin.ibm.com,
+ Ramkrishna.Vepa@neterion.com, raghavendra.koushik@neterion.com,
+ wenxiong@us.ibm.com, jeff@garzik.org, vasundhara-v.volam@broadcom.com
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Andrew Lunn <andrew@lunn.ch>:
 
-On Fri, 18 Oct 2024 13:33:31 +0800 you wrote:
-> In NC-SI specification, NC-SI is using RMII, not MII.
+On Fri, 18 Oct 2024 10:19:10 +0800 you wrote:
+> There are some spelling mistakes of 'accelaration', 'exprienced' and
+> 'rewritting' in comments which should be 'acceleration', 'experienced'
+> and 'rewriting'.
 > 
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> ---
-> v2:
->   - Correct the subject
+> Suggested-by: Simon Horman <horms@kernel.org>
+> Link: https://lore.kernel.org/all/20241017162846.GA51712@kernel.org/
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v2] net: ftgmac100: correct the phy interface of NC-SI mode
-    https://git.kernel.org/netdev/net-next/c/906c68657850
+  - eth: Fix typo 'accelaration'. 'exprienced' and 'rewritting'
+    https://git.kernel.org/netdev/net-next/c/9e2ffec543b0
 
 You are awesome, thank you!
 -- 
