@@ -1,284 +1,390 @@
-Return-Path: <linux-kernel+bounces-373171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F7E9A5341
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:22:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74A29A5345
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9391C21114
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:22:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37507B21AEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58723155316;
-	Sun, 20 Oct 2024 09:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAB5136982;
+	Sun, 20 Oct 2024 09:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OFdnxIB6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ivDpdqJa"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E0B84E0A;
-	Sun, 20 Oct 2024 09:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A6831A89;
+	Sun, 20 Oct 2024 09:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729416101; cv=none; b=Cl2/FypmQFunsqjkjsGfTYQ0wtXXTqVn4itASg+RWUVDzd2w+5fXEMwhh/Zu4682tN6zLmkofH61B5zJKsffftmc+76CFE60F5hzyl2xFwDqFrvK67//NvSy5Tmcf3REijGbGFdAMOZBijOlm4vjYZxaC4U+ok2mt493YNyYiIk=
+	t=1729416204; cv=none; b=B+G/CPXbF6ZVptaRcz2acavIRahvKOqEU2CQNMvDSRHKpqI81vjKvDP/3Np5CWxmWapkPMT2JILziee9VWdCh4msJxV5f/pFp6eJJWA9lMAiZHqWSMk5VWUEU2Lk6lFDTCsBQUBtSMlQsp6Bs152u+QeEWbvEfyuTUzWoOkWhR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729416101; c=relaxed/simple;
-	bh=0FjaOJikJqwtGL+Y9iaV7osiQQ6qFUvD/z2eON8YtPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=alv9HYZvCkWwYIctfQx1FfNT43xQ1/5p2+KPe783Ik4MYArmK5fefTcEqrmqywUNDAOVT65QW9tAh4BKv4f/6nC5Je600L/CXIYz2NOS4jOsskFnytetKmX/Qgsj9ifzpboLq0Zi8SlF0ru/Z43eRgFJ7/tWygzHY30XhLK0DCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OFdnxIB6; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729416100; x=1760952100;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0FjaOJikJqwtGL+Y9iaV7osiQQ6qFUvD/z2eON8YtPE=;
-  b=OFdnxIB6dQT5B3f4Osh4G1881zHIJexQl0HwsKnOfL9O0azBpb49tbL5
-   I7VwqRlhfBoBgBsppPyn5ofvu276/nKq3OsfjrZHNhvSKAuK+Oif58pnl
-   gNBypY8aFOXiy79rtbcRQntYcMnn8uPZXvp08Nd3VJJCrNke2raQ6H0es
-   5+42ADgjs2xKtnbskjmJVX8yZFJ1PJzQL88FA1TuOiElqKDkKppGMMAuE
-   1WjhPNla7hoi1Sp3rFB/JTRmnozBir4t4jNPuYmkgJ2ssSmYhzjNn86T0
-   mjMMEcBVYSAUTQ9d9hrH1Le+kJVI4X9BZ4eHuP4V2Z+4ojOM1xjzEHy3V
-   g==;
-X-CSE-ConnectionGUID: WP4d/s5IQaesapM3pU6f9A==
-X-CSE-MsgGUID: cJqNOoXFQ92BLjV5A0CSaQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11230"; a="39528708"
-X-IronPort-AV: E=Sophos;i="6.11,218,1725346800"; 
-   d="scan'208";a="39528708"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 02:21:36 -0700
-X-CSE-ConnectionGUID: S96oavzKT2aa8bDdJHdbug==
-X-CSE-MsgGUID: ISIQzx7HTDKxdHRiAqcjcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,218,1725346800"; 
-   d="scan'208";a="79183515"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 20 Oct 2024 02:21:30 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t2S7r-000Q9C-2Q;
-	Sun, 20 Oct 2024 09:21:27 +0000
-Date: Sun, 20 Oct 2024 17:20:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: jeffxu@chromium.org, akpm@linux-foundation.org, keescook@chromium.org,
-	torvalds@linux-foundation.org, usama.anjum@collabora.com,
-	corbet@lwn.net, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jeffxu@google.com,
-	jorgelo@chromium.org, groeck@chromium.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, jannh@google.com, sroettger@google.com,
-	pedro.falcato@gmail.com, linux-hardening@vger.kernel.org,
-	willy@infradead.org, gregkh@linuxfoundation.org,
-	deraadt@openbsd.org, surenb@google.com, merimus@google.com,
-	rdunlap@infradead.org, Jeff Xu <jeffxu@chromium.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] mseal: Two fixes for madvise(MADV_DONTNEED) when
- sealed
-Message-ID: <202410201724.kKCsANsw-lkp@intel.com>
-References: <20241017005105.3047458-2-jeffxu@chromium.org>
+	s=arc-20240116; t=1729416204; c=relaxed/simple;
+	bh=IOLDDDAMLkVvvupnIBQBFYkE1xhR1NVHMOuSMXzNNDw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JVkEuIiCWvBAhbDgBUddhfZio1Lvn+k9OgDdAQhjMYT02Tlxg6TYquwT2Nq0lfIwrBLtbEgo9on07QIoCDTdc+Kewu96DXDp1WZxEJ/2f380HiH8W8WumM+zeS6LgeCpvjV+yJ6hPSD+rx3eWZ0iLqeUf4T8eCGrx+ao00QyGik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ivDpdqJa; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a0c7abaa6so401768166b.2;
+        Sun, 20 Oct 2024 02:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729416201; x=1730021001; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=W4Y2KUB+hbtJn19jSvIIFOnWpC0zAHFrReVOA/qxdR4=;
+        b=ivDpdqJa8NRyjWzZ5zmCJQ35u/UisbgGWmXGPbAOLv3gl6JEUEwd0ciSVODheANNde
+         MWLGZ39SixgnG+1e6GjOwlTzAM73wiRT1HqTYBOinYPJH+Bz48q0GD/vvopWSe29lV6x
+         Jqxto1FQ3toY4TUq9VonbLqmpAfKVew6vVKS28U08rsOLOSOGJSN6OslK5V/u9mKWSpO
+         jLFZhap9mhbvW3yicHVtBM29Z7V8SNRvy8Lwq77od1PtN5w9z/aPzQTHxXBXnUtsNM6f
+         xOgBkFY4tg66CRDRTpSUKtteEfH4MPcwrHf3VtejFeCpfmp5BvA1TX18bCqzy6l0FYYB
+         +Onw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729416201; x=1730021001;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W4Y2KUB+hbtJn19jSvIIFOnWpC0zAHFrReVOA/qxdR4=;
+        b=MDsrMq7wqdD1poWD7Dn+Sqg+1vzKrx+kaT6GHniNqfNtS63JRDuB2t9JMhRa03EFVt
+         l2ysnNwMGP+iIFuXDoRm58H1dSup038nm1ysKFm0NdiuMNjiuGBEdsgjCMTB//eAUIh1
+         SEkgYPEdLzg2ZrVgwsAQ9hPMbyNwgWR2qVuHtWm7xJIV7c6KWNol+8h584mjco4yhmUD
+         lmNeQlAIxQobagP0x2G1gA2ZAkOr5kfZsGWZl5kNBKqjtyZA6D151eQ9aQXaCOOT2RrD
+         akZeUmIOtOS7fQgjF9na/+Yxj9KUaBifHOfRiivzvjy1+TAI9QTDLUyxNrSsXdHF9blH
+         0xTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/XKQ8Dl7CBa5DxpFcbb8uv27yrlBeDoTpKXygMJCofvcWZ/X4GZ+E4NKFnyhyDcV/tb5wpkkt@vger.kernel.org, AJvYcCVQD/W5OV+9rxJwu8T8BDZV7pnvIdCAf6b/b5dYfA14Dheq7Q9+1+EAWCKfAgF9dUYA2EvDqrRSn5sLNiABUnEE@vger.kernel.org, AJvYcCWGIFOr1ijipbVPalKcVNfjFi3AjmJrcHbHtf2gxYRkyNlBFPCaGgk6v4mQzmgQ6nKvdXvqAglmGGI5Jrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2+SbSLJvfGmc5v0l67AzlfN8arRrl2M28MJz5z0X2K92UOnZA
+	6bVV9V39MCT++Fb+PLsdovkRrlwIEmPfdBsxEWn79xoJqEmnsavS
+X-Google-Smtp-Source: AGHT+IEgeEWzgpPx3nVPIrbqvcrJAh2HUIJo7F0NyWd9SDpb4MuFwKVVJY7MiRPCxJBECDErYIC58A==
+X-Received: by 2002:a17:907:7da0:b0:a99:5ad9:b672 with SMTP id a640c23a62f3a-a9a69a63330mr775176966b.10.1729416200400;
+        Sun, 20 Oct 2024 02:23:20 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:20d:1300:1b1c:4449:176a:89ea? (2001-1c00-020d-1300-1b1c-4449-176a-89ea.cable.dynamic.v6.ziggo.nl. [2001:1c00:20d:1300:1b1c:4449:176a:89ea])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91599362sm69317566b.197.2024.10.20.02.23.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Oct 2024 02:23:19 -0700 (PDT)
+Message-ID: <785f6b7a-1de1-46fe-aa6f-9b20feee5973@gmail.com>
+Date: Sun, 20 Oct 2024 11:23:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017005105.3047458-2-jeffxu@chromium.org>
-
-Hi,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.12-rc3 next-20241018]
-[cannot apply to kees/for-next/pstore kees/for-next/kspp linux/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/jeffxu-chromium-org/mseal-Two-fixes-for-madvise-MADV_DONTNEED-when-sealed/20241017-085203
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20241017005105.3047458-2-jeffxu%40chromium.org
-patch subject: [PATCH v1 1/2] mseal: Two fixes for madvise(MADV_DONTNEED) when sealed
-config: i386-defconfig (https://download.01.org/0day-ci/archive/20241020/202410201724.kKCsANsw-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241020/202410201724.kKCsANsw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410201724.kKCsANsw-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> mm/mprotect.c:825:16: error: use of undeclared identifier 'VM_WASWRITE'
-     825 |                         newflags |= VM_WASWRITE;
-         |                                     ^
-   1 error generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 net-next 11/12] bridge:
+ br_vlan_fill_forward_path_mode no _UNTAG_HW for dsa
+From: Eric Woudstra <ericwouds@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Nikolay Aleksandrov <razor@blackwall.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Roopa Prabhu <roopa@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, bridge@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>
+References: <20241013185509.4430-1-ericwouds@gmail.com>
+ <20241013185509.4430-12-ericwouds@gmail.com>
+ <281cce27-c832-41c8-87d0-fbac05b8e802@blackwall.org>
+ <6209405e-7100-43f9-b415-3be8fbcc6352@blackwall.org>
+ <20241014144613.mkc62dvfzp3vr7rj@skbuf>
+ <b919a6b1-1c07-4fc9-b3dc-a7ac2f3645bf@gmail.com>
+Content-Language: en-US
+In-Reply-To: <b919a6b1-1c07-4fc9-b3dc-a7ac2f3645bf@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-vim +/VM_WASWRITE +825 mm/mprotect.c
 
-   705	
-   706	/*
-   707	 * pkey==-1 when doing a legacy mprotect()
-   708	 */
-   709	static int do_mprotect_pkey(unsigned long start, size_t len,
-   710			unsigned long prot, int pkey)
-   711	{
-   712		unsigned long nstart, end, tmp, reqprot;
-   713		struct vm_area_struct *vma, *prev;
-   714		int error;
-   715		const int grows = prot & (PROT_GROWSDOWN|PROT_GROWSUP);
-   716		const bool rier = (current->personality & READ_IMPLIES_EXEC) &&
-   717					(prot & PROT_READ);
-   718		struct mmu_gather tlb;
-   719		struct vma_iterator vmi;
-   720	
-   721		start = untagged_addr(start);
-   722	
-   723		prot &= ~(PROT_GROWSDOWN|PROT_GROWSUP);
-   724		if (grows == (PROT_GROWSDOWN|PROT_GROWSUP)) /* can't be both */
-   725			return -EINVAL;
-   726	
-   727		if (start & ~PAGE_MASK)
-   728			return -EINVAL;
-   729		if (!len)
-   730			return 0;
-   731		len = PAGE_ALIGN(len);
-   732		end = start + len;
-   733		if (end <= start)
-   734			return -ENOMEM;
-   735		if (!arch_validate_prot(prot, start))
-   736			return -EINVAL;
-   737	
-   738		reqprot = prot;
-   739	
-   740		if (mmap_write_lock_killable(current->mm))
-   741			return -EINTR;
-   742	
-   743		/*
-   744		 * If userspace did not allocate the pkey, do not let
-   745		 * them use it here.
-   746		 */
-   747		error = -EINVAL;
-   748		if ((pkey != -1) && !mm_pkey_is_allocated(current->mm, pkey))
-   749			goto out;
-   750	
-   751		vma_iter_init(&vmi, current->mm, start);
-   752		vma = vma_find(&vmi, end);
-   753		error = -ENOMEM;
-   754		if (!vma)
-   755			goto out;
-   756	
-   757		if (unlikely(grows & PROT_GROWSDOWN)) {
-   758			if (vma->vm_start >= end)
-   759				goto out;
-   760			start = vma->vm_start;
-   761			error = -EINVAL;
-   762			if (!(vma->vm_flags & VM_GROWSDOWN))
-   763				goto out;
-   764		} else {
-   765			if (vma->vm_start > start)
-   766				goto out;
-   767			if (unlikely(grows & PROT_GROWSUP)) {
-   768				end = vma->vm_end;
-   769				error = -EINVAL;
-   770				if (!(vma->vm_flags & VM_GROWSUP))
-   771					goto out;
-   772			}
-   773		}
-   774	
-   775		prev = vma_prev(&vmi);
-   776		if (start > vma->vm_start)
-   777			prev = vma;
-   778	
-   779		tlb_gather_mmu(&tlb, current->mm);
-   780		nstart = start;
-   781		tmp = vma->vm_start;
-   782		for_each_vma_range(vmi, vma, end) {
-   783			unsigned long mask_off_old_flags;
-   784			unsigned long newflags;
-   785			int new_vma_pkey;
-   786	
-   787			if (vma->vm_start != tmp) {
-   788				error = -ENOMEM;
-   789				break;
-   790			}
-   791	
-   792			/* Does the application expect PROT_READ to imply PROT_EXEC */
-   793			if (rier && (vma->vm_flags & VM_MAYEXEC))
-   794				prot |= PROT_EXEC;
-   795	
-   796			/*
-   797			 * Each mprotect() call explicitly passes r/w/x permissions.
-   798			 * If a permission is not passed to mprotect(), it must be
-   799			 * cleared from the VMA.
-   800			 */
-   801			mask_off_old_flags = VM_ACCESS_FLAGS | VM_FLAGS_CLEAR;
-   802	
-   803			new_vma_pkey = arch_override_mprotect_pkey(vma, prot, pkey);
-   804			newflags = calc_vm_prot_bits(prot, new_vma_pkey);
-   805			newflags |= (vma->vm_flags & ~mask_off_old_flags);
-   806	
-   807			/* newflags >> 4 shift VM_MAY% in place of VM_% */
-   808			if ((newflags & ~(newflags >> 4)) & VM_ACCESS_FLAGS) {
-   809				error = -EACCES;
-   810				break;
-   811			}
-   812	
-   813			if (map_deny_write_exec(vma, newflags)) {
-   814				error = -EACCES;
-   815				break;
-   816			}
-   817	
-   818			/* Allow architectures to sanity-check the new flags */
-   819			if (!arch_validate_flags(newflags)) {
-   820				error = -EINVAL;
-   821				break;
-   822			}
-   823	
-   824			if ((vma->vm_flags & VM_WRITE) && !(newflags & VM_WRITE))
- > 825				newflags |= VM_WASWRITE;
-   826	
-   827			error = security_file_mprotect(vma, reqprot, prot);
-   828			if (error)
-   829				break;
-   830	
-   831			tmp = vma->vm_end;
-   832			if (tmp > end)
-   833				tmp = end;
-   834	
-   835			if (vma->vm_ops && vma->vm_ops->mprotect) {
-   836				error = vma->vm_ops->mprotect(vma, nstart, tmp, newflags);
-   837				if (error)
-   838					break;
-   839			}
-   840	
-   841			error = mprotect_fixup(&vmi, &tlb, vma, &prev, nstart, tmp, newflags);
-   842			if (error)
-   843				break;
-   844	
-   845			tmp = vma_iter_end(&vmi);
-   846			nstart = tmp;
-   847			prot = reqprot;
-   848		}
-   849		tlb_finish_mmu(&tlb);
-   850	
-   851		if (!error && tmp < end)
-   852			error = -ENOMEM;
-   853	
-   854	out:
-   855		mmap_write_unlock(current->mm);
-   856		return error;
-   857	}
-   858	
+On 10/15/24 12:26 PM, Eric Woudstra wrote:
+> 
+> 
+> On 10/14/24 4:46 PM, Vladimir Oltean wrote:
+>> Keeping the full email body untrimmed for extra context for the newly
+>> added people.
+>>
+>> On Mon, Oct 14, 2024 at 09:22:07AM +0300, Nikolay Aleksandrov wrote:
+>>> On 14/10/2024 09:18, Nikolay Aleksandrov wrote:
+>>>> On 13/10/2024 21:55, Eric Woudstra wrote:
+>>>>> In network setup as below:
+>>>>>
+>>>>>              fastpath bypass
+>>>>>  .----------------------------------------.
+>>>>> /                                          \
+>>>>> |                        IP - forwarding    |
+>>>>> |                       /                \  v
+>>>>> |                      /                  wan ...
+>>>>> |                     /
+>>>>> |                     |
+>>>>> |                     |
+>>>>> |                   brlan.1
+>>>>> |                     |
+>>>>> |    +-------------------------------+
+>>>>> |    |           vlan 1              |
+>>>>> |    |                               |
+>>>>> |    |     brlan (vlan-filtering)    |
+>>>>> |    |               +---------------+
+>>>>> |    |               |  DSA-SWITCH   |
+>>>>> |    |    vlan 1     |               |
+>>>>> |    |      to       |               |
+>>>>> |    |   untagged    1     vlan 1    |
+>>>>> |    +---------------+---------------+
+>>>>> .         /                   \
+>>>>>  ----->wlan1                 lan0
+>>>>>        .                       .
+>>>>>        .                       ^
+>>>>>        ^                     vlan 1 tagged packets
+>>>>>      untagged packets
+>>>>>
+>>>>> Now that DEV_PATH_MTK_WDMA is added to nft_dev_path_info() the forward
+>>>>> path is filled also when ending with the mediatek wlan1, info.indev not
+>>>>> NULL now in nft_dev_forward_path(). This results in a direct transmit
+>>>>> instead of a neighbor transmit. This is how it should be, But this fails.
+>>>>>
+>>>>> br_vlan_fill_forward_path_mode() sets DEV_PATH_BR_VLAN_UNTAG_HW when
+>>>>> filling in from brlan.1 towards wlan1. But it should be set to
+>>>>> DEV_PATH_BR_VLAN_UNTAG in this case. Using BR_VLFLAG_ADDED_BY_SWITCHDEV
+>>>>> is not correct. The dsa switchdev adds it as a foreign port.
+>>>>>
+>>>>> Use BR_VLFLAG_TAGGING_BY_SWITCHDEV to make sure DEV_PATH_BR_VLAN_UNTAG is
+>>>>> set when there is a dsa-switch inside the bridge.
+>>>>>
+>>>>> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
+>>>>> ---
+>>>>>  net/bridge/br_private.h |  1 +
+>>>>>  net/bridge/br_vlan.c    | 18 +++++++++++++++++-
+>>>>>  2 files changed, 18 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
+>>>>> index 8da7798f9368..7d427214cc7c 100644
+>>>>> --- a/net/bridge/br_private.h
+>>>>> +++ b/net/bridge/br_private.h
+>>>>> @@ -180,6 +180,7 @@ enum {
+>>>>>  	BR_VLFLAG_MCAST_ENABLED = BIT(2),
+>>>>>  	BR_VLFLAG_GLOBAL_MCAST_ENABLED = BIT(3),
+>>>>>  	BR_VLFLAG_NEIGH_SUPPRESS_ENABLED = BIT(4),
+>>>>> +	BR_VLFLAG_TAGGING_BY_SWITCHDEV = BIT(5),
+>>>>>  };
+>>>>>  
+>>>>>  /**
+>>>>> diff --git a/net/bridge/br_vlan.c b/net/bridge/br_vlan.c
+>>>>> index 1830d7d617cd..b7877724b969 100644
+>>>>> --- a/net/bridge/br_vlan.c
+>>>>> +++ b/net/bridge/br_vlan.c
+>>>>> @@ -3,6 +3,7 @@
+>>>>>  #include <linux/netdevice.h>
+>>>>>  #include <linux/rtnetlink.h>
+>>>>>  #include <linux/slab.h>
+>>>>> +#include <net/dsa.h>
+>>>>>  #include <net/switchdev.h>
+>>>>>  
+>>>>>  #include "br_private.h"
+>>>>> @@ -100,6 +101,19 @@ static void __vlan_flags_commit(struct net_bridge_vlan *v, u16 flags)
+>>>>>  	__vlan_flags_update(v, flags, true);
+>>>>>  }
+>>>>>  
+>>>>> +static inline bool br_vlan_tagging_by_switchdev(struct net_bridge *br)
+>>>>
+>>>> no inline in .c files and also constify br
+>>>>
+>>>>> +{
+>>>>> +#if IS_ENABLED(CONFIG_NET_DSA)
+>>>>> +	struct net_bridge_port *p;
+>>>>> +
+>>>>> +	list_for_each_entry(p, &br->port_list, list) {
+>>>>> +		if (dsa_user_dev_check(p->dev))
+>>>>
+>>>> I don't think this can change at runtime, so please keep a counter in
+>>>> the bridge and don't walk the port list on every vlan add.
+>>>>
+>>>
+>>> you can use an internal bridge opt (check br_private.h) with a private opt
+>>> that's set when such device is added as a port, no need for a full counter
+>>> obviously
+>>
+>> To continue on Nikolay's line of thought...
+>>
+>> Can you abstractly describe which functional behavior do you need the
+>> bridge port to perform, rather than "it needs to be a DSA user port"?
+> 
+> Hello Vladimir,
+> 
+> This has to do with the sequence of events, when dealing with vlan
+> tagging in a bridge. When looking at the ingress of untaggged packets,
+> that will be tagged by a certain port of that bridge, it depends when
+> this tagging happens, in respect to the netfilter hook. This describes
+> the existing code:
+> 
+> Because we are using dev_fill_forward_path(), we know in all cases that
+> untagged packets arive and are tagged by the bridge.
+> 
+> In the case (#1) off a switchdev, the tagging is done before the packet
+> reaches the netfilter hook. Then the software fastpath code needs to
+> handle the packet, as if it is incoming tagged, remembering that this
+> tag was tagged at ingress (tuple->in_vlan_ingress). We need to remember
+> this, because dealing with hardware offloaded fastpath we then need to
+> skip this vlan tag in the hardware offloaded fastpath in
+> nf_flow_rule_match() and nf_flow_rule_route_common().
+> 
+> In all other cases (#2), 'normal' ports (ports without switchdev and
+> dsa-user-ports) the tagging is done after packet reaches the
+> netfilter-hook. Then the software fastpath code needs to handle the
+> packet, as incoming untagged.
+> 
+> (Of course the dsa-user-port is more complicated, but it all handled by
+> the dsa architecture so that it can be used as a 'normal' port.)
+> 
+> In both cases #1 and #2 also the other direction is taken into account.
+> 
+> To decide which case to apply, the code looks at
+> BR_VLFLAG_ADDED_BY_SWITCHDEV, which was actually used for something
+> else, but it is easily available in the code at that point and seemed to
+> work, so far...
+> 
+> But as it turns out, this flag is also set for foreign ports added to
+> the dsa-switchdev. This means that case #1 is applied to the foreign dsa
+> port. This breaks the software fastpath and, with packets not reaching
+> their destination, also the hardware offloaded fastpath does not start.
+> We need to apply case #2.
+> 
+> So actually we need to know, inside br_vlan_fill_forward_path_mode(),
+> whether or not net_bridge_port *dst is a foreign port added to the dsa
+> switchdev. Or perhaps there is another way to find out we have to apply
+> case #2.
+> 
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+So after doing some more reading, at creation of the code using
+BR_VLFLAG_ADDED_BY_SWITCHDEV would have been without problems.
+
+After the switchdev was altered so that objects from foreign devices can
+be added, it is problematic in br_vlan_fill_forward_path_mode(). I have
+tested and indeed any foreign device does have this problem.
+
+So we need a way to distinguish in br_vlan_fill_forward_path_mode()
+whether or not we are dealing with a (dsa) foreign device on the switchdev.
+
+I have come up with something, but this is most likely to crude to be
+accepted, but for the sake of 'rfc' discussing it may lead to a proper
+solution. So what does work is the following patch, so that
+netif_has_dsa_foreign_vlan() can be used inside
+br_vlan_fill_forward_path_mode().
+
+Any suggestions on how this could be implemented properly would be
+greatly appreciated.
+
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 9d80f650345e75..3fb67312428a1f 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -1839,6 +1839,7 @@ enum netdev_reg_state {
+  *
+  *	@vlan_info:	VLAN info
+  *	@dsa_ptr:	dsa specific data
++ *	@dsa_foreign_vlan:	Counter, number of dsa foreign vlans added
+  *	@tipc_ptr:	TIPC specific data
+  *	@atalk_ptr:	AppleTalk link
+  *	@ip_ptr:	IPv4 specific data
+@@ -2214,6 +2215,7 @@ struct net_device {
+ #endif
+ #if IS_ENABLED(CONFIG_NET_DSA)
+ 	struct dsa_port		*dsa_ptr;
++	unsigned int		dsa_foreign_vlan;
+ #endif
+ #if IS_ENABLED(CONFIG_TIPC)
+ 	struct tipc_bearer __rcu *tipc_ptr;
+@@ -5135,6 +5137,15 @@ static inline bool netif_is_lag_port(const struct
+net_device *dev)
+ 	return netif_is_bond_slave(dev) || netif_is_team_port(dev);
+ }
+
++static inline bool netif_has_dsa_foreign_vlan(const struct net_device *dev)
++{
++#if IS_ENABLED(CONFIG_NET_DSA)
++	return !!dev->dsa_foreign_vlan;
++#else
++	return false;
++#endif
++}
++
+ static inline bool netif_is_rxfh_configured(const struct net_device *dev)
+ {
+ 	return dev->priv_flags & IFF_RXFH_CONFIGURED;
+diff --git a/net/dsa/user.c b/net/dsa/user.c
+index 74eda9b30608e6..775f6346120ed6 100644
+--- a/net/dsa/user.c
++++ b/net/dsa/user.c
+@@ -737,6 +737,8 @@ static int dsa_user_host_vlan_add(struct net_device
+*dev,
+ 		return 0;
+ 	}
+
++	obj->orig_dev->dsa_foreign_vlan++;
++
+ 	vlan = *SWITCHDEV_OBJ_PORT_VLAN(obj);
+
+ 	/* Even though drivers often handle CPU membership in special ways,
+@@ -824,6 +826,8 @@ static int dsa_user_host_vlan_del(struct net_device
+*dev,
+ 	if (dsa_port_skip_vlan_configuration(dp))
+ 		return 0;
+
++	obj->orig_dev->dsa_foreign_vlan--;
++
+ 	vlan = SWITCHDEV_OBJ_PORT_VLAN(obj);
+
+ 	return dsa_port_host_vlan_del(dp, vlan);
+
+
+
+>> switchdev_bridge_port_offload() has a mechanism to inform the bridge
+>> core of extra abilities (like tx_fwd_offload). Perhaps you could modify
+>> the DSA drivers you need to set a similar bit to inform the bridge of
+>> their presence and ability. That would also work when the bridge port is
+>> a LAG over a DSA user port.
+>>
+>> Also, please also CC DSA maintainers when you use DSA API outside
+>> net/dsa/ and drivers/net/dsa/. I am in the process of revamping the
+>> public DSA API and would like to be in touch with changes as they are
+>> made.
+>>
+>>>>> +			return false;
+>>>>> +	}
+>>>>> +#endif
+>>>>> +	return true;
+>>>>> +}
+>>>>> +
+>>>>>  static int __vlan_vid_add(struct net_device *dev, struct net_bridge *br,
+>>>>>  			  struct net_bridge_vlan *v, u16 flags,
+>>>>>  			  struct netlink_ext_ack *extack)
+>>>>> @@ -113,6 +127,8 @@ static int __vlan_vid_add(struct net_device *dev, struct net_bridge *br,
+>>>>>  	if (err == -EOPNOTSUPP)
+>>>>>  		return vlan_vid_add(dev, br->vlan_proto, v->vid);
+>>>>>  	v->priv_flags |= BR_VLFLAG_ADDED_BY_SWITCHDEV;
+>>>>> +	if (br_vlan_tagging_by_switchdev(br))
+>>>>> +		v->priv_flags |= BR_VLFLAG_TAGGING_BY_SWITCHDEV;
+>>>>>  	return err;
+>>>>>  }
+>>>>>  
+>>>>> @@ -1491,7 +1507,7 @@ int br_vlan_fill_forward_path_mode(struct net_bridge *br,
+>>>>>  
+>>>>>  	if (path->bridge.vlan_mode == DEV_PATH_BR_VLAN_TAG)
+>>>>>  		path->bridge.vlan_mode = DEV_PATH_BR_VLAN_KEEP;
+>>>>> -	else if (v->priv_flags & BR_VLFLAG_ADDED_BY_SWITCHDEV)
+>>>>> +	else if (v->priv_flags & BR_VLFLAG_TAGGING_BY_SWITCHDEV)
+>>>>>  		path->bridge.vlan_mode = DEV_PATH_BR_VLAN_UNTAG_HW;
+>>>>>  	else
+>>>>>  		path->bridge.vlan_mode = DEV_PATH_BR_VLAN_UNTAG;
+>>>>
 
