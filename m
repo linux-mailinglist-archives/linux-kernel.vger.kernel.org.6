@@ -1,87 +1,110 @@
-Return-Path: <linux-kernel+bounces-373269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B609A5477
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:00:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E109A9A5482
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D272B1F22020
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:00:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CD81F21CF5
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F068A19259B;
-	Sun, 20 Oct 2024 14:00:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCC0192D77;
+	Sun, 20 Oct 2024 14:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="dAyw6bpQ"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24F7193078
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 14:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F57219259F;
+	Sun, 20 Oct 2024 14:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729432806; cv=none; b=gxz0zb5E7twK4/TpgJysYTtW35BC6KRGbLc9CG69+UAZ90cfoTH4p3KBidCxBj5/eb0USUC3KwNYQXmahTvQhw17+IMuCr/ksddvbxieXpUUpPv4nVj8rihZM0LTNBD/h1q5+krJbgj3APkB6tFOvwpTMPD8cfLBTaAWpOpbKTQ=
+	t=1729434630; cv=none; b=mmNPkR0ch+hp7C7myWFGpZiZTt0x8yy+yonPkzDqfLEYSWK4qrarIzA7VOjnvpryTfdYPHtM5WXs2TwPcIumoAfCOIl5oBq4v3AHTcuKFncGlwWPVgq2/ivZ+KBLYCa5G5x8rQ8ouyX25V/NJvQbQX+PZnvpw7hwmXaIWSZKVP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729432806; c=relaxed/simple;
-	bh=rUQrLhwWxKOY5jgPlr0oL4Y1sM2HEH6Mt7die/aH6ms=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eejdBr905LkmXVHZpCa5oEn5RSEhx7cxZZ54Rr1fuCDDBS4PCz/ebZmoKPxTaS6tNC+8pG+CZF+3iVXAJXV4LekbXgvH4b7VXwjNa3Rc5M405273C4s4GfweGLw9d1HJUh1AJookqolydfS+UokDhUS26SKbvxPBTj0qly3BxKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b7129255so35151165ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 07:00:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729432804; x=1730037604;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fltwTQu3GyCKZz8VrMg8t1f9X/GDWSqqya0RcvyFpLc=;
-        b=cG7x8qJM+WA8/eI0a8R4rVVIVMbLpiidbgqCczYQ+8NXvcBEe7+ENKdQGRps4SYDtG
-         u9iD/ag3dJIQHMkDyV4GC99PHzHY5XT1x4vgDFeDtYbDYGaeTaCvSrlGIxEHnftIE6d/
-         2u/XIcy6afrhVetZNEvaObiC+wtDdJBnWTezmFOlZFPgiB7V2Pe1AttAU2Apf7ysMhWJ
-         JcViz6HfITxlv0mAUnsTOPqJeQWcjIW9VEuNDNKSVJ5UVbmgxv+hbKu8J1VajG5WP0n7
-         YuOFNUw3xpm9uSWK8E/kfXi1g8ODP0ng5zQnGnO4c5eOXDyZyTH+cqrMWZz9WDxraUSa
-         sbaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWr/Ff8mXGkudHidLz82fy581n58qz0rCICT7eMQ/nFos/l1Dyj9fUM1qVRabbTnRL4ufXH09VjWekeVUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTQxpRBDPMJ4+pPp7e5P9FjTnRG/XwWqSR6aiwH7UtTCqFXwFF
-	BSKbg7ZPUzPsLSKnffFLVl7mo6Qzj+YJgJ/BFioMiqvLdGdzUIrhKeNWSM/y+kR5Zw3kzPfrJfJ
-	6J+pYWOxn+vw1flTBdXRXTW/mR/WqUvnjY/ddsjSybtPCzSsXuhLiTvA=
-X-Google-Smtp-Source: AGHT+IGsX9zyGeg3RfeBZEGPLpLwnpY83dn7l2cwczJbJApP341Na+vAeZGUEtQQANCNyiuQXPMqQ7MbJN3OeRJS1xc0K7lIxE1z
+	s=arc-20240116; t=1729434630; c=relaxed/simple;
+	bh=sjC3FAXtWg6O06Pv1zwqwzO4mh/+6hnyFfe6tqV1uzA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k2a9XL//WkAqUmQRwIOxfvmGV5R8gl2f5PL0fno0/Z9p/mFG6cQOJNw3qrxOCqg6I9NyrnJQPXKu2+uA26KTNGVYpJmjZsLxewtQb8O+W+wWT2ermrJtdTHl6WZWFUTcWT7jRZTabVjS+Wf/WxOGOawCJtz1uCffDuBJRNGx5po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=dAyw6bpQ; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Content-Type:From:Reply-To:Subject:Content-ID:
+	Content-Description:In-Reply-To:References:X-Debbugs-Cc;
+	bh=c8OwalKN/einu7unYL2zrwmG3433Cw/yB0G2xU4t9rQ=; b=dAyw6bpQ+Wz1leHkH9cvdO39Nm
+	fngPmqnv1U4CWTTIkFui4x2R+PFoROQhuVLhj659h1deKyEfSjcIv/2Wc5Y3GJeXKXWKE/X2WuSRY
+	vmkvBvC6Ef9hWP3IEdXH5iMpogNeruNwuvX5DmqQEnLg1G50gKANYOaEpBXnE+SUQEeVgGIbSVdu2
+	Q9bD3ubEO+YER73zUeya0qIq9jBCSRQXYu5PxcXIWkiEuP5aIBW99Vr1ywMWI5hTxtufH+gaj1taP
+	0NIa9BE+GvYhy/y12MMtbXQ9eskley/iKQUldCt36i6cqR+DpF40tgarIFCQ49hFe5dz9IOCNz40D
+	xYGicPbA==;
+Received: from ohm.aurel32.net ([2001:bc8:30d7:111::2] helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1t2WwJ-00BfVt-0V;
+	Sun, 20 Oct 2024 16:29:51 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: William Qiu <william.qiu@starfivetech.com>,
+	linux-riscv@lists.infradead.org (open list:RISC-V MISC SOC SUPPORT),
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	linux-mmc@vger.kernel.org (open list:SYNOPSYS DESIGNWARE MMC/SD/SDIO DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Aurelien Jarno <aurelien@aurel32.net>,
+	Ron Economos <re@w6rz.net>,
+	Jing Luo <jing@jing.rocks>,
+	stable@vger.kernel.org
+Subject: [PATCH] mmc: dw_mmc: take SWIOTLB memory size limitation into account
+Date: Sun, 20 Oct 2024 16:29:31 +0200
+Message-ID: <20241020142931.138277-1-aurelien@aurel32.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a08:b0:3a2:7651:9846 with SMTP id
- e9e14a558f8ab-3a3f4060bd4mr77134315ab.13.1729432803784; Sun, 20 Oct 2024
- 07:00:03 -0700 (PDT)
-Date: Sun, 20 Oct 2024 07:00:03 -0700
-In-Reply-To: <CAKwoAfrCsg9pB7SuCaNW=-MZqNGbULkLRq-jEzGMzW3HvfjM3w@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67150ce3.050a0220.10f4f4.0032.GAE@google.com>
-Subject: Re: [syzbot] [usb?] WARNING in thrustmaster_probe/usb_submit_urb
-From: syzbot <syzbot+040e8b3db6a96908d470@syzkaller.appspotmail.com>
-To: karprzy7@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The Synopsys DesignWare mmc controller on the JH7110 SoC
+(dw_mmc-starfive.c driver) is using a 32-bit IDMAC address bus width,
+and thus requires the use of SWIOTLB.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+The commit 8396c793ffdf ("mmc: dw_mmc: Fix IDMAC operation with pages
+bigger than 4K") increased the max_seq_size, even for 4K pages, causing
+"swiotlb buffer is full" to happen because swiotlb can only handle a
+memory size up to 256kB only.
 
-Reported-by: syzbot+040e8b3db6a96908d470@syzkaller.appspotmail.com
-Tested-by: syzbot+040e8b3db6a96908d470@syzkaller.appspotmail.com
+Fix the issue, by making sure the dw_mmc driver doesn't use segments
+bigger than what SWIOTLB can handle.
 
-Tested on:
+Reported-by: Ron Economos <re@w6rz.net>
+Reported-by: Jing Luo <jing@jing.rocks>
+Fixes: 8396c793ffdf ("mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K")
+Cc: stable@vger.kernel.org
+Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+---
+ drivers/mmc/host/dw_mmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-commit:         07b887f8 xhci: add helper to stop endpoint and wait fo..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=15998c87980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9878fe11046ea2c6
-dashboard link: https://syzkaller.appspot.com/bug?extid=040e8b3db6a96908d470
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1000a430580000
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 41e451235f637..dc0d6201f7b73 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -2958,7 +2958,8 @@ static int dw_mci_init_slot(struct dw_mci *host)
+ 		mmc->max_segs = host->ring_size;
+ 		mmc->max_blk_size = 65535;
+ 		mmc->max_req_size = DW_MCI_DESC_DATA_LENGTH * host->ring_size;
+-		mmc->max_seg_size = mmc->max_req_size;
++		mmc->max_seg_size =
++		    min_t(size_t, mmc->max_req_size, dma_max_mapping_size(host->dev));
+ 		mmc->max_blk_count = mmc->max_req_size / 512;
+ 	} else if (host->use_dma == TRANS_MODE_EDMAC) {
+ 		mmc->max_segs = 64;
+-- 
+2.45.2
 
-Note: testing is done by a robot and is best-effort only.
 
