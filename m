@@ -1,221 +1,143 @@
-Return-Path: <linux-kernel+bounces-373272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 633879A5489
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:41:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9B49A548B
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26EFC2824BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:41:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9BD28245F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D864E192D7C;
-	Sun, 20 Oct 2024 14:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD237192D79;
+	Sun, 20 Oct 2024 14:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WUC064BA"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhSAIBH+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6141A1DFDE;
-	Sun, 20 Oct 2024 14:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231FB1DFDE;
+	Sun, 20 Oct 2024 14:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729435253; cv=none; b=P70fNxsKQkQkeHljVi1G3nkhXELfrWByZbVsJGYdyOngauVsOfo7IbteUr3sTHzcL0omQXQ6UxSj6wkmmVk4PZjnn5p+gwU5Non4/VDi+QwIFCe0trzoN48WTyvTTnXkpM9lb0WGCvH7hdrL72VNNDeqiI5pFKkPMt+jFmSxm+A=
+	t=1729435293; cv=none; b=CkGUI6y4zRUgni1oQm4X4MqpFZOH8t88SXlD4GV+prz1ADR/UHaWQlmGibdZJFqEWDfkM9d2GzgUXi6SwB4ZHf0hTeiRVPB+M1JEMU/5AtRA3eE1qsxYQggIIa14BZiPCfTNcOXPqqPVyp+I2L7+On9OxqLPCwUfNOjCGVU2Dww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729435253; c=relaxed/simple;
-	bh=ZOyF1uST6LI2Kd4g149Kr79ccs0og3AwNC4M61JitYc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tvH7Lm3iR9ZTO9fNzxev2mKDGEDQcbXs7D5Fi329BMrXmHMcph8jzRXYbpphEmxMzNRkff6iBNhmJydK0DcDK93hHRCFhJypLGI0D3bahmC6m72Q28vth0JyaSg4Ot6JYRMvSD7e/EtNuPzTHAWlHF5j1+oFfYx4nv2YhLMeerg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WUC064BA; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2d83f15f3so566776a91.0;
-        Sun, 20 Oct 2024 07:40:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729435250; x=1730040050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uRn4Amd24EVDYVUH1i1mZ9/GKGJm5YlRavS+SEAAK/Y=;
-        b=WUC064BA7R66jFy3ZxJTpqH/mm/tldd8Bax4fKnBCpeyFJ7zBeEYTt+Znv1XARCkvK
-         iKT9h/nQlLkCvJkIUupRZ43uQ2fBkGuubmWMWrcDVVqnWF/7Qp0TUDQMjl2BMxGt4/DG
-         vKP3XqO5y65plR4EP4uIQC/rRlaVqb4xdEfylMeQ8WV0A0ffplVqeGcqzTvw/iTvPFfm
-         isgqtnQZsDAKZTAAOnNMJyZjWR9egsc9Qg/ynubwD6hr9+ajuPf40YoGy7eI8Mqw35jW
-         sGMuAtcxsb3Bpvn+91yqFSVNFwAIBmTRdHGGPZ0VPybRF8eMwuurPG4GNmFQuxtbyMG5
-         UJUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729435250; x=1730040050;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uRn4Amd24EVDYVUH1i1mZ9/GKGJm5YlRavS+SEAAK/Y=;
-        b=rUo1Y9oDhBVTzpQO0lq57CNSucCYEcqbvlQlWL6hT48o2grRoNd3cde0F/pXG9N6Hg
-         k7As9XQSf6uynhjrBZrukNzksvp+R/M7vMt4fxwhy74viC3BABH85Snz3KjkNXacaK4u
-         umZU9SHEnGms2OmOLdkBt78NV0Ghtf9HfEb/vSw0w58o/Yv7Q34pXQLYPbf92qXSnsAu
-         GOMUWnlfxsDHPiJqCEb2S3b2jxaVTclIR+haX8TWckZAfKJh0YESrD2rpkBEmDhVAmZm
-         K4XIf2zaSrESj+ExvuwYObt50VK7+Eopl8c05MtwqdjUPuSSTUF/Yc2nTd5FKRwv7mCu
-         rkmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbK9BESE+Ez32W4mKLyPj8zgDAOYvZDdrfa0Z3IE+8x+/ASsMRVBnd7gHQQbQKK+R1LEgOR0hZW4HGIw==@vger.kernel.org, AJvYcCX/+5lImsJGcTXLplxqIffzjAg/nVvAKCUNN7kdSIcC2X9rxoNOYNfTUDxan58h+ojJbAwvHc6szA0IZdZs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyORlqZvwPiMVxYKA/Q7fYJwP+jjt+wTLo1ekuhQlcF8CQxroZt
-	V9BUinvqMEy9CZQ8U+HItNiLIpWbN9ACFOvV1BJhI8NzmYpJpUTi
-X-Google-Smtp-Source: AGHT+IH0hiFp3O8QAFN+JSAxhXXkRWwP1nxuqIDaTUk68eT9XVPNqtCv6Pt30CcdJFdko3SP8VS4Qw==
-X-Received: by 2002:a05:6a00:2d0e:b0:71e:5b2b:9927 with SMTP id d2e1a72fcca58-71ea31d019dmr5108215b3a.1.1729435250347;
-        Sun, 20 Oct 2024 07:40:50 -0700 (PDT)
-Received: from localhost.localdomain ([139.177.225.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d7668sm1223326b3a.129.2024.10.20.07.40.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 07:40:49 -0700 (PDT)
-From: zhuxiaohui <zhuxiaohui400@gmail.com>
-X-Google-Original-From: zhuxiaohui <zhuxiaohui.400@bytedance.com>
-To: axboe@kernel.dk,
-	kbusch@kernel.org,
-	ming.lei@redhat.com,
-	hch@lst.de,
-	sagi@grimberg.me,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org
-Cc: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-Subject: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support mq ctx fallback
-Date: Sun, 20 Oct 2024 22:40:41 +0800
-Message-ID: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1729435293; c=relaxed/simple;
+	bh=LwfanjgEQjqyWcvwDJM9Gy7OKlQwPcMP7YlWcbF+oPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osr50ebIt+Slszr90Y1G4kxn6mfwurYvYjxTvsi1NKzgpNgY1dKo+9AZIfuZHuPJVevPX1oRoVgUBTNSeLcKMTKe2wQUUQ4rRbPLLdkAuQ62qD1jANwt+ih/hiS4MpYFgUQd0UJO05mw8tCGa+r9axKKwnNPEY16H0s5cZDNIFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhSAIBH+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39ACC4CEC6;
+	Sun, 20 Oct 2024 14:41:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729435292;
+	bh=LwfanjgEQjqyWcvwDJM9Gy7OKlQwPcMP7YlWcbF+oPE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VhSAIBH+KyvhoemjtmfVf14Yu7DhyPJFJ04d/eY6gx3QP1MfPbAFexhBaA5i+scti
+	 JJx0CV0bT9fs+jULlxw7lwCDCCvQUgRopoqs+ScVS3EkQWn1WWQ3Q2NS9NU7Kp7gEN
+	 4QtvMnJYrN7gesnb/X/Hb2hoNaM6uKQIWl/tg0v4ZMIqZFOWmjP2vV6VLrnFwLgGpl
+	 a+1mX/MAmrIW5P6d35gueW8xCxVlyYAURIULTgUadCaHoJwJwWCs74PqfSmjGgnnb7
+	 zi68ghQQP3U982unoBk9Qj2Mk+NFxKquzykV1Ve9oEtagQIuE/BwQ5E9UtYiOSLYqv
+	 1fk8g+WRBisGg==
+Date: Sun, 20 Oct 2024 16:41:25 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
+	tglx@linutronix.de, jdmason@kudzu.us
+Subject: Re: [PATCH v3 4/6] PCI: endpoint: pci-epf-test: Add doorbell test
+ support
+Message-ID: <ZxUWlSFEPDCCXaq0@x1-carbon.lan>
+References: <20241015-ep-msi-v3-0-cedc89a16c1a@nxp.com>
+ <20241015-ep-msi-v3-4-cedc89a16c1a@nxp.com>
+ <ZxJqITunljv0PGxn@ryzen.lan>
+ <ZxJ7HoSuYNr8mwSi@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxJ7HoSuYNr8mwSi@lizhi-Precision-Tower-5810>
 
-From: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
+On Fri, Oct 18, 2024 at 11:13:34AM -0400, Frank Li wrote:
+> On Fri, Oct 18, 2024 at 04:01:05PM +0200, Niklas Cassel wrote:
+> > > +	/* Only revid >=1 support RC-to-EP Door bell */
+> > > +	ret = epf->header->revid > 0 ?  pci_epf_alloc_doorbell(epf, 1) : -EINVAL;
+> >
+> > I really, really don't like this idea.
+> >
+> > This means that you would need to write a revid > 1 in configfs to test this.
+> > I also don't think that it is right that pci-epf-test takes ownership of "rev".
+> >
+> > How about something like this instead:
+> >
+> > My thinking is that you add a doorbell_capable struct member to epc_features,
+> > and then populate CAPS_DOORBELL_SUPPORT based on epc_features in
+> > pci_epf_test_init_caps() (similar to how my proposal sets CAPS_MSI_SUPPORT).
+> 
+> The primary issue is that the doorbell is not a capability of the EPC
+> itself; rather, it's a capability of the entire system that requires an
+> external MSI/ITS controller. The CAPS_DOORBELL_SUPPORT should handle this
+> feature. Even we needn't CAPS_DOORBELL_SUPPORT, just call
+> pci_epf_alloc_doorbell(), if error return, means not support DOORBELL.
 
-It is observed that nvme connect to a nvme over fabric target will
-always fail when 'nohz_full' is set.
+Well, the idea is that CAPS_DOORBELL_SUPPORT bit is to tell the host side
+driver (pci-endpoint-test.c) that the EPF supports doorbell.
 
-In commit a46c27026da1 ("blk-mq: don't schedule block kworker on
-isolated CPUs"), it clears hctx->cpumask for all isolate CPUs,
-and when nvme connect to a remote target, it may fails on this stack:
+In other words, if pcitest -B is executed, but the EP (pci-epf-test) does
+not set the CAPS_DOORBELL_SUPPORT bit to one in the CAPS register,
+the host side driver (pci-endpoint-test.c) can error out immediately,
+no need to even trying to send any command to the EP.
 
-        blk_mq_alloc_request_hctx+1
-        __nvme_submit_sync_cmd+106
-        nvmf_connect_io_queue+181
-        nvme_tcp_start_queue+293
-        nvme_tcp_setup_ctrl+948
-        nvme_tcp_create_ctrl+735
-        nvmf_dev_write+532
-        vfs_write+237
-        ksys_write+107
-        do_syscall_64+128
-        entry_SYSCALL_64_after_hwframe+118
+(We can do the same with MSI and MSI-X, no need to send a command to the EP
+if the EP has CAPS (CAPS_MAGIC is set), but does not indicate support for
+MSI/MSI-X.)
 
-due to that the given blk_mq_hw_ctx->cpumask is cleared with no available
-blk_mq_ctx on the hw queue.
 
-This patch introduce a new blk_mq_req_flags_t flag 'BLK_MQ_REQ_ARB_MQ'
-as well as a nvme_submit_flags_t 'NVME_SUBMIT_ARB_MQ' which are used to
-indicate that block layer can fallback to a  blk_mq_ctx whose cpu
-is not isolated.
+> To use the doorbell functionality, the revid can clearly inform users that
+> this feature breaks previous compatibility. Users will need to update the
+> host-side driver, PID/VID values, and the pcitest tools accordingly.
 
-Signed-off-by: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
----
- block/blk-mq.c              | 12 ++++++++++--
- drivers/nvme/host/core.c    |  5 ++++-
- drivers/nvme/host/fabrics.c |  3 ++-
- drivers/nvme/host/nvme.h    |  2 ++
- include/linux/blk-mq.h      |  4 +++-
- 5 files changed, 21 insertions(+), 5 deletions(-)
+I still really don't like the revid idea.
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index cf626e061dd7..e4e791fd6d80 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -654,8 +654,16 @@ struct request *blk_mq_alloc_request_hctx(struct request_queue *q,
- 	if (!blk_mq_hw_queue_mapped(data.hctx))
- 		goto out_queue_exit;
- 	cpu = cpumask_first_and(data.hctx->cpumask, cpu_online_mask);
--	if (cpu >= nr_cpu_ids)
--		goto out_queue_exit;
-+	if (cpu >= nr_cpu_ids) {
-+		if (!(flags & BLK_MQ_REQ_ARB_MQ))
-+			goto out_queue_exit;
-+		/* fallback to the first cpu not isolated */
-+		for_each_online_cpu(cpu) {
-+			if (!cpu_is_isolated(cpu))
-+				break;
-+		}
-+	}
-+
- 	data.ctx = __blk_mq_get_ctx(q, cpu);
- 
- 	if (q->elevator)
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 84cb859a911d..dbb9cb59e54c 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1130,9 +1130,12 @@ int __nvme_submit_sync_cmd(struct request_queue *q, struct nvme_command *cmd,
- 		blk_flags |= BLK_MQ_REQ_RESERVED;
- 	if (qid == NVME_QID_ANY)
- 		req = blk_mq_alloc_request(q, nvme_req_op(cmd), blk_flags);
--	else
-+	else {
-+		if (flags & NVME_SUBMIT_ARB_MQ)
-+			blk_flags |= BLK_MQ_REQ_ARB_MQ;
- 		req = blk_mq_alloc_request_hctx(q, nvme_req_op(cmd), blk_flags,
- 						qid - 1);
-+	}
- 
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
-diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
-index 432efcbf9e2f..ef34958e33c0 100644
---- a/drivers/nvme/host/fabrics.c
-+++ b/drivers/nvme/host/fabrics.c
-@@ -539,7 +539,8 @@ int nvmf_connect_io_queue(struct nvme_ctrl *ctrl, u16 qid)
- 			data, sizeof(*data), qid,
- 			NVME_SUBMIT_AT_HEAD |
- 			NVME_SUBMIT_RESERVED |
--			NVME_SUBMIT_NOWAIT);
-+			NVME_SUBMIT_NOWAIT |
-+			NVME_SUBMIT_ARB_MQ);
- 	if (ret) {
- 		nvmf_log_connect_error(ctrl, ret, le32_to_cpu(res.u32),
- 				       &cmd, data);
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 093cb423f536..a61b35b1cd90 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -880,6 +880,8 @@ enum {
- 	NVME_SUBMIT_RESERVED = (__force nvme_submit_flags_t)(1 << 2),
- 	/* Retry command when NVME_STATUS_DNR is not set in the result */
- 	NVME_SUBMIT_RETRY = (__force nvme_submit_flags_t)(1 << 3),
-+	/* Submit command with arbitrary mq ctx */
-+	NVME_SUBMIT_ARB_MQ = (__force nvme_submit_flags_t)(1 << 4),
- };
- 
- int nvme_submit_sync_cmd(struct request_queue *q, struct nvme_command *cmd,
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 4fecf46ef681..d14be341ea4b 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -746,6 +746,8 @@ enum {
- 	BLK_MQ_REQ_RESERVED	= (__force blk_mq_req_flags_t)(1 << 1),
- 	/* set RQF_PM */
- 	BLK_MQ_REQ_PM		= (__force blk_mq_req_flags_t)(1 << 2),
-+	/* use arbitrary mq ctx */
-+	BLK_MQ_REQ_ARB_MQ	= (__force blk_mq_req_flags_t)(1 << 3),
- };
- 
- struct request *blk_mq_alloc_request(struct request_queue *q, blk_opf_t opf,
-@@ -824,7 +826,7 @@ static inline int blk_mq_request_completed(struct request *rq)
- }
- 
- /*
-- * 
-+ *
-  * Set the state to complete when completing a request from inside ->queue_rq.
-  * This is used by drivers that want to ensure special complete actions that
-  * need access to the request are called on failure, e.g. by nvme for
--- 
-2.39.5
 
+> One potential problem is that if the EPC supports CAPS_DOORBELL_SUPPORT,
+> but the user continues to use older PID/VID values to enable EPF testing,
+> the pcitest tool may treat the doorbell BAR as a normal BAR. This could
+> lead to confusion for users as to why their system breaks after a kernel
+> update.
+
+How about we add a new pcitest --set-doorbell-mode option
+(that is similar to pcitest -i which sets the interrupt mode to use).
+
+That way, we can do:
+./pcitest --set-doorbell-mode 1
+(This will enable doorbell for e.g. BAR0, pci-epf-test will call
+pci_epf_alloc_doorbell() when receiving this command from the RC side.
+The command will return failure if pci_epf_alloc_doorbell() returned failure.)
+
+./pcitest -B
+(This will perform the doorbell test)
+
+./pcitest --set-doorbell-mode 0
+(This will disable the doorbell for BAR0,
+so it will again not trigger IRQs when BAR0 is written,
+and pcitest's tests to read/write the BARs will again behave as expected.)
+
+(We probably also need another option pcitest --get-doorbell-mode.)
+
+I think this should solve all your concerns. Thoughts?
+
+
+Kind regards,
+Niklas
 
