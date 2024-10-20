@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-373083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58ECD9A5205
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 04:58:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A75AE9A520A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EED55283E05
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 02:58:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9B89B24BCE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 03:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BBB3D6D;
-	Sun, 20 Oct 2024 02:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FB57462;
+	Sun, 20 Oct 2024 03:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="eoesKANB"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="t0bUb2Gm"
+Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39272119
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 02:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DD6522F
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 03:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729393102; cv=none; b=aOfp0OIOCcz/cKQF/UqNIg0OjhPv31xxtAocBxYW4T/tiSabgzA+2vxaeooC4xV9r/Fm/uRi5kaNsC3rePEyJ2qSPpFWGa17NiaT/HKpKCUcE2QoghTMZsMB7unr1chkznPdRc6nr2E0DQMPsKGwHMa4E1WQ9UFpk0FV5pSEFzE=
+	t=1729394094; cv=none; b=DNSh3aGzdiOoDfT+/h67bysUgPZOCXLk+fsKG42AK5hj1SHxaXC6eT8cP85BXGLi7Eybk5wxGo3OhJlWOKxdB4xi5mrmNZ4d2ldAaL4QRkjvnMMatFkzYHcYIY8dBnuLR83vJm9G/0+yiXOdyHYdHUfdhH+dU9cK3sZ/kVw+HDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729393102; c=relaxed/simple;
-	bh=SBPGmGwiCkEl/txV6fIuDN8U8qj25xJTs9gh/76pX7w=;
+	s=arc-20240116; t=1729394094; c=relaxed/simple;
+	bh=t7rAV19HF+s4oSEoJdeu5haeiT0Iv8hcm6RqZcuQYak=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=DkFFcatf7cVUawHG3owfGL3faiT97Mdh01Z1mHKADMqptyfvz62B2kq+n2Vur8zqDFBTfIYtWxnoDOJFXIdk8QooWTeMUyglK39QNtp2j5LAMgw07KZxxID9OF7iN2TKqRUK1JMJREXx2chmyWDmD/QJyBNOazRDuMA+/GZRij4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=eoesKANB; arc=none smtp.client-ip=162.62.58.211
+	 MIME-Version; b=tpLYDP502VmiQawxVciCtEBgRf4JMNMpgfl9yPpfJgG2tXdv1DOyXSW3CCvEkHVTrK09YoNLd/6pyIO0prnCD/joJuHC1Pl52DCguUQJpwH4stUCDb1VeKvpUYp4bWcR6xAg0BVzO+v1RYNkhrrSB/XexXJD9OjGVKhKwP7JrCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=t0bUb2Gm; arc=none smtp.client-ip=203.205.221.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1729392786; bh=lQrh/YCq+3AoRVc4CCz9YEwxYEPob7aHL41dcY2uQE0=;
+	t=1729393781; bh=pTkYmTkOzMMx3C160krS8c6v1gMy6GS1btbDEZKllg4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=eoesKANB7YCs4HQIedSO0X0JQH3ZK6G8r40Z1Tbv2HBFl98wwzGOZeGGzXeWtt54E
-	 bsQ2ZB9YXT40hMU/dHHxmWmRxiqJU1eCBcALgw8pVwX5iWFEArn67rub+isMT+/kxY
-	 rqSzLNQ/zENV5+OQPhCR3gveJHk/XjDP0DUdE7A0=
+	b=t0bUb2Gmg0RY3rA4KY9DqNpKHx+OIdxKGQhkBWM3a7jV58+3INxOXjfUS4IlL3qob
+	 nDEW0/aII064lwaD8JIB2M70nagej7MNW0v913suKA1CNCkVotrJMF2YmmB5i2O6eu
+	 bC3eeuFDQKDAYd3mmoJzuPYkBkbv/DmTmychrXMg=
 Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id D4492EC5; Sun, 20 Oct 2024 10:53:04 +0800
-X-QQ-mid: xmsmtpt1729392784ted94vpqi
-Message-ID: <tencent_1756D762F77466DD937EA36E2960A3AD4405@qq.com>
-X-QQ-XMAILINFO: M0PjjqbLT90wa3B8JXO/EbfvJIGsb0c03UQAmMYigz6QdJ9el+6syy4LTNNf+i
-	 iKjrqYaXMJ5WZO2umCSiJaAOuXjRGibUGeNBx/4ObD73rSJpukimRzdIm1fUA99IX8ENDzWg0Zrc
-	 JzLhcRbh0dlq7OPvA+8PvCp3eL3t7mGJoz6fMbS6mwMw6ixenfIATFXfIKsD6RF4Zc9XmsQjnuGL
-	 5gh96q7KZXXDyLRjZ/1ETe4sPQ/kpiRFtNInS3iN/qN6AjoU4sEAW9Jyxg3M6+CTcKZuzfvrgjYs
-	 Jwn73a/DW4h/yt51cZF8JtEEYN0blJZcjGx9sYSwdDlbEDW2jZg6T5Q5PQ9QOAbpj9YnRqNKeSw0
-	 OihEN/P45wx2YYAqNGXb3qzy4Xbif01RyH4hLsW7afXa6zm8VLIjtBM+6iISsC94ElhfuWqCXkLc
-	 CpVNy0C01m6lGURsIOqJatc2RrKgHpWa0NNuqEyl6mC/349F9hJD9/33lsT/jaAosxde6eRr/UMt
-	 BYoYwdAPNV+ToHHx2W90iooZdaO+i6pi8bGexmzhwiqoIMgQQBjI6GFgVvf7tTTtHtx88wMDCrO5
-	 PfhoHHgiKCQ7YRhlxhBZzS2LMmQPC2pkUzf3SRI4cBmZEOM/zZzscLiKdyJLeXfYq0y7m0B+Yy1o
-	 CcnkZw6dQnoJH0H2DftKFGD/Xlf7AGTaX2vqZ1/dyNX6ujiXSdZHw5rXrwFYO2bsK28GTYhPpJjF
-	 4LS6xPscbWlgeZIDBtSekmwwQy5DYO6tJrykJ4nI7CK18wpNUiP30wspHGX0X3cjgI+0JajYTxph
-	 49aBzlaK+9sG2ZNncPMYmNmQuN9+oN8NCdWLbncQzT0HRNfQuC3Sygi88a4fowIgepVK7h/nx3tD
-	 WyQ6WVKcomkjQqGSkHMFOf4W9a8TbkxYlPvOqmMV9HD8KiReviGItRJkyusSkhYg==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 26702EBA; Sun, 20 Oct 2024 11:09:39 +0800
+X-QQ-mid: xmsmtpt1729393779th0c6wf69
+Message-ID: <tencent_CE9C9E131B1F4B491B1E25F3BA14BB123308@qq.com>
+X-QQ-XMAILINFO: M0PjjqbLT90wa3B8JXO/EbcnLDIo1RiwR7oVE2BX7mF3sqd3tJHr7yapZEgPro
+	 2/Sbbx6YXFvfP+OPY6TFIb0tGFV3lSaUInpLXbFNoW+WzqJLJ6q/5ACg17IB2snetAYYZxwfy/yU
+	 dpzGkcKnQP9c48+i/0VfOzvUukubBKboKQkJ6xdqGFwy435iDGVOyf65Xt4Hmh5f8ma+uU5ujlX2
+	 2IiL12b4qf/B6nCYK6K+R5Ze51NQynZJ37I4ugHsyxgAdoj/LnTNjAzaBdf3BDDrJGppWImB3CuC
+	 tzCkKrCsGv/Jov/jhiOadXJ/WkvqQRDyXJcUIrAPCOU+J/T6PkX9y6QLFEZOhwTidkoJvN9+hckN
+	 8VsW2Jr/JItX61OgGzZ19pASBdfaCMT/Bo+sBK3gY4D1O3DX7UrLXOWhYh2EdagX7cDlLBiRhK+c
+	 tCI0QmvrWJIYZjRgemMi4Ya4jQWkmMWkxIJLLuPJi2xqG/RXzg+Bmivnb5M83vPYWmvWAWa7996d
+	 hzpO7cm0NnaPjvhOtzejwMgDClMg1MLp9ax5pk1XmZGbCU1lHruBWB9vc8OA48Ff7a0VF9WhRLrv
+	 K7DWlKN8RE6dzeSLj123LOte2Jwe6I01uK+8Tp7fwfNJHmn84kczvEyQ1SHxUgRD4HvZorVGOQtY
+	 oARvlKUAbElmT29BfoAth6rrWgyZUmERlr7iEczpjnFu0YF1RfGKLF+B9paypz8rlE0jWr/UoS3s
+	 SJ2YDlzo+msJkHMDapPLmX5IffcRO+DcSmj/rmyK0tUYSiE4rdxJsf5AfzimHdvkPN680LIIda3z
+	 2vTbB8AYCGxP260Q6CjNRL1lE0N7V5pdzd07/0xdHyNpLgyIfyirquXR+bvCcJfA6//18riyvWVx
+	 SQAX/boV3QLUT4B8gReWwq7SgOmN20Hsg4zyUL7D5mxGEY3OexC4aX3Y0luiSZQO71tMAF67QCyc
+	 /jarx+5nWjrlbkEq/XlpOvjcZ5KuuR
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com
+To: syzbot+9ef37ac20608f4836256@syzkaller.appspotmail.com
 Cc: linux-kernel@vger.kernel.org,
 	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] KASAN: null-ptr-deref Write in xfs_filestream_select_ag (2)
-Date: Sun, 20 Oct 2024 10:53:05 +0800
-X-OQ-MSGID: <20241020025304.2289918-2-eadavis@qq.com>
+Subject: Re: [syzbot] [nilfs?] possible deadlock in nilfs_dirty_inode (4)
+Date: Sun, 20 Oct 2024 11:09:39 +0800
+X-OQ-MSGID: <20241020030938.2303274-2-eadavis@qq.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <6712b052.050a0220.10f4f4.001a.GAE@google.com>
-References: <6712b052.050a0220.10f4f4.001a.GAE@google.com>
+In-Reply-To: <67134033.050a0220.1e4b4d.001f.GAE@google.com>
+References: <67134033.050a0220.1e4b4d.001f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,32 +74,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-catch can't pick any perpag
+make sure all allocations with GFP_NOFS
 
 #syz test
 
-diff --git a/fs/xfs/xfs_filestream.c b/fs/xfs/xfs_filestream.c
-index e3aaa0555597..8c8f341cf627 100644
---- a/fs/xfs/xfs_filestream.c
-+++ b/fs/xfs/xfs_filestream.c
-@@ -165,6 +165,7 @@ xfs_filestream_pick_ag(
+diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+index be6acf6e2bfc..183c16ad8776 100644
+--- a/fs/nilfs2/inode.c
++++ b/fs/nilfs2/inode.c
+@@ -252,11 +252,14 @@ static int nilfs_write_begin(struct file *file, struct address_space *mapping,
+ {
+ 	struct inode *inode = mapping->host;
+ 	int err = nilfs_transaction_begin(inode->i_sb, NULL, 1);
++	unsigned flags;
  
- 	trace_xfs_filestream_pick(pag, pino, free);
- 	args->pag = pag;
-+	printk("pag: %p, %s\n", args->pag, __func__);
- 	return 0;
+ 	if (unlikely(err))
+ 		return err;
  
- }
-@@ -298,8 +299,8 @@ xfs_filestream_create_association(
- 
- 	*longest = ap->length;
- 	error = xfs_filestream_pick_ag(args, pino, agno, flags, longest);
--	if (error)
--		return error;
-+	if (error || !args->pag)
-+		return error ?: 0;
- 
- 	/*
- 	 * We are going to use this perag now, so create an assoication for it.
++	falgs = memalloc_nofs_save();
+ 	err = block_write_begin(mapping, pos, len, foliop, nilfs_get_block);
++	memalloc_nofs_restore(flags);
+ 	if (unlikely(err)) {
+ 		nilfs_write_failed(mapping, pos + len);
+ 		nilfs_transaction_abort(inode->i_sb);
 
 
