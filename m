@@ -1,89 +1,54 @@
-Return-Path: <linux-kernel+bounces-373351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB359A55A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7CC9A55AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA2681F225E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:02:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0848280A0B
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75215197A9A;
-	Sun, 20 Oct 2024 18:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B1E194AE6;
+	Sun, 20 Oct 2024 18:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3LKb7jz"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEucNOOO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04111957E9;
-	Sun, 20 Oct 2024 18:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1AAFC0A;
+	Sun, 20 Oct 2024 18:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729447330; cv=none; b=JKckpF82tf82TejyCUyQ0LnWO7As7jL2t7f6G8WcnlBNZXuwccieZ3V773ndGhZT3UugPGw1OK8AKQJLLujqihIxaQiAQTAm1Hv6iuazC/iZPYVh6t5hs60xumT/Cx0axbmXMcGOo3F7mxInovSKto0U9BN9SmMvS/0Glb1AP3c=
+	t=1729447420; cv=none; b=fK1xBju0Zp+tx4uyNlEJVnlY2AGpwKbtgsijSJfoWY7qp+2yAmAtQCZbtJoI5E0vxLsY1h9uaNEHrjGyJQLcbnVJIHwyEVWURfGmWAA2Uez8pxWn8DQDv7XzWyu52r/08z+2n5gbNRsSTUvhF4w4KmeEcf8iOa4AjcDuwaZs7iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729447330; c=relaxed/simple;
-	bh=dHqFkA/UyUtnaj88tOEALnbRjE56MKlSYpYd/DN2NNU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PHHyLEDg8+aXuyu0hgZpKwPqUNQv9z+zVjHVqUpyMuDZM/E6sNvSp9POcA5qBLvUKEgSWwXUlT6h9x/zylRL7hbNnpAWiTd6AeDGU5CFFHE4fc8BAa+gnzRvO0nTvAn2RQ5i/jdwRlTEGzO0CIvwdc2ZKFmQylETwA4mH5XPDa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3LKb7jz; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so40554225e9.3;
-        Sun, 20 Oct 2024 11:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729447327; x=1730052127; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yJOU40KbragVWiu4TEFCg8jUPIOwe0Dmrqxh8YGBid0=;
-        b=A3LKb7jzkP/9jqmG859eeJ6Ll6lC91T22jPARgkJorMO6b4ww1d0wNHv+gTvP2Bvf/
-         o2oh/DwZngZXssapgaLds8Lg6P3Wt8wE0GDlTD+1JA85QrlNSJrRKSg8WRH1Zi0Np8L5
-         lhst2fzL+uEAweX9GebObIDu26UXyu1QXXlv4LaOFdna1H5pKhW9ph2LL0r+JF34XW1Q
-         eotljlFFLDrl3+cSr3Tng89C+3is5JKV+iwm+vEI+XiUuFyT9ZXgvO1eE5EsPPDpCSwY
-         SIjXKNdM1ggtuq07CcVThotlxP81pFSlzAZCR6sDKJb1uJSGw4fbxXl9v7nsMGPaCVUB
-         2f9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729447327; x=1730052127;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yJOU40KbragVWiu4TEFCg8jUPIOwe0Dmrqxh8YGBid0=;
-        b=S/s0Ape3WdUTB+obBoux3w/37zLvLiCNunPdrOI0OeeKPnPEMi6oyNhkWnrbKF/8vs
-         yl69w/2Dwe4Zo1DznTUemC30F46oXqO8r7k+Ogy3TbS6xIdNjlpN+i0bWdfUJTnEsaOA
-         9iRyiobQ31ibFOd5y8UJrAulFxtq6UkwA6K+pwxC8jHYs6m7MS5WCJN0NKUTtKY/0cP8
-         /zsxDwnLEOjspVQ55rjdaqSIlmnsVd6IjrNElNaC8Eb4DjOk/hGMxBeNOEDmuY7uQBTe
-         Q/8YslU0Kj9R8NGYRR0CrdK+jdf/cQNVdRcTii/8KTr4TEMc4Rg9NuhLogB+7MmGI7gB
-         ++AA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2cfdZ4qAo6/e+un/ypGZmsPzFOB0Dp7OYBdcsp26KH81xLYFdkbaWBpTVcJmS2brk/XgHzSfaG23Ts5JW@vger.kernel.org, AJvYcCWY9epQu3314Q0Q/WHFvofu7gSgaCunQDdc3R2cpuK5uddPremWDMId0EfDksnX76v5D7cZNpw45s/t@vger.kernel.org, AJvYcCXER4FukNnfk1zAx1SkgN1HD+oyF0PsdktyUCvTGwiOs3amucfrTg3rUxECEAvkttnpifzXD8eJ6kYO6Abo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8Iy1lv8FLKNQm59wU1JiIy7yjws0swlEeDwWOui99CpFGjUH6
-	s8oOyJX45D8geX8DuC5ZGtuQwfTsbvD8p9Du6X/OtOrBgfQLFRRx
-X-Google-Smtp-Source: AGHT+IFS9pdpUSEUR+qkGnO2/A0qQ4nF7fipBIDcXd+fdyWcNedtFnw6FCqFhh0YpSzNJh64nHDomA==
-X-Received: by 2002:a05:600c:1c29:b0:431:5df7:b337 with SMTP id 5b1f17b1804b1-4316163b55emr64740305e9.8.1729447326671;
-        Sun, 20 Oct 2024 11:02:06 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc57esm29922105e9.48.2024.10.20.11.02.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 11:02:06 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] tty: serial: samsung: Add Exynos8895 compatible
-Date: Sun, 20 Oct 2024 21:02:01 +0300
-Message-ID: <20241020180201.376151-3-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241020180201.376151-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20241020180201.376151-1-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1729447420; c=relaxed/simple;
+	bh=yJYMK3br6K6gsuyUqnxzPXiUZcPS5ZVEBLXA4w+Y3c8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hfFGyYLG9fE91OzgiB0lNyVKDGJvpFyRROnpCzagSbffRebdOZ9qoTLA9blbypKCSwMKPeSzI26a6DbrGF+9TQBLB/5VahMCSywpDvf2zlFYln7MXG6bDIvPEZX1PnOjn9YxWtlyWNURTjV0znaja70MULi24qv7ppGKnTQq5Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEucNOOO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 224E4C4CEC6;
+	Sun, 20 Oct 2024 18:03:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729447420;
+	bh=yJYMK3br6K6gsuyUqnxzPXiUZcPS5ZVEBLXA4w+Y3c8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eEucNOOOYQ0RVLGjWecOUXBo4CP+2OpDBxdojng8LdBfIO5vYh+QX8u7Ms3qyP8dn
+	 vT+91RKWiBkKpgBRDyVIQIrt+w9oGW9f+FDJwRBdeY6mrsBvC9ebJ/G59OSjIC0vFE
+	 cBZYIBd5Z4+IdJr5Zs4P/OoxR9/pKj8OCI6s9vybB58SXdxFbQTf+ljFKzPL2V7Lc9
+	 Tk6Xmi7pgJ/6PqhdJloA7+enW9yFvskFRAgO9Nb42XdWFGMUJ47zzIjl5htQWJ2+sg
+	 yA9qhfDzKiXhQVtVpmPdpuktRaBQdr+VRnnlY8OX51Eo8U1f1XTGKti3YAO3FFeO59
+	 c1AOKCBY/VONA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Guan Wentao <guanwentao@uniontech.com>,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] crypto: mips/crc32 - fix the CRC32C implementation
+Date: Sun, 20 Oct 2024 11:02:58 -0700
+Message-ID: <20241020180258.8060-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,67 +57,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add serial driver data for Exynos8895 SoC. The main difference from
-other platforms is that fifosize is only specified via the
-samsung,uart-fifosize DT property.
+From: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Commit ca459e5f826f ("crypto: mips/crc32 - Clean up useless assignment
+operations") changed crc32c_mips_le_hw() to use the instructions that
+use the "regular" CRC32 polynomial instead of the Castagnoli polynomial.
+Therefore it can't be computing CRC32C values correctly anymore.
+
+I haven't been successful in running a MIPS kernel in QEMU, but based on
+code review this is the fix that is needed.
+
+Fixes: ca459e5f826f ("crypto: mips/crc32 - Clean up useless assignment operations")
+Cc: Guan Wentao <guanwentao@uniontech.com>
+Cc: WangYuli <wangyuli@uniontech.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- drivers/tty/serial/samsung_tty.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 0d184ee2f..ce3c3ec34 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -2498,6 +2498,12 @@ static const struct s3c24xx_serial_drv_data exynos850_serial_drv_data = {
- 	.fifosize = { 256, 64, 64, 64 },
- };
+This is a regression in 6.12, so it should be fixed in a 6.12-rc.
+
+ arch/mips/crypto/crc32-mips.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/mips/crypto/crc32-mips.c b/arch/mips/crypto/crc32-mips.c
+index a7a1d43a1b2ca..90eacf00cfc31 100644
+--- a/arch/mips/crypto/crc32-mips.c
++++ b/arch/mips/crypto/crc32-mips.c
+@@ -121,24 +121,24 @@ static u32 crc32c_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
  
-+static const struct s3c24xx_serial_drv_data exynos8895_serial_drv_data = {
-+	EXYNOS_COMMON_SERIAL_DRV_DATA,
-+	/* samsung,uart-fifosize must be specified in the device tree. */
-+	.fifosize = { 0 },
-+};
-+
- static const struct s3c24xx_serial_drv_data gs101_serial_drv_data = {
- 	.info = {
- 		.name		= "Google GS101 UART",
-@@ -2528,12 +2534,14 @@ static const struct s3c24xx_serial_drv_data gs101_serial_drv_data = {
- #define EXYNOS4210_SERIAL_DRV_DATA (&exynos4210_serial_drv_data)
- #define EXYNOS5433_SERIAL_DRV_DATA (&exynos5433_serial_drv_data)
- #define EXYNOS850_SERIAL_DRV_DATA (&exynos850_serial_drv_data)
-+#define EXYNOS8895_SERIAL_DRV_DATA (&exynos8895_serial_drv_data)
- #define GS101_SERIAL_DRV_DATA (&gs101_serial_drv_data)
+ 	if (IS_ENABLED(CONFIG_64BIT)) {
+ 		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
+ 			u64 value = get_unaligned_le64(p);
  
- #else
- #define EXYNOS4210_SERIAL_DRV_DATA NULL
- #define EXYNOS5433_SERIAL_DRV_DATA NULL
- #define EXYNOS850_SERIAL_DRV_DATA NULL
-+#define EXYNOS8895_SERIAL_DRV_DATA NULL
- #define GS101_SERIAL_DRV_DATA NULL
- #endif
+-			CRC32(crc, value, d);
++			CRC32C(crc, value, d);
+ 		}
  
-@@ -2623,6 +2631,9 @@ static const struct platform_device_id s3c24xx_serial_driver_ids[] = {
- 	}, {
- 		.name		= "gs101-uart",
- 		.driver_data	= (kernel_ulong_t)GS101_SERIAL_DRV_DATA,
-+	}, {
-+		.name		= "exynos8895-uart",
-+		.driver_data	= (kernel_ulong_t)EXYNOS8895_SERIAL_DRV_DATA,
- 	},
- 	{ },
- };
-@@ -2646,6 +2657,8 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
- 		.data = ARTPEC8_SERIAL_DRV_DATA },
- 	{ .compatible = "google,gs101-uart",
- 		.data = GS101_SERIAL_DRV_DATA },
-+	{ .compatible = "samsung,exynos8895-uart",
-+		.data = EXYNOS8895_SERIAL_DRV_DATA },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, s3c24xx_uart_dt_match);
+ 		if (len & sizeof(u32)) {
+ 			u32 value = get_unaligned_le32(p);
+ 
+-			CRC32(crc, value, w);
++			CRC32C(crc, value, w);
+ 			p += sizeof(u32);
+ 		}
+ 	} else {
+ 		for (; len >= sizeof(u32); len -= sizeof(u32)) {
+ 			u32 value = get_unaligned_le32(p);
+ 
+-			CRC32(crc, value, w);
++			CRC32C(crc, value, w);
+ 			p += sizeof(u32);
+ 		}
+ 	}
+ 
+ 	if (len & sizeof(u16)) {
+
+base-commit: 7fa4be6d6752512278c4cbf2d2745568626e7369
 -- 
-2.43.0
+2.47.0
 
 
