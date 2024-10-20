@@ -1,390 +1,286 @@
-Return-Path: <linux-kernel+bounces-373172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74A29A5345
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:23:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3939A534F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37507B21AEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:23:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFAD7282A23
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAB5136982;
-	Sun, 20 Oct 2024 09:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ivDpdqJa"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1223EA64;
+	Sun, 20 Oct 2024 09:30:28 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A6831A89;
-	Sun, 20 Oct 2024 09:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BE436124
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 09:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729416204; cv=none; b=B+G/CPXbF6ZVptaRcz2acavIRahvKOqEU2CQNMvDSRHKpqI81vjKvDP/3Np5CWxmWapkPMT2JILziee9VWdCh4msJxV5f/pFp6eJJWA9lMAiZHqWSMk5VWUEU2Lk6lFDTCsBQUBtSMlQsp6Bs152u+QeEWbvEfyuTUzWoOkWhR0=
+	t=1729416627; cv=none; b=taxgfm4XXk22REShstWG+wfPz+bKp8cd6vJ2MbU7JE6/c/j+nd3cmNNn3Cts6RuxSg/p6tgZ9NwV8N+XSgylcq7PqD/MrWM71tcFFUlkmZJc04aaRPerIog8cyrOaTB11S/vwMnFX4U8EV0lWYsLN9a+gGlJgpaYco3k6NmLQXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729416204; c=relaxed/simple;
-	bh=IOLDDDAMLkVvvupnIBQBFYkE1xhR1NVHMOuSMXzNNDw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JVkEuIiCWvBAhbDgBUddhfZio1Lvn+k9OgDdAQhjMYT02Tlxg6TYquwT2Nq0lfIwrBLtbEgo9on07QIoCDTdc+Kewu96DXDp1WZxEJ/2f380HiH8W8WumM+zeS6LgeCpvjV+yJ6hPSD+rx3eWZ0iLqeUf4T8eCGrx+ao00QyGik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ivDpdqJa; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a0c7abaa6so401768166b.2;
-        Sun, 20 Oct 2024 02:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729416201; x=1730021001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=W4Y2KUB+hbtJn19jSvIIFOnWpC0zAHFrReVOA/qxdR4=;
-        b=ivDpdqJa8NRyjWzZ5zmCJQ35u/UisbgGWmXGPbAOLv3gl6JEUEwd0ciSVODheANNde
-         MWLGZ39SixgnG+1e6GjOwlTzAM73wiRT1HqTYBOinYPJH+Bz48q0GD/vvopWSe29lV6x
-         Jqxto1FQ3toY4TUq9VonbLqmpAfKVew6vVKS28U08rsOLOSOGJSN6OslK5V/u9mKWSpO
-         jLFZhap9mhbvW3yicHVtBM29Z7V8SNRvy8Lwq77od1PtN5w9z/aPzQTHxXBXnUtsNM6f
-         xOgBkFY4tg66CRDRTpSUKtteEfH4MPcwrHf3VtejFeCpfmp5BvA1TX18bCqzy6l0FYYB
-         +Onw==
+	s=arc-20240116; t=1729416627; c=relaxed/simple;
+	bh=/9urwPjAj7eikyGICYXw9f7CxpOEirysIm60DnpPQuM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uf/XbHEPoY/CHG9wRi55XoV2u3ECzxLo7pucVfDkX0+hjFlFHj0HFRH3OkB5qutbQ2BF3rPq+kD53NLYDXd28hwUilnFL1wZEqleSuiWVVgWIMbLweAHUrcX6CjZnQ10ghFn85eFpeFvxXr2o0n6O73zKrM2jmaYlXMqQB+pv2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3cd35858aso31870065ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 02:30:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729416201; x=1730021001;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1729416624; x=1730021424;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W4Y2KUB+hbtJn19jSvIIFOnWpC0zAHFrReVOA/qxdR4=;
-        b=MDsrMq7wqdD1poWD7Dn+Sqg+1vzKrx+kaT6GHniNqfNtS63JRDuB2t9JMhRa03EFVt
-         l2ysnNwMGP+iIFuXDoRm58H1dSup038nm1ysKFm0NdiuMNjiuGBEdsgjCMTB//eAUIh1
-         SEkgYPEdLzg2ZrVgwsAQ9hPMbyNwgWR2qVuHtWm7xJIV7c6KWNol+8h584mjco4yhmUD
-         lmNeQlAIxQobagP0x2G1gA2ZAkOr5kfZsGWZl5kNBKqjtyZA6D151eQ9aQXaCOOT2RrD
-         akZeUmIOtOS7fQgjF9na/+Yxj9KUaBifHOfRiivzvjy1+TAI9QTDLUyxNrSsXdHF9blH
-         0xTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/XKQ8Dl7CBa5DxpFcbb8uv27yrlBeDoTpKXygMJCofvcWZ/X4GZ+E4NKFnyhyDcV/tb5wpkkt@vger.kernel.org, AJvYcCVQD/W5OV+9rxJwu8T8BDZV7pnvIdCAf6b/b5dYfA14Dheq7Q9+1+EAWCKfAgF9dUYA2EvDqrRSn5sLNiABUnEE@vger.kernel.org, AJvYcCWGIFOr1ijipbVPalKcVNfjFi3AjmJrcHbHtf2gxYRkyNlBFPCaGgk6v4mQzmgQ6nKvdXvqAglmGGI5Jrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2+SbSLJvfGmc5v0l67AzlfN8arRrl2M28MJz5z0X2K92UOnZA
-	6bVV9V39MCT++Fb+PLsdovkRrlwIEmPfdBsxEWn79xoJqEmnsavS
-X-Google-Smtp-Source: AGHT+IEgeEWzgpPx3nVPIrbqvcrJAh2HUIJo7F0NyWd9SDpb4MuFwKVVJY7MiRPCxJBECDErYIC58A==
-X-Received: by 2002:a17:907:7da0:b0:a99:5ad9:b672 with SMTP id a640c23a62f3a-a9a69a63330mr775176966b.10.1729416200400;
-        Sun, 20 Oct 2024 02:23:20 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:20d:1300:1b1c:4449:176a:89ea? (2001-1c00-020d-1300-1b1c-4449-176a-89ea.cable.dynamic.v6.ziggo.nl. [2001:1c00:20d:1300:1b1c:4449:176a:89ea])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91599362sm69317566b.197.2024.10.20.02.23.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Oct 2024 02:23:19 -0700 (PDT)
-Message-ID: <785f6b7a-1de1-46fe-aa6f-9b20feee5973@gmail.com>
-Date: Sun, 20 Oct 2024 11:23:18 +0200
+        bh=fIBojxIgxGt6eAn9pNCE6JAfkCcK56p1VeY7YIhXKmU=;
+        b=VnsIN82RF/B0HgK37nHFar11QSkCNKGb5K4TdVIK4ksSAgmnUKm5ST994zkSuvCybe
+         8SGLzS14dIGorLIlH753bs3MYMacT2MFc4yx+yavLxy71qcGmhLpPR96ujh9C94zrlqs
+         UipfwVK4fsB6TTfD6iePXp6URC4CrD7WvypPL4WhaGeqTEM2QITLfETyGrlyfaEuXkcd
+         7LTC7lj4ZWvGvINcxQhidAOYXML++2JYAhD/jtXQijEf6EgFflmOd8kkqrQSL1evOdjS
+         vMyIPx8rFlZsYUWj15705yK5S4FxmkTAfmy27T47NmZ/KTLG5oSoQcZQRaaeaoDjvXTq
+         L1KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRYmDLZmvf/JCqDws34hNJhNfE6MbDVmupY8H3pYpm1ozJ6lv0P0LTLI3l+0/LGQPRsOjUEx3TrDXN7Y8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylOREVGImEi2iTiSON963G8v35KnZqXxdegcYfMLgZXg6D4bbw
+	e1NGWVb0h45BQe4MAuglKB7PwPRANoba4fCqcnWso53Yi5yEj5qhfU2/92Lb5zvvAg5zpI6vOxF
+	BkFyBkvw6xu3zfJV6reWLxypnsKdf87lE4glwH2/sJ++MgtJyzLb4ZIM=
+X-Google-Smtp-Source: AGHT+IH3flPPwyJ21LcEMelNjBcePGZ8dj9aMQVSUjbIXDJL0vh/c3ONWUeWYzg23tcHs8NqorUSoP62xWnthWtu7hkYwWyEsJ/9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 net-next 11/12] bridge:
- br_vlan_fill_forward_path_mode no _UNTAG_HW for dsa
-From: Eric Woudstra <ericwouds@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Nikolay Aleksandrov <razor@blackwall.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Roopa Prabhu <roopa@nvidia.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, bridge@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>
-References: <20241013185509.4430-1-ericwouds@gmail.com>
- <20241013185509.4430-12-ericwouds@gmail.com>
- <281cce27-c832-41c8-87d0-fbac05b8e802@blackwall.org>
- <6209405e-7100-43f9-b415-3be8fbcc6352@blackwall.org>
- <20241014144613.mkc62dvfzp3vr7rj@skbuf>
- <b919a6b1-1c07-4fc9-b3dc-a7ac2f3645bf@gmail.com>
-Content-Language: en-US
-In-Reply-To: <b919a6b1-1c07-4fc9-b3dc-a7ac2f3645bf@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1d97:b0:3a0:a0bd:f92b with SMTP id
+ e9e14a558f8ab-3a3f405e45dmr62381535ab.10.1729416624290; Sun, 20 Oct 2024
+ 02:30:24 -0700 (PDT)
+Date: Sun, 20 Oct 2024 02:30:24 -0700
+In-Reply-To: <6710d2a2.050a0220.d9b66.0189.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6714cdb0.050a0220.1e4b4d.003e.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] INFO: task hung in do_coredump (3)
+From: syzbot <syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com>
+To: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    715ca9dd687f Merge tag 'io_uring-6.12-20241019' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1483825f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cd54001fa72fa33d
+dashboard link: https://syzkaller.appspot.com/bug?extid=a8cdfe2d8ad35db3a7fd
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11aa7240580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a3e72f8f3c4f/disk-715ca9dd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7b3548f5ba14/vmlinux-715ca9dd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0d058d51ce5b/bzImage-715ca9dd.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com
+
+INFO: task syz.3.130:5664 blocked for more than 144 seconds.
+      Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.3.130       state:D stack:28592 pid:5664  tgid:5660  ppid:5353   flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5322 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6682
+ __schedule_loop kernel/sched/core.c:6759 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6774
+ schedule_timeout+0x258/0x2a0 kernel/time/timer.c:2591
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common+0x3e1/0x600 kernel/sched/completion.c:116
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion_state+0x1c/0x40 kernel/sched/completion.c:264
+ coredump_wait fs/coredump.c:418 [inline]
+ do_coredump+0x82f/0x4160 fs/coredump.c:575
+ get_signal+0x237c/0x26d0 kernel/signal.c:2902
+ arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2af557dff9
+RSP: 002b:00007f2af63aa0e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: ffffffffffffffda RBX: 00007f2af5736060 RCX: 00007f2af557dff9
+RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007f2af5736064
+RBP: 00007f2af5736058 R08: 00007f2af63cc080 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2af5736064
+R13: 0000000000000000 R14: 00007ffda02286a0 R15: 00007ffda0228788
+ </TASK>
+INFO: task syz.2.131:5669 blocked for more than 144 seconds.
+      Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.2.131       state:D stack:28592 pid:5669  tgid:5668  ppid:5349   flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5322 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6682
+ __schedule_loop kernel/sched/core.c:6759 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6774
+ schedule_timeout+0x258/0x2a0 kernel/time/timer.c:2591
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common+0x3e1/0x600 kernel/sched/completion.c:116
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion_state+0x1c/0x40 kernel/sched/completion.c:264
+ coredump_wait fs/coredump.c:418 [inline]
+ do_coredump+0x82f/0x4160 fs/coredump.c:575
+ get_signal+0x237c/0x26d0 kernel/signal.c:2902
+ arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa3c517dff9
+RSP: 002b:00007fa3c5fb30e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: ffffffffffffffda RBX: 00007fa3c5335f88 RCX: 00007fa3c517dff9
+RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007fa3c5335f8c
+RBP: 00007fa3c5335f80 R08: 00007fa3c5fb4080 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa3c5335f8c
+R13: 0000000000000000 R14: 00007fffdf878150 R15: 00007fffdf878238
+ </TASK>
+INFO: task syz.1.159:5736 blocked for more than 145 seconds.
+      Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.159       state:D stack:28592 pid:5736  tgid:5734  ppid:5342   flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5322 [inline]
+ __schedule+0xef5/0x5750 kernel/sched/core.c:6682
+ __schedule_loop kernel/sched/core.c:6759 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6774
+ schedule_timeout+0x258/0x2a0 kernel/time/timer.c:2591
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common+0x3e1/0x600 kernel/sched/completion.c:116
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion_state+0x1c/0x40 kernel/sched/completion.c:264
+ coredump_wait fs/coredump.c:418 [inline]
+ do_coredump+0x82f/0x4160 fs/coredump.c:575
+ get_signal+0x237c/0x26d0 kernel/signal.c:2902
+ arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fac9cf7dff9
+RSP: 002b:00007fac9dd3b0e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: ffffffffffffffda RBX: 00007fac9d136060 RCX: 00007fac9cf7dff9
+RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007fac9d136064
+RBP: 00007fac9d136058 R08: 00007fac9dd5d080 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fac9d136064
+R13: 0000000000000000 R14: 00007fff5f308c60 R15: 00007fff5f308d48
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8ddb7840 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8ddb7840 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8ddb7840 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x7f/0x390 kernel/locking/lockdep.c:6720
+2 locks held by getty/4985:
+ #0: ffff88814c5240a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfba/0x1480 drivers/tty/n_tty.c:2211
+1 lock held by syz.3.130/5667:
+1 lock held by syz.2.131/5673:
+1 lock held by syz.1.159/5737:
+3 locks held by kworker/u8:9/5768:
+3 locks held by dhcpcd/5920:
+1 lock held by syz.3.181/6065:
+5 locks held by syz.1.189/6169:
+2 locks held by syz.2.190/6173:
+2 locks held by syz.0.191/6175:
+2 locks held by dhcpcd-run-hook/6176:
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xf0c/0x1240 kernel/hung_task.c:379
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 5860 Comm: syz-executor Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:stack_access_ok+0xc/0x200 arch/x86/kernel/unwind_orc.c:389
+Code: ff e9 b0 fe ff ff 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 48 b8 00 00 00 00 00 fc ff df 41 57 <41> 56 4c 8d 77 08 41 55 41 54 49 89 d4 4c 89 f2 55 48 c1 ea 03 48
+RSP: 0018:ffffc90002d8f328 EFLAGS: 00000246
+RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff90b840e0
+RDX: 0000000000000008 RSI: ffffc90002d8fb68 RDI: ffffc90002d8f3a8
+RBP: ffffc90002d8f3f0 R08: ffffffff90b840e6 R09: ffffffff90b840e4
+R10: ffffc90002d8f3a8 R11: 000000000000ccb0 R12: ffffc90002d8f3f8
+R13: ffffc90002d8f3a8 R14: ffffc90002d8fb70 R15: ffffc90002d8fb68
+FS:  00005555721e0500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5f0ee9c000 CR3: 0000000028c4e000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ deref_stack_reg arch/x86/kernel/unwind_orc.c:403 [inline]
+ unwind_next_frame+0xac7/0x20c0 arch/x86/kernel/unwind_orc.c:585
+ arch_stack_walk+0x95/0x100 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x95/0xd0 kernel/stacktrace.c:122
+ save_stack+0x162/0x1f0 mm/page_owner.c:156
+ __reset_page_owner+0x8d/0x400 mm/page_owner.c:297
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_folios+0x956/0x1310 mm/page_alloc.c:2686
+ folios_put_refs+0x551/0x750 mm/swap.c:1007
+ folio_batch_release include/linux/pagevec.h:101 [inline]
+ shmem_undo_range+0x586/0x1170 mm/shmem.c:1032
+ shmem_truncate_range mm/shmem.c:1144 [inline]
+ shmem_evict_inode+0x3a3/0xba0 mm/shmem.c:1272
+ evict+0x409/0x970 fs/inode.c:725
+ iput_final fs/inode.c:1877 [inline]
+ iput fs/inode.c:1903 [inline]
+ iput+0x530/0x890 fs/inode.c:1889
+ do_unlinkat+0x5c3/0x760 fs/namei.c:4540
+ __do_sys_unlink fs/namei.c:4581 [inline]
+ __se_sys_unlink fs/namei.c:4579 [inline]
+ __x64_sys_unlink+0xc5/0x110 fs/namei.c:4579
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f341997d5a7
+Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 57 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff8c61fa08 EFLAGS: 00000206 ORIG_RAX: 0000000000000057
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f341997d5a7
+RDX: 00007fff8c61fa30 RSI: 00007fff8c61fac0 RDI: 00007fff8c61fac0
+RBP: 00007fff8c61fac0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000100 R11: 0000000000000206 R12: 00007fff8c620b40
+R13: 00007f34199f0134 R14: 0000000000064daa R15: 00007fff8c620b80
+ </TASK>
 
 
-
-On 10/15/24 12:26 PM, Eric Woudstra wrote:
-> 
-> 
-> On 10/14/24 4:46 PM, Vladimir Oltean wrote:
->> Keeping the full email body untrimmed for extra context for the newly
->> added people.
->>
->> On Mon, Oct 14, 2024 at 09:22:07AM +0300, Nikolay Aleksandrov wrote:
->>> On 14/10/2024 09:18, Nikolay Aleksandrov wrote:
->>>> On 13/10/2024 21:55, Eric Woudstra wrote:
->>>>> In network setup as below:
->>>>>
->>>>>              fastpath bypass
->>>>>  .----------------------------------------.
->>>>> /                                          \
->>>>> |                        IP - forwarding    |
->>>>> |                       /                \  v
->>>>> |                      /                  wan ...
->>>>> |                     /
->>>>> |                     |
->>>>> |                     |
->>>>> |                   brlan.1
->>>>> |                     |
->>>>> |    +-------------------------------+
->>>>> |    |           vlan 1              |
->>>>> |    |                               |
->>>>> |    |     brlan (vlan-filtering)    |
->>>>> |    |               +---------------+
->>>>> |    |               |  DSA-SWITCH   |
->>>>> |    |    vlan 1     |               |
->>>>> |    |      to       |               |
->>>>> |    |   untagged    1     vlan 1    |
->>>>> |    +---------------+---------------+
->>>>> .         /                   \
->>>>>  ----->wlan1                 lan0
->>>>>        .                       .
->>>>>        .                       ^
->>>>>        ^                     vlan 1 tagged packets
->>>>>      untagged packets
->>>>>
->>>>> Now that DEV_PATH_MTK_WDMA is added to nft_dev_path_info() the forward
->>>>> path is filled also when ending with the mediatek wlan1, info.indev not
->>>>> NULL now in nft_dev_forward_path(). This results in a direct transmit
->>>>> instead of a neighbor transmit. This is how it should be, But this fails.
->>>>>
->>>>> br_vlan_fill_forward_path_mode() sets DEV_PATH_BR_VLAN_UNTAG_HW when
->>>>> filling in from brlan.1 towards wlan1. But it should be set to
->>>>> DEV_PATH_BR_VLAN_UNTAG in this case. Using BR_VLFLAG_ADDED_BY_SWITCHDEV
->>>>> is not correct. The dsa switchdev adds it as a foreign port.
->>>>>
->>>>> Use BR_VLFLAG_TAGGING_BY_SWITCHDEV to make sure DEV_PATH_BR_VLAN_UNTAG is
->>>>> set when there is a dsa-switch inside the bridge.
->>>>>
->>>>> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
->>>>> ---
->>>>>  net/bridge/br_private.h |  1 +
->>>>>  net/bridge/br_vlan.c    | 18 +++++++++++++++++-
->>>>>  2 files changed, 18 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
->>>>> index 8da7798f9368..7d427214cc7c 100644
->>>>> --- a/net/bridge/br_private.h
->>>>> +++ b/net/bridge/br_private.h
->>>>> @@ -180,6 +180,7 @@ enum {
->>>>>  	BR_VLFLAG_MCAST_ENABLED = BIT(2),
->>>>>  	BR_VLFLAG_GLOBAL_MCAST_ENABLED = BIT(3),
->>>>>  	BR_VLFLAG_NEIGH_SUPPRESS_ENABLED = BIT(4),
->>>>> +	BR_VLFLAG_TAGGING_BY_SWITCHDEV = BIT(5),
->>>>>  };
->>>>>  
->>>>>  /**
->>>>> diff --git a/net/bridge/br_vlan.c b/net/bridge/br_vlan.c
->>>>> index 1830d7d617cd..b7877724b969 100644
->>>>> --- a/net/bridge/br_vlan.c
->>>>> +++ b/net/bridge/br_vlan.c
->>>>> @@ -3,6 +3,7 @@
->>>>>  #include <linux/netdevice.h>
->>>>>  #include <linux/rtnetlink.h>
->>>>>  #include <linux/slab.h>
->>>>> +#include <net/dsa.h>
->>>>>  #include <net/switchdev.h>
->>>>>  
->>>>>  #include "br_private.h"
->>>>> @@ -100,6 +101,19 @@ static void __vlan_flags_commit(struct net_bridge_vlan *v, u16 flags)
->>>>>  	__vlan_flags_update(v, flags, true);
->>>>>  }
->>>>>  
->>>>> +static inline bool br_vlan_tagging_by_switchdev(struct net_bridge *br)
->>>>
->>>> no inline in .c files and also constify br
->>>>
->>>>> +{
->>>>> +#if IS_ENABLED(CONFIG_NET_DSA)
->>>>> +	struct net_bridge_port *p;
->>>>> +
->>>>> +	list_for_each_entry(p, &br->port_list, list) {
->>>>> +		if (dsa_user_dev_check(p->dev))
->>>>
->>>> I don't think this can change at runtime, so please keep a counter in
->>>> the bridge and don't walk the port list on every vlan add.
->>>>
->>>
->>> you can use an internal bridge opt (check br_private.h) with a private opt
->>> that's set when such device is added as a port, no need for a full counter
->>> obviously
->>
->> To continue on Nikolay's line of thought...
->>
->> Can you abstractly describe which functional behavior do you need the
->> bridge port to perform, rather than "it needs to be a DSA user port"?
-> 
-> Hello Vladimir,
-> 
-> This has to do with the sequence of events, when dealing with vlan
-> tagging in a bridge. When looking at the ingress of untaggged packets,
-> that will be tagged by a certain port of that bridge, it depends when
-> this tagging happens, in respect to the netfilter hook. This describes
-> the existing code:
-> 
-> Because we are using dev_fill_forward_path(), we know in all cases that
-> untagged packets arive and are tagged by the bridge.
-> 
-> In the case (#1) off a switchdev, the tagging is done before the packet
-> reaches the netfilter hook. Then the software fastpath code needs to
-> handle the packet, as if it is incoming tagged, remembering that this
-> tag was tagged at ingress (tuple->in_vlan_ingress). We need to remember
-> this, because dealing with hardware offloaded fastpath we then need to
-> skip this vlan tag in the hardware offloaded fastpath in
-> nf_flow_rule_match() and nf_flow_rule_route_common().
-> 
-> In all other cases (#2), 'normal' ports (ports without switchdev and
-> dsa-user-ports) the tagging is done after packet reaches the
-> netfilter-hook. Then the software fastpath code needs to handle the
-> packet, as incoming untagged.
-> 
-> (Of course the dsa-user-port is more complicated, but it all handled by
-> the dsa architecture so that it can be used as a 'normal' port.)
-> 
-> In both cases #1 and #2 also the other direction is taken into account.
-> 
-> To decide which case to apply, the code looks at
-> BR_VLFLAG_ADDED_BY_SWITCHDEV, which was actually used for something
-> else, but it is easily available in the code at that point and seemed to
-> work, so far...
-> 
-> But as it turns out, this flag is also set for foreign ports added to
-> the dsa-switchdev. This means that case #1 is applied to the foreign dsa
-> port. This breaks the software fastpath and, with packets not reaching
-> their destination, also the hardware offloaded fastpath does not start.
-> We need to apply case #2.
-> 
-> So actually we need to know, inside br_vlan_fill_forward_path_mode(),
-> whether or not net_bridge_port *dst is a foreign port added to the dsa
-> switchdev. Or perhaps there is another way to find out we have to apply
-> case #2.
-> 
-
-So after doing some more reading, at creation of the code using
-BR_VLFLAG_ADDED_BY_SWITCHDEV would have been without problems.
-
-After the switchdev was altered so that objects from foreign devices can
-be added, it is problematic in br_vlan_fill_forward_path_mode(). I have
-tested and indeed any foreign device does have this problem.
-
-So we need a way to distinguish in br_vlan_fill_forward_path_mode()
-whether or not we are dealing with a (dsa) foreign device on the switchdev.
-
-I have come up with something, but this is most likely to crude to be
-accepted, but for the sake of 'rfc' discussing it may lead to a proper
-solution. So what does work is the following patch, so that
-netif_has_dsa_foreign_vlan() can be used inside
-br_vlan_fill_forward_path_mode().
-
-Any suggestions on how this could be implemented properly would be
-greatly appreciated.
-
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 9d80f650345e75..3fb67312428a1f 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -1839,6 +1839,7 @@ enum netdev_reg_state {
-  *
-  *	@vlan_info:	VLAN info
-  *	@dsa_ptr:	dsa specific data
-+ *	@dsa_foreign_vlan:	Counter, number of dsa foreign vlans added
-  *	@tipc_ptr:	TIPC specific data
-  *	@atalk_ptr:	AppleTalk link
-  *	@ip_ptr:	IPv4 specific data
-@@ -2214,6 +2215,7 @@ struct net_device {
- #endif
- #if IS_ENABLED(CONFIG_NET_DSA)
- 	struct dsa_port		*dsa_ptr;
-+	unsigned int		dsa_foreign_vlan;
- #endif
- #if IS_ENABLED(CONFIG_TIPC)
- 	struct tipc_bearer __rcu *tipc_ptr;
-@@ -5135,6 +5137,15 @@ static inline bool netif_is_lag_port(const struct
-net_device *dev)
- 	return netif_is_bond_slave(dev) || netif_is_team_port(dev);
- }
-
-+static inline bool netif_has_dsa_foreign_vlan(const struct net_device *dev)
-+{
-+#if IS_ENABLED(CONFIG_NET_DSA)
-+	return !!dev->dsa_foreign_vlan;
-+#else
-+	return false;
-+#endif
-+}
-+
- static inline bool netif_is_rxfh_configured(const struct net_device *dev)
- {
- 	return dev->priv_flags & IFF_RXFH_CONFIGURED;
-diff --git a/net/dsa/user.c b/net/dsa/user.c
-index 74eda9b30608e6..775f6346120ed6 100644
---- a/net/dsa/user.c
-+++ b/net/dsa/user.c
-@@ -737,6 +737,8 @@ static int dsa_user_host_vlan_add(struct net_device
-*dev,
- 		return 0;
- 	}
-
-+	obj->orig_dev->dsa_foreign_vlan++;
-+
- 	vlan = *SWITCHDEV_OBJ_PORT_VLAN(obj);
-
- 	/* Even though drivers often handle CPU membership in special ways,
-@@ -824,6 +826,8 @@ static int dsa_user_host_vlan_del(struct net_device
-*dev,
- 	if (dsa_port_skip_vlan_configuration(dp))
- 		return 0;
-
-+	obj->orig_dev->dsa_foreign_vlan--;
-+
- 	vlan = SWITCHDEV_OBJ_PORT_VLAN(obj);
-
- 	return dsa_port_host_vlan_del(dp, vlan);
-
-
-
->> switchdev_bridge_port_offload() has a mechanism to inform the bridge
->> core of extra abilities (like tx_fwd_offload). Perhaps you could modify
->> the DSA drivers you need to set a similar bit to inform the bridge of
->> their presence and ability. That would also work when the bridge port is
->> a LAG over a DSA user port.
->>
->> Also, please also CC DSA maintainers when you use DSA API outside
->> net/dsa/ and drivers/net/dsa/. I am in the process of revamping the
->> public DSA API and would like to be in touch with changes as they are
->> made.
->>
->>>>> +			return false;
->>>>> +	}
->>>>> +#endif
->>>>> +	return true;
->>>>> +}
->>>>> +
->>>>>  static int __vlan_vid_add(struct net_device *dev, struct net_bridge *br,
->>>>>  			  struct net_bridge_vlan *v, u16 flags,
->>>>>  			  struct netlink_ext_ack *extack)
->>>>> @@ -113,6 +127,8 @@ static int __vlan_vid_add(struct net_device *dev, struct net_bridge *br,
->>>>>  	if (err == -EOPNOTSUPP)
->>>>>  		return vlan_vid_add(dev, br->vlan_proto, v->vid);
->>>>>  	v->priv_flags |= BR_VLFLAG_ADDED_BY_SWITCHDEV;
->>>>> +	if (br_vlan_tagging_by_switchdev(br))
->>>>> +		v->priv_flags |= BR_VLFLAG_TAGGING_BY_SWITCHDEV;
->>>>>  	return err;
->>>>>  }
->>>>>  
->>>>> @@ -1491,7 +1507,7 @@ int br_vlan_fill_forward_path_mode(struct net_bridge *br,
->>>>>  
->>>>>  	if (path->bridge.vlan_mode == DEV_PATH_BR_VLAN_TAG)
->>>>>  		path->bridge.vlan_mode = DEV_PATH_BR_VLAN_KEEP;
->>>>> -	else if (v->priv_flags & BR_VLFLAG_ADDED_BY_SWITCHDEV)
->>>>> +	else if (v->priv_flags & BR_VLFLAG_TAGGING_BY_SWITCHDEV)
->>>>>  		path->bridge.vlan_mode = DEV_PATH_BR_VLAN_UNTAG_HW;
->>>>>  	else
->>>>>  		path->bridge.vlan_mode = DEV_PATH_BR_VLAN_UNTAG;
->>>>
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
