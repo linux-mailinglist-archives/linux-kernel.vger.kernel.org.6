@@ -1,87 +1,178 @@
-Return-Path: <linux-kernel+bounces-373165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F9BD9A5330
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:54:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C1D9A5332
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF5E1C20E4D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:54:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5273CB23020
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A886739FD6;
-	Sun, 20 Oct 2024 08:54:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44CA3E49E;
+	Sun, 20 Oct 2024 09:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Me/8UH54"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AC01754B
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 08:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259251754B;
+	Sun, 20 Oct 2024 09:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729414448; cv=none; b=k5KIFddDZP7hJ5KCmV8b84Kc8ekCy1OeIqAFftnpf6/8CAyCVcWGxUrQZPW3fM7IewN5mWf+T3rRWVzev4P5BWnmZXciqqA0MAns01PmQjwYEbAL1O9LuC5KS32K4I/UmdU0uKPyY1N9rLtfhqUoZU0N0a4so8lLqPgpqk3uHog=
+	t=1729414881; cv=none; b=PO41d2N6Pm9TOFuyJsMiaYANuScEWEi8DYD7tOp41Sbzqih6lX8bkHHTNgc3bRxWoVFeWHhuY6gEDhAwhOuViFwMKGERyWyHpapNFN+zXDeZotPV2S86cc9M/vGrcudFFbbCxpNukAu2IrODk3QiQa0vc4sbo72wY+5lMDfrt2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729414448; c=relaxed/simple;
-	bh=vQ9lojtvYSC55T6VujuN/PjFssGMXHSxkbqgp41+U6g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EXJgXT2TQKAm18+szqr+fwwOyem+ba3S1bdcCnGWdPQwLPph0nJdQTgOHwnVgs6MrNIwMqUnbXs8lx1/dwQxQwcQs1sN1nESTEJxfr+2eeZE3nedbfIDXMz1aPnLitRUfeebq6dPInoiZzOufsUOWQE2XnKM6xqsoH3pjnuwFfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3bb31e3cfso31152085ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 01:54:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729414445; x=1730019245;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kSCARb7keecuFTwpVfxUIPQnHbUul8QSoVKzrcuWYF8=;
-        b=K3EQ/ObZ4MSYRKM5yr7chHf6M9ulwyh2QySaGp/tYnN83IH4AD3EJua0r+MgvHHFf7
-         39G9xzAEZC5Qr2q42nDpoFlvcMNsfy6lnpWOhQLCcEsdldurMHGB7cvPOzmu1NccpQBz
-         cKmBgJtBMpzyeR5+bN7Qh2L+QuG6kPGNDpIHbuIVHflmE8fJJn96Du5XgrE9Z8D69jqP
-         y8l+i+kTgNbZu/TL8moKFfmAkqR3Buwj48sCeSNuAa82ni2n7PC6/fmk1vZ9cFCTlOd7
-         SMeeLXVlpAWP8AF7upwneMdWVJWj/Jle8GhzVShQkYotMbTRvjBPKBhL+ifQ6WPY/CuV
-         pMYg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Zs31UzAcP+ooUmNxOq3I4SQ9fkKohFAklY2R/6Xdr0u589QsK9kflMyuWR50SfqUq557a1Aptq3YVs0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4BJWwSJghpLkNswnePAkZ9/QQy6YJKuiUgmWWu2KsJSioGT95
-	9hFcsEOgaAGuxlt3G+ZpcA5yaJGC/hR43Ih8WkOjmXsaOMKTpZp/r+kPB1d2mKXwNJcfPbCZdsZ
-	DfbOHX3vzZSq6StGIcfVLU16PwzVHr8CgsuD3RkoIv0WJJ29Q0PiLxJU=
-X-Google-Smtp-Source: AGHT+IH7RWaTdjALE/T2LyD+fPeiOqSziovJONV4fkMR0W2+pqZGSbuQdKYrnLBrGbEVSW0icfXK4C/aJw6CsczbwQ2t4lhxhT5q
+	s=arc-20240116; t=1729414881; c=relaxed/simple;
+	bh=bNi3UlAVbvyjJRic/L8UHdlKecEsBMV+KKUYX3mNmjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M0+Q81px9j+6rofC/QHqz2mUUNPD9ibDo9Sh79eroe3+GBsYfS/P75AEM7as9QoP3A9n+wPREd9Ant689mfMDjXz16HPOvZrumg34j3Xtz9dVU1vihrOtXpjXWghE6C3/cWPvyNVec1i8H3GyI6M9qXyI7qIsrn6V/0wFz67Nq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Me/8UH54; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A76D5C4CEC6;
+	Sun, 20 Oct 2024 09:01:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729414877;
+	bh=bNi3UlAVbvyjJRic/L8UHdlKecEsBMV+KKUYX3mNmjY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Me/8UH54qRnC+ERDPuiR1P7Zp2rZ/4bVI3px3v7Yb+Y9y3meIcbxCccI6W0A8KFL6
+	 EO3/2ejVig4WM28hIiIXRwNIzdX3iekW7difUgiZNLBZQpS7vp6pw6mcqFq0g652XP
+	 vILbUPh5cG9uVP7G0KDLii2BGUi/zsnQMEMFMTNPR59ml7eA6gYZu5LmsFIwRS5NzS
+	 qJjwkS2eX3X083+Z+zZCMzeB8SDasACC1y4EOUFWMGMbByNLMZGKYCOikrJohkF32R
+	 yFFNug3+nuDwqDsS9slWoyIww/KwzjfG5JcRoqlk5rA65qllTwXs8w7YwNeyoOgZ5d
+	 f/QZxp6KlN7Dw==
+Date: Sun, 20 Oct 2024 11:57:27 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Gregory Price <gourry@gourry.net>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	dan.j.williams@intel.com, ira.weiny@intel.com, david@redhat.com,
+	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+	rafael@kernel.org, lenb@kernel.org, akpm@linux-foundation.org,
+	alison.schofield@intel.com, Jonathan.Cameron@huawei.com,
+	rrichter@amd.com, ytcoode@gmail.com, haibo1.xu@intel.com,
+	dave.jiang@intel.com
+Subject: Re: [PATCH v2 1/3] mm/memblock: implement memblock_advise_size_order
+ and probe functions
+Message-ID: <ZxTF93VzRiygScA1@kernel.org>
+References: <20241016192445.3118-1-gourry@gourry.net>
+ <20241016192445.3118-2-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d0e:b0:3a3:b256:f325 with SMTP id
- e9e14a558f8ab-3a3f40a8446mr71237375ab.20.1729414445583; Sun, 20 Oct 2024
- 01:54:05 -0700 (PDT)
-Date: Sun, 20 Oct 2024 01:54:05 -0700
-In-Reply-To: <27386470-ef9f-49dc-a3d6-6c7f428737ad@nvidia.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6714c52d.050a0220.10f4f4.002f.GAE@google.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
-To: cmeiohas@nvidia.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016192445.3118-2-gourry@gourry.net>
 
-Hello,
+On Wed, Oct 16, 2024 at 03:24:43PM -0400, Gregory Price wrote:
+> Hotplug memory sources may have opinions on what the memblock size
+> should be - usually for alignment purposes.  For example, CXL memory
+> extents can be as small as 256MB with a matching physical alignment.
+> 
+> Implement memblock_advise_size_order for use during early init, prior
+> to allocator and smp init, for software to advise the system as to what
+> the preferred block size should be.
+> 
+> The probe function is meant for arch_init code to fetch this value
+> once during memblock size calculation. Use of the advisement value
+> is arch-specific, and no guarantee is made that it will be used.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I'm confused.
+ 
+Aren't we talking about memory blocks for hotplugable memory here?
+This functionality rather belongs to drivers/base/memory.c, doesn't it?
 
-Reported-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
-Tested-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
+> Calls to either function after probe results in -EBUSY to signal that
+> advisement is ignored or that memblock_get_size_bytes should be used.
+> 
+> Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> ---
+>  include/linux/memblock.h |  2 ++
+>  mm/memblock.c            | 49 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 51 insertions(+)
+> 
+> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> index fc4d75c6cec3..efb1f7cfbd58 100644
+> --- a/include/linux/memblock.h
+> +++ b/include/linux/memblock.h
+> @@ -111,6 +111,8 @@ static inline void memblock_discard(void) {}
+>  #endif
+>  
+>  void memblock_allow_resize(void);
+> +int memblock_advise_size_order(int order);
+> +int memblock_probe_size_order(void);
+>  int memblock_add_node(phys_addr_t base, phys_addr_t size, int nid,
+>  		      enum memblock_flags flags);
+>  int memblock_add(phys_addr_t base, phys_addr_t size);
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 3b9dc2d89b8a..e0bdba011564 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -2009,6 +2009,55 @@ void __init memblock_allow_resize(void)
+>  	memblock_can_resize = 1;
+>  }
+>  
+> +/*
+> + * @order: bit-order describing the preferred minimum block size
+> + *
+> + * Intended for use by early-boot software prior to smp and allocator init to
+> + * advise the architecture what the minimum block size should be. Should only
+> + * be called during arch init before allocator and smp init.
+> + *
+> + * This value can only decrease after it has been initially set, the intention
+> + * is to identify the smallest supported alignment across all opinions.
+> + *
+> + * Use of this advisement value is arch-specific.
+> + *
+> + * Returns: 0 on success, -EINVAL if order is <=0, and -EBUSY if already probed
+> + */
+> +static int memblock_sz_order;
+> +#define MEMBLOCK_SZO_PROBED (-1)
+> +int memblock_advise_size_order(int order)
+> +{
+> +	if (order <= 0)
+> +		return -EINVAL;
+> +
+> +	if (memblock_sz_order == MEMBLOCK_SZO_PROBED)
+> +		return -EBUSY;
+> +
+> +	if (memblock_sz_order)
+> +		memblock_sz_order = min(order, memblock_sz_order);
+> +	else
+> +		memblock_sz_order = order;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * memblock_probe_size_order is intended for arch init code to probe one time,
+> + * for a suggested memory block size.  After the first call, the result will
+> + * always be -EBUSY. A late user should call memory_block_size_bytes instead to
+> + * determine the actual block size in use.
+> + *
+> + * Should only be called during arch init prior to allocator and smp init.
+> + *
+> + * Returns: block size order, 0 if never set, or -EBUSY if previously probed.
+> + */
+> +int memblock_probe_size_order(void)
+> +{
+> +	int rv = xchg(&memblock_sz_order, -1);
+> +
+> +	return (rv == -1) ? -EBUSY : rv;
+> +}
+> +
+>  static int __init early_memblock(char *p)
+>  {
+>  	if (p && strstr(p, "debug"))
+> -- 
+> 2.43.0
+> 
 
-Tested on:
-
-commit:         89e9ae55 IB/hfi1: make clear_all_interrupts static
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17bc7240580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
-dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=125fb240580000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Sincerely yours,
+Mike.
 
