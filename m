@@ -1,118 +1,147 @@
-Return-Path: <linux-kernel+bounces-373119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB829A526D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 06:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DA29A5276
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 06:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4923282F16
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 04:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E870128311E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 04:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D48BE5E;
-	Sun, 20 Oct 2024 04:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C21BE40;
+	Sun, 20 Oct 2024 04:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mla2AEYA"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PM4n/mDz"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7F68F5E;
-	Sun, 20 Oct 2024 04:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FFC3D6D;
+	Sun, 20 Oct 2024 04:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729398432; cv=none; b=S5hjUAx7lpJBEKg/o7PuUPm4ho3+Oy5g2s2l/ZwuMe6WuoRvshlwzemP9CTpKkb7b10SnKmqzWvoJ1ZA+Y3yKX33pfYVsWJ9V5Wvd9eHvzbKBJs1mnUdxnO2xJkHi0ApYw7uYMxIzR3Qrld9tF7VdquKkdedZwsb9ECdlgfsPAc=
+	t=1729399457; cv=none; b=kytL9ahlqcywq+g2s11q4szYiBaNd6skpfe+Uk9kjugZ+nSXuaJaY5m0Erf+PEiAzQo4BjfGd5A7QHa1m9WvMitUz4QhFTOLOsdKQa82uEm2x9h/0PFpA9xm+aUw97LpdVKcsMeFuVSfR1t2jl0KP88dGZfhMKpL6bEua7+tXWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729398432; c=relaxed/simple;
-	bh=D1RezRlkB9L4TfHEDkozhaaOZUO1U3mlZToPaKXwzXs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZbNWA51Z+MZ36x7CaZ8k5X6JmgiJ5IEx4NgEirsWQHHP5AoBTMUja3vTkGfeqYW1fGCbUl30mg6pMRMfeBWEBazPNsoPwwq1FbVnBaYQYa2o+lxR7YKQcLgIPUT976S968UII5GYPigW2Ve0pIgjt+/celOwecXR5PDAG+t1BT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mla2AEYA; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1729399457; c=relaxed/simple;
+	bh=4QyW6R9lut9Re2pIQveoUZCbz2Gy/4n4UbV5rSWYifw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=F45GApXsRz9oSrEdrojd2oVoLqCirzY8SmeNAtMGWLmUJtDCG+MuubjGEplpv3iFV97ZKoe6pr4wvh6N1dAEvBiD+VgTVbwDdAj9WfxNNcOA6S3Skoo2u0XcKWALqx0ekx6afop0+9537KZXNUEi1IACpO4hjAHIqOwhRgyafX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PM4n/mDz; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a0472306cso441675466b.3;
-        Sat, 19 Oct 2024 21:27:10 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c767a9c50so31898975ad.1;
+        Sat, 19 Oct 2024 21:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729398429; x=1730003229; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729399455; x=1730004255; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/5hnJw00SHkS8Yg/z28Fwh+SQ2vwZshL2rzFNrvtoN8=;
-        b=Mla2AEYAhyn9vxDQc0/8PyBR5bWG51Av/Vps72N2hisNiRqNlr7qMGv3AXdLTPWKVY
-         AV05IWwc3zJR6ki/hMrHtDejOMZZz+E8MKMCPH/d8jEgq1JJhqNTyjs7FTMTGvXKFgAi
-         OQwGfE4X2CItGWCxPCC+jmmriI7o5TilFMk1yUSkiD/jpByE2ykrffRS6HWa0Fs9A8jL
-         oH2UlQRJNRQAt4P/iC5630R64fp9+sfJVoRutJJGoNkfVOFhdrIgMC5jwvSwTLUQ5bio
-         Uk4P8kIrhjhouKIkR+jHjMznxgUNmbcGbj8waR0T8LmYaVGnIdBJWO+XoyBQeS1Q4QRF
-         +ODQ==
+        bh=dDs6LtKOyP/Pre2ItPTAhwUX3UQfGRseg7n3uXJjZVo=;
+        b=PM4n/mDzgBnrXaInepvFcloEFKv7dnoK8wO213J/Dst4VnN16d4xfF4QdVN+f1xh4G
+         jW2abzqxUpeTq5DXGbyV44Lzn69eURbaVq3R3fNnnB1AkbRbAdcG5mfAyUQRAHbdF0sy
+         LzBDVPKbfdMxTILDfWk6q6ft1rwOXLVM00OPYnj4ejK7R4dWY6LNtDKzVv9X8Mz+VEGo
+         6vt9MvScS8rt6ok/H8qkY68fmEBBiccNY9UcE1RQ8/160jREy7OnwHfWetEPpjlkxdEz
+         6AUAK6iqe4NkK/sjCyFkbSYJopw02B8qaKTpb32Sj++Df19EQkPxisOjwYgh0NjXhcyV
+         rs7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729398429; x=1730003229;
+        d=1e100.net; s=20230601; t=1729399455; x=1730004255;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/5hnJw00SHkS8Yg/z28Fwh+SQ2vwZshL2rzFNrvtoN8=;
-        b=f5UBpYXlylAdDvi9IIyDx4Q3uG9gE2r2JMKf6PLww5Tw4dybsR4GulSX30xg8gjo3G
-         Kppf1a0ydTOHC9RA3KQ7QVl7eucc29TrjDtdymUrmxW0ZRznc5goHGKTg+OVbf15yDlz
-         fyIT+LLV3TW5yTwpHAQbe1+OvSXRPXrGHHnSa3sTdjXojEaLXGxXajLNq/B0olTjlRdQ
-         ReVpnCm29L8KSUAFB1HmYSfkuFga5Dy9kpdxgRaWKUt9o1AxTqWjn5TjM7ea/0d/+yxl
-         SfFQFJi4MYlD38n4Gjf5OU3tVUb/4vOjxVaLpyb1gkP08Pvy3r8jlMbbGBuEH0sgcvdh
-         9IPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUirV9RTuKwSLLbm010kko8iRW/pONy9a6KHvKgWjspDXxQGJiXyQARA9NsX9mGsZsV37M9GDBSg5lH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO5XaoYZmlYkxwbet/CGFqbuxBtkAaTE0A4p53Mc3Y8RveWnEv
-	5Jk4r/C9o7uONJsoNTHqtyw0YkE0DNzhtSHDxe3aBTpHeMisdiSo
-X-Google-Smtp-Source: AGHT+IEoN4xc5/Tx6bMejoVoteamzsBJhLtm+0tByF4wF1Fd4S52hX2jt8Ei98iyjI+WqELTS1N7MA==
-X-Received: by 2002:a17:906:4fca:b0:a9a:1bb4:800c with SMTP id a640c23a62f3a-a9a6996979amr725802866b.4.1729398428641;
-        Sat, 19 Oct 2024 21:27:08 -0700 (PDT)
-Received: from work.. ([5.250.149.103])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91597c05sm47221866b.195.2024.10.19.21.27.06
+        bh=dDs6LtKOyP/Pre2ItPTAhwUX3UQfGRseg7n3uXJjZVo=;
+        b=B36DjIdf2mnFqIRh6XGFZNppeul+qkEn/7wei3B7hF70U/OSJ7mhYUq6l96HeNq5Jb
+         F5Ni+o//GvPVIT+49r76TNVOp3ObmTCUNSTl1kqq0dCC5YVyj/kARdT2XJWo5bxaEvsi
+         Qm5qRjojlr5ZCpShhKND+Z6FXKGoqG+O1GJK6NpGB1noERsa/7rE6REWN5982Qv/Ju4f
+         8Jig4Jr2hBbGpHjkBkrRmfJutFh4Fh2IBuv2nDtESbT4YjnuRX47eaD1RRWMqvxklnDy
+         oczm+KZrnK8yINQSBrPQMCo09xIzURC9kBGr+L1Y6ZlOaj7q0COdqsJrURdpk5mOHgJr
+         nGgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMPEAAJ0vUDXch5WxZdjBIjVSG0rWj41av8pWRyfVu7PsswETENN/lwdzGuuUXGjtGU/631isLval9JlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaIY+3NEPxMt6GkbkXLdN5+taMN1kTScapAIF97tAlCPVQSgRQ
+	YvKBUMK6f88XVnUN+Bb5JtCOVtqbpxN7s1xJGr8qaHtEJY8bjD3eQ7sWBA==
+X-Google-Smtp-Source: AGHT+IHwaIYQpkDRxUDukmk8lRB8IbagrZSbwADY4jchzpRTasfpkg+tUTGt1zpi4AGuUCefzx6iCw==
+X-Received: by 2002:a17:903:32d1:b0:20b:8c13:5307 with SMTP id d9443c01a7336-20e5a8c3befmr84742405ad.33.1729399455105;
+        Sat, 19 Oct 2024 21:44:15 -0700 (PDT)
+Received: from carrot.. (i118-19-49-33.s41.a014.ap.plala.or.jp. [118.19.49.33])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7ef0bd97sm4649505ad.92.2024.10.19.21.44.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 21:27:08 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org,
-	sfr@canb.auug.org.au,
-	snovitoll@gmail.com
-Subject: [PATCH] Documentation/kasan: fix indentation in translation
-Date: Sun, 20 Oct 2024 09:28:13 +0500
-Message-Id: <20241020042813.3223449-1-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241016131802.3115788-4-snovitoll@gmail.com>
-References: <20241016131802.3115788-4-snovitoll@gmail.com>
+        Sat, 19 Oct 2024 21:44:14 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot <syzbot+9ef37ac20608f4836256@syzkaller.appspotmail.co>,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] nilfs2: fix potential deadlock with newly created symlinks
+Date: Sun, 20 Oct 2024 13:36:30 +0900
+Message-ID: <20241020044418.4253-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <67134033.050a0220.1e4b4d.001f.GAE@google.com>
+References: <67134033.050a0220.1e4b4d.001f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Fix the warning in linux-next (htmldocs):
+Syzbot reported that page_symlink(), called by nilfs_symlink(),
+triggers memory reclamation involving the filesystem layer, which can
+result in circular lock dependencies among the reader/writer semaphore
+nilfs->ns_segctor_sem, s_writers percpu_rwsem (intwrite) and the
+fs_reclaim pseudo lock.
 
-> Documentation/translations/zh_TW/dev-tools/kasan.rst:410:
->	ERROR: Unexpected indentation.
+This is because after commit 21fc61c73c39 ("don't put symlink bodies in
+pagecache into highmem"), the gfp flags of the page cache for symbolic
+links are overwritten to GFP_KERNEL via inode_nohighmem().
 
-This is based on -mm tree (linux-mm-unstable branch).
+This is not a problem for symlinks read from the backing device,
+because the __GFP_FS flag is dropped after inode_nohighmem() is called.
+However, when a new symlink is created with nilfs_symlink(), the gfp
+flags remain overwritten to GFP_KERNEL.  Then, memory allocation called
+from page_symlink() etc. triggers memory reclamation including the FS
+layer, which may call nilfs_evict_inode() or nilfs_dirty_inode().  And
+these can cause a deadlock if they are called while
+nilfs->ns_segctor_sem is held:
 
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Fix this issue by dropping the __GFP_FS flag from the page cache GFP
+flags of newly created symlinks in the same way that nilfs_new_inode()
+and __nilfs_read_inode() do, as a workaround until we adopt nofs
+allocation scope consistently or improve the locking constraints.
+
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Reported-by: syzbot+9ef37ac20608f4836256@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=9ef37ac20608f4836256
+Fixes: 21fc61c73c39 ("don't put symlink bodies in pagecache into highmem")
+Tested-by: syzbot+9ef37ac20608f4836256@syzkaller.appspotmail.com
+Cc: stable@vger.kernel.org
 ---
- Documentation/translations/zh_TW/dev-tools/kasan.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Andrew, please apply this patch as a bug fix.
 
-diff --git a/Documentation/translations/zh_TW/dev-tools/kasan.rst b/Documentation/translations/zh_TW/dev-tools/kasan.rst
-index 35b7fd18a..27fb76451 100644
---- a/Documentation/translations/zh_TW/dev-tools/kasan.rst
-+++ b/Documentation/translations/zh_TW/dev-tools/kasan.rst
-@@ -407,7 +407,7 @@ KASAN連接到vmap基礎架構以懶清理未使用的影子內存。
- 
- 所有 KASAN 測試均與 KUnit 測試框架集成，並且可以啟用
- 透過 ``CONFIG_KASAN_KUNIT_TEST``。可以運行測試並進行部分驗證
-- 以幾種不同的方式自動進行；請參閱下面的說明。
-+以幾種不同的方式自動進行；請參閱下面的說明。
- 
- 如果偵測到錯誤，每個 KASAN 測試都會列印多個 KASAN 報告之一。
- 然後測試列印其編號和狀態。
+This fixes a potential deadlock issue recently reported by syzbot.
+
+Thanks,
+Ryusuke Konishi
+
+ fs/nilfs2/namei.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
+index 4905063790c5..9b108052d9f7 100644
+--- a/fs/nilfs2/namei.c
++++ b/fs/nilfs2/namei.c
+@@ -157,6 +157,9 @@ static int nilfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	/* slow symlink */
+ 	inode->i_op = &nilfs_symlink_inode_operations;
+ 	inode_nohighmem(inode);
++	mapping_set_gfp_mask(inode->i_mapping,
++			     mapping_gfp_constraint(inode->i_mapping,
++						    ~__GFP_FS));
+ 	inode->i_mapping->a_ops = &nilfs_aops;
+ 	err = page_symlink(inode, symname, l);
+ 	if (err)
 -- 
-2.34.1
+2.43.0
 
 
