@@ -1,212 +1,191 @@
-Return-Path: <linux-kernel+bounces-373145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCF29A52F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:54:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308C19A52F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27E44B224A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 06:54:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479831C2122D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A309F286A8;
-	Sun, 20 Oct 2024 06:54:28 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AD5182BC;
+	Sun, 20 Oct 2024 07:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MLJN0ipg"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233BEFBF6
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 06:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4CB179A3
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 07:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729407268; cv=none; b=NdJQoXcRAoR6Je9cnD75N2ASOk8O3Yd5CzyQ4EWhgzRLL51xwMX4iTl5VU5vDP8djqgylCsjyZs+AcpQlWyLJVfhdROcahQlKpV0PYHf7BYVWBvUzSX9KhCiXrahq2/HOjKytpO2QW9Mrjx0ogQ20wfia53FOfzuSWOTzJNikSU=
+	t=1729407908; cv=none; b=asDnYBO+H99bS9jyqj0wRAqtHd3alZ6uoLCC8VZaYtb09aTtFUCI0yE5aPnIF1AqHqJNGGfYlmpnJLuYcAG6WzerHlPegIa7ZuPfyKtVCxT9FgkOOn51rRK7IvWOOtug3x5RMs3v9aWJYXJsdzynTeO1YPp9IpnsqWMsi9f97gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729407268; c=relaxed/simple;
-	bh=5GFzwewL/6GDKwWKnE1RznpqGM1MLWb559+xZEgufOg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JktNm3m5Z21O/yU36xBx6xMHuClWELOJL9VHHW6rDeqK2/7/5LxGBIxeXMl/x40VpBoqF7r6Ac0LZ7HvjY01FY7u+IXsMy8nDtnpiDN3m60qkdX66+7ndijMRi5j5Ewp6GL/6IVY2Sr3yLD8KSNRD1gCiKL3joIRWFf7MBe8wGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b45bfc94so33152525ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 23:54:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729407265; x=1730012065;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pbUKYCvdMhlnRHofXfVq/vHcCYY8nGsh/snjxhoO2XE=;
-        b=GrNFWa4+AcF4spc77w57h9pGPpLTTaCNs/pJDihauSWppJiQ2sjgFxcrrkUaSBQtCS
-         KNZX/KbY2pphCCXpHtqmU117opR1WmXavMS80B71v+vpRXa5sOjEjdVN7R6+3GvaPxZU
-         DkDORzhjaWpRYsdFY/wzCFcv09a0q/hVa2m62ytW6BouM7Ssfvjekm/8yz/MfQ3ba5aD
-         khmXMZTEKUR1APzp9cnrrAJSxLlXZpP3w+ru6Uhtx9HRSU8dXF7enUM34L1q+Vw8Unqu
-         eWr6eaN1K4AiIMl1/uUEoqUWEoKLDHGtoNaEY/jwh3apA33DbsknZujWNVIKwJCLeSzE
-         EIlg==
-X-Gm-Message-State: AOJu0YxEQ7T5BDMHVLhKO511pDMGZtivgzX9Ey5cP+j4DZJQ2sTjHEYV
-	VVSiuwX7aKOYn4J4BQaxNxOoJGoUkttAyhkrx5GPyCRIP7TeQDJGuGR4ryjUyhsZM5ziS0zOpW0
-	jKoVoJeWI1Cfex2+JjCOdNBf5FqnYQkhTIOAI68SevpjHSAZwVzzxQUw=
-X-Google-Smtp-Source: AGHT+IF8XaoqN3UIEHsxdxYQmWYjGWUCfGKY0MT4MS0tobljYMNL3mPUd+o02SYX9FqodX68GiYK1G9tjHy8jtgxhDSGyASjGPRn
+	s=arc-20240116; t=1729407908; c=relaxed/simple;
+	bh=QMiL4cA0pX0cwFCg2aR5P5zopBl0Q/7Gl3PjWIlvw9c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OjNEUpWMdbuWf0Z1x9b2/LcG4lkz96sDmdqj7tVCiUsWIuKh7zFM8tFMhGfdI7ENvayEunK9t77pQX+nDvHc1cDgFFTUX3K+PK/eaU9IHUBr3fTGZwd3lYiIP0COpNkxzEt32kLBowR9exXXz+AjNP0JQXfcE0PGU9DgvHut0UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MLJN0ipg; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729407901;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LqIdPb7NeBf33hzfhwQNcfLF0EmzG7i1fDU5vSLYBC4=;
+	b=MLJN0ipgsiKkCeXjYpmPrtUmW5IkWZc/qemb1EXpJbJSKgBxQARNDBhsJWdVUCskVl3p21
+	jjW6fv1v3RQL95DemTkKUuonskzGpShulNvvtEAkxIgBSFnSlUNCi8RF5fVIC8cCt5RgDL
+	qGtsxQqsaG8ibrcKCZOMA7YxcCvve8U=
+From: Hao Ge <hao.ge@linux.dev>
+To: surenb@google.com,
+	kent.overstreet@linux.dev,
+	akpm@linux-foundation.org
+Cc: yuzhao@google.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	hao.ge@linux.dev,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH] mm/codetag: fix null pointer check logic for ref and tag
+Date: Sun, 20 Oct 2024 15:04:27 +0800
+Message-Id: <20241020070427.307702-1-hao.ge@linux.dev>
+In-Reply-To: <20241018152925.138341-1-hao.ge@linux.dev>
+References: <20241018152925.138341-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1529:b0:3a3:b3f4:af4c with SMTP id
- e9e14a558f8ab-3a3f40b74b8mr63434305ab.25.1729407265165; Sat, 19 Oct 2024
- 23:54:25 -0700 (PDT)
-Date: Sat, 19 Oct 2024 23:54:25 -0700
-In-Reply-To: <000000000000657ecd0614456af8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6714a921.050a0220.1e4b4d.0036.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+From: Hao Ge <gehao@kylinos.cn>
 
-***
+When we compile and load lib/slub_kunit.c,it will cause a panic.
 
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-Author: cmeiohas@nvidia.com
+The root cause is that __kmalloc_cache_noprof was directly called
+instead of kmem_cache_alloc,which resulted in no alloc_tag being
+allocated.This caused current->alloc_tag to be null,leading to a
+null pointer dereference in alloc_tag_ref_set.
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+Despite the fact that my colleague Pei Xiao will later fix the code
+in slub_kunit.c,we still need fix null pointer check logic for ref
+and tag to avoid panic caused by a null pointer dereference.
 
-On 19/10/2024 21:55, syzbot wrote:
-> External email: Use caution opening links or attachments
->
->
-> Hello,
->
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> BUG: workqueue leaked atomic, lock or RCU: kworker/NUM:NUM[NUM]
->
-> BUG: workqueue leaked atomic, lock or RCU: kworker/1:4[5339]
->      preempt=0x00000000 lock=0->1 RCU=0->0 workfn=smc_ib_port_event_work
-> 1 lock held by kworker/1:4/5339:
->  #0: ffffffff8fcd1d48 (rtnl_mutex){+.+.}-{3:3}, at: ib_get_eth_speed+0x13c/0x800 drivers/infiniband/core/verbs.c:1991
-> CPU: 1 UID: 0 PID: 5339 Comm: kworker/1:4 Not tainted 6.12.0-rc2-syzkaller-00003-g89e9ae55dc56-dirty #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: events smc_ib_port_event_work
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  process_one_work kernel/workqueue.c:3250 [inline]
->  process_scheduled_works+0x1158/0x1850 kernel/workqueue.c:3310
->  worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
->
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.12.0-rc2-syzkaller-00003-g89e9ae55dc56-dirty #0 Not tainted
-> ------------------------------------------------------
-> kworker/1:4/5339 is trying to acquire lock:
-> ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
-> ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
->
-> but task is already holding lock:
-> ffffffff8fcd1d48 (rtnl_mutex){+.+.}-{3:3}, at: ib_get_eth_speed+0x13c/0x800 drivers/infiniband/core/verbs.c:1991
->
-> which lock already depends on the new lock.
->
->
-> the existing dependency chain (in reverse order) is:
->
-> -> #1 (rtnl_mutex){+.+.}-{3:3}:
->        reacquire_held_locks+0x3eb/0x690 kernel/locking/lockdep.c:5350
->        __lock_release kernel/locking/lockdep.c:5539 [inline]
->        lock_release+0x396/0xa30 kernel/locking/lockdep.c:5846
->        process_one_work kernel/workqueue.c:3236 [inline]
->        process_scheduled_works+0xb70/0x1850 kernel/workqueue.c:3310
->        worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->        kthread+0x2f0/0x390 kernel/kthread.c:389
->        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> -> #0 ((wq_completion)events){+.+.}-{0:0}:
->        check_prev_add kernel/locking/lockdep.c:3161 [inline]
->        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
->        validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
->        __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
->        process_one_work kernel/workqueue.c:3204 [inline]
->        process_scheduled_works+0x950/0x1850 kernel/workqueue.c:3310
->        worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->        kthread+0x2f0/0x390 kernel/kthread.c:389
->        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> other info that might help us debug this:
->
->  Possible unsafe locking scenario:
->
->        CPU0                    CPU1
->        ----                    ----
->   lock(rtnl_mutex);
->                                lock((wq_completion)events);
->                                lock(rtnl_mutex);
->   lock((wq_completion)events);
->
->  *** DEADLOCK ***
->
-> 1 lock held by kworker/1:4/5339:
->  #0: ffffffff8fcd1d48 (rtnl_mutex){+.+.}-{3:3}, at: ib_get_eth_speed+0x13c/0x800 drivers/infiniband/core/verbs.c:1991
->
-> stack backtrace:
-> CPU: 1 UID: 0 PID: 5339 Comm: kworker/1:4 Not tainted 6.12.0-rc2-syzkaller-00003-g89e9ae55dc56-dirty #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: events wq_barrier_func
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
->  check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
->  check_prev_add kernel/locking/lockdep.c:3161 [inline]
->  check_prevs_add kernel/locking/lockdep.c:3280 [inline]
->  validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
->  __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
->  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
->  process_one_work kernel/workqueue.c:3204 [inline]
->  process_scheduled_works+0x950/0x1850 kernel/workqueue.c:3310
->  worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-> BUG: workqueue leaked atomic, lock or RCU: kworker/1:4[5339]
->      preempt=0x00000000 lock=1->0 RCU=0->0 workfn=wq_barrier_func
-> INFO: lockdep is turned off.
-> CPU: 1 UID: 0 PID: 5339 Comm: kworker/1:4 Not tainted 6.12.0-rc2-syzkaller-00003-g89e9ae55dc56-dirty #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: events wq_barrier_func
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  process_one_work kernel/workqueue.c:3250 [inline]
->  process_scheduled_works+0x1158/0x1850 kernel/workqueue.c:3310
->  worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
->
->
-> Tested on:
->
-> commit:         89e9ae55 IB/hfi1: make clear_all_interrupts static
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1727fc5f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=15bcf487980000
->
+Here is the log for the panic:
+
+[   74.779373][ T2158] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
+[   74.780130][ T2158] Mem abort info:
+[   74.780406][ T2158]   ESR = 0x0000000096000004
+[   74.780756][ T2158]   EC = 0x25: DABT (current EL), IL = 32 bits
+[   74.781225][ T2158]   SET = 0, FnV = 0
+[   74.781529][ T2158]   EA = 0, S1PTW = 0
+[   74.781836][ T2158]   FSC = 0x04: level 0 translation fault
+[   74.782288][ T2158] Data abort info:
+[   74.782577][ T2158]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[   74.783068][ T2158]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[   74.783533][ T2158]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[   74.784010][ T2158] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000105f34000
+[   74.784586][ T2158] [0000000000000020] pgd=0000000000000000, p4d=0000000000000000
+[   74.785293][ T2158] Internal error: Oops: 0000000096000004 [#1] SMP
+[   74.785805][ T2158] Modules linked in: slub_kunit kunit ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_mangle 4
+[   74.790661][ T2158] CPU: 0 UID: 0 PID: 2158 Comm: kunit_try_catch Kdump: loaded Tainted: G        W        N 6.12.0-rc3+ #2
+[   74.791535][ T2158] Tainted: [W]=WARN, [N]=TEST
+[   74.791889][ T2158] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+[   74.792479][ T2158] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   74.793101][ T2158] pc : alloc_tagging_slab_alloc_hook+0x120/0x270
+[   74.793607][ T2158] lr : alloc_tagging_slab_alloc_hook+0x120/0x270
+[   74.794095][ T2158] sp : ffff800084d33cd0
+[   74.794418][ T2158] x29: ffff800084d33cd0 x28: 0000000000000000 x27: 0000000000000000
+[   74.795095][ T2158] x26: 0000000000000000 x25: 0000000000000012 x24: ffff80007b30e314
+[   74.795822][ T2158] x23: ffff000390ff6f10 x22: 0000000000000000 x21: 0000000000000088
+[   74.796555][ T2158] x20: ffff000390285840 x19: fffffd7fc3ef7830 x18: ffffffffffffffff
+[   74.797283][ T2158] x17: ffff8000800e63b4 x16: ffff80007b33afc4 x15: ffff800081654c00
+[   74.798011][ T2158] x14: 0000000000000000 x13: 205d383531325420 x12: 5b5d383734363537
+[   74.798744][ T2158] x11: ffff800084d337e0 x10: 000000000000005d x9 : 00000000ffffffd0
+[   74.799476][ T2158] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008219d188 x6 : c0000000ffff7fff
+[   74.800206][ T2158] x5 : ffff0003fdbc9208 x4 : ffff800081edd188 x3 : 0000000000000001
+[   74.800932][ T2158] x2 : 0beaa6dee1ac5a00 x1 : 0beaa6dee1ac5a00 x0 : ffff80037c2cb000
+[   74.801656][ T2158] Call trace:
+[   74.801954][ T2158]  alloc_tagging_slab_alloc_hook+0x120/0x270
+[   74.802494][ T2158]  __kmalloc_cache_noprof+0x148/0x33c
+[   74.802976][ T2158]  test_kmalloc_redzone_access+0x4c/0x104 [slub_kunit]
+[   74.803607][ T2158]  kunit_try_run_case+0x70/0x17c [kunit]
+[   74.804124][ T2158]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
+[   74.804768][ T2158]  kthread+0x10c/0x118
+[   74.805141][ T2158]  ret_from_fork+0x10/0x20
+[   74.805540][ T2158] Code: b9400a80 11000400 b9000a80 97ffd858 (f94012d3)
+[   74.806176][ T2158] SMP: stopping secondary CPUs
+[   74.808130][ T2158] Starting crashdump kernel...
+
+Fixes: e0a955bf7f61 ("mm/codetag: add pgalloc_tag_copy()")
+Suggested-by: Suren Baghdasaryan <surenb@google.com>
+Acked-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+v3: Modify the code logic based on Suren's suggestions.
+    Update title and commit message due to code logic change.
+    Add Suggested-by: Suren Baghdasaryan <surenb@google.com>
+    Add Acked-by: Yu Zhao <yuzhao@google.com>
+
+v2: Modify the errors in the title and commit message.
+    Remove the empty lines that were mistakenly added in version v1.
+---
+ include/linux/alloc_tag.h | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+index 1f0a9ff23a2c..941deffc590d 100644
+--- a/include/linux/alloc_tag.h
++++ b/include/linux/alloc_tag.h
+@@ -135,18 +135,21 @@ static inline void alloc_tag_sub_check(union codetag_ref *ref) {}
+ #endif
+ 
+ /* Caller should verify both ref and tag to be valid */
+-static inline void __alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *tag)
++static inline bool __alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *tag)
+ {
+ 	alloc_tag_add_check(ref, tag);
+ 	if (!ref || !tag)
+-		return;
++		return false;
+ 
+ 	ref->ct = &tag->ct;
++	return true;
+ }
+ 
+-static inline void alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *tag)
++static inline bool alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *tag)
+ {
+-	__alloc_tag_ref_set(ref, tag);
++	if (unlikely(!__alloc_tag_ref_set(ref, tag)))
++		return false;
++
+ 	/*
+ 	 * We need in increment the call counter every time we have a new
+ 	 * allocation or when we split a large allocation into smaller ones.
+@@ -154,12 +157,13 @@ static inline void alloc_tag_ref_set(union codetag_ref *ref, struct alloc_tag *t
+ 	 * counter because when we free each part the counter will be decremented.
+ 	 */
+ 	this_cpu_inc(tag->counters->calls);
++	return true;
+ }
+ 
+ static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag, size_t bytes)
+ {
+-	alloc_tag_ref_set(ref, tag);
+-	this_cpu_add(tag->counters->bytes, bytes);
++	if (likely(alloc_tag_ref_set(ref, tag)))
++		this_cpu_add(tag->counters->bytes, bytes);
+ }
+ 
+ static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes)
+-- 
+2.25.1
+
 
