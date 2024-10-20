@@ -1,226 +1,91 @@
-Return-Path: <linux-kernel+bounces-373187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7B99A5387
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 12:46:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8949A5389
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 12:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45A931F21C51
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 611CB282A9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF98E183CA6;
-	Sun, 20 Oct 2024 10:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B45B18E361;
+	Sun, 20 Oct 2024 10:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RubCtQ2p"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Phd4w9Dn"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB9D6AA7;
-	Sun, 20 Oct 2024 10:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A024A6AA7
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 10:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729421168; cv=none; b=m7FvWs3cl0RzDMO04fCFwolfoIiUTwAy4SITjU5P8hTVWZLXUL8zVc3PMY4zpkmJ0IFgoRrYv5BsP6qhXX7gfVN/pN/mpzoCZauApERDiSP2+9Jt7KWVCGzMjrlT3roj9xjJDrhzpqgi9QU8OuHz5VEp89bG7ssIrVEe+KEwtwE=
+	t=1729421336; cv=none; b=G95K0+UiE1X7s7kLIg/m4hPBCBLdfr/6ytQrTWqGCRCjJpnTBDMQDTyndEAiIjyJrJMYPX/8UuTExbRwD9UwWlormt67N9vm25JjgGmqfw7Jcj9YC99RXRNtgecgkFLpSRcExo750TXkzv0jPvuVSbBifWBIT/WTY2QaJnQLjTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729421168; c=relaxed/simple;
-	bh=0XhLUi2QSo07min72woGCvHWNfk5RNmyOWYj3D88ugA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nlXU4dVejFC+FaHw4304dvVZk7mJ3FjGXrldrcQEVYow5xggQ4HaJpNcIkbtfiXml2p6H92TLvBf3zA46XrkColxU5QC1DshfqyK8syBFbfunJ0F4SmrMwx21t4NioUMINpWMN3vh5midVA1CH9psC48Y6LzIlaM9bHzimF/WXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RubCtQ2p; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729421166; x=1760957166;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0XhLUi2QSo07min72woGCvHWNfk5RNmyOWYj3D88ugA=;
-  b=RubCtQ2pcaA95rHFHhdaTSyc36xCLsv9QFGXDPM57bdyltDTDV75XZBW
-   WevSMatp4PLvZxgRqo+Y7kuZH2jyaUgRJLm4nlwGbj3N9kC7yBB7TFRe/
-   dWiUNMOQipyYK44mvxaf67AchLp3gifUdbDDQ6iAZGUhp47zIuM5w4K88
-   QUxbqZ3VeG83IuG0aVKOoGk5mVZfc6F2Zx/RB1FE3S93qK8oMNtC0LlTc
-   7QtQ91eyDqkrxgvQPqVJ4sAewZhv0uI3Xx0n2+uKx4JVzzXHvseS468dy
-   tHtPjU+4N4LHhZb0uHLSNDrJmLBpuX0WVGf1NSouRh7CC7E7aSttYkfG8
-   Q==;
-X-CSE-ConnectionGUID: 4V8BCFvsT+KBvLuOVoe1UQ==
-X-CSE-MsgGUID: 8FmA7dc3T+mi12Qwils6wA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11230"; a="39530527"
-X-IronPort-AV: E=Sophos;i="6.11,218,1725346800"; 
-   d="scan'208";a="39530527"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 03:46:06 -0700
-X-CSE-ConnectionGUID: mWSdEmY5S62M85EmvaF/sg==
-X-CSE-MsgGUID: uvvOuuk/Q8OYVJkyyWbBGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,218,1725346800"; 
-   d="scan'208";a="79224218"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 03:46:03 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id E20DA11F802;
-	Sun, 20 Oct 2024 13:45:59 +0300 (EEST)
-Date: Sun, 20 Oct 2024 10:45:59 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: laurent.pinchart@ideasonboard.com, prabhakar.csengg@gmail.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: v4l2-subdev: Refactor events
-Message-ID: <ZxTfZ1GOMdOmrmTt@kekkonen.localdomain>
-References: <20241018171104.1624426-1-tomm.merciai@gmail.com>
- <ZxK3VsNdFjULfRxK@kekkonen.localdomain>
- <ZxQtlwVZ9JfIM8tl@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+	s=arc-20240116; t=1729421336; c=relaxed/simple;
+	bh=SDKtvxc6BdDUdcS/xBbukopdK/nzFQdN0uyG01misAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E3x4uJ0ewT/+KCDiT0fcK5XywarcntYcDY4NTmjjxKN5HRVnfYEUbq9u7WRmCSonT1oONCAHsXk39gqyRtG9WKnQG4VhpD3tOhbB4DlVfYj+YdYrOARavqe932DnkmDVNfbFZcxCTdMzgzmRzqh+qE5Fk/JhcJaoMQqAGBVdvuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Phd4w9Dn; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729421330;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Q2dkOgqWwR9XgMPnHIscHjM3nX4m78fOsiQRAow4grE=;
+	b=Phd4w9DniHxnwASXS7nn8tbTMKmZkOzAcY55nGas4aTbwgJfiK9e6f75rJ6q9iYZjvkECZ
+	BeY3qwc4C/rWzPXah6PrsBCShSBTZUw3bLyxArqob5tg5D7cDX0ZvFzPPVKNFipDU6OexW
+	u12rwyZ9RgCsupWgP7y8n0zIKe6nkRA=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: sched: etf: Use str_on_off() helper function in etf_init()
+Date: Sun, 20 Oct 2024 12:47:59 +0200
+Message-ID: <20241020104758.49964-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxQtlwVZ9JfIM8tl@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Tommaso,
+Remove hard-coded strings by using the helper function str_on_off().
 
-On Sun, Oct 20, 2024 at 12:07:19AM +0200, Tommaso Merciai wrote:
-> Hi Sakari,
-> 
-> On Fri, Oct 18, 2024 at 07:30:30PM +0000, Sakari Ailus wrote:
-> > Hi Tommaso,
-> > 
-> > Thanks for working on this.
-> 
-> In real it's a Laurent's suggestion :)
-> 
-> > 
-> > On Fri, Oct 18, 2024 at 07:11:03PM +0200, Tommaso Merciai wrote:
-> > > Controls can be exposed to userspace via a v4l-subdevX device, and
-> > > userspace has to be able to subscribe to control events so that it is
-> > > notified when the control changes value.
-> > > If a control handler is set for the subdev then set the HAS_EVENTS
-> > > flag automatically into v4l2_subdev_init_finalize() and use
-> > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> > > as default if subdev don't have .(un)subscribe control operations.
-> > > 
-> > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> > > ---
-> > >  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
-> > >  1 file changed, 20 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > index 3a4ba08810d2..77ca829b9983 100644
-> > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
-> > >  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
-> > >  
-> > >  	case VIDIOC_SUBSCRIBE_EVENT:
-> > > -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
-> > > +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> > > +			return v4l2_subdev_call(sd, core, subscribe_event,
-> > > +						vfh, arg);
-> > > +
-> > > +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
-> > > +		     vfh->ctrl_handler)
-> > > +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-> > > +
-> > > +		return -ENOIOCTLCMD;
-> > 
-> > While this mostly does the same thing, I prefer the order of tests below.
-> > Could you align event subscription with unsubscription?
-> 
-> What about:
-> 
-> 	case VIDIOC_SUBSCRIBE_EVENT:
-> 		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
-> 			return -ENOIOCTLCMD;
-> 
-> 		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> 			return v4l2_subdev_call(sd, core, subscribe_event,
-> 						vfh, arg);
-> 
-> 		if (!vfh->ctrl_handler)
-> 			return -ENOTTY;
-> 
-> 		return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ net/sched/sch_etf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Oh, right. Actually the earlier unsubscription didn't always produce
-correct results. I missed that. This is needlessly complicated at the
-moment. So I'd do:
-
-	case VIDIOC_SUBSCRIBE_EVENT:
-		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-			return v4l2_subdev_call(sd, core, subscribe_event,
-						vfh, arg);
-
-		return (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
-			vfh->ctrl_handler ?
-			v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg) :
-			-ENOIOCTLCMD;
-
-	case VIDIOC_UNSUBSCRIBE_EVENT:
-		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-			return v4l2_subdev_call(sd, core, unsubscribe_event,
-						vfh, arg);
-
-		return sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS ?
-			v4l2_event_subdev_unsubscribe(sd, vfh, arg) :
-			-ENOIOCTLCMD;
-
-
-> 
-> 	case VIDIOC_UNSUBSCRIBE_EVENT:
-> 		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
-> 			return -ENOIOCTLCMD;
-> 
-> 		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> 			return v4l2_subdev_call(sd, core, unsubscribe_event,
-> 						vfh, arg);
-> 
-> 		return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
-> 
-> ?
-> 
-> Thanks & Regards,
-> Tommaso
-> 
-> > 
-> > >  
-> > >  	case VIDIOC_UNSUBSCRIBE_EVENT:
-> > > -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
-> > > +		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
-> > > +			return -ENOIOCTLCMD;
-> > > +
-> > > +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> > > +			return v4l2_subdev_call(sd, core, unsubscribe_event,
-> > > +						vfh, arg);
-> > > +
-> > > +		return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
-> > >  
-> > >  #ifdef CONFIG_VIDEO_ADV_DEBUG
-> > >  	case VIDIOC_DBG_G_REGISTER:
-> > > @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
-> > >  		}
-> > >  	}
-> > >  
-> > > +	if (sd->ctrl_handler)
-> > > +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-> > > +
-> > >  	state = __v4l2_subdev_state_alloc(sd, name, key);
-> > >  	if (IS_ERR(state))
-> > >  		return PTR_ERR(state);
-> > 
-> > -- 
-> > Kind regards,
-> > 
-> > Sakari Ailus
-
+diff --git a/net/sched/sch_etf.c b/net/sched/sch_etf.c
+index c74d778c32a1..c62730f5df4c 100644
+--- a/net/sched/sch_etf.c
++++ b/net/sched/sch_etf.c
+@@ -369,8 +369,8 @@ static int etf_init(struct Qdisc *sch, struct nlattr *opt,
+ 
+ 	pr_debug("delta %d clockid %d offload %s deadline %s\n",
+ 		 qopt->delta, qopt->clockid,
+-		 OFFLOAD_IS_ON(qopt) ? "on" : "off",
+-		 DEADLINE_MODE_IS_ON(qopt) ? "on" : "off");
++		 str_on_off(OFFLOAD_IS_ON(qopt)),
++		 str_on_off(DEADLINE_MODE_IS_ON(qopt)));
+ 
+ 	err = validate_input_params(qopt, extack);
+ 	if (err < 0)
 -- 
-Sakari Ailus
+2.47.0
+
 
