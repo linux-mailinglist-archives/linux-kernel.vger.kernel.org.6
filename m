@@ -1,113 +1,78 @@
-Return-Path: <linux-kernel+bounces-373460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8660C9A56EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 23:07:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F159A56F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 23:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 343561F219AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:07:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AD8AB214C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AF6198A06;
-	Sun, 20 Oct 2024 21:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A61719883C;
+	Sun, 20 Oct 2024 21:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="T+0uMew2"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VlgLoK60"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50B03A1CD;
-	Sun, 20 Oct 2024 21:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7808845025;
+	Sun, 20 Oct 2024 21:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729458448; cv=none; b=h2NiW71K88k4MOYhtwtEhgYql8YSKwuSc1FkaUoStH97n9JubmTaW60fdZhndSuN1ZAiRtKPsiYcSl9Gy+ZzWJoIlZ7GWieZrQVyx6B9OKGi/og9EvE0He0XRF8gr+OXa1RPJC/eZJ7qhNCRp8qXpTP/QFvuAHQkwUZ6AwQieYk=
+	t=1729459150; cv=none; b=tZTkkeHzKuh0y+PQtrqqdg3Jn4o3ry+HHHqmPnUH+9S9Y4MNo13qI2tfYBZUA8hHyICT3hRPoGvusFEGcsJgL3oLQ4vvNS4LwCwO3QN8y5T7JW53hIRfP+fSWYmL69n9g/61jFR1E5AJ6Ort2e6sNGytHiIA2RY2vsUMz/5Ka+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729458448; c=relaxed/simple;
-	bh=Rak7smfvFZuG8pTd0YZjqSm5UlWH6+ZVw84ynDVgDzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G9FNuks3rf7UC45vmLZYUU3wGQ6myoBtePyu14nvZb+ifGXkKl7ze6z+lsOhT2JYsNmLhyuF2ZXzSRXaGsFfVSD9BulZjzGaEN2HJdzcc+3IsRrtaXJB5WqIK7DL89RCY3xf9R2MusydR53tUKr/d2X1Ho/Wz52GjG4kKwX6024=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=T+0uMew2; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729458442;
-	bh=Rak7smfvFZuG8pTd0YZjqSm5UlWH6+ZVw84ynDVgDzo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=T+0uMew2wk18XSjSEMsTPLezcns9EdbyvEsZb/SqP3tcAqh9H0MKCMVc8mIXf6Te0
-	 yjZzw7knnHsVBcBFMHEk5RIp5QHZf/Pmzi4tjA59tmYQTMYfMxwXhwbUu6HUMqjYMQ
-	 y8G+giSpyiQV3DdfSJhWIcoH00nFW6Q1eJNm01MhTH13/lWP9TN3jeRNElK1fP05Ks
-	 ZQ7V1qTJLf/OY/RMRSKczwt4dXDMgB3r/VKYdC1Er71hIal2QZm+2KlGHuM0aSX5nI
-	 o89BajhgGy8onpLm4+ZS8CyD8b5YiGRiW+ZrdifRhqVk2kjd0vg9myaNCzz+o/Cogo
-	 0c2mjLco4hODg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XWrcB1m6bz4wbv;
-	Mon, 21 Oct 2024 08:07:22 +1100 (AEDT)
-Date: Mon, 21 Oct 2024 08:07:22 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: error trying to fetch the bcachefs tree
-Message-ID: <20241021080722.2aa7db61@canb.auug.org.au>
-In-Reply-To: <pmdkqd63ywjl4ktdjg24v6pjslepes7fmmu4llpqzeueeeos2b@vldhjmmcqfil>
-References: <20241021073823.1a89e1fa@canb.auug.org.au>
-	<pmdkqd63ywjl4ktdjg24v6pjslepes7fmmu4llpqzeueeeos2b@vldhjmmcqfil>
+	s=arc-20240116; t=1729459150; c=relaxed/simple;
+	bh=OZeJUa0mSW+noCK3Rai8Sp1tqeDt/wHMr6AMqYtbes8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IaFkvuvMPBzgd1Aupkgw7V12qBJ/RKci3/QjuFvLgjCtx0hcWP4ihWZ61MKyMUzHkJTbEAohNh8QyDIEGLrj2J4Evnla6FJTbcqxaPJXk9MHS/ViRyV1XTET8iO/jr14xLkuW38qlOJs8gVGP1ZQqKh7dFrpqVRr1HXilzoLWYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VlgLoK60; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D0DC4CEC6;
+	Sun, 20 Oct 2024 21:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729459150;
+	bh=OZeJUa0mSW+noCK3Rai8Sp1tqeDt/wHMr6AMqYtbes8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=VlgLoK60XFAU91BDD8yAv9NMBgdw1eBzJjIYodtEeo967yHN2GGUSFxPC6OK1qz5C
+	 zQTtx4OcceJB6DdmGQ/OUB3hYVo1Swh2es1CAgYq74jNV5GAcg0UI8LJvqHtjl47aB
+	 jMOqldivNl769FDlaVRoDY2cPmArInbYBsgfWaJeIln884T1XvzsZMG2jehtPRK4Me
+	 yF51F9G/UTAExKh2bQlYqjuIS9Da1XWPx7uQNSTuVXblTFreiDy1NpzD3hfdoeieeF
+	 SHZrmz/tAKgysVxUZobYMjflLUCVUZVetEiv68PmWjCqC8S3SAit1tklSfzPEwgR/9
+	 AIf/HeUk2/JVQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EE63805CC0;
+	Sun, 20 Oct 2024 21:19:17 +0000 (UTC)
+Subject: Re: [GIT PULL] Pin control fixes for v6.12
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdZ1K=G+J-Kw1=gbHixuS32DoXGdoja7dOc1O6cR8VeshQ@mail.gmail.com>
+References: <CACRpkdZ1K=G+J-Kw1=gbHixuS32DoXGdoja7dOc1O6cR8VeshQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdZ1K=G+J-Kw1=gbHixuS32DoXGdoja7dOc1O6cR8VeshQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.12-2
+X-PR-Tracked-Commit-Id: 93b8ddc54507a227087c60a0013ed833b6ae7d3c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: dd4f50373e508632f01b63eab5a3c0b5debe22e3
+Message-Id: <172945915602.3645781.15115471904500259612.pr-tracker-bot@kernel.org>
+Date: Sun, 20 Oct 2024 21:19:16 +0000
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/1tUTJ3QBz3+CxJZJd_1islX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/1tUTJ3QBz3+CxJZJd_1islX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The pull request you sent on Sun, 20 Oct 2024 19:39:54 +0200:
 
-Hi Kent,
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.12-2
 
-On Sun, 20 Oct 2024 16:40:32 -0400 Kent Overstreet <kent.overstreet@linux.d=
-ev> wrote:
->
-> On Mon, Oct 21, 2024 at 07:38:23AM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > Fetching the bcachefs tree produces this error:
-> >=20
-> > fatal: unable to connect to evilpiepirate.org:
-> > evilpiepirate.org[0: 5.161.236.196]: errno=3DNo route to host
-> >=20
-> > This also applies to the header_cleanup tree. =20
->=20
-> It should be back up in a day or so, for now I have a github mirror:
-> https://github.com/koverstreet/bcachefs/ for-next
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/dd4f50373e508632f01b63eab5a3c0b5debe22e3
 
-OK, thanks, I will use that for now.
+Thank you!
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1tUTJ3QBz3+CxJZJd_1islX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcVcQoACgkQAVBC80lX
-0GxieggApkYTGmPr7awKvt6KRyosmr6f2vHMSwwR8H6+F/XbaeXYKM86/qySfeM5
-nfejmtdXuCoKiwuvC425nM2l48MSAZxsZRwHGNszSV+A6kdjh+ftwqnPan5u4QcU
-zM14ofKxD7exvCf4kIPTiSPSbNpp4kLq0+3BUo7jLjQ6BiHNvail0Nfg4YTgYdLR
-9RBFT8WeQGTrgMSrtM4ilqOvH8wH+ha5LFc0Oadq0x1JZ+n3DPRnHfnqDy7q+DR/
-5w4t2XCG2gqdbCncQL+RzZ+7I+Daoye/qL520ZCwYmct6tMTSTb3cGDGiN+4DUIw
-/ME9sfeTGs8IjCq5JO1eRoyIV7Oegw==
-=f8aU
------END PGP SIGNATURE-----
-
---Sig_/1tUTJ3QBz3+CxJZJd_1islX--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
