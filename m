@@ -1,129 +1,87 @@
-Return-Path: <linux-kernel+bounces-373182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F348F9A536D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 12:05:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE179A536F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 12:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED3B2830BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:05:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CBA61F22044
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE76D811F1;
-	Sun, 20 Oct 2024 10:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="EAAlkW7u";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="EAAlkW7u"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CCF83A19;
+	Sun, 20 Oct 2024 10:08:07 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002C12C181
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 10:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC902BAF9
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 10:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729418738; cv=none; b=VIz5aXX5KD6+cJlz9lvrxh6Ug5+aZGcNLVcmkqhpJnccS818xjcrWaoOtl1Z4Ol9xkX93USYZ7UzE2zXXht+QqnKxgLGmUIRkq5wBzwHp8HS7oqDzDbDLP6K7ZDImHCNxui0LsPayatQHoh4tuKnhCrdCHaEmVbH4pKpFhYdgD0=
+	t=1729418886; cv=none; b=AxdW9naPko7aOvnsVHZZRaPrbX5vyJ96aPsDaMiuaXdDiJDsa9dfMysAIFxWEiJ/2uPKzy7CwF8yIe+CXiXA9GG/tl/1NXL9T6FLUWVL99LLiulV3T3UpvpSsXbHWrz1gEhucOkboR4eDlW6XwjgJKp0cVW7saFWSOpuNC96oZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729418738; c=relaxed/simple;
-	bh=1zubAoXozFOi4/w84S1PdSPAh60vA3TEyGruyHvh3QU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mDXt/rFTVBmc7RW4nBusUnsbQesqu5F0minHG2e8vseD6lF01pDPj31bCyuDLTHLuLZv9FWEARo3DSrp8hlEtTWV3rzURs0nVQjJQF7tx81Q/lORy0pbGmi+AJT0FRIj1guM8KlFQH7QRLWJRSbZcku+DGkaUX7+Kn8grjU6XPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=EAAlkW7u; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=EAAlkW7u; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0E34B1FDDE;
-	Sun, 20 Oct 2024 10:05:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1729418734; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=yN4mSamSE977luvalP1/nrLwKNupeevFLON1NVBJIOg=;
-	b=EAAlkW7uunjfa8n0lH/lb98e3o41KEvzMwShkY4eq3LWOKb8mfPFGTcrocv6u/seuTvXB6
-	kMlWiGdoE13/3su9CIhYGsgsPXGjMvUb0J+c9Wa9piiCIqXMsoIlVRalWj3njXP6Z/O8+r
-	QP8fTyXGkDZda3C8kZKMf4G+MJ5zvkc=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1729418734; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=yN4mSamSE977luvalP1/nrLwKNupeevFLON1NVBJIOg=;
-	b=EAAlkW7uunjfa8n0lH/lb98e3o41KEvzMwShkY4eq3LWOKb8mfPFGTcrocv6u/seuTvXB6
-	kMlWiGdoE13/3su9CIhYGsgsPXGjMvUb0J+c9Wa9piiCIqXMsoIlVRalWj3njXP6Z/O8+r
-	QP8fTyXGkDZda3C8kZKMf4G+MJ5zvkc=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CD2AF13894;
-	Sun, 20 Oct 2024 10:05:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gQNDMO3VFGd4IgAAD6G6ig
-	(envelope-from <jgross@suse.com>); Sun, 20 Oct 2024 10:05:33 +0000
-From: Juergen Gross <jgross@suse.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	sstabellini@kernel.org
-Subject: [GIT PULL] xen: branch for v6.12-rc4
-Date: Sun, 20 Oct 2024 12:05:33 +0200
-Message-ID: <20241020100533.24289-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729418886; c=relaxed/simple;
+	bh=QqqWWdK5oRqdeOqWHtbZ/WMn1XhxH0GF6hdq+17CIxI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Q1HKxEDUhD2dGUmSrDgsBA420U92oNFBvgWiqVeJYRUqwVdKnXELX8PYm0s+7W9V6uqIhMCnbejZVGnDPnj7yzbtHxbUEMBty2WKuR9As2ApD7N2USiDYCqPEdtZ0MDUOPnrYxf2huvLVHGkCQ38N7BfanjSCeDZM33C1ArB6SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso28236535ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 03:08:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729418884; x=1730023684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jN8ckLTIPTUwP25Ye31kzu+M+HZrMXCNwC5b24P98sQ=;
+        b=eyLG5C40xYd4YZFmf1IpImXCRs1PthJL22eRMv7hS+eokJfmXeOBhN4R+4bwJkSIOO
+         JEgj5eWjikDqX90tva+pO2qLBZ09YafLMvTsw0jeBMI2ej4Psaw9dA1jqNuJuJR5c5X0
+         3W3NSijmW+CL9Qk2nAvD424CJTQw0/6DT9+QT/wzGDG7dr/cQO0mich5k6kZq51iwt0E
+         mlx2uYJ5x1TixcMoRwf5FGlyKq2XSSmMng6v98OpA/dZyTK8cuHijHXFrhEMpt/uQje9
+         7PC8O8hU1h3UK3FnM70qw2AHsi0IM8Q/XRufnY3Db5911cMXJ5UyHc+Gc6sSIY+mAOuX
+         bP+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVy4aQ3/hm7wHl5DK5BmeYUa/lPenKNJ+t79O/4mRaIbw4mqDwBAJXpaYZkezA/qsHsQlBt94aG1HBbQjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywoy1lPeNGe6v6Q3C4FiCLYvkdrugIZWqQT+6Ou2oHGds81YdzL
+	gTNmmiZT794RCRW88ogO8vYZIXWlI7UkB4GZ3YXOVRs9qdJmMaxdEXvC3DzAwNg8woOcac1R8Q0
+	+7GScH24TsU+FeQTXfA6pAbW458QEvkL1kGyS4plbVs+dxBq/F+efuXw=
+X-Google-Smtp-Source: AGHT+IEadGs/x7MObHoL4gq6S553k8y/+iM/aD2Cdp2VEjN4zq/jgI7Us1oiST8cAPYTFaYvlo13CkprghfFIZss+cIs1C9XrFfQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+X-Received: by 2002:a05:6e02:20cc:b0:3a0:9c99:32d6 with SMTP id
+ e9e14a558f8ab-3a3f40b1441mr68491755ab.24.1729418883552; Sun, 20 Oct 2024
+ 03:08:03 -0700 (PDT)
+Date: Sun, 20 Oct 2024 03:08:03 -0700
+In-Reply-To: <20241020093903.2182-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6714d683.050a0220.1e4b4d.003f.GAE@google.com>
+Subject: Re: [syzbot] [fuse?] kernel BUG in fuse_dev_do_write
+From: syzbot <syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Linus,
+Hello,
 
-Please git pull the following tag:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
- git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-6.12a-rc4-tag
+Reported-by: syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com
+Tested-by: syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com
 
-xen: branch for v6.12-rc4
+Tested on:
 
-It contains just a single fix for a build failure introduced with a
-patch in the 6.12 merge window.
+commit:         f2493655 Add linux-next specific files for 20241018
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12852430580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=838d70a59aaad5d2
+dashboard link: https://syzkaller.appspot.com/bug?extid=65d101735df4bb19d2a3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1323825f980000
 
-Thanks.
-
-Juergen
-
- drivers/xen/Kconfig                |  1 -
- drivers/xen/acpi.c                 | 24 ++++++++++++++++++++++++
- drivers/xen/privcmd.c              |  6 ++----
- drivers/xen/xen-pciback/pci_stub.c | 11 +++++++++--
- include/xen/acpi.h                 | 14 +++++++++-----
- 5 files changed, 44 insertions(+), 12 deletions(-)
-
-Jiqian Chen (1):
-      xen: Remove dependency between pciback and privcmd
+Note: testing is done by a robot and is best-effort only.
 
