@@ -1,233 +1,198 @@
-Return-Path: <linux-kernel+bounces-373138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE119A52E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:23:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E900D9A52EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580F02835C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 06:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974BE1F22AF8
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 06:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001DC15E90;
-	Sun, 20 Oct 2024 06:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O+S6bFDp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2211B18E25;
+	Sun, 20 Oct 2024 06:44:32 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4418BE8
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 06:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2C416426
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 06:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729405406; cv=none; b=Sxh48Cxwl5njZIYWyHPfubFkZ1YMaqdXhU9jIDSm6GZo4EjMdODBGHrrvkE7rzVaqlp1AKwPya/QNCpzfgQTC/tyCCyHcAM2v7GMYKpt0JEsvk1q/5L459hLRW/Q8o2JqqFIDgGg6HsyyUgmT0rVbSo7PYxoeFGyWLR4YGQVKW0=
+	t=1729406671; cv=none; b=hUMDseGqFuprrjOGNuZm1BKRM5/WKBGEcjC9ldUMxLh6OjN+lmw7S6rkVDFCVFFnOvsmMdzWvoeX4dmGxJxVy600opk+MSIAGjh8ZWYfnOipmV9YYYZQvCdm0cRP6Uq7xY05iINwNdDIAp6uk+8vuntX0Uav0ZIk/QPe1TEQlis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729405406; c=relaxed/simple;
-	bh=YOgoFs16A+Y3ecRnnziswAMdFiSgBFhfuQnmuNNhXEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W01C3PZmyKXQ1mgil0+S2IRYcwP2ONI4dYVvzDNvaCOGvtD+wy78wi6+GEotcZgFnKf3r6BDzmkP+YmJ/H0y+BxvdQ27FJrWJo3KPqknTI7UHT+nAHMrmE4S8qKF5NtigSwHzhcFCK05YQ/7k94eNKt6PVvcQd4E+moWkPvWkMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O+S6bFDp; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729405404; x=1760941404;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YOgoFs16A+Y3ecRnnziswAMdFiSgBFhfuQnmuNNhXEs=;
-  b=O+S6bFDpDuWiW5Sh6E64JoZy+REAT6mVuGtasg80awCLK4x7c7XynSAG
-   EWkyJEQQ9ygLe8eD24vTi2y1sJhLqR98Y6nFWpchDu5/UT6WVJufihRCb
-   9lmpfdcHHvhgiamJB0bAky4yBVq5R8ZZwOcBmRCgaRdsC9+eD5w6XptJb
-   vKds3qL1qlIUJ8nfY9FElI45NIZuTw6JAiq2JGH3e1hO1LjQEqSEOrCKu
-   /W7ynTSjkVg2aGA6oNP3ltecQiCSVmw9wbMlk+qPqdQSX8R7gVtK/I8ty
-   Yfe6DGVmhbKk/0pp07h30nfE8s1MlxWhCW0QZRGGmh03/Np/S/gOW+9hp
-   A==;
-X-CSE-ConnectionGUID: VFzS5IoIQpq3rmw2wXB1VA==
-X-CSE-MsgGUID: p7z7ivEeSsW1lT+WXnW4FA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11230"; a="29117573"
-X-IronPort-AV: E=Sophos;i="6.11,218,1725346800"; 
-   d="scan'208";a="29117573"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 23:23:23 -0700
-X-CSE-ConnectionGUID: o2wIV/AdRvqdj2qMlY04HQ==
-X-CSE-MsgGUID: esxB1rTeSJ2S6sjBYarB8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,218,1725346800"; 
-   d="scan'208";a="79157493"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 19 Oct 2024 23:23:22 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t2PLT-000Pyn-1H;
-	Sun, 20 Oct 2024 06:23:19 +0000
-Date: Sun, 20 Oct 2024 14:23:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ba Jing <bajing@cmss.chinamobile.com>, mporter@kernel.crashing.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	alex.bou9@gmail.com, linux-kernel@vger.kernel.org,
-	Ba Jing <bajing@cmss.chinamobile.com>
-Subject: Re: [PATCH] rapidio: rio-access: remove unused macros
-Message-ID: <202410201348.MoFc4X0v-lkp@intel.com>
-References: <20241015000207.5047-1-bajing@cmss.chinamobile.com>
+	s=arc-20240116; t=1729406671; c=relaxed/simple;
+	bh=V3fNttd2n0ql5uASrbgLMeCI4WtK3rqH9eK8HXoqvv4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fJmEQGDP+DlU4QZNYo4TvNvtQjw2biY6VeTKOltzXY91qJpswjYOkuIfImees4f2MsM5b0dSFawRaJoA9KtEHGJddgwECyLQSvkWxIgBO9QlyEX9GXG5HVOYxYK8svcST7dQO4mF6ewJupaRioB2Ubap+0TOfcxLivq415AqVn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4ed972bso30901545ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 23:44:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729406668; x=1730011468;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bd1fL7aS05DYOnfvYcKYEq0K4IvNygpjLfYe3E0oh04=;
+        b=iNjbpx0K5DLs6yXFDucCONffcb5aFoQNTVgRrE3LsXEWhCRvytMGuaSrv/xj42ZiAa
+         6DOvO39PK5REXR0UAjcmZYgJxA87EmWN/iI1RpAobaSuUkIeJy4Yl7w9kkcW/m+bRaht
+         kQv6ZeOE4XqczeN7mdDmuqkjMN9v5mjeISYosErIqM60STK8qSBg3GyaVHZODFt0Ieck
+         gMg8tS65JtMcQmSf+dc6lMjI3aatGamui109mtQxGwdlhErUNaDRAOG3G0MlA7FYT2F4
+         Puhji/ykzt+t6mu8++UrGhG+sGnETFKyB7ceEV3Kl/PrqMVIrHxcuUamr8hFWazH7/uN
+         HLRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpPsKjcQD/9YuhQK4C4jH1r0Op+inDAgVIrzRNaTmfA0HrP5kRxd1/b/3hnJMUscDgIbo8vZlHCTRFF1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY3YC/hwMv4sB11ryhonwt1Gb+/HjWiiCYcrrj+t9hHYkowkmO
+	d4NPyvVbZlC/o524IVuzIQU8vC/YLUgMF7JH0SYFlWUrwRDpA2kRxyi2UI/HxvVFhkBsHgeg5J/
+	jIhYSq8J7TAXJ60BvepsS2n5HyEb9Ng/mFWvazKQtbsKGT4kqg99DzBw=
+X-Google-Smtp-Source: AGHT+IHA/beOU/s52aJdDpURlTjcgZTMwCHn0pYfQlC9jGVSxlKa6YaJiS7C/2mxZHc9Vcxoczzt9alSPoSGEEoAKFpeXLU3jp/P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015000207.5047-1-bajing@cmss.chinamobile.com>
+X-Received: by 2002:a05:6e02:1a83:b0:3a3:b254:ca2c with SMTP id
+ e9e14a558f8ab-3a3f40b5b9cmr63228105ab.25.1729406668673; Sat, 19 Oct 2024
+ 23:44:28 -0700 (PDT)
+Date: Sat, 19 Oct 2024 23:44:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6714a6cc.050a0220.10f4f4.002b.GAE@google.com>
+Subject: [syzbot] [media?] WARNING in uvc_status_unregister
+From: syzbot <syzbot+9446d5e0d25571e6a212@syzkaller.appspotmail.com>
+To: hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, mchehab@kernel.org, 
+	ribalda@chromium.org, senozhatsky@chromium.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ba,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.12-rc3 next-20241018]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    15e7d45e786a Add linux-next specific files for 20241016
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14a8f887980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
+dashboard link: https://syzkaller.appspot.com/bug?extid=9446d5e0d25571e6a212
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1483e830580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10560240580000
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ba-Jing/rapidio-rio-access-remove-unused-macros/20241017-152330
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241015000207.5047-1-bajing%40cmss.chinamobile.com
-patch subject: [PATCH] rapidio: rio-access: remove unused macros
-config: i386-buildonly-randconfig-002-20241020 (https://download.01.org/0day-ci/archive/20241020/202410201348.MoFc4X0v-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241020/202410201348.MoFc4X0v-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/disk-15e7d45e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinux-15e7d45e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/bzImage-15e7d45e.xz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410201348.MoFc4X0v-lkp@intel.com/
+The issue was bisected to:
 
-All errors (new ones prefixed by >>):
+commit c5fe3ed618f995b4a903e574bf2e993cdebeefca
+Author: Ricardo Ribalda <ribalda@chromium.org>
+Date:   Thu Sep 26 05:49:58 2024 +0000
 
->> drivers/rapidio/rio-access.c:52:1: error: use of undeclared identifier 'RIO_8_BAD'
-      52 | RIO_LOP_READ(8, u8, 1)
-         | ^
-   drivers/rapidio/rio-access.c:29:6: note: expanded from macro 'RIO_LOP_READ'
-      29 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:171:1: note: expanded from here
-     171 | RIO_8_BAD
-         | ^
->> drivers/rapidio/rio-access.c:53:1: error: use of undeclared identifier 'RIO_16_BAD'
-      53 | RIO_LOP_READ(16, u16, 2)
-         | ^
-   drivers/rapidio/rio-access.c:29:6: note: expanded from macro 'RIO_LOP_READ'
-      29 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:174:1: note: expanded from here
-     174 | RIO_16_BAD
-         | ^
->> drivers/rapidio/rio-access.c:54:1: error: use of undeclared identifier 'RIO_32_BAD'
-      54 | RIO_LOP_READ(32, u32, 4)
-         | ^
-   drivers/rapidio/rio-access.c:29:6: note: expanded from macro 'RIO_LOP_READ'
-      29 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:177:1: note: expanded from here
-     177 | RIO_32_BAD
-         | ^
-   drivers/rapidio/rio-access.c:55:1: error: use of undeclared identifier 'RIO_8_BAD'
-      55 | RIO_LOP_WRITE(8, u8, 1)
-         | ^
-   drivers/rapidio/rio-access.c:48:6: note: expanded from macro 'RIO_LOP_WRITE'
-      48 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:180:1: note: expanded from here
-     180 | RIO_8_BAD
-         | ^
-   drivers/rapidio/rio-access.c:56:1: error: use of undeclared identifier 'RIO_16_BAD'
-      56 | RIO_LOP_WRITE(16, u16, 2)
-         | ^
-   drivers/rapidio/rio-access.c:48:6: note: expanded from macro 'RIO_LOP_WRITE'
-      48 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:183:1: note: expanded from here
-     183 | RIO_16_BAD
-         | ^
-   drivers/rapidio/rio-access.c:57:1: error: use of undeclared identifier 'RIO_32_BAD'
-      57 | RIO_LOP_WRITE(32, u32, 4)
-         | ^
-   drivers/rapidio/rio-access.c:48:6: note: expanded from macro 'RIO_LOP_WRITE'
-      48 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:186:1: note: expanded from here
-     186 | RIO_32_BAD
-         | ^
-   drivers/rapidio/rio-access.c:105:1: error: use of undeclared identifier 'RIO_8_BAD'
-     105 | RIO_OP_READ(8, u8, 1)
-         | ^
-   drivers/rapidio/rio-access.c:81:6: note: expanded from macro 'RIO_OP_READ'
-      81 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:25:1: note: expanded from here
-      25 | RIO_8_BAD
-         | ^
-   drivers/rapidio/rio-access.c:106:1: error: use of undeclared identifier 'RIO_16_BAD'
-     106 | RIO_OP_READ(16, u16, 2)
-         | ^
-   drivers/rapidio/rio-access.c:81:6: note: expanded from macro 'RIO_OP_READ'
-      81 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:28:1: note: expanded from here
-      28 | RIO_16_BAD
-         | ^
-   drivers/rapidio/rio-access.c:107:1: error: use of undeclared identifier 'RIO_32_BAD'
-     107 | RIO_OP_READ(32, u32, 4)
-         | ^
-   drivers/rapidio/rio-access.c:81:6: note: expanded from macro 'RIO_OP_READ'
-      81 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:31:1: note: expanded from here
-      31 | RIO_32_BAD
-         | ^
-   drivers/rapidio/rio-access.c:108:1: error: use of undeclared identifier 'RIO_8_BAD'
-     108 | RIO_OP_WRITE(8, u8, 1)
-         | ^
-   drivers/rapidio/rio-access.c:100:6: note: expanded from macro 'RIO_OP_WRITE'
-     100 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:34:1: note: expanded from here
-      34 | RIO_8_BAD
-         | ^
-   drivers/rapidio/rio-access.c:109:1: error: use of undeclared identifier 'RIO_16_BAD'
-     109 | RIO_OP_WRITE(16, u16, 2)
-         | ^
-   drivers/rapidio/rio-access.c:100:6: note: expanded from macro 'RIO_OP_WRITE'
-     100 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:37:1: note: expanded from here
-      37 | RIO_16_BAD
-         | ^
-   drivers/rapidio/rio-access.c:110:1: error: use of undeclared identifier 'RIO_32_BAD'
-     110 | RIO_OP_WRITE(32, u32, 4)
-         | ^
-   drivers/rapidio/rio-access.c:100:6: note: expanded from macro 'RIO_OP_WRITE'
-     100 |         if (RIO_##size##_BAD) return RIO_BAD_SIZE;                      \
-         |             ^
-   <scratch space>:40:1: note: expanded from here
-      40 | RIO_32_BAD
-         | ^
-   12 errors generated.
+    media: uvcvideo: Avoid race condition during unregister
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12554240580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11554240580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16554240580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9446d5e0d25571e6a212@syzkaller.appspotmail.com
+Fixes: c5fe3ed618f9 ("media: uvcvideo: Avoid race condition during unregister")
+
+usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+usb 1-1: Product: syz
+usb 1-1: Manufacturer: syz
+usb 1-1: SerialNumber: syz
+usb 1-1: config 0 descriptor??
+usb 1-1: Found UVC 0.00 device syz (05ac:8600)
+usb 1-1: No valid video chain found.
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+WARNING: CPU: 0 PID: 1166 at kernel/locking/mutex.c:587 __mutex_lock_common kernel/locking/mutex.c:587 [inline]
+WARNING: CPU: 0 PID: 1166 at kernel/locking/mutex.c:587 __mutex_lock+0xc41/0xd70 kernel/locking/mutex.c:752
+Modules linked in:
+CPU: 0 UID: 0 PID: 1166 Comm: kworker/0:2 Not tainted 6.12.0-rc3-next-20241016-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:587 [inline]
+RIP: 0010:__mutex_lock+0xc41/0xd70 kernel/locking/mutex.c:752
+Code: 0f b6 04 20 84 c0 0f 85 18 01 00 00 83 3d 36 20 49 04 00 75 19 90 48 c7 c7 20 b9 0a 8c 48 c7 c6 c0 b9 0a 8c e8 00 0f 81 f5 90 <0f> 0b 90 90 90 e9 bd f4 ff ff 90 0f 0b 90 e9 cf f8 ff ff 90 0f 0b
+RSP: 0018:ffffc90004516980 EFLAGS: 00010246
+RAX: 44423ff48d37de00 RBX: 0000000000000000 RCX: ffff888027929e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90004516ad0 R08: ffffffff8155d7b2 R09: fffffbfff1cfa3e0
+R10: dffffc0000000000 R11: fffffbfff1cfa3e0 R12: dffffc0000000000
+R13: ffff88814bd82518 R14: 0000000000000000 R15: ffff88814bd824e8
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055ffca8e3610 CR3: 000000001e3f4000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ class_mutex_constructor include/linux/mutex.h:201 [inline]
+ uvc_status_suspend drivers/media/usb/uvc/uvc_status.c:375 [inline]
+ uvc_status_unregister+0x2f/0xe0 drivers/media/usb/uvc/uvc_status.c:297
+ uvc_unregister_video+0xeb/0x1c0 drivers/media/usb/uvc/uvc_driver.c:1947
+ uvc_probe+0x9135/0x98c0 drivers/media/usb/uvc/uvc_driver.c:2272
+ usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
+ really_probe+0x2b8/0xad0 drivers/base/dd.c:658
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
+ __device_attach+0x333/0x520 drivers/base/dd.c:1030
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:534
+ device_add+0x856/0xbf0 drivers/base/core.c:3675
+ usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
+ usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:294
+ really_probe+0x2b8/0xad0 drivers/base/dd.c:658
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
+ __device_attach+0x333/0x520 drivers/base/dd.c:1030
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:534
+ device_add+0x856/0xbf0 drivers/base/core.c:3675
+ usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2d6d/0x5150 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
-vim +/RIO_8_BAD +52 drivers/rapidio/rio-access.c
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-394b701ce4fbfd Matt Porter 2005-11-07  51  
-394b701ce4fbfd Matt Porter 2005-11-07 @52  RIO_LOP_READ(8, u8, 1)
-394b701ce4fbfd Matt Porter 2005-11-07 @53  RIO_LOP_READ(16, u16, 2)
-394b701ce4fbfd Matt Porter 2005-11-07 @54  RIO_LOP_READ(32, u32, 4)
-394b701ce4fbfd Matt Porter 2005-11-07  55  RIO_LOP_WRITE(8, u8, 1)
-394b701ce4fbfd Matt Porter 2005-11-07  56  RIO_LOP_WRITE(16, u16, 2)
-394b701ce4fbfd Matt Porter 2005-11-07  57  RIO_LOP_WRITE(32, u32, 4)
-394b701ce4fbfd Matt Porter 2005-11-07  58  
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
