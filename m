@@ -1,138 +1,221 @@
-Return-Path: <linux-kernel+bounces-373271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E80E9A5484
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:36:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633879A5489
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89351F21CF5
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:36:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26EFC2824BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34146192D79;
-	Sun, 20 Oct 2024 14:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D864E192D7C;
+	Sun, 20 Oct 2024 14:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="TaVt67gg"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WUC064BA"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977772B9C6
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 14:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6141A1DFDE;
+	Sun, 20 Oct 2024 14:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729434972; cv=none; b=kZnN5vzxRFFSifNaYjrvnHIR0PeS+Bc2enHCukiv5r1enHl9yzg9WfVIDPongWMJITP6DFl2W0r7WIjENQu8CFJ4Xn7OGoj4cRwCmB+fZKhgbszoMVaiVJY8Fqtd3zYdCMy1jsHwGL+OIyToXVH8hF0/n5Mrh9nMw60iv/vVB30=
+	t=1729435253; cv=none; b=P70fNxsKQkQkeHljVi1G3nkhXELfrWByZbVsJGYdyOngauVsOfo7IbteUr3sTHzcL0omQXQ6UxSj6wkmmVk4PZjnn5p+gwU5Non4/VDi+QwIFCe0trzoN48WTyvTTnXkpM9lb0WGCvH7hdrL72VNNDeqiI5pFKkPMt+jFmSxm+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729434972; c=relaxed/simple;
-	bh=nI7CzD0dROhg5LFR+SbTGgNA8U3esGCj22cTRyP1R+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UAbjspOXJ0z4gSp3y30L8pCrF0+BqAIFscpclyuUfuNrB4RW/d/zVPjM2uAQtAUWUggTS2mH4WT4DvRk3nsJcPPBVfCyn9lytr4BkX92OdSGdCUmQ8sLT8A5dtINBD/tkQ30zSYhKY02EKdfh+DSv8ZA6RMAS8wWvF4vEqpJGds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=TaVt67gg; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e30db524c2so2661746a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 07:36:09 -0700 (PDT)
+	s=arc-20240116; t=1729435253; c=relaxed/simple;
+	bh=ZOyF1uST6LI2Kd4g149Kr79ccs0og3AwNC4M61JitYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tvH7Lm3iR9ZTO9fNzxev2mKDGEDQcbXs7D5Fi329BMrXmHMcph8jzRXYbpphEmxMzNRkff6iBNhmJydK0DcDK93hHRCFhJypLGI0D3bahmC6m72Q28vth0JyaSg4Ot6JYRMvSD7e/EtNuPzTHAWlHF5j1+oFfYx4nv2YhLMeerg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WUC064BA; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2d83f15f3so566776a91.0;
+        Sun, 20 Oct 2024 07:40:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1729434969; x=1730039769; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kKUwNFi+RGRukUqB0kD8s+grnaOyo0LZlXvjUDFIUlI=;
-        b=TaVt67ggiO8TII9/hxMikq/0rOqWFNrSgEyb65y38OwGJlJbAPCDO1m15+dYaXOcPV
-         jZ1nA/l3+s13FQzChmbtX2H0ookV8ruvTAvoHyp2M3bglha1tq/FyXlA91QvCzjU/Kg3
-         fwsSSnt160hEig656Kb4t/pR/kKcV83K1979UlwajpDRgs/ByAhscugJBDjkAlP/NkWp
-         1qEfYz0/2/+Ug7cHaL6y8dtxcyk20qb4zB1P7lZbttXlRiFtz7J3Dr6Vub4AnN3Gah5M
-         26xeB3mWfuJDWOhxSCxMJZiiixBWgr4tIQ6m7PWmj4CzwgagpzPZZyWgAXFxRdnVovnQ
-         7MuQ==
+        d=gmail.com; s=20230601; t=1729435250; x=1730040050; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uRn4Amd24EVDYVUH1i1mZ9/GKGJm5YlRavS+SEAAK/Y=;
+        b=WUC064BA7R66jFy3ZxJTpqH/mm/tldd8Bax4fKnBCpeyFJ7zBeEYTt+Znv1XARCkvK
+         iKT9h/nQlLkCvJkIUupRZ43uQ2fBkGuubmWMWrcDVVqnWF/7Qp0TUDQMjl2BMxGt4/DG
+         vKP3XqO5y65plR4EP4uIQC/rRlaVqb4xdEfylMeQ8WV0A0ffplVqeGcqzTvw/iTvPFfm
+         isgqtnQZsDAKZTAAOnNMJyZjWR9egsc9Qg/ynubwD6hr9+ajuPf40YoGy7eI8Mqw35jW
+         sGMuAtcxsb3Bpvn+91yqFSVNFwAIBmTRdHGGPZ0VPybRF8eMwuurPG4GNmFQuxtbyMG5
+         UJUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729434969; x=1730039769;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKUwNFi+RGRukUqB0kD8s+grnaOyo0LZlXvjUDFIUlI=;
-        b=WlMi3NuavpNj6C6Y1IlpzttNrJG0M3nagXfo3zqI3cwMNYl/OH2/pYo5nVyZ48cG4s
-         HPGCcH/ISJE0yP5GHjkqetEAIVYm7+1xxKsj80Py4eGwvb7hRbRgSku/qaop6NRKByfb
-         Zd1wEBNcxC9VXpeNJAbd1OeWSu/zigGOvgl8sfmKhUe3OJQuv7cA3lLGCL+YoqHjR34o
-         47gPmDPeN7ovg+V3i9FkGJxkOuFFUaH80cnuONq1wtVKyqkiH3yq+Dpyk2CvD2eXdmqX
-         jx6ncoU9pbgLqOioKRzv4Jlxtv3cxQyh/bZc0o66Fy2Hw/kmtrBQP9MMU1wAgRpC2D+s
-         TMnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUalU8gc3UkNoxjHvmlT28TIcVbtiaJUsVPTXyM+i8AAsxQkgZ29HokbQ65g512R67llgvS0YwuZTffGwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNXrQ0a+7MkOYjMf2D7mPpakT84TdhvC7TL8mbRTYQhL0idCtM
-	STfXdKZkE0CsovbzFFVHAQSc691feY5nSuIvNHGOE5L8RyAXgDpFzCw6MP+rdOw=
-X-Google-Smtp-Source: AGHT+IGJNYH1gN14k1HjiG8KMaOw8wGH7bmIO29hzeC6OSNwC+ZYDPZ5SQj59jaNoa9SfDiMXNrNKg==
-X-Received: by 2002:a17:90a:e392:b0:2e2:cd5e:7eef with SMTP id 98e67ed59e1d1-2e5618d9edamr9931854a91.27.1729434968747;
-        Sun, 20 Oct 2024 07:36:08 -0700 (PDT)
-Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad4ed825sm1572538a91.35.2024.10.20.07.36.07
+        d=1e100.net; s=20230601; t=1729435250; x=1730040050;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uRn4Amd24EVDYVUH1i1mZ9/GKGJm5YlRavS+SEAAK/Y=;
+        b=rUo1Y9oDhBVTzpQO0lq57CNSucCYEcqbvlQlWL6hT48o2grRoNd3cde0F/pXG9N6Hg
+         k7As9XQSf6uynhjrBZrukNzksvp+R/M7vMt4fxwhy74viC3BABH85Snz3KjkNXacaK4u
+         umZU9SHEnGms2OmOLdkBt78NV0Ghtf9HfEb/vSw0w58o/Yv7Q34pXQLYPbf92qXSnsAu
+         GOMUWnlfxsDHPiJqCEb2S3b2jxaVTclIR+haX8TWckZAfKJh0YESrD2rpkBEmDhVAmZm
+         K4XIf2zaSrESj+ExvuwYObt50VK7+Eopl8c05MtwqdjUPuSSTUF/Yc2nTd5FKRwv7mCu
+         rkmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbK9BESE+Ez32W4mKLyPj8zgDAOYvZDdrfa0Z3IE+8x+/ASsMRVBnd7gHQQbQKK+R1LEgOR0hZW4HGIw==@vger.kernel.org, AJvYcCX/+5lImsJGcTXLplxqIffzjAg/nVvAKCUNN7kdSIcC2X9rxoNOYNfTUDxan58h+ojJbAwvHc6szA0IZdZs@vger.kernel.org
+X-Gm-Message-State: AOJu0YyORlqZvwPiMVxYKA/Q7fYJwP+jjt+wTLo1ekuhQlcF8CQxroZt
+	V9BUinvqMEy9CZQ8U+HItNiLIpWbN9ACFOvV1BJhI8NzmYpJpUTi
+X-Google-Smtp-Source: AGHT+IH0hiFp3O8QAFN+JSAxhXXkRWwP1nxuqIDaTUk68eT9XVPNqtCv6Pt30CcdJFdko3SP8VS4Qw==
+X-Received: by 2002:a05:6a00:2d0e:b0:71e:5b2b:9927 with SMTP id d2e1a72fcca58-71ea31d019dmr5108215b3a.1.1729435250347;
+        Sun, 20 Oct 2024 07:40:50 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d7668sm1223326b3a.129.2024.10.20.07.40.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 07:36:08 -0700 (PDT)
-Date: Sun, 20 Oct 2024 07:36:06 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: soc@kernel.org
-Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Conor Dooley <conor+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] RISC-V T-HEAD Devicetrees for v6.13
-Message-ID: <ZxUVVk9gWJAVrp0g@x1>
+        Sun, 20 Oct 2024 07:40:49 -0700 (PDT)
+From: zhuxiaohui <zhuxiaohui400@gmail.com>
+X-Google-Original-From: zhuxiaohui <zhuxiaohui.400@bytedance.com>
+To: axboe@kernel.dk,
+	kbusch@kernel.org,
+	ming.lei@redhat.com,
+	hch@lst.de,
+	sagi@grimberg.me,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org
+Cc: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
+Subject: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support mq ctx fallback
+Date: Sun, 20 Oct 2024 22:40:41 +0800
+Message-ID: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Arnd,
+From: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
 
-Please pull these thead dts changes. I've run W=1 dtbs_check and they
-have been in linux-next since October 15th.
+It is observed that nvme connect to a nvme over fabric target will
+always fail when 'nohz_full' is set.
 
-Thanks,
-Drew
+In commit a46c27026da1 ("blk-mq: don't schedule block kworker on
+isolated CPUs"), it clears hctx->cpumask for all isolate CPUs,
+and when nvme connect to a remote target, it may fails on this stack:
 
-The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
+        blk_mq_alloc_request_hctx+1
+        __nvme_submit_sync_cmd+106
+        nvmf_connect_io_queue+181
+        nvme_tcp_start_queue+293
+        nvme_tcp_setup_ctrl+948
+        nvme_tcp_create_ctrl+735
+        nvmf_dev_write+532
+        vfs_write+237
+        ksys_write+107
+        do_syscall_64+128
+        entry_SYSCALL_64_after_hwframe+118
 
-  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
+due to that the given blk_mq_hw_ctx->cpumask is cleared with no available
+blk_mq_ctx on the hw queue.
 
-are available in the Git repository at:
+This patch introduce a new blk_mq_req_flags_t flag 'BLK_MQ_REQ_ARB_MQ'
+as well as a nvme_submit_flags_t 'NVME_SUBMIT_ARB_MQ' which are used to
+indicate that block layer can fallback to a  blk_mq_ctx whose cpu
+is not isolated.
 
-  git@github.com:pdp7/linux.git tags/thead-dt-for-v6.13
+Signed-off-by: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
+---
+ block/blk-mq.c              | 12 ++++++++++--
+ drivers/nvme/host/core.c    |  5 ++++-
+ drivers/nvme/host/fabrics.c |  3 ++-
+ drivers/nvme/host/nvme.h    |  2 ++
+ include/linux/blk-mq.h      |  4 +++-
+ 5 files changed, 21 insertions(+), 5 deletions(-)
 
-for you to fetch changes up to 2a3bf75a9408c40403aab39336274c8010b4c815:
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index cf626e061dd7..e4e791fd6d80 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -654,8 +654,16 @@ struct request *blk_mq_alloc_request_hctx(struct request_queue *q,
+ 	if (!blk_mq_hw_queue_mapped(data.hctx))
+ 		goto out_queue_exit;
+ 	cpu = cpumask_first_and(data.hctx->cpumask, cpu_online_mask);
+-	if (cpu >= nr_cpu_ids)
+-		goto out_queue_exit;
++	if (cpu >= nr_cpu_ids) {
++		if (!(flags & BLK_MQ_REQ_ARB_MQ))
++			goto out_queue_exit;
++		/* fallback to the first cpu not isolated */
++		for_each_online_cpu(cpu) {
++			if (!cpu_is_isolated(cpu))
++				break;
++		}
++	}
++
+ 	data.ctx = __blk_mq_get_ctx(q, cpu);
+ 
+ 	if (q->elevator)
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 84cb859a911d..dbb9cb59e54c 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -1130,9 +1130,12 @@ int __nvme_submit_sync_cmd(struct request_queue *q, struct nvme_command *cmd,
+ 		blk_flags |= BLK_MQ_REQ_RESERVED;
+ 	if (qid == NVME_QID_ANY)
+ 		req = blk_mq_alloc_request(q, nvme_req_op(cmd), blk_flags);
+-	else
++	else {
++		if (flags & NVME_SUBMIT_ARB_MQ)
++			blk_flags |= BLK_MQ_REQ_ARB_MQ;
+ 		req = blk_mq_alloc_request_hctx(q, nvme_req_op(cmd), blk_flags,
+ 						qid - 1);
++	}
+ 
+ 	if (IS_ERR(req))
+ 		return PTR_ERR(req);
+diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
+index 432efcbf9e2f..ef34958e33c0 100644
+--- a/drivers/nvme/host/fabrics.c
++++ b/drivers/nvme/host/fabrics.c
+@@ -539,7 +539,8 @@ int nvmf_connect_io_queue(struct nvme_ctrl *ctrl, u16 qid)
+ 			data, sizeof(*data), qid,
+ 			NVME_SUBMIT_AT_HEAD |
+ 			NVME_SUBMIT_RESERVED |
+-			NVME_SUBMIT_NOWAIT);
++			NVME_SUBMIT_NOWAIT |
++			NVME_SUBMIT_ARB_MQ);
+ 	if (ret) {
+ 		nvmf_log_connect_error(ctrl, ret, le32_to_cpu(res.u32),
+ 				       &cmd, data);
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 093cb423f536..a61b35b1cd90 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -880,6 +880,8 @@ enum {
+ 	NVME_SUBMIT_RESERVED = (__force nvme_submit_flags_t)(1 << 2),
+ 	/* Retry command when NVME_STATUS_DNR is not set in the result */
+ 	NVME_SUBMIT_RETRY = (__force nvme_submit_flags_t)(1 << 3),
++	/* Submit command with arbitrary mq ctx */
++	NVME_SUBMIT_ARB_MQ = (__force nvme_submit_flags_t)(1 << 4),
+ };
+ 
+ int nvme_submit_sync_cmd(struct request_queue *q, struct nvme_command *cmd,
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index 4fecf46ef681..d14be341ea4b 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -746,6 +746,8 @@ enum {
+ 	BLK_MQ_REQ_RESERVED	= (__force blk_mq_req_flags_t)(1 << 1),
+ 	/* set RQF_PM */
+ 	BLK_MQ_REQ_PM		= (__force blk_mq_req_flags_t)(1 << 2),
++	/* use arbitrary mq ctx */
++	BLK_MQ_REQ_ARB_MQ	= (__force blk_mq_req_flags_t)(1 << 3),
+ };
+ 
+ struct request *blk_mq_alloc_request(struct request_queue *q, blk_opf_t opf,
+@@ -824,7 +826,7 @@ static inline int blk_mq_request_completed(struct request *rq)
+ }
+ 
+ /*
+- * 
++ *
+  * Set the state to complete when completing a request from inside ->queue_rq.
+  * This is used by drivers that want to ensure special complete actions that
+  * need access to the request are called on failure, e.g. by nvme for
+-- 
+2.39.5
 
-  riscv: dts: thead: remove enabled property for spi0 (2024-10-15 10:01:18 -0700)
-
-----------------------------------------------------------------
-T-HEAD Devicetrees for v6.13
-
-Add nodes for pin controllers on the T-Head TH1520 RISC-V SoC. The
-yaml binding and pinctrl-th1520 driver has been merged into next by
-Linus W and will be included in the 6.13 pinctrl PR.
-
-The TH1520 GPIO controllers are already supported by the gpio-dwapb
-driver. This PR improves GPIO support by adding GPIO ranges and GPIO
-line names for the BeagleV Ahead and LicheePi 4A boards. Support is
-added for the built-in LEDs on the Ahead board.
-
-Signed-off-by: Drew Fustini <drew@pdp7.com>
-
-----------------------------------------------------------------
-Drew Fustini (1):
-      riscv: dts: thead: remove enabled property for spi0
-
-Emil Renner Berthing (7):
-      riscv: dts: thead: Add TH1520 pin control nodes
-      riscv: dts: thead: Add TH1520 GPIO ranges
-      riscv: dts: thead: Adjust TH1520 GPIO labels
-      riscv: dts: thead: Add Lichee Pi 4M GPIO line names
-      riscv: dts: thead: Add TH1520 pinctrl settings for UART0
-      riscv: dtb: thead: Add BeagleV Ahead LEDs
-      riscv: dts: thead: Add missing GPIO clock-names
-
- arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts | 86 +++++++++++++++++++++-
- .../boot/dts/thead/th1520-lichee-module-4a.dtsi    | 39 ++++++++++
- arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts  | 30 +++++++-
- arch/riscv/boot/dts/thead/th1520.dtsi              | 70 ++++++++++++++----
- 4 files changed, 202 insertions(+), 23 deletions(-)
 
