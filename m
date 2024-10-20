@@ -1,149 +1,168 @@
-Return-Path: <linux-kernel+bounces-373362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C891B9A55D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:23:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3969A55D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 037211C20BE9
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:23:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFC9BB22DAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99CD199234;
-	Sun, 20 Oct 2024 18:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072241957E1;
+	Sun, 20 Oct 2024 18:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MK6xgAR7"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlUuEk/E"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE1D1990BB;
-	Sun, 20 Oct 2024 18:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5A982877;
+	Sun, 20 Oct 2024 18:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729448526; cv=none; b=NZCBOhp+1aIq7QqLZR1kjWs58wPVEtpUSWjXyoD46PaKywTjtrgOTqwx11V5IZhjmOiQs0cz4lGADBins4PiNz7DTnku46/AB7nQYdXaGb31pG2YBkyaqVd5+jZuIdfCcNoLrCRwwXqAWUaTWrmbWlIDFhfQaLBX9XYIkYHY1Yo=
+	t=1729448841; cv=none; b=s1zO95Pdg/I3QjFX/cwNhp1ObJbp63hoA93VBrdnfOVFDQhbJhx2BGfRcCwqDqPgogVk8DNyfLAOg8wcWU68MySk5EHzZvFlE2wMHjJjySlRD1XP9neE/50e2URCd5bzL8K3+awEyZXZwu8uk7PJYZ7PP2H37nXGGe9ODj5rYLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729448526; c=relaxed/simple;
-	bh=rQDFcUnzkJ9BFuSeY9oNM9lBI52DXuy7K8Perx9Jq3U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ibWMvHzRiT9xJoHOMjmwklqsrtwjGfGMkWuPkvpqqalD6EAEfFEnAzgj4eb14eetOdmRG16EoPyW79pccGg9GnGFFVg9nRC2/tz9Sfv+Ugx8xXgEripW9Ld3IFpLllaAt4nFkrGiBoWpJ1VJbgONZTWV+dxb9naVp66WJMDF4Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MK6xgAR7; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1729448841; c=relaxed/simple;
+	bh=Ww13dvSbpLS1CRSU7TPVVRBFuyPAJT0QbJBdP+1IZ8s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GI08/75RnWCRFI0VWMhwoQV6UQxPJmxv/ClTAcvYkQtsgJtDO3vn7oay/nM6uaEAeHyHiMLRoZm4TDcosOCfJLGbInaXxO6GLXPLEj8TjwHzbjQdl7XI6ot1Imfij7/vn0JiqZ6eho0QvuWcb/2RPWxf6Xt59+lOIi8VUVU3mao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlUuEk/E; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-431616c23b5so15196495e9.0;
-        Sun, 20 Oct 2024 11:22:04 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43155afca99so26689135e9.1;
+        Sun, 20 Oct 2024 11:27:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729448522; x=1730053322; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kv66YW5L6/jj49RpWN4ISuR3J2Fku5YT9aw2fCyxGkA=;
-        b=MK6xgAR7dSHCGp7Upy3h5O0u3+fw6JW7Tprtu4JpDhX3FRr9bAe8EDcpVqOmWx6TDC
-         K6e1dIbRwwhT8sbTze1LfERbh6SXe+thDBXW0H37vfeJx8nITLonxKmxUUOIzk5b7i2g
-         /jFXJ1tO4fOYCYOfqJQNPRI6zphR4Iw1QrcrHYkCC4OPs4x3B76i7kTk3l12T2nzZhNh
-         OLzuHlHQ7kZCGCcqWDlZ+Mztl1TJNjVJyq4nKquDOKg651NStccsBuaTdY5GprRmE7kP
-         S564BWdFj06wO3fwKJ/hyAYjDgM5kyxtUk38DqPaT2uwCBYLQVLnaN6fSjc9pdjEZtBV
-         EFOg==
+        d=gmail.com; s=20230601; t=1729448837; x=1730053637; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oC94XqAfObW7gsifgeU8sWbkg+sAsaXMzC798gctVto=;
+        b=nlUuEk/E2BZpWIweYVTE6zKPeXpDSzX+jrx9ZK2CdKkQ/fsBhfQaoSHExtsbv0RLv4
+         GLoH/GuDFPDAkY1/OOU6eZfrh0vwrw0d6OkX75eWR+PRjm9yVYeJR739HGT1EP7hGrWK
+         KuZQJNqOaF1h690M94howEKVhgX2tJLnFBiVvuRRLEKeHz3/wRPBReySNyNSzA9MqcjX
+         CUcEq2XouBTMQXHpauLtkpZGoDaQ63vXJZQp8xZAQA4K8tDj58W84H34LvEmDWyQ/5Jq
+         uo1jWrx7wcDYuBWeu4+us9Z+MtGeyAMu0Ephx/QeFXpvKD+378WMwE6zXeYmhSlQH5I+
+         5fBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729448522; x=1730053322;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kv66YW5L6/jj49RpWN4ISuR3J2Fku5YT9aw2fCyxGkA=;
-        b=Vb/iRRQc4MjJ7Clm+k2N1mFNWoLs+W33jbYb3IBttDWX+g2hCOqR2dUKFpxGFpUR62
-         i6FkAE88efISt7BZIDRSW6W+/HR95IU6JKdsMoYovBui9n0amOjYpR+8Fn8C1wI4qFZr
-         xxLrVMe5Dawa496xUFPe6g1CFauxiUZWTrZkUPs+JBgomP+OjzA78qD9LlH54m0Wvw5b
-         v4SG7DzEVdniEqlwDBMb9B/afYpFLI/hAdoQEwxXq7MWqAcKM6DZ7zVk5EsB6vJK7xZj
-         yP6vt238ToNjUXMVBwf+wCaAtnBv4bBbRtc+0IAI0GIUMD9eWIRIEuWU+0aZLevs9Ss9
-         Q9kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDypJqUJx5L5lcw22GEiWk51/smu8LA59Lqmki2x6zCZpA6W7ZeCUGhS095w2XUPEhJ8tuC7jLfnykLHc0@vger.kernel.org, AJvYcCV80OUWXHWoZeiE/NJRLae3/CnV4KJatm84TljNUMdWahAbYzoXfrIHzCHT/WHGW11C2gxcDP1eFnz5liCQdgdM30g=@vger.kernel.org, AJvYcCWHl+ZW+hnAuCaozO+1+OFEiwoDiXupB675kN5ZPQWynARmKrFRGGTIb/dHUXEFjts7PR1jmP8lWQXM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3/HAiqlRrtJEcLdVBv96zDzvwHS3ZWc47jIoqCmjNI7n3e93T
-	kS5ehlDAXHQnwueB4aMZeZg7m9O8SE1+qZm5nJ2u1GakcyW5tr+B
-X-Google-Smtp-Source: AGHT+IExxAQlZ8OeGLgSLSXLdOccWbsZ9T2b2+RHr9tBp5KTor7LS1jCccXn4K/1jhGb+EfWMbT1MA==
-X-Received: by 2002:a05:600c:4fd2:b0:431:15f1:421d with SMTP id 5b1f17b1804b1-43158760531mr87808305e9.16.1729448522343;
-        Sun, 20 Oct 2024 11:22:02 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a48903sm2276459f8f.37.2024.10.20.11.22.00
+        d=1e100.net; s=20230601; t=1729448837; x=1730053637;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oC94XqAfObW7gsifgeU8sWbkg+sAsaXMzC798gctVto=;
+        b=oZFfy306b06GrAd29DExVlxbt5P5niTvmCgvxSBGzqNTgagTCCp3z8kCyM8SsM9XHn
+         KrWWiM3mFPQr55czxjBaESY7nBwe5A70uGzRed1UOxUkaAZBc7J0gTfCPHF//eTC0c3p
+         NJAVTawl9F/qkgYu/gUzfZhgC6eOZoLRA8jy1JkVh0dSBbJi9KqVQ0PBFlSFJvBhkOcj
+         BQZ+uOXkaU/Vl0JrjuUsDCY9LZsfLt9ArpYVX3kejw5GglsKl2K5WBor0O0fWocbY8gd
+         WS9onFDMsbzZ162yJUR4cVAFz1qbPYKet3VLyj8GnXHs4jErAOxglwuSqTUwZhV592y9
+         U32g==
+X-Forwarded-Encrypted: i=1; AJvYcCX7iX53G2yMa1kEEzz0//Bk+e3wRzGTVT0s1Y6n+9yGTfzPsl2TaRodAoHg0ZfT3j0rg4VqybABlBqX7uA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaYQ4QR8RFUEEX++UJhT/rhqeQPOpLNT8dkRztfc8b3M6GTg6V
+	DzMN6kwjoCYoEUvOLyGtS/kkUFTvVHVj9HWOjiS2RNDu379AlHkN
+X-Google-Smtp-Source: AGHT+IEM3cXnu7Szl4hCwHLN8wVFsmNZ4NIEh7q1lVGN/TNryiPhzRMZ+nRPrTxss73+eZIvE3gk5w==
+X-Received: by 2002:a05:600c:1d27:b0:431:44aa:ee2c with SMTP id 5b1f17b1804b1-4316163bb0bmr55994265e9.9.1729448837337;
+        Sun, 20 Oct 2024 11:27:17 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-6b9f-98af-2a5c-6ed2.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:6b9f:98af:2a5c:6ed2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58af90sm31023845e9.21.2024.10.20.11.27.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 11:22:01 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-spi@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 6/6] arm64: dts: exynos8895: Add spi_0/1 nodes
-Date: Sun, 20 Oct 2024 21:21:21 +0300
-Message-ID: <20241020182121.377969-7-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241020182121.377969-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20241020182121.377969-1-ivo.ivanov.ivanov1@gmail.com>
+        Sun, 20 Oct 2024 11:27:16 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Sun, 20 Oct 2024 20:27:13 +0200
+Subject: [PATCH v2] Input: sparcspkr - use cleanup facility for device_node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241020-input_automate_of_node_put-v2-1-ddec58b4b99e@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAIBLFWcC/33NSw6DIBSF4a2YOy4N0Ee0o+6jMQTxojepYABNG
+ 8PeS03HHf5n8J0NIgbCCLdqg4ArRfKuhDxUYEbtBmTUlwbJ5Vlw3jBy85KUXpKfdELlrXK+R1V
+ GJjqNjb0YLvsGCjAHtPTa8UdbeqSYfHjvX6v4rj9W8H/sKhhn2JmrFKfadra+D5Om59H4Cdqc8
+ wc8IiUWxAAAAA==
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-rpi-kernel@lists.infradead.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729448835; l=1854;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=Ww13dvSbpLS1CRSU7TPVVRBFuyPAJT0QbJBdP+1IZ8s=;
+ b=4JJ/8rNbRS5CDLSsjceGOzrXN95Je/MHjDmrnycsm3LBmxcv6W1rD4Kud8D3RuxIWD1xGrIml
+ i4ByO0r4793Bt9BGAEzqktKDKifH7g0va6oGud7Buk3Csn5Wl2gpBxs
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Add nodes for spi_0 (SPI_CAM0) and spi_1 (SPI_CAM1), which
-allows using them.
+Use the 'free(device_node)' macro to simplify the code by automatically
+freeing the device node, which removes the need for explicit calls to
+'of_node_put()'.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
- arch/arm64/boot/dts/exynos/exynos8895.dtsi | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Changes in v2:
+- rebase onto input/next, drop applied patches.
+- sparcspkr: drop goto before node declaration and return -ENOMEM.
+- Link to v1: https://lore.kernel.org/r/20241010-input_automate_of_node_put-v1-0-ebc62138fbf8@gmail.com
+---
+ drivers/input/misc/sparcspkr.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-index c57b7243d..d936c7bc9 100644
---- a/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-@@ -282,6 +282,36 @@ pinctrl_peric1: pinctrl@10980000 {
- 			interrupts = <GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH>;
- 		};
+diff --git a/drivers/input/misc/sparcspkr.c b/drivers/input/misc/sparcspkr.c
+index ff7b6291894a..66ddea9a203a 100644
+--- a/drivers/input/misc/sparcspkr.c
++++ b/drivers/input/misc/sparcspkr.c
+@@ -182,25 +182,23 @@ static int bbc_beep_probe(struct platform_device *op)
+ {
+ 	struct sparcspkr_state *state;
+ 	struct bbc_beep_info *info;
+-	struct device_node *dp;
+-	int err = -ENOMEM;
++	int err;
  
-+		spi_0: spi@109d0000 {
-+			compatible = "samsung,exynos8895-spi",
-+				     "samsung,exynos850-spi";
-+			reg = <0x109d0000 0x100>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_SPI_CAM0_PCLK>,
-+				 <&cmu_peric1 CLK_GOUT_PERIC1_SPI_CAM0_SPI_EXT_CLK>;
-+			clock-names = "spi", "spi_busclk0";
-+			interrupts = <GIC_SPI 435 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&spi0_bus>;
-+			pinctrl-names = "default";
-+			status = "disabled";
-+		};
-+
-+		spi_1: spi@109e0000 {
-+			compatible = "samsung,exynos8895-spi",
-+				     "samsung,exynos850-spi";
-+			reg = <0x109e0000 0x100>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_SPI_CAM1_PCLK>,
-+				 <&cmu_peric1 CLK_GOUT_PERIC1_SPI_CAM1_SPI_EXT_CLK>;
-+			clock-names = "spi", "spi_busclk0";
-+			interrupts = <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&spi1_bus>;
-+			pinctrl-names = "default";
-+			status = "disabled";
-+		};
-+
- 		cmu_fsys0: clock-controller@11000000 {
- 			compatible = "samsung,exynos8895-cmu-fsys0";
- 			reg = <0x11000000 0x8000>;
+ 	state = kzalloc(sizeof(*state), GFP_KERNEL);
+ 	if (!state)
+-		goto out_err;
++		return -ENOMEM;
+ 
+ 	state->name = "Sparc BBC Speaker";
+ 	state->event = bbc_spkr_event;
+ 	spin_lock_init(&state->lock);
+ 
+-	dp = of_find_node_by_path("/");
+ 	err = -ENODEV;
++	struct device_node *dp __free(device_node) = of_find_node_by_path("/");
+ 	if (!dp)
+ 		goto out_free;
+ 
+ 	info = &state->u.bbc;
+ 	info->clock_freq = of_getintprop_default(dp, "clock-frequency", 0);
+-	of_node_put(dp);
+ 	if (!info->clock_freq)
+ 		goto out_free;
+ 
+@@ -221,7 +219,6 @@ static int bbc_beep_probe(struct platform_device *op)
+ 
+ out_free:
+ 	kfree(state);
+-out_err:
+ 	return err;
+ }
+ 
+
+---
+base-commit: 00850d7b542aa4a8240cf977d43dc6d2158e48d7
+change-id: 20241009-input_automate_of_node_put-1bae9f5c02d9
+
+Best regards,
 -- 
-2.43.0
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
