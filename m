@@ -1,81 +1,87 @@
-Return-Path: <linux-kernel+bounces-373156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4506A9A530C
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:07:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C44F9A530D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A894E1F22983
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:07:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29A021C2116D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A30D2A1BF;
-	Sun, 20 Oct 2024 08:07:21 +0000 (UTC)
-Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CFF374CB;
+	Sun, 20 Oct 2024 08:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9vcpbYx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3EA23CE
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 08:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EE674E09;
+	Sun, 20 Oct 2024 08:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729411641; cv=none; b=uzy33ilpesC449XiNlKXP3lTj0gfn/DFyRttDXVYlwhcX3wUtjludw8VuefsgQS4+xxYsoMdXiTmxmM6WMGUm4s46Nhwt8j+Zv0DHswKpipsmayMMkQ3+UCeBPmOdu2VwgrMOOkomnVc3RL5oDaBfL2r3IkZwLAehHhBkAJ/76c=
+	t=1729411762; cv=none; b=IUwJICDFYrVh+sF7MZH2TKb/eZUewmcyGuM8+/eso05sWMZYONCPNPVthoAdaqnEwflykNfjyIh0uNxzQuB3/92RcIbval5St5TU8wlMtgFofjkxCyC1SkmXsAWU/pGKyYNnxFY1Lekv0XKmFoxEaetaeJ4C2E8FpdR3bvHJSy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729411641; c=relaxed/simple;
-	bh=/8pvhc03WCENtS+Mx8YeWDkxyX+w+90CdadY7Vz40Ko=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hqsFjtWcM8NljpBOJBfIUzZLGnD6HTQZdxfiC0T/NDN+BBej50qtwaIOjh5Hn0BmwpuL71GSWnN8KYo23z53+4JXXzepkx3N9yxwMUFWAUbdJHSSx/V8hPX6jisTASmGtm35wel1PoW9cgNdYAFSq0ftv+A8lNdqBUQabSibjlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.9.146])
-	by sina.com (10.185.250.22) with ESMTP
-	id 6714BA2C00004027; Sun, 20 Oct 2024 16:07:12 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5870587602685
-X-SMAIL-UIID: B45C02E3AC8542DABDAD9F6F47EC593D-20241020-160712-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+9446d5e0d25571e6a212@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [media?] WARNING in uvc_status_unregister
-Date: Sun, 20 Oct 2024 16:06:58 +0800
-Message-Id: <20241020080658.2124-1-hdanton@sina.com>
-In-Reply-To: <6714a6cc.050a0220.10f4f4.002b.GAE@google.com>
-References: 
+	s=arc-20240116; t=1729411762; c=relaxed/simple;
+	bh=Py80XVglq1WbNOTFGcMrtwmae8Aqs77dotNfxGrgoJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AaQzHhcjpUx3BgZu1hAnj7ZzhdOT4SzM0crb9rcyG4Y1T06gyqmlemRFODukV93k0rVxdQPFBfBbmtmcpUuES0F1ADx5KE+vI8weJZoMaFXZ4mkctaxy/t0MPYY0EfEKSaVY/qft5VTCoJsCweMPcv0OAXHjDpeLHRLoeHDwoHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9vcpbYx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2005C4CEC6;
+	Sun, 20 Oct 2024 08:09:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729411761;
+	bh=Py80XVglq1WbNOTFGcMrtwmae8Aqs77dotNfxGrgoJA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V9vcpbYxh7WIXInVLSSqiGPCMFkSpoT9Gk5YE6iHX351DoBXr6ecWMVOUFaXcrBD8
+	 AoRJWBfEjQOZ4GjlY3dSUVzN+9JU+RLWezBY/ZvZb/dD4ZSTZDdVGB4VuhepaOULvo
+	 LEeN+SD7mwlWKDrlvHFMKWzhFH/PvZq6jYVhEslbp2tbhothBFtqobjp1chkELcKgE
+	 2JL/ujUDCRHb+0ueOTS2vIakqRRkaSV1dl9gQyarDX0pVijS22k0B6INK0ePKpL9ER
+	 jsQVdqyxi4Uuz3nGSNWYeKM+9AIHDriizf5LUjUOSWlB6nHeA/eJnQF11Y+57gpVA9
+	 GNUX0UokPIQtw==
+Date: Sun, 20 Oct 2024 01:09:19 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v2 02/11] unwind/x86: Add HAVE_USER_UNWIND
+Message-ID: <20241020080919.v4zfqwgpjxhluxaq@treble>
+References: <cover.1726268190.git.jpoimboe@kernel.org>
+ <82ef19a767cb75e76a985ecc0d47a39400b4fdf5.1726268190.git.jpoimboe@kernel.org>
+ <20240916114605.GA4723@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240916114605.GA4723@noisy.programming.kicks-ass.net>
 
-On Sat, 19 Oct 2024 23:44:28 -0700
-> syzbot found the following issue on:
+On Mon, Sep 16, 2024 at 01:46:05PM +0200, Peter Zijlstra wrote:
+> > +#define ARCH_INIT_USER_FP_FRAME							\
+> > +	.ra_off		= (s32)sizeof(long) * -1,				\
+> > +	.cfa_off	= (s32)sizeof(long) * 2,				\
+> > +	.fp_off		= (s32)sizeof(long) * -2,				\
+> > +	.use_fp		= true,
 > 
-> HEAD commit:    15e7d45e786a Add linux-next specific files for 20241016
-> git tree:       linux-next
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10560240580000
+> What about compat crap?
 
-#syz test
+Sframe doesn't support x86 compat so I guess we don't need to worry
+about that at least for now.
 
---- x/drivers/media/usb/uvc/uvc_status.c
-+++ y/drivers/media/usb/uvc/uvc_status.c
-@@ -372,6 +372,8 @@ int uvc_status_resume(struct uvc_device
- 
- void uvc_status_suspend(struct uvc_device *dev)
- {
-+	if (!dev->int_urb)
-+		return;
- 	guard(mutex)(&dev->status_lock);
- 
- 	if (dev->status_users)
---
+-- 
+Josh
 
