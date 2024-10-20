@@ -1,83 +1,70 @@
-Return-Path: <linux-kernel+bounces-373122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3050E9A527F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 803569A5280
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A936E1F220BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:00:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF351F21ED5
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A646FB674;
-	Sun, 20 Oct 2024 05:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B097489;
+	Sun, 20 Oct 2024 05:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RBo4HKYP"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mG184FrM"
+Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399B14C96;
-	Sun, 20 Oct 2024 04:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF3D322E
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 05:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729400401; cv=none; b=BKMfDIU2JXgOITIdinqLz7Bj6LR61JN7D7RjHEBZf1JGg3aZecdlL2HMnfGkerhJZLeP/2+qkSW4SOCifKLKkVbQKKifuEK77bUViu7uXQMzWjXkyxVfHU+RFhxw1JqJrUtlIdIu7OuCn0r9xUhzH2V5uTIeP8w2bxk6gvjw/eE=
+	t=1729400455; cv=none; b=sGW6mWtIoD1r9Rd+ME7gk0pmI2DIJvg/8TVEGiEplaENxCg1EBMIpBKsGKMSLRsTqX2xheANDheZFeSYPQ6CdmRUyss4PPz+ben/RlXlK2D7akYp83HYECjkrD90ABWlE3uD7HziLjSwJ/62ZQT5XTaYTn1qJSwmVrMzftQxTXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729400401; c=relaxed/simple;
-	bh=SCGAtJlNNJS48DESWrlcIoyC7LdwlBt0R4p7ke/8yVg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jHLcjolBHU1d308FTpUVrJKrXLpdtRKwIvhd+LsiUShrBjVWOAs1JWFyyg5cTE8Mgv5bzD6rFlOOoapbOGcPGG7F+NOsw8VtSUbJRdLwodLivlqA+78Nqk8dE5YqKMdZgUi2QUaRUjkCgCztYi/GgU6BL00rL6Mg7h0h7LGuczg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RBo4HKYP; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso2853907a91.1;
-        Sat, 19 Oct 2024 21:59:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729400398; x=1730005198; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nUaXr9jyI82v7WCqHmTaJdfptWknWvRqcMeZwkWUzbY=;
-        b=RBo4HKYPweXgVDVrDGr4UIdoIVxeZ58mpmt1C2sY6UVQX5iw1jibc0eULwh6M0pG+D
-         O7IRPLBA0mPR/dhOYxdMTkksMV48upkDAYOOa/R0pLYlF1MypN7y7PymjnhiFLIIPGhQ
-         R4LohmQri2YKcwwWUemmyh2E6g67LS2gKRKWMH6GyXbz30RhkghAKzvpAbsvFnb+eu/c
-         dzMghIvY/nn+zv8QKJryXaawqam6Yy2yI8zc9aosA+9pfgdYd3nRjzFeAjRrTEPrutXb
-         B8Z0wDtFI72WVXKGHsCxvx1VdsOvW4Vk2ckeItLdtP7aixc1BQ/1Ao0X6w1pouqrsz32
-         h06g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729400398; x=1730005198;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nUaXr9jyI82v7WCqHmTaJdfptWknWvRqcMeZwkWUzbY=;
-        b=gFhP4iTCEob/4R8hSm28HO4Dx839CMFEBk1lsRMpL4V0sv6lCSHFyYIvdy0m3G4gIc
-         S57pC7YkToh0SFk54R80uelx8akMZ62q1lfRoBsONLk8Ox5CGNzxr4VAgW4DEiZ/xBcR
-         KNfqVjDiij1+9MRB6FprNRS+StUWk0+5Wlv20S6lFglsGZQLR8a/OA8bLth8cSzr/98R
-         GglMmsWUmGbhSWOdqLHOl6Ua1ptEf4MLHcJv8y72agQObv7z2ViVBwRUFV8ulW2Y+8cY
-         JAre70teamM8EYqD/ZQBfQTwhnQ0JL7xfoysHEym3cjUqyOwU5vxA3sGd6RDTMRM8vqJ
-         uNZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVr/BKw/ZhrblMaA1TVCVfxMV06Ko5W1Kd6NuFdTB4Abbwcpp6YwW8YOvemOuLPgdrPuUPnkcckMXVw+b0=@vger.kernel.org, AJvYcCXJ7PUoCE/3Tdmxxg2ZefcIs5z25nuVwoGOctTDdQ9mkxIxouYfnnII3L3LFViPNuFo+M8PeABGaV89KC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoiF03bufrahSz+/3Mk3woMlzohW53wEUrvDgycRRWEtwWXRyd
-	Yc4m5tRttvaTp85pyKPwMh67T4a2yb617Amu0G7U1jUY0MezDJKu
-X-Google-Smtp-Source: AGHT+IGmY2dOGaZZNT1ol5gR380oL0yb8gm+JrSmSBRI7ACJExC/AnPnv9kLcOLqtCEKaQsXVgMRMw==
-X-Received: by 2002:a17:90b:4b8c:b0:2e2:8995:dd10 with SMTP id 98e67ed59e1d1-2e5616dedabmr9199390a91.4.1729400398314;
-        Sat, 19 Oct 2024 21:59:58 -0700 (PDT)
-Received: from carrot.. (i118-19-49-33.s41.a014.ap.plala.or.jp. [118.19.49.33])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad512a98sm688779a91.52.2024.10.19.21.59.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 21:59:57 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: syzbot <syzbot+9ef37ac20608f4836256@syzkaller.appspotmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1729400455; c=relaxed/simple;
+	bh=rJlwgCzcuawhqgsCy5Mk45PD8DAtXQfa/5g0kjlouME=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=kiHIIQXABrxD5ogVdmoAeDtiTGPsJSPcH9qdpUOce9gMFKw5m1I9VIcIFyGwzJqGmItNWY5gwEZgr+CnkWWOw4vMSl66Mi6+AwxdWjIwJRoiUFW7CKOXfYDS3KhSydw0Fy5kQ3/aPRk5AF5bViH9HoqqB0F33vd4X7gL8N8pbKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mG184FrM; arc=none smtp.client-ip=203.205.221.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1729400448; bh=gsb2WBPn8DCCWviJr1e0m09zoekMTXoMr5wARom7/uo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=mG184FrM6R3rmpylYSXQmpqIAHH/3etlzfX+MELFmqNK3/GP5S0/wTEdjbJp9CwR/
+	 QGENOnU07cVbkhqHp+9kixIRoiIEUD2FyW4btF7ecx9FlukiRMBhgJD16wu6FCeXgE
+	 J7RVZbKTzSDstchlaHIuTvlIotUAmKb+1CMZKA94=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 2E06E09; Sun, 20 Oct 2024 13:00:46 +0800
+X-QQ-mid: xmsmtpt1729400446t7r7zxoef
+Message-ID: <tencent_3D5A3D31368C961236E64AB074D777FD6609@qq.com>
+X-QQ-XMAILINFO: OLnGMPzD2sDVZQZCZrQIWCE2u2y1nLde/0ekXjj8giqFgwzdRO+hOdfsUs3hJT
+	 mBYnBmXowmCUyGJTVD6KXFj5C4JcZSRSwwmjEYucM7aGa7LxG/7wfKrkbG3gNjwpqfsI4GroIKN/
+	 dfhXoObrCAS9j6k2E1yckBBQllkBQjY+iyliEQQtPoY+Gv6CLFItV1ioeUb+bpaoYCtMeZYK9hhP
+	 XIZLSGsPsXVdbH6kLEKKESFZzM5ryd2PaZ3CctQ/9apMAY0V7TL2gySnWNfKNNVdo0ZpK5l+c7FA
+	 2UAUyHMB32KqYp5y3ZjVKdFm13hZ84jQ2KXwknZe1R+nFEshUM4Vo4BN7HxmlNl/XmhHCE2MC9wX
+	 SINifBO/qYRGYvjNRkscZpZVl/9qOxiQTsi22UpSDwylq67yF8w6BiDNVrnPovDcpOAudPSE0dcR
+	 ihP6zdx0LCX4f9jU1g75I396AJofRE5VxmTIJQ9AKd3sDhiUDJQLoQfWSG1tFD5fIAWaYJFBZswS
+	 83aqo+QxvlFLD6vPVQUUd8cQDotihUNdfxLOn9jx0Wp44he5YFccPpUToGj+E0ytt1zOUw1iSTTp
+	 Z3RpR73f3XlRzVea8OakZP4dAuSeIzlOpsi+/+NDH0JAowg4/zLyG2Si9U05uZyD+eARLej1o+MR
+	 E5LHXuGBzDUjOnX+JiD1rmJLJKXLIAfarcWcleXQ3XjMy3HebjMeirho0TZgUxX+qV/s5hYXlA9d
+	 j1x8hPJ0TYLQGvswgTvEFe7gQbUivB9LOso+IbbJbOAaYPesYVBOhVjNZRsNXwXLAhwvjinyq5De
+	 Aq1zzlMFXPdJWwFFwtvOlfq741iws87B/9fxTsy3mcRDRXPARAsM1mDMWj5UH4G4S87XEw0/EHCV
+	 FzVl8zwtfyjD6VCumtG3Jj89ida5JTDJBPOT02yg/FppUVD673z6idyO9ISsSSoPT8SGT9oktX
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
 	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] nilfs2: fix potential deadlock with newly created symlinks
-Date: Sun, 20 Oct 2024 13:51:28 +0900
-Message-ID: <20241020050003.4308-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <67134033.050a0220.1e4b4d.001f.GAE@google.com>
-References: <67134033.050a0220.1e4b4d.001f.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] KASAN: null-ptr-deref Write in xfs_filestream_select_ag (2)
+Date: Sun, 20 Oct 2024 13:00:46 +0800
+X-OQ-MSGID: <20241020050045.2405611-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <6712b052.050a0220.10f4f4.001a.GAE@google.com>
+References: <6712b052.050a0220.10f4f4.001a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,62 +73,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Syzbot reported that page_symlink(), called by nilfs_symlink(),
-triggers memory reclamation involving the filesystem layer, which can
-result in circular lock dependencies among the reader/writer semaphore
-nilfs->ns_segctor_sem, s_writers percpu_rwsem (intwrite) and the
-fs_reclaim pseudo lock.
+can't pick any perpag
 
-This is because after commit 21fc61c73c39 ("don't put symlink bodies in
-pagecache into highmem"), the gfp flags of the page cache for symbolic
-links are overwritten to GFP_KERNEL via inode_nohighmem().
+#syz test
 
-This is not a problem for symlinks read from the backing device,
-because the __GFP_FS flag is dropped after inode_nohighmem() is called.
-However, when a new symlink is created with nilfs_symlink(), the gfp
-flags remain overwritten to GFP_KERNEL.  Then, memory allocation called
-from page_symlink() etc. triggers memory reclamation including the FS
-layer, which may call nilfs_evict_inode() or nilfs_dirty_inode().  And
-these can cause a deadlock if they are called while
-nilfs->ns_segctor_sem is held:
-
-Fix this issue by dropping the __GFP_FS flag from the page cache GFP
-flags of newly created symlinks in the same way that nilfs_new_inode()
-and __nilfs_read_inode() do, as a workaround until we adopt nofs
-allocation scope consistently or improve the locking constraints.
-
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Reported-by: syzbot+9ef37ac20608f4836256@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=9ef37ac20608f4836256
-Fixes: 21fc61c73c39 ("don't put symlink bodies in pagecache into highmem")
-Tested-by: syzbot+9ef37ac20608f4836256@syzkaller.appspotmail.com
-Cc: stable@vger.kernel.org
----
-Part of the syzbot address was missing in the recipient's addresses,
-so I'll resend this to syzbot.
-
-Please be careful when replying to the previous patch submission.
-
-Ryusuke Konishi
-
- fs/nilfs2/namei.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
-index 4905063790c5..9b108052d9f7 100644
---- a/fs/nilfs2/namei.c
-+++ b/fs/nilfs2/namei.c
-@@ -157,6 +157,9 @@ static int nilfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	/* slow symlink */
- 	inode->i_op = &nilfs_symlink_inode_operations;
- 	inode_nohighmem(inode);
-+	mapping_set_gfp_mask(inode->i_mapping,
-+			     mapping_gfp_constraint(inode->i_mapping,
-+						    ~__GFP_FS));
- 	inode->i_mapping->a_ops = &nilfs_aops;
- 	err = page_symlink(inode, symname, l);
- 	if (err)
--- 
-2.43.0
+diff --git a/fs/xfs/xfs_filestream.c b/fs/xfs/xfs_filestream.c
+index e3aaa0555597..dd8f193a3957 100644
+--- a/fs/xfs/xfs_filestream.c
++++ b/fs/xfs/xfs_filestream.c
+@@ -165,6 +165,10 @@ xfs_filestream_pick_ag(
+ 
+ 	trace_xfs_filestream_pick(pag, pino, free);
+ 	args->pag = pag;
++
++	if (!args->pag)
++		return -ENOSPC;
++
+ 	return 0;
+ 
+ }
 
 
