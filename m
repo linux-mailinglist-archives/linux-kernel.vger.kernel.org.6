@@ -1,327 +1,255 @@
-Return-Path: <linux-kernel+bounces-373389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC809A562C
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 162CD9A5637
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EF5FB22B01
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:28:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72083B2199A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0A8196D90;
-	Sun, 20 Oct 2024 19:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452DB19755B;
+	Sun, 20 Oct 2024 19:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="gi+y7nvw"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGqmEBeI"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99311194C6F
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 19:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AF02B9A5;
+	Sun, 20 Oct 2024 19:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729452500; cv=none; b=n83yS+7cDZ5pD8BQqyhi9Zv9OTzvB/vlpHotYh4yGw8qJXD0FZuN/VHGvf9GK6swBi2V5h0ujFrQ/TOoGY9laniShqdqdnjg/hjk3E2R6KSdlX+TDDSa+ATcvEuMNxUsnffIM+LchS+60uydflfWPki6oNIypVV4fOA9HhPkBoA=
+	t=1729453234; cv=none; b=hFQCumVBwHVpqjUJ1ZCXT2voOy5cwtEpibV3u/KtNgVpWPDe3X4OJeUPqHFSIOZ5EqIiuZFLY2NfjGqbrcUGoaK9qPxkcjS7FXAaC6Sh4272ckic3JofDOTmAmbgQzJyr9tvAqxeF5j/CSjRrnZ9xNFqYnojRNvZFj4rMRkNYc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729452500; c=relaxed/simple;
-	bh=5Bi3G8Fq72dernPiyu+wY4Ywa0YDykwXEnkAZctMsZc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FuUFnDmVU4JSVZ1ngVakTNeXP8iRnnehrxy1vhtHtlHodHBcnfSuNZHliWloYJ9hzH6YkbOtn6UWob37avGvAY06dJI5SPqPNZH81bqMlCzw6ccARq6HWbaLVSvo7r6O3mV0qGl9eWPLEoCdQKTsVJ+pyrvy11icJt6ZvZDbbHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=gi+y7nvw; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a3b1aa0e80so15973995ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 12:28:18 -0700 (PDT)
+	s=arc-20240116; t=1729453234; c=relaxed/simple;
+	bh=dr130A5GQ2lBUget9rpDZpLccc1BqWSVhd3YtQ/e+jo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OngLX65QGN2i7l87wG2bCxypK3Q6agOkMjC0QLClTecHVfDkQkkavsQ5S3K3BxFErEnK6GH38W6Ie6RhF14x7TgPkMUsnil1J0RaBTCaQS5eMgy7U14PxcHDRbxZXlybFkStOkHGkTze4+33ojRYoc91mITUEfT97al0iAKubBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGqmEBeI; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c93346dfc8so483641a12.3;
+        Sun, 20 Oct 2024 12:40:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1729452497; x=1730057297; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lo1sYL9XZDOCFMQlGLlMPtl2RTXyX/oraDhwcNdvML0=;
-        b=gi+y7nvw38aSB6VR3X2GSBMdhlH0NPzX8vpXooeoLH2ETJnENXHTEEhW6noxMWn+Dm
-         LMGZGMWSCT+vVX5evhFYyhbadRUVZ5zSoR8KchTLLdd7NjEIIZA0czoPdOuKmB1x/hyS
-         hjpJrQt80kD17dmolk2ozfdMfLkzAmibd2pisvFtMAKD68C1sUP1BMc0vB7TL/ukRUuE
-         wbhrgRCyOVgp0itdXMyt5mGt/v7UPQTSqG7sWyqUBMI5+JKl23Hw9PdQlQkSwZXlyA3b
-         lh7i4U9rWpQnUERvrTKgzYEYU0a2GjNizqnxKZI66Id5FAdSvWKwYyGSkuNfQFrqTv/C
-         MQxw==
+        d=gmail.com; s=20230601; t=1729453230; x=1730058030; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Itsp4INdusxqJHDPUbKXM08ZzVa355fgp9+sYyVFtJU=;
+        b=dGqmEBeIFepeqDn8S7niVG7hmz2eDD9GSdaXdBPaPdFEWFCEWCxwrM7FPWjD+vq9bi
+         402LBBm+USk+568hENJCpAZOPk75g/1sohL12o37QV/x2dMbzI5KojA6neuz5hzxOJqS
+         Ji7lzhbe77JhORdC6i6wtoFwQlejMvz+9ua1C+YCDmiCVi6F000ab5AgF9pIx2JDNlio
+         /P1ZdWippkahfdiX9IVMz+c3bLOzkoN4GNeOX0MpXUCGtL4ed4nHN46Xkg0puJ9XO+Do
+         Qcrtjrmj+nqL8KstEBntT2vDujFVYveHDZ0OVeXzW9AecQlHOTynZdcu24Wczy+HMNbB
+         RFSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729452497; x=1730057297;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lo1sYL9XZDOCFMQlGLlMPtl2RTXyX/oraDhwcNdvML0=;
-        b=NzeD4IJq2dXE0+i9bCyvTovapa/TFJOYwbDYA+Mx0BihAjeCHGh0HuHM/mFdg1Yn4+
-         57KPDOieJQReOKLoaPzZVTcz/ooAYuiGh1qA2qB2/ZWJfvaYUqDfm99xDD2KaQdhcSkn
-         oK2h/MRAeYIO+5vyHalBixEPXfhyysVmlSvwOFfnl5Ru1cCiepkehwI/1axYW+B+X1zg
-         el3PfNJrTUdpL0Ox89aAUF1+nTyBKsnFQ97yVYA4kqPn++SnvPcjEUJOodtsBbS3LDfr
-         QgZyRoys9nYolgk+xAh9cOFXQsU4vUqS8V3FWKFEyG0WccHh/K3Dm1FekKiDmXQpDd/G
-         gTkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXPbxT1rSaInX43zZefd1pBCv4iA1Y1Qg3uVM6MLRGFBLE8/XwSStrtYpMw3IQxtqIzK5nTmerta7dPK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhvD3H852z4DNe6USViUW/8p4eGlpQQpzNxX+BT/r3hi4G+sfz
-	0ecrWOITGAQ2XY6W4XAj1NGTReXFWu6NeL55NwQA0zdJUwBv619N4X5GS+LGr9OIxoaQjReeqI6
-	a2YUF8UwJ+ccp9nyL0VZX6pnHFOCJztnC0TH5EA==
-X-Google-Smtp-Source: AGHT+IF/05AGlms0paeIinKOowlDh+Z4PGQr0LRA6CuYMYavOxYaakTODKHu7n2oJbjlXgoQHpva7fdFPPHuHLBVnsc=
-X-Received: by 2002:a05:6e02:1fc3:b0:3a1:a243:c7a6 with SMTP id
- e9e14a558f8ab-3a3f40531c5mr76368905ab.10.1729452497490; Sun, 20 Oct 2024
- 12:28:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729453230; x=1730058030;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Itsp4INdusxqJHDPUbKXM08ZzVa355fgp9+sYyVFtJU=;
+        b=Qf5yqwZFbRJQEarkJ4znBgf4i1A2ezX5QYNOSGWM54O9kkGvIomvPSfxWSealLZfYW
+         VTv+SopMb6RXf07wDuOtyPkaskH3IkGrAPzZfcaYBm9eNJ3/nHmcUdFaHPIGQ04c6THK
+         IathPMhjgrljNRhlL+GzO/wBBTLsh5M+M9rkJ6b0rSjpl1+fAuN5+2JBQ4262HXg59k+
+         N1D8wC4lR9zB8LKDNhg1jdBHeAq5Ae0T0hvZRHe6N6ONp0zHbmnfDy+8VMSDPO0s0yx6
+         6P4NFGIF5EITmatOt4k8+bkpMIKLWp3qMZ7szmT8PTmZmdJ6Euix9tGBu8jDIKtUax+M
+         Md+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUf7AA8W4ZyoUEJTy1sbbNOcb8zUGaFHuTn2xvItathia3+D4sLDpZKFHx6mJgY1qZrSQlg07Xl9li6@vger.kernel.org, AJvYcCV4f6OVO4NI5KCcTmiUp+qvgz61fSccCpS89eIjXT3NV6CGDLFUsYzCE9olFd8xbzpf+Q3GqeAMlTBrlDQ5@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZi1KPheNCQ9evkKlp11jwH4rAmxNHE7mbO8JNTX9seuNwhrz9
+	M2lwYl0bYbKsBw9xhyzg99COf0PWJZvQcPVw1z8ckhHF58MXNbuQ
+X-Google-Smtp-Source: AGHT+IEWdEYP2PkryaXCE0xuNP8Bi9bajm9vg8i90nr0xDvLpCLGGVnGGkL1SK7M1GrDP48I5oUG4g==
+X-Received: by 2002:a17:906:2b4e:b0:a9a:410d:f86f with SMTP id a640c23a62f3a-a9a69ccf937mr316100366b.14.1729453230041;
+        Sun, 20 Oct 2024 12:40:30 -0700 (PDT)
+Received: from e8ff02ae9b18.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91578129sm120576966b.186.2024.10.20.12.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 12:40:29 -0700 (PDT)
+From: Lothar Rubusch <l.rubusch@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dinguyen@kernel.org,
+	marex@denx.de,
+	s.trumtrar@pengutronix.de
+Cc: l.rubusch@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2 00/23] Add Enclustra Arria10 and Cyclone5 SoMs
+Date: Sun, 20 Oct 2024 19:40:05 +0000
+Message-Id: <20241020194028.2272371-1-l.rubusch@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719160913.342027-1-apatel@ventanamicro.com>
- <20240719160913.342027-12-apatel@ventanamicro.com> <CAOnJCU+rORtJecgZA1inp7pzjoK8Rc_q46JNcsEcnm31M8bjJg@mail.gmail.com>
-In-Reply-To: <CAOnJCU+rORtJecgZA1inp7pzjoK8Rc_q46JNcsEcnm31M8bjJg@mail.gmail.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Mon, 21 Oct 2024 00:58:06 +0530
-Message-ID: <CAAhSdy1RYERiApvxwgz4rc53qq_6D0Rp90GBBhAJq2uMwqf4mA@mail.gmail.com>
-Subject: Re: [PATCH 11/13] RISC-V: KVM: Use SBI sync SRET call when available
-To: Atish Patra <atishp@atishpatra.org>
-Cc: Anup Patel <apatel@ventanamicro.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Andrew Jones <ajones@ventanamicro.com>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 19, 2024 at 1:33=E2=80=AFAM Atish Patra <atishp@atishpatra.org>=
- wrote:
->
-> On Fri, Jul 19, 2024 at 9:10=E2=80=AFAM Anup Patel <apatel@ventanamicro.c=
-om> wrote:
-> >
-> > Implement an optimized KVM world-switch using SBI sync SRET call
-> > when SBI nested acceleration extension is available. This improves
-> > KVM world-switch when KVM RISC-V is running as a Guest under some
-> > other hypervisor.
-> >
-> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > ---
-> >  arch/riscv/include/asm/kvm_nacl.h | 32 +++++++++++++++++++++
-> >  arch/riscv/kvm/vcpu.c             | 48 ++++++++++++++++++++++++++++---
-> >  arch/riscv/kvm/vcpu_switch.S      | 29 +++++++++++++++++++
-> >  3 files changed, 105 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/riscv/include/asm/kvm_nacl.h b/arch/riscv/include/asm=
-/kvm_nacl.h
-> > index a704e8000a58..5e74238ea525 100644
-> > --- a/arch/riscv/include/asm/kvm_nacl.h
-> > +++ b/arch/riscv/include/asm/kvm_nacl.h
-> > @@ -12,6 +12,8 @@
-> >  #include <asm/csr.h>
-> >  #include <asm/sbi.h>
-> >
-> > +struct kvm_vcpu_arch;
-> > +
-> >  DECLARE_STATIC_KEY_FALSE(kvm_riscv_nacl_available);
-> >  #define kvm_riscv_nacl_available() \
-> >         static_branch_unlikely(&kvm_riscv_nacl_available)
-> > @@ -43,6 +45,10 @@ void __kvm_riscv_nacl_hfence(void *shmem,
-> >                              unsigned long page_num,
-> >                              unsigned long page_count);
-> >
-> > +void __kvm_riscv_nacl_switch_to(struct kvm_vcpu_arch *vcpu_arch,
-> > +                               unsigned long sbi_ext_id,
-> > +                               unsigned long sbi_func_id);
-> > +
-> >  int kvm_riscv_nacl_enable(void);
-> >
-> >  void kvm_riscv_nacl_disable(void);
-> > @@ -64,6 +70,32 @@ int kvm_riscv_nacl_init(void);
-> >  #define nacl_shmem_fast()                                             =
- \
-> >         (kvm_riscv_nacl_available() ? nacl_shmem() : NULL)
-> >
-> > +#define nacl_scratch_read_long(__shmem, __offset)                     =
- \
-> > +({                                                                    =
- \
-> > +       unsigned long *__p =3D (__shmem) +                             =
-   \
-> > +                            SBI_NACL_SHMEM_SCRATCH_OFFSET +           =
- \
-> > +                            (__offset);                               =
- \
-> > +       lelong_to_cpu(*__p);                                           =
- \
-> > +})
-> > +
-> > +#define nacl_scratch_write_long(__shmem, __offset, __val)             =
- \
-> > +do {                                                                  =
- \
-> > +       unsigned long *__p =3D (__shmem) +                             =
-   \
-> > +                            SBI_NACL_SHMEM_SCRATCH_OFFSET +           =
- \
-> > +                            (__offset);                               =
- \
-> > +       *__p =3D cpu_to_lelong(__val);                                 =
-   \
-> > +} while (0)
-> > +
-> > +#define nacl_scratch_write_longs(__shmem, __offset, __array, __count) =
- \
-> > +do {                                                                  =
- \
-> > +       unsigned int __i;                                              =
- \
-> > +       unsigned long *__p =3D (__shmem) +                             =
-   \
-> > +                            SBI_NACL_SHMEM_SCRATCH_OFFSET +           =
- \
-> > +                            (__offset);                               =
- \
-> > +       for (__i =3D 0; __i < (__count); __i++)                        =
-   \
-> > +               __p[__i] =3D cpu_to_lelong((__array)[__i]);            =
-   \
-> > +} while (0)
-> > +
->
-> This should be in a separate patch along with other helpers ?
+Add device-tree support for the following SoMs:
 
-Okay, I will move these macros to PATCH8.
+- Mercury SA1 (cyclone5)
+- Mercury+ SA2 (cyclone5)
+- Mercury+ AA1 (arria10)
 
->
-> >  #define nacl_sync_hfence(__e)                                         =
- \
-> >         sbi_ecall(SBI_EXT_NACL, SBI_EXT_NACL_SYNC_HFENCE,              =
- \
-> >                   (__e), 0, 0, 0, 0, 0)
-> > diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> > index 00baaf1b0136..fe849fb1aaab 100644
-> > --- a/arch/riscv/kvm/vcpu.c
-> > +++ b/arch/riscv/kvm/vcpu.c
-> > @@ -759,19 +759,59 @@ static __always_inline void kvm_riscv_vcpu_swap_i=
-n_host_state(struct kvm_vcpu *v
-> >   */
-> >  static void noinstr kvm_riscv_vcpu_enter_exit(struct kvm_vcpu *vcpu)
-> >  {
-> > +       void *nsh;
-> >         struct kvm_cpu_context *gcntx =3D &vcpu->arch.guest_context;
-> >         struct kvm_cpu_context *hcntx =3D &vcpu->arch.host_context;
-> >
-> >         kvm_riscv_vcpu_swap_in_guest_state(vcpu);
-> >         guest_state_enter_irqoff();
-> >
-> > -       hcntx->hstatus =3D ncsr_swap(CSR_HSTATUS, gcntx->hstatus);
-> > +       if (kvm_riscv_nacl_sync_sret_available()) {
-> > +               nsh =3D nacl_shmem();
-> >
-> > -       nsync_csr(-1UL);
-> > +               if (kvm_riscv_nacl_autoswap_csr_available()) {
-> > +                       hcntx->hstatus =3D
-> > +                               nacl_csr_read(nsh, CSR_HSTATUS);
-> > +                       nacl_scratch_write_long(nsh,
-> > +                                               SBI_NACL_SHMEM_AUTOSWAP=
-_OFFSET +
-> > +                                               SBI_NACL_SHMEM_AUTOSWAP=
-_HSTATUS,
-> > +                                               gcntx->hstatus);
-> > +                       nacl_scratch_write_long(nsh,
-> > +                                               SBI_NACL_SHMEM_AUTOSWAP=
-_OFFSET,
-> > +                                               SBI_NACL_SHMEM_AUTOSWAP=
-_FLAG_HSTATUS);
-> > +               } else if (kvm_riscv_nacl_sync_csr_available()) {
-> > +                       hcntx->hstatus =3D nacl_csr_swap(nsh,
-> > +                                                      CSR_HSTATUS, gcn=
-tx->hstatus);
-> > +               } else {
-> > +                       hcntx->hstatus =3D csr_swap(CSR_HSTATUS, gcntx-=
->hstatus);
-> > +               }
-> >
-> > -       __kvm_riscv_switch_to(&vcpu->arch);
-> > +               nacl_scratch_write_longs(nsh,
-> > +                                        SBI_NACL_SHMEM_SRET_OFFSET +
-> > +                                        SBI_NACL_SHMEM_SRET_X(1),
-> > +                                        &gcntx->ra,
-> > +                                        SBI_NACL_SHMEM_SRET_X_LAST);
-> > +
-> > +               __kvm_riscv_nacl_switch_to(&vcpu->arch, SBI_EXT_NACL,
-> > +                                          SBI_EXT_NACL_SYNC_SRET);
-> > +
-> > +               if (kvm_riscv_nacl_autoswap_csr_available()) {
-> > +                       nacl_scratch_write_long(nsh,
-> > +                                               SBI_NACL_SHMEM_AUTOSWAP=
-_OFFSET,
-> > +                                               0);
-> > +                       gcntx->hstatus =3D nacl_scratch_read_long(nsh,
-> > +                                                               SBI_NAC=
-L_SHMEM_AUTOSWAP_OFFSET +
-> > +                                                               SBI_NAC=
-L_SHMEM_AUTOSWAP_HSTATUS);
-> > +               } else {
-> > +                       gcntx->hstatus =3D csr_swap(CSR_HSTATUS, hcntx-=
->hstatus);
-> > +               }
-> > +       } else {
-> > +               hcntx->hstatus =3D csr_swap(CSR_HSTATUS, gcntx->hstatus=
-);
-> >
-> > -       gcntx->hstatus =3D csr_swap(CSR_HSTATUS, hcntx->hstatus);
-> > +               __kvm_riscv_switch_to(&vcpu->arch);
-> > +
-> > +               gcntx->hstatus =3D csr_swap(CSR_HSTATUS, hcntx->hstatus=
-);
-> > +       }
-> >
-> >         vcpu->arch.last_exit_cpu =3D vcpu->cpu;
-> >         guest_state_exit_irqoff();
-> > diff --git a/arch/riscv/kvm/vcpu_switch.S b/arch/riscv/kvm/vcpu_switch.=
-S
-> > index 9f13e5ce6a18..47686bcb21e0 100644
-> > --- a/arch/riscv/kvm/vcpu_switch.S
-> > +++ b/arch/riscv/kvm/vcpu_switch.S
-> > @@ -218,6 +218,35 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
-> >         ret
-> >  SYM_FUNC_END(__kvm_riscv_switch_to)
-> >
-> > +       /*
-> > +        * Parameters:
-> > +        * A0 <=3D Pointer to struct kvm_vcpu_arch
-> > +        * A1 <=3D SBI extension ID
-> > +        * A2 <=3D SBI function ID
-> > +        */
-> > +SYM_FUNC_START(__kvm_riscv_nacl_switch_to)
-> > +       SAVE_HOST_GPRS
-> > +
-> > +       SAVE_HOST_AND_RESTORE_GUEST_CSRS .Lkvm_nacl_switch_return
-> > +
-> > +       /* Resume Guest using SBI nested acceleration */
-> > +       add     a6, a2, zero
-> > +       add     a7, a1, zero
-> > +       ecall
-> > +
-> > +       /* Back to Host */
-> > +       .align 2
-> > +.Lkvm_nacl_switch_return:
-> > +       SAVE_GUEST_GPRS
-> > +
-> > +       SAVE_GUEST_AND_RESTORE_HOST_CSRS
-> > +
-> > +       RESTORE_HOST_GPRS
-> > +
-> > +       /* Return to C code */
-> > +       ret
-> > +SYM_FUNC_END(__kvm_riscv_nacl_switch_to)
-> > +
-> >  SYM_CODE_START(__kvm_riscv_unpriv_trap)
-> >         /*
-> >          * We assume that faulting unpriv load/store instruction is
-> > --
-> > 2.34.1
-> >
->
->
-> Reviewed-by: Atish Patra <atishp@rivosinc.com>
-> --
-> Regards,
-> Atish
+Further add device-tree support for the corresponding carrier boards:
 
-Regards,
-Anup
+- Mercury+ PE1
+- Mercury+ PE3
+- Mercury+ ST1
+
+Finally, provide generic support for combinations of the above with
+one of the boot-modes
+- SD
+- eMMC
+- QSPI
+
+Almost all of the above can be freely combined. Combinations are
+covered by the provided .dts files. This makes an already existing
+.dts file obsolete. Further minor fixes of the dtbs_checks are
+added separtely.
+
+The current approach shall be partly useful also for corresponding
+bootloader integration using dts/upstream. That's also one of the
+reasons for the .dtsi split.
+
+
+Note: Pls, take this as a draft, in particular I have the following
+open questions and would appreciate to get some short statement:
+
+1.) Documentation/devicetree/bindings:
+Executing the following find...
+$ find ./Documentation/devicetree/bindings -name socfpga-\*.txt
+...shows 4 text files describing "altr," bindings. I sketch-implemented
+the clock binding and could reduce some of my dtbs_check warnings. So, my
+questions is, if this is the right way? Shall I try to write .yaml files
+for all 4 of them, too? Related to that, who will be maintainer?
+
+2.) Some bindings, e.g. the Silabs clock generator seem to have no
+driver, thus show up as warning:
+    compatible = "silabs,si5338";
+IMHO it is most likely rather to be probed/loaded in the SPL of the
+bootloader. Is it problematic to keep those declarations (showing up as
+warning in dtbs_check) or how to deal with them?
+
+3.) Please, give me some feedback if the DT and binding adjustments are
+going into total wrong direction, or where I may do better. If it is ok,
+and acceptable, or what is still missing. I tried to split them, to
+allow for better single integration / discussion let me know if this is
+ok, too.
+
+---
+v1 -> v2:
+- split bindings and DT adjustments/additions
+- add several fixes to the socfpga.dtsi and socfpga_arria10.dtsi where
+  bindings did not match
+- extend existing bindings by properties and nods from arria10 setup
+- implement the clock binding altr,socfpga-a10.yaml based on existing
+  text file, rudimentary datasheet study and requirements of the
+  particular DT setup
+---
+Lothar Rubusch (23):
+  ARM: dts: socfpga: fix typo
+  ARM: dts: socfpga: align bus name with bindings
+  ARM: dts: socfpga: align dma name with binding
+  ARM: dts: socfpga: align fpga-region name
+  ARM: dts: socfpga: add label to clock manager
+  ARM: dts: socfpga: add missing cells properties
+  ARM: dts: socfpga: fix missing ranges
+  ARM: dts: socfpga: add clock-frequency property
+  ARM: dts: socfpga: add ranges property to sram
+  ARM: dts: socfpga: remove arria10 reset-names
+  ARM: socfpga: dts: add compatibility for arria10
+  ARM: socfpga: dts: add a10 clock binding yaml
+  ARM: dts: socfpga: add Enclustra boot-mode dtsi
+  ARM: dts: socfpga: add Enclustra base-board dtsi
+  ARM: dts: socfpga: add Enclustra Mercury SA1
+  dt-bindings: altera: add Enclustra Mercury SA1
+  ARM: dts: socfpga: add Enclustra Mercury+ SA2
+  dt-bindings: altera: add binding for Mercury+ SA2
+  ARM: dts: socfpga: add Mercury AA1 combinations
+  dt-bindings: altera: add Mercury AA1 combinations
+  ARM: dts: socfpga: removal of generic PE1 dts
+  dt-bindings: altera: removal of generic PE1 dts
+  ARM: dts: socfpga: add Enclustra SoM dts files
+
+ .../devicetree/bindings/arm/altera.yaml       |  24 ++-
+ .../bindings/clock/altr,socfpga-a10.yaml      | 107 +++++++++++++
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   2 +
+ arch/arm/boot/dts/intel/socfpga/Makefile      |  25 ++-
+ arch/arm/boot/dts/intel/socfpga/socfpga.dtsi  |   6 +-
+ .../dts/intel/socfpga/socfpga_arria10.dtsi    |  26 ++--
+ .../socfpga/socfpga_arria10_mercury_aa1.dtsi  | 141 ++++++++++++++---
+ .../socfpga_arria10_mercury_aa1_pe1_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe1_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe1_sdmmc.dts |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_sdmmc.dts |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_sdmmc.dts |  16 ++
+ .../socfpga/socfpga_arria10_mercury_pe1.dts   |  55 -------
+ .../socfpga/socfpga_cyclone5_mercury_sa1.dtsi | 143 +++++++++++++++++
+ .../socfpga_cyclone5_mercury_sa1_pe1_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe3_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe3_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_st1_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_st1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts |  16 ++
+ .../socfpga/socfpga_cyclone5_mercury_sa2.dtsi | 146 ++++++++++++++++++
+ .../socfpga_cyclone5_mercury_sa2_pe1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa2_pe3_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa2_st1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts |  16 ++
+ ...cfpga_enclustra_mercury_bootmode_emmc.dtsi |  12 ++
+ ...cfpga_enclustra_mercury_bootmode_qspi.dtsi |   8 +
+ ...fpga_enclustra_mercury_bootmode_sdmmc.dtsi |   8 +
+ .../socfpga_enclustra_mercury_pe1.dtsi        |  33 ++++
+ .../socfpga_enclustra_mercury_pe3.dtsi        |  55 +++++++
+ .../socfpga_enclustra_mercury_st1.dtsi        |  15 ++
+ 40 files changed, 1097 insertions(+), 93 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_sdmmc.dts
+ delete mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_pe1.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_emmc.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_qspi.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_sdmmc.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_pe1.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_pe3.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_st1.dtsi
+
+-- 
+2.25.1
+
 
