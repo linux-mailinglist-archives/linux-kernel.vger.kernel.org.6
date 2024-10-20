@@ -1,118 +1,144 @@
-Return-Path: <linux-kernel+bounces-373352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B7CC9A55AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:03:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7AB9A55AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0848280A0B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:03:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89FC01C20DAB
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B1E194AE6;
-	Sun, 20 Oct 2024 18:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19790194AE6;
+	Sun, 20 Oct 2024 18:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEucNOOO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="d9AB/8b2"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1AAFC0A;
-	Sun, 20 Oct 2024 18:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839B3FC0A;
+	Sun, 20 Oct 2024 18:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729447420; cv=none; b=fK1xBju0Zp+tx4uyNlEJVnlY2AGpwKbtgsijSJfoWY7qp+2yAmAtQCZbtJoI5E0vxLsY1h9uaNEHrjGyJQLcbnVJIHwyEVWURfGmWAA2Uez8pxWn8DQDv7XzWyu52r/08z+2n5gbNRsSTUvhF4w4KmeEcf8iOa4AjcDuwaZs7iU=
+	t=1729447460; cv=none; b=Gww2wxh6HkORJBGoM1FYJv3+QjaKyah9wCOAIxDAjS4GlUYqhrCp6Fy9Yf/5KTThCSZ4EZtVCS0kENhY5Yag0bLOVWWzJsSxBV+OIZaHJ2ytDCO2jnCGD6edpkfLrQ1GvO8XNAq67Sl+/IQFS/v4/XitInpWRI7K04Ozmdt8Nh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729447420; c=relaxed/simple;
-	bh=yJYMK3br6K6gsuyUqnxzPXiUZcPS5ZVEBLXA4w+Y3c8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hfFGyYLG9fE91OzgiB0lNyVKDGJvpFyRROnpCzagSbffRebdOZ9qoTLA9blbypKCSwMKPeSzI26a6DbrGF+9TQBLB/5VahMCSywpDvf2zlFYln7MXG6bDIvPEZX1PnOjn9YxWtlyWNURTjV0znaja70MULi24qv7ppGKnTQq5Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEucNOOO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 224E4C4CEC6;
-	Sun, 20 Oct 2024 18:03:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729447420;
-	bh=yJYMK3br6K6gsuyUqnxzPXiUZcPS5ZVEBLXA4w+Y3c8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eEucNOOOYQ0RVLGjWecOUXBo4CP+2OpDBxdojng8LdBfIO5vYh+QX8u7Ms3qyP8dn
-	 vT+91RKWiBkKpgBRDyVIQIrt+w9oGW9f+FDJwRBdeY6mrsBvC9ebJ/G59OSjIC0vFE
-	 cBZYIBd5Z4+IdJr5Zs4P/OoxR9/pKj8OCI6s9vybB58SXdxFbQTf+ljFKzPL2V7Lc9
-	 Tk6Xmi7pgJ/6PqhdJloA7+enW9yFvskFRAgO9Nb42XdWFGMUJ47zzIjl5htQWJ2+sg
-	 yA9qhfDzKiXhQVtVpmPdpuktRaBQdr+VRnnlY8OX51Eo8U1f1XTGKti3YAO3FFeO59
-	 c1AOKCBY/VONA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guan Wentao <guanwentao@uniontech.com>,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] crypto: mips/crc32 - fix the CRC32C implementation
-Date: Sun, 20 Oct 2024 11:02:58 -0700
-Message-ID: <20241020180258.8060-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729447460; c=relaxed/simple;
+	bh=yKJtUlFJu4KiHlkrYgJwXBXA6fF8UAYMRZklShavRoY=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=HvFwnO1AFxybwvmCK6p9I7FIBccQJuiJONbiy3NBxDbi5ierDdf3zZ4lhoqM5NzB72gZtPEvldI24uAbSVQoeLLAWEADTrrw2KJyGqqLrwBLsvx3ajuXmYzix3mUJ6jlJZd3r/cwseltvS2XUV2MvDP7FAI4G18seoURbByTaZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=d9AB/8b2; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1729447449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EUk2djnV1e9rrtO5Qm3LygELN8tFQ9aXm6rOK5MKU9Q=;
+	b=d9AB/8b2OufsQjJ/nWN/iyh+Lmh1FrMehf3Vvc0VLm2FZjbp4d6ezD9YhnUQeZmtO+ZLWJ
+	N5VLCZA5vJY5hVKOZRrqXmNozrC4pBTmpAzbbegrNKEdCfY9iJ/PiWz2Vn7JPoJjzdrWek
+	10Zf3VzH1zf5B2xdpkvWtpcHLt1DVm2l2/gd+0v4ZH24gC2H3I2YkM6+7jBq4Sl63G5RwE
+	rzqxfycXTRMr7PUPgJSXWAvo2hp9Eb987j84bPkipJNI23x6YRC8dBQpq5SRQ8Vi18eHMU
+	8ZR2xqa1EykocjzTMjV0yWOlPbsQnlAe5rs1riXNr9Ku+fdqqfQriXJmArnsMg==
+Date: Sun, 20 Oct 2024 20:04:09 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Prepare RK356x SoC dtsi files
+ for per-variant OPPs
+In-Reply-To: <D4ZZFL98AMFI.1TDPL2DJPSQ3D@cknow.org>
+References: <cover.1728752527.git.dsimic@manjaro.org>
+ <cc2aed3116a57dd50e2bb15ab41b12784adfafe3.1728752527.git.dsimic@manjaro.org>
+ <D4U30AUOH6UR.1QPH47KN5EWE4@cknow.org>
+ <D4ZZFL98AMFI.1TDPL2DJPSQ3D@cknow.org>
+Message-ID: <6567146d2dfb0287e482ec1c441b31d9@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-From: Eric Biggers <ebiggers@google.com>
+Hello Diederik,
 
-Commit ca459e5f826f ("crypto: mips/crc32 - Clean up useless assignment
-operations") changed crc32c_mips_le_hw() to use the instructions that
-use the "regular" CRC32 polynomial instead of the Castagnoli polynomial.
-Therefore it can't be computing CRC32C values correctly anymore.
+On 2024-10-19 20:09, Diederik de Haas wrote:
+> On Sat Oct 12, 2024 at 9:41 PM CEST, Diederik de Haas wrote:
+>> On Sat Oct 12, 2024 at 7:04 PM CEST, Dragan Simic wrote:
+>> >
+>> > -&pipegrf {
+>> > -	compatible = "rockchip,rk3566-pipe-grf", "syscon";
+>> 
+>> This seems unrelated?
+>> 
+>> > +&cpu0 {
+>> > +	operating-points-v2 = <&cpu0_opp_table>;
+>> >  };
+>> >
+>> > -&power {
+>> > -	power-domain@RK3568_PD_PIPE {
+>> > -		reg = <RK3568_PD_PIPE>;
+>> > -		clocks = <&cru PCLK_PIPE>;
+>> > -		pm_qos = <&qos_pcie2x1>,
+>> > -			 <&qos_sata1>,
+>> > -			 <&qos_sata2>,
+>> > -			 <&qos_usb3_0>,
+>> > -			 <&qos_usb3_1>;
+>> > -		#power-domain-cells = <0>;
+>> > -	};
+>> 
+>> This seems unrelated to me and possibly a functional change?
+>> If this was intended, then a description in the commit message would 
+>> be
+>> nice why this is appropriate and possibly moved to a separate patch?
+>> 
+>> > +&cpu1 {
+>> > +	operating-points-v2 = <&cpu0_opp_table>;
+>> > +};
+>> > +
+>> > +&cpu2 {
+>> > +	operating-points-v2 = <&cpu0_opp_table>;
+>> >  };
+>> >
+>> > -&usb_host0_xhci {
+>> > -	phys = <&usb2phy0_otg>;
+>> > -	phy-names = "usb2-phy";
+>> > -	extcon = <&usb2phy0>;
+>> > -	maximum-speed = "high-speed";
+>> 
+>> This also looks unrelated and a functional change?
+>> 
+>> > +&cpu3 {
+>> > +	operating-points-v2 = <&cpu0_opp_table>;
+>> >  };
+>> >
+>> > -&vop {
+>> > -	compatible = "rockchip,rk3566-vop";
+>> 
+>> This also looks unrelated?
+> 
+> It turns out I was wrong.
+> The elements I thought were removed, aren't removed.
+> 
+> Sorry for the noise.
 
-I haven't been successful in running a MIPS kernel in QEMU, but based on
-code review this is the fix that is needed.
+No worries.  I tried to tune and adjust the patch generation
+parameters as best as possible, but some parts of the produced
+patches still remained slightly confusing.
 
-Fixes: ca459e5f826f ("crypto: mips/crc32 - Clean up useless assignment operations")
-Cc: Guan Wentao <guanwentao@uniontech.com>
-Cc: WangYuli <wangyuli@uniontech.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
-
-This is a regression in 6.12, so it should be fixed in a 6.12-rc.
-
- arch/mips/crypto/crc32-mips.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/mips/crypto/crc32-mips.c b/arch/mips/crypto/crc32-mips.c
-index a7a1d43a1b2ca..90eacf00cfc31 100644
---- a/arch/mips/crypto/crc32-mips.c
-+++ b/arch/mips/crypto/crc32-mips.c
-@@ -121,24 +121,24 @@ static u32 crc32c_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
- 
- 	if (IS_ENABLED(CONFIG_64BIT)) {
- 		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
- 			u64 value = get_unaligned_le64(p);
- 
--			CRC32(crc, value, d);
-+			CRC32C(crc, value, d);
- 		}
- 
- 		if (len & sizeof(u32)) {
- 			u32 value = get_unaligned_le32(p);
- 
--			CRC32(crc, value, w);
-+			CRC32C(crc, value, w);
- 			p += sizeof(u32);
- 		}
- 	} else {
- 		for (; len >= sizeof(u32); len -= sizeof(u32)) {
- 			u32 value = get_unaligned_le32(p);
- 
--			CRC32(crc, value, w);
-+			CRC32C(crc, value, w);
- 			p += sizeof(u32);
- 		}
- 	}
- 
- 	if (len & sizeof(u16)) {
-
-base-commit: 7fa4be6d6752512278c4cbf2d2745568626e7369
--- 
-2.47.0
-
+By the way, a few months ago there was a discussion on the Git
+mailing list about making Git perform such parameter adjustment
+magic itself, which back then seemed like a good idea to me,
+but after dealing with a few rather complex patches myself, I
+no longer think that's actually possible.
 
