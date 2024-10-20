@@ -1,106 +1,127 @@
-Return-Path: <linux-kernel+bounces-373275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC8A9A548F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:47:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFA59A5490
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B45221F22029
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3C72824B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AA8193070;
-	Sun, 20 Oct 2024 14:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8963E193070;
+	Sun, 20 Oct 2024 14:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2q6StgT1"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIZP7Okk"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B042209B;
-	Sun, 20 Oct 2024 14:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70F6192B90;
+	Sun, 20 Oct 2024 14:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729435646; cv=none; b=nBo0QNW3NCdGI7eh5rGOLoXjiCXxVgfPK3fDfWKSKRG9PLWpqGhFBpfBHgCIqVJC0Pq2byEb1KYRQf/P6QO+zxZT6HalYIesRxAhLulhEpZeb9Jiw3+2Em0Ms7c8wOdDSJLdjnx/KMRRsPBs0grt3VF9/xKchsEKbcwdw1OWEDI=
+	t=1729435673; cv=none; b=e5dCshOfv7d2KB3CGZNOw0Qf5KHOS95QjaK8/2VEF5pNmoI0JqpnCz2FST1nDMqUCwBSW9GT077imeEN/Rrh68xP6xnxUE7ohqBxFPgV+n0ScmhQs95atQhpwr8UQUPTN4jd8GElhj7PDJsw5ezmRkQx9bNYFxL25//8KBcXauM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729435646; c=relaxed/simple;
-	bh=bdHe8oVf66Ft+GmEmF4nt9Sks7q1UbxWLdKl81fEQ1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=csOGLYQPeXd1jKhQU+JsG/eUqKXuJBGaeCWgN3ZKNL9vBgntWN8eMnMQfD06GFw2xghj3VJUsklxp3LhR1golkEzskCPBps03hVPFklrjob0hDb7AycAX5ukTzLo2U3kvUEZN00a7CMhD3SdVchXDuHhHahf4eK7hK+PKaUwygw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2q6StgT1; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Zmyo1fTWbthMVmNxF8nKhGsgsGfAfxJZkUfU7Y5L4X8=; b=2q6StgT1ePMGCGk9pFg3okb6/v
-	KU0nneBoZwQWzTg2s12nlTNyNhQSFRV5GmT6zXZSbAyVL10DQHJnnrKGP19XYsWvC6HlMzNdP/ydQ
-	b6m/1jvXX5vZ59lNVdglNcmZ2J5h7+5R7Q1klB7Moql5qRLCqsOIYnUy2GrMomhm1tks=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t2XD1-00AeUw-TC; Sun, 20 Oct 2024 16:47:07 +0200
-Date: Sun, 20 Oct 2024 16:47:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dsa: mv88e6xxx: fix unreleased
- fwnode_handle in setup_port()
-Message-ID: <612445d2-d7c8-4bda-a070-e2c0ebbf3d4e@lunn.ch>
-References: <20241019-mv88e6xxx_chip-fwnode_handle_put-v1-1-fc92c4f16831@gmail.com>
- <11c644b5-e6e5-4c4c-9398-7a8e59519370@lunn.ch>
- <f148a61d-4ad5-4f62-b1f0-d216e1873067@gmail.com>
+	s=arc-20240116; t=1729435673; c=relaxed/simple;
+	bh=gAgOhwpZlmmkuEbOHAmwjxHfuctXq5ehk/b/YaDekl8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dR/IYJx3fWfctuIuDO0M5tQSltVD8+qYBFKl4GS3TXu1fwxVezlrh4PQZu78/sP82W+OSmkCvRK0mmOtN7VDfr2PfPMkY/oinj1DjwJ1/i5Jpri1PXB4/PERxIisn23lOKom7C2gqpNTJt2uknf6ffWpHDKEcWdfmZ/oqU4/y6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIZP7Okk; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c9625cfe4dso4535792a12.0;
+        Sun, 20 Oct 2024 07:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729435670; x=1730040470; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jKc4HUiSL08fbl+1Cp0m4Wtmx7X/6lUCNDJ1T+im9NM=;
+        b=CIZP7OkklGDl7Lhf+QutEBMomIs4nl72LixSyA4ntrIcYJ8oYfcxP6Tq9Vh9TvBY+1
+         yUXfAB9uLtwdnvWPPoozKFFBlzr23SLJ+Etsk7CbViHXqQXjFXpPh/XZOfSIxdYDYny2
+         TGUkaLAPruv5XJG3UnOYz8XDlasZMCZlRvVpk8qrAXHMNrdB648SeBYEbqD1u4ZA6RMp
+         DfFSpR2yBkwqIBN1anSvFuwfmnwdwoJ65oRJWnOK48wwb9ErSJuh5E8AwaIiVp3IVy5K
+         BralCekM0yD02Tsk/YpqAvF7RNrK0eR366jd4la1h3a749LNb1mWqfsRXhcDDXLK8tb7
+         sXvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729435670; x=1730040470;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jKc4HUiSL08fbl+1Cp0m4Wtmx7X/6lUCNDJ1T+im9NM=;
+        b=g4LLnn6WAs7XK9QfTFIpNMe9b+rVzNWk/m39fWakCJaTLhtwu59HjOxbi7j8kAxIar
+         HeBgq5RopYtvVdOtiF/NBNR8Mg4vOvHxjwWXsZ5ImavBbgsHxUfczLFGSPjG4N1JEWKB
+         hL6yAb23sEmeXe3OsjN4Vy4GgZ6MFXBbvgbkGYG8/a8ILMi7CvbzCexz7bFLe6iRl6CU
+         gllynYU+exkU0eL8CvW+xrocdppY/79gUXGwueCTY44q0otvFtxLRQroiJO843OSG27U
+         CR+4N8tTSvFx1k5M2YCB0lmbxbA2wonGipL+KIhbEn+13eBRD/NX8YTOfIPUj4C1WAgi
+         ULJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfJzQ59HiQC/MAU+akhYXs3TuPPhrmZMYC04p7J2VLBYx8Bt3L/ELKKN/WFRhf8NtmebAeNJr36+tilhBw@vger.kernel.org, AJvYcCW/kJMLj3wvXjApTgSYKbYpbULu/NiePPVmQGMCCHbjwidbKo1jftOunAFkKrreOwn8UiEwo8VUTlzoXA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJXTkld9trBACC2UcZBwCNx6NOLwiX1EqHalIPDGjerKxMq29P
+	UF8BvtDd2NrYLeC2EIOx0GHuCBoTFZNUTikfhGAWN9yKh10CeuEh
+X-Google-Smtp-Source: AGHT+IGHD3C7WMAfwu034gemcUPBTbi4GTHeY+VlhD+dixphZLpFTmlYZV+o5j5E5ifFLaLvCDDMXw==
+X-Received: by 2002:a05:6402:34d4:b0:5cb:6729:feaf with SMTP id 4fb4d7f45d1cf-5cb672a12cbmr1857651a12.16.1729435669814;
+        Sun, 20 Oct 2024 07:47:49 -0700 (PDT)
+Received: from localhost.localdomain ([83.168.79.145])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb6696b525sm945788a12.16.2024.10.20.07.47.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 07:47:48 -0700 (PDT)
+From: Karol Przybylski <karprzy7@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com
+Cc: Karol Przybylski <karprzy7@gmail.com>,
+	linux-input@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+040e8b3db6a96908d470@syzkaller.appspotmail.com
+Subject: [PATCH] HID: hid-thrustmaster: add endpoint check in thrustmaster_interrupts
+Date: Sun, 20 Oct 2024 16:47:36 +0200
+Message-Id: <20241020144736.367420-1-karprzy7@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f148a61d-4ad5-4f62-b1f0-d216e1873067@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 20, 2024 at 12:21:07AM +0200, Javier Carrasco wrote:
-> On 19/10/2024 23:59, Andrew Lunn wrote:
-> > On Sat, Oct 19, 2024 at 10:16:49PM +0200, Javier Carrasco wrote:
-> >> 'ports_fwnode' is initialized via device_get_named_child_node(), which
-> >> requires a call to fwnode_handle_put() when the variable is no longer
-> >> required to avoid leaking memory.
-> >>
-> >> Add the missing fwnode_handle_put() after 'ports_fwnode' has been used
-> >> and is no longer required.
-> > 
-> > As you point out, the handle is obtained with
-> > device_get_named_child_node(). It seems odd to use a fwnode_ function
-> > not a device_ function to release the handle. Is there a device_
-> > function?
-> > 
-> > 	Andrew
-> 
-> 
-> Hi Andrew,
-> 
-> device_get_named_child_node() receives a pointer to a *device*, and
-> returns a child node (a pointer to an *fwnode_handle*). That is what has
-> to be released, and therefore fwnode_handle_put() is the right one.
-> 
-> Note that device_get_named_child_node() documents how to release the
-> fwnode pointer:
-> 
-> "The caller is responsible for calling fwnode_handle_put() on the
-> returned fwnode pointer."
+syzbot has found a type mismatch between a USB pipe and the transfer
+endpoint, which is triggered by the hid-thrustmaster driver[1].
+There is a number of similar, already fixed issues [2].
+In this case as in others, implementing check for endpoint type fixes the issue.
 
-O.K. I just don't like asymmetric APIs. They often lead to bugs, just
-look wrong, and make reviewers ask questions...
+[1] https://syzkaller.appspot.com/bug?extid=040e8b3db6a96908d470
+[2] https://syzkaller.appspot.com/bug?extid=348331f63b034f89b622
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: c49c33637802 ("HID: support for initialization of some Thrustmaster wheels")
+Reported-by: syzbot+040e8b3db6a96908d470@syzkaller.appspotmail.com
+Tested-by: syzbot+040e8b3db6a96908d470@syzkaller.appspotmail.com
+Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+---
+ drivers/hid/hid-thrustmaster.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-    Andrew
+diff --git a/drivers/hid/hid-thrustmaster.c b/drivers/hid/hid-thrustmaster.c
+index cf1679b0d4fb..f948189394ef 100644
+--- a/drivers/hid/hid-thrustmaster.c
++++ b/drivers/hid/hid-thrustmaster.c
+@@ -170,6 +170,13 @@ static void thrustmaster_interrupts(struct hid_device *hdev)
+ 	ep = &usbif->cur_altsetting->endpoint[1];
+ 	b_ep = ep->desc.bEndpointAddress;
+ 
++	/* Are the expected endpoints present? */
++	u8 ep_addr[1] = {b_ep};
++	if (!usb_check_int_endpoints(usbif, ep_addr)) {
++		hid_err(hdev, "Unexpected non-int endpoint\n");
++		return;
++	}
++
+ 	for (i = 0; i < ARRAY_SIZE(setup_arr); ++i) {
+ 		memcpy(send_buf, setup_arr[i], setup_arr_sizes[i]);
+ 
+-- 
+2.34.1
+
 
