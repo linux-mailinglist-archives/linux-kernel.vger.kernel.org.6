@@ -1,199 +1,137 @@
-Return-Path: <linux-kernel+bounces-373235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13D69A541B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:51:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B25319A5428
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 14:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C88FF1C20DAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 12:51:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4FA91C20CE3
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 12:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EAD374CB;
-	Sun, 20 Oct 2024 12:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBD0192D6E;
+	Sun, 20 Oct 2024 12:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6FuUcNH"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VszKozBO"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537FA192B9E;
-	Sun, 20 Oct 2024 12:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E53137E;
+	Sun, 20 Oct 2024 12:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729428691; cv=none; b=PfMNSmKTQuNVH9BA6jPCtniIUIYc9oEdh9WRevuW1zgmrNwrMhefm44f4dSh9uI3dkjyw5WycsX0pfemm+qIhEoIQK0HnZQT3XB+a9VN5h8QlXjqYwkAG3xt3ZXOb1zomaWkTnHaK43+QNJN8nu+dSWPGq3/ME9Z4CO6li2q8+c=
+	t=1729429003; cv=none; b=Js7oyizCh3bk0zUXmoKoqi7XKG+7hynJEGs5O1LAm9ioVQlyL77tbyZgmLPOWln6Eb5nNxK6aQ9mT5hBqXnXVXzC4RTvA4VCB4DXTSIoiJ0BmZLPMb6DQDqzKMl+e0PJAA65g1yuG3OuaC+fOZcTCdS7shsO+/74QUHsoGcpKEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729428691; c=relaxed/simple;
-	bh=V1Hd2hpF1PC6ov8soQexfZcR7ndvBAQxb+ycPCgw0oM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=hJIhwA0V0pTSVKmM+Ykn04Qj6WJk6/kJ4SthqJ32xZUKBdx0pj9SlPoeOsQiF/rbXMGmu2XZGDiM0FCmPpk2vT7poUBBjQkQEgNqdmkF5GH3T4KVOQYAS65MAB4Z7HU9W57ARq1hoOd0HhbR+V/aPWK57SZxNXFPV5iHMuf0uqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6FuUcNH; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1729429003; c=relaxed/simple;
+	bh=o4hRuDeci+lewqXrEpMnVxOP+77ejmgwOUR3uaBa0eE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PfWWLZFtjtAhgRT6PNjPiFXr36H/bz0JdJNhJnuaeoslQ21pkZiEqxysyyy++pRo3B3YT5tY0zaQOcXJ3JQMWySdWb0un2XCW6r05mLf+LA5xUwvz9LdQroHonHhG3Oq5LiuddrJfH5E7SnMe5YHQ6C/uA5o6YhBGRxOULzbHUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VszKozBO; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c693b68f5so37954835ad.1;
-        Sun, 20 Oct 2024 05:51:29 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4316e9f4a40so7386265e9.2;
+        Sun, 20 Oct 2024 05:56:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729428688; x=1730033488; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Liji241/QeE11KiWMMMGYF8zGuKangkdUYIyn2w04fI=;
-        b=G6FuUcNHiPjn+18dBuCFzjlfLTli/Qb0JgUXoLKQ+yT2JZlbrJPBm95YfYFUB1atJu
-         ZvX/nQWP8Qg5vA8EtoyiGFdGy3NtOI6Q0bla4zVBJpj3RS+Gvmr2OxYmZ4lVO6AYev3U
-         2w99GiDph28dY64eTDnOcRweZ+YpkjWXn8z7CSgVOjZ/nDnO2AXhKzjCNN1d87t38ahf
-         33Otz40LuqPPnls9YLyDommHQ+IPBAHTDzFM3BBFj/F6xOO6PxyzIeEZhRLEt4MUprju
-         gSpyGmhD863tdR/e+5dyVG7LbBkayOEaiaKrsY4b6O9zBz3uJRmyTzGaClyTFUoVy5Ot
-         neAw==
+        d=gmail.com; s=20230601; t=1729428999; x=1730033799; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TgUWrWRIiNQfKrPYF7x5YNeRJ4uuAQZGRGkDi+8FGE0=;
+        b=VszKozBOX3h1ORlbWORCctygT1boYtbk+oXFweszOMLuxE0tTGpsXDevNDvNmPw1Yj
+         AMRd8EhHDP/5jL65oLNVZVkOOHMMCT3TinzbUd1suN9REp3vtQioLsGQ+czqAbPG/t5J
+         ie5kIebVwApYGhscVy75R6gN/8OQcbZnSsrL/C8tbri5AcKgzApzIysLdsd4nyUQa8vc
+         WRHUHLk4Dwl1zpKRre77dC5oKkfrFmQWzdiTs4nHs2jgJRwUU2OoxPcmA6mtxYpCmerf
+         ZyXyP+r95c+fL4+XP1iIuEfZ54hDZVtRLVFxSxuN1ga+WFpDquLO59KHkxLmHUgkPQNX
+         oXDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729428688; x=1730033488;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Liji241/QeE11KiWMMMGYF8zGuKangkdUYIyn2w04fI=;
-        b=h1ppkcHWyIg013iAiSECDD8juG+clAVE7H2z40Tw6v5Nue7ry2seqHtZTjaM9CpYFI
-         ogjH3mwTclSWyVkJ9cbvK5dRTX+rhjCfGMXydTBuTc4Zon1sxc4bkIQLdzUvpr2t8Eoi
-         4B7ate51oO0oqmFtTtiI0FNN0vynK3/bVtfyATauKHDqcxRJt/dnLJYrOj51hmbGRk56
-         qpf2VK4FX6welRN3dpZsym2GLnLt0gruRj3LNHAPAbW6KdTSQKf/GYjFuKTKVBamWXq8
-         /kI34xT1fcrm8XKgpI6i38TrtZ76NpG89kbnXt3CGj3hLzStcbjZPgfL7GX0m7uWaS3h
-         3pvw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5p5bfokXolqs1XIig1W56D31+cJ++A3gFHYRDpkFXXHxO7zlCRudMKO9dFvh+zzVx313A@vger.kernel.org, AJvYcCXZYuBhkNscT3p1rxCbQsZo2wjyxDDLQVuII2gyGjRCk+g2qwpREgGKgjaOLN2hT7fUlTSlMJmuXaZPomQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAdODFZ7dJJHj1gy1JfexIiYj4iG59R0TON0znX5lSoyha8Q6H
-	XpUlyu6MhKOjjC/d9ciHAjknrKYQ9SHAR/nydSEnIXsVqPB8cRwF5/wtRA==
-X-Google-Smtp-Source: AGHT+IEJoSu7QQXD8v81l++M/y6bfs2W7vBREvCVBPanmVLmyFPMJhcrwlQJppMUrum1cAnNNNql/Q==
-X-Received: by 2002:a17:903:2284:b0:20c:62f4:41c with SMTP id d9443c01a7336-20e5a70d567mr123529715ad.3.1729428688287;
-        Sun, 20 Oct 2024 05:51:28 -0700 (PDT)
-Received: from localhost.localdomain ([120.244.141.0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0de4d3sm9915825ad.216.2024.10.20.05.51.24
+        d=1e100.net; s=20230601; t=1729428999; x=1730033799;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TgUWrWRIiNQfKrPYF7x5YNeRJ4uuAQZGRGkDi+8FGE0=;
+        b=GYk0yu9HK9aWk8miTLDIDrR+A7zex6O61Jn1rNWr0rBHD5wpGmg11UyAcC0hMlczNr
+         IXEBwcgK7tSDiGBaTS0l5Jb2yssST+o7UhlCqSp7ZzMKbe7utATKQKDWL+PFm8D9kFDq
+         eguTyoFYDYCX0uQHaIRaiWjREPgDPIaRZugac9GC3IGsJEfFL30muZXQNuDGaX5Gx1hE
+         qtMUotgOUlX6pG1cT5jYl8eK8j2TvaEnVbpWHaiIqksnXF4y2u0ZX52fRrzhWhSzf6M0
+         sS89A5CruPdkyBh0QSMAwlG/DwAxguAVaKi2GYlZ9gB5goqdIML+98GhVIq8fU+IqOzq
+         rghA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1QATb2diNeVXksFgf4O5wRCWFelEGHjy1BEpjsGygByVtmpGbL39C1farGglxIUb07dysgvVFrXhG@vger.kernel.org, AJvYcCXX3ixL5KRRE/2IuEG3Fsn4YzxE9YTAIEQIHqIPNsREzV+wD+FukitdJ0njOJjWQIPCFj4R0UeS@vger.kernel.org, AJvYcCXb5nBFlMwmcGlLUqOwgeRAYNEli9OFXg9NQPGv0hDRtxslOKrTMjpL8QTL1t8m3iP03CYizkdSd8Xzgas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbMf7dPx/Dq1AZHbKZEhZcH798HjpDfjuAR9Q/pN9lIPnkCoaT
+	wSVeG8jSatjqF1K6p1fBHXpyuSKM8245usmk3PMYkNVI9ybxirnMJ6Wv/n+6
+X-Google-Smtp-Source: AGHT+IFjVzRJTUQyEnMkRsreGeJvgRrpUgUffO0pWo1hLJhIubsHlRfX0VOhhcIfR+lgsMKjqURXTw==
+X-Received: by 2002:a05:600c:1d99:b0:431:59ab:15cf with SMTP id 5b1f17b1804b1-431616595bemr57538105e9.19.1729428998355;
+        Sun, 20 Oct 2024 05:56:38 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-5fe4-91f7-fa4f-9c21.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:5fe4:91f7:fa4f:9c21])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fe00sm23010755e9.20.2024.10.20.05.56.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 05:51:27 -0700 (PDT)
-From: Zqiang <qiang.zhang1211@gmail.com>
-To: paulmck@kernel.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org,
-	urezki@gmail.com,
-	boqun.feng@gmail.com
-Cc: qiang.zhang1211@gmail.com,
-	rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rcu/nocb: Fix the WARN_ON_ONCE() in rcu_nocb_rdp_deoffload()
-Date: Sun, 20 Oct 2024 20:51:19 +0800
-Message-Id: <20241020125119.14751-1-qiang.zhang1211@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 20 Oct 2024 05:56:37 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v2 0/2] usb: typec: qcom-pmic-typec: fix missing fwnode
+ removal in error path
+Date: Sun, 20 Oct 2024 14:56:33 +0200
+Message-Id: <20241020-qcom_pmic_typec-fwnode_remove-v2-0-7054f3d2e215@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAH+FGcC/42NQQ6DIBBFr2JmXRogtEpXvUdjjIFRJyliwdAaw
+ 91LPUGX7yX//R0iBsIIt2qHgIki+bmAPFVgpn4ekZEtDJJLJbjQ7GW86xZHplu3BQ0b3rO32AV
+ 0PiHj3Bql+UWZoYbSWAIO9Dn6j7bwRHH1YTvukvjZf8tJMMGaRulro7nUtb6PrqfnuYygzTl/A
+ Zq3ebvKAAAA
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Caleb Connolly <caleb.connolly@linaro.org>, 
+ Guenter Roeck <linux@roeck-us.net>
+Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729428996; l=1334;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=o4hRuDeci+lewqXrEpMnVxOP+77ejmgwOUR3uaBa0eE=;
+ b=OjvXql8067L0bHC8C+OSOEfo15pc9mk5DVD5q4S0WYLHGXm/GhSMkdNKTCR3a9+JE2Ki9xoSo
+ PRo9R7sN0DQAvcGRUKucm4CUAyKpvXHckK/dQgb0xW/WTu50dAaRTFC
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Currently, running rcutorture test with torture_type=rcu fwd_progress=8
-n_barrier_cbs=8 nocbs_nthreads=8 nocbs_toggle=100 onoff_interval=60
-test_boost=2, will trigger the following warning:
+This series fixes the handling of an fwnode that is not released in all
+error paths and uses the wrong function to release it (spotted by Dmitry
+Baryshkov).
 
-WARNING: CPU: 19 PID: 100 at kernel/rcu/tree_nocb.h:1061 rcu_nocb_rdp_deoffload+0x292/0x2a0
-RIP: 0010:rcu_nocb_rdp_deoffload+0x292/0x2a0
-[18839.537322] Call Trace:
-[18839.538006]  <TASK>
-[18839.538596]  ? __warn+0x7e/0x120
-[18839.539491]  ? rcu_nocb_rdp_deoffload+0x292/0x2a0
-[18839.540757]  ? report_bug+0x18e/0x1a0
-[18839.541805]  ? handle_bug+0x3d/0x70
-[18839.542837]  ? exc_invalid_op+0x18/0x70
-[18839.543959]  ? asm_exc_invalid_op+0x1a/0x20
-[18839.545165]  ? rcu_nocb_rdp_deoffload+0x292/0x2a0
-[18839.546547]  rcu_nocb_cpu_deoffload+0x70/0xa0
-[18839.547814]  rcu_nocb_toggle+0x136/0x1c0
-[18839.548960]  ? __pfx_rcu_nocb_toggle+0x10/0x10
-[18839.550073]  kthread+0xd1/0x100
-[18839.550958]  ? __pfx_kthread+0x10/0x10
-[18839.552008]  ret_from_fork+0x2f/0x50
-[18839.553002]  ? __pfx_kthread+0x10/0x10
-[18839.553968]  ret_from_fork_asm+0x1a/0x30
-[18839.555038]  </TASK>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Caleb Connolly <caleb.connolly@linaro.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-CPU0                               CPU2                          CPU3
-//rcu_nocb_toggle             //nocb_cb_wait                   //rcutorture
+Changes in v2:
+- add patch to use fwnode_handle_put() instead of
+  fwnode_remove_software-node().
+- Link to v1: https://lore.kernel.org/r/20241019-qcom_pmic_typec-fwnode_remove-v1-1-884968902979@gmail.com
 
-// deoffload CPU1             // process CPU1's rdp
-rcu_barrier()
-    rcu_segcblist_entrain()
-        rcu_segcblist_add_len(1);
-        // len == 2
-        // enqueue barrier
-        // callback to CPU1's
-        // rdp->cblist
-                             rcu_do_batch()
-                                 // invoke CPU1's rdp->cblist
-                                 // callback
-                                 rcu_barrier_callback()
-                                                             rcu_barrier()
-                                                               mutex_lock(&rcu_state.barrier_mutex);
-                                                               // still see len == 2
-                                                               // enqueue barrier callback
-                                                               // to CPU1's rdp->cblist
-                                                               rcu_segcblist_entrain()
-                                                                   rcu_segcblist_add_len(1);
-                                                                   // len == 3
-                                 // decrement len
-                                 rcu_segcblist_add_len(-2);
-                             kthread_parkme()
-
-// CPU1's rdp->cblist len == 1
-// Warn because there is
-// still a pending barrier
-// trigger warning
-WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
-cpus_read_unlock();
-
-                                                                // wait CPU1 comes online
-                                                                // invoke barrier callback on
-                                                                // CPU1 rdp's->cblist
-                                                                wait_for_completion(&rcu_state.barrier_completion);
-// deoffload CPU4
-cpus_read_lock()
-  rcu_barrier()
-    mutex_lock(&rcu_state.barrier_mutex);
-    // block on barrier_mutex
-    // wait rcu_barrier() on
-    // CPU3 to unlock barrier_mutex
-    // but CPU3 unlock barrier_mutex
-    // need to wait CPU1 comes online
-    // when CPU1 going online will block on cpus_write_lock
-
-The above scenario will not only trigger WARN_ON_ONCE(), but also
-trigger deadlock, this commit therefore check rdp->cblist length
-before invoke kthread_parkme(), and the kthread_parkme() is not
-invoke until length reaches zero.
-
-Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
 ---
- kernel/rcu/tree_nocb.h | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Javier Carrasco (2):
+      usb: typec: qcom-pmic-typec: use fwnode_handle_put() to release fwnodes
+      usb: typec: qcom-pmic-typec: fix missing fwnode removal in error path
 
-diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-index 8648233e1717..a2b0ebdefee3 100644
---- a/kernel/rcu/tree_nocb.h
-+++ b/kernel/rcu/tree_nocb.h
-@@ -893,6 +893,12 @@ static inline bool nocb_cb_wait_cond(struct rcu_data *rdp)
- 	return !READ_ONCE(rdp->nocb_cb_sleep) || kthread_should_park();
- }
- 
-+static inline bool nocb_cblist_empty(struct rcu_data *rdp)
-+{
-+	return !(rcu_rdp_is_offloaded(rdp) &&
-+		WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist)));
-+}
-+
- /*
-  * Invoke any ready callbacks from the corresponding no-CBs CPU,
-  * then, if there are no more, wait for more to appear.
-@@ -907,7 +913,7 @@ static void nocb_cb_wait(struct rcu_data *rdp)
- 
- 	swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
- 					    nocb_cb_wait_cond(rdp));
--	if (kthread_should_park()) {
-+	if (kthread_should_park() && nocb_cblist_empty(rdp)) {
- 		kthread_parkme();
- 	} else if (READ_ONCE(rdp->nocb_cb_sleep)) {
- 		WARN_ON(signal_pending(current));
+ drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241019-qcom_pmic_typec-fwnode_remove-00dc49054cf7
+
+Best regards,
 -- 
-2.17.1
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
