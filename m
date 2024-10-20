@@ -1,87 +1,133 @@
-Return-Path: <linux-kernel+bounces-373161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16EE9A5327
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:33:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248479A532E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B26A2832C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA851F2217F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 08:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC4C745F4;
-	Sun, 20 Oct 2024 08:33:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A561182877;
+	Sun, 20 Oct 2024 08:44:29 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F4C29CF4
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 08:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70821CFB9
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 08:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729413186; cv=none; b=h133a15CHs37xZXVUo6Acr6Rj9obK7go1yNuZwNty55QYNCbfs7+Podj/yTNuNF96bQjMQ3UVr+Zj/etf8Yr/v7nOh5ePSfIncm9KCRJYsdLZEsIvAJyZJQiSYacRFler4YnwTTWIGjo57Fjyyk5fSHfVSXQEQPeBiI+4H98QGc=
+	t=1729413869; cv=none; b=klh1HvR3RPM5v/+kIEuspSHgxpxa5TnFhy/uL0aCCu1nic9yfvB6+XVaSDe0kSby85ZnOMwP0LTtvsn2zZ7tgaMzUt4gumTA/drycUfzaYIC7jz5uKk4XbM6xqI2zVr/uJshA1cAeSdKre+q3BTtmHogYL/5g9O0Cjh04I0yoQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729413186; c=relaxed/simple;
-	bh=T2p5HbN20bIhW6uDXYznp/AOie/8oGLXHMtgZspAlGc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=u45Z6t84izu2GJ6olGZcZb52RtNWCP6DzTc6Hj5OaZRPcn8WhCBSHMGkI3ucnRtRCbqJRqXKSpGrQVn+tiQeYDgd04JrAcsvKgz0DOHSQdM/npsfG+XOl0ZeSlbzAElNW/dL0cbpeyHHXkM3f3i4NaXoi6KsSlVwrCBuJy8elCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b4395dedso32087825ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 01:33:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729413183; x=1730017983;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dVrP/thCqYtSWY92L3Wkb2xNaQ/CtB2RHmoU142L8C8=;
-        b=hNCfEHaI1azyIVsokpzNzvXhLMgRtM0gP4lc1lriRQa+vNtvsIBIT+PnUyYFu4ws7c
-         eTDV0h+ul8UoaZlyjRNAneEenNmPcX4LBhiNJ7zaGh06rFTbYhABNge3XxGiWaUG9/6C
-         Dyki/TliWf9WfIgorGswAGCqviBcbDtxB6F0tjmU7GDBLQN/ly41yt8ijta3POngG8sY
-         rPceNTWuEQlIyXIlhRUw/0zm0OG6r1TZC663m/+wdyAUpGohkqdpTYjazNgYgX80RnBu
-         b6/11hKQyEGRBibUk7UloEv1lw0PGRxFy/DCLsWWlQLRFJ+qG9FwMMXFvpThfxLKU3II
-         UH0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUv7LVMTFLiWZMqEXSb7MEcjcH4FWi+7Tha+zvvo5eXZAOa4WCk3KI6uj+R8hzU7GC+TayQlgwniyDfEzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWrrrVKmWn7rTJ4I7dgNfWVQBiYEijbrSy25/a4e2yMTUA699J
-	PDcONSt6gTvwGc1he6+q+QfZnjs13RKqsq5BZkL2bq6+8eK1cVd+IBZeaKdxMpg1sOggJR/xCOH
-	9JfyqXrpTd7kwGwM2yA9E4YcThqVPfIvCVDakmg7m7JUZsn+cJbm5Xls=
-X-Google-Smtp-Source: AGHT+IGMTNfuD+Ygo6qjR6eqphuUVC+BjinKpwiT/JNG9BhWu60f/NmTg+aTzK5DMOZaaFH4pNaauYSHasWYMg23YCd0mwLvMZck
+	s=arc-20240116; t=1729413869; c=relaxed/simple;
+	bh=+stGq4nb8akwH6Nh93GfnKJT4y3xPhzx01jTDLNF/xc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fxfCS7yBut3NnXFRLpTxZq2fwmkn2736CshtrFjgOtr+GzpevE4TTeijTI2mZ9eTGFfj5Eadawoaim3hdFf6eiDz9SXJ0oJjO6/UUNgiUuUvaFva5e43RswKN+yxjmi5Evn6q9z2VzNd0TTCkF8GSOGpqynOS+2H4cCiK/edyck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t2RXh-0000gK-OY; Sun, 20 Oct 2024 10:44:05 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t2RXg-000VCp-03;
+	Sun, 20 Oct 2024 10:44:04 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t2RXf-003vtG-2w;
+	Sun, 20 Oct 2024 10:44:03 +0200
+Date: Sun, 20 Oct 2024 10:44:03 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lukasz Majewski <lukma@denx.de>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v4] net: dsa: microchip: disable EEE for
+ KSZ879x/KSZ877x/KSZ876x
+Message-ID: <ZxTC006I-AWuJ3Ru@pengutronix.de>
+References: <20241018160658.781564-1-tharvey@gateworks.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1906:b0:3a2:91f:497b with SMTP id
- e9e14a558f8ab-3a3f4073d2cmr72653855ab.13.1729413183272; Sun, 20 Oct 2024
- 01:33:03 -0700 (PDT)
-Date: Sun, 20 Oct 2024 01:33:03 -0700
-In-Reply-To: <605a7a92-5e06-42b6-a44c-6529cfa86d47@nvidia.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6714c03f.050a0220.1e4b4d.003a.GAE@google.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
-To: cmeiohas@nvidia.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241018160658.781564-1-tharvey@gateworks.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, Oct 18, 2024 at 09:06:58AM -0700, Tim Harvey wrote:
+> The well-known errata regarding EEE not being functional on various KSZ
+> switches has been refactored a few times. Recently the refactoring has
+> excluded several switches that the errata should also apply to.
+> 
+> Disable EEE for additional switches with this errata and provide
+> additional comments referring to the public errata document.
+> 
+> The original workaround for the errata was applied with a register
+> write to manually disable the EEE feature in MMD 7:60 which was being
+> applied for KSZ9477/KSZ9897/KSZ9567 switch ID's.
+> 
+> Then came commit 26dd2974c5b5 ("net: phy: micrel: Move KSZ9477 errata
+> fixes to PHY driver") and commit 6068e6d7ba50 ("net: dsa: microchip:
+> remove KSZ9477 PHY errata handling") which moved the errata from the
+> switch driver to the PHY driver but only for PHY_ID_KSZ9477 (PHY ID)
+> however that PHY code was dead code because an entry was never added
+> for PHY_ID_KSZ9477 via MODULE_DEVICE_TABLE.
+> 
+> This was apparently realized much later and commit 54a4e5c16382 ("net:
+> phy: micrel: add Microchip KSZ 9477 to the device table") added the
+> PHY_ID_KSZ9477 to the PHY driver but as the errata was only being
+> applied to PHY_ID_KSZ9477 it's not completely clear what switches
+> that relates to.
+> 
+> Later commit 6149db4997f5 ("net: phy: micrel: fix KSZ9477 PHY issues
+> after suspend/resume") breaks this again for all but KSZ9897 by only
+> applying the errata for that PHY ID.
+> 
+> Following that this was affected with commit 08c6d8bae48c("net: phy:
+> Provide Module 4 KSZ9477 errata (DS80000754C)") which removes
+> the blatant register write to MMD 7:60 and replaces it by
+> setting phydev->eee_broken_modes = -1 so that the generic phy-c45 code
+> disables EEE but this is only done for the KSZ9477_CHIP_ID (Switch ID).
+> 
+> Lastly commit 0411f73c13af ("net: dsa: microchip: disable EEE for
+> KSZ8567/KSZ9567/KSZ9896/KSZ9897.") adds some additional switches
+> that were missing to the errata due to the previous changes.
+> 
+> This commit adds an additional set of switches.
+> 
+> Fixes: 0411f73c13af ("net: dsa: microchip: disable EEE for KSZ8567/KSZ9567/KSZ9896/KSZ9897.")
+> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Reported-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
-Tested-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
+Thank you!
 
-Tested on:
-
-commit:         89e9ae55 IB/hfi1: make clear_all_interrupts static
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=128c7240580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
-dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=177520a7980000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
