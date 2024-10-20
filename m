@@ -1,88 +1,113 @@
-Return-Path: <linux-kernel+bounces-373126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC669A528C
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:27:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7B79A528E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38351C21132
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C95283D2A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26CCEAFA;
-	Sun, 20 Oct 2024 05:27:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3ED7FC12;
+	Sun, 20 Oct 2024 05:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="rjcm4E9b"
+Received: from pv50p00im-hyfv10021501.me.com (pv50p00im-hyfv10021501.me.com [17.58.6.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB05EBE5E
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 05:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860C8E567
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 05:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729402027; cv=none; b=Sesu5AOYi7HYd/gagH12cz8p9Ewwb+1l8wym/kkiOWyIxvvmHi4l5zRA/pdSrLCRltmFjU6Zly/2MtEwbZ4QtzjEqtdg7r1lD+lC2QHPk6jg1GU/a0gERHL55q3xCAu3jYLhfn7Bgdy0sEgs5orniRUlzEtuj8hw3omLONuI9dY=
+	t=1729402105; cv=none; b=lv+kRghzPwIn1ZO/srJTLAMnkQlmfKgSJljl7DAbZ2F9lBJrM+pDUVzUs9sf/S0NQr5CR/PXyZ708aApsqZL+wPPLJex45PSaz7yX1C+TyUvrXSn2BFUlgrDsGUpJ92VLIosPh7VIYByiXpiof756karuYeSWtWWnSfGnCU2FAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729402027; c=relaxed/simple;
-	bh=a5Rcf6a6v5JDZThblChhGloRU+jtbi7xTzEPZ1eKLa4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pIsUqYhGUQy2ZpI3mOjp2grMXgXd9X8AT7lx2pbMhOElQcZxfNW69wu3opvTPNTzXTXv9RlpEwvHxebocFEWa+YmzlRA5XKj6bnlfbdZz/NdXD46rP2qvmWDkDQVgoBOOT+HSo0FB1Y000fjAN/4M9vNsmNk2trn7Jzl+bqkKi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c72d4ac4so33463185ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 22:27:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729402025; x=1730006825;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3lpPtvmifi5Sca04uwV/sjmM6lHv0HJRcL4LGQWXbZI=;
-        b=uFGxKLPU/n3gEy35ip6qT+hpy7B6++qx1afUozm16EVFVcIZAtCr2bE9AvMbWoVmbU
-         aR8yh7KUYHp0eUFH3RebzYsJUBZMhrp7Ary7DEYMaCjoafKTz5tl1FQ5RWGwABBRRrhu
-         Xz8rTQglb4xOpAamXs0DC1ggpaxcVmeplKo3cd/rDEi3N0l6trkR+Jdkcrw+AwYUhk9m
-         rtvgykaC6+nMzsKjx5JxPQSXVWu3IpDCzK2eOXpJvUqNMWkH9QfPsbpFZ3r948qo7y76
-         Uj3nDqtn45GTNQkt7WqubrPG3eh5KrxosttfzFQtxVSxDoFv4jS4w1yfwcVM4101zekv
-         6Vyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXr1gUIvmu+pDbzXl/MJjhcQbHw9ERrPihrOum3bt97vRgrr20KPzVYSdi6oy01GAyOnbDKhrIYaQ8S0cI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ/AL8a5pXrCgtbL59AYVSjt4Jsri5Z14LlvqvPSrWphg2Zvgy
-	5wSRNN7QIThurkrvR2rZLe6mrkD5a4CJUDU49kUogq1IEMkLMNE2uLVNhhNplyVe6O9+rshc2qM
-	WZdikiL8rIpqCMRX1OHgyQSnFWOkQeI0FQcP0zI7YTAszxF/dYBBuDGQ=
-X-Google-Smtp-Source: AGHT+IEYce9sUyNDdTk+wgGzFw2BwQz03vWyRMhmI14+zjrbpa+FnVBxVGn7dNxGyzCKuqAaIyh1OXcVhnLc8MTf6tvTILICZaan
+	s=arc-20240116; t=1729402105; c=relaxed/simple;
+	bh=lWpKg7cZlxk5+I5dEu0m2KWp7mH0jRj5PAELGzya32s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pv7V7iM6TIQWZnUkjdGCQpqG2OpR5Zbdtyy/N/rO+3SYMfx5HNum+rFebY9r07HMEuM1wHOcwj6LzBFc+32mhJF3tF735gRVTQnkCfqnm8HliSyOhQSQk7er8ueLfh7bOUU7jvoLr382JFrI5qRADsj0zEhe12WtoK2jkfZNlZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=rjcm4E9b; arc=none smtp.client-ip=17.58.6.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1729402102;
+	bh=+3UjV7BU0TIkt4Lhwy86UL8JylbnLsp4ODES3JsnJc0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To;
+	b=rjcm4E9be/d88baHvpjEDFn5al/Fz/NXhsYtKGzKnafVfMRwuJdWdaetj2P298Uol
+	 TTjVNcX4qkwkOuO2C5BiGI5I2wGfoc0zs4c1cIUIpLvkIGG3DowwSWqEgEkzsDi2iz
+	 QnGnkHDTsXLBUiIKEAcHctWo9CDJRdYITP/6k6r1usb+LdEniQeLKz6herCHFcRu+q
+	 JM1CHMn+QvmHDDojbnjvnQkSKWBPEDASEqMufPPBrATP5w1XuU6w0Xlmnp04eIRBAi
+	 VnwOewVctf8wtkcUAlcNflBPxT8gHwsJJqv1N65Ls8/D9+DM469oRyzZDOlrRUxvIf
+	 6+1IYBnTg2ybw==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-hyfv10021501.me.com (Postfix) with ESMTPSA id 515E72C0141;
+	Sun, 20 Oct 2024 05:28:16 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH 0/6] phy: core: Fix bugs for several APIs and simplify an
+ API
+Date: Sun, 20 Oct 2024 13:27:45 +0800
+Message-Id: <20241020-phy_core_fix-v1-0-078062f7da71@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1385:b0:3a0:8d8a:47c with SMTP id
- e9e14a558f8ab-3a3f4073df5mr70096325ab.14.1729402024790; Sat, 19 Oct 2024
- 22:27:04 -0700 (PDT)
-Date: Sat, 19 Oct 2024 22:27:04 -0700
-In-Reply-To: <tencent_3D5A3D31368C961236E64AB074D777FD6609@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671494a8.050a0220.10f4f4.002a.GAE@google.com>
-Subject: Re: [syzbot] [xfs?] KASAN: null-ptr-deref Write in
- xfs_filestream_select_ag (2)
-From: syzbot <syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANGUFGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAyMD3YKMyvjk/KLU+LTMCt1U48QUM9OUJEuLNHMloJaColSgMNi46Nj
+ aWgDfOHg9XgAAAA==
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Lee Jones <lee@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, stable@vger.kernel.org, 
+ linux-phy@lists.infradead.org, netdev@vger.kernel.org, 
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: cUMa0O_M1qQTEfDmNyMtrVfExnK6Tj1_
+X-Proofpoint-GUID: cUMa0O_M1qQTEfDmNyMtrVfExnK6Tj1_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-20_02,2024-10-17_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 spamscore=0
+ malwarescore=0 phishscore=0 mlxscore=0 adultscore=0 bulkscore=0
+ mlxlogscore=574 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2410200032
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-Hello,
+This patch series is to fix bugs for below APIs:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+devm_phy_put()
+devm_of_phy_provider_unregister()
+devm_phy_destroy()
+phy_get()
+of_phy_get()
+devm_of_phy_get_by_index()
 
-Reported-by: syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com
-Tested-by: syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com
+And simplify API of_phy_simple_xlate().
 
-Tested on:
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Zijun Hu (6):
+      phy: core: Fix API devm_phy_put() can not release the phy
+      phy: core: Fix API devm_of_phy_provider_unregister() can not unregister the phy provider
+      phy: core: Fix API devm_phy_destroy() can not destroy the phy
+      phy: core: Add missing of_node_put() for an error handling path of _of_phy_get()
+      phy: core: Add missing of_node_put() in of_phy_provider_lookup()
+      phy: core: Simplify API of_phy_simple_xlate() implementation
 
-commit:         715ca9dd Merge tag 'io_uring-6.12-20241019' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a120a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=78db40d8379956d9
-dashboard link: https://syzkaller.appspot.com/bug?extid=4125a3c514e3436a02e6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12480d1b980000
+ drivers/phy/phy-core.c | 39 ++++++++++++++++++---------------------
+ 1 file changed, 18 insertions(+), 21 deletions(-)
+---
+base-commit: d8f9d6d826fc15780451802796bb88ec52978f17
+change-id: 20241020-phy_core_fix-e3ad65db98f7
 
-Note: testing is done by a robot and is best-effort only.
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
