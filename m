@@ -1,80 +1,57 @@
-Return-Path: <linux-kernel+bounces-373322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16099A5543
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:43:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0425B9A5545
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54F63281740
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:43:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33B271C20849
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67674194A66;
-	Sun, 20 Oct 2024 16:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E1B194AD5;
+	Sun, 20 Oct 2024 16:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="I/TzK25e"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Ml+uN4pW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7062209B
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 16:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CB91922EE;
+	Sun, 20 Oct 2024 16:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729442623; cv=none; b=Yo/uMLfYS9ZXy8TOMvmGPuMDh+ri0w8hwThQmQkscLFVsWjVBxPHoybjP0/JkS/HjLAUMJrmebOh0biWJtZOmRw/cbDtaEDE36WEQOFbzGpvIy7Y8HXbuB+u4hJg0y9sznrQzjb1vNIdTie7je/hpuCgOz/ao5l8LBIyc2k0buk=
+	t=1729442643; cv=none; b=hXTqyUjkiqpB/4+WAZ/nHZ6n9KU+/0Jf77BABuoEQkntmNa/ZaCAtFd8KRXSRIWFVCtZFTlHYrCytXHuEhxQ0H4dJly01E9xbpOrkT/uvfcE+1j2BSP95da7l3Bb21yldCDCyjgtqcA/JP6zf17DzEb0vT0Vc7TqMefpNVsIung=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729442623; c=relaxed/simple;
-	bh=aXelq+6UcPxutqyDfCpfiq66JRmQ5hET+F7UNbintns=;
+	s=arc-20240116; t=1729442643; c=relaxed/simple;
+	bh=GvjUc9EISQVY17P7P0HsrkgLTXZjnepFFKZDU77GjnY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lg9GcC6B266+zYK/+A565grBUcYZ7NNWDKuBho8PYq9q5UuuIf9fH0torxvT/NvruFiRiJQdLydUrTVmqhEPfyFRe0wihBUefcXzS5kOKh+2Zs9egesP9iDWBraF4Xcq8piZ41P9EFqIjdUfrYNQ8/ZU2ZOCqzQK6eQsatCkkqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=I/TzK25e; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71ec997ad06so98703b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 09:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1729442621; x=1730047421; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uuyE0zXThf85ODlV7Yrpi5hwCxVxPXafthR4WU2BoDk=;
-        b=I/TzK25euVtXyEraaC865llkN61ZRrBT97P+4LI3uoCdkTS26pJ9NFwd1Fgo97hiIa
-         w3efV6xfDpvE2YaxsSj7e1AS7AMXdKGITeQnhTsa6vrGxqCtu7asNm6rnDZXoTcxiAyS
-         w+0LzupUDwHRPPzFiKfA/AfYbSKqisx9saJrgjMSmg446klc/D4OkoI6VWFr7oipfXjV
-         xT6cwfKdccbXOwEnMSI9yvA8/Kda8GF3lkJ++9pmDpAvndQRwKVN0xSywos6NxqtjOHE
-         gBTttzWSZkVnVqCuvL1Ay05Voxqg+J0JGP+NDn/zJY+RfHfMUZa2rCXputkukOQbEIpJ
-         v+aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729442621; x=1730047421;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uuyE0zXThf85ODlV7Yrpi5hwCxVxPXafthR4WU2BoDk=;
-        b=pCp+l/K0MGAjXK63Xj5RJGN3/f/DnJOfGVjsl1k8neYmIfy6aiDt5Kl5TQeoqbVDGM
-         W4DjUridiFFF/8hOa6zgbxl4aKnC/G76WzPHUWjJQ7xwr/ORAXO2J2UFbwz5wXdoxoa6
-         KSVN6a5cfV3jiu72XpMvuKVw4qvWNcmc621qRvJxgS/BUdbPBgliwVDcOyC41h4EEcD6
-         AHD8EEVZqzav1P5oVa8otVJhsQ6loQwaNHklEgDjI7aW0z978xPsi4fhk4LbYIZVPITy
-         9yMi0t5gK9ayTxzFWmuBen4TVVwmGeaWnJ+RoXmUS8GNsk+CRNn0YB7Dtk6IegH1y0b6
-         yJLw==
-X-Gm-Message-State: AOJu0Yz8scZ2S5KQJwOK71Ie3JJ0RXmEgEm0E7cFMNjTm3K/xA8G0oR6
-	4YAz4XB5pucIjB6wHoupLo5+eFoLUPr2PL6Lc4LGUPMhCVcP73BBB87mu4HozHuu3UBuB6PZE2a
-	V
-X-Google-Smtp-Source: AGHT+IHFp/oUg1b/dmDTKrHpwmqnvfJj1a4oSvJqt+BGdzsAhPpsM0P8qLXruvy7sWZ869eHE6N/LA==
-X-Received: by 2002:a05:6a00:198d:b0:71e:4c86:6594 with SMTP id d2e1a72fcca58-71ea320d843mr11915880b3a.10.1729442620838;
-        Sun, 20 Oct 2024 09:43:40 -0700 (PDT)
-Received: from mozart.vkv.me (192-184-160-110.fiber.dynamic.sonic.net. [192.184.160.110])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13ea1d1sm1346265b3a.165.2024.10.20.09.43.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 09:43:40 -0700 (PDT)
-Date: Sun, 20 Oct 2024 09:43:37 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, Rodolfo Giometti <giometti@enneenne.com>,
-	George Spelvin <linux@horizon.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] pps: Remove embedded cdev to fix a use-after-free
-Message-ID: <ZxUzORuz4r4HATOe@mozart.vkv.me>
-References: <ZuMvmbf6Ru_pxhWn@mozart.vkv.me>
- <8072cd54b02eaebf16739f07e6307271534e21c7.1726119983.git.calvin@wbinvd.org>
- <2024101350-jinx-haggler-5aca@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IzYjaNRN9pkSSkrSGOvlz+iI+5kpLs6ttmXvZ4IMGKxSDpGmNBtW8+QxtzM++AttI6B2xz5GXKGXpBCyBv7tokxthgjFU1c+TgobGXUggKFF7vRaHePCnuhpnztFoyHUvHu0cg3d4lGwlIdUJiKRJW39toLGFFzZnBe8UPfzuZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Ml+uN4pW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6A77A78E;
+	Sun, 20 Oct 2024 18:42:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1729442534;
+	bh=GvjUc9EISQVY17P7P0HsrkgLTXZjnepFFKZDU77GjnY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ml+uN4pWalDw4CheCRA+UlqUiR6ctf6Iuz+HdtOzygefnkNraxujE3Dxu/XnlljpW
+	 WT95RhLaCTGpsazkzyvA0vbgkl0DctAGYKjAqjw0P/couXPn0d//SPVC5ujiPlbvfk
+	 1oJ+M9G0wW+2kJmm88+hOQavk2NWBsiJqeItYdb4=
+Date: Sun, 20 Oct 2024 19:43:54 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: sakari.ailus@linux.intel.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: v4l2-subdev: Refactor events
+Message-ID: <20241020164354.GG7770@pendragon.ideasonboard.com>
+References: <20241020163534.1720297-1-tomm.merciai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,198 +60,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2024101350-jinx-haggler-5aca@gregkh>
+In-Reply-To: <20241020163534.1720297-1-tomm.merciai@gmail.com>
 
-Hi Greg,
+Hi Tommaso,
 
-On Sunday 10/13 at 17:04 +0200, Greg Kroah-Hartman wrote:
-> On Fri, Sep 13, 2024 at 05:24:29PM -0700, Calvin Owens wrote:
-> > On a board running ntpd and gpsd, I'm seeing a consistent use-after-free
-> > in sys_exit() from gpsd when rebooting:
-> > 
-> >     pps pps1: removed
-> >     ------------[ cut here ]------------
-> >     kobject: '(null)' (00000000db4bec24): is not initialized, yet kobject_put() is being called.
+Thank you for the patch.
+
+On Sun, Oct 20, 2024 at 06:35:32PM +0200, Tommaso Merciai wrote:
+> Controls can be exposed to userspace via a v4l-subdevX device, and
+> userspace has to be able to subscribe to control events so that it is
+> notified when the control changes value.
+> If a control handler is set for the subdev then set the HAS_EVENTS
+> flag automatically into v4l2_subdev_init_finalize() and use
+> v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
+> as default if subdev don't have .(un)subscribe control operations.
+
+I would add here
+
+This simplifies subdev drivers by avoiding the need to set the
+V4L2_SUBDEV_FL_HAS_EVENTS flag and plug the event handlers, and ensures
+consistency of the API exposed to userspace.
+
+And you can also add
+
+Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Now, can we simplify sensor drivers to drop the event handlers and the
+flag ? :-)
+
+> ---
+> Changes since v1:
+>  - Aligned event subscription with unsubscription as suggested by LPinchart,
+>    SAilus
 > 
-> Something is wrong with the reference counting here...
+>  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
 > 
-> >     WARNING: CPU: 2 PID: 440 at lib/kobject.c:734 kobject_put+0x120/0x150
-> >     CPU: 2 UID: 299 PID: 440 Comm: gpsd Not tainted 6.11.0-rc6-00308-gb31c44928842 #1
-> >     Hardware name: Raspberry Pi 4 Model B Rev 1.1 (DT)
-> >     pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> >     pc : kobject_put+0x120/0x150
-> >     lr : kobject_put+0x120/0x150
-> >     sp : ffffffc0803d3ae0
-> >     x29: ffffffc0803d3ae0 x28: ffffff8042dc9738 x27: 0000000000000001
-> >     x26: 0000000000000000 x25: ffffff8042dc9040 x24: ffffff8042dc9440
-> >     x23: ffffff80402a4620 x22: ffffff8042ef4bd0 x21: ffffff80405cb600
-> >     x20: 000000000008001b x19: ffffff8040b3b6e0 x18: 0000000000000000
-> >     x17: 0000000000000000 x16: 0000000000000000 x15: 696e6920746f6e20
-> >     x14: 7369203a29343263 x13: 205d303434542020 x12: 0000000000000000
-> >     x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
-> >     x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-> >     x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> >     x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-> >     Call trace:
-> >      kobject_put+0x120/0x150
-> >      cdev_put+0x20/0x3c
-> >      __fput+0x2c4/0x2d8
-> >      ____fput+0x1c/0x38
-> >      task_work_run+0x70/0xfc
-> >      do_exit+0x2a0/0x924
-> >      do_group_exit+0x34/0x90
-> >      get_signal+0x7fc/0x8c0
-> >      do_signal+0x128/0x13b4
-> >      do_notify_resume+0xdc/0x160
-> >      el0_svc+0xd4/0xf8
-> >      el0t_64_sync_handler+0x140/0x14c
-> >      el0t_64_sync+0x190/0x194
-> >     ---[ end trace 0000000000000000 ]---
-> > 
-> > ...followed by more symptoms of corruption, with similar stacks:
-> > 
-> >     refcount_t: underflow; use-after-free.
-> >     kernel BUG at lib/list_debug.c:62!
-> >     Kernel panic - not syncing: Oops - BUG: Fatal exception
-> > 
-> > This happens because pps_device_destruct() frees the pps_device with the
-> > embedded cdev immediately after calling cdev_del(), but, as the comment
-> > above cdev_del() notes, fops for previously opened cdevs are still
-> > callable even after cdev_del() returns. I think this bug has always
-> > been there: I can't explain why it suddenly started happening every time
-> > I reboot this particular board.
-> > 
-> > In commit d953e0e837e6 ("pps: Fix a use-after free bug when
-> > unregistering a source."), George Spelvin suggested removing the
-> > embedded cdev. That seems like the simplest way to fix this, so I've
-> > implemented his suggestion, with pps_idr becoming the source of truth
-> > for which minor corresponds to which device.
-> 
-> You remove it, but now the structure has no reference counting at all,
-> so you should make it a real "struct device" not just containing a
-> pointer to one.
+> diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+> index 3a4ba08810d2..fad8fa1f63e8 100644
+> --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
+>  
+>  	case VIDIOC_SUBSCRIBE_EVENT:
+> -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
+> +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
+> +			return v4l2_subdev_call(sd, core, subscribe_event,
+> +						vfh, arg);
+> +
+> +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
+> +		    vfh->ctrl_handler)
+> +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
+> +
+> +		return -ENOIOCTLCMD;
+>  
+>  	case VIDIOC_UNSUBSCRIBE_EVENT:
+> -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
+> +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
+> +			return v4l2_subdev_call(sd, core, unsubscribe_event,
+> +						vfh, arg);
+> +
+> +		if (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS)
+> +			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
+> +
+> +		return -ENOIOCTLCMD;
+>  
+>  #ifdef CONFIG_VIDEO_ADV_DEBUG
+>  	case VIDIOC_DBG_G_REGISTER:
+> @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
+>  		}
+>  	}
+>  
+> +	if (sd->ctrl_handler)
+> +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
+> +
+>  	state = __v4l2_subdev_state_alloc(sd, name, key);
+>  	if (IS_ERR(state))
+>  		return PTR_ERR(state);
 
-It still uses the device refcount. I didn't change that, see the
-kobject_get() (which is confusing and should be get_device() as you note
-below) in pps_cdev_open() before my patch.
+-- 
+Regards,
 
-> > But now that pps_idr defines userspace visibility instead of cdev_add(),
-> > we need to be sure the pps->dev kobject refcount can't reach zero while
-> > userspace can still find it again. So, the idr_remove() call moves to
-> > pps_unregister_cdev(), and pps_idr now holds a reference to the pps->dev
-> > kobject.
-> 
-> An idr shouldn't be doing the reference counting here, the struct device
-> should be doing it, right?
-
-Right, I was trying to explain that it is now necessary to call
-get_device() to acquire a reference while the device minor is indexed by
-the idr.
-
-Before, the minor was deindexed in the idr in ->release(). But now,
-since it is visible the moment it is indexed by the idr, deindexing it
-in ->release() means this could happen during removal:
-
-	CPU1		CPU2
-	---		---
-			pps_unregister_cdev()
-			<...>
-	sys_open()
-	<...>
-	idr_lookup()
-			idr_remove()
-			put_device() <--- ref goes to zero
-	get_device()		     <--- BOOM
-			pps_device_destruct()
-			pps_idr_remove()
-
-By calling get_device() in pps_idr_get(), and by moving the idr
-deindexing from ->release() to pps_unregister_cdev(), we ensure that
-can't happen.
-
-> > 
-> >     pps_core: source serial1 got cdev (251:1)
-> >     <...>
-> >     pps pps1: removed
-> >     pps_core: unregistering pps1
-> >     pps_core: deallocating pps1
-> > 
-> > Fixes: d953e0e837e6 ("pps: Fix a use-after free bug when unregistering a source.")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
-> > ---
-> > Changes in v2:
-> > - Don't move pr_debug() from pps_device_destruct() to pps_unregister_cdev()
-> > - Actually add stable@vger.kernel.org to CC
-> > ---
-> >  drivers/pps/pps.c          | 83 ++++++++++++++++++++------------------
-> >  include/linux/pps_kernel.h |  1 -
-> >  2 files changed, 44 insertions(+), 40 deletions(-)
-> > 
-> > diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
-> > index 5d19baae6a38..6980ab17f314 100644
-> > --- a/drivers/pps/pps.c
-> > +++ b/drivers/pps/pps.c
-> > @@ -25,7 +25,7 @@
-> >   * Local variables
-> >   */
-> >  
-> > -static dev_t pps_devt;
-> > +static int pps_major;
-> >  static struct class *pps_class;
-> >  
-> >  static DEFINE_MUTEX(pps_idr_lock);
-> > @@ -296,19 +296,35 @@ static long pps_cdev_compat_ioctl(struct file *file,
-> >  #define pps_cdev_compat_ioctl	NULL
-> >  #endif
-> >  
-> > +static struct pps_device *pps_idr_get(unsigned long id)
-> > +{
-> > +	struct pps_device *pps;
-> > +
-> > +	mutex_lock(&pps_idr_lock);
-> > +	pps = idr_find(&pps_idr, id);
-> > +	if (pps)
-> > +		kobject_get(&pps->dev->kobj);
-> 
-> A driver should never call "raw" kobject calls, this alone makes this
-> not ok :(
-
-Oh this is silly, sorry: it's simply open coding put_device() and
-get_device(), I'll fix that.
-
-> Please move the structure to be embedded in and then it should be
-> simpler.
-
-I actually tried to do that, but got hung up on the API: what's the
-right way to do what device_create() does for an embedded device struct?
-
-Today, the pps core does:
-
-	pps = kzalloc(sizeof(*pps));
-
-...then later in pps_register_cdev():
-
-	idr_alloc(&newmin, ...);
-	pps->dev = device_create(..., MKDEV(maj, newmin), ...);
-
-To embed the device struct, I guess this would become something like:
-
-	pps = kzalloc(sizeof(*pps));
-	device_initialize(&pps->dev);
-	idr_alloc(&newmin, ...);
-	/* ??? */
-	device_register(&pps->dev);
-
-...but the question marks are what I'm not seeing: what's the proper way
-to accomplish what device_create() does, but in an embedded dev struct?
-Obviously I could just copy device_create(), but I'm sure that's not
-what you want.
-
-Thanks,
-Calvin
-
-> thanks,
-> 
-> greg k-h
+Laurent Pinchart
 
