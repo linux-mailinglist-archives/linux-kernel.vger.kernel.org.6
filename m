@@ -1,87 +1,143 @@
-Return-Path: <linux-kernel+bounces-373183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE179A536F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 12:08:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E589A5373
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 12:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CBA61F22044
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:08:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB882817DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 10:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CCF83A19;
-	Sun, 20 Oct 2024 10:08:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ACA15B0F7;
+	Sun, 20 Oct 2024 10:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="QqVdEdWg"
+Received: from pv50p00im-zteg10011501.me.com (pv50p00im-zteg10011501.me.com [17.58.6.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC902BAF9
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 10:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0B013635F
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 10:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729418886; cv=none; b=AxdW9naPko7aOvnsVHZZRaPrbX5vyJ96aPsDaMiuaXdDiJDsa9dfMysAIFxWEiJ/2uPKzy7CwF8yIe+CXiXA9GG/tl/1NXL9T6FLUWVL99LLiulV3T3UpvpSsXbHWrz1gEhucOkboR4eDlW6XwjgJKp0cVW7saFWSOpuNC96oZ8=
+	t=1729419587; cv=none; b=bDjIuaawBgJs3o4KOL3SAbu3CaiUsK3XcD3279e1RP8u++hVjmCmJHX5BJUlmcoKr4PE10k8iNukztsFqQaLb0nSAATFnJTCF2JsK40attugQ3aCAE4SyS+k5wKNtzsRxVsoMwfXadvLgZXkGVU6ojo23lGWk8tXTy9+4hB9pWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729418886; c=relaxed/simple;
-	bh=QqqWWdK5oRqdeOqWHtbZ/WMn1XhxH0GF6hdq+17CIxI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Q1HKxEDUhD2dGUmSrDgsBA420U92oNFBvgWiqVeJYRUqwVdKnXELX8PYm0s+7W9V6uqIhMCnbejZVGnDPnj7yzbtHxbUEMBty2WKuR9As2ApD7N2USiDYCqPEdtZ0MDUOPnrYxf2huvLVHGkCQ38N7BfanjSCeDZM33C1ArB6SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso28236535ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 03:08:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729418884; x=1730023684;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jN8ckLTIPTUwP25Ye31kzu+M+HZrMXCNwC5b24P98sQ=;
-        b=eyLG5C40xYd4YZFmf1IpImXCRs1PthJL22eRMv7hS+eokJfmXeOBhN4R+4bwJkSIOO
-         JEgj5eWjikDqX90tva+pO2qLBZ09YafLMvTsw0jeBMI2ej4Psaw9dA1jqNuJuJR5c5X0
-         3W3NSijmW+CL9Qk2nAvD424CJTQw0/6DT9+QT/wzGDG7dr/cQO0mich5k6kZq51iwt0E
-         mlx2uYJ5x1TixcMoRwf5FGlyKq2XSSmMng6v98OpA/dZyTK8cuHijHXFrhEMpt/uQje9
-         7PC8O8hU1h3UK3FnM70qw2AHsi0IM8Q/XRufnY3Db5911cMXJ5UyHc+Gc6sSIY+mAOuX
-         bP+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVy4aQ3/hm7wHl5DK5BmeYUa/lPenKNJ+t79O/4mRaIbw4mqDwBAJXpaYZkezA/qsHsQlBt94aG1HBbQjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoy1lPeNGe6v6Q3C4FiCLYvkdrugIZWqQT+6Ou2oHGds81YdzL
-	gTNmmiZT794RCRW88ogO8vYZIXWlI7UkB4GZ3YXOVRs9qdJmMaxdEXvC3DzAwNg8woOcac1R8Q0
-	+7GScH24TsU+FeQTXfA6pAbW458QEvkL1kGyS4plbVs+dxBq/F+efuXw=
-X-Google-Smtp-Source: AGHT+IEadGs/x7MObHoL4gq6S553k8y/+iM/aD2Cdp2VEjN4zq/jgI7Us1oiST8cAPYTFaYvlo13CkprghfFIZss+cIs1C9XrFfQ
+	s=arc-20240116; t=1729419587; c=relaxed/simple;
+	bh=l1S0Oc4Vc+ZVohAA151UdXjpKQfwMpMbOn4+f3lXQvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rst/KahGE2PnLV9MmLGAkAqO0T7sU/GXf0WiftqSRVLzpMpvETrHrt6wOL/0+4sRzOcne1xscVgPUWvUHw6GZZp0TDYwa0yHhqt/65/j8S6S/5fqWqx2i975aJqjRWs7mNdXUCq00v7PQvIbkQ9cBPKL687StOzJglFCS0Hy2nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=QqVdEdWg; arc=none smtp.client-ip=17.58.6.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1729419585;
+	bh=yVKYWzMebxw4JY7NKUStkDyKnGs9EY56GyMpc/ew/5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=QqVdEdWgDfwnj7sF608eoKseidVyEc9MnjcbtIetM2ltCo7znHh6/zw/rNtMoWxKB
+	 zSfhIRGERY4m5CBmGapmGnHc1mYt/xCg1k7JTt7VDBitn670tYo0pSDNAAeZgWnvsS
+	 OAoY8NZHSRrC2LoibpeFxwXOp47ROFjTuG6pZV8TH5gUkuT3Vnx6qSai15tKQIDkrp
+	 nVarkPmuVFPUQ/snUHmLnzVrPrhNK7CXLx95oQTENFmMQqiEZQ8a2fuXYQTVTdWjHs
+	 QFvIVBBMySAYWSOoMie1YL6gdCyvxHTxfuUPoJC5ZsvJeHDbHdmjRtWwdU7tWy4+wC
+	 sasAFyyMjGu1g==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10011501.me.com (Postfix) with ESMTPSA id 67C964A02BE;
+	Sun, 20 Oct 2024 10:19:38 +0000 (UTC)
+Message-ID: <8adbf600-b8c1-4d3d-a6b0-8f18482742aa@icloud.com>
+Date: Sun, 20 Oct 2024 18:19:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20cc:b0:3a0:9c99:32d6 with SMTP id
- e9e14a558f8ab-3a3f40b1441mr68491755ab.24.1729418883552; Sun, 20 Oct 2024
- 03:08:03 -0700 (PDT)
-Date: Sun, 20 Oct 2024 03:08:03 -0700
-In-Reply-To: <20241020093903.2182-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6714d683.050a0220.1e4b4d.003f.GAE@google.com>
-Subject: Re: [syzbot] [fuse?] kernel BUG in fuse_dev_do_write
-From: syzbot <syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] phy: core: Simplify API of_phy_simple_xlate()
+ implementation
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Lee Jones <lee@kernel.org>
+Cc: stable@vger.kernel.org, linux-phy@lists.infradead.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241020-phy_core_fix-v1-0-078062f7da71@quicinc.com>
+ <20241020-phy_core_fix-v1-6-078062f7da71@quicinc.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20241020-phy_core_fix-v1-6-078062f7da71@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: VuuRnmVBSFD8Lq-91SJTDLikCykcND8L
+X-Proofpoint-GUID: VuuRnmVBSFD8Lq-91SJTDLikCykcND8L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-20_07,2024-10-17_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 clxscore=1015 mlxscore=0
+ spamscore=0 malwarescore=0 phishscore=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2410200068
 
-Hello,
+On 2024/10/20 13:27, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> Simplify of_phy_simple_xlate() implementation by API
+> class_find_device_by_of_node() which is also safer since it
+> subsys_get() @phy_class subsystem firstly then iterates devices.
+> 
+> Also comment its parameter @dev with unused in passing since the parameter
+> provides no available input info but acts as an auto variable.
+> 
+i am not sure which parameter is unused. @dev or @args
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+comment says @args is not used here
+but code actually uses @args but does not use @dev
 
-Reported-by: syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com
-Tested-by: syzbot+65d101735df4bb19d2a3@syzkaller.appspotmail.com
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  drivers/phy/phy-core.c | 19 ++++++-------------
+>  1 file changed, 6 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 24bd619a33dd..102fc6b6ff71 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -748,7 +748,7 @@ EXPORT_SYMBOL_GPL(devm_phy_put);
+>  
+>  /**
+>   * of_phy_simple_xlate() - returns the phy instance from phy provider
+> - * @dev: the PHY provider device
+> + * @dev: the PHY provider device unused
+>   * @args: of_phandle_args (not used here)
+>   *
+>   * Intended to be used by phy provider for the common case where #phy-cells is
+> @@ -759,20 +759,13 @@ EXPORT_SYMBOL_GPL(devm_phy_put);
+>  struct phy *of_phy_simple_xlate(struct device *dev,
+>  				const struct of_phandle_args *args)
+>  {
+> -	struct phy *phy;
+> -	struct class_dev_iter iter;
+> -
+> -	class_dev_iter_init(&iter, &phy_class, NULL, NULL);
+> -	while ((dev = class_dev_iter_next(&iter))) {
+> -		phy = to_phy(dev);
+> -		if (args->np != phy->dev.of_node)
+> -			continue;
+> +	struct device *target_dev;
+>  
+> -		class_dev_iter_exit(&iter);
+> -		return phy;
+> +	target_dev = class_find_device_by_of_node(&phy_class, args->np);
+> +	if (target_dev) {
+> +		put_device(target_dev);
+> +		return to_phy(target_dev);
+>  	}
+> -
+> -	class_dev_iter_exit(&iter);
+>  	return ERR_PTR(-ENODEV);
+>  }
+>  EXPORT_SYMBOL_GPL(of_phy_simple_xlate);
+> 
 
-Tested on:
-
-commit:         f2493655 Add linux-next specific files for 20241018
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12852430580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=838d70a59aaad5d2
-dashboard link: https://syzkaller.appspot.com/bug?extid=65d101735df4bb19d2a3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1323825f980000
-
-Note: testing is done by a robot and is best-effort only.
 
