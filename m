@@ -1,452 +1,255 @@
-Return-Path: <linux-kernel+bounces-373414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A31D9A5666
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:47:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D408B9A566D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8871DB27225
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:47:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DA1BB219DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD7B196D9D;
-	Sun, 20 Oct 2024 19:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE141198A01;
+	Sun, 20 Oct 2024 19:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="uAQxayBK"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kdZRrCJL";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="v/QnMfcW"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B392B9A5;
-	Sun, 20 Oct 2024 19:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729453426; cv=none; b=k5PTOJwYzzf2W4WESBLdbpQx1nXO2EFX7kdG1jtJ7/rGBUKSUesmpKLvwlj3O1nrg3ypIVWxAk4cNy3wNLYWTYmPlFfKYxzdiIT3KbJqNUHeWBzMGa1p/WkFWM/UHLJNsnv73+Mg5GL2WeTTP8OfhOzaSC8iGSkoOcW1cPyT5SY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729453426; c=relaxed/simple;
-	bh=JaLFQBr3mBeZid15hpI5dREamA5UlAKkKP5ClmObnHg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=a9DiLHl38KQSTn6nxZKtziGRGBLwQk2JsVIpAPZt2TE0QMXeV82MXGbNyMcpwaX/v09e5Ivy3KR1jj0FeGtfviybv/dSNZpHVIqXc0dPIs9aqLUQf4r1ZICLCcD72xsLT77ydhtQVpEEbjvdzBbaw3SMVvtyXeJT5yo6w4jDE8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=uAQxayBK; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1729453367; x=1730058167; i=w_armin@gmx.de;
-	bh=JaLFQBr3mBeZid15hpI5dREamA5UlAKkKP5ClmObnHg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=uAQxayBKt1nvkVdE7Q0NlHbz425VSsW0DItvFhcFSl8hGZgdKrxmJkn9tq713a/B
-	 iVowu3nWYNWU+t4EyWLB3sSzUbCGol/HiEmSobSMAtuIUUziQmW9u/5Affy/alg9W
-	 ub2dbp3EakrMsaxNnNzaeVLUOEypLMVLiaeOt3c0eSKWnRqj9seEeSxkK0ADfyNeY
-	 IUMQc4jndIl3uxLu9qxPlIPqYG874kH/TuTZj+aCWur2MXiZgGC4eea6gPHLmcmrI
-	 YtmuEbY0AwBCm3cHYI1Q8Kh1jKiXBdfqBL96zuyJq5w/24tXs7DHimPZ2Y8vpeIdJ
-	 zCEIWtXXFtmvpQG8yA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MKbgE-1tLE6c3h2y-00QrBp; Sun, 20
- Oct 2024 21:42:46 +0200
-Message-ID: <8d70bb6a-c6fd-49de-a494-e97c093827e9@gmx.de>
-Date: Sun, 20 Oct 2024 21:42:45 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD44191F6D;
+	Sun, 20 Oct 2024 19:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729453579; cv=fail; b=O2HF0smGntj9ZGGOZ3qt1uT1w1xOc/SeaQVzdYOA2ji/2GXwCjI9i/ABbO6SFuUg/QU7WVQDTzKEzI94dwGe3Gy8WTjHWlgxbc11LJ8PGpP7SGyGzFBUP3+zXvBE3pHDA1kqLCxtHI8jRw5s1Oi21YB2gkkc95Cf+Nff0HA+CYQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729453579; c=relaxed/simple;
+	bh=utL9u2F2VG1y8K2MaDygzOsE6/+/1kch00d1I29SuzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=iWiHMpW/R1fdNG6XvauSeJ+IX81VgjqZuNPCijhlWmmcj7OVK2N6Ye+BJhkYELpNkGABz8fm1jZ5o7QioX6QK0xAD207fARJiIEeD+KXn3xm2o+66js8/XhQ8n6AAS08+oRjeB1nTUss4RsyaFCCPP0AiaTDlQTYKCLt9ME21/A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kdZRrCJL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=v/QnMfcW; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49KDBjaF032077;
+	Sun, 20 Oct 2024 19:45:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=yXr8LZNvBd/C2+u/Dx
+	T1HI7/TnWtBeWrE61AdAGAkjQ=; b=kdZRrCJLsyF+QI2uh2HGhhV3dwHr+4l3lK
+	OnE/3SPb0iuaU1v/WH4LDKLbe/5IUbUuoG08p5EJ/kQmUjDXG3Haq2HnBY3sAPkp
+	79pmQPkSJcEOvbxChVeyy7MyZSlASZvt252UgUNFMuhdJQP5tc2s+4acl32uHzE2
+	Jku4pjnvaxURYylT5eSXoVwWrEh7ul7NGvBiqC9OlUUOjOJDnfB8atdQNHJV5zkZ
+	jRZnOTgaI+hJqMFt3EhMsgubAh1zUZBMYhyMf2nkErzAXkBlXGmmGKHRMzN29aif
+	zWw9QGTj8NQji1ipKfTmSUibMQofJsc3doheMM1xW4KLtqo71aPA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42c5as9wpu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 20 Oct 2024 19:45:24 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49KHqnA7008250;
+	Sun, 20 Oct 2024 19:45:20 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2173.outbound.protection.outlook.com [104.47.55.173])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42c375kmms-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 20 Oct 2024 19:45:20 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hF10Ja2/xIJSvGTqmIdOS3A/W8oucpcmMsxB6CO6uBI3R+dzMUPVPmFMsMTbrZywxgX5WEV5ZBPkiufF0T29qlHsmAcspAMMxZ38rWeMZPrNFinYsN7OJcpT8tSACPYyS5BPXSknpx3E6pDONxQoe3U6cIGhMI7GLpCgNzuFufmylITwic3huFJcNwA2YOBKTe8JK5sFkt4m04yQijprRorl99P1FoFk3f/SuelC8H88HY5mwAGNKcPVEZVu/d+jXaHJW/FIIT/RRKnn6kMdSJ6QT9xk60fjwOWLf0um46OWgccUSv0IK5nzkHcPycCLGj5qr0KJyXOePu7fqdNuvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yXr8LZNvBd/C2+u/DxT1HI7/TnWtBeWrE61AdAGAkjQ=;
+ b=rozowNqcvtbgPa2912BLoZOKrcmV7XmGVa0wbC7QdXqp2UVVOZjjxq72o6wYH3e41yW1dpth/fq4qp7cjrSVLz7XXucokp/20NfHP7A9JNmIR+PTjgeD6sSg9JPr0V9pTyaCTQ/eLb2Nf8t06c3l9xFpR5t9hvphHFJHsqsAHjSB+0M8DaiSFbm2JiiU1LW5KCLCpifWB7QGFYMm113LNXuH/J52OVY4QUMASZW8YFsnNwsGhdcZoBSNcZOf7CrArjbct1aca4GBiROHzr/t39afrtDgfOf5oExcPE+Y7FNGZTIGBUQ06/wdeItsbOf0Ge0bj7lTy0zG16ZoVd/p9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yXr8LZNvBd/C2+u/DxT1HI7/TnWtBeWrE61AdAGAkjQ=;
+ b=v/QnMfcWiQHRmXdoblbV2oURscZrN1f1X3bhG2I+ZaiNnjal1+YoMohGgrYZXnP/CphlJ9Hm6fierKiBTQBWmn+DMMb2nSj//Im4NSiy/m90ionu+eQIoBNTIF4wbgWDObSFAnPQxLnGVVE4aVQBxuz+r0ZwLzsba+zw45JZP9Y=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by CY8PR10MB6850.namprd10.prod.outlook.com (2603:10b6:930:9e::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Sun, 20 Oct
+ 2024 19:45:11 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%6]) with mapi id 15.20.8069.024; Sun, 20 Oct 2024
+ 19:45:11 +0000
+Date: Sun, 20 Oct 2024 20:45:08 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Florian Weimer <fw@deneb.enyo.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
+        "Paul E . McKenney" <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
+        David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Muchun Song <muchun.song@linux.dev>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+        Jeff Xu <jeffxu@chromium.org>, Christoph Hellwig <hch@infradead.org>,
+        linux-api@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v2 0/5] implement lightweight guard pages
+Message-ID: <57e6c8d9-5893-4221-966d-065f98189eb7@lucifer.local>
+References: <cover.1729440856.git.lorenzo.stoakes@oracle.com>
+ <87a5eysmj1.fsf@mid.deneb.enyo.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a5eysmj1.fsf@mid.deneb.enyo.de>
+X-ClientProxiedBy: LO4P123CA0251.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a7::22) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: asus-wmi: Support setting AIPT modes
-From: Armin Wolf <W_Armin@gmx.de>
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- corentin.chary@gmail.com, luke@ljones.dev, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michael Larabel <Michael@phoronix.com>,
- Casey Bowman <casey.g.bowman@intel.com>
-References: <20241020065051.1724435-1-srinivas.pandruvada@linux.intel.com>
- <911ce141-8f20-48fb-bc43-e6d4262dbc81@gmx.de>
-Content-Language: en-US
-In-Reply-To: <911ce141-8f20-48fb-bc43-e6d4262dbc81@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:eP4wqlu4TlRrUjVruluy8M//Z1EX5kj2NIQL5gErrpLeE9QgCSj
- BvuaKfps0wTnhSGVwmgbOe8DL+riKQpdGFFjMFh7ZDUkK03yGleyvFoexgn+CKxV2V0bccb
- /z6dfBDewCvQQ5B0D53BCcBXm71o+Ohm1MALY2mKqgsV9nLqI+3G4rGF/1aFKkioOSvdYgg
- ynHGmaSVUWtfza3sQaPNw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:NsYoQE057PM=;Ip/YneLqlG1g8sM2QYuTE9V/+dg
- qTZAspjPXtydE1R1n1tp4oH0lH1+8GFIrfUZ2D/7CqjoLsW4j0Lj2I5OuWySc+Rg2/infTnak
- kXBEBofsP3swU9E1ZJlLRRiyAl5QEA5p///dtBWOLArDs+wQ+DF7oJt9yj5EYzIWrbwLdkdfg
- driCsRUvY9OCDAOGUEM33g3VksCfYstnomZidUVa34TjH/TfdCbUyHYpyYVatK3jSwSqp75bl
- zic2drheICOMgJR3A3iDlfgmy5m3WvJ3hrZy4KVCM2Hx/RqIHFOd7RDJFt1cJrmNPawFOPCgT
- vnxeEu+cQmdqPLQGmg+WLKLy1IdyNij/WnGVNumI9errqf8XofbLoSx9OBeyVZP24ZWYOclM5
- RgvfGN+GeRDqtLf3HRm19hqCLlIh7LYaxFG11T1sUmfoCoC+tnwZaqeC0NOI9kWV4PEZQjqIa
- Q0x0lJ2LUoji+ehvxe8C7cDKeGbrlrhDDzuEL4ikUeWGKY08bKWwbBJSK58qFFa518Naty3eh
- MxRgE24jAJzhF9+mY4y75ocwwwN32mbFv4M6q4iUdZdqRd8AT84rgORiXJ2XUrtFVeW8iq2G+
- le+NnyC2rzWsX5XVLwV0nqclpw2VMhhNx6COfH/xz6a7BkLS9S9kQmUJDP05wcc9tGsYjhUbr
- 57X27LSTafv2VHO2vu9eiyOm+KU0xofWSR+MGWn7Y4KuRX1oRjbiyGOMUjl4nnjFnDwBzSx/l
- +KjQ1W8tYqm2wr67WYNI6zbwQjHhb0YERFSyK+qgtZjuMx4fRYUKlu3sjtEpobYqflALfs8TP
- X9oOunhCzn0FTIQHCVUFR9uu5uccRYWSueG74Pn8rd+eI=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|CY8PR10MB6850:EE_
+X-MS-Office365-Filtering-Correlation-Id: fedef79c-96a7-4848-cc6f-08dcf13fb5a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UwtIPrb3vu11670VrfrUbTeumIyz68vq99qf9J2LM7nP5BfXxWV3YUlgWRHy?=
+ =?us-ascii?Q?db2RcArKmq5pO7Qukr+VQ7mrXENTnV5Dw8HsBS01mvXkKE5KqfHPJ6flEBna?=
+ =?us-ascii?Q?idXQ9I6JWDIwpQgnvygKlATl0DIeLYIk/UUlfgXKyAcyZJyCFzNC1TBMh44+?=
+ =?us-ascii?Q?+e91u3gvl0GGKauNV9vhz/a2s1rx9DeAuC+6aq6nr/FtPaEq9KsoJzYV1lfW?=
+ =?us-ascii?Q?ojIZn2KJPUGugI/UT06VmLvzYx3IOtihT1AqpoJhq6SuFXfEYGLfAVGi/vOf?=
+ =?us-ascii?Q?rj3gbzi8zJQoAw3wL9hKtV9JXyZx/oEKV18GGjrWYVhyHwzqgkNAj9Tl2QmB?=
+ =?us-ascii?Q?Cvxc5ukK3XuLPe6560hDq0JJek5l/FOxq8b07BgKEYpJ2zjNu3+eynmrBUvq?=
+ =?us-ascii?Q?0c1z40F4/l7q9ZVq9CC3f3b6JoW/tNjyyD16EyDGUFPN1aQ2JKPtMyOzfq2G?=
+ =?us-ascii?Q?6n1MawT1gIoHTF/fOAlDV0oxgvTTEjJ02ZkJe6iB54086BgiXmh/agrl4LNZ?=
+ =?us-ascii?Q?x0Bk6fdBYQ7KSDN/9dRKw2eLqM26GnpRjhjkFGKtx3z86r/FrsXpVPhMGMsG?=
+ =?us-ascii?Q?UAJmxV1Zmx8JcQmGuj/tRyzkOl6cu22mRZI8GWS67sH4Hk4HHx4TkJUjlwuP?=
+ =?us-ascii?Q?rfif4Eq/vWIzkSTrvhRf7j47JoDutq0Yr85/L3l8eEIyGo+B4MLQHTXu4oMy?=
+ =?us-ascii?Q?nDFWSGKVIzmWSpQwnZLg0udrGwzsbfNY38yW/2ElJcj3AimoRGakmo2+56IT?=
+ =?us-ascii?Q?uG4DVgc5Vk3+d9qPoUdXAXr1sStAoRCMuO8G5lJwtpBvzIZ3VhV+8z/s92Un?=
+ =?us-ascii?Q?wVKnZsuBYsV+MAvNNkTfEPtj83OPzmEstqGGZB8Va0b3Sl8Tput9VtNuvewF?=
+ =?us-ascii?Q?DUTJbGlO8vJfnFh6Ag3PUpClbONceuaBj1EKzBzwM5Z0t+OI+u1V1Hea4X2m?=
+ =?us-ascii?Q?OcnEuguBf7r7KkeUJ4NPLqR2665azGz2D1YZtYNCW7u0s5Lx0AAyWjdQQSAW?=
+ =?us-ascii?Q?r5vM9l78aSLHmcFW/nEbd9hJg3ZZ5xJcMgxYeRjyB0GXxmYH+OzjEkJtV38G?=
+ =?us-ascii?Q?/MU9e3Y1M5zLYLhjPTCbDjsSqDHmwCcxHGoEJutUnmZ4hvQ3YSjB6pjwfwBA?=
+ =?us-ascii?Q?CmyG4zp1YdWeNRN0GWGVktTs2x03ts0c+phI9XjMj0Q5+hcmJIQoXJwYdu8x?=
+ =?us-ascii?Q?AGLGKw06CJY4k056gAUV9c3VQS987wyJskbrGtjplVGwrhWrVvevydERncZD?=
+ =?us-ascii?Q?1Z+MTnG/FSmB4euLilOiX+f0trzXmTXgFemGDHHa25F/8VpXyR4vEiLy7U4x?=
+ =?us-ascii?Q?PHqSwDPxw2UMKYy4LKHcvv5O?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KMGy83HiZdiMFExZb+09l9AjjzZzzXsXWPZiBTfXjoOX7kEMSJNZpB2McxU3?=
+ =?us-ascii?Q?l0AuuMIiSfYZcF7KZLANF9V28AULG4zSgHu/nRQKA7evYFKD5YNZvq5CShdO?=
+ =?us-ascii?Q?lUrSVw22oOKgDS0PUAlcrXoHraeNoryFjwwSVtWZZ95YWBWoynOw/wWCyayY?=
+ =?us-ascii?Q?zGpwWREeUUrez0gTHWVFxNJlBZfNqCueykluX2vhpHFLXfXbg23XEnDzOZ6V?=
+ =?us-ascii?Q?8Vj6YQXwgNoJwpTitu0y/yddOION4eqY1PEYOCHzalqTwl5CVFWWaDwNjM0E?=
+ =?us-ascii?Q?SjK2FnxiQA8/TLsTyYcA9d3pTe2dI7j5aM+h2g1NiAFiIJNrkaKzeAzvXzEZ?=
+ =?us-ascii?Q?4HL6Kgc7R5TWK4Axf2J8fzbbyGv4QKEZ1abRe1uNxF22HvnOyWRUJ+tCMFZH?=
+ =?us-ascii?Q?ltHcdKZYY40eYlArn/4ArN6mAYCaN15e1Rc4jHec05SllCTpVwiORtv89DBy?=
+ =?us-ascii?Q?Joq/QswE3w8KFIlgmDtp1cr66SISRdhjP6svBiNwz8sasCReo1vI3ShVT7a/?=
+ =?us-ascii?Q?jvl0TnWpfishRDR0YYYdLlCbabr0ymM5fUFR2GAJ6vyp3LcN2EgNysY3/MmB?=
+ =?us-ascii?Q?ioy9JNb/Lmi5K9uhOuvRfstIqomR/xmhVHKDtARdycjmcztx1xHAGTYEK6bY?=
+ =?us-ascii?Q?BHcqV+bda3f4A3uoc38CVWladZYWFxpcYVkX5CFkgvCqfp77P1qkh7ezK7Pe?=
+ =?us-ascii?Q?EQzZXT3MxJwBecOg7IsI/99X/+KTDzjmuyDjMBkD2J6edsJ345Yf9FbES1VM?=
+ =?us-ascii?Q?XIWwbv/Z0paemvRSnnDgJBuGOAtPJ686zc3AFopYTswHJd5ezFTMR/vQ1BqV?=
+ =?us-ascii?Q?1x/wj4+6PN6qUcBGCKa/7wdxAp3vN1Du0K8E3C+4WvTDKpUS7XHeTRKd+8yW?=
+ =?us-ascii?Q?wHQD0kD0g8EqyfKc3nCCNeIUUXeMkZB95wAJMc7d77hUe6123pkDDpZTa9In?=
+ =?us-ascii?Q?+EiL2nGGdohem5BzP+d5Io5pyffEbNnHWAt53OoCmY4uBAZ4uEoqNZds2fmu?=
+ =?us-ascii?Q?KeVLtXwcETZcghnHuLtn5EJ5ZZiksK/20IKCeYEfBCsxUQR6FpXxTkdjF6+o?=
+ =?us-ascii?Q?wI91SAicN0ZUruQmYuWaPKSjgSQICbOnFTvY7FdS5hJjPa9P4XO4MMev7izi?=
+ =?us-ascii?Q?IjoLiNWtz7kQSQzY2dmkDritTL9udN9SnjFZ/lsiZNqCSqWbGjb/kbcDNOlq?=
+ =?us-ascii?Q?pyxOclhUl/Jan/+KhGaAmsT/2Xv95A7com6bR/8xq2gblRe+EtbCbMHOHKgM?=
+ =?us-ascii?Q?nScwEi82uD55BtAuUtOYSugah7tFmsfQio1I2xRN+LUMQ8KXRm1m8rQzs5GO?=
+ =?us-ascii?Q?laN1BcSPeOf+3CVRlqz6KgMR6LK7ebbH2w4WN9axvy7NDZPKhCAgejl4UoFD?=
+ =?us-ascii?Q?I2kHXggHgVnrjpJ2Tm3k+6Wh4D7BzbGmdXyVekiOpysapGt9+t0iJiwqWGWd?=
+ =?us-ascii?Q?cGs9DX8hG80nkTYb+OVjhpFBjO/Bk9UuXMlXaOsZqzlkIea/2EDlNp/MYmHU?=
+ =?us-ascii?Q?TdD77RBW24WWCRvvk+Il41m6leJ1NUEeFUE7pv8Hi9qSuGQCKYkN9QiitHhC?=
+ =?us-ascii?Q?8AxRRreuAP7UtYEoDMLw0nqMFYC9Ltm/q7f5UmD74izvuWeTaCwLT3yv1SHw?=
+ =?us-ascii?Q?UVdtqHQyxniXYwB47h9BqCCY/pvbFMekigamd7T1Yx/s1CL5Vs3RR2+PutqC?=
+ =?us-ascii?Q?Vh47QQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	XrRVI/nbTljVyvvV3tCl5LZ0TsfTAQgHJkDtVszrsFCDflF/J7ayLE7G75ygd8nOAu4UhX7c8p9tVJqdFi5ITAOvVkkPM8ieQO8ffpjNzFDMJjZN5f7eQrnGo8D0kvu7SrdoE7zYaCWjCxt6V/bNj9s+yV+pWUUOYQo1Gj/qnTWEiJpwvzWS3nkiwxzIPeJcW1A01rFS8ENGrrd6kBDqHxRJVHDNijwxVIkMhQKjaHb9sexPcyAMjuhC67PAD295zSy8AvjjYkPBiMmlvtoPt3iHh9IXDAZil80f3Etcpz7U7WXxhLzDLr+k5oHMKQrQEf3McY5ehWbagWFcMyhNIwCQVk5oE5xphWtt5XRY/XoLJX7rQ9AVTzGT6YB4TNV5aCS8ozqsWFaLkpbKOqWV5Ql8wnmcpyB+ai9Rvp28pHpeJmMT/SuqZV1cUyVzW16UmPjHZuKv5y/cHQUmwpo7gO25FB/VvZ0u1l7OteJJ6RZQOPII4+DIaUkq+Of8IMX8iwFHiVRp8ufuAamcp4R8fMQuqeBFHVm6d1F0fxHgpG3Bc8l+nE1fY7CAs7Kw/corEnivy/xq2459NGsQ+GC+yRGDOj6oIC6EWNytUIho9KI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fedef79c-96a7-4848-cc6f-08dcf13fb5a3
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2024 19:45:11.3340
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nZGRhP/lS9BE0SKJJNSg6jqJ1pEYH2Su+eqe+VJi8vMjpcdp/b1aaFMR5dqXrm1/zMf0nUzmB4glqQt2jCj72Wf2gnI+WwB8+ohAhbHAjao=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6850
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-20_17,2024-10-17_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 spamscore=0 mlxlogscore=774 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410200140
+X-Proofpoint-GUID: oDbFHu4eveWIq_xy_WqxrhcO5eqMYzPK
+X-Proofpoint-ORIG-GUID: oDbFHu4eveWIq_xy_WqxrhcO5eqMYzPK
 
-Am 20.10.24 um 21:05 schrieb Armin Wolf:
-
-> Am 20.10.24 um 08:50 schrieb Srinivas Pandruvada:
+On Sun, Oct 20, 2024 at 07:37:54PM +0200, Florian Weimer wrote:
+> * Lorenzo Stoakes:
 >
->> Some recent Asus laptops are supporting ASUS Intelligent Performance
->> Technology (AIPT). This solution allows users to have maximized CPU
->> performance in models with a chassis providing more thermal head room.
->> Refer to [1].
->>
->> There are major performance issues when Linux is installed on these
->> laptops compared to Windows install. One such report is published for
->> Graphics benchmarks on Asus ASUS Zenbook S 14 with Lunar Lake
->> processors [2].
->>
->> By default, these laptops are booting in "Whisper Mode" till OS power
->> management or tools change this to other AIPT mode. This "Whisper" mode
->> calls to set lower maximum and minimum RAPL (Running Average Power
->> Limit)
->> via thermal tables. On Linux this leads to lower performance even when
->> platform power profile is "balanced". This "Whisper" mode should
->> correspond to "quiet" mode.
->>
->> So, when AIPT is present change the default mode to "Standard" during
->> boot. Map the three platform power profile modes as follows:
->>
->> Power Profile Mode=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AIPT mode
->> -----------------------------------
->> quiet=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- Whisper
->> balanced=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Standard
->> performance=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Performance
->> ------------------------------------
->>
->> Here AIPT mode can be detected by checking presese of "FANL" method
->> under
->> PNP HID "PNP0C14" and UID "ATK". If AIPT mode is present, this takes
->> precedence over the existing VIVO thermal policy. These modes are set
->> using "FANL" method.
->>
->> Although this =E2=80=9CFANL=E2=80=9D method is not used in the Asus WMI=
- driver, users
->> have used this method from user space [3] to set AIPT modes. Used this
->> as a reference.
->>
->> Link:
->> https://www.asus.com/content/laptop-asus-intelligent-performance-techno=
-logy-aipt/
->> # [1]
->> Reported-by: Michael Larabel <Michael@phoronix.com>
->> Closes: https://www.phoronix.com/review/lunar-lake-xe2/5 # [2]
->> Link: https://github.com/dominiksalvet/asus-fan-control/issues/151 # [3=
-]
->> Tested-by: Casey Bowman <casey.g.bowman@intel.com>
->> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com=
+> > Early testing of the prototype version of this code suggests a 5 times
+> > speed up in memory mapping invocations (in conjunction with use of
+> > process_madvise()) and a 13% reduction in VMAs on an entirely idle android
+> > system and unoptimised code.
+> >
+> > We expect with optimisation and a loaded system with a larger number of
+> > guard pages this could significantly increase, but in any case these
+> > numbers are encouraging.
+> >
+> > This way, rather than having separate VMAs specifying which parts of a
+> > range are guard pages, instead we have a VMA spanning the entire range of
+> > memory a user is permitted to access and including ranges which are to be
+> > 'guarded'.
+> >
+> > After mapping this, a user can specify which parts of the range should
+> > result in a fatal signal when accessed.
+> >
+> > By restricting the ability to specify guard pages to memory mapped by
+> > existing VMAs, we can rely on the mappings being torn down when the
+> > mappings are ultimately unmapped and everything works simply as if the
+> > memory were not faulted in, from the point of view of the containing VMAs.
 >
->> ---
->> =C2=A0 drivers/platform/x86/asus-wmi.c | 93 +++++++++++++++++++++++++++=
-=2B+++--
->> =C2=A0 1 file changed, 89 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/platform/x86/asus-wmi.c
->> b/drivers/platform/x86/asus-wmi.c
->> index 7a48220b4f5a..06689d0f98c7 100644
->> --- a/drivers/platform/x86/asus-wmi.c
->> +++ b/drivers/platform/x86/asus-wmi.c
->> @@ -100,6 +100,11 @@ module_param(fnlock_default, bool, 0444);
->> =C2=A0 #define ASUS_THROTTLE_THERMAL_POLICY_SILENT_VIVO=C2=A0=C2=A0=C2=
-=A0 1
->> =C2=A0 #define ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST_VIVO=C2=A0=C2=A0=
-=C2=A0 2
->>
->> +#define AIPT_STANDARD=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0
->> +#define AIPT_WHISPER=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1
->> +#define AIPT_PERFORMANCE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 2
->> +#define AIPT_FULL_SPEED=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 3
->> +
->> =C2=A0 #define PLATFORM_PROFILE_MAX 2
->>
->> =C2=A0 #define USB_INTEL_XUSB2PR=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 0xD0
->> @@ -333,6 +338,9 @@ struct asus_wmi {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct asus_wmi_debug debug;
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct asus_wmi_driver *driver;
->> +=C2=A0=C2=A0=C2=A0 acpi_handle acpi_mgmt_handle;
->> +=C2=A0=C2=A0=C2=A0 int asus_aipt_mode;
->> +=C2=A0=C2=A0=C2=A0 bool asus_aipt_present;
->> =C2=A0 };
->>
->> =C2=A0 /* WMI
->> ***********************************************************************=
-*/
->> @@ -3804,6 +3812,19 @@ static ssize_t
->> throttle_thermal_policy_store(struct device *dev,
->> =C2=A0 static DEVICE_ATTR_RW(throttle_thermal_policy);
->>
->> =C2=A0 /* Platform profile
->> ***********************************************************/
->> +static int asus_wmi_write_aipt_mode(struct asus_wmi *asus, int
->> aipt_mode)
->> +{
->> +=C2=A0=C2=A0=C2=A0 int status;
->> +
->> +=C2=A0=C2=A0=C2=A0 status =3D acpi_execute_simple_method(asus->acpi_mg=
-mt_handle,
->> "FANL", aipt_mode);
->> +=C2=A0=C2=A0=C2=A0 if (ACPI_FAILURE(status)) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 acpi_handle_info(asus->acpi=
-_mgmt_handle, "FANL execute
->> failed\n");
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EIO;
->> +=C2=A0=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0=C2=A0 return 0;
->> +}
->> +
->> =C2=A0 static int asus_wmi_platform_profile_to_vivo(struct asus_wmi *as=
-us,
->> int mode)
->> =C2=A0 {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool vivo;
->> @@ -3844,6 +3865,26 @@ static int
->> asus_wmi_platform_profile_mode_from_vivo(struct asus_wmi *asus, int m
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return mode;
->> =C2=A0 }
->>
->> +static int asus_wmi_aipt_platform_profile_get(struct asus_wmi *asus,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 enum platform_profile_option *profile)
->> +{
->> +=C2=A0=C2=A0=C2=A0 switch (asus->asus_aipt_mode) {
->> +=C2=A0=C2=A0=C2=A0 case AIPT_STANDARD:
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *profile =3D PLATFORM_PROFI=
-LE_BALANCED;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
->> +=C2=A0=C2=A0=C2=A0 case AIPT_PERFORMANCE:
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *profile =3D PLATFORM_PROFI=
-LE_PERFORMANCE;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
->> +=C2=A0=C2=A0=C2=A0 case AIPT_WHISPER:
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *profile =3D PLATFORM_PROFI=
-LE_QUIET;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
->> +=C2=A0=C2=A0=C2=A0 default:
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
->> +=C2=A0=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0=C2=A0 return 0;
->> +}
->> +
->> =C2=A0 static int asus_wmi_platform_profile_get(struct
->> platform_profile_handler *pprof,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum platform_pr=
-ofile_option *profile)
->> =C2=A0 {
->> @@ -3851,6 +3892,10 @@ static int
->> asus_wmi_platform_profile_get(struct platform_profile_handler *pprof,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int tp;
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 asus =3D container_of(pprof, struct asus=
-_wmi,
->> platform_profile_handler);
->> +
->> +=C2=A0=C2=A0=C2=A0 if (asus->asus_aipt_present)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return asus_wmi_aipt_platfo=
-rm_profile_get(asus, profile);
->> +
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tp =3D asus->throttle_thermal_policy_mod=
-e;
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 switch (asus_wmi_platform_profile_mode_f=
-rom_vivo(asus, tp)) {
->> @@ -3874,26 +3919,42 @@ static int
->> asus_wmi_platform_profile_set(struct platform_profile_handler *pprof,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum platform_pr=
-ofile_option profile)
->> =C2=A0 {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct asus_wmi *asus;
->> -=C2=A0=C2=A0=C2=A0 int tp;
->> +=C2=A0=C2=A0=C2=A0 int ret =3D 0, tp, aipt_mode;
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 asus =3D container_of(pprof, struct asus=
-_wmi,
->> platform_profile_handler);
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 switch (profile) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case PLATFORM_PROFILE_PERFORMANCE:
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tp =3D ASUS_THRO=
-TTLE_THERMAL_POLICY_OVERBOOST;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 aipt_mode =3D AIPT_PERFORMA=
-NCE;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case PLATFORM_PROFILE_BALANCED:
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tp =3D ASUS_THRO=
-TTLE_THERMAL_POLICY_DEFAULT;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 aipt_mode =3D AIPT_STANDARD=
-;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case PLATFORM_PROFILE_QUIET:
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tp =3D ASUS_THRO=
-TTLE_THERMAL_POLICY_SILENT;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 aipt_mode =3D AIPT_WHISPER;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default:
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EOPNOTSU=
-PP;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>
->> -=C2=A0=C2=A0=C2=A0 asus->throttle_thermal_policy_mode =3D
->> asus_wmi_platform_profile_to_vivo(asus, tp);
->> -=C2=A0=C2=A0=C2=A0 return throttle_thermal_policy_write(asus);
->> +=C2=A0=C2=A0=C2=A0 if (asus->asus_aipt_present) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D asus_wmi_write_aipt=
-_mode(asus, aipt_mode);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!ret) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 asu=
-s->asus_aipt_mode =3D aipt_mode;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 got=
-o skip_vivo;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> +=C2=A0=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0=C2=A0 if (asus->throttle_thermal_policy_dev) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 asus->throttle_thermal_poli=
-cy_mode =3D
->> asus_wmi_platform_profile_to_vivo(asus, tp);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D throttle_thermal_po=
-licy_write(asus);
->> +=C2=A0=C2=A0=C2=A0 }
->> +
->> +skip_vivo:
->> +=C2=A0=C2=A0=C2=A0 return ret;
->> =C2=A0 }
->>
->> =C2=A0 static int platform_profile_setup(struct asus_wmi *asus)
->> @@ -3905,7 +3966,7 @@ static int platform_profile_setup(struct
->> asus_wmi *asus)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Not an error if a component plat=
-form_profile relies on is
->> unavailable
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * so early return, skipping the se=
-tup of platform_profile.
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> -=C2=A0=C2=A0=C2=A0 if (!asus->throttle_thermal_policy_dev)
->> +=C2=A0=C2=A0=C2=A0 if (!asus->throttle_thermal_policy_dev && !asus->as=
-us_aipt_present)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_info(dev, "Using throttle_thermal_po=
-licy for
->> platform_profile support\n");
->> @@ -4538,6 +4599,7 @@ static int asus_wmi_sysfs_init(struct
->> platform_device *device)
->> =C2=A0 static int asus_wmi_platform_init(struct asus_wmi *asus)
->> =C2=A0 {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device *dev =3D &asus->platform_d=
-evice->dev;
->> +=C2=A0=C2=A0=C2=A0 struct acpi_device *adev;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char *wmi_uid;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int rv;
->>
->> @@ -4593,6 +4655,29 @@ static int asus_wmi_platform_init(struct
->> asus_wmi *asus)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 asus_wmi_set_dev=
-state(ASUS_WMI_DEVID_CWAP,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 asus=
-->driver->quirks->wapf, NULL);
->>
->> +=C2=A0=C2=A0=C2=A0 /*
->> +=C2=A0=C2=A0=C2=A0=C2=A0 * Check presence of Intelligent Performance T=
-echnology (AIPT).
->> +=C2=A0=C2=A0=C2=A0=C2=A0 * If present store acpi handle and set asus_a=
-ipt_present to true.
->> +=C2=A0=C2=A0=C2=A0=C2=A0 */
->> +=C2=A0=C2=A0=C2=A0 adev =3D acpi_dev_get_first_match_dev("PNP0C14", "A=
-TK", -1);
+> We have a glibc (so not Android) dynamic linker bug that asks us to
+> remove PROT_NONE mappings in mapped shared objects:
 >
-> Is there really no way of changing the AIPT mode through the WMI
-> interface?
-> I would prefer using the WMI interface if available, since the
-> firmware might
-> assume that FANL is only called through the WMI interface.
+>   Extra struct vm_area_struct with ---p created when PAGE_SIZE < max-page-size
+>   <https://sourceware.org/bugzilla/show_bug.cgi?id=31076>
 >
-> Do you have a acpidump from a affected device?
+> It's slightly different from a guard page because our main goal is to
+> avoid other mappings to end up in those gaps, which has been shown to
+> cause odd application behavior in cases where it happens.  If I
+> understand the series correctly, the kernel would not automatically
+> attribute those PROT_NONE gaps to the previous or subsequent mapping.
+> We would have to extend one of the surrounding mapps and apply
+> MADV_POISON to that over-mapped part.  That doesn't seem too onerous.
 >
-> Thanks,
-> Armin Wolf
->
-I found a acpidump from a ASUS device with a matching FANL method. It seem=
-s that this method
-can indeed be called using the WMI interface using the DEVS() WMI method:
+> Could the ELF loader in the kernel do the same thing for the main
+> executable and the program loader?
 
-[WmiMethodId(1398162756), Implemented] void DEVS([in] uint32 Device_ID, [i=
-n] uint32 Control_status, [out] uint32 result);
-
-If Device_ID is 0x00110019, then Control_status is passed to the FANL ACPI=
- method.
-
-It also seems that support for AIPT can be queried using the DSTS() WMI me=
-thod:
-
-[WmiMethodId(1398035268), Implemented] void DSTS([in] uint32 Device_ID, [o=
-ut] uint32 device_status);
-
-Using Device_ID 0x00110019, the returned device status seems to contain th=
-e following information:
-
-- 16-bit current AIPT mode
-- 4-bit unknown value (possible values 2, 3 and 7, maybe number of support=
-ed modes or some kind of bitmap?)
-- 1-bit with is set when (GGIV (0x0907000C) =3D=3D One) is true
-
-Maybe you can figure out the meaning of the 4-bit value so that the number=
- of supported states can be
-detected automatically. For interacting with the DEVS() and DSTS() WMI met=
-hod, please use the driver-provided
-helper methods if suitable.
-
-Thanks,
-Armin Wolf
-
->> +=C2=A0=C2=A0=C2=A0 if (adev) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 acpi_handle handle =3D acpi=
-_device_handle(adev);
->> +
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 acpi_dev_put(adev);
->> +
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!acpi_has_method(handle=
-, "FANL"))
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
-urn 0;
->> +
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 asus->acpi_mgmt_handle =3D =
-handle;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 asus->asus_aipt_present =3D=
- true;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_info(dev, "ASUS Intelli=
-gent Performance Technology
->> (AIPT) is present\n");
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Set the mode corres=
-ponding to default Linux platform power
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * profile Balanced
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 asus_wmi_write_aipt_mode(as=
-us, AIPT_STANDARD);
->> +=C2=A0=C2=A0=C2=A0 }
->> +
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->> =C2=A0 }
->>
->
+Currently this implementation is only available for private anonymous
+memory. We may look at extending it to shmem and file-backed memory in the
+future but there are a whole host of things to overcome to make that work
+so it's one step at a time! :)
 
