@@ -1,295 +1,289 @@
-Return-Path: <linux-kernel+bounces-373299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F0A9A54D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 17:46:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004EF9A54D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 17:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E9552820C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:46:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217A01C20BF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BB119414E;
-	Sun, 20 Oct 2024 15:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC267194A4C;
+	Sun, 20 Oct 2024 15:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuJoFNE2"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6++6gGR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D662C79F6;
-	Sun, 20 Oct 2024 15:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE19D79F6;
+	Sun, 20 Oct 2024 15:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729439171; cv=none; b=nyYm/TbrlnyDsvlO2WOo++DdRxeT0lmxmGAwphGw1/RrHePuyPb4VDS309iu0b0Qx+PVHH4LryBEOubF3CKZGMTBY18KZVxsPSOKgTRO75jCp/1pWUVmvsNnAjLPu8kB7157IxHEXdHx2MP6aVtgc1dJD4kcr3dzRRNh2B2KsyI=
+	t=1729439180; cv=none; b=trKUMTswItE6W+k7JMGOxJoIKaPEwY6tKgdjsXIvTc/T6u8kh4BvSrC3r6lojRus7KtYlBntgX+Hf/OkM9rjFnp7pgk8jhf2ssYodRQSgboFfu55ZO/pEp20GpeYCkCJOy+7NUyQ8UXgyQFIJL1KTKtJy3cI0XBs1ShLsa5iJMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729439171; c=relaxed/simple;
-	bh=H3BmJbQvjx8bjRLo6TYpmkIaXhWGT/hkUaWS35dGXWw=;
+	s=arc-20240116; t=1729439180; c=relaxed/simple;
+	bh=dybJvTIwydrLBvn1LcH/lZMry79zGiff5879XyIL0zg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LZejwuKXAVT/hfSE1qMYxtu25+HbNfwCw6KJVuS49+/44dIj4sVMUcRrr/mLMrIo/pUPzdF0gCuckIsBh0GsQFWDYUYA2Yve4QarlVdJiOOerdy/PweFlBgHYgzrFqyyAR8VEYnDd3PgId5NlLkG6qgFF6EOn/7eA6QmJyyhiNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cuJoFNE2; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d6ff1cbe1so2826140f8f.3;
-        Sun, 20 Oct 2024 08:46:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729439167; x=1730043967; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3PjXYYMDpPm5X5EPWEKHoxPJTPqKzwTZG3+9F8SNHhM=;
-        b=cuJoFNE2d9qNXULFDYcluB7U3bKd0phLdNTHEfQE8LRnR/wbtfK6zLbj4hFS7RYNIU
-         OzWciB+c0YIA633K17CCy2dzJOL1eaBzMhzXGzMNV9zxBluWupJRHgLycNAzUUaMkIjw
-         Hayn4cx//fZPhaCqRueHOWM5K6ztp/hv/fcfJDWNHz9JNCnpAbmXNskwc8dHQW0XafKU
-         9aD29WrklHYmmdemP3qW5Oj6KmLwjw4Xc5TahSASZMEgBt2JR9VZR6Snv+jHTE+I5rvP
-         mIZ400Z9ktombkQvaL3P8uSc9EW4pofcFsyPzmykYXYI8e/7PSlGugK3HeFiC+qn15Ai
-         EWXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729439167; x=1730043967;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3PjXYYMDpPm5X5EPWEKHoxPJTPqKzwTZG3+9F8SNHhM=;
-        b=WTI52KefP0tNTGtX5IFRRjSn5/G7zmXo8dhSvz2faLm/1zDF65WL92Izh8WMe9amOt
-         TvsIT/P9WTY0KON12ou0Hm9XEZyC2BX88Ff1ChJD+IsW1jqfLEMkeVQShRbSV7Txua7+
-         THXi4YxDS/HK2ojhb9/+BsMb8i47Y6U5zneLB6nV3BZwnhqYN47QcM4xsn5t/OuwuT9q
-         07zBzaHVR4SJ9J1/GHGZzvlevHXbhvWFvFEKlfxQnNJOJDDsib33Wr6lUClfhbDCj4MA
-         j+lffo37FDQtd8ZLDd8kEo1OuVYz+9WzsIjUVTNH6fYVdeHLNCLaaLGqBP7gTPo4M36L
-         5bjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAhL1CC/thmR8YdzKwPZimo7FO0nf9vo5UIe4do3SVHPPfRPciEkPMNfJJOaK/Rf7mkX+O5K3Y8fQO+CE=@vger.kernel.org, AJvYcCURSp4rJRCifKg7JgSRQTUtUsJffM5ihV1wq44+ChdxI9HiBS1Kc8/BQcgAENo7T/+QrN/wbMNG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUYqnNVok3xVgPRg9MDlSbyfewqrTyCfSBDP26WxReOBhE4jqM
-	G811zvw0H5giUDJ+Xs+/0tvRUU19L5zPzFl7vKhSriY/SpRXVvLmUicYrvz9OTHwPFtKYtJxCY6
-	giQfd0CaHgbne60J69630g2AYXxM=
-X-Google-Smtp-Source: AGHT+IFpTTK4xiZI+sQVonpSTpHD6MhBxh/2WcsJso7oJEHFdD5WDxTb3wuuPVyGYl3gdXTbACogsrG9ax0OKJcikNs=
-X-Received: by 2002:a05:6000:4013:b0:374:b5fc:d31a with SMTP id
- ffacd0b85a97d-37eab7260ebmr7395445f8f.25.1729439166886; Sun, 20 Oct 2024
- 08:46:06 -0700 (PDT)
+	 To:Cc:Content-Type; b=KBYHnYFZQ/Bl2Ap7H+NuHFvLNDwccswBBdmoTRdjKxJGopIpM7CYSr8sPT/l+UjE4Dry5zkJR68G/w05aVpTutvsOLotaWhHlMqPha45RtmfxM4yY6oEuXkXsNF+WZXze2zZ3M+Vyq7v+XVTukghjwILFLy5qUO7AjbNPl4kV8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6++6gGR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FA70C4CEED;
+	Sun, 20 Oct 2024 15:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729439179;
+	bh=dybJvTIwydrLBvn1LcH/lZMry79zGiff5879XyIL0zg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=N6++6gGRhYbOmKLkI0kMy8uxf1eJcK4QpzjTYHkL31hos9eglTtkadQEkZ/MKD9dr
+	 ODlp6brmU1BX7rahC8gGEnmNg+jtDeRSCKCdP8dPebFk5KdKlGZwNjW1ZYaJeKawvv
+	 dF3os4hhX8qDXh7kWjUaSVAE1tb9Frd/A3tjy4/H/eeHmhimSXVYCkMjgpLTkoooOz
+	 ZA3oYHjAEQeeUNiW2Ebyo0Sd0U0V3dALSCYWKi3K4KRTt9S0MWh+NlfZP+S9IE2k+D
+	 +RSFLyDtX8+SHqh6ElD5KtbS/b3eSO0EFV7XavmYBCAQrUyfvItQn4Cca1G4JqbmFG
+	 qdwFQn4fVrI7g==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so3196283e87.3;
+        Sun, 20 Oct 2024 08:46:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGqjOS0ZBono+H6G90YZ8lfFT0rfaOD4hKJS1dInh2Y3K/cfuMQ4pbktHkRaCQLWwrVvYC/4s7BMAL@vger.kernel.org, AJvYcCUfNeWToORR91pyjPvKlTBjxXuLZO9wC9YZLD4sbe3WQRfNJx5guZ2mkPnBR9j3JvX29W1P/rvUs77A@vger.kernel.org, AJvYcCWRIhObuqR5VCoDaAzXWXFbUbU+XI/1sGYqOy3w8NCxo72mxdYJNMtL9CuShM92HXBxrPwsgHcvlNxg@vger.kernel.org, AJvYcCXeXflE1soAtFmC4VSENPnCscf4Zfqdkh1JY9rkunotMvAKPtfPLxw76jQDROFzNYJ8omDoobUJ4moGwIgd@vger.kernel.org, AJvYcCXrsEES+YuvMDJnJqr+YdHB5suz9UvgBKHGL0X617M8QaJkJdIZ2L3kdzZe0/8kgqVyj2TMmEMwCFbLE8hc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws/O1VzMEbCyzlFG4/VB1RO3z4+mBlGOnjtdKFGvGi+qpBTCmT
+	4Wv+LFDMiLpH+DPK6Av+W8rbvczASBnFUkRLFFGbh/EL3i2IVMgf5ISPSvh5fFfEyREhRRqFXWs
+	NZZm8WW0y7b6tzURCKnF529YZhdM=
+X-Google-Smtp-Source: AGHT+IHVNEBd41mpXJ65nn09YsbsLIWj9/J956BaHSIAk6ZWD5G3zkZ2X2eav8p4dtbyv45AK6HMs6lPUuxyTCIJaXo=
+X-Received: by 2002:a05:6512:104a:b0:539:e0fa:6ee8 with SMTP id
+ 2adb3069b0e04-53a1520b6a6mr4932543e87.6.1729439177507; Sun, 20 Oct 2024
+ 08:46:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018105351.1960345-1-linyunsheng@huawei.com>
- <20241018105351.1960345-8-linyunsheng@huawei.com> <CAKgT0UcBveXG3D9aHHADHn3yAwA6mLeQeSqoyP+UwyQ3FDEKGw@mail.gmail.com>
- <e38cc22e-afbc-445e-b986-9ab31c799a09@gmail.com>
-In-Reply-To: <e38cc22e-afbc-445e-b986-9ab31c799a09@gmail.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Sun, 20 Oct 2024 08:45:29 -0700
-Message-ID: <CAKgT0UeM15+HZor5_woJ4Fd_YrHVgrMM86wD4o5xGczQXC2aOg@mail.gmail.com>
-Subject: Re: [PATCH net-next v22 07/14] mm: page_frag: some minor refactoring
- before adding new API
-To: Yunsheng Lin <yunshenglin0825@gmail.com>
-Cc: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+References: <20241014213342.1480681-1-xur@google.com> <20241020033116.GA3653827@thelio-3990X>
+In-Reply-To: <20241020033116.GA3653827@thelio-3990X>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 21 Oct 2024 00:45:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQD7_iLo9SnQW0_KYx2vBoNSpi98yrgmn_Z0Yh8500tsg@mail.gmail.com>
+Message-ID: <CAK7LNAQD7_iLo9SnQW0_KYx2vBoNSpi98yrgmn_Z0Yh8500tsg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] Add AutoFDO and Propeller support for Clang build
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Rong Xu <xur@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, 
+	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>, 
+	workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, linux-arch@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 19, 2024 at 1:30=E2=80=AFAM Yunsheng Lin <yunshenglin0825@gmail=
-.com> wrote:
+On Sun, Oct 20, 2024 at 12:31=E2=80=AFPM Nathan Chancellor <nathan@kernel.o=
+rg> wrote:
 >
-> On 10/19/2024 1:26 AM, Alexander Duyck wrote:
+> Hi Masahiro and Andrew,
 >
-> ...
+> Top posting only for visibility. Would it make more sense to have this
+> land via the Kbuild tree or -mm? The core of the series really touches
+> Kbuild and I think the x86 stuff can just land with Acks, unless the
+> -tip folks feel differently. I would like Rong to have a relatively
+> clear path forward to mainline once the requisite review and testing has
+> accomplished, which requires a shepherd :)
+
+
+I think I can pick it up if 2/6 gains Ack from an objtool maintainer.
+
+
+
+
+
+
+> Cheers,
+> Nathan
 >
-> >> +static inline void *__page_frag_alloc_align(struct page_frag_cache *n=
-c,
-> >> +                                           unsigned int fragsz, gfp_t=
- gfp_mask,
-> >> +                                           unsigned int align_mask)
-> >> +{
-> >> +       struct page_frag page_frag;
-> >> +       void *va;
-> >> +
-> >> +       va =3D __page_frag_cache_prepare(nc, fragsz, &page_frag, gfp_m=
-ask,
-> >> +                                      align_mask);
-> >> +       if (unlikely(!va))
-> >> +               return NULL;
-> >> +
-> >> +       __page_frag_cache_commit(nc, &page_frag, fragsz);
+> On Mon, Oct 14, 2024 at 02:33:34PM -0700, Rong Xu wrote:
+> > Hi,
 > >
-> > Minor nit here. Rather than if (!va) return I think it might be better
-> > to just go with if (likely(va)) __page_frag_cache_commit.
->
-> Ack.
->
+> > This patch series is to integrate AutoFDO and Propeller support into
+> > the Linux kernel. AutoFDO is a profile-guided optimization technique
+> > that leverages hardware sampling to enhance binary performance.
+> > Unlike Instrumentation-based FDO (iFDO), AutoFDO offers a user-friendly
+> > and straightforward application process. While iFDO generally yields
+> > superior profile quality and performance, our findings reveal that
+> > AutoFDO achieves remarkable effectiveness, bringing performance close
+> > to iFDO for benchmark applications.
 > >
-> >> +
-> >> +       return va;
-> >> +}
-> >>
-> >>   static inline void *page_frag_alloc_align(struct page_frag_cache *nc=
+> > Propeller is a profile-guided, post-link optimizer that improves
+> > the performance of large-scale applications compiled with LLVM. It
+> > operates by relinking the binary based on an additional round of runtim=
+e
+> > profiles, enabling precise optimizations that are not possible at
+> > compile time.  Similar to AutoFDO, Propeller too utilizes hardware
+> > sampling to collect profiles and apply post-link optimizations to impro=
+ve
+> > the benchmark=E2=80=99s performance over and above AutoFDO.
+> >
+> > Our empirical data demonstrates significant performance improvements
+> > with AutoFDO and Propeller, up to 10% on microbenchmarks and up to 5%
+> > on large warehouse-scale benchmarks. This makes a strong case for their
+> > inclusion as supported features in the upstream kernel.
+> >
+> > Background
+> >
+> > A significant fraction of fleet processing cycles (excluding idle time)
+> > from data center workloads are attributable to the kernel. Ware-house
+> > scale workloads maximize performance by optimizing the production kerne=
+l
+> > using iFDO (a.k.a instrumented PGO, Profile Guided Optimization).
+> >
+> > iFDO can significantly enhance application performance but its use
+> > within the kernel has raised concerns. AutoFDO is a variant of FDO that
+> > uses the hardware=E2=80=99s Performance Monitoring Unit (PMU) to collec=
+t
+> > profiling data. While AutoFDO typically yields smaller performance
+> > gains than iFDO, it presents unique benefits for optimizing kernels.
+> >
+> > AutoFDO eliminates the need for instrumented kernels, allowing a single
+> > optimized kernel to serve both execution and profile collection. It als=
+o
+> > minimizes slowdown during profile collection, potentially yielding
+> > higher-fidelity profiling, especially for time-sensitive code, compared
+> > to iFDO. Additionally, AutoFDO profiles can be obtained from production
+> > environments via the hardware=E2=80=99s PMU whereas iFDO profiles requi=
+re
+> > carefully curated load tests that are representative of real-world
+> > traffic.
+> >
+> > AutoFDO facilitates profile collection across diverse targets.
+> > Preliminary studies indicate significant variation in kernel hot spots
+> > within Google=E2=80=99s infrastructure, suggesting potential performanc=
+e gains
+> > through target-specific kernel customization.
+> >
+> > Furthermore, other advanced compiler optimization techniques, including
+> > ThinLTO and Propeller can be stacked on top of AutoFDO, similar to iFDO=
+.
+> > ThinLTO achieves better runtime performance through whole-program
+> > analysis and cross module optimizations. The main difference between
+> > traditional LTO and ThinLTO is that the latter is scalable in time and
+> > memory.
+> >
+> > This patch series adds AutoFDO and Propeller support to the kernel. The
+> > actual solution comes in six parts:
+> >
+> > [P 1] Add the build support for using AutoFDO in Clang
+> >
+> >       Add the basic support for AutoFDO build and provide the
+> >       instructions for using AutoFDO.
+> >
+> > [P 2] Fix objtool for bogus warnings when -ffunction-sections is enable=
+d
+> >
+> > [P 3] Change the subsection ordering when -ffunction-sections is enable=
+d
+> >
+> > [P 4] Enable =E2=80=93ffunction-sections for the AutoFDO build
+> >
+> > [P 5] Enable Machine Function Split (MFS) optimization for AutoFDO
+> >
+> > [P 6] Add Propeller configuration to the kernel build
+> >
+> > Patch 1 provides basic AutoFDO build support. Patches 2 to 5 further
+> > enhance the performance of AutoFDO builds and are functionally dependen=
+t
+> > on Patch 1. Patch 6 enables support for Propeller and is dependent on
+> > patch 2 and patch 3.
+> >
+> > Caveats
+> >
+> > AutoFDO is compatible with both GCC and Clang, but the patches in this
+> > series are exclusively applicable to LLVM 17 or newer for AutoFDO and
+> > LLVM 19 or newer for Propeller. For profile conversion, two different
+> > tools could be used, llvm_profgen or create_llvm_prof. llvm_profgen
+> > needs to be the LLVM 19 or newer, or just the LLVM trunk. Alternatively=
 ,
-> >>                                            unsigned int fragsz, gfp_t =
-gfp_mask,
-> >> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-> >> index a36fd09bf275..a852523bc8ca 100644
-> >> --- a/mm/page_frag_cache.c
-> >> +++ b/mm/page_frag_cache.c
-> >> @@ -90,9 +90,31 @@ void __page_frag_cache_drain(struct page *page, uns=
-igned int count)
-> >>   }
-> >>   EXPORT_SYMBOL(__page_frag_cache_drain);
-> >>
-> >> -void *__page_frag_alloc_align(struct page_frag_cache *nc,
-> >> -                             unsigned int fragsz, gfp_t gfp_mask,
-> >> -                             unsigned int align_mask)
-> >> +unsigned int __page_frag_cache_commit_noref(struct page_frag_cache *n=
-c,
-> >> +                                           struct page_frag *pfrag,
-> >> +                                           unsigned int used_sz)
-> >> +{
-> >> +       unsigned int orig_offset;
-> >> +
-> >> +       VM_BUG_ON(used_sz > pfrag->size);
-> >> +       VM_BUG_ON(pfrag->page !=3D encoded_page_decode_page(nc->encode=
-d_page));
-> >> +       VM_BUG_ON(pfrag->offset + pfrag->size >
-> >> +                 (PAGE_SIZE << encoded_page_decode_order(nc->encoded_=
-page)));
-> >> +
-> >> +       /* pfrag->offset might be bigger than the nc->offset due to al=
-ignment */
-> >> +       VM_BUG_ON(nc->offset > pfrag->offset);
-> >> +
-> >> +       orig_offset =3D nc->offset;
-> >> +       nc->offset =3D pfrag->offset + used_sz;
-> >> +
-> >> +       /* Return true size back to caller considering the offset alig=
-nment */
-> >> +       return nc->offset - orig_offset;
-> >> +}
-> >> +EXPORT_SYMBOL(__page_frag_cache_commit_noref);
-> >> +
+> > create_llvm_prof v0.30.1 or newer can be used instead of llvm-profgen.
 > >
-> > I have a question. How often is it that we are committing versus just
-> > dropping the fragment? It seems like this approach is designed around
-> > optimizing for not commiting the page as we are having to take an
-> > extra function call to commit the change every time. Would it make
-> > more sense to have an abort versus a commit?
->
-> Before this patch, page_frag_alloc() related API seems to be mostly used
-> for skb data or frag for rx part, see napi_alloc_skb() or some drivers
-> like e1000, but with more drivers using the page_pool for skb rx frag,
-> it seems skb data for tx is the main usecase.
->
-> And the prepare and commit API added in the patchset seems to be mainly
-> used for skb frag for tx part except af_packet.
->
-> It seems it is not very clear which is mostly used one, mostly likely
-> the prepare and commit API might be the mostly used one if I have to
-> guess as there might be more memory needed for skb frag than skb data.
-
-Well one of the things I am noticing is that you have essentially two
-API setups in the later patches.
-
-In one you are calling the page_frag_alloc_align and then later
-calling an abort function that is added later. In the other you have
-the probe/commit approach. In my mind it might make sense to think
-about breaking those up to be handled as two seperate APIs rather than
-trying to replace everything all at once.
-
+> > Additionally, the build is only supported on x86 platforms equipped
+> > with PMU capabilities, such as LBR on Intel machines. More
+> > specifically:
+> >  * Intel platforms: works on every platform that supports LBR;
+> >    we have tested on Skylake.
+> >  * AMD platforms: tested on AMD Zen3 with the BRS feature. The kernel
+> >    needs to be configured with =E2=80=9CCONFIG_PERF_EVENTS_AMD_BRS=3Dy"=
+, To
+> >    check, use
+> >    $ cat /proc/cpuinfo | grep =E2=80=9C brs=E2=80=9D
+> >    For the AMD Zen4, AMD LBRV2 is supported, but we suspect a bug with
+> >    AMD LBRv2 implementation in Genoa which blocks the usage.
 > >
-> >> +void *__page_frag_cache_prepare(struct page_frag_cache *nc, unsigned =
-int fragsz,
-> >> +                               struct page_frag *pfrag, gfp_t gfp_mas=
-k,
-> >> +                               unsigned int align_mask)
-> >>   {
-> >>          unsigned long encoded_page =3D nc->encoded_page;
-> >>          unsigned int size, offset;
-> >> @@ -114,6 +136,8 @@ void *__page_frag_alloc_align(struct page_frag_cac=
-he *nc,
-> >>                  /* reset page count bias and offset to start of new f=
-rag */
-> >>                  nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
-> >>                  nc->offset =3D 0;
-> >> +       } else {
-> >> +               page =3D encoded_page_decode_page(encoded_page);
-> >>          }
-> >>
-> >>          size =3D PAGE_SIZE << encoded_page_decode_order(encoded_page)=
-;
+> > Experiments and Results
 > >
-> > This makes no sense to me. Seems like there are scenarios where you
-> > are grabbing the page even if you aren't going to use it? Why?
+> > Experiments were conducted to compare the performance of AutoFDO-optimi=
+zed
+> > kernel images (version 6.9.x) against default builds.. The evaluation
+> > encompassed both open source microbenchmarks and real-world production
+> > services from Google and Meta. The selected microbenchmarks included Ne=
+per,
+> > a network subsystem benchmark, and UnixBench which is a comprehensive s=
+uite
+> > for assessing various kernel operations.
 > >
-> > I think you would be better off just waiting to the end and then
-> > fetching it instead of trying to grab it and potentially throw it away
-> > if there is no space left in the page. Otherwise what you might do is
-> > something along the lines of:
-> > pfrag->page =3D page ? : encoded_page_decode_page(encoded_page);
->
-> But doesn't that mean an additional checking is needed to decide if we
-> need to grab the page?
->
-> But the './scripts/bloat-o-meter' does show some binary size shrink
-> using the above.
-
-You are probably correct on this one. I think your approach may be
-better. I think the only case my approach would be optimizing for
-would probably be the size > 4K which isn't appropriate anyway.
-
+> > For Neper, AutoFDO optimization resulted in a 6.1% increase in throughp=
+ut
+> > and a 10.6% reduction in latency. Unixbench saw a 2.2% improvement in i=
+ts
+> > index score under low system load and a 2.6% improvement under high sys=
+tem
+> > load.
+> >
+> > For further details on the improvements observed in Google and Meta's
+> > production services, please refer to the LLVM discourse post:
+> > https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autofdo-i=
+ncluding-thinlto-and-propeller/79108
+> ...
+> > Rong Xu (6):
+> >   Add AutoFDO support for Clang build
+> >   objtool: Fix unreachable instruction warnings for weak funcitons
+> >   Change the symbols order when --ffuntion-sections is enabled
+> >   AutoFDO: Enable -ffunction-sections for the AutoFDO build
+> >   AutoFDO: Enable machine function split optimization for AutoFDO
+> >   Add Propeller configuration for kernel build.
+> >
+> >  Documentation/dev-tools/autofdo.rst   | 165 ++++++++++++++++++++++++++
+> >  Documentation/dev-tools/index.rst     |   2 +
+> >  Documentation/dev-tools/propeller.rst | 161 +++++++++++++++++++++++++
+> >  MAINTAINERS                           |  14 +++
+> >  Makefile                              |   2 +
+> >  arch/Kconfig                          |  42 +++++++
+> >  arch/x86/Kconfig                      |   2 +
+> >  arch/x86/kernel/vmlinux.lds.S         |   4 +
+> >  include/asm-generic/vmlinux.lds.h     |  54 +++++++--
+> >  scripts/Makefile.autofdo              |  25 ++++
+> >  scripts/Makefile.lib                  |  20 ++++
+> >  scripts/Makefile.propeller            |  28 +++++
+> >  tools/objtool/check.c                 |   2 +
+> >  tools/objtool/elf.c                   |  15 ++-
+> >  14 files changed, 524 insertions(+), 12 deletions(-)
+> >  create mode 100644 Documentation/dev-tools/autofdo.rst
+> >  create mode 100644 Documentation/dev-tools/propeller.rst
+> >  create mode 100644 scripts/Makefile.autofdo
+> >  create mode 100644 scripts/Makefile.propeller
 > >
 > >
-> >> @@ -132,8 +156,6 @@ void *__page_frag_alloc_align(struct page_frag_cac=
-he *nc,
-> >>                          return NULL;
-> >>                  }
-> >>
-> >> -               page =3D encoded_page_decode_page(encoded_page);
-> >> -
-> >>                  if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
-> >>                          goto refill;
-> >>
-> >> @@ -148,15 +170,17 @@ void *__page_frag_alloc_align(struct page_frag_c=
-ache *nc,
-> >>
-> >>                  /* reset page count bias and offset to start of new f=
-rag */
-> >>                  nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
-> >> +               nc->offset =3D 0;
-> >>                  offset =3D 0;
-> >>          }
-> >>
-> >> -       nc->pagecnt_bias--;
-> >> -       nc->offset =3D offset + fragsz;
-> >> +       pfrag->page =3D page;
-> >> +       pfrag->offset =3D offset;
-> >> +       pfrag->size =3D size - offset;
+> > base-commit: eb952c47d154ba2aac794b99c66c3c45eb4cc4ec
+> > --
+> > 2.47.0.rc1.288.g06298d1525-goog
 > >
-> > I really think we should still be moving the nc->offset forward at
-> > least with each allocation. It seems like you end up doing two flavors
-> > of commit, one with and one without the decrement of the bias. So I
-> > would be okay with that being pulled out into some separate logic to
-> > avoid the extra increment in the case of merging the pages. However in
-> > both cases you need to move the offset, so I would recommend keeping
-> > that bit there as it would allow us to essentially call this multiple
-> > times without having to do a commit in between to keep the offset
-> > correct. With that your commit logic only has to verify nothing
-> > changes out from underneath us and then update the pagecnt_bias if
-> > needed.
->
-> The problem is that we don't really know how much the nc->offset
-> need to be moved forward to and the caller needs the original offset
-> for skb_fill_page_desc() related calling when prepare API is used as
-> an example in 'Preparation & committing API' section of patch 13:
 
-The thing is you really have 2 different APIs. You have one you were
-doing which was a alloc/abort approach and another that is a
-probe/commit approach. I think for the probe/commit you could probably
-get away with using an "alloc" type approach with a size of 0 which
-would correctly set the start of your offset and then you would need
-to update it later once you know the total size for your commit. For
-the probe/commit we could use the nc->offset as a kind of cookie to
-verify we are working with the expected page and offset.
 
-For the alloc/abort it would be something similar but more the
-reverse. With that one we would need to have the size + offset and
-then verify the current offset is equal to that before we allow
-reverting the previous nc->offset update. The current patch set is a
-bit too permissive on the abort in my opinion and should be verifying
-that we are updating the correct offset.
+
+--
+Best Regards
+Masahiro Yamada
 
