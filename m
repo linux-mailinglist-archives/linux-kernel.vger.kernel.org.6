@@ -1,49 +1,60 @@
-Return-Path: <linux-kernel+bounces-373154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FFEF9A5309
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:49:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 964BE9A530A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95CE2B22B80
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7543282D94
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDC82B9DD;
-	Sun, 20 Oct 2024 07:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FD12AF1D;
+	Sun, 20 Oct 2024 07:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="P55lH9gd"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3D32B9C6;
-	Sun, 20 Oct 2024 07:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="XlsWaD/D"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237D0BA2D
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 07:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729410558; cv=none; b=hxEARvg7uCe2EqzqsrWPRlapxv1RaMnxnSz+CMzDh5WdZJCYcX3fA1jKNpgWvh87xKrzMvFoewT9Gi8OsMN2ViThcvcfqIa6wex4ey/t2j8D9GKdpEAtaauw25TfJomLbzm10vvA/tGiaq1B96vx5k/iEnRR10ux4HWBK7np20Q=
+	t=1729410960; cv=none; b=PLIHa/BeRFkRcBpBZ4naLzsrpW9UgJNrGqE29nG8QJjH8nvpll1PqotII3IC104svz2csmuWzoqZLlDTBUuA2BlFdXHrl3rKvKbW+opP2lGq7GqbMudkCYUuQWN8SYJsVnLTO9g+vJD7Vt/KDdXO1EcMUIGlc/OvMuKIX7BU1Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729410558; c=relaxed/simple;
-	bh=2/4nBV3EbJg4VYgdxH1vnXvH/rfZWUnk7Ke5IscmR6A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oV/O+J3yk0pBF9TA1fUDOtr6LKPGk460SNNxmDZwDgdCLCmh5Dd4PfoMhzn8Pasmd3YL8dW9F7aXF9J6Nqsx8NCP4dZ7SIhQO/FK76uSaa+DweGpdPlhlCtvsbFS3Gd4HuwMXhp8UTJuEMJp57GVNJE6V7UTMOQu8XCbsZcTfyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=P55lH9gd; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=x4NTp
-	GjZzFN6SUgygF3qJkYQtZICM+89+U+jSj6asRw=; b=P55lH9gdNXdjAH4BK1M/4
-	Q2iLWqF/8u2ata3tfN+A2/gd3akMk8QZSjGdzaXbIZbNRNS3KCf2h6DCP4+hXBJ/
-	qp+xQBVDIXb4QMBPuzic5X8E3EpkEpWdNTQJ6s1VBe62mlRyORo10DB+Zdtn2U7Y
-	W9YfQGoFb9uqz9DNfJyapg=
-Received: from localhost.localdomain (unknown [114.253.22.201])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgDnRlvZtRRnTWTBAg--.44212S2;
-	Sun, 20 Oct 2024 15:48:42 +0800 (CST)
-From: Dingyan Li <18500469033@163.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] usb: storage: fix wrong comments for struct bulk_cb_wrap
-Date: Sun, 20 Oct 2024 15:47:21 +0800
-Message-Id: <20241020074721.26905-1-18500469033@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729410960; c=relaxed/simple;
+	bh=7aL5LzELG0tTYPdM5LGYfOHO7YjqPtAI8/gSpPTe1o8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tgGI4bM72d1GMzSE4W38aT4h6s6+RmVNDt/m3KxJvkzPUA3HKBEg0nvIL5Px8jNnOfQxv6jEfVkxOTWXwIiHJLH2UvXElqG8jXRmZONL+gnb+qVAaNeLX1XIR9f/tJzjcQmusgjqFXpmYApfzfC79dBtS1j+waSl77Xmr8K7pz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=XlsWaD/D; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1729410886;
+	bh=QlBcGlE34Va4z6tdQ+526erMjntc98YXGGaX0KDIwFY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=XlsWaD/DXZ1HbBhsP7kaW/N06iyUa/Z5/mGZ5ntuHUfHr063638zvIoHxO/0aijTP
+	 EkVXhtVbegJLzdm9Jp7b+T78UV+aVTkklXPdrK5TZdomLqCBO0v00zryPi+bS5d8u3
+	 gNWT+EUSwi7svQhX7Tq8tDu7jBGkhqC3PHyQRPpQ=
+X-QQ-mid: bizesmtp88t1729410881t0029a7e
+X-QQ-Originating-IP: DNywZhexV8iN4Izdp5oTMn236th23b+y5ijrnx8ukaw=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sun, 20 Oct 2024 15:54:39 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 9097797976645357771
+From: WangYuli <wangyuli@uniontech.com>
+To: rostedt@goodmis.org,
+	warthog9@eaglescrag.net,
+	wangyuli@uniontech.com
+Cc: linux-kernel@vger.kernel.org,
+	standby24x7@gmail.com,
+	jkosina@suse.cz
+Subject: [PATCH] tools/testing: Fix typo "accesing"
+Date: Sun, 20 Oct 2024 15:54:32 +0800
+Message-ID: <154347BA9B9746F8+20241020075432.1869841-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,35 +62,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgDnRlvZtRRnTWTBAg--.44212S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWruF47Cr4UXr4UCr1UJF4xJFb_yoW3WFbE9w
-	1xK348ArWrArW7Jw13tFnavF17K348JFsFg3WrtrW3Z390vws5u3s7AFnFqFW3G3W7GrZx
-	u3WkWryfJrySyjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUb1lk3UUUUU==
-X-CM-SenderInfo: jprykiiquwmiitt6il2tof0z/1tbiNhV+y2cUnJX3NwAAss
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N6+UlSQllctNI+UOVWAU/CwlTSoJXgNn1lUxHqfGLyK3ZJ8P4H9ag6/u
+	r6oj5n8vrX+eNlZgBhVGqaJ9px4Uekt4BIEle9ycYJzLi3P19VvGY15XW1BbhvP7iqbGlqv
+	7AYakVczjc2jOunYjA8L3k/g3ksv9xMo0zPIikd7jTeWuvGjAN/AZBRIx/oW2wGUkMm5UeO
+	PaXt8EWsdmeEgP57jvfIgnLxoO5eTTOBGjA3cYLvL9h7/1ZTOYYI9m8bAmSl95EnEe0P/Xm
+	wHeO3WTRWEp2XdKZgxhMTp0/Pia7Z6anh3LOuoSSoy2lpJWVeXK20gcP2aqC/5csTERvOs7
+	31tPRusRvq3T+OFu/FgN2BcmCpN/san0rwac3D3mp1IrXpsr4R1MKkngO6KqlF5A0WOHXIS
+	iFicnzClm4VbRZs5pRmCekv1qYVUh+0p+QqdteVaD0Y/vJm/9MLlOjhqUALG2V3l66/VSNQ
+	IgjCCCxHuK/PwPHOxGUgsbzuZvULvWnfzqx8hD7dPBdKlYc2XJc1HOal2DSA4kCuZieFIjn
+	gHWAdXNgKKM5HjHYGkTWLSv3++Ucbsfu/GpLiMJRV5QYHegi0Iny6CfFMJ9gj4fXG59RiwU
+	96ByQbgYWZyx6mqh+tlytJbaInrJQDWjQ37/HJ//0sr0oT+2J2grm+t5w/xg/KM9E03wOGh
+	Jl3hkJsyG5zcpuhJcsYhIqkchjifh01+4Bm1/8EVxosHSlqOUvBn0mUegHUWtiIoUIw1f+m
+	Bl3thO1p2HePB21w4xpXOZPM2+kGOAvXlVrX1UkSxCUpNAOZYR1xaaVweWDsgE+c5/9Id7f
+	2LacAfnNsqlqbP95MusGU9+ZanbBABoXfCDiBFHimW9A439G7vKQGLCNP+Iy+2OHBIjgDi4
+	c1JGMT6Irs4Xtcjg8N46JRv0KaH/cnuxS7rQEqWAOVzP/ifhwY9uQS1TQRCIp6Nmmbhg+wR
+	XjM+iwNYUKLrFvpXYq61N/ogg1AGAL3ytHaU=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-In the flags, direction is in bit 7 instead of bit 0 based
-on the specification.
+There is a spelling mistake of 'accesing' in comments which should
+be 'accessing'.
 
-Signed-off-by: Dingyan Li <18500469033@163.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
- include/linux/usb/storage.h | 2 +-
+ tools/testing/ktest/examples/include/defaults.conf | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/usb/storage.h b/include/linux/usb/storage.h
-index 2827ce72e502..8539956bc2be 100644
---- a/include/linux/usb/storage.h
-+++ b/include/linux/usb/storage.h
-@@ -53,7 +53,7 @@ struct bulk_cb_wrap {
- 	__le32	Signature;		/* contains 'USBC' */
- 	__u32	Tag;			/* unique per command id */
- 	__le32	DataTransferLength;	/* size of data */
--	__u8	Flags;			/* direction in bit 0 */
-+	__u8	Flags;			/* direction in bit 7 */
- 	__u8	Lun;			/* LUN normally 0 */
- 	__u8	Length;			/* length of the CDB */
- 	__u8	CDB[16];		/* max command */
+diff --git a/tools/testing/ktest/examples/include/defaults.conf b/tools/testing/ktest/examples/include/defaults.conf
+index 63a1a83f4f0b..f6d8517a471e 100644
+--- a/tools/testing/ktest/examples/include/defaults.conf
++++ b/tools/testing/ktest/examples/include/defaults.conf
+@@ -46,7 +46,7 @@ CLEAR_LOG = 1
+ 
+ SSH_USER = root
+ 
+-# For accesing the machine, we will ssh to root@machine.
++# For accessing the machine, we will ssh to root@machine.
+ SSH := ssh ${SSH_USER}@${MACHINE}
+ 
+ # Update this. The default here is ktest will ssh to the target box
 -- 
-2.25.1
+2.45.2
 
 
