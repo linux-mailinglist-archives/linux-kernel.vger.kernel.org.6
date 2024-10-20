@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-373179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A399A5363
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:48:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005249A5366
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90B641F2204B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:48:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07211F2208D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 09:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEF3183CCA;
-	Sun, 20 Oct 2024 09:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E7879F6;
+	Sun, 20 Oct 2024 09:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5dLhz0j"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="ksgRFxqm"
+Received: from pv50p00im-ztdg10011901.me.com (pv50p00im-ztdg10011901.me.com [17.58.6.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A485FBF0;
-	Sun, 20 Oct 2024 09:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CD347F4A
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 09:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729417708; cv=none; b=h6Ch/4ya1JUel/H9+erGUzS3vOQZmkJPTRE0y5PBne0JI2sv3IlObnCTxHaaa80YFXe30Yf5KJsDWAfy5eZ18ldtKmN0cHjJadH7PIibMw08bkRKiPfd2oKAUJtmKdFv4Ykfo+tjBD8g1X29+eAgCJyULym/gwP8Fxh0I+Q3/zc=
+	t=1729418250; cv=none; b=T1IlWJrfuD1iCcqPB41uwlg9HT6z2fy3m3bd4gELUVrRE2Kut3DUJPU9evY3BmkZVh42ZElgn3wPzse6v57eOkX6A88M6bkzgXML9aTHDMOFzcRaKsq/uTtSo/BGdCwLl0JXxuQm9GfDffWa0jL1r0VdrYTFClSP9UVUS55k814=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729417708; c=relaxed/simple;
-	bh=L3whGAyCtfk52Zej/fOSJGWKP4dlYCEiXFi6zyG46Ao=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=BfAK3yKehxCdzaUiDd8w+cd7YekxdyW64721zl0IaCtSrZ7ikpEj3YnpU5JS0y7lbO7KPylP8kR94NiJ5J+EoaW9+r4foxmDG6IpIhRLa6LDxUT6VUrQlNAyGkVt0Mwo+xTXgvqw3zBYe8SZZxD3ajRC2s/Q1F2E7uidRRjXFlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D5dLhz0j; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ea6a4f287bso2317019a12.3;
-        Sun, 20 Oct 2024 02:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729417706; x=1730022506; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ldn27lzLHuOpCiGlLeOSNBCC/qe0KrC1TVYFVBtlbwk=;
-        b=D5dLhz0j4QXh8FgyIZR3tHvfbBXtq3MxOnLLNkWmwpGCI7HUIn9chHFvhgdi+Wk/f3
-         k5CG8yUyUNfD+HkayVQtaFXFN23OMgB3c97h8T+GkDxvKJGBPUXnEJpHiX0wAtqC/zhO
-         +tqb3/FYg+BW0c9ev3mKttqfG4hbdJyw7YRdkin1im+zwaCoCdDJzSJJaTDScmbiaLZC
-         NFx/jiFU3fPUrSba6rmvXLQYcD0BMVr9ibvhr04Cgy3+0S7UNKTKMYFCoIPv//vyTB+d
-         TjEwWsEDl2E9nbhzxVv+NMFyg7KlS7fRhGhpiRGfYNS+Gyq2V4w9id4VN/96OQxy8aRW
-         hlJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729417706; x=1730022506;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ldn27lzLHuOpCiGlLeOSNBCC/qe0KrC1TVYFVBtlbwk=;
-        b=k3TE+BAByd828YfvninfAnAvqJO1xRzCNb6VMUU1o8ACedOZdi7GnJEgLZxuq8eI2c
-         wqYdR4+zltkxseO8SUtt1MrqgbGhQp/G2euvzeUtOR5+BYY2fS7cOsPCWUWUHXHODCd/
-         wCCXrF5OM81J3murJzpoaV2CGsx1QLfl5OObhmJkErl8yJJm0eAwK2Nh01jA/TAMzkED
-         WWL87PsKlrhpc+m82wtoR4SyWxHb3zrtb1NLElGZZ1p3hbt8fY+Kj9/WbF0+CFARjwge
-         CGmqjRYOiX3XGXxC3Mtdjtn9KiyBPonr5hxyTfy8RTwcFRdR6G6vsX2iKu3KHX84GMZu
-         J4TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvXpfscHUmYQymngKbok5fBFbE4hVn+uzkUpyB8AVxQ7KbP11bYZwdMsdYcU3vJrlCw37yT04+bBfR@vger.kernel.org, AJvYcCVXvjp3Md2LpaomCZHV5rfmKs3f4oQLc8bUrcu4Btn2QSZ+ptAlSpfzkd/xr+7YhPCzz0BYnClYhedjthop@vger.kernel.org, AJvYcCW5zlR2ssE+l7EhArGgP2REbh4b20VXpn/bCeLUmfHcPMN9/vdqSYjzCeH/1dh11ErMyTSEl0W/+LwhyNFI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqJad/YmrjJv7gdk5U+YT83wmKufwymEWUv6HEDZlG2Vgx12mK
-	hUHZS3RaasW/AkOxJK5Jl3XPiktq8yEN5h8D8C93I9qpJqJi7nOV
-X-Google-Smtp-Source: AGHT+IFKCdM/qCR/SvMRMS1hpLJmhhAfa4mB09hQj79THgWcoIQjCDAzhIcy5MenLEoPOatm9GkM5A==
-X-Received: by 2002:a05:6a21:330b:b0:1d9:1e36:8f97 with SMTP id adf61e73a8af0-1d92c4dfef5mr10424074637.19.1729417705701;
-        Sun, 20 Oct 2024 02:48:25 -0700 (PDT)
-Received: from dw-tp ([171.76.81.191])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabd9bebsm783827a12.80.2024.10.20.02.48.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 02:48:25 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com, hch@lst.de, cem@kernel.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, hare@suse.de, martin.petersen@oracle.com, catherine.hoang@oracle.com, mcgrof@kernel.org, ojaswin@linux.ibm.com, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v10 7/8] xfs: Validate atomic writes
-In-Reply-To: <20241019125113.369994-8-john.g.garry@oracle.com>
-Date: Sun, 20 Oct 2024 15:14:11 +0530
-Message-ID: <87plnvglck.fsf@gmail.com>
-References: <20241019125113.369994-1-john.g.garry@oracle.com> <20241019125113.369994-8-john.g.garry@oracle.com>
+	s=arc-20240116; t=1729418250; c=relaxed/simple;
+	bh=LgPXBjzX8PbJLbITTYq2V2BJykeardUriI373knrMQg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dk3g1Xrn0wHGc6E3V7LQkT4AVtAWQihZ+ZWzqu4d7P6TMQpEEHavYCfZb8Kqhd4deraDrRhvFmPur4XrfMYcWN23a2KC6/ODl+XiLZEpvbRk0NRHND/fIooWrTZtWBUfG4MbEEqc56owzUrTQTaHcwvr2H5c19dBXzPaI8qupEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=ksgRFxqm; arc=none smtp.client-ip=17.58.6.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1729418248;
+	bh=FhrdYFOvstRecP2ZKmMJqGaEIjevtvQvDh2O0fTXTbM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=ksgRFxqmpf7BJskMZUFm37BEgWBH6aojJuT9UohySRjZnrbrIgKlDMXKYDLgIqZiK
+	 unpm+u0QycRvx63P23gIDZH2ooaeH5WeQV2O2LWqXarEIetWXjMFcQFhD5VE7sSYpk
+	 B97FQM3IM8B5frxvjkgcyhf1I0YMUCs1p5coUV93wL5U2EcI9e25dQPXWVs16X67BP
+	 pAF/BFKszqkTFvoYcYD/RupOwpxgeBLS7klmDq5LsbHsxDizJGaidFHNOm/TwP+cWz
+	 x8jCLI9UDHlDFX44zNLkfXp2RehsT2PgxlhvvQBai3qlFx6lyQtTVKRkX/m/3M7+Ok
+	 IpV5nE0mf4LSA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011901.me.com (Postfix) with ESMTPSA id 51DE23A016A;
+	Sun, 20 Oct 2024 09:57:23 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Sun, 20 Oct 2024 17:56:58 +0800
+Subject: [PATCH] PCI: endpoint: Fix API devm_pci_epc_destroy() can not
+ destroy the EPC device
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241020-pci-epc-core_fix-v1-1-3899705e3537@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOnTFGcC/x2MQQqAIBAAvxJ7bkGXOthXIkJ0rb2oKEQg/j3pO
+ AMzDSoX4Qrb1KDwI1VSHKDnCdxt48UofjCQokUrUpidIGeHLhU+g7xoDa2agjVeGxhZLjz0v9y
+ P3j8Yve5VYgAAAA==
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Joao Pinto <jpinto@synopsys.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: BdJXf0YaDzhouuutKbfZLhYBHe0r3UQo
+X-Proofpoint-GUID: BdJXf0YaDzhouuutKbfZLhYBHe0r3UQo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-20_07,2024-10-17_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=586
+ bulkscore=0 phishscore=0 mlxscore=0 adultscore=0 spamscore=0 clxscore=1011
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2410200066
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-John Garry <john.g.garry@oracle.com> writes:
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-> Validate that an atomic write adheres to length/offset rules. Currently
-> we can only write a single FS block.
->
-> For an IOCB with IOCB_ATOMIC set to get as far as xfs_file_write_iter(),
-> FMODE_CAN_ATOMIC_WRITE will need to be set for the file; for this,
-> ATOMICWRITES flags would also need to be set for the inode.
->
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/xfs/xfs_file.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index b19916b11fd5..1ccbc1eb75c9 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -852,6 +852,20 @@ xfs_file_write_iter(
->  	if (IS_DAX(inode))
->  		return xfs_file_dax_write(iocb, from);
->  
-> +	if (iocb->ki_flags & IOCB_ATOMIC) {
-> +		/*
-> +		 * Currently only atomic writing of a single FS block is
-> +		 * supported. It would be possible to atomic write smaller than
-> +		 * a FS block, but there is no requirement to support this.
-> +		 * Note that iomap also does not support this yet.
-> +		 */
-> +		if (ocount != ip->i_mount->m_sb.sb_blocksize)
-> +			return -EINVAL;
+For devm_pci_epc_destroy(), its comment says it needs to destroy the EPC
+device, but it does not do that actually, so it can not fully undo what
+the API devm_pci_epc_create() does, that is wrong, fixed by using
+devres_release() instead of devres_destroy() within the API.
 
-Shouldn't we "return -ENOTSUPP" ? 
-Given we are later going to add support for ocount > sb_blocksize.
+Fixes: 5e8cb4033807 ("PCI: endpoint: Add EP core layer to enable EP controller and EP functions")
+Cc: stable@vger.kernel.org
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+ drivers/pci/endpoint/pci-epc-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--ritesh
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index 17f007109255..71b6d100056e 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -857,7 +857,7 @@ void devm_pci_epc_destroy(struct device *dev, struct pci_epc *epc)
+ {
+ 	int r;
+ 
+-	r = devres_destroy(dev, devm_pci_epc_release, devm_pci_epc_match,
++	r = devres_release(dev, devm_pci_epc_release, devm_pci_epc_match,
+ 			   epc);
+ 	dev_WARN_ONCE(dev, r, "couldn't find PCI EPC resource\n");
+ }
+
+---
+base-commit: 715ca9dd687f89ddaac8ec8ccb3b5e5a30311a99
+change-id: 20241020-pci-epc-core_fix-a92512fa9d19
+
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
