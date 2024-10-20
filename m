@@ -1,205 +1,261 @@
-Return-Path: <linux-kernel+bounces-373303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 734769A54F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:03:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC689A54F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 936301C20EA8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:03:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D060A283987
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25F819414A;
-	Sun, 20 Oct 2024 16:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440091946A2;
+	Sun, 20 Oct 2024 16:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="I1mkg/yA"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ic2AW0kz"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E72567D;
-	Sun, 20 Oct 2024 16:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3260B567D;
+	Sun, 20 Oct 2024 16:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729440179; cv=none; b=X0PRtgjzm3tXoztwX6yCsjH2vIy909zDYnx1rWUmMRvYVDuFbg1EpzEJ4SrJYBDRAe3xpJlTeaeuLV++SuFmLS83GhzhpbqKVJP/eu5sUm8AY52GNXkb+rqYJ9/WfoG7Zgk+VB3K7ZAmfL1Rje1jbKu3Kgm1l8G6RvkPBcKpHpw=
+	t=1729440339; cv=none; b=K44mM/4hEBIV/oTHUQOU6C4DL3Rxx1IY5WTFMrOcYpRvcgVajv70ivwyTBDfbNR8FM17oy3B641TbEoPu4Ok9wIfmM9qqIYuIjZWXqZBVewQ5zpcY/S3FEyJKOQZdYvGIfjA3tquY/Zye/9a8J8VpehlAkSTiKhPhNLV6NVpVwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729440179; c=relaxed/simple;
-	bh=eEqdnT9zeihfovN32kEoloUVe9WbErtbn9U2MC80FII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GDiLOah4XlywTW5yrEYGf88GlcvAKWZRdA4J6KOBjFifoF5ORmsZ2/K66cio32s4oW6kQ3uJGahDUKCaSjBsWCK6JrJSg02kFichz/p0iP8qQSFdbO24Lrqdiyy+w1pnxSKqjJNZUoT4oKqVVMLk6bDL8a5upyfzKyxO/Fn9yrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=I1mkg/yA; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9C76F526;
-	Sun, 20 Oct 2024 18:01:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729440069;
-	bh=eEqdnT9zeihfovN32kEoloUVe9WbErtbn9U2MC80FII=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I1mkg/yAdmkyZPEEqssKSr8Zk+zkjwO+4T5+PTiWas1aTopJwq6Y4VpPnEjOE7uk7
-	 sBeS7h9kEj30KL9U4mjtKaPIiI+kOjDBcOprB3/XT0ftOLuqqggqEncDxLujwJxily
-	 TDkEhg+wL0V9fYE0JLHyEUncS3Tna9DHsLl18ojA=
-Date: Sun, 20 Oct 2024 19:02:49 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: syzbot <syzbot+9446d5e0d25571e6a212@syzkaller.appspotmail.com>
-Cc: hverkuil-cisco@xs4all.nl, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, mchehab@kernel.org,
-	ribalda@chromium.org, senozhatsky@chromium.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [media?] WARNING in uvc_status_unregister
-Message-ID: <20241020160249.GD7770@pendragon.ideasonboard.com>
-References: <6714a6cc.050a0220.10f4f4.002b.GAE@google.com>
+	s=arc-20240116; t=1729440339; c=relaxed/simple;
+	bh=UFG4jRzqjHXc3n1ppQNZKoBh1uR/uxtT3NKkqC7yL1k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SLqMb6zCBDMSYi9AsTtCLS+FJzPoRb31DPaJMxr18tVF5dYruIn39g4oYI/nLjrdyX0SS5fV4PlaTtbmB4zTL3ZdFCPX7xMB7QULQ7G92HgImaRGhaRSnht+oI8baA1V5XhlWu+3ZhQKTXud9vf16cRpMAxFsKtK7cDE3Fi/qsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ic2AW0kz; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d533b5412so2498449f8f.2;
+        Sun, 20 Oct 2024 09:05:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729440335; x=1730045135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zJQ7NzBQmKMeNc7M9zrhC1o48BxNYFY3M9Ix09latD8=;
+        b=ic2AW0kzvgM9Rt5HB4gYYyEler4bCSbYrY0IE0xh9O8n4FIPWf6I358fYhHOMQSa+U
+         HwRk5+Wm6Pbr4dNzFYWmIhgSvlTroG5YAcARxpHou3NB+VuahVraRr85jcUrUOUnFW6H
+         n/D702SL3OjQl+1p0tqejYz3671p7IxEGpOqL2chZZZtkLlpheyfNXLC8U/1/Jx13K/Y
+         kYOl2aDM9Yht6W64O8LwuTFuWYpquM4xbZvGKZvWuI1KxoaLedNYNZ9TzhUsfbCuFc1z
+         YggqH5YvaSGgb5qOx31so02i9Arryl35lK2O8FZ47Le7fQsrbSO+Vl4y/1cbFHDKqFCu
+         1B5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729440335; x=1730045135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zJQ7NzBQmKMeNc7M9zrhC1o48BxNYFY3M9Ix09latD8=;
+        b=lrsvLBFPCYBEVND4LtawP5nNYLYbhBdvAQN6sY9sUZfFBNtEKdtkgz4UwAdRuWeIw2
+         ey0k8UB5sVhnpl3VoBL0GNsR2vXCgcKGR1YaXb/Ag+vwKGKmBx2CUJejvkVK2A5HMoTC
+         I/Dc0hZONbWL4UjYaBIu7bjqf5EK2ZTkf4bJEx3/2M53ckvB53a3wV68vNkbMIudybJN
+         vLSeasJ+LqSd/zxtbaaxVsAye9gf/ZDPLD0Qr0Er6vTK0889LeeQWomQf6uVUd5MqsUO
+         Yy2CcI/MDXMaER6DEnFRom+WZgCaQwaYx6A8nRJG/z0UvsVvUJP1kvkrZkZiZMHAb7Yd
+         ACVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyecSEnZWnxCt9rekHdQ4OG6U8/1djQZubqEHKPxCugolvNam7N+StZNggdzFGRCYCzqOTkhHb@vger.kernel.org, AJvYcCXHSV1RUu/rtTmW9Pre5jX0SOuR1S2s+ZAopsKXiLRl7ez2Ee62YRo7x6BGMtSRQ+0FSIXZ+tt0r0WtjTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMwhSoCVX64hjla9NOd8WIiRV4bgyHJFin4seh6sd199XiTnha
+	2wqFOUI3WH3MlCayXrezT+/BEdxuruWWUmAmpgz6ENbzFry1A2YvZ7RxMSxtbCr8B6bEAPhuhOl
+	S0DbUW6i4sIwBX9Q0tE4NTNdyg3Q=
+X-Google-Smtp-Source: AGHT+IFZ/Fy2Ii2u5SIrL80Yn1WMaw2/2zE2RJB2oGdpgKR21e8zwfzBaVyl3DbRVRkWkeI1wZdNcW9hHLkkRdWvQGo=
+X-Received: by 2002:adf:f9d0:0:b0:374:c4e2:3ca7 with SMTP id
+ ffacd0b85a97d-37eab4d13b7mr4964756f8f.5.1729440335166; Sun, 20 Oct 2024
+ 09:05:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6714a6cc.050a0220.10f4f4.002b.GAE@google.com>
+References: <20241018105351.1960345-1-linyunsheng@huawei.com>
+ <20241018105351.1960345-11-linyunsheng@huawei.com> <CAKgT0UcrbmhJCm4=30Y12ZX9bWD_ChTn5vqHxKdTrGBP-FLk5w@mail.gmail.com>
+ <a6703e66-a8bc-43c9-a2b9-08f2a849c4ff@gmail.com>
+In-Reply-To: <a6703e66-a8bc-43c9-a2b9-08f2a849c4ff@gmail.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Sun, 20 Oct 2024 09:04:58 -0700
+Message-ID: <CAKgT0UdawPJgh-J266cpRqNvCHFT=X=OM3CVBorBT0mTEGVpeg@mail.gmail.com>
+Subject: Re: [PATCH net-next v22 10/14] mm: page_frag: introduce
+ prepare/probe/commit API
+To: Yunsheng Lin <yunshenglin0825@gmail.com>
+Cc: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 19, 2024 at 11:44:28PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    15e7d45e786a Add linux-next specific files for 20241016
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14a8f887980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9446d5e0d25571e6a212
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1483e830580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10560240580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/disk-15e7d45e.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinux-15e7d45e.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/bzImage-15e7d45e.xz
-> 
-> The issue was bisected to:
-> 
-> commit c5fe3ed618f995b4a903e574bf2e993cdebeefca
-> Author: Ricardo Ribalda <ribalda@chromium.org>
-> Date:   Thu Sep 26 05:49:58 2024 +0000
-> 
->     media: uvcvideo: Avoid race condition during unregister
+On Sat, Oct 19, 2024 at 1:33=E2=80=AFAM Yunsheng Lin <yunshenglin0825@gmail=
+.com> wrote:
+>
+> On 10/19/2024 2:03 AM, Alexander Duyck wrote:
+>
+> >
+> > Not a huge fan of introducing a ton of new API calls and then having
+> > to have them all applied at once in the follow-on patches. Ideally the
+> > functions and the header documentation for them would be introduced in
+> > the same patch as well as examples on how it would be used.
+> >
+> > I really think we should break these up as some are used in one case,
+> > and others in another and it is a pain to have a pile of abstractions
+> > that are all using these functions in different ways.
+>
+> I am guessing this patch may be split into three parts to make it more
+> reviewable and easier to discuss here:
+> 1. Prepare & commit related API, which is still the large one.
+> 2. Probe API related API.
 
-It looks like the issue comes from the fact that uvc_status_unregister()
-gets called from the error path in uvc_probe() through
-uvc_unregister_video(), likely for errors occuring before
-uvc_status_init() is called. uvc_status_unregister() should return
-immediately in that case. Ricardo, do you plan to look at that?
+In my mind the first two listed here are much more related to each
+other than this abort api.
 
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12554240580000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=11554240580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16554240580000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+9446d5e0d25571e6a212@syzkaller.appspotmail.com
-> Fixes: c5fe3ed618f9 ("media: uvcvideo: Avoid race condition during unregister")
-> 
-> usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-> usb 1-1: Product: syz
-> usb 1-1: Manufacturer: syz
-> usb 1-1: SerialNumber: syz
-> usb 1-1: config 0 descriptor??
-> usb 1-1: Found UVC 0.00 device syz (05ac:8600)
-> usb 1-1: No valid video chain found.
-> ------------[ cut here ]------------
-> DEBUG_LOCKS_WARN_ON(lock->magic != lock)
-> WARNING: CPU: 0 PID: 1166 at kernel/locking/mutex.c:587 __mutex_lock_common kernel/locking/mutex.c:587 [inline]
-> WARNING: CPU: 0 PID: 1166 at kernel/locking/mutex.c:587 __mutex_lock+0xc41/0xd70 kernel/locking/mutex.c:752
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 1166 Comm: kworker/0:2 Not tainted 6.12.0-rc3-next-20241016-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: usb_hub_wq hub_event
-> RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:587 [inline]
-> RIP: 0010:__mutex_lock+0xc41/0xd70 kernel/locking/mutex.c:752
-> Code: 0f b6 04 20 84 c0 0f 85 18 01 00 00 83 3d 36 20 49 04 00 75 19 90 48 c7 c7 20 b9 0a 8c 48 c7 c6 c0 b9 0a 8c e8 00 0f 81 f5 90 <0f> 0b 90 90 90 e9 bd f4 ff ff 90 0f 0b 90 e9 cf f8 ff ff 90 0f 0b
-> RSP: 0018:ffffc90004516980 EFLAGS: 00010246
-> RAX: 44423ff48d37de00 RBX: 0000000000000000 RCX: ffff888027929e00
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90004516ad0 R08: ffffffff8155d7b2 R09: fffffbfff1cfa3e0
-> R10: dffffc0000000000 R11: fffffbfff1cfa3e0 R12: dffffc0000000000
-> R13: ffff88814bd82518 R14: 0000000000000000 R15: ffff88814bd824e8
-> FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055ffca8e3610 CR3: 000000001e3f4000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  class_mutex_constructor include/linux/mutex.h:201 [inline]
->  uvc_status_suspend drivers/media/usb/uvc/uvc_status.c:375 [inline]
->  uvc_status_unregister+0x2f/0xe0 drivers/media/usb/uvc/uvc_status.c:297
->  uvc_unregister_video+0xeb/0x1c0 drivers/media/usb/uvc/uvc_driver.c:1947
->  uvc_probe+0x9135/0x98c0 drivers/media/usb/uvc/uvc_driver.c:2272
->  usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
->  really_probe+0x2b8/0xad0 drivers/base/dd.c:658
->  __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
->  driver_probe_device+0x50/0x430 drivers/base/dd.c:830
->  __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
->  bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
->  __device_attach+0x333/0x520 drivers/base/dd.c:1030
->  bus_probe_device+0x189/0x260 drivers/base/bus.c:534
->  device_add+0x856/0xbf0 drivers/base/core.c:3675
->  usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
->  usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
->  usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:294
->  really_probe+0x2b8/0xad0 drivers/base/dd.c:658
->  __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
->  driver_probe_device+0x50/0x430 drivers/base/dd.c:830
->  __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
->  bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
->  __device_attach+0x333/0x520 drivers/base/dd.c:1030
->  bus_probe_device+0x189/0x260 drivers/base/bus.c:534
->  device_add+0x856/0xbf0 drivers/base/core.c:3675
->  usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2651
->  hub_port_connect drivers/usb/core/hub.c:5521 [inline]
->  hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
->  port_event drivers/usb/core/hub.c:5821 [inline]
->  hub_event+0x2d6d/0x5150 drivers/usb/core/hub.c:5903
->  process_one_work kernel/workqueue.c:3229 [inline]
->  process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
->  worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+> 3. Abort API.
 
--- 
-Regards,
+I wonder if we couldn't look at introducing this first as it is
+actually closer to the existing API in terms of how you might use it.
+The only spot of commonality I can think of in terms of all these is
+that we would need to be able to verify the VA, offset, and size. I
+partly wonder if for our page frag API we couldn't get away with
+passing a virtual address instead of a page for the page frag. It
+would save us having to do the virt_to_page or page_to_virt when
+trying to verify a commit or a revert.
 
-Laurent Pinchart
+
+> And it is worthing mentioning that even if this patch is split into more
+> patches, it seems impossible to break patch 12 up as almost everything
+> related to changing "page_frag" to "page_frag_cache" need to be one
+> patch to avoid compile error.
+
+That is partly true. One issue is that there are more changes there
+than just changing out the page APIs. It seems like you went in
+performing optimizations as soon as you were changing out the page
+allocation method used. For example one thing that jumps out at me was
+the removal of linear_to_page and its replacement with
+spd_fill_linear_page which seems to take on other pieces of the
+function as well as you made it a return path of its own when that
+section wasn't previously.
+
+Ideally changing out the APIs used should be more about doing just
+that and avoiding additional optimization or deviations from the
+original coded path if possible.
+
+> >
+> >> +static inline void page_frag_alloc_abort(struct page_frag_cache *nc,
+> >> +                                        unsigned int fragsz)
+> >> +{
+> >> +       VM_BUG_ON(fragsz > nc->offset);
+> >> +
+> >> +       nc->pagecnt_bias++;
+> >> +       nc->offset -=3D fragsz;
+> >> +}
+> >> +
+> >
+> > We should probably have the same checks here you had on the earlier
+> > commit. We should not be allowing blind changes. If we are using the
+> > commit or abort interfaces we should be verifying a page frag with
+> > them to verify that the request to modify this is legitimate.
+>
+> As an example in 'Preparation & committing API' section of patch 13, the
+> abort API is used to abort the operation of page_frag_alloc_*() related
+> API, so 'page_frag' is not available for doing those checking like the
+> commit API. For some case without the needing of complicated prepare &
+> commit API like tun_build_skb(), the abort API can be used to abort the
+> operation of page_frag_alloc_*() related API when bpf_prog_run_xdp()
+> returns XDP_DROP knowing that no one else is taking extra reference to
+> the just allocated fragment.
+>
+> +Allocation & freeing API
+> +------------------------
+> +
+> +.. code-block:: c
+> +
+> +    void *va;
+> +
+> +    va =3D page_frag_alloc_align(nc, size, gfp, align);
+> +    if (!va)
+> +        goto do_error;
+> +
+> +    err =3D do_something(va, size);
+> +    if (err) {
+> +        page_frag_alloc_abort(nc, size);
+> +        goto do_error;
+> +    }
+> +
+> +    ...
+> +
+> +    page_frag_free(va);
+>
+>
+> If there is a need to abort the commit API operation, we probably call
+> it something like page_frag_commit_abort()?
+
+I would argue that using an abort API in such a case is likely not
+valid then. What we most likely need to be doing is passing the va as
+a part of the abort request. With that we should be able to work our
+way backwards to get back to verifying the fragment came from the
+correct page before we allow stuffing it back on the page.
+
+> >
+> >>   void page_frag_free(void *addr);
+> >>
+> >>   #endif
+> >> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+> >> index f55d34cf7d43..5ea4b663ab8e 100644
+> >> --- a/mm/page_frag_cache.c
+> >> +++ b/mm/page_frag_cache.c
+> >> @@ -112,6 +112,27 @@ unsigned int __page_frag_cache_commit_noref(struc=
+t page_frag_cache *nc,
+> >>   }
+> >>   EXPORT_SYMBOL(__page_frag_cache_commit_noref);
+> >>
+> >> +void *__page_frag_alloc_refill_probe_align(struct page_frag_cache *nc=
+,
+> >> +                                          unsigned int fragsz,
+> >> +                                          struct page_frag *pfrag,
+> >> +                                          unsigned int align_mask)
+> >> +{
+> >> +       unsigned long encoded_page =3D nc->encoded_page;
+> >> +       unsigned int size, offset;
+> >> +
+> >> +       size =3D PAGE_SIZE << encoded_page_decode_order(encoded_page);
+> >> +       offset =3D __ALIGN_KERNEL_MASK(nc->offset, ~align_mask);
+> >> +       if (unlikely(!encoded_page || offset + fragsz > size))
+> >> +               return NULL;
+> >> +
+> >> +       pfrag->page =3D encoded_page_decode_page(encoded_page);
+> >> +       pfrag->size =3D size - offset;
+> >> +       pfrag->offset =3D offset;
+> >> +
+> >> +       return encoded_page_decode_virt(encoded_page) + offset;
+> >> +}
+> >> +EXPORT_SYMBOL(__page_frag_alloc_refill_probe_align);
+> >> +
+> >
+> > If I am not mistaken this would be the equivalent of allocating a size
+> > 0 fragment right? The only difference is that you are copying out the
+> > "remaining" size, but we could get that from the offset if we knew the
+> > size couldn't we? Would it maybe make sense to look at limiting this
+> > to PAGE_SIZE instead of passing the size of the actual fragment?
+>
+> I am not sure if I understand what does "limiting this to PAGE_SIZE"
+> mean here.
+
+Right now you are returning pfrag->size =3D size - offset. I am
+wondering if we should be returning something more like "pfrag->size =3D
+PAGE_SIZE - (offset % PAGE_SIZE)".
+
+> I probably should mention the usecase of probe API here. For the usecase
+> of mptcp_sendmsg(), the minimum size of a fragment can be smaller when
+> the new fragment can be coalesced to previous fragment as there is an
+> extra memory needed for some header if the fragment can not be coalesced
+> to previous fragment. The probe API is mainly used to see if there is
+> any memory left in the 'page_frag_cache' that can be coalesced to
+> previous fragment.
+
+What is the fragment size we are talking about? In my example above we
+would basically be looking at rounding the page off to the nearest
+PAGE_SIZE block before we would have to repeat the call to grab the
+next PAGE_SIZE block. Since the request size for the page frag alloc
+API is supposed to be limited to 4K or less it would make sense to
+limit the probe API similarly.
 
