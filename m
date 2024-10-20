@@ -1,176 +1,206 @@
-Return-Path: <linux-kernel+bounces-373258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2341F9A5460
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:38:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9366A9A5463
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F2051C20321
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:38:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B3DFB22217
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AF419259F;
-	Sun, 20 Oct 2024 13:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98361192D69;
+	Sun, 20 Oct 2024 13:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="prGQaYTn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="jJMs1AHm"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C956FB674
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 13:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505D84C7D
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 13:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729431515; cv=none; b=qDTj1/8zLwz14z9fg6IcNg/aFyixyjPoMbMJ0b9HSUinLzsdMvk/zmBz20CkgOJIKGEUTmxizSKgbyyvpj34upuIHUlUciMJtZO5mL16u2w6izMt1aabrNYQmu8Pv2xMMJnTbca7S8ZOZ49X5zrXbsqiX74CqfvVFsRe8PYilLc=
+	t=1729432253; cv=none; b=EaJBEqOzsUaSZb88dSHd0Xq8ra5TeylvgjZElj2lALz8NGlu8XDOxTp8hPvmKz37/qTH80Do3zcGP6hXGH3LkNZI0nmkFxJ9XvKl+BYG4q3PvEKlx6VHY30ABXL7XkAG/0ni7S3dg9MVtUN5W8lFLJKUM2/zk+Yv0U/lfMruySM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729431515; c=relaxed/simple;
-	bh=8uFQFLvSa2mDp9GOzl7dkH89sp92ve8LttZLgsJBsh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SyG90HlRTLw93vKhij0yo+9qgfo0qabn2aD3Alxjvfx7ycbk0k6yvzoxSZGQ+WIfRJEdZgpi2kdAzTwOBLSH6lTDcaZM0P6Kimhb4bL+h9IfqS+YmPuV8WExOYPbB0ewe/sA1vAUj3j9ROZpFS7gUQ+3/LvMuHWVijfJcbR7JoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=prGQaYTn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0889CC4CEC6;
-	Sun, 20 Oct 2024 13:38:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729431515;
-	bh=8uFQFLvSa2mDp9GOzl7dkH89sp92ve8LttZLgsJBsh0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=prGQaYTndxZb40KAgbO0Ylc0U3J31LkTDWB6GAN0bK1YXwTOkQ89iEwJs/ToIxut2
-	 R9lNN22VaGcY8ZT+a/s0H0Y4e92kTBkqfHDh4Q7zHQx1Vf+ytMaC1o6llgRVKtkdXg
-	 GBYIRaOsbSMsqpkW4/MWNM2PygRkPsH81Fr8H/OU=
-Date: Sun, 20 Oct 2024 15:38:32 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc driver fixes for 6.12-rc4
-Message-ID: <ZxUH2J0BL3FCV6Hr@kroah.com>
+	s=arc-20240116; t=1729432253; c=relaxed/simple;
+	bh=3ixVkNJPxWFe97eRFC1T0i5mV+yElzvwk03zFFD0ZzU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bGDJGgWyQAYIozmpcLu8QdqKnnwDEJcCQMXMbCSlAtyVsoz6w5qefv6S76+9T5dmM3FlamYKFm5GifUfqnpqbjg9iNmarOlkS+UqXuhZylyuiGRM8/E1JWZ4vgGC5a0KWku35ZHWGvKAGYDVvwUk8h14SfYax6tBhQnrb5IHnVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=jJMs1AHm; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20bb39d97d1so33330555ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 06:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1729432250; x=1730037050; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Inqg1tmm6xHd6cimigwIyJaawPAIIIaPNdfqb/QubP0=;
+        b=jJMs1AHmjpYrwIYX8/mXVXzE9dnu7gurx8w3QDnQhNYcaz8DWww+jwVyt/STyW1H+2
+         9zR5h7/PTaTsHOpVBmDKOkI4L2gcGoIRZQVzDkuzzHVtvOD6/luTI03bxnsQAAzoh/lr
+         rIc/1bFhCU42/K1pW2PWUAf5acltJUcj5rnVCrMwGxJWfp4P3sRlYv2aDGT7ta5A3Wk/
+         OefZhatVS3skPGhrP/64rP5jSaXNHdgcJjZgCpxpbRDLp/Ljjk+8P5vYG5vULWKUJ426
+         d4Hek9pfl0Dp73SFnAqX2o8E6D1nK8+2HH5RHFjVf9X0jJNNCQ8+EFUBIlbS0CPzygl6
+         yjqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729432250; x=1730037050;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Inqg1tmm6xHd6cimigwIyJaawPAIIIaPNdfqb/QubP0=;
+        b=bz/EHzMe2CRzcWFRQpk7F14OKEwRWX+ePIj6XWLRsFHAWyGa8r74YMmVjpqjcdkhyY
+         oLsDRi2+2tYES1I2pqmWBlWFsRdMMxipq+JrY4G09jpDLzMOyAccRwdd3O4XPtO7n9eI
+         RtXGxS3VDdMw2SjKBhGmbFIg3KcNkyj0kyQaoSGYv1V6LppCnJFHXREMjg3IdIzvKDnT
+         GreoCZD1GB3G6q8VDnRmYWGZdSavqsXZ2hNPRQJCeqRbHRqgC3RrBzNLtdKRK+pQ1OSi
+         9B87MqQdKTW4hPpxjlDxgJBcazQ7Y83a4VChd5Mn3HwBjh2okkeXv/KFHtrMO3JsV040
+         qqYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXqfryh54Utckdb0ywS/x038Tvl9CfymQrzFhDK79pEWPQri9NSTWXIAaBdrgvSlrvwHFQ39UpFeKQibS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqtvd8Bs4haPPENL1sc8UfDIGFEPlEGOvii/yQbEfKmbIIjAi4
+	Uu2QIdPxZgGp3VE1ayV/QBXGG5rTnWPiIUyOIG0+9Ypak1sBwT7B7cOfTVfwaa8=
+X-Google-Smtp-Source: AGHT+IFYcPnxuXktJBagQgtle0401hr/lktbq89F50ipN56+or5lo6r+eP3gufcTxqaRKoDCycgUkQ==
+X-Received: by 2002:a17:902:c94f:b0:207:18f5:7e78 with SMTP id d9443c01a7336-20e5a94acccmr102524295ad.48.1729432250435;
+        Sun, 20 Oct 2024 06:50:50 -0700 (PDT)
+Received: from localhost.localdomain ([2a11:3:200::40df])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee63f0sm10554935ad.3.2024.10.20.06.50.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 06:50:50 -0700 (PDT)
+From: Guodong Xu <guodong@riscstar.com>
+To: Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	rafal@milecki.pl,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Michael Zhu <michael.zhu@starfivetech.com>,
+	Drew Fustini <drew@beagleboard.org>,
+	Alexandru Stan <ams@frame.work>,
+	Daniel Schaefer <dhs@frame.work>,
+	Sandie Cao <sandie.cao@deepcomputing.io>,
+	Yuning Liang <yuning.liang@deepcomputing.io>,
+	Huiming Qiu <huiming.qiu@deepcomputing.io>,
+	Alex Elder <elder@riscstar.com>,
+	linux@frame.work,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Guodong Xu <guodong@riscstar.com>
+Subject: [PATCH v5 0/3] Add DeepComputing FML13V01 board dts
+Date: Sun, 20 Oct 2024 21:49:56 +0800
+Message-Id: <20241020134959.519462-1-guodong@riscstar.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+This series updates Device Tree related files to introduce the
+FML13V10 board from DeepComputing, which incorporates a StarFive
+JH7110 SoC.  This board is designed for use on the Framework Laptop 13
+Chassis, which has (Framework) SKU FRANHQ0001.
 
-  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+The original three versions of this series were posted by Sandie Cao
+from DeepComputing.  Her mailer configuration caused mail threading
+errors, which led to some confusion.  After some discussion, we have
+agreed to take over moving this series toward acceptance.
 
-are available in the Git repository at:
+Changes from v4:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.12-rc4
+Remove the extra "From:" line in commit messages of patch 1 & 2.
 
-for you to fetch changes up to 9b673c7551e6881ee0946be95e21ba290c8ac45e:
+Changes from v3:
 
-  misc: rtsx: list supported models in Kconfig help (2024-10-18 13:40:17 +0200)
+In this version, the board name is changed from FM7110 to FML13V10.
 
-----------------------------------------------------------------
-Char/Misc/IIO fixes for 6.12-rc4
+The descriptions for all patches in this series now have been updated
+(slightly).  The first patch received an ack from Krzysztof in v2, and
+the second patch received an ack from Rob on v3, and both are included
+here. Other than the board name, the content of the first and second
+patches are the same as before.
 
-Here are a number of small char/misc/iio driver fixes for 6.12-rc4.
-Included in here are the following:
-  - loads of small iio driver fixes for reported problems
-  - parport driver out-of-bounds fix
-  - Kconfig description and MAINTAINERS file updates
+The third patch has been modified.  pcie0 was marked as disabled in
+patch 3, and Krzysztof asked why pcie0 was enabled in the first place.
+In fact, it is *not* enabled, and the node disabling it in patch 3
+was not required.  Similarly, gmac1 is already disabled.  So these nodes
+have been removed in patch 3.
 
-All of these, except for the Kconfig and MAINTAINERS file updates have
-been in linux-next all week.  Those other two are just documentation
-changes and will have no runtime issues and were merged on Friday.
+However, gmac0 and pwmdac *are* enabled (in "jh7110-common.dtsi"),
+but they should not be (for now) on this board.  The same is true
+for spi0, csi2rx, and camss.  There are a few other nodes added in
+patch 3 to ensure things are disabled that should be. Finally, usb0
+remains enabled, but with a different operational mode (dr_mode =
+"host").
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The proper fix is to disable things except where they're needed rather
+than enabling them in jh7110-common.dtsi and disabling them for this
+board.  We propose to fix this in a follow-on patch (or series), but
+we can do this in a new version of this series if requested.
 
-----------------------------------------------------------------
-Christophe JAILLET (1):
-      iio: hid-sensors: Fix an error handling path in _hid_sensor_set_report_latency()
+Below is a version history, including direct links to all of the patches
+(because a single link to each series doesn't work).
 
-Dan Carpenter (2):
-      iio: bmi323: fix copy and paste bugs in suspend resume
-      iio: bmi323: fix reversed if statement in bmi323_core_runtime_resume()
+Best regards,
+Guodong, Alex
 
-David Lechner (1):
-      iio: adc: ad4695: Add missing Kconfig select
+v5:
+- Remove the extra "From:" line in commit messages of patch 1 & 2.
 
-Emil Gedenryd (1):
-      iio: light: opt3001: add missing full-scale range value
+v4:
+- Board name was changed from FM7110 to FML13V10
+- Descriptions for all patches in this series were updated slightly
+- Add Rob's ack on patch 2
+- In patch 3, device nodes were updated to reflect their proper status
 
-Greg Kroah-Hartman (2):
-      Merge tag 'iio-fixes-for-6.12a' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/jic23/iio into char-misc-linus
-      MAINTAINERS: Remove some entries due to various compliance requirements.
+https://lore.kernel.org/linux-riscv/20241019162605.308475-1-guodong@riscstar.com/
 
-Heiko Thiery (2):
-      misc: microchip: pci1xxxx: add support for NVMEM_DEVID_AUTO for EEPROM device
-      misc: microchip: pci1xxxx: add support for NVMEM_DEVID_AUTO for OTP device
+v3:
+- Update board features into description
+- Add Krzysztof's ack on patch 1
 
-Javier Carrasco (24):
-      iio: light: veml6030: fix IIO device retrieval from embedded device
-      iio: light: veml6030: fix ALS sensor resolution
-      iio: accel: kx022a: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: adc: ad7944: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: adc: ti-ads124s08: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: adc: ti-lmp92064: add missing select REGMAP_SPI in Kconfig
-      iio: adc: ti-lmp92064: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: dac: ad3552r: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: dac: ad5766: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: chemical: ens160: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: light: bu27008: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: magnetometer: af8133j: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: pressure: bm1390: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: proximity: mb1232: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: resolver: ad2s1210 add missing select REGMAP in Kconfig
-      iio: resolver: ad2s1210: add missing select (TRIGGERED_)BUFFER in Kconfig
-      iio: frequency: adf4377: add missing select REMAP_SPI in Kconfig
-      iio: amplifiers: ada4250: add missing select REGMAP_SPI in Kconfig
-      iio: dac: ad5770r: add missing select REGMAP_SPI in Kconfig
-      iio: dac: ltc1660: add missing select REGMAP_SPI in Kconfig
-      iio: dac: stm32-dac-core: add missing select REGMAP_MMIO in Kconfig
-      iio: adc: ti-ads8688: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-      iio: frequency: {admv4420,adrf6780}: format Kconfig entries
-      iio: frequency: admv4420: fix missing select REMAP_SPI in Kconfig
+https://lore.kernel.org/all/20240925053123.1364574-1-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240925053123.1364574-2-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240925053123.1364574-3-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240925053123.1364574-4-sandie.cao@deepcomputing.io/
 
-Jonathan Cameron (1):
-      iio: pressure: sdp500: Add missing select CRC8
+v2:
+- Add deepcomputing into vendor list.
+- Add deepcomputing,fm7110 into model compatible list.
+- Framework Config will be included in later a patch.
 
-Mikhail Lobanov (1):
-      iio: accel: bma400: Fix uninitialized variable field_value in tap event handling.
+https://lore.kernel.org/all/20240924080650.1345485-1-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240924080650.1345485-2-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240924080650.1345485-3-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240924080650.1345485-4-sandie.cao@deepcomputing.io/
 
-Mohammed Anees (1):
-      iioc: dac: ltc2664: Fix span variable usage in ltc2664_channel_config()
+v1:
+- Add framework dts and config.
 
-Nathan Chancellor (1):
-      iio: bmi323: Drop CONFIG_PM guards around runtime functions
+https://lore.kernel.org/all/20240923053621.1585972-1-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240923053621.1585972-2-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240923053806.1586080-1-sandie.cao@deepcomputing.io/
 
-Rob Herring (Arm) (1):
-      dt-bindings: iio: dac: adi,ad56xx: Fix duplicate compatible strings
+Guodong Xu (1):
+  riscv: dts: starfive: add DeepComputing FML13V01 board device tree
 
-Takashi Iwai (1):
-      parport: Proper fix for array out-of-bounds access
+Sandie Cao (2):
+  dt-bindings: vendor: add deepcomputing
+  dt-bindings: riscv: starfive: add deepcomputing,fml13v01
 
-Yo-Jung (Leo) Lin (1):
-      misc: rtsx: list supported models in Kconfig help
+ .../devicetree/bindings/riscv/starfive.yaml   |  1 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
+ arch/riscv/boot/dts/starfive/Makefile         |  1 +
+ .../jh7110-deepcomputing-fml13v01.dts         | 44 +++++++++++++++++++
+ 4 files changed, 48 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
 
- .../devicetree/bindings/iio/dac/adi,ad5686.yaml    |  53 ++----
- .../devicetree/bindings/iio/dac/adi,ad5696.yaml    |   3 +-
- MAINTAINERS                                        | 178 ---------------------
- drivers/iio/accel/Kconfig                          |   2 +
- drivers/iio/accel/bma400_core.c                    |   3 +-
- drivers/iio/adc/Kconfig                            |  11 ++
- drivers/iio/amplifiers/Kconfig                     |   1 +
- drivers/iio/chemical/Kconfig                       |   2 +
- .../iio/common/hid-sensors/hid-sensor-trigger.c    |   2 +-
- drivers/iio/dac/Kconfig                            |   7 +
- drivers/iio/dac/ltc2664.c                          |  17 +-
- drivers/iio/frequency/Kconfig                      |  32 ++--
- drivers/iio/imu/bmi323/bmi323_core.c               |  23 ++-
- drivers/iio/light/Kconfig                          |   2 +
- drivers/iio/light/opt3001.c                        |   4 +
- drivers/iio/light/veml6030.c                       |   5 +-
- drivers/iio/magnetometer/Kconfig                   |   2 +
- drivers/iio/pressure/Kconfig                       |   4 +
- drivers/iio/proximity/Kconfig                      |   2 +
- drivers/iio/resolver/Kconfig                       |   3 +
- drivers/misc/cardreader/Kconfig                    |   3 +-
- drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c  |   2 +
- drivers/parport/procfs.c                           |  22 +--
- 23 files changed, 116 insertions(+), 267 deletions(-)
+-- 
+2.34.1
+
 
