@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-373259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9366A9A5463
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:51:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5699A5465
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B3DFB22217
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:51:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4609B282D26
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98361192D69;
-	Sun, 20 Oct 2024 13:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E365A192D84;
+	Sun, 20 Oct 2024 13:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="jJMs1AHm"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="3CTkdRWA"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505D84C7D
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 13:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B86192B9E
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 13:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729432253; cv=none; b=EaJBEqOzsUaSZb88dSHd0Xq8ra5TeylvgjZElj2lALz8NGlu8XDOxTp8hPvmKz37/qTH80Do3zcGP6hXGH3LkNZI0nmkFxJ9XvKl+BYG4q3PvEKlx6VHY30ABXL7XkAG/0ni7S3dg9MVtUN5W8lFLJKUM2/zk+Yv0U/lfMruySM=
+	t=1729432275; cv=none; b=J5MWnknV+wXkiRsWXspMMo+JUKjwWTgKLypOK7975TVUkJMovBsOYofvU6/wxkmv11bNItf6GuIzhzFTWDyNVHkv6NBuHCR9M1jsoCK9wHL3DWL6vLRbTji2S7vG7zjRcGjDEbVpbLIL9nnzUkBHhGjAjjy8/Cc9IILJ3IBINW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729432253; c=relaxed/simple;
-	bh=3ixVkNJPxWFe97eRFC1T0i5mV+yElzvwk03zFFD0ZzU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bGDJGgWyQAYIozmpcLu8QdqKnnwDEJcCQMXMbCSlAtyVsoz6w5qefv6S76+9T5dmM3FlamYKFm5GifUfqnpqbjg9iNmarOlkS+UqXuhZylyuiGRM8/E1JWZ4vgGC5a0KWku35ZHWGvKAGYDVvwUk8h14SfYax6tBhQnrb5IHnVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=jJMs1AHm; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1729432275; c=relaxed/simple;
+	bh=JoWkKFBeo7yvxDdD9XCOEG7N5AMm357CJbsqOD/SrzE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=vDoKaF8KOKeIKngEnJItXhaSft+m3Zr/KhFcR80SmYmbjM97HL7lXxGE59Gkf00OByRWLwHU+ZQTD/ykFfsTbXSJAW67JauVVagHEW/oN25Dt98I0Lh6kba05nmPtBLUbEU3KJgjrig5Tw/y4yCAnNpe1qpyHrfbk0wCvU+pevc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=3CTkdRWA; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20bb39d97d1so33330555ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 06:50:51 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20caccadbeeso40231755ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 06:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1729432250; x=1730037050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Inqg1tmm6xHd6cimigwIyJaawPAIIIaPNdfqb/QubP0=;
-        b=jJMs1AHmjpYrwIYX8/mXVXzE9dnu7gurx8w3QDnQhNYcaz8DWww+jwVyt/STyW1H+2
-         9zR5h7/PTaTsHOpVBmDKOkI4L2gcGoIRZQVzDkuzzHVtvOD6/luTI03bxnsQAAzoh/lr
-         rIc/1bFhCU42/K1pW2PWUAf5acltJUcj5rnVCrMwGxJWfp4P3sRlYv2aDGT7ta5A3Wk/
-         OefZhatVS3skPGhrP/64rP5jSaXNHdgcJjZgCpxpbRDLp/Ljjk+8P5vYG5vULWKUJ426
-         d4Hek9pfl0Dp73SFnAqX2o8E6D1nK8+2HH5RHFjVf9X0jJNNCQ8+EFUBIlbS0CPzygl6
-         yjqg==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1729432272; x=1730037072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3mSKaigzCZh6DD67qUNYuh/ETwBUWDczHGXUVVmnZHc=;
+        b=3CTkdRWATbCSrAdHGUha0qJ4zAzjyj3foEf2zUSehKQUc4SHCfU5Qc1B6gZVfLHczG
+         coW4nEp/5wBFXv6mr5aCZpE4nnbrrU6Do5FKinrRa7GqaTGfMQyvn4sTrsp5Es/CGCnn
+         IEd+5llT1bbcNFxJ8VVA4TqRZOjA6Mz4J9+VOK3SSbXA5sWq7S6WwCrOWfUUF0Twpul1
+         HrSuC18cum/Cjp60yhOWSUmEiP0kMHD9hT3VFT25PyANs+oZKWqSb44cG+6/95d2KMLn
+         jEK3oruoiln5zD/CkWnlxPD94LxxmYGmSo945hkNC6XFBZWvgGyiBXytPI7o7jSwUtBE
+         /r9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729432250; x=1730037050;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Inqg1tmm6xHd6cimigwIyJaawPAIIIaPNdfqb/QubP0=;
-        b=bz/EHzMe2CRzcWFRQpk7F14OKEwRWX+ePIj6XWLRsFHAWyGa8r74YMmVjpqjcdkhyY
-         oLsDRi2+2tYES1I2pqmWBlWFsRdMMxipq+JrY4G09jpDLzMOyAccRwdd3O4XPtO7n9eI
-         RtXGxS3VDdMw2SjKBhGmbFIg3KcNkyj0kyQaoSGYv1V6LppCnJFHXREMjg3IdIzvKDnT
-         GreoCZD1GB3G6q8VDnRmYWGZdSavqsXZ2hNPRQJCeqRbHRqgC3RrBzNLtdKRK+pQ1OSi
-         9B87MqQdKTW4hPpxjlDxgJBcazQ7Y83a4VChd5Mn3HwBjh2okkeXv/KFHtrMO3JsV040
-         qqYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqfryh54Utckdb0ywS/x038Tvl9CfymQrzFhDK79pEWPQri9NSTWXIAaBdrgvSlrvwHFQ39UpFeKQibS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqtvd8Bs4haPPENL1sc8UfDIGFEPlEGOvii/yQbEfKmbIIjAi4
-	Uu2QIdPxZgGp3VE1ayV/QBXGG5rTnWPiIUyOIG0+9Ypak1sBwT7B7cOfTVfwaa8=
-X-Google-Smtp-Source: AGHT+IFYcPnxuXktJBagQgtle0401hr/lktbq89F50ipN56+or5lo6r+eP3gufcTxqaRKoDCycgUkQ==
-X-Received: by 2002:a17:902:c94f:b0:207:18f5:7e78 with SMTP id d9443c01a7336-20e5a94acccmr102524295ad.48.1729432250435;
-        Sun, 20 Oct 2024 06:50:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729432272; x=1730037072;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3mSKaigzCZh6DD67qUNYuh/ETwBUWDczHGXUVVmnZHc=;
+        b=ls0ycMDFxUAYa2IBVMFBJJDugGcm48NhGlh92ne1jhl4g3HpkW5WTmc8Kpj7JJvo0A
+         XOyTR2mzrpvcY12oUKDqAxMSme7fuvBArl+6Lq53SeUOYEmDRILjekCZjBR6re2uMdad
+         3LupQ5xHwMW0dlmj3noXkgj7D6ctDLgZgDLe0j1Z71JlWDBveJ26R8ELSBfATaRJx5fa
+         9hkwl9Bj486rz/m9XLUEwludYTL8N1wPIgWIZQHhe5zcZKNc+OUIRMOc88rSJP4wN+KC
+         cFeeXBR8bMK0BFV5sbPctFVUdpoKtwOTxnbOubD1gB4ICPPG1lAXKrNdymHA0cdO79AC
+         s63g==
+X-Forwarded-Encrypted: i=1; AJvYcCXZMjNP8lb0KgNdZVlsDZU3W+19Q9bRkZ4pWV48z3akZTB9yjtHViX7+0w/5b94QBHDSeICcB0RYpzjkxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw8mnogu0PKEtOIa7T4FpEbS8sBLe5oNiRJcGs+/Qim+/Krn8v
+	v6NXWZHBKORuIjuWnLHLnlY/FLZPC3KZojA/IlXal5TzxSYFzqkqOT+6wrwpYwY=
+X-Google-Smtp-Source: AGHT+IHwDpd5QJfP6/APfYz9jCZn27fX4Z5ntBmC4Na1PFB7aUjCldslVEpY68xkxkDoxwfvRQa+2Q==
+X-Received: by 2002:a17:902:e54c:b0:20b:7ed8:3978 with SMTP id d9443c01a7336-20e5a8fe8d5mr104601955ad.26.1729432272577;
+        Sun, 20 Oct 2024 06:51:12 -0700 (PDT)
 Received: from localhost.localdomain ([2a11:3:200::40df])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee63f0sm10554935ad.3.2024.10.20.06.50.34
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee63f0sm10554935ad.3.2024.10.20.06.50.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 06:50:50 -0700 (PDT)
+        Sun, 20 Oct 2024 06:51:11 -0700 (PDT)
 From: Guodong Xu <guodong@riscstar.com>
 To: Conor Dooley <conor@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -88,11 +90,14 @@ Cc: Paul Walmsley <paul.walmsley@sifive.com>,
 	devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
 	Guodong Xu <guodong@riscstar.com>
-Subject: [PATCH v5 0/3] Add DeepComputing FML13V01 board dts
-Date: Sun, 20 Oct 2024 21:49:56 +0800
-Message-Id: <20241020134959.519462-1-guodong@riscstar.com>
+Subject: [PATCH v5 1/3] dt-bindings: vendor: add deepcomputing
+Date: Sun, 20 Oct 2024 21:49:57 +0800
+Message-Id: <20241020134959.519462-2-guodong@riscstar.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241020134959.519462-1-guodong@riscstar.com>
+References: <20241020134959.519462-1-guodong@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,105 +106,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series updates Device Tree related files to introduce the
-FML13V10 board from DeepComputing, which incorporates a StarFive
-JH7110 SoC.  This board is designed for use on the Framework Laptop 13
-Chassis, which has (Framework) SKU FRANHQ0001.
+From: Sandie Cao <sandie.cao@deepcomputing.io>
 
-The original three versions of this series were posted by Sandie Cao
-from DeepComputing.  Her mailer configuration caused mail threading
-errors, which led to some confusion.  After some discussion, we have
-agreed to take over moving this series toward acceptance.
+Add "deepcomputing" to the Devicetree Vendor Prefix Registry.
 
-Changes from v4:
+Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+[elder@riscstar.com: revised the description]
+Signed-off-by: Alex Elder <elder@riscstar.com>
+Signed-off-by: Guodong Xu <guodong@riscstar.com>
+---
+v5: Removed extra "From:" line in the commit message
+v4: Updated description
+v3: Add Krzysztof's ack
+v2: Add deepcomputing into Vendor Prefix Registery
 
-Remove the extra "From:" line in commit messages of patch 1 & 2.
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes from v3:
-
-In this version, the board name is changed from FM7110 to FML13V10.
-
-The descriptions for all patches in this series now have been updated
-(slightly).  The first patch received an ack from Krzysztof in v2, and
-the second patch received an ack from Rob on v3, and both are included
-here. Other than the board name, the content of the first and second
-patches are the same as before.
-
-The third patch has been modified.  pcie0 was marked as disabled in
-patch 3, and Krzysztof asked why pcie0 was enabled in the first place.
-In fact, it is *not* enabled, and the node disabling it in patch 3
-was not required.  Similarly, gmac1 is already disabled.  So these nodes
-have been removed in patch 3.
-
-However, gmac0 and pwmdac *are* enabled (in "jh7110-common.dtsi"),
-but they should not be (for now) on this board.  The same is true
-for spi0, csi2rx, and camss.  There are a few other nodes added in
-patch 3 to ensure things are disabled that should be. Finally, usb0
-remains enabled, but with a different operational mode (dr_mode =
-"host").
-
-The proper fix is to disable things except where they're needed rather
-than enabling them in jh7110-common.dtsi and disabling them for this
-board.  We propose to fix this in a follow-on patch (or series), but
-we can do this in a new version of this series if requested.
-
-Below is a version history, including direct links to all of the patches
-(because a single link to each series doesn't work).
-
-Best regards,
-Guodong, Alex
-
-v5:
-- Remove the extra "From:" line in commit messages of patch 1 & 2.
-
-v4:
-- Board name was changed from FM7110 to FML13V10
-- Descriptions for all patches in this series were updated slightly
-- Add Rob's ack on patch 2
-- In patch 3, device nodes were updated to reflect their proper status
-
-https://lore.kernel.org/linux-riscv/20241019162605.308475-1-guodong@riscstar.com/
-
-v3:
-- Update board features into description
-- Add Krzysztof's ack on patch 1
-
-https://lore.kernel.org/all/20240925053123.1364574-1-sandie.cao@deepcomputing.io/
-https://lore.kernel.org/all/20240925053123.1364574-2-sandie.cao@deepcomputing.io/
-https://lore.kernel.org/all/20240925053123.1364574-3-sandie.cao@deepcomputing.io/
-https://lore.kernel.org/all/20240925053123.1364574-4-sandie.cao@deepcomputing.io/
-
-v2:
-- Add deepcomputing into vendor list.
-- Add deepcomputing,fm7110 into model compatible list.
-- Framework Config will be included in later a patch.
-
-https://lore.kernel.org/all/20240924080650.1345485-1-sandie.cao@deepcomputing.io/
-https://lore.kernel.org/all/20240924080650.1345485-2-sandie.cao@deepcomputing.io/
-https://lore.kernel.org/all/20240924080650.1345485-3-sandie.cao@deepcomputing.io/
-https://lore.kernel.org/all/20240924080650.1345485-4-sandie.cao@deepcomputing.io/
-
-v1:
-- Add framework dts and config.
-
-https://lore.kernel.org/all/20240923053621.1585972-1-sandie.cao@deepcomputing.io/
-https://lore.kernel.org/all/20240923053621.1585972-2-sandie.cao@deepcomputing.io/
-https://lore.kernel.org/all/20240923053806.1586080-1-sandie.cao@deepcomputing.io/
-
-Guodong Xu (1):
-  riscv: dts: starfive: add DeepComputing FML13V01 board device tree
-
-Sandie Cao (2):
-  dt-bindings: vendor: add deepcomputing
-  dt-bindings: riscv: starfive: add deepcomputing,fml13v01
-
- .../devicetree/bindings/riscv/starfive.yaml   |  1 +
- .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
- arch/riscv/boot/dts/starfive/Makefile         |  1 +
- .../jh7110-deepcomputing-fml13v01.dts         | 44 +++++++++++++++++++
- 4 files changed, 48 insertions(+)
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index b320a39de7fe..f8bb3df65797 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -356,6 +356,8 @@ patternProperties:
+     description: DataImage, Inc.
+   "^davicom,.*":
+     description: DAVICOM Semiconductor, Inc.
++  "^deepcomputing,.*":
++    description: DeepComputing (HK) Limited
+   "^dell,.*":
+     description: Dell Inc.
+   "^delta,.*":
 -- 
 2.34.1
 
