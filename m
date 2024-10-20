@@ -1,133 +1,88 @@
-Return-Path: <linux-kernel+bounces-373125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BFD19A528A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:15:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC669A528C
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 07:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32356283D7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:15:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38351C21132
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799C011187;
-	Sun, 20 Oct 2024 05:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKTtG7Tj"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26CCEAFA;
+	Sun, 20 Oct 2024 05:27:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CB5747F;
-	Sun, 20 Oct 2024 05:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB05EBE5E
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 05:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729401328; cv=none; b=ZxjvICL1AwaC2cgvat+7POd/HUdLClB9MJXkAoDsBaFAqjmEImJZfopI3yWTQCRaQArLUYUlQunFUK88+b76dszCLLum45x33LuGZA7/9Hs42cCUzdcQ0v37HKcjpEOytVlh5jwb45k8aB/MT3qlM7QUcR782j7WCp2ausAQGvA=
+	t=1729402027; cv=none; b=Sesu5AOYi7HYd/gagH12cz8p9Ewwb+1l8wym/kkiOWyIxvvmHi4l5zRA/pdSrLCRltmFjU6Zly/2MtEwbZ4QtzjEqtdg7r1lD+lC2QHPk6jg1GU/a0gERHL55q3xCAu3jYLhfn7Bgdy0sEgs5orniRUlzEtuj8hw3omLONuI9dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729401328; c=relaxed/simple;
-	bh=EiS1xJd1Mm5kFjrRr9U5CfecgYtGUDFHb98U0Psae/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hfbQOXx46+ZoGlR4eZqV48PQjGsuUY3EfB2iC8glfltz05l3hVvefuVJ1qSy+2VoiC4uc27fhBzTt2Nb2wCEnUFKlfFp5nVifWv5AMDibog8dsS3QU1+24JmOdDV/rLJPAC2rN+wpDVpQswsoVWZmZgvt5lKNCXr9zX9cC5pIOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QKTtG7Tj; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20cceb8d8b4so20015995ad.1;
-        Sat, 19 Oct 2024 22:15:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729401326; x=1730006126; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mPLTUkSwRn/ADCNGu4AGpEmYT7rtlb2CMdwqNdOxpTA=;
-        b=QKTtG7TjOstHNeIvKZ3umi8kdnWBls6FPY1U4KIZpeDb6CwQ2LpjEltMFQAuyNcEvX
-         fgQXWDsAa4o9CbeOyrmbIxzM5tVFLAJwjAL5lc2q5PDkz010JNlqp9ursrPz28M6YTkl
-         ZIha354g2WaVFeKHkGh1Qkev58tZ6dOHJUH2JMKDP03T8dCg2in1Nm05OWyd+D8mMlxs
-         +ZXfZJIIubl0bHXZ7Y2R2/RXrk9DNost0DgaLG2YJaXfuqKyWo/p+yBn/HUZm2TqdozK
-         5Ge7IwRCznCP5xlvPkA0vHTsgjn2/uBFV6Hy9CNTn2VXqlg1oQXh9StNrfKceAvMegPL
-         YJ9w==
+	s=arc-20240116; t=1729402027; c=relaxed/simple;
+	bh=a5Rcf6a6v5JDZThblChhGloRU+jtbi7xTzEPZ1eKLa4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pIsUqYhGUQy2ZpI3mOjp2grMXgXd9X8AT7lx2pbMhOElQcZxfNW69wu3opvTPNTzXTXv9RlpEwvHxebocFEWa+YmzlRA5XKj6bnlfbdZz/NdXD46rP2qvmWDkDQVgoBOOT+HSo0FB1Y000fjAN/4M9vNsmNk2trn7Jzl+bqkKi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c72d4ac4so33463185ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 22:27:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729401326; x=1730006126;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mPLTUkSwRn/ADCNGu4AGpEmYT7rtlb2CMdwqNdOxpTA=;
-        b=wJx0IPOGaYzYxohIDgFKrTejasMXZhwpai0HFytJJ31QEFUPqo/7vWba5AZbAUb/YD
-         YqoaZNtBWB3LCLNFLSNDd+gV6h7+TLh+68psdLqnhdARK5GQSBAKejxXhT9oWo3FpEG0
-         u4FuSHaxgYVTMJMCWaUKFxwnEdFnor8nUwfX2u5ttG0JCkdV7Cn5vqCrZCH8cEyroFMJ
-         4Qxg3MMGZWfNsuhR8RhEeOf2fprfFRw7mMN4QJAoZjzkuggv4VYl0PZuW/mmT+t+YqED
-         K5zfUkkLBU7kbt8JkURa4aAC6LJ6zSlrWL+oWoO5o19mB36UfgTxlM6am41vmnCI/Ape
-         hPWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjrU6i6CTyaKkIDzuGU8rL9yMntdPoDvMG6iR2mAyIEvPG+FYdR7z6nhMmuBEzh3IIL8GliH5tnPEW@vger.kernel.org, AJvYcCWS1S4RnVsFLtqfziCKymX9dhTwk0sQwsW+CmLCR38lG/MfanQTdJy27M4RzUKAH889BNzOhiOUCA8655Vm@vger.kernel.org, AJvYcCXLyRZwQBR+TZwJfAvovZAgDiNVCcpOiY6JHpdrDxMxUA9Qe9NJuLfmE0PCC2g/vMKVrmh3UAUAWrSgXzw=@vger.kernel.org, AJvYcCXMWtU6YraYQQ2WvRwfbbk3TNckgituUls2EZEgOY/IetL1deKImGLooTI0zgoiXUS54/oyB7BNaXvQS8xs+5U=@vger.kernel.org, AJvYcCXP9b9B5Wke35+YC7La4vKRTJ3HfpBPt2ERDHTxoT/qv24yoxmWkiwkg8W7z+oTZ/TCauj/NuB5FheyVFImSfhpwQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBkDwb3gophCq+V3OljVPK2BnljDrL3Wo87ISP8rWEUQdwxQyp
-	QvlKNT8FkMazjxua27WhdtamnglobE8eUqTy166wXLvOe+l9EfUckJQtpA==
-X-Google-Smtp-Source: AGHT+IE2fzzFACXVkzcnLBp5pcAmsooXt9koAwUC1XLg/0exaP+5fY0FgX9aH1MGPibSba2Conm9sg==
-X-Received: by 2002:a17:902:d4c9:b0:20b:c043:3873 with SMTP id d9443c01a7336-20e5c29ab00mr108315935ad.21.1729401326147;
-        Sat, 19 Oct 2024 22:15:26 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0de39fsm4857465ad.206.2024.10.19.22.15.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 22:15:24 -0700 (PDT)
-Date: Sun, 20 Oct 2024 13:15:19 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: colyli@suse.de, kent.overstreet@linux.dev, msakai@redhat.com,
-	corbet@lwn.net, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, akpm@linux-foundation.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, jserv@ccns.ncku.edu.tw,
-	linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/3] lib/min_heap: Introduce non-inline versions of min
- heap API functions
-Message-ID: <ZxSR50u0qLYPUeH+@visitorckw-System-Product-Name>
-References: <20241013184703.659652-1-visitorckw@gmail.com>
- <20241013184703.659652-2-visitorckw@gmail.com>
- <20241014081358.GS17263@noisy.programming.kicks-ass.net>
+        d=1e100.net; s=20230601; t=1729402025; x=1730006825;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3lpPtvmifi5Sca04uwV/sjmM6lHv0HJRcL4LGQWXbZI=;
+        b=uFGxKLPU/n3gEy35ip6qT+hpy7B6++qx1afUozm16EVFVcIZAtCr2bE9AvMbWoVmbU
+         aR8yh7KUYHp0eUFH3RebzYsJUBZMhrp7Ary7DEYMaCjoafKTz5tl1FQ5RWGwABBRRrhu
+         Xz8rTQglb4xOpAamXs0DC1ggpaxcVmeplKo3cd/rDEi3N0l6trkR+Jdkcrw+AwYUhk9m
+         rtvgykaC6+nMzsKjx5JxPQSXVWu3IpDCzK2eOXpJvUqNMWkH9QfPsbpFZ3r948qo7y76
+         Uj3nDqtn45GTNQkt7WqubrPG3eh5KrxosttfzFQtxVSxDoFv4jS4w1yfwcVM4101zekv
+         6Vyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXr1gUIvmu+pDbzXl/MJjhcQbHw9ERrPihrOum3bt97vRgrr20KPzVYSdi6oy01GAyOnbDKhrIYaQ8S0cI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ/AL8a5pXrCgtbL59AYVSjt4Jsri5Z14LlvqvPSrWphg2Zvgy
+	5wSRNN7QIThurkrvR2rZLe6mrkD5a4CJUDU49kUogq1IEMkLMNE2uLVNhhNplyVe6O9+rshc2qM
+	WZdikiL8rIpqCMRX1OHgyQSnFWOkQeI0FQcP0zI7YTAszxF/dYBBuDGQ=
+X-Google-Smtp-Source: AGHT+IEYce9sUyNDdTk+wgGzFw2BwQz03vWyRMhmI14+zjrbpa+FnVBxVGn7dNxGyzCKuqAaIyh1OXcVhnLc8MTf6tvTILICZaan
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014081358.GS17263@noisy.programming.kicks-ass.net>
+X-Received: by 2002:a05:6e02:1385:b0:3a0:8d8a:47c with SMTP id
+ e9e14a558f8ab-3a3f4073df5mr70096325ab.14.1729402024790; Sat, 19 Oct 2024
+ 22:27:04 -0700 (PDT)
+Date: Sat, 19 Oct 2024 22:27:04 -0700
+In-Reply-To: <tencent_3D5A3D31368C961236E64AB074D777FD6609@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671494a8.050a0220.10f4f4.002a.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] KASAN: null-ptr-deref Write in
+ xfs_filestream_select_ag (2)
+From: syzbot <syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 14, 2024 at 10:13:58AM +0200, Peter Zijlstra wrote:
-> On Mon, Oct 14, 2024 at 02:47:01AM +0800, Kuan-Wei Chiu wrote:
-> > All current min heap API functions are marked with '__always_inline'.
-> > However, as the number of users increases, inlining these functions
-> > everywhere leads to a significant increase in kernel size.
-> > 
-> > In performance-critical paths, such as when perf events are enabled and
-> > min heap functions are called on every context switch, it is important
-> > to retain the inline versions for optimal performance. To balance this,
-> > the original inline functions are kept, and additional non-inline
-> > versions of the functions have been added in lib/min_heap.c.
-> 
-> The reason it is all __always_inline is because then the whole
-> min_heap_callbacks thing can be constant propagated and the func->less()
-> etc calls become direct calls.
-> 
-> Doing out of line for this stuff, makes them indirect calls, and
-> indirect calls are super retarded expensive ever since spectre. But also
-> things like kCFI add significant cost to indirect calls.
-> 
-> Something that would be a trivial subtract instruction becomes this
-> giant mess of an indirect function call.
-> 
-> Given the whole min_heap thing is basically a ton of less() and swp()
-> calls, I really don't think this trade off makes any kind of sense.
+Hello,
 
-BTW, Regarding the concerns about the efficiency impact of indirect
-function calls, should we also consider converting some calls to
-sort()/list_sort() into inline function calls? The comparison functions
-they require could lead to a significant number of indirect calls.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-For instance, the comparison function passed to list_sort() in ubifs
-calls cond_resched(), which implies that the linked list could be
-lengthy, further increasing the likelihood of numerous indirect calls.
+Reported-by: syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com
+Tested-by: syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com
 
-Regards,
-Kuan-Wei
+Tested on:
+
+commit:         715ca9dd Merge tag 'io_uring-6.12-20241019' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a120a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=78db40d8379956d9
+dashboard link: https://syzkaller.appspot.com/bug?extid=4125a3c514e3436a02e6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12480d1b980000
+
+Note: testing is done by a robot and is best-effort only.
 
