@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-373089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48309A5218
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:25:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943089A521D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 354C9B23829
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 03:25:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552A6283EAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 03:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA6E6FBF;
-	Sun, 20 Oct 2024 03:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996973D64;
+	Sun, 20 Oct 2024 03:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeSAfr5+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qm2RPNDd"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45BC28E7;
-	Sun, 20 Oct 2024 03:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495F18F54
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 03:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729394728; cv=none; b=rHRtuskTVUSnPP5duoW2UmwZ/f+mdiQwm9izrY1VWmh+xS0Zx68RoGkPJo3Pw4NhRFnEAkbAAExCzYHLzvKI9ffGYG6MEgT3yKdleujq+T65VApuw6Ec+vpdbOwyC4hfKAcfExAYiZsla+zc7mEl1XTA9cU97f8wzA+Yp583F14=
+	t=1729395143; cv=none; b=p9+f26fM0V5p/cmHW4rsCaIgGoRfzMjnsS6pUOywSe4YQubPej7Ig9JXBSm7Iq5oigP8bV/7CbHO2erTxNzmWPiu7e+4Zcl9UkHu2+7F26YduS8gqQrIBRYPEB+a1N7bjbrwRfipkm1wDdnpnPkUTFsZsQiuaDTbttuFbGb4kMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729394728; c=relaxed/simple;
-	bh=mz0/k4cJHWArxWFnNfCOwKgrevz3pP6WZwnhnKTk6Qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kTFlfeyFJUufoOAc0BOpbO8njFYTAOzHkzSQAOBGvUiAnXj8S7up1JHLF9MJuV60+MV6mcTroZ18f5/q/Z6Nzn8K+YhmBbMVAfeJu5f1Rd+ejBjGmIY7cZGlR1p0JC+ysNe7NVE7leKo8GNWTXvEdVmI6zbmDi8FDHQyprwYEfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeSAfr5+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19D5DC4CEC6;
-	Sun, 20 Oct 2024 03:25:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729394727;
-	bh=mz0/k4cJHWArxWFnNfCOwKgrevz3pP6WZwnhnKTk6Qk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AeSAfr5+PiWsU+bhzOrYzV8wCNwGkJE5AMtI8eH31cgGM/evvvxQhK81621jifHcI
-	 7+UAWrrIxXlXWVpOHHwFe/M+kcL3UJLhG/+P57CSUrw16AgFzGOG3+le+33Tc7Q3RC
-	 +HnY/TUl4XkbDkINSJPDYRAqgucEN2m0p3cQp7rdlfjr58dodiqhvvOx1j2S9C7M8z
-	 7PYwk4ZgFGIVLOLJUwqUZAw3aA7WCUUDQXJAcUGd8V+DZ5ULGY3+2eBHf0Pb+Bqq76
-	 5b42jU3kyqKmVwshtonKYUgDaUC/SoowtQBKgKIM4DYUGHxGEHoufHT/MP2GXSOkba
-	 SQ2ecyRjsZ9/w==
-Date: Sat, 19 Oct 2024 20:25:23 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Rong Xu <xur@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
-	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
-	Brian Gerst <brgerst@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Li <davidxl@google.com>, Han Shen <shenhan@google.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Maksim Panchenko <max4bolt@gmail.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Yabin Cui <yabinc@google.com>, x86@kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v4 0/6] Add AutoFDO and Propeller support for Clang build
-Message-ID: <20241020032523.GA3652325@thelio-3990X>
-References: <20241014213342.1480681-1-xur@google.com>
- <CAF1bQ=SQ9rFdwRk_waQvn4PW7x6T1uJmJ8qNqj04oRKmujkCQw@mail.gmail.com>
+	s=arc-20240116; t=1729395143; c=relaxed/simple;
+	bh=xCK3AXY8CDW1ReLuuT8y4IcuNqEUNdip/M7kljNMa6o=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=s7RfhkXDQGNtPgtV+KLUL/zsoYA3is4XHADj7IcZLI1p6oRP5hTzyWfHXUoAmAP/NQz59UKdV+JWbKP3N/hJkrnU4Y/7h1/x1lRFiAMcYEa7dQQt+wUnle70y3qFsUNyQouq8bZaMviMCzcbfco9DnEzDdSTYizkrY8Co2YxLc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qm2RPNDd; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c77459558so29444665ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 20:32:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729395140; x=1729999940; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=arsoYGK56l+bg8s3KsyQtHRFxcfKcaAdMop/4D8FedQ=;
+        b=Qm2RPNDdy/WyhNAvU3xTFrtutQMUvxjUyABNtNq3r83QpdHmbNl9+lG5mR4iKRShGS
+         4aAVdNa+c3U2cfAZewavqk8RCtKdEki4ZFbl4IATkqdML92q1YUEBxltR6gh6URaSipE
+         fe7WLJplClVEqdbNo9oQCDXiNgLaj/UNtmg8+4+BAu2cTGkP8XKV5oy3IiqfbHEM2srJ
+         ubTB+r8b9BPncfZJ1iNFM3yhmXG0oJpd72zAw6HGCzda1WHjjnFjxPizNkxVPxr6zeFX
+         xOVADnLcy7Wf/ybo/MuUU490cTYDOHXZ4IJoOfpJb4lB3Bnecoc18CKL2C//q0cr9/84
+         cJAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729395140; x=1729999940;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=arsoYGK56l+bg8s3KsyQtHRFxcfKcaAdMop/4D8FedQ=;
+        b=S8U4kehMdvwJdWNO2VRQdkgikpCUv4p3IAw3jH8hwXNC+TxayT91XrM1IQv/CZN1P0
+         zw0KZTIlLEQ9LHPDdnK+Xhq//l1rsOhqtF5XHqzvyviOatmOuLXEN0l7KG6zRVa+4NB0
+         f3NfmK1b2x8nnSTxj8AKnfqE4tPMpIwV2fKj02Ib1J1U9HsAGZ0Sd5/DyfH2KQ4AYtbe
+         9pdBqZw+7eaxuqNMA25joROo6/t5nTsJ7iyCCPiwLPVJ4f1fN6Cuq/czx6Mu2yTDe1lL
+         cVJL5bbZ+bJ3MRmoPmjF4VXcGETiPZZrrruRlbKUfzZY5MPKK8od43CJygZTxjXlKJX8
+         q+1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwUgZavEcafSi7zkJ/EqzWsA6TLzWX5bUd4YSnTDtOrerU8Tq6+FTys9aN1R6R4Xkj+vVZ7t5Ycbq9WOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHIB+Ri9nuCQXBTs63brgfQi06w3SXjUTRN0TDVDaNqgj5n0dx
+	YcyCE13pMe+HRA2RfEH2HBZYWmLsw8IRhadjgwMMSst0LT6MlYDh
+X-Google-Smtp-Source: AGHT+IHiyKI0dC0d3iVl6Ljx0+V63CQHq38IlTeH2R5whHvajTvEZhI21MSVDgPlrdXlnV9xIT20PA==
+X-Received: by 2002:a17:902:d481:b0:20b:8a93:eeff with SMTP id d9443c01a7336-20e5a933726mr86356635ad.37.1729395140345;
+        Sat, 19 Oct 2024 20:32:20 -0700 (PDT)
+Received: from localhost (i118-19-49-33.s41.a014.ap.plala.or.jp. [118.19.49.33])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0bd561sm3942405ad.179.2024.10.19.20.32.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Oct 2024 20:32:19 -0700 (PDT)
+Date: Sun, 20 Oct 2024 12:27:52 +0900 (JST)
+Message-Id: <20241020.122752.543927907848385586.konishi.ryusuke@gmail.com>
+To: syzbot+9ef37ac20608f4836256@syzkaller.appspotmail.com
+Cc: syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [syzbot] [nilfs?] possible deadlock in nilfs_dirty_inode (4)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+In-Reply-To: <67134033.050a0220.1e4b4d.001f.GAE@google.com>
+References: <67134033.050a0220.1e4b4d.001f.GAE@google.com>
+X-Mailer: Mew version 6.8 on Emacs 29.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAF1bQ=SQ9rFdwRk_waQvn4PW7x6T1uJmJ8qNqj04oRKmujkCQw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-Hi Rong,
 
-On Fri, Oct 18, 2024 at 11:20:02PM -0700, Rong Xu wrote:
-> Thanks to all for the feedback and suggestions! We are ready to make any further
-> changes needed. Is there anything else we can address for this patch?
+drop __GFP_FS for symlinks
 
-I will reply in a separate thread for visibility but I think one of the
-biggest open questions at the moment is trying to find someone to
-shepherd this code into mainline.
+#syz test
 
-> Also, we know it's not easy to test this patch, but if anyone has had a chance
-> to try building AutoFDO/Propeller kernels with it, we'd really appreciate your
-> input here. Any confirmation that it works as expected would be very helpful.
-
-I went to take this series for a spin in a virtual machine first as a
-smoke test before attempting to boot on bare metal. This was done on a
-server with an Intel Xeon Gold 6314U. The kernel booted fine but when I
-went to run the command to generate the perf data from the
-documentation, I get an error.
-
-  $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c 500009 -o /tmp/perf.data -- make -j$(nproc) O=out mrproper defconfig all
-  Error:
-  BR_INST_RETIRED.NEAR_TAKEN:k: PMU Hardware or event type doesn't support branch stack sampling.
-
-Do you know if this is expected for a virtual machine setup? I will
-attempt to test the series on real hardware here soon, it is currently
-tied up with investigating a regression in -next at the moment.
-
-Cheers,
-Nathan
+diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
+index c950139db6ef..bcd7d1288e2c 100644
+--- a/fs/nilfs2/namei.c
++++ b/fs/nilfs2/namei.c
+@@ -149,6 +149,9 @@ static int nilfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	/* slow symlink */
+ 	inode->i_op = &nilfs_symlink_inode_operations;
+ 	inode_nohighmem(inode);
++	mapping_set_gfp_mask(inode->i_mapping,
++			     mapping_gfp_constraint(inode->i_mapping,
++						    ~__GFP_FS));
+ 	inode->i_mapping->a_ops = &nilfs_aops;
+ 	err = page_symlink(inode, symname, l);
+ 	if (err)
 
