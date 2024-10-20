@@ -1,174 +1,222 @@
-Return-Path: <linux-kernel+bounces-373316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E469A5534
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:27:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED059A553A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E8B5B2153F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:27:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528D51C20A47
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0434D193436;
-	Sun, 20 Oct 2024 16:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A332B19342E;
+	Sun, 20 Oct 2024 16:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="XjPAGumF"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRbis/Mk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB94019342D
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 16:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC792119;
+	Sun, 20 Oct 2024 16:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729441633; cv=none; b=hSmG4o2Kn/YakIXKDx3PyscgYU1C+LGrGtkyA0XhWMAbOB2fppZY2U6NGAjp5sMGkcZzszE26KtanG97D+2QUT1KwvPvxpXtr8EzGM9q4WpGVDVqdl/1DOayte8CtOVnWSKeZ5FLweD/mgNn0H1SnR2k4sXO6nCw4l68RTq5ZIA=
+	t=1729442013; cv=none; b=GRyUcmgPO9D9D45FOmMCB+cbdwLAMtuVtjaQZXXztS5ZCl1OdburrvhCBLCIBEfO9gJ6Y7Ac3WdqMk67zQqkBH+maZ6aCVHdneHnddVvADnSaVDUokHAdhDsCW11kzF+z1pt0zJTG4TJvaCB7JQ3RemMesjscvCrZBsS+ZrLRF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729441633; c=relaxed/simple;
-	bh=ZJWn3/ME7/PKMVdnFU/59dN2zZj9ws4GTRkgqj3wGV4=;
+	s=arc-20240116; t=1729442013; c=relaxed/simple;
+	bh=uPFnGWDTdB8fCmlssabZmdFxdbw/lBbpoj15YwsGW9A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t3DMxBc5EyH6+UIxrocznC4SZQ4YZwnydphWi/SfWLKb9TSetujcgr2zhI8XifF3Y79Jb6IX8UzYgO/9OBv0eEZpQJ9K6GC1EYY0XyuC9I4F5cjK5/OP99yQoFO9sDJ3HmF33ekCmrYoaGxQa0JiaLt/y2ZygMLJp4ZddGweqRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=XjPAGumF; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a3a309154aso13024815ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 09:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1729441630; x=1730046430; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vlJnZ2dnH0yKZQoVb1MYW1Cw6i1APoJ7tUtFkvOa8R4=;
-        b=XjPAGumFjzgOouOvI19TBHCSzJZmvD8s1d2a8pm/9QmXxxLP0mpSHXJBpqG4e6MV0e
-         89F5IhQQocXqa3miw2TSzrawL+wu/gSOxbX8+WLleKs3qgzUwRaN0fZsG/kL15uxl2f2
-         VxA0hOtQuFVQpH8Nu/0pE+eRDmKsu8meobqWOhadkJqBD/DPoSU7USwSk97w+/CaIpQV
-         YxS/rZwL5iEHe6Jm+ESyUBFjCbALjL/lKPM3VC3ZCpuhwk9KpU2lqljVqSIGYiUDiax9
-         xqbM55EdIXIEd7BaSQZL6o1rv7AAsMF9URg6xWa1hFiF3i3gGHcyT2jHhHrLqawRJ96s
-         cdrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729441630; x=1730046430;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vlJnZ2dnH0yKZQoVb1MYW1Cw6i1APoJ7tUtFkvOa8R4=;
-        b=bnNa4Pb+nC8+STqV20aw/pgUKUBOQq2WYr9XjKTECItpeU69aOWHvs+m29SO2esfqj
-         Owkv5lydY5VTYi9SiYcKuSQA5A8TFcUPpq/1z8eXFw9Sqg3PUwRrVHqpoXlcSvplWwPZ
-         FXOIREx2UlJjajQq4qU1a8xNCbwDb+8edpnHDjRVzzGvBdHf7KqHHjha2hK9n5Q5AGCh
-         c2pgT6s15wAQbWSyCDpkwlpjN9Cq7X+EmXcjprJ2eQgkK8+oYNhUOC0aQTQT3BYtR3p7
-         IArCNIPYYKOK1f/GCntuepw7A+T6+AgVmhV+uu/rVfHMfnzPaOI0FCZ2mNL/JicVM7HE
-         P6Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJI9STPMnprYEBn+mjr8SM4Nsm/OLlqziHt5KeZSFqcKzeUzI7TuG859127iY1B7a9yFeZgcpuiAke9ZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhm+RDL+57gKU+Wf93bJGa/B2/5btzijKK1fauE13gtKcz/5vx
-	L7LfJGqh1KrvDu2jzOgoiD4ahxp4Yh/bai5hw3nonSHAtvvRcaDHMPg+UFPq9SYdg2c/6AUO5zT
-	Ybbs6tNXALHtE7HXKwhCOdAFJHuq3zDT2O/KT/w==
-X-Google-Smtp-Source: AGHT+IHut51aPnA4HRNe+5sFOzWqMYIfb+uEzsIdOlVQy40Ze9JNhMPONaOQfYNIMN+UGYB+CfdjzsYqyLXhrhld8kI=
-X-Received: by 2002:a92:cd83:0:b0:3a3:96c4:29bc with SMTP id
- e9e14a558f8ab-3a3f406fe98mr81302935ab.11.1729441629798; Sun, 20 Oct 2024
- 09:27:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=Qv3naklDVJVWP2PeHI0b2H8uc+L3gHwWszz3qMPtZzTbhNAHmEq8sntmRwyrVhkeG7dQNQXj+6gnkKviGpKaytczlysWEw+VETUbnypLOO4OijypjT5Qk4X6H0ZHGxTXLqbSghM7foU/Yjzwcf+VwBkqHRUGH5r09VXoM6oVgk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vRbis/Mk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 559A7C4CEE9;
+	Sun, 20 Oct 2024 16:33:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729442012;
+	bh=uPFnGWDTdB8fCmlssabZmdFxdbw/lBbpoj15YwsGW9A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vRbis/Mk//J9/SPvA40etThDNfNL8tHSDZKqFMFM2zDDZxBYPnC3YUk2WUCdjsfWG
+	 L64cwpZr2d1bWkypTu+Np8o1kpm1lFPYblGBWkBVBS7yUg6KYzOfzPUVxut+5PQmDC
+	 kZDsqAJxykFJifng8Ea2od+ZEfHry93ZFKAiVl/Bbp7nvao9oB56FDsoJQQCvl3QAj
+	 VI6/1Lp5XFNHVugkOrMpGdYqNTxF2ALHuOelVPrfh8OQ7M5ySz8JQ4atZxOp9d8yuv
+	 6I0IGCFpahS58PR9Wufp3Vcx4vofvROubSrTT3XihI+mphJBiln4TWqUMTomnoqryF
+	 3DfihlfemQO6A==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e3f35268so1588542e87.3;
+        Sun, 20 Oct 2024 09:33:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVFzH/xh+F7NdfaxMujavC9bWUEQwgm7ewrUObwtFMHYH1W7h+TESPjPz5SFTSGKEMJcYyWACsFVFQVALa@vger.kernel.org, AJvYcCVTrkU4PwsTCCNJk2Ca8kXEMBmimby86OR0tWg3+h4b+C2MfMMgAVMthCKwPMzlimqOG9ciEQfWjA1Ba5SM@vger.kernel.org, AJvYcCW7+x6iXhY/n9iZLuneQ8yJN6RmJRIzkChk9OBuUbWzS5MM2C4iDn+fa9SrPqgUFwP02p37rptd5i+F@vger.kernel.org, AJvYcCWYK6PMT8b+8FmcLrXjzvckOMM24mC2KahuMrOXdheeOU2DI9+eX04XXN1Nj/baVFTmGSZC5K6sCwm6@vger.kernel.org, AJvYcCXw5Jy63ztjjzgVH3zsmyKja+d3eq0Mp4FoKgwDEmWEKY80cfDfNf9ng6kO+1gXEjqXRjelhfwZlKqm@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKrfCrpUtKEva8d0nfqUHVpruvjpoakqWTXuSzu9Q2p0dy0Co+
+	JpfQPYZL1y++CRrNDtVMZiH7OwJ+qEvq6iOuUfdyoTABaf2PEyaE33sJD3skJ0t5QR64H0JwvFC
+	rPBlLTMkjCiRQ3MS+Xmg5Qu076P4=
+X-Google-Smtp-Source: AGHT+IHRsYlqxXcM1oQgzvk1BylM0N3VPuu21Dvx0mE0WPjx0yBxJBLh7hgIROlqIeEZugzFSYbXaalAxT8cwivhBwk=
+X-Received: by 2002:a05:6512:3da9:b0:539:8fcd:51f with SMTP id
+ 2adb3069b0e04-53a1522aa5emr4507693e87.30.1729442010869; Sun, 20 Oct 2024
+ 09:33:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016202814.4061541-1-samuel.holland@sifive.com> <20241016202814.4061541-10-samuel.holland@sifive.com>
-In-Reply-To: <20241016202814.4061541-10-samuel.holland@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Sun, 20 Oct 2024 21:56:58 +0530
-Message-ID: <CAAhSdy3FTjVUDBJtbsFwj6+DWjrQh3nWwvsm_1edDUO9SkXB2A@mail.gmail.com>
-Subject: Re: [PATCH v5 09/10] RISC-V: KVM: Allow Smnpm and Ssnpm extensions
- for guests
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-	Catalin Marinas <catalin.marinas@arm.com>, Atish Patra <atishp@atishpatra.org>, 
-	linux-kselftest@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Shuah Khan <shuah@kernel.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jonathan Corbet <corbet@lwn.net>, kvm-riscv@lists.infradead.org, 
-	Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	Evgenii Stepanov <eugenis@google.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+References: <20241014213342.1480681-1-xur@google.com> <20241014213342.1480681-2-xur@google.com>
+In-Reply-To: <20241014213342.1480681-2-xur@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 21 Oct 2024 01:32:54 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ5yNKvZDtJuvo9Lt4rZwLSv0UN4=Ff=WcCDy1CCEpQ7Q@mail.gmail.com>
+Message-ID: <CAK7LNAQ5yNKvZDtJuvo9Lt4rZwLSv0UN4=Ff=WcCDy1CCEpQ7Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] Add AutoFDO support for Clang build
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Stephane Eranian <eranian@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 1:58=E2=80=AFAM Samuel Holland
-<samuel.holland@sifive.com> wrote:
->
-> The interface for controlling pointer masking in VS-mode is henvcfg.PMM,
-> which is part of the Ssnpm extension, even though pointer masking in
-> HS-mode is provided by the Smnpm extension. As a result, emulating Smnpm
-> in the guest requires (only) Ssnpm on the host.
->
-> The guest configures Smnpm through the SBI Firmware Features extension,
-> which KVM does not yet implement, so currently the ISA extension has no
-> visible effect on the guest, and thus it cannot be disabled. Ssnpm is
-> configured using the senvcfg CSR within the guest, so that extension
-> cannot be hidden from the guest without intercepting writes to the CSR.
->
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+On Tue, Oct 15, 2024 at 6:33=E2=80=AFAM Rong Xu <xur@google.com> wrote:
 
-LGTM.
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+> +Customization
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +You can enable or disable AutoFDO build for individual file and director=
+ies by
+> +adding a line similar to the following to the respective kernel Makefile=
+:
 
-Regards,
-Anup
 
-> ---
+Perhaps, it might be worth mentioning that kernel space objects are
+covered by default.
+
+Then, people would understand ':=3D y' will be less common than ':=3D n'.
+
+
+
+
+> +
+> +- For enabling a single file (e.g. foo.o) ::
+> +
+> +   AUTOFDO_PROFILE_foo.o :=3D y
+> +
+> +- For enabling all files in one directory ::
+> +
+> +   AUTOFDO_PROFILE :=3D y
+> +
+> +- For disabling one file ::
+> +
+> +   AUTOFDO_PROFILE_foo.o :=3D n
+> +
+> +- For disabling all files in one directory ::
+> +
+> +   AUTOFDO_PROFILE :=3D n
+> +
+
+
+
+
+> +3) Run the load tests. The '-c' option in perf specifies the sample
+> +   event period. We suggest using a suitable prime number, like 500009,
+> +   for this purpose.
+> +
+> +   - For Intel platforms::
+> +
+> +      $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count> =
+-o <perf_file> -- <loadtest>
+> +
+> +   - For AMD platforms: For Intel platforms:
+
+
+I guess this is a copy-paste mistake.
+
+
+For AMD platforms: For Intel platforms:
+
+   ->
+
+For AMD platforms:
+
+
+
+
+
+
+> +   (https://github.com/google/autofdo),  version v0.30.1 or later.
+
+
+Please one space instead of two after the comma.
+
+
+
+
+
+
+
+> diff --git a/scripts/Makefile.autofdo b/scripts/Makefile.autofdo
+> new file mode 100644
+> index 000000000000..1c9f224bc221
+> --- /dev/null
+> +++ b/scripts/Makefile.autofdo
+> @@ -0,0 +1,23 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +# Enable available and selected Clang AutoFDO features.
+> +
+> +CFLAGS_AUTOFDO_CLANG :=3D -fdebug-info-for-profiling -mllvm -enable-fs-d=
+iscriminator=3Dtrue -mllvm -improved-fs-discriminator=3Dtrue
+> +
+> +# If CONFIG_DEBUG_INFO is not enabled, set -gmlt option.
+
+
+Meaningless comment. It explains too obvious code.
+
+
+> +ifndef CONFIG_DEBUG_INFO
+> +  CFLAGS_AUTOFDO_CLANG +=3D -gmlt
+> +endif
+
+
+
+
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 01a9f567d5af..e85d6ac31bd9 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -191,6 +191,16 @@ _c_flags +=3D $(if $(patsubst n%,, \
+>         -D__KCSAN_INSTRUMENT_BARRIERS__)
+>  endif
 >
-> Changes in v5:
->  - Do not allow Smnpm to be disabled, as suggested by Anup
->
-> Changes in v2:
->  - New patch for v2
->
->  arch/riscv/include/uapi/asm/kvm.h | 2 ++
->  arch/riscv/kvm/vcpu_onereg.c      | 4 ++++
->  2 files changed, 6 insertions(+)
->
-> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/=
-asm/kvm.h
-> index e97db3296456..4f24201376b1 100644
-> --- a/arch/riscv/include/uapi/asm/kvm.h
-> +++ b/arch/riscv/include/uapi/asm/kvm.h
-> @@ -175,6 +175,8 @@ enum KVM_RISCV_ISA_EXT_ID {
->         KVM_RISCV_ISA_EXT_ZCF,
->         KVM_RISCV_ISA_EXT_ZCMOP,
->         KVM_RISCV_ISA_EXT_ZAWRS,
-> +       KVM_RISCV_ISA_EXT_SMNPM,
-> +       KVM_RISCV_ISA_EXT_SSNPM,
->         KVM_RISCV_ISA_EXT_MAX,
->  };
->
-> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
-> index b319c4c13c54..5b68490ad9b7 100644
-> --- a/arch/riscv/kvm/vcpu_onereg.c
-> +++ b/arch/riscv/kvm/vcpu_onereg.c
-> @@ -34,9 +34,11 @@ static const unsigned long kvm_isa_ext_arr[] =3D {
->         [KVM_RISCV_ISA_EXT_M] =3D RISCV_ISA_EXT_m,
->         [KVM_RISCV_ISA_EXT_V] =3D RISCV_ISA_EXT_v,
->         /* Multi letter extensions (alphabetically sorted) */
-> +       [KVM_RISCV_ISA_EXT_SMNPM] =3D RISCV_ISA_EXT_SSNPM,
->         KVM_ISA_EXT_ARR(SMSTATEEN),
->         KVM_ISA_EXT_ARR(SSAIA),
->         KVM_ISA_EXT_ARR(SSCOFPMF),
-> +       KVM_ISA_EXT_ARR(SSNPM),
->         KVM_ISA_EXT_ARR(SSTC),
->         KVM_ISA_EXT_ARR(SVINVAL),
->         KVM_ISA_EXT_ARR(SVNAPOT),
-> @@ -127,8 +129,10 @@ static bool kvm_riscv_vcpu_isa_disable_allowed(unsig=
-ned long ext)
->         case KVM_RISCV_ISA_EXT_C:
->         case KVM_RISCV_ISA_EXT_I:
->         case KVM_RISCV_ISA_EXT_M:
-> +       case KVM_RISCV_ISA_EXT_SMNPM:
->         /* There is not architectural config bit to disable sscofpmf comp=
-letely */
->         case KVM_RISCV_ISA_EXT_SSCOFPMF:
-> +       case KVM_RISCV_ISA_EXT_SSNPM:
->         case KVM_RISCV_ISA_EXT_SSTC:
->         case KVM_RISCV_ISA_EXT_SVINVAL:
->         case KVM_RISCV_ISA_EXT_SVNAPOT:
-> --
-> 2.45.1
->
+> +#
+> +# Enable Clang's AutoFDO build flags for a file or directory depending o=
+n
+> +# variables AUTOFDO_PROFILE_obj.o and AUTOFDO_PROFILE.
+> +#
+
+
+This comment would give the wrong understanding that this flag is opt-in.
+
+
+The comment for KASAN correctly describes that it is enabled by default,
+and can be opted out using KASAN_SANITIZE_*.
+
+
+
+
+
+--
+Best Regards
+
+
+Masahiro Yamada
 
