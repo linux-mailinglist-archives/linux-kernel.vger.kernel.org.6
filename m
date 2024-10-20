@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-373407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34BA39A5658
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:44:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829559A565A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 21:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E031C21043
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:44:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AA30B265A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318FB19D8A8;
-	Sun, 20 Oct 2024 19:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260D819DF8D;
+	Sun, 20 Oct 2024 19:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lv3hKvUh"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fz8kYjGD"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503DD19CC2D;
-	Sun, 20 Oct 2024 19:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15E4198850;
+	Sun, 20 Oct 2024 19:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729453257; cv=none; b=dygi//tIfs8b66QhqKiKg8cHKTMeFGNIpPSwo8fjiG2pAx4JsoOepVvd08pn2yyTT/njlan/rnpyT37+BxsDAAX0OhhmhjMaFYYp1W0RK9LGscuzV0CSPH+QeJ/w+2STf6uaKjs3Nz9EALox0rFb3+Pja5SNTsPlNa5JUuYcsPk=
+	t=1729453259; cv=none; b=tvdQcbdguOx1Az1+TUTV+DR96ok0Pi8CgOQbbmEKEoZdBd9AF8aolnBjK4RCKr0haP8Rpz/wJ1Iq93mTZhcLr1dij447V4Jj+k9h4ytxUZGUGh8z0AWvnkQ0O+muL+JUXqmI6b6NZdAcgqsi6Yy8VF9V/F5bo94jeISBBXMWuJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729453257; c=relaxed/simple;
-	bh=5TZIB2542Vc0yIo0WvDWBjKa33kV6CuS60FxkuJ5KV4=;
+	s=arc-20240116; t=1729453259; c=relaxed/simple;
+	bh=27NvY+oqHgSkrI5lxkKLYnp4X//jaOa/2qmioyhBup4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cYJIbeoVU7NJqPCnQfMQNZEFdQ1cfszE8fKdMt/gzwFP1BRHd1mm5sBPwMy9EAVUHDnr6vOS3AcBRC+CrMTZ5LGedX+i3kojhccCG4yLHjqdufkJOLkItMYL5kog/WeKaHuPeJK6UKtvmk923hSu/HAjrBF6notRVbhBTt1jO+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lv3hKvUh; arc=none smtp.client-ip=209.85.208.54
+	 MIME-Version; b=ppKAlS+OCv0z9oiWEVti8KXGtyUBKs4xByQkcky5VHYXSxcH8fJT6KUPKlt1XwzRqFXwGoHqf4PygYUU/2YacJrYT/ebhfnBFMAJqqd9RD3rz7fsHw6LfdU3ipD6vRbc3AvaMxffUxhtGWaHYyle/YQ5tMn/WYe1OCE0bIPXZuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fz8kYjGD; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c9589ba577so519582a12.1;
-        Sun, 20 Oct 2024 12:40:55 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a68480e3eso25265766b.1;
+        Sun, 20 Oct 2024 12:40:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729453253; x=1730058053; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729453256; x=1730058056; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YMcrhXfFwBDQeC8deO1th93gr8djMeKIrCWvtsHZ+18=;
-        b=Lv3hKvUhxAAPP9tHeLP3C5E7BF2CF2pJc5BJxiiwb7L4ahBWaJGUsw6a4qX9RwMpnp
-         Fhm8lOUrVOXV9bNq+3COnJFP4Mwc4AHpKitwzp7vnnZhadotYQbgq+xpJn7DV99GY+OQ
-         RJ+MR/x3nSMLGlKb2L9yNw0e6hKNGD6wn3GWTr9cKYcPbdIDERD/XMvdacCBT83NwW5h
-         D7tZNrg9snMbGW3BcM9TW9dr7/Zx4vPQt17e13KxMoQCbMHsMOhWNnHIex1IfYRTlxFM
-         dLl4H4LkEU7oGcu55Dlhiz725V+NjMKzjGk87icRFfr/IgPaJh9YpN/0rE7pcd1v03iO
-         SOVQ==
+        bh=tY8Z0h1B9qGZ8W4gBKFGpJTQoZr0iEHUbZV6WjRURpU=;
+        b=fz8kYjGDCjUutXN7UiK79MRUtmvzBoIX0QHNljy8CJrXIFUkPv9/uRjSBs7sDVXzgo
+         iqAOiUPq5GNvWURpkDjcRywsCPqEUPTzKBl3vwl2UqUkMcKSBlJSp77M4qWsAsErON3j
+         HgucCtOqCqfl0jblkD+xFtC3d5dK1jzy+TyBATS+cnQw4nOdchm5+3+9+3rO7CFzaFap
+         wjMIgKlsQ2BVAGhdymz+x4GHHx1/2wrYYFlNw4FDF4OoLanx8mVjHv8sOorqiv3Ja4iv
+         C+4xMK4Ob0HlBrRCVkVHtym8PkHgnLjVLV7Q+mDJx7ap+qYKtUJI5+AIT+fw+4Gr492p
+         /Hsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729453253; x=1730058053;
+        d=1e100.net; s=20230601; t=1729453256; x=1730058056;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YMcrhXfFwBDQeC8deO1th93gr8djMeKIrCWvtsHZ+18=;
-        b=EGWoPyjJk7hZHDJz75zqGPf91l8GZkO2lOXQ8/WwC8I6+fc9r/23UJbiXbQclANxm7
-         Np6Ez6cW8e3NGbBNOoidhaRWXjVAnYVa71ozI1DncXRpFfnHf+68fbZLGy6LBLVLGWIs
-         vB0Ibpd4Fx7md725zR/WL80mYBKxIm0anAe6+Hc8tEhqIb+Ry58AQGeW66SeCp6iI8av
-         tdTFkeupgiHTt6KGPA5ZZBr+ryg0rPt+NDRfRMz47g+lb1HOKE1WSSSL0b5PF1JYS+Jd
-         3u3oi8GefAjH1slo+l+Jok8gTQf9eDq1VbjH2NuupWjzBVsmxpOepC5VELAMzcRZi0ZR
-         ojiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcD0NT4uwWEl75KI/bxL+0ZSW42AsIh7QsiHRS42y/bLUXLiGeZHx3Y7wH4reQwuAuVdvcQwiOyVisti5F@vger.kernel.org, AJvYcCWy5DNbp2YiKD65wtlyWTz2/V6//ZNmmj33UVyfTaYedhjML73uNKFMaAN2hLEwnSn8vJehI9CJqmSe@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAphuXKDD9eeF7i9o+X4//TU+dUy3PW7q57wYG8wQY0pPMES19
-	Pjifg2Ge2baTTqkzin0AiJnJymyRa0s2sA5vuUDiBrFQhpDcjMyT
-X-Google-Smtp-Source: AGHT+IGfTJALLs43UHZ5A+N2hijtCwVT1rICAk+qSZMwWMZKN7HQ2jnv6oUjLTB43z0Gh9GVT9weNw==
-X-Received: by 2002:a17:907:3f18:b0:a9a:2a56:139a with SMTP id a640c23a62f3a-a9a69a76869mr414484366b.4.1729453253326;
-        Sun, 20 Oct 2024 12:40:53 -0700 (PDT)
+        bh=tY8Z0h1B9qGZ8W4gBKFGpJTQoZr0iEHUbZV6WjRURpU=;
+        b=T9nNSZ5frTcFIDYvMfSNyRILFnfl/MMimQB+oX49DO11zAmQpIfBYNXh9ve8/2lnS/
+         sWJmwpbGvMrCW/1f757S2kdNGkAfUPWcSej+Ip6SmIRkwNEO4DGc19j8BunRcyqU9hEv
+         5ZGehKZWvVZFtj2nNRlhBdhvY5jHWJaSINcsgNuFVrI2YJICn/ipBye+yPJGUHRQB2Is
+         ITJc97FGnXVVYn3jMKL1EgO82jUvvorN2N8xVeLUsbaxQ2emWmX08SeSjCrGLqSBStQp
+         4skDt+sJc7ntEOmbZGxrROsEU//cM0X3qeY7nIHGz9bfEWSdL9IIBFTfILhWWb646Iwg
+         fJag==
+X-Forwarded-Encrypted: i=1; AJvYcCVOkkAgS3UEu2YkyW8V/mLjNKE9EhfS0+q8ZdLJN/n9xYrqjmWwqqsSUUzNh7lxfwjNQ7SfGGPRSHMsRPRM@vger.kernel.org, AJvYcCXQYb0mx2YxwM6IT41Tq4X3ZT85+cdvKrE/xDwfBBzBZB5f1t59rQrsJz1jtdPYwI8DzKLWUg9EaNQQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhXMMsqZxfxrBwzmGnnSymkeb9FXXS4CPjoKNz2QlCuu5kUZTS
+	fM52N+HdJxcJbSmd29YwkTnbmXa6lR9K/ELEMGwjrAunPASUtXD4
+X-Google-Smtp-Source: AGHT+IF/F73Jy/FxCOTDHDc1P5tF6T838SLhRDeGjm/Gb4Pn//weTPZgOPtZgtOnaLtt3Y3Ksc7UJw==
+X-Received: by 2002:a17:907:94cf:b0:a99:f388:6f49 with SMTP id a640c23a62f3a-a9a69c9bd69mr441408966b.9.1729453255775;
+        Sun, 20 Oct 2024 12:40:55 -0700 (PDT)
 Received: from e8ff02ae9b18.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91578129sm120576966b.186.2024.10.20.12.40.52
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91578129sm120576966b.186.2024.10.20.12.40.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 12:40:53 -0700 (PDT)
+        Sun, 20 Oct 2024 12:40:54 -0700 (PDT)
 From: Lothar Rubusch <l.rubusch@gmail.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -76,9 +76,9 @@ To: robh@kernel.org,
 Cc: l.rubusch@gmail.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCHv2 17/23] ARM: dts: socfpga: add Enclustra Mercury+ SA2
-Date: Sun, 20 Oct 2024 19:40:22 +0000
-Message-Id: <20241020194028.2272371-18-l.rubusch@gmail.com>
+Subject: [PATCHv2 18/23] dt-bindings: altera: add binding for Mercury+ SA2
+Date: Sun, 20 Oct 2024 19:40:23 +0000
+Message-Id: <20241020194028.2272371-19-l.rubusch@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241020194028.2272371-1-l.rubusch@gmail.com>
 References: <20241020194028.2272371-1-l.rubusch@gmail.com>
@@ -90,168 +90,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce Enclustra's Mercury+ SA2 SoM based on Intel Cyclone5
-technology as a .dtsi file.
+Update the device-tree binding for the Enclustra Mercury+ SA2 SoM.
 
-Signed-off-by: Andreas Buerkler <andreas.buerkler@enclustra.com>
 Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
- .../socfpga/socfpga_cyclone5_mercury_sa2.dtsi | 146 ++++++++++++++++++
- 1 file changed, 146 insertions(+)
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
+ Documentation/devicetree/bindings/arm/altera.yaml | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
-new file mode 100644
-index 000000000..0425520e9
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
+diff --git a/Documentation/devicetree/bindings/arm/altera.yaml b/Documentation/devicetree/bindings/arm/altera.yaml
+index 87a22d2a4..31af6859d 100644
+--- a/Documentation/devicetree/bindings/arm/altera.yaml
++++ b/Documentation/devicetree/bindings/arm/altera.yaml
+@@ -61,6 +61,16 @@ properties:
+           - const: altr,socfpga-cyclone5
+           - const: altr,socfpga
+ 
++      - description: Mercury+ SA2 boards
++        items:
++          - enum:
++              - enclustra,mercury-sa2-pe1
++              - enclustra,mercury-sa2-pe3
++              - enclustra,mercury-sa2-st1
++          - const: enclustra,mercury-sa2
++          - const: altr,socfpga-cyclone5
++          - const: altr,socfpga
 +
-+#include "socfpga_cyclone5.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ SA2";
-+	compatible = "altr,socfpga-cyclone5", "altr,socfpga";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	aliases {
-+		ethernet0 = &gmac1;
-+	};
-+
-+	/* Adjusted the i2c labels to use generic base-board dtsi files for
-+	 * Enclustra Arria10 and Cyclone5 SoMs.
-+	 *
-+	 * The set of i2c0 and i2c1 labels defined in socfpga_cyclone5.dtsi and in
-+	 * socfpga_arria10.dtsi do not allow for using the same base-board .dtsi
-+	 * fragments. Thus define generic labels here to match the correct i2c
-+	 * bus in a generic base-board .dtsi file.
-+	 */
-+	soc {
-+		i2c_encl: i2c@ffc04000 {
-+		};
-+		i2c_encl_fpga: i2c@ffc05000 {
-+		};
-+	};
-+
-+	memory {
-+		name = "memory";
-+		device_type = "memory";
-+		reg = <0x0 0x80000000>; /* 2GB */
-+	};
-+};
-+
-+&osc1 {
-+	clock-frequency = <50000000>;
-+};
-+
-+&i2c_encl {
-+	i2c-sda-hold-time-ns = <300>;
-+	clock-frequency = <100000>;
-+	status = "okay";
-+
-+	isl12020: isl12020@6f {
-+		compatible = "isil,isl12022";
-+		reg = <0x6f>;
-+	};
-+
-+	atsha204a: atsha204a@64 {
-+		compatible = "atmel,atsha204a";
-+		reg = <0x64>;
-+	};
-+};
-+
-+&i2c_encl_fpga {
-+	i2c-sda-hold-time-ns = <300>;
-+	status = "disabled";
-+};
-+
-+&uart0 {
-+	clock-frequency = <100000000>;
-+};
-+
-+&mmc0 {
-+	status = "okay";
-+};
-+
-+&qspi {
-+	status = "okay";
-+
-+	flash0: s25fl512s@0 {
-+		u-boot,dm-pre-reloc;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "spansion,s25fl512s", "jedec,spi-nor";
-+		reg = <0>;
-+
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
-+		spi-max-frequency = <10000000>;
-+
-+		cdns,read-delay = <4>;
-+		cdns,tshsl-ns = <50>;
-+		cdns,tsd2d-ns = <50>;
-+		cdns,tchsh-ns = <4>;
-+		cdns,tslch-ns = <4>;
-+
-+		partition@raw {
-+			label = "Flash Raw";
-+			reg = <0x0 0x4000000>;
-+		};
-+	};
-+};
-+
-+&gpio0 {
-+	status = "okay";
-+};
-+
-+&gpio1 {
-+	status = "okay";
-+};
-+
-+&gmac1 {
-+	status = "okay";
-+	/delete-property/ mac-address;
-+	phy-mode = "rgmii";
-+	phy-handle = <&phy3>;
-+
-+	mdio0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "snps,dwmac-mdio";
-+
-+		phy3: ethernet-phy@3 {
-+			reg = <3>;
-+
-+			/* Add 2ns RX clock delay (1.2ns + 0.78ns)*/
-+			rxc-skew-ps = <1680>;
-+			rxd0-skew-ps = <420>;
-+			rxd1-skew-ps = <420>;
-+			rxd2-skew-ps = <420>;
-+			rxd3-skew-ps = <420>;
-+			rxdv-skew-ps = <420>;
-+
-+			/* Add 1.38ns TX clock delay (0.96ns + 0.42ns)*/
-+			txc-skew-ps = <1860>;
-+			txd0-skew-ps = <0>;
-+			txd1-skew-ps = <0>;
-+			txd2-skew-ps = <0>;
-+			txd3-skew-ps = <0>;
-+			txen-skew-ps = <0>;
-+		};
-+	};
-+};
-+
-+&usb1 {
-+	status = "okay";
-+	dr_mode = "host";
-+};
+       - description: Stratix 10 boards
+         items:
+           - enum:
 -- 
 2.25.1
 
