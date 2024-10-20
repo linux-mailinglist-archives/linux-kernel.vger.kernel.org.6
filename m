@@ -1,312 +1,523 @@
-Return-Path: <linux-kernel+bounces-373087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FBC9A5213
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:20:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFBB9A5214
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 05:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230191C22171
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 03:20:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604471F22098
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 03:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718DC3209;
-	Sun, 20 Oct 2024 03:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991B746BA;
+	Sun, 20 Oct 2024 03:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uKHEONGz"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="H4FA+O8U"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA4528E7
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 03:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC74A322E
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 03:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729394430; cv=none; b=X4ruvAUPzHC2DHpueIx3s6TnZ06XNBUPsvXbYLAxBNUO5rwYGcQCFIPdDI/Tizd6leHOklyA935n7RQS7p0q3SIjc7kDAWU7eUIYtFhNRG/sWk97goXkRnBGbhCI+IEePE4rpOkKVoUKMu0WfccUJ/RENdcjVfl/2t74kVqCjWw=
+	t=1729394670; cv=none; b=Jx8/ykz7NU4GotqYsNaNt3whAQ6n6M/inUy0Kg26hk9z7efGr5NjfGNwWvYIBM9ntGfe2XZ0ajkCuO/itGpM9koi5gAnYAArA98DknJOt44krXQODG37Vo3eyTS8Vu8Xwy1cptuIWeF63ulXroF8XnaeMXhGVzHF1Z30iCKm0ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729394430; c=relaxed/simple;
-	bh=meRoOtmEK+GHaT/Jn/4a7l3dMXe6RHFlKdwtGmZMUe4=;
+	s=arc-20240116; t=1729394670; c=relaxed/simple;
+	bh=UmHXvjGsQJfT6nKZ2eAFDDs4DgbACPJ2CxbdthknAPA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DG6Vr4hGeIjAF01D3bRPmxIG2TwwL7T2pdYt8MEtdv0TpQxEeJgdHcVkK0Qb2WYIFatYvYZcwf/HFfaFlLLA8v41aDN+WbDmKANpVieYNgREBZ2ylU3eZjpdVkwdPJx8XWW48d5UOsmLbzCzlyH12hJJFDGc4O6BaEqPbYkMuNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uKHEONGz; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <7c7b053e-28a1-490f-ba8c-a7eb60ca81d2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729394423;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YPl2yq5UvwsWil+2Bp35g/sSg8f0++FeykoufY0O9Pw=;
-	b=uKHEONGzj6/vGyEFWzF36CBQ6VsmV6+Re01k5sygIpZDVh+EzrT4H8v5v9QfPECsBjX17z
-	JGQktFVvR5iuTDRhxB31mpenVShkaTNotuzTVOa7NpwMugxdQKoxkJ0FZEozFEVnqia8jJ
-	BPgReqjYOjj6p/D3H4cRWa8zf8+9jbA=
-Date: Sat, 19 Oct 2024 20:20:09 -0700
+	 In-Reply-To:Content-Type; b=fruM8tuxqu7l0P9arFwqbAwceGKsXTrg1j4tLRBqP9ku9iEmOzn8m7rEAp3MDPwRMlWNtlseN5T+rvXlqzUBol88OiFxcQVIdsli+9uqG3Itqzm+jpX49O8TFfMc2t33FT+FqObM7qm/3uIkbK01vcAt7c2M3mQDxBvUy7easTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=H4FA+O8U; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso2300080a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Oct 2024 20:24:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729394666; x=1729999466; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rbc1A1lbWoXEL3ZrMG1PbnMccM33RUZTMomnfxj4fAM=;
+        b=H4FA+O8U6IA3aYL+rNb4RcsuQHfwnZFJ5CrBb07sZULeBLyyxQtaoXnBCR6nFLfHh7
+         V+Uy4AWoZcr3sF1nEzx7fouC2ycquXkBbnDKdsLkggBSpqI9lvF9PwVDQ6R2MAQAfy/B
+         iy82BLQu+1LW20n+A5ai0JxiTFMKaEHato/Njfg07OtQW9azcfnWNI59NwVF6PuGPl/r
+         dq1+6YA9pF6VDnzkkvJuR/yGbywxqdwbV8Tpk0oN6cmKc0UojGcdABn0yA7aDyYXfEAB
+         Cgmy5MZfYdL1xQfQFbDHz6Ge2r66EwD9ehumAVGPWc/c/XoL/5b9/2I2JdbVZGmrfXZW
+         xebw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729394666; x=1729999466;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rbc1A1lbWoXEL3ZrMG1PbnMccM33RUZTMomnfxj4fAM=;
+        b=hmR1ydwpyalLeukWuUDb6Hbf9LUcszp8EeJo4z9KBY6Xm3UXlnH0S81qvW91hoHuFO
+         Ad49XSvFSnaWFtN6QbgNpmfnYr82IQt44PNv9mgdeK8Ph8Eg4WzX4R6wiGRRqd8Ls6nQ
+         x89fXrV83yD4bB2o1tMwENEShu/vBW3hAWzntkXdkVFBT7xWbBt+JpGWaMczp213dPEP
+         Zu72tkAB2YYhrMiAs2/2c/Kn1RqPosMpdMXZIckegv8pNdPLBQJNvIoBmcybAqdH34Hd
+         rlGFIXdsYBz1XuyuVyjKpoTgiOOD1PRlh+2SOJe/muB7WH84fdp4aDTXgs5lNw7j261A
+         GKIg==
+X-Forwarded-Encrypted: i=1; AJvYcCU18Dll3NSoqTUq8a2yfW10wwif6jVo9dcI2ALeXRMqNMk+6C5X4XQmNwWArY5TnMWCQE0tB0FzswFnSk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyRjNX8VuiosQiE39G8uL1sewyiOC2zsyPRDb7DzQk6pFuHP/Q
+	H7wnCNau/R2bJ4wz0Evung/OOGFWGJL7RWE6Zk4oOp5cGwE7J2C7BkWB4cH0TKN0sT+3PWg5qTf
+	2
+X-Google-Smtp-Source: AGHT+IH6J721g2QJQocqVUUwYxVeHLZEcBex4rYv7sCLJ8t2EBzEOwn8xTF8xIrJgSX+YMiGvolILA==
+X-Received: by 2002:a05:6a21:a4c1:b0:1d9:16db:902e with SMTP id adf61e73a8af0-1d92c4babebmr10547404637.9.1729394665853;
+        Sat, 19 Oct 2024 20:24:25 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1335591sm449076b3a.66.2024.10.19.20.24.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 19 Oct 2024 20:24:25 -0700 (PDT)
+Message-ID: <b2fd70bb-9414-49e0-bdb8-5c538f247dea@kernel.dk>
+Date: Sat, 19 Oct 2024 21:24:24 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 0/6] Add AutoFDO and Propeller support for Clang build
-Content-Language: en-GB
-To: Rong Xu <xur@google.com>, Alice Ryhl <aliceryhl@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>,
- Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>,
- Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>,
- Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
- Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>,
- workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Maksim Panchenko <max4bolt@gmail.com>, Yabin Cui <yabinc@google.com>
-Cc: x86@kernel.org, linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20241014213342.1480681-1-xur@google.com>
- <CAF1bQ=SQ9rFdwRk_waQvn4PW7x6T1uJmJ8qNqj04oRKmujkCQw@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <CAF1bQ=SQ9rFdwRk_waQvn4PW7x6T1uJmJ8qNqj04oRKmujkCQw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: AMD zen microcode updates breaks boot
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ the arch/x86 maintainers <x86@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "regressions@lists.linux.dev" <regressions@lists.linux.dev>
+References: <20241018115857.GBZxJNgZY-NedtPrxX@fat_crate.local>
+ <20241018124943.GDZxJZZxtwA9O9eqiU@fat_crate.local>
+ <79296353-1fa3-458a-b055-88bc6a772180@kernel.dk>
+ <20241018155143.GIZxKED9YcF0Jg1CWZ@fat_crate.local>
+ <320024ab-63af-45eb-a3ae-5486cb2015c0@kernel.dk>
+ <20241018175606.GJZxKhNmW9nCLwNS6Z@fat_crate.local>
+ <016ecb00-2331-472c-88e4-66b1dbecfc99@kernel.dk>
+ <1bb5dd7f-15b5-4d9d-97ef-75ebdc24e7d9@kernel.dk>
+ <20241019093748.GAZxN97LS_dJ3DNrpd@fat_crate.local>
+ <436b4fc7-6369-40d9-8e88-556cbf5a5687@kernel.dk>
+ <20241019232138.GDZxQ_AtkqA9iAR2td@fat_crate.local>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241019232138.GDZxQ_AtkqA9iAR2td@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/19/24 5:21 PM, Borislav Petkov wrote:
+> On Sat, Oct 19, 2024 at 07:54:07AM -0600, Jens Axboe wrote:
+>> Added that, and here's the full boot output until it crashes. Sent you
+>> the full thing as there's some microcode debug prints initially, and
+>> then some later on. Didn't want to miss any.
+> 
+> Thanks, I think I see it. It is that weird node-per-L3 setting which
+> apparently doesn't set up the ACPI tables properly or the loader runs too
+> early but load_microcode_amd() sees a very funky node maps. Node 0's first CPU
+> in the map is CPU 0, which is correct but then cpu_data(0) is a funky pointer
+> which causes the splat.
 
-On 10/18/24 11:20 PM, Rong Xu wrote:
-> Thanks to all for the feedback and suggestions! We are ready to make any further
-> changes needed. Is there anything else we can address for this patch?
->
-> Also, we know it's not easy to test this patch, but if anyone has had a chance
-> to try building AutoFDO/Propeller kernels with it, we'd really appreciate your
-> input here. Any confirmation that it works as expected would be very helpful.
->
-> -Rong
->
-> On Mon, Oct 14, 2024 at 2:33 PM Rong Xu <xur@google.com> wrote:
->> Hi,
->>
->> This patch series is to integrate AutoFDO and Propeller support into
->> the Linux kernel. AutoFDO is a profile-guided optimization technique
->> that leverages hardware sampling to enhance binary performance.
->> Unlike Instrumentation-based FDO (iFDO), AutoFDO offers a user-friendly
->> and straightforward application process. While iFDO generally yields
->> superior profile quality and performance, our findings reveal that
->> AutoFDO achieves remarkable effectiveness, bringing performance close
->> to iFDO for benchmark applications.
->>
->> Propeller is a profile-guided, post-link optimizer that improves
->> the performance of large-scale applications compiled with LLVM. It
->> operates by relinking the binary based on an additional round of runtime
->> profiles, enabling precise optimizations that are not possible at
->> compile time.  Similar to AutoFDO, Propeller too utilizes hardware
->> sampling to collect profiles and apply post-link optimizations to improve
->> the benchmark’s performance over and above AutoFDO.
->>
->> Our empirical data demonstrates significant performance improvements
->> with AutoFDO and Propeller, up to 10% on microbenchmarks and up to 5%
->> on large warehouse-scale benchmarks. This makes a strong case for their
->> inclusion as supported features in the upstream kernel.
->>
->> Background
->>
->> A significant fraction of fleet processing cycles (excluding idle time)
->> from data center workloads are attributable to the kernel. Ware-house
->> scale workloads maximize performance by optimizing the production kernel
->> using iFDO (a.k.a instrumented PGO, Profile Guided Optimization).
->>
->> iFDO can significantly enhance application performance but its use
->> within the kernel has raised concerns. AutoFDO is a variant of FDO that
->> uses the hardware’s Performance Monitoring Unit (PMU) to collect
->> profiling data. While AutoFDO typically yields smaller performance
->> gains than iFDO, it presents unique benefits for optimizing kernels.
->>
->> AutoFDO eliminates the need for instrumented kernels, allowing a single
->> optimized kernel to serve both execution and profile collection. It also
->> minimizes slowdown during profile collection, potentially yielding
->> higher-fidelity profiling, especially for time-sensitive code, compared
->> to iFDO. Additionally, AutoFDO profiles can be obtained from production
->> environments via the hardware’s PMU whereas iFDO profiles require
->> carefully curated load tests that are representative of real-world
->> traffic.
->>
->> AutoFDO facilitates profile collection across diverse targets.
->> Preliminary studies indicate significant variation in kernel hot spots
->> within Google’s infrastructure, suggesting potential performance gains
->> through target-specific kernel customization.
->>
->> Furthermore, other advanced compiler optimization techniques, including
->> ThinLTO and Propeller can be stacked on top of AutoFDO, similar to iFDO.
->> ThinLTO achieves better runtime performance through whole-program
->> analysis and cross module optimizations. The main difference between
->> traditional LTO and ThinLTO is that the latter is scalable in time and
->> memory.
->>
->> This patch series adds AutoFDO and Propeller support to the kernel. The
->> actual solution comes in six parts:
->>
->> [P 1] Add the build support for using AutoFDO in Clang
->>
->>        Add the basic support for AutoFDO build and provide the
->>        instructions for using AutoFDO.
->>
->> [P 2] Fix objtool for bogus warnings when -ffunction-sections is enabled
->>
->> [P 3] Change the subsection ordering when -ffunction-sections is enabled
->>
->> [P 4] Enable –ffunction-sections for the AutoFDO build
->>
->> [P 5] Enable Machine Function Split (MFS) optimization for AutoFDO
->>
->> [P 6] Add Propeller configuration to the kernel build
->>
->> Patch 1 provides basic AutoFDO build support. Patches 2 to 5 further
->> enhance the performance of AutoFDO builds and are functionally dependent
->> on Patch 1. Patch 6 enables support for Propeller and is dependent on
->> patch 2 and patch 3.
->>
->> Caveats
->>
->> AutoFDO is compatible with both GCC and Clang, but the patches in this
->> series are exclusively applicable to LLVM 17 or newer for AutoFDO and
->> LLVM 19 or newer for Propeller. For profile conversion, two different
->> tools could be used, llvm_profgen or create_llvm_prof. llvm_profgen
->> needs to be the LLVM 19 or newer, or just the LLVM trunk. Alternatively,
->> create_llvm_prof v0.30.1 or newer can be used instead of llvm-profgen.
->>
->> Additionally, the build is only supported on x86 platforms equipped
->> with PMU capabilities, such as LBR on Intel machines. More
->> specifically:
->>   * Intel platforms: works on every platform that supports LBR;
->>     we have tested on Skylake.
->>   * AMD platforms: tested on AMD Zen3 with the BRS feature. The kernel
->>     needs to be configured with “CONFIG_PERF_EVENTS_AMD_BRS=y", To
->>     check, use
->>     $ cat /proc/cpuinfo | grep “ brs”
->>     For the AMD Zen4, AMD LBRV2 is supported, but we suspect a bug with
->>     AMD LBRv2 implementation in Genoa which blocks the usage.
->>
->> Experiments and Results
->>
->> Experiments were conducted to compare the performance of AutoFDO-optimized
->> kernel images (version 6.9.x) against default builds.. The evaluation
->> encompassed both open source microbenchmarks and real-world production
->> services from Google and Meta. The selected microbenchmarks included Neper,
->> a network subsystem benchmark, and UnixBench which is a comprehensive suite
->> for assessing various kernel operations.
->>
->> For Neper, AutoFDO optimization resulted in a 6.1% increase in throughput
->> and a 10.6% reduction in latency. Unixbench saw a 2.2% improvement in its
->> index score under low system load and a 2.6% improvement under high system
->> load.
->>
->> For further details on the improvements observed in Google and Meta's
->> production services, please refer to the LLVM discourse post:
->> https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autofdo-including-thinlto-and-propeller/79108
->>
->> Thanks,
->>
->> Rong Xu and Han Shen
->>
->> Change-Logs in V2:
->> Rebased the source to e32cde8d2bd7 (Merge tag 'sched_ext-for-6.12-rc1-fixes-1')
->> 1. Cover-letter: moved the Propeller description to the top (Peter Zijlstra)
->> 2. [P 1]: (1) Makefile: fixed file order (Masahiro Yamada)
->>            (2) scripts/Makefile.lib: used is-kernel-object to exclude
->>                files (Masahiro Yamada)
->>            (3) scripts/Makefile.autofdo: improved the code (Masahiro Yamada)
->>            (4) scripts/Makefile.autofdo: handled when DEBUG_INFO disabled (Nick Desaulniers)
->> 3. [P 2]: tools/objtool/elf.c: updated the comments (Peter Zijlstra)
->> 4. [P 3]: include/asm-generic/vmlinux.lds.h:
->>            (1) explicit set cold text function aligned (Peter Zijlstra and Peter Anvin)
->>            (2) set hot-text page aligned
->> 5. [P 6]: (1) include/asm-generic/vmlinux.lds.h: made Propeller not depending
->>                on AutoFDO
->>            (2) Makefile: fixed file order (Masahiro Yamada)
->>            (3) scripts/Makefile.lib: used is-kernel-object to exclude
->>                files (Masahiro Yamada). This removed the change in
->>                arch/x86/platform/efi/Makefile,
->>                drivers/firmware/efi/libstub/Makefile, and
->>                arch/x86/boot/compressed/Makefile.
->>                And this also addressed the comment from Arnd Bergmann regarding
->>                arch/x86/purgatory/Makefile.
->>            (4) scripts/Makefile.propeller: improved the code (Masahiro Yamada)
->>
->> Change-Logs in V3:
->> Rebased the source to eb952c47d154 (Merge tag 'for-6.12-rc2-tag').
->> 1. [P 1]: autofdo.rst: removed code-block directives and used "::" (Mike Rapoport)
->> 2. [P 6]: propeller.rst: removed code-block directives and use "::" (Mike Rapoport)
->>
->> Change-Logs in V4:
->> 1. [P 1]: autofdo.rst: fixed a typo for create_llvm_prof commmand.
->>
->> Rong Xu (6):
->>    Add AutoFDO support for Clang build
->>    objtool: Fix unreachable instruction warnings for weak funcitons
->>    Change the symbols order when --ffuntion-sections is enabled
->>    AutoFDO: Enable -ffunction-sections for the AutoFDO build
->>    AutoFDO: Enable machine function split optimization for AutoFDO
->>    Add Propeller configuration for kernel build.
->>
->>   Documentation/dev-tools/autofdo.rst   | 165 ++++++++++++++++++++++++++
->>   Documentation/dev-tools/index.rst     |   2 +
->>   Documentation/dev-tools/propeller.rst | 161 +++++++++++++++++++++++++
->>   MAINTAINERS                           |  14 +++
->>   Makefile                              |   2 +
->>   arch/Kconfig                          |  42 +++++++
->>   arch/x86/Kconfig                      |   2 +
->>   arch/x86/kernel/vmlinux.lds.S         |   4 +
->>   include/asm-generic/vmlinux.lds.h     |  54 +++++++--
->>   scripts/Makefile.autofdo              |  25 ++++
->>   scripts/Makefile.lib                  |  20 ++++
->>   scripts/Makefile.propeller            |  28 +++++
->>   tools/objtool/check.c                 |   2 +
->>   tools/objtool/elf.c                   |  15 ++-
->>   14 files changed, 524 insertions(+), 12 deletions(-)
->>   create mode 100644 Documentation/dev-tools/autofdo.rst
->>   create mode 100644 Documentation/dev-tools/propeller.rst
->>   create mode 100644 scripts/Makefile.autofdo
->>   create mode 100644 scripts/Makefile.propeller
->>
->>
->> base-commit: eb952c47d154ba2aac794b99c66c3c45eb4cc4ec
->> --
->> 2.47.0.rc1.288.g06298d1525-goog
->>
-I tried this patch set on our production machine.
-I am using llvm19, built by myself from the llvm19 release branch. I tried
-with x86_64 intel processor only. The base config file is based on Meta internal
-config file (production version).
+This was my initial thought when I saw where it crashed, is this being
+run before node masks are initialized?
 
-Overall, I didn't find any issues. I checked IR file with both non-lto and lto
-version and in both cases, the expected sample PGO loader indeed added
-some profiles to IR. For non-lto versions during normal compilation. For lto
-version both optimization before lto and during lto.
+> All the other "nodes" up to 31 have the first CPU in the mask as 512 which is
+> WTF?!
+> 
+> So the below is the same conglomerate patch but with code to dump those node
+> ids in load_microcode_amd() so that I can see what your system says.
+> 
+> It should boot ok now - fingers crossed - but let's see what it really does on
+> your machine. Just replace it with the previous one, pls, and send me full
+> dmesg again.
 
-The propeller works fine too. I downloaded the binary from the autofdo git
-repo as directed in the commit message of patch 6. create_llvm_prof dumps
-a lot of information which shows quite some functions with profile data.
-I also checked some asm code and does see basic-block level section
-are encoded in .s file (it should be in .o file as well but .s file is easier
-to reason.)
+That's a lot of output... Took about 1 minute on the serial console just
+for that. Here's some of it, let me know if you need all, because it's a
+LOT. Looks like it takes long enough that it actually fails to bring up
+some CPUs.
 
-The training data is collected with some workloads in the machine, not heavy
-but for testing purposes it should be enough.
-I run bpf selftests on the eventual kernel (after autofdo and propeller).
-Everything works fine.
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #487
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
 
-Of course I didn't try all possible combination. But for the config I am using
-(heavily geared for bpf selftests), things work fine. So
+.... node  #29, CPUs:   #488
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #489
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #490
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #491
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #492
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #493
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #494
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #495
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
 
-Tested-by: Yonghong Song <yonghong.song@linux.dev>
+.... node  #30, CPUs:   #496
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #497
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #498
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #499
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #500
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #501
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #502
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #503
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
 
+.... node  #31, CPUs:   #504
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #505
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #506
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #507
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #508
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #509
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #510
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+ #511
+microcode: cache_find_patch: equiv_cpu: 0x0, patch_id: 0xaa00215
+microcode: ucode_rev_to_cpuid: val: 0xa00107a, p.stepping: 0x0, c.stepping: 0x0
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+microcode: patch_cpus_equivalent: p_cid.full: 0xa00f10, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xa101248, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xa10f12, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: ucode_rev_to_cpuid: val: 0xaa00215, p.stepping: 0x2, c.stepping: 0x2
+microcode: cache_find_patch: using 0xaa00215
+microcode: patch_cpus_equivalent: p_cid.full: 0xaa0f02, n_cid.full: 0xaa0f02
+microcode: cache_find_patch: using 0xaa00215
+CPU257 failed to report alive state
+call_irq_handler: 498.55 No irq handler for vector
+smp: Brought up 32 nodes, 510 CPUs
+
+then a bunch of the usual kernel messages, then it ends with:
+
+microcode: Current revision: 0x0aa00215
+microcode: Updated early from: 0x0aa00215
+BUG: unable to handle page fault for address: 000000000aa0021d
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0
+Oops: Oops: 0000 [#1] SMP
+CPU: 225 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc2+ #145
+Hardware name: Dell Inc. PowerEdge R7625/06444F, BIOS 1.8.3 04/02/2024
+RIP: 0010:internal_create_group+0x1d0/0x430
+Code: 8b 0c 24 81 e2 b4 11 00 00 4c 89 ef e8 39 f2 ff ff 85 c0 0f 85 55 01 00 00 49 8b 47 08 49 83 c7 08 41 83 c6 01 48 85 c0 74 22 <0f> b7 48 08 85 ed 74 96 48 8b 30 31 d2 4c 89 ef 89 4c 24 08 e8 07
+RSP: 0018:ffffb4a3000e7de8 EFLAGS: 00010246
+RAX: 000000000aa00215 RBX: ffffffffbaa1a0c0 RCX: ffff9c6da7a374d0
+RDX: 0000000080000001 RSI: ffff9c3da7a36598 RDI: ffff9c7fcc4e5188
+RBP: 0000000000000000 R08: 0000000000000228 R09: ffff9bd8403a4f10
+R10: ffff9c91c2381dd0 R11: 0000000000000000 R12: ffff9be3a7a3cc00
+R13: ffff9c7fcc4e5188 R14: 0000000000000000 R15: ffffffffbb7e3928
+FS:  0000000000000000(0000) GS:ffff9c85a7a40000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000aa0021d CR3: 000000bd9bc28001 CR4: 0000000000370ef0
+Call Trace:
+ <TASK>
+ ? __die_body.cold+0x19/0x2b
+ ? page_fault_oops+0x90/0x210
+ ? idr_alloc_cyclic+0x49/0x90
+ ? exc_page_fault+0x6c/0x130
+ ? asm_exc_page_fault+0x22/0x30
+ ? internal_create_group+0x1d0/0x430
+ ? internal_create_group+0x141/0x430
+ microcode_init+0x121/0x190
+ ? mtrr_trim_uncached_memory+0x2d0/0x2d0
+ do_one_initcall+0x2e/0x190
+ ? __kmalloc_noprof+0x1d0/0x2c0
+ kernel_init_freeable+0x1d0/0x210
+ ? rest_init+0xc0/0xc0
+ kernel_init+0x16/0x120
+ ret_from_fork+0x2d/0x50
+ ? rest_init+0xc0/0xc0
+ ret_from_fork_asm+0x11/0x20
+ </TASK>
+Modules linked in:
+CR2: 000000000aa0021d
+---[ end trace 0000000000000000 ]---
+RIP: 0010:internal_create_group+0x1d0/0x430
+Code: 8b 0c 24 81 e2 b4 11 00 00 4c 89 ef e8 39 f2 ff ff 85 c0 0f 85 55 01 00 00 49 8b 47 08 49 83 c7 08 41 83 c6 01 48 85 c0 74 22 <0f> b7 48 08 85 ed 74 96 48 8b 30 31 d2 4c 89 ef 89 4c 24 08 e8 07
+RSP: 0018:ffffb4a3000e7de8 EFLAGS: 00010246
+RAX: 000000000aa00215 RBX: ffffffffbaa1a0c0 RCX: ffff9c6da7a374d0
+RDX: 0000000080000001 RSI: ffff9c3da7a36598 RDI: ffff9c7fcc4e5188
+RBP: 0000000000000000 R08: 0000000000000228 R09: ffff9bd8403a4f10
+R10: ffff9c91c2381dd0 R11: 0000000000000000 R12: ffff9be3a7a3cc00
+R13: ffff9c7fcc4e5188 R14: 0000000000000000 R15: ffffffffbb7e3928
+FS:  0000000000000000(0000) GS:ffff9c85a7a40000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000aa0021d CR3: 000000bd9bc28001 CR4: 0000000000370ef0
+note: swapper/0[1] exited with irqs disabled
+Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+Kernel Offset: 0x38e00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009 ]---
+
+-- 
+Jens Axboe
 
