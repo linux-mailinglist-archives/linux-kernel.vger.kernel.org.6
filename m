@@ -1,192 +1,166 @@
-Return-Path: <linux-kernel+bounces-373220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219B19A53EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:56:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DD69A53EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFE331F21A03
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:56:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9511C20AC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E9619259A;
-	Sun, 20 Oct 2024 11:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AF6191F7C;
+	Sun, 20 Oct 2024 11:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCPRz0/i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PlVGDAFe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1455EEC5;
-	Sun, 20 Oct 2024 11:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DF519259B
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 11:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729425383; cv=none; b=uoTJdPg92r1ZLY/QtW+GJYVWm6GRvJjmtUom+m1LRuPL2Bhie5LmIMHP8pvaOqfnaMebte319l/l/uPbLs8D+lK0P1xb6myWqlecDGEuLxWX/enLkBLgVvirT/oGdd6i4XEXlMsZSBra49xuG90H8XS9WRwdxfY0DvPZee45dog=
+	t=1729425464; cv=none; b=VN72RNU29E/3RMbZB1VtjIAaxdrdXqR+tk0Wfk0EAP7RZF0iQPwGYxjp0wGIuU9o1mq8dNKcF/jUqdrn8p6t8+WfoNVXDi2z6+rjlq2st3E8gCaq2JcyLtfU132mV4buCH7yZPQIApKOkNxGWv8LuaY43zdEz/smkOuADfUFTlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729425383; c=relaxed/simple;
-	bh=+0p5NkerOmvHfi35QPuQhFjpevnJp/owSssWdYHgSGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JRJ0QhRgG+LmkLdDePuT5AY0Z8dCjfQDOhllFwq+3BIwzVHqaY+2IOHE4dFtyk3LtHJIB3zqu80IYZ4GXI3gGV3p6DGYnlnVbs3WfIqzhwAdHxaSXHGYowpdHwlwTGTNn/ufCPUTFyRDXLT2C9G61/Mtknlpf1BlUoiPRkaS0U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCPRz0/i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB26BC4CEC6;
-	Sun, 20 Oct 2024 11:56:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729425382;
-	bh=+0p5NkerOmvHfi35QPuQhFjpevnJp/owSssWdYHgSGM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rCPRz0/iXnI9k/4NroLOaILStRwtaHc60W60TVkQczROmUVPGfyvETOQDxNMvIYbD
-	 yTLEJi0vX7vSD/ooet7e59kMrwLprqFUEiTO+/yOBMCP1HoYdZKnTEKcE/nacAcj+0
-	 87l/o84GdkwxNNitIK+yX9XQyNgJAglKm1mfLZCEmQ5qr6FjLya4PMgfGGJxEgA9Z9
-	 GI8hniQwmdREMyohHrDxNsbDIZyBiCOk+jVvKRPzJsmX7Rsh4jKx+GIplVWdsjZc+m
-	 Rtt2k0p2kmK/yBiyALS2AjVD4mgcU7c4mXyskAV65yjr44XBARCT56mgw19oUAKYeV
-	 rXObioLHHMdkw==
-Date: Sun, 20 Oct 2024 12:56:12 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Alexandru Ardelean
- <alexandru.ardelean@analog.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Nuno Sa
- <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, George Mois
- <george.mois@analog.com>, Ana-Maria Cusco <ana-maria.cusco@analog.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v7 3/3] drivers: iio: adc: add support for ad777x family
-Message-ID: <20241020125437.72c1de38@jic23-huawei>
-In-Reply-To: <20241014143204.30195-4-ramona.nechita@analog.com>
-References: <20241014143204.30195-1-ramona.nechita@analog.com>
-	<20241014143204.30195-4-ramona.nechita@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729425464; c=relaxed/simple;
+	bh=NusKdUyvj/EWpbxU2J1ZIMoe76mgSStPu5zFOKCDzTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OymEJBXpkhMwHVR4zalxVv5RaAOo4Evb+7jz9Qu+Qyt2wRDcF6SdhYDWkaDTTXtLMF9icRdYYo05u3m9oCnYl9KiqwVotQR36A5XqHMzzlwxtBBjQZYL4JiKV3K91YP45FWwByobNusnHizERPQrb34rVgKhuLwxDjsc9ykuVmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PlVGDAFe; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729425462; x=1760961462;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=NusKdUyvj/EWpbxU2J1ZIMoe76mgSStPu5zFOKCDzTo=;
+  b=PlVGDAFeoU4PS6qHktlsij82dO5aizryxJV4hUh/bIaN7XmLBHdsx8Tg
+   aqSKdgd53R8to/OBjO6I0uBOKC4+TmVUCaon1x4W84tha1tAnfTsBgJ29
+   QFoZy8z3zp8ajvmBAxIe5E7fQy4xfBZGR6mf4/2PjbG+hcmjrcp6Lr2am
+   sqodv7HqJJdoQKd7Qgmmxdu9tUnvNs/UjWvqyHkTT8Ak5Dt4dmzyZGxbK
+   PYKqhICRYLjHRVhD/tGTtnMvVdXslj5vmQlJ0fjHiFP6CSHO1FxFDvSX6
+   WbkW6U3DY84XRXvbH8VRZvQ3PNA9RUpVQtiiutlbdI1Ex5SkRJJvZfJUh
+   Q==;
+X-CSE-ConnectionGUID: uAchxeA8QduYglFofK8yWA==
+X-CSE-MsgGUID: msUKs5MPQiKvwVIdJF0ZSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40037177"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40037177"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 04:57:42 -0700
+X-CSE-ConnectionGUID: v6NiQ6sBQ+qqRS+IjZIsrQ==
+X-CSE-MsgGUID: pdnp1tNOT0Wiu3T4XRR+kQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="84091136"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 20 Oct 2024 04:57:41 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t2UZ0-000QGD-2U;
+	Sun, 20 Oct 2024 11:57:38 +0000
+Date: Sun, 20 Oct 2024 19:56:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: drivers/gpu/drm/sti/sti_plane.h:32:28: error: bitwise operation
+ between different enumeration types ('enum sti_plane_type' and 'enum
+ sti_plane_id_of_type')
+Message-ID: <202410201951.B9q3AL5V-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 14 Oct 2024 17:32:00 +0300
-Ramona Alexandra Nechita <ramona.nechita@analog.com> wrote:
+Hi Ville,
 
-> Add support for AD7770, AD7771, AD7779 ADCs. The device is capable of
-> sending out data both on DOUT lines interface,as on the SDO line.
-> The driver currently implements only the SDO data streaming mode. SPI
-> communication is used alternatively for accessing registers and streaming
-> data. Register accesses are protected by crc8.
-> 
-> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+FYI, the error/warning still remains.
 
-A few comments inline.  I also tweaked white space in a few places
-whilst applying.  Target in IIO is still sub 80 chars whenever it
-doesn't hurt readability.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f9e4825524aaf28af6b2097776616f27c31d6847
+commit: 74bde7581df3e18061119e1b27b63d0a9ea57b7a drm/sti: Allow build with COMPILE_TEST=y
+date:   5 months ago
+config: powerpc64-randconfig-001-20241019 (https://download.01.org/0day-ci/archive/20241020/202410201951.B9q3AL5V-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bfe84f7085d82d06d61c632a7bad1e692fd159e4)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241020/202410201951.B9q3AL5V-lkp@intel.com/reproduce)
 
-Also, you had unusual formatting for some of the macros. Avoid mixing
-tabs then spaces for indentation of the \ 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410201951.B9q3AL5V-lkp@intel.com/
 
-series applied to the togreg branch of iio.git and initially pushed
-out as testing so 0-day can take a look.
+All errors (new ones prefixed by >>):
 
-One missing return in the debugfs register access as well. Please
-check I fixed that up correctly.
+   In file included from drivers/gpu/drm/sti/sti_vid.c:8:
+   In file included from include/drm/drm_debugfs.h:38:
+   In file included from include/drm/drm_gpuvm.h:34:
+   In file included from include/drm/drm_gem.h:42:
+   In file included from include/drm/drm_vma_manager.h:27:
+   In file included from include/linux/mm.h:2253:
+   include/linux/vmstat.h:500:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
+     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     501 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:507:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
+     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     508 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:514:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:519:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
+     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     520 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/gpu/drm/sti/sti_vid.c:12:
+>> drivers/gpu/drm/sti/sti_plane.h:32:28: error: bitwise operation between different enumeration types ('enum sti_plane_type' and 'enum sti_plane_id_of_type') [-Werror,-Wenum-enum-conversion]
+      32 |         STI_GDP_0       = STI_GDP | STI_ID_0,
+         |                           ~~~~~~~ ^ ~~~~~~~~
+   drivers/gpu/drm/sti/sti_plane.h:33:28: error: bitwise operation between different enumeration types ('enum sti_plane_type' and 'enum sti_plane_id_of_type') [-Werror,-Wenum-enum-conversion]
+      33 |         STI_GDP_1       = STI_GDP | STI_ID_1,
+         |                           ~~~~~~~ ^ ~~~~~~~~
+   drivers/gpu/drm/sti/sti_plane.h:34:28: error: bitwise operation between different enumeration types ('enum sti_plane_type' and 'enum sti_plane_id_of_type') [-Werror,-Wenum-enum-conversion]
+      34 |         STI_GDP_2       = STI_GDP | STI_ID_2,
+         |                           ~~~~~~~ ^ ~~~~~~~~
+   drivers/gpu/drm/sti/sti_plane.h:35:28: error: bitwise operation between different enumeration types ('enum sti_plane_type' and 'enum sti_plane_id_of_type') [-Werror,-Wenum-enum-conversion]
+      35 |         STI_GDP_3       = STI_GDP | STI_ID_3,
+         |                           ~~~~~~~ ^ ~~~~~~~~
+   drivers/gpu/drm/sti/sti_plane.h:36:28: error: bitwise operation between different enumeration types ('enum sti_plane_type' and 'enum sti_plane_id_of_type') [-Werror,-Wenum-enum-conversion]
+      36 |         STI_HQVDP_0     = STI_VDP | STI_ID_0,
+         |                           ~~~~~~~ ^ ~~~~~~~~
+   9 errors generated.
 
-Thanks,
 
-Jonathan
+vim +32 drivers/gpu/drm/sti/sti_plane.h
 
-> diff --git a/drivers/iio/adc/ad7779.c b/drivers/iio/adc/ad7779.c
-> new file mode 100644
-> index 000000000000..5904cc669f3a
-> --- /dev/null
-> +++ b/drivers/iio/adc/ad7779.c
-> @@ -0,0 +1,909 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * AD7770, AD7771, AD7779 ADC
-> + *
-> + * Copyright 2023-2024 Analog Devices Inc.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/bitmap.h>
-> +#include <linux/clk.h>
-> +#include <linux/crc8.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/math.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/string.h>
-> +#include <linux/types.h>
-> +#include <linux/units.h>
-> +
-> +#include <asm/unaligned.h>
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31  30  
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31  31  enum sti_plane_desc {
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31 @32  	STI_GDP_0       = STI_GDP | STI_ID_0,
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31  33  	STI_GDP_1       = STI_GDP | STI_ID_1,
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31  34  	STI_GDP_2       = STI_GDP | STI_ID_2,
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31  35  	STI_GDP_3       = STI_GDP | STI_ID_3,
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31  36  	STI_HQVDP_0     = STI_VDP | STI_ID_0,
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31  37  	STI_CURSOR      = STI_CUR,
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31  38  	STI_BACK        = STI_BCK
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31  39  };
+871bcdfea68560 drivers/gpu/drm/sti/sti_drm_plane.h Vincent Abriou 2015-07-31  40  
 
-This moved, I'll fix up.
+:::::: The code at line 32 was first introduced by commit
+:::::: 871bcdfea68560991bd650406e47a801ab9d635d drm/sti: code clean up
 
-> +	{								       \
-> +		.type = IIO_VOLTAGE,					       \
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE)  |	       \
-> +				      BIT(IIO_CHAN_INFO_CALIBBIAS),	       \
-> +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),       \
+:::::: TO: Vincent Abriou <vincent.abriou@st.com>
+:::::: CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 
-It's not technically an ABI issue, but ususual to have an ADC driver that provides
-no direct readings via sysfs and also provides no indication of channel scaling.
-
-A quick glance at the datasheet suggests there is a PGA in the path, so perhaps
-you plan to add scaling later.  Raw reads of single channels would I think
-have to just select from the bulk channel read back so not that trivial to implement.
-Maybe worth doing longer term though as that is a useful debug interface if nothing
-else.
-
-Anyhow, I'm fine with taking the driver with the current feature set
-I was just a bit surprised at which features were implemented.
-
-> +		.address = (index),					       \
-> +		.indexed = 1,						       \
-> +		.channel = (index),					       \
-> +		.scan_index = (index),					       \
-> +		.ext_info = (_ext_info),				       \
-> +		.scan_type = {						       \
-> +			.sign = 's',					       \
-> +			.realbits = 24,					       \
-> +			.storagebits = 32,				       \
-> +			.endianness = IIO_BE,				   \
-> +		},								\
-> +	}
-> +
-> +#define AD777x_CHAN_NO_FILTER_S(index)					       \
-> +	AD777x_CHAN_S(index, NULL)
-> +
-> +#define AD777x_CHAN_FILTER_S(index)					       \
-> +	AD777x_CHAN_S(index, ad7779_ext_filter)
-> +static const struct iio_chan_spec ad7779_channels[] = {
-> +	AD777x_CHAN_NO_FILTER_S(0),
-> +	AD777x_CHAN_NO_FILTER_S(1),
-> +	AD777x_CHAN_NO_FILTER_S(2),
-> +	AD777x_CHAN_NO_FILTER_S(3),
-> +	AD777x_CHAN_NO_FILTER_S(4),
-> +	AD777x_CHAN_NO_FILTER_S(5),
-> +	AD777x_CHAN_NO_FILTER_S(6),
-> +	AD777x_CHAN_NO_FILTER_S(7),
-> +	IIO_CHAN_SOFT_TIMESTAMP(8),
-> +};
-> +
-> +static const struct iio_chan_spec ad7779_channels_filter[] = {
-> +	AD777x_CHAN_FILTER_S(0),
-> +	AD777x_CHAN_FILTER_S(1),
-> +	AD777x_CHAN_FILTER_S(2),
-> +	AD777x_CHAN_FILTER_S(3),
-> +	AD777x_CHAN_FILTER_S(4),
-> +	AD777x_CHAN_FILTER_S(5),
-> +	AD777x_CHAN_FILTER_S(6),
-> +	AD777x_CHAN_FILTER_S(7),
-> +	IIO_CHAN_SOFT_TIMESTAMP(8),
-> +};
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
