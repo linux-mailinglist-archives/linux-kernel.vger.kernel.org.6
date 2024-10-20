@@ -1,250 +1,342 @@
-Return-Path: <linux-kernel+bounces-373203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169E49A53B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:24:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E679A53BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456721C20A91
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:24:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F182281028
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B82191F7C;
-	Sun, 20 Oct 2024 11:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370ED191F60;
+	Sun, 20 Oct 2024 11:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FQSr/2Ls"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="azYNdirA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE6128F4
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 11:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA2682877
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 11:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729423437; cv=none; b=sWO/UeMnnrgvAid+x8XHla+EO2t9i1SxhqrndeFPgO5SRtQah2hM+BMsdmdXijoCQdeoP4PGKXxItealpNonZOnOEQI2qBTgBwmKage9jl/3gSJTuqiJnLOyU5OvKaGCtWtbSRrdwmbUcdM/cxdUJP1r+xyJ31oTxo2ulY9Nagw=
+	t=1729423604; cv=none; b=SmD2cQDAoYa+/MNFbcPGH4kbmDR9iuPa6sAjx1zqkiYUGIe6MA64+dqiglEF7rtPcg5gpN2DCmlRggoxLFfIWlsBo/tw66OvFP3AZlcSaJ5oSMJezTEgXZNEeC6qfPe5HjEcaVEWE9w0hxwmNhALGY6We7BmUW1ieE9vi79GJB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729423437; c=relaxed/simple;
-	bh=uTSU9Icqm1BH2e3ef1hfcYv/A1CE2ayRieFAHspcG8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kV7asmpNgUuXpWrrPKVJWbyzAtEf+h3UW3VBcbKfDf50bmgEJLHJng+CN7AsOuSl3nz6yr+cVL3MdmZEM/hqjSESdDY2qP3ChPQfLq5MK+eP0bCPbjxEYZbHk/KfJYg/sUDRBj+1Mt7E06jo62fgLAeYCcNH03quS7yXkXtAn2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FQSr/2Ls; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729423433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Lny050tEcGeI2Uox2WgaoIjNCTUW378cFEU6PBnN/8E=;
-	b=FQSr/2Ls+SX+RuVcO9qiqzU6pP301S5iXYUrqXMmgoxqo9jmemrmZHSA2HcjMv0xDviJG9
-	rk8I/2q4yUPIlbePKQyO2pBPCixCmqQ3YFewf/zD93lnMX1UC1O24yi1CtJCTEuV7lfDr+
-	c8q/1bbrsjjPQVvw4QpcazIJ845Syog=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-388-0Bq2JOcKMKuHdwCk--GJtA-1; Sun, 20 Oct 2024 07:23:52 -0400
-X-MC-Unique: 0Bq2JOcKMKuHdwCk--GJtA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43157cff1d1so26870475e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 04:23:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729423431; x=1730028231;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lny050tEcGeI2Uox2WgaoIjNCTUW378cFEU6PBnN/8E=;
-        b=o3n+YSRbUGOfXdOPpqJ7qYwM99j34WM62gkOBDWklzUm/b1n/euFAYcpMIfAAv8FJh
-         RbqjWHKAMgHlQveYlaotw88eqjLPZOqbANVKwIqOvpn1NuwhpRTiBfYVCk+m2VQ/BgXb
-         8j7py2wO3BDBKXJyTUpHogVtrpT84WObktii7EiYGZ7Xxsr/WI9A5JvUF+bo6SWu/VSt
-         N0g8EaGvTm2bFByZ0oQpZcxUwWWjNjZgzDz4NHUcd7NZ6rGjD2RQ8dvd50dnsumPaXD8
-         ucdv6xLIktB2BPujazfSq5ZdUS8jqgJxHNrX+RxkvAEBoIyY76gBTBVzMcNxNCcEC0IN
-         dRcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSB7ut4sKXvWzIlFHB49J8IH8zpQ1j13OEcsTNkKWLjAInKLKA+KFRCXNoUB6mqqursn9XanPdKcy7U1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiHIYTyW6ip8+89g6URWAqZj/Nj/M76QTmA97YbRQnQYeptd40
-	4WCQqYykjpAXhk9Jsxasi+1ntKXLnRx3Cbg/2DUlU+HgLy8ibRtoxNSL4/q7BI8ewT+DU3FePNX
-	70k2j+iQGLfynLmH/WNeqTFlrR3pEVyP7QTHYgV9eP4hi9hxVpDiJKbGKSl4Q9g==
-X-Received: by 2002:a5d:40c3:0:b0:37c:d23f:e464 with SMTP id ffacd0b85a97d-37eb487c2d3mr5023188f8f.38.1729423431166;
-        Sun, 20 Oct 2024 04:23:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcwDTX8341anZv1s4YlXjYOHvwjt0tzPfZ/65jz10bcvacK48CpasaYoZJiAZepxSATlDbGg==
-X-Received: by 2002:a5d:40c3:0:b0:37c:d23f:e464 with SMTP id ffacd0b85a97d-37eb487c2d3mr5023178f8f.38.1729423430796;
-        Sun, 20 Oct 2024 04:23:50 -0700 (PDT)
-Received: from [192.168.10.3] ([151.95.144.54])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37ee0b9432fsm1543123f8f.83.2024.10.20.04.23.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Oct 2024 04:23:50 -0700 (PDT)
-Message-ID: <8889dc3b-d672-41c3-8d11-e88861b7b38e@redhat.com>
-Date: Sun, 20 Oct 2024 13:23:46 +0200
+	s=arc-20240116; t=1729423604; c=relaxed/simple;
+	bh=O4i1qBKKaJ66V6YTLTbvtIH7J/dRl9IZKUePZiOh//Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QHT2XrMooQ1UBogTjcw0JqfPGDkwEhGyrccG2QjwCjrc0pb2VVGa0tQdn0TgdY44XnfE5Gpa8nTUiqqstpL9uFaFoG/xmLUYgxFydKc6z5PMgwVR3oSvRJ4npl6zSQd59cqT4w4YLauX2Heg4SxvKcHxQAyJMC6WpZJleNwmq2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=azYNdirA; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729423602; x=1760959602;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O4i1qBKKaJ66V6YTLTbvtIH7J/dRl9IZKUePZiOh//Y=;
+  b=azYNdirAjDt2FoFo+13IMlBkRrUHDQAck56reeHOH9IrrWy7cz+gbH2M
+   sbS4/XPwNGZRpZaWezRrkexSAqXKTW15LKXkpq90pPcPyrb8s0kTbtbbJ
+   kmG6X+8H+HTbAVh97Jsa7krEcnp781Ur+J6On//lK5+6hxUK96BZlTejq
+   lEnBJ87GmN6qeE1DATpB2/HjI3KXA/iYc4wwBy/82qoDblZ8welhTPv+Q
+   mBnU/rpulRG+6+y3rVVvzikt/wtoOIA16ladNnY2M7dU+lS5/pV/fdy5t
+   Aqc4/VVIUSCv1J1Jce4sutOOeJJz5eJQz3+NxrpZqiz/RryKeozIv/4fc
+   g==;
+X-CSE-ConnectionGUID: mSevPiT2QOWS2Ou5m7Jrpg==
+X-CSE-MsgGUID: TcEpk6vYSDuTQ9XAL0a+wQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="40268907"
+X-IronPort-AV: E=Sophos;i="6.11,218,1725346800"; 
+   d="scan'208";a="40268907"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 04:26:41 -0700
+X-CSE-ConnectionGUID: znHcLmU/TLO1PWyQPHBYXg==
+X-CSE-MsgGUID: RqbTcHXUSfCDglvNm+tC0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,218,1725346800"; 
+   d="scan'208";a="78937493"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 20 Oct 2024 04:26:39 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t2U4z-000QEf-1s;
+	Sun, 20 Oct 2024 11:26:37 +0000
+Date: Sun, 20 Oct 2024 19:25:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, Sanket.Goswami@amd.com,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH 4/6] i3c: master: Add a routine to include the I3C SPD
+ device
+Message-ID: <202410201938.oiMeI2Pu-lkp@intel.com>
+References: <20241017150330.3035568-5-Shyam-sundar.S-k@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] Revert "KVM: Fix vcpu_array[0] races"
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Will Deacon <will@kernel.org>, Michal Luczaj <mhal@rbox.co>,
- Alexander Potapenko <glider@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>
-References: <20241009150455.1057573-1-seanjc@google.com>
- <20241009150455.1057573-5-seanjc@google.com>
- <1baf4159-ce53-4a75-99bf-adf4b89dd07b@redhat.com>
- <ZwgTUNCOIh2xwU6e@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <ZwgTUNCOIh2xwU6e@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017150330.3035568-5-Shyam-sundar.S-k@amd.com>
 
-On 10/10/24 19:48, Sean Christopherson wrote:
-> On Thu, Oct 10, 2024, Paolo Bonzini wrote:
->> On 10/9/24 17:04, Sean Christopherson wrote:
->>> Now that KVM loads from vcpu_array if and only if the target index is
->>> valid with respect to online_vcpus, i.e. now that it is safe to erase a
->>> not-fully-onlined vCPU entry, revert to storing into vcpu_array before
->>> success is guaranteed.
->>>
->>> If xa_store() fails, which _should_ be impossible, then putting the vCPU's
->>> reference to 'struct kvm' results in a refcounting bug as the vCPU fd has
->>> been installed and owns the vCPU's reference.
->>>
->>> This was found by inspection, but forcing the xa_store() to fail
->>> confirms the problem:
->>>
->>>    | Unable to handle kernel paging request at virtual address ffff800080ecd960
->>>    | Call trace:
->>>    |  _raw_spin_lock_irq+0x2c/0x70
->>>    |  kvm_irqfd_release+0x24/0xa0
->>>    |  kvm_vm_release+0x1c/0x38
->>>    |  __fput+0x88/0x2ec
->>>    |  ____fput+0x10/0x1c
->>>    |  task_work_run+0xb0/0xd4
->>>    |  do_exit+0x210/0x854
->>>    |  do_group_exit+0x70/0x98
->>>    |  get_signal+0x6b0/0x73c
->>>    |  do_signal+0xa4/0x11e8
->>>    |  do_notify_resume+0x60/0x12c
->>>    |  el0_svc+0x64/0x68
->>>    |  el0t_64_sync_handler+0x84/0xfc
->>>    |  el0t_64_sync+0x190/0x194
->>>    | Code: b9000909 d503201f 2a1f03e1 52800028 (88e17c08)
->>>
->>> Practically speaking, this is a non-issue as xa_store() can't fail, absent
->>> a nasty kernel bug.  But the code is visually jarring and technically
->>> broken.
->>>
->>> This reverts commit afb2acb2e3a32e4d56f7fbd819769b98ed1b7520.
->>>
->>> Cc: Paolo Bonzini <pbonzini@redhat.com>
->>> Cc: Michal Luczaj <mhal@rbox.co>
->>> Cc: Alexander Potapenko <glider@google.com>
->>> Cc: Marc Zyngier <maz@kernel.org>
->>> Reported-by: Will Deacon <will@kernel.org>
->>> Signed-off-by: Sean Christopherson <seanjc@google.com>
->>> ---
->>>    virt/kvm/kvm_main.c | 14 +++++---------
->>>    1 file changed, 5 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
->>> index fca9f74e9544..f081839521ef 100644
->>> --- a/virt/kvm/kvm_main.c
->>> +++ b/virt/kvm/kvm_main.c
->>> @@ -4283,7 +4283,8 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
->>>    	}
->>>    	vcpu->vcpu_idx = atomic_read(&kvm->online_vcpus);
->>> -	r = xa_reserve(&kvm->vcpu_array, vcpu->vcpu_idx, GFP_KERNEL_ACCOUNT);
->>> +	r = xa_insert(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, GFP_KERNEL_ACCOUNT);
->>> +	BUG_ON(r == -EBUSY);
->>>    	if (r)
->>>    		goto unlock_vcpu_destroy;
->>> @@ -4298,12 +4299,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
->>>    	kvm_get_kvm(kvm);
->>>    	r = create_vcpu_fd(vcpu);
->>>    	if (r < 0)
->>> -		goto kvm_put_xa_release;
->>> -
->>> -	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
->>> -		r = -EINVAL;
->>> -		goto kvm_put_xa_release;
->>> -	}
->>> +		goto kvm_put_xa_erase;
->>
->> I also find it a bit jarring though that we have to undo the insertion. This
->> is a chicken-and-egg situation where you are pick one operation B that will
->> have to undo operation A if it fails.  But what xa_store is doing, is
->> breaking this deadlock.
->>
->> The code is a bit longer, sure, but I don't see the point in complicating
->> the vcpu_array invariants and letting an entry disappear.
-> 
-> But we only need one rule: vcpu_array[x] is valid if and only if 'x' is less than
-> online_vcpus.  And that rule is necessary regardless of whether or not vcpu_array[x]
-> is filled before success is guaranteed.
+Hi Shyam,
 
-Even if the invariant is explainable I still find xa_erase to be uglier 
-than xa_release, but maybe it's just me.
+kernel test robot noticed the following build warnings:
 
-The reason I'm not fully convinced by the explanation is that...
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.12-rc3 next-20241018]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> I'm not concerned about the code length, it's that we need to do _something_ if
-> xa_store() fails.  Yeah, it should never happen, but knowingly doing nothing feels
-> all kinds of wrong.
+url:    https://github.com/intel-lab-lkp/linux/commits/Shyam-Sundar-S-K/i3c-dw-Add-support-for-AMDI0015-ACPI-ID/20241017-230810
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241017150330.3035568-5-Shyam-sundar.S-k%40amd.com
+patch subject: [PATCH 4/6] i3c: master: Add a routine to include the I3C SPD device
+config: arm-randconfig-r073-20241020 (https://download.01.org/0day-ci/archive/20241020/202410201938.oiMeI2Pu-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bfe84f7085d82d06d61c632a7bad1e692fd159e4)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241020/202410201938.oiMeI2Pu-lkp@intel.com/reproduce)
 
-... it seems to me that this is not just an issue in KVM code; it should 
-apply to other uses of xa_reserve()/xa_store() as well.  If xa_store() 
-fails after xa_reserve(), you're pretty much using the xarray API 
-incorrectly... and then, just make it a BUG()?  I know that BUG() is 
-frowned upon, but if the API causes invalid memory accesses when used 
-incorrectly, one might as well fail as early as possible and before the 
-invalid memory access becomes exploitable.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410201938.oiMeI2Pu-lkp@intel.com/
 
-> I don't like BUG(), because it's obviously very doable to
-> gracefully handle failure.
+All warnings (new ones prefixed by >>):
 
-Yes, you can by using a different API.  But the point is that in the 
-reserve/store case the insert failure becomes a reserve failure, never a 
-store failure.
+   In file included from drivers/i3c/master.c:21:
+   In file included from drivers/i3c/internals.h:11:
+   In file included from include/linux/i3c/master.h:14:
+   In file included from include/linux/i2c.h:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/i3c/master.c:1910:33: warning: variable 'i3cboardinfo' is uninitialized when used here [-Wuninitialized]
+    1910 |         i3c_master_add_spd_dev(master, i3cboardinfo);
+         |                                        ^~~~~~~~~~~~
+   drivers/i3c/master.c:1856:40: note: initialize the variable 'i3cboardinfo' to silence this warning
+    1856 |         struct i3c_dev_boardinfo *i3cboardinfo;
+         |                                               ^
+         |                                                = NULL
+   drivers/i3c/master.c:2324:12: error: call to undeclared function 'acpi_evaluate_integer'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    2324 |                 status = acpi_evaluate_integer(adev->handle, "_ADR", NULL, &val);
+         |                          ^
+   drivers/i3c/master.c:2324:12: note: did you mean 'acpi_evaluate_object'?
+   include/acpi/acpixf.h:550:8: note: 'acpi_evaluate_object' declared here
+     550 |                             acpi_evaluate_object(acpi_handle object,
+         |                             ^
+   include/acpi/platform/aclinux.h:93:21: note: expanded from macro 'ACPI_EXTERNAL_RETURN_STATUS'
+      93 |         static ACPI_INLINE prototype {return(AE_NOT_CONFIGURED);}
+         |                            ^
+   drivers/i3c/master.c:2324:38: error: incomplete definition of type 'struct acpi_device'
+    2324 |                 status = acpi_evaluate_integer(adev->handle, "_ADR", NULL, &val);
+         |                                                ~~~~^
+   include/linux/acpi.h:801:8: note: forward declaration of 'struct acpi_device'
+     801 | struct acpi_device;
+         |        ^
+   drivers/i3c/master.c:2352:27: warning: shift count is negative [-Wshift-count-negative]
+    2352 |                 boardinfo->pid = (val & GENMASK(47, 0));
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/bits.h:35:31: note: expanded from macro 'GENMASK'
+      35 |         (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+         |                                      ^~~~~~~~~~~~~~~
+   include/uapi/linux/bits.h:9:19: note: expanded from macro '__GENMASK'
+       9 |          (~_UL(0) >> (__BITS_PER_LONG - 1 - (h))))
+         |                   ^  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   3 warnings and 2 errors generated.
 
-Maybe there should be an xa_store_reserved() that BUGs on failure, I 
-don't know.
 
-Paolo
+vim +/i3cboardinfo +1910 drivers/i3c/master.c
 
+  1819	
+  1820	/**
+  1821	 * i3c_master_bus_init() - initialize an I3C bus
+  1822	 * @master: main master initializing the bus
+  1823	 *
+  1824	 * This function is following all initialisation steps described in the I3C
+  1825	 * specification:
+  1826	 *
+  1827	 * 1. Attach I2C devs to the master so that the master can fill its internal
+  1828	 *    device table appropriately
+  1829	 *
+  1830	 * 2. Call &i3c_master_controller_ops->bus_init() method to initialize
+  1831	 *    the master controller. That's usually where the bus mode is selected
+  1832	 *    (pure bus or mixed fast/slow bus)
+  1833	 *
+  1834	 * 3. Instruct all devices on the bus to drop their dynamic address. This is
+  1835	 *    particularly important when the bus was previously configured by someone
+  1836	 *    else (for example the bootloader)
+  1837	 *
+  1838	 * 4. Disable all slave events.
+  1839	 *
+  1840	 * 5. Reserve address slots for I3C devices with init_dyn_addr. And if devices
+  1841	 *    also have static_addr, try to pre-assign dynamic addresses requested by
+  1842	 *    the FW with SETDASA and attach corresponding statically defined I3C
+  1843	 *    devices to the master.
+  1844	 *
+  1845	 * 6. Do a DAA (Dynamic Address Assignment) to assign dynamic addresses to all
+  1846	 *    remaining I3C devices
+  1847	 *
+  1848	 * Once this is done, all I3C and I2C devices should be usable.
+  1849	 *
+  1850	 * Return: a 0 in case of success, an negative error code otherwise.
+  1851	 */
+  1852	static int i3c_master_bus_init(struct i3c_master_controller *master)
+  1853	{
+  1854		enum i3c_addr_slot_status status;
+  1855		struct i2c_dev_boardinfo *i2cboardinfo;
+  1856		struct i3c_dev_boardinfo *i3cboardinfo;
+  1857		struct i2c_dev_desc *i2cdev;
+  1858		int ret;
+  1859	
+  1860		/*
+  1861		 * First attach all devices with static definitions provided by the
+  1862		 * FW.
+  1863		 */
+  1864		list_for_each_entry(i2cboardinfo, &master->boardinfo.i2c, node) {
+  1865			status = i3c_bus_get_addr_slot_status(&master->bus,
+  1866							      i2cboardinfo->base.addr);
+  1867			if (status != I3C_ADDR_SLOT_FREE) {
+  1868				ret = -EBUSY;
+  1869				goto err_detach_devs;
+  1870			}
+  1871	
+  1872			i3c_bus_set_addr_slot_status(&master->bus,
+  1873						     i2cboardinfo->base.addr,
+  1874						     I3C_ADDR_SLOT_I2C_DEV);
+  1875	
+  1876			i2cdev = i3c_master_alloc_i2c_dev(master,
+  1877							  i2cboardinfo->base.addr,
+  1878							  i2cboardinfo->lvr);
+  1879			if (IS_ERR(i2cdev)) {
+  1880				ret = PTR_ERR(i2cdev);
+  1881				goto err_detach_devs;
+  1882			}
+  1883	
+  1884			ret = i3c_master_attach_i2c_dev(master, i2cdev);
+  1885			if (ret) {
+  1886				i3c_master_free_i2c_dev(i2cdev);
+  1887				goto err_detach_devs;
+  1888			}
+  1889		}
+  1890	
+  1891		/*
+  1892		 * Now execute the controller specific ->bus_init() routine, which
+  1893		 * might configure its internal logic to match the bus limitations.
+  1894		 */
+  1895		ret = master->ops->bus_init(master);
+  1896		if (ret)
+  1897			goto err_detach_devs;
+  1898	
+  1899		/*
+  1900		 * The master device should have been instantiated in ->bus_init(),
+  1901		 * complain if this was not the case.
+  1902		 */
+  1903		if (!master->this) {
+  1904			dev_err(&master->dev,
+  1905				"master_set_info() was not called in ->bus_init()\n");
+  1906			ret = -EINVAL;
+  1907			goto err_bus_cleanup;
+  1908		}
+  1909	
+> 1910		i3c_master_add_spd_dev(master, i3cboardinfo);
+  1911	
+  1912		if (master->ops->set_speed) {
+  1913			ret = master->ops->set_speed(master, I3C_OPEN_DRAIN_SLOW_SPEED);
+  1914			if (ret)
+  1915				goto err_bus_cleanup;
+  1916		}
+  1917	
+  1918		/*
+  1919		 * Reset all dynamic address that may have been assigned before
+  1920		 * (assigned by the bootloader for example).
+  1921		 */
+  1922		ret = i3c_master_rstdaa_locked(master, I3C_BROADCAST_ADDR);
+  1923		if (ret && ret != I3C_ERROR_M2)
+  1924			goto err_bus_cleanup;
+  1925	
+  1926		if (master->ops->set_speed) {
+  1927			master->ops->set_speed(master, I3C_OPEN_DRAIN_NORMAL_SPEED);
+  1928			if (ret)
+  1929				goto err_bus_cleanup;
+  1930		}
+  1931	
+  1932		/* Disable all slave events before starting DAA. */
+  1933		ret = i3c_master_disec_locked(master, I3C_BROADCAST_ADDR,
+  1934					      I3C_CCC_EVENT_SIR | I3C_CCC_EVENT_MR |
+  1935					      I3C_CCC_EVENT_HJ);
+  1936		if (ret && ret != I3C_ERROR_M2)
+  1937			goto err_bus_cleanup;
+  1938	
+  1939		/*
+  1940		 * Reserve init_dyn_addr first, and then try to pre-assign dynamic
+  1941		 * address and retrieve device information if needed.
+  1942		 * In case pre-assign dynamic address fails, setting dynamic address to
+  1943		 * the requested init_dyn_addr is retried after DAA is done in
+  1944		 * i3c_master_add_i3c_dev_locked().
+  1945		 */
+  1946		list_for_each_entry(i3cboardinfo, &master->boardinfo.i3c, node) {
+  1947	
+  1948			/*
+  1949			 * We don't reserve a dynamic address for devices that
+  1950			 * don't explicitly request one.
+  1951			 */
+  1952			if (!i3cboardinfo->init_dyn_addr)
+  1953				continue;
+  1954	
+  1955			ret = i3c_bus_get_addr_slot_status(&master->bus,
+  1956							   i3cboardinfo->init_dyn_addr);
+  1957			if (ret != I3C_ADDR_SLOT_FREE) {
+  1958				ret = -EBUSY;
+  1959				goto err_rstdaa;
+  1960			}
+  1961	
+  1962			i3c_bus_set_addr_slot_status(&master->bus,
+  1963						     i3cboardinfo->init_dyn_addr,
+  1964						     I3C_ADDR_SLOT_I3C_DEV);
+  1965	
+  1966			/*
+  1967			 * Only try to create/attach devices that have a static
+  1968			 * address. Other devices will be created/attached when
+  1969			 * DAA happens, and the requested dynamic address will
+  1970			 * be set using SETNEWDA once those devices become
+  1971			 * addressable.
+  1972			 */
+  1973	
+  1974			if (i3cboardinfo->static_addr)
+  1975				i3c_master_early_i3c_dev_add(master, i3cboardinfo);
+  1976		}
+  1977	
+  1978		ret = i3c_master_do_daa(master);
+  1979		if (ret)
+  1980			goto err_rstdaa;
+  1981	
+  1982		return 0;
+  1983	
+  1984	err_rstdaa:
+  1985		i3c_master_rstdaa_locked(master, I3C_BROADCAST_ADDR);
+  1986	
+  1987	err_bus_cleanup:
+  1988		if (master->ops->bus_cleanup)
+  1989			master->ops->bus_cleanup(master);
+  1990	
+  1991	err_detach_devs:
+  1992		i3c_master_detach_free_devs(master);
+  1993	
+  1994		return ret;
+  1995	}
+  1996	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
