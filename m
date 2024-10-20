@@ -1,133 +1,85 @@
-Return-Path: <linux-kernel+bounces-373191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33AD99A5392
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:00:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A519A5395
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87D82B21828
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B0031F227BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3292D18E361;
-	Sun, 20 Oct 2024 10:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B6EB674;
+	Sun, 20 Oct 2024 11:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aQIB2dc1"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdD78Tya"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A226AA7;
-	Sun, 20 Oct 2024 10:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4141465BB;
+	Sun, 20 Oct 2024 11:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729421996; cv=none; b=Q6R4ukWvhzK+BZqoK4gNIutkrjv4FUx5cKmn+Si2uBoCqB0LougbGKHPva57NawRU96s9R5h29GSBo+a6QCm+kHifHDTAvrANxvpWk9zRUKBR0H7dliXGxcGU6eIUKADyV3p/XR8BO+HdnvjGbhZCek+Kzlc/LIsA7TjAKOabSY=
+	t=1729422013; cv=none; b=fCVGhtgLDWAXPGIQb/jhrgRQCRrLoXULVFeWs8gZN34A5uKCR3pTetlIO2h+LXlSM7pxF22HPhhpQ1Z98nVTTLEjQdgS8NFN4xtKOpYrUK8+eu8YKjU+iIgtduv5Z4cchmWwyVBGCwJDunR3UacbZsCoYf1+d/1uNv1Y0nHCIiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729421996; c=relaxed/simple;
-	bh=Ez26bh9tHqqLY9ulMFyogGa+HW8UWLMV0dvVM/teQn0=;
+	s=arc-20240116; t=1729422013; c=relaxed/simple;
+	bh=yAcfpOxj9t0NOhWYxCiaqe0yIlaU7gqHRvUW7RoK9To=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WpslRfuDhJaS+lRVTHxOV8+e4byaF0buNhRpRH1Pk0WkHxAxFRD4OYDwhHFJ0MkAgAy94iFHKVirqP4E6e0dE5A3NmOGDFFBB5HaFr8eW/2oLlOnONX+btuZUzIL5aoIlPNUchdyPZaaDSPaxRLVHErR7Vg02h970vwVT+9t4BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aQIB2dc1; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729421991;
-	bh=JHJRLpA94qHX4kOBpUBcRZMD8go6QvdIkInPmeCI0cA=;
+	 MIME-Version:Content-Type; b=ADdajPdpeImz1QIYbcsE+OM4P8PTUNnAhBeJNbXeW4y9MGu9eSRN0i0oiEfX0R9TjSBbHfdJb6ks0WHIFVQ3z0112KNaM0hxpplj4iqOumypdoygAUmbjyMArn7WVWRqhLAsO4XjzFW5MJKSFp/IvifYxUecFCDumb20YUOZu4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NdD78Tya; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDF8C4CEC6;
+	Sun, 20 Oct 2024 11:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729422013;
+	bh=yAcfpOxj9t0NOhWYxCiaqe0yIlaU7gqHRvUW7RoK9To=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aQIB2dc1iIgjdYuWHboBJZUj/SS4OR6dnMs90yiLZZjRhX+dHhOj4k0kME6p0KM2G
-	 8jbVaMLKQkn3Ic/OJQ7pLhtodI3hi5Q/qPepY4bF5KZZk/uzjV+wN0zgOi0/QO63iJ
-	 j8JkDONSRTI2nP4LWXakPoZlW3Vt8Ido9N5AKAvsi8aznOBtY1sqwwCLrV6UKIjqZB
-	 SURH41b3Vuvy6mORo79PC4sU3zOt78p9m5ui1985koZOXxbS0Ah2FygUr/3uB/wRIu
-	 DLdqN911DMsI6Ek4j5RxqOLOX3IVG7eYY3jbO7au5W+CmRufZfCrpKmA3F6z0vaQWX
-	 VLoKgpWq0+HeQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XWb7B2gg4z4wbp;
-	Sun, 20 Oct 2024 21:59:50 +1100 (AEDT)
-Date: Sun, 20 Oct 2024 21:59:49 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: petr.pavlu@suse.com, samitolvanen@google.com, da.gomez@samsung.com,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] next: use new shared modules tree
-Message-ID: <20241020215949.41324ccf@canb.auug.org.au>
-In-Reply-To: <20241019212100.940549-1-mcgrof@kernel.org>
-References: <20241019212100.940549-1-mcgrof@kernel.org>
+	b=NdD78TyaggvRGiCVBfHXXPT5j9xFRc1Ua1CwqLcQfGRkHf9VBpisXtKyiwDZ6WiNE
+	 IfcFqbA8adzE8RO6stlR23AgoRSnG4OryNrmRTh6nhMgSHgvDpHyzfGBZSBCbRxofH
+	 sSewPpVjorUusi/7kZAWZFy9RHUqbZRA+f/sdyTcHUgizwbQn3QK4kCmu4WtTtYB+A
+	 q+cRK8ExaTmTRKwnYmCYfJr5I1nA0148TwrPzwbpbrL2k0LpgGpbDIKxz/6L2MjjvU
+	 B7tJlb0pEyTmU9CelQpcnxkTLX9l1ikP4iB95mkQBJuvIjyt+T9z8zA7jjXtiTbZWE
+	 9R9llwl+aVbtQ==
+Date: Sun, 20 Oct 2024 12:00:04 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Derek J . Clark"
+ <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxlcg==?=
+ <philm@manjaro.org>
+Subject: Re: [PATCH v2 4/6] iio: imu: bmi270: Add support for BMI260
+Message-ID: <20241020120004.305b2e72@jic23-huawei>
+In-Reply-To: <87sesrak8w.fsf@justinweiss.com>
+References: <20241018233723.28757-1-justin@justinweiss.com>
+	<20241018233723.28757-5-justin@justinweiss.com>
+	<20241019124013.0575e05b@jic23-huawei>
+	<87sesrak8w.fsf@justinweiss.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/PhAISm9YWCJwAcCr+AyPPiN";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/PhAISm9YWCJwAcCr+AyPPiN
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi,
 
-On Sat, 19 Oct 2024 14:21:00 -0700 Luis Chamberlain <mcgrof@kernel.org> wro=
-te:
->
-> Use the new shared modules tree as we have more than one
-> modules maintainer now.
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git
->=20
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  Next/Trees | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/Next/Trees b/Next/Trees
-> index 38812059087c..585cddaf8746 100644
-> --- a/Next/Trees
-> +++ b/Next/Trees
-> @@ -252,7 +252,7 @@ regmap		git	git://git.kernel.org/pub/scm/linux/kernel=
-/git/broonie/regmap.git#for
->  sound		git	git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git=
-#for-next
->  ieee1394	git	https://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/li=
-nux1394.git#for-next
->  sound-asoc	git	git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sou=
-nd.git#for-next
-> -modules		git	git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.=
-git#modules-next
-> +modules		git	git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux=
-.git#modules-next
->  input		git	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git#=
-next
->  block		git	git://git.kernel.dk/linux-block.git#for-next
->  device-mapper	git	git://git.kernel.org/pub/scm/linux/kernel/git/device-m=
-apper/linux-dm.git#for-next
+> >>  #define BMI270_CHIP_ID_REG				0x00
+> >> +#define BMI160_CHIP_ID_VAL				0xD1  
+> >
+> > This one looks like a cut and paste error.  
+> 
+> No, this was intentional -- I added the BMI160 chip ID here so it could
+> be checked later to avoid conflicting with the existing bmi160 driver. I
+> could add newlines before and after this group of _ID_VAL #defines if it
+> makes it clearer.
 
-Done
+Got it. Just add a comment that it's to exclude known bad firmwares and
+that is fine to keep.
 
-Currently only you, Luis, are listed as a contact.  Should I add anyone els=
-e?
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/PhAISm9YWCJwAcCr+AyPPiN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcU4qUACgkQAVBC80lX
-0GwZlwf/bfIjAodugw9q1IlkhZ7IeCx7e373lSUlg/hR+ZXQdjuWC6q9Q/yIBp0F
-vK6UTCt+JHfoM+j2zReZ6OmbFWPU6G7ju0rTGna9WzUFKs05sZr9Fh7S6GAbudEW
-gmZFLFYK+7hWdQKr6JOTEPkHoe/QF6btE6NGorc3S5zphUPu+SKsm6bDd3mV11KW
-whtPk9mB5wOLFozyYQ3QWpgLmW2/qq10/Jr4+nJB8J+zZzb+ZEjEMtcB6EgydDlQ
-UisJJJSM31t4RLgI3GWHNt7sJxvlaV/NwwDZFVGEuEBmFq+J+B0DcD95/vULAoOL
-smbGoO+bYg13f6YT9J23p+n6cI9X0g==
-=aHjy
------END PGP SIGNATURE-----
-
---Sig_/PhAISm9YWCJwAcCr+AyPPiN--
 
