@@ -1,190 +1,114 @@
-Return-Path: <linux-kernel+bounces-373337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E929A5565
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D10D9A5569
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D5D282930
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 17:40:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F504282950
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 17:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88DB1957E4;
-	Sun, 20 Oct 2024 17:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D771953B9;
+	Sun, 20 Oct 2024 17:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DTQFAvqs"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmhjz0ek"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E0C195FEA
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 17:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CC64431;
+	Sun, 20 Oct 2024 17:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729446013; cv=none; b=hcPS9w9ES4w4mtpsihyANqkVt5Es5NYT0zaOXHJHeV2hFBWhoNP+SJB2V/eNcD7iEX11agf2qbnlMSgQBN+scNgDc5JUMsMmqDRRbV9EawQhpoVr8rCxUy54CBYBqxwFEfbQVctFiID8Y9q//idWmT5i19e//QHFkd8zEhx9XiE=
+	t=1729446100; cv=none; b=ZDWdSChF6w69xy0+0nM+MN71LLvf17oLIge/OQTKpo33TgPkRIUPK4tt6z11NtjVyoKpCRd7Okzhy85+RM9OTB1nv4Bdy/kGq76xcF94YcQydiOy4xWwnh+hnn5HEp1nHo5bEeIUVtCRd8lW9xWzlSIq2gXK/+BCvXctnA36vLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729446013; c=relaxed/simple;
-	bh=/MZUMPHP1MmyAsHFI3p+nistd/d0UbV6Cq7ocTvO5bs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X/39b5QaXcskgDr1rhOd6N+GsiHP37VUyOgE+GJIo6HQwW/ZZjXpe05pksMdT0lcpMvEHCvis3gv2Ku649lLP6tqx2JrPpH034CMCjgVv9oDaDtfOSxhAi90sTw0Ji5dtwKge55Yg7vYjM0SmiuauiZUY3m02ZzybpDEJ4kLgOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DTQFAvqs; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-84fc1a5e65bso1091984241.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 10:40:10 -0700 (PDT)
+	s=arc-20240116; t=1729446100; c=relaxed/simple;
+	bh=q+wdm6egVDwjBW+1n+K1DM13AKNIQm5RrbrjL39kHfs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f+lj4EzF9vJkm8j+mRDDDmLiPUwSU0XX5g/YbffE2ZPG2usPfZRbuYEUVO4mhYlSjBAOTrijMbXg/FNf3Y+cj0mVLJyIXQJOw9v/IoyurZxNLsAiccBdigs6WABu5zSpF+MjPEs9ah5vYnKE7LTyUP7DRvQRaN3iM0JwR7IWFnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmhjz0ek; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431481433bdso38740945e9.3;
+        Sun, 20 Oct 2024 10:41:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729446009; x=1730050809; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5dQElZmdOpFlm9UG88kAU1LTaBVdJQXUvWqA3Tf+jXw=;
-        b=DTQFAvqs4s4TN76QccpoLbJs8XZvaHMkG64oh1IGRr9IJqVADM+MBZhH4hFlF2NREm
-         X7VlsTFhrK0/eRNywhZPoxQgEWD5L7l1MIzEhmRbZbucO6EVHfkJ/j4K2O6c4tlwlFNX
-         7k1o8o3FOoyUGLrqHDmRyWiCrkrmRgpLuWSbRqzep7o6XVcIGN2aMTzE0y8FO0RT6XNW
-         /MnyWnR/EvSWrXL437nyDPk3JniR8ATmATkJILUyZh9CyZtzq6n2DziWEz3AbF05oLo5
-         QVRS4zNXIrJrq5nQytKO1abVOkZCKy8bmiUoOygjY5VI7hQVNphfA6GYm1HzKNqg+r+t
-         9sHQ==
+        d=gmail.com; s=20230601; t=1729446096; x=1730050896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fiDr2EgAXSV5r56uzap2YtxynjiRZajySX4Brk5lIlY=;
+        b=hmhjz0ekUaYhM3a7P7e5+WeJKHdnPD8yM5XJLSFI/04Pvz+93lc+7TzY3XcGVG4bBN
+         JUxdkEyryfkla4Rm4/W9NB05Q1AVDVODP74VHKM6k/fUetEnEXsyOcTWfd9xk2CkbMBh
+         Iyhyo/rk+LhgVg7UWs+Xtfif9a6/Y1dPsVnhveK7NxaaL83Cnd9arO2RYjUDJydTRlxi
+         LAvljwcqXeNNsvlbx6kYi3yJa5VnLRRA2E/JPCnfJ+grzMTsdBAO7/1vxQz0Oslggu9y
+         etK7aTZcXiDcmDriEu2JgJgYc2xLR/M3ryb6JEbzsjfhQqSacZ+3tK4UM6XM+j6wI8e7
+         SCWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729446009; x=1730050809;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1729446096; x=1730050896;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5dQElZmdOpFlm9UG88kAU1LTaBVdJQXUvWqA3Tf+jXw=;
-        b=Cf6AZ3FGLTDaGxEs9USUdfygNQ6o4jJAHIwzd/LDpp3FgapcoMMMslYv1v/0gWdoZn
-         E2yagKYtfe3lMWRhmpRc0iYe0JZYdfqT6DSyBf4tSH+Bj4lqEWcqKrOa/JXLUm3jYgOb
-         t61xSp+P7FsnS3DWHPCFpwcVfSOXbo7P4Yev2eMF8fDPu41kkdqIGRwcNM+ebR4ZDQ6s
-         0IOudX496ZKUUnb1ZOiO9BSiqcrWVk3PRxcNJRr5H95Yn8BBwOoAY/+zc28hN4afEsDQ
-         sEgmUu4TcO9t0LhbeFlf4Os3ltfyitzHgOUVEZ0O5Wts5Drt/OdnArVnQhLxpgNvs2c3
-         BQZw==
-X-Gm-Message-State: AOJu0Yw9tCp404syvUmgUE3exsmkriVn1axHEDQEIgZsUBCOJUnkBHei
-	rAgrLHg10ZiQTfK4wRsXSkP33asIOqtelkuktn91MICMm8nWjY+5oivJ3NDuHnvIqPLXXxjfisP
-	jcQLX4HoQERY/aVh9QquqP0dcWOkmtPjO8RMEnUNpShN+w0df4nk=
-X-Google-Smtp-Source: AGHT+IG4vi/NuEfb80CzvtYT1ihWDnjiE86tCBRUI0Pm+Ge1Bb280g9GXaYQ34p3oxV9/F2MPuI42yWtHFMEmMGjwcQ=
-X-Received: by 2002:a05:6102:3a0d:b0:49e:94e8:acd5 with SMTP id
- ada2fe7eead31-4a5d6b746e3mr8432271137.22.1729446009509; Sun, 20 Oct 2024
- 10:40:09 -0700 (PDT)
+        bh=fiDr2EgAXSV5r56uzap2YtxynjiRZajySX4Brk5lIlY=;
+        b=o7g9BabYrZpzshmlGsJfyni+xr7eAIssjBVEZsZ7qWQgFDUza5kto0+LiD4hyQw8/g
+         OXAekbFEQEa0kkrh3ZtxEq+TMNP1fl3oBYecg72G6eaHAD30vlq4Dmjc5w7o3Wq7FQl8
+         a46vOIpYnr0NTB4NdKzNMdElzks/8e81nBS6KytyjH1XHEJePq8s7t5QuCHFLB0b3EFF
+         iBfnB7IPIRSt7ZfLzGONSwjSTX3pomg0FVRptS7z2Wxu++Hn4fd9HGS1UmwrPhlAwcpC
+         jEMB7/+bPaZGd2XTEJpFIzEelApu0F2y6SPBn3xVS6DbAsnwVP+fAN8fXYpq7ZZqnVzh
+         Ehfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVie5ELBWQzb1Z4hRLroxZsDrEbo2H9KQcsqlSDd74yrBN6rKo6vwq5kRSuSq8QQH1VmDqm64C/2dV6RAg=@vger.kernel.org, AJvYcCWKj1zsZhM2kHn+eXqnVtVIRzkYCOKZrNnrPFhpFkYiYgeUIqkeHFmB3cnX874kfEpqbrrFXZZf@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFc5juq2Zicdl1CZQwu5qWjrySBlf1uNfqgqIToafpVk+hJLaZ
+	CpLIt8huJ5kyU2oiYkJl7RAX2AI37aQaMc6Z94xU+6QzNtwPB1/i
+X-Google-Smtp-Source: AGHT+IEjdb1hjiYAr224xsUcd/twtKCJPqEUHlaY3Xc9qGyDFR5gNZqKzpYNwMrWHqNH4Gu9MoSQnA==
+X-Received: by 2002:a05:600c:4f15:b0:42c:b187:bde9 with SMTP id 5b1f17b1804b1-4316168ffb3mr76253005e9.30.1729446096042;
+        Sun, 20 Oct 2024 10:41:36 -0700 (PDT)
+Received: from localhost.localdomain ([212.231.124.9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5c2b46sm29647445e9.36.2024.10.20.10.41.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 10:41:35 -0700 (PDT)
+From: =?UTF-8?q?Benjamin=20Gro=C3=9Fe?= <ste3ls@gmail.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Benjamin=20Gro=C3=9Fe?= <ste3ls@gmail.com>
+Subject: [PATCH] usb: add support for new USB device ID 0x17EF:0x3098 for the r8152 driver
+Date: Sun, 20 Oct 2024 18:41:28 +0100
+Message-ID: <20241020174128.160898-1-ste3ls@gmail.com>
+X-Mailer: git-send-email 2.44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
-In-Reply-To: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sun, 20 Oct 2024 23:09:57 +0530
-Message-ID: <CA+G9fYsMg0fA-jraEvC==0a-22J97o-uBmbLJt16_ZKBpOT8EQ@mail.gmail.com>
-Subject: Re: Qemu v9.0.2: Boot failed qemu-arm with Linux next-20241017 tag.
-To: open list <linux-kernel@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, qemu-devel@nongnu.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Aishwarya TCV <Aishwarya.TCV@arm.com>, 
-	Peter Maydell <peter.maydell@linaro.org>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 18 Oct 2024 at 12:35, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->
-> The QEMU-ARMv7 boot has failed with the Linux next-20241017 tag.
-> The boot log is incomplete, and no kernel crash was detected.
-> However, the system did not proceed far enough to reach the login prompt.
->
-> Please find the incomplete boot log links below for your reference.
-> The Qemu version is 9.0.2.
-> The arm devices TI beaglebone x15 boot pass.
->
-> This is always reproducible.
-> First seen on Linux next-20241017 tag.
->   Good: next-20241016
->   Bad: next-20241017
->
-> qemu-armv7:
->   boot:
->     * clang-19-lkftconfig
->     * gcc-13-lkftconfig
->     * clang-nightly-lkftconfig
+This patch adds support for another Lenovo Mini dock 0x17EF:0x3098 to the
+r8152 driver. The device has been tested on NixOS, hotplugging and sleep
+included.
 
-Anders bisected this boot regressions and found,
-# first bad commit:
-  [efe8419ae78d65e83edc31aad74b605c12e7d60c]
-    vdso: Introduce vdso/page.h
+Signed-off-by: Benjamin Große <ste3ls@gmail.com>
+---
+ drivers/net/usb/r8152.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-We are investigating the reason for boot failure due to this commit.
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index a5612c799..468c73974 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -10069,6 +10069,7 @@ static const struct usb_device_id rtl8152_table[] = {
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3062) },
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3069) },
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3082) },
++	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x3098) },
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x7205) },
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x720c) },
+ 	{ USB_DEVICE(VENDOR_ID_LENOVO,  0x7214) },
+-- 
+2.44.1
 
-Anyone have noticed a similar qemu-arm boot regressions with
-the Linux next-20241017 and  next-20241018 tags ?
-
-
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
-> Boot log:
-> -------
-> [    0.000000] Booting Linux on physical CPU 0x0
-> [    0.000000] Linux version 6.12.0-rc3-next-20241017
-> (tuxmake@tuxmake) (arm-linux-gnueabihf-gcc (Debian 13.3.0-5) 13.3.0,
-> GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP @1729156545
-> [    0.000000] CPU: ARMv7 Processor [414fc0f0] revision 0 (ARMv7), cr=10c5387d
-> [    0.000000] CPU: div instructions available: patching division code
-> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
-> [    0.000000] OF: fdt: Machine model: linux,dummy-virt
-> [    0.000000] random: crng init done
-> [    0.000000] earlycon: pl11 at MMIO 0x09000000 (options '')
-> [    0.000000] printk: legacy bootconsole [pl11] enabled
-> [    0.000000] Memory policy: Data cache writealloc
-> [    0.000000] efi: UEFI not found.
-> [    0.000000] cma: Size (0x04000000) of region at 0x00000000 exceeds
-> limit (0x00000000)
-> [    0.000000] cma: Failed to reserve 64 MiB on node -1
->
-> <nothing after this>
->
-> Boot log link,
-> -----
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/log
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/details/
->
-> Build images:
-> ------
->  - https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/
->
-> Steps to reproduce via qemu:
-> ----------------
-> /usr/bin/qemu-system-arm -cpu cortex-a15 \
->           -machine virt,gic-version=3 \
->           -nographic -nic none -m 4G -monitor \
->           none -no-reboot -smp 2 \
->           -kernel zImage \
->           -append \"console=ttyAMA0,115200 rootwait root=/dev/vda
-> debug verbose console_msg_format=syslog systemd.log_level=warning rw
-> earlycon\"
->           -drive
-> file=debian_trixie_armhf_rootfs.ext4,if=none,format=raw,id=hd0 \
->           -device virtio-blk-device,drive=hd0
->
-> Steps to reproduce with tuxrun reproducer:
-> ---------------
-> - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/reproducer
->
-> Boot history compare link:
-> ------------------------
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/history/
->
-> metadata:
-> ----
->   git describe: next-20241017
->   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->   git sha: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
->   kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/config
->   build url: https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/
->   toolchain: clang-19, gcc-13 and clang-nightly
->   config: lkftconfig
->   arch: arm
->
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
-
-- Naresh
 
