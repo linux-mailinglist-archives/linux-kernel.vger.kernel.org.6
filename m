@@ -1,113 +1,119 @@
-Return-Path: <linux-kernel+bounces-373340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6522B9A5573
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:44:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F569A5560
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91DF31C20FD8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 17:44:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B255E28297A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 17:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F211957E4;
-	Sun, 20 Oct 2024 17:44:39 +0000 (UTC)
-Received: from cygnus.enyo.de (cygnus.enyo.de [79.140.189.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD9D194C9D;
+	Sun, 20 Oct 2024 17:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GAqIVLHH"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361B56AA7;
-	Sun, 20 Oct 2024 17:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.140.189.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021FF194C83;
+	Sun, 20 Oct 2024 17:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729446278; cv=none; b=rvYC91M55XK2YdvjgcfwRB57Yl5YgausWRm2hR/FeT4+VhiRhJ8XU72vLLP4QxOwk6ZuOnUt5e7ieagbq8AI+pZOpjlUPrjE9ypR1LDY88+wq5JZdQ29xilhcBJGlqo78vwMAmd+XrBTOC35qiH5myuQ6SiRSKnLykpP4pmPqqs=
+	t=1729446000; cv=none; b=o4GaFklx0E0d6AeOs6plSJZkpCKsFnMbP/kQk+iMOvWJchxwm59z9/wW4VLo4lKs4g44JNxPx15aYKe/Kira/OllGCKbuTcE9ViYvc4T7JZ98IUd0Fo/T8TQoRye3mX8syu1PcMxlQ6OaaN+CwXUnvUxFMYhB2WG0KJRyOybeFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729446278; c=relaxed/simple;
-	bh=r/w8lsb8WKZRC9vQEw3SJnhjGHXAAsZ6aR9bEYkSyVs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=GTFtD+bo4RcYkcNeatHz82NS12+KUuqQcY96PFFXPBQPT0uFjlW5LwuBINLx59Q6RlLmGYPleX+3lz36jJYmG/hS8bxBc99LxxyAPYQnc2/EJDC51+rfjXM6ie8ycyM43DZDE2Uxhn6MQTPBDH0zNVPWkwIz5ZWcVME1AN3wSzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de; spf=pass smtp.mailfrom=deneb.enyo.de; arc=none smtp.client-ip=79.140.189.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deneb.enyo.de
-Received: from [172.17.203.2] (port=37437 helo=deneb.enyo.de)
-	by albireo.enyo.de ([172.17.140.2]) with esmtps (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	id 1t2ZsI-002agy-2T;
-	Sun, 20 Oct 2024 17:37:54 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.96)
-	(envelope-from <fw@deneb.enyo.de>)
-	id 1t2ZsI-008CWx-26;
-	Sun, 20 Oct 2024 19:37:54 +0200
-From: Florian Weimer <fw@deneb.enyo.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Suren Baghdasaryan
- <surenb@google.com>,  "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-  Matthew Wilcox <willy@infradead.org>,  Vlastimil Babka <vbabka@suse.cz>,
-  "Paul E . McKenney" <paulmck@kernel.org>,  Jann Horn <jannh@google.com>,
-  David Hildenbrand <david@redhat.com>,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Muchun Song <muchun.song@linux.dev>,
-  Richard Henderson <richard.henderson@linaro.org>,  Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>,  Matt Turner <mattst88@gmail.com>,  Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>,  "James E . J . Bottomley"
- <James.Bottomley@HansenPartnership.com>,  Helge Deller <deller@gmx.de>,
-  Chris Zankel <chris@zankel.net>,  Max Filippov <jcmvbkbc@gmail.com>,
-  Arnd Bergmann <arnd@arndb.de>,  linux-alpha@vger.kernel.org,
-  linux-mips@vger.kernel.org,  linux-parisc@vger.kernel.org,
-  linux-arch@vger.kernel.org,  Shuah Khan <shuah@kernel.org>,  Christian
- Brauner <brauner@kernel.org>,  linux-kselftest@vger.kernel.org,  Sidhartha
- Kumar <sidhartha.kumar@oracle.com>,  Jeff Xu <jeffxu@chromium.org>,
-  Christoph Hellwig <hch@infradead.org>,  linux-api@vger.kernel.org,  John
- Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v2 0/5] implement lightweight guard pages
-References: <cover.1729440856.git.lorenzo.stoakes@oracle.com>
-Date: Sun, 20 Oct 2024 19:37:54 +0200
-In-Reply-To: <cover.1729440856.git.lorenzo.stoakes@oracle.com> (Lorenzo
-	Stoakes's message of "Sun, 20 Oct 2024 17:20:00 +0100")
-Message-ID: <87a5eysmj1.fsf@mid.deneb.enyo.de>
+	s=arc-20240116; t=1729446000; c=relaxed/simple;
+	bh=xjGbZSjwyozty4a/+zmFgBEQ/KekPNCfVm81d7HmOHQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kDT/sG7RAm9ov3DsCUjXAMHinLvWfTUW0rl98EoxXwkuBJBBzV+jejpeCPYLgMJkXgI9bkTPlZi2/+CJRfuBcNnLZ0ok7eY92ZJGcbLoOuQvihOIcVwY2q0Km9kia/AqKANKMXc6DttdyWb8KQPwImAIc/YtvnyXYqHz+FdjcdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GAqIVLHH; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20ca1b6a80aso33318165ad.2;
+        Sun, 20 Oct 2024 10:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729445998; x=1730050798; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iCzoy58B728Y9YfdMzrfkv1ULrAnawyYFUq7OsuAFiM=;
+        b=GAqIVLHH0uomFM+Mh20coflHaUk0XfsQRZ0lnZVHWaBvmOTcZYQuzX++lAmZWwJ/Uf
+         ydy1Ht5CSWPh9Kgb7eFop0hCXpef7fp+HPA+7VpLZe5aLonfPcpMQBfqC3zccPowjJsB
+         uzzfRRAysCJItUUpl5YBQbTjGp5+UnQn9HvxoaxU8eRy5Qx6pFlVpZGCaoIQgBSpqa1d
+         awu3QwRAcf/NN8SEKl0Wn5eMqgKpCkw1mhi1p3CG9mp/ywJESr7qpNTKN325Bimow4nF
+         RCEj5kJAcdIpRNoM0j8PlqaMCsAsjJQPxgXIN7ii6YZak7B9qh3gw20KkdKFiToH6h/0
+         a+YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729445998; x=1730050798;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iCzoy58B728Y9YfdMzrfkv1ULrAnawyYFUq7OsuAFiM=;
+        b=E8dfBtcRpsBe01s+KH60QWdhIOLNjQZkIDCmCCWsOZ7r+rlgFQseHqGr7ACLOPuMAD
+         2gDfSvrJ3QtfYWu6pPFce5ENVuFgN1Tn9oOp4nSftA4cVYBYH9/FsPzHyxlSii1fwbA6
+         wHkq9zkeoW0+rRyPl5aKSMBlRCYCwtCrWwfRiZnkZGS4s/9AcYDz7Hh2z9PrY4uGS/n8
+         JK8QBh0gEMoKA8VlHtI0g5xUQSHSDlRPv8ANp4PfFuQNcrzkiNjWK0pOxYGLFM1HrC+T
+         TwANt+GweJF0FhWcgM2hTMh3ZXZbiNkWNDK4M7c1nDCqhoXXFPdFrswj/oPolnRu20Tn
+         Pf8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUQWq7xrOwJxFq3ewLY4G92examk0Qt3VUOmDig/6lVyotMRWdTA1fG2qR3xttdGuO0vCtOfE2HmagymMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwx4L1ZTAQZ5gOoyEVKkKfuwFF4++bRW6bmn8m3AENLxLIk8FC
+	+tOJ/zk8TEYfEqmaESzwVKQUFxH/Mb5P1kMSBQKqPgtneiwrYyD7
+X-Google-Smtp-Source: AGHT+IER0PkLEfl8SCgcw7azi7ZIdy0Jj2EnoxnllTknGc7m1H1PEoBmWi3QsD899JLxWGBQOXHY/g==
+X-Received: by 2002:a17:903:2287:b0:20c:ab33:f8b8 with SMTP id d9443c01a7336-20e5a76da57mr135652535ad.15.1729445997397;
+        Sun, 20 Oct 2024 10:39:57 -0700 (PDT)
+Received: from CNSZTL-DEB.lan ([2408:8262:245d:5b64:bc4b:53ff:fead:2725])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee8b94sm12600785ad.4.2024.10.20.10.39.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 10:39:56 -0700 (PDT)
+From: Tianling Shen <cnsztl@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Andy Yan <andyshrk@163.com>,
+	Jagan Teki <jagan@edgeble.ai>,
+	Tianling Shen <cnsztl@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: arm: rockchip: Add FriendlyARM NanoPi R3S
+Date: Mon, 21 Oct 2024 01:39:45 +0800
+Message-ID: <20241020173946.225960-1-cnsztl@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-* Lorenzo Stoakes:
+Add devicetree binding for FriendlyARM NanoPi R3S.
 
-> Early testing of the prototype version of this code suggests a 5 times
-> speed up in memory mapping invocations (in conjunction with use of
-> process_madvise()) and a 13% reduction in VMAs on an entirely idle android
-> system and unoptimised code.
->
-> We expect with optimisation and a loaded system with a larger number of
-> guard pages this could significantly increase, but in any case these
-> numbers are encouraging.
->
-> This way, rather than having separate VMAs specifying which parts of a
-> range are guard pages, instead we have a VMA spanning the entire range of
-> memory a user is permitted to access and including ranges which are to be
-> 'guarded'.
->
-> After mapping this, a user can specify which parts of the range should
-> result in a fatal signal when accessed.
->
-> By restricting the ability to specify guard pages to memory mapped by
-> existing VMAs, we can rely on the mappings being torn down when the
-> mappings are ultimately unmapped and everything works simply as if the
-> memory were not faulted in, from the point of view of the containing VMAs.
+Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-We have a glibc (so not Android) dynamic linker bug that asks us to
-remove PROT_NONE mappings in mapped shared objects:
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 70bd2e4d1195..862cc2982086 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -244,6 +244,11 @@ properties:
+               - friendlyarm,nanopi-r2s-plus
+           - const: rockchip,rk3328
+ 
++      - description: FriendlyElec NanoPi R3S
++        items:
++          - const: friendlyarm,nanopi-r3s
++          - const: rockchip,rk3566
++
+       - description: FriendlyElec NanoPi4 series boards
+         items:
+           - enum:
+-- 
+2.47.0
 
-  Extra struct vm_area_struct with ---p created when PAGE_SIZE < max-page-size
-  <https://sourceware.org/bugzilla/show_bug.cgi?id=31076>
-
-It's slightly different from a guard page because our main goal is to
-avoid other mappings to end up in those gaps, which has been shown to
-cause odd application behavior in cases where it happens.  If I
-understand the series correctly, the kernel would not automatically
-attribute those PROT_NONE gaps to the previous or subsequent mapping.
-We would have to extend one of the surrounding mapps and apply
-MADV_POISON to that over-mapped part.  That doesn't seem too onerous.
-
-Could the ELF loader in the kernel do the same thing for the main
-executable and the program loader?
 
