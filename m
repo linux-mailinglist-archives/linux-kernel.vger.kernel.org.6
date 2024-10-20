@@ -1,49 +1,50 @@
-Return-Path: <linux-kernel+bounces-373256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F9A9A545D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:37:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB669A545E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5C42B211D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DABF81F21C14
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA996192B79;
-	Sun, 20 Oct 2024 13:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DFD192D76;
+	Sun, 20 Oct 2024 13:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BvOUCCkP"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NsKsttsY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03170B674;
-	Sun, 20 Oct 2024 13:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E7A192584;
+	Sun, 20 Oct 2024 13:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729431420; cv=none; b=pmhM0n/r01Agx95zC97rW8RYDpL+LoI0jWd9WlG9YunYUy6OeidieCQpjQqzjggp675lDy6rS74BSEeVQktAuXpBOCGEgX2vYMXbkHa323wL8Wi/WcILTH0P89DSYP3krzDBJUIj+uNqOb7OC9Fj1zjblN6es2EKvl0E6zFbDWA=
+	t=1729431447; cv=none; b=M2W126WJ6jkTsTW9j+mUNVJKUz+/HjHs7TFIxr2dWc9a94rPiWfDGVkfLyHmH0JLpCpjv4B50yRoS3zw+4B0BBjufTIuaIqnI8646iESALJbZjq4sPEE5g6KeShKemVpM1t4cWD8UuiD8LqJQCha6FkEE0LzTVW9l7SunmyFK8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729431420; c=relaxed/simple;
-	bh=eU3MmXCBLWtKtdd7ohkchgxxz4Ne2wwiApnaTpyBHLU=;
+	s=arc-20240116; t=1729431447; c=relaxed/simple;
+	bh=5kVXWUm2KQAMiSiPiIX9smJCWHSx6GTgKnjO07hMmf0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uCGZHb8glgvmA1hYK52W5t9Sl4g+QwH4zVQHknPsRHsM+zRtENMQ1iQnHf7RkNPoNLHwFGmQdUXJt6LNoFD0GV2yLI+BT6qJIXPxmw6fBnnve2scvZ9+Mc+Wp2vUaS4ZT3/vytyefPtEqkidq5vePFy0nADnjj7SvCEEgeW4B8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BvOUCCkP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3286FC4CEC6;
-	Sun, 20 Oct 2024 13:36:59 +0000 (UTC)
+	 Content-Disposition; b=ekIBTgCGMwvBu9yS0TZhdXf37yr2NdCOERVnQXaiyJ8v+9PMwvngh9hNmD/dSAEQYPjbNUlXOXzQjVHv+ThRh/hRIG0qv4cJoYL0hq2L66rXQk3Qdy5fYfZ3jzdMgf1uoGEuvLwkUmgIwm+uLr7DY+ELydfgrQq/tmi7vbPvgLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NsKsttsY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2680DC4CEC6;
+	Sun, 20 Oct 2024 13:37:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729431419;
-	bh=eU3MmXCBLWtKtdd7ohkchgxxz4Ne2wwiApnaTpyBHLU=;
+	s=korg; t=1729431445;
+	bh=5kVXWUm2KQAMiSiPiIX9smJCWHSx6GTgKnjO07hMmf0=;
 	h=Date:From:To:Cc:Subject:From;
-	b=BvOUCCkPRRCiMFs5wIAyIlhlrAKYJXalJUAqtDQGnylduocOnhhOewIUGaDCsxzXH
-	 /whgqXi9OeYp4P6abk0GKkEYa2vraieLC1n3e3MjVp5qvcVgvha8YV45w9gkPKcgZV
-	 HYQ7J0qykukqwuucXxxrH8Ho9PlJJbZ4/xJiV6ss=
-Date: Sun, 20 Oct 2024 15:36:56 +0200
+	b=NsKsttsY3BpHX2FELotW+3Saa5YYuAZ3jydOz/N6Rf5hdbygAFXgdqsN2ueZjxrrt
+	 k9PNwZSFfPGT86g9Gg6hWFBhJR6urIRd0QvSnn/jEHCiTlVW6j20gljJfSObtoeIF1
+	 XoCq6UWpU7rFWtK+GMauhQjaEdFbOLYw7TW6ZX3I=
+Date: Sun, 20 Oct 2024 15:37:22 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB fixes for 6.12-rc4
-Message-ID: <ZxUHeLHqcv55AzHa@kroah.com>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY / Serial driver fixes for 6.12-rc4
+Message-ID: <ZxUHkmIo91tAeyFl@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,92 +54,60 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
+The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
 
-  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.12-rc4
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.12-rc4
 
-for you to fetch changes up to 1154a599214c655c8138b540f13845257f1952fd:
+for you to fetch changes up to be847a3a8d4ec4bf270c2455376d11f2de61bfb3:
 
-  Merge tag 'usb-serial-6.12-rc4' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus (2024-10-18 12:11:28 +0200)
+  serial: qcom-geni: rename suspend functions (2024-10-11 08:39:24 +0200)
 
 ----------------------------------------------------------------
-USB driver fixes for 6.12-rc4
+TTY/Serial driver fixes for 6.12-rc4
 
-Here are some small USB driver fixes and new device ids for 6.12-rc4.
-Included in here are:
-  - xhci driver fixes for a number of reported issues
-  - new usb-serial driver ids
-  - dwc3 driver fixes for reported problems.
-  - usb gadget driver fixes for reported problems
-  - typec driver fixes
-  - MAINTAINER file updates
+Here are some small tty and serial driver fixes for 6.12-rc4.  Included
+in here are:
+  - qcom-geni serial driver fixes, wow what a mess of a UART chip that
+    thing is...
+  - vt infoleak fix for odd font sizes
+  - imx serial driver bugfix
+  - yet-another n_gsm ldisc bugfix, slowly chipping down the issues in
+    that piece of code.
 
-All of these have been in linux-next this week with no reported issues.
+All of these have been in linux-next for over a week with no reported
+issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Alan Stern (1):
-      USB: gadget: dummy-hcd: Fix "task hung" problem
+Jeongjun Park (1):
+      vt: prevent kernel-infoleak in con_font_get()
 
-Andrey Konovalov (1):
-      MAINTAINERS: usb: raw-gadget: add bug tracker link
+Johan Hovold (9):
+      serial: qcom-geni: fix polled console initialisation
+      serial: qcom-geni: revert broken hibernation support
+      serial: qcom-geni: fix shutdown race
+      serial: qcom-geni: fix dma rx cancellation
+      serial: qcom-geni: fix receiver enable
+      serial: qcom-geni: fix rx cancel dma status bit
+      serial: qcom-geni: drop flip buffer WARN()
+      serial: qcom-geni: drop unused receive parameter
+      serial: qcom-geni: rename suspend functions
 
-Benjamin B. Frost (1):
-      USB: serial: option: add support for Quectel EG916Q-GL
+Longlong Xia (1):
+      tty: n_gsm: Fix use-after-free in gsm_cleanup_mux
 
-Daniele Palmas (1):
-      USB: serial: option: add Telit FN920C04 MBIM compositions
+Marek Vasut (1):
+      serial: imx: Update mctrl old_status on RTSD interrupt
 
-Greg Kroah-Hartman (1):
-      Merge tag 'usb-serial-6.12-rc4' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus
-
-Henry Lin (1):
-      xhci: tegra: fix checked USB2 port number
-
-Jonathan Marek (1):
-      usb: typec: qcom-pmic-typec: fix sink status being overwritten with RP_DEF
-
-Kevin Groeneveld (1):
-      usb: gadget: f_uac2: fix return value for UAC2_ATTRIBUTE_STRING store
-
-Mathias Nyman (3):
-      xhci: Fix incorrect stream context type macro
-      xhci: Mitigate failed set dequeue pointer commands
-      xhci: dbc: honor usb transfer size boundaries.
-
-Michal Pecio (1):
-      usb: xhci: Fix handling errors mid TD followed by other errors
-
-Prashanth K (1):
-      usb: dwc3: Wait for EndXfer completion before restoring GUSB2PHYCFG
-
-Roger Quadros (1):
-      usb: dwc3: core: Fix system suspend on TI AM62 platforms
-
-Sakari Ailus (1):
-      MAINTAINERS: Add an entry for the LJCA drivers
-
-Thadeu Lima de Souza Cascardo (1):
-      usb: typec: altmode should keep reference to parent
-
- MAINTAINERS                                        | 11 ++++
- drivers/usb/dwc3/core.c                            | 19 ++++++
- drivers/usb/dwc3/core.h                            |  3 +
- drivers/usb/dwc3/gadget.c                          | 10 ++--
- drivers/usb/gadget/function/f_uac2.c               |  6 +-
- drivers/usb/gadget/udc/dummy_hcd.c                 | 20 +++++--
- drivers/usb/host/xhci-dbgcap.h                     |  1 +
- drivers/usb/host/xhci-dbgtty.c                     | 55 +++++++++++++++--
- drivers/usb/host/xhci-ring.c                       | 68 ++++++++++------------
- drivers/usb/host/xhci-tegra.c                      |  2 +-
- drivers/usb/host/xhci.h                            |  2 +-
- drivers/usb/serial/option.c                        |  8 +++
- drivers/usb/typec/class.c                          |  3 +
- drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_port.c |  1 -
- 14 files changed, 151 insertions(+), 58 deletions(-)
+ drivers/tty/n_gsm.c                   |   2 +
+ drivers/tty/serial/imx.c              |  15 +++++
+ drivers/tty/serial/qcom_geni_serial.c | 103 ++++++++++++++++------------------
+ drivers/tty/vt/vt.c                   |   2 +-
+ include/linux/soc/qcom/geni-se.h      |   2 +-
+ 5 files changed, 67 insertions(+), 57 deletions(-)
 
