@@ -1,164 +1,190 @@
-Return-Path: <linux-kernel+bounces-373336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0351F9A5564
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:40:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E929A5565
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BBB71C20DF8
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 17:40:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D5D282930
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 17:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290D4195FEC;
-	Sun, 20 Oct 2024 17:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88DB1957E4;
+	Sun, 20 Oct 2024 17:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jIrLW1Vd"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DTQFAvqs"
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF4C194C96
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 17:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E0C195FEA
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 17:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729446010; cv=none; b=PqgdZyu+J84fSdV+1WHIjcqBpD6bzj9CHLv5odAT2UfWHj24GzUHY3qFvcjaeyUtAGotG/NfF5nt9IUzp7FhsaSuaSqr73dRgKjecj8RuqveQwheSqMP9yeXSlvIxCjGnwNGmcQkRKExKNy3lyydwJrQ+uPo9DZTvAfl+taWOpw=
+	t=1729446013; cv=none; b=hcPS9w9ES4w4mtpsihyANqkVt5Es5NYT0zaOXHJHeV2hFBWhoNP+SJB2V/eNcD7iEX11agf2qbnlMSgQBN+scNgDc5JUMsMmqDRRbV9EawQhpoVr8rCxUy54CBYBqxwFEfbQVctFiID8Y9q//idWmT5i19e//QHFkd8zEhx9XiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729446010; c=relaxed/simple;
-	bh=2PySjemDfX/YXZ1xf2funszs+7EbTC5cyOkh+6oo5QA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZnP4Z7AhYP34k+x9q2Z2fTo4ls2alOWxJvhDfhCoFhncQenCDUqrUy33u/SlIg6XQrNTAe2EWisxuZ8c3p8JTem1OdER2aGmBMs4txz68jgyJS09Bi1AyN6WsbUmmO+8oFeWLtl4I7Zw9xSciU9z8QMd0c4MV/EAOB+8rGOeIjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jIrLW1Vd; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1729446013; c=relaxed/simple;
+	bh=/MZUMPHP1MmyAsHFI3p+nistd/d0UbV6Cq7ocTvO5bs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X/39b5QaXcskgDr1rhOd6N+GsiHP37VUyOgE+GJIo6HQwW/ZZjXpe05pksMdT0lcpMvEHCvis3gv2Ku649lLP6tqx2JrPpH034CMCjgVv9oDaDtfOSxhAi90sTw0Ji5dtwKge55Yg7vYjM0SmiuauiZUY3m02ZzybpDEJ4kLgOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DTQFAvqs; arc=none smtp.client-ip=209.85.222.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53a0c160b94so1577997e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 10:40:07 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-84fc1a5e65bso1091984241.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 10:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729446006; x=1730050806; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JA6BmeWwEFY/jwQSrDo3imNJ52bplV55SQsd5euBkew=;
-        b=jIrLW1VdrtYXp/TclXU+Yld+3j2tlfzdL37bOMTPhhT8k24WKWofO1rtRmalTuTcN1
-         1L5GnOjAnKsNRruadZ0TvOyIVXQYup/i1J8a+Q5sErWKfJ+HskXUxON9blcngnWnGA4U
-         wTC7D/YyH0kMDrkgN+vynIla8gReIJYsEy6IhuwmDpvUIN9S0P/8c+kJ+Wxv3ArDPDXD
-         xR5SzmATo7PT5aeybEgEaRzWDETCb6Vv2OOMJoQJnvm45I4Fg8XqLqa0+nO1P77OeNHK
-         1PU92Q+kdMvHcIzbhHmSf7L6rXOUBr+HuzvtfrR1zMHuTuWqEZ/nVdh8tflRlGt6EmR5
-         /4Zg==
+        d=linaro.org; s=google; t=1729446009; x=1730050809; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5dQElZmdOpFlm9UG88kAU1LTaBVdJQXUvWqA3Tf+jXw=;
+        b=DTQFAvqs4s4TN76QccpoLbJs8XZvaHMkG64oh1IGRr9IJqVADM+MBZhH4hFlF2NREm
+         X7VlsTFhrK0/eRNywhZPoxQgEWD5L7l1MIzEhmRbZbucO6EVHfkJ/j4K2O6c4tlwlFNX
+         7k1o8o3FOoyUGLrqHDmRyWiCrkrmRgpLuWSbRqzep7o6XVcIGN2aMTzE0y8FO0RT6XNW
+         /MnyWnR/EvSWrXL437nyDPk3JniR8ATmATkJILUyZh9CyZtzq6n2DziWEz3AbF05oLo5
+         QVRS4zNXIrJrq5nQytKO1abVOkZCKy8bmiUoOygjY5VI7hQVNphfA6GYm1HzKNqg+r+t
+         9sHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729446006; x=1730050806;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JA6BmeWwEFY/jwQSrDo3imNJ52bplV55SQsd5euBkew=;
-        b=vRzGtdi8SE1tov5Lj71RPSzavTiWvTPOUoYVPLRt7y38wrRN9GYwo1RddqEacxqz0q
-         HU71BGOc8hBz18eqB6mby8xP1S5+JQmJRb/NqcAyiseYvKALosh4uERVr6O9aKeuPxOv
-         87G/IPlMMSbwURxxn/jyGWpjg7r9lzoHhqzEJVbBJ2LVEdndTaqCocZYx3eqglAcIh9n
-         04h8wpAwWaHDtsE1YXl7pwvwh/KNKq+4vNJVLqPfbjbS6QPRLnFm/qMuryBknxsTdQhQ
-         i6RJVNWgXNTjts1l1J7U0pD0cKzJ99M7ID7z/Paonf+bF74tJj7Fz7Fdlv0GG4Uh7Ftu
-         4KZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNFuoK8HfZnI360Rtceo6+BBnaLbewpHMxNS7/p27UrRvFiAaMzSXK6A/B8yQ3yFJ4MJki2qPdFCzeWbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK+/Pn6u/nHXs/3hbNWjZOHO+4dYEp0c0sDGgNvz2ZuXo1wOKW
-	HJXk3wKKUEL/Oh2lNPdleLvHOZ6zO2dIk9/zOWB2nMyUXEU1TN0M82YCj+tx6d4pb7FR7Hds/E3
-	Oqi1BSOrFBe2EcZ9JOqMSE/aMay15H1vtSoKZZKL4Qp/yfKsz8tA=
-X-Google-Smtp-Source: AGHT+IGlgmXQu77sBHLqlXPg31Rg5NJggY/u7DZPakfOAAxehvUSfC/3TPknDBAoQAcKFOB+KaonZte6KYmHd+Bnbnw=
-X-Received: by 2002:a05:6512:1116:b0:539:9155:e8b8 with SMTP id
- 2adb3069b0e04-53a1520be63mr4950182e87.6.1729446005953; Sun, 20 Oct 2024
- 10:40:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729446009; x=1730050809;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5dQElZmdOpFlm9UG88kAU1LTaBVdJQXUvWqA3Tf+jXw=;
+        b=Cf6AZ3FGLTDaGxEs9USUdfygNQ6o4jJAHIwzd/LDpp3FgapcoMMMslYv1v/0gWdoZn
+         E2yagKYtfe3lMWRhmpRc0iYe0JZYdfqT6DSyBf4tSH+Bj4lqEWcqKrOa/JXLUm3jYgOb
+         t61xSp+P7FsnS3DWHPCFpwcVfSOXbo7P4Yev2eMF8fDPu41kkdqIGRwcNM+ebR4ZDQ6s
+         0IOudX496ZKUUnb1ZOiO9BSiqcrWVk3PRxcNJRr5H95Yn8BBwOoAY/+zc28hN4afEsDQ
+         sEgmUu4TcO9t0LhbeFlf4Os3ltfyitzHgOUVEZ0O5Wts5Drt/OdnArVnQhLxpgNvs2c3
+         BQZw==
+X-Gm-Message-State: AOJu0Yw9tCp404syvUmgUE3exsmkriVn1axHEDQEIgZsUBCOJUnkBHei
+	rAgrLHg10ZiQTfK4wRsXSkP33asIOqtelkuktn91MICMm8nWjY+5oivJ3NDuHnvIqPLXXxjfisP
+	jcQLX4HoQERY/aVh9QquqP0dcWOkmtPjO8RMEnUNpShN+w0df4nk=
+X-Google-Smtp-Source: AGHT+IG4vi/NuEfb80CzvtYT1ihWDnjiE86tCBRUI0Pm+Ge1Bb280g9GXaYQ34p3oxV9/F2MPuI42yWtHFMEmMGjwcQ=
+X-Received: by 2002:a05:6102:3a0d:b0:49e:94e8:acd5 with SMTP id
+ ada2fe7eead31-4a5d6b746e3mr8432271137.22.1729446009509; Sun, 20 Oct 2024
+ 10:40:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 20 Oct 2024 19:39:54 +0200
-Message-ID: <CACRpkdZ1K=G+J-Kw1=gbHixuS32DoXGdoja7dOc1O6cR8VeshQ@mail.gmail.com>
-Subject: [GIT PULL] Pin control fixes for v6.12
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
+In-Reply-To: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sun, 20 Oct 2024 23:09:57 +0530
+Message-ID: <CA+G9fYsMg0fA-jraEvC==0a-22J97o-uBmbLJt16_ZKBpOT8EQ@mail.gmail.com>
+Subject: Re: Qemu v9.0.2: Boot failed qemu-arm with Linux next-20241017 tag.
+To: open list <linux-kernel@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, qemu-devel@nongnu.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Aishwarya TCV <Aishwarya.TCV@arm.com>, 
+	Peter Maydell <peter.maydell@linaro.org>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Geert Uytterhoeven <geert@linux-m68k.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+On Fri, 18 Oct 2024 at 12:35, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> The QEMU-ARMv7 boot has failed with the Linux next-20241017 tag.
+> The boot log is incomplete, and no kernel crash was detected.
+> However, the system did not proceed far enough to reach the login prompt.
+>
+> Please find the incomplete boot log links below for your reference.
+> The Qemu version is 9.0.2.
+> The arm devices TI beaglebone x15 boot pass.
+>
+> This is always reproducible.
+> First seen on Linux next-20241017 tag.
+>   Good: next-20241016
+>   Bad: next-20241017
+>
+> qemu-armv7:
+>   boot:
+>     * clang-19-lkftconfig
+>     * gcc-13-lkftconfig
+>     * clang-nightly-lkftconfig
 
-here are some pin control fixes for the v6.12 series,
-mostly error paths, but one pretty serious interrupt
-problem in the Ocelot driver as well.
+Anders bisected this boot regressions and found,
+# first bad commit:
+  [efe8419ae78d65e83edc31aad74b605c12e7d60c]
+    vdso: Introduce vdso/page.h
 
-Details in the signed tag! Please pull it in!
+We are investigating the reason for boot failure due to this commit.
 
-Yours,
-Linus Walleij
+Anyone have noticed a similar qemu-arm boot regressions with
+the Linux next-20241017 and  next-20241018 tags ?
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> Boot log:
+> -------
+> [    0.000000] Booting Linux on physical CPU 0x0
+> [    0.000000] Linux version 6.12.0-rc3-next-20241017
+> (tuxmake@tuxmake) (arm-linux-gnueabihf-gcc (Debian 13.3.0-5) 13.3.0,
+> GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP @1729156545
+> [    0.000000] CPU: ARMv7 Processor [414fc0f0] revision 0 (ARMv7), cr=10c5387d
+> [    0.000000] CPU: div instructions available: patching division code
+> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
+> [    0.000000] OF: fdt: Machine model: linux,dummy-virt
+> [    0.000000] random: crng init done
+> [    0.000000] earlycon: pl11 at MMIO 0x09000000 (options '')
+> [    0.000000] printk: legacy bootconsole [pl11] enabled
+> [    0.000000] Memory policy: Data cache writealloc
+> [    0.000000] efi: UEFI not found.
+> [    0.000000] cma: Size (0x04000000) of region at 0x00000000 exceeds
+> limit (0x00000000)
+> [    0.000000] cma: Failed to reserve 64 MiB on node -1
+>
+> <nothing after this>
+>
+> Boot log link,
+> -----
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/log
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/details/
+>
+> Build images:
+> ------
+>  - https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/
+>
+> Steps to reproduce via qemu:
+> ----------------
+> /usr/bin/qemu-system-arm -cpu cortex-a15 \
+>           -machine virt,gic-version=3 \
+>           -nographic -nic none -m 4G -monitor \
+>           none -no-reboot -smp 2 \
+>           -kernel zImage \
+>           -append \"console=ttyAMA0,115200 rootwait root=/dev/vda
+> debug verbose console_msg_format=syslog systemd.log_level=warning rw
+> earlycon\"
+>           -drive
+> file=debian_trixie_armhf_rootfs.ext4,if=none,format=raw,id=hd0 \
+>           -device virtio-blk-device,drive=hd0
+>
+> Steps to reproduce with tuxrun reproducer:
+> ---------------
+> - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/reproducer
+>
+> Boot history compare link:
+> ------------------------
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241017/testrun/25476340/suite/boot/test/clang-19-lkftconfig/history/
+>
+> metadata:
+> ----
+>   git describe: next-20241017
+>   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>   git sha: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
+>   kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/config
+>   build url: https://storage.tuxsuite.com/public/linaro/lkft/tests/2nYi2nidfMq35VigDlxJblZzokr/
+>   toolchain: clang-19, gcc-13 and clang-nightly
+>   config: lkftconfig
+>   arch: arm
+>
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v6.12-2
-
-for you to fetch changes up to 93b8ddc54507a227087c60a0013ed833b6ae7d3c:
-
-  pinctrl: ocelot: fix system hang on level based interrupts
-(2024-10-12 22:04:38 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for the v6.12 kernel series:
-
-- Fix two error paths and a missing semicolon in the
-  Intel driver.
-
-- Add a missing ACPI ID for the Intel Panther Lake.
-
-- Check return value of devm_kasprintf() in the Apple
-  and STM32 drivers.
-
-- Add a missing mutex_destroy() in the aw9523 driver.
-
-- Fix a double free in cv1800_pctrl_dt_node_to_map()
-  in the Sophgo driver.
-
-- Fix a double free in ma35_pinctrl_dt_node_to_map_func()
-  in the Nuvoton driver.
-
-- Fix a bug in the Ocelot interrupt handler making the
-  system hang.
-
-----------------------------------------------------------------
-Andy Shevchenko (2):
-      Merge patch series "pinctrl: intel: platform: fix error path in
-device_for_each_child_node()"
-      pinctrl: intel: platform: Add Panther Lake to the list of supported
-
-Harshit Mogalapalli (2):
-      pinctrl: sophgo: fix double free in cv1800_pctrl_dt_node_to_map()
-      pinctrl: nuvoton: fix a double free in ma35_pinctrl_dt_node_to_map_func()
-
-Javier Carrasco (2):
-      pinctrl: intel: platform: fix error path in device_for_each_child_node()
-      pinctrl: intel: platform: use semicolon instead of comma in
-ncommunities assignment
-
-Linus Walleij (1):
-      Merge tag 'intel-pinctrl-v6.12-2' of
-git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel into fixes
-
-Ma Ke (2):
-      pinctrl: apple: check devm_kasprintf() returned value
-      pinctrl: stm32: check devm_kasprintf() returned value
-
-Rosen Penev (1):
-      pinctrl: aw9523: add missing mutex_destroy
-
-Sergey Matsievskiy (1):
-      pinctrl: ocelot: fix system hang on level based interrupts
-
- drivers/pinctrl/intel/Kconfig                  | 1 +
- drivers/pinctrl/intel/pinctrl-intel-platform.c | 5 ++---
- drivers/pinctrl/nuvoton/pinctrl-ma35.c         | 2 +-
- drivers/pinctrl/pinctrl-apple-gpio.c           | 3 +++
- drivers/pinctrl/pinctrl-aw9523.c               | 6 ++++--
- drivers/pinctrl/pinctrl-ocelot.c               | 8 ++++----
- drivers/pinctrl/sophgo/pinctrl-cv18xx.c        | 2 +-
- drivers/pinctrl/stm32/pinctrl-stm32.c          | 9 +++++++--
- 8 files changed, 23 insertions(+), 13 deletions(-)
+- Naresh
 
