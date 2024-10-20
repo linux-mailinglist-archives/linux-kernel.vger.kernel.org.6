@@ -1,57 +1,85 @@
-Return-Path: <linux-kernel+bounces-373348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05619A559A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 19:57:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179E39A559F
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 400421F2258B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 17:57:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37D3A1C20B21
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4541953B9;
-	Sun, 20 Oct 2024 17:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B09194C78;
+	Sun, 20 Oct 2024 18:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYyBhPam"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXEX0NW5"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD777320E;
-	Sun, 20 Oct 2024 17:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22099FC0A;
+	Sun, 20 Oct 2024 18:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729447057; cv=none; b=r2rDafGDhZrnbuxvN6Bo7tgLBbMrpHK2yvh8TGOHlltxt8ekvFekYle+lxX5na1v2YWCSleclHY63J+pTn8Ldl6wybO96QteBMqmzc76txFXmv0LsEtvCKTVAMJIFQTOqDkjRpJmQKCghAPQpWgvpbVX9IBtC1HhFKCicTgzljQ=
+	t=1729447328; cv=none; b=MJkG6lRHZ+rZN7GGZGV/7yTEZOz0DumjYkkm67fMJzxfIU9rrppeq4lolJLqhuvyZrQd+Au3gW8inRQ5qoKuKlaW7dZSbBtavP0YMGAWzOQxm8ldPA8MKzsHG+hvYIOn+GleNAo8VD0d/Knck33nYSiw8LcavMIHwcK+wu5mn1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729447057; c=relaxed/simple;
-	bh=4zQj6Y+b1upLSDxYwWSPMbK0sSE7AnUQaW0OlxZUmdg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tsfp/d0hFSjtdrmWvDzbH//laQfD5jN8nAu/cPYNzjq1ZOpzwffHM6qzRHwXKNZCgCeTEfD2fxZzJjqZ3TKjw8nLKxnzSP6+cw4DRbMtBNm12EVdrLIfqWA7Ki03wdvlPfnDgNNiFhiYtUd4ooxOaWG8eUTYDOuRWw+fViTw9r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYyBhPam; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31B4CC4CEC6;
-	Sun, 20 Oct 2024 17:57:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729447056;
-	bh=4zQj6Y+b1upLSDxYwWSPMbK0sSE7AnUQaW0OlxZUmdg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PYyBhPamDwm9YthcN4jvCE8TzhoHRkZDhfyD2lbbdBR+eeHMprC9JTDutUQt1wm1u
-	 Dp5rvJ2NEBP32IXx/o8+mOlvjCLAqgbX5n9oHumCkkYeXqkI5uAOgWBmTJEuRTsoAx
-	 I2QEdSpEqLYgx3i8Xy9a2aZQhY4uh5ExozBqZN7G2j8GFqGq9K3NkcUMPD+x0fEFI8
-	 44AMFCB6Wr0JRNLOLJdQxgDob9QEUzPNYBcMtZ8I37c6hKVN6F7pGY11Xv4VTq/lZV
-	 Bla9+cZoatYvyixGc0e3O9GWLspQ/WKtH/00G8BjiAARLVeoghhZqFXcMbQVcR/+ZQ
-	 c98ekQqtiGxoQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-sound@vger.kernel.org,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org,
-	Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] ALSA: hda/tas2781: select CRC32 instead of CRC32_SARWATE
-Date: Sun, 20 Oct 2024 10:56:24 -0700
-Message-ID: <20241020175624.7095-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729447328; c=relaxed/simple;
+	bh=m6r/u6nn0z2hqH3ks8cUNqKPx6n+R76j+TxMCz/3QnY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IGb/BZQhqbbFaPecjXDkmSNeJGWV5IeTM83tjripT1uzmIT/QRuSEoMavb0k/ujNUEsTm3nwWcjVaQbMAASrKkiBAwz3QOG3yWDiIfF51okravql9wNMESl0vR9KfreHzR7p/JTe3dQDd8UR5gPryad2pFAW5iAvWq8aNVwVH98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXEX0NW5; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43167ff0f91so15989965e9.1;
+        Sun, 20 Oct 2024 11:02:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729447324; x=1730052124; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8/mwlwjjwtoQhRvD/uWxXM/Y4o9ZU4631Nv77kKHaY4=;
+        b=AXEX0NW5hKSUwNHExUpdz2R5JXgzSrQydtZFQvZppRcXbwLKBCNKL/DoRdR5hRk6V+
+         k76Vhy2bdmCvLqY1PPZtq3Iwug2Uw1gVDx0Hc3DDiie9gAqROnzRjBYDGPSCFvD7wk7K
+         Q5aobtls/b/G/S2h/fsrx57GeHy/9+wB9keHgIty6sehdWd1nQ2MiXwEpMMTrjLIuqc1
+         V2UGfVyL0lciEuzTqaH7q5C70Z/2k8bBScLIamF11QhsXTJlZp1Ms0pYM1QqabHgHtWN
+         CuWiwsQBxV4el4Qwp3dk08FPicOyR/X3NvCmDib09peBrcFX7d951O0NaUEXvfyUrMNq
+         BqfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729447324; x=1730052124;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8/mwlwjjwtoQhRvD/uWxXM/Y4o9ZU4631Nv77kKHaY4=;
+        b=p87wlPtkW51GGiY5cKoSULdQ5WT6w4sd6PbCmjtSkW/4OzwvB2kEoCXAo+/49rBbPA
+         Hv1npIGGdkHkBcJcm4giJ2q3WqgsJKCXTCU5pG6SHo3Gm1BqU9MU87hQtUIRG5/4ZE6a
+         pfA3GRAhjleYCltt8xTDktun7evjSOAm8mOcsHoAhGtj2p3TVSzwdfPBLtO6EiER6iE9
+         BFKUHJZvTD64WgF/lzc5xo6N3y9ZOKXZinHs/7zoA2qBNQaRunts8M9+S8DrGPH9Pa8Q
+         rdi8EYQtkB0JD6jgVj3y9TIVv9ZU6FH7WA8geM70CrAJqbz0dTOH7O2Xz49JpYKIP2Xq
+         DsDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHp6cQvGQ8sUtz0nuZCIJEEybO9ZYnGYszCeKgldXsDojk5WOZYfO9vvlF0k8p/viYWDb7nh5k6n8RtemA@vger.kernel.org, AJvYcCVAh+wk7Ndx20gbEk5a99R9SGQ1t+3BclVoDyv2wmevbuEUlaj8E9RstrFVTAXXYi7+l+y5/QTB4GShoEgF@vger.kernel.org, AJvYcCXeBVpHUMcUcy2tZylU3ftVvZW9Jmb+2BwdUZq6fwx7uvOWtr2cEdSgKUBFvdAoH+ngYXEHSOZX39/n@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyYKK3yJOmt1fh1QXsji+xDdbE8tZxV1sXRBUJhYSqo5BIT5U/
+	4fDshyrHXg9z+kLONVQrh5eq7RcV2td5sghyWl3no6YheauZ0l0D
+X-Google-Smtp-Source: AGHT+IF2KlJHlLBhH1K51KC+tGjI/jpHud5v4rP4jsKAXI8Ldbd6pwtY7BfboxMkzoJUTOT5iPxq6w==
+X-Received: by 2002:a05:600c:45c3:b0:42f:8515:e490 with SMTP id 5b1f17b1804b1-4316161f58bmr79960115e9.5.1729447324276;
+        Sun, 20 Oct 2024 11:02:04 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc57esm29922105e9.48.2024.10.20.11.02.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 11:02:03 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] tty: serial: samsung: Add Exynos8895 compatible
+Date: Sun, 20 Oct 2024 21:01:59 +0300
+Message-ID: <20241020180201.376151-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,42 +88,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Eric Biggers <ebiggers@google.com>
+Hey folks,
 
-Fix the kconfig option for the tas2781 HDA driver to select CRC32 rather
-than CRC32_SARWATE.  CRC32_SARWATE is an option from the kconfig
-'choice' that selects the specific CRC32 implementation.  Selecting a
-'choice' option seems to have no effect, but even if it did work, it
-would be incorrect for a random driver to override the user's choice.
-CRC32 is the correct option to select for crc32() to be available.
+This patchset adds serial driver support for Exynos8895 SoC. The main
+difference from other exynos platforms is that fifosize is only
+specified via the samsung,uart-fifosize DT property.
 
-Fixes: 5be27f1e3ec9 ("ALSA: hda/tas2781: Add tas2781 HDA driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- sound/pci/hda/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Newer Exynos platforms also specify fifosize via DT, so in such case
+this compatible could be used with oneOf.
 
-diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
-index bb15a0248250c..68f1eee9e5c93 100644
---- a/sound/pci/hda/Kconfig
-+++ b/sound/pci/hda/Kconfig
-@@ -196,11 +196,11 @@ config SND_HDA_SCODEC_TAS2781_I2C
- 	depends on ACPI
- 	depends on EFI
- 	depends on SND_SOC
- 	select SND_SOC_TAS2781_COMLIB
- 	select SND_SOC_TAS2781_FMWLIB
--	select CRC32_SARWATE
-+	select CRC32
- 	help
- 	  Say Y or M here to include TAS2781 I2C HD-audio side codec support
- 	  in snd-hda-intel driver, such as ALC287.
- 
- comment "Set to Y if you want auto-loading the side codec driver"
+Ivaylo Ivanov (2):
+  dt-bindings: serial: samsung: Add samsung,exynos8895-uart compatible
+  tty: serial: samsung: Add Exynos8895 compatible
 
-base-commit: 715ca9dd687f89ddaac8ec8ccb3b5e5a30311a99
+ .../bindings/serial/samsung_uart.yaml           | 17 +++++++++++++++++
+ drivers/tty/serial/samsung_tty.c                | 13 +++++++++++++
+ 2 files changed, 30 insertions(+)
+
 -- 
-2.47.0
+2.43.0
 
 
