@@ -1,220 +1,169 @@
-Return-Path: <linux-kernel+bounces-373076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434819A51F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 03:46:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F5AB9A51F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 04:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50DF91C21364
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 01:46:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7EA283D33
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 02:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DDC28F4;
-	Sun, 20 Oct 2024 01:46:06 +0000 (UTC)
-Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EAC3FE4;
+	Sun, 20 Oct 2024 02:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I/iShMfq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31CA391
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 01:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8484A28E7;
+	Sun, 20 Oct 2024 02:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729388765; cv=none; b=kJxam10vHICbfvKsbOZCOFiqGwTn3eaNLCwZkgegxapaxAxGkL/Xievk3WlS9cg+GXFjPntlsdra2utQgm4G3epysWv68czi+FtJKvpbaxXBw8PG0BDb1I2SzkYqByADzirlyLwjf4s+S1Kg0gddV2bdq1axlrfb3Mv3X63RjJg=
+	t=1729389919; cv=none; b=EQQs3hhToXMAsBr2JnDmsctEQ5g3B+wXOyTUph29d4MBUx+K3wW0cz+/jIz7mgigyWujKc6zXB0oVlcTkVIQY9hkjKLm8jg35QSNJC0j9fLycpTBMFIxiR+uZKZpydWydSLLHxpaQEUutL9+kgtB+XR2q3vWM7fjzSfK/VksjVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729388765; c=relaxed/simple;
-	bh=BujBYmnRAJp3XmojequG3tFaoSP+SIJxRFdXh3/k5SU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NjobytbCLpF4G3a6g5gYE12grFvUQr222aWe0ToOso1DFJshISMLfYfxUXP3GDyJo6NtDBz8BD+aNMT16J9iSqdwrSoShlgjJeFVCMM4dxZ/hFy1vG3dlUfvF6dfFkuw/hHQnIWCi8NJz1PpzLETLXPo09VyCnqhtaG2SovF1rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
-Received: from dsgsiengine01.siengine.com ([10.8.1.61])
-	by mail03.siengine.com with ESMTPS id 49K1jhgY057326
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 20 Oct 2024 09:45:43 +0800 (+08)
-	(envelope-from hailong.fan@siengine.com)
-Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
-	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4XWLqp1QtLz7ZMSJ;
-	Sun, 20 Oct 2024 09:45:42 +0800 (CST)
-Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
- SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Sun, 20 Oct 2024 09:45:42 +0800
-Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
- SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.9; Sun, 20 Oct 2024 09:45:41 +0800
-Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
- SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
- 15.02.1544.011; Sun, 20 Oct 2024 09:45:41 +0800
-From: =?utf-8?B?RmFuIEhhaWxvbmcv6IyD5rW36b6Z?= <hailong.fan@siengine.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Simon Horman <horms@kernel.org>, "2694439648@qq.com" <2694439648@qq.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        "joabreu@synopsys.com" <joabreu@synopsys.com>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com"
-	<linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: =?utf-8?B?5Zue5aSNOiDlm57lpI06IFtQQVRDSF0gbmV0OiBzdG1tYWM6IGVuYWJsZSBN?=
- =?utf-8?Q?AC_after_MTL_configuring?=
-Thread-Topic: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIG5ldDogc3RtbWFjOiBlbmFibGUgTUFDIGFmdGVy?=
- =?utf-8?Q?_MTL_configuring?=
-Thread-Index: AQHbHfwmUFDRUPAmP0Op3UD8MH3slLKKOd6AgAF8NlCAAJYugIACmsmw
-Date: Sun, 20 Oct 2024 01:45:41 +0000
-Message-ID: <daf687938ae1413bbc556134b47d0629@siengine.com>
-References: <tencent_6BF819F333D995B4D3932826194B9B671207@qq.com>
- <20241017101857.GE1697@kernel.org>
- <bd7a1be5cec348dab22f7d0c2552967d@siengine.com>
- <9a11c47e-0cd6-4741-a25b-68538763110a@lunn.ch>
-In-Reply-To: <9a11c47e-0cd6-4741-a25b-68538763110a@lunn.ch>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-Content-Type: multipart/mixed;
-	boundary="_002_daf687938ae1413bbc556134b47d0629sienginecom_"
+	s=arc-20240116; t=1729389919; c=relaxed/simple;
+	bh=83M22/fJyGB1tR9/miY2c43dp32t29qIpAheq1Shv50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEYLbObj4UKfjXbDdulgGdCLTIPUgN3y65gFbLzDqLlDR41ylXW/VRgMOeJLcFe5Vt/aTF5R5PbLGgZ3UNGLv4R5uXmCpKQOb0djGuK3wgnGV6GrksD4Sj8nckiI/DOGAeeavLyezGPe0EdyTyr9aKo0anxzzUaAjxNEis6WjHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I/iShMfq; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729389916; x=1760925916;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=83M22/fJyGB1tR9/miY2c43dp32t29qIpAheq1Shv50=;
+  b=I/iShMfqbx/5f6ItSc731NO/agK2hD6BxjT1ELZUIFLW20hiW0rN8KwE
+   axoNUciY3DxKPOhp4E4jwbJGGHerWsAFKsTRByiUR/r0DSsYWnsKaj00T
+   6OFtMLyhCjK2p6DQZGa53cOHSShe7AxYOyJvfPFKgtkLGWspZXgJO1KKC
+   XhctvW+6dQxtjpCremHGFtXQMyLLsXqcyWYxj3AQQ3CkoPrsccGUuAI7w
+   Kc9A4SRY3CZYDZ33ep5iapWvoVrjYVE4ktiiCYE1pdWXtpTCa4cGT/emO
+   NpP34M/jHsrVGrC32+qCCrp5nZgE80bjjmCg4Yh/Ut74AgAvABkPWfPcr
+   A==;
+X-CSE-ConnectionGUID: AzfcmKExTZGjfxIe+LvhDw==
+X-CSE-MsgGUID: elnmzJ2HRyKhWTGY642cjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11230"; a="39517322"
+X-IronPort-AV: E=Sophos;i="6.11,217,1725346800"; 
+   d="scan'208";a="39517322"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 19:05:15 -0700
+X-CSE-ConnectionGUID: 3XsXIaETS8iLPcmLmKlhqA==
+X-CSE-MsgGUID: mL48R6XcR/2dOcW6NfDUFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,217,1725346800"; 
+   d="scan'208";a="79351368"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 19 Oct 2024 19:05:11 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t2LJc-000Pm9-1K;
+	Sun, 20 Oct 2024 02:05:08 +0000
+Date: Sun, 20 Oct 2024 10:04:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zhao Qunqin <zhaoqunqin@loongson.cn>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
+	bp@alien8.de, tony.luck@intel.com, james.morse@arm.com,
+	mchehab@kernel.org, rric@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-edac@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@xen0n.name, loongarch@lists.linux.dev,
+	Jonathan.Cameron@huawei.com, Zhao Qunqin <zhaoqunqin@loongson.cn>
+Subject: Re: [PATCH v6 RESEND 2/2] EDAC: Add EDAC driver for loongson memory
+ controller
+Message-ID: <202410200949.GpnHSLfV-lkp@intel.com>
+References: <20241018014542.27283-3-zhaoqunqin@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-DKIM-Results: [10.8.1.61]; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:mail03.siengine.com 49K1jhgY057326
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241018014542.27283-3-zhaoqunqin@loongson.cn>
 
---_002_daf687938ae1413bbc556134b47d0629sienginecom_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Hi Zhao,
 
-SGkgDQoNClBsZWFzZSBmaW5kIG5ldyBwYXRjaCBpbiBhdHRhY2htZW50cywgdGhhbmtzLg0KDQoN
-Ci0tLS0t6YKu5Lu25Y6f5Lu2LS0tLS0NCuWPkeS7tuS6ujogQW5kcmV3IEx1bm4gPGFuZHJld0Bs
-dW5uLmNoPiANCuWPkemAgeaXtumXtDogMjAyNOW5tDEw5pyIMTnml6UgMTo1Nw0K5pS25Lu25Lq6
-OiBGYW4gSGFpbG9uZy/ojIPmtbfpvpkgPGhhaWxvbmcuZmFuQHNpZW5naW5lLmNvbT4NCuaKhOmA
-gTogU2ltb24gSG9ybWFuIDxob3Jtc0BrZXJuZWwub3JnPjsgMjY5NDQzOTY0OEBxcS5jb207IGFs
-ZXhhbmRyZS50b3JndWVAZm9zcy5zdC5jb207IGpvYWJyZXVAc3lub3BzeXMuY29tOyBkYXZlbUBk
-YXZlbWxvZnQubmV0OyBlZHVtYXpldEBnb29nbGUuY29tOyBrdWJhQGtlcm5lbC5vcmc7IHBhYmVu
-aUByZWRoYXQuY29tOyBtY29xdWVsaW4uc3RtMzJAZ21haWwuY29tOyBuZXRkZXZAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC1zdG0zMkBzdC1tZC1tYWlsbWFuLnN0b3JtcmVwbHkuY29tOyBsaW51eC1h
-cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
-cmcNCuS4u+mimDogUmU6IOWbnuWkjTogW1BBVENIXSBuZXQ6IHN0bW1hYzogZW5hYmxlIE1BQyBh
-ZnRlciBNVEwgY29uZmlndXJpbmcNCg0KT24gRnJpLCBPY3QgMTgsIDIwMjQgYXQgMDE6MTU6MzBB
-TSArMDAwMCwgRmFuIEhhaWxvbmcv6IyD5rW36b6ZIHdyb3RlOg0KPiBIaQ0KPiANCj4gRm9yIGV4
-YW1wbGUsIEVUSCBpcyBkaXJlY3RseSBjb25uZWN0ZWQgdG8gdGhlIHN3aXRjaCwgd2hpY2ggbmV2
-ZXIgcG93ZXIgZG93biBhbmQgc2VuZHMgYnJvYWRjYXN0IHBhY2tldHMgYXQgcmVndWxhciBpbnRl
-cnZhbHMuIA0KPiBEdXJpbmcgdGhlIHByb2Nlc3Mgb2Ygb3BlbmluZyBFVEgsIGRhdGEgbWF5IGZs
-b3cgaW50byB0aGUgTVRMIEZJRk8sIG9uY2UgTUFDIFJYIGlzIGVuYWJsZWQuDQo+IGFuZCB0aGVu
-LCBNVEwgd2lsbCBiZSBzZXQsIHN1Y2ggYXMgRklGTyBzaXplLiANCj4gT25jZSBlbmFibGUgRE1B
-LCBUaGVyZSBpcyBhIGNlcnRhaW4gcHJvYmFiaWxpdHkgdGhhdCBETUEgd2lsbCByZWFkIGluY29y
-cmVjdCBkYXRhIGZyb20gTVRMIEZJRk8sIGNhdXNpbmcgRE1BIHRvIGhhbmcgdXAuIA0KPiBCeSBy
-ZWFkIERNQV9EZWJ1Z19TdGF0dXMsIHlvdSBjYW4gYmUgb2JzZXJ2ZWQgdGhhdCB0aGUgUlBTIHJl
-bWFpbnMgYXQgYSBjZXJ0YWluIHZhbHVlIGZvcmV2ZXIuIA0KPiBUaGUgY29ycmVjdCBwcm9jZXNz
-IHNob3VsZCBiZSB0byBjb25maWd1cmUgTUFDL01UTC9ETUEgYmVmb3JlIGVuYWJsaW5nIERNQS9N
-QUMNCg0KV2hhdCBTaW1vbiBpcyBhc2tpbmcgZm9yIGlzIHRoYXQgdGhpcyBpcyBwYXJ0IG9mIHRo
-ZSBjb21taXQgbWVzc2FnZS4NCg0KUGxlYXNlIGFsc28gZG9uJ3QgdG9wIHBvc3QuDQoNCiAgICBB
-bmRyZXcNCg0KLS0tDQpwdy1ib3Q6IGNyDQo=
+kernel test robot noticed the following build warnings:
 
---_002_daf687938ae1413bbc556134b47d0629sienginecom_
-Content-Type: application/octet-stream;
-	name="0001-net-stmmac-enable-MAC-after-MTL-configuring.patch"
-Content-Description: 0001-net-stmmac-enable-MAC-after-MTL-configuring.patch
-Content-Disposition: attachment;
-	filename="0001-net-stmmac-enable-MAC-after-MTL-configuring.patch"; size=4554;
-	creation-date="Sun, 20 Oct 2024 01:43:57 GMT";
-	modification-date="Sun, 20 Oct 2024 01:42:30 GMT"
-Content-Transfer-Encoding: base64
+[auto build test WARNING on 61124f42dcaa30f58a8b47a2b69ddb80260677c7]
 
-RnJvbSA1N2M5MzQ2M2NmNmJlM2ZkMDMwOTE4ZDg0NmVmM2Q2NWM3NTRkMjAxIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiAiaGFpbG9uZy5mYW4iIDxoYWlsb25nLmZhbkBzaWVuZ2luZS5j
-b20+CkRhdGU6IE1vbiwgMTQgT2N0IDIwMjQgMTE6MTk6MTYgKzA4MDAKU3ViamVjdDogW1BBVENI
-XSBuZXQ6IHN0bW1hYzogZW5hYmxlIE1BQyBhZnRlciBNVEwgY29uZmlndXJpbmcKCkRNQSBtYXli
-ZSBibG9jayB3aGlsZSBFVEggaXMgb3BlbmluZywKQWRqdXN0IHRoZSBlbmFibGUgc2VxdWVuY2Us
-IHB1dCB0aGUgTUFDIGVuYWJsZSBsYXN0CgpGb3IgZXhhbXBsZSwgRVRIIGlzIGRpcmVjdGx5IGNv
-bm5lY3RlZCB0byB0aGUgc3dpdGNoLAp3aGljaCBuZXZlciBwb3dlciBkb3duIGFuZCBzZW5kcyBi
-cm9hZGNhc3QgcGFja2V0cyBhdCByZWd1bGFyIGludGVydmFscy4KRHVyaW5nIHRoZSBwcm9jZXNz
-IG9mIG9wZW5pbmcgRVRILCBkYXRhIG1heSBmbG93IGludG8gdGhlIE1UTCBGSUZPLApvbmNlIE1B
-QyBSWCBpcyBlbmFibGVkLiBhbmQgdGhlbiwgTVRMIHdpbGwgYmUgc2V0LCBzdWNoIGFzIEZJRk8g
-c2l6ZS4KT25jZSBlbmFibGUgRE1BLCBUaGVyZSBpcyBhIGNlcnRhaW4gcHJvYmFiaWxpdHkgdGhh
-dCBETUEgd2lsbCByZWFkCmluY29ycmVjdCBkYXRhIGZyb20gTVRMIEZJRk8sIGNhdXNpbmcgRE1B
-IHRvIGhhbmcgdXAuCkJ5IHJlYWQgRE1BX0RlYnVnX1N0YXR1cywgeW91IGNhbiBiZSBvYnNlcnZl
-ZCB0aGF0IHRoZSBSUFMgcmVtYWlucyBhdAphIGNlcnRhaW4gdmFsdWUgZm9yZXZlci4gVGhlIGNv
-cnJlY3QgcHJvY2VzcyBzaG91bGQgYmUgdG8gY29uZmlndXJlCk1BQy9NVEwvRE1BIGJlZm9yZSBl
-bmFibGluZyBETUEvTUFDCgpTaWduZWQtb2ZmLWJ5OiBoYWlsb25nLmZhbiA8aGFpbG9uZy5mYW5A
-c2llbmdpbmUuY29tPgotLS0KIGRyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL2R3
-bWFjNF9saWIuYyAgIHwgIDggLS0tLS0tLS0KIGRyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8v
-c3RtbWFjL2R3eGdtYWMyX2RtYS5jIHwgMTIgLS0tLS0tLS0tLS0tCiBkcml2ZXJzL25ldC9ldGhl
-cm5ldC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5jICB8ICA2ICsrKy0tLQogMyBmaWxlcyBj
-aGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDIzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL2R3bWFjNF9saWIuYyBiL2RyaXZlcnMv
-bmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL2R3bWFjNF9saWIuYwppbmRleCAwZDE4NWU1NGUu
-LjkyNDQ4ZDg1OCAxMDA2NDQKLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1t
-YWMvZHdtYWM0X2xpYi5jCisrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFj
-L2R3bWFjNF9saWIuYwpAQCAtNTAsMTAgKzUwLDYgQEAgdm9pZCBkd21hYzRfZG1hX3N0YXJ0X3R4
-KHN0cnVjdCBzdG1tYWNfcHJpdiAqcHJpdiwgdm9pZCBfX2lvbWVtICppb2FkZHIsCiAKIAl2YWx1
-ZSB8PSBETUFfQ09OVFJPTF9TVDsKIAl3cml0ZWwodmFsdWUsIGlvYWRkciArIERNQV9DSEFOX1RY
-X0NPTlRST0woZHdtYWM0X2FkZHJzLCBjaGFuKSk7Ci0KLQl2YWx1ZSA9IHJlYWRsKGlvYWRkciAr
-IEdNQUNfQ09ORklHKTsKLQl2YWx1ZSB8PSBHTUFDX0NPTkZJR19URTsKLQl3cml0ZWwodmFsdWUs
-IGlvYWRkciArIEdNQUNfQ09ORklHKTsKIH0KIAogdm9pZCBkd21hYzRfZG1hX3N0b3BfdHgoc3Ry
-dWN0IHN0bW1hY19wcml2ICpwcml2LCB2b2lkIF9faW9tZW0gKmlvYWRkciwKQEAgLTc3LDEwICs3
-Myw2IEBAIHZvaWQgZHdtYWM0X2RtYV9zdGFydF9yeChzdHJ1Y3Qgc3RtbWFjX3ByaXYgKnByaXYs
-IHZvaWQgX19pb21lbSAqaW9hZGRyLAogCXZhbHVlIHw9IERNQV9DT05UUk9MX1NSOwogCiAJd3Jp
-dGVsKHZhbHVlLCBpb2FkZHIgKyBETUFfQ0hBTl9SWF9DT05UUk9MKGR3bWFjNF9hZGRycywgY2hh
-bikpOwotCi0JdmFsdWUgPSByZWFkbChpb2FkZHIgKyBHTUFDX0NPTkZJRyk7Ci0JdmFsdWUgfD0g
-R01BQ19DT05GSUdfUkU7Ci0Jd3JpdGVsKHZhbHVlLCBpb2FkZHIgKyBHTUFDX0NPTkZJRyk7CiB9
-CiAKIHZvaWQgZHdtYWM0X2RtYV9zdG9wX3J4KHN0cnVjdCBzdG1tYWNfcHJpdiAqcHJpdiwgdm9p
-ZCBfX2lvbWVtICppb2FkZHIsCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1p
-Y3JvL3N0bW1hYy9kd3hnbWFjMl9kbWEuYyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8v
-c3RtbWFjL2R3eGdtYWMyX2RtYS5jCmluZGV4IDc4NDBiYzQwMy4uY2JhMTJlZGMxIDEwMDY0NAot
-LS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9kd3hnbWFjMl9kbWEuYwor
-KysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9kd3hnbWFjMl9kbWEuYwpA
-QCAtMjg4LDEwICsyODgsNiBAQCBzdGF0aWMgdm9pZCBkd3hnbWFjMl9kbWFfc3RhcnRfdHgoc3Ry
-dWN0IHN0bW1hY19wcml2ICpwcml2LAogCXZhbHVlID0gcmVhZGwoaW9hZGRyICsgWEdNQUNfRE1B
-X0NIX1RYX0NPTlRST0woY2hhbikpOwogCXZhbHVlIHw9IFhHTUFDX1RYU1Q7CiAJd3JpdGVsKHZh
-bHVlLCBpb2FkZHIgKyBYR01BQ19ETUFfQ0hfVFhfQ09OVFJPTChjaGFuKSk7Ci0KLQl2YWx1ZSA9
-IHJlYWRsKGlvYWRkciArIFhHTUFDX1RYX0NPTkZJRyk7Ci0JdmFsdWUgfD0gWEdNQUNfQ09ORklH
-X1RFOwotCXdyaXRlbCh2YWx1ZSwgaW9hZGRyICsgWEdNQUNfVFhfQ09ORklHKTsKIH0KIAogc3Rh
-dGljIHZvaWQgZHd4Z21hYzJfZG1hX3N0b3BfdHgoc3RydWN0IHN0bW1hY19wcml2ICpwcml2LCB2
-b2lkIF9faW9tZW0gKmlvYWRkciwKQEAgLTMwMiwxMCArMjk4LDYgQEAgc3RhdGljIHZvaWQgZHd4
-Z21hYzJfZG1hX3N0b3BfdHgoc3RydWN0IHN0bW1hY19wcml2ICpwcml2LCB2b2lkIF9faW9tZW0g
-KmlvYWRkciwKIAl2YWx1ZSA9IHJlYWRsKGlvYWRkciArIFhHTUFDX0RNQV9DSF9UWF9DT05UUk9M
-KGNoYW4pKTsKIAl2YWx1ZSAmPSB+WEdNQUNfVFhTVDsKIAl3cml0ZWwodmFsdWUsIGlvYWRkciAr
-IFhHTUFDX0RNQV9DSF9UWF9DT05UUk9MKGNoYW4pKTsKLQotCXZhbHVlID0gcmVhZGwoaW9hZGRy
-ICsgWEdNQUNfVFhfQ09ORklHKTsKLQl2YWx1ZSAmPSB+WEdNQUNfQ09ORklHX1RFOwotCXdyaXRl
-bCh2YWx1ZSwgaW9hZGRyICsgWEdNQUNfVFhfQ09ORklHKTsKIH0KIAogc3RhdGljIHZvaWQgZHd4
-Z21hYzJfZG1hX3N0YXJ0X3J4KHN0cnVjdCBzdG1tYWNfcHJpdiAqcHJpdiwKQEAgLTMxNiwxMCAr
-MzA4LDYgQEAgc3RhdGljIHZvaWQgZHd4Z21hYzJfZG1hX3N0YXJ0X3J4KHN0cnVjdCBzdG1tYWNf
-cHJpdiAqcHJpdiwKIAl2YWx1ZSA9IHJlYWRsKGlvYWRkciArIFhHTUFDX0RNQV9DSF9SWF9DT05U
-Uk9MKGNoYW4pKTsKIAl2YWx1ZSB8PSBYR01BQ19SWFNUOwogCXdyaXRlbCh2YWx1ZSwgaW9hZGRy
-ICsgWEdNQUNfRE1BX0NIX1JYX0NPTlRST0woY2hhbikpOwotCi0JdmFsdWUgPSByZWFkbChpb2Fk
-ZHIgKyBYR01BQ19SWF9DT05GSUcpOwotCXZhbHVlIHw9IFhHTUFDX0NPTkZJR19SRTsKLQl3cml0
-ZWwodmFsdWUsIGlvYWRkciArIFhHTUFDX1JYX0NPTkZJRyk7CiB9CiAKIHN0YXRpYyB2b2lkIGR3
-eGdtYWMyX2RtYV9zdG9wX3J4KHN0cnVjdCBzdG1tYWNfcHJpdiAqcHJpdiwgdm9pZCBfX2lvbWVt
-ICppb2FkZHIsCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1h
-Yy9zdG1tYWNfbWFpbi5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3Rt
-bWFjX21haW4uYwppbmRleCBlMjE0MDQ4MjIuLmMxOWNhNjJhNCAxMDA2NDQKLS0tIGEvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX21haW4uYworKysgYi9kcml2ZXJz
-L25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1hYy9zdG1tYWNfbWFpbi5jCkBAIC0zNDM3LDkgKzM0
-MzcsNiBAQCBzdGF0aWMgaW50IHN0bW1hY19od19zZXR1cChzdHJ1Y3QgbmV0X2RldmljZSAqZGV2
-LCBib29sIHB0cF9yZWdpc3RlcikKIAkJcHJpdi0+aHctPnJ4X2NzdW0gPSAwOwogCX0KIAotCS8q
-IEVuYWJsZSB0aGUgTUFDIFJ4L1R4ICovCi0Jc3RtbWFjX21hY19zZXQocHJpdiwgcHJpdi0+aW9h
-ZGRyLCB0cnVlKTsKLQogCS8qIFNldCB0aGUgSFcgRE1BIG1vZGUgYW5kIHRoZSBDT0UgKi8KIAlz
-dG1tYWNfZG1hX29wZXJhdGlvbl9tb2RlKHByaXYpOwogCkBAIC0zNTIzLDYgKzM1MjAsOSBAQCBz
-dGF0aWMgaW50IHN0bW1hY19od19zZXR1cChzdHJ1Y3QgbmV0X2RldmljZSAqZGV2LCBib29sIHB0
-cF9yZWdpc3RlcikKIAkvKiBTdGFydCB0aGUgYmFsbCByb2xsaW5nLi4uICovCiAJc3RtbWFjX3N0
-YXJ0X2FsbF9kbWEocHJpdik7CiAKKwkvKiBFbmFibGUgdGhlIE1BQyBSeC9UeCAqLworCXN0bW1h
-Y19tYWNfc2V0KHByaXYsIHByaXYtPmlvYWRkciwgdHJ1ZSk7CisKIAlzdG1tYWNfc2V0X2h3X3Zs
-YW5fbW9kZShwcml2LCBwcml2LT5odyk7CiAKIAlyZXR1cm4gMDsKLS0gCjIuMzQuMQoK
+url:    https://github.com/intel-lab-lkp/linux/commits/Zhao-Qunqin/dt-bindings-EDAC-for-ls3a5000-memory-controller/20241018-094803
+base:   61124f42dcaa30f58a8b47a2b69ddb80260677c7
+patch link:    https://lore.kernel.org/r/20241018014542.27283-3-zhaoqunqin%40loongson.cn
+patch subject: [PATCH v6 RESEND 2/2] EDAC: Add EDAC driver for loongson memory controller
+config: arm64-randconfig-r113-20241019 (https://download.01.org/0day-ci/archive/20241020/202410200949.GpnHSLfV-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20241020/202410200949.GpnHSLfV-lkp@intel.com/reproduce)
 
---_002_daf687938ae1413bbc556134b47d0629sienginecom_--
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410200949.GpnHSLfV-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/edac/loongson_edac.c:100:15: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned long long [usertype] *vbase @@     got void [noderef] __iomem * @@
+   drivers/edac/loongson_edac.c:100:15: sparse:     expected unsigned long long [usertype] *vbase
+   drivers/edac/loongson_edac.c:100:15: sparse:     got void [noderef] __iomem *
+
+vim +100 drivers/edac/loongson_edac.c
+
+    91	
+    92	static int edac_probe(struct platform_device *pdev)
+    93	{
+    94		struct edac_mc_layer layers[2];
+    95		struct loongson_edac_pvt *pvt;
+    96		struct mem_ctl_info *mci;
+    97		u64 *vbase;
+    98		int ret;
+    99	
+ > 100		vbase = devm_platform_ioremap_resource(pdev, 0);
+   101		if (IS_ERR(vbase))
+   102			return PTR_ERR(vbase);
+   103	
+   104		/* allocate a new MC control structure */
+   105		layers[0].type = EDAC_MC_LAYER_CHANNEL;
+   106		layers[0].size = 1;
+   107		layers[0].is_virt_csrow = false;
+   108		layers[1].type = EDAC_MC_LAYER_SLOT;
+   109		layers[1].size = 1;
+   110		layers[1].is_virt_csrow = true;
+   111		mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(*pvt));
+   112		if (mci == NULL)
+   113			return -ENOMEM;
+   114	
+   115		mci->mc_idx = edac_device_alloc_index();
+   116		mci->mtype_cap = MEM_FLAG_RDDR4;
+   117		mci->edac_ctl_cap = EDAC_FLAG_NONE;
+   118		mci->edac_cap = EDAC_FLAG_NONE;
+   119		mci->mod_name = "loongson_edac.c";
+   120		mci->ctl_name = "loongson_edac_ctl";
+   121		mci->dev_name = "loongson_edac_dev";
+   122		mci->ctl_page_to_phys = NULL;
+   123		mci->pdev = &pdev->dev;
+   124		mci->error_desc.grain = 8;
+   125		/* Set the function pointer to an actual operation function */
+   126		mci->edac_check = edac_check;
+   127	
+   128		pvt_init(mci, vbase);
+   129		get_dimm_config(mci);
+   130	
+   131		ret = edac_mc_add_mc(mci);
+   132		if (ret) {
+   133			edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
+   134			edac_mc_free(mci);
+   135			return ret;
+   136		}
+   137		edac_op_state = EDAC_OPSTATE_POLL;
+   138	
+   139		return 0;
+   140	}
+   141	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
