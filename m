@@ -1,168 +1,175 @@
-Return-Path: <linux-kernel+bounces-373363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B3969A55D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 765AD9A55DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFC9BB22DAC
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:27:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF078B232D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072241957E1;
-	Sun, 20 Oct 2024 18:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7297D1953A1;
+	Sun, 20 Oct 2024 18:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlUuEk/E"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OgSyavW6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5A982877;
-	Sun, 20 Oct 2024 18:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A456B194AD6;
+	Sun, 20 Oct 2024 18:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729448841; cv=none; b=s1zO95Pdg/I3QjFX/cwNhp1ObJbp63hoA93VBrdnfOVFDQhbJhx2BGfRcCwqDqPgogVk8DNyfLAOg8wcWU68MySk5EHzZvFlE2wMHjJjySlRD1XP9neE/50e2URCd5bzL8K3+awEyZXZwu8uk7PJYZ7PP2H37nXGGe9ODj5rYLE=
+	t=1729449067; cv=none; b=N4NH49B7X34gsoCNMEJfAr87UvHZrB5TiD3mso2oDvZHQPtpYtwzsGXMUVOFFxtPsr31mSN+vTonjJ1wTnaVeouo4rSn2cMepuEDqGob1wl9Zi0vZ6hblQm6xz1r1XTDUyEbRHMZFnViaV3B/260bvD5+dlTY2fot4pX2/PZq3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729448841; c=relaxed/simple;
-	bh=Ww13dvSbpLS1CRSU7TPVVRBFuyPAJT0QbJBdP+1IZ8s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GI08/75RnWCRFI0VWMhwoQV6UQxPJmxv/ClTAcvYkQtsgJtDO3vn7oay/nM6uaEAeHyHiMLRoZm4TDcosOCfJLGbInaXxO6GLXPLEj8TjwHzbjQdl7XI6ot1Imfij7/vn0JiqZ6eho0QvuWcb/2RPWxf6Xt59+lOIi8VUVU3mao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlUuEk/E; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43155afca99so26689135e9.1;
-        Sun, 20 Oct 2024 11:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729448837; x=1730053637; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oC94XqAfObW7gsifgeU8sWbkg+sAsaXMzC798gctVto=;
-        b=nlUuEk/E2BZpWIweYVTE6zKPeXpDSzX+jrx9ZK2CdKkQ/fsBhfQaoSHExtsbv0RLv4
-         GLoH/GuDFPDAkY1/OOU6eZfrh0vwrw0d6OkX75eWR+PRjm9yVYeJR739HGT1EP7hGrWK
-         KuZQJNqOaF1h690M94howEKVhgX2tJLnFBiVvuRRLEKeHz3/wRPBReySNyNSzA9MqcjX
-         CUcEq2XouBTMQXHpauLtkpZGoDaQ63vXJZQp8xZAQA4K8tDj58W84H34LvEmDWyQ/5Jq
-         uo1jWrx7wcDYuBWeu4+us9Z+MtGeyAMu0Ephx/QeFXpvKD+378WMwE6zXeYmhSlQH5I+
-         5fBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729448837; x=1730053637;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oC94XqAfObW7gsifgeU8sWbkg+sAsaXMzC798gctVto=;
-        b=oZFfy306b06GrAd29DExVlxbt5P5niTvmCgvxSBGzqNTgagTCCp3z8kCyM8SsM9XHn
-         KrWWiM3mFPQr55czxjBaESY7nBwe5A70uGzRed1UOxUkaAZBc7J0gTfCPHF//eTC0c3p
-         NJAVTawl9F/qkgYu/gUzfZhgC6eOZoLRA8jy1JkVh0dSBbJi9KqVQ0PBFlSFJvBhkOcj
-         BQZ+uOXkaU/Vl0JrjuUsDCY9LZsfLt9ArpYVX3kejw5GglsKl2K5WBor0O0fWocbY8gd
-         WS9onFDMsbzZ162yJUR4cVAFz1qbPYKet3VLyj8GnXHs4jErAOxglwuSqTUwZhV592y9
-         U32g==
-X-Forwarded-Encrypted: i=1; AJvYcCX7iX53G2yMa1kEEzz0//Bk+e3wRzGTVT0s1Y6n+9yGTfzPsl2TaRodAoHg0ZfT3j0rg4VqybABlBqX7uA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaYQ4QR8RFUEEX++UJhT/rhqeQPOpLNT8dkRztfc8b3M6GTg6V
-	DzMN6kwjoCYoEUvOLyGtS/kkUFTvVHVj9HWOjiS2RNDu379AlHkN
-X-Google-Smtp-Source: AGHT+IEM3cXnu7Szl4hCwHLN8wVFsmNZ4NIEh7q1lVGN/TNryiPhzRMZ+nRPrTxss73+eZIvE3gk5w==
-X-Received: by 2002:a05:600c:1d27:b0:431:44aa:ee2c with SMTP id 5b1f17b1804b1-4316163bb0bmr55994265e9.9.1729448837337;
-        Sun, 20 Oct 2024 11:27:17 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-6b9f-98af-2a5c-6ed2.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:6b9f:98af:2a5c:6ed2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58af90sm31023845e9.21.2024.10.20.11.27.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 11:27:16 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Sun, 20 Oct 2024 20:27:13 +0200
-Subject: [PATCH v2] Input: sparcspkr - use cleanup facility for device_node
+	s=arc-20240116; t=1729449067; c=relaxed/simple;
+	bh=v39Rr5eF3eWe0K5Su3ujXYO57zb/mrOvhsFkm+1e1nU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sY+RCFK1KOcCRkcAdXdvybnNrfQyFLiPJXglGdMir/ZOGx3k/UCRiF92HToBkzmeP7ufrLKVNzocmXTuXoyTKZzRnShCnaYLyww9oLI9A1UZwSWHL6rD+vz28GNAmCfOf4JwvGwJwMzQeZbhM0YBPVD7LtDOPs6H3unltsRsbxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OgSyavW6; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729449065; x=1760985065;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v39Rr5eF3eWe0K5Su3ujXYO57zb/mrOvhsFkm+1e1nU=;
+  b=OgSyavW6TdS2Hu03Fyl1SeYcvOCrEyXPdXqj8R7aYQCecRS0bx1bV8OO
+   odvtZ77Pduno001HMZxnotJCPmzKs1k/LvjkwYBN6Siajhowmsil0Dtzo
+   n3czd4hRjB6DIYzuBAxYQ+qEPufqcFbMyrLfNS0IbrTOVu2PJ1a9pY5i3
+   g4laPKmknQ5YmZqd0wzVy4zwNRaxcG/bfvFomMlGQ+gzyvn2OFl8LK6ND
+   o3HHzjg5M1rLGuC54fLO5w4GQM1CGyRuklZ6wYP64Os/kufTuej/JbeDw
+   URlMLPX+/BxDwQTeyLDtlEQgn1kMW2Ev/oE958PqEbdzR7jTOf6ZZeCtG
+   Q==;
+X-CSE-ConnectionGUID: r0ndL4RfQl6axx+phGfxeQ==
+X-CSE-MsgGUID: MqNBRm1nQ5ysCbfX3xeacA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="32840925"
+X-IronPort-AV: E=Sophos;i="6.11,219,1725346800"; 
+   d="scan'208";a="32840925"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 11:31:05 -0700
+X-CSE-ConnectionGUID: OzBYEk6pRU2avgDpHiDMBQ==
+X-CSE-MsgGUID: G8xMv0IUThyf5uIazvRcLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,219,1725346800"; 
+   d="scan'208";a="116786918"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 20 Oct 2024 11:31:03 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t2ahg-000Qgy-1Q;
+	Sun, 20 Oct 2024 18:31:00 +0000
+Date: Mon, 21 Oct 2024 02:30:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Subject: Re: [PATCH] iio: invensense: fix multiple odr switch when FIFO is off
+Message-ID: <202410210200.tPt6CQU4-lkp@intel.com>
+References: <20241017-invn-inv-sensors-timestamp-fix-switch-fifo-off-v1-1-1bcfa70a747b@tdk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241020-input_automate_of_node_put-v2-1-ddec58b4b99e@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAIBLFWcC/33NSw6DIBSF4a2YOy4N0Ee0o+6jMQTxojepYABNG
- 8PeS03HHf5n8J0NIgbCCLdqg4ArRfKuhDxUYEbtBmTUlwbJ5Vlw3jBy85KUXpKfdELlrXK+R1V
- GJjqNjb0YLvsGCjAHtPTa8UdbeqSYfHjvX6v4rj9W8H/sKhhn2JmrFKfadra+D5Om59H4Cdqc8
- wc8IiUWxAAAAA==
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-rpi-kernel@lists.infradead.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729448835; l=1854;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=Ww13dvSbpLS1CRSU7TPVVRBFuyPAJT0QbJBdP+1IZ8s=;
- b=4JJ/8rNbRS5CDLSsjceGOzrXN95Je/MHjDmrnycsm3LBmxcv6W1rD4Kud8D3RuxIWD1xGrIml
- i4ByO0r4793Bt9BGAEzqktKDKifH7g0va6oGud7Buk3Csn5Wl2gpBxs
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017-invn-inv-sensors-timestamp-fix-switch-fifo-off-v1-1-1bcfa70a747b@tdk.com>
 
-Use the 'free(device_node)' macro to simplify the code by automatically
-freeing the device node, which removes the need for explicit calls to
-'of_node_put()'.
+Hi Jean-Baptiste,
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-Changes in v2:
-- rebase onto input/next, drop applied patches.
-- sparcspkr: drop goto before node declaration and return -ENOMEM.
-- Link to v1: https://lore.kernel.org/r/20241010-input_automate_of_node_put-v1-0-ebc62138fbf8@gmail.com
----
- drivers/input/misc/sparcspkr.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/input/misc/sparcspkr.c b/drivers/input/misc/sparcspkr.c
-index ff7b6291894a..66ddea9a203a 100644
---- a/drivers/input/misc/sparcspkr.c
-+++ b/drivers/input/misc/sparcspkr.c
-@@ -182,25 +182,23 @@ static int bbc_beep_probe(struct platform_device *op)
- {
- 	struct sparcspkr_state *state;
- 	struct bbc_beep_info *info;
--	struct device_node *dp;
--	int err = -ENOMEM;
-+	int err;
- 
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	if (!state)
--		goto out_err;
-+		return -ENOMEM;
- 
- 	state->name = "Sparc BBC Speaker";
- 	state->event = bbc_spkr_event;
- 	spin_lock_init(&state->lock);
- 
--	dp = of_find_node_by_path("/");
- 	err = -ENODEV;
-+	struct device_node *dp __free(device_node) = of_find_node_by_path("/");
- 	if (!dp)
- 		goto out_free;
- 
- 	info = &state->u.bbc;
- 	info->clock_freq = of_getintprop_default(dp, "clock-frequency", 0);
--	of_node_put(dp);
- 	if (!info->clock_freq)
- 		goto out_free;
- 
-@@ -221,7 +219,6 @@ static int bbc_beep_probe(struct platform_device *op)
- 
- out_free:
- 	kfree(state);
--out_err:
- 	return err;
- }
- 
+[auto build test WARNING on c3e9df514041ec6c46be83801b1891392f4522f7]
 
----
-base-commit: 00850d7b542aa4a8240cf977d43dc6d2158e48d7
-change-id: 20241009-input_automate_of_node_put-1bae9f5c02d9
+url:    https://github.com/intel-lab-lkp/linux/commits/Jean-Baptiste-Maneyrol-via-B4-Relay/iio-invensense-fix-multiple-odr-switch-when-FIFO-is-off/20241017-220821
+base:   c3e9df514041ec6c46be83801b1891392f4522f7
+patch link:    https://lore.kernel.org/r/20241017-invn-inv-sensors-timestamp-fix-switch-fifo-off-v1-1-1bcfa70a747b%40tdk.com
+patch subject: [PATCH] iio: invensense: fix multiple odr switch when FIFO is off
+config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20241021/202410210200.tPt6CQU4-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241021/202410210200.tPt6CQU4-lkp@intel.com/reproduce)
 
-Best regards,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410210200.tPt6CQU4-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/iio/imu/inv_icm42600/inv_icm42600_gyro.c: In function 'inv_icm42600_gyro_update_scan_mode':
+>> drivers/iio/imu/inv_icm42600/inv_icm42600_gyro.c:103:39: warning: unused variable 'ts' [-Wunused-variable]
+     103 |         struct inv_sensors_timestamp *ts = &gyro_st->ts;
+         |                                       ^~
+--
+   drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c: In function 'inv_icm42600_accel_update_scan_mode':
+>> drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c:203:39: warning: unused variable 'ts' [-Wunused-variable]
+     203 |         struct inv_sensors_timestamp *ts = &accel_st->ts;
+         |                                       ^~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [y]:
+   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+
+
+vim +/ts +103 drivers/iio/imu/inv_icm42600/inv_icm42600_gyro.c
+
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22   96  
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22   97  /* enable gyroscope sensor and FIFO write */
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22   98  static int inv_icm42600_gyro_update_scan_mode(struct iio_dev *indio_dev,
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22   99  					      const unsigned long *scan_mask)
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  100  {
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  101  	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+a1432b5b4f4c44 Jean-Baptiste Maneyrol    2024-04-22  102  	struct inv_icm42600_sensor_state *gyro_st = iio_priv(indio_dev);
+a1432b5b4f4c44 Jean-Baptiste Maneyrol    2024-04-22 @103  	struct inv_sensors_timestamp *ts = &gyro_st->ts;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  104  	struct inv_icm42600_sensor_conf conf = INV_ICM42600_SENSOR_CONF_INIT;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  105  	unsigned int fifo_en = 0;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  106  	unsigned int sleep_gyro = 0;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  107  	unsigned int sleep_temp = 0;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  108  	unsigned int sleep;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  109  	int ret;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  110  
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  111  	mutex_lock(&st->lock);
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  112  
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  113  	if (*scan_mask & INV_ICM42600_SCAN_MASK_TEMP) {
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  114  		/* enable temp sensor */
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  115  		ret = inv_icm42600_set_temp_conf(st, true, &sleep_temp);
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  116  		if (ret)
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  117  			goto out_unlock;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  118  		fifo_en |= INV_ICM42600_SENSOR_TEMP;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  119  	}
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  120  
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  121  	if (*scan_mask & INV_ICM42600_SCAN_MASK_GYRO_3AXIS) {
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  122  		/* enable gyro sensor */
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  123  		conf.mode = INV_ICM42600_SENSOR_MODE_LOW_NOISE;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  124  		ret = inv_icm42600_set_gyro_conf(st, &conf, &sleep_gyro);
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  125  		if (ret)
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  126  			goto out_unlock;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  127  		fifo_en |= INV_ICM42600_SENSOR_GYRO;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  128  	}
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  129  
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  130  	/* update data FIFO write */
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  131  	ret = inv_icm42600_buffer_set_fifo_en(st, fifo_en | st->fifo.en);
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  132  
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  133  out_unlock:
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  134  	mutex_unlock(&st->lock);
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  135  	/* sleep maximum required time */
+c788b9e56acd46 Bragatheswaran Manickavel 2023-10-27  136  	sleep = max(sleep_gyro, sleep_temp);
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  137  	if (sleep)
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  138  		msleep(sleep);
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  139  	return ret;
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  140  }
+7f85e42a6c54c0 Jean-Baptiste Maneyrol    2020-06-22  141  
+
 -- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
