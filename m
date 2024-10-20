@@ -1,76 +1,114 @@
-Return-Path: <linux-kernel+bounces-373242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212649A543B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:07:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED5C79A5442
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4C77B21834
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:07:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B8D1C20E00
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6F3192D6A;
-	Sun, 20 Oct 2024 13:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBA918E762;
+	Sun, 20 Oct 2024 13:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhj09P0j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PdvTe2dj"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D928D299;
-	Sun, 20 Oct 2024 13:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECFF158218
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 13:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729429649; cv=none; b=BDYl1F7E+d3a1dkCHwcEIYjOwZwQAfdPbhkMKx2CO24jQ5s2udFnX+EZsaWiA2yoSZSg79oSoA1c7c0DtWkv6LhG1cNov55bpZGcauy4NoPpAc31Tbzyh607e7A3U6W1QGiqGilSFcliDGy6iFDvDvwvVkygUBJqQeTvS24z408=
+	t=1729430124; cv=none; b=aC1vSJ6zSlGnaZFrkAfnxnTP5C2z5SYUhF6yZBNxLyvA2Uqo9JLZ+8E5oymMz444WbYs5TcWsf/4/Ppuv2ofbR6AEgKuU9sGcanPa+C7EzfIRLz5r+WyPJNxKw/1bynUqeKiVxO9/93v5qZysMWy3u/s2FJD2QCku5wzwOT09s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729429649; c=relaxed/simple;
-	bh=csjbkGR4ysrBGSW061tsE2Qxt1y9P8caMRfJu9VxeBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N4I14XnrvN+KwjQ89TXSgfYZJrK/fFYSVzBe64vezbXs2mhreHl3oiOScDyRvsTRHWwsejy9wZACLpVXfn28MRP3/hmzRaM8Swc0AGm1bEcpiwbyr7to4vr7uCCk6cCpjddpku0IT+Lia/NDBoC0ATt/ChfEUQgeWovmWxuvI4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhj09P0j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 527E7C4CEC6;
-	Sun, 20 Oct 2024 13:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729429649;
-	bh=csjbkGR4ysrBGSW061tsE2Qxt1y9P8caMRfJu9VxeBE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qhj09P0jWUIDLN0xY2nz11NdPeasymnal2dcEu/sGicwJO4Yx1hANw8AhadaLufAh
-	 2GGx4luz0irNnkB0mgf5S1enwcnGQZRZSkk8f+kJcNt9IvHx0Ef1tF5+75KuO36BSc
-	 WF9q7xG8fxiNI59Kk0dW0c4NxKIbSwxzO8Rym9KLw0S1U17CM2rznaSGzaiCfuWj1b
-	 fh909kAq4CaMJ12WALopj20Hok2x3sdnLj5Pu1jM4dgISy/HKh+WiIi90bVatzNnry
-	 h772lDY/UbT51sC3wG2kWWaWiqNh6GyH3OwNQ4rIhQydL7EYGZou4Ow58Rmu932Wbp
-	 g/cxAS/6iQ/Pg==
-Date: Sun, 20 Oct 2024 14:07:21 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Yasin Lee <yasin.lee.x@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, yasin.lee.x@outlook.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iio: proximity: hx9023s: Add performance tuning
- function
-Message-ID: <20241020140721.6bbfb59c@jic23-huawei>
-In-Reply-To: <20241017-add-performance-tuning-configuration-v3-2-e7289791f523@gmail.com>
-References: <20241017-add-performance-tuning-configuration-v3-0-e7289791f523@gmail.com>
-	<20241017-add-performance-tuning-configuration-v3-2-e7289791f523@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729430124; c=relaxed/simple;
+	bh=poO/hwuPggMCfKMtN6J/IKMRK8KmxYpxlq0aLtC6rXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=no32hTznIKyp1vI0IRNMMldYjWwiDWjI9db54iwwqdPjETI4VaKFytRyqFog7k/Isq7+Rj4OfjkOUmwrOQiqbulyY/oMidaC+s5E0F8PPC+hdGIb0OGf9emJAWMns8Xk7up6fJ0YSRJMaNI0p+96sR4SSRBqj1VOYb7HhAiCWRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PdvTe2dj; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso48935881fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 06:15:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729430119; x=1730034919; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9gXL56oVVchWDXVTsVXRD1GEhyc86fnULmJY57/IB98=;
+        b=PdvTe2djFMDCmA4Y8a0ThWYOIEWy78iCaAORlTJhhmrdcDG3u8CZAOD/bD2KSaQQ8T
+         2RWrnVdtcD4p1ghxOyxphjWX/LH3KSZ71UtQFeLv8A0wD4Sd5zVu/81jGWC1NqJjlmq8
+         MqhaD/tEKGXYekiRZNSZ5Mu77ctdba2sQSLNIOP8f1A/JwoQuT+ujG9Pp30LJXM6xTWc
+         e5LfinwG8eUMVRMZYShAAV1yi7Gsdjymj9TdjLkGfv4FJPHD1v6DXPlN5ylDjR39U58j
+         sb2+fvo5fQlRo24rSE1bCKlU63mAYwvwrOzdzPntJtfrOA5djJBtYNfoK4C8UG4VhtZt
+         k+Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729430119; x=1730034919;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9gXL56oVVchWDXVTsVXRD1GEhyc86fnULmJY57/IB98=;
+        b=VbAz87YJcwWVqcR/+dQzUZXCdrG+46CrG3QxSXwFvP3TreqCiHufLtQdWWzWi9BNZ3
+         HHD0dzr4chloTT3wBJBMKN5W4rwIOwE0dsH6yhrz+4W34P+VvaQAi84xcykryHW/zkcP
+         Zt23r4dDltOvPSPmFM6bM8Ph4LEh0jjMMxXAaq7H0pKVsJIXpoI6fnAxBYEeilgjh2kT
+         TplPosQdfoEJ7gjFxxnK0glDcGXlGU7Ojt9VFdROSG92BVlLV2EhuRmUpswjA1ZmJUeT
+         Fh8nZX3NuSBVAT+7ncGujzFxRqtQWd+itlnfkaHBXc31cxlOzKPsDVkJqQjRZ1digy2g
+         d5ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtGhjCX6XETV1sJCyRplviNaU0H1Leynn8GiyhocnyGgXeelvE0QThqTwahmq5slM9sFk+zviAu0y99c0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2bg0cmMeop+o46kK1sayX2AYxMYu8t+0cym/c7zwqGBsfElh5
+	10EWgwUnmjeqGX1tmTg4704aSfClwoZd2CxV3DYYdB9xefJF6n3ucvJCNkySjGc=
+X-Google-Smtp-Source: AGHT+IGuzJyisFPDCA07ZQb5NEcQD2ZqMQRQA//tQSzjdBOhWj0uTeILAHaOSrId8jri4G7h0VDyGQ==
+X-Received: by 2002:a2e:80a:0:b0:2fb:5ae7:24e7 with SMTP id 38308e7fff4ca-2fb82e90ee3mr44660631fa.4.1729430119150;
+        Sun, 20 Oct 2024 06:15:19 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb9ae24b58sm2270571fa.128.2024.10.20.06.15.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 06:15:17 -0700 (PDT)
+Date: Sun, 20 Oct 2024 16:15:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Caleb Connolly <caleb.connolly@linaro.org>, Guenter Roeck <linux@roeck-us.net>, 
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] usb: typec: qcom-pmic-typec: use
+ fwnode_handle_put() to release fwnodes
+Message-ID: <upegry45eqmt6nton6whtvlbg2wjoh5uvocmq46rlv5xhg5qf6@pacgknliknsx>
+References: <20241020-qcom_pmic_typec-fwnode_remove-v2-0-7054f3d2e215@gmail.com>
+ <20241020-qcom_pmic_typec-fwnode_remove-v2-1-7054f3d2e215@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241020-qcom_pmic_typec-fwnode_remove-v2-1-7054f3d2e215@gmail.com>
 
-On Thu, 17 Oct 2024 18:36:45 +0800
-Yasin Lee <yasin.lee.x@gmail.com> wrote:
+On Sun, Oct 20, 2024 at 02:56:34PM +0200, Javier Carrasco wrote:
+> The right function to release a fwnode acquired via
+> device_get_named_child_node() is fwnode_handle_put(), and not
+> fwnode_remove_software_node(), as no software node is being handled.
+> 
+> Replace the calls to fwnode_remove_software_node() with
+> fwnode_handle_put() in qcom_pmic_typec_probe() and
+> qcom_pmic_typec_remove().
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: a4422ff22142 ("usb: typec: qcom: Add Qualcomm PMIC Type-C driver")
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>  drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-> When hardware design introduces significant sensor data noise,
-> performance can be improved by adjusting register settings.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Given review of previous patch that I just sent, I'm not going to review
-the implementation at this point.
-
-Jonathan
+-- 
+With best wishes
+Dmitry
 
