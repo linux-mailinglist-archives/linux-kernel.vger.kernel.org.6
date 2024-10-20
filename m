@@ -1,298 +1,205 @@
-Return-Path: <linux-kernel+bounces-373302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D279A54EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 17:59:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 734769A54F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57C51F21C40
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 15:59:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 936301C20EA8
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 16:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FE11946A2;
-	Sun, 20 Oct 2024 15:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25F819414A;
+	Sun, 20 Oct 2024 16:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tJSXMkEX"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2069.outbound.protection.outlook.com [40.107.93.69])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="I1mkg/yA"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AFA2209B;
-	Sun, 20 Oct 2024 15:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729439970; cv=fail; b=hKJtF5fWttBdwRgEZTFbgxdTvCFXW3ej+LlLi32D0xQALL+LSgsi8WHp//JvoNlhQ6U8oLxkrkaDQTm8Tjh88FZ9dMD2l+zwqQ+LSxvLjGuBuwieuJP7uCaYSkpcPuL1mavXjPH9xW206modseFNf7J5VSa3fTEOxdneHR0JhQs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729439970; c=relaxed/simple;
-	bh=tYnEHeQRYRlCiovv+fEUK+jkyhFMWQW6d4yPbeq+A88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kJXWb/l2ORuQmOnjKvVa/PvTns33H3ehNd7EZWx49nGHm9lMuOtDqMhUHW0fZPGab7xfYS7ZyxJUlUICjFc44hr/EI7/Rm8L2mkhVBXCJ+VFM43vOR6Qv+uD5mugIWxUmabD37ZZW/7hrMmE+VzyJCQCWexPEa3USVnyOIlyIAY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tJSXMkEX; arc=fail smtp.client-ip=40.107.93.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MH9egBszPkx1Nohg4FXk4TsLl1ap49jEF4bI8BWwNHVaM2lktshm1ORkEnrElCVNPPn5KNfqTVzaurB455ExQ1gjaeqMxrycnCfhinNUJTKPomqy2P3Ya881kG9XCxXSZU10TnpmJz7rluWf2Klc/EgjPeON6tWQe3wwIbuRZhF4TN4biy+/c1qxOY16/1r5rfJTtCWECb5ej1GwoLfyMP2ZODKIBmz3y4yjdTQwC4k7fKnCTSLtSHcqr2buVehcweSdcbgwAn9VHdPDHQSF5y3xL9/Ui6haNQgO7mYzjqrxnlD5GyisVLif4M9U4E4G6PTWhTYOBx1BarT7WXg5Bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/EYq0ZST+OTB7Qa2dvFmBVXc8GVj1d64OhhuI0nuvUc=;
- b=KqJqoSdMdzAJBJtu5EwVVFC07C4YCg8RZFaaVuxo4anuid5XWAQIhj6z7X81sAbGP2mYTBy5dZ432Z1fZxYrF95I1Gc0gv1EMagB9dzdSbUg1nnKVOdoWY056O545liK3Aq+04fJ5uuVOijbSnmx5CEadBBUZl3wavQjIVFW/xaKZJ6weESR1iVz5NyAQdKQMgv5dlojmUAFGzO/y8wKLiK4fty77EgXDa7FwQqP6B7JKL6ChtLROJLeQo360D5F6SOr+dqIuLhokT7XBqS0cLRX5o5cBqrJfD+CRhd5vf/8MpPIowFfKC79i0itGcnPxiozH4pRz2ntSfBHBmhovA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/EYq0ZST+OTB7Qa2dvFmBVXc8GVj1d64OhhuI0nuvUc=;
- b=tJSXMkEX797FBVPBRh+PVU4NviEd3ThOYnPUSuhZTqZSbBtX7hNglSrNln3FHSUUDFAQN8KT72gsu/3ZlAmHlnmPgbDtMND9wWFgXAvg5tbJcf/2d0fcQOloSPuhn5lBXh2REdOGlvp/Vj6j/I+uqKHNyCx4V4OL5bd/b+ju6iEkGulNpdj8tD9HqhHzTHU3AAdSHwDdpPGGQAETulIIeb95p7OOXlWKdcN90u6+GsB1kleePK61VW9T38y8K7U3BjQ2R/jRON/+DBPTa5e0j9HhKn1sjEQg+mwqYYQdCIsxegHcuKtCkWR2sum8dkNHiCbq+b4fPxDaWdP7pD/m3Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
- by PH0PR12MB5630.namprd12.prod.outlook.com (2603:10b6:510:146::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Sun, 20 Oct
- 2024 15:59:24 +0000
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8]) by SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8%3]) with mapi id 15.20.8069.024; Sun, 20 Oct 2024
- 15:59:23 +0000
-Date: Sun, 20 Oct 2024 18:59:12 +0300
-From: Ido Schimmel <idosch@nvidia.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Petr Machata <petrm@nvidia.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	UNGLinuxDriver@microchip.com, Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	Vlad Buslov <vladbu@nvidia.com>, Simon Horman <horms@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	=?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net-next 1/6] net: sched: propagate "skip_sw" flag to
- offload for flower and matchall
-Message-ID: <ZxUo0Dc0M5Y6l9qF@shredder.mtl.com>
-References: <20241017165215.3709000-1-vladimir.oltean@nxp.com>
- <20241017165215.3709000-2-vladimir.oltean@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017165215.3709000-2-vladimir.oltean@nxp.com>
-X-ClientProxiedBy: FR0P281CA0098.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a9::8) To SA3PR12MB7901.namprd12.prod.outlook.com
- (2603:10b6:806:306::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E72567D;
+	Sun, 20 Oct 2024 16:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729440179; cv=none; b=X0PRtgjzm3tXoztwX6yCsjH2vIy909zDYnx1rWUmMRvYVDuFbg1EpzEJ4SrJYBDRAe3xpJlTeaeuLV++SuFmLS83GhzhpbqKVJP/eu5sUm8AY52GNXkb+rqYJ9/WfoG7Zgk+VB3K7ZAmfL1Rje1jbKu3Kgm1l8G6RvkPBcKpHpw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729440179; c=relaxed/simple;
+	bh=eEqdnT9zeihfovN32kEoloUVe9WbErtbn9U2MC80FII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDiLOah4XlywTW5yrEYGf88GlcvAKWZRdA4J6KOBjFifoF5ORmsZ2/K66cio32s4oW6kQ3uJGahDUKCaSjBsWCK6JrJSg02kFichz/p0iP8qQSFdbO24Lrqdiyy+w1pnxSKqjJNZUoT4oKqVVMLk6bDL8a5upyfzKyxO/Fn9yrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=I1mkg/yA; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9C76F526;
+	Sun, 20 Oct 2024 18:01:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1729440069;
+	bh=eEqdnT9zeihfovN32kEoloUVe9WbErtbn9U2MC80FII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I1mkg/yAdmkyZPEEqssKSr8Zk+zkjwO+4T5+PTiWas1aTopJwq6Y4VpPnEjOE7uk7
+	 sBeS7h9kEj30KL9U4mjtKaPIiI+kOjDBcOprB3/XT0ftOLuqqggqEncDxLujwJxily
+	 TDkEhg+wL0V9fYE0JLHyEUncS3Tna9DHsLl18ojA=
+Date: Sun, 20 Oct 2024 19:02:49 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: syzbot <syzbot+9446d5e0d25571e6a212@syzkaller.appspotmail.com>
+Cc: hverkuil-cisco@xs4all.nl, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, mchehab@kernel.org,
+	ribalda@chromium.org, senozhatsky@chromium.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [media?] WARNING in uvc_status_unregister
+Message-ID: <20241020160249.GD7770@pendragon.ideasonboard.com>
+References: <6714a6cc.050a0220.10f4f4.002b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|PH0PR12MB5630:EE_
-X-MS-Office365-Filtering-Correlation-Id: ff0d851a-7350-4984-7419-08dcf1202a42
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jeEL0odSsM+bWtUMqXXXFcrd4Zh1DItTDUTDAwCIzD7ZvCW3dv5FmaSyn6yi?=
- =?us-ascii?Q?eY1kjxHOQrg7cTsODb1NawauGKUpS8sPSCSx6TY2nNlqD8ZOoy9F4bEXuZ58?=
- =?us-ascii?Q?oiHGhVtrZ7Mx8scXGxyDWLqn8JtlTXvcxq/Wzn/QUYE3BwAVLmc1+o6YSArH?=
- =?us-ascii?Q?NELtTFkHqnWvYtCq6NxkHtWqzHbvlVwqpkiWiVLRwsP2K2pdJVbje986Ceun?=
- =?us-ascii?Q?gSEneUAYne79jmPL9fJ+vi/Zzg6nSEz6jxmLBN3RK9JXu4LeYqP1bGBuTBXD?=
- =?us-ascii?Q?Mzh3ig6AZjK06G8Iau6LgnW3JUdVixvjbAQ5zSOkVqKi+wXYKr4/cgRmGAhq?=
- =?us-ascii?Q?lB6PdZlHQseUXHUWrtdTQdEN1cQTaXCddtkrmFvKC6E5EBY4wzSB5LoYlyHR?=
- =?us-ascii?Q?D9ri4gGUS2wNHiU1qPibBbpz6w1Tf3tsI5msmSQJOxHFzAyK/BZU5bklMc2Z?=
- =?us-ascii?Q?tsGE3y9hfJi5MCbSRjs5trYdo43lmoZHCRmg8Tak/GMYYmI6hR7AUfskHz0Z?=
- =?us-ascii?Q?66XC9Ut99eWQ9GOT25TeotGym5jtrIvTP4+VFEaQY5IncKUCnwVhKCUHDelR?=
- =?us-ascii?Q?B5HcFiNOs/+RD4JRwO4vnOGHEahnmL8aSlwyIsLwqpmX+ZBzjW+obk1UN5xn?=
- =?us-ascii?Q?3msgEKOAW66gBUyEP7TNXCfaprCKiGn1RmANrjSzIqCZz65+H+QNumzwUlRj?=
- =?us-ascii?Q?F6/XoD8cnuW/VqMFPAFnW23oDYHXY1K/fo9TFcFTbPpK7Vbx5U7Obu623osc?=
- =?us-ascii?Q?mu8Zk7jF5jTf0wlndrKuJe4vQjtW39GNWVhxpdi2gMNNfoNU0XuR00vk/jcz?=
- =?us-ascii?Q?Obzn+z8UiKNAAunEt2Ta0ZSUu6E0Yb0fTEPdZaesYXbGUsyPl/LanO1IHrJR?=
- =?us-ascii?Q?FpDtIZIMFlJ08yhxNlavakEDUUKaqK3K/Ynh22p5bLHNP1zM0oLOWW+r42GG?=
- =?us-ascii?Q?cGRQsXA8Df/Rtw6I0MQEiGF/o0EHxBIKdXB6krblJTjbEXYPQR9qjYXZwAg+?=
- =?us-ascii?Q?jMoNCyYuaDHyvutaFS60ouEH4F4Z3fPH2CjHsoiJnoOUsDtb0S9aJbNW12fD?=
- =?us-ascii?Q?0Q4JX3tUfcX+brIm9yk+kVM4xlY1xATd2wbLGAmuhyVawlWiwNGodWTdPbVB?=
- =?us-ascii?Q?XUk1et8+1HZLa8pNJvNwHGPj9imhwun5Re13RB+EELOg0lK9IQ1ASrTc6qUn?=
- =?us-ascii?Q?VHlIYHbaQaVBdV8iDTAfQ7bYF/f2+Wr2LQDyyViKHu7cLF6pCvL/ltuJoCuC?=
- =?us-ascii?Q?+F5y93q4xt/iOGEBYmgfrsKOax38pK1syXVRQsmFDiogdWWOumayZPak9PaP?=
- =?us-ascii?Q?n5iFbA5xE6kg6BNCAOG8BPpy?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+ftIFOWyFw4oFPu8wkCN9CSFyKjqtT5icctub5wJtk7V7tap6MAUPDy98gwg?=
- =?us-ascii?Q?gWJkV3Tp39gyQCX1owGsS9cCPxaIj7EWhmc9+QCn+bZv/5QzdVq73SCCAXSO?=
- =?us-ascii?Q?+dYUaC8FpA6bkifAXWZlZOa7iCZ0OnIGW3AgIG+x6AZF0x1mmv9hyxv303vT?=
- =?us-ascii?Q?NoXr9kw/BARMK5PoVivj4sRhBiYGi0MQM3W3WhHr5wzbB7H3AfiVVrzAmRvD?=
- =?us-ascii?Q?elTM1DlQu5koIS/5V/eDJNrCL4XY8Oj8WnFBtzeSaDSzBk10IIR/Zjr4V7O3?=
- =?us-ascii?Q?fYqLEN0uMtx7sTRyihQtTO1YUjT7HhXR2df1Ytp+dBqtCciHoz8D54pyAp6U?=
- =?us-ascii?Q?uOrkBAIiLwn6SuR4ppQNM/1syhxXnzToaZRs2jo885eCraM1dS7hu6l4OhoJ?=
- =?us-ascii?Q?ppyD/IUDb62Yl5FlUc4G4QhwtSElV8geGQO2pdfC85tFnEEhmiHE0qpScGmr?=
- =?us-ascii?Q?1s6LIuF7xz69hQmaeVNpUGZ+J+NPf91OBiHF4Vm9bGVKTMWYOUIGCM+MymYa?=
- =?us-ascii?Q?ugip43NlmQL2fIA+lCGS3uYTg2e2drorSRZO1j/glGTiE2cLhpBVx5Skd4Ir?=
- =?us-ascii?Q?VrW+OTlu7Pf6JZU5O0Cm+36PdyJW2zkNbRn1/F35ECUdusoMtIPtxgotXAnt?=
- =?us-ascii?Q?g925VohnLzqG/zmaQhvQd3sz8nUu+SHVzoRpIXQBEhlN5lGZo2OCmgZtEhG9?=
- =?us-ascii?Q?bLqAwr/ovKmTtQpzJj2xUNlpJ/82zPSPFq3AxrHndbh/9r/mZ3wvYwXvziML?=
- =?us-ascii?Q?z83s9Gp0MXkoY0DTn6MTfOj9v8QGdHfzuvoxsk1wVSJ5UDpyHkGLNvwjnUht?=
- =?us-ascii?Q?rCHmDyS3dlLaBPSAwepU+e1FGt6rf/tILKkWpeBmFxYoOvwgVSvVlxXRrfke?=
- =?us-ascii?Q?LSlfmR1GQHKyU/h6tRBEZLsY0pBvYWJidM0Z8pbvR5+z5sMurpdvKDhGXm6G?=
- =?us-ascii?Q?NoBQZRGv5MBFUbq75CFQzLzV4yL1p74x4/MR9VX6LHqSkhlf0iIaMMypOz3M?=
- =?us-ascii?Q?IcY+sis63RI3IoGYh3Lf8RNLq46mUKMc4/KmfT98wtLmXP1bH1mTuvw85/i1?=
- =?us-ascii?Q?/GShs7xUVk60ER4jKahyZBq6P9evixbFpwD99gzamRofVWyNt/HU6N79hnUl?=
- =?us-ascii?Q?05lQRu7Yz8CfaDOIkSf1LWIA5YTgkmBNw4UWicnRJd2N2P4pQLppAhZLG70T?=
- =?us-ascii?Q?nH+V5x+BhuoYx3qK+T36BlL/83eOPe+C3vPQJtmwmDoraZ75Cjp84dQSszKs?=
- =?us-ascii?Q?of9ropr05LvOqagDEZrjURp4TzpaC4ObOul4RnILkdNBPN/GJwR5Tjdy5FWH?=
- =?us-ascii?Q?i+2a08VdEJGoDlgl+flz2iGOUjhoXD5bGEg0WsYEMPFwIv6dOGv04GamoaEk?=
- =?us-ascii?Q?sUONNH59xsgVrm8AKwhr+onmH/Zh/XcEregRMByY2TZSu5Fw9Ojlnd9aL5Nl?=
- =?us-ascii?Q?fkeG5tNWzB11V+UEoE/Bs8c5hhMk5j+uGXHIVNMHkri5VnDfb4z7ENh1nyuM?=
- =?us-ascii?Q?4iUQK1diJdHiHFkhLf7AQvROQsJOqWOIMJtSCBsJFmdBweoqQAudLMKvZTzC?=
- =?us-ascii?Q?KhAhAZ/0oOI4NbTi/LLWXtGrAvc151PdmFowLsdL?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff0d851a-7350-4984-7419-08dcf1202a42
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2024 15:59:23.6958
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Qq3fpGAG4e5PzgzcApIszWoQT0oPwK1pTFbxbAbY/zprSl92yCCNmzu1D5LTqJ678NDl87mKHBGvzRC/DVShqg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5630
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6714a6cc.050a0220.10f4f4.002b.GAE@google.com>
 
-On Thu, Oct 17, 2024 at 07:52:10PM +0300, Vladimir Oltean wrote:
-> Background: switchdev ports offload the Linux bridge, and most of the
-> packets they handle will never see the CPU. The ports between which
-> there exists no hardware data path are considered 'foreign' to switchdev.
-> These can either be normal physical NICs without switchdev offload, or
-> incompatible switchdev ports, or virtual interfaces like veth/dummy/etc.
+On Sat, Oct 19, 2024 at 11:44:28PM -0700, syzbot wrote:
+> Hello,
 > 
-> In some cases, an offloaded filter can only do half the work, and the
-> rest must be handled by software. Redirecting/mirroring from the ingress
-> of a switchdev port towards a foreign interface is one example of
-> combined hardware/software data path. The most that the switchdev port
-> can do is to extract the matching packets from its offloaded data path
-> and send them to the CPU. From there on, the software filter runs
-> (a second time, after the first run in hardware) on the packet and
-> performs the mirred action.
+> syzbot found the following issue on:
 > 
-> It makes sense for switchdev drivers which allow this kind of "half
-> offloading" to sense the "skip_sw" flag of the filter/action pair, and
-> deny attempts from the user to install a filter that does not run in
-> software, because that simply won't work.
+> HEAD commit:    15e7d45e786a Add linux-next specific files for 20241016
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14a8f887980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9446d5e0d25571e6a212
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1483e830580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10560240580000
 > 
-> In fact, a mirred action on a switchdev port towards a dummy interface
-> appears to be a valid way of (selectively) monitoring offloaded traffic
-> that flows through it. IFF_PROMISC was also discussed years ago, but
-> (despite initial disagreement) there seems to be consensus that this
-> flag should not affect the destination taken by packets, but merely
-> whether or not the NIC discards packets with unknown MAC DA for local
-> processing.
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/disk-15e7d45e.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinux-15e7d45e.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/bzImage-15e7d45e.xz
 > 
-> Only the flower and matchall classifiers are of interest to me for
-> purely pragmatic reasons: these are offloaded by DSA currently.
+> The issue was bisected to:
+> 
+> commit c5fe3ed618f995b4a903e574bf2e993cdebeefca
+> Author: Ricardo Ribalda <ribalda@chromium.org>
+> Date:   Thu Sep 26 05:49:58 2024 +0000
+> 
+>     media: uvcvideo: Avoid race condition during unregister
 
-Possibly a stupid question given I don't remember all the details of the
-TC offload, but is there a reason not to put the 'skip_sw' indication in
-'struct flow_cls_common_offload' and initialize the new field as part of
-tc_cls_common_offload_init()?
-
-Seems like it won't require patching every classifier and will also work
-for the re-offload case (e.g., fl_reoffload())?
-
-Something like:
-
-diff --git a/include/net/flow_offload.h b/include/net/flow_offload.h
-index 292cd8f4b762..596ab9791e4d 100644
---- a/include/net/flow_offload.h
-+++ b/include/net/flow_offload.h
-@@ -685,6 +685,7 @@ struct flow_cls_common_offload {
-        u32 chain_index;
-        __be16 protocol;
-        u32 prio;
-+       bool skip_sw;
-        struct netlink_ext_ack *extack;
- };
- 
-diff --git a/include/net/pkt_cls.h b/include/net/pkt_cls.h
-index 4880b3a7aced..cf199af85c52 100644
---- a/include/net/pkt_cls.h
-+++ b/include/net/pkt_cls.h
-@@ -755,6 +755,7 @@ tc_cls_common_offload_init(struct flow_cls_common_offload *cls_common,
-        cls_common->chain_index = tp->chain->index;
-        cls_common->protocol = tp->protocol;
-        cls_common->prio = tp->prio >> 16;
-+       cls_common->skip_sw = tc_skip_sw(flags);
-        if (tc_skip_sw(flags) || flags & TCA_CLS_FLAGS_VERBOSE)
-                cls_common->extack = extack;
- }
+It looks like the issue comes from the fact that uvc_status_unregister()
+gets called from the error path in uvc_probe() through
+uvc_unregister_video(), likely for errors occuring before
+uvc_status_init() is called. uvc_status_unregister() should return
+immediately in that case. Ricardo, do you plan to look at that?
 
 > 
-> [1] https://lore.kernel.org/netdev/20190830092637.7f83d162@ceranb/
-> [2] https://lore.kernel.org/netdev/20191002233750.13566-1-olteanv@gmail.com/
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12554240580000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=11554240580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16554240580000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9446d5e0d25571e6a212@syzkaller.appspotmail.com
+> Fixes: c5fe3ed618f9 ("media: uvcvideo: Avoid race condition during unregister")
+> 
+> usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+> usb 1-1: Product: syz
+> usb 1-1: Manufacturer: syz
+> usb 1-1: SerialNumber: syz
+> usb 1-1: config 0 descriptor??
+> usb 1-1: Found UVC 0.00 device syz (05ac:8600)
+> usb 1-1: No valid video chain found.
+> ------------[ cut here ]------------
+> DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+> WARNING: CPU: 0 PID: 1166 at kernel/locking/mutex.c:587 __mutex_lock_common kernel/locking/mutex.c:587 [inline]
+> WARNING: CPU: 0 PID: 1166 at kernel/locking/mutex.c:587 __mutex_lock+0xc41/0xd70 kernel/locking/mutex.c:752
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 1166 Comm: kworker/0:2 Not tainted 6.12.0-rc3-next-20241016-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Workqueue: usb_hub_wq hub_event
+> RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:587 [inline]
+> RIP: 0010:__mutex_lock+0xc41/0xd70 kernel/locking/mutex.c:752
+> Code: 0f b6 04 20 84 c0 0f 85 18 01 00 00 83 3d 36 20 49 04 00 75 19 90 48 c7 c7 20 b9 0a 8c 48 c7 c6 c0 b9 0a 8c e8 00 0f 81 f5 90 <0f> 0b 90 90 90 e9 bd f4 ff ff 90 0f 0b 90 e9 cf f8 ff ff 90 0f 0b
+> RSP: 0018:ffffc90004516980 EFLAGS: 00010246
+> RAX: 44423ff48d37de00 RBX: 0000000000000000 RCX: ffff888027929e00
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: ffffc90004516ad0 R08: ffffffff8155d7b2 R09: fffffbfff1cfa3e0
+> R10: dffffc0000000000 R11: fffffbfff1cfa3e0 R12: dffffc0000000000
+> R13: ffff88814bd82518 R14: 0000000000000000 R15: ffff88814bd824e8
+> FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055ffca8e3610 CR3: 000000001e3f4000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  class_mutex_constructor include/linux/mutex.h:201 [inline]
+>  uvc_status_suspend drivers/media/usb/uvc/uvc_status.c:375 [inline]
+>  uvc_status_unregister+0x2f/0xe0 drivers/media/usb/uvc/uvc_status.c:297
+>  uvc_unregister_video+0xeb/0x1c0 drivers/media/usb/uvc/uvc_driver.c:1947
+>  uvc_probe+0x9135/0x98c0 drivers/media/usb/uvc/uvc_driver.c:2272
+>  usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
+>  really_probe+0x2b8/0xad0 drivers/base/dd.c:658
+>  __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+>  driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+>  __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
+>  bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
+>  __device_attach+0x333/0x520 drivers/base/dd.c:1030
+>  bus_probe_device+0x189/0x260 drivers/base/bus.c:534
+>  device_add+0x856/0xbf0 drivers/base/core.c:3675
+>  usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
+>  usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
+>  usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:294
+>  really_probe+0x2b8/0xad0 drivers/base/dd.c:658
+>  __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+>  driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+>  __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
+>  bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
+>  __device_attach+0x333/0x520 drivers/base/dd.c:1030
+>  bus_probe_device+0x189/0x260 drivers/base/bus.c:534
+>  device_add+0x856/0xbf0 drivers/base/core.c:3675
+>  usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2651
+>  hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+>  hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+>  port_event drivers/usb/core/hub.c:5821 [inline]
+>  hub_event+0x2d6d/0x5150 drivers/usb/core/hub.c:5903
+>  process_one_work kernel/workqueue.c:3229 [inline]
+>  process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+>  worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> 
+> 
 > ---
-> v1->v2: rewrite commit message
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 > 
->  include/net/flow_offload.h | 1 +
->  include/net/pkt_cls.h      | 1 +
->  net/sched/cls_flower.c     | 1 +
->  net/sched/cls_matchall.c   | 1 +
->  4 files changed, 4 insertions(+)
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 > 
-> diff --git a/include/net/flow_offload.h b/include/net/flow_offload.h
-> index 292cd8f4b762..a2f688dd0447 100644
-> --- a/include/net/flow_offload.h
-> +++ b/include/net/flow_offload.h
-> @@ -692,6 +692,7 @@ struct flow_cls_offload {
->  	struct flow_cls_common_offload common;
->  	enum flow_cls_command command;
->  	bool use_act_stats;
-> +	bool skip_sw;
->  	unsigned long cookie;
->  	struct flow_rule *rule;
->  	struct flow_stats stats;
-> diff --git a/include/net/pkt_cls.h b/include/net/pkt_cls.h
-> index 4880b3a7aced..7b9f41f33c33 100644
-> --- a/include/net/pkt_cls.h
-> +++ b/include/net/pkt_cls.h
-> @@ -782,6 +782,7 @@ struct tc_cls_matchall_offload {
->  	struct flow_rule *rule;
->  	struct flow_stats stats;
->  	bool use_act_stats;
-> +	bool skip_sw;
->  	unsigned long cookie;
->  };
->  
-> diff --git a/net/sched/cls_flower.c b/net/sched/cls_flower.c
-> index e280c27cb9f9..8f7c60805f85 100644
-> --- a/net/sched/cls_flower.c
-> +++ b/net/sched/cls_flower.c
-> @@ -480,6 +480,7 @@ static int fl_hw_replace_filter(struct tcf_proto *tp,
->  	cls_flower.rule->match.mask = &f->mask->key;
->  	cls_flower.rule->match.key = &f->mkey;
->  	cls_flower.classid = f->res.classid;
-> +	cls_flower.skip_sw = skip_sw;
->  
->  	err = tc_setup_offload_action(&cls_flower.rule->action, &f->exts,
->  				      cls_flower.common.extack);
-> diff --git a/net/sched/cls_matchall.c b/net/sched/cls_matchall.c
-> index 9f1e62ca508d..9bd598f8a46c 100644
-> --- a/net/sched/cls_matchall.c
-> +++ b/net/sched/cls_matchall.c
-> @@ -98,6 +98,7 @@ static int mall_replace_hw_filter(struct tcf_proto *tp,
->  	tc_cls_common_offload_init(&cls_mall.common, tp, head->flags, extack);
->  	cls_mall.command = TC_CLSMATCHALL_REPLACE;
->  	cls_mall.cookie = cookie;
-> +	cls_mall.skip_sw = skip_sw;
->  
->  	err = tc_setup_offload_action(&cls_mall.rule->action, &head->exts,
->  				      cls_mall.common.extack);
-> -- 
-> 2.43.0
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
 > 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+
+-- 
+Regards,
+
+Laurent Pinchart
 
