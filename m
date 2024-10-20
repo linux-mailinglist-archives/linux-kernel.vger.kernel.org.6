@@ -1,195 +1,286 @@
-Return-Path: <linux-kernel+bounces-373214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2929A53DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:46:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 321219A53DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 13:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A8551C20891
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:46:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7EB1F21BA6
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 11:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D3019146E;
-	Sun, 20 Oct 2024 11:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7A019146E;
+	Sun, 20 Oct 2024 11:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="WYQYnjCw"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SwyaErZE"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BEE12E1E0
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 11:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F1AD26D
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 11:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729424807; cv=none; b=kbHt8tSi6mOER6Er/95qtHpcVfiJavm9/pR31ZtRHVxLA8m3EeiW3QqvR2nk9GIxDsQ1l/w0O/1ZZ5CNWfH5HFlNyX7NX/quHOZtAYe94HdVbDykP67UEY7nMOOuO/H2NLlEyZN6XiB7uuCd4eHCt57qiJ5inVr+55tIqxql+vw=
+	t=1729424875; cv=none; b=ZMYa4YCa9ZRRWqa/cu+GzhZUx3oydOfsbMuLmJMF72MSEEaIeqnXtGSTf9ZEDuDxuXIVC6GznkLnNTHTw+TyMI8WOv/xD3bBDULAzyuzozvaEYuTbsjH9722FFm//j/wQhFMtjgjLTMkfUQnxY6ErO/NzQo+byJoK4Rzhit/1PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729424807; c=relaxed/simple;
-	bh=upnip+KNwQAs5nEMTYdsPkAdO8L2+BUAYtZm7wVhLGo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=oSjpbJkMHaahpq9HfJTMK5tmP4BGnMQKthu67zJVoyPr8bkfefflhvycEqKy5bRzmwb9gcZbIDhkIAsSI2VTXerQq13HtPmCPr2AJERiXHemI8cGJxkYRSYcRgf91FhoHLVq04SO8TDarzWzwrkwU7t/jOWyG19DdOGsKc3DZYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=WYQYnjCw; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
-	by cmsmtp with ESMTPS
-	id 2QpkttcVvvH7l2UOStOVlx; Sun, 20 Oct 2024 11:46:45 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id 2UOQtyKwwHNNp2UORtUNGV; Sun, 20 Oct 2024 11:46:44 +0000
-X-Authority-Analysis: v=2.4 cv=OK8h3zaB c=1 sm=1 tr=0 ts=6714eda4
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=geAcWm3dhgwnT0Pjoka1yw==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
- a=VwQbUJbxAAAA:8 a=6Ujbnq6iAAAA:8 a=YmDlHjd7AAAA:8 a=jMfKuDRYAAAA:8
- a=M0D2_HLXQKRqHRaDSZIA:9 a=QEXdDO2ut3YA:10 a=8eZOVWP4HKkA:10
- a=rsP06fVo5MYu2ilr0aT5:22 a=-sNzveBoo8RYOSiOai2t:22 a=jsfG_yEu7aiiUYXEnMLs:22
- a=-3YgmSAAc2L1nfTqJm0e:22 a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Lz4/Flhiw6ewyWon5kfy+3sj4U87pQQGDwuFZrLscXQ=; b=WYQYnjCwhv483UaeNE8qLymQDZ
-	SFyS/Xde4oCN7DFDEAO1Sf3H0EwiFCUqfKU8/ZcJFpadRGL3BouIiBQbzSv2oFnzdjdVkSKxTr7JK
-	/YHp8faeASFgteLudjzlLIk9V9L6HD17nAakmBgQGXv3UfYKFgy678k100LUmgCd7Du8hUAHxDS2m
-	7ASCQigTNvdzXNxcOulM0I9oA90eZ8Q9mccf8N1uedRwKMqfUsBj6icBqq3y6geYHjWavtBudpn4U
-	/IAeZFoBNzKu0Y1UYLYcSZ6d7C06yU0rVaAbzdxPy56iEGesiAVqYlZRCYgnDE/n3XR6/vHV7GyTr
-	sXrI67Yw==;
-Received: from [49.206.112.194] (port=10981 helo=[192.168.0.206])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parthiban@linumiz.com>)
-	id 1t2UOM-003DWo-1N;
-	Sun, 20 Oct 2024 17:16:38 +0530
-Message-ID: <a6226742-72e9-456a-a2fa-c4d4e73ee9be@linumiz.com>
-Date: Sun, 20 Oct 2024 17:16:35 +0530
+	s=arc-20240116; t=1729424875; c=relaxed/simple;
+	bh=/9/nYY+hbbFJwS03Zm4eK2Q/QgjUw75Ctus0lU9TiSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fo0Xm+eFc525tlkHFmr+63NSmBJegENBS5Cq/fwlj0mjrUrLjJpRCLBuZ/lF6V35oJ+nenkShc6/2yQZJTBE8t6KvBlOZuIW8PDt59R4vMtvqWn6Qa15JnpgdXl/yYhDI7biTISOCDTwOfSVHTOE+2kKV7EJzPYlD7grwtRwKnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SwyaErZE; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so31665221fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 04:47:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729424871; x=1730029671; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I3MwemwtOnXFXWvxYPsTpfeerKMKatzArLCCx5itR1A=;
+        b=SwyaErZEu+t+yRxxGQOtlq6liqUNJYW00vIMrFJw42w4V2xXB4BktgGVyzglBqxzBA
+         C3FVLS37HSQO02B0ZLcvW3caN1aOj6/0gpM8ZMHtYx1okIiO8NdJbplyM9HcNAsBwSVi
+         fyMSBWI5pwbXZntSkI+N+33efOdP8RHHw1ZBT14+dJCvxqIEsmRDQIZeKXSy3tl1w/j9
+         QXCSm0+ta7HOcXvqR+Sx7x1srh/sdpyUJMfnfLNRA+wiNwIaR1iZrliWrkfvAXjSl4I/
+         lswNQjHB8yYw8PcXIRoV3bn+lA4wKW66h3S6nZJH29Y0ZeYPIMFDTjl+LIOYMCeaWXg1
+         Pz1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729424871; x=1730029671;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I3MwemwtOnXFXWvxYPsTpfeerKMKatzArLCCx5itR1A=;
+        b=S0T2EefO1Xa3m/BKO+nmVOtwermChpb0oM6l5PJ5TiL2NIquzb4d6/cc5lX7DfGggP
+         RLt/v9LUxmOJXwfIA0aFgGGbif78zejox4MTrjJA3k5OXC05C7rS9XpTXxPccPUHkpZf
+         J5b2kaFf8m7R8ZThLIr2uV8kBhEBCI3O10Xc+3WRzzIKG1M03qRxzSZxfxzl74IIVEwI
+         X49JcxNpqCkLi4fCW23fHjGglXi3zRvW+KrtSysB5Zzd3SviQ69oXW6IgnKi7BenMTY3
+         Bfx3ngeO7UqSZQWWYJPyCeTXM3pDr7jeqOHvFL8tPU1/uY0aP1Rkbr9l5ok1aRarmCVg
+         wPmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAQ/5scipAdYQRpWzinvOPVtwG6qqFGelUcvbiU9zHHOIJ5pMCXf9q2ATe0J6+d9fCIcy3IBa8OPk2eCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLL45YWjHFPf80/rAiTE/YB9fNTLYF40yLQ8Z77/1qufHm7CRx
+	xFLLAdkgHo+J+QvWAlwj6j8XoJ47WmE5ZzX+9I8Mxb9gOU9RIhZcK/gUY6DQ5wA=
+X-Google-Smtp-Source: AGHT+IFiUWIYUPRBLqRq5jEiHwazU34w60+UrA+qWxSb7DwqSwwF4F0Sdu4M/kprqUWv3jTXpdksqg==
+X-Received: by 2002:a2e:851:0:b0:2fb:3a78:190a with SMTP id 38308e7fff4ca-2fb83262a78mr25135511fa.29.1729424871024;
+        Sun, 20 Oct 2024 04:47:51 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb9ad4b804sm2117621fa.1.2024.10.20.04.47.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 04:47:49 -0700 (PDT)
+Date: Sun, 20 Oct 2024 14:47:47 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Dominik Haller <d.haller@phytec.de>, Sam Ravnborg <sam@ravnborg.org>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Devarsh Thakkar <devarsht@ti.com>, 
+	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>, 
+	Jayesh Choudhary <j-choudhary@ti.com>, DRI Development List <dri-devel@lists.freedesktop.org>, 
+	Linux Kernel List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 11/13] drm/atomic-helper: Separate out Encoder-Bridge
+ enable and disable
+Message-ID: <d3odg42cw2zg6jf3zrjtmquq4fyrvb5stnzptexv7auwvtq3yf@ljohsfvp4uhq>
+References: <20241019195411.266860-1-aradhya.bhatia@linux.dev>
+ <20241019200530.270738-1-aradhya.bhatia@linux.dev>
+ <20241019200530.270738-4-aradhya.bhatia@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: parthiban@linumiz.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, wens@csie.org, jernej.skrabec@gmail.com,
- samuel@sholland.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, masterr3c0rd@epochal.quest
-Subject: Re: A133 support
-To: Andre Przywara <andre.przywara@arm.com>
-References: <2dc2c052-8fde-4656-8dbf-a6980cd968ae@linumiz.com>
- <20241020122321.141727c7@minigeek.lan>
-Content-Language: en-US
-From: Parthiban <parthiban@linumiz.com>
-Organization: Linumiz
-In-Reply-To: <20241020122321.141727c7@minigeek.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 49.206.112.194
-X-Source-L: No
-X-Exim-ID: 1t2UOM-003DWo-1N
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.206]) [49.206.112.194]:10981
-X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 2
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfONvTGXUB1qrOiI+UruLgUoUJn2NKVkpWtl0JyuAycDVGRFSE1EG/cVOsJq8s8x5wUuEg6k3szRmCm9wHVthk2grtewhtHzj8K09A7nTpxoegJ4beucx
- u1wa86A8RdT6ziGHR3Xz2WV5E+1//VNTLyhG5DaBX0trOko4w3yfm/Qk8Ow+V8tP0/5irnAXLuJR2NC+1kdeUwhij9xIBNCQdsU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241019200530.270738-4-aradhya.bhatia@linux.dev>
 
-On 10/20/24 4:53 PM, Andre Przywara wrote:
-> On Sun, 20 Oct 2024 15:06:46 +0530
-> Parthiban <parthiban@linumiz.com> wrote:
+On Sun, Oct 20, 2024 at 01:35:28AM +0530, Aradhya Bhatia wrote:
+> From: Aradhya Bhatia <a-bhatia1@ti.com>
 > 
-> Hi,
+> The way any singular display pipeline, in need of a modeset, gets
+> enabled is as follows -
 > 
->> Am currently adding support for Allwinner A133 SoC based on A100.
+> 	CRTC Enable
+> 	All Bridge Pre-Enable
+> 	Encoder Enable
+> 	All Bridge Enable
 > 
-> Many thanks for picking this up, but what do you mean exactly by
-> "adding support"? As you probably have seen, there is already some
+> - and the disable path is exactly the reverse of this.
+> 
+> The CRTC enable/disable occurs by looping over the old and new CRTC
+> states, while the bridge pre-enable, encoder enable, and bridge enable
+> occur by looping through the new connector states of the display
+> pipelines.
+> 
+> At the moment, the encoder and bridge operations are grouped together
+> and occur under the same loops.
+> 
+> Separate out the enable/disable loops of the encoder and bridge
+> operations into a different function, to make way for the re-ordering of
+> the enable and disable sequence of all these display elements.
+> 
+> This patch doesn't alter in any way the ordering of CRTC/encoder/bridge
+> enable and disable, but merely helps to cleanly set up for the next
+> patch and to make sure that the bisectibility remains intact.
+> 
+> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+> ---
+>  drivers/gpu/drm/drm_atomic_helper.c | 97 +++++++++++++++++------------
+>  1 file changed, 57 insertions(+), 40 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index 5186d2114a50..7741fbcc8fc7 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -1122,11 +1122,10 @@ crtc_needs_disable(struct drm_crtc_state *old_state,
+>  }
+>  
+>  static void
+> -disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
+> +encoder_bridge_chain_disable(struct drm_device *dev, struct drm_atomic_state *old_state)
+>  {
+>  	struct drm_connector *connector;
+>  	struct drm_connector_state *old_conn_state, *new_conn_state;
+> -	struct drm_crtc *crtc;
+>  	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
+>  	int i;
+>  
+> @@ -1189,6 +1188,16 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
+>  
+>  		drm_atomic_bridge_chain_post_disable(bridge, old_state);
+>  	}
+> +}
+> +
+> +static void
+> +disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
+> +{
+> +	struct drm_crtc *crtc;
+> +	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
+> +	int i;
+> +
+> +	encoder_bridge_chain_disable(dev, old_state);
+>  
+>  	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
+>  		const struct drm_crtc_helper_funcs *funcs;
+> @@ -1445,6 +1454,51 @@ static void drm_atomic_helper_commit_writebacks(struct drm_device *dev,
+>  	}
+>  }
+>  
+> +static void
+> +encoder_bridge_chain_enable(struct drm_device *dev, struct drm_atomic_state *old_state)
+> +{
+> +	struct drm_connector *connector;
+> +	struct drm_connector_state *new_conn_state;
+> +	int i;
+> +
+> +	for_each_new_connector_in_state(old_state, connector, new_conn_state, i) {
+> +		const struct drm_encoder_helper_funcs *funcs;
+> +		struct drm_encoder *encoder;
+> +		struct drm_bridge *bridge;
+> +
+> +		if (!new_conn_state->best_encoder)
+> +			continue;
+> +
+> +		if (!new_conn_state->crtc->state->active ||
+> +		    !drm_atomic_crtc_needs_modeset(new_conn_state->crtc->state))
+> +			continue;
+> +
+> +		encoder = new_conn_state->best_encoder;
+> +		funcs = encoder->helper_private;
+> +
+> +		drm_dbg_atomic(dev, "enabling [ENCODER:%d:%s]\n",
+> +			       encoder->base.id, encoder->name);
+> +
+> +		/*
+> +		 * Each encoder has at most one connector (since we always steal
+> +		 * it away), so we won't call enable hooks twice.
+> +		 */
+> +		bridge = drm_bridge_chain_get_first_bridge(encoder);
+> +		drm_atomic_bridge_chain_pre_enable(bridge, old_state);
+> +
+> +		if (funcs) {
+> +			if (funcs->atomic_enable)
+> +				funcs->atomic_enable(encoder, old_state);
+> +			else if (funcs->enable)
+> +				funcs->enable(encoder);
+> +			else if (funcs->commit)
+> +				funcs->commit(encoder);
+> +		}
+> +
+> +		drm_atomic_bridge_chain_enable(bridge, old_state);
+> +	}
+> +}
+> +
+>  /**
+>   * drm_atomic_helper_commit_modeset_enables - modeset commit to enable outputs
+>   * @dev: DRM device
+> @@ -1465,8 +1519,6 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+>  	struct drm_crtc *crtc;
+>  	struct drm_crtc_state *old_crtc_state;
+>  	struct drm_crtc_state *new_crtc_state;
+> -	struct drm_connector *connector;
+> -	struct drm_connector_state *new_conn_state;
+>  	int i;
+>  
+>  	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
+> @@ -1491,42 +1543,7 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+>  		}
+>  	}
 
-By meaning using the existing compatible and preparing devicetree for
-[1].
+I'd say, if you want for it to be cleaner, split both loops from
+drm_atomic_helper_commit_modeset_enables() and call them separately.
+This save you from the code move, which is harder to review (and also
+helps with the function complexity).
 
-> basic support for the A100 in the tree, and since we assume that both
-> SoCs are basically identical, there wouldn't be too much left to do,
-> would there?
-> For reference, there is some leftover patch series from the original
-> A100 upstreaming attempt, which you could rebase and rework:
-> https://lore.kernel.org/linux-arm-kernel/cover.1604988979.git.frank@allwinnertech.com/
-
-Yeah, I did pull few things which were dangling in the series.
-
-> 
-> I haven't checked in a while, but some patches in there have either
-> been merged or are superseded by other patches, and I guess the others
-> need at least a rebase, but it's certainly something worthwhile to work
-> on.
-> 
->> Based on the [1],
->> A100 and A133 uses same IP across. But there is no public available datasheet or
->> user manual for A100.
-> 
-> Indeed there has never been, and back then we relied on information
-> provided by those Allwinner employees sending the patches.
-> For now we assume that the A133 manual describes the A100 as well.
-> 
->> Should A100 kept as base and A133 dtsi needs to added on top or A133 can be duplicated
->> into a new devicetree?
-> 
-> As far as we know, the A133 is the better bin of the A100, so they
-> should be identical from the software perspective. This seems to be
-> similar to the H616/H313 situation. At some point the A100 totally
-> disappeared from Allwinner's documentation (in an almost "Orwellian
-> 1984 fashion"), and they only mention the A133 ever since.
-> 
-> So, since the A100 is already in, and was the first one, I'd say:
-> - Keep using an allwinner,sun50i-a100 prefix for any compatible string.
->   Rationale: it's the base model, and was the first one, and we have
->   compatible strings with that in, so we should keep using that for
->   consistency.
-> - There is no need for any kind of a133.dtsi, since they are probably
->   identical.
-> - If you add a board with an A133, use that name in the root compatible
->   string, but include the a100.dtsi. See the H616/H313/H618 situation,
->   for instance as in sun50i-h618-transpeed-8k618-t.dts.
-
-Thanks for the details. That helps.
-
-> 
-> Hope that helps, and thanks for your efforts on improving support for
-> that chip! Please come back to the #linux-sunxi IRC channel on OFTC,
-> there is someone (MasterR3C0RD) actively working on some A133 board as
-> well, and he even has a working DRAM driver for U-Boot. So you should
-> coordinate any upstreaming efforts.
-
-Great, am still stuck with 2018 tree from vendor, this will help.
-
-[1]: https://szbaijie.com/index/product/product_detail.html?product_id=23&language=en
-
-Thanks,
-Parthiban N
-> 
-> Cheers
-> Andre
-> 
-> 
-> 
-> 
->>
->> [1]: https://linux-sunxi.org/Linux_mainlining_effort#Status_Matrix
->>
-> 
+>  
+> -	for_each_new_connector_in_state(old_state, connector, new_conn_state, i) {
+> -		const struct drm_encoder_helper_funcs *funcs;
+> -		struct drm_encoder *encoder;
+> -		struct drm_bridge *bridge;
+> -
+> -		if (!new_conn_state->best_encoder)
+> -			continue;
+> -
+> -		if (!new_conn_state->crtc->state->active ||
+> -		    !drm_atomic_crtc_needs_modeset(new_conn_state->crtc->state))
+> -			continue;
+> -
+> -		encoder = new_conn_state->best_encoder;
+> -		funcs = encoder->helper_private;
+> -
+> -		drm_dbg_atomic(dev, "enabling [ENCODER:%d:%s]\n",
+> -			       encoder->base.id, encoder->name);
+> -
+> -		/*
+> -		 * Each encoder has at most one connector (since we always steal
+> -		 * it away), so we won't call enable hooks twice.
+> -		 */
+> -		bridge = drm_bridge_chain_get_first_bridge(encoder);
+> -		drm_atomic_bridge_chain_pre_enable(bridge, old_state);
+> -
+> -		if (funcs) {
+> -			if (funcs->atomic_enable)
+> -				funcs->atomic_enable(encoder, old_state);
+> -			else if (funcs->enable)
+> -				funcs->enable(encoder);
+> -			else if (funcs->commit)
+> -				funcs->commit(encoder);
+> -		}
+> -
+> -		drm_atomic_bridge_chain_enable(bridge, old_state);
+> -	}
+> +	encoder_bridge_chain_enable(dev, old_state);
+>  
+>  	drm_atomic_helper_commit_writebacks(dev, old_state);
+>  }
+> -- 
+> 2.34.1
 > 
 
+-- 
+With best wishes
+Dmitry
 
