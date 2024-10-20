@@ -1,144 +1,92 @@
-Return-Path: <linux-kernel+bounces-373353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7AB9A55AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:04:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D749A55B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 20:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89FC01C20DAB
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:04:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C34BB212F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Oct 2024 18:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19790194AE6;
-	Sun, 20 Oct 2024 18:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="d9AB/8b2"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810E619581F;
+	Sun, 20 Oct 2024 18:12:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839B3FC0A;
-	Sun, 20 Oct 2024 18:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8841946B8
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 18:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729447460; cv=none; b=Gww2wxh6HkORJBGoM1FYJv3+QjaKyah9wCOAIxDAjS4GlUYqhrCp6Fy9Yf/5KTThCSZ4EZtVCS0kENhY5Yag0bLOVWWzJsSxBV+OIZaHJ2ytDCO2jnCGD6edpkfLrQ1GvO8XNAq67Sl+/IQFS/v4/XitInpWRI7K04Ozmdt8Nh0=
+	t=1729447927; cv=none; b=XuJuLg2oejBR7/6SBLNlJ8uq6rS3QBXfOFRaiDNCgxby1sVq0PLOxeoAoOJ3KRcbglqBgXrTdygM50eHPmCcMNfBdOY4XT4H9f4RxPRwiyhHOEe59+tzTgGKdLY74Aby6QG2JSJNzS0r+GE2+cF3olMNHEMtXae+LANm3/1G3s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729447460; c=relaxed/simple;
-	bh=yKJtUlFJu4KiHlkrYgJwXBXA6fF8UAYMRZklShavRoY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=HvFwnO1AFxybwvmCK6p9I7FIBccQJuiJONbiy3NBxDbi5ierDdf3zZ4lhoqM5NzB72gZtPEvldI24uAbSVQoeLLAWEADTrrw2KJyGqqLrwBLsvx3ajuXmYzix3mUJ6jlJZd3r/cwseltvS2XUV2MvDP7FAI4G18seoURbByTaZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=d9AB/8b2; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1729447927; c=relaxed/simple;
+	bh=0kdGTm27vaQn2TkIRItbudHFnl/kmcbl+QDOl2Jg11E=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=B2nmNes0s1PEZz+ZP3WACAFzYyCqRcL+FHA2y6nQH2s/Jq6B5+DTtNHH3gRUnoeqfVHNbS/GbK+4lUtb+oZMNHJ5GjPe6pQ67eHBkI03YPTFEjXoigdaKejdicBLz6dmGRHiYfdOUjj2TTe2wYnSnBkQszLsxfkD4ppaQcugEFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3bf44b0f5so21444275ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 11:12:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729447924; x=1730052724;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z8QAZccqRwz7JcdERXlsfYo5Amz76jomyg/R0CbjXGM=;
+        b=ott7HAXQX/xaenB/gcE4oVBCrC5B3vN5FK1g2sslsS0yEqZdNslvtL7sOuV8JIh3bd
+         OF/vgPOuufKxz0pAB8SxPNRXfiVn/fS9Nlm4KU9y042GXVqrG2WvbK+Yta6J6gEwcA3p
+         HClm4n7k7xl3Kooiz4YOjJsW2BWxoH/1SVyvhumufi6O5Ass1TJrx4JDI8lju9tG8ock
+         zwA42RqC3opEBnLEsVYPaiRnrX0rCSzv/d5XgYYBJQW1XjHhzdxSRUC0AjhpaoiGIW2u
+         CjFRHLBmp68oNCns/zW9Mi/7HJoQlujMa8RxrI8lbVa0hnu2wnK5h6PadcXNruN8/16e
+         E1hw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFjbi7YALxX0PdMOtY22ZSjyoOxBphzvx/bB4oVa4jjmOiYP0yyhfF2TuEroRdC/0uTHGOMX2ZF/QIMbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3dOByNF+E355vtGuJp8kolZUft+rP+iIzKZOhfBthSxgZDJhZ
+	fENVfZHNPW33aKYMkcDWbK+hsx/0vnLDelY+CQxWkeOVnXkMgweK/T208hprrmuYcSDZepCBH1H
+	t3U3vF+wwBYFFxYEPa5FqrkJ2tZDR/JyQe6zQg2kXCnIuLpB31v+VzDc=
+X-Google-Smtp-Source: AGHT+IHxFULUh2WfaDEzwwv3dhCh4UHvJD1yb+hBECZ/uvFS08R7wFelVAdOjp7rgFfJ88saFCbLT4YCwdT6Hpdhbl+B6Y7JcSh4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1729447449;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EUk2djnV1e9rrtO5Qm3LygELN8tFQ9aXm6rOK5MKU9Q=;
-	b=d9AB/8b2OufsQjJ/nWN/iyh+Lmh1FrMehf3Vvc0VLm2FZjbp4d6ezD9YhnUQeZmtO+ZLWJ
-	N5VLCZA5vJY5hVKOZRrqXmNozrC4pBTmpAzbbegrNKEdCfY9iJ/PiWz2Vn7JPoJjzdrWek
-	10Zf3VzH1zf5B2xdpkvWtpcHLt1DVm2l2/gd+0v4ZH24gC2H3I2YkM6+7jBq4Sl63G5RwE
-	rzqxfycXTRMr7PUPgJSXWAvo2hp9Eb987j84bPkipJNI23x6YRC8dBQpq5SRQ8Vi18eHMU
-	8ZR2xqa1EykocjzTMjV0yWOlPbsQnlAe5rs1riXNr9Ku+fdqqfQriXJmArnsMg==
-Date: Sun, 20 Oct 2024 20:04:09 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Prepare RK356x SoC dtsi files
- for per-variant OPPs
-In-Reply-To: <D4ZZFL98AMFI.1TDPL2DJPSQ3D@cknow.org>
-References: <cover.1728752527.git.dsimic@manjaro.org>
- <cc2aed3116a57dd50e2bb15ab41b12784adfafe3.1728752527.git.dsimic@manjaro.org>
- <D4U30AUOH6UR.1QPH47KN5EWE4@cknow.org>
- <D4ZZFL98AMFI.1TDPL2DJPSQ3D@cknow.org>
-Message-ID: <6567146d2dfb0287e482ec1c441b31d9@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-Received: by 2002:a05:6e02:12c6:b0:3a0:4a91:224f with SMTP id
+ e9e14a558f8ab-3a3f40474d0mr67332645ab.1.1729447924296; Sun, 20 Oct 2024
+ 11:12:04 -0700 (PDT)
+Date: Sun, 20 Oct 2024 11:12:04 -0700
+In-Reply-To: <000000000000ade4f305fc36868f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671547f4.050a0220.1e4b4d.0049.GAE@google.com>
+Subject: Re: [syzbot] [usb] kernel BUG in __page_table_check_zero
+From: syzbot <syzbot+7a9bbb158a7a1071eb27@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, jannh@google.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-usb@vger.kernel.org, pasha.tatashin@soleen.com, 
+	syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org, 
+	yuran.pereira@hotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Diederik,
+syzbot suspects this issue was fixed by commit:
 
-On 2024-10-19 20:09, Diederik de Haas wrote:
-> On Sat Oct 12, 2024 at 9:41 PM CEST, Diederik de Haas wrote:
->> On Sat Oct 12, 2024 at 7:04 PM CEST, Dragan Simic wrote:
->> >
->> > -&pipegrf {
->> > -	compatible = "rockchip,rk3566-pipe-grf", "syscon";
->> 
->> This seems unrelated?
->> 
->> > +&cpu0 {
->> > +	operating-points-v2 = <&cpu0_opp_table>;
->> >  };
->> >
->> > -&power {
->> > -	power-domain@RK3568_PD_PIPE {
->> > -		reg = <RK3568_PD_PIPE>;
->> > -		clocks = <&cru PCLK_PIPE>;
->> > -		pm_qos = <&qos_pcie2x1>,
->> > -			 <&qos_sata1>,
->> > -			 <&qos_sata2>,
->> > -			 <&qos_usb3_0>,
->> > -			 <&qos_usb3_1>;
->> > -		#power-domain-cells = <0>;
->> > -	};
->> 
->> This seems unrelated to me and possibly a functional change?
->> If this was intended, then a description in the commit message would 
->> be
->> nice why this is appropriate and possibly moved to a separate patch?
->> 
->> > +&cpu1 {
->> > +	operating-points-v2 = <&cpu0_opp_table>;
->> > +};
->> > +
->> > +&cpu2 {
->> > +	operating-points-v2 = <&cpu0_opp_table>;
->> >  };
->> >
->> > -&usb_host0_xhci {
->> > -	phys = <&usb2phy0_otg>;
->> > -	phy-names = "usb2-phy";
->> > -	extcon = <&usb2phy0>;
->> > -	maximum-speed = "high-speed";
->> 
->> This also looks unrelated and a functional change?
->> 
->> > +&cpu3 {
->> > +	operating-points-v2 = <&cpu0_opp_table>;
->> >  };
->> >
->> > -&vop {
->> > -	compatible = "rockchip,rk3566-vop";
->> 
->> This also looks unrelated?
-> 
-> It turns out I was wrong.
-> The elements I thought were removed, aren't removed.
-> 
-> Sorry for the noise.
+commit 79a61cc3fc0466ad2b7b89618a6157785f0293b3
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu Sep 12 00:11:23 2024 +0000
 
-No worries.  I tried to tune and adjust the patch generation
-parameters as best as possible, but some parts of the produced
-patches still remained slightly confusing.
+    mm: avoid leaving partial pfn mappings around in error case
 
-By the way, a few months ago there was a discussion on the Git
-mailing list about making Git perform such parameter adjustment
-magic itself, which back then seemed like a good idea to me,
-but after dealing with a few rather complex patches myself, I
-no longer think that's actually possible.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11f76c87980000
+start commit:   cbf3a2cb156a Merge tag 'nfs-for-6.6-3' of git://git.linux-..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=57da1ac039c4c78a
+dashboard link: https://syzkaller.appspot.com/bug?extid=7a9bbb158a7a1071eb27
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15394721680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152b7af6680000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: mm: avoid leaving partial pfn mappings around in error case
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
