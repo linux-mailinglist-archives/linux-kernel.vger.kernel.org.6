@@ -1,74 +1,108 @@
-Return-Path: <linux-kernel+bounces-373998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439549A606C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:43:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA81C9A606E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 723221C21806
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF1B1F2245C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC6D1E32D4;
-	Mon, 21 Oct 2024 09:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B9B1E376B;
+	Mon, 21 Oct 2024 09:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="ZWAykMsO"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1886F946C;
-	Mon, 21 Oct 2024 09:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOxgJQ81"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB4D1E32A4;
+	Mon, 21 Oct 2024 09:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729503794; cv=none; b=G59br9PpmMUy5c0z0k84as5+gFizdXuAYInpH7Cn8L+uUnU/mtPeRoXq7cEkq/GeUHtkg4owUkG/VSoYrKntR76iPDuqDDf3KGpTPPFEq1Obxn8vGysgiQQ5BbrtZXehytnbYgHF8mbxtfSBfedcOibjkxzp8i1cB0NPiyXjL9Y=
+	t=1729503805; cv=none; b=iZXB+0zoAf2AOEWvxc24aH5zU5TVtzeYVr6AZQvY1jP5fJ6GuBJI9HKxMcjQKEKFyiyaLASen6t8SNzKm4/8Wr6moeKCMOYjHQuSUKA1ve38rj1f2pV/S05NGJHkgug13P8g9ImzlIvPaLDJM5uLOa4Kce0E0xunuQagI6Xt4/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729503794; c=relaxed/simple;
-	bh=OL44tXeoxalIZKSmbvd+NvtT+kQ8M6pJ8t8GR13R0wk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YRhQIdGFITiieKeEQEYD76vdXhjshhj4h5+oN108poiFJ1CX94XbcO5KCIcC1ht0GUf2ljMsumTI+4SbDyq138mKjqJmdnFBP2h0DEtv2UmMMF4J/ehY/6QRyeTbx8Rvjl7wG67lAy+5qBO1tk7v1YP87n5zIFsxAGH63HBUx34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=ZWAykMsO; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=YkZ4qiiMuubjDD/b8aOn38w6UrzOXZrqBqxzSQrF+Dk=;
-	b=ZWAykMsOQ1ljAeLPFa6AMNUqHm4addGoow458FJRQAMYUV87+3GQ39jxuXDiTa
-	zd0LsHDf1UZAQfL85pxNKZVBZvFXA50uDqm7s9emYptozxJ7hfWBcFLiTjMHqas0
-	14wKJokvmomA5efRh37o+L+kFWolzEU+do7lqxgcJQjeA=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgBHr9ULIhZnXh+EAA--.4753S3;
-	Mon, 21 Oct 2024 17:42:36 +0800 (CST)
-Date: Mon, 21 Oct 2024 17:42:34 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	m.felsch@pengutronix.de, bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH] arm64: dts: imx8mp: add cpuidle state "cpu-pd-wait"
-Message-ID: <ZxYiCv6SpLq9uh08@dragon>
-References: <20241007134424.859467-1-catalin.popescu@leica-geosystems.com>
+	s=arc-20240116; t=1729503805; c=relaxed/simple;
+	bh=WLQzzjkWn8BYyGnGkfYMIkyxT5MqPku5adLbUxRMOtM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O3khHft+WfQ+gPz5mDQvZJRm1NH6AsFivQRJapwJxBtbDv0QP/0a/CjJLIByOdKjCbGT8vQwjuaWhODh3ngYvNP/NJtd1wyZLhi0pPlyqZVbW8NGxgkGF4dUjzv2kRobCYGSUc206YMTu/Z5983te9mQrzqHthm0i8bv6zBIYow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kOxgJQ81; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99e3b3a411so852152166b.0;
+        Mon, 21 Oct 2024 02:43:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729503802; x=1730108602; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WLQzzjkWn8BYyGnGkfYMIkyxT5MqPku5adLbUxRMOtM=;
+        b=kOxgJQ81OWrsN2zQI/ww4RlluBh18BgUInzJxQ+6qDg14ROLwMr6ahyrwufFpcO9W6
+         mgsg9WVE2HQhaaumBujkAaMphOzxYdX0Zao3WZjNLxiaHcNytWE+AAOfDShU1sVPTyL+
+         5mbHuvdH6tSzhFUV7GtgETpSh25pWQZ3Yt+FmjBGLoa5uv2V6K/DvQisPM9dRoX6cReA
+         pi8ZFU1DjzWux6Tnx9LTNZ6m4wcGzVwmqHiGIN/kwF8cqu4fE+9i9FRrgXYp7VHvtBNv
+         +ArHlafEve5eBHwpgVG7LGBKiRh/0vop9wD4Nay4nmIsGVBaxKo6Cv2FwGA6RvxUvY7A
+         p7VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729503802; x=1730108602;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WLQzzjkWn8BYyGnGkfYMIkyxT5MqPku5adLbUxRMOtM=;
+        b=OltAF5W06ka5kC15np/YwPxYJ5ju7Kxn2NTiKs8ZILV7+hYGyUixFB8bwOXENlR0p/
+         bgj7VaOXFFki2/aETfkM9nvpjSGLSE7HR7DgbT8/6QuEnsZ5YV+PmVxaiI546xAiej4+
+         DnUjD+dK+mqapem2et243l9GEskYNnMp396jQGz/cW+kgNInzfej/bJ/w/qVh172SViM
+         +AP0seU8w8D6g4O0UK9m5Sf4/4sHV6gv6e7wfHilnCqswboD5mUJeXodiFVBjePdbqGQ
+         1aa5i+vRKbIoj/2ogSX+9lv42VompFETCw8IR7Dw7H08XaJJrx/D+ZyRK31fJ5lGTGaG
+         AmpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4YSe3Rifg0nArFHenNh0IuSKA3qheDI4KzIRBf7LUciuCsD1qWNDFnb1v4mcgaD7gLR0QrgXjvoN4Lvnal6xuYAmH9w==@vger.kernel.org, AJvYcCX/RItR3aeL4IAAisKk7yfdkYChq//jjGUM7Td6AAHQXOrDUGSNKqJtzDkd4tIqOfDD+FK/YQlmGuIzk7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgiZ+V/25MiIagVfulRUNsIezrzR8DfTVvKchUn9DQyDkcC+05
+	YG298qWV1MnsfwpeL4rEV8iQ4Faxv5Y6f0shaDzSIOyFkq7dZlMgt3j/0nwggbqt9SfO8oRa5tS
+	QwOdyIUQqQtf7Ki3Hu9LGVW+QB+c=
+X-Google-Smtp-Source: AGHT+IHWVoHZzx66vm5XItIOnhAzewmvpF+TDxqDaHLETrmpDx200z2cbbDSQykdfAm3Kt0JjcWib7PCldbNCMcX9hM=
+X-Received: by 2002:a17:906:730b:b0:a99:d587:6046 with SMTP id
+ a640c23a62f3a-a9a4cc58f60mr1402633566b.32.1729503801298; Mon, 21 Oct 2024
+ 02:43:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007134424.859467-1-catalin.popescu@leica-geosystems.com>
-X-CM-TRANSID:M88vCgBHr9ULIhZnXh+EAA--.4753S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU4IJmUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBAl-ZWcV6t2pkwAAso
+References: <20241021084053.2443545-1-andriy.shevchenko@linux.intel.com>
+ <20241021084053.2443545-3-andriy.shevchenko@linux.intel.com> <28078013-a643-af8e-22be-f36c75790ba5@linux.intel.com>
+In-Reply-To: <28078013-a643-af8e-22be-f36c75790ba5@linux.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 21 Oct 2024 12:42:45 +0300
+Message-ID: <CAHp75VejavDObi4PMLPVCO==YCTRkOvV-uOOSyx_=74bOSrKxQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] platform/x86: intel_scu_ipc: Simplify code with
+ cleanup helpers
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, 
+	platform-driver-x86@vger.kernel.org, Andy Shevchenko <andy@kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Ferry Toth <fntoth@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 07, 2024 at 03:44:24PM +0200, Catalin Popescu wrote:
-> So far, only WFI is supported on i.MX8mp platform. Add support for
-> deeper cpuidle state "cpu-pd-wait" that would allow for better power
-> usage during runtime. This is a port from NXP downstream kernel.
-> 
-> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+On Mon, Oct 21, 2024 at 12:32=E2=80=AFPM Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+> On Mon, 21 Oct 2024, Andy Shevchenko wrote:
 
-Applied, thanks!
+...
 
+> IMO, this change is doing too many things at once and it's hard to justif=
+y
+> why those changes must be kept in the same patch. If the guard() change
+> is done first and only then the logic reversions, both patches would
+> probably be near trivial to review for correctness.
+
+Are you insisting on this?
+Because that's how I have done similar changes in the past all over
+the kernel, and IIRC you are the first one asking for this :-)
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
