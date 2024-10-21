@@ -1,151 +1,209 @@
-Return-Path: <linux-kernel+bounces-374403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C07C9A69AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:07:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3B49A69B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B892821BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11B0B1F238D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461ED1E6DFC;
-	Mon, 21 Oct 2024 13:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F4A1F8F0B;
+	Mon, 21 Oct 2024 13:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O+6HG9IV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="I2/QZ8fF"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34DC1F7092
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729515897; cv=none; b=CplU0XmjfFS2x7Tufqg1rSoNl8XRShnVS3vW6AtxfYSeYTAtE0UohcGCclES9KA/bRmhF+byEETqvb+L1APJWb3IXSrTDgksjbvkCdEx6hV9OtSems6BwhIucehR4QLnAa3xlqR3PMO86Cuu11uJN9Kf6HCkINojxPoLnNw1YOc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729515897; c=relaxed/simple;
-	bh=ZXsRzzI65oFPL+bLiMeRuzFe+GIf/sYuOmsoAjRMaoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BAYwuR5K5Hce9oG7Qx2XlGasf/pgeN08GK+GrBAtqux0qgghcLR9CSwFe8APVzYyms6LJUU4Y4lyaAv0ip20cxpyNcE9Rt6tRge+qRrzpeUyFzKZ8vbDdIM6XygSjNZrp2dezZpQB0sdjnA/Lx9ncRlZ16kuMvU1OR5yy1hlKEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O+6HG9IV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729515894;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MnoXKlaAADuYo7UIHUrYglfpwoeZ7XCU5QulYnBo9iY=;
-	b=O+6HG9IVnZgEn+7/6pqtTWv/WHtFt9vMp8KT7ZiCN7jz/Ux0JpY1fcgXbmYkGV4eqmY0xU
-	p0MXlFolpoxV3iH6PmNk9nJCLmo9YEKFYUqgSG5BSk+lBRmHD8H6j24foQXJTqnOlVjNE9
-	2oiLHJH0SO/SB2Eswj2CukjQ2RBkbzQ=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-92-DvCiHVakN0W9WuRLtzFoRw-1; Mon, 21 Oct 2024 09:04:53 -0400
-X-MC-Unique: DvCiHVakN0W9WuRLtzFoRw-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-539e0fa6f3dso3324939e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:04:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729515891; x=1730120691;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MnoXKlaAADuYo7UIHUrYglfpwoeZ7XCU5QulYnBo9iY=;
-        b=sVSwoh59RUpR7182ubrwgEtEY+BTVYfg1znAJN9t0fX6p+WRcRAaPKjhgufQwLlxtk
-         C3XcEwbnyjLcgiN69uy0/CKL+pSK00WE1FblqC6Q3MBGBQTvRz47IrbUUGAnz84BJkN3
-         1gxxc8sAOsVzJXU1eaDFz9hb+lLi+iq+K4dsKiOzDJDddw0TO7LNufHnMHdwv8CtgN3t
-         14GucIkUf14rqpNgfvb33I8umCCsBPXGPZumiQb6JYgmj8DiGAAdsSTWspFIfb7Qbtb2
-         iF27c4S+PsvaX1ralWkd9wsm8pOkZG61HAv/Kd/a4WbUgP5RgzGQcncsqpQjKVADnwnM
-         wHuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzNQ3oqnZqS7Cs4qyzfqA89LrAU0jlvU8DL1WJochdpBYrutzov1UICKGzb44Ae9PtEFLkWh3+YUG/Br4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3T82rD8SZV5O7zNRXgLvvVrmLrDLTTbXBtqJYrJDoUdVi4oj2
-	QEIS8uOIYtKu77/rRHW+8ktDvr+QToL/tio9dhl617z+mPQQQzjQNLbZQt/jnLKP7XpD+xWDgjP
-	0AftchcT+Bx44l6nh7Eww3iQJvtPJYnLiaeM9fA4X2skbmF3+vtM/jRyptcxJgW6wPbdK4zoY
-X-Received: by 2002:a05:6512:31c3:b0:535:6baa:8c5d with SMTP id 2adb3069b0e04-53a15444970mr7461445e87.20.1729515891549;
-        Mon, 21 Oct 2024 06:04:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGL4sQ4qrfDrX36WQMDxjmFjytkGRNimdA+M0d/Uy0JJag0mVaYAC5dva1+mNzQ1SHOAQb0kg==
-X-Received: by 2002:a05:6512:31c3:b0:535:6baa:8c5d with SMTP id 2adb3069b0e04-53a15444970mr7461413e87.20.1729515891071;
-        Mon, 21 Oct 2024 06:04:51 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d636csm201407966b.36.2024.10.21.06.04.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 06:04:50 -0700 (PDT)
-Message-ID: <4b9736fd-82db-4863-a251-80d82b375e1b@redhat.com>
-Date: Mon, 21 Oct 2024 15:04:50 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717E41F76D0;
+	Mon, 21 Oct 2024 13:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729515923; cv=fail; b=H4U5d31mO/o0J/pdAA706/73VwYdsra01TA/SsrHhnu8IYptbMT38Zen/kTqeV+ProReGcQk9Zdml7hi69IMy6LjFynmOWj5o6iVYNl5tBT/FumBDUpLuImAzRESm8uMc3I96dF0jdRZDaA1s+nWgKGmoHI6GW0wUfbw2bZwJw4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729515923; c=relaxed/simple;
+	bh=HPufvja0TfrBsED83DL4FOROoKsHhkNprV/XddK0mMQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=YA/RqFXSGzQcwBoL9uuaGV3aeMWS2rAAe5qVQIVmCzTZg6Bgv5IVIJOqZ+Y/PXopbKorjYl+VebJ+VDnPf9seujnezJSr4HTv42Ovy44uvQne21J7AlYYXJvjF3R6U5UMdcPTmzhqGprJodykzKJl66VeknnLA7MZA24DLdjHY8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=I2/QZ8fF; arc=fail smtp.client-ip=40.107.93.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NyjNYwW7HTl3+Xqkr9TnyBWCqJICQQWzYxGg67MWmxk8vXVsXDBB2u5Q7MVVLV0FTK6An/pMSmoRdC0wvnlTIgu+4iOIC8lEoSvr9UYGc9Rc3M5aBsWC3PkPkfpKi3+hSGZCOQ+zibfauacwOgkU5C7r4tsKDizlgXWGiAThbaGdFS/6EmNncsC4D4VjAeySMEL6Kns885BfB/Y428Ef97C4QXjesvwr7TvnoFNMucEDutVDEI0Ix841LXBSgHv3XfVBStT2cgJLXGJVROY9F5jX/W1JIeq7Xvp/qriCVSQpj6nucBX61UakHran6DEA8BQnub0kx8XmY9W5qECWHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ykzdYzij+UtEN3xpRiEUjY7ODesdn0EVAgMB1s8nGTE=;
+ b=qP/PtxkcAthEac/C/zImYg5AeWjbMVT0pYlyparRgW9ER9yVoqukIW31BP1o6HuWVopecFd45p6oOxDIjE3B48HDQ6xy6IK4Fxq4GWIDzIkKleXbjMJVdRMIBcAgNLVoVhh+1VqZqyCGV8asgc2gqcuPEePwSezyzF+lKs4vHPquKFe+GqZ1Oo+F4u0Jk0PB7gwGoZezqldIysqi4Na2rh9At4gN96IVDW0YgsOzs/7gX5+G88l3/y0sDCfeEs27UuBzRcBQ3d7DxUPINhXoAogv3nKblJZplYWdhB28Kc0dmSFTHpQClSHqi5dnARylnnCTX8QNBvadIoezDboEIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ykzdYzij+UtEN3xpRiEUjY7ODesdn0EVAgMB1s8nGTE=;
+ b=I2/QZ8fFvJ7icUjoWzioa9kdbJYkdvSsLellROhq07nd+Fh10bDSHnuZS48/fbmY2r8gB3w0heZKirgEXYHd9OQivqelVClfnNk7skPE99DZySrPeUMc/W9DOTqbfQ7FsEZbLR0RQIr9cPetbVna2MbF4QJZRszIrZX5ikdaeD0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6095.namprd12.prod.outlook.com (2603:10b6:8:9c::19) by
+ DS7PR12MB8371.namprd12.prod.outlook.com (2603:10b6:8:e9::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8069.20; Mon, 21 Oct 2024 13:05:18 +0000
+Received: from DS7PR12MB6095.namprd12.prod.outlook.com
+ ([fe80::c48a:6eaf:96b0:8405]) by DS7PR12MB6095.namprd12.prod.outlook.com
+ ([fe80::c48a:6eaf:96b0:8405%6]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
+ 13:05:18 +0000
+Message-ID: <d5d8783d-472d-4266-a0cd-e9eb7ba3cbac@amd.com>
+Date: Mon, 21 Oct 2024 08:05:17 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] amd-pstate: Make amd-pstate the default driver on
+ server platforms
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, Huang Rui <ray.huang@amd.com>,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241021101836.9047-1-gautham.shenoy@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20241021101836.9047-1-gautham.shenoy@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN6PR05CA0018.namprd05.prod.outlook.com
+ (2603:10b6:805:de::31) To DS7PR12MB6095.namprd12.prod.outlook.com
+ (2603:10b6:8:9c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] platform/x86/hp: Avoid spurious wakeup on HP ProOne
- 440
-To: Kai-Heng Feng <kaihengf@nvidia.com>, ilpo.jarvinen@linux.intel.com,
- gregkh@linuxfoundation.org, jorge.lopez2@hp.com
-Cc: acelan.kao@canonical.com, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20240906053047.459036-1-kai.heng.feng@canonical.com>
- <87d40775-9bd4-4f22-81da-4e670236c15e@redhat.com>
- <f6b62a45-c44f-492f-8f79-96b4fd54555e@nvidia.com>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <f6b62a45-c44f-492f-8f79-96b4fd54555e@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6095:EE_|DS7PR12MB8371:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8bfadd3f-90c2-4e05-0fa5-08dcf1d102d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?emptWllCdi90Z29YWGU1dm5OMlhBYk9sV29uT3dFTlhqczF5OFViZ0d1MzdR?=
+ =?utf-8?B?TkNQZmwvdGR4d1Z4dHRLTjZndzBiTGRIMVVoVE1yckYrVzhkWFNXY2tNeWVs?=
+ =?utf-8?B?WlJWREoxL0VHWFYrd09FZ3AxdGxCR2c2cWJ4ZTN3QWpBU2ladnFxTUlpRGZa?=
+ =?utf-8?B?OXBhaUd2TFhLTjhYY2VVUFZUYXFVNVc5SU8vd2VMNmtlM1YvNlpPUi9PR2hP?=
+ =?utf-8?B?TisxTHBlcEhMZXEwNEN4ZFI1YUczUmZ5enltRklzVlNob1ZiWllrL1Y1ZnpK?=
+ =?utf-8?B?Yk05dVBBNDNwL2pueGs4TXNtbDJDTmw3SE1DSXYrbFFlK0ZwakhRRmd0OW45?=
+ =?utf-8?B?WTR6RW8zMVFRb00zK1ZqVDVwWVJjb2VLb0tBTS9QWjFUczdIWXozdFlnbDd3?=
+ =?utf-8?B?UnR5YTJwdk9lTDZGNFd3UnVRbk94bE1Ta2NFbC9jeDZZMEYzTFcxVENpRWRt?=
+ =?utf-8?B?VW5XWVkzMHlrdEhDUXBiSHZrSUlJNU5WQXhxSnZWSzBSa3h6UnBRbmNmUUJp?=
+ =?utf-8?B?L0g2NHFpeGJmcU5YcXdKNWV0aVRoazBwQmhEc09tR2RraWx0bnRNbGV2LzJr?=
+ =?utf-8?B?NW9VcysrNGcvSGp6TWNlcFJWc2prM25vTFlsMGhDdVVQV3dFV2lRT1plOE1E?=
+ =?utf-8?B?TEludVcrUUZId25KMHhNaU9zMjhCcUJUMHhmWVptUEo2dXZSOU45SFhCNG9p?=
+ =?utf-8?B?cjR2WDlFQWNDUHdoNEt4Q3ViK2xQdXNKcTlTVDduaHpadkY0eTZxSmRoUXRr?=
+ =?utf-8?B?NElRTklZZmFCS0NUQ2tHaEozRHpadGNxNzJqUk1QMmlxUDh1MjVKOTAxODRR?=
+ =?utf-8?B?d2pYZ2xYVkxKVkg0SEVvOHM4UTRWQUlSZHB2K0RSbEpOK2ZFS3RIMEUrd2xI?=
+ =?utf-8?B?V2R1aTFGUk9CcFIwSURhUUtlbXp4ajZxUjdaaW9hOE44UWYxMWhzSEYvNXA5?=
+ =?utf-8?B?K1ZmWHlXbUtKQ3dpck5qZFhFNWZla1EvQlU4OEtDWHZvQnMrN1NwOHRBdzky?=
+ =?utf-8?B?UWdmUDA4RHlqNFpWaEdBeVFURTJQUElBc3pvWHM5VTI4WlJRTEJTWVFhUWtY?=
+ =?utf-8?B?a2VsOVRHUzVtZnZBWXRjL2ZINnNmOUthZnJDRnVXZTViZmtoVTh0L2FnZHZu?=
+ =?utf-8?B?aVh4UG1UVFNNV2ZYTHNXWVlvNmVPNTNOVit4VXNqM1VCKzkzV0Q4NlJ3VHYy?=
+ =?utf-8?B?bVNDYzYyYlQ2MzNMc2FuM1RkRXViVWE0ZTROeENXZUtwVy9oUmltWEduK0Qr?=
+ =?utf-8?B?UUZ5NmkvRUNrWWh2VWNJU25WYnVvYnI5QU1UbXh0c3EyL3JPOVpTaisvSFlr?=
+ =?utf-8?B?T1dWbFpob2lhYVB6Q21wNHZyeUxLMWVOaldpRUQwZEIrcUJTT1pHa2h6ZmIr?=
+ =?utf-8?B?S1lXL0hXYVRFenhwdFBhdkgxRXFYTlAyUXFiQUY1NE95dnZTcEpxREVRMmdG?=
+ =?utf-8?B?aXl4emFxaXMzb0F0OUd2a0tKS3NkanZIazJURHA3Q2JiMWhNMGVqUDhucDhL?=
+ =?utf-8?B?dEt6a3VzVEtoWmZYaU9HeXRpWVlSeFpTRW9ZdUoyc1JJck10WTB6ZU5ibUt4?=
+ =?utf-8?B?U2FrdElpeTlzV2ttUVFiMVZ3WFVrelFOZ2doUzB4N3V6Wjh6R28zYlY0S1NQ?=
+ =?utf-8?B?dE5UTnNkUkd0NWlMU0twSjdaMVowb2cxN0p6ODdzWkZjSGFhYjdwd1AzZklI?=
+ =?utf-8?B?Ujc1OVpBUGs5M1oyNDJqU1YyYnBzS3ZHdjdBNzFyQzQ3ck9JK3FTUVEyNll5?=
+ =?utf-8?Q?GvkrssRsf6jNyn0IMYt7HdiSzwy3sj0H18/yQY4?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6095.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UndlamZtZFRyLzRhVGRPTDYrcGRKc1dHRTR0ejFVWG9xQ04xdS9yc0xNOEtR?=
+ =?utf-8?B?RUU5VVV0enMzanZ6Wi80MzBQNkVGcUxoWEZXQVJvNU95OVJBWTIwUXVUZVFk?=
+ =?utf-8?B?aGVOVmtZZjRiS2JHUStYS3B0cXYraDI1dXUzUE1ydzZxNjQvc052T0MwU0do?=
+ =?utf-8?B?VjlpTnR6RTBRU3lFbHUrUmFxRXd1QXAwWmZzRmd0NTV2T2pLZTl0SzJyMUpr?=
+ =?utf-8?B?NW0rVnpEV0h6clNMOUd3SlQxZldjQityK2pwclRqQngxRkVVU0dsV1d5Y1NU?=
+ =?utf-8?B?S3lJNHUrdllmK010TzFTMHAybWJQcGRBNkdpaGZ3TGZ4amFVWEkvb2ZXRktw?=
+ =?utf-8?B?NU14dTErOXdHYllpb3grTWtobnl4akgrN0tUcjlZWVNGVk5LMHB3MUxrWTlP?=
+ =?utf-8?B?b1NTTmR5dUhQYUxybGYvOVJTNSsrM3E1WWErUHVmMmNOMmIxV2VXNFdTRElX?=
+ =?utf-8?B?U1paYzZMck9WaE1HbkJ6aGN4ZGl4NkRsL1g0MThvWm80RncweFJ5OWNXNFZC?=
+ =?utf-8?B?RTlGVXVDYTlXRk03VjJDTlhMeWs3M1JRUkxZVFZYMHRJMmx3TUpMRG9wVndu?=
+ =?utf-8?B?bndhekF3ZDBqZGt5K3dtVzRMQk1EazJNcm92aktKbFA5N0w5OWM0VFdaVHpx?=
+ =?utf-8?B?eUg2NmZKeTVORG1oeWF1SnpNQU4rbEM1OE5mN3V4blorc0VyZWJxdCs4Z1dB?=
+ =?utf-8?B?N1VQOFA2eEJvT3ZGeHI3amhHL3dyemExeWY4TXMwcjlaN2p4MTIramFKMHA2?=
+ =?utf-8?B?VHhJUGk2UW1OWFc2UWhmUGRialVwaGNyQkxnN3RockJkcHNtWEJFTXZRakdi?=
+ =?utf-8?B?MzVJSWllZUJTNUFvelcrZ1puYmpOSHZaMldlTUNDYVBxelNrV0VJR2Nsd0Rz?=
+ =?utf-8?B?aWNnOUo3K3ZJR2lOK3hwU21LQVlmZU0wOWNCbytxWVQ2VHlCd0wrZ0dFRkRX?=
+ =?utf-8?B?eG45UGpkSHNidFFsN1N0UDM3eVFYaXhDVU5GaGMwTVl3VVE1VlFUaTJzWGVB?=
+ =?utf-8?B?VkRhdDNCWndtNWxaRGI2NEpOMjl3blNFRmFxd29nUlRMV21YWUQwdGxtRWFm?=
+ =?utf-8?B?THBNbmw1b1RlMjVKY00zZ2FsQVBrRU5mSlladko1TllIWjhia0hETGFadnRE?=
+ =?utf-8?B?VkYwSVhFNDJNU2lyRXRGS1NOc1hpUDdwUlNaczFSdFUzU0VZeWk3QXpZUVIz?=
+ =?utf-8?B?WFdEelJHMFRxR0FrN3lVY3o3cENuOE5LNmlxTG5XNFluUk5pOUlTckcrUFg5?=
+ =?utf-8?B?WkhSb2tnWHZld2JLbzFYZUM3QTNkT04waE9WU29aV0NKU0krMnJySmRiOE9Z?=
+ =?utf-8?B?SlF1SERBL3Zqbmxlbi9RR0VsNCt5dTJ0K0poaW1ySEE3SjFrV2ZtMHNsK1Fm?=
+ =?utf-8?B?eU5oMFpZOWs1SkkyZUx4TG1ZbVlsTXA1SmpXdGhicE9SNHNXVmFDZXFtRzBi?=
+ =?utf-8?B?MTlRTEpoc2g5SSt6RDVQUTdvcmY0RzZ0UGNqdllXRlBIWEE5VWVnbUlCVGNF?=
+ =?utf-8?B?RVRxSlN2WGIra3ZPUHBBQUhnQWhNblR5UjNaWE94Mk84V3RqR0cxdVpHVm9R?=
+ =?utf-8?B?eVlRb1pmOC9MQS8ySEpmWE1pNXNlQkhXc0RMUlVBV1g2V1hNMUJweEZ3bHdK?=
+ =?utf-8?B?VkJHYjg0a1NEcEUxTUQ4ZlNmNmZrcjVDNzArWEZsNHdDQXBQdEdlTzJ3UE4w?=
+ =?utf-8?B?UzZDZURMZzVVdGlQR0pBVEZlaHhjYVl5c3JWL1ZuUUxnUXJzZ2ZJUUIydzFK?=
+ =?utf-8?B?dGJGTm4zcTV1U1VOSGZDWVJ4L0dWb3gwOUhnQXNmczVwdllMMFR4cFpsbTNT?=
+ =?utf-8?B?cjB6aXNiaE5NUHVaNGplYUlZUnUrS2dKRXhvd01vY2pyK0JTZXBpYUlJcWpz?=
+ =?utf-8?B?aCtCbGVqUnUyZENuKzFQeTdBMDlSN1VLZVQ3cStnL2hTUWNZOUY3NWYrQ3VZ?=
+ =?utf-8?B?VTNoTHFQSjU4TFhmUmFwaTFZNG9uQWZqSGx0Q2RvM1hZZStaL0VYMmI0aE5O?=
+ =?utf-8?B?QXJqVmJENHMvMDArKzd4MlU3azZPTmxXNTh3N25WMHFaOXpOK0VWdlJBTkRT?=
+ =?utf-8?B?TkFoME5hT2ZPQ2lRbUNXZ0lTdldPcUJ1N2dmelN3ekx0UzlNYXVvRkU4ZUlO?=
+ =?utf-8?Q?A/rXXDYvJi2Xh/irIMp/+YREI?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bfadd3f-90c2-4e05-0fa5-08dcf1d102d1
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6095.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 13:05:18.0171
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RKeKx5hqjSmx4ierkPaC0EXsEnsBagbIDaVD4VDQnz/7sCzyfHaexbzuJoD5dXI4AM/57ffNUAnC/GIuFCBd2w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8371
 
-Hi Kai-Heng,
-
-On 7-Oct-24 6:22 AM, Kai-Heng Feng wrote:
-> Hi Hans,
+On 10/21/2024 05:18, Gautham R. Shenoy wrote:
+> Hello,
 > 
-> On 2024/10/5 10:25 PM, Hans de Goede wrote:
->> Hi Kai-Heng,
->>
->> On 6-Sep-24 7:30 AM, Kai-Heng Feng wrote:
->>> The HP ProOne 440 has a power saving design that when the display is
->>> off, it also cuts the USB touchscreen device's power off.
->>>
->>> This can cause system early wakeup because cutting the power off the
->>> touchscreen device creates a disconnect event and prevent the system
->>> from suspending:
->>> [  445.814574] hub 2-0:1.0: hub_suspend
->>> [  445.814652] usb usb2: bus suspend, wakeup 0
->>> [  445.824629] xhci_hcd 0000:00:14.0: Port change event, 1-11, id 11, portsc: 0x202a0
->>> [  445.824639] xhci_hcd 0000:00:14.0: resume root hub
->>> [  445.824651] xhci_hcd 0000:00:14.0: handle_port_status: starting usb1 port polling.
->>> [  445.844039] xhci_hcd 0000:00:14.0: PM: pci_pm_suspend(): hcd_pci_suspend+0x0/0x20 returns -16
->>> [  445.844058] xhci_hcd 0000:00:14.0: PM: dpm_run_callback(): pci_pm_suspend+0x0/0x1c0 returns -16
->>> [  445.844072] xhci_hcd 0000:00:14.0: PM: failed to suspend async: error -16
->>> [  446.276101] PM: Some devices failed to suspend, or early wake event detected
->>>
->>> So add a quirk to make sure the following is happening:
->>> 1. Let the i915 driver suspend first, to ensure the display is off so
->>>     system also cuts the USB touchscreen's power.
->>> 2. Wait a while to let the USB disconnect event fire and get handled.
->>> 3. Since the disconnect event already happened, the xhci's suspend
->>>     routine won't be interrupted anymore.
->>>
->>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>
->> I was wondering if there is any progress in trying to come up with
->> a more generic fix at the USB hub level for this as discussed in
->> other emails in this thread ?
+> This patchset contains two patches to
 > 
-> This patch fixes this issue and IMO quite generic:
-> https://lore.kernel.org/linux-usb/20240906030548.845115-1-duanchenghao@kylinos.cn/
+> * Prevent frequency throttling on power-limited systems with
+>    amd-pstate active mode with performance governor.
+> 
+> * Make amd_pstate default on EPYC Family 1A+. Based on tests, the
+>    amd-pstate driver performs well enough on EPYC.
+> 
+> These patches are based on the "linux-next" branch of
+> https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git
+> 
+> Gautham R. Shenoy (1):
+>    amd-pstate: Set min_perf to nominal_perf for active mode performance
+>      gov
+> 
+> Swapnil Sapkal (1):
+>    amd-pstate: Switch to amd-pstate by default on some Server platforms
+> 
+>   drivers/cpufreq/amd-pstate.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
 
-It looks like during review the patch has changes and now it only applies
-to S4 / hibernate.
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
-So I guess we may need something similar for S3 / s2idle suspend ?
+I'll queue this up for 6.13.
 
-Regards,
+There were previously two differences for server and non-server:
+  * amd-pstate not enabled by default
+  * amd-pstate cpufreq policy starting in performance mode vs power-save?
 
-Hans
-
-
-
+This series adjusts the first for at least the newer parts, but I would 
+like to ask does it make sense to also evaluating changing the default 
+policy to powersave as a follow up, or should this policy delta remain?
 
