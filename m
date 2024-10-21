@@ -1,123 +1,76 @@
-Return-Path: <linux-kernel+bounces-375217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C77E9A933D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:25:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8BA9A933F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C746C1C22C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDE6C1F22D8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38E41FEFAE;
-	Mon, 21 Oct 2024 22:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bc8T3bDn"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02A71FCC7F;
+	Mon, 21 Oct 2024 22:25:56 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE24E1E2839
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 22:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAD31E2839
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 22:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729549549; cv=none; b=sb/xFG2lhiy83WlQz+3cpMVjRQlPFSXahUK2PGYysYkFJ7fdHGobajkHNeeXdELt7Wx/jWsPd4txDCasx95zGWh2ZEe8nF/OK0Vc6IwIGqlCzmxe5+WiF4kjN6rVYTkBNm5KlpwP69zibBQ/LlS04XL2uAZ0jtVTTaKPFn+Ya8w=
+	t=1729549556; cv=none; b=A4hiZRugMAy5Cm8EV5V8RU3UmJ9eCnaBpLgQnhVRoPy6IFqzMcAbKlVLn58eGITgoqV0pKUBWgQbFsE9HAq2iHZqTq+HfdgASMNLGXnJjQMW88yhHrCMXlyp5OCADT5Q8mIDFp2DfNMOeZ6Dr3jHpovy7rasIfl9eE2y6RLXJYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729549549; c=relaxed/simple;
-	bh=kbSWV7WYy6Hw26ZhpOM9b2Ymm2PpDWHZpJ4ll0Zidxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uElgwQKFkyolnGi9Z2WR+8v1VXoJchGUjXJMALzbH4yn7RETNefFSLtF2dfmEPOL77Qn4Y+PvCWu+lrzqt6ecSCmGIrgKKunQQX7Zy/tYIpquazi278PHJrE/KTFsHdjLlDMq8mibHAqaQWBknmUxAajOH8RhJWbQPjRvGDesFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bc8T3bDn; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c7d0503b-e20d-4a6d-aecf-2bd7e1c7a450@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729549544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0QWlVeZK0mzFq8Syz3jh9cSrVTMw6VdFMuwprJIetTs=;
-	b=bc8T3bDn1bM253UvdXcCdKl1phP9sdN92ABL3VlaUpo8+wHg5OTc0sObm5ULagzYkezpx+
-	d1IxoIW+1poLjCsjUfk770bB0QN2eQYe7I2vv04r/sLmf5sufjkaRik7zBWSfXxYEOgetM
-	bDUyJwWHlMVqwtg3iNLQFBNVuHEC89A=
-Date: Mon, 21 Oct 2024 15:25:36 -0700
+	s=arc-20240116; t=1729549556; c=relaxed/simple;
+	bh=2v1KH2bWtDWEr2n/QvnL6K9QK2FAhlzSD9sDb1LQOMs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AYaYJvY3Sku5J58f0X8EQzYBrzHk2aAF+V1M5G6MAnar10z4YAWjbuqN4msrxavq6pMbb+bfm0I9f1rjtg5HMCjehsIXGZsaqYEN8j52wpasL4H5PI9beQt1Zl0RuFtQrcczeN7Y32fTYikRZvq8vSMrjH/ZkQrpPyS5Ev9dzXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3bcae85a5so36135975ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:25:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729549554; x=1730154354;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2v1KH2bWtDWEr2n/QvnL6K9QK2FAhlzSD9sDb1LQOMs=;
+        b=gaWNqzURJQ5KlyeCGDn2kkSmwhgmUebrmjMw98Fyt/ikDGzqCoHQ7V3b5rJg9X3Gea
+         Ff4B/4P4UpJIBBZOyjA8rh+0imA8jMXvfXNUKNfgc2RYjkPbXyovy2b9iB1OHt0w/ndL
+         TFyfluab0NK1SLfX31za1H7lRdgDj/B909mzKVdCkRwBpN8LQDnE4GzgC3EILmriK8ZT
+         NXCWu0Qi8SZZnFKOnKyD65N26u+OxyjUqfxchMe2ERUxImJtXH56pnehrQyQLZCL93yb
+         BZH6ct/n14Y/IyUj3aMbEc0riutYBlm8H9Mu/vE1mMIYDcza8uTW3mTLoIH2esydRAvF
+         hoIA==
+X-Gm-Message-State: AOJu0YxfhIOM2OjObmi6jMrg+JyZLVlIA+f2yGYzXD9woHzou6MTIa7F
+	JT5/+fseT5bNxISv3MyFZZOdOenqfPjz8AchM4QLK6jtt4Fln/dAN1Mqh9ggvPq7+705AuisJWR
+	twvUYpo5A3wbbceAtK63Qoei13fKIFyMct7tYzUQaPQszIHxGhM44G2s=
+X-Google-Smtp-Source: AGHT+IFontqY/o9kF4Umas2KaV0Qk1I68BFaUuSbrVZlKVmdJEz/PT3rbSGKmcwPPDtrNPT5I2oRXl5pRtVPDDCxx9Zr0B/g0Wvp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] Drop packets with invalid headers to prevent KMSAN
- infoleak
-To: Daniel Yang <danielyangkang@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- "open list:BPF [NETWORKING] (tcx & tc BPF, sock_addr)"
- <bpf@vger.kernel.org>,
- "open list:BPF [NETWORKING] (tcx & tc BPF, sock_addr)"
- <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-References: <20241019071149.81696-1-danielyangkang@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20241019071149.81696-1-danielyangkang@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:20ed:b0:3a3:a639:a594 with SMTP id
+ e9e14a558f8ab-3a4cc0342b4mr9583805ab.4.1729549554087; Mon, 21 Oct 2024
+ 15:25:54 -0700 (PDT)
+Date: Mon, 21 Oct 2024 15:25:54 -0700
+In-Reply-To: <6716521b.050a0220.1e4b4d.0059.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6716d4f2.050a0220.10f4f4.00bb.GAE@google.com>
+Subject: Re: [syzbot] kernel BUG in bch2_journal_key_insert_take
+From: syzbot <syzbot+47f334396d741f9cb1ce@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/19/24 12:11 AM, Daniel Yang wrote:
-> KMSAN detects uninitialized memory stored to memory by
-> bpf_clone_redirect(). Adding a check to the transmission path to find
-> malformed headers prevents this issue. Specifically, we check if the length
-> of the data stored in skb is less than the minimum device header length.
-> If so, drop the packet since the skb cannot contain a valid device header.
-> Also check if mac_header_len(skb) is outside the range provided of valid
-> device header lengths.
-> 
-> Testing this patch with syzbot removes the bug.
-> 
-> Fixes: 88264981f208 ("Merge tag 'sched_ext-for-6.12' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext")
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-I am pretty sure this is the wrong tag.
+***
 
-A test in selftests/bpf is needed to reproduce and better understand this. Only 
-bpf_clone_redirect() is needed to reproduce or other bpf_skb_*() helpers calls 
-are needed to reproduce?
+Subject: kernel BUG in bch2_journal_key_insert_take
+Author: pz010001011111@proton.me
 
-
-> Reported-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=346474e3bf0b26bd3090
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> ---
->   net/core/filter.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/net/core/filter.c b/net/core/filter.c
-> index cd3524cb3..92d8f2098 100644
-> --- a/net/core/filter.c
-> +++ b/net/core/filter.c
-> @@ -2191,6 +2191,13 @@ static int __bpf_redirect_common(struct sk_buff *skb, struct net_device *dev,
->   		return -ERANGE;
->   	}
->   
-> +	if (unlikely(skb->len < dev->min_header_len ||
-> +		     skb_mac_header_len(skb) < dev->min_header_len ||
-> +		     skb_mac_header_len(skb) > dev->hard_header_len)) {
-> +		kfree_skb(skb);
-> +		return -ERANGE;
-> +	}
-> +
->   	bpf_push_mac_rcsum(skb);
->   	return flags & BPF_F_INGRESS ?
->   	       __bpf_rx_skb(dev, skb) : __bpf_tx_skb(dev, skb);
-
+#syz test
 
