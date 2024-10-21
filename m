@@ -1,200 +1,133 @@
-Return-Path: <linux-kernel+bounces-374232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9809A6734
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:56:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CBFF9A6710
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 069741F218A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:56:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC6341C212F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14541E882C;
-	Mon, 21 Oct 2024 11:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861211E8830;
+	Mon, 21 Oct 2024 11:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+U+Z84o"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YrkGjsBp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AF31E1C22;
-	Mon, 21 Oct 2024 11:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A0A1E5706
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729511796; cv=none; b=lQlEoPgwFEtF+pPyzob644Z0p7C2xwZR1aq00iGg1zL/1/icRRZ49hXHGdl19/pHhu3Brhxa6OQ0RHpbXDK2OWx480Q3fMnDUsGb7RUMD0Ddek8aAByFgZ7n7X9xw9g47LW/132MishZoVKlkGq+vP0sVQzT+EbjzM/MIx6HRTY=
+	t=1729511594; cv=none; b=SH6JWKzoqhZifZ2lXYZ9TUotG9Gmu/7jW9fdDmmn6tEGsybmceJSv1ZdgLVmel0nKz3jZkW8bWcD1bVoA81xSF08PuwBoQILy7O2hg7WIGB1spxYin3hnpQBFP0xZZbhhXaefWvIq9ueX/8GQhVHR/kAf7rxYHxO1gIXgFuHl9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729511796; c=relaxed/simple;
-	bh=B4Hktr4dTY9FV1wNi3EDemMJgSpeWdvg+DXtZW7vj3E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hluQxLuJJGt4vUH+RMSpsqsRrSYD8IucQrQevXY1cLzUMTU81st1rEsRlCMObx6HGNFx6UjhaGkYrxqqVowxrOrnrqaBteAYaJIgZBk34NQCvkUShUlgUlqZ2+JZx37NZ14zJ/sOO+kwGOzk7H+ePFMFgNV/sKdf/c3us4ORKHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+U+Z84o; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729511794; x=1761047794;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=B4Hktr4dTY9FV1wNi3EDemMJgSpeWdvg+DXtZW7vj3E=;
-  b=n+U+Z84or1ZUeKF4cWW9o6a5S/7r6otJH4JNbVFFbmd+A3caGiRP9pcK
-   e4giSBf+HdKajglnM/9INfVpBE3lFFAbWrPQ4L6rP32hFtjpDHlPMYuOv
-   MsAGfAK8nE1CJ10iz/I/LtSE8Q9cSWq2xh24WVGEMbggruW1I00l9h+K8
-   Ei0/ILYMqz6c7QCFfA2+65PmFkfa/865NpFBEx+hScHJJK3l0dZXfWV4k
-   yk7Y9m6pJS2PEj0a9oCJhOVF0k85hM+hrFZE+ofSAKlFLxvUYtlW2k1qx
-   FNAG5L7RtXg7/w2lczWY6z1qaXhw0P3Qydz4jN+JDL1BL6s3lw5KY1qAJ
-   w==;
-X-CSE-ConnectionGUID: Gef+9v6ERIunmOPQbamx/Q==
-X-CSE-MsgGUID: 2ALKV1uXTTyAG+ur0hTd0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="16621188"
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="16621188"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 04:56:33 -0700
-X-CSE-ConnectionGUID: bfTRB1DeRZ6KMXdk+aUTFQ==
-X-CSE-MsgGUID: MZniU/MoTKWEqUkxVylqZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="79658627"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 04:56:30 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,  linux-cxl@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Gregory Price <gourry@gourry.net>,
-  Davidlohr Bueso <dave@stgolabs.net>,  Jonathan Cameron
- <jonathan.cameron@huawei.com>,  Alison Schofield
- <alison.schofield@intel.com>,  Vishal Verma <vishal.l.verma@intel.com>,
-  Ira Weiny <ira.weiny@intel.com>,  Alejandro Lucero <alucerop@amd.com>,
-  Ben Cheatham <benjamin.cheatham@amd.com>
-Subject: Re: [PATCH 5/5] cxl: Avoid to create dax regions for type2
- accelerators
-In-Reply-To: <67119a9189428_3f14294b4@dwillia2-xfh.jf.intel.com.notmuch> (Dan
-	Williams's message of "Thu, 17 Oct 2024 16:15:29 -0700")
-References: <20241015065713.308671-1-ying.huang@intel.com>
-	<20241015065713.308671-6-ying.huang@intel.com>
-	<67119a9189428_3f14294b4@dwillia2-xfh.jf.intel.com.notmuch>
-Date: Mon, 21 Oct 2024 19:52:57 +0800
-Message-ID: <87ed4965ba.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1729511594; c=relaxed/simple;
+	bh=C3SttAleNRdX+kbEry1Q63ZTLfxG+GRL8Io3dhLyU9o=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=RcAx4MNeYpOPFWgahG2WhLmZfttL6W8esYIgHVI7IbIkkeUOkriKc/+iKwpSTV+wGqR9DhwN9NOzEVWqVHeBuAnutdhWBcDjJprXD0fs8waAM7JPmsDEFHMnWPLBhFRhBRUf32AiSywUH5RfXGM7+hfIPSNIo1t21ou+3mBqfGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YrkGjsBp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729511591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SNCQhHzFd1NUHzGxH9c1VqwwdqX/nhUWNke4YanTciI=;
+	b=YrkGjsBp9UEjwqLnOqglm7elzRa+A8eL1ntWuO678QiszE/jOB8ruiL9cP33qNitWprfEs
+	TYcqF2ogkdGx0uSU6RV4f4eL/E1B5Yndmzq3DhPUnbtHD0YEdKchvGwKeSU2Jqt2ICv4Y/
+	A8p+op101hTEXfYd0WrQmI5zyyMtHTs=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-351-YKvOEUpcMDKgFALrgs2VdQ-1; Mon,
+ 21 Oct 2024 07:53:08 -0400
+X-MC-Unique: YKvOEUpcMDKgFALrgs2VdQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 42C7619560AF;
+	Mon, 21 Oct 2024 11:53:06 +0000 (UTC)
+Received: from [10.45.226.64] (unknown [10.45.226.64])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1339E1956052;
+	Mon, 21 Oct 2024 11:53:02 +0000 (UTC)
+Date: Mon, 21 Oct 2024 13:52:58 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Eric Biggers <ebiggers@kernel.org>
+cc: dm-devel@lists.linux.dev, linux-block@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org, 
+    linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+    Md Sadre Alam <quic_mdalam@quicinc.com>, 
+    Israel Rukshin <israelr@nvidia.com>, Milan Broz <gmazyland@gmail.com>, 
+    Adrian Vovk <adrianvovk@gmail.com>
+Subject: Re: [RFC PATCH 0/4] dm-default-key: target for filesystem metadata
+ encryption
+In-Reply-To: <20241018184339.66601-1-ebiggers@kernel.org>
+Message-ID: <b56689c6-c0cd-c44e-16fb-8a73c460aa87@redhat.com>
+References: <20241018184339.66601-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Dan Williams <dan.j.williams@intel.com> writes:
 
-> Huang Ying wrote:
->> The memory range of a type2 accelerator should be managed by the type2
->> accelerator specific driver instead of the common dax region drivers,
->> as discussed in [1].
->> 
->> [1] https://lore.kernel.org/linux-cxl/66469ff1b8fbc_2c2629427@dwillia2-xfh.jf.intel.com.notmuch/
->> 
->> So, the patch skips dax regions creation for type2 accelerator device
->> memory regions.
->> 
->> Based on: https://lore.kernel.org/linux-cxl/168592159835.1948938.1647215579839222774.stgit@dwillia2-xfh.jf.intel.com/
->> 
->> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
->> Co-developed-by: Dan Williams <dan.j.williams@intel.com>
->> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->> Reviewed-by: Gregory Price <gourry@gourry.net>
->> Cc: Davidlohr Bueso <dave@stgolabs.net>
->> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
->> Cc: Dave Jiang <dave.jiang@intel.com>
->> Cc: Alison Schofield <alison.schofield@intel.com>
->> Cc: Vishal Verma <vishal.l.verma@intel.com>
->> Cc: Ira Weiny <ira.weiny@intel.com>
->> Cc: Alejandro Lucero <alucerop@amd.com>
->> Cc: Ben Cheatham <benjamin.cheatham@amd.com>
->> ---
->>  drivers/cxl/core/region.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->> 
->> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->> index d709738ada61..708be236c9a2 100644
->> --- a/drivers/cxl/core/region.c
->> +++ b/drivers/cxl/core/region.c
->> @@ -3473,6 +3473,14 @@ static int cxl_region_probe(struct device *dev)
->>  					p->res->start, p->res->end, cxlr,
->>  					is_system_ram) > 0)
->>  			return 0;
->> +		/*
->> +		 * Accelerator regions have specific usage, skip
->> +		 * device-dax registration.
->> +		 */
->> +		if (cxlr->type == CXL_DECODER_ACCEL)
->> +			return 0;
->> +
->> +		/* Expander routes to device-dax */
->
-> So Linux is this weird career choice where you get to argue with
-> yourself months later. I understand why I took this shortcut of assuming
-> that the coherence mode determines device-dax routing, but that is not
-> sufficient.
->
-> An HDM-DB region could want the device-dax uAPI, and an HDM-H range
-> could want to do its own uAPI besides device-dax.
->
-> So, in retrospect, I think it is a mistake to assume uAPI from coherence
-> mode. It really is a property of the region decided by the region
-> creator independent of the coherence mode or the device type.
 
-Yes.  It isn't a good idea to determine the region usage based on coherence
-mode.  In this series, clxr->type is used to designate
-expander/accelerator instead of hostonly/dev, it makes more sense to
-create device-dax for expander only by default.
+On Fri, 18 Oct 2024, Eric Biggers wrote:
 
-> I am thinking that 'struct cxl_region' grows something like:
->
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 5406e3ab3d4a..4cf1d030404d 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -511,12 +511,25 @@ struct cxl_region_params {
->   */
->  #define CXL_REGION_F_NEEDS_RESET 1
->  
-> +/*
-> + * enum cxl_mem_api - where to route this cxl region
-> + * @CXL_MEM_API_DAX: application specific / soft-reserved memory
-> + * @CXL_MEM_API_PMEM: direct region to the NVDIMM subsystem
-> + * @CXL_MEM_API_NONE: accelerator specific / hard-reserved memory
-> + */
-> +enum cxl_mem_api {
-> +	CXL_MEM_API_DAX,
-> +	CXL_MEM_API_PMEM,
-> +	CXL_MEM_API_NONE,
-> +};
-> +
->  /**
->   * struct cxl_region - CXL region
->   * @dev: This region's device
->   * @id: This region's id. Id is globally unique across all regions
->   * @mode: Endpoint decoder allocation / access mode
->   * @type: Endpoint decoder target type
-> + * @api: What if any subsystem will present this region to consumers
->   * @cxl_nvb: nvdimm bridge for coordinating @cxlr_pmem setup / shutdown
->   * @cxlr_pmem: (for pmem regions) cached copy of the nvdimm bridge
->   * @flags: Region state flags
-> @@ -530,6 +543,7 @@ struct cxl_region {
->  	int id;
->  	enum cxl_decoder_mode mode;
->  	enum cxl_decoder_type type;
-> +	enum cxl_mem_api api;
->  	struct cxl_nvdimm_bridge *cxl_nvb;
->  	struct cxl_pmem_region *cxlr_pmem;
->  	unsigned long flags;
+> This series adds "metadata encryption" support to ext4 and f2fs via a
+> new device-mapper target dm-default-key.  dm-default-key encrypts all
+> data on a block device that isn't already encrypted by the filesystem.
+> 
+> Except for the passthrough support, dm-default-key is basically the same
+> as the proposed dm-inlinecrypt which omits that feature
+> (https://lore.kernel.org/dm-devel/20241016232748.134211-1-ebiggers@kernel.org/).
+> 
+> I am sending this out for reference, as dm-default-key (which Android
+> has been using for a while) hasn't previously been sent to the lists in
+> full, and there has been interest in it.  However, my current impression
+> is that this feature will need to be redesigned as a filesystem native
+> feature in order to make it upstream.  If that is indeed the case, then
+> IMO it would make sense to merge dm-inlinecrypt in the mean time instead
+> (or add its functionality to dm-crypt) so that anyone who just wants
+> "dm-crypt + inline encryption hardware" gets a solution for that.
 
-This looks good to me.  The usage is specified by the device driver explicitly.
+I we merge dm-inlinecrypt, we can't remove it later because users will 
+depend on it. I think it is not sensible to have two targets 
+(dm-inlinecrypt and dm-default-key) that do almost the same thing.
 
-> Now, I have not seen how Alejandro's series handles this, but this
-> type-2 series was shorter so I started here first.
+I've got another idea - what about a new target "dm-metadata-switch" that 
+will take two block devices as arguments and it will pass metadata bios to 
+the first device and data bios to the second device - so that the logic 
+to decide where the bio will go would be decoupled from the encryption. 
+Then, you can put dm-crypt or dm-inlinecrypt underneath 
+"dm-metadata-switch".
 
---
-Best Regards,
-Huang, Ying
+----------------------
+|     filesystem     |
+----------------------
+          |
+          V
+----------------------
+| dm-metadata-switch |
+----------------------
+      |           |
+      V           |
+------------      |
+| dm-crypt |      |
+------------      |
+      |           |
+      V           V
+-------------------------
+| physical block device |
+-------------------------
+
+Mikulas
+
 
