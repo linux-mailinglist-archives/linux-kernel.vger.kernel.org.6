@@ -1,83 +1,59 @@
-Return-Path: <linux-kernel+bounces-373813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09919A5D1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:32:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E36E69A5D24
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BA0EB21288
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:32:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B46B281074
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B971DC07D;
-	Mon, 21 Oct 2024 07:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6B01D5AAD;
+	Mon, 21 Oct 2024 07:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bnbvAs6U"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGCqNK51"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E399F1D318A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F356319408B;
+	Mon, 21 Oct 2024 07:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495928; cv=none; b=A+Chh1WEFXj2z0ykX4Z5EGTjCZJ/BS4g+/YdiTvbimcP2+O636wVNoYSBVEEmzEZbgEg3rqFMG8T4mipPaMR3CM2ud97X9vBUmOJyV2oWg4zM6b3NiVpu/U/vc8u8PV8XgaPR8Gzkh6zwxkJO4jL+Y8sDauGqnOsWxoBiviRFn4=
+	t=1729495962; cv=none; b=NNN59+ISZxTiED1mByD4rT8bg4IZh9bvBqHg8Rq4REheN6tjHTN2BkbpSSBJauTn1qofnlepsmtreSsgG/Eo1asKqR/mGg5oiJ2Pz3t/13DXuuqlYVoDfCdmBvoPW4mfOpDvkiZQ7+K3Dk+pKVxdHwlNv3NAOPnf9TsxfuF9Gjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495928; c=relaxed/simple;
-	bh=jsFFDqK9j4osMzG9Hf/Jl4FKrfH26gMir5LU2zRCC2c=;
+	s=arc-20240116; t=1729495962; c=relaxed/simple;
+	bh=TF91/lByhMW1CGFwlu0+quAwto3mDL8Vghp7zpYZlWI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mTl8PAuNS0dwa4fPLKD2O9mkWTT/wsLVsqsw7dAG7DUHQkWystNy8PI5TWMjEO1lgqEEwtZkdOnsS8rj1Y346OiFNkFWIPH7HK0+6bOLxTOhq1DyQUrKZov58AoyEVZO4428nymul84UfpXt7jMmKuS2+yi5qSG+wObDoUdGMM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bnbvAs6U; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1298940E0184;
-	Mon, 21 Oct 2024 07:31:58 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DqzfQdhGwoHO; Mon, 21 Oct 2024 07:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729495913; bh=8SmcL6UZK8KZbZ3fnpWgyhFG2IJfwd0RD8+4bVI03e8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7i1Xp1/xvna2HoUHPQMYUNRbEOI4K3Hb9PKg4t3Pydv6+aGaEsYAyN1MgSY8x6hFp4hjO2OCYQ45ZkxE3mv2A5FmhrFYVSjntSGk03t8DlDtr3JnDQpemJywPVUfdqQvtmzFDcqjPf0DQ/tSpUtEwy9XDQOBJ9J/Cs4XOAvtO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGCqNK51; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C45C4CEC3;
+	Mon, 21 Oct 2024 07:32:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729495961;
+	bh=TF91/lByhMW1CGFwlu0+quAwto3mDL8Vghp7zpYZlWI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bnbvAs6Uc/1eJRySZ+Zs/AgbsdS+/d5tVc/4fl/Aai2a2Mx7tFzpQlrZnxQJPZnHT
-	 5XpN9KRgVhmBk0mTJWIW3H82wUD3V54QlwzbakzpSCsC0gEDWYWYCNIXssA11kVMBb
-	 lmwBgRmioAzDdCZ40rzSLfXKRAK+vbFVXbrGz0W/uW20TBAt8RC9mdleIp0x2hIuz0
-	 IeXqkM6gpkg8A/6xUro8YpDiO2Qj6nIeVdP6mImBw9nFoveKUBr8TJws7u1lpgO1PV
-	 kSCKhgEG4WZw6ShP8hfCc0QRu7cs3WVv2OqRxkV0o+VZ1X8bMJCKkMKAqxi/OH/Va4
-	 TBAckZQrz4MXoyEJU1SwCBQFtzB73tkKDlYCw9DCOnzHciMt2U3knea72XXHj/7Fnm
-	 9W3lVVjY/a5wlz6gDuDthuFnrr8+vEipu32sQ/JYs1V/+3Grl4S57MPjBHACKURf+C
-	 YYeto8n5m7B4NVBLqLyfnDNP4Od7jbI8r5hLpQe8LjYDz8sDm0Lhw5LZbO1PCGGN/k
-	 ZpKoSZFNLxVESQd5UFsWdz10PUYtay1QXiWOn0hRB6b0NgIau37/JnYQYY8bIj9jIF
-	 bLzisDTfYiPPkxrADK6gYK9fx9vPQ/EiPz5uuB+X9SJHBg41S+doCic6OeHiKlOAcD
-	 XrpfDWN53H3xAl34yqqVKMik=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5BF9140E0194;
-	Mon, 21 Oct 2024 07:31:48 +0000 (UTC)
-Date: Mon, 21 Oct 2024 09:31:40 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Subject: Re: AMD zen microcode updates breaks boot
-Message-ID: <20241021073140.GAZxYDXCk02lSrG3-T@fat_crate.local>
-References: <320024ab-63af-45eb-a3ae-5486cb2015c0@kernel.dk>
- <20241018175606.GJZxKhNmW9nCLwNS6Z@fat_crate.local>
- <016ecb00-2331-472c-88e4-66b1dbecfc99@kernel.dk>
- <1bb5dd7f-15b5-4d9d-97ef-75ebdc24e7d9@kernel.dk>
- <20241019093748.GAZxN97LS_dJ3DNrpd@fat_crate.local>
- <436b4fc7-6369-40d9-8e88-556cbf5a5687@kernel.dk>
- <20241019232138.GDZxQ_AtkqA9iAR2td@fat_crate.local>
- <b2fd70bb-9414-49e0-bdb8-5c538f247dea@kernel.dk>
- <20241020121819.GAZxT1CyR_5vLLZ5e6@fat_crate.local>
- <df217737-6e2c-41fe-b558-3e2ab6dc0d9e@kernel.dk>
+	b=DGCqNK51ypchKfZEz0VWoRQ8Hvxon5nbFgCKUov3MvsJeZq59mp7SYFtvbRddXYHC
+	 /khg/uZDLWoLcpYV12cRNmiofSa3knkD74KAEUv0/NrGeoI4yF6aP68TDibjAWrAfj
+	 PZeP2a7nVr8l8kSEOIIwRQnKDQaH4HswxOMOY2fMWF53zd71py6aqYDYIrba5mO7X7
+	 qfU10geLX7aGNATPR5GOsNGA7QGYWK3W1hqnYOnlz1ZwTqS+fOCPp21wCP4/IagYYf
+	 3KYbb+ER0ps4Zi+fwnFDTbq+yMntdy+hXJg3tiqSleK5QXO4QarCJPEs+cU6KaJIcv
+	 ceblDQWFcCnhA==
+Date: Mon, 21 Oct 2024 09:32:37 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	alexandre.belloni@bootlin.com, magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v4 03/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
+ Document VBATTB
+Message-ID: <m4kxv7cba6qd67ahhh4cal6sgieohgow6f3tdvqoxvheemtp4j@gpxbkxd3tvat>
+References: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241019084738.3370489-4-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,37 +62,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <df217737-6e2c-41fe-b558-3e2ab6dc0d9e@kernel.dk>
+In-Reply-To: <20241019084738.3370489-4-claudiu.beznea.uj@bp.renesas.com>
 
-On Sun, Oct 20, 2024 at 06:47:25PM -0600, Jens Axboe wrote:
-> Works, outside of waiting 3 min for the serial console spewage from the
-> patch! But it boots and it's happy after that. Attached here gzip'ed as
-> it's 1.3M otherwise.
-
-Thanks for testing.
-
-Lemme write proper patches, run them everywhere here and give them to you for
-one final testing.
-
-> I get:
+On Sat, Oct 19, 2024 at 11:47:29AM +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> root@r7625 ~# echo 1 > /sys/devices/system/cpu/microcode/reload
-> warning: An error occurred while redirecting file '/sys/devices/system/cpu/microcode/reload'
-> open: Permission denied
+> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC,
+> the tamper detector and a small general usage memory of 128B.
 > 
-> and no output in dmesg.
+> The VBATTB controller controls the clock for the RTC on the Renesas
+> RZ/G3S. The HW block diagram for the clock logic is as follows:
+> 
+>            +----------+ XC   `\
+> RTXIN  --->|          |----->| \       +----+  VBATTCLK
+>            | 32K clock|      |  |----->|gate|----------->
+> 	   | osc      | XBYP |  |      +----+
 
-Right, you need
+Messed indent. Switch to spaces.
 
-CONFIG_MICROCODE_LATE_LOADING=y
+> RTXOUT --->|          |----->| /
+>            +----------+      ,/
+> 
+> One could connect as input to this HW block either a crystal or
+> an external clock device.
+> 
+> After discussions w/ Stephen Boyd the clock tree associated with this
+> hardware block was exported in Linux as:
+> 
+> input-xtal
+>   xbyp
+>   xc
+>      mux
+>         vbattclk
+> 
+> where:
+> - input-xtal is the input clock (connected to RTXIN, RTXOUT pins)
+> - xc, xbyp are mux inputs
+> - mux is the internal mux
+> - vbattclk is the gate clock that feeds in the end the RTC
+> 
+> to allow selecting the input of the MUX though assigned-clock DT
+> properties, using the already existing clock drivers and avoid adding
+> other DT properties.
+> 
+> This allows select the input of the mux based on the type of the
+> connected input clock:
+> - if the 32768 crystal is connected as input for the VBATTB,
+>   the input of the mux should be xc
+> - if an external clock device is connected as input for the VBATTB the
+>   input of the mux should be xbyp
 
-for that.
+> +  clocks:
+> +    items:
+> +      - description: VBATTB module clock
+> +      - description: RTC input clock (crystal or external clock device)
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bclk
+> +      - const: rtx
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    items:
+> +      - description: VBATTB module reset
+> +
+> +  quartz-load-femtofarads:
+> +    description: load capacitance of the on board crystal
+> +    enum: [ 4000, 7000, 9000, 12500 ]
 
-Thx.
+It's not required, so:
+default: ?
 
--- 
-Regards/Gruss,
-    Boris.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - power-domains
+> +  - resets
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
+> +    #include <dt-bindings/clock/renesas,r9a08g045-vbattb.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    clock-controller@1005c000 {
+> +        compatible = "renesas,r9a08g045-vbattb";
+> +        reg = <0x1005c000 0x1000>;
+> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
+> +        clock-names = "bclk", "rtx";
+> +        assigned-clocks = <&vbattb VBATTB_MUX>;
+> +        assigned-clock-parents = <&vbattb VBATTB_XC>;
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Why are you configuring internal clocks to internal parents? That's part
+internal to this device, not DTS... or at least some explanation would
+be useful.
+
+Best regards,
+Krzysztof
+
 
