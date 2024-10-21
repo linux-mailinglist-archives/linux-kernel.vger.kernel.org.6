@@ -1,52 +1,81 @@
-Return-Path: <linux-kernel+bounces-375005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861499A7311
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:14:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9593E9A7316
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E9E1F22469
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:14:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46B91C217C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AF01FC7F5;
-	Mon, 21 Oct 2024 19:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5001EF0B1;
+	Mon, 21 Oct 2024 19:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjSIeixh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8Tax/vr"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4AFB2209B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488D81EEE0;
+	Mon, 21 Oct 2024 19:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729538068; cv=none; b=O7q5UTbdX6Ttc6Be552sZQEg7W5YhiCd0EQhsXVYfQxZOznJoj/mxij4AqF0wruuB0bEsVu3uGrS80t2UBKs1vAEyRyJsuijtrGXjIg4B9QAzphbyOPZ+ph5mADkN89OqSKT92soEj2RwzpKt4EEuGyL9bs2MYt1FiLHyFs+Vzg=
+	t=1729538374; cv=none; b=d4atyoqa4KI8BQevB9mHkug3VWUXxpcoaU8msolXfE5CmzUo/CtynWBlrmoOBYOeQzmiJTBvhMWHXnqjwUavGeYLLf+UsYATsIZh87Fx5K3eMDusvKeWxbYKdDgYMfXGrKYDxBV+tg89SAXJClK2K7AfQAJvr2Lvhwv4s9whVN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729538068; c=relaxed/simple;
-	bh=Vp3VyPCEZtRWwIx4AQb+2QWWum+1wrgS2sZgatBVYI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=LAbfy/pqUrAmwvnZ+kPqeQAdH/yrmb9f83hTi4JZiQDeEQ/AsLZgoYSmSCoZKZLA9rtZAn76vST43+1bfBgBNc3FyObxHuhgTm6u4s3vOUjTCg7oDiYJkWS0WaRfdh5BVjPO0pqfYm/FZ/dXzo776IPQIqKnJngeB1OUAZ1pRmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjSIeixh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F05B2C4CEC7;
-	Mon, 21 Oct 2024 19:14:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729538068;
-	bh=Vp3VyPCEZtRWwIx4AQb+2QWWum+1wrgS2sZgatBVYI4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=IjSIeixhoW7LrHHtj3D38jNNHgcGJonJznArxuKKaj0syGR2VTke4/VV9Ys+zP4jT
-	 d/Laq/3YCgme1Px0rjjUxULUUfiPD0tmvOAq6zhTPs7CpZeZmIegQbCraFvtVMZTaq
-	 ooOvisJl2bN78AdIWi61Fqxn38ESfAE9rBjWvMGbFN4WKbuFNMYXuWyV5Q1DZ4doQw
-	 5NwTtzW8JvrJE3z+qmgSmH83VrKr4ARei8LXHUlmNG2NclQR0p02CANeD1Xu0UukFJ
-	 hTb4Wzud7w1WBbcoA/7BlrF95TuSJZe7IcsuUCH1o5Iq3buVX0BOIIJyiu8SWybhOa
-	 yqOJPEtWCi3ew==
-Date: Mon, 21 Oct 2024 14:14:26 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Justin Piszcz <jpiszcz@lucidpixels.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org
-Subject: Re: 6.1.0-17: nvme nvme0: controller is down; will reset:
- CSTS=0xffffffff, PCI_STATUS=0xffff
-Message-ID: <20241021191426.GA842491@bhelgaas>
+	s=arc-20240116; t=1729538374; c=relaxed/simple;
+	bh=xyJxs4NLT8NaP7TlTozHXsYl5ZnfdnJftXyFrOr8SsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dpp4A6WFSj7MX47y5W3t/ZgNZWuHfl5hYVD190ttRPL6y/mjIp5tXX7LQlHq7d01yzrKELYX54dUyauJnE+07+uT6EnMsWZLnHkiyKWDohTWxrQRz6cj7+fmfkV2r13QkwlpufDdG+nEbyt5XzYlVTraSSjiLcvIeIrFEqLfHw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8Tax/vr; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20cbcd71012so43302375ad.3;
+        Mon, 21 Oct 2024 12:19:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729538371; x=1730143171; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8STVZnlFNrmdtpautcda4HE5obN66LvYKFM9OyrWkUY=;
+        b=N8Tax/vr4MMNkqxJUEMeK+47iQSUbCMRig7Y+vQiqt5dV4vSpLWK3pR5oCDe40UaO3
+         aMQwBla3hLO1zfLx6vFONVs2xLjeulzZn7mWHXGFx9AoIdXA5PZLm+5bjtP+ztzWs/oN
+         vBZGKhrQ04KLxTseePEVgbmFdsRBRdTdyMG7lsqr/E6qadAO1hRkcz1GSuCz+8tBsfP6
+         TCmZKudFOvrP7haoE0sl+mx1Fxa9hB66ZPzpIbJDtnGaYskm9/zRm0w7vc4qESnKVLC/
+         C3XLpeYXgSuPe9BIIfAyR11fVq3A+wMtV8xdmcfRMpFdCwYnqXjoDlr62H5zXhIkhXWH
+         jQfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729538371; x=1730143171;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8STVZnlFNrmdtpautcda4HE5obN66LvYKFM9OyrWkUY=;
+        b=U9l5A+4NflzPor04eiC4q/gm4PMJyg2/KZhkfeDugRwT2IaIo2Z2yV7CCN+F61l+0Q
+         n/L2Y1y+l3ca87SQ+LeddJVR3oLUEhctbIYMExXQCZIR+6ONJseYMV2JthM53hVmLZkD
+         4eBfIRQclqgVK4jwc5DMZwi54EtUKT60TywOR8Kmswil5gbWDPLCOdHrJsF2KlRVmyqm
+         4ZGwoHZuZgWGfD9IAnmGbZi0CwzMXh2BJh1AAp/xt/JRTL7e5VhS3WZIjUAmwpLQm5uA
+         wJYhZ1HqhjPKsblzNBcRRv6YHAYzFWBdn+ZRJ/sC9jjQJXREliqYgGPDUJGLYwo4qtEw
+         tyyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGKYmI/OFO/sCl/fblGjJtIEviwfG2/BGbNM4DVVJJSM/IelJl19sLhjkhZYV4V6c1aeWbL5c3hz1kLw==@vger.kernel.org, AJvYcCWal0xqRs3qyyCyrpdlf8rWjffobzDzmfrnyp997FdEE4ACeRC1gAJD9mCdKluO2ecoYpV9no0X+2kCAqjE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1bon7zI53rnAgDgse0TvtrRXVDJZVpJ5xUQ3uqxFQdIks6A4s
+	VHVN70VgROYWBz14ioaC8qQH4oaF1KJEj5loUilqoQ3Z1f11piCV
+X-Google-Smtp-Source: AGHT+IH52WO15xmHYvhYyY4+EH4EN6lFaf8jH8dwnGs5iK9xPRcYA3Z83CF7ohgW4Ojc9Tt+NYwVnQ==
+X-Received: by 2002:a17:902:d50d:b0:20d:1a47:ecd5 with SMTP id d9443c01a7336-20e5a9530camr134001965ad.61.1729538371281;
+        Mon, 21 Oct 2024 12:19:31 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:3336:4a8a:d651:58bd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eeef550sm29547195ad.57.2024.10.21.12.19.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 12:19:30 -0700 (PDT)
+Date: Mon, 21 Oct 2024 12:19:28 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
+	Dan Carpenter <error27@gmail.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: serio_raw - initialize serio_raw_write() the
+ return code
+Message-ID: <ZxapQMubTgMx9Pgl@google.com>
+References: <20241021103839.2828469-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,52 +84,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAO9zADza=73GsuzAcuyH-YfhS34qjkDtuJjGBReVGpfE6KN_ow@mail.gmail.com>
+In-Reply-To: <20241021103839.2828469-1-arnd@kernel.org>
 
-On Fri, Jan 05, 2024 at 09:49:58AM -0500, Justin Piszcz wrote:
-> Hello,
-> 
-> Distribution: Debian Stable x86-64
-> Kernel: 6.1.0-17
-> 
-> Reporting this as requested from the kernel message, I have now
-> appended the recommended kernel boot parameters
-> nvme_core.default_ps_max_latency_us=0 pcie_aspm=off and will see if
-> this recurs.
+Hi Arnd,
 
-Hi Justin, did anything ever come of this report?  Is it reproducible?
-Did it seem to be related to suspend/resume?
-
-> Jan  5 06:18:52 atom kernel: [295306.524933] pcieport 0000:00:06.0:
-> AER: Corrected error received: 0000:00:06.0
-> Jan  5 06:18:52 atom kernel: [295306.524979] pcieport 0000:00:06.0:
-> PCIe Bus Error: severity=Corrected, type=Physical Layer, (Receiver ID)
-> Jan  5 06:18:52 atom kernel: [295306.525004] pcieport 0000:00:06.0:
-> device [8086:a74d] error status/mask=00000001/00002000
-> Jan  5 06:18:52 atom kernel: [295306.525027] pcieport 0000:00:06.0:
-> [ 0] RxErr                  (First)
-> Jan  5 06:19:22 atom kernel: [295336.554420] nvme nvme0: controller is
-> down; will reset: CSTS=0xffffffff, PCI_STATUS=0xffff
-> Jan  5 06:19:22 atom kernel: [295336.554469] nvme nvme0: Does your
-> device have a faulty power saving mode enabled?
-> Jan  5 06:19:22 atom kernel: [295336.554489] nvme nvme0: Try
-> "nvme_core.default_ps_max_latency_us=0 pcie_aspm=off" and report a bug
-> Jan  5 06:19:22 atom kernel: [295336.614521] nvme 0000:03:00.0: Unable
-> to change power state from D3cold to D0, device inaccessible
-> Jan  5 06:19:22 atom kernel: [295336.614898] nvme nvme0: Removing
-> after probe failure status: -19
-> Jan  5 06:19:22 atom kernel: [295336.630497] nvme0n1: detected
-> capacity change from 7814037168 to 0
-> Jan  5 06:19:22 atom kernel: [295336.630502] BTRFS error (device
-> nvme0n1p2): bdev /dev/nvme0n1p2 errs: wr 1, rd 0, flush 0, corrupt 0,
-> gen 0
-> Jan  5 06:19:22 atom kernel: [295336.630513] BTRFS error (device
-> nvme0n1p2): bdev /dev/nvme0n1p2 errs: wr 2, rd 0, flush 0, corrupt 0,
-> gen 0
-> Jan  5 06:19:22 atom kernel: [295336.630542] BTRFS error (device
-> nvme0n1p2): bdev /dev/nvme0n1p2 errs: wr 3, rd 0, flush 0, corrupt 0,
-> gen 0
+On Mon, Oct 21, 2024 at 10:38:27AM +0000, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Regards,
-> Justin
+> The number of bytes returned from the write function is now
+> undefined:
+> 
+> drivers/input/serio/serio_raw.c:204:12: error: variable 'written' is uninitialized when used here [-Werror,-Wuninitialized]
+>   204 |                                 return written ?: -EIO;
+>       |                                        ^~~~~~~
+
+Thank you for the patch but I already have one fixing this up queued.
+
+> 
+> Fixes: 5b53a9d40c4f ("Input: serio_raw - use guard notation for locks and other resources")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <error27@gmail.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202410201730.ItNhUTIv-lkp@intel.com/
+> Closes: https://lore.kernel.org/r/202410201759.qnyACw46-lkp@intel.com/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/input/serio/serio_raw.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/input/serio/serio_raw.c b/drivers/input/serio/serio_raw.c
+> index e058fef07f57..55fe77d04089 100644
+> --- a/drivers/input/serio/serio_raw.c
+> +++ b/drivers/input/serio/serio_raw.c
+> @@ -195,6 +195,7 @@ static ssize_t serio_raw_write(struct file *file, const char __user *buffer,
+>  		if (count > 32)
+>  			count = 32;
+>  
+> +		written = 0;
+>  		while (count--) {
+>  			if (get_user(c, buffer++))
+>  				return -EFAULT;
+> -- 
+> 2.39.5
+> 
+
+-- 
+Dmitry
 
