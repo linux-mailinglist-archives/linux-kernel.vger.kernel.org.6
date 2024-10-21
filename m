@@ -1,112 +1,153 @@
-Return-Path: <linux-kernel+bounces-374625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05DC39A6DB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:10:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E369A6DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346F51C218C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F79C282B6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107FF1F8EF0;
-	Mon, 21 Oct 2024 15:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26F41F9402;
+	Mon, 21 Oct 2024 15:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdEEnDQk"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fbw5Iuq2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635991E7677;
-	Mon, 21 Oct 2024 15:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0930433BB;
+	Mon, 21 Oct 2024 15:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729523452; cv=none; b=N7a+dNoTIFnpIVHWAI02S/vBG8vm5o5437Jd0C3JNdqpcqeRjNHaRvSNo+uId83AtrzPrGDpvAP+h6tNxeUJ7pSoo4bVcBcKKv7uCKVN79/FtNV+qyh+yjbSC833QT/yCXM8PmYIgNHJZj7NIaUZJtaozh41+cLCobJlqc1n0Z4=
+	t=1729523486; cv=none; b=AI90hKj/7xdzHxLIcAZwA5SKYl2t1o5pVPmrgHnJasUh5oxWb8Wk5uk25nqkJesvpVRhhUHNiwwyqqLh16mf+hAGBMiIaJC3ohJx9QscyzyyCmpd0oX+jyEq6eBBp0CjjIZhc5bR9IbzjE+T4HPJZXOqMkZa3am60CpmkFQabZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729523452; c=relaxed/simple;
-	bh=QD7AxKLoZEP4E4LfscetL7prn5bCZbFOznQeWqU4LwU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gpWSvGLM2kttzFyeVY7Z0QczXUvQlrQGg/12fTNdI44nLcOlj1cqZVYK+Ve/AXYVSfxtfxGz7B795coJVc5SGot6du3p9JS5cIWg9VJePMLajmYlY/1uDDF/5cRF2etJhRW3zjku2fHMs0x/9CU8/KjdZCfIlLl8RzyhEOcxMD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jdEEnDQk; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so3426711a12.0;
-        Mon, 21 Oct 2024 08:10:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729523448; x=1730128248; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RdRN/obzgK7K5Ctq8X1iTFrBCGuTBWFn0VMlx5LGh0A=;
-        b=jdEEnDQkdDseCy6K9OA+txB6AYBBzhV383kQyeaOn+qq3S++S9REqwzOYKmURPf0Sj
-         Cq7hJTxO5Q2xpubbuu/sAuvbac/WN238eM7RWNQSElAT+5COib+1kLcF/IQX1AZ8bMqP
-         83iN2HfJfqXiUILODXDzu6PcG5Dcl/JafBcesYPcOyNCgbZNOa0w1psHjKrE0jOuIB5s
-         h4AWhRYiUEDngGqWODfKq07Hw6rTvBR35d+GKzdtBwFjENOU6SZTEo4+E8WWlt4zFIIO
-         dDSCaFBs9BWmxY3Uf2OZZNL8q5IhVURiFGXZmCovn8KMbcJnpu48wyQMtOxOPndbwAsy
-         J58Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729523448; x=1730128248;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RdRN/obzgK7K5Ctq8X1iTFrBCGuTBWFn0VMlx5LGh0A=;
-        b=FKvTrXoZZd1LIMqENguIHHMSauFUrBr8yiFuPXbvgZSgNIBGVnyUvTwf+DpUy8RLnf
-         +tOAWKe1x+sNfC8Mu8gxRXDrqRMgwSf0w51psF+2u4Vg7ZsAv4r6yv/FoZOmkIjUhc5u
-         ByM1RbCtKszHtKHQShFY1w3AlxKvgY+rpTLVWwt8QqOu1biCVODKVWxftuS5NB6QeqBM
-         cpBEBE+J54LvJ4PQm32FJxeAB7/6jf1ANwtzVCASfwKLM78XXYl7y3Q5DUaDYjKTQ0Rf
-         9h1txQ9sv1qJT/TDiYJRFvnsvcMegmmia8YRrBfdRAfVNkViu/rUcchoLKzoCgHybbZX
-         RMYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8MZDAR3bWeuiUHfeShWmZos3Bs7OOrdveKtN6xYVxFpV+C/a3lKHVs+FhqfXSEkFA4+rXotn5BR0TMoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiIyROXc5GahPNiAlg/laKVmfGdq94i5nu9jxTm3seqyKKT+Vp
-	ZdvptCRMcl/QG5LccHn8jxDix1yyHxCoznuelOePwmSprPhFJuL1
-X-Google-Smtp-Source: AGHT+IFGFy8UNsxuG1pwYq5UQvbcrMWGxtPY/UqbUS5OlAQ0G51urwFqTX8239a4emVgytnzTC1mtA==
-X-Received: by 2002:a05:6a21:3a94:b0:1d8:b11e:19b9 with SMTP id adf61e73a8af0-1d92c57df1dmr18577271637.47.1729523447079;
-        Mon, 21 Oct 2024 08:10:47 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1312d2dsm3002925b3a.9.2024.10.21.08.10.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 08:10:46 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: kent.overstreet@linux.dev,
-	mmpgouride@gmail.com
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH v2] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
-Date: Tue, 22 Oct 2024 00:10:36 +0900
-Message-Id: <20241021151036.34383-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729523486; c=relaxed/simple;
+	bh=0KCpzPHZ1pNgIIRdXUR2Qx8qYG69coHvhvj1zY+Ljms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Co6wnLuL7v0r9P3f9NQ1yCQAIOEeaNceJjGuFZRcC/ljvSDBS9aPsRgavr0r6qalw4l3o1gnnVL/hifXo6MWZO2QdYEaY7L17utWHHFTye+RJqdGDy8zS6yT7avWy9FQiLLGo8tTJ4Be0vN4w1z60el0dc0fppeqEXZob6ZD0uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fbw5Iuq2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 657CDC4CEC3;
+	Mon, 21 Oct 2024 15:11:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729523485;
+	bh=0KCpzPHZ1pNgIIRdXUR2Qx8qYG69coHvhvj1zY+Ljms=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Fbw5Iuq2Y6b9ymEaPAokuEYu4p4Jnuhw3sovfASbJizPT6zhMCllbyH19WeVE9vAb
+	 YNg7A+0nAVvlX3vmEI9sDwVldy2mvp5Uxo3mibrEyJr9TyaWw6d6UmwDan+8zYxBBL
+	 Z5KwW3S/HqWJ8uPwn9q3H9nFj4EV1gNJc0ovU3qOZVqe9EWJcYM0tqqAaa+KVQkMpq
+	 VDYtlV1Pgw4YtmhwfztQe7iXwPINQEL1PGDk9lyCHkwDmfTrHjVoJbRJB9h89KUCXP
+	 ijxzUmh1OFMOZRdGZ8oyH40z58SLlSWwyLZ1qqRHo7g2dRyw7S7DyqnnBPoe12V9ff
+	 ctODNN93hwbOA==
+Message-ID: <34216857-170c-45d4-8f6d-987573269215@kernel.org>
+Date: Mon, 21 Oct 2024 17:11:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] clk: qcom: Add support for GPU Clock Controller on
+ QCS8300
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Imran Shaik <quic_imrashai@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+ Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
+ <20241018-qcs8300-mm-patches-v1-2-859095e0776c@quicinc.com>
+ <puhpztfn6ga5rxv4mwu7wyvk63hqme2nzffcvzwv7t4oo5hlvc@4ugxncmu3wwk>
+ <o5v3fch5oxol4t7j4xlqswk6m6uo4tleck2cnfk6whpfqsrvjc@s2yrjumgvw6j>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <o5v3fch5oxol4t7j4xlqswk6m6uo4tleck2cnfk6whpfqsrvjc@s2yrjumgvw6j>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The size of a.data_type is set abnormally large, causing shift-out-of-bounds.
-To fix this, we need to add validation on a.data_type in 
-alloc_lru_idx_fragmentation().
+On 21/10/2024 12:56, Dmitry Baryshkov wrote:
+>>>  	{ }
+>>>  };
+>>> @@ -596,6 +635,14 @@ static int gpu_cc_sa8775p_probe(struct platform_device *pdev)
+>>>  	if (IS_ERR(regmap))
+>>>  		return PTR_ERR(regmap);
+>>>  
+>>> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-gpucc")) {
+>>
+>> Why we cannot use match data? Seeing compatibles in the code is
+>> unexpected and does not scale.
+> 
+> Because using match data doesn't scale in such cases. We have been using
 
-Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
-Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- fs/bcachefs/alloc_background.h | 3 +++
- 1 file changed, 3 insertions(+)
+I don't understand how it could not scale. That's the entire point of
+match data - scaling.
 
-diff --git a/fs/bcachefs/alloc_background.h b/fs/bcachefs/alloc_background.h
-index f8e87c6721b1..91eb96b19a76 100644
---- a/fs/bcachefs/alloc_background.h
-+++ b/fs/bcachefs/alloc_background.h
-@@ -168,6 +168,9 @@ static inline bool data_type_movable(enum bch_data_type type)
- static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 a,
- 					      struct bch_dev *ca)
- {
-+	if (a.data_type > BCH_DATA_NR)
-+		return 0;
-+
- 	if (!data_type_movable(a.data_type) ||
- 	    !bch2_bucket_sectors_fragmented(ca, a))
- 		return 0;
---
+> compatibles to patch clock trees for the platforms for quite a while.
+> You can see that each of the "tunings" is slightly different. From my
+
+
+You have one driver, where are these tunings which are supposed to be
+different? You need here only enum or define, in the simplest choice.
+
+> point of view, this approach provides a nice balance between having a
+> completely duplicate driver and having a driver which self-patches the
+> tree.
+
+How duplicate driver got into this? I don't think we talk about the
+same. I meant ID table match data.
+> 
+
+Best regards,
+Krzysztof
+
 
