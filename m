@@ -1,146 +1,119 @@
-Return-Path: <linux-kernel+bounces-375029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74609A8FF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:35:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0AC79A7204
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65B09B228B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5DF61C228D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6144F1FBCA1;
-	Mon, 21 Oct 2024 19:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4031FAC37;
+	Mon, 21 Oct 2024 18:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOK308uF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="luJdRIGR"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9401D12E0;
-	Mon, 21 Oct 2024 19:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F941FA24A;
+	Mon, 21 Oct 2024 18:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729539346; cv=none; b=d3DA7Ee6rA5wBDTdlJDhennxn/+QTEpqqiHoJfMh3PdQmxYbLNlXJ+/U4KMC2ntl0esdiPxUpv0hVBsS26SiNtr1CP1R1yqnH3tHBqR3RbivFMIU7U76AVMfuxBbPE7EhAF7XHT08h9+OYaqYUtpOSv1eUTMtb2G/ARffIiJn10=
+	t=1729534249; cv=none; b=JOCEEcF+omaZE7YIPW6U6U0nzBktyZvvygI5awF6zZncroUFt7brYiNd1/6N7o0Reu4ql1ieJuOVlqmYuf1nCMnIXabVj+gotC07mik078ejYVpuEpMR4PKc4zMRV+e+TgV6YQzP+WxCS3OhMSXYbQt0Ho2hGeAsLNNPnvGjgmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729539346; c=relaxed/simple;
-	bh=bKOdD2DQboA2xhUxsX07ctKS9t84zsPpWtZW6h5BiPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TqKSTVHD1Z/2QPrfznbGT8p5TVFihlrius4QQWR6DoAn57x86b7wY58b3L6luIRQKB0QcX5wq3pyoa2nSRkx6u+kPUrXAi5rzKI71YWXYdBuFa4MZEBUoqciBLWRDmdrOcb4RlIzGdl6HieOl2jmyQOg4gNw+24rK3LEUTwyLEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOK308uF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28F2EC4CEC3;
-	Mon, 21 Oct 2024 19:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729539346;
-	bh=bKOdD2DQboA2xhUxsX07ctKS9t84zsPpWtZW6h5BiPY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NOK308uFq62GnMH9TsCUKUjMlhDnZhiniTVyiVk5GWA2b7MhBMQWtJjR3EI1rfDPo
-	 L7S8O2KTU9dY8oPBLAasrXvhI4BPbDFclwwXMusq+VArGptJdSFX7exMToCTaY+jg6
-	 ttiFObt2idvbOX/p3H8KyXqAVrQcbyRj/3sQXd3G1VstrdSrqyE4Sx+Hq/XAZby2V3
-	 py3OyICtcghCJ+P/gmg4AAnjLcMquS4cqtxXaMuESUuJQ8GjjMNd2BfCsXUkHal7m+
-	 nCMk7RwU0A8cR4y8hIE/U9PQ4WdIAWiS5C9KcpP3bzerkISbh+Wz6iSAYeYlZt445q
-	 +Mn02Rt7rRu2w==
-Date: Mon, 21 Oct 2024 13:36:25 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <ZxaRGWhXndfHMOBD@sashalap>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <e7bc3cfe-f7c0-4d8b-b89d-a2f260d34a76@kernel.org>
+	s=arc-20240116; t=1729534249; c=relaxed/simple;
+	bh=Ge2nrC7MFJDyNA/W1z9790rySUXfow//XCU/mTYaGPU=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pDLkTepAxVpH06kmXMtKvUJUFw8sQSbRXICdLPDew4m3/hiVI97I5k4g0DSXGphRZ4+GdDNZT3rvhisISegAHCPNLFFl2ViqyhKAzJBMgPGj+iMQmjE0Azvorw5GMpXg7zhR8umxhAXagRbSQ5BKpedN6rdTGNpzEA+tUTP4/Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=luJdRIGR; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=7gspbwr7pvdfhc2vd4vclq3x6y.protonmail; t=1729534239; x=1729793439;
+	bh=wutsRmZGLwRCQ8Ztmh5WTQAwGgnDBZjcHoDlibWncKA=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=luJdRIGR6FmS3zi6mgky63AcdSnXeh/21cbXFWtpNbZgnqrTvfgYZWlAFyY7fbIq6
+	 fSXQKAXOH7+SxIIX49yXYKCyYYhC32hhtVW8gCiK05DKhfFqELSpRMuc2BetrQSn6b
+	 NQu1pM8BNi4nxvVgGj2zzaO4l5YLEHOo2SPC1YAWGYMffeLQNXiX8QNNj6Xaa3OqCI
+	 /29GLlEemfTRMUD0Pa9++Nx5DGWjsY7oS4UltAIFHkAH0crwo1r3xI2emSO2EO3DwO
+	 0iLbf2twxbsJpzi+SMMWme9H6fRIOXdSq2FXX+yNesKHB9UznVYI1dCUteULmt4AIU
+	 2Ql1TUJjLaAQA==
+Date: Mon, 21 Oct 2024 18:10:36 +0000
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
+Subject: [PATCH v2] bcachefs: init freespace inited bits to 0 in bch2_fs_initialize
+Message-ID: <20241021174151.37692-2-pZ010001011111@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 9f54eb99fe7fbed3b91dbc5acba2312d81a37194
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e7bc3cfe-f7c0-4d8b-b89d-a2f260d34a76@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 07:18:38PM +0200, Matthieu Baerts wrote:
->Hi Sasha,
->
->On 21/10/2024 18:07, Sasha Levin wrote:
->
->(...)
->
->> In an attempt to address the concerns, we're trying out a new "linus-next"
->> tree is being created and maintained with the following characteristics:
->>
->>     1. Composed of pull requests sent directly to Linus
->>
->>     2. Contains branches destined for imminent inclusion by Linus
->>
->>     3. Higher code quality expectation (these are pull requests that
->>     maintainers expect Linus to pull)
->
->That's a good idea! Thank you for putting this in place!
+Initialize freespace_initialized bits to 0 in member's flags and update
+member's cached version for each device in bch2_fs_initialize.
 
-Thank you!
+It's possible for the bits to be set to 1 before fs is initialized and if
+call to bch2_trans_mark_dev_sbs (just before bch2_fs_freespace_init) fails
+bits remain to be 1 which can later indirectly trigger BUG condition in
+bch2_bucket_alloc_freelist during shutdown.
 
->If you don't mind, I have some questions below.
->
->>     4. Continuous tree (not daily tags like in linux-next),
->>     facilitating easier bisection
->
->What will happen when a pull request is rejected?
+Reported-by: syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3D2b6a17991a6af64f9489
+Fixes: bbe682c76789 ("bcachefs: Ensure devices are always correctly initial=
+ized")
+Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
+Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+---
 
-My mental playbook is:
+Notes:
+    changes in v2:
+        - unconditionally set freespace initialized bits to false at
+          the top of bch2_fs_initialized instead of only if
+          bch2_trans_mark_dev_sbs fails
 
-1. If a pull request is just ignored, ping it in case it was forgotten.
-2. If we have an explicit NACK, just revert the merge commit.
+    Link to v1: https://lore.kernel.org/linux-bcachefs/20241020170708.67044=
+-2-pZ010001011111@proton.me/
 
->(...)
->
->> We also want to avoid altering the existing workflow. In particular:
->>
->>     1. No increase in latency. If anything, the expectation is that
->>     the cadence of merges would be improved given that Linus will
->>     need to do less builds and tests.
->>
->>     2. Require "sign up" for the tree like linux-next does. Instead,
->>     pull requests are monitored and grabbed directly from the
->>     mailing list.
->
->Out of curiosity: is it done automatically? Will it email someone when a
->conflict is found?
+ fs/bcachefs/recovery.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-So it's 80% automatic now: my scripts monitor emails using lei, parse
-relevant ones and manage to extract the pull instructions out of them,
-and then most of those pull requests just merge cleanly.
+diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
+index 67bba156cce9..ed3dbe5802b5 100644
+--- a/fs/bcachefs/recovery.c
++++ b/fs/bcachefs/recovery.c
+@@ -1030,6 +1030,7 @@ int bch2_fs_initialize(struct bch_fs *c)
+ =09struct bch_inode_unpacked root_inode, lostfound_inode;
+ =09struct bkey_inode_buf packed_inode;
+ =09struct qstr lostfound =3D QSTR("lost+found");
++=09struct bch_member *m;
+ =09int ret;
+=20
+ =09bch_notice(c, "initializing new filesystem");
+@@ -1046,6 +1047,13 @@ int bch2_fs_initialize(struct bch_fs *c)
+ =09=09SET_BCH_SB_VERSION_UPGRADE_COMPLETE(c->disk_sb.sb, bcachefs_metadata=
+_version_current);
+ =09=09bch2_write_super(c);
+ =09}
++
++=09for_each_member_device(c, ca) {
++=09=09m =3D bch2_members_v2_get_mut(c->disk_sb.sb, ca->dev_idx);
++=09=09SET_BCH_MEMBER_FREESPACE_INITIALIZED(m, false);
++=09=09ca->mi =3D bch2_mi_to_cpu(m);
++=09}
++
+ =09mutex_unlock(&c->sb_lock);
+=20
+ =09c->curr_recovery_pass =3D BCH_RECOVERY_PASS_NR;
+--=20
+2.47.0
 
-There are some with conflicts, but since Linus insists on having an
-explanation for merge conflicts, those pull requsts contain those
-instructions within them. In those cases I manually followed the
-instructions to resolve the conflicts (which were trivial so far).
 
-I'll likely send a mail out *only* if I see a non-trivial merge conflict
-without an explanation in the body.
-
->(...)
->
->> Current testing:
->>   - LKFT: https://qa-reports.linaro.org/lkft/sashal-linus-next/
->>   - KernelCI: https://t.ly/KEW7F
->
->That's great to have more tests being executed! Who is going to monitor
->the results? This task can quickly take time if this person also has to
->check for false positives and flaky tests.
->
->Are the maintainers supposed to regularly monitor the results for the
->tests they are responsible for? Or will they be (automatically?) emailed
->when there is a regression?
-
-I'm not sure about this part. While I look at it in and will likely send
-a mail out if I see something fishy, the only change in workflow that I
-hope will happen here is Linus looking at a dashboard or two before he
-begins his daily merge session.
-
--- 
-Thanks,
-Sasha
 
