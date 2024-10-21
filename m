@@ -1,70 +1,39 @@
-Return-Path: <linux-kernel+bounces-375220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57629A9351
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:29:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DEA39A9354
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 328E31F22D90
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:29:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5249283A80
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778471FDFA5;
-	Mon, 21 Oct 2024 22:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dU3avb9D"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D4ADDAB
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 22:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146921FDFBF;
+	Mon, 21 Oct 2024 22:29:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4821DDAB;
+	Mon, 21 Oct 2024 22:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729549759; cv=none; b=CnQASjCTdARYKzKG+kFKtzFX4w3AnJdKbngPrv7UbZa+pn1IOrNieukiMF2PfGtpWv6OT4emyRkHt6HUC8Dmev+WzdAwmoF8jmGNP3Dt6UQ57E9cW3KioDGhd0PyTXqsubT0rzlQ2wd4uaBR+2M6725brtNCsm9zjImQT+UoE7I=
+	t=1729549785; cv=none; b=fBUkkm6YcHEAzgQs2PUp7W11YoRM9tfdMUskEyQX8qoJQU55r0wWgagX8HyDn1xXyVRC9K0oE3bvUP9I9iyOtd2N8lvK/64fNY5fBcTyXdjiXMRtwz59EHAkOWqqKKlIQ7sf5a6Kw6TijVlA2CCFNRSo1u8oocLC7p1XwQZcfhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729549759; c=relaxed/simple;
-	bh=DK5cAoaLipLQJ1Qq11dmR38yV4BdPfJO6Co5qz6yZms=;
+	s=arc-20240116; t=1729549785; c=relaxed/simple;
+	bh=dKZrfhPdmyuzohwpr6Ekx7caFoT70m1yEyJd4AdAoyk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LjhNkHbGL/R57wQRAoEsKxxeKPQtr5ds35kyAvQx1EmMXwMLhTAadgxxSwviemS1XW5UM4N8VLrRaAKtNSMDuWQfExBC62RWmY3mI9IPpvNtbPgnv5qDb3PkLX9NlVwfh/bFVq8imMrFF7eIUMgJgrnYe8jPRJLXohJAKbiRB/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dU3avb9D; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-83abdaf8a26so127615239f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:29:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729549757; x=1730154557; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TA4XM5hTiGNOd+KQ3u3JDVeWEwmpgPZoFJVi0gICoWw=;
-        b=dU3avb9DlJ5lt7m1IhWT0B0X0PRM9XWtSThrVY1rHd1jwO0XBOf9wB9FeH+eAJDzcx
-         YERoORGw2jyZ0afLaG0mNh2tWZEfQCVO9+u8nEBwq931ZsbTyU/cuyhCduzSi2GTKz8b
-         eiA9OSmNgUOqTlKFLuAO4SX1eW73ANAHLszPE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729549757; x=1730154557;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TA4XM5hTiGNOd+KQ3u3JDVeWEwmpgPZoFJVi0gICoWw=;
-        b=wB768+TGDz3Jx7DZOMWf7PZl5yEFtCajSxscnlwYFbFmzfHKDWdqdwciYnihE1dK2y
-         y5e8q7IhBepSUKP0I4JEznCRF5bVjkwWXpie/DVRHbPA0xTEefRw9LT5HQnrKdBu3JkX
-         W0O3LYIigttr5VRTWezI1lD/EpoY5fzL4Qv/UWk0M6rVpfdkIugSdiXSBhByNtaDxexN
-         cjPDVDcT13m9vfN8l6Fqy7RCCijNyrciyCF/TURWMVxhp4e9gzAkX+Z/60K5l6EQoqhp
-         KXK+TBosFBxgeoePz7oRzPjOd0zfg4galPo6THVW0PJREGnMidQ5/5Gw3SAuW/umwT3v
-         vaWg==
-X-Forwarded-Encrypted: i=1; AJvYcCW118coVq6/OKXYXmn5bM0FEoUfdmowxoSXOdMbZSv6KwCDun9LNZQtsScliFrN6dLR/Its5ANFsqkDyho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXTibeUgCfcmNq8Dlmf7vCOr4lWl6GsDYFCLJviLeolELpl/JR
-	Rj0cT119ctv4I+dxqcJwF+L14ZAxlta+bWEDDU7eK1tdGfumLSWJb70kSe+d6wA=
-X-Google-Smtp-Source: AGHT+IE+r2Sv2Vi8956gLES8UxPVDLR8WmGuc8PVr3WktKjFjqRF4T4ZtzxG0LU9kkxugixlftUMTA==
-X-Received: by 2002:a05:6602:6d16:b0:835:4d27:edf6 with SMTP id ca18e2360f4ac-83aba5f2764mr1039351939f.7.1729549757368;
-        Mon, 21 Oct 2024 15:29:17 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a60947bsm1235916173.116.2024.10.21.15.29.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 15:29:16 -0700 (PDT)
-Message-ID: <6049fc80-b936-496b-b1d0-134de9fc19dc@linuxfoundation.org>
-Date: Mon, 21 Oct 2024 16:29:15 -0600
+	 In-Reply-To:Content-Type; b=QfebGjrRrvJxEz1tMG/QBUvCktBqSBdGOs0cSuzF3nlcbuOCj9gU/HjYspCRcrIIKyiBAKaad0B5LI1JOfIQ9G/0AzG7vLT63c0hZLlCxw0fFkPjXAZ5Pkp7IZvAIEZlLIkAiHr3WOW2PEDDXR8pdpn6w6O0PSibj6Zew78Vpfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D96B1497;
+	Mon, 21 Oct 2024 15:30:12 -0700 (PDT)
+Received: from [10.57.65.103] (unknown [10.57.65.103])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DEC963F71E;
+	Mon, 21 Oct 2024 15:29:41 -0700 (PDT)
+Message-ID: <1ef9dcdc-763d-418b-8d22-6ba139671f70@arm.com>
+Date: Mon, 21 Oct 2024 23:30:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,46 +41,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.11 000/135] 6.11.5-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241021102259.324175287@linuxfoundation.org>
+Subject: Re: [PATCH v2 06/12] thermal: core: Consolidate thermal zone locking
+ during initialization
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <2215082.irdbgypaU6@rjwysocki.net>
+ <1920382.CQOukoFCf9@rjwysocki.net>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241021102259.324175287@linuxfoundation.org>
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <1920382.CQOukoFCf9@rjwysocki.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/21/24 04:22, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.5 release.
-> There are 135 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+
+On 10/4/24 20:23, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
-> Anything received after that time might be too late.
+> The part of thermal zone initialization carried out under
+> thermal_list_lock acquires the thermal zone lock and releases it
+> multiple times back and forth which is not really necessary.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
+> Instead of doing this, make it acquire the thermal zone lock once after
+> acquiring thermal_list_lock and release it along with that lock.
 > 
-> thanks,
+> For this purpose, move all of the code in question to
+> thermal_zone_init_complete() introduced previously and provide an
+> "unlocked" variant of thermal_zone_cdev_bind() to be invoked from
+> there.
 > 
-> greg k-h
+> Also notice that a thermal zone does not need to be added to
+> thermal_tz_list under its own lock, so make the new code acquire
+> the thermal zone lock after adding it to the list.
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> This is a new iteration of
+> 
+> https://lore.kernel.org/linux-pm/10548633.nUPlyArG6x@rjwysocki.net/
+> 
+> v1 -> v2: Rebase, update the changelog.
+> 
+> ---
+>   drivers/thermal/thermal_core.c |   39 ++++++++++++++++++++++-----------------
+>   1 file changed, 22 insertions(+), 17 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -933,16 +933,14 @@ void print_bind_err_msg(struct thermal_z
+>   		cdev->type, thermal_zone_trip_id(tz, trip), ret);
+>   }
+>   
+> -static void thermal_zone_cdev_bind(struct thermal_zone_device *tz,
+> -				   struct thermal_cooling_device *cdev)
+> +static void __thermal_zone_cdev_bind(struct thermal_zone_device *tz,
+> +				     struct thermal_cooling_device *cdev)
+>   {
+>   	struct thermal_trip_desc *td;
+>   
+>   	if (!tz->ops.should_bind)
+>   		return;
+>   
+> -	mutex_lock(&tz->lock);
+> -
+>   	for_each_trip_desc(tz, td) {
+>   		struct thermal_trip *trip = &td->trip;
+>   		struct cooling_spec c = {
+> @@ -959,6 +957,14 @@ static void thermal_zone_cdev_bind(struc
+>   		if (ret)
+>   			print_bind_err_msg(tz, trip, cdev, ret);
+>   	}
+> +}
+> +
+> +static void thermal_zone_cdev_bind(struct thermal_zone_device *tz,
+> +				   struct thermal_cooling_device *cdev)
+> +{
+> +	mutex_lock(&tz->lock);
+> +
+> +	__thermal_zone_cdev_bind(tz, cdev);
+>   
+>   	mutex_unlock(&tz->lock);
+>   }
+> @@ -1336,8 +1342,18 @@ EXPORT_SYMBOL_GPL(thermal_zone_get_crit_
+>   
+>   static void thermal_zone_init_complete(struct thermal_zone_device *tz)
+>   {
+> +	struct thermal_cooling_device *cdev;
+> +
+> +	mutex_lock(&thermal_list_lock);
+> +
+> +	list_add_tail(&tz->node, &thermal_tz_list);
+> +
+>   	mutex_lock(&tz->lock);
+>   
+> +	/* Bind cooling devices for this zone. */
+> +	list_for_each_entry(cdev, &thermal_cdev_list, node)
+> +		__thermal_zone_cdev_bind(tz, cdev);
+> +
+>   	tz->state &= ~TZ_STATE_FLAG_INIT;
+>   	/*
+>   	 * If system suspend or resume is in progress at this point, the
+> @@ -1350,6 +1366,8 @@ static void thermal_zone_init_complete(s
+>   	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
+>   
+>   	mutex_unlock(&tz->lock);
+> +
+> +	mutex_unlock(&thermal_list_lock);
+>   }
+>   
+>   /**
+> @@ -1386,7 +1404,6 @@ thermal_zone_device_register_with_trips(
+>   					unsigned int polling_delay)
+>   {
+>   	const struct thermal_trip *trip = trips;
+> -	struct thermal_cooling_device *cdev;
+>   	struct thermal_zone_device *tz;
+>   	struct thermal_trip_desc *td;
+>   	int id;
+> @@ -1514,20 +1531,8 @@ thermal_zone_device_register_with_trips(
+>   			goto unregister;
+>   	}
+>   
+> -	mutex_lock(&thermal_list_lock);
+> -
+> -	mutex_lock(&tz->lock);
+> -	list_add_tail(&tz->node, &thermal_tz_list);
+> -	mutex_unlock(&tz->lock);
+> -
+> -	/* Bind cooling devices for this zone */
+> -	list_for_each_entry(cdev, &thermal_cdev_list, node)
+> -		thermal_zone_cdev_bind(tz, cdev);
+> -
+>   	thermal_zone_init_complete(tz);
+>   
+> -	mutex_unlock(&thermal_list_lock);
+> -
+>   	thermal_notify_tz_create(tz);
+>   
+>   	thermal_debug_tz_add(tz);
+> 
+> 
 > 
 
-Compiled and booted on my test system. No dmesg regressions.
-
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
