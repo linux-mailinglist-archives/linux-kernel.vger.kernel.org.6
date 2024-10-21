@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-374233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4A69A6737
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:57:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D179A6750
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A9991F21B2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:57:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D9E9B26849
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBF11E883C;
-	Mon, 21 Oct 2024 11:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPtKl6Bg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F085F1EF086;
+	Mon, 21 Oct 2024 11:57:20 +0000 (UTC)
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786FD1E884E;
-	Mon, 21 Oct 2024 11:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969EF1EBFEA
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729511798; cv=none; b=nBVVvYw6Kwc7ec6WjVaXBpvcedKckg3Z3vNcZMAuSItN1CAuBtIseTchs4Q4P5m6GrvdRxJxgnqNEDiWss53v35so07DH3L06qQNt0nPLFF22K3CtJfFpf8nEzNX6EQ2BfFK1KTYKkZqQAIiAPOXpa1Si9/gW5Zypcocdy3lT7k=
+	t=1729511840; cv=none; b=rh/mxX0+/AtVp4VtkbZTJaZ6Vv/d974MCUu5r2BTl5JszOk6IUeO48pXLVn1QOpP5X+fKq3M//HoKMlGj/e53keDw8VymDOn7QLZdb2Sv0n2bXHQR8DBGtqQZHouWb8UJjHDiyUYXjsEWRKFD9CyYYIHwL86CiqwqQcbxee8DEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729511798; c=relaxed/simple;
-	bh=iZKzS4vmBiEZsEttEtxZcIb92mfcq/gi05eIuco9YVA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iUHwda2d8VLiNRTPBIBzdyOgxTtmo1ad7c8L/1h/RT8SSEiGJ/1uhHfsC9rVKnM1IvcwBBhlO7fyg1fYKOxdCLudKOGdryw/MxcovJGN8cCSiqBkghWAp318vOx1fBPPe47lSWNAPK0Qci7qJ6jQSsfTzz3Pwf82kt0Tnp8qwYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPtKl6Bg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C44EC4CEE8;
-	Mon, 21 Oct 2024 11:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729511798;
-	bh=iZKzS4vmBiEZsEttEtxZcIb92mfcq/gi05eIuco9YVA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GPtKl6Bggt4/TamihrTZBB77XXeeJpGHQQXXlzjlEZKJsozvj2Agb8oOpdfFEhHP5
-	 /zCWStUHugubB24PJxmQXJdvgtMhwxMvXUVKcyfD8ru0bvCBIYUUxJfT+MZfKsmKDc
-	 f16aEDpzRJ3CkV+e2dizG+4/aCHSNSJD9GaI0Qxl/QeDdAqxDD3xTFJSfR65jyNGU4
-	 HTOD/YuqWJhbOm3uAYUWLqXarDdM6dT/LI+PuVvi72JOwitrLkBqF7guAxaZG0kOYg
-	 a2xuMBZ0w6MnBxy+uEc83TPLO9xrdlISEStDlXNMqIOLI3Vhn0YnDR01I3pN5GvYi9
-	 HAyvCdcW3W2fg==
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e5f9712991so2075948b6e.2;
-        Mon, 21 Oct 2024 04:56:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU25diKch/9lrvlhuHyH2Wvnn0h661i/OZpfP5hKVTLZrfBGOhHq789yxoqGAXGREZp8S7sU2qlpKks@vger.kernel.org, AJvYcCU3ufUWMwhKo9ZZs6a3jXJS9t/l8qAK+H37FtAl9enmaGsdThmqSYgnm8Z8gei59VnsRHRX7idgyVwL11Dl@vger.kernel.org, AJvYcCWPeqMcbm2JHiUhqicYX+WhsmiO1PYwkUNuU/dT7O5FWiz7G2QG0ekUonOTFWgZpkvxUCZGgCjB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDR36VDb1o/0ZDdg3g/Dy2fD/DL4xTMNufRB2X6vJGMFFTIC4L
-	XyKqhGv0MVjujfYje1NY2kQEuISdylgLeBwVoLooLISLqaf2yF9skD8Nr319zyyNha6AJ+98GKr
-	oRL5087oa2GtVoNJ2qky+ybIjf5c=
-X-Google-Smtp-Source: AGHT+IG5XhnUvagQdAMqem7+z6gKQWhQFAFH3ahh4zbsV1c6ekkCAHEo7YEbfB1J8j3e+1DzqVdfJ0Kk90T2t2VoakA=
-X-Received: by 2002:a05:6871:5824:b0:277:c28c:147e with SMTP id
- 586e51a60fabf-2892c352bb2mr8523011fac.21.1729511797250; Mon, 21 Oct 2024
- 04:56:37 -0700 (PDT)
+	s=arc-20240116; t=1729511840; c=relaxed/simple;
+	bh=uvKF2V3H4LquVX1wvNEb/CZNdDfNMiP7msDnCiH+Rc4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=lksz2oAD0wn9bpwmnjAJkXj0pc8h2IxhgC0GeafI5veP13lmwGCLK5b5nhof+LoultlWmFpXDnvlwRJHpSl41BEkbS0CgwN0/74sIww8N2MsPP2pZ+PB8Vfk6FgfqnL8KjF/EMoChOaVSPy6et8/xmqHqgFOG1KgwVhaxaRxgmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:a141:3544:6743:cb10])
+	by laurent.telenet-ops.be with cmsmtp
+	id Szx72D0025HsszL01zx70H; Mon, 21 Oct 2024 13:57:08 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t2r1m-004FMK-J9;
+	Mon, 21 Oct 2024 13:57:07 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t2r22-00CZiV-Qx;
+	Mon, 21 Oct 2024 13:57:06 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC] MAINTAINERS: Re-add cancelled Renesas driver sections
+Date: Mon, 21 Oct 2024 13:56:51 +0200
+Message-Id: <0a189e2c4090a1b308e18005d2552e335bac354f.1729511337.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017-lg-gram-pro-keyboard-v2-1-7c8fbf6ff718@heusel.eu>
-In-Reply-To: <20241017-lg-gram-pro-keyboard-v2-1-7c8fbf6ff718@heusel.eu>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 21 Oct 2024 13:56:21 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hkNWNb912Ye7cgPVhLyCEHynNFtf0=xWiv0hBbPPwsAw@mail.gmail.com>
-Message-ID: <CAJZ5v0hkNWNb912Ye7cgPVhLyCEHynNFtf0=xWiv0hBbPPwsAw@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: resource: Add LG 16T90SP to irq1_level_low_skip_override[]
-To: Christian Heusel <christian@heusel.eu>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dirk Holten <dirk.holten@gmx.de>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 17, 2024 at 1:16=E2=80=AFPM Christian Heusel <christian@heusel.=
-eu> wrote:
->
-> The LG Gram Pro 16 2-in-1 (2024) the 16T90SP has its keybopard IRQ (1)
-> described as ActiveLow in the DSDT, which the kernel overrides to EdgeHig=
-h
-> which breaks the keyboard.
->
-> Add the 16T90SP to the irq1_level_low_skip_override[] quirk table to fix
-> this.
->
-> Reported-by: Dirk Holten <dirk.holten@gmx.de>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219382
-> Cc: stable@vger.kernel.org
-> Suggested-by: Dirk Holten <dirk.holten@gmx.de>
-> Signed-off-by: Christian Heusel <christian@heusel.eu>
-> ---
-> Note that I do not have the relevant hardware since I'm sending in this
-> quirk at the request of someone else.
-> ---
-> Changes in v2:
-> - fix the double initialization warning reported by the kernel test
->   robot, which accidentially overwrote another quirk
+Removing full driver sections also removed mailing list entries, causing
+submitters of future patches to forget CCing these mailing lists.
 
-Applied as 6.12-rc material, thanks!
+Fixes: 6e90b675cf942e50 ("MAINTAINERS: Remove some entries due to various compliance requirements.")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Anyone who wants to take over maintenance for these drivers?
+Thanks in advance!
+---
+ MAINTAINERS | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-> - Link to v1: https://lore.kernel.org/r/20241016-lg-gram-pro-keyboard-v1-=
-1-34306123102f@heusel.eu
-> ---
->  drivers/acpi/resource.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
-> index 129bceb1f4a27df93439bcefdb27fd9c91258028..7fe842dae1ec05ce6726af2ae=
-4fcc8eff3698dcb 100644
-> --- a/drivers/acpi/resource.c
-> +++ b/drivers/acpi/resource.c
-> @@ -503,6 +503,13 @@ static const struct dmi_system_id irq1_level_low_ski=
-p_override[] =3D {
->                         DMI_MATCH(DMI_BOARD_NAME, "17U70P"),
->                 },
->         },
-> +       {
-> +               /* LG Electronics 16T90SP */
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "LG Electronics"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "16T90SP"),
-> +               },
-> +       },
->         { }
->  };
->
->
-> ---
-> base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-> change-id: 20241016-lg-gram-pro-keyboard-9a9d8b9aa647
->
-> Best regards,
-> --
-> Christian Heusel <christian@heusel.eu>
->
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f04cba42a59301fa..97a23cea2729942e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19521,6 +19521,14 @@ S:	Supported
+ F:	Documentation/devicetree/bindings/i2c/renesas,iic-emev2.yaml
+ F:	drivers/i2c/busses/i2c-emev2.c
+ 
++RENESAS ETHERNET AVB DRIVER
++L:	netdev@vger.kernel.org
++L:	linux-renesas-soc@vger.kernel.org
++F:	Documentation/devicetree/bindings/net/renesas,etheravb.yaml
++F:	drivers/net/ethernet/renesas/Kconfig
++F:	drivers/net/ethernet/renesas/Makefile
++F:	drivers/net/ethernet/renesas/ravb*
++
+ RENESAS ETHERNET SWITCH DRIVER
+ R:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+ L:	netdev@vger.kernel.org
+@@ -19570,6 +19578,13 @@ F:	Documentation/devicetree/bindings/i2c/renesas,rmobile-iic.yaml
+ F:	drivers/i2c/busses/i2c-rcar.c
+ F:	drivers/i2c/busses/i2c-sh_mobile.c
+ 
++RENESAS R-CAR SATA DRIVER
++L:	linux-ide@vger.kernel.org
++L:	linux-renesas-soc@vger.kernel.org
++S:	Supported
++F:	Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
++F:	drivers/ata/sata_rcar.c
++
+ RENESAS R-CAR THERMAL DRIVERS
+ M:	Niklas Söderlund <niklas.soderlund@ragnatech.se>
+ L:	linux-renesas-soc@vger.kernel.org
+@@ -19645,6 +19660,15 @@ S:	Supported
+ F:	Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
+ F:	drivers/i2c/busses/i2c-rzv2m.c
+ 
++RENESAS SUPERH ETHERNET DRIVER
++L:	netdev@vger.kernel.org
++L:	linux-renesas-soc@vger.kernel.org
++F:	Documentation/devicetree/bindings/net/renesas,ether.yaml
++F:	drivers/net/ethernet/renesas/Kconfig
++F:	drivers/net/ethernet/renesas/Makefile
++F:	drivers/net/ethernet/renesas/sh_eth*
++F:	include/linux/sh_eth.h
++
+ RENESAS USB PHY DRIVER
+ M:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+ L:	linux-renesas-soc@vger.kernel.org
+-- 
+2.34.1
+
 
