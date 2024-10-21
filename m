@@ -1,127 +1,161 @@
-Return-Path: <linux-kernel+bounces-374952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB82C9A725D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:30:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7839A725A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB5451C228C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E49F1F223AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7E01EF920;
-	Mon, 21 Oct 2024 18:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F251FAC46;
+	Mon, 21 Oct 2024 18:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfsoMIFR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b="rOV7SWwB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NJjdcg90"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318833BBF2;
-	Mon, 21 Oct 2024 18:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC641F942D;
+	Mon, 21 Oct 2024 18:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729535448; cv=none; b=ns9GVLk+AUng37fygShyXcqrNi0UNxNcsuuEJGPwYR7nzcOiy2TKZiiyncl9uoraB+wSbsqHMr86pRe1YMdJzlvtPlXBniOm3WnGCg7AQpbxAe6gTLUZg90chRvtB15z9Iu6AinZHuXrxhvpFl1yOJeqXv9SOe2Yydk0soZwXq0=
+	t=1729535353; cv=none; b=LqTpWZlokU59szIxtIE1LjRl99mZUoPfieHYW8l7Bo/wUOr1hFx3ixean3dihkKhFpDkL22w0ZZi6lIh9y1DV4YEcjVcaVa9l2EVoWB+/DnEOvzFNOW4BinSkyeP3wCGlvcjSmt3xiiqD7jndcHvpYwx5ifkLPoUoGREUlOGAzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729535448; c=relaxed/simple;
-	bh=60uYPtFvmEu2DAWYDp3MV/mD0VByiSXYotBRept3Xec=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SE3cKOntobpyQ8T5S5ySg9K9G/eFDCjQk3TzoQWN8i0IP2D51vmqSQE5MfUVHVGcBzuvvjq8FACe6gDyqAScHatydqwXlzm5+APsbna9hO6oFAnMpxO0YYXS9GAIknqZoYX2KMgAQbxZX7uaaJsvjhSkE9BgBhVLxqgQwY7BQdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfsoMIFR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE51C4CEC3;
-	Mon, 21 Oct 2024 18:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729535447;
-	bh=60uYPtFvmEu2DAWYDp3MV/mD0VByiSXYotBRept3Xec=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nfsoMIFRlhZUaHXjWdhk2esBc4pkRXhjFyTnrPna9zJ6bI5EtnMeeN6Wr7lqZnhE3
-	 zREvWyIIeY3Ewge4p9D8De7WDHuJnR50gBmun4iM9MYjxPNityP9yT5GK1aDZVfM06
-	 SBsfFdeTYEimrrB5+h+4bXpF5ZG6fg3vfbE2c00dr1hb9E/eWs7kPVw063Tt7vRP50
-	 V974dczLX8yRct4p2F+pH2SYlaPn/8acrCuAibO+ZoDeof2/wS5r6Y5aQrHCS5qdOC
-	 vp+HY3tPC/hbJiq8CqXi1dWwI2gZ4xDXdtTsCyO6E12b5U4yUfoCWxbwknVPgLM657
-	 sFsxCcF5K0d8g==
-Date: Mon, 21 Oct 2024 19:30:41 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Justin Weiss <justin@justinweiss.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Hans de
- Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v1 1/1] iio: gyro: bmg160: Drop most likely fake ACPI
- IDs
-Message-ID: <20241021193041.07ed79c6@jic23-huawei>
-In-Reply-To: <ZxX49BzZJtoYOBI7@smile.fi.intel.com>
-References: <20241018145732.2181309-1-andriy.shevchenko@linux.intel.com>
-	<20241018185105.41a2db06@jic23-huawei>
-	<87sestcg1e.fsf@justinweiss.com>
-	<ZxX49BzZJtoYOBI7@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729535353; c=relaxed/simple;
+	bh=wGf56HOWPEAJ4DCDdsL3K6DHH1vg5bhFGfsMNNo+ktI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f7cWlBk4QOf3F9hvkPMGL6F00r94+GhFzUbDJFw0tjmgcZ1YV9s0MgeD6cHPi/QVf++gIvQIiHSjZRZN0V4yXi0N2YePacDQOPUv7Gfnq9fk/YtASBt1qNVjuYRafq2kfvzL/IpDeDIZxtfSS9W6xYKKvSQzvAP3c/JEKYSnT4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io; spf=pass smtp.mailfrom=ryhl.io; dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b=rOV7SWwB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NJjdcg90; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ryhl.io
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id E3F821380211;
+	Mon, 21 Oct 2024 14:29:09 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Mon, 21 Oct 2024 14:29:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1729535349;
+	 x=1729621749; bh=lfMv/gEB7Fyh2WyXq+JcQ/WoYPqo5T4/tBmvvpdRhJA=; b=
+	rOV7SWwBsrFdn/qJriNNPluYBAnFHA7xrFZNYPZO9w0ApdMlkRE/ggcWuReQoofH
+	wNx6c88VuofHtZX8Dn7PO/3E1zQOAQAsn0MZYZsTipH1XxbVhLBIU+U322DaO1zf
+	gvv4fv6lFz7lmjbeMM2LEFLT0Pt0CjC0tqVye9M2VRCEIb2yPc3mAfoXLnwsC03D
+	Zpab4Zw+ZiOsAXCt2GOEDxscsQg8WIox9jooP1y5os8svt0U7cVaIF4MQ+FPzq9O
+	7u9eJyamlBV9bWj106g7NLgzXy8kJVPOh+Cg6yj/vdnyNYhkAvEaMIm46Pe7OPIq
+	c89qz/IO1qseUPa4+UPffw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729535349; x=
+	1729621749; bh=lfMv/gEB7Fyh2WyXq+JcQ/WoYPqo5T4/tBmvvpdRhJA=; b=N
+	Jjdcg90unnsZwAiQtEjrllg2dHY5NvgV5fv/g53R61XbEqQZ0Fz6/w6NaiD/N7mg
+	hsuDJtitLqsoIibx8WSP5zQU1lu+0ebYDhKaIBGnSXVHyK3zBwyRLE6lFfmKHfMC
+	ujTgEkuiv/Ht8zOxrNbtvUhuBNzLQWx7TzsaLfUUTgwSIyKziOQUzdunn5MaoAho
+	/lbLRSqwNyqdNyouoAiiTwAKKwUjdZrOdkuRxoon6hxc3ZlYqToHs3l4k3vGd+IG
+	OhYtEVlQbQBfp+2jyozSu++YhFWwe9L7WtP7xV+rvs1TljkYaY4fbZyn0FsYhMLm
+	XaMT8gU+ubgiSZK51K56w==
+X-ME-Sender: <xms:dZ0WZyd4qz17f9PXyTuPLDMr76lLVXBLM3ywl9QcbEjQgxxoj-pnQw>
+    <xme:dZ0WZ8NO3y24dQjZdFmtRJBjkOl4zCNLllboc45om9bn2cY0kMCjxvkS8BlpZiuVU
+    UoQxXlr7ndXyYG2AA>
+X-ME-Received: <xmr:dZ0WZzgT_NUt-vI0l2kLfsoC-ivNl0xtxOsXiZbeo0xEGZza_U0d6JvftP-F_pMc1w2GX-gCUdkEwDpIVnYi6MdwyaRJjNeZDP0N>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledguddvhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
+    jeenucfhrhhomheptehlihgtvgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqne
+    cuggftrfgrthhtvghrnhepgfduleegleehieelhefgjeegleeffeeliefgtdfgteeflefg
+    fedvgefgvdetjeetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrlhhitggvsehrhihhlhdr
+    ihhopdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    epjhhhuhgssggrrhgusehnvhhiughirgdrtghomhdprhgtphhtthhopehojhgvuggrsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrd
+    gtohhmpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpg
+    hghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhs
+    ihhnsehprhhothhonhdrmhgvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehtmhhgrhhoshhssehumhhitghhrdgvughu
+X-ME-Proxy: <xmx:dZ0WZ__qGyKzsnoBIj8TDhjBW-Yo3OQhnJNlgp0ig9muq0po0qG2CQ>
+    <xmx:dZ0WZ-vsW5zEnRXZEj-iPUp7IZdr-BQnBJH68yy90j_NwYIHPP1E2A>
+    <xmx:dZ0WZ2Geid23f1MgKGVpVRYfHhwC1AUgJ65zk_uwU9QEKDMHXGTuyg>
+    <xmx:dZ0WZ9Mm7Yn7gDpSL-RD3OsR2_5ILLRMTFdzIoLJBNLP6yi0xmD34A>
+    <xmx:dZ0WZ6O0GK03kktAbJxHNRFIN0WBd4rN97WXRZVi_FZ0Jmu7AZuX1qbh>
+Feedback-ID: i56684263:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Oct 2024 14:29:06 -0400 (EDT)
+Message-ID: <56169ee4-321c-4546-bb89-2f9530adb01c@ryhl.io>
+Date: Mon, 21 Oct 2024 20:32:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] rust: page: add Rust version of PAGE_ALIGN
+To: John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ linux-mm@kvack.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+References: <20241016-page-align-v2-1-e0afe85fc4b4@google.com>
+ <81e9b289-b95c-4671-b442-1a0ac3dae466@nvidia.com>
+Content-Language: en-US, da
+From: Alice Ryhl <alice@ryhl.io>
+In-Reply-To: <81e9b289-b95c-4671-b442-1a0ac3dae466@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 21 Oct 2024 09:47:16 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On 10/21/24 8:20 PM, John Hubbard wrote:
+> On 10/16/24 4:34 AM, Alice Ryhl wrote:
+>> This is a useful for helper for working with indices into buffers that
+>> consist of several pages. I forgot to include it when I added PAGE_SIZE
+>> and PAGE_MASK for the same purpose in commit fc6e66f4696b ("rust: add
+>> abstraction for `struct page`").
+>>
+>> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>> ---
+>> Changes in v2:
+>> - Make the function const.
+>> - Address integer overflow in docs.
+>> - Link to v1: https://lore.kernel.org/r/20241015-page-align- 
+>> v1-1-68fbd8b6d10c@google.com
+>> ---
+>>   rust/kernel/page.rs | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
+>> index 208a006d587c..9ef01929e7d0 100644
+>> --- a/rust/kernel/page.rs
+>> +++ b/rust/kernel/page.rs
+>> @@ -20,6 +20,15 @@
+>>   /// A bitmask that gives the page containing a given address.
+>>   pub const PAGE_MASK: usize = !(PAGE_SIZE - 1);
+>> +/// Round up the given number to the next multiple of `PAGE_SIZE`.
+>> +///
+>> +/// It is incorrect to pass an address where the next multiple of 
+>> `PAGE_SIZE` doesn't fit in a
+>> +/// `usize`.
+>> +pub const fn page_align(addr: usize) -> usize {
+>> +    // Brackets around PAGE_SIZE-1 to avoid triggering overflow 
+>> sanitizers in the wrong cases.
+> 
+> Silly nit, but I did start looking for brackets that aren't there, so:
+> 
+> s/Brackets/parentheses/
+This isn't a distinction that exists in my vocabulary, shrug.
 
-> On Fri, Oct 18, 2024 at 01:27:57PM -0700, Justin Weiss wrote:
-> > Jonathan Cameron <jic23@kernel.org> writes:
-> >   
-> > > On Fri, 18 Oct 2024 17:57:32 +0300
-> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > >  
-> > >> The commits in question do not proove that ACPI IDs exist.
-> > >> Quite likely it was a cargo cult addition while doing that
-> > >> for DT-based enumeration. Drop most likely fake ACPI IDs.
-> > >> 
-> > >> The to be removed IDs has been checked against the following resources:
-> > >> 1) DuckDuckGo
-> > >> 2) Google
-> > >> 3) MS catalog: https://www.catalog.update.microsoft.com/Search.aspx
-> > >> This gives no useful results in regard to DSDT, moreover, the official
-> > >> vendor IDs in the registry for Bosh are BSG and BOSC.
-> > >>   
-> > >
-> > > I'm nervous about Bosch drivers in the wild given recent report
-> > > from Justin
-> > > https://lore.kernel.org/linux-iio/87jzeboi3g.fsf@justinweiss.com/  
-> 
-> I know about Realtek case, but for BMI0/BMI it's interesting that MS
-> catalog shows hits on BMI160 (note no leading zero!), but not on BMI0160.
-> 
-> > > Justin, I couldn't find the driver you were referring to for the bmi160,
-> > > is it online somewhere?  
-> > 
-> > Yes, the BMI160/260 Windows driver is on this page:
-> > https://ayaneo.com/support/download
-> > 
-> > It's at the very bottom, under "AYANEO Universal Gyro Driver." GPD also
-> > has a copy inside their driver pack under the "Drivers & BIOS" tab here:
-> > https://www.gpd.hk/gpdwinminifirmwaredriver, but the download is often  
-> >>  at capacity unless you're signed into Google.  
-> 
-> I was not Cc'ed on ACPI ID parts, please make sure that the patch
-> that adds it has a pointer to the actual device which uses it _and_
-> DSDT excerpt of the respective Device object. Without that info provided,
-> NAK from me.
-Device we have in the patch comments. Justin if you can supply the DSDT
-excerpts in reply to that patch that would be great.
+Miguel, feel free to reword when you pick this.
 
-I'll try and remember to check you are on the CC next time Andy.
-
-Jonathan
-> 
-> > > Also if you have other bosch drivers could you check for these + bmc150
-> > > IDs Andy is proposing dropping in:
-> > >
-> > > https://lore.kernel.org/linux-iio/20241018145805.2181682-1-andriy.shevchenko@linux.intel.com/  
-> > 
-> > Unfortunately, the 160/260 driver is the only one I have. I wanted gyro
-> > support in Linux for a handheld PC I bought, and it was the IMU that
-> > happened to be inside.  
-> 
-
+Alice
 
