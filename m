@@ -1,132 +1,146 @@
-Return-Path: <linux-kernel+bounces-375092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5DD9A90BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:14:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8088E9A90D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AA8F284902
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:14:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9A2DB20EDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F101FE0FF;
-	Mon, 21 Oct 2024 20:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6FD1FBCBC;
+	Mon, 21 Oct 2024 20:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzLFHJWw"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="f5dDGPMj"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28081FCF7E;
-	Mon, 21 Oct 2024 20:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140201DFE22
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 20:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729541645; cv=none; b=WZq9h4YRy+luxpRrkDSd921k+6CPyGR3hhAWN7KYJRmp7CD15BM5evAaQWMw88OgIKdQSaRGPF7Dp7zy8BqnZsatXE7qpJ8CHZx0FomXQPcYmfDAboizSvxLM+x4/QOJy0T/uPqL7K/bggBjtrYkelbzYLXpdDGkW1GN7Kg/LWc=
+	t=1729541773; cv=none; b=LWliViiVeswxhZ8HOHsUhTOZvzkTtVWePfDt0WcAbZdSrMVQOKulvU39aZZk5wGpDYepKtY7T7KDE0SWoQ02ujllp2rF/t1GgyZ76BnATg5tAFr2Xn6K66rNj1NU5iLsBGpEZ4dQTzKqBrRDz7v6oUBxuq4+Eluw974CeqbpMS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729541645; c=relaxed/simple;
-	bh=RhDfivLBp99aqQqN99iX1ihiJWuLb8WZSsBqMTiq5Jw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IxxLJRLK6o9ZYw5KW+32XwHeigR7Mj0J6LYEkOKV6eiHS4qIYcU9RbxXQzxmWbNEnHp/C5DJWuidfR8smqzS0I+90ktN3YW+PSGv9Hwoxd66gtM5aS/3seDcnoyqsVXC8q9CFNpzmXI02r0xuB63LUq7+AH4c4yu21j7Xu4U/Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzLFHJWw; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4316e9f4a40so22248515e9.2;
-        Mon, 21 Oct 2024 13:14:03 -0700 (PDT)
+	s=arc-20240116; t=1729541773; c=relaxed/simple;
+	bh=YFwzr5dHaLpfBFmugZgbppOyLruS2DUUmkleAkWdFGs=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=b0JILz/2DHDl3qC2Pd92wQMGUlUFYeY8kUt25pYzuZdRduf21CtPhkvj+ONxepYEgzKODvuj5vmpvcw8//ArUV4my1ZUG4UcOfYgD3YIkSPES2WnagQI8Z/ko26OESdfQAyO8jYqfIebsHiz+JkbqbyqCCoYYe3AQy8gImQU7VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=f5dDGPMj; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c96df52c52so6315638a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:16:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729541642; x=1730146442; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=suse.com; s=google; t=1729541768; x=1730146568; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g2CsLO4eOiz7g7HoJIEax9lPCTEohwl7YG0piqoqEL8=;
-        b=RzLFHJWwQPIET+M0qFgGBeeQsOKJm/1hjgBxqBg5KKSqEUKfRW8pu/DtS0DwFhj+ig
-         e/oLAmBOXXf2sW0tS+dfJtr/A2ttpALoe12blxAX63dpPnFXlAGLSRN34MuRkpYBHCmP
-         afvBcDh0u03G4gPFJ8JvkHTEZy8V4FfCY1mBvld3ecxMSz7tzKFY8arxNGmLXsTj7VZs
-         aOIjilZZO0yjssY5qYbmDTe+Cmtz0Nkpb6+PhQZQkf9DVNiQnTu2+ujdwhqeIvQclslY
-         KcDYXjPNLUOjnKVKm+jYQYUbDLqzBloNbgEDuSs5htKbSIG2jGS74mxUED2Z8k7VToSg
-         nJlQ==
+        bh=YFwzr5dHaLpfBFmugZgbppOyLruS2DUUmkleAkWdFGs=;
+        b=f5dDGPMjPqSoTXkPFy3H57ZqHFDsZGJXZeeve2dCfL1Mr/8IVIbAUkEQQbWuZSQmyx
+         oVAmwAoZoRVE8RXBs/zNpIocFpM6DI2hcTDTWzY9bzTo+l+XXrKnJBzz/Z+l8XHWImMA
+         fWwNXGNeKA4HdKRFLFMUeCcmdJs9RZI8smA4YqfmWEL/MX/xHZq2zWPg+KRAf3PnzDhf
+         WLIFv/pPYJYoukPMLVLeUnPC4oL3LQkFypDWr9g51lRbK8TTDzfmy+AyPQ7eceKGp5ey
+         ARYUq/Djxq7LrhNedTDEkTjcw4ElgvdDfkRVBC4cWK0HhrVbFe/Ln6AZkpDE6DC2eTk/
+         N8cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729541642; x=1730146442;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g2CsLO4eOiz7g7HoJIEax9lPCTEohwl7YG0piqoqEL8=;
-        b=arzI9rRe11VWNuN7BWZktLfkL76Hdh3NL1w6iUa1Ezjg6k338TgiYSBzC2G2au+sI+
-         OvA93oeQ2hruYln6iZG48u8DPJ+VbXKu8sr6NkxSaIvHQk//siXonBiAFYz0dX/iFQVZ
-         nr3ejceaNwcDCY5SDUY4/0zztsPB1rWcrs76UOu/ffw6rDbngZU2M3lEsUTvFHe17ine
-         5vlOujvSo3ABG41QFigbtfia8UXlMDOhLKynbWLwMGNn9qso0dA/jzc4UKDugUb1mosQ
-         jeJC7bqJmlxwi8Hai6SzpKsWrubcYCmc+32134DJXyR4SpXFF1/QCVIxWWpmpOWe9hjO
-         Ha4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUHdFCPyhTFp/Vl+2NvW2Sb6Qf3mu8vcNNcuoCF8uetM234jSevPT7vN6i2tdCWWhv/EMNgFPjqYyOzujo=@vger.kernel.org, AJvYcCVuZ7oPUNSInae6+jWfOfMIslnpU76eCOdqNXiUFj1QHSmCq92LCNbTe/RGO3W/7JwEVkLm8EP7P8TSa/7miQDDa10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH096E1VUnlBkvEb9MIfTVH2B4D1LUENxRRQ/Fbn7+6JwHxQhr
-	SRLiQoKpCMOqfjSR0CIBc0IzyVWLP8UoMDD8Iw+x+fzPm25ztL7L
-X-Google-Smtp-Source: AGHT+IGI/nrbbKfm2jJIJ6i1KjPgU9c3mQaNa+6RXVH3tUt9fB6wnoYKd7sqCiHgga1LmBOPynV6Cg==
-X-Received: by 2002:adf:f186:0:b0:376:37e:2729 with SMTP id ffacd0b85a97d-37eab6ef33amr8403475f8f.31.1729541642144;
-        Mon, 21 Oct 2024 13:14:02 -0700 (PDT)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:8a20:67a1:e60f:941e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a584f7sm5042935f8f.53.2024.10.21.13.14.01
+        d=1e100.net; s=20230601; t=1729541768; x=1730146568;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=YFwzr5dHaLpfBFmugZgbppOyLruS2DUUmkleAkWdFGs=;
+        b=Nf5B5u7cyG45rOBXZkM4+Bg0EfO/mnLCU+MpT7Ez1ZNPDb6zH0+d3ne4uonlONfc54
+         q6EhjQ/F27lfW3IY3XkVTfpRofbst93CIXx86q52lzunAidpzJrc80+p0xJuxiHovkrH
+         3noojAmpXTmhSlI97bXo9hej8xtZCjzxaaP2CQhvbhArIbyVxUS8S7JZ0X9sbZ1uyclN
+         c73Nc1DZvq48FQ3p6EtAFSlai8jcavTajmEOD/KyCcuFbN1/2a0PExSnagdNqhMJQXNu
+         M1hYYrs2tsTA1AMGLmg8CedXpSPyEQbmR0d7klsZld6zNtQfSYhTRvpgntcltcid1w7Z
+         XyBA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1xpR2G9nkYkH4FbcPxkyh0nJ9r1iTkgfY6fhDQI1hSHw5OfTFj++5fTDOqsrgBexzrh7nPQXPe/v9XxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXptMm2HPgef1YJZtopRfLdrkbc6IPx0LAR5+V93ILPuUOLUlX
+	zcFEz9pfCYOS1HYM3mLu9m0qk0gfxN7VRIS+64TYE7miklaox+xnVm9TFInPHYI=
+X-Google-Smtp-Source: AGHT+IGbLDt8ZDXNCiOg6R8VCnpkVelDlKHWtxr/WdbCXV+AQpiE7tEgEa04LNydACGk9Ydg88ChrA==
+X-Received: by 2002:a17:907:9711:b0:a99:ff79:51a5 with SMTP id a640c23a62f3a-a9a69772b2emr1345823966b.3.1729541768510;
+        Mon, 21 Oct 2024 13:16:08 -0700 (PDT)
+Received: from [192.168.3.33] (61.39.160.45.gramnet.com.br. [45.160.39.61])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91571e3asm249542966b.147.2024.10.21.13.16.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 13:14:01 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 4/4] MAINTAINERS: Add entry for Renesas ASoC drivers
-Date: Mon, 21 Oct 2024 21:13:49 +0100
-Message-ID: <20241021201349.395022-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241021201349.395022-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241021201349.395022-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Mon, 21 Oct 2024 13:16:08 -0700 (PDT)
+Message-ID: <985f11db4b861a7fffcc29b74f9025649cf510d3.camel@suse.com>
+Subject: Re: [PATCH v5 0/3] selftests: livepatch: test livepatching a
+ kprobed function
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: Michael Vetter <mvetter@suse.com>, linux-kselftest@vger.kernel.org, 
+	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 21 Oct 2024 17:16:02 -0300
+In-Reply-To: <20241017200132.21946-1-mvetter@suse.com>
+References: <20241017200132.21946-1-mvetter@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, 2024-10-17 at 22:01 +0200, Michael Vetter wrote:
+> Thanks for all the reviews.
+>=20
+> V5:
+> Replace /sys/kernel/livepatch also in other/already existing tests.
+> Improve commit message of 3rd patch.
+>=20
+> V4:
+> Use variable for /sys/kernel/debug.
+> Be consistent with "" around variables.
+> Fix path in commit message to /sys/kernel/debug/kprobes/enabled.
+>=20
+> V3:
+> Save and restore kprobe state also when test fails, by integrating it
+> into setup_config() and cleanup().
+> Rename SYSFS variables in a more logical way.
+> Sort test modules in alphabetical order.
+> Rename module description.
+>=20
+> V2:
+> Save and restore kprobe state.
 
-Add a new entry to the MAINTAINERS file for Renesas ASoC drivers. This
-entry covers the Renesas R-Car, SH7760 and Migo-R audio drivers, including
-the device tree bindings.
+With the syntax error pointed out by Joe resolved, you can add:
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Tested-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+Reviewed-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8994bb088035..3a07e76fc7fb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19622,6 +19622,15 @@ L:	linux-remoteproc@vger.kernel.org
- S:	Maintained
- F:	drivers/net/wwan/rpmsg_wwan_ctrl.c
- 
-+RENESAS AUDIO (ASoC) DRIVERS
-+M:	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-+L:	linux-sound@vger.kernel.org
-+L:	linux-renesas-soc@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/sound/renesas,rsnd.*
-+F:	sound/soc/renesas/
-+X:	sound/soc/renesas/rz-ssi.c
+>=20
+> Michael Vetter (3):
+> =C2=A0 selftests: livepatch: rename KLP_SYSFS_DIR to SYSFS_KLP_DIR
+> =C2=A0 selftests: livepatch: save and restore kprobe state
+> =C2=A0 selftests: livepatch: test livepatching a kprobed function
+>=20
+> =C2=A0tools/testing/selftests/livepatch/Makefile=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 3 +-
+> =C2=A0.../testing/selftests/livepatch/functions.sh=C2=A0 | 29 +++++----
+> =C2=A0.../selftests/livepatch/test-callbacks.sh=C2=A0=C2=A0=C2=A0=C2=A0 |=
+ 24 +++----
+> =C2=A0.../selftests/livepatch/test-ftrace.sh=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> =C2=A0.../selftests/livepatch/test-kprobe.sh=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 62
+> +++++++++++++++++++
+> =C2=A0.../selftests/livepatch/test-livepatch.sh=C2=A0=C2=A0=C2=A0=C2=A0 |=
+ 12 ++--
+> =C2=A0.../testing/selftests/livepatch/test-state.sh |=C2=A0 8 +--
+> =C2=A0.../selftests/livepatch/test-syscall.sh=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 2 +-
+> =C2=A0.../testing/selftests/livepatch/test-sysfs.sh |=C2=A0 8 +--
+> =C2=A0.../selftests/livepatch/test_modules/Makefile |=C2=A0 3 +-
+> =C2=A0.../livepatch/test_modules/test_klp_kprobe.c=C2=A0 | 38 +++++++++++=
 +
- RENESAS CLOCK DRIVERS
- M:	Geert Uytterhoeven <geert+renesas@glider.be>
- L:	linux-renesas-soc@vger.kernel.org
--- 
-2.43.0
+> =C2=A011 files changed, 150 insertions(+), 41 deletions(-)
+> =C2=A0create mode 100755 tools/testing/selftests/livepatch/test-kprobe.sh
+> =C2=A0create mode 100644
+> tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
+>=20
 
 
