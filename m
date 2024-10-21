@@ -1,154 +1,135 @@
-Return-Path: <linux-kernel+bounces-374411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673AF9A69D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:16:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77B09A69E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 178EEB2570C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:10:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66519B20932
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6221F4732;
-	Mon, 21 Oct 2024 13:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B451F470B;
+	Mon, 21 Oct 2024 13:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x8lIfY2B"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dYyqFYI5"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7B11E0B96
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E4B1E7C0D
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729516236; cv=none; b=SYdWyq0TMfmWMQygl1goB7xmdg5DnzzxMzwilATzUtSd/u4QzAbp/h0IXi8K66KsQF/xrG/ayVOTYECusk0pi8ub+Ob2w1Vfud9GiYOVyXJ87XG19UHkaVoxAtYw0NdEW2foUoWcd6jDvamiFma0CeyLTiMDOPW5thYB+jezZeU=
+	t=1729516256; cv=none; b=mmc+1DQxiWwxT3rtxqL20EJvIfiHyB4+N/9UYTV4iaPgenyteDRJzVxCLfdgRweQKaGpA935SdpxXExqf/Ne8p+nK/9HfU3bxsINqXibp+uMn4ozECawCuR45nrx2dnx2Rn4HqFO51g5312fb5anbsktCdgYPqHhNjGlWbjCstc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729516236; c=relaxed/simple;
-	bh=w04B4+pdnZp7RHySWs5qTnwOJQqR6aB+TK5PLU9uqBY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=c6599yAJKlO/0v/hTFeXMLSk/FFlwXYSOiTnTO01OgDj1VTgSA/2YHHFFTV4O5TGzurBDopJ74kDA+kFdGqX1ZUA/poFr0cDrfkPIJJ1cgxdXWQpbgVWzyD4K26dkyrUmezeDJWSiOf4U9xErVq20u90ZBi4pRvHN8JaKRQdwQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x8lIfY2B; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so43483955e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:10:33 -0700 (PDT)
+	s=arc-20240116; t=1729516256; c=relaxed/simple;
+	bh=r+aOMV3MADphoeGOSyYy73k5f0WucUEtLuhrb3GEHIk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fjeuW0zVSJmhxrjJl0IuA1FpT5ypviowQUk6WRbzwkdlAUVjY4tKkGlE9JUPBTCVxS3CXED6rr1KV6Mvfh/kZ5HrgDXxNpQ5mom1YJdjtTLlJJTw97IqSut9nKpzEGi0nITznPZEgWHu4ubl2IvGtjiQ0G3qQ0xTg1/QL7eVX8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dYyqFYI5; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d6a2aa748so2954844f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:10:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729516232; x=1730121032; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xYbCfssml+Vu66NamN6anRmgpqYBwgmPLsHuVShZzT0=;
-        b=x8lIfY2Bz7hSEU6r/BgMHQ750kZNIRA+lP6bTCtkKGOTpl+RcuriD4sMVEAx1hRxvr
-         KX0lP+6zoqviWFwSMHxl0eYkX1/4i4Tie0JMH2jmj1hvBxLePZnQ0THiWSTklMETPatJ
-         xqVGXdZaMY6z068ThYNo4gc+xzhDquvwXnWRp+oKDOMNbh+8qkuKUnyubYtCKsPWuId1
-         a8sc6bTpDKXl3/ksMhWlEJ5H+A43/6TQrohZ8meSp5ywkWLx3OyHcjm9j0bUPPCCLrvC
-         IbhvbR7P2SFcj8i8QON8HBfkZllt96q7luD4pAmIUqrYj6axHDSWpcirn5KC+uunIxeX
-         VhJQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729516251; x=1730121051; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hb5z7oqU7DLw6NgZCfx42d0B4py7r2L+/9jylzSGUKY=;
+        b=dYyqFYI50jrvT3Qy4rxzqHiGt3x0UWM+6G3+nohCNWN4tdf5vTzCMqgLIdBQcFY62y
+         4fyzevIUm+krRIRJ81cs50E/6GP0UZRaHfO33kfY5881DGIWkpFWNtSHkdY4RPa+tmAU
+         twM5G0AZeYB6D5lBNZ1Q9OdbPSZaOQRyjRWnWdwTMx64Z7d63Qwbf3CSf64p2rkr40Kq
+         C8M4VFHOhbuwryGzVpJNCWvln00kAfI3gCGy3GGd8oVWKTv8o93Zi1HGasYs1R/vrGQK
+         2JQdhEFu9UnJpQsRBgDng31MYhFbPTbgXC1qmCyAYYjcmkOauqb6SKPp3KH6+h5hHYVw
+         Mp9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729516232; x=1730121032;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xYbCfssml+Vu66NamN6anRmgpqYBwgmPLsHuVShZzT0=;
-        b=FwZT7ZsJA9WfNx+owjqtnXOdwbi0yoFR5tcqde+vPJb+UphEE6ahF5Skg/ZKM/F2p+
-         eBcUYtVr/TVsF9d8S0XzvUcQJiZTe4iVYW3y0Rw3eW64ybhYUxIoUTCP4xuuY+fyTr8+
-         M6Gdf16Zz50RrzA7i7sTgH580P8fP3CtuDsQR9IMjKg0VyF6M6wBP/fDp3DM/vB0ZBH6
-         H96BPx2Brqw7tCWL9cp+VzUFxmWEq1qITpS73gW2EG0Oljr9BQJAbWtrCijfaEes0ZZm
-         PIPkYxse6QD6Dr0dnop3mjNfu+xvf+1uFpT+n/TcK2zM5BFGF2MndQYY+zSMENP9qvFn
-         Jiug==
-X-Forwarded-Encrypted: i=1; AJvYcCXVq8XkCQAytIp8ZJX/6pmRHFzUjUn1ZLQxRqb02RDCGQu7wFKsB/vxfWdhAa3KBtVvv1UJO+B9eRxoFMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXzv/0FhwYj42dlJclqDKoAmVVRc2lolTFiAuemqMg5knhMZvE
-	D8Dm7tW8iIBeqagCeog2X2ytL1cxZeV34D3n/MKlqs5XL61NNaMGJtMNmHfZGPM=
-X-Google-Smtp-Source: AGHT+IEkYfAg7B2wd/HLUSjMsGgkpRPQc8ZS96HCFk9HhQRU2OLSa9AkuW3QWYcBX+c1+hZNlRSGEg==
-X-Received: by 2002:a05:600c:1c95:b0:431:6083:cd2a with SMTP id 5b1f17b1804b1-43161659c02mr97462325e9.15.1729516232387;
-        Mon, 21 Oct 2024 06:10:32 -0700 (PDT)
-Received: from [127.0.1.1] ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fbe8sm56677015e9.18.2024.10.21.06.10.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 06:10:32 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 21 Oct 2024 16:10:21 +0300
-Subject: [PATCH v2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Fix
- X1E80100 resets entries
+        d=1e100.net; s=20230601; t=1729516251; x=1730121051;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hb5z7oqU7DLw6NgZCfx42d0B4py7r2L+/9jylzSGUKY=;
+        b=Zp5LjhMuxWUzNaxYBf9qVDpG+8UNp9CA4AHfur4nqldPDqdpejFrQdHcylbRidnqNF
+         ohv+AZszyFz39vrFezSjxI0tGgvkiRyySfYUyWhXD81z6U7HUptgSf/OHDXRoJTWKB4M
+         T30bnCXbmo33ZHys4uYbEbwG1SRKumIjmpF6F0FSJY03XOkTV0r3zUerf7Zx2FGDlT2P
+         OICcIOvOmKjZl9oU1aHLJhugJFTNE3ikLi08rjdlKua/ZdphtuLNqtELibYB2qZe8tm6
+         jWnA3EIn3TaAXWce+Zr0qs6fJ/6/mkaInph6SE4m21VvRTHUY69oRzW6+qkQ/l+F6D7n
+         9HIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCpG9pDMYHLDdQhkMeY/+iFjgrh7HZGcYdXkh0B+KYtluViYbLCDje3ilFJjpjBPxfLJKAlD37AqM5rx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUi8aquMGkr3ImiGCAqlok4DDEpm4Kp9f3valNdPPHwiHEM8zo
+	l2rLp0u+k9KW/xkJwawd+EL0lcj3IQwqApmdrmVM3cJLqVqTNJJh/zFll3DE21U=
+X-Google-Smtp-Source: AGHT+IGDnIWfxiOcEveLs2MQlDhwR4gmi9FH0MSQHpKsf+BMqQSLSH8WpoqUGsyHzwGiIA8WXTqaaQ==
+X-Received: by 2002:a5d:674c:0:b0:37d:4c8f:2e1 with SMTP id ffacd0b85a97d-37ea2181ea7mr6445009f8f.22.1729516250368;
+        Mon, 21 Oct 2024 06:10:50 -0700 (PDT)
+Received: from ?IPV6:2a02:8428:e55b:1101:8419:4feb:c28:3b3f? (2a02-8428-e55b-1101-8419-4feb-0c28-3b3f.rev.sfr.net. [2a02:8428:e55b:1101:8419:4feb:c28:3b3f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc5adsm57103685e9.42.2024.10.21.06.10.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 06:10:49 -0700 (PDT)
+Message-ID: <c6aeaec1-35b7-47a1-8ae2-3386e5241ad5@baylibre.com>
+Date: Mon, 21 Oct 2024 15:10:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/8] Add iio backend compatibility for ad7606
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ aardelean@baylibre.com, dlechner@baylibre.com, jstephan@baylibre.com,
+ nuno.sa@analog.com, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20241015-ad7606_add_iio_backend_support-v5-0-654faf1ae08c@baylibre.com>
+ <20241019155329.500ae439@jic23-huawei>
+Content-Language: en-US
+From: Guillaume Stols <gstols@baylibre.com>
+In-Reply-To: <20241019155329.500ae439@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241021-phy-qcom-qmp-pcie-fix-x1e80100-gen4x4-resets-v2-1-1b11a40baad1@linaro.org>
-X-B4-Tracking: v=1; b=H4sIALxSFmcC/52NTQqDMBBGryJZd0omxmpd9R7FhT+jDtQkJiKKe
- PemHqHL9/Hx3iECeaYgyuQQnlYObE0EdUtEO9ZmIOAuslBSaZRYgBt3mFs7wTw5cC0T9LzBhlR
- IlBIGMnrT4CnQEqDHRmPzTLM8kyIqnaf4vnLvKvLIYbF+v+or/tY/QysCQp/pVD3yWnVd8fqwq
- b29Wz+I6jzPL39O9ZvpAAAA
-X-Change-ID: 20241018-phy-qcom-qmp-pcie-fix-x1e80100-gen4x4-resets-f1b41b935750
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Johan Hovold <johan+linaro@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1929; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=w04B4+pdnZp7RHySWs5qTnwOJQqR6aB+TK5PLU9uqBY=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnFlLBOKta7vfpFMzvXPZw/TYT8ZlGIupVgWT4k
- 5qVaZMgZiiJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZxZSwQAKCRAbX0TJAJUV
- VpAFEACiBRTxKvXnP2CGLo98QkHfqAue8u2DvOC3XEDkJCFJPEtUutbr0FL8vhEksljR1ljUIWs
- Ns1d86fiHeaKKs2587qL/qIVXcfbwVm89k340Z6yM65cFxPKC+3nms749BDbd/d6ByuCqlRg98s
- 2bsTuiC7O4c64n5AMCfhZE+2YWy+rVgXPJhS4iR1aGBsBwnHVAqjTWwXiJd2F973KR+c7aKb7j/
- lz0YYgLc+kT/jXxkmNl/7fRWLGkOdsdmgCXFTLgdXGCr9MfdmAvmAEkjTm91yxk8M38/edprC31
- s/omCW70PLqMkj1dq67uMmXkSNSJnH8U0FRLAoIlnguSYsA3CML7ru3owudfDSsJ2GgN9kFbnZI
- BkMN47GSiJmn0naUFqqu16b0pAecQ4tHJZHqAdyOgJ9b16rBd23+VWPvSbqrtwxED7e3lOZFjop
- t67hEkj5GUUc+Om5TWtsSLAqExzzQw7Bxe1kUODl5VlZjXtPJweq53bVGYnR44A0wMSnEWwEKsT
- oGdZ8A+ZvDKlgRgTtW7mBqReqUXFD6wurhtYojFPZkKLhpvfFfC7U2aAjkEzgxCLo8bH28fFBeh
- WNPuJolHIuzpyatPbbtzh8wCD8tSbaJREfOq9/Zhy/pFKf000AdTKcklLd1Td9s2dWJENUQZXVW
- 5A3beXTduDYxlwA==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-The PCIe 6a PHY is actually Gen4 4-lanes capable. So the gen4x4 compatible
-describes it. But according to the schema, currently the gen4x4 compatible
-doesn't require both PHY and PHY-nocsr resets, while the HW does. So fix
-that by adding by adding the gen4x4 compatible alongside gen4x2 for the
-resets description.
 
-Fixes: 0c5f4d23f776 ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100 QMP PCIe PHY Gen4 x4")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202410182029.n2zPkuGx-lkp@intel.com/
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
-Changes in v2:
-- Picked up Krzysztof's R-b tag
-- Re-worded commit message according to Johan's
-  suggestion
-- Link to v1: https://lore.kernel.org/r/20241018-phy-qcom-qmp-pcie-fix-x1e80100-gen4x4-resets-v1-1-f543267a2dd8@linaro.org
----
- Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml | 1 +
- 1 file changed, 1 insertion(+)
+On 10/19/24 16:53, Jonathan Cameron wrote:
+> On Tue, 15 Oct 2024 13:56:13 +0000
+> Guillaume Stols <gstols@baylibre.com> wrote:
+>
+>> This series aims to add iio backend support for AD7606X ADCs.
+>>
+>> In a nutshell, iio backend is a paradigm to shift the logic establishing
+>> the connexion between iio buffers and backend buffers into the backend's
+>> driver.  This provides a more stable programming interface to the driver
+>> developers, and give more flexibility in the way the hardware communicates.
+>>
+>> The support will be first added on AD7606B, and on next patches AD7606C16
+>> and AD7606C18 will be added.  The series have been tested on a Zedboard,
+>> using the latest HDL available, i.e
+>> https://github.com/analogdevicesinc/hdl/commit/7d0a4cee1b5fa403f175af513d7eb804c3bd75d0
+>> and an AD7606B FMCZ EKV.  This HDL handles both the conversion trigger
+>> (through a PWM), and the end of conversion interruption, and is compatible
+>> with axi-adc, which is "iio-backendable".
+>>
+>> More information about this HDL design can be found at:
+>> https://wiki.analog.com/resources/eval/user-guides/ad7606x-fmc/hdl
+>>
+> Applied and pushed out as testing. Please check I didn't mess up the few
+> minor tweaks needed.
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-index dcf4fa55fbba58e162e5c7bebd40170342039172..b5bb665503c86c79940031bcb58a36a833918a4e 100644
---- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-@@ -201,6 +201,7 @@ allOf:
-               - qcom,sm8550-qmp-gen4x2-pcie-phy
-               - qcom,sm8650-qmp-gen4x2-pcie-phy
-               - qcom,x1e80100-qmp-gen4x2-pcie-phy
-+              - qcom,x1e80100-qmp-gen4x4-pcie-phy
-     then:
-       properties:
-         resets:
+Hi Jonathan, thank you for the fixes and the merge. Just tested it, 
+didnt notice any bug.
 
----
-base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
-change-id: 20241018-phy-qcom-qmp-pcie-fix-x1e80100-gen4x4-resets-f1b41b935750
+FYI Next step is software mode enablement for IIO backend enabled devices.
 
 Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+
+Guillaume
 
 
