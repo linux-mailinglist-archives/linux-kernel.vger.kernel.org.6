@@ -1,110 +1,143 @@
-Return-Path: <linux-kernel+bounces-374177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E26B9A6666
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:16:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2631D9A6668
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569461C2207E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24D8281ACA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5CF1E5708;
-	Mon, 21 Oct 2024 11:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CF11E47AD;
+	Mon, 21 Oct 2024 11:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSCmy9gt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfom7GnG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A701D221A;
-	Mon, 21 Oct 2024 11:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795E11E47BC;
+	Mon, 21 Oct 2024 11:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729509381; cv=none; b=PM0JcL7ckNBJpX/L8VG7iD4+2ZhTAmFGQeOF1rPLyFtRUVNOU81RrlJO5qkKrenyVSoNK5buNX6CnyrKnj6XjDOCIQF6n8tPB/BI7Eq6zVfIeSQquOqNGayJ+fcycG7cGHXTVGh6mgWGVMYI0is0Nxf3IETp84cJ7O0PcYCrHFY=
+	t=1729509409; cv=none; b=ukQvf+JA1lfGkKD2vBWDfmpofOfsGzixc6RfK9zohf04t/8ND1oK6G/SmFdSS4nBKxLqUaxvJ+e41polr5AQrWViQ13JQfrOic/lNLSdq9YEtDwM/6KxX/I1AwFTBVkML1YbDeiAjNG2oKUHqqDTC9ah2qwH8GBdcbEt36xl2p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729509381; c=relaxed/simple;
-	bh=FXMKF0x3pLRWghRqjicLkR5xFXNDlk9ezTRxo7rl6ks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UJh8KvAtOyvIg0LMAf1xTKG6i4JiEcRPyDvgs/OnI4jCZuIOb/uMUQUA4+csUYBOD45QGF2GI0zUr41fwmnmjwJ3Yg+B/CUa3fD/2dALfAhHKJ1SJZApi4pW6Zq89evyHw6cLuGPlG22NEuka7wyvtQhiXLq5m/ZdgzDHgY0Zew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSCmy9gt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA54C4CEC3;
-	Mon, 21 Oct 2024 11:16:21 +0000 (UTC)
+	s=arc-20240116; t=1729509409; c=relaxed/simple;
+	bh=2f93h3fB4LLkd11DyIv9Y0/XNE6yLB6WyRy24xVgmlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ugwpER9j0W+sbFR6s8Sxt2gqf6mv1hdaugvWKXu2qcX0TmjWlCd5lwBFyirHLWC8ODyE1il8AfJ1g3JlHzc/US2TW+OVO7Tam5iYgPz8CpuYJG+Dl/Rp7SDUT5N6rWuFx9zpe7QaMKTwgAOMwlCeZIlvjcLY+VAXn3U57iAYn4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfom7GnG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8717C4CEC3;
+	Mon, 21 Oct 2024 11:16:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729509381;
-	bh=FXMKF0x3pLRWghRqjicLkR5xFXNDlk9ezTRxo7rl6ks=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FSCmy9gtrdhZEy5l+mNIBVkLXG6mWs4Gc1w8n/PJNT6/VNGUSu4anGX+07MtYAeOw
-	 pZa0VzY0RxM+1IXwmiri9ldCCiRSXriTMpz4FmYg8RY5ShZ8+S0blC+ioTNg/GO+pZ
-	 DSCwf9RwLIFZIOxGc52Rk/WVOn+98QHBgLFLj+YxLb9YNio3DzhwK4v+DQ7Hs676ki
-	 i+LfzozVfWy14rwEH3bu1SpADYIUT6fSG3iTUn2FAog+d3dlqabiqL+XdlviCMDo7u
-	 mM9s8ReD7/FehU9VZSSLhjZlhYNwodf/wiD6PjuDdHvZaNgDWuS4gIbNyvWmFLDvQU
-	 HJxTw3I28dY3g==
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-288dfdaf833so2035420fac.3;
-        Mon, 21 Oct 2024 04:16:21 -0700 (PDT)
-X-Gm-Message-State: AOJu0YyORZkVFAzQP+hY06Ibj+GcFfgTYqortinWysMTL1G5oXQqodes
-	QtKi/Fyt0DYt6FA25oqp8SlZXNbIYgjRCWNAeN2Ui3pC9jJr/f7F/PrNuAUWLc6FDHljyQW3mTg
-	eJX8mJd3oDf5//3Jvsby3r5/2ZK0=
-X-Google-Smtp-Source: AGHT+IE7Y18PjDlwjRnyNjeDvx+G55f22d+COSDhu7XbrReHy5no4QHiXjP3WP4pNIbW69mb7Y+E3hxZm5lmIjO00z8=
-X-Received: by 2002:a05:6870:40c7:b0:261:1600:b1eb with SMTP id
- 586e51a60fabf-2892c4f0b20mr7810015fac.31.1729509380637; Mon, 21 Oct 2024
- 04:16:20 -0700 (PDT)
+	s=k20201202; t=1729509409;
+	bh=2f93h3fB4LLkd11DyIv9Y0/XNE6yLB6WyRy24xVgmlY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nfom7GnGD1cB5+8lbtj2U35qRULIN35Q5wNvCT+cPuje4/lsjyjdKydoruv6X3gCH
+	 ZcVTe9YBem9ZKJCeyW6hUp7vMJW32WabUtneH8/ngK3Jv4uYXdeJQbyQghsgoQ80LL
+	 mVcpPd46XYpRna5Cf4m0cDaOwUcJgQSNzeB7Sb94uhQneT1ROzlG8kQz4vRyfqlSJY
+	 ZtHndxS2qpOYQeg4JVXYgzcIHSmvw6f+7AbkVxK45e1rIwFbHulH9v27bPyde8BXly
+	 6uF/mf+dOfSW+mkXepO77BHYxPaQdmcsYmfT6mqUeua4LJLmKeGaayRay9Ee5YkkSd
+	 jN+AErlxgfjDw==
+Date: Mon, 21 Oct 2024 12:16:42 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Guodong Xu <guodong@riscstar.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>, rafal@milecki.pl,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Michael Zhu <michael.zhu@starfivetech.com>,
+	Drew Fustini <drew@beagleboard.org>,
+	Alexandru Stan <ams@frame.work>, Daniel Schaefer <dhs@frame.work>,
+	Sandie Cao <sandie.cao@deepcomputing.io>,
+	Yuning Liang <yuning.liang@deepcomputing.io>,
+	Huiming Qiu <huiming.qiu@deepcomputing.io>,
+	Alex Elder <elder@riscstar.com>, linux@frame.work,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] riscv: dts: starfive: add DeepComputing FML13V01
+ board device tree
+Message-ID: <20241021-unroll-empower-3ab903615d6d@spud>
+References: <20241020134959.519462-1-guodong@riscstar.com>
+ <20241020134959.519462-4-guodong@riscstar.com>
+ <ae5gels34ozgzrcrwz53wj22hoy5cq3crn3dmkhitxlffmnavt@6lbmrcpjmqyd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4958885.31r3eYUQgx@rjwysocki.net>
-In-Reply-To: <4958885.31r3eYUQgx@rjwysocki.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 21 Oct 2024 13:16:05 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g_ALycyT7Y2GwebF_ON-EMP_WGoTn4+1V0ZisK1vwROg@mail.gmail.com>
-Message-ID: <CAJZ5v0g_ALycyT7Y2GwebF_ON-EMP_WGoTn4+1V0ZisK1vwROg@mail.gmail.com>
-Subject: Re: [PATCH v1 00/10] thermal: core: Use lists of trips for trip
- crossing detection and handling
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Zhang Rui <rui.zhang@intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="VVnw05SnzZXMvGzA"
+Content-Disposition: inline
+In-Reply-To: <ae5gels34ozgzrcrwz53wj22hoy5cq3crn3dmkhitxlffmnavt@6lbmrcpjmqyd>
+
+
+--VVnw05SnzZXMvGzA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 1:37=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.ne=
-t> wrote:
->
-> Hi Everyone,
->
-> This is a continuation of
->
-> https://lore.kernel.org/linux-pm/4985597.31r3eYUQgx@rjwysocki.net/
->
-> derived from patches [3-7/8] in the following patch series:
->
-> https://lore.kernel.org/linux-pm/4920970.GXAFRqVoOG@rjwysocki.net/
->
-> but mostly rewritten.
->
-> It is based on the observation that putting trip points on sorted lists
-> allows to reduce overhead related to the handling of them in some cases.
-> Namely, it avoids the need to walk all trips in a thermal zone every
-> time the zone temperature is updated (including invalid ones) and
-> generally leads to cleaner code.
->
-> Patches [01-08/10] are preliminary, patch [09/10] makes the key changes,
-> and patch [10/10] is a super-cosmetic cleanup on top of the rest.
->
-> Please refer to the individual patch changelogs for details.
+On Mon, Oct 21, 2024 at 09:17:59AM +0200, Krzysztof Kozlowski wrote:
+> On Sun, Oct 20, 2024 at 09:49:59PM +0800, Guodong Xu wrote:
+> > From: Sandie Cao <sandie.cao@deepcomputing.io>
+> > +&camss {
+> > +	status =3D "disabled";
+> > +};
+> > +
+> > +&csi2rx {
+> > +	status =3D "disabled";
+> > +};
 
-This material is on the thermal-core-experimental branch in
-linux-pm.git along with
+You can drop these two, I marked them disabled in the common file
+earlier this week.
+1
+> > +
+> > +&gmac0 {
+> > +	status =3D "disabled";
+> > +};
+> > +
+> > +&i2c0 {
+> > +	status =3D "disabled";
+> > +};
+> > +
+> > +&pwm {
+> > +	status =3D "disabled";
+> > +};
+> > +
+> > +&pwmdac {
+> > +	status =3D "disabled";
+> > +};
+> > +
+> > +&spi0 {
+> > +	status =3D "disabled";
+>=20
+> If your board has to disable all these, then they should not have been
+> enabled in DTSI in the first place. Only blocks present and working in
+> the SoC (without amny external needs) should be enabled.
+>=20
+> I suggest to fix that aspect first.
 
-https://lore.kernel.org/linux-pm/2215082.irdbgypaU6@rjwysocki.net/
+Eh, I don't think I agree. Having 5 disables here is a lesser evil than
+reproducing 90% of jh7110-common.dtsi or shunting a bunch of stuff
+around. Emil?
 
-and
+--VVnw05SnzZXMvGzA
+Content-Type: application/pgp-signature; name="signature.asc"
 
-https://lore.kernel.org/linux-pm/4985597.31r3eYUQgx@rjwysocki.net/
+-----BEGIN PGP SIGNATURE-----
 
-which are also present in the thermal-core-testing branch.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxY4GgAKCRB4tDGHoIJi
+0ryMAQDylSPIecFs5rj5VL8jUi+nAFss0Y7ZYLW2+cgjnnNluQD/VG1+cJIt0h8u
+syL+09/AjgZAeUOS6/+AmUIafMx6oQg=
+=JCPq
+-----END PGP SIGNATURE-----
+
+--VVnw05SnzZXMvGzA--
 
