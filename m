@@ -1,95 +1,141 @@
-Return-Path: <linux-kernel+bounces-373958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2119A5FD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:20:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514849A5FDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 001E91C21461
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:20:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9C971F219D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CE61E2824;
-	Mon, 21 Oct 2024 09:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81ADE1E282F;
+	Mon, 21 Oct 2024 09:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUlgG2kK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jm4KieOX"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C395198E6F;
-	Mon, 21 Oct 2024 09:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF4D946C;
+	Mon, 21 Oct 2024 09:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729502423; cv=none; b=GZtPhRn/68ihMdm0hqLxRNbVDLUFkTmm1J/wlUABdyxF7yzIwvt1NIDpIfZyzEgYiC3xALABdPw/r5bVv1JceT7E3//d1ghwMR5MiZ+Tv2z86+xKvotFpaSekENfqDvQ+5mcdgUHOkgVLaaR9v3L5V/OGJ7ACZtJp/cX4+YS5tQ=
+	t=1729502596; cv=none; b=Pv7h8xwo7oNGe6P3YG0iXWsNUN2LrN90dQ0vN21EoIlXYyVlDIUpKdksoaNkywdvuA1DUVLe3RVOQPudsoTU/47n9e5ty9CMX82kaEgaFP2w/iB6S/kqeNyrZ/AuRTYNJVp5cYLP0nRADvrMDsHJA7erV8ZhP8umUmi+7EHMLBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729502423; c=relaxed/simple;
-	bh=seaquORoS5AkXRzcY9g8QWa1F9h31Z6RPMQ3WgHrMiA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Ns+v9zPt07XhV3oI7ry0faEYjUGrn+u3u851Iz0bbZ7Zcpl+lnE/NGFecad/t+0cn+d4SR//U3Lf8+tz0jvDMzFzEc9M3SoOfyhU1mvxF2JuoOpcBlh0o6cCaSLonkaDvtuw7jEe0xonn3QJtmK1w/oz8Hdthx0+DKmbJcVHkMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUlgG2kK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE5EC4CEC3;
-	Mon, 21 Oct 2024 09:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729502423;
-	bh=seaquORoS5AkXRzcY9g8QWa1F9h31Z6RPMQ3WgHrMiA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=TUlgG2kKSv+XmpQ9nNGpsgj4Jc0kb0Yzoal/B9zJ4v0eX4+sTghSx/Ty8XtgQkAEB
-	 BTaoI+RL4NqZI7m8SPhLWThU+Oo0M0T2gC+ldh9w8/31nDbGIndLSiSfDUGBALS5kY
-	 TrMJ5lSQRs9bbG+ygFMiL1xqq6Ww5XKR2NDhm8ly+6Me+L659GJ5Y9V/VdiudNyw7A
-	 dhL8iSK/sfM8khnAQPkcznLsQggC0uNrxCRBPUBMCzuI4uEQ/zQN4D6zbO0mxblpD6
-	 2U+sYKjmuoPrQIZcGemYK9RStY5J45ndvx75j9sTuRpcrWOugo7g+HsZFieThRUk93
-	 DnXlnFteOxAIg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DFF3809A8A;
-	Mon, 21 Oct 2024 09:20:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729502596; c=relaxed/simple;
+	bh=WAYYulQYX+DAUemVwit3xk3XSk1nPNeKZQVIB1B57co=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p/7naOSJe+iJcc/6dpAH+0Qj4CYNSmyXplaBc7LAhFB/5LosEacpBq6M+7KxZjCqm2n6f1BovobaeP4g4e1uMOZd2k3Bjb3crDUkCx5iBBS2lItjiyc1gOLsK38u7wOeKxlip1QSBxwpZJNhimBlZFouHOmUU36GN+PLAst86R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jm4KieOX; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-50c9f4efd09so1271885e0c.2;
+        Mon, 21 Oct 2024 02:23:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729502594; x=1730107394; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ENbw7gWD7Jn54F2uwwYCMj4RVQBrD+2XwdYMKUKg144=;
+        b=Jm4KieOXNKsoXd15BdujTUkzuM07Iht38N6hQK81fVdg9Wa0ggePBLPkvUC4HjCp3p
+         SyYbfCdaB/XTkT/mkFWIh2pz7dd+jewjKk8f0oHepmD85kdySCkpr9bbowfsSgk0VxDq
+         m6zCOcjwOKBc81SAEpgvQpbTGEYiJWj7CU/Is4RtIBI6xctopvPlTJvZwwSnerZ+T0IZ
+         Qi4+YZUUDWOh6yYoxlzNAOB4tLWd/0Bniz5WkzXtjqM0jYRuGNNXj6Hwfk+9XJnXM3T0
+         QnxdXVfLeo/mbxvO1EkvCSvagAVCe/KGsnmFR3W6zw2i3MXVDdPeZwqOdnObgGqUTcxX
+         b5pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729502594; x=1730107394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ENbw7gWD7Jn54F2uwwYCMj4RVQBrD+2XwdYMKUKg144=;
+        b=GKsthhLJTuPj6ySPLHEZ9DiAaoeNxstSvKNCEYfr0XtYk7PDFHyoVydZbgXruA6m9P
+         NwBtNnvWw74OzTZbeu7oWCM88EJAIBi+/fF01CMKgYC0q/nraTYajtgXX2D0RFwUj7ZW
+         yujkhINLFLMKzxoEPxLM3K5ChY72AEHyx0ATIcrshQSuCxyyjiggPPq82o6iA1BgvPlC
+         8gmbqLwQ3bZsnXfrvjkGqnWH15Bj1/MbaQ8UCt+DLtLc0ejVwtjBGl0HoOjsOsC2/YiF
+         bGLCKlj8HrnnqtW5NWiSer9ZYT0CXodOJ68Z7S56s/2sNHDncTFkwLsRqka6GG+q+s2J
+         4nDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcqb/SpbtCaqNNn7JFM1HsIMgQCb4n+6XyOXMZ3bF5KLrDgIuQrrMnPL45bMxQnHiZ6FM/9FCjiDhtxkA=@vger.kernel.org, AJvYcCVxxZLkJHl7mpph8rITzKIXb6mgbdsSXx/GfEeu7z9pJSGgS+jEX9xXiYONjRKHVoDdP0U8Ie1uI6u9p3dDg4k3DA4=@vger.kernel.org, AJvYcCWYE2SJqOuEYCFtpRDpjCRtYYXo11yvFQ7OncgZ0cW7PTQHgvdlbE3GJrGCjVWkZ7iCbmhsudqqHcYJnAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAcH59PKOUK2QgzyxAQycKfzRvPJJRLB/WSBdjaDKyIhhCHdmH
+	dSnaAKyhFm9pN/RHUmag0nRvfP7odhe/PeC+1YcQEB4sniVIdc6Vr2L7mklHcI467FhIMJYwzeW
+	JRk4MkUbCRvRd7golqsbkcOcnTbE=
+X-Google-Smtp-Source: AGHT+IE84rq5c82g8Tz5bnxAkvjCHAq8g0llMBa5uZLrF5eolLVIg282EihctrNLjQnRbMTuFp0Cp6yG1YuPoCNkcio=
+X-Received: by 2002:a05:6122:d9d:b0:50d:2769:d757 with SMTP id
+ 71dfb90a1353d-50dda3caa3bmr7779684e0c.11.1729502593733; Mon, 21 Oct 2024
+ 02:23:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/2] fsl/fman: Fix refcount handling of fman-related
- devices
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172950242900.181020.3714375774039373979.git-patchwork-notify@kernel.org>
-Date: Mon, 21 Oct 2024 09:20:29 +0000
-References: <20241015060122.25709-1-amishin@t-argos.ru>
-In-Reply-To: <20241015060122.25709-1-amishin@t-argos.ru>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: igal.liberman@freescale.com, horms@kernel.org, madalin.bucur@nxp.com,
- sean.anderson@seco.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20241018153230.235647-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <ZxYMaGhTDLWsUPOm@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+In-Reply-To: <ZxYMaGhTDLWsUPOm@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 21 Oct 2024 10:22:47 +0100
+Message-ID: <CA+V-a8u3eW0WH5JAXtAkejXoJyijW-SgkHCYrzQ0HBZAUUkxpQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] media: ov5645: Add support for streams
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+Hi Tommaso,
 
-This series was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+On Mon, Oct 21, 2024 at 9:10=E2=80=AFAM Tommaso Merciai <tomm.merciai@gmail=
+.com> wrote:
+>
+> Hi Prabhakar,
+> Thanks this series.
+>
+> On Fri, Oct 18, 2024 at 04:32:20PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Hi All,
+> >
+> > This patch series aims to add the below features,
+> > - Support subdev active state
+> > - Support for streams
+> > - Support for virtual channel
+> > - Code cleanup
+> >
+> > Note, these patches are dependent on below:
+> > 1] https://patchwork.kernel.org/project/linux-media/patch/2024041619331=
+9.778192-27-sakari.ailus@linux.intel.com/
+> > 2] https://patchwork.kernel.org/project/linux-media/patch/2024041619331=
+9.778192-26-sakari.ailus@linux.intel.com/
+>
+> I thinks also:
+>  3] https://patchwork.kernel.org/project/linux-media/patch/20240416193319=
+.778192-45-sakari.ailus@linux.intel.com/
+>
+Agreed.
 
-On Tue, 15 Oct 2024 09:01:20 +0300 you wrote:
-> The series is intended to fix refcount handling for fman-related "struct
-> device" objects - the devices are not released upon driver removal or in
-> the error paths during probe. This leads to device reference leaks.
-> 
-> The device pointers are now saved to struct mac_device and properly handled
-> in the driver's probe and removal functions.
-> 
-> [...]
+> >
+> > v2->v3
+> > - Fixed review commments from Laurent
+> > - Included RB tags from Laurent
+> > - Dropped patch "media: i2c: ov5645: Enable runtime PM after v4l2_async=
+_register_subdev()"
+> > - Fixed checkpatch issues (ie used --max-line-length=3D80)
+> >
+<snip>
+> >
+>
+> Same result here.
+> Tested on rzg2l-smarc evk.
+>
+> Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
+>
+Thanks for the testing.
 
-Here is the summary with links:
-  - [net,1/2] fsl/fman: Save device references taken in mac_probe()
-    https://git.kernel.org/netdev/net/c/efeddd552ec6
-  - [net,2/2] fsl/fman: Fix refcount handling of fman-related devices
-    https://git.kernel.org/netdev/net/c/1dec67e0d9fb
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Cheers,
+Prabhakar
 
