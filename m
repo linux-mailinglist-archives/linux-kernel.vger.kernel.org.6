@@ -1,250 +1,139 @@
-Return-Path: <linux-kernel+bounces-374722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20AD99A6EFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:02:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB649A6EFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24C7A1C23520
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:02:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 124B0284138
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4837B1E5716;
-	Mon, 21 Oct 2024 16:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100D41D1F5D;
+	Mon, 21 Oct 2024 16:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="C7i96HM9"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FSFlqe7f"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13B91CBEAC;
-	Mon, 21 Oct 2024 16:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790EE1CBEAC
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729526540; cv=none; b=d2RSiPYcWGRZQ60J9Ri9S7sSOL3wDaR5OGrT4NxS0XW6IStAe6shVZLA/UC9EuXc6uelW3E3ZpS51DCY7egDzdjaBd46UU9jhGyoNNygyKgDT/jzpCsWEwmcj3/kBpESwg8qmxC0S9thSoFxpbabpR2wA3ZEoSLknO+EneqmA+w=
+	t=1729526557; cv=none; b=CEX3nrcKgcOB0PL7Q4jmOBwW5JiwzwIXW1wAjQUoInbhxLf6Y/AXLA8AA03mTPwge3EEUi+guSTWO2ulSNbb2XijIhJbj6+vL2V/Wg5iYOWDklmTT4eqFMZkokZ6LrI39e3iicDJ6fAEsHy5II/udnfRiKHCxp4EQdtHKn8WuSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729526540; c=relaxed/simple;
-	bh=2jsYqb4Ep2sJG5RivIhBxdAGOfUNCMP3DJotctrN4pU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gttUYtcQjaqNdV7fulXnkuDDG772wPIKf9j/7cGV5XuNGuNNYge3j3BEQzYleePpmLapMh2k6ZUjFK+ApzWBPlITl7/Y+ki9H89jgHyHuTL+7XaJYlTn96yXABD5fsXddjKLa6RNlb1KjQiW/rlMMQ9DwGmRrIsvsJ8D0UQF6Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=C7i96HM9; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AFE7340E0198;
-	Mon, 21 Oct 2024 16:02:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id TNPfEbfOKVQk; Mon, 21 Oct 2024 16:02:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729526530; bh=gxl89NxCdQju+U0MLf0hibFSL/6VOGUYN70p3/bw+j4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C7i96HM9lXwl1k5HrAq902CmHG0b3HztacSFaP1d9APzlRdHBwfHHY+Nt6ByNtrcF
-	 R8j/llMr1+RvDOHplMM3GixW8TmJ6nK3x2XQHHCn5I39mGOT43cvxL2umYYan+HfYj
-	 CRJLTO6GFdi/1RU4Aa54ow86yrb634NySlltHrQQCh4nhTrzrHXZbpVeHsGAgPHNSK
-	 uP8+K+rqfQQDPgBqdHTpDZSh74tVfLsGUmEdhRB9m6YhIsAb/koG850TzIezCAsw7T
-	 naUCIv76eZlZASeU/dOXUKsfn186sZvz3hMCOOLulMVAaHs7RjMwsSvoIKLVfNsxh0
-	 2JXlWguaQTySq3ZR+Ki6Zg3415vJX5qsRQVTGKBC+hUsoxDKGSFCTbn/cAief5jYyr
-	 9+Pe0Kr+hUr0wFFSOQHG4qVZi01RZCnMKIWWjLb8JiUiu90PAff6r3avbT1YjDvL79
-	 EwAYGAAbTrW0t+XKU3+T/5DUH/8w4HVw2PNeWPXH5w3esKMQ8Rdfz72NARJfzELgs1
-	 IHnLM08TDqszmkfWEZbgtLLf54Cp6twbiJ94FySU3g4cjbvHePb4Urpd9IseieN/JM
-	 1XS25ZsLtRBAbZm49S+px84WiWvweL6abSkW16sXLEGkiQvjzrFwgG1AuZ8go048Q5
-	 aoyYhLuA2KoPr42gbEiqNAnY=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 98CD340E0194;
-	Mon, 21 Oct 2024 16:02:03 +0000 (UTC)
-Date: Mon, 21 Oct 2024 18:02:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: bugzilla-daemon@kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org,
-	lkml <linux-kernel@vger.kernel.org>
-Cc: mikeseohyungjin@gmail.com
-Subject: Re: [Bug 219383] New: System reboot on S3 sleep/wakeup test
-Message-ID: <20241021160202.GGZxZ6-gCNNKUtTRse@fat_crate.local>
-References: <bug-219383-6385@https.bugzilla.kernel.org/>
+	s=arc-20240116; t=1729526557; c=relaxed/simple;
+	bh=AWbZedU+/iyeA5bLS4jAirLWZGBbH1WMGEm0Ke4wUDQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=kXPkjhVDnZ60EetzP9zzNMPLj4ubF+JIzoKKB8czDBPvymAZyO6oGIu5ASlu3InjJcOLMAEkXLakwN6hXIkEV9XCBpVpsnR8dqigaKuGzzT8e82q6pEnJYCkRqrveTeVUpKBm485vr/9c0m2nr1QrgX6g5ULbqmF6D8od00oH2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FSFlqe7f; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1159159528so8011482276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729526554; x=1730131354; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xS8RR8lB059oPyR5mt7J0tawOIdChogU8TDyO7jPWP4=;
+        b=FSFlqe7feptFxGdKLQKSjD5tB02Xma7WQi0iUwf1lnY7aiVdmMyECg95J2r5g9FWiA
+         WVqg1wB7u6ZcUsbiLkIDz4vrAgGZq5jiAZlJtFlq+Fzhi33Vig/Sz9QpBOjy5f4ITknY
+         CSr+lfSq9Q9ah3HcYXQ1J8QrxWobP5DsSBKt6wLsbcMHQ2u6xSYDCjJf5BLVHElchsTk
+         zImvwsO+tEaO/3y3afn8k2aMWqfhDi+Ypn7ZMbALFVXvEMXk0wUU+ubDpfPEwguTXdN6
+         bT27khofj5V1/7ArB1oP1W0An00m0KquHGCgRwIxWeXGdVi2neNW4yt14hiK+6YFrsTZ
+         G9UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729526554; x=1730131354;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xS8RR8lB059oPyR5mt7J0tawOIdChogU8TDyO7jPWP4=;
+        b=HerNfm163uGA25Nf/MyVwJEEyfGterwi95BVgSVd2r8TS3oFeH9EBtQvQ/pa6EsiZ+
+         nOULgl8AAyu9J0Yh1AhlPfbGlOIQdhSSGnlucoy4QlhTb3t0mTfBfYx+ocZU7k3i9iUm
+         oDgMlqzpcjou3sVjtFWscFYN3xA12XQwv3jeH24sxYI/RxHMN2+2MAqlk2XAKdCjaAFC
+         oSszh5m+l8kCVWVl6I4zRF8iTjXBxTCbRLaKcjPCQt9Kt0RWW5ZzF/0lpk3XMAjnIFiT
+         5GrUw1zz52YgIWg52tu8BjzqQ05PZf5RZC6zwO0tTZfvIuZRAQRQ6JsZnKaQ6B9Q+Kox
+         j/Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/InnzifYPuRfeqPr+vpw3ZvxKvw8+Rl/oNat21qnRYUTiODlwvk55QhqVnbzhdaVsRAGt5mAdKygXgf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZCH/vzyqHvRj2KjVuPgFbOLy9gPqO5nS8aq92zH2aIrFf6NKU
+	5WFnh+63E5JtbU/w67uV7ijpqEdr3wh9e8ZczocxxWx53uIQEb7deHI1AHCS3eBjRTdvz7Q/Ofy
+	fZtNfCBoWdS2Sezu2vg==
+X-Google-Smtp-Source: AGHT+IGDNzg+raVpdy9asgo0adGMV8bfu1r5gOhX68FDbWgpgo+ybonbytlhVGcQ6fwb8NaxBtgJYObRec+ukV0u
+X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:13d:fb22:ac12:a84b])
+ (user=jthoughton job=sendgmr) by 2002:a5b:503:0:b0:e29:7587:66d6 with SMTP id
+ 3f1490d57ef6-e2e245964c8mr62276.4.1729526554296; Mon, 21 Oct 2024 09:02:34
+ -0700 (PDT)
+Date: Mon, 21 Oct 2024 16:02:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bug-219383-6385@https.bugzilla.kernel.org/>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+Message-ID: <20241021160212.9935-1-jthoughton@google.com>
+Subject: [PATCH] mm: Add missing mmu_notifier_clear_young for !MMU_NOTIFIER
+From: James Houghton <jthoughton@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: James Houghton <jthoughton@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Jason Gunthorpe <jgg@nvidia.com>, David Hildenbrand <david@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Looks like TPM. CCing the proper people.
+Remove the now unnecessary ifdef in mm/damon/vaddr.c as well.
 
-On Mon, Oct 14, 2024 at 12:46:26AM +0000, bugzilla-daemon@kernel.org wrote:
-> https://bugzilla.kernel.org/show_bug.cgi?id=219383
-> 
->             Bug ID: 219383
->            Summary: System reboot on S3 sleep/wakeup test
->            Product: Platform Specific/Hardware
->            Version: 2.5
->           Hardware: All
->                 OS: Linux
->             Status: NEW
->           Severity: normal
->           Priority: P3
->          Component: x86-64
->           Assignee: platform_x86_64@kernel-bugs.osdl.org
->           Reporter: mikeseohyungjin@gmail.com
->         Regression: No
-> 
-> I'm working for LG laptops, and I have run serveral LG PC with ubuntu OS. You
-> may know, most LG laptops has intel soc.
-> I found out a critical issue, system reboot on S3 sleep/wake up.
-> 
-> Enviornments:
-> - PC BIOS : Phoenix Technologies
-> - Intel Jasperlake or Intel Lunarlake 
-> - OS Ubuntu 22.04(Jasperlake), 24.04.1(Lunarlake)
-> - linux kernel version 6.x.0(Jasperlake) or up-to-date 6.11(Lunarlake)
-> 
-> Symptom:
-> 
-> Running the aging scripts like below, system reboots.
-> -------------------------
-> #!/bin/bash
-> <snip>
-> for (( i=1; i<=10000 ; i++ ))
-> sudo rtcwake -m mem -s 10 >> ${LOG} 2>&1
-> <snip>
-> -------------------------
-> The scripts works like below,
-> 1. waits 10 secs
-> 2. echo mem > /sys/power/state
-> 3. waits 10 secs again and wake up system like press power button.
-> 
-> 
-> My analysis:
-> 
-> I had reproduced several times to find that BIOS side triggered the system
-> reboots.
-> | pm_suspend() | syscore_suspend() | acpi_suspend_enter() | ... |  < BIOS > | 
-> ...| acpi_suspend_enter() |  syscore_resume() | ...|
-> 
-> Debugging on BIOS, TPM2 can generate cold reset when it detects something wrong
-> after TPM resuming.
-> In the BIOS code, if there are active PCR banks that are not supported by the
-> Platform mask, it supposes to be update the TPM allocations and reboot the
-> machine.
-> 
-> It means that something in linux kernel side can effect operations of  tpm when
-> going to sleep.
-> So, I have debuggered and traced the functions related to tpm, such as
-> tpm_chip_start whenever the symptoms represented.
-> 
-> In normal case, tpm_chip_start() called once like below,
->  tpm_pm_suspend()-> tpm_chip_start().
-> but issued case, additionally called below
->  hwrng_fillfn ->
->   rng_get_data ->
->     tpm_hwrng_read ->
->       tpm_get_random ->
->         tpm_find_get_ops ->
->            tpm_try_get_ops ->
->              tpm_chip_start ->
-> 
-> I found out that when running hwrng_fillfn(), related to Hardware random number
-> generator,  called during system_sleep, it can cause system reboots.
-> To Verify it, I have tested with custom kernel which includes below patch.
-> 
-> -----------------------
-> From 373e92bb6d471c5fb42bacb97a4caf5375df5522 Mon Sep 17 00:00:00 2001
-> From: mike Seo <mikeseohyungjin@gmail.com>
-> Date: Thu, 10 Oct 2024 14:04:57 +0900
-> Subject: [PATCH] test_patch
-> 
-> test_patch for reboot while sleep/wakeup
-> 
-> Signed-off-by: mike Seo <mikeseohyungjin@gmail.com>
-> ---
->  drivers/char/hw_random/core.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-> index 57c51efa5..d3f0059a4 100644
-> --- a/drivers/char/hw_random/core.c
-> +++ b/drivers/char/hw_random/core.c
-> @@ -25,6 +25,7 @@
->  #include <linux/slab.h>
->  #include <linux/string.h>
->  #include <linux/uaccess.h>
-> +#include <linux/suspend.h>
-> 
->  #define RNG_MODULE_NAME                "hw_random"
-> 
-> @@ -469,6 +470,22 @@ static struct attribute *rng_dev_attrs[] = {
-> 
->  ATTRIBUTE_GROUPS(rng_dev);
-> 
-> +
-> +static int hwrng_pm_notification(struct notifier_block *nb, unsigned long
-> action, void *data)
-> +{
-> +
-> +       switch (action) {
-> +       case PM_SUSPEND_PREPARE:
-> +               is_suspend_prepare = 1;
-> +               break;
-> +       default:
-> +               is_suspend_prepare = 0;
-> +               break;
-> +       }
-> +       return 0;
-> +}
-> +
-> +static struct notifier_block pm_notifier = { .notifier_call =
-> hwrng_pm_notification };
->  static int hwrng_fillfn(void *unused)
->  {
->         size_t entropy, entropy_credit = 0; /* in 1/1024 of a bit */
-> @@ -478,6 +495,9 @@ static int hwrng_fillfn(void *unused)
->                 unsigned short quality;
->                 struct hwrng *rng;
-> 
-> +               while (is_suspend_prepare)
-> +                       msleep(500);
-> +
->                 rng = get_current_rng();
->                 if (IS_ERR(rng) || !rng)
->                         break;
-> @@ -549,6 +569,7 @@ int hwrng_register(struct hwrng *rng)
->                         goto out_unlock;
->         }
->         mutex_unlock(&rng_mutex);
-> +       WARN_ON(register_pm_notifier(&pm_notifier));
->         return 0;
->  out_unlock:
->         mutex_unlock(&rng_mutex);
-> -- 
-> 2.43.0
-> ------------------------
-> 
-> And I had passed over 10000 times of s3 wake/sleep aging test.
-> 
-> Can you make some patches for this issue and merges?
-> 
-> Thank you,
-> Mike
-> 
-> -- 
-> You may reply to this email to add a comment.
-> 
-> You are receiving this mail because:
-> You are watching the assignee of the bug.
+Signed-off-by: James Houghton <jthoughton@google.com>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+---
 
+Notes:
+    This patch is originally from this series[1]. I've split up the MM and
+    KVM bits of the series, and I have already sent the MGLRU changes
+    here[2]. That leaves this small cleanup for DAMON.
+    
+    [1]: https://lore.kernel.org/kvm/20240926013506.860253-1-jthoughton@google.com/
+    [2]: https://lore.kernel.org/kvm/20241019012940.3656292-1-jthoughton@google.com/
+
+ include/linux/mmu_notifier.h | 7 +++++++
+ mm/damon/vaddr.c             | 2 --
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+index d39ebb10caeb..e2dd57ca368b 100644
+--- a/include/linux/mmu_notifier.h
++++ b/include/linux/mmu_notifier.h
+@@ -606,6 +606,13 @@ static inline int mmu_notifier_clear_flush_young(struct mm_struct *mm,
+ 	return 0;
+ }
+ 
++static inline int mmu_notifier_clear_young(struct mm_struct *mm,
++					   unsigned long start,
++					   unsigned long end)
++{
++	return 0;
++}
++
+ static inline int mmu_notifier_test_young(struct mm_struct *mm,
+ 					  unsigned long address)
+ {
+diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+index 08cfd22b5249..821990d0141a 100644
+--- a/mm/damon/vaddr.c
++++ b/mm/damon/vaddr.c
+@@ -353,11 +353,9 @@ static void damon_hugetlb_mkold(pte_t *pte, struct mm_struct *mm,
+ 		set_huge_pte_at(mm, addr, pte, entry, psize);
+ 	}
+ 
+-#ifdef CONFIG_MMU_NOTIFIER
+ 	if (mmu_notifier_clear_young(mm, addr,
+ 				     addr + huge_page_size(hstate_vma(vma))))
+ 		referenced = true;
+-#endif /* CONFIG_MMU_NOTIFIER */
+ 
+ 	if (referenced)
+ 		folio_set_young(folio);
+
+base-commit: b5d43fad926a3f542cd06f3c9d286f6f489f7129
 -- 
-Regards/Gruss,
-    Boris.
+2.47.0.105.g07ac214952-goog
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
