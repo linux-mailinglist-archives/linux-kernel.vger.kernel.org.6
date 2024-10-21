@@ -1,154 +1,144 @@
-Return-Path: <linux-kernel+bounces-374619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783E99A6D91
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8134E9A6D96
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBB611F21816
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0504B1F22C70
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DB61F4FD8;
-	Mon, 21 Oct 2024 15:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9684F1F9EB3;
+	Mon, 21 Oct 2024 15:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKA+ZeFK"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iivwPXPq"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AC21EBA08;
-	Mon, 21 Oct 2024 15:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D451F4713;
+	Mon, 21 Oct 2024 15:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729523093; cv=none; b=C4s74bD0J4N6QEwAgqTyACuHZ1Wcxp3D2CJQ4kVVodnG/AVM17EHnkEfaqnaQgckY+BL6Cmi1lOlUpPxUxkSp6zuxo3XbRMqKi5dCRHILGiK/R0EWjUYE31THAyMgRXaC1hvSrSJeT8ed0V04QKnnZmFyuI1XBmq2ycqQ93N3oA=
+	t=1729523095; cv=none; b=XOD0vygVZqKb36G1yEYhZdbibBCifi0awTmhQ54otHWx1XG1WF9R7WJdFD3UN45thrqaAIpqfw+/9sb5OHDlewBOYIlPPzzth3Cg5NUVlDa7jISpxrnDHIhWd/33olbnwH2ti6kYOuJ3is9GBQMfDU1rI9zMDGZOAVtfbUAyX7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729523093; c=relaxed/simple;
-	bh=YpyR+0oK6sTRh5iMM2mhp9NQ7lGx0lwNLgFecx7Zzgo=;
+	s=arc-20240116; t=1729523095; c=relaxed/simple;
+	bh=7RZ2FleI+lwkQBnS71UwBmagAUNQishsx/OuSEHgZXA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r3lvN9a9MU2kvkgySrHINkFYeATzkOYTXBYfChek/L/9nONa8NuF4PcSq8j6EVMx06mc5yWw56YgXKWAa5rfjkIjSqq0p/QVOQsL+l8tWh90rjG+2leMyaKtaWWq5mtjWRG9DorD6RVLYHz4pw3By4jO4J02Gl6vgjZAUlnYNmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DKA+ZeFK; arc=none smtp.client-ip=209.85.208.47
+	 To:Cc:Content-Type; b=lAZ33Zch/IJdRvS7PYqc3kMkBoXvZIn/IAJylj8olcdiNV9ryiDsG28XC3SGF24o6UwqC6GOuohiml4DCFeUKB8+a4fYYBFWhQriVdGKSMwhr9eHQaWS8hfcMjw3o+5FwwMBdRPYjKqSG5eP1GIan/5wLes0Bc10P877k+dLiB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iivwPXPq; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1e63so5349742a12.0;
-        Mon, 21 Oct 2024 08:04:51 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-715716974baso2685349a34.1;
+        Mon, 21 Oct 2024 08:04:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729523090; x=1730127890; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729523092; x=1730127892; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/JRIMg2z82gb0miw9gdPsnIiJdQXVNTFbR+DAY8GrU=;
-        b=DKA+ZeFK0DcrUvnkVlZBmQbzLxHIk18ytUan+O3rRVuIs9k7KXw8+Qbld8zPGkEzBk
-         XzeZKbNGVfDaxs2C7U17Zh7fme97TsM/YE4SmNXC/eNb13CtFu7LIFSAVtNMehGV10jj
-         iwI1PqU/yWYctorNDiXAz2P+Y4M9d6M322BFVNcaGqCywBu2Mvhq+Eu2fReUhDyEMlLQ
-         xQhLOtoFJekR4m5dn1qzsxYkNPX3tG+jMg9tI16FwhQhjP7h3dBeJO1oSnndv8CyCpFH
-         QS6liK/KEoRyFAtNGoKoY5XLK5j64IuDlmp2Lwiw8wiHblMr4+vDvY6A/S52ViPhUorQ
-         TN4g==
+        bh=HkHKVQQZOiFvIJXD4A49RfSsdZno+Y8yFuWG+vCWgIk=;
+        b=iivwPXPqOumesGn/zGgkiK9YXzLNePw/YYwj9D6b4qpq5j8/MfWqYtPhv3/PHhPvhK
+         B9JmoHIlrC1q0ov9UpsAMyW/+3pBJdkoBjvCrlbS/Sl4leQ3K/UlV4oN8URMnvdUrJ5V
+         aUkzB6u5JN+P7nR+a7v0AQLaq3OTYBMKLrLBitUWuW7QjKIhcaCl1+CN69z8JoUi1/jc
+         tf1MvkYPmBTdBFvgY/kR9BNXDi+FGUCFKHd5SOlPrvEjoMQ/sqNmulq3THu3/3xF4J/f
+         dwoagCv45vg9FLjEmaDKwhLOOAeSw2rKndRvP6/wTHatNfW/0yg0Tj/a4n+YJiz4Lm5i
+         Y/IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729523090; x=1730127890;
+        d=1e100.net; s=20230601; t=1729523092; x=1730127892;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=r/JRIMg2z82gb0miw9gdPsnIiJdQXVNTFbR+DAY8GrU=;
-        b=WOPikS23M8HKi3rAjgR1Jp3aqK6Txmqn0xQzjO+2IR1Ohp0egIWLVOpR9bghyk1Fw7
-         LANKbZgMp9i850ei75nIkdYmEuvC/oPzswX+XahO9xDmfBHMJOfUYcu3smnWUnaRU8Sq
-         JsWmz9H0OpROB0iQGosXvT9RWytZhu0Jt06OymVThkchckLlzWSnIBGgx8a0hxjZXP10
-         QlhE1N+pqDNW4tlvT8RUvTMSKPYkRgC0Vi0UjvkwFhy1gBX6hfRUsGHq5qL+hWSPYJBB
-         R13nCk5qeYAe+cEkS+7e0HFhewVTCOuuTfnVPqG4q0485X+HHWc1s9bh3qOFxD7q1iwP
-         YXKw==
-X-Forwarded-Encrypted: i=1; AJvYcCV44KRX+xyTk6E3jPpVp6UKuMmIrDkaMVsFjJAZxu7OjB45bmUGKDNtXL8VDz/7tDjMy+l6Acbs1OylGXE=@vger.kernel.org, AJvYcCWB0oRPf/sPK9zJUd2O82N3M2LUyAD1NExRiYXL7l88/rMe+lWpVag2PhQpRu7a4YE+u1JlT+O+5k8Cnkov42LZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2TZqzMmruN/mrjb8ivJSTRzvwmNdIEnevyRH07VPCb4w+LZLK
-	tM9ztqUXDgN4vPWYNa9Ad2SirhEWqasiut0pScaXw9YCBjdMESXwwsYhC5R1gOSlXfzOPAtEFeZ
-	/1ndZ6wUt0m0wD8emCxk7S7VwiU0=
-X-Google-Smtp-Source: AGHT+IHNUDkn7YmuzYRyjxAXSLvzGs3jkNwapjUsiQvvFToFgyk5dU2LfTFToOW2bJY0IS0ThCPlDb/4DawJHeu7tNE=
-X-Received: by 2002:a05:6402:270f:b0:5c9:5a96:2869 with SMTP id
- 4fb4d7f45d1cf-5ca0ac85068mr9895133a12.10.1729523089591; Mon, 21 Oct 2024
- 08:04:49 -0700 (PDT)
+        bh=HkHKVQQZOiFvIJXD4A49RfSsdZno+Y8yFuWG+vCWgIk=;
+        b=mPcox/ZNL8Nr5eLWuUf/ZC5WYhrRU6xyaiEOcwwVrmB/asiyN9YAFCwm8Yj0ZAGfnL
+         OqX9PW8qikFo1XBlzPDur6D2fpXMxH5ZiVYBm7e9VzlqZ5EF47xUWwn3U4EgCnJ5LYzA
+         2mKNDXqYFHMSzSveyAq7aErEKhF8Vz3Cfxm3j0RjvhTuAvOgJX3OEOjjAfOtQnYWrXWR
+         CKrs+E7TmmYAd789PiKFFPEZstNL7FTj1CZ0j+H1teMxvwobO2HJjBSkzW8S45tj14Oq
+         AEFMP/Q/pU7QSd0jzU/eMAT3xUizzuSXU2gjie6mXukRIMHxGEWhI+HJcPE65gEV2Rz0
+         aj4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU/VHrkIvBGs0hA6tu72v9h6EhCAsG00Sdg5iEPpgjr/fAHSVjwoOMBIHpdTxqpjwBoh4MsFoaohMqeW+vf@vger.kernel.org, AJvYcCW+hQu1Yxf7fqLaJ3/MWdy1df2sHHqTPF44ncg0MyfbafdHAyLdPsD20pT80gUfdbgBYwWN94G+trfF@vger.kernel.org, AJvYcCWMtvaQnUDgHpzPpP5hNo7k04UruYa5agpbSjVtXYcsHqCFZYvDzhAEwmA2YvdjV54KZHZMaVtk0PjBSA==@vger.kernel.org, AJvYcCWlGPJUO/Q9s12G1nlYXRhuG1jmTL389mXfeVSlO25g1wdHpGGaGE3rfhs0QItCFMQ9z8jGrM3pmxufz9w=@vger.kernel.org, AJvYcCX0SCOYnGLFoZQV9eXP/TiKAKGf1DcEMk0nTaee0pkgr96Z31QJwC+UsCmYodI33Bw9M7WMGaAyl38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRu4TjTD3qMg8a6+bzNgz3a5DCxwuuLtifPu6NM1ktVpqVixiV
+	V/zxdazLn45aKiPaAlPebxPmIJ17yRgkC0ubBpqbWoeRECffu48BPuLiGodczI28eCerGBhXzwr
+	ozbPDy5ntkfUPSyk2prnav+2wS/Q=
+X-Google-Smtp-Source: AGHT+IEZIMiuefKxT+GJW54sVo2g5FwsIkVDpDQOvwfStSdupUdcWV8p8l3S3dr51HZ9W73K5w87ivtfmrcvSV3jexA=
+X-Received: by 2002:a05:6808:210d:b0:3e5:c7f8:ad7d with SMTP id
+ 5614622812f47-3e602da0447mr9391319b6e.39.1729523092022; Mon, 21 Oct 2024
+ 08:04:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014172149.324639-1-alessandro.zanni87@gmail.com>
- <41d157fc-6413-4061-95af-518ec7b923f1@linuxfoundation.org> <4hxgkaxray75k2z4zyhhq6nb6iegsfokhsv6gdthai7bfzbpnw@6doocomldm6m>
-In-Reply-To: <4hxgkaxray75k2z4zyhhq6nb6iegsfokhsv6gdthai7bfzbpnw@6doocomldm6m>
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-Date: Mon, 21 Oct 2024 17:04:12 +0200
-Message-ID: <CABq9Dx6b0TxXfvsmaaAMG+O=x8v3pD4CY2TTowcGzkL2q=Q1Yg@mail.gmail.com>
-Subject: Re: [PATCH v2] selftests/intel_pstate: fix operand expected
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, anupnewsmail@gmail.com
+References: <20241007-starqltechn_integration_upstream-v6-0-0d38b5090c57@gmail.com>
+ <20241007-starqltechn_integration_upstream-v6-3-0d38b5090c57@gmail.com> <20241015140224.GI8348@google.com>
+In-Reply-To: <20241015140224.GI8348@google.com>
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Mon, 21 Oct 2024 18:04:39 +0300
+Message-ID: <CABTCjFBpdMv6Qi3CLYNukMn+J1FwhbAg0hMy075Dt0H-g_hrUw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] mfd: Add new driver for MAX77705 PMIC
+To: Lee Jones <lee@kernel.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-> On 24/10/14 06:05, Shuah Khan wrote:
-> > On 10/14/24 11:21, Alessandro Zanni wrote:
-> > > This fix solves theses errors, when calling kselftest with
-> > > targets "intel_pstate":
-> > >
-> > > ./run.sh: line 90: / 1000: syntax error: operand expected (error token is "/ 1000")
-> > >
-> > > ./run.sh: line 92: / 1000: syntax error: operand expected (error token is "/ 1000")
-> > >
-> > > To error was found by running tests manually with the command:
-> > > make kselftest TARGETS=intel_pstate
-> > >
-> > > Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
-> > > ---
-> > >
-> > > Notes:
-> > >      v2: removed debug echos
-> >
-> > See my comments on your v1. It would help to wait a bit
-> > to send v2.
+> > diff --git a/drivers/mfd/max77705.c b/drivers/mfd/max77705.c
+> > new file mode 100644
+> > index 000000000000..553f20a6cdd5
+> > --- /dev/null
+> > +++ b/drivers/mfd/max77705.c
+> > @@ -0,0 +1,248 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +//
+> > +// max77705.c - mfd core driver for the MAX77705
 >
-> Ok and thanks for the comments.
+(...)
+> > +// Copyright (C) 2024 Dzmitry Sankouski <dsankouski@gmail.com>
 >
-> > I can't reproduce this problem on Linux 6.12-rc3.
-> > What's you environment like?
+> Only the SPDX in C++ comments please.
 >
-> My kernel version is 6.12.0-rc3 from "make kernelversion".
->
-> I think the errors are related to the bash type and version, rather than the kernel version.
-> My bash version is: GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)
->
-> In fact, some shell do not complete expressions in variables and $var and command substitutions
-> are done before the arithmetic expression itself is parsed.
-> That expansion happens without regard for the arithmetic syntax, so with $var you can mess
-> with that.
-> So, I suggest to avoid to use $var inside a arithmetic expansion in order to be cross-platform.
+This conflicts with https://patchwork.kernel.org/comment/25898728/
+> > +
+(...)
 
-Hello,
-any thoughts about this patch?
-
-Were you able to replicate the error?
-
-> > >
-> > >   tools/testing/selftests/intel_pstate/run.sh | 4 ++--
-> > >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
-> > > index e7008f614ad7..0c1b6c1308a4 100755
-> > > --- a/tools/testing/selftests/intel_pstate/run.sh
-> > > +++ b/tools/testing/selftests/intel_pstate/run.sh
-> > > @@ -87,9 +87,9 @@ mkt_freq=${_mkt_freq}0
-> > >   # Get the ranges from cpupower
-> > >   _min_freq=$(cpupower frequency-info -l | tail -1 | awk ' { print $1 } ')
-> > > -min_freq=$(($_min_freq / 1000))
-> > > +min_freq=$((_min_freq / 1000))
-> > >   _max_freq=$(cpupower frequency-info -l | tail -1 | awk ' { print $2 } ')
-> > > -max_freq=$(($_max_freq / 1000))
-> > > +max_freq=$((_max_freq / 1000))
-> > >   [ $EVALUATE_ONLY -eq 0 ] && for freq in `seq $max_freq -100 $min_freq`
-> >
-> > thanks,
-> > -- Shuah
+> > +++ b/include/linux/mfd/max77705-private.h
+> > @@ -0,0 +1,180 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +//
+> > +// Maxim MAX77705 definitions.
+> > +//
+> > +// Copyright (C) 2015 Samsung Electronics, Inc.
+> > +// Copyright (C) 2024 Dzmitry Sankouski <dsankouski@gmail.com>
 >
-> Thanks,
-> Alessandro
+> No C++ please.
 
-Feel free to indicate if I can provide something useful for your evaluation.
+This conflicts with https://patchwork.kernel.org/comment/25898728/
 
-Thanks,
-Alessandro
+>
+> > +
+> > +#ifndef __LINUX_MFD_MAX77705_PRIV_H
+> > +#define __LINUX_MFD_MAX77705_PRIV_H
+> > +
+> > +#include <linux/pm.h>
+> > +
+> > +#define MAX77705_SRC_IRQ_CHG BIT(0)
+> > +#define MAX77705_SRC_IRQ_TOP BIT(1)
+> > +#define MAX77705_SRC_IRQ_FG  BIT(2)
+> > +#define MAX77705_SRC_IRQ_USBC        BIT(3)
+> > +#define MAX77705_SRC_IRQ_ALL (MAX77705_SRC_IRQ_CHG | MAX77705_SRC_IRQ_TOP | \
+> > +                             MAX77705_SRC_IRQ_FG | MAX77705_SRC_IRQ_USBC)
+> > +
+> > +// MAX77705_PMIC_REG_PMICREV register
+>
+> No C++ please.
+
+This conflicts with https://patchwork.kernel.org/comment/25898728/
+
+-- 
+
+Best regards,
+Dzmitry
 
