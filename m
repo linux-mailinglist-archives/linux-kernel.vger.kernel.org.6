@@ -1,420 +1,119 @@
-Return-Path: <linux-kernel+bounces-374135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BCE9A64DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:51:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E359A62CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6CE81F2100D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A410282870
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8E91F4727;
-	Mon, 21 Oct 2024 10:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0881E5037;
+	Mon, 21 Oct 2024 10:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RtT5f2b6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rv9APw8Y"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B5D1E7C01;
-	Mon, 21 Oct 2024 10:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E771E1C11
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729507532; cv=none; b=gc+5Hlu74h6/BO88yfVuVKkXgW8oJGmj/4PM8iIDJ+RF72ltiEgG2JTiLBM5We9zD3hjv4igGhCdoEJDWzsxFEt3b8QQ+sFWjyStuuna6+aEiaWfYaRqrhc4y7NEsc2P1iqanMSRcxTJpsCUQXxZa5vWzwiLB6Vdc04PkWUw2Hk=
+	t=1729506377; cv=none; b=kTV/ylUBMiFVcRNxy2KH1Hh3QUTIhVDyAJsVSa/q49tuZm406U9aNeuk/IlYy1gVFytdAYwy8PBsHic2AoC9F4lMfYd/DbopDDpTuvqOpvu57NxY/h8mwK5cUOCvEtVPkQhgul8Wh4F9n9DFPgtM8lllB76h2mrkDOk0n6v282A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729507532; c=relaxed/simple;
-	bh=EoRz985Isd7Gx2BEp5sjKgq5DSaMQEkxgVsXm1jyGoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CjI61RlKz2sxqDSufXb90vl1DrhF+gFNL9nldh9RKD8QY/jaQGHAO+sdJqvLdW8Diw9OFUpQ2HxS6BA2JnKE+Njit6ML795tkj9tlV8RgSl6DOCrW7UiwnRbISF7auQsdTyyV2ONSzkZDAZ+oqtUvvtBkQiNux4sfbyRhFG/XKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RtT5f2b6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5627FC4CEC7;
-	Mon, 21 Oct 2024 10:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729507531;
-	bh=EoRz985Isd7Gx2BEp5sjKgq5DSaMQEkxgVsXm1jyGoo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RtT5f2b6Nd7TEoN4AagquDF7jLDIrw/1LTJ5iFoWQu67I42mLkyqMiZ/NUIB573K8
-	 oaJQ/YuHg4XI0dD60F7de0cqYAVp7g+PW8GXXamVQhXhTEKUkg7wtpjjlCxdeHTNiF
-	 bS3wkKqjm3hg0/4+4ps962K810IJrHUXeYrY6xvs=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org
-Subject: [PATCH 5.15 00/82] 5.15.169-rc1 review
-Date: Mon, 21 Oct 2024 12:24:41 +0200
-Message-ID: <20241021102247.209765070@linuxfoundation.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729506377; c=relaxed/simple;
+	bh=cYNzRplU6x1mXgW3f1ZkHHmcMdVXmjoR36UDS02SVxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=O6DVVlUk8NsOBWBItMEhlJb9RJZH1qMlRSy+HhE9ZkiTU+sHAIBXx1IvlEwUFIfv7MGOQ6LMvtyGY5/+3y+OO5IyNM5916NSQ8F2g0LQLIal9ptDS9sHJIIawL1QCVfDgwLbm4Udv7loGEiaY4hmtEmPXPDrgFMbFmt5rQuSJB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rv9APw8Y; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1729506343; x=1730111143; i=markus.elfring@web.de;
+	bh=VeX2L3+Nej3Vx2tuHsig1eaUnAxQKHWxv9FBnucD6yg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:Cc:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=rv9APw8YaKdrzvL06jmZPqZSAJpXprbXGkZtG6bCZXoCAy0wS5fW4wuhQNUnXt/O
+	 hzPAgnfmWsEbibHYyfNjzFjlXZzFYuJ3dYxrGVtY5sxhxw/hksDXsx7Ea9lrXmnYx
+	 dBmHBefZKKpDfd/oNvf04JU8t3oWNXsR3wQJZjDHxxhDMouWcntrolM2Mm0wg3BOv
+	 MpijMfqClo2XQ6KtjOQ2cb7sqZI98TWwHbPHaXkWRiYXzKN1Ryf+opjcE7DX6b9fJ
+	 yjQBKuYBzw3SRwvQiSyPckf/HuVUTdPU7dnOyywPopHluCBFfOLs8YIcpZtRyQRVQ
+	 8Iza8raenYVTOTbDuA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5CQT-1u1luU3VhN-011Dtk; Mon, 21
+ Oct 2024 12:25:43 +0200
+Message-ID: <d693331d-1e86-415f-8fdc-6a6b43f110a5@web.de>
+Date: Mon, 21 Oct 2024 12:25:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.169-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.15.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.15.169-rc1
-X-KernelTest-Deadline: 2024-10-23T10:22+00:00
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] coresight: trbe: Fix return value check in
+ arm_trbe_register_coresight_cpu()
+To: Zhen Lei <thunder.leizhen@huawei.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ James Clark <james.clark@linaro.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Mike Leach <mike.leach@linaro.org>, Suzuki Poulouse <suzuki.poulose@arm.com>
+References: <20241021072120.739-1-thunder.leizhen@huawei.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241021072120.739-1-thunder.leizhen@huawei.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 5.15.169 release.
-There are 82 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.169-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.15.169-rc1
-
-Vasiliy Kovalev <kovalev@altlinux.org>
-    ALSA: hda/conexant - Use cached pin control for Node 0x1d on HP EliteOne 1000 G2
-
-Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-    powerpc/mm: Always update max/min_low_pfn in mem_topology_setup()
-
-Ryusuke Konishi <konishi.ryusuke@gmail.com>
-    nilfs2: propagate directory read errors from nilfs_find_entry()
-
-Paolo Abeni <pabeni@redhat.com>
-    mptcp: prevent MPC handshake on port-based signal endpoints
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: pm: fix UaF read in mptcp_pm_nl_rm_addr_or_subflow
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: fallback when MPTCP opts are dropped after 1st data
-
-Paolo Abeni <pabeni@redhat.com>
-    tcp: fix mptcp DSS corruption due to large pmtu xmit
-
-Paolo Abeni <pabeni@redhat.com>
-    mptcp: handle consistently DSS corruption
-
-Geliang Tang <geliang.tang@suse.com>
-    mptcp: track and update contiguous data status
-
-Marc Zyngier <maz@kernel.org>
-    irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
-
-Sergey Matsievskiy <matsievskiysv@gmail.com>
-    pinctrl: ocelot: fix system hang on level based interrupts
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/entry_32: Clear CPU buffers after register restore in NMI return
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/entry_32: Do not clobber user EFLAGS.ZF
-
-Zhang Rui <rui.zhang@intel.com>
-    x86/apic: Always explicitly disarm TSC-deadline timer
-
-Nathan Chancellor <nathan@kernel.org>
-    x86/resctrl: Annotate get_mem_config() functions as __init
-
-Takashi Iwai <tiwai@suse.de>
-    parport: Proper fix for array out-of-bounds access
-
-Daniele Palmas <dnlplm@gmail.com>
-    USB: serial: option: add Telit FN920C04 MBIM compositions
-
-Benjamin B. Frost <benjamin@geanix.com>
-    USB: serial: option: add support for Quectel EG916Q-GL
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: Mitigate failed set dequeue pointer commands
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: Fix incorrect stream context type macro
-
-Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Bluetooth: btusb: Fix regression with fake CSR controllers 0a12:0001
-
-Aaron Thompson <dev@aaront.org>
-    Bluetooth: Remove debugfs directory on module init failure
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: adc: ti-ads124s08: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: proximity: mb1232: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-
-Emil Gedenryd <emil.gedenryd@axis.com>
-    iio: light: opt3001: add missing full-scale range value
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: light: veml6030: fix IIO device retrieval from embedded device
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: light: veml6030: fix ALS sensor resolution
-
-Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-    iio: hid-sensors: Fix an error handling path in _hid_sensor_set_report_latency()
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: adc: ti-ads8688: add missing select IIO_(TRIGGERED_)BUFFER in Kconfig
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: dac: stm32-dac-core: add missing select REGMAP_MMIO in Kconfig
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: dac: ltc1660: add missing select REGMAP_SPI in Kconfig
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: dac: ad5770r: add missing select REGMAP_SPI in Kconfig
-
-Nikolay Kuratov <kniv@yandex-team.ru>
-    drm/vmwgfx: Handle surface check failure correctly
-
-Ville Syrjälä <ville.syrjala@linux.intel.com>
-    drm/radeon: Fix encoder->possible_clones
-
-Jens Axboe <axboe@kernel.dk>
-    io_uring/sqpoll: close race on waiting for sqring entries
-
-Omar Sandoval <osandov@fb.com>
-    blk-rq-qos: fix crash on rq_qos_wait vs. rq_qos_wake_function race
-
-Johannes Wikner <kwikner@ethz.ch>
-    x86/bugs: Do not use UNTRAIN_RET with IBPB on entry
-
-Johannes Wikner <kwikner@ethz.ch>
-    x86/bugs: Skip RSB fill at VMEXIT
-
-Johannes Wikner <kwikner@ethz.ch>
-    x86/entry: Have entry_ibpb() invalidate return predictions
-
-Johannes Wikner <kwikner@ethz.ch>
-    x86/cpufeatures: Add a IBPB_NO_RET BUG flag
-
-Jim Mattson <jmattson@google.com>
-    x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
-
-Michael Mueller <mimu@linux.ibm.com>
-    KVM: s390: Change virtual to physical address access in diag 0x258 handler
-
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-    s390/sclp_vt220: Convert newlines to CRLF instead of LFCR
-
-Lu Baolu <baolu.lu@linux.intel.com>
-    iommu/vt-d: Fix incorrect pci_for_each_dma_alias() for non-PCI devices
-
-Felix Moessbauer <felix.moessbauer@siemens.com>
-    io_uring/sqpoll: do not put cpumask on stack
-
-Jens Axboe <axboe@kernel.dk>
-    io_uring/sqpoll: retain test for whether the CPU is valid
-
-Felix Moessbauer <felix.moessbauer@siemens.com>
-    io_uring/sqpoll: do not allow pinning outside of cpuset
-
-Wachowski, Karol <karol.wachowski@intel.com>
-    drm/shmem-helper: Fix BUG_ON() on mmap(PROT_WRITE, MAP_PRIVATE)
-
-Breno Leitao <leitao@debian.org>
-    KVM: Fix a data race on last_boosted_vcpu in kvm_vcpu_on_spin()
-
-Mikulas Patocka <mpatocka@redhat.com>
-    dm-crypt, dm-verity: disable tasklets
-
-Johannes Berg <johannes.berg@intel.com>
-    wifi: mac80211: fix potential key use-after-free
-
-Patrick Roy <roypat@amazon.co.uk>
-    secretmem: disable memfd_secret() if arch cannot set direct map
-
-Liu Shixin <liushixin2@huawei.com>
-    mm/swapfile: skip HugeTLB pages for unuse_vma
-
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-    fat: fix uninitialized variable
-
-Nianyao Tang <tangnianyao@huawei.com>
-    irqchip/gic-v3-its: Fix VSYNC referencing an unmapped VPE on GIC v4.1
-
-Oleksij Rempel <linux@rempel-privat.de>
-    net: macb: Avoid 20s boot delay by skipping MDIO bus registration for fixed-link PHY
-
-Mark Rutland <mark.rutland@arm.com>
-    arm64: probes: Fix simulate_ldr*_literal()
-
-Mark Rutland <mark.rutland@arm.com>
-    arm64: probes: Remove broken LDR (literal) uprobe support
-
-Jinjie Ruan <ruanjinjie@huawei.com>
-    posix-clock: Fix missing timespec64 check in pc_clock_settime()
-
-Wei Fang <wei.fang@nxp.com>
-    net: enetc: add missing static descriptor and inline keyword
-
-Wei Fang <wei.fang@nxp.com>
-    net: enetc: remove xdp_drops statistic from enetc_xdp_drop()
-
-Jan Kara <jack@suse.cz>
-    udf: Fix bogus checksum computation in udf_rename()
-
-Jan Kara <jack@suse.cz>
-    udf: Don't return bh from udf_expand_dir_adinicb()
-
-Jan Kara <jack@suse.cz>
-    udf: Handle error when expanding directory
-
-Jan Kara <jack@suse.cz>
-    udf: Remove old directory iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Convert udf_link() to new directory iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Convert udf_mkdir() to new directory iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Convert udf_add_nondir() to new directory iteration
-
-Jan Kara <jack@suse.cz>
-    udf: Implement adding of dir entries using new iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Convert udf_unlink() to new directory iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Convert udf_rmdir() to new directory iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Convert empty_dir() to new directory iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Convert udf_get_parent() to new directory iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Convert udf_lookup() to use new directory iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Convert udf_readdir() to new directory iteration
-
-Jan Kara <jack@suse.cz>
-    udf: Convert udf_rename() to new directory iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Provide function to mark entry as deleted using new directory iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Implement searching for directory entry using new iteration code
-
-Jan Kara <jack@suse.cz>
-    udf: Move udf_expand_dir_adinicb() to its callsite
-
-Jan Kara <jack@suse.cz>
-    udf: Convert udf_expand_dir_adinicb() to new directory iteration
-
-Jan Kara <jack@suse.cz>
-    udf: New directory iteration code
-
-Vasiliy Kovalev <kovalev@altlinux.org>
-    ALSA: hda/conexant - Fix audio routing for HP EliteOne 1000 G2
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |    4 +-
- arch/arm64/kernel/probes/decode-insn.c             |   16 +-
- arch/arm64/kernel/probes/simulate-insn.c           |   18 +-
- arch/powerpc/mm/numa.c                             |    6 +-
- arch/s390/kvm/diag.c                               |    2 +-
- arch/x86/entry/entry.S                             |    5 +
- arch/x86/entry/entry_32.S                          |    6 +-
- arch/x86/include/asm/cpufeatures.h                 |    4 +-
- arch/x86/kernel/apic/apic.c                        |   14 +-
- arch/x86/kernel/cpu/bugs.c                         |   32 +
- arch/x86/kernel/cpu/common.c                       |    3 +
- arch/x86/kernel/cpu/resctrl/core.c                 |    4 +-
- block/blk-rq-qos.c                                 |    2 +-
- drivers/bluetooth/btusb.c                          |   13 +-
- drivers/gpu/drm/drm_gem_shmem_helper.c             |    3 +
- drivers/gpu/drm/radeon/radeon_encoders.c           |    2 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                |    1 +
- drivers/iio/adc/Kconfig                            |    4 +
- .../iio/common/hid-sensors/hid-sensor-trigger.c    |    2 +-
- drivers/iio/dac/Kconfig                            |    3 +
- drivers/iio/light/opt3001.c                        |    4 +
- drivers/iio/light/veml6030.c                       |    5 +-
- drivers/iio/proximity/Kconfig                      |    2 +
- drivers/iommu/intel/iommu.c                        |    4 +-
- drivers/irqchip/irq-gic-v3-its.c                   |   26 +-
- drivers/md/dm-crypt.c                              |   37 +-
- drivers/net/ethernet/cadence/macb_main.c           |   14 +-
- drivers/net/ethernet/freescale/enetc/enetc.c       |    2 +-
- drivers/parport/procfs.c                           |   22 +-
- drivers/pinctrl/pinctrl-ocelot.c                   |    8 +-
- drivers/s390/char/sclp_vt220.c                     |    4 +-
- drivers/usb/host/xhci-ring.c                       |    2 +-
- drivers/usb/host/xhci.h                            |    2 +-
- drivers/usb/serial/option.c                        |    8 +
- fs/fat/namei_vfat.c                                |    2 +-
- fs/nilfs2/dir.c                                    |   50 +-
- fs/nilfs2/namei.c                                  |   39 +-
- fs/nilfs2/nilfs.h                                  |    2 +-
- fs/udf/dir.c                                       |  148 +--
- fs/udf/directory.c                                 |  594 ++++++++---
- fs/udf/inode.c                                     |   90 --
- fs/udf/namei.c                                     | 1038 +++++++-------------
- fs/udf/udfdecl.h                                   |   45 +-
- include/linux/fsl/enetc_mdio.h                     |    3 +-
- include/linux/irqchip/arm-gic-v4.h                 |    4 +-
- io_uring/io_uring.c                                |   21 +-
- kernel/time/posix-clock.c                          |    3 +
- mm/secretmem.c                                     |    4 +-
- mm/swapfile.c                                      |    2 +-
- net/bluetooth/af_bluetooth.c                       |    1 +
- net/ipv4/tcp_output.c                              |    2 +-
- net/mac80211/cfg.c                                 |    3 +
- net/mac80211/key.c                                 |    2 +-
- net/mptcp/mib.c                                    |    3 +
- net/mptcp/mib.h                                    |    3 +
- net/mptcp/pm_netlink.c                             |    3 +-
- net/mptcp/protocol.c                               |   23 +-
- net/mptcp/protocol.h                               |    2 +
- net/mptcp/subflow.c                                |   19 +-
- sound/pci/hda/patch_conexant.c                     |   19 +
- virt/kvm/kvm_main.c                                |    5 +-
- 61 files changed, 1172 insertions(+), 1242 deletions(-)
-
-
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tgKZesTdN07y1psD5/XYkHpKPdZJPpXSrjTRYXIvLf7ONH8bYlK
+ 9nS5NqU2nFRZt6nRIjNDqc+DI1aNCNAi66QClYAwG4JCMtziRje8frQvlTfF0q6C2LqRxB9
+ LI0UpE5UiOS7AcTz8EdyiUhY50tIqP3ivyN7dpA4B6VLlJVOqhrqPTv1nrx6f2/aZbI7GC3
+ q4C+GQkfWxG3Iu6wF0hjQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Ly1IXGtOTIw=;H4hezi9AlckIQuhjRp9e3OSq3uM
+ /LzHHHTpBrAod3/BuZ8tCHnRlgmaBLg4KD3m9YuydxWjwHYnzZAhKZr2a8CmMEYdmPC86Uiaz
+ jvM7zjzlSy1wAoXdXNNVTBdFmX+r4lHIeoLdwbOTql6yPXi9EehLS5AE6DIHBdydonUc1S+i8
+ wmU1j5PZkEDChc9zhR4TWxeXml++p/ke9pcbn7224eTvif9SoSZQqMMsHdtAx1a0lGGKQH9ME
+ Di735iomf+d6mckug8gR3/YVTehNvO1SnYgQLU7r+fvNdYZ8+5ftIBUfXmBNSAa/qXqtih5qZ
+ K8u7lXFr7aVQseOZFQDNcoil6KaLvasBMgRHXJXP2tKAdw4MjV1EoiVvMcbEaiMAF2icPk5jk
+ WHw4u6FSUTmSvSSSNwAoSZexouUI9VapvwKrfWg2kpfqOhCcUAUkDwVGRJznAbwrb53G+DxaC
+ P09pw173E7adC9QEya8b/PdBAGNTtjQ0g5XwOrzIoIvvMY6mZMMsTIdQlTl5GXXLT5nk/xinJ
+ t8iZrpur//h0ZRriLUxkXjglFz/QYKnYdSQEeSCM9FoQ3a/O3EWfkF+oO2uazbVePHgn9KVj4
+ /7gnlRomoK4f4cXMf4QN8/KW3QM1FwNO4di2dyQ3eAfziwu+5BTxzgvK2XNEQBy4DKM0VxpmQ
+ 82TjpRbd3lUnOneRio5fJt29QG0qr2IyCRcS3JBYf6CahTqhlXVQ7Oz9kE1fHMYUlTdOhAE7N
+ Zy2ObrUFWXudDgH+dCkvo64A3xoZTRKEFrx5HTTnlxJmiEsR975eavcXGpfgBATx4Azd4vNEV
+ L29DpYW8Yro3iq7Y33xoFAZA==
+
+=E2=80=A6
+> memory instead of coresight_get_platform_data(), but forgot to update th=
+e
+> return value check code accordingly. Fix the incorrect return value chec=
+k
+> for devm_kzalloc(), which returns NULL instead of ERR_PTR() when it fail=
+s.
+=E2=80=A6
+> ---
+>  drivers/hwtracing/coresight/coresight-trbe.c | 2 +-
+=E2=80=A6
+
+It would have been nice to add a patch version description.
+
+See also:
+* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.12-rc4#n321
+
+* https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+p=
+reviously+submitted+patch%22
+
+
+Regards,
+Markus
 
