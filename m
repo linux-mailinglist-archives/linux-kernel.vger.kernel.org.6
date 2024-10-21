@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-374287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F76C9A67FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F8E9A6800
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D7421C20F63
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA08D280D5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E35F1F940D;
-	Mon, 21 Oct 2024 12:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2341F426B;
+	Mon, 21 Oct 2024 12:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5NvzLEn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJQ6lwLU"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4963A1F4FB0;
-	Mon, 21 Oct 2024 12:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC1E1E7C13;
+	Mon, 21 Oct 2024 12:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513091; cv=none; b=nJK9I3SMqoOdWQWb/n+Whb9PSWIeOFXtHCnIEkQ7SyPtFY2d/TdIOIaTJiR3rUBFobRhf1II287eEhhYK8Ao0NkuWJGSF+O9t6tV7Uug4t4a1SXHHYLJCnWD/QWKM8jgC6jwXiSDpGs+CqFGh1OvV3zHMYKg/K7stqWEXrpnwa4=
+	t=1729513160; cv=none; b=DdstkqL35uAnvCF3ARS2euAqwp6sI9fbEBq/k/TIux4W44njZnuY8B5LIUGgv5+Evq+CHirWuxV8yllEB0VEgIbm0MLFcOYpcEZeD+ROWKYeemtj5K96IUHfVmfhRa1cnvL8CVditzJVPaFPKqLoUg5n4Jt3cjBTY3xPTxW1HLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513091; c=relaxed/simple;
-	bh=fJF3sv1WK29g491H9+hsq1JOT1porgzkvgomaG6Ledw=;
+	s=arc-20240116; t=1729513160; c=relaxed/simple;
+	bh=7mrhqlzLU/8yE2Bl6++pdNx3AsmIHi/tmHTMQIHyy7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVNY+immZTyL/Xc39ETenLHBkvG94cNE6ZSejcO+Wndl74c5k5Fq9orpK/kNZs+zj690Yb441x6Jq3ifXn8B7U/Z2GJXw2r9PWaanzNTuleY4RF0likgVbrk4N0VoYLG2uJDQU3yXncMREAv+ky+B2hVbXFErMzJVuxHCHxZPzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5NvzLEn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B0AC4CEC3;
-	Mon, 21 Oct 2024 12:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729513090;
-	bh=fJF3sv1WK29g491H9+hsq1JOT1porgzkvgomaG6Ledw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M5NvzLEnUIfSqKtpJxwNDMzakIDzjY7CACpZ/ItWVCBMAppqUukiTWn21NbgAgPuO
-	 /EdtycJo+5CkYX0osKx1t1bfv/uvbnOTvTQw40ZlYRG2PO4Z5m8YSEn1IIQVeCA5UW
-	 8I4EsKn9JmEhP0AUNOXtlakZbSomGTo5prJdr5c/rlRlBT/LYtVBoLoj3znWcMVnNc
-	 ygfKpAbsag0y3B03PbHHpkK3qJ0tiwA96ZWsCZFH4/tReON0RB8Z6bRA6NnYRmJmjf
-	 WU8ltnuf3sFSpNykC7ejhoI9y276DrIp5pGKkqJ+VRq670+mrGpQ4IYfc8foWc46US
-	 7JBeelvJY7eMA==
-Date: Mon, 21 Oct 2024 13:18:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: iansdannapel@gmail.com, mdf@kernel.org, hao.wu@intel.com,
-	yilun.xu@intel.com, trix@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, neil.armstrong@linaro.org,
-	heiko.stuebner@cherry.de, rafal@milecki.pl,
-	linus.walleij@linaro.org, linux-fpga@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fpga: Add Efinix Trion & Titanium serial SPI
- programming driver
-Message-ID: <20241021-depravity-scale-6123da541538@spud>
-References: <20240927141445.157234-1-iansdannapel@gmail.com>
- <ZxG70kzjsvT3UBlQ@yilunxu-OptiPlex-7050>
- <20241018-chump-juvenile-dc368d3d2f2c@spud>
- <ZxW4DJOES77ifOC9@yilunxu-OptiPlex-7050>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E9vZooA/v3ckuzsa54fo1cDJcdHh26kmIiaQDh1B639hVUA25JF2qplaKskfNi3q84ZXDQAF+JbNuYLJQtWCbq+PehNgLrH6L0TmppAQvLV/8pKGuD+Q06vAo8Mfs/hHFc8aNL6VfXzHm9Cpex6fw9xyjNXtCU05Tx7zQsCM5C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJQ6lwLU; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e4fa3ea7cso3370975b3a.0;
+        Mon, 21 Oct 2024 05:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729513158; x=1730117958; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GzXAN/kGFLyZ6KoxQYaMyN8WIW7O/chKPrM0YUwT+2Y=;
+        b=YJQ6lwLU7n04PJmAJNZ/HtMDtWl4vYmqS9qQDCtE1imYoqsVVwSooUUiUWrRDLcgkq
+         64DXxemN+fnA6FTWwa57Y2N/o9pf3WcJUYV34lkG9v6qUrIU2KSvJqXEAejAN7Jz4X0U
+         pfp+UbBwpUZdwMwl35tXPTh1PxZyRJjZWGfNaAgDg2UPXccMKKyS8qEgdWtwOUYaIab9
+         eH+KrtBGNf8M4IStTKJrYolbf9C7ImzFHsy0Mho4IWqkwkSM6VqBijLn+d0PSXPeM8Ur
+         26+l6vnvwUuccRHb3IF3J1/4wW98wM8Uz5LsVY4gROHM3VKurENv4RjLmRH51WbJmbJk
+         xR9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729513158; x=1730117958;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GzXAN/kGFLyZ6KoxQYaMyN8WIW7O/chKPrM0YUwT+2Y=;
+        b=iO/mbJA9DqUJu0NZJUa/HbBCgFz75KVXgALKVIvKEHvlqQr6gL+9IlkrZzf/CylIR+
+         x40v/5sRZo3odwKaQq6je4QlT73hLV1Mi+rHQr2z4f8lhxm5FxPMm2Lnt88TSkG80LSt
+         LVh6wwWteDRgkuK+6QqATvnvQyf1OlI59tvJQ+ihyNqh7dxV0LXwK5UXGq/4ArKT4W0x
+         GS+U0dx6bFz2vHLfJ1/BiCMeiI3sXw5zQxXFxp3DH/0ukzLxeD8GpZGlKyQ5gDRtDOaH
+         +2fQG1oxqeQV3c8EDZV7QCvCLgTOejpsD71+R6uriSVeU6RqivxxbIAkkkkoWQlL2iEC
+         fvDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2u8IB+CEWNjZXq69QGd9cbB3MgMO/ZwidZLl00BapSKKwQTV7N9tGTf6YmuViLnBoSv+z6WyVsXnlVQJ7@vger.kernel.org, AJvYcCU8HDKqd5RlfWHNXsRsWIGcpKH0vKhJKdFdhxAVhj4HifrS4IT9M6toswtFyc57vKLHSt+N7J1Ny9HzTVn0@vger.kernel.org, AJvYcCVoscgNohim02VHjrf146jF2/QOoHdFANrtuF5d9e4vw3TugQlpCOJQNIZwaoCWiP46WOVKupZA1qhU@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBpVCxpqxpMCwL3TRsTY2h6p5BOkCvCjWGJ0eZKMzv+oaVeDI+
+	GGTx/OKDto4h65QlzZpxSGx3m2qqZlYgpeTgGEt96INKazF9m9bq
+X-Google-Smtp-Source: AGHT+IG3E9DRACYh7UWi0DZZrBl+qKyuSDA06T/8MVTylVvYqdgNfbdh8aJBhwejFWfecdHUmg2QQQ==
+X-Received: by 2002:a05:6a00:98d:b0:71e:1201:636a with SMTP id d2e1a72fcca58-71ea31a5886mr15484512b3a.1.1729513157747;
+        Mon, 21 Oct 2024 05:19:17 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabdb75esm2907976a12.89.2024.10.21.05.19.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 05:19:17 -0700 (PDT)
+Date: Mon, 21 Oct 2024 20:18:58 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Inochi Amaoto <inochiama@outlook.com>, 
+	Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
+ SG2044 uarts
+Message-ID: <r5ngs2j776jcy6sfirwzmtsoljotatfvgmlmv4sj4xksye2bff@xtn7adafbpfz>
+References: <20241021072606.585878-1-inochiama@gmail.com>
+ <20241021072606.585878-2-inochiama@gmail.com>
+ <20241021-outlying-washday-8f171dedc703@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Wt9DGYSdOGciyjI4"
-Content-Disposition: inline
-In-Reply-To: <ZxW4DJOES77ifOC9@yilunxu-OptiPlex-7050>
-
-
---Wt9DGYSdOGciyjI4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241021-outlying-washday-8f171dedc703@spud>
 
-On Mon, Oct 21, 2024 at 10:10:20AM +0800, Xu Yilun wrote:
-> On Fri, Oct 18, 2024 at 05:58:44PM +0100, Conor Dooley wrote:
-> > On Fri, Oct 18, 2024 at 09:37:22AM +0800, Xu Yilun wrote:
-> > > On Fri, Sep 27, 2024 at 04:14:42PM +0200, iansdannapel@gmail.com wrot=
-e:
-> > > > From: Ian Dannapel <iansdannapel@gmail.com>
-> > > >=20
-> > > > Add a new driver for loading binary firmware to volatile
-> > > > configuration RAM using "SPI passive programming" on Efinix FPGAs.
-> > > >=20
-> > > > Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
-> > > > ---
-> > > >  drivers/fpga/Kconfig                    |  10 ++
-> > > >  drivers/fpga/Makefile                   |   1 +
-> > > >  drivers/fpga/efinix-trion-spi-passive.c | 211 ++++++++++++++++++++=
-++++
-> > > >  3 files changed, 222 insertions(+)
-> > > >  create mode 100644 drivers/fpga/efinix-trion-spi-passive.c
-> > > >=20
-> > > > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-> > > > index 37b35f58f0df..eb1e44c4e3e0 100644
-> > > > --- a/drivers/fpga/Kconfig
-> > > > +++ b/drivers/fpga/Kconfig
-> > > > @@ -83,6 +83,16 @@ config FPGA_MGR_XILINX_SPI
-> > > >  	  FPGA manager driver support for Xilinx FPGA configuration
-> > > >  	  over slave serial interface.
-> > > > =20
-> > > > +config FPGA_MGR_EFINIX_SPI
-> > > > +	tristate "Efinix FPGA configuration over SPI passive"
-> > > > +	depends on SPI
-> > > > +	help
-> > > > +	  This option enables support for the FPGA manager driver to
-> > > > +	  configure Efinix Trion and Titanium Series FPGAs over SPI
-> > > > +	  using passive serial mode.
-> > > > +	  Warning: Do not activate this if there are other SPI devices
-> > > > +	  on the same bus as it might interfere with the transmission.
-> > >=20
-> > > Sorry, this won't work. As you can see, the conflict usage of CS caus=
-es
-> > > several concerns. Just a text here is far from enough.
-> > >=20
-> > > You need to actively work with SPI core/controller drivers to find a
-> > > solution that coordinate the usage of this pin.
-> >=20
-> > Why does it even impact other SPI devices on the bus? It's not /their/
-> > CS line that is being modified here, it is the line for the FPGA's
-> > programming interface, right?
-> > What am I missing here that makes it any different to any other SPI
-> > device that may need it's CS toggled?
->=20
-> IIUC, now spi core or controller driver should fully responsible for
-> HW operations of CS. And every good behaved spi device driver should
-> declare their logical CS index defined by SPI controller and let SPI
-> core/controller driver to proxy the CS change.
->=20
-> But if this spi device driver directly aquires CS, it conflicts with
-> the controller and just fails.
+On Mon, Oct 21, 2024 at 01:10:52PM +0100, Conor Dooley wrote:
+> On Mon, Oct 21, 2024 at 03:26:05PM +0800, Inochi Amaoto wrote:
+> > The UART of SG2044 is modified version of the standard Synopsys
+> > DesignWare UART. The UART on SG2044 relys on the internal divisor
+> > and can not set right clock rate for the common bitrates.
+> > 
+> > Add compatibles string for the Sophgo SG2044 uarts.
+> > 
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > ---
+> >  .../devicetree/bindings/serial/snps-dw-apb-uart.yaml          | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
+> > index 4cdb0dcaccf3..6963f89a1848 100644
+> > --- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
+> > +++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
+> > @@ -58,6 +58,10 @@ properties:
+> >                - brcm,bcm11351-dw-apb-uart
+> >                - brcm,bcm21664-dw-apb-uart
+> >            - const: snps,dw-apb-uart
+> > +      - items:
+> > +          - enum:
+> > +              - sophgo,sg2044-uart
+> > +          - const: snps,dw-apb-uart
+> 
+> Why does each vendor have an items entry of its own? Seems like needless
+> clutter of the file IMO, except for the renesas bit.
+> 
+> 
+> Cheers,
+> Conor.
 
-Right, I don't think you answered my question here at all, but just
-reading over the kconfig text again I think I understand what it means.
-I'd interpreted this as other devices being impacted by what this driver
-is doing, but actually it is talking about other devices on the bus
-interfering with this one because of how it handles the chip select.
 
---Wt9DGYSdOGciyjI4
-Content-Type: application/pgp-signature; name="signature.asc"
+I just follow others when writing this binding. I think it may need
+another patch to fix this problem, right?
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxZGfQAKCRB4tDGHoIJi
-0orWAQDW1clt+xNoVd8+K4hwkETBaQSqcDeo3EyjcnhtdNtidAD/Tyrn1QgIt56w
-C4eWfh6Id3Pl5G2xcXBOJXfI3Ese1Qk=
-=Ue1A
------END PGP SIGNATURE-----
-
---Wt9DGYSdOGciyjI4--
+Regards,
+Inochi
 
