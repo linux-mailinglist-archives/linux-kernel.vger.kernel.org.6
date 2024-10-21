@@ -1,145 +1,112 @@
-Return-Path: <linux-kernel+bounces-374168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF6C9A65E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:07:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66EFB9A65F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80FC21C228C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28364282155
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2879D1E47AC;
-	Mon, 21 Oct 2024 11:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0280B1E47BD;
+	Mon, 21 Oct 2024 11:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ki9BSR26"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pATrULGT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB27F1E4938
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A42539FD6;
+	Mon, 21 Oct 2024 11:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729508838; cv=none; b=b8mvFaR+uocPVJkqWmx25jIfrUsg9wdZtTY1rW5VWTJs2M/vpUNGPPsXfNvMi7RsE0/RCaU4xA1snRKeBP7otluFe44ai9wfBumGQOK8f7f15bFtOUIC5KqENry2nZhE3auj7CGTo3C/ljB33TJo/mMZt3NWoVKsXqawqCNFcCQ=
+	t=1729508929; cv=none; b=m5wAP9s9pgTo+jG0bKnOf6KgtRikNIl4pfGLxsBzkpJ44VlZ2SqhwJiFyiyRBD64Dbc8jjkXo0DHbfmkCjcFTh0TRTcZIzsHfxUShPZz67VsrWkyYTNUdQiNhDEjRi6tuIN9h9fcDoX9TUSYIbKhFqHLVQy7zsJQa1a5CpbO31g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729508838; c=relaxed/simple;
-	bh=N5eBhN7l4N5g+CiruVAT/S8z5Q24aiDr5bqSg9fD31s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RTuFehWT3GuPqpm505aD/ZSqT2sGVhiLX/1r8ShMmNKamTd0MIBQC4cjQl4HyUDo6V7F9eIMss/yx1ZQ2ArnnUchpjs9QHCHoha+2g9vb51qqnqdUXXoiFHK2a5Im79UnDtsZ7AxqoMWP3cTtfTJtpBnz8KN16elyuDAG/TULAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ki9BSR26; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L8JrSk009629
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:07:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dRRpJ/UZTMidDbDrDpmrUhrP7JPG8Yqq8PSOPA/Y8Oc=; b=ki9BSR262NGyMhzA
-	2zSFlWm3dUanejTogjEqd4hmTcZbY1nUWaGLmcv/Jdgsu3vgMieE4YBPAvepQQIi
-	39aJ+3mfSg8wQo8RLCEFOLMiELituh79azI9983+TiEPVX5nvqJEz+ufizgytxdS
-	Yluo7TgKWPMu7FaO9zC/FihyJE6JS3NRnCJ9HjDR4/WtdYx/sD2YwmApY1IoT6+v
-	2D3tuGkr2dY77+aIO4u+92RcLQmxcqYMBBdyDB85FJDw9muGmpbdmwi2Y3nofg1G
-	0wb7zTl51GIPJtcZLiPcWPtSJFBT38bCRUxPOs7yEFjsrTewf1Vbk6PbKuhwuAcF
-	d0jx2A==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42dkbt0m5s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:07:15 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbf2a4afcfso14388706d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:07:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729508830; x=1730113630;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dRRpJ/UZTMidDbDrDpmrUhrP7JPG8Yqq8PSOPA/Y8Oc=;
-        b=PQ0+SrxsPPXsiXrXPy8Ibj0msHyHDVKngAiaTVB9MYxGoXswEm1EJONVLfYM1jmH4g
-         MqvRxBtKnA3vnz4GEDYyKQW32qS8EnVK0OFJlWiCpLYVh4u0Uk1NRErI4hg033+7nGhK
-         3SR21yghyHPEv3vGeUQ0Z1ezs3Qs1b73JGHeDEtYRb1jtyJmxEQFlHeCQSKLe58xDHIy
-         yxh4Fj81ADQ5POme7wwvmRCjnkOszFRd2XgCNlVccVY1Lz0OSN500zdG5zBEZSxtvPnW
-         uOezXQRPl7hTwPu4FZdDxVGlZ9aVdaWwuI0WJho0PUB4HpmVH0ik8BNNYK7rLSV9KL2y
-         pSxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWu2pKVuah73Q/KbxcGIMtqSJyeQqrCgLkBiqHInqL/DHrBHow9znQ9VD6nBYF8nwGycCntrnMNmjuCx1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJXZSUHp5d6KbFO2TeewZImR9HNxExuVbvMjRku9vchLHMPNRi
-	uddBLfI1Mw+ZLLi7tnjPfP7GBOj2cZBgkNwP5FwlkwXRc0PFaGxvGvfIiQVwP8BxoeB3bMoNTQv
-	0LlLOpvUhY5fmCl1pxlczXXA9QpkHYAU8RUjbYFzo6RxAm1z/0TGZUC34VLTpy/k=
-X-Received: by 2002:a05:6214:1948:b0:6cb:e6b4:2d36 with SMTP id 6a1803df08f44-6cde15c6223mr78561526d6.7.1729508830608;
-        Mon, 21 Oct 2024 04:07:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBfNHni3oaxFZqhR6T1qV3nO2g8kHzH2/s0gjy45NEB89jUIXw2wfgW2KkCIfZEbRx6DzJ0A==
-X-Received: by 2002:a05:6214:1948:b0:6cb:e6b4:2d36 with SMTP id 6a1803df08f44-6cde15c6223mr78561296d6.7.1729508830330;
-        Mon, 21 Oct 2024 04:07:10 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb6696b553sm1824101a12.3.2024.10.21.04.07.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 04:07:09 -0700 (PDT)
-Message-ID: <c6a1eced-ea8e-4174-9f8b-dbf4131e0a2c@oss.qualcomm.com>
-Date: Mon, 21 Oct 2024 13:07:05 +0200
+	s=arc-20240116; t=1729508929; c=relaxed/simple;
+	bh=OF3YQJNOHAwOJ4wqBRrTi+APrTW81rts9A+uLky2rEc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N5VEk4KADl7oyMETuxgBwYHJrFBNMXZrDa31GLWBO6d2qTvkUaTqFj0qQRWTRgLNP+pinDEm97XxTfxvmv+VkPEsx7qstjMgEWGKs/VyMyT/Qza43jlanV/Lyfxu3WVzY9NqIGl7G+gNpwKHgsr6pOMJws0R9oMtSk/S8jllJY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pATrULGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CF8C4CEE5;
+	Mon, 21 Oct 2024 11:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729508928;
+	bh=OF3YQJNOHAwOJ4wqBRrTi+APrTW81rts9A+uLky2rEc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pATrULGTWNBa19h4o7C3Vug2LQHhRwR7L8Fpmb6j6gxjuaTeAPCR8bfDdybHFButi
+	 CEq87ulCx4RoupmNAVNZlMQo+Z07bQ8zTpucmMU34aVmJbbSsL+glVXCR4xVGQwL+6
+	 9i2iVQetTLjhVp8Mu2uotYjsyAMSzmfdxZbE3xezv1MCvAJQWtna+jVkMpaQyv2D/k
+	 at1oeUkKtfPsXd51i3iL/PeYBjr1vhOS3LlDPRg1H2wP6+xg/ikWuuko/u0sDiXyVl
+	 cEoSXzDNq0khqB6N4qwXhK04rG+qoMGHKqKn1+PFxl0OoVLwyQ/6U7FmuD0amkXh76
+	 lLm5SOjUkC/yQ==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-277e6002b7dso1488067fac.1;
+        Mon, 21 Oct 2024 04:08:48 -0700 (PDT)
+X-Gm-Message-State: AOJu0YymBXTxPlz415c2BdiAzjFO6Rhf5tJEm3XwPh/xow4CvIYt0Kdq
+	tZkOuPmWTuPMpFh1FBYUk7WWWGEbjpdZ4yffb0bA4Teqg19qa9NfaI6tAvsL/fTxxm9wdxf4iNK
+	0Ahdb8jcWsF8Ab1Ol+fneAeQRea4=
+X-Google-Smtp-Source: AGHT+IGCO5f9yRRu4pJKjmgHVZZjES9ccAyz/6MdgSiSg296qJ+sZcEddd75nEC0iUqja4+ve6sHG0f2916xoUn8gr0=
+X-Received: by 2002:a05:6870:80c8:b0:270:1352:6c10 with SMTP id
+ 586e51a60fabf-2892c5435d9mr8965609fac.37.1729508927935; Mon, 21 Oct 2024
+ 04:08:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] clk: qcom: add support for clock controllers on
- the SAR2130P platform
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kalpak Kawadkar <quic_kkawadka@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 2Q0kuXPed4U4oneGnIRG9xNMDUIbFjbd
-X-Proofpoint-GUID: 2Q0kuXPed4U4oneGnIRG9xNMDUIbFjbd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
- phishscore=0 spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410210080
+References: <4985597.31r3eYUQgx@rjwysocki.net> <CAJZ5v0iV4-3-sqmK12ZoRQXzUSgO0NDySe5LZ3z7FMQOFJCymQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0iV4-3-sqmK12ZoRQXzUSgO0NDySe5LZ3z7FMQOFJCymQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 21 Oct 2024 13:08:32 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hHFp+FROxs_NbyjA8_ODKmiirFrdJNhGiHYvDMjZ2h3A@mail.gmail.com>
+Message-ID: <CAJZ5v0hHFp+FROxs_NbyjA8_ODKmiirFrdJNhGiHYvDMjZ2h3A@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] thermal: core: Reimplement locking through guards
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Zhang Rui <rui.zhang@intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21.10.2024 12:30 PM, Dmitry Baryshkov wrote:
-> Add support for the RPMh, TCSR, Global, Display and GPU clock
-> controllers as present on the Qualcomm SAR2130P platform.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-> Changes in v2:
-> - Dropped gcc_camera_hf_axi_clk, gcc_camera_sf_axi_clk,
->   gcc_qmip_camera_nrt_ahb_clk, gcc_qmip_camera_rt_ahb_clk,
->   gcc_iris_ss_hf_axi1_sreg, gcc_iris_ss_spd_axi1_sreg,
->   gcc_video_axi0_sreg and gcc_video_axi1_sreg clocks until corresponding
->   subsytems bringup (Taniya)
-> - Program GDSC_SLEEP_ENA_VOTE directly from the probe function (Taniya)
-> - Dropped sreg, BRANCH_HALT_POLL and collapse_sleep_mask patches
->   (Taniya)
-> - Dropped gcc_parent_data_4, gcc_parent_map_4, gcc_parent_data_5,
->   gcc_parent_map_5 (LKP)
-> - Link to v1: https://lore.kernel.org/r/20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org
+On Fri, Oct 11, 2024 at 8:51=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Fri, Oct 11, 2024 at 12:22=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki=
+.net> wrote:
+> >
+> > Hi Everyone,
+> >
+> > This is a continuation of
+> >
+> > https://lore.kernel.org/linux-pm/2215082.irdbgypaU6@rjwysocki.net/
+> >
+> > and (quite obviously) it is based on that series.
+> >
+> > The majority of the patches in it are new iterations of patches include=
+d in
+> >
+> > https://lore.kernel.org/linux-pm/6100907.lOV4Wx5bFT@rjwysocki.net/
+> >
+> > and there is one new patch ([02/11]).
+> >
+> > All of these patches are related to locking, but some of them are prepa=
+ratory.
+> >
+> > The series as a whole introduces guards for thermal zones and cooling d=
+evices
+> > and uses them to re-implement locking in the thermal core.  It also use=
+s mutex
+> > guards for thermal_list_lock and thermal_governor_lock locking.
+> >
+> > As usual, the details are described by the individual patch changelogs.
+>
+> This material is now present in the thermal-core-experimental branch
+> in linux-pm.git.
 
-Please address the remaining comments from me too
-
-Konrad
+I gather that it is not controversial as it was covered in the PM+TC
+session at the LPC and it has been around for quite a while, so I've
+just queued it up for 6.13.
 
