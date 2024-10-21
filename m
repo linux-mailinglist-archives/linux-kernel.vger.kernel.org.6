@@ -1,272 +1,189 @@
-Return-Path: <linux-kernel+bounces-375234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C878B9A9381
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:43:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35CEB9A9387
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45E371F224B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:43:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56AED1C225DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB2D1FEFAE;
-	Mon, 21 Oct 2024 22:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBE21FEFAE;
+	Mon, 21 Oct 2024 22:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UWncrZaY"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Eu/DMtJI"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6101E32BD
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 22:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6702CA9
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 22:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729550617; cv=none; b=Eo3ei4Ui+znXOKKLLjW9oKVubRNFO+pzDnAjnLaXpQgQMYNxG1aSLp44eRnSdttrcK0Ri+Yztl8GaoyJZm3WHHX/6FCdJGIwVAy35M02TR1xEJUiLTxAMb4wcKfUXmoA6kqW9RjPFebB2bUCpm8YVnDrOB0tam2gPjmd3YLXNNQ=
+	t=1729550688; cv=none; b=l+0wzRXNIPQKF2/CXsO+CEGZPGCrowwz0aMHsn8EdX6JQizsch9iNHkBphHS/Y0ZvHqOgZoIsynxnZa9zaLjc6KctEnd0CgM/r054U3hnrLX/rtlMrLXrpdcgAP34/TnT0wJbLIy7S3XrvYMpy+xG2XfDz/yKeK8tlRQEIHdQ3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729550617; c=relaxed/simple;
-	bh=18SuxrItI+6f+tfrvR4g2u78bJrgXnBh0EqpwvVjrEg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OwrgvVSI7ovvyju8CfZdxPwyDTKprxQEh6QXIprlCzWkPLCE7vuAOSj7118qqLD5VXtqrXNls2zTdgf5lTJYbwujhfayktEa+5Em9R98b2//NE5ZWxOGYKNIAn3WFOo3ILS3USJA8JXF9AqmWo2ewHPV404DaV+FZZI/kKohUqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UWncrZaY; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a3bd5a273bso43845ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:43:35 -0700 (PDT)
+	s=arc-20240116; t=1729550688; c=relaxed/simple;
+	bh=fvBdXU5wdNYyyb0YdMIwM6Zof0HtqskXysq5kTzkOJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=haMOKbvA9b2FTs/McrjzvcVAe3nyuivNSyvz50P3OAT4D3jAqBBedUEgwnhX2EUMgDa7eCuV5rRBT7tGDnJnoUWYCStLbaQ5Onrn5R/SxsDYK8fP/a4I9PXsF5oNBTgpnTpjLDGBeNR8LnSC6YHcPWeMYB7hYejyPV/fF0s1QQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Eu/DMtJI; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e2cc469c62so3353286a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 15:44:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729550615; x=1730155415; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yovHp8/4KQS/SjRw8rzJ2RWtyZhJZCAGgSQbJZaDAus=;
-        b=UWncrZaY9hUbvqNviMND55QvslQ7k3erHzT24fSS4U6U+PyeCjgO+fLTHuZR6Kb0JI
-         pxBLjBuNKYeg+an90FewLvDzGSf4AlgE2kh5DmPp+VBYtyBUBDBnh2ZTkzn2gH84/MCG
-         VELzUbJOBjcJiZwzj7Fa6CI+cJxccUcc9AlsEOFaLaSf4PFIV5mw4N9EkoiQzvpQlwj9
-         0OpRdCKJzH2RdPecKe5A0Z2xqTDaBGNLJlxQwqh/60xO40+40RXy75l+oxDoGEhcAtL3
-         +G1jzQlIEWUMOlj+hlJj31Qp5E7LGzzzF+GSO/sklNnTB+BFrC6zGKcBxdTdfIMjRIc6
-         I0UA==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1729550686; x=1730155486; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=v9dYHyq/nO2kjsKJljIwgu2XBEVXjwR+MspuvtZff/o=;
+        b=Eu/DMtJIpd40O2ed5g9eFydSa1a4GmTmROIj2lD9FQDfKAGJLwwZAuvIRxQ31ckjbE
+         LUZ4eRhW4oIJ/cJD7VlqhIPTEwfSfbXoWIYp54/i7wi8oYP5zPLqETrTYosdB97wdwHa
+         Khaleew0eDYbLm6u94USWFGcRSiK0t8pTdXpi3y29J69CDnhlhaQEVyPfoeAOafDtPfU
+         VhM5EdMaZP7CyXJ0xwoJ61C6gwh/tbhXOjLNikIolIDOlTNH5qntm/4XT749n54g2qIe
+         DEVOXRJP7coLlir351qpWktCW6iXBlKS/5O7UlHEK4tyf5wC2wOFs/iL8p41M84mBzZj
+         AnxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729550615; x=1730155415;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yovHp8/4KQS/SjRw8rzJ2RWtyZhJZCAGgSQbJZaDAus=;
-        b=IggyubbpOtnXFKUgST4f4HXtH9FGEPfXqi06xM/l6Zb9Tb/whTjC35eu02epCrw2uc
-         xNMsctEWoQcAAQ9FgqaO1hHdWanTv4+tkkvFwfVm9yQwmpDv8G7Z5knWUKXPvMPbqwK6
-         hAswhtGxgzMBUE6y6GIwwr4/BesZk2ps5+ZD00PePQloD5W47BG2QPZhBuHfOZLboh1j
-         v8QpBSDHadkOgZFqMR9ekZCu1VqaZPbOJchB0Exy4Yenw+RKtw1fb72QU9PqMfwa3jQB
-         qSKzvsiCPRTreRPJIEWhtw94D2neeARYgrxque1Uf7J+NVEXTJIN0snUPWDhELDMzFc1
-         Kkdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLybNmpahdR+n0q0YI5ptXIi0kf5Atyj/eF3ag2I+oxtmcMEHbEMf5CV/dRRo/p/tALO+S2dXVBO5/ajE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS09suUcrKxDqz0LpFtg/UEokxOhsIvWny35xkCo/74P1ybkKL
-	5nxQ8bBCsuPdwUDltwpyEDE1VkGmsW3eg1FELAlGgqAazWPVPuhlZ+ZrIfeAin1MFrFJkX8381x
-	D5xOYEiUiQ8eadlfHf3r7BDc3uzjG/yaNzDMr
-X-Google-Smtp-Source: AGHT+IH0HVg3fvyt1+QDr1YQLUpP3z4mO+u5A4ersGEMt75VHmDTieIO3qGEubKhoWD+zxsaZ/P7FpluFK6JQL6j+ro=
-X-Received: by 2002:a05:6e02:148d:b0:3a2:6d54:33f1 with SMTP id
- e9e14a558f8ab-3a4cc972f72mr1555125ab.16.1729550614610; Mon, 21 Oct 2024
- 15:43:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729550686; x=1730155486;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v9dYHyq/nO2kjsKJljIwgu2XBEVXjwR+MspuvtZff/o=;
+        b=oGCGEtzdW4QPH5IC87j2349osZKi9E/ygTNK4WVqga53Ze7gpvSSxf8bsPYtgKsSOf
+         zI2RGDLITVihzovMXCRTlVyoK9Y2qrKn0OPPiN6MpSHUM/3G8rZmqQXEPlyIizUKOdWA
+         k5CsLzQNmDmJxmvUa+UOXah9uFXuhNlRQ61O6T9+VsVAtSf162UqnD4/GOeue0jM2pv5
+         2IkNgj4dF88fLxuLrnZhKn/zvs3U/dXdpU2LnauuRCg9PdERL4MuLY4WbXvO2UVuEbCV
+         Mbw8DIZvSrHuY7DoxTBhuxZlRqADElrCORi4DjljNcSkwGgHB7A4lbMNjp3x/3+apEAp
+         rZ0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVGXniBLs16s+M+UuIx9kkGt/c3csx/1tSnyxVUSV+4UctYTtYR6g0o8dTmHbLN5yttpQHnCXCpZl4pROA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDxluLGifKZKcL4wgg7zb/bc2V0vLn3kx+m9jWRZXc/EhCBubd
+	EBOzB1qlELZ7VKqNKr5GF8/P+2BPPjQIZ3ES4gjLgQmVg8GO+K6kynUXRPKGlhs=
+X-Google-Smtp-Source: AGHT+IGhdnySufxWPfyYesh8DzNaeadpQJfwQ7ArqAHGT1qeQ1opDWNb+N7doDqEnIoCBf6sf7SXqg==
+X-Received: by 2002:a17:90a:ce8d:b0:2e2:973b:f8e7 with SMTP id 98e67ed59e1d1-2e5619f788amr13821134a91.38.1729550686240;
+        Mon, 21 Oct 2024 15:44:46 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ddb41548sm285199a91.39.2024.10.21.15.44.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 15:44:45 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1t318l-003zgG-0d;
+	Tue, 22 Oct 2024 09:44:43 +1100
+Date: Tue, 22 Oct 2024 09:44:43 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: syzbot <syzbot+611be8174be36ca5dbc9@syzkaller.appspotmail.com>,
+	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] INFO: task hung in xfs_ail_push_all_sync (2)
+Message-ID: <ZxbZW5Q9sC0c+bqU@dread.disaster.area>
+References: <67104ab3.050a0220.d9b66.0175.GAE@google.com>
+ <ZxBgAU7aasIzcBfj@dread.disaster.area>
+ <CANp29Y6Rv2vUg463F3SYTsSNDr=Hmnarbz377tS=Hash7pT4xw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014213342.1480681-1-xur@google.com> <20241014213342.1480681-2-xur@google.com>
- <CAK7LNAQ5yNKvZDtJuvo9Lt4rZwLSv0UN4=Ff=WcCDy1CCEpQ7Q@mail.gmail.com>
-In-Reply-To: <CAK7LNAQ5yNKvZDtJuvo9Lt4rZwLSv0UN4=Ff=WcCDy1CCEpQ7Q@mail.gmail.com>
-From: Rong Xu <xur@google.com>
-Date: Mon, 21 Oct 2024 15:43:22 -0700
-Message-ID: <CAF1bQ=Syxi46xnGbpZWhYfqKhQZqrBPPh5FGaqzmJTg6MMDJSA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/6] Add AutoFDO support for Clang build
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
-	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
-	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>, 
-	Krzysztof Pszeniczny <kpszeniczny@google.com>, Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANp29Y6Rv2vUg463F3SYTsSNDr=Hmnarbz377tS=Hash7pT4xw@mail.gmail.com>
 
-Thanks for the detailed suggestions! My comments are inlined below.
-
-Best regards,
-
--Rong
-
-On Sun, Oct 20, 2024 at 9:33=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Tue, Oct 15, 2024 at 6:33=E2=80=AFAM Rong Xu <xur@google.com> wrote:
->
->
-> > +Customization
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +You can enable or disable AutoFDO build for individual file and direct=
-ories by
-> > +adding a line similar to the following to the respective kernel Makefi=
-le:
->
->
-> Perhaps, it might be worth mentioning that kernel space objects are
-> covered by default.
->
-> Then, people would understand ':=3D y' will be less common than ':=3D n'.
->
-
-Good point! How about I change to the following:
-"
-The default CONFIG_AUTOFDO_CLANG setting covers kernel space objects for
-AutoFDO builds. One can, however, enable or disable AutoFDO build for
-individual file and directories by adding a line similar to the following
-to the respective kernel Makefile ...
-
->
->
->
-> > +
-> > +- For enabling a single file (e.g. foo.o) ::
-> > +
-> > +   AUTOFDO_PROFILE_foo.o :=3D y
-> > +
-> > +- For enabling all files in one directory ::
-> > +
-> > +   AUTOFDO_PROFILE :=3D y
-> > +
-> > +- For disabling one file ::
-> > +
-> > +   AUTOFDO_PROFILE_foo.o :=3D n
-> > +
-> > +- For disabling all files in one directory ::
-> > +
-> > +   AUTOFDO_PROFILE :=3D n
-> > +
->
->
->
->
-> > +3) Run the load tests. The '-c' option in perf specifies the sample
-> > +   event period. We suggest using a suitable prime number, like 500009=
-,
-> > +   for this purpose.
-> > +
-> > +   - For Intel platforms::
-> > +
-> > +      $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count=
-> -o <perf_file> -- <loadtest>
-> > +
-> > +   - For AMD platforms: For Intel platforms:
->
->
-> I guess this is a copy-paste mistake.
->
->
-> For AMD platforms: For Intel platforms:
->
->    ->
->
-> For AMD platforms:
-
-Thanks for catching this! Will fix this.
-
->
->
->
->
->
->
-> > +   (https://github.com/google/autofdo),  version v0.30.1 or later.
->
->
-> Please one space instead of two after the comma.
->
-
-Will fix it.
-
->
->
->
->
->
->
-> > diff --git a/scripts/Makefile.autofdo b/scripts/Makefile.autofdo
-> > new file mode 100644
-> > index 000000000000..1c9f224bc221
-> > --- /dev/null
-> > +++ b/scripts/Makefile.autofdo
-> > @@ -0,0 +1,23 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +# Enable available and selected Clang AutoFDO features.
-> > +
-> > +CFLAGS_AUTOFDO_CLANG :=3D -fdebug-info-for-profiling -mllvm -enable-fs=
--discriminator=3Dtrue -mllvm -improved-fs-discriminator=3Dtrue
-> > +
-> > +# If CONFIG_DEBUG_INFO is not enabled, set -gmlt option.
->
->
-> Meaningless comment. It explains too obvious code.
-
-Will remove this line of comment.
-
->
->
-> > +ifndef CONFIG_DEBUG_INFO
-> > +  CFLAGS_AUTOFDO_CLANG +=3D -gmlt
-> > +endif
->
->
->
->
-> > diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> > index 01a9f567d5af..e85d6ac31bd9 100644
-> > --- a/scripts/Makefile.lib
-> > +++ b/scripts/Makefile.lib
-> > @@ -191,6 +191,16 @@ _c_flags +=3D $(if $(patsubst n%,, \
-> >         -D__KCSAN_INSTRUMENT_BARRIERS__)
-> >  endif
+On Fri, Oct 18, 2024 at 12:13:33PM +0200, Aleksandr Nogikh wrote:
+> Hi Dave,
+> 
+> On Thu, Oct 17, 2024 at 2:53 AM 'Dave Chinner' via syzkaller-bugs
+> <syzkaller-bugs@googlegroups.com> wrote:
 > >
-> > +#
-> > +# Enable Clang's AutoFDO build flags for a file or directory depending=
- on
-> > +# variables AUTOFDO_PROFILE_obj.o and AUTOFDO_PROFILE.
-> > +#
->
->
-> This comment would give the wrong understanding that this flag is opt-in.
->
->
-> The comment for KASAN correctly describes that it is enabled by default,
-> and can be opted out using KASAN_SANITIZE_*.
->
+> > On Wed, Oct 16, 2024 at 04:22:27PM -0700, syzbot wrote:
+> > > Hello,
+> > >
+> > > syzbot found the following issue on:
+> > >
+> > > HEAD commit:    09f6b0c8904b Merge tag 'linux_kselftest-fixes-6.12-rc3' of..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=14af3fd0580000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=611be8174be36ca5dbc9
+> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16c7705f980000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d2fb27980000
+> >
+> 
+> It's better to just leave the issue open until syzbot actually stops
+> triggering it. Otherwise, after every "#syz invalid", the crash will
+> be eventually seen again and re-sent to the mailing lists.
+> 
+> In the other email you mentioned
+> "/sys/fs/xfs/<dev>/error/metadata/EIO/max_retries" as the only way to
+> prevent this hang. Must max_retries be set every time after xfs is
+> mounted? Or is it possible to somehow preconfigure it once at VM boot
+> and then no longer worry about it during fuzzing?
 
-I can change to use KASAN's expression:
-"
-# Enable Clang's AutoFDO build flags for kernel except some files or direct=
-ories
-# we don't want to enable (depends on variables AUTOFDO_PROFILE_obj.o
-and AUTOFDO_PROFILE)
-"
+It's a post mount config because the filesystem has to be mounted
+before the error config files show up in /sys/fs/xfs/<dev>/....
 
->
->
->
->
-> --
-> Best Regards
->
->
-> Masahiro Yamada
+For example, in fstests we set "fail_at_unmount" specifically when
+running a test that will error out all writes and then unmount.
+
+The code that does this is in common/xfs:
+
+# Prepare a mounted filesystem for an IO error shutdown test by disabling retry
+# for metadata writes.  This prevents a (rare) log livelock when:
+#
+# - The log has given out all available grant space, preventing any new
+#   writers from tripping over IO errors (and shutting down the fs/log),
+# - All log buffers were written to disk, and
+# - The log tail is pinned because the AIL keeps hitting EIO trying to write
+#   committed changes back into the filesystem.
+#
+# Real users might want the default behavior of the AIL retrying writes forever
+# but for testing purposes we don't want to wait.
+#
+# The sole parameter should be the filesystem data device, e.g. $SCRATCH_DEV.
+_xfs_prepare_for_eio_shutdown()
+{
+        local dev="$1"
+        local ctlfile="error/fail_at_unmount"
+
+        # Once we enable IO errors, it's possible that a writer thread will
+        # trip over EIO, cancel the transaction, and shut down the system.
+        # This is expected behavior, so we need to remove the "Internal error"
+        # message from the list of things that can cause the test to be marked
+        # as failed.
+        _add_dmesg_filter "Internal error"
+
+        # Don't retry any writes during the (presumably) post-shutdown unmount
+        _has_fs_sysfs "$ctlfile" && _set_fs_sysfs_attr $dev "$ctlfile" 1
+
+        # Disable retry of metadata writes that fail with EIO
+        for ctl in max_retries retry_timeout_seconds; do
+                ctlfile="error/metadata/EIO/$ctl"
+
+                _has_fs_sysfs "$ctlfile" && _set_fs_sysfs_attr $dev "$ctlfile" 0
+        done
+}
+
+However, this does not address the same issue when a filesystem
+freeze is run (because it has to bring the on-disk state down to the
+same as a clean unmounted filesystem). Hence for syzbot, the only
+way to avoid this sort of issue is to cap the maximum number of
+retries so that metadata writes fail as soon as the device starts
+rejecting them.
+
+Realistically, we want syzbot to exercise both the retry logic and
+the hard fail logic. Right now it is only exercising the retry
+logic, so setting the max retries to, say, three retries would
+exercise both the retry logic and the hard fail logic and still
+avoid all the potential "livelock until user intervention" test
+hangs...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
