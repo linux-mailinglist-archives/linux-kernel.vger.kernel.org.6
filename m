@@ -1,58 +1,66 @@
-Return-Path: <linux-kernel+bounces-373822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7739A5D44
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:39:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A009A5D48
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A39AB2323F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C7832817F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5491E0B94;
-	Mon, 21 Oct 2024 07:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD2D1E04B0;
+	Mon, 21 Oct 2024 07:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmHfZtPF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDMEv9Cd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D238A194A73;
-	Mon, 21 Oct 2024 07:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09249194A73;
+	Mon, 21 Oct 2024 07:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729496339; cv=none; b=AUqZ52Og59Q50YfftV2eNvrrl65yb2A9nVQqhEEWgG+hm+yC6hYd+mO1u8rJEZz+gBj47OoM7b3MtdqXNnW2RhQOY+fVbUVJQOSY37AL5bmj4fcLp846k+DAHaGEyiRFnaH2Rwxmij4fJqSGyUo4z/w5UXw3kwnRYR5BsmVWvFI=
+	t=1729496398; cv=none; b=bMjPMz0qGt1gYv8YpiCwaEsC33JasETt7Dfi9aSa2Yls1Vspm4otzW+havRvb/Hqv4v9DEFaie95AH68O5KoGiPQAcrUSKw6IazODWpEb2TTTpS7zk+bJ8aismgCIyNnUYgegNMAWYPrSd1FvMugX/ou/HVwWHxGZ3Z4rj1XoyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729496339; c=relaxed/simple;
-	bh=ljL74qSzfYV7vSO8Dk/xSzTXazS1a48G9FtGOkKXhd0=;
+	s=arc-20240116; t=1729496398; c=relaxed/simple;
+	bh=t7UAac/htt4W25ejQemVdCOasvKrcJlRzstvxEL64Sg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SE7MqKWWMdhmLvLc5EUY7HveIGypcJsh16AR1GQVY+NKoSno6eyJmd/wcBKsxyVLQ15b+k9DjrXcfSGw2lAdx0IGOn18mNTtsxqLzOAmjwPriGMzjg5VIoyXeJ17rHAHaFUAmcaThwWuJskVkgFP+kuaeQ3nXN0rK3VV8yaXubI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmHfZtPF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D3C7C4CEC3;
-	Mon, 21 Oct 2024 07:38:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=A53KN4ecms+aN6IAvnRofepXCchYtKjV6nK0egJaPIZu1suAuAerL7rIJsvmAWjCppyVng81ZvRNrbR1WpguNlrJnKK7Z1mcpuZGZ/jcOiBQPrWI6z1B+FPuV6wkbTI2R2rQO2KpeZK2Lurw4eeJMvgPsNOAHybiujOi5XmpNFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDMEv9Cd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B34A9C4CEC3;
+	Mon, 21 Oct 2024 07:39:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729496338;
-	bh=ljL74qSzfYV7vSO8Dk/xSzTXazS1a48G9FtGOkKXhd0=;
+	s=k20201202; t=1729496397;
+	bh=t7UAac/htt4W25ejQemVdCOasvKrcJlRzstvxEL64Sg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hmHfZtPFoTlMQxYjgRoPrrNLJtm4LiUr/ng0po4i8NNa4aY/ft2ETPcY1w0XXIzyi
-	 sAQZhAy5DL2fYo2wXcE5ZjQr5myNDKlEPirnhxYk3+FmIxiwdEtB1uU0ml3h3+n10W
-	 S1Exl+2xe05KR5e8820v0QmhlyXOfgYG2W68rxSzj4+PmhhAXDTX9alWzxZdwII5js
-	 WzXKLfNvlvPYTgeFRT0Ye2d1GBwmFO+i/a+9fSWy9C8le7ApePej1Mj86oj+10dNFQ
-	 ipzRcU/90fXiLUiXMQky/R9nhxmd+m9Wl7tS79Wtw7dkrC1QZvGrvFpkJXPuFNAnW/
-	 piJuzaVHrQWRw==
-Date: Mon, 21 Oct 2024 09:38:55 +0200
+	b=BDMEv9Cd9HxMft6YXRpvVjtTrMfioKFRW4haEgoqv+DR6MV4NCJSHDjMy7iC4ZJP9
+	 i+g9IrXdtSSzLCOA78mwb1s+7nT1/3XTkA2PinHuBoQkfJ5oGh8jNtvtgz9vhLO3Ym
+	 +SsbKgOLme2Vt1Jc7COmGX9drY+ukMtNTKZbJdlkhW5ZeM+CC3jtZCOaH2Wq3eYLON
+	 6cBH6mvf5gqybshixouMzvCO+0p0O8TCKddHG+Ij4/8il+u0wDsL+OAX8XjyFeBoSi
+	 CT0x2QrNvq69EOx5BOp/a9F05nwULABHM770Gfp2zn15WfdnC717zSMnBokkAL+9VO
+	 Gryg6knxtH4oA==
+Date: Mon, 21 Oct 2024 09:39:53 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Justin Weiss <justin@justinweiss.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "Derek J . Clark" <derekjohn.clark@gmail.com>, 
-	Philip =?utf-8?Q?M=C3=BCller?= <philm@manjaro.org>
-Subject: Re: [PATCH v3 3/6] dt-bindings: iio: imu: bmi270: Add Bosch BMI260
-Message-ID: <ynhv4c4pyj72nsof6wwkaon22i6chd4ux5cb7hv4tmblwhv3aq@564biida44ii>
-References: <20241020220011.212395-1-justin@justinweiss.com>
- <20241020220011.212395-4-justin@justinweiss.com>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
+	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
+	jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, quic_jesszhan@quicinc.com, 
+	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com, 
+	quic_bjorande@quicinc.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
+	arnd@arndb.de, nfraprado@collabora.com, thierry.reding@gmail.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, marex@denx.de, biju.das.jz@bp.renesas.com
+Subject: Re: [PATCH v3 07/15] dt-bindings: display: lvds-data-mapping: Add
+ 30-bit RGB pixel data mappings
+Message-ID: <zcqpk37cxe76jqui5k3yyi5tlsm63zhkpsktg7h655e7cvv42g@nlhd2s3h3a7f>
+References: <20241021064446.263619-1-victor.liu@nxp.com>
+ <20241021064446.263619-8-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,13 +69,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241020220011.212395-4-justin@justinweiss.com>
+In-Reply-To: <20241021064446.263619-8-victor.liu@nxp.com>
 
-On Sun, Oct 20, 2024 at 03:00:07PM -0700, Justin Weiss wrote:
-> Add compatible ID for Bosch BMI260 to BMI270 documentation.
+On Mon, Oct 21, 2024 at 02:44:38PM +0800, Liu Ying wrote:
+> Add "jeida-30" and "vesa-30" data mappings that are compatible with JEIDA
+> and VESA respectively.
+> 
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> ---
+> v3:
+> * New patch.
+> 
+>  .../bindings/display/lvds-data-mapping.yaml   | 31 +++++++++++++++++++
+>  1 file changed, 31 insertions(+)
 
-This we see from the diff. Say something about the hardware, are they
-compatible? No? What are the differences?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
