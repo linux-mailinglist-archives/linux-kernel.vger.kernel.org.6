@@ -1,135 +1,159 @@
-Return-Path: <linux-kernel+bounces-374412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E77B09A69E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:18:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65329A69CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66519B20932
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:11:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660B1282222
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B451F470B;
-	Mon, 21 Oct 2024 13:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BC71F4731;
+	Mon, 21 Oct 2024 13:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dYyqFYI5"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wqZZN1J7"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E4B1E7C0D
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3481EABBA
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729516256; cv=none; b=mmc+1DQxiWwxT3rtxqL20EJvIfiHyB4+N/9UYTV4iaPgenyteDRJzVxCLfdgRweQKaGpA935SdpxXExqf/Ne8p+nK/9HfU3bxsINqXibp+uMn4ozECawCuR45nrx2dnx2Rn4HqFO51g5312fb5anbsktCdgYPqHhNjGlWbjCstc=
+	t=1729516447; cv=none; b=J5G7V0WJ+Tckr1ortOato0Pj05QVYakRneDBFFJ/LTAlH4g6g8+cgqmvWlZr+2+TiVa2nBbf1DsDgxq8ARiAi5FcMhv/6zOzYErcWHSQbjFDluIEPWWgKbBiHeML8BDaMtaN6KZ55G/rC8UXEnNtAssAEASPkdgOlESIVVB2Frw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729516256; c=relaxed/simple;
-	bh=r+aOMV3MADphoeGOSyYy73k5f0WucUEtLuhrb3GEHIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fjeuW0zVSJmhxrjJl0IuA1FpT5ypviowQUk6WRbzwkdlAUVjY4tKkGlE9JUPBTCVxS3CXED6rr1KV6Mvfh/kZ5HrgDXxNpQ5mom1YJdjtTLlJJTw97IqSut9nKpzEGi0nITznPZEgWHu4ubl2IvGtjiQ0G3qQ0xTg1/QL7eVX8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dYyqFYI5; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d6a2aa748so2954844f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:10:52 -0700 (PDT)
+	s=arc-20240116; t=1729516447; c=relaxed/simple;
+	bh=x9yG3MBn1vkK+WDBnEoO/PPa0GRvaGfLCFIBWnUj9vI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aR/dLSDWtYGrz3fEg8320WZl2aUd3sAAiNTMVpBqAGQDUYK13EzSNqCXx/90MREF/CY3ZxkYmrma1ApET0fEto6IwgiftcVmTa8S4UEACYoU671n89uBbOLN94oip/H5DHwY3Wvm0t45UZqOmYF52Dc8hhrWnU1FZkZHeXAFq8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wqZZN1J7; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e3d7e6f832so42026577b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:14:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729516251; x=1730121051; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hb5z7oqU7DLw6NgZCfx42d0B4py7r2L+/9jylzSGUKY=;
-        b=dYyqFYI50jrvT3Qy4rxzqHiGt3x0UWM+6G3+nohCNWN4tdf5vTzCMqgLIdBQcFY62y
-         4fyzevIUm+krRIRJ81cs50E/6GP0UZRaHfO33kfY5881DGIWkpFWNtSHkdY4RPa+tmAU
-         twM5G0AZeYB6D5lBNZ1Q9OdbPSZaOQRyjRWnWdwTMx64Z7d63Qwbf3CSf64p2rkr40Kq
-         C8M4VFHOhbuwryGzVpJNCWvln00kAfI3gCGy3GGd8oVWKTv8o93Zi1HGasYs1R/vrGQK
-         2JQdhEFu9UnJpQsRBgDng31MYhFbPTbgXC1qmCyAYYjcmkOauqb6SKPp3KH6+h5hHYVw
-         Mp9Q==
+        d=linaro.org; s=google; t=1729516443; x=1730121243; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q7erg8vrrwhLwTJ4vsjvKgNC1A86srGjOS44RXukUWE=;
+        b=wqZZN1J7T1PoLur+u6+vlGPjHezjIbCYdoRPChHqi4jjvv3yCQYaAAfL5rJj4b8p+f
+         kOoLjPUbUSjIWxUmOtbLihlqIeELC/8sjmMXazzQomxYrye0qGenutkRX2iwNkUQdDf/
+         dCOQFUajW9MVrM+JShWOQwCVl4LU6xfOxaHAFfC95JCGsM5HVkyf/2cCf1uxXXR0Nhr0
+         tB/Ca+21SXaLH1R3ohOU/wRokr7wS1Q+X05CIiO0HSMq8BgRMgW/8ZNJvurXFrRvfp9w
+         e8zRH12LJb+kUZVd9CeEQSXQ/jSG43y/htey3qfT7acMb03vLlDc1XW3yymS1ZQNPcWM
+         8x5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729516251; x=1730121051;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hb5z7oqU7DLw6NgZCfx42d0B4py7r2L+/9jylzSGUKY=;
-        b=Zp5LjhMuxWUzNaxYBf9qVDpG+8UNp9CA4AHfur4nqldPDqdpejFrQdHcylbRidnqNF
-         ohv+AZszyFz39vrFezSjxI0tGgvkiRyySfYUyWhXD81z6U7HUptgSf/OHDXRoJTWKB4M
-         T30bnCXbmo33ZHys4uYbEbwG1SRKumIjmpF6F0FSJY03XOkTV0r3zUerf7Zx2FGDlT2P
-         OICcIOvOmKjZl9oU1aHLJhugJFTNE3ikLi08rjdlKua/ZdphtuLNqtELibYB2qZe8tm6
-         jWnA3EIn3TaAXWce+Zr0qs6fJ/6/mkaInph6SE4m21VvRTHUY69oRzW6+qkQ/l+F6D7n
-         9HIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCpG9pDMYHLDdQhkMeY/+iFjgrh7HZGcYdXkh0B+KYtluViYbLCDje3ilFJjpjBPxfLJKAlD37AqM5rx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUi8aquMGkr3ImiGCAqlok4DDEpm4Kp9f3valNdPPHwiHEM8zo
-	l2rLp0u+k9KW/xkJwawd+EL0lcj3IQwqApmdrmVM3cJLqVqTNJJh/zFll3DE21U=
-X-Google-Smtp-Source: AGHT+IGDnIWfxiOcEveLs2MQlDhwR4gmi9FH0MSQHpKsf+BMqQSLSH8WpoqUGsyHzwGiIA8WXTqaaQ==
-X-Received: by 2002:a5d:674c:0:b0:37d:4c8f:2e1 with SMTP id ffacd0b85a97d-37ea2181ea7mr6445009f8f.22.1729516250368;
-        Mon, 21 Oct 2024 06:10:50 -0700 (PDT)
-Received: from ?IPV6:2a02:8428:e55b:1101:8419:4feb:c28:3b3f? (2a02-8428-e55b-1101-8419-4feb-0c28-3b3f.rev.sfr.net. [2a02:8428:e55b:1101:8419:4feb:c28:3b3f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc5adsm57103685e9.42.2024.10.21.06.10.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 06:10:49 -0700 (PDT)
-Message-ID: <c6aeaec1-35b7-47a1-8ae2-3386e5241ad5@baylibre.com>
-Date: Mon, 21 Oct 2024 15:10:48 +0200
+        d=1e100.net; s=20230601; t=1729516443; x=1730121243;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q7erg8vrrwhLwTJ4vsjvKgNC1A86srGjOS44RXukUWE=;
+        b=TwsRMrrlk09SMO98MLPaAIGiMX3LwEhR956BH+wCkZ56KpEdWgEVyVcWvPEKQkqUbw
+         2v/U0NQAK4j9oubrq+HBd2RWqeJol3dV8QIqO0TZ4vyY8EOYuKEGgC2SOxul01nQWa5T
+         iZskaJYsrsewAiUFKLlROetAfGHFEvxpwsk5N8saiv5/qayYh3MFxk7Qw3zloI+PY/8M
+         NxXYhz7WKkQBc/qP/o8EFxmzcEFXtVf80g7zVryWHEIciAkrnGZ7AlQW/uazpY5Sj8Ft
+         g8BLftycMXWRP0KyXbqQKRDEiof+iSo8mJUKokkAqzPR8OGz2U3o7Gk8xIQEBnMjefvm
+         gDPg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/dD02DQAvDD3giWbC91g40ukeoU6fYVgr1PthZwhcsW2nfVEXYVkj2B3jTTA3bF7nhvCwF2sffr2n3U0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJe9XvM4nLBIMgjyExnD6hYnkY+q0AYpR0am0o0UAcYThqd5v8
+	CW5KKN55iAzUxvjUFD+ucywyShKsoXruXZwos14iP00A6LW/G4MfzZYVVBT43DWCFU81CWijrLW
+	0r4QZR2D+wF1A/Ds1YawhSl1eoSXc+pM4/BI2QA==
+X-Google-Smtp-Source: AGHT+IGJ9USpRoWSI7sBmA4N3tw//QAZfbQQ0ijGIXzkFPl+Q/rOF3E6ZVe4QumN0Z18GXDkKnNi8cp+VDSqifxCnH0=
+X-Received: by 2002:a05:690c:f8f:b0:6d3:f9a6:e29c with SMTP id
+ 00721157ae682-6e5bf9a0846mr102792247b3.12.1729516443131; Mon, 21 Oct 2024
+ 06:14:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/8] Add iio backend compatibility for ad7606
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- aardelean@baylibre.com, dlechner@baylibre.com, jstephan@baylibre.com,
- nuno.sa@analog.com, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20241015-ad7606_add_iio_backend_support-v5-0-654faf1ae08c@baylibre.com>
- <20241019155329.500ae439@jic23-huawei>
-Content-Language: en-US
-From: Guillaume Stols <gstols@baylibre.com>
-In-Reply-To: <20241019155329.500ae439@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241019-sar2130p-llcc-v1-0-4e09063d04f2@linaro.org>
+ <20241019-sar2130p-llcc-v1-2-4e09063d04f2@linaro.org> <7fa066b6-a214-4866-9d0a-f75896531d84@oss.qualcomm.com>
+In-Reply-To: <7fa066b6-a214-4866-9d0a-f75896531d84@oss.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 21 Oct 2024 16:13:51 +0300
+Message-ID: <CAA8EJprvQTGABZ6LAq1qXRfPgOz7VzxPuKnRz_EO_4S6tveXgQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] soc: qcom: llcc: add support for SAR2130P and SAR1130P
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 10/19/24 16:53, Jonathan Cameron wrote:
-> On Tue, 15 Oct 2024 13:56:13 +0000
-> Guillaume Stols <gstols@baylibre.com> wrote:
+On Mon, 21 Oct 2024 at 14:04, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
 >
->> This series aims to add iio backend support for AD7606X ADCs.
->>
->> In a nutshell, iio backend is a paradigm to shift the logic establishing
->> the connexion between iio buffers and backend buffers into the backend's
->> driver.  This provides a more stable programming interface to the driver
->> developers, and give more flexibility in the way the hardware communicates.
->>
->> The support will be first added on AD7606B, and on next patches AD7606C16
->> and AD7606C18 will be added.  The series have been tested on a Zedboard,
->> using the latest HDL available, i.e
->> https://github.com/analogdevicesinc/hdl/commit/7d0a4cee1b5fa403f175af513d7eb804c3bd75d0
->> and an AD7606B FMCZ EKV.  This HDL handles both the conversion trigger
->> (through a PWM), and the end of conversion interruption, and is compatible
->> with axi-adc, which is "iio-backendable".
->>
->> More information about this HDL design can be found at:
->> https://wiki.analog.com/resources/eval/user-guides/ad7606x-fmc/hdl
->>
-> Applied and pushed out as testing. Please check I didn't mess up the few
-> minor tweaks needed.
+> On 19.10.2024 6:26 PM, Dmitry Baryshkov wrote:
+> > Implement necessary support for the LLCC control on the SAR1130P and
+> > SAR2130P platforms. These two platforms use different ATTR1_MAX_CAP
+> > shift and also require manual override for num_banks.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/soc/qcom/llcc-qcom.c       | 468 ++++++++++++++++++++++++++++++++++++-
+> >  include/linux/soc/qcom/llcc-qcom.h |  12 +
+> >  2 files changed, 474 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+> > index a470285f54a875bf2262aac7b0f84ed8fd028ef1..ef84fe3b2af4e777126a8308bfd4ec47b28aeae2 100644
+> > --- a/drivers/soc/qcom/llcc-qcom.c
+> > +++ b/drivers/soc/qcom/llcc-qcom.c
+> > @@ -32,6 +32,7 @@
+> >  #define ATTR1_FIXED_SIZE_SHIFT        0x03
+> >  #define ATTR1_PRIORITY_SHIFT          0x04
+> >  #define ATTR1_MAX_CAP_SHIFT           0x10
+> > +#define ATTR1_MAX_CAP_SHIFT_sar       0x0e
+> >  #define ATTR0_RES_WAYS_MASK           GENMASK(15, 0)
+> >  #define ATTR0_BONUS_WAYS_MASK         GENMASK(31, 16)
+> >  #define ATTR0_BONUS_WAYS_SHIFT        0x10
+> > @@ -140,6 +141,11 @@ struct qcom_llcc_config {
+> >       bool need_llcc_cfg;
+> >       bool no_edac;
+> >       bool irq_configured;
+> > +     /*
+> > +      * special workarounds for SAR2130P and similar platforms which have
+> > +      * slightly different register mapping.
+> > +      */
+> > +     bool is_sar_chip;
+>
+> This is not the only odd ball, please make max_cap_width variable
 
-Hi Jonathan, thank you for the fixes and the merge. Just tested it, 
-didnt notice any bug.
+I'm not sure what you mean here. Moving max_cap_width to the drv_data
+/ configuration? Or do you mean something else?
 
-FYI Next step is software mode enablement for IIO backend enabled devices.
+>
+> [...]
+>
+> > +     /*
+> > +      * For some reason register returns incorrect value here.
+> > +      * List compatibles instead of using .is_sar_chip since there might be
+> > +      * SAR-like chips which have other number of banks.
+> > +      */
+> > +     if (of_device_is_compatible(dev->of_node, "qcom,sar1130p-llcc") ||
+> > +         of_device_is_compatible(dev->of_node, "qcom,sar2130p-llcc")) {
+> > +             num_banks = 2;
+> > +     } else {
+> > +             ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
+> > +             if (ret)
+> > +                     goto err;
+> > +
+> > +             num_banks &= LLCC_LB_CNT_MASK;
+> > +             num_banks >>= LLCC_LB_CNT_SHIFT;
+> > +     }
+> >
+> > -     num_banks &= LLCC_LB_CNT_MASK;
+> > -     num_banks >>= LLCC_LB_CNT_SHIFT;
+> >       drv_data->num_banks = num_banks;
+>
+> This too
 
-Best regards,
+This can probably go to qcom_llcc_config.
 
-Guillaume
 
+-- 
+With best wishes
+Dmitry
 
