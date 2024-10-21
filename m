@@ -1,92 +1,141 @@
-Return-Path: <linux-kernel+bounces-373747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECE99A5C04
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:00:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C1989A5C18
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30AE0282A78
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:00:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA2191C21C2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E691D0F68;
-	Mon, 21 Oct 2024 07:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nAsw5tiX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCE11D0F66;
+	Mon, 21 Oct 2024 07:09:26 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74D79454;
-	Mon, 21 Oct 2024 07:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4531940A2;
+	Mon, 21 Oct 2024 07:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729494051; cv=none; b=VWi+Sd3EaD5I8sx6Au0T6NEQwO+SD74Srb/jx/M3tp6vy96eneX4NWdtX/On6nPSL93cv3HH8tgo3Mllxf2YZCpQkbEhTVfBhB+8HViImsNvTegGvKMCnmhezI8liPvkdMuvL6G3yqNXztjSfbpJmi2HkS8deuS/WF+tDgPB0rk=
+	t=1729494565; cv=none; b=QctpYKHUdeBab30ISW1CPObPwj5NyesSGzCv3ZxdThn+bR6+hmgJKkU9mttHFCft7fo1NulKXUv3OuHnJbsxSnjfR/YpnRfDDHpeawmMeil4zpkDr8XPYFAUqM+PIJZxgfHhvcSCi8brqcLErdOZC2euNeRZA5gA68FK3hE5xOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729494051; c=relaxed/simple;
-	bh=MlELaK8WcZVLOcmW5R45RLH+7kzKB04vhG0TSFXxhY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uVK9KyQz2k2kAHrFu7u/jtX/4Tbsbm1Ttc+qeGkNyKd0ARz84AZVEfXYcL6Ar0xqHV0B+LhkrT78Kfxo/XU8iKodViftbBJjextzCq6zOFUwSGZx8MkWhLIU39k0GyFxi9ypZMB6tUR5cmYIsa7GULOlMWVep5wLjFPoIjkJ1FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nAsw5tiX; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729494050; x=1761030050;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MlELaK8WcZVLOcmW5R45RLH+7kzKB04vhG0TSFXxhY8=;
-  b=nAsw5tiXAKvB+3+yiUF2+ea5vQ+6tmf4/O6uEgEVBeBy6/7kmHbXSjSr
-   MSTwv9MzfHZnA6XW8pExFgsAdL/aMkIgj/m+PEz9FJXCjb2NJdUegt5KK
-   FbjB4+bxhE3G0bledWaFoFZPeuYU5PImva4RpfoKmNCxogkvhp+v5FDoB
-   Su9z2Uxw3zJBLTT1thzqf9YMgPxAfadTZrE8VROEMR68htfO4ocjl6xyR
-   nYfAIgT5IeTAaWDGqV9HS2MPLHno+n2Qsxm6JHIS4WUjfI41T2OOlwDoT
-   ppqqkg8/FPT9hIih9/wk6VVf6JfXeBUrII0tjcO3RDJ05j6lAe0ZgOpAy
-   Q==;
-X-CSE-ConnectionGUID: lUFVDAjBQ2m3UJr1eokWkA==
-X-CSE-MsgGUID: 6Qi8DKn9TEm+Am4stSG1Vw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="28840710"
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="28840710"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 00:00:49 -0700
-X-CSE-ConnectionGUID: rv2QVlBySG+cgOxEabNUPQ==
-X-CSE-MsgGUID: g4a8SoJaSfmcQn6L0dqVFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="79443740"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 21 Oct 2024 00:00:47 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id A261B12B; Mon, 21 Oct 2024 10:00:46 +0300 (EEST)
-Date: Mon, 21 Oct 2024 10:00:46 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	Andy Shevchenko <andy@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Ferry Toth <fntoth@gmail.com>
-Subject: Re: [PATCH v1 3/3] platform/x86: intel_scu_ipc: Save a copy of the
- entire struct intel_scu_ipc_data
-Message-ID: <20241021070046.GX275077@black.fi.intel.com>
-References: <20241016115033.858574-1-andriy.shevchenko@linux.intel.com>
- <20241016115033.858574-4-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1729494565; c=relaxed/simple;
+	bh=BuMoBbEJv0QBFc+iaOOPJLqEUE148FEUiylWOCRFXpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ixuSOk8Vqe4ESX7iRrsAkuSMr1J7nppyjhaAiX5GUZrz85852WBMHW3dApq8Ez0zhcUpp+uHM9lZthfBSvEMaEEwVaYRG3+Ccfc3Knbf7MvY0GMANGYWV8HXlHwsI4dQsSH8tfIqf2QpPODJBlmNwDoB9FDZc3r8lmVDwPFMVo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.224] (ip5f5ae835.dynamic.kabel-deutschland.de [95.90.232.53])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 92D0261E5FE05;
+	Mon, 21 Oct 2024 09:01:15 +0200 (CEST)
+Message-ID: <67d34216-e98b-43d9-afd1-2e73ffb71968@molgen.mpg.de>
+Date: Mon, 21 Oct 2024 09:01:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241016115033.858574-4-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/4] i2c: npcm: Modify the client address assignment
+To: Tyrone Ting <warp5tw@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+ venture@google.com, yuenn@google.com, benjaminfair@google.com,
+ andi.shyti@kernel.org, andriy.shevchenko@linux.intel.com, wsa@kernel.org,
+ rand.sec96@gmail.com, wsa+renesas@sang-engineering.com,
+ tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
+ KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
+ openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241021062732.5592-1-kfting@nuvoton.com>
+ <20241021062732.5592-3-kfting@nuvoton.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20241021062732.5592-3-kfting@nuvoton.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 02:48:26PM +0300, Andy Shevchenko wrote:
-> Save a copy of the entire struct intel_scu_ipc_data for easier
-> maintenance in case of expanding (adding new members become simpler).
+Dear Tyrone,
+
+
+Thank you for your patch.
+
+Am 21.10.24 um 08:27 schrieb Tyrone Ting:
+> From: Tyrone Ting <kfting@nuvoton.com>
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Store the client address earlier since it might get called in
+> the i2c_recover_bus() logic flow at the early stage of
+> npcm_i2c_master_xfer().
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Thank you for the description. For the summary/title it’d be great, if 
+you were more specific. For example:
+
+i2c: npcm: Assign client address earlier for `i2c_recover_bus()`
+
+It’d be great if you noted the commit, your patch fixes, so it’s clear 
+since when the problem has been present.
+
+> Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+> Reviewed-by: Tali Perry <tali.perry1@gmail.com>
+> ---
+>   drivers/i2c/busses/i2c-npcm7xx.c | 20 +++++++++++++++++++-
+>   1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
+> index c96a25d37c14..a9a9b21f1f0b 100644
+> --- a/drivers/i2c/busses/i2c-npcm7xx.c
+> +++ b/drivers/i2c/busses/i2c-npcm7xx.c
+> @@ -2155,6 +2155,16 @@ static int npcm_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>   
+>   	} while (time_is_after_jiffies(time_left) && bus_busy);
+>   
+> +	/*
+> +	 * Previously, the 7-bit address was stored and being converted to
+> +	 * the address of event in the following call to npcm_i2c_master_start_xmit().
+> +	 *
+> +	 * Since there are cases that the i2c_recover_bus() gets called at the
+> +	 * early stage of npcm_i2c_master_xfer(), the address of event is stored
+> +	 * and then used in the i2c_recover_bus().
+> +	 */
+> +	bus->dest_addr = i2c_8bit_addr_from_msg(msg0);
+> +
+>   	/*
+>   	 * Check the BER (bus error) state, when ber_state is true, it means that the module
+>   	 * detects the bus error which is caused by some factor like that the electricity
+> @@ -2165,6 +2175,15 @@ static int npcm_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>   	 * bus is busy.
+>   	 */
+>   	if (bus_busy || bus->ber_state) {
+> +		/*
+> +		 * Since the transfer might be a read operation, remove the I2C_M_RD flag
+> +		 * from the bus->dest_addr for the i2c_recover_bus() call later.
+> +		 *
+> +		 * The i2c_recover_bus() uses the address in a write direction to recover
+> +		 * the i2c bus if some error condition occurs.
+> +		 */
+> +		bus->dest_addr &= ~I2C_M_RD;
+> +
+>   		iowrite8(NPCM_I2CCST_BB, bus->reg + NPCM_I2CCST);
+>   		npcm_i2c_reset(bus);
+>   		i2c_recover_bus(adap);
+> @@ -2172,7 +2191,6 @@ static int npcm_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>   	}
+>   
+>   	npcm_i2c_init_params(bus);
+> -	bus->dest_addr = slave_addr;
+>   	bus->msgs = msgs;
+>   	bus->msgs_num = num;
+>   	bus->cmd_err = 0;
+
+
+Kind regards,
+
+Paul
 
