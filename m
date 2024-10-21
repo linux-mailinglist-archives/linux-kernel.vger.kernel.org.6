@@ -1,84 +1,73 @@
-Return-Path: <linux-kernel+bounces-373881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677E49A5E64
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:16:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580269A5E67
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CD8E1F23034
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:16:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8E0EB22251
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F5C1E1301;
-	Mon, 21 Oct 2024 08:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09141E0DEE;
+	Mon, 21 Oct 2024 08:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRFHdyHC"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lIAsGnCN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F5531A60;
-	Mon, 21 Oct 2024 08:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27EF1DDC1E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729498581; cv=none; b=QsxouMYuaKF7cDa9u3LoSbfpISO45F3Gdn1zGb5gev9FDrWQ1ItNtwFHst3gbn7Tq69v33pAyrz/bHeTZ7mhQFliWdADZezPICu1PPnT714UrsbjJvxNZQBk4Kig4xZCy6AqA6NnDJN/cnDqHvxi4qawcv4VzgNrfpHpZ3ubiSM=
+	t=1729498615; cv=none; b=UwpYidLzdLKW5qBIYsZmkBj+x2N4jyf6Tgt5FP/AiftTLKtyvjHLThlg+9mXUs4RcaBxZfpV8VgrJsHKu6dgqF94Pd8QJqIA6bv0T2pr7i0x8Vpzc3Ay0DkzLPhB8iHLyfxbsm7ns4RowHp2XUgeUYvWrVX2MTdoDgexWBzTUwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729498581; c=relaxed/simple;
-	bh=c3Q7LGQVuIITg5UaABd1a43cuAt+QmdW85NdxlKpNVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJKXnDOYvc3xG3DGA2GNfWBGYRXGnspJXYBqmenYjtLhJQUuVUHC0WMK8FckkjOKQOK6LzEcSon0IOAxQPDCVgpLQYNUpQ17QoLlI1JhWERL2G9NBc0w33jhI+kLslUiLL+p0cJUyTpY+knz8+8HbKE5IzDqsOFqgvMLGDv7cF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRFHdyHC; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99f1fd20c4so564814166b.0;
-        Mon, 21 Oct 2024 01:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729498578; x=1730103378; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hikONoUm9dyOaIh70TuwxhRECZdjoHLLuaQITExzXGI=;
-        b=IRFHdyHCRRKm2YheoNSTK7YqX4YMASIar9++LQrsMWQdtIkCtTaJds4L/AgSU+TBAg
-         YZAp4qIcdX4OWQ0qbK672ixoA5PXckwRAK2yMCcNaH1KhFCS2b5A+JumpzRrHlfUbxOa
-         QnWtncOPgk1fRjaRhj1k8sZR2VbkH0Pjv+FCzjFoUwvOR8VJSWauUk+Dr0duPkVDxZSS
-         3v61j5Ixf9dSRpxkQ7yAS738hGCrXIHecpXLYhCVa/em/sMBAiq5i/aGIDzYIAf6euJQ
-         i+XOz0rmUTS5h6yf4Ck1jNK4EQA7BJh9QKZsEhVK21f4U8cuJxE7MsKFkjnfKsrPOh/G
-         eFJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729498578; x=1730103378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hikONoUm9dyOaIh70TuwxhRECZdjoHLLuaQITExzXGI=;
-        b=nP/e5ysQoI+RzvteJkOu03V+j0CU5hXmejR4ljJKjxhMohuUYLN+KP5S4kg/PBSZ1t
-         gzaOZn1yBez/xLlRkcBHOrK2JJIM7zKqqQqJHcfdE903da+YHPM4zvDTJHcLhd1ujRXI
-         O8QeqfTMg3vUPXv4Ng5MsJqWA7LNvNClnXGVnn3eC75PzXKY5Xss/D0xhF3BTCVygQn4
-         hSp5Shk3jdD190ndFCvvSuhFOGtPcJY/DEiQ7+3/FCEAdtqSzVxESAg8U49spwyQesHY
-         6+e5UZCqTXkIDFQYmcM/7NndNf2ytiY7PRzzPuQRptR44Jc9i3mZD/Jyr4JTx7LYc6cQ
-         uHMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvtpup3INwQzx526FLRYYOzvLE+w2ydlIva86q6iAdb3M3rdid/9XX+furrcYF6n7VYPjvaahIBb5Otts=@vger.kernel.org, AJvYcCXHw4Vy7dCuj8WG7IeYJnMQxH/QKe4j2xNQXPMHJx7zm9GvFguFOvOcI0Kpvg90WhDKS/fZEaKqbhcLMzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcTu7W1ovkS0ZlB15OmCLf8Z4lVn2PRyImIwXNraqBdrOzDywJ
-	+/tXgMN6FZ/z6/zSbFhT84CWJlHEZopd+m+ab/ZiImaCjmND1qu/
-X-Google-Smtp-Source: AGHT+IFEyf5L7n2B3B3XBAQKurb3beIhgnv6Bq2BmEGpujTZe6w/vLlHAocBgUPXhyZmaAU7th6WAw==
-X-Received: by 2002:a17:907:a089:b0:a9a:12c9:41d1 with SMTP id a640c23a62f3a-a9a69ba59acmr1175756866b.28.1729498577534;
-        Mon, 21 Oct 2024 01:16:17 -0700 (PDT)
-Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-51-176.cust.vodafonedsl.it. [188.217.51.176])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91571e3asm174577566b.147.2024.10.21.01.16.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 01:16:17 -0700 (PDT)
-Date: Mon, 21 Oct 2024 10:16:15 +0200
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: v4l2-subdev: Refactor events
-Message-ID: <ZxYNzxH0UGy/jsEG@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-References: <20241020163534.1720297-1-tomm.merciai@gmail.com>
- <20241020164354.GG7770@pendragon.ideasonboard.com>
- <ZxYCMWryQl6lZxf9@kekkonen.localdomain>
+	s=arc-20240116; t=1729498615; c=relaxed/simple;
+	bh=zG8389AzEcTqHbq/aHLbTOlVn9gUHn2FDnw8cKkmpCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kJD4gv7VH/xzLOghSfrZAdbUoCv+TI/ZLtsX8LvGXLw3qsqzEjJgpLknQvt4TPLyjeQllftH6Zf0nNtRJzrzQRWfqXkIxETC+mWj8VfXIQuJj5Ox8q1eoHX+5cKcBfmBau42IxjL7xzPb/eNIqFC1I5ULDueEzELPdPO89WmZ1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lIAsGnCN; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729498613; x=1761034613;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=zG8389AzEcTqHbq/aHLbTOlVn9gUHn2FDnw8cKkmpCM=;
+  b=lIAsGnCNspk168n7JLjIE65YFUjclOlcCfCjhTes/sqyd/Mb1aAbPAWx
+   4QplCQ2eNAZt51mE6SUtovGyGoJqhqNCYbY3w2g7V9sa9spW9dAniVyVs
+   hcQtHdf5HyFmbIEWmxLg14WBeAFXOunWfW4NR1n1sGZzpWNYNocEyRUmg
+   2NWk0CkTPCB+kzuSnvvSWKvv6dUPpJib3PrnR3EbawjaOGDKkc4pZkw5R
+   TYskFtOvGWnehwseQuc/6eTzIqSdjWE25g+q0w3izWAxcysyY7pR2CkSu
+   Hz3vT8SE4O/LKFuv9elSNJY/kYIl7Qm0Pu90Bd/77p7NF+++RWZ8d199O
+   A==;
+X-CSE-ConnectionGUID: 6kBZrZZET0OvSzG5YeGpCA==
+X-CSE-MsgGUID: Iul4aYLrSs2liLPLfEkI7g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="28847512"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="28847512"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 01:16:53 -0700
+X-CSE-ConnectionGUID: H9O/iqP6Qvy1tSU49oEzRg==
+X-CSE-MsgGUID: vf1Da8lrSkKq8wMHAA8HVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="102772650"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 21 Oct 2024 01:16:51 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t2nar-000RMa-03;
+	Mon, 21 Oct 2024 08:16:49 +0000
+Date: Mon, 21 Oct 2024 16:16:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jordan Niethe <jniethe5@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: arch/powerpc/kvm/test-guest-state-buffer.c:70:25: sparse: sparse:
+ restricted __be64 degrades to integer
+Message-ID: <202410211611.R5rf8B37-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,65 +76,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxYCMWryQl6lZxf9@kekkonen.localdomain>
 
-Hi Sakari,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   42f7652d3eb527d03665b09edac47f85fb600924
+commit: 6ccbbc33f06adaf79acde18571c6543ad1cb4be6 KVM: PPC: Add helper library for Guest State Buffers
+date:   1 year, 1 month ago
+config: powerpc64-randconfig-r131-20241021 (https://download.01.org/0day-ci/archive/20241021/202410211611.R5rf8B37-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bfe84f7085d82d06d61c632a7bad1e692fd159e4)
+reproduce: (https://download.01.org/0day-ci/archive/20241021/202410211611.R5rf8B37-lkp@intel.com/reproduce)
 
-On Mon, Oct 21, 2024 at 07:26:41AM +0000, Sakari Ailus wrote:
-> Hi Laurent, Tommaso,
-> 
-> On Sun, Oct 20, 2024 at 07:43:54PM +0300, Laurent Pinchart wrote:
-> > Hi Tommaso,
-> > 
-> > Thank you for the patch.
-> > 
-> > On Sun, Oct 20, 2024 at 06:35:32PM +0200, Tommaso Merciai wrote:
-> > > Controls can be exposed to userspace via a v4l-subdevX device, and
-> > > userspace has to be able to subscribe to control events so that it is
-> > > notified when the control changes value.
-> > > If a control handler is set for the subdev then set the HAS_EVENTS
-> > > flag automatically into v4l2_subdev_init_finalize() and use
-> > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> > > as default if subdev don't have .(un)subscribe control operations.
-> > 
-> > I would add here
-> > 
-> > This simplifies subdev drivers by avoiding the need to set the
-> > V4L2_SUBDEV_FL_HAS_EVENTS flag and plug the event handlers, and ensures
-> > consistency of the API exposed to userspace.
-> > 
-> > And you can also add
-> > 
-> > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > 
-> > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> > 
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> Thanks!
-> 
-> I've picked this to my tree.
-> 
-> Please try to properly wrap the commit message the next time, most editors
-> can do that automatically.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410211611.R5rf8B37-lkp@intel.com/
 
-Mmm..
-In theory I have this cfg for my vim:
+sparse warnings: (new ones prefixed by >>)
+>> arch/powerpc/kvm/test-guest-state-buffer.c:70:25: sparse: sparse: restricted __be64 degrades to integer
+>> arch/powerpc/kvm/test-guest-state-buffer.c:70:25: sparse: sparse: incorrect type in initializer (different base types) @@     expected long long left_value @@     got restricted __be64 const __left @@
+   arch/powerpc/kvm/test-guest-state-buffer.c:70:25: sparse:     expected long long left_value
+   arch/powerpc/kvm/test-guest-state-buffer.c:70:25: sparse:     got restricted __be64 const __left
+   arch/powerpc/kvm/test-guest-state-buffer.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/umh.h, include/linux/kmod.h, ...):
+   include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
 
-filetype plugin indent on
-syntax on
-set title
-set tabstop=8
-set softtabstop=8
-set shiftwidth=8
-set noexpandtab
-set number
-set hidden
+vim +70 arch/powerpc/kvm/test-guest-state-buffer.c
 
-Thanks & Regards,
-Tommaso
+    24	
+    25	static void test_adding_element(struct kunit *test)
+    26	{
+    27		const struct kvmppc_gs_elem *head, *curr;
+    28		union {
+    29			__vector128 v;
+    30			u64 dw[2];
+    31		} u;
+    32		int rem;
+    33		struct kvmppc_gs_buff *gsb;
+    34		size_t size = 0x1000;
+    35		int i, rc;
+    36		u64 data;
+    37	
+    38		gsb = kvmppc_gsb_new(size, 0, 0, GFP_KERNEL);
+    39		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, gsb);
+    40	
+    41		/* Single elements, direct use of __kvmppc_gse_put() */
+    42		data = 0xdeadbeef;
+    43		rc = __kvmppc_gse_put(gsb, KVMPPC_GSID_GPR(0), 8, &data);
+    44		KUNIT_EXPECT_GE(test, rc, 0);
+    45	
+    46		head = kvmppc_gsb_data(gsb);
+    47		KUNIT_EXPECT_EQ(test, kvmppc_gse_iden(head), KVMPPC_GSID_GPR(0));
+    48		KUNIT_EXPECT_EQ(test, kvmppc_gse_len(head), 8);
+    49		data = 0;
+    50		memcpy(&data, kvmppc_gse_data(head), 8);
+    51		KUNIT_EXPECT_EQ(test, data, 0xdeadbeef);
+    52	
+    53		/* Multiple elements, simple wrapper */
+    54		rc = kvmppc_gse_put_u64(gsb, KVMPPC_GSID_GPR(1), 0xcafef00d);
+    55		KUNIT_EXPECT_GE(test, rc, 0);
+    56	
+    57		u.dw[0] = 0x1;
+    58		u.dw[1] = 0x2;
+    59		rc = kvmppc_gse_put_vector128(gsb, KVMPPC_GSID_VSRS(0), &u.v);
+    60		KUNIT_EXPECT_GE(test, rc, 0);
+    61		u.dw[0] = 0x0;
+    62		u.dw[1] = 0x0;
+    63	
+    64		kvmppc_gsb_for_each_elem(i, curr, gsb, rem) {
+    65			switch (i) {
+    66			case 0:
+    67				KUNIT_EXPECT_EQ(test, kvmppc_gse_iden(curr),
+    68						KVMPPC_GSID_GPR(0));
+    69				KUNIT_EXPECT_EQ(test, kvmppc_gse_len(curr), 8);
+  > 70				KUNIT_EXPECT_EQ(test, kvmppc_gse_get_be64(curr),
+    71						0xdeadbeef);
+    72				break;
+    73			case 1:
+    74				KUNIT_EXPECT_EQ(test, kvmppc_gse_iden(curr),
+    75						KVMPPC_GSID_GPR(1));
+    76				KUNIT_EXPECT_EQ(test, kvmppc_gse_len(curr), 8);
+    77				KUNIT_EXPECT_EQ(test, kvmppc_gse_get_u64(curr),
+    78						0xcafef00d);
+    79				break;
+    80			case 2:
+    81				KUNIT_EXPECT_EQ(test, kvmppc_gse_iden(curr),
+    82						KVMPPC_GSID_VSRS(0));
+    83				KUNIT_EXPECT_EQ(test, kvmppc_gse_len(curr), 16);
+    84				kvmppc_gse_get_vector128(curr, &u.v);
+    85				KUNIT_EXPECT_EQ(test, u.dw[0], 0x1);
+    86				KUNIT_EXPECT_EQ(test, u.dw[1], 0x2);
+    87				break;
+    88			}
+    89		}
+    90		KUNIT_EXPECT_EQ(test, i, 3);
+    91	
+    92		kvmppc_gsb_reset(gsb);
+    93		KUNIT_EXPECT_EQ(test, kvmppc_gsb_nelems(gsb), 0);
+    94		KUNIT_EXPECT_EQ(test, kvmppc_gsb_len(gsb),
+    95				sizeof(struct kvmppc_gs_header));
+    96	
+    97		kvmppc_gsb_free(gsb);
+    98	}
+    99	
 
-> 
-> -- 
-> Sakari Ailus
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
