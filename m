@@ -1,313 +1,186 @@
-Return-Path: <linux-kernel+bounces-374297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38CB9A681C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4559A6822
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37588B263EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:23:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D778B266AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ACC1F7092;
-	Mon, 21 Oct 2024 12:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6561F9419;
+	Mon, 21 Oct 2024 12:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dh4EBEmj"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="E8PZDkmB"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2082.outbound.protection.outlook.com [40.107.93.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EFE1F1310
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513309; cv=none; b=Ht8iZ4dbeSFJpfk7zxAFAV2Q2I+JodGuNjc3c9LW144onnHzx1r3o7VqWpe8SPn5/WUOKtF5al7U4beI83wFFqUQzZgAJFFigMZtOwaK4YRcmbLLAYjdbssilB3SFLcgK2VajE3ZiPcLfu2knsyzPFJ7voxrjEAgBreRqyTYqkc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513309; c=relaxed/simple;
-	bh=WZlxIaormjNBAmpVA3OSHxhEAdbnXU/CxUaZ0vpsPt8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=R5UMTXcwK7ozH7Rvj43RybE7j+laj1R68e5dJ9KmwVt+AfZ2h886fz9NHkeKKklpc0QVLaEvf7lUl9XDf5g3oWzS1t9mGYJ4SCr5QdYy9Tmi+Q8F3I/CRsITvxhJtUoJb4IK7qYoKpCl6ho/D/x61tfi6FNrvhsTV1j50elbhdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dh4EBEmj; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so45146075e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:21:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729513306; x=1730118106; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L8PXh0dAOwDKmgSRcSg3e05JHCblzWTRNfVzKItfysk=;
-        b=Dh4EBEmjf8s+EsHG5pZmzJa1h13FUJYaG44bVZiEIsu1PgT3TAObAeEHVXiXrCg2Ee
-         m5CgtbKv2C7x1gKQ+jnKVfnbEBylIzzbTvLoj1h8HTqZ7tFU+/uHmEKgUiwFH4j8Av21
-         3wBgPjSluiaPnChc6RDPtyYftuc9+oT4aOi45IqKzGSjjyT4LUFzCDGlByatGzabC1o5
-         GypieX4Zd/4GHKjbhLoqscc+PodHZ/T0zNjJmNbi6c+0exBx33asN2sxBVg5NtqoX4az
-         c9ksrn6jFYubtZvP68PMXjkq3SP0jfjBvhfjUpVIJX6KHREV7motmMtmlX7lt8GlZ6Ok
-         002w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513306; x=1730118106;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=L8PXh0dAOwDKmgSRcSg3e05JHCblzWTRNfVzKItfysk=;
-        b=oht2T+pBQ2fyMyGFN0fXdsBzmMpVsnpWb2YOpwVWaLud2US5ph1xXjmdOkLnfOjQWC
-         SmlJEWPCAt1Aj1ozQgUu0JxUgklLQxNbDPqhW8Lh9c7BwnInD7+B469u+Oj2ZtE5A1kO
-         SwKH6rzntITC2k5+bH9OlM6GCX4SXYHtBmB+ED5Jq4lVHTgbJVCYmu80+RsL/zaFUt0n
-         Zu6kG/xQa2tlHQKapkU/Mo15+14izSew/VXTOAIj5y3SYoZnTxnF3WPTJrr+ENMwioeY
-         IAS3m2OeAVV+PCjmgCp0Goa75wzAb2Nzvf4634eOHjVSAD7DHMmCNMKg/K17HZgWDu1c
-         v/gg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXUKADGZJzmggP+PVxASkMSi+wwSnrVIYTVeXdVmRF3SP2/lMOsPMDRrQKoCef+zQPD3+hJipYWZvUve0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf5JK0PX3RLV4hreirmVRpHUS7oE9p8jOl+0FOdFiAiyCpNabP
-	9rNhqN26ye7lvzQk2YHgitSVnC79ep4QDjSc5kvIdWcE43qR7/J04JXxn/WdA7Uz5JjIwlT3jTb
-	0i3M=
-X-Google-Smtp-Source: AGHT+IHkCdDLs8a3oPYVJ00k2pUqgkYfiwWhPd4FYGvTMUrxEd+Of4MdGYYoSjjW2mKfmtYrwxqvxg==
-X-Received: by 2002:a05:600c:34cc:b0:431:5d89:6465 with SMTP id 5b1f17b1804b1-43161697980mr86968265e9.34.1729513305634;
-        Mon, 21 Oct 2024 05:21:45 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc921sm55374295e9.46.2024.10.21.05.21.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 05:21:45 -0700 (PDT)
-Message-ID: <efdcdd4b-c5ca-42cc-beed-e92201bc07e9@linaro.org>
-Date: Mon, 21 Oct 2024 14:21:44 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770DA1F890E;
+	Mon, 21 Oct 2024 12:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729513316; cv=fail; b=QFM73erQKbqMYq9AcZJggC5bmzgsrNVL8TtPxO+2UK1jDIHAohTx+XuKtcAwZRuQSJI/FQfaMouQHuLbgbh0/KH28ktyh/nkpSWuGUv1Vh4kmIYYsR5NR4ibL7X0RntAI8qJxCpF1QhhTCjIv2nrx7VkWkm0XO7Av1Mzljvc2Lw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729513316; c=relaxed/simple;
+	bh=nAe8IkLcPUj9p9vXOONaoko0jB6wS+ueRj6tu2jNXcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cNeyNToOnFcetp7EqW3BxI4KLb37yVIvtihKtOL9XN3MB+HS365P0D5oZQY5IUoXJbuU9X3kpUjRxl9BgVmD4UxEu1PwBDmTyxRbxxrhpnU8R6PQa4w2p50RYvEan5UUg03M5eUPLNzk+ttERGTZESk7DGw3ZBeoDVskWPec4dY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=E8PZDkmB; arc=fail smtp.client-ip=40.107.93.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Phj4PjwwCtXoOi4Q5Q6RnrS8Y+mSs3RCg6WoXKM7iDUUIAuC2hxlxLTeThnvGiOC8i0hR8h/CXPhklJrLfhkID7sZuO9TEK9MmCBhfW7/N12Y6JDtk6VQv4c6PtzFJwKMmJd0YozvJspo4pZm1loaDgNJbSUhVZOJppfabfzf7wvBM2eVwQv4gTYWk7hYwYuM9kdlPDdo1DAonu4RwIVYv6BdzzRyUANG06gwRUbghcIjJPpsKmMLIa2exkH8Ol8txEEtSHDjpQvIeRXd1kDlXUytGtbPyeh+4dnwmWHdUGFSrrxG4Lpwut9cZv+rL5xPHHPxcJOfxhnFSeSOJM8EQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0Zn16QjR2VSFxFGVFUl7eHish0OGuh5CxUJ70pGbdhU=;
+ b=DmMURyRob3BibqHElTj3UrHEds2grbZBoz1fuT6PdwN2WlkvX6V5UlcU2QhwNdiStaIGtTsVc5nLvSxF6sl8FF5IRNxYy0RSnUYcY3SPDSSQ2D3sqnk/hooYsAn7CSULEZbFoHgHMmVUBQ3/UKJbIwkkk4Cp0httb4XdHYL52cIVonM5NoWdN8rIvHUPsPhMuxuJ3TQEfSrXA8QSMX0mevQF3cGxSRa7wJj1Aka0kAAfpLVu8HT7IadixoQnPcfNgw3c/24KrT9duQeK2qLYC0SqH6amqWlOaCEeOV+VQV8aWsu3l00WQP8AiyZEHpcLK7of86ZG/7R17nROWVoHWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0Zn16QjR2VSFxFGVFUl7eHish0OGuh5CxUJ70pGbdhU=;
+ b=E8PZDkmBY2ZSteRvaTVEJcZKm/vZBU4GODBxkIt/4i9NcAUKCX1+DLGzHvhCzjIS2eeJO1sFtmseRrtzvCGcyrEeL2M1fIjPksqqZKoJstMDEebvjLbN2WDeGzv4dxnfOXkcbX9Tp0K8o2H+an+I1lk52BV5FIlVAOkfSLDgWQu7uOAzizQrQ6xmmG5qD0Fru3KZA0PKVD7Q/QkKrtgw76m+8Hv+4bNus/YvLm5LyvXYriPEjak6sfrxPNgX3Auq93DoZtb/dj6FcAI5jpxVXpK3z8qrqLNZnPqjnf172DhzW8JW9wyzLAvrf7MsbN3QYrD3O1b92qzfkNBAirZQhw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.27; Mon, 21 Oct
+ 2024 12:21:50 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
+ 12:21:49 +0000
+Date: Mon, 21 Oct 2024 09:21:48 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
+	yi.l.liu@intel.com, aik@amd.com, patches@lists.linux.dev
+Subject: Re: [PATCH v3 01/16] iommufd/viommu: Introduce IOMMUFD_OBJ_VDEVICE
+ and its related struct
+Message-ID: <20241021122148.GP3559746@nvidia.com>
+References: <cover.1728491532.git.nicolinc@nvidia.com>
+ <556347d2e69e8b236ec946a93132181385344d4f.1728491532.git.nicolinc@nvidia.com>
+ <20241017184556.GQ3559746@nvidia.com>
+ <ZxRecZKbXd7cLOqy@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxRecZKbXd7cLOqy@Asurada-Nvidia>
+X-ClientProxiedBy: BN9PR03CA0473.namprd03.prod.outlook.com
+ (2603:10b6:408:139::28) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 4/6] phy: qualcomm: qmp-pcie: split PCS_LANE1 region
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241021-sar2130p-phys-v2-0-d883acf170f7@linaro.org>
- <20241021-sar2130p-phys-v2-4-d883acf170f7@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241021-sar2130p-phys-v2-4-d883acf170f7@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA3PR12MB7901:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4d7bb37-7f79-477b-1c6e-08dcf1caf016
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fJWfTNu5GykX89Gxuj3Jibfrektv86dXruPipfSjNrpmYEq6qFkVulYYEABO?=
+ =?us-ascii?Q?asQi5w7yI4NfRfTyc8Qqdx07UAXuQxLeiZbJv5KbwMw2/viYOD1kHlrxlI9S?=
+ =?us-ascii?Q?WgqCe7hktVbOwu1vrhdENQPS+Am5TWtDAoDftQP5cX2JN81Ih98w7UX5YhF3?=
+ =?us-ascii?Q?soVLaIKFAlD+L/phROcThYmQTiPMIKGX9tszhG828NEgqm3D8/GUKyzv7dO/?=
+ =?us-ascii?Q?rMFSJ4/Wf4sy5a4gRsjVXzovj54J9No+hs1BbXrhWZkhVXl6b0SOby3RO2uW?=
+ =?us-ascii?Q?pIefQZZLSCDr4fMgGCxEyP/yhltheNuMYRVYmnJyoMLWec5EAuznUdMOviLL?=
+ =?us-ascii?Q?DZ+u3Ih7mh4drWRld0+7IYG/7XQZkurvi/78x9xti6TnKiueXSmhaT7jmO0y?=
+ =?us-ascii?Q?gu+AeoogDeZ/rH6e9qGPtb+xDqS/LC+WUz/Qvr9AIV/r6q7sUIVy13THcLc7?=
+ =?us-ascii?Q?YjGGvEk7MkQQrkojiXWOH9rfGt0Y6PLu9U+K50Xnc8kkbDBkaqwRwEieueRp?=
+ =?us-ascii?Q?sCpc0HUqHk7nOWbzCIOnndMYkQi4oKy5f1Ginm4CavswXvn0DBeeOWKL10wg?=
+ =?us-ascii?Q?ynpDlh4eokNCtZ6A5o1eUBG9gafbi2RvaF8HN4ZQ6p+MBl3R+GicJAgbvfDA?=
+ =?us-ascii?Q?XrXjWz9bNjPhbcQ5SY+KFGwtU9yzbzFNjJcMK6O2S/hig0wF0UX5ghoykdfK?=
+ =?us-ascii?Q?OQn/Slkaqtpng45VygCtK8Sno/YZyJLAwkjr2kWjddD6tyjqFbelsZVcjcQM?=
+ =?us-ascii?Q?QRvFk8J0G/78EDW5OF2zNqFbI0gq8mVb5h7ql4PkEhETI5mV3iEJZJ3sUvWo?=
+ =?us-ascii?Q?45CaQanOuRgYinfmt2Dg2gubHtmvD6zDPjVaWHRlNrClyezx9iBNdhPm7i8E?=
+ =?us-ascii?Q?CGCfbIw+q1E0H0LO7uYEGWMJAiSvwk00V3g0tfOR5lvqY8DEvyc2MocUI0Rn?=
+ =?us-ascii?Q?8UQU7mt6BnLehOIJuDIvnpzTutu7n0GScl7Q1+9C71HqgaKRMNwIkPysEkMY?=
+ =?us-ascii?Q?C6nh66vgfGiJQ65HqmqeN2H/IwVWglPpR/F6jE1pXZ8oNJzpmapsXEHmpf9G?=
+ =?us-ascii?Q?K0fXltl69NM1PfuiQZSDIm3UDgzGA1NgQPXmQbHjajSBcUk22z1Z4DT2AyTM?=
+ =?us-ascii?Q?9h8VbVv1MlzF/QyIOhoclIyStyz26VU85u+bC7EC/JNe72u4jdkeBCf3Hxik?=
+ =?us-ascii?Q?c/DvcS0Z6irTMYsZUVimA+O84ivEL+wN0rvlCTquaDjVrJY+XL95lzxTT+4l?=
+ =?us-ascii?Q?J+GLtv631LKSTu8gQGVIAsy5RH5dcM4CWdJOAlWjcAPwcFpb0MrjVeunama8?=
+ =?us-ascii?Q?znJ5pFzOEGAVa0rdnKtGnDAb?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mo+2gwNWuafiIB6axUNH32o0L2eawN3PRcS/qHWrP79CuKASeZ0rn/fhMApL?=
+ =?us-ascii?Q?qe7YAgVnVLZ0fX5UZovyFAuIvgvSZrpWJTV6A37M93MTiXMEGA5bbuPNZAYQ?=
+ =?us-ascii?Q?sSxajCnDXv9MqDpcXUtto9dzMa0bZJ8ZZR+jWvQirvmFOIlEcGPba0TT1HkG?=
+ =?us-ascii?Q?z11/8OgNuXcDiX0lPDTZP0Rp+f2D3HP1WcXs6vKayVX4Bc6eO89kZilcnrtU?=
+ =?us-ascii?Q?DtiBnck0RgXAfCudIkKYbcLGEkC3VDGO6iG5GpqyTNbWOjWg34u6HCoHHb5m?=
+ =?us-ascii?Q?PYA66hbK7dmQyP2FVzSSeOqoc5txmi5g8NeX/lmwZ7QFkrPpLKPGjszLKUTi?=
+ =?us-ascii?Q?6MrpCq4s0rYSVm/CVdh+oby3bokqj48BGiH5lsYVydTX0CUli6yqlxiCk6oH?=
+ =?us-ascii?Q?BeusWY3c/m/hr1Tb9WJaR7qHOUnxUW3A5xpYZc1gUsNuE3n8BGif5ZZUjxV6?=
+ =?us-ascii?Q?4DJHYgpxC1R1TV8XkYfwWxLQNAD/MubHFhhdr501YZXGFyDZAEExnpab09DX?=
+ =?us-ascii?Q?glm1dZyTgDWhAnklpbhGs8E29IIIHHvXhHlH+5SP4Y9xwLx3oY4uel3jMo5w?=
+ =?us-ascii?Q?0Y3wmOp9CUEU+WfxEdap/pmhoxVfyI4enZy5smuTIyATpFxqS9Wkt7+k9IWg?=
+ =?us-ascii?Q?prySm2AUvseGJyfbGLhv/v/qzszzVkGmrfURSvj7uT3mqEqpTumkqNkR/3xI?=
+ =?us-ascii?Q?tPpqhRvuKwPmKdqYvVDmXHgifqGiQguWmJk5mHmJmZlpwYwKoPX6Two7X6JP?=
+ =?us-ascii?Q?y36JZbdxSxyBy3kNRClaNrotadIadZxnRXBFo+CwAFolO4bSaYijag06eqNN?=
+ =?us-ascii?Q?v4f4CbSJ5uPQXlf4I71MLBlmExpdljko6oxu9kKq9hBQWKa0e2oIfgI1BHAd?=
+ =?us-ascii?Q?GVywhANCQZ35U0/PYP5OwtHFVDZViuZdAfMz9W1bsS36z5DH3cQ3uaWhzz3a?=
+ =?us-ascii?Q?YBjHtdv+J18GjZ/WimEJYnqmGzBscbJzxROwYQkWPrTJmbOM07iV381WfB6u?=
+ =?us-ascii?Q?3p470VRts0hcIfdsZyOUM4vdi4WD1ATa9jUJErWvHeaUQCNWbqSygZbyEo1K?=
+ =?us-ascii?Q?XHRjr3Mfg+jSy+7Nk3aLoB5vorYJeHYSXlUBkZuWxAPXsJFBtTxSlY+JupHE?=
+ =?us-ascii?Q?wtoEDaDVQPW10o4nAT9YsNtGY/7PiQtJ7yI7QCmmHXbpjGFmQcEj08jpIjyp?=
+ =?us-ascii?Q?Q5T4tgv3JuzFFIPAW20XJU/1ZfgjeSGl+ZODLt559FEefnZ5vhywnXuulmtK?=
+ =?us-ascii?Q?wUfCnPbPzRyVat31aHtBAlHbsttn5O2mHomUpUfYFjbYNgwTQtjG1rfxahSH?=
+ =?us-ascii?Q?hhQmQ6l4vXY8RFHCcHy/FkbMjRdBn8t1PSxtqHjDcfBrvKabXNsx6N5OKY8B?=
+ =?us-ascii?Q?nF6BF6kr39BxQde7/Mo7kNX6tKTvY1q/69k8QESB5Km2S/m6cNwHdlkYCTh/?=
+ =?us-ascii?Q?eD1S1NKdV3OtnOkNbdfsNw5Hf4hB0EacPGRE2qBP7AuQgB4neTF9kKSd+eLs?=
+ =?us-ascii?Q?/FX68qSiyQV8xfKl9CKfeqEdY9fAHHYCv8M8X+b2Wwquc/aNKTyXpk3AWgw0?=
+ =?us-ascii?Q?DHaRfp6np11eGasdh1s=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4d7bb37-7f79-477b-1c6e-08dcf1caf016
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 12:21:49.5187
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xYhK7fD06XTRSvGfsgqdDawyGPprSPbeaLNdnIR63WmZziACXAm9j7dAnywNPQXC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7901
 
-On 21/10/2024 12:33, Dmitry Baryshkov wrote:
-> The PCS_LANE1 region isn't a part of the PCS_PCIE region. It was handled
-> this way as it simplified handled of devices with the old bindings.
-> Nowadays it can be handled as is, without hacks.
+On Sat, Oct 19, 2024 at 06:35:45PM -0700, Nicolin Chen wrote:
+> On Thu, Oct 17, 2024 at 03:45:56PM -0300, Jason Gunthorpe wrote:
+> > > +struct iommufd_vdevice *
+> > > +__iommufd_vdevice_alloc(struct iommufd_ctx *ictx, size_t size)
+> > > +{
+> > > +	struct iommufd_object *obj;
+> > > +
+> > > +	if (WARN_ON(size < sizeof(struct iommufd_vdevice)))
+> > > +		return ERR_PTR(-EINVAL);
+> > > +	obj = iommufd_object_alloc_elm(ictx, size, IOMMUFD_OBJ_VDEVICE);
+> > > +	if (IS_ERR(obj))
+> > > +		return ERR_CAST(obj);
+> > > +	return container_of(obj, struct iommufd_vdevice, obj);
+> > > +}
+> > 
+> > Like for the viommu this can all just be folded into the #define
 > 
-> Split the PCS_LANE1 region from the PCS_PCIE / PCS_MISC region space.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c           | 32 ++++++++++++++++++----
->   drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v4_20.h |  5 ++--
->   drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5_20.h |  5 ++--
->   3 files changed, 33 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> index 873f2f9844c66d7bd0b3bb3ab4bbd8be9a37cebd..1ca1f21b1cc225f435da9c775c97dfa142117f95 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> @@ -1773,7 +1773,7 @@ static const struct qmp_phy_init_tbl sdx55_qmp_pcie_rc_pcs_misc_tbl[] = {
->   	QMP_PHY_INIT_CFG(QPHY_V4_20_PCS_PCIE_OSC_DTCT_ACTIONS, 0x00),
->   };
->   
-> -static const struct qmp_phy_init_tbl sdx55_qmp_pcie_ep_pcs_misc_tbl[] = {
-> +static const struct qmp_phy_init_tbl sdx55_qmp_pcie_ep_pcs_lane1_tbl[] = {
->   	QMP_PHY_INIT_CFG(QPHY_V4_20_PCS_LANE1_INSIG_SW_CTRL2, 0x00),
->   	QMP_PHY_INIT_CFG(QPHY_V4_20_PCS_LANE1_INSIG_MX_CTRL2, 0x00),
->   };
-> @@ -1907,6 +1907,9 @@ static const struct qmp_phy_init_tbl sdx65_qmp_pcie_pcs_misc_tbl[] = {
->   	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_PCIE_G4_EQ_CONFIG2, 0x0d),
->   	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_PCIE_G4_EQ_CONFIG5, 0x02),
->   	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_PCIE_G4_PRE_GAIN, 0x2e),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl sdx65_qmp_pcie_pcs_lane1_tbl[] = {
->   	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_LANE1_INSIG_SW_CTRL2, 0x00),
->   	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_LANE1_INSIG_MX_CTRL2, 0x00),
->   };
-> @@ -2582,8 +2585,6 @@ static const struct qmp_phy_init_tbl sa8775p_qmp_gen4_pcie_rc_pcs_misc_tbl[] = {
->   static const struct qmp_phy_init_tbl sa8775p_qmp_gen4x2_pcie_pcs_alt_tbl[] = {
->   	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_EQ_CONFIG4, 0x16),
->   	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_EQ_CONFIG5, 0x22),
-> -	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_LANE1_INSIG_SW_CTRL2, 0x00),
-> -	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_LANE1_INSIG_MX_CTRL2, 0x00),
->   	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_G3S2_PRE_GAIN, 0x2e),
->   	QMP_PHY_INIT_CFG(QPHY_V5_20_PCS_RX_SIGDET_LVL, 0x66),
->   };
-> @@ -2728,6 +2729,7 @@ struct qmp_pcie_offsets {
->   	u16 serdes;
->   	u16 pcs;
->   	u16 pcs_misc;
-> +	u16 pcs_lane1;
->   	u16 tx;
->   	u16 rx;
->   	u16 tx2;
-> @@ -2752,6 +2754,8 @@ struct qmp_phy_cfg_tbls {
->   	int pcs_num;
->   	const struct qmp_phy_init_tbl *pcs_misc;
->   	int pcs_misc_num;
-> +	const struct qmp_phy_init_tbl *pcs_lane1;
-> +	int pcs_lane1_num;
->   	const struct qmp_phy_init_tbl *ln_shrd;
->   	int ln_shrd_num;
->   };
-> @@ -2811,6 +2815,7 @@ struct qmp_pcie {
->   	void __iomem *serdes;
->   	void __iomem *pcs;
->   	void __iomem *pcs_misc;
-> +	void __iomem *pcs_lane1;
->   	void __iomem *tx;
->   	void __iomem *rx;
->   	void __iomem *tx2;
-> @@ -2927,6 +2932,7 @@ static const struct qmp_pcie_offsets qmp_pcie_offsets_v4_20 = {
->   	.serdes		= 0x1000,
->   	.pcs		= 0x1200,
->   	.pcs_misc	= 0x1600,
-> +	.pcs_lane1	= 0x1e00,
->   	.tx		= 0x0000,
->   	.rx		= 0x0200,
->   	.tx2		= 0x0800,
-> @@ -2957,6 +2963,7 @@ static const struct qmp_pcie_offsets qmp_pcie_offsets_v5_20 = {
->   	.serdes		= 0x1000,
->   	.pcs		= 0x1200,
->   	.pcs_misc	= 0x1400,
-> +	.pcs_lane1	= 0x1e00,
->   	.tx		= 0x0000,
->   	.rx		= 0x0200,
->   	.tx2		= 0x0800,
-> @@ -3440,8 +3447,8 @@ static const struct qmp_phy_cfg sdx55_qmp_pciephy_cfg = {
->   	.tbls_ep = &(const struct qmp_phy_cfg_tbls) {
->   		.serdes		= sdx55_qmp_pcie_ep_serdes_tbl,
->   		.serdes_num	= ARRAY_SIZE(sdx55_qmp_pcie_ep_serdes_tbl),
-> -		.pcs_misc	= sdx55_qmp_pcie_ep_pcs_misc_tbl,
-> -		.pcs_misc_num	= ARRAY_SIZE(sdx55_qmp_pcie_ep_pcs_misc_tbl),
-> +		.pcs_lane1	= sdx55_qmp_pcie_ep_pcs_lane1_tbl,
-> +		.pcs_lane1_num	= ARRAY_SIZE(sdx55_qmp_pcie_ep_pcs_lane1_tbl),
->   	},
->   
->   	.reset_list		= sdm845_pciephy_reset_l,
-> @@ -3540,6 +3547,8 @@ static const struct qmp_phy_cfg sdx65_qmp_pciephy_cfg = {
->   			.pcs_num        = ARRAY_SIZE(sdx65_qmp_pcie_pcs_tbl),
->   			.pcs_misc       = sdx65_qmp_pcie_pcs_misc_tbl,
->   			.pcs_misc_num   = ARRAY_SIZE(sdx65_qmp_pcie_pcs_misc_tbl),
-> +			.pcs_lane1       = sdx65_qmp_pcie_pcs_lane1_tbl,
-> +			.pcs_lane1_num   = ARRAY_SIZE(sdx65_qmp_pcie_pcs_lane1_tbl),
->   		},
->   	.reset_list             = sdm845_pciephy_reset_l,
->   	.num_resets             = ARRAY_SIZE(sdm845_pciephy_reset_l),
-> @@ -3739,6 +3748,8 @@ static const struct qmp_phy_cfg sa8775p_qmp_gen4x2_pciephy_cfg = {
->   		.pcs_num		= ARRAY_SIZE(sa8775p_qmp_gen4x2_pcie_pcs_alt_tbl),
->   		.pcs_misc		= sa8775p_qmp_gen4_pcie_pcs_misc_tbl,
->   		.pcs_misc_num	= ARRAY_SIZE(sa8775p_qmp_gen4_pcie_pcs_misc_tbl),
-> +		.pcs_lane1	= sdx65_qmp_pcie_pcs_lane1_tbl,
-> +		.pcs_lane1_num	= ARRAY_SIZE(sdx65_qmp_pcie_pcs_lane1_tbl),
->   	},
->   
->   	.tbls_rc = &(const struct qmp_phy_cfg_tbls) {
-> @@ -3945,6 +3956,7 @@ static void qmp_pcie_init_registers(struct qmp_pcie *qmp, const struct qmp_phy_c
->   	void __iomem *rx2 = qmp->rx2;
->   	void __iomem *pcs = qmp->pcs;
->   	void __iomem *pcs_misc = qmp->pcs_misc;
-> +	void __iomem *pcs_lane1 = qmp->pcs_lane1;
->   	void __iomem *ln_shrd = qmp->ln_shrd;
->   
->   	if (!tbls)
-> @@ -3969,6 +3981,7 @@ static void qmp_pcie_init_registers(struct qmp_pcie *qmp, const struct qmp_phy_c
->   
->   	qmp_configure(qmp->dev, pcs, tbls->pcs, tbls->pcs_num);
->   	qmp_configure(qmp->dev, pcs_misc, tbls->pcs_misc, tbls->pcs_misc_num);
-> +	qmp_configure(qmp->dev, pcs_lane1, tbls->pcs_lane1, tbls->pcs_lane1_num);
->   
->   	if (cfg->lanes >= 4 && qmp->tcsr_4ln_config) {
->   		qmp_configure(qmp->dev, serdes, cfg->serdes_4ln_tbl,
-> @@ -4420,6 +4433,14 @@ static int qmp_pcie_parse_dt_legacy(struct qmp_pcie *qmp, struct device_node *np
->   		}
->   	}
->   
-> +	/*
-> +	 * For all platforms where legacy bindings existed, PCS_LANE1 was
-> +	 * mapped as a part of the PCS_MISC region.
-> +	 */
-> +	if (!IS_ERR(qmp->pcs_misc) && cfg->offsets->pcs_lane1 != 0)
-> +		qmp->pcs_lane1 = qmp->pcs_misc +
-> +			(cfg->offsets->pcs_lane1 - cfg->offsets->pcs_misc);
-> +
->   	clk = devm_get_clk_from_child(dev, np, NULL);
->   	if (IS_ERR(clk)) {
->   		return dev_err_probe(dev, PTR_ERR(clk),
-> @@ -4487,6 +4508,7 @@ static int qmp_pcie_parse_dt(struct qmp_pcie *qmp)
->   	qmp->serdes = base + offs->serdes;
->   	qmp->pcs = base + offs->pcs;
->   	qmp->pcs_misc = base + offs->pcs_misc;
-> +	qmp->pcs_lane1 = base + offs->pcs_lane1;
->   	qmp->tx = base + offs->tx;
->   	qmp->rx = base + offs->rx;
->   
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v4_20.h b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v4_20.h
-> index ac872a9eff9a8fe7fc3307759288aee15d17bd24..ab892d1067c219e8db0ba0591921b38a9cebebe7 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v4_20.h
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v4_20.h
-> @@ -13,7 +13,8 @@
->   #define QPHY_V4_20_PCS_PCIE_G4_RXEQEVAL_TIME		0x0f4
->   #define QPHY_V4_20_PCS_PCIE_G4_EQ_CONFIG2		0x0fc
->   #define QPHY_V4_20_PCS_PCIE_G4_EQ_CONFIG5		0x108
-> -#define QPHY_V4_20_PCS_LANE1_INSIG_SW_CTRL2		0x824
-> -#define QPHY_V4_20_PCS_LANE1_INSIG_MX_CTRL2		0x828
-> +
-> +#define QPHY_V4_20_PCS_LANE1_INSIG_SW_CTRL2		0x024
-> +#define QPHY_V4_20_PCS_LANE1_INSIG_MX_CTRL2		0x028
->   
->   #endif
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5_20.h b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5_20.h
-> index cdf8c04ea078a985be82d561ad0918dfdece9987..283d63c8159338b57a5026b6c2a86e3cce21097c 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5_20.h
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5_20.h
-> @@ -17,7 +17,8 @@
->   #define QPHY_V5_20_PCS_PCIE_G4_EQ_CONFIG5		0x108
->   #define QPHY_V5_20_PCS_PCIE_G4_PRE_GAIN			0x15c
->   #define QPHY_V5_20_PCS_PCIE_RX_MARGINING_CONFIG3	0x184
-> -#define QPHY_V5_20_PCS_LANE1_INSIG_SW_CTRL2		0xa24
-> -#define QPHY_V5_20_PCS_LANE1_INSIG_MX_CTRL2		0xa28
-> +
-> +#define QPHY_V5_20_PCS_LANE1_INSIG_SW_CTRL2		0x024
-> +#define QPHY_V5_20_PCS_LANE1_INSIG_MX_CTRL2		0x028
->   
->   #endif
-> 
+> It seems that we have to keep two small functions as followings,
+> unless we want to expose the enum iommufd_object_type.
 
-Looks good
+I'd probably expose the enum along with the struct..
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Jason
 
