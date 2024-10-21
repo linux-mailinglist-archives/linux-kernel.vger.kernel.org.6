@@ -1,174 +1,168 @@
-Return-Path: <linux-kernel+bounces-374360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2A49A68FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:47:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD2DC9A6902
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7526B1C22622
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:47:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07BD81C211AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323A01EABBA;
-	Mon, 21 Oct 2024 12:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892E11F584A;
+	Mon, 21 Oct 2024 12:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljVVC56u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561B01F130A;
-	Mon, 21 Oct 2024 12:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Mga2vFLt"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8A81D3590;
+	Mon, 21 Oct 2024 12:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729514864; cv=none; b=dn+lK7naWuvojX2GeKmKFAaZaW7S+hqvobYDb64mPJH4qmnrQF+RVozOFG7J3w+qbHDrr1GX01UP290N18j1wR+9YK/6dpoa5SNE1tPB9hZx2P66SCEK5pZKf3oitaDOZKz6MvEjEC4rS1bKrjAmVEqKCqMuLt4hOBvvrFd4r2U=
+	t=1729514891; cv=none; b=eRY18sVlMcQrh+ZVOMQv0SKpYvAluf3v76jjQ7WSDME9NIFWKuEtpIxhWt9k1BZ7Z5n0LMDbzrZ6EdoaQEQicgspHdYoUuM2Q6FecH0OB+mw30jSs+Fpgft0fwGkVp3LK8baxFVkyU3m7u2jCX4qY6WNjBMp0Ce7U0Le9pYDdSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729514864; c=relaxed/simple;
-	bh=TdRtTKzQUuBzDz5Brnx39Tf1QkRAMgpDSfGVgGG3i98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a+Cj4XFmvr8GIhpd5kLgPexomqipVnPY9Cn/n8f8C92rKJdo1zp8Y4aHVmyRc8fzdWjy/t7PiaVPXhW+Gk5ja+m9zrKiJTsX/6sWhGks9f2HbB9/jA80RA1c0oKBgc772GCcSmrV4JhYuS6iU6xLkTeoarhViH0Z7RXX6Wq0MJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ljVVC56u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19FFBC4CEC3;
-	Mon, 21 Oct 2024 12:47:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729514863;
-	bh=TdRtTKzQUuBzDz5Brnx39Tf1QkRAMgpDSfGVgGG3i98=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ljVVC56uysSjykiOb3ys73cGAtPuNBztEN0WdqjjhTb7ayzsOmOy+ucaLK0XtCqm2
-	 SxPXicBXSShWKk/kQJSjgg0wsWnVBaz28U+KYY20mDIQ0SZ4pKurf46YZVwkzgSke+
-	 iDx8/OnOv/uyx0ITIj6Z6usNz1eHdO20/6UrYgKO2TbJsfg5OW2Of7grUtXLnlP3Id
-	 xnh21u+NR/NNV5C3Z2xLaoCmPt2m1IKrP6GGx79pHqTKae06FlOfxubX3NxUKsfRWw
-	 2Oq7rNlkGvnw20hGs5GT/W31IbtU/Cd2Ui1cUepTebjBIBuzfqjCdWpW6EAf1ZpDyr
-	 /x9CiVI73+Lsg==
-Message-ID: <c048d270-7a07-4807-b816-0f4e0aeb67f7@kernel.org>
-Date: Mon, 21 Oct 2024 14:47:32 +0200
+	s=arc-20240116; t=1729514891; c=relaxed/simple;
+	bh=dcwsrDYAarJ2dsbZUYaldSwnwfwiSjhedCj7X3eiXZ8=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=EBexAIdHJ3RIgzkYjbSwXTV+04ljeN1zDYrdRc1aAz5vxocYzQpiwomc7km46M+Kyxg/Dfpz4sCVAmh8pk4MTIwit54gXKzIyBDV8a2CuPp00e5bhj2MukTW23lnfZ+0GU9mzL4nWUIatG5QUes/q+pr4c9B8ol+mPEHfTydfSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Mga2vFLt; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=S29G+BHUzKxODCYlrD
+	MsOh8+n3v/qlCoAc25CmxuWtQ=; b=Mga2vFLthllg7HCcKDY7YerdHB9bhmlEAH
+	Z0imRJ12K13VdMNnba0vDHfMHVV2sr423BCffGy2cOG1OMFWsxcnDB8LnrLdYmTH
+	6ULEknwh7s15xTpr+djLoWaSAsg9xi8Lao3lhvN/eSPCia/m1y3/O6YhUsCp9LLN
+	MHRSmIVN4=
+Received: from localhost.localdomain (unknown [111.48.58.10])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgD336x1TRZnmIsqAA--.12297S2;
+	Mon, 21 Oct 2024 20:47:50 +0800 (CST)
+From: huanglei814 <huanglei814@163.com>
+To: gregkh@linuxfoundation.org,
+	mathias.nyman@intel.com
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	huanglei <huanglei@kylinos.cn>
+Subject: [PATCH] usb: core: adds support for PM control of specific USB dev skip suspend.
+Date: Mon, 21 Oct 2024 20:47:41 +0800
+Message-Id: <20241021124741.6014-1-huanglei814@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:PSgvCgD336x1TRZnmIsqAA--.12297S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuryxKw4DJrW5AF45ZrWDurg_yoWrJry5pF
+	4qyFWYkrsxGr1Iv34aya1kuF1rWanYkayjk3sakw1Ygw17J395Gr10yFy5Xwnxur9xAFy7
+	trsrG3yUCrW7GFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UBBTrUUUUU=
+X-CM-SenderInfo: xkxd0wxohlmiqu6rljoofrz/1tbiLAJ-9mcV2zOcIgABsC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] riscv: dts: starfive: add DeepComputing FML13V01
- board device tree
-To: Conor Dooley <conor@kernel.org>
-Cc: Guodong Xu <guodong@riscstar.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Emil Renner Berthing <kernel@esmil.dk>, rafal@milecki.pl,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Heiko Stuebner <heiko.stuebner@cherry.de>,
- Michael Zhu <michael.zhu@starfivetech.com>,
- Drew Fustini <drew@beagleboard.org>, Alexandru Stan <ams@frame.work>,
- Daniel Schaefer <dhs@frame.work>, Sandie Cao <sandie.cao@deepcomputing.io>,
- Yuning Liang <yuning.liang@deepcomputing.io>,
- Huiming Qiu <huiming.qiu@deepcomputing.io>, Alex Elder <elder@riscstar.com>,
- linux@frame.work, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241020134959.519462-1-guodong@riscstar.com>
- <20241020134959.519462-4-guodong@riscstar.com>
- <ae5gels34ozgzrcrwz53wj22hoy5cq3crn3dmkhitxlffmnavt@6lbmrcpjmqyd>
- <20241021-unroll-empower-3ab903615d6d@spud>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241021-unroll-empower-3ab903615d6d@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 21/10/2024 13:16, Conor Dooley wrote:
-> On Mon, Oct 21, 2024 at 09:17:59AM +0200, Krzysztof Kozlowski wrote:
->> On Sun, Oct 20, 2024 at 09:49:59PM +0800, Guodong Xu wrote:
->>> From: Sandie Cao <sandie.cao@deepcomputing.io>
->>> +&camss {
->>> +	status = "disabled";
->>> +};
->>> +
->>> +&csi2rx {
->>> +	status = "disabled";
->>> +};
-> 
-> You can drop these two, I marked them disabled in the common file
-> earlier this week.
-> 1
->>> +
->>> +&gmac0 {
->>> +	status = "disabled";
->>> +};
->>> +
->>> +&i2c0 {
->>> +	status = "disabled";
->>> +};
->>> +
->>> +&pwm {
->>> +	status = "disabled";
->>> +};
->>> +
->>> +&pwmdac {
->>> +	status = "disabled";
->>> +};
->>> +
->>> +&spi0 {
->>> +	status = "disabled";
->>
->> If your board has to disable all these, then they should not have been
->> enabled in DTSI in the first place. Only blocks present and working in
->> the SoC (without amny external needs) should be enabled.
->>
->> I suggest to fix that aspect first.
-> 
-> Eh, I don't think I agree. Having 5 disables here is a lesser evil than
-> reproducing 90% of jh7110-common.dtsi or shunting a bunch of stuff
-> around. Emil?
+From: huanglei <huanglei@kylinos.cn>
 
-Why reproducing 90%? Only enable would be here, no? Or you want to say
-the common DTSI has things which do not exist?
+All USB devices are brought into suspend power state after system suspend.
+It is desirable for some specific manufacturers buses to keep their devices
+in normal state even after system suspend.
 
-Best regards,
-Krzysztof
+Signed-off-by: huanglei <huanglei@kylinos.cn>
+---
+ drivers/usb/core/Kconfig     | 12 ++++++++++++
+ drivers/usb/core/driver.c    | 14 ++++++++++++++
+ drivers/usb/host/xhci-plat.c |  7 +++++++
+ include/linux/usb.h          |  9 +++++++++
+ 4 files changed, 42 insertions(+)
+
+diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
+index 58e3ca7e4793..fe178c90d167 100644
+--- a/drivers/usb/core/Kconfig
++++ b/drivers/usb/core/Kconfig
+@@ -143,3 +143,15 @@ config USB_DEFAULT_AUTHORIZATION_MODE
+ 	  ACPI selecting value 2 is analogous to selecting value 0.
+ 
+ 	  If unsure, keep the default value.
++
++config USB_SKIP_SUSPEND
++	bool "Vendor USB support skip suspend"
++	depends on USB
++	default n
++	help
++	  Select this the associate USB devices will skip suspend when pm control.
++
++	  This option adds support skip suspend for PM control of USB devices
++	  in specific manufacturers platforms.
++
++	  If unsure, keep the default value.
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index 0c3f12daac79..05fe921f8297 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -1583,6 +1583,15 @@ int usb_suspend(struct device *dev, pm_message_t msg)
+ 	struct usb_device	*udev = to_usb_device(dev);
+ 	int r;
+ 
++#ifdef CONFIG_USB_SKIP_SUSPEND
++	if (udev->bus->skip_suspend && (msg.event == PM_EVENT_SUSPEND)) {
++		if (udev->state != USB_STATE_SUSPENDED)
++			dev_err(dev, "abort suspend\n");
++
++		return 0;
++	}
++#endif
++
+ 	unbind_no_pm_drivers_interfaces(udev);
+ 
+ 	/* From now on we are sure all drivers support suspend/resume
+@@ -1619,6 +1628,11 @@ int usb_resume(struct device *dev, pm_message_t msg)
+ 	struct usb_device	*udev = to_usb_device(dev);
+ 	int			status;
+ 
++#ifdef CONFIG_USB_SKIP_SUSPEND
++	if (udev->bus->skip_suspend && (msg.event == PM_EVENT_RESUME))
++		return 0;
++#endif
++
+ 	/* For all calls, take the device back to full power and
+ 	 * tell the PM core in case it was autosuspended previously.
+ 	 * Unbind the interfaces that will need rebinding later,
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index ecaa75718e59..8cbc666ab5c6 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -265,6 +265,13 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+ 		if (device_property_read_bool(tmpdev, "xhci-skip-phy-init-quirk"))
+ 			xhci->quirks |= XHCI_SKIP_PHY_INIT;
+ 
++#ifdef CONFIG_USB_SKIP_SUSPEND
++		if (device_property_read_bool(tmpdev, "usb-skip-suspend")) {
++			hcd_to_bus(hcd)->skip_suspend = true;
++			hcd_to_bus(xhci->shared_hcd)->skip_suspend = true;
++		}
++#endif
++
+ 		device_property_read_u32(tmpdev, "imod-interval-ns",
+ 					 &xhci->imod_interval);
+ 	}
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index 672d8fc2abdb..5f88850fc42d 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -487,6 +487,15 @@ struct usb_bus {
+ 	struct mon_bus *mon_bus;	/* non-null when associated */
+ 	int monitored;			/* non-zero when monitored */
+ #endif
++
++#ifdef CONFIG_USB_SKIP_SUSPEND
++	unsigned int skip_suspend;	/* All USB devices are brought into suspend
++					 * power state after system suspend. It is
++					 * desirable for some specific manufacturers
++					 * buses to keep their devices in normal
++					 * state even after system suspend.
++					 */
++#endif
+ };
+ 
+ struct usb_dev_state;
+-- 
+2.17.1
 
 
