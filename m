@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-374433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCAC9A6A23
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:26:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BA29A6A29
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9997281E6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:26:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5C731F247AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF04F1F8F0B;
-	Mon, 21 Oct 2024 13:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D456E1F7092;
+	Mon, 21 Oct 2024 13:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UbKTYOde"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lc3Zgqu7"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA161F81BA;
-	Mon, 21 Oct 2024 13:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B25C1E1C3B;
+	Mon, 21 Oct 2024 13:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517144; cv=none; b=S80wHPhzS9ELqNvfcWby2fimaqwDrAnHgzJUXv8NJrzDYbS/zM2iv3baO9CSLPXLwCEUXLfyzkJDA4uTeaUmtk1hEiJmrStWHXDHOFFhQ4DzeEjpCj8DAY8kCJcbCszGCp+zflC6S2AcHEmdS/ygoJmJ3oIgK0SvmryKbjdWuK4=
+	t=1729517223; cv=none; b=ppn4SKEsDe3Xbrg+a1M+Ngtvk9H1uOdcFcH8eZ5uc/m6QgjHdCA9mLHtf3zc1ezKonngUntVGQFLspzDzyAO9gLntMGw/YgYSxOGntNxNwU0+4L6bm8gdXy33bj0oyqLBtG+wazCpI+yK1xue2BLR9RssZFen2+AWBeYCBwUxIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517144; c=relaxed/simple;
-	bh=uYWC/DG5xTZcjFW/SXNzk+0WkPCWF8jfgMFknvCWaL8=;
+	s=arc-20240116; t=1729517223; c=relaxed/simple;
+	bh=mTIoVtYVIb9LlICU5RHcqT1i6f0rLph2WFVJzpdQiZY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FB2CnA972MfbgqLOPqoe5yIC3jN3OEfxmZLa96V0E7NSiWbT/S2dVaxVlREKvlcy8vlZ+Gse6C1TLkcVQ/6fZfv/J01xfY6nwtX052ffE3HUQAaRlH5LxjMghPRXoYxJPQLccOv7YeD3gnpTlsXDX4mEQI9tH5Ohd5oWTgBqRgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UbKTYOde; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=eqkTJVFcpG37qUHBkbjtJnS/XfJMd9c07s1rE9d7zLxLAq96uGofNQkZJzrDDp3noWfIGGMosB+3QOEFQCCyvTzyyocSsT+KRivx2XyxhqrO0p4Um7X8cGKDEIw19b+7FTmuDu6J5ceMir5zxP+2xTkhhzzXXsEtjXWbF0y2EO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lc3Zgqu7; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729517140;
-	bh=uYWC/DG5xTZcjFW/SXNzk+0WkPCWF8jfgMFknvCWaL8=;
+	s=mail; t=1729517219;
+	bh=mTIoVtYVIb9LlICU5RHcqT1i6f0rLph2WFVJzpdQiZY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UbKTYOdejnTHi/frnF0rQvi0lsfZVRhD/G2+Xt04xboSHKvtlP1cL2d6LgF5uRt9V
-	 3MDeCJqbt8cjehzRpvNTxuS/tuwutHx0W0wQH5+SbDHUsSzn2MRd9F9Z6INBFbMxKh
-	 8ePXfFXDgq/aQIbCOiQRxl90Us+pClWLRVx/1R3VS5yKstpdmqc18jsHQric7uQgPZ
-	 tRbH9yY2y1M43G6kAe75kbCNxWYmBV95rAP/yMKfpCYJ/IUAK1UxHTtsSlO51U2EWp
-	 e+xGPTfm0AAX/CTE2P2p+OZkms5lLrctjUSj8RclEKC9Hf6Oz8Gp3oWc5tWy2hD00C
-	 v83s+ZuqUvP0A==
+	b=lc3Zgqu7X/SsLog0UfF+/eTEoJKPIj+GB2GL2oy6/oIUToR0qwGnCWBqM0frfHDWD
+	 1NjRG/lj0rJKiCjzXVebXWzfPF+f2nCTAnXd81yOkDlDIOLJVfu2YCbpNXVuvhXGoZ
+	 gXbSpoScmsSvvxiYUJRPDmclITjcrmuOKsT+2i2tqOtZgF8Dw/seuuWVR3ldafDvw+
+	 XGVmR0WiGBACvrQmih+7+Tk4rKsuDhYqYY4AT0FXj7h5EfArVyP6ce/BLs8EdcIRsX
+	 gjOnpwS9XQKiKpfXsLJ1/VRMmnGWJSOIQep+NUGHL2Psr7pLpNhdh5ASlkodeQ360o
+	 ZMMzt/aB8/sAQ==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8B59F17E3618;
-	Mon, 21 Oct 2024 15:25:39 +0200 (CEST)
-Message-ID: <9aa9a99a-4518-40a6-9556-7de1d0669327@collabora.com>
-Date: Mon, 21 Oct 2024 15:25:39 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2021217E10AC;
+	Mon, 21 Oct 2024 15:26:59 +0200 (CEST)
+Message-ID: <93dbd4e5-6cd9-435d-962d-b6c261df899c@collabora.com>
+Date: Mon, 21 Oct 2024 15:26:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,37 +56,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: mfd: mediatek: mt6397: Add bindings for
- MT6328
-To: Yassine Oudjana <yassine.oudjana@gmail.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
- Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- jason-ch chen <Jason-ch.Chen@mediatek.com>,
- Chen Zhong <chen.zhong@mediatek.com>, Flora Fu <flora.fu@mediatek.com>,
- Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20241018081050.23592-1-y.oudjana@protonmail.com>
- <20241018081050.23592-3-y.oudjana@protonmail.com>
+Subject: Re: [PATCH v2] arm64: dts: mediatek: mt8173-elm-hana: Add vdd-supply
+ to second source trackpad
+To: Chen-Yu Tsai <wenst@chromium.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241018082001.1296963-1-wenst@chromium.org>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20241018081050.23592-3-y.oudjana@protonmail.com>
+In-Reply-To: <20241018082001.1296963-1-wenst@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 18/10/24 10:10, Yassine Oudjana ha scritto:
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
+Il 18/10/24 10:20, Chen-Yu Tsai ha scritto:
+> The Hana device has a second source option trackpad, but it is missing
+> its regulator supply. It only works because the regulator is marked as
+> always-on.
 > 
-> Add compatible strings for the MT6328 PMIC.
+> Add the regulator supply, but leave out the post-power-on delay. Instead,
+> document the post-power-on delay along with the reason for not adding
+> it in a comment.
 > 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> Fixes: 689b937bedde ("arm64: dts: mediatek: add mt8173 elm and hana board")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
 
 
