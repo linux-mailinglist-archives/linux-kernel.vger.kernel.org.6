@@ -1,223 +1,298 @@
-Return-Path: <linux-kernel+bounces-374515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2FB99A6BA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:08:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F98E9A6B68
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94DEEB28CCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:02:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF61E283032
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768DC1FC7D1;
-	Mon, 21 Oct 2024 14:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CCC1FCF40;
+	Mon, 21 Oct 2024 14:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="c3SH5BR+"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXjKY2iv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82B81E7C09;
-	Mon, 21 Oct 2024 14:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C785B1E526;
+	Mon, 21 Oct 2024 14:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729519217; cv=none; b=rM8CjgD/MG4gI2IkYzAfWv3s49Zks9xinUtVGAAq+pllqvPk9WSy0YkZE4x7n2J8aPKKkj4ohUipoG4a9J6wvnYMFT4/hI/8PIxLME1FGuJjhBL/mY2Z7tpfNlH72Gt63ably2b4ilnSOZic7petExdTzr1Fer72wriZQCKQVaU=
+	t=1729519219; cv=none; b=bkRl3y3IO+xSoRuB+pjhDNef/w0lobQ+jGNPGkkn/Hjlb6fUhmG8BM2kEwQgCpVzxVBOxXLx+raTjMtI6SEtgObVUOKE+aoVJwr4VeiZChcX3v9x6QFainHelUMfF/gWgXV99ZWjiru2wvRlL1I96WZKy48v4Nhyw3GDIJKcpSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729519217; c=relaxed/simple;
-	bh=MGtHqjnJHsWdHgeNRtIE41YoumSd7sY+lNNdVHYmShs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=LAty3esh9NrkNPFhdISRk+o1bmZi9wuiccCghglNNIGpe0/f5CwGimLtuHV2XPJUixgkvm8QJOaGRLIE1k7uHY/fbh2QPd9uXTAcdKsoq+0zzz/yR4yxbFYYLiOUatjZ69VLBpuhJpoGL05T6vevvkwSjSUOMMRYctV+L5BzYCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=c3SH5BR+; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1729519216; x=1761055216;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=MGtHqjnJHsWdHgeNRtIE41YoumSd7sY+lNNdVHYmShs=;
-  b=c3SH5BR+TunEQXAzwIK4hDeeqrQnZAKRo3iUEhIAYs8QqLH9IicbPY33
-   3wBRlSZxRBaWOn/zrMk/g0WEmoMX55X0bdt3Yj9rCBijhFb2DYODN2hi+
-   TZLKr61E4svQH2tRCVHaE4Kfj4el0b23IQ7uz9Ib0T6oMGOfNad1CjVfC
-   X3ND91yfIwaNf6Vl1ik8Rkez54muCnoJNNHl+j9pLSGLMXcgYuxBqSO/7
-   7FLULzqFNvYKmDzS5F9dzQwgjBZ09w1PwJwHdsduwH/LHfWJJ3DXNYw7/
-   g0iqe7vlf1n82qSNMUWOnEHnUvxFAk2LEEO3Kmeja31Y4gzG67FJ/uHW0
-   g==;
-X-CSE-ConnectionGUID: wjlJ/ymcRaqntxTcHXMHhA==
-X-CSE-MsgGUID: I0v9UrQkSW+g6ZlCutcotw==
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="33285734"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Oct 2024 07:00:13 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 21 Oct 2024 06:59:56 -0700
-Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 21 Oct 2024 06:59:52 -0700
-From: Daniel Machon <daniel.machon@microchip.com>
-Date: Mon, 21 Oct 2024 15:58:52 +0200
-Subject: [PATCH net-next 15/15] net: sparx5: add feature support
+	s=arc-20240116; t=1729519219; c=relaxed/simple;
+	bh=K11LCsKQc2ry+fO2DLHhfmu1ngQ3hcOkF6If1cy54AQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JVuj8RHWVgz1wyfIvBtqw4MDXp865g+lg0Np2umEe793tJC7fwFml3GEk2qByyWwsqzRT/Bv6oEhuKKzyfsg/Nd5iG+mvrSt4PBBc3uRPU43VSVLBiVCKjoc/2LwmX+iJLHr4SKM4KaWn66koPdDhfee1aP2f9tVGFDq24+hQSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FXjKY2iv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48588C4CEC3;
+	Mon, 21 Oct 2024 14:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729519219;
+	bh=K11LCsKQc2ry+fO2DLHhfmu1ngQ3hcOkF6If1cy54AQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FXjKY2ivGt3Mpt61YRFUTs3b2GtS1CmR0iRrDHbkKfbCFbxaB1Dqc9jCDNBBZXwRA
+	 KH/dRGXLr1QOLq3/tFPYD2PFWA2su8eqDI+cAX8FxifCvPQM+RS462Uu1udKI6hGL4
+	 IvumQKTBZH1IsQI2jegzgTWPeCXj6FFYzUnjVQN7AXFn+6HFKBA+PQHV9KvL441E3Z
+	 298qDG/R2qWvdWrZv+h8fZB8NkF0vsTOOHR+RSoZggVKAKJlLEyKJx9uIRIDEyZ8BK
+	 8I03R2DEpOCWpy2RwZZei9RQw9zM/ueu/PRZNmXE+60OJVr5nF0gmhw1TgXOGZih+I
+	 uKTNfhq0LfRWA==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, =?utf-8?B?Qmo=?=
+ =?utf-8?B?w7ZybiBUw7ZwZWw=?=
+ <bjorn@rivosinc.com>, Celeste Liu <coelacanthushex@gmail.com>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>,
+ Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
+ Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, Yao Zi
+ <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>, Thomas
+ Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] riscv/entry: get correct syscall number from
+ syscall_get_nr()
+In-Reply-To: <20241017-fix-riscv-syscall-nr-v1-1-4edb4ca07f07@gmail.com>
+References: <20241017-fix-riscv-syscall-nr-v1-1-4edb4ca07f07@gmail.com>
+Date: Mon, 21 Oct 2024 07:00:18 -0700
+Message-ID: <87a5exy2rx.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241021-sparx5-lan969x-switch-driver-2-v1-15-c8c49ef21e0f@microchip.com>
-References: <20241021-sparx5-lan969x-switch-driver-2-v1-0-c8c49ef21e0f@microchip.com>
-In-Reply-To: <20241021-sparx5-lan969x-switch-driver-2-v1-0-c8c49ef21e0f@microchip.com>
-To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <andrew@lunn.ch>, Lars Povlsen
-	<lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
-	<horatiu.vultur@microchip.com>, <jensemil.schulzostergaard@microchip.com>,
-	<Parthiban.Veerasooran@microchip.com>, <Raju.Lakkaraju@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, Richard Cochran <richardcochran@gmail.com>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, <jacob.e.keller@intel.com>,
-	<ast@fiberby.net>, <maxime.chevallier@bootlin.com>
-CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Steen Hegelund
-	<steen.hegelund@microchip.com>, <devicetree@vger.kernel.org>
-X-Mailer: b4 0.14-dev
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Lan969x supports a number of different features, depending on the SKU
-(Stock Keeping Unit, see [1] for details). Add new field
-sparx5->features and initialize the features based on the target. Also
-add the function sparx5_has_feature() and use it throughout. For now, we
-only need to handle features: PSFP and PTP - more will come in the
-future.
+Celeste!
 
-[1] https://www.microchip.com/en-us/product/lan9698
+I'll pick up your thread [1] here, since there's code here! :-) Let's
+try to clear up/define the possible flow.
 
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
-Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
----
- .../net/ethernet/microchip/sparx5/sparx5_main.c    | 40 +++++++++++++++++++++-
- .../net/ethernet/microchip/sparx5/sparx5_main.h    |  7 ++++
- .../ethernet/microchip/sparx5/sparx5_tc_flower.c   |  5 +++
- 3 files changed, 51 insertions(+), 1 deletion(-)
+The common/generic entry syscall_enter_from_user_mode{,_work}() says
+that a return value of -1 means that the syscall should be skipped.
 
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.c b/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-index edbe639d98c5..ecec93625d37 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-@@ -267,6 +267,40 @@ static int sparx5_set_target_dt(struct sparx5 *sparx5)
- 	return 0;
+The RISC-V calling convention uses the same register for arg0/retval
+(a0). So, when a ptracer (PTRACE_SYSCALL+PTRACE_GETREGS). That means
+that the kernel cannot call into the tracer, *after* changing a0.
+
+The interesting flow for a syscall is roughly:
+1. The exception/trap function
+2. syscall_enter_from_user_mode() which might return -1, meaning that
+   the syscall should be skipped. A tracer might have altered the
+   regs. More importantly, if it's -1 the kernel cannot change the
+   return value, because seccomp filtering might already done that.
+3. If it's a valid syscall, perform the syscall.
+
+Now some scenarios:
+* A user does a valid syscall.
+* A user does an invalid syscall(-1)
+* A user does an invalid syscall(!=3D -1)
+
+Then there're the tracing variants of those, and that's where we go get
+trouble.
+
+Now the bugs we've seen in RISC-V:
+
+1. strace "tracing": Requires that regs->a0 is not tampered with prior
+   ptrace notification
+
+   E.g.:
+   | # ./strace /
+   | execve("/", ["/"], 0x7ffffaac3890 /* 21 vars */) =3D -1 EACCES (Permis=
+sion denied)
+   | ./strace: exec: Permission denied
+   | +++ exited with 1 +++
+   | # ./disable_ptrace_get_syscall_info ./strace /
+   | execve(0xffffffffffffffda, ["/"], 0x7fffd893ce10 /* 21 vars */) =3D -1=
+ EACCES (Permission denied)
+   | ./strace: exec: Permission denied
+   | +++ exited with 1 +++
+
+   In the second case, arg0 is prematurely set to -ENOSYS
+   (0xffffffffffffffda).
+
+2. strace "syscall tampering": Requires that ENOSYS is returned for
+   syscall(-1), and not skipped w/o a proper return value.
+=20=20=20
+   E.g.:
+   | ./strace -a0 -ewrite -einject=3Dwrite:error=3Denospc echo helloject=3D=
+write:error=3Denospc echo hello=20=20=20
+=20=20=20
+   Here, strace expects that injecting -1, would result in a ENOSYS.
+
+3. seccomp filtering: Requires that the a0 is not tampered to
+
+First 3 was broken (tampering with a0 after seccomp), then 2 was
+broken (not setting ENOSYS for -1), and finally 1 was broken (and
+still is!).
+
+Now for your patch:
+
+Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>
+writes:
+
+> From: Celeste Liu <CoelacanthusHex@gmail.com>
+>
+> The return value of syscall_enter_from_user_mode() is always -1 when the
+> syscall was filtered. We can't know whether syscall_nr is -1 when we get =
+-1
+> from syscall_enter_from_user_mode(). And the old syscall variable is
+> unusable because syscall_enter_from_user_mode() may change a7 register.
+> So get correct syscall number from syscall_get_nr().
+>
+> So syscall number part of return value of syscall_enter_from_user_mode()
+> is completely useless. We can remove it from API and require caller to
+> get syscall number from syscall_get_nr(). But this change affect more
+> architectures and will block more time. So we split it into another
+> patchset to avoid block this fix. (Other architectures can works
+> without this change but riscv need it, see Link: tag below)
+>
+> Fixes: 61119394631f ("riscv: entry: always initialize regs->a0 to -ENOSYS=
+")
+> Reported-by: Andrea Bolognani <abologna@redhat.com>
+> Closes: https://github.com/strace/strace/issues/315
+> Link: https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gm=
+ail.com/
+> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+> ---
+>  arch/riscv/kernel/traps.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+> index 51ebfd23e0076447518081d137102a9a11ff2e45..3125fab8ee4af468ace9f692d=
+d34e1797555cce3 100644
+> --- a/arch/riscv/kernel/traps.c
+> +++ b/arch/riscv/kernel/traps.c
+> @@ -316,18 +316,25 @@ void do_trap_ecall_u(struct pt_regs *regs)
+>  {
+>  	if (user_mode(regs)) {
+>  		long syscall =3D regs->a7;
+> +		long res;
+>=20=20
+>  		regs->epc +=3D 4;
+>  		regs->orig_a0 =3D regs->a0;
+> -		regs->a0 =3D -ENOSYS;
+>=20=20
+>  		riscv_v_vstate_discard(regs);
+>=20=20
+> -		syscall =3D syscall_enter_from_user_mode(regs, syscall);
+> +		res =3D syscall_enter_from_user_mode(regs, syscall);
+> +		/*
+> +		 * Call syscall_get_nr() again because syscall_enter_from_user_mode()
+> +		 * may change a7 register.
+> +		 */
+> +		syscall =3D syscall_get_nr(current, regs);
+>=20=20
+>  		add_random_kstack_offset();
+>=20=20
+> -		if (syscall >=3D 0 && syscall < NR_syscalls)
+> +		if (syscall < 0 || syscall >=3D NR_syscalls)
+> +			regs->a0 =3D -ENOSYS;
+> +		else if (res !=3D -1)
+>  			syscall_handler(regs, syscall);
+
+Here we can perform the syscall, even if res is -1. E.g., if this path
+[2] is taken, we might have a valid syscall number in a7, but the
+syscall should not be performed.
+
+Also, one reason for the generic entry is so that it should be less
+work. Here, you pull (IMO) details that belong to the common entry
+implementation/API up the common entry user. Wdyt about pushing it down
+to common entry? Something like:
+
+--8<--
+diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+index 51ebfd23e007..66fded8e4b60 100644
+--- a/arch/riscv/kernel/traps.c
++++ b/arch/riscv/kernel/traps.c
+@@ -319,7 +319,6 @@ void do_trap_ecall_u(struct pt_regs *regs)
+=20
+ 		regs->epc +=3D 4;
+ 		regs->orig_a0 =3D regs->a0;
+-		regs->a0 =3D -ENOSYS;
+=20
+ 		riscv_v_vstate_discard(regs);
+=20
+@@ -329,6 +328,8 @@ void do_trap_ecall_u(struct pt_regs *regs)
+=20
+ 		if (syscall >=3D 0 && syscall < NR_syscalls)
+ 			syscall_handler(regs, syscall);
++		else if (syscall !=3D -1)
++			regs->a0 =3D -ENOSYS;
+=20
+ 		/*
+ 		 * Ultimately, this value will get limited by KSTACK_OFFSET_MAX(),
+diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
+index 1e50cdb83ae5..9b69c2ad4f12 100644
+--- a/include/linux/entry-common.h
++++ b/include/linux/entry-common.h
+@@ -14,6 +14,7 @@
+ #include <linux/kmsan.h>
+=20
+ #include <asm/entry-common.h>
++#include <asm/syscall.h>
+=20
+ /*
+  * Define dummy _TIF work flags if not defined by the architecture or for
+@@ -166,6 +167,8 @@ static __always_inline long syscall_enter_from_user_mod=
+e_work(struct pt_regs *re
+=20
+ 	if (work & SYSCALL_WORK_ENTER)
+ 		syscall =3D syscall_trace_enter(regs, syscall, work);
++	else if (syscall =3D=3D -1L)
++		syscall_set_return_value(current, regs, -ENOSYS, 0);
+=20
+ 	return syscall;
  }
- 
-+static void sparx5_init_features(struct sparx5 *sparx5)
-+{
-+	switch (sparx5->target_dt) {
-+	case SPX5_TARGET_CT_7546:
-+	case SPX5_TARGET_CT_7549:
-+	case SPX5_TARGET_CT_7552:
-+	case SPX5_TARGET_CT_7556:
-+	case SPX5_TARGET_CT_7558:
-+	case SPX5_TARGET_CT_7546TSN:
-+	case SPX5_TARGET_CT_7549TSN:
-+	case SPX5_TARGET_CT_7552TSN:
-+	case SPX5_TARGET_CT_7556TSN:
-+	case SPX5_TARGET_CT_7558TSN:
-+	case SPX5_TARGET_CT_LAN9691VAO:
-+	case SPX5_TARGET_CT_LAN9694TSN:
-+	case SPX5_TARGET_CT_LAN9694RED:
-+	case SPX5_TARGET_CT_LAN9692VAO:
-+	case SPX5_TARGET_CT_LAN9696TSN:
-+	case SPX5_TARGET_CT_LAN9696RED:
-+	case SPX5_TARGET_CT_LAN9693VAO:
-+	case SPX5_TARGET_CT_LAN9698TSN:
-+	case SPX5_TARGET_CT_LAN9698RED:
-+		sparx5->features = (SPX5_FEATURE_PSFP | SPX5_FEATURE_PTP);
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
-+bool sparx5_has_feature(struct sparx5 *sparx5, enum sparx5_feature feature)
-+{
-+	return sparx5->features & feature;
-+}
-+
- /* Compare the devicetree target with the chip target.
-  * Make sure the chip target supports the features and bandwidth requested
-  * from the devicetree target.
-@@ -934,7 +968,8 @@ static int sparx5_start(struct sparx5 *sparx5)
- 		sparx5->xtr_irq = -ENXIO;
- 	}
- 
--	if (sparx5->ptp_irq >= 0) {
-+	if (sparx5->ptp_irq >= 0 &&
-+	    sparx5_has_feature(sparx5, SPX5_FEATURE_PTP)) {
- 		err = devm_request_threaded_irq(sparx5->dev, sparx5->ptp_irq,
- 						NULL, ops->ptp_irq_handler,
- 						IRQF_ONESHOT, "sparx5-ptp",
-@@ -1088,6 +1123,9 @@ static int mchp_sparx5_probe(struct platform_device *pdev)
- 	if (err)
- 		goto cleanup_config;
- 
-+	/* Initialize the features based on the devicetree target */
-+	sparx5_init_features(sparx5);
-+
- 	/* Initialize Switchcore and internal RAMs */
- 	err = sparx5_init_switchcore(sparx5);
- 	if (err) {
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-index 8a2b74d0bd35..5163e26a28b4 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-@@ -75,6 +75,11 @@ enum sparx5_cal_bw {
- 	SPX5_CAL_SPEED_12G5 = 7
- };
- 
-+enum sparx5_feature {
-+	SPX5_FEATURE_PSFP = BIT(0),
-+	SPX5_FEATURE_PTP  = BIT(1),
-+};
-+
- #define SPX5_PORTS             65
- #define SPX5_PORTS_ALL         70 /* Total number of ports */
- 
-@@ -338,6 +343,7 @@ struct sparx5 {
- 	u32 chip_id;
- 	enum spx5_target_chiptype target_ct;
- 	enum spx5_target_chiptype target_dt; /* target from devicetree */
-+	u32 features;
- 	void __iomem *regs[NUM_TARGETS];
- 	int port_count;
- 	struct mutex lock; /* MAC reg lock */
-@@ -405,6 +411,7 @@ struct sparx5 {
- 
- /* sparx5_main.c */
- bool is_sparx5(struct sparx5 *sparx5);
-+bool sparx5_has_feature(struct sparx5 *sparx5, enum sparx5_feature feature);
- 
- /* sparx5_switchdev.c */
- int sparx5_register_notifier_blocks(struct sparx5 *sparx5);
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c b/drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c
-index c3bbed140554..4dc1ebd5d510 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.c
-@@ -1284,6 +1284,11 @@ static int sparx5_tc_flower_replace(struct net_device *ndev,
- 
- 	/* Setup PSFP */
- 	if (tc_sg_idx >= 0 || tc_pol_idx >= 0) {
-+		if (!sparx5_has_feature(sparx5, SPX5_FEATURE_PSFP)) {
-+			err = -EOPNOTSUPP;
-+			goto out;
+diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+index 5b6934e23c21..99742aee5002 100644
+--- a/kernel/entry/common.c
++++ b/kernel/entry/common.c
+@@ -43,8 +43,10 @@ long syscall_trace_enter(struct pt_regs *regs, long sysc=
+all,
+ 	/* Handle ptrace */
+ 	if (work & (SYSCALL_WORK_SYSCALL_TRACE | SYSCALL_WORK_SYSCALL_EMU)) {
+ 		ret =3D ptrace_report_syscall_entry(regs);
+-		if (ret || (work & SYSCALL_WORK_SYSCALL_EMU))
++		if (ret || (work & SYSCALL_WORK_SYSCALL_EMU)) {
++			syscall_set_return_value(current, regs, -ENOSYS, 0);
+ 			return -1L;
 +		}
+ 	}
+=20
+ 	/* Do seccomp after ptrace, to catch any tracer changes. */
+@@ -66,6 +68,14 @@ long syscall_trace_enter(struct pt_regs *regs, long sysc=
+all,
+ 		syscall =3D syscall_get_nr(current, regs);
+ 	}
+=20
++	/*
++	 * If we're not setting the return value here, the context is
++	 * gone; For higher callers, -1 means that the syscall should
++	 * be skipped.
++	 */
++	if (syscall =3D=3D -1L)
++		syscall_set_return_value(current, regs, -ENOSYS, 0);
 +
- 		err = sparx5_tc_flower_psfp_setup(sparx5, vrule, tc_sg_idx,
- 						  tc_pol_idx, &sg, &fm, &sf);
- 		if (err)
+ 	syscall_enter_audit(regs, syscall);
+=20
+ 	return ret ? : syscall;
+--8<--
 
--- 
-2.34.1
+I did a quick test of the above, and it seems to cover all the previous
+bugs -- but who knows! ;-)
 
+
+Bj=C3=B6rn
+
+[1] https://lore.kernel.org/linux-riscv/59505464-c84a-403d-972f-d4b2055eeaa=
+c@gmail.com/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/kernel/entry/common.c#n47
 
