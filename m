@@ -1,272 +1,252 @@
-Return-Path: <linux-kernel+bounces-373523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBF49A5832
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:39:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03679A5833
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 02:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EAC1F20C27
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 00:39:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E17A1F20FF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 00:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44ED879CC;
-	Mon, 21 Oct 2024 00:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3365fCb"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B057462;
+	Mon, 21 Oct 2024 00:40:37 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF901FDD;
-	Mon, 21 Oct 2024 00:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D401FDD
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729471179; cv=none; b=B/v0ruG3V3mmudo6XKucRmyDSU5i/B79+b7VTFJ+5AzIniHGbtIaAexsqMET7MkK/kB1A40taou9MWwxakqphZEKnTugNa04EGckIxQzOEGbxmvcB+nu3HrgPnAGWvjhWrYkmWoiTR+1ga811XFztOPmPRrlr7zL7CUQF1r6yKk=
+	t=1729471237; cv=none; b=HDyWox+NAFJS/QMX1DTrZSl+/yEhgjC1Go9DMieTwbIq1VP7yXVvopZZTb/6VoFIlwNJ7vMHziGQDBRgZdPqygFxu9P73KdPu2zetSmKL1lJl3xdRFLTSUL77gmX6yAuJpVZQQw53ZQ/LOb0NuQBm6YUg/agSQTwizth04ivNwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729471179; c=relaxed/simple;
-	bh=L6ST1QJasl3mtJ4houSLt1c+e9IqlVPIqwr3tSn6irI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RLeXzmoUFnQ2ztTyarYafKHjlHViZ6XxpXU+AUqsHwrAv4FiAE3ya5kdlYXVvGJPS9HSt1ietejT0xjWe13ob2pd5GTNHz9Geh+T8RYsiQ7OkcepuIgeru2QjntxH6pgAIqbl/2JCsCfbs48SKpmKWFHT1CmGWnbdIEATl3Av/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L3365fCb; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e983487a1so2718791b3a.2;
-        Sun, 20 Oct 2024 17:39:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729471177; x=1730075977; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ANyKrgYNgnyauX32Pt4wK4DRXcpk6uScKLfjJ4dSe4c=;
-        b=L3365fCbdXz+hv3ziCmrcX03FFAIv3NmZWB/VmfwR1bgICvWKkCbfUE6lZ0eY/D8zP
-         HGfMw9JUdt40QbLrEDIy12EDrWhaI+Sv4Utb8nkbaOIZhP9gkcFmYPyRmrXFgdfJWOEs
-         D7QQRbF2U5440OKt334OOwdeYah3bQuXDuN92h98SVKMsMcvNtJpHVkS2UWizTT2ZqgD
-         hCTxOFd5zuh39JyVTJ2LroJ+JQHmRsH3gn9xHuI9wP/tPbhoY03OI0172o2XoT7olpQY
-         f0WCgEuVmZdGf46xSD7nijdhQSMktNuGyxstsThp5dn+88cjS/JEV83qbu2NHnRJmdVy
-         oFew==
+	s=arc-20240116; t=1729471237; c=relaxed/simple;
+	bh=YDSUl+oTjwOsxdJ4cQ0UPiNbzptzZIDgQSCu2sh9M30=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dCr/frpV4N5YcfIrBfWZcf0ZAz9bI/qzMLtNXhHiaVZFeJeJCGXLa0UedqOu+S1rU6vD89KfdHsNflc+BfpQMo+kVPv45HQGLQAj8isvNGgOiMEWv3IA7NSqWuiQ3mrBriGI6RO8GePQ6/UGgcimZl4Doz7FcbBeABpDjHDvuNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b4395dedso36228075ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 17:40:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729471177; x=1730075977;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ANyKrgYNgnyauX32Pt4wK4DRXcpk6uScKLfjJ4dSe4c=;
-        b=o1IzvUQ15boQcdO1O6HC3M8RmiFRlb7xN4Lrz/lY2KFr802BHgiu+yDF/DyGdxHME9
-         BkRaLfzPkC9Is93bby3oyBRka0hOz119pPu7AFAwUz8UhQwH8GTgwpTq9qaXIEk5Bq1h
-         EET4E2AkOVHeGPEDcDIvwqUcldBe8mHZkGMpHZqj/GszjuzoIb9kO7gCxnrWsmg9PrGc
-         fxf+TzoqhgO02OSSBDgtSyB3PdReEH8nLlrPSHKBzXbzLYeplhquDnxg8t0kmBZKCT0V
-         Mt1U7vlwe8qmKzw2Pnw0icbLfW41JUPUWPHucqSWw8kH+rx4IRvLWJ37pqv/0CKKkQbK
-         Zy+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUAktLbv4o8BDLHOBJ8FicTrKPH4p432JJB/IRBi0yneYZQp+YN8vHGcSXlmfKTadY89z8hCs4OsyRfuCE=@vger.kernel.org, AJvYcCVngf5sIsp7spxy1G7a9TGzDdudGcop69iNv4qbWX/xlEAph608UsuBuMkjKcVzCOnKJV3C@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT3g6oJOxqK+1X03b3x3ShdbrFpDslSjbcD7beOpEHRrNp7Gsa
-	3Chg+djavFfwQV1CkEA+GZGnezdoEsIezOO/kCHArY/PBhYSSwDNRwDq7Lj7eKOMO7lXHIeHRRr
-	0m/lo30z+Ut/VIj0ywnPIYnOxzhg=
-X-Google-Smtp-Source: AGHT+IF02fpeRCAfdflN0uMgWfoX/IQlvyaz7kAhF7WaR7s8HnCe0eDc0Hm59uenuc76hvenr3Pr6VU8HFUJ/hjN/g0=
-X-Received: by 2002:a05:6a00:b48:b0:71e:82b4:6e6e with SMTP id
- d2e1a72fcca58-71ea31d3056mr14318470b3a.4.1729471176585; Sun, 20 Oct 2024
- 17:39:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729471234; x=1730076034;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QsY3dWlh/LzELHSyrae1TYpmYyLRquBWbH9nTXICvDA=;
+        b=Nb0zKL397po2itAKDNUDnOeYZo4HVnJJrc5TUtyRp5gfGgIDzrkjkQm0TZGBJ5UdYE
+         qTIjOhnBkkY/qNiSEz1LPNNJBcSXh4Frl7O1QiynwOIo3nHCqORP5pOILaCsaISNEBnt
+         Gv8DLFOPgMT2TJthLTSublGrC6A4Rq6QsE435qqW+VKorl+dUOKde5iZrTHsc/g15/lH
+         rfGW2PmRKrFSOxoZCDTXCNNfLWO5o2Aw6qxXoTWQz8imEaIXSgYDEb2eTtEA/UMrBluD
+         59wS+siYjmQECgyYeiW5XXeP0VTshAMZ5Pzou79VmTEDPISOYkQKqfw7FevI301u6SgU
+         oeYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXAn4FdjlCZohtC4K4PagrF36YfPfsigwOBVXy2b246ocVdG3H8Q29oGIxRUc62NMmLHfceJeN0/cuvX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfXw2ZUOFVKBlb6qWxddtApxyg8UxfPqQQwWRG0ZE6+8VddQL2
+	M32kkYI79CFDJhyoZo1q8i1kv8j1xIaBwP+6uAoIQbKi0GcNG7xAnhi67z2fZ9xWIgmmS4bGLxM
+	+IA3/UyCeHGeimzjHiNYUJ4hLXFzwdkfCeXvKkBpUeRzlQrJ9FJhB1ow=
+X-Google-Smtp-Source: AGHT+IFBQbZL0GQhdLU1mia+b8nYr0R623HYtRlQxWXrlUwEQfBqDZC3iBpOUThq3+0pHaoOJdsz2ee+EP4xGNvJTmaU/hnHELcv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241020125119.14751-1-qiang.zhang1211@gmail.com> <ZxWO6BmRutOC0RnZ@pavilion.home>
-In-Reply-To: <ZxWO6BmRutOC0RnZ@pavilion.home>
-From: Z qiang <qiang.zhang1211@gmail.com>
-Date: Mon, 21 Oct 2024 08:39:24 +0800
-Message-ID: <CALm+0cW=1PAVhjHKM+aXLHHzsD0+7pbVDvmm+kxvff7r=Di2tA@mail.gmail.com>
-Subject: Re: [PATCH] rcu/nocb: Fix the WARN_ON_ONCE() in rcu_nocb_rdp_deoffload()
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: paulmck@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, 
-	urezki@gmail.com, boqun.feng@gmail.com, rcu@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1d1d:b0:3a0:9a32:dedc with SMTP id
+ e9e14a558f8ab-3a3f405d059mr84487785ab.6.1729471234121; Sun, 20 Oct 2024
+ 17:40:34 -0700 (PDT)
+Date: Sun, 20 Oct 2024 17:40:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6715a302.050a0220.10f4f4.003a.GAE@google.com>
+Subject: [syzbot] [bfs?] possible deadlock in bfs_lookup
+From: syzbot <syzbot+217317969b6cefff1415@syzkaller.appspotmail.com>
+To: aivazian.tigran@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
->
-> Le Sun, Oct 20, 2024 at 08:51:19PM +0800, Zqiang a =C3=A9crit :
-> > Currently, running rcutorture test with torture_type=3Drcu fwd_progress=
-=3D8
-> > n_barrier_cbs=3D8 nocbs_nthreads=3D8 nocbs_toggle=3D100 onoff_interval=
-=3D60
-> > test_boost=3D2, will trigger the following warning:
-> >
-> > WARNING: CPU: 19 PID: 100 at kernel/rcu/tree_nocb.h:1061 rcu_nocb_rdp_d=
-eoffload+0x292/0x2a0
-> > RIP: 0010:rcu_nocb_rdp_deoffload+0x292/0x2a0
-> > [18839.537322] Call Trace:
-> > [18839.538006]  <TASK>
-> > [18839.538596]  ? __warn+0x7e/0x120
-> > [18839.539491]  ? rcu_nocb_rdp_deoffload+0x292/0x2a0
-> > [18839.540757]  ? report_bug+0x18e/0x1a0
-> > [18839.541805]  ? handle_bug+0x3d/0x70
-> > [18839.542837]  ? exc_invalid_op+0x18/0x70
-> > [18839.543959]  ? asm_exc_invalid_op+0x1a/0x20
-> > [18839.545165]  ? rcu_nocb_rdp_deoffload+0x292/0x2a0
-> > [18839.546547]  rcu_nocb_cpu_deoffload+0x70/0xa0
-> > [18839.547814]  rcu_nocb_toggle+0x136/0x1c0
-> > [18839.548960]  ? __pfx_rcu_nocb_toggle+0x10/0x10
-> > [18839.550073]  kthread+0xd1/0x100
-> > [18839.550958]  ? __pfx_kthread+0x10/0x10
-> > [18839.552008]  ret_from_fork+0x2f/0x50
-> > [18839.553002]  ? __pfx_kthread+0x10/0x10
-> > [18839.553968]  ret_from_fork_asm+0x1a/0x30
-> > [18839.555038]  </TASK>
-> >
-> > CPU0                               CPU2                          CPU3
-> > //rcu_nocb_toggle             //nocb_cb_wait                   //rcutor=
-ture
-> >
-> > // deoffload CPU1             // process CPU1's rdp
-> > rcu_barrier()
-> >     rcu_segcblist_entrain()
-> >         rcu_segcblist_add_len(1);
-> >         // len =3D=3D 2
-> >         // enqueue barrier
-> >         // callback to CPU1's
-> >         // rdp->cblist
-> >                              rcu_do_batch()
-> >                                  // invoke CPU1's rdp->cblist
-> >                                  // callback
-> >                                  rcu_barrier_callback()
-> >                                                              rcu_barrie=
-r()
-> >                                                                mutex_lo=
-ck(&rcu_state.barrier_mutex);
-> >                                                                // still=
- see len =3D=3D 2
-> >                                                                // enque=
-ue barrier callback
-> >                                                                // to CP=
-U1's rdp->cblist
-> >                                                                rcu_segc=
-blist_entrain()
-> >                                                                    rcu_=
-segcblist_add_len(1);
-> >                                                                    // l=
-en =3D=3D 3
-> >                                  // decrement len
-> >                                  rcu_segcblist_add_len(-2);
-> >                              kthread_parkme()
-> >
-> > // CPU1's rdp->cblist len =3D=3D 1
-> > // Warn because there is
-> > // still a pending barrier
-> > // trigger warning
-> > WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
-> > cpus_read_unlock();
-> >
-> >                                                                 // wait=
- CPU1 comes online
-> >                                                                 // invo=
-ke barrier callback on
-> >                                                                 // CPU1=
- rdp's->cblist
-> >                                                                 wait_fo=
-r_completion(&rcu_state.barrier_completion);
-> > // deoffload CPU4
-> > cpus_read_lock()
-> >   rcu_barrier()
-> >     mutex_lock(&rcu_state.barrier_mutex);
-> >     // block on barrier_mutex
-> >     // wait rcu_barrier() on
-> >     // CPU3 to unlock barrier_mutex
-> >     // but CPU3 unlock barrier_mutex
-> >     // need to wait CPU1 comes online
-> >     // when CPU1 going online will block on cpus_write_lock
-> >
-> > The above scenario will not only trigger WARN_ON_ONCE(), but also
-> > trigger deadlock, this commit therefore check rdp->cblist length
-> > before invoke kthread_parkme(), and the kthread_parkme() is not
-> > invoke until length reaches zero.
-> >
-> > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
-> > ---
-> >  kernel/rcu/tree_nocb.h | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> > index 8648233e1717..a2b0ebdefee3 100644
-> > --- a/kernel/rcu/tree_nocb.h
-> > +++ b/kernel/rcu/tree_nocb.h
-> > @@ -893,6 +893,12 @@ static inline bool nocb_cb_wait_cond(struct rcu_da=
-ta *rdp)
-> >       return !READ_ONCE(rdp->nocb_cb_sleep) || kthread_should_park();
-> >  }
-> >
-> > +static inline bool nocb_cblist_empty(struct rcu_data *rdp)
-> > +{
-> > +     return !(rcu_rdp_is_offloaded(rdp) &&
->
-> But the rdp has to be offloaded when nocb_cb_wait() is running, and that
-> include the times when it is parking and when it is unparking.
->
-> > +             WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist)));
->
-> And like your scenario above shows, it's possible to reach here with
-> callbacks. So this check shouldn't be a warning at that point?
+Hello,
 
-Yes, the WARN_ON_ONCE() should be removed.
+syzbot found the following issue on:
 
->
-> > +}
-> > +
-> >  /*
-> >   * Invoke any ready callbacks from the corresponding no-CBs CPU,
-> >   * then, if there are no more, wait for more to appear.
-> > @@ -907,7 +913,7 @@ static void nocb_cb_wait(struct rcu_data *rdp)
-> >
-> >       swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
-> >                                           nocb_cb_wait_cond(rdp));
-> > -     if (kthread_should_park()) {
-> > +     if (kthread_should_park() && nocb_cblist_empty(rdp)) {
->
-> What about this instead? If the second barrier is queued before
-> the final check to rcu_segcblist_ready_cbs() in nocb_cb_wait(), this
-> will be noticed and ->nocb_cb_sleep will remain false. If otherwise rcu_b=
-arrier()
-> is called after that final rcu_segcblist_ready_cbs() check, it will obser=
-ve
-> the final decrement to zero and won't entrain the callback.
->
-> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> index 16865475120b..0de07d44646c 100644
-> --- a/kernel/rcu/tree_nocb.h
-> +++ b/kernel/rcu/tree_nocb.h
-> @@ -891,7 +891,19 @@ static void nocb_cb_wait(struct rcu_data *rdp)
->         swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
->                                             nocb_cb_wait_cond(rdp));
->         if (kthread_should_park()) {
-> -               kthread_parkme();
-> +               /*
-> +                * kthread_park() must be preceded by an rcu_barrier().
-> +                * But yet another rcu_barrier() might have sneaked in be=
-tween
-> +                * the barrier callback execution and the callbacks count=
-er
-> +                * decrement.
-> +                */
-> +               if (rdp->nocb_cb_sleep) {
+HEAD commit:    c964ced77262 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1315f45f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
+dashboard link: https://syzkaller.appspot.com/bug?extid=217317969b6cefff1415
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-For the non-nocb cpus set during boot, the corresponding
-rcuop kthread, we should park directly, otherwise
-WARN_ON_ONCE(!rcu_rdp_is_offloaded(rdp)) will be triggered.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Should the conditions be like this?
-if(!rcu_rdp_is_offloaded(rdp) || rdp->nocb_cb_sleep)
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c964ced7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e937ef58569a/vmlinux-c964ced7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f1df9880ca4b/bzImage-c964ced7.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+217317969b6cefff1415@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 64
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc3-syzkaller-00087-gc964ced77262 #0 Not tainted
+------------------------------------------------------
+syz.0.0/5114 is trying to acquire lock:
+ffffffff8ea37160 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:318 [inline]
+ffffffff8ea37160 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:4036 [inline]
+ffffffff8ea37160 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:4114 [inline]
+ffffffff8ea37160 (fs_reclaim){+.+.}-{0:0}, at: kmem_cache_alloc_lru_noprof+0x42/0x2b0 mm/slub.c:4153
+
+but task is already holding lock:
+ffff8880409598d8 (&info->bfs_lock){+.+.}-{3:3}, at: bfs_lookup+0x139/0x270 fs/bfs/dir.c:136
+
+which lock already depends on the new lock.
 
 
-Thanks
-Zqiang
+the existing dependency chain (in reverse order) is:
 
-> +                       rcu_nocb_lock_irqsave(rdp, flags);
-> +                       WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
-> +                       rcu_nocb_unlock_irqrestore(rdp, flags);
-> +
-> +                       kthread_parkme();
-> +               }
->         } else if (READ_ONCE(rdp->nocb_cb_sleep)) {
->                 WARN_ON(signal_pending(current));
->                 trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("WokeEm=
-pty"));
+-> #1 (&info->bfs_lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       bfs_evict_inode+0x272/0x510 fs/bfs/inode.c:182
+       evict+0x4e8/0x9b0 fs/inode.c:725
+       __dentry_kill+0x20d/0x630 fs/dcache.c:615
+       shrink_kill+0xa9/0x2c0 fs/dcache.c:1060
+       shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1087
+       prune_dcache_sb+0x10f/0x180 fs/dcache.c:1168
+       super_cache_scan+0x34f/0x4b0 fs/super.c:221
+       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
+       shrink_one+0x43b/0x850 mm/vmscan.c:4818
+       shrink_many mm/vmscan.c:4879 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+       shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
+       kswapd_shrink_node mm/vmscan.c:6765 [inline]
+       balance_pgdat mm/vmscan.c:6957 [inline]
+       kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 (fs_reclaim){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+       __fs_reclaim_acquire mm/page_alloc.c:3834 [inline]
+       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3848
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4036 [inline]
+       slab_alloc_node mm/slub.c:4114 [inline]
+       kmem_cache_alloc_lru_noprof+0x42/0x2b0 mm/slub.c:4153
+       bfs_alloc_inode+0x28/0x40 fs/bfs/inode.c:239
+       alloc_inode+0x65/0x1a0 fs/inode.c:265
+       iget_locked+0xf1/0x5a0 fs/inode.c:1418
+       bfs_iget+0x28/0xac0 fs/bfs/inode.c:41
+       bfs_lookup+0x1ca/0x270 fs/bfs/dir.c:141
+       lookup_open fs/namei.c:3573 [inline]
+       open_last_lookups fs/namei.c:3694 [inline]
+       path_openat+0x11a7/0x3590 fs/namei.c:3930
+       do_filp_open+0x235/0x490 fs/namei.c:3960
+       do_open_execat fs/exec.c:901 [inline]
+       open_exec+0xc0/0x2b0 fs/exec.c:935
+       bm_register_write+0xc1c/0x15e0 fs/binfmt_misc.c:830
+       vfs_write+0x29c/0xc90 fs/read_write.c:681
+       ksys_write+0x183/0x2b0 fs/read_write.c:736
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&info->bfs_lock);
+                               lock(fs_reclaim);
+                               lock(&info->bfs_lock);
+  lock(fs_reclaim);
+
+ *** DEADLOCK ***
+
+4 locks held by syz.0.0/5114:
+ #0: ffff88801e34ad38 (&f->f_pos_lock){+.+.}-{3:3}, at: fdget_pos+0x24e/0x320 fs/file.c:1160
+ #1: ffff88801a84e420 (sb_writers#10){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2931 [inline]
+ #1: ffff88801a84e420 (sb_writers#10){.+.+}-{0:0}, at: vfs_write+0x224/0xc90 fs/read_write.c:679
+ #2: ffff8880007d8160 (&type->i_mutex_dir_key#7){++++}-{3:3}, at: inode_lock_shared include/linux/fs.h:825 [inline]
+ #2: ffff8880007d8160 (&type->i_mutex_dir_key#7){++++}-{3:3}, at: open_last_lookups fs/namei.c:3693 [inline]
+ #2: ffff8880007d8160 (&type->i_mutex_dir_key#7){++++}-{3:3}, at: path_openat+0x88b/0x3590 fs/namei.c:3930
+ #3: ffff8880409598d8 (&info->bfs_lock){+.+.}-{3:3}, at: bfs_lookup+0x139/0x270 fs/bfs/dir.c:136
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5114 Comm: syz.0.0 Not tainted 6.12.0-rc3-syzkaller-00087-gc964ced77262 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ __fs_reclaim_acquire mm/page_alloc.c:3834 [inline]
+ fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3848
+ might_alloc include/linux/sched/mm.h:318 [inline]
+ slab_pre_alloc_hook mm/slub.c:4036 [inline]
+ slab_alloc_node mm/slub.c:4114 [inline]
+ kmem_cache_alloc_lru_noprof+0x42/0x2b0 mm/slub.c:4153
+ bfs_alloc_inode+0x28/0x40 fs/bfs/inode.c:239
+ alloc_inode+0x65/0x1a0 fs/inode.c:265
+ iget_locked+0xf1/0x5a0 fs/inode.c:1418
+ bfs_iget+0x28/0xac0 fs/bfs/inode.c:41
+ bfs_lookup+0x1ca/0x270 fs/bfs/dir.c:141
+ lookup_open fs/namei.c:3573 [inline]
+ open_last_lookups fs/namei.c:3694 [inline]
+ path_openat+0x11a7/0x3590 fs/namei.c:3930
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_open_execat fs/exec.c:901 [inline]
+ open_exec+0xc0/0x2b0 fs/exec.c:935
+ bm_register_write+0xc1c/0x15e0 fs/binfmt_misc.c:830
+ vfs_write+0x29c/0xc90 fs/read_write.c:681
+ ksys_write+0x183/0x2b0 fs/read_write.c:736
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2a78d7dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2a79bf4038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f2a78f35f80 RCX: 00007f2a78d7dff9
+RDX: 000000000000003f RSI: 0000000020000200 RDI: 0000000000000005
+RBP: 00007f2a78df0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f2a78f35f80 R15: 00007ffe29710148
+ </TASK>
+binfmt_misc: register: failed to install interpreter file ./file0
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
