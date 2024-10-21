@@ -1,255 +1,75 @@
-Return-Path: <linux-kernel+bounces-373821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB80A9A5D41
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:38:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF7739A5D44
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1731C1C21F3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:38:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A39AB2323F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145331E0497;
-	Mon, 21 Oct 2024 07:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5491E0B94;
+	Mon, 21 Oct 2024 07:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YEOteoyU"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmHfZtPF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360591DE4CF
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D238A194A73;
+	Mon, 21 Oct 2024 07:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729496329; cv=none; b=iDizdV+tIo/ynZ3KP+qiUhkT5WKDL6KptNxhezsls35obZfI5WR3smg4JY4H6u1v8sjoYq2ANkMXLYtzTKuX+IlHsQHuN+TAsN/dSEdJlz24KFRVeDoBQGrEuVmKAqbwiyvrEGFZCgTkHUhxUNWxsZrvHELvTWkKjPHc7KoPwGo=
+	t=1729496339; cv=none; b=AUqZ52Og59Q50YfftV2eNvrrl65yb2A9nVQqhEEWgG+hm+yC6hYd+mO1u8rJEZz+gBj47OoM7b3MtdqXNnW2RhQOY+fVbUVJQOSY37AL5bmj4fcLp846k+DAHaGEyiRFnaH2Rwxmij4fJqSGyUo4z/w5UXw3kwnRYR5BsmVWvFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729496329; c=relaxed/simple;
-	bh=EOOYepVgtwo6UoPqhkT/0bV6/Hhx4OovJqptdxV0O/s=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=C2Ve4SULDlCMLhVDiizNEt4gcjzm9dTsxQj0OoO9rv3n45Okm621PPvBX3vuvgEH7vkoG3bh/ErUQa+m5NNcbekmIUpYWNHfei+AYADErgeikuvm5g0Xar16pWYauKgLCQ66TimBs0p6IVotkoQ+EYxvU9HkVAmdlu+fZ4mAO8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YEOteoyU; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d41894a32so2642961f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:38:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729496325; x=1730101125; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TxYXh/V+6IatSJ291SsvHWPxINcrTow+PNqrMmvAYgI=;
-        b=YEOteoyUdN0hDVzKdTspS4+Z0xim0hCp/dM4oj6EIWipZUXwqTTNR/hbpVH6FlgEFs
-         YZR2pOyH+sWG0ltUyJNuCEt5JKSI+uUb9wGP8jcLbqwny8G4jEoaL59pcj73QiQBa35Z
-         hHyG6dzJpS1XT+Bjr4Zw8E9V5CiFK2tc+3GTfL+SQxu28gy/Nd6/cpuAUgq2+utrP66v
-         cPvotgCvzeuHtpkdKqqdiGH0Se04676XTK4xUXrNUyKeYKyFr/YA1K6v74QxCMzo/SoW
-         Gb+JhdwDlEM8oHmbd6pmAj6M1VeAYQu2jf9pFSelqUdWpiv13xaxpvtahif7n0Fw8YqO
-         fZ+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729496325; x=1730101125;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TxYXh/V+6IatSJ291SsvHWPxINcrTow+PNqrMmvAYgI=;
-        b=BzlVc1e8OAXUoimNZikyN+cEYAAgJ2uWtTCd6YCpg4UgLTj00tqoxSygBwELBq5t2W
-         o2UeKfbZjj+D7D4xQcv25ImD5jd10qaOmkQVhWu8I4la65Zl70CGKS9pY2rTuNhv1YTe
-         1EqoJZUBvdbeilTOmRnnNlp5pBj5SPi7+8GQq1KHBb7pUP+Tdqxc53pzarg5bHRUiF7S
-         ASKB+KUnbycBK48qQ7gU91ViRA8szRsd3E5HPovGb+k82zguUvubmLeolDoeW6nngsTN
-         YTJmzXMRtdzwsra29qrVI+InX+tTXAMbhrkmzMnR9itYuWI/WWwNVZ3Ep0uTLBN+oh0m
-         WSjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwysd4oO67hT7RtC72uqf80gjEhJ3vfRkS7NahMfx6rU9QTfAHayz39sL+Eqd03fUaVhKDb+dd4Zl7jIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxNOysw5pJwbEQKBgXlrxO64VooJJ2ICPpPlhZOWhShTKBi4Na
-	U1sGWlx3LS2IXB/K210s41wSCybxvlDdedK6bQKsvE84xLIXtREk0rj04tHbX0Y=
-X-Google-Smtp-Source: AGHT+IFtLjIEg8RRnj8c2wcjVt5rOHjraFaFABXFVMuRh8JhTW4RU0amqd3QeH7gBtqewoWIpaMXqw==
-X-Received: by 2002:adf:e3d1:0:b0:37d:4706:f721 with SMTP id ffacd0b85a97d-37ecf086383mr6426593f8f.27.1729496325397;
-        Mon, 21 Oct 2024 00:38:45 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a37bb5sm3593696f8f.7.2024.10.21.00.38.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 00:38:45 -0700 (PDT)
-Message-ID: <fdb4d0eb-a5e5-4061-b3cc-14958473baf3@linaro.org>
-Date: Mon, 21 Oct 2024 09:38:44 +0200
+	s=arc-20240116; t=1729496339; c=relaxed/simple;
+	bh=ljL74qSzfYV7vSO8Dk/xSzTXazS1a48G9FtGOkKXhd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SE7MqKWWMdhmLvLc5EUY7HveIGypcJsh16AR1GQVY+NKoSno6eyJmd/wcBKsxyVLQ15b+k9DjrXcfSGw2lAdx0IGOn18mNTtsxqLzOAmjwPriGMzjg5VIoyXeJ17rHAHaFUAmcaThwWuJskVkgFP+kuaeQ3nXN0rK3VV8yaXubI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmHfZtPF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D3C7C4CEC3;
+	Mon, 21 Oct 2024 07:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729496338;
+	bh=ljL74qSzfYV7vSO8Dk/xSzTXazS1a48G9FtGOkKXhd0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hmHfZtPFoTlMQxYjgRoPrrNLJtm4LiUr/ng0po4i8NNa4aY/ft2ETPcY1w0XXIzyi
+	 sAQZhAy5DL2fYo2wXcE5ZjQr5myNDKlEPirnhxYk3+FmIxiwdEtB1uU0ml3h3+n10W
+	 S1Exl+2xe05KR5e8820v0QmhlyXOfgYG2W68rxSzj4+PmhhAXDTX9alWzxZdwII5js
+	 WzXKLfNvlvPYTgeFRT0Ye2d1GBwmFO+i/a+9fSWy9C8le7ApePej1Mj86oj+10dNFQ
+	 ipzRcU/90fXiLUiXMQky/R9nhxmd+m9Wl7tS79Wtw7dkrC1QZvGrvFpkJXPuFNAnW/
+	 piJuzaVHrQWRw==
+Date: Mon, 21 Oct 2024 09:38:55 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "Derek J . Clark" <derekjohn.clark@gmail.com>, 
+	Philip =?utf-8?Q?M=C3=BCller?= <philm@manjaro.org>
+Subject: Re: [PATCH v3 3/6] dt-bindings: iio: imu: bmi270: Add Bosch BMI260
+Message-ID: <ynhv4c4pyj72nsof6wwkaon22i6chd4ux5cb7hv4tmblwhv3aq@564biida44ii>
+References: <20241020220011.212395-1-justin@justinweiss.com>
+ <20241020220011.212395-4-justin@justinweiss.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Add support for Amlogic A4
- SoCs
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Jerome Brunet <jbrunet@baylibre.com>, Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com>
- <20241018-a4_pinctrl-v3-1-e76fd1cf01d7@amlogic.com>
- <4a79f996-9d82-48b2-8a93-d7917413ed8c@kernel.org>
- <1jttd9rein.fsf@starbuckisacylon.baylibre.com>
- <4127b448-a914-4c69-b938-29512995326f@amlogic.com>
- <1jmsj1rclh.fsf@starbuckisacylon.baylibre.com>
- <d654d2b2-977b-44c0-8b01-b26f5eb0a3fe@kernel.org>
- <5ad8f396-84a5-486d-b90d-98fbf8882d1b@linaro.org>
- <e6cd13b5-2f7a-4ab1-899c-5867bc0ea64f@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <e6cd13b5-2f7a-4ab1-899c-5867bc0ea64f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241020220011.212395-4-justin@justinweiss.com>
 
-On 18/10/2024 17:31, Krzysztof Kozlowski wrote:
-> On 18/10/2024 14:31, Neil Armstrong wrote:
->> On 18/10/2024 12:13, Krzysztof Kozlowski wrote:
->>> On 18/10/2024 11:20, Jerome Brunet wrote:
->>>> On Fri 18 Oct 2024 at 17:01, Xianwei Zhao <xianwei.zhao@amlogic.com> wrote:
->>>>
->>>>> Hi Jerome,
->>>>>      Thanks for your reply.
->>>>>
->>>>> On 2024/10/18 16:39, Jerome Brunet wrote:
->>>>>> [ EXTERNAL EMAIL ]
->>>>>> On Fri 18 Oct 2024 at 10:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>>
->>>>>>> On 18/10/2024 10:10, Xianwei Zhao via B4 Relay wrote:
->>>>>>>> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
->>>>>>>>
->>>>>>>> Add the new compatible name for Amlogic A4 pin controller, and add
->>>>>>>> a new dt-binding header file which document the detail pin names.
->>>>>> the change does not do what is described here. At least the description
->>>>>> needs updating.
->>>>>>
->>>>>
->>>>> Will do.
->>>>>
->>>>>> So if the pin definition is now in the driver, does it mean that pins have
->>>>>> to be referenced in DT directly using the made up numbers that are
->>>>>> created in pinctrl-amlogic-a4.c at the beginning of patch #2 ?
->>>>>>
->>>>>
->>>>> Yes.
->>>>>
->>>>>> If that's case, it does not look very easy a read.
->>>>>>
->>>>>
->>>>> It does happen. The pin definition does not fall under the category of
->>>>> binding.
->>>>>
->>>>> https://lore.kernel.org/all/106f4321-59e8-49b9-bad3-eeb57627c921@amlogic.com/
->>>>
->>>> So the expectation is that people will write something like:
->>>>
->>>>    reset-gpios = <&gpio 42 GPIO_ACTIVE_LOW>;
->>>>
->>>> And others will go in the driver to see that is maps to GPIOX_10 ? the number
->>>> being completly made up, with no link to anything HW/Datasheet
->>>> whatsoever ?
->>>>
->>>> This is how things should be done now ?
->>>
->>> Why would you need to do this? Why it cannot be <&gpio 10
->>> GPIO_ACTIVE_LOW>, assuming it is GPIO 10?
->>>
->>> Bindings have absolutely nothing to do with it. You have GPIO 10, not
->>> 42, right?
->>
->> There's no 1:1 mapping between the number and the pin on Amlogic platforms,
->> so either a supplementary gpio phandle cell is needed to encode the gpio pin
->> group or some bindings header is needed to map those to well known identifiers.
-> 
-> So I assume this is not linear mapping (simple offset)? If so, this fits
-> the binding header with identifiers, but I have impression these were
-> not really used in earlier versions of this patchset. Instead some offsets:
-> https://lore.kernel.org/all/20241014-a4_pinctrl-v2-1-3e74a65c285e@amlogic.com/
-> 
-> and pre-proccessor.
-> 
-> These looked almost good:
-> https://lore.kernel.org/all/20240613170816.GA2020944-robh@kernel.org/
-> 
-> but then 0 -> 0
-> 1 -> 1
-> so where is this need for IDs?
+On Sun, Oct 20, 2024 at 03:00:07PM -0700, Justin Weiss wrote:
+> Add compatible ID for Bosch BMI260 to BMI270 documentation.
 
-???
+This we see from the diff. Say something about the hardware, are they
+compatible? No? What are the differences?
 
-Of courses the first pins maps to linear values...
-
-> 
-> See also last comment from Rob in above email.
-
-OK so I looked and v2 was in fact correct:
-https://lore.kernel.org/all/20241014-a4_pinctrl-v2-1-3e74a65c285e@amlogic.com/
-
-====><=================
-+/* Standard port */
-+#define GPIOB_START	0
-+#define GPIOB_NUM	14
-+
-+#define GPIOD_START	(GPIOB_START + GPIOB_NUM)
-+#define GPIOD_NUM	16
-+
-+#define GPIOE_START	(GPIOD_START + GPIOD_NUM)
-+#define GPIOE_NUM	2
-+
-+#define GPIOT_START	(GPIOE_START + GPIOE_NUM)
-+#define GPIOT_NUM	23
-+
-+#define GPIOX_START	(GPIOT_START + GPIOT_NUM)
-+#define GPIOX_NUM	18
-+
-+#define PERIPHS_PIN_NUM	(GPIOX_START + GPIOX_NUM)
-+
-+/* Aobus port */
-+#define GPIOAO_START	0
-+#define GPIOAO_NUM	7
-+
-+/* It's a special definition, put at the end, just 1 num */
-+#define	GPIO_TEST_N	(GPIOAO_START +  GPIOAO_NUM)
-+#define	AOBUS_PIN_NUM	(GPIO_TEST_N + 1)
-+
-+#define AMLOGIC_GPIO(port, offset)	(port##_START + (offset))
-====><=================
-
-is exactly what rob asked for, and you nacked it.
-
-Neil
-
-
-> 
-> Best regards,
-> Krzysztof
-> 
+Best regards,
+Krzysztof
 
 
