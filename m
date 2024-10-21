@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-373750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA0C9A5C09
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:05:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA40F9A5C0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3792D28285D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:05:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 625A8B229AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1CD1D0E3F;
-	Mon, 21 Oct 2024 07:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CE81D12F9;
+	Mon, 21 Oct 2024 07:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfzXrX/Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9q2qIHa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7813B1CF5FF;
-	Mon, 21 Oct 2024 07:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E43D1D12E0;
+	Mon, 21 Oct 2024 07:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729494301; cv=none; b=BA7l9dOKbRvE5QhAqR0gT9zb2IvqIr0wS37NbJgsKCUViWK2nOdtxpNyxf4oNQ0IVwDvaT12i4FkxrTrOzTJ059dJS2gP5b6LqeR3MANWtSQct9zpIwWlsRJe8cxieHWwztFqojvZ9UW51drdp5Banbch9vwOBii9eKuN9LEmIY=
+	t=1729494317; cv=none; b=Ez6ssd5KDDsadoCWQe9+jiAYPwZXP+Sj7Vkm3n/7opwqAojuoUaapkFh4zmdRgYcKXD4wHx+UEaotlQP0s2PTNbhH8i61fIJp4FKgGI/jMNUvC929C5TiCKv92U4Nxx/kGeuFYPcPMcgqtRbhGrS3XyOIlXON5AQsIHeLT9Mzmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729494301; c=relaxed/simple;
-	bh=t7yRMIhncxD5+5ivHnFBGTUt+ZsgxuwNNequQzRbrtM=;
+	s=arc-20240116; t=1729494317; c=relaxed/simple;
+	bh=3g7Tez+RiNPqSUOGyTVqp0F801z/l8ZXIYh+Z3kz28Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6X94IM+Sy9MQ3fYz986UeQaHNUFHsaDRKB1rRAIJsD2amtGKSpF1838CALcXLJZkQyBnMR+x7SEKr0m49VzL6QfQ0zXMbzZOxplUPnHWGSLJW7b9eKyUnFrvyIHg0Dy3LLD6jMNDrivl43r7Z1cifHKwxPapDqCMW5h6scVL7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfzXrX/Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F80BC4CEC3;
-	Mon, 21 Oct 2024 07:04:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ojlh7+Dn4NREj6ZqFn4V+0sEny/hgfMuN7JNw787kUG1SO48CQkLkddL5WVGme/03TlawCFuZ7tR+kr0GAUfBNtamQYjxkxZC7U3SYSCw/FbQGM9UzcJ1UJQfSKgL3jMLZR58hOpPFzFrlQD/XlabWlIJnCjJrCPnjt5hz/fGGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9q2qIHa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAD5CC4CEC3;
+	Mon, 21 Oct 2024 07:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729494301;
-	bh=t7yRMIhncxD5+5ivHnFBGTUt+ZsgxuwNNequQzRbrtM=;
+	s=k20201202; t=1729494316;
+	bh=3g7Tez+RiNPqSUOGyTVqp0F801z/l8ZXIYh+Z3kz28Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZfzXrX/Z+cw97e+fLs8l1tNAQCvh0xIWYOK5AKUqfDJ1nNej49QvPdsUJ+lPehF7W
-	 qaOeCrr796lW2GnD5x2KCORVhDDyR5dGdi7IA75JZMtVz3wfLnHiQOPI7zkl4bo2sG
-	 AJT6mNX1aMcaiCoUk5pprDs+ORw/k/xa6hF4kJ9k5i67scbQUy7jxlFyJj2ZAy7vSK
-	 538kdG2LSvNX5ypjXdjKRezjfhuvDOVvhJSROOFIOL7o+a7qJLeP+pwsGrnA2FjMwp
-	 m/U/wAJY5iG8sBIDHBUuAxUEONmJmZwIZFSsoTJxe6tDpwR2E8zOwAhvzJ3U/BGFlw
-	 ZT8ib1zh63zag==
-Date: Mon, 21 Oct 2024 09:04:57 +0200
+	b=D9q2qIHa3EZRBE9I43KMgsTqbbtq3B1QBv0aGTtIImCAAesLsO16rvtIPh0MiXPjM
+	 pmPNDPblrxRzb1tU49iGteixxz/gHpwXcfcZ5hFvd8AumLMFU+Q6fvkH16jFvV1UKp
+	 Vqy0Q2rHPkfFsAyR0rl1wzXYsvgR7nUT0wTOmbnIQzlEdy4kTZ+Cuav/uuvZU2erJR
+	 uXgTgSLrWSjsqeR5ikPiexn06GfvdfjVFAMw4spV1R+DoczlFTar8cW6RE+7jnguPP
+	 rqMuPuqog3Xwb3PGXQFAC3+jJerDqSJprsccPom+HrCUNYU/mqpv6v7hWX+EKNUDtm
+	 LWUxZSlzg/MZA==
+Date: Mon, 21 Oct 2024 09:05:13 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Lothar Rubusch <l.rubusch@gmail.com>
 Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
 	dinguyen@kernel.org, marex@denx.de, s.trumtrar@pengutronix.de, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 12/23] ARM: socfpga: dts: add a10 clock binding yaml
-Message-ID: <v4gqnsyhqjccdac3kgmo7y2aunigqquqc3f7n7wgt5hiv3rnip@jfmoq3is4rjh>
+Subject: Re: [PATCHv2 11/23] ARM: socfpga: dts: add compatibility for arria10
+Message-ID: <aogtpcasb4ge5uggdhchk62cvspo74rflwealjgqekqbpdcndw@yt7wjokfy6ag>
 References: <20241020194028.2272371-1-l.rubusch@gmail.com>
- <20241020194028.2272371-13-l.rubusch@gmail.com>
+ <20241020194028.2272371-12-l.rubusch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,13 +58,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241020194028.2272371-13-l.rubusch@gmail.com>
+In-Reply-To: <20241020194028.2272371-12-l.rubusch@gmail.com>
 
-On Sun, Oct 20, 2024 at 07:40:17PM +0000, Lothar Rubusch wrote:
-> Convert content of the altera socfpga.txt to match clock bindings for
-> the Arria10 SoC devicetrees. Currently all altr,* bindings appear as
-> error at dtbs_check, since these bindings are only written in .txt
-> format.
+On Sun, Oct 20, 2024 at 07:40:16PM +0000, Lothar Rubusch wrote:
+> Add compatibility to the arria10 platform. This fixes the dtschema issue
+> 'dwmac: failed to match any schema with compatible'.
+> 
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
 Please use subject prefixes matching the subsystem. You can get them for
@@ -72,64 +75,6 @@ example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
 your patch is touching. For bindings, the preferred subjects are
 explained here:
 https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  .../bindings/clock/altr,socfpga-a10.yaml      | 107 ++++++++++++++++++
->  1 file changed, 107 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml b/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
-> new file mode 100644
-> index 000000000..795826f53
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
-> @@ -0,0 +1,107 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/altr,socfpga-a10.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Device Tree Clock bindings for Altera's SoCFPGA platform
-
-This wasn't tested or you have some very, very old dtschema.
-
-
-> +
-> +maintainers:
-> +  - TODO
-
-We should not be taking unmaintained stuff.
-
-> +
-> +description:
-> +  This binding uses the common clock binding[1].
-> +
-> +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-
-Drop description or describe the hardware.
-
-> +
-> +properties:
-> +  compatible:
-> +    description: |
-> +      shall be one of the following
-> +        - "altr,socfpga-a10-pll-clock" - for a PLL clock
-> +        - "altr,socfpga-a10-perip-clk" - The peripheral clock divided from the
-> +            PLL clock.
-> +        - "altr,socfpga-a10-gate-clk" - Clocks that directly feed peripherals
-> +            and can get gated.
-
-Drop description.
-
-> +    enum:
-> +      - altr,socfpga-a10-pll-clock
-> +      - altr,socfpga-a10-perip-clk
-> +      - altr,socfpga-a10-gate-clk
-
-Why are you adding bindings per clock? Usually that's a no-go, you
-should be describing here clock controller unit.
 
 Best regards,
 Krzysztof
