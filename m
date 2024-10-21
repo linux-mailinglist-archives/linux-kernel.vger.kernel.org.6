@@ -1,347 +1,180 @@
-Return-Path: <linux-kernel+bounces-373631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F699A5996
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:44:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE4A9A599A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85F3F1F21F18
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:44:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416371F21F2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C4C1940B2;
-	Mon, 21 Oct 2024 04:44:18 +0000 (UTC)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0011714B7;
+	Mon, 21 Oct 2024 04:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="FrU6AZsX"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2052.outbound.protection.outlook.com [40.107.215.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DF164A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729485857; cv=none; b=NVywqnnijsULd8xmA43TG1LZs2pMK8mNBOfSk0h/OWjBzVvVfVxWBLnTrHYWOmZeGkEDfJ9JDP3W+9WKjdkT6RQLFhZD/zUpkBqHvutGUj2HYqJtQ7Ps2vBBz1DJW9E110cgKbQtxYq2hwqWZobEEBVuyMs9tcl/TMAuzF8pZeM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729485857; c=relaxed/simple;
-	bh=0jT0JSpBQqM2s+K4ADprzXsQHVXFrLd1fUOjyjGl2d8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VqZbwpzOJk0Cywe9fvDw4XintbJOdhL7NBAqnHDC8ZeCuXTVEkOulxDZXLai2ksIJQE7hycwuubmDZ5Qfj5nsFIEdwQBNdYKicSjxCh64DdZM1y78zRdjbDOWNPduiasRl/1jjGR2M2I2c8A7gzAcKxy4oRoHz7KkNqWjU+wQs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-84fc7b58d4dso1170525241.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 21:44:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729485854; x=1730090654;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m01RtHcH7jVqVjjekW1wmTbPRlfyOxXGbu4ESEnzxXo=;
-        b=BA0BZExWCur3zKolRgUDJgv8awtQljyWZzltarfSwRTjfD5DAW/6o6j/T9VLLmiojf
-         1KMQpA3f5Ceu5xOSRtQ9rdK1xaLQBprft6jp2JoO7pFD3MtlLYFhCpYREkStahRgMgwJ
-         Hp0O5TzNAQP5NhxeyA0ZmMU9aA2aQ+tXMfrzY0M1zNO9+MHiklZbFf/Zho/B8cWzs5yw
-         6Jy6FAmaL3fT6mCLkoCHhi3U6BKaOHQaOinEPCpzeZFz+ol6lUuCEEggBx9i6bwuhdyX
-         Yz2HACMHRXQRjOTsVs4I4M/KnFWXigKMtyis/vFOBsUYUIaEOyT6miF8EE9oC4JpNiwx
-         HJew==
-X-Forwarded-Encrypted: i=1; AJvYcCXiFFu61vxbnwgYzcHyBQ618122sRxOL8Wv2D/XtcdRW0iUuXEx1w8IASYATlKUwSX53P6oLnroKvzPJv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya7ymgEFry6+dgvDqqNLKeBjxoW1WXpND6POmgYrX8nXT4gm+S
-	VJSmSXZ47yNmW/cSKGnvCAP4slnLcEnQjUxPnma6C0cnj3p/MPGi/TIdsihGYDeAbeud2w+Cfcy
-	AptbiMKwtYfrvijDfa3z6CneLBDU=
-X-Google-Smtp-Source: AGHT+IGgeNOxeW2ojfo08suRiiHeAdMlxK3cKjG4ICyLsdNqgGmYc6WTwrOOEP3XWAxeEu1d4KqPB8m0VUKGVAz3zt4=
-X-Received: by 2002:a05:6122:201e:b0:50d:7a14:ddf7 with SMTP id
- 71dfb90a1353d-50dda3a0289mr7667931e0c.8.1729485853975; Sun, 20 Oct 2024
- 21:44:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF49228F7
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729486099; cv=fail; b=uRRP2boak9kw5CjHCcmuE4qY5Wp3NXRAB7bqFv0tHoKW2IK3YJSFz8/98W3UWqvW3LBHWlMuEkHDBaXKIdWaZdsYZVBGoCsHkveyxUJnRqrD9R/gl49SFIszt7WoQ+Rld+gaNo+ikktzx+sYs8T/Zh+DJhhvi9lTinYZiwkzq3A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729486099; c=relaxed/simple;
+	bh=OHR/8i3VwRABCHvpnsE9JlxC7Jn1fKPwVBDbsD6lcK4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=StPJIu8STp8AbbqE5HtWVnI2Pz+3gM9uwJNb08KI7PPu0WJHla0QMoC/b0hfdJca6tPT/yNCnu/IRxLr/6GvNcJSnmKd68ovaZP6a3fLPkm8V8zbfpebNpuTc+szRjR7hCbG1ZBpdbZEYqh/Y82Ofcer6iaMiEX/aeHHihmVUFA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=FrU6AZsX; arc=fail smtp.client-ip=40.107.215.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pEKjRW66zejnKKBmWpd1QspXQuYV1cNJ+UrnOm3OqHWVzBFx/zzMiOd/zfUEEIzEKRDWRhncBkwSGj/9HKgb3oEVeVw7EdZNGDd9YuGsx4ydWoA7UTbttomx1Pg720iLU6WU31nlu6oJqYH4+Zw1uowb2zBZtKTf+ONUsvJNKD/BRglCd4Vaaf4GCsRfgu5kYPRlEcZqvyibrDVSwjjlOMSkKoro8h6zkOrvFpssVEzXdercplrOpSpYRhT+4zri5n8jHSbTeQOQ9H+dAn2e2JWNV6xD6U2NAECCk1wdBiEMI2rUbDMYbMQ6oymsClQE7qdbbQZ/dLcakInyroIwGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7hjXT0S7+TaQJqbLt4A3vHalCeIZErJ53sRPbk4yV2c=;
+ b=BiiqNlJjwnRYxaetBXoOHPkM7320QpEzbvPpVT1hl9cYHmv1kQebwuyFEFu7mh0DmTu9uOQzFzGiy0VQ3ngW8P+PVVQuHvAWkwDSfkPeifUdUj7YOYBHs6by3q35AeOqGpW1zp1CY15+WdsK6AHy17EfDfc+6NNWA+XQofL0KpFgtoEkk66g1WhajCovFTE7TrMWErzBxTd8/yizTNBHw9JDnm+SXdmFxEFO1wk2Xs+lnnyjdR7oXDsJUxnYhME6W56UkOJpra3V1P2GQeMngy8hwC8U+aZa87fCiCkUtC8tphRpmoPr1S2/XCeLHLk8IvQtcgvA3SSg5sDI+jQEnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7hjXT0S7+TaQJqbLt4A3vHalCeIZErJ53sRPbk4yV2c=;
+ b=FrU6AZsXzpof5gwsWYWXZgeSIMNqbV7mlsqQATQFOOc15qj4TlMpD/keYRXxKmGSHQIDHG2zh+oLxifwVLiBS/m0pjUXEp0Y02HcxigfZKQp7TaLeKQmOyAZyfx0ttSzN4BUv2Cn69LapNIFHqBBqExCOxIwxMH6iDwzL46tmUE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oppo.com;
+Received: from PSAPR02MB4727.apcprd02.prod.outlook.com (2603:1096:301:90::7)
+ by SEZPR02MB7421.apcprd02.prod.outlook.com (2603:1096:101:1ee::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.27; Mon, 21 Oct
+ 2024 04:48:14 +0000
+Received: from PSAPR02MB4727.apcprd02.prod.outlook.com
+ ([fe80::a138:e48f:965e:36f9]) by PSAPR02MB4727.apcprd02.prod.outlook.com
+ ([fe80::a138:e48f:965e:36f9%3]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
+ 04:48:14 +0000
+From: Yongpeng Yang <yangyongpeng1@oppo.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Yongpeng Yang <yangyongpeng1@oppo.com>
+Subject: [PATCH] f2fs: check curseg->inited before write_sum_page in change_curseg
+Date: Mon, 21 Oct 2024 12:48:01 +0800
+Message-Id: <20241021044801.1358850-1-yangyongpeng1@oppo.com>
+X-Mailer: git-send-email 2.40.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0011.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::19) To PSAPR02MB4727.apcprd02.prod.outlook.com
+ (2603:1096:301:90::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010081802.290893-1-chenridong@huaweicloud.com>
- <c3f2c5e2-4804-46e8-86ff-1f6a79ea9a7c@huawei.com> <CAGsJ_4zR+=80S_Fz1ZV3iZxjVKUE3-f32w7W1smuAgZM=HrPRQ@mail.gmail.com>
- <62bd2564-76fa-4cb0-9c08-9eb2f96771b6@huawei.com>
-In-Reply-To: <62bd2564-76fa-4cb0-9c08-9eb2f96771b6@huawei.com>
-From: Barry Song <baohua@kernel.org>
-Date: Mon, 21 Oct 2024 17:44:03 +1300
-Message-ID: <CAGsJ_4x=nqKFMqDmfmvXVAhQNTo1Fx-aQ2MoSKSGQrSCccqr3Q@mail.gmail.com>
-Subject: Re: [PATCH v3] mm/vmscan: stop the loop if enough pages have been page_out
-To: chenridong <chenridong@huawei.com>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>, Chen Ridong <chenridong@huaweicloud.com>, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	wangweiyang2@huawei.com, Michal Hocko <mhocko@suse.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, Yu Zhao <yuzhao@google.com>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PSAPR02MB4727:EE_|SEZPR02MB7421:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9b87d65-8777-48ad-8dd3-08dcf18b9287
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Njl3m8jaRqL86+M8d+wd8j9f2Rp+YReKg+fhb9jDf0Mo8Ba5RegKTAsnfNF1?=
+ =?us-ascii?Q?cb0WryRqCLJvHEvOBzr2/IsaTDYLMoG+eUVoAoxZOCHba8u6dYE9fT66HW30?=
+ =?us-ascii?Q?bJliWNxRKNDb2tC9/DF1EUtp1v6MRue+3ABilVEIw3clcp1ScuPDBZdDenx5?=
+ =?us-ascii?Q?B4hny/AmNlk23QpOWTiVht68TJGMz98PDWRbK9HHFFO9s9IEc82bgfbpZYKI?=
+ =?us-ascii?Q?MPf5AAVFzRoKp0mY5RvdR97XuAkotPqwws9/B89CU29Zhrg730Hwvsm1uMla?=
+ =?us-ascii?Q?8kA69mjSCsuulbYgJ+oOXbIBroTKh0/grV02Dym98aPNczn5rjzDJl7y7wBu?=
+ =?us-ascii?Q?+4ZIkPV4LJuFQfTHivG2rFRF7mFI8rJwAGZ5akLIwK0vGpGye6Oyp0dSegF6?=
+ =?us-ascii?Q?Dj4FstvRTKV+lNh6J5+TKYVnmb2d4nNkRCMn2vqKW1W+6t9ppomywTsXioyP?=
+ =?us-ascii?Q?y4oXpmuONkoMjsktVOplgpdTAGO2B8L/R0O71MKby14WC5o9HXjDWYVXpA2I?=
+ =?us-ascii?Q?+6EWtKAuv8k98fLuTMvIpfwDS3UG8K4EF9L36zqlVkzX63PF3NT1PQ+36eJu?=
+ =?us-ascii?Q?pYmouIRX/Zjt8nrwRp0/+uWzsUEs/pwxbtPGOrpgpiEzYlL2xdiG12B58EYU?=
+ =?us-ascii?Q?/6GE97NkLUkUkDWxkDrS2QgpD+ZoUJXz03SFxlQT5ITSVc9JFRoQ0PIsXD4z?=
+ =?us-ascii?Q?n3cfF4785+sxWx8t19zdm8q5g0Naz3nsTX1DYVf0P0KnZvfYccB+lRUiSyjB?=
+ =?us-ascii?Q?yYk039K3CnpxzVQUMSUkITLTLynIVxpuxhUfSixfQQ6HqMgkt7/VG9ryPbiT?=
+ =?us-ascii?Q?L2mo29fPpcBq7HWeqUiGFlU3Co2nQQ6055jxTUDCiIrUoeVWekxHWmmyN6Od?=
+ =?us-ascii?Q?Kb5x/lgx92KJWI4WnCe5bAIzzSkPIGD4dQQt0eTtIzg14/tirFfaSxP+bUbV?=
+ =?us-ascii?Q?iEm5OBYrq+ZblkeNGzPd8C+EfBqSOsbwmgPdx38KaQwX6b0D9xzST0FM0r8f?=
+ =?us-ascii?Q?PwF7zsLK+CVSowc2YvK51zaCHxk2VCvND2ZpZ1Jm1nmCj77eeRevNujtwhvy?=
+ =?us-ascii?Q?oJ3LFeeJIbdM+NKBVOSG9U3QPKctKNCLghbTnOcDL8U3hNng2raQ4Nlx//Vb?=
+ =?us-ascii?Q?BryuvOhEZDgKs4lf2VMe8Khw+hdr7GS+djWeHM6VGryL8JByWnYf5A0jBYpS?=
+ =?us-ascii?Q?8oPxsnBr85UsElllTj6ZIC5zjn4K95ak/pbFXXHVh/ngC6B0B7Zw8xpEenQr?=
+ =?us-ascii?Q?K+QvMWxND8CsM2DBXdYskpEdSVRF8zueIqcEc4ux2w+QL1khFVUi+aDhfDaP?=
+ =?us-ascii?Q?IXgZ7opAmK8FO600LCKWzECMoOOIDXaQacBANGjRN7rX9N8SgFwNEfL6spxS?=
+ =?us-ascii?Q?Y57eQz4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR02MB4727.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BL7UgaWjp1VAoebcfxcLCyqR71YCYrR1hwqI7sWZOlJmAngpY1ZQp9cHSlOk?=
+ =?us-ascii?Q?eOeNJtpSnPb43q1ystEjU7UKQ9tFVQnp8z8ruhtREJ77yGY83368WKFwz4DS?=
+ =?us-ascii?Q?j8kvKEQjDCg7hAe3O4zqocWnP9j8T37VZtTswQhj1TJhcaHhy0thxvciknbe?=
+ =?us-ascii?Q?VAWfg6u9E2UD0rWsjU9papmq+sMwFAuOOuZkWLi1U98Mw8hWPNk/meOokGsY?=
+ =?us-ascii?Q?ddu2r/VPdJpDEJxwHEyy5Exej3KiGVeNsLWw5WJ5g1/iQeoMRKSLk0jiLFbb?=
+ =?us-ascii?Q?TFncHLl6yNTaiUFC2RHsOeSihsQxfayc5wmCVpJyMyHiIBkXnXKjmHf97/gt?=
+ =?us-ascii?Q?cjcqboBUnvmX9pmBMVU6H0RYq3Y2sMftG4bBZBzhNDsL8jhhIgw76SIO1EPe?=
+ =?us-ascii?Q?bK0C+axBuDsuib3w6yfUz+2BX029qF/T4SjfNEjnlykmjhkHibVspcEx7ciq?=
+ =?us-ascii?Q?sEj04ZEQaCRmmf3ncg29rGGPZHhRUKh4muQcFETyAQdtSn6hSqOhD9Ido66V?=
+ =?us-ascii?Q?+c1B9Y1zQhZRUb3wPvN1QmYNjaQ5nViposlL52Oj/J4lnP5UI5ss1fBCp6fo?=
+ =?us-ascii?Q?oK6xOeLIMMShDSsuLzpij8laVyV4F+cyV3qpLhj0MglchTtd7xbm93yGOnnl?=
+ =?us-ascii?Q?Uuz/ox284drmtheY323vO6/DvX6Bx7+Dd69JXD96XIv6MY5LSCUmSNXv626X?=
+ =?us-ascii?Q?Bc1Qsk7bLPU00KBEH7gAVMM/XIB6OuyRHK/VuGozCvpJKU+PSXCFhsI2FoP6?=
+ =?us-ascii?Q?QWLv4hOGvGFI3owT6VOaVrKoHWYJgXzgY2UEkN+CVG5FT3CkUg5jn2z/FH11?=
+ =?us-ascii?Q?MpTWW332sKLTxqkYlvc8+nCpQuLt1di7YXj5f0KqeDHI905J1XNH08tyDqb5?=
+ =?us-ascii?Q?xlQTLVflQVR0JGeNjHQeJl05G7mVLsbPjb9VaHYM0Gz/ofVXnQc7irmkzVHT?=
+ =?us-ascii?Q?wg7HYmemvwet2gmP9Ur+XYVa9hkg2+gB21ucAxEvDYo1AvZGXJH0N1k2CFzF?=
+ =?us-ascii?Q?0GsOteI3CNQjdk/0MxDJjieqzy9ncEXb4UgtP/dfXXQXIHuLLRcSu4wZJ+kt?=
+ =?us-ascii?Q?aJ+i3uDAYerrCxLE/mMYwTggmxQNJ41O/eObV0UAq8cMd7bGRTZ21WiRihU1?=
+ =?us-ascii?Q?mFtIn+PDfHa7duEilTPQ4W2w0MiklxJwbh2hrm+baBMplFPbAWY3gk51pMkW?=
+ =?us-ascii?Q?zQmAY0i+XWD7yYA35T5YEyCJj3Ne89HBdxIGobb5Rnynclp7/0MBGheTEzy3?=
+ =?us-ascii?Q?3yPBNiOi2Z5Lo6sZjrrQ3y2BKtl2Wagf6saCBRt7PahekCPgo+eSivFsiOz5?=
+ =?us-ascii?Q?FQY+DGkB4XG42FE4PUiQdD22nW6KoFuZ5FaoHGSVjvRu+UCnSlgCojV7y87N?=
+ =?us-ascii?Q?Azf5YxH9ArSKozZcENkNQXoKI6Arl1X+MlFe9t58a7l2978LPH2WIMkGUdzv?=
+ =?us-ascii?Q?CUEXsDXiiXwR7XpbrYDDcgQk0PZ/Wqkt0NtQUjFIbT7lsZMie/3BKiKbJNfA?=
+ =?us-ascii?Q?moorHk2oLDuTTPuYqVmnvdXg2JXNCTeCA0uhPw3rXBHDB8X6xLJNVPyBlRmK?=
+ =?us-ascii?Q?stlnypCQ+Ys/0p+cSqr1lhD6eBctJ2lFIbFxmtCFvdawSKpFR3yvv2CIgn0w?=
+ =?us-ascii?Q?kA=3D=3D?=
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9b87d65-8777-48ad-8dd3-08dcf18b9287
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR02MB4727.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 04:48:14.2962
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QbSUKXCg3jY7PdIX2glmy+p3xjyOrdBLE67cXWfPIjr7ijYg5iDAuIa3V6HKmqVRbFpYQlDmmv+/TSROH09UGA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR02MB7421
 
-On Fri, Oct 11, 2024 at 7:49=E2=80=AFPM chenridong <chenridong@huawei.com> =
-wrote:
->
->
->
-> On 2024/10/11 0:17, Barry Song wrote:
-> > On Thu, Oct 10, 2024 at 4:59=E2=80=AFPM Kefeng Wang <wangkefeng.wang@hu=
-awei.com> wrote:
-> >>
-> >> Hi Ridong,
-> >>
-> >> This should be the first version for upstream, and the issue only
-> >> occurred when large folio is spited.
-> >>
-> >> Adding more CCs to see if there's more feedback.
-> >>
-> >>
-> >> On 2024/10/10 16:18, Chen Ridong wrote:
-> >>> From: Chen Ridong <chenridong@huawei.com>
-> >>>
-> >>> An issue was found with the following testing step:
-> >>> 1. Compile with CONFIG_TRANSPARENT_HUGEPAGE=3Dy
-> >>> 2. Mount memcg v1, and create memcg named test_memcg and set
-> >>>      usage_in_bytes=3D2.1G, memsw.usage_in_bytes=3D3G.
-> >>> 3. Create a 1G swap file, and allocate 2.2G anon memory in test_memcg=
-.
-> >>>
-> >>> It was found that:
-> >>>
-> >>> cat memory.usage_in_bytes
-> >>> 2144940032
-> >>> cat memory.memsw.usage_in_bytes
-> >>> 2255056896
-> >>>
-> >>> free -h
-> >>>                 total        used        free
-> >>> Mem:           31Gi       2.1Gi        27Gi
-> >>> Swap:         1.0Gi       618Mi       405Mi
-> >>>
-> >>> As shown above, the test_memcg used about 100M swap, but 600M+ swap m=
-emory
-> >>> was used, which means that 500M may be wasted because other memcgs ca=
-n not
-> >>> use these swap memory.
-> >>>
-> >>> It can be explained as follows:
-> >>> 1. When entering shrink_inactive_list, it isolates folios from lru fr=
-om
-> >>>      tail to head. If it just takes folioN from lru(make it simple).
-> >>>
-> >>>      inactive lru: folio1<->folio2<->folio3...<->folioN-1
-> >>>      isolated list: folioN
-> >>>
-> >>> 2. In shrink_page_list function, if folioN is THP, it may be splited =
-and
-> >>>      added to swap cache folio by folio. After adding to swap cache, =
-it will
-> >>>      submit io to writeback folio to swap, which is asynchronous.
-> >>>      When shrink_page_list is finished, the isolated folios list will=
- be
-> >>>      moved back to the head of inactive lru. The inactive lru may jus=
-t look
-> >>>      like this, with 512 filioes have been move to the head of inacti=
-ve lru.
-> >>>
-> >>>      folioN512<->folioN511<->...filioN1<->folio1<->folio2...<->folioN=
--1
-> >>>
-> >>> 3. When folio writeback io is completed, the folio may be rotated to =
-tail
-> >>>      of lru. The following lru list is expected, with those filioes t=
-hat have
-> >>>      been added to swap cache are rotated to tail of lru. So those fo=
-lios
-> >>>      can be reclaimed as soon as possible.
-> >>>
-> >>>      folio1<->folio2<->...<->folioN-1<->filioN1<->...folioN511<->foli=
-oN512
-> >>>
-> >>> 4. However, shrink_page_list and folio writeback are asynchronous. If=
- THP
-> >>>      is splited, shrink_page_list loops at least 512 times, which mea=
-ns that
-> >>>      shrink_page_list is not completed but some folios writeback have=
- been
-> >>>      completed, and this may lead to failure to rotate these folios t=
-o the
-> >>>      tail of lru. The lru may look likes as below:
-> >
-> > I assume you=E2=80=99re referring to PMD-mapped THP, but your code also=
- modifies
-> > mTHP, which might not be that large. For instance, it could be a 16KB m=
-THP.
-> >
-> >>>
-> >>>      folioN50<->folioN49<->...filioN1<->folio1<->folio2...<->folioN-1=
-<->
-> >>>      folioN51<->folioN52<->...folioN511<->folioN512
-> >>>
-> >>>      Although those folios (N1-N50) have been finished writing back, =
-they
-> >>>      are still at the head of lru. When isolating folios from lru, it=
- scans
-> >>>      from tail to head, so it is difficult to scan those folios again=
-.
-> >>>
-> >>> What mentioned above may lead to a large number of folios have been a=
-dded
-> >>> to swap cache but can not be reclaimed in time, which may reduce recl=
-aim
-> >>> efficiency and prevent other memcgs from using this swap memory even =
-if
-> >>> they trigger OOM.
-> >>>
-> >>> To fix this issue, it's better to stop looping if THP has been splite=
-d and
-> >>> nr_pageout is greater than nr_to_reclaim.
-> >>>
-> >>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> >>> ---
-> >>>    mm/vmscan.c | 16 +++++++++++++++-
-> >>>    1 file changed, 15 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> >>> index 749cdc110c74..fd8ad251eda2 100644
-> >>> --- a/mm/vmscan.c
-> >>> +++ b/mm/vmscan.c
-> >>> @@ -1047,7 +1047,7 @@ static unsigned int shrink_folio_list(struct li=
-st_head *folio_list,
-> >>>        LIST_HEAD(demote_folios);
-> >>>        unsigned int nr_reclaimed =3D 0;
-> >>>        unsigned int pgactivate =3D 0;
-> >>> -     bool do_demote_pass;
-> >>> +     bool do_demote_pass, splited =3D false;
-> >>>        struct swap_iocb *plug =3D NULL;
-> >>>
-> >>>        folio_batch_init(&free_folios);
-> >>> @@ -1065,6 +1065,16 @@ static unsigned int shrink_folio_list(struct l=
-ist_head *folio_list,
-> >>>
-> >>>                cond_resched();
-> >>>
-> >>> +             /*
-> >>> +              * If a large folio has been split, many folios are add=
-ed
-> >>> +              * to folio_list. Looping through the entire list takes
-> >>> +              * too much time, which may prevent folios that have co=
-mpleted
-> >>> +              * writeback from rotateing to the tail of the lru. Jus=
-t
-> >>> +              * stop looping if nr_pageout is greater than nr_to_rec=
-laim.
-> >>> +              */
-> >>> +             if (unlikely(splited && stat->nr_pageout > sc->nr_to_re=
-claim))
-> >>> +                     break;
-> >
-> > I=E2=80=99m not entirely sure about the theory behind comparing stat->n=
-r_pageout
-> > with sc->nr_to_reclaim. However, the condition might still hold true ev=
-en
-> > if you=E2=80=99ve split a relatively small =E2=80=9Clarge folio,=E2=80=
-=9D such as 16kB?
-> >
->
-> Why compare stat->nr_pageout with sc->nr_to_reclaim? It's because if all
-> pages that have been pageout can be reclaimed, then enough pages can be
-> reclaimed when all pages have finished writeback. Thus, it may not have
-> to pageout more.
->
-> If a small large folio(16 kB) has been split, it may return early
-> without the entire pages in the folio_list being pageout, but I think
-> that is fine. It can pageout more pages the next time it enters
-> shrink_folio_list if there are not enough pages to reclaimed.
->
-> However, if pages that have been pageout are still at the head of the
-> LRU, it is difficult to scan these pages again. In this case, not only
-> might it "waste" some swap memory but it also has to pageout more pages.
->
-> Considering the above, I sent this patch. It may not be a perfect
-> solution, but i think it's a good option to consider. And I am wondering
-> if anyone has a better solution.
+In the __f2fs_init_atgc_curseg->get_atssr_segment calling,
+curseg->segno is NULL_SEGNO, indicating that there is no summary
+block that needs to be written.
 
-Hi Ridong,
-My overall understanding is that you have failed to describe your problem
-particularly I don't understand what your 3 and 4 mean:
+Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
+---
+ fs/f2fs/segment.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 3. When folio writeback io is completed, the folio may be rotated to tail
->    of lru. The following lru list is expected, with those filioes that ha=
-ve
->    been added to swap cache are rotated to tail of lru. So those folios
->  can be reclaimed as soon as possible.
->
->  folio1<->folio2<->...<->folioN-1<->filioN1<->...folioN511<->folioN512
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1766254279d2..35f0b5065554 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2926,7 +2926,8 @@ static int change_curseg(struct f2fs_sb_info *sbi, int type)
+ 	struct f2fs_summary_block *sum_node;
+ 	struct page *sum_page;
+ 
+-	write_sum_page(sbi, curseg->sum_blk, GET_SUM_BLOCK(sbi, curseg->segno));
++	if (curseg->inited)
++		write_sum_page(sbi, curseg->sum_blk, GET_SUM_BLOCK(sbi, curseg->segno));
+ 
+ 	__set_test_and_inuse(sbi, new_segno);
+ 
+-- 
+2.40.1
 
- > 4. However, shrink_page_list and folio writeback are asynchronous. If TH=
-P
- >    is splited, shrink_page_list loops at least 512 times, which means th=
-at
- >    shrink_page_list is not completed but some folios writeback have been
- >    completed, and this may lead to failure to rotate these folios to the
-  >  tail of lru. The lru may look likes as below:
-
-can you please describe it in a readable approach?
-
-i feel your below diagram is somehow wrong:
-folio1<->folio2<->...<->folioN-1<->filioN1<->...folioN511<->folioN512
-
-You mentioned "rotate', how could "rotate" makes:
-folioN512<->folioN511<->...filioN1 in (2)
-become
-filioN1<->...folioN511<->folioN512 in (3).
-
-btw, writeback isn't always async. it could be sync for zram and sync_io
-swap. in that case, your patch might change the order of LRU. i mean,
-for example, while a mTHP becomes cold, we always reclaim all of them,
-but not part of them and put back part of small folios to the head of lru.
-
->
-> Best regards,
-> Ridong
->
-> >>> +
-> >>>                folio =3D lru_to_folio(folio_list);
-> >>>                list_del(&folio->lru);
-> >>>
-> >>> @@ -1273,6 +1283,7 @@ static unsigned int shrink_folio_list(struct li=
-st_head *folio_list,
-> >>>                if ((nr_pages > 1) && !folio_test_large(folio)) {
-> >>>                        sc->nr_scanned -=3D (nr_pages - 1);
-> >>>                        nr_pages =3D 1;
-> >>> +                     splited =3D true;
-> >>>                }
-> >>>
-> >>>                /*
-> >>> @@ -1375,12 +1386,14 @@ static unsigned int shrink_folio_list(struct =
-list_head *folio_list,
-> >>>                                if (nr_pages > 1 && !folio_test_large(=
-folio)) {
-> >>>                                        sc->nr_scanned -=3D (nr_pages =
-- 1);
-> >>>                                        nr_pages =3D 1;
-> >>> +                                     splited =3D true;
-> >>>                                }
-> >>>                                goto activate_locked;
-> >>>                        case PAGE_SUCCESS:
-> >>>                                if (nr_pages > 1 && !folio_test_large(=
-folio)) {
-> >>>                                        sc->nr_scanned -=3D (nr_pages =
-- 1);
-> >>>                                        nr_pages =3D 1;
-> >>> +                                     splited =3D true;
-> >>>                                }
-> >>>                                stat->nr_pageout +=3D nr_pages;
-> >>>
-> >>> @@ -1491,6 +1504,7 @@ static unsigned int shrink_folio_list(struct li=
-st_head *folio_list,
-> >>>                if (nr_pages > 1) {
-> >>>                        sc->nr_scanned -=3D (nr_pages - 1);
-> >>>                        nr_pages =3D 1;
-> >>> +                     splited =3D true;
-> >>>                }
-> >>>    activate_locked:
-> >>>                /* Not a candidate for swapping, so reclaim swap space=
-. */
-> >>
->
-
-Thanks
-barry
 
