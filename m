@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-373590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A63D9A592C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:13:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09ADE9A5932
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D19B1C211DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:13:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76203B21A28
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1801D079E;
-	Mon, 21 Oct 2024 03:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA2A199EB0;
+	Mon, 21 Oct 2024 03:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4B/d0VB"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TABi75Fd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5481531A60;
-	Mon, 21 Oct 2024 03:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9AEA41;
+	Mon, 21 Oct 2024 03:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729480373; cv=none; b=L/sK/WDr2iAeS+aob0aSdewfwjLBybt7YMukgyeYPR4e1cmuDHQu8vLjZb5SGKrCHPGvpmBPHyobjvqia8BDOnGeUmWbCcEbZ6Eo+oPdhJZbMZ5ZPitnKjKxtA1sTDGwKjAcGo1jTh6LGWo9/bt4KsAVv473Q/qjRgneN1/Z/yU=
+	t=1729480735; cv=none; b=K9zr15xNQ6hGzORntIT6sbqIiUlW/4x+nfM3IHOuZiHApuhhuPEtqCZpWWJAIhnKf2r125e+1JLowGlvYq6mbkVlhRM1Df9znvFjhnEeh2OF2C5lNAqRitVn2OE3kP+/9yK1NDg2ndNoNRZCS5AS+etVLvt6UkQ3/AdPy6FSi/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729480373; c=relaxed/simple;
-	bh=fOLDmvWp03EDMC/jF5pgUB9+gKQ4S8vdFti47RUJux0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YDNH+HvrCsA1qgSqqoCJJF56YMrrM7yZvBi66VCnfEqwTdHbhXNXhpqs3OcXRvmi5Sx62kUMBMoTF0keMxYW0HVAWVJ8pfORYF191IZWqc2uBxp8ICRPbo56cDiMmEl5VEEztsEG/TY6oVfjymIXUe+3eEfNaeyGjALaehpYODI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M4B/d0VB; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20e576dbc42so25583155ad.0;
-        Sun, 20 Oct 2024 20:12:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729480370; x=1730085170; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R9uyhhZHz3cwvmGlgJcmKlovJH7fLo1iSETQBpUvqrE=;
-        b=M4B/d0VB1LU5NAIlxbuFYy5ToyR/HVULFEVm4ciuWPbje0mcdD6Ym7y53SzSkA48E7
-         Nwjf+7JLtZXDU62IEkqbT8bDdBRHiIzMMhp9KlGWbwwd5wvP/Sp6AjhEAju5vMPCdnwG
-         nghhO11LpGYk5ckSyRbWJDr41OwhERxSuS6Ir5YNqB7Ph5CYXClQHwxnR6JT7QeywdKP
-         j3LsHBK1V/8zefmnQL3SJnDVqCdl9oEY3Z3TpBDCHteBIfz7pWLVQDpQN41E5ChKaA+b
-         aNW4dLqxPiyuDMIHPTpz+d/JnrWWu6DOz90HPSk8VIIFWQ1fdYORU+yNRamS9VLvlug/
-         nepw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729480370; x=1730085170;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R9uyhhZHz3cwvmGlgJcmKlovJH7fLo1iSETQBpUvqrE=;
-        b=QLq6l0RN2Ki4TUFqUcTq0HBIzP+mj80TyhqcGkpIi/IoI+Q/jVMpQYw/Jwchx5VNnY
-         P/tqvoWWkItQjvZzTc7uqbC8ODH5ub4cUkz7nF/mhOQv7GuaygxYNyiOYp3On7EWYaTe
-         K5qGkYsN/VW7TfbjACHSTGq3NfXi0PRgN6Sw6WwbeGYB+lAH+uvuooWqo9xTQWqeHLAr
-         0YgZYpf7/mfn6aoJ+bMJkm1ksQpprsJVDiaXTt67fJch2SOWEI0BxhViR1dJKYaMIUOk
-         ULdvkAeY+WEPD0cCBpDfR5hcIq7Q1PTbcNSSnovjI3yYWseIfGW/NZ90QVTCrL5ZFFS3
-         T/rA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4FNHxCHH9cffjOw/4WOeuoEuD+dAFCohiTTnXtbqseHPhuZEEaXkgAOq/YT/j5WHplRYfsUisqrCW@vger.kernel.org, AJvYcCUJujXzUKpKBQN7VHR8eY3YnCZnkj/Zd085laS5qhGxcG1rbeWcz6+fzUQQxC49y09NfW0=@vger.kernel.org, AJvYcCXXx4/bXThSgfLPDh1ZNjsdPOw4HYOQbyU4I0pCKd2Mue4DJJ5/fa64jL4VP81gTMYvuZVtQ/TJkU8shz4a@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD0macxeZ8wSZQKh0fPX5h7w5a8XEbgVtJeW1vhCl9pA1/jbJB
-	Da/jjAG4nCMVp+YootmKpG7NNu/MhQ5KFYqx4DYR6NwZ1qkuvvFknrvBrmEmAMA=
-X-Google-Smtp-Source: AGHT+IH+03AHqmQUUE5TU4bSFfRQnNY4XsqORm1ADpzBvIcC549dB6BcgfFw6JBBuF2A2Hw5JWGhFg==
-X-Received: by 2002:a17:902:e883:b0:20c:7898:a8f5 with SMTP id d9443c01a7336-20e5a90df51mr137221975ad.28.1729480369584;
-        Sun, 20 Oct 2024 20:12:49 -0700 (PDT)
-Received: from fedora.dns.podman ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee658esm16377845ad.13.2024.10.20.20.12.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Oct 2024 20:12:48 -0700 (PDT)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrii Nakryiko <andriin@fb.com>,
-	Jussi Maki <joamaki@gmail.com>,
-	Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>
-Subject: [PATCHv3 net-next 2/2] Documentation: bonding: add XDP support explanation
-Date: Mon, 21 Oct 2024 03:12:11 +0000
-Message-ID: <20241021031211.814-3-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241021031211.814-1-liuhangbin@gmail.com>
-References: <20241021031211.814-1-liuhangbin@gmail.com>
+	s=arc-20240116; t=1729480735; c=relaxed/simple;
+	bh=Nie2AFcFSUfc/tFdc/pmxlhQ189rqt/EUrhnGQ9Geo8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XqqxkGsmnIyq0FbIEyUKscozZKby6CXX+SrAGX1I1LFM+V+KTKReoT7xtrJVISI2qaegIM76BLd61zrPPB7ezHbopRMc2hKB1Ak8rgeCnQqxYtUce5oP28wRCSeGIduPqWY0gbkfowRGj5yZdyws7FtU1Snu/29/xwgg9l4ooUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TABi75Fd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C09CC4CEEA;
+	Mon, 21 Oct 2024 03:18:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729480734;
+	bh=Nie2AFcFSUfc/tFdc/pmxlhQ189rqt/EUrhnGQ9Geo8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TABi75FdBaoOqSod8UvE6rF34pp3dGkoSsLNDQ9gZvM1YQes8MFBtgQXofPpazonz
+	 gIyCXFFOWHPiXx3K6o4Yqau09U66BLNpx/GT+GBOcoscXIT6POPLLJkh976s65uw9v
+	 2gu0XIR75/D+2T8YESyGs4nfSb6KvlO0z5CTQjZR8ag8NjtoayTqt8TX6hM+vKUSdo
+	 9uAZ71bXTKUBUe5GjPj0F8dZd86uwtdL6lEk3UzAe7Rp4f9mT1Xpi+e/c8h/AmBEpP
+	 SKM4IXx+qMVJ+JU1cNWj1p2Br1+KexfXrKPhBUCAx1Y9U5s/+78eDdtLSZKEjiIMn4
+	 1fgbGMSbcAOdQ==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f84907caso4360457e87.3;
+        Sun, 20 Oct 2024 20:18:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUXlW4pBsm4qVEWNirsc/Asn7f1OTO0zNJ04x3tfARk9J/omquO3IifyWt8Gozy3y44e8vOuiaWjpd@vger.kernel.org, AJvYcCUrcK22cXtaTBd08faZ24c5UDpo+9IshW72XosIhmnlynRtgom2yHYWTCJzpZYdPTpIykJCXkQKyKhIsysc@vger.kernel.org, AJvYcCVo00BqlFx6I+bGRaRkF7qxt+QAVmUc4qmh7w8o0rhIVJSXD2V3pNJ2GPdMhv3h+IhZAeFQJ6up7OiQ@vger.kernel.org, AJvYcCW3BMTou1m7NMciC+pNo7clDM/xbARkn7l+DVNnl+jq85+0srxj3p7/21xTjs9gJHaKuSwbFOCoE6gc@vger.kernel.org, AJvYcCW6oKZj/t6OsqI4gG3qrbNqnshuM1JfVMg5U3CaOil0d8Y52uyh0A8/HUljm2g0i+lOJ444d8BLU57xwd78@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOwFLHYGCS32y0q6f3RpzX+qo5Y7IN+L6kIfxAkl6o+S0kaYeV
+	zzBdtdmbCV16ioyHwBmgvFB5IaocIPW6cpT7vPT8jT/ADV+EWmHYonOoX5+hR1+dqAVa+Gn2n/O
+	m7ICn7p5rcNaLOKg5xdRmi8ZT2qw=
+X-Google-Smtp-Source: AGHT+IFF+6OY++aC6VgSvFOGFIPuUwbQy2uTC0O38gyEQAjFUkHkDmaIEUyBHfWpTEdN9+71dto4vZQ2X+vvT37eHI4=
+X-Received: by 2002:a05:6512:b19:b0:539:df2f:e115 with SMTP id
+ 2adb3069b0e04-53a1521993cmr4056473e87.23.1729480732824; Sun, 20 Oct 2024
+ 20:18:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241014213342.1480681-1-xur@google.com> <20241014213342.1480681-6-xur@google.com>
+In-Reply-To: <20241014213342.1480681-6-xur@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 21 Oct 2024 12:18:16 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ0RwJYkCXHj8QMH3sqXgY2LBTiYV8HnKD8oANB8Bb+Yg@mail.gmail.com>
+Message-ID: <CAK7LNAQ0RwJYkCXHj8QMH3sqXgY2LBTiYV8HnKD8oANB8Bb+Yg@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] AutoFDO: Enable machine function split
+ optimization for AutoFDO
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add document about which modes have native XDP support.
+On Tue, Oct 15, 2024 at 6:33=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+>
+> Enable the machine function split optimization for AutoFDO in Clang.
+>
+> Machine function split (MFS) is a pass in the Clang compiler that
+> splits a function into hot and cold parts. The linker groups all
+> cold blocks across functions together. This decreases hot code
+> fragmentation and improves iCache and iTLB utilization.
+>
+> MFS requires a profile so this is enabled only for the AutoFDO builds.
+>
+> Co-developed-by: Han Shen <shenhan@google.com>
+> Signed-off-by: Han Shen <shenhan@google.com>
+> Signed-off-by: Rong Xu <xur@google.com>
+> Suggested-by: Sriraman Tallam <tmsriram@google.com>
+> Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
+> ---
+>  include/asm-generic/vmlinux.lds.h | 6 ++++++
+>  scripts/Makefile.autofdo          | 2 ++
+>  2 files changed, 8 insertions(+)
+>
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmli=
+nux.lds.h
+> index ace617d1af9b..20e46c0917db 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -565,9 +565,14 @@ defined(CONFIG_AUTOFDO_CLANG)
+>                 __unlikely_text_start =3D .;                             =
+ \
+>                 *(.text.unlikely .text.unlikely.*)                      \
+>                 __unlikely_text_end =3D .;
+> +#define TEXT_SPLIT                                                     \
+> +               __split_text_start =3D .;                                =
+ \
+> +               *(.text.split .text.split.[0-9a-zA-Z_]*)                \
+> +               __split_text_end =3D .;
+>  #else
+>  #define TEXT_HOT *(.text.hot .text.hot.*)
+>  #define TEXT_UNLIKELY *(.text.unlikely .text.unlikely.*)
+> +#define TEXT_SPLIT
+>  #endif
 
-Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
----
- Documentation/networking/bonding.rst | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/networking/bonding.rst b/Documentation/networking/bonding.rst
-index e774b48de9f5..7c8d22d68682 100644
---- a/Documentation/networking/bonding.rst
-+++ b/Documentation/networking/bonding.rst
-@@ -2916,6 +2916,17 @@ from the bond (``ifenslave -d bond0 eth0``). The bonding driver will
- then restore the MAC addresses that the slaves had before they were
- enslaved.
- 
-+9.  What bonding modes support native XDP?
-+------------------------------------------
-+
-+  * balance-rr (0)
-+  * active-backup (1)
-+  * balance-xor (2)
-+  * 802.3ad (4)
-+
-+Note that the vlan+srcmac hash policy does not support native XDP.
-+For other bonding modes, the XDP program must be loaded with generic mode.
-+
- 16. Resources and Links
- =======================
- 
--- 
-2.46.0
+Why conditional?
 
+
+Where are __unlikely_text_start and __unlikely_text_end used?
+
+
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
