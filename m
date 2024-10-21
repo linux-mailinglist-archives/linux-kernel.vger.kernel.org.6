@@ -1,177 +1,99 @@
-Return-Path: <linux-kernel+bounces-374585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89FDE9A6C74
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F127C9A6C80
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51A2D282966
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62BB2282826
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA431D175B;
-	Mon, 21 Oct 2024 14:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370301FAC45;
+	Mon, 21 Oct 2024 14:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="C7cLxQJH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="m3KmhpM3"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjyMsvML"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E6E1D2718
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B811FAC38;
+	Mon, 21 Oct 2024 14:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729521877; cv=none; b=qFAXi4bPCy86xGtAcGVxbPU2Rbfpt04iD4q9ZTPDX1lv3n7kYinxCvaGcEHlXE5r6j4yrX23+FxCWCuiRQ+IEn1UJD3wO8bHRqgB56oLNSJCAr4rWZXwAOTMoBgHxCzxlyg97ZljPU+VNdI2hEBojKdzzYaE7Born2Gc29XAyxs=
+	t=1729521969; cv=none; b=hE30ltl59I0+jiiDx9V6JUFZ3/3p4LRHaFCPYYndQU8d9XY3xeWPjdx8+SlLX456Sh+dvrqQbDwkRnv+WIsH5KCkJEEpBy3C1KMmKqCS6B+k7X0bbTqdVXYW4TkZ4e+kAm5xTECl+E6wqd9SwJbsunYpVg08NAcstX+ULUrfoKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729521877; c=relaxed/simple;
-	bh=1RBfEmxbMElSHuGi/ZfNw9GuOJ/LcpL0xT0FGzEaRi0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g1zmleOL95EHcbxqOw++K74wsyMoMEvJ38sQY3RCWgIt+9Y+8DOPkZNFMZBfuTyYHjqrD2iw/jX8fYI/CUXtrClzGdbrm3k2gFcd3/Yv6imjvfvQA1b4Xwu+Duq9qMxg5ROVDIotAqIHTrokqFNmhY0Nl1+F5hVhFRizgpKsiU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=C7cLxQJH; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=m3KmhpM3 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1729521874; x=1761057874;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=JEBO4bmnA1LwmC5/rU2MmK+d0ytWeHsZV1AVSaGRT2o=;
-  b=C7cLxQJHtJYEfleHp6OIobQQdIbOfkNNa6sIQncQMYGeacxgHusjRD6y
-   0IcJEuQgsZTYLjFzq+5ZWDiYSGSgnQVCsvn9BxLk43vnVPJtmwIr6h4kO
-   fwP1qfB/n43L0DFJPk3fpe9VMOE6kQJiGaQjwvj7JZl6V5fL5LZCHs+NC
-   6AD/Boq6VI2yGU7TB+xnTwsCcwfYaLG0xS148KmeD0YY3At1B/mYD4TsD
-   oCHtOWhx+kg6YzbJacFFGeLpNafQkN5Kf3VTpS2T9/41Gk3ExOWuuJGwh
-   pfcGtMghfwPpybMYj3KOnD6kUC6e2lMvn98ZAsIjlfDUwMfF0OfsZSycE
-   Q==;
-X-CSE-ConnectionGUID: G0Mrly8uS0yyB3/AfNyLQA==
-X-CSE-MsgGUID: uvFFfAWuRdOt+L5KPh99cA==
-X-IronPort-AV: E=Sophos;i="6.11,221,1725314400"; 
-   d="scan'208";a="39577380"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 21 Oct 2024 16:44:31 +0200
-X-CheckPoint: {671668CF-14-8E59014-E6F31237}
-X-MAIL-CPID: 3C4F8A4EB954108A790B88B9D00F6D15_1
-X-Control-Analysis: str=0001.0A682F28.671668CF.00A0,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F0E4916139E;
-	Mon, 21 Oct 2024 16:44:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1729521867;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=JEBO4bmnA1LwmC5/rU2MmK+d0ytWeHsZV1AVSaGRT2o=;
-	b=m3KmhpM3fQceCrnzQiU4FbQ+i8yuRTBEQ8Z6Jq4bXCv9sPioglAqt0UIiEwETrRXW0NeMG
-	4GRXclMGs8o48VcwR9DxCaJ2vZiLen0ukAhDyIs9QrqMALkrlLb7AJx6GRMP0zjPt+HdPq
-	MhHs4KhNtaYPCABGsYS2Sxg3BUKRvdrB04NPeBdF/1V86WVe7mrYgt+28Y59Ss7qfdMuE9
-	Y+le+xbe36QC5wYHE3Kvph1IJzk5Mhj7DImh8GTr+9ASxJTz60g+374qEqdjX/+8KA3Rst
-	OX9p3yJBGhcD89U7MceFbp6t/yueK7/o4RGGLL1KYTJmFawOXMvjFuQ57h97Iw==
-Message-ID: <da174fe9af56d5c0f77ee140456c9d07cc968136.camel@ew.tq-group.com>
-Subject: Re: [PATCH v5 5/5] mfd: tqmx86: add I2C IRQ support
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux@ew.tq-group.com, linux-kernel@vger.kernel.org, Gregor Herburger
-	 <gregor.herburger@tq-group.com>
-Date: Mon, 21 Oct 2024 16:44:26 +0200
-In-Reply-To: <1d2477439ec2bb7f5145648da4be5dcd8cfb6847.1729509613.git.matthias.schiffer@ew.tq-group.com>
-References: <cover.1729509613.git.matthias.schiffer@ew.tq-group.com>
-	 <1d2477439ec2bb7f5145648da4be5dcd8cfb6847.1729509613.git.matthias.schiffer@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1729521969; c=relaxed/simple;
+	bh=Sw7cSXm9EpyX+c9azldUEdZILDN8Yb+WOiQsimH/O8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ipIGym1YXdj6OPc0C1vL5q5Nv0VvnnvcWbDvagQmPMAaIXgOq50SJOh7JHhNrPyI+Egunxnsvn2A3cI9p2tvwHpqo6vVQoLlaIOJJ07Shu6+gdwnCerNqUsMLKJ6Hz4574ylUCHi3d5BLyY2OkFB2XXGXjK7+IagJDZjos1vnRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjyMsvML; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC40C4CEE4;
+	Mon, 21 Oct 2024 14:46:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729521968;
+	bh=Sw7cSXm9EpyX+c9azldUEdZILDN8Yb+WOiQsimH/O8E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RjyMsvMLsy09mLn1wKEqg9IX9Otm410RPO79HhJP0sDhtaqojwzEfusaFYh6/tLRW
+	 3ptLUpXvVNI5YguCcjxcU0pLSrxxJGjpyueevOC7HVffdo84mBuqGYJc5EDVJDXf2E
+	 57Hu4ZOwujY4Dio+4JegikxRmGh7enPWF4K1DnOt5/TcDJAUSHl+e7VZs7e+2GP7M1
+	 5weW53zbe0MvqiG1RucQ2rbwFDrRhluopFPHH/C5EdXmJNoLs4fs/TDbvBGr+aM17A
+	 DA05efav16PXUW4NXEn1GMHlDA+ArlTwoXkOywb0FTtErNQtOHeAHgXeLyL4tr9Pvk
+	 CmZt0VmRsNnJw==
+From: Christian Brauner <brauner@kernel.org>
+To: luca.boccassi@gmail.com
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	oleg@redhat.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v11] pidfd: add ioctl to retrieve pid info
+Date: Mon, 21 Oct 2024 16:45:23 +0200
+Message-ID: <20241021-warten-ozonwerte-0e7b2326a566@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241010155401.2268522-1-luca.boccassi@gmail.com>
+References: <20241010155401.2268522-1-luca.boccassi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1349; i=brauner@kernel.org; h=from:subject:message-id; bh=9CadsZ2Z1aw2hnXOf9IXM8u+GQsiszDp2+uSXlr0hLI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSLZTKbpv29F6XyJ9A1rET7sG/U5elXTHbVGdZlbhV4l l+3YPKbjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlYhzL8r1lexBx9j1XHeFrI /vQa7olLHKbfL0/7v32Fpg/X9XPTVBl+syc75f7v3cc9e/IT434J6y+3GqNtdBjdF6kfMBfaddG aGQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-10-21 at 13:34 +0200, Matthias Schiffer wrote:
-> From: Gregor Herburger <gregor.herburger@tq-group.com>
->=20
-> The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
-> Add module parameter to allow configuring the IRQ number, similar to the
-> handling of the GPIO IRQ.
->=20
-> Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> ---
->=20
-> v2: improve module parameter description (was patch 4/4)
-> v3: replace IRQ 0 resource with an empty placeholder to simplify error ha=
-ndling
-> v4: no changes
-> v5: move placeholder to the end of the resource array, use define for ind=
-ex
+On Thu, 10 Oct 2024 16:52:32 +0100, luca.boccassi@gmail.com wrote:
+> A common pattern when using pid fds is having to get information
+> about the process, which currently requires /proc being mounted,
+> resolving the fd to a pid, and then do manual string parsing of
+> /proc/N/status and friends. This needs to be reimplemented over
+> and over in all userspace projects (e.g.: I have reimplemented
+> resolving in systemd, dbus, dbus-daemon, polkit so far), and
+> requires additional care in checking that the fd is still valid
+> after having parsed the data, to avoid races.
+> 
+> [...]
 
-Ugh... I just realized that I forgot to update a comment for v5. Will send =
-a new version some time
-this week.
+Applied with some minor changes as mentioned elsewhere.
 
+---
 
+Applied to the vfs.pidfs branch of the vfs/vfs.git tree.
+Patches in the vfs.pidfs branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
->=20
->  drivers/mfd/tqmx86.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-> index 1fd2212bf492c..94126a484c412 100644
-> --- a/drivers/mfd/tqmx86.c
-> +++ b/drivers/mfd/tqmx86.c
-> @@ -50,6 +50,7 @@
->  #define TQMX86_REG_IO_EXT_INT_9			2
->  #define TQMX86_REG_IO_EXT_INT_12		3
->  #define TQMX86_REG_IO_EXT_INT_MASK		0x3
-> +#define TQMX86_REG_IO_EXT_INT_I2C_SHIFT		0
->  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
->  #define TQMX86_REG_SAUC		0x17
-> =20
-> @@ -60,11 +61,18 @@ static uint gpio_irq;
->  module_param(gpio_irq, uint, 0);
->  MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, 9, 12)=
-");
-> =20
-> +static uint i2c_irq;
-> +module_param(i2c_irq, uint, 0);
-> +MODULE_PARM_DESC(i2c_irq, "I2C IRQ number (valid parameters: 7, 9, 12)")=
-;
-> +
->  /* Index of IRQ placeholder in resource list */
->  #define TQMX86_IRQ_GPIO 1
-> +#define TQMX86_IRQ_I2C 1
-> =20
-> -static const struct resource tqmx_i2c_soft_resources[] =3D {
-> +static struct resource tqmx_i2c_soft_resources[] =3D {
->  	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
-> +	/* Placeholder for IRQ resource - filled in by the probe function */
-> +	[TQMX86_IRQ_I2C] =3D {},
->  };
-> =20
->  static const struct resource tqmx_watchdog_resources[] =3D {
-> @@ -262,6 +270,14 @@ static int tqmx86_probe(struct platform_device *pdev=
-)
->  	ocores_platform_data.clock_khz =3D tqmx86_board_id_to_clk_rate(dev, boa=
-rd_id);
-> =20
->  	if (i2c_det =3D=3D TQMX86_REG_I2C_DETECT_SOFT) {
-> +		if (i2c_irq) {
-> +			err =3D tqmx86_setup_irq(dev, "I2C", i2c_irq, io_base,
-> +					       TQMX86_REG_IO_EXT_INT_I2C_SHIFT);
-> +			if (!err)
-> +				/* Assumes the IRQ resource placeholder is first */
-> +				tqmx_i2c_soft_resources[TQMX86_IRQ_I2C] =3D DEFINE_RES_IRQ(i2c_irq);
-> +		}
-> +
->  		err =3D devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
->  					   tqmx86_i2c_soft_dev,
->  					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.pidfs
+
+[1/1] pidfd: add ioctl to retrieve pid info
+      https://git.kernel.org/vfs/vfs/c/12506679be68
 
