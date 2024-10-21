@@ -1,177 +1,191 @@
-Return-Path: <linux-kernel+bounces-375189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA369A9237
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:42:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739D49A9241
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A76A52815B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:42:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A361C217DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A4C19923C;
-	Mon, 21 Oct 2024 21:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCAC1FBCA0;
+	Mon, 21 Oct 2024 21:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLIt4oHR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OjB649pr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF52D1FE115;
-	Mon, 21 Oct 2024 21:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F297719A28D;
+	Mon, 21 Oct 2024 21:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729546918; cv=none; b=ngkqn9IscF78R4qhmhOA7mOMP4gT0C+I15CTyLGxHM3c55EFKm54Cb/K0nVhh5ZbbuOPpP7886poqCxj/9v9+Wbo/K0UBwnwVkrDnGM7CtrB5PYB6v0uIv7Wo7/Eb7PcYBwazArmuYIW9/mAXsyx+OLk9OhYU992fBHUhBVO/iI=
+	t=1729547215; cv=none; b=shf0erTdgYKnBAjWMAbThKr2FatLQjy0x2FWjRNFVqsHCVXfScFwedhWh3yt389z/h/z9Uz6hR9QOibfW4T5FMbl95KcVPbi4LKGxWN1h+FtsF5UFsJMwCRYWZJwTbBT3LD03ut/pBX5JB027vEXjw2fMUpglHLe4o2b3NG1bCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729546918; c=relaxed/simple;
-	bh=fWDT7/tqiHFxu6jARFHgw792ZtaMGHZPjKiSd/GLY7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mEXHFJhANm5j09HKmEx6bGswtGcqcRrfxQswiFutIZiuY+foWbeECzHXBqyfsTjIOCaFVqRA84JvhC6Kei3uAwe60cfWtNSvVQnN+4luSBMLDqcWJtnqCsJnOrSXQanTrcgctgQXekp1T+rDCnsKND3YjDTg9C7wx3LZQT/pGKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLIt4oHR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5001DC4CEE5;
-	Mon, 21 Oct 2024 21:41:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729546918;
-	bh=fWDT7/tqiHFxu6jARFHgw792ZtaMGHZPjKiSd/GLY7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eLIt4oHRnLa5HXop2Jx8cVADa0x3s35Bro9lKmzhSRDBkvrCcsqdeIZbxQ99w4tVD
-	 +hB0WT6rRiTRUQC+se+DtPrteUwGcV1gX6VnwF6kW9EfMWLLzsVtutXRJn11LIkkZA
-	 LieNytP4rUs3bxTiGzgPbyJpPlbnBp55qJHGk0m5TuxnV7D80fkqUhce5plxwhyPzW
-	 2+HqmA3Cwv9eDrrvFtaID/feiBkze2Obxeqi3wSvps1BnvHCxi6nr1QS2olBxbJ7nr
-	 wNXUrKDbNhU2FG9VOGoo3kjYtDdXhLqxjmukIC8w43AaxwJf7EE1JOInbbAyKvIvFe
-	 gwyz2hpGaZXKw==
-Date: Mon, 21 Oct 2024 22:41:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: torvalds@linux-foundation.org, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <6dbbc85e-5a87-4605-8db6-92b191878d97@sirena.org.uk>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
+	s=arc-20240116; t=1729547215; c=relaxed/simple;
+	bh=Q+cvWcUVWy73ICGhozfk1+GJaKl0toxokv/FzKVseGQ=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=SmoTcgslUb9Ywjy3kRiEs6XLYCC+jP40/LwUiAkOQiysjZPFMnDwUL7MCvRvabDv5WXpUfy+P6gwTTfYWzOYdfEQxwpxgBLDHsh/9bZeqU7lYRtl/o8glNt/SYSK227coaf1FNUa8FvWYqNNYkz7i5TorKLHaqyt8OxSc/PL8d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OjB649pr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49LJo2vP003362;
+	Mon, 21 Oct 2024 21:46:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=b6UEaIhFUTz3pILviabJli
+	0g9/hx0mMgyZvZpox86UM=; b=OjB649prRQUuk1fSarkPhpg0zap7F9ToejXxkM
+	2IO0Km6Z3d9ekaBTVtJY/zgM9ybqRoy2LPCFYQfEfRYHyndvWTdH6F4uapWHtKqf
+	UIkQUWhW14teKW0iEkd97ir7ihJ23yLYIT//oB67rCagiRAnSA1xcsumcGWAjf2U
+	S72Af2JLUZ+bopXFLujlxwS2gVNJHdLSt4GVJ0g3og7vboKOzVXVF7SDo3rVPIVU
+	wwlOOMBWjdvUv3fGQ9MOO7n4LDfNuevP1lG9VJU+PF9L09AVSRKYWt1DWq047OOs
+	FBbaJKgNjrzjfHiMYlttSPl7VWVQNGNK2xTpNp2ekBZ5G4Lw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42c6tux4p8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 21:46:37 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49LLkbZB011890
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 21:46:37 GMT
+Received: from [10.213.111.143] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 21 Oct
+ 2024 14:46:31 -0700
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Subject: [PATCH v2 0/4] DRM/MSM: Support for Adreno 663 GPU
+Date: Tue, 22 Oct 2024 03:16:02 +0530
+Message-ID: <20241022-a663-gpu-support-v2-0-38da38234697@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XVFzAHx1LlJYtmMS"
-Content-Disposition: inline
-In-Reply-To: <ZxZ8MStt4e8JXeJb@sashalap>
-X-Cookie: Most people prefer certainty to truth.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJrLFmcC/2WNyw6CMBBFf4V0bU0ftAIr/8OwaIepzkLAFoiG8
+ O9WjCt3c+7NnLuyhJEwsaZYWcSFEg19BnUoGNxcf0VOXWamhCpFLU/cWav5dZx5msdxiBP3sjw
+ ZqFRlhWX5bYwY6LkrL23mG6VpiK99YZGf9Cer/mWL5IIrE9DpoDtbdufHTEA9HGG4s3b7+iPmN
+ NH0HWHeJeS5v9PUFE4JV8vgpQ8OTCcMgvEQahdQQK2tDhaqfGTZ9gYHb4uo/gAAAA==
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Connor Abbott <cwabbott0@gmail.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Puranam V G Tejaswi
+	<quic_pvgtejas@quicinc.com>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729547190; l=2819;
+ i=quic_akhilpo@quicinc.com; s=20240726; h=from:subject:message-id;
+ bh=Q+cvWcUVWy73ICGhozfk1+GJaKl0toxokv/FzKVseGQ=;
+ b=3j5NtmF7f6lB0oXWZr/+WLGh0MLIFzjMMot5BlXwYiptRFFm6LWydGyA+uApo0XTJg+CbLifL
+ W9MYAclIlLDDaOnjuZaKqtJuNeh4UDK5mVM7giW8pWVYKj8TgWCp+ug
+X-Developer-Key: i=quic_akhilpo@quicinc.com; a=ed25519;
+ pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Vbf1FCH9qbFX9ZCXJO8ZAAnYeJwEpbAn
+X-Proofpoint-GUID: Vbf1FCH9qbFX9ZCXJO8ZAAnYeJwEpbAn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ adultscore=0 spamscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 clxscore=1011 suspectscore=0 mlxlogscore=999 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410210155
 
+This series adds support for Adreno 663 gpu found in SA8775P chipsets.
+The closest gpu which is currently supported in drm-msm is A660.
+Following are the major differences with that:
+	1. gmu/zap firmwares
+	2. Recommended to disable Level2 swizzling
 
---XVFzAHx1LlJYtmMS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Verified kmscube/weston/glmark2-es2 with the below Mesa change [1].
+This series is rebased on top of msm-next.
 
-On Mon, Oct 21, 2024 at 12:07:13PM -0400, Sasha Levin wrote:
+Patch (1) & (2) for Rob Clark and Patch (3) & (4) for Bjorn
 
-> During the Maintainer's Summit, Linus Torvalds expressed concerns about
-> the quality of testing that code receives before he pulls it. The
-> subsequent discussion side-tracked to the testability of linux-next, but
-> we didn't directly address Linus's original concern about pre-pull
-> testing quality.
+Devicetree changes have a runtime dependency on the Display DT change [2].
 
-> In an attempt to address the concerns, we're trying out a new "linus-next"
-> tree is being created and maintained with the following characteristics:
+[1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/31211
+[2] https://patchwork.freedesktop.org/patch/620500/?series=140216
 
-> 	1. Composed of pull requests sent directly to Linus
+To: Rob Clark <robdclark@gmail.com>
+To: Sean Paul <sean@poorly.run>
+To: Konrad Dybcio <konradybcio@kernel.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Marijn Suijten <marijn.suijten@somainline.org>
+To: David Airlie <airlied@gmail.com>
+To: Simona Vetter <simona@ffwll.ch>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Connor Abbott <cwabbott0@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org
 
-> 	2. Contains branches destined for imminent inclusion by Linus
+-Akhil
 
-> 	3. Higher code quality expectation (these are pull requests that
-> 	maintainers expect Linus to pull)
+---
+Changes in v2:
+- Fixed ubwc configuration (dimtry)
+- Split out platform dt patch (dimtry)
+- Fix formatting in the dt patch (dimtry)
+- Updated Opp table to include all levels
+- Updated bw IB votes to match downstream
+- Rebased on top of msm-next tip
+- Link to v1: https://lore.kernel.org/r/20240918-a663-gpu-support-v1-0-25fea3f3d64d@quicinc.com
 
-This feels kind of late for thorough testing, especially outside of the
-merge window where it's mostly fixes.
+---
+Puranam V G Tejaswi (4):
+      drm/msm/a6xx: Add support for A663
+      dt-bindings: display/msm/gmu: Add Adreno 663 GMU
+      arm64: dts: qcom: sa8775p: Add gpu and gmu nodes
+      arm64: dts: qcom: sa8775p-ride: Enable Adreno 663 GPU
 
-> 	4. Continuous tree (not daily tags like in linux-next),
-> 	facilitating easier bisection
+ .../devicetree/bindings/display/msm/gmu.yaml       |  1 +
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi         |  8 ++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 94 ++++++++++++++++++++++
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c          | 19 +++++
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c              | 11 ++-
+ drivers/gpu/drm/msm/adreno/a6xx_hfi.c              | 33 ++++++++
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h            |  5 ++
+ 7 files changed, 170 insertions(+), 1 deletion(-)
+---
+base-commit: a20a91fb1bfac5d05ec5bcf9afe0c9363f6c8c93
+change-id: 20240917-a663-gpu-support-b1475c828606
 
-Is this a pressing problem?  I routinely bisect -next, you have to base
-things on Linus' tree (or pending-fixes) but otherwise it's not
-especially problematic.  It is a bit helpful to remember commits that
-you've run a given test on before to speed things up a bit but that's
-not super essential.  The downside of not redoing the merge is that
-once problematic stuff ends up in history it doesn't go away which can
-itself be disruptive whenever there's multiple issues going on, you get
-a window you have to skip through when bisecting.
+Best regards,
+-- 
+Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-> The linus-next tree aims to provide a more stable and testable
-> integration point compared to linux-next, addressing the runtime issues
-> that make testing linux-next challenging and focusing on code that's
-> about to be pulled by Linus.
-
-> linus-next is (expected to be) particularly effective before the merge
-> window opens, as maintainers tend to send their pull requests early,
-> allowing for more thorough testing of to-be-merged changes.
-
-How many people send pull requests in advance, as opposed to getting
-their tree stable, waiting for further testing, applying any fixes from
-that testing and then sending a pull request after the merge window has
-opened?
-
-One big concern I have with this is that for non-fix changes the testing
-coverage will be very heavily loaded to the end of the development cycle
-and the merge window, with a lot of changes in flight at the same time.
-That means it's going to be harder to effectively run more expensive
-tests, and we'll potentially be a month or two on from when the changes
-were landed by the time we actually get round to running whatever extra
-tests get run here.
-
-I do think it's useful to have coverage of specifically things actually
-sent in pull requests, but I'm not sure we'd get much more thorough
-testing than we already get via pending-fixes and -next.
-
-> We also want to avoid altering the existing workflow. In particular:
->=20
-> 	1. No increase in latency. If anything, the expectation is that
-> 	the cadence of merges would be improved given that Linus will
-> 	need to do less builds and tests.
-
-For fixes we do routinely have things landing within hours of the pull
-request being sent, that's pretty aggressive for CI.
-
-> 	2. Require "sign up" for the tree like linux-next does. Instead,
-> 	pull requests are monitored and grabbed directly from the
-> 	mailing list.
-
-Like I mentioned above what's the plan for handling bad changes?  If an
-issue is found in linus-next (BTW, I forsee confusion being caused by
-typos there).  If a problem is found and then fixed with an incremental
-patch which is sent in another pull request then the fix will eventually
-land but if the offending patch is rebased out or the pull request just
-dropped entirely then presumably someone will have to do something
-manual.  How will that happen, and on what sort of schedule?
-
-I do wonder if it's worth splitting the -next merge further and having
-another pending-fixes type split where maintainers can differentiate
-between changes where they're reasonably happy with the testing and
-those that are bleeding edge.  It is volunteering Stephen to do even
-more merges, and it does rely on people identifying what's stable, so
-I'm not sure how useful it'd be but seems like it would mesh well with
-the flow where people are doing their own stabalisation prior to sending
-pull requests.  That's a different thing to increasing the coverage of
-PRs like you're proposing here but it's another angle on the "-next is
-too unstable" issue.
-
---XVFzAHx1LlJYtmMS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcWyqEACgkQJNaLcl1U
-h9CSLgf/YYiRGiitFXCegBQeROsMzJPCCZbMm/B1YzMU/4NTedpuKO7OnlVCgt82
-bD888+EM7//qNX0t7/ja4ZIFhGLGecTTQ7hXAvC8aSAq7/mPzhQyI/P7gF8PJsGS
-Dbzx7p4Xb83lNR81vWahFn3FVFfGOrrflxwTxUEdb+mvaJ5Mdif8rPIf6sFXCCxL
-ctoHoXXS/WARlHnA7BKCiGfsKyuE9uzn488MfpGahHiqt7UBLfeb2a+R2K8db3Hp
-7uoVre+ZmvQhru1+ayV+LSYgXXhjobv8e0GYrhxY4ewtRBMEmpV4TAGKUYwHRKAY
-q5RN//LLG1H1LEvToGhsgqQ23zH0EA==
-=c9we
------END PGP SIGNATURE-----
-
---XVFzAHx1LlJYtmMS--
 
