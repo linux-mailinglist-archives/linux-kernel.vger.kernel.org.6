@@ -1,175 +1,404 @@
-Return-Path: <linux-kernel+bounces-374612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5ED9A6D75
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:59:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C339A6D79
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834AA1F225D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8211C22A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEDD1F4736;
-	Mon, 21 Oct 2024 14:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A312E1FA26D;
+	Mon, 21 Oct 2024 14:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0Ii4OXY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRxj5sOX"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964041F8936;
-	Mon, 21 Oct 2024 14:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9AB1D4336;
+	Mon, 21 Oct 2024 14:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729522771; cv=none; b=CVGtYqmKzhvKarWAgJjDXsat0kNFFJl8gek/1fV8yEcR575HySReBBtoPwBfU7+InPe0lQJ++LkezcxjcfBaHzA5XgRL9AyfBe8u7Sd6jL1OtE6wAfTn8lL59QkNi03uYpFsAU1Ak+shKEjuALveTZUyxQ2LD091h+XDaO+Wjs4=
+	t=1729522789; cv=none; b=ldGckeh+hM0cqJHcTlSAjHYCud9My3xp/qMUEnFeO4QvO1QRuGwvTPXWAGbD5avlIZ33XgiT3tKBMblwTgSHdQ1ZdxOFuf3N3iv33n11g6Jgqjh4tX0nKTUsu4c8EgCzECNhmoD+zroVAJhPMUtNNCAzPXO+YR8pCtEeAbUFQwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729522771; c=relaxed/simple;
-	bh=albO36l24SFKiOm+yXAcpi7rfrjp7joQOfomUwb920c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQuo/hpgii05BMOKQ5dp/KaXJIpW0aiSIDerlsEnucRVSGbbiXQsSrRTbIb0soXI38nqHSKK9wlj+wao94nGS1vDtmtxHP7HKTxeAgaDCbKFm7mnbwqe7eOhvGaXrFU8kNgAMZVKrqw1LfPPclefrvC01pExdG28mTu1PRRqUCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0Ii4OXY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C477C4CEC3;
-	Mon, 21 Oct 2024 14:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729522771;
-	bh=albO36l24SFKiOm+yXAcpi7rfrjp7joQOfomUwb920c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i0Ii4OXYK3I8yRGtboVVVGKd4BxaOPScyZm4KX4qupSOZnr+P2JZB8hZNEDc4nNI7
-	 o5nH/bTrY0jxuNWE/J3FFUlQNEK90VBzMbmBTQRIbfv/QdqNZtVaVzMbCpmw6EOUep
-	 kDGDUBSzKPgy3qFwVoqEUXWhqQowew3les07r5VJZ2t3gpBxtnZ4ZmCcMUxVS+3061
-	 Qplyp9jHTIzNkdeLGJcRMP50OhEW09UBMelDCid0Xe7DpPu7x7ordT5W0xd5LXcBcD
-	 PPdmLNgPN/peOctn3WZJeaUC889Sy7qu/V9zHL0bW+rYtw4LMT0vP30yjKbsB4Rp/S
-	 V67SXlF4POitA==
-Date: Mon, 21 Oct 2024 15:59:25 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jeff Xu <jeffxu@chromium.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	akpm@linux-foundation.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org, pedro.falcato@gmail.com,
-	willy@infradead.org, vbabka@suse.cz, Liam.Howlett@oracle.com,
-	rientjes@google.com, keescook@chromium.org
-Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
-Message-ID: <a7b8f7a4-4202-489e-badf-6ef50463745e@sirena.org.uk>
-References: <f9b9422c-216d-422e-94b4-d8814b0b277e@lucifer.local>
- <CABi2SkWAv4LXvR1Wb1e31eyZ35JfyieXhDOq1bp_ZvHPLLg-qA@mail.gmail.com>
- <e0f440b0-5a45-4218-8c51-27f848c0617b@lucifer.local>
- <CABi2SkWNRTCC0LzDSuzgjC1tO=KF==5FXUnPHOrPzEG5abAeDg@mail.gmail.com>
- <1f8eff74-005b-4fa9-9446-47f4cdbf3e8d@sirena.org.uk>
- <CABi2SkV38U-ZCAq9W091zYkOM1m5e-C27YmVXdTCi-t+p_W_fQ@mail.gmail.com>
- <a2652ed4-ea8b-4b56-bac6-6479b3df6c14@sirena.org.uk>
- <CABi2SkVF3OtRcq9cCgLh_hOjxRnWq0owypw++xodrEfm=dt_qA@mail.gmail.com>
- <6aefd38b-d758-4e7c-a910-254251c2a294@sirena.org.uk>
- <CABi2SkUG8bhKQeHd_pvLw4y3ZY+Z8CvxZ_iV4YhTc+JQqe9TxA@mail.gmail.com>
+	s=arc-20240116; t=1729522789; c=relaxed/simple;
+	bh=c+Qi+Jx+CXTBC6SGBbwZd+QHqQ3u2ujH1bhsnaOs+tM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ne9yco+NtuG/vRD8y37YrwykmuaPXljkxspWOEY9d0uAb0nhLvRRC2Luuu7QQBhSb8eTvr8DT1CfQEfAks6lOXTgAnmXq2w8JtUSK2CVxNvWnYxtctMVV9cIP5+idZXYFCx/3yRLNg308afXv3kodmJ76vEhbgO7oPBhY6BXl4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eRxj5sOX; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so43876765e9.1;
+        Mon, 21 Oct 2024 07:59:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729522786; x=1730127586; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b2oNlw5sC6corZeG/j34t0WS9fihe4BrMBO9k5dV7z4=;
+        b=eRxj5sOXjm4J09BnG6O3xr6nyMmZMrKA/mdHjZ/e/hp5C5o23VSbFVUYKRCF4BOdOL
+         vT0PrU6m8R9mGAeTXsIci8BKACqtHiDHQcKVmD7bSAUfTdSXQa/ooT+aB7Ddx+7TMcgI
+         Y8I3NNUHKNvs0V+xXV8PaGkxPEKSF6K/guKydxQm7FodkMxSn3sXij2/HGIodK5rr8V3
+         iBvCgpKAwikXtHG0gQXe2e0DW8mp/S0VoPzkO949h32PJ75/ZLE6iC0lUXD3o1nYhwhF
+         INRn3uiXHgSxk2BCPQOYkr21jOI0DsNNb0JkgWrWC/5RIGLfIsXPq/DB6b2adK/j0heD
+         6jZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729522786; x=1730127586;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b2oNlw5sC6corZeG/j34t0WS9fihe4BrMBO9k5dV7z4=;
+        b=IZ8F4pOjP4MrrCmyGewttvFir6ovtyj/l9qJvfJQUIUjuAA6V4DlzWriVBkrtiyjSG
+         PSjkaPE0LLmMhaJBNoqQpaxbji9SSReKQnNggOeifBD+voF7sj4SoVLeRxz9CzNOpLGI
+         mX9uvajzn059U7+wV4uSFRpELEgVY8fJvdpfMc8zKtJxQ2R77yXXqAmmhFr/VQcER8GT
+         cshGcusqeMCnyM+LR46u1vbg2SyVjXE7VEUqzXLVpFlU14bF6BK7mVb94Pho0TUKKOYr
+         zlJdr1DuTeYWwPcQN5/AVmqH87mfXiHriSacs+22sl47dC5F1n/G1OnOAyzSX5N23ObI
+         motw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuCpDYuBcuIly84JwgDJfj+1bMjUBqMIX629KBvWMksdiBXc+280hYcFUbt6bXqebq5ysPBvHTZ5N4elqg@vger.kernel.org, AJvYcCVOf6qXMhJNCA70CkUjMEuU9NFvoD6MKLVJ5G6mUQAq2ht1t/25wZdHS503Vl8C6FdHTfMhoDAs1VAx@vger.kernel.org, AJvYcCX1V1MDUCWG0Zavvu3J3niGIV1PpGNi6O3wftzXVUbfJF9LMYmECr71OQqsJtYbyuDpjuFVH3fknGMk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz00vJY1Uq/xXERHOM08nhjvwyCIvqbMoQIdVyS+Zl/SdPGXoyy
+	mQP913+2OVzX6NZoxwU06bJ88k6UcXmbbAc5/QcmvFcElEpnygHK
+X-Google-Smtp-Source: AGHT+IEst292QV7hRLtR3biILTiH0zvysU6L3GW2PdM63Pg8uNswcivTzfgAQhuoJltf24mOVAd5AQ==
+X-Received: by 2002:a05:600c:1d27:b0:431:4e25:fe26 with SMTP id 5b1f17b1804b1-4316169742fmr80595915e9.27.1729522785452;
+        Mon, 21 Oct 2024 07:59:45 -0700 (PDT)
+Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58ae0asm60050285e9.23.2024.10.21.07.59.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 07:59:45 -0700 (PDT)
+Message-ID: <f472ab62-a248-4753-a2cf-a8b85ae88638@gmail.com>
+Date: Mon, 21 Oct 2024 17:59:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2vh7jJ4clxa55i2K"
-Content-Disposition: inline
-In-Reply-To: <CABi2SkUG8bhKQeHd_pvLw4y3ZY+Z8CvxZ_iV4YhTc+JQqe9TxA@mail.gmail.com>
-X-Cookie: Most people prefer certainty to truth.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: Add Exynos8895 SoC CMU
+ bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241020174825.375096-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241020174825.375096-2-ivo.ivanov.ivanov1@gmail.com>
+ <75e0b0a3-6b6c-427e-a748-329dc1237da7@kernel.org>
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <75e0b0a3-6b6c-427e-a748-329dc1237da7@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---2vh7jJ4clxa55i2K
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/21/24 12:38, Krzysztof Kozlowski wrote:
+> On 20/10/2024 19:48, Ivaylo Ivanov wrote:
+>> Provide dt-schema documentation for Exynos8895 SoC clock controller.
+>> Add device tree clock binding definitions for the following CMU blocks:
+>>  - CMU_TOP
+>>  - CMU_FSYS0/1
+>>  - CMU_PERIC0/1
+>>  - CMU_PERIS
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>
+> A nit, subject: drop second/last, redundant "bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>
+>> +
+>> +title: Samsung Exynos8895 SoC clock controller
+>> +
+>> +maintainers:
+>> +  - Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> +  - Chanwoo Choi <cw00.choi@samsung.com>
+>> +  - Krzysztof Kozlowski <krzk@kernel.org>
+>> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> +  - Tomasz Figa <tomasz.figa@gmail.com>
+> Please drop Sylwester and Tomasz, they opted out from clocks.
+>
+>> +
+>> +description: |
+>> +  Exynos8895 clock controller is comprised of several CMU units, generating
+>> +  clocks for different domains. Those CMU units are modeled as separate device
+>> +  tree nodes, and might depend on each other. The root clock in that root tree
+>> +  is an external clock: OSCCLK (26 MHz). This external clock must be defined
+>> +  as a fixed-rate clock in dts.
+>> +
+>> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+>> +  dividers; all other clocks of function blocks (other CMUs) are usually
+>> +  derived from CMU_TOP.
+>> +
+>> +  Each clock is assigned an identifier and client nodes can use this identifier
+>> +  to specify the clock which they consume. All clocks available for usage
+>> +  in clock consumer nodes are defined as preprocessor macros in
+>> +  'include/dt-bindings/clock/samsung,exynos8895.h' header.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - samsung,exynos8895-cmu-top
+>> +      - samsung,exynos8895-cmu-fsys0
+>> +      - samsung,exynos8895-cmu-fsys1
+>> +      - samsung,exynos8895-cmu-peric0
+>> +      - samsung,exynos8895-cmu-peric1
+>> +      - samsung,exynos8895-cmu-peris
+> Alphabetical order.
+>
+>> +
+>> +  clocks:
+>> +    minItems: 1
+>> +    maxItems: 16
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+>> +    maxItems: 16
+>> +
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+> required: block should go here (I know that other Samsung clock bindings
+> do not follow this convention).
+>
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-top
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-fsys0
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +            - description: CMU_FSYS0 BUS clock (from CMU_TOP)
+>> +            - description: CMU_FSYS0 DPGTC clock (from CMU_TOP)
+>> +            - description: CMU_FSYS0 MMC_EMBD clock (from CMU_TOP)
+>> +            - description: CMU_FSYS0 UFS_EMBD clock (from CMU_TOP)
+>> +            - description: CMU_FSYS0 USBDRD30 clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: bus
+>> +            - const: dpgtc
+>> +            - const: mmc_embd
+> mmc
+>
+>> +            - const: ufs_embd
+> ufs
+>
+>> +            - const: usbdrd30
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-fsys1
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +            - description: CMU_FSYS1 BUS clock (from CMU_TOP)
+>> +            - description: CMU_FSYS1 MMC_CARD clock (from CMU_TOP)
+>> +            - description: CMU_FSYS1 PCIE clock (from CMU_TOP)
+>> +            - description: CMU_FSYS1 UFS_CARD clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: bus
+>> +            - const: mmc_card
+> mmc
+> Although now I wonder, why this is different FSYS. Is it for different
+> mmc controller?
 
-On Fri, Oct 18, 2024 at 05:10:01PM -0700, Jeff Xu wrote:
-> On Fri, Oct 18, 2024 at 2:05=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
-rote:
+FSYS0 provides clocks for embedded storages (UFS and eMMC), whereas FSYS1
 
-> > That's not the entire issue - it is also a problem that the test name
-> > is not the same between passes and failures so automated systems can't
-> > associate the failures with the passes.
+clocks external storage cards (UFS and MMC cards). As far as I can tell, there's
 
-> I failed to understand this part.
-> Maybe you meant the failing logging  is not the same across the
-> multiple versions of test code, by testname you meant "failing
-> logging"
+only one MMC controller, so perhaps it could be set to drive an eMMC or an SD
 
-Tests are identified by the string given in the line reporting their
-result, that's not *really* a log message but rather a test name.  The
-strings for a given test need to be the same between different runs of
-the test program for tooling to be able to see that it's the same test.
+card. On retail devices, UFS_EMBD and MMC_CARD are used.
 
-> >When a test starts failing they
-> > will see the passing test disappear and a new test appears that has nev=
-er
-> > worked.
->  > This will mean that for example if they have bisection support
-> > or UI for showing when a test started regressing those won't work.  The
-> > test name needs to be stable, diagnostics identifying why or where it
-> > failed should be separate prints.
+Thanks for the review, will fix the issues in the next patchset.
 
-> If the test hasn't been changed for a while,  and start failing. Then
+Best regards, Ivo.
 
-Well, you'd hope that the tests never start failing but yet we still
-have tests and keep running them. =20
-
-> it is quite easy to run the same test on recent code changes. I think
-> you might agree with me on this. The only thing that bisec needs to
-> check is if the entire tests are failing or not.
-
-Unfortunately we're not in a position where people can reliably assume
-that every test program will always work everywhere so people work on
-individual tests, and it's certainly useful for UIs to be able to give
-an overview of what specifically failed.  A bunch of that is tests that
-just don't implement feature detection/skipping properly.
-
-> I haven't used the biset functionality, so I'm not sure how it works
-> exactly, e.g. when it runs on the old version of kernel, does it use
-> the test binary from the old kernel ? or the test binary provided by
-> dev ?
-
-That's up to whoever is doing the testing, but I think most people run
-the selftests from the version of the code they're testing.  Some of the
-subsystems aren't very enthusiastic about supporting running on older
-kernels.
-
-> > > how do I pass the "seal" flag to it ?
-> > > e.g. how do I run the same test twice, first seal =3D true, and secon=
-d seal=3Dfalse.
-> >
-> > >         test_seal_mmap_shrink(false);
-> > >         test_seal_mmap_shrink(true);
-
-> > That looks like fixture variants to me, using those with
-> > kselftest_harness.h will also fix the problem with duplicate test names
-> > being used since it generates different names for each instance of the
-> > test.  Something like:
-
-> Thanks! This is really helpful, I think the existing mseal_test can be
-> quickly converted using this example.
-
-Great!
-
-> (A side note: if selftest documentation is updated to include this
-> example, it will be much easier to future dev to follow)
-
-Possibly send a patch adding that wherever you were looking?  That was
-just a quick hack down of the gcs-locking program verifying that it had
-what I thought you needed.
-
---2vh7jJ4clxa55i2K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcWbEwACgkQJNaLcl1U
-h9D7kgf/Q8O65O7KSc2ZO90h5zDrTW5/re+yyLl6rrA33pKJ3+HBeThhcoovMeVD
-UGIP6+ppSvCsERN01Havz3+k+ekJefqaaZFRnRn7PKoD4SyxguuojkO6hJMASnsK
-QUSlPb7+jf+VjQA09AZO7Rt65pr3drmlPjZk7eVXh4Gi0y+oPsV/TZ3CZA74Tnc1
-3mGmetqcL4LsStRWPrO25RoJqkZrayX9P/WnjF5duR7r82pIIt7e5FdwyZIsWeia
-q3Reo7UQrCYnPWrZqJg64W1IKsVneN0FYMyUgtVBzlcQ2tR/Ncz5D/ySDxK6p+/r
-KZawNXyH8jQfs2HcpHmhVShtAw+/cQ==
-=ivod
------END PGP SIGNATURE-----
-
---2vh7jJ4clxa55i2K--
+>
+>> +            - const: pcie
+>> +            - const: ufs_card
+> ufs
+>
+> Keep the order as in GS101 file.
+>
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-peric0
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +            - description: CMU_PERIC0 BUS clock (from CMU_TOP)
+>> +            - description: CMU_PERIC0 UART_DBG clock (from CMU_TOP)
+>> +            - description: CMU_PERIC0 USI00 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC0 USI01 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC0 USI02 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC0 USI03 clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: bus
+>> +            - const: uart_dbg
+> uart
+>
+>> +            - const: usi00
+> usi0
+>
+>> +            - const: usi01
+> usi1
+>
+>> +            - const: usi02
+> usi2
+>
+>> +            - const: usi03
+> usi3
+>
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-peric1
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +            - description: CMU_PERIC1 BUS clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 SPEEDY2 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 SPI_CAM0 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 SPI_CAM1 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 UART_BT clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI04 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI05 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI06 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI07 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI08 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI09 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI10 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI11 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI12 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI13 clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: bus
+>> +            - const: speedy2
+> speedy
+>
+>> +            - const: cam0
+>> +            - const: cam1
+>> +            - const: uart_bt
+> uart
+>
+>> +            - const: usi04
+> usi4, etc
+>
+>> +            - const: usi05
+>> +            - const: usi06
+>> +            - const: usi07
+>> +            - const: usi08
+>> +            - const: usi09
+>> +            - const: usi10
+>> +            - const: usi11
+>> +            - const: usi12
+>> +            - const: usi13
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-peris
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +            - description: CMU_PERIS BUS clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: bus
+>> +
+>> +required:
+>> +  - compatible
+>> +  - "#clock-cells"
+>> +  - clocks
+>> +  - clock-names
+>> +  - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  # Clock controller node for CMU_FSYS1
+>> +  - |
+>> +    #include <dt-bindings/clock/samsung,exynos8895.h>
+>> +
+>> +    cmu_fsys1: clock-controller@11400000 {
+>> +        compatible = "samsung,exynos8895-cmu-fsys1";
+>> +        reg = <0x11400000 0x8000>;
+>> +        #clock-cells = <1>;
+>> +
+>> +        clocks = <&oscclk>,
+>> +                 <&cmu_top CLK_DOUT_CMU_FSYS1_BUS>,
+>> +                 <&cmu_top CLK_DOUT_CMU_FSYS1_MMC_CARD>,
+>> +                 <&cmu_top CLK_DOUT_CMU_FSYS1_PCIE>,
+>> +                 <&cmu_top CLK_DOUT_CMU_FSYS1_UFS_CARD>;
+>> +        clock-names = "oscclk", "bus", "mmc_card",
+>> +                      "pcie", "ufs_card";
+>> +    };
+>> +
+>
+> Best regards,
+> Krzysztof
+>
 
