@@ -1,95 +1,115 @@
-Return-Path: <linux-kernel+bounces-374879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D499A716B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:53:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB629A716D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7EEB283FE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:53:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54FA7B23171
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C491F4FCB;
-	Mon, 21 Oct 2024 17:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7EA1F4FDA;
+	Mon, 21 Oct 2024 17:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aES25T0K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSAuLsWm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9E11CBEB6;
-	Mon, 21 Oct 2024 17:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA3D1EABD1;
+	Mon, 21 Oct 2024 17:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729533191; cv=none; b=VWcgCy79vJCPNTzxjAEYfSsHJb7MYLZNaeeDvOUQVT0le1BSkSjobN5xZKulIZGWVRG2udr+xoot/JatrAsaisYeW0NdhYMz0otTDFTv2x7EBy2tk/FhumxTYv2RmUTH8sYUmjgqqwnc1J7zkh8QDC9LJijAwOLfm/k7IIpaXGE=
+	t=1729533211; cv=none; b=e2cfmWTUagD9FuvHKLrkYaLZykLUYUefq6Tng3TCKnhYCZF3EpndqZgUOzu1NA0aE8IpcEWmeYtCpRkZOzfskZ0R5LdPOikBctWGO+VweRRQWA5/Tyspq9PqM05nNo4t/RqqQRyDUBhKdwcpqLdl9e4Dy6lYHGz9yN5kVNLBCh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729533191; c=relaxed/simple;
-	bh=dGEHLL7GlnvTK+ikCYmTEGZS19Drc7emvofWAAegQ58=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=j415znDxcys17QgjTICs65fN4bLFKpXBg92pRImPCQmvxreoe0JfgwsqEQu1B5H+8kZ76rtAx5S/BQPLrfBm0hIKgdwuZrfxJcroDFL+Svtdz4qppaFRlt/ODTvKHbQPxKeBLqdAcYO3y+YKkCZlB5oxZe/FLlJOQiZCEg968kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aES25T0K; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729533190; x=1761069190;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=dGEHLL7GlnvTK+ikCYmTEGZS19Drc7emvofWAAegQ58=;
-  b=aES25T0KKWjHoPrLfPOhl3wJBo3lhrIFtB2TyiMeSkVVxA+35Z3JmXji
-   aMO5fDUlsznSyKNgjCeG6TmvY2TP7YrXE+1/BINkyZzCzeRQfiHYnZHHg
-   yh8t9XitxBOUNIzn0ywa7jhJdNZpp/+mXbY7YMVBiOH1xHgm/T1IvU6lO
-   HNqCVF7kO5NUoxMNR8RVZbO2Rzs0sMte3w2EeN+Z/NKNNnV8yw5J0MxTz
-   9Hgq0p0a9HMQ53npbN9LFsSx0zWShUC0WKSXxJ1K12wIHopN2kPA3GbqL
-   lZ/knVf2XbffmbTNfPI16d/WinMPyv37d6MufkGugWzXWm4alt17qmM4W
-   A==;
-X-CSE-ConnectionGUID: 0G8FeQf6T4uJZ/TX+puWAA==
-X-CSE-MsgGUID: xmkzHXzUTc+RrKa1lDLW6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="29148691"
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="29148691"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 10:53:09 -0700
-X-CSE-ConnectionGUID: KIAgIRt5T3yUc8lfnh981g==
-X-CSE-MsgGUID: pi6whwP0Rx6oYF+rREC91w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="80422863"
-Received: from philliph-desk.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.220.26])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 10:53:08 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>, Jamal Hadi Salim
- <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko
- <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: sched: etf: Use str_on_off() helper
- function in etf_init()
-In-Reply-To: <20241020104758.49964-2-thorsten.blum@linux.dev>
-References: <20241020104758.49964-2-thorsten.blum@linux.dev>
-Date: Mon, 21 Oct 2024 10:53:07 -0700
-Message-ID: <87v7xlfim4.fsf@intel.com>
+	s=arc-20240116; t=1729533211; c=relaxed/simple;
+	bh=pEO3WCdTG0OPmLeMMYj2xwB5T3LSe9k1uzrv7xAakx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qn8Hw+ms9wAB3jmh73j9W5AogJEWyYX8zGyAE1/XrPOtRP7+wQ5NL4pFlskVxwL7Zq1fMqBu2iJ0sr4WvYYRjePJsgsS2JnVj2qXstCB0d0kG4702wEgYS5X5WZFwaubfN+ufggqxlqyTfKj0+cWZXl+n6eXH6eg2wFAsGElbkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oSAuLsWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F7F6C4CEC3;
+	Mon, 21 Oct 2024 17:53:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729533211;
+	bh=pEO3WCdTG0OPmLeMMYj2xwB5T3LSe9k1uzrv7xAakx0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=oSAuLsWmFi6L0bCtv6qZr7bUMa7W/b85jFoSuSurslAl9wnf8jpPqdn9CiBD9kodq
+	 6jhgMDKF9HmmVDmXDOZp1N8/LgW/Ro6LpFAybMv7rIPqja/W2ydi8h8Z46l8iJls48
+	 oluy9OrlphhI67hn+DH/RWk5jsXXE2Cn6ZGKCt6TD+3AYiOUxpNLjVnc2TQKi8J9Gx
+	 Bygl4l5Rs8Am1QaiByzxRy8eSnEEQSWG3i36qr5Q5Jf8mDKEOxOnMHMfk5QCQYCVrD
+	 oJLlSGPw5UmRnQqG4SpnDYJNfa0NV5YrBy0RR1i+FS7q7ySToJs1Ml55Y+kOseXmbC
+	 W6UDoMX8gF59g==
+Date: Mon, 21 Oct 2024 12:53:28 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Philipp Stanner <pstanner@redhat.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] PCI: Improve printout in pdev_sort_resources()
+Message-ID: <20241021175328.GA839797@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241018234258.GA770341@bhelgaas>
 
-Thorsten Blum <thorsten.blum@linux.dev> writes:
+Oops, I inadvertently removed the cc list when I sent the response
+below.  Adding it back here.
 
-> Remove hard-coded strings by using the helper function str_on_off().
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
-
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-
-
-Cheers,
--- 
-Vinicius
+On Fri, Oct 18, 2024 at 06:42:59PM -0500, Bjorn Helgaas wrote:
+> [+cc Jonathan]
+> 
+> On Thu, Oct 17, 2024 at 12:55:45PM +0300, Ilpo Järvinen wrote:
+> > Use pci_resource_name() helper in pdev_sort_resources() to print
+> > resources in user-friendly format. Also replace the vague "bogus
+> > alignment" with a more precise explanation of the problem.
+> > 
+> > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> 
+> Applied with Philipp's reviewed-by to pci/resource for v6.13, thanks!
+> 
+> Happy to add yours, too, Jonathan, if you want.  You basically said
+> so, but I don't want to presume :)
+> 
+> > ---
+> > 
+> > v2:
+> > - Place colon after %s %pR to be consistent with other printouts
+> > - Replace vague "bogus alignment" with the exact cause
+> > 
+> >  drivers/pci/setup-bus.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> > index 23082bc0ca37..0fd286f79674 100644
+> > --- a/drivers/pci/setup-bus.c
+> > +++ b/drivers/pci/setup-bus.c
+> > @@ -134,6 +134,7 @@ static void pdev_sort_resources(struct pci_dev *dev, struct list_head *head)
+> >  	int i;
+> >  
+> >  	pci_dev_for_each_resource(dev, r, i) {
+> > +		const char *r_name = pci_resource_name(dev, i);
+> >  		struct pci_dev_resource *dev_res, *tmp;
+> >  		resource_size_t r_align;
+> >  		struct list_head *n;
+> > @@ -146,8 +147,8 @@ static void pdev_sort_resources(struct pci_dev *dev, struct list_head *head)
+> >  
+> >  		r_align = pci_resource_alignment(dev, r);
+> >  		if (!r_align) {
+> > -			pci_warn(dev, "BAR %d: %pR has bogus alignment\n",
+> > -				 i, r);
+> > +			pci_warn(dev, "%s %pR: alignment must not be zero\n",
+> > +				 r_name, r);
+> >  			continue;
+> >  		}
+> >  
+> > -- 
+> > 2.39.5
+> > 
 
