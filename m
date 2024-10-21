@@ -1,172 +1,171 @@
-Return-Path: <linux-kernel+bounces-373849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E792E9A5DBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:56:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA639A5DC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943681F21174
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:56:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C951C21464
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C8E1E102E;
-	Mon, 21 Oct 2024 07:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3A71E102C;
+	Mon, 21 Oct 2024 07:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTBx9YBf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="o2JrKS/V"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16741DF730;
-	Mon, 21 Oct 2024 07:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1EF1E1022
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729497373; cv=none; b=HJCO12rQta7OPDrIqhNF4t3NwaZ1P6mJq7D/3vwXWadzEO7P37YC+YkK65RTk2R4vTpQT7MFjeNuew+u8fQ6SsXm7oAIQ4MM6cLRvowNm3Zw8QdxzF5RJtCqTUyZDfH/+lkawGQ926s2WJu/BjCyK5pLLImzVoZvaZoNDxneKkw=
+	t=1729497409; cv=none; b=XNFKOdPLDQgv5P+srdzttXj7hzwlKYwqhzWchFjWoKkloAt7fEuJasqSbfjXtw5XxuCHuCKus0RdJxPwF9XkLHLXbbI31PbIygjILweMKBdXfhxtbt30NY/s622xAROdxuVxR0M3EiMKnbtzFXYOVEK8sDkYVUQonwQyy4qzbPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729497373; c=relaxed/simple;
-	bh=DQhuco04oiVnYP1cZjNQ2CI+wRPOHbQtA3/UoSttBL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YWhm92e3sPvnP56RhNeJVgfbGPhadRuDqJ2luMIgNuLM58VyUsZUmuLqMNTDKzUd0OVMv4wIlQ/jUv8NPQH0IJhcKb3z0ZP9K+ZBs3eG7BaTUTPt/sOIPm8hqnE56mjTZ6mp7E6xSJtvGH5DRaQQZ92MowUoVFodo9S8BIknIPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTBx9YBf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DD10C4CEC3;
-	Mon, 21 Oct 2024 07:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729497372;
-	bh=DQhuco04oiVnYP1cZjNQ2CI+wRPOHbQtA3/UoSttBL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZTBx9YBfaa+6nfhk4HkEIv2YNoydlyM6wGKrD6TVf3tBMPuFSBpgAFDiUr+NqXQfT
-	 1I99X6CegcTCl+WpM6yyKBEC3Ig/aW+d61oSFYqE1pLBV4an73kHcB9Grohv5o3u9+
-	 eSvcUTNIQYVEJyeg2ZmpsI81E6xbcYUUQHMGfxRatoDYPHE9LVnai/Uh6AyLp/n87a
-	 hPdvf7vEHEmTac+/fIvjhN6obdO8U1MHlqAT7RTKTOVXLTCB2wBJjxFah9YJmEMdxg
-	 hi1B9U1QsVP7FEI5iviAHTcTQEljvn57e7mNoPhwU1t5S+28OQeDLP34CxCinFV5Wr
-	 kz/hfjXgo/SUA==
-Date: Mon, 21 Oct 2024 09:56:08 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Imran Shaik <quic_imrashai@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: qcom: Add support for GPU Clock Controller on
- QCS8300
-Message-ID: <puhpztfn6ga5rxv4mwu7wyvk63hqme2nzffcvzwv7t4oo5hlvc@4ugxncmu3wwk>
-References: <20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com>
- <20241018-qcs8300-mm-patches-v1-2-859095e0776c@quicinc.com>
+	s=arc-20240116; t=1729497409; c=relaxed/simple;
+	bh=D4tf7xAfL9Kx0tW7kSDxr2Kpk6+LcteU+JQAkd5FRwc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Bqd7KwTL13RIuxqQ4L4mogi1AGn8bNGk1G74nYFO5Trt5WpmCGMmi6goK4P9VkGnwmtWjDWVkJD5/h8ZN9sIoVu0XtLckbBkIzhjQBZyg3zsx20lkrwqWeLqxSvvM4ypoWGWge2wOapWQXbCs9pf9i7og9HwDAZKI2+7AH+fKCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=o2JrKS/V; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1729497408; x=1761033408;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=D4tf7xAfL9Kx0tW7kSDxr2Kpk6+LcteU+JQAkd5FRwc=;
+  b=o2JrKS/VUxrXB4gqLnDJjQrqpQeLxkVO3TMsgxiOvtNHOU0b1CxQjlGQ
+   yehp3xvP2YHahdmtor6fbEmS8tnedWDbiwchh7xcDeTgTphZnobsItIXm
+   jWHnhFipKN6FIAWAWbL1KDSjLUipWsoNo9xxtKUnhlZ5gi76lVl7WgOrS
+   uU2qlpUL7Ij9FH7qjGk/NNBKr5XXFH4Ir43qUUCP3Y7ubJlNyXJnZ4I1B
+   utyIkgkn0nd5lAyBlf6Wv2oY66bm8ig8Y1QHHuonsEFBE36xOJBiUrOhB
+   58h3mZ7YdqlR7nqICOY5oh6wfMOGsbSusX7b5TxeDyaKQSRMVLrqX4bO6
+   A==;
+X-CSE-ConnectionGUID: myTjaD8mQ8OJ4PBrExTmXA==
+X-CSE-MsgGUID: 9GEN55FtSKuxdMi6rMNDcw==
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="264363866"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Oct 2024 00:56:42 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 21 Oct 2024 00:56:22 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 21 Oct 2024 00:56:20 -0700
+Message-ID: <7106870f-6452-47b1-9251-ce2a69366fe7@microchip.com>
+Date: Mon, 21 Oct 2024 09:56:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241018-qcs8300-mm-patches-v1-2-859095e0776c@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: atmel-hlcdc: fix atmel_xlcdc_plane_setup_scaler()
+To: Manikandan Muralidharan <manikandan.m@microchip.com>, <sam@ravnborg.org>,
+	<bbrezillon@kernel.org>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <Hari.PrasathGE@microchip.com>,
+	<durai.manickamkr@microchip.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: Cyrille Pitchen <cyrille.pitchen@microchip.com>
+References: <20241014094942.325211-1-manikandan.m@microchip.com>
+Content-Language: en-US, fr-FR
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20241014094942.325211-1-manikandan.m@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 18, 2024 at 04:42:30PM +0530, Imran Shaik wrote:
-> Add support to the QCS8300 GPU clock controller by extending
-> the SA8775P GPU clock controller, which is mostly identical
-> but QCS8300 has few additional clocks and minor differences.
+On 14/10/2024 at 11:49, Manikandan Muralidharan wrote:
+> From: Cyrille Pitchen <cyrille.pitchen@microchip.com>
 > 
-> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-> ---
->  drivers/clk/qcom/gpucc-sa8775p.c | 47 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 47 insertions(+)
+> On SoCs, like the SAM9X75, which embed the XLCDC ip, the registers that
+> configure the unified scaling engine were not filled with proper values.
 > 
-> diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
-> index f8a8ac343d70..99a8344b00db 100644
-> --- a/drivers/clk/qcom/gpucc-sa8775p.c
-> +++ b/drivers/clk/qcom/gpucc-sa8775p.c
-> @@ -317,6 +317,24 @@ static struct clk_branch gpu_cc_crc_ahb_clk = {
->  	},
->  };
->  
-> +static struct clk_branch gpu_cc_cx_accu_shift_clk = {
-> +	.halt_reg = 0x95e8,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x95e8,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data){
-> +			.name = "gpu_cc_cx_accu_shift_clk",
-> +			.parent_hws = (const struct clk_hw*[]){
-> +				&gpu_cc_xo_clk_src.clkr.hw,
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->  static struct clk_branch gpu_cc_cx_ff_clk = {
->  	.halt_reg = 0x914c,
->  	.halt_check = BRANCH_HALT,
-> @@ -420,6 +438,24 @@ static struct clk_branch gpu_cc_demet_clk = {
->  	},
->  };
->  
-> +static struct clk_branch gpu_cc_gx_accu_shift_clk = {
-> +	.halt_reg = 0x95e4,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x95e4,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data){
-> +			.name = "gpu_cc_gx_accu_shift_clk",
-> +			.parent_hws = (const struct clk_hw*[]){
-> +				&gpu_cc_xo_clk_src.clkr.hw,
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->  static struct clk_branch gpu_cc_hlos1_vote_gpu_smmu_clk = {
->  	.halt_reg = 0x7000,
->  	.halt_check = BRANCH_HALT_VOTED,
-> @@ -499,6 +535,7 @@ static struct clk_regmap *gpu_cc_sa8775p_clocks[] = {
->  	[GPU_CC_AHB_CLK] = &gpu_cc_ahb_clk.clkr,
->  	[GPU_CC_CB_CLK] = &gpu_cc_cb_clk.clkr,
->  	[GPU_CC_CRC_AHB_CLK] = &gpu_cc_crc_ahb_clk.clkr,
-> +	[GPU_CC_CX_ACCU_SHIFT_CLK] = NULL,
->  	[GPU_CC_CX_FF_CLK] = &gpu_cc_cx_ff_clk.clkr,
->  	[GPU_CC_CX_GMU_CLK] = &gpu_cc_cx_gmu_clk.clkr,
->  	[GPU_CC_CX_SNOC_DVM_CLK] = &gpu_cc_cx_snoc_dvm_clk.clkr,
-> @@ -508,6 +545,7 @@ static struct clk_regmap *gpu_cc_sa8775p_clocks[] = {
->  	[GPU_CC_DEMET_DIV_CLK_SRC] = &gpu_cc_demet_div_clk_src.clkr,
->  	[GPU_CC_FF_CLK_SRC] = &gpu_cc_ff_clk_src.clkr,
->  	[GPU_CC_GMU_CLK_SRC] = &gpu_cc_gmu_clk_src.clkr,
-> +	[GPU_CC_GX_ACCU_SHIFT_CLK] = NULL,
->  	[GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK] = &gpu_cc_hlos1_vote_gpu_smmu_clk.clkr,
->  	[GPU_CC_HUB_AHB_DIV_CLK_SRC] = &gpu_cc_hub_ahb_div_clk_src.clkr,
->  	[GPU_CC_HUB_AON_CLK] = &gpu_cc_hub_aon_clk.clkr,
-> @@ -583,6 +621,7 @@ static const struct qcom_cc_desc gpu_cc_sa8775p_desc = {
->  };
->  
->  static const struct of_device_id gpu_cc_sa8775p_match_table[] = {
-> +	{ .compatible = "qcom,qcs8300-gpucc" },
->  	{ .compatible = "qcom,sa8775p-gpucc" },
+> Indeed, for YCbCr formats, the VXSCFACT bitfield of the HEOCFG25
+> register and the HXSCFACT bitfield of the HEOCFG27 register were
+> incorrect.
+> 
+> For 4:2:0 formats, both vertical and horizontal factors for
+> chroma chanels should be divided by 2 from the factors for the luma
+> channel. Hence:
+> 
+> HEOCFG24.VXSYFACT = VFACTOR
+> HEOCFG25.VSXCFACT = VFACTOR / 2
+> HEOCFG26.HXSYFACT = HFACTOR
+> HEOCFG27.HXSCFACT = HFACTOR / 2
+> 
+> However, for 4:2:2 formats, only the horizontal factor for chroma
+> chanels should be divided by 2 from the factor for the luma channel;
+> the vertical factor is the same for all the luma and chroma channels.
+> Hence:
+> 
+> HEOCFG24.VXSYFACT = VFACTOR
+> HEOCFG25.VXSCFACT = VFACTOR
+> HEOCFG26.HXSYFACT = HFACTOR
+> HEOCFG27.HXSCFACT = HFACTOR / 2
+> 
+> Fixes: d498771b0b83 ("drm: atmel_hlcdc: Add support for XLCDC using IP specific driver ops")
+> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@microchip.com>
 
-I just wanted to comment on your binding that devices should be made
-compatible...
-
->  	{ }
->  };
-> @@ -596,6 +635,14 @@ static int gpu_cc_sa8775p_probe(struct platform_device *pdev)
->  	if (IS_ERR(regmap))
->  		return PTR_ERR(regmap);
->  
-> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-gpucc")) {
-
-Why we cannot use match data? Seeing compatibles in the code is
-unexpected and does not scale.
+Thanks Mani and Cyrille:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
 Best regards,
-Krzysztof
+  Nicolas
+
+> ---
+>   .../gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c   | 27 ++++++++++++++++---
+>   1 file changed, 24 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> index 4bcaf2cd7672..41c7351ae811 100644
+> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> @@ -365,13 +365,34 @@ void atmel_xlcdc_plane_setup_scaler(struct atmel_hlcdc_plane *plane,
+>   				    xfactor);
+>   
+>   	/*
+> -	 * With YCbCr 4:2:2 and YCbYcr 4:2:0 window resampling, configuration
+> -	 * register LCDC_HEOCFG25.VXSCFACT and LCDC_HEOCFG27.HXSCFACT is half
+> +	 * With YCbCr 4:2:0 window resampling, configuration register
+> +	 * LCDC_HEOCFG25.VXSCFACT and LCDC_HEOCFG27.HXSCFACT values are half
+>   	 * the value of yfactor and xfactor.
+> +	 *
+> +	 * On the other hand, with YCbCr 4:2:2 window resampling, only the
+> +	 * configuration register LCDC_HEOCFG27.HXSCFACT value is half the value
+> +	 * of the xfactor; the value of LCDC_HEOCFG25.VXSCFACT is yfactor (no
+> +	 * division by 2).
+>   	 */
+> -	if (state->base.fb->format->format == DRM_FORMAT_YUV420) {
+> +	switch (state->base.fb->format->format) {
+> +	/* YCbCr 4:2:2 */
+> +	case DRM_FORMAT_YUYV:
+> +	case DRM_FORMAT_UYVY:
+> +	case DRM_FORMAT_YVYU:
+> +	case DRM_FORMAT_VYUY:
+> +	case DRM_FORMAT_YUV422:
+> +	case DRM_FORMAT_NV61:
+> +		xfactor /= 2;
+> +		break;
+> +
+> +	/* YCbCr 4:2:0 */
+> +	case DRM_FORMAT_YUV420:
+> +	case DRM_FORMAT_NV21:
+>   		yfactor /= 2;
+>   		xfactor /= 2;
+> +		break;
+> +	default:
+> +		break;
+>   	}
+>   
+>   	atmel_hlcdc_layer_write_cfg(&plane->layer, desc->layout.scaler_config + 2,
 
 
