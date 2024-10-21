@@ -1,85 +1,80 @@
-Return-Path: <linux-kernel+bounces-373877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A749A5E48
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:13:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EBB49A5E4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4028AB246CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:13:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46F31F21C43
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF22F1E1C04;
-	Mon, 21 Oct 2024 08:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC1C1E1C0F;
+	Mon, 21 Oct 2024 08:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4MqpvlP"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BRbq5AcZ"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166A81E0E11;
-	Mon, 21 Oct 2024 08:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DFE1E1A2C
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729498385; cv=none; b=WhE89Ux33K+YX/goNPtgj//VSfYfaV+DtX9CIhsm40WZul3ozmPqi9IXpJbIUGz8XAPzH8fkP+Vv9RsXmYU3qTRcPSiAnvIOl+yxnr/rp3sumZcEJCSwfutjlvhhQiYz1oSDwWigMOKrVt5gwQyfFwFtJ+rWREpIyw/kSfpxJ90=
+	t=1729498421; cv=none; b=MmwPs857WrVDkVNj/WyuZhhD7MLMwZsESAEg5GNPfvakAB/zxQ6hK4uHza6DRwIchdtDxDVoSAaC/6tbyeEnKFj+kPBGXW7Fu8xlw4QRrpuGih1Yqyr/z66/69dy3ywKh3DNTWpznRDJOHVnRTLsUVcUNaGvnufc3RlfxdvP4gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729498385; c=relaxed/simple;
-	bh=VxGqKEGCnBkJCvO3qGHM5rWV2Hs+c2kSKdV7faUoDJ0=;
+	s=arc-20240116; t=1729498421; c=relaxed/simple;
+	bh=h0dSRN5aVnaI/bTvz9JTkUaXVI7M0yMT/ZQG/CoBhtA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LnWJSmiyFPk9Upd8ECerfu2acgZoooflOGSTYT8A+VbHopj1XAkkxUMHyk5dcSzZ/5FjeI1G1EU9XXapPjEIaN8QAN12IqfbxVZ8Pn6da+3NSd57rnl2GZtO69+qacALIPKKxO3lJKUG8yWFRaoyntSeO0j0lQ1mWWRfhNvkGg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C4MqpvlP; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a850270e2so293127466b.0;
-        Mon, 21 Oct 2024 01:13:02 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZAYNyau2gN6gSUdrkZZ59llMVv0LbozZlljLgAz/+QD+YYg3BzeLSpSTTnVbR8Yh7TN4VkK1SRzJaG9enfjTBvZotqyW8t3/v2235HlDd+spneCDa/9nWQWJzuPqlC6JgbdUSCpkqiEa1CZcOr0yfqZUQDHABAcdQBoQjY5EOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BRbq5AcZ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso566036066b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 01:13:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729498381; x=1730103181; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1729498417; x=1730103217; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g9Ky9EMNkbbRjWKUs8mDwmXwg2t/TZHXkf923bR2tnY=;
-        b=C4MqpvlPOATgJ+vF6qk8F4f6BbVMyYcl//WNunQln7wUJdotdw8o9WBsBkdU0vUMOc
-         RmHc05E81QfggAI/bVVC7IJiujtCePz6f/TpAcbljhp9AqYDzzfU6ldi95+lvqJfvXK3
-         jd5E+CzIiea3O3InIUdIEM90NsbN/HV+/63hfaz70tFtCgBUbIscoS/x/9j9Qz+QUOhF
-         NI8GX+3In7j1vB34Uz2zRQcXI8hBLKPs8iQtbWOd+sr1Jcq0rtrTPwWTtl+cP9AC2FdM
-         2YEPQBv3ZpCegBd9HP2xRpDOy/tZVLGojXZJce+OXDXFatebhzyOuP1/wqbuvlvBP7P/
-         y+ig==
+        bh=yZWxmndYcOZZ85jYs10Ky2hzEF5qsbgDei3uuETVLRo=;
+        b=BRbq5AcZwt307ydYlAK1vnEwpqZuVEr7cXOEkT/ZkQvg9zjLCCn9AL/j++Ain5CUWl
+         o5iXGE+imu3bILgR/tV1BQ99KDVkEFhixDF29gaNvHpPhjn3J7tHy2gYU75HKS9cet+U
+         eoVLquCiZI7kG/cFtDQi/4y0foZdMs4IGE/4XYoYnTvvTgalsf4u83Rmf8LZG7T0zfDf
+         T7+ZP0WeFxEMZ+Hz+gTPjBI+ns8Sb8eq76fbu2v7+yF/uTQPt1ahljxw8jiQqg7NVOZG
+         msllpod0jK32G1LlrS8ZxF5Gq1nTYrJuRfaiaay1c38LN2/3lkvSEQL/awuwDbM7VXe+
+         bmqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729498381; x=1730103181;
+        d=1e100.net; s=20230601; t=1729498417; x=1730103217;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g9Ky9EMNkbbRjWKUs8mDwmXwg2t/TZHXkf923bR2tnY=;
-        b=kLkytdUO0PGklBDkPiMhzcAbS+WunU1jD2C2zC9Jhq+3tj1E/kcimtX6Tm2nQsgzHn
-         C8yLUrxSSkFsu6VuZ/n6t88P/P5sYYYvh8pJXklCJ7Igy8LAS20QVXqd7we4JDayL5TV
-         3vaDBJduZFu/rRo2lMNvcfM+ZqLXa3TfgYyQkAJkj2YHbZxvkZYfxgBFMTw7/ckMLaSk
-         HCmUTw+TavO5qJrnNEPK+KecXDghr5TPUawHGBfC27ZcfEe9ObQ5z0UIpXKkvbzegjNd
-         paXQMyvZ53SkXXMLlBy3mgkbCYPZ92KWjK8eRpHfN/yWVOUw4mRM8UDBcqEIVtGj5le8
-         U6cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWb/u7e279hwbLYMsOInLZ/Ejke3uXdmo4juHq+UhPsLTcchlWFMzCixhK0FKSOLrbLYwxm/zEltGnxk/o=@vger.kernel.org, AJvYcCWi1gxlLWL+UX0kd0oFx2sWi6pGYGOrk6jvQq1CuB2DvzlDu6CTbZINNptc8JpR3ST6LAHCiKMa3doWC94=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvz+/IhTQjYUZyAdfkr5I7k07JVcqDY4JtZ8ZNbzlJSbdR8r/g
-	OQ7aQNqIt5nKa/eDPlIFKxyC3JBuBy18ghQpO+x6ZmkjbGTgwhuc
-X-Google-Smtp-Source: AGHT+IE7AznbKuRbPEcL50uPSYz10OJVhjTCkxblruqPL518uSHr3Vnx+XV+D1ZorUI0J7TcH2Ex6g==
-X-Received: by 2002:a17:907:1c26:b0:a99:3c32:b538 with SMTP id a640c23a62f3a-a9a69cccdd9mr1238237066b.42.1729498381003;
-        Mon, 21 Oct 2024 01:13:01 -0700 (PDT)
-Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-51-176.cust.vodafonedsl.it. [188.217.51.176])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a915720fesm173285166b.167.2024.10.21.01.13.00
+        bh=yZWxmndYcOZZ85jYs10Ky2hzEF5qsbgDei3uuETVLRo=;
+        b=k68z7nnvwDhGvnqr12MUwO1jrliR9UoMNw9jhfxOEQuMCtR50fPlD98JVlzL9WzOp1
+         j/UwkA4jh0hr0hwehoYlzIrvGQxLH+/3XxjxxgXjej/SkITjq89+4YWlPWvjWQQNWZ8i
+         ryMPVdDd8jPtJFPhhpU1OBCtHsLh+IcjVhcVNYw0ev88Rai8Zfp673sfharYQoUrrQ3f
+         UGH2EQZCB4/I/NAzsfoAD8Niwe5GS52Ixkbcrnfpp0UVXb3EZdr9BMDG35zQ1+7KT3D+
+         rIsdRqrbo7TXYwqKLV8/g4DVlbHh07r0lTntWFe8tyY/h2U6SN91wN2cb9Dm3HfYLrON
+         e5Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpK2v4dkYI0y7PiDOoi8QW7USINkYfcYrH+rEuD4JgOwayNOggthW1/SiSOCHGj6mDXplBU+5v7VDr2yI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmWKgh1xG5uvAozTdRwDgon1ryYYXeF03tEZ7AsawRu0tZ3dW0
+	jFnlcm1FEUOhrUZT7o6J2wtINwa4ObNgUGxuOA4nfiScufF0GqhRB0O5d3G49RM=
+X-Google-Smtp-Source: AGHT+IH6OUZvSau7zYJilrQ3BnOA5Jyne3edpM2fJujY3GAy9NDR+atmzAursD7ReEtWUYn2DtdlHg==
+X-Received: by 2002:a17:907:1c24:b0:a9a:6d7:9c4 with SMTP id a640c23a62f3a-a9a69a63af8mr1163073366b.12.1729498414640;
+        Mon, 21 Oct 2024 01:13:34 -0700 (PDT)
+Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370631sm173355166b.104.2024.10.21.01.13.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 01:13:00 -0700 (PDT)
-Date: Mon, 21 Oct 2024 10:12:58 +0200
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: sakari.ailus@linux.intel.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: v4l2-subdev: Refactor events
-Message-ID: <ZxYNCmZhGTICDfDC@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-References: <20241020163534.1720297-1-tomm.merciai@gmail.com>
- <20241020164354.GG7770@pendragon.ideasonboard.com>
- <ZxX2SVl/p0i7Nemi@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <20241021073034.GC14328@pendragon.ideasonboard.com>
+        Mon, 21 Oct 2024 01:13:34 -0700 (PDT)
+Date: Mon, 21 Oct 2024 10:13:33 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Link Lin <linkl@google.com>
+Subject: Re: [PATCH mm-unstable v1] mm/page_alloc: try not to overestimate
+ free highatomic
+Message-ID: <ZxYNLb0CiZyw31_q@tiehlicka>
+References: <20241020051315.356103-1-yuzhao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,125 +83,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021073034.GC14328@pendragon.ideasonboard.com>
+In-Reply-To: <20241020051315.356103-1-yuzhao@google.com>
 
-On Mon, Oct 21, 2024 at 10:30:34AM +0300, Laurent Pinchart wrote:
-> On Mon, Oct 21, 2024 at 08:35:53AM +0200, Tommaso Merciai wrote:
-> > Hi Laurent,
-> > Thanks for your review.
-> > 
-> > On Sun, Oct 20, 2024 at 07:43:54PM +0300, Laurent Pinchart wrote:
-> > > Hi Tommaso,
-> > > 
-> > > Thank you for the patch.
-> > > 
-> > > On Sun, Oct 20, 2024 at 06:35:32PM +0200, Tommaso Merciai wrote:
-> > > > Controls can be exposed to userspace via a v4l-subdevX device, and
-> > > > userspace has to be able to subscribe to control events so that it is
-> > > > notified when the control changes value.
-> > > > If a control handler is set for the subdev then set the HAS_EVENTS
-> > > > flag automatically into v4l2_subdev_init_finalize() and use
-> > > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> > > > as default if subdev don't have .(un)subscribe control operations.
-> > > 
-> > > I would add here
-> > > 
-> > > This simplifies subdev drivers by avoiding the need to set the
-> > > V4L2_SUBDEV_FL_HAS_EVENTS flag and plug the event handlers, and ensures
-> > > consistency of the API exposed to userspace.
-> > > 
-> > > And you can also add
-> > > 
-> > > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > 
-> > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> > > 
-> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > 
-> > Oks, Thanks again.
-> > 
-> > > Now, can we simplify sensor drivers to drop the event handlers and the
-> > > flag ? :-)
-> > 
-> > Yep, plan is add all to support v4l2_subdev_init_finalize()
-> > Removing:
-> > 
-> >  .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-> >  .unsubscribe_event = v4l2_event_subdev_unsubscribe,
-> > 
-> > if are used. And ofc V4L2_SUBDEV_FL_HAS_EVENTS.
+On Sat 19-10-24 23:13:15, Yu Zhao wrote:
+> OOM kills due to vastly overestimated free highatomic reserves were
+> observed:
 > 
-> What I meant is looking at the I2C sensor drivers that currently
+>   ... invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0 ...
+>   Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB high:1068392kB reserved_highatomic:1073152KB ...
+>   Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB (ME) 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (M) 0*2048kB 0*4096kB = 1477408kB
 > 
-> - call v4l2_subdev_init_finalize()
-> - set V4L2_SUBDEV_FL_HAS_EVENTS
-> - set the .subscribe_event() and .unsubscribe_event() handlers
+> The second line above shows that the OOM kill was due to the following
+> condition:
 > 
-> and dropping the flag and handlers from them. Is that what you plan to
-> work on ?
+>   free (1482936kB) - reserved_highatomic (1073152kB) = 409784KB < min (410416kB)
+> 
+> And the third line shows there were no free pages in any
+> MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as type
+> 'H'. Therefore __zone_watermark_unusable_free() overestimated free
+> highatomic reserves. IOW, it underestimated the usable free memory by
+> over 1GB, which resulted in the unnecessary OOM kill.
 
-Yep, I will take a look on that. :)
+Why doesn't unreserve_highatomic_pageblock deal with this situation?
 
-Thanks & Regards,
-Tommaso
-
-> 
-> > Meanwhile I think I will send v3 with your
-> > suggestions. :)
-> > 
-> > > > ---
-> > > > Changes since v1:
-> > > >  - Aligned event subscription with unsubscription as suggested by LPinchart,
-> > > >    SAilus
-> > > > 
-> > > >  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
-> > > >  1 file changed, 20 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > index 3a4ba08810d2..fad8fa1f63e8 100644
-> > > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
-> > > >  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
-> > > >  
-> > > >  	case VIDIOC_SUBSCRIBE_EVENT:
-> > > > -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
-> > > > +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> > > > +			return v4l2_subdev_call(sd, core, subscribe_event,
-> > > > +						vfh, arg);
-> > > > +
-> > > > +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
-> > > > +		    vfh->ctrl_handler)
-> > > > +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-> > > > +
-> > > > +		return -ENOIOCTLCMD;
-> > > >  
-> > > >  	case VIDIOC_UNSUBSCRIBE_EVENT:
-> > > > -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
-> > > > +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> > > > +			return v4l2_subdev_call(sd, core, unsubscribe_event,
-> > > > +						vfh, arg);
-> > > > +
-> > > > +		if (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS)
-> > > > +			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
-> > > > +
-> > > > +		return -ENOIOCTLCMD;
-> > > >  
-> > > >  #ifdef CONFIG_VIDEO_ADV_DEBUG
-> > > >  	case VIDIOC_DBG_G_REGISTER:
-> > > > @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
-> > > >  		}
-> > > >  	}
-> > > >  
-> > > > +	if (sd->ctrl_handler)
-> > > > +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-> > > > +
-> > > >  	state = __v4l2_subdev_state_alloc(sd, name, key);
-> > > >  	if (IS_ERR(state))
-> > > >  		return PTR_ERR(state);
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+-- 
+Michal Hocko
+SUSE Labs
 
