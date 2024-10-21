@@ -1,134 +1,161 @@
-Return-Path: <linux-kernel+bounces-374288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F8E9A6800
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B454C9A6805
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA08D280D5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C3A9281A57
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2341F426B;
-	Mon, 21 Oct 2024 12:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDEC1F5859;
+	Mon, 21 Oct 2024 12:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJQ6lwLU"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="itBqERyJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC1E1E7C13;
-	Mon, 21 Oct 2024 12:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FA41F4FDD
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513160; cv=none; b=DdstkqL35uAnvCF3ARS2euAqwp6sI9fbEBq/k/TIux4W44njZnuY8B5LIUGgv5+Evq+CHirWuxV8yllEB0VEgIbm0MLFcOYpcEZeD+ROWKYeemtj5K96IUHfVmfhRa1cnvL8CVditzJVPaFPKqLoUg5n4Jt3cjBTY3xPTxW1HLo=
+	t=1729513170; cv=none; b=bP+jG0/R8ZIdsUzzH9HTeN+Hzeq+PgFYvtAxVo0fzr5BZfb3s60ehobQXvk2uPMODKOrXcl7gN5L1CJEwtrqCRNPjbuMJSV79Hn88GLujf8oMWCWhbtN4LUUq/f+P9PSg9WfaMEYicwZUCbnOb21MiKj/CxD+YAQPrvoPR0wwwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513160; c=relaxed/simple;
-	bh=7mrhqlzLU/8yE2Bl6++pdNx3AsmIHi/tmHTMQIHyy7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E9vZooA/v3ckuzsa54fo1cDJcdHh26kmIiaQDh1B639hVUA25JF2qplaKskfNi3q84ZXDQAF+JbNuYLJQtWCbq+PehNgLrH6L0TmppAQvLV/8pKGuD+Q06vAo8Mfs/hHFc8aNL6VfXzHm9Cpex6fw9xyjNXtCU05Tx7zQsCM5C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJQ6lwLU; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e4fa3ea7cso3370975b3a.0;
-        Mon, 21 Oct 2024 05:19:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729513158; x=1730117958; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GzXAN/kGFLyZ6KoxQYaMyN8WIW7O/chKPrM0YUwT+2Y=;
-        b=YJQ6lwLU7n04PJmAJNZ/HtMDtWl4vYmqS9qQDCtE1imYoqsVVwSooUUiUWrRDLcgkq
-         64DXxemN+fnA6FTWwa57Y2N/o9pf3WcJUYV34lkG9v6qUrIU2KSvJqXEAejAN7Jz4X0U
-         pfp+UbBwpUZdwMwl35tXPTh1PxZyRJjZWGfNaAgDg2UPXccMKKyS8qEgdWtwOUYaIab9
-         eH+KrtBGNf8M4IStTKJrYolbf9C7ImzFHsy0Mho4IWqkwkSM6VqBijLn+d0PSXPeM8Ur
-         26+l6vnvwUuccRHb3IF3J1/4wW98wM8Uz5LsVY4gROHM3VKurENv4RjLmRH51WbJmbJk
-         xR9g==
+	s=arc-20240116; t=1729513170; c=relaxed/simple;
+	bh=85dwOBqgxabEtu7DlXSK3j+X36k6w41TKJHAAtHgg2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QHKSWjXz4YJ542EONvnf2EE2hmuhhR8M+7DVz/t1fp1XRfZGPJ5WqdIrizUgUeO0bHiNFr1SnwdK9i/AWoNPE/oWsu1J2Uo9fUZErF2w6gS6F+n0RQx6d3fzw40CMPpR7sYrFnNPl1Uj7xGDzLewUa4knnsLJjY/pmKoJCih9Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=itBqERyJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729513167;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3SSNANQOGj1r9ayrCBzVvFmFj/ChOB3ieC2hxuoZm3o=;
+	b=itBqERyJZx0C2HdogBZrG1iHhbTD+RVGYjGo8WQyOwltnzNBy58AqH6ro8TNzpLRkxKfWp
+	Ghvv3brzegyNpke9jO2nji55JSLzY5N46YCYOlXaLUHP98x3wvsr2abHHaXYNmm06pJFJe
+	jmt/atFFhosb9d41FV9VbifIoXhVQHI=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-448-mkp5I1ZaOy6cDOL7mqpq4w-1; Mon, 21 Oct 2024 08:19:26 -0400
+X-MC-Unique: mkp5I1ZaOy6cDOL7mqpq4w-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4316ac69e6dso14859255e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:19:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513158; x=1730117958;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GzXAN/kGFLyZ6KoxQYaMyN8WIW7O/chKPrM0YUwT+2Y=;
-        b=iO/mbJA9DqUJu0NZJUa/HbBCgFz75KVXgALKVIvKEHvlqQr6gL+9IlkrZzf/CylIR+
-         x40v/5sRZo3odwKaQq6je4QlT73hLV1Mi+rHQr2z4f8lhxm5FxPMm2Lnt88TSkG80LSt
-         LVh6wwWteDRgkuK+6QqATvnvQyf1OlI59tvJQ+ihyNqh7dxV0LXwK5UXGq/4ArKT4W0x
-         GS+U0dx6bFz2vHLfJ1/BiCMeiI3sXw5zQxXFxp3DH/0ukzLxeD8GpZGlKyQ5gDRtDOaH
-         +2fQG1oxqeQV3c8EDZV7QCvCLgTOejpsD71+R6uriSVeU6RqivxxbIAkkkkoWQlL2iEC
-         fvDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2u8IB+CEWNjZXq69QGd9cbB3MgMO/ZwidZLl00BapSKKwQTV7N9tGTf6YmuViLnBoSv+z6WyVsXnlVQJ7@vger.kernel.org, AJvYcCU8HDKqd5RlfWHNXsRsWIGcpKH0vKhJKdFdhxAVhj4HifrS4IT9M6toswtFyc57vKLHSt+N7J1Ny9HzTVn0@vger.kernel.org, AJvYcCVoscgNohim02VHjrf146jF2/QOoHdFANrtuF5d9e4vw3TugQlpCOJQNIZwaoCWiP46WOVKupZA1qhU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBpVCxpqxpMCwL3TRsTY2h6p5BOkCvCjWGJ0eZKMzv+oaVeDI+
-	GGTx/OKDto4h65QlzZpxSGx3m2qqZlYgpeTgGEt96INKazF9m9bq
-X-Google-Smtp-Source: AGHT+IG3E9DRACYh7UWi0DZZrBl+qKyuSDA06T/8MVTylVvYqdgNfbdh8aJBhwejFWfecdHUmg2QQQ==
-X-Received: by 2002:a05:6a00:98d:b0:71e:1201:636a with SMTP id d2e1a72fcca58-71ea31a5886mr15484512b3a.1.1729513157747;
-        Mon, 21 Oct 2024 05:19:17 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabdb75esm2907976a12.89.2024.10.21.05.19.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:19:17 -0700 (PDT)
-Date: Mon, 21 Oct 2024 20:18:58 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Inochi Amaoto <inochiama@outlook.com>, 
-	Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
- SG2044 uarts
-Message-ID: <r5ngs2j776jcy6sfirwzmtsoljotatfvgmlmv4sj4xksye2bff@xtn7adafbpfz>
-References: <20241021072606.585878-1-inochiama@gmail.com>
- <20241021072606.585878-2-inochiama@gmail.com>
- <20241021-outlying-washday-8f171dedc703@spud>
+        d=1e100.net; s=20230601; t=1729513165; x=1730117965;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3SSNANQOGj1r9ayrCBzVvFmFj/ChOB3ieC2hxuoZm3o=;
+        b=J7Txm9GHqUoGHnfFxlHLsBu/TdfK2bBEzckl0kIZXpu9b0nt6Y9fchtbneld5dDwtQ
+         rTVHzDUmCM/h45ujz1pq7luXL8nD6ceownI012BezAN7xoIIGR4aXpJJfGrr0BB4h6tm
+         45drVMU7Ipv6LKHhky+Tg4VpftK99tRktJ+FxNhwGJHW7BPZ1MzPzUy/fibWRd2vsS29
+         OIOLp/xWNfgy9TNturxS9e5zLD1BvVkevftsHDQElzqGKXzS6eENFDylmeoFuNIieyUR
+         D+0jz1pHka2+Y34A2PsznjkCm+mJe0s8c2i1AZE/GPhlmhz25pmal7WzEWMDFbTiLedg
+         JyUg==
+X-Gm-Message-State: AOJu0YzqTA4XhgEyqijyFbJ0UXwqxc4YaPDlEWKVTX9qtLyCe0zcDPyG
+	qcnf1EAHnNVaM+ercf0f7iIQezC6MHQPdRpsYoWPRmqjakFBGtUxBk1AKLuScTyks51iIKBAb8q
+	znGGhdscaL5u+iNoY+pfarNqjL0nEC3gOW4XGQFB3A2TMFqHj9kxOqt33EJ31lg==
+X-Received: by 2002:a05:600c:4e12:b0:431:1d97:2b0a with SMTP id 5b1f17b1804b1-43161641793mr95708025e9.15.1729513164991;
+        Mon, 21 Oct 2024 05:19:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHL+4zTIZRaHCwKu0OkK2nf7jN/ima55H0fGeAQpNI8aBlBlaAzYq2yIrtU/CEO+/V54e4DoQ==
+X-Received: by 2002:a05:600c:4e12:b0:431:1d97:2b0a with SMTP id 5b1f17b1804b1-43161641793mr95707665e9.15.1729513164570;
+        Mon, 21 Oct 2024 05:19:24 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:36d3:2b96:a142:a05b? ([2a09:80c0:192:0:36d3:2b96:a142:a05b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fa4fsm56089275e9.16.2024.10.21.05.19.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 05:19:24 -0700 (PDT)
+Message-ID: <213b6a6a-3594-4bc5-ae6d-930bbaf3616d@redhat.com>
+Date: Mon, 21 Oct 2024 14:19:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021-outlying-washday-8f171dedc703@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] virtio-mem: s390 support
+To: Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-6-david@redhat.com>
+ <20241014184824.10447-F-hca@linux.ibm.com>
+ <ebce486f-71a0-4196-b52a-a61d0403e384@redhat.com>
+ <20241015083750.7641-D-hca@linux.ibm.com>
+ <fbee219a-cc88-414b-8f5f-2cb3b4c9f470@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+In-Reply-To: <fbee219a-cc88-414b-8f5f-2cb3b4c9f470@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 21, 2024 at 01:10:52PM +0100, Conor Dooley wrote:
-> On Mon, Oct 21, 2024 at 03:26:05PM +0800, Inochi Amaoto wrote:
-> > The UART of SG2044 is modified version of the standard Synopsys
-> > DesignWare UART. The UART on SG2044 relys on the internal divisor
-> > and can not set right clock rate for the common bitrates.
-> > 
-> > Add compatibles string for the Sophgo SG2044 uarts.
-> > 
-> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > ---
-> >  .../devicetree/bindings/serial/snps-dw-apb-uart.yaml          | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > index 4cdb0dcaccf3..6963f89a1848 100644
-> > --- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > +++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > @@ -58,6 +58,10 @@ properties:
-> >                - brcm,bcm11351-dw-apb-uart
-> >                - brcm,bcm21664-dw-apb-uart
-> >            - const: snps,dw-apb-uart
-> > +      - items:
-> > +          - enum:
-> > +              - sophgo,sg2044-uart
-> > +          - const: snps,dw-apb-uart
+
+
+Am 21.10.24 um 08:33 schrieb Christian Borntraeger:
 > 
-> Why does each vendor have an items entry of its own? Seems like needless
-> clutter of the file IMO, except for the renesas bit.
 > 
+> Am 15.10.24 um 10:37 schrieb Heiko Carstens:
+>> On Mon, Oct 14, 2024 at 09:16:45PM +0200, David Hildenbrand wrote:
+>>> On 14.10.24 20:48, Heiko Carstens wrote:
+>>>
+>>> The cover letter is clearer on that: "One remaining work item is kdump
+>>> support for virtio-mem memory. This will be sent out separately once initial
+>>> support landed."
+>>>
+>>> I had a prototype, but need to spend some time to clean it up -- or find
+>>> someone to hand it over to clean it up.
+>>>
+>>> I have to chose wisely what I work on nowadays, and cannot spend that time
+>>> if the basic support won't get ACKed.
+>>>
+>>>
+>>> For many production use cases it certainly needs to exist.
+>>>
+>>> But note that virtio-mem can be used with ZONE_MOVABLE, in which case mostly
+>>> only user data (e.g., pagecache,anon) ends up on hotplugged memory, that
+>>> would get excluded from makedumpfile in the default configs either way.
+>>>
+>>> It's not uncommon to let kdump support be added later (e.g., AMD SNP
+>>> variants).
+>>
+>> I'll leave it up to kvm folks to decide if we need kdump support from
+>> the beginning or if we are good with the current implementation.
 > 
-> Cheers,
-> Conor.
+> If David confirms that he has a plan for this, I am fine with a staged approach
+> for upstream.
 
+I do have a plan and a even a semi-working prototype that I am currently 
+improving. In summary, the virtio-mem driver in kdump mode can report ranges 
+with plugged memory to the core so we can include them in the elfcore hdr. That 
+is the easy part.
 
-I just follow others when writing this binding. I think it may need
-another patch to fix this problem, right?
+The "challenge" is when the virtio-mem driver is built as a module and gets 
+loaded after building/allocating the elfcore hdr (which happens when creating 
+/proc/vmcore). We have to defer detecting+adding the ranges to the time 
+/proc/vmcore gets opened. Not super complicated, but needs some thought to get 
+it done in a clean way / with minimal churn.
 
-Regards,
-Inochi
+-- 
+Cheers,
+
+David / dhildenb
+
 
