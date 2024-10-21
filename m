@@ -1,100 +1,78 @@
-Return-Path: <linux-kernel+bounces-373770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CB59A5C80
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:17:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA159A5C85
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92C4A1F228BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:17:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C6D1F210AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62CD1D151E;
-	Mon, 21 Oct 2024 07:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E791D130E;
+	Mon, 21 Oct 2024 07:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ifvADmV3"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDKxBnuN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7651D07A3;
-	Mon, 21 Oct 2024 07:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15923194A75;
+	Mon, 21 Oct 2024 07:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495045; cv=none; b=QwShAW+yBiV4V0NoTMPIp+VvUw+srnMKOHRQOKooHh0ZX6AVVZ+zPwFshjUH8lHMO1zwbyj7rW3NSaPNvLXuNXi83vWMBSlWRom30QzDeXy/MZbC3O/oDghlTb/HW5hm+VivinGGWUdcVUDTbeAvwRlcwNSgLeQdan7mm1Cning=
+	t=1729495073; cv=none; b=NGlzzfq4JI3LdRbQqlwUfuYSHJJLDOYd5g6zxyD61rr0nbE+XRsuCp3xQvyvh2pxx1y3DukRDNGQX/L1HiHUcmRoX1DrmSlAMw+NzO1fBAbb94Mki3Yjf5LM0wDx3XZ0WxcvuiqAh9rkhn4CM24fnUhZ45RWcxVp1yHBv0+mEP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495045; c=relaxed/simple;
-	bh=yNkzjvJHErMr5ItWr86Ff1LdwbAplket3nAXC6LDs5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N4ePZ/O+ledm3TXgXWC+QJMtDj0/oa9H9IfQVFIqV5jE5Ibhldt3pu9fNR+SomftxaLeyggDT78c/CerB7p/EStUZ9PGGVGERgqlk58SXbfitdrPp3vvj56r2PfVWhT4C9AtEE4yBhC8oH4sv/or7MSsETcsupbB5sJunqogGqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ifvADmV3; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2a97c2681so3003163a91.2;
-        Mon, 21 Oct 2024 00:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729495042; x=1730099842; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cAUk5W98O64U9IZMaqTyyBAdnws1M/z10hXkJohh3N0=;
-        b=ifvADmV3nynRpi87NSCJ2PHwcHPaqU8HxV23aCQ6wCuxl8aLAGBC56PckiWf8EKwom
-         wDW8yRuZlK9TXnDH8GZ6o/p5f7+iO3Jfpp4rZBOwA1+hQKNcqEsu5ieVL+3rZmQ3i2VI
-         t3pfM8JYsAY8a8IJC0dzn7fZT6u2xtu+/JIHwHcPRJUi2J+DFuwR2EO2h8cW95fJAVkq
-         8Czs1bMbXcunJZ7fLadQG8xz6KQPz5S+nKFqu+TLvq+bFXKJJNih3Qw9+cS6dnoQIN3u
-         dSvBqdqI5fF5TWXnGMSHZBqQdGtOh4vtJ4Kck+DfeqZ0ADJhhIs4XNc09/n1pDXIXG9Y
-         5IpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729495042; x=1730099842;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cAUk5W98O64U9IZMaqTyyBAdnws1M/z10hXkJohh3N0=;
-        b=LBNj076JdiJhC1fRcTcJN0lAbT84B+fz7wZcXLOwEoPSsAdSG48424/PFudU7nr+z7
-         4uX5J74Got0IXmisIn496/7dt57fjtLrf5heAZb/KVVtuN7l3AF/pCerWDOOv3cDesay
-         pJ0hCz84oiv9UFAT5cLLwzJCZ10OSEYxxBdPd/9HDudUhE6I47VclwWjnebUZval/1Xe
-         w1YpTKj6Q+zOvLqLBmXGItGKmiDZdVSMU2IAJ6nCNBRZ222acFlSu9cHN1tyLmngmoQD
-         AmH6Nqg6vRBGHXii4o4PfOhCNz3sZU8sozsjpnIbD2X2y5m66O/rKChMRc6iDjdg0VAK
-         +lMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUquk/6VUrGufTFGMvpvJ7WY8bC87ukOV8O3G5IbXVfObS8hVLbZ/XRoD1AfEmdrRbhfL7CYfX1X6Tw@vger.kernel.org, AJvYcCUzX5tGme4kTxoqfNQ9u3IqjPcuW5pajOm3icRQdAc7mCCarSihu8splLOPtpyslX5LTbUcCBNTqSYpF5I=@vger.kernel.org, AJvYcCXZikzZBLZob58IlVpeE3gHz+RTKfdSr5GEBhMmdDxOE9iIsjcZ96xNVwGb8CUDW0cy89B3v4/xRwwMVfny@vger.kernel.org
-X-Gm-Message-State: AOJu0YxunbulIMigeDQTQ1RN36pHX4jMxgU2qrs7u6/FlXWCEGBlVJUS
-	U6qZt7DwodDMpHN31ignqs4ezoxidodNEqdPz3R8itaPCPecBbiS
-X-Google-Smtp-Source: AGHT+IGneQjtaluKEP/Dr7JWISPzjl8lPXj+gklNXWwqzoxaJiGA1EN7a1TRxGE1qWenqDLpbFxmXA==
-X-Received: by 2002:a17:90a:8d14:b0:2e2:c00c:cb79 with SMTP id 98e67ed59e1d1-2e5616db842mr11923766a91.3.1729495042427;
-        Mon, 21 Oct 2024 00:17:22 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:6e21:7092:f7c7:3951])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad389146sm2818628a91.26.2024.10.21.00.17.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 00:17:22 -0700 (PDT)
-Date: Mon, 21 Oct 2024 00:17:19 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	matthias.bgg@gmail.com, chen.zhong@mediatek.com,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, macpaul.lin@mediatek.com,
-	kernel@collabora.com
-Subject: Re: [PATCH] dt-bindings: input: mediatek,pmic-keys: Add compatible
- for MT6359 keys
-Message-ID: <ZxX__86dGl5QNsYE@google.com>
-References: <20241008074137.20269-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1729495073; c=relaxed/simple;
+	bh=JlgTjAP3ky+Oilz/rDXUrx4ib4ZWloaLx9eDP59DYWc=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=ACdnngoObwD/LLD9i1+EYu/kHkLX9/zCsN16D7az1C8SVW8DQDRz5/chwxld9RgWXBt3IHlafIvTcE6ewbct0ScluSl7ZQX6IRECRfcY5/yZulZ1FiyAtsyXKRXNl/00RpPlqP8Ddh5Pxi+JfoLqh79yYfMw04+MTi5NFsZdyyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDKxBnuN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BCE3C4CEC3;
+	Mon, 21 Oct 2024 07:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729495072;
+	bh=JlgTjAP3ky+Oilz/rDXUrx4ib4ZWloaLx9eDP59DYWc=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=BDKxBnuN3ge25rZUKYv5xiZkNYQgrhZSQ8Jr08+i5cOzT9JA5Dmt/lhz12B15J+fm
+	 QqADyFxeGpf/1Qko/jWk2VXs36TK3Drvuid/d9p7+gIGss1BDUM3BJgnfqsc0KfqrP
+	 L6QJHwp8ClnSclGLms11w1haL+20RXJGV06b40xY+vHUI2xTAw3XQJ3X9FFILw5uTc
+	 U4uZ/M8qPZzKdz7zqnk37yd974cREL8+0KY/ZPjongWzDQZWzlkm6jsTvCUiStywMH
+	 DFtZOOySch1FMrti2ntpVXeXDKEUHkVIpLHM4IK3eDLrdBBuRTBFE0gOoeHyYjtOic
+	 evFfuHYc8reog==
+Message-ID: <7f54c943d952a8bbc0f725304b8ab907@kernel.org>
+Date: Mon, 21 Oct 2024 07:17:49 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH 0/6] drm/bridge: add ycbcr_420_allowed support
+In-Reply-To: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
+References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>, "Alexander Stein" <alexander.stein@ew.tq-group.com>, "Andrzej
+ Hajda" <andrzej.hajda@intel.com>, "David Airlie" <airlied@gmail.com>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Marijn
+ Suijten" <marijn.suijten@somainline.org>, "Maxime Ripard" <mripard@kernel.org>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, "Rob Clark" <robdclark@gmail.com>, "Robert
+ Foss" <rfoss@kernel.org>, "Sean Paul" <sean@poorly.run>, "Simona Vetter" <simona@ffwll.ch>, "Thomas
+ Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008074137.20269-1-angelogioacchino.delregno@collabora.com>
 
-On Tue, Oct 08, 2024 at 09:41:37AM +0200, AngeloGioacchino Del Regno wrote:
-> Add a compatible for the keys found on the MT6359 PMIC.
+On Sat, 19 Oct 2024 00:49:11 +0300, Dmitry Baryshkov wrote:
+> One of the features that drm_bridge_connector can't handle currently is
+> setting of the ycbcr_420_allowed flag on the connector. Add the flag to
+> the drm_bridge struct and propagate it to the drm_connector as AND of
+> all flags in the bridge chain.
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 
+> [ ... ]
 
-Applied, thank you.
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
--- 
-Dmitry
+Thanks!
+Maxime
 
