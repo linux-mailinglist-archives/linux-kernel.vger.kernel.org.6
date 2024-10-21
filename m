@@ -1,305 +1,194 @@
-Return-Path: <linux-kernel+bounces-374602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECC09A6D3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:54:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE229A6D5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B73A61F21E85
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:54:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABA531C22942
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D181FA25D;
-	Mon, 21 Oct 2024 14:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ABF1FA265;
+	Mon, 21 Oct 2024 14:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s7jRDk65";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sQdL5ECs";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s7jRDk65";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sQdL5ECs"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f289kk1n"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEBC1D517D;
-	Mon, 21 Oct 2024 14:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125C51D517D;
+	Mon, 21 Oct 2024 14:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729522451; cv=none; b=IdqpS3/B3UFRwA8L0I1mXK2k8PxfM9NLDns8KCSXZOn6xwRKDj0hTI+uxe8Q81YJdq8yGu5uKiCOIbZFP9xxRGzzkOGJmFu12GUGdnb0VFjXbN8GOE3vlYYB5V74J1dn690gyfPy8HPsLSZztMikRkwroswgUmaV4toewjE7arc=
+	t=1729522530; cv=none; b=MyWwUpFM1TKrgiMDFemUkEwEikkjiLJdlA4iyX9JZ8AX6kLU3Iq6xLUc+29x9F0zbMcO4puZm7QJ9dHFwhkWXiS7krW0CC/OgHew5f5eaBqyC9nNrEWC/4z2b5hVtS4GKKqAXPusUAE4mfRU3Ls8jJ55tphVitPLWMegablo+DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729522451; c=relaxed/simple;
-	bh=oqRZDTTe4MF/DbAWYno+v6i6nbbzjqccUT1JUdfFYSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jwUzTFUB+WMVZ6usYtCuLRjpPiRozAqoYgGhNbkrMNJA9IJImINfy/3G/RLwHnBWd0r9H4klrdvtXSKAYwNVw64V5TkbsFahASQeg0P1voaWyJRrpy007Y/lJEIG0V/uET5riH0ysKJcidtTzgBL1lF8WZOtOTrqNXcc7knbiJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s7jRDk65; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sQdL5ECs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s7jRDk65; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sQdL5ECs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 099A71F7E9;
-	Mon, 21 Oct 2024 14:54:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729522447; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nRI3sbkmnwOK+Lkb9FefXrZ7ZGht1xUlXQS9Se85dJs=;
-	b=s7jRDk65dXPM9sqi5FebmAmjOq990Otj25sm+mTxtyacbJmiJCEXID7gzUvpYzrkLOCSlW
-	38IrqTGFOR5zzzBbPv0QeBohVAmVJWJ5Qmy5tceuYbG+JDnGVwHUWv/PZ+YG7gBSvmI4dd
-	i0CXYQnDjq6LwCymkh4sBMop5v4ZN2U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729522447;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nRI3sbkmnwOK+Lkb9FefXrZ7ZGht1xUlXQS9Se85dJs=;
-	b=sQdL5ECsXTNp2qeCI6E997OfEUobMwAFczHwOsmd8cHt8PaDNU6lmWdd9itCT+EPWaswCA
-	By1E737FIhl5z4BA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=s7jRDk65;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=sQdL5ECs
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729522447; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nRI3sbkmnwOK+Lkb9FefXrZ7ZGht1xUlXQS9Se85dJs=;
-	b=s7jRDk65dXPM9sqi5FebmAmjOq990Otj25sm+mTxtyacbJmiJCEXID7gzUvpYzrkLOCSlW
-	38IrqTGFOR5zzzBbPv0QeBohVAmVJWJ5Qmy5tceuYbG+JDnGVwHUWv/PZ+YG7gBSvmI4dd
-	i0CXYQnDjq6LwCymkh4sBMop5v4ZN2U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729522447;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nRI3sbkmnwOK+Lkb9FefXrZ7ZGht1xUlXQS9Se85dJs=;
-	b=sQdL5ECsXTNp2qeCI6E997OfEUobMwAFczHwOsmd8cHt8PaDNU6lmWdd9itCT+EPWaswCA
-	By1E737FIhl5z4BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BBC18136DC;
-	Mon, 21 Oct 2024 14:54:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id K03gLA5rFmfDXgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 21 Oct 2024 14:54:06 +0000
-Message-ID: <caf95a99-e975-4f3d-a94b-298a5fc88b5a@suse.cz>
-Date: Mon, 21 Oct 2024 16:54:06 +0200
+	s=arc-20240116; t=1729522530; c=relaxed/simple;
+	bh=XYYOuKK7N4AhTh521C2sLHl1eimfPwywP5dRv+Qj9CE=;
+	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MKgylmY7Ra8BgtZyexNA5nCWtEWkUp4v7wshJ8WRCv3EkCpijigRrKdim1xlaRLSTueIKKk+SwkLIzKl67XjiEDFPEnXt6/Db53c2gO3LL8PgrxAyfYZ1ObyNzJsZ4k++cz8ZL+dTnvMvXiShf4h7mpT4+GPYt5Aaib9NbLJ/Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f289kk1n; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539fbe22ac0so5054185e87.2;
+        Mon, 21 Oct 2024 07:55:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729522526; x=1730127326; darn=vger.kernel.org;
+        h=mime-version:references:in-reply-to:message-id:cc:to:subject:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g3Rgg0MJCMkfbcr4Si6GxlCe2/XCe13lLM5Bd5Kjvvw=;
+        b=f289kk1nu61paxTLE8aFw4xa+9WdF+K+umWg3i7HraVVPdc0EOJBXf4NeEEoW1uZlb
+         G6Q3bhMoaGhNcnUEV4pErVf+jhPzzvwPAENUnfwgHIJcvKLYgjtJZyxKKRdHJ3yxhoXV
+         4DY8UddODaPJj48jIj9BiZBaL9VdZ4aN6kfqGpAujqOxLvsAMpjosgbBfJhD5hrKu0DD
+         uzKCu4kisFEU+4bPmY1NDkDQcakvOEpuVEOsRKn3Fq0QQAbetOz+CSCjWWiIweqdQiHL
+         X1LC9b/ITunGS+zRzsBMCe1so8l+VCyiFLgW45EPb4BsNxqdD0Rfw67aaaXEI4s2gfjS
+         VgDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729522526; x=1730127326;
+        h=mime-version:references:in-reply-to:message-id:cc:to:subject:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g3Rgg0MJCMkfbcr4Si6GxlCe2/XCe13lLM5Bd5Kjvvw=;
+        b=rDGYqjLUAMBNiuC9CEFnaQYtOVwUam8EoNZsNw/lVK6rmaQQlQtIAQ4DKdGXJ+Se54
+         CL1gah2qJZhuojjHcl+gNPddg7u/uTI+wnXaJQtZs0161b8bYfwDw22jT+CqKv70mSDW
+         6wHUwdaZowgV/WczrGpam4GNlMCrfFCmOTIJFan0m4YMpv50d3KHMYRung6t/3QpExKB
+         +8wybJdKCuIWArqZ3kfXYPZEBJ0ziTfiAcSTPaNVBT4Fr8nbmaGdlXbtO3dm1/WM7JsO
+         Vh4qzY//DfwcqtGAxXcFmpahDkf9h+iK9rk6Hkl/IPLYFUqN9Zie777X3mN7MXBpGNoA
+         rkFw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3pwNX2ySbwDd0TdD2bZCI7IV9aIHhQz8n0pO+PM7wDh7+XFSn8DI4dW3V4eGXuyNwEX1X37dZ4pEq0JF/@vger.kernel.org, AJvYcCWqb9qAXgj5fMay1x8MxxjXBFrqy8yTU0ku6Ncw/IzvleAqrgKywRpTpa5Mug5Tw99ji6XcI/jIVIysOh0=@vger.kernel.org, AJvYcCXVywrf8Rxlg33SVYlELr53qcEfWQUYWetBjQwrTrMoaXpiccTAJ4XuaC2MoKCivEl879jwKgwURJih@vger.kernel.org, AJvYcCXsPT0XVFH3aIxKmDk+Uj94PTfR4pdjJxqzAiWkM3sAjeHwpkIfPTPotmGz5EpO0pzN2W7ya48+EtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz7BLv5leTpSNxRh4De/LogTLzSz3jVeQyBRp6r9xGw04/4WM1
+	Ie+5tIJT+TY7w0jaNtOu/JqyKO6sh5VsODTCZTEzyToeHSuPwUBb
+X-Google-Smtp-Source: AGHT+IE+YyScAjvYSe25yG8D2UmU8Xnhqk2eOEorogl+DBh/qWGlnW8rmng8G47tnMj4whqFWuze/w==
+X-Received: by 2002:a05:6512:2316:b0:533:711:35be with SMTP id 2adb3069b0e04-53a15229c20mr5991228e87.26.1729522525660;
+        Mon, 21 Oct 2024 07:55:25 -0700 (PDT)
+Received: from [10.50.4.74] ([95.183.227.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9137053csm210335266b.115.2024.10.21.07.55.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 07:55:21 -0700 (PDT)
+Date: Mon, 21 Oct 2024 17:55:12 +0300
+From: Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: Re: [PATCH 5/6] regulator: Add driver for MediaTek MT6328 PMIC
+ regulators
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>, Sean Wang
+	<sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones
+	<lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, jason-ch chen
+	<Jason-ch.Chen@mediatek.com>, Chen Zhong <chen.zhong@mediatek.com>, Flora Fu
+	<flora.fu@mediatek.com>, Alexandre Mergnat <amergnat@baylibre.com>,
+	Yassine Oudjana <y.oudjana@protonmail.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Message-Id: <04OPLS.YYQIIIW9J73R3@gmail.com>
+In-Reply-To: <4cf5a3d0-97a2-4a43-a91a-0a35aa2bc7e4@collabora.com>
+References: <20241018081050.23592-1-y.oudjana@protonmail.com>
+	<20241018081050.23592-6-y.oudjana@protonmail.com>
+	<4cf5a3d0-97a2-4a43-a91a-0a35aa2bc7e4@collabora.com>
+X-Mailer: geary/46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] mm: add PTE_MARKER_GUARD PTE marker
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
- <paulmck@kernel.org>, Jann Horn <jannh@google.com>,
- David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Muchun Song <muchun.song@linux.dev>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
- Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
- linux-kselftest@vger.kernel.org, Sidhartha Kumar
- <sidhartha.kumar@oracle.com>, Jeff Xu <jeffxu@chromium.org>,
- Christoph Hellwig <hch@infradead.org>, linux-api@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>
-References: <cover.1729440856.git.lorenzo.stoakes@oracle.com>
- <081837b697a98c7fa5832542b20f603d49e0b557.1729440856.git.lorenzo.stoakes@oracle.com>
- <470886d2-9f6f-4486-a935-daea4c5bea09@suse.cz>
- <434a440a-d6a4-4144-b4fb-8e0d8535f03f@lucifer.local>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <434a440a-d6a4-4144-b4fb-8e0d8535f03f@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 099A71F7E9
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[32];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,google.com,oracle.com,infradead.org,kernel.org,redhat.com,kvack.org,vger.kernel.org,linux.dev,linaro.org,jurassic.park.msu.ru,gmail.com,alpha.franken.de,hansenpartnership.com,gmx.de,zankel.net,arndb.de,chromium.org,nvidia.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLz1534diqmneu69wx1fp4cing)];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii; format=flowed
 
-On 10/21/24 16:33, Lorenzo Stoakes wrote:
-> On Mon, Oct 21, 2024 at 04:13:34PM +0200, Vlastimil Babka wrote:
->> On 10/20/24 18:20, Lorenzo Stoakes wrote:
->> > Add a new PTE marker that results in any access causing the accessing
->> > process to segfault.
->> >
->> > This is preferable to PTE_MARKER_POISONED, which results in the same
->> > handling as hardware poisoned memory, and is thus undesirable for cases
->> > where we simply wish to 'soft' poison a range.
->> >
->> > This is in preparation for implementing the ability to specify guard pages
->> > at the page table level, i.e. ranges that, when accessed, should cause
->> > process termination.
->> >
->> > Additionally, rename zap_drop_file_uffd_wp() to zap_drop_markers() - the
->> > function checks the ZAP_FLAG_DROP_MARKER flag so naming it for this single
->> > purpose was simply incorrect.
->> >
->> > We then reuse the same logic to determine whether a zap should clear a
->> > guard entry - this should only be performed on teardown and never on
->> > MADV_DONTNEED or the like.
->>
->> Since I would have personally put MADV_FREE among "or the like" here, it's
->> surprising to me that it in fact it's tearing down the guard entries now. Is
->> that intentional? It should be at least mentioned very explicitly. But I'd
->> really argue against it, as MADV_FREE is to me a weaker form of
->> MADV_DONTNEED - the existing pages are not zapped immediately but
->> prioritized for reclaim. If MADV_DONTNEED leaves guard PTEs in place, why
->> shouldn't MADV_FREE too?
+
+On Mon, Oct 21 2024 at 15:24:51 +02:00:00, AngeloGioacchino Del Regno 
+<angelogioacchino.delregno@collabora.com> wrote:
+> Il 18/10/24 10:10, Yassine Oudjana ha scritto:
+>> From: Yassine Oudjana <y.oudjana@protonmail.com>
+>> 
+>> Add a driver for the regulators on the MT6328 PMIC.
+>> 
+>> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>> ---
+>>   drivers/regulator/Kconfig                  |   9 +
+>>   drivers/regulator/Makefile                 |   1 +
+>>   drivers/regulator/mt6328-regulator.c       | 479 
+>> +++++++++++++++++++++
+>>   include/linux/regulator/mt6328-regulator.h |  49 +++
+>>   4 files changed, 538 insertions(+)
+>>   create mode 100644 drivers/regulator/mt6328-regulator.c
+>>   create mode 100644 include/linux/regulator/mt6328-regulator.h
+>> 
+>> diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+>> index 249933d6388dd..e9b9faff67f3a 100644
+>> --- a/drivers/regulator/Kconfig
+>> +++ b/drivers/regulator/Kconfig
+>> @@ -862,6 +862,15 @@ config REGULATOR_MT6323
+>>   	  This driver supports the control of different power rails of 
+>> device
+>>   	  through regulator interface.
+>>   +config REGULATOR_MT6328
+>> +	tristate "MediaTek MT6328 PMIC"
+>> +	depends on MFD_MT6397
+>> +	help
+>> +	  Say y here to select this option to enable the power regulator of
+>> +	  MediaTek MT6328 PMIC.
+>> +	  This driver supports the control of different power rails of 
+>> device
+>> +	  through regulator interface.
+>> +
+>>   config REGULATOR_MT6331
+>>   	tristate "MediaTek MT6331 PMIC"
+>>   	depends on MFD_MT6397
+>> diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+>> index 9b69546fb3f65..c1a5a44413198 100644
+>> --- a/drivers/regulator/Makefile
+>> +++ b/drivers/regulator/Makefile
+>> @@ -103,6 +103,7 @@ obj-$(CONFIG_REGULATOR_MPQ7920) += mpq7920.o
+>>   obj-$(CONFIG_REGULATOR_MT6311) += mt6311-regulator.o
+>>   obj-$(CONFIG_REGULATOR_MT6315) += mt6315-regulator.o
+>>   obj-$(CONFIG_REGULATOR_MT6323)	+= mt6323-regulator.o
+>> +obj-$(CONFIG_REGULATOR_MT6328)	+= mt6328-regulator.o
+>>   obj-$(CONFIG_REGULATOR_MT6331)	+= mt6331-regulator.o
+>>   obj-$(CONFIG_REGULATOR_MT6332)	+= mt6332-regulator.o
+>>   obj-$(CONFIG_REGULATOR_MT6357)	+= mt6357-regulator.o
+>> diff --git a/drivers/regulator/mt6328-regulator.c 
+>> b/drivers/regulator/mt6328-regulator.c
+>> new file mode 100644
+>> index 0000000000000..e15a64404f494
+>> --- /dev/null
+>> +++ b/drivers/regulator/mt6328-regulator.c
+>> @@ -0,0 +1,479 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * MediaTek MT6328 regulator driver
+>> + * Based on MT6323 driver.
+>> + *
+>> + * Copyright (c) 2016 MediaTek Inc.
+>> + * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
+>> + */
+>> +
 > 
-> That is not, as I understand it, what MADV_FREE is, semantically. From the
-> man pages:
+> ..snip..
 > 
->        MADV_FREE (since Linux 4.5)
+>> +/* The array is indexed by id(MT6328_ID_XXX) */
+>> +static struct mt6328_regulator_info mt6328_regulators[] = {
+>> +	MT6328_BUCK("buck_vpa", VPA, 500000, 3650000, 50000,
+>> +		buck_volt_range1, MT6328_VPA_CON9, MT6328_VPA_CON11, 0x3f,
+>> +		MT6328_VPA_CON12, MT6328_VPA_CON7),
 > 
->               The application no longer requires the pages in the range
->               specified by addr and len.  The kernel can thus free these
->               pages, but the freeing could be delayed until memory pressure
->               occurs.
+> Can you please fix the indentation?
 > 
->        MADV_DONTNEED
+> Also, all of those entries do fit in two lines, I checked a couple of 
+> those
+> and always ended up with less than 90 columns anyway.
+
+I can't seem to fit even the first one in 2 lines in under 90 columns :/
+That is unless I don't indent the second line:
+
+	MT6328_BUCK("buck_vpa", VPA, 500000, 3650000, 50000, buck_volt_range1,
+	MT6328_VPA_CON9, MT6328_VPA_CON11, 0x3f, MT6328_VPA_CON12, 
+MT6328_VPA_CON7),
+
+Which I don't think is what you meant by fixing the indentation. Can 
+you show me an example? With 100 columns on the other hand it seems 
+like they should fit.
 > 
->               Do not expect access in the near future.  (For the time
->               being, the application is finished with the given range, so
->               the kernel can free resources associated with it.)
-> 
-> MADV_FREE is 'we are completely done with this range'. MADV_DONTNEED is 'we
-> don't expect to use it in the near future'.
 
-I think the description gives a wrong impression. What I think matters it
-what happens (limited to anon private case as MADV_FREE doesn't support any
-other)
-
-MADV_DONTNEED - pages discarded immediately, further access gives new
-zero-filled pages
-
-MADV_FREE - pages prioritized for discarding, if that happens before next
-write, it gets zero-filled page on next access, but a write done soon enough
- can cancel the upcoming discard.
-
-In that sense, MADV_FREE is a weaker form of DONTNEED, no?
-
->>
->> Seems to me rather currently an artifact of MADV_FREE implementation - if it
->> encounters hwpoison entries it will tear them down because why not, we have
->> detected a hw memory error and are lucky the program wants to discard the
->> pages and not access them, so best use the opportunity and get rid of the
->> PTE entries immediately (if MADV_DONTNEED doesn't do that too, it certainly
->> could).
-> 
-> Right, but we explicitly do not tear them down in the case of MADV_DONTNEED
-> which matches the description in the manpages that the user _might_ come
-> back to the range, whereas MADV_FREE means they are truly done but just
-> don't want the overhead of actually unmapping at this point.
-
-But it's also defined what happens if user comes back to the range after a
-MADV_FREE. I think the overhead saved happens in the case of actually coming
-back soon enough to prevent the discard. With MADV_DONTNEED its immediate
-and unconditional.
-
-> Seems to be this is moreso that MADV_FREE is a not-really-as-efficient
-> version of what Rik wants to do with his MADV_LAZYFREE thing.
-
-I think that further optimizes MADV_FREE, which is already more optimized
-than MADV_DONTNEED.
-
->>
->> But to extend this to guard PTEs which are result of an explicit userspace
->> action feels wrong, unless the semantics is the same for MADV_DONTEED. The
->> semantics chosen for MADV_DONTNEED makes sense, so MADV_FREE should behave
->> the same?
-> 
-> My understanding from the above is that MADV_FREE is a softer version of
-> munmap(), i.e. 'totally done with this range', whereas MADV_DONTNEED is a
-> 'revert state to when I first mapped this stuff because I'm done with it
-> for now but might use it later'.
-
-From the implementation I get the opposite understanding. Neither tears down
-the vma like a proper unmap(). MADV_DONTNEED zaps page tables immediately,
-MADV_FREE effectively too but with a delay depending on memory pressure.
 
 
