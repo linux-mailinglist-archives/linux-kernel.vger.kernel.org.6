@@ -1,126 +1,202 @@
-Return-Path: <linux-kernel+bounces-375210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806E39A9328
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:16:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 053199A932C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACA981C222C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:16:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A001C21CE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424B01FF036;
-	Mon, 21 Oct 2024 22:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cSx5KWTL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c0wDeuB8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46CF1FEFD2;
-	Mon, 21 Oct 2024 22:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387FA1FDFA7;
+	Mon, 21 Oct 2024 22:17:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE68113C69E;
+	Mon, 21 Oct 2024 22:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729548975; cv=none; b=RSjq+pxpc5EsRC86hIPbV6+jSldcxzYPAm19SO27saSc/FLr35CWGJ1d0wDoHUzyJt/AOgVKSfA8h9rItNaVbQZ30B+wonMg7TOIxfUYG5ZDBW3YTl6mckk23y8ARQAWQWi8e/iH3JS7MxQKhwmvQ4A+49PLGc/Jz1FmKwBkuZo=
+	t=1729549038; cv=none; b=XIxMVu4BekIkwX8zbqFtoRSgSoM3JZDROOQ+LypfFtF4WYSELujWPcC6KBS6wdgm9vm9BAQTZgcInHKO2mE5s+vufdX1afshWxNvUM7jq5GrPZVnt4LHk1unQeho2rRQALj2i6BBargpySQoB0uCm/Up+3CFBBH8CMyMtth94pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729548975; c=relaxed/simple;
-	bh=o/21IDi3z+3r/CfWZohnh+gwI8lcHwVWkH/yH95StvA=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=VOOf8tb0jgyKDQeod5TvzmWs0DZ6idZDO1xtJIIHqRQRBRO928D0zrrmVPbfIkr/33Z5tMfnZKHf6TxX1QQpI2uJ5rWIaxQJCV7TlA+ao7lIyFB+rhhYm8eQ5M56rXbFscDEHYEWHqsYZklcN0DgqDCd/ObS5tHKjgRe2M++rkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cSx5KWTL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c0wDeuB8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 21 Oct 2024 22:16:09 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729548970;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=F/VQH6ij6E//+e6oHqxact1RCWdlNziDjscxF7SHn/A=;
-	b=cSx5KWTLQfVlVsanarHTdIPWf0b2r7oSvQGO8goTivqT115Hvof/Xo/jnfWgO1HDZhTxPY
-	YalStZhRT2tYj63JDs+KOhWrwuLVX2Rz8h8ZionNCS/PldjTtDSwyfVbEXrh4XD24x5S2y
-	ti5k2FeAeNIuASee2ZeAIADX9q2irKfg2XAdKP1a393Bm/aozcBKoVrTP2MsPZ/gTKIlYM
-	5tkUkyuc9OFaCejjhyFGfP2ROkGLpgK6QWhUKOfJpHNlzq4l01dU2hQqMkNp7HyJYayqoV
-	uEozhMY7ukCVrWrQYYIZA3DdeuXw7gNK/jR9f5Vh2bO7JGjX4ARULELTRkQM9w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729548970;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=F/VQH6ij6E//+e6oHqxact1RCWdlNziDjscxF7SHn/A=;
-	b=c0wDeuB8QM+B/AbKR/7i28++aq2WdmwkDQW5LAOVemEEL7dJyOOldKtA3pd0erhV5WbJZm
-	WGc4Hzxbfui4cXDQ==
-From: "tip-bot2 for Pawan Gupta" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/lam: Disable ADDRESS_MASKING in most cases
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Sohil Mehta <sohil.mehta@intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1729549038; c=relaxed/simple;
+	bh=KWoL5iaMCRFuWKIL5C7HM1EAIHkYL4dDG72sXrOieZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=omWlYRh8oFGJQzMPxGT4CjdoqeodALrbDIcWGEOtZbXVg63AcMfWsbFF1ZjMQu8eYkn+1WFGMoH/Ob4JRdFNZ2ui54D1/X2k4vC86uoKObNXkJDmPh7/ewwZ5+d+saRjY79EUDLW92xVJllGRoRSFAwhtjGcuMNdvwLDHv+HAZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB02C497;
+	Mon, 21 Oct 2024 15:17:45 -0700 (PDT)
+Received: from [10.57.65.103] (unknown [10.57.65.103])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC0E23F71E;
+	Mon, 21 Oct 2024 15:17:14 -0700 (PDT)
+Message-ID: <24c31077-8970-4fcd-bcaa-60d1a3da8f27@arm.com>
+Date: Mon, 21 Oct 2024 23:18:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172954896978.1442.12851270945186118443.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/12] thermal: core: Rearrange PM notification code
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+References: <2215082.irdbgypaU6@rjwysocki.net>
+ <2299090.iZASKD2KPV@rjwysocki.net>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <2299090.iZASKD2KPV@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/urgent branch of tip:
 
-Commit-ID:     3267cb6d3a174ff83d6287dcd5b0047bbd912452
-Gitweb:        https://git.kernel.org/tip/3267cb6d3a174ff83d6287dcd5b0047bbd912452
-Author:        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-AuthorDate:    Tue, 23 Jan 2024 19:55:21 -08:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Mon, 21 Oct 2024 15:05:43 -07:00
 
-x86/lam: Disable ADDRESS_MASKING in most cases
+On 10/4/24 20:09, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Move the code run for each thermal zone by the thermal PM notify
+> handler to separate functions.
+> 
+> This will help to make some subsequent changes look somewhat more
+> straightforward, among other things.
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> This is a new iteration of
+> 
+> https://lore.kernel.org/linux-pm/4940614.GXAFRqVoOG@rjwysocki.net/
+> 
+> v1 -> v2: The thermal zone guard has not been defined yet, so use lock/unlock
+>            directly on the thermal zone lock and update the changelog accordingly.
+> 
+> ---
+>   drivers/thermal/thermal_core.c |   88 +++++++++++++++++++++--------------------
+>   1 file changed, 46 insertions(+), 42 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.c
+> +++ linux-pm/drivers/thermal/thermal_core.c
+> @@ -1675,6 +1675,48 @@ static void thermal_zone_device_resume(s
+>   	mutex_unlock(&tz->lock);
+>   }
+>   
+> +static void thermal_zone_pm_prepare(struct thermal_zone_device *tz)
+> +{
+> +	mutex_lock(&tz->lock);
+> +
+> +	if (tz->resuming) {
+> +		/*
+> +		 * thermal_zone_device_resume() queued up for this zone has not
+> +		 * acquired the lock yet, so release it to let the function run
+> +		 * and wait util it has done the work.
+> +		 */
+> +		mutex_unlock(&tz->lock);
+> +
+> +		wait_for_completion(&tz->resume);
+> +
+> +		mutex_lock(&tz->lock);
+> +	}
+> +
+> +	tz->suspended = true;
+> +
+> +	mutex_unlock(&tz->lock);
+> +}
+> +
+> +static void thermal_zone_pm_complete(struct thermal_zone_device *tz)
+> +{
+> +	mutex_lock(&tz->lock);
+> +
+> +	cancel_delayed_work(&tz->poll_queue);
+> +
+> +	reinit_completion(&tz->resume);
+> +	tz->resuming = true;
+> +
+> +	/*
+> +	 * Replace the work function with the resume one, which will restore the
+> +	 * original work function and schedule the polling work if needed.
+> +	 */
+> +	INIT_DELAYED_WORK(&tz->poll_queue, thermal_zone_device_resume);
+> +	/* Queue up the work without a delay. */
+> +	mod_delayed_work(system_freezable_power_efficient_wq, &tz->poll_queue, 0);
+> +
+> +	mutex_unlock(&tz->lock);
+> +}
+> +
+>   static int thermal_pm_notify(struct notifier_block *nb,
+>   			     unsigned long mode, void *_unused)
+>   {
+> @@ -1686,27 +1728,8 @@ static int thermal_pm_notify(struct noti
+>   	case PM_SUSPEND_PREPARE:
+>   		mutex_lock(&thermal_list_lock);
+>   
+> -		list_for_each_entry(tz, &thermal_tz_list, node) {
+> -			mutex_lock(&tz->lock);
+> -
+> -			if (tz->resuming) {
+> -				/*
+> -				 * thermal_zone_device_resume() queued up for
+> -				 * this zone has not acquired the lock yet, so
+> -				 * release it to let the function run and wait
+> -				 * util it has done the work.
+> -				 */
+> -				mutex_unlock(&tz->lock);
+> -
+> -				wait_for_completion(&tz->resume);
+> -
+> -				mutex_lock(&tz->lock);
+> -			}
+> -
+> -			tz->suspended = true;
+> -
+> -			mutex_unlock(&tz->lock);
+> -		}
+> +		list_for_each_entry(tz, &thermal_tz_list, node)
+> +			thermal_zone_pm_prepare(tz);
+>   
+>   		mutex_unlock(&thermal_list_lock);
+>   		break;
+> @@ -1715,27 +1738,8 @@ static int thermal_pm_notify(struct noti
+>   	case PM_POST_SUSPEND:
+>   		mutex_lock(&thermal_list_lock);
+>   
+> -		list_for_each_entry(tz, &thermal_tz_list, node) {
+> -			mutex_lock(&tz->lock);
+> -
+> -			cancel_delayed_work(&tz->poll_queue);
+> -
+> -			reinit_completion(&tz->resume);
+> -			tz->resuming = true;
+> -
+> -			/*
+> -			 * Replace the work function with the resume one, which
+> -			 * will restore the original work function and schedule
+> -			 * the polling work if needed.
+> -			 */
+> -			INIT_DELAYED_WORK(&tz->poll_queue,
+> -					  thermal_zone_device_resume);
+> -			/* Queue up the work without a delay. */
+> -			mod_delayed_work(system_freezable_power_efficient_wq,
+> -					 &tz->poll_queue, 0);
+> -
+> -			mutex_unlock(&tz->lock);
+> -		}
+> +		list_for_each_entry(tz, &thermal_tz_list, node)
+> +			thermal_zone_pm_complete(tz);
+>   
+>   		mutex_unlock(&thermal_list_lock);
+>   		break;
+> 
+> 
+> 
 
-Linear Address Masking (LAM) has a weakness related to transient
-execution as described in the SLAM paper[1]. Unless Linear Address
-Space Separation (LASS) is enabled this weakness may be exploitable.
-
-Until kernel adds support for LASS[2], only allow LAM for COMPILE_TEST,
-or when speculation mitigations have been disabled at compile time,
-otherwise keep LAM disabled.
-
-There are no processors in market that support LAM yet, so currently
-nobody is affected by this issue.
-
-[1] SLAM: https://download.vusec.net/papers/slam_sp24.pdf
-[2] LASS: https://lore.kernel.org/lkml/20230609183632.48706-1-alexander.shishkin@linux.intel.com/
-
-[ dhansen: update SPECULATION_MITIGATIONS -> CPU_MITIGATIONS ]
-
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc:stable@vger.kernel.org
-Link: https://lore.kernel.org/all/5373262886f2783f054256babdf5a98545dc986b.1706068222.git.pawan.kumar.gupta%40linux.intel.com
----
- arch/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 2852fcd..16354df 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2257,6 +2257,7 @@ config RANDOMIZE_MEMORY_PHYSICAL_PADDING
- config ADDRESS_MASKING
- 	bool "Linear Address Masking support"
- 	depends on X86_64
-+	depends on COMPILE_TEST || !CPU_MITIGATIONS # wait for LASS
- 	help
- 	  Linear Address Masking (LAM) modifies the checking that is applied
- 	  to 64-bit linear addresses, allowing software to use of the
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
