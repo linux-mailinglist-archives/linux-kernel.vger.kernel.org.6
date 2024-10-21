@@ -1,111 +1,174 @@
-Return-Path: <linux-kernel+bounces-374450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564C89A6A76
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:36:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 457F89A6A85
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 708551C2369A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:36:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BF71C24739
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F571F7094;
-	Mon, 21 Oct 2024 13:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0001F8936;
+	Mon, 21 Oct 2024 13:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcqkH9pp"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P++zRoGM"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E7A1D1E61;
-	Mon, 21 Oct 2024 13:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2611F4726
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517773; cv=none; b=mPUYq4s6H1V1v658CaNpIkBfOMo5lq0t+EYawSRswA7PC6qR2j1As3sy95Ou2vGlkshz+yesG8w/AQTxvcbijPiaAUQajLsFSFy/7R6AT/HXSFKp9plTKbw2S+1kQhLk083rXqwxlw+LsYKVGCWvQBYgbIoEpwPFdA8oy1w5tKs=
+	t=1729517875; cv=none; b=cFRNDP+nE/p2TumrNXKe1gkF/FWc2Rz5hWKfjUDIBwVbVqurl9i/N0NPGP49Bk7hcFaXh41go3Mt9lYuM43Cdc9DCYtfgymsgBrqKjFJaHNKP0x84M0fGjX1eqeevQ0db/HQ4gZRowgmNC4X3MGqIfWfBUL9x3frQAik83fl4Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517773; c=relaxed/simple;
-	bh=7ejbPkgmBzrbdcIDBY7U2DR3YaP99NE2v5gBEHCZrjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJD+sMBjmXbAW+JrtoaoB1Gsrmy4CuFdaxgQMiE8paIxWFCjmgS2qETJmp0Rl3HO/TUbXm76h8GtuJoDBm8RrE+zFVl1+mS04t7WDOzJSH6L8hU5LovhH1E0t99uLbB/qv/hBqX1edzeS5dPtSew7wHKT3w3X2mD6OOb+oFRiBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KcqkH9pp; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a966de2f4d3so47842466b.2;
-        Mon, 21 Oct 2024 06:36:11 -0700 (PDT)
+	s=arc-20240116; t=1729517875; c=relaxed/simple;
+	bh=Yx0nEL3eDqy4wnT/TPSTYD0CqCa7ByqGEhXEm4yYtd8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dIFmVvgODmdSTI+jjFX+P2b828pCu5q3bAcZtHQ0ILh5z1hWDyu5Y8ETygcA1wsXVS+pDrZTmyZjdWXs+NFkNJ++B1Z+KzVp4lrCvVk7COkZ92tzP17OHXMsvjOxYlRd0x71UYi47z7G+Azn+eKVyOpLS6vApqbYUQKWb5Nh+B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P++zRoGM; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e7e73740so4010335e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:37:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729517770; x=1730122570; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ejbPkgmBzrbdcIDBY7U2DR3YaP99NE2v5gBEHCZrjA=;
-        b=KcqkH9ppXOgdtISYrjtsqTesriVTDQnGRSB0dMjzdQvEMspiLL4zSn/D4byFGbTZsK
-         YL8KdP+JPF00KyjsyI9zhuyYdlHEO/HMw/FphVW6l68JcYzrCAwAYMYUAHERaZcKL/RG
-         y6CsYEh0n7VC5YZYPvmRF2dmzQKrPRHhvdt1TbsRyco7hJVHr2GV0BpOB7P61n3Ab4Ih
-         lDWOvhXr0EyUnU8K8o/dJWO7N3rD39iZB5STY8ZULbP/1v8iJqo7a0Hl9DMPAJLC1WWm
-         gAFzeu+cVbby+ECpUy1G4iZD291c8Ze1KbodeGeDJpBJeOjIH2Aq9KVLohzzz0Ov6miG
-         9s4w==
+        d=linaro.org; s=google; t=1729517871; x=1730122671; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fC1MtmbCN57A6bjwUEsG+s8kklw98PPJXY/T3i9tkGI=;
+        b=P++zRoGM6q88QbZMoTnM7HG29UV7HHmUcN/x7zc1utKnHF9ZJiFTEGr/8LLS0vILe2
+         UCdFJbE6k8KAl8LJs/FTB8/QCHDRoybtpQuegRO+W9n9+MBuVqPnzfkPzZD0CQbGQitC
+         PiCQJ/ZfUeDKbap4SCQrbiyTmkmuG25G/l1wWVXYeHUM2HRCDm5FuvviG42HjJ8zEow6
+         wQUR3zQZgfFLW7PptCj0w3N0K/C1ZxOseTYEG+qNP4GQ9kOSZB4M2AE0iq2qj9oWT5XT
+         Qjd2pkcjE1b3livbDqprrnzjfZweNMZw+2PGe5kmn0b2cgiaqvNYtcnf1mQXrIPny0tZ
+         T/WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729517770; x=1730122570;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ejbPkgmBzrbdcIDBY7U2DR3YaP99NE2v5gBEHCZrjA=;
-        b=arwDL1x1pEylJ5BEfkX7fi2YN8ya63EPBZY/2CcvrxSwMFqkqa6HTDGKZL7d5Awg5G
-         EbfVBqOwL10VlsTT1AMNMUU593EdEpDtmy/ndm/cK4bizIK0QBiZLE8ifUMCmAgCHY4/
-         +vDWYNOl/KxJPRfkOevF2sULgrimswGClY39QkB6vkzzmP0qrVkywI9jHMUJkahCwJwN
-         IIiGw0WM1ODAIkoQT+u/V7QamxHFLAnhTbMPpKet9jJJoLZ6LWTW7lHiVJ3CwRzgs3/w
-         uSuhEOI45lM2y22W1tnvmNdTPDfDRFH/aSfjDlvhYnRjXNd29d6gC85JsZP07OlSjBSr
-         OCkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvZGkl4ehbJcdxsARn/XUv3yus6rovB2qxZ0u80OwLMBSbv1/Usj7AOv3HfbCIXOMEzf6FFMrI@vger.kernel.org, AJvYcCW+HV0VyIHzEZDL1Qa+bvowSGoXYkQGOs56ClA/828rCEgKlEUCgNgl2sDNkay/BUre7aGi7GPkzxr053tM@vger.kernel.org, AJvYcCWBtCcaBcpqU4/vsFfJYzUxeP+h7HgnC19GkRN0jNPEpzQDUZsS9rNVu/3608sCNzAWiLG8xY+P9fQd@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqLPbO1SDeDpABZ3eNNzn/joKlljmVyAzWzcx2F3/VtNZyfHGr
-	SewvGAATD8nKGsyXLIHOam/q2DlKNePWhH0+4Sbq+FMhA4mQy4sY
-X-Google-Smtp-Source: AGHT+IGNYJBaRpTS/ccI6Q7hA9PHsmRJtd+/a127r5kJAH8ZNrCayA8KVxqY86ZKxcGODMA4JgMC/g==
-X-Received: by 2002:a17:907:2d89:b0:a9a:2afc:e4dc with SMTP id a640c23a62f3a-a9a69c9b851mr468402266b.11.1729517769359;
-        Mon, 21 Oct 2024 06:36:09 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912edfd0sm206007266b.67.2024.10.21.06.36.07
+        d=1e100.net; s=20230601; t=1729517871; x=1730122671;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fC1MtmbCN57A6bjwUEsG+s8kklw98PPJXY/T3i9tkGI=;
+        b=EXgY4MfGdydGhgcD8sz0A0er82yjKY61pTQMsm+7Ab31b0N7tM13o5uytLJ4nRfXHS
+         /6/27n1CLMudLDu6PjAfNQtLiTXaKrl8EomITF04l4n9aXWgzPFd9swpZRGntO9S5VUl
+         U8f3u3RDM3weqeWnlj4GI/v7dRFLR7yTb1XsU2ZYwl2O1+KRBFePEXD/jIbr0xUWdDot
+         O8s0RZkQb1aWo6FlV26Vi7IPW6mW6jADucz/SCMWZRWMUu/Cl4Axv0VyEnCekq1QiVET
+         moGfmqzgWNU++L3gaL5rfGm1pinM5gEPt1myRlj7ZoXhb+3nEu8aWGfzaGutEdY2rqwH
+         6rKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMuJQeLs5hx2Utd7BR3Vtobru5MF+SKrpVjWskugLT5AO8+WRhDLkvExmvN+tZz13Kt1sm4efwiMG4Yhs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwItQsMHa0AM6epvq56zPEN5Za/2q73oL42isZqKrvAGpKg4arV
+	G+bewyGmGJBKR9DeNmOfGqPYU/wdaY+1Fdt03su6B3SjS+GASjCi8eUlmbPWJPg=
+X-Google-Smtp-Source: AGHT+IHIBrzPSrtxxezikBJ8RWJQ/7DBIsPbOI7qex7+5iaCtDjcjOOwcYu9pj7lrqoxGT33evVFNQ==
+X-Received: by 2002:a05:6512:2209:b0:53a:40e:d547 with SMTP id 2adb3069b0e04-53a1520afadmr5582803e87.5.1729517870933;
+        Mon, 21 Oct 2024 06:37:50 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a2243198dsm480767e87.224.2024.10.21.06.37.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 06:36:08 -0700 (PDT)
-Date: Mon, 21 Oct 2024 16:36:05 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next RFC PATCH 0/4] net: dsa: Add Airoha AN8855 support
-Message-ID: <20241021133605.yavvlsgp2yikeep4@skbuf>
-References: <20241021130209.15660-1-ansuelsmth@gmail.com>
+        Mon, 21 Oct 2024 06:37:49 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 21 Oct 2024 16:37:46 +0300
+Subject: [PATCH v2] drm/fbdev: fix drm_fb_helper_deferred_io() build
+ failure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021130209.15660-1-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241021-fix-drm-deferred-v2-1-db1de4c6b042@linaro.org>
+X-B4-Tracking: v=1; b=H4sIACpZFmcC/32NQQ6CMBBFr0Jm7ZhOUbSuvIdhUdoBJlFqpoZoC
+ He3cgCX7+f/9xfIrMIZLtUCyrNkSVMBu6sgjH4aGCUWBmvsgQydsZc3Rn1g5J5VOaKh4JxrAp1
+ 8A2X2VC6dTXlrC4+SX0k/28NMv/SPbCYkDHXd9cdojevM9S6T17RPOkC7rusXI1lD7LEAAAA=
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jonathan Cavitt <jonathan.cavitt@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2709;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=Yx0nEL3eDqy4wnT/TPSTYD0CqCa7ByqGEhXEm4yYtd8=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ7pYpI6xc0FWfLde7mw2lleHoy37/tiWyrq5LVtkk8Fql
+ 2LMadPJaMzCwMjFICumyOJT0DI1ZlNy2IcdU+thBrEygUxh4OIUgIlku7L/95I9d9rk3JOLL2rT
+ fWUPJ69+rHJ04p2rxsWS2ZbhXhLPfKKc/lc3Cea3xX7pWDdTi6nFl+GXx6WUP/bvWub8Yv4SePb
+ V25UvGTlcb5aL17ge/eV/8oKRb4/25fzgbfdWfuV5VavnIC6zzFh97V41jqLOaYy73h5vc+5pTH
+ 6SEqz2gWFGQZ1l5LPPSuK7Dra8v6t3VkOsyiT/jl2Gi9uSgikvqi6b/rG/r5X33NHYO9zrUWrgQ
+ 50P6v3uoo8l9V5y3K7MdCphWcBaHsojnLhc9Q+jQ6Acy+fzHEGPF4TutJzxYfq16Vnf/52uTuxQ
+ 6dD3mXbf+sT6LQ3nF9w4fCdCQcmqXsPPRGd+9ocnW9YDAA==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Mon, Oct 21, 2024 at 03:01:55PM +0200, Christian Marangi wrote:
-> It's conceptually similar to mediatek switch but register and bits
-> are different.
+The drm_fb_helper_deferred_io() uses struct fb_deferred_io_pageref,
+which isn't available without CONFIG_FB_DEFERRED_IO. Put the function
+under corresponding #ifdef to fix build failure if deferred I/O isn't
+enabled.
 
-Is it impractical to use struct regmap_field to abstract those
-differences away and reuse the mt7530 driver's control flow? What is the
-relationship between the Airoha and Mediatek IP anyway? The mt7530
-maintainers should also be consulted w.r.t. whether code sharing is in
-the common interest (I copied them).
+Fixes: 8058944f5226 ("drm/fbdev: Select fbdev I/O helpers from modules that require them")
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Added guard #ifdef's around function prototype and a stub (Thomas)
+- Link to v1: https://lore.kernel.org/r/20241018-fix-drm-deferred-v1-1-c33bf5d209b0@linaro.org
+---
+ drivers/gpu/drm/drm_fb_helper.c | 2 ++
+ include/drm/drm_fb_helper.h     | 4 ++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index d5e8994345bb..c9008113111b 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -697,6 +697,7 @@ void drm_fb_helper_damage_area(struct fb_info *info, u32 x, u32 y, u32 width, u3
+ }
+ EXPORT_SYMBOL(drm_fb_helper_damage_area);
+ 
++#ifdef CONFIG_FB_DEFERRED_IO
+ /**
+  * drm_fb_helper_deferred_io() - fbdev deferred_io callback function
+  * @info: fb_info struct pointer
+@@ -740,6 +741,7 @@ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagerefli
+ 	}
+ }
+ EXPORT_SYMBOL(drm_fb_helper_deferred_io);
++#endif
+ 
+ /**
+  * drm_fb_helper_set_suspend - wrapper around fb_set_suspend
+diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+index 699f2790b9ac..8426b9921a03 100644
+--- a/include/drm/drm_fb_helper.h
++++ b/include/drm/drm_fb_helper.h
+@@ -256,7 +256,9 @@ void drm_fb_helper_fill_info(struct fb_info *info,
+ void drm_fb_helper_damage_range(struct fb_info *info, off_t off, size_t len);
+ void drm_fb_helper_damage_area(struct fb_info *info, u32 x, u32 y, u32 width, u32 height);
+ 
++#ifdef CONFIG_FB_DEFERRED_IO
+ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagereflist);
++#endif
+ 
+ void drm_fb_helper_set_suspend(struct drm_fb_helper *fb_helper, bool suspend);
+ void drm_fb_helper_set_suspend_unlocked(struct drm_fb_helper *fb_helper,
+@@ -361,10 +363,12 @@ static inline int drm_fb_helper_ioctl(struct fb_info *info, unsigned int cmd,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_FB_DEFERRED_IO
+ static inline void drm_fb_helper_deferred_io(struct fb_info *info,
+ 					     struct list_head *pagelist)
+ {
+ }
++#endif
+ 
+ static inline void drm_fb_helper_set_suspend(struct drm_fb_helper *fb_helper,
+ 					     bool suspend)
+
+---
+base-commit: 2063ca42486bc07b49bc145b5dfcb421f4deebaf
+change-id: 20241018-fix-drm-deferred-01c9996c17a6
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
