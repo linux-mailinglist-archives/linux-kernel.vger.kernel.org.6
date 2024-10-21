@@ -1,56 +1,63 @@
-Return-Path: <linux-kernel+bounces-374853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9CEB9A7121
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BF19A7123
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397EA1F230A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:35:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297241F23010
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BC31EF93F;
-	Mon, 21 Oct 2024 17:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED791F12FC;
+	Mon, 21 Oct 2024 17:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nTb8Qi6P"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="385f+IkR"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483CD1CBEBC
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 17:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FC4199239;
+	Mon, 21 Oct 2024 17:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729532123; cv=none; b=fBgJjtluW2J6BnYaXKg26UD9ekExFJmV0PmfMonyJ++VdyNR49EAn5ftTHJH/6XkL39Mala272imzV4ugYRRPKZZUXKf0dgwg38toj3PDeoaxib+xBn+DzhB7Hd4PMSwo5GXfktof0vOmO5/O5bYoBo7pVm0a+0b++8X/24F5xE=
+	t=1729532233; cv=none; b=LRmEBGsX4tMjoEXeM/MzxYwNc+++Q3A7PtaWJrtdy91rYor/lcz2DOegqc4HZwC42SNEYVRHjdEkiSOOlbV02fjbkA+5zrTTbHZy9iQI4neZSOL6DA+qlrfpJgWKxq4A8rlV2I+IlrtMwnNX+LM6vaZAz1C/3y8ZREEl7eM+DTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729532123; c=relaxed/simple;
-	bh=czQ9g0mFdvgWl9O8XJj/3MVzvE7/qQBGFDMz0c7CFFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AnNtom1xURnOUkC24lr3HA4NcbUY/4tA3yKLEheYykX2dQoFUAwkIlcyWYxhKBRBa/QTrLbJCQOyQKWMZ/uUGtdxOA0CFsx5dn5NeMa3jYJwydJonuMtk/tfx5qCLsz5JNeGEnr3gztKqjCVp/Y9QZVcLGkjgxYR00ZGK7CgWDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nTb8Qi6P; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729532116;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ng2+tosjoBBu6IdGY0OAnCymCQLdInYE8eT0ciVoT6Q=;
-	b=nTb8Qi6PWoiuOxAhB2TmVQyT041O2AFkafYBMJopBHfQOCTheY74oOCMxNH5WXHJi6XH8S
-	wH1DrvZ7kX9K0x0Eyig4ZzFCWHsTH/Nodj4ftVlvHF7qEkNZtJA4itciPtPuj65L6Fc3N6
-	aWIQ45xJ+gwJ3pbUhozwlm9h9TgMHBk=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	Vlastimil Babka <vbabka@suse.cz>,
+	s=arc-20240116; t=1729532233; c=relaxed/simple;
+	bh=0ssP+/C45v+G+qhQEUwDcfAMflnQ9ClkL/fOR4zIRX4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=X8QzdZchv3ZwxsozzJE8n+/LdC1LE9A5WizcsHv0VOXAklKgCwBtl0CMup5coqeVXLiz6KXhbgL8cMN3OjR8wIzjkDnCCbdfSYZtL6E8v4iLNjEQk8RhmvhWys6WLeyZL9dntfD8nUUWgcR8NqVueivEiPejJlsiKoSiAnT2oyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=385f+IkR; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=y7dzIerB/KI11ADRmN80B/zGm4FVlX7K4IYPNpBrSck=; b=385f+IkRCbWxq59mxLMVgH21Wb
+	YDipVHsEzRS8CEZEbEu527EEEoBo17dv0eOTkAW1Ivt44/E9htOhk538HdAT+JSQylZbxD+j1CHl5
+	+6b9dJ9TvwxY6+mq9yxFy0oz8fhUBMHovau6reGScFw8jfYEWw2CQHdW2RAqMtum6KKYOjLfoqMpq
+	FiwhNI2QDCF5ZEiYD7bPZxPXKWL4n1n+nY933Zfck/XF729NsJoBu+hpWLM40rwETDbz1Zc56PmyR
+	dx98rEe/sy0R4bQyDJv0uAmyR1Gsvkjn8UyYdi6WXkCIu/z7g/UQUaKRE+AsHrZ3uh4WzcQf9Qqw/
+	DRm5b7wg==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	stable@vger.kernel.org,
-	Hugh Dickins <hughd@google.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v2] mm: page_alloc: move mlocked flag clearance into free_pages_prepare()
-Date: Mon, 21 Oct 2024 17:34:55 +0000
-Message-ID: <20241021173455.2691973-1-roman.gushchin@linux.dev>
+	Fabio Estevam <festevam@gmail.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH 0/3] ARM: dts: add Kobo Clara 2E
+Date: Mon, 21 Oct 2024 19:36:28 +0200
+Message-Id: <20241021173631.299143-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,138 +65,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Syzbot reported a bad page state problem caused by a page
-being freed using free_page() still having a mlocked flag at
-free_pages_prepare() stage:
+Add a basic device tree for the Kobo Clara 2E Ebook reader.
+It is equipped with an i.MX6SLL SoC. EPDC PMIC drivers
+are not ready for mainline yet.
 
-  BUG: Bad page state in process syz.0.15  pfn:1137bb
-  page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8881137bb870 pfn:0x1137bb
-  flags: 0x400000000080000(mlocked|node=0|zone=1)
-  raw: 0400000000080000 0000000000000000 dead000000000122 0000000000000000
-  raw: ffff8881137bb870 0000000000000000 00000000ffffffff 0000000000000000
-  page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
-  page_owner tracks the page as allocated
-  page last allocated via order 0, migratetype Unmovable, gfp_mask
-  0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), pid 3005, tgid
-  3004 (syz.0.15), ts 61546  608067, free_ts 61390082085
-   set_page_owner include/linux/page_owner.h:32 [inline]
-   post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
-   prep_new_page mm/page_alloc.c:1545 [inline]
-   get_page_from_freelist+0x3008/0x31f0 mm/page_alloc.c:3457
-   __alloc_pages_noprof+0x292/0x7b0 mm/page_alloc.c:4733
-   alloc_pages_mpol_noprof+0x3e8/0x630 mm/mempolicy.c:2265
-   kvm_coalesced_mmio_init+0x1f/0xf0 virt/kvm/coalesced_mmio.c:99
-   kvm_create_vm virt/kvm/kvm_main.c:1235 [inline]
-   kvm_dev_ioctl_create_vm virt/kvm/kvm_main.c:5500 [inline]
-   kvm_dev_ioctl+0x13bb/0x2320 virt/kvm/kvm_main.c:5542
-   vfs_ioctl fs/ioctl.c:51 [inline]
-   __do_sys_ioctl fs/ioctl.c:907 [inline]
-   __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
-   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-   do_syscall_64+0x69/0x110 arch/x86/entry/common.c:83
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  page last free pid 951 tgid 951 stack trace:
-   reset_page_owner include/linux/page_owner.h:25 [inline]
-   free_pages_prepare mm/page_alloc.c:1108 [inline]
-   free_unref_page+0xcb1/0xf00 mm/page_alloc.c:2638
-   vfree+0x181/0x2e0 mm/vmalloc.c:3361
-   delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3282
-   process_one_work kernel/workqueue.c:3229 [inline]
-   process_scheduled_works+0xa5c/0x17a0 kernel/workqueue.c:3310
-   worker_thread+0xa2b/0xf70 kernel/workqueue.c:3391
-   kthread+0x2df/0x370 kernel/kthread.c:389
-   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Andreas Kemnade (3):
+  dt-bindings: arm: fsl: add compatible strings for Kobo Clara 2E
+  ARM: dts: imx: Add devicetree for Kobo Clara 2E
+  ARM: imx_v6_v7_defconfig: Enable drivers for Kobo Clara 2E
 
-A reproducer is available here:
-https://syzkaller.appspot.com/x/repro.c?x=1437939f980000
+ .../devicetree/bindings/arm/fsl.yaml          |   8 +
+ arch/arm/boot/dts/nxp/imx/Makefile            |   2 +
+ .../dts/nxp/imx/imx6sll-kobo-clara2e-a.dts    |  23 +
+ .../dts/nxp/imx/imx6sll-kobo-clara2e-b.dts    |  23 +
+ .../nxp/imx/imx6sll-kobo-clara2e-common.dtsi  | 514 ++++++++++++++++++
+ arch/arm/configs/imx_v6_v7_defconfig          |   2 +
+ 6 files changed, 572 insertions(+)
+ create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dts
+ create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dts
+ create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-common.dtsi
 
-The problem was originally introduced by
-commit b109b87050df ("mm/munlock: replace clear_page_mlock() by final
-clearance"): it was handling focused on handling pagecache
-and anonymous memory and wasn't suitable for lower level
-get_page()/free_page() API's used for example by KVM, as with
-this reproducer.
-
-Fix it by moving the mlocked flag clearance down to
-free_page_prepare().
-
-The bug itself if fairly old and harmless (aside from generating these
-warnings).
-
-Closes: https://syzkaller.appspot.com/x/report.txt?x=169a47d0580000
-Fixes: b109b87050df ("mm/munlock: replace clear_page_mlock() by final clearance")
-Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: <stable@vger.kernel.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
----
- mm/page_alloc.c | 15 +++++++++++++++
- mm/swap.c       | 14 --------------
- 2 files changed, 15 insertions(+), 14 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index bc55d39eb372..7535d78862ab 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1044,6 +1044,7 @@ __always_inline bool free_pages_prepare(struct page *page,
- 	bool skip_kasan_poison = should_skip_kasan_poison(page);
- 	bool init = want_init_on_free();
- 	bool compound = PageCompound(page);
-+	struct folio *folio = page_folio(page);
- 
- 	VM_BUG_ON_PAGE(PageTail(page), page);
- 
-@@ -1053,6 +1054,20 @@ __always_inline bool free_pages_prepare(struct page *page,
- 	if (memcg_kmem_online() && PageMemcgKmem(page))
- 		__memcg_kmem_uncharge_page(page, order);
- 
-+	/*
-+	 * In rare cases, when truncation or holepunching raced with
-+	 * munlock after VM_LOCKED was cleared, Mlocked may still be
-+	 * found set here.  This does not indicate a problem, unless
-+	 * "unevictable_pgs_cleared" appears worryingly large.
-+	 */
-+	if (unlikely(folio_test_mlocked(folio))) {
-+		long nr_pages = folio_nr_pages(folio);
-+
-+		__folio_clear_mlocked(folio);
-+		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
-+		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
-+	}
-+
- 	if (unlikely(PageHWPoison(page)) && !order) {
- 		/* Do not let hwpoison pages hit pcplists/buddy */
- 		reset_page_owner(page, order);
-diff --git a/mm/swap.c b/mm/swap.c
-index 835bdf324b76..7cd0f4719423 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -78,20 +78,6 @@ static void __page_cache_release(struct folio *folio, struct lruvec **lruvecp,
- 		lruvec_del_folio(*lruvecp, folio);
- 		__folio_clear_lru_flags(folio);
- 	}
--
--	/*
--	 * In rare cases, when truncation or holepunching raced with
--	 * munlock after VM_LOCKED was cleared, Mlocked may still be
--	 * found set here.  This does not indicate a problem, unless
--	 * "unevictable_pgs_cleared" appears worryingly large.
--	 */
--	if (unlikely(folio_test_mlocked(folio))) {
--		long nr_pages = folio_nr_pages(folio);
--
--		__folio_clear_mlocked(folio);
--		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
--		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
--	}
- }
- 
- /*
 -- 
-2.47.0.105.g07ac214952-goog
+2.39.5
 
 
