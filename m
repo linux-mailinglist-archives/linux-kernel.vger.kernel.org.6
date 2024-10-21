@@ -1,252 +1,163 @@
-Return-Path: <linux-kernel+bounces-374439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E5D9A6A54
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:30:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D4C9A6A59
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300861C21E80
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:30:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 254801C223EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4AB1E7C0D;
-	Mon, 21 Oct 2024 13:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45311E7C1C;
+	Mon, 21 Oct 2024 13:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iWNLeEa9"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WpzpoDBd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0536B11185
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E4026AD0;
+	Mon, 21 Oct 2024 13:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517426; cv=none; b=fOa7BfEtHFfzf8flPtmH2QXNbYHNOJx8p3gYi3MncEywYs2o6Fum6eE8RN2KKZ0+Mg3qcIXgJLXrqTXmL6W66l9EA6UymT1wteZ6PJOFlxIJugUQH464GORDyu+Lgq2LZA58e299hvamC4WRucrtprLzLi5TfYxwPxtZRK6iNCM=
+	t=1729517442; cv=none; b=HPtfe1KxjI0bMm5dncQfa6Qsvzmxsp9wSj52Apu7OR+94kkoYzw1A94w6xC3612Hi5MSvpZKeU2EQwPao143MKfXUCaGEZMGvTqk7u3x7CWMx/by2KClcrwhw08fMMIO0nmc+MtI9wb1E0rXtPMfelXXu7qiKo+S/8irbawM4c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517426; c=relaxed/simple;
-	bh=5EjVz3Q+MOWdSbz7fy3KdO9neMXkMKVokQZXuSXImg0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ra8NrJR1EtZYJ5aBX/YPMSmrplbcLmnUPH0RCLQC8AaSdRUsIVLhZchpT5HjPnCO/gcxna1GB8PviL/pnKdrswD/I9X/YgUUqjMV5ExC6vvVEcil8UI8rVh7kZQE2zx2G4LZ5Tytj34fGnmZ91wwFfDcnGuf+Aw9zRMKLcJTGJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iWNLeEa9; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e3881042dcso39550187b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729517423; x=1730122223; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xbhe2TqzSvcaurimHVW1IGX30JYpSFOMwX7ToQfqPaU=;
-        b=iWNLeEa9TOzXYnBnXtC/fYYqhl1xKGKNtmcqj3SLdMlofAKmgO/hZdfPRms8x/+qA0
-         OGoYlVBICiXuVLlgo7m5p7Fb71j2V2bfH1APNilzQpavTFE4PvhHvJPRGj74hVSmFnMS
-         BU2Fs15jBQAsSMT5u8QhzITI6ktzvVU9mjGMeeOVp2tW8p7DPWpkb5akKVdYf+xhuD4q
-         Vy2VGtc1SwS/lkbq+BB3r7uCgarRZUFpELz7iTkGwA+KNYkRi8DoWx29Zrh5rO3IOmee
-         gqeKtCZ5OKRxv1tXXxMbSSKlarVddC2jW44Jwt5EgWxiuZJWhb3c1wIOeToaImE5Qxix
-         an+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729517423; x=1730122223;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xbhe2TqzSvcaurimHVW1IGX30JYpSFOMwX7ToQfqPaU=;
-        b=Aivq3cDj0revCV/RnObsuRROWKOjnQehBYSxZkuz2bXux6+qxnjy1EzEoPOeqWA8ka
-         rVWMAWMEj1KbqKCFNoGc67DoUsn+HOvYIPxxLcB3d6wrfa3hMft7Fa84JZ6UHAY/bwok
-         /I6HX1YiWFQATkuOGvIHu01r7UmwYrQgA/Rp23BZHGDR2wH+JogWrl+wb6NYr70sN/1D
-         /lGU/36U9ZDHUbX0/s2nVoFxachbtEq337WNq6tBLWMh6h21srfOPPOxFAr3Utk4Ie6G
-         mlRbyAB30JtiwhDx9yZRgHEx95S0xVIHWMIm4zK6U/DbLH8jIxUjKHY9gsibGJiUVJKQ
-         pA2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVYc/5Lbwm11Nuanur7I301NMpOZOdQMO9hMNSDxNkTXodH6QJQE+TRXJkvsYvKFcvyycRcf3fAH5+IYek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yytu0D5xGystW9hiZMaBjpqr5cPeVpeU8c8T8GRCaxKFMuVMj2+
-	7mzSjXv56rYL5zXhWxa904B1o9qYvCVOOMoShhOMLutHDc6KXA0/CPV9I9078BsSeEK92mfmeX0
-	opNnAFjGWkwdozmB2/0VRi+L1tAPZUd9YFh2uOw==
-X-Google-Smtp-Source: AGHT+IHqwJNEfK6Y3ddBvD/T1PBpBcKI+SMe9p7s2+QvnApVMesS8CYFE9YL4hm4SDDk+0IzMCy6Q/MHASzUaHJGNWk=
-X-Received: by 2002:a05:690c:28f:b0:6e2:313a:a022 with SMTP id
- 00721157ae682-6e5bfe94d4bmr107404457b3.33.1729517422932; Mon, 21 Oct 2024
- 06:30:22 -0700 (PDT)
+	s=arc-20240116; t=1729517442; c=relaxed/simple;
+	bh=RBRYg2Lyf+LiEknArGxUljEJplGrUfUMHLLkLVtBLr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q4QGflj1x1/UxDd7mOqPyOesw1UqyVDfPfA/10C03N999/ICx7ldMPXr7akZnbjy7Y0jRAL5U9bwPnPpBVnYln6lnL+xndG+2iWtlqevXkNjDgN9JebgGPqZEla/u8fPj7iLencfLE6BS9XJwbUc6FkaGXnGcNEt7HnaOaPsT4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WpzpoDBd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6495EC4CEE5;
+	Mon, 21 Oct 2024 13:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729517441;
+	bh=RBRYg2Lyf+LiEknArGxUljEJplGrUfUMHLLkLVtBLr0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WpzpoDBdapgeTnMsbH+j7gWPiaE30q+ERPjBQQjtftrHfpk0LHTeJKWZbdrpucyMy
+	 MMlDBQ1n3N5iCflRX9Wz1G4eXs9vMOB/Pe9PG94hli7xsWOXO2eZao1Wo1jFR5LK9W
+	 Va+fDBrJA6MT+dJ73Uyg2G3gRzvp8OFdMiZnAXUBfsX9PRMSvLEbYTRI+JARYGZym9
+	 phXjrQ+joDYdKNOh9SVuAyLctLJHUlbl/w/jvphPilIQkK8Pi19LwlNL08KCCUujQm
+	 m8omlNeiaJxL/VTD7hh5M37DB60QqdFN74GGdbHEDK5YNoD6JKCIlTPtohWCwjwSPg
+	 DKGId6m/DPwHg==
+Date: Mon, 21 Oct 2024 15:30:38 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, 
+	dri-devel@lists.freedesktop.org, stable@vger.kernel.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Sean Paul <seanpaul@chromium.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/atomic_helper: Add missing NULL check for
+ drm_plane_helper_funcs.atomic_update
+Message-ID: <20241021-airborne-proud-lynx-e1186d@houat>
+References: <20240927204616.697467-1-lyude@redhat.com>
+ <htfplghwrowt4oihykcj53orgaeudo7a664ysyybint2oib3u5@lcyhfss3nyja>
+ <bcf7e1e9-b876-4efc-83ef-b48403315d31@suse.de>
+ <2f012eeab0c1cb37422d9790843ffbbc5eda0131.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAC8uq=Ppnmv98mpa1CrWLawWoPnu5abtU69v-=G-P7ysATQ2Pw@mail.gmail.com>
- <3748add3-18e5-42ef-9d48-93650cfc0682@rock-chips.com> <CAC8uq=O=519iRpcs7p+jZaKngkCDuawLz8NVZYORY6qfGPifZg@mail.gmail.com>
- <eb1d15dd-8e85-4a9b-9b8b-ee005c446bf6@rock-chips.com>
-In-Reply-To: <eb1d15dd-8e85-4a9b-9b8b-ee005c446bf6@rock-chips.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 21 Oct 2024 15:29:46 +0200
-Message-ID: <CAPDyKFr6oDxdc2UhMvAh885dofF1EeT17Ch_Fp-9f2Yvf-654A@mail.gmail.com>
-Subject: Re: Unable to handle kernel paging request at virtual address ffffffc08058e000
-To: Shawn Lin <shawn.lin@rock-chips.com>, Adam Green <greena88@gmail.com>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>, regressions@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, sydarn@proton.me, linux-mmc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="g4sw4e3uc2zpwhye"
+Content-Disposition: inline
+In-Reply-To: <2f012eeab0c1cb37422d9790843ffbbc5eda0131.camel@redhat.com>
+
+
+--g4sw4e3uc2zpwhye
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/atomic_helper: Add missing NULL check for
+ drm_plane_helper_funcs.atomic_update
+MIME-Version: 1.0
 
-On Fri, 18 Oct 2024 at 05:43, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->
-> + Sam
->
-> =E5=9C=A8 2024/10/18 8:06, Adam Green =E5=86=99=E9=81=93:
-> > Hi Shawn,
-> >
-> > I can confirm that after reverting
-> >
-> > commit 8396c793ffdf28bb8aee7cfe0891080f8cab7890
-> > Author: Sam Protsenko <semen.protsenko@linaro.org>
-> > Date:   Wed Mar 6 17:20:52 2024 -0600
-> >
-> >      mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K
-> >
-> > that the problem does appear to have resolved itself, I tested this on
-> > a variety of devices.
-> >
->
-> I'm confused about the patch. Doesn't max_seg_size stand for max bytes
-> per IDMA descriptor can handle?  How can it be equal to max_req_size
-> which should be max_seq_size * max_segs=EF=BC=88max_segs is IDMAC descrip=
-tors
-> number can be used=EF=BC=89 ?
->
->   /* Each descriptor can transfer up to 4KB of data in chained mode */
->   #define DW_MCI_DESC_DATA_LENGTH 0x1000
->
+Hi,
 
-Does the below patch fix the problem too?
+On Mon, Sep 30, 2024 at 03:45:13PM -0400, Lyude Paul wrote:
+> On Mon, 2024-09-30 at 09:06 +0200, Thomas Zimmermann wrote:
+> > Hi
+> >=20
+> > Am 30.09.24 um 09:01 schrieb Maxime Ripard:
+> > > Hi,
+> > >=20
+> > > On Fri, Sep 27, 2024 at 04:46:16PM GMT, Lyude Paul wrote:
+> > > > Something I discovered while writing rvkms since some versions of t=
+he
+> > > > driver didn't have a filled out atomic_update function - we mention=
+ that
+> > > > this callback is "optional", but we don't actually check whether it=
+'s NULL
+> > > > or not before calling it. As a result, we'll segfault if it's not f=
+illed
+> > > > in.
+> > > >=20
+> > > >    rvkms rvkms.0: [drm:drm_atomic_helper_commit_modeset_disables] m=
+odeset on [ENCODER:36:Virtual-36]
+> > > >    BUG: kernel NULL pointer dereference, address: 0000000000000000
+> > > >    PGD 0 P4D 0
+> > > >    Oops: Oops: 0010 [#1] PREEMPT SMP NOPTI
+> > > >    Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20=
+240813-1.fc40 08/13/2024
+> > > >    RIP: 0010:0x0
+> > > >=20
+> > > > So, let's fix that.
+> > > >=20
+> > > > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > > > Fixes: c2fcd274bce5 ("drm: Add atomic/plane helpers")
+> > > > Cc: dri-devel@lists.freedesktop.org
+> > > > Cc: <stable@vger.kernel.org> # v3.19+
+> > > So we had kind of a similar argument with drm_connector_init early th=
+is
+> > > year, but I do agree we shouldn't fault if we're missing a callback.
+> > >=20
+> > > I do wonder how we can implement a plane without atomic_update though?
+> > > Do we have drivers in such a case?
+> >=20
+> > That would likely be an output with an entirely static display. Hard to=
+=20
+> > imaging, I think.
+> >=20
+> > >=20
+> > > If not, a better solution would be to make it mandatory and check it
+> > > when registering.
+> >=20
+> > Although I r-b'ed the patch already, I'd also prefer this solution.
+>=20
+> Gotcha, FWIW the reason I went with this patch:
+>  * atomic_update is actually documented as being optional in the kernel d=
+ocs,
+>    so we'd want to remove that if we make it mandatory
 
-https://lore.kernel.org/lkml/20241020142931.138277-1-aurelien@aurel32.net/T=
-/
+Sure, that makes total sense :)
 
-Kind regards
-Uffe
+>  * rvkms currently doesn't have an atomic_update. We will likely have one
+>    whenever I get a chance to actually add CRC and/or writeback connector
+>    supports - but for the time being all we do is register a KMS device w=
+ith
+>    vblank support.
 
->
-> > Best regards,
-> >
-> > Adam
-> >
-> > On Wed, 16 Oct 2024 at 11:13, Shawn Lin <shawn.lin@rock-chips.com> wrot=
-e:
-> >>
-> >> =E5=9C=A8 2024/10/16 17:55, Adam Green =E5=86=99=E9=81=93:
-> >>> Good morning,
-> >>>
-> >>> I would like to report a regression that appears to have been
-> >>> introduced into the linux kernel since v6.9.
-> >>>
-> >>
-> >> I didn't see many patches for dw_mmc since 6.9. So I guess the fastest
-> >> way is to do a bisect. Or maybe you could try reverting this commit
-> >> first to see what will happen.
-> >>
-> >> commit 8396c793ffdf28bb8aee7cfe0891080f8cab7890
-> >> Author: Sam Protsenko <semen.protsenko@linaro.org>
-> >> Date:   Wed Mar 6 17:20:52 2024 -0600
-> >>
-> >>       mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K
-> >>
-> >>
-> >>> My device is currently experiencing a panic booting the kernel/rootfs
-> >>> from an SD card.
-> >>>
-> >>> The device is a Powkiddy RGB30 which is a portable handheld gaming
-> >>> console with a Rockchip RK3566 SoC (arm64).
-> >>>
-> >>> I have tested a variety of devices from a couple of manufacturers wit=
-h
-> >>> the same SoC and they all have the same issue,
-> >>> I have also tested, 6.12-rc3 and linux-next and the same issue appear=
-s present.
-> >>>
-> >>> A full UART dump can be found here: https://clbin.com/zLZAW
-> >>>
-> >>> [   41.547983] Unable to handle kernel paging request at virtual
-> >>> address ffffffc08058e000
-> >>> [   41.553426] Mem abort info:
-> >>> [   41.558231]   ESR =3D 0x0000000096000007
-> >>> [   41.563115]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> >>> [   41.568135]   SET =3D 0, FnV =3D 0
-> >>> [   41.572882]   EA =3D 0, S1PTW =3D 0
-> >>> [   41.577575]   FSC =3D 0x07: level 3 translation fault
-> >>> [   41.582404] Data abort info:
-> >>> [   41.586995]   ISV =3D 0, ISS =3D 0x00000007, ISS2 =3D 0x00000000
-> >>> [   41.591848]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-> >>> [   41.596664]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> >>> [   41.601457] swapper pgtable: 4k pages, 39-bit VAs, pgdp=3D00000000=
-0363e000
-> >>> [   41.606359] [ffffffc08058e000] pgd=3D1000000000225003,
-> >>> p4d=3D1000000000225003, pud=3D1000000000225003, pmd=3D1000000000c8c00=
-3,
-> >>> pte=3D0000000000000000
-> >>> [   41.616442] Internal error: Oops: 0000000096000007 [#1] PREEMPT SM=
-P
-> >>> [   41.621544] Modules linked in: hci_uart btrtl bluetooth rfkill
-> >>> [   41.626678] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.12.=
-0-rc2 #1
-> >>> [   41.631922] Hardware name: Powkiddy RGB30 (DT)
-> >>> [   41.636951] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS =
-BTYPE=3D--)
-> >>> [   41.642330] pc : dw_mci_idmac_start_dma+0xa0/0x358
-> >>> [   41.647585] lr : __dw_mci_start_request+0x21c/0x6a0
-> >>> [   41.652827] sp : ffffffc080003da0
-> >>> [   41.657882] x29: ffffffc080003da0 x28: ffffff8001f06d80 x27: fffff=
-fc08058d000
-> >>> [   41.663399] x26: ffffffc08058e000 x25: 0000000000002711 x24: 00000=
-00000002000
-> >>> [   41.668864] x23: ffffff800167dc80 x22: 0000000080000012 x21: 00000=
-00000001000
-> >>> [   41.674257] x20: 000000003b5d1000 x19: 0000000000001000 x18: 00000=
-00972073a81
-> >>> [   41.679654] x17: ffffff9c39b47000 x16: ffffffc080000000 x15: 00000=
-00000000001
-> >>> [   41.685074] x14: 0000000000000004 x13: 000001ba5087c8e8 x12: 00000=
-000000001a8
-> >>> [   41.690506] x11: 0000000000000040 x10: ffffffe40628d890 x9 : 00000=
-00000000000
-> >>> [   41.695972] x8 : ffffff803fd44080 x7 : 0000000008f0d180 x6 : 00000=
-0003b9ac9ff
-> >>> [   41.701495] x5 : 0000000000fffffe x4 : ffffffc08058de80 x3 : 00000=
-000b2d05e00
-> >>> [   41.707073] x2 : ffffffe40546ab08 x1 : ffffffc08058e000 x0 : 00000=
-00000001000
-> >>> [   41.712686] Call trace:
-> >>> [   41.717857]  dw_mci_idmac_start_dma+0xa0/0x358
-> >>> [   41.723266]  __dw_mci_start_request+0x21c/0x6a0
-> >>> [   41.728719]  dw_mci_work_func+0x4c8/0x4d8
-> >>> [   41.734144]  process_one_work+0x148/0x284
-> >>> [   41.739587]  bh_worker+0x224/0x278
-> >>> [   41.744985]  workqueue_softirq_action+0x78/0x88
-> >>> [   41.750545]  tasklet_action+0x14/0x3c
-> >>> [   41.756023]  handle_softirqs+0x100/0x23c
-> >>> [   41.761506]  __do_softirq+0x14/0x20
-> >>> [   41.766917]  ____do_softirq+0x10/0x20
-> >>> [   41.772301]  call_on_irq_stack+0x24/0x54
-> >>> [   41.777689]  do_softirq_own_stack+0x1c/0x40
-> >>> [   41.783106]  irq_exit_rcu+0x94/0xd0
-> >>> [   41.788455]  el1_interrupt+0x38/0x68
-> >>> [   41.793799]  el1h_64_irq_handler+0x18/0x24
-> >>> [   41.799200]  el1h_64_irq+0x68/0x6c
-> >>> [   41.804532]  default_idle_call+0x28/0x58
-> >>> [   41.809931]  do_idle+0x1fc/0x260
-> >>> [   41.815152]  cpu_startup_entry+0x34/0x40
-> >>> [   41.820346]  kernel_init+0x0/0x140
-> >>> [   41.825437]  console_on_rootfs+0x0/0x6c
-> >>> [   41.830477]  __primary_switched+0x80/0x88
-> >>> [   41.835501] Code: 54000280 d294f8c0 940e1f8c d503203f (b9400340)
-> >>> [   41.840748] ---[ end trace 0000000000000000 ]---
-> >>> [   41.845896] Kernel panic - not syncing: Oops: Fatal exception in i=
-nterrupt
-> >>> [   41.851321] SMP: stopping secondary CPUs
-> >>> [   41.856502] Kernel Offset: 0x2384800000 from 0xffffffc080000000
-> >>> [   41.861840] PHYS_OFFSET: 0x0
-> >>> [   41.866814] CPU features: 0x0c,00000014,00280928,4201720b
-> >>> [   41.872087] Memory Limit: none
-> >>> [   41.877119] Rebooting in 1 seconds..
-> >>>
-> >>> Best regards,
-> >>>
-> >>> Adam Green
-> >>
->
+WIP drivers can provide an empty implementation. And even if actually
+didn't need it for $REASONS, I'd argue that an empty implementation (and
+a comment) makes that explicit instead of making the reader guess why
+it's not needed.
+
+Maxime
+
+--g4sw4e3uc2zpwhye
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxZXfgAKCRAnX84Zoj2+
+dlfJAYDkkhOPulr0ja4Fr7y5aisIL3dAV+71shbFI1TdZ3tI/4i3FmUP7C236+Fs
+wIjnYScBgNTC1j7usayK7OzzXCXw25d8OrMV3K0RS+AJpIiAeWYUfsAlmXz9GXCN
+4nwHkHAzhg==
+=fT2I
+-----END PGP SIGNATURE-----
+
+--g4sw4e3uc2zpwhye--
 
