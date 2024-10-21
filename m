@@ -1,107 +1,148 @@
-Return-Path: <linux-kernel+bounces-374473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0729A6ABD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:43:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4489A6AAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE1B1F22526
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:43:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8FA1F218AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937671F9ED0;
-	Mon, 21 Oct 2024 13:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3D81F8F12;
+	Mon, 21 Oct 2024 13:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b="1HBJy0MW"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="CWAvYykh"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5D81F8F1B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8691F4FBE;
+	Mon, 21 Oct 2024 13:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729518160; cv=none; b=kQ6BBhoTd4LMbYyg9ysfzttBIQ1e3/379WlddqXmd8h13Hij1kM6ZtYWqi8TWiDH09uvCsMPwqM5ful8xscrClStokX8MJPgGkqEAgdJcFAhQHEri1GJeWsl/88jv81UqxJCu7faHwCo/7DlvaLOnTLb323BngBpaliWbkQBCoQ=
+	t=1729518112; cv=none; b=DGV+gqo2od5063IVbw+gGnBRiynaOiN8xVVv91Ad4hBnaRspGklhtpMDbhumLp0+3AXh7/IEqvapbfNnBUg/uAtcjBetlDCDxTqiI4cxbfbD29xTOd6AaEt14ieXxWCw/jmcoAMQXWb5jz/TP2bzag8pKMEMr28VYsx1ftN78GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729518160; c=relaxed/simple;
-	bh=2OvNmKCE+1cUEVZtspsYcVHSe2PwsTglKsSpIw30sCY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kalegSDwInl+kj9ZcoJliwLYSV81pCiQ5cujHl/3gx45lb8pYMeb3UmyA45GaBLtxnLFLGhad40vP668JODbYFKMPazpV/nY26FPTyc63tn0c2VEpHB1JSrssPzFrl0iPCisg7PwN1N69Ge0zEV3tZWneGIh+tvFplj6f7tw4u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc; spf=pass smtp.mailfrom=steffen.cc; dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b=1HBJy0MW; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=steffen.cc
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4XXGhT4w7Sz9sqr;
-	Mon, 21 Oct 2024 15:42:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffen.cc; s=MBO0001;
-	t=1729518153;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=p+Ueqw7K6WBwEq+dB6zx4UE03I/127H/OEWMY7Bd6us=;
-	b=1HBJy0MWhCTeRao5h9ySggPP1YHqCwKRWJJp3t1NP8nwkRoGsFXoWVwCX3oW70/FDGnAe8
-	KXbn4FFgoq3/axUS7BRaaxQNLeET3MGRX8jSRScyubaL909T6gnkdmuYFSmlqdz3B2e6q+
-	hL3J4NEV+1UIgeH5D81zf54lz2uOqi8493PZffxo+reHiPl2SmIZwlxFFJlTUPhnO34ycG
-	Gi8WnZ9pKlwZX5hXP/rLoS/KCaFalUyv1KtAUDK3FYPKhdkIzzFgv36GxUVQn+S8VzWp7S
-	mXmgJibt1/VcdzNEzQaDJE8FuAu3uid3+MQv8+f8td6b/pEcvsoH+5NWMlUJ/w==
-From: Steffen Dirkwinkel <lists@steffen.cc>
-To: dri-devel@lists.freedesktop.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm: xlnx: zynqmp_dpsub: fix hotplug detection
-Date: Mon, 21 Oct 2024 15:41:14 +0200
-Message-ID: <20241021134115.216568-1-lists@steffen.cc>
+	s=arc-20240116; t=1729518112; c=relaxed/simple;
+	bh=ylRAIjJ367YBULxY5gOMU8zQfpicV/xSRdV9kZ1zCag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hhlzP1fJ3slBxoiM2efsGa6HRfINYehjq3AQy33mIvmxQ9A9/EVnmeLJSaVGbNCMRiHXBLpP1YUJLk6T0I63Qhi8tQUcUdgfY0VZ5o8PbrjTintOJnhlj1pf2QSDF35054YZbgZEQiXMBqUrbM+bv9weOAf+k2L5GTXgAHgHNdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=CWAvYykh; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=EB14kE+XbYntJMYIF/Jpxe88uRqc1TnATnNMz1K4OmE=; b=CWAvYykhhD5mCggfpPyrWXQV6L
+	ch05vX3TgO3BVgVCOnRTLrzel7hyqRuwnP4Y+ryUMTnt2Q9UnVHp8J0zjMdKp9v3GeO6EAYGldRT+
+	sQvqpZc50ZmBi3m1feC/LN9AZYeTrDQwsrBa34YAIwzPt2WOkkqyAQwZQJt9JndMVJ2SGhXS2y/k7
+	dw25ecvSUCmH/I7xbVw6gYc0lzXwLU+EKQ6k4q2hf6+yNPBJ4wPe83RLH0HtXJcCLtPpmTmeve/Pg
+	+otpXLzukl0PAx29O4h4zTJLvkbrI+gJLL61JXG78JYfUrSTJIh7wVt4K9WLZcfUTCYpxKJj9LTqn
+	1GLLo+kA==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1t2sfA-0008vG-A3; Mon, 21 Oct 2024 15:41:36 +0200
+Received: from [178.197.248.43] (helo=[192.168.1.114])
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1t2sf8-000Hts-1r;
+	Mon, 21 Oct 2024 15:41:34 +0200
+Message-ID: <9684019c-039d-441d-919f-da13060a200e@iogearbox.net>
+Date: Mon, 21 Oct 2024 15:41:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 1/5] net: checksum: move from32to16() to generic
+ header
+To: Puranjay Mohan <puranjay@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eduard Zingerman
+ <eddyz87@gmail.com>, Eric Dumazet <edumazet@google.com>,
+ Hao Luo <haoluo@google.com>, Helge Deller <deller@gmx.de>,
+ Jakub Kicinski <kuba@kernel.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Martin KaFai Lau <martin.lau@linux.dev>, Mykola Lysenko <mykolal@fb.com>,
+ netdev@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paolo Abeni <pabeni@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Puranjay Mohan <puranjay12@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Yonghong Song <yonghong.song@linux.dev>
+References: <20241021122112.101513-1-puranjay@kernel.org>
+ <20241021122112.101513-2-puranjay@kernel.org>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ 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
+In-Reply-To: <20241021122112.101513-2-puranjay@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27434/Mon Oct 21 10:49:31 2024)
 
-From: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
+On 10/21/24 2:21 PM, Puranjay Mohan wrote:
+> from32to16() is used by lib/checksum.c and also by
+> arch/parisc/lib/checksum.c. The next patch will use it in the
+> bpf_csum_diff helper.
+> 
+> Move from32to16() to the include/net/checksum.h as csum_from32to16() and
+> remove other implementations.
+> 
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
 
-drm_kms_helper_poll_init needs to be called after zynqmp_dpsub_kms_init.
-zynqmp_dpsub_kms_init creates the connector and without it we don't
-enable hotplug detection.
-
-Signed-off-by: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
----
- drivers/gpu/drm/xlnx/zynqmp_kms.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_kms.c b/drivers/gpu/drm/xlnx/zynqmp_kms.c
-index bd1368df7870..311397cee5ca 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_kms.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_kms.c
-@@ -509,12 +509,12 @@ int zynqmp_dpsub_drm_init(struct zynqmp_dpsub *dpsub)
- 	if (ret)
- 		return ret;
- 
--	drm_kms_helper_poll_init(drm);
--
- 	ret = zynqmp_dpsub_kms_init(dpsub);
- 	if (ret < 0)
- 		goto err_poll_fini;
- 
-+	drm_kms_helper_poll_init(drm);
-+
- 	/* Reset all components and register the DRM device. */
- 	drm_mode_config_reset(drm);
- 
--- 
-2.47.0
-
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
 
