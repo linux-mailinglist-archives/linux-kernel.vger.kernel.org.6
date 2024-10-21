@@ -1,47 +1,77 @@
-Return-Path: <linux-kernel+bounces-374556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF5F9A6BEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A029A6C07
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D291F214A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3FD31F22DE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8FD1F819F;
-	Mon, 21 Oct 2024 14:18:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26CE5A79B;
-	Mon, 21 Oct 2024 14:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07F61F8F04;
+	Mon, 21 Oct 2024 14:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XNPmoe+3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE521D1E88;
+	Mon, 21 Oct 2024 14:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729520323; cv=none; b=QWoI6ToPMIn0SOxvEx3+T0+z6bT76ZY63CL3tr1h8eW9Ig1u31+yrJzk+3McjaBTSCxC/UyUQUj1iJT/o2zEnvwb7MpOF0+PyngQiTZzXfm04H7A25YTOL+xWuNpq5PVLGPAMPMJRNLicgg9ZXJk6yROatf+3ARc7ELn0XNWQB0=
+	t=1729520684; cv=none; b=JP/QNiG32smsfTdf2Rxf+lxq4MmjrbARvgCnKT00Rvzc1xAFj6Pni3jY9pL2+/kvyZVi59B3vbbxT5Cuv3+pKGVfYeh6eSgrKKONG5wY6owD9HHV5XraMS4KCHkYw/JM7ObAUnqSGT1ety7874tZszVvHyGokwANCl6CTLP7Z7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729520323; c=relaxed/simple;
-	bh=4PqKFbnXtjrVOKH1RCuooGjPrj3vKC1/J74OQn0EL5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ksLZ42bnIiU40TnWkFP++6QCZw1+QIdcAEctXZSyHSG43OIh+VnM5xQ1NpFBKbL9fN7kv3N9NFJ0JtmOeckFzrHb0Y1UkJ6u6wd9DblDDuGaJsAtSrxgaOSyOvY96HzYm9j4wXZmQjVYW8CF1BiabnY/rtpe44FnT9ZS/OHIhr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A2BDDA7;
-	Mon, 21 Oct 2024 07:19:10 -0700 (PDT)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D4CC3F73B;
-	Mon, 21 Oct 2024 07:18:39 -0700 (PDT)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	s=arc-20240116; t=1729520684; c=relaxed/simple;
+	bh=pc4NBde+fXjBXx1YyOAYXQyIKmBbSnOydn+XQMOwhH4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jxkhVg9L2gONpaOiNG6gtzW8DzcMu6X7FWSzjOSS5dbeKOcnfdjcxd99UM8t4/mfgRyDfCTh2PQXIafzR5HuZ7EGrIo4L6qlicwRsst4tDq5Rb29Mzi1s4rWQBRhwgo6PkPza9AmFKEhqabJ6Z0IimQ01HYl0xIzNxOF7rldmOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XNPmoe+3; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729520682; x=1761056682;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pc4NBde+fXjBXx1YyOAYXQyIKmBbSnOydn+XQMOwhH4=;
+  b=XNPmoe+3EmHGOOJxVFhlOIpQupAY9fIKLa+0hmKiFVXSY3g3KVyUY0TR
+   Rs6RcYFbyR4XCglaXe74pOCJ2s3jupwX+DtW9uQ9602xC68nfsTVmkXnn
+   2cH/CO4wKwC/+mLmrP2Ork9XaHUUoBTKdD+8UL+JOFfmDK4hKQ9I2tcgB
+   AAoXbQH5RmqNOk3FiOhNDmB46FWic9cgltin6PdHbQIdQ6Sq2ftUeZcam
+   GGMCt1n3m+lAMAcW9KUtGmPO3AcOWi+I9yBdk40jOB0/k0H1gu6NRmL5Z
+   nY+Aad8I5ursvQBRsU6yHwpkkT5Tde2o7+p4CfurDEFZbKVnOgDuo4Zdc
+   w==;
+X-CSE-ConnectionGUID: n+Q1AmMOSu2busVmZqNUrQ==
+X-CSE-MsgGUID: gIT3QhIyTfC3YC6Au5au3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28781472"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28781472"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 07:24:40 -0700
+X-CSE-ConnectionGUID: K/mVzZNPTeyWcbXabMW+6w==
+X-CSE-MsgGUID: RNR/rDYxRJCBtdFcUPU2Kw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="102857310"
+Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
+  by fmviesa002.fm.intel.com with ESMTP; 21 Oct 2024 07:24:38 -0700
+From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+To: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2] tracing: Make percpu stack trace buffer invariant to PAGE_SIZE
-Date: Mon, 21 Oct 2024 15:18:31 +0100
-Message-ID: <20241021141832.3668264-1-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.43.0
+	intel-wired-lan@lists.osuosl.org
+Cc: anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	richardcochran@gmail.com,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Subject: [PATCH net-next 0/2] ptp: add control over HW timestamp latch point
+Date: Mon, 21 Oct 2024 16:19:53 +0200
+Message-Id: <20241021141955.1466979-1-arkadiusz.kubalewski@intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,38 +80,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Previously the size of "struct ftrace_stacks" depended upon PAGE_SIZE.
-For the common 4K page size, on a 64-bit system, sizeof(struct
-ftrace_stacks) was 32K. But for a 64K page size, sizeof(struct
-ftrace_stacks) was 512K.
+HW support of PTP/timesync solutions in network PHY chips can be
+achieved with two different approaches, the timestamp maybe latched
+either in the beginning or after the Start of Frame Delimiter (SFD) [1].
 
-But ftrace stack usage requirements should be invariant to page size. So
-let's redefine FTRACE_KSTACK_ENTRIES so that "struct ftrace_stacks" is
-always sized at 32K for 64-bit and 16K for 32-bit.
+Allow ptp device drivers to provide user with control over the timestamp
+latch point.
 
-As a side effect, it removes the PAGE_SIZE compile-time constant
-assumption from this code, which is required to reach the goal of
-boot-time page size selection.
+[1] https://www.ieee802.org/3/cx/public/april20/tse_3cx_01_0420.pdf
 
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
----
- kernel/trace/trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Arkadiusz Kubalewski (2):
+  ptp: add control over HW timestamp latch point
+  ice: ptp: add control over HW timestamp latch point
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 1c69ca1f1088..d4654943b580 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2914,7 +2914,7 @@ trace_function(struct trace_array *tr, unsigned long ip, unsigned long
- /* Allow 4 levels of nesting: normal, softirq, irq, NMI */
- #define FTRACE_KSTACK_NESTING	4
+ Documentation/ABI/testing/sysfs-ptp         | 12 +++++
+ drivers/net/ethernet/intel/ice/ice_ptp.c    | 46 +++++++++++++++++
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.c | 57 +++++++++++++++++++++
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.h |  2 +
+ drivers/ptp/ptp_sysfs.c                     | 44 ++++++++++++++++
+ include/linux/ptp_clock_kernel.h            | 29 +++++++++++
+ 6 files changed, 190 insertions(+)
 
--#define FTRACE_KSTACK_ENTRIES	(PAGE_SIZE / FTRACE_KSTACK_NESTING)
-+#define FTRACE_KSTACK_ENTRIES	(SZ_4K / FTRACE_KSTACK_NESTING)
-
- struct ftrace_stack {
- 	unsigned long		calls[FTRACE_KSTACK_ENTRIES];
---
-2.43.0
+-- 
+2.38.1
 
 
