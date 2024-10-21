@@ -1,158 +1,237 @@
-Return-Path: <linux-kernel+bounces-374574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36989A6C50
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:36:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29B59A6C53
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31E50B21466
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:36:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 804DE1F21537
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BF31F9A8C;
-	Mon, 21 Oct 2024 14:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67E21F9A84;
+	Mon, 21 Oct 2024 14:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XllLZWIL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eJ2u1bPs"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9AA1E0B96
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CADD1EABA5
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729521403; cv=none; b=ncfJk1eapaFew9XhBSSiuOvvXOw+RSyvN2kPmR0kbv9nS9ivk1tTYrtwS1r8QyPTfze+SzwRg1wCHjy7EQSNU/HCYx/ko1bj0dNp40XPXP7MbxyAHqK/b5ZhYRbgPWE0s9x/Z9bl0zRskJz8NORFGZeNm5IgJu5wHEsTrlbD/4k=
+	t=1729521443; cv=none; b=YLjnnc1WtXOaw9fkc6DGyFB6QI3LWRiDxyhrI2iEJ5DZVKTuwRfmpEamQ4Vlt8v/WCY3jd5kksebGKlUXaBb66FdHrSOoU7zWf+saQl21MYX7Xn1BUO55JU6rLhwYZF5wXxNUgvFBgjoXGV7/9r9wniREkM7vcK/28nNKsjurjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729521403; c=relaxed/simple;
-	bh=RgU58RN4trfD5valkvE0kXJVfUlucPbMoeUgDlvOaJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPOCM67HisK07UNXO+7cC2SYwQawgHaxG8zQH9roz+xuW7bOifb+YKVgjr5eNmccadAoLJJgEiUgv4sY1zAYbs0wuaC8HPQiYRIS5ZWtAoDEBcO7A3lgH2Fpkrr8BELYCxoEj2WJR7X+Jner4ioqACHQRanMEJ3aoy50MTICRo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XllLZWIL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729521400;
+	s=arc-20240116; t=1729521443; c=relaxed/simple;
+	bh=w9UslHje9Y25HqAgD6FbzkeP4dbMjaWhYX4yiay4hlk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hcta+pBZJ3NqU3XN7qcefHRIc9vA2AvlAehce7S9xpQg21wLYeT7d1FRjOBYE5dDotfzItqUmgRlKx5pG/Br03SYn3fFVXc24gCC8RDE4rwbY30YgPSjCfTuVELet5H0JazM9fb0EVZnMcFvOJJ+OOoEn/IhmgGB9xGiRhCrMQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eJ2u1bPs; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a61b0a48-d55b-494b-a7e8-04b02dc87e21@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729521431;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XdHMHctRtd6RpWu83wzIm149e96GKtvvM481R456WxY=;
-	b=XllLZWILhKlxdXEhkf16PZxBydWDtEP8Hv2bPuL2/x845t+lxFBxapG6veht3cLjIm0Ipg
-	8YPMgDy8wjWCLrZLalLFcVOkzW4Xfi/IrSnvPvR2F+YzDDkwkp5rvgxA/i2lLJJrdkx+tO
-	aKe1/2VRefgmx8aRmku0oiPfnN0g968=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-552-0pwV072UOfySrmjNGC_Seg-1; Mon,
- 21 Oct 2024 10:36:35 -0400
-X-MC-Unique: 0pwV072UOfySrmjNGC_Seg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6FCB7195608D;
-	Mon, 21 Oct 2024 14:36:32 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.32])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DFC941956056;
-	Mon, 21 Oct 2024 14:36:25 +0000 (UTC)
-Date: Mon, 21 Oct 2024 22:36:20 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: zhuxiaohui <zhuxiaohui400@gmail.com>, axboe@kernel.dk,
-	kbusch@kernel.org, hch@lst.de, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-Subject: Re: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support mq
- ctx fallback
-Message-ID: <ZxZm5HcsGCYoQ6Mv@fedora>
-References: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
- <ZxWwvF0Er-Aj-rtX@fedora>
- <064a6fb0-0cdb-4634-863d-a06574fcc0fa@grimberg.me>
- <ZxYRXvyxzlFP_NPl@fedora>
- <ab2ed574-5fb8-49d9-b6f3-5030566fc64a@grimberg.me>
+	bh=mA3Yw+C9FhQPBZ1Ah8zRphQ8BomtwMtOAV4fpiUEPcc=;
+	b=eJ2u1bPspCyKDFZxOYZF29T/F5YR3lGU6492LgXb8AdIZzBVRtPhQseMWnXFwjoj34pFEu
+	sKP9lxrJA6CzixQ0rwCZRsSEeqU1ooRRSJ6G80JOv6L/YeQ25aqCDcIEKGNfoJG6jYhjZq
+	9PhKEImi9KUCn+kUt8TkQPdAmugnTuc=
+Date: Mon, 21 Oct 2024 10:37:07 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab2ed574-5fb8-49d9-b6f3-5030566fc64a@grimberg.me>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Subject: Re: [PATCH 3/3] dma-mapping: Trace more error paths
+To: Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>,
+ iommu@lists.linux.dev
+Cc: linux-trace-kernel@vger.kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20241017181354.2834674-1-sean.anderson@linux.dev>
+ <20241017181354.2834674-4-sean.anderson@linux.dev>
+ <5e01b376-b905-4775-badf-41d31d2a821c@arm.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <5e01b376-b905-4775-badf-41d31d2a821c@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 21, 2024 at 02:30:01PM +0300, Sagi Grimberg wrote:
+On 10/21/24 06:38, Robin Murphy wrote:
+> On 2024-10-17 7:13 pm, Sean Anderson wrote:
+>> It can be surprising to the user if DMA functions are only traced on
+>> success. On failure, it can be unclear what the source of the problem
+>> is. Fix this by tracing all functions even when they fail. Cases where
+>> we BUG/WARN are skipped, since those should be sufficiently noisy
+>> already.
+>>
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>>
+>>   include/trace/events/dma.h | 41 ++++++++++++++++++++++++++++++++++++++
+>>   kernel/dma/mapping.c       | 27 +++++++++++++++++--------
+>>   2 files changed, 60 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/include/trace/events/dma.h b/include/trace/events/dma.h
+>> index 9bc647f9ad4d..321cce327404 100644
+>> --- a/include/trace/events/dma.h
+>> +++ b/include/trace/events/dma.h
+>> @@ -161,6 +161,12 @@ DEFINE_EVENT(_dma_alloc, dma_alloc_pages,
+>>            unsigned long attrs),
+>>       TP_ARGS(dev, virt_addr, dma_addr, size, dir, flags, attrs));
+>>   +DEFINE_EVENT(_dma_alloc, dma_alloc_sgt_err,
+>> +    TP_PROTO(struct device *dev, void *virt_addr, dma_addr_t dma_addr,
+>> +         size_t size, enum dma_data_direction dir, gfp_t flags,
+>> +         unsigned long attrs),
+>> +    TP_ARGS(dev, virt_addr, dma_addr, size, dir, flags, attrs));
+>> +
+>>   TRACE_EVENT(dma_alloc_sgt,
+>>       TP_PROTO(struct device *dev, struct sg_table *sgt, size_t size,
+>>            enum dma_data_direction dir, gfp_t flags, unsigned long attrs),
+>> @@ -325,6 +331,41 @@ TRACE_EVENT(dma_map_sg,
+>>           decode_dma_attrs(__entry->attrs))
+>>   );
+>>   +TRACE_EVENT(dma_map_sg_err,
+>> +    TP_PROTO(struct device *dev, struct scatterlist *sgl, int nents,
+>> +         int err, enum dma_data_direction dir, unsigned long attrs),
+>> +    TP_ARGS(dev, sgl, nents, err, dir, attrs),
+>> +
+>> +    TP_STRUCT__entry(
+>> +        __string(device, dev_name(dev))
+>> +        __dynamic_array(u64, phys_addrs, nents)
+>> +        __field(int, err)
+>> +        __field(enum dma_data_direction, dir)
+>> +        __field(unsigned long, attrs)
+>> +    ),
+>> +
+>> +    TP_fast_assign(
+>> +        struct scatterlist *sg;
+>> +        int i;
+>> +
+>> +        __assign_str(device);
+>> +        for_each_sg(sgl, sg, nents, i)
+>> +            ((u64 *)__get_dynamic_array(phys_addrs))[i] = sg_phys(sg);
+>> +        __entry->err = err;
+>> +        __entry->dir = dir;
+>> +        __entry->attrs = attrs;
+>> +    ),
+>> +
+>> +    TP_printk("%s dir=%s dma_addrs=%s err=%d attrs=%s",
+>> +        __get_str(device),
+>> +        decode_dma_data_direction(__entry->dir),
+>> +        __print_array(__get_dynamic_array(phys_addrs),
+>> +                  __get_dynamic_array_len(phys_addrs) /
+>> +                sizeof(u64), sizeof(u64)),
+>> +        __entry->err,
+>> +        decode_dma_attrs(__entry->attrs))
+>> +);
+>> +
+>>   TRACE_EVENT(dma_unmap_sg,
+>>       TP_PROTO(struct device *dev, struct scatterlist *sgl, int nents,
+>>            enum dma_data_direction dir, unsigned long attrs),
+>> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+>> index b8a6bc492fae..636dbb0629a4 100644
+>> --- a/kernel/dma/mapping.c
+>> +++ b/kernel/dma/mapping.c
+>> @@ -223,6 +223,7 @@ static int __dma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
+>>           debug_dma_map_sg(dev, sg, nents, ents, dir, attrs);
+>>       } else if (WARN_ON_ONCE(ents != -EINVAL && ents != -ENOMEM &&
+>>                   ents != -EIO && ents != -EREMOTEIO)) {
+>> +        trace_dma_map_sg_err(dev, sg, nents, ents, dir, attrs);
 > 
+> Isn't this just a case of moving the existing tracepoint up outside the "if (ents > 0)" condition?
+
+This is a separate tracepoint (_err) to simplify collecting/printing the
+addresses.
+
 > 
+>>           return -EIO;
+>>       }
+>>   @@ -604,20 +605,26 @@ void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>>       if (WARN_ON_ONCE(flag & __GFP_COMP))
+>>           return NULL;
+>>   -    if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
+>> +    if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr)) {
+>> +        trace_dma_alloc(dev, cpu_addr, *dma_handle, size,
+>> +                DMA_BIDIRECTIONAL, flag, attrs);
+>>           return cpu_addr;
+>> +    }
+>>         /* let the implementation decide on the zone to allocate from: */
+>>       flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
+>>   -    if (dma_alloc_direct(dev, ops))
+>> +    if (dma_alloc_direct(dev, ops)) {
+>>           cpu_addr = dma_direct_alloc(dev, size, dma_handle, flag, attrs);
+>> -    else if (use_dma_iommu(dev))
+>> +    } else if (use_dma_iommu(dev)) {
+>>           cpu_addr = iommu_dma_alloc(dev, size, dma_handle, flag, attrs);
+>> -    else if (ops->alloc)
+>> +    } else if (ops->alloc) {
+>>           cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
+>> -    else
+>> +    } else {
+>> +        trace_dma_alloc(dev, NULL, 0, size, DMA_BIDIRECTIONAL, flag,
+>> +                attrs);
+>>           return NULL;
 > 
-> On 21/10/2024 11:31, Ming Lei wrote:
-> > On Mon, Oct 21, 2024 at 10:05:34AM +0300, Sagi Grimberg wrote:
-> > > 
-> > > 
-> > > On 21/10/2024 4:39, Ming Lei wrote:
-> > > > On Sun, Oct 20, 2024 at 10:40:41PM +0800, zhuxiaohui wrote:
-> > > > > From: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-> > > > > 
-> > > > > It is observed that nvme connect to a nvme over fabric target will
-> > > > > always fail when 'nohz_full' is set.
-> > > > > 
-> > > > > In commit a46c27026da1 ("blk-mq: don't schedule block kworker on
-> > > > > isolated CPUs"), it clears hctx->cpumask for all isolate CPUs,
-> > > > > and when nvme connect to a remote target, it may fails on this stack:
-> > > > > 
-> > > > >           blk_mq_alloc_request_hctx+1
-> > > > >           __nvme_submit_sync_cmd+106
-> > > > >           nvmf_connect_io_queue+181
-> > > > >           nvme_tcp_start_queue+293
-> > > > >           nvme_tcp_setup_ctrl+948
-> > > > >           nvme_tcp_create_ctrl+735
-> > > > >           nvmf_dev_write+532
-> > > > >           vfs_write+237
-> > > > >           ksys_write+107
-> > > > >           do_syscall_64+128
-> > > > >           entry_SYSCALL_64_after_hwframe+118
-> > > > > 
-> > > > > due to that the given blk_mq_hw_ctx->cpumask is cleared with no available
-> > > > > blk_mq_ctx on the hw queue.
-> > > > > 
-> > > > > This patch introduce a new blk_mq_req_flags_t flag 'BLK_MQ_REQ_ARB_MQ'
-> > > > > as well as a nvme_submit_flags_t 'NVME_SUBMIT_ARB_MQ' which are used to
-> > > > > indicate that block layer can fallback to a  blk_mq_ctx whose cpu
-> > > > > is not isolated.
-> > > > blk_mq_alloc_request_hctx()
-> > > > 	...
-> > > > 	cpu = cpumask_first_and(data.hctx->cpumask, cpu_online_mask);
-> > > > 	...
-> > > > 
-> > > > It can happen in case of non-cpu-isolation too, such as when this hctx hasn't
-> > > > online CPUs, both are same actually from this viewpoint.
-> > > > 
-> > > > It is one long-time problem for nvme fc.
-> > > For what nvmf is using blk_mq_alloc_request_hctx() is not important. It just
-> > > needs a tag from that hctx. the request execution is running where
-> > > blk_mq_alloc_request_hctx() is running.
-> > I am afraid that just one tag from the specified hw queue isn't enough.
-> > 
-> > The connection request needs to be issued to the hw queue & completed.
-> > Without any online CPU for this hw queue, the request can't be completed
-> > in case of managed-irq.
+> Similarly just move this return down past the tracepoint, same as the hunk below?
+
+OK
+
+>> +    }
+>>         trace_dma_alloc(dev, cpu_addr, *dma_handle, size, DMA_BIDIRECTIONAL,
+>>               flag, attrs);
+>> @@ -642,11 +649,11 @@ void dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
+>>        */
+>>       WARN_ON(irqs_disabled());
+>>   -    if (!cpu_addr)
+>> -        return;
+>> -
+>>       trace_dma_free(dev, cpu_addr, dma_handle, size, DMA_BIDIRECTIONAL,
+>>                  attrs);
+>> +    if (!cpu_addr)
+>> +        return;
+>> +
+>>       debug_dma_free_coherent(dev, size, cpu_addr, dma_handle);
+>>       if (dma_alloc_direct(dev, ops))
+>>           dma_direct_free(dev, size, cpu_addr, dma_handle, attrs);
+>> @@ -688,6 +695,8 @@ struct page *dma_alloc_pages(struct device *dev, size_t size,
+>>           trace_dma_alloc_pages(dev, page_to_virt(page), *dma_handle,
+>>                         size, dir, gfp, 0);
+>>           debug_dma_map_page(dev, page, 0, size, dir, *dma_handle, 0);
+>> +    } else {
+>> +        trace_dma_alloc_pages(dev, NULL, 0, size, dir, gfp, 0);
 > 
-> None of the consumers of this API use managed-irqs. the networking stack
-> takes care of steering irq vectors to online cpus.
+> Could we move the page_to_virt() into the event definiton and let that handle NULL, then similarly hoist the tracepoint out of the condition?
 
-OK, it looks not necessary to AND with cpu_online_mask in
-blk_mq_alloc_request_hctx, and the behavior is actually from commit
-20e4d8139319 ("blk-mq: simplify queue mapping & schedule with each possisble CPU").
+Then we cannot reuse the event class for trace_dma_alloc, which does not
+have a struct page available.
 
-But it is still too tricky as one API, please look at blk_mq_get_tag(), which may
-allocate tag from other hw queue, instead of the specified one.
+>>       }
+>>       return page;
+>>   }
+>> @@ -772,6 +781,8 @@ struct sg_table *dma_alloc_noncontiguous(struct device *dev, size_t size,
+>>           sgt->nents = 1;
+>>           trace_dma_alloc_sgt(dev, sgt, size, dir, gfp, attrs);
+>>           debug_dma_map_sg(dev, sgt->sgl, sgt->orig_nents, 1, dir, attrs);
+>> +    } else {
+>> +        trace_dma_alloc_sgt_err(dev, NULL, 0, size, gfp, dir, attrs);
+> 
+> And again similarly here - if I'm interested in calls to dma_alloc_contiguous(), I'd rather have a "dma_alloc_contiguous" tracepoint which can tell me both the arguments and the result at a glance, than have to remember to trace two distinct other things based on internal details.
 
-It is just lucky for connection request because IO isn't started
-yet at that time, and the allocation always succeeds in the 1st try of
-__blk_mq_get_tag().
+Isn't it a case of just doing `perf record -e 'dma:dma_alloc_sgt*'`?
 
+Fundamentally, these events have different information available, and
+dealing with this in a generic manner is inconvenient.
 
-
-thanks,
-Ming
-
+--Sean
 
