@@ -1,178 +1,275 @@
-Return-Path: <linux-kernel+bounces-373676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C749A5A1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:05:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E57D9A59EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E17CE1C211FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:05:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7096A1C210A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31BC1946CD;
-	Mon, 21 Oct 2024 06:05:15 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2131.outbound.protection.partner.outlook.cn [139.219.146.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FBB194A48;
+	Mon, 21 Oct 2024 05:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ux0k+Ewq"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75467148FF9;
-	Mon, 21 Oct 2024 06:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.131
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729490715; cv=fail; b=J7GR538VnFUrfnTUHvVAZqzYHxqBKR7qExkxbQCokBJfhDjwTQpdX0ndu7wH9YgZ0KsUWXQ/OVHrMCOaBsIZ7FaJna2hsGk1JoEgknh0f427D3rxlNsVz0pd8yeIDqspyynZlE6ENPv/y0gQrD9jEXa3DwVz4V3Z5WWte/2aGLU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729490715; c=relaxed/simple;
-	bh=R+EeBlj86pRNtPtgXv896mqaSsSseyfHwsT8jQ5djoc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YkFYbXIZBLZH0DN+jYjOgMUqXHXAqz6W9D9nR8KGH4OlPY2F6u97E14D06Z7x4g88eie3RIhigAXN284oCbOU53LpmL1xN1FC70ToZzmOHGfPFvRXtV9gARjT5UugXBOnGjI5akZ039YkqvVfSP9ZEE9SsGZNV86AZccYPLTpSM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j3rTQxMuPcQQCLrf1jJr9Mgwrxbr/RLgf/LRuYtsmFcWlRH9E5KVtMvAKz7irY1WaCCHRiONkQ/IrZK0E6P3uowLNYKPvYAIIaz2XkA+mwUfGLNcHvtyZ3OV4mgT5O4paNv0nj0m6y4iV9i25tz1y2rFWiBbu/j6CShtS2D0kg0WZTI/xUIXPdw+8Qdki4DST/ZYGFVnN6ZVntk1lLtcrbJB9KWrjVtZp5HlqFQSYH4r4arMzw3P4774kZf4OhMpC3B7uWs82+uBPI2UmNsSDy3YdXpB/hgv8/cIv4slh8dv0w3eoxpWyGgbOKpU7pK2QD0659QetUi+Ln4NruVAhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/sNVfhZi9kq6WRMkg6s9bACOW5z61wVpEKgboggd3Zs=;
- b=M/T+6pF4G939G/z9iIuIqHWmatCQyWDXYe8/WP75CwBNZx9cSuFuuo/rODJFvtgBJs85mQrCUVptWvEH5w0FgWUCVYgYpL/yqEne1ZT0xyLJtI1QfbyY2xh1Rn3jNgufS3zJKoXHm5xi1tVzEAxdtRXcz25p4Za8n/7+Ltb+g2pF4yRhD+rtx4esnq+KqnCmVwypxVwkYA9FGKEoJNMD2IM1GyNMBuXHUFyOFa4OR41cS7oKbtaQ0REHbsC0ktMX/UR3TrVEPDQKR3q1kuw+52+c9tiw9Eh1vug5X1uxvrIrf6fRTwmGsKFt4NVN3lKeifkBFooALCgQGofygUUM3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:f::12) by ZQZPR01MB0996.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:a::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.20; Mon, 21 Oct
- 2024 05:49:16 +0000
-Received: from ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
- ([fe80::617c:34a2:c5bf:8095]) by
- ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn ([fe80::617c:34a2:c5bf:8095%4])
- with mapi id 15.20.8069.016; Mon, 21 Oct 2024 05:49:16 +0000
-From: Ley Foon Tan <leyfoon.tan@starfivetech.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lftan.linux@gmail.com,
-	leyfoon.tan@starfivetech.com
-Subject: [PATCH net-next, v1 3/3] net: stmmac: dwmac4: Receive Watchdog Timeout is not in abnormal interrupt summary
-Date: Mon, 21 Oct 2024 13:48:48 +0800
-Message-ID: <20241021054849.1801838-4-leyfoon.tan@starfivetech.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241021054849.1801838-1-leyfoon.tan@starfivetech.com>
-References: <20241021054849.1801838-1-leyfoon.tan@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: NT0PR01CA0028.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:c::15) To ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:f::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9587C3398E;
+	Mon, 21 Oct 2024 05:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729489783; cv=none; b=DSj9Hb4Sn6hkuXH4BGCfh472Hf0xBpcbLfZEhBypAD44AjPjbHyouVwBijeG2w7f7x8kE+BQK7grnGgT4jtptNtnbHfGO/FkLWaFydiGuOnBQrm3Rc9ahDuxIkYsadhb92pcQiB/bteDJX5AufB+uP9oOUbo5fql4HjbDAag2OQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729489783; c=relaxed/simple;
+	bh=KTR94EdhoOTqObKtMcJjWtFWf8t7y1RjNNVP2V/N7G4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FcEcEEXS0XBm5NdxfFfyG8B3bJTwVa9ufBoS5Zy+f4nv0MFj4ZdVHfj+sr8QkJ6TxiTJstr1RFVztNQFyPUpMhXWzNipyod7A7n0pkuBBZ1aEvxRnBMArHEWXYuaKdQ3KUlnY/eaTrFOyd1rbAlD9GRWEhbLbmfHjhUt7uJbvHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ux0k+Ewq; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4a46fee3b16so2070078137.0;
+        Sun, 20 Oct 2024 22:49:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729489780; x=1730094580; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HC/Fzf5LVO7VqDQJv1Y+GNKYd72VoygUexXVUNcG2ec=;
+        b=Ux0k+EwqIe2KRRg5PRNutow6xUOOF5yAZYlM5ai+6qBzPWnavkbODtqBYEJIRuVsPx
+         AUbgwOagHSydnxz3ZCaUgiYkIM8LKGUel0fHSaH2OPWo5K/YDrGCKOijTVYdAA5ULbmE
+         Jq+2I5p2eN6M+afeVDuraPxeioxHcIaslM9vpII3Y+yTtCejad1yTPa1DifPqUzWEaeW
+         Jotegbo+0pOFlbpl8k0GKJL74cqV6wlnTdlJBvvRw6IcUs+J0MDJUNS0l9NiBsJUfVwd
+         CWikLi+ORsYa82mxHKFpJthikUrmeGvBvW5QraQpgxHZ+7Ay7/7PfNdgTiEOU7xGviKU
+         31hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729489780; x=1730094580;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HC/Fzf5LVO7VqDQJv1Y+GNKYd72VoygUexXVUNcG2ec=;
+        b=OwhslP9aQpYERHLDjaIpu0CkH3tLC7Bpk9aF3AmTWXE8x7HZHXy9FPzOiA2bEHb1Fp
+         6+uawmNargOXSVvwGMVOCHaQWTPATbFMB8qrOWvhpd6EX8x55yCv2tpSHL0QB6JgXKkr
+         +2BwetTcAAB+IzIo+28jImXtpYt4QTOqoGUgNKjOrQuAp+NWPVWuVcxzH5MI+T8W952W
+         83dMuia6AaGPJTrRdJssPKIBijTTTODnM6Agqr4FYCOmSvUpBYQXWu71M9ZPeWIMjibt
+         mPDIu6GLl377cdLkRGnykiNrFui5sLAIRcBhCrzpgN7DSNVTM16tKu+nvNAoEY56Nq/U
+         DCjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSCO9ese4No0Eu5X3o+QKtBzk0f06g8/aeBdA1qexSAQsA9I4LsbVhsBHIdrdIMJeBcpMsPw1iHSA=@vger.kernel.org, AJvYcCXqbH+wFU2aJI3mMB8ySVBdu/HXhSHa81p8Y7ofKlaRcb3PRcXA++VqD3EDMEwooMcsUx/uUYxmD5yUntEY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXsYV631tfxboKRQy44vsiDRKtJ1K4FmFBX99I9l5orv6iPaWe
+	7nGkkaWGLKvjgZ15JqL/h++ELWa7irmrx9I97c4zBE6mpPPHdwSBTasJt0GftK4+Y7AB0yEbt3Y
+	28czEQfzVF+ZNeNtaQ5yATlM7XfI=
+X-Google-Smtp-Source: AGHT+IFlaokaNpDuvWcjTGk5CV57Ho/WnAS8Kxyp+RDruZDlLzBfk2EJEa310elv3KNL64aNswgkXzxiSRd8dfOKuio=
+X-Received: by 2002:a05:6102:4b8b:b0:4a5:b1f5:ba93 with SMTP id
+ ada2fe7eead31-4a5c491efe1mr9357011137.6.1729489780332; Sun, 20 Oct 2024
+ 22:49:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQZPR01MB0979:EE_|ZQZPR01MB0996:EE_
-X-MS-Office365-Filtering-Correlation-Id: a164545b-4736-4a28-993f-08dcf1941923
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|366016|41320700013|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	B9fdFMDltopznV+mF9z0mgMzVtoHacy/lZ3BLo97ZIrgzkS4KgF13teipfm/0gSpGilARxPuVl75AqcDc5edC4tdvQlTy4N4/fcGVWu2+Uo8Xigv+/Q8ElJjtr0vGCq/XEw3h9lkIb+lZz/eF9wWwgfi5SYqHsYfLSpH6BalNIQSYnnWYcRrAjAi5YZQvwew5CCkBZat6iTobsLAuPUqCVw0948nSHKUSvFK1kFzEtt4D0iy3kQQPmdT7ytoSokXWMBYpIMm6XNYzDjaYfgpVENVPIpQ0rMNoNHEPvSp0l86DMHiB1+FN/leEjJ6JHnSqq9sluLRhc85Vhi443wt9NXJrUPMJvc4Edbovxfcu7a+weGAL9KscZiQyVLZMfjX38J4BMlwDNQusBo8jeR0EEzdJvqJ1+NlqtT5898DwkEW1T0m7qOAA580hg8MwtA9LXcbX1iiz8KDKrXYAgdpnd0jAc59jUBeLbbxxkBP2kl1GXV+0WZ/pjP3KpB9hJ288NLhUEFh/9V+M5RaHwpatnS0yfnodPv16UnBFQTq6ioix6AzSfRiaukD81sYLpKFs3UMujMzWVI/BPrY3uhOkcNsoYpGzdMKL1Dmb2OwY8UYIGFKQUjS9BUT0CPtVREd
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(366016)(41320700013)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?69GpiCog967GC6fHlzf+sohmxO5xLrZ+3k2HuAoWnZERuCUHcfAoS29cIM+W?=
- =?us-ascii?Q?HvYCEl11UMq9sIsGsWo0vRzHNsuFzvWhYPxdykBTy96VYPG0TmHZg59PBsgm?=
- =?us-ascii?Q?Ss5hixNJpcDJBLQwZFSyOToVE31UChahF3ZDYg9576QkBbOsxP/Cqoj7qfqy?=
- =?us-ascii?Q?07uSFRNzQezD1XxXGpaO5T/hD3U4BoiNBDzWzzqZ/2mQgHoo2wVgh5aKXzth?=
- =?us-ascii?Q?T9mr0z5Fxc8LA4csV5SSN9veIC8oJp/SjN4Y/ioMB+2I14fcnytCwAeyAf3G?=
- =?us-ascii?Q?ege5Dnwp0ThiHzR7IisS83ImKWMLVqfC2HLo9fsJPbfa6Rv/MoIWynvxiwa4?=
- =?us-ascii?Q?e1PCiW006tNVX4Goig5H1R5rmA1ma5WD9nzBeyYFdfV3zd4c403tnOO/6JDd?=
- =?us-ascii?Q?PTUs+gjsP2ncEdoB2x3XMET01Hl6j4x+tNE3RXOJZhOMChW/hl1J/dOlzt5d?=
- =?us-ascii?Q?pTR/ft+LICdY48M47TxaegCKvfKzDqxXfa2lkpvGLyg5wpD4+hujNF4f+b15?=
- =?us-ascii?Q?ICs2J0ySCoDeppjIJzi5ErElRGJYaCNKc7mpnbVCty1E8jLOQNYduftpcir0?=
- =?us-ascii?Q?a8D/cnKxwEqxWFlgjafT71FoegX4VeUNY5fZ0pk7vnDLE7lixmeCmGONuce6?=
- =?us-ascii?Q?oaAXPPGIawGBz0D2vyoQYKfOrIV/MZ3sKY5RUsS9gekoEr+sgh1kzG36o0bR?=
- =?us-ascii?Q?omjVgwA5GO/Jy76GwSH0kODmcJMHrytbhcrZZ2yNTmZVAjy1XgD7MwNWDguG?=
- =?us-ascii?Q?wXCdBRxeEnZj012plXtPoXENsl1uKcQL4X9tItGo8n7DIcrAWj3FKjGbjuNh?=
- =?us-ascii?Q?XkJH+jsdt0hjat04Xe5Ny8sbdxw8iQYo6fyp6o/CT2sBSOvr+4VJBYXWR4op?=
- =?us-ascii?Q?/I99dXdQeGUCY2TShSU/2vvLUms9HbPWLrgYCtW5ryMhi1doqPWdZg0qXlMK?=
- =?us-ascii?Q?aBX7dtDadDybWnOked7ZbMYQtcy46+7KOdfA3DSoSfg73rzoTSImyZEDjsiX?=
- =?us-ascii?Q?GkG+DfNPFU/0ZrPDmXXAs4qPRZgWZJOQ6if7vhAPHBex0q9lJ+MyK2lQHydG?=
- =?us-ascii?Q?qrRNiMnxdunXj4gThk72IvzRiHBia9uGC0pGJD2ervpqwPNNKbUXjkz2Gl/a?=
- =?us-ascii?Q?QXsRGkqjOCO0LCYtawYIP9MDi9KwUaMdDF4OERTMLNzP9ehof6EbLoXqaVb+?=
- =?us-ascii?Q?igii4NS8AffkXiTQZPJXUriyr+rUWn1vMEi2uZTyMqmCEnPg0VD00bB+Xl0O?=
- =?us-ascii?Q?f8DzYwkVXisINSTkIKsWnB2bVtokW71DlzCHbMlvqPMni5JL9vE9HO8nVHA5?=
- =?us-ascii?Q?CWHzuiFrO/Ljogxl23gqERGxYu/5F3q0GTjc0WKyRROwDvJFrgOcGdKqnn+0?=
- =?us-ascii?Q?rJtyJgonmHK7gaSHNVvGicIZkPW4/rkfZ5Ycma/+DSndG+/CiHxANDDOC1zO?=
- =?us-ascii?Q?Zl7OjQYXUjlyay++lx2ElAWn8NhWuvVPwmMAzVskK22QicQgF8bfXY5HaGpj?=
- =?us-ascii?Q?axDaAniXoy8HVzJXdbCLqc4IUhP+ogYeSW828C/hfq4/4HGbeUAvqHazAVyn?=
- =?us-ascii?Q?tfK4ybkM3HZH7lAivREMZPBUObilz+lHI14LkB3G00bko/NwOM83bu52kkIm?=
- =?us-ascii?Q?Jg=3D=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a164545b-4736-4a28-993f-08dcf1941923
-X-MS-Exchange-CrossTenant-AuthSource: ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 05:49:16.0416
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZvC1E+h7OkT6y9dYZWnWEWP2r2WtNxbvAhY6AEEBsPTLbTWrUj/mBF7qrQGOc4BOHGBIRfr/SBRuNktuo6zmBgV5V4Uzrceblmch1/uOuXI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQZPR01MB0996
+References: <20241018105026.2521366-1-usamaarif642@gmail.com> <20241018105026.2521366-4-usamaarif642@gmail.com>
+In-Reply-To: <20241018105026.2521366-4-usamaarif642@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 21 Oct 2024 18:49:29 +1300
+Message-ID: <CAGsJ_4xyDMUDxVhi0bzZJ4jAd_Hw8Hn25+4epO9u9=iu0QMdoA@mail.gmail.com>
+Subject: Re: [RFC 3/4] mm/zswap: add support for large folio zswapin
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	david@redhat.com, willy@infradead.org, kanchana.p.sridhar@intel.com, 
+	yosryahmed@google.com, nphamcs@gmail.com, chengming.zhou@linux.dev, 
+	ryan.roberts@arm.com, ying.huang@intel.com, riel@surriel.com, 
+	shakeel.butt@linux.dev, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Receive Watchdog Timeout (RWT, bit[9]) is not part of Abnormal
-Interrupt Summary (AIS). Move the RWT handling out of the AIS
-condition statement.
+On Fri, Oct 18, 2024 at 11:50=E2=80=AFPM Usama Arif <usamaarif642@gmail.com=
+> wrote:
+>
+> At time of folio allocation, alloc_swap_folio checks if the entire
+> folio is in zswap to determine folio order.
+> During swap_read_folio, zswap_load will check if the entire folio
+> is in zswap, and if it is, it will iterate through the pages in
+> folio and decompress them.
+> This will mean the benefits of large folios (fewer page faults, batched
+> PTE and rmap manipulation, reduced lru list, TLB coalescing (for arm64
+> and amd) are not lost at swap out when using zswap.
+> This patch does not add support for hybrid backends (i.e. folios
+> partly present swap and zswap).
+>
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> ---
+>  mm/memory.c | 13 +++-------
+>  mm/zswap.c  | 68 ++++++++++++++++++++++++-----------------------------
+>  2 files changed, 34 insertions(+), 47 deletions(-)
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 49d243131169..75f7b9f5fb32 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4077,13 +4077,14 @@ static bool can_swapin_thp(struct vm_fault *vmf, =
+pte_t *ptep, int nr_pages)
+>
+>         /*
+>          * swap_read_folio() can't handle the case a large folio is hybri=
+dly
+> -        * from different backends. And they are likely corner cases. Sim=
+ilar
+> -        * things might be added once zswap support large folios.
+> +        * from different backends. And they are likely corner cases.
+>          */
+>         if (unlikely(swap_zeromap_batch(entry, nr_pages, NULL) !=3D nr_pa=
+ges))
+>                 return false;
+>         if (unlikely(non_swapcache_batch(entry, nr_pages) !=3D nr_pages))
+>                 return false;
+> +       if (unlikely(!zswap_present_test(entry, nr_pages)))
+> +               return false;
+>
+>         return true;
+>  }
+> @@ -4130,14 +4131,6 @@ static struct folio *alloc_swap_folio(struct vm_fa=
+ult *vmf)
+>         if (unlikely(userfaultfd_armed(vma)))
+>                 goto fallback;
+>
+> -       /*
+> -        * A large swapped out folio could be partially or fully in zswap=
+. We
+> -        * lack handling for such cases, so fallback to swapping in order=
+-0
+> -        * folio.
+> -        */
+> -       if (!zswap_never_enabled())
+> -               goto fallback;
+> -
+>         entry =3D pte_to_swp_entry(vmf->orig_pte);
+>         /*
+>          * Get a list of all the (large) orders below PMD_ORDER that are =
+enabled
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 9cc91ae31116..a5aa86c24060 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -1624,59 +1624,53 @@ bool zswap_present_test(swp_entry_t swp, int nr_p=
+ages)
+>
+>  bool zswap_load(struct folio *folio)
+>  {
+> +       int nr_pages =3D folio_nr_pages(folio);
+>         swp_entry_t swp =3D folio->swap;
+> +       unsigned int type =3D swp_type(swp);
+>         pgoff_t offset =3D swp_offset(swp);
+>         bool swapcache =3D folio_test_swapcache(folio);
+> -       struct xarray *tree =3D swap_zswap_tree(swp);
+> +       struct xarray *tree;
+>         struct zswap_entry *entry;
+> +       int i;
+>
+>         VM_WARN_ON_ONCE(!folio_test_locked(folio));
+>
+>         if (zswap_never_enabled())
+>                 return false;
+>
+> -       /*
+> -        * Large folios should not be swapped in while zswap is being use=
+d, as
+> -        * they are not properly handled. Zswap does not properly load la=
+rge
+> -        * folios, and a large folio may only be partially in zswap.
+> -        *
+> -        * Return true without marking the folio uptodate so that an IO e=
+rror is
+> -        * emitted (e.g. do_swap_page() will sigbus).
+> -        */
+> -       if (WARN_ON_ONCE(folio_test_large(folio)))
+> -               return true;
+> -
+> -       /*
+> -        * When reading into the swapcache, invalidate our entry. The
+> -        * swapcache can be the authoritative owner of the page and
+> -        * its mappings, and the pressure that results from having two
+> -        * in-memory copies outweighs any benefits of caching the
+> -        * compression work.
+> -        *
+> -        * (Most swapins go through the swapcache. The notable
+> -        * exception is the singleton fault on SWP_SYNCHRONOUS_IO
+> -        * files, which reads into a private page and may free it if
+> -        * the fault fails. We remain the primary owner of the entry.)
+> -        */
+> -       if (swapcache)
+> -               entry =3D xa_erase(tree, offset);
+> -       else
+> -               entry =3D xa_load(tree, offset);
+> -
+> -       if (!entry)
+> +       if (!zswap_present_test(folio->swap, nr_pages))
+>                 return false;
 
-From databook, the AIS is the logical OR of the following interrupt bits:
+Hi Usama,
 
-- Bit 1: Transmit Process Stopped
-- Bit 7: Receive Buffer Unavailable
-- Bit 8: Receive Process Stopped
-- Bit 10: Early Transmit Interrupt
-- Bit 12: Fatal Bus Error
-- Bit 13: Context Descriptor Error
+Is there any chance that zswap_present_test() returns true
+in do_swap_page() but false in zswap_load()? If that=E2=80=99s
+possible, could we be missing something? For example,
+could it be that zswap has been partially released (with
+part of it still present) during an mTHP swap-in?
 
-Fixes: 48863ce5940f ("stmmac: add DMA support for GMAC 4.xx")
-Signed-off-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+If this happens with an mTHP, my understanding is that
+we shouldn't proceed with reading corrupted data from the
+disk backend.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
-index 0d185e54eb7e..57c03d491774 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
-@@ -185,8 +185,6 @@ int dwmac4_dma_interrupt(struct stmmac_priv *priv, void __iomem *ioaddr,
- 			x->rx_buf_unav_irq++;
- 		if (unlikely(intr_status & DMA_CHAN_STATUS_RPS))
- 			x->rx_process_stopped_irq++;
--		if (unlikely(intr_status & DMA_CHAN_STATUS_RWT))
--			x->rx_watchdog_irq++;
- 		if (unlikely(intr_status & DMA_CHAN_STATUS_ETI))
- 			x->tx_early_irq++;
- 		if (unlikely(intr_status & DMA_CHAN_STATUS_TPS)) {
-@@ -198,6 +196,10 @@ int dwmac4_dma_interrupt(struct stmmac_priv *priv, void __iomem *ioaddr,
- 			ret = tx_hard_error;
- 		}
- 	}
-+
-+	if (unlikely(intr_status & DMA_CHAN_STATUS_RWT))
-+		x->rx_watchdog_irq++;
-+
- 	/* TX/RX NORMAL interrupts */
- 	if (likely(intr_status & DMA_CHAN_STATUS_RI)) {
- 		u64_stats_update_begin(&stats->syncp);
--- 
-2.34.1
+>
+> -       zswap_decompress(entry, &folio->page);
+> +       for (i =3D 0; i < nr_pages; ++i) {
+> +               tree =3D swap_zswap_tree(swp_entry(type, offset + i));
+> +               /*
+> +                * When reading into the swapcache, invalidate our entry.=
+ The
+> +                * swapcache can be the authoritative owner of the page a=
+nd
+> +                * its mappings, and the pressure that results from havin=
+g two
+> +                * in-memory copies outweighs any benefits of caching the
+> +                * compression work.
+> +                *
+> +                * (Swapins with swap count > 1 go through the swapcache.
+> +                * For swap count =3D=3D 1, the swapcache is skipped and =
+we
+> +                * remain the primary owner of the entry.)
+> +                */
+> +               if (swapcache)
+> +                       entry =3D xa_erase(tree, offset + i);
+> +               else
+> +                       entry =3D xa_load(tree, offset + i);
+>
+> -       count_vm_event(ZSWPIN);
+> -       if (entry->objcg)
+> -               count_objcg_events(entry->objcg, ZSWPIN, 1);
+> +               zswap_decompress(entry, folio_page(folio, i));
+>
+> -       if (swapcache) {
+> -               zswap_entry_free(entry);
+> -               folio_mark_dirty(folio);
+> +               if (entry->objcg)
+> +                       count_objcg_events(entry->objcg, ZSWPIN, 1);
+> +               if (swapcache)
+> +                       zswap_entry_free(entry);
+>         }
+>
+> +       count_vm_events(ZSWPIN, nr_pages);
+> +       if (swapcache)
+> +               folio_mark_dirty(folio);
+> +
+>         folio_mark_uptodate(folio);
+>         return true;
+>  }
+> --
+> 2.43.5
+>
 
+Thanks
+barry
 
