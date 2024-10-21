@@ -1,105 +1,211 @@
-Return-Path: <linux-kernel+bounces-374586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E77F9A6C79
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:46:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3579A6C7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664AE282B54
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:46:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1318CB2495A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8781FA24E;
-	Mon, 21 Oct 2024 14:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A1E1FAC37;
+	Mon, 21 Oct 2024 14:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ehTK5qga"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jGnwPKS8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFE0225D6
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CA8225D6
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 14:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729521962; cv=none; b=egPC5pl+5lWFy0dDrdGmJYj7O/sJaHvwS+HTdhnsjRrVKa2EbN7nFg/szypL1Hx+qXtndDtlOD8EX0xfmuyB60zwVpTegPqti3xRo8GO5HPOVqdlHIgMEI31foye4A4KkzOWhCPOA1hP7nON2NJDv3thYkemSpK/i4PoaHDv6cE=
+	t=1729521968; cv=none; b=hS2Ht7S1JbGRJO+MXqG4yRWCOHmdfieuX0TKW3raujbPixl39IxuvP9UMMhPYvPg8iYb1WUVezA1AiCGe+amNKfq7fqWZDGlvtPLRetv0QCCVlTW/rQOMJflYPyVlsjWcIKuaRdfnPmLfxkVTjz7G5YfRX6afQjUaRRUQsvUZok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729521962; c=relaxed/simple;
-	bh=MlfWX4tqpaCWzQbuTo9owf+BHcmgyI86ZvsjuJjKESw=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=i2nwYmpx0RmIySBEnWrjirZaqe2Dm82onX5X1alXEjypjBzyAP9sAaRdbWH7ppnD5qgRwdgfENSauKsWhA4O2yVG/c4m5RaLl8YFY/MQ3IgvEvu8SVzXRTl+zn9HLAJ4KBKC1O946/uLPnw4lNtrly5wQwAQeB/z/XnhadjywOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ehTK5qga; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1729521968; c=relaxed/simple;
+	bh=DmQWkn1T9PFoG0NEwWjY8BdpxvZZCy1ZxEjLTxUCtIw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WdteV6tp5ui3vvJJfVuSGglOseyPIiZUocxOwDeYQS6hBM3LDLM8kwRmy+IueS9xTsC0ekVtio9EOUuh9iQacGkWPOM2NgEUAkjx5Ue3NFJLUzguDpZHV07prZieB/Bmkm10WXTkfKdm0CvBNNsFktYZDEJJGUTEhNf2h9XBzOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jGnwPKS8; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729521959;
+	s=mimecast20190719; t=1729521965;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZF/W6huHYmJAWgOtJhZ3UzfsAIEzi9eYFD/euXGD1Qk=;
-	b=ehTK5qgarTCzHjXvLUou/F18ZqfLZ0r545SWe2PlvP2wx4Ga17HFQ0Vvc7SfNhUeByQ/l3
-	0DjfzLs1JYvkFqFepWsBxW6bibIj+y2JkL2AvcrcdjWd+tJVYZdaGvzs19LTZZ1iFVITGm
-	9uXnzD7bBORJtdPbHgHmLYcMMl4IQ9k=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-369-G7bERathNQCOvlq-b9um2Q-1; Mon,
- 21 Oct 2024 10:45:56 -0400
-X-MC-Unique: G7bERathNQCOvlq-b9um2Q-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7093A1955F41;
-	Mon, 21 Oct 2024 14:45:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.218])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E959B1955E83;
-	Mon, 21 Oct 2024 14:45:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <ZxFQw4OI9rrc7UYc@Antony2201.local>
-References: <ZxFQw4OI9rrc7UYc@Antony2201.local> <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me> <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info> <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me> <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com>
-To: Antony Antony <antony@phenome.org>
-Cc: dhowells@redhat.com, Sedat Dilek <sedat.dilek@gmail.com>,
-    Maximilian Bosch <maximilian@mbosch.me>,
-    Linux regressions mailing list <regressions@lists.linux.dev>,
-    LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-    Christian Brauner <brauner@kernel.org>
-Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
+	bh=3pBpP7qLCW9N3cROeVqgUltAMhaWq+ArP+b0NXa5W34=;
+	b=jGnwPKS8qS74KD5aFrJHBO6uvcQOyQtH0/KbZmBoUDA62QmnI/x2jTMrYUE3FnVDLfeZyu
+	nj3upWYkk+ZNkqmDB1inWNQBhboaUQBmANuj10rtKCldiqKzjKK55+hP5k1Kb4K6/9DPuD
+	1Aw6oTzZOgbl6KEY7frrmLzofO0AAb8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-118-ivkvQPDMOju3erII4yDL8Q-1; Mon, 21 Oct 2024 10:46:03 -0400
+X-MC-Unique: ivkvQPDMOju3erII4yDL8Q-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4314c6ca114so36579555e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:46:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729521962; x=1730126762;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3pBpP7qLCW9N3cROeVqgUltAMhaWq+ArP+b0NXa5W34=;
+        b=vfCEa9f26clKfng+2SzLbJQt3ULYH6Dqhpa7Onf7mOHgr87vxqLgjaiAKdtcLnmEaC
+         ygB6p0EtXeH3Q/+zABSZHqmzJFLtqdZP3fVwA9UDXNF7Ar7G8d9tnd7jBtinS7x05LGO
+         FBZG+cdJISeq6NkrJnZYk+pKNHoqVTgzKlTA9+uLYr9Mujn6UIr+CqLu5hWhHe6tySZR
+         iHQ2sqY41XXRD5W4tKsh3eRBm3ofT8VR4QAnhAY9l/bxnxklOqpdeEzC9sO6386uDMEL
+         EcyTb9qWkv2kNdh+Hkm2CWlT4NemydonxGjLhyYmp36aIefSswtm3QHt6rQz5QchMnOy
+         TTEw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8kbG33DwX6dT1jCgR9v2tCWqJxqPL21rb1hZRga8Oyuqm6+GmgdYUdGNKjz4b2lqyUc38WqfrPQEVT/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzizCNTp7XuZCZZTJgL+NUX8COnWAce0nmD2VNC5acuGnKNB9lC
+	L/J9tBEi/wCQsguPBM5vBY0bObHvYNyYq+4og5EGalIWDNXeuIkzvWsqCMhhQp0ymB7QbR74X3E
+	BjXv0UAkScpPWTPglntVctOYih84X2H1s7QZwpIVkES3wbX2PMh93NTFGBU+BEg==
+X-Received: by 2002:a05:600c:4f15:b0:42c:b187:bde9 with SMTP id 5b1f17b1804b1-4316168ffb3mr101784455e9.30.1729521961927;
+        Mon, 21 Oct 2024 07:46:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHnIcoVRRXbRUhxXReK6GpWNjdl0oiVGYJ9jq/7PmjHByyOKh4qiRtxhiYigJPvogBLyhVgLw==
+X-Received: by 2002:a05:600c:4f15:b0:42c:b187:bde9 with SMTP id 5b1f17b1804b1-4316168ffb3mr101784205e9.30.1729521961507;
+        Mon, 21 Oct 2024 07:46:01 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:36d3:2b96:a142:a05b? ([2a09:80c0:192:0:36d3:2b96:a142:a05b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fc77sm60419925e9.17.2024.10.21.07.46.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 07:46:01 -0700 (PDT)
+Message-ID: <64db4a88-4f2d-4d1d-8f7c-37c797d15529@redhat.com>
+Date: Mon, 21 Oct 2024 16:45:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2171404.1729521950.1@warthog.procyon.org.uk>
-Date: Mon, 21 Oct 2024 15:45:50 +0100
-Message-ID: <2171405.1729521950@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
+To: Alexander Egorenkov <egorenar@linux.ibm.com>
+Cc: agordeev@linux.ibm.com, akpm@linux-foundation.org,
+ borntraeger@linux.ibm.com, cohuck@redhat.com, corbet@lwn.net,
+ eperezma@redhat.com, frankja@linux.ibm.com, gor@linux.ibm.com,
+ hca@linux.ibm.com, imbrenda@linux.ibm.com, jasowang@redhat.com,
+ kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, mcasquer@redhat.com, mst@redhat.com,
+ svens@linux.ibm.com, thuth@redhat.com, virtualization@lists.linux.dev,
+ xuanzhuo@linux.alibaba.com, zaslonko@linux.ibm.com
+References: <87ed4g5fwk.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
+ <76f4ed45-5a40-4ac4-af24-a40effe7725c@redhat.com>
+ <87sespfwtt.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+In-Reply-To: <87sespfwtt.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Can you tell me what parameters you're mounting 9p with?  Looking at the
-backtrace:
 
-[   32.390878]  bad_page+0x70/0x110
-[   32.391056]  free_unref_page+0x363/0x4f0
-[   32.391257]  p9_release_pages+0x41/0x90 [9pnet]
-[   32.391627]  p9_virtio_zc_request+0x3d4/0x720 [9pnet_virtio]
-[   32.391896]  ? p9pdu_finalize+0x32/0xa0 [9pnet]
-[   32.392153]  p9_client_zc_rpc.constprop.0+0x102/0x310 [9pnet]
-[   32.392447]  ? kmem_cache_free+0x36/0x370
-[   32.392703]  p9_client_read_once+0x1a6/0x310 [9pnet]
-[   32.392992]  p9_client_read+0x56/0x80 [9pnet]
-[   32.393238]  v9fs_issue_read+0x50/0xd0 [9p]
-[   32.393467]  netfs_read_to_pagecache+0x20c/0x480 [netfs]
-[   32.393832]  netfs_readahead+0x225/0x330 [netfs]
-[   32.394154]  read_pages+0x6a/0x250
 
-it's using buffered I/O, but when I try and use 9p from qemu, it wants to use
-unbuffered/direct I/O.
+Am 21.10.24 um 14:46 schrieb Alexander Egorenkov:
+> Hi David,
+> 
+> David Hildenbrand <david@redhat.com> writes:
+> 
+>> Makes sense, so it boils down to either
+>>
+>> bool is_kdump_kernel(void)
+>> {
+>>            return oldmem_data.start;
+>> }
+>>
+>> Which means is_kdump_kernel() can be "false" even though /proc/vmcore is
+>> available or
+>>
+>> bool is_kdump_kernel(void)
+>> {
+>>            return dump_available();
+>> }
+>>
+>> Which means is_kdump_kernel() can never be "false" if /proc/vmcore is
+>> available. There is the chance of is_kdump_kernel() being "true" if
+>> "elfcorehdr_alloc()" fails with -ENODEV.
 
-David
+Thanks for having another look!
+
+> 
+> Do you consider is_kdump_kernel() returning "true" in case of zfcpdump or
+> nvme/eckd+ldipl dump (also called NGDump) okay ? Because
+> dump_available() would return "true" in such cases too.
+> If yes then please explain why, i might have missed a previous
+> explanation from you.
+
+I consider it okay because this is the current behavior after elfcorehdr_alloc() 
+succeeded and set elfcorehdr_addr.
+
+Not sure if it is the right think to do, though :)
+
+Whatever we do, we should achieve on s390 that the result of is_kdump_kernel() 
+is consistent throughout the booting stages, just like on all other architectures.
+
+Right now it goes from false->true when /proc/vmcore gets initialized (and only 
+if it gets initialized properly).
+
+> 
+> I'm afraid everyone will make wrong assumptions while reading the name
+> of is_kdump_kernel() and assuming that it only applies to kdump or
+> kdump-alike dumps (like stand-alone kdump), and, therefore, introduce
+> bugs because the name of the function conveys the wrong idea to code
+> readers. I consider dump_available() as a superset of is_kdump_kernel()
+> and, therefore, to me they are not equivalent.
+ > > I have the feeling you consider is_kdump_kernel() equivalent to
+> "/proc/vmcore" being present and not really saying anything about
+> whether kdump is active ?
+
+Yes, but primarily because this is the existing handling.
+
+Staring at the powerpc implementation:
+
+/*
+  * Return true only when kexec based kernel dump capturing method is used.
+  * This ensures all restritions applied for kdump case are not automatically
+  * applied for fadump case.
+  */
+bool is_kdump_kernel(void)
+{
+	return !is_fadump_active() && elfcorehdr_addr != ELFCORE_ADDR_MAX;
+}
+EXPORT_SYMBOL_GPL(is_kdump_kernel);
+
+
+Which was added by
+
+commit b098f1c32365304633077d73e4ae21c72d4241b3
+Author: Hari Bathini <hbathini@linux.ibm.com>
+Date:   Tue Sep 12 13:59:50 2023 +0530
+
+     powerpc/fadump: make is_kdump_kernel() return false when fadump is active
+
+     Currently, is_kdump_kernel() returns true in crash dump capture kernel
+     for both kdump and fadump crash dump capturing methods, as both these
+     methods set elfcorehdr_addr. Some restrictions enforced for crash dump
+     capture kernel, based on is_kdump_kernel(), are specifically meant for
+     kdump case and not desirable for fadump - eg. IO queues restriction in
+     device drivers. So, define is_kdump_kernel() to return false when f/w
+     assisted dump is active.
+
+
+For my purpose (virtio-mem), it's sufficient to only support "kexec triggered 
+kdump" either way, so I don't care.
+
+So for me it's good enough to have
+
+bool is_kdump_kernel(void)
+{
+	return oldmem_data.start;
+}
+
+And trying to document the situation in a comment like powerpc does :)
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
