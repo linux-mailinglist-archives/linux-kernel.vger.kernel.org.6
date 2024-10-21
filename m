@@ -1,122 +1,119 @@
-Return-Path: <linux-kernel+bounces-375203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E4B9A9309
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:10:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6109A9323
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 00:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9A3F1C224EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:10:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7FDF1F22D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF50E1FE0F2;
-	Mon, 21 Oct 2024 22:10:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FBB1FCC51;
-	Mon, 21 Oct 2024 22:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D17C1FDFB1;
+	Mon, 21 Oct 2024 22:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZ79nMOY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EE91C9EDA;
+	Mon, 21 Oct 2024 22:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729548618; cv=none; b=aUZzJcn+UyBJNRdxgf3tLrKy7B+OrWuzjcoA6lj7Wqv5Nfbsxpj4ArITG70RNvc2p8MLQm9PS96zEfi93x4xb+MH5c4fZyPNfQKkXWQP0aNSJ1isTa/kkHfMQsiS0fuBz46J6cm36WhmXfKoZC9wJGBMOzwXORzvp/TMEvC8iL0=
+	t=1729548972; cv=none; b=WSIU3QKyZX5v/s2E3n/y8WVF9hZNCeoJOgs6aPZ0vSK59jPl/M4zb1C2CmimVl9WRxew7vi2vSCJtTy+TwRkzDE7FYWk1cbQ0aANiCEEteK+U8xhGjyabcTZfFfyEqUSPLlZEK3G0vNGdQRlAKYplF+fgvTkXaYYVmcZj/oRIZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729548618; c=relaxed/simple;
-	bh=jnXeoGKRGFTD/K1W6aKJIn+T/e/NqOSJnYi1PDW4t3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VUk4YsA5+IWpV4glWfVz7vYIB5vtbsdLAaY8btYKAqP+e31yruXW9MA4iVVfEnqWqbsLfXXCtuv9A7pD3S9wIu87lQPZYaUCZI5zmReT150rJCSNWL2kn6FyTX7UcQgsl6S+ojObvTkaPz76tq6Wv/TXkAuwr/qHIBYHHybcY5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31F46497;
-	Mon, 21 Oct 2024 15:10:45 -0700 (PDT)
-Received: from [10.57.65.103] (unknown [10.57.65.103])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6E833F71E;
-	Mon, 21 Oct 2024 15:10:13 -0700 (PDT)
-Message-ID: <0c02c5a3-9eea-495e-aa39-3aac862b5427@arm.com>
-Date: Mon, 21 Oct 2024 23:11:23 +0100
+	s=arc-20240116; t=1729548972; c=relaxed/simple;
+	bh=eiNYccaEe6YvcZ5Yhjie50uzxPO+pld8P9lHn4HdcS0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UTcwvkSQV2L4qADFX1xG7g3eVWMm4eQ0vjC6eUewHqF7BigQZA2bWO0ajeJupUuVKC+AUejhz7uLOUOokvxoKklxb2Axf1AoINeEWrfvq/1m12nt+l1OB98/LJ863YwCSsUr/s4eiEJDzXOZ2LVA7PUexCrH75rOnq+z6Rqjpg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZ79nMOY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 361CCC4CEC3;
+	Mon, 21 Oct 2024 22:16:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729548971;
+	bh=eiNYccaEe6YvcZ5Yhjie50uzxPO+pld8P9lHn4HdcS0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=KZ79nMOYfWpzgBl7pJ2U5ZhwrEdOqPBKtVfE98BKOvGvbgmnQHLeYx2KBiO9qL3ML
+	 x5vhtgON7wW1Nkv9Zi0KrtMPWjBJw7JMhOY8NwgiyfpYH6h+7NmAIDPA8cN8wzNjJI
+	 3RtrgTACOFHKytJXtfrv2D6v64fLZhbkmvRY/jwg80osIY5+poDdLxtfNAQ2JOO7xT
+	 cYcLXf04Nlh+Z/TWuC2nkrwa7PZWP1UrHBJ32P6o4JrlHtj8sD4nyhj5l48xg324A1
+	 9Jyi0viYu5oUDhq5qkTLbcJw/LAiG0X5r3ruym1vU7rbZarUhuGmss2yFRnXCvITss
+	 Hwo6s5liITKjw==
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 21 Oct 2024 23:11:40 +0100
+Subject: [PATCH] KVM: selftests: Fix build on on non-x86 architectures
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal: gov_power_allocator: Granted power set to max
- when nobody request power
-To: ZhengShaobo <zhengshaobo1@xiaomi.com>
-Cc: zhuzhangwei <chuci@xiaomi.com>, Zhang Rui <rui.zhang@intel.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- dingchongchong <dingchongchong@xiaomi.com>, chendejun
- <chendejun@xiaomi.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241021121138.422-1-zhengshaobo1@xiaomi.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20241021121138.422-1-zhengshaobo1@xiaomi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241021-kvm-build-break-v1-1-625ea60ed7df@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAJvRFmcC/x3MQQqAIBBA0avIrBtQsUVdJVpoTjVUFkoShHdPW
+ r7F/y8kikwJevFCpMyJz1ChGgHTasNCyL4atNRGSa1wywe6m3ePLpLd0HStdeSnVpGEWl2RZn7
+ +4zCW8gGvogcgYQAAAA==
+X-Change-ID: 20241021-kvm-build-break-495abedc51e0
+To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+ Vitaly Kuznetsov <vkuznets@redhat.com>, 
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1609; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=eiNYccaEe6YvcZ5Yhjie50uzxPO+pld8P9lHn4HdcS0=;
+ b=owGbwMvMwMWocq27KDak/QLjabUkhnSxSys7LC3EWFtO+05rmVSWMF9Fc9ZjjaXv/7UYF9ZafFp/
+ nSG8k9GYhYGRi0FWTJFl7bOMVenhElvnP5r/CmYQKxPIFAYuTgGYSMU69n92jv93ZW8Pa0xMnZfsL3
+ 33ZZh2cpHj0v7AaRGsBbdffshbudw0OP0Lx/SCnx9/vK35JhnaU1pTo3Ljc+9lQZ0pDIpyDYdaIqqY
+ 1uqX/zmtE9KrzHGv8uIRg1ClzKu7UhvuzH3NaVsiabTqW8PqZwahIj/Egj8mecxeKHAleS7v9NjIAJ
+ FzemIPVdR+H+MKzClfKb/47V+Ba82GBT7TbDRqfN/VdLuu/p32evm7kMYJlzydmsOZK/jacjMX2r/N
+ 2v1tSlD1R++2O1HevB9nCa1yWtJrcFQwnNHhssOWymDO007cfh+mCc0Wbw6xatl97vzKxA7LNQyHe7
+ i4/aO7JNac3D1Vcaf+t6smQlayAA==
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Hello ZhengShaobo,
+Commit 9a400068a158 ("KVM: selftests: x86: Avoid using SSE/AVX
+instructions") unconditionally added -march=x86-64-v2 to the CFLAGS used
+to build the KVM selftests which does not work on non-x86 architectures:
 
-On 10/21/24 13:11, ZhengShaobo wrote:
-> From: zhengshaobo1 <zhengshaobo1@xiaomi.com>
-> 
-> When total_req_power is 0, divvy_up_power() will set granted_power to 0,
-> and cdev will be limited to the lowest performance. If our polling delay
-> is set to 200ms, it means that cdev cannot perform better within 200ms
-> even if cdev has a sudden load. This will affect the performance of cdev
-> and is not as expected.
-> 
-> For this reason, if nobody requests power, then set the granted power to
-> the max_power.
-> 
-> Signed-off-by: zhengshaobo1 <zhengshaobo1@xiaomi.com>
-> ---
->   drivers/thermal/gov_power_allocator.c | 18 +++++++++++++-----
->   1 file changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
-> index 1b2345a697c5..4301516c0938 100644
-> --- a/drivers/thermal/gov_power_allocator.c
-> +++ b/drivers/thermal/gov_power_allocator.c
-> @@ -356,11 +356,19 @@ static void divvy_up_power(struct power_actor *power, int num_actors,
->   	u32 extra_power = 0;
->   	int i;
->   
-> -	/*
-> -	 * Prevent division by 0 if none of the actors request power.
-> -	 */
-> -	if (!total_req_power)
-> -		total_req_power = 1;
-> +	if (!total_req_power) {
-> +		/*
-> +		 * Nobody requested anything, just give everybody
-> +		 * the maximum power
-> +		 */
-> +		for (i = 0; i < num_actors; i++) {
-> +			struct power_actor *pa = &power[i];
-> +
-> +			pa->granted_power = pa->max_power;
-> +		}
-> +
-> +		return;
-> +	}
->   
->   	for (i = 0; i < num_actors; i++) {
->   		struct power_actor *pa = &power[i];
+  cc1: error: unknown value ‘x86-64-v2’ for ‘-march’
 
-Thank you for the patch. Good catch of that corner case.
+Fix this by making the addition of this x86 specific command line flag
+conditional on building for x86.
 
-If there is no load on those devices, then the temperature should
-be low, lower than the 1st trip point. In that case we should
-reset the PID and call allow_maximum_power()...
+Fixes: 9a400068a158 ("KVM: selftests: x86: Avoid using SSE/AVX instructions")
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/kvm/Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Although, what if the temperature is higher, e.g. due to
-ambient temperature and no load on the devices. Then we
-hit that corner case and your code would help.
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index e6b7e01d57080b304b21120f0d47bda260ba6c43..156fbfae940feac649f933dc6e048a2e2926542a 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -244,11 +244,13 @@ CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
+ 	-fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
+ 	-I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
+ 	-I$(<D) -Iinclude/$(ARCH_DIR) -I ../rseq -I.. $(EXTRA_CFLAGS) \
+-	-march=x86-64-v2 \
+ 	$(KHDR_INCLUDES)
+ ifeq ($(ARCH),s390)
+ 	CFLAGS += -march=z10
+ endif
++ifeq ($(ARCH),x86)
++	CFLAGS += -march=x86-64-v2
++endif
+ ifeq ($(ARCH),arm64)
+ tools_dir := $(top_srcdir)/tools
+ arm64_tools_dir := $(tools_dir)/arch/arm64/tools/
 
-LGTM,
+---
+base-commit: d129377639907fce7e0a27990e590e4661d3ee02
+change-id: 20241021-kvm-build-break-495abedc51e0
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
