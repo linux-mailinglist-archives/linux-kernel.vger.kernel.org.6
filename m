@@ -1,295 +1,216 @@
-Return-Path: <linux-kernel+bounces-374763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575409A6F8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:33:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F47E9A6F97
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 130F42834B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:33:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21C771F2659D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB1C1DF754;
-	Mon, 21 Oct 2024 16:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B981D0174;
+	Mon, 21 Oct 2024 16:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="fyog8uog"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Oqv6kKrk"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2073.outbound.protection.outlook.com [40.107.241.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A1F1EABD0
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729528408; cv=none; b=nZgHTadqjLjXqnow46KdsJsQIY8xEIAiLZZWvf8ty3hJnOL2ah3LePh5dhey3po6n+4Q6ZBm8CHtElWPNsR6pKbHhjhv/5rshwJeOxO4KwNon7MLmSDZOMJikoQKVuUXGhicE+vYkgjf8BO2znjCGPSX5qOIXtaFjGsF28Nono8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729528408; c=relaxed/simple;
-	bh=VGX2BOoN5yaA0r3uurxYxFu+qq2+Od+7xX5jaP7gJF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qpnhKmE9kZmpzPS7H+t475VZRFjVeti8Ku0Yz0NC5GluznR8SZETYtsvtYNLAGqgnK1rAcai/8cGtIPDAyVpDLyjrP0nzWGfKTkZSGumHIjrxIj5/rV2Irl5MfScfzye6fVEH/xzjJTbeD82t+gK2IDfDQnQuCmoLWBJ6uSSqk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=fyog8uog; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7eb00dc77f1so274856a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1729528405; x=1730133205; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rj7uTRFGZXMqC2YS9qWKHqBkcNhGSePp25EEQea4IH4=;
-        b=fyog8uogkCoEEnfW34pGuFzVjVWeMVqRkLXKbTW4dFv8Db7AKw3nwI1WFhNV7xaFD9
-         GYsqHE05l0QMuy6x6AiIGYmcv4tM4Cx3fvBv0fkIsMo+ZrMyz9cRL7SrPvkLSPJyqBW0
-         SeCCxyizZo7gFiRMK3lHbBrLEnbcVnDNJCTPM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729528405; x=1730133205;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rj7uTRFGZXMqC2YS9qWKHqBkcNhGSePp25EEQea4IH4=;
-        b=jLmEO2d7tp+KzJOlTR64Z/6iZCGHhKdeo13pJ43GQQmbSNe0ih7FIwtffbhLR4Nz8/
-         bS+ELGnaEanSnjNV6IF1GHIjjLqsARrYTLP/TThfMacOynA8aceJenuEoWY5YiASfFu6
-         klvs+6JK8W/dFhSOF4i0z/Vc0MtzgDg/Vw/pr8Yw+BRA+aDmDuHASsWSqIxyPWAkucFy
-         ZMNtCFddChCnD/KiJrGMJypvsqEImR/lreXBB1Vvw3XxEmDYmnM5phXDFc64tnF8uoUI
-         SGIIAtnrbcASFOU9Y8dVJuM0yTPsMR1xoROJ8rgRMTm23fKsWehNN7kiCzJ8MrdALnQk
-         EvUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGqMAtUV9aKqhNRAuLqrH+aFiGQc8E+hh/sFR1WlvSb3J1i+vAN9HUWwCHSGv5D6JGM//bYGOeDDdsC2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP+2TU0JEiJpvxwnhaoLBtWURtcZhX4nq+LOaQr2TdftGaqSK2
-	aPgGXHKvdjR3LlLeFl1eAPxNaJ36Fv1x1eLmwz+VIrhJ7MAETwGMjAyyHp3IO+M=
-X-Google-Smtp-Source: AGHT+IE4BcYs0yAgU6r4RPKaASzilu3a+p3CUWGFBO9lYOqdLzl+wYFC2w3HC6qR2+jo3JZEXQ8WNg==
-X-Received: by 2002:a05:6a21:1707:b0:1d9:2bed:c7d8 with SMTP id adf61e73a8af0-1d92c57e3c0mr16742734637.43.1729528404939;
-        Mon, 21 Oct 2024 09:33:24 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d74d9sm3081883b3a.133.2024.10.21.09.33.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 09:33:24 -0700 (PDT)
-Date: Mon, 21 Oct 2024 09:33:21 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Networking <netdev@vger.kernel.org>, namangulati@google.com,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, kuba@kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux BPF <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 6/6] docs: networking: Describe irq suspension
-Message-ID: <ZxaCUZ5rNd86gDHG@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Linux Networking <netdev@vger.kernel.org>, namangulati@google.com,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, kuba@kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux BPF <bpf@vger.kernel.org>
-References: <20241021015311.95468-1-jdamato@fastly.com>
- <20241021015311.95468-7-jdamato@fastly.com>
- <ZxYxqhj7cesDO8-j@archie.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B7743173;
+	Mon, 21 Oct 2024 16:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729528500; cv=fail; b=u1sBB7kB1Y5oC8K8zcZdsMVBdkcgoGnSx0CyKoApsCnK3tJPwhy7RU3I7YCKstH/jrPN7eAo2+FoxbtJujclaQgq4s3hTKTqKqoczr58Tr8sbFyg1tdh51cov6jPWOpYkqAdXYqqIH77FzLv9wB2QU/m71NkZkmPYOPKvB837ZE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729528500; c=relaxed/simple;
+	bh=4s9o70erAfz174yHpp6HWKiDNkjuMzUKepKXz2HneSg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=idXOUNEnwDNCb7l7MqZLRkiFiO9j3Ij2hRm5D1QCwhb5eoy5CssfZpq5Uxnho7rE01YjSCQ8TyI7YYJalQwebNcj9JJaPa+uUhNaHfhNyJl3MdQQNaCfeVBHK2V8gw9Kt1cWDK79XY13X0wNLdyKaQApyb7Y2rHW661C9v6sqJM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Oqv6kKrk; arc=fail smtp.client-ip=40.107.241.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UxPZxveLhkwOgwAHKLpUT8YdLZOOWCCbhUSQzZGAJiUzmW1GYGfNsqSvY2AErvC36SACtErEBx54+O3mpi4j8L4grefMmbsKMylFTFElSjJPy98COx3l5oPkmnR58BTa6GdATUziqROXf6+Kg+W3egdxy7xT2R/owj8SLbbej3ZVALP1yvUmZTk14BO69d5ZKLS+9CFU/7ITY1pzoan96YEoDIf66JvxX8n85I3iyLyHF9Si5tyCv/RAdGPogpO4oRJWubekJBa/kh9Xyu4oc6S7zNAstuiNTZWeO8rUmiaiIYxJ1fc+CTru+bwIwN0SkpPGj3nwT6RKRVM+y9JzgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fcHGoM3FqiCfCWcqQZpVMOJR59KqkDnEKJCHq5TTO8s=;
+ b=vnJndKmMDkQMY7b8WHS3BGeCGDAM8pMH47f3zKztKzWYZcQJib2Q3m98lPjYmKlZArhhPbSJLS2896rFVvxhRv3Vzs0W0bXJ2tXPr7GQxxDUlfvTiXhNowGC1oYTaq0Cls01WVoZwxQKS86cGFDOvuoV/iV5l3/PaoV686qroQExxP8R2WJ9QbqOKTSjvX2P/tiZ7xfiBCe9qndJDf70exFKiLBXJOVorpQ+b46dUug4P35ZAAOnn+brRQL7bVDZy+w48N/mO4JTI+K+coiyVuTUsGVF0F8XRIvT/0GpGPRKlXrv4bLeodkAr+Jr/VxOKkEdKTo9BOFCMqdhDLmtEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fcHGoM3FqiCfCWcqQZpVMOJR59KqkDnEKJCHq5TTO8s=;
+ b=Oqv6kKrkOl2NqPcvjk85mJYjFyEA/MgUmPknQha56mzPM+Tp0b09V7pYaBXs/b8UGUO7MpZWbsxz2TwSdSySe6fhDglRvZx+8lddjRynIbOBan0Om0kfcCyZiBxLtJqrUo4dxYS+lYFGXlXV2NRIET82aSB0gw5Q1w7KitNq8z37cq/gSeZfUT1cQpeiA123vJ4AL0dFhvSzzkj86/L7BuaTHt2k5CVPs/uXWC/RwOOW9ERAOPjfXadwIRyrS6oBgvK361n/ukuloTBpvkPdgwymw7A6rfLgXvORtkmfKIr9QP672YgYTkhxbNk1tnS3Uky0nmgoUZKRo9xv3EDkng==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB8831.eurprd04.prod.outlook.com (2603:10a6:102:20e::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
+ 2024 16:34:53 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.024; Mon, 21 Oct 2024
+ 16:34:53 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: shawnguo2@yeah.net
+Cc: Frank.Li@nxp.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	kernel@pengutronix.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	s.hauer@pengutronix.de,
+	shawnguo@kernel.org
+Subject: [PATCH v2 1/6] arm64: dts: imx8qxp-mek: add bluetooth audio codec
+Date: Mon, 21 Oct 2024 12:34:32 -0400
+Message-Id: <20241021163437.1007507-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY5PR13CA0005.namprd13.prod.outlook.com
+ (2603:10b6:a03:180::18) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxYxqhj7cesDO8-j@archie.me>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8831:EE_
+X-MS-Office365-Filtering-Correlation-Id: 761c520e-ffc8-4338-f69f-08dcf1ee4a35
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KL8vw8V51p7AukcbfOQ9t5xxmAS+rleh5csG2fx0NnEFoM1shD+xZk6qLY5L?=
+ =?us-ascii?Q?MLQT9mICy2RKab/HlZmktfioZ0txLDc4Kq+N6Qov4CDy2sHj5p95RCId7KR6?=
+ =?us-ascii?Q?dvb6OzCC/VpwnuJU/YT31k37ZQy7MCYXhS6M0zQmcApNn6DaEZfyggElp/gB?=
+ =?us-ascii?Q?XX02iOfYGWy4tQODOrtm8DkC4OYis+6u13Xkr4Ri0t3VyaVTfWe10YAukTBg?=
+ =?us-ascii?Q?zC/jEe5RukzNUprCFCCAFp8a0uM7BGqCa6rxoD3d1cNnVv8S5lXOO2z1gaU1?=
+ =?us-ascii?Q?ca477lu3B7Jx24+R+MQ727pSZOEYE0K81Cy7t3cSfhZV2DLDeNvrzWj7hqFv?=
+ =?us-ascii?Q?i7JRZbWUqzJ0X+JwfegNouFpZkBIkuaTE0tuWINMR/l1lAGJSdT/3hqVkmcw?=
+ =?us-ascii?Q?l4+NFcIg2wJ/HJLEPJJ5Vh3mX9BUnQTknBWtLjREsmRJupDah9b5gdvLjzLP?=
+ =?us-ascii?Q?CdfgcKAx3jK7Js+CRI+OfmaQOZc3KVVVYpDEb/KPDOofSMUhDI4MJQeqNmwS?=
+ =?us-ascii?Q?OKj0RQ8Q1ZPnfXb1H/epFac6Ffi6uFvbRuL9zWCmzrRTCXD/SM7vCU9N698B?=
+ =?us-ascii?Q?uuTAX2ttn7Oy6qnjC0SgNHCmqxuqRsPYhpMwvMYNd95rYjmiLtGQxgS11uxr?=
+ =?us-ascii?Q?W2d8YOrKWJiWWAb2kjc4nP5isK/z3pPWkodGQ8i2R/RKWODnWj+Hk4h3oXYd?=
+ =?us-ascii?Q?q6alzg7iHW3UJFhv77u3EfGvFeti/MTQX59zbBlWqd4B3gN2Il5WYJXnXqg6?=
+ =?us-ascii?Q?wF1hvqB+iP9pcOdzfIP09Qc7UnBegiXnPwJqIBLuynIVKLjrH/WoqTqM/d3P?=
+ =?us-ascii?Q?IGtP2tyObqymwryCGdF+EPsiJmgOguNe59WhqTyCHGM57lO2CzJ2jtG8DhpM?=
+ =?us-ascii?Q?l2GEd4Ttlf7wJT89xNSr4bzUMWT0JaWL0BC6824bODEjTemku1Ki1s2ME2Kt?=
+ =?us-ascii?Q?i9cGYZnzwPyJ+xbMur7QKsBTw1rZXhim3f+TkulgUpc9OZmVK8WOTX+fujFs?=
+ =?us-ascii?Q?UlOuTjuClZO90nLzHCZ3EYFIZv7bVGA3/2uEmsNkHB/YMS8MvKuCI7SycnE5?=
+ =?us-ascii?Q?PDdTr7rJK0ybaMj3+hsP3Im/HGtmPHGsGN8uV8SMWd2toNoQ2Q9tfR3IJ7s4?=
+ =?us-ascii?Q?jD9cDRXopLP1G0pw4GWZw70AyW78WJyZ7V9K6PXqyYREaAMOZnJd/I5FyaLD?=
+ =?us-ascii?Q?KRLsX4JDiMeMYB1WulC5TClAeZtmP2m+BgnlmyGvMp/IyZT13SSIdLbdZuoy?=
+ =?us-ascii?Q?gLj3zwiuU5lTOTjX/J6eaUAVxkDXaHZanZjIABVyJMbX0B5GZLWknwz16UXh?=
+ =?us-ascii?Q?a6rwP9wdyfcQaSZMTND3HaFbhqyfplZg+IJNaAegXq440aVGPN2HVvo+6O/y?=
+ =?us-ascii?Q?KdHR3hk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DZsIYC2vZ2/9VW/39Ccelo9gM45Y3LXfDF8Rk4D7o/RbZvhDvbkeB3cNXGPK?=
+ =?us-ascii?Q?B2W1aD/xjTrLZyRdDp6yI58T3P7YOZ6Z6jBRaqbS9RAzgRO5sZABvvSqd84D?=
+ =?us-ascii?Q?1GwcI0ibJ7JaJv7h4YW0dLCx7P0rF/CtHNTpDtPs6u3Na047TsodSKoywaxc?=
+ =?us-ascii?Q?tQsXkUdHZyYEY36ovyGeetSZl6lilBPOH5WccN70XDeVhBC3ZxpmPRBRNFx2?=
+ =?us-ascii?Q?/PDFkCyRFeRd/iE0SlDNo+bWQOHRJSKhQzTrgsF9VL3EZg/SM5DHEj63jVOy?=
+ =?us-ascii?Q?j+EJH16YA8m++Ya4OqV2c3ua3VeB6Z+rcDbbTCMQZnasqnGivaJmcfS6qIbx?=
+ =?us-ascii?Q?vRtYjy6PNZW5CIlWB+uaYE/gQcFnA6Hf4Bt7L8JOAon2ZCL0ZOeDiRn1YjPZ?=
+ =?us-ascii?Q?+4iExsYrncm4xuO54gXfV3+1UIGhGUSkznimttT/OJi1j3tCPu58JaQLxoT2?=
+ =?us-ascii?Q?NCcziM48+Uq8CGKPkWvcggek0m+L71+9+ZuDrBkq8ttZO+a+yto643l95fKo?=
+ =?us-ascii?Q?jDV27J/Av2EC1FV/iLFcHOp8wApZxEf6DcNVrrUwy7vj5T7ZvpCDgE4UpDGs?=
+ =?us-ascii?Q?HzFRkecyUkZhP8H/XXmKG2JkcUyu71NAYfdvskWM4bHC0YPq1dd/pWMG+WeP?=
+ =?us-ascii?Q?iC7Dj5wVk4BqxKlofsVQ/7Kz4Wb6qRjsc4gp7S9iK2neazHcvYb4G2El3P03?=
+ =?us-ascii?Q?+xt9LWO7va4QXuYbk5eQmteSP31GcBZ1eK7HXv4lATzyKGx0PhbBUHLiIWm7?=
+ =?us-ascii?Q?5Jb5AuUf6nwtRluAU3/LFNhVeAWbUbu+rFFZ+hZ3yLDyZupXuysDDr+3R+VA?=
+ =?us-ascii?Q?V5/0qx0aWTarW/Snf7UAxpGjuswPCbqBbi2KzDQHmdHh9n6wHWRGiTAoTqUj?=
+ =?us-ascii?Q?S6KnOaOKGCMqOYRpDX5SP29oYhcOMAIzr6/8HZhc2WTjplTsN9SnhMkd5I5t?=
+ =?us-ascii?Q?rqHj6/1R9D/8ncswyka8irFP0HsG3txm4pd7ATeUrjO7f2O4aWQSVqj/vPBk?=
+ =?us-ascii?Q?WjQnvi3rmCLGZgRpoUKekHrn6cmwM1ECKDejIAJcvV/udVAtu4xs17jiwSzA?=
+ =?us-ascii?Q?VM3GDo1NJ0tPWOdyG+qv6YlZP2OSa9FsrMnZO8RIIceeG6vlOIzLv10RLPwZ?=
+ =?us-ascii?Q?dnfj89u/KmKHnBQvo01TutnFShptVgyj6UiIuooRhFlkphN/w9keoDO1q3qW?=
+ =?us-ascii?Q?hEOjvRIZVsRrrY6ti9Xgkjqof+NvptzCJOVt71FtLDzWIWZCcsFDllvLMny4?=
+ =?us-ascii?Q?b9KEQkYgJ6eesBlvHy8lAvZr/CalOlsx8axaeBNo8uFeXvPAES3qq9j0SFSK?=
+ =?us-ascii?Q?7kkyA0SL8CgFWLawgzo96Mf3jNdxCyORuwgRRC7z/+426MWp4aGRZEQVd0j7?=
+ =?us-ascii?Q?JIyRj2ijI5+xU2NWCDmUE7d5DCzE9JVrXNULht/kQvWX3wNu0Dp1nc8tjlZC?=
+ =?us-ascii?Q?/Hp5dIYG4wZdPmOeYnjMr9P+OVU035b7hlugbWyxJjW/0qJ+zt4hx0MFkaoh?=
+ =?us-ascii?Q?ejsMGO3tBdGsT9eWiRLu0LMh8L8ajA6Y4llbds3d6rwpphRQ5Ofn/QgepVBn?=
+ =?us-ascii?Q?8a4WvPc0ePn8XhNPRWI=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 761c520e-ffc8-4338-f69f-08dcf1ee4a35
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 16:34:53.6157
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DnJqJFpKVrVrjpDSLrUYHZR8fgnTKjRXJ1CxEhiSsL8GTbaGevjhFhj3zszlJNapwOKrpDLtkQX3Lb8BnKCFHg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8831
 
-On Mon, Oct 21, 2024 at 05:49:14PM +0700, Bagas Sanjaya wrote:
-> On Mon, Oct 21, 2024 at 01:53:01AM +0000, Joe Damato wrote:
-> > diff --git a/Documentation/networking/napi.rst b/Documentation/networking/napi.rst
-> > index dfa5d549be9c..3b43477a52ce 100644
-> > --- a/Documentation/networking/napi.rst
-> > +++ b/Documentation/networking/napi.rst
-> > @@ -192,6 +192,28 @@ is reused to control the delay of the timer, while
-> >  ``napi_defer_hard_irqs`` controls the number of consecutive empty polls
-> >  before NAPI gives up and goes back to using hardware IRQs.
-> >  
-> > +The above parameters can also be set on a per-NAPI basis using netlink via
-> > +netdev-genl. This can be done programmatically in a user application or by
-> > +using a script included in the kernel source tree: ``tools/net/ynl/cli.py``.
-> > +
-> > +For example, using the script:
-> > +
-> > +.. code-block:: bash
-> > +
-> > +  $ kernel-source/tools/net/ynl/cli.py \
-> > +            --spec Documentation/netlink/specs/netdev.yaml \
-> > +            --do napi-set \
-> > +            --json='{"id": 345,
-> > +                     "defer-hard-irqs": 111,
-> > +                     "gro-flush-timeout": 11111}'
-> > +
-> > +Similarly, the parameter ``irq-suspend-timeout`` can be set using netlink
-> > +via netdev-genl. There is no global sysfs parameter for this value.
-> 
-> In JSON, both gro-flush-timeout and irq-suspend-timeout parameter
-> names are written in hyphens; but the rest of the docs uses underscores
-> (that is, gro_flush_timeout and irq_suspend_timeout), right?
+Add bluetooth audio codec.
 
-That's right. The YAML specification uses hyphens throughout, so we
-follow that convention there.
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+change from v1 to v2
+-none
+---
+ arch/arm64/boot/dts/freescale/imx8qxp-mek.dts | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-In the rest of the docs we use the name of the field which appears
-in the code itself, which uses underscores.
-
-> > +
-> > +``irq_suspend_timeout`` is used to determine how long an application can
-> > +completely suspend IRQs. It is used in combination with SO_PREFER_BUSY_POLL,
-> > +which can be set on a per-epoll context basis with ``EPIOCSPARAMS`` ioctl.
-> > +
-> >  .. _poll:
-> >  
-> >  Busy polling
-> > @@ -207,6 +229,46 @@ selected sockets or using the global ``net.core.busy_poll`` and
-> >  ``net.core.busy_read`` sysctls. An io_uring API for NAPI busy polling
-> >  also exists.
-> >  
-> > +epoll-based busy polling
-> > +------------------------
-> > +
-> > +It is possible to trigger packet processing directly from calls to
-> > +``epoll_wait``. In order to use this feature, a user application must ensure
-> > +all file descriptors which are added to an epoll context have the same NAPI ID.
-> > +
-> > +If the application uses a dedicated acceptor thread, the application can obtain
-> > +the NAPI ID of the incoming connection using SO_INCOMING_NAPI_ID and then
-> > +distribute that file descriptor to a worker thread. The worker thread would add
-> > +the file descriptor to its epoll context. This would ensure each worker thread
-> > +has an epoll context with FDs that have the same NAPI ID.
-> > +
-> > +Alternatively, if the application uses SO_REUSEPORT, a bpf or ebpf program be
-> > +inserted to distribute incoming connections to threads such that each thread is
-> > +only given incoming connections with the same NAPI ID. Care must be taken to
-> > +carefully handle cases where a system may have multiple NICs.
-> > +
-> > +In order to enable busy polling, there are two choices:
-> > +
-> > +1. ``/proc/sys/net/core/busy_poll`` can be set with a time in useconds to busy
-> > +   loop waiting for events. This is a system-wide setting and will cause all
-> > +   epoll-based applications to busy poll when they call epoll_wait. This may
-> > +   not be desirable as many applications may not have the need to busy poll.
-> > +
-> > +2. Applications using recent kernels can issue an ioctl on the epoll context
-> > +   file descriptor to set (``EPIOCSPARAMS``) or get (``EPIOCGPARAMS``) ``struct
-> > +   epoll_params``:, which user programs can define as follows:
-> > +
-> > +.. code-block:: c
-> > +
-> > +  struct epoll_params {
-> > +      uint32_t busy_poll_usecs;
-> > +      uint16_t busy_poll_budget;
-> > +      uint8_t prefer_busy_poll;
-> > +
-> > +      /* pad the struct to a multiple of 64bits */
-> > +      uint8_t __pad;
-> > +  };
-> > +
-> >  IRQ mitigation
-> >  ---------------
-> >  
-> > @@ -222,12 +284,78 @@ Such applications can pledge to the kernel that they will perform a busy
-> >  polling operation periodically, and the driver should keep the device IRQs
-> >  permanently masked. This mode is enabled by using the ``SO_PREFER_BUSY_POLL``
-> >  socket option. To avoid system misbehavior the pledge is revoked
-> > -if ``gro_flush_timeout`` passes without any busy poll call.
-> > +if ``gro_flush_timeout`` passes without any busy poll call. For epoll-based
-> > +busy polling applications, the ``prefer_busy_poll`` field of ``struct
-> > +epoll_params`` can be set to 1 and the ``EPIOCSPARAMS`` ioctl can be issued to
-> > +enable this mode. See the above section for more details.
-> >  
-> >  The NAPI budget for busy polling is lower than the default (which makes
-> >  sense given the low latency intention of normal busy polling). This is
-> >  not the case with IRQ mitigation, however, so the budget can be adjusted
-> > -with the ``SO_BUSY_POLL_BUDGET`` socket option.
-> > +with the ``SO_BUSY_POLL_BUDGET`` socket option. For epoll-based busy polling
-> > +applications, the ``busy_poll_budget`` field can be adjusted to the desired value
-> > +in ``struct epoll_params`` and set on a specific epoll context using the ``EPIOCSPARAMS``
-> > +ioctl. See the above section for more details.
-> > +
-> > +It is important to note that choosing a large value for ``gro_flush_timeout``
-> > +will defer IRQs to allow for better batch processing, but will induce latency
-> > +when the system is not fully loaded. Choosing a small value for
-> > +``gro_flush_timeout`` can cause interference of the user application which is
-> > +attempting to busy poll by device IRQs and softirq processing. This value
-> > +should be chosen carefully with these tradeoffs in mind. epoll-based busy
-> > +polling applications may be able to mitigate how much user processing happens
-> > +by choosing an appropriate value for ``maxevents``.
-> > +
-> > +Users may want to consider an alternate approach, IRQ suspension, to help deal
-> > +with these tradeoffs.
-> > +
-> > +IRQ suspension
-> > +--------------
-> > +
-> > +IRQ suspension is a mechanism wherein device IRQs are masked while epoll
-> > +triggers NAPI packet processing.
-> > +
-> > +While application calls to epoll_wait successfully retrieve events, the kernel will
-> > +defer the IRQ suspension timer. If the kernel does not retrieve any events
-> > +while busy polling (for example, because network traffic levels subsided), IRQ
-> > +suspension is disabled and the IRQ mitigation strategies described above are
-> > +engaged.
-> > +
-> > +This allows users to balance CPU consumption with network processing
-> > +efficiency.
-> > +
-> > +To use this mechanism:
-> > +
-> > +  1. The per-NAPI config parameter ``irq_suspend_timeout`` should be set to the
-> > +     maximum time (in nanoseconds) the application can have its IRQs
-> > +     suspended. This is done using netlink, as described above. This timeout
-> > +     serves as a safety mechanism to restart IRQ driver interrupt processing if
-> > +     the application has stalled. This value should be chosen so that it covers
-> > +     the amount of time the user application needs to process data from its
-> > +     call to epoll_wait, noting that applications can control how much data
-> > +     they retrieve by setting ``max_events`` when calling epoll_wait.
-> > +
-> > +  2. The sysfs parameter or per-NAPI config parameters ``gro_flush_timeout``
-> > +     and ``napi_defer_hard_irqs`` can be set to low values. They will be used
-> > +     to defer IRQs after busy poll has found no data.
-> > +
-> > +  3. The ``prefer_busy_poll`` flag must be set to true. This can be done using
-> > +     the ``EPIOCSPARAMS`` ioctl as described above.
-> > +
-> > +  4. The application uses epoll as described above to trigger NAPI packet
-> > +     processing.
-> > +
-> > +As mentioned above, as long as subsequent calls to epoll_wait return events to
-> > +userland, the ``irq_suspend_timeout`` is deferred and IRQs are disabled. This
-> > +allows the application to process data without interference.
-> > +
-> > +Once a call to epoll_wait results in no events being found, IRQ suspension is
-> > +automatically disabled and the ``gro_flush_timeout`` and
-> > +``napi_defer_hard_irqs`` mitigation mechanisms take over.
-> > +
-> > +It is expected that ``irq_suspend_timeout`` will be set to a value much larger
-> > +than ``gro_flush_timeout`` as ``irq_suspend_timeout`` should suspend IRQs for
-> > +the duration of one userland processing cycle.
-> >  
-> >  .. _threaded:
-> >  
-> 
-> The rest LGTM, thanks!
-
-Thanks for the review.
-
-> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> 
-> -- 
-> An old man doll... just what I always wanted! - Clara
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts b/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
+index 936ba5ecdcac7..d8d9e2883caf7 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
++++ b/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
+@@ -12,6 +12,11 @@ / {
+ 	model = "Freescale i.MX8QXP MEK";
+ 	compatible = "fsl,imx8qxp-mek", "fsl,imx8qxp";
+ 
++	bt_sco_codec: audio-codec-bt {
++		compatible = "linux,bt-sco";
++		#sound-dai-cells = <1>;
++	};
++
+ 	chosen {
+ 		stdout-path = &lpuart0;
+ 	};
+@@ -45,6 +50,25 @@ usb3_data_ss: endpoint {
+ 		};
+ 	};
+ 
++	sound-bt-sco {
++		compatible = "simple-audio-card";
++		simple-audio-card,bitclock-inversion;
++		simple-audio-card,bitclock-master = <&btcpu>;
++		simple-audio-card,format = "dsp_a";
++		simple-audio-card,frame-master = <&btcpu>;
++		simple-audio-card,name = "bt-sco-audio";
++
++		simple-audio-card,codec {
++			sound-dai = <&bt_sco_codec 1>;
++		};
++
++		btcpu: simple-audio-card,cpu {
++			dai-tdm-slot-num = <2>;
++			dai-tdm-slot-width = <16>;
++			sound-dai = <&sai0>;
++		};
++	};
++
+ 	sound-wm8960 {
+ 		compatible = "fsl,imx-audio-wm8960";
+ 		model = "wm8960-audio";
+-- 
+2.34.1
 
 
