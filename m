@@ -1,73 +1,55 @@
-Return-Path: <linux-kernel+bounces-375118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558339A9123
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:26:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3FC9A9129
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 040A6283572
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:26:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F8F41C22AF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B221FCF47;
-	Mon, 21 Oct 2024 20:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD42D1FDF85;
+	Mon, 21 Oct 2024 20:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ZO9Qy5Xr"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="HBnoie6+"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBAF1C8FDB
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 20:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ACF1C8FDB;
+	Mon, 21 Oct 2024 20:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729542393; cv=none; b=qRYutrQTzSyVGoJZ8BvARPuAe3LuVBh0u2JCwegDUmio+nHW2axJEPZ+h1l9MB0DhHGxw6vK5UM5bd4gGarHlDKaN0FaGoqW3jcV4D7EDSPfywmdTFssN4zu8VgbHeimaDNAXr9eyuDZAQA8Ph9gP8x8v80o33OmmEHjGXaodWg=
+	t=1729542440; cv=none; b=mNBavwrokGaxgAoSVvXEg9eFKErf7Gd4cWEVOAlNJp3c5eQU+AMNF1B0bjyG5zYq7WKPGUs6i19WHAXrkFMHWyHEqHTUHaYDuMjkO0fM3wNATXpwBqVppw6BxtnUmNvpuxJxQPv8tm0DkgEVcG4a08/kxDhz9hl2ypIYfoh7cN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729542393; c=relaxed/simple;
-	bh=8WQiABvM7Dupn6mekVJ4xMF/Lyf4f7C0MNtxUSxO7Ls=;
+	s=arc-20240116; t=1729542440; c=relaxed/simple;
+	bh=3g3ulzUEILj6Ab6SKjBWHtGnUwVU/KgosIKltudjBYA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CP1dzDsX5NXqq7e0gsHrvEIkNvlNDtd9UJ5cvKJBk8Y9clZdJX3EWY6VzpSx+80Zfttf7wC36VqCzlfOcxh2PmAy9/R+r6/YJ8zQ+rIHUEFNZ2eaHP1F6HENSSm9O7jHrh/OZOZdp6z+gI+BdQ5JSe5NEjEzIc9UvTVRjlKMeko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=ZO9Qy5Xr; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5e7e1320cabso2124244eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1729542389; x=1730147189; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P+68g9n32g9C+8SvfHBjSGSr/gvAiFPiTke9yTa/MWY=;
-        b=ZO9Qy5XrKwVG1Ny7YcyDndC6QZ+olZvaA1ptlvn1oYlDAalIppLNtplViiEg38z7TE
-         pVKDjYBC+puavlF2EgLyyJQpfjJOHEx6bRIFEYJDVnVM7+Nx2VWLxEXIMe1ZR1jBTXrp
-         FO9FyNR7EwJANFJMhCUsrPA04B0Y9O7kn98eh5+iQqky7H+b1v5H5QPKfzTJ6k41Lsbt
-         QqDwHDzmpAqVf+yIdkpNC90a/oKj4okktGs1NNGS9p3qiX47d1wcn8LiBFQg9xf8U7So
-         GfRJq79f5VE5u+rVomBv3vhrLsP01cw/YpOC8uhj+Qz6h0f0Hvnu86MV9F83YtnV/eZw
-         vXPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729542389; x=1730147189;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P+68g9n32g9C+8SvfHBjSGSr/gvAiFPiTke9yTa/MWY=;
-        b=q8UNMNVCCkfVQXb+FUwy7Ga8OuAxRqNjgtmlJ6KHlI2CgwrkDtsmE8c7YLN691piGp
-         8pmVcDLVVuOLMClkQ7zTHrfupRTiEPJ6okkVDhEZbDA/AdREWcLOd7pwlYHMb/6PNWth
-         qlhRwpCLBHTIOdBX9wF82gcMvRJKRcfFEHAoPbY7NHxK92QWiISkaW4Vj4Yg62b3n8H/
-         1AWCzeMg9n52oFg8UlgzqvjK4mXjqgQJ2Tje2FEREeyOVwVvvaLx6zjDsJXsJZYZoHdv
-         yKjK0RuGPrv4DBmzC7DFsU7dwvj87IVqXjKNsjrLT7NFuLUHlOjIOwxwNI/qHV3OZ092
-         mazQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZtMehPJGE6QePgPJHPUwS1jGq5c//YrQH+JPfOSdV1IZhN4YDOwsBwOneMIX3I+wo4Pr2wIGxM0atjQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+7/MUYrVEA+tLJiwGrT2Y5xo3znE1/t9SjdqMy2K3P80KE0LT
-	wI8yT635dDu+hxjFkb6CuXwsmzGujsMAyCDhGeNl13Tyvu0Wk9f3oZvyrMhZZrI=
-X-Google-Smtp-Source: AGHT+IGOkG0Lb+H7O3OcfeUyJ+pJwrVbDFZtemCKHksU9M8rEdOq9OgYu9KELQB6UrgkfNRTlu4jUQ==
-X-Received: by 2002:a05:6871:1ce:b0:250:756b:b1ed with SMTP id 586e51a60fabf-2892c2abea0mr11300516fac.19.1729542387778;
-        Mon, 21 Oct 2024 13:26:27 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-28c792b25fcsm1301917fac.32.2024.10.21.13.26.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 13:26:27 -0700 (PDT)
-Message-ID: <5e6d9e76-f0f1-497c-ad49-5f705b188912@sifive.com>
-Date: Mon, 21 Oct 2024 15:26:25 -0500
+	 In-Reply-To:Content-Type; b=SjZvV0b/rNh+AWjEpcA90arMcLEZxefOs3AD7PJLnP4o+uIKAPEcaX7gXy4FxG04/okvBuIJEccVNfR1N3QCsXoM0p/KkTsMInlNRCTnRnHL1uvPPgsqeOYLXb97B05nU9mppgDNr79nZqTUEmo5kIqjT7tnHtQpPi59QZIkKNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=HBnoie6+; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1729542416; x=1730147216; i=w_armin@gmx.de;
+	bh=e9QbNuLAuXgzKvnSaHT2dAq3xYZ/W2rd0vmM7cmicmQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=HBnoie6+Eni1+RAqebH7JvbR6KXTStsKsuLhcPhUNN/HBs5M4bMHPQ3O7Yy4f8aW
+	 2OyTuvfMadMULQBvI8s0b68cbFcL3um2IOhiSRpDA+7KeNJ/V44slXuQsTIltiLr5
+	 y9G+lHvF7TM1E+sADntfaz7vcFOsOCTFxpGR2Urh7j5OBOD6nX1WC/FlUadBFKAk9
+	 BJyZugpNBkj0nSHG/hikbExCkoa2dbfeWXuVF36W3HQZKyCB9GtBQPohuBuac7UuZ
+	 h8yqGTjU5ijpRIZClm89OJafN+Ze8hIlJcHc8Rr/5P0vT9r6VGhMAIAJAKlXruGcP
+	 bAH/TDavJlSK0KAHiQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MysRu-1tokLq117a-00w12Z; Mon, 21
+ Oct 2024 22:26:56 +0200
+Message-ID: <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
+Date: Mon, 21 Oct 2024 22:26:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,241 +57,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/7] kasan: sw_tags: Use arithmetic shift for shadow
- computation
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, kasan-dev@googlegroups.com,
- llvm@lists.linux.dev, linux-kernel@vger.kernel.org,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- Evgenii Stepanov <eugenis@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- linux-arm-kernel@lists.infradead.org
-References: <20240814085618.968833-1-samuel.holland@sifive.com>
- <20240814085618.968833-2-samuel.holland@sifive.com>
- <CA+fCnZcd0jg5HqQqERfqTbVc-F2mYsq=w4aek8pQSCEPXyRG7w@mail.gmail.com>
-From: Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Werner Sembach <wse@tuxedocomputers.com>,
+ Benjamin Tissoires <bentiss@kernel.org>, Hans de Goede
+ <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, dri-devel@lists.freedesktop.org,
+ jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+ ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
+References: <7ce4470c-a502-416a-8472-a5b606bb8fd4@tuxedocomputers.com>
+ <d7gk2mgihtg6242l3isnhw3xpdt745ehpu2kvim2xxgmxdhat7@g5cqei7uqujj>
+ <39f84cfe-bb89-4194-81a9-e178c93e5309@tuxedocomputers.com>
+ <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
+ <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
+ <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
+ <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
+ <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
+ <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
+ <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de> <ZwlDpCPhieF3tezX@duo.ucw.cz>
 Content-Language: en-US
-In-Reply-To: <CA+fCnZcd0jg5HqQqERfqTbVc-F2mYsq=w4aek8pQSCEPXyRG7w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <ZwlDpCPhieF3tezX@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:3UMk7ZMRiG7KwkFqWRpMUf9HSa5Kej0YUjCRMm78uvohH0r57Db
+ NagZcni7LAn/QyXuhwv5M3Mj7tDVTx0RNnEkYnM7QOeBRscIkVx4Y7n0AjicHLNAuRDYi45
+ qrbUQd6FzewuS90QL4lsQBE7ApYx4+uzWisL9H8/gokYmwXheZ3PYed9n0raiMHbXj4S3aU
+ q/QhfvfTgh9FFsvxOIvZA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YkNcCmVhFIg=;TW3OJSZTcOHLE/RkcCQciQ7OVw9
+ CFIxdo5Aoe6bYbK5ID+klKg7e5S6efm7oiCgvmUItL835L5FAD1ncJWdBVAEvwxnKYxA6aj6r
+ hHfKJhwr02GhQ/XJ4HNOA+Bf+DD5Lvs8zZU6NYNEJXwNR99zA/QpcT0cLfM4luIWaHvvNhbL5
+ Qj34WGp/1Ajq0SotkyOyfYu5X0KRSrkooA5ySIppPj6ghSmESgsml0ge1cf828seXOhWzgwfP
+ LTUDb7+TlttV5+PQlRF8llDbg2z+sNHYI8iFXmQZe7H7iEkpAGcF6c6EnwzF08Cmhm0PuVlZ+
+ 8r/yrBXlKQcc6djkb9vzXC7v4WSWdrGi5PL1JSWpi2+9cJU6WkLjsWZ9v4hU+HIuY0RnkFCov
+ JjTpYL/2RlRhack6g8VE1CjJxO5TrHVlUXIX2SpknhxsVVazTBk2g+TQwPDnjUtCQb5dye+LC
+ K9kDF7OXxe+hkqv2OvLsJy8WmhAXBkIwW66ah+Rm3WwaWhw9RQ5NRlXi6CLj7M6gkgX1M4Snh
+ VaY0BvQVh33Q44U79yLehRyb3rkcJaeQP8x4Uby4+q9Jg+pb+Uamda/edV8eqN583lgawOdGK
+ m2pozh0n9hwLla2Ip83zigs/DGdBSVUVb0P2ac5MKTHecUMh2wwZaiRVkWVuGzy7iZyWjGtIi
+ Ct2EooV5PGaoXBlWFVtPzY9Xlp26h7/G5pLkPBmpxAZ3UuDF1ubVNaixfToBxOexSCbzWlJ+n
+ 6OieTfsdUkhAWvfmbGEQZjEtsNX9KC+wElfjei3HwgE+Ifrq4deEy3F6Sfq07SGHy0NeqhDDw
+ 7AkxX6ZRe8wg96COrLhplymqFwLN0Unw2M+teLY76xe3s=
 
-Hi Andrey,
+Am 11.10.24 um 17:26 schrieb Pavel Machek:
 
-Thanks for the review!
+> Hi!
+>
+>>> 1.
+>>> https://lore.kernel.org/all/6b32fb73-0544-4a68-95ba-e82406a4b188@gmx.de/
+>>> -> Should be no problem? Because this is not generally exposing wmi
+>>> calls, just mapping two explicitly with sanitized input (whitelisting
+>>> basically).
+>> It would be OK to expose a selected set of WMI calls to userspace and sanitizing the input of protect potentially buggy firmware from userspace.
+>>
+> I don't believe this is good idea. Passthrough interfaces where
+> userland talks directly to hardware are very tricky.
+>
+>> Regarding the basic idea of having a virtual HID interface: i would prefer to create a illumination subsystem instead, but i have to agree that we should be doing this
+>> only after enough drivers are inside the kernel, so we can design a
+>> suitable interface for them. For now, creating a virtual HID
+>> interface seems to be good enough.
+> I have an RGB keyboard, and would like to get it supported. I already
+> have kernel driver for LEDs (which breaks input functionality). I'd
+> like to cooperate on "illumination" subsystem.
+>
+> Best regards,
+> 								Pavel
 
-On 2024-08-14 11:03 AM, Andrey Konovalov wrote:
-> On Wed, Aug 14, 2024 at 10:56 AM Samuel Holland
-> <samuel.holland@sifive.com> wrote:
->>
->> Currently, kasan_mem_to_shadow() uses a logical right shift, which turns
->> canonical kernel addresses into non-canonical addresses by clearing the
->> high KASAN_SHADOW_SCALE_SHIFT bits. The value of KASAN_SHADOW_OFFSET is
->> then chosen so that the addition results in a canonical address for the
->> shadow memory.
->>
->> For KASAN_GENERIC, this shift/add combination is ABI with the compiler,
->> because KASAN_SHADOW_OFFSET is used in compiler-generated inline tag
->> checks[1], which must only attempt to dereference canonical addresses.
->>
->> However, for KASAN_SW_TAGS we have some freedom to change the algorithm
->> without breaking the ABI. Because TBI is enabled for kernel addresses,
->> the top bits of shadow memory addresses computed during tag checks are
->> irrelevant, and so likewise are the top bits of KASAN_SHADOW_OFFSET.
->> This is demonstrated by the fact that LLVM uses a logical right shift
->> in the tag check fast path[2] but a sbfx (signed bitfield extract)
->> instruction in the slow path[3] without causing any issues.
->>
->> Using an arithmetic shift in kasan_mem_to_shadow() provides a number of
->> benefits:
->>
->> 1) The memory layout is easier to understand. KASAN_SHADOW_OFFSET
->> becomes a canonical memory address, and the shifted pointer becomes a
->> negative offset, so KASAN_SHADOW_OFFSET == KASAN_SHADOW_END regardless
->> of the shift amount or the size of the virtual address space.
->>
->> 2) KASAN_SHADOW_OFFSET becomes a simpler constant, requiring only one
->> instruction to load instead of two. Since it must be loaded in each
->> function with a tag check, this decreases kernel text size by 0.5%.
->>
->> 3) This shift and the sign extension from kasan_reset_tag() can be
->> combined into a single sbfx instruction. When this same algorithm change
->> is applied to the compiler, it removes an instruction from each inline
->> tag check, further reducing kernel text size by an additional 4.6%.
->>
->> These benefits extend to other architectures as well. On RISC-V, where
->> the baseline ISA does not shifted addition or have an equivalent to the
->> sbfx instruction, loading KASAN_SHADOW_OFFSET is reduced from 3 to 2
->> instructions, and kasan_mem_to_shadow(kasan_reset_tag(addr)) similarly
->> combines two consecutive right shifts.
-> 
-> Will this change cause any problems with the check against
-> KASAN_SHADOW_OFFSET in kasan_non_canonical_hook()?
+Sorry for taking a bit long to respond.
 
-Yes, this check needs to be updated. Now kernel addresses map to a negative
-displacement from KASAN_SHADOW_OFFSET, and user addresses map to a positive
-displacement from KASAN_SHADOW_OFFSET. My understanding is that this check is
-supposed to be a coarse-grained test for if the faulting address could be the
-result of a shadow memory computation. I will update kasan_non_canonical_hook()
-to use the appropriate check for KASAN_SW_TAGS in v2.
+This "illumination" subsystem would (from my perspective) act like some sort of LED subsystem
+for devices with a high count of LEDs, like some RGB keyboards.
 
->> Link: https://github.com/llvm/llvm-project/blob/llvmorg-20-init/llvm/lib/Transforms/Instrumentation/AddressSanitizer.cpp#L1316 [1]
->> Link: https://github.com/llvm/llvm-project/blob/llvmorg-20-init/llvm/lib/Transforms/Instrumentation/HWAddressSanitizer.cpp#L895 [2]
->> Link: https://github.com/llvm/llvm-project/blob/llvmorg-20-init/llvm/lib/Target/AArch64/AArch64AsmPrinter.cpp#L669 [3]
->> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
->> ---
->>
->>  arch/arm64/Kconfig              | 10 +++++-----
->>  arch/arm64/include/asm/memory.h |  8 ++++++++
->>  arch/arm64/mm/kasan_init.c      |  7 +++++--
->>  include/linux/kasan.h           | 10 ++++++++--
->>  scripts/gdb/linux/mm.py         |  5 +++--
->>  5 files changed, 29 insertions(+), 11 deletions(-)
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index a2f8ff354ca6..7df218cca168 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -402,11 +402,11 @@ config KASAN_SHADOW_OFFSET
->>         default 0xdffffe0000000000 if ARM64_VA_BITS_42 && !KASAN_SW_TAGS
->>         default 0xdfffffc000000000 if ARM64_VA_BITS_39 && !KASAN_SW_TAGS
->>         default 0xdffffff800000000 if ARM64_VA_BITS_36 && !KASAN_SW_TAGS
->> -       default 0xefff800000000000 if (ARM64_VA_BITS_48 || (ARM64_VA_BITS_52 && !ARM64_16K_PAGES)) && KASAN_SW_TAGS
->> -       default 0xefffc00000000000 if (ARM64_VA_BITS_47 || ARM64_VA_BITS_52) && ARM64_16K_PAGES && KASAN_SW_TAGS
->> -       default 0xeffffe0000000000 if ARM64_VA_BITS_42 && KASAN_SW_TAGS
->> -       default 0xefffffc000000000 if ARM64_VA_BITS_39 && KASAN_SW_TAGS
->> -       default 0xeffffff800000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
->> +       default 0xffff800000000000 if (ARM64_VA_BITS_48 || (ARM64_VA_BITS_52 && !ARM64_16K_PAGES)) && KASAN_SW_TAGS
->> +       default 0xffffc00000000000 if (ARM64_VA_BITS_47 || ARM64_VA_BITS_52) && ARM64_16K_PAGES && KASAN_SW_TAGS
->> +       default 0xfffffe0000000000 if ARM64_VA_BITS_42 && KASAN_SW_TAGS
->> +       default 0xffffffc000000000 if ARM64_VA_BITS_39 && KASAN_SW_TAGS
->> +       default 0xfffffff800000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
->>         default 0xffffffffffffffff
->>
->>  config UNWIND_TABLES
->> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
->> index 54fb014eba05..3af8d1e721af 100644
->> --- a/arch/arm64/include/asm/memory.h
->> +++ b/arch/arm64/include/asm/memory.h
->> @@ -82,6 +82,10 @@
->>   * the mapping. Note that KASAN_SHADOW_OFFSET does not point to the start of
->>   * the shadow memory region.
->>   *
->> + * For KASAN_GENERIC, addr is treated as unsigned. For KASAN_SW_TAGS, addr is
->> + * treated as signed, so in that case KASAN_SHADOW_OFFSET points to the end of
->> + * the shadow memory region.
-> 
-> Hm, it's not immediately obvious why using a signed addr leads to
-> KASAN_SHADOW_OFFSET being == KASAN_SHADOW_END. Could you clarify this
-> in the comment?
-> 
-> Let's also put this explanation into the KASAN_SHADOW_END paragraph
-> instead, something like:
-> 
-> KASAN_SHADOW_END is defined first as the shadow address that
-> corresponds to the upper bound of possible virtual kernel memory
-> addresses UL(1) << 64 according to the mapping formula. For Generic
-> KASAN, the address in the mapping formula is treated as unsigned (part
-> of the compiler's ABI), so we do explicit calculations according to
-> the formula. For Software Tag-Based KASAN, the address is treated as
-> signed, and thus <EXPLANATION HERE>.
+This would allow us too:
+- provide an abstract interface for userspace applications like OpenRGB
+- provide an generic LED subsystem emulation on top of the illumination device (optional)
+- support future RGB controllers in a generic way
 
-Here's what I plan to include in v2:
+Advanced features like RGB effects, etc can be added later should the need arise.
 
-KASAN_SHADOW_END is defined first as the shadow address that corresponds to
-the upper bound of possible virtual kernel memory addresses UL(1) << 64
-according to the mapping formula. For Generic KASAN, the address in the
-mapping formula is treated as unsigned (part of the compiler's ABI), so the
-end of the shadow memory region is at a large positive offset from
-KASAN_SHADOW_OFFSET. For Software Tag-Based KASAN, the address in the
-formula is treated as signed. Since all kernel addresses are negative, they
-map to shadow memory below KASAN_SHADOW_OFFSET, making KASAN_SHADOW_OFFSET
-itself the end of the shadow memory region. (User pointers are positive and
-would map to shadow memory above KASAN_SHADOW_OFFSET, but shadow memory is
-not allocated for them.)
+I would suggest that we model it after the HID LampArray interface:
 
-Regards,
-Samuel
+- interface for querying:
+  - number of LEDs
+  - supported colors, etc of those LEDs
+  - position of those LEDs if available
+  - kind (keyboard, ...)
+  - latency, etc
+- interface for setting multiple LEDs at once
+- interface for setting a range of LEDs at once
+- interface for getting the current LED colors
 
->> + *
->>   * Based on this mapping, we define two constants:
->>   *
->>   *     KASAN_SHADOW_START: the start of the shadow memory region;
->> @@ -100,7 +104,11 @@
->>   */
->>  #if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
->>  #define KASAN_SHADOW_OFFSET    _AC(CONFIG_KASAN_SHADOW_OFFSET, UL)
->> +#ifdef CONFIG_KASAN_GENERIC
->>  #define KASAN_SHADOW_END       ((UL(1) << (64 - KASAN_SHADOW_SCALE_SHIFT)) + KASAN_SHADOW_OFFSET)
->> +#else
->> +#define KASAN_SHADOW_END       KASAN_SHADOW_OFFSET
->> +#endif
->>  #define _KASAN_SHADOW_START(va)        (KASAN_SHADOW_END - (UL(1) << ((va) - KASAN_SHADOW_SCALE_SHIFT)))
->>  #define KASAN_SHADOW_START     _KASAN_SHADOW_START(vabits_actual)
->>  #define PAGE_END               KASAN_SHADOW_START
->> diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
->> index b65a29440a0c..6836e571555c 100644
->> --- a/arch/arm64/mm/kasan_init.c
->> +++ b/arch/arm64/mm/kasan_init.c
->> @@ -198,8 +198,11 @@ static bool __init root_level_aligned(u64 addr)
->>  /* The early shadow maps everything to a single page of zeroes */
->>  asmlinkage void __init kasan_early_init(void)
->>  {
->> -       BUILD_BUG_ON(KASAN_SHADOW_OFFSET !=
->> -               KASAN_SHADOW_END - (1UL << (64 - KASAN_SHADOW_SCALE_SHIFT)));
->> +       if (IS_ENABLED(CONFIG_KASAN_GENERIC))
->> +               BUILD_BUG_ON(KASAN_SHADOW_OFFSET !=
->> +                       KASAN_SHADOW_END - (1UL << (64 - KASAN_SHADOW_SCALE_SHIFT)));
->> +       else
->> +               BUILD_BUG_ON(KASAN_SHADOW_OFFSET != KASAN_SHADOW_END);
->>         BUILD_BUG_ON(!IS_ALIGNED(_KASAN_SHADOW_START(VA_BITS), SHADOW_ALIGN));
->>         BUILD_BUG_ON(!IS_ALIGNED(_KASAN_SHADOW_START(VA_BITS_MIN), SHADOW_ALIGN));
->>         BUILD_BUG_ON(!IS_ALIGNED(KASAN_SHADOW_END, SHADOW_ALIGN));
->> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
->> index 70d6a8f6e25d..41f57e10ba03 100644
->> --- a/include/linux/kasan.h
->> +++ b/include/linux/kasan.h
->> @@ -58,8 +58,14 @@ int kasan_populate_early_shadow(const void *shadow_start,
->>  #ifndef kasan_mem_to_shadow
->>  static inline void *kasan_mem_to_shadow(const void *addr)
->>  {
->> -       return (void *)((unsigned long)addr >> KASAN_SHADOW_SCALE_SHIFT)
->> -               + KASAN_SHADOW_OFFSET;
->> +       void *scaled;
->> +
->> +       if (IS_ENABLED(CONFIG_KASAN_GENERIC))
->> +               scaled = (void *)((unsigned long)addr >> KASAN_SHADOW_SCALE_SHIFT);
->> +       else
->> +               scaled = (void *)((long)addr >> KASAN_SHADOW_SCALE_SHIFT);
->> +
->> +       return KASAN_SHADOW_OFFSET + scaled;
->>  }
->>  #endif
->>
->> diff --git a/scripts/gdb/linux/mm.py b/scripts/gdb/linux/mm.py
->> index 7571aebbe650..2e63f3dedd53 100644
->> --- a/scripts/gdb/linux/mm.py
->> +++ b/scripts/gdb/linux/mm.py
->> @@ -110,12 +110,13 @@ class aarch64_page_ops():
->>          self.KERNEL_END = gdb.parse_and_eval("_end")
->>
->>          if constants.LX_CONFIG_KASAN_GENERIC or constants.LX_CONFIG_KASAN_SW_TAGS:
->> +            self.KASAN_SHADOW_OFFSET = constants.LX_CONFIG_KASAN_SHADOW_OFFSET
->>              if constants.LX_CONFIG_KASAN_GENERIC:
->>                  self.KASAN_SHADOW_SCALE_SHIFT = 3
->> +                self.KASAN_SHADOW_END = (1 << (64 - self.KASAN_SHADOW_SCALE_SHIFT)) + self.KASAN_SHADOW_OFFSET
->>              else:
->>                  self.KASAN_SHADOW_SCALE_SHIFT = 4
->> -            self.KASAN_SHADOW_OFFSET = constants.LX_CONFIG_KASAN_SHADOW_OFFSET
->> -            self.KASAN_SHADOW_END = (1 << (64 - self.KASAN_SHADOW_SCALE_SHIFT)) + self.KASAN_SHADOW_OFFSET
->> +                self.KASAN_SHADOW_END = self.KASAN_SHADOW_OFFSET
->>              self.PAGE_END = self.KASAN_SHADOW_END - (1 << (self.vabits_actual - self.KASAN_SHADOW_SCALE_SHIFT))
->>          else:
->>              self.PAGE_END = self._PAGE_END(self.VA_BITS_MIN)
->> --
->> 2.45.1
->>
+Since sysfs has a "one value per file" rule, i suggest that we use a chardev interface
+for querying per-LED data and for setting/getting LED colors.
+
+I do not know if mixing sysfs (for controller attributes like number of LEDs, etc) and IOCTL
+(for setting/getting LED colors) is a good idea, any thoughts?
+
+Thanks,
+Armin Wolf
 
 
