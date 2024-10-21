@@ -1,160 +1,152 @@
-Return-Path: <linux-kernel+bounces-374980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D569A72C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:58:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277BC9A72B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4842028302A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:58:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47DAA1C21276
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E531FB3F3;
-	Mon, 21 Oct 2024 18:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0E01FBC9F;
+	Mon, 21 Oct 2024 18:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kdASUYjA"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b="m8bsw8TU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F6s09tF7"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522661FB3D7
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 18:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB701FB3D6;
+	Mon, 21 Oct 2024 18:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729537072; cv=none; b=Kba8OEcvv6HPguQJobJiOptZW5INMCibLNkq13+uBS6H3IYzkz5YHu9mONmFbqOMDGgbHUKIXYGN+QD2GlkEh+6OTqZbd0VCLQsWbXsvNaTjE3o++bansyYbw0Ny45dLgXFf0DHEFQgEcj2nP8sTZ3F9l3JgEtgU8CzV0u+4tcs=
+	t=1729536976; cv=none; b=UwRIrnO3/RXuK2N/5H7ZANOmpHa5/RO2cnvuaKq0+SnHFDSigXD/WmCTHuL59N1ox0qFHrFQDkrUfFO6n6SdpzjpTuLJaq4d8/fx3+1Z4AHIRcM3bF++r9IKG15Uk1HLAlt7/rRTB535K82ah/lJhDF5mG4fbWsZ1MU6rE9783Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729537072; c=relaxed/simple;
-	bh=eiuskN0Rqd2YRzqsihlK78NQBES1kITJct33unB+ED8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Lp40YpWjW8FlU/fnsXjrRKkjuf+/+hCzzjpZFqyXfzHX7t5jqxSeCm+/aWAxj5Qezh3F3Nl0BiMySq6+cAmQ+Q1CEDo0uTLTZA4irvKVq0HlDDdB0PUY5kMlB6YW/mLe78pSN/jdFrQ7fqXDTFndUpVreGkp7FY9gRLAQ/zMCt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kdASUYjA; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7e9b2d75d6dso3983414a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:57:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729537065; x=1730141865; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TRc3VGGNkUkUR9ifA4nNeX0hRZiSdlXeerhUJQ+tYBo=;
-        b=kdASUYjA4uGl+/Lzlu6BXwHfIsB7i/tBFO9IhxUbGjGXjQF59ek6/CHFTCctjDPUuZ
-         1MsqOVNsd6s+GVMiWC66957Em1xb2DBYSrU8isQeABQyn83ei/fsD2aLt0a479A84cPB
-         V6LQXUawucewAehTnjFLXliSYnhKBk8UAXPQ+AitbwdoQtePAUTyUeq4WLFcVDe63oDV
-         NJ1lP/wPdprXRQIJOX+XcdgC/XnymfjsG04Nsel3StCJTWt/TqYrXpcJScgrgmUXp0Nw
-         t/bsnz9EcP/v4StUu/at1ueGJTkWoxc7LMRy61IvJpEUERO1Ijr8RyeSn6hTAIbErve4
-         namA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729537065; x=1730141865;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TRc3VGGNkUkUR9ifA4nNeX0hRZiSdlXeerhUJQ+tYBo=;
-        b=ug2J7iCKV3SJdMPU/Oq1WbESzT0+yNr6BNXg0/NxEvXc5BGUbPLDTaHEXhSX42I6H0
-         83I4Zqi6EcdC+0H516kz7rj/z9PB1rbspbg06GxUryOEunbo5eUqHQFXKTmygf7LEkMA
-         Mgomn3RqNKlB9o/PttAH44DIP7EEJx1Da9NfadM6Rs7aJDbJW9HvB5w66kB9p0/Xs52C
-         apAGiWQngjqBv94LjA7zEpNuSPp2G72lXSx0euAXWlfn0xZFVxcplftyXT/oaB7OY614
-         DKSR8dCa7O3tIHU/bDhyGbciQkPBoUjXpPwv3CDBCORNZvzv+IDgxhprBwjin58/nlLp
-         WRnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWGo/7YUWQNGd6ChX2teM13fWYY8RLs7c/Ef8W6wqj0xz0hIfoOEkYZY7I8mXJMx5F9pgr8ZQgAMYi4Nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa7B9+CaR4nSr8f3Vthu3AwoLNZj2499NUTr/OKOpOm0chWpRE
-	F42MUQ6Tdwivh/JNr1ffyaIvdsTozoLCLnSpM/PYoOveS5r9uFz6iGPstRmdZxue/2OgEGAlyvi
-	8tQ==
-X-Google-Smtp-Source: AGHT+IHRYlBrX6M+NH4TUGVEqm9BFtB7q+VVhXD5EoRBvSsXa42IiMZxJc+hXyxs+ZPnB8HLQQfXC/cdu0E=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a63:3858:0:b0:7e9:f93c:22b9 with SMTP id
- 41be03b00d2f7-7eacc895cf2mr12508a12.10.1729537064143; Mon, 21 Oct 2024
- 11:57:44 -0700 (PDT)
-Date: Mon, 21 Oct 2024 11:57:42 -0700
-In-Reply-To: <ZxYrYe/WN8XoB+fI@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1729536976; c=relaxed/simple;
+	bh=/IPROGTA0htPr53cWP8DGFpla2+xGW/oBPBfV2xWNIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NapW/6rFLJaZhBOO8+BCZRSO1a/4aiEc+OC8uWDfx1pUtVFy36+PiNYIp1HqFLH2LKunOaKEv4WNpGRzZLDC43R9bj/+fnJLgOElBdKgUKkyF5Gk+z61YwmnGq7miUxbpWBqu8fkjg9zBwmdFQh1dJH9Jbm9p0x+JGBo3SUlsCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io; spf=pass smtp.mailfrom=ryhl.io; dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b=m8bsw8TU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F6s09tF7; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ryhl.io
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id EC7D611402A2;
+	Mon, 21 Oct 2024 14:56:11 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 21 Oct 2024 14:56:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1729536971;
+	 x=1729623371; bh=8/knyt373KHC7O1bo9D61lcsLQGqkBmLhK7MvjS+qWY=; b=
+	m8bsw8TUaAs3RBjgYzy1fe/EZrQXxBXzToL6+H5Iv99VmdZxfjrDXYp1dYebkc5I
+	ZjmB1Hl9hcyVq+vKMQARserywIkRHfNwnlQwZbvez7la6I4ulMx4iUa86HCFPbk6
+	ArK0dCoeQYb3rzWY3xvgqWujXWqHjjwYvNaA1dui/SKBBDbQvXkXHrGzRhYiDsS7
+	9JZIgx1Pe1uLf5cPAyuNNIcgIYRSEJS+UVQJVktxarapphL/Ii9iXEC4h00C7A3q
+	TYsMFrB7YBD7wcPB0Nz5WcOxQ5EtzamAvuhA2zsc4PpFYsgeUyS3lrOQisBrHWUc
+	Igt7vK52dHxJLb1plcTPuw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729536971; x=
+	1729623371; bh=8/knyt373KHC7O1bo9D61lcsLQGqkBmLhK7MvjS+qWY=; b=F
+	6s09tF729gSFKsF09r8Ko81NvHFQxLyFaqcDxBEF3z2/Q6Hg908Ee2IHJTXxxFTS
+	k7csOX+HDMb4TFXsDle+1rNNOyvoYuTh7zpad9rl6l7dtsFAhjclrzsTLLa4/P22
+	vWi7HWRGhm3rVnayoK9gVTeFo03EvuytUVof7U5F0e6P7NR5bdWwpnWilIMvMI2L
+	BNJsn8d+98+TqmwXbR7nh9KFpIiZmGdurba7qYQJ/HajND3N/Sv5OY1X0xwHp3nH
+	NUWaJLIHBmgCqdp+h3dOW4NV3vSspFbfrYQHqmB51BXaypirxyaJ7Q/R91Q7m6vC
+	C4r8URhh05YoGQ1gD9CxA==
+X-ME-Sender: <xms:y6MWZ5pUbuqYDpdMelJvlEq2pSYaEL1vnmaJv1-6Xx_iwd7HFFWtwg>
+    <xme:y6MWZ7p96sKSI9QhklxGyYaIKCd69sPwvmrlG8e21tKMxZroVBBO8SFf97tHA6wK8
+    UiMWzBaRB6ZVafdIA>
+X-ME-Received: <xmr:y6MWZ2P8pNVDfELTcLEq1EZCtlhml79O0xuQD5WszRjOQj-nETAgzj4NMqiqmi9L6xy9TdqlyvaGsRiWzkhCgKYR1LU7A15VU3YR>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledgudefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
+    jeenucfhrhhomheptehlihgtvgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqne
+    cuggftrfgrthhtvghrnhepkefgieeigeehgfdvffeltdevuefgtdfhfeehgfegtddtjeej
+    tefhvdfhtdehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomheprghlihgtvgesrhihhhhlrdhiohdpnhgspghrtghpthhtohepudeipdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehjhhhusggsrghrugesnhhvihguihgrrdgtoh
+    hmpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhishesghhmrghi
+    lhdrtghomhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprh
+    gtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhpmhes
+    lhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepfihilhhlhiesih
+    hnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgr
+    ihhlrdgtohhmpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpd
+    hrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvght
+X-ME-Proxy: <xmx:y6MWZ07UJ_zFWnUmj4_UrqPCKa3I9RDc-fnQegaVetjItfW9gXHfjg>
+    <xmx:y6MWZ449372GYJCqRmuTC5_h-Mr5qT39kz-d_7_Z6TqcmY7qr-nGdQ>
+    <xmx:y6MWZ8hlKc1wwqesNJYLfd25dpR_itWd_MaKl6xU2U7B_WH4JfVIsg>
+    <xmx:y6MWZ66XD0OGOWww8R-jMj2CpKf98mc7uz_GrUBqZvLbubipFw9dGw>
+    <xmx:y6MWZ0rYRDtsYGYsNUt33pw1qrpJ-SuBNQIPf806lPO0htLVbQstKCK6>
+Feedback-ID: i56684263:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Oct 2024 14:56:09 -0400 (EDT)
+Message-ID: <afc139fe-ac03-43e7-a5c0-22410f1acea3@ryhl.io>
+Date: Mon, 21 Oct 2024 20:59:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241010182427.1434605-1-seanjc@google.com> <20241010182427.1434605-52-seanjc@google.com>
- <ZxYrYe/WN8XoB+fI@yzhao56-desk.sh.intel.com>
-Message-ID: <ZxakJr_jWkU-Y54e@google.com>
-Subject: Re: [PATCH v13 51/85] KVM: VMX: Use __kvm_faultin_page() to get APIC
- access page/pfn
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	"Alex =?utf-8?Q?Benn=C3=A9e?=" <alex.bennee@linaro.org>, David Matlack <dmatlack@google.com>, 
-	David Stevens <stevensd@chromium.org>, Andrew Jones <ajones@ventanamicro.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] rust: page: add Rust version of PAGE_ALIGN
+To: John Hubbard <jhubbard@nvidia.com>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ linux-mm@kvack.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241016-page-align-v2-1-e0afe85fc4b4@google.com>
+ <81e9b289-b95c-4671-b442-1a0ac3dae466@nvidia.com>
+ <CANiq72mW8seB=938XZM7bwdSU43z0eePXinE5QPYyybvNfbUeA@mail.gmail.com>
+ <dc5e7653-8d6d-4822-9c29-702ece830717@nvidia.com>
+ <CANiq72kuQ-fNTYw33czgN3_DYjixzk01+hahFhR4QSkENeDBkw@mail.gmail.com>
+ <b93805c1-28a6-4ad9-b0d2-5116ef4b0d83@nvidia.com>
+Content-Language: en-US, da
+From: Alice Ryhl <alice@ryhl.io>
+In-Reply-To: <b93805c1-28a6-4ad9-b0d2-5116ef4b0d83@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 21, 2024, Yan Zhao wrote:
-> On Thu, Oct 10, 2024 at 11:23:53AM -0700, Sean Christopherson wrote:
-> > Use __kvm_faultin_page() get the APIC access page so that KVM can
-> > precisely release the refcounted page, i.e. to remove yet another user
-> > of kvm_pfn_to_refcounted_page().  While the path isn't handling a guest
-> > page fault, the semantics are effectively the same; KVM just happens to
-> > be mapping the pfn into a VMCS field instead of a secondary MMU.
-> >=20
-> > Tested-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
+On 10/21/24 8:41 PM, John Hubbard wrote:
+> On 10/21/24 11:37 AM, Miguel Ojeda wrote:
+>> On Mon, Oct 21, 2024 at 8:35 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>>>
+>>> Is this another case of C and Rust using different words for things??
+>>> Wow. OK...
+>>
+>> I am not sure what you mean -- by BE I meant British English.
+>>
+>> See my other reply as well -- I just changed it anyway because Rust
+>> apparently uses "parentheses".
+>>
+> 
+> Right. For spoken languages, that's simply preference, and I would not
+> try to impose anything on anyone there.
+> 
+> But in this case, at least for C (and, from reading my Rust book(s), I
+> thought for Rust also), "parentheses" is a technical specification, and
+> we should prefer to be accurate:
+> 
+>      parentheses: ()
+>      brackets:    []
+> 
+> Yes?
+What word would you use to collectively talk about (), [], {}? In my 
+native language they're all a kind of parenthesis.
 
-...
-
-> > @@ -6838,10 +6840,13 @@ void vmx_set_apic_access_page_addr(struct kvm_v=
-cpu *vcpu)
-> >  		vmcs_write64(APIC_ACCESS_ADDR, pfn_to_hpa(pfn));
-> > =20
-> >  	/*
-> > -	 * Do not pin apic access page in memory, the MMU notifier
-> > -	 * will call us again if it is migrated or swapped out.
-> > +	 * Do not pin the APIC access page in memory so that it can be freely
-> > +	 * migrated, the MMU notifier will call us again if it is migrated or
-> > +	 * swapped out.  KVM backs the memslot with anonymous memory, the pfn
-> > +	 * should always point at a refcounted page (if the pfn is valid).
-> >  	 */
-> > -	kvm_release_pfn_clean(pfn);
-> > +	if (!WARN_ON_ONCE(!refcounted_page))
-> > +		kvm_release_page_clean(refcounted_page);
-> Why it's not
-> if (!WARN_ON_ONCE(!refcounted_page)) {
-> 	if (writable)
-> 		kvm_release_page_dirty(refcounted_page)
-> 	else
-> 		kvm_release_page_clean(refcounted_page)
-> }
->=20
-> or simply not pass "writable" to __kvm_faultin_pfn() as we know the slot =
-is
-> not read-only and then set dirty ?
-
-__kvm_faultin_pfn() requires a non-NULL @writable.  The intent is to help e=
-nsure
-the caller is actually checking whether a readable vs. writable mapping was
-acquired.  For cases that explicitly pass FOLL_WRITE, it's awkward, but tho=
-se
-should be few and far between.
-
-> if (!WARN_ON_ONCE(!refcounted_page))
-> 	kvm_release_page_dirty(refcounted_page)
-
-Ya, this is probably more correct?  Though I would strongly prefer to make =
-any
-change in behavior on top of this series.  The use of kvm_release_page_clea=
-n()
-was added by commit 878940b33d76 ("KVM: VMX: Retry APIC-access page reload =
-if
-invalidation is in-progress"), and I suspect the only reason it added the
-kvm_set_page_accessed() call is because there was no "unused" variant.  I.e=
-. there
-was no concious decision to set Accessed but not Dirty.
+Alice
 
