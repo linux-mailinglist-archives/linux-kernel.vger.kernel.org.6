@@ -1,136 +1,100 @@
-Return-Path: <linux-kernel+bounces-374488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D749A6B02
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:51:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D24A9A6B12
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878FA285210
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28D0281808
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A831F706A;
-	Mon, 21 Oct 2024 13:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF01F1F81BA;
+	Mon, 21 Oct 2024 13:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="0x/7tMms"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b="XMxIfD+P"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D04F1E6DC7
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2FC1F80AC
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729518669; cv=none; b=YRLK72LUU3qwU4IYjkEH4yyROCBeiVWk+pAe3mHnvpoMNYFxKBk7gYj0ZSb+EaUZijKRA0+YWmgpp1xiRYXMZGaMexmRGJ2NtFY+KQZIMk2Ex/iHOaoj8K12HGm8ILK1LZ+XUg1QOM65hF8tutOT4bX1x7GymO7Xjwqul8UYCjQ=
+	t=1729518763; cv=none; b=Q3hpKIfRImrP5+LQfyVPXTHQiPyjOU+ozfInVmbj0pMi908KlZ9dKRTlHvu9ZDLekLPfeZF8P5RTA7J867gdccfUJFe5lqhcfWyDmHDS5RiR8fJ1wC9/KuN0lEl2YmzOTfZ41/muH365AQtw3LlmPrM4o4zbpgZ7qwhswnIn3X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729518669; c=relaxed/simple;
-	bh=HXDMjUzao9l0FPzv0fWzHetKraYXxqwrYGzwCA5PdjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCUN0jzAp6GdYxCkCigUn8mfDUs3l6aw+q/61nFluQsxLvNgjbQ65paj78NAwJ49NSuSjrmES+AQoYLy2jxYulGJFjjH0a95CbHZbkXJtvom/c4rhs+6ypSVukzzUl9Ws1W7g3Ye9OyE2zm6fMznZfr6NGwlxUJSIbSOWxjxw+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=0x/7tMms; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2cc47f1d7so3007874a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1729518666; x=1730123466; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qmlYusqwbs3QBiSq5jmhKci3LuQRDJfNgiez5CPmGk4=;
-        b=0x/7tMmsyK1++7/lt7uXHm5WFwbuxenx6no+mWYXBii98YUFJ++TLM4O1B+MDpvNtu
-         ujau2Lu3gOdDOPFhfE/ZKRxaZDj9L38JgzaUVbkc/WHgGGobXuISXl3hIrhC+2xTcCXy
-         wJ+u4IwrsDGCgU6jVxr8mIYAdxBs4Bufg3uBz1sHoCMoxDthHHj2pxlwVM8SR2my8aUG
-         YqYVZOBh/2yIJiaqjozeNZ+zwisuKVxdsZyeNzSM3nsdeA7MEHaFaHHe2XA5xjPpVWZP
-         Zh9LupvgwiU9ozoXf8sgSOm/puzaKsaS5HSQmhkrUjuEIzQpZtOn3j4bY3ZVvF4QGdfa
-         +NCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729518666; x=1730123466;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qmlYusqwbs3QBiSq5jmhKci3LuQRDJfNgiez5CPmGk4=;
-        b=g9HNLYcazfxx3NfgPJmapxObLiPWDCA2T1gkzUCT1n44g6iW97FGUWOxDW2oVUQcXH
-         dOt8czz2ON3BE7YMDW655aR3Qa8bEngXrfhr6PSDsZw3QynYTxYqeZg6zL7qoNo/OD6X
-         EgO2jUBM17teMvojKNMzML7d36d3CK9H5SoeTKxdMhr1iwU2hr6cNgZE1wXUKEnaJIfM
-         2cuXn6/jtlCyN8Un8J8utn49qvAl9szDcFMUBQt0PDqjfQGnOvI1Uug4ujNR5GfhFRwa
-         mcfc7HjMMNBHqHdifDEUYN8PhWG0MIFwUHKOROBmF53INjhX0QNE0X40cCkqYQ0ZaZ1A
-         kJeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKZ76FKf92CDg06HxSIVHrY6ENWmL/YmQjPO/3iiLlSOK6LbHaUjKqKc+stY7Q30yW2EWJLYbKNVUFqZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKqnmFyyv1RiQCwUqU6TdPbMJjl9LjSKzcpV04MItkLWC85/s7
-	+3dc/gGT6uWYZ1OpUbfxYPDACJTPf08ebSnFhYfdZ6TepwhGKAWfIg7sNFlIu6Q=
-X-Google-Smtp-Source: AGHT+IH9gcyU4W3xftnDCfwy1lQ8dwmp5zX8+FASkrzzKK6k6eeOtIwXLT5p801y52PXMwLNab7Mbw==
-X-Received: by 2002:a17:90b:4b92:b0:2e2:c744:2eea with SMTP id 98e67ed59e1d1-2e565063adcmr15695640a91.13.1729518666469;
-        Mon, 21 Oct 2024 06:51:06 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad25c314sm3838181a91.12.2024.10.21.06.51.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 06:51:06 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1t2soJ-003pQd-13;
-	Tue, 22 Oct 2024 00:51:03 +1100
-Date: Tue, 22 Oct 2024 00:51:03 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com, cem@kernel.org,
-	chandan.babu@oracle.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] xfs: If unable to pick perag an error needs to be
- returned
-Message-ID: <ZxZcR1v8OnYH/l+/@dread.disaster.area>
-References: <6712b052.050a0220.10f4f4.001a.GAE@google.com>
- <tencent_1DD6B365236C297EA3A6A45DB768B76F2605@qq.com>
+	s=arc-20240116; t=1729518763; c=relaxed/simple;
+	bh=mWS86uxMWdC6gVhIz2KdmLhzVCkDB1CjGV9cSCNuTfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oSZbZSrspkK9YWO1Bd0AAVM/aMyJ0tp92gySx+UMBMEn6ZKs+/GOcVvbKMTUD2Srjjo4YlDPfqtyCngtELTelzuE4gwZtDI7OUEVOIZ1FZ2RL1MB6mlL00XKcSqdR4GQfpteXBP06HrfxHXWVkZ9oBs4NtYhXVyDxANoWoCMTAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc; spf=pass smtp.mailfrom=steffen.cc; dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b=XMxIfD+P; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=steffen.cc
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XXGvz1TLnz9slY;
+	Mon, 21 Oct 2024 15:52:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffen.cc; s=MBO0001;
+	t=1729518751;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Qm5H3iVaNzE/cyspTjKRSfgDmWv1EYY1JXmeR3OStN0=;
+	b=XMxIfD+P3ISrQks2rwOErN9A6YAYxfM7D0T4pCxnbRmIlO75GEod6Mhh33eBZT+WmukFkp
+	uMqRneVZN8q+pD2r2bQpUeUNWy+DTLeucJKnwz/zlCmynBGm6qwkGeYwHbPxXttYvjKsWM
+	gvI+6wnCkfxZAaynQicQwB0/Okjq504R+VI/h36p2Do6cI5EQ+kMpSoQTZaq47EkIGE91g
+	Zw7razQ4yNqzXXD3Ozei+raosuWEVcITchEPgZZKkeIuxgnKXPljqM0Ejl3rfkUO2sYkZp
+	86exRn19aAB62irJozoiI8UjB88qMnq1AQ2aaSSdlABzM86C7JVyxjCPMM0+dA==
+From: Steffen Dirkwinkel <lists@steffen.cc>
+To: dri-devel@lists.freedesktop.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: xlnx: zynqmp_disp: layer may be null while releasing
+Date: Mon, 21 Oct 2024 15:51:27 +0200
+Message-ID: <20241021135127.218947-1-lists@steffen.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_1DD6B365236C297EA3A6A45DB768B76F2605@qq.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 20, 2024 at 01:30:05PM +0800, Edward Adam Davis wrote:
-> Syzbot reported a null-ptr-deref Write in xfs_filestream_select_ag.
-> When pag is not found, xfs_filestream_pick_ag() also returns 0, which leads
-> to null pointer access in xfs_filestream_create_association().
-> 
-> At the end of xfs_filestream_pick_ag, we need to add a sanity check for pag,
-> if we fail to grab any AG, we should return to -ENOSPC instead of 0.
-> 
-> Reported-and-tested-by: syzbot+4125a3c514e3436a02e6@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=4125a3c514e3436a02e6
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  fs/xfs/xfs_filestream.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_filestream.c b/fs/xfs/xfs_filestream.c
-> index e3aaa0555597..dd8f193a3957 100644
-> --- a/fs/xfs/xfs_filestream.c
-> +++ b/fs/xfs/xfs_filestream.c
-> @@ -165,6 +165,10 @@ xfs_filestream_pick_ag(
->  
->  	trace_xfs_filestream_pick(pag, pino, free);
->  	args->pag = pag;
-> +
-> +	if (!args->pag)
-> +		return -ENOSPC;
-> +
+From: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
 
-If we get here with pag == NULL, then something else has gone
-wrong before we got here.
+layer->info can be null if we have an error on the first layer in
+zynqmp_disp_create_layers
 
-i.e. there's an if (!pag) {} check directly above this, and it can
-only fall through to this code if pag != NULL. Hence if pag is NULL
-at this point, we should have already hit a null pointer deref
-before we got to this point...
+Signed-off-by: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
+---
+ drivers/gpu/drm/xlnx/zynqmp_disp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-So, where's the null pag coming from?
-
--Dave.
+diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+index 9368acf56eaf..e4e0e299e8a7 100644
+--- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
++++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+@@ -1200,6 +1200,9 @@ static void zynqmp_disp_layer_release_dma(struct zynqmp_disp *disp,
+ {
+ 	unsigned int i;
+ 
++	if (!layer->info)
++		return;
++
+ 	for (i = 0; i < layer->info->num_channels; i++) {
+ 		struct zynqmp_disp_layer_dma *dma = &layer->dmas[i];
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.47.0
+
 
