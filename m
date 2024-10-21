@@ -1,92 +1,125 @@
-Return-Path: <linux-kernel+bounces-374970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7C89A72A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:50:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E42019A72A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 996C01C228CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BD8D1F2213E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44F91FAEE4;
-	Mon, 21 Oct 2024 18:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B551FAC34;
+	Mon, 21 Oct 2024 18:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRt5zLpY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UUFdLXU2"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73E0173;
-	Mon, 21 Oct 2024 18:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEB81D07A1;
+	Mon, 21 Oct 2024 18:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729536621; cv=none; b=YRCz77+6knP5PkZgdd5+e7kL2PboUyTUfjvJtUgoiJ5CgrckYvMRrBr8JB0TBbckVBWFjHLz4a6hJwosvVnxgeYRN/4UicEK47mfgibI0gbZ9TIJKxpPBDEKWBjwXaQjFkqpOxfGz6VzoKQJeA705wF/UFh/XFAeUy5hzEwJ3Uw=
+	t=1729536665; cv=none; b=hTj2CXUoBbzMwV2u/HWc65shy3h0DNZO4oVmRvg+Tj22z8wMRql4I2vYkyFRlUu/0T4eRdODD9rzVGdpYTAwJkxp/n5Cf19/epDpB0zp/f/QG2Z9EG5MNpJsFl7O/U7OPgid8W6kApjBmCMIlrhumjEqTQYE+xKNtB0qqY55yMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729536621; c=relaxed/simple;
-	bh=qgyG8Kaa/YtH51Hlpd3SjiwLQqr3adzTo83sdSlMQx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dWW8GRCYWInWSQwXnAIqOAQe2NyuSpuMs3mEWubfgAsVXqoNPTUkcTeD5NG5AOQ+TMN081cyKSsj/zdifYFJrdFVmOt5b8YuufA+ifm5by1tzTSTyCi2CFvFMKNOnnBw+uBdXTHehQ+98XzhB2Om1qRDf5iqeSg7bcHtKniz7/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRt5zLpY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C723EC4CEC3;
-	Mon, 21 Oct 2024 18:50:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729536620;
-	bh=qgyG8Kaa/YtH51Hlpd3SjiwLQqr3adzTo83sdSlMQx0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iRt5zLpY0+WS2sYGXU65HxGytlhkxgBDvLXMwIo9WG8d57C5caCA4R2AIzbrpiViW
-	 2ZTRM310ZHGH9Js5UlHYo6CQDS3x8YnvdRpQfDtU2wkYYNSuiAEBWtephNwoVNllzR
-	 hLgH/YKKckxmfOAmGhTYtZJD7USq0XgppQafPy5m6E0uF6aIXwD782oW159FTezwy7
-	 eSsQaJBXgLJXOXp8yV1GM6Gz1KzNJ6uJ07F36z2fH6rp+Yd0za//O3ebyO1TP/04k3
-	 K7MdDhOn8bY1rLKNtTTaj00Us29H3HpBmoebwck/qEEIQ2okUaGWDmNOuRq2PXuCJT
-	 KTaVAtijTxhFg==
-Date: Mon, 21 Oct 2024 11:50:18 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org,
-	gary@garyguo.net, Alex Gaynor <alex.gaynor@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, neal@gompa.dev, marcan@marcan.st,
-	j@jannau.net, asahi@lists.linux.dev, linux-modules@vger.kernel.org,
-	samitolvanen@google.com, Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Subject: Re: [PATCH v6 4/5] modpost: Produce extended MODVERSIONS information
-Message-ID: <ZxaialZA7rCrwlHL@bombadil.infradead.org>
-References: <20241015231925.3854230-1-mmaurer@google.com>
- <20241015231925.3854230-5-mmaurer@google.com>
+	s=arc-20240116; t=1729536665; c=relaxed/simple;
+	bh=c1L7b4KjHyaDOWTiFdUHcYaqE6QeCKPONNoMW8jTU44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kU3pkcqwhC7+1P9YHivjEJNfGKsqjWzACahgpgRYG0ansgMr0i9aoAPyKDVY8Wg+9VKuu+dITQJEMClqnDf8cYP4Synzb2KQ3KrLBDVOd2ecsiIiK0vInya+FYL6Rkk+SH6Nup3r12j3MTgqfoe8lALuOfHEZTUO0DxnsQyxp4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UUFdLXU2; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729536657;
+	bh=c1L7b4KjHyaDOWTiFdUHcYaqE6QeCKPONNoMW8jTU44=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UUFdLXU2XZwN1mO16qE1B3uaHX5rMiu0aoBttN4RjqbwgNq7tohGS0bO8yt0l5pxR
+	 ya/yJic/jqu4RNC7lFwZ1lqTxegm2XsH44PssiA0OL7a0/MY4lyeZ3mGGhFUyuPedm
+	 rD/8wI9TM+Z+1TSsGu5oXxCsgc+aBxvdnWK9YlU34vrHglu0xzovxtMeioHIJfyQw4
+	 F4vM39jENZSuNo6Cr2cGBcOd4hJ5wCtXrVjdIIqm6/gsolZE9SQXQjU35dvsISZ00O
+	 DkphpJyBSYcAgXoZwxyZiprXfC0QFC8x09yWZfhR1KzUUASdm8Y9nOJS8hBCyW743g
+	 vflQOmX59dH4w==
+Received: from [192.168.1.90] (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8724217E362A;
+	Mon, 21 Oct 2024 20:50:57 +0200 (CEST)
+Message-ID: <1624395d-f4e9-4c82-a5ef-c05e2f3505db@collabora.com>
+Date: Mon, 21 Oct 2024 21:50:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015231925.3854230-5-mmaurer@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: rockchip: Drop invalid clock-names from
+ es8388 codec nodes
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: kernel@collabora.com, linux-arm-kernel@lists.infradead.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241019-es8328-dt-fixes-v1-1-ca77d5ce21ad@collabora.com>
+ <172953337556.748331.14779753664880128918.robh@kernel.org>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Language: en-US
+In-Reply-To: <172953337556.748331.14779753664880128918.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 11:18:59PM +0000, Matthew Maurer wrote:
-> Generate both the existing modversions format and the new extended one
-> when running modpost. Presence of this metadata in the final .ko is
-> guarded by CONFIG_EXTENDED_MODVERSIONS.
+On 10/21/24 8:58 PM, Rob Herring (Arm) wrote:
 > 
-> We no longer generate an error on long symbols in modpost if
-> CONFIG_EXTENDED_MODVERSIONS is set, as they can now be appropriately
-> encoded in the extended section. These symbols will be skipped in the
-> previous encoding. An error will still be generated if
-> CONFIG_EXTENDED_MODVERSIONS is not set.
+> On Sat, 19 Oct 2024 03:38:10 +0300, Cristian Ciocaltea wrote:
+>> The binding for Everest ES8328/ES8388 audio CODEC doesn't support the
+>> 'clock-names' property:
+>>
+>>   rk3588-orangepi-5-plus.dtb: audio-codec@11: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+>>     from schema $id: http://devicetree.org/schemas/sound/everest,es8328.yaml#
+>>
+>> Since the related audio driver is also not making use of it, drop the
+>> invalid property from all es8388 codec nodes.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>> Several DT fixes involving the usage of the Everest ES8328/ES8388 audio
+>> CODEC.
+>> ---
+>>  arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts      | 1 -
+>>  arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts  | 1 -
+>>  arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts      | 1 -
+>>  arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts | 1 -
+>>  4 files changed, 4 deletions(-)
+>>
 > 
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
+> 
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+> 
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+> 
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+> 
+>   pip3 install dtschema --upgrade
+> 
+> 
+> New warnings running 'make CHECK_DTBS=y rockchip/rk3399-roc-pc-plus.dtb rockchip/rk3588-orangepi-5-plus.dtb rockchip/rk3588-quartzpro64.dtb rockchip/rk3588s-indiedroid-nova.dtb' for 20241019-es8328-dt-fixes-v1-1-ca77d5ce21ad@collabora.com:
+> 
+> arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: audio-codec@11: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/sound/everest,es8328.yaml#
+ 
+This warning is unrelated, but eventually fixed via:
 
-If nothing is selecting EXTENDED_MODVERSIONS then this is dead code and
-should not be submitted unless we have a user, if that's the case then
-this series should be folded into Sami's.
+https://lore.kernel.org/lkml/20241019-es8328-doc-port-v1-1-25c1d1b5c65c@collabora.com/
 
-  Luis
+Regards,
+Cristian
 
