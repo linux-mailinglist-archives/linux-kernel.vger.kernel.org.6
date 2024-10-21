@@ -1,126 +1,128 @@
-Return-Path: <linux-kernel+bounces-374634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D0D9A6DCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:14:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7299A6DCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC4F1F22816
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:14:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E08E282A4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3331FA278;
-	Mon, 21 Oct 2024 15:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280F21F9A9C;
+	Mon, 21 Oct 2024 15:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bgk9sQT2"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aiz2T1wr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378A71F9400;
-	Mon, 21 Oct 2024 15:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686B3EEB3;
+	Mon, 21 Oct 2024 15:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729523636; cv=none; b=NB9WaKWBUBkAJ6WBaXB/5y7PStJssmOTJtiH6Zio35WCn+dGfmF9OeQcTDr2k+jNyEzCwfFP0Rgw2l5OgMPkQrTuR2N/MvpKuKkKMTSqPMb4mu5uyL5jHJYrXFdUJS6ikAguAk0kTphaLKUnsYq0aBNIE8FHYN4IR7hdbGxBxts=
+	t=1729523670; cv=none; b=LSYCQUg3XXwVvygZW9QDs89IKynFWw1JWNJHOMFZpf50xHV/FvUOY3TNO3cpAgITI+s/a56FFu9UZK18N6JdpDQ9dDm4WgGCsTwEu69G3Feud/X32mkpCYg5GDiWmpU1Z/FkbXUjOGLdyVtxkcQrcWmN54zN/ixaklajvPWqFrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729523636; c=relaxed/simple;
-	bh=49N5VKSySbtliRwXOzIYpfzoQzjDrQP7uCdd295VepQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=r/C1t51QB3AZ2PxQ8LK4K3fL5l3Ek0Tio7sfVuZh1s97weFeD9+SZSsBLwLsVGaAAR3OUG6G2qz4xrBbU6D8ASz+ztfIvVbR2xsD5A182xKnAZWpu1ocWuHBpIuggSZneJV1VPrMGfGw0wfu1XzFOWkffhLwLgVaAOFPk2vgV0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bgk9sQT2; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c6f492d2dso53183455ad.0;
-        Mon, 21 Oct 2024 08:13:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729523634; x=1730128434; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pxYG0K82tGIikDdAvIHwwgggZl99rm7a6utz2gNU0e8=;
-        b=Bgk9sQT2Ynrq1C3bYcinyV+zmGExcKIf+5Jyrr1pv7LPnZK03D5KdpBjUUu0E98pTE
-         nEyjRDWNGrjR4XSNOkCJWZqfUDhrh2/YFyr2GXp18idwlGFtn6j8wWJGCpDB5Tt4xeyS
-         3wzS2pcq8+XMc1wFSTyHNb86jIGB17ITlKbTo6lMd4J/ebYb3v8K5KoF9PQeuLrP6E3B
-         oaIjYOZGHvZWOtYqebpNce5KkiFBkaru6cEC/V90QTdYouJV0bczHaeRynulMHT1w3CF
-         FYAj4UThOLgcb7jvUELH4KnmKemruTApWGhgCkZlaQj4iQvXM6tGmaVlY6vaHl226FSe
-         lMRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729523634; x=1730128434;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pxYG0K82tGIikDdAvIHwwgggZl99rm7a6utz2gNU0e8=;
-        b=lz8H9JmD1MP4OMyGArfcgsB+HiwGmrYFocKAM0JuyHMtkrAPen7cyN9m63+IS7Mrpi
-         +Z7bSYJseIaqJEdQrRotwdMF+C1LFVB2h1WAfdBU57bdN5/C7Z7WzAlNMaLdw1Ju3KHZ
-         CYrvStkNDS+S6B5F2Zy0M/KxRSkLxzvr4iO7QwWQYN8KP0Fkvwx4PKfL9AlIqNDW1RMv
-         +8Qg02ri3DKcXJd9g+TLQlFT1eH+mtQov5idoSz8UDDpuCtzCgRQ8ENWNDI8NeFLCC4N
-         4MBzITqszH6RBA4LSwp44ZzudQSz+jpBe4scBUCcwn92GvYQppwtDUa/vv8+OdGjqBqc
-         P3UA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVPBz2OWqeFat/03R0DH89QweHJoDLlbEiJJx68R1rQZw03Xyl3tRyGvzc+1A2jZ7//VcM2jHimp2jDTAN@vger.kernel.org, AJvYcCXfGdf/xqAsnLKjRnsOi8Sh9TjVGtUg6Ji8fhvyH5IvyBQFCgG8UeKTf+fn3zKZnDAQD+2No1/5OdgdBW/gZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWTe1sykcRqCGEk7dIRe4eJMVeVG9GLgKNixofe9LQCUYlockQ
-	YjB7Hi2GuY9UDdvJgU/0IjTPTDUm6tbpAUHiZ0OLn0bWlkvgDUS10c/9vRfP
-X-Google-Smtp-Source: AGHT+IF1xmuPRiFmthIiN+NHjFojO2ALGYc5pakgdevqHg7LKpXEuBfV1fcpi4mGORPshWWn/pyeQA==
-X-Received: by 2002:a17:903:2a90:b0:205:8407:6321 with SMTP id d9443c01a7336-20e5a70d669mr160210395ad.9.1729523634259;
-        Mon, 21 Oct 2024 08:13:54 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee6583sm27348195ad.8.2024.10.21.08.13.52
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Oct 2024 08:13:53 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1729523670; c=relaxed/simple;
+	bh=9Ci3URL81eTgLvYVIBvGyCPDi5UDYbisHdT29x4F5Vc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ViBxXgL2KbAYzwaUDPqkCD1HR7hyQhNI7gh8AP422kwpFdSSZr2RLHHdOZDdTabxNE9LKiIWEShPe+VCh7kbYBw/7JpIbXIdINZ22TKBzG56dUXiQjwESOpV4X5kWX4ERRndgz/aibAFua53taEZCLyPsbH6dw0D6ZrncPXlnWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aiz2T1wr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 923C8C4CEC3;
+	Mon, 21 Oct 2024 15:14:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729523670;
+	bh=9Ci3URL81eTgLvYVIBvGyCPDi5UDYbisHdT29x4F5Vc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Aiz2T1wrGx4PRpFelsNC3fQjyF1G1m1tgcKw0i3wg0jkRC5vqDURVlPy8VwZDGvD7
+	 oZui0ChdnwxicVTWv9oXwumatrAOMh0t2nyq55vyWXvKsiwrJeC3ppLTVtt4cWrmMX
+	 VGyzz7dcWoZr3suwzDCvn69dv22m0aWS2fiD4vHYpxa+ywbfyQtAMO5kPsu/QFeS3s
+	 lxy/dO40uO+yR9U3EUUc7xdN6R7LgWojSuBJlQRGKpeBW0KjhHYIOr/N12s6qgqAlg
+	 KozOsKtk1dKaw1Bwnpa9FSAMRKwY3L26vWP++9lckixsk7BH5R1NpCj7ux1hUw38NF
+	 zeKOxaFXOWiyQ==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 0/4] mptcp: various small improvements
+Date: Mon, 21 Oct 2024 17:14:02 +0200
+Message-Id: <20241021-net-next-mptcp-misc-6-13-v1-0-1ef02746504a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v2] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <20241021151036.34383-1-aha310510@gmail.com>
-Date: Mon, 21 Oct 2024 23:13:39 +0800
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- linux-bcachefs@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>,
- syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E6F9687B-700A-4A02-8A7F-4C9ED648D746@gmail.com>
-References: <20241021151036.34383-1-aha310510@gmail.com>
-To: Jeongjun Park <aha310510@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALpvFmcC/zWMMQqAMAwAvyKZDbRNFfEr4iA1agZraYsI4t8tg
+ sMNN9zdkDgKJ+irGyKfkuTwRXRdgdsmvzLKXByMMlYr3aHnXLgy7iG7gLskhy1qQkeWqLGGeFJ
+ Q8hB5ketbD/BXMD7PC5v8Oxl0AAAA
+X-Change-ID: 20241018-net-next-mptcp-misc-6-13-c34335423ea0
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ Gang Yan <yangang@kylinos.cn>, Davide Caratti <dcaratti@redhat.com>, 
+ Geliang Tang <geliang@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1375; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=9Ci3URL81eTgLvYVIBvGyCPDi5UDYbisHdT29x4F5Vc=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnFm/SwdUTR64cmNwmbeZD8w3h9o8NigR+iSL6T
+ P3kQUANCbyJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZxZv0gAKCRD2t4JPQmmg
+ c9T4D/9t6LvYjS7aLGlxvd0QDPpzJ9Xqxf3vzG3ffoOhs1vVR6hvkdb69qTQOu6djrxMBNVkDNT
+ V4P7RzoG+j3lvvBOGKmvo4Hwp+eVdjcKbYH5YyMphF5z+ehts8Y7QEhuCWi35eZjur+GXxy3tDt
+ mD+x2fbw8xcvUIpEBK7PVzQHzEE/uJMUa7pBbP1nHlx1PLbxfAEfHenf089VZP5ww4/u+gPzjkw
+ T2S31uusjxBVeVGlUnIKbXJjDS4kHpSskxxvIZYEr9A8ZG6SJAktrDYzH3SWFxMn50y+5MQbPKi
+ zZfOTvOLNxs8D3NPz+xxuB83vlhqIs9dVMishz6dn4PaBZjIXXI1XtOv5+/akTMPE0qkNpyFQng
+ HqZ1m4A3X5sbhW+rN6N0PZNwbjqyTiEPiRg2xTlNGpi+kXSlfhe0Q3+r/weNLVpAR1kO6SF/mZc
+ Wt6bzy9U2cTQ8w9XXwKLaKefYkIe3hAIx1n4tlAtZmqxtfw6zf1lMneAvC+GvJ3g9jn98Pwx7IC
+ CyhAmMiwtju7eCfQ6nUkMoA0t1YBfOKsXlz7Ec1xEIjTndaN74EvwP6bayiR92y5qlJB/7hRB/G
+ itspyHzNCT8jQWPfeqO2glAzZMjVa52st4Zby86baHIV9AzFr+jq2Jy85Nf78zmSUXWKJDCMxH4
+ DPq0dQIPYE2JWOA==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Oct 21, 2024, at 23:10, Jeongjun Park <aha310510@gmail.com> wrote:
->=20
-> The size of a.data_type is set abnormally large, causing =
-shift-out-of-bounds.
-> To fix this, we need to add validation on a.data_type in=20
-> alloc_lru_idx_fragmentation().
->=20
-> Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
-> Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
-> fs/bcachefs/alloc_background.h | 3 +++
-> 1 file changed, 3 insertions(+)
->=20
-> diff --git a/fs/bcachefs/alloc_background.h =
-b/fs/bcachefs/alloc_background.h
-> index f8e87c6721b1..91eb96b19a76 100644
-> --- a/fs/bcachefs/alloc_background.h
-> +++ b/fs/bcachefs/alloc_background.h
-> @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum =
-bch_data_type type)
-> static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 a,
->      struct bch_dev *ca)
-> {
-> + if (a.data_type > BCH_DATA_NR)
+The following patches are not related to each other.
 
-This should be  >=3D ?
+- Patch 1: Avoid sending advertisements on stale subflows, reducing
+  risks on loosing them.
 
-> + return 0;
-> +
-> if (!data_type_movable(a.data_type) ||
->    !bch2_bucket_sectors_fragmented(ca, a))
-> return 0;
-> --
+- Patch 2: Annotate data-races around subflow->fully_established, using
+  READ/WRITE_ONCE().
+
+- Patch 3: A small clean-up on the PM side, avoiding a bit of duplicated
+  code.
+
+- Patch 4: Use "Middlebox interference" MP_TCPRST code in reaction to a
+  packet received without MPTCP options in the middle of a connection.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Davide Caratti (1):
+      mptcp: use "middlebox interference" RST when no DSS
+
+Gang Yan (1):
+      mptcp: annotate data-races around subflow->fully_established
+
+Geliang Tang (1):
+      mptcp: implement mptcp_pm_connection_closed
+
+Matthieu Baerts (NGI0) (1):
+      mptcp: pm: send ACK on non-stale subflows
+
+ net/mptcp/diag.c       |  2 +-
+ net/mptcp/options.c    |  4 ++--
+ net/mptcp/pm.c         |  3 +++
+ net/mptcp/pm_netlink.c | 14 +++++++++++---
+ net/mptcp/protocol.c   |  8 +++-----
+ net/mptcp/protocol.h   |  6 +++---
+ net/mptcp/subflow.c    | 16 ++++++++++------
+ 7 files changed, 33 insertions(+), 20 deletions(-)
+---
+base-commit: 7cb08476e19fb3d0dce618df7c11713434553e27
+change-id: 20241018-net-next-mptcp-misc-6-13-c34335423ea0
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
