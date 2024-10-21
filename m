@@ -1,136 +1,136 @@
-Return-Path: <linux-kernel+bounces-373530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D8F79A5873
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:14:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60119A5877
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B9E2B2110F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BD311F216B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A2311CAF;
-	Mon, 21 Oct 2024 01:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2A0C2F2;
+	Mon, 21 Oct 2024 01:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fw8e/QwJ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YrEIvDHZ"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20866DF49;
-	Mon, 21 Oct 2024 01:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABD2EBE;
+	Mon, 21 Oct 2024 01:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729473236; cv=none; b=hQdpFWgKGs2aKCJd9jTxiQXo5XTxjZkTmJgNPGyyDF+8ccO3ZifR8cR01g0z8pnO2AE/nhmbXgdtaaoM/gkyb3U5u+kuWlXXpv0dTwxueEMEuFF0bCTDsKIi/g13wXXsBvkZoQtPDVx7rbQTHOXX1O+wqs+qWCyR9gBFwo4QCz0=
+	t=1729473347; cv=none; b=dVDUw85aJt+z2J9s6t3VitXQGLu8KckpGnn4gooxgFzUJOPFENkauK5aCHWoeVEyah36XstglSGGDTFs/MxSJKs1NqIe1QYXKdsIWrZfJ+9qCZ2fWgm7vn5sPOkK1/zetCYKknfwL9SeGQRnlE0S+bmHGKUzd5hTJgvXXqyb1JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729473236; c=relaxed/simple;
-	bh=xmOFIc7UL6nimH312fjzPftPE9PYTHGVlw1oJojaILE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Cyof2/V6+fZ0LRWzo1bj+adQTF4u8HcGKRWOdqhdixjaptNubRbOQJGv/2seDtMpUd2WI1ZBXmWQLoPd+s4IaWytckx6neHcTn/Ydp8kDr0lxT50cd1YoLOyh1+3Q4J+d14ugEx5Y5N5ZkuGykTOQekVGn3KfrPJ9Yt6ywYFG8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fw8e/QwJ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729473229;
-	bh=h32jElHbBaqpGucnDgLckBhcNEW7fIGoLMv+rsBlEwE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=fw8e/QwJBCQEBKQHFCjjdOiDIjNG3kVrn2LSB6FFe4qVmZq46yin8+pqKwiKBmbnP
-	 ZPukbqOd0hdxB+7ToRMlpkWYAUEMyd5uR88fnbYR2LFUWM3siKa3BHPr6Wvm0pCOfx
-	 aWxBO5NTEFw4EhTs22U8akCDC18xOoEwZAqu7wzuSSTgfP711GApIUN8AuZ+ErBWa/
-	 VRiyR1e//bPnrRJjT/qbBull5T4tIm62A1sgq5yK+rqsaa/o0tqK+YnHiSzkL4jTMA
-	 pVPekkqYvYRjfnnFNbw21GK6THt3J+fCPkh5iLm0x8IOg2D4enxKx6h8usEKVKCbYD
-	 AwYUltm52YHpw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XWy4Y4Trsz4wcr;
-	Mon, 21 Oct 2024 12:13:49 +1100 (AEDT)
-Date: Mon, 21 Oct 2024 12:13:49 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linux Crypto List <linux-crypto@vger.kernel.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the crypto tree
-Message-ID: <20241021121349.14a5e2c4@canb.auug.org.au>
+	s=arc-20240116; t=1729473347; c=relaxed/simple;
+	bh=BI9Q9ZUlQiY1jsmjR1g/2co4zW/naWyEETlDmd+hyhE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ew+CR7W4hMu5HX8VFz7PadDhJ5m42jldKtiMwA5dtW6OBAKENJSzISgS04yTqHKwhQ0ZHEaiQBZ8O0h29ejv57BndtmHI9MqCxbDpbeJl/p8PoiWYIAzEbQEB8orwK5g/+6+lTFvh81KsFJkLGVpFeTiFmLut8HbQpFLYvfZY+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YrEIvDHZ; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c693b68f5so41078535ad.1;
+        Sun, 20 Oct 2024 18:15:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729473345; x=1730078145; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g83Gh21Rtk98rhGv2tDfxM2gmGbALgRmapHQzAjA6CI=;
+        b=YrEIvDHZpxoZsLCN+fjBa5TEAGcHheOpRAzGj2iPodmDeMN1p8fSqqFPtHknqGYyhf
+         QIeabLiTKi3gwSe7tYM17yBiyh1cW/6J/Yv2s8WcW3upOa9o+fQFLv5szMZSzOyqRJcS
+         MPQXjx7vPhm1Rf+cAiF2ex1thXqXCf1yhpsjRNovKcX8v2TTLXspORILkT9sWid9IM9t
+         BPzwlZRiVIpGslZtT+nc0RA9VCAGLHnM6DmY+2sh/nV9LwH4MBGVZFuaHAIQrGd8VnkK
+         SIMWbpBW0r3rrWTB3O0EzobI7SIUn3AKUPB6iHqTPfP7CHQ1paJJ/+UUof2bLxCMLKWs
+         78Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729473345; x=1730078145;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g83Gh21Rtk98rhGv2tDfxM2gmGbALgRmapHQzAjA6CI=;
+        b=FiVkc1C+9OyYkxcJuo1yjtR9CTkZviU2Cmv4pcJlFjm7sZFOo7Dn4dI7uDe2oUq51a
+         ujCTRX9W0x9HTSyEPivWNgGJNUfNdR/9wHo+ZxwMq2186UnWa96IeTA5o4U+t4Kl1OOp
+         u88X7f3ThI4onRn+3luIb1a7BtGy0+DI0DbJCcg90ez15LlpuyCV9ZdV2N+Uy4HwyVj0
+         U4cIr/U2To7iRc5QyFcnDMPzHMn14bU/WsZDTte8OijqLwP+dTI+++NcLLjYZb/Odh9m
+         57/JSzxklvLV1PKjuue05vFqedPAdByznohRpJJQPi29m32BQOcasTdCN2orUQOgoTYZ
+         byeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWW/KPbFXAImWoKdTszQKJiSgKLv0BHfI464BeW0Oea9CXudjtSbkqGyhC4QVhfbjvZbkP+sxUbYW9JURw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7hDBrIupYWEABnuygV9im0EGEQpjvh5a2lIoHy0IJp9ORjqeZ
+	j0VyJvKu7I/ATddzMsHyodaVEzadF5XFJI4jsCFX4qVosA5ybgFH4c/9BQ==
+X-Google-Smtp-Source: AGHT+IEGA8Nd6qo20wkr2oX1evHm81krZcanksKEUWAmKm2DPsizp4V6eH1BClDv/k4f0PpdzAdi2A==
+X-Received: by 2002:a17:902:ecd2:b0:20b:5645:d860 with SMTP id d9443c01a7336-20e5a8c6c33mr115689035ad.36.1729473344935;
+        Sun, 20 Oct 2024 18:15:44 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f58d6sm15327425ad.276.2024.10.20.18.15.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 18:15:44 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-rdma@vger.kernel.org
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	Rosen Penev <rosenp@gmail.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] RDMA: use ethtool string helpers
+Date: Sun, 20 Oct 2024 18:15:43 -0700
+Message-ID: <20241021011543.5922-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/C..pc.4S6nh+Enm3rkJxE1=";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/C..pc.4S6nh+Enm3rkJxE1=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Avoids having to manually increment the pointer.
 
-Hi all,
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/infiniband/ulp/ipoib/ipoib_ethtool.c       | 9 +++------
+ drivers/infiniband/ulp/opa_vnic/opa_vnic_ethtool.c | 4 +---
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-The following commit is also in the crypto-current tree as a different
-commit (but the same patch):
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_ethtool.c b/drivers/infiniband/ulp/ipoib/ipoib_ethtool.c
+index 7da94fb8d7fa..4feb7170535c 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_ethtool.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_ethtool.c
+@@ -128,16 +128,13 @@ static void ipoib_get_ethtool_stats(struct net_device *dev,
+ static void ipoib_get_strings(struct net_device __always_unused *dev,
+ 			      u32 stringset, u8 *data)
+ {
+-	u8 *p = data;
+ 	int i;
+ 
+ 	switch (stringset) {
+ 	case ETH_SS_STATS:
+-		for (i = 0; i < IPOIB_GLOBAL_STATS_LEN; i++) {
+-			memcpy(p, ipoib_gstrings_stats[i].stat_string,
+-				ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
+-		}
++		for (i = 0; i < IPOIB_GLOBAL_STATS_LEN; i++)
++			ethtool_puts(&data,
++				     ipoib_gstrings_stats[i].stat_string);
+ 		break;
+ 	default:
+ 		break;
+diff --git a/drivers/infiniband/ulp/opa_vnic/opa_vnic_ethtool.c b/drivers/infiniband/ulp/opa_vnic/opa_vnic_ethtool.c
+index 29b3d8fce3f5..316959940d2f 100644
+--- a/drivers/infiniband/ulp/opa_vnic/opa_vnic_ethtool.c
++++ b/drivers/infiniband/ulp/opa_vnic/opa_vnic_ethtool.c
+@@ -164,9 +164,7 @@ static void vnic_get_strings(struct net_device *netdev, u32 stringset, u8 *data)
+ 		return;
+ 
+ 	for (i = 0; i < VNIC_STATS_LEN; i++)
+-		memcpy(data + i * ETH_GSTRING_LEN,
+-		       vnic_gstrings_stats[i].stat_string,
+-		       ETH_GSTRING_LEN);
++		ethtool_puts(&data, vnic_gstrings_stats[i].stat_string);
+ }
+ 
+ /* ethtool ops */
+-- 
+2.47.0
 
-  6100da511bd2 ("crypto: lib/mpi - Fix an "Uninitialized scalar variable" i=
-ssue")
-
-This is commit
-
-  cd843399d706 ("crypto: lib/mpi - Fix an "Uninitialized scalar variable" i=
-ssue")
-
-in the crypto-current tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc block/elevator.c
-index 9430cde13d1a,d6b4eb5443d9..000000000000
---- a/block/elevator.c
-+++ b/block/elevator.c
-@@@ -708,23 -709,12 +708,21 @@@ void elv_iosched_load_module(struct gen
-  			    size_t count)
-  {
-  	char elevator_name[ELV_NAME_MAX];
- +	struct elevator_type *found;
- +	const char *name;
- =20
-  	if (!elv_support_iosched(disk->queue))
-- 		return -EOPNOTSUPP;
-+ 		return;
- =20
-  	strscpy(elevator_name, buf, sizeof(elevator_name));
- -	request_module("%s-iosched", strstrip(elevator_name));
- +	name =3D strstrip(elevator_name);
- +
- +	spin_lock(&elv_list_lock);
- +	found =3D __elevator_find(name);
- +	spin_unlock(&elv_list_lock);
- +
- +	if (!found)
- +		request_module("%s-iosched", name);
--=20
-- 	return 0;
-  }
- =20
-  ssize_t elv_iosched_store(struct gendisk *disk, const char *buf,
-
---Sig_/C..pc.4S6nh+Enm3rkJxE1=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcVqs0ACgkQAVBC80lX
-0Gw1pwf/TxYb3divxta6nuL9xqF+aOkytTxFhEvEy4SdLsXvxuFsQshqpwhgSFXu
-lNP2xGYnikstRtyJfdNKY4zbyUagbxNV3Cq2O1YZKWOKvt/0vujGFRtel8tbFbbJ
-Uo5VSEfFlIPg9twEBb7MroCk9skpNJV57JdvexcjIrT0gApMu8BHebWW8DVLJZ+H
-TEfLuZnTo2IgR+goUWPLtiA6vBu6ev48PHUCV7SMkuG/d01U6ZRHiW57G0B/SbTS
-3EEGOlmarLJdETGBjjifJ6AmoCS2YmxFYw0v7CWTKJ77+lCLqOtbAJS5e682ngtV
-fbE28GO7wl39mQ1fiwNER1jYTpMnIg==
-=nDxn
------END PGP SIGNATURE-----
-
---Sig_/C..pc.4S6nh+Enm3rkJxE1=--
 
