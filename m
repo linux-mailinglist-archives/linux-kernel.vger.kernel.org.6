@@ -1,153 +1,140 @@
-Return-Path: <linux-kernel+bounces-373680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BA59A5A2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:08:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62489A5A2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926F81F216CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:08:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F4621F216BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3B71946A8;
-	Mon, 21 Oct 2024 06:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC4B192D98;
+	Mon, 21 Oct 2024 06:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qmxsljzf"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZisq0/3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4F31EEF9;
-	Mon, 21 Oct 2024 06:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08C9DF49
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729490876; cv=none; b=flYJT479WlrQW1jTLxS6wHjdQimNFD7q5QZn3UekZ2HWaVt0K1dorwADPqUEpjZ78xPgpywbeCrywwRH2y90HD6jyr5wp/6AdU0yWvFfb8aC8+rYoVDErMTA3rRg+tjDmzO9203JJATLyTXyt3M5/L9yoGCBnMhQHNOSu0G6gEM=
+	t=1729491007; cv=none; b=t7S7xNRaQ7B7T0k6g7q4dmzE2ahseu0BU4WSy9jqu1WyP8uRjtNo7D+I1vyUislDj03gluXYoQoSzvMHEqcdxKXBJF1QiXLHI+pIeevOnaw0uJGH83v2dWAETheTHyXvP6k+3w5MCyxayBjaYrXaNOVZhGDrdL5hqhttIhXcGQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729490876; c=relaxed/simple;
-	bh=qXsYb9SX8s/L/zEPUt4/xo8MTk2kBkfL88O19nPRdm4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OVQHzquT8t6fepvI3yFXm8SNZzs63s/YHF7e5b3y+kjd6H/2nXUxNXs/Lzr0krTDTEQTbmQIc5uTTnWvldw/svo8zNAVFF1sj3xOFnElibe6ahqSqUuVs4M4bYaHjbuZykEsUvD+V2rG/1PZI836387WYXJN4+EUwCOJ88A/A7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qmxsljzf; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-288d4da7221so1927891fac.1;
-        Sun, 20 Oct 2024 23:07:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729490873; x=1730095673; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FsHV1DeqWJoj2ZcYbTpaphYAWXw5LJS8G2+p8MKU1jM=;
-        b=QmxsljzfKBpfeDxzxFV7x/IG+vAWTFTIfk0z3ZA+cLb5+TKVppQXp9r9mBkagKSeFL
-         QbfUozXIwVDY682y/04YZwUS79uvRoYT0IkWyA1fwqCRKl9GQ++AkitnFCpSsXz9ZGRi
-         gRnnZKIwYkCoKwaKoTz3cDjxmxpfxFtgRosU+cHJbl5IThmPlTUaYeK5ia+KBeL+msK0
-         MQzKe/mCTTJ3QKZEXMHPCKkTXobBhQOVy8UL/myPtm7IkKQz9Dr3I+wK7gUZq8CcmbHa
-         qDZ4WB+9gda6Cx7CjWcit9JKEpP2FXZ32/4CimN1QL/tdVseF1JtqQ7EknmhaT0s4htL
-         v4aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729490873; x=1730095673;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FsHV1DeqWJoj2ZcYbTpaphYAWXw5LJS8G2+p8MKU1jM=;
-        b=svsDG3lvm6aE3wpXCBVK2mMlAXMmTWouPiU+On1dymUq+oVY5Bvk0dAbCayK0R82JY
-         dK8xlRQXtYtnC03OzbiHvuQfwszca0KIClhgWsEGieKoiO3DYuy30EHNy/rfRzKREoi7
-         QT021keblA9c4Y5SsEVXqh0d0JIbOcCj9EpxryZRz180XZSAspPABV3/SAMQDMUwtWBm
-         8Q/pZUgRZ9PYinlBM65vqQU9+K0Dkhpb3nyIiOo4Tmgu0vNvFFkZWj/d9PSNw3kC8VnU
-         pNCCYY3DzZk3KI10fX8v6qbK8j7AOFFHyk2rGRTnxsDg4v74OyhaDwUIBQkuZotGKxFW
-         hwKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuKAiRL/NG/3nfEYdNOIlyMQOh9zhsFLyn8JwHOZk8adJq9gTNViKon/n7kPkjSWddU4xo3YAJ@vger.kernel.org, AJvYcCXgWwTdmQPjS6Eah9mBPmyI8+h0FaMG2wP4lH0ZZvTrpLpv8ykZNPcTm1IXEmZOJPkI8s8Ni4AxHVAM@vger.kernel.org, AJvYcCXqaw6i8vNC8ohKsWdbm9+hpYPTDRqP8qJskAPkEnlCFvFhW1C2YiyCWvNvQqI7yDw2n3n6JeC8tF7N2U8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo6JmeacN/zth57b1eeEC/cJeUtYp8Jkdq6hFlF+I+ZcG9aW1d
-	aMKLXULrmBEmqWBvi3cYacWaBlQth5X8cM1FTjuAg3UC83LuPe7iNr/kUyyn25W+tf5a+vEBScF
-	vaiXj1OLdZ4bscGzhPHMBUH31Yc3F0A==
-X-Google-Smtp-Source: AGHT+IHpPFqsJuCvsJFqshBiSlkp52VkseK6tb4r+rc6MrPKp4rcWkL3ThHr5jpGe6dSRrP2Uk6AQnrmJjxXvN8NsHg=
-X-Received: by 2002:a05:6870:6394:b0:270:1b79:ccbc with SMTP id
- 586e51a60fabf-2892c24db1bmr7442706fac.5.1729490872798; Sun, 20 Oct 2024
- 23:07:52 -0700 (PDT)
+	s=arc-20240116; t=1729491007; c=relaxed/simple;
+	bh=QxWYi9E1NuDuGW03Ns2H5yfIOq02EgyAbp8wT02r0wg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d6/qBorXp5e71jfMB9jHSwZpGACZJenM/Qf3nb3GIb8ZhAkNSBPWkoCAUPoy2YPkYm6WTnFLJLZlaVI/PexfNB/zVxByEYc48XA+hPUZdRWvF2ePBN/qbqfxWOXpnDWJj1vkoZBQRr7HLZYwW9YWD70mGYUlx9+yjxqutxSTqIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZisq0/3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7642C4CEC3;
+	Mon, 21 Oct 2024 06:10:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729491006;
+	bh=QxWYi9E1NuDuGW03Ns2H5yfIOq02EgyAbp8wT02r0wg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AZisq0/377yayn1GcGT7Axf8F0O1GDnDnxlLm9ou11uJjkoN1Peu79a894Z2ZBUl4
+	 Eo1hGbKmHV5cF+HfB4mKm4nfmGTG0nwFaHDT2A0TOVmBnQfYv5iNvbW5ST3b88ZRfG
+	 Z0iN9v9eC8h5Hw30jNjrlrq+KaDYzzjQiv1JDFJA71eWJamRXa4ZGLoIsCZQ2l6SeM
+	 vFAPV37m1O0Xk96puQ4JNwR9acNS7IUyfnxE6anOP58VioG6Ydr40rzYmSoWgav6iA
+	 Z9CEet8izoSVjMUJxMAyeZg3ZFpGyLZIm6+2K5qAOkjxD4EyBEubBQOMgMtR3XZFJd
+	 +6sZXPXGEAl2w==
+Message-ID: <16555929-6e1b-4018-ab9a-8a8efa7ea695@kernel.org>
+Date: Mon, 21 Oct 2024 08:10:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241020142931.138277-1-aurelien@aurel32.net>
-In-Reply-To: <20241020142931.138277-1-aurelien@aurel32.net>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 21 Oct 2024 11:37:37 +0530
-Message-ID: <CANAwSgR1ks_L94QPSCOsL4ATX=3HA59LHK1GdJTctUsM_f_DuQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc: take SWIOTLB memory size limitation into account
-To: Aurelien Jarno <aurelien@aurel32.net>
-Cc: William Qiu <william.qiu@starfivetech.com>, 
-	"open list:RISC-V MISC SOC SUPPORT" <linux-riscv@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	"open list:SYNOPSYS DESIGNWARE MMC/SD/SDIO DRIVER" <linux-mmc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Ron Economos <re@w6rz.net>, Jing Luo <jing@jing.rocks>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: arm: mediatek: Add MT8186 Chinchou
+ Chromebook
+To: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>,
+ devicetree@vger.kernel.or, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ wenst@chromium.org, hsinyi@chromium.org, sean.wang@mediatek.com
+References: <20241021025938.676-1-xiazhengqiao@huaqin.corp-partner.google.com>
+ <20241021025938.676-2-xiazhengqiao@huaqin.corp-partner.google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241021025938.676-2-xiazhengqiao@huaqin.corp-partner.google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Aurelien,
+On 21/10/2024 04:59, Zhengqiao Xia wrote:
+> Add an entry for the MT8186 based Chinchou Chromebook, also known as the
+> ASUS Chromebook CZ12 Flip (CZ1204F) and CZ12(CZ1204C).
+> 
+> Signed-off-by: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
 
-On Sun, 20 Oct 2024 at 20:01, Aurelien Jarno <aurelien@aurel32.net> wrote:
->
-> The Synopsys DesignWare mmc controller on the JH7110 SoC
-> (dw_mmc-starfive.c driver) is using a 32-bit IDMAC address bus width,
-> and thus requires the use of SWIOTLB.
->
-> The commit 8396c793ffdf ("mmc: dw_mmc: Fix IDMAC operation with pages
-> bigger than 4K") increased the max_seq_size, even for 4K pages, causing
-> "swiotlb buffer is full" to happen because swiotlb can only handle a
-> memory size up to 256kB only.
->
-> Fix the issue, by making sure the dw_mmc driver doesn't use segments
-> bigger than what SWIOTLB can handle.
->
-> Reported-by: Ron Economos <re@w6rz.net>
-> Reported-by: Jing Luo <jing@jing.rocks>
-> Fixes: 8396c793ffdf ("mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> ---
-Please add my
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-Tested-by: Anand Moon <linux.amoon@gmail.com>
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
 
-Thanks for fixing the warning below.
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
 
-[  511.837216][  T148] dwmmc_starfive 16020000.mmc: swiotlb buffer is
-full (sz: 290816 bytes), total 65536 (slots), used 246 (slots)
-[  511.837423][    C0] dwmmc_starfive 16020000.mmc: swiotlb buffer is
-full (sz: 278528 bytes), total 65536 (slots), used 222 (slots)
-[  511.916951][    C0] dwmmc_starfive 16020000.mmc: swiotlb buffer is
-full (sz: 290816 bytes), total 65536 (slots), used 24 (slots)
-[  516.803916][  T575] dwmmc_starfive 16020000.mmc: swiotlb buffer is
-full (sz: 507904 bytes), total 65536 (slots), used 122 (slots)
-[  516.805450][    C0] dwmmc_starfive 16020000.mmc: swiotlb buffer is
-full (sz: 507904 bytes), total 65536 (slots), used 364 (slots)
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
 
-Thanks
--Anand
+Best regards,
+Krzysztof
 
->  drivers/mmc/host/dw_mmc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 41e451235f637..dc0d6201f7b73 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -2958,7 +2958,8 @@ static int dw_mci_init_slot(struct dw_mci *host)
->                 mmc->max_segs = host->ring_size;
->                 mmc->max_blk_size = 65535;
->                 mmc->max_req_size = DW_MCI_DESC_DATA_LENGTH * host->ring_size;
-> -               mmc->max_seg_size = mmc->max_req_size;
-> +               mmc->max_seg_size =
-> +                   min_t(size_t, mmc->max_req_size, dma_max_mapping_size(host->dev));
->                 mmc->max_blk_count = mmc->max_req_size / 512;
->         } else if (host->use_dma == TRANS_MODE_EDMAC) {
->                 mmc->max_segs = 64;
-> --
-> 2.45.2
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
