@@ -1,216 +1,142 @@
-Return-Path: <linux-kernel+bounces-374033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075C89A60DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:59:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8AB9A60E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ED551F22C75
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:59:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C40A21F21946
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D171E3797;
-	Mon, 21 Oct 2024 09:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD0B1974F4;
+	Mon, 21 Oct 2024 10:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="qyKy2Wwd"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dBG9Xv+R"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053E11E5701;
-	Mon, 21 Oct 2024 09:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17E91E04BC
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 10:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504696; cv=none; b=H29uN3098o3UbcD0GT43zMbxfm7GdripgJW24E000JOYJjj5EtKkclRUW9XmimjSezvxFlhAXi+sl92YPRmAfF743WImbHC9FvmrTbvnCcOCZk1jPkVGbiEE0NScFYu1imPloE6Q+1pw02EcAlRU6oZtYE6nBIfpPTNzr6YvXU8=
+	t=1729504817; cv=none; b=IL3HqX8OrGjfQ5a2aO2ssmKLbmiKLYpOFrpkdhB/XlS6Db2LnmtToKqPwtXXIinI19PteVRYGMgcd05vzGBdxuXAda0ueYQebqKWiYpV/Ka0wG2ztnsTvrSF8xhRUZam67rd/EoYa7xL+fbobndENUHwbwa6gCY3KWdXRGQVT70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504696; c=relaxed/simple;
-	bh=uCULIxbcJywiOKYZjq43UhyRV8sFKz967+OUgHE/Iu4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GE+MmO3cnkzdinbrRmb5ACXmKnvsLoTWuXpvc0J7WwkEioNqT4dgQlLCQZRNoAmHSwA00rm64dgRDSu1VxfanxuA3NacIHz/e9zS41pPAIC6R3aWXeBp56gcvihjHNcyKXurZlNAi0flRRqmGV5deSKllVIBB/bvFC/5OuFl1MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=qyKy2Wwd; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:Reply-To:Subject:From:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=mDveBoDYf4fN13vKMrP/EXZV3Nj+OeRfq74BWOg3v4w=;
-	t=1729504694; x=1729936694; b=qyKy2Wwd9aQhqHsXwIu2FxrycJ+LCB7e/ouozBUWN5rs/CJ
-	Lc+EYLSVqrYpih74WumIgkeLY5hP2Ji7iDyy0A5BtmuG9JcnzBES5pXPIqZJ4gFi8R/59R2UFyQLT
-	kr+1AZg5zgRsXaIU16UF6x5Mxjqsq9YbCvz41I5RKTI6hu9KwqPlbu0Go2pnYccIpQAIJbd0yih2F
-	MuZjezR/cPRzqDuobGTW5FdAQbCDUjWY7K1dMNFjvqAJkU80WT+qNbuxCG+LJ8rO8eXflfQHoh0bn
-	HqkAwaj4fPTnmzZjT4jxtyImfjqHkbf9a3eUeE1QESKIM9/PkLR/2qr6aiBVWt9w==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t2pAx-0001lx-3g; Mon, 21 Oct 2024 11:58:11 +0200
-Message-ID: <43b6b750-3f7d-437f-a62e-ab2dba06827a@leemhuis.info>
-Date: Mon, 21 Oct 2024 11:58:07 +0200
+	s=arc-20240116; t=1729504817; c=relaxed/simple;
+	bh=LG9mv9A5S7JtcUZ3x3v5Oc4S0zx/0RbcU0WFxYrah0A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oFB0s/kKZ6ZSkWOSAS2H+Mr9uK0KzjwpJbgT2e06AtDVerWV8A3WaPvlOpLn9ND+yi6ct2tGydklv4wc/aLvFGGQPOcQbJWxjITwP7Z+vhA5UQHI9uJt7pd9TCbLPgQxNn1e0dFcuc+JGaXA63f2ITk9AOp0ErgMRa7vy8sIr8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dBG9Xv+R; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4314c452180so35064985e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729504812; x=1730109612; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nEQgoXWurslujnhmekbXopxUBMb8xPqnpQko+0aaeq0=;
+        b=dBG9Xv+RzsRWR16DwlYq1DSmf2KajQBA8eX2iit0E3zCUaU4++rMb2gbc6zFxPncTX
+         +CWHmVIlayO6GJ776jgzkj9gQGqWoppjrxTVXQsBIQ4+WUgn1KPXqmzDR3CBuDY6ECtC
+         d1h5LTYQyinvIGUaKGHmgbh1f2wJPhiFMbfEBOa5N0vQk2brqaDo7Q6GKfkjWNNQtagv
+         75XZfgmqUFLqlqhF3GgZQ71EmWRTwCtjsanykVjFIS4GJ54Wxs4oHE7ys/+XBZ6w3iNv
+         ZJvXGvwhpSEvgCOGTVFi294HlZCENAGaLCie+r+vdHzajBYo5F9jSWDedjXTY3AswIQr
+         J+TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729504812; x=1730109612;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nEQgoXWurslujnhmekbXopxUBMb8xPqnpQko+0aaeq0=;
+        b=wtLfXBiCCV8JJLMxlXC7euaLadeIKvcE4LZpBIgjv5rmdUiU6iDp1xtOwBabXads0J
+         MBcj/YlYGS8x1rgIIBQe2RuCQ8JT0ZM60uCj/MBcaMT7R8YeS49h6pDbsNTJtxk15RYP
+         m5UU6RjX7oJI+gpV9jmwmhZiRPGiibHVCC1jmmVAdZCVX5ZVRjmSdZIFIL6CMjrHkPu+
+         fiMGxe25PPpSKqfWYC5L8VjMMSeeAVBGToWPlb+PImRrb5UwOp2gFwZuGtKQPGgjX/Xc
+         6qYCA+TtzXxxS7oY3o2b1gatV4uZ/wqO1zDAOyxfuBir0WjNk1ukHYcBupK5aXdpiN0p
+         iCNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfjrTeL4gO1fpOjMUzgIe/GKGKbvE7sUWz8vnSwr3UpMm7cEDSM5riW4eKk9CkA4Gyo1HXv6IOXd3YhqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdujtohFnr409Yb8tGyGdTVZooXR4CkNj0ITzciRgu895DJ4kG
+	Dze1ptt0SsJSOqtJUmlKEr1KIhRHtrBQJfihlkyK0tPrmVmjbQRN8DyqNIFLA/g=
+X-Google-Smtp-Source: AGHT+IERELLrHoxhs+BrqkBuHWu/+dVs+uiy2dyn6XFdwv/PzU/E0Nv+i8bR/x6sYA9bUHowK6vwQA==
+X-Received: by 2002:a05:600c:4e12:b0:42c:b98d:b993 with SMTP id 5b1f17b1804b1-4316161db92mr57044745e9.2.1729504812233;
+        Mon, 21 Oct 2024 03:00:12 -0700 (PDT)
+Received: from [192.168.1.64] (2a02-842a-d52e-6101-6fd0-06c4-5d68-f0a5.rev.sfr.net. [2a02:842a:d52e:6101:6fd0:6c4:5d68:f0a5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58bbaasm52375995e9.23.2024.10.21.03.00.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 03:00:11 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Subject: [PATCH v2 0/5] iio: adc: ad7380: fix several supplies issues
+Date: Mon, 21 Oct 2024 12:00:08 +0200
+Message-Id: <20241021-ad7380-fix-supplies-v2-0-2ca551b3352a@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Subject: Re: [REGRESSION] spi: cadence-quadspi: STIG mode results in timeouts
- for Micron MT25QL01 flash
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-To: Dhruva Gole <d-gole@ti.com>
-Cc: Yoshitaka Ikeda <ikeda@nskint.co.jp>, Mark Brown <broonie@kernel.org>,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-team@pengutronix.de, Stefan Kerkmann <s.kerkmann@pengutronix.de>,
- regressions@lists.linux.dev, Mark Brown <broonie@kernel.org>
-References: <c2cdfba1-afcc-4a77-8890-7da49c4b73c2@pengutronix.de>
-Content-Language: en-US, de-DE
-In-Reply-To: <c2cdfba1-afcc-4a77-8890-7da49c4b73c2@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1729504694;9b2e926e;
-X-HE-SMSGID: 1t2pAx-0001lx-3g
+X-B4-Tracking: v=1; b=H4sIACgmFmcC/22NwQ6CMBBEf4Xs2TUtRQqc/A/DoS1FNkFoWiUSw
+ r+7knjz+GYybzZIPpJP0GQbRL9QonliyE8ZuMFMd4/UMUMu8kIKUaDptKoE9vTG9Aph5DGqUmt
+ VXlxfGQO8DNFzf1hvLfNA6TnH9ThZ5Df9+fRf3yJRoDUdC6Vyta2v1qwj2ejPbn5Au+/7B1jbS
+ gK5AAAA
+X-Change-ID: 20241004-ad7380-fix-supplies-3677365cf8aa
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-doc@vger.kernel.org, 
+ Julien Stephan <jstephan@baylibre.com>
+X-Mailer: b4 0.14.2
 
-On 14.10.24 14:43, Stefan Kerkmann wrote:
-> 
-> I have run into the same regression when probing a Micron MT25QL01 SPI-NOR flash
-> on a Intel CycloneV platform (socfpga) as Yoshitaka Ikeda[1]. The regression
-> manifests in read timeouts. Bisecting the issue tracked it down to commit
-> "d403fb6e76bf8 spi: cadence-quadspi: use STIG mode for small reads".
+Hello,
 
-Adding Dhruva Gole (author) and Mark Brown (committer) to the list of
-recipients.
+This series tries to fix several issues found on the ad7380 driver about
+supplies:
 
-> Reverting
-> the commit resolves the issue on v6.12-rc3. There are no custom patches applied,
-> except for the debugging output mentioned in the linked thread.
+- vcc and vlogic are required, but are not retrieved and enabled in the
+probe function
+- ad7380-4 is the only device from the family that does not have internal
+reference and uses REFIN instead of REFIO for external reference.
 
-The culprit afaics was merged for v6.3-rc1. Makes me wonder: would
-reverting this now even an option to fix this in mainline, or would this
-just lead to a regression for someone else?
+driver, bindings, and doc are fixed accordingly
 
-Ciao, Thorsten
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+---
+Changes in v2:
+- Fix kernel test robot warning about variable uninitialized when used [1]
+- drop commit removing supply description in bindings
+- after discussion on [2] we decided to add refin supply here, as it
+  will be needed in the futur
 
-> The good case is as follows:
-> 
-> ```
-> [    1.063171] **********spi_mem_op dump**************
-> [    1.063183] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-> [    1.068093] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x9F
-> [    1.073837] data: nbytes:0x6 , buswidth 0x1, dtr 0x0, data dir 0x1
-> [    1.079823] ***************************************
-> [    1.086068] **********spi_mem_op dump**************
-> [    1.090931] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x0
-> [    1.095815] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-> [    1.101543] data: nbytes:0x10 , buswidth 0x1, dtr 0x0, data dir 0x1
-> [    1.107547] ***************************************
-> [    1.113835] **********spi_mem_op dump**************
-> [    1.118695] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x10
-> [    1.123573] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-> [    1.129395] data: nbytes:0x8 , buswidth 0x1, dtr 0x0, data dir 0x1
-> [    1.135392] ***************************************
-> [    1.141592] **********spi_mem_op dump**************
-> [    1.146471] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x0
-> [    1.151335] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-> [    1.157072] data: nbytes:0x88 , buswidth 0x1, dtr 0x0, data dir 0x1
-> [    1.163058] ***************************************
-> [    1.169341] **********spi_mem_op dump**************
-> [    1.174219] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x30
-> [    1.179082] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-> [    1.184904] data: nbytes:0x40 , buswidth 0x1, dtr 0x0, data dir 0x1
-> [    1.190890] ***************************************
-> [    1.197183] **********spi_mem_op dump**************
-> [    1.202045] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x80
-> [    1.206925] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-> [    1.212740] data: nbytes:0x8 , buswidth 0x1, dtr 0x0, data dir 0x1
-> [    1.218736] ***************************************
-> [    1.224916] **********spi_mem_op dump**************
-> [    1.229776] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-> [    1.234649] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x6
-> [    1.240376] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
-> [    1.246283] ***************************************
-> [    1.252443] **********spi_mem_op dump**************
-> [    1.257314] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-> [    1.262176] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0xB7
-> [    1.267917] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
-> [    1.273914] ***************************************
-> [    1.280074] **********spi_mem_op dump**************
-> [    1.284946] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-> [    1.289809] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x4
-> [    1.295544] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
-> [    1.301444] ***************************************
-> [    1.307694] 5 fixed-partitions partitions found on MTD device ff705000.spi.0
-> [    1.319593] Creating 5 MTD partitions on "ff705000.spi.0":
-> [    1.325080] 0x000000000000-0x000000040000 : "preloader"
-> [    1.331825] 0x000000040000-0x0000000c0000 : "bootloader"
-> [    1.338645] 0x0000000c0000-0x0000000e0000 : "barebox-environment"
-> [    1.346299] 0x0000000e0000-0x000000110000 : "state-storage"
-> [    1.353319] 0x000000110000-0x000008000000 : "ubi"
-> ```
-> 
-> With the STIG short read optimization enabled, the read timeouts occur:
-> 
-> ```
-> [    0.931469] **********spi_mem_op dump**************
-> [    0.931482] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-> [    0.936398] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x9F
-> [    0.942129] data: nbytes:0x6 , buswidth 0x1, dtr 0x0, data dir 0x1
-> [    0.948132] ***************************************
-> [    0.954369] **********spi_mem_op dump**************
-> [    0.959233] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x0
-> [    0.964117] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-> [    0.969845] data: nbytes:0x10 , buswidth 0x1, dtr 0x0, data dir 0x1
-> [    0.975844] ***************************************
-> [    1.482104] cadence-qspi ff705000.spi: Flash command execution timed out.
-> [    1.493754] **********spi_mem_op dump**************
-> [    1.493759] addr: nbytes:0x3 , buswidth 0x1, dtr 0x0, val 0x10
-> [    1.498623] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x5A
-> [    1.504451] data: nbytes:0x8 , buswidth 0x1, dtr 0x0, data dir 0x1
-> [    1.510438] ***************************************
-> [    1.516611] spi-nor spi0.0: operation failed with -110
-> [    2.026639] cadence-qspi ff705000.spi: Flash command execution timed out.
-> [    2.033430] **********spi_mem_op dump**************
-> [    2.033437] addr: nbytes:0x0 , buswidth 0x0, dtr 0x0, val 0x0
-> [    2.038300] cmd: nbytes:0x1 , buswidth 0x1, dtr 0x0, opcode 0x6
-> [    2.044041] data: nbytes:0x0 , buswidth 0x0, dtr 0x0, data dir 0x0
-> [    2.049942] ***************************************
-> [    2.056112] spi-nor spi0.0: operation failed with -110
-> [    2.066110] spi-nor spi0.0: probe with driver spi-nor failed with error -110
-> ```
-> 
-> The DT node for the flash is as follows:
-> 
-> ```
-> &qspi {
-> 	status = "okay";
-> 
-> 	flash0: flash@0 {
-> 		#address-cells = <1>;
-> 		#size-cells = <1>;
-> 		/* Micron MT25QL01 */
-> 		compatible = "n25q00", "jedec,spi-nor";
-> 		reg = <0>;	/* chip select */
-> 		spi-max-frequency = <100000000>;
-> 		m25p,fast-read;
-> 		cdns,page-size = <256>;
-> 		cdns,block-size = <16>;   /* 2^16, 64KB */
-> 		cdns,read-delay = <4>;    /* delay value in read data capture register */
-> 		cdns,tshsl-ns = <50>;
-> 		cdns,tsd2d-ns = <50>;
-> 		cdns,tchsh-ns = <4>;
-> 		cdns,tslch-ns = <4>;
-> 	};
-> };
-> ```
-> 
-> Regards,
-> Stefan Kerkmann
-> 
-> [1]:
-> https://lore.kernel.org/lkml/OSZPR01MB70048CE259A3D63C4179199A8B659@OSZPR01MB7004.jpnprd01.prod.outlook.com/#t
-> 
-> #regzbot introduced: d403fb6e76bf854ef0f7d84e797e51b9494788e0
-> 
+- Link to v1: https://lore.kernel.org/r/20241007-ad7380-fix-supplies-v1-0-badcf813c9b9@baylibre.com
 
-#regzbot poke
+[1] https://lore.kernel.org/oe-kbuild-all/202410081608.ZxEPPZ0u-lkp@intel.com/
+[2] https://lore.kernel.org/all/20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com/:warning
+
+---
+Julien Stephan (5):
+      dt-bindings: iio: adc: ad7380: fix ad7380-4 reference supply
+      iio: adc: ad7380: use devm_regulator_get_enable_read_voltage()
+      iio: adc: ad7380: add missing supplies
+      iio: adc: ad7380: fix supplies for ad7380-4
+      docs: iio: ad7380: fix supply for ad7380-4
+
+ .../devicetree/bindings/iio/adc/adi,ad7380.yaml    |  21 ++++
+ Documentation/iio/ad7380.rst                       |  13 +-
+ drivers/iio/adc/ad7380.c                           | 136 ++++++++++++---------
+ 3 files changed, 110 insertions(+), 60 deletions(-)
+---
+base-commit: 1a8b58362f6a6fef975032f7fceb7c4b80d20d60
+change-id: 20241004-ad7380-fix-supplies-3677365cf8aa
+
+Best regards,
+-- 
+Julien Stephan <jstephan@baylibre.com>
+
 
