@@ -1,103 +1,71 @@
-Return-Path: <linux-kernel+bounces-374270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FD49A67B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:13:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B0E9A67B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ECEA1C214D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65A41F212D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF501F1317;
-	Mon, 21 Oct 2024 12:12:55 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1C41DA314;
-	Mon, 21 Oct 2024 12:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C0A1F426F;
+	Mon, 21 Oct 2024 12:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cas+vdo7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06671DA314;
+	Mon, 21 Oct 2024 12:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729512775; cv=none; b=CR/Atc5eWTIToSxUrQj9OqFL4A3KfufEqkro7VvmHnPTp6OT9XbQp7NnldEIzU7gAoe4O/eOjD8tP7WVZe8d+W9zSOzokcf7g4U8RIQYaN94hPk7sj2rcQQ+05BCm9YvA8ZLBQgXoZ0qpNzVyYyTLkenMra2mi4LSeX46ubfpFs=
+	t=1729512820; cv=none; b=YAU4pbrxkqH3Hb1nIMC/CiZdo0MK+EHzzKCvHIXmbga0SFtbTpk4FEQrg8YEQTkaFVPuIsAyMUJ2yTeVmIabx6xKO/P1VcF9Zn77Ym97RacGAyZL8kO8RgWCh4gd1ZBAQQXSnSv61EBRFKWLcx8LHrdfga/XRn9qU0Pn+9cE7xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729512775; c=relaxed/simple;
-	bh=knWulEp3Y8VsTxmNEmN7lvDWgNciIS+AGlFK3WZJVTk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MCWlIVK/SSX69zX90Hym1AIKpuzjNFQbuvcAT5/S7mE09sLnK1uUAr/VZcAW7eVZ9mheuTmy5fm4zERaPKe40l3TlvXBOThUumDC5XV8ln20Apvst6gu2n+lRLAjcpqeOUv72bGXuREhxIubQAPEyIbFOQo926G23O1zYQkI3lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: 9sRJT4PMSSK/gjHv2KG29Q==
-X-CSE-MsgGUID: aHGXw6PQQguRCuSVron6Qw==
-X-IronPort-AV: E=Sophos;i="6.11,220,1725292800"; 
-   d="scan'208";a="99300552"
-From: ZhengShaobo <zhengshaobo1@xiaomi.com>
-To: Lukasz Luba <lukasz.luba@arm.com>, "Rafael J . Wysocki"
-	<rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui
-	<rui.zhang@intel.com>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: zhuzhangwei <chuci@xiaomi.com>, dingchongchong
-	<dingchongchong@xiaomi.com>, chendejun <chendejun@xiaomi.com>, zhengshaobo1
-	<zhengshaobo1@xiaomi.com>
-Subject: [PATCH] thermal: gov_power_allocator: Granted power set to max when nobody request power
-Date: Mon, 21 Oct 2024 20:11:38 +0800
-Message-ID: <20241021121138.422-1-zhengshaobo1@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729512820; c=relaxed/simple;
+	bh=SPJORoXMm6uQpdXvW0Ah1+v97I3+rNx2RapMTpuGGcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mkrL0m3lxrDfKczt7uB20Kh4dmEp3/HPPh8Cu5cg4zl2NPdcp0W8Trc/gkmMcAzAVpwNLBS2VYT1ggkkW7D/QlD2yvaGMpoOECkfXj6E0SdHXOyCs3nLbfu2BqMyl9vppSfzvRKuqnHx0tYEX+chQ2UfbGV5crqDDR5ITV+earE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cas+vdo7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEDAEC4CEC3;
+	Mon, 21 Oct 2024 12:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729512820;
+	bh=SPJORoXMm6uQpdXvW0Ah1+v97I3+rNx2RapMTpuGGcM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cas+vdo7E3cS3ZwSR/iLbMksBIDfWi40eQDEMsCCh0VEDsq5ZtgS6w/t286oAk4al
+	 QSLYuVQ+7it+klkY+o9VfRwfg+5W3wDlXU4hYESW/9lW6zaLi07D7x/5ZKSHiqcpGB
+	 0K1W7GBdqkyHDtOub4pskEOrm1npAJgjA8sx1clE=
+Date: Mon, 21 Oct 2024 14:13:37 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFC] MAINTAINERS: Re-add cancelled Renesas driver sections
+Message-ID: <2024102128-overthrow-sulk-4260@gregkh>
+References: <0a189e2c4090a1b308e18005d2552e335bac354f.1729511337.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: bj-mbx09.mioffice.cn (10.237.8.129) To BJ-MBX15.mioffice.cn
- (10.237.8.135)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a189e2c4090a1b308e18005d2552e335bac354f.1729511337.git.geert+renesas@glider.be>
 
-From: zhengshaobo1 <zhengshaobo1@xiaomi.com>
+On Mon, Oct 21, 2024 at 01:56:51PM +0200, Geert Uytterhoeven wrote:
+> Removing full driver sections also removed mailing list entries, causing
+> submitters of future patches to forget CCing these mailing lists.
+> 
+> Fixes: 6e90b675cf942e50 ("MAINTAINERS: Remove some entries due to various compliance requirements.")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-When total_req_power is 0, divvy_up_power() will set granted_power to 0,
-and cdev will be limited to the lowest performance. If our polling delay
-is set to 200ms, it means that cdev cannot perform better within 200ms
-even if cdev has a sudden load. This will affect the performance of cdev
-and is not as expected.
-
-For this reason, if nobody requests power, then set the granted power to
-the max_power.
-
-Signed-off-by: zhengshaobo1 <zhengshaobo1@xiaomi.com>
----
- drivers/thermal/gov_power_allocator.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
-index 1b2345a697c5..4301516c0938 100644
---- a/drivers/thermal/gov_power_allocator.c
-+++ b/drivers/thermal/gov_power_allocator.c
-@@ -356,11 +356,19 @@ static void divvy_up_power(struct power_actor *power, int num_actors,
- 	u32 extra_power = 0;
- 	int i;
- 
--	/*
--	 * Prevent division by 0 if none of the actors request power.
--	 */
--	if (!total_req_power)
--		total_req_power = 1;
-+	if (!total_req_power) {
-+		/*
-+		 * Nobody requested anything, just give everybody
-+		 * the maximum power
-+		 */
-+		for (i = 0; i < num_actors; i++) {
-+			struct power_actor *pa = &power[i];
-+
-+			pa->granted_power = pa->max_power;
-+		}
-+
-+		return;
-+	}
- 
- 	for (i = 0; i < num_actors; i++) {
- 		struct power_actor *pa = &power[i];
--- 
-2.43.0
-
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
