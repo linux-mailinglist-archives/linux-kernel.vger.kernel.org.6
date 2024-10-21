@@ -1,115 +1,207 @@
-Return-Path: <linux-kernel+bounces-373803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DD79A5D03
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:29:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD9A9A5CE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCCC0283FB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:29:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1581C217FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8FC1E04AB;
-	Mon, 21 Oct 2024 07:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BB41D1721;
+	Mon, 21 Oct 2024 07:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="a2/3G4yJ"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VWtj+PXW"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00511DACA1
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2841A1D14FB
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495664; cv=none; b=RNmlOJa7EYCl3MnCjsLZEFu+0nHTqL+rPFzyOzUHKr37ZJQgFg4OlR4saVuPgKv+qcfvEXcYRzE7mE5ACoEOLXLFBKsqK/sej3aiF+QeiBQMIqQQaO7/Vu5Hstl8vbvDum++My7WAs6v93UlX6zThM3GQjqZNT/Wra/UMQvXWKE=
+	t=1729495601; cv=none; b=Cx6iLO1AHb99/YSChp98bQeLLvmHZCJeaFg61hv/ASDV6Y3OPX7rlLTLMn3VD2PSDv5C/PKkHX0CG/BwcgEJkJQ58moZsRa5sDWqvTUEvvXNyagbD1ZvvWJgOVszNODV9yOJlNPEqLhs4VMUmIyHkY2TB8nyhHY5Zc/7ZS8IACA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495664; c=relaxed/simple;
-	bh=+1oPmQQZYYyTlzfu+WalO7jQocFIehp8SUptW/y7x18=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=KzXy34FW72nuYkb6jrmZiAMVfN9f5IOdulpoFJ7CYz7CNbrqXjXcGYvzYOEV+mQK2YiUCf5d6UYncU/p93KwGH/FMbod0ssYx/zZ+34c6Mk+wmXnNNyuXnYnnCI9hV05gyOs8zNsEPeMt5hczbYVUPG5fRE2p6IFoVbMHakdzbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=a2/3G4yJ; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e3c0d1ccc6so646923a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:27:41 -0700 (PDT)
+	s=arc-20240116; t=1729495601; c=relaxed/simple;
+	bh=0xdTFnOsrdnUM7/fSp03gc6tKBSnSRZJsR7vT/vyDIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=maCTfS/SimmB0ylasn4brDmvQT+RHLao57CbyTjIHRZbTjwubUoTijnWBvtYNnmGjd7nHZyy/FSCcaSdtzHnmkkLJ2ahXQXE7RfFzna1lGxz9DpgAKoLbx/FcAWCT3XsgSU4g04dEEf+a4YpdBJRIg4hh+4RB+sNGdbuooOk2kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VWtj+PXW; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so38111321fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:26:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1729495661; x=1730100461; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+        d=suse.com; s=google; t=1729495597; x=1730100397; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=RwvmpL8qKj3SLwmzOmr8dF0fJatg9G7HpxkdxZupeyM=;
-        b=a2/3G4yJTRnZr2n3G+zOSS3jb5tf6/kIhQ0sTcfCIUSPyzbMM3XN0ONyUb9UXGmkQx
-         haq1hmAUW5K0HBhwmk3+GdfJT1F6Sc9mr7zb/BmFRCTwmJYKA7wHKclkXYkCbhJEdI9L
-         cB65sOL2pMTD2qXd4nDVDAMxo+ibl778h+E6VEfKBcl/E4raQu+1UboIu3akAM2pzapX
-         OHj5bqRGVk8krLiP54VWn8Y1aU9navB+C3rfLsChlZwIijjzsWFJimDQO3YU8U89dm0R
-         M4fSOhcoelRHVAKBkLQZRIdi02G6vC6Uho/5Li1NP4PebX67u7LTO7u4k61HJ2wtO9Ub
-         Ditg==
+        bh=1iW7zHRRBIrIicRdTUgHWKYd7YrTdzT9PhDQ/2eOzio=;
+        b=VWtj+PXWM8/No/6j8nVngC9sLa/9GYl0W+WG9PC7YOC6v/MnENOW+kJ9b/30U9pUIC
+         sFNxyf2/zzrF2NWPjRK6M8f858Orpi8edggj0gQst5Ua4OikD2wL61j7I/UhMmZ8kXbb
+         X16zX+yLwlm2Z1YYUCIrAEiNP1MGtFyYbSuMRMoXFC/xNOSlQl6zgpBBjViPq0Rd3Ojs
+         usEW5iDzj2iIx+mB0wKq1pRoo5Vp9GwU0FPV3wqT7aWyLH7M4i9PIIs0Jdw9T+h3UMYJ
+         3zq9x5DXqc3xyGR16xg9OpoCi4iP3YXMnD3nF1Dz+zaFcC2731vbgb9vYdI+w7qEFdfi
+         zujw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729495661; x=1730100461;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        d=1e100.net; s=20230601; t=1729495597; x=1730100397;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RwvmpL8qKj3SLwmzOmr8dF0fJatg9G7HpxkdxZupeyM=;
-        b=jeTS3woNbd6WRJO1CM/lBd4dyUsGraPP66/SH3wKVhaxQX87sR99BG17bQNTi8zK0T
-         W5ZK0OTrY3ESqI92MDISDx8YKoK0SjQ2gOZGs6YOYxPOp6sxk8kP+17SLjIEZ/ORgnNj
-         LH6ppYVBcJf/NYks6gvoZZIKNdyklrt9GOsDwqmznn2+Yw5DRvUc+GbivgBUyci57nfG
-         Bl4MIIsMDOjDBPLcNnzo6+9NJ+iOocQG6oTukMYDAGd9KmCBzHcfJAa4Zy6m9aNwgbk0
-         rmCGjqufQtFdKU0PveVN55NmcLunr9dB5rQGEsSqPs04mc+/0wyQ9MtiFuimANux6O6U
-         lzSA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/XrFJllGne5sgcbABsILmz5wmbRNloKRbEdsHceopjLupc5BlLIHDy2e9tTBVH31syX4bTKmKIXMk9vQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9FdrJUImZwLf9YYapHARjYJvq6F1Q8jwlG90uIv71otfTQuiM
-	oDZzusHfvyaqt/4QBSiDWlgTohsQgB31hXWLYwb7fYoOFjC1iHemSyp5FJHDfro=
-X-Google-Smtp-Source: AGHT+IG7O4MTB4RTMZwzLlrbW/3WFjdoM5Duu6oLxtC3YUEZUKgcz7nk76eEdwRy5PZ8e1hJ3H2RpA==
-X-Received: by 2002:a17:902:da8f:b0:20c:9285:e951 with SMTP id d9443c01a7336-20e5a71b46dmr62715575ad.3.1729495660913;
-        Mon, 21 Oct 2024 00:27:40 -0700 (PDT)
-Received: from ubuntu.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0db2desm19749595ad.203.2024.10.21.00.27.38
+        bh=1iW7zHRRBIrIicRdTUgHWKYd7YrTdzT9PhDQ/2eOzio=;
+        b=YZkQMLpFgCh2z2jGEODHlWCXoY1WonEUjqAgoW/RrpBHH4Dq2z7ztZCD147URe8eRN
+         vtPhrpf5yMk4IBan3XGX0KzXKsj4QC7nBB7Jiy5WJKhDEs1p2IvHlRmnU5gy6aIgrCON
+         m+O1sjBQdLk7GL2JjOCjVMp5/a3yI0fPzJm6/mOo2V1SQZTikc9IbmhlG5VSYERJXyqI
+         a5u/lTgRJo7RZPXpmOXkcwpUOPnXunux9yvf6B98zFKs+spere8iuncof4Nbq5fFg+oz
+         nGOyeG9DKo+KXJpppamJF0h24BjtL2eXCtiUAzju6ancf40fZtzTmLn3ax43+U/77HFP
+         MfIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+e+3ei6BELx7iiPebFAF65l3e704Ta4vuaCcX3v+jCXzYD3wHi6FmWSpTALw8sP6sgO2oGJQSj+QtBaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf9s0GhuAzzXjZ6ZTk1X5rs34NLchCwJghJp6f+rDh/ndQXmer
+	B87FDm1lw7nMa5ZwQz10B5pYFBUdM1Ua1weC/V5dnuZY/EhPOs+KSGc1e6EZPXo=
+X-Google-Smtp-Source: AGHT+IEaIIlMaaA/c4s+FmIRsV38tfJXNw8YcF/Nn1xqhJFI0pm7wR7caance5o0xCeMZwsESMW0uw==
+X-Received: by 2002:a2e:d01:0:b0:2fb:5ac6:90f0 with SMTP id 38308e7fff4ca-2fb831e94b0mr37655971fa.34.1729495597083;
+        Mon, 21 Oct 2024 00:26:37 -0700 (PDT)
+Received: from localhost (109-81-89-238.rct.o2.cz. [109.81.89.238])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c6b163sm1697370a12.76.2024.10.21.00.26.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 00:27:40 -0700 (PDT)
-From: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	wenst@chromium.org,
-	hsinyi@chromium.org,
-	sean.wang@mediatek.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
-Subject: [PATCH v3 RESEND 4/4] arm64: dts: mediatek: Modify audio codec name for pmic
-Date: Mon, 21 Oct 2024 15:26:26 +0800
-Message-Id: <20241021072626.15102-5-xiazhengqiao@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241021072626.15102-1-xiazhengqiao@huaqin.corp-partner.google.com>
-References: <20241021072626.15102-1-xiazhengqiao@huaqin.corp-partner.google.com>
+        Mon, 21 Oct 2024 00:26:36 -0700 (PDT)
+Date: Mon, 21 Oct 2024 09:26:35 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org,
+	kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
+	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
+	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
+	xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz,
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
+	willy@infradead.org, liam.howlett@oracle.com,
+	pasha.tatashin@soleen.com, souravpanda@google.com,
+	keescook@chromium.org, dennis@kernel.org, yuzhao@google.com,
+	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com,
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
+ refs in page flags
+Message-ID: <ZxYCK0jZVmKSksA4@tiehlicka>
+References: <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com>
+ <6a2a84f5-8474-432f-b97e-18552a9d993c@redhat.com>
+ <CAJuCfpGkuaCh+PxKbzMbu-81oeEdzcfjFThoRk+-Cezf0oJWZg@mail.gmail.com>
+ <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
+ <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
+ <ZxJcryjDUk_LzOuj@tiehlicka>
+ <CAJuCfpGV3hwCRJj6D-SnSOc+VEe5=_045R1aGJEuYCL7WESsrg@mail.gmail.com>
+ <ZxKWBfQ_Lps93fY1@tiehlicka>
+ <CAJuCfpHa9qjugR+a3cs6Cud4PUcPWdvc+OgKTJ1qnryyJ9+WXA@mail.gmail.com>
+ <CAJuCfpHFmmZhSrWo0iWST9+DGbwJZYdZx7zjHSHJLs_QY-7UbA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpHFmmZhSrWo0iWST9+DGbwJZYdZx7zjHSHJLs_QY-7UbA@mail.gmail.com>
 
-change `codec` in pmic (in mt8186-corsola.dtsi) to `audio-codec`
+On Fri 18-10-24 14:57:26, Suren Baghdasaryan wrote:
+> On Fri, Oct 18, 2024 at 10:45 AM Suren Baghdasaryan <surenb@google.com> wrote:
+> >
+> > On Fri, Oct 18, 2024 at 10:08 AM Michal Hocko <mhocko@suse.com> wrote:
+> > >
+> > > On Fri 18-10-24 09:04:24, Suren Baghdasaryan wrote:
+> > > > On Fri, Oct 18, 2024 at 6:03 AM Michal Hocko <mhocko@suse.com> wrote:
+> > > > >
+> > > > > On Tue 15-10-24 08:58:59, Suren Baghdasaryan wrote:
+> > > > > > On Tue, Oct 15, 2024 at 8:42 AM David Hildenbrand <david@redhat.com> wrote:
+> > > > > [...]
+> > > > > > > Right, I think what John is concerned about (and me as well) is that
+> > > > > > > once a new feature really needs a page flag, there will be objection
+> > > > > > > like "no you can't, we need them for allocation tags otherwise that
+> > > > > > > feature will be degraded".
+> > > > > >
+> > > > > > I do understand your concern but IMHO the possibility of degrading a
+> > > > > > feature should not be a reason to always operate at degraded capacity
+> > > > > > (which is what we have today). If one is really concerned about
+> > > > > > possible future regression they can set
+> > > > > > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS=n and keep what we have today. That's
+> > > > > > why I'm strongly advocating that we do need
+> > > > > > CONFIG_PGALLOC_TAG_USE_PAGEFLAGS so that the user has control over how
+> > > > > > this scarce resource is used.
+> > > > >
+> > > > > I really do not think users will know how/why to setup this and I wouldn't
+> > > > > even bother them thinking about that at all TBH.
+> > > > >
+> > > > > This is an implementation detail. It is fine to reuse unused flags space
+> > > > > as a storage as a performance optimization but why do you want users to
+> > > > > bother with that? Why would they ever want to say N here?
+> > > >
+> > > > In this patch you can find a couple of warnings that look like this:
+> > > >
+> > > > pr_warn("With module %s there are too many tags to fit in %d page flag
+> > > > bits. Memory profiling is disabled!\n", mod->name,
+> > > > NR_UNUSED_PAGEFLAG_BITS);
+> > > > emitted when we run out of page flag bits during a module loading,
+> > > >
+> > > > pr_err("%s: alignment %lu is incompatible with allocation tag
+> > > > indexing, disable CONFIG_PGALLOC_TAG_USE_PAGEFLAGS",  mod->name,
+> > > > align);
+> > > > emitted when the arch-specific section alignment is incompatible with
+> > > > alloc_tag indexing.
+> > >
+> > > You are asking users to workaround implementation issue by configuration
+> > > which sounds like a really bad idea. Why cannot you make the fallback
+> > > automatic?
+> >
+> > Automatic fallback is possible during boot, when we decide whether to
+> > enable page extensions or not. So, if during boot we decide to disable
+> > page extensions and use page flags, we can't go back and re-enable
+> > page extensions after boot is complete. Since there is a possibility
+> > that we run out of page flags at runtime when we load a new module,
+> > this leaves this case when we can't reference the module tags and we
+> > can't fall back to page extensions, so we have to disable memory
+> > profiling.
+> > I could keep page extensions always on just in case this happens but
+> > that's a lot of memory waste to handle a rare case...
+> 
+> After thinking more about this, I suggest a couple of changes that
+> IMHO would make configuration simpler:
+> 1. Change the CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to an early boot
+> parameter.
 
-Signed-off-by: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
----
- arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This makes much more sense!
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-index 943837f20377..13e464dac1be 100644
---- a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-@@ -1276,7 +1276,7 @@
- 		interrupts-extended = <&pio 201 IRQ_TYPE_LEVEL_HIGH>;
- 		#interrupt-cells = <2>;
- 
--		mt6366codec: codec {
-+		mt6366codec: audio-codec {
- 			compatible = "mediatek,mt6366-sound", "mediatek,mt6358-sound";
- 			Avdd-supply = <&mt6366_vaud28_reg>;
- 			mediatek,dmic-mode = <1>; /* one-wire */
+> Today we have a "mem_profiling" parameter to enable/disable
+> memory profiling. I suggest adding "mem_profiling_use_pgflags" to
+> switch the current behavior of using page extensions to use page
+> flags.
+
+I do not want to bikeshed about this but to me it would make more sense
+to have an extension paramater to mem_profiling and call it something
+like compress or similar so that page flags are not really carved into
+naming. The docuemntation then can explain that the copression cannot be
+always guaranteed and it might fail so this is more of a optimistic and
+potentially failing optimization that might need to be dropped in some
+usege scenarios.
+
+> We keep the current behavior of using page extensions as
+> default (mem_profiling_use_pgflags=0) because it always works even
+> though it has higher overhead.
+
+Yes this seems to be a safe default.
+
+> 2. No auto-fallback. If mem_profiling_use_pgflags=1 and we don't have
+> enough page flags (at boot time or later when we load a module), we
+> simply disable memory profiling with a warning.
+
+No strong opinion on this.
+
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
 
