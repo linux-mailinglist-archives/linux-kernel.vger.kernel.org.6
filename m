@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-373585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 339099A5915
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:03:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16AE69A591F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACFCDB222AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372EA1C20D56
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDDD1CF294;
-	Mon, 21 Oct 2024 03:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D611CF285;
+	Mon, 21 Oct 2024 03:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Ixuoz/Mc"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6838A1CF5FF;
-	Mon, 21 Oct 2024 03:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="cZTB1RRg"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027A8171CD;
+	Mon, 21 Oct 2024 03:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729479747; cv=none; b=hp56gIlCq0GlYr2KCkQrW0/bu53vWlsvV4DBQ7wAiNIykg7SG1fZagT0ly3qhJ5K0DFYhnujxmFyGvTcAUMiTTR+rBTUTJRx12Q17+WwMfOhYpZ8kjrkdN3PJTpjE5svezMDdXCuHhaVpHa1XpxSm6UfxprQYnBuIRPN7I3TDTg=
+	t=1729480017; cv=none; b=Qn9kUR/xWeAXzzuD7Tquk4sTzDim6LxPbMui5oJxpqFDGEMqO5vjrvPpNauuQYLH6GErJ/17cLQWdqJHfABIkmKJm1BdWZ6FGau+8Zo8yW0eCfufKYdu+6GbiajtRwW9SzQaCjt7uXfxVtXhHOSlXynwjplcQOrjDuUdbUiHmu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729479747; c=relaxed/simple;
-	bh=kSGITymX8G5UYC2kkCP3RnP5xxdpboux5e0YSduEr6Y=;
+	s=arc-20240116; t=1729480017; c=relaxed/simple;
+	bh=zYtdfZSw5YF4y0QM/96J5dPe0gYsKc6BPs5yQgGZo8A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdYpb1vCtbz4p2PbAEvZX+q6pD6kRMtwjegn6rU/86wbRisjXzs3d6m/LE2T87I2LJPEO6F1YXvrot6jSndIdnCTPwL1HQkdgCWXkxfA4NBQ9liphE8C4jCBV3ELKgQ9xLSatKdMMv2dU3C5FL0CJbbZoBqnVD8YKdI0ijz3HhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Ixuoz/Mc; arc=none smtp.client-ip=1.95.21.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=CRP6A4tHma1ENN331hx6su0VPf55686QJ1qMgbNhu/QR0oPkp/LgtxOeiKQwCA2GD+PEGA1UCo7mrar1uPuBdhN5p5Er3Hq+vckA5P3fYFQaT5ftpkN7kq4uBpOSfvjNpLsYWyA5h50exE1sWExe6ZEGArA97r0TsEbzwkSehwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=cZTB1RRg; arc=none smtp.client-ip=1.95.21.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
 	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=lCfnNg7FzLSSkzFpo65zrxn7J41VejPEALY0vkiWc9s=;
-	b=Ixuoz/MclYUvAWnD/zNzreHikRMBa9KIZcM8Fdku7+zymsnRCgcRVlduZhjE6W
-	HRm7xFDaBb2/6jkJeCaKQEI4B8o9NJlFVdHAu5mj3NpwckKe40wzAoiRMXQxNMb7
-	rmaWTMY3UvXepYV0lUI+AIJ9rImzLz4Vyf+oE3S/iL+vI=
+	Content-Type; bh=Pk4wtwi5gon8tDwXcWXIEkO5i3S6GR/L2MzMD+xWLUc=;
+	b=cZTB1RRgY59WMnL4/+gFJ5uS4mUnqrneIhVc7aYz3t8W/eFFf9B2Km5UqjIXMj
+	GVGz7uG7/p9emYJqCBrI6hLrP3/6EULueofXzUQYBmbhmD60UmbpvqtbQsI/lkFj
+	NczyHyN+pVAsN2rJ+86Z0qZ++V8RadCOO8qoZYrBNqQmo=
 Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDXH_kDxBVnEZaAAA--.4531S3;
-	Mon, 21 Oct 2024 11:01:25 +0800 (CST)
-Date: Mon, 21 Oct 2024 11:01:23 +0800
+	by gzsmtp3 (Coremail) with SMTP id M88vCgC33c8gxRVni8x9AA--.4490S3;
+	Mon, 21 Oct 2024 11:06:10 +0800 (CST)
+Date: Mon, 21 Oct 2024 11:06:08 +0800
 From: Shawn Guo <shawnguo2@yeah.net>
 To: Frank Li <Frank.Li@nxp.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -49,11 +49,10 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
 	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
 	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/6] arm64: dts: imx8qxp-mek: add esai, cs42888 and
- related node
-Message-ID: <ZxXEA9TdHX5sEoEt@dragon>
+Subject: Re: [PATCH 6/6] arm64: dts: imx8qxp-mek: add cm4 and related nodes
+Message-ID: <ZxXFICl573EOMWQX@dragon>
 References: <20240930212604.118756-1-Frank.Li@nxp.com>
- <20240930212604.118756-2-Frank.Li@nxp.com>
+ <20240930212604.118756-6-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,164 +61,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240930212604.118756-2-Frank.Li@nxp.com>
-X-CM-TRANSID:Ms8vCgDXH_kDxBVnEZaAAA--.4531S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWFW5uw47Xw1fZrykZr1rtFb_yoWrZF1rp3
-	s7JFsakr4ftFW0yw1rtr9xKrWfWws5GF1Duwn3ur10kF92q3saqF1jkwnxurWDtrn5Gw42
-	qF9xXry2ka1Dt3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jho7tUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiERd-ZWcVuw0gAAAAs4
+In-Reply-To: <20240930212604.118756-6-Frank.Li@nxp.com>
+X-CM-TRANSID:M88vCgC33c8gxRVni8x9AA--.4490S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KF1fJr1kAr1xtryrJFyrJFb_yoW8Kw1Upr
+	yvkayrWFWIkF17G3s8XF1DCr15JanYkFWv9r9rCrWjkrZFyrnxt3WfGw1fur4UXr4UAwsF
+	vFn2qFy0kwnrJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j55rcUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiERd-ZWcVuw0gAAABs5
 
-On Mon, Sep 30, 2024 at 05:25:59PM -0400, Frank Li wrote:
-> Add audio codec cs42888 and related node.
+On Mon, Sep 30, 2024 at 05:26:03PM -0400, Frank Li wrote:
+> Add cm4 and related nodes.
 > 
 > Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
-> arch/arm64/boot/dts/freescale/imx8qxp-mek.dtb: esai@59010000: Unevaluated properties are not allowed ('power-domains' was unexpected)
-> update binding patch already sent
-> https://lore.kernel.org/linux-devicetree/20240927205618.4093591-1-Frank.Li@nxp.com/#R
-> ---
->  arch/arm64/boot/dts/freescale/imx8qxp-mek.dts | 84 +++++++++++++++++++
->  1 file changed, 84 insertions(+)
+>  arch/arm64/boot/dts/freescale/imx8qxp-mek.dts | 61 +++++++++++++++++++
+>  1 file changed, 61 insertions(+)
 > 
 > diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts b/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
-> index d8d9e2883caf7..9b9ad389a807a 100644
+> index bbb94adfd64f0..83e8393a34a0c 100644
 > --- a/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
 > +++ b/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
-> @@ -50,6 +50,13 @@ usb3_data_ss: endpoint {
->  		};
+> @@ -21,6 +21,21 @@ chosen {
+>  		stdout-path = &lpuart0;
 >  	};
 >  
-> +	reg_audio: regulator-audio {
-> +		compatible = "regulator-fixed";
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-name = "cs42888_supply";
+> +	imx8x_cm4: imx8x_cm4 {
+
+Hyphen instead of underscore in node name.
+
+> +		compatible = "fsl,imx8qxp-cm4";
+> +		mbox-names = "tx", "rx", "rxdb";
+> +		mboxes = <&lsio_mu5 0 1
+> +			  &lsio_mu5 1 1
+> +			  &lsio_mu5 3 1>;
+> +		memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
+> +				<&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
+> +		power-domains = <&pd IMX_SC_R_M4_0_PID0>,
+> +				<&pd IMX_SC_R_M4_0_MU_1A>;
+> +		fsl,entry-address = <0x34fe0000>;
+> +		fsl,resource-id = <IMX_SC_R_M4_0_PID0>;
+> +		status = "okay";
+> +	};
+> +
+>  	memory@80000000 {
+>  		device_type = "memory";
+>  		reg = <0x00000000 0x80000000 0 0x40000000>;
+> @@ -85,6 +100,48 @@ reg_usb_otg1_vbus: regulator-usbotg1-vbus {
+>  		enable-active-high;
+>  	};
+>  
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		vdev0vring0: memory@90000000 {
+> +			reg = <0 0x90000000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev0vring1: memory@90008000 {
+> +			reg = <0 0x90008000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev1vring0: memory@90010000 {
+> +			reg = <0 0x90010000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev1vring1: memory@90018000 {
+> +			reg = <0 0x90018000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		rsc_table: memory@900ff000 {
+> +			reg = <0 0x900ff000 0 0x1000>;
+> +			no-map;
+> +		};
+> +
+> +		vdevbuffer: memory@90400000 {
+> +                        compatible = "shared-dma-pool";
+
+Use tabs instead of spaces for indent.
+
+> +			reg = <0 0x90400000 0 0x100000>;
+> +			no-map;
+> +		};
+> +
+> +		gpu_reserved: gpu_reserved@880000000 {
+
+"memory" for node name?
+
+Shawn
+
+> +			no-map;
+> +			reg = <0x8 0x80000000 0 0x10000000>;
+> +		};
 > +	};
 > +
 >  	sound-bt-sco {
 >  		compatible = "simple-audio-card";
 >  		simple-audio-card,bitclock-inversion;
-> @@ -69,6 +76,28 @@ btcpu: simple-audio-card,cpu {
->  		};
->  	};
->  
-> +	sound-cs42888 {
-> +		compatible = "fsl,imx-audio-cs42888";
-> +		audio-asrc = <&asrc0>;
-> +		audio-codec = <&cs42888>;
-> +		audio-cpu = <&esai0>;
-> +		audio-routing =
-> +			"Line Out Jack", "AOUT1L",
-> +			"Line Out Jack", "AOUT1R",
-> +			"Line Out Jack", "AOUT2L",
-> +			"Line Out Jack", "AOUT2R",
-> +			"Line Out Jack", "AOUT3L",
-> +			"Line Out Jack", "AOUT3R",
-> +			"Line Out Jack", "AOUT4L",
-> +			"Line Out Jack", "AOUT4R",
-> +			"AIN1L", "Line In Jack",
-> +			"AIN1R", "Line In Jack",
-> +			"AIN2L", "Line In Jack",
-> +			"AIN2R", "Line In Jack";
-> +		model = "imx-cs42888";
-> +		status = "okay";
-
-Unneeded "okay" status.
-
-> +	};
-> +
->  	sound-wm8960 {
->  		compatible = "fsl,imx-audio-wm8960";
->  		model = "wm8960-audio";
-> @@ -86,6 +115,15 @@ sound-wm8960 {
->  	};
->  };
->  
-> +&amix {
-> +	status = "okay";
-> +};
-> +
-> +&asrc0 {
-> +	fsl,asrc-rate  = <48000>;
-
-Double space before =
-
-Shawn
-
-> +	status = "okay";
-> +};
-> +
->  &dsp {
->  	memory-region = <&dsp_reserved>;
->  	status = "okay";
-> @@ -95,6 +133,19 @@ &dsp_reserved {
+> @@ -407,6 +464,10 @@ &lpuart3 {
 >  	status = "okay";
 >  };
 >  
-> +&esai0 {
-> +	assigned-clocks = <&acm IMX_ADMA_ACM_ESAI0_MCLK_SEL>,
-> +			<&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
-> +			<&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
-> +			<&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
-> +			<&esai0_lpcg 0>;
-> +	assigned-clock-parents = <&aud_pll_div0_lpcg 0>;
-> +	assigned-clock-rates = <0>, <786432000>, <49152000>, <12288000>, <49152000>;
-> +	pinctrl-0 = <&pinctrl_esai0>;
-> +	pinctrl-names = "default";
+> +&lsio_mu5 {
 > +	status = "okay";
 > +};
 > +
->  &fec1 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_fec1>;
-> @@ -264,6 +315,24 @@ pca6416: gpio@20 {
->  		gpio-controller;
->  		#gpio-cells = <2>;
->  	};
-> +
-> +	cs42888: audio-codec@48 {
-> +		compatible = "cirrus,cs42888";
-> +		reg = <0x48>;
-> +		clocks = <&mclkout0_lpcg 0>;
-> +		clock-names = "mclk";
-> +		assigned-clocks = <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
-> +				<&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
-> +				<&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
-> +				<&mclkout0_lpcg 0>;
-> +		assigned-clock-rates = <786432000>, <49152000>, <12288000>, <12288000>;
-> +		reset-gpios = <&pca9557_b 1 GPIO_ACTIVE_LOW>;
-> +		VA-supply = <&reg_audio>;
-> +		VD-supply = <&reg_audio>;
-> +		VLC-supply = <&reg_audio>;
-> +		VLS-supply = <&reg_audio>;
-> +
-> +	};
+>  &mu_m0 {
+>  	status = "okay";
 >  };
->  
->  &cm40_intmux {
-> @@ -458,6 +527,21 @@ IMX8QXP_ADC_IN0_LSIO_GPIO1_IO10				0xc600004c
->  		>;
->  	};
->  
-> +	pinctrl_esai0: esai0grp {
-> +		fsl,pins = <
-> +			IMX8QXP_ESAI0_FSR_ADMA_ESAI0_FSR           0xc6000040
-> +			IMX8QXP_ESAI0_FST_ADMA_ESAI0_FST           0xc6000040
-> +			IMX8QXP_ESAI0_SCKR_ADMA_ESAI0_SCKR         0xc6000040
-> +			IMX8QXP_ESAI0_SCKT_ADMA_ESAI0_SCKT         0xc6000040
-> +			IMX8QXP_ESAI0_TX0_ADMA_ESAI0_TX0           0xc6000040
-> +			IMX8QXP_ESAI0_TX1_ADMA_ESAI0_TX1           0xc6000040
-> +			IMX8QXP_ESAI0_TX2_RX3_ADMA_ESAI0_TX2_RX3   0xc6000040
-> +			IMX8QXP_ESAI0_TX3_RX2_ADMA_ESAI0_TX3_RX2   0xc6000040
-> +			IMX8QXP_ESAI0_TX4_RX1_ADMA_ESAI0_TX4_RX1   0xc6000040
-> +			IMX8QXP_ESAI0_TX5_RX0_ADMA_ESAI0_TX5_RX0   0xc6000040
-> +		>;
-> +	};
-> +
->  	pinctrl_fec1: fec1grp {
->  		fsl,pins = <
->  			IMX8QXP_ENET0_MDC_CONN_ENET0_MDC			0x06000020
 > -- 
 > 2.34.1
 > 
