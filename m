@@ -1,203 +1,322 @@
-Return-Path: <linux-kernel+bounces-373919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC4C9A5EFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:43:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0109A5EFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B845C1F22A52
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:43:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E2CD1C226D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 08:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116321E25F0;
-	Mon, 21 Oct 2024 08:43:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CB11D2707;
-	Mon, 21 Oct 2024 08:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D2D1E2610;
+	Mon, 21 Oct 2024 08:44:30 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9495C1E25E3
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 08:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729500227; cv=none; b=t5nL/XkCdRygwgmTwOUPv8gSoAhaHHZg3qln1QBgAxe3ixFei9kHg2OtkHscr97y/lhA1N1J+NhkfkGeqbgieFBLwwz54SrTH3PdIJsPkvzG0iNmQGBj5u/wa3uQ3Ou89wwWabsqamAtJHVtQVXwCDXQZ+IGwNgSYAuuvQ2Kme8=
+	t=1729500269; cv=none; b=Pm6mjD+1DMJhczK8/hEdWl163bHdkfdX7Np/8py9K1bEzH1UMzX5I2wTKBwWHplOGhLL8iHiUCbn5P5oOsJOoGAlrgS09nyozUQvNLECZgbuuv0cLSNN0EqFo3x4FUQrkBhFthZNLPFIGvop0yFN3Ct09ht6F9kQYD1+2PmmGdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729500227; c=relaxed/simple;
-	bh=77ILEaMMwbIZsITnawXNVRMUCjGHehhWgVYdsenRkt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A5IG6sPIhbLXrNItKng/AANTG2PHD+dY4natT1IgjKDLSZ6J2gtUJSc8HuxV7soRW1Ql8hkEdGdClG9PTOBJ8TI7AnFxc2I0jpH66oA/4ap+26rAm81VIQfvGjmEFGOgni44U7loIKFhczUsGS/C/9/CO0XCd9QW5GkwotPQNEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0F63DA7;
-	Mon, 21 Oct 2024 01:44:13 -0700 (PDT)
-Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 935F23F528;
-	Mon, 21 Oct 2024 01:43:42 -0700 (PDT)
-Message-ID: <6df6b42a-6e33-449c-8e57-c07e897142e8@arm.com>
-Date: Mon, 21 Oct 2024 09:43:42 +0100
+	s=arc-20240116; t=1729500269; c=relaxed/simple;
+	bh=br3LQjATIoa4TZtoA6uptkLEu7YaBvtlubc7eiZ5g3g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OhOhv/fEaZgh1Hp5m1+zSofhyo8frxDBt6plD8ZjexXYiDrIiYG/RuM5KMnXBMjy6EYgdx2sI3OMCdQ+awrNdX1v1vQtFIj6iMX9BKtTm+7A0WK/rOQKy81LmIriROa3lxvtPu+/hsP1IzMI9PoIk5NPbGK+vRsvsfSBBWnl2dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3b7d1e8a0so37295775ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 01:44:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729500266; x=1730105066;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1TtwUFfgBTeyDk5BfS1XR5Z9416F/wTRqGd8gyon6VM=;
+        b=LmZtesyMppc6PdhSinZFqtCGidjqWCDOwKSzVwScf+hb1R7cP6GGE/ypEYXTz/qKCx
+         kt0k7pasWukGAJEl7ExRLsA8072DizV/2gwWljwTCQiOvFtmmi9ARRJN21JMAXP+axhK
+         duGC05IgQMzeQlt4nv/MDjFdv4WF7mhU8CxOt4UHJEX8WZze9gta1My4Cz9NneFjWu/a
+         8UDXFCAzh/t8ET1Kf4XoQ+/Slq/thO+4+vTkAiaOE5i0iN10VLnWxUAc8tWPTN7tXd8K
+         pdFzbm/ve5o0bWyPTvBatLhJhuFyWeeG5NyzEhKQxL8LTx5KyNNdyzSM2E+cEgWtPVS7
+         UW0w==
+X-Gm-Message-State: AOJu0YwTi8xViRS70YVKmi0sxdxmvm9bBnJhFKepVbisMbDMNcpPAx+Y
+	YkCg3C/TdT4Ufgeieip83HfG+gt1N7qUV9r7fIw+D3U+dw8LbzUCXO5owjkOGeePA5sbIPlew87
+	GxBuP+dyKvlJeFNPioMgWQ9XyvxkQwWx71kXJznJdbMfVFix0ATE/lCY=
+X-Google-Smtp-Source: AGHT+IFQ+fuLgxnBom70LDFJ2vwFghtdBqaVnsqHms8u2AuDDixrR0tmlvOL0rjcpe+KgC2dp88+Kv3aNNsvORmMnwSSK9qUFIcW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] cpuidle/menu: Address performance drop from favoring
- physical over polling cpuidle state
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>, rafael@kernel.org,
- daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: gautam@linux.ibm.com
-References: <20240809073120.250974-1-aboorvad@linux.ibm.com>
- <93d9ffb2-482d-49e0-8c67-b795256d961a@arm.com>
- <9e5ef8ab0f0f3e7cb128291cd60591e3d07b33e4.camel@linux.ibm.com>
- <4c897ab4-d592-427b-9a97-79c2b14d5c46@arm.com>
- <6371848e9c260743f381be6e0114743ffab5e5bb.camel@linux.ibm.com>
- <6ae997ca-9712-4497-b666-11b976b1816d@arm.com>
- <20f31d99374ef1ffa7dc7fc1a609074009742e00.camel@linux.ibm.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20f31d99374ef1ffa7dc7fc1a609074009742e00.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1fe5:b0:3a3:49f0:f425 with SMTP id
+ e9e14a558f8ab-3a3f3fd0bc2mr92000325ab.0.1729500266629; Mon, 21 Oct 2024
+ 01:44:26 -0700 (PDT)
+Date: Mon, 21 Oct 2024 01:44:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6716146a.050a0220.1e4b4d.0054.GAE@google.com>
+Subject: [syzbot] [media?] KASAN: slab-use-after-free Write in as102_release
+From: syzbot <syzbot+54badf2f2563324d3654@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-usb@vger.kernel.org, mchehab@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Aboorva,
+Hello,
 
-On 10/21/24 06:27, Aboorva Devarajan wrote:
-> [...] 
-> I ran the benchmark again and collected the idle statistics on a different
-> system since I no longer have access to the previous one.
-> 
-> Here are the stats I gathered, including data for the menu, teo, and ladder governors:
-> 
-> Metric                        | Ladder        | Teo           | Menu          | Menu Patched
-> --------------------------------------------------------------------------------------------
-> Transactions Processed        | 42,902,188    | 48,499,709    | 42,653,477    | 48,648,867   
-> Latency (ms)                  | 0.313         | 0.277         | 0.315         | 0.276        
-> TPS                           | 715,340.96    | 808,672.59    | 711,123.13    | 811,137.40  
-> --------------------------------------------------------------------------------------------
-> Total Usage Difference        | 46,680,184    | 66,348,992    | 47,892,509    | 62,366,337
-> Usage Diff (CEDE)             | 46,680,184    | 7,612,960     | 45,421,436    | 19,237,430
-> Usage Diff (Snooze)           | 0             | 58,736,032    | 2,471,073     | 43,128,907
-> --------------------------------------------------------------------------------------------
-> Total Time Difference (s)     | 5,552.20      | 5,242.75      | 5,534.62      | 5,238.46     
-> Time Diff (CEDE)              | 5,552.20      | 2,497.89      | 5,431.91      | 3,324.99
-> Time Diff (Snooze)            | 0.00          | 2,744.86      | 102.71        | 1,913.47
-> --------------------------------------------------------------------------------------------
-> Total Above Diff              | 40,381,398    | 4,520,998     | 38,942,725    | 15,072,345
-> Above Diff (CEDE)             | 40,381,398    | 4,520,998     | 38,942,725    | 15,072,345
-> Above Diff (Snooze)           | 0             | 0             | 0             | 0
-> --------------------------------------------------------------------------------------------
-> Total Below Diff              | 0             | 12,362,392    | 405,357       | 8,172,845
-> Below Diff (CEDE)             | 0             | 0             | 0             | 0
-> Below Diff (Snooze)           | 0             | 12,362,392    | 405,357       | 8,172,845
-> --------------------------------------------------------------------------------------------
-> % Above w.r.t. Usage          | 86.51%        | 6.82%         | 81.30%        | 24.17%
-> --------------------------------------------------------------------------------------------
-> % Below w.r.t. Usage          | 0%            | 18.64%        | 0.85%         | 13.10%
-> --------------------------------------------------------------------------------------------
-> 
-> --------------------------------------------------------------------------------------------
-> 
-> Note:
-> 
-> % Above w.r.t Usage = (Total Above Difference / Total Usage Difference) * 100
-> % Below w.r.t Usage = (Total Below Difference / Total Usage Difference) * 100
-> 
-> 
-> Menu, Teo, Ladder: This is with menu, teo and ladder governor enabled respectively on v6.12-rc1.
-> 
-> Menu Patched: This is with menu governor enabled on v6.12-rc + 
->               https://lore.kernel.org/all/20240809073120.250974-2-aboorvad@linux.ibm.com/
-> --------------------------------------------------------------------------------------------
-> 
-> --------------------------------------------------------------------------------------------
-> Inference:
-> --------------------------------------------------------------------------------------------
-> 
-> Transactions Processed: The number of transactions processed in Menu Patched is
-> 14.06% higher compared to Menu.
-> 
-> Latency: There is a 12.38% reduction in latency in Menu Patched compared to Menu.
-> 
-> TPS (Transactions Per Second): The TPS in Menu Patched is 14.06% higher than in
-> Menu.
-> --------------------------------------------------------------------------------------------
-> 
-> While this patch hasn't completely eliminated the cpuidle miss ratio, but it
-> has improved see Above w.r.t Usage, Below w.r.t Usage.
-> 
-> I'll keep investigating why there's still a 24% miss rate in the "above" and
-> 13% in the "below" stats after the patch. This could be a different issue.
-> Additionally, I've seen good performance improvements using the teo governor
-> with the pgbench benchmark, although it didn't provide the same benefit in the
-> original test.
+syzbot found the following issue on:
 
-Good to hear and thank you for testing.
-Indeed the menu idle misses sound somewhat high, given that teo scores fewer.
-I'd be very curious about the workload where menu patched significantly outperforms
-teo if you ever come across that again.
+HEAD commit:    c6d9e43954bf Merge 6.12-rc4 into usb-next
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=11751c87980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4a2bb21f91d75c65
+dashboard link: https://syzkaller.appspot.com/bug?extid=54badf2f2563324d3654
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3bf4a453ec2f/disk-c6d9e439.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e4a2db2a5d95/vmlinux-c6d9e439.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8eb8e481b288/bzImage-c6d9e439.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+54badf2f2563324d3654@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: slab-use-after-free in atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:400 [inline]
+BUG: KASAN: slab-use-after-free in __refcount_sub_and_test include/linux/refcount.h:264 [inline]
+BUG: KASAN: slab-use-after-free in __refcount_dec_and_test include/linux/refcount.h:307 [inline]
+BUG: KASAN: slab-use-after-free in refcount_dec_and_test include/linux/refcount.h:325 [inline]
+BUG: KASAN: slab-use-after-free in kref_put include/linux/kref.h:64 [inline]
+BUG: KASAN: slab-use-after-free in as102_release+0x56/0x110 drivers/media/usb/as102/as102_usb_drv.c:456
+Write of size 4 at addr ffff88813475c150 by task syz.2.3721/23552
+
+CPU: 0 UID: 0 PID: 23552 Comm: syz.2.3721 Not tainted 6.12.0-rc4-syzkaller-00052-gc6d9e43954bf #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:400 [inline]
+ __refcount_sub_and_test include/linux/refcount.h:264 [inline]
+ __refcount_dec_and_test include/linux/refcount.h:307 [inline]
+ refcount_dec_and_test include/linux/refcount.h:325 [inline]
+ kref_put include/linux/kref.h:64 [inline]
+ as102_release+0x56/0x110 drivers/media/usb/as102/as102_usb_drv.c:456
+ __fput+0x3f6/0xb60 fs/file_table.c:431
+ task_work_run+0x14e/0x250 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x24e/0x260 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe5e568dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc5bcad328 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 000000000024152f RCX: 00007fe5e568dff9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007fe5e5847a80 R08: 0000000000000001 R09: 00007ffc5bcad61f
+R10: 00007fe5e5510000 R11: 0000000000000246 R12: 0000000000242c4e
+R13: 00007ffc5bcad430 R14: 0000000000000bea R15: ffffffffffffffff
+ </TASK>
+
+Allocated by task 9:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x8f/0xa0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ as102_usb_probe+0x54/0xb20 drivers/media/usb/as102/as102_usb_drv.c:348
+ usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3675
+ usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
+ usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3675
+ usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2e58/0x4f40 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Freed by task 9:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x37/0x50 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x130/0x480 mm/slub.c:4727
+ as102_usb_probe+0x6aa/0xb20 drivers/media/usb/as102/as102_usb_drv.c:410
+ usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3675
+ usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
+ usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3675
+ usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2e58/0x4f40 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+The buggy address belongs to the object at ffff88813475c000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 336 bytes inside of
+ freed 4096-byte region [ffff88813475c000, ffff88813475d000)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x134758
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x200000000000040(head|node=0|zone=2)
+page_type: f5(slab)
+raw: 0200000000000040 ffff888100042140 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+head: 0200000000000040 ffff888100042140 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+head: 0200000000000003 ffffea0004d1d601 ffffffffffffffff 0000000000000000
+head: ffff888100000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 9, tgid 9 (kworker/0:1), ts 2366277287355, free_ts 2365404618420
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0xd5c/0x2630 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x221/0x2270 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0xeb/0x400 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2ba/0x3f0 mm/slub.c:2631
+ ___slab_alloc+0xd45/0x1760 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __kmalloc_cache_noprof+0x27a/0x2c0 mm/slub.c:4290
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ kobject_uevent_env+0x265/0x1860 lib/kobject_uevent.c:540
+ device_add+0x10e0/0x1a70 drivers/base/core.c:3656
+ usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2e58/0x4f40 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+page last free pid 16423 tgid 16423 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0x58a/0xb50 mm/page_alloc.c:2638
+ __put_partials+0x14c/0x170 mm/slub.c:3145
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x4e/0x70 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_noprof+0x11c/0x2b0 mm/slub.c:4141
+ getname_flags.part.0+0x4c/0x550 fs/namei.c:139
+ getname_flags+0x93/0xf0 include/linux/audit.h:322
+ do_readlinkat+0xb5/0x390 fs/stat.c:536
+ __do_sys_readlink fs/stat.c:574 [inline]
+ __se_sys_readlink fs/stat.c:571 [inline]
+ __x64_sys_readlink+0x78/0xc0 fs/stat.c:571
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88813475c000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88813475c080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88813475c100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                 ^
+ ffff88813475c180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88813475c200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
-> [...] 
-> 
-> I ran a similar benchmark using teo cpuidle governor, presented the averaged out
-> values across 10 runs (has low standard deviation). Below are the results for a
-> pipe-based wakeup with an approximate 50 microsecond sleep interval:
-> 
-> 
-> Pipe based wakeup with approx 50 us as sleep interval:
-> 
-> Metric                    Ladder           Menu            Teo              Menu Patched
-> ----------------------------------------------------------------------------------------
-> Wakeups                   579,690          579,951         578,328          578,363
-> Avg wakeup latency (us)   7.456            7.112           4.46067          4.48733
-> ========================================================================================
-> Sleep interval (us)       51.7333          51.7097         51.8533          51.8477
-> ========================================================================================
-> State 0 Usage diff        0                7,324           578,361          578,407
-> State 0 Time diff (ns)    0                340,115         2.75953e+07      2.75696e+07
-> State 0 Above diff        0                0               0                0
-> State 0 Below diff        0                0               0.333333         0.666667
-> ========================================================================================
-> State 1 Usage diff        580,114          572,644         0.666667         9.33333
-> State 1 Time diff (ns)    2.74189e+07      2.73901e+07     20.6667          445.333
-> State 1 Above diff        579,993          572,535         0.666667         9.33333
-> State 1 Below diff        0                0               0                0
-> Total Above               579,993          572,535         0.666667         9.33333
-> Total Below               0                0               0.333333         0.666667
-> ========================================================================================
-> Total Above Percent       99.98%           98.7167%        0%               0%             --> [1]
-> Total Below Percent       0%               0%              0%               0%
-> ========================================================================================
-> 
-> Timer based wakeup with approx 50 us as sleep interval:
-> 
-> Metric                    Ladder           Menu            Teo              Menu Patched
-> ----------------------------------------------------------------------------------------
-> Sleep interval (us)        53.775           52.3687         52.746           52.327
-> ========================================================================================
-> State 0 Usage diff         0                572,575         568,419          573,109
-> State 0 Time diff (ns)     0                2.84142e+07     2.81956e+07      2.84548e+07
-> State 0 Above diff         0                0               0                0
-> State 0 Below diff         0                0.333333        1                0.333333
-> ========================================================================================
-> State 1 Usage diff         558,285          0.333333        0                0
-> State 1 Time diff (ns)     2.80965e+07      17              0                0
-> State 1 Above diff         558,215          0.333333        0                0
-> State 1 Below diff         0                0               0                0
-> ========================================================================================
-> Total Above                558,215          0.333333        0                0
-> Total Below                0                0.333333        1                0.333333
-> ========================================================================================
-> Total Above Percent        99.99%           0%              0%               0%
-> Total Below Percent        0%               0%              0%               0%
-> ========================================================================================
-> 
-> 
-> [1] The results does show that the teo governor doesn't have this issue.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Glad to see that confirmed, thank you.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Regards,
-Christian
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
