@@ -1,179 +1,127 @@
-Return-Path: <linux-kernel+bounces-374311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C395D9A684F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:27:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782A89A6860
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415A91F2708C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:27:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17970B254C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DE61F7061;
-	Mon, 21 Oct 2024 12:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB57F1F8F07;
+	Mon, 21 Oct 2024 12:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ORfImR0E"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HlF6z4iS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F131F1316
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259CC1E908A;
+	Mon, 21 Oct 2024 12:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513419; cv=none; b=oy5D3l7NY5KMwyXWjwKmQS12kIZwJrcMMHzozI2OHl6au5wZo7pWqaIaJ//34m6w+IyIYUsmHdu1HGPWGTB9OFyNIxPWRHXIIucllxwDWLmz97K/aGGiSqOF2Iwe7dHSzkV3F5SHXvrFrkcf4AyGte4mKva56h8FCNHIPlm0yxA=
+	t=1729513566; cv=none; b=kn6mFcPGWVKP0K080F3J+YypSvQyiGksIenKxGwt1+EyjYQlE+t0K3/+fmuOXCNno50lLStooWxp9KUPNbccRXzx2OOFetEdxUv2RLwVyHjBY7kZRSlcXoLylfyPG1CRl0WcakxmsABdaAjXnp65B3NrYXxGlr+UmkIFPyQeIVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513419; c=relaxed/simple;
-	bh=hqH3uJ3cRmHOsg368fktq8gyPxcMNhmSH3SzytsGRbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DhvVFU60GGSl+TloSk2qFJM2ZphEqVbQod60MVCmfVS3UgXrlpkH6lU8aULyy9Ae2bha+SCzcYT3PsoT83HsCv6Ez6aR+wR0JtUsn/7QMnmU8RUkxkjKO4R/zX6PNBFEkRdhU38G5z0XxEKZsSXjfP6HxrQ+WnJ4iksLsHiGA2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ORfImR0E; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729513416;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uFXJPA42Z4FvckVpfiQrwGifFsYvWjPgRdkDsfHcBUA=;
-	b=ORfImR0EiVOQsctBCNdNW4LU1MlmoRz28uJ21WaxCivEYCUtldMvQZw4JnNsXwqbnahisQ
-	kt+f7pucfhe1lrcpv8zhDfUv4c4BfAShzgQFiz9Tcy7gBap1GLAZ4TOU/73fxwsninfkvj
-	xTslXLsoRzGfY42Lt6yHOrpnsQKdZPw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-678-Jm5UskipPCm64VDxaVy4OA-1; Mon, 21 Oct 2024 08:23:34 -0400
-X-MC-Unique: Jm5UskipPCm64VDxaVy4OA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315d98a873so28977115e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:23:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729513414; x=1730118214;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uFXJPA42Z4FvckVpfiQrwGifFsYvWjPgRdkDsfHcBUA=;
-        b=xEtYA8uwWjuONjotq+P9TAX4MWG3xFQRmQkgk0bA72mCxbWRlBmFdLWVvQNIjgVL1r
-         riBfVwkDfht7F7dfCmFPhFTmZZBOLfzZ5wta8MBcW3AMgIT/uAXCeHbum/p+t/8QiTwh
-         ewjx8xh1V4PEPjnMVPRs2ujez9vdUa8vkjqRt+jt0CykSaoPokn2Gb884EwD8E+cV4/d
-         AsYpw9FWP0ciHdZeLve42/HcR70DaoUKk10FdjFAPuZTHrmcEzdeaVjuRHsYKSSEj1K4
-         lGckY1MGQadZBymxO0jR9TGIBA0W6b37yfJg5cTfBh1SDklY/9obhhmVZK09hyHre6Ja
-         27ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0lPYIePUDmPfyJpov/NWFlv9FcOL9knTsXKZVAUrylgnp5WUq3GZlf+EgyoEqeq2Izq+z0NromGpTCa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztKjRDcJKCuqrqPLRUnV+7yKFst/IOPMSxtOD5hl8/shrvNYvo
-	qgxle0KulMPbxrh3JcqZ+IjCFthsFAQQlWWcw98Pp6IRw3sZm3IKcoMnkiZ8sEpO3E3VR6EGETE
-	VCI+CiZbG8vRzeh3L5AQr8tTQzqYJYQNCV+R0QEfMVujRldxW571Kwb4WWeSMlg==
-X-Received: by 2002:a05:600c:1547:b0:42c:b80e:5e50 with SMTP id 5b1f17b1804b1-431615bf97dmr90972315e9.0.1729513413631;
-        Mon, 21 Oct 2024 05:23:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEXq14rjOzZqkZ2LLBYAJkh/Z9QyHz8AiwWS/xKGGmWoTb0OdLBygpyTri0cFef6ZUQDR+yOA==
-X-Received: by 2002:a05:600c:1547:b0:42c:b80e:5e50 with SMTP id 5b1f17b1804b1-431615bf97dmr90972045e9.0.1729513413260;
-        Mon, 21 Oct 2024 05:23:33 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:36d3:2b96:a142:a05b? ([2a09:80c0:192:0:36d3:2b96:a142:a05b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f57fbe8sm55532975e9.18.2024.10.21.05.23.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 05:23:32 -0700 (PDT)
-Message-ID: <a7279751-b9cd-4197-9c98-3aa70b1f5fe8@redhat.com>
-Date: Mon, 21 Oct 2024 14:23:31 +0200
+	s=arc-20240116; t=1729513566; c=relaxed/simple;
+	bh=cx/tLvH9CPRgHxEav9sPf4o/gHFa4lb5PR3fe7KBDA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pY6CAl9W/BWYRSUSOt5fVrAizfMff3rRAG4k/kZV55w9lA8cUE/UuAhK/iQPL7lG4YxXG5RDx+7OGPcjC6xAFJ5KeOc+zyNoNY6leoZYjNR6dsJEO2qL12FQGSxzlND6K3MRjnIkMd7tYQbDAvYhJV/R3h3UkLd+iit7qAnn624=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HlF6z4iS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F5EC4CEC3;
+	Mon, 21 Oct 2024 12:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729513565;
+	bh=cx/tLvH9CPRgHxEav9sPf4o/gHFa4lb5PR3fe7KBDA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HlF6z4iSE4m4KO6vx5hubfGjBlUBCwj1PXsxIH+/Xcop+vfX86LaDkpRtod2cq+MH
+	 xH+iCQ7icStQOSTZEWdc7fwJ2/vdFJWRYkY8zGc56jciyDi9wjqf3ULXVX0bpDynPR
+	 TABkMjgXNxkDAXPztzvpPj4Y0rCfErFGxe9c9p5bryS3zWbd8G4u9ot6FCw+FIbdfv
+	 Pi3m1RlJ4bGU9Z8TSdjIx1fidU6H8IECafN4z0VFaBT+I+dzNoeq1cC5K/+tD2XSYa
+	 CY3zwTqSII+OWs2FChK3B0e9JOcWROv1/xtstboToEqnH7FR+5JCEpEFWZpZ1FpbJG
+	 deqz1OZtUifHg==
+Date: Mon, 21 Oct 2024 13:26:01 +0100
+From: Simon Horman <horms@kernel.org>
+To: Furong Xu <0x1207@gmail.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
+	Suraj Jaiswal <quic_jsuraj@quicinc.com>
+Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap
+ for non-paged SKB data
+Message-ID: <20241021122601.GI402847@kernel.org>
+References: <20241021061023.2162701-1-0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: avoid zeroing user movable page twice with
- init_on_alloc=1
-To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- John Hubbard <jhubbard@nvidia.com>, "Huang, Ying" <ying.huang@intel.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Alexander Potapenko
- <glider@google.com>, Kees Cook <keescook@chromium.org>,
- linux-kernel@vger.kernel.org
-References: <20241011150304.709590-1-ziy@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20241011150304.709590-1-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021061023.2162701-1-0x1207@gmail.com>
 
-
-
-Am 11.10.24 um 17:03 schrieb Zi Yan:
-> Commit 6471384af2a6 ("mm: security: introduce init_on_alloc=1 and
-> init_on_free=1 boot options") forces allocated page to be zeroed in
-> post_alloc_hook() when init_on_alloc=1.
+On Mon, Oct 21, 2024 at 02:10:23PM +0800, Furong Xu wrote:
+> In case the non-paged data of a SKB carries protocol header and protocol
+> payload to be transmitted on a certain platform that the DMA AXI address
+> width is configured to 40-bit/48-bit, or the size of the non-paged data
+> is bigger than TSO_MAX_BUFF_SIZE on a certain platform that the DMA AXI
+> address width is configured to 32-bit, then this SKB requires at least
+> two DMA transmit descriptors to serve it.
 > 
-> For order-0 folios, if arch does not define
-> vma_alloc_zeroed_movable_folio(), the default implementation again zeros
-> the page return from the buddy allocator. So the page is zeroed twice.
-> Fix it by passing __GFP_ZERO instead to avoid double page zeroing.
-> At the moment, s390,arm64,x86,alpha,m68k are not impacted since they
-> define their own vma_alloc_zeroed_movable_folio().
+> For example, three descriptors are allocated to split one DMA buffer
+> mapped from one piece of non-paged data:
+>     dma_desc[N + 0],
+>     dma_desc[N + 1],
+>     dma_desc[N + 2].
+> Then three elements of tx_q->tx_skbuff_dma[] will be allocated to hold
+> extra information to be reused in stmmac_tx_clean():
+>     tx_q->tx_skbuff_dma[N + 0],
+>     tx_q->tx_skbuff_dma[N + 1],
+>     tx_q->tx_skbuff_dma[N + 2].
+> Now we focus on tx_q->tx_skbuff_dma[entry].buf, which is the DMA buffer
+> address returned by DMA mapping call. stmmac_tx_clean() will try to
+> unmap the DMA buffer _ONLY_IF_ tx_q->tx_skbuff_dma[entry].buf
+> is a valid buffer address.
 > 
-> For >0 order folios (mTHP and PMD THP), folio_zero_user() is called to
-> zero the folio again. Fix it by calling folio_zero_user() only if
-> init_on_alloc is set. All arch are impacted.
+> The expected behavior that saves DMA buffer address of this non-paged
+> data to tx_q->tx_skbuff_dma[entry].buf is:
+>     tx_q->tx_skbuff_dma[N + 0].buf = NULL;
+>     tx_q->tx_skbuff_dma[N + 1].buf = NULL;
+>     tx_q->tx_skbuff_dma[N + 2].buf = dma_map_single();
+> Unfortunately, the current code misbehaves like this:
+>     tx_q->tx_skbuff_dma[N + 0].buf = dma_map_single();
+>     tx_q->tx_skbuff_dma[N + 1].buf = NULL;
+>     tx_q->tx_skbuff_dma[N + 2].buf = NULL;
 > 
-> Added alloc_zeroed() helper to encapsulate the init_on_alloc check.
+> On the stmmac_tx_clean() side, when dma_desc[N + 0] is closed by the
+> DMA engine, tx_q->tx_skbuff_dma[N + 0].buf is a valid buffer address
+> obviously, then the DMA buffer will be unmapped immediately.
+> There may be a rare case that the DMA engine does not finish the
+> pending dma_desc[N + 1], dma_desc[N + 2] yet. Now things will go
+> horribly wrong, DMA is going to access a unmapped/unreferenced memory
+> region, corrupted data will be transmited or iommu fault will be
+> triggered :(
 > 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
->   include/linux/highmem.h | 8 +-------
->   mm/huge_memory.c        | 3 ++-
->   mm/internal.h           | 6 ++++++
->   mm/memory.c             | 3 ++-
->   4 files changed, 11 insertions(+), 9 deletions(-)
+> In contrast, the for-loop that maps SKB fragments behaves perfectly
+> as expected, and that is how the driver should do for both non-paged
+> data and paged frags actually.
 > 
-> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-> index bec9bd715acf..6e452bd8e7e3 100644
-> --- a/include/linux/highmem.h
-> +++ b/include/linux/highmem.h
-> @@ -224,13 +224,7 @@ static inline
->   struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
->   				   unsigned long vaddr)
->   {
-> -	struct folio *folio;
-> -
-> -	folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr);
-> -	if (folio)
-> -		clear_user_highpage(&folio->page, vaddr);
-> -
-> -	return folio;
-> +	return vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr);
->   }
->   #endif
->   
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 82f464865570..5dcbea96edb7 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1176,7 +1176,8 @@ static struct folio *vma_alloc_anon_folio_pmd(struct vm_area_struct *vma,
->   	}
->   	folio_throttle_swaprate(folio, gfp);
->   
-> -	folio_zero_user(folio, addr);
-> +	if (!alloc_zeroed())
-> +		folio_zero_user(folio, addr);
+> This patch corrects DMA map/unmap sequences by fixing the array index
+> for tx_q->tx_skbuff_dma[entry].buf when assigning DMA buffer address.
+> 
+> Tested and verified on DWXGMAC CORE 3.20a
+> 
+> Reported-by: Suraj Jaiswal <quic_jsuraj@quicinc.com>
+> Fixes: f748be531d70 ("stmmac: support new GMAC4")
+> Signed-off-by: Furong Xu <0x1207@gmail.com>
 
+Thanks for the very thorough explanation, much appreciated.
 
-
-It might be reasonable to spell out why we are not using GFP_ZERO somewhere, 
-something like
-
-/*
-  * We are not using __GFP_ZERO because folio_zero_user() will make sure that the
-  * page corresponding to the faulting address will be hot in the cache.
-  */
-
-Sth. like that maybe.
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
+Reviewed-by: Simon Horman <horms@kernel.org>
 
