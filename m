@@ -1,56 +1,46 @@
-Return-Path: <linux-kernel+bounces-374189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9482E9A6693
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:29:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4FD49A67B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 400B11F22EB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:29:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ECEA1C214D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF51E1E6DFE;
-	Mon, 21 Oct 2024 11:29:20 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D20198E6F
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF501F1317;
+	Mon, 21 Oct 2024 12:12:55 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1C41DA314;
+	Mon, 21 Oct 2024 12:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729510160; cv=none; b=nEDDQ4mgWfjUncWUWCs27DckJCF/oea3bR7dReg2IbH2KUBOMwXa0CciRzPUp1FtfvS/gL1UXNUdvEyIBxsetAltBXKPFwzyKTMb6dyF0whRjxdYfu3qY40h3YlMTjytcFvF0pVLt30n6ultfUX4zSHAtaUV+7PqLWJhJw1BeqI=
+	t=1729512775; cv=none; b=CR/Atc5eWTIToSxUrQj9OqFL4A3KfufEqkro7VvmHnPTp6OT9XbQp7NnldEIzU7gAoe4O/eOjD8tP7WVZe8d+W9zSOzokcf7g4U8RIQYaN94hPk7sj2rcQQ+05BCm9YvA8ZLBQgXoZ0qpNzVyYyTLkenMra2mi4LSeX46ubfpFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729510160; c=relaxed/simple;
-	bh=MFnHqhiYcgFdWTxIUbSwgDAUeksZyFX9gIUi8PfmW50=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UP2JQSbx4EzqwtWf4sT4rXua5ekzZ+jv3d8FAX5KHyJoOjytBxyEHgFgyrDplv4jVM4+kOQE+64INhTVz7iAhRCxxchU9Gc+/y/sA7eKWrvIIPC8YQ4+A8jP3+YGO5TM3R3Ri7M1wQKnAPXp1FXpsm76vNL7ptUNtIT/onepJUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XXCj66w1cz1jBBx;
-	Mon, 21 Oct 2024 19:27:54 +0800 (CST)
-Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6A68B1402D0;
-	Mon, 21 Oct 2024 19:29:15 +0800 (CST)
-Received: from lihuafei.huawei.com (10.90.53.74) by
- kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 21 Oct 2024 19:29:14 +0800
-From: Li Huafei <lihuafei1@huawei.com>
-To: <tglx@linutronix.de>, <peterz@infradead.org>
-CC: <akpm@linux-foundation.org>, <linux@weissschuh.net>, <song@kernel.org>,
-	<dianders@chromium.org>, <j.granados@samsung.com>,
-	<liusong@linux.alibaba.com>, <lizhe.67@bytedance.com>,
-	<yaoma@linux.alibaba.com>, <dzickus@redhat.com>, <mingo@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lihuafei1@huawei.com>
-Subject: [PATCH RESEND 2/2] watchdog/hardlockup/perf: Warn if watchdog_ev is overwritten
-Date: Tue, 22 Oct 2024 03:30:04 +0800
-Message-ID: <20241021193004.308303-2-lihuafei1@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241021193004.308303-1-lihuafei1@huawei.com>
-References: <20241021193004.308303-1-lihuafei1@huawei.com>
+	s=arc-20240116; t=1729512775; c=relaxed/simple;
+	bh=knWulEp3Y8VsTxmNEmN7lvDWgNciIS+AGlFK3WZJVTk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MCWlIVK/SSX69zX90Hym1AIKpuzjNFQbuvcAT5/S7mE09sLnK1uUAr/VZcAW7eVZ9mheuTmy5fm4zERaPKe40l3TlvXBOThUumDC5XV8ln20Apvst6gu2n+lRLAjcpqeOUv72bGXuREhxIubQAPEyIbFOQo926G23O1zYQkI3lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: 9sRJT4PMSSK/gjHv2KG29Q==
+X-CSE-MsgGUID: aHGXw6PQQguRCuSVron6Qw==
+X-IronPort-AV: E=Sophos;i="6.11,220,1725292800"; 
+   d="scan'208";a="99300552"
+From: ZhengShaobo <zhengshaobo1@xiaomi.com>
+To: Lukasz Luba <lukasz.luba@arm.com>, "Rafael J . Wysocki"
+	<rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui
+	<rui.zhang@intel.com>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: zhuzhangwei <chuci@xiaomi.com>, dingchongchong
+	<dingchongchong@xiaomi.com>, chendejun <chendejun@xiaomi.com>, zhengshaobo1
+	<zhengshaobo1@xiaomi.com>
+Subject: [PATCH] thermal: gov_power_allocator: Granted power set to max when nobody request power
+Date: Mon, 21 Oct 2024 20:11:38 +0800
+Message-ID: <20241021121138.422-1-zhengshaobo1@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,31 +49,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemf500004.china.huawei.com (7.202.181.242)
+X-ClientProxiedBy: bj-mbx09.mioffice.cn (10.237.8.129) To BJ-MBX15.mioffice.cn
+ (10.237.8.135)
 
-When creating a new perf_event, it should not happen that the old
-perf_event is not released. If it does, make a warning to sense the
-problem in time.
+From: zhengshaobo1 <zhengshaobo1@xiaomi.com>
 
-Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+When total_req_power is 0, divvy_up_power() will set granted_power to 0,
+and cdev will be limited to the lowest performance. If our polling delay
+is set to 200ms, it means that cdev cannot perform better within 200ms
+even if cdev has a sudden load. This will affect the performance of cdev
+and is not as expected.
+
+For this reason, if nobody requests power, then set the granted power to
+the max_power.
+
+Signed-off-by: zhengshaobo1 <zhengshaobo1@xiaomi.com>
 ---
- kernel/watchdog_perf.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/thermal/gov_power_allocator.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/watchdog_perf.c b/kernel/watchdog_perf.c
-index 2fdb96eaf493..09236586b8c3 100644
---- a/kernel/watchdog_perf.c
-+++ b/kernel/watchdog_perf.c
-@@ -144,6 +144,7 @@ static int hardlockup_detector_event_create(void)
- 			 PTR_ERR(evt));
- 		return PTR_ERR(evt);
- 	}
-+	WARN_ON(this_cpu_read(watchdog_ev));
- 	this_cpu_write(watchdog_ev, evt);
- 	return 0;
- }
+diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_power_allocator.c
+index 1b2345a697c5..4301516c0938 100644
+--- a/drivers/thermal/gov_power_allocator.c
++++ b/drivers/thermal/gov_power_allocator.c
+@@ -356,11 +356,19 @@ static void divvy_up_power(struct power_actor *power, int num_actors,
+ 	u32 extra_power = 0;
+ 	int i;
+ 
+-	/*
+-	 * Prevent division by 0 if none of the actors request power.
+-	 */
+-	if (!total_req_power)
+-		total_req_power = 1;
++	if (!total_req_power) {
++		/*
++		 * Nobody requested anything, just give everybody
++		 * the maximum power
++		 */
++		for (i = 0; i < num_actors; i++) {
++			struct power_actor *pa = &power[i];
++
++			pa->granted_power = pa->max_power;
++		}
++
++		return;
++	}
+ 
+ 	for (i = 0; i < num_actors; i++) {
+ 		struct power_actor *pa = &power[i];
 -- 
-2.25.1
+2.43.0
 
 
