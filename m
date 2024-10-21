@@ -1,130 +1,129 @@
-Return-Path: <linux-kernel+bounces-374998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B176E9A72F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:10:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56879A72FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 334B7B22334
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67771283B9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1924F1FBCAC;
-	Mon, 21 Oct 2024 19:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECFB1FBCA2;
+	Mon, 21 Oct 2024 19:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhS8MIpP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="sgOKrCFU"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461F01FB3F6;
-	Mon, 21 Oct 2024 19:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CCC2209B;
+	Mon, 21 Oct 2024 19:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729537811; cv=none; b=XCZxHvge8gzyGL74wUvodmHGQfhc2iMKRM07IuqJg4LKpZBRiRm+oT0RfDpFt2RjvPq/CgybFcU1Oblz8IRC2F403VOCjjGGnA/lYGXHT0+Te/dd7J6KiO/nN7PaT6u5b13FaAkgqFmf6rqQ69ZUlCnZ6upmWTiLDyY1U1ePjrM=
+	t=1729537856; cv=none; b=uJlYMHJQpCjmJMxQ0npWNbxMmMfmzKeJlCCNFvFv/3j5hDvurk749+o14PCBbLtdxzqgQHHvyNI1LMQh10t49eGv4oGl+KYpxXDaIpK56k6ivJ7Br8vHiH99k8Zv1zA4F5Y3TqXZfB10UPIo/rohiWATuqRmCeI0ZddeiFiNI2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729537811; c=relaxed/simple;
-	bh=LYfZM6Q6uUneW9KRYJEfi2BKTV//PDb/wWBvvJxwfR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XalskxB4sUZR84qRhzQ9+EHfvIq3+uHP5jn2v0XoUV52GeLpCoDQi6uJEEAci64b8Rf0E+m6EB5/udhouqpmRzqMDGqMawcokaowwkZZp2eLu7qMIoZQLIcoR2rZOYsZ2CYgO6Jq0KfkBev0SGdrpQlDJdMvuH5Zp0/qYzjgEgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhS8MIpP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F563C4CEE5;
-	Mon, 21 Oct 2024 19:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729537810;
-	bh=LYfZM6Q6uUneW9KRYJEfi2BKTV//PDb/wWBvvJxwfR8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fhS8MIpPoWxTg9VRlPO9/Q30BPSxXPRqalwXfqAi/ZezydoSfQSqJz9IdPNGv08sn
-	 BX2WZirNj0hQXfKA8AAb64kCR8J3dlJ3/VQN7x/KDyiF3vBRaHAitmtksGjTRx3Gmh
-	 HxwZnTmVBWmOP4JW4TYRMztJgo8rsRGWD4T4P2cUsb3VsB8pHWQ1loS3BNwaJvgnVn
-	 OwaXjtFFQjM6gT8tKQqbte4wxL1995C2rWoRXAjx4886cGz6IkulPql2Hz5cgcgD09
-	 4pAZDg+6PHfU+0VgddrHP5LEVQRt0fnzCrTwrz1DbsA+TzNBMRNb6NL2XSCuzbpxZD
-	 5CmcqjjNnusfA==
-Date: Mon, 21 Oct 2024 19:10:08 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	Md Sadre Alam <quic_mdalam@quicinc.com>,
-	Israel Rukshin <israelr@nvidia.com>,
-	Milan Broz <gmazyland@gmail.com>,
-	Adrian Vovk <adrianvovk@gmail.com>
-Subject: Re: [RFC PATCH 0/4] dm-default-key: target for filesystem metadata
- encryption
-Message-ID: <20241021191008.GB1395714@google.com>
-References: <20241018184339.66601-1-ebiggers@kernel.org>
- <b56689c6-c0cd-c44e-16fb-8a73c460aa87@redhat.com>
+	s=arc-20240116; t=1729537856; c=relaxed/simple;
+	bh=5Npb0UB3xjxu34VLa/hXfqiKXjp+NHGyBf4A2zbCrLw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dAiiFFZNnMQrkQo9fr/cw3PVu7pl5NE/oeq1ykJxzgEXqrwdNhqS+pMegl8CX4f3HHXKjHzPunS+YObsvOxh85UR8YW0JgXCs+yLKRO3j7InkRgk5GwDDIIwz3wX2U/G1lu+u07VcRAwlmJR4JKiSgPu86tJkvOJpFmfjEloc6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=sgOKrCFU; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1729537854; x=1761073854;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5Npb0UB3xjxu34VLa/hXfqiKXjp+NHGyBf4A2zbCrLw=;
+  b=sgOKrCFUFresoonOtetxw744HzBfZ5b3WY4c2cpty4SoSZmEU8cxHB6G
+   aS2JdIP/lzgiJZLAxo2VWPk5phx9bvLOrEYvUhzVuq0bGqxjyxSIejScs
+   Zgta4Ga5ux9hunDcQTYdXbzUPJZYdYUsnDjgLjnuVgrbRYbzVbujK87Ss
+   YoUoKkVf0PCsmygN4UULECASK6wQ4ewWzbB3gfJ6BIvi3oG8Gykz+lyQj
+   GExjWyt03Do8o+zgAGU4iy6wM2HW43dt70VUUHL41w+jsdPSWElcX1o80
+   YFatwSgBCkyNhzCMYy0GOyR37jQkt5FCLyUIekhHnJVZbujmx8T0T/GMK
+   A==;
+X-CSE-ConnectionGUID: AY5F0AEfSvWQ3nuwGvWjFA==
+X-CSE-MsgGUID: GZEoHNsmRTe4gsUIApM8fg==
+X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
+   d="scan'208";a="36683189"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Oct 2024 12:10:53 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 21 Oct 2024 12:10:32 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 21 Oct 2024 12:10:28 -0700
+Date: Mon, 21 Oct 2024 19:10:27 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, <andrew@lunn.ch>, Lars Povlsen
+	<lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
+	<horatiu.vultur@microchip.com>, <jensemil.schulzostergaard@microchip.com>,
+	<Parthiban.Veerasooran@microchip.com>, <Raju.Lakkaraju@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, Richard Cochran <richardcochran@gmail.com>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, <jacob.e.keller@intel.com>,
+	<ast@fiberby.net>, <netdev@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: Re: [PATCH net-next 05/15] net: sparx5: add registers required by
+ lan969x
+Message-ID: <20241021191027.wgtyhy53ect2xhko@DEN-DL-M70577>
+References: <20241021-sparx5-lan969x-switch-driver-2-v1-0-c8c49ef21e0f@microchip.com>
+ <20241021-sparx5-lan969x-switch-driver-2-v1-5-c8c49ef21e0f@microchip.com>
+ <20241021193348.7a2423db@device-21.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <b56689c6-c0cd-c44e-16fb-8a73c460aa87@redhat.com>
+In-Reply-To: <20241021193348.7a2423db@device-21.home>
 
-On Mon, Oct 21, 2024 at 01:52:58PM +0200, Mikulas Patocka wrote:
-> On Fri, 18 Oct 2024, Eric Biggers wrote:
+> Hello Daniel,
 > 
-> > This series adds "metadata encryption" support to ext4 and f2fs via a
-> > new device-mapper target dm-default-key.  dm-default-key encrypts all
-> > data on a block device that isn't already encrypted by the filesystem.
-> > 
-> > Except for the passthrough support, dm-default-key is basically the same
-> > as the proposed dm-inlinecrypt which omits that feature
-> > (https://lore.kernel.org/dm-devel/20241016232748.134211-1-ebiggers@kernel.org/).
-> > 
-> > I am sending this out for reference, as dm-default-key (which Android
-> > has been using for a while) hasn't previously been sent to the lists in
-> > full, and there has been interest in it.  However, my current impression
-> > is that this feature will need to be redesigned as a filesystem native
-> > feature in order to make it upstream.  If that is indeed the case, then
-> > IMO it would make sense to merge dm-inlinecrypt in the mean time instead
-> > (or add its functionality to dm-crypt) so that anyone who just wants
-> > "dm-crypt + inline encryption hardware" gets a solution for that.
+> On Mon, 21 Oct 2024 15:58:42 +0200
+> Daniel Machon <daniel.machon@microchip.com> wrote:
 > 
-> I we merge dm-inlinecrypt, we can't remove it later because users will 
-> depend on it. I think it is not sensible to have two targets 
-> (dm-inlinecrypt and dm-default-key) that do almost the same thing.
-
-The code would not need to be duplicated, though.  E.g. dm-default-key
-functionality could be added as an enable_passthrough option to dm-inlinecrypt.
-Or the same .c file could register both targets sharing most of the same code.
-
-> I've got another idea - what about a new target "dm-metadata-switch" that 
-> will take two block devices as arguments and it will pass metadata bios to 
-> the first device and data bios to the second device - so that the logic 
-> to decide where the bio will go would be decoupled from the encryption. 
-> Then, you can put dm-crypt or dm-inlinecrypt underneath 
-> "dm-metadata-switch".
+> > Lan969x will require a few additional registers for certain operations.
+> > Some are shared, some are not. Add these.
+> >
+> > Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+> > Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 > 
-> ----------------------
-> |     filesystem     |
-> ----------------------
->           |
->           V
-> ----------------------
-> | dm-metadata-switch |
-> ----------------------
->       |           |
->       V           |
-> ------------      |
-> | dm-crypt |      |
-> ------------      |
->       |           |
->       V           V
-> -------------------------
-> | physical block device |
-> -------------------------
+> [...]
+> 
+> > +#define PTP_PTP_TWOSTEP_STAMP_SUBNS_STAMP_SUB_NSEC GENMASK(7, 0)
+> 
+> I understand that this is partly autogenerated, however the naming for
+> this register in particular seems very redundant... Is there any way
+> this could be improved ?
+> 
+> Thanks,
+> 
+> Maxime
+> 
 
-Would this have any use case other than what dm-default-key does?
+Yes, this might be a new candidate for "the longest name in the kernel"
+award.
 
-Keep in mind that dm-metadata-switch would have to pass through all sector
-addresses unchanged.  So if you wanted to reuse this to actually put your
-filesystem metadata on one disk and data on another, this wouldn't be very
-effective at that, as both data and metadata would take up the full space.
+This particular register is a concatenation of: PTP (target) PTP_TS_FIFO
+(register group) PTP_TWOSTEP_STAMP_SUBNS (register) STAMP_SUB_NSEC
+(field), and as you can see the register group part is already removed.
+That said, the tool for generating this, can be tweaked to rename
+registers if required - I will do that here :-)
 
-- Eric
+Thanks!
+
+/Daniel
+
+
 
