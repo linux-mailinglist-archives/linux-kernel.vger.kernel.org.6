@@ -1,146 +1,273 @@
-Return-Path: <linux-kernel+bounces-373591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09ADE9A5932
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:19:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 865499A593A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 05:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76203B21A28
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:19:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84F72823C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA2A199EB0;
-	Mon, 21 Oct 2024 03:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2431CF28C;
+	Mon, 21 Oct 2024 03:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TABi75Fd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="WBfaHN2N"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9AEA41;
-	Mon, 21 Oct 2024 03:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB8F450EE;
+	Mon, 21 Oct 2024 03:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729480735; cv=none; b=K9zr15xNQ6hGzORntIT6sbqIiUlW/4x+nfM3IHOuZiHApuhhuPEtqCZpWWJAIhnKf2r125e+1JLowGlvYq6mbkVlhRM1Df9znvFjhnEeh2OF2C5lNAqRitVn2OE3kP+/9yK1NDg2ndNoNRZCS5AS+etVLvt6UkQ3/AdPy6FSi/s=
+	t=1729481000; cv=none; b=sLFAruepbdT0et9NhT2xW53NdV7GrpxJUGk/Ix7MbLd5MFKRE2QjsFG97fTuuVD/PKt/vlwQVKpjqjsu7MmbY51hfnhsyP9QUdqFQidrvQxHSFCmgP0pvRxRwjB65qGMBBLf+b732sCIV5xt3asem4rGoBwzAXJ30rBsHOKmx/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729480735; c=relaxed/simple;
-	bh=Nie2AFcFSUfc/tFdc/pmxlhQ189rqt/EUrhnGQ9Geo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XqqxkGsmnIyq0FbIEyUKscozZKby6CXX+SrAGX1I1LFM+V+KTKReoT7xtrJVISI2qaegIM76BLd61zrPPB7ezHbopRMc2hKB1Ak8rgeCnQqxYtUce5oP28wRCSeGIduPqWY0gbkfowRGj5yZdyws7FtU1Snu/29/xwgg9l4ooUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TABi75Fd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C09CC4CEEA;
-	Mon, 21 Oct 2024 03:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729480734;
-	bh=Nie2AFcFSUfc/tFdc/pmxlhQ189rqt/EUrhnGQ9Geo8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TABi75FdBaoOqSod8UvE6rF34pp3dGkoSsLNDQ9gZvM1YQes8MFBtgQXofPpazonz
-	 gIyCXFFOWHPiXx3K6o4Yqau09U66BLNpx/GT+GBOcoscXIT6POPLLJkh976s65uw9v
-	 2gu0XIR75/D+2T8YESyGs4nfSb6KvlO0z5CTQjZR8ag8NjtoayTqt8TX6hM+vKUSdo
-	 9uAZ71bXTKUBUe5GjPj0F8dZd86uwtdL6lEk3UzAe7Rp4f9mT1Xpi+e/c8h/AmBEpP
-	 SKM4IXx+qMVJ+JU1cNWj1p2Br1+KexfXrKPhBUCAx1Y9U5s/+78eDdtLSZKEjiIMn4
-	 1fgbGMSbcAOdQ==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f84907caso4360457e87.3;
-        Sun, 20 Oct 2024 20:18:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUXlW4pBsm4qVEWNirsc/Asn7f1OTO0zNJ04x3tfARk9J/omquO3IifyWt8Gozy3y44e8vOuiaWjpd@vger.kernel.org, AJvYcCUrcK22cXtaTBd08faZ24c5UDpo+9IshW72XosIhmnlynRtgom2yHYWTCJzpZYdPTpIykJCXkQKyKhIsysc@vger.kernel.org, AJvYcCVo00BqlFx6I+bGRaRkF7qxt+QAVmUc4qmh7w8o0rhIVJSXD2V3pNJ2GPdMhv3h+IhZAeFQJ6up7OiQ@vger.kernel.org, AJvYcCW3BMTou1m7NMciC+pNo7clDM/xbARkn7l+DVNnl+jq85+0srxj3p7/21xTjs9gJHaKuSwbFOCoE6gc@vger.kernel.org, AJvYcCW6oKZj/t6OsqI4gG3qrbNqnshuM1JfVMg5U3CaOil0d8Y52uyh0A8/HUljm2g0i+lOJ444d8BLU57xwd78@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOwFLHYGCS32y0q6f3RpzX+qo5Y7IN+L6kIfxAkl6o+S0kaYeV
-	zzBdtdmbCV16ioyHwBmgvFB5IaocIPW6cpT7vPT8jT/ADV+EWmHYonOoX5+hR1+dqAVa+Gn2n/O
-	m7ICn7p5rcNaLOKg5xdRmi8ZT2qw=
-X-Google-Smtp-Source: AGHT+IFF+6OY++aC6VgSvFOGFIPuUwbQy2uTC0O38gyEQAjFUkHkDmaIEUyBHfWpTEdN9+71dto4vZQ2X+vvT37eHI4=
-X-Received: by 2002:a05:6512:b19:b0:539:df2f:e115 with SMTP id
- 2adb3069b0e04-53a1521993cmr4056473e87.23.1729480732824; Sun, 20 Oct 2024
- 20:18:52 -0700 (PDT)
+	s=arc-20240116; t=1729481000; c=relaxed/simple;
+	bh=FBMEXsB2qzeZlTQOmTKM5Xf8X7yqy8bE7p2PQNX/XG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kD5DeWPSKs3dN7GwJ2XNQmOsEBfaDgZWwqROud6wXkXp8vPKJVKq3xOe56VIMaVyrphLpoTqs/ioo8mYiANHDFYJ9JkkOFw1FKntoh5ZPF1R6JApt2Ko5Q2lQtFa1GCFpTlM3db516ChRTVypcKYxocotEmgUk8riQrIGJmz9NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=WBfaHN2N; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1729480954;
+	bh=a3700QODi51nDA2tPcEBFNTNF0pUu84KZh3aJFSeGFs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=WBfaHN2N9eRX1y2pwscRFW1lgtNvjxdiWVTHdf35wdf8GqKKaWoXUpg6VOmCmFgVQ
+	 B8/s1SFshM9ilPqysCFXfrfbtN+fONuGluvKIVh96WUOIYCHQnGDFhvQiyuHZzLDQh
+	 IcW4TgPXqtRpYG0JypFCYsO6FNS+N2mKgjcpfBcA=
+X-QQ-mid: bizesmtp80t1729480909t12cb70e
+X-QQ-Originating-IP: l/rpe0HqxzmODTO5fBNlat18nEut6xgckmAPugpHy7Q=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 21 Oct 2024 11:21:47 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 3419970537500328848
+From: WangYuli <wangyuli@uniontech.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yushengjin@uniontech.com,
+	zhangdandan@uniontech.com,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] fs/pipe: Introduce a check to skip sleeping processes during pipe read/write
+Date: Mon, 21 Oct 2024 11:21:45 +0800
+Message-ID: <C984DC21381D181A+20241021032145.23328-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014213342.1480681-1-xur@google.com> <20241014213342.1480681-6-xur@google.com>
-In-Reply-To: <20241014213342.1480681-6-xur@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 21 Oct 2024 12:18:16 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ0RwJYkCXHj8QMH3sqXgY2LBTiYV8HnKD8oANB8Bb+Yg@mail.gmail.com>
-Message-ID: <CAK7LNAQ0RwJYkCXHj8QMH3sqXgY2LBTiYV8HnKD8oANB8Bb+Yg@mail.gmail.com>
-Subject: Re: [PATCH v4 5/6] AutoFDO: Enable machine function split
- optimization for AutoFDO
-To: Rong Xu <xur@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
-	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
-	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>, 
-	Krzysztof Pszeniczny <kpszeniczny@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OBUGnm9pFasAA903kNgODajRPmlwrHOCP20qB2SRsSc0NlzWC3JaZSni
+	JIdS5qRuaeiC7vbCryWdQQu+tfKw2BveSdDlRsOz9PQKD9/bYXiCAfBYd4vvopW9G2KxUdr
+	p5hJd9IEWQFtSSHm8uMMUwVLaLvphrHE6/SsNrbPJHi2JtmrEf/e+3YewfOmRQURHqgtc9F
+	IYvXxWqcXuddTR8A7Ma0TucjYNOb8HC5Gzrlgs2Gpnoj0qTPBiKa4DHU4SW8VNqtwOHLgHV
+	DxByxi1ZF8my4+KSQyW6etPOcwOM+MxZMnCD/cX4Q0QsX/JGPqoHSsJkZTLWLNyvT0r/gEc
+	v3O5HFNbu1TENmTbAr6e/Rpr304wZPLmCnBPiVTdVDep+GVoJrS+rTLJkKdAOtXelbvcmxm
+	hGWpMWcOc7eOWtrAFohRsVRkan6OLLsIskLmOs9S63t1L0DPVQsuzRmldu6r4gm04uNgaLC
+	pR5fDftxqno5EJs1715e5zdRY7zsSmDVaEx5hBlsT4O8db7S5F+XiRHt44lvElNtJla4DwK
+	ewDEWYDnBuahxVTFBUCa1PsDfybtMpEFC1nHzLhiYlPM4zFd5JxPF2xQM53CDXcWHKdzSua
+	dnc8sA1/tIao7D3sxGaoisC8Xfc9N07yLXFOPZpTcvA/WBeRmInebn1UdW6oTUWBHnRKHgC
+	ilodygZxP6yn/m529W0z+ncTAmdNzJtq5v0fw05E61Lq+MNguRLeTtQ1q+OgJmudvihSZWK
+	KJwPs346grhZTmyXoK4PzXYuRJCRkjsf6Kt3o43gEFgOW5s59mO8VcV+GNaG9QKjbiEBiNK
+	tTtR4YDFQeLcVQGMehROJIZRm3eesEiD3s3Ieq0BBzmGkVDCJf92tMy/cd2EXzftOk9DY/4
+	N29qx9EQAWpOdyXAQ7Yor2mf98kiaMrRYyxB+wiqVKGMzxa7+8azueCbdLgR3m1BVpQ0XYr
+	A8g7ScYS8ustAhbYHD5SNAKlxrQY5oYXJldFh60TRmSpwU4nkBRdpgu4fT92CgFaXRBVGEZ
+	fuKYARUy8IKTQcYhzfFT1BmP9ijhw=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Oct 15, 2024 at 6:33=E2=80=AFAM Rong Xu <xur@google.com> wrote:
->
-> Enable the machine function split optimization for AutoFDO in Clang.
->
-> Machine function split (MFS) is a pass in the Clang compiler that
-> splits a function into hot and cold parts. The linker groups all
-> cold blocks across functions together. This decreases hot code
-> fragmentation and improves iCache and iTLB utilization.
->
-> MFS requires a profile so this is enabled only for the AutoFDO builds.
->
-> Co-developed-by: Han Shen <shenhan@google.com>
-> Signed-off-by: Han Shen <shenhan@google.com>
-> Signed-off-by: Rong Xu <xur@google.com>
-> Suggested-by: Sriraman Tallam <tmsriram@google.com>
-> Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
-> ---
->  include/asm-generic/vmlinux.lds.h | 6 ++++++
->  scripts/Makefile.autofdo          | 2 ++
->  2 files changed, 8 insertions(+)
->
-> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmli=
-nux.lds.h
-> index ace617d1af9b..20e46c0917db 100644
-> --- a/include/asm-generic/vmlinux.lds.h
-> +++ b/include/asm-generic/vmlinux.lds.h
-> @@ -565,9 +565,14 @@ defined(CONFIG_AUTOFDO_CLANG)
->                 __unlikely_text_start =3D .;                             =
- \
->                 *(.text.unlikely .text.unlikely.*)                      \
->                 __unlikely_text_end =3D .;
-> +#define TEXT_SPLIT                                                     \
-> +               __split_text_start =3D .;                                =
- \
-> +               *(.text.split .text.split.[0-9a-zA-Z_]*)                \
-> +               __split_text_end =3D .;
->  #else
->  #define TEXT_HOT *(.text.hot .text.hot.*)
->  #define TEXT_UNLIKELY *(.text.unlikely .text.unlikely.*)
-> +#define TEXT_SPLIT
->  #endif
+When a user calls the read/write system call and passes a pipe
+descriptor, the pipe_read/pipe_write functions are invoked:
 
+1. pipe_read():
+  1). Checks if the pipe is valid and if there is any data in the
+pipe buffer.
+  2). Waits for data:
+    *If there is no data in the pipe and the write end is still open,
+the current process enters a sleep state (wait_event()) until data
+is written.
+    *If the write end is closed, return 0.
+  3). Reads data:
+    *Wakes up the process and copies data from the pipe's memory
+buffer to user space.
+    *When the buffer is full, the writing process will go to sleep,
+waiting for the pipe state to change to be awakened (using the
+wake_up_interruptible_sync_poll() mechanism). Once data is read
+from the buffer, the writing process can continue writing, and the
+reading process can continue reading new data.
+  4). Returns the number of bytes read upon successful read.
 
-Why conditional?
+2. pipe_write():
+  1). Checks if the pipe is valid and if there is any available
+space in the pipe buffer.
+  2). Waits for buffer space:
+    *If the pipe buffer is full and the reading process has not
+read any data, pipe_write() may put the current process to sleep
+until there is space in the buffer.
+    *If the read end of the pipe is closed (no process is waiting
+to read), an error code -EPIPE is returned, and a SIGPIPE signal may
+be sent to the process.
+  3). Writes data:
+    *If there is enough space in the pipe buffer, pipe_write() copies
+data from the user space buffer to the kernel buffer of the pipe
+(using copy_from_user()).
+    *If the amount of data the user requests to write is larger than
+the available space in the buffer, multiple writes may be required,
+or the process may wait for new space to be freed.
+  4). Wakes up waiting reading processes:
+    *After the data is successfully written, pipe_write() wakes up
+any processes that may be waiting to read data (using the
+wake_up_interruptible_sync_poll() mechanism).
+  5). Returns the number of bytes successfully written.
 
+Check if there are any waiting processes in the process wait queue
+by introducing wq_has_sleeper() when waking up processes for pipe
+read/write operations.
 
-Where are __unlikely_text_start and __unlikely_text_end used?
+If no processes are waiting, there's no need to execute
+wake_up_interruptible_sync_poll(), thus avoiding unnecessary wake-ups.
 
+Unnecessary wake-ups can lead to context switches, where a process
+is woken up to handle I/O events even when there is no immediate
+need.
 
+Only wake up processes when there are actually waiting processes to
+reduce context switches and system overhead by checking
+with wq_has_sleeper().
 
+Additionally, by reducing unnecessary synchronization and wake-up
+operations, wq_has_sleeper() can decrease system resource waste and
+lock contention, improving overall system performance.
 
+For pipe read/write operations, this eliminates ineffective scheduling
+and enhances concurrency.
 
+It's important to note that enabling this option means invoking
+wq_has_sleeper() to check for sleeping processes in the wait queue
+for every read or write operation.
 
+While this is a lightweight operation, it still incurs some overhead.
 
---=20
-Best Regards
-Masahiro Yamada
+In low-load or single-task scenarios, this overhead may not yield
+significant benefits and could even introduce minor performance
+degradation.
+
+UnixBench Pipe benchmark results on Zhaoxin KX-U6780A processor:
+
+With the option disabled: Single-core: 841.8, Multi-core (8): 4621.6
+With the option enabled:  Single-core: 877.8, Multi-core (8): 4854.7
+
+Single-core performance improved by 4.1%, multi-core performance
+improved by 4.8%.
+
+Co-developed-by: Shengjin Yu <yushengjin@uniontech.com>
+Signed-off-by: Shengjin Yu <yushengjin@uniontech.com>
+Co-developed-by: Dandan Zhang <zhangdandan@uniontech.com>
+Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
+Tested-by: Dandan Zhang <zhangdandan@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ fs/Kconfig | 13 +++++++++++++
+ fs/pipe.c  | 21 +++++++++++++++------
+ 2 files changed, 28 insertions(+), 6 deletions(-)
+
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 949895cff872..068f4f886a58 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -430,4 +430,17 @@ source "fs/unicode/Kconfig"
+ config IO_WQ
+ 	bool
+ 
++config PIPE_SKIP_SLEEPER
++	bool "Skip sleeping processes during pipe read/write"
++	default n
++	help
++	  This option introduces a check whether the sleep queue will
++	  be awakened during pipe read/write.
++
++	  It often leads to a performance improvement. However, in
++	  low-load or single-task scenarios, it may introduce minor
++	  performance overhead.
++
++	  If unsure, say N.
++
+ endmenu
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 12b22c2723b7..c085333ae72c 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -247,6 +247,15 @@ static inline unsigned int pipe_update_tail(struct pipe_inode_info *pipe,
+ 	return tail;
+ }
+ 
++static inline bool
++pipe_check_wq_has_sleeper(struct wait_queue_head *wq_head)
++{
++	if (IS_ENABLED(CONFIG_PIPE_SKIP_SLEEPER))
++		return wq_has_sleeper(wq_head);
++	else
++		return true;
++}
++
+ static ssize_t
+ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ {
+@@ -377,7 +386,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 		 * _very_ unlikely case that the pipe was full, but we got
+ 		 * no data.
+ 		 */
+-		if (unlikely(was_full))
++		if (unlikely(was_full) && pipe_check_wq_has_sleeper(&pipe->wr_wait))
+ 			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+ 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+ 
+@@ -398,9 +407,9 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 		wake_next_reader = false;
+ 	mutex_unlock(&pipe->mutex);
+ 
+-	if (was_full)
++	if (was_full && pipe_check_wq_has_sleeper(&pipe->wr_wait))
+ 		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+-	if (wake_next_reader)
++	if (wake_next_reader && pipe_check_wq_has_sleeper(&pipe->rd_wait))
+ 		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+ 	kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+ 	if (ret > 0)
+@@ -573,7 +582,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 		 * become empty while we dropped the lock.
+ 		 */
+ 		mutex_unlock(&pipe->mutex);
+-		if (was_empty)
++		if (was_empty && pipe_check_wq_has_sleeper(&pipe->rd_wait))
+ 			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+ 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+ 		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
+@@ -598,10 +607,10 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 	 * Epoll nonsensically wants a wakeup whether the pipe
+ 	 * was already empty or not.
+ 	 */
+-	if (was_empty || pipe->poll_usage)
++	if ((was_empty || pipe->poll_usage) && pipe_check_wq_has_sleeper(&pipe->rd_wait))
+ 		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+ 	kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+-	if (wake_next_writer)
++	if (wake_next_writer && pipe_check_wq_has_sleeper(&pipe->wr_wait))
+ 		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+ 	if (ret > 0 && sb_start_write_trylock(file_inode(filp)->i_sb)) {
+ 		int err = file_update_time(filp);
+-- 
+2.45.2
+
 
