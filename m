@@ -1,220 +1,149 @@
-Return-Path: <linux-kernel+bounces-374365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9389F9A6914
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:51:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF3D9A691B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46381C22207
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:51:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D74F1C223EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2317A1F4736;
-	Mon, 21 Oct 2024 12:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBE11F4FD5;
+	Mon, 21 Oct 2024 12:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovtOKHwU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="htfcfLWN"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555BA1D1E7A;
-	Mon, 21 Oct 2024 12:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64DE1D1E7A;
+	Mon, 21 Oct 2024 12:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729515056; cv=none; b=URV/MA+5ByaRKlEt2xRDjrOvQoWRZM7O/9tLK1o+u5Kctus4+8S5HcMiXY49OcxZ53iVHvlh+17wWec1aQ0PR2G+btL8yKhgEchsKSFVY/vexJqYDQovP0nQC3JV/18cLGzUYMr4Ef6WtIdpGBBy2PZJhqTKimEtdYnCjlwLEio=
+	t=1729515099; cv=none; b=V9AYfKMD8+1qhdR+JdXmHGii57tIbX1sduPFs+BnvjUjZFp1TKXGyLvTP5i/668X9z9O3uHRsAwfhXqvThjo+TGLZuFBgWThiCvHBCEjQd1OT4RbQ0mwRTncXWrxP55xtAK/24Hhn0mp/pfHPA3UkcvcN9W4Xs5fCpgu9u94VLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729515056; c=relaxed/simple;
-	bh=b+6l4BsUolOYut6i6SR1zP3LvfGX7ZQLtQzTjt4qRGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kuyiNzQyuallGC2u++PVebqe2ayY0cX8neU/H2JcCycME0f3tKkZ/2p1KMzIp/vjvcImQpGVIZ+ubSymISw4hMswk5J0qAzk90JvZvhil+j1YK8P1NSwzPc25AkQGYs0YwKSsdf5r6Q0ShuztviG+IXgdmnXVshD2UjIjin0rHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovtOKHwU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA940C4CEEB;
-	Mon, 21 Oct 2024 12:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729515056;
-	bh=b+6l4BsUolOYut6i6SR1zP3LvfGX7ZQLtQzTjt4qRGU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ovtOKHwUMUU5R3hJLLt/7sG6YzDH+O6y7QU/0DhidpgciKmYe/+1y9YpKOv2Q16/f
-	 EFJ5eJS/bLxJkcUiu/GRQKiy9TgtKu+hi0+2ANoQPtCm2Sy0/mEfuQp7zBTrGDhq5C
-	 MYuMFH9GlvPBQELR9dIgyBU+yTCRFyiSH2XL8nwbATWxWGhozK9QvEs9vZWqt0xrkp
-	 6cWGrbcPXs+sVWtOG4tS17pqLDELylcDRPO4Koxr6BwTEKx62imR/+vqkC0hZa9lCe
-	 MRhRdnXTi1CrPgEUVRL3CRQA6QrM2WU7T9hAO9+kqL1WBV4PYmZBthO42sujbNO5dP
-	 ftN7PoGo8ukmw==
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso2811594b3a.3;
-        Mon, 21 Oct 2024 05:50:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVb1+mOC73smK5w7oo8c5EgudreTjvZ4EFh0eo9wTMx70Es4IYJqJ1906q6P+QPOPHC86fOejWOHF1J@vger.kernel.org, AJvYcCXvKMaz+XqBNos+0Z3vzLAF0fHnaxuBrePB2P5uJnSDkxbMotlC+1tQg+hJzd/Tf/AiNrQzDJuDE7lhkMfT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhG5dBW7KRqDNkxdQh49VXOVYWS6dxWmOIxC9HeJ+JaqWvKOFG
-	Bzqgk/iY1XoioWN3LN1cU/8YfCQIri86lWRA1EqOnutgB/XIdKJMdG2Da3jQQHlEEmtibyojW6E
-	B/6LqPLztEKUIOpKKtJYsxgv3Wg==
-X-Google-Smtp-Source: AGHT+IFZ1C5QqluT3ibMGY6cMrOFVa0OCrC4RfXKLBxeIAjailnBblIgy2YF9BWgyqZBpaECWwTu7rQPKp8us5XNm1o=
-X-Received: by 2002:a05:6a00:9298:b0:71e:5de:ad6d with SMTP id
- d2e1a72fcca58-71ea323b91dmr16025574b3a.24.1729515055229; Mon, 21 Oct 2024
- 05:50:55 -0700 (PDT)
+	s=arc-20240116; t=1729515099; c=relaxed/simple;
+	bh=Lv9VrjmXHa8PT28MwNQ7rdLj1ClF1IBCgpDEoygVeNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OoYWHIgqCj+PXp9CQo7MgCo7iqL65nFIycF5+UPTrb8ELbunK002IzJ9mXc5jIA60PbApB9XLrICuxJ+6ctAa1bt4D8sliIxsZkze6YqIp1i0Pd8+n7Fnllw8oFchoawPE9qAfAq5sMAzE19AOMVfLA8Ovb9piVbTYLF7/QFMPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=htfcfLWN; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so49682355e9.1;
+        Mon, 21 Oct 2024 05:51:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729515096; x=1730119896; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fWgOmOfi/coO/g3WzFFtfVpzbPBXbofxJwFTWwltwcA=;
+        b=htfcfLWNW2vi1yLHg9r1ptPrxgdaMZ1sLPg45suI6tRx8WwLCzFlQoALnohkIg6NJz
+         qIyYfNkpXmmM90rVbyEnOFrQnYpoe/AnKVCfAyqp9sh6OZYIIgTS1kWLj1OHLyiW8U38
+         tAG4VNG81PECZ+Ah/6l6RA6ncfXPafGW2V6Nz158QVETT/HUg2I0EXH3wEXEzZHHxXgM
+         awFf8eT1aNZiNYw0D/dYR41HXmHn76/LSvTacH4tw+qbdhabIZyu3JsCHMEKxgFqD635
+         D09bO6H9u5z4pWAzVTCHHNrlJXmbJT7Ei7OQyetdHOfw0uKoomQ0hT6XXTWgHEzIcvxm
+         4UnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729515096; x=1730119896;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWgOmOfi/coO/g3WzFFtfVpzbPBXbofxJwFTWwltwcA=;
+        b=cEfojQQxethiFNSzf5Gw0jue3sam3Ly2NQKC93mMq8Z/zMlEkaeO/asSQcba0+bsl2
+         cBNyeeJ8tsH8EayylcITdje2tWCkfogw94k/SnI/bglS4PFnwMwKqfGD3YzyTLZ+Dl6t
+         oc7KOJeq/Te5tT5YrAzNwnvq302m2nSaiJGkaEYo1LaKzd3HKVLx9ze6ll9ccN5hq70K
+         MPDLEHpPVHTsxdJ5K/p0CEaQl21hpmm+nVS0Bp5BaLCghzYGPo9u02ybyWjZHDMq1euC
+         QOZ6doXIbMW/MIkpG6l7YNDrdpclgPeNTuVBKXrX5flh5TeTgAv/8+s6IR6ZbXMtL7jF
+         n8oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqwCPP/eeEhthFy4z1PrK+OuKYPlQnYaXIV+jVHCeshi5C7cqiTG85HAC/1ZTZCT6kJfCDbmtaizLhER1s@vger.kernel.org, AJvYcCV90IrgksoS9BGE7An/OHJ+xR6uhH9UCcHBfEtkVfWNsh2nIuplJfRFQ7l4Vlm40I523IS97yrAR79IElWL@vger.kernel.org, AJvYcCVnf7XnWMefAJYDBzkEhtGEs9js+flAKAbXQvsNpm0LBdaZ/TqCEbf4g2UcBgPbUNqWURj8Pxdpptqt@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyVlFbx08Ki1++IZ+7zWrBP+ovAN0eFlFmUsd1gH/v2IC8a4PK
+	zsqgT0lO6Z35c/AaTZqgYr8NW+LTID/8OqlJe36bLc966GfS7zEu
+X-Google-Smtp-Source: AGHT+IE5W1CAoDs1sVbKlEaGdGprifJoywoWBYxAmpwzSv+xmCNh9vaXDVP3VMWtWv+l2NUfwnQTlg==
+X-Received: by 2002:a05:600c:474e:b0:431:47d4:19bd with SMTP id 5b1f17b1804b1-431616287aamr99170455e9.9.1729515095885;
+        Mon, 21 Oct 2024 05:51:35 -0700 (PDT)
+Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58f2c3sm56826175e9.27.2024.10.21.05.51.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 05:51:35 -0700 (PDT)
+Message-ID: <d20c05a7-5411-4a2a-950a-8a48b0c2e127@gmail.com>
+Date: Mon, 21 Oct 2024 15:51:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017103809.156056-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20241017103809.156056-1-angelogioacchino.delregno@collabora.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Mon, 21 Oct 2024 20:51:15 +0800
-X-Gmail-Original-Message-ID: <CAAOTY__6CVfnCCMGnbrfi0qdp5qK73TzNLo6T+-+HxqAGYwP1w@mail.gmail.com>
-Message-ID: <CAAOTY__6CVfnCCMGnbrfi0qdp5qK73TzNLo6T+-+HxqAGYwP1w@mail.gmail.com>
-Subject: Re: [PATCH v13 0/3] drm/mediatek: Add support for OF graphs
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: chunkuang.hu@kernel.org, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com, 
-	ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	wenst@chromium.org, kernel@collabora.com, sui.jingfeng@linux.dev, 
-	michael@walle.cc, sjoerd@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: serial: samsung: Add
+ samsung,exynos8895-uart compatible
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241020180201.376151-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241020180201.376151-2-ivo.ivanov.ivanov1@gmail.com>
+ <09c1e8a0-f669-42ef-bbd2-44649fad35d8@kernel.org>
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <09c1e8a0-f669-42ef-bbd2-44649fad35d8@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi, Angelo:
 
-For patch [1/3] and patch [3/3], applied to mediatek-drm-next [1], thanks.
+On 10/21/24 12:29, Krzysztof Kozlowski wrote:
+> On 20/10/2024 20:02, Ivaylo Ivanov wrote:
+>> Add dedicated samsung,exynos8895-uart compatible to the dt-schema for
+>> representing uart of the Exynos8895 SoC.
+>>
+>> Like GS101, it has a required DT property samsung,uart-fifosize, but
+>> it does not exhibit the 32 bit register access limit.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> ---
+>>  .../bindings/serial/samsung_uart.yaml           | 17 +++++++++++++++++
+>>  1 file changed, 17 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+>> index 788c80e47..2491b6048 100644
+>> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+>> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+>> @@ -27,6 +27,7 @@ properties:
+>>            - samsung,exynos4210-uart
+>>            - samsung,exynos5433-uart
+>>            - samsung,exynos850-uart
+>> +          - samsung,exynos8895-uart
+>>        - items:
+>>            - enum:
+>>                - samsung,exynos7-uart
+>> @@ -172,6 +173,22 @@ allOf:
+>>          clock-names:
+>>            maxItems: 2
+>>  
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - samsung,exynos8895-uart
+> This looks exactly like gs101, so please grow the enum there.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-next
+It's missing the reg-io-width property. My initial idea was to add a
 
-Regards,
-Chun-Kuang.
+completely new entry, so new exynos platforms that don't exhibit
 
-AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> =E6=96=
-=BC
-2024=E5=B9=B410=E6=9C=8817=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=886:=
-38=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Changes in v13:
->  - Added comment in commit description of patch [1/3] to warn about
->    new port scheme.
->  - The series is now fully reviewed, tested, hence *ready*.
->
-> Changes in v12:
->  - Added comment to describe graph for OVL_ADAPTOR in patch [3/3]
->    as suggested by CK Hu.
->
-> Changes in v11:
->  - Added OVL_ADAPTOR_MDP_RDMA to OVL Adaptor exclusive components list
->    to avoid failures in graphs with MDP_RDMA inside
->  - Rebased on next-20241004
->
-> Changes in v10:
->  - Removed erroneously added *.orig/*.rej files
->
-> Changes in v9:
->  - Rebased on next-20240910
->  - Removed redundant assignment and changed a print to dev_err()
->  - Dropped if branch to switch conversion as requested; this will
->    be sent as a separate commit out of this series.
->
-> Changes in v8:
->  - Rebased on next-20240617
->  - Changed to allow probing a VDO with no available display outputs
->
-> Changes in v7:
->  - Fix typo in patch 3/3
->
-> Changes in v6:
->  - Added EPROBE_DEFER check to fix dsi/dpi false positive DT fallback cas=
-e
->  - Dropped refcount of ep_out in mtk_drm_of_get_ddp_ep_cid()
->  - Fixed double refcount drop during path building
->  - Removed failure upon finding a DT-disabled path as requested
->  - Tested again on MT8195, MT8395 boards
->
-> Changes in v5:
->  - Fixed commit [2/3], changed allOf -> anyOf to get the
->    intended allowance in the binding
->
-> Changes in v4:
->  - Fixed a typo that caused pure OF graphs pipelines multiple
->    concurrent outputs to not get correctly parsed (port->id);
->  - Added OVL_ADAPTOR support for OF graph specified pipelines;
->  - Now tested with fully OF Graph specified pipelines on MT8195
->    Chromebooks and MT8395 boards;
->  - Rebased on next-20240516
->
-> Changes in v3:
->  - Rebased on next-20240502 because of renames in mediatek-drm
->
-> Changes in v2:
->  - Fixed wrong `required` block indentation in commit [2/3]
->
->
-> The display IPs in MediaTek SoCs are *VERY* flexible and those support
-> being interconnected with different instances of DDP IPs (for example,
-> merge0 or merge1) and/or with different DDP IPs (for example, rdma can
-> be connected with either color, dpi, dsi, merge, etc), forming a full
-> Display Data Path that ends with an actual display.
->
-> This series was born because of an issue that I've found while enabling
-> support for MT8195/MT8395 boards with DSI output as main display: the
-> current mtk_drm_route variations would not work as currently, the driver
-> hardcodes a display path for Chromebooks, which have a DisplayPort panel
-> with DSC support, instead of a DSI panel without DSC support.
->
-> There are other reasons for which I wrote this series, and I find that
-> hardcoding those paths - when a HW path is clearly board-specific - is
-> highly suboptimal. Also, let's not forget about keeping this driver from
-> becoming a huge list of paths for each combination of SoC->board->disp
-> and... this and that.
->
-> For more information, please look at the commit description for each of
-> the commits included in this series.
->
-> This series is essential to enable support for the MT8195/MT8395 EVK,
-> Kontron i1200, Radxa NIO-12L and, mainly, for non-Chromebook boards
-> and Chromebooks to co-exist without conflicts.
->
-> Besides, this is also a valid option for MT8188 Chromebooks which might
-> have different DSI-or-eDP displays depending on the model (as far as I
-> can see from the mtk_drm_route attempt for this SoC that is already
-> present in this driver).
->
-> This series was tested on MT8195 Cherry Tomato and on MT8395 Radxa
-> NIO-12L with both hardcoded paths, OF graph support and partially
-> hardcoded paths, and pure OF graph support including pipelines that
-> require OVL_ADAPTOR support.
->
-> AngeloGioacchino Del Regno (3):
->   dt-bindings: display: mediatek: Add OF graph support for board path
->   dt-bindings: arm: mediatek: mmsys: Add OF graph support for board path
->   drm/mediatek: Implement OF graphs support for display paths
->
->  .../bindings/arm/mediatek/mediatek,mmsys.yaml |  28 ++
->  .../display/mediatek/mediatek,aal.yaml        |  40 +++
->  .../display/mediatek/mediatek,ccorr.yaml      |  21 ++
->  .../display/mediatek/mediatek,color.yaml      |  22 ++
->  .../display/mediatek/mediatek,dither.yaml     |  22 ++
->  .../display/mediatek/mediatek,dpi.yaml        |  25 +-
->  .../display/mediatek/mediatek,dsc.yaml        |  24 ++
->  .../display/mediatek/mediatek,dsi.yaml        |  27 +-
->  .../display/mediatek/mediatek,ethdr.yaml      |  22 ++
->  .../display/mediatek/mediatek,gamma.yaml      |  19 ++
->  .../display/mediatek/mediatek,merge.yaml      |  23 ++
->  .../display/mediatek/mediatek,od.yaml         |  22 ++
->  .../display/mediatek/mediatek,ovl-2l.yaml     |  22 ++
->  .../display/mediatek/mediatek,ovl.yaml        |  22 ++
->  .../display/mediatek/mediatek,postmask.yaml   |  21 ++
->  .../display/mediatek/mediatek,rdma.yaml       |  22 ++
->  .../display/mediatek/mediatek,ufoe.yaml       |  21 ++
->  drivers/gpu/drm/mediatek/mtk_disp_drv.h       |   1 +
->  .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  43 ++-
->  drivers/gpu/drm/mediatek/mtk_dpi.c            |  21 +-
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 253 +++++++++++++++++-
->  drivers/gpu/drm/mediatek/mtk_drm_drv.h        |   2 +-
->  drivers/gpu/drm/mediatek/mtk_dsi.c            |  14 +-
->  23 files changed, 712 insertions(+), 25 deletions(-)
->
-> --
-> 2.46.1
+the same issue could grow the enum there.
+
+Although now that I think about it, I could grow the gs101 enum and set
+
+the  reg-io-width property for gs101 after that list.
+
+Best regards, Ivo.
+
+> Best regards,
+> Krzysztof
 >
 
