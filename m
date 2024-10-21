@@ -1,138 +1,174 @@
-Return-Path: <linux-kernel+bounces-373630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD099A5995
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:36:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CB29A5997
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA10280F00
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:36:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D435F1C20E9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F7E1CEEAF;
-	Mon, 21 Oct 2024 04:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8081CF7BA;
+	Mon, 21 Oct 2024 04:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Twem3gfa"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QOpZLuok"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0322C95;
-	Mon, 21 Oct 2024 04:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115A964A;
+	Mon, 21 Oct 2024 04:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729485364; cv=none; b=WOA1i/1aM21yHkuH2gKv3nBnnUyYaZeUFgyXI5z3ifuXCLplcYqYu87zMxM1UeOLPoQWRMReKDuf/MRpqhRln9W6dpDy4l6ZqlSzPjnn+BmiU2nSHsNA0akaTXkloQn9svHGzYjt0Iyu7TjUFDKF6NYltSXppigbEJyw5BZKeeM=
+	t=1729485865; cv=none; b=r9XDSTdJoxsry0R6Sztz7FawD5xzdpGN/vzx+DA7hxVgS3P2M2QCV2+9R6vjBkQdioYqoC63G7Z4bhYiIPi6/6881RK4x3DZEEBjtK2xK0kw9j9drPX81bl+2SM/dev1ohhhFP9iiGeq5dncHYGRHUISQGyKqsKh/En+RUd6mko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729485364; c=relaxed/simple;
-	bh=kfyBl89qi07l58LqgOVh/E+t7hT9q6eZ/J9aUMqlDdU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sJ/GT4iZ4kOQV/GJe2HVQLsQ9RmU78aNybGbzY2jLgPNXYigi51qGTdpGYLnarhsFtaRXVlsNUVfkmCj0sqCHNJ8zhb1rNU4gv2cU24Rd2c/ChS2o8C4fLmLGn19vaH9WPxhJRiHfJaK2yPzBMQDYVdOWginGdkRoEMmvxpaRT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Twem3gfa; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1729485353;
-	bh=SWW3lLflcZSTt/7kAMirXY1p2/5OZLkG+On5G9EG8/A=;
-	h=From:Date:Subject:To:Cc;
-	b=Twem3gfa9XF7vZ9+LBBoBs/KVaTjd5iDwmUpGIHcQHNvjpk+k42dMqotBhFknCfC/
-	 tn1EeUwJY4ONJGbsmFGyMCpXAV6hf4cnVktpwRPC/KL6ht8Y4KjXFHbWKKgwRgApbj
-	 9JjEIBPUbnh+ikgxFIx8xvHYlfpthwrGsMKpq908znJ991vx8KhJhnDM9P//cerDbr
-	 IloAw5RWtSw6n2iYsC1Wl0TAA3ChCf8jQ4DFJ+21o7HWP4LGL/CP2YkmN8vN9E0q/S
-	 okSsvfRvgA9arsO3NPMcA1BnMHHwweMgMocF8imL0QKUgIhVdf0OqISw+kCZO4YpA9
-	 pAKVP50bRZ5Ag==
-Received: by codeconstruct.com.au (Postfix, from userid 10001)
-	id D2D4368607; Mon, 21 Oct 2024 12:35:53 +0800 (AWST)
-From: Matt Johnston <matt@codeconstruct.com.au>
-Date: Mon, 21 Oct 2024 12:35:26 +0800
-Subject: [PATCH net v2] mctp i2c: handle NULL header address
+	s=arc-20240116; t=1729485865; c=relaxed/simple;
+	bh=AOXTHP1ex+E1EjvhhyRyoOh0uTiIU0JTYVltxXeKFW0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=V84dRWm+o21pdt773NhzyGgYIgZOpFlxv4WiWMBiecJ/QOIY4+pyqvbkPpfroY3QDnIGc1o/33RPnecmcibi7kNWjLsOgfJIKwNBWbhopuckZY4v33OHVMM0n/oYDHlm4hpDr7OYW2612NZx1gvEmvbiEw+d7nqhLsgsA+H4ZVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QOpZLuok; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729485863; x=1761021863;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=AOXTHP1ex+E1EjvhhyRyoOh0uTiIU0JTYVltxXeKFW0=;
+  b=QOpZLuok7vG1pX2sknlBkxlU09hV9Vxf9z248xtBjNrpJSorcvhdX4C3
+   yCVfbFdKh7VPXGfwpG9/odpfI3MvqY4mjVklO3RJaP/uhW3RmJS8CN+/E
+   Xcmwz33WBs9/G5MOqohcmHC0Tt6oLbWZSKXk71AWV4UTqZdg7URmXQ9oT
+   5W9vsqBUGRAXn9+SOX63URpacaDy/QuS+DFQU8vE3UOU5eZeZGfGbBgez
+   p/jcJ2VdyhdO/zOsDyncZHp/idtJ3b1oAFaogr3OUV5uqS7pqVH5d4QyG
+   G0YRpimgirjhYt1/IzYFVXxfxYf6KRAQhLXFx6bRVwYBt5LMvEs3x9WhB
+   w==;
+X-CSE-ConnectionGUID: 4ljgGTBKSL2ak/dWrvuP5A==
+X-CSE-MsgGUID: v/WB2ra4RRGJm/UBWbmCZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="39537766"
+X-IronPort-AV: E=Sophos;i="6.11,219,1725346800"; 
+   d="scan'208";a="39537766"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 21:44:22 -0700
+X-CSE-ConnectionGUID: vhX11N2iSsqynX+fsN63vg==
+X-CSE-MsgGUID: 9EaZtMePTcijimhaR5LNfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,219,1725346800"; 
+   d="scan'208";a="102720799"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2024 21:44:19 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,  linux-cxl@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Davidlohr Bueso <dave@stgolabs.net>,
+  Gregory Price <gourry@gourry.net>,  Jonathan Cameron
+ <jonathan.cameron@huawei.com>,  Alison Schofield
+ <alison.schofield@intel.com>,  Vishal Verma <vishal.l.verma@intel.com>,
+  Ira Weiny <ira.weiny@intel.com>,  Alejandro Lucero <alucerop@amd.com>,
+  Ben Cheatham <benjamin.cheatham@amd.com>
+Subject: Re: [PATCH 2/5] cxl: Rename CXL_DECODER_HOSTONLYMEM/DEVMEM
+In-Reply-To: <6712d07f3300b_10a03294bd@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	(Dan Williams's message of "Fri, 18 Oct 2024 14:17:51 -0700")
+References: <20241015065713.308671-1-ying.huang@intel.com>
+	<20241015065713.308671-3-ying.huang@intel.com>
+	<67118dcd2ba4a_3f14294fe@dwillia2-xfh.jf.intel.com.notmuch>
+	<87bjzi6iig.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<6712d07f3300b_10a03294bd@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Date: Mon, 21 Oct 2024 12:40:47 +0800
+Message-ID: <8734kq6pbk.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241021-mctp-i2c-null-dest-v2-1-4503e478517c@codeconstruct.com.au>
-X-B4-Tracking: v=1; b=H4sIAA3aFWcC/32NQQqDMBBFryKz7kgSrNWueo/iIo7TOqCJJFFax
- Ls3eIAu3//893eIHIQj3IsdAm8SxbsM5lIAjda9GWXIDEaZSivd4ExpQTGEbp0mHDgmtKq35qZ
- ZUdVAHi6BX/I5pU9wnKDL4Sgx+fA9jzZ9Vv+cm0aNvdW2v5q2rrl9kB+YvIsprJRK8nNpV+iO4
- /gBy/ICRcQAAAA=
-X-Change-ID: 20241018-mctp-i2c-null-dest-a0ba271e0c48
-To: Jeremy Kerr <jk@codeconstruct.com.au>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Matt Johnston <matt@codeconstruct.com.au>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, Wolfram Sang <wsa@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Dung Cao <dung@os.amperecomputing.com>
-X-Mailer: b4 0.15-dev-cbbb4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729485352; l=2035;
- i=matt@codeconstruct.com.au; s=20241018; h=from:subject:message-id;
- bh=kfyBl89qi07l58LqgOVh/E+t7hT9q6eZ/J9aUMqlDdU=;
- b=g8pthMSNyYuR426kRcv+rNB5vPq1JTxfSaNyB/pLReNKQr30VxaDqtwxBo/x6cHU755b1KqIm
- NS1QpeuuzdbDZMqYl6SqN+gNnn/6WS1F7p8opuPbPhlo58ziKBBOG/3
-X-Developer-Key: i=matt@codeconstruct.com.au; a=ed25519;
- pk=exersTcCYD/pEBOzXGO6HkLd6kKXRuWxHhj+LXn3DYE=
+Content-Type: text/plain; charset=ascii
 
-daddr can be NULL if there is no neighbour table entry present,
-in that case the tx packet should be dropped.
+Dan Williams <dan.j.williams@intel.com> writes:
 
-saddr will normally be set by MCTP core, but in case it is NULL it
-should be set to the device address.
+> Huang, Ying wrote:
+>> Hi, Dan,
+>> 
+>> Dan Williams <dan.j.williams@intel.com> writes:
+>> 
+>> > Huang Ying wrote:
+>> >> Previously, CXL type3 devices (memory expanders) use host only
+>> >> coherence (HDM-H), while CXL type2 devices (accelerators) use dev
+>> >> coherence (HDM-D).  So the name of the target device type of a cxl
+>> >> decoder is CXL_DECODER_HOSTONLYMEM for type3 devices and
+>> >> CXL_DECODER_DEVMEM for type2 devices.  However, this isn't true
+>> >> anymore.  CXL type3 devices can use dev coherence + back
+>> >> invalidation (HDM-DB) too.
+>> >> 
+>> >> To avoid confusion between the device type and coherence, the patch
+>> >> renames CXL_DECODER_HOSTONLYMEM/DEVMEM to CXL_DECODER_EXPANDER/ACCEL.
+>> >
+>> > This does not look like an improvement to me. Type-3 devices that
+>> > support back-invalidate are DEVMEM devices. The device plays a role in
+>> > the coherence. 
+>> >
+>> > Your explanation is the reverse of this commit:
+>> >
+>> > 5aa39a9165cf cxl/port: Rename CXL_DECODER_{EXPANDER, ACCELERATOR} => {HOSTONLYMEM, DEVMEM}
+>> >
+>> > ...so I am confused what motivated this rename?
+>> 
+>> Sorry, I am confused about the target_type and coherence and forgot to
+>> check the history.  In some places, current kernel still hints
+>> target_type (CXL_DECODER_HOSTONLYMEM/DEVMEM) as expander/accelerator.
+>> Should we change them to avoid confusion in the future?
+>> 
+>> $ grep expander -r drivers/cxl/
+>> drivers/cxl/cxl.h:346: * @target_type: accelerator vs expander (type2 vs type3) selector
+>> drivers/cxl/core/region.c:2450: * @type: select whether this is an expander or accelerator (type-2 or type-3)
+>> drivers/cxl/core/port.c:141:		return sysfs_emit(buf, "expander\n");
+>> 
+>> The last one is
+>> 
+>> static ssize_t target_type_show(struct device *dev,
+>> 				struct device_attribute *attr, char *buf)
+>> {
+>> 	struct cxl_decoder *cxld = to_cxl_decoder(dev);
+>> 
+>> 	switch (cxld->target_type) {
+>> 	case CXL_DECODER_DEVMEM:
+>> 		return sysfs_emit(buf, "accelerator\n");
+>> 	case CXL_DECODER_HOSTONLYMEM:
+>> 		return sysfs_emit(buf, "expander\n");
+>> 	}
+>> 	return -ENXIO;
+>> }
+>> static DEVICE_ATTR_RO(target_type);
+>> 
+>> for decoder device.  This is a testing ABI documented in,
+>> 
+>> Documentation/ABI/testing/sysfs-bus-cxl
+>> 
+>> Is it OK to change this?
+>
+> No, why does it need to change?
 
-Incorrect indent of the function arguments is also fixed.
+For example, if the target_type is CXL_DECODER_DEVMEM, while the device
+is a memory expander with HDM-DB protocol.  The sysfs will show it as
+"accelerator".  This may make users or developers confusing.  If we can
+show "hostonlymem"/"devmem", that may be better.  But apparently, we
+cannot change ABI.
 
-Fixes: f5b8abf9fc3d ("mctp i2c: MCTP I2C binding driver")
-Cc: stable@vger.kernel.org
-Reported-by: Dung Cao <dung@os.amperecomputing.com>
-Signed-off-by: Matt Johnston <matt@codeconstruct.com.au>
----
-Changes in v2:
-- Set saddr to device address if NULL, mention in commit message
-- Fix patch prefix formatting
-- Link to v1: https://lore.kernel.org/r/20241018-mctp-i2c-null-dest-v1-1-ba1ab52966e9@codeconstruct.com.au
----
- drivers/net/mctp/mctp-i2c.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+> It is unfortunate, but ABI's are forever. The place to clarify that this
+> decoder is participating in HDM-D[B] vs HDM-H protocol rather than being
+> an "accelerator" or "expander" device would be in user tooling like
+> cxl-cli. sysfs is just a transport, not a UI.
 
-diff --git a/drivers/net/mctp/mctp-i2c.c b/drivers/net/mctp/mctp-i2c.c
-index 4dc057c121f5d0fb9c9c48bf16b6933ae2f7b2ac..c909254e03c21518c17daf8b813e610558e074c1 100644
---- a/drivers/net/mctp/mctp-i2c.c
-+++ b/drivers/net/mctp/mctp-i2c.c
-@@ -579,7 +579,7 @@ static void mctp_i2c_flow_release(struct mctp_i2c_dev *midev)
- 
- static int mctp_i2c_header_create(struct sk_buff *skb, struct net_device *dev,
- 				  unsigned short type, const void *daddr,
--	   const void *saddr, unsigned int len)
-+				  const void *saddr, unsigned int len)
- {
- 	struct mctp_i2c_hdr *hdr;
- 	struct mctp_hdr *mhdr;
-@@ -588,8 +588,15 @@ static int mctp_i2c_header_create(struct sk_buff *skb, struct net_device *dev,
- 	if (len > MCTP_I2C_MAXMTU)
- 		return -EMSGSIZE;
- 
--	lldst = *((u8 *)daddr);
--	llsrc = *((u8 *)saddr);
-+	if (daddr)
-+		lldst = *((u8 *)daddr);
-+	else
-+		return -EINVAL;
-+
-+	if (saddr)
-+		llsrc = *((u8 *)saddr);
-+	else
-+		llsrc = dev->dev_addr;
- 
- 	skb_push(skb, sizeof(struct mctp_i2c_hdr));
- 	skb_reset_mac_header(skb);
+Although it's not perfect, this is a solution.  Another way to solve
+this is to separate device coherence (HOSTONLY vs. DEV) and device type
+(ACCELERATOR vs. EXPANDER).  In this way, if the "target_type" in sysfs
+designates device type, it could show "expander" for memory expander
+even if HDM-DB protocol is used.
 
----
-base-commit: cb560795c8c2ceca1d36a95f0d1b2eafc4074e37
-change-id: 20241018-mctp-i2c-null-dest-a0ba271e0c48
+Another possibility, can we just remove this sysfs file?
 
-Best regards,
--- 
-Matt Johnston <matt@codeconstruct.com.au>
-
+--
+Best Regards,
+Huang, Ying
 
