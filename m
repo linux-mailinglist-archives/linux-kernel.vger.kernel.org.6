@@ -1,166 +1,165 @@
-Return-Path: <linux-kernel+bounces-374075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D751D9A626E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F109A6274
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 822811F22936
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C8E11F228E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 10:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CA41E411D;
-	Mon, 21 Oct 2024 10:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024661E377B;
+	Mon, 21 Oct 2024 10:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lDOCHzje"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CoYUZGAw"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2054.outbound.protection.outlook.com [40.107.212.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7D0DDC1;
-	Mon, 21 Oct 2024 10:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729505887; cv=none; b=Edx7iNCqFVqWrVYKfcr9N0DpiNVDBU2CuanaJQA8W6TMWSYGNO4gcDW7Jxv5r3QzCTE7UrzsFMzbFeYjt+Q0jG5Pshvn7AEx4UjDwcUqI+L/v0on82nohf0FxSXZa+3dKGMXBsPOdlMw8MbPyQr5CwgFlWHD4jGFQhrzF9YbXuA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729505887; c=relaxed/simple;
-	bh=Q4czTQPI4Z5Zy8B+MQf/hc42cmnbOK1BUsG1bn7iWN0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nKE6/sH1YdtwjcLlBasHTmrIv4zCr4PXjD4DmCycyo8JiZGETkTwkmexCK5C+swGjSacppBeSK+/G9+iJH0m+DWOw+9P7AZClEixQcgw7gWkNRkTximnZxtcI9q+kCLOqRi03rf0xtD1WEveU3V8O67sqYf8gAHJfndI1VzXSk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lDOCHzje; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729505885; x=1761041885;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Q4czTQPI4Z5Zy8B+MQf/hc42cmnbOK1BUsG1bn7iWN0=;
-  b=lDOCHzje5IhvA1MeG7zXbxwuasOZOt2Nk6d+ltl0q//sydvmV6T3dWmf
-   OEvNPhCDXvxfxl0vcm4X3K76HSdGNWpruZGobpqP7GHoAiCUaTbWz+eJ6
-   HtEDfn0Cj2vUI5THx6xrHcW9TOQ9QL3cWDOMcUQ0UYdvweCO4suJ15hsc
-   s2hjrpOfOiN9QTf1brbYh2VieMAzAK+fxT4xxffF/gYBoqhJ6+CnuqO2S
-   exZ+M/WQTRIsYMHKooDYS8HS2CDb2XijTaNIccoypvYf0kD9kUMnH77JW
-   l1BhenXoEfKNScVw2EwDQlUeJir5VaCs64N0h65QBC63g1W4Zri0lIair
-   Q==;
-X-CSE-ConnectionGUID: PX8QDsR+S/qcIVnEbh8hZw==
-X-CSE-MsgGUID: VScUnll6Taqx5Rn84hwfcw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="40353347"
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="40353347"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 03:18:05 -0700
-X-CSE-ConnectionGUID: TqhSGXDcQz67JFSfHQ8t7Q==
-X-CSE-MsgGUID: CAUsUVz8TZmzpZ0FmnJhzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="80302518"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.201])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 03:17:59 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 21 Oct 2024 13:17:55 +0300 (EEST)
-To: Inochi Amaoto <inochiama@gmail.com>
-cc: Chen Wang <unicorn_wang@outlook.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-    Conor Dooley <conor+dt@kernel.org>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    Inochi Amaoto <inochiama@outlook.com>, Yixun Lan <dlan@gentoo.org>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    linux-serial <linux-serial@vger.kernel.org>, devicetree@vger.kernel.org, 
-    linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] serial: 8250_dw: Add Sophgo SG2044 quirk
-In-Reply-To: <tm7jtf3swggiilznwo3xcqjlhd2a7cguwk3nay3bhmaxo23mf5@qw2fyjwapoxe>
-Message-ID: <3dafd285-f56f-de2a-1544-b6ce092607b5@linux.intel.com>
-References: <20241021072606.585878-1-inochiama@gmail.com> <20241021072606.585878-3-inochiama@gmail.com> <29d8e2a6-d0e7-0f74-1f5c-4f285ec1e9ee@linux.intel.com> <tm7jtf3swggiilznwo3xcqjlhd2a7cguwk3nay3bhmaxo23mf5@qw2fyjwapoxe>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF39DDC1;
+	Mon, 21 Oct 2024 10:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729505946; cv=fail; b=k+XivHVexyqF+ylsir4eUeQ9FZL8GCNqGYAWJnCBbIsyeIDtOKWYtW60X4jJBGpXbGSNpqW2S9EOtGnYTWsBlIO9Adzm7P+xcAJ9kJKHrKpnzo6Y3cTuunzTSWixdghIUxBUA24xx28Rl+Qt/4kJA/7zccgQWlBcz3WdYNqvDFo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729505946; c=relaxed/simple;
+	bh=Oh2zuFzUCcbTCu5Svbm+3LpwCe1Mnz/GG/j6tsl9mls=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Kqr5WE7h/6Gsti32T4LSIq7ZDMWoCvfssQvrYkEYzKcERdvcAVNJQWzyh1rMxfUu6U3bx19Zw+PIq6oE/3GqbGlNUpMD8yNXjULcYlqTrNFrc37zobfWZRLuF7JmuG4tBG8rcMlcuITcI86Un5F8MiDw40TiXH5xxCBcDA2HssU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CoYUZGAw; arc=fail smtp.client-ip=40.107.212.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G6ifPLlvqyemj8DN7Ot0VuURFg1asDTkrb7ig6ups9T+KltMALuaeN1bYBNnvIFh4eqO1reYD+KeUArt+TQJPXskFkebtWzAnfg+VWPwmWQVbon1yYMl/SzVWhMhtJJMJyfWtb2xxDvTOpgYyu5+bqb2szB2CoAKPwDaeqiTaT0Tet4bNM1Bjwibw8WhOuFKQcXkUO2XEYNnA7eIvkt/NIAM8nfLvb77bB1EWjWc/wK9Ma7935P5InW5CUg0KJQIT5iE0rk+xRBtUq6sbCioqUZMvTu2NFs/96/YzvEBeFgY+T37vJvCxLv7HGZs3qHzz7UaIN2sw901bI0AdAc9Qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DGfV4qXT/2x8uD5n8JJznGYPjPlD4Hr9POuYErPcLqc=;
+ b=JS+jrl0hhEoD/4RtbFdDTyOm9PcsW/Sle2Cj8Sng0g5M0T08gYm0AMbksFPLR24TXPP9W2sOqg3nm5Qs3Kr7nkC9/78y6pmvbVG1dvtpqGReExcKndituF+cxOXn7T/t6q9bp29QulAWBpR0BbZf/Lwek3Qx/zTLA691W3xkYmlIY5HW/FgCSw8Z6CxU5WM7z0IexSc8KlfRaJTam6Q1xCazifzRcmGP7JS+7+BN+sqFhx04mZP/02pk8FtHMTfRJIcaJgzelYgnVgGYalr25pDcSlgVPmj9c6KlwHV3679M2du+i+qZH/YKNNwJoC0X2IcVBZ6NU/zbcEhQMYVcIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DGfV4qXT/2x8uD5n8JJznGYPjPlD4Hr9POuYErPcLqc=;
+ b=CoYUZGAw4iHHeTU1Vvc01WHXTxWUaVXy/SkSt09Ckot0BTXjbrVVhvk1OwCNnFTD4r/KhNlBc47fGVHYxqI+GT6RQsIt1QWOPtikLOs7o5B1W1T78MpXPPoAldsJOf6Jza8g2C3FJhm4uDb8YwRd+VIwPA+lttPmZJfnOIrPNyg=
+Received: from PH1PEPF000132E7.NAMP220.PROD.OUTLOOK.COM (2603:10b6:518:1::27)
+ by BL4PR12MB9507.namprd12.prod.outlook.com (2603:10b6:208:58d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
+ 2024 10:19:00 +0000
+Received: from CY4PEPF0000E9CE.namprd03.prod.outlook.com
+ (2a01:111:f403:f912::4) by PH1PEPF000132E7.outlook.office365.com
+ (2603:1036:903:47::3) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28 via Frontend
+ Transport; Mon, 21 Oct 2024 10:19:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000E9CE.mail.protection.outlook.com (10.167.241.133) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8093.14 via Frontend Transport; Mon, 21 Oct 2024 10:18:59 +0000
+Received: from BLRRASHENOY1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Oct
+ 2024 05:18:55 -0500
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Mario Limonciello <mario.limonciello@amd.com>, Perry Yuan
+	<perry.yuan@amd.com>, Huang Rui <ray.huang@amd.com>, Dhananjay Ugwekar
+	<Dhananjay.Ugwekar@amd.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, "Rafael
+ J . Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Gautham R.
+ Shenoy" <gautham.shenoy@amd.com>
+Subject: [PATCH 0/2] amd-pstate: Make amd-pstate the default driver on server platforms
+Date: Mon, 21 Oct 2024 15:48:34 +0530
+Message-ID: <20241021101836.9047-1-gautham.shenoy@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-2055814311-1729505875=:1065"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CE:EE_|BL4PR12MB9507:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9174a4b5-88a0-44f1-8b34-08dcf1b9c762
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5832j9Hz81A0I3qek8PoTyZn/gMB+UVIH8aDVrh2axZIQ8Y6vHvkruncvcKa?=
+ =?us-ascii?Q?eMeQarYS+xMJ08t5Re2bYJHZTvS8aPWjBhcap0B4kebx2YNvDMo3tuTSnzgI?=
+ =?us-ascii?Q?NTC4g4c2Z75/DEY0Nz2WjCbSTGCX5B5Zablx9KRPFxk+14EHsfssnJ3nBnvb?=
+ =?us-ascii?Q?u9jWPXWNet6At+i/IoAucpyNNKcGUD8MsxjsEyASn+8C9arb6/3VTNCKgV/P?=
+ =?us-ascii?Q?bfVzSIoBEKuphI/tLgr3s9wY8O0meQXQeLcgWHn/3NzhMEyE+Y/jp50waKP/?=
+ =?us-ascii?Q?aixur+rkSPnuvUmxXQouxrxxLTkXmSmzazZot+J19vEDOa+wXEK4ZTFefd6E?=
+ =?us-ascii?Q?O+Swk9WAx1nZUmTjU8tQNmvvkhHB4JKa9bHzvkF180xZ8lHOFtI7+umJCQIX?=
+ =?us-ascii?Q?LoGt1FZVGDjxYhEyMkYjcHSjkB7Gvn3JZm9MlNFmxmnVYC4rhKBd6zLkyGWc?=
+ =?us-ascii?Q?UGm3pNVt1a4NeVjWL+hShwgKcHuG+xp19dN7VKnr8f+toXPF45i9/wAfCTn4?=
+ =?us-ascii?Q?uofYN/7dG8vl38PiihMPrDQFGA/lceeed0dgv1YdjF9Txs3/p9eR3eFD2yOI?=
+ =?us-ascii?Q?Z+Sr56KWQebWw1GiH2x9CcOCLV1wYbNzEPhASCHOGHDBAXxhABrEP0c0ImS0?=
+ =?us-ascii?Q?e99WA732hlnl8tf2nnBkvc/0pSRKM5JNMiCaWAYDxZc5Q+JKu88TR6gclBVd?=
+ =?us-ascii?Q?Kw11X2pXZgOLHTlBtt/EAgpU+9Np7RrqciCQH/DDnU/csFCzCK26pPxHzbxv?=
+ =?us-ascii?Q?lcFAldCCPsrSpaQfZwwJ0fgBMk8Ks36wVxzs3W7WVEwTx2g/BVe4URh+Ajrl?=
+ =?us-ascii?Q?fA+LQf1rKsKH7E45xqeHkMUAYqvFkP3vb5vSh06GQUfMdmkP5HoQ2l0lM65b?=
+ =?us-ascii?Q?M7XbhlDr1HD+xeglS6uictwPhNUr2TkbIkIYmgm+l70HJu3SW4W3DkjrEoIf?=
+ =?us-ascii?Q?HgK3j0K2MepryKEnaN9V54/JpNUwzaJFnlCkYcdQJZWzZlNk7dUjbstcolcM?=
+ =?us-ascii?Q?USNzWrApWo/nfzRN5yyBQLgc7Ncplq6tom4zhgWv1a/udB4z9XmJRGEgBCWL?=
+ =?us-ascii?Q?sq1QOoTGG2otD3JUYF6XR9LgU4fMfWrALmYzpIRHuGN84JAfSrq568/oSkDb?=
+ =?us-ascii?Q?SbW+qcdrdeFAevmRY1C/j+i0HN4NILHEukjpxS4obScJ/8TbARv+5/LYZCVO?=
+ =?us-ascii?Q?OeGcxA6ra9GfkVMSOj7nyfxi7vBRw18lFuDIwNIkH7kAjsfmfQTUr7dBWxYQ?=
+ =?us-ascii?Q?Mji5jCMhuaizjnGW+Yx+CjpaXV0cWPgJJv+RyhkWBvkCGkT+YvXvlKzKDbVS?=
+ =?us-ascii?Q?u8e6feib6VIOa2lhBSKc/3ZjAQwhUkPrdaUSk7b94j8+AWYcQmseEDzyGKFR?=
+ =?us-ascii?Q?xTwZP1/YsHiqUit2JJKK+ZpAdkoH8uIyTXKG9Tuzhd9qTs9K2g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 10:18:59.4260
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9174a4b5-88a0-44f1-8b34-08dcf1b9c762
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9CE.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR12MB9507
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello,
 
---8323328-2055814311-1729505875=:1065
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+This patchset contains two patches to
 
-On Mon, 21 Oct 2024, Inochi Amaoto wrote:
+* Prevent frequency throttling on power-limited systems with
+  amd-pstate active mode with performance governor.
 
-> On Mon, Oct 21, 2024 at 11:52:38AM +0300, Ilpo J=E4rvinen wrote:
-> > On Mon, 21 Oct 2024, Inochi Amaoto wrote:
-> >=20
-> > > SG2044 relys on an internal divisor when calculating bitrate, which
-> > > means a wrong clock for the most common bitrates. So add a quirk for
-> > > this uart device to skip the set rate call and only relys on the
-> > > internal UART divisor.
-> > >=20
-> > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> >=20
-> > Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> >=20
-> > I wonder though does this mean the numbers userspace can read from kern=
-el=20
-> > are bogus and if something can be done about that?
-> >=20
->=20
-> I am not sure whether the clock rate can be read by the userspace.
-> At least it report the right baud speed by using stty.
+* Make amd_pstate default on EPYC Family 1A+. Based on tests, the
+  amd-pstate driver performs well enough on EPYC.
 
-Okay, I meant baud & other settings. Thanks for checking it.
+These patches are based on the "linux-next" branch of
+https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git
 
---=20
- i.
+Gautham R. Shenoy (1):
+  amd-pstate: Set min_perf to nominal_perf for active mode performance
+    gov
 
-> Regards,
-> Inochi
->=20
-> >=20
-> > > ---
-> > >  drivers/tty/serial/8250/8250_dw.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8=
-250/8250_dw.c
-> > > index ab9e7f204260..51894c93c8a3 100644
-> > > --- a/drivers/tty/serial/8250/8250_dw.c
-> > > +++ b/drivers/tty/serial/8250/8250_dw.c
-> > > @@ -750,7 +750,7 @@ static const struct dw8250_platform_data dw8250_r=
-enesas_rzn1_data =3D {
-> > >  =09.quirks =3D DW_UART_QUIRK_CPR_VALUE | DW_UART_QUIRK_IS_DMA_FC,
-> > >  };
-> > > =20
-> > > -static const struct dw8250_platform_data dw8250_starfive_jh7100_data=
- =3D {
-> > > +static const struct dw8250_platform_data dw8250_skip_set_rate_data =
-=3D {
-> > >  =09.usr_reg =3D DW_UART_USR,
-> > >  =09.quirks =3D DW_UART_QUIRK_SKIP_SET_RATE,
-> > >  };
-> > > @@ -760,7 +760,8 @@ static const struct of_device_id dw8250_of_match[=
-] =3D {
-> > >  =09{ .compatible =3D "cavium,octeon-3860-uart", .data =3D &dw8250_oc=
-teon_3860_data },
-> > >  =09{ .compatible =3D "marvell,armada-38x-uart", .data =3D &dw8250_ar=
-mada_38x_data },
-> > >  =09{ .compatible =3D "renesas,rzn1-uart", .data =3D &dw8250_renesas_=
-rzn1_data },
-> > > -=09{ .compatible =3D "starfive,jh7100-uart", .data =3D &dw8250_starf=
-ive_jh7100_data },
-> > > +=09{ .compatible =3D "sophgo,sg2044-uart", .data =3D &dw8250_skip_se=
-t_rate_data },
-> > > +=09{ .compatible =3D "starfive,jh7100-uart", .data =3D &dw8250_skip_=
-set_rate_data },
-> > >  =09{ /* Sentinel */ }
-> > >  };
-> > >  MODULE_DEVICE_TABLE(of, dw8250_of_match);
-> > >=20
->=20
---8323328-2055814311-1729505875=:1065--
+Swapnil Sapkal (1):
+  amd-pstate: Switch to amd-pstate by default on some Server platforms
+
+ drivers/cpufreq/amd-pstate.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+2.34.1
+
 
