@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-374756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB4A9A6F7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:31:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA12B9A6F16
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 18:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E2E1C2173B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86791C21A8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9101CC161;
-	Mon, 21 Oct 2024 16:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMvMrt/c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CEA1D0153;
+	Mon, 21 Oct 2024 16:10:25 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50EA191F81;
-	Mon, 21 Oct 2024 16:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C17C17C224
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729528311; cv=none; b=FlZSjDceTrV0AI1Z8vihDelnX3ky+Ht8HwV/YU9TBBfx333vggMZTgPFAhCsqPDFlRQSHjsTLQRGc0uhHVCIQwNtScjFSIxXqP51hgs/3pSOgaFttR8Usxrf135UuJnW9UqrU3fmrS9Ms0oa5Yqu+kykE4sqEPKSeBLtFOdHQ2c=
+	t=1729527025; cv=none; b=NTMrzt3SJxu7/QJwZfXlXZiyMoTbHO0yRtGhAPI7fkH8Gy3MEnTSIj8EkXF5kvTYiK9h8OCDoYe2rj/yUaWRUoqPeSKLw/wWJsIimuuSzQzlKXUh97+E9L+9ZCFzPv+cnKFFmbPOLjFBj1tY0ouscGXfTuW4IVzUxbAEWcWsnOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729528311; c=relaxed/simple;
-	bh=sQ0x/Wz1DFne7tpBH3VPLt6J1dTHAYiRYKKRTRgEkIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SLjZB/uIzd8XOoqcM3CR4hSVIW0wvU4SZ8hySEoiJFYnXvbAgT4hoDsV7K1AMplOtzPjwrerHZ7X6C+rZJ9Y4gSSUPI1mBFFDNo92mtLjRYxhY5Xj/YBQSuU2QqpMd8L4V+5GTcjo7wfppW/3WvJ+YAakHnCZiCl6rWK7SXdsKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMvMrt/c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B47C4CEC3;
-	Mon, 21 Oct 2024 16:31:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729528310;
-	bh=sQ0x/Wz1DFne7tpBH3VPLt6J1dTHAYiRYKKRTRgEkIk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nMvMrt/cBqrgCptZnLYecNbi9tfjjXyK3HLCoXUMOA3T6ChrcsP9tN3wTlZoC24jN
-	 8kH7CFV17oR3gr3ls3fEDUTGChbnDzEpqZi7xmgE8N0li1yqpEs2faeYRIx8Zz6FPr
-	 0RUR91AvP/IRItBePpePXmRrGuzByjoU8S1X8M1SF2fD//IQSGOzqdubSEV6sJnTas
-	 zeeXMGODpL6u1pCtm5OFWc4DrpL6fNsiHt4Vcv8u1rOqX9ICs/DnalCmj6wBBNoKOf
-	 nmxrOVErZ01W1xUnZvJE3JxoyXsSQO93Wonjmx7QGepJukscr699JUxYFIxgBYQQSM
-	 WVhjKmEeO0L6A==
-Date: Mon, 21 Oct 2024 12:07:13 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: ksummit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <ZxZ8MStt4e8JXeJb@sashalap>
+	s=arc-20240116; t=1729527025; c=relaxed/simple;
+	bh=SHkfl7zwwdOZZpM3tZyCrj6DU/+eGm7kRwBKaChlot8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=NWTSFQIXcwZWzI2FufS47pOER3+qvhnI/4lUHwSgMC4wkN2rCsOzGVG9TTZWD+Fqhur+iJ9wmghxtxIFcD4txaDtax6ZvvvIo8ZYhqM601Dh+JLdFYhuo/6N3odTSN6cTYr0jqmGs38IXwp4csE3eGxiawI+Umg01GOpRtfZ1tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-42-GJKTBsbbNASPdj52kXe81Q-1; Mon, 21 Oct 2024 17:10:19 +0100
+X-MC-Unique: GJKTBsbbNASPdj52kXe81Q-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 21 Oct
+ 2024 17:10:18 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Mon, 21 Oct 2024 17:10:18 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'Liam R. Howlett'" <Liam.Howlett@oracle.com>, Shuah Khan
+	<skhan@linuxfoundation.org>
+CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "vbabka@suse.cz"
+	<vbabka@suse.cz>, "sidhartha.kumar@oracle.com" <sidhartha.kumar@oracle.com>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] tools: fix -Wunused-result in linux.c
+Thread-Topic: [PATCH] tools: fix -Wunused-result in linux.c
+Thread-Index: AQHbHp870qBUIivxfUSvLqqqTfcy0bKRaOAw
+Date: Mon, 21 Oct 2024 16:10:18 +0000
+Message-ID: <13ddebb3e15b4a94b466c6ee5f3f2f42@AcuMS.aculab.com>
+References: <20241011225155.27607-1-skhan@linuxfoundation.org>
+ <ddepbtajvjqoftjqanab7dpcx62pjrl4s3cowhciocevfa43wa@sncxpv75hpjp>
+In-Reply-To: <ddepbtajvjqoftjqanab7dpcx62pjrl4s3cowhciocevfa43wa@sncxpv75hpjp>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-Hi folks,
+RnJvbTogTGlhbSBSLiBIb3dsZXR0DQo+IFNlbnQ6IDE1IE9jdG9iZXIgMjAyNCAwMjoxMQ0KPiAN
+Cj4gKiBTaHVhaCBLaGFuIDxza2hhbkBsaW51eGZvdW5kYXRpb24ub3JnPiBbMjQxMDExIDE4OjUy
+XToNCj4gPiBGaXggdGhlIGZvbGxvd2luZyAtV3VudXNlZC1yZXN1bHQgd2FybmluZ3Mgb24gcG9z
+aXhfbWVtYWxpZ24oKQ0KPiA+IHJldHVybiB2YWx1ZXMgYW5kIGFkZCBlcnJvciBoYW5kbGluZy4N
+Cj4gPg0KPiA+IC4vc2hhcmVkL2xpbnV4LmM6MTAwOjI1OiB3YXJuaW5nOiBpZ25vcmluZyByZXR1
+cm4gdmFsdWUgb2Yg4oCYcG9zaXhfbWVtYWxpZ27igJkgZGVjbGFyZWQgd2l0aCBhdHRyaWJ1dGUN
+Cj4g4oCYd2Fybl91bnVzZWRfcmVzdWx04oCZIFstV3VudXNlZC1yZXN1bHRdDQo+ID4gICAxMDAg
+fCAgICAgICAgICBwb3NpeF9tZW1hbGlnbigmcCwgY2FjaGVwLT5hbGlnbiwgY2FjaGVwLT5zaXpl
+KTsNCj4gPiAgICAgICB8ICAgICAgICAgIF5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
+fn5+fn5+fn5+fn5+fn5+DQo+ID4gLi4vc2hhcmVkL2xpbnV4LmM6IEluIGZ1bmN0aW9uIOKAmGtt
+ZW1fY2FjaGVfYWxsb2NfYnVsa+KAmToNCj4gPiAuLi9zaGFyZWQvbGludXguYzoxOTg6MzM6IHdh
+cm5pbmc6IGlnbm9yaW5nIHJldHVybiB2YWx1ZSBvZiDigJhwb3NpeF9tZW1hbGlnbuKAmSBkZWNs
+YXJlZCB3aXRoIGF0dHJpYnV0ZQ0KPiDigJh3YXJuX3VudXNlZF9yZXN1bHTigJkgWy1XdW51c2Vk
+LXJlc3VsdF0NCj4gPiAgIDE5OCB8ICAgICAgICAgIHBvc2l4X21lbWFsaWduKCZwW2ldLCBjYWNo
+ZXAtPmFsaWduLA0KPiA+ICAgICAgIHwgICAgICAgICAgXn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
+fn5+fn5+fn5+fn5+DQo+ID4gICAxOTkgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+Y2FjaGVwLT5zaXplKTsNCj4gPiAgICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICB+fn5+fn5+fn5+fn5+DQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTaHVhaCBLaGFuIDxza2hh
+bkBsaW51eGZvdW5kYXRpb24ub3JnPg0KPiANCj4gUmV2aWV3ZWQtYnk6IExpYW0gUi4gSG93bGV0
+dCA8TGlhbS5Ib3dsZXR0QE9yYWNsZS5jb20+DQo+IA0KPiA+IC0tLQ0KPiA+ICB0b29scy90ZXN0
+aW5nL3NoYXJlZC9saW51eC5jIHwgMTQgKysrKysrKysrLS0tLS0NCj4gPiAgMSBmaWxlIGNoYW5n
+ZWQsIDkgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQg
+YS90b29scy90ZXN0aW5nL3NoYXJlZC9saW51eC5jIGIvdG9vbHMvdGVzdGluZy9zaGFyZWQvbGlu
+dXguYw0KPiA+IGluZGV4IDE3MjYzNjk2YjVkOC4uNjZkYmIzNjIzODVmIDEwMDY0NA0KPiA+IC0t
+LSBhL3Rvb2xzL3Rlc3Rpbmcvc2hhcmVkL2xpbnV4LmMNCj4gPiArKysgYi90b29scy90ZXN0aW5n
+L3NoYXJlZC9saW51eC5jDQo+ID4gQEAgLTk2LDEwICs5NiwxMyBAQCB2b2lkICprbWVtX2NhY2hl
+X2FsbG9jX2xydShzdHJ1Y3Qga21lbV9jYWNoZSAqY2FjaGVwLCBzdHJ1Y3QgbGlzdF9scnUgKmxy
+dSwNCj4gPiAgCQlwID0gbm9kZTsNCj4gPiAgCX0gZWxzZSB7DQo+ID4gIAkJcHRocmVhZF9tdXRl
+eF91bmxvY2soJmNhY2hlcC0+bG9jayk7DQo+ID4gLQkJaWYgKGNhY2hlcC0+YWxpZ24pDQo+ID4g
+LQkJCXBvc2l4X21lbWFsaWduKCZwLCBjYWNoZXAtPmFsaWduLCBjYWNoZXAtPnNpemUpOw0KPiA+
+IC0JCWVsc2UNCj4gPiArCQlpZiAoY2FjaGVwLT5hbGlnbikgew0KPiA+ICsJCQlpZiAocG9zaXhf
+bWVtYWxpZ24oJnAsIGNhY2hlcC0+YWxpZ24sIGNhY2hlcC0+c2l6ZSkgPCAwKQ0KPiA+ICsJCQkJ
+cmV0dXJuIE5VTEw7DQo+ID4gKwkJfSBlbHNlIHsNCj4gPiAgCQkJcCA9IG1hbGxvYyhjYWNoZXAt
+PnNpemUpOw0KPiA+ICsJCX0NCj4gPiArDQoNCllvdSByZWFsbHkgb3VnaHQgdG8gYmUgY2hlY2tp
+bmcgbWFsbG9jKCkgYXMgd2VsbC4NClBlcmhhcHM6DQoJCWlmICguLi4pIHsNCgkJCWlmIChwb3Np
+eF9tZW1hbGlnbiguLi4pIDwgMCkNCgkJCQlwID0gTlVMTDsNCgkJfSBlbHNlIHsNCgkJCXAgPSBt
+YWxsb2MoLi4uKTsNCgkJfQ0KCQlpZiAoIXApDQoJCQlyZXR1cm4gTlVMTDsNCg0KT3IganVzdCB1
+c2UgYSBoYWNrIHRvIGdldCB0aGUgY29tcGlsZXIgdG8gU1RGVSA6LSkNCg0KCURhdmlkDQoNCi0N
+ClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBN
+aWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxl
+cykNCg==
 
-The linux-next tree we all know and love is widely used by the kernel
-community for integration work. It offers several advantages:
-
-	1. Early detection of conflicts between matinainer trees
-
-	2. Catching most new build errors/warnings
-
-However, it faces significant testing challenges:
-
-	1. Contains a mix of "ready-to-go" code and experimental additions
-
-	2. A single "bad" piece of code can affect testing of everything else
-
-	3. Low barrier of entry, encouraging inclusion over exclusion
-
-	4. While linux-next offers early conflict resolution and
-	identifies build issues, it is very difficult to actually test
-	due to the abundance of runtime issues it tends to have
-
-These factors combine to make linux-next a valuable tool for integration
-but problematic for comprehensive testing.
-
-During the Maintainer's Summit, Linus Torvalds expressed concerns about
-the quality of testing that code receives before he pulls it. The
-subsequent discussion side-tracked to the testability of linux-next, but
-we didn't directly address Linus's original concern about pre-pull
-testing quality.
-
-In an attempt to address the concerns, we're trying out a new "linus-next"
-tree is being created and maintained with the following characteristics:
-
-	1. Composed of pull requests sent directly to Linus
-
-	2. Contains branches destined for imminent inclusion by Linus
-
-	3. Higher code quality expectation (these are pull requests that
-	maintainers expect Linus to pull)
-
-	4. Continuous tree (not daily tags like in linux-next),
-	facilitating easier bisection
-
-The linus-next tree aims to provide a more stable and testable
-integration point compared to linux-next, addressing the runtime issues
-that make testing linux-next challenging and focusing on code that's
-about to be pulled by Linus.
-
-linus-next is (expected to be) particularly effective before the merge
-window opens, as maintainers tend to send their pull requests early,
-allowing for more thorough testing of to-be-merged changes.
-
-We also want to avoid altering the existing workflow. In particular:
-
-	1. No increase in latency. If anything, the expectation is that
-	the cadence of merges would be improved given that Linus will
-	need to do less builds and tests.
-
-	2. Require "sign up" for the tree like linux-next does. Instead,
-	pull requests are monitored and grabbed directly from the
-	mailing list.
-
-Tree location: `git://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git linus-next`
-
-Current testing:
-   - LKFT: https://qa-reports.linaro.org/lkft/sashal-linus-next/
-   - KernelCI: https://t.ly/KEW7F
-
-Feedback and suggestions for improving usability are welcome!
-
--- 
-Thanks,
-Sasha
 
