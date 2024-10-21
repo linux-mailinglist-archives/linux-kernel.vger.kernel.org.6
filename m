@@ -1,131 +1,158 @@
-Return-Path: <linux-kernel+bounces-373807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266D49A5D11
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:30:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99F6E9A5D13
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64A82846FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:30:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5517F281158
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DAA1D1E72;
-	Mon, 21 Oct 2024 07:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13361D26E9;
+	Mon, 21 Oct 2024 07:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EDtXA5lm"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DtcSBRL5"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DC31DE898
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE111D220E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495789; cv=none; b=Vq+XoczdhE4zF/kK+ptmlxpTtgrMS9+z73HhqSI/YoQ3+8bVHTnCKk5hXeYa4GIZamcuUIziBdXM02hkEYXe1M2u4ypiFgAKlRwtFRe0CaXAmFywcXV3mQlN3IeHKWhYn4DSpxbGeQjaH3wbu5dlrFHjD5ReN/T3O2flEglMtOM=
+	t=1729495798; cv=none; b=njhktrkZV7lxVwdB35+FXY8nR/+SDDrOVOX49HFthIp1W96u68nQ9VBxyxuGVKDydk2WilxZMfe81WwtVVBM+s8KzjBo7OfBpZl4ovd/MelcGtIKnQlJImwFps5POphnOJEUpRVHm4Rt1P3DvG22NWa0YYJ22Il73tmzH8mBcFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495789; c=relaxed/simple;
-	bh=XrusYag+LII0liDvjBVw2JqWK3sU0P0bEy+YtyI5W7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uxc5qzEBZIZ0K0TPiuocRYdzyaeVsOGSFBvpNio4EFWSuQDJUp60YNdY8nDQHVl5S6shYGHU6E17CU+baKWFNIW2SHshX9YuvqxyL4Wy+K1IGTiko04BcBqSmcTq6T9ovUgPXaAC20jJkcg9/1EKAGkEMWQ+ir1qKrl4GaQBzzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EDtXA5lm; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1729495798; c=relaxed/simple;
+	bh=ccghK1rZWyDtkZQcOREz7ARLrOL1DYBYTH9L0R9+UKc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=aXZwys80Z8s49jy8QwnCg73vOFj96G/5Fpqbpq5Gblvu579vZV2nriFbGKPpTxfJtREJpAqDgSQckE+7IPAjFeSBd0CWkwFvPTInQJ9tzXQLuweCPX6wJ7WQvHibJHnXyAB/nAjDAoG7/ClIH8eN9u9LVIe0MCfNXiFY9ywCBTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DtcSBRL5; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d4a5ecc44so3098709f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:29:47 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315baec681so41709385e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 00:29:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729495785; x=1730100585; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T/oqIfHdzcYvPr+1084fMJueTQGBe/OWdE59Qz6opvs=;
-        b=EDtXA5lmcUR8SFnhiHxLAgMGt9CnuCNtq+yltnF80hBzG0d17rdA7z46p8x/7+0MJc
-         4zfKHf9U13Q6P+z7ebB5Drl8k5Yc9/yW1qXfNjPSyv0g5cdBqE2sWlv4AfFr/Dp6kUaQ
-         YwDkjWPch6QVw0FS3LTFFRLlYr5BazW12l589yR4QaVSURV1oSqw4VkNBxYWb1CuuGSd
-         C3EkNo9uhT2huc0YXKnHXsvgHGWHHG3tv3CH19+9LUnOaQpk0G8EI1NisUEqNzYpAg8t
-         mRFZY1ym3oqnih62MRZ7drviVCtOxAD2Snpj85n9xoezArd7wgvs8RRvHwaCIR6N2SGk
-         yTlQ==
+        d=linaro.org; s=google; t=1729495795; x=1730100595; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YNOZqddaoOrk8/x4u3nq9GdRCqUuOFLmAqZeR4UqCCw=;
+        b=DtcSBRL5gz7p0z/PxHA+m0x44xfZsQ3BvF6d+hpj5DhpnrmuuBxFE8yIcv2s3rQjkh
+         1xL+3xI8IGyvC5ApAi9fVlbvOoq3kZ9Uwiq5jK/WIUdme7roiJGwfghwGUNltuIGdx9T
+         z1l22fbUuxV+aPCDS983kiCtsIBOAWfPJIbncS9ZybJEw3h1jff3SccklgpwQ88YqYPx
+         5or34fROiFSfbxNK1NL9I4FAVZLfthnxM7mrRBfTAIrahIsnk6wcdc+WXdY1bWZ6yBdf
+         fVbNKLPt/PrPy07OjSsJMIESyVmdr3QMClv6sLltl3gljBMVnWmlLmp0F4mwZ7xOLblK
+         s+0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729495785; x=1730100585;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T/oqIfHdzcYvPr+1084fMJueTQGBe/OWdE59Qz6opvs=;
-        b=UeNrfm6zBubaDZMj+bBIjXd84q66wdChZM7vgEYxd/tJP2ZjCuaJLuJLAYLNTCVA0y
-         BxgKtWxGIJGMlJU5sAE3z7+rHXKPHZSxVExkuW3bmwrMIbyeX4G9/+uLQaI5YQrBvmx6
-         n3LJZNKP1r0XFFJ3+wic1PmCszYkaq0GX26pkpLCRFlZ38kWv8nkKEjm2eJc9/EYsXrs
-         1FYY+E72pIz9B6pJIGSNePntnUYsV1c10yKEIqUTejW2JpPleX96edptPrBV8BrU4HUd
-         T/lyZNns1oU8FMCdHdfFVMkQBw4lr7nFBGX9XyMLziXp6Sv88W9N18AI+gSTBRPuRbzS
-         6EoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDQDIekvnoL+tR9GjlKPLhdcl7CX9GuYJdmNQpJi4HtaqPsXD6kbb/hsTYUopNuPyZGx2x1Ebn74aLpCY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1SuI1ZEest2ysxj+YAbFe5AZFLfOaISDT7GF+kywEljenbUF7
-	ER0mJvjlZODSybI5MokCSwFlvEdJ3Fo6cTTwbRVbHhW22YsWVnEbSjHMhq477aM=
-X-Google-Smtp-Source: AGHT+IEiT5sMS+JgZu4ao5jBHWTOP1eckzgWiyUMsyejreFShjkny/C9UcGB2hR74+jC68Jx+/qP2w==
-X-Received: by 2002:adf:a34e:0:b0:37d:4b73:24c0 with SMTP id ffacd0b85a97d-37eb4896bcemr6237577f8f.35.1729495785515;
-        Mon, 21 Oct 2024 00:29:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b944f0sm3581825f8f.77.2024.10.21.00.29.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 00:29:45 -0700 (PDT)
-Date: Mon, 21 Oct 2024 10:29:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Marc Zyngier <maz@kernel.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: arch/arm64/kvm/at.c:71 at_s1e1p_fast() error: uninitialized symbol
- 'fail'.
-Message-ID: <7612de9a-d262-4d40-addb-64449768b35a@stanley.mountain>
+        d=1e100.net; s=20230601; t=1729495795; x=1730100595;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YNOZqddaoOrk8/x4u3nq9GdRCqUuOFLmAqZeR4UqCCw=;
+        b=gJYxosYG/RYibEwQfb6cyyp3mcEFhV8/EEX6xsxRwvbeICBkNsg1BUaWkKpVHZjrjK
+         kj+Vnqo84s7WlTAh0f9+X1s+E0mgKJW3c+Ud1kLW3a/21+p+qG4OTAp6BnbkrjKMc6vC
+         YFkv/jgaLy4QzjpqNPJO5wdQlVaTzG6xXJSdmtUd2sKvfmQuKwZ45ORH48agBQh0MEMR
+         zBnUmCttPYcva6GLrsr7eq/e4DOh/vstlIPwyC8ZP8sudKulpUh6PUppPnq5IAKl6Z9k
+         Z5Xn2yoVz4KXx0CTA7pWjMSmv1tjbG65SekP4PE1q2ZvhUqxOfeTibJPvJeRZysTEvEC
+         5dpA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7BM/iWaXH/S4KrA4j5tzKQvbCC/jkX9i4nOTYlwSPl3hmFKWWL8W+lbIylep4c4lhZVY7rw3hP8gsoU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGG69zMfih6Okx17dx3ZI+g5HHdOiW5Bwr3sCd1kvqipxQxOff
+	jQbhMflMb8DwjEdHpjqhS7LS2BA/NeGSHzrGO3eAbv/EfsVz4AeWkJe8p4uRvko=
+X-Google-Smtp-Source: AGHT+IFJuoUGb5krhAn5cqCgAJnC/ljP9vnIC3rDFQBRXtRPQG7LFSg4zpy9bDNhkNTbxSQjbnPvqQ==
+X-Received: by 2002:a05:600c:1d04:b0:431:1a98:cb40 with SMTP id 5b1f17b1804b1-43161667bddmr62590085e9.18.1729495794803;
+        Mon, 21 Oct 2024 00:29:54 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5709efsm47712795e9.10.2024.10.21.00.29.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 00:29:54 -0700 (PDT)
+Message-ID: <28fb5aed-0387-4c16-96fb-c2c23ae315b0@linaro.org>
+Date: Mon, 21 Oct 2024 09:29:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 3/6] drm/bridge: display-connector: allow YCbCr 420 for
+ HDMI and DP
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
+ <20241019-bridge-yuv420-v1-3-d74efac9e4e6@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241019-bridge-yuv420-v1-3-d74efac9e4e6@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   3d5ad2d4eca337e80f38df77de89614aa5aaceb9
-commit: be0135bde1df5e80cffacd2ed6f952e6d38d6f71 KVM: arm64: nv: Add basic emulation of AT S1E1{R,W}P
-date:   7 weeks ago
-config: arm64-randconfig-r071-20241015 (https://download.01.org/0day-ci/archive/20241020/202410200209.bAXXL58Q-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.1.0
+On 18/10/2024 23:49, Dmitry Baryshkov wrote:
+> Allow YCbCr 420 output for HDMI and DisplayPort connectors. Other
+> bridges in the chain still might limit YCbCr 420 support on the
+> corresponding connector.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/bridge/display-connector.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/display-connector.c b/drivers/gpu/drm/bridge/display-connector.c
+> index ab8e00baf3f1..aab9ce7be94c 100644
+> --- a/drivers/gpu/drm/bridge/display-connector.c
+> +++ b/drivers/gpu/drm/bridge/display-connector.c
+> @@ -270,6 +270,10 @@ static int display_connector_probe(struct platform_device *pdev)
+>   	/* All the supported connector types support interlaced modes. */
+>   	conn->bridge.interlace_allowed = true;
+>   
+> +	if (type == DRM_MODE_CONNECTOR_HDMIA ||
+> +	    type == DRM_MODE_CONNECTOR_DisplayPort)
+> +		conn->bridge.ycbcr_420_allowed = true;
+> +
+>   	/* Get the optional connector label. */
+>   	of_property_read_string(pdev->dev.of_node, "label", &label);
+>   
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202410200209.bAXXL58Q-lkp@intel.com/
+I think we should make sure all HDMI bridges can filter out 420 before
+landing this, no ?
 
-smatch warnings:
-arch/arm64/kvm/at.c:71 at_s1e1p_fast() error: uninitialized symbol 'fail'.
-
-vim +/fail +71 arch/arm64/kvm/at.c
-
-be0135bde1df5e Marc Zyngier 2024-07-14  52  static bool at_s1e1p_fast(struct kvm_vcpu *vcpu, u32 op, u64 vaddr)
-be0135bde1df5e Marc Zyngier 2024-07-14  53  {
-be0135bde1df5e Marc Zyngier 2024-07-14  54  	u64 host_pan;
-be0135bde1df5e Marc Zyngier 2024-07-14  55  	bool fail;
-be0135bde1df5e Marc Zyngier 2024-07-14  56  
-be0135bde1df5e Marc Zyngier 2024-07-14  57  	host_pan = read_sysreg_s(SYS_PSTATE_PAN);
-be0135bde1df5e Marc Zyngier 2024-07-14  58  	write_sysreg_s(*vcpu_cpsr(vcpu) & PSTATE_PAN, SYS_PSTATE_PAN);
-be0135bde1df5e Marc Zyngier 2024-07-14  59  
-be0135bde1df5e Marc Zyngier 2024-07-14  60  	switch (op) {
-be0135bde1df5e Marc Zyngier 2024-07-14  61  	case OP_AT_S1E1RP:
-be0135bde1df5e Marc Zyngier 2024-07-14  62  		fail = __kvm_at(OP_AT_S1E1RP, vaddr);
-be0135bde1df5e Marc Zyngier 2024-07-14  63  		break;
-be0135bde1df5e Marc Zyngier 2024-07-14  64  	case OP_AT_S1E1WP:
-be0135bde1df5e Marc Zyngier 2024-07-14  65  		fail = __kvm_at(OP_AT_S1E1WP, vaddr);
-be0135bde1df5e Marc Zyngier 2024-07-14  66  		break;
-
-default case?
-
-be0135bde1df5e Marc Zyngier 2024-07-14  67  	}
-be0135bde1df5e Marc Zyngier 2024-07-14  68  
-be0135bde1df5e Marc Zyngier 2024-07-14  69  	write_sysreg_s(host_pan, SYS_PSTATE_PAN);
-be0135bde1df5e Marc Zyngier 2024-07-14  70  
-be0135bde1df5e Marc Zyngier 2024-07-14 @71  	return fail;
-be0135bde1df5e Marc Zyngier 2024-07-14  72  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Neil
 
