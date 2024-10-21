@@ -1,181 +1,432 @@
-Return-Path: <linux-kernel+bounces-373533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758619A587F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:22:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6969A5881
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23F791F21E0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:22:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D7B31C20CCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685D0EEAB;
-	Mon, 21 Oct 2024 01:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CG7+E6Vz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A622C4C70;
-	Mon, 21 Oct 2024 01:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111A8C2F2;
+	Mon, 21 Oct 2024 01:25:12 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9C5C13C
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 01:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729473763; cv=none; b=KIeUKa6JFmTBEA83JXYRHC8ch5d8wJ3fzZNnJXWd2Nj/195nY3g6MR6ibXLZbX+VVYEtb+oi+ep50OBa/xkU9ghx30XqZ3skqAtYf6Oy3OB2jkvr6VwMGMlyT946WTUXBI/M/hAjVvsl42U1yUWekL2xFVkPbZE+8C1u6KeFDLw=
+	t=1729473911; cv=none; b=M+lVk9ATngjj/g235o0PDUKa1owNZUL9EM56mG9nJypjpvNFNCVkfcwZIk64QdaT8WFaOmA0QS7cGLDKLJc7rlM9/6Ta9DN5jX63bkamT7bGrCIdOsquQvbvCJ+37EtwMMgH/g54+/DEBrlxrlMppv5QyqWbOUWytwvKp3Egb1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729473763; c=relaxed/simple;
-	bh=jlCzg7egAixbWdgUefAl7xo5OOX4XAUpPQw4CNFUOIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wt1MS4iyIs+rgn5UIu4vbyf0J7svmy8sEORztD6YTGBe+XyPRyw2WVtyIFeqnHqIRrJMi/apitrn8IyPX1urKfvDg2r8iKgWuXn8V/09mNAd7XLIiMmcI17A2L6HtsrUf7txebrACCspt8EKabH3U4DaC3v4ax5sm14LCAVGQG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CG7+E6Vz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35EC7C4CEC7;
-	Mon, 21 Oct 2024 01:22:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729473763;
-	bh=jlCzg7egAixbWdgUefAl7xo5OOX4XAUpPQw4CNFUOIo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CG7+E6VzrSrwBrhwvoSrkmrlXQtOW8B22B8eFwlRO9GrJyrW/jHD8SztOSd3JNflR
-	 u5tSATP4Y+I3hP1gVAZgTGFSgBvyuM7B2FmO5q0ERSf70fo3evLrEkNvnvE+dAbkZ5
-	 iYywmNzmXytC9xC6MVv0xBjEt3pe4I7RbTbf8icw+v+rs1WWDC0GLu5hbQjddHG1MN
-	 DTrXnwFr0phT/a3dLgu18+KxUKJBzf4ZMuNCNl95zX5lhXqa0tYPmZ+CjZQHkvZFP6
-	 UsyjpeCtvHyyrT5bCMb1CclRstx7xmcCConnRVyGlH0IgcfD9Khw9YcW1yvYwXonYU
-	 46UlX9NtYR2Hg==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so45328601fa.0;
-        Sun, 20 Oct 2024 18:22:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVCbXIf2qw2SY/7XOrA6jkBBQJLAC0U9cdJNctCRc52clgiOJRp46vffVNKq6lOxoosmoSaLQyM5+Ac4xM9@vger.kernel.org, AJvYcCVDb950Q7ilKE1hnJAc0FJztdTIptRLQyNITIdDtnWPFKSmn8tVvRT4bxousrbXWuwsP2zJwovAVNDzTHKp@vger.kernel.org, AJvYcCXP05sKMD8O5prAwSiCC0NAuwblXAjc6qBbBtb1F2o1HkFKeod/doFS8TI6aouPXrfN05m0aXLWmNDX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUvp4778UxTgp1pgky7sbBaSn5C1RoBu6k+xGnbRIS9qxmAEh9
-	WHFmmvLhjzkqbQapfsYQNVH1ZMEWGiTpTAhS4dghQ6Rlf+Xva5aXSt+MUQl64qH2aDx8xM8NJuW
-	AbVbJSwER/B7SKc0NJ4t03bACpfE=
-X-Google-Smtp-Source: AGHT+IHKEipf35MYVwH+nk6bWLaxQ2XVrgwntLhq6reCsCyEjeQfuvEfGfKQ2g8ZLOkWK0d/FcaxQkfXbS6HX1Iz10k=
-X-Received: by 2002:a2e:a545:0:b0:2fb:50e9:34cc with SMTP id
- 38308e7fff4ca-2fb6dc74e7bmr44845751fa.17.1729473761693; Sun, 20 Oct 2024
- 18:22:41 -0700 (PDT)
+	s=arc-20240116; t=1729473911; c=relaxed/simple;
+	bh=64HU+j/0ZKi5/pVfSV0n5V4NApw03EN1YWR3JV/cJ+Y=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ocxZUIzCn5pWZe8vmyYdvYAKIQ4nzBfELzLVgOX7MFiqVAyD5kajl0DfcF1SDCLmbyr/N+k44JPoPexhae2IfR6XsEDmZSD+jIjg5hzEHwSYKhNyDfgNodU62H411m9yVX4dpF7ivqdsi5CTUWP0aI3ROiGeDB7sXY9M1eNpaXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8BxYa8NrRVnlhABAA--.2512S3;
+	Mon, 21 Oct 2024 09:23:25 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMBxveAKrRVn+ckBAA--.10312S3;
+	Mon, 21 Oct 2024 09:23:22 +0800 (CST)
+Subject: Re: [PATCH v2 1/3] LoongArch: Set initial pte entry with PAGE_GLOBAL
+ for kernel space
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: wuruiyang@loongson.cn, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-mm@kvack.org
+References: <20241014035855.1119220-1-maobibo@loongson.cn>
+ <20241014035855.1119220-2-maobibo@loongson.cn>
+ <CAAhV-H5QkULWp6fciR1Lnds0r00fUdrmj86K_wBuxd0D=RkaXQ@mail.gmail.com>
+ <f3089991-fd49-8d55-9ede-62ab1555c9fa@loongson.cn>
+ <CAAhV-H7yX6qinPL5E5tmNVpJk_xdKqFaSicUYy2k8NGM1owucw@mail.gmail.com>
+ <a4c6b89e-4ffe-4486-4ccd-7ebc28734f6f@loongson.cn>
+ <CAAhV-H6FkJZwa-pALUhucrU5OXxsHg+ByM+4NN0wPQgOJTqOXA@mail.gmail.com>
+ <5f76ede6-e8be-c7a9-f957-479afa2fb828@loongson.cn>
+ <CAAhV-H51W3ZRNxUjeAx52j6Tq18CEhB3_YeSH=psjAbEJUdwgg@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <f727e384-6989-0942-1cc8-7188f558ee39@loongson.cn>
+Date: Mon, 21 Oct 2024 09:22:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016194149.4178898-1-chris.packham@alliedtelesis.co.nz>
- <CAK7LNAR4h6NZ+D0BK+q4VQBeHWpjzRBQFQ9ovBrftM=6dHRcUg@mail.gmail.com> <bca44b71-d002-4dac-8c53-6b7dd90ffce1@alliedtelesis.co.nz>
-In-Reply-To: <bca44b71-d002-4dac-8c53-6b7dd90ffce1@alliedtelesis.co.nz>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 21 Oct 2024 10:22:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASZSSkUOTGeCB-JsSyX8a7EbKOD5UdQPqN4pVnG5rXeKg@mail.gmail.com>
-Message-ID: <CAK7LNASZSSkUOTGeCB-JsSyX8a7EbKOD5UdQPqN4pVnG5rXeKg@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: Restore the ability to build out of tree dtbs
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: nathan@kernel.org, nicolas@fjasle.eu, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Oct 21, 2024 at 7:57=E2=80=AFAM Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
->
-> +cc devicetree
->
-> Hi Masahiro,
->
-> On 19/10/24 00:19, Masahiro Yamada wrote:
-> > On Thu, Oct 17, 2024 at 4:59=E2=80=AFAM Chris Packham
-> > <chris.packham@alliedtelesis.co.nz> wrote:
-> >> A build pattern to handle out of tree dtbs is to copy the .dts file in=
-to
-> >> the kernel source tree and run `make myboard.dtb`. This is supported b=
-y
-> >> the wildcard %.dtb rule in the Makefile but recent changes to split th=
-e
-> >> dtb handling out of scripts/Makefile.build stopped this from working.
-> >> Restore this functionality by looking for .dtb in $(MAKECMDGOALS) as
-> >> well as $(targets).
-> >>
-> >> Fixes: e7e2941300d2 ("kbuild: split device tree build rules into scrip=
-ts/Makefile.dtbs")
-> >> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> >> ---
-> > This is not a use-case in upstream.
-> >
-> > If you drop-in your downstream DT to the kernel tree,
-> > you need to associate it with Makefile.
->
-> I agree that this is Hyrum's Law at work.  I still feel that handling
-> out-of-tree dtbs is something that would be in the best interest of the
-> Linux kernel. It doesn't necessarily need to be done by allowing copying
-> arbitrary .dts files into the tree, a mechanism like the way out of tree
-> kernel modules are handled would be workable.
->
-> Often supporting a new hardware platform is just a matter of writing a
-> dts that describes the board. Particularly when that board is based on
-> an existing one. The way most dts/dtsi files are arranged in-tree
-> requires a non trivial amount of handling by the C processor. So while
-> one could produce a dtb file by invoking cc -E and dtc with the right
-> options pointing at the right paths, having the kernel build system
-> provide something that abstracts that would be beneficial for developers
-> and even end users.
+In-Reply-To: <CAAhV-H51W3ZRNxUjeAx52j6Tq18CEhB3_YeSH=psjAbEJUdwgg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxveAKrRVn+ckBAA--.10312S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj9fXoWfJw48ZFyfWrWrtw45try3ZFc_yoW8GF1DZo
+	W5JF47tr18JryUJr10y34Dtw1Utw1DKw4UArW2yr4UXF15t34UAr1UJr15XFW7Gr1rJrsr
+	GFyUXr4UZrW7Jrn8l-sFpf9Il3svdjkaLaAFLSUrUUUUnb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
+	UjIYCTnIWjp_UUUOb7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
+	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
+	Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
+	CYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48J
+	MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcbAwUUUUU
 
 
 
-I also handle a bunch of yet-to-upstream device tree files.
+On 2024/10/18 下午2:32, Huacai Chen wrote:
+> On Fri, Oct 18, 2024 at 2:23 PM maobibo <maobibo@loongson.cn> wrote:
+>>
+>>
+>>
+>> On 2024/10/18 下午12:23, Huacai Chen wrote:
+>>> On Fri, Oct 18, 2024 at 12:16 PM maobibo <maobibo@loongson.cn> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2024/10/18 下午12:11, Huacai Chen wrote:
+>>>>> On Fri, Oct 18, 2024 at 11:44 AM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 2024/10/18 上午11:14, Huacai Chen wrote:
+>>>>>>> Hi, Bibo,
+>>>>>>>
+>>>>>>> I applied this patch but drop the part of arch/loongarch/mm/kasan_init.c:
+>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/commit/?h=loongarch-next&id=15832255e84494853f543b4c70ced50afc403067
+>>>>>>>
+>>>>>>> Because kernel_pte_init() should operate on page-table pages, not on
+>>>>>>> data pages. You have already handle page-table page in
+>>>>>>> mm/kasan/init.c, and if we don't drop the modification on data pages
+>>>>>>> in arch/loongarch/mm/kasan_init.c, the kernel fail to boot if KASAN is
+>>>>>>> enabled.
+>>>>>>>
+>>>>>> static inline void set_pte(pte_t *ptep, pte_t pteval)
+>>>>>>      {
+>>>>>>            WRITE_ONCE(*ptep, pteval);
+>>>>>> -
+>>>>>> -       if (pte_val(pteval) & _PAGE_GLOBAL) {
+>>>>>> -               pte_t *buddy = ptep_buddy(ptep);
+>>>>>> -               /*
+>>>>>> -                * Make sure the buddy is global too (if it's !none,
+>>>>>> -                * it better already be global)
+>>>>>> -                */
+>>>>>> -               if (pte_none(ptep_get(buddy))) {
+>>>>>> -#ifdef CONFIG_SMP
+>>>>>> -                       /*
+>>>>>> -                        * For SMP, multiple CPUs can race, so we need
+>>>>>> -                        * to do this atomically.
+>>>>>> -                        */
+>>>>>> -                       __asm__ __volatile__(
+>>>>>> -                       __AMOR "$zero, %[global], %[buddy] \n"
+>>>>>> -                       : [buddy] "+ZB" (buddy->pte)
+>>>>>> -                       : [global] "r" (_PAGE_GLOBAL)
+>>>>>> -                       : "memory");
+>>>>>> -
+>>>>>> -                       DBAR(0b11000); /* o_wrw = 0b11000 */
+>>>>>> -#else /* !CONFIG_SMP */
+>>>>>> -                       WRITE_ONCE(*buddy, __pte(pte_val(ptep_get(buddy)) | _PAGE_GLOBAL));
+>>>>>> -#endif /* CONFIG_SMP */
+>>>>>> -               }
+>>>>>> -       }
+>>>>>> +       DBAR(0b11000); /* o_wrw = 0b11000 */
+>>>>>>      }
+>>>>>>
+>>>>>> No, please hold on. This issue exists about twenty years, Do we need be
+>>>>>> in such a hurry now?
+>>>>>>
+>>>>>> why is DBAR(0b11000) added in set_pte()?
+>>>>> It exists before, not added by this patch. The reason is explained in
+>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v6.12-rc3&id=f93f67d06b1023313ef1662eac490e29c025c030
+>>>> why speculative accesses may cause spurious page fault in kernel space
+>>>> with PTE enabled?  speculative accesses exists anywhere, it does not
+>>>> cause spurious page fault.
+>>> Confirmed by Ruiyang Wu, and even if DBAR(0b11000) is wrong, that
+>>> means another patch's mistake, not this one. This one just keeps the
+>>> old behavior.
+>>> +CC Ruiyang Wu here.
+>> Also from Ruiyang Wu, the information is that speculative accesses may
+>> insert stale TLB, however no page fault exception.
+>>
+>> So adding barrier in set_pte() does not prevent speculative accesses.
+>> And you write patch here, however do not know the actual reason?
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v6.12-rc3&id=f93f67d06b1023313ef1662eac490e29c025c030
+> I have CCed Ruiyang, whether the description is correct can be judged by him.
+
+There are some problems to add barrier() in set_pte():
+
+1. There is such issue only for HW ptw enabled and kernel address space, 
+is that? Also it may be two heavy to add barrier in set_pte(), comparing 
+to do this in flush_cache_vmap().
+
+2. LoongArch is different with other other architectures, two pages are 
+included in one TLB entry. If there is two consecutive page mapped and 
+memory access, there will page fault for the second memory access. Such
+as:
+    addr1 =percpu_alloc(pagesize);
+    val1 = *(int *)addr1;
+      // With page table walk, addr1 is present and addr2 is pte_none
+      // TLB entry includes valid pte for addr1, invalid pte for addr2
+    addr2 =percpu_alloc(pagesize); // will not flush tlb in first time
+    val2 = *(int *)addr2;
+      // With page table walk, addr1 is present and addr2 is present also
+      // TLB entry includes valid pte for addr1, invalid pte for addr2
+    So there will be page fault when accessing address addr2
+
+There there is the same problem with user address space. By the way, 
+there is HW prefetching technology, negative effective of HW prefetching 
+technology will be tlb added. So there is potential page fault if memory 
+is allocated and accessed in the first time.
+
+3. For speculative execution, if it is user address, there is eret from 
+syscall. eret will rollback all speculative execution instruction. So it 
+is only problem for speculative execution. And how to verify whether it 
+is the problem of speculative execution or it is the problem of clause 2?
+
+Regards
+Bibo Mao
 
 
-I have them in the proper directory location, and add
+> 
+> Huacai
+> 
+>>
+>> Bibo Mao
+>>>
+>>> Huacai
+>>>
+>>>>
+>>>> Obvious you do not it and you write wrong patch.
+>>>>
+>>>>>
+>>>>> Huacai
+>>>>>
+>>>>>>
+>>>>>> Regards
+>>>>>> Bibo Mao
+>>>>>>> Huacai
+>>>>>>>
+>>>>>>> On Mon, Oct 14, 2024 at 11:59 AM Bibo Mao <maobibo@loongson.cn> wrote:
+>>>>>>>>
+>>>>>>>> Unlike general architectures, there are two pages in one TLB entry
+>>>>>>>> on LoongArch system. For kernel space, it requires both two pte
+>>>>>>>> entries with PAGE_GLOBAL bit set, else HW treats it as non-global
+>>>>>>>> tlb, there will be potential problems if tlb entry for kernel space
+>>>>>>>> is not global. Such as fail to flush kernel tlb with function
+>>>>>>>> local_flush_tlb_kernel_range() which only flush tlb with global bit.
+>>>>>>>>
+>>>>>>>> With function kernel_pte_init() added, it can be used to init pte
+>>>>>>>> table when it is created for kernel address space, and the default
+>>>>>>>> initial pte value is PAGE_GLOBAL rather than zero at beginning.
+>>>>>>>>
+>>>>>>>> Kernel address space areas includes fixmap, percpu, vmalloc, kasan
+>>>>>>>> and vmemmap areas set default pte entry with PAGE_GLOBAL set.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>>>>>>>> ---
+>>>>>>>>      arch/loongarch/include/asm/pgalloc.h | 13 +++++++++++++
+>>>>>>>>      arch/loongarch/include/asm/pgtable.h |  1 +
+>>>>>>>>      arch/loongarch/mm/init.c             |  4 +++-
+>>>>>>>>      arch/loongarch/mm/kasan_init.c       |  4 +++-
+>>>>>>>>      arch/loongarch/mm/pgtable.c          | 22 ++++++++++++++++++++++
+>>>>>>>>      include/linux/mm.h                   |  1 +
+>>>>>>>>      mm/kasan/init.c                      |  8 +++++++-
+>>>>>>>>      mm/sparse-vmemmap.c                  |  5 +++++
+>>>>>>>>      8 files changed, 55 insertions(+), 3 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/arch/loongarch/include/asm/pgalloc.h b/arch/loongarch/include/asm/pgalloc.h
+>>>>>>>> index 4e2d6b7ca2ee..b2698c03dc2c 100644
+>>>>>>>> --- a/arch/loongarch/include/asm/pgalloc.h
+>>>>>>>> +++ b/arch/loongarch/include/asm/pgalloc.h
+>>>>>>>> @@ -10,8 +10,21 @@
+>>>>>>>>
+>>>>>>>>      #define __HAVE_ARCH_PMD_ALLOC_ONE
+>>>>>>>>      #define __HAVE_ARCH_PUD_ALLOC_ONE
+>>>>>>>> +#define __HAVE_ARCH_PTE_ALLOC_ONE_KERNEL
+>>>>>>>>      #include <asm-generic/pgalloc.h>
+>>>>>>>>
+>>>>>>>> +static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+>>>>>>>> +{
+>>>>>>>> +       pte_t *pte;
+>>>>>>>> +
+>>>>>>>> +       pte = (pte_t *) __get_free_page(GFP_KERNEL);
+>>>>>>>> +       if (!pte)
+>>>>>>>> +               return NULL;
+>>>>>>>> +
+>>>>>>>> +       kernel_pte_init(pte);
+>>>>>>>> +       return pte;
+>>>>>>>> +}
+>>>>>>>> +
+>>>>>>>>      static inline void pmd_populate_kernel(struct mm_struct *mm,
+>>>>>>>>                                            pmd_t *pmd, pte_t *pte)
+>>>>>>>>      {
+>>>>>>>> diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
+>>>>>>>> index 9965f52ef65b..22e3a8f96213 100644
+>>>>>>>> --- a/arch/loongarch/include/asm/pgtable.h
+>>>>>>>> +++ b/arch/loongarch/include/asm/pgtable.h
+>>>>>>>> @@ -269,6 +269,7 @@ extern void set_pmd_at(struct mm_struct *mm, unsigned long addr, pmd_t *pmdp, pm
+>>>>>>>>      extern void pgd_init(void *addr);
+>>>>>>>>      extern void pud_init(void *addr);
+>>>>>>>>      extern void pmd_init(void *addr);
+>>>>>>>> +extern void kernel_pte_init(void *addr);
+>>>>>>>>
+>>>>>>>>      /*
+>>>>>>>>       * Encode/decode swap entries and swap PTEs. Swap PTEs are all PTEs that
+>>>>>>>> diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
+>>>>>>>> index 8a87a482c8f4..9f26e933a8a3 100644
+>>>>>>>> --- a/arch/loongarch/mm/init.c
+>>>>>>>> +++ b/arch/loongarch/mm/init.c
+>>>>>>>> @@ -198,9 +198,11 @@ pte_t * __init populate_kernel_pte(unsigned long addr)
+>>>>>>>>             if (!pmd_present(pmdp_get(pmd))) {
+>>>>>>>>                     pte_t *pte;
+>>>>>>>>
+>>>>>>>> -               pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+>>>>>>>> +               pte = memblock_alloc_raw(PAGE_SIZE, PAGE_SIZE);
+>>>>>>>>                     if (!pte)
+>>>>>>>>                             panic("%s: Failed to allocate memory\n", __func__);
+>>>>>>>> +
+>>>>>>>> +               kernel_pte_init(pte);
+>>>>>>>>                     pmd_populate_kernel(&init_mm, pmd, pte);
+>>>>>>>>             }
+>>>>>>>>
+>>>>>>>> diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_init.c
+>>>>>>>> index 427d6b1aec09..34988573b0d5 100644
+>>>>>>>> --- a/arch/loongarch/mm/kasan_init.c
+>>>>>>>> +++ b/arch/loongarch/mm/kasan_init.c
+>>>>>>>> @@ -152,6 +152,8 @@ static void __init kasan_pte_populate(pmd_t *pmdp, unsigned long addr,
+>>>>>>>>                     phys_addr_t page_phys = early ?
+>>>>>>>>                                             __pa_symbol(kasan_early_shadow_page)
+>>>>>>>>                                                   : kasan_alloc_zeroed_page(node);
+>>>>>>>> +               if (!early)
+>>>>>>>> +                       kernel_pte_init(__va(page_phys));
+>>>>>>>>                     next = addr + PAGE_SIZE;
+>>>>>>>>                     set_pte(ptep, pfn_pte(__phys_to_pfn(page_phys), PAGE_KERNEL));
+>>>>>>>>             } while (ptep++, addr = next, addr != end && __pte_none(early, ptep_get(ptep)));
+>>>>>>>> @@ -287,7 +289,7 @@ void __init kasan_init(void)
+>>>>>>>>                     set_pte(&kasan_early_shadow_pte[i],
+>>>>>>>>                             pfn_pte(__phys_to_pfn(__pa_symbol(kasan_early_shadow_page)), PAGE_KERNEL_RO));
+>>>>>>>>
+>>>>>>>> -       memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+>>>>>>>> +       kernel_pte_init(kasan_early_shadow_page);
+>>>>>>>>             csr_write64(__pa_symbol(swapper_pg_dir), LOONGARCH_CSR_PGDH);
+>>>>>>>>             local_flush_tlb_all();
+>>>>>>>>
+>>>>>>>> diff --git a/arch/loongarch/mm/pgtable.c b/arch/loongarch/mm/pgtable.c
+>>>>>>>> index eb6a29b491a7..228ffc1db0a3 100644
+>>>>>>>> --- a/arch/loongarch/mm/pgtable.c
+>>>>>>>> +++ b/arch/loongarch/mm/pgtable.c
+>>>>>>>> @@ -38,6 +38,28 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+>>>>>>>>      }
+>>>>>>>>      EXPORT_SYMBOL_GPL(pgd_alloc);
+>>>>>>>>
+>>>>>>>> +void kernel_pte_init(void *addr)
+>>>>>>>> +{
+>>>>>>>> +       unsigned long *p, *end;
+>>>>>>>> +       unsigned long entry;
+>>>>>>>> +
+>>>>>>>> +       entry = (unsigned long)_PAGE_GLOBAL;
+>>>>>>>> +       p = (unsigned long *)addr;
+>>>>>>>> +       end = p + PTRS_PER_PTE;
+>>>>>>>> +
+>>>>>>>> +       do {
+>>>>>>>> +               p[0] = entry;
+>>>>>>>> +               p[1] = entry;
+>>>>>>>> +               p[2] = entry;
+>>>>>>>> +               p[3] = entry;
+>>>>>>>> +               p[4] = entry;
+>>>>>>>> +               p += 8;
+>>>>>>>> +               p[-3] = entry;
+>>>>>>>> +               p[-2] = entry;
+>>>>>>>> +               p[-1] = entry;
+>>>>>>>> +       } while (p != end);
+>>>>>>>> +}
+>>>>>>>> +
+>>>>>>>>      void pgd_init(void *addr)
+>>>>>>>>      {
+>>>>>>>>             unsigned long *p, *end;
+>>>>>>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>>>>>>>> index ecf63d2b0582..6909fe059a2c 100644
+>>>>>>>> --- a/include/linux/mm.h
+>>>>>>>> +++ b/include/linux/mm.h
+>>>>>>>> @@ -3818,6 +3818,7 @@ void *sparse_buffer_alloc(unsigned long size);
+>>>>>>>>      struct page * __populate_section_memmap(unsigned long pfn,
+>>>>>>>>                     unsigned long nr_pages, int nid, struct vmem_altmap *altmap,
+>>>>>>>>                     struct dev_pagemap *pgmap);
+>>>>>>>> +void kernel_pte_init(void *addr);
+>>>>>>>>      void pmd_init(void *addr);
+>>>>>>>>      void pud_init(void *addr);
+>>>>>>>>      pgd_t *vmemmap_pgd_populate(unsigned long addr, int node);
+>>>>>>>> diff --git a/mm/kasan/init.c b/mm/kasan/init.c
+>>>>>>>> index 89895f38f722..ac607c306292 100644
+>>>>>>>> --- a/mm/kasan/init.c
+>>>>>>>> +++ b/mm/kasan/init.c
+>>>>>>>> @@ -106,6 +106,10 @@ static void __ref zero_pte_populate(pmd_t *pmd, unsigned long addr,
+>>>>>>>>             }
+>>>>>>>>      }
+>>>>>>>>
+>>>>>>>> +void __weak __meminit kernel_pte_init(void *addr)
+>>>>>>>> +{
+>>>>>>>> +}
+>>>>>>>> +
+>>>>>>>>      static int __ref zero_pmd_populate(pud_t *pud, unsigned long addr,
+>>>>>>>>                                     unsigned long end)
+>>>>>>>>      {
+>>>>>>>> @@ -126,8 +130,10 @@ static int __ref zero_pmd_populate(pud_t *pud, unsigned long addr,
+>>>>>>>>
+>>>>>>>>                             if (slab_is_available())
+>>>>>>>>                                     p = pte_alloc_one_kernel(&init_mm);
+>>>>>>>> -                       else
+>>>>>>>> +                       else {
+>>>>>>>>                                     p = early_alloc(PAGE_SIZE, NUMA_NO_NODE);
+>>>>>>>> +                               kernel_pte_init(p);
+>>>>>>>> +                       }
+>>>>>>>>                             if (!p)
+>>>>>>>>                                     return -ENOMEM;
+>>>>>>>>
+>>>>>>>> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+>>>>>>>> index edcc7a6b0f6f..c0388b2e959d 100644
+>>>>>>>> --- a/mm/sparse-vmemmap.c
+>>>>>>>> +++ b/mm/sparse-vmemmap.c
+>>>>>>>> @@ -184,6 +184,10 @@ static void * __meminit vmemmap_alloc_block_zero(unsigned long size, int node)
+>>>>>>>>             return p;
+>>>>>>>>      }
+>>>>>>>>
+>>>>>>>> +void __weak __meminit kernel_pte_init(void *addr)
+>>>>>>>> +{
+>>>>>>>> +}
+>>>>>>>> +
+>>>>>>>>      pmd_t * __meminit vmemmap_pmd_populate(pud_t *pud, unsigned long addr, int node)
+>>>>>>>>      {
+>>>>>>>>             pmd_t *pmd = pmd_offset(pud, addr);
+>>>>>>>> @@ -191,6 +195,7 @@ pmd_t * __meminit vmemmap_pmd_populate(pud_t *pud, unsigned long addr, int node)
+>>>>>>>>                     void *p = vmemmap_alloc_block_zero(PAGE_SIZE, node);
+>>>>>>>>                     if (!p)
+>>>>>>>>                             return NULL;
+>>>>>>>> +               kernel_pte_init(p);
+>>>>>>>>                     pmd_populate_kernel(&init_mm, pmd, p);
+>>>>>>>>             }
+>>>>>>>>             return pmd;
+>>>>>>>> --
+>>>>>>>> 2.39.3
+>>>>>>>>
+>>>>>>
+>>>>>>
+>>>>
+>>>>
+>>
+>>
 
-  dtb-$(CONFIG_ARCH_FOO)  +=3D foo-downstream-custom1.dtb
-  dtb-$(CONFIG_ARCH_FOO)  +=3D foo-downstream-custom2.dtb
-    ...
-
-jutt like how they would look when they were upstreamed.
-
-
-
-I do not understand why the drop-in way is supported.
-
-
-
-
-
-
-
-
-
-
-
-> >> Notes:
-> >>      Changes in v2:
-> >>      - keep $(target) and search for .dtb in $(MAKECMDGOALS)
-> >>
-> >>   scripts/Makefile.build | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> >> index 8f423a1faf50..78763a4bc58a 100644
-> >> --- a/scripts/Makefile.build
-> >> +++ b/scripts/Makefile.build
-> >> @@ -449,7 +449,7 @@ ifneq ($(userprogs),)
-> >>   include $(srctree)/scripts/Makefile.userprogs
-> >>   endif
-> >>
-> >> -ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o %.dtbo.o=
-,$(targets)),)
-> >> +ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o %.dtbo.o=
-,$(targets))$(filter %.dtb,$(MAKECMDGOALS)),)
-> >>   include $(srctree)/scripts/Makefile.dtbs
-> >>   endif
-> >>
-> >> --
-> >> 2.47.0
-> >>
-> >>
-> >
-> > --
-> > Best Regards
-> > Masahiro Yamada
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
