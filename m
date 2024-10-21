@@ -1,202 +1,95 @@
-Return-Path: <linux-kernel+bounces-374182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8338E9A667A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:20:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C349A667D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBB611F22F54
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:20:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2DD11C21995
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999591E5728;
-	Mon, 21 Oct 2024 11:20:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA741E3787
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 11:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DCB1E7657;
+	Mon, 21 Oct 2024 11:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFM73l/B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66341E3787;
+	Mon, 21 Oct 2024 11:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729509614; cv=none; b=FNxdc/T9CZ5DriybFbSbBqJgrGD1Pn3lblqommCPVHPYE2rA4FgYKLHbFV0ktAtmupsOv2TG3vAxXpC/tGZFyN6XuzWZQbDvvXyK3c83APxm+9xLdEkuKmowrL02G20SiLaF1AeVw8WR/uB1aiT7DUVJftZOK+wv+Vz0Fpg8dcM=
+	t=1729509625; cv=none; b=ir89snDvKDrkPJCQHiRbjP139zRHU0rjJ6zTFcHSQIRPrd+Fixs3K2TX2sGj96thioqVC0Ped1YEcEuOLlHrR9nDCYxlAIDNBnBhmETm/KNhHEORhY1CPnsXApZ+6mk4TBLWgIGP+A9HqB0TvYh6gecGzFJnlj7TM6j03UpA3dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729509614; c=relaxed/simple;
-	bh=04+++EXzlIsU3O1OYtV8+JrmYNxTV69w0cFqFS1hxl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VCQJPkZmZklGc9tgBATZjoEcfNFekalthCP9AtFy7pxYhQ/bn8EbU8cDmylFNHggPw9oWYWN2yyylWw0bt++pcpX9p38Bcs7i6gcerLlxZx5D7L86p6sEOIDGedkZPIe9TqmZr4ELUnGxM9ihmhyxYIiIFr/ErneC6i3KOhErec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCA96DA7;
-	Mon, 21 Oct 2024 04:20:39 -0700 (PDT)
-Received: from [10.57.87.148] (unknown [10.57.87.148])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B769F3F528;
-	Mon, 21 Oct 2024 04:20:06 -0700 (PDT)
-Message-ID: <cffd8486-63af-4e45-9c4b-57ffda2fc63a@arm.com>
-Date: Mon, 21 Oct 2024 12:20:04 +0100
+	s=arc-20240116; t=1729509625; c=relaxed/simple;
+	bh=hoylwdeO+4UCHP8hfqECEFKP9uT5H2q9+JA5ehD/yA0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rXxnSzxLP8Xj5pPKaLHLdNDaSeY/S21dERn5EaAEx/mylsaZTp/NpWKZM4sqOL92sjCXZplTKIcHkmFjhevV+8KnUSsJei1Uq4+08e3c6QJYGdxRt83jkRXHeJwfzqWCmyusqqO2WYzkoKU7dccrFGn3H2nrZGdQLOqdQP/zSUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFM73l/B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 497CEC4CEC3;
+	Mon, 21 Oct 2024 11:20:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729509625;
+	bh=hoylwdeO+4UCHP8hfqECEFKP9uT5H2q9+JA5ehD/yA0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=gFM73l/BbP+lF2eKn/xPt7wGrJRcG5CHDlTctZcwszn8hDu3Hq+Qw4mEpCJG31rpc
+	 Tyzco5Eq2yB1/AESePa8Bh08q8RAliUO4Np1vL1pVhvzwdeB7pYVszSGY1yF+rS4Ua
+	 SSK7udYTaVcrXZryJR5tlwUDKU27yQ6gogP5hG0ijKM9Xrz675rx1olCuELmSgOiVC
+	 3LFJ1ak5GLd2SIHm5E3iX9U281FB+q4Dxnn95NiAQmKE3KoYJQco2ir9V0i3vhx0Ts
+	 IIx2iAZ0EaWO9Hy/vMu8jM4zL04SiMwI/a3Sdfzon7XyLo8vwCP1GbIVH7Purcm24J
+	 +/7NiJd5N7MlQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E113809A8A;
+	Mon, 21 Oct 2024 11:20:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 44/57] arm64: Align sections to PAGE_SIZE_MAX
-Content-Language: en-GB
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- David Hildenbrand <david@redhat.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Oliver Upton <oliver.upton@linux.dev>,
- Will Deacon <will@kernel.org>, kvmarm@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-44-ryan.roberts@arm.com>
- <69533deb-dc77-49c3-a256-49efee308905@t-8ch.de>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <69533deb-dc77-49c3-a256-49efee308905@t-8ch.de>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] virtio_net: fix integer overflow in stats
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172950963128.220882.1931223325921327261.git-patchwork-notify@kernel.org>
+Date: Mon, 21 Oct 2024 11:20:31 +0000
+References: <53e2bd6728136d5916e384a7840e5dc7eebff832.1729099611.git.mst@redhat.com>
+In-Reply-To: <53e2bd6728136d5916e384a7840e5dc7eebff832.1729099611.git.mst@redhat.com>
+To: Michael S. Tsirkin <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, colin.i.king@gmail.com, jasowang@redhat.com,
+ xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ virtualization@lists.linux.dev, netdev@vger.kernel.org
 
-On 19/10/2024 15:16, Thomas Weißschuh wrote:
-> On 2024-10-14 11:58:51+0100, Ryan Roberts wrote:
->> Increase alignment of sections in nvhe hyp, vdso and final vmlinux image
->> from PAGE_SIZE to PAGE_SIZE_MAX. For compile-time PAGE_SIZE,
->> PAGE_SIZE_MAX == PAGE_SIZE so there is no change. For boot-time
->> PAGE_SIZE, PAGE_SIZE_MAX is the largest selectable page size.
->>
->> For a boot-time page size build, image size is comparable to a 64K page
->> size compile-time build. In future, it may be desirable to optimize
->> run-time memory consumption by freeing unused padding pages when the
->> boot-time selected page size is less than PAGE_SIZE_MAX.
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>
->> ***NOTE***
->> Any confused maintainers may want to read the cover note here for context:
->> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
->>
->>  arch/arm64/include/asm/memory.h     |  4 +--
->>  arch/arm64/kernel/vdso-wrap.S       |  4 +--
->>  arch/arm64/kernel/vdso.c            |  7 +++---
->>  arch/arm64/kernel/vdso/vdso.lds.S   |  4 +--
->>  arch/arm64/kernel/vdso32-wrap.S     |  4 +--
->>  arch/arm64/kernel/vdso32/vdso.lds.S |  4 +--
->>  arch/arm64/kernel/vmlinux.lds.S     | 38 ++++++++++++++---------------
->>  arch/arm64/kvm/hyp/nvhe/hyp.lds.S   |  2 +-
->>  8 files changed, 34 insertions(+), 33 deletions(-)
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Wed, 16 Oct 2024 13:27:07 -0400 you wrote:
+> Static analysis on linux-next has detected the following issue
+> in function virtnet_stats_ctx_init, in drivers/net/virtio_net.c :
 > 
->> diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
->> index 89b6e78400023..1efe98909a2e0 100644
->> --- a/arch/arm64/kernel/vdso.c
->> +++ b/arch/arm64/kernel/vdso.c
->> @@ -195,7 +195,7 @@ static int __setup_additional_pages(enum vdso_abi abi,
->>  
->>  	vdso_text_len = vdso_info[abi].vdso_pages << PAGE_SHIFT;
->>  	/* Be sure to map the data page */
->> -	vdso_mapping_len = vdso_text_len + VVAR_NR_PAGES * PAGE_SIZE;
->> +	vdso_mapping_len = vdso_text_len + VVAR_NR_PAGES * PAGE_SIZE_MAX;
->>  
->>  	vdso_base = get_unmapped_area(NULL, 0, vdso_mapping_len, 0, 0);
->>  	if (IS_ERR_VALUE(vdso_base)) {
->> @@ -203,7 +203,8 @@ static int __setup_additional_pages(enum vdso_abi abi,
->>  		goto up_fail;
->>  	}
->>  
->> -	ret = _install_special_mapping(mm, vdso_base, VVAR_NR_PAGES * PAGE_SIZE,
->> +	ret = _install_special_mapping(mm, vdso_base,
->> +				       VVAR_NR_PAGES * PAGE_SIZE_MAX,
->>  				       VM_READ|VM_MAYREAD|VM_PFNMAP,
->>  				       vdso_info[abi].dm);
->>  	if (IS_ERR(ret))
->> @@ -212,7 +213,7 @@ static int __setup_additional_pages(enum vdso_abi abi,
->>  	if (system_supports_bti_kernel())
->>  		gp_flags = VM_ARM64_BTI;
->>  
->> -	vdso_base += VVAR_NR_PAGES * PAGE_SIZE;
->> +	vdso_base += VVAR_NR_PAGES * PAGE_SIZE_MAX;
->>  	mm->context.vdso = (void *)vdso_base;
->>  	ret = _install_special_mapping(mm, vdso_base, vdso_text_len,
->>  				       VM_READ|VM_EXEC|gp_flags|
+>         if (vi->device_stats_cap & VIRTIO_NET_STATS_TYPE_CVQ) {
+>                 queue_type = VIRTNET_Q_TYPE_CQ;
+>                 ctx->bitmap[queue_type]   |= VIRTIO_NET_STATS_TYPE_CVQ;
+>                 ctx->desc_num[queue_type] += ARRAY_SIZE(virtnet_stats_cvq_desc);
+>                 ctx->size[queue_type]     += sizeof(struct virtio_net_stats_cvq);
+>         }
 > 
->> diff --git a/arch/arm64/kernel/vdso/vdso.lds.S b/arch/arm64/kernel/vdso/vdso.lds.S
->> index 45354f2ddf706..f7d1537a689e8 100644
->> --- a/arch/arm64/kernel/vdso/vdso.lds.S
->> +++ b/arch/arm64/kernel/vdso/vdso.lds.S
->> @@ -18,9 +18,9 @@ OUTPUT_ARCH(aarch64)
->>  
->>  SECTIONS
->>  {
->> -	PROVIDE(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE);
->> +	PROVIDE(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE_MAX);
->>  #ifdef CONFIG_TIME_NS
->> -	PROVIDE(_timens_data = _vdso_data + PAGE_SIZE);
->> +	PROVIDE(_timens_data = _vdso_data + PAGE_SIZE_MAX);
-> 
-> This looks like it also needs a change to vvar_fault() in vdso.c.
-> The symbols are now always PAGE_SIZE_MAX apart, while vvar_fault() works
-> in page offsets (vmf->pgoff) that are based on the runtime PAGE_SIZE and
-> it expects hardcoded offsets.
-> 
-> As test you can use tools/testing/selftests/timens/timens.
-> 
-> (I can't test this right now, so it's only a suspicion)
+> [...]
 
-Ahh good spot - that test does infact fail.
+Here is the summary with links:
+  - virtio_net: fix integer overflow in stats
+    https://git.kernel.org/netdev/net/c/d95d9a31aceb
 
-This fixes the problem:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
----8<---
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 1efe98909a2e0..d2049ba6b19f5 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -151,10 +151,11 @@ int vdso_join_timens(struct task_struct *task, struct
-time_namespace *ns)
- static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
-                             struct vm_area_struct *vma, struct vm_fault *vmf)
- {
-+       pgoff_t pgmaxoff = vmf->pgoff >> (PAGE_SHIFT_MAX - PAGE_SHIFT);
-        struct page *timens_page = find_timens_vvar_page(vma);
-        unsigned long pfn;
-
--       switch (vmf->pgoff) {
-+       switch (pgmaxoff) {
-        case VVAR_DATA_PAGE_OFFSET:
-                if (timens_page)
-                        pfn = page_to_pfn(timens_page);
----8<---
-
-I'll include it in the next version.
-
-Thanks,
-Ryan
-
-> 
->>  #endif
->>  	. = VDSO_LBASE + SIZEOF_HEADERS;
-> 
->> diff --git a/arch/arm64/kernel/vdso32/vdso.lds.S b/arch/arm64/kernel/vdso32/vdso.lds.S
->> index 8d95d7d35057d..c46d18a69d1ce 100644
->> --- a/arch/arm64/kernel/vdso32/vdso.lds.S
->> +++ b/arch/arm64/kernel/vdso32/vdso.lds.S
->> @@ -18,9 +18,9 @@ OUTPUT_ARCH(arm)
->>  
->>  SECTIONS
->>  {
->> -	PROVIDE_HIDDEN(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE);
->> +	PROVIDE_HIDDEN(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE_MAX);
->>  #ifdef CONFIG_TIME_NS
->> -	PROVIDE_HIDDEN(_timens_data = _vdso_data + PAGE_SIZE);
->> +	PROVIDE_HIDDEN(_timens_data = _vdso_data + PAGE_SIZE_MAX);
->>  #endif
->>  	. = VDSO_LBASE + SIZEOF_HEADERS;
 
 
