@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-375295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66749A944C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:40:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4DF9A9450
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D57A11C22A87
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092201F22D90
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5697020010C;
-	Mon, 21 Oct 2024 23:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0923E20012C;
+	Mon, 21 Oct 2024 23:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Kzfj3jpq"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="b8hwkhcz"
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891281FF5FE
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C1C1FF7AE
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729553993; cv=none; b=QI6OzJ2w4DENPAAQFpgrsXO9kCQGITdqVgZwu74bRFhXdTMD86fH3B/yUyhAf8riLG2mHRe6jFMjUTOefE4NHBu7UenqlXWcSxR2ZNABq5h4sfB08eGnHsdUhg+p0blFBcw1H6E+5AMtusIeM0u+2eHmTAZWvuHS+ViYJOQwt8o=
+	t=1729553994; cv=none; b=jsg2Q2HRp1fmfgO82RS3eGLTZXfnARfUyQXOAK7KpAhIU8Wm/UnUbrTyXumjgR5Ze7jf0M9qld4LqVHqn9xz89tHDLgTTETMDrxjRHJGYzaIwiBl7vYIB5uaSCn5uuuEES88u0klrnqUtdrohzq1TvOCIII7fU32KgD9rV8CWQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729553993; c=relaxed/simple;
-	bh=q1QmvXn6GwPcneGjGwPv0xmS4RRUjRFacDa92Vsp7Kw=;
+	s=arc-20240116; t=1729553994; c=relaxed/simple;
+	bh=NInB1ELQ1g4XSXdcmSTFZeS7lQkYq0qiMSkXS/J8G1g=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=eEgPQjn3KElr3H+lJAdRpo1ne0SHwTcngYJCrJqt3DR5VOHxFwrAmblmUXdq6WQ/7Uj+mPLckNdu/XVR1LbBHN7S46dRIV7soOXVKeACZmQD1j7p7NVUf5zbVNuScb20kIHzU2U06pEm8QikNXTibKSTCOILczNCx/BSkYz4MHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Kzfj3jpq; arc=none smtp.client-ip=209.85.222.179
+	 References:In-Reply-To; b=IZAm1WS85S6IDpCUenWTCzJ2ral6hgetW0d2e8D3aVPV/VzRI4BB5nmE21rca1Pio7+W5VLDv8TgtRGt+ERJwPXik76puxSDdhMQmENIL45A33yU8aS22uRqH1WRszQns+/bRI5OCPnfKK6fdsfu1/EjtsMwppikuUCnYvtPBVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=b8hwkhcz; arc=none smtp.client-ip=209.85.217.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b155cca097so329455085a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:39:51 -0700 (PDT)
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4a470d330a5so1590598137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 16:39:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1729553990; x=1730158790; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1729553991; x=1730158791; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=X7tHUckLE/MLiHUlkx0kAjj3yltxCb3kfPASiHLjhco=;
-        b=Kzfj3jpq5Gs6Iyof3iA7rovfU2wLkd9Tl9jotb42aKAxDv1hEyEWdJFW3Yl2oB9wi4
-         x+UYwFcHG5FTNw3OiuzdHqfFrDDlTTo9vkfe+S8/KQv2aAYcRkn9Ac+IULwekeeQhaYu
-         VJQaLNUNKeDcAKFZFoIcHiHNd4ur112PjTRwcDC/+g+UXtBx5MK0x6IOtsmfONfbBxei
-         4oqqOZ2g71XbJCpB1IH8cuBNPO+RGSMvCw8z0/V5b90L3YJ3/htlYjsS0P0+BNx+PjKU
-         y+Rfo7VyX4lNQkeCqX0TcvolcjJWOtv7yrDRIdyHXCtek63tYyZPcPWkitTkHo2S/nUu
-         zAQw==
+        bh=sDWEE14Y4prwCb9Fzm1EENaaRq06/1PNnuTUtMOSfEo=;
+        b=b8hwkhczIuUS4MDTwG13WlmxeVODuqeDR2T1YxKCKiIcUtQsQFdXYY10kU3Mp3yosW
+         gVPDcBjkg9pAU92BOHHGcGI2qcVG5iZnD5pd3qn1Pq2phOL6XcV/tGK1PrjD2JZBmX/T
+         QHzBV3yUIVlvtoRiCQHxvbXm/PU+XTn8TBvB2+XXXFkfZZvb9fRknVxn6wShCN1LR+cG
+         J9ISacDDRM4z9zKmx6BNu+SXaPiglOp5lwzt3o9PBlvfvaSCcDJ7mLwflooWt3Snm0Ux
+         jZ0X1DJ/bxV0V+KvSan2pLMPyyFaK0bCNbuYU4jbykY/9zUReQvr/OPkfEHTUM+03eNq
+         q9MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729553990; x=1730158790;
+        d=1e100.net; s=20230601; t=1729553991; x=1730158791;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=X7tHUckLE/MLiHUlkx0kAjj3yltxCb3kfPASiHLjhco=;
-        b=fYeFQ5avSaGkcW2qjdy1RY+2VHcLUAcOgGbGB6ywnow01H7rEGdXpNk4KYGer31QJc
-         j1Xvx2d3v39vY5Qq84ec5eqblKZSQqypwO2AoDAHlirjB39yTDctSgz/i8jsc9yxWbNm
-         4wnseA8AZsaHJzgPbQRXbvVV9AGgOwBwuUWtuaJAvyN/MeZXun17Zjc2ieF9fRW0uaGW
-         6j7IwEmQLyKGPjKyKn4YPW8sqzpbLpEcgZd7eow99hSdbNFhIPD7WDifAuCci4ZmdO/d
-         cmaqQ7hZqW3mGTcEisLFQyF0obZda2gzZMQc5PiTs+/thiKsFQN7rFBlYjGDp1kiALdP
-         /I/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVU8Lb+XXvDk1eXPVrB/10O4TLg05/keNYLyJUDLKE1MWFSvs7V024kjyB+TtV2QfilFxqdbe92K/257rE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCmJcI48fFnn4rpOujRpPFjB7lrOxUz4essx/pGYiMIyIEpQ6r
-	iJ4lqqGvyN+8Uj3puot9OvfLvHGAYzsSqIzGaDb+qO1zPRCWc1HcfH/yWMEZOw==
-X-Google-Smtp-Source: AGHT+IHMuRe4JiqCCfpTVHmSm+FewrxBnBkGSC7Nzs4TDMNE+u2iWG54d8b/+ap0PMLoJ5C40bnP5Q==
-X-Received: by 2002:a05:620a:1928:b0:7ac:e8bf:894a with SMTP id af79cd13be357-7b1755db38cmr237177885a.20.1729553990490;
-        Mon, 21 Oct 2024 16:39:50 -0700 (PDT)
+        bh=sDWEE14Y4prwCb9Fzm1EENaaRq06/1PNnuTUtMOSfEo=;
+        b=Q6vpkW532tZuk9W7Sk6nxD6d2TkJsFwlyNj5GYNOfKxujALBkf/n6SsmPHftYCcdyF
+         MpVq65z2SWv9MJ8blDSPcngGVP72eV0bl/uqa1tZAGWsr/qVSSOqkctsaYWdZA/d/4m9
+         4du/3nyusIok4uCUUcFKWN1YL43p1DTdvzMjRx+xKb+1eP969BFZSNAZchPXNuZazs0D
+         eCb3Xhg92tMk8GKypCYiwUmTbWKEMRTO09p6eMPmolv85rs+/H6YUFV/8kW85dHPSLnt
+         OoKpMfSCmhCBfvMKf7RrjMICZsQI/9Nu2FqFK/FishC3K3cvjCmWkPsCupkcOsxVLVSW
+         38eA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkgLMsOCiT8ExRUvLBk5o7R176+aHe7PhbYoTAkgGNHN2t7ce5jg4hrfqmkDMHcFChC5kvobgwo+EiwLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMU9fVFLtIvK623C7lFqIMj+vMSNkUl4WDOD+CZCPisin3U0qR
+	XdgFfqq6EVBDKpYzGpqkYY4ow1ZBqhhvcWiIqBwFrQtS2Qf3AgxCf9+WNuL9NQ==
+X-Google-Smtp-Source: AGHT+IFWWAbYXocHhlD1zYem9kRJwJmJqB2DCjjBRaGPSAY+7moTo2ts1qOtpARGMDwTWMEgN4Zm7g==
+X-Received: by 2002:a05:6102:2924:b0:4a4:8b30:53e with SMTP id ada2fe7eead31-4a742d5c725mr800271137.7.1729553991685;
+        Mon, 21 Oct 2024 16:39:51 -0700 (PDT)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1659c88f1sm226044385a.17.2024.10.21.16.39.49
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3d69467sm23730721cf.75.2024.10.21.16.39.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 16:39:50 -0700 (PDT)
-Date: Mon, 21 Oct 2024 19:39:49 -0400
-Message-ID: <b94aa34a25a19ea729faa1c8240ebf5b@paul-moore.com>
+        Mon, 21 Oct 2024 16:39:51 -0700 (PDT)
+Date: Mon, 21 Oct 2024 19:39:50 -0400
+Message-ID: <5b6addd938c9feae0b4df8f54d56f9f0@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,66 +79,74 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: pstg-pwork:20241021_1626/pstg-lib:20241021_1624/pstg-pwork:20241021_1626
 From: Paul Moore <paul@paul-moore.com>
 To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] LSM: lsm_context in security_dentry_init_security
-References: <20241014151450.73674-5-casey@schaufler-ca.com>
-In-Reply-To: <20241014151450.73674-5-casey@schaufler-ca.com>
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net
+Subject: Re: [PATCH v2 5/6] LSM: secctx provider check on release
+References: <20241014151450.73674-6-casey@schaufler-ca.com>
+In-Reply-To: <20241014151450.73674-6-casey@schaufler-ca.com>
 
 On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> Replace the (secctx,seclen) pointer pair with a single lsm_context
-> pointer to allow return of the LSM identifier along with the context
-> and context length. This allows security_release_secctx() to know how
-> to release the context. Callers have been modified to use or save the
-> returned data from the new structure.
-> 
-> Special care is taken in the NFS code, which uses the same data structure
-> for its own copied labels as it does for the data which comes from
-> security_dentry_init_security().  In the case of copied labels the data
-> has to be freed, not released.
-> 
-> The scaffolding funtion lsmcontext_init() is no longer needed and is
-> removed.
+> Verify that the LSM releasing the secctx is the LSM that
+> allocated it. This was not necessary when only one LSM could
+> create a secctx, but once there can be more than one it is.
 > 
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: ceph-devel@vger.kernel.org
-> Cc: linux-nfs@vger.kernel.org
 > ---
->  fs/ceph/super.h               |  3 +--
->  fs/ceph/xattr.c               | 16 ++++++----------
->  fs/fuse/dir.c                 | 35 ++++++++++++++++++-----------------
->  fs/nfs/dir.c                  |  2 +-
->  fs/nfs/inode.c                | 17 ++++++++++-------
->  fs/nfs/internal.h             |  8 +++++---
->  fs/nfs/nfs4proc.c             | 22 +++++++++-------------
->  fs/nfs/nfs4xdr.c              | 22 ++++++++++++----------
->  include/linux/lsm_hook_defs.h |  2 +-
->  include/linux/nfs4.h          |  8 ++++----
->  include/linux/nfs_fs.h        |  2 +-
->  include/linux/security.h      | 26 +++-----------------------
->  security/security.c           |  9 ++++-----
->  security/selinux/hooks.c      |  9 +++++----
->  14 files changed, 80 insertions(+), 101 deletions(-)
-
-...
-
-> diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
-> index 039898d70954..47652d217d05 100644
-> --- a/include/linux/nfs_fs.h
-> +++ b/include/linux/nfs_fs.h
-> @@ -457,7 +457,7 @@ static inline void nfs4_label_free(struct nfs4_label *label)
+>  security/apparmor/secid.c | 10 ++--------
+>  security/selinux/hooks.c  | 10 ++--------
+>  2 files changed, 4 insertions(+), 16 deletions(-)
+> 
+> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+> index 5d92fc3ab8b4..974f802cbe5a 100644
+> --- a/security/apparmor/secid.c
+> +++ b/security/apparmor/secid.c
+> @@ -122,14 +122,8 @@ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+>  
+>  void apparmor_release_secctx(struct lsm_context *cp)
 >  {
->  #ifdef CONFIG_NFS_V4_SECURITY_LABEL
->  	if (label) {
-> -		kfree(label->label);
-> +		kfree(label->lsmctx.context);
+> -	/*
+> -	 * stacking scaffolding:
+> -	 * When it is possible for more than one LSM to provide a
+> -	 * release hook, do this check:
+> -	 * if (cp->id == LSM_ID_APPARMOR || cp->id == LSM_ID_UNDEF)
+> -	 */
+> -
+> -	kfree(cp->context);
+> +	if (cp->id == LSM_ID_APPARMOR)
+> +		kfree(cp->context);
 
-Shouldn't this be a call to security_release_secctx() instead of a raw
-kfree()?
+Should we set cp->context to NULL too?  One could argue that it's an
+unecessary assignment, given the cp->id checks, and they wouldn't be
+wrong, but considering the potential for a BPF LSM to do things with
+a lsm_context, I wonder if resetting the pointer to NULL is the
+smart thing to do.
 
->  		kfree(label);
->  	}
->  #endif
+This obviously applies to the SELinux code (below) too.
+
+>  }
+>  
+>  /**
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 79776a5e651d..b9286c2c5efe 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6640,14 +6640,8 @@ static int selinux_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+>  
+>  static void selinux_release_secctx(struct lsm_context *cp)
+>  {
+> -	/*
+> -	 * stacking scaffolding:
+> -	 * When it is possible for more than one LSM to provide a
+> -	 * release hook, do this check:
+> -	 * if (cp->id == LSM_ID_SELINUX || cp->id == LSM_ID_UNDEF)
+> -	 */
+> -
+> -	kfree(cp->context);
+> +	if (cp->id == LSM_ID_SELINUX)
+> +		kfree(cp->context);
+>  }
+>  
+>  static void selinux_inode_invalidate_secctx(struct inode *inode)
 
 --
 paul-moore.com
