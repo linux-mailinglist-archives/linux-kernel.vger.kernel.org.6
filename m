@@ -1,340 +1,95 @@
-Return-Path: <linux-kernel+bounces-375270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418759A93F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:14:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE229A93F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Oct 2024 01:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A573F1F22C90
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:14:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A53F6B2183F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 23:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCC21FEFDD;
-	Mon, 21 Oct 2024 23:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD83C1FDFA7;
+	Mon, 21 Oct 2024 23:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z+o8HRAC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="GuqxPzZr"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B311E201D
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4319B149C64
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 23:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729552472; cv=none; b=LpetXJPKD+cpuYPprR3rqd7ug/FF1KqRM0NijXDSN4hhVkNwgkixc+xVTaFw6LmT4YD8n9BH9um6h4Cmd64aac8K/0ycitNoR4hv5bxC5KIa15sLOBNJOQiYJRPhjkKVsP3L5UrgPqJvH/J3aJbkDS4Ah6rMSXdyBpH+DttRQ1A=
+	t=1729552620; cv=none; b=HsJ11HCWe3TrMLZs1oJe/8sQPr+9dagPBx6u9DwLZJJKS+kxImQLlFV7vPrlrVVDa+omI0wtktXTNVJrCgKanDIU/Eoq1BpimmckhktIIc1RpnS1z16Kdx8KnI3dDcVhfXi47VQZLtfSu6zZXLiYgfKsSrHtmaCEO5FVY6gFSaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729552472; c=relaxed/simple;
-	bh=pmH0zHXeP5OH9YQvRucq/Si/jaZ+Ne4KpiQsfpoWjBc=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=HVNrXPAZsPx92iCTvwuRVxWc6nwBkeDii9fK/MENFPBhIN8pB3bfE/GiDVQIiUFvN9FkxrnioF9/fNcx873uCjvx3jwQ3TV0g6GWDS5ES3WWgWefsxHXM+NpkzoVi5bnd3y6jaUoXjYcUZ/Gc0WLi7LPCuX9NGY6IxmlIck+iGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z+o8HRAC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729552469;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zQ0MKqQxa7ETrGUeViXzkqtCEJr3CQ/fdaJCZsPv2V0=;
-	b=Z+o8HRAChWVwqKd2Y/AqvGI2eGMm9gybfXD+ZGbQ3GbpUct3/R5LJRomH8FDVlyN2S80X6
-	gfstvOr5Q8alh1Ad4HSQCLJv4esns+5h+x3OCo8PDaZaLZ/l8AG9DG2rEaELEhlld9DudM
-	xyMHenPApnxkQQ1ZWkDL07MYJt2vEH8=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-255-Ayou6e6XMbyGpRoDZOL3cw-1; Mon,
- 21 Oct 2024 19:14:25 -0400
-X-MC-Unique: Ayou6e6XMbyGpRoDZOL3cw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 753BC1956096;
-	Mon, 21 Oct 2024 23:14:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.218])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D4EB21956056;
-	Mon, 21 Oct 2024 23:14:22 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Marc Dionne <marc.dionne@auristor.com>
-cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Fix missing subdir edit when renamed between parent dirs
+	s=arc-20240116; t=1729552620; c=relaxed/simple;
+	bh=3YCoSDXnCZt16X9xdWeW/a+e27s7xG0fmqkr9ptV1c4=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=J9VO8FcG0kIIZ3EAAcoF3DDbOowjhIv2QIjzVGycIFOfPt4wGb1zOYuzCOnub6j5IhqrYHlE59fnNJpsA/6URVLJ5kOunL7Ofyym1WsTuno5Wom1VTpmmkMiqwPmv9vPUHAp5/Yzt/Q9sFWeMBZLxdNiAd74bwvCYcFGfqybLEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=GuqxPzZr; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1729552616; x=1729811816;
+	bh=/WiN5iL5UMBiePcQ0NW/mqJFSHEbR+SOCOUOUW12EaE=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=GuqxPzZrCsucltUez5mufQ8ySZfA+1ABXCCgxDEHK8uZeoWS6BTmxe1iEWdRESb21
+	 l4D7CWBneiR2BCmStDS8gA+sAKt8eLzYRx/10FH7LOXSzPx8/G2IhTcxsHS5HnyVVJ
+	 hqELK9BDsbLPNPjCJyCPH4Ff1bs4MOr/8oAeOn6HL7JveJ7bNzRuC92tp9Q1I/aOkg
+	 KhhJ4oPIeXRrIGzh4rzgY3BrTjzMx8Za8IE3qNx2fETF1zlpA6WY68kyp8HPBQNeB/
+	 hmHDl0zGj+85AdXpJy88s5bRzmKGuy407rAXvk5RCTzc29uDOjlhvq7V8S1B7i0W24
+	 Idhm6K0C1IZFw==
+Date: Mon, 21 Oct 2024 23:16:52 +0000
+To: tj@kernel.org, void@manifault.com
+From: Ihor Solodrai <ihor.solodrai@pm.me>
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, andrii@kernel.org, mykolal@fb.com
+Subject: [PATCH] selftests/sched_ext: add order-only dependency of runner.o on BPFOBJ
+Message-ID: <20241021231648.921226-1-ihor.solodrai@pm.me>
+Feedback-ID: 27520582:user:proton
+X-Pm-Message-ID: c0dc43686d32b48b2efc10ec330f7455db15c59b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2411940.1729552461.1@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 22 Oct 2024 00:14:21 +0100
-Message-ID: <2411941.1729552461@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-When rename moves an AFS subdirectory between parent directories, the
-subdir also needs a bit of editing: the ".." entry needs updating to point
-to the new parent (though I don't make use of the info) and the DV needs
-incrementing by 1 to reflect the change of content.  The server also sends
-a callback break notification on the subdirectory if we have one, but we
-can take care of recovering the promise next time we access the subdir.
+The runner.o may start building before libbpf headers are installed,
+and as a result build fails. This happened a couple of times on
+libbpf/ci test jobs:
+  * https://github.com/libbpf/ci/actions/runs/11447667257/job/31849533100
+  * https://github.com/theihor/libbpf-ci/actions/runs/11445162764/job/31841=
+649552
 
-This can be triggered by something like:
+Headers are installed in a recipe for $(BPFOBJ) target, and adding an
+order-only dependency should ensure this doesn't happen.
 
-    mount -t afs %example.com:xfstest.test20 /xfstest.test/
-    mkdir /xfstest.test/{aaa,bbbb,aaa/ccc}
-    mv /xfstest.test/{aaa/ccc,bbbb/ccc}
-    touch /xfstest.test/bbbb/ccc/d
-
-When the pathwalk for the touch hits "ccc", kafs spots that the DV is
-incorrect and downloads it again unnecessarily.
-
-Fix this, if the rename target is a directory and the old and new
-parents are different, by:
-
- (1) Incrementing the DV number of the target locally.
-
- (2) Editing the ".." entry in the target to refer to its new parent's
-     vnode ID and uniquifier.
-
-cc: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
+Signed-off-by: Ihor Solodrai <ihor.solodrai@pm.me>
 ---
- fs/afs/dir.c               |   25 ++++++++++++
- fs/afs/dir_edit.c          |   91 +++++++++++++++++++++++++++++++++++++++=
-+++++-
- fs/afs/internal.h          |    2 =
+ tools/testing/selftests/sched_ext/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- include/trace/events/afs.h |    7 ++-
- 4 files changed, 122 insertions(+), 3 deletions(-)
+diff --git a/tools/testing/selftests/sched_ext/Makefile b/tools/testing/sel=
+ftests/sched_ext/Makefile
+index 0754a2c110a1..57739563d334 100644
+--- a/tools/testing/selftests/sched_ext/Makefile
++++ b/tools/testing/selftests/sched_ext/Makefile
+@@ -185,7 +185,7 @@ auto-test-targets :=3D=09=09=09\
+=20
+ testcase-targets :=3D $(addsuffix .o,$(addprefix $(SCXOBJ_DIR)/,$(auto-tes=
+t-targets)))
+=20
+-$(SCXOBJ_DIR)/runner.o: runner.c | $(SCXOBJ_DIR)
++$(SCXOBJ_DIR)/runner.o: runner.c | $(SCXOBJ_DIR) $(BPFOBJ)
+ =09$(CC) $(CFLAGS) -c $< -o $@
+=20
+ # Create all of the test targets object files, whose testcase objects will=
+ be
+--=20
+2.43.0
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index f8622ed72e08..474062d22712 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -12,6 +12,7 @@
- #include <linux/swap.h>
- #include <linux/ctype.h>
- #include <linux/sched.h>
-+#include <linux/iversion.h>
- #include <linux/task_io_accounting_ops.h>
- #include "internal.h"
- #include "afs_fs.h"
-@@ -1823,6 +1824,8 @@ static int afs_symlink(struct mnt_idmap *idmap, stru=
-ct inode *dir,
- =
-
- static void afs_rename_success(struct afs_operation *op)
- {
-+	struct afs_vnode *vnode =3D AFS_FS_I(d_inode(op->dentry));
-+
- 	_enter("op=3D%08x", op->debug_id);
- =
-
- 	op->ctime =3D op->file[0].scb.status.mtime_client;
-@@ -1832,6 +1835,22 @@ static void afs_rename_success(struct afs_operation=
- *op)
- 		op->ctime =3D op->file[1].scb.status.mtime_client;
- 		afs_vnode_commit_status(op, &op->file[1]);
- 	}
-+
-+	/* If we're moving a subdir between dirs, we need to update
-+	 * its DV counter too as the ".." will be altered.
-+	 */
-+	if (S_ISDIR(vnode->netfs.inode.i_mode) &&
-+	    op->file[0].vnode !=3D op->file[1].vnode) {
-+		u64 new_dv;
-+
-+		write_seqlock(&vnode->cb_lock);
-+
-+		new_dv =3D vnode->status.data_version + 1;
-+		vnode->status.data_version =3D new_dv;
-+		inode_set_iversion_raw(&vnode->netfs.inode, new_dv);
-+
-+		write_sequnlock(&vnode->cb_lock);
-+	}
- }
- =
-
- static void afs_rename_edit_dir(struct afs_operation *op)
-@@ -1873,6 +1892,12 @@ static void afs_rename_edit_dir(struct afs_operatio=
-n *op)
- 				 &vnode->fid, afs_edit_dir_for_rename_2);
- 	}
- =
-
-+	if (S_ISDIR(vnode->netfs.inode.i_mode) &&
-+	    new_dvnode !=3D orig_dvnode &&
-+	    test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
-+		afs_edit_dir_update_dotdot(vnode, new_dvnode,
-+					   afs_edit_dir_for_rename_sub);
-+	=
-
- 	new_inode =3D d_inode(new_dentry);
- 	if (new_inode) {
- 		spin_lock(&new_inode->i_lock);
-diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-index a71bff10496b..fe223fb78111 100644
---- a/fs/afs/dir_edit.c
-+++ b/fs/afs/dir_edit.c
-@@ -127,10 +127,10 @@ static struct folio *afs_dir_get_folio(struct afs_vn=
-ode *vnode, pgoff_t index)
- /*
-  * Scan a directory block looking for a dirent of the right name.
-  */
--static int afs_dir_scan_block(union afs_xdr_dir_block *block, struct qstr=
- *name,
-+static int afs_dir_scan_block(const union afs_xdr_dir_block *block, const=
- struct qstr *name,
- 			      unsigned int blocknum)
- {
--	union afs_xdr_dirent *de;
-+	const union afs_xdr_dirent *de;
- 	u64 bitmap;
- 	int d, len, n;
- =
-
-@@ -492,3 +492,90 @@ void afs_edit_dir_remove(struct afs_vnode *vnode,
- 	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
- 	goto out_unmap;
- }
-+
-+/*
-+ * Edit a subdirectory that has been moved between directories to update =
-the
-+ * ".." entry.
-+ */
-+void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
- *new_dvnode,
-+				enum afs_edit_dir_reason why)
-+{
-+	union afs_xdr_dir_block *block;
-+	union afs_xdr_dirent *de;
-+	struct folio *folio;
-+	unsigned int nr_blocks, b;
-+	pgoff_t index;
-+	loff_t i_size;
-+	int slot;
-+
-+	_enter("");
-+
-+	i_size =3D i_size_read(&vnode->netfs.inode);
-+	if (i_size < AFS_DIR_BLOCK_SIZE) {
-+		clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+		return;
-+	}
-+	nr_blocks =3D i_size / AFS_DIR_BLOCK_SIZE;
-+
-+	/* Find a block that has sufficient slots available.  Each folio
-+	 * contains two or more directory blocks.
-+	 */
-+	for (b =3D 0; b < nr_blocks; b++) {
-+		index =3D b / AFS_DIR_BLOCKS_PER_PAGE;
-+		folio =3D afs_dir_get_folio(vnode, index);
-+		if (!folio)
-+			goto error;
-+
-+		block =3D kmap_local_folio(folio, b * AFS_DIR_BLOCK_SIZE - folio_pos(fo=
-lio));
-+
-+		/* Abandon the edit if we got a callback break. */
-+		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
-+			goto invalidated;
-+
-+		slot =3D afs_dir_scan_block(block, &dotdot_name, b);
-+		if (slot >=3D 0)
-+			goto found_dirent;
-+
-+		kunmap_local(block);
-+		folio_unlock(folio);
-+		folio_put(folio);
-+	}
-+
-+	/* Didn't find the dirent to clobber.  Download the directory again. */
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_nodd,
-+			   0, 0, 0, 0, "..");
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	goto out;
-+
-+found_dirent:
-+	de =3D &block->dirents[slot];
-+	de->u.vnode  =3D htonl(new_dvnode->fid.vnode);
-+	de->u.unique =3D htonl(new_dvnode->fid.unique);
-+
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_dd, b, slot,
-+			   ntohl(de->u.vnode), ntohl(de->u.unique), "..");
-+
-+	kunmap_local(block);
-+	folio_unlock(folio);
-+	folio_put(folio);
-+	inode_set_iversion_raw(&vnode->netfs.inode, vnode->status.data_version);
-+
-+out:
-+	_leave("");
-+	return;
-+
-+invalidated:
-+	kunmap_local(block);
-+	folio_unlock(folio);
-+	folio_put(folio);
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_inval,
-+			   0, 0, 0, 0, "..");
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	goto out;
-+
-+error:
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_error,
-+			   0, 0, 0, 0, "..");
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	goto out;
-+}
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 52aab09a32a9..c9d620175e80 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1073,6 +1073,8 @@ extern void afs_check_for_remote_deletion(struct afs=
-_operation *);
- extern void afs_edit_dir_add(struct afs_vnode *, struct qstr *, struct af=
-s_fid *,
- 			     enum afs_edit_dir_reason);
- extern void afs_edit_dir_remove(struct afs_vnode *, struct qstr *, enum a=
-fs_edit_dir_reason);
-+void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
- *new_dvnode,
-+				enum afs_edit_dir_reason why);
- =
-
- /*
-  * dir_silly.c
-diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-index 450c44c83a5d..a0aed1a428a1 100644
---- a/include/trace/events/afs.h
-+++ b/include/trace/events/afs.h
-@@ -331,7 +331,11 @@ enum yfs_cm_operation {
- 	EM(afs_edit_dir_delete,			"delete") \
- 	EM(afs_edit_dir_delete_error,		"d_err ") \
- 	EM(afs_edit_dir_delete_inval,		"d_invl") \
--	E_(afs_edit_dir_delete_noent,		"d_nent")
-+	EM(afs_edit_dir_delete_noent,		"d_nent") \
-+	EM(afs_edit_dir_update_dd,		"u_ddot") \
-+	EM(afs_edit_dir_update_error,		"u_fail") \
-+	EM(afs_edit_dir_update_inval,		"u_invl") \
-+	E_(afs_edit_dir_update_nodd,		"u_nodd")
- =
-
- #define afs_edit_dir_reasons				  \
- 	EM(afs_edit_dir_for_create,		"Create") \
-@@ -340,6 +344,7 @@ enum yfs_cm_operation {
- 	EM(afs_edit_dir_for_rename_0,		"Renam0") \
- 	EM(afs_edit_dir_for_rename_1,		"Renam1") \
- 	EM(afs_edit_dir_for_rename_2,		"Renam2") \
-+	EM(afs_edit_dir_for_rename_sub,		"RnmSub") \
- 	EM(afs_edit_dir_for_rmdir,		"RmDir ") \
- 	EM(afs_edit_dir_for_silly_0,		"S_Ren0") \
- 	EM(afs_edit_dir_for_silly_1,		"S_Ren1") \
 
 
