@@ -1,123 +1,153 @@
-Return-Path: <linux-kernel+bounces-373541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 485529A5899
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:39:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772339A589E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 03:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B91B8B218EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:39:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B13BB2217D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 01:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC8E1946B;
-	Mon, 21 Oct 2024 01:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81AD17BB6;
+	Mon, 21 Oct 2024 01:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AZeQqg/X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Q8xQdhC9"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B100F1758B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 01:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C0C256E;
+	Mon, 21 Oct 2024 01:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729474768; cv=none; b=BmMQeQXGD4myiYrZdI9CoJv1q9EZFyn9uzfHuA6MVrxAj2gVP5AOUs1qf52zZdGgUrpvLzu9t/dTOOsSV0DrLENLMq7ajObn1G/f+eYrccH1fg4SLP3dM++zFp/ywFHu2SD32M8deDzbdKPQHUTqaQgYNmhTLz+KTZVF1nvLAqA=
+	t=1729475323; cv=none; b=QsGbXzGLtTKXE38fM4kr6mS828jt7ea3foLMWmXqZSVDx8+fWOUx0fWt2zujLpz83X9TNFiVCldjJmoxxTv/Iz7lGtsgU31gU731tFlsyHvy8k9cXJWXd+iAXKJrS7iF/FqPcDEZKcj/Vh1ohW+bJmnGlSk75Gi43E9YNxFNIsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729474768; c=relaxed/simple;
-	bh=/uzzaNJezF7oaSzA3AeyX2IArPjPGreLCAxbgk9jhz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tMqAW9E/d0YMvqb/CJVGW3lMCmN7Crfv4v3YZeYDN0qgX7gBxSbmqT+0MEJ36gKGoreLtLCp3g1hmv1elJo9rzumOOfXLAA2J70FJZVLdGm5DsTyXTyOHjJ0hfBwtKhP+UCGdEqz80QMUZoFDnmTRrhvwlIvxvPvNfrsKaJFDJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AZeQqg/X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729474765;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GQA277wjiIsEsX13SC3EOBQ9MmBhGxtmhKvxedw4Rlk=;
-	b=AZeQqg/Xmcc6nimbyHORQTzSExfIcaUc8WfNYlg2yd7VTKcbmsBsCcWinVam44JESJid8n
-	jjCAn+nhE2tjm7GxYooOj2jvz322XrQXAgHFYGRnY8yKOuEcSKcZGf/Y/UPaiFbov/4zmC
-	NM/rQG/wfa4Yk2X7hvWsSV3P2XxFNmk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-wQlEZ6TvMaiCF-M6LJjQ4Q-1; Sun,
- 20 Oct 2024 21:39:24 -0400
-X-MC-Unique: wQlEZ6TvMaiCF-M6LJjQ4Q-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 63B2719560A2;
-	Mon, 21 Oct 2024 01:39:21 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.25])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 87D5519560A2;
-	Mon, 21 Oct 2024 01:39:14 +0000 (UTC)
-Date: Mon, 21 Oct 2024 09:39:08 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: zhuxiaohui <zhuxiaohui400@gmail.com>
-Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-Subject: Re: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support mq
- ctx fallback
-Message-ID: <ZxWwvF0Er-Aj-rtX@fedora>
-References: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
+	s=arc-20240116; t=1729475323; c=relaxed/simple;
+	bh=g7Oz2WchqaPxIcn3/FbwuwteX1Z14I41x36ekLkSuHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EBzOXMmBg6COj1pILOzob1rckq+LJApJMqQBYS+2heZVexNe5nQQnjk3rJ0duSmnCp1HYMM4E94jAWSALkP5tMRfWuGMduapj1QnRRCYnMGBbokQKGARV0/fpRKZxyM31vxeDW+0AHcOt3nv2QEIm01xP8ndLj1VUAk4kUePb8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Q8xQdhC9; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1729475272;
+	bh=3Jb3+8m3q5GqSoRa3aSjH0BmD/kHkoSd7GPyOJ35dOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Q8xQdhC9TxXGovN06qZI/avjNXk+9M3f9bN73SOxPnWdQNFtjBRfsaEkT9KxbYbzR
+	 iJb+D0ZwPx8L4PPzDv/VWyO2FEUy2ky+mN0Zggpl2rYlRL4NkbF40c86ZsgX7CCR8K
+	 CCNXNVdcN2jdylZfVMMb3+2yo81+KrfELJxmVuxs=
+X-QQ-mid: bizesmtp80t1729475266thpnflk4
+X-QQ-Originating-IP: sLITKTob2X6UQdBdGgosOb3ERsqJEfUTqINTPTS43QY=
+Received: from [10.20.53.22] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 21 Oct 2024 09:47:45 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 15121724753342584298
+Message-ID: <86C0A4FFA98AE1E7+ac00f3f7-866f-4735-a361-a7119aaa3eb0@uniontech.com>
+Date: Mon, 21 Oct 2024 09:47:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: mips/crc32 - fix the CRC32C implementation
+To: Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Guan Wentao <guanwentao@uniontech.com>, herbert@gondor.apana.org.au,
+ davem@davemloft.net, tsbogend@alpha.franken.de
+References: <20241020180258.8060-1-ebiggers@kernel.org>
+Content-Language: en-US
+From: WangYuli <wangyuli@uniontech.com>
+In-Reply-To: <20241020180258.8060-1-ebiggers@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MBN1Gf7pvZQZ6dfWcrTXiKX9h10oAehlD0N/mMsfI82cSjBbongspMb+
+	8cRJRRugBDCekNeez40gHMAq8oMcctwDF6RVoecCtI4/M54Vw8XUvQ7JQlleY84jT0TdR8X
+	JVZ7QvpY0CamyTAEvfuWovNwjp1ZfZNvOjDW4PKBWWf+vFtLRyZslsVr8KiBaq4tsmCGkar
+	IJEcvYVhS94H2USwAFAB5hJXovQccHS32Af3tJT5npfHDhoS3HET3NBJrHpoP4n1Sn1JkWL
+	OsKt29YOlVNEXgBWpIcPTacxZhIlWz33wQgbZ2xLfCiwMJydPwsxY8F1dsL3OOtWEl35/Ds
+	jGY452DmV3NdxLjc/2aqirMKK3LjxpryrGS6xt6bWsXF1c8qIbzEkR0tNNKul4eX93e2Fuo
+	NDGzFuy33DJjs6QXT5/pDp1jf2Y4LGcUT3PJSVqswXtV5Jfpt7nFs/dMLZurPgpLXjG7ti9
+	I1Bg6AvkuKMeeFlfrzmz9p0BRH/rEoPTArAmmEGTpSHHwMlrf5xtaDDfmuVZn6JofgwXEHr
+	52ZXE1biqDmk/vZuZ9nJ5Vlu+tytGWlX2CLnnE1Pe/YA6OP83sO0Q/hPPxJb5XoG0o2mQwc
+	B8lyH5TvjAoNkJpV+lZKA5AW1TZXrSMQ+7Nek1Tj4RvtHtGNAC8V3BSnTIdAV8o2vikxdyG
+	RXVEtF/TRE34Rgq+YO6kwP2637U89wAZG3sNIEKGm0adcQ6zEoQzfV/h3JLLa1t8Yoz2Bgo
+	Cz/QLFQmMRAlKO5zRQ8IPZ7MzltUn9D+ZE1TPjeUGna9uDghLSJRADpKQ7YJQahNGkcteyI
+	ABzSQU8GYDdYkpTcPe6OTmQqQjcs3PDRq+tQZzrWjdzf32lPy5J+xHbVVupo8BxOKiNnnOQ
+	yHFUjeLyhgQFrU2CjW45sQ9aNVM8adLm4FjWc/O7pm2R1wIncSe8QoBtdbAgqZjcVOVeC0R
+	xs5hNLgX2xvEmbV/MA/IEpIZW
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On Sun, Oct 20, 2024 at 10:40:41PM +0800, zhuxiaohui wrote:
-> From: Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-> 
-> It is observed that nvme connect to a nvme over fabric target will
-> always fail when 'nohz_full' is set.
-> 
-> In commit a46c27026da1 ("blk-mq: don't schedule block kworker on
-> isolated CPUs"), it clears hctx->cpumask for all isolate CPUs,
-> and when nvme connect to a remote target, it may fails on this stack:
-> 
->         blk_mq_alloc_request_hctx+1
->         __nvme_submit_sync_cmd+106
->         nvmf_connect_io_queue+181
->         nvme_tcp_start_queue+293
->         nvme_tcp_setup_ctrl+948
->         nvme_tcp_create_ctrl+735
->         nvmf_dev_write+532
->         vfs_write+237
->         ksys_write+107
->         do_syscall_64+128
->         entry_SYSCALL_64_after_hwframe+118
-> 
-> due to that the given blk_mq_hw_ctx->cpumask is cleared with no available
-> blk_mq_ctx on the hw queue.
-> 
-> This patch introduce a new blk_mq_req_flags_t flag 'BLK_MQ_REQ_ARB_MQ'
-> as well as a nvme_submit_flags_t 'NVME_SUBMIT_ARB_MQ' which are used to
-> indicate that block layer can fallback to a  blk_mq_ctx whose cpu
-> is not isolated.
+On 2024/10/21 02:02, Eric Biggers wrote:
 
-blk_mq_alloc_request_hctx()
-	...
-	cpu = cpumask_first_and(data.hctx->cpumask, cpu_online_mask);
-	...
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Commit ca459e5f826f ("crypto: mips/crc32 - Clean up useless assignment
+> operations") changed crc32c_mips_le_hw() to use the instructions that
+> use the "regular" CRC32 polynomial instead of the Castagnoli polynomial.
+> Therefore it can't be computing CRC32C values correctly anymore.
+>
+> I haven't been successful in running a MIPS kernel in QEMU, but based on
+> code review this is the fix that is needed.
+>
+> Fixes: ca459e5f826f ("crypto: mips/crc32 - Clean up useless assignment operations")
+> Cc: Guan Wentao <guanwentao@uniontech.com>
+> Cc: WangYuli <wangyuli@uniontech.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>
+> This is a regression in 6.12, so it should be fixed in a 6.12-rc.
+>
+>   arch/mips/crypto/crc32-mips.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/mips/crypto/crc32-mips.c b/arch/mips/crypto/crc32-mips.c
+> index a7a1d43a1b2ca..90eacf00cfc31 100644
+> --- a/arch/mips/crypto/crc32-mips.c
+> +++ b/arch/mips/crypto/crc32-mips.c
+> @@ -121,24 +121,24 @@ static u32 crc32c_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
+>   
+>   	if (IS_ENABLED(CONFIG_64BIT)) {
+>   		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
+>   			u64 value = get_unaligned_le64(p);
+>   
+> -			CRC32(crc, value, d);
+> +			CRC32C(crc, value, d);
+>   		}
+>   
+>   		if (len & sizeof(u32)) {
+>   			u32 value = get_unaligned_le32(p);
+>   
+> -			CRC32(crc, value, w);
+> +			CRC32C(crc, value, w);
+>   			p += sizeof(u32);
+>   		}
+>   	} else {
+>   		for (; len >= sizeof(u32); len -= sizeof(u32)) {
+>   			u32 value = get_unaligned_le32(p);
+>   
+> -			CRC32(crc, value, w);
+> +			CRC32C(crc, value, w);
+>   			p += sizeof(u32);
+>   		}
+>   	}
+>   
+>   	if (len & sizeof(u16)) {
+>
+> base-commit: 7fa4be6d6752512278c4cbf2d2745568626e7369
 
-It can happen in case of non-cpu-isolation too, such as when this hctx hasn't
-online CPUs, both are same actually from this viewpoint.
-
-It is one long-time problem for nvme fc.
-
-
+Ah...I apologize for the oversight that introduced this bug...And it's 
+indeed a necessary fix.
 Thanks,
-Ming
 
+Acked-by: WangYuli <wangyuli@uniontech.com>
+-- 
+WangYuli
 
