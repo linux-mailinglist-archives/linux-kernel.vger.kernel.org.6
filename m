@@ -1,82 +1,180 @@
-Return-Path: <linux-kernel+bounces-373953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D269A5FC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:14:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46C69A5FC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FCD9B21E2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:14:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9574D282163
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFB91E32A4;
-	Mon, 21 Oct 2024 09:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF6F1E32A7;
+	Mon, 21 Oct 2024 09:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rdAj9ZT7"
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f0tb2U6p"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993231E25E6
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896451E284E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 09:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729502065; cv=none; b=I6H516hcgEoyUR71N+C045Wj2kwGyfeSEs/jWyap2VnAZWWwYKIw3yc5fnoReTWjHjo6IFETsLbCgGGKI+BqHCrbW7sf80yiwPW/w6eiDn7xFxLWUrMjnhxC8CrkicK0MrNng4JfUP6DanLuvZe3XYliMRi0UJ1PhtUY1gTCz0E=
+	t=1729502040; cv=none; b=WUJh9he9durXxV5siYobiUWxRT7gg3JjTXkbtJuuZ2JN2RqMHBhE+2/23PCjWktujH+q+ut7e/xj3UVmqrUFF/sw9npRWOZ0Yo/4OPB8ioxGJJ647+ufxCnUqblwkJa7d533go8Vj0hi3Fh7bsy8OTIivwPckP1r6nWgvV+KM4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729502065; c=relaxed/simple;
-	bh=r72VYBhQohT11BWpxAbyyQ8tZ0NxKp9JjzHQ+0PQcds=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LbLMfZvvtzgIqzLXoQ0zEZVY3Gyf9dagoT1pm9K3/b7Xb4bvHGliQCT3bIr20PLNYyzG3caw5aTVewJugHY12ruKjKMhv4dQRI3jEckH6aePXeeFUAEDQ0N1vFlMCU+fhKVcigJ5K8KovVS2OQuDTZQhbqrXGcSNAHr5BgrIogE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rdAj9ZT7; arc=none smtp.client-ip=95.215.58.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729502059;
+	s=arc-20240116; t=1729502040; c=relaxed/simple;
+	bh=Qpok900RIq0lalZ/bvNPZcgfy2eFsV4ECXKYjvsFsZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZN1V2jXYNlQ9BYjY+Lk7kF8S7jcokJO9QlsoRjf/J2qyk21xwrjv9ADAXWc7dRP7WdzpeieGwRTypdWOOcF0EhiE5M37xtZEB8xlRvkHgM/NApPM2jQq8d1RicrIT+P9+fAomgc/lizMwT2f/Gaba7G1wx2xFrxqqQ1cBG3x2yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f0tb2U6p; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729502037;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Wlq+3bW4+TRGvbmu1pjeIeW38H6q6bepbBN1pV11OEU=;
-	b=rdAj9ZT7rjK4bLOiSJ8iG8k/loXlDfy2JDlV4T/hM930LE2b1bVKcQg3SHK7EcUfCAdWNR
-	5L7hU7++bSA4Kia1LaxPZghbA59KQJI4n9pgR1J0Uj/usjFsJAo2q7phFV8a82u8lNfp+j
-	B8pb+uvECcTBLPg/TWz3Nib5IhDVw2o=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/page_alloc: Use str_off_on() helper in build_all_zonelists()
-Date: Mon, 21 Oct 2024 11:13:40 +0200
-Message-ID: <20241021091340.5243-2-thorsten.blum@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=laNZkwIbOwCUsbOEzRR8/YU1OhJt9JdhAA++t+a3gVA=;
+	b=f0tb2U6pc/0AbXetj9cCU/Vv8vR4iDQBhbe8A2o+FqR5LqK8xvXlAcoAYpT0Fmw1K3j2TB
+	kyobQ69Q33lImMaW1ydAdMqAnvJmqifhlYco7TUYEuiA8xggnYAe9FGJMOxibQeklWz89G
+	NfAWnIIErlZ0LVmQaMETTqF+e21u+68=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-74-iBuxusBSNBSwCZiGhNp4qA-1; Mon, 21 Oct 2024 05:13:52 -0400
+X-MC-Unique: iBuxusBSNBSwCZiGhNp4qA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d4a211177so2145136f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 02:13:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729502031; x=1730106831;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=laNZkwIbOwCUsbOEzRR8/YU1OhJt9JdhAA++t+a3gVA=;
+        b=r2Gz1z3dvlme+CELzXefRDypRURGK6XFRVmxD0138zg3Sl6DXYfWwx7NrFwStupRdR
+         k/aSZR1SvAr6Nw9J9mD5JF9UOQ65Zw2ImTMTuq2z4fhbpd9nQQw65PdKruS85ITs0cCA
+         kNge/Dy36s3wi9jGLvo3eRgr3mLtEpZ1vxQEu2Yvqz0GT3ZdkLh+3SnwforhA1gYVFaU
+         MJ7uBlZpnWeKfa1df86KzxGkSQn/F49QJzMQ00bYA7RDipqP1kQLyvziDWZm1YdrltF7
+         Ymx3L62v2JlYTb6tO7kQSfvfUyZnXkk5R+zp7ZqHx4K+0ktRnUTzFmSyfWGLJVU1BM18
+         zz0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVHzeU7y/aWR1epbW8ej/avyw0VpLL1Xeka2SRSYEtJMfbdN16gYC81OJ8VvDPeb0EEGWqBkOLF3mRE2kk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4hKiG/sKHyOtXyhYrp+BHSXVr3/Ap8vXlKMKGIQtTiHXuldJn
+	k2GQvwIAZwWhTfqC5tCIY/a9GGkCkUgu5dQFkpeyywdGkqspoIrT+FyFA2VN+qg7WJX7E2Vb7dW
+	W2TglC45RC8QZcFC8zexC9JmS86cWKBygujqTPXgkRYv1f3N4dllEX6WloX8dcA==
+X-Received: by 2002:a5d:60cd:0:b0:37d:52d0:a59d with SMTP id ffacd0b85a97d-37eab72732cmr6823876f8f.10.1729502031071;
+        Mon, 21 Oct 2024 02:13:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGf2q3ct7vDUcpXfTgq4f/Ogs1pSXSIZFsokW+/dUVWCwOUrBI/1w/NWhFvrEEHU/F3TQLS9Q==
+X-Received: by 2002:a5d:60cd:0:b0:37d:52d0:a59d with SMTP id ffacd0b85a97d-37eab72732cmr6823825f8f.10.1729502030651;
+        Mon, 21 Oct 2024 02:13:50 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:36d3:2b96:a142:a05b? ([2a09:80c0:192:0:36d3:2b96:a142:a05b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b944fbsm3841034f8f.72.2024.10.21.02.13.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 02:13:50 -0700 (PDT)
+Message-ID: <62a7eb3f-fb27-43f4-8365-0fa0456c2f01@redhat.com>
+Date: Mon, 21 Oct 2024 11:13:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] alloc_tag: config to store page allocation tag
+ refs in page flags
+To: Michal Hocko <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>
+Cc: John Hubbard <jhubbard@nvidia.com>, Yosry Ahmed <yosryahmed@google.com>,
+ akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net,
+ arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org,
+ thuth@redhat.com, tglx@linutronix.de, bp@alien8.de,
+ xiongwei.song@windriver.com, ardb@kernel.org, vbabka@suse.cz,
+ hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
+ willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com,
+ souravpanda@google.com, keescook@chromium.org, dennis@kernel.org,
+ yuzhao@google.com, vvvvvv@google.com, rostedt@goodmis.org,
+ iamjoonsoo.kim@lge.com, rientjes@google.com, minchan@google.com,
+ kaleshsingh@google.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-mm@kvack.org, linux-modules@vger.kernel.org, kernel-team@android.com
+References: <cd848c5f-50cd-4834-a6dc-dff16c586e49@nvidia.com>
+ <6a2a84f5-8474-432f-b97e-18552a9d993c@redhat.com>
+ <CAJuCfpGkuaCh+PxKbzMbu-81oeEdzcfjFThoRk+-Cezf0oJWZg@mail.gmail.com>
+ <9c81a8bb-18e5-4851-9925-769bf8535e46@redhat.com>
+ <CAJuCfpH-YqwEi1aqUAF3rCZGByFpvKVSfDckATtCFm=J_4+QOw@mail.gmail.com>
+ <ZxJcryjDUk_LzOuj@tiehlicka>
+ <CAJuCfpGV3hwCRJj6D-SnSOc+VEe5=_045R1aGJEuYCL7WESsrg@mail.gmail.com>
+ <ZxKWBfQ_Lps93fY1@tiehlicka>
+ <CAJuCfpHa9qjugR+a3cs6Cud4PUcPWdvc+OgKTJ1qnryyJ9+WXA@mail.gmail.com>
+ <CAJuCfpHFmmZhSrWo0iWST9+DGbwJZYdZx7zjHSHJLs_QY-7UbA@mail.gmail.com>
+ <ZxYCK0jZVmKSksA4@tiehlicka>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+In-Reply-To: <ZxYCK0jZVmKSksA4@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Remove hard-coded strings by using the str_off_on() helper function.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- mm/page_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 8afab64814dc..11d3fa3587db 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5495,7 +5495,7 @@ void __ref build_all_zonelists(pg_data_t *pgdat)
- 
- 	pr_info("Built %u zonelists, mobility grouping %s.  Total pages: %ld\n",
- 		nr_online_nodes,
--		page_group_by_mobility_disabled ? "off" : "on",
-+		str_off_on(page_group_by_mobility_disabled),
- 		vm_total_pages);
- #ifdef CONFIG_NUMA
- 	pr_info("Policy zone: %s\n", zone_names[policy_zone]);
+Am 21.10.24 um 09:26 schrieb Michal Hocko:
+> On Fri 18-10-24 14:57:26, Suren Baghdasaryan wrote:
+>> On Fri, Oct 18, 2024 at 10:45 AM Suren Baghdasaryan <surenb@google.com> wrote:
+>>>
+>>> On Fri, Oct 18, 2024 at 10:08 AM Michal Hocko <mhocko@suse.com> wrote:
+>>>
+>>> Automatic fallback is possible during boot, when we decide whether to
+>>> enable page extensions or not. So, if during boot we decide to disable
+>>> page extensions and use page flags, we can't go back and re-enable
+>>> page extensions after boot is complete. Since there is a possibility
+>>> that we run out of page flags at runtime when we load a new module,
+>>> this leaves this case when we can't reference the module tags and we
+>>> can't fall back to page extensions, so we have to disable memory
+>>> profiling.
+>>> I could keep page extensions always on just in case this happens but
+>>> that's a lot of memory waste to handle a rare case...
+>>
+>> After thinking more about this, I suggest a couple of changes that
+>> IMHO would make configuration simpler:
+>> 1. Change the CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to an early boot
+>> parameter.
+> 
+> This makes much more sense!
+> 
+>> Today we have a "mem_profiling" parameter to enable/disable
+>> memory profiling. I suggest adding "mem_profiling_use_pgflags" to
+>> switch the current behavior of using page extensions to use page
+>> flags.
+> 
+> I do not want to bikeshed about this but to me it would make more sense
+> to have an extension paramater to mem_profiling and call it something
+> like compress or similar so that page flags are not really carved into
+> naming. The docuemntation then can explain that the copression cannot be
+> always guaranteed and it might fail so this is more of a optimistic and
+> potentially failing optimization that might need to be dropped in some
+> usege scenarios.
+
+Maybe we can reuse the existing parameter (e.g., tristate). Only makes sense if 
+we don't expect too many other modes though :)
+
+> 
+>> We keep the current behavior of using page extensions as
+>> default (mem_profiling_use_pgflags=0) because it always works even
+>> though it has higher overhead.
+> 
+> Yes this seems to be a safe default.
+
+Agreed.
+
+> 
+>> 2. No auto-fallback. If mem_profiling_use_pgflags=1 and we don't have
+>> enough page flags (at boot time or later when we load a module), we
+>> simply disable memory profiling with a warning.
+
+Sounds reasonable to me.
+
 -- 
-2.47.0
+Cheers,
+
+David / dhildenb
 
 
