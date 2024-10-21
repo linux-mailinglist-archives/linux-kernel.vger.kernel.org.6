@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-373762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D9C9A5C48
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:15:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A019A5C46
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46F41F22B5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C35451F22A45
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D5C1D1511;
-	Mon, 21 Oct 2024 07:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B581D150E;
+	Mon, 21 Oct 2024 07:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkdcFhNm"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKuWxwT+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5C81D131F;
-	Mon, 21 Oct 2024 07:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E93C1D07A3;
+	Mon, 21 Oct 2024 07:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729494910; cv=none; b=dEh2SehwhEM6bHH3HUw3PJoYmgCwTTpcIaqvUiyeJ1Zx829TSTtiqjOjhSdjJOSHrCrTsgV8zwWTOCl+/k1UO/hgz2Xk72PoeFI0baAlI/H4pWWwqHH0oCpvqyYavxVcpWjqlQaamjOW/lT1JBF9ykTI4q/u0EFrHW5ViSN6CAI=
+	t=1729494909; cv=none; b=KC4PtqQEfLzECQWnIIqowJuGOJ8d3l4AKs9WzJMwgaUjR8faQew2E/4p2zXNCzQpUZ15lm1Wf/DCuB+NpLMCk5PGKvt0PTG8Yr1T8+SMbwNKQOwO867cu3Cal8VnnRgTdN7W1hZxL/fHizKwsYfnmyt1i9bcNqfPZmpKjVCPwe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729494910; c=relaxed/simple;
-	bh=dc6pUqfdXdJQEF4Ix0lfWE493NJoqbb52K8H6be4mb0=;
+	s=arc-20240116; t=1729494909; c=relaxed/simple;
+	bh=nKPzNF057pxm0ao76emLKlBxzsL74QCEn259038azO0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wu3Ys3Tm3FiBaUcLjhUjmCx4YMZhOSuJG4N7WdzRIggAxwBdYudyUOM02nN5WG1RubP05B4MqUDYQbaPxAHyK1qNRJGxK6fOJW11j7sR2xbFlc21i6C0r54G6d/BoVr9umDNyospFvUBOGNmA/uDqbAXdzP2KcODCsbfwxT74jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkdcFhNm; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-208cf673b8dso39942615ad.3;
-        Mon, 21 Oct 2024 00:15:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729494908; x=1730099708; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=smZfrGjVtvMSg3iZLlvbi89YS5i9FVGvaFb9EE1aWv8=;
-        b=dkdcFhNmgMaYq+ztsg0/diFgBKAX5+yQ2rTl5t0HFvSgBZnG8GCzZXuMfPjXRCvtQR
-         hDkICX3RCdq11krlMuIMTgeobRYTOV0lSQNUb7T6ZEHU5zFg8iZ8cjKt5WQXdS8JX5dI
-         Z7r5aXIQyJH2nqv93+ydku3jM0KGpjkTAG5lCt0CI3I0HCdtg5iQg5xig8fYsOy6dQzr
-         EopM1QLS+p0cdRLenN6iXEQoIszIV3JBUEzFQH/1mLmvfIym3jwXfKeFddNC3D1VanV3
-         9cVp/e3TznuaoDQ92uShts8tVyvonSho7q9N6LMx07uA0rqQx1QdiDN2mH37A4j0GKVT
-         +4wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729494908; x=1730099708;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=smZfrGjVtvMSg3iZLlvbi89YS5i9FVGvaFb9EE1aWv8=;
-        b=TSJSpSVG0HlmT8MsfLA8fUqq0o+s+721W7AWesbRjaxhzV+ch2ESalQZS3GivnpYBk
-         YMTC2i9FR1JYUIKMFlMqYtRstinls8fWTzivE7HH8bCD++i/b4OiPnztXHKZ6BNXe3KE
-         426fmg/22mQjSokolqQagKbYS7RZiIGVTqqYixGWePyP+HRuZ0lTgv0akPWaxv0/fhZS
-         7Ue4JadkGvaUpUqkpWjemgGKssx5on0GwYrQFxZv0N2Slrbs3/5IMUrXJTjeaaOi4gWe
-         p7t+nzc8fhTplt02+MHnaus2vvUKLNO6486856T+V2ZDDPZHzfDMPStpZRGV1n6eeCdI
-         hq0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdtuWQXVzuLgyk1EG3sf4YfuAIW68YFcML5r0Rw3i+qhgiEeefI0+MH+J7cLwEGBBwn3w2YdNVrMHtBw==@vger.kernel.org, AJvYcCXiIfWQeI04a5Qxob7BbfKtZ+XGiCaL9JNI5HTIpW2Td9jhJtCHphzBeJ2zmaUd9M11WK8Mh/wT9AxPSXWQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdDDpQ8xOxPewreoN2UrMa63n6Yh8EI3TzkMIiZnIrkTxjaynx
-	GJn/EwdxLkDNROg+bu1hbHMwmhnPWqtPajCqg34sPHGr6EbYp3fc
-X-Google-Smtp-Source: AGHT+IHy2ChbQeyZrKCx28/8OkE6XbQjadUgTgmofH8VjxpMdlc/BulLZcrsT3LIRUIu1mJy2aFspg==
-X-Received: by 2002:a17:902:ce07:b0:20c:c9db:7c45 with SMTP id d9443c01a7336-20e5a7604famr168254115ad.20.1729494908190;
-        Mon, 21 Oct 2024 00:15:08 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:6e21:7092:f7c7:3951])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7ef0d6besm19607365ad.104.2024.10.21.00.15.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 00:15:07 -0700 (PDT)
-Date: Mon, 21 Oct 2024 00:15:04 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] Input: sparcspkr - use cleanup facility for
- device_node
-Message-ID: <ZxX_eL_hs-_eKW0h@google.com>
-References: <20241020-input_automate_of_node_put-v2-1-ddec58b4b99e@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xv0sGyDKr52g7kH15JsvyoFj444etcyPxqGDvMgniVVAa5HjJqhGhTBpDeVTwBd3KK+Hq6YhK35+Fb0xH9DKCNi4bWb7GPyYM9lLXyY8XW+IRjw/f1m3EC50ujGOMG9cUfLhJW53/LZacqO0kOTnpgpltfpzaK29OfkxdsHVpfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKuWxwT+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AF4C4CEC3;
+	Mon, 21 Oct 2024 07:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729494909;
+	bh=nKPzNF057pxm0ao76emLKlBxzsL74QCEn259038azO0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vKuWxwT+PirXJWAVCFhlrq4PmDauVrCIPG9OhbpDA4vaW6SURV8ySGsvCCkT7NKHD
+	 PLYnw/oeETVXSAVGAN7IqgEZkDR7OGwRf90qnGbIMqrwAhnRKYf+PP/7zvzGK5sJvB
+	 802kYFeA036TvrdzXz14zMLYvHpKJI7fGdHKX4mSiHjLFS+tSIUgJzBJAfNloixmFd
+	 Wi9tbJ41XptxVqI7KK06g07bs4qhybsbQymNswWCbfOIFwTbPziGl/ElZ1M3SRgOFQ
+	 g6MykEe4VTzzW+8LFVR/qYZBG9jwxI2aaW1+fuIOg8pespcp5nDUmpHiBLpISw1QKz
+	 fJrOfbDn93kQw==
+Date: Mon, 21 Oct 2024 09:15:05 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Stephen Boyd <sboyd@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/12] dt-bindings: clock: qcom: Add QCS615 GCC clocks
+Message-ID: <bqnqc3sxnh5afs6nb7hrc45scfk6amcj2d3hbeuyriydowmmam@jvma7o4mg65m>
+References: <20241019-qcs615-mm-clockcontroller-v1-0-9f1ca2048287@quicinc.com>
+ <20241019-qcs615-mm-clockcontroller-v1-5-9f1ca2048287@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241020-input_automate_of_node_put-v2-1-ddec58b4b99e@gmail.com>
+In-Reply-To: <20241019-qcs615-mm-clockcontroller-v1-5-9f1ca2048287@quicinc.com>
 
-Hi Javier,
-
-On Sun, Oct 20, 2024 at 08:27:13PM +0200, Javier Carrasco wrote:
-> Use the 'free(device_node)' macro to simplify the code by automatically
-> freeing the device node, which removes the need for explicit calls to
-> 'of_node_put()'.
+On Sat, Oct 19, 2024 at 12:42:35AM +0530, Taniya Das wrote:
+> Add device tree bindings for global clock controller on QCS615 SoCs.
 > 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
-> Changes in v2:
-> - rebase onto input/next, drop applied patches.
-> - sparcspkr: drop goto before node declaration and return -ENOMEM.
 
-Can we switch the driver to devm so that issues with cleanup and gotos
-will have less chances of resurfacing?
+That's 5/12 but rest is missing. Are you sure you used sent it
+correctly?
 
-Thanks.
+>  .../devicetree/bindings/clock/qcom,qcs615-gcc.yaml |  59 ++++++
+>  include/dt-bindings/clock/qcom,qcs615-gcc.h        | 211 +++++++++++++++++++++
+>  2 files changed, 270 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs615-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs615-gcc.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..fecc694cd71b8aeb3d420ccea5f5ffba04c8ff9c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,qcs615-gcc.yaml
+> @@ -0,0 +1,59 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,qcs615-gcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller on QCS615
+> +
+> +maintainers:
+> +  - Taniya Das <quic_tdas@quicinc.com>
+> +
+> +description: |
+> +  Qualcomm global clock control module provides the clocks, resets and power
+> +  domains on QCS615.
+> +
+> +  See also:: include/dt-bindings/clock/qcom,qcs615-gcc.h
 
--- 
-Dmitry
+s/::/:/
+
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,qcs615-gcc
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: Board active XO source
+> +      - description: Sleep clock source
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: bi_tcxo_ao
+> +      - const: sleep_clk
+
+That's just "sleep".
+
+Why do you need clock-names in the first place?
+
+Best regards,
+Krzysztof
+
 
