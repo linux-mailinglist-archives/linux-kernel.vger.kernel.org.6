@@ -1,156 +1,171 @@
-Return-Path: <linux-kernel+bounces-375037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F929A9013
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:44:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F9C9A9019
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DE021F23135
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:44:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25FCE1C228CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231821FCC7F;
-	Mon, 21 Oct 2024 19:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E4D1CB51B;
+	Mon, 21 Oct 2024 19:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzlYHMf0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="isaz50hi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666B11D0E2F;
-	Mon, 21 Oct 2024 19:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAE51C3F0E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729539854; cv=none; b=XEELtNx+C3Q9MhwSo2hPiYxxTjj9DjM4+pdlbtKAddXLIKbv8/jeFJs1tkBnAu/u70gMMtyHqsdzPGtkydKvFr/BNq2Ad63HdsuJtAucC5gox2o3tC1aKwLk6CUXjwdVra+eIsTA443AqbDaZivf6veQ5T0DKfv2wDRaTTY6QxI=
+	t=1729540115; cv=none; b=B1Kcs1Hs3KZltcjAb5VHAosNtomah6jYzvlFFEz1d5E6KWyhofExsRmR604eD/gXeyXMeBHe/Jv2YFEwsfC+FWLR5IktrO5nmZfTkS0gKkVGAf5S000+S5S5yixabeuXNvYTGNAjcRHlocYtDRLhD+PevRlJ1LrkrwMkDTHh968=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729539854; c=relaxed/simple;
-	bh=lt9IZgebpUmwFfGy4DoMADM3P3rv3/HpBmChqkr8OSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=biG7ubMrxDAnyKnS/y+5lNI2yIu4PEZoCye7Wl0ZUu+BALPVzSYMohBvB1bIOOFsqJWEzlyPzRKf9noNnlVPkQIkT60u5nO3ezImYPegszcjk+VQI8BOYiPTHGSmJ2UVqhLZdglGEuRUC95rcObPYYln2wL1/VVXfg+Cxk8NKkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzlYHMf0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0049C4CEC3;
-	Mon, 21 Oct 2024 19:44:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729539854;
-	bh=lt9IZgebpUmwFfGy4DoMADM3P3rv3/HpBmChqkr8OSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tzlYHMf0aiwfAsoHrnek0xbJT3P9ZsgvOapSwqJXl37zqovojEg2+j33isQNFFmh0
-	 9NeMlN7svx0g/89lNVzIc1vc66TC5TCyIIo8MRGiSrjZhNdQMRuLu1lGP/J2lr4eCp
-	 vL4vWrpKRewUb6dxUOAtQYr34b9lOUKarGAKrNBcdIc/WGpJgUp6HOgJ0o+N6Q0JuW
-	 5fnk1azK78nLm0CjcleL7YEJqVB9Ldx0AKsqzM4bzu0sPQJLNse8NJBF4cEEIQwLa2
-	 DPMhJTjQcAj1BwJhLpnSUodHXwgX9TP3u7noqFti70NsIejxYp+kRZbq+mhXNyaxBq
-	 GS8IA/L1DePNg==
-Date: Mon, 21 Oct 2024 15:44:12 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: torvalds@linux-foundation.org, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <ZxavDApnkMl2xZNA@sashalap>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <xhjzj6kfgg2dxq6swurwaeyzqtd2sl4dat5pzg6jolirw5og6z@bmwdcuwsf2bv>
+	s=arc-20240116; t=1729540115; c=relaxed/simple;
+	bh=1mhtp26nldbkYkNL9WgdwxCUmet/2hIoEzLsfujmG6E=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=MyaPQ3qG2Nt5aPqlGmKWzWZMz1RJbIdiWXFDvCSkoB1l4mLnPgBGnK9WzT0uVtOKNrVpsW1gfkOb3M2H8rAcv1+Py5zRIi0lcaNp1shhceEPD+YqVSRjIv2sJDCREx/2giFsTm//lEin9p7MfOt/xBE4DZCuVtM7aPAXHIaCItg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=isaz50hi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729540112;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bvLTrAc+n+1CPaIy+KG+kXWufej77bt1knPj7ZYg6H4=;
+	b=isaz50hieALo8jH3dNObnJskElT+18muzThp8nR73Nz9cwB777pKgzEeMxnv09F1/g4qpU
+	T+1RGIJ3WuuL+sCdjw96rqT3CpaZ+QTwaxLjnfT7wQJ02iDzX7OKbLyAueKFb9VpT3qGu7
+	E6sMizCCM3jFdNg0XaYPy419CoOfRmE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-619-FN0_IHLiPoaEXLCJMnkWUA-1; Mon,
+ 21 Oct 2024 15:48:29 -0400
+X-MC-Unique: FN0_IHLiPoaEXLCJMnkWUA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 052521955F3C;
+	Mon, 21 Oct 2024 19:48:27 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.218])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6CCA030001A3;
+	Mon, 21 Oct 2024 19:48:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <ZxZ4-9guCQdAQLpu@Antony2201.local>
+References: <ZxZ4-9guCQdAQLpu@Antony2201.local> <ZxFQw4OI9rrc7UYc@Antony2201.local> <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me> <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info> <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me> <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com> <2171405.1729521950@warthog.procyon.org.uk>
+To: Antony Antony <antony@phenome.org>
+Cc: dhowells@redhat.com, Sedat Dilek <sedat.dilek@gmail.com>,
+    Maximilian Bosch <maximilian@mbosch.me>,
+    Linux regressions mailing list <regressions@lists.linux.dev>,
+    LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+    Christian Brauner <brauner@kernel.org>
+Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <xhjzj6kfgg2dxq6swurwaeyzqtd2sl4dat5pzg6jolirw5og6z@bmwdcuwsf2bv>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2196249.1729540103.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 21 Oct 2024 20:48:23 +0100
+Message-ID: <2196250.1729540103@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Oct 21, 2024 at 02:36:39PM -0400, Liam R. Howlett wrote:
->* Sasha Levin <sashal@kernel.org> [241021 12:32]:
->> Hi folks,
->>
->> The linux-next tree we all know and love is widely used by the kernel
->> community for integration work. It offers several advantages:
->>
->> 	1. Early detection of conflicts between matinainer trees
->>
->> 	2. Catching most new build errors/warnings
->
->Would it be difficult to catch branches that change things outside their
->scope without correct SOB/RB/Acks?  Asking for a friend...
+I may have reproduced the bug (see attached), though the symptoms are slig=
+htly
+different.  Hopefully, it's just the one bug.
 
-Up to the guy in charge... I don't want to attempt and monitor a policy
-that won't be enforced :)
+David
+---
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x5626ca804 pfn=
+:0x7948
+flags: 0x2000000000000000(zone=3D1)
+raw: 2000000000000000 ffffea000024d3c8 ffffea00001e5248 0000000000000000
+raw: 00000005626ca804 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: VM_BUG_ON_FOLIO(((unsigned int) folio_ref_count(folio=
+) + 127u <=3D 127u))
+------------[ cut here ]------------
+kernel BUG at include/linux/mm.h:1444!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 3 UID: 0 PID: 303 Comm: md5sum Not tainted 6.12.0-rc2-ktest-00012-g57=
+e4ac5316ef-dirty #8
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/=
+01/2014
+RIP: 0010:__iov_iter_get_pages_alloc+0x701/0x7e0
+Code: 0f 0b 4d 85 f6 0f 85 f8 fc ff ff e9 21 fe ff ff 48 c7 c6 38 6b 40 82=
+ e8 cd f4 aa ff 0f 0b 48 c7 c6 38 6b 40 82 e8 bf f4 aa ff <0f> 0b 4d 89 6a=
+ 18 49 89 52 08 4d 89 42 10 45 88 4a 20 e9 26 fb ff
+RSP: 0018:ffff88800804f5c0 EFLAGS: 00010286
+RAX: 000000000000005c RBX: 0000000000001000 RCX: 0000000000000000
+RDX: 0000000000000001 RSI: 0000000000000027 RDI: 00000000ffffffff
+RBP: ffff88800804f648 R08: ffff88807f1d8fa8 R09: 00000000fffc0000
+R10: ffff88807dbd9000 R11: 0000000000000002 R12: 0000000000000001
+R13: 0000000000001000 R14: 0000000000000000 R15: 0000000000001000
+FS:  00007f0c42c29580(0000) GS:ffff88807d8c0000(0000) knlGS:00000000000000=
+00
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000560cff5bb000 CR3: 00000000046a0002 CR4: 0000000000370eb0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ? __die_body.cold+0x19/0x2b
+ ? __die+0x2a/0x40
+ ? die+0x2f/0x50
+ ? do_trap+0xb8/0x100
+ ? do_error_trap+0x6c/0x90
+ ? __iov_iter_get_pages_alloc+0x701/0x7e0
+ ? exc_invalid_op+0x52/0x70
+ ? __iov_iter_get_pages_alloc+0x701/0x7e0
+ ? asm_exc_invalid_op+0x1b/0x20
+ ? __iov_iter_get_pages_alloc+0x701/0x7e0
+ ? radix_tree_node_alloc.constprop.0+0xab/0xf0
+ iov_iter_get_pages_alloc2+0x20/0x50
+ p9_get_mapped_pages.part.0+0x77/0x260
+ ? find_held_lock+0x31/0x90
+ ? p9_tag_alloc+0x1c8/0x2f0
+ p9_virtio_zc_request+0x339/0x6f0
+ ? debug_smp_processor_id+0x17/0x20
+ ? debug_smp_processor_id+0x17/0x20
+ ? rcu_is_watching+0x11/0x50
+ ? p9_client_prepare_req+0x15f/0x190
+ p9_client_zc_rpc.constprop.0+0xe6/0x330
+ p9_client_read_once+0x145/0x2b0
+ p9_client_read+0x59/0x80
+ v9fs_issue_read+0x3d/0xa0
+ netfs_read_to_pagecache+0x27b/0x580
+ netfs_readahead+0x197/0x2f0
+ read_pages+0x4a/0x300
+ page_cache_ra_unbounded+0x197/0x250
+ page_cache_ra_order+0x2f7/0x400
+ ? __this_cpu_preempt_check+0x13/0x20
+ ? lock_release+0x168/0x290
+ page_cache_async_ra+0x1be/0x220
+ filemap_get_pages+0x2f3/0x870
+ filemap_read+0xdc/0x470
+ ? __this_cpu_preempt_check+0x13/0x20
+ ? lock_acquire+0xcc/0x1c0
+ ? preempt_count_add+0x4e/0xc0
+ ? down_read_interruptible+0xb3/0x1b0
+ netfs_buffered_read_iter+0x5c/0x90
+ netfs_file_read_iter+0x29/0x40
+ v9fs_file_read_iter+0x1b/0x30
+ vfs_read+0x22b/0x330
+ ksys_read+0x62/0xe0
+ __x64_sys_read+0x19/0x20
+ x64_sys_call+0x1b70/0x1d20
+ do_syscall_64+0x47/0x110
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-If Linus wants to add this to the workflow (which is doable), then an
-explicit ack would be great.
-
->> However, it faces significant testing challenges:
->>
->> 	1. Contains a mix of "ready-to-go" code and experimental additions
->>
->> 	2. A single "bad" piece of code can affect testing of everything else
->>
->> 	3. Low barrier of entry, encouraging inclusion over exclusion
->>
->> 	4. While linux-next offers early conflict resolution and
->> 	identifies build issues, it is very difficult to actually test
->> 	due to the abundance of runtime issues it tends to have
->>
->> These factors combine to make linux-next a valuable tool for integration
->> but problematic for comprehensive testing.
->>
->> During the Maintainer's Summit, Linus Torvalds expressed concerns about
->> the quality of testing that code receives before he pulls it. The
->> subsequent discussion side-tracked to the testability of linux-next, but
->> we didn't directly address Linus's original concern about pre-pull
->> testing quality.
->>
->> In an attempt to address the concerns, we're trying out a new "linus-next"
->
->The names are really close, could it be something that's more than one
->character different?
->
->linus-pulled, linux-pending, linux-pr or something?  They are also the
->same length, which adds to the parsing challenge on both typing and
->reading.  I'm thinking I'll get emails about the wrong branch or send
->them with the wrong branch specified - especially pre-coffee.
-
-Maybe... I didn't think about the name too much because my thinking is
-that it'll mostly be a behind-the-scenes for most folks outside of a
-very small group.
-
->> tree is being created and maintained with the following characteristics:
->>
->> 	1. Composed of pull requests sent directly to Linus
->>
->> 	2. Contains branches destined for imminent inclusion by Linus
->>
->> 	3. Higher code quality expectation (these are pull requests that
->> 	maintainers expect Linus to pull)
->>
->> 	4. Continuous tree (not daily tags like in linux-next),
->> 	facilitating easier bisection
->>
->> The linus-next tree aims to provide a more stable and testable
->> integration point compared to linux-next, addressing the runtime issues
->> that make testing linux-next challenging and focusing on code that's
->> about to be pulled by Linus.
->
->What about the people who send them late?  I know people get told not to
->do that, but some people still do.  Those late pull requests would
->potentially invalidate a lot of the testing in this scenario.
->
->For example, if there was a late mm change, then anything using mm could
->be affected.  That's a large subset.
->
->Is there any cut-off time for testing?
-
-I think that the answer here is the same as whatever Linus considers as
-"too late".
-
-My cron scripts will pick up the pull request quickly and send it out to
-be tested, but it's up to Linus to decide if he wants to sit on it for
-another day/week/month or not.
-
-Again, not enforcing policy, that's up to the penguin in charge...
-
--- 
-Thanks,
-Sasha
 
