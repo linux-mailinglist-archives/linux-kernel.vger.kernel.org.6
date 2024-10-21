@@ -1,52 +1,54 @@
-Return-Path: <linux-kernel+bounces-375087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258379A90B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:13:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394469A90CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 22:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFF1B1F2314D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:13:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E6CA1C20AEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 20:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2A51FBC92;
-	Mon, 21 Oct 2024 20:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C60C1FDF92;
+	Mon, 21 Oct 2024 20:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iuo1xN94"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ath19mW8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BD61F8EEC;
-	Mon, 21 Oct 2024 20:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB9D192D66;
+	Mon, 21 Oct 2024 20:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729541592; cv=none; b=ZYwZNnIzvHS8dZV1qCYzYF0QwGaE7tjJ6nDa9OvzjhpNB54Tx3c8Y1XsOA2VRhAbGFiNx1yF+H2or/biDFaTTSWLlq+vR+p9ffYaTg6GWTRR4sNJhAqB4kyV1izjVQ39qsmycClaNJG5wk5T3Kpx+STteBKXyCeAi1/2/mOcc8E=
+	t=1729541677; cv=none; b=ObY2wF22bv2ay2HEQwXcX/j3mE25dOtLmmwt2E7t7Uuve8hNNuEit9P2LBjWDjEfRKapiRU6w//PlhLIYU57x+fQq3R00xyPMPKkoxW17VYS9BSten2zR1Ge3MRHYTBB7LqpH8xwL9dL4hGFnWN79F8gwFfykAuwRUlN4PpWFjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729541592; c=relaxed/simple;
-	bh=5I/+WnSIh7ZTj3Ga0psfjktPdutzjm6moTImzEaKQW0=;
+	s=arc-20240116; t=1729541677; c=relaxed/simple;
+	bh=j/BrK8B0TGkZ9ZwNciUqLWo+wzl27hLDJOIpsB2sOLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+T0llHnWogz2O5XntWNujAEt0UgtL76qwu/AVeIsYQdIhjNiTqRQXge708wLNLq5XJGb8Fxx7+oPFC7ycephFyPIBC2rLtry/KR4AYQTsBzIMu5Vr4Vsa8nfw/Zc8+vqOf+1MSiUfBtrumRRIwAtrLjf3w2osC5+iH5ZuLYT7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iuo1xN94; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A743C4CEC3;
-	Mon, 21 Oct 2024 20:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729541592;
-	bh=5I/+WnSIh7ZTj3Ga0psfjktPdutzjm6moTImzEaKQW0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=eXm07kXzOnwbFiuMRkww/9o8glPKQgKpW4mEn+Ptn27IL1oKQnl8hKhn4ZVAro1pVlU/lPZyDuml0k8cjSDEzFS66QjMkmLFyInd1AjCLtj/YdBx2ts3+9ZD0rwnHDfoCiDPlExSnrNq+n+IptrFsxyda2RkvOuurtv9DeD7fDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ath19mW8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CDDC4CEC3;
+	Mon, 21 Oct 2024 20:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729541677;
+	bh=j/BrK8B0TGkZ9ZwNciUqLWo+wzl27hLDJOIpsB2sOLQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iuo1xN94Rs2Bn2DyDG0QmNr4niT48ZHch9GxgPDRmF7o067lncwie3plP0dtmD6Jz
-	 2qEZSmQszFXnlvzMR16Qj0J6FN5g1SHDOfLAq+I7fydMbf6HEEP2NhI2/aYuCR835S
-	 1vfX0hBaZr7ByQNDZLZolxSKGFv9Oe7sviLOKBcnp/bf2PSqGfVPH0LnTDNIXiNvRs
-	 itXIjyP2kEDM8H7iIzYmwQFLzTw0XaN/ts/Ny3XvbFhTjRpbBcQmhT/1AqPva2ayva
-	 /6TTzClNXQOpET+ZTN+v1Y/GHVPpdFnr5FJVEBFK1zxv/3clRnYfNT+md+nDV7WHr0
-	 TE9EJQDBLGyKA==
-Date: Mon, 21 Oct 2024 10:13:11 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched-ext: Use correct annotation for strings in kfuncs
-Message-ID: <Zxa113xfLj4Dffyk@slm.duckdns.org>
-References: <20241021201143.2010388-1-memxor@gmail.com>
+	b=ath19mW8aXXkH6uv9k4DdfEi8j+WQftCAu0vTLib1HY+oSD1lAV+LSLabNrpzVg28
+	 LYGpTBaQKuyBXg9mLs0UcTroswf/x1+FY9cDaInTuDxQLeLdYaDvJHz96yD9M9O0Rj
+	 bdxTXBQ0Rc1v7NGivSBjjwK4DlG11n1vP4qVesj0=
+Date: Mon, 21 Oct 2024 22:13:17 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+	anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Stable@vger.kernel.org
+Subject: Re: [PATCH v2 01/13] iio: chemical: bme680: Fix missing header
+Message-ID: <2024102100-sulfide-paving-17fb@gregkh>
+References: <20241021195316.58911-1-vassilisamir@gmail.com>
+ <20241021195316.58911-2-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,22 +57,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021201143.2010388-1-memxor@gmail.com>
+In-Reply-To: <20241021195316.58911-2-vassilisamir@gmail.com>
 
-On Mon, Oct 21, 2024 at 01:11:43PM -0700, Kumar Kartikeya Dwivedi wrote:
-> The sched-ext kfuncs with bstr suffix need to take a string, but that
-> requires annotating the parameters with __str suffix, as right now the
-> verifier will treat this parameter as a one-byte memory region.
+On Mon, Oct 21, 2024 at 09:53:04PM +0200, Vasileios Amoiridis wrote:
+> Add the linux/regmap.h header since the struct regmap_config is used
+> in this file.
 > 
-> Fixes: f0e1a0643a59 ("sched_ext: Implement BPF extensible scheduler class")
-> Fixes: 07814a9439a3 ("sched_ext: Print debug dump after an error exit")
-> Cc: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+> Cc: <Stable@vger.kernel.org>
+> Fixes: 1b3bd8592780 ("iio: chemical: Add support for Bosch BME680 sensor")
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> ---
+>  drivers/iio/chemical/bme680.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/iio/chemical/bme680.h b/drivers/iio/chemical/bme680.h
+> index b2c547ac8d34..dc9ff477da34 100644
+> --- a/drivers/iio/chemical/bme680.h
+> +++ b/drivers/iio/chemical/bme680.h
+> @@ -2,6 +2,8 @@
+>  #ifndef BME680_H_
+>  #define BME680_H_
+>  
+> +#include <linux/regmap.h>
+> +
+>  #define BME680_REG_CHIP_ID			0xD0
+>  #define   BME680_CHIP_ID_VAL			0x61
+>  #define BME680_REG_SOFT_RESET			0xE0
 
-Applied to sched_ext/for-6.12-fixes.
+Why is this needed in a stable release?  Does it fix a bug?
 
-Thanks.
-
--- 
-tejun
 
