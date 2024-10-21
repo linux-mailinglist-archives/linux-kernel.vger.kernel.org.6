@@ -1,116 +1,137 @@
-Return-Path: <linux-kernel+bounces-373993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1D19A605B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:41:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C849A6063
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A04C9280E4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:41:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6439B1C216CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BE31E32CC;
-	Mon, 21 Oct 2024 09:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8062A1E3775;
+	Mon, 21 Oct 2024 09:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S41S/vky"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R8x4cMH/"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB518198837;
-	Mon, 21 Oct 2024 09:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A14E1E2832;
+	Mon, 21 Oct 2024 09:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729503682; cv=none; b=jVbyxAP7BakwiHli+XVW9xiMXOo4qFA9Q8ZwkWlGSRqAtqajDOYCp9dR2zUZsZqwxVf1r0O6JqiSYidaehhuR+Tkn/6HSB0pmUqjzfA8INGBxHxOQ01/MjN/UjGsdVItGjRgIAA8troc1V+aW5fmfU3DBG+8mtIzjaY75LrCBYY=
+	t=1729503702; cv=none; b=nAu83kNm731ZbKhzuDuOdWIjOJn5c8kARGkfKcpRGSLqpQsCbi/VGq+3dVFnI2duqgUTH4wfe1jYr09/dr51oKXhuwO38DX5N1pBngzqKfdsVZTzTqVNvJTsCFg8rndpFlWXeuNhj8vxTyzHBxD2InlA85vxlgGg/A5kwvnPc4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729503682; c=relaxed/simple;
-	bh=6rptqk1yjX88puhYrwkZuZq14mYGXe2ZwC+jebh3JSY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=CCHzHfnGrZI4nLe3MeVx39e/d61pwV0qnKSdKQQ741jjC3Tm0y7mNr0fb6Gg0vVSbH5ZXlzlPwHWcFdq6b3IgF22sXfBjrhGDrUCYk65BNTbuqTPUWMMLadpHy0AJO9PgDSYW0q2m/YqQ2m3HBClCEtlchWZ2qE0OCDwiZGWiBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S41S/vky; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575AAC4CEC7;
-	Mon, 21 Oct 2024 09:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729503682;
-	bh=6rptqk1yjX88puhYrwkZuZq14mYGXe2ZwC+jebh3JSY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=S41S/vkyRGKEeA2C28ygl8O6TszptYIZciX2hVi0K6ajaT1IUs8nB3sssIhzZ3iro
-	 5MgcWeFSicjmCjP2JHwfuTKfaT8K94xIY5xyrx6cVkBijHnEH94Bgywcvo1tlAIo8C
-	 tYbTfIoC16G59ZkYXOTJ3WWaiT6kyiwmlRU9GozUx1ode9Km/A5eR5/ogC8TvLzTRv
-	 //boFiV114+ULueUV+g7fYKYnYJC/ntsQbIyQ9fo3HLo4SxHw8282MDQIugyY5zeg0
-	 IqwpMyqcWCJMQJemvOEK377iHALkawjauBChannsK/rQnwcdOzuPCRrMwm29hrnU/9
-	 z3VQc3xBKI59g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DC93809A8A;
-	Mon, 21 Oct 2024 09:41:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729503702; c=relaxed/simple;
+	bh=P54tLI5YsgAA8zPPDJIZ/yBTq6jfjUxrUYiQ3cLFdzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFhAeUURTUrR72lB3xGGJOqmOFNHvWZVvQp06UUjOvKkMYfRlnVIhKL3Nv6nQ1rmsTy4X608BZvbm24nCRsBQuSpwLSjAPld7HXGw/zaGZJdHPzDpq8quyJy2ntSJq41TlNXdOasRcGjXC6WYz1xLb3vK71SfgXb61OBmuHSq4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R8x4cMH/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49L2L6QB032130;
+	Mon, 21 Oct 2024 09:41:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=gppHrh53X6WMLkwMFn96MT3da38sjn
+	e7HSCAYAud/+U=; b=R8x4cMH/31KpcjL1SPm1sMbhJFR1aB3OQp0vYpA+nxwLN6
+	ZLFYTLS32wfKmJg0JMeEAHn3oUf/Z4d2mAedhDHXY8klVwY2whifCpwAOx1gKsUO
+	O+XIruG5kxiMs8zhtMkyRdvynzWP/OpGnx8EkrwyLe/eBqEXCYvsG9Oe+G69wUgF
+	WbMi/oiLKoGG0N+7q1iLJCOp503HoTBbNNN7kAPNltETUDjTSY/Lp3ibABKZGHCT
+	IWo/QIFJ2htpdVuTfC8uIaGnl2yowqFhgsWJdJW326AuJPAOuDgzSZr3NSt2gsnl
+	GEEdR5RDMSJM2QlRVnRbMmUgnkhqPQRx3KQbu0Ig==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42c5fsqxcw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 09:41:39 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49L87U9l028885;
+	Mon, 21 Oct 2024 09:41:39 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42cqfxdp7n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Oct 2024 09:41:39 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49L9fZbv54854130
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 21 Oct 2024 09:41:35 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 71AB22004B;
+	Mon, 21 Oct 2024 09:41:35 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D59D82004E;
+	Mon, 21 Oct 2024 09:41:34 +0000 (GMT)
+Received: from osiris (unknown [9.171.37.192])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 21 Oct 2024 09:41:34 +0000 (GMT)
+Date: Mon, 21 Oct 2024 11:41:33 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, borntraeger@de.ibm.com, nsg@linux.ibm.com,
+        nrb@linux.ibm.com, frankja@linux.ibm.com, seiden@linux.ibm.com,
+        agordeev@linux.ibm.com, gor@linux.ibm.com,
+        gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v3 03/11] s390/mm/gmap: Refactor gmap_fault() and add
+ support for pfault
+Message-ID: <20241021094133.6950-A-hca@linux.ibm.com>
+References: <20241015164326.124987-1-imbrenda@linux.ibm.com>
+ <20241015164326.124987-4-imbrenda@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V12 RESEND net-next 00/10] Add support of HIBMCGE Ethernet
- Driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172950368799.187649.5504292717467642283.git-patchwork-notify@kernel.org>
-Date: Mon, 21 Oct 2024 09:41:27 +0000
-References: <20241015123516.4035035-1-shaojijie@huawei.com>
-In-Reply-To: <20241015123516.4035035-1-shaojijie@huawei.com>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, shenjian15@huawei.com, wangpeiyang1@huawei.com,
- liuyonglong@huawei.com, chenhao418@huawei.com, sudongming1@huawei.com,
- xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
- andrew@lunn.ch, jdamato@fastly.com, horms@kernel.org,
- kalesh-anakkur.purayil@broadcom.com, christophe.jaillet@wanadoo.fr,
- jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
- salil.mehta@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015164326.124987-4-imbrenda@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Km2xh2AANfqiAEv46XevX-K-Bi7EIU9s
+X-Proofpoint-ORIG-GUID: Km2xh2AANfqiAEv46XevX-K-Bi7EIU9s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1015 mlxscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 adultscore=0 phishscore=0 priorityscore=1501
+ spamscore=0 mlxlogscore=754 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410210068
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue, 15 Oct 2024 20:35:06 +0800 you wrote:
-> This patch set adds the support of Hisilicon BMC Gigabit Ethernet Driver.
+On Tue, Oct 15, 2024 at 06:43:18PM +0200, Claudio Imbrenda wrote:
+> When specifying FAULT_FLAG_RETRY_NOWAIT as flag for gmap_fault(), the
+> gmap fault will be processed only if it can be resolved quickly and
+> without sleeping. This will be needed for pfault.
 > 
-> This patch set includes basic Rx/Tx functionality. It also includes
-> the registration and interrupt codes.
+> Refactor gmap_fault() to improve readability.
 > 
-> This work provides the initial support to the HIBMCGE and
-> would incrementally add features or enhancements.
-> 
-> [...]
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
+> ---
+>  arch/s390/mm/gmap.c | 119 +++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 100 insertions(+), 19 deletions(-)
+...
 
-Here is the summary with links:
-  - [V12,RESEND,net-next,01/10] net: hibmcge: Add pci table supported in this module
-    https://git.kernel.org/netdev/net-next/c/a95ac4f92aa6
-  - [V12,RESEND,net-next,02/10] net: hibmcge: Add read/write registers supported through the bar space
-    https://git.kernel.org/netdev/net-next/c/fc1992bad7da
-  - [V12,RESEND,net-next,03/10] net: hibmcge: Add mdio and hardware configuration supported in this module
-    https://git.kernel.org/netdev/net-next/c/a239b2b1dee2
-  - [V12,RESEND,net-next,04/10] net: hibmcge: Add interrupt supported in this module
-    https://git.kernel.org/netdev/net-next/c/4d089035fa19
-  - [V12,RESEND,net-next,05/10] net: hibmcge: Implement some .ndo functions
-    https://git.kernel.org/netdev/net-next/c/ff4edac6e9bd
-  - [V12,RESEND,net-next,06/10] net: hibmcge: Implement .ndo_start_xmit function
-    https://git.kernel.org/netdev/net-next/c/40735e7543f9
-  - [V12,RESEND,net-next,07/10] net: hibmcge: Implement rx_poll function to receive packets
-    https://git.kernel.org/netdev/net-next/c/f72e25594061
-  - [V12,RESEND,net-next,08/10] net: hibmcge: Implement some ethtool_ops functions
-    https://git.kernel.org/netdev/net-next/c/e8d13548bd08
-  - [V12,RESEND,net-next,09/10] net: hibmcge: Add a Makefile and update Kconfig for hibmcge
-    https://git.kernel.org/netdev/net-next/c/81e176de6ad4
-  - [V12,RESEND,net-next,10/10] net: hibmcge: Add maintainer for hibmcge
-    https://git.kernel.org/netdev/net-next/c/f9a002a13054
+> +static int fixup_user_fault_nowait(struct mm_struct *mm, unsigned long address,
+> +				   unsigned int fault_flags, bool *unlocked)
+> +{
+> +	struct vm_area_struct *vma;
+> +	unsigned int test_flags;
+> +	vm_fault_t fault;
+> +	int rc;
+> +
+> +	fault_flags |= FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT;
+                                                ^^^^^^^^^^^^^^^^^^^^^^^
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+This is not necessary, because of
 
+> +	if (fault_flags & FAULT_FLAG_RETRY_NOWAIT) {
+> +		rc = fixup_user_fault_nowait(gmap->mm, vmaddr, fault_flags, &unlocked);
 
+this.
+
+In any case:
+Reviewed-by: Heiko Carstens <hca@linux.ibm.com>
 
