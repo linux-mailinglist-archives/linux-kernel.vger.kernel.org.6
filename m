@@ -1,128 +1,88 @@
-Return-Path: <linux-kernel+bounces-374654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69EE59A6E1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:29:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8F09A6E25
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15C3C1F24269
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:29:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EAEC282B1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FFD1741D2;
-	Mon, 21 Oct 2024 15:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D4119F133;
+	Mon, 21 Oct 2024 15:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IO7rNIDL"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="FZOMfv5i"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F01815666C;
-	Mon, 21 Oct 2024 15:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A236719DF9E;
+	Mon, 21 Oct 2024 15:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729524554; cv=none; b=A2oiqBOwT+FJ0B9F+Y//bnsAOyJK09UwqTFRFLE0Y9FCB5burvr/ThSeyEwRIsynfvdocs4VJ7Vk7AepLwQRdvyDNsmrj/xFLrhFpP8lkGYGyleC739xsHWoMO0a1QfPPbyxCpvYb1j+XNv9+eBWj3pFzPyW9xibEc7EUkEWa0o=
+	t=1729524625; cv=none; b=okKtNkixrEgmLcvJS6fe+x1WXsy72vW4hvqL62A9J40Nz288OV8n6LL6juSP7qn77A/wmSnnZ1Sbl19N9nEX3uMF5358H2CuaFvutuciQI0VY2QBqvh+pW40qiERZzRVhaBjI4K47c9zlZ5SIvImF97MmTNfbpeLmC6Hp3nUIOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729524554; c=relaxed/simple;
-	bh=djjbLzgO5ZMu5YQoFhWKRk/U8zzfkcKjEWieuZBAClY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ttgqfbeq09/8Ijyi5mN8DD6IQt9cqqSlTKovHOfp51v+FHl+9ZZ51D3RyDiXxmCCvkciVDXXQR2O4fr2lLIwm/reg3HadVLcuiUkE/Wleo7Xfnr8ENRTMS4EKW+LFMYPwvAWe5UxwuWuEAn8DLda6GeFWLKH/WJSZQd1hak14o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IO7rNIDL; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea8ecacf16so3143942a12.1;
-        Mon, 21 Oct 2024 08:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729524551; x=1730129351; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OxtlyOqwd5QS2va759UuCoBJi2MrqRuIrYTgMMaR/b4=;
-        b=IO7rNIDLWncvvdsXHPxdrnY5GcTg+G44GfCr7yChLpvrERFfVHseljB1GfTkH7CNdk
-         /JF+KT3xIdLDwsNFoN7VID1YswBba4axz3PUn9+qAKDcbHHMHCb/PKkxcpMbbUwcBMkh
-         c6IHS69fhVp30KQslcfwGVN9yYyEm12VKlI87UbR1cPjACRVH7KcVficCZKPZyNjnz1B
-         W5RsEd3BE0/PzQHM3Rr4yzQ3mkc5EYY6okWJTcDBBPLY3DScB/BK0i4RTPtoZzLSuR4d
-         U2hIE4RnyCcDkfrxRjq9OYffCFsAzYDb1yvd39LYPHjv3i1KWb8itQA+vjtVA8YApmAo
-         kbHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729524551; x=1730129351;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OxtlyOqwd5QS2va759UuCoBJi2MrqRuIrYTgMMaR/b4=;
-        b=Rz9iXDdvlBg4+DdyzvzeJ1xMcZnH8N7HAaV5NjZdW669t5KKZO8wPLWwh+t/JXV21m
-         vkQ5q/xR9OMYoqWoNZk5MyEo8VBfxYuUtJJoH4VjcKOKemt6tGfccaPzy/vsFeZBO5tQ
-         8vwD21KWFBsv4Lh+ZEyb3tOE/Fl11vdvrK4kc+T2sAbM0s3rP5TvOff59q/O2necYiA+
-         AKT8wrOkCVcZBrzWRXj6So3Gj7VXoZryR/SQRkcbl03knLyA9in8TttNEIVN368HoDK/
-         aSTdoDCqbPtf539WKx9VhvS6g3ExaK72S//rwvIAXwU0bpxKmp3atXSysjU5TG0/QUIi
-         QUrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0sSN5brhAUc6CouIPp3nKgxYsEPef5DkErMmoTi6ZjrGM0FgoNgE5UGbxi94l2Np2SbbzqYGW2oWNUQf9fA==@vger.kernel.org, AJvYcCXqRKIg402sYT2bNF90mXfOD8ygavZqvQt2P96HJbz7erAhZzuU7bNZkLk/NZO6xQTDkLXnFXH/M6Ts590i@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdb5NQTlW4GbxVj4E3lJIWnAQg8envCZLGl+BZsp3qHC3SBQDs
-	NEL5gAoXYH2v3mYYxfWwMBf6yqibMsf3EMNuQ2cFWNs7wlIs/H739LbZAMwx/9SHGocoCIJunZU
-	LS7lKsx3573qvYv7/N7zOTJyoN3g=
-X-Google-Smtp-Source: AGHT+IFAHg5lxUbwjuA68v6eKNTB7ETnc5cSGTv3ajBN8pBqKTJGGulmN6cIpeuwYwUVOLdoIKqdrrR2BgDFamzakSw=
-X-Received: by 2002:a05:6300:4041:b0:1d9:2bed:c7e8 with SMTP id
- adf61e73a8af0-1d92c56cd8dmr18534677637.35.1729524551544; Mon, 21 Oct 2024
- 08:29:11 -0700 (PDT)
+	s=arc-20240116; t=1729524625; c=relaxed/simple;
+	bh=TT2QyUsGNicsEgyMGPRC93OUkdpWgPpagvhS1C5I2+w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nwJOrN13Cn2RXqNxblyfqC2tuskaAgdH2dtcOPNRStHk+HjaYQG6hjnIOTnllWnlSay0ROTpG6GvQASkWF1Jd3E3DXd19CQFsYV1667P4TG8R2kxls3mOf5dpLsn8j6E6uh4ElUNu9d9IHQqvH5niEJs58oam8XImIenlBbB0Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=FZOMfv5i; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7824C42B3D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1729524622; bh=H489kSdhQ7TfamFhivHgfmOh2p+oCYztU/4FDtLuF/A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FZOMfv5iZ2y4qwAJuurbUlIhHY9HRI7+mt9DxBgnbUNavAeMJ/IBLD7bmhhvWj6x2
+	 s6IKtHw6NzxSsdMNSg/ZVTywpj+GRYcPfTEDACDkqsXSVdyXYoGoXHMfwRHyGcKzRm
+	 eMIp/exaqLz3WxeV8Ik+c655l/DL3p8SZB05hED7d/u+qDqNe1x52QmCuZFpp5SmF5
+	 Jabkxdwem4IXPu11psrBZnDIkNwGXA+Dma5HoaPd97FegINy7a4iBkK5EKmTvHCr0p
+	 +Z8bQlMWDplkVPxoG9oMzERmNlhbm6PXrX7NlA1kbrWTyx0eFqPX44GuYJqaA1AgbW
+	 zVO02kR+t7V3g==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 7824C42B3D;
+	Mon, 21 Oct 2024 15:30:22 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev, Alex Shi
+ <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, Dongliang Mu
+ <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] docs/zh_CN: add the translations of
+ kbuild/reproducible-builds.rst
+In-Reply-To: <dcd09bf28f52ba0461b26f800fdbb145c879a313.1729259177.git.dzm91@hust.edu.cn>
+References: <cover.1729259177.git.dzm91@hust.edu.cn>
+ <dcd09bf28f52ba0461b26f800fdbb145c879a313.1729259177.git.dzm91@hust.edu.cn>
+Date: Mon, 21 Oct 2024 09:30:21 -0600
+Message-ID: <87r089tqwi.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021151036.34383-1-aha310510@gmail.com> <E6F9687B-700A-4A02-8A7F-4C9ED648D746@gmail.com>
-In-Reply-To: <E6F9687B-700A-4A02-8A7F-4C9ED648D746@gmail.com>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Tue, 22 Oct 2024 00:29:01 +0900
-Message-ID: <CAO9qdTHjjJ53F0Vw=SSnLka1B5QLD1Sj6ZRM6g=AFtiLGKQ-+A@mail.gmail.com>
-Subject: Re: [PATCH v2] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
-To: Alan Huang <mmpgouride@gmail.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Alan Huang <mmpgouride@gmail.com> wrote:
+Dongliang Mu <dzm91@hust.edu.cn> writes:
+
+> Finish the translation of kbuild/reproducible-builds.rst and move
+> reproducible-builds.rst from TODO to the main body.
 >
-> On Oct 21, 2024, at 23:10, Jeongjun Park <aha310510@gmail.com> wrote:
-> >
-> > The size of a.data_type is set abnormally large, causing shift-out-of-bounds.
-> > To fix this, we need to add validation on a.data_type in
-> > alloc_lru_idx_fragmentation().
-> >
-> > Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
-> > Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > ---
-> > fs/bcachefs/alloc_background.h | 3 +++
-> > 1 file changed, 3 insertions(+)
-> >
-> > diff --git a/fs/bcachefs/alloc_background.h b/fs/bcachefs/alloc_background.h
-> > index f8e87c6721b1..91eb96b19a76 100644
-> > --- a/fs/bcachefs/alloc_background.h
-> > +++ b/fs/bcachefs/alloc_background.h
-> > @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum bch_data_type type)
-> > static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 a,
-> >      struct bch_dev *ca)
-> > {
-> > + if (a.data_type > BCH_DATA_NR)
+> Update to commit 114ff6fe6cfb ("Documentation: kbuild: Add description
+> of git for reproducible builds")
 >
-> This should be  >= ?
-
-Oh, that's right. I checked it myself and it's the maximum value + 1, so
-I think I should use >=.
-
-Thanks for letting me know!
-
-Regards,
-
-Jeongjun Park
-
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> ---
+>  .../translations/zh_CN/kbuild/index.rst       |   2 +-
+>  .../zh_CN/kbuild/reproducible-builds.rst      | 114 ++++++++++++++++++
+>  2 files changed, 115 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/translations/zh_CN/kbuild/reproducible-builds.rst
 >
-> > + return 0;
-> > +
-> > if (!data_type_movable(a.data_type) ||
-> >    !bch2_bucket_sectors_fragmented(ca, a))
-> > return 0;
-> > --
->
+I've applied this (patch #1 was already applied).
+
+jon
 
