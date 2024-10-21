@@ -1,103 +1,169 @@
-Return-Path: <linux-kernel+bounces-374325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65B39A6887
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:32:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5039A688D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6772F28737F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:32:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57B9D1F28008
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C131F12ED;
-	Mon, 21 Oct 2024 12:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F651EF92C;
+	Mon, 21 Oct 2024 12:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMRb3CJb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X1x2io/Q"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAF01EABB2;
-	Mon, 21 Oct 2024 12:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A18A1EF0B8
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729513957; cv=none; b=ge8TZWmV2oU+TunjwKfguSK4AecMWB9/Hu0a+SoHl2ic9JicnjLtpfttC/6nRddt7bFiB7imKMW5iRcE7TeYDSk3eEWhj9Cy7ClYeYH/ajqj+pxt+GXHKaJYkxNfEzxF7LYFI/Kl8mIKWpalcdA6S0ANhuYXwM2qGfRODHDTzDY=
+	t=1729513966; cv=none; b=jaanJt0P4Acs2I3O1wwEamvxsLIY78MnxOxfiWG0Qdpk17Ox81kcfRStroRJ6Kdu58lBuMlC3w9cdoQifBYP0GhZ2831hcDydF2G3ONIoTIQt3MaNjTOjTyMLKshqTjQJar/cvvBxVmurXuiiecfQuUINNgJ97qBXBRKgW2N80o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729513957; c=relaxed/simple;
-	bh=DVCh3iNw6uYypy5M+ZmLHYym9XosXi9ik8C+JBoUxs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tkPh3++UgoLG3B3z5vBCpU+MOfheLhj5G6sC6umguxGq3q+7AZyyg1xZ1d7w8iHWV56wS6NzbK8+g/Ajg1upkelvj904VcBZw0KEYOCyH8WrEtKEnibqV8w9oi5OfGEgZj21hTMSKQoBdiVvehkiRg6xYk8vI7MhH3OScdMBXuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMRb3CJb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A68C4CEC3;
-	Mon, 21 Oct 2024 12:32:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729513956;
-	bh=DVCh3iNw6uYypy5M+ZmLHYym9XosXi9ik8C+JBoUxs0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OMRb3CJbsVB5FZhUyX7AOdeCDOUsx0HODnJp64JvMdx85P3rcjiQZHgS+3/Z2K+TW
-	 dfpC/QpPYmeHHfTPWeY/FKuduAkEk5svXCyTNbNLyDEOgwjdDcMYDILilS+SWdu/FE
-	 /vnVtlAKb7VixXBJAPxXTprJ8AyoShCTiDfRxjX8Xv5rIi4Q+efm6qT28m5kTQqJXb
-	 9z6is7DjXHCEJDUVsxQxLQYbnR4tUo+V4T1gJreuwN787sKfgykvotf7LrM7PTHLN7
-	 VOAmekzhIMsvjhMgdCF/IqTYgOBmdzBPGyJTy9ANQ4jNDFjg/Qx32SRzLaSYpXQOn1
-	 DxnOXjFOCZTCQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Gao Xiang <xiang@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Allison Karlitskaya <allison.karlitskaya@redhat.com>,
-	Chao Yu <chao@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 1/2] fs/super.c: introduce get_tree_bdev_flags()
-Date: Mon, 21 Oct 2024 14:32:29 +0200
-Message-ID: <20241021-gesagt-abverlangen-b9ad11ca0e9e@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
-References: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1729513966; c=relaxed/simple;
+	bh=4XJdHOeLB0HksEUioBvTCNJuvmjFzA4qDeHZmTgcxDo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZszR7FnVM+JkaquP13jbzYB6LqKPI9hh8xpXH4Y72CcqtoVqMtGyP6XApAbWuQzgYc2W25QIn6q+wTD0d+IHJ6gOw8c7t91cc6UOIhzZlRkicNy/tUbnBJn+WM+dXxq0UxaX3UC2FHx0LFKEQBKvxF3bqPZkJ2aMd0VAInB0TCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X1x2io/Q; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431481433bdso46836725e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 05:32:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729513963; x=1730118763; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xK977l4SMZlVVZ120SxoAqshGqpipjnvBMfJGymAJIY=;
+        b=X1x2io/QqWxUP6JOdsuunUNEE9UbQELC8Q/q0Ev6A597GwfGT7xI/m+JfPCdEYdl3S
+         dzFzlZ37bp+8QP7qCvKmCIUJxib4YLkx0MmpbA9Rdhrv1GLWBlPcK4l0H/gNStm8AX1V
+         VdcXL+iYI4jXHmb5XRrPtoy2incHiHxveBMGb52qwrPYVgC00J+hYdruKUEF/HjYw14y
+         LFxoA0tIiiTrNcKlbONsVDVOznmeAQ8Ynf32sHvVg0GknwZiMxBevZTomxBUXeXabn90
+         eh/xQgUeKuTGZidX63Bq8dbUHuw/KUuOfnhrAbRL5po1Y8kYDxrN9vWZCRHpF6EeLrHm
+         wncA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729513963; x=1730118763;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xK977l4SMZlVVZ120SxoAqshGqpipjnvBMfJGymAJIY=;
+        b=Ltr0PHG/HtsUcaDLw5HsRQgM3+9qcWiiSFTKxZoWr/YlFM+nNe48YPsBu9iDDtrgUU
+         LW7ZuIIV/GmI3BVsluwzV2Z+ehMUmuQb2+ONkwoo1ptq9X7hAziK07zHViFyaCxmle1X
+         FokfKCRhnxxxOd9XsHU7qqcdtx/qTXiOh2jB4Vi2uZ1I2iKbLka4g9Y7C04r1k0Hh6mD
+         qEBLK+tM+G9lZhm7YjNV7Xcxc/ICaTI5J5z8uM1AquAg73ZksGt8zv9kc0lNbFTq4Qsh
+         BDYyDXVusjWcs4sNnJ/4/91Aml2/FxhDJP1lkGJ45pKIsjK7HD49nJNWJ/UPVl4f9lAi
+         nIZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUL2CjhghJrF1xPXGk+HNE7O3oDyyBP9DWhIdz1S984qd5pzgqNYdUdI22hcIxcyvCrkNmUxt8nEV4Si4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAnGDhOdjLjivEdM1hy4orvnxsB4TrN8GwTGiXzIpvz1OpVrvk
+	/nhXxK07MpmjpHD1Oy0bCbOQ51RpljaRxEfFSjswljw8oQqORS3tdmyjBDz9Jns=
+X-Google-Smtp-Source: AGHT+IEF5fcgC6ODgI4jJBJx2i1qOREjjBxmOShJ8ylB9dd5vueXyrRW5QKR45FnVPpf8X+wIJuZhg==
+X-Received: by 2002:adf:ec8a:0:b0:37d:4ef1:1820 with SMTP id ffacd0b85a97d-37eb487c281mr7320360f8f.40.1729513962869;
+        Mon, 21 Oct 2024 05:32:42 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:3908:dea6:2ddd:be97? ([2a01:e0a:982:cbb0:3908:dea6:2ddd:be97])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a587f4sm4249896f8f.52.2024.10.21.05.32.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Oct 2024 05:32:42 -0700 (PDT)
+Message-ID: <a2d20619-0724-4b16-a9a5-4a3680f21c99@linaro.org>
+Date: Mon, 21 Oct 2024 14:32:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1436; i=brauner@kernel.org; h=from:subject:message-id; bh=DVCh3iNw6uYypy5M+ZmLHYym9XosXi9ik8C+JBoUxs0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSLed7d5DRNM+1o6qydGjovDrYvVzpXe9h47kKO1MkLy wVCdCY0dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkfzfDP41Lm94vbNkdYff2 qxrL6Ut/6pqEdzDFqacq/pDTDdixV5CR4YCBMUuuH3dE33mrEsPTHI5xUbufe/3f+lVlZwz/3dO hXAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 0/6] drm/bridge: add ycbcr_420_allowed support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ Alexander Stein <alexander.stein@ew.tq-group.com>
+References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 09 Oct 2024 11:31:50 +0800, Gao Xiang wrote:
-> As Allison reported [1], currently get_tree_bdev() will store
-> "Can't lookup blockdev" error message.  Although it makes sense for
-> pure bdev-based fses, this message may mislead users who try to use
-> EROFS file-backed mounts since get_tree_nodev() is used as a fallback
-> then.
+Hi,
+
+On 18/10/2024 23:49, Dmitry Baryshkov wrote:
+> One of the features that drm_bridge_connector can't handle currently is
+> setting of the ycbcr_420_allowed flag on the connector. Add the flag to
+> the drm_bridge struct and propagate it to the drm_connector as AND of
+> all flags in the bridge chain.
 > 
-> Add get_tree_bdev_flags() to specify extensible flags [2] and
-> GET_TREE_BDEV_QUIET_LOOKUP to silence "Can't lookup blockdev" message
-> since it's misleading to EROFS file-backed mounts now.
+> As an example of the conversion, enable the flag on the DW HDMI bridge,
+> MSM DP bridge, display connector drivers (for DisplayPort and HDMI
+> outputs) and AUX bridges.
 > 
-> [...]
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+> Dmitry Baryshkov (6):
+>        drm/display: bridge_connector: handle ycbcr_420_allowed
+>        drm/atomic: add interlaced and ycbcr_420 flags to connector's state dump
+>        drm/bridge: display-connector: allow YCbCr 420 for HDMI and DP
+>        drm/bridge: aux: allow interlaced and YCbCr 420 output
+>        drm/msm/dp: migrate the ycbcr_420_allowed to drm_bridge
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+How do you plan to merge this serie ?
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+>        drm/bridge: dw-hdmi: set bridge's ycbcr_420_allowed flag
+> 
+>   drivers/gpu/drm/bridge/aux-bridge.c            |  4 ++++
+>   drivers/gpu/drm/bridge/aux-hpd-bridge.c        |  4 ++++
+>   drivers/gpu/drm/bridge/display-connector.c     |  4 ++++
+>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c      |  3 +++
+>   drivers/gpu/drm/display/drm_bridge_connector.c |  6 ++++--
+>   drivers/gpu/drm/drm_atomic.c                   |  2 ++
+>   drivers/gpu/drm/msm/dp/dp_display.c            |  4 ++--
+>   drivers/gpu/drm/msm/dp/dp_drm.c                | 10 ++++------
+>   drivers/gpu/drm/msm/dp/dp_drm.h                |  7 ++++---
+>   include/drm/drm_bridge.h                       |  5 +++++
+>   10 files changed, 36 insertions(+), 13 deletions(-)
+> ---
+> base-commit: 7f796de9da37b78e05edde94ebc7e3f9ee53b3b4
+> change-id: 20241018-bridge-yuv420-aab94d4575de
+> 
+> Best regards,
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/2] fs/super.c: introduce get_tree_bdev_flags()
-      https://git.kernel.org/vfs/vfs/c/4021e685139d
-[2/2] erofs: use get_tree_bdev_flags() to avoid misleading messages
-      https://git.kernel.org/vfs/vfs/c/14c2d97265ea
+Neil
 
