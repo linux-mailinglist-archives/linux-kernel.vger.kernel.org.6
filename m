@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-374890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45029A7195
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:58:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74909A7199
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F1232837E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:58:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D0721F234D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 17:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08201F7088;
-	Mon, 21 Oct 2024 17:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5461F942D;
+	Mon, 21 Oct 2024 17:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrK/QYz2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjizZSy0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113B61F131C;
-	Mon, 21 Oct 2024 17:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6CC1F80D2;
+	Mon, 21 Oct 2024 17:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729533511; cv=none; b=YYBTBz9+9u/jmMegADpYTZXv+5wrwlFeVS8mndlHL3olGbFyTvsVXeNtbd7HW5zxbl9dVQXlQbvAkVRlwgFx53PvH3ukm15MFZR+KV6UVU+lYOnZ16U2PoCo5JtjDV8v07i3qYhCu+0Tl6uagoOwbSlhd5tzuiTkfjpUrfdXAaI=
+	t=1729533512; cv=none; b=ang9yNziRDJtVUonAzltXmGQExsVM5ibndgBRYlGw4bk8ylCn7S91K46xPH1GZQMupRFfdfAZDW822qeHs6buKGsOqX7IhuvVPQKTyeWNXaYRlM5mrsQJQf3pz55FE68eTzTmibqVsZwa/k47blDDoI/+qOBjvBWu/zKpHjG9xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729533511; c=relaxed/simple;
-	bh=4PjbEw1WHe2byrx6rgRj932kUF7KpoXEY8hA0mTormw=;
+	s=arc-20240116; t=1729533512; c=relaxed/simple;
+	bh=UcEBlP+K6AUWwNnV6WDbqbJ07FizzoR5surBemBIhmg=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=C0jjVa/R19j8FlIXvjTcXW+w7X+b65DqSqeeevFsoMp1YFqz945XXHNcEec3CLKkpoAC+apNDPxXb/KdobB1yu1eU7MsnfpVsjJi46qcbAo+rgCPq5z4q3NzUvWdjAbaAa5nGjrqM1BKP4bZZUA2Sp+8hndqV2cnEwtXba13Eas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrK/QYz2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD11C4CEC7;
-	Mon, 21 Oct 2024 17:58:30 +0000 (UTC)
+	 Message-Id:Subject; b=L9+iS03aa5hQ0RDCNQAXRYIVqO+mCHWF5DFeBZDthmbYKBdFBrG6eTAfM0hyPNg2fkOhA6L7VL+3FVwCBWAGe32LnTn1eDuvHlwsAtTe7yyjmJTlCAunu3TkyCOd/WrHqHXrcjLnjRAOfmPIVZobu8/2DUpeXqvy53+ZVYqdEVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjizZSy0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB30EC4CEC7;
+	Mon, 21 Oct 2024 17:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729533510;
-	bh=4PjbEw1WHe2byrx6rgRj932kUF7KpoXEY8hA0mTormw=;
+	s=k20201202; t=1729533512;
+	bh=UcEBlP+K6AUWwNnV6WDbqbJ07FizzoR5surBemBIhmg=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=LrK/QYz2Z52/mNh5/0IP06LC15qWJZOAa/dCgA2ltP8mEfIQG6WCCgY0Xqr8HxEVb
-	 NtQDNsfHfjUGFaCRly2p9y4SzhULkgCmuK/t2MWZbo35QonTLk5Kws3gcrHclW4jrK
-	 Jh2CNlDqN4GIg+eqkrzPOKF2T9TWJjrdCLhm6nqL4Uzx8SH6mHAM8TdiFw1IafanVA
-	 bLsQod1rciIXbzRWi4z4qG8OmhNDSoRLorwMwXXpaW4xR+9JwBJ7CMQAhSoShjLQ7i
-	 tc/4ufobEQXk6KFVwpHwP+b/N4332qpKB57DEjMI/7bx68Upv61e80OPWd0FQ5BseO
-	 XPBXFD/R7Zcpw==
-Date: Mon, 21 Oct 2024 12:58:29 -0500
+	b=PjizZSy0tkgmPS1cTRFQR1hXg9/PXD8NY2DSjXaC0e/yg0INAN9eRw4l0IvuPL+VJ
+	 YAJW1vyAEJLAcNWCGtTA7ShNOBlDcgTEoYweOC/Sc5NA1dEON21F2f7YIB8dvk6JzV
+	 lyy97KW5fBmfJ+a/lOOQMyUHANbiOkNQEklHZtPXHQlDBRP8PYw2jEK7HFwDQRIldi
+	 9TFEUX/njgnb0XuI72M+xJpr8n43BcZOjoSakWKBYx5A+7IQFYBhF+BN5XDEvl25w1
+	 FMbLvo6OWz1OHTXEGUn74tc6MSRB9K1xsIFwzF820UDRpIi4Us6cginksJPl+VsLJd
+	 n8ew2ScmTG7rQ==
+Date: Mon, 21 Oct 2024 12:58:30 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,28 +50,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org, 
- imx@lists.linux.dev, Fabio Estevam <festevam@gmail.com>, 
+To: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Cc: Richard Cochran <richardcochran@gmail.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ Macpaul Lin <macpaul.lin@mediatek.com>, devicetree@vger.kernel.org, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241018182444.817848-1-tharvey@gateworks.com>
-References: <20241018182444.817848-1-tharvey@gateworks.com>
-Message-Id: <172953336997.748149.3894675959431217817.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: Add Gateworks GW82XX-2x dev
- kit
+ fanyi zhang <fanyi.zhang@mediatek.com>, 
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
+ Jianguo Zhang <jianguo.zhang@mediatek.com>, 
+ Hsuan-Yu Lin <shane.lin@canonical.com>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ netdev@vger.kernel.org, Pablo Sun <pablo.sun@mediatek.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20241018-genio700-eth-v2-0-f3c73b85507b@collabora.com>
+References: <20241018-genio700-eth-v2-0-f3c73b85507b@collabora.com>
+Message-Id: <172953337183.748181.12748276548047622670.robh@kernel.org>
+Subject: Re: [PATCH v2 0/2] Enable Ethernet on the Genio 700 EVK board
 
 
-On Fri, 18 Oct 2024 11:24:45 -0700, Tim Harvey wrote:
-> Adds support for the Gateworks GW82XX-2X development kit
-> based on a GW82XX baseboard and a GW702X System On Module.
+On Fri, 18 Oct 2024 11:19:01 -0400, Nícolas F. R. A. Prado wrote:
+> The patches in this series add the ethernet node on mt8188 and enable it
+> on the Genio 700 EVK board.
 > 
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> The changes were picked up from the downstream branch at
+> https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-mtk/+git/jammy,
+> cleaned up and split into two commits.
+> 
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 > ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Changes in v2:
+> - Moved mdio bus to mt8188.dtsi
+> - Changed phy-mode: rgmii-rxid -> rgmii-id
+> - Removed mediatek,tx-delay-ps
+> - style: Reordered vendor properties alphabetically
+> - style: Used fewer lines for clock-names
+> - Fixed typo in commit message: 1000 Gbps -> 1000 Mbps
+> - Link to v1: https://lore.kernel.org/r/20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com
+> 
+> ---
+> Nícolas F. R. A. Prado (2):
+>       arm64: dts: mediatek: mt8188: Add ethernet node
+>       arm64: dts: mediatek: mt8390-genio-700-evk: Enable ethernet
+> 
+>  arch/arm64/boot/dts/mediatek/mt8188.dtsi           | 97 ++++++++++++++++++++++
+>  .../boot/dts/mediatek/mt8390-genio-700-evk.dts     | 20 +++++
+>  2 files changed, 117 insertions(+)
+> ---
+> base-commit: 7f773fd61baa9b136faa5c4e6555aa64c758d07c
+> change-id: 20241015-genio700-eth-252304da766c
+> 
+> Best regards,
+> --
+> Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> 
 > 
 
 
@@ -89,10 +120,10 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y freescale/imx8mp-venice-gw82xx-2x.dtb' for 20241018182444.817848-1-tharvey@gateworks.com:
+New warnings running 'make CHECK_DTBS=y mediatek/mt8390-genio-700-evk.dtb' for 20241018-genio700-eth-v2-0-f3c73b85507b@collabora.com:
 
-arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx-2x.dtb: magnetometer@1e: st,drdy-int-pin: False schema does not allow 1
-	from schema $id: http://devicetree.org/schemas/iio/st,st-sensors.yaml#
+arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: jpeg-decoder@1a040000: iommus: [[118, 685], [118, 686], [118, 690], [118, 691], [118, 692], [118, 693]] is too long
+	from schema $id: http://devicetree.org/schemas/media/mediatek-jpeg-decoder.yaml#
 
 
 
