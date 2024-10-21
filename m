@@ -1,164 +1,125 @@
-Return-Path: <linux-kernel+bounces-374596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F319A6CE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:52:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C991D9A6D2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 16:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540A428137F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:52:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B31F280613
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAC51F4FC6;
-	Mon, 21 Oct 2024 14:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70A41FAC5B;
+	Mon, 21 Oct 2024 14:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPZfC6/l"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TE2vDYBh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564831F7092;
-	Mon, 21 Oct 2024 14:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115971FA25D;
+	Mon, 21 Oct 2024 14:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729522319; cv=none; b=Opo6egG7auBF8CHPgNnIPGv0UvSaM5IQIrJ52mB2MSe0HIwc75xFKcFPMPuwdMx/R+vMJWtKuZK+COG47w7uCrTD8E6mO8cL17kBr2d3QfJ4hJ40G5hhpDrjeiWMdJTpvbtlQFfavB++Oso9oQ/gL4e5isWZAT2nvHNzuagvr6U=
+	t=1729522360; cv=none; b=R4LkhKSAxP5/+MjjBFX7CpUUA0lJYCa5fxupoJWsbOvp2pwkNX9ogbU52AhYrMso1mGhwt9lQMDFwbSXUtiBKF9p2U14Wm6nsDUNxT06QTTotyPPjvhlN1lel4knn5EDn4K40hg1NsC3GYUlLPyQ90uZCBpJu3B/jPrzUh469qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729522319; c=relaxed/simple;
-	bh=n/DqeEp3zB2caMk9GO1G5MCRJfgu3rzzsfIKp5PiEUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e8ZH7Ke3OGvQHBEpePy91tMwrriCx31WV/cGQm9pVMyd4CSdfsBtVFA5uq6PPzai0RfovBIHvwRftmwlKdJoOaAkQqLxzyJJYCyAoDEAJLwDVCvhw5Bb9bbXehMxs4L7GMBMJU8XAq8u7c7UDWROlfMC+lBthSRoW5NW6eLEcok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YPZfC6/l; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb443746b8so47019251fa.0;
-        Mon, 21 Oct 2024 07:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729522315; x=1730127115; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5eABMIx9lnMto4OhJZ3h1jo2zuiX/EYRQgb1Gk/pqN0=;
-        b=YPZfC6/lNtldf8GCVuCicYeAUG7ZqWFPri8yNWxZZBwQkin2g2sSLbYEQr8u1X0tt9
-         xwzCJy6zUQQaoEaQXKk8Eb63SS8PRledSeCJHN5o9r2WuqvYG5Yf2z8AHdtl1S7Ywh1a
-         J/XmRzE1OJDXD5guFTitdRQMHBzp+t3ue6mXx47vQHxtysqBHoRW9ZAV/6KuuMexGuK7
-         TR268AmjT0U9CFwLAnonL6DWnwhV/w2CU/qrY6igpgeanM3S2xI+XCfO454Z4B6Gw1Ku
-         hTut6AgJJy3L1Pr1H5cWHbYzjRtJMYgCU8VBH/OgCJS2EbBndziQid+Ka4Kqw6AjShrC
-         WAWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729522315; x=1730127115;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5eABMIx9lnMto4OhJZ3h1jo2zuiX/EYRQgb1Gk/pqN0=;
-        b=jLYYdzJFZmy2KjKnaMWtfHs0qc66QmWkMnVyFUxqkUXGYOToXvMJIivuEK8lkxMOMV
-         cbBnynKPMowAA+RZvebqI3xT+b5Mf83Ukwy+MpE/eKhty4hhPW4Y8Lxrpsl/ne7QJnPM
-         rq/jXrwSWcqvP85OglOHGC7zOh9LbcO/nTZj7SBBSPobHszivM00Z0a4s8ba86UJnHP1
-         XZlpB8Stpt+Th8vwqZCBh72P6QbTjguWE1UnY7+MY4WgtUppD778DYkalN027QxJIAEc
-         kYZgGkSXYnI5bBf2knflLVO+8AVdTW7IcRomzPzdEmK+QgefUSj95RdrCmzWxKlZO77+
-         6qug==
-X-Forwarded-Encrypted: i=1; AJvYcCWxFIPTJ/Uimd6HVwFUIxvXNTqkdA/F+ZPRyoWu1JKa0PGUMVVEXnwOfCs/5/2OH5tYzCcuf3mLHw8PwnUx@vger.kernel.org, AJvYcCXjqtxNW3GRfYpgFLnNvSPnEuQjG+7FOTSrnuKhXvEwHyv3DnfNffvWG4E8yiuODWDnPZed1App@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXO9d/kno6ZEfDwtsBEREusTPRFCshPql9efcvopHMLX3PcbxB
-	nMS/cEcqZ0pJUjFv/xe3ksBi3B4LxxwPW/aLckz+OPxst9R6BkLJpjyD11lB7qe5utgnc3yspLK
-	KrEmtiBwoB6soCSKyMH4PoAqr90A=
-X-Google-Smtp-Source: AGHT+IFXPlzL373ISjpa3KTVBnHtlsi6xEMamxxcHC6fm0VA8xoQMx7OABNdmlt0t9yTrBxGrENWyIGVCihHQEte1SE=
-X-Received: by 2002:a2e:b987:0:b0:2fb:3bc0:9c7c with SMTP id
- 38308e7fff4ca-2fb82eb3506mr45509321fa.25.1729522315068; Mon, 21 Oct 2024
- 07:51:55 -0700 (PDT)
+	s=arc-20240116; t=1729522360; c=relaxed/simple;
+	bh=dlWGS/l4ijCOGac8jIK107VrQI+1RI8UERuuB2oajJE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hDGerendu52NRLGSEPZ+rPAaXa67jj0zAQ9EEknhPoa7m5qdXH0CRDGz9mYkhh91/gecfh6nXcJnL9nbIIk5lfHLrPU9yahCu2INt3RsQ2RzIldft/pfN+IqubRiuM7yUcJGAEUfwjHVd6fw1zuqLjTB+0//h0e4cY1dTds2FCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TE2vDYBh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4C0CC4CEE6;
+	Mon, 21 Oct 2024 14:52:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729522359;
+	bh=dlWGS/l4ijCOGac8jIK107VrQI+1RI8UERuuB2oajJE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TE2vDYBhb7mKSE49g1O1JrRTkH+haqmC6CjGkUMfx/NS5mL2aW3udk3wL9gUNgImP
+	 lw5uhWPxmWnn055BzlW8D3d4PJLrCI2Mc6TTBrY15owrVx4SFgKredCEEn/wqA+/De
+	 5phEeg9ijWs+UwuKH6Vw/FPgPgBVMA0Q3PGN87Cr8wBsoyzf7w1T97B41O6ZkPipoh
+	 g4X2y2ZyA2/unPvyF6YAj9Ll8sDI5HOmR/4GoSJOjp1LwmDTiSq63J91XJiphb9PLG
+	 GX/RPoLKgNFfPGGPtQ6RxHZU1UMZwLvNgKkkUk+YvNv9/e72gF7xqPWdRD5lQRjyhu
+	 k5ysD7Q/BvrNw==
+From: Christian Brauner <brauner@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Florian Weimer <fweimer@redhat.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	stable@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Shuah Khan <shuah@kernel.org>
+Subject: Re: (subset) [PATCH RFC v3 00/10] extensible syscalls: CHECK_FIELDS to allow for easier feature detection
+Date: Mon, 21 Oct 2024 16:51:51 +0200
+Message-ID: <20241021-kraut-fundgrube-cf1648e59df4@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
+References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017160438.3893293-1-joshua.hahnjy@gmail.com>
- <ZxI0cBwXIuVUmElU@tiehlicka> <20241018123122.GB71939@cmpxchg.org>
- <ZxJltegdzUYGiMfR@tiehlicka> <il346o3nahawquum3t5rzcuuntkdpyahidpm2ctmdibj3td7pm@2aqirlm5hrdh>
- <CAN+CAwOHE_J3yO=uMjAGamNKHFc7WXETDutvU=uWzNv5d33zYg@mail.gmail.com> <ZxX_gvuo8hhPlzvb@tiehlicka>
-In-Reply-To: <ZxX_gvuo8hhPlzvb@tiehlicka>
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-Date: Mon, 21 Oct 2024 10:51:43 -0400
-Message-ID: <CAN+CAwMCbX1BAmfBxFC6t75i5k6GVNKPR_QPCB5DDnYwHeCbnA@mail.gmail.com>
-Subject: Re: [PATCH 0/1] memcg/hugetlb: Adding hugeTLB counters to memory controller
-To: Michal Hocko <mhocko@suse.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, nphamcs@gmail.com, 
-	roman.gushchin@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	lnyng@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1779; i=brauner@kernel.org; h=from:subject:message-id; bh=dlWGS/l4ijCOGac8jIK107VrQI+1RI8UERuuB2oajJE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSLZa29GrT7ZpV74rL3y8Ijstc/P7tdxYBRchtjj8Umw 0JXGZ8vHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOpj2f4X33A1Nfrxe052925 gvPv/S+69SaCQZXp45K3TXnHQj0mCzMyfPqyRJ9NYJ5kq/Clhd+W3ix5fGt6n9uW5+rR3003zXn Cxg8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-> On Mon, Oct 21, 2024 at 3:15=E2=80=AFAM Michal Hocko <mhocko@suse.com> wr=
-ote:
-> > On Fri 18-10-24 14:38:48, Joshua Hahn wrote:
-> > But even if we are okay with this, I think it might be overkill to
-> > enable the hugeTLB controller for the convenience of being able to insp=
-ect
-> > the hugeTLB usage for cgroups. This is especially true in workloads whe=
-re
-> > we can predict what usage patterns will be like, and we do not need to =
-enforce
-> > specific limits on hugeTLB usage.
->
-> I am sorry but I do not understand the overkill part of the argument.
-> Is there any runtime or configuration cost that is visible?
+On Thu, 10 Oct 2024 07:40:33 +1100, Aleksa Sarai wrote:
+> This is something that I've been thinking about for a while. We had a
+> discussion at LPC 2020 about this[1] but the proposals suggested there
+> never materialised.
+> 
+> In short, it is quite difficult for userspace to detect the feature
+> capability of syscalls at runtime. This is something a lot of programs
+> want to do, but they are forced to create elaborate scenarios to try to
+> figure out if a feature is supported without causing damage to the
+> system. For the vast majority of cases, each individual feature also
+> needs to be tested individually (because syscall results are
+> all-or-nothing), so testing even a single syscall's feature set can
+> easily inflate the startup time of programs.
+> 
+> [...]
 
-I think an argument could be made that any amount of incremental overhead
-is unnecessary. With that said however, I think a bigger reason why this is
-overkill is that a user who wishes to use the hugeTLB counter (which this
-patch achieves in ~10 lines) should not have to enable a ~1000 line feature=
-,
-as Johannes suggested.
+I think the copy_struct_to_user() is useful especially now that we'll gain
+another user with pidfd_info.
 
-A diligent user will have to spend time learning how the hugeTLB controller
-works and figuring out the settings that will basically make the controller
-do no enforcing (and basically, the same as if the feature was not enabled)=
-.
-A not-so-diligent user will not spend the time to make sure that the config=
-s
-make sense, and may run into unexpected & unwanted hugeTLB behavior [1].
+---
 
-> TL;DR
-> 1) you need to make the stats accounting aligned with the existing
->    charge accounting.
-> 2) make the stat visible only when feature is enabled
-> 3) work more on the justification - i.e. changelog part and give us a
->    better insight why a) hugetlb cgroup is seen is a bad choice and b) wh=
-y
->    the original limitation hasn't proven good since the feature was
->    introduced.
->
-> Makes sense?
-> --
-> Michal Hocko
-> SUSE Labs
+Applied to the vfs.usercopy branch of the vfs/vfs.git tree.
+Patches in the vfs.usercopy branch should appear in linux-next soon.
 
-Hi Michal,
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Thank you for your input. Yes -- this makes sense to me. I apologize, as it
-seems that I definitely left a lot to be assumed & inferred, based on my
-original patch changelog.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-In my next version of this patch, I am planning to add the changes that hav=
-e
-been suggested by Johannes, write code with the try_charge cleanup that
-Shakeel suggested in mind, and change the behavior to make sense only when
-hugeTLB accounting is enabled, as you suggested as well. I'll also update
-the changelog & commit message and add any information that will hopefully
-make future reviewers aware of the motivation for this patch.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Please let me know if you have any remaining concerns with the implementati=
-on
-or motivation, and I will be happy to incorporate your ideas into the next
-version as well.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.usercopy
 
-Joshua
-
-[1] Of course, this argument isn't really generalizable to *all* features,
-we can't make a separate config for every small feature that a user might
-want to enable with the smallest granularity. However, given that the exist=
-ing
-solution of enabling the hugeTLB controller is an imperfect solution that
-still leaves a discrepancy between memory.stat and memory.current when huge=
-TLB
-accounting is enabled, I think it is reasonable to isolate this feature.
+[01/10] uaccess: add copy_struct_to_user helper
+        https://git.kernel.org/vfs/vfs/c/424a55a4a908
+[02/10] sched_getattr: port to copy_struct_to_user
+        https://git.kernel.org/vfs/vfs/c/112cca098a70
 
