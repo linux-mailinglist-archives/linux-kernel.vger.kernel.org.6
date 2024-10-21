@@ -1,218 +1,128 @@
-Return-Path: <linux-kernel+bounces-374363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416FB9A690A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:49:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7189A6911
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 14:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6362A1C214B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:49:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9FC28280C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 12:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4611F4FA1;
-	Mon, 21 Oct 2024 12:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484AD1F4736;
+	Mon, 21 Oct 2024 12:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XEQtqbAt"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lGuDbay+"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D555E1E1A23;
-	Mon, 21 Oct 2024 12:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26EB1D1E7A;
+	Mon, 21 Oct 2024 12:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729514970; cv=none; b=TNercSC55/pCwxzl9TJDvaay/o+IFtNi7USxyG/gGDGmkPx8nz5P2o5PaZqXFk4CrDpnMyhb+TlpFzkfyCYCPU0u4q+3Yv1lNVeZFC35hE2kTtQ9ItGMU5WsXCztDR4iNnpDJskp2JCJTT4IB41E/DJB6O+GYCP3ZPHaZbA+t/I=
+	t=1729515013; cv=none; b=nsE1dQjy4ZLjDHfNPHVPJESgXLXpnUz5KqR5TnhzFC9IDsLWs3IXfK9OGbKzoPkuYRxuoZkAuzSdUrrHV+YfDZR9sFwLS2wkYqMTWI/jvUgKpsxYnz8y3unFdL36FgkI7ze5l5uXlYy/Y+Grk8xjRFOo62i+KXClE4QQNuwg7d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729514970; c=relaxed/simple;
-	bh=GH+Q9t87101VfCb8kbMrKjRlxSEEKEOk1jtATHA+GOM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a6/G8i5ohJyOkgzeX1fQKbKXRLDx1XGif2C86mZABG6zjXQJTeL8vWBY4JmW1EQEcfIRQ8fzKGzIyOrUE/qcnXSYHyqqM4atJ3/k9/eQDT01BLHycUtYp4gARasa/bSXizEfThlWh+xruRbf40fLCO9IPHIJK+xmHpYdY0f5IfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XEQtqbAt; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1729515013; c=relaxed/simple;
+	bh=7+WybbgX8eJAkMNsicvpmq9LMNsc3BufzyLQqCYGQLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LEFuHF6nB1RSHzfcZRvrqqJTkaFKSKS6+4PlN3AAgX3hby0RYiV0xU4G3knMJwxvzb56apJ/Dt4A/oySD8jRx+ZAK2WFrnnLwKoW5ZAFphHNINVupwW4G0iBbDb3mY4eKKBgytnDHjTITVI0g2uE4u2BzKEaa1V2K5rqIwO+BFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lGuDbay+; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so43252205e9.3;
-        Mon, 21 Oct 2024 05:49:28 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d70df0b1aso3561958f8f.3;
+        Mon, 21 Oct 2024 05:50:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729514967; x=1730119767; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Q32sh+uJFSpt9TLvxk2ifmsRw8yfE9HNNl0na2PYAU=;
-        b=XEQtqbAtHCMf8gZ4pVAiReQwnxMV/fW/yqgixcIA9MiJ7uPDIhhuQEJjrQe/B0XZPR
-         nRJJN/byc/jIJynyJsg03P6H+7K4zgDuOnlyzZn/rQOz17h7bBjC7nRcDLkWzO6uz6AU
-         /dMbyggu0JGnWPgiRKqP0babDvdZHstqePpjamjGXN7hfRCf9tIF7TExSPKBl7bZJMd5
-         p2izQzatVDV9MPctwmRBipNS2qhMI4xTGrKpBQ2U7W4MjG5HuF9zAl+CJ/dtsA0S32Yq
-         7KAQJHt+qLrY8uNNGsFg0YAY2EEsUesYViSFH2zw4LIvzvE8zSIhzA6x2G0VTYwXD6iw
-         reEQ==
+        d=gmail.com; s=20230601; t=1729515010; x=1730119810; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ny2EzjP6BQ8EDbZh2xO7tlOnTQLXpJSSlQMga51ck5s=;
+        b=lGuDbay+whuVUKmH8wbpHzvRithE+WvmRUZjAurpiQJ6ufdIO99S8/Ahu5t7UHySqU
+         2l1MVNa8rEd3ikVF6t7pEPbUj7Tm6Ha3wBR5AKhas+DPojwgRr5wJ/cqHRPotJyo9GMv
+         EhgkAolZVjW0vwoa1s0VdF51JPHwCYNPTlb0L6IBIWJchMcYC6Led2QRq4+TdX+ZmEW+
+         ZUtvvlxIE+getl+zCYLRAg7S3J7QbT7rRUdNa8ZNqDBB2JRP/N34u2Er9uW9aN2NOvFP
+         H0FjiQ8lWa8L0jkOIg0+59CLvx8ZjkdEEBH4Jyl3RUNiu+Bf+J6J5QW+xXBrb4nfJwgz
+         j3Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729514967; x=1730119767;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3Q32sh+uJFSpt9TLvxk2ifmsRw8yfE9HNNl0na2PYAU=;
-        b=QBZ5PiclWzdYVozhKnrZO/esZKyjWvFvoZhb7LdFMnQhJn6mAbd6LA97eAXQwcQSHm
-         ajFkmXiDlcQxL8YiKHml3/ny1jt+IhKchM2VBwEI4i/+VSPV8hOGTgME4dHh8m3tMWrf
-         GEGZtlHDf6kZ0bhMqN6CEypXrT4/PceG5RNGM9zRBHXvMDB5iMNU7a7c0o2gCXSkI0A3
-         qlvYHHTFmQ2f/abPxG/1gjy0FUkqfhzWIxocyIysca/o8Y8OCZvTM+xNdfrmwhSptqEI
-         JnTJ5dYGq4IiATa5pI7wDnQ/UbWT389WFERrPMO3Ke1h7neIhHJqDbo5mi3TrpsIHYVX
-         jpPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUznKMkoqcMWlGKzYeTptHYE8fpQsQkWpGLQlL272WB1OrFA45vd+gIaXga0QfDiytjTkoRDPZaIcZk14E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUcNyrTJcscrwSLzYpJ9MsscUdNu4f/daAzvaBFUxsYLgkx5TC
-	AUCDHuQypbhLdLnanOs00qptMezbP5jvsnT8OQMcvQl54v9MybXY
-X-Google-Smtp-Source: AGHT+IF7y/aVuMR4dM/wOhaLHG4+/0yWCkNhdRhKrO6vRCRYPe8M7QABDKRdq1+Ho2EKQbs991Zaig==
-X-Received: by 2002:a05:600c:4595:b0:431:3b53:105e with SMTP id 5b1f17b1804b1-4316163bccfmr99788485e9.9.1729514966811;
-        Mon, 21 Oct 2024 05:49:26 -0700 (PDT)
-Received: from eichest-laptop.. ([178.197.202.204])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5c2df7sm56460595e9.33.2024.10.21.05.49.25
+        d=1e100.net; s=20230601; t=1729515010; x=1730119810;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ny2EzjP6BQ8EDbZh2xO7tlOnTQLXpJSSlQMga51ck5s=;
+        b=XvDcCOCBo6ZpUax76JFNuhMulMbj9X+5xOaRMKMOtN9KbV0L7ITAzZlSSkcxqjQpnv
+         k3Ml+1serqbRqfMAE+Ke21S7R5M2mZhivGaLvZv2j1bK3v8AbJJLVgdl+RHzuVjEspUm
+         A27QT2587UB2gpx+wkRW/lH/htb1srBI/n3urn8mFNRUUp0TojMB12ZvXdPLaZGAZMzJ
+         MA8XkzBm4R6X1gtpE+T9Xi6mdi4Wa5lqod4tjVTFm7DqPLagBDUUGJxtW9N24aBq1eui
+         3HJNA5CTSI6xGkK+KgdRDYgj+url/r5UFI/MdkI4tY34oBx3NBhGZ1T/nx/tdgDjTybz
+         ZfCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuOjPs+vJTsQPCHXRd7jpLb2rNW1UQlZ+cc0KQdMKHpToJzXxEoVXE6rGQKyx+k41CbWpaYBfTlwbaBSw=@vger.kernel.org, AJvYcCVriMOu3VcBU9napwY8M0BHfs6+VQAgAb8SOvRwJhC8eA2coSIYVEDjxiGB1EjSX2s0Sy6VgZ+euwOWJN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ9jRqadIiwNZp0c6YUGTx+rGmiwjx2zaFJHDWVms+VRdrSSv/
+	a8ZaFlORlJgU0SvI1RtrQz6GyhZqEOI3Jl5Hfr8JUkCnu2qI7Oh1
+X-Google-Smtp-Source: AGHT+IEAd4G54DP9Gc8AV0E85ByBWJ8OgZpAqArfj+Z35pEgsQmtE6MKuAwRT3EfahSpc4WUOuY+eA==
+X-Received: by 2002:adf:f8c7:0:b0:37c:d57d:71cd with SMTP id ffacd0b85a97d-37ebd3a30dcmr6732276f8f.52.1729515009956;
+        Mon, 21 Oct 2024 05:50:09 -0700 (PDT)
+Received: from orome (p200300e41f26ec00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f26:ec00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a485dcsm4273254f8f.34.2024.10.21.05.50.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 05:49:26 -0700 (PDT)
-From: Stefan Eichenberger <eichest@gmail.com>
-To: hongxing.zhu@nxp.com,
-	l.stach@pengutronix.de,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	francesco.dolcini@toradex.com,
-	Frank.li@nxp.com
-Cc: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: [PATCH v3] PCI: imx6: Add suspend/resume support for i.MX6QDL
-Date: Mon, 21 Oct 2024 14:49:13 +0200
-Message-ID: <20241021124922.5361-1-eichest@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Mon, 21 Oct 2024 05:50:09 -0700 (PDT)
+Date: Mon, 21 Oct 2024 14:50:07 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: jckuo@nvidia.com, vkoul@kernel.org, kishon@kernel.org, 
+	jonathanh@nvidia.com, nkristam@nvidia.com, linux-phy@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: tegra: xusb: Add error pointer check in xusb.c
+Message-ID: <v4ng6ctnwymoorzbaqo3xsbqtd6ocg73iau56m7ineykbpxsi6@hgv4y66d36or>
+References: <20240930191101.13184-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nyexhj7aoiso3top"
+Content-Disposition: inline
+In-Reply-To: <20240930191101.13184-1-kdipendra88@gmail.com>
 
-From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 
-The suspend/resume support is broken on the i.MX6QDL platform. This
-patch resets the link upon resuming to recover functionality. It shares
-most of the sequences with other i.MX devices but does not touch the
-critical registers, which might break PCIe. This patch addresses the
-same issue as the following downstream commit:
-https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
-In comparison this patch will also reset the device if possible because
-the downstream patch alone would still make the ath10k driver crash.
-Without this patch suspend/resume will not work if a PCIe device is
-connected. The kernel will hang on resume and print an error:
-ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
-8<--- cut here ---
-Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
+--nyexhj7aoiso3top
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] phy: tegra: xusb: Add error pointer check in xusb.c
+MIME-Version: 1.0
 
-Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
----
-Changes in v3:
-- Added a new flag to the driver data to indicate that the suspend/resume
-  is broken on the i.MX6QDL platform. (Frank)
-- Fix comments to be more relevant (Mani)
-- Use imx_pcie_assert_core_reset in suspend (Mani)
+On Mon, Sep 30, 2024 at 07:11:00PM +0000, Dipendra Khadka wrote:
+> Add error pointer check after tegra_xusb_find_lane().
+>=20
+> Fixes: e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+> ---
+>  drivers/phy/tegra/xusb.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
- drivers/pci/controller/dwc/pci-imx6.c | 57 +++++++++++++++++++++------
- 1 file changed, 46 insertions(+), 11 deletions(-)
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 808d1f1054173..09e3b15f0908a 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -82,6 +82,11 @@ enum imx_pcie_variants {
- #define IMX_PCIE_FLAG_HAS_SERDES		BIT(6)
- #define IMX_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
- #define IMX_PCIE_FLAG_CPU_ADDR_FIXUP		BIT(8)
-+/**
-+ * Because of ERR005723 (PCIe does not support L2 power down) we need to
-+ * workaround suspend resume on some devices which are affected by this errata.
-+ */
-+#define IMX_PCIE_FLAG_BROKEN_SUSPEND		BIT(9)
- 
- #define imx_check_flag(pci, val)	(pci->drvdata->flags & val)
- 
-@@ -1237,9 +1242,19 @@ static int imx_pcie_suspend_noirq(struct device *dev)
- 		return 0;
- 
- 	imx_pcie_msi_save_restore(imx_pcie, true);
--	imx_pcie_pm_turnoff(imx_pcie);
--	imx_pcie_stop_link(imx_pcie->pci);
--	imx_pcie_host_exit(pp);
-+	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_BROKEN_SUSPEND)) {
-+		/**
-+		 * The minimum for a workaround would be to set PERST# and to
-+		 * set the PCIE_TEST_PD flag. However, we can also disable the
-+		 * clock which saves some power.
-+		 */
-+		imx_pcie_assert_core_reset(imx_pcie);
-+		imx_pcie->drvdata->enable_ref_clk(imx_pcie, false);
-+	} else {
-+		imx_pcie_pm_turnoff(imx_pcie);
-+		imx_pcie_stop_link(imx_pcie->pci);
-+		imx_pcie_host_exit(pp);
-+	}
- 
- 	return 0;
- }
-@@ -1253,14 +1268,32 @@ static int imx_pcie_resume_noirq(struct device *dev)
- 	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_SUPPORTS_SUSPEND))
- 		return 0;
- 
--	ret = imx_pcie_host_init(pp);
--	if (ret)
--		return ret;
--	imx_pcie_msi_save_restore(imx_pcie, false);
--	dw_pcie_setup_rc(pp);
-+	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_BROKEN_SUSPEND)) {
-+		ret = imx_pcie->drvdata->enable_ref_clk(imx_pcie, true);
-+		if (ret)
-+			return ret;
-+		ret = imx_pcie_deassert_core_reset(imx_pcie);
-+		if (ret)
-+			return ret;
-+		/**
-+		 * Using PCIE_TEST_PD seems to disable msi and powers down the
-+		 * root complex. This is why we have to setup the rc again and
-+		 * why we have to restore the msi register.
-+		 */
-+		ret = dw_pcie_setup_rc(&imx_pcie->pci->pp);
-+		if (ret)
-+			return ret;
-+		imx_pcie_msi_save_restore(imx_pcie, false);
-+	} else {
-+		ret = imx_pcie_host_init(pp);
-+		if (ret)
-+			return ret;
-+		imx_pcie_msi_save_restore(imx_pcie, false);
-+		dw_pcie_setup_rc(pp);
- 
--	if (imx_pcie->link_is_up)
--		imx_pcie_start_link(imx_pcie->pci);
-+		if (imx_pcie->link_is_up)
-+			imx_pcie_start_link(imx_pcie->pci);
-+	}
- 
- 	return 0;
- }
-@@ -1485,7 +1518,9 @@ static const struct imx_pcie_drvdata drvdata[] = {
- 	[IMX6Q] = {
- 		.variant = IMX6Q,
- 		.flags = IMX_PCIE_FLAG_IMX_PHY |
--			 IMX_PCIE_FLAG_IMX_SPEED_CHANGE,
-+			 IMX_PCIE_FLAG_IMX_SPEED_CHANGE |
-+			 IMX_PCIE_FLAG_BROKEN_SUSPEND |
-+			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
- 		.dbi_length = 0x200,
- 		.gpr = "fsl,imx6q-iomuxc-gpr",
- 		.clk_names = imx6q_clks,
--- 
-2.43.0
+--nyexhj7aoiso3top
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcWTf8ACgkQ3SOs138+
+s6Fxeg/8CQxyMg/0RjT7XVFwK6GWeQolN/rpQBX76LH9QVf2dd9MH6tLXjcmRhbO
+dKW6TvkSnAG42z8q4Z8jrnPG3IhcR9ElV/Qddh2N8BfH5i/OZ0p9VQOHDYMxvV0n
+SCybULwwRHm/l6smmCAold+hHaKrb8J3YbHqZUVw0weRoKgvRH63DYsBt2GJExz+
+lzjHv55Lva0sqMemJNMDZ76bYsTHXlhQynMspfopAfbG9O6i/SCxti81Qde+tm/N
+9M7qynuPRyoj5CI9DV9JZaR3DUAlBjCKl2A2kD/ZxoTiQ6bTlR+4zge3cDWpq9VR
+0z+3cYo1XWJ+MmU7iA/AmAPxw1+gA5rRUSHbEFokBKhK64F1bYbr1PKqjtKq/i2D
+htU+/yyUE4EBBYg5LhNfYV9S58egs1pPHiDr48D4yqWwRT+n2g5u3cn4Rp5IBomI
+0fp1ZWtnil/QMwdNLBAK1q0WNmvKl35YxmQ+Mcj68um7S31212iblIgntjDX/FJr
+i1in1E+sNouSARS+znU4dQcs5m642gVlNA25xw+fR77NkZD6VdhT1jS7i9AQkjBT
+MhVxNFqrsGW1+hRoU7VpUaJYk5pKUIkQqmRBSeCwqtbEzUonorZ6AZzIAUGPgZIe
+mpJdZ93LLRgxDiDiVRg/FBzEVwXTlxxln2aFkD/abIWLUExfmeA=
+=9qzA
+-----END PGP SIGNATURE-----
+
+--nyexhj7aoiso3top--
 
