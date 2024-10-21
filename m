@@ -1,205 +1,232 @@
-Return-Path: <linux-kernel+bounces-375038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB969A9015
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE099A901D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94AA0B22725
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:46:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95B10B2276B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB151C9EB9;
-	Mon, 21 Oct 2024 19:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83741CB518;
+	Mon, 21 Oct 2024 19:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b="bTlg/rmA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L9+AX6vi"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u38O1dgU"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686B9145FE8;
-	Mon, 21 Oct 2024 19:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075AF1C3F0E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 19:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729539979; cv=none; b=S3sxAyG1QNPnkSEhBYlumo8lbZ2sjzgV00JL0M7uW3nJs0bMuFojpJqwQw7b2eaG/wYcg9haXwW38Rpe3wdSiDZZWWDmODPOr6Zw0bfiKBYRncOQXHUcC1qoJv+mB4kKj5bgagxjkun0yJuwZEqlX3UNTR50wpKUQVmxTIHAJFw=
+	t=1729540185; cv=none; b=lw25QIaVl2gRHHHXFQYZP1WYyhOOFWXwZwkD5P+ubaxIB7x4dOJVCH5V7CaKy+00YyCDgZYxItCPpq7wI0UtdJgJNvXiyLg/CkpQiW3Y2ioUvaE6itF2ZczU8nnAhY2c1yw+0py674vubYE86T/FRRi5SXQwvBV+9W/O4BlB+vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729539979; c=relaxed/simple;
-	bh=TtQwBt8ZotMQii1U0Ih3L4Gg92i+ZlrIzrJpbpXIkP0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VcLh0vJFtlFg5bFKM8HPaEZMdOWHrTHI3pqfZaFvy9SXp84Sp7hJYxoVFqPzel0Qil8iBntv4F/YHgQsH2MDt975Svs9nD4Y+yRHxmyf/SO57a6ZUM6nb8LxdaY2H+ZniXBG5UxRME1eZJqFe2NrdsFdNIoWOz06UgtYo20fakA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io; spf=pass smtp.mailfrom=ryhl.io; dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b=bTlg/rmA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L9+AX6vi; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ryhl.io
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6AFA913800EC;
-	Mon, 21 Oct 2024 15:46:16 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Mon, 21 Oct 2024 15:46:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1729539976;
-	 x=1729626376; bh=nVSNeQ8pRXqtaa1i/ayXGAtU7aaY0oQNDtra/+rIYGU=; b=
-	bTlg/rmA94EhLc+ywVQ2CyE3axjRYJPiVitN7erZt/R3HE8E8m/yl5aZXXuMioVa
-	09ZigGRkVphyt9F52r1lc/rhknlRqyII8D3H2ZSSJPlugqe6uns8qeS5Se6F5hlR
-	fYbyW/QHRHTF8lX91k/ateDnC60wDbNwaGhd1I9VeWEgbz1246cQxjunVtzUAgXd
-	lNSqB5eNySW8xICwSaT3HG/SJMrfCsFPehAS0RPL3FVcopYJYLcbIV+psI3xaCAD
-	9leTsc8Jp9URjy7u3TH6X6c3FmjWDxFLEYWlC0P9uKQGqAKkome073X/U3Fy2Qa7
-	DxlfhYHGs0h2RMzl/Cws9Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729539976; x=
-	1729626376; bh=nVSNeQ8pRXqtaa1i/ayXGAtU7aaY0oQNDtra/+rIYGU=; b=L
-	9+AX6viACEmVROHmvaH+KzT7FP/l49Q7L0FxjF3OiDKR9KaImTDF/XX4fajac5c0
-	SpdfSipcIZLmXgFf4wBeixZ8xoFqcO008EE/1nHnaE3FNchu2/uGODD8ov/zhSvz
-	8Bjw1oyraYi5VP9h/nuiXtDjg9zguqX/9mYnFsz7IgSpzvuw4hdSC3wdUOEv4g/P
-	YGRuIrwTIvX8/JB+v+eCarpoltiqrSNSpQ3KDYK2OZUPTuryBk7dk9oTBNumu63t
-	xrkIwqExSN1O8pFIqhKjbBeA6Yj67xqcVaXyx/faOB9lIitgUmtOIQgsOnaRzVNz
-	cgbCWidX+Du6PTaP+vVzg==
-X-ME-Sender: <xms:iK8WZ6B4luqIxIdx9F03Cvj6vKikBke6DTsE0S0bBGb-VlA6SZQ64A>
-    <xme:iK8WZ0g4502IIZmOPdxrADNE8wHggqBVEr__12S3wmGA8dn46IjHsgAze-bBXXuEk
-    wsL5FOKfYTpBHGcYA>
-X-ME-Received: <xmr:iK8WZ9n-wzEHAfEG_nhh7g-oGFjdOkyiSeDJGXLMdDmCwuTg9jjL9XS0bOqOlV_m8_cCtXjCpkM0_k04GHWJDcetef8yrEi3XS8_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledgudegvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
-    jeenucfhrhhomheptehlihgtvgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqne
-    cuggftrfgrthhtvghrnhepkefgieeigeehgfdvffeltdevuefgtdfhfeehgfegtddtjeej
-    tefhvdfhtdehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomheprghlihgtvgesrhihhhhlrdhiohdpnhgspghrtghpthhtohepudeipdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehjhhhusggsrghrugesnhhvihguihgrrdgtoh
-    hmpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthht
-    ohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhishesghhmrghilhdrtghomhdprh
-    gtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhpmhes
-    lhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepfihilhhlhiesih
-    hnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpd
-    hrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvght
-X-ME-Proxy: <xmx:iK8WZ4zkWaqkSni-SqIWJWalmL6mXsaI02J9nR9dWxEOUT9il90LMg>
-    <xmx:iK8WZ_Tb76C75pSRB6rfcwfyPRHkwlPwexqbF8fGhy28GIEQpf5vTQ>
-    <xmx:iK8WZzZ7lONmiidj_ZWdNp3XrTdfWqDghrxmopKmV5L_Qqn534iigA>
-    <xmx:iK8WZ4SLUCmdD26qwRM2A_WqgnhGEFLHBUU32WdOuJEVp2kXy6j4-A>
-    <xmx:iK8WZwCtrqXTYvlpIO1zF9EZAOw3kh4ma2OP8N_BKSVczKh_oNxAU2dW>
-Feedback-ID: i56684263:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Oct 2024 15:46:13 -0400 (EDT)
-Message-ID: <d9b79f25-ae52-4cda-86d0-d4cde9338644@ryhl.io>
-Date: Mon, 21 Oct 2024 21:49:17 +0200
+	s=arc-20240116; t=1729540185; c=relaxed/simple;
+	bh=HTep6Ps/b0VqQuVOG52oSj2XTrXoOn40CM7dR4EIEOI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MKa/J0s+JJ/MOtHJNayT00jzdPUoyiPCw9u45/f2hHgJu7VQHqDP8H1E9TZK30mAS6S/GRW75ePSmyQAhrzsXweKl7Oo35+6nlThYdcPaDHn6TG0b+t8LuxvaJnAyhTQHbBZyXD4AZHuKJPf/gQd1GrcvLpT2wEfkVfsqdNUPb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u38O1dgU; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so3758969b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 12:49:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729540182; x=1730144982; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TIAEhXnz+TycYsOXq4fwUScpNqUcxMY2FROsK0V63/0=;
+        b=u38O1dgUi9XNpaywyCUwduuXJ9Nc4q2RPX1D/Yq5Vb3OTTT/z4A+25TEsVWxq7QNf4
+         X7JF6sW6MT+lqBO5h0xTtzXB2WNGuQe3+C+Qutew8+KCulr+0MZzNRBn9Wuz4ota5ztz
+         vYPk0nw1oeO2fsGegij3qpgdNhBr33WPZGttJlNc/RTlv48iYYee0ocFZv38ten/6iLG
+         yLRzV5Q4PnZ0v2zP2O8ZlSQR/JaLcKkStZIKEGxntXzqr8+dfqQOlAeTJD1R9W40khZH
+         cF7ML29gfA8UVY19YwYJzKUxfhhVPfmq+h4rpjMFE8jdPm6PmgkjFYhXeCr2dyvMJiAf
+         HH3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729540182; x=1730144982;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TIAEhXnz+TycYsOXq4fwUScpNqUcxMY2FROsK0V63/0=;
+        b=WCYWer0XV8AfJmokWkU6w7VZy3uxYxY8jWUor3HlZmKxXKTTs4bCk2PomW+vUvXM+B
+         E+G69SZxNu4K7Gxb07hhmd0LWB2Z2DWvFJp1R50yyezVYJ58nv5pPSD0T2hz4yubRhwz
+         rO5MONeEcmorhAv/sBvkl4kxUeY78PXtujkmN87kW1W+fx5yvBUHAT/DRZMpNq5yYSva
+         OHgv8q4r30oJffFybJPhunqMbEYolq9cI0lqF99Dzob3MKezy2CZnivibF3RRhLkbBOs
+         wczYeBUDcofxIwpEu7o89JMzKcIptaFSZv/9Xw2AgPIDLhe/nqO4nelml13MMgccmIxK
+         D76Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXvBqQmFIlDiUzI270XlMaiOhsyjMWBOqTvW6g5zaRFhvLOaFvX5I8VYNRg+mJYXeajMBhJJ3BbV18ZM4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoM7/RTVKrJl8Mb+fHR8+iMj7cSGuIbFijvIoomLDU54Bp9NbZ
+	phRoYAkis9hhRfu8mLDj3YoTm5xf8SE+6/udzvd1eyn+pFX2bwcBg3uk812Y/g==
+X-Google-Smtp-Source: AGHT+IE7LBFDuXD464oDX7R+3pKFv6gB/pDONRd/qrGrJhWZX+JT1kChQtcaO3T6c0R4R1FchyglYw==
+X-Received: by 2002:a05:6a21:a24b:b0:1d9:275b:4f06 with SMTP id adf61e73a8af0-1d96debc9a1mr86139637.19.1729540181812;
+        Mon, 21 Oct 2024 12:49:41 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1407f63sm3277862b3a.204.2024.10.21.12.49.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 12:49:40 -0700 (PDT)
+Date: Mon, 21 Oct 2024 12:49:28 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+    Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
+    stable@vger.kernel.org, Hugh Dickins <hughd@google.com>, 
+    Matthew Wilcox <willy@infradead.org>, 
+    Shakeel Butt <shakeel.butt@linux.dev>
+Subject: Re: [PATCH v2] mm: page_alloc: move mlocked flag clearance into
+ free_pages_prepare()
+In-Reply-To: <20241021173455.2691973-1-roman.gushchin@linux.dev>
+Message-ID: <d50407d4-5a4e-de0c-9f70-222eef9a9f67@google.com>
+References: <20241021173455.2691973-1-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] rust: page: add Rust version of PAGE_ALIGN
-To: John Hubbard <jhubbard@nvidia.com>, Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- linux-mm@kvack.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241016-page-align-v2-1-e0afe85fc4b4@google.com>
- <81e9b289-b95c-4671-b442-1a0ac3dae466@nvidia.com>
- <CANiq72mW8seB=938XZM7bwdSU43z0eePXinE5QPYyybvNfbUeA@mail.gmail.com>
- <dc5e7653-8d6d-4822-9c29-702ece830717@nvidia.com>
- <CANiq72kuQ-fNTYw33czgN3_DYjixzk01+hahFhR4QSkENeDBkw@mail.gmail.com>
- <b93805c1-28a6-4ad9-b0d2-5116ef4b0d83@nvidia.com>
- <afc139fe-ac03-43e7-a5c0-22410f1acea3@ryhl.io>
- <682c97a0-9877-4e31-b180-c1e38d3bc883@nvidia.com>
- <CAH5fLghMiNbyD-As40Rz+eRzxMVdX9TXwesxN7cbu-iW2bZJpQ@mail.gmail.com>
- <7d708e79-1a94-499e-a0e8-c3431aeaea3d@nvidia.com>
-Content-Language: en-US, da
-From: Alice Ryhl <alice@ryhl.io>
-In-Reply-To: <7d708e79-1a94-499e-a0e8-c3431aeaea3d@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 10/21/24 9:34 PM, John Hubbard wrote:
-> On 10/21/24 12:26 PM, Alice Ryhl wrote:
->> On Mon, Oct 21, 2024 at 9:09 PM John Hubbard <jhubbard@nvidia.com> wrote:
->>>
->>> On 10/21/24 11:59 AM, Alice Ryhl wrote:
->>>> On 10/21/24 8:41 PM, John Hubbard wrote:
->>>>> On 10/21/24 11:37 AM, Miguel Ojeda wrote:
->>>>>> On Mon, Oct 21, 2024 at 8:35 PM John Hubbard <jhubbard@nvidia.com> 
->>>>>> wrote:
->>>>>>>
->>>>>>> Is this another case of C and Rust using different words for 
->>>>>>> things??
->>>>>>> Wow. OK...
->>>>>>
->>>>>> I am not sure what you mean -- by BE I meant British English.
->>>>>>
->>>>>> See my other reply as well -- I just changed it anyway because Rust
->>>>>> apparently uses "parentheses".
->>>>>>
->>>>>
->>>>> Right. For spoken languages, that's simply preference, and I would not
->>>>> try to impose anything on anyone there.
->>>>>
->>>>> But in this case, at least for C (and, from reading my Rust book(s), I
->>>>> thought for Rust also), "parentheses" is a technical specification, 
->>>>> and
->>>>> we should prefer to be accurate:
->>>>>
->>>>>       parentheses: ()
->>>>>       brackets:    []
->>>>>
->>>>> Yes?
->>>> What word would you use to collectively talk about (), [], {}? In my 
->>>> native language they're all a kind of parenthesis.
->>>>
->>>
->>> Good question. I've never attempted that when discussing programming
->>> language details, because it hasn't come up, because it would be a
->>> programming error in C to use one in place of the other. And it is
->>> rare to refer to both cases in C.
->>>
->>> Rust so far seems to have the same distinction, although I am standing
->>> by to be corrected as necessary, there! :)
->>>
->>> At a higher level of abstraction, though, perhaps "grouping" is a good
->>> word.
->>
->> Rust macros can use different types of brackets. For example, the
->> `assert!(1 < 2)` macro uses round parenthesises, the `vec![1,2,3]`
->> macro uses square parenthesises, and the `thread_local! { ... }` macro
->> uses curly parenthesies. The round and square brackets are used for
->> expression-like things, and the curlies are used for things that
->> expand to top-level items such as global variables or functions.
->>
->> Macros cannot use any other delimiter than those three. So e.g. <>
->> wouldn't work.
-> 
-> That answers my implicit "are there any cases in which you would
-> want to collectively refer to all three types of...bracket?", yes.
-> 
-> For the original point, though, we are not in a Rust macro. Is it
-> actually allowable to use [] or {} here:
-> 
-> +    // Brackets around PAGE_SIZE-1 to avoid triggering overflow 
-> sanitizers in the wrong cases.
-> +    (addr + (PAGE_SIZE - 1)) & PAGE_MASK
-> 
-> ? Is that why you were not seeing a difference between saying "brackets"
-> vs. "parentheses" there? If so, this would be yet another case of my
-> Rust newbie-ness being inflicted on you. :)
-You can use both () and {}, but you can only use brackets if you're 
-European. ;)
+On Mon, 21 Oct 2024, Roman Gushchin wrote:
 
-Using {} to create a block works because a block evaluates to the value 
-of the last expression in the block. It would be super weird to define a 
-block here, though.
+> Syzbot reported a bad page state problem caused by a page
+> being freed using free_page() still having a mlocked flag at
+> free_pages_prepare() stage:
+> 
+>   BUG: Bad page state in process syz.0.15  pfn:1137bb
+>   page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8881137bb870 pfn:0x1137bb
+>   flags: 0x400000000080000(mlocked|node=0|zone=1)
+>   raw: 0400000000080000 0000000000000000 dead000000000122 0000000000000000
+>   raw: ffff8881137bb870 0000000000000000 00000000ffffffff 0000000000000000
+>   page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+>   page_owner tracks the page as allocated
+>   page last allocated via order 0, migratetype Unmovable, gfp_mask
+>   0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), pid 3005, tgid
+>   3004 (syz.0.15), ts 61546  608067, free_ts 61390082085
+>    set_page_owner include/linux/page_owner.h:32 [inline]
+>    post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+>    prep_new_page mm/page_alloc.c:1545 [inline]
+>    get_page_from_freelist+0x3008/0x31f0 mm/page_alloc.c:3457
+>    __alloc_pages_noprof+0x292/0x7b0 mm/page_alloc.c:4733
+>    alloc_pages_mpol_noprof+0x3e8/0x630 mm/mempolicy.c:2265
+>    kvm_coalesced_mmio_init+0x1f/0xf0 virt/kvm/coalesced_mmio.c:99
+>    kvm_create_vm virt/kvm/kvm_main.c:1235 [inline]
+>    kvm_dev_ioctl_create_vm virt/kvm/kvm_main.c:5500 [inline]
+>    kvm_dev_ioctl+0x13bb/0x2320 virt/kvm/kvm_main.c:5542
+>    vfs_ioctl fs/ioctl.c:51 [inline]
+>    __do_sys_ioctl fs/ioctl.c:907 [inline]
+>    __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+>    do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>    do_syscall_64+0x69/0x110 arch/x86/entry/common.c:83
+>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>   page last free pid 951 tgid 951 stack trace:
+>    reset_page_owner include/linux/page_owner.h:25 [inline]
+>    free_pages_prepare mm/page_alloc.c:1108 [inline]
+>    free_unref_page+0xcb1/0xf00 mm/page_alloc.c:2638
+>    vfree+0x181/0x2e0 mm/vmalloc.c:3361
+>    delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3282
+>    process_one_work kernel/workqueue.c:3229 [inline]
+>    process_scheduled_works+0xa5c/0x17a0 kernel/workqueue.c:3310
+>    worker_thread+0xa2b/0xf70 kernel/workqueue.c:3391
+>    kthread+0x2df/0x370 kernel/kthread.c:389
+>    ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> A reproducer is available here:
+> https://syzkaller.appspot.com/x/repro.c?x=1437939f980000
+> 
+> The problem was originally introduced by
+> commit b109b87050df ("mm/munlock: replace clear_page_mlock() by final
+> clearance"): it was handling focused on handling pagecache
+> and anonymous memory and wasn't suitable for lower level
+> get_page()/free_page() API's used for example by KVM, as with
+> this reproducer.
+> 
+> Fix it by moving the mlocked flag clearance down to
+> free_page_prepare().
+> 
+> The bug itself if fairly old and harmless (aside from generating these
+> warnings).
+> 
+> Closes: https://syzkaller.appspot.com/x/report.txt?x=169a47d0580000
+> Fixes: b109b87050df ("mm/munlock: replace clear_page_mlock() by final clearance")
+> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: <stable@vger.kernel.org>
+> Cc: Hugh Dickins <hughd@google.com>
 
-Alice
+Acked-by: Hugh Dickins <hughd@google.com>
+
+Thanks Roman - I'd been preparing a similar patch, so agree that this is
+the right fix.  I don't think there's any need to change your text, but
+let me remind us that any "Bad page" report stops that page from being
+allocated again (because it's in an undefined, potentially dangerous
+state): so does amount to a small memory leak even if otherwise harmless.
+
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  mm/page_alloc.c | 15 +++++++++++++++
+>  mm/swap.c       | 14 --------------
+>  2 files changed, 15 insertions(+), 14 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index bc55d39eb372..7535d78862ab 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1044,6 +1044,7 @@ __always_inline bool free_pages_prepare(struct page *page,
+>  	bool skip_kasan_poison = should_skip_kasan_poison(page);
+>  	bool init = want_init_on_free();
+>  	bool compound = PageCompound(page);
+> +	struct folio *folio = page_folio(page);
+>  
+>  	VM_BUG_ON_PAGE(PageTail(page), page);
+>  
+> @@ -1053,6 +1054,20 @@ __always_inline bool free_pages_prepare(struct page *page,
+>  	if (memcg_kmem_online() && PageMemcgKmem(page))
+>  		__memcg_kmem_uncharge_page(page, order);
+>  
+> +	/*
+> +	 * In rare cases, when truncation or holepunching raced with
+> +	 * munlock after VM_LOCKED was cleared, Mlocked may still be
+> +	 * found set here.  This does not indicate a problem, unless
+> +	 * "unevictable_pgs_cleared" appears worryingly large.
+> +	 */
+> +	if (unlikely(folio_test_mlocked(folio))) {
+> +		long nr_pages = folio_nr_pages(folio);
+> +
+> +		__folio_clear_mlocked(folio);
+> +		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
+> +		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
+> +	}
+> +
+>  	if (unlikely(PageHWPoison(page)) && !order) {
+>  		/* Do not let hwpoison pages hit pcplists/buddy */
+>  		reset_page_owner(page, order);
+> diff --git a/mm/swap.c b/mm/swap.c
+> index 835bdf324b76..7cd0f4719423 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -78,20 +78,6 @@ static void __page_cache_release(struct folio *folio, struct lruvec **lruvecp,
+>  		lruvec_del_folio(*lruvecp, folio);
+>  		__folio_clear_lru_flags(folio);
+>  	}
+> -
+> -	/*
+> -	 * In rare cases, when truncation or holepunching raced with
+> -	 * munlock after VM_LOCKED was cleared, Mlocked may still be
+> -	 * found set here.  This does not indicate a problem, unless
+> -	 * "unevictable_pgs_cleared" appears worryingly large.
+> -	 */
+> -	if (unlikely(folio_test_mlocked(folio))) {
+> -		long nr_pages = folio_nr_pages(folio);
+> -
+> -		__folio_clear_mlocked(folio);
+> -		zone_stat_mod_folio(folio, NR_MLOCK, -nr_pages);
+> -		count_vm_events(UNEVICTABLE_PGCLEARED, nr_pages);
+> -	}
+>  }
+>  
+>  /*
+> -- 
+> 2.47.0.105.g07ac214952-goog
+> 
+> 
 
