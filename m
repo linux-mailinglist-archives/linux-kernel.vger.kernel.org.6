@@ -1,71 +1,109 @@
-Return-Path: <linux-kernel+bounces-373837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88ED29A5D7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:48:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A23F9A5D88
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B805C1C20431
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:48:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C85E1C203B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A9B1E0E03;
-	Mon, 21 Oct 2024 07:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2657B1E0E0E;
+	Mon, 21 Oct 2024 07:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqrqiA/r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZWdyu/ez"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F36F1E0B67;
-	Mon, 21 Oct 2024 07:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915041E0DE6;
+	Mon, 21 Oct 2024 07:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729496921; cv=none; b=dcwaOMJS70hLZ5niIkkEeJ0EJwOdWLOwaqmsxpsmRTQT6tBeHXCse+iZ8x336Q5noOY+QflBrwO9U3kZ76W1eyt3q3/uMDfLsfGPYm2S5Sna2RKH9O4KipvCH0RgprJ2hB4Xfxi49kh8f2eaasfpoJbZW2KTl+hpVI5WfMcwhGc=
+	t=1729497013; cv=none; b=ouCfoXdV6aGMs+in7as7TINbj+8rD7QnRqb+njRo423P44EH3UeFutkk0G3GcnXyltuDyiID3BbPkrmHL8AysqM7ba4Am+kZmb7g5ORLb16S+1w6djlva654Xc883C4NIgV1bAqvOiYgbZQ6umFCcQ3lpyURlEnQfJqOTA/G1S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729496921; c=relaxed/simple;
-	bh=qSpv3tBvMMGIwq7aMGW3Ea661hMS8kpa2sDYpiU/D/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eF6xwHijVa6/KC0gAmHs6U3Bv3Ovzjwu0GRMydKSqpXim7oqFOmkVcvyF5TSNqiO/1bXY/rrFLRsOihpntqLgvS8QLgeYkTZHHHC4TZqdrkROKFWEA4J5QG1Q0do+pobaQshkwfl2zRqcOh5rCvhuzag3e2EczSxA7bDiIxKops=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqrqiA/r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47109C4CEC3;
-	Mon, 21 Oct 2024 07:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729496920;
-	bh=qSpv3tBvMMGIwq7aMGW3Ea661hMS8kpa2sDYpiU/D/c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tqrqiA/rX8wprOkxdM1qti2Oo/OgGh6Hvv7VanVnnlyf/IlucFk4usD4sBx6rGu66
-	 WaUMQV5O9ID/9vScJyZquzqYtRMv0c9LFRtAXbP6TUS5Je0i11l4ZYeOHlYeiYP2Z+
-	 g7OHapd0BogtfrAibHYr0y8TJuM0LEcUm47+ql52S2IOcQ2skVOCZBROuglkSaqJOb
-	 /1bw1wAGxhImFNkaQOti1ikMsWGH9iMksMm1uJ/h4nMSfbFd9eju/kvhJKDuC15aDx
-	 NAmDsFesB6gYWu8jFK2Qvt3BfDhiChey/aM5A5TxuczUG9D6+nsBG9TBgW6qLUJBqJ
-	 iEZFwDxxAFKwQ==
-Date: Mon, 21 Oct 2024 09:48:37 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	dinguyen@kernel.org, marex@denx.de, s.trumtrar@pengutronix.de, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 22/23] dt-bindings: altera: removal of generic PE1 dts
-Message-ID: <evkk3wwfxrx4feyl6fedg5mmxdtkdueak7vse3hy3vgqxkc3iy@lzggix6oxnfe>
-References: <20241020194028.2272371-1-l.rubusch@gmail.com>
- <20241020194028.2272371-23-l.rubusch@gmail.com>
+	s=arc-20240116; t=1729497013; c=relaxed/simple;
+	bh=XnT93t9gRI+nxE+bt78pJm7Y0qFs241Nf7r6GTYJmo8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MaG74LK11V+sEAuLa8Q8KMSXFClUP25gJObDAvHEj54jzCRoff70C5bXI+ZOlXYyziusizgfDZs6qaVkGwBGzPqbbpYrkYT2Hih/tLKZXHcIXY+hGI2X5sJuVrMEKb7TlgF79ypoN18V7ftJBUfICqzuoZn2SEKIC2rBz9QPDN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZWdyu/ez; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 2n9ntL06gjsSz2n9ntfpEX; Mon, 21 Oct 2024 09:48:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1729496933;
+	bh=Eb/kMiEWGo00zh4rVI7VXlwQ/NqeEqhpavG4zbOM3UM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=ZWdyu/ezYh4Srx9uTDE61kWjfxE0Qg5364xgp+6Dysh48jJ5+RGRAKWT4q99gyqqf
+	 0YtR+wouWC7GUSQhe5xBAzdR4rOyy0gtCg476aIHa9ZiPorTiHxm093qhpfvaZoUzE
+	 bHkCp73+YUAFZt7qBcZVRTdWqqF3fi85KIBJuQMMIirPLpWhuv/1u61taIoHpWPU8G
+	 eWBZybVG85L8Pp7aQUQikug3G0Gg54lWA28wMCbP2tavYPjvAYFuZ3d7EVVs9GnCL8
+	 /qoE0G0h7euFkK+AGkfSDh1JTAR1j8HyzevwOohbsQh2Nv3rMXS/6cG9F5oqig+Czi
+	 e+ihO0pfj3xVw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 21 Oct 2024 09:48:53 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <5350829a-d30f-41b4-82db-8ed822e13d09@wanadoo.fr>
+Date: Mon, 21 Oct 2024 09:48:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241020194028.2272371-23-l.rubusch@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 01/13] x86/sev: Carve out and export SNP guest
+ messaging init routines
+To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+ thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
+Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+ pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
+References: <20241021055156.2342564-1-nikunj@amd.com>
+ <20241021055156.2342564-2-nikunj@amd.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241021055156.2342564-2-nikunj@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 20, 2024 at 07:40:27PM +0000, Lothar Rubusch wrote:
-> Remove the binding for the generic Mercury+ AA1 on PE1 carrier board.
+Le 21/10/2024 à 07:51, Nikunj A Dadhania a écrit :
+> Currently, the SEV guest driver is the only user of SNP guest messaging.
+> All routines for initializing SNP guest messaging are implemented within
+> the SEV guest driver. To add Secure TSC guest support, these initialization
+> routines need to be available during early boot.
+> 
+> Carve out common SNP guest messaging buffer allocations and message
+> initialization routines to core/sev.c and export them. These newly added
+> APIs set up the SNP message context (snp_msg_desc), which contains all the
+> necessary details for sending SNP guest messages.
+> 
+> At present, the SEV guest platform data structure is used to pass the
+> secrets page physical address to SEV guest driver. Since the secrets page
+> address is locally available to the initialization routine, use the cached
+> address. Remove the unused SEV guest platform data structure.
+> 
+> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+> ---
 
-This we see from the diff. It's obvious. We do not see "why?".
+...
 
-Best regards,
-Krzysztof
+> +static inline bool is_vmpck_empty(struct snp_msg_desc *mdesc)
+> +{
+> +	char zero_key[VMPCK_KEY_LEN] = {0};
 
+Nitpick: I think this could be a static const.
+
+> +
+> +	if (mdesc->vmpck)
+> +		return !memcmp(mdesc->vmpck, zero_key, VMPCK_KEY_LEN);
+> +
+> +	return true;
+> +}
+
+...
 
