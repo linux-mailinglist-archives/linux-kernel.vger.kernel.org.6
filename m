@@ -1,79 +1,76 @@
-Return-Path: <linux-kernel+bounces-374463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F109A6A97
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:40:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0B69A6A61
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 15:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A90AEB28153
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2971F281C68
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEAD1F8F1F;
-	Mon, 21 Oct 2024 13:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="cpZlIILT"
-Received: from antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4911E7C1C;
+	Mon, 21 Oct 2024 13:33:13 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1F91F8917;
-	Mon, 21 Oct 2024 13:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A77C11185
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 13:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729517982; cv=none; b=ZuPFFkpNVNhn5wHLcRBFVCP0FV5xETcGj3eKXcnNoR6HruYrBnfIN9Rm2z3t3egh2OU+GSY+YI1ChPO3QerK0fMts4AF7p4NYhraC3Qp7rUF+bayf/8YmdTkUxo3egDFQ20hFU+DOryAVyj/r1j+He4a6DZVPe8EJOT4BK0hLT8=
+	t=1729517593; cv=none; b=IN85k9E45lzraEHdXFVkL0CSFomUGT2Z7gvWOFE12eD8j04bfCEnF9jXqWQ0/9H+55HRXhFI836zOcj01tiIblbZifvl07lI853yg3opph3B0m/Srwea21THOzXkEcnnsVVgRXZGCGHFrxzxDBMKks5Ij+5Bivz9I/XOGCPhLoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729517982; c=relaxed/simple;
-	bh=lOn/qtlpo5i1bDkC+lQsBswhDJXwxoDx5wi3y9Hgfv0=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ODmADxvdtWdp1cPp62M8Nkm/HHmqT71x/qW9IQRXuN9ja4aQDWZsN6AiEydihQ0FgrlckYvs1idtsS6sleMOq+eX/LZq/INViFuoiz2z0+0eVEcVnLK2YDYiOAHc6KSuhZojGr1fcG5ysQnDZnrTlaa6AxjL3onqdhCByYsk3NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=cpZlIILT; arc=none smtp.client-ip=91.227.220.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
-Date: Mon, 21 Oct 2024 15:32:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
-	s=202107; t=1729517551;
-	bh=lOn/qtlpo5i1bDkC+lQsBswhDJXwxoDx5wi3y9Hgfv0=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
-	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
-	 references:reply-to:Sender:Subject:Subject:To:To;
-	b=cpZlIILTI7rNsmSk7TqI/SVX88x2NcRD+Yz7H1z00pDpwloLTMsbwwTNnxxz/cW2G
-	 vgWi/wEqHWlWXcZHpoWht7X2j7355id1U1w+ePAYntWU0vtKz+npaqbf2HTVC52Dgg
-	 khqNWm9BrTMLy6OHSz/bWSjiwCMFoJ4kruR12+7DEO35YfMSSA9zakaI3hq6IYTc7v
-	 T6AYHNyPZqPG7V41j4Ad60/uDeiQ9IuaCNTZSPGKdLJOwEtNl2lXceqzRotOq5xbqx
-	 PN2V4WsKy9xHXYtbGnaDe8tRn63Ggh9ZZTxnrxskmrelnl48R9TMncNZez1kGFHZ7f
-	 c+wTs7PRSfWWA==
-From: Markus Reichelt <lkt+2023@mareichelt.com>
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.11 000/135] 6.11.5-rc1 review
-Message-ID: <20241021133230.GA11490@pc21.mareichelt.com>
-Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241021102259.324175287@linuxfoundation.org>
+	s=arc-20240116; t=1729517593; c=relaxed/simple;
+	bh=6AlrBsQMYuHn4+tFYtaGWVVa/w9KfoT0b7uASF6xOc0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Wm70Bq4fo8os3pzVSAPo9/CNwApgcWTmTksxbdNJ6blWC8zEgiFSOU4pVp+FU1Y2vMZXifHVUwMbYwALoWYdKqzAXbiKloXnoL7txZ/DXvh0jnavkH7KKWsDuGqkWsVoVhK3UUE2tW7uXK/VhR/fUvqJjTepaNFYH73vE06jVw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c38d2b91so38531645ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 06:33:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729517590; x=1730122390;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6AlrBsQMYuHn4+tFYtaGWVVa/w9KfoT0b7uASF6xOc0=;
+        b=cQLBTasfbOnb6CD5G0W7S8622irjnm7Uts2AIRJkB9kV1d0v/Wshddhvfzy0DQs7+U
+         ajucDPmM8JrZnfk+mMpBGEDz7xLl5e4rqPkr86NWyFU2uSxdp5bU+rLHa/JfwFcV8zWv
+         wc93yPKJH+Gv4wXSKobsrYIKL1qbQ9pHZBcD3ZUmMocMoq5ODp87d1j7N/R+MYk26rKP
+         /Y1LmZT35rSx9BE4/i7znTMXMu4s6kwO2BE1ymBhRcbzHw5rPi37tANI1IKeuAKIxWQl
+         LIfMiT4W05XJp3b4c4J0umMi+P0QJVC9DlhwodiySPqyajDxhocU2yNpQxCb3cuNXtgR
+         HnDA==
+X-Gm-Message-State: AOJu0YxDAeZdPrtH9R0kp08zIz4QaZ17WjPlYdnnz49i1+DKsXFvwxrJ
+	vQVa0woXEKRpchxbCSPZUdETySbnRwOZhJSeZ1u3zyLqFeX3H14BHVVoV79l3F0g8Z/W9OB4x5G
+	uUTqswSQCap1ymyzMqk2+K3iR2A07HYZJ2LuctCEFqeU29POZVAti9V0=
+X-Google-Smtp-Source: AGHT+IEzWPjaDgunprWz2nMapsvsZlRwA4kBpGaLiMhySRcRPAvSAGvuDYfo6Yx5CmOY/zNOufM7dmHDBTw7uWh7ilCeOYowX9gj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021102259.324175287@linuxfoundation.org>
+X-Received: by 2002:a05:6e02:1e07:b0:3a3:97b6:74fe with SMTP id
+ e9e14a558f8ab-3a3f406fc96mr110715695ab.11.1729517590512; Mon, 21 Oct 2024
+ 06:33:10 -0700 (PDT)
+Date: Mon, 21 Oct 2024 06:33:10 -0700
+In-Reply-To: <6715f84b.050a0220.10f4f4.003e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67165816.050a0220.1e4b4d.005c.GAE@google.com>
+Subject: Re: [syzbot] bcachefs: add check on type to mitigate shift-out-bounds
+From: syzbot <syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-> This is the start of the stable review cycle for the 6.11.5 release.
-> There are 135 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
-> Anything received after that time might be too late.
+***
 
-Hi Greg
+Subject: bcachefs: add check on type to mitigate shift-out-bounds
+Author: gianf.trad@gmail.com
 
-6.11.5-rc1 compiles, boots and runs here on x86_64
-(AMD Ryzen 5 PRO 4650G, Slackware64-15.0)
-
-Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
+#syz test
 
