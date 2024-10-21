@@ -1,217 +1,347 @@
-Return-Path: <linux-kernel+bounces-374154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D64469A659E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:00:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EECBE9A65A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 13:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A371F23453
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAB3A284B8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94A51E7C2D;
-	Mon, 21 Oct 2024 10:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FB91E573C;
+	Mon, 21 Oct 2024 10:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMIKVmzO"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sky3yooi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HTpNCtRV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sky3yooi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HTpNCtRV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF4A1E47B0;
-	Mon, 21 Oct 2024 10:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0884C1E25E3;
+	Mon, 21 Oct 2024 10:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729508273; cv=none; b=q8eHF7gcceJa67Nr8Yzf1onmuztDgB4lhQ7BAagOCkn1iErRj6Qj2xTd1q158iNW8kQaE+VOolm69WE7bnqLn68dVaStCukl5c2s5y4T8sDUPByNfB+VQZnGPTnaUIS57SCaf9D2k+hLLoylpoLnnyA0HsdLxIc+avfGsJIRBjs=
+	t=1729508322; cv=none; b=NkTtnVoiJN4h//urLc1rMgyifhVKrzwG1e5aPgu+bE0gO17EkO512LgcM7dpoN0M95ADWEOUOJe+X8jYPFTcrTOjGanCH+pefAnj8AqA+uwWeTRYPCz9K22G6sdFTwApWdaO8k7gg4mdfQVUj8TFa1EgeM5Uwxf7EvIh4Nu4//Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729508273; c=relaxed/simple;
-	bh=JkL5pxTXYV1c+ASK7POPGo88nBVN/dbvdwl7ADh887Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aQLK/BdChobjeaEUZA4kYAwVQ77FZgJ/bJWUH/J2UC92Nq7qUFgDpc1uNNgjp03Mj7FOr+6FfcsOnX9nlydN9LYkf6NpOcJWRvOJvxtfo3qPMQC3S/nZe5clWYgJJy9wdQ7gFBGCR+DukIzRaleNLrQEwhUeiZ1CYsn5MaBnats=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMIKVmzO; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f58c68c5so6337192e87.3;
-        Mon, 21 Oct 2024 03:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729508270; x=1730113070; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mNFkWYmfRQmEEsZqscUsIfG3JnH/ACkJuFsvDLPow8s=;
-        b=GMIKVmzOhIMyeXlv2ToyT7v2DBrl4TJNOWKzlRHEd3bM6fMcpej5oWBItVbHADj91y
-         yIaFTuz0vcvtn1oTuZzhkuly1D5Ic/rYHTYW7BIOhRA7FvmZmKOjFa/O/JaHp8hPsLuV
-         GC7cdmMPlCTzih3FvgUYoKVLceoCTel5xEHt2E43Xc8x8TR2PAog19R76UDAF1SfqAex
-         XYo+fFAW+GjUX5vul8nqLg+ig0UgiSbClMQRm1FEzzLlcig/VGwv0wJxfFsGAaVa89c9
-         rVDY0Dt6+tcxfuihqsc6zz1KA3d4qOqxWF53IefpmoOugkswg/wDCQ9WkM1aTe4feyPh
-         ys0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729508270; x=1730113070;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mNFkWYmfRQmEEsZqscUsIfG3JnH/ACkJuFsvDLPow8s=;
-        b=WNmZ7pqFOpymjCSuqofWvY3TVvcXgh4PdtAZv96/BOVv2G/ocnGaDItqibUYKP6zeH
-         hE9gKpaYMQAyyauQtvlJvQToHFzQoTdY3ugZQN0weyKl7/UxcCetaQAUFPSCrJ0VJors
-         PglyWLmTCZRB1fUPyFGJYK1J3T/NVtPN6gGzHjkua+/p2ittQzk4vtDg0DOWr5hHfYD9
-         hdyixpybN/6Os0x2B41NC5smZ5XHy0k5f/2gxXcFIcIWirEeII2RwTZ+i4XcFCuEX8qA
-         wT1v+4nW4Ev4lo+BlNUR9xfyq7k0GROsCCXU1ezhN9tRcQPF/lrgDKNfXq6R9KQdGyJF
-         c8Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUoSB0nhYUeBkyoc8TE7/9GVM8k+vLC6rg1OI7twBHfjIVuAkfT0KVp8nIyL9IfWBK8RzpcoLd18Dkp/Q=@vger.kernel.org, AJvYcCWHAcroFaJ28AVBjT792gIx9X4xKXqLE/h6zSN1168Vb6mAD9algiEJkoxhO0jdKiA/IGICSBSDjcxZAFZR@vger.kernel.org, AJvYcCX+aMpvL6Oq1CHn9fAhGufm+8PzprNIkB7RPPy51+nDvf15RMYO0i4vhffnCJPulBF3ITJRr2DQVOI7nYj+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzyuNrCUsIhw4EYGiYpoWMqU1IlJ4ZQeNGqanRkGhIjXSHo4Uc
-	34DMftdhh7zXrhoMF1fN8ES2toI76BbhuNmdWozirGNlW2i5aKkD3tftjbWpD/yaZlaW3izRRSU
-	/+iOYXK5DUdDDS1ZfJR6H5xxOUxd94xe+
-X-Google-Smtp-Source: AGHT+IHn1EHXBFSGk2RgzQqKNIjb5LnBYa3Wgd2udgTG2ZiWf1OnUyWjFfM7/XBOqkiaVvP6T+i+WYtfeSDcS8dg7Dk=
-X-Received: by 2002:a05:6512:318b:b0:536:a695:9414 with SMTP id
- 2adb3069b0e04-53a15340881mr8921169e87.6.1729508269405; Mon, 21 Oct 2024
- 03:57:49 -0700 (PDT)
+	s=arc-20240116; t=1729508322; c=relaxed/simple;
+	bh=Sc2DVuRGcnxAdq5yOlajYBFosbVzYoKWRwSe7XRAG3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o3e79906zjDwg/GqQnBPOOtUW+i/j1sYS+W7tkHQiLa1Dhv9mRMTHRKuxAmS0z7WKZ3ASWNNqnwhD7Rc1aZJO+6X6L1SSOFiC8W8T6Z85oPO8YcMluI0NjZMvgWgG1YpefTr+LVFkCgFc9z8iqSg6QWAqXp1wG3jHSX8mExsFTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sky3yooi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HTpNCtRV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sky3yooi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HTpNCtRV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 270431FC04;
+	Mon, 21 Oct 2024 10:58:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729508318; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=F2uxdBA13vMIyxe5igUJesTE6g/+Q8UD52ks2NuJBT8=;
+	b=sky3yooix9pei98sjqsbnb9VhFMHsFiYNYrfdc0oBXeNx8hkpKvMDzCstDdDQUtCAig1YP
+	OH8i1xU9gPJ1dUlR+f/Mtg8pNy9IgNAuvGnV8XlPFfCCpbU49zDLqkxsydYAVtvdaG49cd
+	+HoJgnbC8immIaBGrFdmacVvbBRa7jE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729508318;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=F2uxdBA13vMIyxe5igUJesTE6g/+Q8UD52ks2NuJBT8=;
+	b=HTpNCtRVeJesYMVqdNnLNRVCkJQiB/mxFNMCpvRYP7C351KhEscxJLQmVL/Q/JkR1c5uZa
+	PGb17uIM7/7+6UAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729508318; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=F2uxdBA13vMIyxe5igUJesTE6g/+Q8UD52ks2NuJBT8=;
+	b=sky3yooix9pei98sjqsbnb9VhFMHsFiYNYrfdc0oBXeNx8hkpKvMDzCstDdDQUtCAig1YP
+	OH8i1xU9gPJ1dUlR+f/Mtg8pNy9IgNAuvGnV8XlPFfCCpbU49zDLqkxsydYAVtvdaG49cd
+	+HoJgnbC8immIaBGrFdmacVvbBRa7jE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729508318;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=F2uxdBA13vMIyxe5igUJesTE6g/+Q8UD52ks2NuJBT8=;
+	b=HTpNCtRVeJesYMVqdNnLNRVCkJQiB/mxFNMCpvRYP7C351KhEscxJLQmVL/Q/JkR1c5uZa
+	PGb17uIM7/7+6UAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6476A136DC;
+	Mon, 21 Oct 2024 10:58:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id a1/OFt0zFmf6EgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 21 Oct 2024 10:58:37 +0000
+Message-ID: <aa679655-290e-4d19-9195-1a581431b9e6@suse.de>
+Date: Mon, 21 Oct 2024 12:58:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <670cb3f6.050a0220.3e960.0052.GAE@google.com> <67162374.050a0220.10f4f4.0045.GAE@google.com>
-In-Reply-To: <67162374.050a0220.10f4f4.0045.GAE@google.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Mon, 21 Oct 2024 19:57:32 +0900
-Message-ID: <CAKFNMonk7-DOE_knZLG8N_JijauKZ-DLgfA9GwsU0nDsbjKcSw@mail.gmail.com>
-Subject: Re: [syzbot] [nilfs] [fs] kernel BUG in submit_bh_wbc (3)
-To: syzbot <syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/5] drm: handle HAS_IOPORT dependencies
+To: Arnd Bergmann <arnd@arndb.de>, Niklas Schnelle <schnelle@linux.ibm.com>,
+ Brian Cain <bcain@quicinc.com>, Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Dave Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Dave Airlie <airlied@redhat.com>,
+ Gerd Hoffmann <kraxel@redhat.com>, Lucas De Marchi
+ <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-serial@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, Arnd Bergmann <arnd@kernel.org>
+References: <20241008-b4-has_ioport-v8-0-793e68aeadda@linux.ibm.com>
+ <20241008-b4-has_ioport-v8-3-793e68aeadda@linux.ibm.com>
+ <64cc9c8f-fff3-4845-bb32-d7f1046ef619@suse.de>
+ <a25086c4-e2fc-4ffc-bc20-afa50e560d96@app.fastmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <a25086c4-e2fc-4ffc-bc20-afa50e560d96@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	FREEMAIL_TO(0.00)[arndb.de,linux.ibm.com,quicinc.com,holtmann.org,gmail.com,linux.intel.com,kernel.org,ffwll.ch,redhat.com,intel.com,linuxfoundation.org,orcam.me.uk];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLykjg6e7ifkwtw7jmpw7b9yio)];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On Mon, Oct 21, 2024 at 6:48=E2=80=AFPM syzbot
-<syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com> wrote:
->
-> syzbot has found a reproducer for the following issue on:
->
-> HEAD commit:    42f7652d3eb5 Linux 6.12-rc4
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D10c66a4058000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D41330fd2db038=
-93d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D985ada84bf055a5=
-75c07
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1541e430580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1181e0a798000=
-0
+Hi
 
-The kernel bug reproduced by this C-reproducer is fixed by the patch
-"nilfs2: fix kernel bug due to missing clearing of buffer delay flag"
-on the way upstream.  I actually performed a follow-up test of this
-C-reproducer and confirmed it.
+Am 21.10.24 um 12:08 schrieb Arnd Bergmann:
+> On Mon, Oct 21, 2024, at 07:52, Thomas Zimmermann wrote:
+>> Am 08.10.24 um 14:39 schrieb Niklas Schnelle:
+> d 100644
+>>> --- a/drivers/gpu/drm/qxl/Kconfig
+>>> +++ b/drivers/gpu/drm/qxl/Kconfig
+>>> @@ -2,6 +2,7 @@
+>>>    config DRM_QXL
+>>>    	tristate "QXL virtual GPU"
+>>>    	depends on DRM && PCI && MMU
+>>> +	depends on HAS_IOPORT
+>> Is there a difference between this style (multiple 'depends on') and the
+>> one used for gma500 (&& && &&)?
+> No, it's the same. Doing it in one line is mainly useful
+> if you have some '||' as well.
+>
+>>> @@ -105,7 +106,9 @@ static void bochs_vga_writeb(struct bochs_device *bochs, u16 ioport, u8 val)
+>>>    
+>>>    		writeb(val, bochs->mmio + offset);
+>>>    	} else {
+>>> +#ifdef CONFIG_HAS_IOPORT
+>>>    		outb(val, ioport);
+>>> +#endif
+>> Could you provide empty defines for the out() interfaces at the top of
+>> the file?
+> That no longer works since there are now __compiletime_error()
+> versions of these funcitons. However we can do it more nicely like:
+>
+> diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
+> index 9b337f948434..034af6e32200 100644
+> --- a/drivers/gpu/drm/tiny/bochs.c
+> +++ b/drivers/gpu/drm/tiny/bochs.c
+> @@ -112,14 +112,12 @@ static void bochs_vga_writeb(struct bochs_device *bochs, u16 ioport, u8 val)
+>   	if (WARN_ON(ioport < 0x3c0 || ioport > 0x3df))
+>   		return;
+>   
+> -	if (bochs->mmio) {
+> +	if (!IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio) {
+>   		int offset = ioport - 0x3c0 + 0x400;
+>   
+>   		writeb(val, bochs->mmio + offset);
+>   	} else {
+> -#ifdef CONFIG_HAS_IOPORT
+>   		outb(val, ioport);
+> -#endif
+>   	}
 
-This should be closed by the patch, so although there are additional
-messages sent by syzbot, I will leave it without closing it manually.
+For all functions with such a pattern, could we use:
 
-Ryusuke Konishi
+bool bochs_uses_mmio(bochs)
+{
+     return !IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio
+}
 
+void writeb_func()
+{
+     if (bochs_uses_mmio()) {
+       writeb()
+#if CONFIG_HAS_IOPORT
+     } else {
+       outb()
+#endif
+     }
+}
+
+u8 readb_func()
+{
+     u8 ret = 0xff
+     if (bochs_uses_mmio()) {
+       ret = readb()
+#if CONFIG_HAS_IOPORT
+     } else {
+       ret = inb()
+#endif
+     }
+     return ret;
+}
+
+?
+
+The code in bochs_uses_mmio() could then also print a drm_warn_once if 
+we have neither MMIO nor I/O ports.
+
+I'd review a separate series for such a change.
+
+>   }
+>   
+> @@ -128,16 +126,12 @@ static u8 bochs_vga_readb(struct bochs_device *bochs, u16 ioport)
+>   	if (WARN_ON(ioport < 0x3c0 || ioport > 0x3df))
+>   		return 0xff;
+>   
+> -	if (bochs->mmio) {
+> +	if (!IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio) {
+>   		int offset = ioport - 0x3c0 + 0x400;
+>   
+>   		return readb(bochs->mmio + offset);
+>   	} else {
+> -#ifdef CONFIG_HAS_IOPORT
+>   		return inb(ioport);
+> -#else
+> -		return 0xff;
+> -#endif
+>   	}
+>   }
+>   
+> @@ -145,32 +139,26 @@ static u16 bochs_dispi_read(struct bochs_device *bochs, u16 reg)
+>   {
+>   	u16 ret = 0;
+>   
+> -	if (bochs->mmio) {
+> +	if (!IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio) {
+>   		int offset = 0x500 + (reg << 1);
+>   
+>   		ret = readw(bochs->mmio + offset);
+>   	} else {
+> -#ifdef CONFIG_HAS_IOPORT
+>   		outw(reg, VBE_DISPI_IOPORT_INDEX);
+>   		ret = inw(VBE_DISPI_IOPORT_DATA);
+> -#else
+> -		ret = 0xffff;
+> -#endif
+>   	}
+>   	return ret;
+>   }
+>   
+>   static void bochs_dispi_write(struct bochs_device *bochs, u16 reg, u16 val)
+>   {
+> -	if (bochs->mmio) {
+> +	if (!IS_DEFINED(CONFIG_HAS_IOPORT) || bochs->mmio) {
+>   		int offset = 0x500 + (reg << 1);
+>   
+>   		writew(val, bochs->mmio + offset);
+>   	} else {
+> -#ifdef CONFIG_HAS_IOPORT
+>   		outw(reg, VBE_DISPI_IOPORT_INDEX);
+>   		outw(val, VBE_DISPI_IOPORT_DATA);
+> -#endif
+>   	}
+>   }
+>   
+>> And the in() interfaces could be defined to 0xff[ff].
+>>
+>> I assume that you don't want to provide such empty macros in the
+>> kernel's io.h header?
+> That was the original idea many years ago, but Linus rejected
+> my pull request for it, so Niklas worked through all drivers
+> individually to add the dependencies instead.
+
+I see.
+
+Best regards
+Thomas
 
 >
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/21f56ec05989/dis=
-k-42f7652d.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/d295ea00e68a/vmlinu=
-x-42f7652d.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/6c4b95c7f67f/b=
-zImage-42f7652d.xz
-> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/709e6e3=
-2762f/mount_0.gz
-> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/6576d88=
-61c23/mount_7.gz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> kernel BUG at fs/buffer.c:2785!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-> CPU: 0 UID: 0 PID: 5235 Comm: syz-executor372 Not tainted 6.12.0-rc4-syzk=
-aller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 09/13/2024
-> RIP: 0010:submit_bh_wbc+0x556/0x560 fs/buffer.c:2785
-> Code: 89 fa e8 dd 76 cc 02 e9 95 fe ff ff e8 73 85 74 ff 90 0f 0b e8 6b 8=
-5 74 ff 90 0f 0b e8 63 85 74 ff 90 0f 0b e8 5b 85 74 ff 90 <0f> 0b e8 53 85=
- 74 ff 90 0f 0b 90 90 90 90 90 90 90 90 90 90 90 90
-> RSP: 0018:ffffc90003b6f0d8 EFLAGS: 00010293
-> RAX: ffffffff82206235 RBX: 0000000000000154 RCX: ffff88802d490000
-> RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000000000000
-> RBP: 0000000000000100 R08: ffffffff82205df9 R09: 1ffff1100ef571d0
-> R10: dffffc0000000000 R11: ffffed100ef571d1 R12: 0000000000000000
-> R13: ffff888077ab8e80 R14: 0000000000000000 R15: 1ffff1100ef571d0
-> FS:  0000555573f7e380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fbda422e00a CR3: 000000002fc1e000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  submit_bh fs/buffer.c:2824 [inline]
->  block_read_full_folio+0x93b/0xcd0 fs/buffer.c:2451
->  do_mpage_readpage+0x1a73/0x1c80 fs/mpage.c:317
->  mpage_read_folio+0x108/0x1e0 fs/mpage.c:392
->  filemap_read_folio+0x14b/0x630 mm/filemap.c:2367
->  do_read_cache_folio+0x3f5/0x850 mm/filemap.c:3825
->  read_mapping_folio include/linux/pagemap.h:1011 [inline]
->  nilfs_get_folio+0x4b/0x240 fs/nilfs2/dir.c:190
->  nilfs_find_entry+0x13d/0x660 fs/nilfs2/dir.c:313
->  nilfs_inode_by_name+0xad/0x240 fs/nilfs2/dir.c:394
->  nilfs_lookup+0xed/0x210 fs/nilfs2/namei.c:63
->  lookup_open fs/namei.c:3573 [inline]
->  open_last_lookups fs/namei.c:3694 [inline]
->  path_openat+0x11a7/0x3590 fs/namei.c:3930
->  do_filp_open+0x235/0x490 fs/namei.c:3960
->  do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
->  do_sys_open fs/open.c:1430 [inline]
->  __do_sys_openat fs/open.c:1446 [inline]
->  __se_sys_openat fs/open.c:1441 [inline]
->  __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fbda41e54a9
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffe5e610168 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fbda41e54a9
-> RDX: 000000000000275a RSI: 0000000020000180 RDI: 00000000ffffff9c
-> RBP: 0000000000000000 R08: 00000000000051a5 R09: 000000002000a440
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe5e61019c
-> R13: 0000000000000007 R14: 431bde82d7b634db R15: 00007ffe5e6101d0
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:submit_bh_wbc+0x556/0x560 fs/buffer.c:2785
-> Code: 89 fa e8 dd 76 cc 02 e9 95 fe ff ff e8 73 85 74 ff 90 0f 0b e8 6b 8=
-5 74 ff 90 0f 0b e8 63 85 74 ff 90 0f 0b e8 5b 85 74 ff 90 <0f> 0b e8 53 85=
- 74 ff 90 0f 0b 90 90 90 90 90 90 90 90 90 90 90 90
-> RSP: 0018:ffffc90003b6f0d8 EFLAGS: 00010293
-> RAX: ffffffff82206235 RBX: 0000000000000154 RCX: ffff88802d490000
-> RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000000000000
-> RBP: 0000000000000100 R08: ffffffff82205df9 R09: 1ffff1100ef571d0
-> R10: dffffc0000000000 R11: ffffed100ef571d1 R12: 0000000000000000
-> R13: ffff888077ab8e80 R14: 0000000000000000 R15: 1ffff1100ef571d0
-> FS:  0000555573f7e380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fbd9cbff000 CR3: 000000002fc1e000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->
->
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+>       Arnd
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
