@@ -1,180 +1,127 @@
-Return-Path: <linux-kernel+bounces-373611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D3EB9A5961
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:00:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6956D9A5965
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB2A9B21087
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9792A1C20EF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79296193402;
-	Mon, 21 Oct 2024 04:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="prbskjbr"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BA21CF5F6
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C111946CA;
+	Mon, 21 Oct 2024 04:01:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5972BB15
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729483208; cv=none; b=J9WkO7iFBUZUiU51sPBAWe4j9bAgW7XbFZNpVxqd6RDzKtWX37NHVcGAjy6CFA8/JKoWQ5XiddECZKbCVDC0iKNOs/qE9shaZtv/iEzvxHlGrNyrViEhbI6H8ymVbjot8WZilpHw7cesPpA/+/unCLJtj78v7/gj4z52eTksYLc=
+	t=1729483310; cv=none; b=HCGi0mmC+8MWmVgg4UvmN+zXiwh9yVNNZEPyKYDAS/5j2t5Zse2vTWkA/Eg3AT48mFhio1TGGQZ9jR1SKzizdrJOURDicmejVlQD55WjtQhJAAsCXxRTTIZ/hwq8Qfx5UJ9nzv1qOcHG6GU+8UWsj25FMhs//zAOdI2fwj6453Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729483208; c=relaxed/simple;
-	bh=DrckcV2kxWdF4O8bs2o6wk3We2ows/aBCuLkrYyGf8E=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=jS6cjwdF3F2SZdCMmaAiK0C1o11qE/xdrW28LD3R1eZhfAU/epvrTud9I05Z1vBt9GhV1HKgsfJHkT74FzPMn62IxzOvTT7mpFW0bvBligIaQ2BWswbApzyVq6qCpYFXh+rZaJCpbOq65y6iPduy6d2PcZ2oWCEY+r4mVRO+xbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=prbskjbr; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241021035959epoutp01eed155be62c3a2ab9ebc578f5e5fa1eb~AW85sjBXY1583415834epoutp01s
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 03:59:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241021035959epoutp01eed155be62c3a2ab9ebc578f5e5fa1eb~AW85sjBXY1583415834epoutp01s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1729483199;
-	bh=DrckcV2kxWdF4O8bs2o6wk3We2ows/aBCuLkrYyGf8E=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=prbskjbruzN/N3wMXSqN6mbtHVcfizlxljqN6BIyT0SglKP6krFchF++7LjZskNsF
-	 eFr8+nuxRdMJuK205aKy0/BiMncmnEHK5uxPk369Xo783Z9DUW6Rd7hxaIpzwNkc28
-	 NMlTm0zNDy3fbnafss5FU0Yv9BMw8QJM5ghdHStU=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20241021035958epcas2p36b1336c717708daf8c2475905002991e~AW85P4xQY2977329773epcas2p3J;
-	Mon, 21 Oct 2024 03:59:58 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.102]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XX1mG1lccz4x9Pp; Mon, 21 Oct
-	2024 03:59:58 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	0E.07.09811.EB1D5176; Mon, 21 Oct 2024 12:59:58 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241021035957epcas2p12cb34aa86daaa4ad40dfc3e9ffa0bd4f~AW84hyfeK0308303083epcas2p1Q;
-	Mon, 21 Oct 2024 03:59:57 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241021035957epsmtrp2bc2076bb8b41b96211b8b5ab2110d72a~AW84hAF1c2662026620epsmtrp2h;
-	Mon, 21 Oct 2024 03:59:57 +0000 (GMT)
-X-AuditID: b6c32a48-84fb870000002653-6f-6715d1be3ef0
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A7.07.07371.DB1D5176; Mon, 21 Oct 2024 12:59:57 +0900 (KST)
-Received: from KORCO119526 (unknown [10.229.18.158]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241021035957epsmtip1e4df4989b9e2b0b6d50a96005193f9f5~AW84TW1Ya1845318453epsmtip1j;
-	Mon, 21 Oct 2024 03:59:57 +0000 (GMT)
-From: =?utf-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
-To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, "'Sam	Protsenko'"
-	<semen.protsenko@linaro.org>
-Cc: "'Wim Van Sebroeck'" <wim@linux-watchdog.org>, "'Guenter Roeck'"
-	<linux@roeck-us.net>, "'Rob Herring'" <robh@kernel.org>, "'Krzysztof
- Kozlowski'" <krzk+dt@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, "'Byoungtae Cho'" <bt.cho@samsung.com>
-In-Reply-To: <005c01db1ae8$544a1e40$fcde5ac0$@samsung.com>
-Subject: RE: [PATCH 2/3] watchdog: s3c2410_wdt: add support for
- exynosautov920 SoC
-Date: Mon, 21 Oct 2024 12:59:57 +0900
-Message-ID: <000001db236d$b18432c0$148c9840$@samsung.com>
+	s=arc-20240116; t=1729483310; c=relaxed/simple;
+	bh=Ts2Vy9YEIjysg0wB78lMVASaMah/0dG6SjxF6FWO1zQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rfOVDFQ/qQVqTnt1r9dob9LlqvFXVcKVX6+oapgl0P2LgPl8iLNM7wspmfIMc8Kf18FsShc9pxlFYTCwN2Z0iZBOZhTa63JLo3yH5n1tZ0NSWTBRHjVjk3SbAuNw7/xrUtaP1m2Vcf1ChRFauUH7Grm1exDhJSnSZamqejFB3Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3853DA7;
+	Sun, 20 Oct 2024 21:02:17 -0700 (PDT)
+Received: from [10.162.16.109] (a077893.blr.arm.com [10.162.16.109])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 798753F73B;
+	Sun, 20 Oct 2024 21:01:45 -0700 (PDT)
+Message-ID: <8c14a3ca-2986-484f-9bc1-c2cf4aa08211@arm.com>
+Date: Mon, 21 Oct 2024 09:31:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIPcUUdHl+Ei7bfUILxdnz4wpISqAFKfb4qAog0DUQCf1lgZgMTgJO5AgAvTqixzJ6GIA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNJsWRmVeSWpSXmKPExsWy7bCmue6+i6LpBk8Xclk8mLeNzeL+pz4m
-	izV7zzFZzD9yjtXi5ax7bBabHl9jtbi8aw6bxYzz+5gsbqzbx27xZOEZJov/e3awWzzvA4o9
-	fvmP2YHXY9OqTjaPO9f2sHmsXLOG1WPzknqPnd8b2D36tqxi9Pi8SS6APSrbJiM1MSW1SCE1
-	Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoWiWFssScUqBQQGJxsZK+
-	nU1RfmlJqkJGfnGJrVJqQUpOgXmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdkbvxjfsBd0iFefu
-	tTI1MG4U7mLk5JAQMJF43XWTtYuRi0NIYAejROvx80wQzidGiVcvDzJDON8YJY7u/8kO0/Li
-	9WsWiMReRomXE86zQzgvGSW2v2tgA6liE7CQWHLtA9AsDg4RgXiJfW+VQWqYBTYyS2xobweL
-	cwpYSfxZywhSLiwQIrGkazETiM0ioCrx4dpnFhCbV8BSorfrMyuELShxcuYTsDizgLbEsoWv
-	mSEOUpD4+XQZWI2IQJjEjQ2nmSFqRCRmd7ZB1ZzhkFh+JALCdpE4f/U81DPCEq+Ob4GypSQ+
-	v9vLBmHnS6xceYIJwq6RuNe2iwXCtpdYdAYUEBxA8zUl1u/SBzElBJQljtyCuoxPouPwX3aI
-	MK9ER5sQhKkqMX1ZAMQMaYmJM9ayTWBUmoXkrVlI3pqF5PxZCKsWMLKsYhRLLSjOTU8tNiow
-	gcd0cn7uJkZwKtby2ME4++0HvUOMTByMhxglOJiVRHiVSkTThXhTEiurUovy44tKc1KLDzGa
-	AgN6IrOUaHI+MBvklcQbmlgamJiZGZobmRqYK4nz3mudmyIkkJ5YkpqdmlqQWgTTx8TBKdXA
-	1LLKPGPf8i9B+zYeC7i/Q37261uL7MXmvhb8Mq2U65ThtPzX870+2P1s2Zc4YZdSze6FMa+k
-	nXcGSzyM8r3q4fPQIPTKPzEN8ble5/cuFZNl1bE+z3Xpv4OOH3Pn19IpnJNOachdXbJCi+GX
-	tdinDd2Tt5vUtIe22TxNLFd5t23DOfeFL2d12lXd+7NHwUq8VfDTkRf7D0yYG7Npq16N+uy+
-	WIXQ3BMxPWfXnYs63OPYJLMzc7F0nppga6WvqdpywbPrG6Ss3KznzD59aSrrX4ONM9bXxTAL
-	HLvgprnsXmbM8sf7j5zJ+5uiYqKyf0OArYSAeUkng9XJFaYZnIcS+xdu9Hplx3rg9qoztdpl
-	QUosxRmJhlrMRcWJAKRhgKNOBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsWy7bCSnO7ei6LpBjMuaVk8mLeNzeL+pz4m
-	izV7zzFZzD9yjtXi5ax7bBabHl9jtbi8aw6bxYzz+5gsbqzbx27xZOEZJov/e3awWzzvA4o9
-	fvmP2YHXY9OqTjaPO9f2sHmsXLOG1WPzknqPnd8b2D36tqxi9Pi8SS6APYrLJiU1J7MstUjf
-	LoEr49fm16wFb/kq3p65xtLAeJKni5GTQ0LAROLF69csXYxcHEICuxklln09xgKRkJY48vsF
-	G4QtLHG/5QgrRNFzRonupitgRWwCFhJLrn1gArFFBOIl/l84zwZSxCywm1li849lUGOfMEms
-	P9zJ3sXIwcEpYCXxZy0jSIOwQJBEy/mlrCA2i4CqxIdrn8GG8gpYSvR2fWaFsAUlTs58AhZn
-	FtCWeHrzKZy9bOFrZojrFCR+Pl3GCnFEmMSNDaeZIWpEJGZ3tjFPYBSehWTULCSjZiEZNQtJ
-	ywJGllWMkqkFxbnpucmGBYZ5qeV6xYm5xaV56XrJ+bmbGMHxqaWxg/He/H96hxiZOBgPMUpw
-	MCuJ8CqViKYL8aYkVlalFuXHF5XmpBYfYpTmYFES5zWcMTtFSCA9sSQ1OzW1ILUIJsvEwSnV
-	wNR9avY5t6Zz5/f9vZV+JG+6pllFQaPNWm3jKoHTByZkWIamvF10ovpe8ME/2yuNf835UR64
-	n1WKtc9LKjK/2PnpfM/F7f19lboHBXXUb/X5PZPO7Cu4c64hraT44ZKHJveYqldsEp897f88
-	t0CvV3MP6W+5/WfzjwO6Nf7cUxPN918Qu679qGNasor82k3FJxfpKoqyRsb7eZ8UZOlaYN99
-	ke2G76TnVg0zzz4oOsboICLwiOvb3/0xDVMefEuJe7WI79QlrsK683J/vzy9IJ6qdfhc/epj
-	C1gF/lmkfah3eiWa1aTOZs/8nP1RgAbHkwMzkr+IH9a2LpS74hcb4mUgG5D0Wvw5s4rDBq7L
-	65RYijMSDbWYi4oTASwKGuE+AwAA
-X-CMS-MailID: 20241021035957epcas2p12cb34aa86daaa4ad40dfc3e9ffa0bd4f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240913080347epcas2p4b5694797cff88a22fd815a9de989d20b
-References: <CGME20240913080347epcas2p4b5694797cff88a22fd815a9de989d20b@epcas2p4.samsung.com>
-	<20240913080325.3676181-1-trunixs.kim@samsung.com>
-	<20240913080325.3676181-3-trunixs.kim@samsung.com>
-	<CAPLW+4k0rpS0F14sqMGPbq_m=aMqK+g=PZewtZYYroQ+OQBeOQ@mail.gmail.com>
-	<000101db1ae5$96c111f0$c44335d0$@samsung.com>
-	<005c01db1ae8$544a1e40$fcde5ac0$@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 47/47] KVM: arm64: nv: Add trap forwarding for FEAT_FGT2
+ described registers
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, maz@kernel.org,
+ James Morse <james.morse@arm.com>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>
+References: <20241001024356.1096072-1-anshuman.khandual@arm.com>
+ <20241001024356.1096072-48-anshuman.khandual@arm.com>
+ <ZvwLRWOKpggCvmH4@linux.dev> <cae8c6ca-d999-4b93-a82d-7a1f9924fcee@arm.com>
+ <Zv92nsoLxbfI45Ji@linux.dev>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <Zv92nsoLxbfI45Ji@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Alim,
 
-> -----Original Message-----
-> From: Alim Akhtar <alim.akhtar=40samsung.com>
-> Sent: Thursday, October 10, 2024 4:45 PM
-> To: '=EA=B9=80=ED=83=9C=EC=99=84'=20<trunixs.kim=40samsung.com>;=20'Sam=
-=20Protsenko'=0D=0A>=20<semen.protsenko=40linaro.org>=0D=0A>=20Cc:=20'Wim=
-=20Van=20Sebroeck'=20<wim=40linux-watchdog.org>;=20'Guenter=20Roeck'=0D=0A>=
-=20<linux=40roeck-us.net>;=20'Rob=20Herring'=20<robh=40kernel.org>;=20'Krzy=
-sztof=20=0D=0A>=20Kozlowski'=20<krzk+dt=40kernel.org>;=20'Conor=20Dooley'=
-=20<conor+dt=40kernel.org>;=0D=0A>=20linux-watchdog=40vger.kernel.org;=20de=
-vicetree=40vger.kernel.org;=20linux-=0D=0A>=20kernel=40vger.kernel.org;=20l=
-inux-arm-kernel=40lists.infradead.org;=20linux-=0D=0A>=20samsung-soc=40vger=
-.kernel.org;=20'Byoungtae=20Cho'=20<bt.cho=40samsung.com>=0D=0A>=20Subject:=
-=20RE:=20=5BPATCH=202/3=5D=20watchdog:=20s3c2410_wdt:=20add=20support=20for=
-=0D=0A>=20exynosautov920=20SoC=0D=0A>=20=0D=0A>=20Hi=20Taewan=0D=0A>=20=0D=
-=0A>=20>=20-----Original=20Message-----=0D=0A>=20>=20From:=20=EA=B9=80=ED=
-=83=9C=EC=99=84=20<trunixs.kim=40samsung.com>=0D=0A>=20>=20Sent:=20Thursday=
-,=20October=2010,=202024=2012:56=20PM=0D=0A>=20>=20To:=20'Sam=20Protsenko'=
-=20<semen.protsenko=40linaro.org>=0D=0A>=20>=20Cc:=20'Wim=20Van=20Sebroeck'=
-=20<wim=40linux-watchdog.org>;=20'Guenter=20Roeck'=0D=0A>=20>=20<linux=40ro=
-eck-us.net>;=20'Rob=20Herring'=20<robh=40kernel.org>;=20'Krzysztof=0D=0A>=
-=20>=20Kozlowski'=20<krzk+dt=40kernel.org>;=20'Conor=20Dooley'=20<conor+dt=
-=40kernel.org>;=0D=0A>=20>=20'Alim=20Akhtar'=20<alim.akhtar=40samsung.com>;=
-=20linux-=0D=0A>=20>=20watchdog=40vger.kernel.org;=20devicetree=40vger.kern=
-el.org;=20linux-=0D=0A>=20>=20kernel=40vger.kernel.org;=20linux-arm-kernel=
-=40lists.infradead.org;=20linux-=0D=0A>=20>=20samsung-soc=40vger.kernel.org=
-;=20'Byoungtae=20Cho'=20<bt.cho=40samsung.com>=0D=0A>=20>=20Subject:=20RE:=
-=20=5BPATCH=202/3=5D=20watchdog:=20s3c2410_wdt:=20add=20support=20for=0D=0A=
->=20>=20exynosautov920=20SoC=0D=0A>=20>=0D=0A>=20>=20Hi,=0D=0A>=20>=0D=0A>=
-=20>=20Thank=20you=20for=20your=20review.=0D=0A>=20>=20Yes,=20cl0=20is=20co=
-rrect=20not=20cl1.=0D=0A>=20>=20I=20will=20apply=20it=20to=20v2=20patch.=0D=
-=0A>=20>=0D=0A>=20Don=E2=80=99t=20send=20a=20top=20up=20reply,=20context=20=
-get=20lost.=20Configure=20your=20email=20client=0D=0A>=20properly=20to=20se=
-nd=20a=20inline=20reply.=0D=0A=0D=0AThanks.=20I'll=20bear=20that=20in=20min=
-d.=0D=0A>=20=0D=0A>=20>=20Best=20regards,=0D=0A>=20>=20Taewan=20Kim.=0D=0A>=
-=20>=0D=0A>=20=0D=0A=0D=0A=0D=0A
+
+On 10/4/24 10:31, Oliver Upton wrote:
+> On Thu, Oct 03, 2024 at 09:46:08AM +0530, Anshuman Khandual wrote:
+>>> I have a patch in the nested PMU series that uses a single complex trap
+>>> ID to evaluate HPMN, and derives the index from ESR_EL2. I think it
+>>> could also be extended to the PMEVCNTSVR<n> range as well.
+>>
+>> Just for reference - the mentioned complex trap ID function from the
+>> given link below.
+>>
+>> static enum trap_behaviour check_mdcr_hpmn(struct kvm_vcpu *vcpu)
+>> {
+>> 	u32 sysreg = esr_sys64_to_sysreg(kvm_vcpu_get_esr(vcpu));
+>> 	u64 mask = kvm_pmu_accessible_counter_mask(vcpu);
+>> 	unsigned int idx;
+>>
+>>
+>> 	switch (sysreg) {
+>> 	case SYS_PMEVTYPERn_EL0(0) ... SYS_PMEVTYPERn_EL0(30):
+>> 	case SYS_PMEVCNTRn_EL0(0) ... SYS_PMEVCNTRn_EL0(30):
+>>
+>> ---------------------------------------------------------------------
+>> Just add the new system register range here ?
+>>
+>> +	case SYS_PMEVCNTSVR_EL1(0)... SYS_PMEVCNTSVR_EL1(31):
+>> ---------------------------------------------------------------------
+>>
+>> 		idx = (sys_reg_CRm(sysreg) & 0x3) << 3 | sys_reg_Op2(sysreg);
+>> 		break;
+> 
+> Yes, so long as the layout of encodings matches the established pattern
+> for value / type registers (I haven't checked this).
+> 
+>>>
+>>> Also, keep in mind that the HPMN trap is annoying since it affects Host
+>>> EL0 in addition to 'guest' ELs.
+>>
+>> Does this require any more special handling other than the above complex trap
+>> ID function ?
+> 
+> There's another patch in that series I linked that allows EL2 traps to
+> describe behavior that takes effect in host EL0.
+> 
+> So I don't believe there's anything in particular related to HPMN that
+> you need to evaluate. I wanted to mention it because some of the PMU
+> related traps besides HPMN take effect in Host EL0, so do keep it in
+> mind.
+> 
+> With that said, I haven't seen an FGT yet that applies to Host EL0.
+> 
+
+Hello Oliver,
+
+Should I rebase this series on the latest series you have posted earlier this
+month [1] ? Also wondering if you had a chance to look into other KVM patches
+here ? Please do let me know if they too need any modification.
+
+  KVM: arm64: nv: Add FEAT_FGT2 registers access from virtual EL2
+  KVM: arm64: nv: Add FEAT_FGT2 registers based FGU handling
+  KVM: arm64: nv: Add trap forwarding for FEAT_FGT2 described registers
+
+[1] https://lore.kernel.org/kvmarm/20241007174559.1830205-1-oliver.upton@linux.dev/
+
+- Anshuman
 
