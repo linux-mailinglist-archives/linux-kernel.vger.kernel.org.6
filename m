@@ -1,121 +1,82 @@
-Return-Path: <linux-kernel+bounces-374991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-374992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAE89A72E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:04:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930E79A72E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AFCC2827EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:04:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB728B219DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2A51FB3E0;
-	Mon, 21 Oct 2024 19:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCDC1FB3F6;
+	Mon, 21 Oct 2024 19:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ikq1Wq4Y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gbrhf5pG"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2065.outbound.protection.outlook.com [40.107.20.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C2F1E9088;
-	Mon, 21 Oct 2024 19:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCEE1F9408;
+	Mon, 21 Oct 2024 19:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729537485; cv=fail; b=Yxl/tbKlhO8ZbbzMeCBOenZ2Ec4+PVAZoq91fMJo3oQOGe8hS5KqxI/ThEJfTCgaOGw2CKUJteCoHzclBzAMyqIXlvDfZBUxrUdG9rIL2SagkUNzfkSi9u4CjnvlmlctQ3Js1kYVGaUVJugVsZPHWDtBXS3mD6ypyxoQVzGBWHU=
+	t=1729537584; cv=fail; b=By78d8XAsudGyFHQQAvmFymmVx0fQNbYLE9SH5egJ+yzZxh8rBW1v5Sv9KGU+0ABFqauQxmwAl0NeT1HQQAnPhKQTM4SYLaWUQ/CQ+mgvpu+b4kEsrzWxG6URiBuEEvP98v2cGPV+VVa1YFYwZg107YfxjKZC18KEUwAYKqAtcw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729537485; c=relaxed/simple;
-	bh=BNSDPb89zV8SzuYJaPCtWiI5ll89jBF95++3NzPrKJk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Z9lYU3ITRw81jycEgSnpxh9Gspb7ZOq8PxGA32E7NdT6+10PIbNktNxXhlBfDhicxWrTsVKZ4gDC6s6ujze9nXEsHlcfAa9yOl87Y5Q0swayNMYzFQNgRE0Z2GhKLbnL27h43nidUA5UFQKZXsUc35s09T30Ihn5DSitkE3d0DQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ikq1Wq4Y; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729537482; x=1761073482;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=BNSDPb89zV8SzuYJaPCtWiI5ll89jBF95++3NzPrKJk=;
-  b=Ikq1Wq4YOEvUFmOpJ0CkoCyK6EjWniRvcOJO3ITmKHGxwq6CDNiGaVyP
-   mQhR0RCSnXHYcW78nk6R3/G4ID8HPrSBwoL9r9o9wQOzd8QFVDbahWvu9
-   UQOR/N2FWDMKYtOJGZu9kGGbSZ2g7gdUtwwM2PpoFnjHkykCNWGzQ9XKd
-   4HcXsS+iBdGLXEQk6dDJof8NY8ALJQ70elFwTstVK8gjsZ0bmFr8zL4LC
-   63rT5f6AiBGZJBef7ImQOyhU5RDRyeRv+4zi+dWt/5keUDLUdnYeC99H7
-   t5ESp4R0VECKlsHwS8kZM+BLd/gYq8Bdl0T5z55kUYhrzMC2CUiavFRCE
-   A==;
-X-CSE-ConnectionGUID: 0q/Xm2YcTCWLS3ZAJ+qW5A==
-X-CSE-MsgGUID: 7X/Eg3/1SMyyRuYZeIXy3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11232"; a="39625056"
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="39625056"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 12:04:41 -0700
-X-CSE-ConnectionGUID: wTyeg/RlR8ebwYsuG9QFkw==
-X-CSE-MsgGUID: n3jVzbw8QKiCJPH2ERWByA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,221,1725346800"; 
-   d="scan'208";a="80017626"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Oct 2024 12:04:41 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 21 Oct 2024 12:04:40 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 21 Oct 2024 12:04:40 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.170)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 21 Oct 2024 12:04:40 -0700
+	s=arc-20240116; t=1729537584; c=relaxed/simple;
+	bh=nk697icWayCBWBjLUKZkx4ZyaXRa+5oQp0EltXkfzLc=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=D5ZsMlEivBj6PPR+/Sidg5Aegfele1XrwZZjuTEmb9A582+IMDdiFG5S5VTqtlUyFgWaVBdQjCrXsD0qn6wPcLLLCZUCVQdwZBcNAvxxK5mqDTmZfJqAk9An9o0pBeQ48TBmNFc851RihsVRo877ljOIUioLoMb3P8OaEiqeq1o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gbrhf5pG; arc=fail smtp.client-ip=40.107.20.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fumWYgXf3solRiuqvbxc/FgAopfSj3W3Pk0+Xh03Ag6ajgzN5Dld5+cZBR9K/bZETEeUH9xINLHpXosrdIouvg1J+fQJuyOmkqGlTdP1oMBxRdH5Z2R8KFR5nqdBCFasxKyRf3UdwfqTATfi3VzCU/T0IOW/BQRvAyxEze5esb2EUv0VzDHzX8otoPxY14ygbiOuWZYm9d+EPipcLlFOLSig74ffXZ34nd/iZPfvG838R/OF1sQTf8ZWCNPE7LyObph/uThw8KKc9pDRuTvboJmgL8Sdf/n65Cf0rLvwPQ/chV8hRfqUfwFIpI3WxBZaxLeBgRmoPYX/VjGRkNwk+A==
+ b=mc05DIl35zst0lauZB1Lqfe0PHxlanwtfsO/yBWNxD/JdzBlYD0TFIJWabrFMG9KuZzot7WMuOMk00csRK2JUBc2fqjm6zMA+XTKGHdH398bvyGbhiBrzA+jW+Awjn6U6f7h7Q8QlcwgtPmyH/+7kRyRvwCRpwkc+7sFpVaYYlqTDeUlIRiZhh49/0j+o+QgHF+TS0Oef6jvSAAjHSk4VvqacUVItmbgemkoC/B0h1nXn12jJiz3X0wgVSBNUXFmcL24CJOOCboLKEi450fbwg9YpDwdpBcqLrF6kVswv2rdrmFhZE+z6kv3w1P6C3m0lzWArehFAsuP+PsxPcHKpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wPBvt22pTu6TTbIU2MOiiWcmk34xxPeCEkKVGHEPtm0=;
- b=PPPMdHhhwY80BHjuXk3hdH9soKvuxrpEPI/WbExNh807xMvLtev1gTUaReQCaYq/ze/WoKx3a1xWL7B3bKLQujakMFwcOUSSvjFyxUzeS9ps/0aUt8dSdjhZ41v6aPE3eP/nQXteQayHOfReQPXosM7xYLSFYL03SR2zaRrdcOhRYV8BzrZ7QQf9HxMzhlPvLcajETkOMb3sOdaWKcTohkXxk6zrqyxsrfo5M7+gV/32KbAos0b4KAKpAc0EPZGaHXnILsJBhHaoXsVsWoeRpeYswyi54PCj4U3UMVVtaNedVtUZci9+eHRqgxR0g0j7yOuzQjioJuycbA7KrEmwQQ==
+ bh=T0lj7L1UzOex7lQ7QcUlPDAVRH+R8shCI1xB2WyENmI=;
+ b=I70FR28C7hYdA9CuBCA6gL0aEpszN9+GjyDcNR1RB1Ur8qtZLExxd6KJFg3m+FpN/VvxyIFVxKMW1vIr7CV4r1QGoZJP8HGHXgf3+Ott8snjIHbBAJSHEMZVXABpuLT9ZdKtg98FVDqU6kepsR42TLNJNN73nc639tindRpiOc4Zg2MkCUBcHrc2bFz1EE/k+Mov6/OZnVPoOkT3NaB/PgWKYcvD/XXWf3iwV1blKFEFMmFrvOhP8Gs97vjW+JQYfEUrpftc2Zpn2qOsXXtzC6GDO/FbFJrFcbAzNvivjR1ezxDfBelPVNtVj9oI+R4zrLpQAsEb666cnz2RKbx+oQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T0lj7L1UzOex7lQ7QcUlPDAVRH+R8shCI1xB2WyENmI=;
+ b=gbrhf5pGTL8Hy8oycb+6LRuesOZ595RXVYpPnch86NuZohMYfj5PG1T+FbR6bnad1u3rKJ1oDnEjc4H1HWAHEYqWnU6yDotxNljaWAFBjNMjMVyyWFcAuZo7micDQt0MeXtHqRtTFm8+TLaxTb2y9R8K3VtOufeSApGYOEv2hVPPiqGMvYGuRKx9CDDQmYgqMf1kvk4Ge3BFZA8MLrliF3mlQpf96u/5d6+d/PacrJcOnnBP+lEF93+KCO/c14QId5UPi3/h9zBoubrtXrVBJO7qTJpuXgnfWBOwbGlVnV6oLtgG+P3Icxpuu4paHjZ8j8+k00ueef2MX3zKrcH3HA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by SA1PR11MB8594.namprd11.prod.outlook.com (2603:10b6:806:3b1::21) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DB9PR04MB9939.eurprd04.prod.outlook.com (2603:10a6:10:4c4::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
- 2024 19:04:37 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%3]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
- 19:04:36 +0000
-Date: Mon, 21 Oct 2024 14:04:29 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Petr Mladek <pmladek@suse.com>, Ira Weiny <ira.weiny@intel.com>
-CC: Dan Williams <dan.j.williams@intel.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, "Andy
- Shevchenko" <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>, Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang
-	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
-	"Vishal Verma" <vishal.l.verma@intel.com>, Fan Ni <fan.ni@samsung.com>, Bagas
- Sanjaya <bagasdotme@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-cxl@vger.kernel.org>
-Subject: Re: [PATCH 2/3] printf: Add print format (%pra) for struct range
-Message-ID: <6716a5bd3308_b74f729424@iweiny-mobl.notmuch>
-References: <20241018-cxl-pra-v1-0-7f49ba58208b@intel.com>
- <20241018-cxl-pra-v1-2-7f49ba58208b@intel.com>
- <6712bf8240b8d_10a03294a6@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <6715c14e9bbf6_747d6294ed@iweiny-mobl.notmuch>
- <ZxZll3-NZreHlRaI@pathway.suse.cz>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZxZll3-NZreHlRaI@pathway.suse.cz>
-X-ClientProxiedBy: MW4P223CA0025.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:303:80::30) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+ 2024 19:06:18 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.024; Mon, 21 Oct 2024
+ 19:06:18 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: shawnguo2@yeah.net
+Cc: Frank.Li@nxp.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	kernel@pengutronix.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	s.hauer@pengutronix.de,
+	shawnguo@kernel.org
+Subject: [PATCH v3 1/4] arm64: dts: imx8-ss-hsio: Add PCIe and SATA support
+Date: Mon, 21 Oct 2024 15:05:59 -0400
+Message-Id: <20241021190602.1056492-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ2PR07CA0006.namprd07.prod.outlook.com
+ (2603:10b6:a03:505::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -123,121 +84,618 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SA1PR11MB8594:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3ad7d966-b6f6-46da-2ad0-08dcf2033479
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB9939:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4aaddb39-e2ec-4c90-b2d8-08dcf203717d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?uVvMkRtybIW/Ac6GkIHQ+THAUfIklDyXDYjTppVsbm+yAlcEnSuqLBP2PM3N?=
- =?us-ascii?Q?HK/QwyQ+rTQdSETSHyNIC68G62tDMaxLhM7OqrVXaP9tuwbKymMZbxKlWYQa?=
- =?us-ascii?Q?RyttL/CMFaAJC1CG37UP+W3thyUvypqiJmmNfxAUTzDLsTjhV/q7ps02so8j?=
- =?us-ascii?Q?PrXd2L4JQpT6xezqBv5A2d2JWA72BxAupa6UFMc1GqgKUEdwbW4QaluS+9Kj?=
- =?us-ascii?Q?U7RhuSUpVQjGMme+/+PyJte/pnI0g9tI4OvxOVQzbbnIN+7+HT3cTmS6sMP4?=
- =?us-ascii?Q?KpD9KdSMsPn3nry1f7p2hxmYgFumvbNHots1h4BXo/iJpjU+2JoHX4bppCle?=
- =?us-ascii?Q?8ey60MrddpYXlNTNDGVR6qNdRFs1hlgZeLb/atbuZGklWj4gmqAKZbzxrS01?=
- =?us-ascii?Q?TJlp9rjVVvyEC6dseIG7QYy0Jg5MV2zEgeu2RK2hjoeduGZAmvV/pstoaw02?=
- =?us-ascii?Q?6Z56mwLBxBLTVY6P1+yaEYfqBxMcxWV7LcWdF4g1O8CQn/lNcNrzXT7F/Pss?=
- =?us-ascii?Q?qdiz/K8am32dPrLvbO8Trhz11hVRBczu6hoXlWSkuiwYFaSgHl8/4PjOCFUu?=
- =?us-ascii?Q?XGpk2moe5YKkKuVZ5+uJJNiksvlEpfMSEGvEGNoe5C1SMTDuk9Q38a6+FfEL?=
- =?us-ascii?Q?BPos2tTYo+jFxGnw3ZTi5NQkV6uAMbhHTm17NGG8hRXDphtgBDXCKwp4W7Xc?=
- =?us-ascii?Q?vaSQyDFRpZHZ+IWFKSosji55wuC15cobMoVx8o9RgnoeuSXjWiW5YqeJVNJx?=
- =?us-ascii?Q?qJFCOd+IVSDchCgURL3dw3CnfUf3dycPDpr1Lu7mQW55vEAJX4/h3jXgwVf0?=
- =?us-ascii?Q?1v2DgwYKvMhW8eJQm2BqcSifJ+aTlMrtidlAt6MCpRZCQn4h2tmNvMiOqrBx?=
- =?us-ascii?Q?UZmjEAAlgzIeB2x+uXBBCn4ii7QxHDqQegEgSKfKyGeKaM53n8WGMtB+UP2k?=
- =?us-ascii?Q?c2J4xCkOtoa/jLn5gqZl+pDnOjM7Nhk53GVfU7h9+KefuTBbFSDYKDKAaMEn?=
- =?us-ascii?Q?KazkSxB6keitRZzfScZaenzDf9tDVtaUR9fA0EHU0Tesm3+mogzrFw5EELMs?=
- =?us-ascii?Q?3ycFjla/O/6RMrOQBcuVucMb/pThJa7Pk1si8wjHzDPitM836dASCZ/BMm0o?=
- =?us-ascii?Q?rwhz+cdvAJQUTn3WTL19bpFvf6ysqanNrdKFy7ZHklRym4E5RX4D8i7BuShu?=
- =?us-ascii?Q?YB7Fon2AAgk8LEIKrTUDs09fW8TsoEiX5Tn9QhaB5EtUewOkv1IKewa1Yj2k?=
- =?us-ascii?Q?cG4LnvnQ52KBW3AiUw/Qmta5ghIeb+gkiQxAUxcf0NXu5V+H4Dk54QYqVarI?=
- =?us-ascii?Q?8T0m2fnBQq/MYXfN1LNw0bqQ?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2p/Wqybx0Av9myHkLn+YYHsjm0YBR0EB0j4hJAucRjDmb3eFoawQsSfxVkBh?=
+ =?us-ascii?Q?w90+GvWfVcBmAjQHGTLColgfYtN/MMecIMSbe3YUxpRgmMZwenR/Kt/eInuL?=
+ =?us-ascii?Q?pvM0pH53K/KfUmOzcbMdUwfH2jSLvzXoQKS1VNJAt9BxYG8bpjg+OV3uUVVH?=
+ =?us-ascii?Q?srcdxf+Jc8vw0iDOB4FtvHaIJ9VbBSUNqVLBvarXGH/E9SeZ+W0kW0rQT6Rj?=
+ =?us-ascii?Q?w1H+RSJD2HOqAIX/UsVdCnNWuxMvIpROhv3NZ9gs/Aj/w8k9pOGbRBSh7HqK?=
+ =?us-ascii?Q?QRB4InbRoP8Ha/cl/Ucl1oYC/UQ4Sexh77OaH1nrzLpkEYmk9jx4490IyZyZ?=
+ =?us-ascii?Q?No/PMI2F6yIMHvIZfAjsTIbHRQMx884q3lXS5F27WbGXBC38mqVI79MAwkKq?=
+ =?us-ascii?Q?2IyTfS4MZUL9SKiOgBr1865iA8APmvk4hqzrEQcSKfxdAeePNLbO8xDNUM4N?=
+ =?us-ascii?Q?5tYLRszjkB90L9A9BT7PgPHyYnvHDOY5n1UfLj+0DwDHIoDJEgX9nt44xEWy?=
+ =?us-ascii?Q?PPF4qN8RZtroZxtK9QQjjTd65yjARpY0kTUJFuQvCGlsuicG5mUzXzZHtwjM?=
+ =?us-ascii?Q?Rj4f1FsizpRx0bFySwPyv0dmk7x+j5jhKbSPZOK9WnuJn4GC27OF9iktowje?=
+ =?us-ascii?Q?GTr+Y+93Crz29QGKHdW/est2ntBVJWDSX/EpDqmlXyKk527QgiGx0g6gxiOC?=
+ =?us-ascii?Q?IsSNYCWyyRNiS4YSrJeXfmGOuvUrrE52GuPD4HB/djFEcjdnNrloiMMbz+Q/?=
+ =?us-ascii?Q?Ee/n5+GVlgw9Y0XkDPewD0m3Gb9iHOMCCw9mOU2e3pBzBgK4Opti67HV5X8a?=
+ =?us-ascii?Q?A6nFl+kA49T66kC2ZxK0f+Fle45qYUB9+/6TRKT4AyBG6BhbuL/J20Pfplq1?=
+ =?us-ascii?Q?Yh4aHJE706KnKG9sGWmAol+fx2r/+LsFWf8E92/1bv8wiIoE/n2fg6LGsjWv?=
+ =?us-ascii?Q?8glgxT/FMSeY5xzROqJLLeNz4ZVoNaXMFwrNkwvpAW6teRhtN57i714HPF+a?=
+ =?us-ascii?Q?U0pCcTl8Hl4OncWHQbd/wK/3k9RX9LTDJUNtI8dy0pOy7jg38IGWFWCatUjP?=
+ =?us-ascii?Q?bcqgICn7WFx2idXVvR0XgAC8CnN6xn2sC1zTHEmhovkiKkApkGa4cPcBPT+r?=
+ =?us-ascii?Q?TDwVTi8OfSdPx8ciswTGDsQFMvDlLZxGmcj7w1LuTwAufpGjvKKex92BM5yl?=
+ =?us-ascii?Q?ymKvv5mV1IxcE6gjn3rsg/5fS130fPIhC1wvL+FBMg0r7v6Sb8qu/1gpqVIo?=
+ =?us-ascii?Q?tV+VUAl/XSHfkoySzJ49Hv2ilHa6ari6MuFxmwjmRZmLu4whGxCA7QR3Ma5P?=
+ =?us-ascii?Q?xoYRnWVJ3CSsH8mrfI8RqiMLR10A63pyhNoPgOoDKYo/4eViXT74UlNB+ZXz?=
+ =?us-ascii?Q?wh1kc1M=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DO7ZhWyeDvArjz2a1ghL/XguAAEqHV6Sist7STCKIxTkBQc50yRZ6OaA1ckZ?=
- =?us-ascii?Q?YBYxA6rx5PYgx6MeJkzqMFt0BFjuTjRG2BUZf1ZaY1bvcO+Sg/Vs28k6xxgC?=
- =?us-ascii?Q?RhldEg9v/qQalOZxscn7VTqY+ADlrzE+CvgsBGxkganYwrq8lkXhvF5/+n48?=
- =?us-ascii?Q?t/DIpBrum7HUdFOQXpmN43z3FgEmmHuH7SbHaqEcJurXzBv/fNaDd9XlNFSL?=
- =?us-ascii?Q?+3/pAztbbtvYl+MTufgh2PjEXNRhrgYSumQQNsusgdZBMwVqTdOU6g1lIOn6?=
- =?us-ascii?Q?PpTRH3DbGOZSbfMNy3SAlzIB1qb1PzajG12NlSkZXKe+YNZPYNqtMu9Js0ML?=
- =?us-ascii?Q?0OzoHnx+ZCudBNpuzR2yFjEjxxh+IQ2EHtODGtpgQJfktdC6Jc3CEK3/3Rxn?=
- =?us-ascii?Q?WpxXhPBkqBSThqUT1VM0VZZMEaw+vOPHkBHSiNTb+ORxR3GNmT7Il09qL9I4?=
- =?us-ascii?Q?iqaAYoVobT2MUhW6e31f6YTzB+7F9gq7qmIYXMI3lAIDn+duHw8F+10xUz/i?=
- =?us-ascii?Q?iAnhSXx6zAXWvq5ytoP+njbDXgRybfMoLHgG+6wF7vdWhFH9p46nsGayHg0c?=
- =?us-ascii?Q?OvrMZKiUuWoPdZNW1rhwkBxZJXtcy3YD/kgHsY6YAjOnIfrHC6iNzidbjbRn?=
- =?us-ascii?Q?huTmvYosVk9wtNE+Y5G3njQZBofyi5/iBtjlQuvxUBPOLFPavIA6q05SiEyi?=
- =?us-ascii?Q?4vbSnr9z/MNz26+NMWxJOgO+8oRQAw5cLD6AaahfYA4MYnLe8bBGuRV3Yv4Q?=
- =?us-ascii?Q?FKF4+E76q1EmwY/Xrnc/YEt7269SbLbhtrbRvVRlRvhu/wfpoeVvzL914Y7l?=
- =?us-ascii?Q?2HF7iEpxLYV/jvPatfKy/pV4kpMh9qpk5diKoo7wDfHg5leNapkc6nhNsybx?=
- =?us-ascii?Q?1k23aWvrFcsUNogF5KTHAfiimvk/6HTtut9g+nYH6OmuC1BjZAlzf+4I+/Wx?=
- =?us-ascii?Q?UC+S3NjroKxmGhq8KbgU3dVO0q2WskP0TXjsMH2bQTPsMQi88QihphZCTjQO?=
- =?us-ascii?Q?lQFHKXgKB/Jvm+SOWq87enZIVAE8Aywn5N3BlKQgt7ganA7BbOD1JLLFAceR?=
- =?us-ascii?Q?f/AVZRaf6eTK5aDCpx7TgiVORrg55FeDZF1wjm/tqDY9EoaWS2oBES+KptWN?=
- =?us-ascii?Q?Ao/pqc1zByij5p8KWvJ5VgFFTrg2IP/Ej7gjT/rMggbmkYvKLMhEz7rm98n1?=
- =?us-ascii?Q?wr7anUNL4FjwMVzJ0iHzDXuYTzS94+qbP4uQ/T7XF77KKhxjcuVOWhw0Au9I?=
- =?us-ascii?Q?scqhjo75bbujXXL1R1I7ztTeqsqlw0RJxUB/v8YaNBTacaK2fP7quBrxtcEC?=
- =?us-ascii?Q?QDjOiCl6Nki2lUzR55zBLm59xgRDy/RtyhsnUHU9sPmJVnfj30eLrvp/2P0N?=
- =?us-ascii?Q?ts/cTYHsbcdSDnhAHUT1BokTIINEF0K52skBXJSVN8jWrXYB9TuFDcW2uZ3Z?=
- =?us-ascii?Q?KZp8YikVwxf1AZpOtXlmkarmY6gbx/XUAVIminFLBUP6uCccfR3z6aX5rNrj?=
- =?us-ascii?Q?6LspXjl8Gxt2qARxzg2AbB2cXCZerxY5q+LVVYE3RXsMoBAs0lpVAb35q8Jj?=
- =?us-ascii?Q?hyRFn0nrGSEYej1wmdw/HcmdxLbV9T9dJ6BxX60N?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ad7d966-b6f6-46da-2ad0-08dcf2033479
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ArInr6+mjhdskUe6nRm1fzBN+TU875RU0KWwf2buG9Xmmx0aiU/1G+2L/Uki?=
+ =?us-ascii?Q?z3l4vjLInt06r5yUdj8OlYYfnpgHrIpFIjIc/DajOGHT/e4Arep2lIaNs8DG?=
+ =?us-ascii?Q?Nu0U53RPpGvL6K8hExQk3P9wf68xaCfXDlriwmYoQmD72z5iYZ9xTBSO8zm7?=
+ =?us-ascii?Q?Rdt2c4JhLlNsNaeinPu4NNnTe1AMMtS7HYn+kfWmcfB35XENZz4FrJVBss/d?=
+ =?us-ascii?Q?yd9tfBig1dmM1T0+CZY5MIXtTRrpe3tnZfN9k3sPrmYkZjWqMBuR+cQfk7Ju?=
+ =?us-ascii?Q?Y+nM4N9ssozNkbqH1R1qZzZ8fTM5psLzkNb0d3FQE68mXGLsatY+tx6TCFzf?=
+ =?us-ascii?Q?UseJxpdCNLO3vGZ7YbIwKW5JOGrBG4EeRgxBBQ/FgvLqAXbM2HOms617hSA9?=
+ =?us-ascii?Q?ZO49oBLqR5xBl/TWSR1mpY8zStoz6m/MjQlXWfueqt8gEQY4TJ3+vMhAC3ia?=
+ =?us-ascii?Q?gFVuWWSnSjYU3gLvgu97UiUdy0Z4cM+Xne2GsSx3cXXOFDFm0Hb9lcqZu1BU?=
+ =?us-ascii?Q?GGIoGwmVue7w7XFa/rUFC3MJCue4lhTKQ29LqIul4ToLPKcJ0+gP7CrTyktt?=
+ =?us-ascii?Q?+slSt7jliPMrV9fucMjV2rwhH5fpIhZmf0E3xBqRP6BWjmZntX+N9wzWV0TF?=
+ =?us-ascii?Q?9ieGifDFF6MMGPD94EVqGuLe4bkNREEx5YiHtxqQD9wkp8WrYY4wjntsNLB5?=
+ =?us-ascii?Q?yDNfbeF9wcyN9e0o5e3ugXZIeh95oCCv4pYvDdVwrsTabMGsHQpQbdnZdqqV?=
+ =?us-ascii?Q?L0VfRbM1LD+fcZg0fi+lhVOdLHcHVe9PG3+N6KpgM0+h2gPRT3fdRq74N2C6?=
+ =?us-ascii?Q?P9dQ1GVhqcfi10dypYBkI+ZS61qCdfQm0xWW2r6wrM8OKdZHA1lXlEiApKQ/?=
+ =?us-ascii?Q?ZWqOK1Ln63sZWldyPjq8lWecYR3ZZynvehU7NxgAL/AylIiFUZifb5xRV4jd?=
+ =?us-ascii?Q?387dKvZqwZyjFeDcJ6HEr1iCavWvrjm6vCisAyYZyQJDBtTcDeIkIBIJVw30?=
+ =?us-ascii?Q?v06IMmFwpISfuroqr1bY1RrrP4gWiW7cOZZ/x2bafDObredLJYZnowbdRwYN?=
+ =?us-ascii?Q?zvohR0VF3B+ZdXyFn63WZxcWG5CCRfmXfX0t20daTgrclWIp+/BnjL1nYcUC?=
+ =?us-ascii?Q?Cg0Hlf63hASLO6sus1wCGI7NDvUjyySGWeqcCvfvgstteKAcFOueKyDlTncS?=
+ =?us-ascii?Q?9TrPn5N9EGTb0hkFSlOOvkMcKBgBg4O5TLul1QZyswYCxR+9Lbdfe+grYKzi?=
+ =?us-ascii?Q?LEZSzGJWY1XnzJkwkRyBsoIpPLg55scCgpGjfDeYNgaeuZsGEgZWQP3dT2t6?=
+ =?us-ascii?Q?fYhCWqEZ9KqKQeqEhLOR0tZlDGzhUKlZLsJHepRL3zIdHnmNJbybmJKaw8hl?=
+ =?us-ascii?Q?eR7YnUQF2ti91YV6ttHg2TQ+HxFp8M9qK8UFqIuLhlOFC8b/HsxfkI80JESZ?=
+ =?us-ascii?Q?6Hp7hg3pdxp19UlbWR+HPauoXZhH+Ft01l4WQgnQUjEwNbZHQw2ySD+RFJiM?=
+ =?us-ascii?Q?zd/+P+yP1Us62RMzhpkjmwmKp/yNBYt6mjowcpuaJL6HMFpZxtv2bIizy2Dh?=
+ =?us-ascii?Q?WSRZtAjO34xmrpYYLeazMGuHmK1GAGCLqQJxIOu0?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4aaddb39-e2ec-4c90-b2d8-08dcf203717d
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 19:04:36.1678
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 19:06:18.4969
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tfBxRFDiPsP3YX9Ob+Z00tdtmpXAi8ookV6Wt8kQIbg2T46+GjVXxsa4clczpkf9RbSb9nyrmxJIESbYJ3VBkg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8594
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: QLQHt3y3mSpnhOc4Esfjn1QAyV6a46AUIchPkWY/g9RnUAIDzn97XSNUmVVT41fSfgVjHoQmBmWlzXpy/OPv/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9939
 
-Petr Mladek wrote:
-> On Sun 2024-10-20 21:49:50, Ira Weiny wrote:
-> > Dan Williams wrote:
-> > > Ira Weiny wrote:
-> > 
-> > [snip]
-> > 
-> > > > diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-> > > > index 14e093da3ccd..e1ebf0376154 100644
-> > > > --- a/Documentation/core-api/printk-formats.rst
-> > > > +++ b/Documentation/core-api/printk-formats.rst
-> > > > @@ -231,6 +231,19 @@ width of the CPU data path.
-> > > >  
-> > > >  Passed by reference.
-> > > >  
-> > > > +Struct Range
-> > > > +------------
-> > > > +
-> > > > +::
-> > > > +
-> > > > +	%pra    [range 0x0000000060000000-0x000000006fffffff]
-> > > > +	%pra    [range 0x0000000060000000]
-> > > > +
-> > > > +For printing struct range.  struct range holds an arbitrary range of u64
-> > > > +values.  If start is equal to end only print the start value.
-> > > 
-> > > I was going to say "why this special case that does not exist for the
-> > > %pr case?", but then checked the code and found it *does* do this for %pr.
-> > > So if you're going to document this special case for %pra might as well
-> > > update the documentation for %pr too.
-> > > 
-> > > Alternatively, drop the new %pra documentation for this corner case as
-> > > accommodating the U64_MAX size range case is arguably a mistake in the
-> > > caller.
-> > > 
-> > > Either way, just make it consistent.
-> > 
-> > I've dropped the special case in the documentation.
-> 
-> I would actually prefer the opposite and update the %pr documentation.
-> 
-> The behavior might be surprising and people should beware of it,
-> for example when writing a parser for the output.
+From: Richard Zhu <hongxing.zhu@nxp.com>
 
-Works for me.  I added a patch to enhance %pr and left in the %pra doc.
+Add PCIe support for i.MX8QXP, i.MX8QM and i.MX8DXL.
+Add SATA support for i.MX8QM, which is in hsio subsystem and is shared with
+PCIe PHY.
 
-Ira
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Change from v2 to v3
+- move fsl,max-link-speed after common property
+- Add sata description at commit message.
+- Fix hsio bus's range overlaps
+
+Change from v1 to v2
+- none
+
+On going discussion:
+https://lore.kernel.org/imx/20240930-pci_fixup_addr-v3-2-80ee70352fc7@nxp.com/
+don't affect this dts.
+This work for with/without above patches.
+---
+ .../boot/dts/freescale/imx8-ss-hsio.dtsi      | 123 +++++++++++
+ .../boot/dts/freescale/imx8dxl-ss-hsio.dtsi   |  52 +++++
+ arch/arm64/boot/dts/freescale/imx8dxl.dtsi    |   2 +
+ .../boot/dts/freescale/imx8qm-ss-hsio.dtsi    | 209 ++++++++++++++++++
+ arch/arm64/boot/dts/freescale/imx8qm.dtsi     |   2 +
+ .../boot/dts/freescale/imx8qxp-ss-hsio.dtsi   |  41 ++++
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi    |   2 +
+ 7 files changed, 431 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8-ss-hsio.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8dxl-ss-hsio.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8qm-ss-hsio.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8qxp-ss-hsio.dtsi
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-hsio.dtsi b/arch/arm64/boot/dts/freescale/imx8-ss-hsio.dtsi
+new file mode 100644
+index 0000000000000..70a8aa1a67911
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8-ss-hsio.dtsi
+@@ -0,0 +1,123 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2024 NXP
++ *
++ * Richard Zhu <hongxing.zhu@nxp.com>
++ */
++#include <dt-bindings/phy/phy.h>
++
++hsio_axi_clk: clock-hsio-axi {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <400000000>;
++	clock-output-names = "hsio_axi_clk";
++};
++
++hsio_per_clk: clock-hsio-per {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <133333333>;
++	clock-output-names = "hsio_per_clk";
++};
++
++hsio_refa_clk: clock-hsio-refa {
++	compatible = "gpio-gate-clock";
++	clocks = <&xtal100m>;
++	#clock-cells = <0>;
++	enable-gpios = <&lsio_gpio4 27 GPIO_ACTIVE_LOW>;
++};
++
++hsio_refb_clk: clock-hsio-refb {
++	compatible = "gpio-gate-clock";
++	clocks = <&xtal100m>;
++	#clock-cells = <0>;
++	enable-gpios = <&lsio_gpio4 1 GPIO_ACTIVE_LOW>;
++};
++
++xtal100m: clock-xtal100m {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <100000000>;
++	clock-output-names = "xtal_100MHz";
++};
++
++hsio_subsys: bus@5f000000 {
++	compatible = "simple-bus";
++	ranges = <0x5f000000 0x0 0x5f000000 0x01000000>,
++		 <0x80000000 0x0 0x70000000 0x10000000>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++	dma-ranges = <0x80000000 0 0x80000000 0x80000000>;
++
++	pcieb: pcie@5f010000 {
++		compatible = "fsl,imx8q-pcie";
++		reg = <0x5f010000 0x10000>,
++		      <0x8ff00000 0x80000>;
++		reg-names = "dbi", "config";
++		ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
++			 <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
++		#interrupt-cells = <1>;
++		interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "msi";
++		#address-cells = <3>;
++		#size-cells = <2>;
++		clocks = <&pcieb_lpcg IMX_LPCG_CLK_6>,
++			 <&pcieb_lpcg IMX_LPCG_CLK_4>,
++			 <&pcieb_lpcg IMX_LPCG_CLK_5>;
++		clock-names = "dbi", "mstr", "slv";
++		bus-range = <0x00 0xff>;
++		device_type = "pci";
++		interrupt-map = <0 0 0 1 &gic 0 105 4>,
++				 <0 0 0 2 &gic 0 106 4>,
++				 <0 0 0 3 &gic 0 107 4>,
++				 <0 0 0 4 &gic 0 108 4>;
++		interrupt-map-mask = <0 0 0 0x7>;
++		num-lanes = <1>;
++		num-viewport = <4>;
++		power-domains = <&pd IMX_SC_R_PCIE_B>;
++		fsl,max-link-speed = <3>;
++		status = "disabled";
++	};
++
++	pcieb_lpcg: clock-controller@5f060000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f060000 0x10000>;
++		clocks = <&hsio_axi_clk>, <&hsio_axi_clk>, <&hsio_axi_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_4>, <IMX_LPCG_CLK_5>, <IMX_LPCG_CLK_6>;
++		clock-output-names = "hsio_pcieb_mstr_axi_clk",
++				     "hsio_pcieb_slv_axi_clk",
++				     "hsio_pcieb_dbi_axi_clk";
++		power-domains = <&pd IMX_SC_R_PCIE_B>;
++	};
++
++	phyx1_crr1_lpcg: clock-controller@5f0b0000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f0b0000 0x10000>;
++		clocks = <&hsio_per_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_4>;
++		clock-output-names = "hsio_phyx1_per_clk";
++		power-domains = <&pd IMX_SC_R_SERDES_1>;
++	};
++
++	pcieb_crr3_lpcg: clock-controller@5f0d0000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f0d0000 0x10000>;
++		clocks = <&hsio_per_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_4>;
++		clock-output-names = "hsio_pcieb_per_clk";
++		power-domains = <&pd IMX_SC_R_PCIE_B>;
++	};
++
++	misc_crr5_lpcg: clock-controller@5f0f0000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f0f0000 0x10000>;
++		clocks = <&hsio_per_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_4>;
++		clock-output-names = "hsio_misc_per_clk";
++		power-domains = <&pd IMX_SC_R_HSIO_GPIO>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8dxl-ss-hsio.dtsi b/arch/arm64/boot/dts/freescale/imx8dxl-ss-hsio.dtsi
+new file mode 100644
+index 0000000000000..f3104e205ae89
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8dxl-ss-hsio.dtsi
+@@ -0,0 +1,52 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2024 NXP
++ */
++
++&hsio_subsys {
++	phyx1_lpcg: clock-controller@5f090000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f090000 0x10000>;
++		clocks = <&hsio_refb_clk>, <&hsio_per_clk>,
++			 <&hsio_per_clk>, <&hsio_per_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_1>,
++				<IMX_LPCG_CLK_2>, <IMX_LPCG_CLK_4>;
++		clock-output-names = "hsio_phyx1_pclk",
++				     "hsio_phyx1_epcs_tx_clk",
++				     "hsio_phyx1_epcs_rx_clk",
++				     "hsio_phyx1_apb_clk";
++		power-domains = <&pd IMX_SC_R_SERDES_1>;
++	};
++
++	hsio_phy: phy@5f1a0000 {
++		compatible = "fsl,imx8qxp-hsio";
++		reg = <0x5f1a0000 0x10000>,
++		      <0x5f120000 0x10000>,
++		      <0x5f140000 0x10000>,
++		      <0x5f160000 0x10000>;
++		reg-names = "reg", "phy", "ctrl", "misc";
++		clocks = <&phyx1_lpcg IMX_LPCG_CLK_0>,
++			 <&phyx1_lpcg IMX_LPCG_CLK_4>,
++			 <&phyx1_crr1_lpcg IMX_LPCG_CLK_4>,
++			 <&pcieb_crr3_lpcg IMX_LPCG_CLK_4>,
++			 <&misc_crr5_lpcg IMX_LPCG_CLK_4>;
++		clock-names = "pclk0", "apb_pclk0", "phy0_crr", "ctl0_crr",
++			      "misc_crr";
++		#phy-cells = <3>;
++		power-domains = <&pd IMX_SC_R_SERDES_1>;
++		status = "disabled";
++	};
++};
++
++&pcieb {
++	#interrupt-cells = <1>;
++	interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
++	interrupt-names = "msi";
++	interrupt-map = <0 0 0 1 &gic 0 47 4>,
++			 <0 0 0 2 &gic 0 48 4>,
++			 <0 0 0 3 &gic 0 49 4>,
++			 <0 0 0 4 &gic 0 50 4>;
++	interrupt-map-mask = <0 0 0 0x7>;
++};
++
+diff --git a/arch/arm64/boot/dts/freescale/imx8dxl.dtsi b/arch/arm64/boot/dts/freescale/imx8dxl.dtsi
+index 7e54cf2028580..76de3db8b9423 100644
+--- a/arch/arm64/boot/dts/freescale/imx8dxl.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8dxl.dtsi
+@@ -237,12 +237,14 @@ xtal24m: clock-xtal24m {
+ 	#include "imx8-ss-conn.dtsi"
+ 	#include "imx8-ss-ddr.dtsi"
+ 	#include "imx8-ss-lsio.dtsi"
++	#include "imx8-ss-hsio.dtsi"
+ };
+ 
+ #include "imx8dxl-ss-adma.dtsi"
+ #include "imx8dxl-ss-conn.dtsi"
+ #include "imx8dxl-ss-lsio.dtsi"
+ #include "imx8dxl-ss-ddr.dtsi"
++#include "imx8dxl-ss-hsio.dtsi"
+ 
+ &cm40_intmux {
+ 	interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-hsio.dtsi b/arch/arm64/boot/dts/freescale/imx8qm-ss-hsio.dtsi
+new file mode 100644
+index 0000000000000..d24d90955c35a
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-hsio.dtsi
+@@ -0,0 +1,209 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2024 NXP
++ *	Richard Zhu <hongxing.zhu@nxp.com>
++ */
++
++&hsio_subsys {
++	compatible = "simple-bus";
++	ranges = <0x5f000000 0x0 0x5f000000 0x01000000>,
++		 <0x40000000 0x0 0x60000000 0x10000000>,
++		 <0x80000000 0x0 0x70000000 0x10000000>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	pciea: pcie@5f000000 {
++		compatible = "fsl,imx8q-pcie";
++		reg = <0x5f000000 0x10000>,
++		      <0x4ff00000 0x80000>;
++		reg-names = "dbi", "config";
++		ranges = <0x81000000 0 0x00000000 0x4ff80000 0 0x00010000>,
++			 <0x82000000 0 0x40000000 0x40000000 0 0x0ff00000>;
++		#interrupt-cells = <1>;
++		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "msi";
++		#address-cells = <3>;
++		#size-cells = <2>;
++		clocks = <&pciea_lpcg 2>,
++			 <&pciea_lpcg 0>,
++			 <&pciea_lpcg 1>;
++		clock-names = "dbi", "mstr", "slv";
++		bus-range = <0x00 0xff>;
++		device_type = "pci";
++		interrupt-map = <0 0 0 1 &gic 0 73 4>,
++				 <0 0 0 2 &gic 0 74 4>,
++				 <0 0 0 3 &gic 0 75 4>,
++				 <0 0 0 4 &gic 0 76 4>;
++		interrupt-map-mask = <0 0 0 0x7>;
++		num-lanes = <1>;
++		num-viewport = <4>;
++		power-domains = <&pd IMX_SC_R_PCIE_A>;
++		fsl,max-link-speed = <3>;
++		status = "disabled";
++	};
++
++	pcieb: pcie@5f010000 {
++		compatible = "fsl,imx8q-pcie";
++		reg = <0x5f010000 0x10000>,
++		      <0x8ff00000 0x80000>;
++		reg-names = "dbi", "config";
++		ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
++			 <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
++		#interrupt-cells = <1>;
++		interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "msi";
++		#address-cells = <3>;
++		#size-cells = <2>;
++		clocks = <&pcieb_lpcg 2>,
++			 <&pcieb_lpcg 0>,
++			 <&pcieb_lpcg 1>;
++		clock-names = "dbi", "mstr", "slv";
++		bus-range = <0x00 0xff>;
++		device_type = "pci";
++		interrupt-map = <0 0 0 1 &gic 0 105 4>,
++				 <0 0 0 2 &gic 0 106 4>,
++				 <0 0 0 3 &gic 0 107 4>,
++				 <0 0 0 4 &gic 0 108 4>;
++		interrupt-map-mask = <0 0 0 0x7>;
++		num-lanes = <1>;
++		num-viewport = <4>;
++		power-domains = <&pd IMX_SC_R_PCIE_B>;
++		fsl,max-link-speed = <3>;
++		status = "disabled";
++	};
++
++	sata: sata@5f020000 {
++		compatible = "fsl,imx8qm-ahci";
++		reg = <0x5f020000 0x10000>;
++		interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&sata_lpcg 0>,
++			 <&sata_crr4_lpcg 0>;
++		clock-names = "sata", "sata_ref";
++		phy-names = "sata-phy", "cali-phy0", "cali-phy1";
++		power-domains = <&pd IMX_SC_R_SATA_0>;
++		/*
++		 * Since "REXT" pin is only present for first lane PHY
++		 * and its calibration result will be stored, and shared
++		 * by the PHY used by SATA.
++		 *
++		 * Add the calibration PHYs for SATA here, although only
++		 * the third lane PHY is used by SATA.
++		 */
++		phys = <&hsio_phy 2 PHY_TYPE_SATA 0>,
++		       <&hsio_phy 0 PHY_TYPE_PCIE 0>,
++		       <&hsio_phy 1 PHY_TYPE_PCIE 1>;
++		status = "disabled";
++	};
++
++	pciea_lpcg: clock-controller@5f050000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f050000 0x10000>;
++		clocks = <&hsio_axi_clk>, <&hsio_axi_clk>, <&hsio_axi_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_4>, <IMX_LPCG_CLK_5>, <IMX_LPCG_CLK_6>;
++		clock-output-names = "hsio_pciea_mstr_axi_clk",
++				     "hsio_pciea_slv_axi_clk",
++				     "hsio_pciea_dbi_axi_clk";
++		power-domains = <&pd IMX_SC_R_PCIE_A>;
++	};
++
++	sata_lpcg: clock-controller@5f070000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f070000 0x10000>;
++		clocks = <&hsio_axi_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_4>;
++		clock-output-names = "hsio_sata_clk";
++		power-domains = <&pd IMX_SC_R_SATA_0>;
++	};
++
++	phyx2_lpcg: clock-controller@5f080000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f080000 0x10000>;
++		clocks = <&hsio_refa_clk>, <&hsio_per_clk>,
++			 <&hsio_refa_clk>, <&hsio_per_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_1>,
++				<IMX_LPCG_CLK_4>, <IMX_LPCG_CLK_5>;
++		clock-output-names = "hsio_phyx2_pclk_0",
++				     "hsio_phyx2_pclk_1",
++				     "hsio_phyx2_apbclk_0",
++				     "hsio_phyx2_apbclk_1";
++		power-domains = <&pd IMX_SC_R_SERDES_0>;
++	};
++
++	phyx1_lpcg: clock-controller@5f090000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f090000 0x10000>;
++		clocks = <&hsio_refa_clk>, <&hsio_per_clk>,
++			 <&hsio_per_clk>, <&hsio_per_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_1>,
++				<IMX_LPCG_CLK_2>, <IMX_LPCG_CLK_4>;
++		clock-output-names = "hsio_phyx1_pclk",
++				     "hsio_phyx1_epcs_tx_clk",
++				     "hsio_phyx1_epcs_rx_clk",
++				     "hsio_phyx1_apb_clk";
++		power-domains = <&pd IMX_SC_R_SERDES_1>;
++	};
++
++	phyx2_crr0_lpcg: clock-controller@5f0a0000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f0a0000 0x10000>;
++		clocks = <&hsio_per_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_4>;
++		clock-output-names = "hsio_phyx2_per_clk";
++		power-domains = <&pd IMX_SC_R_SERDES_0>;
++	};
++
++	pciea_crr2_lpcg: clock-controller@5f0c0000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f0c0000 0x10000>;
++		clocks = <&hsio_per_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_4>;
++		clock-output-names = "hsio_pciea_per_clk";
++		power-domains = <&pd IMX_SC_R_PCIE_A>;
++	};
++
++	sata_crr4_lpcg: clock-controller@5f0e0000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f0e0000 0x10000>;
++		clocks = <&hsio_per_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_4>;
++		clock-output-names = "hsio_sata_per_clk";
++		power-domains = <&pd IMX_SC_R_SATA_0>;
++	};
++
++	hsio_phy: phy@5f180000 {
++		compatible = "fsl,imx8qm-hsio";
++		reg = <0x5f180000 0x30000>,
++		      <0x5f110000 0x20000>,
++		      <0x5f130000 0x30000>,
++		      <0x5f160000 0x10000>;
++		reg-names = "reg", "phy", "ctrl", "misc";
++		clocks = <&phyx2_lpcg IMX_LPCG_CLK_0>,
++			 <&phyx2_lpcg IMX_LPCG_CLK_1>,
++			 <&phyx2_lpcg IMX_LPCG_CLK_4>,
++			 <&phyx2_lpcg IMX_LPCG_CLK_5>,
++			 <&phyx1_lpcg IMX_LPCG_CLK_0>,
++			 <&phyx1_lpcg IMX_LPCG_CLK_1>,
++			 <&phyx1_lpcg IMX_LPCG_CLK_2>,
++			 <&phyx1_lpcg IMX_LPCG_CLK_4>,
++			 <&phyx2_crr0_lpcg IMX_LPCG_CLK_4>,
++			 <&phyx1_crr1_lpcg IMX_LPCG_CLK_4>,
++			 <&pciea_crr2_lpcg IMX_LPCG_CLK_4>,
++			 <&pcieb_crr3_lpcg IMX_LPCG_CLK_4>,
++			 <&sata_crr4_lpcg IMX_LPCG_CLK_4>,
++			 <&misc_crr5_lpcg IMX_LPCG_CLK_4>;
++		clock-names = "pclk0", "pclk1", "apb_pclk0", "apb_pclk1",
++			      "pclk2", "epcs_tx", "epcs_rx", "apb_pclk2",
++			      "phy0_crr", "phy1_crr", "ctl0_crr",
++			      "ctl1_crr", "ctl2_crr", "misc_crr";
++		#phy-cells = <3>;
++		power-domains = <&pd IMX_SC_R_SERDES_0>, <&pd IMX_SC_R_SERDES_1>;
++		status = "disabled";
++	};
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+index 3ee6e2869e3cf..ac9064a949d82 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+@@ -594,6 +594,7 @@ mipi_pll_div2_clk: clock-controller-mipi-div2-pll {
+ 	#include "imx8-ss-dma.dtsi"
+ 	#include "imx8-ss-conn.dtsi"
+ 	#include "imx8-ss-lsio.dtsi"
++	#include "imx8-ss-hsio.dtsi"
+ };
+ 
+ #include "imx8qm-ss-img.dtsi"
+@@ -603,3 +604,4 @@ mipi_pll_div2_clk: clock-controller-mipi-div2-pll {
+ #include "imx8qm-ss-audio.dtsi"
+ #include "imx8qm-ss-lvds.dtsi"
+ #include "imx8qm-ss-mipi.dtsi"
++#include "imx8qm-ss-hsio.dtsi"
+diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-ss-hsio.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp-ss-hsio.dtsi
+new file mode 100644
+index 0000000000000..47fc6e0cff4a1
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8qxp-ss-hsio.dtsi
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2024 NXP
++ *	Richard Zhu <hongxing.zhu@nxp.com>
++ */
++
++&hsio_subsys {
++	phyx1_lpcg: clock-controller@5f090000 {
++		compatible = "fsl,imx8qxp-lpcg";
++		reg = <0x5f090000 0x10000>;
++		clocks = <&hsio_refb_clk>, <&hsio_per_clk>,
++			 <&hsio_per_clk>, <&hsio_per_clk>;
++		#clock-cells = <1>;
++		clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_1>,
++				<IMX_LPCG_CLK_2>, <IMX_LPCG_CLK_4>;
++		clock-output-names = "hsio_phyx1_pclk",
++				     "hsio_phyx1_epcs_tx_clk",
++				     "hsio_phyx1_epcs_rx_clk",
++				     "hsio_phyx1_apb_clk";
++		power-domains = <&pd IMX_SC_R_SERDES_1>;
++	};
++
++	hsio_phy: phy@5f1a0000 {
++		compatible = "fsl,imx8qxp-hsio";
++		reg = <0x5f1a0000 0x10000>,
++		      <0x5f120000 0x10000>,
++		      <0x5f140000 0x10000>,
++		      <0x5f160000 0x10000>;
++		reg-names = "reg", "phy", "ctrl", "misc";
++		clocks = <&phyx1_lpcg IMX_LPCG_CLK_0>,
++			 <&phyx1_lpcg IMX_LPCG_CLK_1>,
++			 <&phyx1_crr1_lpcg IMX_LPCG_CLK_4>,
++			 <&pcieb_crr3_lpcg IMX_LPCG_CLK_4>,
++			 <&misc_crr5_lpcg IMX_LPCG_CLK_4>;
++		clock-names = "pclk0", "apb_pclk0", "phy0_crr", "ctl0_crr",
++			      "misc_crr";
++		#phy-cells = <3>;
++		power-domains = <&pd IMX_SC_R_SERDES_1>;
++		status = "disabled";
++	};
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+index 0313f295de2e9..db21c6d64f24d 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+@@ -323,6 +323,7 @@ map0 {
+ 	#include "imx8-ss-conn.dtsi"
+ 	#include "imx8-ss-ddr.dtsi"
+ 	#include "imx8-ss-lsio.dtsi"
++	#include "imx8-ss-hsio.dtsi"
+ };
+ 
+ #include "imx8qxp-ss-img.dtsi"
+@@ -330,3 +331,4 @@ map0 {
+ #include "imx8qxp-ss-adma.dtsi"
+ #include "imx8qxp-ss-conn.dtsi"
+ #include "imx8qxp-ss-lsio.dtsi"
++#include "imx8qxp-ss-hsio.dtsi"
+-- 
+2.34.1
+
 
