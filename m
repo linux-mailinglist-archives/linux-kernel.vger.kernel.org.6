@@ -1,321 +1,255 @@
-Return-Path: <linux-kernel+bounces-373978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8679A6022
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:34:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 097D49A602B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 11:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED2CAB291C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:33:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36160B2279A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956E31E3DDB;
-	Mon, 21 Oct 2024 09:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB031E379D;
+	Mon, 21 Oct 2024 09:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NGBmgR2c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i4UTpQpL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BF31E3779;
-	Mon, 21 Oct 2024 09:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729503173; cv=none; b=Sv1M7pXkIu2hpQAqCYOzPbVn76NR/2kF8lBpmsSeTrRWpD5O8xoMoZxOevgMoLuMixI7Fc0DzR3Q+mGj8jV0SBRkO9IqqW3BGfDbKCsIo5aYKQUVqer4Ilb9+woP0l5tzDhALLu7D3b4kUl4FBWZxL84zJZgAlVxZId8WEdg6ug=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729503173; c=relaxed/simple;
-	bh=95fm0ioAH0F56m3GzykbVlsa5Kix+AkbST5VAFgN8Hg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=EFpDXEbwZFlEg92oNd6xbIS5hFhx9B2FxD2hXDMcrxpvruQx9Q3OwxATpOCUGIvCcrNKT5mu+6O3Af0ggOavQWFBgDZ16aIuOtxVyrApGDfWkSBCCC5WHnDzluOJrcQNXz+17xwmYxjGZqQBgALXaOGF1A+xY8rhiralzq2hOhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NGBmgR2c; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A5F192D69;
+	Mon, 21 Oct 2024 09:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729503235; cv=fail; b=YOX7Ukok7MvUurl9g66QcumfRKiXs8cOjL07tif4lFpLp/sxOlNVrvXvSK15Q92+M3Prr73qg20g/UR9jpK5khx65CfXVmkzZYdVYi2k635TtjRePv1W5Cu41tKrnzRj29TDMc7z1kvEr+RG5kB4KQT3XEVnxViph4fNRH4WJas=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729503235; c=relaxed/simple;
+	bh=yLB9juMIDkS2/Nx/eRDH37aubmoutkNbosQCRrTQz80=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WPhrfKUqoFhk6BX3hkT9TA1m1TPLiMT7I1cY3UlKniO4DvEewQiKqQe2JBerXMzCksksPNKUO7gJNMXqIblYOpCA7XujD12+zFTbHxML1DwerAx1yvustsxzFnj/nHu9q9kqZit39u9IikRVBsJa63HNQWHg1WkYjm8gvVc9zBs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i4UTpQpL; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729503172; x=1761039172;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=95fm0ioAH0F56m3GzykbVlsa5Kix+AkbST5VAFgN8Hg=;
-  b=NGBmgR2cwX9CJGDvFYzTqGKnzwnVqS59YwEocF94WD1MfkQVErpCBhjz
-   le1LgQ+zlMIQgPsKox5il3/7xodP7fi/bwGB2/C3x5vIl1atWKqA14Kks
-   6lYOs+oW1gsXC5H4Q3vOlrteZ5NXCm3xnYKQIxvRIfeemGvIMbfC/Z2ys
-   CdbpSyMjAAVC4ng2JzUngS8PS7etqnURHQ0M56QHDR2sOLergfGwBFhLb
-   3fL8ZxSF6mZQKlAZuRfAERIacggByBriXlnV21xLkbsolGhm9EmFPBKTi
-   j9TxmfQWX1FVmmF3VX/gKVEy0/BzuUm+AgF89symswXn2zgY3/D4f5stu
-   A==;
-X-CSE-ConnectionGUID: xvh0rzfDQyivTLjhnATWbA==
-X-CSE-MsgGUID: F4I2oIp0T86nn5gXKTnbDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29096208"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29096208"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 02:32:51 -0700
-X-CSE-ConnectionGUID: WlU0b4CGTZCoHnGXPQUx+w==
-X-CSE-MsgGUID: gVWQPkMWSxiLl/i7/9nDMw==
+  t=1729503233; x=1761039233;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=yLB9juMIDkS2/Nx/eRDH37aubmoutkNbosQCRrTQz80=;
+  b=i4UTpQpLAN8sqKu5RLt6rujezFA5yu43wkIrHM6tfvzzroyCj3gRs3xy
+   XQ5m4H0FhFvlIZcfiVYj4lq5OS8GuCEh1PPKB3uoOBL/q7nTWz5iGkHfG
+   MO+X/1zqrcjEfaTdzidCb3TjZnVkO8xMhK/9ajvkbPcJQxasYBWDWCOuS
+   6nhUguD7Qi7GiJIWOF//JtpPZFcXdA/y84Q0+Tr/26U8vO2EXLKX/L9gz
+   SPRwLWvxruVI3kPFwmF7F2YEnuhSxz4o/XKecvgN9JmELSs0E8VipN352
+   qpAGqlyiSX0TYr0YlPgenqZq06oC/MphVD2LsiAHqNcenCrZ6oik6Ikr1
+   w==;
+X-CSE-ConnectionGUID: uzhzkkePQr2rS8MkmPDG+A==
+X-CSE-MsgGUID: pcmK5aSoSFmfB5FJWSiQaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="54387141"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="54387141"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 02:33:52 -0700
+X-CSE-ConnectionGUID: fQdz/VOJTBSI6JRxAqRi6g==
+X-CSE-MsgGUID: 0eLrPtIjS7yqtEbOYB2mqQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
-   d="scan'208";a="79544903"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.201])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 02:32:48 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 21 Oct 2024 12:32:45 +0300 (EEST)
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
-    Andy Shevchenko <andy@kernel.org>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    Hans de Goede <hdegoede@redhat.com>, Ferry Toth <fntoth@gmail.com>
-Subject: Re: [PATCH v2 2/3] platform/x86: intel_scu_ipc: Simplify code with
- cleanup helpers
-In-Reply-To: <20241021084053.2443545-3-andriy.shevchenko@linux.intel.com>
-Message-ID: <28078013-a643-af8e-22be-f36c75790ba5@linux.intel.com>
-References: <20241021084053.2443545-1-andriy.shevchenko@linux.intel.com> <20241021084053.2443545-3-andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="83464472"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Oct 2024 02:33:52 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 21 Oct 2024 02:33:32 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 21 Oct 2024 02:33:32 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.173)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 21 Oct 2024 02:33:26 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OeREktQ0Y1z+L9OYS8DVWD9UnMRlSirnJ26C0a0gWvHFEmYsQaBH0Gjfq8QWFUaxGedybpxxHoZqNxtUbrZNNkYIZJ/UGGtPT0HT8/CdS07GlPpkxL7DIEco4yluhYiB43Qt8T2eEg9ffnMb/S+M3t3dHytUVKGFeF2xeIzlWr/6U2yfo6Ebm9fozuAqG3Qqmk3JKpGCqaaNJxuUjxpTENFnqDr+hwJPdXGqqjuFviKmLd1cYZz6FCOYHQEd1b+oe/p0+gLbh/ebF1YoJDKnQLvGgjAgUzuuASXYJBAJmUfMrP9oU0i4N3YjiGoQR0dTcHN+ubhHxFNGMwXzBHBk9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MEjPvk2kCstrzLcHRQtXCxUYpj2sPyUDoKLPuL1sncI=;
+ b=RTzpI62XBgwnCq8SFRZ0cuLY2ACB7lCNmMFhuSudzuhZnAK+ZH8khR0DfE+b/xuQHmCDFaCMUmOHtmX4jWWewfEvQMj7DOhVKnPG5iZq8rKrAuSk9JvShLdbnp5BmSYQzHmnx1vTgbUHNYt3Bat7dLrkUTajp8/kOXvoZui/GX+M5nzHfDd8TlG51C+btRGBF57Tme/2rtqJI0cak39jhsruvS1jWf0sQv0vHVeBeAy4mthzs4RGDQQ1FwHP8hfVfFJ/+1QvB1ZmWMw4AXP74myih5POKtiPjJhfFAx96mSTeipRRwqT0hJGOO2dKTldDnlkP9O0bOEEb3Ai/3IEiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4610.namprd11.prod.outlook.com (2603:10b6:5:2ab::19)
+ by PH0PR11MB7421.namprd11.prod.outlook.com (2603:10b6:510:281::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
+ 2024 09:33:24 +0000
+Received: from DM6PR11MB4610.namprd11.prod.outlook.com
+ ([fe80::c24a:5ab8:133d:cb04]) by DM6PR11MB4610.namprd11.prod.outlook.com
+ ([fe80::c24a:5ab8:133d:cb04%2]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
+ 09:33:23 +0000
+From: "Kwapulinski, Piotr" <piotr.kwapulinski@intel.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "bhelgaas@google.com"
+	<bhelgaas@google.com>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>
+Subject: RE: [PATCH iwl-next 1/2] PCI: Add PCI_VDEVICE_SUB helper macro
+Thread-Topic: [PATCH iwl-next 1/2] PCI: Add PCI_VDEVICE_SUB helper macro
+Thread-Index: AQHbIJbjj9tJcudR6ECM4cqRzFvsAbKK/qQAgAX31YA=
+Date: Mon, 21 Oct 2024 09:33:23 +0000
+Message-ID: <DM6PR11MB461085854DE76B33E967BB08F3432@DM6PR11MB4610.namprd11.prod.outlook.com>
+References: <20241017131647.4255-1-piotr.kwapulinski@intel.com>
+ <20241017142152.GA685610@bhelgaas>
+In-Reply-To: <20241017142152.GA685610@bhelgaas>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4610:EE_|PH0PR11MB7421:EE_
+x-ms-office365-filtering-correlation-id: f31234a2-0212-4305-5def-08dcf1b3685b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?NxU4yeXsy03pr3BTxV+8RSTyzItHycs91hhN+dPZqZHWTw1qcWfE1t84UqmB?=
+ =?us-ascii?Q?qZ1lTkD7PnRciaEk5Jp8hsm+fiBnh6aYFUHx/YNR3iPnfC2wPECldE0TeO/Z?=
+ =?us-ascii?Q?BF1pMZP6aCEywC3dtFsBM5cAHxApKnYX7szQIcGXeFMKgceaederEkoweih9?=
+ =?us-ascii?Q?9EMdmPbaZc0/DykSXr4/ZtKoRx8e1X6O5VR7Q4iyQ4SgRD0XiWT6hOw+Z1+J?=
+ =?us-ascii?Q?+YmfjuHil7RvuluGbUg94/+8YATIRmLGYM84JQtKdRZFNT4hLEuvXRbCsZtA?=
+ =?us-ascii?Q?07HTJcA3J80NKf1xDCCtWK8++q6KkgN4OxcKmimjLr3ytgLiRliAGihCE/5w?=
+ =?us-ascii?Q?zQ1GVgKza58iNHUmtWXZheVUPTU/iImN8rtfV5quUCU6lpnXMHfRztkNfzXO?=
+ =?us-ascii?Q?WVXqPeJ/B7MR7Owirz2/5xY0vAsHEpxvRuS89GJc6MLX4cKV8jtzOuyhywqw?=
+ =?us-ascii?Q?Lb9cEewUZVi+5BpugZBVZrhPqFnGj22VhkajXp3jAcp2f1CC9Wu4Dt4fui7y?=
+ =?us-ascii?Q?t7mVWn8e5fIQP65e/7mgS4n6umrpFqrKQ9F9wJaRwc7/kuDyIukz/wmhMYLO?=
+ =?us-ascii?Q?Hj3cgZcG/koaAnNBD6qRPsrqdgV/2vAu6EXohVzmJJC3KqRqH2JrVtuk+9mm?=
+ =?us-ascii?Q?P+eOuKolb/RRI1A0NG/auvNen3avriwPzsAjEVz/GpDCqpPlT3s7Y4beKX+C?=
+ =?us-ascii?Q?J+kh6Lgeg1dq+YCClb4HLUaS9yUm9kR/0UA0SAkQQzLnRHepsFHii5fZ5bwX?=
+ =?us-ascii?Q?I6kVF+ku5o/OL6mfzffPS+yrBe+pGDVRt12KtuqJbUpHZsJJt2H8yxgHQGPw?=
+ =?us-ascii?Q?MWSiMLwyiGYhAi4VPyLcthwobm0dfzh3P1Coa1X3uvvbK1b9wi5gLw57pnyp?=
+ =?us-ascii?Q?sAm2cAOOpDc1A74D9k7aNatwtlyiMdjdwNdoZ0VFKdAMvan/jVfEtyfXIn/P?=
+ =?us-ascii?Q?AOETZSxfVvPxufgIdZKCBvoCQXqqnN4pUbaa9E5MS5xi++nBpwBvnM1v39rq?=
+ =?us-ascii?Q?a/g/5nqIEwqUl7D9OlE46SLvdSb2yaijsFOJBfdJwdOb3CT+KWL/+x5++NlG?=
+ =?us-ascii?Q?4tUOxkC932q8fdaSll+IR2pRzTOe5NJrRSmh/wO+ncamcWZJZQdO7xknYSF2?=
+ =?us-ascii?Q?MwtHuy2/CUESNMeu4vKt56iYzACe4NN1nVshL/JiEE9NdWCrTwBXcWn3kaub?=
+ =?us-ascii?Q?dOCL4M12fszD8rlKwAdgMlIKDLiAQREfuu5Rxt9uonAhydtesx4zTqVZjDkK?=
+ =?us-ascii?Q?pUqTveredjg9DyVDfQQ8XwL9/byWyWj6P8k3pgdznpAy4KHXMCdbSPkEiqFh?=
+ =?us-ascii?Q?CE4+OQ4WwTEiRf3vtRrZ4DGZ/6MbPopqoTgARYIoZTvB8jiRSrfJR3Xk4xSU?=
+ =?us-ascii?Q?PaDKZoM=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4610.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?T1aVRUW5dXInUaB+o9YMXiOSj7sIjBFf7XqLuZG7TXK7CKFVPTxzT4gmx7G2?=
+ =?us-ascii?Q?x2ocL2Qc+5aWH+XSu+u7pUyuBMPJwXTOdzKDDt206Rdfxkj37CW3DeoqieJO?=
+ =?us-ascii?Q?epacFuAQQGCXuJzX8Nk/Xv9USGb1fSXBCdt0QOthNXmmD90LwNf3ktkPfnUV?=
+ =?us-ascii?Q?cMBkt8LC8q23SpdVXrzKnP+L3c1WvElht/3fvvfAUoh3FJ58m0T2HPpHB472?=
+ =?us-ascii?Q?qQeavbT/ac/TekqByiYTVYez38uRGN4eocljr5XXkt2A7eacvpWAoUGHauK7?=
+ =?us-ascii?Q?6ktGySDWjaSUYQk2qSm1iSzln16wUET7FAUZqZKoIzP1+fJhlv3rStQjGvzs?=
+ =?us-ascii?Q?20TbnpzdPW3QBzSxIbzla8PXfxR0WWILQmKaDZUsV6uYB4ZSIro9kuahXTkN?=
+ =?us-ascii?Q?M2s+WHuLxstCYdYpiNRcN6gh3T1e8+rU8oDpHQUsLSDEYPtreap025RPehFO?=
+ =?us-ascii?Q?mjOTObbrx4MsJ+U/37fAcGsN6aEMuRvGHteJHvz+lbkX7YCvRSyg1LJco5ox?=
+ =?us-ascii?Q?Z5idBs3OF3M5VA7mXfhI0zLLCpNoHOfpoVFxxiCX51a4YtJm/urn700MZITL?=
+ =?us-ascii?Q?8N0YTKBkbQ+hyFZGchpTqGV/F7V0Se2rvDnumew/5nDEp4a5hYffVlvF7bNU?=
+ =?us-ascii?Q?UkKhzsJl//NtqFhNoh6SHJSBIf1beEIZEI3Mk6XU9Fy53zIIFyopGUbb5FBb?=
+ =?us-ascii?Q?IPIIH27arzVN0kmgRI6LQzLOwZ4zKMQl5vUT4PEDhSvc9KUsVHcJaE9MjgrQ?=
+ =?us-ascii?Q?WVxefHW2z0g5Yr9NuKtZjI9E+WD3UiF5ulDD6IFyJepRDptTfhoA1cKI1haj?=
+ =?us-ascii?Q?1AshTC76OeIkipWvt8dNJ6rX9yyK/pQSaC7Vb0qIU7m7ByiM/Zzi/m9y9Qov?=
+ =?us-ascii?Q?dqx+1h/rvNP8fjPH4L3p2F4BrF+tgaG8AJenGK5Od6EsuNmtjkkr/+fDG4KT?=
+ =?us-ascii?Q?AV99Iv8cZIRIKHTZheTR244rj4RI4o/g3EjYF8pECQn7LC/xZlL3xI8Ybofu?=
+ =?us-ascii?Q?qx1HtHKQz1wTK57a/Q5J8cjPveud82KsdjLBo7z5cnyWRTQrhZ1OK4f9sWvc?=
+ =?us-ascii?Q?UHlxDqbLMu9kBSueNPidPqfErFaohXt0isWsM6b2YoIrwJCmQ5rw4T5r9UgI?=
+ =?us-ascii?Q?FGHWxc+gNXPkztroUgvSsjFhNKXpYzBt22ET7m63LNeGrHUCCY+Pdj5egRx9?=
+ =?us-ascii?Q?08Kuseipiv+lFxOkKak5oJzbpQPI2aqwEgj3xcLC10vLKdetYIlQ6NYejt8F?=
+ =?us-ascii?Q?KTZA2mH+Ck0Z/mwuYlIqkYN/hDu7tX0uZLZO/VqdMJsN/1oZhfvc/8hyJxpd?=
+ =?us-ascii?Q?24FwV83Uk7gcU4rotzqVDld8UBabpcLAeAgcDladK8IWL9y+4DVQSyfp3Aym?=
+ =?us-ascii?Q?ShQaiizgUG1/n6N3irCqx5uLDqMUWsTwLbRvjJwIeS2OLuCaC6xSRawk10JV?=
+ =?us-ascii?Q?uIlyCWuM0AMh27F3+VwoNjy/q0WDFSB5R2SKMdk65YVQQcyny7wOP8nbtygr?=
+ =?us-ascii?Q?YJtc0VuTji55mgZmPPvLaWjMHnjJFt6t7f8kn8g1Yt4SniYqXODmSqf9nuKk?=
+ =?us-ascii?Q?BkneEmJoLyvjb4CDxnXCDTlQWnKyv3Aq3MSTDEph?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4610.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f31234a2-0212-4305-5def-08dcf1b3685b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2024 09:33:23.1457
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gVVoIyiKysoTjiJXQtaLX/iljM2E0i3XexCSzk2m0qQ2nbdvrESahkXPpcwvyvPWOjStzslfLaRmgQ3Cn8HJ5GGVhBr1M7XFkAEorlRAxqA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7421
+X-OriginatorOrg: intel.com
 
-On Mon, 21 Oct 2024, Andy Shevchenko wrote:
+>-----Original Message-----
+>From: Bjorn Helgaas <helgaas@kernel.org>=20
+>Sent: Thursday, October 17, 2024 4:22 PM
+>To: Kwapulinski, Piotr <piotr.kwapulinski@intel.com>
+>Cc: intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; bhelgaas@goo=
+gle.com; linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org; Kitszel, =
+Przemyslaw <przemyslaw.kitszel@intel.com>
+>Subject: Re: [PATCH iwl-next 1/2] PCI: Add PCI_VDEVICE_SUB helper macro
+>
+>On Thu, Oct 17, 2024 at 03:16:47PM +0200, Piotr Kwapulinski wrote:
+>> PCI_VDEVICE_SUB generates the pci_device_id struct layout for the=20
+>> specific PCI device/subdevice. The subvendor field is set to=20
+>> PCI_ANY_ID. Private data may follow the output.
+>>=20
+>> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+>> Signed-off-by: Piotr Kwapulinski <piotr.kwapulinski@intel.com>
+>> ---
+>>  include/linux/pci.h | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
+>>=20
+>> This patch is a part of the series from netdev.
+>>=20
+>> diff --git a/include/linux/pci.h b/include/linux/pci.h index=20
+>> 573b4c4..2b6b2c8 100644
+>> --- a/include/linux/pci.h
+>> +++ b/include/linux/pci.h
+>> @@ -1050,6 +1050,20 @@ struct pci_driver {
+>>  	.vendor =3D PCI_VENDOR_ID_##vend, .device =3D (dev), \
+>>  	.subvendor =3D PCI_ANY_ID, .subdevice =3D PCI_ANY_ID, 0, 0
+>> =20
+>> +/**
+>> + * PCI_VDEVICE_SUB - describe a specific PCI device/subdevice in a=20
+>> +short form
+>> + * @vend: the vendor name
+>> + * @dev: the 16 bit PCI Device ID
+>> + * @subdev: the 16 bit PCI Subdevice ID
+>> + *
+>> + * Generate the pci_device_id struct layout for the specific PCI
+>> + * device/subdevice. The subvendor field is set to PCI_ANY_ID.=20
+>> +Private data
+>> + * may follow the output.
+>> + */
+>> +#define PCI_VDEVICE_SUB(vend, dev, subdev) \
+>> +	.vendor =3D PCI_VENDOR_ID_##vend, .device =3D (dev), \
+>> +	.subvendor =3D PCI_ANY_ID, .subdevice =3D subdev, 0, 0
+>
+>I don't think it's right to specify the subdevice (actually "Subsystem ID"=
+ per spec) without specifying the subvendor ("Subsystem Vendor ID"
+>in the spec).
+>
+>Subsystem IDs are assigned by the vendor, so they have to be used in conju=
+nction with the Subsystem Vendor ID.  See PCIe r6.0, sec
+>7.5.1.2.3:
+I'll add the subvendor to the interface.
+Thank you for comments.
+Piotr
 
-> Use macros defined in linux/cleanup.h to automate resource lifetime
-> control in the driver. The byproduct of this change is that the
-> negative conditionals are swapped by positive ones that are being
-> attached to the respective calls, hence the code uses the regular
-> pattern, i.e. checking for the error first.
-> 
-> Tested-by: Ferry Toth <fntoth@gmail.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/platform/x86/intel_scu_ipc.c | 101 ++++++++++++---------------
->  1 file changed, 43 insertions(+), 58 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
-> index 290b38627542..3a1584ed7db8 100644
-> --- a/drivers/platform/x86/intel_scu_ipc.c
-> +++ b/drivers/platform/x86/intel_scu_ipc.c
-> @@ -13,6 +13,7 @@
->   * along with other APIs.
->   */
->  
-> +#include <linux/cleanup.h>
->  #include <linux/delay.h>
->  #include <linux/device.h>
->  #include <linux/errno.h>
-> @@ -99,23 +100,21 @@ static struct class intel_scu_ipc_class = {
->   */
->  struct intel_scu_ipc_dev *intel_scu_ipc_dev_get(void)
->  {
-> -	struct intel_scu_ipc_dev *scu = NULL;
-> +	guard(mutex)(&ipclock);
->  
-> -	mutex_lock(&ipclock);
->  	if (ipcdev) {
->  		get_device(&ipcdev->dev);
->  		/*
->  		 * Prevent the IPC provider from being unloaded while it
->  		 * is being used.
->  		 */
-> -		if (!try_module_get(ipcdev->owner))
-> -			put_device(&ipcdev->dev);
-> -		else
-> -			scu = ipcdev;
-> +		if (try_module_get(ipcdev->owner))
-> +			return ipcdev;
-> +
-> +		put_device(&ipcdev->dev);
->  	}
->  
-> -	mutex_unlock(&ipclock);
-> -	return scu;
-> +	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(intel_scu_ipc_dev_get);
->  
-> @@ -289,12 +288,11 @@ static int pwr_reg_rdwr(struct intel_scu_ipc_dev *scu, u16 *addr, u8 *data,
->  
->  	memset(cbuf, 0, sizeof(cbuf));
->  
-> -	mutex_lock(&ipclock);
-> +	guard(mutex)(&ipclock);
-> +
->  	scu = intel_scu_ipc_get(scu);
-> -	if (IS_ERR(scu)) {
-> -		mutex_unlock(&ipclock);
-> +	if (IS_ERR(scu))
->  		return PTR_ERR(scu);
-> -	}
->  
->  	for (nc = 0; nc < count; nc++, offset += 2) {
->  		cbuf[offset] = addr[nc];
-> @@ -319,13 +317,14 @@ static int pwr_reg_rdwr(struct intel_scu_ipc_dev *scu, u16 *addr, u8 *data,
->  	}
->  
->  	err = intel_scu_ipc_check_status(scu);
-> -	if (!err) { /* Read rbuf */
-> -		for (nc = 0, offset = 0; nc < 4; nc++, offset += 4)
-> -			wbuf[nc] = ipc_data_readl(scu, offset);
-> -		memcpy(data, wbuf, count);
-> -	}
-> -	mutex_unlock(&ipclock);
-> -	return err;
-> +	if (err)
-> +		return err;
-> +
-> +	for (nc = 0, offset = 0; nc < 4; nc++, offset += 4)
-> +		wbuf[nc] = ipc_data_readl(scu, offset);
-> +	memcpy(data, wbuf, count);
-> +
-> +	return 0;
->  }
->  
->  /**
-> @@ -446,17 +445,15 @@ int intel_scu_ipc_dev_simple_command(struct intel_scu_ipc_dev *scu, int cmd,
->  	u32 cmdval;
->  	int err;
->  
-> -	mutex_lock(&ipclock);
-> +	guard(mutex)(&ipclock);
-> +
->  	scu = intel_scu_ipc_get(scu);
-> -	if (IS_ERR(scu)) {
-> -		mutex_unlock(&ipclock);
-> +	if (IS_ERR(scu))
->  		return PTR_ERR(scu);
-> -	}
->  
->  	cmdval = sub << 12 | cmd;
->  	ipc_command(scu, cmdval);
->  	err = intel_scu_ipc_check_status(scu);
-> -	mutex_unlock(&ipclock);
->  	if (err)
->  		dev_err(&scu->dev, "IPC command %#x failed with %d\n", cmdval, err);
->  	return err;
-> @@ -485,18 +482,17 @@ int intel_scu_ipc_dev_command_with_size(struct intel_scu_ipc_dev *scu, int cmd,
->  {
->  	size_t outbuflen = DIV_ROUND_UP(outlen, sizeof(u32));
->  	size_t inbuflen = DIV_ROUND_UP(inlen, sizeof(u32));
-> -	u32 cmdval, inbuf[4] = {};
-> +	u32 cmdval, inbuf[4] = {}, outbuf[4] = {};
->  	int i, err;
->  
->  	if (inbuflen > 4 || outbuflen > 4)
->  		return -EINVAL;
->  
-> -	mutex_lock(&ipclock);
-> +	guard(mutex)(&ipclock);
-> +
->  	scu = intel_scu_ipc_get(scu);
-> -	if (IS_ERR(scu)) {
-> -		mutex_unlock(&ipclock);
-> +	if (IS_ERR(scu))
->  		return PTR_ERR(scu);
-> -	}
->  
->  	memcpy(inbuf, in, inlen);
->  	for (i = 0; i < inbuflen; i++)
-> @@ -505,20 +501,17 @@ int intel_scu_ipc_dev_command_with_size(struct intel_scu_ipc_dev *scu, int cmd,
->  	cmdval = (size << 16) | (sub << 12) | cmd;
->  	ipc_command(scu, cmdval);
->  	err = intel_scu_ipc_check_status(scu);
-> -
-> -	if (!err) {
-> -		u32 outbuf[4] = {};
-> -
-> -		for (i = 0; i < outbuflen; i++)
-> -			outbuf[i] = ipc_data_readl(scu, 4 * i);
-> -
-> -		memcpy(out, outbuf, outlen);
-> +	if (err) {
-> +		dev_err(&scu->dev, "IPC command %#x failed with %d\n", cmdval, err);
-> +		return err;
->  	}
->  
-> -	mutex_unlock(&ipclock);
-> -	if (err)
-> -		dev_err(&scu->dev, "IPC command %#x failed with %d\n", cmdval, err);
-> -	return err;
-> +	for (i = 0; i < outbuflen; i++)
-> +		outbuf[i] = ipc_data_readl(scu, 4 * i);
-> +
-> +	memcpy(out, outbuf, outlen);
-> +
-> +	return 0;
->  }
->  EXPORT_SYMBOL(intel_scu_ipc_dev_command_with_size);
->  
-> @@ -572,18 +565,15 @@ __intel_scu_ipc_register(struct device *parent,
->  	struct intel_scu_ipc_dev *scu;
->  	void __iomem *ipc_base;
->  
-> -	mutex_lock(&ipclock);
-> +	guard(mutex)(&ipclock);
-> +
->  	/* We support only one IPC */
-> -	if (ipcdev) {
-> -		err = -EBUSY;
-> -		goto err_unlock;
-> -	}
-> +	if (ipcdev)
-> +		return ERR_PTR(-EBUSY);
->  
->  	scu = kzalloc(sizeof(*scu), GFP_KERNEL);
-> -	if (!scu) {
-> -		err = -ENOMEM;
-> -		goto err_unlock;
-> -	}
-> +	if (!scu)
-> +		return ERR_PTR(-ENOMEM);
->  
->  	scu->owner = owner;
->  	scu->dev.parent = parent;
-> @@ -621,13 +611,11 @@ __intel_scu_ipc_register(struct device *parent,
->  	err = device_register(&scu->dev);
->  	if (err) {
->  		put_device(&scu->dev);
-> -		goto err_unlock;
-> +		return ERR_PTR(err);
->  	}
->  
->  	/* Assign device at last */
->  	ipcdev = scu;
-> -	mutex_unlock(&ipclock);
-> -
->  	return scu;
->  
->  err_unmap:
-> @@ -636,9 +624,6 @@ __intel_scu_ipc_register(struct device *parent,
->  	release_mem_region(scu_data->mem.start, resource_size(&scu_data->mem));
->  err_free:
->  	kfree(scu);
-> -err_unlock:
-> -	mutex_unlock(&ipclock);
-> -
->  	return ERR_PTR(err);
->  }
->  EXPORT_SYMBOL_GPL(__intel_scu_ipc_register);
-> @@ -652,12 +637,12 @@ EXPORT_SYMBOL_GPL(__intel_scu_ipc_register);
->   */
->  void intel_scu_ipc_unregister(struct intel_scu_ipc_dev *scu)
->  {
-> -	mutex_lock(&ipclock);
-> +	guard(mutex)(&ipclock);
-> +
->  	if (!WARN_ON(!ipcdev)) {
->  		ipcdev = NULL;
->  		device_unregister(&scu->dev);
->  	}
-> -	mutex_unlock(&ipclock);
->  }
->  EXPORT_SYMBOL_GPL(intel_scu_ipc_unregister);
-
-IMO, this change is doing too many things at once and it's hard to justify 
-why those changes must be kept in the same patch. If the guard() change 
-is done first and only then the logic reversions, both patches would 
-probably be near trivial to review for correctness.
-
--- 
- i.
-
+>
+>  Values for the Subsystem ID are vendor assigned. Subsystem ID
+>  values, in conjunction with the Subsystem Vendor ID, form a unique
+>  identifier for the PCI product. Subsystem ID and Device ID values
+>  are distinct and unrelated to each other, and software should not
+>  assume any relationship between them.
 
