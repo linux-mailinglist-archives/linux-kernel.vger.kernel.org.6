@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-373621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFD49A5979
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:23:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD469A597A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 06:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 204051C20C66
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:23:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC2B1F22082
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 04:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA801D0DF4;
-	Mon, 21 Oct 2024 04:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419D11D0F50;
+	Mon, 21 Oct 2024 04:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dP2gV3Zn"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SRgJuSxa"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49ED81CFEB0
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758161D0DCB
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 04:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729484553; cv=none; b=ld92Nhv4CqcciJ+R7K791+ZiCuAlVWR9+uynffUUwxTrB7e9iCAa8wCdm5MyTEAdZhnrYmY/tZLiF4qWsPrpNi14Qthnf5hf3+YtTTPTV7+3+t9mwa3tCDjNX+Sb0EWzlbq6V+P5A4NGPemwlj+NPVqClsmKps1kzNNRWlCAj+o=
+	t=1729484555; cv=none; b=U5HVgADx3Dysqfpz/DZ6GwSTUI/+KfKa5nu6m1JAss+yQuUJf2vQIuEgufwr2G8PjyWPntTKlKa6tsgKhqDfaTmQPVhKrKzuBbrSX03146gFG9s16U9WKWeCly5mKNk07Zl3fc0GHbixhu/rwFw1dnSsSZpRKH++WASUToloSaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729484553; c=relaxed/simple;
-	bh=yxPuj92Fmmn3KaM12Xuj4lY8zDFa3ylivFiGQ6oeGpQ=;
+	s=arc-20240116; t=1729484555; c=relaxed/simple;
+	bh=IKmv5l1pYnG1SRlKUheSWIhA3bXn6fHcqVHlBZwuIKQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Umx2JupjrdFe2QIvTfKEV6awuUnqKS5GcmVDn0l6RWDIH5lhOhnA0xu9OBVWcyJM3D1wKiwRVdET+pEiAolJ7ZqW3jLpuNPUHcvRNcBu/jR7Bh+SmMAYN5FmxQ2W/bbYIQjag8n6uLfvJ6tyEEcbp4UZGhxrtWYTb1Xt+nFhjFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dP2gV3Zn; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=m2R31lEKS4idvYGasGLz1vK+N44kTeGbfJ1vX2kPLMj1namyR04b9mQ/C+V0yvwl/t6gJfOHMdEfVe1dYX17gdlQEiOoUveCKjnh5UFu9Sm8WNpm/bYIyRGH0ZK6NpE65uq1XdFnN9y0M1iFJoDZ+TFFycfqOa/9Tg+rMIOZ62s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SRgJuSxa; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2bd9b1441aso1483676276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 21:22:31 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2e4874925so68011017b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Oct 2024 21:22:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729484550; x=1730089350; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729484552; x=1730089352; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rF+TQYGEDP6+t2V2Dte+w8ImgbG43FZ1I4yOJyMV9jY=;
-        b=dP2gV3ZnkZrNO/8ipXjP6I2QFG/yzaZiiAHQCXCfqFLorIfNQR7aNZLwCliGdNUqzR
-         z0VpR9fCU/Q10NmLbBwpmrXrRD0NL6TUW4CzhAnniutlID6iMO9aPXQqe5kgdl6DbIv0
-         Ybgnf5ush5ks8DTMItbFc9LJz/sszMX46YDkziW78qO4/vyIacbLcaJmjhBwUkpjOeix
-         ccxFEAQkJqF1gOEwzjVP30yNGGfVCS5jt5w/zVCXGDcH9uSKHKeVLRXLirykj/rZz6Rk
-         oKHUz9a/OV9Y1jbovnTmNoLMplqamO4817glHB7/BikU3UOaCv+6sXOu5ckuCudDgzdm
-         6UdA==
+        bh=KJDQv9BsbNqPzAGIVHBRqdKJMgT8Ksx982Co8Pglskw=;
+        b=SRgJuSxauB0Mdh5dF0cXzoRA9OPuv+N13jXzoOeRxGwCNXlUDZ7d7hd9xbMf7ueifC
+         /3ovq3TjOdcjLTSmSu/rVZKsY/+GrTtcKkGzLs7w0KicKl1/YcQEJe4KtgI6TGRsZ62z
+         NQMKKVh9qLeIZqCkD20wOp7G+cZ28gWhrfp4Tp/SiKqRcLHzDsyv4LCXjf0CGHJEUpto
+         DHlKTyNpXqCkfeR9I8cDTVo6N/NPutDc6t5Nq8pc8YboQul6UQQtSpDrcNezo5QDfSen
+         smdqfYo4IpwH/srNtkuhDZTK1xPOwy/9AuoEM8yKpbJGp5NXcc9E8/F0VGkHsm1a2K5E
+         mHfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729484550; x=1730089350;
+        d=1e100.net; s=20230601; t=1729484552; x=1730089352;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rF+TQYGEDP6+t2V2Dte+w8ImgbG43FZ1I4yOJyMV9jY=;
-        b=W+5AbBVbKc2m053wtKV8wHJ6AbPzwpXL7+76MAqHwogZH7LDl/DyoiMEyyMT1QqVRJ
-         kCH3XlzjJ91hBKiHQfWp/vJUGuV0yX/HO9U69WZ65EZ2Edok3CJcIZafGC61Dy8Ie7Gw
-         WVYswsbR694Y+5nxvDBeKgGRYU6usZXYCqJXIQoLpq68JrMkU5hENEYbk/AFPI10BImd
-         S8WbLIXe6KLRMb26Llf7b4Zh/Lc98b48aGQtgy6eRP41U0LKZQXZwsewDMJGT6fmG/gf
-         yBNiTsqE3NqzMmyj7RCCGH0o+vQ3KEIaVc7DddqvFquI793Rm2l/VqONv8de6YHrLtHd
-         rNjg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9H7b2zbKkfB9epaEVOADKXIMKaxl1EsiahC2mK5kA4YIMPCoocA0mPoPHX43r6zEURTq3gT5RwxW6aJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM0shx4qJDKub132dNPivZhmfPX9/DPH8T6hvKykPTXfcQ2CiH
-	C5ONLH3e7CvQx5vTwY5bIMxfZEKeQAwMW5o9WkKFNojUrxb8bgogqpnmlcb+h74MiMHMchpoagx
-	k/g==
-X-Google-Smtp-Source: AGHT+IEeIIe5Xg98lfzs9VJWYOJ07F6ek87y8El+d0cpjxlVvqWrNUTXfkoh0Qdzc1+S/vFogSJ2meafeF0=
+        bh=KJDQv9BsbNqPzAGIVHBRqdKJMgT8Ksx982Co8Pglskw=;
+        b=DQf+sRH/puU+CAb7JFpk1+AQ+IAUd19DiW0Buh3MIqHrNvHdO5XoN8Oo9C0Wz19TyL
+         E7FBYtN3ALqF1+0Iq/Bg3IRbyiSGyftCU2BiLxohlZXMzdHqXOlPQDyWcdxJCqZ9TnqX
+         irBsXF8S0VVCOejlhlyHJy0TNKdL21X8UaQMz2lwhvR9n7FNtwPW7Bre1jyef7vgA4ZT
+         3GiOPkjBatdJ86yttSo7QFSMwQUmDIvvanLQ2calWArVNwu1aPDJCUR9yypc3IiX14+y
+         PhOxKrZIRyp1UKV33IkU592WdtY45rA0Hmm+eo9WOH7grWEb4odTtyiREvhaVLPcEpFL
+         ywWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+RNqMB3cfA+kh1DhrbadJjmOQHeQRBMuybJTCyjHGmYjR45XvieEpoRxbC+gV9R3/77BIPDb+GTIWFdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yztjv8N2vLwylzlVRkix1KRGK6QLCx5VzjPeuf2GpLs491atrJy
+	OnOp7hSShYtTBHrI6ZFk03RkVoNMBxMnAKiQMD3Md1r6uv04V13Li/GcXlCfokNC5607NqjcHg6
+	K5w==
+X-Google-Smtp-Source: AGHT+IGEZGtfLFTAo+zlX7imoG9sifk97tpSM8aK6pq0aGlMOVsYXw6fthvIZGCv/EPFEWt1vDf5ZDyKg70=
 X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:1569:9ef4:20ab:abf9])
- (user=yuzhao job=sendgmr) by 2002:a25:800f:0:b0:e05:6532:166 with SMTP id
- 3f1490d57ef6-e2bb11cccaemr14439276.1.1729484550141; Sun, 20 Oct 2024 21:22:30
- -0700 (PDT)
-Date: Sun, 20 Oct 2024 22:22:15 -0600
+ (user=yuzhao job=sendgmr) by 2002:a05:690c:fc2:b0:6e2:70e:e82e with SMTP id
+ 00721157ae682-6e5bfc0c757mr2067897b3.6.1729484552429; Sun, 20 Oct 2024
+ 21:22:32 -0700 (PDT)
+Date: Sun, 20 Oct 2024 22:22:16 -0600
 In-Reply-To: <20241021042218.746659-1-yuzhao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241021042218.746659-1-yuzhao@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241021042218.746659-4-yuzhao@google.com>
-Subject: [PATCH v1 3/6] irqchip/gic-v3: support SGI broadcast
+Message-ID: <20241021042218.746659-5-yuzhao@google.com>
+Subject: [PATCH v1 4/6] arm64: broadcast IPIs to pause remote CPUs
 From: Yu Zhao <yuzhao@google.com>
 To: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
 	Marc Zyngier <maz@kernel.org>, Muchun Song <muchun.song@linux.dev>, 
@@ -84,76 +84,189 @@ Cc: Douglas Anderson <dianders@chromium.org>, Mark Rutland <mark.rutland@arm.com
 	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Yu Zhao <yuzhao@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-GIC v3 and later support SGI broadcast, i.e., the mode that routes
-interrupts to all PEs in the system excluding the local CPU.
+Broadcast pseudo-NMI IPIs to pause remote CPUs for a short period of
+time, and then reliably resume them when the local CPU exits critical
+sections that preclude the execution of remote CPUs.
 
-Supporting this mode can avoid looping through all the remote CPUs
-when broadcasting SGIs, especially for systems with 200+ CPUs. The
-performance improvement can be measured with the rest of this series
-booted with "hugetlb_free_vmemmap=on irqchip.gicv3_pseudo_nmi=1":
+A typical example of such critical sections is BBM on kernel PTEs.
+HugeTLB Vmemmap Optimization (HVO) on arm64 was disabled by
+commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
+HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the folllowing reason:
 
-  cd /sys/kernel/mm/hugepages/
-  echo 600 >hugepages-1048576kB/nr_hugepages
-  echo 2048kB >hugepages-1048576kB/demote_size
-  perf record -g -- bash -c "echo 600 >hugepages-1048576kB/demote"
+  This is deemed UNPREDICTABLE by the Arm architecture without a
+  break-before-make sequence (make the PTE invalid, TLBI, write the
+  new valid PTE). However, such sequence is not possible since the
+  vmemmap may be concurrently accessed by the kernel.
 
-         gic_ipi_send_mask()  bash sys time
-Before:  38.14%               0m10.513s
-After:    0.20%               0m5.132s
+Supporting BBM on kernel PTEs is one of the approaches that can make
+HVO theoretically safe on arm64.
+
+Note that it is still possible for the paused CPUs to perform
+speculative translations. Such translations would cause spurious
+kernel PFs, which should be properly handled by
+is_spurious_el1_translation_fault().
 
 Signed-off-by: Yu Zhao <yuzhao@google.com>
 ---
- drivers/irqchip/irq-gic-v3.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/smp.h |  3 ++
+ arch/arm64/kernel/smp.c      | 92 +++++++++++++++++++++++++++++++++---
+ 2 files changed, 88 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index ce87205e3e82..42c39385e1b9 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1394,9 +1394,20 @@ static void gic_send_sgi(u64 cluster_id, u16 tlist, unsigned int irq)
- 	gic_write_sgi1r(val);
+diff --git a/arch/arm64/include/asm/smp.h b/arch/arm64/include/asm/smp.h
+index 2510eec026f7..cffb0cfed961 100644
+--- a/arch/arm64/include/asm/smp.h
++++ b/arch/arm64/include/asm/smp.h
+@@ -133,6 +133,9 @@ bool cpus_are_stuck_in_kernel(void);
+ extern void crash_smp_send_stop(void);
+ extern bool smp_crash_stop_failed(void);
+ 
++void pause_remote_cpus(void);
++void resume_remote_cpus(void);
++
+ #endif /* ifndef __ASSEMBLY__ */
+ 
+ #endif /* ifndef __ASM_SMP_H */
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 3b3f6b56e733..68829c6de1b1 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -85,7 +85,12 @@ static int ipi_irq_base __ro_after_init;
+ static int nr_ipi __ro_after_init = NR_IPI;
+ static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
+ 
+-static bool crash_stop;
++enum {
++	SEND_STOP = BIT(0),
++	CRASH_STOP = BIT(1),
++};
++
++static unsigned long stop_in_progress;
+ 
+ static void ipi_setup(int cpu);
+ 
+@@ -917,6 +922,79 @@ static void __noreturn ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs
+ #endif
  }
  
-+static void gic_broadcast_sgi(unsigned int irq)
++static DEFINE_SPINLOCK(cpu_pause_lock);
++static cpumask_t paused_cpus;
++static cpumask_t resumed_cpus;
++
++static void pause_local_cpu(void)
 +{
-+	u64 val;
++	int cpu = smp_processor_id();
 +
-+	val = BIT(ICC_SGI1R_IRQ_ROUTING_MODE_BIT) | (irq << ICC_SGI1R_SGI_ID_SHIFT);
-+
-+	pr_devel("CPU %d: broadcasting SGI %u\n", smp_processor_id(), irq);
-+	gic_write_sgi1r(val);
++	cpumask_clear_cpu(cpu, &resumed_cpus);
++	/*
++	 * Paired with pause_remote_cpus() to confirm that this CPU not only
++	 * will be paused but also can be reliably resumed.
++	 */
++	smp_wmb();
++	cpumask_set_cpu(cpu, &paused_cpus);
++	/* paused_cpus must be set before waiting on resumed_cpus. */
++	barrier();
++	while (!cpumask_test_cpu(cpu, &resumed_cpus))
++		cpu_relax();
++	/* A typical example for sleep and wake-up functions. */
++	smp_mb();
++	cpumask_clear_cpu(cpu, &paused_cpus);
 +}
 +
- static void gic_ipi_send_mask(struct irq_data *d, const struct cpumask *mask)
- {
- 	int cpu;
-+	cpumask_t broadcast;
- 
- 	if (WARN_ON(d->hwirq >= 16))
- 		return;
-@@ -1407,6 +1418,13 @@ static void gic_ipi_send_mask(struct irq_data *d, const struct cpumask *mask)
- 	 */
- 	dsb(ishst);
- 
-+	cpumask_copy(&broadcast, cpu_present_mask);
-+	cpumask_clear_cpu(smp_processor_id(), &broadcast);
-+	if (cpumask_equal(&broadcast, mask)) {
-+		gic_broadcast_sgi(d->hwirq);
-+		goto done;
-+	}
++void pause_remote_cpus(void)
++{
++	cpumask_t cpus_to_pause;
 +
- 	for_each_cpu(cpu, mask) {
- 		u64 cluster_id = MPIDR_TO_SGI_CLUSTER_ID(gic_cpu_to_affinity(cpu));
- 		u16 tlist;
-@@ -1414,7 +1432,7 @@ static void gic_ipi_send_mask(struct irq_data *d, const struct cpumask *mask)
- 		tlist = gic_compute_target_list(&cpu, mask, cluster_id);
- 		gic_send_sgi(cluster_id, tlist, d->hwirq);
- 	}
--
-+done:
- 	/* Force the above writes to ICC_SGI1R_EL1 to be executed */
- 	isb();
- }
++	lockdep_assert_cpus_held();
++	lockdep_assert_preemption_disabled();
++
++	cpumask_copy(&cpus_to_pause, cpu_online_mask);
++	cpumask_clear_cpu(smp_processor_id(), &cpus_to_pause);
++
++	spin_lock(&cpu_pause_lock);
++
++	WARN_ON_ONCE(!cpumask_empty(&paused_cpus));
++
++	smp_cross_call(&cpus_to_pause, IPI_CPU_STOP_NMI);
++
++	while (!cpumask_equal(&cpus_to_pause, &paused_cpus))
++		cpu_relax();
++	/*
++	 * Paired with pause_local_cpu() to confirm that all CPUs not only will
++	 * be paused but also can be reliably resumed.
++	 */
++	smp_rmb();
++	WARN_ON_ONCE(cpumask_intersects(&cpus_to_pause, &resumed_cpus));
++
++	spin_unlock(&cpu_pause_lock);
++}
++
++void resume_remote_cpus(void)
++{
++	cpumask_t cpus_to_resume;
++
++	lockdep_assert_cpus_held();
++	lockdep_assert_preemption_disabled();
++
++	cpumask_copy(&cpus_to_resume, cpu_online_mask);
++	cpumask_clear_cpu(smp_processor_id(), &cpus_to_resume);
++
++	spin_lock(&cpu_pause_lock);
++
++	cpumask_setall(&resumed_cpus);
++	/* A typical example for sleep and wake-up functions. */
++	smp_mb();
++	while (cpumask_intersects(&cpus_to_resume, &paused_cpus))
++		cpu_relax();
++
++	spin_unlock(&cpu_pause_lock);
++}
++
+ static void arm64_backtrace_ipi(cpumask_t *mask)
+ {
+ 	__ipi_send_mask(ipi_desc[IPI_CPU_BACKTRACE], mask);
+@@ -970,7 +1048,9 @@ static void do_handle_IPI(int ipinr)
+ 
+ 	case IPI_CPU_STOP:
+ 	case IPI_CPU_STOP_NMI:
+-		if (IS_ENABLED(CONFIG_KEXEC_CORE) && crash_stop) {
++		if (!test_bit(SEND_STOP, &stop_in_progress)) {
++			pause_local_cpu();
++		} else if (test_bit(CRASH_STOP, &stop_in_progress)) {
+ 			ipi_cpu_crash_stop(cpu, get_irq_regs());
+ 			unreachable();
+ 		} else {
+@@ -1142,7 +1222,6 @@ static inline unsigned int num_other_online_cpus(void)
+ 
+ void smp_send_stop(void)
+ {
+-	static unsigned long stop_in_progress;
+ 	cpumask_t mask;
+ 	unsigned long timeout;
+ 
+@@ -1154,7 +1233,7 @@ void smp_send_stop(void)
+ 		goto skip_ipi;
+ 
+ 	/* Only proceed if this is the first CPU to reach this code */
+-	if (test_and_set_bit(0, &stop_in_progress))
++	if (test_and_set_bit(SEND_STOP, &stop_in_progress))
+ 		return;
+ 
+ 	/*
+@@ -1230,12 +1309,11 @@ void crash_smp_send_stop(void)
+ 	 * This function can be called twice in panic path, but obviously
+ 	 * we execute this only once.
+ 	 *
+-	 * We use this same boolean to tell whether the IPI we send was a
++	 * We use the CRASH_STOP bit to tell whether the IPI we send was a
+ 	 * stop or a "crash stop".
+ 	 */
+-	if (crash_stop)
++	if (test_and_set_bit(CRASH_STOP, &stop_in_progress))
+ 		return;
+-	crash_stop = 1;
+ 
+ 	smp_send_stop();
+ 
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
