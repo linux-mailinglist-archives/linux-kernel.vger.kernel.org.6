@@ -1,169 +1,327 @@
-Return-Path: <linux-kernel+bounces-373749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2775A9A5C0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6365C9A5C02
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7915BB213BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B3011C2153D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CC31D0F76;
-	Mon, 21 Oct 2024 07:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2B01D0F52;
+	Mon, 21 Oct 2024 07:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="wkRONGB/"
-Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X3IEq7g5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD6D9454
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Oct 2024 07:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ED51D0E3B;
+	Mon, 21 Oct 2024 07:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729494300; cv=none; b=k19uxXFPCcUdCLulDblodUW6D/bLGSfdS3OGKfORF72uGKEokhUksfgkdTl+8iBiQzFiLAVlzgQmdvc08AOhyzWGFsi9cCkR2dpNeZPXMnXr4jQ54a/50tOnxNApVj9KldyYV7neYRYySEGCxivHor7rGyDKQUAlYKzoA21Pglo=
+	t=1729494011; cv=none; b=eqg90rDWyQeuvMY3mi6sMgsXFzC02+j34C1Dd3fDD3RFUX9V1LblS6rLCzIpTxDiB5+5oA49PqPZZ2fVt1Nyk4ovTLdAgR9fycSW4B/W2024gaXg1t8yBueI6Wi8ieTKAtxCHgY4XXToBTpSAa2QoZe15ZWPtXBnAEwrg41MljQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729494300; c=relaxed/simple;
-	bh=B820vkK+6CCW1slGtSQI79P+5XHLgJDW15iLML5/u2c=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=DHa4Tjvq33h2hIU/wFk3UKqnd5FXqQj1/YxMxQxNjp+yTM1cMYXralnBK5siQ9tiSHXVVuk6ytTMtGTaFO4I0g0WKU07IveAdElKiORFNZG8HWAceJ4sRdZ9h/AjMMGqaY3FEpXjmhfbWgU+SXTQRyO1dzGNwj+fgFl5OWqn/2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=wkRONGB/; arc=none smtp.client-ip=203.205.221.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1729493988;
-	bh=144/N2ZzvXSuwNAqNOt4nx8XXQ2rHmaeMBaqchMXVdA=;
-	h=From:To:Cc:Subject:Date;
-	b=wkRONGB/bV01UhZ33+QuTLHREskDPCgNj99F/jrYHYhq8grD9LilYbU1DELrr2HCI
-	 Q1FqZgND1XOtqcYJ+VQBH2x2ier/jZdvH9WdGtj/GFT7kDN1BCz1wueoVeESaVwFq9
-	 K5OIM13hd3fTAY1ecv2XxRrPMcUcMwyHfda1UhC0=
-Received: from xiaopei-pc.. ([111.48.58.13])
-	by newxmesmtplogicsvrszgpuc1-0.qq.com (NewEsmtp) with SMTP
-	id EEE8CCD0; Mon, 21 Oct 2024 14:59:46 +0800
-X-QQ-mid: xmsmtpt1729493986t433b4fs9
-Message-ID: <tencent_C1486E2FA393F0B97DD7D308336E262A3407@qq.com>
-X-QQ-XMAILINFO: MmCmH9jyqHC2n4gG4e7gexqW8tzjEJFq8/qXrF9Q5PcqxZ/kkEeOXdO0dcFAcp
-	 j+u/BFL5N2Hv2NVoVLOa4z+Qu24vEpC4ifFoKFQFWs31RoYGfEnBkCxz5A1bIuvcHWSdEi3Ow9HR
-	 S9hST+dKsS5JE2tL/UAoob/GjjVmmDQlfMHYPUc91XBgbFpk74znjCk5nC9fFYcRILVp5xHC8j6E
-	 zntgtOlmeufc542czi9/QZwIRAV+clfazkXQCUtX1hOtgCJCVY+UlZpRnawpuAPxEM5Ss1ntaHda
-	 oerT/EjpvTQfrJr/Lx9BFPvMWMdRLg5FSv6/wsrLelY7w9IbvGKITVPMyUj85NkZp/4CBnMpqeyg
-	 0LCXv6GEA00iZCQpEbxW0UChafHTzlwCMuTu4PCg7bacYxrL4KOGhEvlNI/ovrevpnT85wVIwdaZ
-	 bTa9Lb4VOSv6jLusnuilKKihauFWjwg8bk/M8fcvvsVX11smEGGOQG9uWYj9rtRCBAOe3IEOBGzh
-	 zS1iownnWooBR2aSXfMq6OjCqe4cXgX9s2L/vrGORdZmg6ZriAnEnBt71tnQcHyxcxjZ1eQUDp6X
-	 db4vSeeEtbxLTtQRQee++pHbh5k92pAtJjHO9T6IWs8lPAznDML0jUtAbdj0KcHWBQhpSIWsz383
-	 syU+xgFmVzRWrdkZK+UC9KxypdRgcRDwVEbd59WjNl9mN/G0y+psLgo/4gh2OkzU+YUcmlYsV10b
-	 bmr6izkA7ot5YIwFZcgOHFwiGdEPWGtlP8G4Gg26wrdQBZm2zMn1yfHOkGR48u7P6V/LHzNTaGIo
-	 NmxU5xofKRcRWs0IUbethWbNARqUPcba+8MhlefES1Q+bjYOj8D8rjMh3iIf36Xmn+jWLyJkvhBQ
-	 Cl+mb+MEUCwoJ6iG3BqCXAwZUYg0yfT73nwdqiVNvGiU/3hXjoluIaymfiX2+fnYhelwJPIF5SQ5
-	 QRprkaHNUoxrC3/HUYpBvBwBbtHEv19CGKGBxEAMQPeFp4oAmVhKtsc1UIaB6gGZiWcd86UsNK2z
-	 rLRa9H4ofITwD9skK4yrsmUIBwU2WaGRrzA2JS2oUJbsV9CqtvfKjjftDOfXx9gtlvjpSpB3R5OO
-	 Et8aNv
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: xiaopeitux@foxmail.com
-To: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	surenb@google.com,
-	yuzhao@google.com
-Cc: xiaopei01@kylinos.cn,
-	gehao@kylinso.cn,
-	xiongxin@kylinos.cn
-Subject: [PATCH] slub/slub_kunit:fix a panic due to __kmalloc_cache_noprof incorretly use
-Date: Mon, 21 Oct 2024 14:59:42 +0800
-X-OQ-MSGID: <c9e26738d7ecb6f1b69ee5f400cc6c3ac343f19c.1729491701.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729494011; c=relaxed/simple;
+	bh=uZiC1BvATmqQezpBAZ1SGsO/gzmmBPKTJ3tla1IXToc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=exeQiKnOp0GvoKwZZ6RAAV5crrkTkvvE0AT8Np4cZz/S/5GYb7c5dJ984XOdraK1tJ8ifKVW86+dLY94xuPUzlLzTqekXDVHm9TM1WAfKJrzqXWrDmo9TRSnGvDTIZB7lpz2LngeFBK5MyeHDb7YC/3PukyNvMHMa4/VHeMX0AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X3IEq7g5; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729494010; x=1761030010;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uZiC1BvATmqQezpBAZ1SGsO/gzmmBPKTJ3tla1IXToc=;
+  b=X3IEq7g5xfKjk2JXCJmHTJRQybtRly9sgMqhJh0lyZvN70uHBtvn+ZsL
+   JzQdmwGEI2IzUQjg6YMaOn2A3G9eOVoe73+2InGdyouYOHH3AbHQzLbte
+   cksi2CR8ouypl55ZrNZ2AyLiRH2uxSU+++k2qDQK5MyPkJqrCeeEPO9J7
+   ZaPrQMXycd+LNVckaOy8xsj3WzUlLSUDMkWhXi6Yy+vpCpQ3jWFTZ7sUl
+   1ybLZiwALLb0wo69j3C3WmVKdWeqOzdV5fUusmMpP1qw9+dT5bpcJ/xu/
+   ximCXrHKgNHvA2lMarkT/X4yx9jtQHQNRjpzE5HsOVh7iiMcvNRvQsSyD
+   w==;
+X-CSE-ConnectionGUID: okWU2jmCR8KTf5VEcoloDg==
+X-CSE-MsgGUID: s8GsETKzQQyEVoS4rSOA5g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11231"; a="29082046"
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="29082046"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 00:00:09 -0700
+X-CSE-ConnectionGUID: QUtKDTlTSOeMftKFZPwaXw==
+X-CSE-MsgGUID: mmzkR5jKRMK2mrvukQ9WIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,220,1725346800"; 
+   d="scan'208";a="79397480"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 21 Oct 2024 00:00:06 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 857E612B; Mon, 21 Oct 2024 10:00:05 +0300 (EEST)
+Date: Mon, 21 Oct 2024 10:00:05 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Ferry Toth <fntoth@gmail.com>
+Subject: Re: [PATCH v1 2/3] platform/x86: intel_scu_ipc: Simplify code with
+ cleanup helpers
+Message-ID: <20241021070005.GW275077@black.fi.intel.com>
+References: <20241016115033.858574-1-andriy.shevchenko@linux.intel.com>
+ <20241016115033.858574-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241016115033.858574-3-andriy.shevchenko@linux.intel.com>
 
-From: Pei Xiao <xiaopei01@kylinos.cn>
+On Wed, Oct 16, 2024 at 02:48:25PM +0300, Andy Shevchenko wrote:
+> Use macros defined in linux/cleanup.h to automate resource lifetime
+> control in the driver.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/platform/x86/intel_scu_ipc.c | 102 ++++++++++++---------------
+>  1 file changed, 44 insertions(+), 58 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
+> index 290b38627542..ffb0a2524388 100644
+> --- a/drivers/platform/x86/intel_scu_ipc.c
+> +++ b/drivers/platform/x86/intel_scu_ipc.c
+> @@ -13,6 +13,7 @@
+>   * along with other APIs.
+>   */
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+>  #include <linux/errno.h>
+> @@ -99,23 +100,22 @@ static struct class intel_scu_ipc_class = {
+>   */
+>  struct intel_scu_ipc_dev *intel_scu_ipc_dev_get(void)
+>  {
+> -	struct intel_scu_ipc_dev *scu = NULL;
+> +	guard(mutex)(&ipclock);
+>  
+> -	mutex_lock(&ipclock);
+>  	if (ipcdev) {
+>  		get_device(&ipcdev->dev);
+> +
 
-'modprobe slub_kunit',will have a panic.The root cause is that
-__kmalloc_cache_noprof was directly ,which resulted in no alloc_tag
-being allocated.This caused current->alloc_tag to be null,leading to
-a null pointer dereference in alloc_tag_ref_set.
+unintended whitespace change?
 
-Here is the log for the panic:
-[   74.779373][ T2158] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
-[   74.780130][ T2158] Mem abort info:
-[   74.780406][ T2158]   ESR = 0x0000000096000004
-[   74.780756][ T2158]   EC = 0x25: DABT (current EL), IL = 32 bits
-[   74.781225][ T2158]   SET = 0, FnV = 0
-[   74.781529][ T2158]   EA = 0, S1PTW = 0
-[   74.781836][ T2158]   FSC = 0x04: level 0 translation fault
-[   74.782288][ T2158] Data abort info:
-[   74.782577][ T2158]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-[   74.783068][ T2158]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[   74.783533][ T2158]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[   74.784010][ T2158] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000105f34000
-[   74.784586][ T2158] [0000000000000020] pgd=0000000000000000, p4d=0000000000000000
-[   74.785293][ T2158] Internal error: Oops: 0000000096000004 [#1] SMP
-[   74.785805][ T2158] Modules linked in: slub_kunit kunit ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_mangle 4
-[   74.790661][ T2158] CPU: 0 UID: 0 PID: 2158 Comm: kunit_try_catch Kdump: loaded Tainted: G        W        N 6.12.0-rc3+ #2
-[   74.791535][ T2158] Tainted: [W]=WARN, [N]=TEST
-[   74.791889][ T2158] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-[   74.792479][ T2158] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   74.793101][ T2158] pc : alloc_tagging_slab_alloc_hook+0x120/0x270
-[   74.793607][ T2158] lr : alloc_tagging_slab_alloc_hook+0x120/0x270
+>  		/*
+>  		 * Prevent the IPC provider from being unloaded while it
+>  		 * is being used.
+>  		 */
+> -		if (!try_module_get(ipcdev->owner))
+> -			put_device(&ipcdev->dev);
+> -		else
+> -			scu = ipcdev;
+> +		if (try_module_get(ipcdev->owner))
+> +			return ipcdev;
+> +
+> +		put_device(&ipcdev->dev);
+>  	}
+>  
+> -	mutex_unlock(&ipclock);
+> -	return scu;
+> +	return NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(intel_scu_ipc_dev_get);
+>  
+> @@ -289,12 +289,11 @@ static int pwr_reg_rdwr(struct intel_scu_ipc_dev *scu, u16 *addr, u8 *data,
+>  
+>  	memset(cbuf, 0, sizeof(cbuf));
+>  
+> -	mutex_lock(&ipclock);
+> +	guard(mutex)(&ipclock);
+> +
+>  	scu = intel_scu_ipc_get(scu);
+> -	if (IS_ERR(scu)) {
+> -		mutex_unlock(&ipclock);
+> +	if (IS_ERR(scu))
+>  		return PTR_ERR(scu);
+> -	}
+>  
+>  	for (nc = 0; nc < count; nc++, offset += 2) {
+>  		cbuf[offset] = addr[nc];
+> @@ -319,13 +318,14 @@ static int pwr_reg_rdwr(struct intel_scu_ipc_dev *scu, u16 *addr, u8 *data,
+>  	}
+>  
+>  	err = intel_scu_ipc_check_status(scu);
+> -	if (!err) { /* Read rbuf */
+> -		for (nc = 0, offset = 0; nc < 4; nc++, offset += 4)
+> -			wbuf[nc] = ipc_data_readl(scu, offset);
+> -		memcpy(data, wbuf, count);
+> -	}
 
-[   74.794095][ T2158] sp : ffff800084d33cd0
-[   74.794418][ T2158] x29: ffff800084d33cd0 x28: 0000000000000000 x27: 0000000000000000
-[   74.795095][ T2158] x26: 0000000000000000 x25: 0000000000000012 x24: ffff80007b30e314
-[   74.795822][ T2158] x23: ffff000390ff6f10 x22: 0000000000000000 x21: 0000000000000088
-[   74.796555][ T2158] x20: ffff000390285840 x19: fffffd7fc3ef7830 x18: ffffffffffffffff
-[   74.797283][ T2158] x17: ffff8000800e63b4 x16: ffff80007b33afc4 x15: ffff800081654c00
-[   74.798011][ T2158] x14: 0000000000000000 x13: 205d383531325420 x12: 5b5d383734363537
-[   74.798744][ T2158] x11: ffff800084d337e0 x10: 000000000000005d x9 : 00000000ffffffd0
-[   74.799476][ T2158] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008219d188 x6 : c0000000ffff7fff
-[   74.800206][ T2158] x5 : ffff0003fdbc9208 x4 : ffff800081edd188 x3 : 0000000000000001
-[   74.800932][ T2158] x2 : 0beaa6dee1ac5a00 x1 : 0beaa6dee1ac5a00 x0 : ffff80037c2cb000
-[   74.801656][ T2158] Call trace:
-[   74.801954][ T2158]  alloc_tagging_slab_alloc_hook+0x120/0x270
-[   74.802494][ T2158]  __kmalloc_cache_noprof+0x148/0x33c
-[   74.802976][ T2158]  test_kmalloc_redzone_access+0x4c/0x104 [slub_kunit]
-[   74.803607][ T2158]  kunit_try_run_case+0x70/0x17c [kunit]
-[   74.804124][ T2158]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
-[   74.804768][ T2158]  kthread+0x10c/0x118
-[   74.805141][ T2158]  ret_from_fork+0x10/0x20
-[   74.805540][ T2158] Code: b9400a80 11000400 b9000a80 97ffd858 (f94012d3)
-[   74.806176][ T2158] SMP: stopping secondary CPUs
-[   74.808130][ T2158] Starting crashdump kernel...
+Here you changed also the check to be for if (err) instead of (!err) so
+at least mention why you did these at the same time you did the cleanup
+change. It is fine by me but good to mention in the commit message.
 
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
----
- include/linux/slab.h | 1 +
- lib/slub_kunit.c     | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+> -	mutex_unlock(&ipclock);
+> -	return err;
+> +	if (err)
+> +		return err;
+> +
+> +	for (nc = 0, offset = 0; nc < 4; nc++, offset += 4)
+> +		wbuf[nc] = ipc_data_readl(scu, offset);
+> +	memcpy(data, wbuf, count);
+> +
+> +	return 0;
+>  }
+>  
+>  /**
+> @@ -446,17 +446,15 @@ int intel_scu_ipc_dev_simple_command(struct intel_scu_ipc_dev *scu, int cmd,
+>  	u32 cmdval;
+>  	int err;
+>  
+> -	mutex_lock(&ipclock);
+> +	guard(mutex)(&ipclock);
+> +
+>  	scu = intel_scu_ipc_get(scu);
+> -	if (IS_ERR(scu)) {
+> -		mutex_unlock(&ipclock);
+> +	if (IS_ERR(scu))
+>  		return PTR_ERR(scu);
+> -	}
+>  
+>  	cmdval = sub << 12 | cmd;
+>  	ipc_command(scu, cmdval);
+>  	err = intel_scu_ipc_check_status(scu);
+> -	mutex_unlock(&ipclock);
+>  	if (err)
+>  		dev_err(&scu->dev, "IPC command %#x failed with %d\n", cmdval, err);
+>  	return err;
+> @@ -485,18 +483,17 @@ int intel_scu_ipc_dev_command_with_size(struct intel_scu_ipc_dev *scu, int cmd,
+>  {
+>  	size_t outbuflen = DIV_ROUND_UP(outlen, sizeof(u32));
+>  	size_t inbuflen = DIV_ROUND_UP(inlen, sizeof(u32));
+> -	u32 cmdval, inbuf[4] = {};
+> +	u32 cmdval, inbuf[4] = {}, outbuf[4] = {};
+>  	int i, err;
+>  
+>  	if (inbuflen > 4 || outbuflen > 4)
+>  		return -EINVAL;
+>  
+> -	mutex_lock(&ipclock);
+> +	guard(mutex)(&ipclock);
+> +
+>  	scu = intel_scu_ipc_get(scu);
+> -	if (IS_ERR(scu)) {
+> -		mutex_unlock(&ipclock);
+> +	if (IS_ERR(scu))
+>  		return PTR_ERR(scu);
+> -	}
+>  
+>  	memcpy(inbuf, in, inlen);
+>  	for (i = 0; i < inbuflen; i++)
+> @@ -505,20 +502,17 @@ int intel_scu_ipc_dev_command_with_size(struct intel_scu_ipc_dev *scu, int cmd,
+>  	cmdval = (size << 16) | (sub << 12) | cmd;
+>  	ipc_command(scu, cmdval);
+>  	err = intel_scu_ipc_check_status(scu);
+> -
+> -	if (!err) {
+> -		u32 outbuf[4] = {};
+> -
+> -		for (i = 0; i < outbuflen; i++)
+> -			outbuf[i] = ipc_data_readl(scu, 4 * i);
+> -
+> -		memcpy(out, outbuf, outlen);
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 10a971c2bde3..0149d36cd311 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -827,6 +827,7 @@ void *__kmalloc_cache_noprof(struct kmem_cache *s, gfp_t flags, size_t size)
- void *__kmalloc_cache_node_noprof(struct kmem_cache *s, gfp_t gfpflags,
- 				  int node, size_t size)
- 				__assume_kmalloc_alignment __alloc_size(4);
-+#define kmalloc_cache(...)	alloc_hooks(__kmalloc_cache_noprof(__VA_ARGS__))
- 
- void *__kmalloc_large_noprof(size_t size, gfp_t flags)
- 				__assume_page_alignment __alloc_size(1);
-diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
-index 80e39f003344..4bf38f52dbbd 100644
---- a/lib/slub_kunit.c
-+++ b/lib/slub_kunit.c
-@@ -141,7 +141,7 @@ static void test_kmalloc_redzone_access(struct kunit *test)
- {
- 	struct kmem_cache *s = test_kmem_cache_create("TestSlub_RZ_kmalloc", 32,
- 				SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_ZONE);
--	u8 *p = __kmalloc_cache_noprof(s, GFP_KERNEL, 18);
-+	u8 *p = kmalloc_cache(s, GFP_KERNEL, 18);
- 
- 	kasan_disable_current();
- 
--- 
-2.34.1
+Same here.
 
+> +	if (err) {
+> +		dev_err(&scu->dev, "IPC command %#x failed with %d\n", cmdval, err);
+> +		return err;
+>  	}
+>  
+> -	mutex_unlock(&ipclock);
+> -	if (err)
+> -		dev_err(&scu->dev, "IPC command %#x failed with %d\n", cmdval, err);
+> -	return err;
+> +	for (i = 0; i < outbuflen; i++)
+> +		outbuf[i] = ipc_data_readl(scu, 4 * i);
+> +
+> +	memcpy(out, outbuf, outlen);
+> +
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(intel_scu_ipc_dev_command_with_size);
+>  
+> @@ -572,18 +566,15 @@ __intel_scu_ipc_register(struct device *parent,
+>  	struct intel_scu_ipc_dev *scu;
+>  	void __iomem *ipc_base;
+>  
+> -	mutex_lock(&ipclock);
+> +	guard(mutex)(&ipclock);
+> +
+>  	/* We support only one IPC */
+> -	if (ipcdev) {
+> -		err = -EBUSY;
+> -		goto err_unlock;
+> -	}
+> +	if (ipcdev)
+> +		return ERR_PTR(-EBUSY);
+>  
+>  	scu = kzalloc(sizeof(*scu), GFP_KERNEL);
+> -	if (!scu) {
+> -		err = -ENOMEM;
+> -		goto err_unlock;
+> -	}
+> +	if (!scu)
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	scu->owner = owner;
+>  	scu->dev.parent = parent;
+> @@ -621,13 +612,11 @@ __intel_scu_ipc_register(struct device *parent,
+>  	err = device_register(&scu->dev);
+>  	if (err) {
+>  		put_device(&scu->dev);
+> -		goto err_unlock;
+> +		return ERR_PTR(err);
+>  	}
+>  
+>  	/* Assign device at last */
+>  	ipcdev = scu;
+> -	mutex_unlock(&ipclock);
+> -
+>  	return scu;
+>  
+>  err_unmap:
+> @@ -636,9 +625,6 @@ __intel_scu_ipc_register(struct device *parent,
+>  	release_mem_region(scu_data->mem.start, resource_size(&scu_data->mem));
+>  err_free:
+>  	kfree(scu);
+> -err_unlock:
+> -	mutex_unlock(&ipclock);
+> -
+>  	return ERR_PTR(err);
+>  }
+>  EXPORT_SYMBOL_GPL(__intel_scu_ipc_register);
+> @@ -652,12 +638,12 @@ EXPORT_SYMBOL_GPL(__intel_scu_ipc_register);
+>   */
+>  void intel_scu_ipc_unregister(struct intel_scu_ipc_dev *scu)
+>  {
+> -	mutex_lock(&ipclock);
+> +	guard(mutex)(&ipclock);
+> +
+>  	if (!WARN_ON(!ipcdev)) {
+>  		ipcdev = NULL;
+>  		device_unregister(&scu->dev);
+>  	}
+> -	mutex_unlock(&ipclock);
+>  }
+>  EXPORT_SYMBOL_GPL(intel_scu_ipc_unregister);
+>  
+> -- 
+> 2.43.0.rc1.1336.g36b5255a03ac
 
