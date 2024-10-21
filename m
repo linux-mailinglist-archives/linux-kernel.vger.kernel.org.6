@@ -1,178 +1,98 @@
-Return-Path: <linux-kernel+bounces-373814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-373815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36E69A5D24
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:32:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4749A5D27
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 09:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B46B281074
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:32:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFABAB236B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 07:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6B01D5AAD;
-	Mon, 21 Oct 2024 07:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880191D27A8;
+	Mon, 21 Oct 2024 07:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGCqNK51"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hEkm3zep"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F356319408B;
-	Mon, 21 Oct 2024 07:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFD71E0B6B;
+	Mon, 21 Oct 2024 07:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729495962; cv=none; b=NNN59+ISZxTiED1mByD4rT8bg4IZh9bvBqHg8Rq4REheN6tjHTN2BkbpSSBJauTn1qofnlepsmtreSsgG/Eo1asKqR/mGg5oiJ2Pz3t/13DXuuqlYVoDfCdmBvoPW4mfOpDvkiZQ7+K3Dk+pKVxdHwlNv3NAOPnf9TsxfuF9Gjg=
+	t=1729495991; cv=none; b=E6rw8+dUlEA/F43cRuu6rgJznD45dfS02Z7bvE3ZVYoifq5Gx/tpscN14OtDpqoccWAcveMxr6cQr9jXh25UswlHwbfwKkWxb5aIucEas+h2nybCdauVOEAzuT+lFrJfchmKw6n2iEWtt5zzD7+6daCMHzXf8VPoWtnnkNKvTTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729495962; c=relaxed/simple;
-	bh=TF91/lByhMW1CGFwlu0+quAwto3mDL8Vghp7zpYZlWI=;
+	s=arc-20240116; t=1729495991; c=relaxed/simple;
+	bh=4TW3dWixNNFpQmCA9x5rxesnC5/3OcngBRf8IQiTnNQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7i1Xp1/xvna2HoUHPQMYUNRbEOI4K3Hb9PKg4t3Pydv6+aGaEsYAyN1MgSY8x6hFp4hjO2OCYQ45ZkxE3mv2A5FmhrFYVSjntSGk03t8DlDtr3JnDQpemJywPVUfdqQvtmzFDcqjPf0DQ/tSpUtEwy9XDQOBJ9J/Cs4XOAvtO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGCqNK51; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C45C4CEC3;
-	Mon, 21 Oct 2024 07:32:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=V3Y2w3uS+noBIzcbV/ZZwccpR+E1xymAc8xFJHXpJNiMJQw2KuhG/ggjWtHmb04IyKW3330rCyTSW5SNEzDRdAA1sygiJ4B0t3XTwmgSf/RNpziTBlWYObsHWZBjdtk1EgUdbNLIO7ilYY9PhiHlS6Z6cNZEJnnfAeEDZruL3kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hEkm3zep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43732C4CEC3;
+	Mon, 21 Oct 2024 07:33:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729495961;
-	bh=TF91/lByhMW1CGFwlu0+quAwto3mDL8Vghp7zpYZlWI=;
+	s=k20201202; t=1729495991;
+	bh=4TW3dWixNNFpQmCA9x5rxesnC5/3OcngBRf8IQiTnNQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DGCqNK51ypchKfZEz0VWoRQ8Hvxon5nbFgCKUov3MvsJeZq59mp7SYFtvbRddXYHC
-	 /khg/uZDLWoLcpYV12cRNmiofSa3knkD74KAEUv0/NrGeoI4yF6aP68TDibjAWrAfj
-	 PZeP2a7nVr8l8kSEOIIwRQnKDQaH4HswxOMOY2fMWF53zd71py6aqYDYIrba5mO7X7
-	 qfU10geLX7aGNATPR5GOsNGA7QGYWK3W1hqnYOnlz1ZwTqS+fOCPp21wCP4/IagYYf
-	 3KYbb+ER0ps4Zi+fwnFDTbq+yMntdy+hXJg3tiqSleK5QXO4QarCJPEs+cU6KaJIcv
-	 ceblDQWFcCnhA==
-Date: Mon, 21 Oct 2024 09:32:37 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	alexandre.belloni@bootlin.com, magnus.damm@gmail.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v4 03/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
- Document VBATTB
-Message-ID: <m4kxv7cba6qd67ahhh4cal6sgieohgow6f3tdvqoxvheemtp4j@gpxbkxd3tvat>
-References: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com>
- <20241019084738.3370489-4-claudiu.beznea.uj@bp.renesas.com>
+	b=hEkm3zepBCBryFT3g9Jo9z9pCYg1j1LEX8VwvV6DWA3eqeh2pvPbBaqfDvQcyRnu8
+	 yRcpvZMStsaWjpY6BbJm0VspYPb5GnVl9CL7681pew4XiNwY99jy9IAa39UizeTMID
+	 IimIiV2p0oTwG5uvGEUtFdleVRFe3NyN4jYoiYKZyLDghS8SeKDA5u7dXIryq7wbkx
+	 HbfTf5eq6npTWYbxWbckCIYSHMWYXv0Cdimf9gTnWcC97H8i2Nlp/Ti0frr0bfx0fH
+	 7P3r9sT0hKFq028Qw40L3HgVsv/cVWo0rznIPv+qTwNFqZ55DDOIagbWsLvyq3aaB5
+	 33ecVGmHttTPw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t2mum-000000001xk-2Lu1;
+	Mon, 21 Oct 2024 09:33:20 +0200
+Date: Mon, 21 Oct 2024 09:33:20 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Fix
+ X1E80100 resets entries
+Message-ID: <ZxYDwAUNV5Jhar4I@hovoldconsulting.com>
+References: <20241018-phy-qcom-qmp-pcie-fix-x1e80100-gen4x4-resets-v1-1-f543267a2dd8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241019084738.3370489-4-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241018-phy-qcom-qmp-pcie-fix-x1e80100-gen4x4-resets-v1-1-f543267a2dd8@linaro.org>
 
-On Sat, Oct 19, 2024 at 11:47:29AM +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC,
-> the tamper detector and a small general usage memory of 128B.
-> 
-> The VBATTB controller controls the clock for the RTC on the Renesas
-> RZ/G3S. The HW block diagram for the clock logic is as follows:
-> 
->            +----------+ XC   `\
-> RTXIN  --->|          |----->| \       +----+  VBATTCLK
->            | 32K clock|      |  |----->|gate|----------->
-> 	   | osc      | XBYP |  |      +----+
+On Fri, Oct 18, 2024 at 04:37:36PM +0300, Abel Vesa wrote:
+> The PCIe 6a PHY on X1E80100 uses both resets in 4-lanes mode as well.
 
-Messed indent. Switch to spaces.
+Again, this is a bit misleading as PCIe6a is using the
+'qcom,x1e80100-qmp-gen4x4-pcie-phy' compatible in both 4-lane and 2-lane
+mode even if the original dtsi got this wrong.
 
-> RTXOUT --->|          |----->| /
->            +----------+      ,/
+PCIe6b will be using 'qcom,x1e80100-qmp-gen4x2-pcie-phy' as that one is
+a 2-lane PHY.
+
+Perhaps you can rephrase this so that it doesn't sound like you are
+using compatibles to configure PCIe6a?
+
+> So fix the resets entries for it by adding the Gen4 4-lanes compatible
+> alongside the 2-lanes one.
 > 
-> One could connect as input to this HW block either a crystal or
-> an external clock device.
-> 
-> After discussions w/ Stephen Boyd the clock tree associated with this
-> hardware block was exported in Linux as:
-> 
-> input-xtal
->   xbyp
->   xc
->      mux
->         vbattclk
-> 
-> where:
-> - input-xtal is the input clock (connected to RTXIN, RTXOUT pins)
-> - xc, xbyp are mux inputs
-> - mux is the internal mux
-> - vbattclk is the gate clock that feeds in the end the RTC
-> 
-> to allow selecting the input of the MUX though assigned-clock DT
-> properties, using the already existing clock drivers and avoid adding
-> other DT properties.
-> 
-> This allows select the input of the mux based on the type of the
-> connected input clock:
-> - if the 32768 crystal is connected as input for the VBATTB,
->   the input of the mux should be xc
-> - if an external clock device is connected as input for the VBATTB the
->   input of the mux should be xbyp
+> Fixes: 0c5f4d23f776 ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100 QMP PCIe PHY Gen4 x4")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202410182029.n2zPkuGx-lkp@intel.com/
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-> +  clocks:
-> +    items:
-> +      - description: VBATTB module clock
-> +      - description: RTC input clock (crystal or external clock device)
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bclk
-> +      - const: rtx
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    items:
-> +      - description: VBATTB module reset
-> +
-> +  quartz-load-femtofarads:
-> +    description: load capacitance of the on board crystal
-> +    enum: [ 4000, 7000, 9000, 12500 ]
+Patch itself looks good.
 
-It's not required, so:
-default: ?
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - power-domains
-> +  - resets
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
-> +    #include <dt-bindings/clock/renesas,r9a08g045-vbattb.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    clock-controller@1005c000 {
-> +        compatible = "renesas,r9a08g045-vbattb";
-> +        reg = <0x1005c000 0x1000>;
-> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
-> +        clock-names = "bclk", "rtx";
-> +        assigned-clocks = <&vbattb VBATTB_MUX>;
-> +        assigned-clock-parents = <&vbattb VBATTB_XC>;
-
-Why are you configuring internal clocks to internal parents? That's part
-internal to this device, not DTS... or at least some explanation would
-be useful.
-
-Best regards,
-Krzysztof
-
+Johan
 
