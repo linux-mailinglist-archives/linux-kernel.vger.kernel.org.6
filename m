@@ -1,124 +1,178 @@
-Return-Path: <linux-kernel+bounces-375017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-375018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D989A8FAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:26:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28FAC9A8FC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 21:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7581F220BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:26:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C485E28308A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Oct 2024 19:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6FA1FBCBC;
-	Mon, 21 Oct 2024 19:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729041FBF53;
+	Mon, 21 Oct 2024 19:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/0x8TMu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6z3oItO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B57C1FBC9C;
-	Mon, 21 Oct 2024 19:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD2D1FBC87;
+	Mon, 21 Oct 2024 19:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729538760; cv=none; b=K4Ht6P4aw7Y0mdADIQ5NqqafroFzaULsvLAB62VHBNZj1f2KOIkOgkvaUNy/7q9OL0rl9t8q/jdYR6g0TM4js/vkOPKdM0bVy99czf0eeBS2uAH4vs9bo2QHR0gy/KETmqz/vT6J22vzi5Ib+fsdU1iWx3ENfveOrk8lxZ8kY1U=
+	t=1729538793; cv=none; b=BLp+NOB1pe7YklSOZFX1UH5e5PTI3dtzWKoaRkUF9d0VtOyK+7enAMq+3GAWBbHdG+q4fICdGZxxLdkHOCfIsqgekhZedscaM7XMykCrIFOt9J0hU7pBEow5PkKP6ciBAPfKm8y5bVNX7zKgspZOgIh0m36eU+Ydh6sOFnvj73w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729538760; c=relaxed/simple;
-	bh=gHgFXRPZ5AKuvTaw9/gjvzuyWZ8Ok1DwaWL1zLbodZA=;
+	s=arc-20240116; t=1729538793; c=relaxed/simple;
+	bh=zA4sZ0GOCefJgtUsyAnLlD0LbsF0ALVbHDC66/Uv15A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tsWcrXCFuS5jt4/A3wdBiWrKYX6jqQpQ5jfP71G676Z30puQE4rTzAxJ2aQkW5CZxJgvKVDH4I3YUOzO3rY7rYII78eYYbSLM8ThqcF3sqF6QoKzsJjQwC0Xz1mV5ge0pw9TU7xIZSOy9pGYkBtXuq4nmI7uvVQMpXVMR75B9K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/0x8TMu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 504F9C4CEC3;
-	Mon, 21 Oct 2024 19:25:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JkW3rwbFqV6lutgGVh4Te2sxYshdfFrsEtwdt6oyCS3wWDp+wQK0XA5cAUWlihwhWMOtIBbgZdtpQoy9yUX3jSijeVEBf8J06w3Kgp3WPTNiwHUuyovvIaj8Yd6hgk1CX1AT+fydcIilMVgikNP9jtn9Q4w54rVMq3fK/vl2oGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6z3oItO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B03C4CEC3;
+	Mon, 21 Oct 2024 19:26:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729538760;
-	bh=gHgFXRPZ5AKuvTaw9/gjvzuyWZ8Ok1DwaWL1zLbodZA=;
+	s=k20201202; t=1729538793;
+	bh=zA4sZ0GOCefJgtUsyAnLlD0LbsF0ALVbHDC66/Uv15A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h/0x8TMu8RVN5UEEsauL3AgXPPHf879EVRjepAneaZANhvvZvLocmHiLte8czCEou
-	 Ii8zdP+GpsKoH3GIOl8wOT/gD2TG7LlWYW+KSqBXgmtYl52b8gMTCCwVRGdewhmxgb
-	 qTgTSCcd36YqG8VKHpCKHOsddT24WLBzwPooJpb+64v1m96vDQqferfxulcEVOEH8F
-	 Ftrk1dAGmdXbCnP41sQv7AEIu+FDUYyiBubF/LqCPYkxsFCrpYTEv5D4+SloiGZ5mt
-	 k5K2KVI/YNbas4+WXuGAGJejRoDmwyPshBgdvChPwueO4HZDS9pA0dTk6XFsuqeWly
-	 BHgKt8tWi70oA==
-Date: Mon, 21 Oct 2024 12:25:57 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Jan Hendrik Farr <kernel@jfarr.cc>
-Cc: Bill Wendling <morbo@google.com>, Kees Cook <kees@kernel.org>,
-	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ardb@kernel.org, ojeda@kernel.org
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <20241021192557.GA2041610@thelio-3990X>
-References: <Zv61dCaxScXuOjZg@archlinux>
- <202410031424.45E5D19@keescook>
- <Zv8RIs-htdc-PtXB@archlinux>
- <202410040958.C19D3B9E48@keescook>
- <ZwNb-_UPL9BPSg9N@archlinux>
- <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
- <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
- <ZxB-uh1KzfD4ww2a@archlinux>
- <20241017165522.GA370674@thelio-3990X>
- <ZxWvcAPHPaRxp9UE@archlinux>
+	b=B6z3oItOv3LMfLuqZ+r7kMjS7DXUolmGT0kIZPxHbo01Xj9/9lisFQ05LrFohJ1Sp
+	 eqX1ziV7LZIN1ypa+h+Co2wvuNs3q4PGM6nAQhHY/8plmSaS/YX15jlM9lpm0KmRIW
+	 YhKBxwNDKgYQc2+myG3YD8vqnzSDbBbQToO6ms1c7TBuM7gQe6Lelr+btLIhg7i3ZP
+	 tGdqf7/I/ikEU4sLJCyXHdGEQn0qprClyFVCqQROaHyVxT1BnTRBHFfVmyFJeUPlst
+	 F23X3dHrPfeO/LsGe3a3DGC4qGGDPa66DBv5U2Q/Bs+KjLpiUuaEBYQIQMdEAvdRMx
+	 fRENLuqAmEHiw==
+Date: Mon, 21 Oct 2024 14:26:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	asahi@lists.linux.dev, linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hector Martin <marcan@marcan.st>,
+	Neal Gompa <neal@gompa.dev>
+Subject: Re: [PATCH v2 1/3] dt-bindings: sound: Add CS42L84 codec
+Message-ID: <20241021192632.GA965116-robh@kernel.org>
+References: <20241020-cs42l84-v2-0-37ba2b6721d9@gmail.com>
+ <20241020-cs42l84-v2-1-37ba2b6721d9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZxWvcAPHPaRxp9UE@archlinux>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241020-cs42l84-v2-1-37ba2b6721d9@gmail.com>
 
-On Mon, Oct 21, 2024 at 03:33:36AM +0200, Jan Hendrik Farr wrote:
-> > +config CC_HAS_COUNTED_BY
-> > +	def_bool $(success,echo 'struct flex { int count; int array[] __attribute__((__counted_by__(count))); };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
-> > +	# clang needs to be at least 19.1.3 to avoid __bdos miscalculations
-> > +	# https://github.com/llvm/llvm-project/pull/110497
-> > +	# https://github.com/llvm/llvm-project/pull/112636
-> > +	depends on CC_IS_GCC || CLANG_VERSION >= 190103
+On Sun, Oct 20, 2024 at 12:47:31AM +1000, James Calligeros wrote:
+> From: Martin Povišer <povik+lin@cutebit.org>
 > 
-> I think I prefer
+> CS42L84 is a headphone jack codec made by Cirrus Logic and seen in Apple
+> computer models starting with 2021 Macbook Pros. It is not a publicly
+> documented part. To a degree the part is similar to the public CS42L42.
+> (The L84 superseded L83 seen in earlier Apple models, and the L83 was
+> pretty much the same as L42.)
+
+Why can't this be added to 
+Documentation/devicetree/bindings/sound/cirrus,cs42l42.yaml?
+
+I guess perhaps you don't know what the supplies look like? Do any of 
+the custom properties apply?
+
 > 
-> 	depends on !(CC_IS_CLANG && CLANG_VERSION < 190103)
+> Signed-off-by: Martin Povišer <povik+lin@cutebit.org>
+> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
+> Reviewed-by: Neal Gompa <neal@gompa.dev>
+> ---
+>  .../bindings/sound/cirrus,cs42l84.yaml   | 56 +++++++++++++++++++++++++
+>  MAINTAINERS                              |  1 +
+>  2 files changed, 57 insertions(+)
 > 
-> to make it more clear that the purpose is to disable this for clang
-> versions below 19.1.3, but keep it enabled for every other compiler
-> including pre-release gcc versions that pass the compile test.
+> diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs42l84.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs42l84.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..7f8338e8ae369bc529ac3cf35041d5a7b9f3e6d1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/cirrus,cs42l84.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/cirrus,cs42l84.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Cirrus Logic CS42L84 audio CODEC
+> +
+> +maintainers:
+> +  - Martin Povišer <povik+lin@cutebit.org>
+> +
+> +description: |
 
-Sure, that's a reasonable tweak to keep it a little bit more concise and
-to the point. It's obviously logically equivalent.
+Don't need '|' if no formatting.
 
-> Also after gcc 15 is released I don't think a version check for gcc
-> should be necessary. I only see an explicit version check as required
-> when we know a certain version is broken. Otherwise I would prefer using
-> the build test.
-
-Yeah, I think this mostly got addressed with the comments downthread, I
-think we are all in agreement.
-
-> I guess an alternative would be to just create a
-> CC_COUNTED_BY_BROKEN that is enabled for clang versions below 19.1.3
-> and continue to use __has_attribute together with that option. That
-> would make the build test unnecesarry. The downside is that it
-> will require checking both __has_attribute and
-> CONFIG_CC_COUNTED_BY_BROKEN for __counted_by support. So I think
-> CC_HAS_COUNTED_BY is better.
-
-Yeah I thought about something like that briefly but came to the same
-conclusion quickly, especially once I realized how many places were
-using __has_attribute for __counted_by already.
-
-> I'll submit it once Bill's fix is in the release/19.x branch. Which
-> maintainer should I address this too? You (Nathan), Miguel, Kees, or
-> someone else?
-
-Like Miguel said, you can send it to all the people you have mentioned
-here but I would probably expect Kees to chauffeur this to Linus with
-Miguel's Ack for compiler_attributes.h since Kees has generally owned
-__counted_by up until this point.
-
-Cheers,
-Nathan
+> +  The CS42L84 is a headphone jack codec made by Cirrus Logic and embedded
+> +  in personal computers sold by Apple. It was first seen in 2021 Macbook
+> +  Pro models. It has stereo DAC for playback, mono ADC for capture, and
+> +  is somewhat similar to CS42L42 but with a different regmap.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - cirrus,cs42l84
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  '#sound-dai-cells':
+> +    const: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      jack_codec: codec@4b {
+> +          compatible = "cirrus,cs42l84";
+> +          reg = <0x4b>;
+> +          reset-gpios = <&pinctrl_nub 4 GPIO_ACTIVE_LOW>;
+> +          interrupts-extended = <&pinctrl_ap 180 IRQ_TYPE_LEVEL_LOW>;
+> +          #sound-dai-cells = <0>;
+> +      };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c1a2c296446c0724a0c6e70c845e5e5e1e693fd5..f5f85714dc4e8ca9c60b3f6963b2cec1ea33fdd0 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2132,6 +2132,7 @@ L:	asahi@lists.linux.dev
+>  L:	linux-sound@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/sound/adi,ssm3515.yaml
+> +F:	Documentation/devicetree/bindings/sound/cirrus,cs42l84.yaml
+>  F:	Documentation/devicetree/bindings/sound/apple,*
+>  F:	sound/soc/apple/*
+>  F:	sound/soc/codecs/cs42l83-i2c.c
+> 
+> -- 
+> 2.47.0
+> 
 
